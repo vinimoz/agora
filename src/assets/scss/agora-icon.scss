@@ -1,0 +1,13 @@
+/*!
+ * SPDX-FileCopyrightText: 2025 Trappe Vincent 
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+.icon-agora {
+  background-image: url(../../../img/agora.svg);
+  filter: var(--background-invert-if-dark);
+}
+
+.icon-agora-dark {
+  background-image: url(../../../img/agora-dark.svg);
+  filter: var(--background-invert-if-dark);
+}

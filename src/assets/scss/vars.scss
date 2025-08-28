@@ -1,0 +1,14 @@
+/*!
+ * SPDX-FileCopyrightText: 2020 René Gieling <github@dartcafe.de>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+:root {
+  --color-inquiries-foreground-yes: var(--color-success);
+  --color-inquiries-foreground-no: var(--color-error);
+  --color-inquiries-foreground-maybe: var(--color-warning);
+  --color-inquiries-background-yes: rgba(var(--color-success-rgb), 0.2);
+  --color-inquiries-background-no: rgba(var(--color-error-rgb), 0.2);
+  --color-inquiries-background-maybe: rgba(var(--color-warning-rgb), 0.1);
+  --container-background-light: rgba(var(--color-info-rgb), 0.1);
+  --cap-width: 49rem;
+}

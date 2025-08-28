@@ -1,0 +1,29 @@
+/*!
+ * SPDX-FileCopyrightText: 2020 René Gieling <github@dartcafe.de>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+.transitions-active {
+  .list-enter-active,
+  .list-leave-active {
+    transition: all 0.5s ease;
+  }
+
+  .list-enter-from,
+  .list-leave-to {
+    opacity: 0;
+  }
+
+  .list-move {
+    transition: transform 0.5s ease;
+  }
+}
+
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
+}

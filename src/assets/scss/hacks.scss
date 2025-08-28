@@ -1,0 +1,51 @@
+/*!
+ * SPDX-FileCopyrightText: 2020 René Gieling <github@dartcafe.de>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+// some hacks, do alter the display of third parity components
+
+// FIXME: remove this hack after the issue is fixed
+.avatardiv .material-design-icon {
+  width: var(--size);
+  height: var(--size);
+}
+
+// h2 in notecard gets a margin-top of -6px instead of 24px for better alignment
+.notecard h2 {
+  margin-top: -6px;
+}
+
+// relative position to be able to get sticky toolbar
+.app-content {
+  position: relative !important;
+}
+
+.app-sidebar {
+  top: 0 !important;
+}
+
+.action-item.action-item--single.app-navigation-toggle.undefined.has-tooltip {
+  top: 4px;
+  margin-inline-end: -50px;
+}
+
+// force scrolling of sidebar-tabs content
+.app-sidebar-tabs {
+  overflow-y: hidden;
+}
+
+.user-item > .checkbox-radio-switch-switch,
+.user-item.add-public > .icon-add {
+  margin-inline-end: 20px !important;
+}
+
+// fix v-popover sizing
+.inquiry-header-buttons {
+  .trigger {
+    display: inline !important;
+  }
+}
+
+.modal-wrapper .modal-container {
+  overflow: scroll !important;
+}

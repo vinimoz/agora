@@ -1,0 +1,436 @@
+<!--
+  - SPDX-FileCopyrightText: 2018 Nextcloud contributors
+  - SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+
+<script setup lang="ts">
+import { ref, computed, onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { debounce } from 'lodash';
+import { showError } from '@nextcloud/dialogs';
+import { generateUrl } from '@nextcloud/router';
+import { t } from '@nextcloud/l10n';
+
+import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch';
+import NcButton from '@nextcloud/vue/components/NcButton';
+
+import { InputDiv } from '../Base/index.ts';
+import { SimpleLink, setCookie } from '../../helpers/index.ts';
+import { ValidatorAPI, PublicAPI } from '../../Api/index.ts';
+import { useSessionStore } from '../../stores/session.ts';
+import { useInquiryStore } from '../../stores/inquiry.ts';
+import { AxiosError } from '@nextcloud/axios';
+import { SignalingType } from '../../Types/index.ts';
+
+const route = useRoute();
+const router = useRouter();
+
+const emit = defineEmits(['close']);
+
+const sessionStore = useSessionStore();
+const inquiryStore = useInquiryStore();
+
+const COOKIE_LIFETIME = 30;
+const checkStatus = ref<{
+  email: SignalingType;
+  userName: SignalingType;
+}>({
+  email: 'empty',
+  userName: 'empty'
+});
+
+const sendRegistration = ref(false);
+const userName = ref('');
+const emailAddress = ref('');
+const saveCookie = ref(true);
+
+const registrationIsValid = computed(
+  () =>
+    checkStatus.value.userName === 'valid' &&
+    (checkStatus.value.email === 'valid' ||
+      (emailAddress.value.length === 0 &&
+        sessionStore.share.publicInquiryEmail !== 'mandatory'))
+);
+const disableSubmit = computed(
+  () =>
+    !registrationIsValid.value ||
+    checkStatus.value.userName === 'checking' ||
+    sendRegistration.value
+);
+const emailGeneratedStatus = computed(() =>
+  checkStatus.value.email === 'empty'
+    ? sessionStore.share.publicInquiryEmail
+    : checkStatus.value.email
+);
+const offerCookies = computed(() => sessionStore.share.type === 'public');
+
+const loginLink = computed(() => {
+  const redirectUrl = router.resolve({
+    name: 'publicInquiry',
+    params: { token: route.params.token }
+  }).href;
+
+  return `${generateUrl('/login')}?redirect_url=${redirectUrl}`;
+});
+
+const userNameHint = computed(() => {
+  if (checkStatus.value.userName === 'checking') {
+    return t('agora', 'Checking name …');
+  }
+  if (checkStatus.value.userName === 'empty') {
+    return t('agora', 'A name is required.');
+  }
+  if (checkStatus.value.userName === 'invalid') {
+    return t('agora', 'The name {username} is invalid or reserved.', {
+      username: userName.value
+    });
+  }
+  return '';
+});
+
+const emailAddressHint = computed(() => {
+  if (emailGeneratedStatus.value === 'checking') {
+    return t('agora', 'Checking email address …');
+  }
+  if (emailGeneratedStatus.value === 'mandatory') {
+    return t('agora', 'An email address is required.');
+  }
+  if (emailGeneratedStatus.value === 'invalid') {
+    return t('agora', 'Invalid email address.');
+  }
+  if (sessionStore.share.type === 'public') {
+    if (emailGeneratedStatus.value === 'valid') {
+      return t(
+        'inquiries',
+        'You will receive your personal link after clicking "OK".'
+      );
+    }
+    return t(
+      'inquiries',
+      'Enter your email address to get your personal access link.'
+    );
+  }
+  return '';
+});
+
+onMounted(() => {
+  if (route.name === 'publicInquiry' && route.query.name) {
+    userName.value = route.query.name.toString();
+  } else {
+    userName.value = sessionStore.currentUser.displayName;
+  }
+  if (route.name === 'publicInquiry' && route.query.email) {
+    emailAddress.value = route.query.email.toString();
+  } else {
+    emailAddress.value = sessionStore.currentUser.emailAddress;
+  }
+});
+
+/**
+ *
+ * @param token
+ */
+function routeToPersonalShare(token: string): void {
+  if (route.params.token === token) {
+    // if share was not a public share, but a personal share
+    // (i.e. email shares allow to change personal data by fist entering of the inquiry),
+    // just load the inquiry
+    inquiryStore.load();
+    closeModal();
+  } else {
+    // in case of a public share, redirect to the generated share
+    router.push({
+      name: 'publicInquiry',
+      params: { token },
+      replace: true
+    });
+    closeModal();
+  }
+}
+
+/**
+ *
+ * @param value - value to be stored in the cookie
+ */
+function updateCookie(value: string): void {
+  const cookieExpiration = COOKIE_LIFETIME * 24 * 60 * 1000;
+  setCookie(route.params.token.toString(), value, cookieExpiration);
+}
+
+/**
+ *
+ */
+function closeModal(): void {
+  emit('close');
+}
+
+/**
+ *
+ */
+function login(): void {
+  window.location.assign(
+    `${window.location.protocol}//${window.location.host}${loginLink.value}`
+  );
+}
+
+const validatePublicUsername = debounce(async function (): Promise<void> {
+  if (userName.value.length < 1) {
+    checkStatus.value.userName = 'empty';
+    return;
+  }
+
+  checkStatus.value.userName = 'checking';
+  try {
+    await ValidatorAPI.validateName(route.params.token, userName.value);
+    checkStatus.value.userName = 'valid';
+  } catch (error) {
+    if ((error as AxiosError).code === 'ERR_CANCELED') {
+      return;
+    }
+    if ((error as AxiosError).code === 'ERR_BAD_REQUEST') {
+      checkStatus.value.userName = 'invalid';
+      return;
+    }
+    throw error;
+  }
+}, 500);
+
+const validateEmailAddress = debounce(async function (): Promise<void> {
+  if (emailAddress.value.length < 1) {
+    checkStatus.value.email = 'empty';
+    return;
+  }
+
+  checkStatus.value.email = 'checking';
+  try {
+    await ValidatorAPI.validateEmailAddress(emailAddress.value);
+    checkStatus.value.email = 'valid';
+  } catch (error) {
+    if ((error as AxiosError).code === 'ERR_CANCELED') {
+      return;
+    }
+    if ((error as AxiosError).code === 'ERR_BAD_REQUEST') {
+      checkStatus.value.email = 'invalid';
+      return;
+    }
+    throw error;
+  }
+}, 500);
+
+/**
+ *
+ */
+async function submitRegistration(): Promise<void> {
+  if (!registrationIsValid.value || sendRegistration.value) {
+    return;
+  }
+
+  sendRegistration.value = true;
+
+  try {
+    const response = await PublicAPI.register(
+      route.params.token as string,
+      userName.value,
+      emailAddress.value
+    );
+
+    if (saveCookie.value && route.name === 'publicInquiry') {
+      updateCookie(response.data.share.token);
+    }
+
+    routeToPersonalShare(response.data.share.token);
+
+    if (
+      sessionStore.currentUser.emailAddress &&
+      !sessionStore.share.invitationSent
+    ) {
+      showError(
+        t('agora', 'Email could not be sent to {emailAddress}', {
+          emailAddress: sessionStore.currentUser.emailAddress
+        })
+      );
+    }
+  } catch (error) {
+    if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+      return;
+    }
+    showError(t('agora', 'Error registering to inquiry', { error }));
+    throw error;
+  } finally {
+    sendRegistration.value = false;
+  }
+}
+</script>
+
+<template>
+  <div class="modal__content">
+    <div class="modal__registration">
+      <div class="registration__registration">
+        <h2>{{ t('agora', 'Guest participants') }}</h2>
+        <InputDiv
+          v-model="userName"
+          class="section__username"
+          :signaling-class="checkStatus.userName"
+          :placeholder="t('agora', 'Enter your name or a nickname')"
+          :helper-text="userNameHint"
+          focus
+          @input="validatePublicUsername()"
+          @submit="submitRegistration()"
+        />
+
+        <InputDiv
+          v-if="sessionStore.share.publicInquiryEmail !== 'disabled'"
+          v-model="emailAddress"
+          class="section__email"
+          :signaling-class="checkStatus.email"
+          :placeholder="
+            sessionStore.share.publicInquiryEmail === 'mandatory'
+              ? t('agora', 'Email address (mandatory)')
+              : t('agora', 'Email address (optional)')
+          "
+          :helper-text="emailAddressHint"
+          type="email"
+          inputmode="email"
+          @input="validateEmailAddress()"
+          @submit="submitRegistration()"
+        />
+
+        <NcCheckboxRadioSwitch v-if="offerCookies" v-model="saveCookie">
+          {{ t('agora', 'Remember me for 30 days') }}
+        </NcCheckboxRadioSwitch>
+
+        <div class="modal__buttons">
+          <div class="left">
+            <div class="legal_links">
+              <SimpleLink
+                v-if="sessionStore.appSettings.finalImprintUrl"
+                :href="sessionStore.appSettings.finalImprintUrl"
+                target="_blank"
+                :name="t('agora', 'Legal Notice')"
+              />
+              <SimpleLink
+                v-if="sessionStore.appSettings.finalPrivacyUrl"
+                :href="sessionStore.appSettings.finalPrivacyUrl"
+                target="_blank"
+                :name="t('agora', 'Privacy policy')"
+              />
+            </div>
+          </div>
+          <div class="right">
+            <NcButton @click="closeModal">
+              <template #default>
+                {{ t('agora', 'Cancel') }}
+              </template>
+            </NcButton>
+
+            <NcButton
+              :variant="'primary'"
+              :disabled="disableSubmit"
+              @click="submitRegistration()"
+            >
+              <template #default>
+                {{ t('agora', 'OK') }}
+              </template>
+            </NcButton>
+          </div>
+        </div>
+      </div>
+
+      <div
+        v-if="sessionStore.appSettings.showLogin"
+        class="registration__login"
+      >
+        <h2>{{ t('agora', 'Registered accounts') }}</h2>
+        <NcButton wide @click="login()">
+          <template #default>
+            {{ t('agora', 'Login') }}
+          </template>
+        </NcButton>
+        <div>
+          {{
+            t(
+              'inquiries',
+              'You can also log in and participate with your regular account.'
+            )
+          }}
+        </div>
+        <div>
+          {{ t('agora', 'Otherwise participate as a guest participant.') }}
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<style lang="scss">
+.section__optin {
+  a {
+    text-decoration: underline;
+  }
+}
+
+.modal__registration {
+  display: flex;
+  flex-wrap: wrap;
+  overflow: hidden;
+  & > div {
+    display: flex;
+    flex-direction: column;
+    flex: 1 auto;
+    min-width: 140px;
+    padding: 24px;
+    border-top: 1px solid;
+    border-inline-end: 1px solid;
+    margin-top: -2px;
+    margin-inline-end: -2px;
+    > button {
+      margin: 8px 0;
+    }
+  }
+
+  .registration__login {
+    flex: 1 180px;
+  }
+  .registration__registration {
+    flex: 1 480px;
+  }
+}
+
+[class*='section__'] {
+  margin: 4px 0;
+}
+
+.modal__content {
+  .enter__name,
+  .enter__email {
+    margin-bottom: 12px;
+  }
+}
+
+.legal_links {
+  a {
+    color: var(--color-text-maxcontrast);
+    font-weight: bold;
+    white-space: nowrap;
+    padding: 10px;
+    margin: -10px;
+
+    &:hover,
+    &:active {
+      color: var(--color-main-text);
+      &::after {
+        color: var(--color-text-maxcontrast);
+      }
+    }
+
+    &:after {
+      content: '·';
+      padding: 0 4px;
+    }
+
+    &:last-child:after {
+      content: '';
+    }
+  }
+}
+</style>

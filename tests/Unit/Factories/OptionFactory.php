@@ -1,0 +1,23 @@
+<?php
+/**
+ * SPDX-FileCopyrightText: 2017 Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+use League\FactoryMuffin\Faker\Facade as Faker;
+
+/**
+ * General factory for the text model.
+ */
+$fm->define('OCA\Inquiries\Db\Option')->setDefinitions([
+	'owner' => Faker::firstNameMale(),
+	'released' => function () {
+		$date = new DateTime('now');
+		return $date->getTimestamp();
+	},
+	'inquiryOptionText' => Faker::text(255),
+	'timestamp' => 0,
+	'order' => 0,
+	'confirmed' => 0,
+	'duration' => 0,
+]);

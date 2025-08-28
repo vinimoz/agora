@@ -1,0 +1,19 @@
+<?php
+/**
+ * SPDX-FileCopyrightText: 2017 Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+use League\FactoryMuffin\Faker\Facade as Faker;
+
+/**
+ * General factory for the comment model.
+ */
+$fm->define('OCA\Inquiries\Db\Comment')->setDefinitions([
+	'userId' => Faker::firstNameMale(),
+	'timestamp' => function () {
+		$date = new DateTime('today');
+		return $date->getTimestamp();
+	},
+	'comment' => Faker::text(255),
+]);

@@ -1,0 +1,30 @@
+/*!
+ * SPDX-FileCopyrightText: 2022 René Gieling <github@dartcafe.de>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+// Resets some NC classes and markdown specific styles
+.inquiries-markdown {
+  * {
+    margin: revert;
+    padding: revert;
+    font-size: revert;
+    text-decoration: revert;
+    list-style: revert;
+    opacity: revert;
+    min-height: revert;
+  }
+
+  table {
+    border-spacing: 2px;
+  }
+
+  thead {
+    background-color: var(--color-background-darker);
+    color: var(--color-main-text);
+  }
+
+  td,
+  th {
+    padding: 1px 4px;
+  }
+}

@@ -1,0 +1,46 @@
+<?php
+
+declare(strict_types=1);
+/**
+ * SPDX-FileCopyrightText: 2017 Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+namespace OCA\Agora\Settings;
+
+use OCA\Agora\AppConstants;
+use OCP\IL10N;
+use OCP\IURLGenerator;
+use OCP\Settings\IIconSection;
+
+/**
+ * @psalm-suppress UnusedClass
+ */
+class PersonalSection implements IIconSection
+{
+    public function __construct(
+        private IL10N $l10n,
+        private IURLGenerator $urlGenerator,
+    ) {
+    }
+
+    public function getID(): string
+    {
+        return AppConstants::APP_ID;
+    }
+
+    public function getName(): string
+    {
+        return $this->l10n->t('Agora');
+    }
+
+    public function getPriority(): int
+    {
+        return 80;
+    }
+
+    public function getIcon(): string
+    {
+        return $this->urlGenerator->imagePath(AppConstants::APP_ID, 'agora-dark.svg');
+    }
+}

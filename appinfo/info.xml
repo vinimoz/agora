@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<info xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
+  <id>agora</id>
+  <name>Agora</name>
+  <summary>A agora app, for citizen democracy.</summary>
+  <description>A agora app, for citizen democracy </description>
+  <version>1.0.0rc1</version>
+  <licence>agpl</licence>
+  <author>VIncent TRAPPE</author>
+  <documentation>
+    <admin>https://github.com/vinimoz/agora/blob/master/README.md</admin>
+  </documentation>
+  <category>tools</category>
+  <category>social</category>
+  <category>organization</category>
+  <website>https://github.com/vinimoz/agora</website>
+  <bugs>https://github.com/vinimoz/agora/issues</bugs>
+  <repository type="git">https://github.com/vinimoz/agora.git</repository>
+  <screenshot>https://raw.githubusercontent.com/nextcloud/agora/master/screenshots/overview.png</screenshot>
+  <screenshot>https://raw.githubusercontent.com/nextcloud/agora/master/screenshots/vote.png</screenshot>
+  <screenshot>https://raw.githubusercontent.com/nextcloud/agora/master/screenshots/edit-poll.png</screenshot>
+  <dependencies>
+    <php min-version="8.1"/>
+    <nextcloud min-version="30" max-version="31"/>
+  </dependencies>
+  <background-jobs>
+    <job>OCA\Agora\Cron\NotificationCron</job>
+    <job>OCA\Agora\Cron\AutoReminderCron</job>
+  </background-jobs>
+  <repair-steps>
+    <pre-migration>
+      <step>OCA\Agora\Migration\RepairSteps\RemoveObsoleteMigrations</step>
+    </pre-migration>
+    <post-migration>
+      <step>OCA\Agora\Migration\RepairSteps\DropOrphanedTables</step>
+      <step>OCA\Agora\Migration\RepairSteps\DropOrphanedColumns</step>
+      <step>OCA\Agora\Migration\RepairSteps\DeleteInvalidRecords</step>
+      <step>OCA\Agora\Migration\RepairSteps\UpdateHashes</step>
+      <step>OCA\Agora\Migration\RepairSteps\CreateIndices</step>
+    </post-migration>
+    <install>
+      <step>OCA\Agora\Migration\RepairSteps\Install</step>
+    </install>
+  </repair-steps>
+  <commands>
+    <command>OCA\Agora\Command\Share\Add</command>
+    <command>OCA\Agora\Command\Share\Remove</command>
+    <command>OCA\Agora\Command\Db\Purge</command>
+    <command>OCA\Agora\Command\Db\RemoveIndices</command>
+    <command>OCA\Agora\Command\Db\Rebuild</command>
+    <command>OCA\Agora\Command\Db\CreateIndices</command>
+    <command>OCA\Agora\Command\Db\CleanMigrations</command>
+    <command>OCA\Agora\Command\Db\ResetWatch</command>
+    <command>OCA\Agora\Command\Db\InitDbDefault</command>
+    <command>OCA\Agora\Command\Inquiry\TransferOwnership</command>
+  </commands>
+  <settings>
+    <admin>OCA\Agora\Settings\AdminSettings</admin>
+    <admin-section>OCA\Agora\Settings\AdminSection</admin-section>
+    <personal>OCA\Agora\Settings\PersonalSettings</personal>
+    <personal-section>OCA\Agora\Settings\PersonalSection</personal-section>
+  </settings>
+  <activity>
+    <filters>
+      <filter>OCA\Agora\Filter\ActivityFilter</filter>
+    </filters>
+    <providers>
+      <provider>OCA\Agora\Provider\ActivityProvider</provider>
+    </providers>
+  </activity>
+  <navigations>
+    <navigation>
+      <name>Agora</name>
+      <route>agora.page.indexindex</route>
+      <icon>app.svg</icon>
+      <order>77</order>
+    </navigation>
+  </navigations>
+</info>

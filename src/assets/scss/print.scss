@@ -1,0 +1,49 @@
+/*!
+ * SPDX-FileCopyrightText: 2020 René Gieling <github@dartcafe.de>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+@media print {
+  #content-vue,
+  .app-agora {
+    padding-top: 0 !important;
+  }
+
+  .header_bar {
+    margin-inline-start: 0 !important;
+  }
+
+  .inquiry-table__inquiries,
+  .inquiry-table .inquiry-table__users {
+    overflow-x: initial !important;
+    min-width: initial !important;
+  }
+
+  .table-view .inquiry-table__inquiries,
+  .table-view .inquiry-table .inquiry-table__users {
+    max-width: 200px;
+  }
+
+  .app-content {
+    background-color: transparent !important;
+    [class*='area__'] {
+      box-shadow: initial !important;
+      margin: 0 !important;
+    }
+  }
+
+  footer,
+  #header,
+  #app-navigation-vue,
+  #app-sidebar-vue,
+  .counter.barStyle,
+  .area__footer,
+  .action-item,
+  .header-actions,
+  .app-navigation,
+  .option-proposals,
+  .inquiry-table__users .owner,
+  .option-item-owner.owner,
+  .app-sidebar {
+    display: none !important;
+  }
+}

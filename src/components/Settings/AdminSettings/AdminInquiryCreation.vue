@@ -1,0 +1,41 @@
+<!--
+  - SPDX-FileCopyrightText: 2021 Nextcloud contributors
+  - SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+
+<script setup>
+import { t } from '@nextcloud/l10n';
+
+import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch';
+import NcSelect from '@nextcloud/vue/components/NcSelect';
+
+import { useAppSettingsStore } from '../../../stores/appSettings.ts';
+
+const appSettingsStore = useAppSettingsStore();
+</script>
+
+<template>
+  <div class="user_settings">
+    <NcCheckboxRadioSwitch
+      v-model="appSettingsStore.allowInquiryCreation"
+      type="switch"
+      @update:model-value="appSettingsStore.write()"
+    >
+      {{ t('agora', 'Enable the inquiry creation globally') }}
+    </NcCheckboxRadioSwitch>
+    <div v-if="!appSettingsStore.allowInquiryCreation" class="settings_details">
+      <NcSelect
+        v-model="appSettingsStore.inquiryCreationGroups"
+        :input-label="t('agora', 'Enable only for the following groups')"
+        label="displayName"
+        :options="appSettingsStore.groups"
+        :user-select="true"
+        :multiple="true"
+        :loading="isLoading"
+        :placeholder="t('agora', 'Leave empty to disable globally')"
+        @update:model-value="appSettingsStore.write()"
+        @search="appSettingsStore.loadGroups"
+      />
+    </div>
+  </div>
+</template>
