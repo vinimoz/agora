@@ -45,7 +45,7 @@ You can download and install the latest release from the [Nextcloud app store](h
 ## Screenshots
 Manage your agora and create new ones | Many configuration options | Share your inquiry with other people | Agora on mobile
 :-:|:-:|:-:|:-:
-![Manage Category](screenshots/Category.png) | ![Agora](screenshots/ModerationStatus.png) | ![View Inquiry ]](screenshots/UserViewInquiry.png) | ![Grid View ]](screenshots/GridView.png)
+![Edit Inquiry](screenshots/edit.png) |![Manage Category](screenshots/Category.png) | ![Agora](screenshots/ModerationStatus.png) | ![View Inquiry](screenshots/UserViewInquiry.png) | ![Grid View](screenshots/GridView.png)
 
 
 ### Install from git
