@@ -115,11 +115,20 @@ const moderationStatus = computed(
 );
 
 const moderationStatusIcon = computed(() => {
-  const item = sessionStore.appSettings.moderationStatusTab.find(
-    (s) => s.inquiryType === inquiry.type
+  const statusItem = sessionStore.appSettings.moderationStatusTab.find(
+    item => item.inquiryType === inquiry.type && item.statusKey === inquiry.moderationStatus
   );
-  return StatusIcons[item.icon];
+
+  if (!statusItem) {
+    console.warn("Status not found for type:", inquiry.type, "and status:", inquiry.moderationStatus);
+    return  StatusIcons["Draft"];
+  }
+
+  console.log("INTO MODERATION STATUS ICON :", statusItem.icon);
+
+  return StatusIcons[statusItem.icon] || StatusIcons["Draft"];
 });
+
 
 const moderationStatusInfo = computed(() => {
   if (

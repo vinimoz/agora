@@ -11,12 +11,14 @@ use OCA\Agora\Db\ModerationStatusMapper;
 use OCA\Agora\Db\ModerationStatus;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Db\MultipleObjectsReturnedException;
+use Psr\Log\LoggerInterface;
 
 class ModerationStatusService
 {
 
     public function __construct(
-        private ModerationStatusMapper $moderationStatusMapper
+        private ModerationStatusMapper $moderationStatusMapper,
+        private LoggerInterface $logger
     ) {
     }
 
@@ -61,6 +63,7 @@ class ModerationStatusService
     public function update(int $id, string $statusKey, string $label, 
         ?string $description, bool $isFinal, string $icon
     ): ModerationStatus {
+        $this->logger->error("MODERATION STATUS TO UPDATE ID :".$id);
         $status = $this->moderationStatusMapper->find($id);
         $status->setStatusKey($statusKey);
         $status->setLabel($label);

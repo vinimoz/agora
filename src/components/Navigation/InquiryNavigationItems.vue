@@ -10,10 +10,14 @@ import NcActionButton from '@nextcloud/vue/components/NcActionButton';
 import NcAppNavigationItem from '@nextcloud/vue/components/NcAppNavigationItem';
 import { InquiryTypesUI } from '../../helpers/modules/InquiryHelper.ts';
 
-import InquiryItemActions from '../Inquiry/InquiryItemActions.vue';
+import DeleteInquiryIcon from 'vue-material-design-icons/Delete.vue';
+import CloneInquiryIcon from 'vue-material-design-icons/ContentCopy.vue';
+import ArchiveInquiryIcon from 'vue-material-design-icons/Archive.vue';
+import RestoreInquiryIcon from 'vue-material-design-icons/Recycle.vue';
 
 import { useSessionStore } from '../../stores/session.ts';
 import { Inquiry } from '../../Types/index.ts';
+import { InquiryGeneralIcons } from '../../utils/icons.ts';
 
 const emit = defineEmits(['cloneInquiry', 'toggleArchive', 'deleteInquiry']);
 const { inquiry } = defineProps<{ inquiry: Inquiry }>();
@@ -36,13 +40,40 @@ const sessionStore = useSessionStore();
         <component :is="InquiryTypesUI[inquiry.type].icon" />
       </div>
     </template>
+    <template #actions>
+      <NcActionButton
+        v-if="inquiry.permissions.edit && !inquiry.status.isArchived"
+        :name="t('agora', 'Archive inquiry')"
+        :aria-label="t('agora', 'Archive inquiry')"
+        @click="emit('toggleArchive')"
+      >
+        <template #icon>
+        	<component :is="InquiryGeneralIcons.archive" />
+        </template>
+      </NcActionButton>
 
-    <template v-if="sessionStore.currentUser.isOwner || sessionStore.currentUser.isAdmin">
-      <InquiryItemActions
-        :key="`actions-${inquiry.id}`"
-        :inquiry="inquiry"
-  style="display: inline-block; position: relative;"
-      />
+      <NcActionButton
+        v-if="inquiry.permissions.edit && inquiry.status.isArchived"
+        :name="t('agora', 'Restore inquiry')"
+        :aria-label="t('agora', 'Restore inquiry')"
+        @click="emit('toggleArchive')"
+      >
+        <template #icon>
+        	<component :is="InquiryGeneralIcons.restore" />
+        </template>
+      </NcActionButton>
+
+      <NcActionButton
+        v-if="inquiry.permissions.edit"
+        class="danger"
+        :name="t('agora', 'Delete inquiry')"
+        :aria-label="t('agora', 'Delete inquiry')"
+        @click="emit('deleteInquiry')"
+      >
+        <template #icon>
+        	<component :is="InquiryGeneralIcons.delete" />
+        </template>
+      </NcActionButton>
     </template>
   </NcAppNavigationItem>
 </template>

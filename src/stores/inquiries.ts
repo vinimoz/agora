@@ -546,14 +546,13 @@ export const useInquiriesStore = defineStore('inquiries', {
      * @param filterList - List of inquiry IDs to filter by
      */
     groupList(filterList: number[]): Inquiry[] {
-      const inquiriesStore = useInquiriesStore();
       return orderBy(
-        inquiriesStore.inquiries.filter((inquiry: Inquiry) =>
+        this.inquiries.filter((inquiry: Inquiry) =>
           filterList.includes(inquiry.id)
         ) ?? [],
         ['created'],
         ['desc']
-      ).slice(0, inquiriesStore.meta.maxInquiriesInNavigation);
+      ).slice(0, this.meta.maxInquiriesInNavigation);
     },
 
     addOrUpdateInquiryGroupInList(payload: { inquiry: Inquiry }) {

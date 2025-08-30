@@ -71,93 +71,103 @@ class InquiryMapper extends QBMapper
      * @param  int $parentId
      * @return int[]|  Returns an array of IDs if children exist, or empty array if none.
      */
-    /**
-     */
     public function findChildrenWithCounts(int $parentId): array
     {
-        $qb = $this->db->getQueryBuilder();
+	    // D'abord, récupérer les enfants
+	    $qb = $this->db->getQueryBuilder();
+	    $qb->select([
+		    'i.id',
+		    'i.title',
+		    'i.type',
+		    'i.created',
+		    'i.last_interaction',
+		    'i.description',
+		    'i.owner',
+		    'i.access',
+		    'i.expire',
+		    'i.archived',
+		    'i.moderation_status',
+		    $qb->createFunction('COUNT(DISTINCT c.id) AS countComments'),
+		    $qb->createFunction('COUNT(DISTINCT s.id) AS countSupports')
+	    ])
+	->from($this->getTableName(), 'i')
+	->leftJoin('i', Comment::TABLE, 'c', $qb->expr()->eq('c.inquiry_id', 'i.id'))
+	->leftJoin('i', Support::TABLE, 's', $qb->expr()->eq('s.inquiry_id', 'i.id'))
+	->where(
+		$qb->expr()->andX(
+			$qb->expr()->eq('i.parent_id', $qb->createNamedParameter($parentId, IQueryBuilder::PARAM_INT)),
+			$qb->expr()->eq('i.access', $qb->createNamedParameter('open')),
+			$qb->expr()->eq('i.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT))
+		)
+	)
+	->groupBy('i.id');
 
-        $qb->select(
-            [
-            'i.id',
-            'i.title',
-            'i.type',
-            'i.created',
-            'i.last_interaction',
-            'i.description',
-            'i.owner',
-            $qb->createFunction('COUNT(DISTINCT c.id) AS countComments'),
-            $qb->createFunction('COUNT(DISTINCT s.id) AS countSupports')
-            ]
-        )
-            ->from($this->getTableName(), 'i')
-            ->leftJoin('i', Comment::TABLE, 'c', $qb->expr()->eq('c.inquiry_id', 'i.id'))
-            ->leftJoin('i', Support::TABLE, 's', $qb->expr()->eq('s.inquiry_id', 'i.id'))
-            ->where(
-                $qb->expr()->andX(
-                    $qb->expr()->eq('i.parent_id', $qb->createNamedParameter($parentId, IQueryBuilder::PARAM_INT)),
-                    $qb->expr()->eq('i.access', $qb->createNamedParameter('open'))
-                )
-            )->groupBy(
-                'i.id',
-                'i.title',
-                'i.type',
-                'i.created',
-                'i.last_interaction',
-                'i.description',
-                'i.owner'
-            );
+	    $result = $qb->execute();
+	    $inquiries = $result->fetchAll();
+	    $result->closeCursor();
 
-        $result = $qb->execute();
-        $inquiries = $result->fetchAll();
-        $result->closeCursor();
+	    // Ensuite, compter les participants pour chaque enfant
+	    foreach ($inquiries as &$inquiry) {
+		    $participantsQb = $this->db->getQueryBuilder();
+		    $participantsQb->select($participantsQb->createFunction('COUNT(*)'))
+		     ->from($this->getTableName())
+		     ->where($participantsQb->expr()->eq('parent_id', $participantsQb->createNamedParameter($inquiry['id'], IQueryBuilder::PARAM_INT)))
+		     ->andWhere($participantsQb->expr()->eq('access', $participantsQb->createNamedParameter('open')))
+		     ->andWhere($participantsQb->expr()->eq('deleted', $participantsQb->expr()->literal(0, IQueryBuilder::PARAM_INT)));
 
-        return array_map(
-            function (array $row) {
-                return [
-                'id' => (int)$row['id'],
-                'title' => (string)$row['title'],
-                'type' => (string)$row['type'],
-                'moderationStatus' => (string)$row['moderation_status'],
-                'description' => (string)$row['description'],
-                'configuration' => [
-                'access' => (string)$row['access'],
-                ],
-                'owner' => [
-                    'id' => (string)$row['owner'],
-                    'displayName' => (string)$row['owner'], 
-                 ],
-                 'status' => [
-                    'countComments' => (int)($row['countComments'] ?? 0),
-                    'countSupports' => (int)($row['countSupports'] ?? 0),
-                    'isExpired' => (bool)($row['expire'] ?? false),
-                    'isArchived' => (bool)($row['archived'] ?? false),
-                    'created' => (int)$row['created'],
-                    'lastInteraction' => (int)$row['last_interaction'],
-                 ],
-                ];
-            }, $inquiries
-        );
-    }    
-    
-    
+		    $participantsResult = $participantsQb->execute();
+		    $inquiry['countParticipants'] = (int)$participantsResult->fetchOne();
+		    $participantsResult->closeCursor();
+	    }
+
+	    return array_map(
+		    function (array $row) {
+			    return [
+				    'id' => (int)$row['id'],
+				    'title' => (string)$row['title'],
+				    'type' => (string)$row['type'],
+				    'moderationStatus' => (string)$row['moderation_status'],
+				    'description' => (string)$row['description'],
+				    'configuration' => [
+					    'access' => (string)$row['access'],
+				    ],
+				    'owner' => [
+					    'id' => (string)$row['owner'],
+					    'displayName' => (string)$row['owner'], 
+				    ],
+				    'status' => [
+					    'countComments' => (int)($row['countComments'] ?? 0),
+					    'countSupports' => (int)($row['countSupports'] ?? 0),
+					    'countParticipants' => (int)($row['countParticipants'] ?? 0),
+					    'isExpired' => ((int)($row['expire'] ?? 0) > 0 && (int)$row['expire'] < time()),
+					    'isArchived' => (bool)($row['archived'] ?? false),
+					    'created' => (int)$row['created'],
+					    'lastInteraction' => (int)$row['last_interaction'],
+				    ],
+			    ];
+		    }, $inquiries
+	    );
+    }
+
+
+
     public function getChildInquiryIds(int $parentId)
     {
-        $qb = $this->db->getQueryBuilder();
-        $qb->select(self::TABLE . '.id')
-            ->from($this->getTableName(), self::TABLE)
-            ->where($qb->expr()->eq(self::TABLE . '.parent_id', $qb->createNamedParameter($parentId, IQueryBuilder::PARAM_INT)));
+	    $qb = $this->db->getQueryBuilder();
+	    $qb->select(self::TABLE . '.id')
+	->from($this->getTableName(), self::TABLE)
+	->where($qb->expr()->eq(self::TABLE . '.parent_id', $qb->createNamedParameter($parentId, IQueryBuilder::PARAM_INT)));
 
-        $stmt = $qb->executeQuery();
-        $rows = $stmt->fetchAll(); // each row is ['id' => ...]
-        $stmt->closeCursor();
+	    $stmt = $qb->executeQuery();
+	    $rows = $stmt->fetchAll(); // each row is ['id' => ...]
+	    $stmt->closeCursor();
 
-        if (empty($rows)) {
-            return [];
-        }
+	    if (empty($rows)) {
+		    return [];
+	    }
 
-        // Extract IDs
-        return array_map(static fn(array $row): int => (int)$row['id'], $rows);
+	    // Extract IDs
+	    return array_map(static fn(array $row): int => (int)$row['id'], $rows);
     }
 
     /**
@@ -169,10 +179,10 @@ class InquiryMapper extends QBMapper
      */
     public function find(int $id): Inquiry
     {
-        $qb = $this->buildQuery();
-        $qb->where($qb->expr()->eq(self::TABLE . '.id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT)));
+	    $qb = $this->buildQuery();
+	    $qb->where($qb->expr()->eq(self::TABLE . '.id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT)));
 
-        return $this->findEntity($qb);
+	    return $this->findEntity($qb);
     }
 
     /**
@@ -181,14 +191,14 @@ class InquiryMapper extends QBMapper
      */
     public function findAutoReminderInquiries(): array
     {
-        $autoReminderSearchString = '%"autoReminder":true%';
-        $qb = $this->db->getQueryBuilder();
-        $qb->select('*')
-            ->from($this->getTableName())
-            ->where($qb->expr()->like('misc_settings', $qb->createNamedParameter($autoReminderSearchString, IQueryBuilder::PARAM_STR)))
-            ->andwhere($qb->expr()->eq('deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)));
+	    $autoReminderSearchString = '%"autoReminder":true%';
+	    $qb = $this->db->getQueryBuilder();
+	    $qb->select('*')
+	->from($this->getTableName())
+	->where($qb->expr()->like('misc_settings', $qb->createNamedParameter($autoReminderSearchString, IQueryBuilder::PARAM_STR)))
+	->andwhere($qb->expr()->eq('deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)));
 
-        return $this->findEntities($qb);
+	    return $this->findEntities($qb);
     }
 
     /**
@@ -197,10 +207,10 @@ class InquiryMapper extends QBMapper
      */
     public function findForMe(string $userId): array
     {
-        $qb = $this->buildQuery();
-        $qb->where($qb->expr()->eq(self::TABLE . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)))
-            ->orWhere($qb->expr()->eq(self::TABLE . '.owner', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR)));
-        return $this->findEntities($qb);
+	    $qb = $this->buildQuery();
+	    $qb->where($qb->expr()->eq(self::TABLE . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)))
+	->orWhere($qb->expr()->eq(self::TABLE . '.owner', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR)));
+	    return $this->findEntities($qb);
     }
 
     /**
@@ -209,9 +219,9 @@ class InquiryMapper extends QBMapper
      */
     public function listByOwner(string $userId): array
     {
-        $qb = $this->buildQuery();
-        $qb->where($qb->expr()->eq(self::TABLE . '.owner', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR)));
-        return $this->findEntities($qb);
+	    $qb = $this->buildQuery();
+	    $qb->where($qb->expr()->eq(self::TABLE . '.owner', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR)));
+	    return $this->findEntities($qb);
     }
 
     /**
@@ -220,29 +230,29 @@ class InquiryMapper extends QBMapper
      */
     public function search(ISearchQuery $query): array
     {
-        $qb = $this->buildQuery();
-        $qb->where($qb->expr()->eq(self::TABLE . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)))
-            ->andWhere(
-                $qb->expr()->orX(
-                    ...array_map(
-                        function (string $token) use ($qb) {
-                            return $qb->expr()->orX(
-                                $qb->expr()->iLike(
-                                    self::TABLE . '.title',
-                                    $qb->createNamedParameter('%' . $this->db->escapeLikeParameter($token) . '%', IQueryBuilder::PARAM_STR),
-                                    IQueryBuilder::PARAM_STR
-                                ),
-                                $qb->expr()->iLike(
-                                    self::TABLE . '.description',
-                                    $qb->createNamedParameter('%' . $this->db->escapeLikeParameter($token) . '%', IQueryBuilder::PARAM_STR),
-                                    IQueryBuilder::PARAM_STR
-                                )
-                            );
-                        }, explode(' ', $query->getTerm())
-                    )
-                )
-            );
-        return $this->findEntities($qb);
+	    $qb = $this->buildQuery();
+	    $qb->where($qb->expr()->eq(self::TABLE . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)))
+	->andWhere(
+		$qb->expr()->orX(
+			...array_map(
+				function (string $token) use ($qb) {
+					return $qb->expr()->orX(
+						$qb->expr()->iLike(
+							self::TABLE . '.title',
+							$qb->createNamedParameter('%' . $this->db->escapeLikeParameter($token) . '%', IQueryBuilder::PARAM_STR),
+							IQueryBuilder::PARAM_STR
+						),
+						$qb->expr()->iLike(
+							self::TABLE . '.description',
+							$qb->createNamedParameter('%' . $this->db->escapeLikeParameter($token) . '%', IQueryBuilder::PARAM_STR),
+							IQueryBuilder::PARAM_STR
+						)
+					);
+				}, explode(' ', $query->getTerm())
+			)
+		)
+	);
+	    return $this->findEntities($qb);
     }
 
     /**
@@ -251,10 +261,10 @@ class InquiryMapper extends QBMapper
      */
     public function findForAdmin(string $userId): array
     {
-        $qb = $this->buildQuery();
-        $qb->where($qb->expr()->neq(self::TABLE . '.owner', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR)));
+	    $qb = $this->buildQuery();
+	    $qb->where($qb->expr()->neq(self::TABLE . '.owner', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR)));
 
-        return $this->findEntities($qb);
+	    return $this->findEntities($qb);
     }
 
     /**
@@ -262,14 +272,14 @@ class InquiryMapper extends QBMapper
      */
     public function archiveExpiredInquiries(int $offset): int
     {
-        $archiveDate = time();
-        $qb = $this->db->getQueryBuilder();
-        $qb->update($this->getTableName())
-            ->set('deleted', $qb->createNamedParameter($archiveDate))
-            ->where($qb->expr()->lt('expire', $qb->createNamedParameter($offset)))
-            ->andWhere($qb->expr()->gt('expire', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)))
-            ->andWhere($qb->expr()->eq('deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)));
-        return $qb->executeStatement();
+	    $archiveDate = time();
+	    $qb = $this->db->getQueryBuilder();
+	    $qb->update($this->getTableName())
+	->set('deleted', $qb->createNamedParameter($archiveDate))
+	->where($qb->expr()->lt('expire', $qb->createNamedParameter($offset)))
+	->andWhere($qb->expr()->gt('expire', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)))
+	->andWhere($qb->expr()->eq('deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)));
+	    return $qb->executeStatement();
     }
 
     /**
@@ -277,11 +287,11 @@ class InquiryMapper extends QBMapper
      */
     public function setModerationStatus(int $inquiryId, string $mstatus): void
     {
-        $qb = $this->db->getQueryBuilder();
-         $qb->update($this->getTableName())
-             ->set('moderation_status', $qb->createNamedParameter($mstatus))
-             ->where($qb->expr()->eq('id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT)));
-         $qb->executeStatement();
+	    $qb = $this->db->getQueryBuilder();
+	    $qb->update($this->getTableName())
+	->set('moderation_status', $qb->createNamedParameter($mstatus))
+	->where($qb->expr()->eq('id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT)));
+	    $qb->executeStatement();
     }
 
 
@@ -290,11 +300,11 @@ class InquiryMapper extends QBMapper
      */
     public function deleteArchivedInquiries(int $offset): int
     {
-        $qb = $this->db->getQueryBuilder();
-        $qb->delete($this->getTableName())
-            ->where($qb->expr()->lt('deleted', $qb->createNamedParameter($offset)))
-            ->andWhere($qb->expr()->gt('deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)));
-        return $qb->executeStatement();
+	    $qb = $this->db->getQueryBuilder();
+	    $qb->delete($this->getTableName())
+	->where($qb->expr()->lt('deleted', $qb->createNamedParameter($offset)))
+	->andWhere($qb->expr()->gt('deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)));
+	    return $qb->executeStatement();
     }
 
     /**
@@ -302,12 +312,12 @@ class InquiryMapper extends QBMapper
      */
     public function setLastInteraction(int $inquiryId): void
     {
-        $timestamp = time();
-        $qb = $this->db->getQueryBuilder();
-        $qb->update($this->getTableName())
-            ->set('last_interaction', $qb->createNamedParameter($timestamp, IQueryBuilder::PARAM_INT))
-            ->where($qb->expr()->eq('id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT)));
-        $qb->executeStatement();
+	    $timestamp = time();
+	    $qb = $this->db->getQueryBuilder();
+	    $qb->update($this->getTableName())
+	->set('last_interaction', $qb->createNamedParameter($timestamp, IQueryBuilder::PARAM_INT))
+	->where($qb->expr()->eq('id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT)));
+	    $qb->executeStatement();
     }
 
     /**
@@ -315,11 +325,11 @@ class InquiryMapper extends QBMapper
      */
     public function deleteByUserId(string $userId): void
     {
-        $qb = $this->db->getQueryBuilder();
-        $qb->delete($this->getTableName())
-            ->where('owner = :userId')
-            ->setParameter('userId', $userId);
-        $qb->executeStatement();
+	    $qb = $this->db->getQueryBuilder();
+	    $qb->delete($this->getTableName())
+	->where('owner = :userId')
+	->setParameter('userId', $userId);
+	    $qb->executeStatement();
     }
 
     /**
@@ -327,56 +337,56 @@ class InquiryMapper extends QBMapper
      */
     protected function buildQuery(): IQueryBuilder
     {
-        $qb = $this->db->getQueryBuilder();
+	    $qb = $this->db->getQueryBuilder();
 
-        $qb->select(self::TABLE . '.*')
-            ->from($this->getTableName(), self::TABLE);
-        //->groupBy(self::TABLE . '.id');
+	    $qb->select(self::TABLE . '.*')
+	->from($this->getTableName(), self::TABLE);
+	    //->groupBy(self::TABLE . '.id');
 
-        $currentUserId = $this->userSession->getCurrentUserId();
-        $inquiryGroupsAlias = 'inquiry_groups';
-        $this->joinOptions($qb, self::TABLE);
-        $this->joinUserRole($qb, self::TABLE, $currentUserId);
-        $this->joinGroupShares($qb, self::TABLE);
-        $this->joinInquiryGroups($qb, self::TABLE, $inquiryGroupsAlias);
-        $this->joinInquiryGroupShares($qb, $inquiryGroupsAlias, $currentUserId, $inquiryGroupsAlias);
-        $this->joinParticipantsCount($qb, self::TABLE);
-        $this->joinSupportsCount($qb, self::TABLE);
-        $this->joinCommentsCount($qb, self::TABLE);
-        return $qb;
+	    $currentUserId = $this->userSession->getCurrentUserId();
+	    $inquiryGroupsAlias = 'inquiry_groups';
+	    $this->joinOptions($qb, self::TABLE);
+	    $this->joinUserRole($qb, self::TABLE, $currentUserId);
+	    $this->joinGroupShares($qb, self::TABLE);
+	    $this->joinInquiryGroups($qb, self::TABLE, $inquiryGroupsAlias);
+	    $this->joinInquiryGroupShares($qb, $inquiryGroupsAlias, $currentUserId, $inquiryGroupsAlias);
+	    $this->joinParticipantsCount($qb, self::TABLE);
+	    $this->joinSupportsCount($qb, self::TABLE);
+	    $this->joinCommentsCount($qb, self::TABLE);
+	    return $qb;
     }
 
     /**
      * Joins shares to evaluate user role
      */
     protected function joinUserRole(
-        IQueryBuilder &$qb,
-        string $fromAlias,
-        string $currentUserId,
-        string $joinAlias = 'user_shares',
+	    IQueryBuilder &$qb,
+	    string $fromAlias,
+	    string $currentUserId,
+	    string $joinAlias = 'user_shares',
     ): void {
 
-        $emptyString = $qb->expr()->literal('');
+	    $emptyString = $qb->expr()->literal('');
 
-        $qb->addSelect($qb->createFunction('coalesce(' . $joinAlias . '.type, ' . $emptyString . ') AS user_role'))
-            ->addGroupBy($joinAlias . '.type');
+	    $qb->addSelect($qb->createFunction('coalesce(' . $joinAlias . '.type, ' . $emptyString . ') AS user_role'))
+	->addGroupBy($joinAlias . '.type');
 
-        $qb->selectAlias($joinAlias . '.locked', 'is_current_user_locked')
-            ->addGroupBy($joinAlias . '.locked');
+	    $qb->selectAlias($joinAlias . '.locked', 'is_current_user_locked')
+	->addGroupBy($joinAlias . '.locked');
 
-        $qb->addSelect($qb->createFunction('coalesce(' . $joinAlias . '.token, ' . $emptyString . ') AS share_token'))
-            ->addGroupBy($joinAlias . '.token');
+	    $qb->addSelect($qb->createFunction('coalesce(' . $joinAlias . '.token, ' . $emptyString . ') AS share_token'))
+	->addGroupBy($joinAlias . '.token');
 
-        $qb->leftJoin(
-            $fromAlias,
-            Share::TABLE,
-            $joinAlias,
-            $qb->expr()->andX(
-                $qb->expr()->eq($joinAlias . '.inquiry_id', $fromAlias . '.id'),
-                $qb->expr()->eq($joinAlias . '.user_id', $qb->createNamedParameter($currentUserId, IQueryBuilder::PARAM_STR)),
-                $qb->expr()->eq($joinAlias . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)),
-            )
-        );
+	    $qb->leftJoin(
+		    $fromAlias,
+		    Share::TABLE,
+		    $joinAlias,
+		    $qb->expr()->andX(
+			    $qb->expr()->eq($joinAlias . '.inquiry_id', $fromAlias . '.id'),
+			    $qb->expr()->eq($joinAlias . '.user_id', $qb->createNamedParameter($currentUserId, IQueryBuilder::PARAM_STR)),
+			    $qb->expr()->eq($joinAlias . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)),
+		    )
+	    );
 
     }
 
@@ -384,54 +394,54 @@ class InquiryMapper extends QBMapper
      * Join group shares of this inquiry
      */
     protected function joinGroupShares(
-        IQueryBuilder &$qb,
-        string $fromAlias,
-        string $joinAlias = 'group_shares',
+	    IQueryBuilder &$qb,
+	    string $fromAlias,
+	    string $joinAlias = 'group_shares',
     ): void {
 
-        TableManager::getConcatenatedArray(
-            qb: $qb,
-            concatColumn: $joinAlias . '.user_id',
-            asColumn: 'group_shares',
-            dbProvider: $this->db->getDatabaseProvider(),
-        );
+	    TableManager::getConcatenatedArray(
+		    qb: $qb,
+		    concatColumn: $joinAlias . '.user_id',
+		    asColumn: 'group_shares',
+		    dbProvider: $this->db->getDatabaseProvider(),
+	    );
 
-        $qb->leftJoin(
-            $fromAlias,
-            Share::TABLE,
-            $joinAlias,
-            $qb->expr()->andX(
-                $qb->expr()->eq($joinAlias . '.inquiry_id', $fromAlias . '.id'),
-                $qb->expr()->eq($joinAlias . '.type', $qb->expr()->literal(Share::TYPE_GROUP)),
-                $qb->expr()->eq($joinAlias . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)),
-            )
-        );
+	    $qb->leftJoin(
+		    $fromAlias,
+		    Share::TABLE,
+		    $joinAlias,
+		    $qb->expr()->andX(
+			    $qb->expr()->eq($joinAlias . '.inquiry_id', $fromAlias . '.id'),
+			    $qb->expr()->eq($joinAlias . '.type', $qb->expr()->literal(Share::TYPE_GROUP)),
+			    $qb->expr()->eq($joinAlias . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)),
+		    )
+	    );
     }
 
     /**
      * Joins inquiry groups, the inquiry belongs to
      */
     protected function joinInquiryGroups(
-        IQueryBuilder $qb,
-        string $fromAlias,
-        string $joinAlias = 'inquiry_groups',
+	    IQueryBuilder $qb,
+	    string $fromAlias,
+	    string $joinAlias = 'inquiry_groups',
     ): void {
 
-        TableManager::getConcatenatedArray(
-            qb: $qb,
-            concatColumn: $joinAlias . '.group_id',
-            asColumn: 'inquiry_groups',
-            dbProvider: $this->db->getDatabaseProvider(),
-        );
+	    TableManager::getConcatenatedArray(
+		    qb: $qb,
+		    concatColumn: $joinAlias . '.group_id',
+		    asColumn: 'inquiry_groups',
+		    dbProvider: $this->db->getDatabaseProvider(),
+	    );
 
-        $qb->leftJoin(
-            $fromAlias,
-            InquiryGroup::RELATION_TABLE,
-            $joinAlias,
-            $qb->expr()->andX(
-                $qb->expr()->eq(self::TABLE . '.id', $joinAlias . '.inquiry_id'),
-            )
-        );
+	    $qb->leftJoin(
+		    $fromAlias,
+		    InquiryGroup::RELATION_TABLE,
+		    $joinAlias,
+		    $qb->expr()->andX(
+			    $qb->expr()->eq(self::TABLE . '.id', $joinAlias . '.inquiry_id'),
+		    )
+	    );
     }
 
     /**
@@ -444,36 +454,36 @@ class InquiryMapper extends QBMapper
      * Groups, Teams will not work atm.
      */
     protected function joinInquiryGroupShares(
-        IQueryBuilder $qb,
-        string $fromAlias,
-        string $currentUserId,
-        string $inquiryGroupsAlias,
-        string $joinAlias = 'inquiry_group_shares',
+	    IQueryBuilder $qb,
+	    string $fromAlias,
+	    string $currentUserId,
+	    string $inquiryGroupsAlias,
+	    string $joinAlias = 'inquiry_group_shares',
     ): void {
 
-        TableManager::getConcatenatedArray(
-            qb: $qb,
-            concatColumn: $joinAlias . '.type',
-            asColumn: 'inquiry_group_user_shares',
-            dbProvider: $this->db->getDatabaseProvider(),
-        );
+	    TableManager::getConcatenatedArray(
+		    qb: $qb,
+		    concatColumn: $joinAlias . '.type',
+		    asColumn: 'inquiry_group_user_shares',
+		    dbProvider: $this->db->getDatabaseProvider(),
+	    );
 
-        $qb->leftJoin(
-            $fromAlias,
-            Share::TABLE,
-            $joinAlias,
-            $qb->expr()->andX(
-                $qb->expr()->eq($joinAlias . '.group_id', $inquiryGroupsAlias . '.group_id'),
-                $qb->expr()->eq($joinAlias . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)),
-                $qb->expr()->eq($joinAlias . '.user_id', $qb->createNamedParameter($currentUserId, IQueryBuilder::PARAM_STR)),
-            )
-        );
+	    $qb->leftJoin(
+		    $fromAlias,
+		    Share::TABLE,
+		    $joinAlias,
+		    $qb->expr()->andX(
+			    $qb->expr()->eq($joinAlias . '.group_id', $inquiryGroupsAlias . '.group_id'),
+			    $qb->expr()->eq($joinAlias . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)),
+			    $qb->expr()->eq($joinAlias . '.user_id', $qb->createNamedParameter($currentUserId, IQueryBuilder::PARAM_STR)),
+		    )
+	    );
     }
 
     public function updateFormId(int $inquiryId, int $formId): void
     {
-        $stmt = $this->db->prepare('UPDATE', Inquiry::Table, ' SET form_id = ? WHERE id = ?');
-        $stmt->executeStatement([$formId, $inquiryId]);
+	    $stmt = $this->db->prepare('UPDATE', Inquiry::Table, ' SET form_id = ? WHERE id = ?');
+	    $stmt->executeStatement([$formId, $inquiryId]);
     }
 
     /**
@@ -484,40 +494,40 @@ class InquiryMapper extends QBMapper
      * and adds the number of available options
      */
     protected function joinOptions(
-        IQueryBuilder &$qb,
-        string $fromAlias,
-        string $joinAlias = 'options',
+	    IQueryBuilder &$qb,
+	    string $fromAlias,
+	    string $joinAlias = 'options',
     ): void {
-        // add highest option date
-        $qb->addSelect($qb->createFunction('MAX(' . $joinAlias . '.timestamp) AS max_date'));
+	    // add highest option date
+	    $qb->addSelect($qb->createFunction('MAX(' . $joinAlias . '.timestamp) AS max_date'));
 
 
-        $qb->leftJoin(
-            $fromAlias,
-            Option::TABLE,
-            $joinAlias,
-            $qb->expr()->andX(
-                $qb->expr()->eq($joinAlias . '.inquiry_id', $fromAlias . '.id'),
-                $qb->expr()->eq($joinAlias . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)),
-            ),
-        );
+	    $qb->leftJoin(
+		    $fromAlias,
+		    Option::TABLE,
+		    $joinAlias,
+		    $qb->expr()->andX(
+			    $qb->expr()->eq($joinAlias . '.inquiry_id', $fromAlias . '.id'),
+			    $qb->expr()->eq($joinAlias . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)),
+		    ),
+	    );
     }
-    
+
     /**
      * Join to count supports in inquiry
      */
     protected function joinSupportsCount(
-        IQueryBuilder &$qb,
-        string $fromAlias,
-        string $joinAlias = 'supports',
+	    IQueryBuilder &$qb,
+	    string $fromAlias,
+	    string $joinAlias = 'supports',
     ): void {
-        $qb->leftJoin(
-            $fromAlias,
-            Support::TABLE,
-            $joinAlias,
-            $qb->expr()->eq($joinAlias . '.inquiry_id', $fromAlias . '.id')
-        )->addSelect($qb->createFunction('COUNT(DISTINCT(' . $joinAlias . '.user_id)) AS count_supports'));
-                  $qb->groupBy($fromAlias . '.id');
+	    $qb->leftJoin(
+		    $fromAlias,
+		    Support::TABLE,
+		    $joinAlias,
+		    $qb->expr()->eq($joinAlias . '.inquiry_id', $fromAlias . '.id')
+	    )->addSelect($qb->createFunction('COUNT(DISTINCT(' . $joinAlias . '.user_id)) AS count_supports'));
+	    $qb->groupBy($fromAlias . '.id');
 
     }
 
@@ -525,36 +535,36 @@ class InquiryMapper extends QBMapper
      * Join to count comments in inquiry
      */
     protected function joinCommentsCount(
-        IQueryBuilder &$qb,
-        string $fromAlias,
-        string $joinAlias = 'comments',
+	    IQueryBuilder &$qb,
+	    string $fromAlias,
+	    string $joinAlias = 'comments',
     ): void {
-        $qb->leftJoin(
-            $fromAlias,
-            Comment::TABLE,
-            $joinAlias,
-            $qb->expr()->eq($joinAlias . '.inquiry_id', $fromAlias . '.id')
-        )->addSelect($qb->createFunction('COUNT(DISTINCT(' . $joinAlias . '.user_id)) AS count_comments'));
-        $qb->groupBy($fromAlias . '.id');
+	    $qb->leftJoin(
+		    $fromAlias,
+		    Comment::TABLE,
+		    $joinAlias,
+		    $qb->expr()->eq($joinAlias . '.inquiry_id', $fromAlias . '.id')
+	    )->addSelect($qb->createFunction('COUNT(DISTINCT(' . $joinAlias . '.user_id)) AS count_comments'));
+	    $qb->groupBy($fromAlias . '.id');
     }
-    
+
     /**
      * Join to count of participants in inquiry
      */
     protected function joinParticipantsCount(
-        IQueryBuilder &$qb,
-        string $fromAlias,
-        string $joinAlias = 'participants',
+	    IQueryBuilder &$qb,
+	    string $fromAlias,
+	    string $joinAlias = 'participants',
     ): void {
-        $qb->leftJoin(
-            $fromAlias,
-            Inquiry::TABLE, // table inquiry
-            $joinAlias,
-            $qb->expr()->andX(
-                $qb->expr()->eq($joinAlias . '.parent_id', $fromAlias . '.id'),
-                $qb->expr()->eq($joinAlias . '.access', $qb->createNamedParameter('open'))
-            )
-        );
-        $qb->addSelect($qb->createFunction('COUNT(DISTINCT(' . $joinAlias . '.id)) AS count_participants'));
+	    $qb->leftJoin(
+		    $fromAlias,
+		    Inquiry::TABLE, // table inquiry
+		    $joinAlias,
+		    $qb->expr()->andX(
+			    $qb->expr()->eq($joinAlias . '.parent_id', $fromAlias . '.id'),
+			    $qb->expr()->eq($joinAlias . '.access', $qb->createNamedParameter('open'))
+		    )
+	    );
+	    $qb->addSelect($qb->createFunction('COUNT(DISTINCT(' . $joinAlias . '.id)) AS count_participants'));
     }
 }

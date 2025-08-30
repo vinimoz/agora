@@ -4,7 +4,7 @@
 -->
 
 <script setup lang="ts">
-import { computed,  onUnmounted, ref, watch} from 'vue'
+import { computed,  onUnmounted, ref, watch, nextTick} from 'vue'
 import { emit, unsubscribe } from '@nextcloud/event-bus';
 import { n, t } from '@nextcloud/l10n';
 import { useRoute, useRouter, onBeforeRouteUpdate } from 'vue-router';
@@ -26,12 +26,13 @@ import IntersectionObserver from '../components/Base/modules/IntersectionObserve
 import InquiryInfoCards from '../components/Cards/InquiryInfoCards.vue';
 import { InquiryTypesUI } from '../helpers/modules/InquiryHelper.ts';
 
+
+const forceRenderKey = ref(0)
+
 const route = useRoute();
 const router = useRouter();
 const inquiryStore = useInquiryStore();
 const inquiriesStore = useInquiriesStore();
-// const preferencesStore = usePreferencesStore()
-// const topObserverVisible = ref(false)
 const tableSticky = ref(false);
 const editMode = ref(false);
 const isAppLoaded = ref(false);
@@ -64,13 +65,15 @@ const infoLoaded = computed(() =>
 );
 
 async function routeChild(childId) {
+  console.log(" IN ROUTE CHILD ",childId)
   router.push({ name: 'inquiry', params: { id: childId } });
 }
 
 async function loadInquiry(id: string) {
   try {
-    const response = await inquiryStore.load(id);
-    inquiryStore.childs = response.data.childs;
+   const response = await inquiryStore.load(id);
+   inquiryStore.childs = response.data.childs;
+   console.log( " INTO THE LOAD INQUIRY :",response.data.childs)
 
     if (inquiryStore.childs.length === 0) {
       inquiryStore.status.forceEditMode = true;
@@ -79,6 +82,9 @@ async function loadInquiry(id: string) {
       inquiryStore.status.forceEditMode = false;
       editMode.value = false;
     }
+   await nextTick()
+    console.log("DOM should be updated now")
+    forceRenderKey.value++
   } catch (error) {
     console.error('Loading error:', error);
     showError(t('agora', 'Failed to load inquiry'));
@@ -89,7 +95,12 @@ async function loadInquiry(id: string) {
 
 watch(
   () => route.params.id,
-  async (newId) => {
+  async (newId,oldId) => {
+   console.log('=== WATCHER DEBUG ===')
+    console.log('Old ID:', oldId)
+    console.log('New ID:', newId)
+    console.log('Are they different?', newId !== oldId)
+
     await loadInquiry(newId);
   },
   { immediate: true }
@@ -101,9 +112,16 @@ const enableEditMode = () => {
 };
 
 onBeforeRouteUpdate(async (to, from, next) => {
-  next();
+  console.log("Route updating from", from.params.id, "to", to.params.id)
+  if (to.params.id) {
+  	inquiryStore.reset();
+    //const resp=await loadInquiry(to.params.id as string)
+    //inquiryStore.childs = resp.data.childs
+  }
+  next()
   emit(Event.TransitionsOff, 500);
 });
+
 
 onUnmounted(() => {
   inquiryStore.reset();
@@ -142,7 +160,7 @@ const collapsibleProps = computed<CollapsibleProps>(() => ({
 </script>
 
 <template>
-  <NcAppContent v-if="isAppLoaded" class="inquiry-list">
+  <NcAppContent :key="forceRenderKey" v-if="isAppLoaded" class="inquiry-list">
     <HeaderBar v-if="editMode">
       <template #icon>
         <div class="type-icon">

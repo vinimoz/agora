@@ -55,7 +55,6 @@ class InquiryDto implements JsonSerializable
             'parentId' => $this->parentId,
             'locationId' => $this->locationId,
             'categoryId' => $this->categoryId,
-            'attachments' => $this->attachments,
         ];
     }
 
@@ -69,7 +68,6 @@ class InquiryDto implements JsonSerializable
             'parent_id' => $this->parentId,
             'location_id' => $this->locationId,
             'category_id' => $this->categoryId,
-            'attachments' => $this->attachments,
         ];
     }
 }

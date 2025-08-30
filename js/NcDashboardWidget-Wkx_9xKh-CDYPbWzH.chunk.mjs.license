@@ -35,7 +35,7 @@ This file is generated from multiple sources. Included packages:
 	- version: 9.0.0-rc.6
 	- license: AGPL-3.0-or-later
 - agora
-	- version: 1.0.0rc1
+	- version: 1.0.0rc2
 	- license: AGPL-3.0
 - github-slugger
 	- version: 2.0.0

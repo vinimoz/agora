@@ -59,7 +59,7 @@ function closeSideBar() {
 </script>
 
 <template>
-  <aside v-if="shouldDisplay && inquiryStore.type !== 'suggestion'">
+  <aside v-if="shouldDisplay ">
     <NcAppSidebar
       v-show="showSidebar"
       v-model="activeTab"

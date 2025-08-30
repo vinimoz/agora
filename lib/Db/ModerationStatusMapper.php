@@ -135,6 +135,8 @@ class ModerationStatusMapper extends QBMapper
         }
     }
 
+        
+
     private function reorderAfterDeletion(string $inquiryType): void
     {
         $statuses = $this->findByInquiryType($inquiryType);

@@ -19,6 +19,10 @@ Agora is a Nextcloud app for participatory democracy, inquiries, and proposals, 
 [![Software License](https://img.shields.io/badge/license-AGPL-brightgreen.svg?style=flat-square)](COPYING)
 [![REUSE status](https://api.reuse.software/badge/github.com/vinimoz/agora)](https://api.reuse.software/info/github.com/vinimoz/agora)
 
+## Todo and next features
+- Create real debate.
+- Create Assembly to manage all inquiries
+- Do a workflow to help moderator
 
 ## Installation / Update
 This app is supposed to work on Nextcloud version 21+.

@@ -10,10 +10,10 @@
     console.error("vite-plugin-css-injected-by-js", e);
   }
 })();
-const O = "agora", W = "1.0.0rc1";
-import { d as m, t as o, f as g, c as h, o as n, h as d, w as c, a as s, u as e, K as l, g as u, x as f, e as _, _ as y, j as b, p as v } from "./NcEmptyContent-q-geAf0w-C5KNLRzH.chunk.mjs";
-import { a as q, I as D, N as w, L as x, s as C } from "./NcDashboardWidget-Wkx_9xKh-lkMdwGn7.chunk.mjs";
-import { _ as I } from "./AgoraAppIcon.vue_vue_type_script_setup_true_lang-BlGw_px0.chunk.mjs";
+const O = "agora", W = "1.0.0rc2";
+import { d as m, t as o, f as g, c as h, o as n, h as d, w as c, a as s, u as e, K as l, g as u, x as f, e as _, _ as y, j as b, p as v } from "./NcEmptyContent-q-geAf0w-DExP7TOI.chunk.mjs";
+import { a as q, I as D, N as w, L as x, s as C } from "./NcDashboardWidget-Wkx_9xKh-CDYPbWzH.chunk.mjs";
+import { _ as I } from "./AgoraAppIcon.vue_vue_type_script_setup_true_lang-DAamrYHc.chunk.mjs";
 
 const L = ["href"], N = { class: "inquiry-item__item" }, M = { class: "type-icon" }, A = { class: "item__title" }, B = { class: "item__title__title" }, E = { class: "item__title__description" }, k = m({ __name: "Dashboard", setup(r) {
   const a = { emptyContentMessage: o("agora", "No inquiries found for this category"), showMoreText: o("agora", "Relevant inquiries") }, i = q();

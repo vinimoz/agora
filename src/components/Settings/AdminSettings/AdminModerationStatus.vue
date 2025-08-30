@@ -41,7 +41,6 @@ const newStatus = ref<StatusForm>({
   icon: 'ClockOutline'
 });
 
-// Ajouter ces computed properties :
 const activeInquiryTypeId = computed(
   () => activeInquiryType.value?.id || InquiryTypeValues.PETITION
 );
@@ -125,12 +124,20 @@ const editStatus = (status) => {
     isFinal: status.isFinal,
     icon: status.icon || 'ClockOutline'
   };
-  appSettingsStore.updateStatusForInquiryType(
-    activeInquiryTypeId.value,
-    status.id,
-    { ...editingStatus.value, icon: String(editingStatus.value.icon) }
-  );
 };
+
+const saveUpdateStatus = () => {
+	  if (editingStatus.value) {
+    appSettingsStore.updateStatusForInquiryType(
+      activeInquiryTypeId.value,
+      editingStatus.value.id,
+      { 
+	...editingStatus.value, 
+	icon: editingStatus.value.icon?.id || String(editingStatus.value.icon)
+      }
+    );
+    editingStatus.value = null;
+}};
 
 // Save edited status
 const saveEditedStatus = () => {
@@ -170,393 +177,393 @@ const cancelEdit = () => {
 </script>
 
 <template>
-  <div class="moderation-status-settings">
-    <!-- Inquiry type selector -->
-    <div class="inquiry-type-selector">
-      <h3>{{ t('agora', 'Select Inquiry Type') }}</h3>
-      <NcSelect
-        v-model="activeInquiryType"
-        :options="inquiryTypes"
-        label="label"
-        :input-label="t('agora', 'Inquiry Type')"
-      />
-    </div>
+	<div class="moderation-status-settings">
+		<!-- Inquiry type selector -->
+		<div class="inquiry-type-selector">
+			<h3>{{ t('agora', 'Select Inquiry Type') }}</h3>
+			<NcSelect
+					v-model="activeInquiryType"
+					:options="inquiryTypes"
+					label="label"
+					:input-label="t('agora', 'Inquiry Type')"
+					/>
+		</div>
 
-    <!-- Status list for current inquiry type -->
-    <div class="status-list">
-      <h3>
-        {{
-          t('agora', 'Statuses for {type}', {
-            type: currentInquiryTypeLabel
-          })
-        }}
-      </h3>
+		<!-- Status list for current inquiry type -->
+		<div class="status-list">
+			<h3>
+				{{
+				t('agora', 'Statuses for {type}', {
+				type: currentInquiryTypeLabel
+				})
+				}}
+			</h3>
 
-      <div v-if="statuses.length === 0" class="empty-state">
-        <p>
-          {{ t('agora', 'No statuses configured for this inquiry type.') }}
-        </p>
-      </div>
+			<div v-if="statuses.length === 0" class="empty-state">
+				<p>
+				{{ t('agora', 'No statuses configured for this inquiry type.') }}
+				</p>
+			</div>
 
-      <div v-else class="status-items">
-        <div
-          v-for="(status, index) in statuses"
-          :key="status.statusKey"
-          class="status-item"
-        >
-          <div class="status-content">
-            <div class="status-icon" :title="status.icon">
-              <component :is="getIconComponent(status.icon)" :size="20" />
-            </div>
-            <div class="status-info">
-              <h4>{{ status.label }}</h4>
-              <p class="status-key">
-                {{ status.statusKey }}
-              </p>
-              <p v-if="status.description" class="status-description">
-                {{ status.description }}
-              </p>
-              <div class="status-properties">
-                <span
-                  :class="[
-                    'status-badge',
-                    status.isFinal ? 'final' : 'non-final'
-                  ]"
-                >
-                  {{
-                    status.isFinal
-                      ? t('agora', 'Final')
-                      : t('agora', 'Non-Final')
-                  }}
-                </span>
-              </div>
-            </div>
-          </div>
+			<div v-else class="status-items">
+				<div
+						v-for="(status, index) in statuses"
+						:key="status.statusKey"
+						class="status-item"
+						>
+						<div class="status-content">
+							<div class="status-icon" :title="status.icon">
+								<component :is="getIconComponent(status.icon)" :size="20" />
+							</div>
+					<div class="status-info">
+						<h4>{{ status.label }}</h4>
+						<p class="status-key">
+						{{ status.statusKey }}
+						</p>
+						<p v-if="status.description" class="status-description">
+						{{ status.description }}
+						</p>
+						<div class="status-properties">
+							<span
+									:class="[
+										 'status-badge',
+										 status.isFinal ? 'final' : 'non-final'
+										 ]"
+									>
+									{{
+									status.isFinal
+									? t('agora', 'Final')
+									: t('agora', 'Non-Final')
+									}}
+							</span>
+						</div>
+					</div>
+						</div>
 
-          <div class="status-actions">
-            <NcButton
-              :disabled="index === 0"
-              @click="moveStatusUp(status.statusKey)"
-            >
-              {{ t('agora', 'Up') }}
-            </NcButton>
-            <NcButton
-              :disabled="index === statuses.length - 1"
-              @click="moveStatusDown(status.statusKey)"
-            >
-              {{ t('agora', 'Down') }}
-            </NcButton>
-            <NcButton @click="editStatus(status)">
-              {{ t('agora', 'Edit') }}
-            </NcButton>
-            <NcButton @click="deleteStatus(status.id)">
-              {{ t('agora', 'Delete') }}
-            </NcButton>
-          </div>
-        </div>
-      </div>
-    </div>
+						<div class="status-actions">
+							<NcButton
+									:disabled="index === 0"
+									@click="moveStatusUp(status.statusKey)"
+									>
+									{{ t('agora', 'Up') }}
+							</NcButton>
+							<NcButton
+									:disabled="index === statuses.length - 1"
+									@click="moveStatusDown(status.statusKey)"
+									>
+									{{ t('agora', 'Down') }}
+							</NcButton>
+							<NcButton @click="editStatus(status)">
+							{{ t('agora', 'Edit') }}
+							</NcButton>
+							<NcButton @click="deleteStatus(status.id)">
+							{{ t('agora', 'Delete') }}
+							</NcButton>
+						</div>
+				</div>
+			</div>
+		</div>
 
-    <!-- Add new status form -->
-    <div class="add-status-form">
-      <h3>{{ t('agora', 'Add New Status') }}</h3>
+		<!-- Add new status form -->
+		<div class="add-status-form">
+			<h3>{{ t('agora', 'Add New Status') }}</h3>
 
-      <div class="form-grid">
-        <NcInputField
-          v-model="newStatus.statusKey"
-          :label="t('agora', 'Status Key')"
-          :placeholder="t('agora', 'Enter unique status key')"
-          required
-        />
+			<div class="form-grid">
+				<NcInputField
+						v-model="newStatus.statusKey"
+						:label="t('agora', 'Status Key')"
+						:placeholder="t('agora', 'Enter unique status key')"
+						required
+						/>
 
-        <NcInputField
-          v-model="newStatus.label"
-          :label="t('agora', 'Label')"
-          :placeholder="t('agora', 'Enter display label')"
-          required
-        />
+				<NcInputField
+						v-model="newStatus.label"
+						:label="t('agora', 'Label')"
+						:placeholder="t('agora', 'Enter display label')"
+						required
+						/>
 
-        <NcInputField
-          v-model="newStatus.description"
-          :label="t('agora', 'Description')"
-          :placeholder="t('agora', 'Enter description (optional)')"
-          type="textarea"
-        />
+				<NcInputField
+						v-model="newStatus.description"
+						:label="t('agora', 'Description')"
+						:placeholder="t('agora', 'Enter description (optional)')"
+						type="textarea"
+						/>
 
-        <NcSelect
-          v-model="newStatus.icon"
-          :options="availableIcons"
-          label="label"
-          :input-label="t('agora', 'Select Icon')"
-        />
+				<NcSelect
+						v-model="newStatus.icon"
+						:options="availableIcons"
+						label="label"
+						:input-label="t('agora', 'Select Icon')"
+						/>
 
-        <div class="checkbox-field">
-          <NcCheckboxRadioSwitch v-model="newStatus.isFinal" type="switch">
-            {{ t('agora', 'Final Status') }}
-          </NcCheckboxRadioSwitch>
-          <p class="field-description">
-            {{ t('agora', 'Final statuses cannot be changed once set') }}
-          </p>
-        </div>
+				<div class="checkbox-field">
+					<NcCheckboxRadioSwitch v-model="newStatus.isFinal" type="switch">
+					{{ t('agora', 'Final Status') }}
+					</NcCheckboxRadioSwitch>
+					<p class="field-description">
+					{{ t('agora', 'Final statuses cannot be changed once set') }}
+					</p>
+				</div>
 
-        <NcButton
-          type="primary"
-          :disabled="!newStatus.statusKey || !newStatus.label"
-          @click="addStatus"
-        >
-          {{ t('agora', 'Add Status') }}
-        </NcButton>
-      </div>
-    </div>
+				<NcButton
+						type="primary"
+						:disabled="!newStatus.statusKey || !newStatus.label"
+						@click="addStatus"
+						>
+						{{ t('agora', 'Add Status') }}
+				</NcButton>
+			</div>
+		</div>
 
-    <!-- Edit status modal -->
-    <div v-if="editingStatus" class="modal-overlay">
-      <div class="modal-content">
-        <h3>{{ t('agora', 'Edit Status') }}</h3>
+		<!-- Edit status modal -->
+		<div v-if="editingStatus" class="modal-overlay">
+			<div class="modal-content">
+				<h3>{{ t('agora', 'Edit Status') }}</h3>
 
-        <div class="form-grid">
-          <NcInputField
-            v-model="editingStatus.statusKey"
-            :label="t('agora', 'Status Key')"
-            :placeholder="t('agora', 'Enter unique status key')"
-            required
-          />
+				<div class="form-grid">
+					<NcInputField
+							v-model="editingStatus.statusKey"
+							:label="t('agora', 'Status Key')"
+							:placeholder="t('agora', 'Enter unique status key')"
+							required
+							/>
 
-          <NcInputField
-            v-model="editingStatus.label"
-            :label="t('agora', 'Label')"
-            :placeholder="t('agora', 'Enter display label')"
-            required
-          />
+					<NcInputField
+							v-model="editingStatus.label"
+							:label="t('agora', 'Label')"
+							:placeholder="t('agora', 'Enter display label')"
+							required
+							/>
 
-          <NcInputField
-            v-model="editingStatus.description"
-            :label="t('agora', 'Description')"
-            :placeholder="t('agora', 'Enter description (optional)')"
-            type="textarea"
-          />
+					<NcInputField
+							v-model="editingStatus.description"
+							:label="t('agora', 'Description')"
+							:placeholder="t('agora', 'Enter description (optional)')"
+							type="textarea"
+							/>
 
-          <NcSelect
-            v-model="editingStatus.icon"
-            :options="availableIcons"
-            label="label"
-            :input-label="t('agora', 'Select Icon')"
-          />
+					<NcSelect
+							v-model="editingStatus.icon"
+							:options="availableIcons"
+							label="label"
+							:input-label="t('agora', 'Select Icon')"
+							/>
 
-          <div class="checkbox-field">
-            <NcCheckboxRadioSwitch
-              v-model="editingStatus.isFinal"
-              type="switch"
-            >
-              {{ t('agora', 'Final Status') }}
-            </NcCheckboxRadioSwitch>
-            <p class="field-description">
-              {{ t('agora', 'Final statuses cannot be changed once set') }}
-            </p>
-          </div>
-        </div>
+					<div class="checkbox-field">
+						<NcCheckboxRadioSwitch
+								v-model="editingStatus.isFinal"
+								type="switch"
+								>
+								{{ t('agora', 'Final Status') }}
+						</NcCheckboxRadioSwitch>
+						<p class="field-description">
+						{{ t('agora', 'Final statuses cannot be changed once set') }}
+						</p>
+					</div>
+				</div>
 
-        <div class="modal-actions">
-          <NcButton @click="cancelEdit">
-            {{ t('agora', 'Cancel') }}
-          </NcButton>
-          <NcButton
-            type="primary"
-            :disabled="!editingStatus.statusKey || !editingStatus.label"
-            @click="saveEditedStatus"
-          >
-            {{ t('agora', 'Save Changes') }}
-          </NcButton>
-        </div>
-      </div>
-    </div>
-  </div>
+				<div class="modal-actions">
+					<NcButton @click="cancelEdit">
+					{{ t('agora', 'Cancel') }}
+					</NcButton>
+					<NcButton
+							type="primary"
+							:disabled="!editingStatus.statusKey || !editingStatus.label"
+							@click="saveUpdateStatus"
+							>
+							{{ t('agora', 'Save Changes') }}
+					</NcButton>
+				</div>
+			</div>
+		</div>
+	</div>
 </template>
 
 <style scoped>
 .moderation-status-settings {
-  padding: 20px;
-  max-width: 1000px;
+	padding: 20px;
+	max-width: 1000px;
 }
 
 .settings-description {
-  margin-bottom: 25px;
-  color: var(--color-text-lighter);
+	margin-bottom: 25px;
+	color: var(--color-text-lighter);
 }
 
 .inquiry-type-selector {
-  margin-bottom: 30px;
-  padding: 20px;
-  background-color: var(--color-background-dark);
-  border-radius: 8px;
+	margin-bottom: 30px;
+	padding: 20px;
+	background-color: var(--color-background-dark);
+	border-radius: 8px;
 }
 
 .status-list {
-  margin-bottom: 30px;
-  padding: 20px;
-  background-color: var(--color-background-dark);
-  border-radius: 8px;
+	margin-bottom: 30px;
+	padding: 20px;
+	background-color: var(--color-background-dark);
+	border-radius: 8px;
 }
 
 .empty-state {
-  text-align: center;
-  padding: 40px;
-  color: var(--color-text-lighter);
+	text-align: center;
+	padding: 40px;
+	color: var(--color-text-lighter);
 }
 
 .status-items {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
+	display: flex;
+	flex-direction: column;
+	gap: 15px;
 }
 
 .status-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px;
-  background-color: var(--color-background-darker);
-  border-radius: 8px;
-  border-left: 4px solid var(--color-primary);
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 15px;
+	background-color: var(--color-background-darker);
+	border-radius: 8px;
+	border-left: 4px solid var(--color-primary);
 }
 
 .status-content {
-  display: flex;
-  align-items: flex-start;
-  gap: 15px;
-  flex: 1;
+	display: flex;
+	align-items: flex-start;
+	gap: 15px;
+	flex: 1;
 }
 
 .status-icon {
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: var(--color-primary);
-  color: white;
-  border-radius: 8px;
-  flex-shrink: 0;
+	width: 40px;
+	height: 40px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: var(--color-primary);
+	color: white;
+	border-radius: 8px;
+	flex-shrink: 0;
 }
 
 .status-icon :deep(svg) {
-  fill: white;
+	fill: white;
 }
 
 .status-info h4 {
-  margin: 0 0 5px 0;
-  font-weight: 600;
+	margin: 0 0 5px 0;
+	font-weight: 600;
 }
 
 .status-key {
-  margin: 0 0 8px 0;
-  font-size: 0.9em;
-  color: var(--color-text-lighter);
-  font-family: monospace;
+	margin: 0 0 8px 0;
+	font-size: 0.9em;
+	color: var(--color-text-lighter);
+	font-family: monospace;
 }
 
 .status-description {
-  margin: 0 0 10px 0;
-  color: var(--color-text-lighter);
-  font-size: 0.95em;
+	margin: 0 0 10px 0;
+	color: var(--color-text-lighter);
+	font-size: 0.95em;
 }
 
 .status-properties {
-  display: flex;
-  gap: 10px;
+	display: flex;
+	gap: 10px;
 }
 
 .status-badge {
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 0.8em;
-  font-weight: 600;
+	padding: 4px 8px;
+	border-radius: 12px;
+	font-size: 0.8em;
+	font-weight: 600;
 }
 
 .status-badge.final {
-  background-color: var(--color-success);
-  color: white;
+	background-color: var(--color-success);
+	color: white;
 }
 
 .status-badge.non-final {
-  background-color: var(--color-warning);
-  color: white;
+	background-color: var(--color-warning);
+	color: white;
 }
 
 .status-actions {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
+	display: flex;
+	gap: 8px;
+	flex-wrap: wrap;
 }
 
 .add-status-form {
-  padding: 20px;
-  background-color: var(--color-background-dark);
-  border-radius: 8px;
+	padding: 20px;
+	background-color: var(--color-background-dark);
+	border-radius: 8px;
 }
 
 .form-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  align-items: start;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 20px;
+	align-items: start;
 }
 
 .checkbox-field {
-  grid-column: span 2;
+	grid-column: span 2;
 }
 
 .field-description {
-  margin: 5px 0 0 0;
-  font-size: 0.9em;
-  color: var(--color-text-lighter);
+	margin: 5px 0 0 0;
+	font-size: 0.9em;
+	color: var(--color-text-lighter);
 }
 
 .modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: rgba(0, 0, 0, 0.5);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	z-index: 1000;
 }
 
 .modal-content {
-  background-color: var(--color-main-background);
-  padding: 30px;
-  border-radius: 12px;
-  width: 600px;
-  max-width: 90%;
-  max-height: 90vh;
-  overflow-y: auto;
+	background-color: var(--color-main-background);
+	padding: 30px;
+	border-radius: 12px;
+	width: 600px;
+	max-width: 90%;
+	max-height: 90vh;
+	overflow-y: auto;
 }
 
 .modal-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-top: 25px;
-  padding-top: 20px;
-  border-top: 1px solid var(--color-border);
+	display: flex;
+	justify-content: flex-end;
+	gap: 10px;
+	margin-top: 25px;
+	padding-top: 20px;
+	border-top: 1px solid var(--color-border);
 }
 
-@media (max-width: 768px) {
-  .form-grid {
-    grid-template-columns: 1fr;
-  }
+  @media (max-width: 768px) {
+	  .form-grid {
+		  grid-template-columns: 1fr;
+	  }
 
-  .status-item {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 15px;
-  }
+	  .status-item {
+		  flex-direction: column;
+		  align-items: stretch;
+		  gap: 15px;
+	  }
 
-  .status-actions {
-    justify-content: center;
+	  .status-actions {
+		  justify-content: center;
+	  }
   }
-}
 </style>

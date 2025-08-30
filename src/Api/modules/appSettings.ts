@@ -179,6 +179,7 @@ const appSettings = {
     moderationStatusId: string,
     moderationStatus: ModerationStatus 
   ): Promise<AxiosResponse<{ moderationStatus: ModerationStatus }>> {
+	 console.log(" IN UPDATE MODERATION API ID :",moderationStatusId)
     return httpInstance.request({
       method: 'PUT',
       url: `settings/moderation-statuses/${moderationStatusId}`,

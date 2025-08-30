@@ -262,9 +262,7 @@ export const useAppSettingsStore = defineStore('appSettings', {
       if (index === -1) {
         return;
       }
-
       const originalStatus = { ...this.moderationStatusTab[index] };
-
       this.moderationStatusTab[index] = {
         ...this.moderationStatusTab[index],
         ...updates

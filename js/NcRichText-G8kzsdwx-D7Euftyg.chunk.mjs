@@ -1,4 +1,4 @@
-const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=[window.OC.filePath('agora', '', 'js/index-1A8_O6CM.chunk.mjs'),window.OC.filePath('agora', '', 'js/NcEmptyContent-q-geAf0w-C5KNLRzH.chunk.mjs')])))=>i.map(i=>d[i]);
+const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=[window.OC.filePath('agora', '', 'js/index-3f2RLsEA.chunk.mjs'),window.OC.filePath('agora', '', 'js/NcEmptyContent-q-geAf0w-DExP7TOI.chunk.mjs')])))=>i.map(i=>d[i]);
 (function() {
   "use strict";
   try {
@@ -11,8 +11,8 @@ const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=[window.OC.filePath('ago
     console.error("vite-plugin-css-injected-by-js", e);
   }
 })();
-const Sy = "agora", Cy = "1.0.0rc1";
-import { k as le, c as z, o as I, a as W, b as G, e as ee, y as te, d as Sn, m as Cn, l as Br, Z as To, $ as Nr, q as Xt, Q as Gt, g as Q, S as vn, r as Y, w as ie, u as ae, U as Mr, a0 as $r, H as ot, a1 as Vr, B as at, G as Ne, a2 as st, a3 as Me, a4 as Ee, a5 as _n, a6 as Oo, a7 as Lo, a8 as Po, a9 as zo, V as Ce, h as ut, aa as Yt, x as ct, ab as jr, ac as Do, ad as Fo, n as pe, i as ye, I as Kt, J as Qt, ae as Hr, af as Ro, ag as Ie, ah as Ur, ai as Jt, aj as ht, ak as Zt, al as Bo, am as En, an as No, ao as Mo, ap as $o, aq as Vo, ar as K, as as jo, at as Ho, X as Wr, W as Uo, au as Wo, Y as Ue, av as qr, aw as qo, ax as Xo, ay as Go, az as Xr, aA as Yo, aB as Ko, aC as Qo, aD as Jo, aE as Zo, aF as ea, z as ta, R as Gr, aG as Yr, O as In, aH as na, aI as ra, aJ as ia, aK as la, aL as oa, aM as aa, aN as Kr, aO as sa, aP as en, aQ as tn, aR as ua, aS as ca, aT as Qr } from "./NcEmptyContent-q-geAf0w-C5KNLRzH.chunk.mjs";
+const Sy = "agora", Cy = "1.0.0rc2";
+import { k as le, c as z, o as I, a as W, b as G, e as ee, y as te, d as Sn, m as Cn, l as Br, Z as To, $ as Nr, q as Xt, Q as Gt, g as Q, S as vn, r as Y, w as ie, u as ae, U as Mr, a0 as $r, H as ot, a1 as Vr, B as at, G as Ne, a2 as st, a3 as Me, a4 as Ee, a5 as _n, a6 as Oo, a7 as Lo, a8 as Po, a9 as zo, V as Ce, h as ut, aa as Yt, x as ct, ab as jr, ac as Do, ad as Fo, n as pe, i as ye, I as Kt, J as Qt, ae as Hr, af as Ro, ag as Ie, ah as Ur, ai as Jt, aj as ht, ak as Zt, al as Bo, am as En, an as No, ao as Mo, ap as $o, aq as Vo, ar as K, as as jo, at as Ho, X as Wr, W as Uo, au as Wo, Y as Ue, av as qr, aw as qo, ax as Xo, ay as Go, az as Xr, aA as Yo, aB as Ko, aC as Qo, aD as Jo, aE as Zo, aF as ea, z as ta, R as Gr, aG as Yr, O as In, aH as na, aI as ra, aJ as ia, aK as la, aL as oa, aM as aa, aN as Kr, aO as sa, aP as en, aQ as tn, aR as ua, aS as ca, aT as Qr } from "./NcEmptyContent-q-geAf0w-DExP7TOI.chunk.mjs";
 const ha = "modulepreload", fa = function(e, n) {
   return new URL(e, n).href;
 }, Jr = {}, Zr = function(n, t, r) {
@@ -5838,7 +5838,7 @@ const gy = function(e) {
   }
 }, yy = () => gy, by = ["http", "https", "mailto", "tel"], Or = In(null);
 async function ky() {
-  const e = await Zr(() => import("./index-1A8_O6CM.chunk.mjs"), true ? __vite__mapDeps([0,1]) : void 0, import.meta.url);
+  const e = await Zr(() => import("./index-3f2RLsEA.chunk.mjs"), true ? __vite__mapDeps([0,1]) : void 0, import.meta.url);
   Or.value = e.default;
 }
 const xy = { name: "NcRichText", components: { NcReferenceList: Tr }, props: { text: { type: String, default: "" }, arguments: { type: Object, default: () => ({}) }, referenceLimit: { type: Number, default: 0 }, referenceInteractive: { type: Boolean, default: true }, referenceInteractiveOptIn: { type: Boolean, default: false }, references: { type: Array, default: null }, useMarkdown: { type: Boolean, default: false }, useExtendedMarkdown: { type: Boolean, default: false }, interactive: { type: Boolean, default: false }, autolink: { type: Boolean, default: true } }, emits: ["interactTodo"], data() {
@@ -5905,4 +5905,4 @@ export {
   Tn as l,
   Dl as r
 };
-//# sourceMappingURL=NcRichText-G8kzsdwx-8HncRjZ1.chunk.mjs.map
+//# sourceMappingURL=NcRichText-G8kzsdwx-D7Euftyg.chunk.mjs.map

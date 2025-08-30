@@ -5,5 +5,8 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+# [1.0.0rc2] - 2025-08-29
+Several bug fix
+
 # [1.0.0rc1] - 2025-08-15
 First Draft

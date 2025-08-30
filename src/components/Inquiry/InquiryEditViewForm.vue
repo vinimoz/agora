@@ -41,6 +41,7 @@ const selectedCategory = ref(inquiryStore.categoryId || 0);
 const selectedLocation = ref(inquiryStore.locationId || 0);
 
 const isSaving = ref(false);
+const isReadonlyDescription = ref(true) 
 
 const hasSupported = computed(() => {
   const result = supportsStore.hasSupport(
@@ -164,20 +165,36 @@ watch(hierarchicalCategory, (categories) => {
 }, { immediate: true });
 
 
-
-
-// Check if support is check or not and action
 const isReadonly = computed(() => {
   const user = sessionStore.currentUser;
+  
   if (!user) return true;
+  
+  const ronly = !(inquiryStore.currentUserStatus.isOwner ||
+    		user.isAdmin ||
+    		(user.isOfficial && inquiryStore.type === 'official') ||
+    		(user.isModerator && inquiryStore.type !== 'official'));
+  
+  if (inquiryStore.type === 'debate') {
+	   isReadonlyDescription.value=false
+  } else isReadonlyDescription.value=ronly
 
-  return !(
-    inquiryStore.currentUserStatus.isOwner ||
-    user.isAdmin ||
-    (user.isOfficial && inquiryStore.type === 'official') ||
-    (user.isModerator && inquiryStore.type !== 'official')
-  );
+return ronly;
+
 });
+
+watch(
+  () => inquiryStore.type,
+  (newType) => {
+    if (newType === 'debate') {
+      isReadonlyDescription.value = false
+    } else {
+      isReadonlyDescription.value = isReadonly.value
+    }
+  },
+  { immediate: true } 
+)
+
 
 // Toggle thumb
 const onToggleSupport = async () => {
@@ -289,7 +306,6 @@ const createChildInquiry = async (type: InquiryTypeValues): Promise<void> => {
   );
   if (!confirmed) return;
 
-
   isSaving.value = true;
 
   try {
@@ -302,8 +318,7 @@ const createChildInquiry = async (type: InquiryTypeValues): Promise<void> => {
     });
 
     if (inquiry) {
-      showSuccess(t('agora', 'Inquiry "{inquiryTitle}" added', inquiry.title));
-
+		showSuccess(t('agora', "Inquiry {title} added", { title: inquiry.title }));
       router.push({
         name: 'inquiry',
         params: { id: inquiry.id }
@@ -343,7 +358,8 @@ const showResponseButton = computed(
 );
 
 // Check if save button should be shown
-const showSaveButton = computed(() => !isReadonly.value);
+const showSaveButton = computed(() => !isReadonlyDescription.value);
+
 </script>
 
 <template>
@@ -447,18 +463,16 @@ const showSaveButton = computed(() => !isReadonly.value);
         </div>
 
         <div
-          v-if="
-            sessionStore.currentUser.isOwner ||
-            sessionStore.currentUser.isAdmin ||
-              sessionStore.currentUser.isModerator ||
-              (sessionStore.currentUser.isOfficial &&
+          v-if="sessionStore.currentUser.isOwner ||
+                sessionStore.currentUser.isAdmin ||
+                sessionStore.currentUser.isModerator ||
+                (sessionStore.currentUser.isOfficial &&
                 inquiryStore.type === 'official')"
-        >
+	  :style="{ display: 'inline-block', position: 'relative' }">
          <InquiryItemActions
-  :key="`actions-${inquiryStore.id}`"
-  :inquiry="inquiryStore"
-  style="display: inline-block; position: relative;"
-/> 
+  			:key="`actions-${inquiryStore.id}`"
+  			:inquiry="inquiryStore"
+	 /> 
         
         </div>
       </div>
@@ -542,8 +556,7 @@ const showSaveButton = computed(() => !isReadonly.value);
         </div>
       </div>
 
-      <!-- BLOCK: Editor/Description
-			-->
+      <!-- BLOCK: Editor/Description -->
       <div
         v-if="
           sessionStore.appSettings.inquiryTypeRights[inquiryStore.type]
@@ -557,7 +570,7 @@ const showSaveButton = computed(() => !isReadonly.value);
             }}</span>
             <InquiryEditor
               v-model="inquiryStore.description"
-              :readonly="isReadonly"
+              :readonly="isReadonlyDescription"
             />
           </div>
         </div>
@@ -580,7 +593,7 @@ const showSaveButton = computed(() => !isReadonly.value);
               :arguments="userMentions"
               :use-markdown="useMarkdown"
               :use-extended-markdown="useExtendedMarkdown"
-              :disabled="isReadonly"
+              :disabled="isReadonlyDescription"
               class="w-full"
               style="min-height: 400px; max-height: 500px"
             />
@@ -596,7 +609,7 @@ const showSaveButton = computed(() => !isReadonly.value);
             }}</span>
             <NcTextArea
               v-model="inquiryStore.description"
-              :disabled="isReadonly"
+              :disabled="isReadonlyDescription"
               class="w-full"
               style="min-height: 200px; max-height: 300px"
             />

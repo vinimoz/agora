@@ -10,11 +10,11 @@
     console.error("vite-plugin-css-injected-by-js", e);
   }
 })();
-const L = "agora", M = "1.0.0rc1";
-import { d as f, g as n, o as r, x as b, w as o, r as h, c as d, b as l, _ as y, L as g, a as c, h as p, u as i, e as t, B as u, t as m, G as j, j as O, p as q } from "./NcEmptyContent-q-geAf0w-C5KNLRzH.chunk.mjs";
-import { r as v } from "./NcRichText-G8kzsdwx-8HncRjZ1.chunk.mjs";
-import { E as w, N as k } from "./CalendarEnd-_wDhJaW-.chunk.mjs";
-import { _ as B } from "./AgoraAppIcon.vue_vue_type_script_setup_true_lang-BlGw_px0.chunk.mjs";
+const L = "agora", M = "1.0.0rc2";
+import { d as f, g as n, o as r, x as b, w as o, r as h, c as d, b as l, _ as y, L as g, a as c, h as p, u as i, e as t, B as u, t as m, G as j, j as O, p as q } from "./NcEmptyContent-q-geAf0w-DExP7TOI.chunk.mjs";
+import { r as v } from "./NcRichText-G8kzsdwx-D7Euftyg.chunk.mjs";
+import { E as w, N as k } from "./CalendarEnd-igix8oSo.chunk.mjs";
+import { _ as B } from "./AgoraAppIcon.vue_vue_type_script_setup_true_lang-DAamrYHc.chunk.mjs";
 
 const N = { key: 0 }, C = f({ __name: "BadgeSmallDiv", props: { tag: { default: "span" } }, setup(a) {
   return (s, e) => (r(), n(b(s.tag), { class: "badge-small" }, { default: o(() => [h(s.$slots, "icon", {}, void 0, true), s.$slots.default ? (r(), d("span", N, [h(s.$slots, "default", {}, void 0, true)])) : l("", true)]), _: 3 }));

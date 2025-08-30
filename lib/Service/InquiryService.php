@@ -300,7 +300,8 @@ class InquiryService
     public function updatePartial(int $inquiryId, InquiryDto $dto): Inquiry
     {
         $this->inquiry = $this->inquiryMapper->find($inquiryId);
-        $this->inquiry->request(Inquiry::PERMISSION_INQUIRY_EDIT);
+        if ($dto->type != Inquiry::TYPE_DEBATE ) $this->inquiry->request(Inquiry::PERMISSION_INQUIRY_EDIT);
+
         $inquiryCongiguration=$dto->configuration;
         // Validate valuess
         if (isset($inquiryConfiguration['showResults']) && !in_array($inquiryConfiguration['showResults'], $this->getValidShowResults())) {
@@ -347,7 +348,6 @@ class InquiryService
         }
 
         $this->inquiry->setLastInteraction($timestamp);
-        $this->inquiry->setParentId($dto->parentId);
         $this->inquiry->setParentId($dto->parentId);
         $this->inquiry->setLocationId($dto->locationId);
         $this->inquiry->setCategoryId($dto->categoryId);

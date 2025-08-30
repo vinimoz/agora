@@ -75,6 +75,8 @@ import ArrowLeft from '@iconify-icons/mdi/arrow-left';
 import Minus from '@iconify-icons/mdi/minus';
 import Restore from '@iconify-icons/mdi/recycle';
 import Transfer from '@iconify-icons/mdi/account-switch-outline';
+import FileDocumentEdit from '@iconify-icons/mdi/file-document-edit';
+
 
 import Comment from '@iconify-icons/mdi/comment';
 import ChatOutline from '@iconify-icons/mdi/chat-outline';
@@ -188,7 +190,7 @@ export const StateIcons: Record<string, Component> = {
   archived: makeIconComponent(Archive, '#607D8B'),
   closed: makeIconComponent(Lock, '#795548'),
   creation: makeIconComponent(ClockOutline, '#FF9800'),
-  expiration: makeIconComponent(CalendarEnd, '#F44336')
+  expiration: makeIconComponent(CalendarEnd, '#F44336'),
 };
 
 // -------------------------------
@@ -225,7 +227,8 @@ export const StatusIcons: Record<string, Component> = {
   DeletedUserIcon: makeIconComponent(DeletedUserIcon, '#F44336'),
   AnoymousIcon: makeIconComponent(AnoymousIcon, '#9E9E9E'),
   InquiryGroupIcon: makeIconComponent(InquiryGroupIcon, '#673AB7'),
-  default: makeIconComponent(ClockOutline, '#9E9E9E')
+  Draft: makeIconComponent(FileDocumentEdit, '#6E3ABE'),
+  default: makeIconComponent(FileDocumentEdit, '#9E9E9E')
 };
 
 // -------------------------------
