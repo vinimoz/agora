@@ -47,8 +47,8 @@ You can download and install the latest release from the [Nextcloud app store](h
 - Community support: https://help.vinimoz.com/c/apps/agora/
 
 ## Screenshots
-Manage your agora and create new ones | Many configuration options | Share your inquiry with other people | Agora on mobile
-:-:|:-:|:-:|:-:
+Edit you inquiry | Many category | Configure your moderation status | View from not owner user | Grid view of inquiries
+:-:|:-:|:-:|:-:|:-:
 ![Edit Inquiry](screenshots/edit.png) |![Manage Category](screenshots/Category.png) | ![Agora](screenshots/ModerationStatus.png) | ![View Inquiry](screenshots/UserViewInquiry.png) | ![Grid View](screenshots/GridView.png)
 
 
