@@ -99,7 +99,7 @@ const loadingOverlayProps = {
 };
 
 const emptyContentProps = computed(() => ({
-  name: t('agora', 'No inquiries found for this category'),
+ name: t('agora', 'No inquiries found for this category'),
   description: t('agora', 'Add one or change category!')
 }));
 

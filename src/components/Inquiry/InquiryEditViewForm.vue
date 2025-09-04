@@ -13,6 +13,7 @@ import { useCommentsStore } from '../../stores/comments';
 import { useSessionStore } from '../../stores/session';
 import { BaseEntry, Event } from '../../Types/index.ts';
 import { t } from '@nextcloud/l10n';
+import { useInquiryPermissions } from '../../composables/useInquiryPermissions.ts'
 import {
   InquiryTypesUI,
   InquiryTypeValues,
@@ -28,6 +29,15 @@ import { ThumbIcon } from '../AppIcons';
 import InquiryEditor from '../Editor/InquiryEditor.vue';
 import { NcTextArea, NcRichText } from '@nextcloud/vue';
 import { InquiryGeneralIcons } from '../../utils/icons.ts';
+import { 
+  canEdit,
+  canDelete,
+  canSupport,
+  canComment,
+  canViewToggle,
+  createPermissionContextForContent, 
+  ContentType 
+} from '../../utils/permissions.ts'
 
 // The constant store declaration
 const sessionStore = useSessionStore();
@@ -36,11 +46,28 @@ const supportsStore = useSupportsStore();
 const inquiryStore = useInquiryStore();
 const router = useRouter();
 
+const context = computed(() => {
+  return createPermissionContextForContent(
+    ContentType.Inquiry,
+    inquiryStore.owner.id,
+    inquiryStore.configuration.access === 'public',
+    inquiryStore.status.isLocked,
+    inquiryStore.status.isExpired,
+    inquiryStore.status.deletionDate > 0,
+    inquiryStore.status.isArchived,
+    inquiryStore.inquiryGroups.length > 0,
+    inquiryStore.inquiryGroups,
+    inquiryStore.type
+  )
+})
+
 // Form fields
 const selectedCategory = ref(inquiryStore.categoryId || 0);
 const selectedLocation = ref(inquiryStore.locationId || 0);
 
 const isSaving = ref(false);
+const isLoaded = ref(false);
+
 const isReadonlyDescription = ref(true) 
 
 const hasSupported = computed(() => {
@@ -169,18 +196,17 @@ const isReadonly = computed(() => {
   const user = sessionStore.currentUser;
   
   if (!user) return true;
-  
-  const ronly = !(inquiryStore.currentUserStatus.isOwner ||
-    		user.isAdmin ||
-    		(user.isOfficial && inquiryStore.type === 'official') ||
-    		(user.isModerator && inquiryStore.type !== 'official'));
+  const ronly=!canEdit(context.value) 
+//  const ronly = !(inquiryStore.currentUserStatus.isOwner ||
+  //  		user.isAdmin ||
+    //		(user.isOfficial && inquiryStore.type === 'official') ||
+    //		(user.isModerator && inquiryStore.type !== 'official'));
   
   if (inquiryStore.type === 'debate') {
 	   isReadonlyDescription.value=false
   } else isReadonlyDescription.value=ronly
 
 return ronly;
-
 });
 
 watch(
@@ -207,11 +233,15 @@ const onToggleSupport = async () => {
 };
 
 onMounted(() => {
+  ///console.log(" CAN  COMMENT ", canComment(context.value))
+  ///console.log(" CAN  SUPPORT ", canSupport(context.value))
   subscribe(Event.UpdateComments, () => commentsStore.load());
   subscribe(Event.UpdateSupports, () => supportsStore.load());
+  isLoaded.value=true
 });
 
 onUnmounted(() => {
+  isLoaded.value=false
   unsubscribe(Event.UpdateComments, () => commentsStore.load());
   unsubscribe(Event.UpdateSupports, () => supportsStore.load());
 });
@@ -263,27 +293,9 @@ const timeUpdatedRelative = computed(() =>
     : ''
 );
 
-// Type label
-const typeLabel = computed(() => {
-  switch (inquiryStore.type) {
-  case InquiryTypeValues.PROJECT:
-    return t('agora', 'Project');
-  case InquiryTypeValues.PROPOSAL:
-    return t('agora', 'Proposal');
-  case InquiryTypeValues.GRIEVANCE:
-    return t('agora', 'Grievance');
-  case InquiryTypeValues.SUGGESTION:
-    return t('agora', 'Suggestion');
-  case InquiryTypeValues.DEBATE:
-    return t('agora', 'Debate');
-  case InquiryTypeValues.PETITION:
-    return t('agora', 'Petition');
-  case InquiryTypeValues.OFFICIAL:
-    return t('agora', 'Official Response');
-  default:
-    return inquiryStore.type;
-  }
-});
+const typeLabel = computed(() =>
+  InquiryTypesUI[inquiryStore.type]?.label ?? inquiryStore.type
+);
 
 // Determine if category/location should be shown as select or label
 const showCategoryAsLabel = computed(() => {
@@ -363,7 +375,7 @@ const showSaveButton = computed(() => !isReadonlyDescription.value);
 </script>
 
 <template>
-  <div class="finalize-form-container">
+  <div v-if="isLoaded" class="finalize-form-container">
     <!-- TOP BLOCK: Dates and action buttons -->
     <div class="top-block">
       <div class="date-info">
@@ -501,16 +513,15 @@ const showSaveButton = computed(() => !isReadonlyDescription.value);
               />
             </div>
           </div>
-
-          <div v-if="inquiryStore.type !== 'official'" class="counters">
+          <div v-if="canComment(context)" class="counters">
             <div class="counter-item">
               <component :is="InquiryGeneralIcons.comment" :size="24" />
               <span>{{ commentsStore.comments.length || 0 }}</span>
             </div>
-            <div class="counter-item" @click="onToggleSupport">
+	  </div>
+          <div v-if="canSupport(context)" class="counter-item" @click="onToggleSupport">
               <ThumbIcon :supported="hasSupported" />
               <span>{{ supportsStore.supports.length || 0 }}</span>
-            </div>
           </div>
         </div>
 

@@ -197,7 +197,6 @@ class InquiryService
             } else {
                 $this->inquiry = $this->inquiryMapper->find($inquiryId);
             }
-            $this->logger->error("GET FULL INQUIRY ID :".$this->inquiry->getId());
             $this->inquiry->request(Inquiry::PERMISSION_INQUIRY_VIEW);
             return $this->inquiry;
         } catch (DoesNotExistException $e) {
@@ -467,29 +466,35 @@ class InquiryService
         $this->inquiry = $this->inquiryMapper->find($inquiryId);
         $this->inquiry->request(Inquiry::PERMISSION_INQUIRY_DELETE);
 
-        $archiveState = !$this->inquiry->getDeleted();
-        $deletedTime = $archiveState ? time() : 0;
 
-        $this->inquiryMapper->beginTransaction();
+        $archiveState = !$this->inquiry->getDeleted();
+	$this->logger->error("TOGGLE DELETED  :".$archiveState);
+	$this->logger->error("TOGGLE ARCHIVED :".$this->inquiry->getArchived());
+        $deletedTime = $archiveState ? time() : 0;
+	$this->logger->error("TOGGLE DELETED TIME  :".$deletedTime);
+
 
         try {
+
+            $this->inquiry->setArchived($deletedTime);
             $this->inquiry->setDeleted($deletedTime);
             $this->inquiry = $this->inquiryMapper->update($this->inquiry);
 
             $archivedCount = 1;
 
             if ($recursive) {
+		$this->logger->error("INTO RECURSIVE ID :".$inquiryId);
                 $childCount = $this->archiveChildrenRecursive($this->inquiry, $archiveState);
                 $archivedCount += $childCount;
-            }
-
-            $this->inquiryMapper->commit();
+	    }
 
             if ($archiveState) {
                 $this->eventDispatcher->dispatchTyped(new InquiryArchivedEvent($this->inquiry));
             } else {
                 $this->eventDispatcher->dispatchTyped(new InquiryRestoredEvent($this->inquiry));
-            }
+	    }
+	
+	    $this->logger->error("AFTER THE RESRUCSWE DISPATCH ");
 
             return [
             'inquiry' => $this->inquiry,
@@ -497,7 +502,6 @@ class InquiryService
             ];
 
         } catch (\Exception $e) {
-            $this->inquiryMapper->rollback();
             throw $e;
         }
     }
@@ -508,15 +512,23 @@ class InquiryService
     private function archiveChildrenRecursive(Inquiry $parent, bool $archiveState): int
     {
         $count = 0;
-        $children = $this->inquiryMapper->findByParentId($parent->getId());
+        $children = $this->inquiryMapper->getChildInquiryIds($parent->getId());
+	
+	$this->logger->error("INTO CHILDREN RECURSIVE APRES GETCHIILD :".sizeof($children));
 
         foreach ($children as $child) {
             try {
+		$this->logger->error("INTO THE FOREACH");
                 $child->request(Inquiry::PERMISSION_INQUIRY_DELETE);
-
+        	$child->setArchived($archiveState ? time() : 0);
                 $child->setDeleted($archiveState ? time() : 0);
                 $this->inquiryMapper->update($child);
                 $count++;
+            	if ($archiveState) {
+                	$this->eventDispatcher->dispatchTyped(new InquiryArchivedEvent($child));
+            	} else {
+                	$this->eventDispatcher->dispatchTyped(new InquiryRestoredEvent($child));
+	    	}
 
                 $count += $this->archiveChildrenRecursive($child, $archiveState);
 

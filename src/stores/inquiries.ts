@@ -236,7 +236,7 @@ const inquiryCategories: InquiryCategoryList = {
       const sessionStore = useSessionStore();
       return !!sessionStore.currentUser?.isAdmin;
     },
-    filterCondition: (inquiry: Inquiry) => !inquiry.permissions.view
+    filterCondition: (inquiry: Inquiry) => inquiry.permissions.view
   }
 };
 

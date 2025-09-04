@@ -512,6 +512,26 @@ class UserBase implements JsonSerializable
         return false;
     }
 
+
+    /**
+     * returns true, if the user is an admin
+     * Only valid for User, false for other user types
+     */
+    public function getIsOfficial(): bool
+    {
+        return false;
+    }
+
+
+    /**
+     * returns true, if the user is an admin
+     * Only valid for User, false for other user types
+     */
+    public function getIsModerator(): bool
+    {
+        return false;
+    }
+
     /**
      * returns true, if the user is an admin
      * Only valid for User, false for other user types

@@ -8,6 +8,7 @@ import { onMounted } from 'vue';
 import { generateUrl } from '@nextcloud/router';
 import { showError } from '@nextcloud/dialogs';
 import { t } from '@nextcloud/l10n';
+import DOMPurify from 'dompurify';
 
 import NcDashboardWidget from '@nextcloud/vue/components/NcDashboardWidget';
 
@@ -21,6 +22,7 @@ const dashboardWidgetProperties = {
   showMoreText: t('agora', 'Relevant inquiries')
 };
 
+
 const inquiriesStore = useInquiriesStore();
 
 /**
@@ -28,6 +30,7 @@ const inquiriesStore = useInquiriesStore();
  */
 function loadInquiries(): void {
   Logger.debug('Loading inquiries in dashboard widget');
+
   try {
     inquiriesStore.load();
   } catch {
@@ -66,9 +69,9 @@ onMounted(() => {
 
               <div class="item__title__description">
                 {{
-                  item.description
+                  DOMPurify.sanitize(item.description
                     ? item.description
-                    : t('agora', 'No description provided')
+                    : t('agora', 'No description provided'))
                 }}
               </div>
             </div>

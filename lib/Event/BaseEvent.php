@@ -30,9 +30,15 @@ abstract class BaseEvent extends Event
 
     public function __construct(
         protected Inquiry|Comment|Share|Option|Support $eventObject,
+        protected bool $loadInquiry = false
     ) {
-        parent::__construct();
-        $this->inquiry = Container::queryInquiry($this->getInquiryId());
+	    parent::__construct();
+	      try {
+     		   $this->inquiry = Container::getInquiry($this->getInquiryId(), true); 
+    		} catch (DoesNotExistException $e) {
+        		throw new \Exception("Inquiry not found: " . $this->getInquiryId());
+		}
+
         $this->userMapper = Container::queryClass(UserMapper::class);
         $this->userSession = Container::queryClass(UserSession::class);
 

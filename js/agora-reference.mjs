@@ -10,17 +10,17 @@
     console.error("vite-plugin-css-injected-by-js", e);
   }
 })();
-const L = "agora", M = "1.0.0rc2";
-import { d as f, g as n, o as r, x as b, w as o, r as h, c as d, b as l, _ as y, L as g, a as c, h as p, u as i, e as t, B as u, t as m, G as j, j as O, p as q } from "./NcEmptyContent-q-geAf0w-DExP7TOI.chunk.mjs";
-import { r as v } from "./NcRichText-G8kzsdwx-D7Euftyg.chunk.mjs";
-import { E as w, N as k } from "./CalendarEnd-igix8oSo.chunk.mjs";
-import { _ as B } from "./AgoraAppIcon.vue_vue_type_script_setup_true_lang-DAamrYHc.chunk.mjs";
+const M = "agora", T = "1.0.0rc3";
+import { d as _, e as n, o as r, s as b, w as o, r as h, c as d, x as l, _ as y, O as g, a as c, f as p, u as i, z as t, B as u, t as m, I as O, h as j, p as q } from "./NcEmptyContent-q-geAf0w-BTrjHyYY.chunk.mjs";
+import { r as v } from "./NcRichText-G8kzsdwx-DH9_CLsd.chunk.mjs";
+import { E as w, N as k } from "./CalendarEnd-Bj1Up2kt.chunk.mjs";
+import { _ as B } from "./AgoraAppIcon.vue_vue_type_script_setup_true_lang-DfAM2TLV.chunk.mjs";
 
-const N = { key: 0 }, C = f({ __name: "BadgeSmallDiv", props: { tag: { default: "span" } }, setup(a) {
+const N = { key: 0 }, C = _({ __name: "BadgeSmallDiv", props: { tag: { default: "span" } }, setup(a) {
   return (s, e) => (r(), n(b(s.tag), { class: "badge-small" }, { default: o(() => [h(s.$slots, "icon", {}, void 0, true), s.$slots.default ? (r(), d("span", N, [h(s.$slots, "default", {}, void 0, true)])) : l("", true)]), _: 3 }));
-} }), _ = y(C, [["__scopeId", "data-v-665a1108"]]), D = { key: 0, class: "agora_widget" }, $ = { class: "widget_header" }, I = ["href"], R = { class: "description" }, V = { class: "clamped" }, S = { key: 0, class: "widget_footer" }, z = f({ __name: "Reference", props: { richObject: {} }, setup(a) {
+} }), f = y(C, [["__scopeId", "data-v-665a1108"]]), D = { key: 0, class: "agora_widget" }, I = { class: "widget_header" }, $ = ["href"], R = { class: "description" }, V = { class: "clamped" }, z = { key: 0, class: "widget_footer" }, S = _({ __name: "Reference", props: { richObject: {} }, setup(a) {
   const s = a.richObject?.inquiry?.expiry ? g.fromMillis(a.richObject.inquiry.expiry * 1e3).diffNow("hours").hours < 36 ? "warning" : "success" : "";
-  return (e, E) => e.richObject ? (r(), d("div", D, [c("div", $, [p(i(B), { size: 20, class: "title-icon" }), c("a", { class: "title", href: e.richObject.inquiry.url, target: "_blank" }, t(e.richObject.inquiry.title), 9, I), e.richObject.inquiry.participated ? (r(), n(_, { key: 0, class: "success" }, { default: o(() => [u(t(i(m)("agora", "participated")), 1)]), _: 1 })) : e.richObject.inquiry.expired ? (r(), n(_, { key: 1, class: "error" }, { default: o(() => [u(t(i(m)("agora", "closed")), 1)]), _: 1 })) : e.richObject.inquiry.expiry > 0 ? (r(), n(_, { key: 2, class: j(i(s)) }, { icon: o(() => [p(w, { size: 16 })]), default: o(() => [u(" " + t(i(g).fromMillis(e.richObject.inquiry.expiry * 1e3).toRelative()), 1)]), _: 1 }, 8, ["class"])) : l("", true)]), c("div", R, [c("span", V, t(e.richObject.inquiry.description), 1)]), e.richObject.inquiry.ownerId ? (r(), d("div", S, [c("span", null, t(i(m)("agora", "By:")), 1), p(i(k), { user: e.richObject.inquiry.ownerId, "display-name": e.richObject.inquiry.ownerDisplayName }, null, 8, ["user", "display-name"])])) : l("", true)])) : l("", true);
-} }), A = y(z, [["__scopeId", "data-v-04db2550"]]);
-v("agora_reference_widget", async (a, { richObject: s }) => O(A, { richObject: s }).use(q).mount(a), (a) => a.classList.add("nc-agora-reference-widget"), {});
+  return (e, E) => e.richObject ? (r(), d("div", D, [c("div", I, [p(i(B), { size: 20, class: "title-icon" }), c("a", { class: "title", href: e.richObject.inquiry.url, target: "_blank" }, t(e.richObject.inquiry.title), 9, $), e.richObject.inquiry.participated ? (r(), n(f, { key: 0, class: "success" }, { default: o(() => [u(t(i(m)("agora", "participated")), 1)]), _: 1 })) : e.richObject.inquiry.expired ? (r(), n(f, { key: 1, class: "error" }, { default: o(() => [u(t(i(m)("agora", "closed")), 1)]), _: 1 })) : e.richObject.inquiry.expiry > 0 ? (r(), n(f, { key: 2, class: O(i(s)) }, { icon: o(() => [p(w, { size: 16 })]), default: o(() => [u(" " + t(i(g).fromMillis(e.richObject.inquiry.expiry * 1e3).toRelative()), 1)]), _: 1 }, 8, ["class"])) : l("", true)]), c("div", R, [c("span", V, t(e.richObject.inquiry.description), 1)]), e.richObject.inquiry.ownerId ? (r(), d("div", z, [c("span", null, t(i(m)("agora", "By:")), 1), p(i(k), { user: e.richObject.inquiry.ownerId, "display-name": e.richObject.inquiry.ownerDisplayName }, null, 8, ["user", "display-name"])])) : l("", true)])) : l("", true);
+} }), A = y(S, [["__scopeId", "data-v-04db2550"]]);
+v("agora_reference_widget", async (a, { richObject: s }) => j(A, { richObject: s }).use(q).mount(a), (a) => a.classList.add("nc-agora-reference-widget"), {});
 //# sourceMappingURL=agora-reference.mjs.map

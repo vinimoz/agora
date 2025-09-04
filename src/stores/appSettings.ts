@@ -8,7 +8,20 @@ import { AppSettingsAPI } from '../Api/index.ts';
 import { Logger } from '../helpers/index.ts';
 import { BaseEntry } from '../Type/index.ts';
 import { AxiosError } from '@nextcloud/axios';
-import type { InquiryTypeRights } from '@/helpers/modules/InquiryHelper';
+
+import type {
+  InquiryTypeRights,
+  ModeratorRights,
+  OfficialRights
+} from '../utils/permissions.ts';
+
+import {
+  DefaultInquiryTypeRights,
+  DefaultModeratorRights,
+  DefaultOfficialRights
+} from '../utils/permissions.ts';
+
+
 
 export type UpdateType =
   | 'noInquirying'
@@ -23,20 +36,6 @@ export type Group = {
   isNoUser: boolean;
   type: string;
 };
-
-interface ModeratorRights {
-  modifyInquiry: boolean;
-  deleteInquiry: boolean;
-  archiveInquiry: boolean;
-}
-
-interface OfficialRights {
-  modifyInquiry: boolean;
-  deleteInquiry: boolean;
-  archiveInquiry: boolean;
-  approveInquiries: boolean;
-  changeInquiryStatus: boolean;
-}
 
 // Simple interfaces for category and location tables
 export interface Category {
@@ -145,19 +144,9 @@ export const useAppSettingsStore = defineStore('appSettings', {
     locationTab: [],
     moderationStatusTab: [],
     groups: [],
-    inquiryTypeRights: {} as Record<string, InquiryTypeRights>,
-    moderatorRights: {
-      modifyInquiry: true,
-      deleteInquiry: true,
-      archiveInquiry: true
-    },
-    officialRights: {
-      modifyInquiry: false,
-      deleteInquiry: false,
-      archiveInquiry: true,
-      approveInquiries: false,
-      changeInquiryStatus: false
-    },
+    inquiryTypeRights: {} as Record<string, InquiryTypeRights>,
+    moderatorRights: { ...DefaultModeratorRights } as ModeratorRights,
+    officialRights: { ...DefaultOfficialRights } as OfficialRights,
     status: {
       loadingGroups: false
     }
@@ -166,12 +155,10 @@ export const useAppSettingsStore = defineStore('appSettings', {
   actions: {
     async load(): Promise<void> {
       try {
-        console.log(' INTO THE LOAD ');
         const response = await AppSettingsAPI.getAppSettings();
         // Initialize moderationStatusTab with defaults if empty
         const settings = response.data.appSettings;
 
-        console.log(' APRE THE API THE LOAD ', settings);
         this.$patch(settings);
         return settings;
       } catch (error) {

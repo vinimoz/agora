@@ -5,6 +5,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+# [1.0.0rc3] - 2025-09-03
+- Fix logo
+- Debate
+- Permissions update, need to be finalized
+
 # [1.0.0rc2] - 2025-08-29
 Several bug fix
 

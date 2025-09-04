@@ -146,6 +146,7 @@ class AppSettings implements JsonSerializable
             self::SETTING_MODERATOR_RIGHTS, [
             'modifyInquiry' => true,
             'deleteInquiry' => true,
+            'transferInquiry' => true,
             'archiveInquiry' => true,
             ]
         );
@@ -158,8 +159,8 @@ class AppSettings implements JsonSerializable
             'modifyInquiry' => true,
             'deleteInquiry' => false,
             'archiveInquiry' => true,
-            'approveInquiries' => true,
-            'changeModerationStatus' => false
+            'transferInquiry' => false,
+            'changeInquiryStatus' => false
             ]
         );
     }
@@ -253,6 +254,7 @@ class AppSettings implements JsonSerializable
      */
     public function getInternalAppSettings(): array
     {
+
         return [
         'useActivity' => $this->getUseActivity(),
         'useCollaboration' => $this->getUseCollaboration(),
@@ -275,14 +277,6 @@ class AppSettings implements JsonSerializable
                 return true;
             }
 
-            $this->logger->debug(
-                'Setting type does not match', [
-                'app' => $app,
-                'key' => $key,
-                'expectedType' => $expectedType,
-                'actualType' => $actualType,
-                ]
-            );
 
         } catch (\Exception $e) {
             $this->logger->debug(

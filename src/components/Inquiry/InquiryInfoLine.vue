@@ -31,12 +31,18 @@ const currentStatus = computed(
   () =>
     availableStatuses.value.find(
       (status) => status.statusKey === inquiryStore.moderationStatus
-    ) || availableStatuses.value[0]
+    ) || [{
+    statusKey: 'draft',
+    label: 'Draft',
+    icon: 'Draft',
+    inquiryType: inquiryStore.type,
+    order: 0
+  }]
 );
 
 const selectedStatusKey = ref(currentStatus.value?.statusKey);
 
-const currentStatusLabel = computed(() => currentStatus.value?.label || '');
+const currentStatusLabel = computed(() => currentStatus.value?.label || 'Draft');
 
 const currentStatusIcon = computed(
   () => StatusIcons[currentStatus.value?.icon]
@@ -45,7 +51,7 @@ const currentStatusIcon = computed(
 const onStatusChange = async () => {
   try {
     await inquiryStore.setModerationStatus(selectedStatusKey.value);
-    showSuccess(' Moderator has been updated !'); // Call success Message
+    showSuccess(' Moderator status of this inquiry has been updated !'); // Call success Message
   } catch (error) {
     console.error('Failed to update status:', error);
     selectedStatusKey.value = currentStatus.value.statusKey;

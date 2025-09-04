@@ -87,16 +87,9 @@ const editingOptions = computed(() => {
   );
 });
 
-// CORRECTION: Fonctions d'ajout
 const addCategory = () => {
   if (newCategory.value.name.trim()) {
     const parentId = selectedCategory.value?.value || 0;
-    console.log(
-      'Adding category:',
-      newCategory.value.name,
-      'parent:',
-      parentId
-    );
     appSettingsStore.addCategory(newCategory.value.name, parentId);
     newCategory.value.name = '';
     selectedCategory.value = { value: 0, label: t('agora', 'No parent') };
@@ -106,19 +99,12 @@ const addCategory = () => {
 const addLocation = () => {
   if (newLocation.value.name.trim()) {
     const parentId = selectedLocation.value?.value || 0;
-    console.log(
-      'Adding location:',
-      newLocation.value.name,
-      'parent:',
-      parentId
-    );
     appSettingsStore.addLocation(newLocation.value.name, parentId);
     newLocation.value.name = '';
     selectedLocation.value = { value: 0, label: t('agora', 'No parent') };
   }
 };
 
-// CORRECTION: Computed pour l'édition du parent
 const editingParent = computed({
   get: () => {
     if (!editingItem.value) return { value: 0, label: t('agora', 'No parent') };

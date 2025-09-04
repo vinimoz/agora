@@ -148,11 +148,7 @@ class Inquiry extends EntityWithUser implements JsonSerializable
     public const LEVEL_COMMITTEE = 2;
     public const LEVEL_OFFICIAL = 3;
 
-    public const STATUS_DRAFT = 'draft';
-    public const STATUS_OPEN = 'open';
-    public const STATUS_UNDER_REVIEW = 'under_review';
-    public const STATUS_ACCEPTED = 'accepted';
-    public const STATUS_REJECTED = 'rejected';
+    public const DEFAULT_STATUS_DRAFT = 'draft';
 
     private IURLGenerator $urlGenerator;
     protected SystemSettings $systemSettings;
@@ -179,7 +175,7 @@ class Inquiry extends EntityWithUser implements JsonSerializable
     protected int $hideBookedUp = 0;
     protected int $lastInteraction = 0;
     protected ?string $miscSettings = '';
-    protected string $moderationStatus = self::STATUS_DRAFT;
+    protected string $moderationStatus = self::DEFAULT_STATUS_DRAFT;
     protected int $categoryId = 0;
     protected int $locationId = 0;
     protected int $level = 0;

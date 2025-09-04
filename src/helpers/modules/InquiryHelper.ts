@@ -44,64 +44,6 @@ export const InquiryTypesUI = {
   }
 };
 
-export const InquiryTypeRights = {
-  proposal: {
-    settings: {
-      supportInquiry: true,
-      commentInquiry: true,
-      attachFileInquiry: true,
-      editorType: 'wysiwyg'
-    }
-  },
-  debate: {
-    settings: {
-      supportInquiry: true,
-      commentInquiry: true,
-      attachFileInquiry: true,
-      editorType: 'texteditor'
-    }
-  },
-  petition: {
-    settings: {
-      supportInquiry: true,
-      commentInquiry: true,
-      attachFileInquiry: true,
-      editorType: 'wysiwyg'
-    }
-  },
-  project: {
-    settings: {
-      supportInquiry: true,
-      commentInquiry: true,
-      attachFileInquiry: true,
-      editorType: 'texteditor'
-    }
-  },
-  grievance: {
-    settings: {
-      supportInquiry: true,
-      commentInquiry: true,
-      attachFileInquiry: true,
-      editorType: 'wysiwyg'
-    }
-  },
-  suggestion: {
-    settings: {
-      supportInquiry: true,
-      commentInquiry: false,
-      attachFileInquiry: false,
-      editorType: 'textarea'
-    }
-  },
-  official: {
-    settings: {
-      supportInquiry: false,
-      commentInquiry: false,
-      attachFileInquiry: false,
-      editorType: 'textarea'
-    }
-  }
-};
 
 export const InquiryTypeValues = {
   PROPOSAL: 'proposal',

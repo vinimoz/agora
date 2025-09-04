@@ -18,8 +18,8 @@ import InquiryCreateDlg from '../components/Create/InquiryCreateDlg.vue';
 import { FilterType, useInquiriesStore } from '../stores/inquiries.ts';
 import { useInquiryGroupsStore } from '../stores/inquiryGroups.ts';
 import { useSessionStore } from '../stores/session.ts';
-//import { usePreferencesStore } from '../stores/preferences.ts';
-//import ActionAddInquiry from '../components/Actions/modules/ActionAddInquiry.vue';
+import ActionAddInquiry from '../components/Actions/modules/ActionAddInquiry.vue'
+import { usePreferencesStore } from '../stores/preferences.ts';
 import { Event } from '../Types/index.ts';
 import { useRouter } from 'vue-router';
 import { NcAppNavigationSpacer } from '@nextcloud/vue';
@@ -29,7 +29,7 @@ const router = useRouter();
 const inquiriesStore = useInquiriesStore();
 const inquiryGroupsStore = useInquiryGroupsStore();
 const sessionStore = useSessionStore();
-//const preferencesStore = usePreferencesStore();
+const preferencesStore = usePreferencesStore();
 
 const iconSize = 20;
 
@@ -127,6 +127,8 @@ async function inquiryAdded(payLoad: { id: number; title: string }) {
   });
 }
 
+
+
 onMounted(() => {
   inquiriesStore.load(false);
 });
@@ -135,10 +137,18 @@ onMounted(() => {
 <template>
   <NcAppNavigation class="agora-navigation">
     <!-- New Inquiry Button -->
+    <ActionAddInquiry
+	      v-if="
+                    preferencesStore.useActionAddInquiryInNavigation
+                    && sessionStore.appPermissions.inquiryCreation
+                    "
+                    :button-mode="'navigation'" />
+
     <div class="agora-navigation__header">
       <NcAppNavigationNew
-        v-if="sessionStore.appPermissions.inquiryCreation"
+        v-if="preferencesStore.useNcAppNavigationNew && sessionStore.appPermissions.inquiryCreation"
         :text="t('agora', 'New inquiry')"
+	button-class="icon-add"
         class="agora-navigation__new-btn"
         @click="createDlgToggle = !createDlgToggle"
       >
@@ -211,11 +221,10 @@ onMounted(() => {
               class="agora-navigation__empty"
             />
             <NcAppNavigationItem
-              v-if="
-                inquiriesStore.groupList(inquiryGroup.inquiryIds).length >
+              v-if="inquiryGroup.inquiryIds.length  >
                   inquiriesStore.meta.maxInquiriesInNavigation
               "
-              class="agora-navigation__view-all"
+              class="force-not-active"
               :to="{
                 name: 'group',
                 params: { slug: inquiryGroup.slug }
@@ -284,11 +293,10 @@ onMounted(() => {
               class="agora-navigation__empty"
             />
             <NcAppNavigationItem
-              v-if="
-                inquiriesStore.navigationList(inquiryCategory.id).length >
+              v-if="inquiriesStore.navigationList(inquiryCategory.id) >
                   inquiriesStore.meta.maxInquiriesInNavigation
               "
-              class="agora-navigation__view-all"
+              class="force-not-active"
               :to="{
                 name: 'list',
                 params: { type: inquiryCategory.id }
@@ -434,7 +442,6 @@ onMounted(() => {
 
 .app-navigation-entry-wrapper.force-not-active .app-navigation-entry.active {
   background-color: transparent !important;
-
   * {
     color: unset !important;
   }

@@ -1,6 +1,6 @@
-const Ma = "agora", ka = "1.0.0rc2";
-import { W as zn, X as Gn, Y as Kn } from "./NcEmptyContent-q-geAf0w-DExP7TOI.chunk.mjs";
-import { c as Re } from "./NcRichText-G8kzsdwx-D7Euftyg.chunk.mjs";
+const Ma = "agora", ka = "1.0.0rc3";
+import { W as zn, X as Gn, Y as Kn } from "./NcEmptyContent-q-geAf0w-BTrjHyYY.chunk.mjs";
+import { c as Re } from "./NcRichText-G8kzsdwx-DH9_CLsd.chunk.mjs";
 const Ct = (function(e, t, i) {
   const a = zn(i);
   if (!e || !e.type || !e.children) throw new Error("Expected parent node");
@@ -1170,4 +1170,4 @@ function Ra(e) {
 export {
   Oa as default
 };
-//# sourceMappingURL=index-3f2RLsEA.chunk.mjs.map
+//# sourceMappingURL=index-D4ty_fJe.chunk.mjs.map

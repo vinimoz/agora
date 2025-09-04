@@ -23,6 +23,7 @@ const emit = defineEmits(['cloneInquiry', 'toggleArchive', 'deleteInquiry']);
 const { inquiry } = defineProps<{ inquiry: Inquiry }>();
 
 const sessionStore = useSessionStore();
+
 </script>
 
 <template>

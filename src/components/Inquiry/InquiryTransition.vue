@@ -32,6 +32,8 @@ const inquiryParent = ref({
   created: null,
   lastInteraction: null,
   owner: '',
+  inquiryGroups: [],
+  participatedCount: 0,
   commentCount: 0,
   supportCount: 0
 });
@@ -86,6 +88,7 @@ onMounted(async () => {
       inquiryParent.value.currentUserStatus = inquiryStore.currentUserStatus;
       inquiryParent.value.commentCount = commentsStore.comments.length;
       inquiryParent.value.supportCount = supportsStore.supports.length;
+      inquiryParent.value.inquiryGroups = inquiryStore.inquiryGroups;
 
       isLoadedLocal.value = true;
     }

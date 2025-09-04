@@ -22,6 +22,7 @@ import { useSubscriptionStore } from './subscription.ts';
 import { AxiosError } from '@nextcloud/axios';
 import { t } from '@nextcloud/l10n';
 import { useInquiryGroupsStore } from './inquiryGroups.ts';
+import type { InquiryTypeRights } from '../utils/permissions.ts';
 
 interface RouteParams {
   id: number;
@@ -85,62 +86,15 @@ export const useSessionStore = defineStore('session', {
       unrestrictedOwner: false
     },
     sessionSettings: {
-      manualViewDateInquiry: '',
-      manualViewTextInquiry: ''
+      manualViewProjectInquiry: '',
+      manualViewPetitionInquiry: '',
+      manualViewDebateInquiry: '',
+      manualViewProposalInquiry: '',
+      manualViewSuggestionInquiry: '',
+      manualViewOfficialInquiry: ''
     },
-    appSettings: {
-      allAccessGroups: [],
-      allowCombo: true,
-      allowPublicShares: true,
-      allowAllAccess: true,
-      allowInquiryCreation: true,
-      allowInquiryDownload: true,
-      autoArchive: false,
-      autoArchiveOffset: 30,
-      autoDelete: false,
-      autoDeleteOffset: 30,
-      defaultPrivacyUrl: '',
-      defaultImprintUrl: '',
-      disclaimer: '',
-      imprintUrl: '',
-      legalTermsInEmail: false,
-      privacyUrl: '',
-      showMailAddresses: false,
-      showLogin: true,
-      updateType: 'noInquirying',
-      useActivity: false,
-      useCollaboration: true,
-      useSiteLegalTerms: true,
-      navigationInquiriesInList: true,
-      finalPrivacyUrl: '',
-      finalImprintUrl: '',
-      comboGroups: [],
-      publicSharesGroups: [],
-      inquiryCreationGroups: [],
-      inquiryDownloadGroups: [],
-      showMailAddressesGroups: [],
-      unrestrictedOwner: false,
-      unrestrictedOwnerGroups: [],
-      groups: [],
-      categoryTab: [],
-      locationTab: [],
-      moderationStatusTab: [],
-      inquiryTypeRights: {} as Record<string, InquiryTypeRights>,
-      moderatorRights: {
-        modifyInquiry: true,
-        deleteInquiry: true,
-        archiveInquiry: true
-      },
-      officialRights: {
-        modifyInquiry: false,
-        deleteInquiry: false,
-        archiveInquiry: true,
-        approveInquiries: false
-      },
-      status: {
-        loadingGroups: false
-      }
-    },
+    
+    appSettings: createDefault<AppSettings>(),
     route: {
       currentRoute: '',
       name: '',

@@ -25,6 +25,17 @@ import TransferInquiryDialog from '../Modals/TransferInquiryDialog.vue';
 
 import { useRoute } from 'vue-router';
 
+import { 
+  canArchive,
+  canRestore,
+  canDelete,
+  canEdit,
+  canTransfer,
+  canViewToggle,
+  createPermissionContextForContent, 
+  ContentType 
+} from '../../utils/permissions.ts'
+
 const { inquiry } = defineProps<{ inquiry: Inquiry }>();
 
 const route = useRoute();
@@ -42,6 +53,21 @@ const showTransferDialog = ref(false);
 const subMenu = ref<'addToGroup' | 'removeFromGroup' | null>(null);
 
 const newGroupTitle = ref('');
+
+const context = computed(() => 
+  createPermissionContextForContent(
+    ContentType.Inquiry,
+    inquiry.owner.id,
+    inquiry.configuration.access === 'public',
+    inquiry.status.isLocked,
+    inquiry.status.isExpired,
+    inquiry.status.deletionDate > 0,
+    inquiry.status.isArchived,
+    inquiry.inquiryGroups.length > 0,
+    inquiry.inquiryGroups,
+    inquiry.type
+  )
+)
 
 async function toggleSubMenu(
   action: 'addToGroup' | 'removeFromGroup' | null = null
@@ -107,7 +133,6 @@ async function toggleArchive() {
     showError(t('agora', 'Error archiving/restoring inquiry.'));
   }
 }
-/*
 async function takeOverInquiry(): Promise<void> {
   if (!sessionStore.currentUser.isAdmin) {
     return;
@@ -117,8 +142,8 @@ async function takeOverInquiry(): Promise<void> {
     await inquiriesStore.takeOver({ inquiryId: inquiry.id });
   } catch {
     showError(t('agora', 'Error taking over inquiry.'));
-  }*
-}*/
+  }
+}
 
 </script>
 
@@ -138,9 +163,7 @@ async function takeOverInquiry(): Promise<void> {
 
     <template v-else>
       <NcActionButton
-        v-show="
-          (adminAccess || inquiry.permissions.edit) &&
-            !inquiry.status.isArchived
+        v-show="canArchive(context)
         "
         :name="t('agora', 'Archive inquiry')"
         :aria-label="t('agora', 'Archive inquiry')"
@@ -153,8 +176,7 @@ async function takeOverInquiry(): Promise<void> {
       </NcActionButton>
 
       <NcActionButton
-        v-show="
-          (adminAccess || inquiry.permissions.edit) && inquiry.status.isArchived
+        v-show="canRestore(context)
         "
         :name="t('agora', 'Restore inquiry')"
         :aria-label="t('agora', 'Restore inquiry')"
@@ -167,7 +189,7 @@ async function takeOverInquiry(): Promise<void> {
       </NcActionButton>
 
       <NcActionButton
-        v-show="adminAccess || inquiry.permissions.edit"
+        v-show="canDelete(context)"
         class="danger"
         :name="t('agora', 'Delete inquiry')"
         :aria-label="t('agora', 'Delete inquiry')"
@@ -180,7 +202,7 @@ async function takeOverInquiry(): Promise<void> {
       </NcActionButton>
 
       <NcActionButton
-        v-show="adminAccess || inquiry.permissions.edit"
+        v-show="canTransfer(context)"
         class="danger"
         :name="t('agora', 'Transfer inquiry ownership')"
         :aria-label="t('agora', 'Transfer inquiry ownership')"
@@ -193,7 +215,7 @@ async function takeOverInquiry(): Promise<void> {
       </NcActionButton>
 
       <NcActionButton
-        v-show="inquiry.permissions.edit"
+        v-show="canEdit(context)"
         is-menu
         name="Add to group"
         @click="toggleSubMenu('addToGroup')"

@@ -71,10 +71,10 @@ class InquiryMapper extends QBMapper
      * @param  int $parentId
      * @return int[]|  Returns an array of IDs if children exist, or empty array if none.
      */
-    public function findChildrenWithCounts(int $parentId): array
+    public function findChildrenWithCounts(int $parentId, bool $getDeleted = false, bool $withRoles = false): array
     {
-	    // D'abord, récupérer les enfants
 	    $qb = $this->db->getQueryBuilder();
+
 	    $qb->select([
 		    'i.id',
 		    'i.title',
@@ -88,11 +88,13 @@ class InquiryMapper extends QBMapper
 		    'i.archived',
 		    'i.moderation_status',
 		    $qb->createFunction('COUNT(DISTINCT c.id) AS countComments'),
-		    $qb->createFunction('COUNT(DISTINCT s.id) AS countSupports')
+		    $qb->createFunction('COUNT(DISTINCT s.id) AS countSupports'),
+		    $qb->createFunction('GROUP_CONCAT(DISTINCT ig.group_id) AS inquiryGroups') 
 	    ])
 	->from($this->getTableName(), 'i')
 	->leftJoin('i', Comment::TABLE, 'c', $qb->expr()->eq('c.inquiry_id', 'i.id'))
 	->leftJoin('i', Support::TABLE, 's', $qb->expr()->eq('s.inquiry_id', 'i.id'))
+	->leftJoin('i', InquiryGroup::RELATION_TABLE, 'ig', $qb->expr()->eq('ig.inquiry_id', 'i.id')) 
 	->where(
 		$qb->expr()->andX(
 			$qb->expr()->eq('i.parent_id', $qb->createNamedParameter($parentId, IQueryBuilder::PARAM_INT)),
@@ -106,7 +108,7 @@ class InquiryMapper extends QBMapper
 	    $inquiries = $result->fetchAll();
 	    $result->closeCursor();
 
-	    // Ensuite, compter les participants pour chaque enfant
+	    // Compter les participants pour chaque enfant
 	    foreach ($inquiries as &$inquiry) {
 		    $participantsQb = $this->db->getQueryBuilder();
 		    $participantsQb->select($participantsQb->createFunction('COUNT(*)'))
@@ -118,6 +120,11 @@ class InquiryMapper extends QBMapper
 		    $participantsResult = $participantsQb->execute();
 		    $inquiry['countParticipants'] = (int)$participantsResult->fetchOne();
 		    $participantsResult->closeCursor();
+
+		    // Traitement des groupes
+		    $inquiry['inquiryGroups'] = !empty($inquiry['inquirygroups']) 
+			    ? array_map('trim', explode(',', $inquiry['inquirygroups']))
+			    : [];
 	    }
 
 	    return array_map(
@@ -144,11 +151,11 @@ class InquiryMapper extends QBMapper
 					    'created' => (int)$row['created'],
 					    'lastInteraction' => (int)$row['last_interaction'],
 				    ],
+				    'inquiryGroups' => $row['inquiryGroups'] ?? [], // Ajout des groupes dans la réponse
 			    ];
 		    }, $inquiries
 	    );
     }
-
 
 
     public function getChildInquiryIds(int $parentId)

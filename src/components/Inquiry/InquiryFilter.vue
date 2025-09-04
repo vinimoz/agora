@@ -12,9 +12,7 @@ import { FilterType, useInquiriesStore } from '../../stores/inquiries.ts';
 const sessionStore = useSessionStore();
 const inquiriesStore = useInquiriesStore();
 
-console.log('Inquiries store:', inquiriesStore);
 
-// Références pour les filtres
 const selectedType = ref<FilterType | 'all'>('all');
 const selectedCategory = ref<string>('all');
 const selectedLocation = ref<string>('all');
@@ -22,10 +20,8 @@ const hasComments = ref<boolean | null>(null);
 const hasSupports = ref<boolean | null>(null);
 const searchQuery = ref<string>('');
 
-// État d'ouverture/fermeture des filtres
 const isFiltersOpen = ref(false);
 
-// Options de filtre disponibles
 const filterOptions = computed(() => ({
   types: [
     { value: 'all', label: t('agora', 'All types') },

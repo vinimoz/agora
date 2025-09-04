@@ -16,6 +16,7 @@ use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
 use OCP\AppFramework\Http\Attribute\OpenAPI;
 use OCP\AppFramework\Http\TemplateResponse;
+use OCP\AppFramework\Http\ContentSecurityPolicy;
 use OCP\Collaboration\Resources\LoadAdditionalScriptsEvent;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IRequest;
@@ -49,7 +50,8 @@ class PageController extends Controller
     {
         Util::addScript(AppConstants::APP_ID, 'agora-main');
         $this->eventDispatcher->dispatchTyped(new LoadAdditionalScriptsEvent());
-        return new TemplateResponse(AppConstants::APP_ID, 'main');
+	$response = new TemplateResponse(AppConstants::APP_ID, 'main');
+	return $response;
     }
 
     /**
@@ -64,7 +66,13 @@ class PageController extends Controller
     public function support(int $id): TemplateResponse
     {
         $this->notificationService->removeNotificationsForInquiry($id);
-        Util::addScript(AppConstants::APP_ID, 'agora-main');
-        return new TemplateResponse(AppConstants::APP_ID, 'main');
+	Util::addScript(AppConstants::APP_ID, 'agora-main');
+	$response = new TemplateResponse(AppConstants::APP_ID, 'main');
+	$csp = new ContentSecurityPolicy();
+	$csp->addAllowedWorkerSrcDomain('self');
+	$csp->addAllowedWorkerSrcDomain('blob:');
+        $response->setContentSecurityPolicy($csp);
+	return $response;
+
     }
 }

@@ -9,6 +9,13 @@ import { computed } from 'vue';
 import { DateTime } from 'luxon';
 import { t } from '@nextcloud/l10n';
 import NcAvatar from '@nextcloud/vue/components/NcAvatar';
+import { 
+  canComment,
+  canSupport,
+  canEdit,
+  createPermissionContextForContent, 
+  ContentType 
+} from '../../utils/permissions.ts'
 
 import {
   InquiryTypesUI,
@@ -20,11 +27,33 @@ import { useInquiryStore, Inquiry } from '../../stores/inquiry';
 import { usePreferencesStore } from '../../stores/preferences.ts';
 import { useSessionStore } from '../../stores/session.ts';
 
+
+const { inquiry, noLink = false, gridView = false } = defineProps<Props>();
+
+const inquiryStore = useInquiryStore();
+const preferencesStore = usePreferencesStore();
+const sessionStore = useSessionStore();
+
 interface Props {
   inquiry: Inquiry;
   noLink?: boolean;
   gridView?: boolean;
 }
+
+const context = computed(() => 
+  createPermissionContextForContent(
+    ContentType.Inquiry,
+    inquiry.owner.id,
+    inquiry.configuration.access === 'public',
+    inquiry.status.isLocked,
+    inquiry.status.isExpired,
+    inquiry.status.deletionDate > 0,
+    inquiry.status.isArchived,
+    inquiry.inquiryGroups.length > 0,
+    inquiry.inquiryGroups,
+    inquiry.type
+    )
+ )
 
 function htmlToFirstLine(html) {
   const tempDiv = document.createElement('div');
@@ -39,11 +68,6 @@ function htmlToFirstLine(html) {
   return firstLine;
 }
 
-const { inquiry, noLink = false, gridView = false } = defineProps<Props>();
-
-const inquiryStore = useInquiryStore();
-const preferencesStore = usePreferencesStore();
-const sessionStore = useSessionStore();
 
 const closeToClosing = computed(
   () =>
@@ -120,11 +144,9 @@ const moderationStatusIcon = computed(() => {
   );
 
   if (!statusItem) {
-    console.warn("Status not found for type:", inquiry.type, "and status:", inquiry.moderationStatus);
     return  StatusIcons["Draft"];
   }
 
-  console.log("INTO MODERATION STATUS ICON :", statusItem.icon);
 
   return StatusIcons[statusItem.icon] || StatusIcons["Draft"];
 });
@@ -259,7 +281,7 @@ const moderationStatusInfo = computed(() => {
         </div>
 
         <div
-          v-if="inquiry.type !== 'official'"
+          v-if="canComment(context)"
           class="badge-bubble"
           :title="
             t('agora', '{count} comments', {
@@ -272,7 +294,7 @@ const moderationStatusInfo = computed(() => {
         </div>
 
         <div
-          v-if="inquiry.type !== 'official'"
+          v-if="canSupport(context)"
           class="badge-bubble"
           :title="
             t('agora', '{count} supports', {
@@ -515,7 +537,7 @@ const moderationStatusInfo = computed(() => {
           </div>
 
           <div
-            v-if="inquiry.type !== 'official'"
+            v-if="canComment(context)"
             class="metadata-item"
             :title="
               t('agora', '{count} comments', {
@@ -528,7 +550,7 @@ const moderationStatusInfo = computed(() => {
           </div>
 
           <div
-            v-if="inquiry.type !== 'official'"
+            v-if="canSupport(context)"
             class="metadata-item"
             :title="
               t('agora', '{count} supports', {
