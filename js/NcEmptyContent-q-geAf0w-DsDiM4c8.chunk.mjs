@@ -10,7 +10,7 @@
     console.error("vite-plugin-css-injected-by-js", e);
   }
 })();
-const KR = "agora", YR = "1.0.0rc3", po = globalThis || void 0 || self;
+const KR = "agora", YR = "1.0.0rc4", po = globalThis || void 0 || self;
 function yl(e4) {
   const t = /* @__PURE__ */ Object.create(null);
   for (const n of e4.split(",")) t[n] = 1;
@@ -13020,4 +13020,4 @@ export {
   Pt as y,
   qe as z
 };
-//# sourceMappingURL=NcEmptyContent-q-geAf0w-BTrjHyYY.chunk.mjs.map
+//# sourceMappingURL=NcEmptyContent-q-geAf0w-DsDiM4c8.chunk.mjs.map

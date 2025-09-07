@@ -1,17 +1,13 @@
-
 <!--
   - SPDX-FileCopyrightText: 2022 Nextcloud contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
 <script setup lang="ts">
-import { t } from '@nextcloud/l10n';
 import { IconProps } from './types';
 
 const {
-  title = t('agora', 'Agora'),
   fillColor = 'currentColor',
-  size = 24,
 } = defineProps<IconProps>();
 </script>
 

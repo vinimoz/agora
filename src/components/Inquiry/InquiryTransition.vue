@@ -6,7 +6,7 @@
 import { t } from '@nextcloud/l10n';
 import { ref, computed, onMounted } from 'vue';
 import {  showError } from '@nextcloud/dialogs';
-import { useRouter, useRoute } from 'vue-router';
+import { useRouter } from 'vue-router';
 import { Inquiry, useInquiryStore } from '../../stores/inquiry.ts';
 import InquiryItem from './InquiryItem.vue';
 import {
@@ -15,7 +15,6 @@ import {
 import NcButton from '@nextcloud/vue/components/NcButton';
 import HomeIcon from 'vue-material-design-icons/Home.vue';
 import { useCommentsStore } from '../../stores/comments';
-import { useSupportsStore } from '../../stores/supports';
 import { usePreferencesStore } from '../../stores/preferences.ts';
 
 const props = defineProps({
@@ -39,10 +38,8 @@ const inquiryParent = ref({
 });
 
 const router = useRouter();
-const route = useRoute();
 const inquiryStore = useInquiryStore();
 const commentsStore = useCommentsStore();
-const supportsStore = useSupportsStore();
 const preferencesStore = usePreferencesStore();
 
 const isLoadedLocal = ref(false);
@@ -87,7 +84,7 @@ onMounted(async () => {
       inquiryParent.value.configuration = inquiryStore.configuration;
       inquiryParent.value.currentUserStatus = inquiryStore.currentUserStatus;
       inquiryParent.value.commentCount = commentsStore.comments.length;
-      inquiryParent.value.supportCount = supportsStore.supports.length;
+      inquiryParent.value.supportCount = inquiryStore.status.countSupports;
       inquiryParent.value.inquiryGroups = inquiryStore.inquiryGroups;
 
       isLoadedLocal.value = true;

@@ -136,7 +136,6 @@ onMounted(async () => {
         </NcSettingsSection>
         <NcSettingsSection v-bind="sections.otherSettings">
           <AdminActivities />
-          <AdminCombo />
           <AdminShowMailAddresses />
         </NcSettingsSection>
 

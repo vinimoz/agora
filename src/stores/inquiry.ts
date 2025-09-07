@@ -31,20 +31,7 @@ import { useSubscriptionStore } from './subscription.ts';
 import { useSharesStore } from './shares.ts';
 import { useCommentsStore } from './comments.ts';
 import { useAttachmentsStore } from './attachments.ts';
-import { useSupportsStore } from './supports.ts';
 import { AxiosError } from '@nextcloud/axios';
-import { 
-  createPermissionContextForContent, 
-  ContentType,
-  canEdit,
-  canDelete,
-  canSupport,
-  canComment,
-  canViewToggle,
-  canArchive,
-  canTransfer,
-  canModerate
-} from '../utils/permissions.ts'
 
 export type AccessType = 'private' | 'open'|'public';
 export type ShowResults = 'always' | 'closed' | 'never';
@@ -112,6 +99,7 @@ export type InquiryPermissions = {
 export type CurrentUserStatus = {
   groupInvitations: string[];
   isInvolved: boolean;
+  hasSupported: boolean;
   isLocked: boolean;
   isLoggedIn: boolean;
   isOwner: boolean;
@@ -184,11 +172,14 @@ export const useInquiryStore = defineStore('inquiry', {
       relevantThreshold: 0,
       deletionDate: 0,
       archivedDate: 0,
-      countParticipants: 0
+      countParticipants: 0,
+      countComments: 0,
+      countSupports: 0
     },
     currentUserStatus: {
       groupInvitations: [],
       isInvolved: false,
+      hasSupported: false,
       isLocked: false,
       isLoggedIn: false,
       isOwner: false,
@@ -232,17 +223,6 @@ export const useInquiryStore = defineStore('inquiry', {
   }),
 
   getters: {
-    isSupportedByCurrentUser(state) {
-      const sessionStore = useSessionStore();
-      const supportsStore = useSupportsStore();
-
-      if (!sessionStore.currentUser || !supportsStore.supports) return false;
-
-      return supportsStore.supports.some(
-        (e) =>
-          e.userId === sessionStore.currentUser.id && e.inquiryId === state.id
-      );
-    },
 
     viewMode(state): ViewMode {
       const preferencesStore = usePreferencesStore();
@@ -329,29 +309,6 @@ export const useInquiryStore = defineStore('inquiry', {
       this.$reset();
     },
 
-    toggleSupport() {
-	    const sessionStore = useSessionStore();
-	    const supportsStore = useSupportsStore();
-	    const currentUserId = sessionStore.currentUser?.id;
-	    const inquiryId = this.id;
-
-	    if (!currentUserId) return;
-
-	    const idx = supportsStore.supports.findIndex(
-		    (e) => e.userId === currentUserId && e.inquiryId === inquiryId
-	    );
-
-	    if (idx !== -1) {
-		    supportsStore.supports.splice(idx, 1);
-		    return supportsStore.remove();
-	    }
-	    supportsStore.supports.push({
-		    userId: currentUserId,
-		    inquiryId
-	    });
-	    return supportsStore.add();
-    },
-
     setSuggestionExpiration(payload: { expire: number }): void {
 	    this.configuration.suggestionsExpire = moment(payload.expire).unix();
 	    this.write();
@@ -375,7 +332,7 @@ export const useInquiryStore = defineStore('inquiry', {
 	    sharesStore.$reset();
 	    commentsStore.$reset();
 	    supportsStore.$reset();
-	    // œ	subscriptionStore.$reset()
+	    // subscriptionStore.$reset()
     },
 
     async load(inquiryId: number | null = null): Promise<void> {
@@ -384,7 +341,6 @@ export const useInquiryStore = defineStore('inquiry', {
 	    const optionsStore = useOptionsStore();
 	    const sharesStore = useSharesStore();
 	    const commentsStore = useCommentsStore();
-	    const supportsStore = useSupportsStore();
 	    const attachmentsStore = useAttachmentsStore();
 	    const subscriptionStore = useSubscriptionStore();
 
@@ -409,7 +365,6 @@ export const useInquiryStore = defineStore('inquiry', {
 		    optionsStore.options = response.data.options;
 		    sharesStore.shares = response.data.shares;
 		    commentsStore.comments = response.data.comments;
-		    supportsStore.supports = response.data.supports;
 		    subscriptionStore.subscribed = response.data.subscribed;
 		    attachmentsStore.attachments = response.data.attachments;
 		    this.childs = response.data.childs;

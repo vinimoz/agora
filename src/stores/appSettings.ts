@@ -16,7 +16,6 @@ import type {
 } from '../utils/permissions.ts';
 
 import {
-  DefaultInquiryTypeRights,
   DefaultModeratorRights,
   DefaultOfficialRights
 } from '../utils/permissions.ts';
@@ -144,7 +143,7 @@ export const useAppSettingsStore = defineStore('appSettings', {
     locationTab: [],
     moderationStatusTab: [],
     groups: [],
-    inquiryTypeRights: {} as Record<string, InquiryTypeRights>,
+    inquiryTypeRights: {} as Record<string,InquiryTypeRights>,
     moderatorRights: { ...DefaultModeratorRights } as ModeratorRights,
     officialRights: { ...DefaultOfficialRights } as OfficialRights,
     status: {

@@ -8,12 +8,12 @@ import { useRouter } from 'vue-router';
 import { subscribe, unsubscribe } from '@nextcloud/event-bus';
 import { showSuccess, showError } from '@nextcloud/dialogs';
 import { useInquiryStore } from '../../stores/inquiry';
+import { useInquiriesStore } from '../../stores/inquiries';
 import { useSupportsStore } from '../../stores/supports';
 import { useCommentsStore } from '../../stores/comments';
 import { useSessionStore } from '../../stores/session';
 import { BaseEntry, Event } from '../../Types/index.ts';
 import { t } from '@nextcloud/l10n';
-import { useInquiryPermissions } from '../../composables/useInquiryPermissions.ts'
 import {
   InquiryTypesUI,
   InquiryTypeValues,
@@ -23,7 +23,6 @@ import { DateTime } from 'luxon';
 import NcSelect from '@nextcloud/vue/components/NcSelect';
 import NcButton from '@nextcloud/vue/components/NcButton';
 import InquiryItemActions from './InquiryItemActions.vue';
-import NcActions from '@nextcloud/vue/components/NcActions';
 import { InputDiv } from '../Base/index.ts';
 import { ThumbIcon } from '../AppIcons';
 import InquiryEditor from '../Editor/InquiryEditor.vue';
@@ -31,10 +30,8 @@ import { NcTextArea, NcRichText } from '@nextcloud/vue';
 import { InquiryGeneralIcons } from '../../utils/icons.ts';
 import { 
   canEdit,
-  canDelete,
   canSupport,
   canComment,
-  canViewToggle,
   createPermissionContextForContent, 
   ContentType 
 } from '../../utils/permissions.ts'
@@ -44,6 +41,7 @@ const sessionStore = useSessionStore();
 const commentsStore = useCommentsStore();
 const supportsStore = useSupportsStore();
 const inquiryStore = useInquiryStore();
+const inquiriesStore = useInquiriesStore();
 const router = useRouter();
 
 const context = computed(() => {
@@ -68,15 +66,9 @@ const selectedLocation = ref(inquiryStore.locationId || 0);
 const isSaving = ref(false);
 const isLoaded = ref(false);
 
-const isReadonlyDescription = ref(true) 
+const hasSupported= computed (() =>  inquiryStore.currentUserStatus.hasSupported) 
 
-const hasSupported = computed(() => {
-  const result = supportsStore.hasSupport(
-    inquiryStore.id,
-    sessionStore.currentUser.id
-  );
-  return result;
-});
+const isReadonlyDescription = ref(true) 
 
 // All regarding Location and category
 // To display in case of read only category
@@ -197,16 +189,8 @@ const isReadonly = computed(() => {
   
   if (!user) return true;
   const ronly=!canEdit(context.value) 
-//  const ronly = !(inquiryStore.currentUserStatus.isOwner ||
-  //  		user.isAdmin ||
-    //		(user.isOfficial && inquiryStore.type === 'official') ||
-    //		(user.isModerator && inquiryStore.type !== 'official'));
   
-  if (inquiryStore.type === 'debate') {
-	   isReadonlyDescription.value=false
-  } else isReadonlyDescription.value=ronly
-
-return ronly;
+  return ronly;
 });
 
 watch(
@@ -224,26 +208,23 @@ watch(
 
 // Toggle thumb
 const onToggleSupport = async () => {
-  supportsStore.toggleSupport(inquiryStore.id, sessionStore.currentUser.id);
-  if (!hasSupported.value)
-    showSuccess(t('agora', 'Inquiry supported, thanks for her !'), {
-      timeout: 2000
-    });
-  else showSuccess(t('agora', 'Inquiry support removed !'), { timeout: 2000 });
+  const supported=supportsStore.toggleSupport(inquiryStore.id, sessionStore.currentUser.id,inquiryStore,inquiriesStore);
+  if (inquiryStore.currentUserStatus.hasSupported) {
+    	showSuccess(t('agora', 'Thank for your support !'), { timeout: 2000});
+
+  } else  {
+  	   showSuccess(t('agora', 'Inquiry support removed !'), { timeout: 2000 });
+	   }
 };
 
 onMounted(() => {
-  ///console.log(" CAN  COMMENT ", canComment(context.value))
-  ///console.log(" CAN  SUPPORT ", canSupport(context.value))
   subscribe(Event.UpdateComments, () => commentsStore.load());
-  subscribe(Event.UpdateSupports, () => supportsStore.load());
   isLoaded.value=true
 });
 
 onUnmounted(() => {
   isLoaded.value=false
   unsubscribe(Event.UpdateComments, () => commentsStore.load());
-  unsubscribe(Event.UpdateSupports, () => supportsStore.load());
 });
 
 /// Toggle the update of the inquiry
@@ -313,24 +294,29 @@ const showLocationAsLabel = computed(() => {
 const createChildInquiry = async (type: InquiryTypeValues): Promise<void> => {
   if (isSaving.value) return;
 
+  titleLabel=``;
   const confirmed = await confirmAction(
     `Do you really want to reply to this inquiry with a ${type} ?`
   );
   if (!confirmed) return;
 
   isSaving.value = true;
+  
 
+  if (inquiryStore.type==='official') titleLabel=`${t('agora', 'Official response for :')}: ${inquiryStore.title.trim()}`
+  else titleLabel=`${t('agora', 'Response for :')}: ${inquiryStore.title.trim()}`
+ 
   try {
     const inquiry = await inquiryStore.add({
       type,
-      title: `${t('agora', 'Response')}: ${inquiryStore.title.trim()}`,
+      title: titleLabel,
       categoryId: inquiryStore.categoryId,
       locationId: inquiryStore.locationId,
       parentId: inquiryStore.id
     });
 
     if (inquiry) {
-		showSuccess(t('agora', "Inquiry {title} added", { title: inquiry.title }));
+      showSuccess(t('agora', 'Inquiry {title} added', { title: inquiry.title }));
       router.push({
         name: 'inquiry',
         params: { id: inquiry.id }
@@ -476,15 +462,15 @@ const showSaveButton = computed(() => !isReadonlyDescription.value);
 
         <div
           v-if="sessionStore.currentUser.isOwner ||
-                sessionStore.currentUser.isAdmin ||
-                sessionStore.currentUser.isModerator ||
-                (sessionStore.currentUser.isOfficial &&
-                inquiryStore.type === 'official')"
-	  :style="{ display: 'inline-block', position: 'relative' }">
-         <InquiryItemActions
-  			:key="`actions-${inquiryStore.id}`"
-  			:inquiry="inquiryStore"
-	 /> 
+            sessionStore.currentUser.isAdmin ||
+            sessionStore.currentUser.isModerator ||
+            (sessionStore.currentUser.isOfficial &&
+              inquiryStore.type === 'official')"
+          :style="{ display: 'inline-block', position: 'relative' }">
+          <InquiryItemActions
+            :key="`actions-${inquiryStore.id}`"
+            :inquiry="inquiryStore"
+          /> 
         
         </div>
       </div>
@@ -518,10 +504,10 @@ const showSaveButton = computed(() => !isReadonlyDescription.value);
               <component :is="InquiryGeneralIcons.comment" :size="24" />
               <span>{{ commentsStore.comments.length || 0 }}</span>
             </div>
-	  </div>
+          </div>
           <div v-if="canSupport(context)" class="counter-item" @click="onToggleSupport">
-              <ThumbIcon :supported="hasSupported" />
-              <span>{{ supportsStore.supports.length || 0 }}</span>
+            <ThumbIcon :supported="hasSupported" />
+            <span>{{ inquiryStore.status.countSupports || 0 }}</span>
           </div>
         </div>
 

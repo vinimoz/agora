@@ -4,8 +4,8 @@
  */
 
 // import { useVotesStore, Vote } from '../../stores/votes'
-import { Inquiry, useInquiryStore } from '../../stores/inquiry';
-import { Option, useOptionsStore } from '../../stores/options';
+import { Inquiry, useInquiryStore } from '../../stores/inquiry.ts';
+import { Option, useOptionsStore } from '../../stores/options.ts';
 
 const StoreHelper = {
   updateStores(data: { inquiry?: Inquiry; options?: Option[] }) {

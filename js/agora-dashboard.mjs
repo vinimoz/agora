@@ -10,10 +10,10 @@
     console.error("vite-plugin-css-injected-by-js", e);
   }
 })();
-const O = "agora", W = "1.0.0rc3";
-import { d as m, t as o, b as h, c as g, o as n, f as d, w as c, a as s, u as e, C as u, e as l, s as f, z as _, D as y, _ as b, h as v, p as q } from "./NcEmptyContent-q-geAf0w-BTrjHyYY.chunk.mjs";
-import { a as D, I as C, N as w, L as x, s as I } from "./NcDashboardWidget-Wkx_9xKh-BCkJxwfa.chunk.mjs";
-import { _ as L } from "./AgoraAppIcon.vue_vue_type_script_setup_true_lang-DfAM2TLV.chunk.mjs";
+const O = "agora", W = "1.0.0rc4";
+import { d as m, t as o, b as h, c as g, o as n, f as d, w as c, a as s, u as e, C as u, e as l, s as f, z as _, D as y, _ as b, h as v, p as q } from "./NcEmptyContent-q-geAf0w-DsDiM4c8.chunk.mjs";
+import { a as D, I as C, N as w, L as x, s as I } from "./NcDashboardWidget-Wkx_9xKh-DfVZeYPI.chunk.mjs";
+import { _ as L } from "./AgoraAppIcon.vue_vue_type_script_setup_true_lang-DNUd1xzt.chunk.mjs";
 
 const N = ["href"], M = { class: "inquiry-item__item" }, A = { class: "type-icon" }, B = { class: "item__title" }, E = { class: "item__title__title" }, k = { class: "item__title__description" }, S = m({ __name: "Dashboard", setup(r) {
   const a = { emptyContentMessage: o("agora", "No inquiries found for this category"), showMoreText: o("agora", "Relevant inquiries") }, i = D();

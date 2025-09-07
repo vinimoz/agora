@@ -30,6 +30,7 @@ import EmailIcon from 'vue-material-design-icons/Email.vue';
 
 import { BadgeDiv } from '../Base/index.ts';
 import { useSessionStore } from '../../stores/session.ts';
+import { useInquiryStore } from '../../stores/inquiry.ts';
 import { useSubscriptionStore } from '../../stores/subscription.ts';
 import { useOptionsStore } from '../../stores/options.ts';
 

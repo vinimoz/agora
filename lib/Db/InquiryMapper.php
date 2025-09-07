@@ -65,14 +65,63 @@ class InquiryMapper extends QBMapper
         return $this->findEntity($qb);
     }
 
+
+    public function findChildrenWithCounts(int $inquiryId)
+    {
+	    try {
+		    // Récupérer les données de base des enfants
+		    $childInquiriesData = $this->inquiryMapper->getChildInquiriesBasicData($inquiryId);
+
+		    $children = [];
+		    foreach ($childInquiriesData as $childData) {
+			    // Utiliser la méthode get() existante pour chaque enfant (mais seulement pour les données complexes)
+			    $childInquiry = $this->get($childData['id'], true); // lightweight = true
+
+			    // Construire le résultat en combinant les données simples et complexes
+			    $children[] = [
+				    'id' => (int)$childData['id'],
+				    'title' => (string)$childData['title'],
+				    'type' => (string)$childData['type'],
+				    'moderationStatus' => (string)$childData['moderation_status'],
+				    'description' => (string)$childData['description'],
+				    'configuration' => [
+					    'access' => (string)$childData['access'],
+				    ],
+				    'owner' => [
+					    'id' => (string)$childData['owner'],
+					    'displayName' => (string)$childData['owner'],
+				    ],
+				    'status' => $childInquiry->getStatusArray(),
+				    'inquiryGroups' => $childInquiry->getInquiryGroups(),
+				    'currentUserStatus' => $childInquiry->getCurrentUserStatus()
+			    ];
+		    }
+
+		    return $children;
+	    } catch (DoesNotExistException $e) {
+		    throw new NotFoundException('Inquiry children not found for inquiry parent');
+	    }
+    }
     /**
      * Get all child inquiry IDs for a given parent inquiry.
      *
      * @param  int $parentId
      * @return int[]|  Returns an array of IDs if children exist, or empty array if none.
-     */
     public function findChildrenWithCounts(int $parentId, bool $getDeleted = false, bool $withRoles = false): array
     {
+	    $tempInquiry = new Inquiry(
+		    $this->userSession,
+		    $this->groupManager,
+		    $this->config,
+		    $this->lockMapper,
+		    $this->supportMapper,
+		    $this->commentMapper,
+		    $this->inquiryGroupMapper,
+		    $this->groupShareMapper
+	    );
+
+	    $currentUserStatus = $tempInquiry->getCurrentUserStatus();
+
 	    $qb = $this->db->getQueryBuilder();
 
 	    $qb->select([
@@ -107,7 +156,6 @@ class InquiryMapper extends QBMapper
 	    $result = $qb->execute();
 	    $inquiries = $result->fetchAll();
 	    $result->closeCursor();
-
 	    // Compter les participants pour chaque enfant
 	    foreach ($inquiries as &$inquiry) {
 		    $participantsQb = $this->db->getQueryBuilder();
@@ -151,11 +199,13 @@ class InquiryMapper extends QBMapper
 					    'created' => (int)$row['created'],
 					    'lastInteraction' => (int)$row['last_interaction'],
 				    ],
-				    'inquiryGroups' => $row['inquiryGroups'] ?? [], // Ajout des groupes dans la réponse
+				    'inquiryGroups' => $row['inquiryGroups'] ?? [], 
+				    'currentUserStatus' => $currentUserStatus
 			    ];
 		    }, $inquiries
 	    );
     }
+     */
 
 
     public function getChildInquiryIds(int $parentId)

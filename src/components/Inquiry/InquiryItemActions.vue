@@ -31,7 +31,6 @@ import {
   canDelete,
   canEdit,
   canTransfer,
-  canViewToggle,
   createPermissionContextForContent, 
   ContentType 
 } from '../../utils/permissions.ts'
@@ -43,10 +42,6 @@ const route = useRoute();
 const inquiriesStore = useInquiriesStore();
 const inquiryGroupsStore = useInquiryGroupsStore();
 const sessionStore = useSessionStore();
-
-const adminAccess = computed(
-  () => !inquiry.permissions.view && sessionStore.currentUser.isAdmin
-);
 
 const showDeleteDialog = ref(false);
 const showTransferDialog = ref(false);
@@ -131,17 +126,6 @@ async function toggleArchive() {
     await inquiriesStore.toggleArchive({ inquiryId: inquiry.id });
   } catch {
     showError(t('agora', 'Error archiving/restoring inquiry.'));
-  }
-}
-async function takeOverInquiry(): Promise<void> {
-  if (!sessionStore.currentUser.isAdmin) {
-    return;
-  }
-
-  try {
-    await inquiriesStore.takeOver({ inquiryId: inquiry.id });
-  } catch {
-    showError(t('agora', 'Error taking over inquiry.'));
   }
 }
 

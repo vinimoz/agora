@@ -4,7 +4,7 @@
 -->
 
 <script setup lang="ts">
-import { computed,  onMounted, onUnmounted, ref, watch, nextTick} from 'vue'
+import { computed,  onUnmounted, ref, watch, nextTick} from 'vue'
 import { emit, unsubscribe } from '@nextcloud/event-bus';
 import { n, t } from '@nextcloud/l10n';
 import { useRoute, useRouter, onBeforeRouteUpdate } from 'vue-router';
@@ -70,8 +70,8 @@ async function routeChild(childId) {
 
 async function loadInquiry(id: string) {
   try {
-   const response = await inquiryStore.load(id);
-   inquiryStore.childs = response.data.childs;
+    const response = await inquiryStore.load(id);
+    inquiryStore.childs = response.data.childs;
     if (inquiryStore.childs.length === 0) {
       inquiryStore.status.forceEditMode = true;
       editMode.value = true;
@@ -91,8 +91,8 @@ async function loadInquiry(id: string) {
 
 watch(
   () => route.params.id,
-  async (newId,oldId) => {
-  isAppLoaded.value=false
+  async (newId) => {
+    isAppLoaded.value=false
     await loadInquiry(newId);
   },
   { immediate: true }
@@ -151,7 +151,7 @@ const collapsibleProps = computed<CollapsibleProps>(() => ({
 </script>
 
 <template>
-  <NcAppContent :key="forceRenderKey" v-if="isAppLoaded" class="inquiry-list">
+  <NcAppContent v-if="isAppLoaded" :key="forceRenderKey"  class="inquiry-list">
     <HeaderBar v-if="editMode">
       <template #icon>
         <div class="type-icon">

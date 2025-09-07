@@ -1,4 +1,8 @@
-// composables/useInquiryPermissions.ts
+<!--
+  - SPDX-FileCopyrightText: 2022 Nextcloud contributors
+  - SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+
 import { computed } from 'vue'
 import { 
   createPermissionContextForContent, 

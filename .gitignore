@@ -18,7 +18,6 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
-package-lock.json
 yarn.lock
 pnpm-lock.yaml
 
@@ -31,7 +30,6 @@ pnpm-lock.yaml
 
 # === Composer / PHP ===
 /vendor/
-/composer.lock
 
 # PHPUnit / Tests
 .phpunit.result.cache

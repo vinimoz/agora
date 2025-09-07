@@ -6,7 +6,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 import { t } from '@nextcloud/l10n';
-
+import { ThumbIcon } from '../AppIcons';
 import UserItem from '../User/UserItem.vue';
 
 import { Share } from '../../stores/shares.ts';
@@ -52,7 +52,8 @@ onMounted(() => {
     >
       <template #status>
         <div v-if="share.supported">
-          <ThumbUpIcon
+          <ThumbIcon
+            :supported=true
             class="support-status supported"
             :name="t('agora', 'Has been supported')"
           />
@@ -63,7 +64,8 @@ onMounted(() => {
           <div class="support-status empty" />
         </div>
         <div v-else>
-          <UnsupportedIcon
+          <ThumbIcon
+	    :supported=false
             class="support-status unsupported"
             :name="t('agora', 'Has not supported')"
           />

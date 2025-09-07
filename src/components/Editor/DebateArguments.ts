@@ -1,3 +1,4 @@
+
 import { Node, mergeAttributes } from '@tiptap/core'
 
 export interface DebateArgumentsOptions {
@@ -37,18 +38,18 @@ export const DebateArguments = Node.create<DebateArgumentsOptions>({
     return {
       insertDebateArguments:
         () =>
-        ({ commands }) => {
-          return commands.insertContent({
-            type: this.name,
-            attrs: {},
-            content: [
-              {
-                type: 'paragraph',
-                content: [{ type: 'text', text: 'Débat : insérer vos arguments ici' }],
-              },
-            ],
-          })
-        },
+          ({ commands }) => {
+            return commands.insertContent({
+              type: this.name,
+              attrs: {},
+              content: [
+                {
+                  type: 'paragraph',
+                  content: [{ type: 'text', text: 'Débat : insérer vos arguments ici' }],
+                },
+              ],
+            })
+          },
     }
   },
 })

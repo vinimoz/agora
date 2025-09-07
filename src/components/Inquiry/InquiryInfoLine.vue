@@ -32,12 +32,12 @@ const currentStatus = computed(
     availableStatuses.value.find(
       (status) => status.statusKey === inquiryStore.moderationStatus
     ) || [{
-    statusKey: 'draft',
-    label: 'Draft',
-    icon: 'Draft',
-    inquiryType: inquiryStore.type,
-    order: 0
-  }]
+      statusKey: 'draft',
+      label: 'Draft',
+      icon: 'Draft',
+      inquiryType: inquiryStore.type,
+      order: 0
+    }]
 );
 
 const selectedStatusKey = ref(currentStatus.value?.statusKey);

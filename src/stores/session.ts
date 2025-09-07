@@ -22,7 +22,6 @@ import { useSubscriptionStore } from './subscription.ts';
 import { AxiosError } from '@nextcloud/axios';
 import { t } from '@nextcloud/l10n';
 import { useInquiryGroupsStore } from './inquiryGroups.ts';
-import type { InquiryTypeRights } from '../utils/permissions.ts';
 
 interface RouteParams {
   id: number;
@@ -85,15 +84,6 @@ export const useSessionStore = defineStore('session', {
       seeMailAddresses: false,
       unrestrictedOwner: false
     },
-    sessionSettings: {
-      manualViewProjectInquiry: '',
-      manualViewPetitionInquiry: '',
-      manualViewDebateInquiry: '',
-      manualViewProposalInquiry: '',
-      manualViewSuggestionInquiry: '',
-      manualViewOfficialInquiry: ''
-    },
-    
     appSettings: createDefault<AppSettings>(),
     route: {
       currentRoute: '',
@@ -137,61 +127,6 @@ export const useSessionStore = defineStore('session', {
         return Number(state.route.params.id);
       }
       return 0;
-    },
-
-    viewProjectInquiry(state): ViewMode {
-      const preferencesStore = usePreferencesStore();
-      if (state.sessionSettings.manualViewProjectInquiry) {
-        return state.sessionSettings.manualViewProjectInquiry;
-      }
-      if (window.innerWidth > MOBILE_BREAKPOINT) {
-        return preferencesStore.user.defaultViewProjectInquiry;
-      }
-      return 'list-view';
-    },
-
-    viewProposalInquiry(state): ViewMode {
-      const preferencesStore = usePreferencesStore();
-      if (state.sessionSettings.manualViewProposalInquiry) {
-        return state.sessionSettings.manualViewProposalInquiry;
-      }
-      if (window.innerWidth > MOBILE_BREAKPOINT) {
-        return preferencesStore.user.defaultViewProposalInquiry;
-      }
-      return 'list-view';
-    },
-
-    viewDebateInquiry(state): ViewMode {
-      const preferencesStore = usePreferencesStore();
-      if (state.sessionSettings.manualViewDebateInquiry) {
-        return state.sessionSettings.manualViewDebateInquiry;
-      }
-      if (window.innerWidth > MOBILE_BREAKPOINT) {
-        return preferencesStore.user.defaultViewDebateInquiry;
-      }
-      return 'list-view';
-    },
-
-    viewGrievanceInquiry(state): ViewMode {
-      const preferencesStore = usePreferencesStore();
-      if (state.sessionSettings.manualViewGrievanceInquiry) {
-        return state.sessionSettings.manualViewGrievanceInquiry;
-      }
-      if (window.innerWidth > MOBILE_BREAKPOINT) {
-        return preferencesStore.user.defaultViewGrievanceInquiry;
-      }
-      return 'list-view';
-    },
-
-    viewPetitionInquiry(state): ViewMode {
-      const preferencesStore = usePreferencesStore();
-      if (state.sessionSettings.manualViewPetitionInquiry) {
-        return state.sessionSettings.manualViewPetitionInquiry;
-      }
-      if (window.innerWidth > MOBILE_BREAKPOINT) {
-        return preferencesStore.user.defaultViewPetitionInquiry;
-      }
-      return 'list-view';
     },
 
     windowTitle(state): string {

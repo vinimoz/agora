@@ -4,15 +4,15 @@
 -->
 
 <script setup lang="ts">
-import {  onBeforeUnmount } from 'vue';
+import { onBeforeUnmount } from 'vue'
 
 import { ActionToggleSidebar } from '../Actions/index.ts';
-// import InquiryInformation from '../Inquiry/InquiryInformation.vue'
 import { useInquiryStore } from '../../stores/inquiry.ts';
 import { useSessionStore } from '../../stores/session.ts';
 
 const inquiryStore = useInquiryStore();
 const sessionStore = useSessionStore();
+
 
 
 onBeforeUnmount(() => {
@@ -22,21 +22,6 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="inquiry-header-buttons">
-    <!-- <UserMenu v-if="showUserMenu" />
-		<NcPopover close-on-click-outside no-focus-trap>
-			<template #trigger>
-				<NcButton
-					:title="caption"
-					:aria-label="caption"
-					:variant="'tertiary'">
-					<template #icon>
-						 <InquiryInformationIcon /> -
-					</template>
-				</NcButton>
-			</template>
-			<InquiryInformation /> 
-/NcPopover>
-		<ExportInquiry v-if="sessionStore.appPermissions.inquiryDownload" /> -->
     <ActionToggleSidebar
       v-if="
         inquiryStore.permissions.edit ||

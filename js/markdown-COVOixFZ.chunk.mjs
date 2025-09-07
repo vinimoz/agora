@@ -10,10 +10,10 @@
     console.error("vite-plugin-css-injected-by-js", e);
   }
 })();
-const be = "agora", we = "1.0.0rc3";
-import { i as O, d as b, k as w, E as M, F as N, G as k, H as F, c as S, o as p, r as T, a as h, f as P, I as R, u as v, J as V, x as B, z as q, K as z, e as _, n as j, g as H, w as C, m as E, j as J, L as K, M as W, B as Q } from "./NcEmptyContent-q-geAf0w-BTrjHyYY.chunk.mjs";
-import { b as f, c as d, L as c } from "./NcDashboardWidget-Wkx_9xKh-BCkJxwfa.chunk.mjs";
-import { N as X } from "./NcRichText-G8kzsdwx-DH9_CLsd.chunk.mjs";
+const be = "agora", we = "1.0.0rc4";
+import { i as O, d as b, k as w, E as M, F as N, G as k, H as F, c as S, o as p, r as T, a as h, f as P, I as R, u as v, J as V, x as B, z as q, K as z, e as _, n as j, g as H, w as C, m as E, j as J, L as K, M as W, B as Q } from "./NcEmptyContent-q-geAf0w-DsDiM4c8.chunk.mjs";
+import { b as f, c as d, L as c } from "./NcDashboardWidget-Wkx_9xKh-DfVZeYPI.chunk.mjs";
+import { N as X } from "./NcRichText-G8kzsdwx-DWCeYxXp.chunk.mjs";
 const Y = ["role"], Z = { key: 0, class: "notecard__heading" }, x = { class: "notecard__text" }, ee = b({ __name: "NcNoteCard", props: { heading: { default: void 0 }, showAlert: { type: Boolean }, text: { default: void 0 }, type: { default: "warning" } }, setup(e) {
   const t = e, r = w(() => t.showAlert || t.type === "error"), a = w(() => {
     switch (t.type) {
@@ -243,4 +243,4 @@ export {
   le as i,
   I as u
 };
-//# sourceMappingURL=markdown-CI5Sqtpe.chunk.mjs.map
+//# sourceMappingURL=markdown-COVOixFZ.chunk.mjs.map

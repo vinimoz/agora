@@ -15,7 +15,6 @@ use OCA\Agora\Service\OptionService;
 use OCA\Agora\Service\InquiryService;
 use OCA\Agora\Service\ShareService;
 use OCA\Agora\Service\SubscriptionService;
-use OCA\Agora\Service\SupportService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\CORS;
@@ -38,7 +37,6 @@ class InquiryApiController extends BaseApiV2Controller
         private OptionService $optionService,
         private ShareService $shareService,
         private SubscriptionService $subscriptionService,
-        private SupportService $supportService,
         private AttachmentService $attachmentService,
     ) {
         parent::__construct($appName, $request);
@@ -73,7 +71,6 @@ class InquiryApiController extends BaseApiV2Controller
             fn () => [
                 'inquiry' => $this->inquiryService->get($inquiryId),
                 'options' => $this->optionService->list($inquiryId),
-                'supports' => $this->supportService->list($inquiryId),
                 'comments' => $this->commentService->list($inquiryId),
                 'shares' => $this->shareService->list($inquiryId),
                 'subscribed' => $this->subscriptionService->get($inquiryId),

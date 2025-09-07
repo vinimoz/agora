@@ -1,5 +1,5 @@
-const ee = "agora", ae = "1.0.0rc3";
-import { i as h, d as U, m as b, j as I, k as t, l as S, R as L, q as R, e as g, o as r, w as m, r as p, s as y, v as _, f as M, a as N, c as o, x as V, u as w, N as A, y as E, z as C, A as D, _ as P } from "./NcEmptyContent-q-geAf0w-BTrjHyYY.chunk.mjs";
+const ee = "agora", ae = "1.0.0rc4";
+import { i as h, d as U, m as b, j as I, k as t, l as S, R as L, q as R, e as g, o as r, w as m, r as p, s as y, v as _, f as M, a as N, c as o, x as V, u as w, N as A, y as E, z as C, A as D, _ as P } from "./NcEmptyContent-q-geAf0w-DsDiM4c8.chunk.mjs";
 const j = {};
 function q(s, l) {
   return r(), o("div", null, [p(s.$slots, "trigger")]);
@@ -32,4 +32,4 @@ export {
   x as E,
   G as N
 };
-//# sourceMappingURL=CalendarEnd-Bj1Up2kt.chunk.mjs.map
+//# sourceMappingURL=CalendarEnd-C24PKsWQ.chunk.mjs.map

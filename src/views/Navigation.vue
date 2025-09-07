@@ -137,18 +137,17 @@ onMounted(() => {
 <template>
   <NcAppNavigation class="agora-navigation">
     <!-- New Inquiry Button -->
-    <ActionAddInquiry
-	      v-if="
-                    preferencesStore.useActionAddInquiryInNavigation
-                    && sessionStore.appPermissions.inquiryCreation
-                    "
-                    :button-mode="'navigation'" />
+    <ActionAddInquiry 
+      v-if="preferencesStore.useActionAddInquiryInNavigation
+        && sessionStore.appPermissions.inquiryCreation
+      "
+      :button-mode="'navigation'" />
 
     <div class="agora-navigation__header">
       <NcAppNavigationNew
         v-if="preferencesStore.useNcAppNavigationNew && sessionStore.appPermissions.inquiryCreation"
         :text="t('agora', 'New inquiry')"
-	button-class="icon-add"
+        button-class="icon-add"
         class="agora-navigation__new-btn"
         @click="createDlgToggle = !createDlgToggle"
       >
@@ -222,7 +221,7 @@ onMounted(() => {
             />
             <NcAppNavigationItem
               v-if="inquiryGroup.inquiryIds.length  >
-                  inquiriesStore.meta.maxInquiriesInNavigation
+                inquiriesStore.meta.maxInquiriesInNavigation
               "
               class="force-not-active"
               :to="{
@@ -294,7 +293,7 @@ onMounted(() => {
             />
             <NcAppNavigationItem
               v-if="inquiriesStore.navigationList(inquiryCategory.id) >
-                  inquiriesStore.meta.maxInquiriesInNavigation
+                inquiriesStore.meta.maxInquiriesInNavigation
               "
               class="force-not-active"
               :to="{

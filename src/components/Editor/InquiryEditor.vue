@@ -359,7 +359,7 @@ const generateWithAI = async () => {
 };
 
 // Mock AI function - replace with real API call
-const mockAICall = async (prompt) =>
+const mockAICall = async () =>
   new Promise((resolve) => {
     setTimeout(() => {
       resolve(`

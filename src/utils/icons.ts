@@ -8,7 +8,6 @@ import { Icon } from '@iconify/vue';
 import type { Component } from 'vue';
 
 // -------------------------------
-// Import local des icônes @iconify-icons/mdi
 // -------------------------------
 import LightbulbOn from '@iconify-icons/mdi/lightbulb-on';
 import Forum from '@iconify-icons/mdi/forum';
@@ -58,6 +57,8 @@ import AccountCheck from '@iconify-icons/mdi/account-check';
 import ShieldCrown from '@iconify-icons/mdi/shield-crown';
 import Key from '@iconify-icons/mdi/key';
 import Earth from '@iconify-icons/mdi/earth';
+import Home from '@iconify-icons/mdi/home';
+
 
 // Navigation Icons (Iconify MDI)
 import ShieldCrown from '@iconify-icons/mdi/shield-crown';
@@ -77,6 +78,45 @@ import Restore from '@iconify-icons/mdi/recycle';
 import Transfer from '@iconify-icons/mdi/account-switch-outline';
 import FileDocumentEdit from '@iconify-icons/mdi/file-document-edit';
 
+import Delete from '@iconify-icons/mdi/delete';
+import Recycle from '@iconify-icons/mdi/recycle';
+import CheckboxBlankOutline from '@iconify-icons/mdi/checkbox-blank-outline';
+import CheckboxMarkedOutline from '@iconify-icons/mdi/checkbox-marked-outline';
+import DotsVertical from '@iconify-icons/mdi/dots-vertical';
+
+// -------------------------------
+// User related icons
+// -------------------------------
+import AccountEdit from '@iconify-icons/mdi/account-edit';
+import Logout from '@iconify-icons/mdi/logout';
+import Undo from '@iconify-icons/mdi/undo';
+import EmailEditOutline from '@iconify-icons/mdi/email-edit-outline';
+import ViewListOutline from '@iconify-icons/mdi/view-list-outline';
+import Table from '@iconify-icons/mdi/table';
+import FormatListBulletedSquare from '@iconify-icons/mdi/format-list-bulleted-square';
+import FormatListNumbered from '@iconify-icons/mdi/format-list-numbered';
+import SortClockAscendingOutline from '@iconify-icons/mdi/sort-clock-ascending-outline';
+
+// -------------------------------
+// Information / Config related icons
+// -------------------------------
+import InformationVariant from '@iconify-icons/mdi/information-variant';
+import LightningBolt from '@iconify-icons/mdi/lightning-bolt';
+import FileDocument from '@iconify-icons/mdi/file-document';
+import ClipboardTextMultiple from '@iconify-icons/mdi/clipboard-text-multiple';
+import CalendarMultiple from '@iconify-icons/mdi/calendar-multiple';
+import CalendarBlank from '@iconify-icons/mdi/calendar-blank';
+import CalendarPlusOutline from '@iconify-icons/mdi/clock-plus-outline';
+import CalendarEndIcon from '@iconify-icons/mdi/calendar-end';
+
+// -------------------------------
+// Share related icons
+// -------------------------------
+import QrCode from '@iconify-icons/mdi/qrcode';
+import ClipboardArrowLeftOutline from '@iconify-icons/mdi/clipboard-arrow-left-outline';
+import EmailArrowRight from '@iconify-icons/mdi/email-arrow-right';
+import EmailAlert from '@iconify-icons/mdi/email-alert';
+import EmailMultipleOutline from '@iconify-icons/mdi/email-multiple-outline';
 
 import Comment from '@iconify-icons/mdi/comment';
 import ChatOutline from '@iconify-icons/mdi/chat-outline';
@@ -110,6 +150,7 @@ export const InquiryGeneralIcons: Record<string, Component> = {
   plus: makeIconComponent(Plus, '#4CAF50'),
   restore: makeIconComponent(Restore, '#009688'),
   transfer: makeIconComponent(Transfer, '#3F51B5'),
+  home: makeIconComponent(Home, '#3F51B5'),
 
   comment: makeIconComponent(Comment, '#2196F3'),
   talk: makeIconComponent(ChatOutline, '#00BCD4'),
@@ -123,6 +164,55 @@ export const InquiryGeneralIcons: Record<string, Component> = {
   creation: makeIconComponent(ClockOutline, '#FFC107'),
   suggestions: makeIconComponent(Offer, '#4CAF50'),
   expiration: makeIconComponent(CalendarEnd, '#E91E63')
+};
+
+export const ShareIcons: Record<string, Component> = {
+  share: makeIconComponent(ShareIcon, '#03A9F4'),
+  qrCode: makeIconComponent(QrCode, '#673AB7'),
+  copyLink: makeIconComponent(ClipboardArrowLeftOutline, '#607D8B'),
+  sendByEmail: makeIconComponent(EmailArrowRight, '#2196F3'),
+  emailAlert: makeIconComponent(EmailAlert, '#F44336'),
+  bulkMail: makeIconComponent(EmailMultipleOutline, '#FF9800'),
+  lock: makeIconComponent(Lock, '#795548'),
+  unlock: makeIconComponent(LockOpen, '#4CAF50'),
+  delete: makeIconComponent(Delete, '#F44336'),
+  restore: makeIconComponent(Restore, '#009688'),
+  adminGrant: makeIconComponent(ShieldCrown, '#FF9800'),
+  adminRevoke: makeIconComponent(ShieldCrown, '#9E9E9E'),
+};
+
+export const InformationIcons: Record<string, Component> = {
+  info: makeIconComponent(InformationVariant, '#2196F3'),
+  activity: makeIconComponent(LightningBolt, '#FF9800'),
+  attachment: makeIconComponent(FileDocument, '#607D8B'),
+  paste: makeIconComponent(ClipboardTextMultiple, '#795548'),
+  calendar: makeIconComponent(Calendar, '#3F51B5'),
+  calendarMultiple: makeIconComponent(CalendarMultiple, '#4CAF50'),
+  calendarBlank: makeIconComponent(CalendarBlank, '#2196F3'),
+  calendarAdd: makeIconComponent(CalendarPlusOutline, '#FFC107'),
+  calendarEnd: makeIconComponent(CalendarEndIcon, '#E91E63'),
+};
+
+export const UserIcons: Record<string, Component> = {
+  settings: makeIconComponent(Cog, '#607D8B'),
+  editAccount: makeIconComponent(AccountEdit, '#2196F3'),
+  editEmail: makeIconComponent(EmailEditOutline, '#3F51B5'),
+  logout: makeIconComponent(Logout, '#F44336'),
+  reset: makeIconComponent(Undo, '#FFC107'),
+  listView: makeIconComponent(ViewListOutline, '#2196F3'),
+  tableView: makeIconComponent(Table, '#795548'),
+  sortByOriginal: makeIconComponent(FormatListBulletedSquare, '#009688'),
+  sortByRank: makeIconComponent(FormatListNumbered, '#4CAF50'),
+  sortByDate: makeIconComponent(SortClockAscendingOutline, '#673AB7'),
+};
+
+
+export const OptionIcons: Record<string, Component> = {
+  delete: makeIconComponent(Delete, '#F44336'),
+  restore: makeIconComponent(Recycle, '#009688'),
+  confirm: makeIconComponent(CheckboxBlankOutline, '#2196F3'),
+  unconfirm: makeIconComponent(CheckboxMarkedOutline, '#4CAF50'),
+  drag: makeIconComponent(DotsVertical, '#9E9E9E'),
 };
 
 // Navigation icons map
@@ -232,12 +322,10 @@ export const StatusIcons: Record<string, Component> = {
 };
 
 // -------------------------------
-// Helper pour récupérer un status icon avec fallback
 // -------------------------------
 export const getStatusIcon = (iconName: string) =>
   StatusIcons[iconName] || StatusIcons.default;
 
 // -------------------------------
-// Export user bubble (avatar)
 // -------------------------------
 export const userIcon = NcUserBubble;

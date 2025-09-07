@@ -63,7 +63,6 @@ class ModerationStatusService
     public function update(int $id, string $statusKey, string $label, 
         ?string $description, bool $isFinal, string $icon
     ): ModerationStatus {
-        $this->logger->error("MODERATION STATUS TO UPDATE ID :".$id);
         $status = $this->moderationStatusMapper->find($id);
         $status->setStatusKey($statusKey);
         $status->setLabel($label);

@@ -139,7 +139,7 @@ This file is generated from multiple sources. Included packages:
 	- version: 0.8.11
 	- license: MIT
 - agora
-	- version: 1.0.0rc3
+	- version: 1.0.0rc4
 	- license: AGPL-3.0
 - base64-js
 	- version: 1.5.1

@@ -132,23 +132,12 @@ const saveUpdateStatus = () => {
       activeInquiryTypeId.value,
       editingStatus.value.id,
       { 
-	...editingStatus.value, 
-	icon: editingStatus.value.icon?.id || String(editingStatus.value.icon)
+        ...editingStatus.value, 
+        icon: editingStatus.value.icon?.id || String(editingStatus.value.icon)
       }
     );
     editingStatus.value = null;
-}};
-
-// Save edited status
-const saveEditedStatus = () => {
-  if (editingStatus.value) {
-    appSettingsStore.addStatusForInquiryType(activeInquiryTypeId.value, {
-      ...editingStatus.value,
-      icon: String(editingStatus.value.icon)
-    });
-    editingStatus.value = null;
-  }
-};
+  }};
 
 // Delete a status
 const deleteStatus = (statusId) => {
@@ -177,207 +166,207 @@ const cancelEdit = () => {
 </script>
 
 <template>
-	<div class="moderation-status-settings">
-		<!-- Inquiry type selector -->
-		<div class="inquiry-type-selector">
-			<h3>{{ t('agora', 'Select Inquiry Type') }}</h3>
-			<NcSelect
-					v-model="activeInquiryType"
-					:options="inquiryTypes"
-					label="label"
-					:input-label="t('agora', 'Inquiry Type')"
-					/>
-		</div>
+  <div class="moderation-status-settings">
+    <!-- Inquiry type selector -->
+    <div class="inquiry-type-selector">
+      <h3>{{ t('agora', 'Select Inquiry Type') }}</h3>
+      <NcSelect
+        v-model="activeInquiryType"
+        :options="inquiryTypes"
+        label="label"
+        :input-label="t('agora', 'Inquiry Type')"
+      />
+    </div>
 
-		<!-- Status list for current inquiry type -->
-		<div class="status-list">
-			<h3>
-				{{
-				t('agora', 'Statuses for {type}', {
-				type: currentInquiryTypeLabel
-				})
-				}}
-			</h3>
+    <!-- Status list for current inquiry type -->
+    <div class="status-list">
+      <h3>
+        {{
+          t('agora', 'Statuses for {type}', {
+            type: currentInquiryTypeLabel
+          })
+        }}
+      </h3>
 
-			<div v-if="statuses.length === 0" class="empty-state">
-				<p>
-				{{ t('agora', 'No statuses configured for this inquiry type.') }}
-				</p>
-			</div>
+      <div v-if="statuses.length === 0" class="empty-state">
+        <p>
+          {{ t('agora', 'No statuses configured for this inquiry type.') }}
+        </p>
+      </div>
 
-			<div v-else class="status-items">
-				<div
-						v-for="(status, index) in statuses"
-						:key="status.statusKey"
-						class="status-item"
-						>
-						<div class="status-content">
-							<div class="status-icon" :title="status.icon">
-								<component :is="getIconComponent(status.icon)" :size="20" />
-							</div>
-					<div class="status-info">
-						<h4>{{ status.label }}</h4>
-						<p class="status-key">
-						{{ status.statusKey }}
-						</p>
-						<p v-if="status.description" class="status-description">
-						{{ status.description }}
-						</p>
-						<div class="status-properties">
-							<span
-									:class="[
-										 'status-badge',
-										 status.isFinal ? 'final' : 'non-final'
-										 ]"
-									>
-									{{
-									status.isFinal
-									? t('agora', 'Final')
-									: t('agora', 'Non-Final')
-									}}
-							</span>
-						</div>
-					</div>
-						</div>
+      <div v-else class="status-items">
+        <div
+          v-for="(status, index) in statuses"
+          :key="status.statusKey"
+          class="status-item"
+        >
+          <div class="status-content">
+            <div class="status-icon" :title="status.icon">
+              <component :is="getIconComponent(status.icon)" :size="20" />
+            </div>
+            <div class="status-info">
+              <h4>{{ status.label }}</h4>
+              <p class="status-key">
+                {{ status.statusKey }}
+              </p>
+              <p v-if="status.description" class="status-description">
+                {{ status.description }}
+              </p>
+              <div class="status-properties">
+                <span
+                  :class="[
+                    'status-badge',
+                    status.isFinal ? 'final' : 'non-final'
+                  ]"
+                >
+                  {{
+                    status.isFinal
+                      ? t('agora', 'Final')
+                      : t('agora', 'Non-Final')
+                  }}
+                </span>
+              </div>
+            </div>
+          </div>
 
-						<div class="status-actions">
-							<NcButton
-									:disabled="index === 0"
-									@click="moveStatusUp(status.statusKey)"
-									>
-									{{ t('agora', 'Up') }}
-							</NcButton>
-							<NcButton
-									:disabled="index === statuses.length - 1"
-									@click="moveStatusDown(status.statusKey)"
-									>
-									{{ t('agora', 'Down') }}
-							</NcButton>
-							<NcButton @click="editStatus(status)">
-							{{ t('agora', 'Edit') }}
-							</NcButton>
-							<NcButton @click="deleteStatus(status.id)">
-							{{ t('agora', 'Delete') }}
-							</NcButton>
-						</div>
-				</div>
-			</div>
-		</div>
+          <div class="status-actions">
+            <NcButton
+              :disabled="index === 0"
+              @click="moveStatusUp(status.statusKey)"
+            >
+              {{ t('agora', 'Up') }}
+            </NcButton>
+            <NcButton
+              :disabled="index === statuses.length - 1"
+              @click="moveStatusDown(status.statusKey)"
+            >
+              {{ t('agora', 'Down') }}
+            </NcButton>
+            <NcButton @click="editStatus(status)">
+              {{ t('agora', 'Edit') }}
+            </NcButton>
+            <NcButton @click="deleteStatus(status.id)">
+              {{ t('agora', 'Delete') }}
+            </NcButton>
+          </div>
+        </div>
+      </div>
+    </div>
 
-		<!-- Add new status form -->
-		<div class="add-status-form">
-			<h3>{{ t('agora', 'Add New Status') }}</h3>
+    <!-- Add new status form -->
+    <div class="add-status-form">
+      <h3>{{ t('agora', 'Add New Status') }}</h3>
 
-			<div class="form-grid">
-				<NcInputField
-						v-model="newStatus.statusKey"
-						:label="t('agora', 'Status Key')"
-						:placeholder="t('agora', 'Enter unique status key')"
-						required
-						/>
+      <div class="form-grid">
+        <NcInputField
+          v-model="newStatus.statusKey"
+          :label="t('agora', 'Status Key')"
+          :placeholder="t('agora', 'Enter unique status key')"
+          required
+        />
 
-				<NcInputField
-						v-model="newStatus.label"
-						:label="t('agora', 'Label')"
-						:placeholder="t('agora', 'Enter display label')"
-						required
-						/>
+        <NcInputField
+          v-model="newStatus.label"
+          :label="t('agora', 'Label')"
+          :placeholder="t('agora', 'Enter display label')"
+          required
+        />
 
-				<NcInputField
-						v-model="newStatus.description"
-						:label="t('agora', 'Description')"
-						:placeholder="t('agora', 'Enter description (optional)')"
-						type="textarea"
-						/>
+        <NcInputField
+          v-model="newStatus.description"
+          :label="t('agora', 'Description')"
+          :placeholder="t('agora', 'Enter description (optional)')"
+          type="textarea"
+        />
 
-				<NcSelect
-						v-model="newStatus.icon"
-						:options="availableIcons"
-						label="label"
-						:input-label="t('agora', 'Select Icon')"
-						/>
+        <NcSelect
+          v-model="newStatus.icon"
+          :options="availableIcons"
+          label="label"
+          :input-label="t('agora', 'Select Icon')"
+        />
 
-				<div class="checkbox-field">
-					<NcCheckboxRadioSwitch v-model="newStatus.isFinal" type="switch">
-					{{ t('agora', 'Final Status') }}
-					</NcCheckboxRadioSwitch>
-					<p class="field-description">
-					{{ t('agora', 'Final statuses cannot be changed once set') }}
-					</p>
-				</div>
+        <div class="checkbox-field">
+          <NcCheckboxRadioSwitch v-model="newStatus.isFinal" type="switch">
+            {{ t('agora', 'Final Status') }}
+          </NcCheckboxRadioSwitch>
+          <p class="field-description">
+            {{ t('agora', 'Final statuses cannot be changed once set') }}
+          </p>
+        </div>
 
-				<NcButton
-						type="primary"
-						:disabled="!newStatus.statusKey || !newStatus.label"
-						@click="addStatus"
-						>
-						{{ t('agora', 'Add Status') }}
-				</NcButton>
-			</div>
-		</div>
+        <NcButton
+          type="primary"
+          :disabled="!newStatus.statusKey || !newStatus.label"
+          @click="addStatus"
+        >
+          {{ t('agora', 'Add Status') }}
+        </NcButton>
+      </div>
+    </div>
 
-		<!-- Edit status modal -->
-		<div v-if="editingStatus" class="modal-overlay">
-			<div class="modal-content">
-				<h3>{{ t('agora', 'Edit Status') }}</h3>
+    <!-- Edit status modal -->
+    <div v-if="editingStatus" class="modal-overlay">
+      <div class="modal-content">
+        <h3>{{ t('agora', 'Edit Status') }}</h3>
 
-				<div class="form-grid">
-					<NcInputField
-							v-model="editingStatus.statusKey"
-							:label="t('agora', 'Status Key')"
-							:placeholder="t('agora', 'Enter unique status key')"
-							required
-							/>
+        <div class="form-grid">
+          <NcInputField
+            v-model="editingStatus.statusKey"
+            :label="t('agora', 'Status Key')"
+            :placeholder="t('agora', 'Enter unique status key')"
+            required
+          />
 
-					<NcInputField
-							v-model="editingStatus.label"
-							:label="t('agora', 'Label')"
-							:placeholder="t('agora', 'Enter display label')"
-							required
-							/>
+          <NcInputField
+            v-model="editingStatus.label"
+            :label="t('agora', 'Label')"
+            :placeholder="t('agora', 'Enter display label')"
+            required
+          />
 
-					<NcInputField
-							v-model="editingStatus.description"
-							:label="t('agora', 'Description')"
-							:placeholder="t('agora', 'Enter description (optional)')"
-							type="textarea"
-							/>
+          <NcInputField
+            v-model="editingStatus.description"
+            :label="t('agora', 'Description')"
+            :placeholder="t('agora', 'Enter description (optional)')"
+            type="textarea"
+          />
 
-					<NcSelect
-							v-model="editingStatus.icon"
-							:options="availableIcons"
-							label="label"
-							:input-label="t('agora', 'Select Icon')"
-							/>
+          <NcSelect
+            v-model="editingStatus.icon"
+            :options="availableIcons"
+            label="label"
+            :input-label="t('agora', 'Select Icon')"
+          />
 
-					<div class="checkbox-field">
-						<NcCheckboxRadioSwitch
-								v-model="editingStatus.isFinal"
-								type="switch"
-								>
-								{{ t('agora', 'Final Status') }}
-						</NcCheckboxRadioSwitch>
-						<p class="field-description">
-						{{ t('agora', 'Final statuses cannot be changed once set') }}
-						</p>
-					</div>
-				</div>
+          <div class="checkbox-field">
+            <NcCheckboxRadioSwitch
+              v-model="editingStatus.isFinal"
+              type="switch"
+            >
+              {{ t('agora', 'Final Status') }}
+            </NcCheckboxRadioSwitch>
+            <p class="field-description">
+              {{ t('agora', 'Final statuses cannot be changed once set') }}
+            </p>
+          </div>
+        </div>
 
-				<div class="modal-actions">
-					<NcButton @click="cancelEdit">
-					{{ t('agora', 'Cancel') }}
-					</NcButton>
-					<NcButton
-							type="primary"
-							:disabled="!editingStatus.statusKey || !editingStatus.label"
-							@click="saveUpdateStatus"
-							>
-							{{ t('agora', 'Save Changes') }}
-					</NcButton>
-				</div>
-			</div>
-		</div>
-	</div>
+        <div class="modal-actions">
+          <NcButton @click="cancelEdit">
+            {{ t('agora', 'Cancel') }}
+          </NcButton>
+          <NcButton
+            type="primary"
+            :disabled="!editingStatus.statusKey || !editingStatus.label"
+            @click="saveUpdateStatus"
+          >
+            {{ t('agora', 'Save Changes') }}
+          </NcButton>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <style scoped>

@@ -10,11 +10,11 @@
     console.error("vite-plugin-css-injected-by-js", e);
   }
 })();
-const A = "agora", h = "1.0.0rc3";
-import { I as w } from "./index-DpU4NVZy.chunk.mjs";
-import { u as g } from "./NcDashboardWidget-Wkx_9xKh-BCkJxwfa.chunk.mjs";
-import { k as V, c as p, o as y, a as n, f as l, w as u, B as d, z as a, u as e, t as r } from "./NcEmptyContent-q-geAf0w-BTrjHyYY.chunk.mjs";
-import { N as m } from "./NcRichText-G8kzsdwx-DH9_CLsd.chunk.mjs";
+const A = "agora", h = "1.0.0rc4";
+import { I as w } from "./index-CnGEXeag.chunk.mjs";
+import { u as g } from "./NcDashboardWidget-Wkx_9xKh-DfVZeYPI.chunk.mjs";
+import { k as V, c as p, o as y, a as n, f as l, w as u, B as d, z as a, u as e, t as r } from "./NcEmptyContent-q-geAf0w-DsDiM4c8.chunk.mjs";
+import { N as m } from "./NcRichText-G8kzsdwx-DWCeYxXp.chunk.mjs";
 const _ = { class: "user_settings" }, q = { class: "settings_details" }, I = { class: "user_settings" }, b = { class: "settings_details" }, N = { class: "user_settings" }, S = { __name: "FeatureSettings", setup(f) {
   const s = g(), v = V({ get() {
     return s.user.defaultViewInquiry === "list-view";
@@ -30,4 +30,4 @@ export {
   S as _,
   k as a
 };
-//# sourceMappingURL=StyleSettings-Buu05YEb.chunk.mjs.map
+//# sourceMappingURL=StyleSettings-samdGq2C.chunk.mjs.map

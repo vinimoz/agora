@@ -133,113 +133,113 @@ const activeFiltersCount = computed(() => {
         class="reset-btn compact"
         @click="resetFilters"
       >
-      {{ t('agora', 'Clear all') }}
+        {{ t('agora', 'Clear all') }}
       </button>
     </div>
 
     <div v-if="isFiltersOpen" class="filters-expanded">
-	    <div class="filters-grid">
-		    <!-- Filtre par type -->
-		    <div class="filter-group">
-			    <label>{{ t('agora', 'Type') }}</label>
-			    <select v-model="selectedType" @change="applyFilters">
-				    <option
-						    v-for="option in filterOptions.types"
-						    :key="option.value"
-						    :value="option.value"
-						    >
-						    {{ option.label }}
-				    </option>
-			    </select>
-		    </div>
+      <div class="filters-grid">
+        <!-- Filtre par type -->
+        <div class="filter-group">
+          <label>{{ t('agora', 'Type') }}</label>
+          <select v-model="selectedType" @change="applyFilters">
+            <option
+              v-for="option in filterOptions.types"
+              :key="option.value"
+              :value="option.value"
+            >
+              {{ option.label }}
+            </option>
+          </select>
+        </div>
 
-		    <div v-if="filterOptions.categories.length > 1" class="filter-group">
-			    <label>{{ t('agora', 'Category') }}</label>
-			    <select v-model="selectedCategory" @change="applyFilters">
-				    <option
-						    v-for="option in filterOptions.categories"
-						    :key="option.value"
-						    :value="option.value"
-						    >
-						    {{ option.label }}
-				    </option>
-			    </select>
-		    </div>
+        <div v-if="filterOptions.categories.length > 1" class="filter-group">
+          <label>{{ t('agora', 'Category') }}</label>
+          <select v-model="selectedCategory" @change="applyFilters">
+            <option
+              v-for="option in filterOptions.categories"
+              :key="option.value"
+              :value="option.value"
+            >
+              {{ option.label }}
+            </option>
+          </select>
+        </div>
 
-		    <div v-if="filterOptions.locations.length > 1" class="filter-group">
-			    <label>{{ t('agora', 'Location') }}</label>
-			    <select v-model="selectedLocation" @change="applyFilters">
-				    <option
-						    v-for="option in filterOptions.locations"
-						    :key="option.value"
-						    :value="option.value"
-						    >
-						    {{ option.label }}
-				    </option>
-			    </select>
-		    </div>
+        <div v-if="filterOptions.locations.length > 1" class="filter-group">
+          <label>{{ t('agora', 'Location') }}</label>
+          <select v-model="selectedLocation" @change="applyFilters">
+            <option
+              v-for="option in filterOptions.locations"
+              :key="option.value"
+              :value="option.value"
+            >
+              {{ option.label }}
+            </option>
+          </select>
+        </div>
 
-		    <div class="filter-group">
-			    <label>{{ t('agora', 'Comments') }}</label>
-			    <select v-model="hasComments" @change="applyFilters">
-				    <option
-						    v-for="option in filterOptions.participation"
-						    :key="String(option.value)"
-						    :value="option.value"
-						    >
-						    {{ option.label }}
-				    </option>
-			    </select>
-		    </div>
+        <div class="filter-group">
+          <label>{{ t('agora', 'Comments') }}</label>
+          <select v-model="hasComments" @change="applyFilters">
+            <option
+              v-for="option in filterOptions.participation"
+              :key="String(option.value)"
+              :value="option.value"
+            >
+              {{ option.label }}
+            </option>
+          </select>
+        </div>
 
-		    <div class="filter-group">
-			    <label>{{ t('agora', 'Supports') }}</label>
-			    <select v-model="hasSupports" @change="applyFilters">
-				    <option
-						    v-for="option in filterOptions.support"
-						    :key="String(option.value)"
-						    :value="option.value"
-						    >
-						    {{ option.label }}
-				    </option>
-			    </select>
-		    </div>
-	    </div>
+        <div class="filter-group">
+          <label>{{ t('agora', 'Supports') }}</label>
+          <select v-model="hasSupports" @change="applyFilters">
+            <option
+              v-for="option in filterOptions.support"
+              :key="String(option.value)"
+              :value="option.value"
+            >
+              {{ option.label }}
+            </option>
+          </select>
+        </div>
+      </div>
     </div>
 
     <div v-if="activeFiltersCount > 0" class="active-filters-summary">
-	    <span class="summary-label">{{ t('agora', 'Active:') }}</span>
+      <span class="summary-label">{{ t('agora', 'Active:') }}</span>
 
-	    <span v-if="selectedType !== 'all'" class="filter-tag">
-		    {{ filterOptions.types.find((t) => t.value === selectedType)?.label }}
-	    </span>
+      <span v-if="selectedType !== 'all'" class="filter-tag">
+        {{ filterOptions.types.find((t) => t.value === selectedType)?.label }}
+      </span>
 
-	    <span v-if="selectedCategory !== 'all'" class="filter-tag">
-		    {{
-		    filterOptions.categories.find((c) => c.value === selectedCategory)
-		    ?.label
-		    }}
-	    </span>
+      <span v-if="selectedCategory !== 'all'" class="filter-tag">
+        {{
+          filterOptions.categories.find((c) => c.value === selectedCategory)
+            ?.label
+        }}
+      </span>
 
-	    <span v-if="selectedLocation !== 'all'" class="filter-tag">
-		    {{
-		    filterOptions.locations.find((l) => l.value === selectedLocation)
-		    ?.label
-		    }}
-	    </span>
+      <span v-if="selectedLocation !== 'all'" class="filter-tag">
+        {{
+          filterOptions.locations.find((l) => l.value === selectedLocation)
+            ?.label
+        }}
+      </span>
 
-	    <span v-if="hasComments !== null" class="filter-tag">
-		    {{
-		    filterOptions.participation.find((p) => p.value === hasComments)
-		    ?.label
-		    }}
-	    </span>
+      <span v-if="hasComments !== null" class="filter-tag">
+        {{
+          filterOptions.participation.find((p) => p.value === hasComments)
+            ?.label
+        }}
+      </span>
 
-	    <span v-if="hasSupports !== null" class="filter-tag">
-		    {{ filterOptions.support.find((s) => s.value === hasSupports)?.label }}
-	    </span>
+      <span v-if="hasSupports !== null" class="filter-tag">
+        {{ filterOptions.support.find((s) => s.value === hasSupports)?.label }}
+      </span>
 
-	    <span v-if="searchQuery" class="filter-tag"> "{{ searchQuery }}" </span>
+      <span v-if="searchQuery" class="filter-tag"> "{{ searchQuery }}" </span>
     </div>
   </div>
 </template>

@@ -10,22 +10,23 @@ A big thanks to the original Polls contributors for creating this wonderful appl
 
 Agora is a Nextcloud app for participatory democracy, inquiries, and proposals, similar to [Decidim](https://decidim.org/), written in PHP and JS/Vue.
 
-![psalm](https://github.com/vinimoz/agora/actions/workflows/static-analysis.yml/badge.svg)
-![tests](https://github.com/vinimoz/agora/actions/workflows/phpunit.yml/badge.svg)
-![puild](https://github.com/vinimoz/agora/actions/workflows/nodejs.yml/badge.svg)
-![lint](https://github.com/vinimoz/agora/actions/workflows/lint.yml/badge.svg)
-
 [![Dependabot status](https://img.shields.io/badge/Dependabot-enabled-brightgreen.svg?longCache=true&style=flat-square&logo=dependabot)](https://dependabot.com)
 [![Software License](https://img.shields.io/badge/license-AGPL-brightgreen.svg?style=flat-square)](COPYING)
 [![REUSE status](https://api.reuse.software/badge/github.com/vinimoz/agora)](https://api.reuse.software/info/github.com/vinimoz/agora)
 
 ## Todo and next features
 - Create real debate.
-- Create Assembly to manage all inquiries
-- Do a workflow to help moderator
+- Create Assembly, Consultation to votes them with polls application.
+- Do a workflow to help moderator 
+- Send followup on inqnuiry user created or participated
+
+## Bug fix
+- CSR error in console.
+- Public share no tested
 
 ## Installation / Update
 This app is supposed to work on Nextcloud version 21+.
+If you wish to have category, location, moderation base, u can use agora:db:init-default ( see below )
 
 ### Install latest release
 You can download and install the latest release from the [Nextcloud app store](https://apps.vinimoz.com/apps/agora).
@@ -36,7 +37,7 @@ You can download and install the latest release from the [Nextcloud app store](h
 | `agora:db:clean-migrations`                                                  | Remove obsolete migrations, which are no more needed         |
 | `agora:db:purge`                                                             | Drop Agora' tables and remove migration and settings records |
 | `agora:db:rebuild`                                                           | Rebuild Agora' database including indices                    |
-| `agora:db:init-default`                                                      | Create default valie                                         |
+| `agora:db:init-default`                                                      | Create default values, Moderation, Location, Category        |
 | `agora:index:create`                                                         | Create all necessary indices and foreign key constraints     |
 | `agora:index:remove`                                                         | Remove all indices                                           |
 | `agora:inquiry:transfer-ownership  <source-user> <target-user>`                 | Transfer inquiry ownership from  <source-user> to <target-user> |
@@ -47,10 +48,14 @@ You can download and install the latest release from the [Nextcloud app store](h
 - Community support: https://help.vinimoz.com/c/apps/agora/
 
 ## Screenshots
-Edit you inquiry | Many category | Configure your moderation status | View from not owner user | Grid view of inquiries
-:-:|:-:|:-:|:-:|:-:
-![Edit Inquiry](screenshots/edit.png) |![Manage Category](screenshots/Category.png) | ![Agora](screenshots/ModerationStatus.png) | ![View Inquiry](screenshots/UserViewInquiry.png) | ![Grid View](screenshots/GridView.png)
+Edit you inquiry | Many category | Configure your moderation status | View from not owner user | Grid view of inquiries | List view of inquiries
+:-:|:-:|:-:|:-:|:-:|:-:
+![Edit Inquiry](screenshots/edit.png) |![Manage Category](screenshots/Category.png) | ![Agora](screenshots/ModerationStatus.png) | ![View Inquiry](screenshots/UserViewInquiry.png) | ![Grid View](screenshots/GridView.png) | ![List View](screenshots/ListView.png)
 
+## Documentations
+User Guide | Api Guide
+:-:|:-:
+![User Guide](docs/USER_GUIDE.md) |![Api Guide](docs/API_v1.0.md) 
 
 ### Install from git
 If you want to run the latest development version from git source, you need to clone the repo to your apps folder:

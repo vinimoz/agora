@@ -9,20 +9,12 @@ import { t } from '@nextcloud/l10n';
 import NcActionButton from '@nextcloud/vue/components/NcActionButton';
 import NcAppNavigationItem from '@nextcloud/vue/components/NcAppNavigationItem';
 import { InquiryTypesUI } from '../../helpers/modules/InquiryHelper.ts';
-
-import DeleteInquiryIcon from 'vue-material-design-icons/Delete.vue';
-import CloneInquiryIcon from 'vue-material-design-icons/ContentCopy.vue';
-import ArchiveInquiryIcon from 'vue-material-design-icons/Archive.vue';
-import RestoreInquiryIcon from 'vue-material-design-icons/Recycle.vue';
-
-import { useSessionStore } from '../../stores/session.ts';
 import { Inquiry } from '../../Types/index.ts';
 import { InquiryGeneralIcons } from '../../utils/icons.ts';
 
 const emit = defineEmits(['cloneInquiry', 'toggleArchive', 'deleteInquiry']);
 const { inquiry } = defineProps<{ inquiry: Inquiry }>();
 
-const sessionStore = useSessionStore();
 
 </script>
 
@@ -49,7 +41,7 @@ const sessionStore = useSessionStore();
         @click="emit('toggleArchive')"
       >
         <template #icon>
-        	<component :is="InquiryGeneralIcons.archive" />
+          <component :is="InquiryGeneralIcons.archive" />
         </template>
       </NcActionButton>
 
@@ -60,7 +52,7 @@ const sessionStore = useSessionStore();
         @click="emit('toggleArchive')"
       >
         <template #icon>
-        	<component :is="InquiryGeneralIcons.restore" />
+          <component :is="InquiryGeneralIcons.restore" />
         </template>
       </NcActionButton>
 
@@ -72,7 +64,7 @@ const sessionStore = useSessionStore();
         @click="emit('deleteInquiry')"
       >
         <template #icon>
-        	<component :is="InquiryGeneralIcons.delete" />
+          <component :is="InquiryGeneralIcons.delete" />
         </template>
       </NcActionButton>
     </template>

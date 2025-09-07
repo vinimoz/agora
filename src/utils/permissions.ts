@@ -45,53 +45,53 @@ export interface OfficialRights {
 // Exportez aussi les valeurs par défaut
 export const DefaultInquiryTypeRights: Record<string, InquiryTypeRights> = {
   proposal: { 
-      supportInquiry: true, 
-      commentInquiry: true, 
-      attachFileInquiry: true, 
-      shareInquiry: true,
-      editorType: 'wysiwyg' 
+    supportInquiry: true, 
+    commentInquiry: true, 
+    attachFileInquiry: true, 
+    shareInquiry: true,
+    editorType: 'wysiwyg' 
   },
   debate: { 
-      supportInquiry: true, 
-      commentInquiry: false, 
-      attachFileInquiry: false, 
-      shareInquiry: true,
-      editorType: 'texteditor' 
+    supportInquiry: true, 
+    commentInquiry: false, 
+    attachFileInquiry: false, 
+    shareInquiry: true,
+    editorType: 'texteditor' 
   },
   petition: { 
-      supportInquiry: true, 
-      commentInquiry: true, 
-      attachFileInquiry: true, 
-      shareInquiry: true,
-      editorType: 'wysiwyg' 
+    supportInquiry: true, 
+    commentInquiry: true, 
+    attachFileInquiry: true, 
+    shareInquiry: true,
+    editorType: 'wysiwyg' 
   },
   project: { 
-      supportInquiry: true, 
-      commentInquiry: true, 
-      attachFileInquiry: true, 
-      shareInquiry: true,
-      editorType: 'texteditor' 
+    supportInquiry: true, 
+    commentInquiry: true, 
+    attachFileInquiry: true, 
+    shareInquiry: true,
+    editorType: 'texteditor' 
   },
   grievance: { 
-      supportInquiry: true, 
-      commentInquiry: true, 
-      attachFileInquiry: true, 
-      shareInquiry: true,
-      editorType: 'wysiwyg' 
+    supportInquiry: true, 
+    commentInquiry: true, 
+    attachFileInquiry: true, 
+    shareInquiry: true,
+    editorType: 'wysiwyg' 
   },
   suggestion: { 
-      supportInquiry: true, 
-      commentInquiry: false, 
-      attachFileInquiry: false, 
-      shareInquiry: true,
-      editorType: 'textarea' 
+    supportInquiry: true, 
+    commentInquiry: false, 
+    attachFileInquiry: false, 
+    shareInquiry: true,
+    editorType: 'textarea' 
   },
   official: { 
-      supportInquiry: false, 
-      commentInquiry: false, 
-      attachFileInquiry: true, 
-      shareInquiry: true,
-      editorType: 'textarea' 
+    supportInquiry: false, 
+    commentInquiry: false, 
+    attachFileInquiry: true, 
+    shareInquiry: true,
+    editorType: 'textarea' 
   }
 };
 
@@ -453,7 +453,6 @@ export function canShare(context: PermissionContext): boolean {
  * Dépend des droits InquiryTypeRights, même pour les Admins
  */
 export function canAttachFile(context: PermissionContext): boolean {
-  const appSettings = useAppSettingsStore();
   
   if (context.isArchived || context.isDeleted || context.isLocked) {
     return false;

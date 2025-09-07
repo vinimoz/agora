@@ -1,0 +1,78 @@
+<!--
+  - SPDX-FileCopyrightText: 2018 Nextcloud contributors
+  - SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+
+<script setup lang="ts">
+import { computed, defineAsyncComponent, onBeforeUnmount } from 'vue'
+import { useRoute } from 'vue-router'
+
+import { ActionToggleSidebar } from '../Actions/index.ts';
+import InquiryInformation from './InquiryInformation.vue'
+import { useInquiryStore } from '../../stores/inquiry.ts';
+import { useSessionStore } from '../../stores/session.ts';
+import InquiryInformationIcon from 'vue-material-design-icons/InformationOutline.vue'
+import UserMenu from '../User/UserMenu.vue'
+import NcPopover from '@nextcloud/vue/components/NcPopover';
+import NcButton from '@nextcloud/vue/components/NcButton';
+
+const caption = t('agora', 'Agora information')
+const route = useRoute()
+
+const inquiryStore = useInquiryStore();
+const sessionStore = useSessionStore();
+
+const showUserMenu = computed(
+	() =>
+		route.name !== 'publicInquiry'
+		|| pollStore.permissions.inquiry
+		|| pollStore.permissions.subscribe,
+)
+
+
+onBeforeUnmount(() => {
+  inquiryStore.$reset();
+});
+</script>
+
+<template>
+  <div class="inquiry-header-buttons">
+    <UserMenu v-if="showUserMenu" />
+    <NcPopover close-on-click-outside no-focus-trap>
+      <template #trigger>
+        <NcButton
+          :title="caption"
+          :aria-label="caption"
+          :variant="'tertiary'">
+          <template #icon>
+            <InquiryInformationIcon /> 
+          </template>
+        </NcButton>
+      </template>
+      <InquiryInformation /> 
+    </NcPopover>
+    <ActionToggleSidebar
+      v-if="
+        inquiryStore.permissions.edit ||
+          sessionStore.appSettings.inquiryTypeRights[inquiryStore.type]
+            .inquiryComment
+      "
+    />
+  </div>
+</template>
+
+<style lang="scss">
+.inquiry-header-buttons {
+  display: flex;
+  flex: 0;
+  justify-content: flex-end;
+  align-self: flex-end;
+  border-radius: var(--border-radius-pill);
+}
+
+.icon.icon-settings.active {
+  display: block;
+  width: 44px;
+  height: 44px;
+}
+</style>

@@ -20,7 +20,6 @@ use OCA\Agora\Service\AttachmentService;
 use OCA\Agora\Service\InquiryService;
 use OCA\Agora\Service\ShareService;
 use OCA\Agora\Service\SubscriptionService;
-use OCA\Agora\Service\SupportService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\FrontpageRoute;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
@@ -41,7 +40,6 @@ class InquiryController extends BaseController
         private OptionService $optionService,
         private InquiryService $inquiryService,
         private InquiryGroupService $inquiryGroupService,
-        private SupportService $supportService,
         private CommentService $commentService,
         private SubscriptionService $subscriptionService,
         private ShareService $shareService,
@@ -126,7 +124,6 @@ class InquiryController extends BaseController
      *                       psalm-return JSONResponse<array{
      *                       inquiry: Inquiry,
      *                       options: array<int, Option>,
-     *                       supports: array<int, Support>,
      *                       comments: array<int, Comment>,
      *                       shares: array<int, Share>,
      *                       subscribed: Subscription|null
@@ -149,9 +146,6 @@ class InquiryController extends BaseController
         $options = $this->optionService->list($inquiryId);
         $timerMicro['options'] = microtime(true);
 
-        $supports = $this->supportService->list($inquiryId);
-        $timerMicro['supports'] = microtime(true);
-
         $comments = $this->commentService->list($inquiryId);
         $timerMicro['comments'] = microtime(true);
 
@@ -171,20 +165,17 @@ class InquiryController extends BaseController
         $diffMicro['total'] = microtime(true) - $timerMicro['start'];
         $diffMicro['inquiry'] = $timerMicro['inquiry'] - $timerMicro['start'];
         $diffMicro['options'] = $timerMicro['options'] - $timerMicro['inquiry'];
-        $diffMicro['supports'] = $timerMicro['supports'] - $timerMicro['options'];
-        $diffMicro['comments'] = $timerMicro['comments'] - $timerMicro['supports'];
+        $diffMicro['comments'] = $timerMicro['comments'] - $timerMicro['options'];
         $diffMicro['shares'] = $timerMicro['shares'] - $timerMicro['comments'];
         $diffMicro['subscribed'] = $timerMicro['subscribed'] - $timerMicro['shares'];
         $diffMicro['attachments'] = $timerMicro['attachments'] - $timerMicro['subscribed'];
         $diffMicro['childs'] = $timerMicro['childs'] - $timerMicro['attachments'];
         
 
-        //$this->logger->critical('IN GET FULL INQUIRY ATTACHMENTS :'.$attachments);
         if ($withTimings) {
             return [
             'inquiry' => $inquiry,
             'options' => $options,
-            'supports' => $supports,
             'comments' => $comments,
             'shares' => $shares,
             'subscribed' => $subscribed,
@@ -196,7 +187,6 @@ class InquiryController extends BaseController
         return [
         'inquiry' => $inquiry,
         'options' => $options,
-        'supports' => $supports,
         'comments' => $comments,
         'shares' => $shares,
         'subscribed' => $subscribed,

@@ -14,24 +14,13 @@ import NcActionRadio from '@nextcloud/vue/components/NcActionRadio';
 import NcActions from '@nextcloud/vue/components/NcActions';
 import NcActionButton from '@nextcloud/vue/components/NcActionButton';
 
-import ResolveGroupIcon from 'vue-material-design-icons/CallSplit.vue';
-import SendEmailIcon from 'vue-material-design-icons/EmailArrowRight.vue';
-import GrantAdminIcon from 'vue-material-design-icons/ShieldCrown.vue';
-import EditIcon from 'vue-material-design-icons/Pencil.vue';
-import WithdrawAdminIcon from 'vue-material-design-icons/ShieldCrownOutline.vue';
-import ClippyIcon from 'vue-material-design-icons/ClipboardArrowLeftOutline.vue';
-import QrIcon from 'vue-material-design-icons/Qrcode.vue';
-import LockIcon from 'vue-material-design-icons/Lock.vue';
-import UnlockIcon from 'vue-material-design-icons/LockOpenVariant.vue';
-import DeleteIcon from 'vue-material-design-icons/Delete.vue';
-import RestoreIcon from 'vue-material-design-icons/Recycle.vue';
-
 import { AxiosError } from '@nextcloud/axios';
 
 import { useSharesStore, Share } from '../../stores/shares.ts';
 import { SentResults } from '../../Api/modules/shares.ts';
 import { useInquiryGroupsStore } from '../../stores/inquiryGroups.ts';
 import { useInquiryStore } from '../../stores/inquiry.ts';
+import { ShareIcons } from '../../utils/icons.ts';
 
 const emit = defineEmits(['showQrCode']);
 
@@ -267,7 +256,7 @@ async function submitLabel() {
       @submit="submitLabel()"
     >
       <template #icon>
-        <EditIcon />
+        <component :is="ShareIcons.edit" />
       </template>
     </NcActionInput>
 
@@ -279,7 +268,7 @@ async function submitLabel() {
       @click="resendInvitation.action"
     >
       <template #icon>
-        <SendEmailIcon />
+        <component :is="ShareIcons.sendByMail" />
       </template>
     </NcActionButton>
 
@@ -292,7 +281,7 @@ async function submitLabel() {
       @click="resolveGroups.action"
     >
       <template #icon>
-        <ResolveGroupIcon />
+        <component :is="ShareIcons.restore" />
       </template>
     </NcActionButton>
 
@@ -304,8 +293,8 @@ async function submitLabel() {
       @click="switchAdmin.action"
     >
       <template #icon>
-        <GrantAdminIcon v-if="share.type === 'user'" />
-        <WithdrawAdminIcon v-else />
+        <component v-if="share.type === 'user'" :is="ShareIcons.adminGrant" />
+        <component v-else :is="ShareIcons.adminRevoke" />
       </template>
     </NcActionButton>
 
@@ -317,7 +306,7 @@ async function submitLabel() {
       @click="copyLinkButton.action"
     >
       <template #icon>
-        <ClippyIcon />
+        <component :is="ShareIcons.copyLink" />
       </template>
     </NcActionButton>
 
@@ -329,7 +318,7 @@ async function submitLabel() {
       @click="showQrCodeButton.action"
     >
       <template #icon>
-        <QrIcon />
+        <component :is="ShareIcons.qrCode" />
       </template>
     </NcActionButton>
 
@@ -391,8 +380,8 @@ async function submitLabel() {
       @click="lockShareButton.action"
     >
       <template #icon>
-        <UnlockIcon v-if="share.locked" />
-        <LockIcon v-else />
+        <component v-if="share.locked" :is="ShareIcons.unlock" />
+        <component v-else :is="ShareIcons.lock" />
       </template>
     </NcActionButton>
 
@@ -404,8 +393,8 @@ async function submitLabel() {
       @click="deleteShareButton.action"
     >
       <template #icon>
-        <RestoreIcon v-if="share.deleted" />
-        <DeleteIcon v-else />
+        <component v-if="share.deleted" :is="ShareIcons.restore" />
+        <component v-else :is="ShareIcons.delete" />
       </template>
     </NcActionButton>
   </NcActions>

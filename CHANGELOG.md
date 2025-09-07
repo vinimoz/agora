@@ -5,6 +5,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+# [1.0.0rc4] - 2025-09-06
+- Uptate screenshoot
+- Fix support implementation.
+- Permissions update, 
+- Package update
+- User Manual in doc directory
+
 # [1.0.0rc3] - 2025-09-03
 - Fix logo
 - Debate

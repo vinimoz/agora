@@ -154,6 +154,7 @@ class Inquiry extends EntityWithUser implements JsonSerializable
     protected SystemSettings $systemSettings;
     protected AppSettings $appSettings;
     protected UserSession $userSession;
+    protected SupportMapper $supportMapper;
 
     // schema columns
     public $id = null;
@@ -230,6 +231,7 @@ class Inquiry extends EntityWithUser implements JsonSerializable
         $this->systemSettings = Container::queryClass(SystemSettings::class);
         $this->appSettings = Container::queryClass(AppSettings::class);
         $this->userSession = Container::queryClass(UserSession::class);
+        $this->supportMapper = Container::queryClass(SupportMapper::class);
     }
 
     /**
@@ -301,6 +303,7 @@ class Inquiry extends EntityWithUser implements JsonSerializable
         return [
         'groupInvitations' => $this->getGroupShares(),
         'isInvolved' => $this->getIsInvolved(),
+        'hasSupported' => $this->hasSupported(),
         'isLocked' => boolval($this->getIsCurrentUserLocked()),
         'isLoggedIn' => $this->userSession->getIsLoggedIn(),
         'isOwner' => $this->getIsInquiryOwner(),
@@ -331,7 +334,6 @@ class Inquiry extends EntityWithUser implements JsonSerializable
         'subscribe' => $this->getIsAllowed(self::PERMISSION_INQUIRY_SUBSCRIBE),
         'takeOver' => $this->getIsAllowed(self::PERMISSION_INQUIRY_TAKEOVER),
         'view' => $this->getIsAllowed(self::PERMISSION_INQUIRY_VIEW),
-        'support' => $this->getIsAllowed(self::PERMISSION_SUPPORT_EDIT),
         ];
     }
 
@@ -697,6 +699,19 @@ class Inquiry extends EntityWithUser implements JsonSerializable
     {
         return $this->getAccess() === Inquiry::ACCESS_OPEN && $this->userSession->getIsLoggedIn();
     }
+    /**
+     * getCurrentUserUSpprt - Is user has supported this inquiry?
+     *
+     * @return bool Returns true, if the current user is already a supporter of the current inquiry.
+     */
+    private function hasSupported(): bool
+    {
+	    if ($this->supportMapper->findSupport( $this->id, $this->userSession->getCurrentUserId() )) {
+		    return true;
+	}
+	else return false;
+    }
+
 
     /**
      * getIsParticipant - Is user a participant?
@@ -967,16 +982,6 @@ class Inquiry extends EntityWithUser implements JsonSerializable
     {
         // user has no access right to this inquiry
         if (!$this->getAllowAccessInquiry()) {
-            return false;
-        }
-
-        // public shares are not allowed to comment
-        if ($this->userSession->getShare()->getType() === Share::TYPE_PUBLIC) {
-            return false;
-        }
-
-        // public shares are not allowed to comment
-        if (boolval($this->getIsCurrentUserLocked())) {
             return false;
         }
 

@@ -44,7 +44,7 @@ This file is generated from multiple sources. Included packages:
 	- version: 11.0.2
 	- license: MIT
 - agora
-	- version: 1.0.0rc3
+	- version: 1.0.0rc4
 	- license: AGPL-3.0
 - date-fns
 	- version: 4.1.0
