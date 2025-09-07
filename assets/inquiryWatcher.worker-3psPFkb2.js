@@ -297,8 +297,8 @@
     }
     return result;
   }
-  const extend = (a, b, thisArg, { allOwnKeys } = {}) => {
-    forEach(b, (val, key) => {
+  const extend = (a, b2, thisArg, { allOwnKeys } = {}) => {
+    forEach(b2, (val, key) => {
       if (thisArg && isFunction(val)) {
         a[key] = bind(val, thisArg);
       } else {
@@ -654,18 +654,18 @@
     var eBias = eMax >> 1;
     var nBits = -7;
     var i2 = isLE ? nBytes - 1 : 0;
-    var d = isLE ? -1 : 1;
+    var d2 = isLE ? -1 : 1;
     var s = buffer2[offset + i2];
-    i2 += d;
+    i2 += d2;
     e = s & (1 << -nBits) - 1;
     s >>= -nBits;
     nBits += eLen;
-    for (; nBits > 0; e = e * 256 + buffer2[offset + i2], i2 += d, nBits -= 8) {
+    for (; nBits > 0; e = e * 256 + buffer2[offset + i2], i2 += d2, nBits -= 8) {
     }
     m = e & (1 << -nBits) - 1;
     e >>= -nBits;
     nBits += mLen;
-    for (; nBits > 0; m = m * 256 + buffer2[offset + i2], i2 += d, nBits -= 8) {
+    for (; nBits > 0; m = m * 256 + buffer2[offset + i2], i2 += d2, nBits -= 8) {
     }
     if (e === 0) {
       e = 1 - eBias;
@@ -684,7 +684,7 @@
     var eBias = eMax >> 1;
     var rt = mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0;
     var i2 = isLE ? 0 : nBytes - 1;
-    var d = isLE ? 1 : -1;
+    var d2 = isLE ? 1 : -1;
     var s = value < 0 || value === 0 && 1 / value < 0 ? 1 : 0;
     value = Math.abs(value);
     if (isNaN(value) || value === Infinity) {
@@ -716,13 +716,13 @@
         e = 0;
       }
     }
-    for (; mLen >= 8; buffer2[offset + i2] = m & 255, i2 += d, m /= 256, mLen -= 8) {
+    for (; mLen >= 8; buffer2[offset + i2] = m & 255, i2 += d2, m /= 256, mLen -= 8) {
     }
     e = e << mLen | m;
     eLen += mLen;
-    for (; eLen > 0; buffer2[offset + i2] = e & 255, i2 += d, e /= 256, eLen -= 8) {
+    for (; eLen > 0; buffer2[offset + i2] = e & 255, i2 += d2, e /= 256, eLen -= 8) {
     }
-    buffer2[offset + i2 - d] |= s * 128;
+    buffer2[offset + i2 - d2] |= s * 128;
   };
   /*!
    * The buffer module from node.js, for the browser.
@@ -820,8 +820,8 @@
       if (valueOf != null && valueOf !== value) {
         return Buffer2.from(valueOf, encodingOrOffset, length);
       }
-      const b = fromObject(value);
-      if (b) return b;
+      const b2 = fromObject(value);
+      if (b2) return b2;
       if (typeof Symbol !== "undefined" && Symbol.toPrimitive != null && typeof value[Symbol.toPrimitive] === "function") {
         return Buffer2.from(value[Symbol.toPrimitive]("string"), encodingOrOffset, length);
       }
@@ -944,24 +944,24 @@
       }
       return Buffer2.alloc(+length);
     }
-    Buffer2.isBuffer = function isBuffer2(b) {
-      return b != null && b._isBuffer === true && b !== Buffer2.prototype;
+    Buffer2.isBuffer = function isBuffer2(b2) {
+      return b2 != null && b2._isBuffer === true && b2 !== Buffer2.prototype;
     };
-    Buffer2.compare = function compare(a, b) {
+    Buffer2.compare = function compare(a, b2) {
       if (isInstance(a, GlobalUint8Array)) a = Buffer2.from(a, a.offset, a.byteLength);
-      if (isInstance(b, GlobalUint8Array)) b = Buffer2.from(b, b.offset, b.byteLength);
-      if (!Buffer2.isBuffer(a) || !Buffer2.isBuffer(b)) {
+      if (isInstance(b2, GlobalUint8Array)) b2 = Buffer2.from(b2, b2.offset, b2.byteLength);
+      if (!Buffer2.isBuffer(a) || !Buffer2.isBuffer(b2)) {
         throw new TypeError(
           'The "buf1", "buf2" arguments must be one of type Buffer or Uint8Array'
         );
       }
-      if (a === b) return 0;
+      if (a === b2) return 0;
       let x = a.length;
-      let y = b.length;
+      let y = b2.length;
       for (let i2 = 0, len2 = Math.min(x, y); i2 < len2; ++i2) {
-        if (a[i2] !== b[i2]) {
+        if (a[i2] !== b2[i2]) {
           x = a[i2];
-          y = b[i2];
+          y = b2[i2];
           break;
         }
       }
@@ -1116,10 +1116,10 @@
       }
     }
     Buffer2.prototype._isBuffer = true;
-    function swap(b, n, m) {
-      const i2 = b[n];
-      b[n] = b[m];
-      b[m] = i2;
+    function swap(b2, n, m) {
+      const i2 = b2[n];
+      b2[n] = b2[m];
+      b2[m] = i2;
     }
     Buffer2.prototype.swap16 = function swap16() {
       const len2 = this.length;
@@ -1162,10 +1162,10 @@
       return slowToString.apply(this, arguments);
     };
     Buffer2.prototype.toLocaleString = Buffer2.prototype.toString;
-    Buffer2.prototype.equals = function equals(b) {
-      if (!Buffer2.isBuffer(b)) throw new TypeError("Argument must be a Buffer");
-      if (this === b) return true;
-      return Buffer2.compare(this, b) === 0;
+    Buffer2.prototype.equals = function equals(b2) {
+      if (!Buffer2.isBuffer(b2)) throw new TypeError("Argument must be a Buffer");
+      if (this === b2) return true;
+      return Buffer2.compare(this, b2) === 0;
     };
     Buffer2.prototype.inspect = function inspect() {
       let str = "";
@@ -3298,28 +3298,28 @@
       }
       return source;
     }
-    function mergeDeepProperties(a, b, prop, caseless) {
-      if (!utils$1.isUndefined(b)) {
-        return getMergedValue(a, b, prop, caseless);
+    function mergeDeepProperties(a, b2, prop, caseless) {
+      if (!utils$1.isUndefined(b2)) {
+        return getMergedValue(a, b2, prop, caseless);
       } else if (!utils$1.isUndefined(a)) {
         return getMergedValue(void 0, a, prop, caseless);
       }
     }
-    function valueFromConfig2(a, b) {
-      if (!utils$1.isUndefined(b)) {
-        return getMergedValue(void 0, b);
+    function valueFromConfig2(a, b2) {
+      if (!utils$1.isUndefined(b2)) {
+        return getMergedValue(void 0, b2);
       }
     }
-    function defaultToConfig2(a, b) {
-      if (!utils$1.isUndefined(b)) {
-        return getMergedValue(void 0, b);
+    function defaultToConfig2(a, b2) {
+      if (!utils$1.isUndefined(b2)) {
+        return getMergedValue(void 0, b2);
       } else if (!utils$1.isUndefined(a)) {
         return getMergedValue(void 0, a);
       }
     }
-    function mergeDirectKeys(a, b, prop) {
+    function mergeDirectKeys(a, b2, prop) {
       if (prop in config2) {
-        return getMergedValue(a, b);
+        return getMergedValue(a, b2);
       } else if (prop in config1) {
         return getMergedValue(void 0, a);
       }
@@ -3353,7 +3353,7 @@
       socketPath: defaultToConfig2,
       responseEncoding: defaultToConfig2,
       validateStatus: mergeDirectKeys,
-      headers: (a, b, prop) => mergeDeepProperties(headersToObject(a), headersToObject(b), prop, true)
+      headers: (a, b2, prop) => mergeDeepProperties(headersToObject(a), headersToObject(b2), prop, true)
     };
     utils$1.forEach(Object.keys({ ...config1, ...config2 }), function computeConfigValue(prop) {
       const merge2 = mergeMap[prop] || mergeDeepProperties;
@@ -4335,6 +4335,32 @@
     getAdapter,
     mergeConfig
   } = axios;
+  const R = (n, e) => d(n, "", e), d = (n, e, o) => {
+    var c, r, i2;
+    const s = (i2 = (r = (c = window == null ? void 0 : window.OC) == null ? void 0 : c.coreApps) == null ? void 0 : r.includes(n)) != null ? i2 : false, l = o.slice(-3) === "php";
+    let t = f();
+    return l && !s ? (t += "/index.php/apps/".concat(n), t += "/".concat(o)) : !l && !s ? (t = b(n), t.at(-1) !== "/" && (t += "/"), t += o) : (t += "/".concat(n), t += "/".concat(o)), t;
+  };
+  function f() {
+    let n = window._oc_webroot;
+    if (typeof n > "u") {
+      n = location.pathname;
+      const e = n.indexOf("/index.php/");
+      if (e !== -1)
+        n = n.slice(0, e);
+      else {
+        const o = n.indexOf("/", 1);
+        n = n.slice(0, o > 0 ? o : void 0);
+      }
+    }
+    return n;
+  }
+  function b(n) {
+    var e, o;
+    return (o = ((e = window._oc_appswebroots) != null ? e : {})[n]) != null ? o : "";
+  }
+  __webpack_public_path__ = `${R("agora", "js")}/`;
+  __webpack_nonce__ = btoa(window.OC.requestToken);
   const MAX_ERRORS = 5;
   const SLEEP_TIMEOUT_DEFAULT = 3e4;
   let lastUpdated = 0;
@@ -4358,7 +4384,7 @@
       status: "starting",
       mode: updateType,
       interval,
-      message: "[Worker] Recieved new parameters."
+      message: "[Worker] Received new parameters."
     });
     if (!http) {
       http = axios.create({
@@ -4430,12 +4456,12 @@
             status: "stopping",
             mode: updateType,
             interval,
-            message: "[Worker] Request aborted by intention",
+            message: "[Worker] Request aborted intentionally",
             lastUpdate: lastUpdated
           });
           return;
         }
-        consecutiveErrors = consecutiveErrors + 1;
+        consecutiveErrors++;
         self.postMessage({
           type: "error",
           status: "error",
@@ -4490,4 +4516,4 @@
     }
   };
 })();
-//# sourceMappingURL=inquiryWatcher.worker-B7QShuFn.js.map
+//# sourceMappingURL=inquiryWatcher.worker-3psPFkb2.js.map
