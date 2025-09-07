@@ -2,16 +2,7 @@
  * SPDX-FileCopyrightText: 2025 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-
 import axios, { AxiosError, AxiosInstance } from 'axios';
-import { linkTo } from '@nextcloud/router';
-
-// -----------------------------
-// Nextcloud CSP / Public Path
-// -----------------------------
-__webpack_public_path__ = `${linkTo('agora', 'js')}/`;
-// Nextcloud nonce pour autoriser l'exécution du worker si nécessaire
-__webpack_nonce__ = btoa(window.OC.requestToken);
 
 const MAX_ERRORS = 5;
 const SLEEP_TIMEOUT_DEFAULT = 30000;
@@ -42,7 +33,7 @@ self.onmessage = async (props) => {
     status: 'starting',
     mode: updateType,
     interval,
-    message: '[Worker] Received new parameters.'
+    message: '[Worker] Recieved new parameters.'
   });
 
   if (!http) {
@@ -123,13 +114,13 @@ self.onmessage = async (props) => {
           status: 'stopping',
           mode: updateType,
           interval,
-          message: '[Worker] Request aborted intentionally',
+          message: '[Worker] Request aborted by intention',
           lastUpdate: lastUpdated
         });
         return;
       }
 
-      consecutiveErrors++;
+      consecutiveErrors = consecutiveErrors + 1;
 
       self.postMessage({
         type: 'error',
@@ -188,4 +179,3 @@ self.onmessage = async (props) => {
     }
   }
 };
-

@@ -19,6 +19,7 @@ Agora is a Nextcloud app for participatory democracy, inquiries, and proposals, 
 - Create Assembly, Consultation to votes them with polls application.
 - Do a workflow to help moderator 
 - Send followup on inqnuiry user created or participated
+- Redefine to be more generic ?
 
 ## Bug fix
 - CSR error in console.
@@ -69,6 +70,9 @@ git clone https://github.com/vinimoz/agora.git
 * Compile javascript with ```npm run build```
 * Run a complete build with ```make appstore``` (Find the output in the build directory)
 * call `occ app:enable agora` to enable Agora
+* call `occ agora:db:init-default to install default value.
+* You can insert into your database some examples, who could be find, on examples directory. Five users need to be created, test, test2, test3, official, moderator
+
 
 ### Installation variants
 

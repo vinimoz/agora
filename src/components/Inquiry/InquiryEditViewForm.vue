@@ -59,6 +59,8 @@ const context = computed(() => {
   )
 })
 
+const titleLabel = ref('');
+
 // Form fields
 const selectedCategory = ref(inquiryStore.categoryId || 0);
 const selectedLocation = ref(inquiryStore.locationId || 0);
@@ -294,7 +296,7 @@ const showLocationAsLabel = computed(() => {
 const createChildInquiry = async (type: InquiryTypeValues): Promise<void> => {
   if (isSaving.value) return;
 
-  titleLabel=``;
+  titleLabel.value=``;
   const confirmed = await confirmAction(
     `Do you really want to reply to this inquiry with a ${type} ?`
   );
@@ -303,13 +305,13 @@ const createChildInquiry = async (type: InquiryTypeValues): Promise<void> => {
   isSaving.value = true;
   
 
-  if (inquiryStore.type==='official') titleLabel=`${t('agora', 'Official response for :')}: ${inquiryStore.title.trim()}`
-  else titleLabel=`${t('agora', 'Response for :')}: ${inquiryStore.title.trim()}`
+  if (type==='official') titleLabel.value=`${t('agora', 'Official response for ')}: ${inquiryStore.title.trim()}`
+  else titleLabel.value=`${t('agora', 'Response for ')}: ${inquiryStore.title.trim()}`
  
   try {
     const inquiry = await inquiryStore.add({
       type,
-      title: titleLabel,
+      title: titleLabel.value,
       categoryId: inquiryStore.categoryId,
       locationId: inquiryStore.locationId,
       parentId: inquiryStore.id

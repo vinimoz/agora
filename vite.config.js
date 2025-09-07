@@ -19,6 +19,8 @@ const customConfig = {
 		},
 	},
 	build: {
+		outDir: 'assets/dist',
+  		emptyOutDir: true,
 		sourcemap: true,        
 		minify: false, 
 	},
