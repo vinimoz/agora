@@ -9,7 +9,7 @@ use League\FactoryMuffin\Faker\Facade as Faker;
 /**
  * General factory for the comment model.
  */
-$fm->define('OCA\Inquiries\Db\Log')->setDefinitions([
+$fm->define('OCA\Agora\Db\Log')->setDefinitions([
 	'created' => function () {
 		$date = new DateTime('yesterday');
 		return $date->getTimestamp();

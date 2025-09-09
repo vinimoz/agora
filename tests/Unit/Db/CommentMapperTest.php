@@ -4,15 +4,15 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Inquiries\Tests\Unit\Db;
+namespace OCA\Agora\Tests\Unit\Db;
 
 use League\FactoryMuffin\Faker\Facade as Faker;
-use OCA\Inquiries\Tests\Unit\UnitTestCase;
+use OCA\Agora\Tests\Unit\UnitTestCase;
 
-use OCA\Inquiries\Db\Comment;
-use OCA\Inquiries\Db\CommentMapper;
-use OCA\Inquiries\Db\Inquiry;
-use OCA\Inquiries\Db\InquiryMapper;
+use OCA\Agora\Db\Comment;
+use OCA\Agora\Db\CommentMapper;
+use OCA\Agora\Db\Inquiry;
+use OCA\Agora\Db\InquiryMapper;
 use OCP\ISession;
 use OCP\Server;
 
@@ -31,20 +31,20 @@ class CommentMapperTest extends UnitTestCase {
 	protected function setUp(): void {
 		parent::setUp();
 		$this->session = Server::get(ISession::class);
-		$this->session->set('ncInquiriesUserId', 'TestUser');
+		$this->session->set('ncAgoraUserId', 'TestUser');
 
 		$this->commentMapper = Server::get(CommentMapper::class);
 		$this->inquiryMapper = Server::get(InquiryMapper::class);
 
 		$this->inquiries = [
-			$this->fm->instance('OCA\Inquiries\Db\Inquiry')
+			$this->fm->instance('OCA\Agora\Db\Inquiry')
 		];
 
 		foreach ($this->inquiries as &$inquiry) {
 			$inquiry = $this->inquiryMapper->insert($inquiry);
 
 			for ($count=0; $count < 2; $count++) {
-				$comment = $this->fm->instance('OCA\Inquiries\Db\Comment');
+				$comment = $this->fm->instance('OCA\Agora\Db\Comment');
 				$comment->setInquiryId($inquiry->getId());
 				array_push($this->comments, $this->commentMapper->insert($comment));
 			}

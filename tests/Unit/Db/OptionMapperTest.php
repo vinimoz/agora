@@ -6,16 +6,14 @@ declare(strict_types=1);
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Inquiries\Tests\Unit\Db;
+namespace OCA\Agora\Tests\Unit\Db;
 
-use OCA\Inquiries\Tests\Unit\UnitTestCase;
+use OCA\Agora\Tests\Unit\UnitTestCase;
 
-use OCA\Inquiries\Db\Inquiry;
-use OCA\Inquiries\Db\InquiryMapper;
-use OCA\Inquiries\Db\Option;
-use OCA\Inquiries\Db\OptionMapper;
-use OCA\Inquiries\Db\Vote;
-use OCA\Inquiries\Db\VoteMapper;
+use OCA\Agora\Db\Inquiry;
+use OCA\Agora\Db\InquiryMapper;
+use OCA\Agora\Db\Option;
+use OCA\Agora\Db\OptionMapper;
 use OCP\ISession;
 use OCP\Server;
 
@@ -23,13 +21,10 @@ class OptionMapperTest extends UnitTestCase {
 	private ISession $session;
 	private OptionMapper $optionMapper;
 	private InquiryMapper $inquiryMapper;
-	private VoteMapper $voteMapper;
 	/** @var Inquiry[] $inquiries */
 	private array $inquiries = [];
 	/** @var Option[] $options */
 	private array $options = [];
-	/** @var Vote[] $votes */
-	private array $votes = [];
 
 	/**
 	 * {@inheritDoc}
@@ -37,14 +32,13 @@ class OptionMapperTest extends UnitTestCase {
 	protected function setUp(): void {
 		parent::setUp();
 		$this->session = Server::get(ISession::class);
-		$this->session->set('ncInquiriesUserId', 'TestUser');
+		$this->session->set('ncAgoraUserId', 'TestUser');
 
-		$this->voteMapper = Server::get(VoteMapper::class);
 		$this->optionMapper = Server::get(OptionMapper::class);
 		$this->inquiryMapper = Server::get(InquiryMapper::class);
 
 		$this->inquiries = [
-			$this->fm->instance('OCA\Inquiries\Db\Inquiry')
+			$this->fm->instance('OCA\Agora\Db\Inquiry')
 		];
 
 		foreach ($this->inquiries as &$inquiry) {
@@ -53,17 +47,11 @@ class OptionMapperTest extends UnitTestCase {
 			for ($count = 0; $count < 2; $count++) {
 
 				/** @var Option $option */
-				$option = $this->fm->instance('OCA\Inquiries\Db\Option');
+				$option = $this->fm->instance('OCA\Agora\Db\Option');
 				$option->setInquiryId($inquiry->getId());
 				$option->syncOption();
 				array_push($this->options, $this->optionMapper->insert($option));
 
-				/** @var Vote $vote */
-				$vote = $this->fm->instance('OCA\Inquiries\Db\Vote');
-				$vote->setInquiryId($option->getInquiryId());
-				$vote->setUserId('TestUser');
-				$vote->setVoteOptionText($option->getInquiryOptionText());
-				array_push($this->votes, $this->voteMapper->insert($vote));
 			}
 		}
 		unset($inquiry);

@@ -4,13 +4,13 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Inquiries\Tests\Unit\Db;
+namespace OCA\Agora\Tests\Unit\Db;
 
-use OCA\Inquiries\Db\Log;
-use OCA\Inquiries\Db\LogMapper;
-use OCA\Inquiries\Db\Inquiry;
-use OCA\Inquiries\Db\InquiryMapper;
-use OCA\Inquiries\Tests\Unit\UnitTestCase;
+use OCA\Agora\Db\Log;
+use OCA\Agora\Db\LogMapper;
+use OCA\Agora\Db\Inquiry;
+use OCA\Agora\Db\InquiryMapper;
+use OCA\Agora\Tests\Unit\UnitTestCase;
 use OCP\Server;
 
 class LogMapperTest extends UnitTestCase {
@@ -30,14 +30,14 @@ class LogMapperTest extends UnitTestCase {
 		$this->inquiryMapper = Server::get(InquiryMapper::class);
 
 		$this->inquiries = [
-			$this->fm->instance('OCA\Inquiries\Db\Inquiry')
+			$this->fm->instance('OCA\Agora\Db\Inquiry')
 		];
 
 		foreach ($this->inquiries as &$inquiry) {
 			$inquiry = $this->inquiryMapper->insert($inquiry);
 
 			for ($count=0; $count < 2; $count++) {
-				$log = $this->fm->instance('OCA\Inquiries\Db\Log');
+				$log = $this->fm->instance('OCA\Agora\Db\Log');
 				$log->setInquiryId($inquiry->getId());
 				array_push($this->logs, $this->logMapper->insert($log));
 			}

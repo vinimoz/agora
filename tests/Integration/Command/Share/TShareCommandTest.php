@@ -3,13 +3,13 @@
  * SPDX-FileCopyrightText: 2021 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-namespace OCA\Inquiries\Tests\Integration\Command\Share;
+namespace OCA\Agora\Tests\Integration\Command\Share;
 
-use OCA\Inquiries\Db\Inquiry;
-use OCA\Inquiries\Db\InquiryMapper;
-use OCA\Inquiries\Db\Share;
-use OCA\Inquiries\Db\ShareMapper;
-use OCA\Inquiries\Service\ShareService;
+use OCA\Agora\Db\Inquiry;
+use OCA\Agora\Db\InquiryMapper;
+use OCA\Agora\Db\Share;
+use OCA\Agora\Db\ShareMapper;
+use OCA\Agora\Service\ShareService;
 use OCP\IGroupManager;
 use OCP\IUserManager;
 use PHPUnit\Framework\MockObject\MockObject;

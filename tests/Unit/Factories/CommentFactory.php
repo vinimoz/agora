@@ -9,7 +9,7 @@ use League\FactoryMuffin\Faker\Facade as Faker;
 /**
  * General factory for the comment model.
  */
-$fm->define('OCA\Inquiries\Db\Comment')->setDefinitions([
+$fm->define('OCA\Agora\Db\Comment')->setDefinitions([
 	'userId' => Faker::firstNameMale(),
 	'timestamp' => function () {
 		$date = new DateTime('today');

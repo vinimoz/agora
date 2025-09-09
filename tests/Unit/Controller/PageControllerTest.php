@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Inquiries\Tests\Unit\Controller;
+namespace OCA\Agora\Tests\Unit\Controller;
 
-use OCA\Inquiries\Controller\PageController;
-use OCA\Inquiries\Tests\Unit\UnitTestCase;
+use OCA\Agora\Controller\PageController;
+use OCA\Agora\Tests\Unit\UnitTestCase;
 use OCP\AppFramework\Http\TemplateResponse;
 
 class PageControllerTest extends UnitTestCase {
@@ -20,7 +20,7 @@ class PageControllerTest extends UnitTestCase {
 		$request = $this->getMockBuilder('OCP\IRequest')
 			->disableOriginalConstructor()
 			->getMock();
-		$notificationService = $this->getMockBuilder('OCA\Inquiries\Service\NotificationService')
+		$notificationService = $this->getMockBuilder('OCA\Agora\Service\NotificationService')
 			->disableOriginalConstructor()
 			->getMock();
 		$eventDispatcher = $this->getMockBuilder('OCP\EventDispatcher\IEventDispatcher')

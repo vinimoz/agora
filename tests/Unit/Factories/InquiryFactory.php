@@ -9,7 +9,7 @@ use League\FactoryMuffin\Faker\Facade as Faker;
 /**
  * General factory for the inquiry model.
  */
-$fm->define('OCA\Inquiries\Db\Inquiry')->setDefinitions([
+$fm->define('OCA\Agora\Db\Inquiry')->setDefinitions([
 	'type' => 'textInquiry',
 	'title' => Faker::text(124),
 	'description' => Faker::text(255),
@@ -35,11 +35,8 @@ $fm->define('OCA\Inquiries\Db\Inquiry')->setDefinitions([
 		$date = new DateTime('tomorrow');
 		return $date->getTimestamp();
 	},
-	'voteLimit' => 0,
+	'supportLimit' => 0,
 	'optionLimit' => 0,
 	'showResults' => 'always',
 	'adminAccess' => 0,
-	'hideBookedUp' => 0,
-	'useNo' => 0,
-	'misc_settings' => '',
 ]);

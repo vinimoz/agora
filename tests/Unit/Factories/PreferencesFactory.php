@@ -7,7 +7,7 @@
 /**
  * General factory for the inquiry model.
  */
-$fm->define('OCA\Inquiries\Db\Preferences')->setDefinitions([
+$fm->define('OCA\Agora\Db\Preferences')->setDefinitions([
 	'type' => 'textInquiry',
 	'timestamp' => function () {
 		$date = new DateTime('today');

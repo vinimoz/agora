@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Inquiries\Tests\Integration\App;
+namespace OCA\Agora\Tests\Integration\App;
 
 use OCP\AppFramework\App;
 use PHPUnit\Framework\TestCase;
@@ -15,12 +15,12 @@ class AppTest extends TestCase {
 
 	protected function setUp(): void {
 		parent::setUp();
-		$app = new App('inquiries');
+		$app = new App('agora');
 		$this->container = $app->getContainer();
 	}
 
 	public function testAppInstalled() {
 		$appManager = $this->container->query('OCP\App\IAppManager');
-		$this->assertTrue($appManager->isInstalled('inquiries'));
+		$this->assertTrue($appManager->isInstalled('agora'));
 	}
 }

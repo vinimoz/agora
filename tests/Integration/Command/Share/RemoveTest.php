@@ -3,10 +3,10 @@
  * SPDX-FileCopyrightText: 2021 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-namespace OCA\Inquiries\Tests\Integration\Command\Share;
+namespace OCA\Agora\Tests\Integration\Command\Share;
 
-use OCA\Inquiries\Command\Share\Remove;
-use OCA\Inquiries\Db\Inquiry;
+use OCA\Agora\Command\Share\Remove;
+use OCA\Agora\Db\Inquiry;
 use OCP\AppFramework\Db\DoesNotExistException;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Exception\RuntimeException as ConsoleRuntimeException;

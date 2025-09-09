@@ -8,7 +8,7 @@ use League\FactoryMuffin\Faker\Facade as Faker;
 /**
  * General factory for the inquiry model.
  */
-$fm->define('OCA\Inquiries\Db\Share')->setDefinitions([
+$fm->define('OCA\Agora\Db\Share')->setDefinitions([
 	'userId' => Faker::firstNameMale(),
 	'emailAddress' => Faker::safeEmail(),
 	'invitationSent' => function () {

@@ -152,6 +152,7 @@ abstract class TableSchema
     'slug' => ['type' => Types::STRING, 'options' => ['notnull' => false, 'default' => 'proposal', 'length' => 255]],
     'tags' => ['type' => Types::TEXT, 'options' => ['notnull' => false, 'default' => '']],
     'parent_id' => ['type' => Types::BIGINT, 'options' => ['notnull' => false, 'default' => 0]],
+    'parent__law_id' => ['type' => Types::BIGINT, 'options' => ['notnull' => false, 'default' => 0]],
     'moderation_status' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'default' => 'draft', 'length' => 50]],
     ],
     Assembly::TABLE => [

@@ -6,12 +6,12 @@ declare(strict_types=1);
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Inquiries\Tests\Unit\Db;
+namespace OCA\Agora\Tests\Unit\Db;
 
 use League\FactoryMuffin\Faker\Facade as Faker;
-use OCA\Inquiries\Db\Inquiry;
-use OCA\Inquiries\Db\InquiryMapper;
-use OCA\Inquiries\Tests\Unit\UnitTestCase;
+use OCA\Agora\Db\Inquiry;
+use OCA\Agora\Db\InquiryMapper;
+use OCA\Agora\Tests\Unit\UnitTestCase;
 use OCP\Server;
 
 class InquiryMapperTest extends UnitTestCase {
@@ -27,9 +27,9 @@ class InquiryMapperTest extends UnitTestCase {
 		$this->inquiryMapper = Server::get(InquiryMapper::class);
 
 		$this->inquiries = [
-			$this->fm->instance('OCA\Inquiries\Db\Inquiry'),
-			$this->fm->instance('OCA\Inquiries\Db\Inquiry'),
-			$this->fm->instance('OCA\Inquiries\Db\Inquiry')
+			$this->fm->instance('OCA\Agora\Db\Inquiry'),
+			$this->fm->instance('OCA\Agora\Db\Inquiry'),
+			$this->fm->instance('OCA\Agora\Db\Inquiry')
 		];
 		foreach ($this->inquiries as &$inquiry) {
 			$inquiry = $this->inquiryMapper->insert($inquiry);

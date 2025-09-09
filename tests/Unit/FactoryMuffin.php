@@ -3,7 +3,7 @@
  * SPDX-FileCopyrightText: 2019 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-namespace OCA\Inquiries\Tests\Unit;
+namespace OCA\Agora\Tests\Unit;
 
 use League\FactoryMuffin\FactoryMuffin as OriginalFactoryMuffin;
 use OCP\AppFramework\Db\Entity;

@@ -9,7 +9,7 @@ use League\FactoryMuffin\Faker\Facade as Faker;
 /**
  * General factory for the text model.
  */
-$fm->define('OCA\Inquiries\Db\Option')->setDefinitions([
+$fm->define('OCA\Agora\Db\Option')->setDefinitions([
 	'owner' => Faker::firstNameMale(),
 	'released' => function () {
 		$date = new DateTime('now');

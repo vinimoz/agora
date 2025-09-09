@@ -8,6 +8,6 @@ use League\FactoryMuffin\Faker\Facade as Faker;
 /**
  * General factory for the Subscription model.
  */
-$fm->define('OCA\Inquiries\Db\Subscription')->setDefinitions([
+$fm->define('OCA\Agora\Db\Subscription')->setDefinitions([
 	'userId' => Faker::firstNameMale()
 ]);
