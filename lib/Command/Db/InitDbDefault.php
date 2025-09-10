@@ -13,6 +13,7 @@ use OCP\IDBConnection;
 use OCA\Agora\Db\Category;
 use OCA\Agora\Db\Location;
 use OCA\Agora\Db\ModerationStatus;
+use OCP\Migration\IOutput;
 
 class InitDbDefault extends Command
 {
@@ -154,7 +155,7 @@ class InitDbDefault extends Command
     ],
     ];
 
-
+    
 
     public function __construct(IDBConnection $connection, IGroupManager $groupManager)
     {
@@ -163,19 +164,32 @@ class InitDbDefault extends Command
         $this->groupManager = $groupManager;
     }
 
-
-    protected function runCommands(): int
+    private function log(?IOutput $output, string $message): void
     {
-        $this->insertDefaultCategories();
-        $this->insertDefaultLocations();
-        $this->insertDefaultModerationStatuses();
-        $this->createDefaultGroups();
+        if ($output !== null) {
+            $output->info($message);
+        } else {
+            $this->output->writeln('[InitDbDefault] ' . $message);
+        }
+    }
+
+
+    public function runCommands(?IOutput $output = null): int
+    {
+        $this->log($output, 'Initializing default statuses...');
+
+
+        $this->insertDefaultCategories($output);
+        $this->insertDefaultLocations($output);
+        $this->insertDefaultModerationStatuses($output);
+        $this->createDefaultGroups($output);
         return 0;
     }
 
-    private function insertDefaultCategories(): void
+    private function insertDefaultCategories(?IOutput $output = null): void
     {
-        $this->output->writeln('Inserting default categories...');
+        $this->log($output, 'Inserting default categories...');
+
         $inserted = [];
 
         foreach ($this->categories as $category) {
@@ -184,7 +198,7 @@ class InitDbDefault extends Command
             $row = $cursor->fetch();
 
             if ($row !== false) {
-                $this->output->writeln('Category already exists: ' . $category['name']);
+                $this->log($output, 'Category already exists: ' . $category['name']);
                 $inserted[$category['name']] = (int) $row['id'];
                 continue;
             }
@@ -197,14 +211,16 @@ class InitDbDefault extends Command
             $id = (int) $this->connection->lastInsertId('*PREFIX*'.Category::TABLE);
 
             $inserted[$category['name']] = $id;
-
-            $this->output->writeln('Inserted category: ' . $category['name']);
+                  
+            
+            $this->log($output, 'Inserted category: ' . $category['name']);
         }
     }
 
-    private function insertDefaultLocations(): void
+    private function insertDefaultLocations(?IOutput $output = null): void
     {
-        $this->output->writeln('Inserting default locations...');
+        $this->log($output, 'Inserting default locations...');
+
         $inserted = [];
 
         foreach ($this->locations as $location) {
@@ -213,7 +229,7 @@ class InitDbDefault extends Command
             $row = $cursor->fetch();
 
             if ($row !== false) {
-                $this->output->writeln('Location already exists: ' . $location['name']);
+                  $this->log($output, 'Location already exists: ' . $location['name']);
                 $inserted[$location['name']] = (int) $row['id'];
                 continue;
             }
@@ -226,70 +242,65 @@ class InitDbDefault extends Command
             $id = (int) $this->connection->lastInsertId('*PREFIX*'.Location::TABLE);
             $inserted[$location['name']] = $id;
 
-            $this->output->writeln('Inserted location: ' . $location['name']);
+                $this->log($output, 'Inserted location: ' . $location['name']);
         }
     }
 
-    private function insertDefaultModerationStatuses(): void
+    private function insertDefaultModerationStatuses(?IOutput $output = null): void
     {
-        $this->output->writeln('Inserting default moderation statuses...');
+        $this->log($output, 'Inserting default moderation statuses...');
 
         foreach ($this->moderationStatuses as $inquiryType => $statuses) {
             foreach ($statuses as $status) {
                 $query = $this->connection->prepare(
                     'SELECT `id` FROM `*PREFIX*'.ModerationStatus::TABLE.'`
-					WHERE `inquiry_type` = ? AND `status_key` = ?'
+				    WHERE `inquiry_type` = ? AND `status_key` = ?'
                 );
                 $cursor = $query->execute([$inquiryType, $status['status_key']]);
                 $row = $cursor->fetch();
 
                 if ($row !== false) {
-                    $this->output->writeln(
-                        'Moderation status already exists: ' . $inquiryType . ' -> ' . $status['status_key']
-                    );
-                          continue;
+                           $this->log($output, 'Moderation status already exists: ' . $inquiryType . ' -> ' . $status['status_key']);
+                       continue;
                 }
                 $insert = $this->connection->prepare(
                     'INSERT INTO `*PREFIX*'.ModerationStatus::TABLE.'` 
-    					(`inquiry_type`, `status_key`, `label`, `description`, `icon`, `is_final`, `order`) 
-    					VALUES (?, ?, ?, ?, ?, ?, ?)'
+				    (`inquiry_type`, `status_key`, `label`, `description`, `icon`, `is_final`, `order`) 
+				    VALUES (?, ?, ?, ?, ?, ?, ?)'
                 );
 
                 $insert->execute(
                     [
-                     $inquiryType,
-                     $status['status_key'],
+                    $inquiryType,
+                    $status['status_key'],
                     $status['label'],
-                     $status['description'],
-                     $status['icon'],
-                     (int) $status['is_final'],
-                     $status['order'],
+                    $status['description'],
+                    $status['icon'],
+                    (int) $status['is_final'],
+                    $status['order'],
                     ]
                 );
 
 
-                $this->output->writeln(
-                    'Inserted moderation status: ' . $inquiryType . ' -> ' . $status['status_key']
-                );
             }
         }
     }
 
 
-    private function createDefaultGroups(): void
+    private function createDefaultGroups(?IOutput $output = null): void
     {
-        $this->output->writeln('Creating default Nextcloud groups...');
+
+        $this->log($output, 'Creating default Nextcloud groups...');
 
         $groups = ['Agora Users','Agora Moderator', 'Agora Official'];
 
         foreach ($groups as $groupName) {
             $group = $this->groupManager->get($groupName);
             if ($group !== null) {
-                $this->output->writeln('Group already exists: ' . $groupName);
+                $this->log($output, 'Group already exists: ' . $groupName);
                 continue;
             }
             $this->groupManager->createGroup($groupName);
-            $this->output->writeln('Created group: ' . $groupName);
         }
     }
 }

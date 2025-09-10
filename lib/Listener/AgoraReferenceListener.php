@@ -14,15 +14,16 @@ use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 use OCP\Util;
 use OCP\ILogger;
+use Psr\Log\LoggerInterface;
 
 /**
  * @template-implements IEventListener<Event>
  */
 class AgoraReferenceListener implements IEventListener
 {
-    private ILogger $logger;
+    private LoggerInterface $logger;
     
-    public function __construct(ILogger $logger)
+    public function __construct(LoggerInterface $logger)
     {
         $this->logger = $logger;
     

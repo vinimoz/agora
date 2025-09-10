@@ -14,17 +14,22 @@ use OCA\Agora\Db\IndexManager;
 use OCP\IDBConnection;
 use OCP\Migration\IOutput;
 use OCP\Migration\IRepairStep;
+use OCA\Agora\Command\Db\InitDbDefault;
 
 /**
  * @psalm-suppress UnusedClass
  */
 class Install implements IRepairStep
 {
+    private InitDbDefault $initDbDefault;
+    
     public function __construct(
         private IndexManager $indexManager,
         private IDBConnection $connection,
-        private Schema $schema,
+	private Schema $schema,
+	InitDbDefault $initDbDefault
     ) {
+	      $this->initDbDefault = $initDbDefault;
     }
 
     public function getName()
@@ -48,6 +53,8 @@ class Install implements IRepairStep
         }
 
         $output->info('Agora - Foreign key contraints created.');
-        $output->info('Agora - Indices created.');
+	$output->info('Agora - Indices created.');
+	$this->initDbDefault->runCommands($output);
+	$output->info('Agora - default values inserted.');
     }
 }

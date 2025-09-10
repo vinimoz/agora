@@ -47,7 +47,7 @@ class CreateIndices extends Command
     }
 
     /**
-     * add an on delete fk contraint to all tables referencing the main agora table
+     * add an on delete fk contraint to all tables referencing the main inquiries table
      */
     private function addForeignKeyConstraints(): void
     {

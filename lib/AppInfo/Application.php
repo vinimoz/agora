@@ -81,6 +81,7 @@ use OCP\User\Events\UserDeletedEvent;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 
+
 /**
  * @psalm-api
  */
@@ -106,7 +107,8 @@ class Application extends App implements IBootstrap
     public function register(IRegistrationContext $context): void
     {
         include_once __DIR__ . '/../../vendor/autoload.php';
-        $this->registerServices($context);
+	$this->registerServices($context);
+
 
         $context->registerEventListener(RenderReferenceEvent::class, AgoraReferenceListener::class);
         $context->registerMiddleWare(RequestAttributesMiddleware::class);
