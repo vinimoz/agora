@@ -64,46 +64,11 @@ class InitDbDefault extends Command
     ];
 
     private array $locations = [
-    ['name' => 'French Polynesia', 'parent' => 0],
+    ['name' => 'Country', 'parent' => 0],
 
-    ['name' => 'Society Islands', 'parent' => 'French Polynesia'],
-    ['name' => 'Windward Islands', 'parent' => 'Society Islands'],
-    ['name' => 'Leeward Islands (Raromatai)', 'parent' => 'Society Islands'],
-
-    ['name' => 'Tahiti', 'parent' => 'Windward Islands'],
-    ['name' => 'Moorea', 'parent' => 'Windward Islands'],
-    ['name' => 'Tetiaroa', 'parent' => 'Windward Islands'],
-    ['name' => 'Mehetia', 'parent' => 'Windward Islands'],
-
-    ['name' => 'Bora Bora', 'parent' => 'Leeward Islands (Raromatai)'],
-    ['name' => 'Raiatea', 'parent' => 'Leeward Islands (Raromatai)'],
-    ['name' => 'Taha’a', 'parent' => 'Leeward Islands (Raromatai)'],
-    ['name' => 'Huahine', 'parent' => 'Leeward Islands (Raromatai)'],
-    ['name' => 'Maupiti', 'parent' => 'Leeward Islands (Raromatai)'],
-
-    ['name' => 'Tuamotu Archipelago', 'parent' => 'French Polynesia'],
-    ['name' => 'Rangiroa', 'parent' => 'Tuamotu Archipelago'],
-    ['name' => 'Manihi', 'parent' => 'Tuamotu Archipelago'],
-    ['name' => 'Fakarava', 'parent' => 'Tuamotu Archipelago'],
-    ['name' => 'Makemo', 'parent' => 'Tuamotu Archipelago'],
-    ['name' => 'Anaa', 'parent' => 'Tuamotu Archipelago'],
-    ['name' => 'Hao', 'parent' => 'Tuamotu Archipelago'],
-
-    ['name' => 'Gambier Islands', 'parent' => 'French Polynesia'],
-    ['name' => 'Mangareva', 'parent' => 'Gambier Islands'],
-    ['name' => 'Austral Islands', 'parent' => 'French Polynesia'],
-    ['name' => 'Rurutu', 'parent' => 'Austral Islands'],
-    ['name' => 'Tubuai', 'parent' => 'Austral Islands'],
-    ['name' => 'Raivavae', 'parent' => 'Austral Islands'],
-    ['name' => 'Rapa Iti', 'parent' => 'Austral Islands'],
-    ['name' => 'Maria (Tupuai)', 'parent' => 'Austral Islands'],
-
-    ['name' => 'Marquesas Islands', 'parent' => 'French Polynesia'],
-    ['name' => 'Nuku Hiva', 'parent' => 'Marquesas Islands'],
-    ['name' => 'Ua Pou', 'parent' => 'Marquesas Islands'],
-    ['name' => 'Ua Huka', 'parent' => 'Marquesas Islands'],
-    ['name' => 'Hiva Oa', 'parent' => 'Marquesas Islands'],
-    ['name' => 'Tahuata', 'parent' => 'Marquesas Islands'],
+    ['name' => 'State 1', 'parent' => 'Country'],
+    ['name' => 'State 2', 'parent' => 'Country'],
+    ['name' => 'State3 ', 'parent' => 'Country'],
     ];
 
 
