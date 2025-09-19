@@ -9,6 +9,7 @@ Thumbs.db
 *.tmp
 *.log
 .idea/
+.cert/
 .vscode/
 nbproject/
 

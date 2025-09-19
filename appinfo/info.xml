@@ -2,11 +2,11 @@
 <info xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
   <id>agora</id>
   <name>Agora</name>
-  <summary>A agora app, for citizen democracy.</summary>
-  <description>A agora app, for citizen democracy </description>
+  <summary>Participatory democracy app for creating, debating and supporting on community proposals..</summary>
+  <description>Agora is a Nextcloud app for participatory democracy. Users can create proposals, debates, petitions or projects, and gather suggestions, comments and supports. Contributions can be organized by location or category, and evolve through customizable workflows. The app integrates with Nextcloud tools (Talk, Collectives, Deck) to support collaboration and citizen participation. </description>
   <version>1.0.0rc4</version>
   <licence>agpl</licence>
-  <author>VIncent TRAPPE</author>
+  <author>Vincent TRAPPE</author>
   <documentation>
     <admin>https://github.com/vinimoz/agora/blob/master/README.md</admin>
   </documentation>
