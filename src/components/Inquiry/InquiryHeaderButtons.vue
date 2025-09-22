@@ -6,18 +6,16 @@
 <script setup lang="ts">
 import { onBeforeUnmount } from 'vue'
 
-import { ActionToggleSidebar } from '../Actions/index.ts';
-import { useInquiryStore } from '../../stores/inquiry.ts';
-import { useSessionStore } from '../../stores/session.ts';
+import { ActionToggleSidebar } from '../Actions/index.ts'
+import { useInquiryStore } from '../../stores/inquiry.ts'
+import { useSessionStore } from '../../stores/session.ts'
 
-const inquiryStore = useInquiryStore();
-const sessionStore = useSessionStore();
-
-
+const inquiryStore = useInquiryStore()
+const sessionStore = useSessionStore()
 
 onBeforeUnmount(() => {
-  inquiryStore.$reset();
-});
+  inquiryStore.$reset()
+})
 </script>
 
 <template>
@@ -25,8 +23,7 @@ onBeforeUnmount(() => {
     <ActionToggleSidebar
       v-if="
         inquiryStore.permissions.edit ||
-          sessionStore.appSettings.inquiryTypeRights[inquiryStore.type]
-            .inquiryComment
+        sessionStore.appSettings.inquiryTypeRights[inquiryStore.type].inquiryComment
       "
     />
   </div>

@@ -4,34 +4,32 @@
 -->
 
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted } from 'vue';
-import { t } from '@nextcloud/l10n';
-import { subscribe, unsubscribe } from '@nextcloud/event-bus';
+import { computed, onMounted, onUnmounted } from 'vue'
+import { t } from '@nextcloud/l10n'
+import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 
-import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent';
+import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
 
-import ActivityIcon from 'vue-material-design-icons/LightningBolt.vue';
+import ActivityIcon from 'vue-material-design-icons/LightningBolt.vue'
 
-import Activities from '../Activity/Activities.vue';
-import { useActivityStore } from '../../stores/activity.ts';
-import { Event } from '../../Types/index.ts';
+import Activities from '../Activity/Activities.vue'
+import { useActivityStore } from '../../stores/activity.ts'
+import { Event } from '../../Types/index.ts'
 
-const activityStore = useActivityStore();
+const activityStore = useActivityStore()
 const emptyContentProps = {
-  name: t('agora', 'No activity yet')
-};
+  name: t('agora', 'No activity yet'),
+}
 
-const showEmptyContent = computed(
-  () => activityStore.getActivitiesForInquiry.length === 0
-);
+const showEmptyContent = computed(() => activityStore.getActivitiesForInquiry.length === 0)
 
 onMounted(() => {
-  subscribe(Event.UpdateActivity, () => activityStore.load());
-});
+  subscribe(Event.UpdateActivity, () => activityStore.load())
+})
 
 onUnmounted(() => {
-  unsubscribe(Event.UpdateActivity, () => activityStore.load());
-});
+  unsubscribe(Event.UpdateActivity, () => activityStore.load())
+})
 </script>
 
 <template>

@@ -4,61 +4,61 @@
 -->
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { debounce } from 'lodash';
-import { t } from '@nextcloud/l10n';
+import { ref } from 'vue'
+import { debounce } from 'lodash'
+import { t } from '@nextcloud/l10n'
 
-import NcSelectUsers from '@nextcloud/vue/components/NcSelectUsers';
+import NcSelectUsers from '@nextcloud/vue/components/NcSelectUsers'
 
-import { AppSettingsAPI } from '../../Api/index.ts';
-import { Logger } from '../../helpers/index.ts';
-import { ISearchType, User } from '../../Types/index.ts';
-import { AxiosError } from '@nextcloud/axios';
+import { AppSettingsAPI } from '../../Api/index.ts'
+import { Logger } from '../../helpers/index.ts'
+import { ISearchType, User } from '../../Types/index.ts'
+import { AxiosError } from '@nextcloud/axios'
 
 interface Props {
-  placeholder?: string;
-  ariaLabel?: string;
-  searchTypes?: ISearchType[];
-  closeOnSelect?: boolean;
+  placeholder?: string
+  ariaLabel?: string
+  searchTypes?: ISearchType[]
+  closeOnSelect?: boolean
 }
 
-const emit = defineEmits(['userSelected']);
+const emit = defineEmits(['userSelected'])
 
-const model = defineModel<User | undefined>();
+const model = defineModel<User | undefined>()
 
 const {
   placeholder = t('agora', 'Type to start searching …'),
   ariaLabel = t('agora', 'Select users'),
   searchTypes = [99],
-  closeOnSelect = false
-} = defineProps<Props>();
+  closeOnSelect = false,
+} = defineProps<Props>()
 
-const users = ref<User[]>([]);
-const isLoading = ref(false);
+const users = ref<User[]>([])
+const isLoading = ref(false)
 
 const loadUsersAsync = debounce(async function (query: string) {
   if (!query) {
-    users.value = [];
-    return;
+    users.value = []
+    return
   }
 
-  isLoading.value = true;
+  isLoading.value = true
 
   try {
-    const response = await AppSettingsAPI.getUsers(query, searchTypes);
-    users.value = response.data.siteusers;
-    isLoading.value = false;
+    const response = await AppSettingsAPI.getUsers(query, searchTypes)
+    users.value = response.data.siteusers
+    isLoading.value = false
   } catch (error) {
     if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-      return;
+      return
     }
-    Logger.error('Error loading users', { error });
-    isLoading.value = false;
+    Logger.error('Error loading users', { error })
+    isLoading.value = false
   }
-}, 250);
+}, 250)
 
 async function optionSelected(user: User) {
-  emit('userSelected', user);
+  emit('userSelected', user)
 }
 
 const selectProps = {
@@ -72,8 +72,8 @@ const selectProps = {
   placeholder,
   closeOnSelect,
   dropdownShouldOpen: () => users.value.length > 0,
-  label: 'displayName'
-};
+  label: 'displayName',
+}
 </script>
 
 <template>

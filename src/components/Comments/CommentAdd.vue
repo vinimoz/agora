@@ -4,27 +4,27 @@
 -->
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { showError } from '@nextcloud/dialogs';
-import { InputDiv } from '../Base/index.ts';
-import { t } from '@nextcloud/l10n';
-import UserItem from '../User/UserItem.vue';
-import { useSessionStore } from '../../stores/session.ts';
-import { useCommentsStore } from '../../stores/comments.ts';
-import { NcCheckboxRadioSwitch } from '@nextcloud/vue';
-import { useInquiryStore } from '../../stores/inquiry.ts';
+import { ref } from 'vue'
+import { showError } from '@nextcloud/dialogs'
+import { InputDiv } from '../Base/index.ts'
+import { t } from '@nextcloud/l10n'
+import UserItem from '../User/UserItem.vue'
+import { useSessionStore } from '../../stores/session.ts'
+import { useCommentsStore } from '../../stores/comments.ts'
+import { NcCheckboxRadioSwitch } from '@nextcloud/vue'
+import { useInquiryStore } from '../../stores/inquiry.ts'
 
-const commentsStore = useCommentsStore();
-const sessionStore = useSessionStore();
-const inquiryStore = useInquiryStore();
-const comment = ref('');
-const confidantial = ref(false);
+const commentsStore = useCommentsStore()
+const sessionStore = useSessionStore()
+const inquiryStore = useInquiryStore()
+const comment = ref('')
+const confidantial = ref(false)
 const confidentialText =
   inquiryStore.owner.id === sessionStore.currentUser.id
     ? t('agora', 'Only visible to me')
     : t('agora', 'Only visible to {displayName}', {
-      displayName: inquiryStore.owner.displayName
-    });
+        displayName: inquiryStore.owner.displayName,
+      })
 
 /**
  *
@@ -34,11 +34,11 @@ async function writeComment() {
     try {
       await commentsStore.add({
         message: comment.value,
-        confidential: confidantial.value
-      });
-      comment.value = '';
+        confidential: confidantial.value,
+      })
+      comment.value = ''
     } catch {
-      showError(t('agora', 'Error while saving comment'));
+      showError(t('agora', 'Error while saving comment'))
     }
   }
 }

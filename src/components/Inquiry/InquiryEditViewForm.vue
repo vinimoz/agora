@@ -3,49 +3,49 @@
 	- SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
-import { ref, watch, computed, onMounted, onUnmounted, toRaw } from 'vue';
-import { useRouter } from 'vue-router';
-import { subscribe, unsubscribe } from '@nextcloud/event-bus';
-import { showSuccess, showError } from '@nextcloud/dialogs';
-import { useInquiryStore } from '../../stores/inquiry';
-import { useInquiriesStore } from '../../stores/inquiries';
-import { useSupportsStore } from '../../stores/supports';
-import { useCommentsStore } from '../../stores/comments';
-import { useSessionStore } from '../../stores/session';
-import { BaseEntry, Event } from '../../Types/index.ts';
-import { t } from '@nextcloud/l10n';
+import { ref, watch, computed, onMounted, onUnmounted, toRaw } from 'vue'
+import { useRouter } from 'vue-router'
+import { subscribe, unsubscribe } from '@nextcloud/event-bus'
+import { showSuccess, showError } from '@nextcloud/dialogs'
+import { useInquiryStore } from '../../stores/inquiry'
+import { useInquiriesStore } from '../../stores/inquiries'
+import { useSupportsStore } from '../../stores/supports'
+import { useCommentsStore } from '../../stores/comments'
+import { useSessionStore } from '../../stores/session'
+import { BaseEntry, Event } from '../../Types/index.ts'
+import { t } from '@nextcloud/l10n'
 import {
   InquiryTypesUI,
   InquiryTypeValues,
-  confirmAction
-} from '../../helpers/modules/InquiryHelper.ts';
-import { DateTime } from 'luxon';
-import NcSelect from '@nextcloud/vue/components/NcSelect';
-import NcButton from '@nextcloud/vue/components/NcButton';
-import InquiryItemActions from './InquiryItemActions.vue';
-import { InputDiv } from '../Base/index.ts';
-import { ThumbIcon } from '../AppIcons';
-import InquiryEditor from '../Editor/InquiryEditor.vue';
-import { NcTextArea, NcRichText } from '@nextcloud/vue';
-import { InquiryGeneralIcons } from '../../utils/icons.ts';
-import { 
+  confirmAction,
+} from '../../helpers/modules/InquiryHelper.ts'
+
+import NcSelect from '@nextcloud/vue/components/NcSelect'
+import NcButton from '@nextcloud/vue/components/NcButton'
+import InquiryItemActions from './InquiryItemActions.vue'
+import { InputDiv } from '../Base/index.ts'
+import { ThumbIcon } from '../AppIcons'
+import InquiryEditor from '../Editor/InquiryEditor.vue'
+import { NcTextArea, NcRichText } from '@nextcloud/vue'
+import { InquiryGeneralIcons } from '../../utils/icons.ts'
+import {
   canEdit,
   canSupport,
   canComment,
-  createPermissionContextForContent, 
-  ContentType 
+  canViewToggle,
+  createPermissionContextForContent,
+  ContentType,
 } from '../../utils/permissions.ts'
 
 // The constant store declaration
-const sessionStore = useSessionStore();
-const commentsStore = useCommentsStore();
-const supportsStore = useSupportsStore();
-const inquiryStore = useInquiryStore();
-const inquiriesStore = useInquiriesStore();
-const router = useRouter();
+const sessionStore = useSessionStore()
+const commentsStore = useCommentsStore()
+const supportsStore = useSupportsStore()
+const inquiryStore = useInquiryStore()
+const inquiriesStore = useInquiriesStore()
+const router = useRouter()
 
-const context = computed(() => {
-  return createPermissionContextForContent(
+const context = computed(() => createPermissionContextForContent(
     ContentType.Inquiry,
     inquiryStore.owner.id,
     inquiryStore.configuration.access === 'public',
@@ -56,144 +56,150 @@ const context = computed(() => {
     inquiryStore.inquiryGroups.length > 0,
     inquiryStore.inquiryGroups,
     inquiryStore.type
-  )
-})
+  ))
 
-const titleLabel = ref('');
+const titleLabel = ref('')
 
 // Form fields
-const selectedCategory = ref(inquiryStore.categoryId || 0);
-const selectedLocation = ref(inquiryStore.locationId || 0);
+const selectedCategory = ref(inquiryStore.categoryId || 0)
+const selectedLocation = ref(inquiryStore.locationId || 0)
 
-const isSaving = ref(false);
-const isLoaded = ref(false);
+const isSaving = ref(false)
+const isLoaded = ref(false)
 
-const hasSupported= computed (() =>  inquiryStore.currentUserStatus.hasSupported) 
+const hasSupported = computed(() => inquiryStore.currentUserStatus.hasSupported)
 
-const isReadonlyDescription = ref(true) 
+const isReadonlyDescription = ref(true)
 
 // All regarding Location and category
 // To display in case of read only category
 function getHierarchyPath(items, targetId) {
-  const itemMap = {};
+  const itemMap = {}
 
   items.forEach((item) => {
-    itemMap[item.id] = item;
-  });
+    itemMap[item.id] = item
+  })
 
   if (!itemMap[targetId]) {
-    return 'ID not found';
+    return 'ID not found'
   }
 
   function buildPath(item) {
     if (item.parentId === 0) {
-      return item.name;
+      return item.name
     }
-    const parent = itemMap[item.parentId];
+    const parent = itemMap[item.parentId]
     if (parent) {
-      return `${buildPath(parent)} -> ${item.name}`;
+      return `${buildPath(parent)} -> ${item.name}`
     }
-    return item.name;
+    return item.name
   }
 
-  return buildPath(itemMap[targetId]);
+  return buildPath(itemMap[targetId])
 }
 
 watch(
   selectedLocation,
   (newVal) => {
-    const rawValue = toRaw(newVal);
+    const rawValue = toRaw(newVal)
 
     if (rawValue) {
-      inquiryStore.locationId = rawValue.value;
+      inquiryStore.locationId = rawValue.value
     }
   },
   { deep: true }
-);
+)
 
 watch(
   selectedCategory,
   (newVal) => {
-    const rawValue = toRaw(newVal);
+    const rawValue = toRaw(newVal)
 
     if (rawValue) {
-      inquiryStore.categoryId = rawValue.value;
+      inquiryStore.categoryId = rawValue.value
     }
   },
   { deep: true }
-);
+)
 
 // BUILD AND DISPLAY CORRECT LOCATION AND CATEGORY
 function buildHierarchy(list: BaseEntry[], parentId = 0, depth = 0): BaseEntry[] {
-  if (!Array.isArray(list)) return [];
+  if (!Array.isArray(list)) return []
   return list
     .filter((item) => item?.parentId === parentId)
     .map((item) => {
-      const children = buildHierarchy(list, item.id, depth + 1);
+      const children = buildHierarchy(list, item.id, depth + 1)
       return {
         ...item,
         depth,
-        children
-      };
+        children,
+      }
     })
-    .flatMap((item) => [item, ...item.children]);
+    .flatMap((item) => [item, ...item.children])
 }
 
 const hierarchicalLocation = computed(() => {
-  if (!Array.isArray(sessionStore.appSettings.locationTab)) return [];
+  if (!Array.isArray(sessionStore.appSettings.locationTab)) return []
 
-  return buildHierarchy(sessionStore.appSettings.locationTab).map(item => ({
+  return buildHierarchy(sessionStore.appSettings.locationTab).map((item) => ({
     value: item.id,
     label: `${'— '.repeat(item.depth ?? 0)}${item.name ?? '[no name]'}`,
-    original: item
-  }));
-});
+    original: item,
+  }))
+})
 
-watch(hierarchicalLocation, (locations) => {
-  if (!locations.length) return;
+watch(
+  hierarchicalLocation,
+  (locations) => {
+    if (!locations.length) return
 
-  if (inquiryStore.locationId === 0) {
-    selectedLocation.value = locations[0];
-    inquiryStore.locationId = locations[0].value;
-  } else {
-    const selected = locations.find(loc => loc.value === inquiryStore.locationId);
-    selectedLocation.value = selected || locations[0];
-    inquiryStore.locationId = selected?.value || locations[0].value;
-  }
-}, { immediate: true });
+    if (inquiryStore.locationId === 0) {
+      selectedLocation.value = locations[0]
+      inquiryStore.locationId = locations[0].value
+    } else {
+      const selected = locations.find((loc) => loc.value === inquiryStore.locationId)
+      selectedLocation.value = selected || locations[0]
+      inquiryStore.locationId = selected?.value || locations[0].value
+    }
+  },
+  { immediate: true }
+)
 
 const hierarchicalCategory = computed(() => {
-  if (!Array.isArray(sessionStore.appSettings.categoryTab)) return [];
+  if (!Array.isArray(sessionStore.appSettings.categoryTab)) return []
 
-  return buildHierarchy(sessionStore.appSettings.categoryTab).map(item => ({
+  return buildHierarchy(sessionStore.appSettings.categoryTab).map((item) => ({
     value: item.id,
     label: `${'— '.repeat(item.depth ?? 0)}${item.name ?? '[no name]'}`,
-    original: item
-  }));
-});
+    original: item,
+  }))
+})
 
-watch(hierarchicalCategory, (categories) => {
-  if (!categories.length) return;
+watch(
+  hierarchicalCategory,
+  (categories) => {
+    if (!categories.length) return
 
-  if (inquiryStore.categoryId === 0) {
-    selectedCategory.value = categories[0];
-    inquiryStore.categoryId = categories[0].value;
-  } else {
-    const selected = categories.find(loc => loc.value === inquiryStore.categoryId);
-    selectedCategory.value = selected || categories[0];
-    inquiryStore.categoryId = selected?.value || categories[0].value;
-  }
-}, { immediate: true });
-
+    if (inquiryStore.categoryId === 0) {
+      selectedCategory.value = categories[0]
+      inquiryStore.categoryId = categories[0].value
+    } else {
+      const selected = categories.find((loc) => loc.value === inquiryStore.categoryId)
+      selectedCategory.value = selected || categories[0]
+      inquiryStore.categoryId = selected?.value || categories[0].value
+    }
+  },
+  { immediate: true }
+)
 
 const isReadonly = computed(() => {
-  const user = sessionStore.currentUser;
-  
-  if (!user) return true;
-  const ronly=!canEdit(context.value) 
-  
-  return ronly;
-});
+  const user = sessionStore.currentUser
+
+  if (!user) return true
+  const ronly = !canEdit(context.value)
+
+  return ronly
+})
 
 watch(
   () => inquiryStore.type,
@@ -204,41 +210,45 @@ watch(
       isReadonlyDescription.value = isReadonly.value
     }
   },
-  { immediate: true } 
+  { immediate: true }
 )
-
 
 // Toggle thumb
 const onToggleSupport = async () => {
-  const supported=supportsStore.toggleSupport(inquiryStore.id, sessionStore.currentUser.id,inquiryStore,inquiriesStore);
+  const supported = supportsStore.toggleSupport(
+    inquiryStore.id,
+    sessionStore.currentUser.id,
+    inquiryStore,
+    inquiriesStore
+  )
   if (inquiryStore.currentUserStatus.hasSupported) {
-    	showSuccess(t('agora', 'Thank for your support !'), { timeout: 2000});
-
-  } else  {
-  	   showSuccess(t('agora', 'Inquiry support removed !'), { timeout: 2000 });
-	   }
-};
+    showSuccess(t('agora', 'Thank for your support !'), { timeout: 2000 })
+  } else {
+    showSuccess(t('agora', 'Inquiry support removed !'), { timeout: 2000 })
+  }
+  return supported
+}
 
 onMounted(() => {
-  subscribe(Event.UpdateComments, () => commentsStore.load());
-  isLoaded.value=true
-});
+  subscribe(Event.UpdateComments, () => commentsStore.load())
+  isLoaded.value = true
+})
 
 onUnmounted(() => {
-  isLoaded.value=false
-  unsubscribe(Event.UpdateComments, () => commentsStore.load());
-});
+  isLoaded.value = false
+  unsubscribe(Event.UpdateComments, () => commentsStore.load())
+})
 
 /// Toggle the update of the inquiry
 const saveChanges = async () => {
-  if (isSaving.value) return;
+  if (isSaving.value) return
 
   if (!inquiryStore.title || inquiryStore.title.trim() === '') {
-    showError(t('agora', 'Title mandatory'), { timeout: 2000 });
-    return;
+    showError(t('agora', 'Title mandatory'), { timeout: 2000 })
+    return
   }
 
-  isSaving.value = true;
+  isSaving.value = true
 
   try {
     await inquiryStore.update({
@@ -248,268 +258,195 @@ const saveChanges = async () => {
       description: inquiryStore.description,
       categoryId: inquiryStore.categoryId,
       locationId: inquiryStore.locationId,
-      parentId: inquiryStore.parentId
-    });
-    showSuccess(t('agora', 'The inquiry has been saved'), { timeout: 2000 });
+      parentId: inquiryStore.parentId,
+    })
+    showSuccess(t('agora', 'The inquiry has been saved'), { timeout: 2000 })
   } catch {
-    showError(t('agora', 'Inquiry error during save !'), { timeout: 2000 });
+    showError(t('agora', 'Inquiry error during save !'), { timeout: 2000 })
   } finally {
-    isSaving.value = false;
+    isSaving.value = false
   }
-};
+}
 
 // Title validation
 
-const timeCreatedRelative = computed(() =>
-  inquiryStore.status.created
-    ? (DateTime.fromMillis(
-      inquiryStore.status.created * 1000
-    ).toRelative() as string)
-    : ''
-);
-
-const timeUpdatedRelative = computed(() =>
-  inquiryStore.status.lastInteraction
-    ? (DateTime.fromMillis(
-      inquiryStore.status.lastInteraction * 1000
-    ).toRelative() as string)
-    : ''
-);
-
-const typeLabel = computed(() =>
-  InquiryTypesUI[inquiryStore.type]?.label ?? inquiryStore.type
-);
-
 // Determine if category/location should be shown as select or label
 const showCategoryAsLabel = computed(() => {
-  if (inquiryStore.parentId !== 0) return true;
-  if (isReadonly.value) return true;
-  return false;
-});
+  if (inquiryStore.parentId !== 0) return true
+  if (isReadonly.value) return true
+  return false
+})
 
 const showLocationAsLabel = computed(() => {
-  if (inquiryStore.parentId !== 0) return true;
-  if (isReadonly.value) return true;
-  return false;
-});
+  if (inquiryStore.parentId !== 0) return true
+  if (isReadonly.value) return true
+  return false
+})
 
 const createChildInquiry = async (type: InquiryTypeValues): Promise<void> => {
-  if (isSaving.value) return;
+  if (isSaving.value) return
 
-  titleLabel.value=``;
+  titleLabel.value = ``
   const confirmed = await confirmAction(
     `Do you really want to reply to this inquiry with a ${type} ?`
-  );
-  if (!confirmed) return;
+  )
+  if (!confirmed) return
 
-  isSaving.value = true;
-  
+  isSaving.value = true
 
-  if (type==='official') titleLabel.value=`${t('agora', 'Official response for ')}: ${inquiryStore.title.trim()}`
-  else titleLabel.value=`${t('agora', 'Response for ')}: ${inquiryStore.title.trim()}`
- 
+  if (type === 'official')
+    titleLabel.value = `${t('agora', 'Official response for ')}: ${inquiryStore.title.trim()}`
+  else titleLabel.value = `${t('agora', 'Response for ')}: ${inquiryStore.title.trim()}`
+
   try {
     const inquiry = await inquiryStore.add({
       type,
       title: titleLabel.value,
       categoryId: inquiryStore.categoryId,
       locationId: inquiryStore.locationId,
-      parentId: inquiryStore.id
-    });
+      parentId: inquiryStore.id,
+    })
 
     if (inquiry) {
-      showSuccess(t('agora', 'Inquiry {title} added', { title: inquiry.title }));
+      showSuccess(t('agora', 'Inquiry {title} added', { title: inquiry.title }))
       router.push({
         name: 'inquiry',
-        params: { id: inquiry.id }
-      });
+        params: { id: inquiry.id },
+      })
     }
   } catch (error) {
-    console.error('Create child inquiry error:', error);
-    showError(
-      t(
-        'agora',
-        error instanceof Error ? error.message : 'Inquiry error during save!'
-      ),
-      { timeout: 2000 }
-    );
+    console.error('Create child inquiry error:', error)
+    showError(t('agora', error instanceof Error ? error.message : 'Inquiry error during save!'), {
+      timeout: 2000,
+    })
   } finally {
-    isSaving.value = false;
+    isSaving.value = false
   }
-};
+}
 
 const allowedTypesForActions = computed(() => [
   InquiryTypeValues.PROJECT,
   InquiryTypeValues.PROPOSAL,
-  InquiryTypeValues.GRIEVANCE
-]);
+  InquiryTypeValues.GRIEVANCE,
+])
 
 // Check if actions menu should be shown
 const showActionsMenu = computed(
-  () =>
-    isReadonly.value && allowedTypesForActions.value.includes(inquiryStore.type)
-);
+  () => isReadonly.value && allowedTypesForActions.value.includes(inquiryStore.type)
+)
 
 // Check if response button should be shown
 const showResponseButton = computed(
-  () =>
-    sessionStore.currentUser?.isOfficial &&
-    inquiryStore.type !== InquiryTypeValues.OFFICIAL
-);
+  () => sessionStore.currentUser?.isOfficial && inquiryStore.type !== InquiryTypeValues.OFFICIAL
+)
 
 // Check if save button should be shown
-const showSaveButton = computed(() => !isReadonlyDescription.value);
-
+const showSaveButton = computed(() => !isReadonlyDescription.value)
 </script>
 
 <template>
   <div v-if="isLoaded" class="finalize-form-container">
-    <!-- TOP BLOCK: Dates and action buttons -->
-    <div class="top-block">
-      <div class="date-info">
-        <div v-if="inquiryStore.status.created" class="date-item">
-          <span class="date-label">{{ t('agora', 'Created at:') }}</span>
-          <span class="date-value">{{ timeCreatedRelative }}</span>
-        </div>
-        <div v-if="inquiryStore.status.lastInteraction" class="date-item">
-          <span class="date-label">{{ t('agora', 'Updated at:') }}</span>
-          <span class="date-value">{{ timeUpdatedRelative }}</span>
-        </div>
+    <div class="action-buttons">
+      <!-- Save button moved to top right -->
+      <NcButton
+        v-if="showSaveButton"
+        :disabled="isSaving"
+        type="button"
+        color="primary"
+        class="save-button"
+        @click.prevent="saveChanges"
+      >
+        {{ t('agora', 'Save') }}
+      </NcButton>
+
+      <NcButton
+        v-if="showResponseButton"
+        class="response-button"
+        @click="createChildInquiry(InquiryTypeValues.OFFICIAL)"
+      >
+        {{ t('agora', 'Official') }}
+      </NcButton>
+      <div v-if="showActionsMenu">
+        <template v-if="inquiryStore.type === InquiryTypeValues.PROJECT">
+          <button
+            class="icon-button"
+            :title="t('agora', 'Create Proposal')"
+            @click="createChildInquiry(InquiryTypeValues.PROPOSAL)"
+          >
+            <component :is="InquiryTypesUI[InquiryTypeValues.PROPOSAL].icon" class="icon" />
+          </button>
+          <button
+            class="icon-button"
+            :title="t('agora', 'Create Grievance')"
+            @click="createChildInquiry(InquiryTypeValues.GRIEVANCE)"
+          >
+            <component :is="InquiryTypesUI[InquiryTypeValues.GRIEVANCE].icon" class="icon" />
+          </button>
+        </template>
+
+        <template v-else-if="inquiryStore.type === InquiryTypeValues.PROPOSAL">
+          <button
+            class="icon-button"
+            :title="t('agora', 'Create Suggestion')"
+            @click="createChildInquiry(InquiryTypeValues.SUGGESTION)"
+          >
+            <component :is="InquiryTypesUI[InquiryTypeValues.SUGGESTION].icon" class="icon" />
+          </button>
+          <button
+            class="icon-button"
+            :title="t('agora', 'Create Grievance')"
+            @click="createChildInquiry(InquiryTypeValues.GRIEVANCE)"
+          >
+            <component :is="InquiryTypesUI[InquiryTypeValues.GRIEVANCE].icon" class="icon" />
+          </button>
+        </template>
+
+        <template v-else-if="inquiryStore.type === InquiryTypeValues.GRIEVANCE">
+          <button
+            class="icon-button"
+            :title="t('agora', 'Create Suggestion')"
+            @click="createChildInquiry(InquiryTypeValues.SUGGESTION)"
+          >
+            <component :is="InquiryTypesUI[InquiryTypeValues.SUGGESTION].icon" class="icon" />
+          </button>
+        </template>
       </div>
-
-      <div class="action-buttons">
-        <!-- Save button moved to top right -->
-        <NcButton
-          v-if="showSaveButton"
-          :disabled="isSaving"
-          type="button"
-          color="primary"
-          class="save-button"
-          @click.prevent="saveChanges"
-        >
-          {{ t('agora', 'Save') }}
-        </NcButton>
-
-        <NcButton
-          v-if="showResponseButton"
-          class="response-button"
-          @click="createChildInquiry(InquiryTypeValues.OFFICIAL)"
-        >
-          {{ t('agora', 'Official') }}
-        </NcButton>
-        <div v-if="showActionsMenu">
-          <template v-if="inquiryStore.type === InquiryTypeValues.PROJECT">
-            <button
-              class="icon-button"
-              :title="t('agora', 'Create Proposal')"
-              @click="createChildInquiry(InquiryTypeValues.PROPOSAL)"
-            >
-              <component
-                :is="InquiryTypesUI[InquiryTypeValues.PROPOSAL].icon"
-                class="icon"
-              />
-            </button>
-            <button
-              class="icon-button"
-              :title="t('agora', 'Create Grievance')"
-              @click="createChildInquiry(InquiryTypeValues.GRIEVANCE)"
-            >
-              <component
-                :is="InquiryTypesUI[InquiryTypeValues.GRIEVANCE].icon"
-                class="icon"
-              />
-            </button>
-          </template>
-
-          <template
-            v-else-if="inquiryStore.type === InquiryTypeValues.PROPOSAL"
-          >
-            <button
-              class="icon-button"
-              :title="t('agora', 'Create Suggestion')"
-              @click="createChildInquiry(InquiryTypeValues.SUGGESTION)"
-            >
-              <component
-                :is="InquiryTypesUI[InquiryTypeValues.SUGGESTION].icon"
-                class="icon"
-              />
-            </button>
-            <button
-              class="icon-button"
-              :title="t('agora', 'Create Grievance')"
-              @click="createChildInquiry(InquiryTypeValues.GRIEVANCE)"
-            >
-              <component
-                :is="InquiryTypesUI[InquiryTypeValues.GRIEVANCE].icon"
-                class="icon"
-              />
-            </button>
-          </template>
-
-          <template
-            v-else-if="inquiryStore.type === InquiryTypeValues.GRIEVANCE"
-          >
-            <button
-              class="icon-button"
-              :title="t('agora', 'Create Suggestion')"
-              @click="createChildInquiry(InquiryTypeValues.SUGGESTION)"
-            >
-              <component
-                :is="InquiryTypesUI[InquiryTypeValues.SUGGESTION].icon"
-                class="icon"
-              />
-            </button>
-          </template>
-        </div>
-
-        <div
-          v-if="sessionStore.currentUser.isOwner ||
-            sessionStore.currentUser.isAdmin ||
-            sessionStore.currentUser.isModerator ||
-            (sessionStore.currentUser.isOfficial &&
-              inquiryStore.type === 'official')"
-          :style="{ display: 'inline-block', position: 'relative' }">
-          <InquiryItemActions
-            :key="`actions-${inquiryStore.id}`"
-            :inquiry="inquiryStore"
-          /> 
-        
-        </div>
+      <div
+        v-if="canViewToggle(context)"
+        :style="{ display: 'inline-block', position: 'relative', marginLeft: 'auto' }"
+      >
+        <InquiryItemActions :key="`actions-${inquiryStore.id}`" :inquiry="inquiryStore" />
       </div>
     </div>
     <form class="inquiry-form">
       <!-- BLOCK: Basic Information -->
       <div class="form-section">
         <div class="section-header">
-          <div class="type-display">
-            <component
-              :is="InquiryTypesUI[inquiryStore.type].icon"
-              class="type-icon"
-            />
-            <span class="section-title">{{ typeLabel }} :</span>
-            <div v-if="inquiryStore.readlonly">
+          <div class="title-section">
+            <span class="section-title">{{ t('agora', 'Title') }} :</span>
+            <div v-if="isReadonly" class="title-content">
               <span class="type-field inline">{{ inquiryStore.title }}</span>
             </div>
-            <div v-else class="form-row">
+            <div v-else class="title-content">
               <InputDiv
                 v-model="inquiryStore.title"
                 type="text"
                 :disabled="isReadonly"
                 :readonly="isReadonly"
                 class="form-input"
-                @change="emit('change')"
               />
             </div>
           </div>
-          <div v-if="canComment(context)" class="counters">
-            <div class="counter-item">
+
+          <div class="counters">
+            <div v-if="canComment(context)" class="counter-item">
               <component :is="InquiryGeneralIcons.comment" :size="24" />
               <span>{{ commentsStore.comments.length || 0 }}</span>
             </div>
-          </div>
-          <div v-if="canSupport(context)" class="counter-item" @click="onToggleSupport">
-            <ThumbIcon :supported="hasSupported" />
-            <span>{{ inquiryStore.status.countSupports || 0 }}</span>
+            <div v-if="canSupport(context)" class="counter-item" @click="onToggleSupport">
+              <ThumbIcon :supported="hasSupported" />
+              <span>{{ inquiryStore.status.countSupports || 0 }}</span>
+            </div>
           </div>
         </div>
 
@@ -526,10 +463,8 @@ const showSaveButton = computed(() => !isReadonlyDescription.value);
             />
             <div v-else class="readonly-value">
               {{
-                getHierarchyPath(
-                  sessionStore.appSettings.locationTab,
-                  inquiryStore.locationId
-                ) || t('agora', 'Inherited from parent')
+                getHierarchyPath(sessionStore.appSettings.locationTab, inquiryStore.locationId) ||
+                t('agora', 'Inherited from parent')
               }}
             </div>
           </div>
@@ -545,10 +480,8 @@ const showSaveButton = computed(() => !isReadonlyDescription.value);
             />
             <div v-else class="readonly-value">
               {{
-                getHierarchyPath(
-                  sessionStore.appSettings.categoryTab,
-                  inquiryStore.categoryId
-                ) || t('agora', 'Inherited from parent')
+                getHierarchyPath(sessionStore.appSettings.categoryTab, inquiryStore.categoryId) ||
+                t('agora', 'Inherited from parent')
               }}
             </div>
           </div>
@@ -558,34 +491,25 @@ const showSaveButton = computed(() => !isReadonlyDescription.value);
       <!-- BLOCK: Editor/Description -->
       <div
         v-if="
-          sessionStore.appSettings.inquiryTypeRights[inquiryStore.type]
-            .editorType === 'wysiwyg'
+          sessionStore.appSettings.inquiryTypeRights[inquiryStore.type].editorType === 'wysiwyg'
         "
       >
         <div class="form-section">
           <div class="form-container" style="height: 500px">
-            <span class="section-title">{{
-              t('agora', 'Detailed Description')
-            }}</span>
-            <InquiryEditor
-              v-model="inquiryStore.description"
-              :readonly="isReadonlyDescription"
-            />
+            <span class="section-title">{{ t('agora', 'Detailed Description') }}</span>
+            <InquiryEditor v-model="inquiryStore.description" :readonly="isReadonlyDescription" />
           </div>
         </div>
       </div>
 
       <div
         v-else-if="
-          sessionStore.appSettings.inquiryTypeRights[inquiryStore.type]
-            .editorType === 'texteditor'
+          sessionStore.appSettings.inquiryTypeRights[inquiryStore.type].editorType === 'texteditor'
         "
       >
         <div class="form-section">
           <div class="form-container">
-            <span class="section-title">{{
-              t('agora', 'Detailed Description')
-            }}</span>
+            <span class="section-title">{{ t('agora', 'Detailed Description') }}</span>
             <NcRichText
               v-model="inquiryStore.description"
               :autolink="autolink"
@@ -603,9 +527,7 @@ const showSaveButton = computed(() => !isReadonlyDescription.value);
       <div v-else>
         <div class="form-section">
           <div class="form-container" style="height: 500px">
-            <span class="section-title">{{
-              t('agora', 'Detailed Description')
-            }}</span>
+            <span class="section-title">{{ t('agora', 'Detailed Description') }}</span>
             <NcTextArea
               v-model="inquiryStore.description"
               :disabled="isReadonlyDescription"
@@ -633,15 +555,13 @@ const showSaveButton = computed(() => !isReadonlyDescription.value);
   border-radius: 0.5rem;
   background: var(--color-main-background);
   padding: 1rem;
-  overflow: hidden; /* Important pour les transitions */
+  overflow: hidden;
 }
 
-/* Version étendue */
 .form-section.expanded .form-container {
   height: 500px;
 }
 
-/* Version compacte */
 .form-section:not(.expanded) .form-container {
   height: 300px;
 }
@@ -653,7 +573,7 @@ const showSaveButton = computed(() => !isReadonlyDescription.value);
 }
 
 .top-block {
-  display: flex;
+  display: inline-block;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1rem;
@@ -689,6 +609,11 @@ const showSaveButton = computed(() => !isReadonlyDescription.value);
   display: flex;
   gap: 0.5rem;
   align-items: center;
+  justify-content: flex-start;
+
+  > :last-child {
+    margin-left: auto;
+  }
 }
 
 .save-button {
@@ -728,6 +653,25 @@ const showSaveButton = computed(() => !isReadonlyDescription.value);
   border-radius: var(--border-radius-large);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
+.title-section {
+  color: var(--color-primary);
+  display: flex;
+  font-size: 1rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-grow: 1;
+}
+
+.title-content {
+  flex-grow: 1;
+
+  .form-input {
+    width: 100%;
+    max-width: 500px;
+  }
+}
 
 .section-title {
   color: var(--color-primary);
@@ -737,8 +681,6 @@ const showSaveButton = computed(() => !isReadonlyDescription.value);
   display: inline-block;
   margin: 0;
   padding: 0;
-  justify-content: space-between;
-  align-items: left;
   flex-wrap: wrap;
 }
 

@@ -4,15 +4,15 @@
 -->
 
 <script setup>
-import { t } from '@nextcloud/l10n';
+import { t } from '@nextcloud/l10n'
 
-import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch';
-import NcSelect from '@nextcloud/vue/components/NcSelect';
+import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
+import NcSelect from '@nextcloud/vue/components/NcSelect'
 
-import { useAppSettingsStore } from '../../../stores/appSettings.ts';
-import CardDiv from '../../Base/modules/CardDiv.vue';
+import { useAppSettingsStore } from '../../../stores/appSettings.ts'
+import CardDiv from '../../Base/modules/CardDiv.vue'
 
-const appSettingsStore = useAppSettingsStore();
+const appSettingsStore = useAppSettingsStore()
 </script>
 
 <template>
@@ -52,12 +52,7 @@ const appSettingsStore = useAppSettingsStore();
           }}
         </li>
         <li>
-          {{
-            t(
-              'agora',
-              'Deleting and changing inquiries of participants is not possible'
-            )
-          }}
+          {{ t('agora', 'Deleting and changing inquiries of participants is not possible') }}
         </li>
       </ul>
     </CardDiv>

@@ -4,61 +4,60 @@
 -->
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, watchEffect } from 'vue';
-import { debounce } from 'lodash';
-import { subscribe, unsubscribe } from '@nextcloud/event-bus';
+import { ref, computed, onMounted, onUnmounted, watchEffect } from 'vue'
+import { debounce } from 'lodash'
+import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 
-import NcContent from '@nextcloud/vue/components/NcContent';
+import NcContent from '@nextcloud/vue/components/NcContent'
 
-import UserSettingsDlg from './components/Settings/UserSettingsDlg.vue';
+import UserSettingsDlg from './components/Settings/UserSettingsDlg.vue'
 
-import { useInquiryWatcher } from './composables/useInquiryWatcher';
+import { useInquiryWatcher } from './composables/useInquiryWatcher'
 
-import { useSessionStore } from './stores/session.ts';
-import { useInquiryStore } from './stores/inquiry.ts';
-import { useInquiryGroupsStore } from './stores/inquiryGroups.ts';
-import { showSuccess } from '@nextcloud/dialogs';
-import { Event } from './Types/index.ts';
+import { useSessionStore } from './stores/session.ts'
+import { useInquiryStore } from './stores/inquiry.ts'
+import { useInquiryGroupsStore } from './stores/inquiryGroups.ts'
+import { showSuccess } from '@nextcloud/dialogs'
+import { Event } from './Types/index.ts'
 
-import '@nextcloud/dialogs/style.css';
-import './assets/scss/vars.scss';
-import './assets/scss/hacks.scss';
-import './assets/scss/print.scss';
-import './assets/scss/transitions.scss';
-import './assets/scss/markdown.scss';
-import './assets/scss/globals.scss';
+import '@nextcloud/dialogs/style.css'
+import './assets/scss/vars.scss'
+import './assets/scss/hacks.scss'
+import './assets/scss/print.scss'
+import './assets/scss/transitions.scss'
+import './assets/scss/markdown.scss'
+import './assets/scss/globals.scss'
 
-useInquiryWatcher();
+useInquiryWatcher()
 
-const sessionStore = useSessionStore();
-const inquiryStore = useInquiryStore();
-const inquiryGroupsStore = useInquiryGroupsStore();
+const sessionStore = useSessionStore()
+const inquiryStore = useInquiryStore()
+const inquiryGroupsStore = useInquiryGroupsStore()
 
-const transitionClass = ref('transitions-active');
+const transitionClass = ref('transitions-active')
 
 const appClass = computed(() => [
   transitionClass.value,
   {
-    edit: inquiryStore.permissions.edit
-  }
-]);
+    edit: inquiryStore.permissions.edit,
+  },
+])
 
-const useNavigation = computed(() => sessionStore.userStatus.isLoggedin);
+const useNavigation = computed(() => sessionStore.userStatus.isLoggedin)
 const useSidebar = computed(
   () =>
     inquiryStore.permissions.edit ||
     inquiryStore.permissions.comment ||
     sessionStore.route.name === 'combo' ||
     (sessionStore.route.name === 'group' &&
-      inquiryGroupsStore.currentInquiryGroup?.owner.id ===
-        sessionStore.currentUser.id)
-);
+      inquiryGroupsStore.currentInquiryGroup?.owner.id === sessionStore.currentUser.id)
+)
 
 /**
  * Turn off transitions
  */
 function transitionsOn() {
-  transitionClass.value = 'transitions-active';
+  transitionClass.value = 'transitions-active'
 }
 
 /**
@@ -67,11 +66,11 @@ function transitionsOn() {
  * @param delay - optional delay
  */
 function transitionsOff(delay: number) {
-  transitionClass.value = '';
+  transitionClass.value = ''
   if (delay) {
     setTimeout(() => {
-      transitionClass.value = 'transitions-active';
-    }, delay);
+      transitionClass.value = 'transitions-active'
+    }, delay)
   }
 }
 
@@ -84,36 +83,36 @@ function transitionsOff(delay: number) {
 function notify(payload: { store: string; message: string }) {
   debounce(async function () {
     if (payload.store === 'inquiry') {
-      showSuccess(payload.message);
+      showSuccess(payload.message)
     }
-  }, 1500);
+  }, 1500)
 }
 
 watchEffect(() => {
-  document.title = sessionStore.windowTitle;
-});
+  document.title = sessionStore.windowTitle
+})
 
 onMounted(() => {
   subscribe(Event.TransitionsOff, (delay) => {
-    transitionsOff(delay);
-  });
+    transitionsOff(delay)
+  })
 
   subscribe(Event.TransitionsOn, () => {
-    transitionsOn();
-  });
+    transitionsOn()
+  })
 
   subscribe(Event.UpdateInquiry, (payload) => {
-    notify(payload);
-  });
-});
+    notify(payload)
+  })
+})
 
 onUnmounted(() => {
   unsubscribe(Event.TransitionsOn, () => {
-    transitionsOn();
-  });
-  unsubscribe(Event.TransitionsOff, () => {});
-  unsubscribe(Event.UpdateInquiry, () => {});
-});
+    transitionsOn()
+  })
+  unsubscribe(Event.TransitionsOff, () => {})
+  unsubscribe(Event.UpdateInquiry, () => {})
+})
 </script>
 
 <template>

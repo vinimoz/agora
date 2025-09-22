@@ -4,23 +4,23 @@
  */
 class Exception extends Error {
   constructor(message: string | undefined) {
-    super(message);
-    this.name = 'Exception';
+    super(message)
+    this.name = 'Exception'
   }
 }
 
 class NotReady extends Error {
   constructor(message: string | undefined) {
-    super(message);
-    this.name = 'NotReady';
+    super(message)
+    this.name = 'NotReady'
   }
 }
 
 class InvalidJSON extends Error {
   constructor(message: string | undefined) {
-    super(message);
-    this.name = 'InvalidJSON';
+    super(message)
+    this.name = 'InvalidJSON'
   }
 }
 
-export { Exception, InvalidJSON, NotReady };
+export { Exception, InvalidJSON, NotReady }

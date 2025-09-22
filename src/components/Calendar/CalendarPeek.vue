@@ -4,63 +4,63 @@
 -->
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
-import { t } from '@nextcloud/l10n';
-import orderBy from 'lodash/orderBy';
-import moment from '@nextcloud/moment';
+import { computed, onMounted, ref } from 'vue'
+import { t } from '@nextcloud/l10n'
+import orderBy from 'lodash/orderBy'
+import moment from '@nextcloud/moment'
 
-import NcPopover from '@nextcloud/vue/components/NcPopover';
+import NcPopover from '@nextcloud/vue/components/NcPopover'
 
-import { useInquiryStore } from '../../stores/inquiry.ts';
+import { useInquiryStore } from '../../stores/inquiry.ts'
 
-import CalendarInfo from './CalendarInfo.vue';
-import { CalendarAPI } from '../../Api/index.ts';
-import { Logger } from '../../helpers/index.ts';
-import { Option } from '../../Types/index.ts';
-import { AxiosError } from '@nextcloud/axios';
-import AlertIcon from 'vue-material-design-icons/Alert.vue';
+import CalendarInfo from './CalendarInfo.vue'
+import { CalendarAPI } from '../../Api/index.ts'
+import { Logger } from '../../helpers/index.ts'
+import { Option } from '../../Types/index.ts'
+import { AxiosError } from '@nextcloud/axios'
+import AlertIcon from 'vue-material-design-icons/Alert.vue'
 
 export type CalendarEvent = {
-  id: number;
-  UID: number;
-  calendarUri: string;
-  calendarKey: number;
-  calendarName: string;
-  displayColor: string;
-  allDay: boolean;
-  description: string;
-  start: number;
-  location: string;
-  end: number;
-  status: string;
-  summary: string;
-  type: string;
-};
+  id: number
+  UID: number
+  calendarUri: string
+  calendarKey: number
+  calendarName: string
+  displayColor: string
+  allDay: boolean
+  description: string
+  start: number
+  location: string
+  end: number
+  status: string
+  summary: string
+  type: string
+}
 
-const { option } = defineProps<{ option: Option }>();
+const { option } = defineProps<{ option: Option }>()
 
-const events = ref<CalendarEvent[]>([]);
+const events = ref<CalendarEvent[]>([])
 
-const inquiryStore = useInquiryStore();
+const inquiryStore = useInquiryStore()
 
 const detectAllDay = computed(() => {
-  const from = moment.unix(option.timestamp);
-  const to = moment.unix(option.timestamp + Math.max(0, option.duration));
+  const from = moment.unix(option.timestamp)
+  const to = moment.unix(option.timestamp + Math.max(0, option.duration))
   const dayLongEvent =
     from.unix() === moment(from).startOf('day').unix() &&
     to.unix() === moment(to).startOf('day').unix() &&
-    from.unix() !== to.unix();
+    from.unix() !== to.unix()
   return {
     allDay: dayLongEvent,
-    type: dayLongEvent ? 'date' : 'dateTime'
-  };
-});
+    type: dayLongEvent ? 'date' : 'dateTime',
+  }
+})
 
 const sortedEvents = computed(() => {
-  const sortedEvents = [...events.value];
-  sortedEvents.push(currentEvent.value);
-  return orderBy(sortedEvents, ['start', 'end'], ['asc', 'asc']);
-});
+  const sortedEvents = [...events.value]
+  sortedEvents.push(currentEvent.value)
+  return orderBy(sortedEvents, ['start', 'end'], ['asc', 'asc'])
+})
 
 const currentEvent = computed(
   (): CalendarEvent => ({
@@ -77,21 +77,21 @@ const currentEvent = computed(
     end: option.timestamp + option.duration,
     status: 'self',
     summary: inquiryStore.title,
-    type: detectAllDay.value.type
+    type: detectAllDay.value.type,
   })
-);
+)
 
 onMounted(async () => {
   try {
-    const response = await CalendarAPI.getEvents(option.id);
-    events.value = response.data.events;
+    const response = await CalendarAPI.getEvents(option.id)
+    events.value = response.data.events
   } catch (error) {
     if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-      return;
+      return
     }
-    Logger.error('Error fetching events', { error });
+    Logger.error('Error fetching events', { error })
   }
-});
+})
 </script>
 
 <template>

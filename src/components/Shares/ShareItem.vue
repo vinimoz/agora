@@ -4,17 +4,17 @@
 -->
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
-import { t } from '@nextcloud/l10n';
-import { ThumbIcon } from '../AppIcons';
-import UserItem from '../User/UserItem.vue';
+import { ref, computed, onMounted } from 'vue'
+import { t } from '@nextcloud/l10n'
+import { ThumbIcon } from '../AppIcons'
+import UserItem from '../User/UserItem.vue'
 
-import { Share } from '../../stores/shares.ts';
-import ShareMenu from './ShareMenu.vue';
+import { Share } from '../../stores/shares.ts'
+import ShareMenu from './ShareMenu.vue'
 
-const emit = defineEmits(['showQrCode']);
+const emit = defineEmits(['showQrCode'])
 
-const { share } = defineProps<{ share: Share }>();
+const { share } = defineProps<{ share: Share }>()
 
 const label = ref({
   inputValue: '',
@@ -23,9 +23,9 @@ const label = ref({
     error: false,
     showTrailingButton: true,
     labelOutside: false,
-    label: t('agora', 'Share label')
-  }
-});
+    label: t('agora', 'Share label'),
+  },
+})
 
 const userItemProps = computed(() => ({
   user: share.user,
@@ -34,12 +34,12 @@ const userItemProps = computed(() => ({
   resolveInfo: true,
   forcedDescription: share.deleted ? `(${t('agora', 'deleted')})` : null,
   showTypeIcon: true,
-  icon: true
-}));
+  icon: true,
+}))
 
 onMounted(() => {
-  label.value.inputValue = share.label;
-});
+  label.value.inputValue = share.label
+})
 </script>
 
 <template>
@@ -53,19 +53,17 @@ onMounted(() => {
       <template #status>
         <div v-if="share.supported">
           <ThumbIcon
-            :supported=true
+            :supported="true"
             class="support-status supported"
             :name="t('agora', 'Has been supported')"
           />
         </div>
-        <div
-          v-else-if="share.groupId || ['public', 'group'].includes(share.type)"
-        >
+        <div v-else-if="share.groupId || ['public', 'group'].includes(share.type)">
           <div class="support-status empty" />
         </div>
         <div v-else>
           <ThumbIcon
-	    :supported=false
+            :supported="false"
             class="support-status unsupported"
             :name="t('agora', 'Has not supported')"
           />

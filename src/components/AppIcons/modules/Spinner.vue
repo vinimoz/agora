@@ -3,23 +3,18 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
-import { t } from '@nextcloud/l10n';
-import { IconProps } from './types';
+import { t } from '@nextcloud/l10n'
+import { IconProps } from './types'
 
 const {
   title = t('agora', 'Loading …'),
   fillColor = 'currentColor',
-  size = 24
-} = defineProps<IconProps>();
+  size = 24,
+} = defineProps<IconProps>()
 </script>
 
 <template>
-  <span
-    :aria-hidden="!title"
-    :aria-label="title"
-    class="material-design-icon spinner"
-    role="img"
-  >
+  <span :aria-hidden="!title" :aria-label="title" class="material-design-icon spinner" role="img">
     <svg viewBox="0 0 100 100" :width="size" :height="size">
       <circle cx="50" cy="50" r="45" :stroke="fillColor" />
     </svg>

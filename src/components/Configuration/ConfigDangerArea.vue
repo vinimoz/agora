@@ -4,37 +4,37 @@
 -->
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { router } from '../../router.ts';
-import { t } from '@nextcloud/l10n';
-import { showError } from '@nextcloud/dialogs';
-import NcButton from '@nextcloud/vue/components/NcButton';
+import { ref } from 'vue'
+import { router } from '../../router.ts'
+import { t } from '@nextcloud/l10n'
+import { showError } from '@nextcloud/dialogs'
+import NcButton from '@nextcloud/vue/components/NcButton'
 
-import { useInquiryStore } from '../../stores/inquiry.ts';
+import { useInquiryStore } from '../../stores/inquiry.ts'
 
-import DeleteInquiryDialog from '../Modals/DeleteInquiryDialog.vue';
-import RestoreInquiryIcon from 'vue-material-design-icons/Recycle.vue';
-import ArchiveInquiryIcon from 'vue-material-design-icons/Archive.vue';
-import DeleteInquiryIcon from 'vue-material-design-icons/Delete.vue';
-import TransferInquiryIcon from 'vue-material-design-icons/AccountSwitchOutline.vue';
-import TransferInquiryDialog from '../Modals/TransferInquiryDialog.vue';
+import DeleteInquiryDialog from '../Modals/DeleteInquiryDialog.vue'
+import RestoreInquiryIcon from 'vue-material-design-icons/Recycle.vue'
+import ArchiveInquiryIcon from 'vue-material-design-icons/Archive.vue'
+import DeleteInquiryIcon from 'vue-material-design-icons/Delete.vue'
+import TransferInquiryIcon from 'vue-material-design-icons/AccountSwitchOutline.vue'
+import TransferInquiryDialog from '../Modals/TransferInquiryDialog.vue'
 
-const inquiryStore = useInquiryStore();
-const showDeleteDialog = ref(false);
-const showTransferDialog = ref(false);
+const inquiryStore = useInquiryStore()
+const showDeleteDialog = ref(false)
+const showTransferDialog = ref(false)
 
 /**
  *
  */
 function toggleArchive() {
   try {
-    inquiryStore.toggleArchive({ inquiryId: inquiryStore.id });
+    inquiryStore.toggleArchive({ inquiryId: inquiryStore.id })
   } catch {
     showError(
       t('agora', 'Error {action} inquiry.', {
-        action: inquiryStore.status.isArchived ? 'restoring' : 'archiving'
+        action: inquiryStore.status.isArchived ? 'restoring' : 'archiving',
       })
-    );
+    )
   }
 }
 
@@ -42,9 +42,9 @@ function routeAway() {
   router.push({
     name: 'list',
     params: {
-      type: 'relevant'
-    }
-  });
+      type: 'relevant',
+    },
+  })
 }
 </script>
 

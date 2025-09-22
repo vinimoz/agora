@@ -4,42 +4,41 @@
 -->
 
 <script setup lang="ts">
-import NcUserBubble from '@nextcloud/vue/components/NcUserBubble';
-import { AgoraAppIcon } from '../components/AppIcons';
-import ExpirationIcon from 'vue-material-design-icons/CalendarEnd.vue';
-import BadgeSmallDiv from '../components/Base/modules/BadgeSmallDiv.vue';
-import { t } from '@nextcloud/l10n';
-import { DateTime } from 'luxon';
+import NcUserBubble from '@nextcloud/vue/components/NcUserBubble'
+import { AgoraAppIcon } from '../components/AppIcons'
+import ExpirationIcon from 'vue-material-design-icons/CalendarEnd.vue'
+import BadgeSmallDiv from '../components/Base/modules/BadgeSmallDiv.vue'
+import { t } from '@nextcloud/l10n'
+import { DateTime } from 'luxon'
 
 type RichObject = {
-  id: number;
+  id: number
   inquiry: {
-    id: number;
-    title: string;
-    description: string;
-    ownerDisplayName: string;
-    ownerId: string;
-    url: string;
-    participated: false;
-    childsList: number;
-    supportsList: number;
-    expiry: number;
-    expired: boolean;
-  };
-};
-
-interface Props {
-  richObject?: RichObject;
+    id: number
+    title: string
+    description: string
+    ownerDisplayName: string
+    ownerId: string
+    url: string
+    participated: false
+    childsList: number
+    supportsList: number
+    expiry: number
+    expired: boolean
+  }
 }
 
-const { richObject } = defineProps<Props>();
+interface Props {
+  richObject?: RichObject
+}
+
+const { richObject } = defineProps<Props>()
 
 const expiryClass = richObject?.inquiry?.expiry
-  ? DateTime.fromMillis(richObject.inquiry.expiry * 1000).diffNow('hours')
-    .hours < 36
+  ? DateTime.fromMillis(richObject.inquiry.expiry * 1000).diffNow('hours').hours < 36
     ? 'warning'
     : 'success'
-  : '';
+  : ''
 </script>
 
 <template>
@@ -55,10 +54,7 @@ const expiryClass = richObject?.inquiry?.expiry
       <BadgeSmallDiv v-else-if="richObject.inquiry.expired" class="error">
         {{ t('agora', 'closed') }}
       </BadgeSmallDiv>
-      <BadgeSmallDiv
-        v-else-if="richObject.inquiry.expiry > 0"
-        :class="expiryClass"
-      >
+      <BadgeSmallDiv v-else-if="richObject.inquiry.expiry > 0" :class="expiryClass">
         <template #icon>
           <ExpirationIcon :size="16" />
         </template>

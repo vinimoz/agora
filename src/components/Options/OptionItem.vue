@@ -4,23 +4,23 @@
 -->
 
 <script setup lang="ts">
-import linkifyStr from 'linkify-string';
-import DragIcon from 'vue-material-design-icons/DotsVertical.vue';
-import { Option } from '../../Types/index.ts';
-import DateBox from '../Base/modules/DateBox.vue';
-import { useInquiryStore } from '../../stores/inquiry.ts';
-import OptionItemOwner from './OptionItemOwner.vue';
-import { DateTime, Duration } from 'luxon';
+import linkifyStr from 'linkify-string'
+import DragIcon from 'vue-material-design-icons/DotsVertical.vue'
+import { Option } from '../../Types/index.ts'
+import DateBox from '../Base/modules/DateBox.vue'
+import { useInquiryStore } from '../../stores/inquiry.ts'
+import OptionItemOwner from './OptionItemOwner.vue'
+import { DateTime, Duration } from 'luxon'
 
 interface Props {
-  option: Option;
-  draggable?: boolean;
-  showOwner?: boolean;
+  option: Option
+  draggable?: boolean
+  showOwner?: boolean
 }
 
-const { option, draggable = false, showOwner = false } = defineProps<Props>();
+const { option, draggable = false, showOwner = false } = defineProps<Props>()
 
-const inquiryStore = useInquiryStore();
+const inquiryStore = useInquiryStore()
 </script>
 
 <template>

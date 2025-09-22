@@ -4,37 +4,32 @@
 -->
 
 <script setup lang="ts">
-import { InputDiv } from '../Base/index.ts';
-import { t } from '@nextcloud/l10n';
-import { useInquiryGroupsStore } from '../../stores/inquiryGroups.ts';
-import { computed } from 'vue';
+import { InputDiv } from '../Base/index.ts'
+import { t } from '@nextcloud/l10n'
+import { useInquiryGroupsStore } from '../../stores/inquiryGroups.ts'
+import { computed } from 'vue'
 
-const emit = defineEmits(['change']);
+const emit = defineEmits(['change'])
 
-const inquiryGroupsStore = useInquiryGroupsStore();
+const inquiryGroupsStore = useInquiryGroupsStore()
 
 const inquiryGroupName = computed({
   get() {
-    return inquiryGroupsStore.currentInquiryGroup?.name || '';
+    return inquiryGroupsStore.currentInquiryGroup?.name || ''
   },
   set(value: string) {
     inquiryGroupsStore.setCurrentInquiryGroup({
       ...inquiryGroupsStore.currentInquiryGroup,
-      name: value
-    });
-  }
-});
-const checkName = computed(() =>
-  inquiryGroupsStore.currentInquiryGroup?.name ? '' : 'error'
-);
+      name: value,
+    })
+  },
+})
+const checkName = computed(() => (inquiryGroupsStore.currentInquiryGroup?.name ? '' : 'error'))
 
 const inputProps = {
   placeholder: t('agora', 'Enter title'),
-  helperText: t(
-    'inquiries',
-    'Choose a brief title for the navigation bar and the slug'
-  )
-};
+  helperText: t('inquiries', 'Choose a brief title for the navigation bar and the slug'),
+}
 </script>
 
 <template>

@@ -4,26 +4,26 @@
 -->
 
 <script setup lang="ts">
-import { t } from '@nextcloud/l10n';
-import { DateTime } from 'luxon';
-import NcButton from '@nextcloud/vue/components/NcButton';
-import NcDateTimePickerNative from '@nextcloud/vue/components/NcDateTimePickerNative';
+import { t } from '@nextcloud/l10n'
+import { DateTime } from 'luxon'
+import NcButton from '@nextcloud/vue/components/NcButton'
+import NcDateTimePickerNative from '@nextcloud/vue/components/NcDateTimePickerNative'
 
-import ChevronLeftIcon from 'vue-material-design-icons/ChevronLeft.vue';
-import ChevronRightIcon from 'vue-material-design-icons/ChevronRight.vue';
+import ChevronLeftIcon from 'vue-material-design-icons/ChevronLeft.vue'
+import ChevronRightIcon from 'vue-material-design-icons/ChevronRight.vue'
 
-defineOptions({ inheritAttrs: false });
+defineOptions({ inheritAttrs: false })
 
-const model = defineModel<Date>({ required: true });
+const model = defineModel<Date>({ required: true })
 
-const { useDayButtons = false } = defineProps<{ useDayButtons?: boolean }>();
+const { useDayButtons = false } = defineProps<{ useDayButtons?: boolean }>()
 
 function previousDay() {
-  model.value = DateTime.fromJSDate(model.value).minus({ days: 1 }).toJSDate();
+  model.value = DateTime.fromJSDate(model.value).minus({ days: 1 }).toJSDate()
 }
 
 function nextDay() {
-  model.value = DateTime.fromJSDate(model.value).plus({ days: 1 }).toJSDate();
+  model.value = DateTime.fromJSDate(model.value).plus({ days: 1 }).toJSDate()
 }
 </script>
 

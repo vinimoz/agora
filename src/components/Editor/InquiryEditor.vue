@@ -35,11 +35,7 @@
         </button>
 
         <!-- Headings -->
-        <select
-          v-model="selectedHeading"
-          aria-label="Text heading"
-          @change="setHeading"
-        >
+        <select v-model="selectedHeading" aria-label="Text heading" @change="setHeading">
           <option value="paragraph">Paragraph</option>
           <option value="h1">Heading 1</option>
           <option value="h2">Heading 2</option>
@@ -79,7 +75,7 @@
         </button>
         <button
           :class="{
-            'is-active': editor.isActive({ textAlign: 'center' })
+            'is-active': editor.isActive({ textAlign: 'center' }),
           }"
           aria-label="Align center"
           @click="editor.chain().focus().setTextAlign('center').run()"
@@ -108,10 +104,7 @@
         >
           <span class="icon">―</span>
         </button>
-        <button
-          aria-label="Hard break"
-          @click="editor.chain().focus().setHardBreak().run()"
-        >
+        <button aria-label="Hard break" @click="editor.chain().focus().setHardBreak().run()">
           <span class="icon">↵</span>
         </button>
 
@@ -185,39 +178,32 @@
 </template>
 
 <script setup>
-import {
-  ref,
-  onMounted,
-  onUnmounted,
-  onBeforeUnmount,
-  watch,
-  nextTick
-} from 'vue';
-import { useEditor, EditorContent } from '@tiptap/vue-3';
-import StarterKit from '@tiptap/starter-kit';
-import Underline from '@tiptap/extension-underline';
-import Link from '@tiptap/extension-link';
-import Image from '@tiptap/extension-image';
-import TaskItem from '@tiptap/extension-task-item';
-import TaskList from '@tiptap/extension-task-list';
-import TextAlign from '@tiptap/extension-text-align';
-import Highlight from '@tiptap/extension-highlight';
-import CharacterCount from '@tiptap/extension-character-count';
-import { Table } from '@tiptap/extension-table';
-import { TableRow } from '@tiptap/extension-table-row';
-import { TableHeader } from '@tiptap/extension-table-header';
-import { TableCell } from '@tiptap/extension-table-cell';
-import mammoth from 'mammoth';
-import { useInquiryStore } from '../../stores/inquiry.ts';
+import { ref, onMounted, onUnmounted, onBeforeUnmount, watch, nextTick } from 'vue'
+import { useEditor, EditorContent } from '@tiptap/vue-3'
+import StarterKit from '@tiptap/starter-kit'
+import Underline from '@tiptap/extension-underline'
+import Link from '@tiptap/extension-link'
+import Image from '@tiptap/extension-image'
+import TaskItem from '@tiptap/extension-task-item'
+import TaskList from '@tiptap/extension-task-list'
+import TextAlign from '@tiptap/extension-text-align'
+import Highlight from '@tiptap/extension-highlight'
+import CharacterCount from '@tiptap/extension-character-count'
+import { Table } from '@tiptap/extension-table'
+import { TableRow } from '@tiptap/extension-table-row'
+import { TableHeader } from '@tiptap/extension-table-header'
+import { TableCell } from '@tiptap/extension-table-cell'
+import mammoth from 'mammoth'
+import { useInquiryStore } from '../../stores/inquiry.ts'
 
-const inquiryStore = useInquiryStore();
+const inquiryStore = useInquiryStore()
 
 const props = defineProps({
   readonly: {
     type: Boolean,
-    default: false
-  }
-});
+    default: false,
+  },
+})
 
 // Initialize editor
 const editor = useEditor({
@@ -227,45 +213,45 @@ const editor = useEditor({
   extensions: [
     StarterKit.configure({
       heading: {
-        levels: [1, 2, 3]
-      }
+        levels: [1, 2, 3],
+      },
     }),
     Underline,
     Link.configure({
-      openOnClick: false
+      openOnClick: false,
     }),
     Image,
     TaskList,
     TaskItem.configure({
-      nested: true
+      nested: true,
     }),
     TextAlign.configure({
-      types: ['heading', 'paragraph']
+      types: ['heading', 'paragraph'],
     }),
     Highlight.configure({ multicolor: true }),
     CharacterCount,
     Table.configure({
-      resizable: true
+      resizable: true,
     }),
     TableRow,
     TableHeader,
-    TableCell
+    TableCell,
   ],
   editorProps: {
     attributes: {
       class: 'tiptap-editor-content',
       style: 'height:100%; width: 100%',
-      spellcheck: 'true'
-    }
+      spellcheck: 'true',
+    },
   },
 
   onUpdate: ({ editor }) => {
-    const currentHtml = editor.getHTML();
+    const currentHtml = editor.getHTML()
     if (currentHtml !== inquiryStore.description) {
-      inquiryStore.description = currentHtml;
+      inquiryStore.description = currentHtml
     }
-  }
-});
+  },
+})
 
 // Sync store changes to editor
 watch(
@@ -273,90 +259,85 @@ watch(
   (newVal) => {
     if (editor.value && newVal !== editor.value.getHTML()) {
       nextTick(() => {
-        editor.value.commands.setContent(newVal || '<p></p>');
-      });
+        editor.value.commands.setContent(newVal || '<p></p>')
+      })
     }
   },
   { immediate: true }
-);
+)
 
 // Handle heading selection
-const selectedHeading = ref('paragraph');
+const selectedHeading = ref('paragraph')
 const setHeading = () => {
   if (selectedHeading.value === 'paragraph') {
-    editor.value.chain().focus().setParagraph().run();
+    editor.value.chain().focus().setParagraph().run()
   } else {
-    const level = parseInt(selectedHeading.value.replace('h', ''));
-    editor.value.chain().focus().toggleHeading({ level }).run();
+    const level = parseInt(selectedHeading.value.replace('h', ''))
+    editor.value.chain().focus().toggleHeading({ level }).run()
   }
-};
+}
 
 // Link handling
 const setLink = () => {
-  const previousUrl = editor.value.getAttributes('link').href;
-  const url = window.prompt('URL', previousUrl);
+  const previousUrl = editor.value.getAttributes('link').href
+  const url = window.prompt('URL', previousUrl)
 
-  if (url === null) return;
+  if (url === null) return
   if (url === '') {
-    editor.value.chain().focus().extendMarkRange('link').unsetLink().run();
-    return;
+    editor.value.chain().focus().extendMarkRange('link').unsetLink().run()
+    return
   }
 
-  editor.value
-    .chain()
-    .focus()
-    .extendMarkRange('link')
-    .setLink({ href: url })
-    .run();
-};
+  editor.value.chain().focus().extendMarkRange('link').setLink({ href: url }).run()
+}
 
 // Image handling
 const addImage = () => {
-  const url = window.prompt('Enter the URL of the image:');
+  const url = window.prompt('Enter the URL of the image:')
 
   if (url) {
-    editor.value.chain().focus().setImage({ src: url }).run();
+    editor.value.chain().focus().setImage({ src: url }).run()
   }
-};
+}
 
 // Word document import
-const wordFileInput = ref(null);
+const wordFileInput = ref(null)
 const importWord = () => {
-  wordFileInput.value.click();
-};
+  wordFileInput.value.click()
+}
 
 const handleWordImport = async (event) => {
-  const file = event.target.files[0];
-  if (!file) return;
+  const file = event.target.files[0]
+  if (!file) return
 
   try {
-    const arrayBuffer = await file.arrayBuffer();
-    const { value: html } = await mammoth.convertToHtml({ arrayBuffer });
-    editor.value.commands.setContent(html);
-    inquiryStore.description = html;
+    const arrayBuffer = await file.arrayBuffer()
+    const { value: html } = await mammoth.convertToHtml({ arrayBuffer })
+    editor.value.commands.setContent(html)
+    inquiryStore.description = html
   } catch (error) {
-    console.error('Error importing Word document:', error);
-    alert('Failed to import Word document');
+    console.error('Error importing Word document:', error)
+    alert('Failed to import Word document')
   }
-};
+}
 
 // AI generation
 const generateWithAI = async () => {
   try {
     const prompt = `Generate professional inquiry content about: ${
       editor.value.getText() || 'general business inquiry'
-    }`;
+    }`
 
     // Replace with actual AI API call
-    const generatedText = await mockAICall(prompt);
+    const generatedText = await mockAICall(prompt)
 
-    editor.value.commands.insertContent(generatedText);
-    inquiryStore.description = editor.value.getHTML();
+    editor.value.commands.insertContent(generatedText)
+    inquiryStore.description = editor.value.getHTML()
   } catch (error) {
-    console.error('AI generation failed:', error);
-    alert('AI generation failed. Please try again.');
+    console.error('AI generation failed:', error)
+    alert('AI generation failed. Please try again.')
   }
-};
+}
 
 // Mock AI function - replace with real API call
 const mockAICall = async () =>
@@ -369,26 +350,26 @@ const mockAICall = async () =>
           <li>Detailed inquiry points</li>
           <li>Call to action</li>
         </ul>
-      `);
-    }, 1000);
-  });
+      `)
+    }, 1000)
+  })
 
 // Lifecycle hooks
 onMounted(() => {
   nextTick(() => {
     if (editor.value && inquiryStore.description) {
-      editor.value.commands.setContent(inquiryStore.description);
+      editor.value.commands.setContent(inquiryStore.description)
     }
-  });
-});
+  })
+})
 
 onUnmounted(() => {
-  if (editor) editor.value.destroy();
-});
+  if (editor) editor.value.destroy()
+})
 
 onBeforeUnmount(() => {
-  if (editor) editor.value.destroy();
-});
+  if (editor) editor.value.destroy()
+})
 </script>
 <style scoped>
 /* Container principal */

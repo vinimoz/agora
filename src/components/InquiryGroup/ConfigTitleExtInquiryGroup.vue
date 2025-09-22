@@ -4,33 +4,30 @@
 -->
 
 <script setup lang="ts">
-import { computed } from 'vue';
-import { InputDiv } from '../Base/index.ts';
-import { t } from '@nextcloud/l10n';
-import { useInquiryGroupsStore } from '../../stores/inquiryGroups.ts';
+import { computed } from 'vue'
+import { InputDiv } from '../Base/index.ts'
+import { t } from '@nextcloud/l10n'
+import { useInquiryGroupsStore } from '../../stores/inquiryGroups.ts'
 
-const emit = defineEmits(['change']);
+const emit = defineEmits(['change'])
 
-const inquiryGroupsStore = useInquiryGroupsStore();
+const inquiryGroupsStore = useInquiryGroupsStore()
 
 const inquiryGroupTitleExt = computed({
   get() {
-    return inquiryGroupsStore.currentInquiryGroup?.titleExt || '';
+    return inquiryGroupsStore.currentInquiryGroup?.titleExt || ''
   },
   set(value: string) {
     inquiryGroupsStore.setCurrentInquiryGroup({
       ...inquiryGroupsStore.currentInquiryGroup,
-      titleExt: value
-    });
-  }
-});
+      titleExt: value,
+    })
+  },
+})
 const inputProps = {
   placeholder: t('agora', 'Enter extended title'),
-  helperText: t(
-    'inquiries',
-    'Optionally choose a more meaningful title for the overview page'
-  )
-};
+  helperText: t('inquiries', 'Optionally choose a more meaningful title for the overview page'),
+}
 </script>
 
 <template>

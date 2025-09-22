@@ -2,16 +2,10 @@
  * SPDX-FileCopyrightText: 2022 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { AxiosResponse } from '@nextcloud/axios';
-import { AppSettings, Group } from '../../stores/appSettings.js';
-import { httpInstance, createCancelTokenHandler } from './HttpApi.js';
-import { ISearchType, User } from '../../Types/index.js';
-import { 
-  Category, 
-  Location, 
-  ModerationStatus
-} from '../../Types/index.js';
-
+import { AxiosResponse } from '@nextcloud/axios'
+import { AppSettings, Group } from '../../stores/appSettings.js'
+import { httpInstance, createCancelTokenHandler } from './HttpApi.js'
+import { ISearchType, User , Category, Location, ModerationStatus } from '../../Types/index.js'
 
 const appSettings = {
   getAppSettings(): Promise<AxiosResponse<{ appSettings: AppSettings }>> {
@@ -20,65 +14,49 @@ const appSettings = {
       url: 'settings/app',
       params: { time: +new Date() },
       cancelToken:
-        cancelTokenHandlerObject[
-          this.getAppSettings.name
-        ].handleRequestCancellation().token
-    });
+        cancelTokenHandlerObject[this.getAppSettings.name].handleRequestCancellation().token,
+    })
   },
 
-  writeAppSettings(
-    appSettings: AppSettings
-  ): Promise<AxiosResponse<{ appSettings: AppSettings }>> {
+  writeAppSettings(appSettings: AppSettings): Promise<AxiosResponse<{ appSettings: AppSettings }>> {
     return httpInstance.request({
       method: 'POST',
       url: 'settings/app',
       data: { appSettings },
       cancelToken:
-        cancelTokenHandlerObject[
-          this.writeAppSettings.name
-        ].handleRequestCancellation().token
-    });
+        cancelTokenHandlerObject[this.writeAppSettings.name].handleRequestCancellation().token,
+    })
   },
 
   getGroups(query: string): Promise<AxiosResponse<{ groups: Group[] }>> {
     return httpInstance.request({
       method: 'GET',
       url: `groups${query.trim() ? `/${query.trim()}` : ''}`,
-      cancelToken:
-        cancelTokenHandlerObject[
-          this.getGroups.name
-        ].handleRequestCancellation().token
-    });
+      cancelToken: cancelTokenHandlerObject[this.getGroups.name].handleRequestCancellation().token,
+    })
   },
 
-  getUsers(
-    query: string,
-    types: ISearchType[]
-  ): Promise<AxiosResponse<{ siteusers: User[] }>> {
+  getUsers(query: string, types: ISearchType[]): Promise<AxiosResponse<{ siteusers: User[] }>> {
     return httpInstance.request({
       method: 'GET',
       url: `search/users${query.trim() ? `/${query.trim()}` : ''}`,
       params: { types: types.toString() },
-      cancelToken:
-        cancelTokenHandlerObject[this.getUsers.name].handleRequestCancellation()
-          .token
-    });
+      cancelToken: cancelTokenHandlerObject[this.getUsers.name].handleRequestCancellation().token,
+    })
   },
 
   // Category functionsa
   addCategory(category: {
-    name: string;
-    parentId?: number;
+    name: string
+    parentId?: number
   }): Promise<AxiosResponse<{ category: Category }>> {
     return httpInstance.request({
       method: 'POST',
       url: 'settings/categories',
       data: { category },
       cancelToken:
-        cancelTokenHandlerObject[
-          this.addCategory.name
-        ].handleRequestCancellation().token
-    });
+        cancelTokenHandlerObject[this.addCategory.name].handleRequestCancellation().token,
+    })
   },
 
   deleteCategory(categoryId: string): Promise<AxiosResponse> {
@@ -86,10 +64,8 @@ const appSettings = {
       method: 'DELETE',
       url: `settings/categories/${categoryId}`,
       cancelToken:
-        cancelTokenHandlerObject[
-          this.deleteCategory.name
-        ].handleRequestCancellation().token
-    });
+        cancelTokenHandlerObject[this.deleteCategory.name].handleRequestCancellation().token,
+    })
   },
 
   updateCategory(
@@ -102,10 +78,8 @@ const appSettings = {
       url: `settings/categories/${categoryId}`,
       data: { name, parentId },
       cancelToken:
-        cancelTokenHandlerObject[
-          this.updateCategory.name
-        ].handleRequestCancellation().token
-    });
+        cancelTokenHandlerObject[this.updateCategory.name].handleRequestCancellation().token,
+    })
   },
 
   // Location functions
@@ -115,10 +89,8 @@ const appSettings = {
       url: 'settings/locations',
       data: { location },
       cancelToken:
-        cancelTokenHandlerObject[
-          this.addLocation.name
-        ].handleRequestCancellation().token
-    });
+        cancelTokenHandlerObject[this.addLocation.name].handleRequestCancellation().token,
+    })
   },
 
   deleteLocation(locationId: string): Promise<AxiosResponse> {
@@ -126,10 +98,8 @@ const appSettings = {
       method: 'DELETE',
       url: `settings/locations/${locationId}`,
       cancelToken:
-        cancelTokenHandlerObject[
-          this.deleteLocation.name
-        ].handleRequestCancellation().token
-    });
+        cancelTokenHandlerObject[this.deleteLocation.name].handleRequestCancellation().token,
+    })
   },
 
   updateLocation(
@@ -142,25 +112,21 @@ const appSettings = {
       url: `settings/locations/${locationId}`,
       data: { name, parentId },
       cancelToken:
-        cancelTokenHandlerObject[
-          this.updateLocation.name
-        ].handleRequestCancellation().token
-    });
+        cancelTokenHandlerObject[this.updateLocation.name].handleRequestCancellation().token,
+    })
   },
 
   // ModerationStatus functions
   addModerationStatus(
-    moderationStatus: ModerationStatus 
+    moderationStatus: ModerationStatus
   ): Promise<AxiosResponse<{ moderationStatus: ModerationStatus }>> {
     return httpInstance.request({
       method: 'POST',
       url: 'settings/moderation-statuses',
       data: { moderationStatus },
       cancelToken:
-        cancelTokenHandlerObject[
-          this.addModerationStatus.name
-        ].handleRequestCancellation().token
-    });
+        cancelTokenHandlerObject[this.addModerationStatus.name].handleRequestCancellation().token,
+    })
   },
 
   deleteModerationStatus(moderationStatusId: string): Promise<AxiosResponse> {
@@ -168,29 +134,26 @@ const appSettings = {
       method: 'DELETE',
       url: `settings/moderation-statuses/${moderationStatusId}`,
       cancelToken:
-        cancelTokenHandlerObject[
-          this.deleteModerationStatus.name
-        ].handleRequestCancellation().token
-    });
+        cancelTokenHandlerObject[this.deleteModerationStatus.name].handleRequestCancellation()
+          .token,
+    })
   },
 
   updateModerationStatus(
     moderationStatusId: string,
-    moderationStatus: ModerationStatus 
+    moderationStatus: ModerationStatus
   ): Promise<AxiosResponse<{ moderationStatus: ModerationStatus }>> {
     return httpInstance.request({
       method: 'PUT',
       url: `settings/moderation-statuses/${moderationStatusId}`,
       data: { moderationStatus },
       cancelToken:
-        cancelTokenHandlerObject[
-          this.updateModerationStatus.name
-        ].handleRequestCancellation().token
-    });
+        cancelTokenHandlerObject[this.updateModerationStatus.name].handleRequestCancellation()
+          .token,
+    })
   },
+}
 
-};
+const cancelTokenHandlerObject = createCancelTokenHandler(appSettings)
 
-const cancelTokenHandlerObject = createCancelTokenHandler(appSettings);
-
-export default appSettings;
+export default appSettings

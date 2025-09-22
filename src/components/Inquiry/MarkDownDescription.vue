@@ -3,17 +3,13 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
-import { useInquiryStore } from '../../stores/inquiry.ts';
-const inquiryStore = useInquiryStore();
+import { useInquiryStore } from '../../stores/inquiry.ts'
+const inquiryStore = useInquiryStore()
 </script>
 
 <template>
   <!-- eslint-disable vue/no-v-html -->
-  <div
-    ref="desc"
-    class="markdown-description"
-    v-html="inquiryStore.descriptionMarkDown"
-  />
+  <div ref="desc" class="markdown-description" v-html="inquiryStore.descriptionMarkDown" />
   <!-- eslint-enable vue/no-v-html -->
 </template>
 

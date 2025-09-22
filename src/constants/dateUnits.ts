@@ -3,63 +3,57 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { t } from '@nextcloud/l10n';
+import { t } from '@nextcloud/l10n'
 
-export type DateTimeUnit =
-  | 'minute'
-  | 'hour'
-  | 'day'
-  | 'week'
-  | 'month'
-  | 'year';
+export type DateTimeUnit = 'minute' | 'hour' | 'day' | 'week' | 'month' | 'year'
 
 export type DateTimeUnitType = {
-  id: DateTimeUnit;
-  name: string;
-  timeOption: boolean;
-};
+  id: DateTimeUnit
+  name: string
+  timeOption: boolean
+}
 
 export type TimeUnitsType = {
-  unit: DateTimeUnitType;
-  value: number;
-};
+  unit: DateTimeUnitType
+  value: number
+}
 
 export type DurationType = {
-  unit: DateTimeUnitType;
-  amount: number;
-};
+  unit: DateTimeUnitType
+  amount: number
+}
 
-export type DateFormats = 'dateTime' | 'dateShort';
+export type DateFormats = 'dateTime' | 'dateShort'
 
 export const dateTimeUnitsKeyed: Record<DateTimeUnit, DateTimeUnitType> = {
   minute: {
     id: 'minute',
     name: t('inquiries', 'Minute'),
-    timeOption: true
+    timeOption: true,
   },
   hour: {
     id: 'hour',
     name: t('inquiries', 'Hour'),
-    timeOption: true
+    timeOption: true,
   },
   day: {
     id: 'day',
     name: t('inquiries', 'Day'),
-    timeOption: false
+    timeOption: false,
   },
   week: {
     id: 'week',
     name: t('inquiries', 'Week'),
-    timeOption: false
+    timeOption: false,
   },
   month: {
     id: 'month',
     name: t('inquiries', 'Month'),
-    timeOption: false
+    timeOption: false,
   },
   year: {
     id: 'year',
     name: t('inquiries', 'Year'),
-    timeOption: false
-  }
-};
+    timeOption: false,
+  },
+}

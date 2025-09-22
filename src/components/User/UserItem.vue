@@ -4,40 +4,40 @@
 -->
 
 <script setup lang="ts">
-import { computed } from 'vue';
-import { useRoute } from 'vue-router';
-import { getCurrentUser } from '@nextcloud/auth';
-import { t } from '@nextcloud/l10n';
-import {  StatusIcons } from '../../utils/icons';
+import { computed } from 'vue'
+import { useRoute } from 'vue-router'
+import { getCurrentUser } from '@nextcloud/auth'
+import { t } from '@nextcloud/l10n'
+import { StatusIcons } from '../../utils/icons'
 
-import NcAvatar from '@nextcloud/vue/components/NcAvatar';
+import NcAvatar from '@nextcloud/vue/components/NcAvatar'
 
-import { User, UserType, VirtualUserItemType } from '../../Types/index.ts';
+import { User, UserType, VirtualUserItemType } from '../../Types/index.ts'
 
 defineOptions({
-  inheritAttrs: true
-});
+  inheritAttrs: true,
+})
 
 interface Props {
-  disabled?: boolean;
-  deletedState?: boolean;
-  lockedState?: boolean;
-  hideNames?: boolean;
-  showEmail?: boolean;
-  disableMenu?: boolean;
-  disableTooltip?: boolean;
-  resolveInfo?: boolean;
-  description?: string;
-  label?: string;
-  type?: UserType | VirtualUserItemType;
-  user?: User;
-  showTypeIcon?: boolean;
-  iconSize?: number;
-  mdIconSize?: number;
-  typeIconSize?: number;
-  hideStatus?: boolean;
-  condensed?: boolean;
-  delegatedFromGroup?: boolean;
+  disabled?: boolean
+  deletedState?: boolean
+  lockedState?: boolean
+  hideNames?: boolean
+  showEmail?: boolean
+  disableMenu?: boolean
+  disableTooltip?: boolean
+  resolveInfo?: boolean
+  description?: string
+  label?: string
+  type?: UserType | VirtualUserItemType
+  user?: User
+  showTypeIcon?: boolean
+  iconSize?: number
+  mdIconSize?: number
+  typeIconSize?: number
+  hideStatus?: boolean
+  condensed?: boolean
+  delegatedFromGroup?: boolean
 }
 
 const {
@@ -68,7 +68,7 @@ const {
     languageCode: '',
     localeCode: null,
     timeZone: null,
-    categories: null
+    categories: null,
   },
   showTypeIcon = false,
   iconSize = 32,
@@ -76,14 +76,12 @@ const {
   typeIconSize = 16,
   hideStatus = false,
   condensed = false,
-  delegatedFromGroup = false
-} = defineProps<Props>();
+  delegatedFromGroup = false,
+} = defineProps<Props>()
 
-const route = useRoute();
+const route = useRoute()
 
-const isGuestComputed = computed(
-  () => route.name === 'publicInquiry' || user.isNoUser
-);
+const isGuestComputed = computed(() => route.name === 'publicInquiry' || user.isNoUser)
 const avatarProps = computed(() => ({
   user: avatarUserId.value,
   showUserStatus: showUserStatusComputed.value,
@@ -92,8 +90,8 @@ const avatarProps = computed(() => ({
   size: iconSize,
   disableTooltip,
   disableMenu,
-  isNoUser: user.isNoUser
-}));
+  isNoUser: user.isNoUser,
+}))
 
 const useIconSlot = computed(() =>
   [
@@ -104,83 +102,78 @@ const useIconSlot = computed(() =>
     'group',
     'circle',
     'deleted',
-    'anonymous'
+    'anonymous',
   ].includes(typeComputed.value)
-);
+)
 
-const typeComputed = computed<UserType | VirtualUserItemType>(
-  () => user.type ?? type
-);
+const typeComputed = computed<UserType | VirtualUserItemType>(() => user.type ?? type)
 const descriptionComputed = computed(() => {
   if (condensed) {
-    return '';
+    return ''
   }
   if (delegatedFromGroup) {
-    return t('agora', 'Inquiry group access');
+    return t('agora', 'Inquiry group access')
   }
   if (deletedState) {
-    return t('agora', '(deleted)');
+    return t('agora', '(deleted)')
   }
   if (lockedState) {
-    return t('agora', '(locked)');
+    return t('agora', '(locked)')
   }
   if (description !== '') {
-    return description;
+    return description
   }
   if (typeComputed.value === 'public') {
-    return publicShareDescription;
+    return publicShareDescription
   }
   if (typeComputed.value === 'deleted') {
-    return t('agora', 'The participant got removed from this inquiry');
+    return t('agora', 'The participant got removed from this inquiry')
   }
   if (typeComputed.value === 'admin') {
-    return t('agora', 'Administrative rights granted');
+    return t('agora', 'Administrative rights granted')
   }
   if (typeComputed.value === 'anonymous') {
-    return t('agora', 'Anonymized participant');
+    return t('agora', 'Anonymized participant')
   }
-  return emailAddressComputed;
-});
+  return emailAddressComputed
+})
 const labelComputed = computed(() => {
   if (label !== '') {
-    return label;
+    return label
   }
   if (typeComputed.value === 'public') {
-    return publicShareLabel.value;
+    return publicShareLabel.value
   }
   if (typeComputed.value === 'deleted') {
-    return t('agora', 'Deleted participant');
+    return t('agora', 'Deleted participant')
   }
-  return user.displayName ?? user.id;
-});
+  return user.displayName ?? user.id
+})
 
 const avatarUserId = computed(() => {
   if (isGuestComputed.value) {
-    return user.displayName;
+    return user.displayName
   }
-  return user.id;
-});
+  return user.id
+})
 
 const publicShareDescription = computed(() => {
   if (label === '') {
-    return t('agora', 'Token: {token}', { token: user.id });
+    return t('agora', 'Token: {token}', { token: user.id })
   }
-  return t('agora', 'Public link: {token}', { token: user.id });
-});
+  return t('agora', 'Public link: {token}', { token: user.id })
+})
 
 const publicShareLabel = computed(() => {
   if (label === '') {
-    return t('agora', 'Public link');
+    return t('agora', 'Public link')
   }
-  return label;
-});
+  return label
+})
 
 const emailAddressComputed = computed(() => {
-  if (
-    resolveInfo &&
-    (typeComputed.value === 'contactGroup' || typeComputed.value === 'circle')
-  ) {
-    return t('agora', 'Resolve this group first!');
+  if (resolveInfo && (typeComputed.value === 'contactGroup' || typeComputed.value === 'circle')) {
+    return t('agora', 'Resolve this group first!')
   }
 
   if (
@@ -188,21 +181,19 @@ const emailAddressComputed = computed(() => {
     user.emailAddress !== user.displayName &&
     (typeComputed.value === 'external' || typeComputed.value === 'email')
   ) {
-    return user.emailAddress;
+    return user.emailAddress
   }
 
-  return '';
-});
-const showUserStatusComputed = computed(
-  () => hideStatus && Boolean(getCurrentUser())
-);
+  return ''
+})
+const showUserStatusComputed = computed(() => hideStatus && Boolean(getCurrentUser()))
 
 /**
  *
  */
 function showMenu() {
   // TODO: implement
-  return true;
+  return true
 }
 </script>
 
@@ -213,16 +204,12 @@ function showMenu() {
       typeComputed,
       {
         disabled,
-        condensed: condensed
-      }
+        condensed: condensed,
+      },
     ]"
   >
     <div class="avatar-wrapper">
-      <NcAvatar
-        v-bind="avatarProps"
-        class="user-item__avatar"
-        @click="showMenu()"
-      >
+      <NcAvatar v-bind="avatarProps" class="user-item__avatar" @click="showMenu()">
         <template v-if="useIconSlot" #icon>
           <component
             :is="StatusIcons.LinkIcon"
@@ -250,7 +237,7 @@ function showMenu() {
             :size="mdIconSize"
           />
           <component
-            :is="StatusIcons.GroupIcon"
+            :is="StatusIcons.AccountMultiple"
             v-if="typeComputed === 'group'"
             :size="mdIconSize"
           />

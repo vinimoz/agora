@@ -7,11 +7,7 @@
   <div class="debate-arguments space-y-4 p-3 rounded-md border bg-gray-50">
     <h3 class="text-lg font-bold">Débat : {{ title }}</h3>
 
-    <button
-      class="px-3 py-1 bg-blue-500 text-white rounded"
-      @click="openForm"
-    >
-    </button>
+    <button class="px-3 py-1 bg-blue-500 text-white rounded" @click="openForm"></button>
 
     <div class="grid grid-cols-3 gap-4 mt-3">
       <div>
@@ -48,7 +44,6 @@
 </template>
 
 <script setup lang="ts">
-
 import DebateReactions from './DebateReactions.vue'
 
 defineProps<{
@@ -64,4 +59,3 @@ const openForm = () => {
   alert('TODO: ouvrir le formulaire pour ajouter un argument')
 }
 </script>
-

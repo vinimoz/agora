@@ -5,15 +5,15 @@
 -->
 
 <script setup lang="ts">
-import { t } from '@nextcloud/l10n';
-import { IconProps } from './types';
+import { t } from '@nextcloud/l10n'
+import { IconProps } from './types'
 
 const {
   title = t('agora', 'Support status'),
   fillColor = '#9ca3af',
   size = 24,
-  supported = false
-} = defineProps<IconProps & { supported?: boolean }>();
+  supported = false,
+} = defineProps<IconProps & { supported?: boolean }>()
 </script>
 
 <template>

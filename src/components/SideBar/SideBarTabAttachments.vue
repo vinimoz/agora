@@ -1,86 +1,81 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import { t } from '@nextcloud/l10n';
-import { NcButton } from '@nextcloud/vue';
-import { useAttachmentsStore } from '../../stores/attachments';
-import { useInquiryStore } from '../../stores/inquiry';
-import Plus from 'vue-material-design-icons/Plus.vue';
-import Close from 'vue-material-design-icons/Close.vue';
-import FileDocument from 'vue-material-design-icons/FileDocument.vue';
-import { showError, showSuccess } from '@nextcloud/dialogs';
+import { ref, computed } from 'vue'
+import { t } from '@nextcloud/l10n'
+import { NcButton } from '@nextcloud/vue'
+import { useAttachmentsStore } from '../../stores/attachments'
+import { useInquiryStore } from '../../stores/inquiry'
+import Plus from 'vue-material-design-icons/Plus.vue'
+import Close from 'vue-material-design-icons/Close.vue'
+import FileDocument from 'vue-material-design-icons/FileDocument.vue'
+import { showError, showSuccess } from '@nextcloud/dialogs'
 
 // Stores
-const attachmentsStore = useAttachmentsStore();
-const inquiryStore = useInquiryStore();
+const attachmentsStore = useAttachmentsStore()
+const inquiryStore = useInquiryStore()
 
-const fileInput = ref<HTMLInputElement | null>(null);
+const fileInput = ref<HTMLInputElement | null>(null)
 
 const handleFileUpload = async (event: Event) => {
-  const target = event.target as HTMLInputElement;
-  const files = target.files;
-  if (!files || files.length === 0) return;
+  const target = event.target as HTMLInputElement
+  const files = target.files
+  if (!files || files.length === 0) return
 
-  target.value = '';
-  const filesArray = Array.from(files);
+  target.value = ''
+  const filesArray = Array.from(files)
 
   for (const file of filesArray) {
     try {
-      const response = await attachmentsStore.upload(inquiryStore.id, file);
+      const response = await attachmentsStore.upload(inquiryStore.id, file)
       const attachment = {
         id: response.id ?? `temp-${Date.now()}-${file.name}`,
         name: response.name ?? file.name,
         size: response.size ?? file.size,
-        url: response.url ?? undefined
-      };
+        url: response.url ?? undefined,
+      }
 
-      attachmentsStore.attachments = [
-        ...attachmentsStore.attachments,
-        attachment
-      ];
+      attachmentsStore.attachments = [...attachmentsStore.attachments, attachment]
 
-      showSuccess(
-        t('agora', '{file} uploaded', { file: response.name ?? file.name })
-      );
+      showSuccess(t('agora', '{file} uploaded', { file: response.name ?? file.name }))
     } catch (error) {
-      console.error('Upload failed:', error);
-      showError(t('agora', 'Failed to upload {file}', { file: file.name }));
+      console.error('Upload failed:', error)
+      showError(t('agora', 'Failed to upload {file}', { file: file.name }))
     }
   }
-};
+}
 
 const removeAttachment = async (index: number) => {
-  const attachment = attachmentsStore.attachments[index];
-  if (!attachment) return;
+  const attachment = attachmentsStore.attachments[index]
+  if (!attachment) return
 
   try {
     if (attachment.id) {
-      await attachmentsStore.delete(attachment.id);
+      await attachmentsStore.delete(attachment.id)
     }
-    attachmentsStore.attachments.splice(index, 1);
-    showSuccess(t('agora', 'File has been removed !'));
+    attachmentsStore.attachments.splice(index, 1)
+    showSuccess(t('agora', 'File has been removed !'))
   } catch (e) {
-    console.error('Delete failed', e);
+    console.error('Delete failed', e)
   }
-};
+}
 
 const attachments = computed({
   get: () => attachmentsStore.attachments,
   set: (value) => {
-    attachmentsStore.attachments = value;
-  }
-});
+    attachmentsStore.attachments = value
+  },
+})
 
 const triggerFileInput = () => {
-  fileInput.value?.click();
-};
+  fileInput.value?.click()
+}
 
 const formatFileSize = (bytes: number): string => {
-  if (bytes === 0) return '0 Bytes';
-  const k = 1024;
-  const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-  const unitIndex = Math.floor(Math.log(bytes) / Math.log(k));
-  return `${parseFloat((bytes / Math.pow(k, unitIndex)).toFixed(2))} ${sizes[unitIndex]}`;
-};
+  if (bytes === 0) return '0 Bytes'
+  const k = 1024
+  const sizes = ['Bytes', 'KB', 'MB', 'GB']
+  const unitIndex = Math.floor(Math.log(bytes) / Math.log(k))
+  return `${parseFloat((bytes / Math.pow(k, unitIndex)).toFixed(2))} ${sizes[unitIndex]}`
+}
 </script>
 
 <template>
@@ -111,9 +106,7 @@ const formatFileSize = (bytes: number): string => {
     </div>
 
     <div class="attachments-list">
-      <div v-if="attachments.length === 0" class="empty-state">
-        No attachments
-      </div>
+      <div v-if="attachments.length === 0" class="empty-state">No attachments</div>
 
       <div
         v-for="(attachment, index) in attachments"
@@ -132,9 +125,7 @@ const formatFileSize = (bytes: number): string => {
             {{ attachment.name }}
           </a>
           <span v-else class="attachment-name">{{ attachment.name }}</span>
-          <span class="attachment-size">{{
-            formatFileSize(attachment.size)
-          }}</span>
+          <span class="attachment-size">{{ formatFileSize(attachment.size) }}</span>
         </div>
         <NcButton
           v-if="inquiryStore.currentUserStatus.isOwner"

@@ -4,42 +4,37 @@
 -->
 
 <script setup lang="ts">
-import QRCode from 'qrcode';
-import { Logger } from '../../../helpers/index.ts';
-import { onMounted, ref } from 'vue';
-import { AxiosError } from '@nextcloud/axios';
+import QRCode from 'qrcode'
+import { Logger } from '../../../helpers/index.ts'
+import { onMounted, ref } from 'vue'
+import { AxiosError } from '@nextcloud/axios'
 
 interface Props {
-  name?: string;
-  subTitle?: string;
-  description?: string;
-  encodeText: string;
+  name?: string
+  subTitle?: string
+  description?: string
+  encodeText: string
 }
 
-const {
-  name = '',
-  subTitle = '',
-  description = '',
-  encodeText
-} = defineProps<Props>();
+const { name = '', subTitle = '', description = '', encodeText } = defineProps<Props>()
 
-const qrUri = ref<string>('');
+const qrUri = ref<string>('')
 
 /**
  * Generate QR code
  */
 async function generateQr() {
   try {
-    qrUri.value = await QRCode.toDataURL(encodeText);
+    qrUri.value = await QRCode.toDataURL(encodeText)
   } catch (e) {
-    const error = e as AxiosError;
-    Logger.error('Error on generating QR code', { error: error.message });
+    const error = e as AxiosError
+    Logger.error('Error on generating QR code', { error: error.message })
   }
 }
 
 onMounted(() => {
-  generateQr();
-});
+  generateQr()
+})
 </script>
 
 <template>

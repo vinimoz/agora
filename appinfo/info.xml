@@ -4,7 +4,7 @@
   <name>Agora</name>
   <summary>Participatory democracy app for creating, debating and supporting on community proposals..</summary>
   <description>Agora is a Nextcloud app for participatory democracy. Users can create proposals, debates, petitions or projects, and gather suggestions, comments and supports. Contributions can be organized by location or category, and evolve through customizable workflows. The app integrates with Nextcloud tools (Talk, Collectives, Deck) to support collaboration and citizen participation. </description>
-  <version>1.0.0rc4</version>
+  <version>1.0.0-rc5</version>
   <licence>agpl</licence>
   <author>Vincent TRAPPE</author>
   <documentation>

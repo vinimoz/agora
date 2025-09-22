@@ -4,9 +4,9 @@
  */
 
 export type WatcherResponse = {
-  id: number;
-  inquiryId: number;
-  table: string;
-  updated: number;
-  sessionId: string;
-};
+  id: number
+  inquiryId: number
+  table: string
+  updated: number
+  sessionId: string
+}

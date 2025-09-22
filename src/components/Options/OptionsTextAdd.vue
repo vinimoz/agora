@@ -4,21 +4,21 @@
 -->
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { showError, showSuccess } from '@nextcloud/dialogs';
-import { t } from '@nextcloud/l10n';
+import { ref } from 'vue'
+import { showError, showSuccess } from '@nextcloud/dialogs'
+import { t } from '@nextcloud/l10n'
 
-import { InputDiv } from '../Base/index.ts';
-import { SimpleOption, useOptionsStore } from '../../stores/options.ts';
-import { AxiosError } from '@nextcloud/axios';
+import { InputDiv } from '../Base/index.ts'
+import { SimpleOption, useOptionsStore } from '../../stores/options.ts'
+import { AxiosError } from '@nextcloud/axios'
 
-const optionsStore = useOptionsStore();
+const optionsStore = useOptionsStore()
 
 const { placeholder = t('agora', 'Add option') } = defineProps<{
-  placeholder?: string;
-}>();
+  placeholder?: string
+}>()
 
-const newInquiryText = ref('');
+const newInquiryText = ref('')
 
 /**
  *
@@ -26,26 +26,26 @@ const newInquiryText = ref('');
 async function addOption(): Promise<void> {
   if (newInquiryText.value) {
     try {
-      await optionsStore.add({ text: newInquiryText.value } as SimpleOption);
+      await optionsStore.add({ text: newInquiryText.value } as SimpleOption)
       showSuccess(
         t('agora', '{optionText} added', {
-          optionText: newInquiryText.value
+          optionText: newInquiryText.value,
         })
-      );
-      newInquiryText.value = '';
+      )
+      newInquiryText.value = ''
     } catch (error) {
       if ((error as AxiosError).response?.status === 409) {
         showError(
           t('agora', '{optionText} already exists', {
-            optionText: newInquiryText.value
+            optionText: newInquiryText.value,
           })
-        );
+        )
       } else {
         showError(
           t('agora', 'Error adding {optionText}', {
-            optionText: newInquiryText.value
+            optionText: newInquiryText.value,
           })
-        );
+        )
       }
     }
   }
@@ -53,12 +53,7 @@ async function addOption(): Promise<void> {
 </script>
 
 <template>
-  <InputDiv
-    v-model="newInquiryText"
-    :placeholder="placeholder"
-    submit
-    @submit="addOption()"
-  />
+  <InputDiv v-model="newInquiryText" :placeholder="placeholder" submit @submit="addOption()" />
 </template>
 
 <style lang="scss">

@@ -4,56 +4,53 @@
 -->
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
-import { t } from '@nextcloud/l10n';
+import { computed, ref } from 'vue'
+import { t } from '@nextcloud/l10n'
 
-import NcActions from '@nextcloud/vue/components/NcActions';
-import NcActionButton from '@nextcloud/vue/components/NcActionButton';
-import NcModal from '@nextcloud/vue/components/NcModal';
+import NcActions from '@nextcloud/vue/components/NcActions'
+import NcActionButton from '@nextcloud/vue/components/NcActionButton'
+import NcModal from '@nextcloud/vue/components/NcModal'
 
-import CloneDateIcon from 'vue-material-design-icons/CalendarMultiple.vue';
-import DeleteIcon from 'vue-material-design-icons/Delete.vue';
-import RestoreIcon from 'vue-material-design-icons/Recycle.vue';
-import ConfirmIcon from 'vue-material-design-icons/CheckboxBlankOutline.vue';
-import UnconfirmIcon from 'vue-material-design-icons/CheckboxMarkedOutline.vue';
+import CloneDateIcon from 'vue-material-design-icons/CalendarMultiple.vue'
+import DeleteIcon from 'vue-material-design-icons/Delete.vue'
+import RestoreIcon from 'vue-material-design-icons/Recycle.vue'
+import ConfirmIcon from 'vue-material-design-icons/CheckboxBlankOutline.vue'
+import UnconfirmIcon from 'vue-material-design-icons/CheckboxMarkedOutline.vue'
 
-import OptionCloneDate from './OptionCloneDate.vue';
-import { useInquiryStore } from '../../stores/inquiry.ts';
-import { useOptionsStore, Option } from '../../stores/options.ts';
+import OptionCloneDate from './OptionCloneDate.vue'
+import { useInquiryStore } from '../../stores/inquiry.ts'
+import { useOptionsStore, Option } from '../../stores/options.ts'
 
 interface Props {
-  option: Option;
+  option: Option
 }
 
-const { option = false } = defineProps<Props>();
+const { option = false } = defineProps<Props>()
 
-const inquiryStore = useInquiryStore();
-const optionsStore = useOptionsStore();
+const inquiryStore = useInquiryStore()
+const optionsStore = useOptionsStore()
 
-const cloneModal = ref(false);
+const cloneModal = ref(false)
 
 const deleteOrRestoreStaticText = computed(() =>
   option.deleted ? t('agora', 'Restore option') : t('agora', 'Delete option')
-);
+)
 
 const deleteAllowed = computed(
-  () =>
-    (option.isOwner || inquiryStore.permissions.edit) && !inquiryStore.isClosed
-);
+  () => (option.isOwner || inquiryStore.permissions.edit) && !inquiryStore.isClosed
+)
 const confirmAllowed = computed(
-  () =>
-    !option.deleted && inquiryStore.isClosed && inquiryStore.permissions.edit
-);
+  () => !option.deleted && inquiryStore.isClosed && inquiryStore.permissions.edit
+)
 const cloneAllowed = computed(
-  () =>
-    !option.deleted && !inquiryStore.isClosed && inquiryStore.permissions.edit
-);
+  () => !option.deleted && !inquiryStore.isClosed && inquiryStore.permissions.edit
+)
 
 /**
  *
  */
 function cloneOptionModal() {
-  cloneModal.value = true;
+  cloneModal.value = true
 }
 
 /**
@@ -61,17 +58,17 @@ function cloneOptionModal() {
  */
 function deleteRestoreOption() {
   if (option.deleted) {
-    optionsStore.restore({ option });
-    return;
+    optionsStore.restore({ option })
+    return
   }
-  optionsStore.delete({ option });
+  optionsStore.delete({ option })
 }
 
 /**
  *
  */
 function confirmOption() {
-  optionsStore.confirm({ option });
+  optionsStore.confirm({ option })
 }
 </script>
 
@@ -102,11 +99,7 @@ function confirmOption() {
 
     <NcActionButton
       v-if="confirmAllowed"
-      :name="
-        option.confirmed
-          ? t('agora', 'Unconfirm option')
-          : t('agora', 'Confirm option')
-      "
+      :name="option.confirmed ? t('agora', 'Unconfirm option') : t('agora', 'Confirm option')"
       close-after-click
       @click="confirmOption()"
     >
@@ -114,11 +107,7 @@ function confirmOption() {
         <UnconfirmIcon v-if="option.confirmed" />
         <ConfirmIcon v-else />
       </template>
-      {{
-        option.confirmed
-          ? t('agora', 'Unconfirm option')
-          : t('agora', 'Confirm option')
-      }}
+      {{ option.confirmed ? t('agora', 'Unconfirm option') : t('agora', 'Confirm option') }}
     </NcActionButton>
 
     <NcActionButton
@@ -134,10 +123,6 @@ function confirmOption() {
   </NcActions>
 
   <NcModal v-if="cloneModal" size="small" no-close>
-    <OptionCloneDate
-      :option="option"
-      class="modal__content"
-      @close="cloneModal = false"
-    />
+    <OptionCloneDate :option="option" class="modal__content" @close="cloneModal = false" />
   </NcModal>
 </template>

@@ -4,48 +4,48 @@
 -->
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import { useRouter } from 'vue-router';
-import { showSuccess, showError } from '@nextcloud/dialogs';
-import { t } from '@nextcloud/l10n';
+import { ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
+import { showSuccess, showError } from '@nextcloud/dialogs'
+import { t } from '@nextcloud/l10n'
 
-import NcButton from '@nextcloud/vue/components/NcButton';
+import NcButton from '@nextcloud/vue/components/NcButton'
 
-import SpeakerIcon from 'vue-material-design-icons/Bullhorn.vue';
-import CheckIcon from 'vue-material-design-icons/Check.vue';
+import SpeakerIcon from 'vue-material-design-icons/Bullhorn.vue'
+import CheckIcon from 'vue-material-design-icons/Check.vue'
 
-import { ConfigBox, RadioGroupDiv, InputDiv } from '../Base/index.ts';
+import { ConfigBox, RadioGroupDiv, InputDiv } from '../Base/index.ts'
 
-import { useInquiryStore } from '../../stores/inquiry.ts';
-import { InquiryTypes } from '../../helpers/modules/InquiryHelper.ts';
+import { useInquiryStore } from '../../stores/inquiry.ts'
+import { InquiryTypes } from '../../helpers/modules/InquiryHelper.ts'
 
-const inquiryStore = useInquiryStore();
-const router = useRouter();
+const inquiryStore = useInquiryStore()
+const router = useRouter()
 
-const title = ref('');
-const adding = ref(false);
+const title = ref('')
+const adding = ref(false)
 
-type InquiryTypeKey = keyof typeof InquiryTypes;
-const inquiryType = ref<InquiryTypeKey>('proposal');
+type InquiryTypeKey = keyof typeof InquiryTypes
+const inquiryType = ref<InquiryTypeKey>('proposal')
 
 const inquiryTypeOptions = Object.entries(InquiryTypes)
   .filter(([key]) => !['official', 'suggestion'].includes(key))
   .map(([key, value]) => ({
     value: key,
-    label: value.label
-  }));
+    label: value.label,
+  }))
 
-const titleEmpty = computed(() => title.value === '');
-const disableConfirm = computed(() => titleEmpty.value || adding.value);
+const titleEmpty = computed(() => title.value === '')
+const disableConfirm = computed(() => titleEmpty.value || adding.value)
 
-const emit = defineEmits(['cancel', 'add']);
+const emit = defineEmits(['cancel', 'add'])
 
 /**
  *
  */
 function resetInput() {
-  title.value = '';
-  inquiryType.value = 'proposal';
+  title.value = ''
+  inquiryType.value = 'proposal'
 }
 
 /**
@@ -53,35 +53,35 @@ function resetInput() {
  */
 async function add() {
   try {
-    adding.value = true;
+    adding.value = true
     const inquiry = await inquiryStore.add({
       type: inquiryType.value,
-      title: title.value
-    });
+      title: title.value,
+    })
 
-    resetInput();
+    resetInput()
     if (inquiry) {
       showSuccess(
         t('agora', 'Inquiry "{inquiryTitle}" added', {
-          inquiryTitle: inquiry.title
+          inquiryTitle: inquiry.title,
         })
-      );
+      )
 
-      emit('add');
+      emit('add')
 
       router.push({
         name: 'inquiry',
-        params: { id: inquiry.id }
-      });
+        params: { id: inquiry.id },
+      })
     }
   } catch {
     showError(
       t('agora', 'Error while creating Inquiry "{inquiryTitle}"', {
-        inquiryTitle: title.value
+        inquiryTitle: title.value,
       })
-    );
+    )
   } finally {
-    adding.value = false;
+    adding.value = false
   }
 }
 </script>

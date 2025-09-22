@@ -4,79 +4,78 @@
 -->
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
-import moment from '@nextcloud/moment';
-import { t } from '@nextcloud/l10n';
+import { computed, ref } from 'vue'
+import moment from '@nextcloud/moment'
+import { t } from '@nextcloud/l10n'
 
-import { useInquiryStore } from '../../stores/inquiry.ts';
-import { useSharesStore } from '../../stores/shares.ts';
-import { useSessionStore } from '../../stores/session.ts';
-import { showSuccess } from '@nextcloud/dialogs';
-import NcUserBubble from '@nextcloud/vue/components/NcUserBubble';
-import { StatusIcons, InquiryGeneralIcons } from '../../utils/icons.ts';
+import { useInquiryStore } from '../../stores/inquiry.ts'
+import { useSharesStore } from '../../stores/shares.ts'
+import { useSessionStore } from '../../stores/session.ts'
+import { showSuccess } from '@nextcloud/dialogs'
+import { InquiryTypesUI, StatusIcons, InquiryGeneralIcons } from '../../utils/icons.ts'
 
 // Constnat
-const inquiryStore = useInquiryStore();
-const sessionStore = useSessionStore();
-const sharesStore = useSharesStore();
+const inquiryStore = useInquiryStore()
+const sessionStore = useSessionStore()
+const sharesStore = useSharesStore()
 
 // Moderation status displayed to be move to helpers ?
 const availableStatuses = computed(() =>
   sessionStore.appSettings.moderationStatusTab
     .filter((status) => status.inquiryType === inquiryStore.type)
     .sort((a, b) => a.order - b.order)
-);
+)
 
 const currentStatus = computed(
   () =>
     availableStatuses.value.find(
       (status) => status.statusKey === inquiryStore.moderationStatus
-    ) || [{
-      statusKey: 'draft',
-      label: 'Draft',
-      icon: 'Draft',
-      inquiryType: inquiryStore.type,
-      order: 0
-    }]
-);
+    ) || [
+      {
+        statusKey: 'draft',
+        label: 'Draft',
+        icon: 'Draft',
+        inquiryType: inquiryStore.type,
+        order: 0,
+      },
+    ]
+)
 
-const selectedStatusKey = ref(currentStatus.value?.statusKey);
+const selectedStatusKey = ref(currentStatus.value?.statusKey)
 
-const currentStatusLabel = computed(() => currentStatus.value?.label || 'Draft');
+const currentStatusLabel = computed(() => currentStatus.value?.label || 'Draft')
 
-const currentStatusIcon = computed(
-  () => StatusIcons[currentStatus.value?.icon]
-);
+const currentStatusIcon = computed(() => StatusIcons[currentStatus.value?.icon])
 
 const onStatusChange = async () => {
   try {
-    await inquiryStore.setModerationStatus(selectedStatusKey.value);
-    showSuccess(' Moderator status of this inquiry has been updated !'); // Call success Message
+    await inquiryStore.setModerationStatus(selectedStatusKey.value)
+    showSuccess(' Moderator status of this inquiry has been updated !') // Call success Message
   } catch (error) {
-    console.error('Failed to update status:', error);
-    selectedStatusKey.value = currentStatus.value.statusKey;
+    console.error('Failed to update status:', error)
+    selectedStatusKey.value = currentStatus.value.statusKey
   }
-};
+}
 
 const isNoAccessSet = computed(
   () =>
     inquiryStore.configuration.access === 'private' &&
     !sharesStore.hasShares &&
     inquiryStore.permissions.edit
-);
+)
 
 // Subtext function and status
 const subTexts = computed(() => {
-  const subTexts = [];
+  const subTexts = []
 
   if (inquiryStore.status.isArchived) {
     subTexts.push({
       id: 'deleted',
       text: t('agora', 'Archived'),
       class: 'archived',
-      iconComponent: InquiryGeneralIcons.archived
-    });
-    return subTexts;
+      iconComponent: InquiryGeneralIcons.archived,
+    })
+    return subTexts
   }
 
   if (isNoAccessSet.value) {
@@ -84,28 +83,28 @@ const subTexts = computed(() => {
       id: 'no-access',
       text: [t('agora', 'Unpublished')].join('. '),
       class: 'unpublished',
-      iconComponent: InquiryGeneralIcons.unpublished
-    });
-    return subTexts;
+      iconComponent: InquiryGeneralIcons.unpublished,
+    })
+    return subTexts
   }
   if (inquiryStore.configuration.access === 'private') {
     subTexts.push({
       id: inquiryStore.configuration.access,
       text: t('agora', 'A private inquiry from {name}', {
-        name: inquiryStore.owner.displayName
+        name: inquiryStore.owner.displayName,
       }),
       class: '',
-      iconComponent: InquiryGeneralIcons.private
-    });
+      iconComponent: InquiryGeneralIcons.private,
+    })
   } else {
     subTexts.push({
       id: inquiryStore.configuration.access,
       text: t('agora', 'An openly accessible inquiry from {name}', {
-        name: inquiryStore.owner.displayName
+        name: inquiryStore.owner.displayName,
       }),
       class: '',
-      iconComponent: InquiryGeneralIcons.open
-    });
+      iconComponent: InquiryGeneralIcons.open,
+    })
   }
 
   if (inquiryStore.isClosed) {
@@ -113,45 +112,9 @@ const subTexts = computed(() => {
       id: 'closed',
       text: timeExpirationRelative.value,
       class: 'closed',
-      iconComponent: InquiryGeneralIcons.closed
-    });
-    return subTexts;
-  }
-
-  if (!inquiryStore.isClosed && inquiryStore.configuration.expire) {
-    subTexts.push({
-      id: 'expiring',
-      text: t('agora', 'Closing {relativeExpirationTime}', {
-        relativeExpirationTime: timeExpirationRelative.value
-      }),
-      class: closeToClosing.value ? 'closing' : 'open',
-      iconComponent: InquiryGeneralIcons.expiration
-    });
-    return subTexts;
-  }
-
-  if (inquiryStore.isSuggestionExpirySet && inquiryStore.isSuggestionExpired) {
-    subTexts.push({
-      id: 'expired',
-      text: t('agora', 'Suggestion period ended {timeRelative}', {
-        timeRelative: inquiryStore.suggestionsExpireRelative
-      }),
-      class: 'suggestion',
-      iconComponent: InquiryGeneralIcons.suggestions
-    });
-    return subTexts;
-  }
-
-  if (inquiryStore.isSuggestionExpirySet && !inquiryStore.isSuggestionExpired) {
-    subTexts.push({
-      id: 'suggestion-open',
-      text: t('agora', 'Suggestion period ends {timeRelative}', {
-        timeRelative: inquiryStore.suggestionsExpireRelative
-      }),
-      class: 'suggestion',
-      iconComponent: InquiryGeneralIcons.suggestions
-    });
-    return subTexts;
+      iconComponent: InquiryGeneralIcons.closed,
+    })
+    return subTexts
   }
 
   if (subTexts.length < 2) {
@@ -159,54 +122,41 @@ const subTexts = computed(() => {
       id: 'created',
       text: dateCreatedRelative.value,
       class: 'created',
-      iconComponent: InquiryGeneralIcons.creation
-    });
+      iconComponent: InquiryGeneralIcons.creation,
+    })
   }
-  return subTexts;
-});
+  return subTexts
+})
 
-const dateCreatedRelative = computed(() =>
-  moment.unix(inquiryStore.status.created).fromNow()
-);
-
-const closeToClosing = computed(
-  () =>
-    !inquiryStore.isClosed &&
-    inquiryStore.configuration.expire &&
-    moment.unix(inquiryStore.configuration.expire).diff() < 86400000
-);
+const dateCreatedRelative = computed(() => moment.unix(inquiryStore.status.created).fromNow())
 
 const timeExpirationRelative = computed(() => {
   if (inquiryStore.configuration.expire) {
-    return moment.unix(inquiryStore.configuration.expire).fromNow();
+    return moment.unix(inquiryStore.configuration.expire).fromNow()
   }
-  return t('agora', 'never');
-});
+  return t('agora', 'never')
+})
 </script>
 
 <template>
   <div class="inquiry-info-line">
     <div class="subtexts-left">
       <component
-        :is="NcUserBubble"
-        :user="inquiryStore.owner.id"
-        :display-name="inquiryStore.owner.displayName"
-        :size="32"
+        :is="InquiryTypesUI[inquiryStore.type]?.icon"
+        v-if="inquiryStore.type && InquiryTypesUI[inquiryStore.type]?.icon"
+        :size="20"
       />
-      <span
-        v-for="subText in subTexts"
-        :key="subText.id"
-        :class="['sub-text', subText.class]"
-      >
+      <span class="type-label">
+        {{ InquiryTypesUI[inquiryStore.type]?.label || inquiryStore.type }}
+      </span>
+      <span v-for="subText in subTexts" :key="subText.id" :class="['sub-text', subText.class]">
         <Component :is="subText.iconComponent" :size="16" />
         <span class="sub-text">{{ subText.text }}</span>
       </span>
     </div>
     <div v-if="inquiryStore.type !== 'official'" class="inquiry-type-status">
       <div class="status-badge">
-        <span class="status-prefix">{{
-          t('agora', 'Moderation status is:')
-        }}</span>
+        <span class="status-prefix">{{ t('agora', 'Moderation status is:') }}</span>
         <template v-if="sessionStore.currentUser.isModerator">
           <select v-model="selectedStatusKey" @change="onStatusChange">
             <option
@@ -228,6 +178,13 @@ const timeExpirationRelative = computed(() => {
 </template>
 
 <style lang="scss">
+.type-label {
+  color: var(--color-primary);
+  display: flex;
+  font-size: 1rem;
+  font-weight: 800;
+}
+
 .inquiry-info-line {
   display: flex;
   flex-wrap: wrap;

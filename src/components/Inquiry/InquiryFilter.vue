@@ -4,23 +4,22 @@
 -->
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
-import { t } from '@nextcloud/l10n';
-import { useSessionStore } from '../../stores/session.ts';
-import { FilterType, useInquiriesStore } from '../../stores/inquiries.ts';
+import { computed, ref } from 'vue'
+import { t } from '@nextcloud/l10n'
+import { useSessionStore } from '../../stores/session.ts'
+import { FilterType, useInquiriesStore } from '../../stores/inquiries.ts'
 
-const sessionStore = useSessionStore();
-const inquiriesStore = useInquiriesStore();
+const sessionStore = useSessionStore()
+const inquiriesStore = useInquiriesStore()
 
+const selectedType = ref<FilterType | 'all'>('all')
+const selectedCategory = ref<string>('all')
+const selectedLocation = ref<string>('all')
+const hasComments = ref<boolean | null>(null)
+const hasSupports = ref<boolean | null>(null)
+const searchQuery = ref<string>('')
 
-const selectedType = ref<FilterType | 'all'>('all');
-const selectedCategory = ref<string>('all');
-const selectedLocation = ref<string>('all');
-const hasComments = ref<boolean | null>(null);
-const hasSupports = ref<boolean | null>(null);
-const searchQuery = ref<string>('');
-
-const isFiltersOpen = ref(false);
+const isFiltersOpen = ref(false)
 
 const filterOptions = computed(() => ({
   types: [
@@ -31,74 +30,69 @@ const filterOptions = computed(() => ({
     { value: 'project', label: t('agora', 'Projects') },
     { value: 'grievance', label: t('agora', 'Grievances') },
     { value: 'suggestion', label: t('agora', 'Suggestions') },
-    { value: 'official', label: t('agora', 'Official') }
+    { value: 'official', label: t('agora', 'Official') },
   ],
   categories: [
     { value: 'all', label: t('agora', 'All categories') },
     ...(sessionStore.appSettings.categoryTab?.map((cat) => ({
       value: cat.id,
-      label: cat.name
-    })) || [])
+      label: cat.name,
+    })) || []),
   ],
   locations: [
     { value: 'all', label: t('agora', 'All locations') },
     ...(sessionStore.appSettings.locationTab?.map((loc) => ({
       value: loc.id,
-      label: loc.name
-    })) || [])
+      label: loc.name,
+    })) || []),
   ],
   participation: [
     { value: null, label: t('agora', 'Any comments') },
     { value: true, label: t('agora', 'With comments') },
-    { value: false, label: t('agora', 'Without comments') }
+    { value: false, label: t('agora', 'Without comments') },
   ],
   support: [
     { value: null, label: t('agora', 'Any supports') },
     { value: true, label: t('agora', 'With supports') },
-    { value: false, label: t('agora', 'Without supports') }
-  ]
-}));
+    { value: false, label: t('agora', 'Without supports') },
+  ],
+}))
 
 const applyFilters = () => {
-	  if (!inquiriesStore) {
-    console.error('Inquiries store not initialized');
-    return;
+  if (!inquiriesStore) {
+    console.error('Inquiries store not initialized')
+    return
   }
   inquiriesStore.setFilters({
-    type:
-      selectedType.value !== 'all'
-        ? (selectedType.value as FilterType)
-        : undefined,
-    categoryId:
-      selectedCategory.value !== 'all' ? selectedCategory.value : undefined,
-    locationId:
-      selectedLocation.value !== 'all' ? selectedLocation.value : undefined,
+    type: selectedType.value !== 'all' ? (selectedType.value as FilterType) : undefined,
+    categoryId: selectedCategory.value !== 'all' ? selectedCategory.value : undefined,
+    locationId: selectedLocation.value !== 'all' ? selectedLocation.value : undefined,
     hasComments: hasComments.value,
     hasSupports: hasSupports.value,
-    search: searchQuery.value.trim() || undefined
-  });
-};
+    search: searchQuery.value.trim() || undefined,
+  })
+}
 
 const resetFilters = () => {
-  selectedType.value = 'all';
-  selectedCategory.value = 'all';
-  selectedLocation.value = 'all';
-  hasComments.value = null;
-  hasSupports.value = null;
-  searchQuery.value = '';
-  inquiriesStore.resetFilters();
-};
+  selectedType.value = 'all'
+  selectedCategory.value = 'all'
+  selectedLocation.value = 'all'
+  hasComments.value = null
+  hasSupports.value = null
+  searchQuery.value = ''
+  inquiriesStore.resetFilters()
+}
 
 const activeFiltersCount = computed(() => {
-  let count = 0;
-  if (selectedType.value !== 'all') count++;
-  if (selectedCategory.value !== 'all') count++;
-  if (selectedLocation.value !== 'all') count++;
-  if (hasComments.value !== null) count++;
-  if (hasSupports.value !== null) count++;
-  if (searchQuery.value.trim()) count++;
-  return count;
-});
+  let count = 0
+  if (selectedType.value !== 'all') count++
+  if (selectedCategory.value !== 'all') count++
+  if (selectedLocation.value !== 'all') count++
+  if (hasComments.value !== null) count++
+  if (hasSupports.value !== null) count++
+  if (searchQuery.value.trim()) count++
+  return count
+})
 </script>
 
 <template>
@@ -128,11 +122,7 @@ const activeFiltersCount = computed(() => {
         <span class="toggle-arrow">{{ isFiltersOpen ? '▲' : '▼' }}</span>
       </button>
 
-      <button
-        v-if="activeFiltersCount > 0"
-        class="reset-btn compact"
-        @click="resetFilters"
-      >
+      <button v-if="activeFiltersCount > 0" class="reset-btn compact" @click="resetFilters">
         {{ t('agora', 'Clear all') }}
       </button>
     </div>
@@ -143,11 +133,7 @@ const activeFiltersCount = computed(() => {
         <div class="filter-group">
           <label>{{ t('agora', 'Type') }}</label>
           <select v-model="selectedType" @change="applyFilters">
-            <option
-              v-for="option in filterOptions.types"
-              :key="option.value"
-              :value="option.value"
-            >
+            <option v-for="option in filterOptions.types" :key="option.value" :value="option.value">
               {{ option.label }}
             </option>
           </select>
@@ -215,24 +201,15 @@ const activeFiltersCount = computed(() => {
       </span>
 
       <span v-if="selectedCategory !== 'all'" class="filter-tag">
-        {{
-          filterOptions.categories.find((c) => c.value === selectedCategory)
-            ?.label
-        }}
+        {{ filterOptions.categories.find((c) => c.value === selectedCategory)?.label }}
       </span>
 
       <span v-if="selectedLocation !== 'all'" class="filter-tag">
-        {{
-          filterOptions.locations.find((l) => l.value === selectedLocation)
-            ?.label
-        }}
+        {{ filterOptions.locations.find((l) => l.value === selectedLocation)?.label }}
       </span>
 
       <span v-if="hasComments !== null" class="filter-tag">
-        {{
-          filterOptions.participation.find((p) => p.value === hasComments)
-            ?.label
-        }}
+        {{ filterOptions.participation.find((p) => p.value === hasComments)?.label }}
       </span>
 
       <span v-if="hasSupports !== null" class="filter-tag">
@@ -246,254 +223,253 @@ const activeFiltersCount = computed(() => {
 
 <style lang="scss">
 .inquiry-filters {
-	margin-bottom: 10px;
-	padding: 8px;
-	background-color: var(--color-background-dark);
-	border-radius: 12px;
-	border: 1px solid var(--color-border);
+  margin-bottom: 10px;
+  padding: 8px;
+  background-color: var(--color-background-dark);
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
 
-	.filters-header {
-		display: flex;
-		align-items: center;
-		gap: 12px;
-		margin-bottom: 16px;
+  .filters-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
 
-		.search-box.compact {
-			position: relative;
-			flex: 1;
-			max-width: 300px;
+    .search-box.compact {
+      position: relative;
+      flex: 1;
+      max-width: 300px;
 
-			.search-input {
-				width: 100%;
-				padding: 10px 12px 10px 36px;
-				border: 1px solid var(--color-border);
-				border-radius: 6px;
-				font-size: 14px;
-				background-color: var(--color-main-background);
-				color: var(--color-main-text);
+      .search-input {
+        width: 100%;
+        padding: 10px 12px 10px 36px;
+        border: 1px solid var(--color-border);
+        border-radius: 6px;
+        font-size: 14px;
+        background-color: var(--color-main-background);
+        color: var(--color-main-text);
 
-				&:focus {
-					outline: none;
-					border-color: var(--color-primary-element);
-				}
-			}
+        &:focus {
+          outline: none;
+          border-color: var(--color-primary-element);
+        }
+      }
 
-			.search-icon {
-				position: absolute;
-				left: 10px;
-				top: 50%;
-				transform: translateY(-50%);
-				color: var(--color-text-lighter);
-				font-size: 14px;
-			}
-		}
+      .search-icon {
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--color-text-lighter);
+        font-size: 14px;
+      }
+    }
 
-		.filters-toggle-btn {
-			display: flex;
-			align-items: center;
-			gap: 6px;
-			padding: 8px 12px;
-			background-color: var(--color-background-darker);
-			border: 1px solid var(--color-border);
-			border-radius: 6px;
-			color: var(--color-text-lighter);
-			font-size: 13px;
-			font-weight: 500;
-			cursor: pointer;
-			transition: all 0.2s ease;
+    .filters-toggle-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 12px;
+      background-color: var(--color-background-darker);
+      border: 1px solid var(--color-border);
+      border-radius: 6px;
+      color: var(--color-text-lighter);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
 
-			&:hover {
-				background-color: var(--color-background-hover);
-				color: var(--color-main-text);
-			}
+      &:hover {
+        background-color: var(--color-background-hover);
+        color: var(--color-main-text);
+      }
 
-			&.active {
-				background-color: var(--color-primary-element);
-				color: white;
-				border-color: var(--color-primary-element);
-			}
+      &.active {
+        background-color: var(--color-primary-element);
+        color: white;
+        border-color: var(--color-primary-element);
+      }
 
-			.filter-icon {
-				font-size: 14px;
-			}
+      .filter-icon {
+        font-size: 14px;
+      }
 
-			.filter-count {
-				background-color: var(--color-error);
-				color: white;
-				border-radius: 50%;
-				width: 18px;
-				height: 18px;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				font-size: 11px;
-				font-weight: 600;
-			}
+      .filter-count {
+        background-color: var(--color-error);
+        color: white;
+        border-radius: 50%;
+        width: 18px;
+        height: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        font-weight: 600;
+      }
 
-			.toggle-arrow {
-				margin-left: 4px;
-				font-size: 12px;
-			}
-		}
+      .toggle-arrow {
+        margin-left: 4px;
+        font-size: 12px;
+      }
+    }
 
-		.reset-btn.compact {
-			padding: 8px 12px;
-			background-color: transparent;
-			border: 1px solid var(--color-border);
-			border-radius: 6px;
-			color: var(--color-text-lighter);
-			font-size: 13px;
-			cursor: pointer;
+    .reset-btn.compact {
+      padding: 8px 12px;
+      background-color: transparent;
+      border: 1px solid var(--color-border);
+      border-radius: 6px;
+      color: var(--color-text-lighter);
+      font-size: 13px;
+      cursor: pointer;
 
-			&:hover {
-				background-color: var(--color-background-hover);
-				color: var(--color-main-text);
-			}
-		}
-	}
+      &:hover {
+        background-color: var(--color-background-hover);
+        color: var(--color-main-text);
+      }
+    }
+  }
 
-	.filters-expanded {
-		margin-bottom: 16px;
-		padding-top: 16px;
-		border-top: 1px solid var(--color-border-light);
+  .filters-expanded {
+    margin-bottom: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--color-border-light);
 
-		.filters-grid {
-			display: grid;
-			grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-			gap: 16px;
+    .filters-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
 
-			.filter-group {
-				display: flex;
-				flex-direction: column;
-				gap: 6px;
+      .filter-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
 
-				label {
-					font-weight: 600;
-					font-size: 12px;
-					color: var(--color-text-lighter);
-				}
+        label {
+          font-weight: 600;
+          font-size: 12px;
+          color: var(--color-text-lighter);
+        }
 
-				select {
-					padding: 8px 10px;
-					border: 1px solid var(--color-border);
-					border-radius: 6px;
-					background-color: var(--color-main-background);
-					color: var(--color-main-text);
-					font-size: 13px;
-					cursor: pointer;
+        select {
+          padding: 8px 10px;
+          border: 1px solid var(--color-border);
+          border-radius: 6px;
+          background-color: var(--color-main-background);
+          color: var(--color-main-text);
+          font-size: 13px;
+          cursor: pointer;
 
-					&:focus {
-						outline: none;
-						border-color: var(--color-primary-element);
-					}
-				}
-			}
-		}
-	}
+          &:focus {
+            outline: none;
+            border-color: var(--color-primary-element);
+          }
+        }
+      }
+    }
+  }
 
-	.active-filters-summary {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: 8px;
-		padding-top: 16px;
-		border-top: 1px solid var(--color-border-light);
+  .active-filters-summary {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    padding-top: 16px;
+    border-top: 1px solid var(--color-border-light);
 
-		.summary-label {
-			font-weight: 600;
-			font-size: 12px;
-			color: var(--color-text-lighter);
-		}
+    .summary-label {
+      font-weight: 600;
+      font-size: 12px;
+      color: var(--color-text-lighter);
+    }
 
-		.filter-tag {
-			padding: 4px 8px;
-			background-color: var(--color-primary-element);
-			color: white;
-			border-radius: 12px;
-			font-size: 11px;
-			font-weight: 500;
-		}
-	}
+    .filter-tag {
+      padding: 4px 8px;
+      background-color: var(--color-primary-element);
+      color: white;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 500;
+    }
+  }
 }
 
-      // Responsive design
+// Responsive design
 @media (max-width: 1024px) {
-	      .inquiry-filters {
-		      .filters-header {
-			      flex-wrap: wrap;
+  .inquiry-filters {
+    .filters-header {
+      flex-wrap: wrap;
 
-			      .search-box.compact {
-				      max-width: none;
-				      min-width: 200px;
-			      }
-		      }
+      .search-box.compact {
+        max-width: none;
+        min-width: 200px;
+      }
+    }
 
-		      .filters-expanded {
-			      .filters-grid {
-				      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-				      gap: 12px;
-			      }
-		      }
-	      }
+    .filters-expanded {
+      .filters-grid {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 12px;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .inquiry-filters {
+    padding: 12px;
+
+    .filters-header {
+      gap: 8px;
+
+      .search-box.compact {
+        min-width: 150px;
       }
 
-      @media (max-width: 768px) {
-	      .inquiry-filters {
-		      padding: 12px;
-
-		      .filters-header {
-			      gap: 8px;
-
-			      .search-box.compact {
-				      min-width: 150px;
-			      }
-
-			      .filters-toggle-btn {
-				      font-size: 12px;
-				      padding: 6px 10px;
-			      }
-
-			      .reset-btn.compact {
-				      font-size: 12px;
-				      padding: 6px 10px;
-			      }
-		      }
-
-		      .filters-expanded {
-			      .filters-grid {
-				      grid-template-columns: 1fr;
-				      gap: 12px;
-			      }
-		      }
-
-		      .active-filters-summary {
-			      flex-direction: column;
-			      align-items: flex-start;
-			      gap: 6px;
-
-			      .summary-label {
-				      margin-bottom: 2px;
-			      }
-		      }
-	      }
+      .filters-toggle-btn {
+        font-size: 12px;
+        padding: 6px 10px;
       }
 
-      @media (max-width: 480px) {
-	      .inquiry-filters {
-		      .filters-header {
-			      flex-direction: column;
-			      align-items: stretch;
+      .reset-btn.compact {
+        font-size: 12px;
+        padding: 6px 10px;
+      }
+    }
 
-			      .search-box.compact {
-				      max-width: none;
-			      }
+    .filters-expanded {
+      .filters-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+    }
 
-			      .filters-toggle-btn,
-			      .reset-btn.compact {
-				      justify-content: center;
-			      }
-		      }
-	      }
+    .active-filters-summary {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 6px;
+
+      .summary-label {
+        margin-bottom: 2px;
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .inquiry-filters {
+    .filters-header {
+      flex-direction: column;
+      align-items: stretch;
+
+      .search-box.compact {
+        max-width: none;
       }
 
+      .filters-toggle-btn,
+      .reset-btn.compact {
+        justify-content: center;
+      }
+    }
+  }
+}
 </style>

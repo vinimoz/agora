@@ -4,53 +4,46 @@
 -->
 
 <script setup lang="ts">
-import { computed } from 'vue';
-import moment from '@nextcloud/moment';
-import linkifyStr from 'linkify-string';
-import { showError } from '@nextcloud/dialogs';
-import { ActionDelete } from '../Actions/index.ts';
-import { t } from '@nextcloud/l10n';
-import UserItem from '../User/UserItem.vue';
-import { useSessionStore } from '../../stores/session.ts';
-import { useInquiryStore } from '../../stores/inquiry.ts';
-import { useCommentsStore } from '../../stores/comments.ts';
-import { Comment, CommentsGrouped } from '../../Types/index.ts';
+import { computed } from 'vue'
+import moment from '@nextcloud/moment'
+import linkifyStr from 'linkify-string'
+import { showError } from '@nextcloud/dialogs'
+import { ActionDelete } from '../Actions/index.ts'
+import { t } from '@nextcloud/l10n'
+import UserItem from '../User/UserItem.vue'
+import { useSessionStore } from '../../stores/session.ts'
+import { useInquiryStore } from '../../stores/inquiry.ts'
+import { useCommentsStore } from '../../stores/comments.ts'
+import { Comment, CommentsGrouped } from '../../Types/index.ts'
 
-const sessionStore = useSessionStore();
-const inquiryStore = useInquiryStore();
-const commentsStore = useCommentsStore();
+const sessionStore = useSessionStore()
+const inquiryStore = useInquiryStore()
+const commentsStore = useCommentsStore()
 
-const { comment } = defineProps<{ comment: CommentsGrouped }>();
+const { comment } = defineProps<{ comment: CommentsGrouped }>()
 
-const dateCommentedRelative = computed(() =>
-  moment.unix(comment.timestamp).fromNow()
-);
+const dateCommentedRelative = computed(() => moment.unix(comment.timestamp).fromNow())
 
-const isCurrentUser = computed(
-  () => sessionStore.currentUser?.id === comment.user.id
-);
+const isCurrentUser = computed(() => sessionStore.currentUser?.id === comment.user.id)
 
-const isConfidential = computed(() => comment.confidential > 0);
+const isConfidential = computed(() => comment.confidential > 0)
 const confidentialRecipient = computed(() => {
   if (!isConfidential.value) {
-    return '';
+    return ''
   }
-  if (
-    comment.recipient &&
-    comment.recipient.id !== sessionStore.currentUser.id
-  ) {
+  if (comment.recipient && comment.recipient.id !== sessionStore.currentUser.id) {
     return t('agora', 'Confidential with {displayName}', {
-      displayName: comment.recipient.displayName
-    });
+      displayName: comment.recipient.displayName,
+    })
   }
-  return t('agora', 'Confidential');
-});
+  return t('agora', 'Confidential')
+})
 /**
  *
  * @param subComment
  */
 function linkify(subComment: string) {
-  return linkifyStr(subComment);
+  return linkifyStr(subComment)
 }
 
 /**
@@ -59,9 +52,9 @@ function linkify(subComment: string) {
  */
 async function deleteComment(comment: Comment) {
   try {
-    await commentsStore.delete({ comment });
+    await commentsStore.delete({ comment })
   } catch {
-    showError(t('agora', 'Error while deleting the comment'));
+    showError(t('agora', 'Error while deleting the comment'))
   }
 }
 
@@ -71,9 +64,9 @@ async function deleteComment(comment: Comment) {
  */
 async function restoreComment(comment: Comment) {
   try {
-    await commentsStore.restore({ comment });
+    await commentsStore.restore({ comment })
   } catch {
-    showError(t('agora', 'Error while restoring the comment'));
+    showError(t('agora', 'Error while restoring the comment'))
   }
 }
 </script>
@@ -100,13 +93,9 @@ async function restoreComment(comment: Comment) {
         <ActionDelete
           v-if="
             comment.user.id === sessionStore.currentUser?.id ||
-              inquiryStore.currentUserStatus.isOwner
+            inquiryStore.currentUserStatus.isOwner
           "
-          :name="
-            subComment.deleted
-              ? t('agora', 'Restore comment')
-              : t('agora', 'Delete comment')
-          "
+          :name="subComment.deleted ? t('agora', 'Restore comment') : t('agora', 'Delete comment')"
           :restore="!!subComment.deleted"
           :timeout="0"
           @restore="restoreComment(subComment)"

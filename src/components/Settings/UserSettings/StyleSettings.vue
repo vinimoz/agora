@@ -4,12 +4,12 @@
 -->
 
 <script setup>
-import { t } from '@nextcloud/l10n';
+import { t } from '@nextcloud/l10n'
 
-import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch';
+import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
 
-import { usePreferencesStore } from '../../../stores/preferences.ts';
-const preferencesStore = usePreferencesStore();
+import { usePreferencesStore } from '../../../stores/preferences.ts'
+const preferencesStore = usePreferencesStore()
 </script>
 
 <template>
@@ -23,10 +23,7 @@ const preferencesStore = usePreferencesStore();
         @update:model-value="preferencesStore.write()"
       >
         {{
-          t(
-            'agora',
-            "Use modal 'Add inquiry ' dialog instead of embedded dialog in Navigation bar"
-          )
+          t('agora', "Use modal 'Add inquiry ' dialog instead of embedded dialog in Navigation bar")
         }}
       </NcCheckboxRadioSwitch>
     </div>

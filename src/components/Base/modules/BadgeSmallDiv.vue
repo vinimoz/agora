@@ -4,7 +4,7 @@
 -->
 
 <script setup lang="ts">
-const { tag = 'span' } = defineProps<{ tag?: string }>();
+const { tag = 'span' } = defineProps<{ tag?: string }>()
 </script>
 
 <template>

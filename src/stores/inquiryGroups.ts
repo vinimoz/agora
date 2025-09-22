@@ -3,35 +3,33 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { defineStore } from 'pinia';
-import { computed, ref } from 'vue';
-import { Inquiry } from '../Types/index';
-import { useSessionStore } from './session';
-import { useInquiriesStore } from './inquiries';
-import { orderBy } from 'lodash';
-import type { InquiryGroup } from './inquiryGroups.types';
-import { InquiryGroupsAPI } from '../Api';
-import { AxiosError } from 'axios';
-import { Logger } from '../helpers';
-import { t } from '@nextcloud/l10n';
+import { defineStore } from 'pinia'
+import { computed, ref } from 'vue'
+import { Inquiry } from '../Types/index'
+import { useSessionStore } from './session'
+import { useInquiriesStore } from './inquiries'
+import { orderBy } from 'lodash'
+import type { InquiryGroup } from './inquiryGroups.types'
+import { InquiryGroupsAPI } from '../Api'
+import { AxiosError } from 'axios'
+import { Logger } from '../helpers'
+import { t } from '@nextcloud/l10n'
 
 export const useInquiryGroupsStore = defineStore('inquiryGroups', () => {
-  const inquiryGroups = ref<InquiryGroup[]>([]);
-  const updating = ref(false);
+  const inquiryGroups = ref<InquiryGroup[]>([])
+  const updating = ref(false)
 
   /**
    * Currently selected inquiriesgroup or undefined if not in a inquiriesgroup route
    * @return {InquiryGroup | undefined} The current inquiry group if in a group route, otherwise undefined
    */
   const currentInquiryGroup = computed((): InquiryGroup | undefined => {
-    const sessionStore = useSessionStore();
+    const sessionStore = useSessionStore()
     if (sessionStore.route.name === 'group') {
-      return inquiryGroups.value.find(
-        (group) => group.slug === sessionStore.route.params.slug
-      );
+      return inquiryGroups.value.find((group) => group.slug === sessionStore.route.params.slug)
     }
-    return undefined;
-  });
+    return undefined
+  })
 
   /**
    * Sort inquiry groups by title in ascending order
@@ -39,23 +37,21 @@ export const useInquiryGroupsStore = defineStore('inquiryGroups', () => {
    */
   const inquiryGroupsSorted = computed((): InquiryGroup[] =>
     orderBy(
-      inquiryGroups.value.filter(
-        (group) => countInquiriesInInquiryGroups.value[group.id] > 0
-      ),
+      inquiryGroups.value.filter((group) => countInquiriesInInquiryGroups.value[group.id] > 0),
       ['title'],
       ['asc']
     )
-  );
+  )
 
   const inquiriesInCurrendInquiryGroup = computed((): Inquiry[] => {
-    const inquiriesStore = useInquiriesStore();
+    const inquiriesStore = useInquiriesStore()
     if (!currentInquiryGroup.value) {
-      return [];
+      return []
     }
     return inquiriesStore.inquiries.filter((inquiry) =>
       currentInquiryGroup.value?.inquiryIds.includes(inquiry.id)
-    );
-  });
+    )
+  })
 
   /**
    * Count of inquiries in each inquiry group and return inquirygroupid and count as list
@@ -63,15 +59,15 @@ export const useInquiryGroupsStore = defineStore('inquiryGroups', () => {
    * @return {Record<number, number>} An object where the keys are inquiry group IDs and the values are the counts of inquiries in those groups
    */
   const countInquiriesInInquiryGroups = computed((): Record<number, number> => {
-    const counts: Record<number, number> = {};
-    const inquiriesStore = useInquiriesStore();
+    const counts: Record<number, number> = {}
+    const inquiriesStore = useInquiriesStore()
     inquiryGroups.value.forEach((group) => {
       counts[group.id] = inquiriesStore.inquiries.filter((inquiry) =>
         group.inquiryIds.includes(inquiry.id)
-      ).length;
-    });
-    return counts;
-  });
+      ).length
+    })
+    return counts
+  })
 
   /**
    * Returns a list of inquiry groups the inquiry can be added to.
@@ -80,9 +76,7 @@ export const useInquiryGroupsStore = defineStore('inquiryGroups', () => {
    * @return {InquiryGroup[]} List of inquiry groups that do not include the given inquiryId.
    */
   function addableInquiryGroups(inquiryId: number): InquiryGroup[] {
-    return inquiryGroups.value.filter(
-      (group) => !group.inquiryIds.includes(inquiryId)
-    );
+    return inquiryGroups.value.filter((group) => !group.inquiryIds.includes(inquiryId))
   }
 
   /**
@@ -95,12 +89,12 @@ export const useInquiryGroupsStore = defineStore('inquiryGroups', () => {
    * @param payload.description
    */
   function setCurrentInquiryGroup(payload: {
-    name?: string;
-    titleExt?: string;
-    description?: string;
+    name?: string
+    titleExt?: string
+    description?: string
   }): void {
     if (!currentInquiryGroup.value) {
-      throw new Error('No current inquiry group set');
+      throw new Error('No current inquiry group set')
     }
 
     inquiryGroups.value = inquiryGroups.value.map((group) => {
@@ -109,115 +103,113 @@ export const useInquiryGroupsStore = defineStore('inquiryGroups', () => {
           ...group,
           name: payload.name ?? group.name,
           titleExt: payload.titleExt ?? group.titleExt,
-          description: payload.description ?? group.description
-        };
+          description: payload.description ?? group.description,
+        }
       }
-      return group;
-    });
+      return group
+    })
   }
 
   async function writeCurrentInquiryGroup(): Promise<InquiryGroup | undefined> {
     if (!currentInquiryGroup.value) {
-      throw new Error('No current inquiry group set');
+      throw new Error('No current inquiry group set')
     }
 
     try {
       const response = await InquiryGroupsAPI.updateInquiryGroup({
-        ...currentInquiryGroup.value
-      });
+        ...currentInquiryGroup.value,
+      })
 
       addOrUpdateInquiryGroupInList({
-        inquiryGroup: response.data.inquiryGroup
-      });
+        inquiryGroup: response.data.inquiryGroup,
+      })
 
-      return response.data.inquiryGroup;
+      return response.data.inquiryGroup
     } catch (error) {
       if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-        return;
+        return
       }
       Logger.error('Error updating inquiry group', {
         error,
-        inquiryGroup: currentInquiryGroup.value
-      });
-      throw error;
+        inquiryGroup: currentInquiryGroup.value,
+      })
+      throw error
     }
   }
 
-  function addOrUpdateInquiryGroupInList(payload: {
-    inquiryGroup: InquiryGroup;
-  }) {
+  function addOrUpdateInquiryGroupInList(payload: { inquiryGroup: InquiryGroup }) {
     inquiryGroups.value = inquiryGroups.value
       .filter((g) => g.id !== payload.inquiryGroup.id)
-      .concat(payload.inquiryGroup);
+      .concat(payload.inquiryGroup)
   }
 
   async function addInquiryToInquiryGroup(payload: {
-    inquiryId: number;
-    inquiryGroupId?: number;
-    groupTitle?: string;
+    inquiryId: number
+    inquiryGroupId?: number
+    groupTitle?: string
   }) {
-    const inquiriesStore = useInquiriesStore();
+    const inquiriesStore = useInquiriesStore()
 
     try {
       const response = await InquiryGroupsAPI.addInquiryToGroup(
         payload.inquiryId,
         payload.inquiryGroupId,
         payload.groupTitle
-      );
+      )
       addOrUpdateInquiryGroupInList({
-        inquiryGroup: response.data.inquiryGroup
-      });
+        inquiryGroup: response.data.inquiryGroup,
+      })
       inquiriesStore.addOrUpdateInquiryGroupInList({
-        inquiry: response.data.inquiry
-      });
+        inquiry: response.data.inquiry,
+      })
     } catch (error) {
       if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-        return;
+        return
       }
       Logger.error('Error adding inquiry to group', {
         error,
-        payload
-      });
-      inquiriesStore.load();
-      throw error;
+        payload,
+      })
+      inquiriesStore.load()
+      throw error
     }
   }
 
   async function removeInquiryFromGroup(payload: {
-    inquiryGroupId: number;
-    inquiryId: number;
+    inquiryGroupId: number
+    inquiryId: number
   }): Promise<void> {
-    const inquiriesStore = useInquiriesStore();
+    const inquiriesStore = useInquiriesStore()
 
     try {
       const response = await InquiryGroupsAPI.removeInquiryFromGroup(
         payload.inquiryGroupId,
         payload.inquiryId
-      );
+      )
 
       // update inquiry in the inquiries store
       inquiriesStore.addOrUpdateInquiryGroupInList({
-        inquiry: response.data.inquiry
-      });
+        inquiry: response.data.inquiry,
+      })
 
       if (response.data.inquiryGroup === null) {
         // If the inquiry group was removed (=== null), remove it from the store
         inquiryGroups.value = inquiryGroups.value.filter(
           (group) => group.id !== payload.inquiryGroupId
-        );
-        return;
+        )
+        return
       }
       // Otherwise, update the inquiry group in the store
       addOrUpdateInquiryGroupInList({
-        inquiryGroup: response.data.inquiryGroup
-      });
+        inquiryGroup: response.data.inquiryGroup,
+      })
     } catch (error) {
       if ((error as AxiosError)?.code !== 'ERR_CANCELED') {
         Logger.error('Error removing inquiry from group', {
           error,
-          payload
-        });
-        throw error;
+          payload,
+        })
+        throw error
       }
     } finally {
       // inquiriesStore.load()
@@ -225,13 +217,11 @@ export const useInquiryGroupsStore = defineStore('inquiryGroups', () => {
   }
 
   function getInquiryGroupName(InquiryGroupId: number): string {
-    const group = inquiryGroups.value.find(
-      (group) => group.id === InquiryGroupId
-    );
+    const group = inquiryGroups.value.find((group) => group.id === InquiryGroupId)
     if (group) {
-      return group.name;
+      return group.name
     }
-    return t('inquiries', 'Invalid Group ID');
+    return t('inquiries', 'Invalid Group ID')
   }
 
   return {
@@ -247,6 +237,6 @@ export const useInquiryGroupsStore = defineStore('inquiryGroups', () => {
     writeCurrentInquiryGroup,
     addInquiryToInquiryGroup,
     removeInquiryFromGroup,
-    getInquiryGroupName
-  };
-});
+    getInquiryGroupName,
+  }
+})

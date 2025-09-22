@@ -4,33 +4,33 @@
 -->
 
 <script setup lang="ts">
-import { computed, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
-import { showError } from '@nextcloud/dialogs';
-import { t, n } from '@nextcloud/l10n';
+import { computed, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
+import { showError } from '@nextcloud/dialogs'
+import { t, n } from '@nextcloud/l10n'
 
-import NcAppContent from '@nextcloud/vue/components/NcAppContent';
-import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent';
+import NcAppContent from '@nextcloud/vue/components/NcAppContent'
+import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
 
-import { HeaderBar, IntersectionObserver } from '../components/Base/index.ts';
-import { AgoraAppIcon } from '../components/AppIcons/index.ts';
-import InquiryItem from '../components/Inquiry/InquiryItem.vue';
-import InquiryFilter from '../components/Inquiry/InquiryFilter.vue';
-import { FilterType, useInquiriesStore } from '../stores/inquiries.ts';
-import InquiryListSort from '../components/Inquiry/InquiryListSort.vue';
-import InquiryItemActions from '../components/Inquiry/InquiryItemActions.vue';
-import ActionAddInquiry from '../components/Actions/modules/ActionAddInquiry.vue';
-import { usePreferencesStore } from '../stores/preferences.ts';
-import { useSessionStore } from '../stores/session.ts';
-import ActionToggleSidebar from '../components/Actions/modules/ActionToggleSidebar.vue';
-import { useInquiryGroupsStore } from '../stores/inquiryGroups.ts';
-import LoadingOverlay from '../components/Base/modules/LoadingOverlay.vue';
+import { HeaderBar, IntersectionObserver } from '../components/Base/index.ts'
+import { AgoraAppIcon } from '../components/AppIcons/index.ts'
+import InquiryItem from '../components/Inquiry/InquiryItem.vue'
+import InquiryFilter from '../components/Inquiry/InquiryFilter.vue'
+import { FilterType, useInquiriesStore } from '../stores/inquiries.ts'
+import InquiryListSort from '../components/Inquiry/InquiryListSort.vue'
+import InquiryItemActions from '../components/Inquiry/InquiryItemActions.vue'
+import ActionAddInquiry from '../components/Actions/modules/ActionAddInquiry.vue'
+import { usePreferencesStore } from '../stores/preferences.ts'
+import { useSessionStore } from '../stores/session.ts'
+import ActionToggleSidebar from '../components/Actions/modules/ActionToggleSidebar.vue'
+import { useInquiryGroupsStore } from '../stores/inquiryGroups.ts'
+import LoadingOverlay from '../components/Base/modules/LoadingOverlay.vue'
 
-const inquiriesStore = useInquiriesStore();
-const inquiryGroupsStore = useInquiryGroupsStore();
-const preferencesStore = usePreferencesStore();
-const sessionStore = useSessionStore();
-const route = useRoute();
+const inquiriesStore = useInquiriesStore()
+const inquiryGroupsStore = useInquiryGroupsStore()
+const preferencesStore = usePreferencesStore()
+const sessionStore = useSessionStore()
+const route = useRoute()
 
 const title = computed(() => {
   if (route.name === 'group') {
@@ -38,24 +38,20 @@ const title = computed(() => {
       inquiryGroupsStore.currentInquiryGroup?.titleExt ||
       inquiryGroupsStore.currentInquiryGroup?.name ||
       ''
-    );
+    )
   }
-  return inquiriesStore.categories[route.params.type as FilterType].titleExt;
-});
+  return inquiriesStore.categories[route.params.type as FilterType].titleExt
+})
 
 const showMore = computed(
   () =>
-    inquiriesStore.chunkedList.length <
-      inquiriesStore.inquiriesFilteredSorted.length &&
+    inquiriesStore.chunkedList.length < inquiriesStore.inquiriesFilteredSorted.length &&
     inquiriesStore.meta.status !== 'loading'
-);
+)
 
 const countLoadedInquiries = computed(() =>
-  Math.min(
-    inquiriesStore.chunkedList.length,
-    inquiriesStore.inquiriesFilteredSorted.length
-  )
-);
+  Math.min(inquiriesStore.chunkedList.length, inquiriesStore.inquiriesFilteredSorted.length)
+)
 
 const infoLoaded = computed(() =>
   n(
@@ -65,26 +61,24 @@ const infoLoaded = computed(() =>
     inquiriesStore.inquiriesFilteredSorted.length,
     {
       loadedInquiries: countLoadedInquiries.value,
-      countInquiries: inquiriesStore.inquiriesFilteredSorted.length
+      countInquiries: inquiriesStore.inquiriesFilteredSorted.length,
     }
   )
-);
+)
 
 const description = computed(() => {
   if (route.name === 'group') {
-    return inquiryGroupsStore.currentInquiryGroup?.description || '';
+    return inquiryGroupsStore.currentInquiryGroup?.description || ''
   }
 
-  return inquiriesStore.categories[route.params.type as FilterType].description;
-});
+  return inquiriesStore.categories[route.params.type as FilterType].description
+})
 
 const emptyInquiryListnoInquiries = computed(
   () => inquiriesStore.inquiriesFilteredSorted.length < 1
-);
+)
 
-const isGridView = computed(
-  () => preferencesStore.user.defaultViewInquiry === 'table-view'
-);
+const isGridView = computed(() => preferencesStore.user.defaultViewInquiry === 'table-view')
 
 const loadingOverlayProps = {
   name: t('agora', 'Loading overview…'),
@@ -94,29 +88,29 @@ const loadingOverlayProps = {
     t('agora', 'Checking access…'),
     t('agora', 'Almost ready…'),
     t('agora', 'Do not go away…'),
-    t('agora', 'Please be patient…')
-  ]
-};
+    t('agora', 'Please be patient…'),
+  ],
+}
 
 const emptyContentProps = computed(() => ({
   name: t('agora', 'No inquiries found for this category'),
-  description: t('agora', 'Add one or change category!')
-}));
+  description: t('agora', 'Add one or change category!'),
+}))
 
 /**
  *
  */
 async function loadMore() {
   try {
-    inquiriesStore.addChunk();
+    inquiriesStore.addChunk()
   } catch {
-    showError(t('agora', 'Error loading more inquiries'));
+    showError(t('agora', 'Error loading more inquiries'))
   }
 }
 
 onMounted(() => {
-  inquiriesStore.load(false);
-});
+  inquiriesStore.load(false)
+})
 </script>
 
 <template>
@@ -127,15 +121,10 @@ onMounted(() => {
       </template>
       {{ description }}
       <template #right>
-        <ActionAddInquiry
-          v-if="preferencesStore.user.useNewInquiryInInquiryist"
-        />
+        <ActionAddInquiry v-if="preferencesStore.user.useNewInquiryInInquiryist" />
         <InquiryListSort />
         <ActionToggleSidebar
-          v-if="
-            inquiryGroupsStore.currentInquiryGroup?.owner.id ===
-              sessionStore.currentUser.id
-          "
+          v-if="inquiryGroupsStore.currentInquiryGroup?.owner.id === sessionStore.currentUser.id"
         />
       </template>
     </HeaderBar>
@@ -148,7 +137,7 @@ onMounted(() => {
         name="list"
         :class="[
           'inquiry-list__container',
-          isGridView ? 'inquiry-list__grid' : 'inquiry-list__list'
+          isGridView ? 'inquiry-list__grid' : 'inquiry-list__list',
         ]"
       >
         <InquiryItem
@@ -159,10 +148,7 @@ onMounted(() => {
         >
           <template #actions>
             <InquiryItemActions
-              v-if="
-                inquiry.permissions.edit ||
-                  sessionStore.appPermissions.inquiryCreation
-              "
+              v-if="inquiry.permissions.edit || sessionStore.appPermissions.inquiryCreation"
               :key="`actions-${inquiry.id}`"
               :inquiry="inquiry"
             />
@@ -182,19 +168,13 @@ onMounted(() => {
         </div>
       </IntersectionObserver>
 
-      <NcEmptyContent
-        v-if="emptyInquiryListnoInquiries"
-        v-bind="emptyContentProps"
-      >
+      <NcEmptyContent v-if="emptyInquiryListnoInquiries" v-bind="emptyContentProps">
         <template #icon>
           <AgoraAppIcon />
         </template>
       </NcEmptyContent>
     </div>
-    <LoadingOverlay
-      :show="inquiriesStore.meta.status === 'loading'"
-      v-bind="loadingOverlayProps"
-    />
+    <LoadingOverlay :show="inquiriesStore.meta.status === 'loading'" v-bind="loadingOverlayProps" />
   </NcAppContent>
 </template>
 

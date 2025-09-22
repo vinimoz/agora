@@ -4,44 +4,40 @@
 -->
 
 <script setup lang="ts">
-import { t } from '@nextcloud/l10n';
+import { t } from '@nextcloud/l10n'
 
-import { useSessionStore } from '../../stores/session.ts';
-import { Inquiry } from '../../stores/inquiry.ts';
-import { computed } from 'vue';
+import { useSessionStore } from '../../stores/session.ts'
+import { Inquiry } from '../../stores/inquiry.ts'
+import { computed } from 'vue'
 
-import { NcDialog } from '@nextcloud/vue';
-import { showError } from '@nextcloud/dialogs';
-import { ButtonVariant } from '@nextcloud/vue/components/NcButton';
-import { useInquiriesStore } from '../../stores/inquiries.ts';
+import { NcDialog } from '@nextcloud/vue'
+import { showError } from '@nextcloud/dialogs'
+import { ButtonVariant } from '@nextcloud/vue/components/NcButton'
+import { useInquiriesStore } from '../../stores/inquiries.ts'
 
-const model = defineModel<boolean>({ required: true });
-const { inquiry } = defineProps<{ inquiry: Inquiry }>();
-const emit = defineEmits(['deleted']);
+const model = defineModel<boolean>({ required: true })
+const { inquiry } = defineProps<{ inquiry: Inquiry }>()
+const emit = defineEmits(['deleted'])
 
-const inquiriesStore = useInquiriesStore();
-const sessionStore = useSessionStore();
+const inquiriesStore = useInquiriesStore()
+const sessionStore = useSessionStore()
 
-const adminAccess = computed(
-  () => !inquiry.permissions.view && sessionStore.currentUser.isAdmin
-);
+const adminAccess = computed(() => !inquiry.permissions.view && sessionStore.currentUser.isAdmin)
 
 function dialogOK() {
   try {
-    inquiriesStore.delete({ inquiryId: inquiry.id });
-    emit('deleted');
+    inquiriesStore.delete({ inquiryId: inquiry.id })
+    emit('deleted')
   } catch {
-    showError(t('agora', 'Error deleting inquiry.'));
+    showError(t('agora', 'Error deleting inquiry.'))
   }
 }
 
 const dialogText = adminAccess.value
-  ? t(
-    'inquiries',
-    'This will finally delete the inquiry and {username} will get notified.',
-    { username: inquiry.owner.displayName }
-  )
-  : t('agora', 'This will finally delete the inquiry.');
+  ? t('inquiries', 'This will finally delete the inquiry and {username} will get notified.', {
+      username: inquiry.owner.displayName,
+    })
+  : t('agora', 'This will finally delete the inquiry.')
 
 const dialogProps = {
   name: t('agora', 'Delete inquiry'),
@@ -53,11 +49,11 @@ const dialogProps = {
       label: t('agora', 'OK'),
       variant: 'primary' as ButtonVariant,
       callback: () => {
-        dialogOK();
-      }
-    }
-  ]
-};
+        dialogOK()
+      },
+    },
+  ],
+}
 </script>
 
 <template>

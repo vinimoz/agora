@@ -4,13 +4,13 @@
 -->
 
 <script setup lang="ts">
-import { t } from '@nextcloud/l10n';
-import { useInquiryStore } from '../../../stores/inquiry.ts';
+import { t } from '@nextcloud/l10n'
+import { useInquiryStore } from '../../../stores/inquiry.ts'
 
-import NcButton from '@nextcloud/vue/components/NcButton';
+import NcButton from '@nextcloud/vue/components/NcButton'
 
-const inquiryStore = useInquiryStore();
-const caption = t('agora', 'Reveal them');
+const inquiryStore = useInquiryStore()
+const caption = t('agora', 'Reveal them')
 </script>
 
 <template>

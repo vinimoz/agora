@@ -4,43 +4,42 @@
 -->
 
 <script setup lang="ts">
-import { onMounted } from 'vue';
-import { generateUrl } from '@nextcloud/router';
-import { showError } from '@nextcloud/dialogs';
-import { t } from '@nextcloud/l10n';
-import DOMPurify from 'dompurify';
+import { onMounted } from 'vue'
+import { generateUrl } from '@nextcloud/router'
+import { showError } from '@nextcloud/dialogs'
+import { t } from '@nextcloud/l10n'
+import DOMPurify from 'dompurify'
 
-import NcDashboardWidget from '@nextcloud/vue/components/NcDashboardWidget';
+import NcDashboardWidget from '@nextcloud/vue/components/NcDashboardWidget'
 
-import { InquiryTypesUI } from '../helpers/modules/InquiryHelper.ts';
-import { AgoraAppIcon } from '../components/AppIcons/index.ts';
-import { Logger } from '../helpers/index.ts';
-import { useInquiriesStore } from '../stores/inquiries.ts';
+import { InquiryTypesUI } from '../helpers/modules/InquiryHelper.ts'
+import { AgoraAppIcon } from '../components/AppIcons/index.ts'
+import { Logger } from '../helpers/index.ts'
+import { useInquiriesStore } from '../stores/inquiries.ts'
 
 const dashboardWidgetProperties = {
   emptyContentMessage: t('agora', 'No inquiries found for this category'),
-  showMoreText: t('agora', 'Relevant inquiries')
-};
+  showMoreText: t('agora', 'Relevant inquiries'),
+}
 
-
-const inquiriesStore = useInquiriesStore();
+const inquiriesStore = useInquiriesStore()
 
 /**
  * Load the inquiries
  */
 function loadInquiries(): void {
-  Logger.debug('Loading inquiries in dashboard widget');
+  Logger.debug('Loading inquiries in dashboard widget')
 
   try {
-    inquiriesStore.load();
+    inquiriesStore.load()
   } catch {
-    showError(t('agora', 'Error setting dashboard list'));
+    showError(t('agora', 'Error setting dashboard list'))
   }
 }
 
 onMounted(() => {
-  loadInquiries();
-});
+  loadInquiries()
+})
 </script>
 
 <template>
@@ -69,9 +68,9 @@ onMounted(() => {
 
               <div class="item__title__description">
                 {{
-                  DOMPurify.sanitize(item.description
-                    ? item.description
-                    : t('agora', 'No description provided'))
+                  DOMPurify.sanitize(
+                    item.description ? item.description : t('agora', 'No description provided')
+                  )
                 }}
               </div>
             </div>

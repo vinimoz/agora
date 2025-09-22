@@ -2,10 +2,10 @@
  * SPDX-FileCopyrightText: 2022 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { AxiosResponse } from '@nextcloud/axios';
-import { httpInstance, createCancelTokenHandler } from './HttpApi.js';
-import { Calendar } from '../../stores/preferences.js';
-import { CalendarEvent } from '../../components/Calendar/CalendarPeek.vue';
+import { AxiosResponse } from '@nextcloud/axios'
+import { httpInstance, createCancelTokenHandler } from './HttpApi.js'
+import { Calendar } from '../../stores/preferences.js'
+import { CalendarEvent } from '../../components/Calendar/CalendarPeek.vue'
 
 const calendar = {
   getCalendars(): Promise<AxiosResponse<{ calendars: Calendar[] }>> {
@@ -14,29 +14,22 @@ const calendar = {
       url: 'calendars',
       params: { time: +new Date() },
       cancelToken:
-        cancelTokenHandlerObject[
-          this.getCalendars.name
-        ].handleRequestCancellation().token
-    });
+        cancelTokenHandlerObject[this.getCalendars.name].handleRequestCancellation().token,
+    })
   },
-  getEvents(
-    optionId: number
-  ): Promise<AxiosResponse<{ events: CalendarEvent[] }>> {
+  getEvents(optionId: number): Promise<AxiosResponse<{ events: CalendarEvent[] }>> {
     return httpInstance.request({
       method: 'GET',
       url: `option/${optionId}/events`,
       params: {
         tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
-        time: +new Date()
+        time: +new Date(),
       },
-      cancelToken:
-        cancelTokenHandlerObject[
-          this.getEvents.name
-        ].handleRequestCancellation().token
-    });
-  }
-};
+      cancelToken: cancelTokenHandlerObject[this.getEvents.name].handleRequestCancellation().token,
+    })
+  },
+}
 
-const cancelTokenHandlerObject = createCancelTokenHandler(calendar);
+const cancelTokenHandlerObject = createCancelTokenHandler(calendar)
 
-export default calendar;
+export default calendar

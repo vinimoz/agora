@@ -4,16 +4,15 @@
 -->
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
-import { t } from '@nextcloud/l10n';
+import { onMounted, ref } from 'vue'
+import { t } from '@nextcloud/l10n'
 
-import NcSettingsSection from '@nextcloud/vue/components/NcSettingsSection';
+import NcSettingsSection from '@nextcloud/vue/components/NcSettingsSection'
 
-import { FlexSettings } from '../components/Base/index.ts';
+import { FlexSettings } from '../components/Base/index.ts'
 import {
   AdminActivities,
   AdminArchiveInquiries,
-  AdminCombo,
   AdminDeleteInquiries,
   AdminEmail,
   AdminModerationStatus,
@@ -30,87 +29,78 @@ import {
   AdminSharePublicCreate,
   AdminSharePublicShowLogin,
   AdminShowMailAddresses,
-  AdminUnrescrictedOwners
-} from '../components/Settings/AdminSettings/index.ts';
-import { useAppSettingsStore } from '../stores/appSettings.ts';
-import '../assets/scss/markdown.scss';
+  AdminUnrescrictedOwners,
+} from '../components/Settings/AdminSettings/index.ts'
+import { useAppSettingsStore } from '../stores/appSettings.ts'
+import '../assets/scss/markdown.scss'
 
-const appSettingsStore = useAppSettingsStore();
-const isLoaded = ref(false);
+const appSettingsStore = useAppSettingsStore()
+const isLoaded = ref(false)
 
 const sections = {
   inquiryCategoryLocation: {
     name: t('agora', 'Categories and Locations Management'),
-    description: t(
-      'agora',
-      'Change globally location and category (for all accounts)'
-    )
+    description: t('agora', 'Change globally location and category (for all accounts)'),
   },
   inquiryModerationStatus: {
     name: t('agora', 'Moderation status settings'),
     description: t(
       'agora',
       'Configure moderation statuses for each type of inquiry. Moderators will be able to set these statuses on inquiries.'
-    )
+    ),
   },
   inquirySettings: {
     name: t('agora', 'Inquiry settings'),
-    description: t(
-      'agora',
-      'Change inquiry settings globally (for all accounts)'
-    )
+    description: t('agora', 'Change inquiry settings globally (for all accounts)'),
   },
   inquiryRights: {
     name: t('agora', 'Inquiry rights'),
-    description: t('agora', 'Change inquiry rights globally (for all accounts)')
+    description: t('agora', 'Change inquiry rights globally (for all accounts)'),
   },
   shareSettings: {
     name: t('agora', 'Share settings'),
-    description: t('agora', 'Change share settings globally (for all accounts)')
+    description: t('agora', 'Change share settings globally (for all accounts)'),
   },
   otherSettings: {
     name: t('agora', 'Other settings'),
-    description: t('agora', 'Enable or disable individual features.')
+    description: t('agora', 'Enable or disable individual features.'),
   },
   performanceSettings: {
     name: t('agora', 'Performance settings'),
     description: t(
       'agora',
       'If you are experiencing connection problems, change how auto updates are retrieved.'
-    )
+    ),
   },
   publicSettings: {
     name: t('agora', 'Public inquiry registration dialog options'),
     description: t(
       'agora',
       'These options regard the appearence of the registration dialog of public inquiries.'
-    )
+    ),
   },
   emailSettings: {
     name: t('agora', 'Email options'),
     description: t(
       'agora',
       'Add links to legal terms, if they exist and add an optional disclaimer to emails.'
-    )
+    ),
   },
   jobSettings: {
     name: t('agora', 'Job control'),
-    description: t(
-      'agora',
-      'Manually start backgropund jobs, independent from the cron schedule.'
-    )
-  }
-};
+    description: t('agora', 'Manually start backgropund jobs, independent from the cron schedule.'),
+  },
+}
 
 onMounted(async () => {
   try {
-    await appSettingsStore.load();
+    await appSettingsStore.load()
   } catch (error) {
-    console.error('Failed to load data:', error);
+    console.error('Failed to load data:', error)
   } finally {
-    isLoaded.value = true;
+    isLoaded.value = true
   }
-});
+})
 </script>
 
 <template>
@@ -158,7 +148,6 @@ onMounted(async () => {
         </NcSettingsSection>
       </NcSettingsSection>
       <NcSettingsSection>
-
         <NcSettingsSection v-bind="sections.jobSettings">
           <AdminJobs />
         </NcSettingsSection>

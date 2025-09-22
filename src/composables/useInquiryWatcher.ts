@@ -48,11 +48,11 @@ export const useInquiryWatcher = (interval = 30000) => {
   let worker: Worker | null = null
 
   /**
-	 * Starts a new Web Worker that watches for updates
-	 *
-	 * @param inquiryId - ID of the currently active inquiry
-	 * @param mode - inquirying mode (e.g. longInquirying, periodicInquirying, noInquirying)
-	 */
+   * Starts a new Web Worker that watches for updates
+   *
+   * @param inquiryId - ID of the currently active inquiry
+   * @param mode - inquirying mode (e.g. longInquirying, periodicInquirying, noInquirying)
+   */
   const startWorker = (inquiryId: number | null | undefined, mode: WatcherMode) => {
     // if a worker is already running, terminate it first
     if (worker) {
@@ -79,8 +79,7 @@ export const useInquiryWatcher = (interval = 30000) => {
 
     // Handle messages from worker
     worker.onmessage = (e: MessageEvent<WorkerResponse>) => {
-      const { type, message, updates, status, mode, lastUpdate, params } =
-				e.data
+      const { type, message, updates, status, mode, lastUpdate, params } = e.data
 
       sessionStore.watcher = <Watcher>{
         ...sessionStore.watcher,
@@ -92,42 +91,42 @@ export const useInquiryWatcher = (interval = 30000) => {
       }
 
       switch (type) {
-      case 'info':
-        Logger.info(`[InquiryWatcher] ${message}`, { params })
-        break
-      case 'debug':
-        Logger.debug(`[InquiryWatcher] ${message}`)
-        break
-      case 'warning':
-        Logger.warn(`[InquiryWatcher] ${message}`)
-        break
-      case 'error':
-        Logger.error(`[InquiryWatcher] ${message}`)
-        break
-      case 'update':
-        Logger.info(`[InquiryWatcher] ${message}`)
-        if (Array.isArray(updates)) {
-          handleWatcherUpdates(updates)
-        }
+        case 'info':
+          Logger.info(`[InquiryWatcher] ${message}`, { params })
+          break
+        case 'debug':
+          Logger.debug(`[InquiryWatcher] ${message}`)
+          break
+        case 'warning':
+          Logger.warn(`[InquiryWatcher] ${message}`)
+          break
+        case 'error':
+          Logger.error(`[InquiryWatcher] ${message}`)
+          break
+        case 'update':
+          Logger.info(`[InquiryWatcher] ${message}`)
+          if (Array.isArray(updates)) {
+            handleWatcherUpdates(updates)
+          }
 
-        break
-      case 'status':
-        if (message) Logger.info(`[InquiryWatcher] ${message}`, { params })
+          break
+        case 'status':
+          if (message) Logger.info(`[InquiryWatcher] ${message}`, { params })
 
-        if (status === 'modeChanged') {
-          sessionStore.load()
-        }
+          if (status === 'modeChanged') {
+            sessionStore.load()
+          }
 
-        break
-      default:
-        Logger.warn('[InquiryWatcher] Unknown message type:', { type })
+          break
+        default:
+          Logger.warn('[InquiryWatcher] Unknown message type:', { type })
       }
     }
   }
 
   /**
-	 * Terminate the current worker
-	 */
+   * Terminate the current worker
+   */
   const stopWorker = () => {
     if (worker) {
       worker.terminate()
@@ -143,16 +142,13 @@ export const useInquiryWatcher = (interval = 30000) => {
   }
 
   /**
-	 * Determines which store modules to update based on incoming WatcherResponse objects
-	 *
-	 * @param updates - list of update events from the server
-	 * @param currentInquiryId - current inquiry ID to distinguish between own and external changes
-	 * @return list of update types to apply
-	 */
-  const getTasksFromUpdates = (
-    updates: WatcherData[],
-    currentInquiryId: number,
-  ): string[] => {
+   * Determines which store modules to update based on incoming WatcherResponse objects
+   *
+   * @param updates - list of update events from the server
+   * @param currentInquiryId - current inquiry ID to distinguish between own and external changes
+   * @return list of update types to apply
+   */
+  const getTasksFromUpdates = (updates: WatcherData[], currentInquiryId: number): string[] => {
     // Use a Set to prevent duplicates
     const tasks = new Set<string>()
 
@@ -172,40 +168,40 @@ export const useInquiryWatcher = (interval = 30000) => {
   }
 
   /**
-	 * Handles the actions based on the tsaks received from the worker
-	 *
-	 * @param tasks - list of tasks to handle
-	 */
+   * Handles the actions based on the tsaks received from the worker
+   *
+   * @param tasks - list of tasks to handle
+   */
   const handleWatcherTasks = (tasks: string[]) => {
     Logger.info('[InquiryWatcher] Tasks to handle:', { tasks })
 
     tasks.forEach((task: string) => {
       switch (task) {
-      case 'shares':
-        sharesStore.load()
-        break
-      case 'inquiries':
-        inquiryStore.load()
-        inquiriesStore.load()
-        break
-      case 'supports':
-        supportsStore.load()
-        break
-      case 'options':
-        optionsStore.load()
-        break
-      case 'comments':
-        commentsStore.load()
-        break
+        case 'shares':
+          sharesStore.load()
+          break
+        case 'inquiries':
+          inquiryStore.load()
+          inquiriesStore.load()
+          break
+        case 'supports':
+          supportsStore.load()
+          break
+        case 'options':
+          optionsStore.load()
+          break
+        case 'comments':
+          commentsStore.load()
+          break
       }
     })
   }
 
   /**
-	 * Dispatches updates to the relevant store modules based on change type.
-	 *
-	 * @param updates - update information from the worker
-	 */
+   * Dispatches updates to the relevant store modules based on change type.
+   *
+   * @param updates - update information from the worker
+   */
   const handleWatcherUpdates = (updates: WatcherData[]) => {
     const tasks = getTasksFromUpdates(updates, inquiryStore.id)
     Logger.info('[InquiryWatcher] Updates received:', { updates })
@@ -213,9 +209,9 @@ export const useInquiryWatcher = (interval = 30000) => {
   }
 
   /**
-	 * Handles visibility changes for the browser tab.
-	 * Stops the worker when the tab is hidden, restarts it when visible again.
-	 */
+   * Handles visibility changes for the browser tab.
+   * Stops the worker when the tab is hidden, restarts it when visible again.
+   */
   const handleVisibilityChange = () => {
     if (document.visibilityState === 'visible') {
       Logger.info('[InquiryWatcher] Window visible → restarting worker')
@@ -227,8 +223,8 @@ export const useInquiryWatcher = (interval = 30000) => {
   }
 
   /**
-	 * Initialize visibility handling and start worker if visible.
-	 */
+   * Initialize visibility handling and start worker if visible.
+   */
   onMounted(() => {
     document.addEventListener('visibilitychange', handleVisibilityChange)
   })
@@ -239,8 +235,8 @@ export const useInquiryWatcher = (interval = 30000) => {
   })
 
   /**
-	 * Reactively restart the worker whenever inquiryId or updateType changes.
-	 */
+   * Reactively restart the worker whenever inquiryId or updateType changes.
+   */
   watch(
     [() => inquiryStore.id, () => sessionStore.appSettings.updateType],
     ([inquiryIdNew, modeNew], [inquiryIdOld, modeOld]) => {
@@ -252,6 +248,6 @@ export const useInquiryWatcher = (interval = 30000) => {
         startWorker(inquiryIdNew, modeNew)
       }
     },
-    { immediate: true },
+    { immediate: true }
   )
 }

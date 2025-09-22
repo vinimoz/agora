@@ -4,19 +4,15 @@
 -->
 
 <script setup lang="ts">
-import { NcCheckboxRadioSwitch } from '@nextcloud/vue';
-import { useInquiryStore } from '../../stores/inquiry.ts';
-import { t } from '@nextcloud/l10n';
-const inquiryStore = useInquiryStore();
-const emit = defineEmits(['change']);
+import { NcCheckboxRadioSwitch } from '@nextcloud/vue'
+import { useInquiryStore } from '../../stores/inquiry.ts'
+import { t } from '@nextcloud/l10n'
+const inquiryStore = useInquiryStore()
+const emit = defineEmits(['change'])
 </script>
 
 <template>
-  <textarea
-    v-model="inquiryStore.description"
-    class="edit-description"
-    @change="emit('change')"
-  />
+  <textarea v-model="inquiryStore.description" class="edit-description" @change="emit('change')" />
   <NcCheckboxRadioSwitch
     v-model="inquiryStore.collapseDescription"
     type="switch"

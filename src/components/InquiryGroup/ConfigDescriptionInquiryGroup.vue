@@ -4,29 +4,29 @@
 -->
 
 <script setup lang="ts">
-import { computed } from 'vue';
-import { t } from '@nextcloud/l10n';
-import { useInquiryGroupsStore } from '../../stores/inquiryGroups.ts';
+import { computed } from 'vue'
+import { t } from '@nextcloud/l10n'
+import { useInquiryGroupsStore } from '../../stores/inquiryGroups.ts'
 
-const emit = defineEmits(['change']);
+const emit = defineEmits(['change'])
 
-const inquiryGroupsStore = useInquiryGroupsStore();
+const inquiryGroupsStore = useInquiryGroupsStore()
 
 const inputProps = {
   placeholder: t('agora', 'Enter a description'),
-  helperText: t('agora', 'Choose a description for the overview page')
-};
+  helperText: t('agora', 'Choose a description for the overview page'),
+}
 const inquiryGroupDescription = computed({
   get() {
-    return inquiryGroupsStore.currentInquiryGroup?.description || '';
+    return inquiryGroupsStore.currentInquiryGroup?.description || ''
   },
   set(value: string) {
     inquiryGroupsStore.setCurrentInquiryGroup({
       ...inquiryGroupsStore.currentInquiryGroup,
-      description: value
-    });
-  }
-});
+      description: value,
+    })
+  },
+})
 </script>
 
 <template>

@@ -4,33 +4,31 @@
 -->
 
 <script setup>
-import { computed } from 'vue';
-import { t } from '@nextcloud/l10n';
+import { computed } from 'vue'
+import { t } from '@nextcloud/l10n'
 
-import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch';
+import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
 
-import { InputDiv } from '../../Base/index.ts';
-import { usePreferencesStore } from '../../../stores/preferences.ts';
-const preferencesStore = usePreferencesStore();
+import { InputDiv } from '../../Base/index.ts'
+import { usePreferencesStore } from '../../../stores/preferences.ts'
+const preferencesStore = usePreferencesStore()
 
 const calendarChoices = computed(() =>
   preferencesStore.availableCalendars.map((calendar) => ({
     key: calendar.key.toString(),
     name: calendar.name,
     displayColor: calendar.displayColor,
-    selected: preferencesStore.user.checkCalendars.includes(
-      calendar.key.toString()
-    )
+    selected: preferencesStore.user.checkCalendars.includes(calendar.key.toString()),
   }))
-);
+)
 
 const clickedCalendar = (calendar) => {
   if (preferencesStore.user.checkCalendars.includes(calendar.key)) {
-    preferencesStore.removeCheckCalendar(calendar);
+    preferencesStore.removeCheckCalendar(calendar)
   } else {
-    preferencesStore.addCheckCalendar(calendar);
+    preferencesStore.addCheckCalendar(calendar)
   }
-};
+}
 </script>
 
 <template>
@@ -47,20 +45,13 @@ const clickedCalendar = (calendar) => {
       <div v-show="preferencesStore.user.calendarPeek" class="settings_details">
         {{ t('agora', 'Select the calendars to use for lookup.') }}
 
-        <div
-          v-for="calendar in calendarChoices"
-          :key="calendar.key"
-          class="calendar-item"
-        >
+        <div v-for="calendar in calendarChoices" :key="calendar.key" class="calendar-item">
           <NcCheckboxRadioSwitch
             :model-value="calendar.selected"
             type="switch"
             @update:model-value="clickedCalendar(calendar)"
           >
-            <span
-              class="bully"
-              :style="{ backgroundColor: calendar.displayColor }"
-            />
+            <span class="bully" :style="{ backgroundColor: calendar.displayColor }" />
             {{ calendar.name }}
           </NcCheckboxRadioSwitch>
         </div>

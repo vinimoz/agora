@@ -2,8 +2,8 @@
  * SPDX-FileCopyrightText: 2022 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { AxiosResponse } from '@nextcloud/axios';
-import { httpInstance, createCancelTokenHandler } from './HttpApi.js';
+import { AxiosResponse } from '@nextcloud/axios'
+import { httpInstance, createCancelTokenHandler } from './HttpApi.js'
 
 const validators = {
   validateEmailAddress(
@@ -13,10 +13,8 @@ const validators = {
       method: 'GET',
       url: `check/emailaddress/${emailAddress}`,
       cancelToken:
-        cancelTokenHandlerObject[
-          this.validateEmailAddress.name
-        ].handleRequestCancellation().token
-    });
+        cancelTokenHandlerObject[this.validateEmailAddress.name].handleRequestCancellation().token,
+    })
   },
 
   validateName(
@@ -27,20 +25,18 @@ const validators = {
       method: 'POST',
       url: 'check/username',
       cancelToken:
-        cancelTokenHandlerObject[
-          this.validateName.name
-        ].handleRequestCancellation().token,
+        cancelTokenHandlerObject[this.validateName.name].handleRequestCancellation().token,
       data: {
         displayName: name,
-        token: inquiryToken
+        token: inquiryToken,
       },
       headers: {
-        'Nc-Agora-Share-Token': inquiryToken
-      }
-    });
-  }
-};
+        'Nc-Agora-Share-Token': inquiryToken,
+      },
+    })
+  },
+}
 
-const cancelTokenHandlerObject = createCancelTokenHandler(validators);
+const cancelTokenHandlerObject = createCancelTokenHandler(validators)
 
-export default validators;
+export default validators

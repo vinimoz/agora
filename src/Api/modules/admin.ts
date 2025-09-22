@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { httpInstance, createCancelTokenHandler } from './HttpApi.js';
+import { httpInstance, createCancelTokenHandler } from './HttpApi.js'
 
 const adminJobs = {
   runAutoReminder() {
@@ -11,33 +11,26 @@ const adminJobs = {
       method: 'GET',
       url: 'administration/autoreminder/run',
       cancelToken:
-        cancelTokenHandlerObject[
-          this.runAutoReminder.name
-        ].handleRequestCancellation().token
-    });
+        cancelTokenHandlerObject[this.runAutoReminder.name].handleRequestCancellation().token,
+    })
   },
   runJanitor() {
     return httpInstance.request({
       method: 'GET',
       url: 'administration/janitor/run',
-      cancelToken:
-        cancelTokenHandlerObject[
-          this.runJanitor.name
-        ].handleRequestCancellation().token
-    });
+      cancelToken: cancelTokenHandlerObject[this.runJanitor.name].handleRequestCancellation().token,
+    })
   },
   runNotification() {
     return httpInstance.request({
       method: 'GET',
       url: 'administration/notification/run',
       cancelToken:
-        cancelTokenHandlerObject[
-          this.runNotification.name
-        ].handleRequestCancellation().token
-    });
-  }
-};
+        cancelTokenHandlerObject[this.runNotification.name].handleRequestCancellation().token,
+    })
+  },
+}
 
-const cancelTokenHandlerObject = createCancelTokenHandler(adminJobs);
+const cancelTokenHandlerObject = createCancelTokenHandler(adminJobs)
 
-export default adminJobs;
+export default adminJobs

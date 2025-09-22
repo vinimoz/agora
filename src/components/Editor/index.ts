@@ -1,9 +1,9 @@
-import InquiryEditor from './InquiryEditor.vue';
+import InquiryEditor from './InquiryEditor.vue'
 
 export default {
   install(app) {
-    app.component('InquiryEditor', InquiryEditor);
-  }
-};
+    app.component('InquiryEditor', InquiryEditor)
+  },
+}
 
-export { InquiryEditor };
+export { InquiryEditor }

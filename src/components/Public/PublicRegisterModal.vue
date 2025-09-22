@@ -4,127 +4,120 @@
 -->
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import { debounce } from 'lodash';
-import { showError } from '@nextcloud/dialogs';
-import { generateUrl } from '@nextcloud/router';
-import { t } from '@nextcloud/l10n';
+import { ref, computed, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { debounce } from 'lodash'
+import { showError } from '@nextcloud/dialogs'
+import { generateUrl } from '@nextcloud/router'
+import { t } from '@nextcloud/l10n'
 
-import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch';
-import NcButton from '@nextcloud/vue/components/NcButton';
+import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
+import NcButton from '@nextcloud/vue/components/NcButton'
 
-import { InputDiv } from '../Base/index.ts';
-import { SimpleLink, setCookie } from '../../helpers/index.ts';
-import { ValidatorAPI, PublicAPI } from '../../Api/index.ts';
-import { useSessionStore } from '../../stores/session.ts';
-import { useInquiryStore } from '../../stores/inquiry.ts';
-import { AxiosError } from '@nextcloud/axios';
-import { SignalingType } from '../../Types/index.ts';
+import { InputDiv } from '../Base/index.ts'
+import { SimpleLink, setCookie } from '../../helpers/index.ts'
+import { ValidatorAPI, PublicAPI } from '../../Api/index.ts'
+import { useSessionStore } from '../../stores/session.ts'
+import { useInquiryStore } from '../../stores/inquiry.ts'
+import { AxiosError } from '@nextcloud/axios'
+import { SignalingType } from '../../Types/index.ts'
 
-const route = useRoute();
-const router = useRouter();
+const route = useRoute()
+const router = useRouter()
 
-const emit = defineEmits(['close']);
+const emit = defineEmits(['close'])
 
-const sessionStore = useSessionStore();
-const inquiryStore = useInquiryStore();
+const sessionStore = useSessionStore()
+const inquiryStore = useInquiryStore()
 
-const COOKIE_LIFETIME = 30;
+const COOKIE_LIFETIME = 30
 const checkStatus = ref<{
-  email: SignalingType;
-  userName: SignalingType;
+  email: SignalingType
+  userName: SignalingType
 }>({
   email: 'empty',
-  userName: 'empty'
-});
+  userName: 'empty',
+})
 
-const sendRegistration = ref(false);
-const userName = ref('');
-const emailAddress = ref('');
-const saveCookie = ref(true);
+const sendRegistration = ref(false)
+const userName = ref('')
+const emailAddress = ref('')
+const saveCookie = ref(true)
 
 const registrationIsValid = computed(
   () =>
     checkStatus.value.userName === 'valid' &&
     (checkStatus.value.email === 'valid' ||
-      (emailAddress.value.length === 0 &&
-        sessionStore.share.publicInquiryEmail !== 'mandatory'))
-);
+      (emailAddress.value.length === 0 && sessionStore.share.publicInquiryEmail !== 'mandatory'))
+)
 const disableSubmit = computed(
   () =>
     !registrationIsValid.value ||
     checkStatus.value.userName === 'checking' ||
     sendRegistration.value
-);
+)
 const emailGeneratedStatus = computed(() =>
   checkStatus.value.email === 'empty'
     ? sessionStore.share.publicInquiryEmail
     : checkStatus.value.email
-);
-const offerCookies = computed(() => sessionStore.share.type === 'public');
+)
+const offerCookies = computed(() => sessionStore.share.type === 'public')
 
 const loginLink = computed(() => {
   const redirectUrl = router.resolve({
     name: 'publicInquiry',
-    params: { token: route.params.token }
-  }).href;
+    params: { token: route.params.token },
+  }).href
 
-  return `${generateUrl('/login')}?redirect_url=${redirectUrl}`;
-});
+  return `${generateUrl('/login')}?redirect_url=${redirectUrl}`
+})
 
 const userNameHint = computed(() => {
   if (checkStatus.value.userName === 'checking') {
-    return t('agora', 'Checking name …');
+    return t('agora', 'Checking name …')
   }
   if (checkStatus.value.userName === 'empty') {
-    return t('agora', 'A name is required.');
+    return t('agora', 'A name is required.')
   }
   if (checkStatus.value.userName === 'invalid') {
     return t('agora', 'The name {username} is invalid or reserved.', {
-      username: userName.value
-    });
+      username: userName.value,
+    })
   }
-  return '';
-});
+  return ''
+})
 
 const emailAddressHint = computed(() => {
   if (emailGeneratedStatus.value === 'checking') {
-    return t('agora', 'Checking email address …');
+    return t('agora', 'Checking email address …')
   }
   if (emailGeneratedStatus.value === 'mandatory') {
-    return t('agora', 'An email address is required.');
+    return t('agora', 'An email address is required.')
   }
   if (emailGeneratedStatus.value === 'invalid') {
-    return t('agora', 'Invalid email address.');
+    return t('agora', 'Invalid email address.')
   }
   if (sessionStore.share.type === 'public') {
     if (emailGeneratedStatus.value === 'valid') {
-      return t(
-        'inquiries',
-        'You will receive your personal link after clicking "OK".'
-      );
+      return t('inquiries', 'You will receive your personal link after clicking "OK".')
     }
-    return t(
-      'inquiries',
-      'Enter your email address to get your personal access link.'
-    );
+    return t('inquiries', 'Enter your email address to get your personal access link.')
   }
-  return '';
-});
+  return ''
+})
 
 onMounted(() => {
   if (route.name === 'publicInquiry' && route.query.name) {
-    userName.value = route.query.name.toString();
+    userName.value = route.query.name.toString()
   } else {
-    userName.value = sessionStore.currentUser.displayName;
+    userName.value = sessionStore.currentUser.displayName
   }
   if (route.name === 'publicInquiry' && route.query.email) {
-    emailAddress.value = route.query.email.toString();
+    emailAddress.value = route.query.email.toString()
   } else {
-    emailAddress.value = sessionStore.currentUser.emailAddress;
+    emailAddress.value = sessionStore.currentUser.emailAddress
   }
-});
+})
 
 /**
  *
@@ -135,16 +128,16 @@ function routeToPersonalShare(token: string): void {
     // if share was not a public share, but a personal share
     // (i.e. email shares allow to change personal data by fist entering of the inquiry),
     // just load the inquiry
-    inquiryStore.load();
-    closeModal();
+    inquiryStore.load()
+    closeModal()
   } else {
     // in case of a public share, redirect to the generated share
     router.push({
       name: 'publicInquiry',
       params: { token },
-      replace: true
-    });
-    closeModal();
+      replace: true,
+    })
+    closeModal()
   }
 }
 
@@ -153,111 +146,106 @@ function routeToPersonalShare(token: string): void {
  * @param value - value to be stored in the cookie
  */
 function updateCookie(value: string): void {
-  const cookieExpiration = COOKIE_LIFETIME * 24 * 60 * 1000;
-  setCookie(route.params.token.toString(), value, cookieExpiration);
+  const cookieExpiration = COOKIE_LIFETIME * 24 * 60 * 1000
+  setCookie(route.params.token.toString(), value, cookieExpiration)
 }
 
 /**
  *
  */
 function closeModal(): void {
-  emit('close');
+  emit('close')
 }
 
 /**
  *
  */
 function login(): void {
-  window.location.assign(
-    `${window.location.protocol}//${window.location.host}${loginLink.value}`
-  );
+  window.location.assign(`${window.location.protocol}//${window.location.host}${loginLink.value}`)
 }
 
 const validatePublicUsername = debounce(async function (): Promise<void> {
   if (userName.value.length < 1) {
-    checkStatus.value.userName = 'empty';
-    return;
+    checkStatus.value.userName = 'empty'
+    return
   }
 
-  checkStatus.value.userName = 'checking';
+  checkStatus.value.userName = 'checking'
   try {
-    await ValidatorAPI.validateName(route.params.token, userName.value);
-    checkStatus.value.userName = 'valid';
+    await ValidatorAPI.validateName(route.params.token, userName.value)
+    checkStatus.value.userName = 'valid'
   } catch (error) {
     if ((error as AxiosError).code === 'ERR_CANCELED') {
-      return;
+      return
     }
     if ((error as AxiosError).code === 'ERR_BAD_REQUEST') {
-      checkStatus.value.userName = 'invalid';
-      return;
+      checkStatus.value.userName = 'invalid'
+      return
     }
-    throw error;
+    throw error
   }
-}, 500);
+}, 500)
 
 const validateEmailAddress = debounce(async function (): Promise<void> {
   if (emailAddress.value.length < 1) {
-    checkStatus.value.email = 'empty';
-    return;
+    checkStatus.value.email = 'empty'
+    return
   }
 
-  checkStatus.value.email = 'checking';
+  checkStatus.value.email = 'checking'
   try {
-    await ValidatorAPI.validateEmailAddress(emailAddress.value);
-    checkStatus.value.email = 'valid';
+    await ValidatorAPI.validateEmailAddress(emailAddress.value)
+    checkStatus.value.email = 'valid'
   } catch (error) {
     if ((error as AxiosError).code === 'ERR_CANCELED') {
-      return;
+      return
     }
     if ((error as AxiosError).code === 'ERR_BAD_REQUEST') {
-      checkStatus.value.email = 'invalid';
-      return;
+      checkStatus.value.email = 'invalid'
+      return
     }
-    throw error;
+    throw error
   }
-}, 500);
+}, 500)
 
 /**
  *
  */
 async function submitRegistration(): Promise<void> {
   if (!registrationIsValid.value || sendRegistration.value) {
-    return;
+    return
   }
 
-  sendRegistration.value = true;
+  sendRegistration.value = true
 
   try {
     const response = await PublicAPI.register(
       route.params.token as string,
       userName.value,
       emailAddress.value
-    );
+    )
 
     if (saveCookie.value && route.name === 'publicInquiry') {
-      updateCookie(response.data.share.token);
+      updateCookie(response.data.share.token)
     }
 
-    routeToPersonalShare(response.data.share.token);
+    routeToPersonalShare(response.data.share.token)
 
-    if (
-      sessionStore.currentUser.emailAddress &&
-      !sessionStore.share.invitationSent
-    ) {
+    if (sessionStore.currentUser.emailAddress && !sessionStore.share.invitationSent) {
       showError(
         t('agora', 'Email could not be sent to {emailAddress}', {
-          emailAddress: sessionStore.currentUser.emailAddress
+          emailAddress: sessionStore.currentUser.emailAddress,
         })
-      );
+      )
     }
   } catch (error) {
     if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-      return;
+      return
     }
-    showError(t('agora', 'Error registering to inquiry', { error }));
-    throw error;
+    showError(t('agora', 'Error registering to inquiry', { error }))
+    throw error
   } finally {
-    sendRegistration.value = false;
+    sendRegistration.value = false
   }
 }
 </script>
@@ -323,11 +311,7 @@ async function submitRegistration(): Promise<void> {
               </template>
             </NcButton>
 
-            <NcButton
-              :variant="'primary'"
-              :disabled="disableSubmit"
-              @click="submitRegistration()"
-            >
+            <NcButton :variant="'primary'" :disabled="disableSubmit" @click="submitRegistration()">
               <template #default>
                 {{ t('agora', 'OK') }}
               </template>
@@ -336,10 +320,7 @@ async function submitRegistration(): Promise<void> {
         </div>
       </div>
 
-      <div
-        v-if="sessionStore.appSettings.showLogin"
-        class="registration__login"
-      >
+      <div v-if="sessionStore.appSettings.showLogin" class="registration__login">
         <h2>{{ t('agora', 'Registered accounts') }}</h2>
         <NcButton wide @click="login()">
           <template #default>
@@ -347,12 +328,7 @@ async function submitRegistration(): Promise<void> {
           </template>
         </NcButton>
         <div>
-          {{
-            t(
-              'inquiries',
-              'You can also log in and participate with your regular account.'
-            )
-          }}
+          {{ t('inquiries', 'You can also log in and participate with your regular account.') }}
         </div>
         <div>
           {{ t('agora', 'Otherwise participate as a guest participant.') }}

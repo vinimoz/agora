@@ -3,19 +3,19 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { defineStore } from 'pinia';
-import orderBy from 'lodash/orderBy';
-import { DateTime } from 'luxon';
-import { t } from '@nextcloud/l10n';
+import { defineStore } from 'pinia'
+import orderBy from 'lodash/orderBy'
+import { DateTime } from 'luxon'
+import { t } from '@nextcloud/l10n'
 
-import { Logger } from '../helpers/index.ts';
-import { InquiriesAPI } from '../Api/index.ts';
+import { Logger } from '../helpers/index.ts'
+import { InquiriesAPI } from '../Api/index.ts'
 
-import { Inquiry } from './inquiry.ts';
-import { useSessionStore } from './session.ts';
-import { Chunking, StatusResults } from '../Types/index.ts';
-import { AxiosError } from '@nextcloud/axios';
-import { useInquiryGroupsStore } from './inquiryGroups.ts';
+import { Inquiry } from './inquiry.ts'
+import { useSessionStore } from './session.ts'
+import { Chunking, StatusResults } from '../Types/index.ts'
+import { AxiosError } from '@nextcloud/axios'
+import { useInquiryGroupsStore } from './inquiryGroups.ts'
 
 export type SortType =
   | 'created'
@@ -28,9 +28,9 @@ export type SortType =
   | 'interaction'
   | 'type'
   | 'countComments'
-  | 'countSupports';
+  | 'countSupports'
 
-export type SortDirection = 'asc' | 'desc';
+export type SortDirection = 'asc' | 'desc'
 
 export type FilterType =
   | 'relevant'
@@ -41,53 +41,53 @@ export type FilterType =
   | 'all'
   | 'closed'
   | 'archived'
-  | 'admin';
+  | 'admin'
 
 export type AdvancedFilters = {
-  type?: FilterType;
-  categoryId?: string;
-  locationId?: string;
-  hasComments?: boolean;
-  hasSupports?: boolean;
-  search?: string;
-};
+  type?: FilterType
+  categoryId?: string
+  locationId?: string
+  hasComments?: boolean
+  hasSupports?: boolean
+  search?: string
+}
 
 export type FilterState = {
-  currentFilter: FilterType;
-  advancedFilters: AdvancedFilters;
-};
+  currentFilter: FilterType
+  advancedFilters: AdvancedFilters
+}
 
 export type InquiryCategory = {
-  id: FilterType;
-  title: string;
-  titleExt: string;
-  description: string;
-  pinned: boolean;
-  showInNavigation(): boolean;
-  filterCondition(inquiry: Inquiry): boolean;
-};
+  id: FilterType
+  title: string
+  titleExt: string
+  description: string
+  pinned: boolean
+  showInNavigation(): boolean
+  filterCondition(inquiry: Inquiry): boolean
+}
 
-export type InquiryCategoryList = Record<FilterType, InquiryCategory>;
+export type InquiryCategoryList = Record<FilterType, InquiryCategory>
 
 export type Meta = {
-  chunks: Chunking;
-  maxInquiriesInNavigation: number;
-  status: StatusResults;
-};
+  chunks: Chunking
+  maxInquiriesInNavigation: number
+  status: StatusResults
+}
 
 export type InquiryList = {
-  inquiries: Inquiry[];
+  inquiries: Inquiry[]
   // inquiryGroups: InquiryGroup[]
-  meta: Meta;
+  meta: Meta
   sort: {
-    by: SortType;
-    reverse: boolean;
-  };
+    by: SortType
+    reverse: boolean
+  }
   status: {
-    loadingGroups: boolean;
-  };
-  categories: InquiryCategoryList;
-};
+    loadingGroups: boolean
+  }
+  categories: InquiryCategoryList
+}
 
 export const sortColumnsMapping: { [key in SortType]: string } = {
   created: 'status.created',
@@ -98,8 +98,8 @@ export const sortColumnsMapping: { [key in SortType]: string } = {
   expire: 'configuration.expire',
   interaction: 'status.lastInteraction',
   countComments: 'status.countComments',
-  countSupports: 'status.countSupports'
-};
+  countSupports: 'status.countSupports',
+}
 
 export const sortTitlesMapping: { [key in SortType]: string } = {
   created: t('agora', 'Created'),
@@ -110,8 +110,8 @@ export const sortTitlesMapping: { [key in SortType]: string } = {
   expire: t('agora', 'Expire'),
   interaction: t('agora', 'Last interaction'),
   countComments: t('agora', 'Comments count'),
-  countSupports: t('agora', 'Supports count')
-};
+  countSupports: t('agora', 'Supports count'),
+}
 
 const inquiryCategories: InquiryCategoryList = {
   relevant: {
@@ -126,10 +126,9 @@ const inquiryCategories: InquiryCategoryList = {
     showInNavigation: () => true,
     filterCondition: (inquiry: Inquiry) =>
       !inquiry.status.isArchived &&
-      DateTime.fromSeconds(inquiry.status.relevantThreshold).diffNow('days')
-        .days > -100 &&
+      DateTime.fromSeconds(inquiry.status.relevantThreshold).diffNow('days').days > -100 &&
       (inquiry.currentUserStatus.isInvolved ||
-        (inquiry.permissions.view && inquiry.configuration.access !== 'open'))
+        (inquiry.permissions.view && inquiry.configuration.access !== 'open')),
   },
   my: {
     id: 'my',
@@ -138,11 +137,11 @@ const inquiryCategories: InquiryCategoryList = {
     description: t('agora', 'These are all inquiries where you are the owner.'),
     pinned: false,
     showInNavigation: () => {
-      const sessionStore = useSessionStore();
-      return sessionStore.appPermissions.inquiryCreation;
+      const sessionStore = useSessionStore()
+      return sessionStore.appPermissions.inquiryCreation
     },
     filterCondition: (inquiry: Inquiry) =>
-      !inquiry.status.isArchived && inquiry.currentUserStatus.isOwner
+      !inquiry.status.isArchived && inquiry.currentUserStatus.isOwner,
   },
   private: {
     id: 'private',
@@ -151,13 +150,13 @@ const inquiryCategories: InquiryCategoryList = {
     description: t('agora', 'All private inquiries, to which you have access.'),
     pinned: false,
     showInNavigation: () => {
-      const sessionStore = useSessionStore();
-      return sessionStore.appPermissions.inquiryCreation;
+      const sessionStore = useSessionStore()
+      return sessionStore.appPermissions.inquiryCreation
     },
     filterCondition: (inquiry: Inquiry) =>
       !inquiry.status.isArchived &&
       inquiry.permissions.view &&
-      inquiry.configuration.access === 'private'
+      inquiry.configuration.access === 'private',
   },
   participated: {
     id: 'participated',
@@ -167,23 +166,20 @@ const inquiryCategories: InquiryCategoryList = {
     pinned: false,
     showInNavigation: () => true,
     filterCondition: (inquiry: Inquiry) =>
-      !inquiry.status.isArchived && inquiry.status.countParticipants > 0
+      !inquiry.status.isArchived && inquiry.status.countParticipants > 0,
   },
   open: {
     id: 'open',
     title: t('agora', 'Openly accessible inquiries'),
     titleExt: t('agora', 'Openly accessible inquiries'),
-    description: t(
-      'agora',
-      'A complete list with all openly accessible inquiries on this site.'
-    ),
+    description: t('agora', 'A complete list with all openly accessible inquiries on this site.'),
     pinned: false,
     showInNavigation: () => {
-      const sessionStore = useSessionStore();
-      return sessionStore.appPermissions.inquiryCreation;
+      const sessionStore = useSessionStore()
+      return sessionStore.appPermissions.inquiryCreation
     },
     filterCondition: (inquiry: Inquiry) =>
-      !inquiry.status.isArchived && inquiry.configuration.access === 'open'
+      !inquiry.status.isArchived && inquiry.configuration.access === 'open',
   },
   all: {
     id: 'all',
@@ -192,8 +188,7 @@ const inquiryCategories: InquiryCategoryList = {
     description: t('agora', 'All inquiries, where you have access to.'),
     pinned: false,
     showInNavigation: () => true,
-    filterCondition: (inquiry: Inquiry) =>
-      !inquiry.status.isArchived && inquiry.permissions.view
+    filterCondition: (inquiry: Inquiry) => !inquiry.status.isArchived && inquiry.permissions.view,
   },
   closed: {
     id: 'closed',
@@ -203,25 +198,19 @@ const inquiryCategories: InquiryCategoryList = {
     pinned: false,
     showInNavigation: () => true,
     filterCondition: (inquiry: Inquiry) =>
-      !inquiry.status.isArchived &&
-      inquiry.status.isExpired &&
-      inquiry.permissions.view
+      !inquiry.status.isArchived && inquiry.status.isExpired && inquiry.permissions.view,
   },
   archived: {
     id: 'archived',
     title: t('agora', 'Archive'),
     titleExt: t('agora', 'My archived inquiries'),
-    description: t(
-      'agora',
-      'Your archived inquiries are only accessible to you.'
-    ),
+    description: t('agora', 'Your archived inquiries are only accessible to you.'),
     pinned: true,
     showInNavigation: () => {
-      const sessionStore = useSessionStore();
-      return sessionStore.appPermissions.inquiryCreation;
+      const sessionStore = useSessionStore()
+      return sessionStore.appPermissions.inquiryCreation
     },
-    filterCondition: (inquiry: Inquiry) =>
-      inquiry.status.isArchived && inquiry.permissions.view
+    filterCondition: (inquiry: Inquiry) => inquiry.status.isArchived && inquiry.permissions.view,
   },
   admin: {
     id: 'admin',
@@ -233,12 +222,12 @@ const inquiryCategories: InquiryCategoryList = {
     ),
     pinned: true,
     showInNavigation: () => {
-      const sessionStore = useSessionStore();
-      return !!sessionStore.currentUser?.isAdmin;
+      const sessionStore = useSessionStore()
+      return !!sessionStore.currentUser?.isAdmin
     },
-    filterCondition: (inquiry: Inquiry) => inquiry.permissions.view
-  }
-};
+    filterCondition: (inquiry: Inquiry) => inquiry.permissions.view,
+  },
+}
 
 export const useInquiriesStore = defineStore('inquiries', {
   state: (): InquiryList & FilterState => ({
@@ -246,73 +235,68 @@ export const useInquiriesStore = defineStore('inquiries', {
     meta: {
       chunks: {
         size: 20,
-        loaded: 1
+        loaded: 1,
       },
       maxInquiriesInNavigation: 6,
-      status: ''
+      status: '',
     },
     sort: {
       by: 'created',
-      reverse: true
+      reverse: true,
     },
     status: {
-      loadingGroups: false
+      loadingGroups: false,
     },
     categories: inquiryCategories,
     currentFilter: 'relevant',
-    advancedFilters: {}
+    advancedFilters: {},
   }),
 
   getters: {
     navigationCategories(state: InquiryList): InquiryCategory[] {
-      return Object.values(state.categories).filter((category) =>
-        category.showInNavigation()
-      );
+      return Object.values(state.categories).filter((category) => category.showInNavigation())
     },
 
     navigationListWithFilters:
       (state: InquiryList & FilterState) =>
-        (filterId: FilterType): Inquiry[] => {
-          let filteredInquiries = state.inquiries.filter((inquiry: Inquiry) =>
-            state.categories[filterId].filterCondition(inquiry)
-          );
+      (filterId: FilterType): Inquiry[] => {
+        let filteredInquiries = state.inquiries.filter((inquiry: Inquiry) =>
+          state.categories[filterId].filterCondition(inquiry)
+        )
 
-          if (state.advancedFilters.type) {
-            filteredInquiries = filteredInquiries.filter(
-              (inquiry) => inquiry.type === state.advancedFilters.type
-            );
-          }
+        if (state.advancedFilters.type) {
+          filteredInquiries = filteredInquiries.filter(
+            (inquiry) => inquiry.type === state.advancedFilters.type
+          )
+        }
 
-          return orderBy(filteredInquiries, ['created'], ['desc']).slice(
-            0,
-            state.meta.maxInquiriesInNavigation
-          );
-        },
+        return orderBy(filteredInquiries, ['created'], ['desc']).slice(
+          0,
+          state.meta.maxInquiriesInNavigation
+        )
+      },
 
     /*
      * Sliced filtered and sorted inquiries for navigation
      */
     navigationList:
       (state: InquiryList) =>
-        (filterId: FilterType): Inquiry[] =>
-          orderBy(
-            state.inquiries.filter((inquiry: Inquiry) =>
-              state.categories[filterId].filterCondition(inquiry)
-            ) ?? [],
-            ['created'],
-            ['desc']
-          ).slice(0, state.meta.maxInquiriesInNavigation),
+      (filterId: FilterType): Inquiry[] =>
+        orderBy(
+          state.inquiries.filter((inquiry: Inquiry) =>
+            state.categories[filterId].filterCondition(inquiry)
+          ) ?? [],
+          ['created'],
+          ['desc']
+        ).slice(0, state.meta.maxInquiriesInNavigation),
 
     currentCategory(state: InquiryList): InquiryCategory {
-      const sessionStore = useSessionStore();
+      const sessionStore = useSessionStore()
 
-      if (
-        sessionStore.route.name === 'list' &&
-        sessionStore.route.params.type
-      ) {
-        return state.categories[sessionStore.route.params.type as FilterType];
+      if (sessionStore.route.name === 'list' && sessionStore.route.params.type) {
+        return state.categories[sessionStore.route.params.type as FilterType]
       }
-      return state.categories.relevant;
+      return state.categories.relevant
     },
 
     /*
@@ -340,35 +324,35 @@ export const useInquiriesStore = defineStore('inquiries', {
      * inquiries list, filtered by current category, advanced filters and sorted
      */
     inquiriesFilteredSorted(state: InquiryList & FilterState): Inquiry[] {
-      const sessionStore = useSessionStore();
-      const inquiryGroupsStore = useInquiryGroupsStore();
+      const sessionStore = useSessionStore()
+      const inquiryGroupsStore = useInquiryGroupsStore()
 
       // if we are in a group route, return the inquiries of the current group
       if (sessionStore.route.name === 'group') {
-        return inquiryGroupsStore.inquiriesInCurrendInquiryGroup;
+        return inquiryGroupsStore.inquiriesInCurrendInquiryGroup
       }
 
       let filteredInquiries =
         state.inquiries.filter((inquiry: Inquiry) =>
           this.currentCategory?.filterCondition(inquiry)
-        ) ?? [];
+        ) ?? []
 
       if (state.advancedFilters.type) {
         filteredInquiries = filteredInquiries.filter(
           (inquiry) => inquiry.type === state.advancedFilters.type
-        );
+        )
       }
 
       if (state.advancedFilters.categoryId) {
         filteredInquiries = filteredInquiries.filter(
           (inquiry) => inquiry.categoryId === state.advancedFilters.categoryId
-        );
+        )
       }
 
       if (state.advancedFilters.locationId) {
         filteredInquiries = filteredInquiries.filter(
           (inquiry) => inquiry.locationId === state.advancedFilters.locationId
-        );
+        )
       }
 
       if (state.advancedFilters.hasComments !== undefined) {
@@ -376,7 +360,7 @@ export const useInquiriesStore = defineStore('inquiries', {
           state.advancedFilters.hasComments
             ? inquiry.status.countComments > 0
             : inquiry.status.countComments === 0
-        );
+        )
       }
 
       if (state.advancedFilters.hasSupports !== undefined) {
@@ -384,45 +368,42 @@ export const useInquiriesStore = defineStore('inquiries', {
           state.advancedFilters.hasSupports
             ? inquiry.status.countSupports > 0
             : inquiry.status.countSupports === 0
-        );
+        )
       }
 
       if (state.advancedFilters.search) {
-        const searchTerm = state.advancedFilters.search.toLowerCase();
+        const searchTerm = state.advancedFilters.search.toLowerCase()
         filteredInquiries = filteredInquiries.filter(
           (inquiry) =>
             inquiry.title.toLowerCase().includes(searchTerm) ||
             inquiry.description.toLowerCase().includes(searchTerm)
-        );
+        )
       }
 
       return orderBy(
         filteredInquiries,
         [sortColumnsMapping[state.sort.by]],
         [state.sort.reverse ? 'desc' : 'asc']
-      );
+      )
     },
 
     /*
      * Chunked filtered and sorted inquiries for main view
      */
     chunkedList(): Inquiry[] {
-      return this.inquiriesFilteredSorted.slice(0, this.loaded);
+      return this.inquiriesFilteredSorted.slice(0, this.loaded)
     },
 
     inquiriesCount(state: InquiryList): { [key: string]: number } {
-      const count: Record<FilterType, number> = {} as Record<
-        FilterType,
-        number
-      >;
+      const count: Record<FilterType, number> = {} as Record<FilterType, number>
 
       for (const [key, category] of Object.entries(state.categories)) {
         count[key as FilterType] = state.inquiries.filter((inquiry: Inquiry) =>
           category.filterCondition(inquiry)
-        ).length;
+        ).length
       }
 
-      return count;
+      return count
     },
 
     /*
@@ -435,28 +416,27 @@ export const useInquiriesStore = defineStore('inquiries', {
         ),
         ['created'],
         ['desc']
-      ).slice(0, 7);
+      ).slice(0, 7)
     },
 
     loaded(state: InquiryList): number {
-      return state.meta.chunks.loaded * state.meta.chunks.size;
+      return state.meta.chunks.loaded * state.meta.chunks.size
     },
 
     proposalInquiries(state: InquiryList): Inquiry[] {
       return state.inquiries.filter(
-        (inquiry: Inquiry) =>
-          inquiry.type === 'proposal' && !inquiry.status.isArchived
-      );
+        (inquiry: Inquiry) => inquiry.type === 'proposal' && !inquiry.status.isArchived
+      )
     },
 
     inquiriesLoading(state): boolean {
-      return state.meta.status === 'loading';
+      return state.meta.status === 'loading'
     },
 
     countByCategory: (state: InquiryList) => (filterId: FilterType) =>
       state.inquiries.filter((inquiry: Inquiry) =>
         state.categories[filterId].filterCondition(inquiry)
-      ).length
+      ).length,
   },
 
   actions: {
@@ -465,16 +445,16 @@ export const useInquiriesStore = defineStore('inquiries', {
      */
 
     setFilters(filters: AdvancedFilters): void {
-      this.advancedFilters = { ...filters };
-      this.resetChunks();
+      this.advancedFilters = { ...filters }
+      this.resetChunks()
     },
 
     /**
      * Reset filter
      */
     resetFilters(): void {
-      this.advancedFilters = {};
-      this.resetChunks();
+      this.advancedFilters = {}
+      this.resetChunks()
     },
 
     /**
@@ -482,9 +462,9 @@ export const useInquiriesStore = defineStore('inquiries', {
      * @param filter
      */
     setCurrentFilter(filter: FilterType): void {
-      this.currentFilter = filter;
-      this.resetChunks();
-      this.resetFilters();
+      this.currentFilter = filter
+      this.resetChunks()
+      this.resetFilters()
     },
 
     /**
@@ -492,12 +472,9 @@ export const useInquiriesStore = defineStore('inquiries', {
      * @param key
      * @param value
      */
-    updateFilter<K extends keyof AdvancedFilters>(
-      key: K,
-      value: AdvancedFilters[K]
-    ): void {
-      this.advancedFilters[key] = value;
-      this.resetChunks();
+    updateFilter<K extends keyof AdvancedFilters>(key: K, value: AdvancedFilters[K]): void {
+      this.advancedFilters[key] = value
+      this.resetChunks()
     },
     /**
      * Load all inquiries and inquiry groups from the API.
@@ -511,33 +488,30 @@ export const useInquiriesStore = defineStore('inquiries', {
      * @return {Promise<void>}
      */
     async load(forced: boolean = true): Promise<void> {
-      const inquiryGroupsStore = useInquiryGroupsStore();
+      const inquiryGroupsStore = useInquiryGroupsStore()
 
-      if (
-        this.meta.status === 'loading' ||
-        (!forced && this.meta.status === 'loaded')
-      ) {
+      if (this.meta.status === 'loading' || (!forced && this.meta.status === 'loaded')) {
         Logger.debug('Inquiries already loaded or loading, skipping load', {
           status: this.meta.status,
-          forced
-        });
-        return;
+          forced,
+        })
+        return
       }
 
-      this.meta.status = 'loading';
+      this.meta.status = 'loading'
 
       try {
-        const response = await InquiriesAPI.getInquiries();
-        this.inquiries = response.data.inquiries;
-        inquiryGroupsStore.inquiryGroups = response.data.inquiryGroups;
-        this.meta.status = 'loaded';
+        const response = await InquiriesAPI.getInquiries()
+        this.inquiries = response.data.inquiries
+        inquiryGroupsStore.inquiryGroups = response.data.inquiryGroups
+        this.meta.status = 'loaded'
       } catch (error) {
         if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return;
+          return
         }
-        this.meta.status = 'error';
-        Logger.error('Error loading inquiries', { error });
-        throw error;
+        this.meta.status = 'error'
+        Logger.error('Error loading inquiries', { error })
+        throw error
       }
     },
 
@@ -547,115 +521,113 @@ export const useInquiriesStore = defineStore('inquiries', {
      */
     groupList(filterList: number[]): Inquiry[] {
       return orderBy(
-        this.inquiries.filter((inquiry: Inquiry) =>
-          filterList.includes(inquiry.id)
-        ) ?? [],
+        this.inquiries.filter((inquiry: Inquiry) => filterList.includes(inquiry.id)) ?? [],
         ['created'],
         ['desc']
-      ).slice(0, this.meta.maxInquiriesInNavigation);
+      ).slice(0, this.meta.maxInquiriesInNavigation)
     },
 
     addOrUpdateInquiryGroupInList(payload: { inquiry: Inquiry }) {
       this.inquiries = this.inquiries
         .filter((p) => p.id !== payload.inquiry?.id)
-        .concat(payload.inquiry);
+        .concat(payload.inquiry)
     },
 
     reset(): void {
-      this.$reset();
+      this.$reset()
     },
 
     async changeOwner(payload: { inquiryId: number; userId: string }) {
       try {
-        await InquiriesAPI.changeOwner(payload.inquiryId, payload.userId);
+        await InquiriesAPI.changeOwner(payload.inquiryId, payload.userId)
       } catch (error) {
         if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return;
+          return
         }
         Logger.error('Error changing inquiry owner', {
           error,
-          payload
-        });
-        throw error;
+          payload,
+        })
+        throw error
       } finally {
-        this.load();
+        this.load()
       }
     },
 
     addChunk(): void {
-      this.meta.chunks.loaded = this.meta.chunks.loaded + 1;
+      this.meta.chunks.loaded = this.meta.chunks.loaded + 1
     },
 
     resetChunks(): void {
-      this.meta.chunks.loaded = 1;
+      this.meta.chunks.loaded = 1
     },
 
     async clone(payload: { inquiryId: number }): Promise<void> {
       try {
-        await InquiriesAPI.cloneInquiry(payload.inquiryId);
+        await InquiriesAPI.cloneInquiry(payload.inquiryId)
       } catch (error) {
         if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return;
+          return
         }
         Logger.error('Error cloning inquiry', {
           error,
-          payload
-        });
-        throw error;
+          payload,
+        })
+        throw error
       } finally {
-        this.load();
+        this.load()
       }
     },
 
     async delete(payload: { inquiryId: number }): Promise<void> {
       try {
-        await InquiriesAPI.deleteInquiry(payload.inquiryId);
+        await InquiriesAPI.deleteInquiry(payload.inquiryId)
       } catch (error) {
         if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return;
+          return
         }
         Logger.error('Error deleting inquiry', {
           error,
-          payload
-        });
-        throw error;
+          payload,
+        })
+        throw error
       } finally {
-        this.load();
+        this.load()
       }
     },
 
     async toggleArchive(payload: { inquiryId: number }) {
       try {
-        await InquiriesAPI.toggleArchive(payload.inquiryId);
+        await InquiriesAPI.toggleArchive(payload.inquiryId)
       } catch (error) {
         if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return;
+          return
         }
         Logger.error('Error archiving/restoring inquiry', {
           error,
-          payload
-        });
-        throw error;
+          payload,
+        })
+        throw error
       } finally {
-        this.load();
+        this.load()
       }
     },
 
     async takeOver(payload: { inquiryId: number }) {
       try {
-        await InquiriesAPI.takeOver(payload.inquiryId);
+        await InquiriesAPI.takeOver(payload.inquiryId)
       } catch (error) {
         if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return;
+          return
         }
         Logger.error('Error archiving/restoring inquiry', {
           error,
-          payload
-        });
-        throw error;
+          payload,
+        })
+        throw error
       } finally {
-        this.load();
+        this.load()
       }
-    }
-  }
-});
+    },
+  },
+})

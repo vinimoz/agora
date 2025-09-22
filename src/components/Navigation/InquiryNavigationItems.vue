@@ -4,28 +4,22 @@
 -->
 
 <script setup lang="ts">
-import { t } from '@nextcloud/l10n';
+import { t } from '@nextcloud/l10n'
 
-import NcActionButton from '@nextcloud/vue/components/NcActionButton';
-import NcAppNavigationItem from '@nextcloud/vue/components/NcAppNavigationItem';
-import { InquiryTypesUI } from '../../helpers/modules/InquiryHelper.ts';
-import { Inquiry } from '../../Types/index.ts';
-import { InquiryGeneralIcons } from '../../utils/icons.ts';
+import NcActionButton from '@nextcloud/vue/components/NcActionButton'
+import NcAppNavigationItem from '@nextcloud/vue/components/NcAppNavigationItem'
+import { InquiryTypesUI } from '../../helpers/modules/InquiryHelper.ts'
+import { Inquiry } from '../../Types/index.ts'
+import { InquiryGeneralIcons } from '../../utils/icons.ts'
 
-const emit = defineEmits(['cloneInquiry', 'toggleArchive', 'deleteInquiry']);
-const { inquiry } = defineProps<{ inquiry: Inquiry }>();
-
-
+const emit = defineEmits(['cloneInquiry', 'toggleArchive', 'deleteInquiry'])
+const { inquiry } = defineProps<{ inquiry: Inquiry }>()
 </script>
 
 <template>
   <NcAppNavigationItem
     :name="inquiry.title"
-    :to="
-      inquiry.permissions.view
-        ? { name: 'inquiry', params: { id: inquiry.id } }
-        : null
-    "
+    :to="inquiry.permissions.view ? { name: 'inquiry', params: { id: inquiry.id } } : null"
     :class="{ closed: inquiry.status.isExpired }"
   >
     <template #icon>

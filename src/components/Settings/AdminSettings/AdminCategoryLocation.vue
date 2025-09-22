@@ -1,144 +1,136 @@
 <script setup lang="ts">
-import { t } from '@nextcloud/l10n';
-import { ref, onMounted, computed } from 'vue';
-import NcButton from '@nextcloud/vue/components/NcButton';
-import NcInputField from '@nextcloud/vue/components/NcInputField';
-import NcSelect from '@nextcloud/vue/components/NcSelect';
-import TreeItem from './TreeItem.vue';
-import BaseEntry from '../../Type/index.ts';
-import { useAppSettingsStore } from '../../../stores/appSettings';
+import { t } from '@nextcloud/l10n'
+import { ref, onMounted, computed } from 'vue'
+import NcButton from '@nextcloud/vue/components/NcButton'
+import NcInputField from '@nextcloud/vue/components/NcInputField'
+import NcSelect from '@nextcloud/vue/components/NcSelect'
+import TreeItem from './TreeItem.vue'
+import BaseEntry from '../../../Types/index.ts'
+import { useAppSettingsStore } from '../../../stores/appSettings'
 
-const appSettingsStore = useAppSettingsStore();
+const appSettingsStore = useAppSettingsStore()
 
 // Form fields - maintenant des objets pour NcSelect
-const selectedCategory = ref({ value: 0, label: t('agora', 'No parent') });
-const selectedLocation = ref({ value: 0, label: t('agora', 'No parent') });
+const selectedCategory = ref({ value: 0, label: t('agora', 'No parent') })
+const selectedLocation = ref({ value: 0, label: t('agora', 'No parent') })
 
 // FOR BUILD THE TREE
-const categories = computed(() => appSettingsStore.categoryTab || []);
-const locations = computed(() => appSettingsStore.locationTab || []);
+const categories = computed(() => appSettingsStore.categoryTab || [])
+const locations = computed(() => appSettingsStore.locationTab || [])
 
 // FOR THE SELECT
-const newCategory = ref({ name: '', parentId: 0 });
-const newLocation = ref({ name: '', parentId: 0 });
+const newCategory = ref({ name: '', parentId: 0 })
+const newLocation = ref({ name: '', parentId: 0 })
 
-const editingItem = ref(null);
-const activeTab = ref('categories');
-const isLoaded = ref(false);
+const editingItem = ref(null)
+const activeTab = ref('categories')
+const isLoaded = ref(false)
 
 // MOUNTED
 onMounted(() => {
-  isLoaded.value = true;
-});
+  isLoaded.value = true
+})
 
 const hierarchicalCategory = computed(() => {
-  if (!Array.isArray(appSettingsStore.categoryTab)) return [];
+  if (!Array.isArray(appSettingsStore.categoryTab)) return []
 
-  const categoriesList = buildHierarchy(appSettingsStore.categoryTab).map(
-    (item) => ({
-      value: item.id,
-      label: `${'— '.repeat(item.depth ?? 0)}${item.name ?? '[no name]'}`,
-      original: item
-    })
-  );
+  const categoriesList = buildHierarchy(appSettingsStore.categoryTab).map((item) => ({
+    value: item.id,
+    label: `${'— '.repeat(item.depth ?? 0)}${item.name ?? '[no name]'}`,
+    original: item,
+  }))
 
-  return [{ value: 0, label: t('agora', 'No parent') }, ...categoriesList];
-});
+  return [{ value: 0, label: t('agora', 'No parent') }, ...categoriesList]
+})
 
 const hierarchicalLocation = computed(() => {
-  if (!Array.isArray(appSettingsStore.locationTab)) return [];
+  if (!Array.isArray(appSettingsStore.locationTab)) return []
 
-  const locationsList = buildHierarchy(appSettingsStore.locationTab).map(
-    (item) => ({
-      value: item.id,
-      label: `${'— '.repeat(item.depth ?? 0)}${item.name ?? '[no name]'}`,
-      original: item
-    })
-  );
-  return [{ value: 0, label: t('agora', 'No parent') }, ...locationsList];
-});
+  const locationsList = buildHierarchy(appSettingsStore.locationTab).map((item) => ({
+    value: item.id,
+    label: `${'— '.repeat(item.depth ?? 0)}${item.name ?? '[no name]'}`,
+    original: item,
+  }))
+  return [{ value: 0, label: t('agora', 'No parent') }, ...locationsList]
+})
 
 function buildHierarchy(list: BaseEntry[], parentId = 0, depth = 0): BaseEntry[] {
-  if (!Array.isArray(list)) return [];
+  if (!Array.isArray(list)) return []
   return list
     .filter((item) => item?.parentId === parentId)
     .map((item) => {
-      const children = buildHierarchy(list, item.id, depth + 1);
+      const children = buildHierarchy(list, item.id, depth + 1)
       return {
         ...item,
         depth,
-        children
-      };
+        children,
+      }
     })
-    .flatMap((item) => [item, ...item.children]);
+    .flatMap((item) => [item, ...item.children])
 }
 
 // METHODS USED INTO BUILD THE TREE
 const editingOptions = computed(() => {
-  if (!editingItem.value) return [];
+  if (!editingItem.value) return []
 
   if (editingItem.value.type === 'category') {
-    return hierarchicalCategory.value.filter(
-      (opt) => opt.value !== editingItem.value.id
-    );
+    return hierarchicalCategory.value.filter((opt) => opt.value !== editingItem.value.id)
   }
-  return hierarchicalLocation.value.filter(
-    (opt) => opt.value !== editingItem.value.id
-  );
-});
+  return hierarchicalLocation.value.filter((opt) => opt.value !== editingItem.value.id)
+})
 
 const addCategory = () => {
   if (newCategory.value.name.trim()) {
-    const parentId = selectedCategory.value?.value || 0;
-    appSettingsStore.addCategory(newCategory.value.name, parentId);
-    newCategory.value.name = '';
-    selectedCategory.value = { value: 0, label: t('agora', 'No parent') };
+    const parentId = selectedCategory.value?.value || 0
+    appSettingsStore.addCategory(newCategory.value.name, parentId)
+    newCategory.value.name = ''
+    selectedCategory.value = { value: 0, label: t('agora', 'No parent') }
   }
-};
+}
 
 const addLocation = () => {
   if (newLocation.value.name.trim()) {
-    const parentId = selectedLocation.value?.value || 0;
-    appSettingsStore.addLocation(newLocation.value.name, parentId);
-    newLocation.value.name = '';
-    selectedLocation.value = { value: 0, label: t('agora', 'No parent') };
+    const parentId = selectedLocation.value?.value || 0
+    appSettingsStore.addLocation(newLocation.value.name, parentId)
+    newLocation.value.name = ''
+    selectedLocation.value = { value: 0, label: t('agora', 'No parent') }
   }
-};
+}
 
 const editingParent = computed({
   get: () => {
-    if (!editingItem.value) return { value: 0, label: t('agora', 'No parent') };
+    if (!editingItem.value) return { value: 0, label: t('agora', 'No parent') }
 
-    const parentId = editingItem.value.parentId || 0;
+    const parentId = editingItem.value.parentId || 0
     if (editingItem.value.type === 'category') {
       return (
         hierarchicalCategory.value.find((opt) => opt.value === parentId) || {
           value: 0,
-          label: t('agora', 'No parent')
+          label: t('agora', 'No parent'),
         }
-      );
+      )
     }
     return (
       hierarchicalLocation.value.find((opt) => opt.value === parentId) || {
         value: 0,
-        label: t('agora', 'No parent')
+        label: t('agora', 'No parent'),
       }
-    );
+    )
   },
   set: (selectedOption) => {
     if (editingItem.value && selectedOption) {
-      editingItem.value.parentId = Number(selectedOption.value) || 0;
+      editingItem.value.parentId = Number(selectedOption.value) || 0
     }
-  }
-});
+  },
+})
 
 const editItem = (item, type) => {
   editingItem.value = {
     ...item,
     type,
-    parentId: item.parentId || 0
-  };
-};
+    parentId: item.parentId || 0,
+  }
+}
 
 const saveEdit = () => {
   if (editingItem.value) {
@@ -147,40 +139,36 @@ const saveEdit = () => {
         editingItem.value.id,
         editingItem.value.name,
         editingItem.value.parentId
-      );
+      )
     } else {
       appSettingsStore.updateLocation(
         editingItem.value.id,
         editingItem.value.name,
         editingItem.value.parentId
-      );
+      )
     }
-    editingItem.value = null;
+    editingItem.value = null
   }
-};
+}
 
 const deleteItem = (id, type) => {
   if (confirm(t('agora', 'Are you sure you want to delete this item?'))) {
     try {
       if (type === 'category') {
-        appSettingsStore.deleteCategory(id);
+        appSettingsStore.deleteCategory(id)
       } else {
-        appSettingsStore.deleteLocation(id);
+        appSettingsStore.deleteLocation(id)
       }
     } catch (error) {
-      console.error('Error deleting item:', error);
-      alert(t('agora', 'Error deleting item'));
+      console.error('Error deleting item:', error)
+      alert(t('agora', 'Error deleting item'))
     }
   }
-};
+}
 
-const rootCategories = computed(() =>
-  categories.value.filter((item) => item.parentId === 0)
-);
+const rootCategories = computed(() => categories.value.filter((item) => item.parentId === 0))
 
-const rootLocations = computed(() =>
-  locations.value.filter((item) => item.parentId === 0)
-);
+const rootLocations = computed(() => locations.value.filter((item) => item.parentId === 0))
 </script>
 
 <template>
@@ -191,16 +179,10 @@ const rootLocations = computed(() =>
 
     <div v-else>
       <div class="tabs">
-        <button
-          :class="{ active: activeTab === 'categories' }"
-          @click="activeTab = 'categories'"
-        >
+        <button :class="{ active: activeTab === 'categories' }" @click="activeTab = 'categories'">
           {{ t('agora', 'Categories') }}
         </button>
-        <button
-          :class="{ active: activeTab === 'locations' }"
-          @click="activeTab = 'locations'"
-        >
+        <button :class="{ active: activeTab === 'locations' }" @click="activeTab = 'locations'">
           {{ t('agora', 'Locations') }}
         </button>
       </div>
@@ -220,11 +202,7 @@ const rootLocations = computed(() =>
               :clearable="false"
               :placeholder="t('agora', 'Select parent category')"
             />
-            <NcButton
-              type="primary"
-              :disabled="!newCategory.name.trim()"
-              @click="addCategory"
-            >
+            <NcButton type="primary" :disabled="!newCategory.name.trim()" @click="addCategory">
               {{ t('agora', 'Add Category') }}
             </NcButton>
           </div>
@@ -262,11 +240,7 @@ const rootLocations = computed(() =>
               :clearable="false"
               :placeholder="t('agora', 'Select parent location')"
             />
-            <NcButton
-              type="primary"
-              :disabled="!newLocation.name.trim()"
-              @click="addLocation"
-            >
+            <NcButton type="primary" :disabled="!newLocation.name.trim()" @click="addLocation">
               {{ t('agora', 'Add Location') }}
             </NcButton>
           </div>
@@ -294,11 +268,7 @@ const rootLocations = computed(() =>
         <div class="modal-content">
           <h3>
             {{ t('agora', 'Edit') }}
-            {{
-              editingItem.type === 'category'
-                ? t('agora', 'Category')
-                : t('agora', 'Location')
-            }}
+            {{ editingItem.type === 'category' ? t('agora', 'Category') : t('agora', 'Location') }}
           </h3>
           <NcInputField
             v-model="editingItem.name"

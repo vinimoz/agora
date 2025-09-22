@@ -4,22 +4,22 @@
 -->
 
 <script setup lang="ts">
-import { computed } from 'vue';
-import { t } from '@nextcloud/l10n';
+import { computed } from 'vue'
+import { t } from '@nextcloud/l10n'
 
-import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch';
+import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
 
-import UserItem from '../User/UserItem.vue';
-import { useInquiryStore } from '../../stores/inquiry.ts';
-import { VirtualUserItemType } from '../../Types/index.ts';
+import UserItem from '../User/UserItem.vue'
+import { useInquiryStore } from '../../stores/inquiry.ts'
+import { VirtualUserItemType } from '../../Types/index.ts'
 
-const inquiryStore = useInquiryStore();
+const inquiryStore = useInquiryStore()
 
 const userItemProps = computed<{
-  label: string;
-  type: VirtualUserItemType;
-  disabled?: boolean;
-  description?: string;
+  label: string
+  type: VirtualUserItemType
+  disabled?: boolean
+  description?: string
 }>(() => ({
   label: t('agora', 'Internal access'),
   type: 'internalAccess',
@@ -27,18 +27,18 @@ const userItemProps = computed<{
   description:
     inquiryStore.configuration.access === 'private'
       ? t('agora', 'This inquiry is private')
-      : t('agora', 'This is an openly accessible inquiry')
-}));
+      : t('agora', 'This is an openly accessible inquiry'),
+}))
 
 const inquiryAccess = computed({
   get() {
-    return inquiryStore.configuration.access === 'open';
+    return inquiryStore.configuration.access === 'open'
   },
   set(value) {
-    inquiryStore.configuration.access = value ? 'open' : 'private';
-    inquiryStore.write();
-  }
-});
+    inquiryStore.configuration.access = value ? 'open' : 'private'
+    inquiryStore.write()
+  },
+})
 </script>
 
 <template>

@@ -4,15 +4,15 @@
 -->
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref } from 'vue'
 
-const clamped = ref(true);
+const clamped = ref(true)
 
 /**
  * Toggles the clamped state
  */
 function toggleClamp() {
-  clamped.value = !clamped.value;
+  clamped.value = !clamped.value
 }
 </script>
 
@@ -20,8 +20,8 @@ function toggleClamp() {
   <div class="header_bar">
     <div class="header_bar_top">
       <div class="bar_top_left">
-        <div :class="['header_title', { clamped }]" @click="toggleClamp()">
-          <slot name="title" />
+        <div :class="['header_avatar', { clamped }]" @click="toggleClamp()">
+          <slot name="avatar" />
         </div>
         <div class="bar_top_left_sub">
           <slot name="sub" />
@@ -78,7 +78,7 @@ function toggleClamp() {
       flex-wrap: wrap;
     }
 
-    .header_title {
+    .header_avatar {
       font-weight: bold;
       font-size: 1em;
       line-height: 1.5em;

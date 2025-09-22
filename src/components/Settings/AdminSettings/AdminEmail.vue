@@ -4,26 +4,26 @@
 -->
 
 <script setup>
-import { computed, ref } from 'vue';
-import { marked } from 'marked';
-import { gfmHeadingId } from 'marked-gfm-heading-id';
-import DOMPurify from 'dompurify';
-import LanguageMarkdownIcon from 'vue-material-design-icons/LanguageMarkdown.vue';
-import { t } from '@nextcloud/l10n';
-import { useAppSettingsStore } from '../../../stores/appSettings.ts';
+import { computed, ref } from 'vue'
+import { marked } from 'marked'
+import { gfmHeadingId } from 'marked-gfm-heading-id'
+import DOMPurify from 'dompurify'
+import LanguageMarkdownIcon from 'vue-material-design-icons/LanguageMarkdown.vue'
+import { t } from '@nextcloud/l10n'
+import { useAppSettingsStore } from '../../../stores/appSettings.ts'
 
-import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch';
-const appSettingsStore = useAppSettingsStore();
+import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
+const appSettingsStore = useAppSettingsStore()
 
 const markedPrefix = {
-  prefix: 'disclaimer-'
-};
+  prefix: 'disclaimer-',
+}
 
-const preview = ref(false);
+const preview = ref(false)
 const markedDisclaimer = computed(() => {
-  marked.use(gfmHeadingId(markedPrefix));
-  return DOMPurify.sanitize(marked.parse(appSettingsStore.disclaimer));
-});
+  marked.use(gfmHeadingId(markedPrefix))
+  return DOMPurify.sanitize(marked.parse(appSettingsStore.disclaimer))
+})
 </script>
 
 <template>
@@ -41,11 +41,7 @@ const markedDisclaimer = computed(() => {
         <span>{{ t('agora', 'Additional email disclaimer') }}</span>
         <LanguageMarkdownIcon />
       </div>
-      <NcCheckboxRadioSwitch
-        v-model="preview"
-        type="switch"
-        @change="appSettingsStore.write()"
-      >
+      <NcCheckboxRadioSwitch v-model="preview" type="switch" @change="appSettingsStore.write()">
         {{ t('agora', 'Preview') }}
       </NcCheckboxRadioSwitch>
     </div>
@@ -55,11 +51,7 @@ const markedDisclaimer = computed(() => {
       @change="appSettingsStore.write()"
     />
     <!-- eslint-disable-next-line vue/no-v-html -->
-    <div
-      v-show="preview"
-      class="inquiries-markdown"
-      v-html="markedDisclaimer"
-    />
+    <div v-show="preview" class="inquiries-markdown" v-html="markedDisclaimer" />
   </div>
 </template>
 

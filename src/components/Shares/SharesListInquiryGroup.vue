@@ -4,34 +4,34 @@
 -->
 
 <script setup lang="ts">
-import { t } from '@nextcloud/l10n';
+import { t } from '@nextcloud/l10n'
 
-import ShareIcon from 'vue-material-design-icons/ShareVariant.vue';
+import ShareIcon from 'vue-material-design-icons/ShareVariant.vue'
 
-import { ConfigBox } from '../Base/index.ts';
-import ShareItem from './ShareItem.vue';
-import UserSearch from '../User/UserSearch.vue';
+import { ConfigBox } from '../Base/index.ts'
+import ShareItem from './ShareItem.vue'
+import UserSearch from '../User/UserSearch.vue'
 
-import { useSharesStore } from '../../stores/shares.ts';
-import { showError } from '@nextcloud/dialogs';
-import { User } from '../../Types/index.ts';
+import { useSharesStore } from '../../stores/shares.ts'
+import { showError } from '@nextcloud/dialogs'
+import { User } from '../../Types/index.ts'
 
-const sharesStore = useSharesStore();
+const sharesStore = useSharesStore()
 const { info } = defineProps<{
-  info?: string;
-}>();
+  info?: string
+}>()
 
 const configBoxProps = {
   sharesList: {
-    name: t('agora', 'Shares')
-  }
-};
+    name: t('agora', 'Shares'),
+  },
+}
 
 async function addShare(user: User) {
   try {
-    await sharesStore.add(user, 'inquiryGroup');
+    await sharesStore.add(user, 'inquiryGroup')
   } catch {
-    showError(t('agora', 'Error while adding share'));
+    showError(t('agora', 'Error while adding share'))
   }
 }
 </script>
@@ -52,11 +52,7 @@ async function addShare(user: User) {
 
     <div v-if="sharesStore.shares" class="shares-list shared">
       <TransitionGroup tag="div" name="list" :css="false">
-        <ShareItem
-          v-for="share in sharesStore.active"
-          :key="share.id"
-          :share="share"
-        />
+        <ShareItem v-for="share in sharesStore.active" :key="share.id" :share="share" />
       </TransitionGroup>
     </div>
   </ConfigBox>
