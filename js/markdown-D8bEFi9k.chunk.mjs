@@ -12,7 +12,7 @@
 })();
 const we = "agora", ve = "1.0.0-rc5";
 import { i as O, d as b, k as w, E as M, F as N, G as k, H as V, c as S, o as p, r as T, a as h, f as F, I as R, u as v, J as P, x as B, z as q, K as z, e as _, n as j, g as H, w as C, m as E, j as J, L as K, M as W, B as Q } from "./NcEmptyContent-q-geAf0w-OoTkDdhx.chunk.mjs";
-import { b as f, c as d, L as c } from "./NcDashboardWidget-Wkx_9xKh-9hyJLnES.chunk.mjs";
+import { b as f, c as d, L as c } from "./NcDashboardWidget-Wkx_9xKh-Byosa_Pq.chunk.mjs";
 import { N as X } from "./NcRichText-G8kzsdwx--9l1qhwo.chunk.mjs";
 const Y = ["role"], Z = { key: 0, class: "notecard__heading" }, x = { class: "notecard__text" }, ee = b({ __name: "NcNoteCard", props: { heading: { default: void 0 }, showAlert: { type: Boolean }, text: { default: void 0 }, type: { default: "warning" } }, setup(e) {
   const t = e, r = w(() => t.showAlert || t.type === "error"), a = w(() => {
@@ -247,4 +247,4 @@ export {
   ne as j,
   I as u
 };
-//# sourceMappingURL=markdown-BRmYFYbf.chunk.mjs.map
+//# sourceMappingURL=markdown-D8bEFi9k.chunk.mjs.map

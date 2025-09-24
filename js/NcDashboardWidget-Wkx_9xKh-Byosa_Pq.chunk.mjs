@@ -10406,9 +10406,12 @@ const ir = Kc(Zk), ii = pn("inquiryGroups", () => {
   const i = Ee(), r = ii();
   if (i.route.name === "group") return r.inquiriesInCurrendInquiryGroup;
   let l = s.inquiries.filter((u) => this.currentCategory?.filterCondition(u)) ?? [];
-  if (s.advancedFilters.type && (l = l.filter((u) => u.type === s.advancedFilters.type)), s.advancedFilters.categoryId && (l = l.filter((u) => u.categoryId === s.advancedFilters.categoryId)), s.advancedFilters.locationId && (l = l.filter((u) => u.locationId === s.advancedFilters.locationId)), s.advancedFilters.hasComments !== void 0 && (l = l.filter((u) => s.advancedFilters.hasComments ? u.status.countComments > 0 : u.status.countComments === 0)), s.advancedFilters.hasSupports !== void 0 && (l = l.filter((u) => s.advancedFilters.hasSupports ? u.status.countSupports > 0 : u.status.countSupports === 0)), s.advancedFilters.search) {
-    const u = s.advancedFilters.search.toLowerCase();
-    l = l.filter((g) => g.title.toLowerCase().includes(u) || g.description.toLowerCase().includes(u));
+  if (s.advancedFilters.type && (l = l.filter((u) => u.type === s.advancedFilters.type)), s.advancedFilters.categoryId && (l = l.filter((u) => u.categoryId === s.advancedFilters.categoryId)), s.advancedFilters.locationId && (l = l.filter((u) => u.locationId === s.advancedFilters.locationId)), s.advancedFilters.hasComments === true && (l = l.filter((u) => u.status.countComments > 0)), s.advancedFilters.hasComments === false && (l = l.filter((u) => u.status.countComments === 0)), s.advancedFilters.hasSupports === true ? l = l.filter((u) => u.status.countSupports > 0) : s.advancedFilters.hasSupports === false && (l = l.filter((u) => u.status.countSupports === 0)), s.advancedFilters.search) {
+    const u = (p) => p.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase(), g = u(s.advancedFilters.search);
+    l = l.filter((p) => {
+      const L = u(p.title), w = u(p.description || ""), D = L.includes(g), b = w.includes(g);
+      return D || b;
+    });
   }
   return ir(l, [Qk[s.sort.by]], [s.sort.reverse ? "desc" : "asc"]);
 }, chunkedList() {
@@ -12209,4 +12212,4 @@ export {
   fL as y,
   Af as z
 };
-//# sourceMappingURL=NcDashboardWidget-Wkx_9xKh-9hyJLnES.chunk.mjs.map
+//# sourceMappingURL=NcDashboardWidget-Wkx_9xKh-Byosa_Pq.chunk.mjs.map

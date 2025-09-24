@@ -53,14 +53,14 @@ const isMobile = ref(window.innerWidth < 768)
 
 const isGridView = computed(() => preferencesStore.user.defaultViewInquiry === 'table-view')
 
-const emit = defineEmits(['edit-parent', 'route-child'])
+const emit = defineEmits(['editParent', 'routeChild'])
 
 const editParent = () => {
-  emit('edit-parent')
+  emit('editParent')
 }
 
 const routeChild = (inquiryId: number) => {
-  emit('route-child', inquiryId)
+  emit('routeChild', inquiryId)
 }
 
 onMounted(async () => {

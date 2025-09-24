@@ -12,10 +12,10 @@
 })();
 const ol = "agora", il = "1.0.0-rc5";
 import { c, o as p, f as i, w as u, B as m, z as n, u as e, t, e as F, x as k, _ as D, a as s, v as ce, P as U, k as A, D as ge, Q as se, S as ne, T as me, U as C, L as G, d as H, V as ve, y as ye, M as Z, b as Q, I as ae, q as re, s as fe, n as N, g as R, h as _e, p as be } from "./NcEmptyContent-q-geAf0w-OoTkDdhx.chunk.mjs";
-import { I as W, N as T } from "./index-CyPY-RaF.chunk.mjs";
-import { m as de, g as he, d as le, L as oe, I as z, e as X, S as ie } from "./NcDashboardWidget-Wkx_9xKh-9hyJLnES.chunk.mjs";
-import { F as Ve } from "./FlexSettings-BmN5I48k.chunk.mjs";
-import { u as I, _ as $e, a as we } from "./markdown-BRmYFYbf.chunk.mjs";
+import { I as W, N as T } from "./index-DuN0Q5me.chunk.mjs";
+import { m as de, g as he, d as le, L as oe, I as z, e as X, S as ie } from "./NcDashboardWidget-Wkx_9xKh-Byosa_Pq.chunk.mjs";
+import { F as Ve } from "./FlexSettings-B8Fsg-ad.chunk.mjs";
+import { u as I, _ as $e, a as we } from "./markdown-D8bEFi9k.chunk.mjs";
 import { N as q, a as M, b as L } from "./NcRichText-G8kzsdwx--9l1qhwo.chunk.mjs";
 const Se = { class: "user_settings" }, qe = { __name: "AdminActivities", setup(_) {
   const a = I();

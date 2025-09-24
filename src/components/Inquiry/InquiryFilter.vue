@@ -4,7 +4,7 @@
 -->
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, onUnmounted } from 'vue'
 import { t } from '@nextcloud/l10n'
 import { useSessionStore } from '../../stores/session.ts'
 import { FilterType, useInquiriesStore } from '../../stores/inquiries.ts'
@@ -64,9 +64,9 @@ const applyFilters = () => {
     return
   }
   inquiriesStore.setFilters({
-    type: selectedType.value !== 'all' ? (selectedType.value as FilterType) : undefined,
-    categoryId: selectedCategory.value !== 'all' ? selectedCategory.value : undefined,
-    locationId: selectedLocation.value !== 'all' ? selectedLocation.value : undefined,
+    type: selectedType.value === 'all' ? undefined : (selectedType.value as FilterType),
+    categoryId: selectedCategory.value === 'all' ? undefined : selectedCategory.value,
+    locationId: selectedLocation.value === 'all' ? undefined : selectedLocation.value,
     hasComments: hasComments.value,
     hasSupports: hasSupports.value,
     search: searchQuery.value.trim() || undefined,
@@ -85,14 +85,19 @@ const resetFilters = () => {
 
 const activeFiltersCount = computed(() => {
   let count = 0
-  if (selectedType.value !== 'all') count++
-  if (selectedCategory.value !== 'all') count++
-  if (selectedLocation.value !== 'all') count++
-  if (hasComments.value !== null) count++
-  if (hasSupports.value !== null) count++
-  if (searchQuery.value.trim()) count++
+  if (selectedType.value !== 'all') count+=1
+  if (selectedCategory.value !== 'all') count+=1
+  if (selectedLocation.value !== 'all') count+=1
+  if (hasComments.value !== null) count+=1
+  if (hasSupports.value !== null) count+=1
+  if (searchQuery.value.trim()) count+=1
   return count
 })
+
+onUnmounted(() => {
+  inquiriesStore.resetFilters()
+})
+
 </script>
 
 <template>

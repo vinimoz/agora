@@ -11,8 +11,8 @@
   }
 })();
 const A = "agora", h = "1.0.0-rc5";
-import { I as w } from "./index-CyPY-RaF.chunk.mjs";
-import { u as g } from "./NcDashboardWidget-Wkx_9xKh-9hyJLnES.chunk.mjs";
+import { I as w } from "./index-DuN0Q5me.chunk.mjs";
+import { u as g } from "./NcDashboardWidget-Wkx_9xKh-Byosa_Pq.chunk.mjs";
 import { k as V, c as p, o as y, a as n, f as l, w as u, B as d, z as a, u as e, t as r } from "./NcEmptyContent-q-geAf0w-OoTkDdhx.chunk.mjs";
 import { N as m } from "./NcRichText-G8kzsdwx--9l1qhwo.chunk.mjs";
 const _ = { class: "user_settings" }, q = { class: "settings_details" }, I = { class: "user_settings" }, b = { class: "settings_details" }, N = { class: "user_settings" }, S = { __name: "FeatureSettings", setup(f) {
@@ -30,4 +30,4 @@ export {
   S as _,
   k as a
 };
-//# sourceMappingURL=StyleSettings-VrDViAvW.chunk.mjs.map
+//# sourceMappingURL=StyleSettings-D_H2S3oX.chunk.mjs.map

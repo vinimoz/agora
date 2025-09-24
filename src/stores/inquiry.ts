@@ -4,7 +4,7 @@
  */
 
 import { defineStore } from 'pinia'
-import DOMPurify from 'dompurify'
+import domPurify from 'dompurify'
 import { marked } from 'marked'
 import { gfmHeadingId } from 'marked-gfm-heading-id'
 import { t } from '@nextcloud/l10n'
@@ -289,7 +289,7 @@ export const useInquiryStore = defineStore('inquiry', {
 
     descriptionMarkDown(): string {
       marked.use(gfmHeadingId(markedPrefix))
-      return DOMPurify.sanitize(marked.parse(this.description).toString())
+      return domPurify.sanitize(marked.parse(this.description).toString())
     },
   },
 

@@ -20,7 +20,6 @@ let lastUpdated = 0
 let http: AxiosInstance
 let consecutiveErrors = 0
 
-const shouldContinue = true
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
@@ -128,7 +127,7 @@ self.onmessage = async (props) => {
         return
       }
 
-      consecutiveErrors++
+      consecutiveErrors+=1
 
       self.postMessage({
         type: 'error',
@@ -162,7 +161,7 @@ self.onmessage = async (props) => {
       interval,
       message: '[Worker] Started periodic inquirying.',
     })
-    while (shouldContinue) {
+    while (true) {
       await run()
       self.postMessage({
         type: 'status',
@@ -182,7 +181,7 @@ self.onmessage = async (props) => {
       interval,
       message: '[Worker] Started long inquirying.',
     })
-    while (shouldContinue) {
+    while (true) {
       await run()
     }
   }

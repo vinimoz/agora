@@ -12,7 +12,7 @@
 })();
 const O = "agora", W = "1.0.0-rc5";
 import { d as m, t as o, b as h, c as g, o as n, f as d, w as c, a as s, u as e, C as u, e as l, s as f, z as _, D as y, _ as b, h as v, p as q } from "./NcEmptyContent-q-geAf0w-OoTkDdhx.chunk.mjs";
-import { a as D, I as C, N as w, L as x, s as I } from "./NcDashboardWidget-Wkx_9xKh-9hyJLnES.chunk.mjs";
+import { a as D, I as C, N as w, L as x, s as I } from "./NcDashboardWidget-Wkx_9xKh-Byosa_Pq.chunk.mjs";
 import { _ as L } from "./AgoraAppIcon.vue_vue_type_script_setup_true_lang-Dm2Ci4ie.chunk.mjs";
 
 const N = ["href"], M = { class: "inquiry-item__item" }, A = { class: "type-icon" }, B = { class: "item__title" }, E = { class: "item__title__title" }, k = { class: "item__title__description" }, S = m({ __name: "Dashboard", setup(r) {

@@ -3,14 +3,15 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { computed } from 'vue'
+import { computed, Ref } from 'vue'
+import { Inquiry } from '../stores/inquiry.ts'
 import {
   createPermissionContextForContent,
   ContentType,
   type PermissionContext,
-} from '@/utils/permissions.ts'
+} from '../utils/permissions.ts'
 
-export function useInquiryPermissions(inquiry: any) {
+export function useInquiryPermissions(inquiry: Ref<Inquiry>) {
   const context = computed<PermissionContext>(() =>
     createPermissionContextForContent(
       ContentType.Inquiry,

@@ -354,36 +354,47 @@ export const useInquiriesStore = defineStore('inquiries', {
           (inquiry) => inquiry.locationId === state.advancedFilters.locationId
         )
       }
-
-      if (state.advancedFilters.hasComments !== undefined) {
-        filteredInquiries = filteredInquiries.filter((inquiry) =>
-          state.advancedFilters.hasComments
-            ? inquiry.status.countComments > 0
-            : inquiry.status.countComments === 0
+     
+      if (state.advancedFilters.hasComments === true) {
+        filteredInquiries = filteredInquiries.filter((inquiry) => inquiry.status.countComments > 0
         )
       }
+      if (state.advancedFilters.hasComments === false) {
+  		filteredInquiries = filteredInquiries.filter((inquiry) => inquiry.status.countComments === 0)
+       }
 
-      if (state.advancedFilters.hasSupports !== undefined) {
-        filteredInquiries = filteredInquiries.filter((inquiry) =>
-          state.advancedFilters.hasSupports
-            ? inquiry.status.countSupports > 0
-            : inquiry.status.countSupports === 0
+      if (state.advancedFilters.hasSupports === true) {
+        filteredInquiries = filteredInquiries.filter((inquiry) =>  inquiry.status.countSupports > 0
         )
+      }
+      else if (state.advancedFilters.hasSupports === false) {
+  		filteredInquiries = filteredInquiries.filter((inquiry) => inquiry.status.countSupports === 0)
       }
 
       if (state.advancedFilters.search) {
-        const searchTerm = state.advancedFilters.search.toLowerCase()
-        filteredInquiries = filteredInquiries.filter(
-          (inquiry) =>
-            inquiry.title.toLowerCase().includes(searchTerm) ||
-            inquiry.description.toLowerCase().includes(searchTerm)
-        )
+	      const normalizeText = (text: string) => text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
+
+	      const searchTerm = normalizeText(state.advancedFilters.search)
+
+	      const results = filteredInquiries.filter((inquiry) => {
+		      const titleNormalized = normalizeText(inquiry.title)
+		      const descNormalized = normalizeText(inquiry.description || '')
+
+		      const titleMatch = titleNormalized.includes(searchTerm)
+		      const descMatch = descNormalized.includes(searchTerm)
+		      const matches = titleMatch || descMatch
+
+		      return matches
+	      })
+
+	      filteredInquiries = results
       }
 
+
       return orderBy(
-        filteredInquiries,
-        [sortColumnsMapping[state.sort.by]],
-        [state.sort.reverse ? 'desc' : 'asc']
+	      filteredInquiries,
+	      [sortColumnsMapping[state.sort.by]],
+	      [state.sort.reverse ? 'desc' : 'asc']
       )
     },
 
@@ -391,243 +402,243 @@ export const useInquiriesStore = defineStore('inquiries', {
      * Chunked filtered and sorted inquiries for main view
      */
     chunkedList(): Inquiry[] {
-      return this.inquiriesFilteredSorted.slice(0, this.loaded)
+	    return this.inquiriesFilteredSorted.slice(0, this.loaded)
     },
 
     inquiriesCount(state: InquiryList): { [key: string]: number } {
-      const count: Record<FilterType, number> = {} as Record<FilterType, number>
+	    const count: Record<FilterType, number> = {} as Record<FilterType, number>
 
-      for (const [key, category] of Object.entries(state.categories)) {
-        count[key as FilterType] = state.inquiries.filter((inquiry: Inquiry) =>
-          category.filterCondition(inquiry)
-        ).length
-      }
+	    for (const [key, category] of Object.entries(state.categories)) {
+		    count[key as FilterType] = state.inquiries.filter((inquiry: Inquiry) =>
+								      category.filterCondition(inquiry)
+								     ).length
+	    }
 
-      return count
+	    return count
     },
 
     /*
      * Sliced filtered and sorted inquiries for dashboard
      */
     dashboardList(state: InquiryList): Inquiry[] {
-      return orderBy(
-        state.inquiries.filter((inquiry: Inquiry) =>
-          state.categories.relevant.filterCondition(inquiry)
-        ),
-        ['created'],
-        ['desc']
-      ).slice(0, 7)
+	    return orderBy(
+		    state.inquiries.filter((inquiry: Inquiry) =>
+					   state.categories.relevant.filterCondition(inquiry)
+					  ),
+					  ['created'],
+					  ['desc']
+	    ).slice(0, 7)
     },
 
     loaded(state: InquiryList): number {
-      return state.meta.chunks.loaded * state.meta.chunks.size
+	    return state.meta.chunks.loaded * state.meta.chunks.size
     },
 
     proposalInquiries(state: InquiryList): Inquiry[] {
-      return state.inquiries.filter(
-        (inquiry: Inquiry) => inquiry.type === 'proposal' && !inquiry.status.isArchived
-      )
+	    return state.inquiries.filter(
+		    (inquiry: Inquiry) => inquiry.type === 'proposal' && !inquiry.status.isArchived
+	    )
     },
 
     inquiriesLoading(state): boolean {
-      return state.meta.status === 'loading'
+	    return state.meta.status === 'loading'
     },
 
     countByCategory: (state: InquiryList) => (filterId: FilterType) =>
-      state.inquiries.filter((inquiry: Inquiry) =>
-        state.categories[filterId].filterCondition(inquiry)
-      ).length,
+    state.inquiries.filter((inquiry: Inquiry) =>
+			   state.categories[filterId].filterCondition(inquiry)
+			  ).length,
   },
 
   actions: {
-    /**
-     * Filter set
-     */
+	  /**
+	   * Filter set
+	   */
 
-    setFilters(filters: AdvancedFilters): void {
-      this.advancedFilters = { ...filters }
-      this.resetChunks()
-    },
+	  setFilters(filters: AdvancedFilters): void {
+		  this.advancedFilters = { ...filters }
+		  this.resetChunks()
+	  },
 
-    /**
-     * Reset filter
-     */
-    resetFilters(): void {
-      this.advancedFilters = {}
-      this.resetChunks()
-    },
+	  /**
+	   * Reset filter
+	   */
+	  resetFilters(): void {
+		  this.advancedFilters = {}
+		  this.resetChunks()
+	  },
 
-    /**
-     * Change filter
-     * @param filter
-     */
-    setCurrentFilter(filter: FilterType): void {
-      this.currentFilter = filter
-      this.resetChunks()
-      this.resetFilters()
-    },
+	  /**
+	   * Change filter
+	   * @param filter
+	   */
+	  setCurrentFilter(filter: FilterType): void {
+		  this.currentFilter = filter
+		  this.resetChunks()
+		  this.resetFilters()
+	  },
 
-    /**
-     * Update filter
-     * @param key
-     * @param value
-     */
-    updateFilter<K extends keyof AdvancedFilters>(key: K, value: AdvancedFilters[K]): void {
-      this.advancedFilters[key] = value
-      this.resetChunks()
-    },
-    /**
-     * Load all inquiries and inquiry groups from the API.
-     * This will set the `inquiries` and `inquiryGroups` state properties.
-     *
-     * This will also set the `meta.status` to `Loading` while the request is in progress,
-     * and to `Loaded` or `Error` when the request is finished.
-     *
-     * @param {boolean} forced - If false, loading inquiries will only be done, when the status is not `Loaded`.
-     * @throws {Error} If the request fails and is not canceled.
-     * @return {Promise<void>}
-     */
-    async load(forced: boolean = true): Promise<void> {
-      const inquiryGroupsStore = useInquiryGroupsStore()
+	  /**
+	   * Update filter
+	   * @param key
+	   * @param value
+	   */
+	  updateFilter<K extends keyof AdvancedFilters>(key: K, value: AdvancedFilters[K]): void {
+		  this.advancedFilters[key] = value
+		  this.resetChunks()
+	  },
+	  /**
+	   * Load all inquiries and inquiry groups from the API.
+	   * This will set the `inquiries` and `inquiryGroups` state properties.
+	   *
+	   * This will also set the `meta.status` to `Loading` while the request is in progress,
+	   * and to `Loaded` or `Error` when the request is finished.
+	   *
+	   * @param {boolean} forced - If false, loading inquiries will only be done, when the status is not `Loaded`.
+	   * @throws {Error} If the request fails and is not canceled.
+	   * @return {Promise<void>}
+	   */
+	  async load(forced: boolean = true): Promise<void> {
+		  const inquiryGroupsStore = useInquiryGroupsStore()
 
-      if (this.meta.status === 'loading' || (!forced && this.meta.status === 'loaded')) {
-        Logger.debug('Inquiries already loaded or loading, skipping load', {
-          status: this.meta.status,
-          forced,
-        })
-        return
-      }
+		  if (this.meta.status === 'loading' || (!forced && this.meta.status === 'loaded')) {
+			  Logger.debug('Inquiries already loaded or loading, skipping load', {
+				  status: this.meta.status,
+				  forced,
+			  })
+			  return
+		  }
 
-      this.meta.status = 'loading'
+		  this.meta.status = 'loading'
 
-      try {
-        const response = await InquiriesAPI.getInquiries()
-        this.inquiries = response.data.inquiries
-        inquiryGroupsStore.inquiryGroups = response.data.inquiryGroups
-        this.meta.status = 'loaded'
-      } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return
-        }
-        this.meta.status = 'error'
-        Logger.error('Error loading inquiries', { error })
-        throw error
-      }
-    },
+		  try {
+			  const response = await InquiriesAPI.getInquiries()
+			  this.inquiries = response.data.inquiries
+			  inquiryGroupsStore.inquiryGroups = response.data.inquiryGroups
+			  this.meta.status = 'loaded'
+		  } catch (error) {
+			  if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+				  return
+			  }
+			  this.meta.status = 'error'
+			  Logger.error('Error loading inquiries', { error })
+			  throw error
+		  }
+	  },
 
-    /**
-     * Sliced filtered and sorted inquiries for navigation
-     * @param filterList - List of inquiry IDs to filter by
-     */
-    groupList(filterList: number[]): Inquiry[] {
-      return orderBy(
-        this.inquiries.filter((inquiry: Inquiry) => filterList.includes(inquiry.id)) ?? [],
-        ['created'],
-        ['desc']
-      ).slice(0, this.meta.maxInquiriesInNavigation)
-    },
+	  /**
+	   * Sliced filtered and sorted inquiries for navigation
+	   * @param filterList - List of inquiry IDs to filter by
+	   */
+	  groupList(filterList: number[]): Inquiry[] {
+		  return orderBy(
+			  this.inquiries.filter((inquiry: Inquiry) => filterList.includes(inquiry.id)) ?? [],
+				  ['created'],
+			  ['desc']
+		  ).slice(0, this.meta.maxInquiriesInNavigation)
+	  },
 
-    addOrUpdateInquiryGroupInList(payload: { inquiry: Inquiry }) {
-      this.inquiries = this.inquiries
-        .filter((p) => p.id !== payload.inquiry?.id)
-        .concat(payload.inquiry)
-    },
+	  addOrUpdateInquiryGroupInList(payload: { inquiry: Inquiry }) {
+		  this.inquiries = this.inquiries
+		  .filter((p) => p.id !== payload.inquiry?.id)
+		  .concat(payload.inquiry)
+	  },
 
-    reset(): void {
-      this.$reset()
-    },
+	  reset(): void {
+		  this.$reset()
+	  },
 
-    async changeOwner(payload: { inquiryId: number; userId: string }) {
-      try {
-        await InquiriesAPI.changeOwner(payload.inquiryId, payload.userId)
-      } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return
-        }
-        Logger.error('Error changing inquiry owner', {
-          error,
-          payload,
-        })
-        throw error
-      } finally {
-        this.load()
-      }
-    },
+	  async changeOwner(payload: { inquiryId: number; userId: string }) {
+		  try {
+			  await InquiriesAPI.changeOwner(payload.inquiryId, payload.userId)
+		  } catch (error) {
+			  if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+				  return
+			  }
+			  Logger.error('Error changing inquiry owner', {
+				  error,
+				  payload,
+			  })
+			  throw error
+		  } finally {
+			  this.load()
+		  }
+	  },
 
-    addChunk(): void {
-      this.meta.chunks.loaded = this.meta.chunks.loaded + 1
-    },
+	  addChunk(): void {
+		  this.meta.chunks.loaded = this.meta.chunks.loaded + 1
+	  },
 
-    resetChunks(): void {
-      this.meta.chunks.loaded = 1
-    },
+	  resetChunks(): void {
+		  this.meta.chunks.loaded = 1
+	  },
 
-    async clone(payload: { inquiryId: number }): Promise<void> {
-      try {
-        await InquiriesAPI.cloneInquiry(payload.inquiryId)
-      } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return
-        }
-        Logger.error('Error cloning inquiry', {
-          error,
-          payload,
-        })
-        throw error
-      } finally {
-        this.load()
-      }
-    },
+	  async clone(payload: { inquiryId: number }): Promise<void> {
+		  try {
+			  await InquiriesAPI.cloneInquiry(payload.inquiryId)
+		  } catch (error) {
+			  if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+				  return
+			  }
+			  Logger.error('Error cloning inquiry', {
+				  error,
+				  payload,
+			  })
+			  throw error
+		  } finally {
+			  this.load()
+		  }
+	  },
 
-    async delete(payload: { inquiryId: number }): Promise<void> {
-      try {
-        await InquiriesAPI.deleteInquiry(payload.inquiryId)
-      } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return
-        }
-        Logger.error('Error deleting inquiry', {
-          error,
-          payload,
-        })
-        throw error
-      } finally {
-        this.load()
-      }
-    },
+	  async delete(payload: { inquiryId: number }): Promise<void> {
+		  try {
+			  await InquiriesAPI.deleteInquiry(payload.inquiryId)
+		  } catch (error) {
+			  if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+				  return
+			  }
+			  Logger.error('Error deleting inquiry', {
+				  error,
+				  payload,
+			  })
+			  throw error
+		  } finally {
+			  this.load()
+		  }
+	  },
 
-    async toggleArchive(payload: { inquiryId: number }) {
-      try {
-        await InquiriesAPI.toggleArchive(payload.inquiryId)
-      } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return
-        }
-        Logger.error('Error archiving/restoring inquiry', {
-          error,
-          payload,
-        })
-        throw error
-      } finally {
-        this.load()
-      }
-    },
+	  async toggleArchive(payload: { inquiryId: number }) {
+		  try {
+			  await InquiriesAPI.toggleArchive(payload.inquiryId)
+		  } catch (error) {
+			  if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+				  return
+			  }
+			  Logger.error('Error archiving/restoring inquiry', {
+				  error,
+				  payload,
+			  })
+			  throw error
+		  } finally {
+			  this.load()
+		  }
+	  },
 
-    async takeOver(payload: { inquiryId: number }) {
-      try {
-        await InquiriesAPI.takeOver(payload.inquiryId)
-      } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return
-        }
-        Logger.error('Error archiving/restoring inquiry', {
-          error,
-          payload,
-        })
-        throw error
-      } finally {
-        this.load()
-      }
-    },
+	  async takeOver(payload: { inquiryId: number }) {
+		  try {
+			  await InquiriesAPI.takeOver(payload.inquiryId)
+		  } catch (error) {
+			  if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+				  return
+			  }
+			  Logger.error('Error archiving/restoring inquiry', {
+				  error,
+				  payload,
+			  })
+			  throw error
+		  } finally {
+			  this.load()
+		  }
+	  },
   },
 })
