@@ -66,154 +66,20 @@ class InquiryMapper extends QBMapper
     }
 
 
-    public function findChildrenWithCounts(int $inquiryId)
-    {
-	    try {
-		    // Récupérer les données de base des enfants
-		    $childInquiriesData = $this->inquiryMapper->getChildInquiriesBasicData($inquiryId);
-
-		    $children = [];
-		    foreach ($childInquiriesData as $childData) {
-			    // Utiliser la méthode get() existante pour chaque enfant (mais seulement pour les données complexes)
-			    $childInquiry = $this->get($childData['id'], true); // lightweight = true
-
-			    // Construire le résultat en combinant les données simples et complexes
-			    $children[] = [
-				    'id' => (int)$childData['id'],
-				    'title' => (string)$childData['title'],
-				    'type' => (string)$childData['type'],
-				    'moderationStatus' => (string)$childData['moderation_status'],
-				    'description' => (string)$childData['description'],
-				    'configuration' => [
-					    'access' => (string)$childData['access'],
-				    ],
-				    'owner' => [
-					    'id' => (string)$childData['owner'],
-					    'displayName' => (string)$childData['owner'],
-				    ],
-				    'status' => $childInquiry->getStatusArray(),
-				    'inquiryGroups' => $childInquiry->getInquiryGroups(),
-				    'currentUserStatus' => $childInquiry->getCurrentUserStatus()
-			    ];
-		    }
-
-		    return $children;
-	    } catch (DoesNotExistException $e) {
-		    throw new NotFoundException('Inquiry children not found for inquiry parent');
-	    }
-    }
-    /**
-     * Get all child inquiry IDs for a given parent inquiry.
-     *
-     * @param  int $parentId
-     * @return int[]|  Returns an array of IDs if children exist, or empty array if none.
-    public function findChildrenWithCounts(int $parentId, bool $getDeleted = false, bool $withRoles = false): array
-    {
-	    $tempInquiry = new Inquiry(
-		    $this->userSession,
-		    $this->groupManager,
-		    $this->config,
-		    $this->lockMapper,
-		    $this->supportMapper,
-		    $this->commentMapper,
-		    $this->inquiryGroupMapper,
-		    $this->groupShareMapper
-	    );
-
-	    $currentUserStatus = $tempInquiry->getCurrentUserStatus();
-
-	    $qb = $this->db->getQueryBuilder();
-
-	    $qb->select([
-		    'i.id',
-		    'i.title',
-		    'i.type',
-		    'i.created',
-		    'i.last_interaction',
-		    'i.description',
-		    'i.owner',
-		    'i.access',
-		    'i.expire',
-		    'i.archived',
-		    'i.moderation_status',
-		    $qb->createFunction('COUNT(DISTINCT c.id) AS countComments'),
-		    $qb->createFunction('COUNT(DISTINCT s.id) AS countSupports'),
-		    $qb->createFunction('GROUP_CONCAT(DISTINCT ig.group_id) AS inquiryGroups') 
-	    ])
-	->from($this->getTableName(), 'i')
-	->leftJoin('i', Comment::TABLE, 'c', $qb->expr()->eq('c.inquiry_id', 'i.id'))
-	->leftJoin('i', Support::TABLE, 's', $qb->expr()->eq('s.inquiry_id', 'i.id'))
-	->leftJoin('i', InquiryGroup::RELATION_TABLE, 'ig', $qb->expr()->eq('ig.inquiry_id', 'i.id')) 
-	->where(
-		$qb->expr()->andX(
-			$qb->expr()->eq('i.parent_id', $qb->createNamedParameter($parentId, IQueryBuilder::PARAM_INT)),
-			$qb->expr()->eq('i.access', $qb->createNamedParameter('open')),
-			$qb->expr()->eq('i.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT))
-		)
-	)
-	->groupBy('i.id');
-
-	    $result = $qb->execute();
-	    $inquiries = $result->fetchAll();
-	    $result->closeCursor();
-	    // Compter les participants pour chaque enfant
-	    foreach ($inquiries as &$inquiry) {
-		    $participantsQb = $this->db->getQueryBuilder();
-		    $participantsQb->select($participantsQb->createFunction('COUNT(*)'))
-		     ->from($this->getTableName())
-		     ->where($participantsQb->expr()->eq('parent_id', $participantsQb->createNamedParameter($inquiry['id'], IQueryBuilder::PARAM_INT)))
-		     ->andWhere($participantsQb->expr()->eq('access', $participantsQb->createNamedParameter('open')))
-		     ->andWhere($participantsQb->expr()->eq('deleted', $participantsQb->expr()->literal(0, IQueryBuilder::PARAM_INT)));
-
-		    $participantsResult = $participantsQb->execute();
-		    $inquiry['countParticipants'] = (int)$participantsResult->fetchOne();
-		    $participantsResult->closeCursor();
-
-		    // Traitement des groupes
-		    $inquiry['inquiryGroups'] = !empty($inquiry['inquirygroups']) 
-			    ? array_map('trim', explode(',', $inquiry['inquirygroups']))
-			    : [];
-	    }
-
-	    return array_map(
-		    function (array $row) {
-			    return [
-				    'id' => (int)$row['id'],
-				    'title' => (string)$row['title'],
-				    'type' => (string)$row['type'],
-				    'moderationStatus' => (string)$row['moderation_status'],
-				    'description' => (string)$row['description'],
-				    'configuration' => [
-					    'access' => (string)$row['access'],
-				    ],
-				    'owner' => [
-					    'id' => (string)$row['owner'],
-					    'displayName' => (string)$row['owner'], 
-				    ],
-				    'status' => [
-					    'countComments' => (int)($row['countComments'] ?? 0),
-					    'countSupports' => (int)($row['countSupports'] ?? 0),
-					    'countParticipants' => (int)($row['countParticipants'] ?? 0),
-					    'isExpired' => ((int)($row['expire'] ?? 0) > 0 && (int)$row['expire'] < time()),
-					    'isArchived' => (bool)($row['archived'] ?? false),
-					    'created' => (int)$row['created'],
-					    'lastInteraction' => (int)$row['last_interaction'],
-				    ],
-				    'inquiryGroups' => $row['inquiryGroups'] ?? [], 
-				    'currentUserStatus' => $currentUserStatus
-			    ];
-		    }, $inquiries
-	    );
-    }
-     */
-
-
     public function getChildInquiryIds(int $parentId)
     {
+	    $currentUserId = $this->userSession->getCurrentUserId();
 	    $qb = $this->db->getQueryBuilder();
 	    $qb->select(self::TABLE . '.id')
-	->from($this->getTableName(), self::TABLE)
-	->where($qb->expr()->eq(self::TABLE . '.parent_id', $qb->createNamedParameter($parentId, IQueryBuilder::PARAM_INT)));
+		->from($this->getTableName(), self::TABLE)
+		->where($qb->expr()->eq(self::TABLE . '.parent_id', $qb->createNamedParameter($parentId, IQueryBuilder::PARAM_INT)));
+
+	    $qb->andWhere($qb->expr()->neq(self::TABLE . '.access', $qb->createNamedParameter('private')));
+
+	    if ($currentUserId !== null) {
+		    $qb->andWhere($qb->expr()->neq(self::TABLE . '.owner', $qb->createNamedParameter($currentUserId)));
+	    }
+
 
 	    $stmt = $qb->executeQuery();
 	    $rows = $stmt->fetchAll(); // each row is ['id' => ...]

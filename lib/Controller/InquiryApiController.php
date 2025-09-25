@@ -75,7 +75,6 @@ class InquiryApiController extends BaseApiV2Controller
                 'shares' => $this->shareService->list($inquiryId),
                 'subscribed' => $this->subscriptionService->get($inquiryId),
                 'attachments' => $this->attachmentService->getAll($inquiryId),
-                'childs' => $this->inquiryService->findChildrenWithCounts($inquiryId),
             ]
         );
     }

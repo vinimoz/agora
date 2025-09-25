@@ -72,6 +72,7 @@ onMounted(async () => {
       showError('Failed to load inquiry:', error)
     } finally {
       inquiryParent.value.id = inquiryStore.id
+      inquiryParent.value.parentId = inquiryStore.parentId
       inquiryParent.value.title = inquiryStore.title
       inquiryParent.value.type = inquiryStore.type
       inquiryParent.value.owner = inquiryStore.owner

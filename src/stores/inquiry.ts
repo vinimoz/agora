@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: 2024 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-
 import { defineStore } from 'pinia'
 import domPurify from 'dompurify'
 import { marked } from 'marked'
@@ -216,26 +215,7 @@ export const useInquiryStore = defineStore('inquiry', {
   }),
 
   getters: {
-    viewMode(state): ViewMode {
-      const preferencesStore = usePreferencesStore()
-      if (state.type === 'proposal') {
-        return preferencesStore.viewProposalInquiry
-      }
-      if (state.type === 'petition') {
-        return preferencesStore.viewPetitionInquiry
-      }
-      if (state.type === 'debate') {
-        return preferencesStore.viewDebateInquiry
-      }
-      if (state.type === 'grievance') {
-        return preferencesStore.viewGrievanceInquiry
-      }
-      if (state.type === 'project') {
-        return preferencesStore.viewProjectInquiry
-      }
-      return 'table-view'
-    },
-
+   
     safeParticipants(): User[] {
       const sessionStore = useSessionStore()
       const inquiriesStore = useInquiriesStore()
@@ -298,6 +278,7 @@ export const useInquiryStore = defineStore('inquiry', {
       this.$reset()
     },
 
+
     setSuggestionExpiration(payload: { expire: number }): void {
       this.configuration.suggestionsExpire = moment(payload.expire).unix()
       this.write()
@@ -325,7 +306,7 @@ export const useInquiryStore = defineStore('inquiry', {
     },
 
     async load(inquiryId: number | null = null): Promise<void> {
-      // const inquiriesStore = useInquiriesStore()
+      const inquiriesStore = useInquiriesStore()
       const sessionStore = useSessionStore()
       const optionsStore = useOptionsStore()
       const sharesStore = useSharesStore()
@@ -354,7 +335,7 @@ export const useInquiryStore = defineStore('inquiry', {
         commentsStore.comments = response.data.comments
         subscriptionStore.subscribed = response.data.subscribed
         attachmentsStore.attachments = response.data.attachments
-        this.childs = response.data.childs
+
         if (response.data.inquiry.owner.id === sessionStore.currentUser.id)
           sessionStore.currentUser.isOwner = true
         else sessionStore.currentUser.isOwner = false

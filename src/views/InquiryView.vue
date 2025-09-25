@@ -85,7 +85,12 @@ async function routeChild(childId: string) {
 async function loadInquiry(id: string) {
   try {
     const response = await inquiryStore.load(id)
-    inquiryStore.childs = response.data.childs
+    const result=inquiriesStore.inquiries.filter(i => 
+               i.parentId === Number(id) &&
+	       i.configuration.access !== 'private'
+     )
+    inquiryStore.childs=result
+
     if (inquiryStore.childs.length === 0) {
       inquiryStore.status.forceEditMode = true
       editMode.value = true

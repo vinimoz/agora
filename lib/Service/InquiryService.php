@@ -204,10 +204,9 @@ class InquiryService
         }
     }
 
-    public function findChildrenWithCounts(int $inquiryId)
+    public function getChildsInquiryIds(int $inquiryId)
     {
 	    try {
-		    // Récupérer les données de base des enfants
 		    $childInquiriesData = $this->inquiryMapper->getChildInquiryIds($inquiryId);
 
 		    $children = [];

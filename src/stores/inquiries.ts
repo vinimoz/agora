@@ -253,6 +253,7 @@ export const useInquiriesStore = defineStore('inquiries', {
   }),
 
   getters: {
+
     navigationCategories(state: InquiryList): InquiryCategory[] {
       return Object.values(state.categories).filter((category) => category.showInNavigation())
     },

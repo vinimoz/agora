@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 # [1.0.0-rc5] - 2025-09-06
 - Fix UI bugs in edit and display
 - Add first language EN and DE ( not finalized )
+- Private childs inquiries are displayed.
 
 # [1.0.0-rc4] - 2025-09-06
 
