@@ -116,7 +116,6 @@ import FormTextbox from '@iconify-icons/mdi/form-textbox'
 import Menu from '@iconify-icons/mdi/menu'
 
 // -------------------------------
-// Helper pour créer un composant Vue à partir d'une icône importée
 // -------------------------------
 export const makeIconComponent = (icon: Component, color = '#000', size = 24) => ({
   name: `Icon-${icon.name || 'custom'}`,

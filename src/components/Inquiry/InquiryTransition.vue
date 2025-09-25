@@ -26,6 +26,7 @@ const inquiryParent = ref({
   id: null,
   title: '',
   type: '',
+  parentId: 0,
   created: null,
   lastInteraction: null,
   owner: '',

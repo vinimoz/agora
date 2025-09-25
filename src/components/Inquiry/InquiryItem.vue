@@ -45,7 +45,7 @@ const context = computed(() =>
   createPermissionContextForContent(
     ContentType.Inquiry,
     inquiry.owner.id,
-    inquiry.configuration.access === 'public',
+    inquiry.configuration.access,
     inquiry.status.isLocked,
     inquiry.status.isExpired,
     inquiry.status.deletionDate > 0,
@@ -491,6 +491,14 @@ const moderationStatusInfo = computed(() => {
 		    </div>
 
 		    <div class="grid-metadata">
+			    <div v-if="inquiry.parentId!==0" class="metadata-item">
+				    <router-link
+						    class="underline"
+						    :to="`/inquiry/${inquiry.parentId}`"
+						    >
+						    <component :is="StatusIcons.LinkIcon" :size="20" :title="`id:inquiry.parentId`"/>
+				    </router-link>
+			    </div> 
 			    <div
 					    v-if="inquiry.type !== 'official' && inquiry.status.countParticipants > 0"
 					    class="metadata-item"
@@ -859,37 +867,37 @@ const moderationStatusInfo = computed(() => {
 	}
 }
 
-    // Styles responsives
-@media (max-width: 768px) {
-	    .inquiry-item.grid-view {
-		    .grid-card {
-			    padding: 10px;
-		    }
+		    // Styles responsives
+	    @media (max-width: 768px) {
+			    .inquiry-item.grid-view {
+				    .grid-card {
+					    padding: 10px;
+				    }
 
-		    .grid-header {
-			    .header-left {
-				    gap: 4px;
+				    .grid-header {
+					    .header-left {
+						    gap: 4px;
 
-				    .status-badge {
-					    font-size: 10px;
-					    padding: 2px 6px;
+						    .status-badge {
+							    font-size: 10px;
+							    padding: 2px 6px;
+						    }
+					    }
+
+					    .header-right {
+						    .user-icon {
+							    margin-left: -6px;
+						    }
+					    }
+				    }
+
+				    .grid-metadata {
+					    gap: 8px;
+
+					    .metadata-item {
+						    font-size: 11px;
+					    }
 				    }
 			    }
-
-			    .header-right {
-				    .user-icon {
-					    margin-left: -6px;
-				    }
-			    }
 		    }
-
-		    .grid-metadata {
-			    gap: 8px;
-
-			    .metadata-item {
-				    font-size: 11px;
-			    }
-		    }
-	    }
-    }
 </style>
