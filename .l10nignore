@@ -3,5 +3,5 @@
 # compiled vue templates
 vendor/
 vendor-bin/
-js/*
-assets/*
+js/
+assets/
