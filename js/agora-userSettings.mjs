@@ -1,77 +1,15 @@
-const appName = "agora";
-const appVersion = "1.0.0-rc5";
-import { d as defineComponent, s as translate, v as onMounted, _ as _export_sfc, f as createBlock, o as openBlock, g as withCtx, j as createVNode, x as normalizeProps, y as guardReactiveProps, z as createApp, A as pinia } from "./NcEmptyContent-q-geAf0w-DpSvTJqc.chunk.mjs";
-import { N as NcSettingsSection } from "./index-CZ70RVFy.chunk.mjs";
-import "./NcDashboardWidget-Wkx_9xKh-Bw6f1oJM.chunk.mjs";
-import { F as FlexSettings } from "./FlexSettings-BTiWc4QN.chunk.mjs";
-import { u as usePreferencesStore, S as StyleSettings, F as FeatureSettings } from "./StyleSettings-Bl2d-fZa.chunk.mjs";
-import "./NcRichText-G8kzsdwx-IKlnWRaR.chunk.mjs";
-const _sfc_main = /* @__PURE__ */ defineComponent({
-  __name: "UserSettingsPage",
-  setup(__props, { expose: __expose }) {
-    __expose();
-    const preferencesStore = usePreferencesStore();
-    const sections = {
-      personalSettings: {
-        name: translate("agora", "Personal preferences"),
-        description: translate("agora", "Set your personal preferences for the agora app")
-      },
-      styleSettings: {
-        name: translate("agora", "Experimental styles"),
-        description: translate("agora", "Some visual styling options.")
-      }
-    };
-    onMounted(() => {
-      preferencesStore.load();
-    });
-    const __returned__ = { preferencesStore, sections, get NcSettingsSection() {
-      return NcSettingsSection;
-    }, get FlexSettings() {
-      return FlexSettings;
-    }, get FeatureSettings() {
-      return FeatureSettings;
-    }, get StyleSettings() {
-      return StyleSettings;
-    } };
-    Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
-    return __returned__;
-  }
-});
-function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createBlock($setup["FlexSettings"], null, {
-    default: withCtx(() => [
-      createVNode(
-        $setup["NcSettingsSection"],
-        normalizeProps(guardReactiveProps($setup.sections.personalSettings)),
-        {
-          default: withCtx(() => [
-            createVNode($setup["FeatureSettings"])
-          ]),
-          _: 1
-          /* STABLE */
-        },
-        16
-        /* FULL_PROPS */
-      ),
-      createVNode(
-        $setup["NcSettingsSection"],
-        normalizeProps(guardReactiveProps($setup.sections.styleSettings)),
-        {
-          default: withCtx(() => [
-            createVNode($setup["StyleSettings"])
-          ]),
-          _: 1
-          /* STABLE */
-        },
-        16
-        /* FULL_PROPS */
-      )
-    ]),
-    _: 1
-    /* STABLE */
-  });
-}
-const UserSettingsPage = /* @__PURE__ */ _export_sfc(_sfc_main, [["render", _sfc_render], ["__file", "/var/www/nextcloud/apps/agora/src/views/UserSettingsPage.vue"]]);
-const Agora = createApp(UserSettingsPage).use(pinia);
-Agora.mount("#content_agora");
+const v = "agora", w = "1.0.0-rc5";
+import { d as c, t as a, b as m, e as l, o as g, w as t, f as s, u as e, n as r, g as n, h as f, p as u } from "./NcEmptyContent-q-geAf0w-B0ZeCpG6.chunk.mjs";
+import { N as i } from "./index-Ch7fpXjv.chunk.mjs";
+import "./NcDashboardWidget-Wkx_9xKh-BuiM1L_L.chunk.mjs";
+import { F as _ } from "./FlexSettings-kLXoANKb.chunk.mjs";
+import { u as S, _ as d, a as y } from "./StyleSettings-qgw6mAVl.chunk.mjs";
+import "./NcRichText-G8kzsdwx-BFAbDomF.chunk.mjs";
+const P = c({ __name: "UserSettingsPage", setup(x) {
+  const p = S(), o = { personalSettings: { name: a("agora", "Personal preferences"), description: a("agora", "Set your personal preferences for the agora app") }, styleSettings: { name: a("agora", "Experimental styles"), description: a("agora", "Some visual styling options.") } };
+  return m(() => {
+    p.load();
+  }), (N, k) => (g(), l(e(_), null, { default: t(() => [s(e(i), r(n(o.personalSettings)), { default: t(() => [s(e(d))]), _: 1 }, 16), s(e(i), r(n(o.styleSettings)), { default: t(() => [s(e(y))]), _: 1 }, 16)]), _: 1 }));
+} }), h = f(P).use(u);
+h.mount("#content_agora");
 //# sourceMappingURL=agora-userSettings.mjs.map

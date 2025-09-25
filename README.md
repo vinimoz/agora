@@ -17,9 +17,9 @@ Agora is a Nextcloud app for participatory democracy, inquiries, and proposals, 
 ## Todo and next features
 
 - Create real debate.
-- Create Assembly, Consultation to votes them with polls application.
+- Create Assembly, Consultation o votes them with polls application.
+- Management for small administration, debate on project law, etc.
 - Do a workflow to help moderator
-- Send followup on inqnuiry user created or participated
 - Redefine to be more generic ?
 
 ## Bug fix

@@ -12,6 +12,7 @@ Thumbs.db
 .cert/
 .vscode/
 nbproject/
+translationfiles
 
 # === Node / Vue3 ===
 node_modules/
