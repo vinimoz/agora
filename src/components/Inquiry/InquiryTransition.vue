@@ -150,7 +150,7 @@ const navigateToRoot = () => {
 <template>
   <div v-if="!isLoadedLocal" class="loading-container">
     <div class="loading-spinner" />
-    <p>{{ t('agora', 'Loading inquiry...') }}</p>
+    <p>{{ t('agora', 'Loading inquiry') }}</p>
   </div>
 
   <div v-else class="transition-form-container">

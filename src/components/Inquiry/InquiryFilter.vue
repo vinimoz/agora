@@ -107,7 +107,7 @@ onUnmounted(() => {
         <input
           v-model="searchQuery"
           type="text"
-          :placeholder="t('agora', 'Search inquiries...')"
+          :placeholder="t('agora', 'Search inquiries')"
           class="search-input"
           @input="applyFilters"
         />

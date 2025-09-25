@@ -81,7 +81,7 @@ const emptyInquiryListnoInquiries = computed(
 const isGridView = computed(() => preferencesStore.user.defaultViewInquiry === 'table-view')
 
 const loadingOverlayProps = {
-  name: t('agora', 'Loading overview…'),
+  name: t('agora', 'Loading overview'),
   teleportTo: '#content-vue',
   loadingTexts: [
     t('agora', 'Fetching inquiries…'),

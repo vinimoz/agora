@@ -295,8 +295,8 @@ const createChildInquiry = async (type: InquiryTypeValues): Promise<void> => {
   isSaving.value = true
 
   if (type === 'official')
-    titleLabel.value = `${t('agora', 'Official response for ')}: ${inquiryStore.title.trim()}`
-  else titleLabel.value = `${t('agora', 'Response for ')}: ${inquiryStore.title.trim()}`
+    titleLabel.value = `${t('agora', 'Official response for')}: ${inquiryStore.title.trim()}`
+  else titleLabel.value = `${t('agora', 'Response for')}: ${inquiryStore.title.trim()}`
 
   try {
     const inquiry = await inquiryStore.add({
@@ -316,7 +316,7 @@ const createChildInquiry = async (type: InquiryTypeValues): Promise<void> => {
     }
   } catch (error) {
     console.error('Create child inquiry error:', error)
-    showError(t('agora', error instanceof Error ? error.message : 'Inquiry error during save!'), {
+    showError(t('agora', error instanceof Error ? error.message : 'Inquiry error during save'), {
       timeout: 2000,
     })
   } finally {

@@ -59,7 +59,7 @@ watch(selectedInquiryType, (newType) => {
     </p>
 
     <div v-if="isLoading" class="loading">
-      {{ t('agora', 'Loading inquiry types...') }}
+      {{ t('agora', 'Loading inquiry types') }}
     </div>
 
     <div v-else-if="!isValidInquiryType" class="error">

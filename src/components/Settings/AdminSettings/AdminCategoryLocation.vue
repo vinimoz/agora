@@ -174,7 +174,7 @@ const rootLocations = computed(() => locations.value.filter((item) => item.paren
 <template>
   <div class="category-location-manager">
     <div v-if="!isLoaded" class="loading">
-      {{ t('agora', 'Loading categories and locations...') }}
+      {{ t('agora', 'Loading categories and locations') }}
     </div>
 
     <div v-else>

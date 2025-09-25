@@ -7,7 +7,7 @@ import { t } from '@nextcloud/l10n'
 import { IconProps } from './types'
 
 const {
-  title = t('agora', 'Loading …'),
+  title = t('agora', 'Loading'),
   fillColor = 'currentColor',
   size = 24,
 } = defineProps<IconProps>()

@@ -1,4 +1,6 @@
-{ "translations": {
+OC.L10N.register(
+    "agora",
+    {
     "Run autoreminder" : "",
     "Run janitor" : "",
     "Run notification" : "",
@@ -846,5 +848,5 @@
     "Inquiry updated" : "",
     "Error writing inquiry" : "",
     "Invalid Group ID" : ""
-},"pluralForm" :"nplurals=INTEGER; plural=EXPRESSION;"
-}
+},
+"nplurals=INTEGER; plural=EXPRESSION;");
