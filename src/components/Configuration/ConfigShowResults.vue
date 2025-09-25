@@ -4,28 +4,28 @@
 -->
 
 <script setup lang="ts">
-import { RadioGroupDiv } from '../Base/index.ts';
-import { t } from '@nextcloud/l10n';
-import { useInquiryStore } from '../../stores/inquiry.ts';
+import { RadioGroupDiv } from '../Base/index.ts'
+import { t } from '@nextcloud/l10n'
+import { useInquiryStore } from '../../stores/inquiry.ts'
 
-const emit = defineEmits(['change']);
+const emit = defineEmits(['change'])
 
-const inquiryStore = useInquiryStore();
+const inquiryStore = useInquiryStore()
 
 const inquiryShowResultsOptions = [
   {
     value: 'always',
-    label: t('agora', 'Always show results')
+    label: t('agora', 'Always show results'),
   },
   {
     value: 'closed',
-    label: t('agora', 'Hide results until inquiry is closed')
+    label: t('agora', 'Hide results until inquiry is closed'),
   },
   {
     value: 'never',
-    label: t('agora', 'Never show results')
-  }
-];
+    label: t('agora', 'Never show results'),
+  },
+]
 </script>
 
 <template>

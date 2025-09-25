@@ -30,6 +30,7 @@ SPDX-FileCopyrightText: @tiptap/extensions developers
 SPDX-FileCopyrightText: @tiptap/starter-kit developers
 SPDX-FileCopyrightText: @tiptap/vue-3 developers
 SPDX-FileCopyrightText: @xmldom/xmldom developers
+SPDX-FileCopyrightText: Iskren Ivov Chernev <iskren.chernev@gmail.com> (https://github.com/ichernev)
 SPDX-FileCopyrightText: Jeremy Ashkenas <jeremy@documentcloud.org>
 SPDX-FileCopyrightText: Marijn Haverbeke <marijn@haverbeke.berlin>
 SPDX-FileCopyrightText: Michael Williamson <mike@zwobble.org>
@@ -139,7 +140,7 @@ This file is generated from multiple sources. Included packages:
 	- version: 0.8.11
 	- license: MIT
 - agora
-	- version: 1.0.0rc4
+	- version: 1.0.0-rc5
 	- license: AGPL-3.0
 - base64-js
 	- version: 1.5.1
@@ -162,6 +163,9 @@ This file is generated from multiple sources. Included packages:
 - mammoth
 	- version: 1.10.0
 	- license: BSD-2-Clause
+- moment
+	- version: 2.30.1
+	- license: MIT
 - option
 	- version: 0.2.4
 	- license: BSD-2-Clause

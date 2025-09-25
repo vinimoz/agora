@@ -3,26 +3,25 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import axios, { AxiosError, AxiosInstance } from 'axios';
-import { linkTo } from '@nextcloud/router';
+import axios, { AxiosError, AxiosInstance } from 'axios'
+import { linkTo } from '@nextcloud/router'
 
 // -----------------------------
 // Nextcloud CSP / Public Path
 // -----------------------------
-__webpack_public_path__ = `${linkTo('agora', 'js')}/`;
+__webpack_public_path__ = `${linkTo('agora', 'js')}/`
 // Nextcloud nonce pour autoriser l'exécution du worker si nécessaire
-__webpack_nonce__ = btoa(window.OC.requestToken);
+__webpack_nonce__ = btoa(window.OC.requestToken)
 
-const MAX_ERRORS = 5;
-const SLEEP_TIMEOUT_DEFAULT = 30000;
+const MAX_ERRORS = 5
+const SLEEP_TIMEOUT_DEFAULT = 30000
 
-let lastUpdated = 0;
-let http: AxiosInstance;
-let consecutiveErrors = 0;
+let lastUpdated = 0
+let http: AxiosInstance
+let consecutiveErrors = 0
 
-const shouldContinue = true;
 
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
 self.onmessage = async (props) => {
   const {
@@ -32,18 +31,18 @@ self.onmessage = async (props) => {
     baseUrl,
     token,
     watcherId,
-    lastUpdate = lastUpdated
-  } = props.data;
+    lastUpdate = lastUpdated,
+  } = props.data
 
-  lastUpdated = lastUpdate;
+  lastUpdated = lastUpdate
 
   self.postMessage({
     type: 'status',
     status: 'starting',
     mode: updateType,
     interval,
-    message: '[Worker] Received new parameters.'
-  });
+    message: '[Worker] Received new parameters.',
+  })
 
   if (!http) {
     http = axios.create({
@@ -51,10 +50,10 @@ self.onmessage = async (props) => {
       withCredentials: true,
       headers: {
         Accept: 'application/json',
-        'Nc-Agora-Client-Id': watcherId
+        'Nc-Agora-Client-Id': watcherId,
       },
-      validateStatus: (status) => [200, 304].includes(status)
-    });
+      validateStatus: (status) => [200, 304].includes(status),
+    })
   }
 
   if (updateType === 'noInquirying') {
@@ -63,28 +62,27 @@ self.onmessage = async (props) => {
       status: 'stopped',
       mode: updateType,
       interval,
-      message: '[Worker] noInquirying: exiting.'
-    });
-    self.close();
-    return;
+      message: '[Worker] noInquirying: exiting.',
+    })
+    self.close()
+    return
   }
 
   const run = async () => {
     try {
-      let endPoint = `inquiry/${inquiryId}/watch`;
+      let endPoint = `inquiry/${inquiryId}/watch`
       if (token) {
-        endPoint = `s/${token}/watch`;
+        endPoint = `s/${token}/watch`
       }
 
       const response = await http.get(endPoint, {
-        params: { offset: lastUpdated }
-      });
+        params: { offset: lastUpdated },
+      })
 
-      consecutiveErrors = 0;
+      consecutiveErrors = 0
 
       if (response.status === 200 && response.data.updates?.length > 0) {
-        lastUpdated =
-          response.data.updates[response.data.updates.length - 1].updated;
+        lastUpdated = response.data.updates[response.data.updates.length - 1].updated
 
         self.postMessage({
           type: 'update',
@@ -93,8 +91,8 @@ self.onmessage = async (props) => {
           interval,
           message: '[Worker] 200 got updates',
           updates: response.data.updates,
-          lastUpdate: lastUpdated
-        });
+          lastUpdate: lastUpdated,
+        })
       } else if (response.status === 304) {
         self.postMessage({
           type: 'info',
@@ -102,8 +100,8 @@ self.onmessage = async (props) => {
           mode: updateType,
           interval,
           message: '[Worker] 304 – no changes',
-          lastUpdate: lastUpdated
-        });
+          lastUpdate: lastUpdated,
+        })
       } else {
         self.postMessage({
           type: 'info',
@@ -111,11 +109,11 @@ self.onmessage = async (props) => {
           mode: updateType,
           interval,
           message: '[Worker] 200 but no updates',
-          lastUpdate: lastUpdated
-        });
+          lastUpdate: lastUpdated,
+        })
       }
     } catch (error) {
-      const err = error as AxiosError;
+      const err = error as AxiosError
 
       if (err.code === 'ECONNABORTED' || err.code === 'ERR_CANCELED') {
         self.postMessage({
@@ -124,20 +122,20 @@ self.onmessage = async (props) => {
           mode: updateType,
           interval,
           message: '[Worker] Request aborted intentionally',
-          lastUpdate: lastUpdated
-        });
-        return;
+          lastUpdate: lastUpdated,
+        })
+        return
       }
 
-      consecutiveErrors++;
+      consecutiveErrors+=1
 
       self.postMessage({
         type: 'error',
         status: 'error',
         mode: updateType,
         interval,
-        message: `[Worker] Request failed (${consecutiveErrors}/${MAX_ERRORS})`
-      });
+        message: `[Worker] Request failed (${consecutiveErrors}/${MAX_ERRORS})`,
+      })
 
       if (consecutiveErrors >= MAX_ERRORS) {
         self.postMessage({
@@ -145,15 +143,15 @@ self.onmessage = async (props) => {
           status: 'error',
           mode: updateType,
           interval,
-          message: `[Worker] Stopping after ${MAX_ERRORS} consecutive errors`
-        });
-        self.close();
-        return;
+          message: `[Worker] Stopping after ${MAX_ERRORS} consecutive errors`,
+        })
+        self.close()
+        return
       }
 
-      await sleep(interval);
+      await sleep(interval)
     }
-  };
+  }
 
   if (updateType === 'periodicInquirying') {
     self.postMessage({
@@ -161,17 +159,17 @@ self.onmessage = async (props) => {
       status: 'starting',
       mode: updateType,
       interval,
-      message: '[Worker] Started periodic inquirying.'
-    });
-    while (shouldContinue) {
-      await run();
+      message: '[Worker] Started periodic inquirying.',
+    })
+    while (true) {
+      await run()
       self.postMessage({
         type: 'status',
         status: 'idle',
         mode: updateType,
-        interval
-      });
-      await sleep(interval);
+        interval,
+      })
+      await sleep(interval)
     }
   }
 
@@ -181,11 +179,10 @@ self.onmessage = async (props) => {
       status: 'starting',
       mode: updateType,
       interval,
-      message: '[Worker] Started long inquirying.'
-    });
-    while (shouldContinue) {
-      await run();
+      message: '[Worker] Started long inquirying.',
+    })
+    while (true) {
+      await run()
     }
   }
-};
-
+}

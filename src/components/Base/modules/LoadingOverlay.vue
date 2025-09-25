@@ -4,72 +4,72 @@
 -->
 
 <script setup lang="ts">
-import { t } from '@nextcloud/l10n';
-import { Spinner } from '../../AppIcons/index.ts';
-import { onMounted, ref, watch } from 'vue';
+import { t } from '@nextcloud/l10n'
+import { Spinner } from '../../AppIcons/index.ts'
+import { onMounted, ref, watch } from 'vue'
 
-const description = ref(t('agora', 'Please wait…'));
+const description = ref(t('agora', 'Please wait…'))
 
 const {
   show = false,
   name = t('agora', 'Loading …'),
   loadingTexts = '',
-  teleportTo = '#content-vue'
+  teleportTo = '#content-vue',
 } = defineProps<{
-  show: boolean;
-  name: string;
-  loadingTexts?: string | string[];
-  teleportTo?: string;
-}>();
+  show: boolean
+  name: string
+  loadingTexts?: string | string[]
+  teleportTo?: string
+}>()
 
 const sequentialDescriptionOutput = () => {
   if (loadingTexts instanceof String) {
-    description.value = loadingTexts as string;
-    return;
+    description.value = loadingTexts as string
+    return
   }
 
   if (loadingTexts.length === 0) {
-    description.value = '';
-    return;
+    description.value = ''
+    return
   }
 
   if (loadingTexts.length === 1) {
-    description.value = loadingTexts[0];
-    return;
+    description.value = loadingTexts[0]
+    return
   }
 
-  let index = 0;
+  let index = 0
 
   const showDescription = () => {
     if (index < loadingTexts.length) {
       if (show === false) {
-        return;
+        return
       }
-      description.value = loadingTexts[index];
-      index = index + 1;
-      const delay = 1500 + Math.floor(Math.random() * 1001) - 500;
-      setTimeout(showDescription, delay);
+      description.value = loadingTexts[index]
+      index = index + 1
+      const delay = 1500 + Math.floor(Math.random() * 1001) - 500
+      setTimeout(showDescription, delay)
     } else {
-      description.value = loadingTexts[loadingTexts.length - 1];
+      description.value = loadingTexts[loadingTexts.length - 1]
     }
-  };
-  showDescription();
-};
+  }
+  showDescription()
+}
 
 watch(
   () => show,
   (newValue) => {
     if (newValue === true && loadingTexts.length > 0) {
-      sequentialDescriptionOutput();
+      sequentialDescriptionOutput()
     }
   }
-);
+)
 
 onMounted(() => {
   if (show) {
-    sequentialDescriptionOutput();
+    sequentialDescriptionOutput()
   }
-});
+})
 </script>
 
 <template>

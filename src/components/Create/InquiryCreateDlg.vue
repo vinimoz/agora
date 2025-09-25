@@ -4,89 +4,89 @@
 -->
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
-import { t } from '@nextcloud/l10n';
+import { computed, ref } from 'vue'
+import { t } from '@nextcloud/l10n'
 
-import NcButton from '@nextcloud/vue/components/NcButton';
+import NcButton from '@nextcloud/vue/components/NcButton'
 
-import SpeakerIcon from 'vue-material-design-icons/Bullhorn.vue';
-import CheckIcon from 'vue-material-design-icons/Check.vue';
+import SpeakerIcon from 'vue-material-design-icons/Bullhorn.vue'
+import CheckIcon from 'vue-material-design-icons/Check.vue'
 
-import { ConfigBox, RadioGroupDiv, InputDiv } from '../Base/index.ts';
+import { ConfigBox, RadioGroupDiv, InputDiv } from '../Base/index.ts'
 
-import { useInquiryStore } from '../../stores/inquiry.ts';
-import { InquiryTypesUI } from '../../helpers/modules/InquiryHelper.ts';
-import { showError, showSuccess } from '@nextcloud/dialogs';
+import { useInquiryStore } from '../../stores/inquiry.ts'
+import { InquiryTypesUI } from '../../helpers/modules/InquiryHelper.ts'
+import { showError, showSuccess } from '@nextcloud/dialogs'
 
-const inquiryStore = useInquiryStore();
+const inquiryStore = useInquiryStore()
 
 const emit = defineEmits<{
-  (e: 'close'): void;
+  (e: 'close'): void
   (
     e: 'added',
     inquiry: {
-      id: number;
-      title: string;
+      id: number
+      title: string
     }
-  ): void;
-}>();
+  ): void
+}>()
 
-const inquiryTitle = ref('');
-const inquiryId = ref<number | null>(null);
-const adding = ref(false);
+const inquiryTitle = ref('')
+const inquiryId = ref<number | null>(null)
+const adding = ref(false)
 
-type InquiryTypeKey = keyof typeof InquiryTypesUI;
-const inquiryType = ref<InquiryTypeKey>('proposal');
+type InquiryTypeKey = keyof typeof InquiryTypesUI
+const inquiryType = ref<InquiryTypeKey>('proposal')
 
 const inquiryTypeOptions = Object.entries(InquiryTypesUI)
   .filter(([key]) => !['official', 'suggestion'].includes(key))
   .map(([key, value]) => ({
     value: key,
-    label: value.label
-  }));
+    label: value.label,
+  }))
 
-const titleIsEmpty = computed(() => inquiryTitle.value === '');
-const disableAddButton = computed(() => titleIsEmpty.value || adding.value);
+const titleIsEmpty = computed(() => inquiryTitle.value === '')
+const disableAddButton = computed(() => titleIsEmpty.value || adding.value)
 
 async function addInquiry() {
   try {
     // block the modal to prevent double submission
-    adding.value = true;
+    adding.value = true
     // add the inquiry
     const inquiry = await inquiryStore.add({
       type: inquiryType.value,
-      title: inquiryTitle.value
-    });
+      title: inquiryTitle.value,
+    })
 
     if (inquiry) {
-      inquiryId.value = inquiry.id;
+      inquiryId.value = inquiry.id
 
       showSuccess(
         t('agora', '"{inquiryTitle}" has been added', {
-          inquiryTitle: inquiry.title
+          inquiryTitle: inquiry.title,
         })
-      );
+      )
       emit('added', {
         id: inquiry.id,
-        title: inquiry.title
-      });
-      resetInquiry();
+        title: inquiry.title,
+      })
+      resetInquiry()
     }
   } catch {
     showError(
       t('agora', 'Error while creating Inquiry "{inquiryTitle}"', {
-        inquiryTitle: inquiryTitle.value
+        inquiryTitle: inquiryTitle.value,
       })
-    );
+    )
   } finally {
     // unblock the modal
-    adding.value = false;
+    adding.value = false
   }
 }
 
 function resetInquiry() {
-  inquiryId.value = null;
-  inquiryTitle.value = '';
+  inquiryId.value = null
+  inquiryTitle.value = ''
 }
 </script>
 
@@ -119,11 +119,7 @@ function resetInquiry() {
           {{ t('agora', 'Close') }}
         </template>
       </NcButton>
-      <NcButton
-        :disabled="disableAddButton"
-        :variant="'primary'"
-        @click="addInquiry"
-      >
+      <NcButton :disabled="disableAddButton" :variant="'primary'" @click="addInquiry">
         <template #default>
           {{ t('agora', 'Add') }}
         </template>

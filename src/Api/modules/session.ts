@@ -2,9 +2,9 @@
  * SPDX-FileCopyrightText: 2022 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { AxiosResponse } from '@nextcloud/axios';
-import { httpInstance, createCancelTokenHandler } from './HttpApi.js';
-import { Session } from '../../stores/session.js';
+import { AxiosResponse } from '@nextcloud/axios'
+import { httpInstance, createCancelTokenHandler } from './HttpApi.js'
+import { Session } from '../../stores/session.js'
 
 const session = {
   getSession(): Promise<AxiosResponse<Session>> {
@@ -12,14 +12,11 @@ const session = {
       method: 'GET',
       url: '/session',
       params: { time: +new Date() },
-      cancelToken:
-        cancelTokenHandlerObject[
-          this.getSession.name
-        ].handleRequestCancellation().token
-    });
-  }
-};
+      cancelToken: cancelTokenHandlerObject[this.getSession.name].handleRequestCancellation().token,
+    })
+  },
+}
 
-const cancelTokenHandlerObject = createCancelTokenHandler(session);
+const cancelTokenHandlerObject = createCancelTokenHandler(session)
 
-export default session;
+export default session

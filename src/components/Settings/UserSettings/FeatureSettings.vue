@@ -4,26 +4,24 @@
 -->
 
 <script setup>
-import { computed } from 'vue';
-import { InputDiv } from '../../Base/index.ts';
-import { t } from '@nextcloud/l10n';
+import { computed } from 'vue'
+import { InputDiv } from '../../Base/index.ts'
+import { t } from '@nextcloud/l10n'
 
-import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch';
+import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
 
-import { usePreferencesStore } from '../../../stores/preferences.ts';
+import { usePreferencesStore } from '../../../stores/preferences.ts'
 
-const preferencesStore = usePreferencesStore();
+const preferencesStore = usePreferencesStore()
 
 const defaultViewInquiry = computed({
   get() {
-    return preferencesStore.user.defaultViewInquiry === 'list-view';
+    return preferencesStore.user.defaultViewInquiry === 'list-view'
   },
   set(value) {
-    preferencesStore.user.defaultViewInquiry = value
-      ? 'list-view'
-      : 'table-view';
-  }
-});
+    preferencesStore.user.defaultViewInquiry = value ? 'list-view' : 'table-view'
+  },
+})
 </script>
 
 <template>
@@ -55,9 +53,7 @@ const defaultViewInquiry = computed({
         {{ t('agora', 'Verbose inquiry list') }}
       </NcCheckboxRadioSwitch>
       <div class="settings_details">
-        {{
-          t('agora', 'Check this for more inquiry information in the overview.')
-        }}
+        {{ t('agora', 'Check this for more inquiry information in the overview.') }}
       </div>
     </div>
 

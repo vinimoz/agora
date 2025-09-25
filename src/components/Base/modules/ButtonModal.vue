@@ -4,31 +4,31 @@
 -->
 
 <script setup lang="ts">
-import { t } from '@nextcloud/l10n';
+import { t } from '@nextcloud/l10n'
 
-import NcButton, { ButtonVariant } from '@nextcloud/vue/components/NcButton';
-import NcModal from '@nextcloud/vue/components/NcModal';
+import NcButton, { ButtonVariant } from '@nextcloud/vue/components/NcButton'
+import NcModal from '@nextcloud/vue/components/NcModal'
 
-import { NcActionButton, NcAppNavigationNew } from '@nextcloud/vue';
-import { ButtonMode } from '../../../Types';
+import { NcActionButton, NcAppNavigationNew } from '@nextcloud/vue'
+import { ButtonMode } from '../../../Types'
 
 interface Props {
-  buttonVariant?: ButtonVariant;
-  buttonMode?: ButtonMode;
-  buttonCaption?: string;
-  modalSize?: string;
-  noClose?: boolean;
+  buttonVariant?: ButtonVariant
+  buttonMode?: ButtonMode
+  buttonCaption?: string
+  modalSize?: string
+  noClose?: boolean
 }
 
-const showModal = defineModel<boolean>('showModal', { default: false });
+const showModal = defineModel<boolean>('showModal', { default: false })
 
 const {
   buttonVariant = 'primary',
   buttonMode = 'native',
   buttonCaption = t('agora', 'Click'),
   modalSize = 'normal',
-  noClose = false
-} = defineProps<Props>();
+  noClose = false,
+} = defineProps<Props>()
 </script>
 
 <template>

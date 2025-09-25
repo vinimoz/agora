@@ -83,7 +83,6 @@ class ReferenceProvider extends ADiscoverableReferenceProvider implements ISearc
                     $url = $inquiry->getSupportUrl();
                     $expired = $inquiry->getExpired();
                     $expiry = $inquiry->getExpire();
-                    $participated =sizeof($this->inquiryService->findChildrenWithCounts($inquiryId));
 
                 } catch (NotFoundException $e) {
                     $inquiryId = 0;

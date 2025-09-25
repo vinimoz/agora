@@ -4,11 +4,9 @@
 -->
 
 <script setup lang="ts">
-import { IconProps } from './types';
+import { IconProps } from './types'
 
-const {
-  fillColor = 'currentColor',
-} = defineProps<IconProps>();
+const { fillColor = 'currentColor' } = defineProps<IconProps>()
 </script>
 
 <template>
@@ -44,4 +42,3 @@ const {
     />
   </svg>
 </template>
-

@@ -91,7 +91,7 @@ class InquiryController extends BaseController
     {
         return $this->response(
             fn () => [
-                'childs' => $this->inquiryService->findChildrenWithCounts($inquiryId),
+                'childs' => $this->inquiryService->getChildInquiryIds($inquiryId),
             ]
         );
     }
@@ -158,10 +158,6 @@ class InquiryController extends BaseController
         $attachments = $this->attachmentService->getAll($inquiryId);
         $timerMicro['attachments'] = microtime(true);
 
-        $childs=$this->inquiryService->findChildrenWithCounts($inquiryId);
-        $inquiry->setChilds($childs);
-        $timerMicro['childs'] = microtime(true);
-
         $diffMicro['total'] = microtime(true) - $timerMicro['start'];
         $diffMicro['inquiry'] = $timerMicro['inquiry'] - $timerMicro['start'];
         $diffMicro['options'] = $timerMicro['options'] - $timerMicro['inquiry'];
@@ -169,7 +165,6 @@ class InquiryController extends BaseController
         $diffMicro['shares'] = $timerMicro['shares'] - $timerMicro['comments'];
         $diffMicro['subscribed'] = $timerMicro['subscribed'] - $timerMicro['shares'];
         $diffMicro['attachments'] = $timerMicro['attachments'] - $timerMicro['subscribed'];
-        $diffMicro['childs'] = $timerMicro['childs'] - $timerMicro['attachments'];
         
 
         if ($withTimings) {
@@ -180,7 +175,6 @@ class InquiryController extends BaseController
             'shares' => $shares,
             'subscribed' => $subscribed,
             'attachments' => $attachments,
-            'childs' => $childs,
             'diffMicro' => $diffMicro,
             ];
         }

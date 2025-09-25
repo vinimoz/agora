@@ -5,95 +5,93 @@ import { useSessionStore } from '../stores/session.ts'
 import { useAppSettingsStore } from '../stores/appSettings.ts'
 
 export interface InquiryTypeSettings {
-  supportInquiry: boolean;
-  commentInquiry: boolean;
-  attachFileInquiry: boolean;
-  shareInquiry?: boolean;
-  editorType: string;
+  supportInquiry: boolean
+  commentInquiry: boolean
+  attachFileInquiry: boolean
+  shareInquiry?: boolean
+  editorType: string
 }
-
 
 export interface InquiryTypeRights {
-  supportInquiry: boolean;
-  commentInquiry: boolean;
-  attachFileInquiry: boolean;
-  shareInquiry?: boolean;
-  editorType: string;
+  supportInquiry: boolean
+  commentInquiry: boolean
+  attachFileInquiry: boolean
+  shareInquiry?: boolean
+  editorType: string
 }
 
-
 export interface ModeratorRights {
-  changeInquiryStatus?: boolean;
-  deleteInquiry?: boolean;
-  archiveInquiry?: boolean;
-  transferInquiry?: boolean;
-  modifyInquiry?: boolean;
-  addShares?: boolean;
-  addSharesExternal?: boolean;
-  deanonymize?: boolean;
-  seeUsernames?: boolean;
+  changeInquiryStatus?: boolean
+  deleteInquiry?: boolean
+  archiveInquiry?: boolean
+  transferInquiry?: boolean
+  modifyInquiry?: boolean
+  addShares?: boolean
+  addSharesExternal?: boolean
+  deanonymize?: boolean
+  seeUsernames?: boolean
 }
 
 export interface OfficialRights {
-  changeInquiryStatus?: boolean;
-  deleteInquiry?: boolean;
-  archiveInquiry?: boolean;
-  transferInquiry?: boolean;
-  modifyInquiry?: boolean;
+  changeInquiryStatus?: boolean
+  deleteInquiry?: boolean
+  archiveInquiry?: boolean
+  transferInquiry?: boolean
+  modifyInquiry?: boolean
 }
 
 // Exportez aussi les valeurs par défaut
 export const DefaultInquiryTypeRights: Record<string, InquiryTypeRights> = {
-  proposal: { 
-    supportInquiry: true, 
-    commentInquiry: true, 
-    attachFileInquiry: true, 
+  proposal: {
+    supportInquiry: true,
+    commentInquiry: true,
+    attachFileInquiry: true,
     shareInquiry: true,
-    editorType: 'wysiwyg' 
+    editorType: 'wysiwyg',
   },
-  debate: { 
-    supportInquiry: true, 
-    commentInquiry: false, 
-    attachFileInquiry: false, 
+  debate: {
+    supportInquiry: true,
+    commentInquiry: false,
+    attachFileInquiry: false,
     shareInquiry: true,
-    editorType: 'texteditor' 
+    editorType: 'texteditor',
   },
-  petition: { 
-    supportInquiry: true, 
-    commentInquiry: true, 
-    attachFileInquiry: true, 
+  petition: {
+    supportInquiry: true,
+    commentInquiry: true,
+    attachFileInquiry: true,
     shareInquiry: true,
-    editorType: 'wysiwyg' 
+    editorType: 'wysiwyg',
   },
-  project: { 
-    supportInquiry: true, 
-    commentInquiry: true, 
-    attachFileInquiry: true, 
+  project: {
+    supportInquiry: true,
+    commentInquiry: true,
+    attachFileInquiry: true,
     shareInquiry: true,
-    editorType: 'texteditor' 
+    editorType: 'texteditor',
   },
-  grievance: { 
-    supportInquiry: true, 
-    commentInquiry: true, 
-    attachFileInquiry: true, 
+  grievance: {
+    supportInquiry: true,
+    commentInquiry: true,
+    attachFileInquiry: true,
     shareInquiry: true,
-    editorType: 'wysiwyg' 
+    editorType: 'wysiwyg',
   },
-  suggestion: { 
-    supportInquiry: true, 
-    commentInquiry: false, 
-    attachFileInquiry: false, 
+  suggestion: {
+    supportInquiry: true,
+    commentInquiry: false,
+    attachFileInquiry: false,
     shareInquiry: true,
-    editorType: 'textarea' 
+    editorType: 'textarea',
   },
-  official: { 
-    supportInquiry: false, 
-    commentInquiry: false, 
-    attachFileInquiry: true, 
+  official: {
+    supportInquiry: false,
+    commentInquiry: false,
+    attachFileInquiry: true,
     shareInquiry: true,
-    editorType: 'textarea' 
-  }
-};
+    editorType: 'textarea',
+  },
+}
 
 export const DefaultModeratorRights: ModeratorRights = {
   changeInquiryStatus: true,
@@ -104,25 +102,25 @@ export const DefaultModeratorRights: ModeratorRights = {
   addShares: true,
   addSharesExternal: false,
   deanonymize: false,
-};
+}
 
 export const DefaultOfficialRights: OfficialRights = {
   changeInquiryStatus: false,
   deleteInquiry: false,
   archiveInquiry: false,
   transferInquiry: false,
-  modifyInquiry: false
-};
+  modifyInquiry: false,
+}
 
 /**
- * User TYPE 
+ * User TYPE
  */
 export enum UserType {
   Guest = 'guest',
   User = 'user',
   Moderator = 'moderator',
   Admin = 'admin',
-  Owner = 'owner'
+  Owner = 'owner',
 }
 
 /**
@@ -133,381 +131,393 @@ export enum ContentType {
   Comment = 'comment',
   Support = 'support',
   Attachment = 'attachment',
-  Share = 'share'
+  Share = 'share',
 }
 
 /**
- * Interface rights permission 
+ * Interface rights permission
  */
 export interface PermissionContext {
-  userType: UserType;
-  contentType: ContentType;
-  isOwner: boolean;
-  isPublic: boolean;
-  isLocked: boolean;
-  isExpired: boolean;
-  isDeleted: boolean;
-  isArchived: boolean;
-  hasGroupRestrictions: boolean;
-  userGroups: string[];
-  allowedGroups: string[];
-  inquiryType?: string; 
+  userType: UserType
+  contentType: ContentType
+  isOwner: boolean
+  isPublic: boolean
+  isLocked: boolean
+  isExpired: boolean
+  isDeleted: boolean
+  isArchived: boolean
+  hasGroupRestrictions: boolean
+  userGroups: string[]
+  allowedGroups: string[]
+  inquiryType?: string
 }
 
 // GET METHODS
 
 function getCurrentUserType(): UserType {
-  const sessionStore = useSessionStore();
-  const currentUser = sessionStore.currentUser;
-  
-  if (!currentUser) return UserType.Guest;
-  if (currentUser.isAdmin) return UserType.Admin;
-  if (currentUser.isModerator) return UserType.Moderator;
-  if (currentUser.isOfficial) return UserType.User;
-  return UserType.User;
+  const sessionStore = useSessionStore()
+  const currentUser = sessionStore.currentUser
+
+  if (!currentUser) return UserType.Guest
+  if (currentUser.isAdmin) return UserType.Admin
+  if (currentUser.isModerator) return UserType.Moderator
+  if (currentUser.isOfficial) return UserType.User
+  return UserType.User
 }
 
 function getCurrentUserGroups(): string[] {
-  const sessionStore = useSessionStore();
-  const currentUser = sessionStore.currentUser;
-  return currentUser?.groups || [];
+  const sessionStore = useSessionStore()
+  const currentUser = sessionStore.currentUser
+  return currentUser?.groups || []
 }
 
 export function getCurrentModeratorRights(): ModeratorRights | null {
-  const sessionStore = useSessionStore();
-  const appSettings = useAppSettingsStore(); 
-  const currentUser = sessionStore.currentUser;
-  return currentUser?.isModerator ? appSettings.moderatorRights : null;
+  const sessionStore = useSessionStore()
+  const appSettings = useAppSettingsStore()
+  const currentUser = sessionStore.currentUser
+  return currentUser?.isModerator ? appSettings.moderatorRights : null
 }
 
 export function getCurrentOfficialRights(): OfficialRights | null {
-  const sessionStore = useSessionStore();
-  const appSettings = useAppSettingsStore(); 
-  const currentUser = sessionStore.currentUser;
-  return currentUser?.isOfficial ? appSettings.officialRights : null;
+  const sessionStore = useSessionStore()
+  const appSettings = useAppSettingsStore()
+  const currentUser = sessionStore.currentUser
+  return currentUser?.isOfficial ? appSettings.officialRights : null
 }
 
 function isContentOwner(contentOwnerId: string): boolean {
-  const sessionStore = useSessionStore();
-  const currentUser = sessionStore.currentUser;
-  return currentUser?.id === contentOwnerId;
+  const sessionStore = useSessionStore()
+  const currentUser = sessionStore.currentUser
+  return currentUser?.id === contentOwnerId
 }
 
-export function canInquiryTypePerformAction(inquiryType: string, action: keyof InquiryTypeSettings): boolean {
-  const sessionStore = useSessionStore();
-  const typeRights = sessionStore.appSettings.inquiryTypeRights[inquiryType];
-  return typeRights?.[action] ?? false;
+export function canInquiryTypePerformAction(
+  inquiryType: string,
+  action: keyof InquiryTypeSettings
+): boolean {
+  const sessionStore = useSessionStore()
+  const typeRights = sessionStore.appSettings.inquiryTypeRights[inquiryType]
+  return typeRights?.[action] ?? false
 }
 
 function hasGroupAccess(context: PermissionContext): boolean {
   if (!context.hasGroupRestrictions || context.userType === UserType.Guest) {
-    return true;
+    return true
   }
-  
-  // Les admins et modérateurs bypassent les restrictions de groupe
+
   if (context.userType === UserType.Admin || context.userType === UserType.Moderator) {
-    return true;
+    return true
   }
-  
-  return context.userGroups.some(group => context.allowedGroups.includes(group));
+
+  return context.userGroups.some((group) => context.allowedGroups.includes(group))
 }
 
 function isContentBlocked(context: PermissionContext): boolean {
-  return context.isArchived || context.isDeleted || context.isLocked || context.isExpired;
+  return context.isArchived || context.isDeleted || context.isLocked || context.isExpired
 }
 
-/**
- * Vérifie si l'utilisateur peut voir le menu toggle
- * Seulement Admin, Owner, Moderator, Official
- */
 export function canViewToggle(context: PermissionContext): boolean {
-  return [
-    UserType.Admin, 
-    UserType.Owner, 
-    UserType.Moderator, 
-    UserType.User
-  ].includes(context.userType);
+  return [UserType.Admin, UserType.Owner, UserType.Moderator, UserType.User].includes(
+    context.userType
+  )
 }
 
 /**
  * Vérifie si l'utilisateur peut supprimer
  * Admin et Owner toujours, autres selon leurs droits
+ * @param context
  */
 export function canDelete(context: PermissionContext): boolean {
-  if (context.isDeleted) return false;
-  
+  if (context.isDeleted) return false
+
   if (context.userType === UserType.Admin || context.isOwner) {
-    return true;
+    return true
   }
 
   if (context.userType === UserType.Moderator) {
-    const moderatorRights = getCurrentModeratorRights();
-    return moderatorRights?.deleteInquiry ?? false;
+    const moderatorRights = getCurrentModeratorRights()
+    return moderatorRights?.deleteInquiry ?? false
   }
 
   if (context.userType === UserType.User) {
-    const officialRights = getCurrentOfficialRights();
-    return officialRights?.deleteInquiry ?? false;
+    const officialRights = getCurrentOfficialRights()
+    return officialRights?.deleteInquiry ?? false
   }
 
-  return false;
+  return false
 }
 
 /**
  * Vérifie si l'utilisateur peut archiver
  * Admin et Owner toujours, autres selon leurs droits
+ * @param context
  */
 export function canRestore(context: PermissionContext): boolean {
-  if (!(context.isArchived || context.isDeleted)) return false;
-  
+  if (!(context.isArchived || context.isDeleted)) return false
+
   if (context.userType === UserType.Admin || context.isOwner) {
-    return true;
+    return true
   }
 
   if (context.userType === UserType.Moderator) {
-    const moderatorRights = getCurrentModeratorRights();
-    return moderatorRights?.archiveInquiry ?? false;
+    const moderatorRights = getCurrentModeratorRights()
+    return moderatorRights?.archiveInquiry ?? false
   }
 
   if (context.userType === UserType.User) {
-    const officialRights = getCurrentOfficialRights();
-    return officialRights?.archiveInquiry ?? false;
+    const officialRights = getCurrentOfficialRights()
+    return officialRights?.archiveInquiry ?? false
   }
 
-  return false;
+  return false
 }
-
 
 /**
  * Vérifie si l'utilisateur peut archiver
  * Admin et Owner toujours, autres selon leurs droits
+ * @param context
  */
 export function canArchive(context: PermissionContext): boolean {
-  if (context.isArchived || context.isDeleted) return false;
-  
+  if (context.isArchived || context.isDeleted) return false
+
   if (context.userType === UserType.Admin || context.isOwner) {
-    return true;
+    return true
   }
 
   if (context.userType === UserType.Moderator) {
-    const moderatorRights = getCurrentModeratorRights();
-    return moderatorRights?.archiveInquiry ?? false;
+    const moderatorRights = getCurrentModeratorRights()
+    return moderatorRights?.archiveInquiry ?? false
   }
 
   if (context.userType === UserType.User) {
-    const officialRights = getCurrentOfficialRights();
-    return officialRights?.archiveInquiry ?? false;
+    const officialRights = getCurrentOfficialRights()
+    return officialRights?.archiveInquiry ?? false
   }
 
-  return false;
+  return false
 }
 
 /**
  * Vérifie si l'utilisateur peut transférer
  * Admin et Owner toujours, autres selon leurs droits
+ * @param context
  */
 export function canTransfer(context: PermissionContext): boolean {
   if (context.userType === UserType.Admin || context.isOwner) {
-    return true;
+    return true
   }
 
   if (context.userType === UserType.Moderator) {
-    const moderatorRights = getCurrentModeratorRights();
-    return moderatorRights?.transferInquiry ?? false;
+    const moderatorRights = getCurrentModeratorRights()
+    return moderatorRights?.transferInquiry ?? false
   }
 
   if (context.userType === UserType.User) {
-    const officialRights = getCurrentOfficialRights();
-    return officialRights?.transferInquiry ?? false;
+    const officialRights = getCurrentOfficialRights()
+    return officialRights?.transferInquiry ?? false
   }
 
-  return false;
+  return false
 }
 
 /**
  * Vérifie si l'utilisateur peut modérer
  * Admin toujours, Moderator selon droits, Official selon droits
+ * @param context
  */
 export function canModerate(context: PermissionContext): boolean {
   if (context.userType === UserType.Admin) {
-    return true;
+    return true
   }
 
   if (context.userType === UserType.Moderator) {
-    const moderatorRights = getCurrentModeratorRights();
-    return moderatorRights?.changeInquiryStatus ?? false;
+    const moderatorRights = getCurrentModeratorRights()
+    return moderatorRights?.changeInquiryStatus ?? false
   }
 
   if (context.userType === UserType.User) {
-    const officialRights = getCurrentOfficialRights();
-    return officialRights?.changeInquiryStatus ?? false;
+    const officialRights = getCurrentOfficialRights()
+    return officialRights?.changeInquiryStatus ?? false
   }
 
-  return false;
+  return false
 }
 
 /**
  * Vérifie si l'utilisateur peut éditer
  * Admin et Owner toujours, autres selon leurs droits
+ * @param context
  */
 export function canEdit(context: PermissionContext): boolean {
   if (context.isLocked || context.isArchived || context.isDeleted) {
-    return false;
+    return false
   }
   if (context.userType === UserType.Admin || context.isOwner) {
-    return true;
+    return true
   }
 
   if (context.userType === UserType.Moderator) {
-    const moderatorRights = getCurrentModeratorRights();
-    return moderatorRights?.modifyInquiry ?? false;
+    const moderatorRights = getCurrentModeratorRights()
+    return moderatorRights?.modifyInquiry ?? false
   }
 
   if (context.userType === UserType.User) {
-    const officialRights = getCurrentOfficialRights();
-    return officialRights?.modifyInquiry ?? false;
+    const officialRights = getCurrentOfficialRights()
+    return officialRights?.modifyInquiry ?? false
   }
 
-  return false;
+  return false
 }
 
 /**
  * Vérifie si l'utilisateur peut commenter
  * Dépend des droits InquiryTypeRights, même pour les Admins
+ * @param context
  */
 export function canComment(context: PermissionContext): boolean {
-  const appSettings = useAppSettingsStore();
-  
+  const appSettings = useAppSettingsStore()
+
   if (isContentBlocked(context)) {
-    return false;
+    return false
   }
 
   if (context.inquiryType && !canInquiryTypePerformAction(context.inquiryType, 'commentInquiry')) {
-    return false;
+    return false
   }
 
   if (!hasGroupAccess(context)) {
-    return false;
+    return false
   }
 
   if (context.userType === UserType.Guest) {
-    return context.isPublic && appSettings.allowGuestComments;
+    return context.isPublic && appSettings.allowGuestComments
   }
 
-  return true;
+  return true
 }
 
 /**
  * Vérifie si l'utilisateur peut supporter
  * Dépend des droits InquiryTypeRights, même pour les Admins
+ * @param context
  */
 export function canSupport(context: PermissionContext): boolean {
-  const appSettings = useSessionStore().appSettings;
+  const appSettings = useSessionStore().appSettings
 
   if (isContentBlocked(context)) {
-    return false;
+    return false
   }
 
   if (context.inquiryType && !canInquiryTypePerformAction(context.inquiryType, 'supportInquiry')) {
-    return false;
+    return false
   }
   if (!hasGroupAccess(context)) {
-    return false;
+    return false
   }
 
   if (context.userType === UserType.Guest) {
-    return context.isPublic && appSettings.allowGuestSupport;
+    return context.isPublic && appSettings.allowGuestSupport
   }
 
-  return true;
+  return true
 }
 
 /**
  * Vérifie si l'utilisateur peut partager
  * Dépend des droits InquiryTypeRights, même pour les Admins
+ * @param context
  */
 export function canShare(context: PermissionContext): boolean {
-  const appSettings = useAppSettingsStore();
-  
+  const appSettings = useAppSettingsStore()
+
   if (context.isArchived || context.isDeleted) {
-    return false;
+    return false
   }
 
   if (context.inquiryType && !canInquiryTypePerformAction(context.inquiryType, 'shareInquiry')) {
-    return false;
+    return false
   }
 
   if (!appSettings.allowSharing) {
-    return false;
+    return false
   }
 
   if (context.userType === UserType.Guest) {
-    return false;
+    return false
   }
 
-  return canModerate(context); // Le partage nécessite généralement des droits de modération
+  return canModerate(context) // Le partage nécessite généralement des droits de modération
 }
 
 /**
  * Vérifie si l'utilisateur peut attacher des fichiers
  * Dépend des droits InquiryTypeRights, même pour les Admins
+ * @param context
  */
 export function canAttachFile(context: PermissionContext): boolean {
-  
   if (context.isArchived || context.isDeleted || context.isLocked) {
-    return false;
+    return false
   }
 
-  if (context.inquiryType && !canInquiryTypePerformAction(context.inquiryType, 'attachFileInquiry')) {
-    return false;
+  if (
+    context.inquiryType &&
+    !canInquiryTypePerformAction(context.inquiryType, 'attachFileInquiry')
+  ) {
+    return false
   }
 
   if (!hasGroupAccess(context)) {
-    return false;
+    return false
   }
 
   if (context.userType === UserType.Guest) {
-    return false;
+    return false
   }
 
-  return true;
+  return true
 }
 
 export function canView(context: PermissionContext): boolean {
-  const appSettings = useAppSettingsStore();
-  
+  const appSettings = useAppSettingsStore()
+
   if (context.isDeleted) {
-    return [UserType.Moderator, UserType.Admin, UserType.Owner].includes(context.userType);
+    return [UserType.Moderator, UserType.Admin, UserType.Owner].includes(context.userType)
   }
 
   if (context.isArchived) {
-    return [UserType.Moderator, UserType.Admin, UserType.Owner, UserType.User].includes(context.userType);
+    return [UserType.Moderator, UserType.Admin, UserType.Owner, UserType.User].includes(
+      context.userType
+    )
   }
 
   if (context.hasGroupRestrictions) {
-    if (!hasGroupAccess(context) && context.userType !== UserType.Admin && context.userType !== UserType.Moderator) {
-      return false;
+    if (
+      !hasGroupAccess(context) &&
+      context.userType !== UserType.Admin &&
+      context.userType !== UserType.Moderator
+    ) {
+      return false
     }
   }
 
   if (context.userType === UserType.Guest) {
-    return context.isPublic && appSettings.allowPublicAccess;
+    return context.isPublic && appSettings.allowPublicAccess
   }
 
-  return true;
+  return true
 }
 
 export function canCreate(context: PermissionContext): boolean {
-  const appSettings = useAppSettingsStore();
-  
+  const appSettings = useAppSettingsStore()
+
   if (context.userType === UserType.Guest) {
-    return appSettings.allowGuestCreation;
+    return appSettings.allowGuestCreation
   }
-  return true;
+  return true
 }
 
 export function canLock(context: PermissionContext): boolean {
-  return [UserType.Moderator, UserType.Admin].includes(context.userType);
+  return [UserType.Moderator, UserType.Admin].includes(context.userType)
 }
 
 export function createPermissionContextForContent(
@@ -522,10 +532,10 @@ export function createPermissionContextForContent(
   allowedGroups: string[] = [],
   inquiryType?: string
 ): PermissionContext {
-  const userType = getCurrentUserType();
-  const userGroups = getCurrentUserGroups();
-  const isOwner = isContentOwner(contentOwnerId);
-  
+  const userType = getCurrentUserType()
+  const userGroups = getCurrentUserGroups()
+  const isOwner = isContentOwner(contentOwnerId)
+
   return {
     userType,
     contentType,
@@ -538,20 +548,20 @@ export function createPermissionContextForContent(
     hasGroupRestrictions,
     userGroups,
     allowedGroups,
-    inquiryType
-  };
+    inquiryType,
+  }
 }
 
 export default {
   // Enums
   UserType,
   ContentType,
-  
+
   // Default values
   DefaultInquiryTypeRights,
   DefaultModeratorRights,
   DefaultOfficialRights,
-  
+
   // Permission functions
   canView,
   canViewToggle,
@@ -567,14 +577,14 @@ export default {
   canEdit,
   canCreate,
   canLock,
-  
+
   // Context functions
   createPermissionContextForContent,
-  
+
   // Helper functions
   getCurrentUserType,
   getCurrentUserGroups,
   getCurrentModeratorRights,
   getCurrentOfficialRights,
-  canInquiryTypePerformAction
-};
+  canInquiryTypePerformAction,
+}

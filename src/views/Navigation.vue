@@ -4,82 +4,82 @@
 -->
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
-import { showError } from '@nextcloud/dialogs';
-import { emit } from '@nextcloud/event-bus';
-import { t } from '@nextcloud/l10n';
-import NcAppNavigation from '@nextcloud/vue/components/NcAppNavigation';
-import NcAppNavigationNew from '@nextcloud/vue/components/NcAppNavigationNew';
-import NcAppNavigationItem from '@nextcloud/vue/components/NcAppNavigationItem';
-import NcCounterBubble from '@nextcloud/vue/components/NcCounterBubble';
-import InquiryNavigationItems from '../components/Navigation/InquiryNavigationItems.vue';
-import { NavigationIcons } from '../utils/icons.ts';
-import InquiryCreateDlg from '../components/Create/InquiryCreateDlg.vue';
-import { FilterType, useInquiriesStore } from '../stores/inquiries.ts';
-import { useInquiryGroupsStore } from '../stores/inquiryGroups.ts';
-import { useSessionStore } from '../stores/session.ts';
+import { onMounted, ref } from 'vue'
+import { showError } from '@nextcloud/dialogs'
+import { emit } from '@nextcloud/event-bus'
+import { t } from '@nextcloud/l10n'
+import NcAppNavigation from '@nextcloud/vue/components/NcAppNavigation'
+import NcAppNavigationNew from '@nextcloud/vue/components/NcAppNavigationNew'
+import NcAppNavigationItem from '@nextcloud/vue/components/NcAppNavigationItem'
+import NcCounterBubble from '@nextcloud/vue/components/NcCounterBubble'
+import InquiryNavigationItems from '../components/Navigation/InquiryNavigationItems.vue'
+import { NavigationIcons } from '../utils/icons.ts'
+import InquiryCreateDlg from '../components/Create/InquiryCreateDlg.vue'
+import { FilterType, useInquiriesStore } from '../stores/inquiries.ts'
+import { useInquiryGroupsStore } from '../stores/inquiryGroups.ts'
+import { useSessionStore } from '../stores/session.ts'
 import ActionAddInquiry from '../components/Actions/modules/ActionAddInquiry.vue'
-import { usePreferencesStore } from '../stores/preferences.ts';
-import { Event } from '../Types/index.ts';
-import { useRouter } from 'vue-router';
-import { NcAppNavigationSpacer } from '@nextcloud/vue';
+import { usePreferencesStore } from '../stores/preferences.ts'
+import { Event } from '../Types/index.ts'
+import { useRouter } from 'vue-router'
+import { NcAppNavigationSpacer } from '@nextcloud/vue'
 
-const router = useRouter();
+const router = useRouter()
 
-const inquiriesStore = useInquiriesStore();
-const inquiryGroupsStore = useInquiryGroupsStore();
-const sessionStore = useSessionStore();
-const preferencesStore = usePreferencesStore();
+const inquiriesStore = useInquiriesStore()
+const inquiryGroupsStore = useInquiryGroupsStore()
+const sessionStore = useSessionStore()
+const preferencesStore = usePreferencesStore()
 
-const iconSize = 20;
+const iconSize = 20
 
 const icons = {
   relevant: {
     id: 'relevant',
-    iconComponent: NavigationIcons.relevant
+    iconComponent: NavigationIcons.relevant,
   },
   my: {
     id: 'my',
-    iconComponent: NavigationIcons.myInquiries
+    iconComponent: NavigationIcons.myInquiries,
   },
   private: {
     id: 'private',
-    iconComponent: NavigationIcons.private
+    iconComponent: NavigationIcons.private,
   },
   participated: {
     id: 'participated',
-    iconComponent: NavigationIcons.participated
+    iconComponent: NavigationIcons.participated,
   },
   open: {
     id: 'open',
-    iconComponent: NavigationIcons.open
+    iconComponent: NavigationIcons.open,
   },
   all: {
     id: 'all',
-    iconComponent: NavigationIcons.all
+    iconComponent: NavigationIcons.all,
   },
   closed: {
     id: 'closed',
-    iconComponent: NavigationIcons.closed
+    iconComponent: NavigationIcons.closed,
   },
   archived: {
     id: 'archived',
-    iconComponent: NavigationIcons.archived
+    iconComponent: NavigationIcons.archived,
   },
   admin: {
     id: 'admin',
-    iconComponent: NavigationIcons.administration
-  }
-};
+    iconComponent: NavigationIcons.administration,
+  },
+}
 
-const createDlgToggle = ref(false);
+const createDlgToggle = ref(false)
 
 /**
  * Get icon component for a specific filter type
  * @param iconId
  */
 function getIconComponent(iconId: FilterType) {
-  return icons[iconId].iconComponent;
+  return icons[iconId].iconComponent
 }
 
 /**
@@ -88,9 +88,9 @@ function getIconComponent(iconId: FilterType) {
  */
 function toggleArchive(inquiryId: number) {
   try {
-    inquiriesStore.toggleArchive({ inquiryId });
+    inquiriesStore.toggleArchive({ inquiryId })
   } catch {
-    showError(t('agora', 'Error archiving/restoring inquiry.'));
+    showError(t('agora', 'Error archiving/restoring inquiry.'))
   }
 }
 
@@ -100,9 +100,9 @@ function toggleArchive(inquiryId: number) {
  */
 function deleteInquiry(inquiryId: number) {
   try {
-    inquiriesStore.delete({ inquiryId });
+    inquiriesStore.delete({ inquiryId })
   } catch {
-    showError(t('agora', 'Error deleting inquiry.'));
+    showError(t('agora', 'Error deleting inquiry.'))
   }
 }
 
@@ -110,7 +110,7 @@ function deleteInquiry(inquiryId: number) {
  * Show the settings dialog
  */
 function showSettings() {
-  emit(Event.ShowSettings, null);
+  emit(Event.ShowSettings, null)
 }
 
 /**
@@ -120,28 +120,28 @@ function showSettings() {
  * @param payLoad.title
  */
 async function inquiryAdded(payLoad: { id: number; title: string }) {
-  createDlgToggle.value = false;
+  createDlgToggle.value = false
   router.push({
     name: 'inquiry',
-    params: { id: payLoad.id }
-  });
+    params: { id: payLoad.id },
+  })
 }
 
-
-
 onMounted(() => {
-  inquiriesStore.load(false);
-});
+  inquiriesStore.load(false)
+})
 </script>
 
 <template>
   <NcAppNavigation class="agora-navigation">
     <!-- New Inquiry Button -->
-    <ActionAddInquiry 
-      v-if="preferencesStore.useActionAddInquiryInNavigation
-        && sessionStore.appPermissions.inquiryCreation
+    <ActionAddInquiry
+      v-if="
+        preferencesStore.useActionAddInquiryInNavigation &&
+        sessionStore.appPermissions.inquiryCreation
       "
-      :button-mode="'navigation'" />
+      :button-mode="'navigation'"
+    />
 
     <div class="agora-navigation__header">
       <NcAppNavigationNew
@@ -181,7 +181,7 @@ onMounted(() => {
           allow-collapse
           :to="{
             name: 'group',
-            params: { slug: inquiryGroup.slug }
+            params: { slug: inquiryGroup.slug },
           }"
           class="agora-navigation__group-item"
           :open="false"
@@ -191,11 +191,7 @@ onMounted(() => {
           </template>
           <template #counter>
             <NcCounterBubble
-              :count="
-                inquiryGroupsStore.countInquiriesInInquiryGroups[
-                  inquiryGroup.id
-                ]
-              "
+              :count="inquiryGroupsStore.countInquiriesInInquiryGroups[inquiryGroup.id]"
               class="agora-navigation__counter"
             />
           </template>
@@ -204,29 +200,23 @@ onMounted(() => {
             class="agora-navigation__sub-list"
           >
             <InquiryNavigationItems
-              v-for="inquiry in inquiriesStore.groupList(
-                inquiryGroup.inquiryIds
-              )"
+              v-for="inquiry in inquiriesStore.groupList(inquiryGroup.inquiryIds)"
               :key="inquiry.id"
               :inquiry="inquiry"
               @toggle-archive="toggleArchive(inquiry.id)"
               @delete-inquiry="deleteInquiry(inquiry.id)"
             />
             <NcAppNavigationItem
-              v-if="
-                inquiriesStore.groupList(inquiryGroup.inquiryIds).length === 0
-              "
+              v-if="inquiriesStore.groupList(inquiryGroup.inquiryIds).length === 0"
               :name="t('agora', 'No inquiries found')"
               class="agora-navigation__empty"
             />
             <NcAppNavigationItem
-              v-if="inquiryGroup.inquiryIds.length  >
-                inquiriesStore.meta.maxInquiriesInNavigation
-              "
+              v-if="inquiryGroup.inquiryIds.length > inquiriesStore.meta.maxInquiriesInNavigation"
               class="force-not-active"
               :to="{
                 name: 'group',
-                params: { slug: inquiryGroup.slug }
+                params: { slug: inquiryGroup.slug },
               }"
               :name="t('agora', 'View all')"
             >
@@ -254,16 +244,13 @@ onMounted(() => {
           :pinned="inquiryCategory.pinned"
           :to="{
             name: 'list',
-            params: { type: inquiryCategory.id }
+            params: { type: inquiryCategory.id },
           }"
           class="agora-navigation__filter-item"
           :open="false"
         >
           <template #icon>
-            <Component
-              :is="getIconComponent(inquiryCategory.id)"
-              :size="iconSize"
-            />
+            <Component :is="getIconComponent(inquiryCategory.id)" :size="iconSize" />
           </template>
           <template #counter>
             <NcCounterBubble
@@ -276,29 +263,26 @@ onMounted(() => {
             class="agora-navigation__sub-list"
           >
             <InquiryNavigationItems
-              v-for="inquiry in inquiriesStore.navigationList(
-                inquiryCategory.id
-              )"
+              v-for="inquiry in inquiriesStore.navigationList(inquiryCategory.id)"
               :key="inquiry.id"
               :inquiry="inquiry"
               @toggle-archive="toggleArchive(inquiry.id)"
               @delete-inquiry="deleteInquiry(inquiry.id)"
             />
             <NcAppNavigationItem
-              v-if="
-                inquiriesStore.navigationList(inquiryCategory.id).length === 0
-              "
+              v-if="inquiriesStore.navigationList(inquiryCategory.id).length === 0"
               :name="t('agora', 'No inquiries found')"
               class="agora-navigation__empty"
             />
             <NcAppNavigationItem
-              v-if="inquiriesStore.navigationList(inquiryCategory.id) >
+              v-if="
+                inquiriesStore.navigationList(inquiryCategory.id) >
                 inquiriesStore.meta.maxInquiriesInNavigation
               "
               class="force-not-active"
               :to="{
                 name: 'list',
-                params: { type: inquiryCategory.id }
+                params: { type: inquiryCategory.id },
               }"
               :name="t('agora', 'View all')"
             >

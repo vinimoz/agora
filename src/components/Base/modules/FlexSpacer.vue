@@ -4,7 +4,7 @@
 -->
 
 <script setup lang="ts">
-const { tag = 'div' } = defineProps<{ tag?: string }>();
+const { tag = 'div' } = defineProps<{ tag?: string }>()
 </script>
 
 <template>

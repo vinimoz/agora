@@ -4,43 +4,41 @@
 -->
 
 <script setup lang="ts">
-import { t } from '@nextcloud/l10n';
-import {
-  SortDirection,
-  sortTitlesMapping,
-  useInquiriesStore
-} from '../../stores/inquiries.ts';
-import { SortType } from '../../Types';
+import { t } from '@nextcloud/l10n'
+import { SortDirection, sortTitlesMapping, useInquiriesStore } from '../../stores/inquiries.ts'
+import { SortType } from '../../Types'
 
-import NcActions from '@nextcloud/vue/components/NcActions';
-import NcActionButton from '@nextcloud/vue/components/NcActionButton';
-import NcActionSeparator from '@nextcloud/vue/components/NcActionSeparator';
+import NcActions from '@nextcloud/vue/components/NcActions'
+import NcActionButton from '@nextcloud/vue/components/NcActionButton'
+import NcActionSeparator from '@nextcloud/vue/components/NcActionSeparator'
 
-import SortAscendingIcon from 'vue-material-design-icons/SortAscending.vue';
-import CommentIcon from 'vue-material-design-icons/Comment.vue';
-import { ThumbIcon } from '../AppIcons';
-import SortDescendingIcon from 'vue-material-design-icons/SortDescending.vue';
-import AlphabeticalIcon from 'vue-material-design-icons/Alphabetical.vue';
-import GestureDoubleTapIcon from 'vue-material-design-icons/GestureDoubleTap.vue';
-import CreationIcon from 'vue-material-design-icons/ClockPlusOutline.vue';
-import ExpirationIcon from 'vue-material-design-icons/CalendarEnd.vue';
-import AccountCircleOutlineIcon from 'vue-material-design-icons/AccountCircleOutline.vue';
-import TypeIcon from 'vue-material-design-icons/Target.vue';
-import { NcActionButtonGroup } from '@nextcloud/vue';
-import { computed } from 'vue';
+import SortAscendingIcon from 'vue-material-design-icons/SortAscending.vue'
+import CommentIcon from 'vue-material-design-icons/Comment.vue'
+import { ThumbIcon } from '../AppIcons'
+import SortDescendingIcon from 'vue-material-design-icons/SortDescending.vue'
+import AlphabeticalIcon from 'vue-material-design-icons/Alphabetical.vue'
+import GestureDoubleTapIcon from 'vue-material-design-icons/GestureDoubleTap.vue'
+import CreationIcon from 'vue-material-design-icons/ClockPlusOutline.vue'
+import ExpirationIcon from 'vue-material-design-icons/CalendarEnd.vue'
+import AccountCircleOutlineIcon from 'vue-material-design-icons/AccountCircleOutline.vue'
+import TypeIcon from 'vue-material-design-icons/Target.vue'
+import { NcActionButtonGroup } from '@nextcloud/vue'
+import { computed } from 'vue'
 
-const inquiriesStore = useInquiriesStore();
+const inquiriesStore = useInquiriesStore()
 
 const sortDirection = computed({
   get() {
-    return inquiriesStore.sort.reverse ? 'desc' : 'asc';
+    return inquiriesStore.sort.reverse ? 'desc' : 'asc'
   },
   set(direction: SortDirection) {
-    direction === 'asc'
-      ? (inquiriesStore.sort.reverse = false)
-      : (inquiriesStore.sort.reverse = true);
+  if (direction === 'asc') {
+    inquiriesStore.sort.reverse = false
+  } else {
+    inquiriesStore.sort.reverse = true
+    }
   }
-});
+})
 
 /**
  *
@@ -50,10 +48,10 @@ const sortDirection = computed({
  */
 function setSort(sort: { by?: SortType; reverse?: boolean }) {
   if (sort.by !== undefined) {
-    inquiriesStore.sort.by = sort.by;
+    inquiriesStore.sort.by = sort.by
   }
   if (sort.reverse !== undefined) {
-    inquiriesStore.sort.reverse = sort.reverse;
+    inquiriesStore.sort.reverse = sort.reverse
   }
 }
 </script>
@@ -61,11 +59,7 @@ function setSort(sort: { by?: SortType; reverse?: boolean }) {
 <template>
   <NcActions primary :menu-name="sortTitlesMapping[inquiriesStore.sort.by]">
     <template #icon>
-      <SortDescendingIcon
-        v-if="inquiriesStore.sort.reverse"
-        :size="20"
-        decorative
-      />
+      <SortDescendingIcon v-if="inquiriesStore.sort.reverse" :size="20" decorative />
       <SortAscendingIcon v-else :size="20" decorative />
     </template>
 

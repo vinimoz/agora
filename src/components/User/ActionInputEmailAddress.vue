@@ -4,64 +4,59 @@
 -->
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { debounce } from 'lodash';
-import { showSuccess, showError } from '@nextcloud/dialogs';
-import { t } from '@nextcloud/l10n';
+import { ref } from 'vue'
+import { debounce } from 'lodash'
+import { showSuccess, showError } from '@nextcloud/dialogs'
+import { t } from '@nextcloud/l10n'
 
-import NcActionInput from '@nextcloud/vue/components/NcActionInput';
-import EditEmailIcon from 'vue-material-design-icons/EmailEditOutline.vue';
+import NcActionInput from '@nextcloud/vue/components/NcActionInput'
+import EditEmailIcon from 'vue-material-design-icons/EmailEditOutline.vue'
 
-import { ValidatorAPI } from '../../Api/index.ts';
-import { StatusResults } from '../../Types/index.ts';
-import { useSessionStore } from '../../stores/session.ts';
+import { ValidatorAPI } from '../../Api/index.ts'
+import { StatusResults } from '../../Types/index.ts'
+import { useSessionStore } from '../../stores/session.ts'
 
 type InputProps = {
-  success: boolean;
-  error: boolean;
-  showTrailingButton: boolean;
-  labelOutside: boolean;
-  label: string;
-};
+  success: boolean
+  error: boolean
+  showTrailingButton: boolean
+  labelOutside: boolean
+  label: string
+}
 
-const sessionStore = useSessionStore();
+const sessionStore = useSessionStore()
 
 const inputProps = ref<InputProps>({
   success: false,
   error: false,
   showTrailingButton: true,
   labelOutside: false,
-  label: t('agora', 'Edit Email Address')
-});
+  label: t('agora', 'Edit Email Address'),
+})
 
 /**
  *
  * @param status
  */
 function setStatus(status: StatusResults) {
-  inputProps.value.success = status === 'success';
-  inputProps.value.error = status === 'error';
-  inputProps.value.showTrailingButton = status === 'success';
+  inputProps.value.success = status === 'success'
+  inputProps.value.error = status === 'error'
+  inputProps.value.showTrailingButton = status === 'success'
 }
 
 const validate = debounce(async function () {
-  if (
-    sessionStore.share.user.emailAddress ===
-    sessionStore.currentUser.emailAddress
-  ) {
-    setStatus('unchanged');
-    return;
+  if (sessionStore.share.user.emailAddress === sessionStore.currentUser.emailAddress) {
+    setStatus('unchanged')
+    return
   }
 
   try {
-    await ValidatorAPI.validateEmailAddress(
-      sessionStore.share.user.emailAddress
-    );
-    setStatus('success');
+    await ValidatorAPI.validateEmailAddress(sessionStore.share.user.emailAddress)
+    setStatus('success')
   } catch {
-    setStatus('error');
+    setStatus('error')
   }
-}, 500);
+}, 500)
 
 /**
  *
@@ -69,21 +64,21 @@ const validate = debounce(async function () {
 async function submit() {
   try {
     await sessionStore.updateEmailAddress({
-      emailAddress: sessionStore.share.user.emailAddress
-    });
+      emailAddress: sessionStore.share.user.emailAddress,
+    })
     showSuccess(
       t('agora', 'Email address {emailAddress} saved.', {
-        emailAddress: sessionStore.share.user.emailAddress
+        emailAddress: sessionStore.share.user.emailAddress,
       })
-    );
-    setStatus('unchanged');
+    )
+    setStatus('unchanged')
   } catch {
     showError(
       t('agora', 'Error saving email address {emailAddress}', {
-        emailAddress: sessionStore.share.user.emailAddress
+        emailAddress: sessionStore.share.user.emailAddress,
       })
-    );
-    setStatus('error');
+    )
+    setStatus('error')
   }
 }
 </script>

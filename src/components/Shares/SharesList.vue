@@ -4,52 +4,52 @@
 -->
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { t } from '@nextcloud/l10n';
+import { ref } from 'vue'
+import { t } from '@nextcloud/l10n'
 
-import NcModal from '@nextcloud/vue/components/NcModal';
+import NcModal from '@nextcloud/vue/components/NcModal'
 
-import ShareIcon from 'vue-material-design-icons/ShareVariant.vue';
+import ShareIcon from 'vue-material-design-icons/ShareVariant.vue'
 
-import { ConfigBox, QrModal } from '../Base/index.ts';
-import ShareItem from './ShareItem.vue';
-import UserSearch from '../User/UserSearch.vue';
-import SharePublicAdd from './SharePublicAdd.vue';
-import ShareItemAllUsers from './ShareItemAllUsers.vue';
-import MarkDownDescription from '../Inquiry/MarkDownDescription.vue';
+import { ConfigBox, QrModal } from '../Base/index.ts'
+import ShareItem from './ShareItem.vue'
+import UserSearch from '../User/UserSearch.vue'
+import SharePublicAdd from './SharePublicAdd.vue'
+import ShareItemAllUsers from './ShareItemAllUsers.vue'
+import MarkDownDescription from '../Inquiry/MarkDownDescription.vue'
 
-import { useInquiryStore } from '../../stores/inquiry.ts';
-import { useSharesStore, Share } from '../../stores/shares.ts';
-import { useSessionStore } from '../../stores/session.ts';
-import { showError } from '@nextcloud/dialogs';
-import { User } from '../../Types/index.ts';
+import { useInquiryStore } from '../../stores/inquiry.ts'
+import { useSharesStore, Share } from '../../stores/shares.ts'
+import { useSessionStore } from '../../stores/session.ts'
+import { showError } from '@nextcloud/dialogs'
+import { User } from '../../Types/index.ts'
 
-const inquiryStore = useInquiryStore();
-const sharesStore = useSharesStore();
-const sessionStore = useSessionStore();
+const inquiryStore = useInquiryStore()
+const sharesStore = useSharesStore()
+const sessionStore = useSessionStore()
 
-const qrModal = ref(false);
-const qrText = ref('');
+const qrModal = ref(false)
+const qrText = ref('')
 const configBoxProps = {
   sharesList: {
-    name: t('agora', 'Shares')
-  }
-};
+    name: t('agora', 'Shares'),
+  },
+}
 
 /**
  *
  * @param share
  */
 function openQrModal(share: Share) {
-  qrText.value = share.URL;
-  qrModal.value = true;
+  qrText.value = share.URL
+  qrModal.value = true
 }
 
 async function addShare(user: User) {
   try {
-    await sharesStore.add(user);
+    await sharesStore.add(user)
   } catch {
-    showError(t('agora', 'Error while adding share'));
+    showError(t('agora', 'Error while adding share'))
   }
 }
 </script>
@@ -73,8 +73,8 @@ async function addShare(user: User) {
     <SharePublicAdd
       v-if="
         sessionStore.appPermissions.publicShares &&
-          sessionStore.appPermissions.addShares &&
-          sessionStore.appPermissions.addSharesExternal
+        sessionStore.appPermissions.addShares &&
+        sessionStore.appPermissions.addSharesExternal
       "
     />
 

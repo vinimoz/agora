@@ -4,91 +4,89 @@
 -->
 
 <script setup lang="ts">
-import { computed } from 'vue';
-import moment from '@nextcloud/moment';
+import { computed } from 'vue'
+import moment from '@nextcloud/moment'
 
-import NcUserBubble from '@nextcloud/vue/components/NcUserBubble';
-import NcRichText from '@nextcloud/vue/components/NcRichText';
+import NcUserBubble from '@nextcloud/vue/components/NcUserBubble'
+import NcRichText from '@nextcloud/vue/components/NcRichText'
 
-import { GuestBubble, SimpleLink } from '../../helpers/index.ts';
+import { GuestBubble, SimpleLink } from '../../helpers/index.ts'
 
 const props = defineProps({
   activity: {
     type: Object,
-    default: null
-  }
-});
+    default: null,
+  },
+})
 
-const dateActivityRelative = computed(() =>
-  moment(props.activity.datetime).fromNow()
-);
+const dateActivityRelative = computed(() => moment(props.activity.datetime).fromNow())
 
 const message = computed(() => {
-  const subject = props.activity.subject_rich[0];
-  const parameters = JSON.parse(JSON.stringify(props.activity.subject_rich[1]));
+  const subject = props.activity.subject_rich[0]
+  const parameters = JSON.parse(JSON.stringify(props.activity.subject_rich[1]))
   if (
     parameters.after &&
     typeof parameters.after.id === 'string' &&
     parameters.after.id.startsWith('dt:')
   ) {
-    const dateTime = parameters.after.id.slice(3);
-    parameters.after.name = moment(dateTime).format('L LTS');
+    const dateTime = parameters.after.id.slice(3)
+    parameters.after.name = moment(dateTime).format('L LTS')
   }
 
   Object.keys(parameters).forEach(function (key) {
-    const { type } = parameters[key];
+    const { type } = parameters[key]
 
     switch (type) {
-    case 'highlight':
-      parameters[key] = parameters[key].link
-        ? {
+      case 'highlight':
+        parameters[key] = parameters[key].link
+          ? {
+              component: SimpleLink,
+              props: {
+                href: parameters[key].link,
+                name: parameters[key].name,
+              },
+            }
+          : `${parameters[key].name}`
+        break
+      case 'user':
+        parameters[key] = {
+          component: NcUserBubble,
+          props: {
+            user: parameters[key].id,
+            displayName: parameters[key].name,
+          },
+        }
+        break
+      case 'circle':
+        parameters[key] = {
           component: SimpleLink,
           props: {
             href: parameters[key].link,
-            name: parameters[key].name
-          }
+            name: parameters[key].name,
+          },
         }
-        : `${parameters[key].name}`;
-      break;
-    case 'user':
-      parameters[key] = {
-        component: NcUserBubble,
-        props: {
-          user: parameters[key].id,
-          displayName: parameters[key].name
+        break
+      case 'addressbook-contact':
+      case 'email':
+      case 'guest':
+        parameters[key] = {
+          component: GuestBubble,
+          props: {
+            user: parameters[key].id,
+            displayName: parameters[key].name,
+          },
         }
-      };
-      break;
-    case 'circle':
-      parameters[key] = {
-        component: SimpleLink,
-        props: {
-          href: parameters[key].link,
-          name: parameters[key].name
-        }
-      };
-      break;
-    case 'addressbook-contact':
-    case 'email':
-    case 'guest':
-      parameters[key] = {
-        component: GuestBubble,
-        props: {
-          user: parameters[key].id,
-          displayName: parameters[key].name
-        }
-      };
-      break;
-    default:
-      parameters[key] = `{${key}}`;
+        break
+      default:
+        parameters[key] = `{${key}}`
     }
-  });
+  })
 
   return {
     subject,
-    parameters
-  };
-});
+    parameters,
+  }
+})
 </script>
 
 <template>

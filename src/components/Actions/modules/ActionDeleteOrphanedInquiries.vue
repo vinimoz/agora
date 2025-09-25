@@ -4,14 +4,14 @@
 -->
 
 <script setup lang="ts">
-import { t } from '@nextcloud/l10n';
+import { t } from '@nextcloud/l10n'
 
-import NcButton from '@nextcloud/vue/components/NcButton';
+import NcButton from '@nextcloud/vue/components/NcButton'
 
-import { useInquiriesStore } from '../../../stores/inquiries.ts';
+import { useInquiriesStore } from '../../../stores/inquiries.ts'
 
-const inquiriesStore = useInquiriesStore();
-const caption = t('agora', 'Delete orphaned');
+const inquiriesStore = useInquiriesStore()
+const caption = t('agora', 'Delete orphaned')
 </script>
 
 <template>

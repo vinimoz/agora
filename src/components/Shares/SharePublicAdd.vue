@@ -4,36 +4,36 @@
 -->
 
 <script setup lang="ts">
-import { showError } from '@nextcloud/dialogs';
-import { t } from '@nextcloud/l10n';
+import { showError } from '@nextcloud/dialogs'
+import { t } from '@nextcloud/l10n'
 
-import NcActions from '@nextcloud/vue/components/NcActions';
-import NcActionButton from '@nextcloud/vue/components/NcActionButton';
+import NcActions from '@nextcloud/vue/components/NcActions'
+import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 
-import PlusIcon from 'vue-material-design-icons/Plus.vue';
+import PlusIcon from 'vue-material-design-icons/Plus.vue'
 
-import UserItem from '../User/UserItem.vue';
-import { useSharesStore } from '../../stores/shares.ts';
-import { VirtualUserItemType } from '../../Types/index.ts';
+import UserItem from '../User/UserItem.vue'
+import { useSharesStore } from '../../stores/shares.ts'
+import { VirtualUserItemType } from '../../Types/index.ts'
 
-const sharesStore = useSharesStore();
+const sharesStore = useSharesStore()
 
 const userItemProps: {
-  label: string;
-  type: VirtualUserItemType;
+  label: string
+  type: VirtualUserItemType
 } = {
   label: t('agora', 'Add a new public link'),
-  type: 'addPublicLink'
-};
+  type: 'addPublicLink',
+}
 
 /**
  *
  */
 async function addPublicShare() {
   try {
-    await sharesStore.addPublicShare();
+    await sharesStore.addPublicShare()
   } catch {
-    showError(t('agora', 'Error adding public link'));
+    showError(t('agora', 'Error adding public link'))
   }
 }
 </script>

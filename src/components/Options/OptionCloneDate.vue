@@ -4,39 +4,35 @@
 -->
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
-import moment from '@nextcloud/moment';
-import { t } from '@nextcloud/l10n';
+import { computed, ref } from 'vue'
+import moment from '@nextcloud/moment'
+import { t } from '@nextcloud/l10n'
 
-import NcSelect from '@nextcloud/vue/components/NcSelect';
-import NcButton from '@nextcloud/vue/components/NcButton';
+import NcSelect from '@nextcloud/vue/components/NcSelect'
+import NcButton from '@nextcloud/vue/components/NcButton'
 
-import { InputDiv } from '../Base/index.ts';
-import { useOptionsStore, Option, Sequence } from '../../stores/options.ts';
-import { dateTimeUnitsKeyed } from '../../constants/dateUnits.ts';
+import { InputDiv } from '../Base/index.ts'
+import { useOptionsStore, Option, Sequence } from '../../stores/options.ts'
+import { dateTimeUnitsKeyed } from '../../constants/dateUnits.ts'
 
-const { option } = defineProps<{ option: Option }>();
+const { option } = defineProps<{ option: Option }>()
 
-const optionsStore = useOptionsStore();
+const optionsStore = useOptionsStore()
 
-const dateTimeOptions = Object.entries(dateTimeUnitsKeyed).map(
-  ([key, value]) => ({
-    id: key,
-    name: value.name
-  })
-);
+const dateTimeOptions = Object.entries(dateTimeUnitsKeyed).map(([key, value]) => ({
+  id: key,
+  name: value.name,
+}))
 
-const emit = defineEmits(['close']);
+const emit = defineEmits(['close'])
 
 const sequence = ref<Sequence>({
   unit: dateTimeUnitsKeyed.week,
   stepWidth: 1,
-  repetitions: 1
-});
+  repetitions: 1,
+})
 
-const dateBaseOptionString = computed(() =>
-  moment.unix(option.timestamp).format('LLLL')
-);
+const dateBaseOptionString = computed(() => moment.unix(option.timestamp).format('LLLL'))
 
 /**
  *
@@ -44,9 +40,9 @@ const dateBaseOptionString = computed(() =>
 function createSequence() {
   optionsStore.sequence({
     option,
-    sequence: sequence.value
-  });
-  emit('close');
+    sequence: sequence.value,
+  })
+  emit('close')
 }
 </script>
 
@@ -55,11 +51,9 @@ function createSequence() {
     <h2>{{ t('agora', 'Clone to option sequence') }}</h2>
     <p>
       {{
-        t(
-          'inquiries',
-          'Create a sequence of date options starting with {dateOption}.',
-          { dateOption: dateBaseOptionString }
-        )
+        t('inquiries', 'Create a sequence of date options starting with {dateOption}.', {
+          dateOption: dateBaseOptionString,
+        })
       }}
     </p>
 

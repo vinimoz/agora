@@ -1,6 +1,6 @@
 {
   "name": "agora",
-  "version": "1.0.0rc4",
+  "version": "1.0.0-rc5",
   "private": true,
   "description": "Decidim like application, for nextcloud",
   "homepage": "https://github.com/vinimoz/agora#readme",
@@ -21,7 +21,9 @@
     "format": "prettier --check .",
     "format:fix": "prettier --write .",
     "version": "node update-app-version.mjs && git add ./appinfo/info.xml",
-    "watch": "NODE_ENV=development vite --mode development build --watch"
+    "watch": "NODE_ENV=development vite --mode development build --watch",
+    "lint": "eslint --ext .js,.ts,.vue src",
+    "lint:fix": "eslint --ext .js,.ts,.vue src --fix"
   },
   "browserslist": [
     "extends @nextcloud/browserslist-config"
@@ -59,9 +61,11 @@
     "axios": "^1.10.0",
     "core-js": "^3.43.0",
     "dompurify": "^3.2.6",
+    "eslint": "^8.57.1",
     "file-saver": "^2.0.5",
     "linkify-string": "^4.3.1",
     "linkify-urls": "^5.0.2",
+    "lint": "^1.1.2",
     "lodash": "^4.17.21",
     "lucide-vue-next": "^0.539.0",
     "luxon": "^3.6.1",
@@ -69,6 +73,7 @@
     "marked": "^15.0.12",
     "marked-gfm-heading-id": "^4.1.0",
     "pinia": "^3.0.3",
+    "prettier": "^3.6.2",
     "qrcode": "^1.5.3",
     "vue": "^3.5.17",
     "vue-material-design-icons": "^5.3.0",
@@ -78,13 +83,19 @@
   "devDependencies": {
     "@fullhuman/postcss-purgecss": "^7.0.2",
     "@nextcloud/browserslist-config": "^3.0.1",
+    "@nextcloud/eslint-config": "^8.3.0",
+    "@nextcloud/prettier-config": "^1.2.0",
+    "@nextcloud/stylelint-config": "^3.1.0",
     "@nextcloud/vite-config": "^2.4.0",
     "@types/file-saver": "^2.0.7",
     "@types/lodash": "^4.17.19",
     "@types/luxon": "^3.6.2",
     "@types/qrcode": "^1.5.5",
+    "@typescript-eslint/eslint-plugin": "^8.44.0",
     "@vue/tsconfig": "^0.7.0",
     "ajv": "^8.17.1",
+    "eslint-config-prettier": "^10.1.8",
+    "moment": "^2.30.1",
     "vite": "^6.3.5",
     "vite-plugin-node-polyfills": "^0.23.0",
     "xml2js": "^0.6.2"

@@ -4,15 +4,15 @@
 -->
 
 <script setup lang="ts">
-import InformationIcon from 'vue-material-design-icons/InformationVariant.vue';
+import InformationIcon from 'vue-material-design-icons/InformationVariant.vue'
 
 interface Props {
-  name: string;
-  info?: string;
-  indented?: boolean;
+  name: string
+  info?: string
+  indented?: boolean
 }
 
-const { name, info = '', indented = false } = defineProps<Props>();
+const { name, info = '', indented = false } = defineProps<Props>()
 </script>
 
 <template>

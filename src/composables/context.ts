@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { RouteLocationNormalized } from 'vue-router';
-import { useSessionStore } from '../stores/session.ts';
-import { usePreferencesStore } from '../stores/preferences.ts';
-import { Logger } from '../helpers/index.ts';
-import { Settings } from 'luxon';
+import { RouteLocationNormalized } from 'vue-router'
+import { useSessionStore } from '../stores/session.ts'
+import { usePreferencesStore } from '../stores/preferences.ts'
+import { Logger } from '../helpers/index.ts'
+import { Settings } from 'luxon'
 
 /**
  * Load the application context based on the current route.
@@ -24,20 +24,19 @@ async function loadContext(
   cheapLoading: boolean = false,
   forceReload: boolean = false
 ) {
-  const sessionStore = useSessionStore();
-  const preferencesStore = usePreferencesStore();
-  const firstLoad = !sessionStore.isLoaded;
-  await sessionStore.load(to, cheapLoading, forceReload);
+  const sessionStore = useSessionStore()
+  const preferencesStore = usePreferencesStore()
+  const firstLoad = !sessionStore.isLoaded
+  await sessionStore.load(to, cheapLoading, forceReload)
   if (firstLoad || (!cheapLoading && forceReload)) {
     Settings.defaultLocale =
-      sessionStore.currentUser.localeCodeIntl ||
-      sessionStore.currentUser.languageCodeIntl;
+      sessionStore.currentUser.localeCodeIntl || sessionStore.currentUser.languageCodeIntl
 
     if (sessionStore.userStatus.isLoggedin) {
-      await preferencesStore.load();
+      await preferencesStore.load()
     }
   }
-  Logger.info('Context loaded');
+  Logger.info('Context loaded')
 }
 
-export { loadContext };
+export { loadContext }

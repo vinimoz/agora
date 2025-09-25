@@ -4,14 +4,14 @@
 -->
 
 <script setup lang="ts">
-import { computed } from 'vue';
-import { InputDiv } from '../Base/index.ts';
-import { useInquiryStore } from '../../stores/inquiry.ts';
+import { computed } from 'vue'
+import { InputDiv } from '../Base/index.ts'
+import { useInquiryStore } from '../../stores/inquiry.ts'
 
-const emit = defineEmits(['change']);
+const emit = defineEmits(['change'])
 
-const inquiryStore = useInquiryStore();
-const checkTitle = computed(() => (inquiryStore.title ? '' : 'error'));
+const inquiryStore = useInquiryStore()
+const checkTitle = computed(() => (inquiryStore.title ? '' : 'error'))
 </script>
 
 <template>

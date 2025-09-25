@@ -5,7 +5,7 @@ SPDX-FileCopyrightText: agora developers
 
 This file is generated from multiple sources. Included packages:
 - agora
-	- version: 1.0.0rc4
+	- version: 1.0.0-rc5
 	- license: AGPL-3.0
 - vue-material-design-icons
 	- version: 5.3.1

@@ -4,14 +4,14 @@
 -->
 
 <script setup lang="ts">
-import { computed } from 'vue';
-import { DateTime, Duration, Interval } from 'luxon';
+import { computed } from 'vue'
+import { DateTime, Duration, Interval } from 'luxon'
 
 interface Props {
-  dateTime: DateTime;
-  duration?: Duration;
+  dateTime: DateTime
+  duration?: Duration
 }
-const { dateTime, duration = Duration.fromMillis(0) } = defineProps<Props>();
+const { dateTime, duration = Duration.fromMillis(0) } = defineProps<Props>()
 
 // the dates span one or more entire days
 // do not display the time in this case
@@ -19,35 +19,31 @@ const allDay = computed(
   () =>
     dateTime.startOf('day').toSeconds() === dateTime.toSeconds() &&
     duration.as('seconds') % 86400 === 0
-);
+)
 
 // 'to' is 'from' plus the duration
 // subtract a day if allDay is true and luxonDuration is greater than 0 to match the
 // end of the day after the duration instead of the beginning of the next day
 const to = computed(() =>
-  dateTime
-    .plus(duration)
-    .minus({ day: allDay.value && duration.as('seconds') > 0 ? 1 : 0 })
-);
+  dateTime.plus(duration).minus({ day: allDay.value && duration.as('seconds') > 0 ? 1 : 0 })
+)
 
 // to and from dates have the same month (and year)
 // suppress the 'to' month if they are the same
 const isSameMonth = computed(
   () => dateTime.month === to.value.month && dateTime.year === to.value.year
-);
+)
 
 // to and from dates have the same day (in the same month and year)
 // suppress the 'to' day if they are the same
 // display the interval as timespan inside the same day
-const isSameDay = computed(
-  () => dateTime.day === to.value.day && isSameMonth.value
-);
+const isSameDay = computed(() => dateTime.day === to.value.day && isSameMonth.value)
 
 // Shortcut: 'to' and 'from' are identical
 // suppress the 'to' time if they are the same
-const isSameTime = computed(() => duration.as('seconds') === 0);
+const isSameTime = computed(() => duration.as('seconds') === 0)
 
-const interval = computed(() => Interval.fromDateTimes(dateTime, to.value));
+const interval = computed(() => Interval.fromDateTimes(dateTime, to.value))
 </script>
 
 <template>

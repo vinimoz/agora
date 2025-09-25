@@ -4,15 +4,13 @@
 -->
 
 <script setup lang="ts">
-import { t } from '@nextcloud/l10n';
+import { t } from '@nextcloud/l10n'
 </script>
 
 <template>
   <div class="auto-reminder-information">
     <h1>
-      {{
-        t('agora', 'The automatic reminder is sent to all shares via email:')
-      }}
+      {{ t('agora', 'The automatic reminder is sent to all shares via email:') }}
     </h1>
     <h2>{{ t('agora', 'For inquiries with expiration:') }}</h2>
     <ul>
@@ -56,12 +54,7 @@ import { t } from '@nextcloud/l10n';
     <ul>
       <li>{{ t('agora', 'For text inquiries without expiration.') }}</li>
       <li>
-        {{
-          t(
-            'inquiries',
-            'For inquiries created less than 2 days before the expiration.'
-          )
-        }}
+        {{ t('inquiries', 'For inquiries created less than 2 days before the expiration.') }}
       </li>
       <li>
         {{

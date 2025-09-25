@@ -4,27 +4,27 @@
 -->
 
 <script setup lang="ts">
-import { onMounted } from 'vue';
-import { onBeforeRouteUpdate } from 'vue-router';
+import { onMounted } from 'vue'
+import { onBeforeRouteUpdate } from 'vue-router'
 
-import { useSharesStore } from '../../stores/shares.ts';
+import { useSharesStore } from '../../stores/shares.ts'
 
-import SharesList from '../Shares/SharesListInquiryGroup.vue';
-import { t } from '@nextcloud/l10n';
+import SharesList from '../Shares/SharesListInquiryGroup.vue'
+import { t } from '@nextcloud/l10n'
 
-const sharesStore = useSharesStore();
+const sharesStore = useSharesStore()
 const infoText = t(
   'inquiries',
   'Shares for a inquiry group grant voting access to the inquiries contained in the inquiry group.'
-);
+)
 
 onMounted(() => {
-  sharesStore.load('inquiryGroup');
-});
+  sharesStore.load('inquiryGroup')
+})
 
 onBeforeRouteUpdate(async () => {
-  sharesStore.load('inquiryGroup');
-});
+  sharesStore.load('inquiryGroup')
+})
 </script>
 
 <template>

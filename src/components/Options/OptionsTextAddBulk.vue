@@ -4,33 +4,33 @@
 -->
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { showError, showSuccess } from '@nextcloud/dialogs';
-import { t } from '@nextcloud/l10n';
+import { ref } from 'vue'
+import { showError, showSuccess } from '@nextcloud/dialogs'
+import { t } from '@nextcloud/l10n'
 
-import NcModal from '@nextcloud/vue/components/NcModal';
-import NcActions from '@nextcloud/vue/components/NcActions';
-import NcActionButton from '@nextcloud/vue/components/NcActionButton';
-import NcButton from '@nextcloud/vue/components/NcButton';
+import NcModal from '@nextcloud/vue/components/NcModal'
+import NcActions from '@nextcloud/vue/components/NcActions'
+import NcActionButton from '@nextcloud/vue/components/NcActionButton'
+import NcButton from '@nextcloud/vue/components/NcButton'
 
-import PasteIcon from 'vue-material-design-icons/ClipboardTextMultiple.vue';
+import PasteIcon from 'vue-material-design-icons/ClipboardTextMultiple.vue'
 
-import { useOptionsStore } from '../../stores/options.ts';
+import { useOptionsStore } from '../../stores/options.ts'
 
 interface Props {
-  placeholder?: string;
-  caption?: string;
+  placeholder?: string
+  caption?: string
 }
 
-const optionsStore = useOptionsStore();
+const optionsStore = useOptionsStore()
 
-const newInquiryTexts = ref('');
-const showModal = ref(false);
+const newInquiryTexts = ref('')
+const showModal = ref(false)
 
 const {
   placeholder = t('agora', 'Add options list (one option per line)'),
-  caption = t('agora', 'Paste option list')
-} = defineProps<Props>();
+  caption = t('agora', 'Paste option list'),
+} = defineProps<Props>()
 
 /**
  *
@@ -38,15 +38,15 @@ const {
 async function addOptionsList() {
   if (newInquiryTexts.value) {
     try {
-      await optionsStore.addBulk({ text: newInquiryTexts.value });
-      showSuccess(t('agora', 'Options added'));
-      newInquiryTexts.value = '';
+      await optionsStore.addBulk({ text: newInquiryTexts.value })
+      showSuccess(t('agora', 'Options added'))
+      newInquiryTexts.value = ''
     } catch {
       showError(
         t('agora', 'Error adding options', {
-          optionText: newInquiryTexts.value
+          optionText: newInquiryTexts.value,
         })
-      );
+      )
     }
   }
 }
@@ -55,11 +55,7 @@ async function addOptionsList() {
 <template>
   <div>
     <NcActions>
-      <NcActionButton
-        :name="caption"
-        :aria-label="caption"
-        @click="showModal = true"
-      >
+      <NcActionButton :name="caption" :aria-label="caption" @click="showModal = true">
         <template #icon>
           <PasteIcon />
         </template>
@@ -78,11 +74,7 @@ async function addOptionsList() {
           }}
         </p>
 
-        <textarea
-          v-model="newInquiryTexts"
-          class="add-options-list"
-          :placeholder="placeholder"
-        />
+        <textarea v-model="newInquiryTexts" class="add-options-list" :placeholder="placeholder" />
 
         <div class="modal__buttons">
           <NcButton @click="showModal = false">

@@ -4,182 +4,176 @@
 -->
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 
 export interface CollapsibleProps {
-  initialState?: 'min' | 'max';
-  minHeight?: number;
-  noCollapse: boolean;
-  maxHeightVh?: number;
+  initialState?: 'min' | 'max'
+  minHeight?: number
+  noCollapse: boolean
+  maxHeightVh?: number
 }
 
 const {
   initialState = 'max',
   minHeight = 100,
   noCollapse = false,
-  maxHeightVh = 40
-} = defineProps<CollapsibleProps>();
+  maxHeightVh = 40,
+} = defineProps<CollapsibleProps>()
 
-const slotWrapper = ref<HTMLElement | null>(null);
-const containerRef = ref<HTMLElement | null>(null);
+const slotWrapper = ref<HTMLElement | null>(null)
+const containerRef = ref<HTMLElement | null>(null)
 
 // Measured content height
-const contentHeight = ref(0);
+const contentHeight = ref(0)
 
 // Current visible container height
-const height = ref(minHeight);
+const height = ref(minHeight)
 
 // Max height is either the content height or capped by maxHeightVh
 const maxHeight = computed(() =>
   Math.min(contentHeight.value, window.innerHeight * (maxHeightVh / 100))
-);
+)
 
 // Effective minimum height: either minHeight or capped by maxHeight
-const effectiveMinHeight = computed(() => Math.min(minHeight, maxHeight.value));
+const effectiveMinHeight = computed(() => Math.min(minHeight, maxHeight.value))
 
 // Watch for manual height changes (e.g., via drag or click)
-const isTransitioning = ref(false);
+const isTransitioning = ref(false)
 
 // Overflow indicators
-const hasTopOverflow = ref(false);
-const hasBottomOverflow = ref(false);
+const hasTopOverflow = ref(false)
+const hasBottomOverflow = ref(false)
 
 // drag state
 const drag = {
   startY: 0,
   startHeight: 0,
   isDragging: false,
-  hasInitializedHeight: false
-};
+  hasInitializedHeight: false,
+}
 
 // Helper to get clientY from mouse or touch events
 function getClientY(event: MouseEvent | TouchEvent): number {
-  return 'touches' in event ? (event.touches[0]?.clientY ?? 0) : event.clientY;
+  return 'touches' in event ? (event.touches[0]?.clientY ?? 0) : event.clientY
 }
 
 // Start dragging the resize handle
 function startResize(event: MouseEvent | TouchEvent) {
-  if (noCollapse) return;
+  if (noCollapse) return
 
-  drag.startY = getClientY(event);
-  drag.startHeight = height.value;
-  drag.isDragging = false;
+  drag.startY = getClientY(event)
+  drag.startHeight = height.value
+  drag.isDragging = false
 
-  document.addEventListener('mousemove', onMove);
-  document.addEventListener('touchmove', onMove);
-  document.addEventListener('mouseup', stopResize);
-  document.addEventListener('touchend', stopResize);
+  document.addEventListener('mousemove', onMove)
+  document.addEventListener('touchmove', onMove)
+  document.addEventListener('mouseup', stopResize)
+  document.addEventListener('touchend', stopResize)
 }
 
 // Handle vertical dragging
 function onMove(event: MouseEvent | TouchEvent) {
-  const y = getClientY(event);
-  const dy = y - drag.startY;
+  const y = getClientY(event)
+  const dy = y - drag.startY
 
-  if (Math.abs(dy) > 3) drag.isDragging = true;
+  if (Math.abs(dy) > 3) drag.isDragging = true
 
-  let newHeight = drag.startHeight + dy;
-  newHeight = Math.max(
-    effectiveMinHeight.value,
-    Math.min(maxHeight.value, newHeight)
-  );
-  height.value = newHeight;
+  let newHeight = drag.startHeight + dy
+  newHeight = Math.max(effectiveMinHeight.value, Math.min(maxHeight.value, newHeight))
+  height.value = newHeight
 }
 
 // Stop dragging – or toggle between min/max if it was just a click
 function stopResize() {
-  if (noCollapse) return;
+  if (noCollapse) return
 
-  document.removeEventListener('mousemove', onMove);
-  document.removeEventListener('touchmove', onMove);
-  document.removeEventListener('mouseup', stopResize);
-  document.removeEventListener('touchend', stopResize);
+  document.removeEventListener('mousemove', onMove)
+  document.removeEventListener('touchmove', onMove)
+  document.removeEventListener('mouseup', stopResize)
+  document.removeEventListener('touchend', stopResize)
 
   if (drag.isDragging) {
-    drag.isDragging = false;
+    drag.isDragging = false
   } else {
     requestAnimationFrame(() => {
-      drag.isDragging = false;
+      drag.isDragging = false
       height.value =
-        height.value > effectiveMinHeight.value + 10
-          ? effectiveMinHeight.value
-          : maxHeight.value;
-    });
+        height.value > effectiveMinHeight.value + 10 ? effectiveMinHeight.value : maxHeight.value
+    })
   }
 }
 
 function updateOverflowIndicators() {
-  const el = containerRef.value;
-  if (!el) return;
+  const el = containerRef.value
+  if (!el) return
 
-  hasTopOverflow.value = el.scrollTop > 0;
-  hasBottomOverflow.value = el.scrollTop + el.clientHeight < el.scrollHeight;
+  hasTopOverflow.value = el.scrollTop > 0
+  hasBottomOverflow.value = el.scrollTop + el.clientHeight < el.scrollHeight
 }
 
-let observer: ResizeObserver | null = null;
+let observer: ResizeObserver | null = null
 
 onMounted(() => {
-  updateOverflowIndicators();
+  updateOverflowIndicators()
 
-  containerRef.value?.addEventListener('scroll', updateOverflowIndicators);
+  containerRef.value?.addEventListener('scroll', updateOverflowIndicators)
 
   if (slotWrapper.value) {
     // Watch actual content size via ResizeObserver
     observer = new ResizeObserver(() => {
-      if (!slotWrapper.value) return;
+      if (!slotWrapper.value) return
 
       // If collapse is disabled, always follow content size (with 50vh cap)
       if (noCollapse) {
-        contentHeight.value = slotWrapper.value.scrollHeight;
-        height.value = maxHeight.value;
-        return;
+        contentHeight.value = slotWrapper.value.scrollHeight
+        height.value = maxHeight.value
+        return
       }
 
-      const scrollHeight = slotWrapper.value.scrollHeight;
-      const previousMax = maxHeight.value;
-      contentHeight.value = scrollHeight;
+      const scrollHeight = slotWrapper.value.scrollHeight
+      const previousMax = maxHeight.value
+      contentHeight.value = scrollHeight
 
-      const newMax = maxHeight.value;
-      const wasAtMax = height.value === previousMax;
+      const newMax = maxHeight.value
+      const wasAtMax = height.value === previousMax
 
       // Expand height if previously at max and content grew
       if (wasAtMax && newMax > previousMax) {
-        height.value = newMax;
+        height.value = newMax
       }
 
       // Reduce height if content shrunk below current height
       if (height.value > newMax) {
-        height.value = newMax;
+        height.value = newMax
       }
 
       // Set initial height only once
       if (!drag.hasInitializedHeight) {
-        const target =
-          initialState === 'min' ? effectiveMinHeight.value : newMax;
+        const target = initialState === 'min' ? effectiveMinHeight.value : newMax
 
-        drag.isDragging = true; // disable transition
-        height.value = target;
-        drag.hasInitializedHeight = true;
+        drag.isDragging = true // disable transition
+        height.value = target
+        drag.hasInitializedHeight = true
 
         requestAnimationFrame(() => {
-          drag.isDragging = false;
-        });
+          drag.isDragging = false
+        })
       }
-      updateOverflowIndicators();
-    });
-    observer.observe(slotWrapper.value);
+      updateOverflowIndicators()
+    })
+    observer.observe(slotWrapper.value)
   }
-});
+})
 
 // Watch for manual height changes (e.g., via drag)
 watch(height, () => {
-  requestAnimationFrame(updateOverflowIndicators);
-});
+  requestAnimationFrame(updateOverflowIndicators)
+})
 
 onBeforeUnmount(() => {
-  observer?.disconnect();
-  containerRef.value?.removeEventListener('scroll', updateOverflowIndicators);
-});
+  observer?.disconnect()
+  containerRef.value?.removeEventListener('scroll', updateOverflowIndicators)
+})
 </script>
 
 <template>
@@ -189,8 +183,8 @@ onBeforeUnmount(() => {
         'collapsible_wrapper',
         {
           'has-top-shadow': hasTopOverflow,
-          'has-bottom-shadow': hasBottomOverflow
-        }
+          'has-bottom-shadow': hasBottomOverflow,
+        },
       ]"
     >
       <div
@@ -248,11 +242,7 @@ onBeforeUnmount(() => {
     // Fade top
     &::before {
       top: 0;
-      background: linear-gradient(
-        to bottom,
-        var(--color-main-background),
-        rgba(0, 0, 0, 0)
-      );
+      background: linear-gradient(to bottom, var(--color-main-background), rgba(0, 0, 0, 0));
       opacity: 0;
       transition: opacity 0.2s;
     }
@@ -260,11 +250,7 @@ onBeforeUnmount(() => {
     // Fade bottom
     &::after {
       bottom: 0;
-      background: linear-gradient(
-        to top,
-        var(--color-main-background),
-        rgba(0, 0, 0, 0)
-      );
+      background: linear-gradient(to top, var(--color-main-background), rgba(0, 0, 0, 0));
       opacity: 0;
       transition: opacity 0.2s;
     }

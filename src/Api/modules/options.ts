@@ -2,10 +2,10 @@
  * SPDX-FileCopyrightText: 2022 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { Option, Sequence, SimpleOption } from '../../stores/options.js';
-import { DateTimeUnit } from '../../constants/dateUnits.js';
-import { httpInstance, createCancelTokenHandler } from './HttpApi.js';
-import { AxiosResponse } from '@nextcloud/axios';
+import { Option, Sequence, SimpleOption } from '../../stores/options.js'
+import { DateTimeUnit } from '../../constants/dateUnits.js'
+import { httpInstance, createCancelTokenHandler } from './HttpApi.js'
+import { AxiosResponse } from '@nextcloud/axios'
 
 const options = {
   getOptions(inquiryId: number): Promise<AxiosResponse<{ options: Option[] }>> {
@@ -13,11 +13,8 @@ const options = {
       method: 'GET',
       url: `inquiry/${inquiryId}/options`,
       params: { time: +new Date() },
-      cancelToken:
-        cancelTokenHandlerObject[
-          this.getOptions.name
-        ].handleRequestCancellation().token
-    });
+      cancelToken: cancelTokenHandlerObject[this.getOptions.name].handleRequestCancellation().token,
+    })
   },
 
   addOption(
@@ -26,8 +23,8 @@ const options = {
     sequence: Sequence | null
   ): Promise<
     AxiosResponse<{
-      added: Option[];
-      options: Option[];
+      added: Option[]
+      options: Option[]
     }>
   > {
     return httpInstance.request({
@@ -35,11 +32,8 @@ const options = {
       url: `inquiry/${inquiryId}/option`,
       // data: { ...option },
       data: { option, sequence },
-      cancelToken:
-        cancelTokenHandlerObject[
-          this.addOption.name
-        ].handleRequestCancellation().token
-    });
+      cancelToken: cancelTokenHandlerObject[this.addOption.name].handleRequestCancellation().token,
+    })
   },
 
   updateOption(option: Option): Promise<AxiosResponse<{ option: Option }>> {
@@ -49,10 +43,8 @@ const options = {
       // TODO: replace text with timestamp
       data: { ...option },
       cancelToken:
-        cancelTokenHandlerObject[
-          this.updateOption.name
-        ].handleRequestCancellation().token
-    });
+        cancelTokenHandlerObject[this.updateOption.name].handleRequestCancellation().token,
+    })
   },
 
   deleteOption(optionId: number): Promise<AxiosResponse<{ option: Option }>> {
@@ -61,10 +53,8 @@ const options = {
       url: `option/${optionId}`,
       params: { time: +new Date() },
       cancelToken:
-        cancelTokenHandlerObject[
-          this.deleteOption.name
-        ].handleRequestCancellation().token
-    });
+        cancelTokenHandlerObject[this.deleteOption.name].handleRequestCancellation().token,
+    })
   },
 
   restoreOption(optionId: number): Promise<AxiosResponse<{ option: Option }>> {
@@ -74,10 +64,8 @@ const options = {
       params: { time: +new Date() },
 
       cancelToken:
-        cancelTokenHandlerObject[
-          this.restoreOption.name
-        ].handleRequestCancellation().token
-    });
+        cancelTokenHandlerObject[this.restoreOption.name].handleRequestCancellation().token,
+    })
   },
 
   addOptions(
@@ -85,9 +73,9 @@ const options = {
     optionsBatch: string
   ): Promise<
     AxiosResponse<{
-      option: Option;
-      repetitions: Option[];
-      options: Option[];
+      option: Option
+      repetitions: Option[]
+      options: Option[]
     }>
   > {
     return httpInstance.request({
@@ -95,13 +83,10 @@ const options = {
       url: 'option/bulk',
       data: {
         inquiryId,
-        text: optionsBatch
+        text: optionsBatch,
       },
-      cancelToken:
-        cancelTokenHandlerObject[
-          this.addOptions.name
-        ].handleRequestCancellation().token
-    });
+      cancelToken: cancelTokenHandlerObject[this.addOptions.name].handleRequestCancellation().token,
+    })
   },
 
   confirmOption(optionId: number): Promise<AxiosResponse<{ option: Option }>> {
@@ -109,17 +94,15 @@ const options = {
       method: 'PUT',
       url: `option/${optionId}/confirm`,
       cancelToken:
-        cancelTokenHandlerObject[
-          this.confirmOption.name
-        ].handleRequestCancellation().token
-    });
+        cancelTokenHandlerObject[this.confirmOption.name].handleRequestCancellation().token,
+    })
   },
 
   reorderOptions(
     inquiryId: number,
     options: {
-      id: number;
-      text: string;
+      id: number
+      text: string
     }[]
   ): Promise<AxiosResponse<{ options: Option[] }>> {
     return httpInstance.request({
@@ -127,10 +110,8 @@ const options = {
       url: `inquiry/${inquiryId}/options/reorder`,
       data: { options },
       cancelToken:
-        cancelTokenHandlerObject[
-          this.reorderOptions.name
-        ].handleRequestCancellation().token
-    });
+        cancelTokenHandlerObject[this.reorderOptions.name].handleRequestCancellation().token,
+    })
   },
 
   addOptionsSequence(
@@ -141,13 +122,11 @@ const options = {
       method: 'POST',
       url: `option/${optionId}/sequence`,
       data: {
-        sequence
+        sequence,
       },
       cancelToken:
-        cancelTokenHandlerObject[
-          this.addOptionsSequence.name
-        ].handleRequestCancellation().token
-    });
+        cancelTokenHandlerObject[this.addOptionsSequence.name].handleRequestCancellation().token,
+    })
   },
 
   shiftOptions(
@@ -160,16 +139,14 @@ const options = {
       url: `inquiry/${inquiryId}/shift`,
       data: {
         step,
-        unit
+        unit,
       },
       cancelToken:
-        cancelTokenHandlerObject[
-          this.shiftOptions.name
-        ].handleRequestCancellation().token
-    });
-  }
-};
+        cancelTokenHandlerObject[this.shiftOptions.name].handleRequestCancellation().token,
+    })
+  },
+}
 
-const cancelTokenHandlerObject = createCancelTokenHandler(options);
+const cancelTokenHandlerObject = createCancelTokenHandler(options)
 
-export default options;
+export default options

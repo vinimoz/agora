@@ -5,13 +5,13 @@
 
 <script setup lang="ts">
 // import ComboInquirySelect from './ComboInquirySelectView.vue'
-import UserItem from '../User/UserItem.vue';
-import { useComboStore } from '../../stores/combo.ts';
-import { ViewMode } from '../../Types/index.ts';
+import UserItem from '../User/UserItem.vue'
+import { useComboStore } from '../../stores/combo.ts'
+import { ViewMode } from '../../Types/index.ts'
 
-const { viewMode } = defineProps<{ viewMode: ViewMode }>();
+const { viewMode } = defineProps<{ viewMode: ViewMode }>()
 
-const comboStore = useComboStore();
+const comboStore = useComboStore()
 </script>
 
 <template>

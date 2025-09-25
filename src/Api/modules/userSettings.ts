@@ -2,9 +2,9 @@
  * SPDX-FileCopyrightText: 2022 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { AxiosResponse } from '@nextcloud/axios';
-import { UserPreferences } from '../../stores/preferences.js';
-import { httpInstance, createCancelTokenHandler } from './HttpApi.js';
+import { AxiosResponse } from '@nextcloud/axios'
+import { UserPreferences } from '../../stores/preferences.js'
+import { httpInstance, createCancelTokenHandler } from './HttpApi.js'
 
 const userSettings = {
   getUserSettings(): Promise<AxiosResponse<{ preferences: UserPreferences }>> {
@@ -13,10 +13,8 @@ const userSettings = {
       url: 'preferences',
       params: { time: +new Date() },
       cancelToken:
-        cancelTokenHandlerObject[
-          this.getUserSettings.name
-        ].handleRequestCancellation().token
-    });
+        cancelTokenHandlerObject[this.getUserSettings.name].handleRequestCancellation().token,
+    })
   },
 
   writeUserSettings(
@@ -27,13 +25,11 @@ const userSettings = {
       url: 'preferences',
       data: { preferences },
       cancelToken:
-        cancelTokenHandlerObject[
-          this.writeUserSettings.name
-        ].handleRequestCancellation().token
-    });
-  }
-};
+        cancelTokenHandlerObject[this.writeUserSettings.name].handleRequestCancellation().token,
+    })
+  },
+}
 
-const cancelTokenHandlerObject = createCancelTokenHandler(userSettings);
+const cancelTokenHandlerObject = createCancelTokenHandler(userSettings)
 
-export default userSettings;
+export default userSettings

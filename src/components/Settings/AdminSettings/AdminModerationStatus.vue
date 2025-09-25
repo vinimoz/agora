@@ -4,73 +4,67 @@
 -->
 
 <script setup lang="ts">
-import { t } from '@nextcloud/l10n';
-import { ref, computed, onMounted, watch } from 'vue';
-import { useAppSettingsStore } from '../../../stores/appSettings.ts';
-import {
-  InquiryTypeValues
-} from '../../../helpers/modules/InquiryHelper.ts';
-import {  StatusIcons } from '../../../utils/icons.ts';
-import NcButton from '@nextcloud/vue/components/NcButton';
-import NcInputField from '@nextcloud/vue/components/NcInputField';
-import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch';
-import NcSelect from '@nextcloud/vue/components/NcSelect';
+import { t } from '@nextcloud/l10n'
+import { ref, computed, onMounted, watch } from 'vue'
+import { useAppSettingsStore } from '../../../stores/appSettings.ts'
+import { InquiryTypeValues } from '../../../helpers/modules/InquiryHelper.ts'
+import { StatusIcons } from '../../../utils/icons.ts'
+import NcButton from '@nextcloud/vue/components/NcButton'
+import NcInputField from '@nextcloud/vue/components/NcInputField'
+import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
+import NcSelect from '@nextcloud/vue/components/NcSelect'
 
 interface StatusForm {
-  id?: number;
-  statusKey: string;
-  label: string;
-  description: string;
-  isFinal: boolean;
-  icon: string;
+  id?: number
+  statusKey: string
+  label: string
+  description: string
+  isFinal: boolean
+  icon: string
 }
 
 interface InquiryTypeOption {
-  id: string;
-  label: string;
+  id: string
+  label: string
 }
 
-const appSettingsStore = useAppSettingsStore();
-const activeInquiryType = ref<InquiryTypeOption | null>(null);
-const editingStatus = ref<StatusForm | null>(null);
+const appSettingsStore = useAppSettingsStore()
+const activeInquiryType = ref<InquiryTypeOption | null>(null)
+const editingStatus = ref<StatusForm | null>(null)
 const newStatus = ref<StatusForm>({
   statusKey: '',
   label: '',
   description: '',
   isFinal: false,
-  icon: 'ClockOutline'
-});
+  icon: 'ClockOutline',
+})
 
 const activeInquiryTypeId = computed(
   () => activeInquiryType.value?.id || InquiryTypeValues.PETITION
-);
+)
 
 const currentInquiryTypeLabel = computed(
-  () =>
-    activeInquiryType.value?.label ||
-    InquiryTypeValues.PETITION.replace(/_/g, ' ')
-);
+  () => activeInquiryType.value?.label || InquiryTypeValues.PETITION.replace(/_/g, ' ')
+)
 
 onMounted(() => {
   if (!activeInquiryType.value) {
     activeInquiryType.value =
-      inquiryTypes.value.find((t) => t.id === InquiryTypeValues.PETITION) ||
-      inquiryTypes.value[0];
+      inquiryTypes.value.find((t) => t.id === InquiryTypeValues.PETITION) || inquiryTypes.value[0]
   }
-});
+})
 
 const availableIcons = computed(() =>
   Object.keys(StatusIcons)
     .filter((key) => key !== 'default')
     .map((iconId) => ({
       id: iconId,
-      label: t('agora', iconId.replace(/([A-Z])/g, ' $1').trim())
+      label: t('agora', iconId.replace(/([A-Z])/g, ' $1').trim()),
     }))
-);
+)
 
 // Get the icon component for a given icon name
-const getIconComponent = (iconName: string) =>
-  StatusIcons[iconName] || StatusIcons.ClockOutline;
+const getIconComponent = (iconName: string) => StatusIcons[iconName] || StatusIcons.ClockOutline
 
 // Get available inquiry types
 const inquiryTypes = computed<InquiryTypeOption[]>(() =>
@@ -79,30 +73,30 @@ const inquiryTypes = computed<InquiryTypeOption[]>(() =>
     label: t(
       'agora',
       type.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())
-    )
+    ),
   }))
-);
+)
 
 // Get statuses for the active inquiry type
 const statuses = computed(() =>
   appSettingsStore.getStatusesForInquiryType(activeInquiryTypeId.value)
-);
+)
 
 // Watch for inquiry type changes and reset editing
 watch(activeInquiryTypeId, () => {
-  editingStatus.value = null;
-});
+  editingStatus.value = null
+})
 
 // Add a new status
 const addStatus = () => {
   if (!newStatus.value.statusKey || !newStatus.value.label) {
-    return;
+    return
   }
 
   appSettingsStore.addStatusForInquiryType(activeInquiryTypeId.value, {
     ...newStatus.value,
-    icon: String(newStatus.value.icon)
-  });
+    icon: String(newStatus.value.icon),
+  })
 
   // Reset form
   newStatus.value = {
@@ -110,9 +104,9 @@ const addStatus = () => {
     label: '',
     description: '',
     isFinal: false,
-    icon: 'ClockOutline'
-  };
-};
+    icon: 'ClockOutline',
+  }
+}
 
 // Edit a status
 const editStatus = (status) => {
@@ -122,47 +116,41 @@ const editStatus = (status) => {
     label: status.label,
     description: status.description || '',
     isFinal: status.isFinal,
-    icon: status.icon || 'ClockOutline'
-  };
-};
+    icon: status.icon || 'ClockOutline',
+  }
+}
 
 const saveUpdateStatus = () => {
-	  if (editingStatus.value) {
-    appSettingsStore.updateStatusForInquiryType(
-      activeInquiryTypeId.value,
-      editingStatus.value.id,
-      { 
-        ...editingStatus.value, 
-        icon: editingStatus.value.icon?.id || String(editingStatus.value.icon)
-      }
-    );
-    editingStatus.value = null;
-  }};
+  if (editingStatus.value) {
+    appSettingsStore.updateStatusForInquiryType(activeInquiryTypeId.value, editingStatus.value.id, {
+      ...editingStatus.value,
+      icon: editingStatus.value.icon?.id || String(editingStatus.value.icon),
+    })
+    editingStatus.value = null
+  }
+}
 
 // Delete a status
 const deleteStatus = (statusId) => {
   if (confirm(t('agora', 'Are you sure you want to delete this status?'))) {
-    appSettingsStore.deleteStatusForInquiryType(
-      activeInquiryTypeId.value,
-      statusId
-    );
+    appSettingsStore.deleteStatusForInquiryType(activeInquiryTypeId.value, statusId)
   }
-};
+}
 
 // Move status up
 const moveStatusUp = (statusId) => {
-  appSettingsStore.moveStatusUp(activeInquiryTypeId.value, statusId);
-};
+  appSettingsStore.moveStatusUp(activeInquiryTypeId.value, statusId)
+}
 
 // Move status down
 const moveStatusDown = (statusId) => {
-  appSettingsStore.moveStatusDown(activeInquiryTypeId.value, statusId);
-};
+  appSettingsStore.moveStatusDown(activeInquiryTypeId.value, statusId)
+}
 
 // Cancel editing
 const cancelEdit = () => {
-  editingStatus.value = null;
-};
+  editingStatus.value = null
+}
 </script>
 
 <template>
@@ -183,7 +171,7 @@ const cancelEdit = () => {
       <h3>
         {{
           t('agora', 'Statuses for {type}', {
-            type: currentInquiryTypeLabel
+            type: currentInquiryTypeLabel,
           })
         }}
       </h3>
@@ -195,11 +183,7 @@ const cancelEdit = () => {
       </div>
 
       <div v-else class="status-items">
-        <div
-          v-for="(status, index) in statuses"
-          :key="status.statusKey"
-          class="status-item"
-        >
+        <div v-for="(status, index) in statuses" :key="status.statusKey" class="status-item">
           <div class="status-content">
             <div class="status-icon" :title="status.icon">
               <component :is="getIconComponent(status.icon)" :size="20" />
@@ -213,27 +197,15 @@ const cancelEdit = () => {
                 {{ status.description }}
               </p>
               <div class="status-properties">
-                <span
-                  :class="[
-                    'status-badge',
-                    status.isFinal ? 'final' : 'non-final'
-                  ]"
-                >
-                  {{
-                    status.isFinal
-                      ? t('agora', 'Final')
-                      : t('agora', 'Non-Final')
-                  }}
+                <span :class="['status-badge', status.isFinal ? 'final' : 'non-final']">
+                  {{ status.isFinal ? t('agora', 'Final') : t('agora', 'Non-Final') }}
                 </span>
               </div>
             </div>
           </div>
 
           <div class="status-actions">
-            <NcButton
-              :disabled="index === 0"
-              @click="moveStatusUp(status.statusKey)"
-            >
+            <NcButton :disabled="index === 0" @click="moveStatusUp(status.statusKey)">
               {{ t('agora', 'Up') }}
             </NcButton>
             <NcButton
@@ -340,10 +312,7 @@ const cancelEdit = () => {
           />
 
           <div class="checkbox-field">
-            <NcCheckboxRadioSwitch
-              v-model="editingStatus.isFinal"
-              type="switch"
-            >
+            <NcCheckboxRadioSwitch v-model="editingStatus.isFinal" type="switch">
               {{ t('agora', 'Final Status') }}
             </NcCheckboxRadioSwitch>
             <p class="field-description">
@@ -371,188 +340,188 @@ const cancelEdit = () => {
 
 <style scoped>
 .moderation-status-settings {
-	padding: 20px;
-	max-width: 1000px;
+  padding: 20px;
+  max-width: 1000px;
 }
 
 .settings-description {
-	margin-bottom: 25px;
-	color: var(--color-text-lighter);
+  margin-bottom: 25px;
+  color: var(--color-text-lighter);
 }
 
 .inquiry-type-selector {
-	margin-bottom: 30px;
-	padding: 20px;
-	background-color: var(--color-background-dark);
-	border-radius: 8px;
+  margin-bottom: 30px;
+  padding: 20px;
+  background-color: var(--color-background-dark);
+  border-radius: 8px;
 }
 
 .status-list {
-	margin-bottom: 30px;
-	padding: 20px;
-	background-color: var(--color-background-dark);
-	border-radius: 8px;
+  margin-bottom: 30px;
+  padding: 20px;
+  background-color: var(--color-background-dark);
+  border-radius: 8px;
 }
 
 .empty-state {
-	text-align: center;
-	padding: 40px;
-	color: var(--color-text-lighter);
+  text-align: center;
+  padding: 40px;
+  color: var(--color-text-lighter);
 }
 
 .status-items {
-	display: flex;
-	flex-direction: column;
-	gap: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }
 
 .status-item {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	padding: 15px;
-	background-color: var(--color-background-darker);
-	border-radius: 8px;
-	border-left: 4px solid var(--color-primary);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  background-color: var(--color-background-darker);
+  border-radius: 8px;
+  border-left: 4px solid var(--color-primary);
 }
 
 .status-content {
-	display: flex;
-	align-items: flex-start;
-	gap: 15px;
-	flex: 1;
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  flex: 1;
 }
 
 .status-icon {
-	width: 40px;
-	height: 40px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	background-color: var(--color-primary);
-	color: white;
-	border-radius: 8px;
-	flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-primary);
+  color: white;
+  border-radius: 8px;
+  flex-shrink: 0;
 }
 
 .status-icon :deep(svg) {
-	fill: white;
+  fill: white;
 }
 
 .status-info h4 {
-	margin: 0 0 5px 0;
-	font-weight: 600;
+  margin: 0 0 5px 0;
+  font-weight: 600;
 }
 
 .status-key {
-	margin: 0 0 8px 0;
-	font-size: 0.9em;
-	color: var(--color-text-lighter);
-	font-family: monospace;
+  margin: 0 0 8px 0;
+  font-size: 0.9em;
+  color: var(--color-text-lighter);
+  font-family: monospace;
 }
 
 .status-description {
-	margin: 0 0 10px 0;
-	color: var(--color-text-lighter);
-	font-size: 0.95em;
+  margin: 0 0 10px 0;
+  color: var(--color-text-lighter);
+  font-size: 0.95em;
 }
 
 .status-properties {
-	display: flex;
-	gap: 10px;
+  display: flex;
+  gap: 10px;
 }
 
 .status-badge {
-	padding: 4px 8px;
-	border-radius: 12px;
-	font-size: 0.8em;
-	font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.8em;
+  font-weight: 600;
 }
 
 .status-badge.final {
-	background-color: var(--color-success);
-	color: white;
+  background-color: var(--color-success);
+  color: white;
 }
 
 .status-badge.non-final {
-	background-color: var(--color-warning);
-	color: white;
+  background-color: var(--color-warning);
+  color: white;
 }
 
 .status-actions {
-	display: flex;
-	gap: 8px;
-	flex-wrap: wrap;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
 .add-status-form {
-	padding: 20px;
-	background-color: var(--color-background-dark);
-	border-radius: 8px;
+  padding: 20px;
+  background-color: var(--color-background-dark);
+  border-radius: 8px;
 }
 
 .form-grid {
-	display: grid;
-	grid-template-columns: 1fr 1fr;
-	gap: 20px;
-	align-items: start;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  align-items: start;
 }
 
 .checkbox-field {
-	grid-column: span 2;
+  grid-column: span 2;
 }
 
 .field-description {
-	margin: 5px 0 0 0;
-	font-size: 0.9em;
-	color: var(--color-text-lighter);
+  margin: 5px 0 0 0;
+  font-size: 0.9em;
+  color: var(--color-text-lighter);
 }
 
 .modal-overlay {
-	position: fixed;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	background-color: rgba(0, 0, 0, 0.5);
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	z-index: 1000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
 }
 
 .modal-content {
-	background-color: var(--color-main-background);
-	padding: 30px;
-	border-radius: 12px;
-	width: 600px;
-	max-width: 90%;
-	max-height: 90vh;
-	overflow-y: auto;
+  background-color: var(--color-main-background);
+  padding: 30px;
+  border-radius: 12px;
+  width: 600px;
+  max-width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
 .modal-actions {
-	display: flex;
-	justify-content: flex-end;
-	gap: 10px;
-	margin-top: 25px;
-	padding-top: 20px;
-	border-top: 1px solid var(--color-border);
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 25px;
+  padding-top: 20px;
+  border-top: 1px solid var(--color-border);
 }
 
-  @media (max-width: 768px) {
-	  .form-grid {
-		  grid-template-columns: 1fr;
-	  }
-
-	  .status-item {
-		  flex-direction: column;
-		  align-items: stretch;
-		  gap: 15px;
-	  }
-
-	  .status-actions {
-		  justify-content: center;
-	  }
+@media (max-width: 768px) {
+  .form-grid {
+    grid-template-columns: 1fr;
   }
+
+  .status-item {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 15px;
+  }
+
+  .status-actions {
+    justify-content: center;
+  }
+}
 </style>

@@ -1,7 +1,0 @@
-SPDX-License-Identifier: AGPL-3.0
-SPDX-FileCopyrightText: agora developers
-
-This file is generated from multiple sources. Included packages:
-- agora
-	- version: 1.0.0rc4
-	- license: AGPL-3.0

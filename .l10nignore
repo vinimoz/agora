@@ -1,7 +1,13 @@
 # SPDX-FileCopyrightText: 2018 Nextcloud contributors
 # SPDX-License-Identifier: AGPL-3.0-or-later
 # compiled vue templates
+<<<<<<< HEAD
 vendor/
 vendor-bin/
 js/
+=======
+js/
+vendor/
+vendor-bin/
+>>>>>>> v1.0.0-rc5
 assets/

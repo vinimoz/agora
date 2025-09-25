@@ -4,35 +4,32 @@
 -->
 
 <script setup lang="ts">
-import { onMounted } from 'vue';
-import { t } from '@nextcloud/l10n';
+import { onMounted } from 'vue'
+import { t } from '@nextcloud/l10n'
 
-import NcSettingsSection from '@nextcloud/vue/components/NcSettingsSection';
+import NcSettingsSection from '@nextcloud/vue/components/NcSettingsSection'
 
-import { FlexSettings } from '../components/Base/index.ts';
-import {
-  FeatureSettings,
-  StyleSettings
-} from '../components/Settings/UserSettings/index.ts';
-import { usePreferencesStore } from '../stores/preferences.ts';
+import { FlexSettings } from '../components/Base/index.ts'
+import { FeatureSettings, StyleSettings } from '../components/Settings/UserSettings/index.ts'
+import { usePreferencesStore } from '../stores/preferences.ts'
 
-const preferencesStore = usePreferencesStore();
+const preferencesStore = usePreferencesStore()
 
 const sections = {
   personalSettings: {
     name: t('agora', 'Personal preferences'),
-    description: t('agora', 'Set your personal preferences for the agora app')
+    description: t('agora', 'Set your personal preferences for the agora app'),
   },
   styleSettings: {
     name: t('agora', 'Experimental styles'),
-    description: t('agora', 'Some visual styling options.')
-  }
-};
+    description: t('agora', 'Some visual styling options.'),
+  },
+}
 
 onMounted(() => {
-  preferencesStore.load();
+  preferencesStore.load()
   // preferencesStore.getCalendars()
-});
+})
 </script>
 
 <template>

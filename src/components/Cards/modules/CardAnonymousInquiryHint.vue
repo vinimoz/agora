@@ -4,12 +4,12 @@
 -->
 
 <script setup lang="ts">
-import { CardDiv } from '../../Base/index.ts';
-import { t } from '@nextcloud/l10n';
-import { useInquiryStore } from '../../../stores/inquiry.ts';
+import { CardDiv } from '../../Base/index.ts'
+import { t } from '@nextcloud/l10n'
+import { useInquiryStore } from '../../../stores/inquiry.ts'
 
-const cardType = 'warning';
-const inquiryStore = useInquiryStore();
+const cardType = 'warning'
+const inquiryStore = useInquiryStore()
 </script>
 
 <template>
@@ -21,10 +21,7 @@ const inquiryStore = useInquiryStore();
       )
     }}
     {{
-      t(
-        'inquiries',
-        'But be aware that your name is not stored in an encrypted or obfuscated way.'
-      )
+      t('inquiries', 'But be aware that your name is not stored in an encrypted or obfuscated way.')
     }}
   </CardDiv>
   <CardDiv v-else :type="cardType">

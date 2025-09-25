@@ -4,33 +4,31 @@
 -->
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
-import { t } from '@nextcloud/l10n';
-import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent';
-import NcModal from '@nextcloud/vue/components/NcModal';
-import { subscribe, unsubscribe } from '@nextcloud/event-bus';
+import { ref, onMounted, onUnmounted } from 'vue'
+import { t } from '@nextcloud/l10n'
+import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
+import NcModal from '@nextcloud/vue/components/NcModal'
+import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 
-import DateInquiryIcon from 'vue-material-design-icons/CalendarBlank.vue';
+import DateInquiryIcon from 'vue-material-design-icons/CalendarBlank.vue'
 
-import OptionsDateAddDialog from '../Options/OptionsDateAddDialog.vue';
-import OptionsDate from '../Options/OptionsDate.vue';
 
-import { useInquiryStore } from '../../stores/inquiry';
-import { Event } from '../../Types';
+import { useInquiryStore } from '../../stores/inquiry'
+import { Event } from '../../Types'
 
-const inquiryStore = useInquiryStore();
-const showModal = ref(false);
-const caption = t('agora', 'Add date option');
+const inquiryStore = useInquiryStore()
+const showModal = ref(false)
+const caption = t('agora', 'Add date option')
 
 onMounted(() => {
   subscribe(Event.AddDate, () => {
-    showModal.value = true;
-  });
-});
+    showModal.value = true
+  })
+})
 
 onUnmounted(() => {
-  unsubscribe(Event.AddDate, () => {});
-});
+  unsubscribe(Event.AddDate, () => {})
+})
 </script>
 
 <template>
@@ -78,12 +76,10 @@ onUnmounted(() => {
       padding: 0 0.5rem;
     }
     > div:first-child {
-      border-radius: var(--border-radius-container-large)
-        var(--border-radius-container-large) 0 0;
+      border-radius: var(--border-radius-container-large) var(--border-radius-container-large) 0 0;
     }
     > div:last-child {
-      border-radius: 0 0 var(--border-radius-container-large)
-        var(--border-radius-container-large);
+      border-radius: 0 0 var(--border-radius-container-large) var(--border-radius-container-large);
     }
   }
 

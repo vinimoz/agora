@@ -4,51 +4,51 @@
 -->
 
 <script setup>
-import { t } from '@nextcloud/l10n';
-import { ref, computed, onMounted, watch } from 'vue';
-import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch';
-import NcSelect from '@nextcloud/vue/components/NcSelect';
-import { useAppSettingsStore } from '../../../stores/appSettings.js';
-import { InquiryTypesUI } from '../../../helpers/modules/InquiryHelper.ts';
+import { t } from '@nextcloud/l10n'
+import { ref, computed, onMounted, watch } from 'vue'
+import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
+import NcSelect from '@nextcloud/vue/components/NcSelect'
+import { useAppSettingsStore } from '../../../stores/appSettings.js'
+import { InquiryTypesUI } from '../../../helpers/modules/InquiryHelper.ts'
 
-const appSettingsStore = useAppSettingsStore();
-const selectedInquiryType = ref('');
-const isLoading = ref(true);
+const appSettingsStore = useAppSettingsStore()
+const selectedInquiryType = ref('')
+const isLoading = ref(true)
 const editorOptions = [
   { value: 'wysiwyg', label: t('agora', 'Rich Text Editor') },
   { value: 'textarea', label: t('agora', 'Simple Text Area') },
-  { value: 'texteditor', label: t('agora', 'Nextcloud text editor') }
-];
+  { value: 'texteditor', label: t('agora', 'Nextcloud text editor') },
+]
 
 onMounted(async () => {
   try {
-    const typeKeys = Object.keys(InquiryTypesUI);
+    const typeKeys = Object.keys(InquiryTypesUI)
     if (typeKeys.length > 0) {
-      selectedInquiryType.value = typeKeys[0];
+      selectedInquiryType.value = typeKeys[0]
     }
   } catch (error) {
-    console.error('Failed to load inquiry types:', error);
+    console.error('Failed to load inquiry types:', error)
   } finally {
-    isLoading.value = false;
+    isLoading.value = false
   }
-});
+})
 
 const inquiryTypeOptions = computed(() =>
   Object.keys(InquiryTypesUI).map((key) => ({
     value: key,
-    label: InquiryTypesUI[key]?.label || key
+    label: InquiryTypesUI[key]?.label || key,
   }))
-);
+)
 
 const isValidInquiryType = computed(
   () => selectedInquiryType.value && InquiryTypesUI[selectedInquiryType.value]
-);
+)
 
 watch(selectedInquiryType, (newType) => {
   if (newType.value) {
-    selectedInquiryType.value = newType.value;
+    selectedInquiryType.value = newType.value
   }
-});
+})
 </script>
 
 <template>
@@ -59,7 +59,7 @@ watch(selectedInquiryType, (newType) => {
     </p>
 
     <div v-if="isLoading" class="loading">
-      {{ t('agora', 'Loading inquiry types...') }}
+      {{ t('agora', 'Loading inquiry types') }}
     </div>
 
     <div v-else-if="!isValidInquiryType" class="error">
@@ -68,9 +68,7 @@ watch(selectedInquiryType, (newType) => {
 
     <div v-else>
       <div class="type-selection">
-        <label for="inquiry-type-select">{{
-          t('agora', 'Select inquiry type:')
-        }}</label>
+        <label for="inquiry-type-select">{{ t('agora', 'Select inquiry type:') }}</label>
         <NcSelect
           id="inquiry-type-select"
           v-model="selectedInquiryType"
@@ -85,19 +83,14 @@ watch(selectedInquiryType, (newType) => {
 
       <div class="settings-container">
         <h3>
-          {{
-            InquiryTypesUI[selectedInquiryType]?.label || selectedInquiryType
-          }}
+          {{ InquiryTypesUI[selectedInquiryType]?.label || selectedInquiryType }}
           {{ t('agora', 'Settings') }}
         </h3>
 
         <div class="settings-list">
           <div class="setting-item">
             <NcCheckboxRadioSwitch
-              v-model="
-                appSettingsStore.inquiryTypeRights[selectedInquiryType]
-                  .supportInquiry
-              "
+              v-model="appSettingsStore.inquiryTypeRights[selectedInquiryType].supportInquiry"
               type="switch"
               @update:model-value="appSettingsStore.write()"
             >
@@ -110,10 +103,7 @@ watch(selectedInquiryType, (newType) => {
 
           <div class="setting-item">
             <NcCheckboxRadioSwitch
-              v-model="
-                appSettingsStore.inquiryTypeRights[selectedInquiryType]
-                  .commentInquiry
-              "
+              v-model="appSettingsStore.inquiryTypeRights[selectedInquiryType].commentInquiry"
               type="switch"
               @update:model-value="appSettingsStore.write()"
             >
@@ -126,32 +116,22 @@ watch(selectedInquiryType, (newType) => {
 
           <div class="setting-item">
             <NcCheckboxRadioSwitch
-              v-model="
-                appSettingsStore.inquiryTypeRights[selectedInquiryType]
-                  .attachFileInquiry
-              "
+              v-model="appSettingsStore.inquiryTypeRights[selectedInquiryType].attachFileInquiry"
               type="switch"
               @update:model-value="appSettingsStore.write()"
             >
               {{ t('agora', 'Allow file attachments') }}
             </NcCheckboxRadioSwitch>
             <p class="setting-description">
-              {{
-                t('agora', 'Allow users to attach files to this inquiry type')
-              }}
+              {{ t('agora', 'Allow users to attach files to this inquiry type') }}
             </p>
           </div>
 
           <div class="setting-item">
-            <label for="editor-type-select">{{
-              t('agora', 'Editor type:')
-            }}</label>
+            <label for="editor-type-select">{{ t('agora', 'Editor type:') }}</label>
             <NcSelect
               id="editor-type-select"
-              v-model="
-                appSettingsStore.inquiryTypeRights[selectedInquiryType]
-                  .editorType
-              "
+              v-model="appSettingsStore.inquiryTypeRights[selectedInquiryType].editorType"
               :options="editorOptions"
               option-value="value"
               option-label="label"

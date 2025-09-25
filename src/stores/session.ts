@@ -3,71 +3,66 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { defineStore } from 'pinia';
-import { getCurrentUser } from '@nextcloud/auth';
-import { PublicAPI, SessionAPI } from '../Api/index.ts';
-import { createDefault, User, AppPermissions } from '../Types/index.ts';
-import { AppSettings, UpdateType } from './appSettings.ts';
-import {
-  usePreferencesStore,
-  ViewMode,
-  SessionSettings
-} from './preferences.ts';
-import { FilterType, useInquiriesStore } from './inquiries.ts';
-import { Share } from './shares.ts';
-import { RouteLocationNormalized, RouteRecordNameGeneric } from 'vue-router';
-import { Logger } from '../helpers/index.ts';
-import { useInquiryStore } from './inquiry.ts';
-import { useSubscriptionStore } from './subscription.ts';
-import { AxiosError } from '@nextcloud/axios';
-import { t } from '@nextcloud/l10n';
-import { useInquiryGroupsStore } from './inquiryGroups.ts';
+import { defineStore } from 'pinia'
+import { getCurrentUser } from '@nextcloud/auth'
+import { PublicAPI, SessionAPI } from '../Api/index.ts'
+import { createDefault, User, AppPermissions } from '../Types/index.ts'
+import { AppSettings, UpdateType } from './appSettings.ts'
+import {  ViewMode, SessionSettings } from './preferences.ts'
+import { FilterType, useInquiriesStore } from './inquiries.ts'
+import { Share } from './shares.ts'
+import { RouteLocationNormalized, RouteRecordNameGeneric } from 'vue-router'
+import { Logger } from '../helpers/index.ts'
+import { useInquiryStore } from './inquiry.ts'
+import { useSubscriptionStore } from './subscription.ts'
+import { AxiosError } from '@nextcloud/axios'
+import { t } from '@nextcloud/l10n'
+import { useInquiryGroupsStore } from './inquiryGroups.ts'
 
 interface RouteParams {
-  id: number;
-  token: string;
-  type: FilterType;
-  slug: string;
+  id: number
+  token: string
+  type: FilterType
+  slug: string
 }
 
 export type Route = {
-  currentRoute: string;
-  name: RouteRecordNameGeneric;
-  path: string;
-  params: RouteParams;
-};
+  currentRoute: string
+  name: RouteRecordNameGeneric
+  path: string
+  params: RouteParams
+}
 
 export type UserStatus = {
-  isLoggedin: boolean;
-  isAdmin: boolean;
-  isOfficial: boolean;
-  isModerator: boolean;
-};
+  isLoggedin: boolean
+  isAdmin: boolean
+  isOfficial: boolean
+  isModerator: boolean
+}
 
 export type Watcher = {
-  id: string;
-  mode: UpdateType;
-  status: 'running' | 'stopped' | 'error' | 'stopping' | 'idle';
-  interval?: number;
-  lastUpdate: number;
-  lastMessage?: string;
-};
+  id: string
+  mode: UpdateType
+  status: 'running' | 'stopped' | 'error' | 'stopping' | 'idle'
+  interval?: number
+  lastUpdate: number
+  lastMessage?: string
+}
 
 export type Session = {
-  appPermissions: AppPermissions;
-  appSettings: AppSettings;
-  currentUser: User;
-  route: Route;
-  sessionSettings: SessionSettings;
-  share: Share;
-  token: string | null;
-  userStatus: UserStatus;
-  watcher: Watcher;
-};
+  appPermissions: AppPermissions
+  appSettings: AppSettings
+  currentUser: User
+  route: Route
+  sessionSettings: SessionSettings
+  share: Share
+  token: string | null
+  userStatus: UserStatus
+  watcher: Watcher
+}
 
-const MOBILE_BREAKPOINT = 480;
 
-let lastLoadedUserId: string | null = null;
+let lastLoadedUserId: string | null = null
 
 export const useSessionStore = defineStore('session', {
   state: (): Session => ({
@@ -82,7 +77,7 @@ export const useSessionStore = defineStore('session', {
       inquiryDownload: false,
       publicShares: false,
       seeMailAddresses: false,
-      unrestrictedOwner: false
+      unrestrictedOwner: false,
     },
     appSettings: createDefault<AppSettings>(),
     route: {
@@ -93,272 +88,256 @@ export const useSessionStore = defineStore('session', {
         id: 0,
         token: '',
         type: 'relevant',
-        slug: ''
-      }
+        slug: '',
+      },
     },
     userStatus: {
       isLoggedin: !!getCurrentUser(),
       isAdmin: !!getCurrentUser()?.isAdmin,
       isOfficial: !!getCurrentUser()?.isOfficial,
-      isModerator: !!getCurrentUser()?.isModerator
+      isModerator: !!getCurrentUser()?.isModerator,
     },
     watcher: {
       id: '',
       mode: 'noInquirying',
       status: 'stopped',
-      lastUpdate: Math.floor(Date.now() / 1000)
+      lastUpdate: Math.floor(Date.now() / 1000),
     },
     token: null,
     currentUser: createDefault<User>(),
     share: createDefault<Share>(),
-    isLoaded: false
+    isLoaded: false,
   }),
 
   getters: {
     publicToken(state): string {
       if (state.route.params.token) {
-        return state.route.params.token as string;
+        return state.route.params.token as string
       }
-      return '';
+      return ''
     },
 
     currentInquiryId(state): number {
       if (state.route.name === 'inquiry') {
-        return Number(state.route.params.id);
+        return Number(state.route.params.id)
       }
-      return 0;
+      return 0
     },
 
     windowTitle(state): string {
-      const inquiryStore = useInquiryStore();
+      const inquiryStore = useInquiryStore()
 
       const windowTitle = {
         prefix: `${t('agora', 'Agora')}`,
-        name: 'Nextcloud'
-      };
+        name: 'Nextcloud',
+      }
 
       if (state.route.name === 'list') {
-        const inquiriesStore = useInquiriesStore();
-        windowTitle.name =
-          inquiriesStore.categories[
-            this.route.params.type as FilterType
-          ].titleExt;
+        const inquiriesStore = useInquiriesStore()
+        windowTitle.name = inquiriesStore.categories[this.route.params.type as FilterType].titleExt
       } else if (state.route.name === 'group') {
-        const inquiryGroupsStore = useInquiryGroupsStore();
+        const inquiryGroupsStore = useInquiryGroupsStore()
         windowTitle.name =
           inquiryGroupsStore.currentInquiryGroup?.titleExt ||
           inquiryGroupsStore.currentInquiryGroup?.name ||
-          '';
+          ''
       } else if (state.route.name === 'publicInquiry') {
-        windowTitle.name = inquiryStore.title;
+        windowTitle.name = inquiryStore.title
       } else if (state.route.name === 'inquiry') {
-        windowTitle.name = inquiryStore.title ?? t('agora', 'Enter title');
+        windowTitle.name = inquiryStore.title ?? t('agora', 'Enter title')
       }
 
-      return `${windowTitle.prefix} – ${windowTitle.name}`;
-    }
+      return `${windowTitle.prefix} – ${windowTitle.name}`
+    },
   },
 
   actions: {
     generateWatcherId() {
-      this.watcher.id = Math.random().toString(36).substring(2);
+      this.watcher.id = Math.random().toString(36).substring(2)
     },
     async load(
       to: null | RouteLocationNormalized,
       cheapLoading: boolean = false,
       forceReload: boolean = false
     ) {
-      Logger.debug('Loading session');
-      if (
-        !forceReload &&
-        this.isLoaded &&
-        this.currentUser.id === lastLoadedUserId
-      ) {
-        Logger.debug(
-          'Session already loaded for same user, skipping, route set to:',
-          to
-        );
-        if (to !== null) await this.setRouter(to);
-        return;
+      Logger.debug('Loading session')
+      if (!forceReload && this.isLoaded && this.currentUser.id === lastLoadedUserId) {
+        Logger.debug('Session already loaded for same user, skipping, route set to:', to)
+        if (to !== null) await this.setRouter(to)
+        return
       }
 
-      this.generateWatcherId();
+      this.generateWatcherId()
 
       if (to !== null) {
-        Logger.debug('Set requested route', { to });
-        await this.setRouter(to);
-        Logger.debug('Route set', { route: this.route });
+        Logger.debug('Set requested route', { to })
+        await this.setRouter(to)
+        Logger.debug('Route set', { route: this.route })
       }
 
       if (cheapLoading) {
-        Logger.debug('Same route, skipping session load');
-        return;
+        Logger.debug('Same route, skipping session load')
+        return
       }
 
       try {
         const response = await (() => {
           if (this.route.name === 'publicInquiry') {
-            return PublicAPI.getSession(this.publicToken);
+            return PublicAPI.getSession(this.publicToken)
           }
-          return SessionAPI.getSession();
-        })();
+          return SessionAPI.getSession()
+        })()
 
-        this.$patch(response.data);
-        this.isLoaded = true;
-        lastLoadedUserId = this.currentUser.id;
+        this.$patch(response.data)
+        this.isLoaded = true
+        lastLoadedUserId = this.currentUser.id
       } catch (error) {
         if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return;
+          return
         }
 
-        this.$reset();
+        this.$reset()
         if (this.route.name === null) {
-          this.$reset();
+          this.$reset()
         } else {
-          throw error;
+          throw error
         }
       }
-      Logger.debug('Session loaded');
+      Logger.debug('Session loaded')
     },
 
     setViewProposalInquiry(viewMode: ViewMode) {
-      this.sessionSettings.manualViewProposalInquiry = viewMode;
+      this.sessionSettings.manualViewProposalInquiry = viewMode
     },
 
     setViewProjectInquiry(viewMode: ViewMode) {
-      this.sessionSettings.manualViewProjectInquiry = viewMode;
+      this.sessionSettings.manualViewProjectInquiry = viewMode
     },
 
     setViewDebateInquiry(viewMode: ViewMode) {
-      this.sessionSettings.manualViewDebateInquiry = viewMode;
+      this.sessionSettings.manualViewDebateInquiry = viewMode
     },
     setViewPetitionInquiry(viewMode: ViewMode) {
-      this.sessionSettings.manualViewPetitionInquiry = viewMode;
+      this.sessionSettings.manualViewPetitionInquiry = viewMode
     },
     setViewGrievanceInquiry(viewMode: ViewMode) {
-      this.sessionSettings.manualViewGrievanceInquiry = viewMode;
+      this.sessionSettings.manualViewGrievanceInquiry = viewMode
     },
     async setRouter(payload: RouteLocationNormalized) {
-      this.route.currentRoute = payload.fullPath;
-      this.route.name = payload.name;
-      this.route.path = payload.path;
-      this.route.params.id = payload.params.id as unknown as number;
-      this.route.params.token = payload.params.token as string;
-      this.route.params.type = payload.params.type as FilterType;
-      this.route.params.slug = payload.params.slug as string;
+      this.route.currentRoute = payload.fullPath
+      this.route.name = payload.name
+      this.route.path = payload.path
+      this.route.params.id = payload.params.id as unknown as number
+      this.route.params.token = payload.params.token as string
+      this.route.params.type = payload.params.type as FilterType
+      this.route.params.slug = payload.params.slug as string
     },
 
     // Share store
     async loadShare(): Promise<void> {
       if (this.route.name !== 'publicInquiry') {
-        this.share = createDefault<Share>();
-        return;
+        this.share = createDefault<Share>()
+        return
       }
 
       try {
-        const response = await PublicAPI.getShare(this.publicToken);
-        this.share = response.data.share;
+        const response = await PublicAPI.getShare(this.publicToken)
+        this.share = response.data.share
       } catch (error) {
         if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return;
+          return
         }
-        Logger.error('Error retrieving share', { error });
-        throw error;
+        Logger.error('Error retrieving share', { error })
+        throw error
       }
     },
 
     async updateEmailAddress(payload: { emailAddress: string }): Promise<void> {
-      const inquiryStore = useInquiryStore();
+      const inquiryStore = useInquiryStore()
 
       if (this.route.name !== 'publicInquiry') {
-        return;
+        return
       }
 
       try {
-        const response = await PublicAPI.setEmailAddress(
-          this.publicToken,
-          payload.emailAddress
-        );
-        this.share = response.data.share;
-        inquiryStore.load();
+        const response = await PublicAPI.setEmailAddress(this.publicToken, payload.emailAddress)
+        this.share = response.data.share
+        inquiryStore.load()
       } catch (error) {
         if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return;
+          return
         }
         Logger.error('Error writing email address', {
           error,
-          payload
-        });
-        throw error;
+          payload,
+        })
+        throw error
       }
     },
 
     async updateDisplayName(payload: { displayName: string }): Promise<void> {
-      const inquiryStore = useInquiryStore();
+      const inquiryStore = useInquiryStore()
 
       if (this.route.name !== 'publicInquiry') {
-        return;
+        return
       }
 
       try {
-        const response = await PublicAPI.setDisplayName(
-          this.publicToken,
-          payload.displayName
-        );
-        this.share = response.data.share;
-        inquiryStore.load();
+        const response = await PublicAPI.setDisplayName(this.publicToken, payload.displayName)
+        this.share = response.data.share
+        inquiryStore.load()
       } catch (error) {
         if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return;
+          return
         }
         Logger.error('Error changing name', {
           error,
-          payload
-        });
-        throw error;
+          payload,
+        })
+        throw error
       }
     },
 
     async deleteEmailAddress(): Promise<void> {
-      const inquiryStore = useInquiryStore();
-      const subscriptionStore = useSubscriptionStore();
+      const inquiryStore = useInquiryStore()
+      const subscriptionStore = useSubscriptionStore()
 
       if (this.route.name !== 'publicInquiry') {
-        return;
+        return
       }
 
       try {
-        const response = await PublicAPI.deleteEmailAddress(this.publicToken);
-        this.share = response.data.share;
-        subscriptionStore.$state.subscribed = false;
-        subscriptionStore.write();
-        inquiryStore.load();
+        const response = await PublicAPI.deleteEmailAddress(this.publicToken)
+        this.share = response.data.share
+        subscriptionStore.$state.subscribed = false
+        subscriptionStore.write()
+        inquiryStore.load()
       } catch (error) {
         if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return;
+          return
         }
-        Logger.error('Error deleting email address', { error });
-        throw error;
+        Logger.error('Error deleting email address', { error })
+        throw error
       }
     },
 
     async resendInvitation() {
       if (this.route.name !== 'publicInquiry') {
-        throw new Error('Not on public inquiry page');
+        throw new Error('Not on public inquiry page')
       }
 
       try {
-        return await PublicAPI.resendInvitation(this.publicToken);
+        return await PublicAPI.resendInvitation(this.publicToken)
       } catch (error) {
         if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return;
+          return
         }
         Logger.error('Error sending invitation', {
           error,
-          token: this.route.params.token
-        });
-        throw error;
+          token: this.route.params.token,
+        })
+        throw error
       }
-    }
-  }
-});
+    },
+  },
+})

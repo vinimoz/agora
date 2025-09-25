@@ -4,41 +4,35 @@
 -->
 
 <script setup lang="ts">
-import { computed } from 'vue';
-import { ActionDelete } from '../Actions/index.ts';
-import UserItem from '../User/UserItem.vue';
-import { t } from '@nextcloud/l10n';
-import { useInquiryStore } from '../../stores/inquiry.ts';
-import { useSessionStore } from '../../stores/session.ts';
-import { useOptionsStore, Option } from '../../stores/options.ts';
+import { computed } from 'vue'
+import { ActionDelete } from '../Actions/index.ts'
+import UserItem from '../User/UserItem.vue'
+import { t } from '@nextcloud/l10n'
+import { useInquiryStore } from '../../stores/inquiry.ts'
+import { useSessionStore } from '../../stores/session.ts'
+import { useOptionsStore, Option } from '../../stores/options.ts'
 
 interface Props {
-  option: Option;
-  avatarSize?: number;
+  option: Option
+  avatarSize?: number
 }
 
-const { option, avatarSize = 32 } = defineProps<Props>();
+const { option, avatarSize = 32 } = defineProps<Props>()
 
-const inquiryStore = useInquiryStore();
-const sessionStore = useSessionStore();
-const optionsStore = useOptionsStore();
+const inquiryStore = useInquiryStore()
+const sessionStore = useSessionStore()
+const optionsStore = useOptionsStore()
 
 const showDelete = computed(
-  () =>
-    !inquiryStore.permissions.edit &&
-    sessionStore.currentUser.id === option.owner?.id
-);
+  () => !inquiryStore.permissions.edit && sessionStore.currentUser.id === option.owner?.id
+)
 </script>
 
 <template>
   <div class="option-item-owner blabla">
     <ActionDelete
       v-if="showDelete"
-      :name="
-        option.deleted
-          ? t('agora', 'Restore option')
-          : t('agora', 'Delete option')
-      "
+      :name="option.deleted ? t('agora', 'Restore option') : t('agora', 'Delete option')"
       :restore="!!option.deleted"
       :timeout="0"
       @restore="optionsStore.restore({ option: option })"
@@ -53,7 +47,7 @@ const showDelete = computed(
       hide-status
       :tooltip-message="
         t('agora', '{displayName}\'s proposal', {
-          displayName: option.owner?.displayName ?? ''
+          displayName: option.owner?.displayName ?? '',
         })
       "
     />

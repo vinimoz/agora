@@ -4,52 +4,52 @@
 -->
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
-import { router } from '../../router.ts';
+import { computed, ref } from 'vue'
+import { router } from '../../router.ts'
 
-import { NcActionInput  } from '@nextcloud/vue';
-import { showError, showInfo } from '@nextcloud/dialogs';
-import { t } from '@nextcloud/l10n';
-import { InquiryGeneralIcons } from '../../utils/icons.ts';
+import { NcActionInput } from '@nextcloud/vue'
+import { showError, showInfo } from '@nextcloud/dialogs'
+import { t } from '@nextcloud/l10n'
+import { InquiryGeneralIcons } from '../../utils/icons.ts'
 
-import NcActions from '@nextcloud/vue/components/NcActions';
-import NcActionButton from '@nextcloud/vue/components/NcActionButton';
+import NcActions from '@nextcloud/vue/components/NcActions'
+import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 
-import { useInquiriesStore } from '../../stores/inquiries.ts';
-import { useInquiryGroupsStore } from '../../stores/inquiryGroups.ts';
-import { useSessionStore } from '../../stores/session.ts';
-import { Inquiry } from '../../stores/inquiry.ts';
+import { useInquiriesStore } from '../../stores/inquiries.ts'
+import { useInquiryGroupsStore } from '../../stores/inquiryGroups.ts'
+import { useSessionStore } from '../../stores/session.ts'
+import { Inquiry } from '../../stores/inquiry.ts'
 
-import DeleteInquiryDialog from '../Modals/DeleteInquiryDialog.vue';
-import TransferInquiryDialog from '../Modals/TransferInquiryDialog.vue';
+import DeleteInquiryDialog from '../Modals/DeleteInquiryDialog.vue'
+import TransferInquiryDialog from '../Modals/TransferInquiryDialog.vue'
 
-import { useRoute } from 'vue-router';
+import { useRoute } from 'vue-router'
 
-import { 
+import {
   canArchive,
   canRestore,
   canDelete,
   canEdit,
   canTransfer,
-  createPermissionContextForContent, 
-  ContentType 
+  createPermissionContextForContent,
+  ContentType,
 } from '../../utils/permissions.ts'
 
-const { inquiry } = defineProps<{ inquiry: Inquiry }>();
+const { inquiry } = defineProps<{ inquiry: Inquiry }>()
 
-const route = useRoute();
+const route = useRoute()
 
-const inquiriesStore = useInquiriesStore();
-const inquiryGroupsStore = useInquiryGroupsStore();
-const sessionStore = useSessionStore();
+const inquiriesStore = useInquiriesStore()
+const inquiryGroupsStore = useInquiryGroupsStore()
+const sessionStore = useSessionStore()
 
-const showDeleteDialog = ref(false);
-const showTransferDialog = ref(false);
-const subMenu = ref<'addToGroup' | 'removeFromGroup' | null>(null);
+const showDeleteDialog = ref(false)
+const showTransferDialog = ref(false)
+const subMenu = ref<'addToGroup' | 'removeFromGroup' | null>(null)
 
-const newGroupTitle = ref('');
+const newGroupTitle = ref('')
 
-const context = computed(() => 
+const context = computed(() =>
   createPermissionContextForContent(
     ContentType.Inquiry,
     inquiry.owner.id,
@@ -64,71 +64,60 @@ const context = computed(() =>
   )
 )
 
-async function toggleSubMenu(
-  action: 'addToGroup' | 'removeFromGroup' | null = null
-) {
-  subMenu.value = subMenu.value === action ? null : action;
+async function toggleSubMenu(action: 'addToGroup' | 'removeFromGroup' | null = null) {
+  subMenu.value = subMenu.value === action ? null : action
 }
 
-async function removeInquiryFromGroup(
-  inquiryId: number,
-  inquiryGroupId: number
-) {
-  subMenu.value = null;
+async function removeInquiryFromGroup(inquiryId: number, inquiryGroupId: number) {
+  subMenu.value = null
   try {
     await inquiryGroupsStore.removeInquiryFromGroup({
       inquiryId,
-      inquiryGroupId
-    });
+      inquiryGroupId,
+    })
     if (!inquiryGroupsStore.currentInquiryGroup) {
-      showInfo(
-        t('agora', 'The inquiry group was deleted by removing the last member.')
-      );
+      showInfo(t('agora', 'The inquiry group was deleted by removing the last member.'))
       if (route.name === 'group') {
-        router.push({ name: 'root' });
+        router.push({ name: 'root' })
       }
     }
   } catch {
-    showError(t('agora', 'Error removing inquiry from group.'));
+    showError(t('agora', 'Error removing inquiry from group.'))
   }
 }
 
-async function addInquiryToInquiryGroup(
-  inquiryId: number,
-  inquiryGroupId: number
-) {
-  subMenu.value = null;
+async function addInquiryToInquiryGroup(inquiryId: number, inquiryGroupId: number) {
+  subMenu.value = null
   inquiryGroupsStore.addInquiryToInquiryGroup({
     inquiryId,
-    inquiryGroupId
-  });
+    inquiryGroupId,
+  })
 }
 
 async function addInquiryToNewInquiryGroup(inquiryId: number) {
   if (!newGroupTitle.value.trim()) {
-    return;
+    return
   }
 
   try {
     await inquiryGroupsStore.addInquiryToInquiryGroup({
       inquiryId,
-      groupTitle: newGroupTitle.value.trim()
-    });
-    newGroupTitle.value = '';
-    subMenu.value = null;
+      groupTitle: newGroupTitle.value.trim(),
+    })
+    newGroupTitle.value = ''
+    subMenu.value = null
   } catch {
-    showError(t('agora', 'Error creating new inquiry group.'));
+    showError(t('agora', 'Error creating new inquiry group.'))
   }
 }
 
 async function toggleArchive() {
   try {
-    await inquiriesStore.toggleArchive({ inquiryId: inquiry.id });
+    await inquiriesStore.toggleArchive({ inquiryId: inquiry.id })
   } catch {
-    showError(t('agora', 'Error archiving/restoring inquiry.'));
+    showError(t('agora', 'Error archiving/restoring inquiry.'))
   }
 }
-
 </script>
 
 <template>
@@ -147,8 +136,7 @@ async function toggleArchive() {
 
     <template v-else>
       <NcActionButton
-        v-show="canArchive(context)
-        "
+        v-show="canArchive(context)"
         :name="t('agora', 'Archive inquiry')"
         :aria-label="t('agora', 'Archive inquiry')"
         close-after-click
@@ -160,8 +148,7 @@ async function toggleArchive() {
       </NcActionButton>
 
       <NcActionButton
-        v-show="canRestore(context)
-        "
+        v-show="canRestore(context)"
         :name="t('agora', 'Restore inquiry')"
         :aria-label="t('agora', 'Restore inquiry')"
         close-after-click
@@ -223,9 +210,7 @@ async function toggleArchive() {
 
     <template v-if="subMenu === 'addToGroup'">
       <NcActionButton
-        v-for="inquiryGroup in inquiryGroupsStore.addableInquiryGroups(
-          inquiry.id
-        )"
+        v-for="inquiryGroup in inquiryGroupsStore.addableInquiryGroups(inquiry.id)"
         :key="`add-${inquiryGroup.id}`"
         :name="inquiryGroup.name"
         @click="addInquiryToInquiryGroup(inquiry.id, inquiryGroup.id)"

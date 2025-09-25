@@ -3,26 +3,24 @@
 	- SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
-import { t } from '@nextcloud/l10n';
-import { ref, computed, onMounted } from 'vue';
-import {  showError } from '@nextcloud/dialogs';
-import { useRouter } from 'vue-router';
-import { Inquiry, useInquiryStore } from '../../stores/inquiry.ts';
-import InquiryItem from './InquiryItem.vue';
-import {
-  InquiryTypeValues
-} from '../../helpers/modules/InquiryHelper.ts';
-import NcButton from '@nextcloud/vue/components/NcButton';
-import HomeIcon from 'vue-material-design-icons/Home.vue';
-import { useCommentsStore } from '../../stores/comments';
-import { usePreferencesStore } from '../../stores/preferences.ts';
+import { t } from '@nextcloud/l10n'
+import { ref, computed, onMounted } from 'vue'
+import { showError } from '@nextcloud/dialogs'
+import { useRouter } from 'vue-router'
+import { Inquiry, useInquiryStore } from '../../stores/inquiry.ts'
+import InquiryItem from './InquiryItem.vue'
+import { InquiryTypeValues } from '../../helpers/modules/InquiryHelper.ts'
+import NcButton from '@nextcloud/vue/components/NcButton'
+import HomeIcon from 'vue-material-design-icons/Home.vue'
+import { useCommentsStore } from '../../stores/comments'
+import { usePreferencesStore } from '../../stores/preferences.ts'
 
 const props = defineProps({
   isLoadedParent: {
     type: Boolean,
-    required: true
-  }
-});
+    required: true,
+  },
+})
 
 const inquiryParent = ref({
   id: null,
@@ -34,129 +32,125 @@ const inquiryParent = ref({
   inquiryGroups: [],
   participatedCount: 0,
   commentCount: 0,
-  supportCount: 0
-});
+  supportCount: 0,
+})
 
-const router = useRouter();
-const inquiryStore = useInquiryStore();
-const commentsStore = useCommentsStore();
-const preferencesStore = usePreferencesStore();
+const router = useRouter()
+const inquiryStore = useInquiryStore()
+const commentsStore = useCommentsStore()
+const preferencesStore = usePreferencesStore()
 
-const isLoadedLocal = ref(false);
+const isLoadedLocal = ref(false)
 
 // Declare refs
-const inquiry = ref<Inquiry | null>(null);
-const hoveredInquiry = ref<Inquiry | null>(null);
-const suggestions = ref<Inquiry[]>([]);
-const grievances = ref<Inquiry[]>([]);
-const proposals = ref<Inquiry[]>([]);
-const officials = ref<Inquiry[]>([]);
-const isMobile = ref(window.innerWidth < 768);
+const inquiry = ref<Inquiry | null>(null)
+const hoveredInquiry = ref<Inquiry | null>(null)
+const suggestions = ref<Inquiry[]>([])
+const grievances = ref<Inquiry[]>([])
+const proposals = ref<Inquiry[]>([])
+const officials = ref<Inquiry[]>([])
+const isMobile = ref(window.innerWidth < 768)
 
-const isGridView = computed(
-  () => preferencesStore.user.defaultViewInquiry === 'table-view'
-);
+const isGridView = computed(() => preferencesStore.user.defaultViewInquiry === 'table-view')
 
-const emit = defineEmits(['edit-parent', 'route-child']);
+const emit = defineEmits(['editParent', 'routeChild'])
 
 const editParent = () => {
-  emit('edit-parent');
-};
+  emit('editParent')
+}
 
 const routeChild = (inquiryId: number) => {
-  emit('route-child', inquiryId);
-};
+  emit('routeChild', inquiryId)
+}
 
 onMounted(async () => {
   if (props.isLoadedParent) {
     try {
-      isLoadedLocal.value = false;
-      await loadInquiryData();
+      isLoadedLocal.value = false
+      await loadInquiryData()
     } catch (error) {
-      showError('Failed to load inquiry:', error);
+      showError('Failed to load inquiry:', error)
     } finally {
-      inquiryParent.value.id = inquiryStore.id;
-      inquiryParent.value.title = inquiryStore.title;
-      inquiryParent.value.type = inquiryStore.type;
-      inquiryParent.value.owner = inquiryStore.owner;
-      inquiryParent.value.moderationStatus = inquiryStore.moderationStatus;
-      inquiryParent.value.status = inquiryStore.status;
-      inquiryParent.value.configuration = inquiryStore.configuration;
-      inquiryParent.value.currentUserStatus = inquiryStore.currentUserStatus;
-      inquiryParent.value.commentCount = commentsStore.comments.length;
-      inquiryParent.value.supportCount = inquiryStore.status.countSupports;
-      inquiryParent.value.inquiryGroups = inquiryStore.inquiryGroups;
+      inquiryParent.value.id = inquiryStore.id
+      inquiryParent.value.parentId = inquiryStore.parentId
+      inquiryParent.value.title = inquiryStore.title
+      inquiryParent.value.type = inquiryStore.type
+      inquiryParent.value.owner = inquiryStore.owner
+      inquiryParent.value.moderationStatus = inquiryStore.moderationStatus
+      inquiryParent.value.status = inquiryStore.status
+      inquiryParent.value.configuration = inquiryStore.configuration
+      inquiryParent.value.currentUserStatus = inquiryStore.currentUserStatus
+      inquiryParent.value.commentCount = commentsStore.comments.length
+      inquiryParent.value.supportCount = inquiryStore.status.countSupports
+      inquiryParent.value.inquiryGroups = inquiryStore.inquiryGroups
 
-      isLoadedLocal.value = true;
+      isLoadedLocal.value = true
     }
   }
 
-  window.addEventListener('resize', handleResize);
-});
+  window.addEventListener('resize', handleResize)
+})
 
 const handleResize = () => {
-  isMobile.value = window.innerWidth < 768;
-};
+  isMobile.value = window.innerWidth < 768
+}
 
 // Need to transform the actual to fit the inquiries tab, need to be fxied.
 function transformOwner(obj) {
   if (obj.owner && typeof obj.owner === 'string') {
     obj.owner = {
       id: obj.owner,
-      displayName: obj.owner
-    };
+      displayName: obj.owner,
+    }
   }
-  return obj;
+  return obj
 }
 
 const loadInquiryData = async () => {
-
   // Filter children by type
   suggestions.value = inquiryStore.childs
     .filter((c) => c.type === InquiryTypeValues.SUGGESTION)
-    .map(transformOwner);
+    .map(transformOwner)
   grievances.value = inquiryStore.childs
     .filter((c) => c.type === InquiryTypeValues.GRIEVANCE)
-    .map(transformOwner);
+    .map(transformOwner)
   proposals.value = inquiryStore.childs
     .filter((c) => c.type === InquiryTypeValues.PROPOSAL)
-    .map(transformOwner);
+    .map(transformOwner)
   officials.value = inquiryStore.childs
     .filter((c) => c.type === InquiryTypeValues.OFFICIAL)
-    .map(transformOwner);
+    .map(transformOwner)
 
   // Redirect if needed (for simple non-participated types)
   if (shouldRedirect.value) {
-    router.replace({ name: 'inquiry', params: { id: inquiryStore.id } });
+    router.replace({ name: 'inquiry', params: { id: inquiryStore.id } })
   }
-  return true;
-};
+  return true
+}
 
 // Check if we should redirect to participation form
 const shouldRedirect = computed(() => {
-  if (!inquiryStore) return false;
+  if (!inquiryStore) return false
 
   const simpleTypes = [
     InquiryTypeValues.SUGGESTION,
     InquiryTypeValues.DEBATE,
-    InquiryTypeValues.PETITION
-  ];
+    InquiryTypeValues.PETITION,
+  ]
 
-  return (
-    inquiryStore.participated === 0 && simpleTypes.includes(inquiryStore.type)
-  );
-});
+  return inquiryStore.participated === 0 && simpleTypes.includes(inquiryStore.type)
+})
 
 // Go to home page
 const navigateToRoot = () => {
-  router.push({ name: 'root' });
-};
+  router.push({ name: 'root' })
+}
 </script>
 
 <template>
   <div v-if="!isLoadedLocal" class="loading-container">
     <div class="loading-spinner" />
-    <p>{{ t('agora', 'Loading inquiry...') }}</p>
+    <p>{{ t('agora', 'Loading inquiry') }}</p>
   </div>
 
   <div v-else class="transition-form-container">

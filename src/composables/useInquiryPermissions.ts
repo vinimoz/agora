@@ -1,17 +1,18 @@
-<!--
-  - SPDX-FileCopyrightText: 2022 Nextcloud contributors
-  - SPDX-License-Identifier: AGPL-3.0-or-later
--->
+/**
+ * SPDX-FileCopyrightText: 2024 Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
 
-import { computed } from 'vue'
-import { 
-  createPermissionContextForContent, 
+import { computed, Ref } from 'vue'
+import { Inquiry } from '../stores/inquiry.ts'
+import {
+  createPermissionContextForContent,
   ContentType,
-  type PermissionContext 
-} from '@/utils/permissions.ts'
+  type PermissionContext,
+} from '../utils/permissions.ts'
 
-export function useInquiryPermissions(inquiry: any) {
-  const context = computed<PermissionContext>(() => 
+export function useInquiryPermissions(inquiry: Ref<Inquiry>) {
+  const context = computed<PermissionContext>(() =>
     createPermissionContextForContent(
       ContentType.Inquiry,
       inquiry.value.ownerId,

@@ -4,48 +4,44 @@
 -->
 
 <script setup lang="ts">
-import { RouterLink } from 'vue-router';
-import { computed } from 'vue';
-import { showSuccess} from '@nextcloud/dialogs';
-import { DateTime } from 'luxon';
-import { t } from '@nextcloud/l10n';
-import NcAvatar from '@nextcloud/vue/components/NcAvatar';
-import { ThumbIcon } from '../AppIcons';
-import { useSupportsStore } from '../../stores/supports';
-import { 
+import { RouterLink } from 'vue-router'
+import { computed } from 'vue'
+import { showSuccess } from '@nextcloud/dialogs'
+import { DateTime } from 'luxon'
+import { t } from '@nextcloud/l10n'
+import NcAvatar from '@nextcloud/vue/components/NcAvatar'
+import { ThumbIcon } from '../AppIcons'
+import { useSupportsStore } from '../../stores/supports'
+import {
   canComment,
   canSupport,
-  createPermissionContextForContent, 
-  ContentType 
+  createPermissionContextForContent,
+  ContentType,
 } from '../../utils/permissions.ts'
 
-import {
-  InquiryTypesUI,
-  BadgeIcons,
-  StatusIcons,
-} from '../../utils/icons.ts';
+import { InquiryTypesUI, BadgeIcons, StatusIcons } from '../../utils/icons.ts'
 
-import { useInquiryStore, Inquiry } from '../../stores/inquiry';
-import { useInquiriesStore } from '../../stores/inquiries';
-import { usePreferencesStore } from '../../stores/preferences.ts';
-import { useSessionStore } from '../../stores/session.ts';
+import { useInquiryStore, Inquiry } from '../../stores/inquiry'
+import { useInquiriesStore } from '../../stores/inquiries'
+import { usePreferencesStore } from '../../stores/preferences.ts'
+import { useSessionStore } from '../../stores/session.ts'
 
 
-const { inquiry, noLink = false, gridView = false } = defineProps<Props>();
-
-const inquiryStore = useInquiryStore();
-const inquiriesStore = useInquiriesStore();
-const preferencesStore = usePreferencesStore();
-const sessionStore = useSessionStore();
-const supportsStore = useSupportsStore();
+const inquiryStore = useInquiryStore()
+const inquiriesStore = useInquiriesStore()
+const preferencesStore = usePreferencesStore()
+const sessionStore = useSessionStore()
+const supportsStore = useSupportsStore()
 
 interface Props {
-  inquiry: Inquiry;
-  noLink?: boolean;
-  gridView?: boolean;
+  inquiry: Inquiry
+  noLink?: boolean
+  gridView?: boolean
 }
 
-const context = computed(() => 
+const { inquiry, noLink = false, gridView = false } = defineProps<Props>()
+
+const context = computed(() =>
   createPermissionContextForContent(
     ContentType.Inquiry,
     inquiry.owner.id,
@@ -61,223 +57,212 @@ const context = computed(() =>
 )
 
 const onToggleSupport = async () => {
-  supportsStore.toggleSupport(inquiry.id, sessionStore.currentUser.id,inquiryStore,inquiriesStore);
+  supportsStore.toggleSupport(inquiry.id, sessionStore.currentUser.id, inquiryStore, inquiriesStore)
   if (inquiry.currentUserStatus.hasSupported) {
-    	showSuccess(t('agora', 'Inquiry supported, thanks for her !'), { timeout: 2000});
-
-  } else  {
-  	   showSuccess(t('agora', 'Inquiry support removed !'), { timeout: 2000 });
-	  }
+    showSuccess(t('agora', 'Inquiry supported, thanks for her !'), { timeout: 2000 })
+  } else {
+    showSuccess(t('agora', 'Inquiry support removed !'), { timeout: 2000 })
+  }
 }
 
 function htmlToFirstLine(html) {
-  const tempDiv = document.createElement('div');
-  tempDiv.innerHTML = html;
+  const tempDiv = document.createElement('div')
+  tempDiv.innerHTML = html
 
-  let text = tempDiv.textContent || tempDiv.innerText || '';
+  let text = tempDiv.textContent || tempDiv.innerText || ''
 
-  text = text.replace(/\s+/g, ' ').trim();
+  text = text.replace(/\s+/g, ' ').trim()
 
-  const firstLine = text.split(/\r?\n/)[0];
+  const firstLine = text.split(/\r?\n/)[0]
 
-  return firstLine;
+  return firstLine
 }
-
 
 const closeToClosing = computed(
   () =>
     !inquiry.status.isExpired &&
     inquiry.configuration.expire &&
-    DateTime.fromMillis(inquiry.configuration.expire * 1000).diffNow('hours')
-      .hours < 36
-);
+    DateTime.fromMillis(inquiry.configuration.expire * 1000).diffNow('hours').hours < 36
+)
 
 const timeExpirationRelative = computed(() => {
   if (inquiry.configuration.expire) {
-    return DateTime.fromMillis(
-      inquiry.configuration.expire * 1000
-    ).toRelative();
+    return DateTime.fromMillis(inquiry.configuration.expire * 1000).toRelative()
   }
-  return t('agora', 'never');
-});
+  return t('agora', 'never')
+})
 
 const expiryClass = computed(() => {
   if (inquiry.status.isExpired) {
-    return 'error';
+    return 'error'
   }
 
   if (inquiry.configuration.expire && closeToClosing.value) {
-    return 'warning';
+    return 'warning'
   }
 
   if (inquiry.configuration.expire && !inquiry.status.isExpired) {
-    return 'success';
+    return 'success'
   }
 
-  return 'success';
-});
+  return 'success'
+})
 
 const timeCreatedRelative = computed(
-  () =>
-    DateTime.fromMillis(inquiry.status.created * 1000).toRelative() as string
-);
+  () => DateTime.fromMillis(inquiry.status.created * 1000).toRelative() as string
+)
 
 const safeDescription = computed(() => {
   if (preferencesStore.user.verboseInquiriesList) {
     if (inquiry.description) {
-      return htmlToFirstLine(inquiry.description);
+      return htmlToFirstLine(inquiry.description)
     }
-    return t('agora', 'No description provided');
+    return t('agora', 'No description provided')
   }
 
   if (inquiry.status.isArchived) {
     return t('agora', 'Archived {relativeTime}', {
-      relativeTime: DateTime.fromMillis(
-        inquiry.status.archivedDate * 1000
-      ).toRelative() as string
-    });
+      relativeTime: DateTime.fromMillis(inquiry.status.archivedDate * 1000).toRelative() as string,
+    })
   }
 
   return t('agora', 'Started {relativeTime} from {ownerName}', {
     ownerName: inquiry.owner.displayName,
-    relativeTime: timeCreatedRelative.value
-  });
-});
+    relativeTime: timeCreatedRelative.value,
+  })
+})
 
 const formatDate = (timestamp: number) =>
-  DateTime.fromMillis(timestamp * 1000).toLocaleString(DateTime.DATE_SHORT);
+  DateTime.fromMillis(timestamp * 1000).toLocaleString(DateTime.DATE_SHORT)
 
 const moderationStatus = computed(
-  () =>
-    inquiry.moderationStatus ||
-    inquiryStore.getInquiryModerationStatus?.(inquiry.id)
-);
+  () => inquiry.moderationStatus || inquiryStore.getInquiryModerationStatus?.(inquiry.id)
+)
 
 const moderationStatusIcon = computed(() => {
   const statusItem = sessionStore.appSettings.moderationStatusTab.find(
-    item => item.inquiryType === inquiry.type && item.statusKey === inquiry.moderationStatus
-  );
+    (item) => item.inquiryType === inquiry.type && item.statusKey === inquiry.moderationStatus
+  )
 
   if (!statusItem) {
-    return  StatusIcons['Draft'];
+    return StatusIcons.Draft
   }
 
+  return StatusIcons[statusItem.icon] || StatusIcons.Draft
+})
 
-  return StatusIcons[statusItem.icon] || StatusIcons['Draft'];
-});
+const moderationStatusLabel = computed(() => {
+  const statusItem = sessionStore.appSettings.moderationStatusTab.find(
+    (item) => item.inquiryType === inquiry.type && item.statusKey === inquiry.moderationStatus
+  )
 
+  if (!statusItem) {
+    return 'Draft'
+  }
+
+  return statusItem.label || 'Draft'
+})
 
 const moderationStatusInfo = computed(() => {
-  if (
-    !moderationStatus.value ||
-    !sessionStore.appSettings?.moderationStatusTab
-  ) {
-    return null;
+  if (!moderationStatus.value || !sessionStore.appSettings?.moderationStatusTab) {
+    return null
   }
 
   return sessionStore.appSettings.moderationStatusTab.find(
     (status) => status.status_key === moderationStatus.value
-  );
-});
+  )
+})
 </script>
 
 <template>
-  <div
-    class="inquiry-item"
-    :class="{ 'grid-view': gridView, 'list-view': !gridView }"
-  >
+  <div class="inquiry-item" :class="{ 'grid-view': gridView, 'list-view': !gridView }">
     <!-- Mode liste -->
     <template v-if="!gridView">
-      <!-- <div v-if="inquiry.parentId!==0">
-			<component :is="StatusIcons.LinkIcon" :size="20" />
-			 <router-link :to="`/inquiry/${parentId}`" class="underline">
-      				id: #{{ inquiry.parentId }}
-    			 </router-link>
-			</div> -->
-      <div class="item__type">
-        <component :is="InquiryTypesUI[inquiry.type].icon" />
+      <div class="item__type" :title="inquiry.type">
+	      <component
+			      :is="InquiryTypesUI[inquiry.type].icon"
+			      :title="InquiryTypesUI[inquiry.type].label"
+			      />
       </div>
 
-      <div
-        v-if="noLink"
-        class="item__title"
-        :class="{ closed: inquiry.status.isExpired }"
-      >
-        <div class="title">
-          {{ inquiry.title }}
-        </div>
+      <div v-if="noLink" class="item__title" :class="{ closed: inquiry.status.isExpired }">
+	      <div class="title" :title="inquiry.title">
+		      {{ inquiry.title }}
+	      </div>
 
-        <div class="description_line">
-          <component :is="StatusIcons.Lock" :size="16" />
-          <div class="description">
-            {{
-              t('agora', 'No access to this inquiry of {ownerName}.', {
-                ownerName: inquiry.owner.displayName
-              })
-            }}
-          </div>
-        </div>
+	      <div class="description_line">
+		      <component :is="StatusIcons.Lock" :size="16" />
+		      <div class="description">
+			      {{
+			      t('agora', 'No access to this inquiry of {ownerName}.', {
+			      ownerName: inquiry.owner.displayName,
+			      })
+			      }}
+		      </div>
+	      </div>
       </div>
 
       <RouterLink
-        v-else
-        class="item__title"
-        :title="inquiry.description"
-        :to="{
-          name: 'inquiry',
-          params: { id: inquiry.id }
-        }"
-        :class="{
-          closed: inquiry.status.isExpired,
-          active: inquiry.id === inquiryStore.id
-        }"
-      >
-        <div class="title_line">
-          <span class="title">
-            {{ inquiry.title }}
-          </span>
-        </div>
+		      v-else
+		      class="item__title"
+		      :title="inquiry.description"
+		      :to="{
+			   name: 'inquiry',
+			   params: { id: inquiry.id },
+			   }"
+		      :class="{
+			      closed: inquiry.status.isExpired,
+			      active: inquiry.id === inquiryStore.id,
+			      }"
+		      >
+		      <div class="title_line">
+			      <span class="title">
+				      {{ inquiry.title }}
+			      </span>
+		      </div>
 
-        <div class="description_line">
-          <component
-            :is="BadgeIcons.archived"
-            v-if="
-              !preferencesStore.user.verboseInquiriesList &&
-                inquiry.status.isArchived
-            "
-            :title="t('agora', 'Archived inquiry')"
-            :size="16"
-          />
-          <component
-            :is="StatusIcons.LockOpen"
-            v-else-if="
-              !preferencesStore.user.verboseInquiriesList &&
-                inquiry.configuration.access === 'open'
-            "
-            :title="t('agora', 'Openly accessible inquiry')"
-            :size="16"
-          />
-          <component
-            :is="StatusIcons.Lock"
-            v-else-if="
-              !preferencesStore.user.verboseInquiriesList &&
-                inquiry.configuration.access === 'private'
-            "
-            :title="t('agora', 'Private inquiry')"
-            :size="16"
-          />
-          <span class="description">{{ safeDescription }}</span>
-        </div>
+		      <div class="description_line">
+			      <component
+					      :is="BadgeIcons.archived"
+					      v-if="!preferencesStore.user.verboseInquiriesList && inquiry.status.isArchived"
+					      :title="t('agora', 'Archived inquiry')"
+					      :size="16"
+					      />
+			      <component
+					      :is="StatusIcons.LockOpen"
+					      v-else-if="
+							 !preferencesStore.user.verboseInquiriesList && inquiry.configuration.access === 'open'
+							 "
+					      :title="t('agora', 'Openly accessible inquiry')"
+					      :size="16"
+					      />
+			      <component
+					      :is="StatusIcons.Lock"
+					      v-else-if="
+							 !preferencesStore.user.verboseInquiriesList &&
+							 inquiry.configuration.access === 'private'
+							 "
+					      :title="t('agora', 'Private inquiry')"
+					      :size="16"
+					      />
+			      <span class="description">{{ safeDescription }}</span>
+		      </div>
       </RouterLink>
 
       <div class="badges">
-	      <div v-if="inquiry.type!=='official'">
+      		<div v-if="inquiry.parentId!==0" class="item__type">
+	     			 <router-link
+			     		 class="underline"
+			      		:to="`/inquiry/${inquiry.parentId}`"
+			     	 >
+	      				<component :is="StatusIcons.LinkIcon" :size="20" :title="`id:inquiry.parentId`"/>
+	      			</router-link>
+      </div> 
+	      <div v-if="inquiry.type !== 'official'">
 		      <div
 				      v-if="moderationStatusInfo"
 				      class="badge-bubble status--moderation"
-				      :title="
-					      moderationStatusInfo.description || moderationStatusInfo.label
-					      "
+				      :title="moderationStatusInfo.description || moderationStatusInfo.label"
 				      >
 				      <component
 						      :is="moderationStatusIcon"
@@ -290,10 +275,9 @@ const moderationStatusInfo = computed(() => {
 		      <div
 				      v-else-if="inquiry.moderationStatus"
 				      class="badge-bubble status--moderation"
-				      :title="moderationStatus"
+				      :title="moderationStatusLabel"
 				      >
 				      <component :is="moderationStatusIcon" :size="12" class="icon" />
-				      <!-- {{ inquiry.moderationStatus }}</span> -->
 		      </div>
 	      </div>
 
@@ -302,7 +286,7 @@ const moderationStatusInfo = computed(() => {
 			      class="badge-bubble"
 			      :title="
 				      t('agora', '{count} comments', {
-				      count: inquiry.status.countComments || 0
+				      count: inquiry.status.countComments || 0,
 				      })
 				      "
 			      >
@@ -315,23 +299,21 @@ const moderationStatusInfo = computed(() => {
 			      class="badge-bubble"
 			      :title="
 				      t('agora', '{count} supports', {
-				      count: inquiry.status.countSupports || 0
+				      count: inquiry.status.countSupports || 0,
 				      })
 				      "
-			      @click="onToggleSupport">
-		      <ThumbIcon :supported="inquiry.currentUserStatus.hasSupported" :size=22 />
-		      <span>{{ inquiry.status.countSupports || 0 }}</span>
+			      @click="onToggleSupport"
+			      >
+			      <ThumbIcon :supported="inquiry.currentUserStatus.hasSupported" :size="22" />
+			      <span>{{ inquiry.status.countSupports || 0 }}</span>
 	      </div>
 
 	      <div
-			      v-if="
-				    inquiry.type !== 'official' &&
-				    preferencesStore.user.verboseInquiriesList
-				    "
+			      v-if="inquiry.type !== 'official' && preferencesStore.user.verboseInquiriesList"
 			      class="badge-bubble"
 			      :title="
 				      t('agora', '{count} participants', {
-				      count: inquiry.status.countParticipants
+				      count: inquiry.status.countParticipants,
 				      })
 				      "
 			      >
@@ -346,9 +328,7 @@ const moderationStatusInfo = computed(() => {
 				    inquiry.configuration.access === 'private'
 				    "
 			      class="badge-bubble"
-			      :title="
-				      t('agora', 'Private inquiry, only invited participants have access')
-				      "
+			      :title="t('agora', 'Private inquiry, only invited participants have access')"
 			      >
 			      <component :is="StatusIcons.Lock" :size="16" class="icon" />
 	      </div>
@@ -360,18 +340,13 @@ const moderationStatusInfo = computed(() => {
 					    inquiry.configuration.access === 'open'
 					    "
 				      class="badge-bubble"
-				      :title="
-					      t('agora', 'Open inquiry, accessible to all users of this instance')
-					      "
+				      :title="t('agora', 'Open inquiry, accessible to all users of this instance')"
 				      >
 				      <component :is="StatusIcons.LockOpen" :size="16" class="icon" />
 		      </div>
 
 			      <div
-					      v-if="
-						    preferencesStore.user.verboseInquiriesList &&
-						    inquiry.status.isArchived
-						    "
+					      v-if="preferencesStore.user.verboseInquiriesList && inquiry.status.isArchived"
 					      class="badge-bubble"
 					      :title="t('agora', 'Archived inquiry')"
 					      >
@@ -379,10 +354,7 @@ const moderationStatusInfo = computed(() => {
 			      </div>
 
 				      <div
-						      v-if="
-							    preferencesStore.user.verboseInquiriesList &&
-							    inquiry.countParticipants
-							    "
+						      v-if="preferencesStore.user.verboseInquiriesList && inquiry.countParticipants"
 						      class="badge-bubble participated"
 						      :title="t('agora', 'This inquiry get participation')"
 						      >
@@ -392,7 +364,7 @@ const moderationStatusInfo = computed(() => {
 					      <NcAvatar
 							      v-if="preferencesStore.user.verboseInquiriesList"
 							      :user="inquiry.owner.id"
-							      class="badge-bubble user-avatar"
+							      class="user-avatar"
 							      :style="{ marginLeft: '-8px', marginRight: '4px' }"
 							      :show-name="false"
 							      :size="32"
@@ -405,11 +377,7 @@ const moderationStatusInfo = computed(() => {
 							      :title="t('agora', 'Expiration')"
 							      >
 							      <component
-									      :is="
-										   inquiry.status.isExpired
-										   ? BadgeIcons.closed
-										   : BadgeIcons.expiration
-										   "
+									      :is="inquiry.status.isExpired ? BadgeIcons.closed : BadgeIcons.expiration"
 									      :size="16"
 									      class="icon"
 									      />
@@ -427,31 +395,29 @@ const moderationStatusInfo = computed(() => {
 		    <div class="grid-header">
 			    <div class="header-left">
 				    <div class="type-icon">
-					    <component :is="InquiryTypesUI[inquiry.type].icon" :size="18" />
+					    <component
+							    :is="InquiryTypesUI[inquiry.type].icon"
+							    :title="InquiryTypesUI[inquiry.type].label"
+							    :size="18"
+							    />
 				    </div>
-	      			    <div v-if="inquiry.type!=='official'">
-				    <div
-						    v-if="moderationStatusInfo"
-						    class="status-badge status--moderation"
-						    :title="
-							    moderationStatusInfo.description || moderationStatusInfo.label
-							    "
-						    >
-						    <component
-								    :is="moderationStatusIcon"
-								    v-if="moderationStatusInfo.icon"
-								    :size="12"
-								    />
-						    <!-- {{ inquiry.moderationStatus }}</span> -->
-				    </div>
-				    <div
-						    v-else-if="inquiry.moderationStatus"
-						    class="status-badge status--moderation"
-						    :title="moderationStatus"
-						    >
-						    <component :is="moderationStatusIcon" :size="12" />
-						    <!-- {{ inquiry.moderationStatus }}</span> -->
-				    </div>
+				    <div v-if="inquiry.type !== 'official'">
+					    <div
+							    v-if="moderationStatusInfo"
+							    class="status-badge status--moderation"
+							    :title="moderationStatusInfo.description || moderationStatusInfo.label"
+							    >
+							    <component :is="moderationStatusIcon" v-if="moderationStatusInfo.icon" :size="12" />
+							    <!-- {{ inquiry.moderationStatus }}</span> -->
+					    </div>
+					    <div
+							    v-else-if="inquiry.moderationStatus"
+							    class="status-badge status--moderation"
+							    :title="moderationStatusLabel"
+							    >
+							    <component :is="moderationStatusIcon" :size="12" />
+							    <!-- {{ inquiry.moderationStatus }}</span> -->
+					    </div>
 				    </div>
 				    <div
 						    v-if="
@@ -460,12 +426,7 @@ const moderationStatusInfo = computed(() => {
 							  inquiry.configuration.access === 'private'
 							  "
 						    class="badge-bubble"
-						    :title="
-							    t(
-							    'agora',
-							    'Private inquiry, only invited participants have access'
-							    )
-							    "
+						    :title="t('agora', 'Private inquiry, only invited participants have access')"
 						    >
 						    <component :is="StatusIcons.Lock" :size="16" class="icon" />
 				    </div>
@@ -477,21 +438,13 @@ const moderationStatusInfo = computed(() => {
 								  inquiry.configuration.access === 'open'
 								  "
 							    class="badge-bubble"
-							    :title="
-								    t(
-								    'agora',
-								    'Open inquiry, accessible to all users of this instance'
-								    )
-								    "
+							    :title="t('agora', 'Open inquiry, accessible to all users of this instance')"
 							    >
 							    <component :is="StatusIcons.LockOpen" :size="16" class="icon" />
 					    </div>
 
 						    <div
-								    v-if="
-									  preferencesStore.user.verboseInquiriesList &&
-									  inquiry.status.isArchived
-									  "
+								    v-if="preferencesStore.user.verboseInquiriesList && inquiry.status.isArchived"
 								    class="badge-bubble"
 								    :title="t('agora', 'Archived inquiry')"
 								    >
@@ -514,7 +467,7 @@ const moderationStatusInfo = computed(() => {
 				    :title="inquiry.description"
 				    :to="{
 					 name: 'inquiry',
-					 params: { id: inquiry.id }
+					 params: { id: inquiry.id },
 					 }"
 				    >
 				    <h3 class="grid-title">
@@ -531,7 +484,7 @@ const moderationStatusInfo = computed(() => {
 			    <p class="grid-description">
 			    {{
 			    t('agora', 'No access to this inquiry of {ownerName}.', {
-			    ownerName: inquiry.owner.displayName
+			    ownerName: inquiry.owner.displayName,
 			    })
 			    }}
 			    </p>
@@ -539,14 +492,11 @@ const moderationStatusInfo = computed(() => {
 
 		    <div class="grid-metadata">
 			    <div
-					    v-if="
-						  inquiry.type !== 'official' &&
-						  inquiry.status.countParticipants > 0
-						  "
+					    v-if="inquiry.type !== 'official' && inquiry.status.countParticipants > 0"
 					    class="metadata-item"
 					    :title="
 						    t('agora', '{count} participants', {
-						    count: inquiry.status.countParticipants
+						    count: inquiry.status.countParticipants,
 						    })
 						    "
 					    >
@@ -559,7 +509,7 @@ const moderationStatusInfo = computed(() => {
 					    class="metadata-item"
 					    :title="
 						    t('agora', '{count} comments', {
-						    count: inquiry.status.countComments || 0
+						    count: inquiry.status.countComments || 0,
 						    })
 						    "
 					    >
@@ -572,27 +522,26 @@ const moderationStatusInfo = computed(() => {
 					    class="metadata-item"
 					    :title="
 						    t('agora', '{count} supports', {
-						    count: inquiry.status.countSupports || 0
+						    count: inquiry.status.countSupports || 0,
 						    })
 						    "
-					    @click="onToggleSupport">
-				    <ThumbIcon :supported="inquiry.currentUserStatus.hasSupported" :size=22 />
-				    <span>{{ inquiry.status.countSupports || 0 }}</span>
+					    @click="onToggleSupport"
+					    >
+					    <ThumbIcon :supported="inquiry.currentUserStatus.hasSupported" :size="22" />
+					    <span>{{ inquiry.status.countSupports || 0 }}</span>
 			    </div>
 			    <div class="metadata-item-time">
 				    <div
 						    class="metadata-item"
 						    :title="
 							    t('agora', 'Created on {date}', {
-							    date: formatDate(inquiry.status.created)
+							    date: formatDate(inquiry.status.created),
 							    })
 							    "
 						    >
 						    <component :is="StatusIcons.Calendar" :size="16" />
 						    <span class="date-label">
-							    <span class="date-value">{{
-								    formatDate(inquiry.status.created)
-								    }}</span>
+							    <span class="date-value">{{ formatDate(inquiry.status.created) }}</span>
 						    </span>
 				    </div>
 
@@ -601,15 +550,13 @@ const moderationStatusInfo = computed(() => {
 						    class="metadata-item"
 						    :title="
 							    t('agora', 'Last interaction on {date}', {
-							    date: formatDate(inquiry.status.lastInteraction)
+							    date: formatDate(inquiry.status.lastInteraction),
 							    })
 							    "
 						    >
 						    <component :is="StatusIcons.Updated" :size="16" />
 						    <span class="date-label">
-							    <span class="date-value">{{
-								    formatDate(inquiry.status.lastInteraction)
-								    }}</span>
+							    <span class="date-value">{{ formatDate(inquiry.status.lastInteraction) }}</span>
 						    </span>
 				    </div>
 			    </div>

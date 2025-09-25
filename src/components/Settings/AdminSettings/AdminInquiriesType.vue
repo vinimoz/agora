@@ -4,37 +4,31 @@
 -->
 
 <script setup>
-import { t } from '@nextcloud/l10n';
+import { t } from '@nextcloud/l10n'
 
-import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch';
-import NcSelect from '@nextcloud/vue/components/NcSelect';
+import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
+import NcSelect from '@nextcloud/vue/components/NcSelect'
 
-import {
-  useAppSettingsStore,
-  InquiriesType
-} from '../../../stores/appSettings.ts';
+import { useAppSettingsStore, InquiriesType } from '../../../stores/appSettings.ts'
 
-const appSettingsStore = useAppSettingsStore();
+const appSettingsStore = useAppSettingsStore()
 
 // Map editor types to their labels
 const editorTypeLabels = {
   textarea: t('agora', 'Textarea'),
   titap: t('agora', 'Tiptap'),
   wysiwyg: t('agora', 'WYSIWYG'),
-  collectives: t('agora', 'Collectives')
-};
+  collectives: t('agora', 'Collectives'),
+}
 
 // Default settings for each inquiry type
-const defaultInquirySettings = Object.values(InquiriesType).reduce(
-  (acc, type) => {
-    acc[type] = {
-      enabled: true,
-      editorType: 'textarea'
-    };
-    return acc;
-  },
-  {}
-);
+const defaultInquirySettings = Object.values(InquiriesType).reduce((acc, type) => {
+  acc[type] = {
+    enabled: true,
+    editorType: 'textarea',
+  }
+  return acc
+}, {})
 </script>
 
 <template>
@@ -47,15 +41,10 @@ const defaultInquirySettings = Object.values(InquiriesType).reduce(
         type="switch"
         @update:model-value="appSettingsStore.write()"
       >
-        {{
-          t('agora', 'Enable the spreadsheet download of inquiries globally')
-        }}
+        {{ t('agora', 'Enable the spreadsheet download of inquiries globally') }}
       </NcCheckboxRadioSwitch>
 
-      <div
-        v-if="!appSettingsStore.allowInquiryDownload"
-        class="settings-details"
-      >
+      <div v-if="!appSettingsStore.allowInquiryDownload" class="settings-details">
         <NcSelect
           v-model="appSettingsStore.inquiryDownloadGroups"
           :input-label="t('agora', 'Enable only for the following groups')"
@@ -94,17 +83,17 @@ const defaultInquirySettings = Object.values(InquiriesType).reduce(
               <NcCheckbox
                 :checked="
                   appSettingsStore.inquiryTypeSettings[type]?.enabled ??
-                    defaultInquirySettings[type].enabled
+                  defaultInquirySettings[type].enabled
                 "
                 @update:checked="
                   (value) => {
                     if (!appSettingsStore.inquiryTypeSettings[type]) {
                       appSettingsStore.inquiryTypeSettings[type] = {
-                        ...defaultInquirySettings[type]
-                      };
+                        ...defaultInquirySettings[type],
+                      }
                     }
-                    appSettingsStore.inquiryTypeSettings[type].enabled = value;
-                    appSettingsStore.write();
+                    appSettingsStore.inquiryTypeSettings[type].enabled = value
+                    appSettingsStore.write()
                   }
                 "
               />
@@ -113,12 +102,12 @@ const defaultInquirySettings = Object.values(InquiriesType).reduce(
               <NcSelect
                 :model-value="
                   appSettingsStore.inquiryTypeSettings[type]?.editorType ??
-                    defaultInquirySettings[type].editorType
+                  defaultInquirySettings[type].editorType
                 "
                 :options="
                   Object.keys(editorTypeLabels).map((key) => ({
                     id: key,
-                    label: editorTypeLabels[key]
+                    label: editorTypeLabels[key],
                   }))
                 "
                 label="label"
@@ -127,12 +116,11 @@ const defaultInquirySettings = Object.values(InquiriesType).reduce(
                   (value) => {
                     if (!appSettingsStore.inquiryTypeSettings[type]) {
                       appSettingsStore.inquiryTypeSettings[type] = {
-                        ...defaultInquirySettings[type]
-                      };
+                        ...defaultInquirySettings[type],
+                      }
                     }
-                    appSettingsStore.inquiryTypeSettings[type].editorType =
-                      value;
-                    appSettingsStore.write();
+                    appSettingsStore.inquiryTypeSettings[type].editorType = value
+                    appSettingsStore.write()
                   }
                 "
               />

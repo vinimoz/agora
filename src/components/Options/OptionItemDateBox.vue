@@ -4,20 +4,20 @@
 -->
 
 <script setup lang="ts">
-import { DateTime, Duration } from 'luxon';
-import DateBox from '../Base/modules/DateBox.vue';
+import { DateTime, Duration } from 'luxon'
+import DateBox from '../Base/modules/DateBox.vue'
 
 interface Props {
-  timeStamp: number;
-  durationSeconds?: number;
+  timeStamp: number
+  durationSeconds?: number
 }
 
-const { timeStamp, durationSeconds = 0 } = defineProps<Props>();
+const { timeStamp, durationSeconds = 0 } = defineProps<Props>()
 
 // computed from as DateTime from Luxon
-const from = DateTime.fromSeconds(timeStamp);
+const from = DateTime.fromSeconds(timeStamp)
 
-const duration = Duration.fromMillis(durationSeconds * 1000);
+const duration = Duration.fromMillis(durationSeconds * 1000)
 </script>
 
 <template>

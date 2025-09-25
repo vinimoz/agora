@@ -4,40 +4,40 @@
 -->
 
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref } from 'vue';
-import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon';
+import { onBeforeUnmount, onMounted, ref } from 'vue'
+import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 
 // const model = ref(false)
-const model = defineModel<boolean>();
+const model = defineModel<boolean>()
 
-const observer = ref<null | IntersectionObserver>(null);
+const observer = ref<null | IntersectionObserver>(null)
 
-const observerTarget = ref<null | Element>(null);
-const emit = defineEmits(['visible', 'invisible']);
+const observerTarget = ref<null | Element>(null)
+const emit = defineEmits(['visible', 'invisible'])
 
-const { loading = false } = defineProps<{ loading?: boolean }>();
+const { loading = false } = defineProps<{ loading?: boolean }>()
 
 onMounted(() => {
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
-        model.value = true;
-        emit('visible');
+        model.value = true
+        emit('visible')
       } else {
-        model.value = false;
-        emit('invisible');
+        model.value = false
+        emit('invisible')
       }
-    });
-  });
+    })
+  })
 
-  observer.observe(observerTarget.value as Element);
-});
+  observer.observe(observerTarget.value as Element)
+})
 
 onBeforeUnmount(() => {
   if (observer.value) {
-    observer.value.disconnect();
+    observer.value.disconnect()
   }
-});
+})
 </script>
 
 <template>

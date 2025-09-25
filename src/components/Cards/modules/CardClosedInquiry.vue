@@ -4,12 +4,12 @@
 -->
 
 <script setup lang="ts">
-import { CardDiv } from '../../Base/index.ts';
-import { t } from '@nextcloud/l10n';
-import { useInquiryStore } from '../../../stores/inquiry.ts';
+import { CardDiv } from '../../Base/index.ts'
+import { t } from '@nextcloud/l10n'
+import { useInquiryStore } from '../../../stores/inquiry.ts'
 
-const inquiryStore = useInquiryStore();
-const cardType = 'warning';
+const inquiryStore = useInquiryStore()
+const cardType = 'warning'
 </script>
 
 <template>
