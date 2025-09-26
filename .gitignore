@@ -59,4 +59,7 @@ nextcloud.log
 # === Misc ===
 *.orig
 *.rej
+js/*.chunk.mjs
+js/*.map
+js/*.license
 
