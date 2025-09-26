@@ -34,7 +34,7 @@ If you wish to have category, location, moderation base, u can use agora:db:init
 
 ### Install latest release
 
-You can download and install the latest release from the [Nextcloud app store](https://apps.vinimoz.com/apps/agora).
+You can download and install the latest release from the [Nextcloud app store](https://apps.nextcloud.com/apps/agora).
 
 ## Available occ commands
 
