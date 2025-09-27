@@ -1,0 +1,23 @@
+{ "translations": {
+    "You have changed the configuration" : "سەپلىمىنى ئۆزگەرتتىڭىز",
+    "{actor} has changed the share type" : "{actor} share ھەمبەھىر تىپىنى ئۆزگەرتتى",
+    "{actor} has added a public share" : "{actor} ئاممىۋى ئۈلۈشنى قوشتى",
+    "You have deleted the share for circle {sharee}" : "چەمبىرەك {sharee} نىڭ ئۈلۈشىنى ئۆچۈردىڭىز",
+    "Reveal them" : "ئۇلارنى ئاشكارىلىغىن",
+    "Support status" : "قوللاش ھالىتى",
+    "To participate, register a name and optionally with your email address." : "قاتنىشىش ئۈچۈن ئىسىمنى تىزىملىتىڭ ۋە ئېلېكترونلۇق خەت ئادرېسىڭىز بىلەن تاللاڭ.",
+    "New comment …" : "يېڭى باھا…",
+    "Projects" : "Projects",
+    "Closing: {dateRelative}" : "يېپىلىش: {dateRelative}",
+    "Confirm option" : "تاللاشنى جەزملەشتۈرۈڭ",
+    "Error adding options" : "تاللاش قوشۇشتا خاتالىق",
+    "Each line creates a new option. Duplicates will get skipped without warning." : "ھەر بىر قۇر يېڭى تاللاش ھاسىل قىلىدۇ. كۆپەيتىلگەن نۇسخىسى ئاگاھلاندۇرۇلماي ئاتلاپ كېتىدۇ.",
+    "Autoreminder started" : "Autoreminder قوزغىتىلدى",
+    "Enter the URL of your privacy policy" : "مەخپىيەتلىك سىياسىتىڭىزنىڭ URL نى كىرگۈزۈڭ",
+    "Error while copying link to clipboard" : "چاپلاش تاختىسىغا ئۇلىنىشنى كۆچۈرگەندە خاتالىق",
+    "Email address is optional" : "ئېلېكترونلۇق خەت ئادرېسى ئىختىيارى",
+    "(deleted)" : "(ئۆچۈرۈلدى)",
+    "Switch to table view" : "جەدۋەل كۆرۈنۈشىگە ئالماشتۇرۇڭ",
+    "View all" : "ھەممىنى كۆرۈش"
+},"pluralForm" :"nplurals=2; plural=(n != 1);"
+}

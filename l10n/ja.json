@@ -1,0 +1,5 @@
+{ "translations": {
+    "New comment …" : "あたらしいコメント",
+    "Error while copying link to clipboard" : "クリップボードへのリンクのコピー中にエラーが発生しました"
+},"pluralForm" :"nplurals=1; plural=0;"
+}

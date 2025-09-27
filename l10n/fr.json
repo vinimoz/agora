@@ -1,0 +1,7 @@
+{ "translations": {
+    "Reveal them" : "Révélez-les",
+    "Extended title" : "Titre étendu",
+    "Error while copying link to clipboard" : "Erreur lors de la copie du lien dans le presse-papier",
+    "Switch to table view" : "Basculer en vue tableau"
+},"pluralForm" :"nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
+}

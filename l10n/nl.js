@@ -1,0 +1,15 @@
+OC.L10N.register(
+    "agora",
+    {
+    "{actor} has changed the share type" : "{actor} heeft het share type gewijzigd",
+    "{actor} has added a public share" : "{actor} heeft een openbare deellink toegevoegd",
+    "You have deleted the share for circle {sharee}" : "Je hebt de share voor kring {sharee} verwijderd",
+    "Support status" : "Status ondersteuning",
+    "New comment …" : "Nieuwe reactie ...",
+    "Projects" : "Projecten",
+    "Confirm option" : "Keuze bevestigen",
+    "Error while copying link to clipboard" : "Fout bij link kopiëren naar klembord",
+    "Email address is optional" : "E-mailadres is optioneel",
+    "Switch to table view" : "Omschakelen naar tabeloverzicht"
+},
+"nplurals=2; plural=(n != 1);");

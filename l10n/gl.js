@@ -1,0 +1,9 @@
+OC.L10N.register(
+    "agora",
+    {
+    "Reveal them" : "Descubrilos",
+    "Extended title" : "Título completo",
+    "Error while copying link to clipboard" : "Produciuse un erro ao copiar a ligazón no portapapeis",
+    "Switch to table view" : "Cambiar á vista de táboa"
+},
+"nplurals=2; plural=(n != 1);");

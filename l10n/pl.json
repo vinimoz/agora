@@ -1,0 +1,13 @@
+{ "translations": {
+    "_Confirmed option:_::_Confirmed options:_" : ["Potwierdzona opcja:","Potwierdzone opcje:","Potwierdzone opcje:","Potwierdzone opcje:"],
+    "{actor} has changed the share type" : "{actor} zmienił typ udostępnienia",
+    "{actor} has added a public share" : "{actor} dodał udostępnienie publiczne",
+    "You have deleted the share for circle {sharee}" : "Usunąłeś udostępnienie dla kręgu {sharee}",
+    "Support status" : "Stan wsparcia",
+    "Projects" : "Projekty",
+    "Confirm option" : "Potwierdź opcję",
+    "Error while copying link to clipboard" : "Błąd podczas kopiowania linku do schowka",
+    "Email address is optional" : "Adres e-mail jest opcjonalny",
+    "Switch to table view" : "Przełącz na widok tabeli"
+},"pluralForm" :"nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);"
+}

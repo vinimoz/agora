@@ -1,0 +1,14 @@
+{ "translations": {
+    "_Confirmed option:_::_Confirmed options:_" : ["Potrjena možnost:","Potrjeni možnosti:","Potrjene možnosti:","Potrjene možnosti:"],
+    "{actor} has changed the share type" : "{actor} spremeni vrsto souporabe",
+    "New comment …" : "Nova opomba ...",
+    "Projects" : "Projekti",
+    "Closing: {dateRelative}" : "Datum preteka: {dateRelative}",
+    "Confirm option" : "Potrdi možnost",
+    "Enter the URL of your privacy policy" : "Vpis naslova URL pravil zasebnosti",
+    "Error while copying link to clipboard" : "Prišlo je do napake med kopiranjem povezave v odložišče",
+    "Email address is optional" : "Elektronski naslov ni obvezen podatek",
+    "(deleted)" : "(izbrisano)",
+    "Switch to table view" : "Preklopi na preglednični pogled"
+},"pluralForm" :"nplurals=4; plural=(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3);"
+}

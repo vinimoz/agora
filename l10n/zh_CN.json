@@ -1,0 +1,17 @@
+{ "translations": {
+    "You have changed the configuration" : "你更改了配置",
+    "{actor} has changed the share type" : "{actor} 更改了共享类型",
+    "{actor} has added a public share" : "{actor} 添加了一个公开分享",
+    "You have deleted the share for circle {sharee}" : "你删除了给 {sharee} 圈子的分享",
+    "Support status" : "支持状态",
+    "New comment …" : "新评论。。。",
+    "Projects" : "项目",
+    "Closing: {dateRelative}" : "关闭: {dateRelative}",
+    "Confirm option" : "确认选项",
+    "Error while copying link to clipboard" : "拷贝链接到剪贴板时出错",
+    "Email address is optional" : "电子邮件地址可不填",
+    "Add a new public link" : "新增公开链接",
+    "Switch to table view" : "切换为表格视图",
+    "View all" : "查看全部"
+},"pluralForm" :"nplurals=1; plural=0;"
+}

@@ -1,0 +1,14 @@
+{ "translations": {
+    "{actor} has changed the share type" : "{actor} изменил вид раздачи",
+    "{actor} has added a public share" : "{actor} добавил общий доступ",
+    "You have deleted the share for circle {sharee}" : "Вы удалили доступ для круга {sharee}",
+    "Support status" : "Статус поддержки",
+    "New comment …" : "Текст комментария…",
+    "Projects" : "Проекты",
+    "Confirm option" : "Подтверждённый вариант",
+    "Error while copying link to clipboard" : "Не удалось скопировать ссылку в буфер обмена",
+    "Email address is optional" : "Адрес эл. почты указывать необязательно",
+    "(deleted)" : "(удалено)",
+    "Switch to table view" : "Переключение в режим просмотра таблицы"
+},"pluralForm" :"nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);"
+}

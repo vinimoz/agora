@@ -1,0 +1,27 @@
+OC.L10N.register(
+    "agora",
+    {
+    "_Confirmed option:_::_Confirmed options:_" : ["Потврђена опција:","Потврђене опције:","Потврђене опције:"],
+    "{actor} has changed the share type" : "{actor} је променио тип дељења",
+    "{actor} has added a public share" : "{actor} је додао јавно гласање",
+    "You have deleted the share for circle {sharee}" : "Обрисали сте дељење за круг {sharee}",
+    "Reveal them" : "Откриј их",
+    "Support status" : "Статус подршке",
+    "Click" : "Клик",
+    "Only visible to me" : "Видим само ја",
+    "New comment …" : "Нови коментар…",
+    "Projects" : "Пројекти",
+    "Closing: {dateRelative}" : "Затвара се за: {dateRelative}",
+    "Extended title" : "Проширени наслов",
+    "Confirm option" : "Потврди опцију гласања",
+    "Autoreminder started" : "Аутоматски подсетник је покренут",
+    "Enter the URL of your privacy policy" : "Унесите URL ваше политике приватности",
+    "Error while copying link to clipboard" : "Грешка приликом копирања везе у оставу",
+    "Email address is optional" : "И-мејл адреса није обавезна",
+    "(deleted)" : "(обрисано)",
+    "Switch to table view" : "Пребаци на поглед табеле",
+    "View all" : "Прикажи све",
+    "By:" : "Корисник:",
+    "Administrative access" : "Административни приступ"
+},
+"nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);");
