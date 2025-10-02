@@ -12,10 +12,7 @@ import NcAppSidebar from '@nextcloud/vue/components/NcAppSidebar'
 import NcAppSidebarTab from '@nextcloud/vue/components/NcAppSidebarTab'
 import { Event } from '../Types/index.ts'
 
-import SidebarShareIcon from 'vue-material-design-icons/ShareVariant.vue'
-import SidebarCommentsIcon from 'vue-material-design-icons/CommentProcessing.vue'
-import SidebarActivityIcon from 'vue-material-design-icons/LightningBolt.vue'
-import SidebarAttachmentsIcon from 'vue-material-design-icons/FileDocument.vue'
+import { InquiryGeneralIcons } from '../utils/icons.ts'
 
 import {
   SideBarTabComments,
@@ -73,7 +70,7 @@ function closeSideBar() {
         :name="t('agora', 'Comments')"
       >
         <template #icon>
-          <SidebarCommentsIcon />
+	   <component :is="InquiryGeneralIcons.comment" />
         </template>
         <SideBarTabComments />
       </NcAppSidebarTab>
@@ -85,7 +82,7 @@ function closeSideBar() {
         :name="t('agora', 'Attachments')"
       >
         <template #icon>
-          <SidebarAttachmentsIcon />
+	   <component :is="InquiryGeneralIcons.attachment" />
         </template>
         <SideBarTabAttachments />
       </NcAppSidebarTab>
@@ -97,7 +94,7 @@ function closeSideBar() {
         :name="t('agora', 'Sharing')"
       >
         <template #icon>
-          <SidebarShareIcon />
+	   <component :is="InquiryGeneralIcons.share" />
         </template>
         <SideBarTabShare />
       </NcAppSidebarTab>
@@ -109,7 +106,7 @@ function closeSideBar() {
         :name="t('agora', 'Activity')"
       >
         <template #icon>
-          <SidebarActivityIcon />
+	   <component :is="InquiryGeneralIcons.activity" />
         </template>
         <SideBarTabActivity />
       </NcAppSidebarTab>

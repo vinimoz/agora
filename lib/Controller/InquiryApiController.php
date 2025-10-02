@@ -55,6 +55,28 @@ class InquiryApiController extends BaseApiV2Controller
     {
         return $this->response(fn () => ['inquiries' => $this->inquiryService->listInquiries()]);
     }
+    /**
+     * get complete inquiry
+  *
+     * @param int $inquiryId Inquiry id
+     */
+    #[CORS]
+    #[NoAdminRequired]
+    #[NoCSRFRequired]
+    #[ApiRoute(verb: 'GET', url: '/api/v1.0/inquiry/{inquiryId}', requirements: ['apiVersion' => '(v2)'])]
+    public function getFull(int $inquiryId): DataResponse
+    {
+        return $this->response(
+            fn () => [
+                'inquiry' => $this->inquiryService->get($inquiryId),
+                'options' => $this->optionService->list($inquiryId),
+                'comments' => $this->commentService->list($inquiryId),
+                'shares' => $this->shareService->list($inquiryId),
+                'subscribed' => $this->subscriptionService->get($inquiryId),
+                'attachments' => $this->attachmentService->getAll($inquiryId),
+            ]
+        );
+    }
 
     /**
      * get complete inquiry

@@ -6,9 +6,11 @@ import { createApp } from 'vue'
 import { pinia } from './stores/index.ts'
 import { router } from './router.ts'
 import App from './App.vue'
+import axios from 'axios'
 
-// TODO: FInd a way to use the devtools in the browser
-// Vue.config.devtools = import.meta.env.MODE !== 'production'
+if (window.OC && OC.requestToken) {
+  axios.defaults.headers.common.requesttoken = OC.requestToken
+}
 
 const Agora = createApp(App)
   .use(pinia)

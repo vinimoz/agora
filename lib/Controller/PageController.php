@@ -48,15 +48,21 @@ class PageController extends Controller
     #[FrontpageRoute(verb: 'GET', url: '/group/{slug}', postfix: 'group')]
     public function index(): TemplateResponse
     {
+
         Util::addScript(AppConstants::APP_ID, 'agora-main');
         $this->eventDispatcher->dispatchTyped(new LoadAdditionalScriptsEvent());
-	$response = new TemplateResponse(AppConstants::APP_ID, 'main');
-	return $response;
+        $response = new TemplateResponse(AppConstants::APP_ID, 'main');
+        $csp = new ContentSecurityPolicy();
+        $csp->addAllowedWorkerSrcDomain('blob:');
+        $csp->addAllowedWorkerSrcDomain("'self'");
+        $response->setContentSecurityPolicy($csp);
+        return $response;
+
     }
 
     /**
      * render support page
-  *
+     *
      * @param $id inquiry id
      */
     #[NoAdminRequired]
@@ -66,13 +72,13 @@ class PageController extends Controller
     public function support(int $id): TemplateResponse
     {
         $this->notificationService->removeNotificationsForInquiry($id);
-	Util::addScript(AppConstants::APP_ID, 'agora-main');
-	$response = new TemplateResponse(AppConstants::APP_ID, 'main');
-	$csp = new ContentSecurityPolicy();
-	$csp->addAllowedWorkerSrcDomain('self');
-	$csp->addAllowedWorkerSrcDomain('blob:');
+        Util::addScript(AppConstants::APP_ID, 'agora-main');
+        $response = new TemplateResponse(AppConstants::APP_ID, 'main');
+        $csp = new EmptyContentSecurityPolicy();
+        $csp->addAllowedWorkerSrcDomain('blob:');
+        $csp->addAllowedWorkerSrcDomain("'self'");
         $response->setContentSecurityPolicy($csp);
-	return $response;
+        return $response;
 
     }
 }

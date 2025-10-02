@@ -26,10 +26,10 @@ class Install implements IRepairStep
     public function __construct(
         private IndexManager $indexManager,
         private IDBConnection $connection,
-	private Schema $schema,
-	InitDbDefault $initDbDefault
+        private Schema $schema,
+        InitDbDefault $initDbDefault
     ) {
-	      $this->initDbDefault = $initDbDefault;
+        $this->initDbDefault = $initDbDefault;
     }
 
     public function getName()
@@ -53,8 +53,8 @@ class Install implements IRepairStep
         }
 
         $output->info('Agora - Foreign key contraints created.');
-	$output->info('Agora - Indices created.');
-	$this->initDbDefault->runCommands($output);
-	$output->info('Agora - default values inserted.');
+        $output->info('Agora - Indices created.');
+        $this->initDbDefault->runCommands($output);
+        $output->info('Agora - default values inserted.');
     }
 }

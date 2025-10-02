@@ -20,7 +20,7 @@ const appSettingsStore = useAppSettingsStore()
       type="switch"
       @update:model-value="appSettingsStore.write()"
     >
-      {{ t('inquiries', 'Enable the tracking of activities with the Activities app') }}
+      {{ t('agora', 'Enable the tracking of activities with the Activities app') }}
     </NcCheckboxRadioSwitch>
   </div>
 </template>

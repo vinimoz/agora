@@ -7,6 +7,12 @@
 
 All notable changes to this project will be documented in this file.
 
+# [1.0.0] - 2025-10-02
+- FIX CSRF
+- FIX Attachment issues, sharing now only files.
+- FIX icons and screenshoot
+
+
 # [1.0.0-rc5] - 2025-09-06
 - Fix UI bugs in edit and display
 - Add first language EN and DE ( not finalized )

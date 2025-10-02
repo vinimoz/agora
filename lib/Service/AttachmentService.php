@@ -50,7 +50,7 @@ class AttachmentService
     }
 
     /**
-     * Get Agora root folder storage folder and ensure it's shared with all users
+     * Get Agora root folder storage folder
      */
     private function getAgoraRootFolder()
     {
@@ -63,33 +63,27 @@ class AttachmentService
             $agoraFolder = $userFolder->get(Group::GROUP_FOLDER);
         }
 
-        $this->ensureFolderSharedWithGroups($agoraFolder);
-
         return $agoraFolder;
     }    
 
     /**
-     * Ensure a folder is shared with all Nextcloud users
+     * Ensure a file is shared with all Agora users
      */
-    /**
-     * Ensure a folder is shared with multiple Nextcloud groups
-     */
-    private function ensureFolderSharedWithGroups($folder): void
+    private function ensureFileSharedWithGroups(File $file): void
     {
         $ownerUid = $this->userSession->getUser()->getUID();
 
-        // Définir les groupes et leurs permissions
         $groups = [
-        Group::GROUP_USERS => \OCP\Constants::PERMISSION_READ,         
-        Group::GROUP_MODERATOR => \OCP\Constants::PERMISSION_ALL,     
-        Group::GROUP_OFFICIAL => \OCP\Constants::PERMISSION_ALL   
+            Group::GROUP_USERS => \OCP\Constants::PERMISSION_READ,         
+            Group::GROUP_MODERATOR => \OCP\Constants::PERMISSION_ALL,     
+            Group::GROUP_OFFICIAL => \OCP\Constants::PERMISSION_ALL   
         ];
 
         foreach ($groups as $groupName => $permissions) {
             $shares = $this->shareManager->getSharesBy(
                 $ownerUid,
                 IShare::TYPE_GROUP,
-                $folder,
+                $file,
                 false,
                 -1
             );
@@ -103,61 +97,25 @@ class AttachmentService
             }
 
             if (!$alreadyShared) {
-                $share = $this->shareManager->newShare();
-                $share->setNode($folder);
-                $share->setShareType(IShare::TYPE_GROUP);
-                $share->setSharedWith($groupName);
-                $share->setPermissions(1);
-                $share->setSharedBy($ownerUid);
-                $this->shareManager->createShare($share);
+                try {
+                    $share = $this->shareManager->newShare();
+                    $share->setNode($file);
+                    $share->setShareType(IShare::TYPE_GROUP);
+                    $share->setSharedWith($groupName);
+                    $share->setPermissions($permissions);
+                    $share->setSharedBy($ownerUid);
+                    $this->shareManager->createShare($share);
+                    $this->logger->info('File shared with group: ' . $groupName . ' - ' . $file->getPath());
+                } catch (\Exception $e) {
+                    $this->logger->error('Error sharing file with group ' . $groupName . ': ' . $e->getMessage());
+                }
             }
         }
     }
-
-
-    /**
-     * Ensure a folder is shared with all Nextcloud users
-    private function ensureFolderSharedWithAllUsers($folder): void {
-        $groupName = Group::GROUP_USERS;
-        $shares = $this->shareManager->getSharesBy(
-            $this->userSession->getUser()->getUID(),
-            IShare::TYPE_GROUP,
-            $folder,
-            false,
-            -1
-        );
-
-        $sharedWithGroup = false;
-        foreach ($shares as $share) {
-            if ($share->getSharedWith() === $groupName) {
-                $sharedWithGroup = true;
-                break;
-            }
-        }
-
-        if (!$sharedWithGroup) {
-            try {
-                $share = $this->shareManager->newShare();
-                $share->setNode($folder)
-         ->setShareType(IShare::TYPE_GROUP)
-         ->setSharedWith($groupName)
-         ->setSharedBy($this->userSession->getUser()->getUID())
-         ->setPermissions(1)
-         ->setShareOwner($this->userSession->getUser()->getUID());
-
-                $this->shareManager->createShare($share);
-                $this->logger->info('Folder shared with: ' . $groupName . ' - ' . $folder->getPath());
-            } catch (\Exception $e) {
-                $this->logger->error('Error sharing: ' . $e->getMessage());
-            }
-        }
-    }
-     */
 
     /**
      * Get or create inquiry-specific folder
      */
-
     private function getInquiryFolder(int $inquiryId)
     {
         $agoraRoot = $this->getAgoraRootFolder();
@@ -165,7 +123,6 @@ class AttachmentService
 
         if (!$agoraRoot->nodeExists($inquiryFolderName)) {
             $inquiryFolder = $agoraRoot->newFolder($inquiryFolderName);
-            $this->ensureFolderSharedWithGroups($inquiryFolder);
         } else {
             $inquiryFolder = $agoraRoot->get($inquiryFolderName);
         }
@@ -190,22 +147,24 @@ class AttachmentService
     /**
      * Add a new attachment (both file and database record)
      */
-    public function add(int $inquiryId,array $uploadedFile): Attachment
+    public function add(int $inquiryId, array $uploadedFile): Attachment
     {
         $inquiryFolder = $this->getInquiryFolder($inquiryId);
         $user = $this->userSession->getUser();
 
         // Copy file to inquiry folder
-        $fileName = $uploadedFile['name'];
+        $fileName = $this->sanitizeFileName($uploadedFile['name']);
         $content = file_get_contents($uploadedFile['tmp_name']);
-        $targetFile = $inquiryFolder->newFile($fileName);
-        $targetFile->putContent($content);
+        $targetFile = $inquiryFolder->newFile($fileName, $content);
+
+        // Share the file with groups
+        $this->ensureFileSharedWithGroups($targetFile);
 
         // Create database record
         $attachment = new Attachment();
         $attachment->setInquiryId($inquiryId);
         $attachment->setName($uploadedFile['name']);
-        $attachment->setMimeType($uploadedFile['type']?? 'application/octet-stream');
+        $attachment->setMimeType($uploadedFile['type'] ?? 'application/octet-stream');
         $attachment->setSize($uploadedFile['size']);
         $attachment->setFileId((string)$targetFile->getId());
         $attachment->setCreated(time());
@@ -222,6 +181,20 @@ class AttachmentService
 
         try {
             $file = $this->rootFolder->getById((int)$attachment->getFileId())[0];
+            
+            // Delete all shares for this file before deleting the file
+            $shares = $this->shareManager->getSharesBy(
+                $this->userSession->getUser()->getUID(),
+                IShare::TYPE_GROUP,
+                $file,
+                false,
+                -1
+            );
+            
+            foreach ($shares as $share) {
+                $this->shareManager->deleteShare($share);
+            }
+            
             $file->delete();
         } catch (NotFoundException $e) {
             // File already deleted, continue with DB removal
@@ -250,15 +223,15 @@ class AttachmentService
                 if (empty($nodes)) {
                     continue; 
                 }
-                $file=$nodes[0];
+                $file = $nodes[0];
                 $result[] = [
-                'id' => $attachment->getId(),
-                'name' => $attachment->getName(),
-                'type' => $attachment->getMimeType(),
-                'size' => $attachment->getSize(),
-                'created' => $attachment->getCreated(),
-                'file_id' => $attachment->getFileId(),
-                'url'  => $this->urlGenerator->linkToRouteAbsolute('files.View.showFile', ['fileid' => $file->getId()])
+                    'id' => $attachment->getId(),
+                    'name' => $attachment->getName(),
+                    'type' => $attachment->getMimeType(),
+                    'size' => $attachment->getSize(),
+                    'created' => $attachment->getCreated(),
+                    'file_id' => $attachment->getFileId(),
+                    'url'  => $this->urlGenerator->linkToRouteAbsolute('files.View.showFile', ['fileid' => $file->getId()])
                 ];
             } catch (NotFoundException $e) {
                 // File missing but DB record exists, skip or handle as needed
@@ -304,5 +277,4 @@ class AttachmentService
         $file = $nodes[0];
         return $this->urlGenerator->linkToRouteAbsolute('files.View.showFile', ['fileid' => $file->getId()]);
     }
-
 }

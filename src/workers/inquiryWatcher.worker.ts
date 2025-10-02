@@ -2,16 +2,7 @@
  * SPDX-FileCopyrightText: 2025 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-
-import axios, { AxiosError, AxiosInstance } from 'axios'
-import { linkTo } from '@nextcloud/router'
-
-// -----------------------------
-// Nextcloud CSP / Public Path
-// -----------------------------
-__webpack_public_path__ = `${linkTo('agora', 'js')}/`
-// Nextcloud nonce pour autoriser l'exécution du worker si nécessaire
-__webpack_nonce__ = btoa(window.OC.requestToken)
+import axios, { AxiosInstance } from 'axios'
 
 const MAX_ERRORS = 5
 const SLEEP_TIMEOUT_DEFAULT = 30000
@@ -20,10 +11,31 @@ let lastUpdated = 0
 let http: AxiosInstance
 let consecutiveErrors = 0
 
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+interface WorkerMessageData {
+  updateType: string
+  inquiryId?: string
+  interval?: number
+  baseUrl: string
+  token?: string
+  watcherId: string
+  lastUpdate?: number
+}
 
-self.onmessage = async (props) => {
+interface WorkerResponseMessage {
+  type: string
+  status: string
+  mode: string
+  interval: number
+  message: string
+  updates?: unknown[]
+  lastUpdate?: number
+}
+
+
+// Worker message handler
+self.onmessage = async (props: MessageEvent<WorkerMessageData>) => {
   const {
     updateType,
     inquiryId,
@@ -36,7 +48,9 @@ self.onmessage = async (props) => {
 
   lastUpdated = lastUpdate
 
-  self.postMessage({
+  const sendMessage = (msg: WorkerResponseMessage) => self.postMessage(msg)
+
+  sendMessage({
     type: 'status',
     status: 'starting',
     mode: updateType,
@@ -52,12 +66,12 @@ self.onmessage = async (props) => {
         Accept: 'application/json',
         'Nc-Agora-Client-Id': watcherId,
       },
-      validateStatus: (status) => [200, 304].includes(status),
+      validateStatus: status => [200, 304].includes(status),
     })
   }
 
   if (updateType === 'noInquirying') {
-    self.postMessage({
+    sendMessage({
       type: 'info',
       status: 'stopped',
       mode: updateType,
@@ -70,31 +84,24 @@ self.onmessage = async (props) => {
 
   const run = async () => {
     try {
-      let endPoint = `inquiry/${inquiryId}/watch`
-      if (token) {
-        endPoint = `s/${token}/watch`
-      }
-
-      const response = await http.get(endPoint, {
-        params: { offset: lastUpdated },
-      })
+      const endPoint = token ? `s/${token}/watch` : `inquiry/${inquiryId}/watch`
+      const response = await http.get(endPoint, { params: { offset: lastUpdated } })
 
       consecutiveErrors = 0
 
-      if (response.status === 200 && response.data.updates?.length > 0) {
+      if (response.status === 200 && response.data.updates?.length) {
         lastUpdated = response.data.updates[response.data.updates.length - 1].updated
-
-        self.postMessage({
+        sendMessage({
           type: 'update',
           status: 'running',
           mode: updateType,
           interval,
-          message: '[Worker] 200 got updates',
+          message: '[Worker] Got updates',
           updates: response.data.updates,
           lastUpdate: lastUpdated,
         })
       } else if (response.status === 304) {
-        self.postMessage({
+        sendMessage({
           type: 'info',
           status: 'running',
           mode: updateType,
@@ -102,35 +109,12 @@ self.onmessage = async (props) => {
           message: '[Worker] 304 – no changes',
           lastUpdate: lastUpdated,
         })
-      } else {
-        self.postMessage({
-          type: 'info',
-          status: 'running',
-          mode: updateType,
-          interval,
-          message: '[Worker] 200 but no updates',
-          lastUpdate: lastUpdated,
-        })
       }
-    } catch (error) {
-      const err = error as AxiosError
-
-      if (err.code === 'ECONNABORTED' || err.code === 'ERR_CANCELED') {
-        self.postMessage({
-          type: 'status',
-          status: 'stopping',
-          mode: updateType,
-          interval,
-          message: '[Worker] Request aborted intentionally',
-          lastUpdate: lastUpdated,
-        })
-        return
-      }
-
+    } catch {
       consecutiveErrors+=1
 
-      self.postMessage({
-        type: 'error',
+      sendMessage({
+        type: 'warning',
         status: 'error',
         mode: updateType,
         interval,
@@ -138,7 +122,7 @@ self.onmessage = async (props) => {
       })
 
       if (consecutiveErrors >= MAX_ERRORS) {
-        self.postMessage({
+        sendMessage({
           type: 'fatal',
           status: 'error',
           mode: updateType,
@@ -146,7 +130,6 @@ self.onmessage = async (props) => {
           message: `[Worker] Stopping after ${MAX_ERRORS} consecutive errors`,
         })
         self.close()
-        return
       }
 
       await sleep(interval)
@@ -154,7 +137,7 @@ self.onmessage = async (props) => {
   }
 
   if (updateType === 'periodicInquirying') {
-    self.postMessage({
+    sendMessage({
       type: 'info',
       status: 'starting',
       mode: updateType,
@@ -163,26 +146,20 @@ self.onmessage = async (props) => {
     })
     while (true) {
       await run()
-      self.postMessage({
-        type: 'status',
-        status: 'idle',
-        mode: updateType,
-        interval,
-      })
+      sendMessage({ type: 'status', status: 'idle', mode: updateType, interval })
       await sleep(interval)
     }
   }
 
   if (updateType === 'longInquirying') {
-    self.postMessage({
+    sendMessage({
       type: 'info',
       status: 'starting',
       mode: updateType,
       interval,
       message: '[Worker] Started long inquirying.',
     })
-    while (true) {
-      await run()
-    }
+    while (true) await run()
   }
 }
+
