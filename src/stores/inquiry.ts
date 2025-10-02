@@ -15,7 +15,6 @@ import { Logger } from '../helpers/index.ts'
 import { PublicAPI, InquiriesAPI } from '../Api/index.ts'
 import { Chunking, createDefault, Event, StatusResults, User, UserType } from '../Types/index.ts'
 
-import { usePreferencesStore, ViewMode } from './preferences.ts'
 import { useOptionsStore } from './options.ts'
 import { useInquiriesStore } from './inquiries.ts'
 import { useSessionStore } from './session.ts'
@@ -306,7 +305,6 @@ export const useInquiryStore = defineStore('inquiry', {
     },
 
     async load(inquiryId: number | null = null): Promise<void> {
-      const inquiriesStore = useInquiriesStore()
       const sessionStore = useSessionStore()
       const optionsStore = useOptionsStore()
       const sharesStore = useSharesStore()

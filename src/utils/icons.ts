@@ -9,7 +9,7 @@ import type { Component } from 'vue'
 
 // -------------------------------
 // -------------------------------
-import LightbulbOn from '@iconify-icons/mdi/lightbulb-on'
+import LightbulbOn from '@iconify-icons/mdi/flash'
 import Forum from '@iconify-icons/mdi/forum'
 import HandHeart from '@iconify-icons/mdi/hand-heart'
 import FileTree from '@iconify-icons/mdi/file-tree'
@@ -51,12 +51,21 @@ import AnoymousIcon from '@iconify-icons/mdi/incognito'
 import InquiryGroupIcon from '@iconify-icons/mdi/code-braces'
 
 import CommentIcon from '@iconify-icons/mdi/comment'
+import CommentProcessing from '@iconify-icons/mdi/comment-processing'
 import AccountMultipleCheck from '@iconify-icons/mdi/account-multiple-check'
 import AccountCheck from '@iconify-icons/mdi/account-check'
 import ShieldCrown from '@iconify-icons/mdi/shield-crown'
 import Key from '@iconify-icons/mdi/key'
 import Earth from '@iconify-icons/mdi/earth'
 import Home from '@iconify-icons/mdi/home'
+import Alphabetical from '@iconify-icons/mdi/alphabetical'
+import Type from '@iconify-icons/mdi/format-letter-case'
+import Creation from '@iconify-icons/mdi/file-plus'
+import Gesture from '@iconify-icons/mdi/gesture-double-tap'
+import AccountCircle from '@iconify-icons/mdi/account-circle-outline'
+import SortDescending from '@iconify-icons/mdi/sort-descending'
+import SortAscending from '@iconify-icons/mdi/sort-ascending'
+
 
 // Navigation Icons (Iconify MDI)
 import Cog from '@iconify-icons/mdi/cog'
@@ -95,12 +104,11 @@ import SortClockAscendingOutline from '@iconify-icons/mdi/sort-clock-ascending-o
 // Information / Config related icons
 // -------------------------------
 import InformationVariant from '@iconify-icons/mdi/information-variant'
-import LightningBolt from '@iconify-icons/mdi/lightning-bolt'
 import FileDocument from '@iconify-icons/mdi/file-document'
 import ClipboardTextMultiple from '@iconify-icons/mdi/clipboard-text-multiple'
 import CalendarMultiple from '@iconify-icons/mdi/calendar-multiple'
 import CalendarBlank from '@iconify-icons/mdi/calendar-blank'
-import CalendarPlusOutline from '@iconify-icons/mdi/clock-plus-outline'
+import CalendarPlusOutline from '@iconify-icons/mdi/calendar-plus-outline'
 
 // -------------------------------
 // Share related icons
@@ -130,6 +138,10 @@ export const makeIconComponent = (icon: Component, color = '#000', size = 24) =>
 })
 
 export const InquiryGeneralIcons: Record<string, Component> = {
+  flash: makeIconComponent(LightningBolt, '#FF9800'),
+  commentProcessing: makeIconComponent(CommentProcessing, '#FF9800'),
+  share: makeIconComponent(ShareIcon, '#03A9F4'),
+  update: makeIconComponent(Update, '#FF9800'),
   archive: makeIconComponent(Archive, '#607D8B'),
   delete: makeIconComponent(Delete, '#F44336'),
   back: makeIconComponent(ArrowLeft, '#2196F3'),
@@ -138,8 +150,16 @@ export const InquiryGeneralIcons: Record<string, Component> = {
   restore: makeIconComponent(Recycle, '#009688'),
   transfer: makeIconComponent(Transfer, '#3F51B5'),
   home: makeIconComponent(Home, '#3F51B5'),
+  alphabetical: makeIconComponent(Alphabetical, '#3F51B5'),
+  type: makeIconComponent(Type, '#3F51B3'),
+  accountCircle: makeIconComponent(AccountCircle, '#3F51B5'),
+  sortAscending: makeIconComponent(SortAscending, '#1F11B8'),
+  sortDescending: makeIconComponent(SortDescending, '#3F91B5'),
+  gesture: makeIconComponent(Gesture, '#3F91B5'),
+  activity: makeIconComponent(LightningBolt, '#FF9800'),
 
   comment: makeIconComponent(CommentIcon, '#2196F3'),
+  thumb: makeIconComponent(ThumbUp, '#5996F3'),
   talk: makeIconComponent(ChatOutline, '#00BCD4'),
   collectives: makeIconComponent(AccountGroup, '#795548'),
   form: makeIconComponent(FormTextbox, '#9C27B0'),
@@ -148,9 +168,11 @@ export const InquiryGeneralIcons: Record<string, Component> = {
   unpublished: makeIconComponent(PublishOff, '#9E9E9E'),
   archived: makeIconComponent(Archive, '#9E9E9E'),
   closed: makeIconComponent(Lock, '#F44336'),
-  creation: makeIconComponent(ClockOutline, '#FFC107'),
+  clockOutline: makeIconComponent(ClockOutline, '#FFC107'),
+  creation: makeIconComponent(Creation, '#FFC107'),
   suggestions: makeIconComponent(Offer, '#4CAF50'),
   expiration: makeIconComponent(CalendarEnd, '#E91E63'),
+  attachment: makeIconComponent(FileDocument, '#607D8B'),
 }
 
 export const ShareIcons: Record<string, Component> = {

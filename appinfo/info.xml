@@ -4,7 +4,7 @@
   <name>Agora</name>
   <summary>Participatory democracy app for creating, debating and supporting on community proposals..</summary>
   <description>Agora is a Nextcloud app for participatory democracy. Users can create proposals, debates, petitions or projects, and gather suggestions, comments and supports. Contributions can be organized by location or category, and evolve through customizable workflows. </description>
-  <version>1.0.0-rc5</version>
+  <version>1.0.0</version>
   <licence>agpl</licence>
   <author>Vincent TRAPPE</author>
   <documentation>
@@ -17,7 +17,8 @@
   <bugs>https://github.com/vinimoz/agora/issues</bugs>
   <repository type="git">https://github.com/vinimoz/agora.git</repository>
   <screenshot>https://raw.githubusercontent.com/nextcloud/agora/main/screenshots/GridView.png</screenshot>
-  <screenshot>https://raw.githubusercontent.com/nextcloud/agora/main/screenshots/edit.png</screenshot>
+  <screenshot>https://raw.githubusercontent.com/nextcloud/agora/main/screenshots/ListView.png</screenshot>
+  <screenshot>https://raw.githubusercontent.com/nextcloud/agora/main/screenshots/Edit.png</screenshot>
   <screenshot>https://raw.githubusercontent.com/nextcloud/agora/main/screenshots/ModerationStatus.png</screenshot>
   <dependencies>
     <php min-version="8.1"/>

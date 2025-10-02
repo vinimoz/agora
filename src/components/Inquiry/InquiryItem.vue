@@ -251,12 +251,12 @@ const moderationStatusInfo = computed(() => {
 
       <div class="badges">
       		<div v-if="inquiry.parentId!==0" class="item__type">
-	     			 <router-link
+	     			 <RouterLink
 			     		 class="underline"
 			      		:to="`/inquiry/${inquiry.parentId}`"
 			     	 >
 	      				<component :is="StatusIcons.LinkIcon" :size="20" :title="`id:inquiry.parentId`"/>
-	      			</router-link>
+	      			</RouterLink>
       </div> 
 	      <div v-if="inquiry.type !== 'official'">
 		      <div
@@ -492,12 +492,12 @@ const moderationStatusInfo = computed(() => {
 
 		    <div class="grid-metadata">
 			    <div v-if="inquiry.parentId!==0" class="metadata-item">
-				    <router-link
+				    <RouterLink
 						    class="underline"
 						    :to="`/inquiry/${inquiry.parentId}`"
 						    >
 						    <component :is="StatusIcons.LinkIcon" :size="20" :title="`id:inquiry.parentId`"/>
-				    </router-link>
+				    </RouterLink>
 			    </div> 
 			    <div
 					    v-if="inquiry.type !== 'official' && inquiry.status.countParticipants > 0"

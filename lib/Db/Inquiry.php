@@ -706,10 +706,11 @@ class Inquiry extends EntityWithUser implements JsonSerializable
      */
     private function hasSupported(): bool
     {
-	    if ($this->supportMapper->findSupport( $this->id, $this->userSession->getCurrentUserId() )) {
-		    return true;
-	}
-	else return false;
+        if ($this->supportMapper->findSupport($this->id, $this->userSession->getCurrentUserId())) {
+            return true;
+        }
+        else { return false;
+        }
     }
 
 

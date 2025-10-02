@@ -43,7 +43,7 @@ export const useInquiryWatcher = (interval = 30000) => {
   const commentsStore = useCommentsStore()
   const sharesStore = useSharesStore()
 
-  const baseUrl = generateUrl('apps/inquiries/')
+  const baseUrl = generateUrl('apps/agora/')
 
   let worker: Worker | null = null
 
@@ -69,7 +69,7 @@ export const useInquiryWatcher = (interval = 30000) => {
     // Pass context to worker
     worker.postMessage({
       inquiryId,
-      mode,
+      updateType: mode,
       interval,
       baseUrl,
       token: sessionStore.token,

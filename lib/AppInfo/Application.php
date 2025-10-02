@@ -107,7 +107,7 @@ class Application extends App implements IBootstrap
     public function register(IRegistrationContext $context): void
     {
         include_once __DIR__ . '/../../vendor/autoload.php';
-	$this->registerServices($context);
+        $this->registerServices($context);
 
 
         $context->registerEventListener(RenderReferenceEvent::class, AgoraReferenceListener::class);
@@ -154,7 +154,6 @@ class Application extends App implements IBootstrap
         $context->registerSearchProvider(SearchProvider::class);
         $context->registerDashboardWidget(InquiryWidget::class);
         $context->registerReferenceProvider(ReferenceProvider::class);
-
     }
 
     /**

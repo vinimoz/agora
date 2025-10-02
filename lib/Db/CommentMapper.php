@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -20,7 +21,7 @@ class CommentMapper extends QBMapperWithUser
     public const TABLE = Comment::TABLE;
 
     /**
-     * @psalm-suppress PossiblyUnusedMethod 
+     * @psalm-suppress PossiblyUnusedMethod
      */
     public function __construct(
         IDBConnection $db,
@@ -36,8 +37,8 @@ class CommentMapper extends QBMapperWithUser
                $qb->select('COUNT(*) AS count')
                    ->from($this->tableName)
                    ->where(
-                    $qb->expr()->eq('inquiry_id', $qb->createNamedParameter($inquiryId))
-                );
+                       $qb->expr()->eq('inquiry_id', $qb->createNamedParameter($inquiryId))
+                   );
 
         $result = $qb->executeQuery()->fetchOne();
         return (int)$result;
@@ -115,7 +116,6 @@ class CommentMapper extends QBMapperWithUser
             );
 
         return $query->executeStatement();
-
     }
 
     /**

@@ -50,7 +50,7 @@ const currentStatusIcon = computed(() => StatusIcons[currentStatus.value?.icon])
 const onStatusChange = async () => {
   try {
     await inquiryStore.setModerationStatus(selectedStatusKey.value)
-    showSuccess(' Moderator status of this inquiry has been updated !') // Call success Message
+    showSuccess(' Moderator status of this inquiry has been updated') // Call success Message
   } catch (error) {
     console.error('Failed to update status:', error)
     selectedStatusKey.value = currentStatus.value.statusKey
@@ -156,7 +156,7 @@ const timeExpirationRelative = computed(() => {
     </div>
     <div v-if="inquiryStore.type !== 'official'" class="inquiry-type-status">
       <div class="status-badge">
-        <span class="status-prefix">{{ t('agora', 'Moderation status is:') }}</span>
+        <span class="status-prefix">{{ t('agora', 'Moderation status is') }}</span>
         <template v-if="sessionStore.currentUser.isModerator">
           <select v-model="selectedStatusKey" @change="onStatusChange">
             <option

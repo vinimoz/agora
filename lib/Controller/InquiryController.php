@@ -130,6 +130,7 @@ class InquiryController extends BaseController
      *                       }>
      */
     #[NoAdminRequired]
+    #[NoCSRFRequired]
     #[FrontpageRoute(verb: 'GET', url: '/inquiry/{inquiryId}')]
     public function getFull(int $inquiryId): JSONResponse
     {

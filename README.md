@@ -36,9 +36,8 @@ Agora is a gentle way to encourage participation and make decisions together. Wh
 - Redefine to be more generic ?
 
 ## Bug fix
-
-- CSR error in console.
 - Public share no tested
+- Image in tiptap doesnt display.
 
 ## Installation / Update
 
@@ -72,7 +71,7 @@ You can download and install the latest release from the [Nextcloud app store](h
 
 |           Edit you inquiry            |                Many category                 |      Configure your moderation status      |             View from not owner user             |         Grid view of inquiries         |         List view of inquiries         |
 | :-----------------------------------: | :------------------------------------------: | :----------------------------------------: | :----------------------------------------------: | :------------------------------------: | :------------------------------------: |
-| ![Edit Inquiry](screenshots/edit.png) | ![Manage Category](screenshots/Category.png) | ![Agora](screenshots/ModerationStatus.png) | ![View Inquiry](screenshots/UserViewInquiry.png) | ![Grid View](screenshots/GridView.png) | ![List View](screenshots/ListView.png) |
+| ![Edit Inquiry](screenshots/Edit.png) | ![Manage Category](screenshots/Category.png) | ![Agora](screenshots/ModerationStatus.png) | ![View Inquiry](screenshots/UserViewInquiry.png) | ![Grid View](screenshots/GridView.png) | ![List View](screenshots/ListView.png) |
 
 ## Documentations
 
