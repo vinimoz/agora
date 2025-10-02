@@ -56,7 +56,7 @@
     "{actor} has added inquiry {inquiryTitle}" : "{actor} hat die Anfrage {inquiryTitle} hinzugefügt",
     "You have created this inquiry" : "Du hast diese Anfrage erstellt",
     "{actor} has created this inquiry" : "{actor} hat diese Anfrage erstellt",
-    "You have changed the configuration of inquiry {inquiryTitle}" : "Du hast die Konfiguration der Anfrage {inquiryTitle} geändert",
+    "You have changed the configuration of inquiry {inquiryTitle}" : "Du hast die Einstellungen der Anfrage {inquiryTitle} geändert",
     "You have changed the configuration" : "Du hast die Einstellungen geändert",
     "{actor} has changed the configuration" : "{actor} hat die Einstellungen geändert",
     "You have archived inquiry {inquiryTitle}" : "Du hast die Anfrage {inquiryTitle} archiviert",

@@ -58,6 +58,7 @@ OC.L10N.register(
     "Save Changes" : "Захаваць змены",
     "Invitation sent to {displayName} ({emailAddress})" : "Запрашэнне апраўлена {displayName} ({emailAddress})",
     "Error sending invitation to {displayName} ({emailAddress})" : "Памалка пры адпраўцы запрашэння {displayName} ({emailAddress})",
+    "Copy link to clipboard" : "Скапіяваць спасылку ў буфер абмену",
     "Link copied to clipboard" : "Спасылка скапіявана ў буфер абмену",
     "Add a new public link" : "Дадаць новую публічную спасылку",
     "No activity yet" : "Пакуль няма актыўнасці",

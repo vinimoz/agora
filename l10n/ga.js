@@ -237,7 +237,6 @@ OC.L10N.register(
     "Events happening inside of a <strong>inquiry</strong>" : "Imeachtaí a tharlaíonn laistigh de <strong>fhiosrúchán</strong>",
     "Someone supported in a <strong>inquiry</strong>" : "Duine éigin a fuair tacaíocht i <strong>fhiosrúchán</strong>",
     "Participatory democracy app for creating, debating and supporting on community proposals.." : "Aip daonlathais rannpháirteach chun moltaí pobail a chruthú, a dhíospóireacht agus tacú leo.",
-    "Agora is a Nextcloud app for participatory democracy. Users can create proposals, debates, petitions or projects, and gather suggestions, comments and supports. Contributions can be organized by location or category, and evolve through customizable workflows. The app integrates with Nextcloud tools (Talk, Collectives, Deck) to support collaboration and citizen participation." : "Is aip Nextcloud í Agora le haghaidh daonlathais rannpháirteach. Is féidir le húsáideoirí tograí, díospóireachtaí, achainíocha nó tionscadail a chruthú, agus moltaí, tuairimí agus tacaíochtaí a bhailiú. Is féidir ranníocaíochtaí a eagrú de réir suímh nó catagóire, agus forbairt trí shreafaí oibre saincheaptha. Comhtháthaíonn an aip le huirlisí Nextcloud (Talk, Collectives, Deck) chun tacú le comhoibriú agus rannpháirtíocht saoránach.",
     "Add inquiry" : "Cuir fiosrúchán leis",
     "\"{inquiryTitle}\" has been successfully created." : "Tá \"{inquiryTitle}\" cruthaithe go rathúil.",
     "Inquiry created" : "Fiosrúchán cruthaithe",
