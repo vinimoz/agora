@@ -17,6 +17,7 @@ OC.L10N.register(
     "deleted" : "Borrado",
     "Cancel" : "Cancel",
     "Close" : "Cerrar",
+    "Italic" : "Itálico",
     "Save" : "Guardar",
     "Official" : "Oficial",
     "Location" : "Ubicación",

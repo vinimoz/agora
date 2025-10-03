@@ -18,6 +18,8 @@ OC.L10N.register(
     "Cancel" : "Cancel",
     "Ok" : "Bone",
     "Close" : "Malfermi",
+    "Italic" : "Kursiva",
+    "Blockquote" : "Citaĵo",
     "Save" : "Konservi",
     "Official" : "Oficiala",
     "Location" : "Loko",

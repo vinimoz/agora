@@ -17,6 +17,7 @@ OC.L10N.register(
     "Ok" : "Ih",
     "Title" : "Azwel",
     "Close" : "Mdel",
+    "URL" : "URL",
     "Save" : "Sekles",
     "Location" : "Adig",
     "Category" : "Taggayt",

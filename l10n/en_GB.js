@@ -150,6 +150,8 @@ OC.L10N.register(
     "Title" : "Title",
     "Enter title" : "Enter title",
     "Close" : "Close",
+    "Italic" : "Italic",
+    "Blockquote" : "Blockquote",
     "Save" : "Save",
     "Official" : "Official",
     "Location" : "Location",

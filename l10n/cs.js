@@ -168,6 +168,7 @@ OC.L10N.register(
     "Enter title" : "Zadejte nadpis",
     "Inquiry type" : "Typ dotazu",
     "Close" : "Zavřít",
+    "Blockquote" : "Citace",
     "Title mandatory" : "Nadpis je třeba vyplnit",
     "Response for" : "Odpověď pro",
     "Save" : "Uložit",

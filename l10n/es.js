@@ -151,6 +151,8 @@ OC.L10N.register(
     "Title" : "Título",
     "Enter title" : "Ingrese título",
     "Close" : "Cerrar",
+    "Italic" : "Cursiva",
+    "Blockquote" : "Bloque citado",
     "Save" : "Guardar",
     "Official" : "Oficial",
     "Location" : "Ubicación",

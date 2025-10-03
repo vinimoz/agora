@@ -29,6 +29,7 @@ OC.L10N.register(
     "Never show results" : "Vis aldrig resultater",
     "Title" : "Titel",
     "Close" : "Luk",
+    "Blockquote" : "Citat",
     "Save" : "Gem",
     "Official" : "Officiel",
     "Location" : "Placering",

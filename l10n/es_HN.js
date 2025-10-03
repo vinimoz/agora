@@ -18,6 +18,7 @@ OC.L10N.register(
     "Ok" : "Ok",
     "Title" : "Título",
     "Close" : "Cerrar",
+    "URL" : "URL",
     "Save" : "Guardar",
     "Official" : "Oficial",
     "Location" : "Ubicación",

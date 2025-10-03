@@ -81,6 +81,7 @@ OC.L10N.register(
     "Never show results" : "Ποτέ να μην εμφανίζονται αποτελέσματα",
     "Title" : "Τίτλος",
     "Close" : "Κλείσιμο",
+    "Blockquote" : "Παράθεση",
     "Save" : "Αποθήκευση",
     "Official" : "Επίσημο",
     "Location" : "Τοποθεσία",

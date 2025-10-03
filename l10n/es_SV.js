@@ -16,6 +16,7 @@ OC.L10N.register(
     "Cancel" : "Cancel",
     "Ok" : "Ok",
     "Close" : "Cerrar",
+    "URL" : "URL",
     "Save" : "Guardar",
     "Official" : "Oficial",
     "Location" : "Ubicación",
