@@ -17,29 +17,32 @@ build_source_dir=$(build_dir)/source
 appstore_build_dir=$(build_dir)/artifacts
 appstore_package_name=$(appstore_build_dir)/$(app_name)
 nc_cert_dir=$(HOME)/.nextcloud/certificates
-composer=$(shell which composer 2> /dev/null)
+composer=$(shell which composer 2> /dev/null || echo $(build_tools_dir)/composer.phar)
 version=$(shell node -p -e "require('./package.json').version")
 
 # all steps for an appstore release
 appstore: setup-build build-js-production package
 
 # install deps for release package
-setup-build: setup-build-composer npm-init
+setup-build: setup-build-composer npm-install
 
 # install deps for ci (tests and analysis)
-setup-dev: setup-dev-composer npm-init
+setup-dev: setup-dev-composer npm-install
 
 # install composer deps for ci (tests and analysis)
 setup-build-composer: composer
-	composer install --no-dev -o
+	$(composer) install --no-dev -o
 
 # install composer deps for release package
 setup-dev-composer: composer
-	composer install -o
+	$(composer) install -o
 
 # install node deps
 npm-init:
 	npm ci
+
+npm-install:
+	npm install
 
 # remove build dir
 clean:
@@ -75,13 +78,12 @@ build-js-production:
 # install composer, if not installed
 .PHONY: composer
 composer:
-ifeq (,$(composer))
+ifeq (,$(wildcard $(composer)))
 	@echo "No composer command available, downloading a copy from the web"
 	mkdir -p $(build_tools_dir)
 	curl -sS https://getcomposer.org/installer | php
 	mv composer.phar $(build_tools_dir)
-	php $(build_tools_dir)/composer.phar install --prefer-dist
-	php $(build_tools_dir)/composer.phar update --prefer-dist
+	chmod +x $(build_tools_dir)/composer.phar
 endif
 
 # Builds the source package for the appstore
