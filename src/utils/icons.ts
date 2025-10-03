@@ -138,7 +138,7 @@ export const makeIconComponent = (icon: Component, color = '#000', size = 24) =>
 })
 
 export const InquiryGeneralIcons: Record<string, Component> = {
-  flash: makeIconComponent(LightningBolt, '#FF9800'),
+  flash: makeIconComponent(LightbulbOn, '#FF9800'),
   commentProcessing: makeIconComponent(CommentProcessing, '#FF9800'),
   share: makeIconComponent(ShareIcon, '#03A9F4'),
   update: makeIconComponent(Update, '#FF9800'),
@@ -156,7 +156,7 @@ export const InquiryGeneralIcons: Record<string, Component> = {
   sortAscending: makeIconComponent(SortAscending, '#1F11B8'),
   sortDescending: makeIconComponent(SortDescending, '#3F91B5'),
   gesture: makeIconComponent(Gesture, '#3F91B5'),
-  activity: makeIconComponent(LightningBolt, '#FF9800'),
+  activity: makeIconComponent(LightbulbOn, '#FF9800'),
 
   comment: makeIconComponent(CommentIcon, '#2196F3'),
   thumb: makeIconComponent(ThumbUp, '#5996F3'),
@@ -192,7 +192,7 @@ export const ShareIcons: Record<string, Component> = {
 
 export const InformationIcons: Record<string, Component> = {
   info: makeIconComponent(InformationVariant, '#2196F3'),
-  activity: makeIconComponent(LightningBolt, '#FF9800'),
+  activity: makeIconComponent(LightbulbOn, '#FF9800'),
   attachment: makeIconComponent(FileDocument, '#607D8B'),
   paste: makeIconComponent(ClipboardTextMultiple, '#795548'),
   calendar: makeIconComponent(Calendar, '#3F51B5'),
