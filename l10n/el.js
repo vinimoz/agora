@@ -247,6 +247,7 @@ OC.L10N.register(
     "Week" : "Εβδομάδα",
     "Month" : "Μήνας",
     "Year" : "Έτος",
+    "Created" : "Δημιουργήθηκε",
     "Access" : "Πρόσβαση",
     "Owner" : "Κάτοχος",
     "Relevant" : "Σχετικές",
