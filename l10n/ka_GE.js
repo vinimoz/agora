@@ -17,6 +17,7 @@ OC.L10N.register(
     "Title" : "სათაური",
     "Close" : "დახურვა",
     "URL" : "URL",
+    "Cheers!" : "წარმატებები",
     "Undo" : "დაბრუნება",
     "Save" : "შენახვა",
     "Official" : "ოფიციალური",

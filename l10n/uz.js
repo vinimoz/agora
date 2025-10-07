@@ -18,6 +18,8 @@ OC.L10N.register(
     "Title" : "Sarlavha",
     "Close" : "Yopish",
     "URL" : "URL",
+    "Cheers!" : "Salom!",
+    "Link" : "Havola",
     "Code" : "Code",
     "Undo" : "Bekor qilish",
     "Medium" : "O'rta",

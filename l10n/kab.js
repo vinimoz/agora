@@ -18,6 +18,7 @@ OC.L10N.register(
     "Title" : "Azwel",
     "Close" : "Mdel",
     "URL" : "URL",
+    "Link" : "Aseɣwen",
     "Save" : "Sekles",
     "Location" : "Adig",
     "Category" : "Taggayt",
