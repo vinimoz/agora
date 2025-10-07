@@ -10,13 +10,13 @@
     console.error("vite-plugin-css-injected-by-js", e);
   }
 })();
-const $l = "agora", wl = "1.1.0-rc1";
-import { c as g, o as p, j as i, g as d, C as v, t as n, n as e, s as a, f as D, l as k, _ as M, k as r, i as he, Q as L, b as A, E as Ve, S as se, T as ne, U as $e, V as C, M as G, d as H, W as we, p as Se, O as Z, v as Q, J as ae, e as re, h as qe, x as N, y as P, z as Ie, A as Ae } from "./NcEmptyContent-q-geAf0w-DQ9Y4Vwi.chunk.mjs";
-import { I as W, N as x } from "./index-C6lxCI53.chunk.mjs";
-import { e as ue, g as Ce, f as le, L as oe, I as J, h as X, S as ie } from "./NcDashboardWidget-BEUtfCxs-KrdgBHVB.chunk.mjs";
-import { F as ke } from "./FlexSettings-BjxNI0T0.chunk.mjs";
-import { u as I, _ as Ue, a as Le } from "./markdown-BL21r3wJ.chunk.mjs";
-import { N as q, a as R, b as T } from "./NcRichText-Dht_wH3t-BiQsfP7D.chunk.mjs";
+const $l = "agora", wl = "1.1.0";
+import { c as g, o as p, j as i, g as d, C as v, t as n, n as e, s as a, f as D, l as k, _ as M, k as r, i as he, Q as L, b as A, E as Ve, S as se, T as ne, U as $e, V as C, M as G, d as H, W as we, p as Se, O as Z, v as Q, J as ae, e as re, h as qe, x as N, y as P, z as Ie, A as Ae } from "./NcEmptyContent-q-geAf0w-CwNlStzH.chunk.mjs";
+import { I as W, N as x } from "./index-huUUTYPN.chunk.mjs";
+import { e as ue, g as Ce, f as le, L as oe, I as J, h as X, S as ie } from "./NcDashboardWidget-BEUtfCxs-BXrgnfdG.chunk.mjs";
+import { F as ke } from "./FlexSettings-DfdLTw7_.chunk.mjs";
+import { u as I, _ as Ue, a as Le } from "./markdown-AwoyEmEj.chunk.mjs";
+import { N as q, a as R, b as T } from "./NcRichText-Dht_wH3t-CenVSsr_.chunk.mjs";
 const Te = { class: "user_settings" }, xe = { __name: "AdminActivities", setup(c) {
   const t = I();
   return (s, l) => (p(), g("div", Te, [i(e(q), { modelValue: e(t).useActivity, "onUpdate:modelValue": [l[0] || (l[0] = (o) => e(t).useActivity = o), l[1] || (l[1] = (o) => e(t).write())], type: "switch" }, { default: d(() => [v(n(e(a)("agora", "Enable the tracking of activities with the Activities app")), 1)]), _: 1 }, 8, ["modelValue"])]));

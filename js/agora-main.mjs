@@ -41,15 +41,15 @@ var __objRest = (source, exclude) => {
     }
   return target;
 };
-const Mq = "agora", Fq = "1.1.0-rc1";
-import { at as tu, B as nu, bb as HD, a as Yn, V as Pe, W as so, c as V, o as k, j as re, g as j, C as Me, t as ae, r as Ot, d as ke, b as me, bc as jD, J as Ve, f as z, n as v, l as oe, b8 as ut, s as A, h as ve, k as H, _ as gt, i as Ge, Q as xe, bd as kp, a3 as Sp, be as YD, S as dn, bf as GD, bg as XD, ar as lo, u as Yr, bh as KD, K as ru, N as ys, p as iu, m as In, e as Sn, a0 as ZD, $ as JD, L as au, a1 as QD, a2 as e_, aw as t_, v as It, aK as xa, ad as n_, bi as r_, T as On, bj as co, bk as Da, M as at, O as Et, b5 as Gr, bl as Ri, aQ as ou, a6 as su, bm as yn, bn as Xr, D as uo, x as _r, y as fo, P as Kr, R as bs, b7 as Gn, b9 as vs, b6 as i_, bo as Ep, aL as xs, bp as a_, bq as o_, br as s_, bs as Ds, bt as l_, bu as bn, aZ as Zr, bv as vn, Y as c_, bw as u_, bx as Xn, by as Nn, bz as Ap, as as Up, bA as Mp, U as d_, bB as f_, bC as h_, bD as p_, z as g_, A as m_ } from "./NcEmptyContent-q-geAf0w-DQ9Y4Vwi.chunk.mjs";
-import { b as ft, i as y_, l as ho, o as b_, L as At, j as Fp, a as xn, p as po, k as _a, m as et, I as Bi, n as bt, q as Lt, s as Ze, r as wr, t as Dn, E as mt, S as ot, v as Ip, w as wa, x as Li, B as Wi, y as Tr, d as v_, z as Op, A as Kn, C as go, D as _s, F as Np, G as qi, h as Ct, H as x_, J as ws, K as Zn } from "./NcDashboardWidget-BEUtfCxs-KrdgBHVB.chunk.mjs";
-import { u as Jr, _ as D_, a as __ } from "./StyleSettings-DCPV1oQf.chunk.mjs";
-import { a as Qr, u as w_, S as T_, Q as C_, I as ei, C as k_, P as Rp, b as lu, c as S_, d as mo, e as E_, f as Bp, g as Lp, r as Wp, t as qp, h as A_, O as U_, i as cu, j as M_, k as F_ } from "./index-C6lxCI53.chunk.mjs";
-import { _ as I_, c as Ts, C as Cs, b as ks, d as uu, e as O_, f as N_, g as R_, h as B_, i as Pp, j as L_, a as Pi, k as W_ } from "./markdown-BL21r3wJ.chunk.mjs";
-import { _ as q_, b as dr, N as Ss, d as $p, e as zp } from "./NcRichText-Dht_wH3t-BiQsfP7D.chunk.mjs";
-import { _ as du } from "./AgoraAppIcon.vue_vue_type_script_setup_true_lang-BttQG-eg.chunk.mjs";
-import { N as Vp } from "./NcUserBubble-ndaFuDRG-CzAVXlwv.chunk.mjs";
+const Mq = "agora", Fq = "1.1.0";
+import { at as tu, B as nu, bb as HD, a as Yn, V as Pe, W as so, c as V, o as k, j as re, g as j, C as Me, t as ae, r as Ot, d as ke, b as me, bc as jD, J as Ve, f as z, n as v, l as oe, b8 as ut, s as A, h as ve, k as H, _ as gt, i as Ge, Q as xe, bd as kp, a3 as Sp, be as YD, S as dn, bf as GD, bg as XD, ar as lo, u as Yr, bh as KD, K as ru, N as ys, p as iu, m as In, e as Sn, a0 as ZD, $ as JD, L as au, a1 as QD, a2 as e_, aw as t_, v as It, aK as xa, ad as n_, bi as r_, T as On, bj as co, bk as Da, M as at, O as Et, b5 as Gr, bl as Ri, aQ as ou, a6 as su, bm as yn, bn as Xr, D as uo, x as _r, y as fo, P as Kr, R as bs, b7 as Gn, b9 as vs, b6 as i_, bo as Ep, aL as xs, bp as a_, bq as o_, br as s_, bs as Ds, bt as l_, bu as bn, aZ as Zr, bv as vn, Y as c_, bw as u_, bx as Xn, by as Nn, bz as Ap, as as Up, bA as Mp, U as d_, bB as f_, bC as h_, bD as p_, z as g_, A as m_ } from "./NcEmptyContent-q-geAf0w-CwNlStzH.chunk.mjs";
+import { b as ft, i as y_, l as ho, o as b_, L as At, j as Fp, a as xn, p as po, k as _a, m as et, I as Bi, n as bt, q as Lt, s as Ze, r as wr, t as Dn, E as mt, S as ot, v as Ip, w as wa, x as Li, B as Wi, y as Tr, d as v_, z as Op, A as Kn, C as go, D as _s, F as Np, G as qi, h as Ct, H as x_, J as ws, K as Zn } from "./NcDashboardWidget-BEUtfCxs-BXrgnfdG.chunk.mjs";
+import { u as Jr, _ as D_, a as __ } from "./StyleSettings-Rm8P_Eut.chunk.mjs";
+import { a as Qr, u as w_, S as T_, Q as C_, I as ei, C as k_, P as Rp, b as lu, c as S_, d as mo, e as E_, f as Bp, g as Lp, r as Wp, t as qp, h as A_, O as U_, i as cu, j as M_, k as F_ } from "./index-huUUTYPN.chunk.mjs";
+import { _ as I_, c as Ts, C as Cs, b as ks, d as uu, e as O_, f as N_, g as R_, h as B_, i as Pp, j as L_, a as Pi, k as W_ } from "./markdown-AwoyEmEj.chunk.mjs";
+import { _ as q_, b as dr, N as Ss, d as $p, e as zp } from "./NcRichText-Dht_wH3t-CenVSsr_.chunk.mjs";
+import { _ as du } from "./AgoraAppIcon.vue_vue_type_script_setup_true_lang-DIi8cyMf.chunk.mjs";
+import { N as Vp } from "./NcUserBubble-ndaFuDRG-DpH3vrBN.chunk.mjs";
 const Hp = (t10, e = "", n = 360) => {
   const r = /* @__PURE__ */ new Date();
   r.setTime(r.getTime() + n), document.cookie = "".concat(t10, "=").concat(e, ";expires=").concat(r.toUTCString(), ";path=/");

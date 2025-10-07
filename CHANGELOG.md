@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 - UPDATE: Most of Nc style have been used ( NcButton, NcSelect,..)
 - FIX: insert image now working in tiptap,.
 - FIX: IA in tiptap, has been change to use the Nextcloud IA ( not finalized yet )
+- IMPROVEMENT: updated search bar.
 
 
 # [1.0.0] - 2025-10-02

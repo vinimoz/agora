@@ -14,7 +14,7 @@
 		Future-proof: Built to connect with other Nextcloud apps and services – integrations with Polls, Forms, Deck, and more are on the roadmap.
 		Community-driven: Flexible workflows, new contribution types, and collaborative drafting are planned – get involved!
 	</description>
-	<version>1.1.0-rc1</version>
+	<version>1.1.0</version>
 	<licence>AGPL</licence>
 	<author>Vincent TRAPPE</author>
 	<documentation>

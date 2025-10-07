@@ -38,7 +38,6 @@ It simplifies decision-making, keeps discussions structured, and ensures **every
 ## 🐞 Known Issues
 
 - Public share not fully tested  
-- Tiptap images sometimes do not display
 
 ---
 
@@ -113,7 +112,7 @@ Please read our [Code of Conduct](https://vinimoz.com/community/code-of-conduct/
 
 ## 🏷 Changelog Highlights for 1.1.0
 
-- ✨ Added new **search bar** for fast filtering  
+- ✨ Improved **search bar** for fast filtering  
 - 📝 Minor UI improvements  
 - 🐞 Bug fixes: comments display, image handling in Tiptap
 

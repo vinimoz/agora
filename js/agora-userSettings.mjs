@@ -1,10 +1,10 @@
-const A = "agora", k = "1.1.0-rc1";
-import { d as c, s as a, v as m, f as l, o as g, g as t, j as s, n as e, x as r, y as n, z as f, A as _ } from "./NcEmptyContent-q-geAf0w-DQ9Y4Vwi.chunk.mjs";
-import { N as i } from "./index-C6lxCI53.chunk.mjs";
-import "./NcDashboardWidget-BEUtfCxs-KrdgBHVB.chunk.mjs";
-import { F as u } from "./FlexSettings-BjxNI0T0.chunk.mjs";
-import { u as S, _ as d, a as y } from "./StyleSettings-DCPV1oQf.chunk.mjs";
-import "./NcRichText-Dht_wH3t-BiQsfP7D.chunk.mjs";
+const A = "agora", k = "1.1.0";
+import { d as c, s as a, v as m, f as l, o as g, g as t, j as s, n as e, x as r, y as n, z as f, A as _ } from "./NcEmptyContent-q-geAf0w-CwNlStzH.chunk.mjs";
+import { N as i } from "./index-huUUTYPN.chunk.mjs";
+import "./NcDashboardWidget-BEUtfCxs-BXrgnfdG.chunk.mjs";
+import { F as u } from "./FlexSettings-DfdLTw7_.chunk.mjs";
+import { u as S, _ as d, a as y } from "./StyleSettings-Rm8P_Eut.chunk.mjs";
+import "./NcRichText-Dht_wH3t-CenVSsr_.chunk.mjs";
 const x = c({ __name: "UserSettingsPage", setup(N) {
   const p = S(), o = { personalSettings: { name: a("agora", "Personal preferences"), description: a("agora", "Set your personal preferences for the agora app") }, styleSettings: { name: a("agora", "Experimental styles"), description: a("agora", "Some visual styling options.") } };
   return m(() => {
