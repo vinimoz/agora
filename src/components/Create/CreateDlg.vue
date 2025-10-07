@@ -97,6 +97,7 @@ async function add() {
         focus
         type="text"
         :placeholder="t('agora', 'Enter title')"
+        :label="t('agora', 'Enter title')"
         @submit="add()"
       />
     </ConfigBox>

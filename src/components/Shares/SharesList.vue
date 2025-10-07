@@ -61,7 +61,6 @@ async function addShare(user: User) {
     </template>
 
     <UserSearch
-      v-if="sessionStore.appPermissions.addShares"
       class="add-share"
       :aria-label="t('agora', 'Add shares')"
       :placeholder="t('agora', 'Type to add an individual share')"
@@ -73,7 +72,6 @@ async function addShare(user: User) {
     <SharePublicAdd
       v-if="
         sessionStore.appPermissions.publicShares &&
-        sessionStore.appPermissions.addShares &&
         sessionStore.appPermissions.addSharesExternal
       "
     />

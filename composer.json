@@ -53,6 +53,7 @@
   },
   "require": {
     "league/commonmark": "^2.1",
+    "openai-php/client": "^0.10.3",
     "rlanvin/php-rrule": "^2.3"
   }
 }

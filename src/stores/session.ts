@@ -8,7 +8,7 @@ import { getCurrentUser } from '@nextcloud/auth'
 import { PublicAPI, SessionAPI } from '../Api/index.ts'
 import { createDefault, User, AppPermissions } from '../Types/index.ts'
 import { AppSettings, UpdateType } from './appSettings.ts'
-import {  ViewMode, SessionSettings } from './preferences.ts'
+import {  SessionSettings } from './preferences.ts'
 import { FilterType, useInquiriesStore } from './inquiries.ts'
 import { Share } from './shares.ts'
 import { RouteLocationNormalized, RouteRecordNameGeneric } from 'vue-router'
@@ -38,6 +38,7 @@ export type UserStatus = {
   isAdmin: boolean
   isOfficial: boolean
   isModerator: boolean
+  isCommission: boolean
 }
 
 export type Watcher = {
@@ -206,23 +207,6 @@ export const useSessionStore = defineStore('session', {
       Logger.debug('Session loaded')
     },
 
-    setViewProposalInquiry(viewMode: ViewMode) {
-      this.sessionSettings.manualViewProposalInquiry = viewMode
-    },
-
-    setViewProjectInquiry(viewMode: ViewMode) {
-      this.sessionSettings.manualViewProjectInquiry = viewMode
-    },
-
-    setViewDebateInquiry(viewMode: ViewMode) {
-      this.sessionSettings.manualViewDebateInquiry = viewMode
-    },
-    setViewPetitionInquiry(viewMode: ViewMode) {
-      this.sessionSettings.manualViewPetitionInquiry = viewMode
-    },
-    setViewGrievanceInquiry(viewMode: ViewMode) {
-      this.sessionSettings.manualViewGrievanceInquiry = viewMode
-    },
     async setRouter(payload: RouteLocationNormalized) {
       this.route.currentRoute = payload.fullPath
       this.route.name = payload.name

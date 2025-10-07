@@ -3,138 +3,117 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
-# Agora
+# Agora 1.1.0
 
-This app has been built on top of [Nextcloud Polls](https://github.com/nextcloud/polls) 8.1.4.  
-A big thanks to the original Polls contributors for creating this wonderful application.
-
-Agora is a Nextcloud app for participatory democracy, inquiries, and proposals, similar to [Decidim](https://decidim.org/), written in PHP and JS/Vue.
- Discover Agora: A Nextcloud App for Collaborative Decision-Making
-
-Agora lets your group or organization collaborate on ideas and decisions in a structured, inclusive way. With it, users can:
-
-- *Create Proposals, Debates, Petitions, or Projects*: Anyone can start a discussion or suggest an idea, whether it's about planning an event, improving a process, or launching something new.
-- *Gather Input and Support*: People can add comments, suggestions, or endorsements to shape ideas together. It's like a friendly, organized conversation where every voice matters.
-- *Sort by Location or Category*: Contributions can be tagged by topic or place, making it easy to keep things relevant and focused.
-
-Since it runs on your Nextcloud server, everything stays private and secure, with no external platforms involved.
-
-## Why Try It?
-Agora is a gentle way to encourage participation and make decisions together. Whether you're part of a community group, a small team, or a local initiative, it helps turn ideas into action without complexity. It’s a small addition that could make a big difference for your group’s collaboration.
-
-
-[![Dependabot status](https://img.shields.io/badge/Dependabot-enabled-brightgreen.svg?longCache=true&style=flat-square&logo=dependabot)](https://dependabot.com)
-[![Software License](https://img.shields.io/badge/license-AGPL-brightgreen.svg?style=flat-square)](COPYING)
+[![Dependabot status](https://img.shields.io/badge/Dependabot-enabled-brightgreen.svg?longCache=true&style=flat-square&logo=dependabot)](https://dependabot.com)  
+[![Software License](https://img.shields.io/badge/license-AGPL-brightgreen.svg?style=flat-square)](COPYING)  
 [![REUSE status](https://api.reuse.software/badge/github.com/vinimoz/agora)](https://api.reuse.software/info/github.com/vinimoz/agora)
 
-## Todo and next features
+Agora is a **Nextcloud app for participatory democracy**, built on [Nextcloud Polls](https://github.com/nextcloud/polls) and inspired by [Decidim](https://decidim.org/).  
+It allows communities and organizations to collaborate on **proposals, debates, petitions, and projects** in a structured, inclusive way.
 
-- Create real debate.
-- Create Assembly, Consultation o votes them with polls application.
-- Management for small administration, debate on project law, etc.
-- Do a workflow to help moderator
-- Redefine to be more generic ?
+---
 
-## Bug fix
-- Public share no tested
-- Image in tiptap doesnt display.
+## 🌟 Features in 1.1.0
 
-## Installation / Update
+- 🔍 **Improved Search Bar** – Quickly find proposals, debates, or projects  
+- 📝 **Create Contributions**  
+  - 📌 **Proposals** – Suggest ideas or improvements  
+  - 💬 **Debates** – Discuss and exchange opinions  
+  - 📃 **Petitions** – Collect support for initiatives  
+  - 🏗 **Projects** – Manage tasks or initiatives collaboratively  
+- 💬 **Comments & Suggestions** – Shape ideas together  
+- 🏷 **Sort by Category & Location** – Keep content organized  
+- 🔒 **Private & Secure** – All data stays on your Nextcloud server
 
-This app is supposed to work on Nextcloud version 21+.
-If you wish to have category, location, moderation base, u can use agora:db:init-default ( see below )
+---
 
-### Install latest release
+## 🚀 Why Agora?
 
-You can download and install the latest release from the [Nextcloud app store](https://apps.nextcloud.com/apps/agora).
+Agora encourages **participation and collaboration** in small teams, community groups, or local initiatives.  
+It simplifies decision-making, keeps discussions structured, and ensures **every voice counts**.
 
-## Available occ commands
+---
 
-| Command                                                                      | Description                                                    |
-| ---------------------------------------------------------------------------- | -------------------------------------------------------------- |
-| `agora:db:clean-migrations`                                                  | Remove obsolete migrations, which are no more needed           |
-| `agora:db:purge`                                                             | Drop Agora' tables and remove migration and settings records   |
-| `agora:db:rebuild`                                                           | Rebuild Agora' database including indices                      |
-| `agora:db:init-default`                                                      |  Create default values, Moderation, Location, Category         |
-| `agora:index:create`                                                         | Create all necessary indices and foreign key constraints       |
-| `agora:index:remove`                                                         | Remove all indices                                             |
-| `agora:inquiry:transfer-ownership  <source-user> <target-user>`              | Transfer inquiry ownership from <source-user> to <target-user> |
-| `agora:share:add [--user USER] [--group GROUP] [--email EMAIL] [--] <id>`    | Add user/group/email with <id> to shares                       |
-| `agora:share:remove [--user USER] [--group GROUP] [--email EMAIL] [--] <id>` | Remove user/group/email with <id> from shares                  |
+## 🐞 Known Issues
 
-## Support
+- Public share not fully tested  
+- Tiptap images sometimes do not display
 
-- Report a bug or request a feature: https://github.com/vinimoz/agora/issues
-- Community support: https://help.vinimoz.com/c/apps/agora/
+---
 
-## Screenshots
+## 📥 Installation / Update
 
-|           Edit you inquiry            |                Many category                 |      Configure your moderation status      |             View from not owner user             |         Grid view of inquiries         |         List view of inquiries         |
-| :-----------------------------------: | :------------------------------------------: | :----------------------------------------: | :----------------------------------------------: | :------------------------------------: | :------------------------------------: |
-| ![Edit Inquiry](screenshots/Edit.png) | ![Manage Category](screenshots/Category.png) | ![Agora](screenshots/ModerationStatus.png) | ![View Inquiry](screenshots/UserViewInquiry.png) | ![Grid View](screenshots/GridView.png) | ![List View](screenshots/ListView.png) |
+### Requirements
 
-## Documentations
+- Nextcloud 21+  
+- PHP 8.1+
 
-|            User Guide             |           Api Guide            |
-| :-------------------------------: | :----------------------------: |
-| ![User Guide](docs/USER_GUIDE.md) | ![Api Guide](docs/API_v1.0.md) |
+### Install Latest Release
 
-### Install from git
+Install directly from the [Nextcloud App Store](https://apps.nextcloud.com/apps/agora).
 
-If you want to run the latest development version from git source, you need to clone the repo to your apps folder:
+### From Git
 
-```
+```bash
 git clone https://github.com/vinimoz/agora.git
+cd agora
+make setup-dev   # Dev environment
+make setup-build # Runtime environment
+npm run build    # Compile JS
+make appstore    # Full build
+occ app:enable agora
 ```
 
-- Install dev environment with `make setup-dev` or
-- install runtime environment with `make setup-build`
-- Compile javascript with `npm run build`
-- Run a complete build with `make appstore` (Find the output in the build directory)
-- call `occ app:enable agora` to enable Agora
-- call `occ agora:db:init-default to install default value.
-- You can insert into your database some examples, who could be find, on examples directory. Five users need to be created, test, test2, test3, official, moderator
+---
 
-### Installation variants
+## ⚙ Useful OCC Commands
 
-### First time install
+| Command | Description |
+| ------- | ----------- |
+| `agora:db:clean-migrations` | Remove obsolete migrations |
+| `agora:db:purge` | Drop all Agora tables & config |
+| `agora:db:rebuild` | Rebuild database including indices |
+| `agora:db:init-default` | Create default categories, locations, moderation |
+| `agora:index:create` | Create database indices |
+| `agora:index:remove` | Remove indices |
+| `agora:inquiry:transfer-ownership <source> <target>` | Transfer ownership of an inquiry |
+| `agora:share:add / remove` | Add or remove user/group/email to shares |
 
-Nextcloud executes
+---
 
-- unexecuted `migration classes` (not listed in the `*_migrations` table) and the
-- `install` repair step.
+## 🖼 Screenshots
 
-### After a version update (changed version attribute in appinfo/info.xml)
+| Edit Inquiry | Manage Category | Moderation Status | View as Non-owner | Grid View | List View |
+| :----------: | :-------------: | :---------------: | :---------------: | :-------: | :-------: |
+| ![Edit Inquiry](screenshots/Edit.png) | ![Category](screenshots/Category.png) | ![Moderation](screenshots/ModerationStatus.png) | ![View](screenshots/UserViewInquiry.png) | ![Grid](screenshots/GridView.png) | ![List](screenshots/ListView.png) |
 
-Nextcloud executes
+---
 
-- `pre-migration` repair steps,
-- unexecuted `migration classes` (not listed in the `*_migrations` table) and the
-- `post-migration` repair steps
+## 📚 Documentation
 
-### Enabling already installed but disabled app without version change
+| User Guide | API Guide |
+| :--------: | :-------: |
+| [USER_GUIDE.md](docs/USER_GUIDE.md) | [API_v1.0.md](docs/API_v1.0.md) |
 
-Nextcloud executes
+---
 
-- `pre-migration` repair steps,
-- unexecuted `migration classes` (not listed in the `*_migrations` table) and the
-- `post-migration` repair steps and the
-- `install` repair step
+## 🛠 Support
 
-❗ As a compromise at the moment we allow the index creation to be ran twice when enabling the app via app store or `occ`, to ensure all indexes are created properly for every install/update/enabling path.
+- Report bugs or request features: [GitHub Issues](https://github.com/vinimoz/agora/issues)  
+- Community support: [Nextcloud Help](https://help.vinimoz.com/c/apps/agora/)
 
-## Removing Agora from instance
+---
 
-Call `occ agora:db:purge` to remove Agora completely.
+## 🤝 Contribution
 
-- removes all Agora related tables
-- removes all Agora related migration records
-- removes all Agora related app config records (this also disables Agora)
+Please read our [Code of Conduct](https://vinimoz.com/community/code-of-conduct/) to ensure collaboration in a positive and respectful way.
 
-This does not remove Agora' files (call `occ app:remove agora` to remove it complete afterwards) but it resets Agora into an 'uninstalled' state. Enabling the app is then equivalent to a first time install and calls the migration and the install repair step (see above).
+---
 
-## Contribution Guidelines
+## 🏷 Changelog Highlights for 1.1.0
 
-Please read the [Code of Conduct](https://vinimoz.com/community/code-of-conduct/). This document offers some guidance to ensure Nextcloud participants can cooperate effectively in a positive and inspiring atmosphere, and to explain how together we can strengthen and support each other.
+- ✨ Added new **search bar** for fast filtering  
+- 📝 Minor UI improvements  
+- 🐞 Bug fixes: comments display, image handling in Tiptap
 
-For more information please review the [guidelines for contributing](https://github.com/vinimoz/server/blob/master/.github/CONTRIBUTING.md) to this repository.

@@ -189,7 +189,6 @@ class SettingsService
             (int)$categoryId,
             $categoryData['name'] ?? '',
             $categoryData['parentId'] ?? 0
-            // Ajoutez d'autres paramètres selon votre implémentation CategoryService
         );
     }
 

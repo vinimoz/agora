@@ -292,6 +292,20 @@ const inquiries = {
         cancelTokenHandlerObject[this.getLocations.name].handleRequestCancellation().token,
     })
   },
+
+  enhanceText(text: string): Promise<AxiosResponse<{ text: string }>> {
+  return httpInstance.request({
+    method: 'POST',
+    url: 'inquiry/get-text-ai',
+    data: { text },
+    cancelToken:
+      cancelTokenHandlerObject[this.enhanceText.name]
+        .handleRequestCancellation()
+        .token,
+  })
+}
+
+
 }
 
 const cancelTokenHandlerObject = createCancelTokenHandler(inquiries)

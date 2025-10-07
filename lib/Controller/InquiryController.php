@@ -14,6 +14,7 @@ use OCA\Agora\Helper\Container;
 use OCA\Agora\Model\Settings\AppSettings;
 use OCA\Agora\Service\CommentService;
 use OCA\Agora\Service\MailService;
+use OCA\Agora\Service\AIService;
 use OCA\Agora\Service\OptionService;
 use OCA\Agora\Service\InquiryGroupService;
 use OCA\Agora\Service\AttachmentService;
@@ -37,6 +38,7 @@ class InquiryController extends BaseController
         string $appName,
         IRequest $request,
         private MailService $mailService,
+        private AIService $aiService,
         private OptionService $optionService,
         private InquiryService $inquiryService,
         private InquiryGroupService $inquiryGroupService,
@@ -510,5 +512,17 @@ class InquiryController extends BaseController
     public function getParticipantsEmailAddresses(int $inquiryId): JSONResponse
     {
         return $this->response(fn () => $this->inquiryService->getParticipantsEmailAddresses($inquiryId));
+    }
+
+    /**
+     * Get echance Text for inquiry
+     *
+     */
+    #[NoAdminRequired]
+    #[FrontpageRoute(verb: 'POST', url: '/inquiry/get-text-ai')]
+    public function getTextAi(string $text): JSONResponse
+    {
+       $rawData = $this->request->getParams('data');
+       return $this->response(fn () => $this->aiService->echanceText($rawData));
     }
 }

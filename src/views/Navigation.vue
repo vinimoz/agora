@@ -133,7 +133,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <NcAppNavigation class="agora-navigation">
+  <NcAppNavigation class="agora-navigation" aria-label="Agora Navigation">
     <!-- New Inquiry Button -->
     <ActionAddInquiry
       v-if="

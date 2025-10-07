@@ -9,7 +9,7 @@ import { emit, unsubscribe } from '@nextcloud/event-bus'
 import { n, t } from '@nextcloud/l10n'
 import { useRoute, useRouter, onBeforeRouteUpdate } from 'vue-router'
 import { showError } from '@nextcloud/dialogs'
-import moment from 'moment'
+import  moment  from 'moment'
 
 import NcAppContent from '@nextcloud/vue/components/NcAppContent'
 import NcUserBubble from '@nextcloud/vue/components/NcUserBubble'

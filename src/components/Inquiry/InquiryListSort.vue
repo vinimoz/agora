@@ -51,8 +51,9 @@ function setSort(sort: { by?: SortType; reverse?: boolean }) {
 <template>
   <NcActions primary :menu-name="sortTitlesMapping[inquiriesStore.sort.by]">
     <template #icon>
-      <SortDescendingIcon v-if="inquiriesStore.sort.reverse" :size="20" decorative />
-      <SortAscendingIcon v-else :size="20" decorative />
+	<component :is="InquiryGeneralIcons.sortDescending" v-if="inquiriesStore.sort.reverse" :size="20" decorative/>
+	<component :is="InquiryGeneralIcons.sortAscending" v-else :size="20" decorative/>
+
     </template>
 
     <NcActionButton

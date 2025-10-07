@@ -171,6 +171,7 @@ const formatFileSize = (bytes: number): string => {
       <input
         id="attachment-upload-input"
         ref="fileInput"
+        :label="t('agora', 'Select files to upload')"
         type="file"
         multiple
         class="hidden"

@@ -17,6 +17,7 @@ import { Logger } from '../../../helpers/index.ts'
 
 import { SignalingType } from '../../../Types/index.ts'
 import { NcButton } from '@nextcloud/vue'
+import NcTextField from '@nextcloud/vue/components/NcTextField'
 
 import { t } from '@nextcloud/l10n'
 
@@ -179,11 +180,12 @@ onMounted(() => {
         </template>
       </NcButton>
 
-      <input
+      <NcTextField
         v-model="model"
         v-input-focus
         :disabled="disabled"
         :type="type"
+        :label="label"
         :inputmode="inputmode"
         :placeholder="placeholder"
         :class="[

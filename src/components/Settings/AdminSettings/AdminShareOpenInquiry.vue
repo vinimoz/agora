@@ -12,6 +12,7 @@ import NcSelect from '@nextcloud/vue/components/NcSelect'
 import { useAppSettingsStore } from '../../../stores/appSettings.ts'
 
 const appSettingsStore = useAppSettingsStore()
+
 </script>
 
 <template>
@@ -21,7 +22,7 @@ const appSettingsStore = useAppSettingsStore()
       type="switch"
       @update:model-value="appSettingsStore.write()"
     >
-      {{ t('agora', 'Enable the creation of openly accessible inquiries globally') }}
+      {{ t('agora', 'Enable the shares of inquiries globally, by default admin and moderator have rights') }}
     </NcCheckboxRadioSwitch>
 
     <div v-if="!appSettingsStore.allowAllAccess" class="settings_details">

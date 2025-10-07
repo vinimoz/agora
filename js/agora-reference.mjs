@@ -10,11 +10,11 @@
     console.error("vite-plugin-css-injected-by-js", e);
   }
 })();
-const F = "agora", G = "1.0.0";
-import { _ as u, c, o as a, k as n, l as o, t as s, i as k, d as _, f as d, h as C, g as l, r as b, P as p, j as f, n as r, C as h, s as m, J as w, z as O, A as q } from "./NcEmptyContent-q-geAf0w-BE9auIn9.chunk.mjs";
-import { r as H } from "./NcRichText-Dht_wH3t-BOSakNmB.chunk.mjs";
-import { N } from "./NcUserBubble-ndaFuDRG-DfZ4d100.chunk.mjs";
-import { _ as $ } from "./AgoraAppIcon.vue_vue_type_script_setup_true_lang-BiKNn9_8.chunk.mjs";
+const F = "agora", G = "1.1.0-rc1";
+import { _ as u, c, o as a, k as n, l as o, t as s, i as k, d as _, f as d, h as C, g as l, r as b, P as p, j as f, n as r, C as h, s as m, J as w, z as O, A as q } from "./NcEmptyContent-q-geAf0w-DQ9Y4Vwi.chunk.mjs";
+import { r as H } from "./NcRichText-Dht_wH3t-BiQsfP7D.chunk.mjs";
+import { N } from "./NcUserBubble-ndaFuDRG-CzAVXlwv.chunk.mjs";
+import { _ as $ } from "./AgoraAppIcon.vue_vue_type_script_setup_true_lang-BttQG-eg.chunk.mjs";
 
 const x = { name: "CalendarEndIcon", emits: ["click"], props: { title: { type: String }, fillColor: { type: String, default: "currentColor" }, size: { type: Number, default: 24 } } }, B = ["aria-hidden", "aria-label"], z = ["fill", "width", "height"], D = { d: "M22 14V22H20V18L16 22V19H11V17H16V14L20 18V14H22M5 19L9 19V21L5 21C3.9 21 3 20.1 3 19V5C3 3.89 3.9 3 5 3H6V.998H8V3H16V.998H18V3H19C20.11 3 21 3.89 21 5L21 12H19V8H5V19Z" }, I = { key: 0 };
 function L(e, i, t, y, V, v) {

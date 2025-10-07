@@ -1,6 +1,5 @@
-<!-- src/components/AppIcons/modules/ThumbIcon.vue -->
 <!--
-  - SPDX-FileCopyrightText: [Votre Nom/Organisation]
+  - SPDX-FileCopyrightText: Nextcloud 2026 
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 

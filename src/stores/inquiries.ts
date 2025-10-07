@@ -49,6 +49,7 @@ export type AdvancedFilters = {
   locationId?: string
   hasComments?: boolean
   hasSupports?: boolean
+  parentId?: number
   search?: string
 }
 
@@ -249,7 +250,9 @@ export const useInquiriesStore = defineStore('inquiries', {
     },
     categories: inquiryCategories,
     currentFilter: 'relevant',
-    advancedFilters: {},
+     advancedFilters: {
+      parentId: 0  
+    },
   }),
 
   getters: {
@@ -300,26 +303,6 @@ export const useInquiriesStore = defineStore('inquiries', {
       return state.categories.relevant
     },
 
-    /*
-		 * inquiries list, filtered by current category and sorted
-		 inquiriesFilteredSorted(state: InquiryList): Inquiry[] {
-		 const sessionStore = useSessionStore()
-		 const inquiryGroupsStore = useInquiryGroupsStore()
-
-		// if we are in a group route, return the inquiries of the current group
-		if (sessionStore.route.name === 'group') {
-		return inquiryGroupsStore.inquiriesInCurrendInquiryGroup
-		}
-
-		return orderBy(
-		state.inquiries.filter((inquiry: Inquiry) =>
-		this.currentCategory?.filterCondition(inquiry),
-		) ?? [],
-		[sortColumnsMapping[state.sort.by]],
-		[state.sort.reverse ? 'desc' : 'asc'],
-		)
-		},
-		*/
 
     /*
      * inquiries list, filtered by current category, advanced filters and sorted
@@ -349,7 +332,11 @@ export const useInquiriesStore = defineStore('inquiries', {
           (inquiry) => inquiry.categoryId === state.advancedFilters.categoryId
         )
       }
-
+     if (state.advancedFilters.parentId !== undefined) {
+ 		 filteredInquiries = filteredInquiries.filter((inquiry) =>
+    		 inquiry.parentId === state.advancedFilters.parentId
+       )
+    }
       if (state.advancedFilters.locationId) {
         filteredInquiries = filteredInquiries.filter(
           (inquiry) => inquiry.locationId === state.advancedFilters.locationId
@@ -457,7 +444,9 @@ export const useInquiriesStore = defineStore('inquiries', {
 	   */
 
 	  setFilters(filters: AdvancedFilters): void {
-		  this.advancedFilters = { ...filters }
+		  this.advancedFilters = { 
+			  ...filters,
+		  }
 		  this.resetChunks()
 	  },
 
@@ -465,7 +454,9 @@ export const useInquiriesStore = defineStore('inquiries', {
 	   * Reset filter
 	   */
 	  resetFilters(): void {
-		  this.advancedFilters = {}
+		 this.advancedFilters= {
+		      parentId: 0  
+    		  }
 		  this.resetChunks()
 	  },
 

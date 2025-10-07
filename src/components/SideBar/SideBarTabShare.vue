@@ -8,7 +8,6 @@ import { onMounted, onUnmounted } from 'vue'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 
 import { useSharesStore } from '../../stores/shares.ts'
-import { useSessionStore } from '../../stores/session.ts'
 
 import SharesList from '../Shares/SharesList.vue'
 import SharesListUnsent from '../Shares/SharesListUnsent.vue'
@@ -16,7 +15,6 @@ import SharesListLocked from '../Shares/SharesListLocked.vue'
 import { Event } from '../../Types/index.ts'
 
 const sharesStore = useSharesStore()
-const sessionStore = useSessionStore()
 
 onMounted(() => {
   subscribe(Event.ChangeShares, () => sharesStore.load())
@@ -29,9 +27,9 @@ onUnmounted(() => {
 
 <template>
   <div class="sidebar-share">
-    <SharesListUnsent v-if="sessionStore.appPermissions.addShares" class="shares unsent" />
+    <SharesListUnsent class="shares unsent" />
     <SharesList class="shares effective" />
-    <SharesListLocked v-if="sessionStore.appPermissions.addShares" class="shares" />
+    <SharesListLocked class="shares" />
   </div>
 </template>
 

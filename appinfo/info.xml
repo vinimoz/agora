@@ -1,80 +1,91 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <info xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
-  <id>agora</id>
-  <name>Agora</name>
-  <summary>Participatory democracy app for creating, debating and supporting on community proposals..</summary>
-  <description>Agora is a Nextcloud app for participatory democracy. Users can create proposals, debates, petitions or projects, and gather suggestions, comments and supports. Contributions can be organized by location or category, and evolve through customizable workflows. </description>
-  <version>1.0.0</version>
-  <licence>agpl</licence>
-  <author>Vincent TRAPPE</author>
-  <documentation>
-    <admin>https://github.com/vinimoz/agora/blob/master/README.md</admin>
-  </documentation>
-  <category>tools</category>
-  <category>social</category>
-  <category>organization</category>
-  <website>https://github.com/vinimoz/agora</website>
-  <bugs>https://github.com/vinimoz/agora/issues</bugs>
-  <repository type="git">https://github.com/vinimoz/agora.git</repository>
-  <screenshot>https://raw.githubusercontent.com/nextcloud/agora/main/screenshots/GridView.png</screenshot>
-  <screenshot>https://raw.githubusercontent.com/nextcloud/agora/main/screenshots/ListView.png</screenshot>
-  <screenshot>https://raw.githubusercontent.com/nextcloud/agora/main/screenshots/Edit.png</screenshot>
-  <screenshot>https://raw.githubusercontent.com/nextcloud/agora/main/screenshots/ModerationStatus.png</screenshot>
-  <dependencies>
-    <php min-version="8.1"/>
-    <nextcloud min-version="30" max-version="31"/>
-  </dependencies>
-  <background-jobs>
-    <job>OCA\Agora\Cron\NotificationCron</job>
-    <job>OCA\Agora\Cron\AutoReminderCron</job>
-  </background-jobs>
-  <repair-steps>
-    <pre-migration>
-      <step>OCA\Agora\Migration\RepairSteps\RemoveObsoleteMigrations</step>
-    </pre-migration>
-    <post-migration>
-      <step>OCA\Agora\Migration\RepairSteps\DropOrphanedTables</step>
-      <step>OCA\Agora\Migration\RepairSteps\DropOrphanedColumns</step>
-      <step>OCA\Agora\Migration\RepairSteps\DeleteInvalidRecords</step>
-      <step>OCA\Agora\Migration\RepairSteps\UpdateHashes</step>
-      <step>OCA\Agora\Migration\RepairSteps\CreateIndices</step>
-    </post-migration>
-    <install>
-      <step>OCA\Agora\Migration\RepairSteps\Install</step>
-    </install>
-  </repair-steps>
-  <commands>
-    <command>OCA\Agora\Command\Share\Add</command>
-    <command>OCA\Agora\Command\Share\Remove</command>
-    <command>OCA\Agora\Command\Db\Purge</command>
-    <command>OCA\Agora\Command\Db\RemoveIndices</command>
-    <command>OCA\Agora\Command\Db\Rebuild</command>
-    <command>OCA\Agora\Command\Db\CreateIndices</command>
-    <command>OCA\Agora\Command\Db\CleanMigrations</command>
-    <command>OCA\Agora\Command\Db\ResetWatch</command>
-    <command>OCA\Agora\Command\Db\InitDbDefault</command>
-    <command>OCA\Agora\Command\Inquiry\TransferOwnership</command>
-  </commands>
-  <settings>
-    <admin>OCA\Agora\Settings\AdminSettings</admin>
-    <admin-section>OCA\Agora\Settings\AdminSection</admin-section>
-    <personal>OCA\Agora\Settings\PersonalSettings</personal>
-    <personal-section>OCA\Agora\Settings\PersonalSection</personal-section>
-  </settings>
-  <activity>
-    <filters>
-      <filter>OCA\Agora\Filter\ActivityFilter</filter>
-    </filters>
-    <providers>
-      <provider>OCA\Agora\Provider\ActivityProvider</provider>
-    </providers>
-  </activity>
-  <navigations>
-    <navigation>
-      <name>Agora</name>
-      <route>agora.page.indexindex</route>
-      <icon>app.svg</icon>
-      <order>77</order>
-    </navigation>
-  </navigations>
+	<id>agora</id>
+	<name>Agora</name>
+	<summary>Participatory democracy platform for proposals, debates, petitions, and surveys.</summary>
+	<description>
+		Agora – Participatory democracy, self-hosted!
+
+		All-in-one participation: Citizens can create proposals, debates, petitions, and more – all in a single platform.
+		Engage with ideas: Support or vote on proposals, add comments, and contribute with suggestions.
+		Moderation workflow: Every contribution goes through clear moderation statuses for transparency and trust.
+		Follow the process: Contributions evolve step by step, with visible statuses and participation records.
+		Your data, your control: Unlike external platforms, all discussions, votes, and contributions stay private and under your instance.
+		Future-proof: Built to connect with other Nextcloud apps and services – integrations with Polls, Forms, Deck, and more are on the roadmap.
+		Community-driven: Flexible workflows, new contribution types, and collaborative drafting are planned – get involved!
+	</description>
+	<version>1.1.0-rc1</version>
+	<licence>AGPL</licence>
+	<author>Vincent TRAPPE</author>
+	<documentation>
+		<admin>https://github.com/vinimoz/agora/blob/master/README.md</admin>
+	</documentation>
+	<category>tools</category>
+	<category>social</category>
+	<category>organization</category>
+	<category>productivity</category>
+	<website>https://github.com/vinimoz/agora</website>
+	<bugs>https://github.com/vinimoz/agora/issues</bugs>
+	<repository type="git">https://github.com/vinimoz/agora.git</repository>
+	<screenshot>https://raw.githubusercontent.com/vinimoz/agora/main/screenshots/GridView.png</screenshot>
+	<screenshot>https://raw.githubusercontent.com/vinimoz/agora/main/screenshots/ListView.png</screenshot>
+	<screenshot>https://raw.githubusercontent.com/vinimoz/agora/main/screenshots/Edit.png</screenshot>
+	<screenshot>https://raw.githubusercontent.com/vinimoz/agora/main/screenshots/ModerationStatus.png</screenshot>
+	<dependencies>
+		<php min-version="8.1"/>
+		<nextcloud min-version="30" max-version="31"/>
+	</dependencies>
+	<background-jobs>
+		<job>OCA\Agora\Cron\NotificationCron</job>
+		<job>OCA\Agora\Cron\AutoReminderCron</job>
+	</background-jobs>
+	<repair-steps>
+		<pre-migration>
+			<step>OCA\Agora\Migration\RepairSteps\RemoveObsoleteMigrations</step>
+		</pre-migration>
+		<post-migration>
+			<step>OCA\Agora\Migration\RepairSteps\DropOrphanedTables</step>
+			<step>OCA\Agora\Migration\RepairSteps\DropOrphanedColumns</step>
+			<step>OCA\Agora\Migration\RepairSteps\DeleteInvalidRecords</step>
+			<step>OCA\Agora\Migration\RepairSteps\UpdateHashes</step>
+			<step>OCA\Agora\Migration\RepairSteps\CreateIndices</step>
+		</post-migration>
+		<install>
+			<step>OCA\Agora\Migration\RepairSteps\Install</step>
+		</install>
+	</repair-steps>
+	<commands>
+		<command>OCA\Agora\Command\Share\Add</command>
+		<command>OCA\Agora\Command\Share\Remove</command>
+		<command>OCA\Agora\Command\Db\Purge</command>
+		<command>OCA\Agora\Command\Db\RemoveIndices</command>
+		<command>OCA\Agora\Command\Db\Rebuild</command>
+		<command>OCA\Agora\Command\Db\CreateIndices</command>
+		<command>OCA\Agora\Command\Db\CleanMigrations</command>
+		<command>OCA\Agora\Command\Db\ResetWatch</command>
+		<command>OCA\Agora\Command\Db\InitDbDefault</command>
+		<command>OCA\Agora\Command\Inquiry\TransferOwnership</command>
+	</commands>
+	<settings>
+		<admin>OCA\Agora\Settings\AdminSettings</admin>
+		<admin-section>OCA\Agora\Settings\AdminSection</admin-section>
+		<personal>OCA\Agora\Settings\PersonalSettings</personal>
+		<personal-section>OCA\Agora\Settings\PersonalSection</personal-section>
+	</settings>
+	<activity>
+		<filters>
+			<filter>OCA\Agora\Filter\ActivityFilter</filter>
+		</filters>
+		<providers>
+			<provider>OCA\Agora\Provider\ActivityProvider</provider>
+		</providers>
+	</activity>
+	<navigations>
+		<navigation>
+			<name>Agora</name>
+			<route>agora.page.indexindex</route>
+			<icon>app.svg</icon>
+			<order>77</order>
+		</navigation>
+	</navigations>
 </info>

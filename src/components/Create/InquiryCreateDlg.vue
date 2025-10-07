@@ -102,11 +102,12 @@ function resetInquiry() {
         type="text"
         :placeholder="t('agora', 'Enter title')"
         :helper-text="t('agora', 'Choose a meaningful title for your inquiry')"
+        :label="t('agora', 'Enter title')"
         @submit="addInquiry"
       />
     </ConfigBox>
 
-    <ConfigBox :name="t('agora', 'Inquiry type')">
+    <ConfigBox :name="t('agora', 'Inquiry type')" :label="t('agora', 'Inquiry type')">
       <template #icon>
         <CheckIcon />
       </template>

@@ -6,12 +6,16 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+# [1.1.0] - 2025-10-02
+- UPDATE: Most of Nc style have been used ( NcButton, NcSelect,..)
+- FIX: insert image now working in tiptap,.
+- FIX: IA in tiptap, has been change to use the Nextcloud IA ( not finalized yet )
+
 
 # [1.0.0] - 2025-10-02
 - FIX CSRF
 - FIX Attachment issues, sharing now only files.
 - FIX icons and screenshoot
-
 
 # [1.0.0-rc5] - 2025-09-06
 - Fix UI bugs in edit and display

@@ -3,6 +3,9 @@ OC.L10N.register(
     {
     "Agora" : "Agora",
     "Team" : "Équipe",
+    "Inquiries" : "Demandes",
+    "Inquiry" : "Demande",
+    "New inquiry" : "Nouvelle demande",
     "Contact group" : "Groupe de contact",
     "Group" : "Groupe",
     "_Confirmed option:_::_Confirmed options:_" : ["Option confirmée :","Options confirmées :","Options confirmées :"],

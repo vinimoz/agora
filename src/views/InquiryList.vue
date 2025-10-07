@@ -315,7 +315,6 @@ onMounted(() => {
   }
 }
 
-// Assurer que le contenu prend toute la largeur
 .app-content {
   width: 100%;
 
@@ -325,7 +324,6 @@ onMounted(() => {
   }
 }
 
-// Correction pour les écrans larges
 @media (min-width: 1600px) {
   .inquiry-list__grid {
     grid-template-columns: repeat(4, 1fr);

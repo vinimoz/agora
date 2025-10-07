@@ -179,12 +179,12 @@ const rootLocations = computed(() => locations.value.filter((item) => item.paren
 
     <div v-else>
       <div class="tabs">
-        <button :class="{ active: activeTab === 'categories' }" @click="activeTab = 'categories'">
+        <NcButton :class="{ active: activeTab === 'categories' }" @click="activeTab = 'categories'">
           {{ t('agora', 'Categories') }}
-        </button>
-        <button :class="{ active: activeTab === 'locations' }" @click="activeTab = 'locations'">
+        </NcButton>
+        <NcButton :class="{ active: activeTab === 'locations' }" @click="activeTab = 'locations'">
           {{ t('agora', 'Locations') }}
-        </button>
+        </NcButton>
       </div>
 
       <div v-if="activeTab === 'categories'" class="tab-content">
@@ -310,7 +310,7 @@ const rootLocations = computed(() => locations.value.filter((item) => item.paren
   border-bottom: 1px solid var(--color-border);
 }
 
-.tabs button {
+.tabs NcButton {
   padding: 10px 20px;
   border: none;
   background: none;
@@ -318,7 +318,7 @@ const rootLocations = computed(() => locations.value.filter((item) => item.paren
   border-bottom: 2px solid transparent;
 }
 
-.tabs button.active {
+.tabs NcButton.active {
   border-bottom-color: var(--color-primary);
   color: var(--color-primary);
 }

@@ -51,6 +51,7 @@ async function writeComment() {
       <InputDiv
         v-model="comment"
         :placeholder="t('agora', 'New comment …')"
+        :label="t('agora', 'New comment …')"
         submit
         @submit="writeComment()"
       />

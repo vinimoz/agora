@@ -40,7 +40,6 @@ export interface OfficialRights {
   modifyInquiry?: boolean
 }
 
-// Exportez aussi les valeurs par défaut
 export const DefaultInquiryTypeRights: Record<string, InquiryTypeRights> = {
   proposal: {
     supportInquiry: true,
@@ -161,7 +160,7 @@ function getCurrentUserType(): UserType {
   if (!currentUser) return UserType.Guest
   if (currentUser.isAdmin) return UserType.Admin
   if (currentUser.isModerator) return UserType.Moderator
-  if (currentUser.isOfficial) return UserType.User
+  if (currentUser.isOfficial) return UserType.Official
   return UserType.User
 }
 
@@ -223,8 +222,6 @@ export function canViewToggle(context: PermissionContext): boolean {
 }
 
 /**
- * Vérifie si l'utilisateur peut supprimer
- * Admin et Owner toujours, autres selon leurs droits
  * @param context
  */
 export function canDelete(context: PermissionContext): boolean {
@@ -248,8 +245,6 @@ export function canDelete(context: PermissionContext): boolean {
 }
 
 /**
- * Vérifie si l'utilisateur peut archiver
- * Admin et Owner toujours, autres selon leurs droits
  * @param context
  */
 export function canRestore(context: PermissionContext): boolean {
@@ -273,8 +268,6 @@ export function canRestore(context: PermissionContext): boolean {
 }
 
 /**
- * Vérifie si l'utilisateur peut archiver
- * Admin et Owner toujours, autres selon leurs droits
  * @param context
  */
 export function canArchive(context: PermissionContext): boolean {
@@ -298,8 +291,6 @@ export function canArchive(context: PermissionContext): boolean {
 }
 
 /**
- * Vérifie si l'utilisateur peut transférer
- * Admin et Owner toujours, autres selon leurs droits
  * @param context
  */
 export function canTransfer(context: PermissionContext): boolean {
@@ -321,8 +312,6 @@ export function canTransfer(context: PermissionContext): boolean {
 }
 
 /**
- * Vérifie si l'utilisateur peut modérer
- * Admin toujours, Moderator selon droits, Official selon droits
  * @param context
  */
 export function canModerate(context: PermissionContext): boolean {
@@ -344,8 +333,6 @@ export function canModerate(context: PermissionContext): boolean {
 }
 
 /**
- * Vérifie si l'utilisateur peut éditer
- * Admin et Owner toujours, autres selon leurs droits
  * @param context
  */
 export function canEdit(context: PermissionContext): boolean {
@@ -370,8 +357,6 @@ export function canEdit(context: PermissionContext): boolean {
 }
 
 /**
- * Vérifie si l'utilisateur peut commenter
- * Dépend des droits InquiryTypeRights, même pour les Admins
  * @param context
  */
 export function canComment(context: PermissionContext): boolean {
@@ -397,8 +382,6 @@ export function canComment(context: PermissionContext): boolean {
 }
 
 /**
- * Vérifie si l'utilisateur peut supporter
- * Dépend des droits InquiryTypeRights, même pour les Admins
  * @param context
  */
 export function canSupport(context: PermissionContext): boolean {
@@ -423,35 +406,36 @@ export function canSupport(context: PermissionContext): boolean {
 }
 
 /**
- * Vérifie si l'utilisateur peut partager
- * Dépend des droits InquiryTypeRights, même pour les Admins
  * @param context
  */
 export function canShare(context: PermissionContext): boolean {
-  const appSettings = useAppSettingsStore()
+   const sessionStore = useSessionStore()
 
   if (context.isArchived || context.isDeleted) {
     return false
   }
-
-  if (context.inquiryType && !canInquiryTypePerformAction(context.inquiryType, 'shareInquiry')) {
-    return false
-  }
-
-  if (!appSettings.allowSharing) {
-    return false
-  }
+  if (sessionStore.appPermissions.allowAllAccess) {
+    return true
+   }
 
   if (context.userType === UserType.Guest) {
     return false
   }
 
-  return canModerate(context) // Le partage nécessite généralement des droits de modération
+  if (context.userType === UserType.Admin || context.userType === UserType.Moderator) {
+    return true
+  }
+
+  if (context.userType === UserType.Official) {
+    return context.isOwner
+  }
+
+  return false
 }
 
+
+
 /**
- * Vérifie si l'utilisateur peut attacher des fichiers
- * Dépend des droits InquiryTypeRights, même pour les Admins
  * @param context
  */
 export function canAttachFile(context: PermissionContext): boolean {

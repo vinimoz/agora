@@ -1,5 +1,5 @@
 <!--
-	- SPDX-FileCopyrightText: 2018 Nextcloud contributors
+	- SPDX-FileCopyrightText: 2018 Nextcloud Contributors
 	- SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
@@ -13,8 +13,9 @@ import { useSharesStore } from '../../stores/shares.ts'
 import { useSessionStore } from '../../stores/session.ts'
 import { showSuccess } from '@nextcloud/dialogs'
 import { InquiryTypesUI, StatusIcons, InquiryGeneralIcons } from '../../utils/icons.ts'
+import { NcSelect } from '@nextcloud/vue'
 
-// Constnat
+// Store initialization
 const inquiryStore = useInquiryStore()
 const sessionStore = useSessionStore()
 const sharesStore = useSharesStore()
@@ -30,16 +31,23 @@ const currentStatus = computed(
   () =>
     availableStatuses.value.find(
       (status) => status.statusKey === inquiryStore.moderationStatus
-    ) || [
-      {
-        statusKey: 'draft',
-        label: 'Draft',
-        icon: 'Draft',
-        inquiryType: inquiryStore.type,
-        order: 0,
-      },
-    ]
+    ) || {
+      statusKey: 'draft',
+      label: 'Draft',
+      icon: 'Draft',
+      inquiryType: inquiryStore.type,
+      order: 0,
+    }
 )
+
+const selectedStatus = computed({
+  get: () => statusOptions.value.find(option => option.id === selectedStatusKey.value),
+  set: (newValue) => {
+    if (newValue) {
+      selectedStatusKey.value = newValue.id
+    }
+  }
+})
 
 const selectedStatusKey = ref(currentStatus.value?.statusKey)
 
@@ -47,10 +55,12 @@ const currentStatusLabel = computed(() => currentStatus.value?.label || 'Draft')
 
 const currentStatusIcon = computed(() => StatusIcons[currentStatus.value?.icon])
 
-const onStatusChange = async () => {
+const onStatusChange = async (newStatus: string) => {
   try {
-    await inquiryStore.setModerationStatus(selectedStatusKey.value)
-    showSuccess(' Moderator status of this inquiry has been updated') // Call success Message
+   const statusId = newStatus?.id || newStatus
+
+    await inquiryStore.setModerationStatus(statusId)
+    showSuccess(t('agora', 'Moderator status of this inquiry has been updated'))
   } catch (error) {
     console.error('Failed to update status:', error)
     selectedStatusKey.value = currentStatus.value.statusKey
@@ -136,6 +146,14 @@ const timeExpirationRelative = computed(() => {
   }
   return t('agora', 'never')
 })
+
+// Options pour le NcSelect
+const statusOptions = computed(() => 
+  availableStatuses.value.map(status => ({
+    id: status.statusKey,
+    label: t('agora', status.label),
+  }))
+)
 </script>
 
 <template>
@@ -158,15 +176,12 @@ const timeExpirationRelative = computed(() => {
       <div class="status-badge">
         <span class="status-prefix">{{ t('agora', 'Moderation status is') }}</span>
         <template v-if="sessionStore.currentUser.isModerator">
-          <select v-model="selectedStatusKey" @change="onStatusChange">
-            <option
-              v-for="status in availableStatuses"
-              :key="status.statusKey"
-              :value="status.statusKey"
-            >
-              {{ t('agora', status.label) }}
-            </option>
-          </select>
+          <NcSelect
+            v-model="selectedStatus"
+            :options="statusOptions"
+            :clearable="false"
+            @update:model-value="onStatusChange"
+          />
         </template>
         <template v-else>
           <Component :is="currentStatusIcon" :size="20" />

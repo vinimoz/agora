@@ -1,6 +1,6 @@
 <!--
-	- SPDX-FileCopyrightText: 2018 Nextcloud contributors
-	- SPDX-License-Identifier: AGPL-3.0-or-later
+  - SPDX-FileCopyrightText: 2018 Nextcloud contributors
+  - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
 import { ref, watch, computed, onMounted, onUnmounted, toRaw } from 'vue'
@@ -37,7 +37,7 @@ import {
   ContentType,
 } from '../../utils/permissions.ts'
 
-// The constant store declaration
+// Store declarations
 const sessionStore = useSessionStore()
 const commentsStore = useCommentsStore()
 const supportsStore = useSupportsStore()
@@ -46,17 +46,17 @@ const inquiriesStore = useInquiriesStore()
 const router = useRouter()
 
 const context = computed(() => createPermissionContextForContent(
-    ContentType.Inquiry,
-    inquiryStore.owner.id,
-    inquiryStore.configuration.access === 'public',
-    inquiryStore.status.isLocked,
-    inquiryStore.status.isExpired,
-    inquiryStore.status.deletionDate > 0,
-    inquiryStore.status.isArchived,
-    inquiryStore.inquiryGroups.length > 0,
-    inquiryStore.inquiryGroups,
-    inquiryStore.type
-  ))
+  ContentType.Inquiry,
+  inquiryStore.owner.id,
+  inquiryStore.configuration.access === 'public',
+  inquiryStore.status.isLocked,
+  inquiryStore.status.isExpired,
+  inquiryStore.status.deletionDate > 0,
+  inquiryStore.status.isArchived,
+  inquiryStore.inquiryGroups.length > 0,
+  inquiryStore.inquiryGroups,
+  inquiryStore.type
+))
 
 const titleLabel = ref('')
 
@@ -71,8 +71,7 @@ const hasSupported = computed(() => inquiryStore.currentUserStatus.hasSupported)
 
 const isReadonlyDescription = ref(true)
 
-// All regarding Location and category
-// To display in case of read only category
+// Get hierarchy path for location and category display
 function getHierarchyPath(items, targetId) {
   const itemMap = {}
 
@@ -98,11 +97,11 @@ function getHierarchyPath(items, targetId) {
   return buildPath(itemMap[targetId])
 }
 
+// Watchers for location and category
 watch(
   selectedLocation,
   (newVal) => {
     const rawValue = toRaw(newVal)
-
     if (rawValue) {
       inquiryStore.locationId = rawValue.value
     }
@@ -114,7 +113,6 @@ watch(
   selectedCategory,
   (newVal) => {
     const rawValue = toRaw(newVal)
-
     if (rawValue) {
       inquiryStore.categoryId = rawValue.value
     }
@@ -122,7 +120,7 @@ watch(
   { deep: true }
 )
 
-// BUILD AND DISPLAY CORRECT LOCATION AND CATEGORY
+// Build hierarchy for location and category dropdowns
 function buildHierarchy(list: BaseEntry[], parentId = 0, depth = 0): BaseEntry[] {
   if (!Array.isArray(list)) return []
   return list
@@ -140,7 +138,6 @@ function buildHierarchy(list: BaseEntry[], parentId = 0, depth = 0): BaseEntry[]
 
 const hierarchicalLocation = computed(() => {
   if (!Array.isArray(sessionStore.appSettings.locationTab)) return []
-
   return buildHierarchy(sessionStore.appSettings.locationTab).map((item) => ({
     value: item.id,
     label: `${'— '.repeat(item.depth ?? 0)}${item.name ?? '[no name]'}`,
@@ -148,11 +145,20 @@ const hierarchicalLocation = computed(() => {
   }))
 })
 
+const hierarchicalCategory = computed(() => {
+  if (!Array.isArray(sessionStore.appSettings.categoryTab)) return []
+  return buildHierarchy(sessionStore.appSettings.categoryTab).map((item) => ({
+    value: item.id,
+    label: `${'— '.repeat(item.depth ?? 0)}${item.name ?? '[no name]'}`,
+    original: item,
+  }))
+})
+
+// Initialize location and category
 watch(
   hierarchicalLocation,
   (locations) => {
     if (!locations.length) return
-
     if (inquiryStore.locationId === 0) {
       selectedLocation.value = locations[0]
       inquiryStore.locationId = locations[0].value
@@ -165,21 +171,10 @@ watch(
   { immediate: true }
 )
 
-const hierarchicalCategory = computed(() => {
-  if (!Array.isArray(sessionStore.appSettings.categoryTab)) return []
-
-  return buildHierarchy(sessionStore.appSettings.categoryTab).map((item) => ({
-    value: item.id,
-    label: `${'— '.repeat(item.depth ?? 0)}${item.name ?? '[no name]'}`,
-    original: item,
-  }))
-})
-
 watch(
   hierarchicalCategory,
   (categories) => {
     if (!categories.length) return
-
     if (inquiryStore.categoryId === 0) {
       selectedCategory.value = categories[0]
       inquiryStore.categoryId = categories[0].value
@@ -194,11 +189,8 @@ watch(
 
 const isReadonly = computed(() => {
   const user = sessionStore.currentUser
-
   if (!user) return true
-  const ronly = !canEdit(context.value)
-
-  return ronly
+  return !canEdit(context.value)
 })
 
 watch(
@@ -213,7 +205,7 @@ watch(
   { immediate: true }
 )
 
-// Toggle thumb
+// Toggle support
 const onToggleSupport = async () => {
   const supported = supportsStore.toggleSupport(
     inquiryStore.id,
@@ -222,13 +214,14 @@ const onToggleSupport = async () => {
     inquiriesStore
   )
   if (inquiryStore.currentUserStatus.hasSupported) {
-    showSuccess(t('agora', 'Thank for your support !'), { timeout: 2000 })
+    showSuccess(t('agora', 'Thank you for your support!'), { timeout: 2000 })
   } else {
-    showSuccess(t('agora', 'Inquiry support removed !'), { timeout: 2000 })
+    showSuccess(t('agora', 'Support removed!'), { timeout: 2000 })
   }
   return supported
 }
 
+// Event subscriptions
 onMounted(() => {
   subscribe(Event.UpdateComments, () => commentsStore.load())
   isLoaded.value = true
@@ -239,12 +232,12 @@ onUnmounted(() => {
   unsubscribe(Event.UpdateComments, () => commentsStore.load())
 })
 
-/// Toggle the update of the inquiry
+// Save inquiry changes
 const saveChanges = async () => {
   if (isSaving.value) return
 
   if (!inquiryStore.title || inquiryStore.title.trim() === '') {
-    showError(t('agora', 'Title mandatory'), { timeout: 2000 })
+    showError(t('agora', 'Title is mandatory'), { timeout: 2000 })
     return
   }
 
@@ -262,13 +255,11 @@ const saveChanges = async () => {
     })
     showSuccess(t('agora', 'The inquiry has been saved'), { timeout: 2000 })
   } catch {
-    showError(t('agora', 'Inquiry error during save !'), { timeout: 2000 })
+    showError(t('agora', 'Error saving inquiry!'), { timeout: 2000 })
   } finally {
     isSaving.value = false
   }
 }
-
-// Title validation
 
 // Determine if category/location should be shown as select or label
 const showCategoryAsLabel = computed(() => {
@@ -283,12 +274,13 @@ const showLocationAsLabel = computed(() => {
   return false
 })
 
+// Create child inquiry
 const createChildInquiry = async (type: InquiryTypeValues): Promise<void> => {
   if (isSaving.value) return
 
   titleLabel.value = ``
   const confirmed = await confirmAction(
-    `Do you really want to reply to this inquiry with a ${type} ?`
+    `Do you really want to reply to this inquiry with a ${type}?`
   )
   if (!confirmed) return
 
@@ -316,7 +308,7 @@ const createChildInquiry = async (type: InquiryTypeValues): Promise<void> => {
     }
   } catch (error) {
     console.error('Create child inquiry error:', error)
-    showError(t('agora', error instanceof Error ? error.message : 'Inquiry error during save'), {
+    showError(t('agora', error instanceof Error ? error.message : 'Error saving inquiry'), {
       timeout: 2000,
     })
   } finally {
@@ -345,85 +337,116 @@ const showSaveButton = computed(() => !isReadonlyDescription.value)
 </script>
 
 <template>
-  <div v-if="isLoaded" class="finalize-form-container">
-    <div class="action-buttons">
-      <!-- Save button moved to top right -->
-      <NcButton
-        v-if="showSaveButton"
-        :disabled="isSaving"
-        type="button"
-        color="primary"
-        class="save-button"
-        @click.prevent="saveChanges"
-      >
-        {{ t('agora', 'Save') }}
-      </NcButton>
+  <div v-if="isLoaded" class="inquiry-edit-view">
+    <!-- Action buttons toolbar - ALL ON LEFT -->
+    <div class="action-toolbar">
+      <div class="left-actions">
+        <!-- Action buttons (GRIEVANCE, SUGGESTION, etc.) -->
+        <div v-if="showActionsMenu" class="action-buttons">
+          <template v-if="inquiryStore.type === InquiryTypeValues.PROJECT">
+            <NcButton
+              type="secondary"
+              :title="t('agora', 'Create Proposal')"
+              @click="createChildInquiry(InquiryTypeValues.PROPOSAL)"
+            >
+              <template #icon>
+                <component :is="InquiryTypesUI[InquiryTypeValues.PROPOSAL].icon" class="action-icon" />
+              </template>
+              {{ t('agora', 'Proposal') }}
+            </NcButton>
+            <NcButton
+              type="secondary"
+              :title="t('agora', 'Create Grievance')"
+              @click="createChildInquiry(InquiryTypeValues.GRIEVANCE)"
+            >
+              <template #icon>
+                <component :is="InquiryTypesUI[InquiryTypeValues.GRIEVANCE].icon" class="action-icon" />
+              </template>
+              {{ t('agora', 'Grievance') }}
+            </NcButton>
+          </template>
 
-      <NcButton
-        v-if="showResponseButton"
-        class="response-button"
-        @click="createChildInquiry(InquiryTypeValues.OFFICIAL)"
-      >
-        {{ t('agora', 'Official') }}
-      </NcButton>
-      <div v-if="showActionsMenu">
-        <template v-if="inquiryStore.type === InquiryTypeValues.PROJECT">
-          <button
-            class="icon-button"
-            :title="t('agora', 'Create Proposal')"
-            @click="createChildInquiry(InquiryTypeValues.PROPOSAL)"
-          >
-            <component :is="InquiryTypesUI[InquiryTypeValues.PROPOSAL].icon" class="icon" />
-          </button>
-          <button
-            class="icon-button"
-            :title="t('agora', 'Create Grievance')"
-            @click="createChildInquiry(InquiryTypeValues.GRIEVANCE)"
-          >
-            <component :is="InquiryTypesUI[InquiryTypeValues.GRIEVANCE].icon" class="icon" />
-          </button>
-        </template>
+          <template v-else-if="inquiryStore.type === InquiryTypeValues.PROPOSAL">
+            <NcButton
+              type="secondary"
+              :title="t('agora', 'Create Suggestion')"
+              @click="createChildInquiry(InquiryTypeValues.SUGGESTION)"
+            >
+              <template #icon>
+                <component :is="InquiryTypesUI[InquiryTypeValues.SUGGESTION].icon" class="action-icon" />
+              </template>
+              {{ t('agora', 'Suggestion') }}
+            </NcButton>
+            <NcButton
+              type="secondary"
+              :title="t('agora', 'Create Grievance')"
+              @click="createChildInquiry(InquiryTypeValues.GRIEVANCE)"
+            >
+              <template #icon>
+                <component :is="InquiryTypesUI[InquiryTypeValues.GRIEVANCE].icon" class="action-icon" />
+              </template>
+              {{ t('agora', 'Grievance') }}
+            </NcButton>
+          </template>
 
-        <template v-else-if="inquiryStore.type === InquiryTypeValues.PROPOSAL">
-          <button
-            class="icon-button"
-            :title="t('agora', 'Create Suggestion')"
-            @click="createChildInquiry(InquiryTypeValues.SUGGESTION)"
-          >
-            <component :is="InquiryTypesUI[InquiryTypeValues.SUGGESTION].icon" class="icon" />
-          </button>
-          <button
-            class="icon-button"
-            :title="t('agora', 'Create Grievance')"
-            @click="createChildInquiry(InquiryTypeValues.GRIEVANCE)"
-          >
-            <component :is="InquiryTypesUI[InquiryTypeValues.GRIEVANCE].icon" class="icon" />
-          </button>
-        </template>
+          <template v-else-if="inquiryStore.type === InquiryTypeValues.GRIEVANCE">
+            <NcButton
+              type="secondary"
+              :title="t('agora', 'Create Suggestion')"
+              @click="createChildInquiry(InquiryTypeValues.SUGGESTION)"
+            >
+              <template #icon>
+                <component :is="InquiryTypesUI[InquiryTypeValues.SUGGESTION].icon" class="action-icon" />
+              </template>
+              {{ t('agora', 'Suggestion') }}
+            </NcButton>
+          </template>
+        </div>
 
-        <template v-else-if="inquiryStore.type === InquiryTypeValues.GRIEVANCE">
-          <button
-            class="icon-button"
-            :title="t('agora', 'Create Suggestion')"
-            @click="createChildInquiry(InquiryTypeValues.SUGGESTION)"
+        <!-- Save and Response buttons -->
+        <div class="primary-actions">
+          <NcButton
+            v-if="showSaveButton"
+            :disabled="isSaving"
+            type="primary"
+            class="save-button"
+            @click.prevent="saveChanges"
           >
-            <component :is="InquiryTypesUI[InquiryTypeValues.SUGGESTION].icon" class="icon" />
-          </button>
-        </template>
+            <template #icon>
+              <span v-if="isSaving" class="loading-icon"></span>
+            </template>
+            {{ t('agora', 'Save') }}
+          </NcButton>
+
+          <NcButton
+            v-if="showResponseButton"
+            type="primary"
+            class="response-button"
+            @click="createChildInquiry(InquiryTypeValues.OFFICIAL)"
+          >
+            {{ t('agora', 'Official Response') }}
+          </NcButton>
+        </div>
       </div>
-      <div
-        v-if="canViewToggle(context)"
-        :style="{ display: 'inline-block', position: 'relative', marginLeft: 'auto' }"
-      >
-        <InquiryItemActions :key="`actions-${inquiryStore.id}`" :inquiry="inquiryStore" />
+
+      <!-- Right: Item actions toggle -->
+      <div class="right-actions">
+        <div
+          v-if="canViewToggle(context)"
+          class="item-actions"
+        >
+          <InquiryItemActions :key="`actions-${inquiryStore.id}`" :inquiry="inquiryStore" />
+        </div>
       </div>
     </div>
+
+    <!-- Inquiry form -->
     <form class="inquiry-form">
-      <!-- BLOCK: Basic Information -->
+      <!-- Basic Information Section -->
       <div class="form-section">
         <div class="section-header">
           <div class="title-section">
-            <span class="section-title">{{ t('agora', 'Title') }} :</span>
+            <span class="section-title">{{ t('agora', 'Title') }}:</span>
             <div v-if="isReadonly" class="title-content">
               <span class="type-field inline">{{ inquiryStore.title }}</span>
             </div>
@@ -434,6 +457,8 @@ const showSaveButton = computed(() => !isReadonlyDescription.value)
                 :disabled="isReadonly"
                 :readonly="isReadonly"
                 class="form-input"
+                label="Title"
+                :placeholder="t('agora', 'Enter inquiry title')"
               />
             </div>
           </div>
@@ -452,13 +477,14 @@ const showSaveButton = computed(() => !isReadonlyDescription.value)
 
         <div class="form-row double-columns">
           <div class="form-field">
-            <label class="type-label">{{ t('agora', 'Location') }} :</label>
+            <label class="type-label">{{ t('agora', 'Location') }}:</label>
             <NcSelect
               v-if="!showLocationAsLabel"
               v-model="selectedLocation"
               :options="hierarchicalLocation"
               :clearable="false"
-              class="select-field location-select narrow-select"
+              :label-outside="true"
+              class="select-field location-select"
               required
             />
             <div v-else class="readonly-value">
@@ -469,13 +495,14 @@ const showSaveButton = computed(() => !isReadonlyDescription.value)
             </div>
           </div>
           <div class="form-field">
-            <label class="type-label">{{ t('agora', 'Category') }} :</label>
+            <label class="type-label">{{ t('agora', 'Category') }}:</label>
             <NcSelect
               v-if="!showCategoryAsLabel"
               v-model="selectedCategory"
               :options="hierarchicalCategory"
               :clearable="false"
-              class="select-field category-select narrow-select"
+              :label-outside="true"
+              class="select-field category-select"
               required
             />
             <div v-else class="readonly-value">
@@ -488,53 +515,42 @@ const showSaveButton = computed(() => !isReadonlyDescription.value)
         </div>
       </div>
 
-      <!-- BLOCK: Editor/Description -->
+      <!-- Description Section -->
       <div
-        v-if="
-          sessionStore.appSettings.inquiryTypeRights[inquiryStore.type].editorType === 'wysiwyg'
-        "
+        v-if="sessionStore.appSettings.inquiryTypeRights[inquiryStore.type].editorType === 'wysiwyg'"
+        class="form-section"
       >
-        <div class="form-section">
-          <div class="form-container" style="height: 500px">
-            <span class="section-title">{{ t('agora', 'Detailed Description') }}</span>
-            <InquiryEditor v-model="inquiryStore.description" :readonly="isReadonlyDescription" />
-          </div>
+        <div class="form-container">
+          <span class="section-title">{{ t('agora', 'Detailed Description') }}</span>
+          <InquiryEditor v-model="inquiryStore.description" :readonly="isReadonlyDescription" />
         </div>
       </div>
 
       <div
-        v-else-if="
-          sessionStore.appSettings.inquiryTypeRights[inquiryStore.type].editorType === 'texteditor'
-        "
+        v-else-if="sessionStore.appSettings.inquiryTypeRights[inquiryStore.type].editorType === 'texteditor'"
+        class="form-section"
       >
-        <div class="form-section">
-          <div class="form-container">
-            <span class="section-title">{{ t('agora', 'Detailed Description') }}</span>
-            <NcRichText
-              v-model="inquiryStore.description"
-              :autolink="autolink"
-              :arguments="userMentions"
-              :use-markdown="useMarkdown"
-              :use-extended-markdown="useExtendedMarkdown"
-              :disabled="isReadonlyDescription"
-              class="w-full"
-              style="min-height: 400px; max-height: 500px"
-            />
-          </div>
+        <div class="form-container">
+          <span class="section-title">{{ t('agora', 'Detailed Description') }}</span>
+          <NcRichText
+            v-model="inquiryStore.description"
+            :autolink="true"
+            :use-markdown="true"
+            :disabled="isReadonlyDescription"
+            class="rich-text-editor"
+          />
         </div>
       </div>
 
-      <div v-else>
-        <div class="form-section">
-          <div class="form-container" style="height: 500px">
-            <span class="section-title">{{ t('agora', 'Detailed Description') }}</span>
-            <NcTextArea
-              v-model="inquiryStore.description"
-              :disabled="isReadonlyDescription"
-              class="w-full"
-              style="min-height: 200px; max-height: 300px"
-            />
-          </div>
+      <div v-else class="form-section">
+        <div class="form-container">
+          <span class="section-title">{{ t('agora', 'Detailed Description') }}</span>
+          <NcTextArea
+            v-model="inquiryStore.description"
+            :disabled="isReadonlyDescription"
+            class="text-area-editor"
+            :rows="8"
+          />
         </div>
       </div>
     </form>
@@ -542,106 +558,75 @@ const showSaveButton = computed(() => !isReadonlyDescription.value)
 </template>
 
 <style scoped lang="scss">
-.finalize-form-container {
+.inquiry-edit-view {
   padding: 10px;
   background: var(--color-main-background);
   border-radius: var(--border-radius-large);
 }
 
-.form-container {
-  flex-grow: 1;
-  min-height: 200px;
-  border: 1px solid #e2e8f0;
-  border-radius: 0.5rem;
-  background: var(--color-main-background);
-  padding: 1rem;
-  overflow: hidden;
-}
-
-.form-section.expanded .form-container {
-  height: 500px;
-}
-
-.form-section:not(.expanded) .form-container {
-  height: 300px;
-}
-
-.inline {
-  display: inline;
-  margin: 0;
-  padding: 0;
-}
-
-.top-block {
-  display: inline-block;
+/* Action toolbar styles - ALL LEFT ALIGNED */
+.action-toolbar {
+  display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
-  flex-wrap: wrap;
   gap: 1rem;
+  width: 100%;
+  margin-bottom: 0.5rem; 
+  padding: 1rem;
   background: var(--color-background-dark);
   border-radius: var(--border-radius-large);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.date-info {
+.left-actions {
   display: flex;
-  gap: 1.5rem;
-  font-size: 0.85rem;
-}
-
-.date-item {
-  display: flex;
+  gap: 1rem;
   align-items: center;
+  flex: 1;
+  justify-content: flex-start;
 }
 
-.date-label {
-  color: var(--color-primary);
-  font-weight: 500;
-  margin-right: 4px;
-}
-
-.date-value {
-  color: var(--color-text-lighter);
+.right-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex: 0;
+  justify-content: flex-end;
 }
 
 .action-buttons {
   display: flex;
   gap: 0.5rem;
   align-items: center;
-  justify-content: flex-start;
-
-  > :last-child {
-    margin-left: auto;
-  }
 }
 
-.save-button {
-  background-color: var(--color-primary);
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: var(--border-radius);
-  font-weight: 500;
+.primary-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
 }
 
+.action-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.save-button,
 .response-button {
-  background-color: var(--color-primary);
-  border-radius: var(--border-radius);
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  font-weight: 500;
+  min-width: 120px;
+  white-space: nowrap;
 }
 
-.actions-menu {
-  margin-left: 10px;
+.item-actions {
+  display: flex;
+  align-items: center;
 }
 
+/* Form styles */
 .inquiry-form {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1rem; 
 }
 
 .form-section {
@@ -652,36 +637,17 @@ const showSaveButton = computed(() => !isReadonlyDescription.value)
   background: var(--color-background-dark);
   border-radius: var(--border-radius-large);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  margin-top: 0;
 }
-.title-section {
-  color: var(--color-primary);
-  display: flex;
-  font-size: 1rem;
-  font-weight: 800;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+
+.form-container {
   flex-grow: 1;
-}
-
-.title-content {
-  flex-grow: 1;
-
-  .form-input {
-    width: 100%;
-    max-width: 500px;
-  }
-}
-
-.section-title {
-  color: var(--color-primary);
-  display: flex;
-  font-size: 1rem;
-  font-weight: 800;
-  display: inline-block;
-  margin: 0;
-  padding: 0;
-  flex-wrap: wrap;
+  min-height: 300px;
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  background: var(--color-main-background);
+  padding: 1rem;
+  overflow: hidden;
 }
 
 .section-header {
@@ -693,22 +659,31 @@ const showSaveButton = computed(() => !isReadonlyDescription.value)
   gap: 1rem;
 }
 
-.type-display {
+.title-section {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 0.5rem;
+  flex-grow: 1;
+  color: var(--color-primary);
+  font-size: 1rem;
+  font-weight: 800;
 }
 
-.type-icon {
-  width: 24px;
-  height: 24px;
-  color: var(--color-primary);
+.title-content {
+  flex-grow: 1;
+  
+  .form-input {
+    width: 100%;
+    max-width: 500px;
+  }
 }
 
-.type-label {
-  font-weight: 600;
+.section-title {
   color: var(--color-primary);
-  text-transform: capitalize;
+  font-size: 1rem;
+  font-weight: 800;
+  margin: 0;
+  padding: 0;
 }
 
 .counters {
@@ -721,7 +696,7 @@ const showSaveButton = computed(() => !isReadonlyDescription.value)
   align-items: center;
   gap: 0.5rem;
   cursor: pointer;
-
+  
   span {
     font-weight: bold;
   }
@@ -731,13 +706,13 @@ const showSaveButton = computed(() => !isReadonlyDescription.value)
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-
+  
   &.double-columns {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 1rem;
-
-    @media (max-width: 600px) {
+    
+    @media (max-width: 768px) {
       grid-template-columns: 1fr;
     }
   }
@@ -747,114 +722,110 @@ const showSaveButton = computed(() => !isReadonlyDescription.value)
   width: 100%;
 }
 
-.form-input {
-  width: 500px;
+.type-label {
+  font-weight: 600;
+  color: var(--color-primary);
+  text-transform: capitalize;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.select-field {
+  width: 100%;
+  
+  &.location-select,
+  &.category-select {
+    max-width: 300px;
+  }
 }
 
 .readonly-value {
-  padding: 8px;
+  padding: 8px 12px;
   background: var(--color-background-darker);
   border-radius: var(--border-radius);
   font-size: 0.9rem;
+  color: var(--color-text-lighter);
 }
 
-/* Select field adjustments */
-.select-field {
+.rich-text-editor,
+.text-area-editor {
   width: 100%;
+}
 
-  &.narrow-select {
-    max-width: 200px;
+.inline {
+  display: inline;
+  margin: 0;
+  padding: 0;
+}
+
+/* Loading animation */
+.loading-icon {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid transparent;
+  border-top: 2px solid currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-right: 8px;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
   }
 }
 
-.link-section {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
-
-.link-button {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  min-width: max-content;
-  padding: 8px 12px;
-}
-
-.html-content {
-  padding: 16px;
-  background: var(--color-background-darker);
-  border-radius: var(--border-radius);
-  border: 1px solid var(--color-border);
-}
-
-.debate-integration {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
-
-.integration-button {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 8px 12px;
-}
-
-@media (max-width: 600px) {
-  .top-block {
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .action-toolbar {
     flex-direction: column;
-    align-items: stretch;
+    gap: 1rem;
+    padding: 1rem;
+    margin-bottom: 0.5rem; 
   }
-
-  .date-info {
+  
+  .left-actions {
     flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .action-buttons {
-    justify-content: flex-end;
+    gap: 1rem;
     width: 100%;
-    margin-top: 10px;
   }
-
+  
+  .action-buttons,
+  .primary-actions {
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+  }
+  
+  .right-actions {
+    width: 100%;
+    justify-content: center;
+  }
+  
   .section-header {
     flex-direction: column;
     align-items: flex-start;
   }
-
+  
   .counters {
     width: 100%;
     justify-content: space-between;
   }
-
-  .link-section,
-  .debate-integration {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .link-button,
-  .integration-button {
-    width: 100%;
-  }
-
-  .select-field.narrow-select {
+  
+  .select-field.location-select,
+  .select-field.category-select {
     max-width: 100%;
   }
-  .loading-icon {
-    display: inline-block;
-    animation: spin 1s linear infinite;
-    margin-right: 8px;
-  }
+}
 
-  @keyframes spin {
-    from {
-      transform: rotate(0deg);
-    }
-    to {
-      transform: rotate(360deg);
-    }
-  }
+/* Hide input labels */
+.input-div :deep(.nc-input-field__label),
+.input-div :deep(label) {
+  display: none !important;
 }
 </style>
+
