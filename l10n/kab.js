@@ -24,6 +24,7 @@ OC.L10N.register(
     "Category" : "Taggayt",
     "Projects" : "Isenfaren",
     "All categories" : "Akk taggayin",
+    "Location:" : "Adig:",
     "Type" : "Anaw",
     "Comments" : "Iwenniten",
     "Back" : "Uɣal",

@@ -51,6 +51,8 @@ OC.L10N.register(
     "Comments" : "Каментарыі",
     "Archived" : "Архіваванае",
     "never" : "ніколі",
+    "Created {dateRelative}" : "Створана {dateRelative}",
+    "Closing: {dateRelative}" : "Закрываецца: {dateRelative}",
     "Archived {relativeTime}" : "Архівавана {relativeTime}",
     "Back" : "Назад",
     "Create new group" : "Стварыць новую групу",
