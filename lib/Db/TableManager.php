@@ -11,11 +11,13 @@ namespace OCA\Agora\Db;
 use Doctrine\DBAL\Types\Type;
 use Exception;
 use OCA\Agora\AppConstants;
+use OCA\Agora\Db\Option;
 use OCA\Agora\Db\OptionMapper;
 use OCA\Agora\Db\Inquiry;
 use OCA\Agora\Db\InquiryGroup;
 use OCA\Agora\Db\InquiryMapper;
 use OCA\Agora\Db\Share;
+use OCA\Agora\Db\Support;
 use OCA\Agora\Db\SupportMapper;
 use OCA\Agora\Command\Db\InitDbDefault;
 use OCA\Agora\Db\Watch;
@@ -916,6 +918,125 @@ public function removeObsoleteColumns(): array {
             ]);
             $messages[] = 'Updated ' . $updated . ' inquiry access value';
 
+        }
+
+        return $messages;
+    }
+
+    /**
+     * Tables containing user-created content
+     */
+    private const USER_CONTENT_TABLES = [
+        Inquiry::TABLE,
+        Option::TABLE,
+        InquiryGroup::TABLE,
+        InquiryGroup::RELATION_TABLE,
+        Support::TABLE,
+        'agora_comments',
+        Share::TABLE,
+        'agora_attachments',
+        'agora_notif',
+        'agora_quorums',
+        'agora_inq_misc',
+        'agora_opt_misc',
+        'agora_inq_group_misc',
+        'agora_inq_links',
+    ];
+
+    /**
+     * Tables containing configuration/schema data (pre-installed)
+     */
+    private const CONFIGURATION_TABLES = [
+        'agora_category',
+        'agora_location',
+        'agora_inq_type',
+        'agora_inq_families',
+        'agora_inq_status',
+        'agora_inq_option_type',
+        'agora_inq_group_type',
+    ];
+
+    /**
+     * Tables containing support/session data
+     */
+    private const SUPPORT_TABLES = [
+        'agora_log',
+        'agora_preferences',
+        Watch::TABLE,
+    ];
+
+    /**
+     * Clean instance data by category
+     *
+     * @param string $category One of: 'user_content', 'configuration', 'support', 'all'
+     * @return string[] Messages as array
+     */
+    public function cleanInstanceData(string $category): array {
+        $messages = [];
+
+        $tables = match ($category) {
+            'user_content' => self::USER_CONTENT_TABLES,
+            'configuration' => self::CONFIGURATION_TABLES,
+            'support' => self::SUPPORT_TABLES,
+            'all' => array_merge(
+                self::USER_CONTENT_TABLES,
+                self::CONFIGURATION_TABLES,
+                self::SUPPORT_TABLES
+            ),
+            default => [],
+        };
+
+        if (empty($tables)) {
+            $messages[] = 'Unknown category: ' . $category;
+            return $messages;
+        }
+
+        // Disable foreign key checks to allow truncation in any order
+        $this->connection->executeStatement('SET FOREIGN_KEY_CHECKS = 0');
+
+        try {
+            foreach ($tables as $tableName) {
+                $messages = array_merge($messages, $this->truncateTable($tableName));
+            }
+        } finally {
+            // Re-enable foreign key checks
+            $this->connection->executeStatement('SET FOREIGN_KEY_CHECKS = 1');
+        }
+
+        return $messages;
+    }
+
+    /**
+     * Truncate a single table
+     *
+     * @param string $tableName The table name (without prefix)
+     * @return string[] Messages as array
+     */
+    private function truncateTable(string $tableName): array {
+        $messages = [];
+
+        if (!$this->connection->tableExists($tableName)) {
+            $messages[] = 'Table ' . $this->dbPrefix . $tableName . ' does not exist, skipping';
+            return $messages;
+        }
+
+        try {
+            $this->connection->executeStatement("TRUNCATE TABLE `{$this->dbPrefix}{$tableName}`");
+            $messages[] = 'Truncated ' . $this->dbPrefix . $tableName;
+            $this->logger->info('Truncated table {table}', ['table' => $this->dbPrefix . $tableName]);
+        } catch (\Exception $e) {
+            // Fallback: try DELETE FROM if TRUNCATE fails
+            try {
+                $this->connection->executeStatement("DELETE FROM `{$this->dbPrefix}{$tableName}`");
+                $messages[] = 'Cleared ' . $this->dbPrefix . $tableName;
+                $this->logger->info('Cleared table {table}', ['table' => $this->dbPrefix . $tableName]);
+            } catch (\Exception $e2) {
+                $messages[] = 'Failed to clean ' . $this->dbPrefix . $tableName . ': ' . $e2->getMessage();
+                $this->logger->error('Failed to clean table {table}: {error}', [
+                    'table' => $this->dbPrefix . $tableName,
+                    'error' => $e2->getMessage()
+                ]);
+            }
         }
 
         return $messages;

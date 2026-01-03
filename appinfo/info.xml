@@ -74,6 +74,7 @@
 		<command>OCA\Agora\Command\Share\Add</command>
 		<command>OCA\Agora\Command\Share\Remove</command>
 		<command>OCA\Agora\Command\Db\Purge</command>
+		<command>OCA\Agora\Command\Db\CleanInstance</command>
 		<command>OCA\Agora\Command\Db\RemoveIndices</command>
 		<command>OCA\Agora\Command\Db\Rebuild</command>
 		<command>OCA\Agora\Command\Db\CreateIndices</command>
