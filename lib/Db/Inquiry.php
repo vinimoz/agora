@@ -47,8 +47,8 @@ use OCP\IURLGenerator;
  * @method    void setInquiryStatus(string $value)
  * @method    int getAllowComment()
  * @method    void setAllowComment(int $value)
- * @method    int getAllowSupport()
- * @method    void setAllowSupport(int $value)
+ * @method    string getSupportFeature()
+ * @method    void setSupportFeature(string $value)
  * @method    int getQuorum()
  * @method    void setQuorum(int $value)
  * @method    string getShowResults()
@@ -157,7 +157,7 @@ class Inquiry extends EntityWithUser implements JsonSerializable
     protected string $moderationStatus = self::DEFAULT_STATUS_DRAFT;
     protected string $inquiryStatus = self::DEFAULT_STATUS_DRAFT;
     protected int $allowComment = 0;
-    protected int $allowSupport = 0;
+    protected string $supportFeature = 'none';
     protected bool $hasSupported = false; 
     protected ?int $supportValue = null; 
     protected string $supportMode = 'simple'; 
@@ -237,7 +237,7 @@ class Inquiry extends EntityWithUser implements JsonSerializable
         'access' => $this->getAccess(),
         'showResults' => $this->getShowResults(),
         'allowComment' => $this->getAllowComment(),
-        'allowSupport' => $this->getAllowSupport(),
+        'supportFeature' => $this->getSupportFeature(),
         'archived' => $this->getArchived(),
         'deleted' => $this->getDeleted(),
         'lastInteraction' => $this->getLastInteraction(),
@@ -302,6 +302,7 @@ class Inquiry extends EntityWithUser implements JsonSerializable
         'expire' => $this->getExpire(),
         'forceConfidentialComments' => $this->getForceConfidentialComments(),
         'allowComment' => boolval($this->getAllowComment()),
+        'supportFeature' => $this->getSupportFeature(),
         'showResults' => $this->getShowResults(),
         'supportMode' => $this->getSupportMode(),
         ];
@@ -522,7 +523,7 @@ class Inquiry extends EntityWithUser implements JsonSerializable
     {
         return match ($permission) {
             self::PERMISSION_COMMENT_ADD => $this->getAllowCommenting(),
-            self::PERMISSION_SUPPORT_ADD => $this->getAllowSupporting(),
+            self::PERMISSION_SUPPORT_ADD => $this->getSupportFeaturing(),
             self::PERMISSION_COMMENT_DELETE => $this->getAllowDeleteComment(),
             self::PERMISSION_SUPPORT_DELETE => $this->getAllowDeleteSupport(),
             self::PERMISSION_INQUIRY_ADD => $this->getAllowAddInquiry(),
@@ -537,7 +538,7 @@ class Inquiry extends EntityWithUser implements JsonSerializable
             self::PERMISSION_INQUIRY_CHANGE_OWNER => $this->getAllowChangeOwner(),
             self::PERMISSION_INQUIRY_SUBSCRIBE => $this->getAllowSubscribeToInquiry(),
             self::PERMISSION_INQUIRY_RESULTS_VIEW => $this->getAllowShowResults(),
-            self::PERMISSION_SUPPORT_EDIT => $this->getAllowSupport(),
+            self::PERMISSION_SUPPORT_EDIT => $this->getSupportFeaturing(),
             self::PERMISSION_SUPPORT_FOREIGN_CHANGE => $this->getAllowChangeForeignSupports(),
             self::PERMISSION_SHARE_ADD => $this->systemSettings->getShareCreateAllowed(),
             self::PERMISSION_SHARE_ADD_EXTERNAL => $this->systemSettings->getExternalShareCreationAllowed(),
@@ -747,13 +748,14 @@ class Inquiry extends EntityWithUser implements JsonSerializable
         return (bool)$this->getAllowComment();
     }
 
-    private function getAllowSupporting(): bool
+    private function getSupportFeaturing(): bool
     {
         if (!$this->getAllowAccessInquiry()) {
-            return false;
+            return 'false';
         }
 
-        return (bool)$this->getAllowSupport();
+     if ($this->getSupportFeature()!=='none') return false; 
+    return true;
     }
 
     private function getAllowDeleteSupport(): bool
@@ -776,17 +778,18 @@ class Inquiry extends EntityWithUser implements JsonSerializable
         return $this->getAllowEditInquiry() && $this->getUser()->getIsUnrestrictedInquiryOwner();
     }
 
-    private function getAllowSupport(): bool
+    private function getSupportFeature(): string
     {
         if (!$this->getAllowAccessInquiry()) {
-            return false;
+            return 'none';
         }
 
         if ($this->userSession->getShare()->getType() === 'public') {
-            return false;
+            return 'none';
         }
 
-        return !$this->getExpired();
+      if (!$this->getExpired()) return 'binary';
+      else return 'none';
     }
 
     private function getAllowSubscribeToInquiry(): bool

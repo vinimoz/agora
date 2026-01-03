@@ -47,8 +47,8 @@ use OCP\IURLGenerator;
  * @method    void setStatus(string $value)
  * @method    int getAllowComment()
  * @method    void setAllowComment(int $value)
- * @method    int getAllowSupport()
- * @method    void setAllowSupport(int $value)
+ * @method    int getSupportFeature()
+ * @method    void setSupportFeature(int $value)
  * @method    int getSortOrder()
  * @method    void setSortOrder(int $value)
  *
@@ -188,7 +188,7 @@ class Option extends EntityWithUser implements JsonSerializable
             'archived' => $this->getArchived(),
             'status' => $this->getStatus(),
             'allowComment' => $this->getAllowComment(),
-            'allowSupport' => $this->getAllowSupport(),
+            'allowSupport' => $this->getSupportFeature(),
             'sortOrder' => $this->getSortOrder(),
             'statusInfo' => $this->getStatusArray(),
             'currentUserStatus' => $this->getCurrentUserStatus(),
@@ -345,7 +345,7 @@ class Option extends EntityWithUser implements JsonSerializable
     {
         return match ($permission) {
             self::PERMISSION_COMMENT_ADD => $this->getAllowCommenting(),
-            self::PERMISSION_SUPPORT_ADD => $this->getAllowSupporting(),
+            self::PERMISSION_SUPPORT_ADD => $this->getSupportFeaturing(),
             self::PERMISSION_COMMENT_DELETE => $this->getAllowDeleteComment(),
             self::PERMISSION_SUPPORT_DELETE => $this->getAllowDeleteSupport(),
             self::PERMISSION_OPTION_ADD => $this->getAllowAddOption(),
@@ -360,7 +360,7 @@ class Option extends EntityWithUser implements JsonSerializable
             self::PERMISSION_OPTION_CHANGE_OWNER => $this->getAllowChangeOwner(),
             self::PERMISSION_OPTION_SUBSCRIBE => $this->getAllowSubscribeToOption(),
             self::PERMISSION_OPTION_RESULTS_VIEW => $this->getAllowShowResults(),
-            self::PERMISSION_SUPPORT_EDIT => $this->getAllowSupport(),
+            self::PERMISSION_SUPPORT_EDIT => $this->getSupportFeature(),
             self::PERMISSION_SUPPORT_FOREIGN_CHANGE => $this->getAllowChangeForeignSupports(),
             self::PERMISSION_SHARE_ADD => $this->systemSettings->getShareCreateAllowed(),
             self::PERMISSION_SHARE_ADD_EXTERNAL => $this->systemSettings->getExternalShareCreationAllowed(),
@@ -552,13 +552,13 @@ class Option extends EntityWithUser implements JsonSerializable
         return (bool)$this->getAllowComment();
     }
 
-    private function getAllowSupporting(): bool
+    private function getSupportFeaturing(): bool
     {
         if (!$this->getAllowAccessOption()) {
             return false;
         }
 
-        return (bool)$this->getAllowSupport();
+        return (bool)$this->getSupportFeature();
     }
 
     private function getAllowDeleteSupport(): bool
@@ -581,7 +581,7 @@ class Option extends EntityWithUser implements JsonSerializable
         return $this->getAllowEditOption() && $this->getUser()->getIsUnrestrictedOptionOwner();
     }
 
-    private function getAllowSupport(): bool
+    private function getSupportFeature(): bool
     {
         if (!$this->getAllowAccessOption()) {
             return false;

@@ -430,7 +430,7 @@ abstract class TableSchema
         Inquiry::TABLE => [
             'id' => ['type' => Types::BIGINT, 'options' => ['autoincrement' => true, 'notnull' => true, 'length' => 20]],
             'cover_id' => ['type' => Types::BIGINT, 'options' => ['notnull' => false, 'default' => null,'length' => 20]],
-            'type' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'default' => 'petition', 'length' => 64]], // This is the actual column name
+            'type' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'default' => 'petition', 'length' => 64]],
             'title' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'default' => '', 'length' => 128]],
             'description' => ['type' => Types::TEXT, 'options' => ['notnull' => false, 'default' => null, 'length' => 65535]],
             'location_id' => ['type' => Types::BIGINT, 'options' => ['notnull' => false, 'default' => 0, 'length' => 20]],
@@ -448,8 +448,8 @@ abstract class TableSchema
             'moderation_status' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'default' => 'draft', 'length' => 32]],
             'inquiry_status' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'default' => 'draft', 'length' => 32]],
             'allow_comment' => ['type' => Types::BIGINT, 'options' => ['notnull' => true, 'default' => 1, 'length' => 20]],
-            'allow_support' => ['type' => Types::BIGINT, 'options' => ['notnull' => true, 'default' => 1, 'length' => 20]],
-            'family' => ['type' => Types::STRING, 'options' => ['notnull' => false, 'default' => 'deliberative', 'length' => 64]], // Added missing family column
+            'support_feature' => ['type' => Types:STRING, 'options' => ['notnull' => true, 'default' => 'none', 'length' => 20]],
+            'family' => ['type' => Types::STRING, 'options' => ['notnull' => false, 'default' => 'deliberative', 'length' => 64]], 
         ],
 
         InquiryMisc::TABLE => [
@@ -507,7 +507,7 @@ abstract class TableSchema
 
         InquiryType::TABLE => [
             'id' => ['type' => Types::BIGINT, 'options' => ['autoincrement' => true, 'notnull' => true, 'length' => 20]],
-            'inquiry_type' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'length' => 50]], // This is the actual column name
+            'inquiry_type' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'length' => 50]], 
             'family' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'default' => 'deliberative', 'length' => 64]],
             'icon' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'default' => '']],
             'label' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'length' => 100]],
@@ -515,6 +515,7 @@ abstract class TableSchema
             'fields' => ['type' => Types::TEXT, 'options' => ['notnull' => false]],
             'allowed_response' => ['type' => Types::TEXT, 'options' => ['notnull' => false]],
             'allowed_transformation' => ['type' => Types::TEXT, 'options' => ['notnull' => false]],
+            'allowed_root_option_types' => ['type' => Types::TEXT, 'options' => ['notnull' => false]],
             'is_root' => ['type' => Types::BOOLEAN, 'options' => ['notnull' => false, 'default' => true]],
             'created' => ['type' => Types::BIGINT, 'options' => ['notnull' => true, 'default' => 0, 'length' => 20]],
         ],
@@ -545,7 +546,8 @@ abstract class TableSchema
             'archived' => ['type' => Types::BIGINT, 'options' => ['notnull' => false, 'default' => 0, 'length' => 20]],
             'option_status' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'default' => 'draft', 'length' => 32]],
             'allow_comment' => ['type' => Types::BIGINT, 'options' => ['notnull' => true, 'default' => 1, 'length' => 20]],
-            'allow_support' => ['type' => Types::BIGINT, 'options' => ['notnull' => true, 'default' => 1, 'length' => 20]],
+            'support_feature' => ['type' => Types:STRING, 'options' => ['notnull' => true, 'default' => 'none', 'length' => 20]],
+            'family' => ['type' => Types::STRING, 'options' => ['notnull' => false, 'default' => 'deliberative', 'length' => 64]], 
             'sort_order' => ['type' => Types::BIGINT, 'options' => ['notnull' => true, 'default' => 0, 'length' => 20]],
         ],
 

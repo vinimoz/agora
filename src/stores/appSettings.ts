@@ -49,7 +49,6 @@ export interface InquiryStatus {
 
 export type AppSettings = {
 	allAccessGroups: string[]
-	allowCombo: boolean
 	allowPublicShares: boolean
 	allowAllAccess: boolean
 	allowInquiryCreation: boolean
@@ -102,7 +101,6 @@ export type AppSettings = {
 export const useAppSettingsStore = defineStore('appSettings', {
 	state: (): AppSettings => ({
 		allAccessGroups: [],
-		allowCombo: true,
 		allowPublicShares: true,
 		allowAllAccess: true,
 		allowInquiryCreation: true,

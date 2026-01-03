@@ -43,6 +43,7 @@ export type InquiryConfiguration = {
   forceConfidentialComments: boolean
   maxInquiriesPerUser: number
   supportMode: string
+  supportFeature: string
   quorum: number
 }
 
@@ -146,6 +147,7 @@ export const useInquiryStore = defineStore('inquiry', {
       forceConfidentialComments: false,
       suggestionsExpire: 0,
       supportMode: new Map<number, 'simple' | 'ternary'>(), // standard: 0/1, ternary: -1/0/1
+      supportFeature: 'none',
       quorum: 0,
     },
     owner: createDefault<User>(),

@@ -87,112 +87,251 @@ class InitDbDefault extends Command
 
     private array $optionTypes = [
 
-        // --- Debate ---
+        // ====================================================
+        // Debate – Positions
+        // ====================================================
         [
             'family' => 'debate',
-            'option_type' => 'debate_for',
+            'option_type' => 'position_for',
             'icon' => 'ThumbUp',
-            'label' => 'Debate For',
-            'description' => 'Argument in favor within a debate.',
+            'label' => 'Position – For',
+            'description' => 'Support position in a debate.',
             'fields' => [],
-            'allowed_response' => ['suggestion','proposal','official'],
-            'created' => '',
-        ],
-        [
-            'family' => 'debate',
-            'option_type' => 'debate_against',
-            'icon' => 'ThumbDown',
-            'label' => 'Debate Against',
-            'description' => 'Argument against within a debate.',
-            'fields' => [],
-            'allowed_response' => ['suggestion','proposal','official'],
-            'created' => '',
-        ],
-        [
-            'family' => 'debate',
-            'option_type' => 'debate_choice',
-            'icon' => 'CheckboxMultiple',
-            'label' => 'Debate Choice',
-            'description' => 'Selectable choice within a debate.',
-            'fields' => [],
-            'allowed_response' => [],
-            'created' => '',
-        ],
-        [
-            'family' => 'debate',
-            'option_type' => 'debate_accepted',
-            'icon' => 'CheckCircle',
-            'label' => 'Debate Accepted',
-            'description' => 'Accepted or resolved argument.',
-            'fields' => [
-                ["key"=>"resolved_by_suggestion_id","type"=>"integer","required"=>false],
+            'allowed_response' => [
+                'argument_for',
+                'argument_against',
+                'alternative',
+                'message',
+                'official_summary',
             ],
-            'allowed_response' => ['official'],
-            'created' => '',
+        ],
+        [
+            'family' => 'debate',
+            'option_type' => 'position_against',
+            'icon' => 'ThumbDown',
+            'label' => 'Position – Against',
+            'description' => 'Opposition position in a debate (can be conditional).',
+            'fields' => [
+                ['key' => 'conditional_support', 'type' => 'json', 'required' => false],
+            ],
+            'allowed_response' => [
+                'argument_for',
+                'argument_against',
+                'alternative',
+                'message',
+                'official_summary',
+            ],
         ],
 
-        // --- Law Proposal ---
+        // ====================================================
+        // Debate – Arguments
+        // ====================================================
         [
-            'family' => 'law_proposal',
+            'family' => 'debate',
+            'option_type' => 'argument_for',
+            'icon' => 'MessagePlus',
+            'label' => 'Argument – For',
+            'description' => 'Argument supporting a position.',
+            'fields' => [],
+            'allowed_response' => [
+                'message',
+                'official_summary',
+            ],
+        ],
+        [
+            'family' => 'debate',
+            'option_type' => 'argument_against',
+            'icon' => 'MessageMinus',
+            'label' => 'Argument – Against',
+            'description' => 'Argument opposing a position.',
+            'fields' => [],
+            'allowed_response' => [
+                'message',
+                'official_summary',
+            ],
+        ],
+
+        // ====================================================
+        // Debate – Alternatives
+        // ====================================================
+        [
+            'family' => 'debate',
+            'option_type' => 'alternative',
+            'icon' => 'SwapHorizontal',
+            'label' => 'Alternative',
+            'description' => 'Alternative proposal that may lift objections.',
+            'fields' => [],
+            'allowed_response' => [
+                'argument_for',
+                'argument_against',
+                'message',
+                'official_summary',
+            ],
+        ],
+
+        // ====================================================
+        // Debate – Messages
+        // ====================================================
+        [
+            'family' => 'debate',
+            'option_type' => 'message',
+            'icon' => 'MessageText',
+            'label' => 'Message',
+            'description' => 'Free discussion message.',
+            'fields' => [],
+            'allowed_response' => [
+                'message',
+            ],
+        ],
+
+        // ====================================================
+        // Debate – Official Summary
+        // ====================================================
+        [
+            'family' => 'debate',
+            'option_type' => 'official_summary',
+            'icon' => 'CheckCircle',
+            'label' => 'Official Summary',
+            'description' => 'Final synthesis or accepted outcome.',
+            'fields' => [
+                ['key' => 'resolved_option_ids', 'type' => 'json', 'required' => false],
+            ],
+            'allowed_response' => [],
+        ],
+
+        // ====================================================
+        // Structure
+        // ====================================================
+        [
+            'family' => 'structure',
             'option_type' => 'chapter',
             'icon' => 'BookOpenVariant',
             'label' => 'Chapter',
-            'description' => 'Chapter in a law.',
+            'description' => 'Chapter in a structured proposal.',
             'fields' => [],
-            'allowed_response' => ['article','official'],
-            'created' => '',
+            'allowed_response' => [
+                'article',
+                'official_summary',
+            ],
         ],
         [
-            'family' => 'law_proposal',
+            'family' => 'structure',
             'option_type' => 'article',
             'icon' => 'FileDocument',
             'label' => 'Article',
+            'description' => 'Article within a chapter.',
             'fields' => [],
-            'allowed_response' => ['amendment','official'],
-            'created' => '',
+            'allowed_response' => [
+                'amendment',
+                'official_summary',
+            ],
         ],
         [
-            'family' => 'law_proposal',
+            'family' => 'structure',
             'option_type' => 'amendment',
             'icon' => 'FileDocumentEdit',
             'label' => 'Amendment',
+            'description' => 'Amendment to an article.',
             'fields' => [
-                ["key"=>"article_ref","type"=>"integer","required"=>true],
+                ['key' => 'article_ref', 'type' => 'integer', 'required' => true],
             ],
-            'allowed_response' => ['official'],
-            'created' => '',
+            'allowed_response' => [
+                'argument_for',
+                'argument_against',
+                'official_summary',
+            ],
         ],
 
-        // --- Collective Questions / Consultation ---
+        // ====================================================
+        // Consensus
+        // ====================================================
         [
-            'family' => 'collective',
+            'family' => 'consensus',
             'option_type' => 'consultation_question',
             'icon' => 'HelpCircle',
             'label' => 'Consultation Question',
-            'description' => 'Question posed to a collective for consultation.',
+            'description' => 'Question posed to a collective.',
             'fields' => [],
-            'allowed_response' => ['option','official'],
-            'created' => '',
+            'allowed_response' => [
+                'poll_option',
+                'argument_for',
+                'argument_against',
+                'official_result',
+            ],
         ],
         [
-            'family' => 'collective',
+            'family' => 'consensus',
             'option_type' => 'poll_option',
             'icon' => 'BarChart2',
             'label' => 'Poll Option',
-            'description' => 'Option for a poll or vote.',
+            'description' => 'Selectable option in a poll.',
             'fields' => [],
-            'allowed_response' => ['official'],
-            'created' => '',
+            'allowed_response' => [
+                'official_result',
+            ],
         ],
         [
-            'family' => 'collective',
-            'option_type' => 'consultation_accepted',
-            'icon' => 'CheckCircle',
-            'label' => 'Accepted Response',
-            'description' => 'Officially accepted answer or summary.',
+            'family' => 'consensus',
+            'option_type' => 'objection',
+            'icon' => 'AlertCircle',
+            'label' => 'Formal Objection',
+            'description' => 'Blocks consensus until resolved.',
+            'fields' => [
+                ['key' => 'blocking', 'type' => 'boolean', 'required' => true],
+            ],
+            'allowed_response' => [
+                'amendment',
+                'exception',
+                'official_summary',
+            ],
+        ],
+        [
+            'family' => 'consensus',
+            'option_type' => 'exception',
+            'icon' => 'AlertOutline',
+            'label' => 'Exception',
+            'description' => 'Negative feedback that does not block consensus.',
             'fields' => [],
-            'allowed_response' => ['official'],
-            'created' => '',
+            'allowed_response' => [
+                'amendment',
+                'message',
+                'official_summary',
+            ],
+        ],
+
+        // ====================================================
+        // Decision
+        // ====================================================
+        [
+            'family' => 'decision',
+            'option_type' => 'official_result',
+            'icon' => 'CheckCircle',
+            'label' => 'Official Result',
+            'description' => 'Final result or synthesis.',
+            'fields' => [
+                ['key' => 'poll_provider', 'type' => 'string', 'required' => false],
+                ['key' => 'poll_id', 'type' => 'string', 'required' => false],
+            ],
+            'allowed_response' => [],
+        ],
+
+        // ====================================================
+        // Proposal
+        // ====================================================
+        [
+            'family' => 'proposal',
+            'option_type' => 'proposal',
+            'icon' => 'Lightbulb',
+            'label' => 'Proposal',
+            'description' => 'Initial proposal.',
+            'fields' => [],
+            'allowed_response' => [
+                'argument_for',
+                'argument_against',
+                'objection',
+                'amendment',
+                'official_summary',
+            ],
         ],
 
     ];
@@ -223,6 +362,7 @@ class InitDbDefault extends Command
             ],
             'allowed_response' => ['amendment','objection','official'],
             'allowed_transformation' => [],
+            'allowed_root_option_types' = ['chapter','position_for','position_against','alternative','official_summary'],
             'is_root' => true,
             'created' => '',
         ],
@@ -243,6 +383,7 @@ class InitDbDefault extends Command
             ],
             'allowed_response' => null,
             'allowed_transformation' => null,
+            'allowed_root_option_types' = ['amendment','argument_for','argument_against','official_summary'],
             'is_root' => false,
             'created' => '',
         ],
@@ -263,6 +404,7 @@ class InitDbDefault extends Command
             ],
             'allowed_response' => ['law_proposal'],
             'allowed_transformation' => null,
+            'allowed_root_option_types' = ['chapter','position_for','position_against','alternative'],
             'is_root' => true,
             'created' => '',
         ],
@@ -282,6 +424,7 @@ class InitDbDefault extends Command
             ],
             'allowed_response' => ['law_proposal','response'],
             'allowed_transformation' => null,
+            'allowed_root_option_types' = ['consultation_question','position_for','position_against','official_result'],
             'is_root' => true,
             'created' => '',
         ],
@@ -300,6 +443,7 @@ class InitDbDefault extends Command
             ],
             'allowed_response' => ['suggestion'],
             'allowed_transformation' => null,
+            'allowed_root_option_types' = ['proposal','position_for','position_against','alternative','official_summary'],
             'is_root' => false,
             'created' => '',
         ],
@@ -317,6 +461,7 @@ class InitDbDefault extends Command
             ],
             'allowed_response' => null,
             'allowed_transformation' => ['proposal','law_proposal'],
+            'allowed_root_option_types' = ['objection','amendment','exception'],
             'is_root' => false,
             'created' => '',
         ],
@@ -341,6 +486,7 @@ class InitDbDefault extends Command
             ],
             'allowed_response' => ['objection','suggestion','official'],
             'allowed_transformation' => ['law_proposal'],
+            'allowed_root_option_types' = ['suggestion','position_for','position_against'],
             'is_root' => true,
             'created' => '',
         ],
@@ -363,6 +509,7 @@ class InitDbDefault extends Command
             ],
             'allowed_response' => ['official'],
             'allowed_transformation' => ['initiative'],
+            'allowed_root_option_types' = ['proposal','position_for','official_summary'],
             'is_root' => true,
             'created' => '',
         ],
@@ -380,6 +527,7 @@ class InitDbDefault extends Command
             ],
             'allowed_response' => ['suggestion'],
             'allowed_transformation' => ['roadmap'],
+            'allowed_root_option_types' = ['proposal','chapter','position_for','alternative'],
             'is_root' => true,
             'created' => '',
         ],
@@ -404,6 +552,7 @@ class InitDbDefault extends Command
             ],
             'allowed_response' => ['proposal','objection','suggestion','official'],
             'allowed_transformation' => ['law_proposal'],
+            'allowed_root_option_types' = ['proposal','position_for','position_against','official_summary'],
             'is_root' => true,
             'created' => '',
         ],
@@ -422,6 +571,7 @@ class InitDbDefault extends Command
             ],
             'allowed_response' => ['proposal','suggestion','official'],
             'allowed_transformation' => null,
+            'allowed_root_option_types' = ['position_for','position_against','alternative','official_summary'],
             'is_root' => true,
             'created' => '',
         ],
@@ -449,6 +599,7 @@ class InitDbDefault extends Command
             ],
             'allowed_response' => ['project_review','suggestion','objection','official'],
             'allowed_transformation' => [],
+            'allowed_root_option_types' = ['proposal','chapter','official_summary'],
             'is_root' => true,
             'created' => '',
         ],
@@ -469,6 +620,7 @@ class InitDbDefault extends Command
             ],
             'allowed_response' => ['suggestion'],
             'allowed_transformation' => null,
+            'allowed_root_option_types' = ['position_for','position_against','objection','official_summary'],
             'is_root' => false,
             'created' => '',
         ],
@@ -489,25 +641,7 @@ class InitDbDefault extends Command
             ],
             'allowed_response' => ['proposal','recommendation'],
             'allowed_transformation' => ['policy_consultation'],
-            'is_root' => true,
-            'created' => '',
-        ],
-
-        // HEARING
-        [
-            'inquiry_type' => 'hearing',
-            'family' => 'deliberative',
-            'icon' => 'Mic',
-            'label' => 'Hearing',
-            'description' => 'Public hearing collecting feedback.',
-            'fields' => [
-                ["key"=>"topic","label"=>"Topic","type"=>"string","required"=>true,"default"=>null,"rules"=>[]],
-                ["key"=>"layout_zone","label"=>"Position display into the layout","type"=>"enum","required"=>false,"default"=>"footer","allowed_values"=>["sidebar","main","footer","header"],"rules"=>[]],
-                ["key"=>"render_mode","label"=>"Render mode of inquiries","type"=>"enum","required"=>false,"default"=>"cards","allowed_values"=>["cards","list","full","summary","rich_html"],"rules"=>[]],
-                ["key"=>"open_mode","label"=>"Open Mode","type"=>"enum","required"=>false,"default"=>"page","allowed_values"=>["page","modal","popup"],"rules"=>[]],
-            ],
-            'allowed_response' => ['suggestion','objection'],
-            'allowed_transformation' => null,
+            'allowed_root_option_types' = ['position_for','position_against','message','official_summary'],
             'is_root' => true,
             'created' => '',
         ],
@@ -527,6 +661,7 @@ class InitDbDefault extends Command
             ],
             'allowed_response' => [],
             'allowed_transformation' => null,
+            'allowed_root_option_types' = ['message'],
             'is_root' => true,
             'created' => '',
         ],
@@ -538,15 +673,16 @@ class InitDbDefault extends Command
             'icon' => 'Megaphone',
             'label' => 'Announcement',
             'description' => 'Administrative or public announcement.',
-             
+
             'fields' => [
                 ["key"=>"layout_zone","label"=>"Position display into the layout","type"=>"enum","required"=>false,"default"=>"footer","allowed_values"=>["sidebar","main","footer","header"],"rules"=>[]],
                 ["key"=>"render_mode","label"=>"Render mode of inquiries","type"=>"enum","required"=>false,"default"=>"cards","allowed_values"=>["cards","list","full","summary","rich_html"],"rules"=>[]],
                 ["key"=>"open_mode","label"=>"Open Mode","type"=>"enum","required"=>false,"default"=>"page","allowed_values"=>["page","modal","popup"],"rules"=>[]],
-           
+
             ],
             'allowed_response' => [],
             'allowed_transformation' => null,
+            'allowed_root_option_types' = ['message'],
             'is_root' => true,
             'created' => '',
         ],
@@ -565,6 +701,7 @@ class InitDbDefault extends Command
             ],
             'allowed_response' => [],
             'allowed_transformation' => null,
+            'allowed_root_option_types' = ['message'],
             'is_root' => true,
             'created' => '',
         ],
@@ -585,6 +722,7 @@ class InitDbDefault extends Command
             ],
             'allowed_response' => ['suggestion'],
             'allowed_transformation' => null,
+            'allowed_root_option_types' = ['agenda_item','message','official_summary'],
             'is_root' => true,
             'created' => '',
         ],
@@ -605,6 +743,7 @@ class InitDbDefault extends Command
             ],
             'allowed_response' => ['suggestion'],
             'allowed_transformation' => null,
+            'allowed_root_option_types' = ['agenda_item','message','official_summary'],
             'is_root' => true,
             'created' => '',
         ],
@@ -626,6 +765,7 @@ class InitDbDefault extends Command
             ],
             'allowed_response' => ['suggestion'],
             'allowed_transformation' => null,
+            'allowed_root_option_types' = ['agenda_item','message','official_summary'],
             'is_root' => true,
             'created' => '',
         ],
@@ -655,6 +795,7 @@ class InitDbDefault extends Command
             ],
             'allowed_response' => ['suggestion','proposal','petition','official'],
             'allowed_transformation' => ['law_proposal','policy_consultation'],
+            'allowed_root_option_types' = ['position_for','position_against','alternative','official_summary'],
             'is_root' => true,
             'created' => '',
         ],
@@ -687,6 +828,7 @@ class InitDbDefault extends Command
             ],
             'allowed_response' => ['official'],
             'allowed_transformation' => null,
+            'allowed_root_option_types' = ['poll_option','official_result'],
             'is_root' => true,
             'created' => '',
         ],
@@ -708,11 +850,11 @@ class InitDbDefault extends Command
             ],
             'allowed_response' => ['proposal','law_proposal','official'],
             'allowed_transformation' => null,
+            'allowed_root_option_types' = ['recommendation','objection','official_result'],
             'is_root' => true,
             'created' => '',
         ],
 
-        // --- Consultation  ---
         // --- Consultation ---
         [
             'inquiry_type' => 'consultation',
@@ -741,9 +883,9 @@ class InitDbDefault extends Command
                 ["key"=>"render_mode","label"=>"Render mode of inquiries","type"=>"enum","required"=>false,"default"=>"cards","allowed_values"=>["cards","list","full","summary","rich_html"],"rules"=>[]],
                 ["key"=>"open_mode","label"=>"Open Mode","type"=>"enum","required"=>false,"default"=>"page","allowed_values"=>["page","modal","popup"],"rules"=>[]],
             ],
-
             'allowed_response' => ['proposal', 'law_proposal', 'official'],
             'allowed_transformation' => null,
+            'allowed_root_option_types' = ['consultation_question','poll_option','objection','exception','official_result'],
             'is_root' => true,
             'created' => '',
         ],
