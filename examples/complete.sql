@@ -146,7 +146,7 @@ INSERT INTO oc_agora_inq_group_misc (inquiry_group_id, `key`, value) VALUES
 -- Table: oc_agora_inquiries
 -- ============================
 
-INSERT INTO oc_agora_inquiries (id, cover_id, type, title, description, location_id, category_id, owner, created, archived, expire, deleted, owned_group, access, show_results, last_interaction, parent_id, moderation_status, inquiry_status, allow_comment, allow_support, family) VALUES
+INSERT INTO oc_agora_inquiries (id, cover_id, type, title, description, location_id, category_id, owner, created, archived, expire, deleted, owned_group, access, show_results, last_interaction, parent_id, moderation_status, inquiry_status, allow_comment, support_feature, family) VALUES
 -- Climate Program Inquiries
 (1, NULL, 'news', 'Federal Council Adopts New Climate Measures', 'Switzerland updates its climate targets for 2030 with stricter CO2 reduction goals for buildings and transport sectors.', 0, 0, 'admin', UNIX_TIMESTAMP() - 86400*20, 0, 0, 0, 'federal-government', 'open', 'always', UNIX_TIMESTAMP() - 86400*5, NULL, 'accepted', 'published', 1, 1, 'collective'),
 (11, NULL, 'consultation', 'Public Consultation: Renewable Energy Expansion 2025-2030', 'Seeking public input on solar and wind energy development targets and support programs for the next 5 years.', 0, 0, 'admin', UNIX_TIMESTAMP() - 86400*15, 0, UNIX_TIMESTAMP() + 86400*45, 0, 'federal-energy', 'open', 'after_vote', UNIX_TIMESTAMP() - 86400*2, NULL, 'accepted', 'active', 1, 0, 'deliberative'),
@@ -369,7 +369,7 @@ INSERT INTO oc_agora_inquiries
 (id, cover_id, type, title, description, location_id, category_id, owner,
  created, archived, expire, deleted, owned_group, access, show_results,
  last_interaction, parent_id, moderation_status, inquiry_status,
- allow_comment, allow_support)
+ allow_comment, support_feature)
 VALUES
 -- 5001 — Genève / Mobilité douce
 (5001, NULL, 'proposal',
