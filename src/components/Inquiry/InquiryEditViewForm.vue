@@ -27,6 +27,7 @@ import { NcTextArea, NcRichText } from '@nextcloud/vue'
 
 import { TernarySupportIcon, ThumbIcon } from '../AppIcons'
 import InquiryEditor from '../Editor/InquiryEditor.vue'
+import OptionEditView from '../Options/OptionEditView.vue'
 import { InquiryGeneralIcons, StatusIcons } from '../../utils/icons.ts'
 import {
   canSupport,
@@ -733,6 +734,7 @@ const formatDate = (timestamp: number) => new Date(timestamp * 1000).toLocaleDat
 				</div>
 			</div>
 		</div>
+    <OptionEditView :inquiry-id="inquiryStore.id"/>
 	</div>
 </template>
 <style scoped lang="scss">

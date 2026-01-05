@@ -150,7 +150,7 @@ class InquiryController extends BaseController
         $diffMicro['total'] = microtime(true) - $timerMicro['start'];
         $timerMicro['inquiry'] = microtime(true);
 
-        $options = $this->optionService->list($inquiryId);
+        $options = $this->optionService->listByTargetId($inquiryId);
         $timerMicro['options'] = microtime(true);
 
         $comments = $this->commentService->list($inquiryId);

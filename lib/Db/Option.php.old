@@ -21,20 +21,18 @@ use OCP\IURLGenerator;
  * @psalm-api
  * @method    int getId()
  * @method    void setId(int $value)
- * @method    int getTargetId()
- * @method    void setTargetId(int $value)
+ * @method    int getInquiryId()
+ * @method    void setInquiryId(int $value)
  * @method    int getParentId()
  * @method    void setParentId(int $value)
  * @method    string getType()
  * @method    void setType(string $value)
  * @method    string getAccess()
  * @method    void setAccess(string $value)
- * @method    string getText()
- * @method    void setText(string $value)
+ * @method    string getOptionText()
+ * @method    void setOptionText(string $value)
  * @method    string getOwner()
  * @method    void setOwner(string $value)
- * @method    string getOwnedGroup()
- * @method    void setOwnedGroup(string $value)
  * @method    int getCreated()
  * @method    void setCreated(int $value)
  * @method    int getUpdated()
@@ -49,10 +47,8 @@ use OCP\IURLGenerator;
  * @method    void setStatus(string $value)
  * @method    int getAllowComment()
  * @method    void setAllowComment(int $value)
- * @method    string getSupportFeature()
- * @method    void setSupportFeature(string $value)
- * @method    string getFamily()
- * @method    void setFamily(string $value)
+ * @method    int getSupportFeature()
+ * @method    void setSupportFeature(int $value)
  * @method    int getSortOrder()
  * @method    void setSortOrder(int $value)
  *
@@ -62,9 +58,6 @@ use OCP\IURLGenerator;
  * @method    int getCountParticipants()
  * @method    int getCountComments()
  * @method    int getCountSupports()
- * @method    int getCountPositiveSupports()
- * @method    int getCountNegativeSupports()
- * @method    int getCountNeutralSupports()
  */
 class Option extends EntityWithUser implements JsonSerializable
 {
@@ -76,14 +69,6 @@ class Option extends EntityWithUser implements JsonSerializable
     public const SHOW_RESULTS_ALWAYS = 'always';
     public const SHOW_RESULTS_CLOSED = 'closed';
     public const SHOW_RESULTS_NEVER = 'never';
-    public const URI_PREFIX = 'option/';
-
-    // Option types (for debate inquiries)
-    public const TYPE_ARGUMENT_FOR = 'argument_for';
-    public const TYPE_ARGUMENT_AGAINST = 'argument_against';
-    public const TYPE_PROPOSAL = 'proposal';
-    public const TYPE_QUESTION = 'question';
-    public const TYPE_IDEA = 'idea';
 
     public const ROLE_USER = 'user';
     public const ROLE_ADMIN = 'admin';
@@ -125,25 +110,21 @@ class Option extends EntityWithUser implements JsonSerializable
 
     // schema columns
     public $id = null;
-    protected int $targetId = 0;  // Reference to parent inquiry
-    protected int $parentId = 0;  // For hierarchical options
-    protected string $type = 'debate';
-    protected string $access = 'private';
-    protected string $text = '';
+    protected int $inquiryId = 0;
+    protected int $parentId = 0;
+    protected string $type = '';
+    protected string $access = '';
+    protected string $optionText = '';
     protected string $owner = '';
-    protected string $ownedGroup = '';
     protected int $created = 0;
     protected int $updated = 0;
-    protected string $showResults = 'always';
+    protected string $showResults = '';
     protected int $deleted = 0;
     protected int $archived = 0;
     protected string $status = self::DEFAULT_STATUS_DRAFT;
-    protected int $allowComment = 1;
-    protected string $supportFeature = 'none';
-    protected string $family = 'debate';
+    protected int $allowComment = 0;
+    protected int $allowSupport = 0;
     protected int $sortOrder = 0;
-    protected bool $hasSupported = false;
-    protected ?int $supportValue = null;
 
     // joined columns
     protected string $userRole = '';
@@ -152,32 +133,26 @@ class Option extends EntityWithUser implements JsonSerializable
     protected int $countParticipants = 0;
     protected int $countComments = 0;
     protected int $countSupports = 0;
-    protected int $countPositiveSupports = 0;
-    protected int $countNegativeSupports = 0;
-    protected int $countNeutralSupports = 0;
     protected string $groupShares = '';
     protected string $optionGroups = '';
     protected string $optionGroupUserShares = '';
-    protected string $inquiryTitle = '';
-    protected string $inquiryType = '';
-    protected string $inquiryAccess = '';
-    protected ?string $miscSettingsConcat = '';
 
     // Dynamic fields for option types
-    protected array $miscFields = [];
+    private array $dynamicFields = [];
     private array $optionTypeConfig = [];
 
     private array $children = [];
 
     public function __construct()
     {
-        $this->addType('targetId', 'integer');
+        $this->addType('inquiryId', 'integer');
         $this->addType('parentId', 'integer');
         $this->addType('created', 'integer');
         $this->addType('updated', 'integer');
         $this->addType('deleted', 'integer');
         $this->addType('archived', 'integer');
         $this->addType('allowComment', 'integer');
+        $this->addType('allowSupport', 'integer');
         $this->addType('sortOrder', 'integer');
 
         // joined Attributes
@@ -185,10 +160,6 @@ class Option extends EntityWithUser implements JsonSerializable
         $this->addType('countParticipants', 'integer');
         $this->addType('countComments', 'integer');
         $this->addType('countSupports', 'integer');
-        $this->addType('countPositiveSupports', 'integer');
-        $this->addType('countNegativeSupports', 'integer');
-        $this->addType('countNeutralSupports', 'integer');
-        $this->addType('miscSettingsConcat', 'string');
 
         $this->urlGenerator = Container::queryClass(IURLGenerator::class);
         $this->systemSettings = Container::queryClass(SystemSettings::class);
@@ -201,15 +172,15 @@ class Option extends EntityWithUser implements JsonSerializable
 
     public function jsonSerialize(): array
     {
+        
         $baseData = [
             'id' => $this->getId(),
-            'targetId' => $this->getTargetId(),
+            'inquiryId' => $this->getInquiryId(),
             'parentId' => $this->getParentId(),
             'type' => $this->getType(),
             'access' => $this->getAccess(),
-            'text' => $this->getText(),
+            'optionText' => $this->getOptionText(),
             'owner' => $this->getUser(),
-            'ownedGroup' => $this->getOwnedGroup(),
             'created' => $this->getCreated(),
             'updated' => $this->getUpdated(),
             'showResults' => $this->getShowResults(),
@@ -217,28 +188,16 @@ class Option extends EntityWithUser implements JsonSerializable
             'archived' => $this->getArchived(),
             'status' => $this->getStatus(),
             'allowComment' => $this->getAllowComment(),
-            'supportFeature' => $this->getSupportFeature(),
-            'family' => $this->getFamily(),
+            'allowSupport' => $this->getSupportFeature(),
             'sortOrder' => $this->getSortOrder(),
             'statusInfo' => $this->getStatusArray(),
             'currentUserStatus' => $this->getCurrentUserStatus(),
             'permissions' => $this->getPermissionsArray(),
             'optionGroups' => $this->getOptionGroups(),
-            'inquiryInfo' => $this->getInquiryInfoArray(),
-            'miscFields' => $this->getMiscArray(),
-            'children' => $this->getChildren(),
         ];
 
-        return $baseData;
-    }
 
-    public function getMiscArray(): array
-    {
-        $prefixedMiscFields = [];
-        foreach ($this->miscFields as $key => $value) {
-            $prefixedMiscFields["$key"] = $value;
-        }
-        return $prefixedMiscFields;
+        return $baseData ;
     }
 
     public function getStatusArray(): array
@@ -251,9 +210,6 @@ class Option extends EntityWithUser implements JsonSerializable
             'countParticipants' => $this->getIsAllowed(self::PERMISSION_OPTION_RESULTS_VIEW) ? $this->getCountParticipants() : 0,
             'countComments' => $this->getIsAllowed(self::PERMISSION_OPTION_RESULTS_VIEW) ? $this->getCountComments() : 0,
             'countSupports' => $this->getIsAllowed(self::PERMISSION_OPTION_RESULTS_VIEW) ? $this->getCountSupports() : 0,
-            'countPositiveSupports' => $this->getIsAllowed(self::PERMISSION_OPTION_RESULTS_VIEW) ? $this->getCountPositiveSupports() : 0,
-            'countNegativeSupports' => $this->getIsAllowed(self::PERMISSION_OPTION_RESULTS_VIEW) ? $this->getCountNegativeSupports() : 0,
-            'countNeutralSupports' => $this->getIsAllowed(self::PERMISSION_OPTION_RESULTS_VIEW) ? $this->getCountNeutralSupports() : 0,
         ];
     }
 
@@ -262,12 +218,12 @@ class Option extends EntityWithUser implements JsonSerializable
         return [
             'isInvolved' => $this->getIsInvolved(),
             'hasSupported' => $this->hasSupported(),
-            'supportValue' => $this->supportValue(),
             'isLoggedIn' => $this->userSession->getIsLoggedIn(),
             'isOwner' => $this->getIsOptionOwner(),
             'shareToken' => $this->getShareToken(),
             'userId' => $this->userSession->getCurrentUserId(),
             'userRole' => $this->getUserRole(),
+            'optionGroupUserShares' => $this->getOptionGroupUserShares(),
         ];
     }
 
@@ -294,20 +250,9 @@ class Option extends EntityWithUser implements JsonSerializable
         ];
     }
 
-    public function getInquiryInfoArray(): array
-    {
-        return [
-            'targetId' => $this->getTargetId(),
-            'inquiryTitle' => $this->inquiryTitle ?: '',
-            'inquiryType' => $this->inquiryType ?: '',
-            'inquiryAccess' => $this->inquiryAccess ?: '',
-        ];
-    }
-
     public function getExpired(): bool
     {
-        // Options inherit expiry from parent inquiry
-        // We would need to join with inquiry table or have a separate query
+        // Options don't have expire field in this table structure
         return false;
     }
 
@@ -323,20 +268,16 @@ class Option extends EntityWithUser implements JsonSerializable
             foreach ($this->getOptionGroupUserShares() as $shareType) {
                 if ($shareType === self::ROLE_ADMIN) {
                     $evaluatedRole = self::ROLE_ADMIN;
-                    break;
                 }
+                return self::ROLE_USER;
             }
         }
 
         if ($evaluatedRole === self::ROLE_ADMIN) {
-            return self::ROLE_ADMIN;
+            return self::ROLE_USER;
         }
 
-        if ($evaluatedRole) {
-            return $evaluatedRole;
-        }
-
-        return self::ROLE_NONE;
+        return $evaluatedRole ?: self::ROLE_NONE;
     }
 
     public function getOptionUrl(): string
@@ -350,11 +291,6 @@ class Option extends EntityWithUser implements JsonSerializable
     public function setChildren(array $children): void
     {
         $this->children = $children;
-    }
-
-    public function getChildren(): array
-    {
-        return $this->children;
     }
 
     public function getOptionId(): int
@@ -396,50 +332,6 @@ class Option extends EntityWithUser implements JsonSerializable
         return explode(OptionGroup::CONCAT_SEPARATOR, $this->optionGroupUserShares);
     }
 
-    public function setMiscFields(array $misc): void
-    {
-        foreach ($misc as $field) {
-            $key = $field->getKey();
-            $this->miscFields[$key] = $field->getValue() ?? null;
-        }
-    }
-
-    public function initializeMiscFields(array $fieldsDefinition): void
-    {
-        foreach ($fieldsDefinition as $field) {
-            $key = $field['key'];
-            $this->miscFields[$key] = $field['default'] ?? null;
-        }
-    }
-
-    public function getMiscField(string $key): mixed
-    {
-        return $this->miscFields[$key] ?? null;
-    }
-
-    public function setMiscField(string $key, mixed $value): void
-    {
-        $this->miscFields[$key] = $value;
-    }
-
-    /**
-     * @return static
-     */
-    public function deserializeArray(array $optionConfiguration): self
-    {
-        $this->setAccess($optionConfiguration['access'] ?? $this->getAccess());
-        $this->setAllowComment($optionConfiguration['allowComment'] ?? $this->getAllowComment());
-        $this->setShowResults($optionConfiguration['showResults'] ?? $this->getShowResults());
-        
-        // Set misc fields from configuration
-        if (isset($optionConfiguration['miscFields']) && is_array($optionConfiguration['miscFields'])) {
-            foreach ($optionConfiguration['miscFields'] as $key => $value) {
-                $this->setMiscField($key, $value);
-            }
-        }
-        
-        return $this;
-    }
 
     public function request(string $permission): bool
     {
@@ -468,7 +360,7 @@ class Option extends EntityWithUser implements JsonSerializable
             self::PERMISSION_OPTION_CHANGE_OWNER => $this->getAllowChangeOwner(),
             self::PERMISSION_OPTION_SUBSCRIBE => $this->getAllowSubscribeToOption(),
             self::PERMISSION_OPTION_RESULTS_VIEW => $this->getAllowShowResults(),
-            self::PERMISSION_SUPPORT_EDIT => $this->getSupportFeaturing(),
+            self::PERMISSION_SUPPORT_EDIT => $this->getSupportFeature(),
             self::PERMISSION_SUPPORT_FOREIGN_CHANGE => $this->getAllowChangeForeignSupports(),
             self::PERMISSION_SHARE_ADD => $this->systemSettings->getShareCreateAllowed(),
             self::PERMISSION_SHARE_ADD_EXTERNAL => $this->systemSettings->getExternalShareCreationAllowed(),
@@ -494,12 +386,7 @@ class Option extends EntityWithUser implements JsonSerializable
 
     private function hasSupported(): bool
     {
-        return $this->hasSupported;
-    }
-
-    private function supportValue(): ?int
-    {
-        return $this->supportValue;
+        return $this->getCurrentUserSupports() > 0;
     }
 
     private function getIsParticipant(): bool
@@ -558,12 +445,6 @@ class Option extends EntityWithUser implements JsonSerializable
             return true;
         }
 
-        // For debate options, check if user can edit the parent inquiry
-        if ($this->getTargetId() > 0) {
-            // We would need to check inquiry permissions here
-            // This would require loading the inquiry or having joined data
-        }
-
         return false;
     }
 
@@ -596,13 +477,6 @@ class Option extends EntityWithUser implements JsonSerializable
             return true;
         }
 
-        // Check if parent inquiry allows access
-        if ($this->getTargetId() > 0 && $this->inquiryAccess) {
-            if ($this->inquiryAccess === Inquiry::ACCESS_OPEN || $this->inquiryAccess === Inquiry::ACCESS_MODERATE) {
-                return $this->userSession->getIsLoggedIn();
-            }
-        }
-
         $share = $this->userSession->getShare();
         return (bool)($share->getId() && $share->getOptionId() === $this->getId());
     }
@@ -628,11 +502,6 @@ class Option extends EntityWithUser implements JsonSerializable
 
         if ($this->userSession->getShare()->getType() === 'public') {
             return false;
-        }
-
-        // For debate inquiries, check if we can add arguments/proposals
-        if ($this->getTargetId() > 0 && $this->inquiryType === Inquiry::TYPE_DEBATE) {
-            return $this->userSession->getIsLoggedIn();
         }
 
         return true;
@@ -662,10 +531,7 @@ class Option extends EntityWithUser implements JsonSerializable
     {
         $userId = $this->userSession->getCurrentUser()->getId();
         foreach ($this->children as $child) {
-            if (method_exists($child, 'getUserId') && $child->getUserId() === $userId) {
-                return true;
-            }
-            if (is_array($child) && isset($child['userId']) && $child['userId'] === $userId) {
+            if ($child->userId === $userId) {
                 return true;
             }
         }
@@ -682,6 +548,7 @@ class Option extends EntityWithUser implements JsonSerializable
             return false;
         }
 
+
         return (bool)$this->getAllowComment();
     }
 
@@ -691,11 +558,7 @@ class Option extends EntityWithUser implements JsonSerializable
             return false;
         }
 
-        if ($this->userSession->getShare()->getType() === 'public') {
-            return false;
-        }
-
-        return $this->getSupportFeature() !== 'none';
+        return (bool)$this->getSupportFeature();
     }
 
     private function getAllowDeleteSupport(): bool
@@ -716,6 +579,19 @@ class Option extends EntityWithUser implements JsonSerializable
     private function getAllowDeanonymize(): bool
     {
         return $this->getAllowEditOption() && $this->getUser()->getIsUnrestrictedOptionOwner();
+    }
+
+    private function getSupportFeature(): bool
+    {
+        if (!$this->getAllowAccessOption()) {
+            return false;
+        }
+
+        if ($this->userSession->getShare()->getType() === 'public') {
+            return false;
+        }
+
+        return true;
     }
 
     private function getAllowSubscribeToOption(): bool
@@ -742,33 +618,5 @@ class Option extends EntityWithUser implements JsonSerializable
         }
 
         return $this->getShowResults() === self::SHOW_RESULTS_ALWAYS;
-    }
-
-
-    public function setInquiryInfo(string $title, string $type, string $access): void
-    {
-        $this->inquiryTitle = $title;
-        $this->inquiryType = $type;
-        $this->inquiryAccess = $access;
-    }
-
-    public function setSupported(bool $hasSupported, ?int $supportValue = null): void
-    {
-        $this->hasSupported = $hasSupported;
-        $this->supportValue = $supportValue;
-    }
-
-    // Load misc fields from concatenated string (used when loading from database)
-    public function loadMiscFromConcat(): void
-    {
-        if ($this->miscSettingsConcat) {
-            $pairs = explode(OptionMisc::CONCAT_SEPARATOR, $this->miscSettingsConcat);
-            foreach ($pairs as $pair) {
-                if (strpos($pair, '=') !== false) {
-                    list($key, $value) = explode('=', $pair, 2);
-                    $this->miscFields[$key] = $value;
-                }
-            }
-        }
     }
 }

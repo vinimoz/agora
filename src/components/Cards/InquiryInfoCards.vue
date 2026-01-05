@@ -6,7 +6,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import {
-  CardAddSuggestions,
   CardClosedInquiry,
   CardLimitedInquiries,
   CardLocked,
@@ -62,7 +61,6 @@ const showRegisterCard = computed(
     <CardUnpublishedInquiry v-if="showUnpublishedInquiryCard" :key="0" />
     <CardClosedInquiry v-if="showClosedCard" :key="3" />
     <CardLocked v-if="inquiryStore.currentUserStatus.isLocked" :key="5" />
-    <CardAddSuggestions v-if="showAddSuggestionsCard" :key="1" />
     <CardSendConfirmations v-if="showSendConfirmationsCard" :key="4" />
     <CardRegister v-if="showRegisterCard" :key="6" />
   </TransitionGroup>
