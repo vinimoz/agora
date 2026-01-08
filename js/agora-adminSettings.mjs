@@ -12,11 +12,11 @@
 })();
 const Lo = "agora", Eo = "1.6.0";
 import { c as y, o as p, j as s, g, C as _, t as n, n as e, s as t, f as R, l as T, _ as j, k as i, i as ge, U as L, b as E, O as ye, V as ie, W as se, X as ve, Y as C, K as G, L as z, h as W, Z as X, d as Z, e as ne, H as Q, $ as fe, p as _e, v as re, x as P, y as J, z as be, A as he } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_f6cfe8f3_lang-DYSogmh5.chunk.mjs";
-import { I as Y, a as $e, N as O } from "./index-Q4YjEz1q.chunk.mjs";
-import { d as x, e as de, g as Ve, f as ee, L as te, I as H, s as ae, S as le } from "./NcDashboardWidget-Bu7bWoUK-DQKogSSJ.chunk.mjs";
-import { F as we } from "./FlexSettings-0w1sQSkB.chunk.mjs";
+import { I as Y, a as $e, N as O } from "./index-DrbL9FFf.chunk.mjs";
+import { d as x, e as de, g as Ve, f as ee, L as te, I as H, s as ae, S as le } from "./NcDashboardWidget-Bu7bWoUK-BBZ3nml0.chunk.mjs";
+import { F as we } from "./FlexSettings-DgrjWG8C.chunk.mjs";
 import { N as I, a as A, b as N } from "./NcRichText-CETsOVBU-Bfq-n-JZ.chunk.mjs";
-import { _ as Se, a as qe } from "./markdown-CUsBu7iY.chunk.mjs";
+import { _ as Se, a as qe } from "./markdown-JLZH1h-P.chunk.mjs";
 const ke = { class: "user_settings" }, Ce = { __name: "AdminActivities", setup(V) {
   const l = x();
   return (u, a) => (p(), y("div", ke, [s(e(I), { modelValue: e(l).useActivity, "onUpdate:modelValue": [a[0] || (a[0] = (o) => e(l).useActivity = o), a[1] || (a[1] = (o) => e(l).write())], type: "switch" }, { default: g(() => [_(n(e(t)("agora", "Enable the tracking of activities with the Activities app")), 1)]), _: 1 }, 8, ["modelValue"])]));

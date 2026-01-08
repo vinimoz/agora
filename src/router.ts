@@ -98,7 +98,10 @@ const routes: RouteRecordRaw[] = [
       default: GroupList,
       navigation: NavigationGroup,
     },
-    props: true,
+      props: {
+        default: true,
+        navigation: false,  
+    },
     meta: {
       listPage: true,
     },
@@ -137,7 +140,7 @@ const routes: RouteRecordRaw[] = [
     },
      props: {
        default: true,
-       navigation: true,
+       navigation: false,
     },
     meta: {
       groupPage: true,
@@ -173,7 +176,10 @@ const routes: RouteRecordRaw[] = [
 		  navigation: NavigationGroup,
 		  sidebar: SideBarInquiryGroup,
 	  },
-	  props: true,
+      props: {
+        default: true,
+        navigation: false,  
+    },
 	  meta: {
 		  groupPage: true,
 		  listPage: true,

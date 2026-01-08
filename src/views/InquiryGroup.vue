@@ -559,12 +559,11 @@ function createInquiryGroup(inquiryGroupType: InquiryGroupType) {
   createGroupDlgToggle.value = true
 }
 
-// Image URL function
-function getNextcloudPreviewUrl(fileId: number, x = 1920, y = 1080, autoScale = true) {
-  const baseUrl = window.location.origin
-  return `${baseUrl}/index.php/core/preview?fileId=${fileId}&x=${x}&y=${y}&a=${autoScale ? 1 : 0}`
-}
+const BASE_URL = window.location.origin;
 
+function getNextcloudPreviewUrl(fileId: number, x = 1920, y = 1080, autoScale = true) {
+  return `${BASE_URL}/index.php/core/preview?fileId=${fileId}&x=${x}&y=${y}&a=${autoScale ? 1 : 0}`;
+}
 
 // Cover URL helper
 function getCoverUrl(coverId: string) {
@@ -668,7 +667,7 @@ onMounted(async () => {
     if (hasSlug.value) {
       const slug = route.params.slug as string
       const group = inquiryGroupsStore.bySlug(slug)
-      currentInquiryGroup.value=group
+      //currentInquiryGroup.value=group
       if (!group) {
         groupNotFound.value = true
       }

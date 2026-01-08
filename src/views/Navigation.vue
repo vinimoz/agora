@@ -256,7 +256,6 @@ onMounted(() => {
                    }"
               :exact="true"
               class="navigation-item"
-              @click="navigateToHome"
               >
               <template #icon>
                   <component :is="NavigationIcons.Home" />

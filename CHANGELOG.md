@@ -5,6 +5,9 @@
 
 # Changelog
 All notable changes to this project will be documented in this file.
+# [1.6.1] - 2025-12-22
+- Fix: Table for POSTGRES; Editing inquiry group ( refresh )
+
 # [1.6.0] - 2025-12-22
 - Fix: Update and forms in link form.
 - Features: Add ternary support choice
