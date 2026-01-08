@@ -139,9 +139,7 @@ export const useOptionsStore = defineStore('options', {
         },
 
         // Get options by specific type
-        getOptionsByType: (state) => (typeKey: string): Option[] => {
-            return state.options.filter(option => option.type === typeKey)
-        },
+        getOptionsByType: (state) => (typeKey: string): Option[] => state.options.filter(option => option.type === typeKey),
 
         // Get options for a specific family
         getOptionsByFamily: (state) => (familyKey: string): Option[] => {
@@ -158,9 +156,7 @@ export const useOptionsStore = defineStore('options', {
         },
 
         // Get child options for a specific parent
-        childOptions: (state) => (parentId: number): Option[] => {
-            return state.options.filter(option => option.parentId === parentId)
-        },
+        childOptions: (state) => (parentId: number): Option[] => state.options.filter(option => option.parentId === parentId),
 
         // Get hierarchical structure
         hierarchicalOptions(): Array<Option & { children: Option[] }> {
@@ -421,10 +417,10 @@ export const useOptionsStore = defineStore('options', {
                     this.optionsByFamily[familyKey].push(option)
                 } else {
                     // If type not found, put in 'other' family
-                    if (!this.optionsByFamily['other']) {
-                        this.optionsByFamily['other'] = []
+                    if (!this.optionsByFamily.other) {
+                        this.optionsByFamily.other = []
                     }
-                    this.optionsByFamily['other'].push(option)
+                    this.optionsByFamily.other.push(option)
                 }
             })
             

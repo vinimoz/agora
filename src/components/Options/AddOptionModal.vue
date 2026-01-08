@@ -178,7 +178,7 @@
           @click="submitForm"
         >
           <template #icon>
-            <component :is="InquiryGeneralIcons.Add" :size="18" v-if="!submitting" />
+            <component :is="InquiryGeneralIcons.Add" v-if="!submitting" :size="18" />
             <NcLoadingIcon v-else :size="18" />
           </template>
           {{ t('agora', 'Add Option') }}
@@ -203,10 +203,9 @@ import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 
 import { useInquiryStore } from '../../stores/inquiry'
-import { useOptionsStore } from '../../stores/options'
+import { useOptionsStore , OptionTypeDefinition } from '../../stores/options'
 import { useSessionStore } from '../../stores/session'
 import { InquiryGeneralIcons } from '../../utils/icons.ts'
-import { OptionTypeDefinition } from '../../stores/options.ts'
 
 // Props
 const props = defineProps<{
@@ -251,29 +250,19 @@ const modalTitle = computed(() => {
   return t('agora', 'Add New Option')
 })
 
-const supportsMarkdown = computed(() => {
-  return props.optionType?.features?.includes('markdown') || false
-})
+const supportsMarkdown = computed(() => props.optionType?.features?.includes('markdown') || false)
 
-const miscFields = computed(() => {
-  return props.optionType?.miscFields || []
-})
+const miscFields = computed(() => props.optionType?.miscFields || [])
 
-const hasMiscFields = computed(() => {
-  return miscFields.value.length > 0
-})
+const hasMiscFields = computed(() => miscFields.value.length > 0)
 
-const canSetAccess = computed(() => {
-  return inquiryStore.permissions.setAccess
-})
+const canSetAccess = computed(() => inquiryStore.permissions.setAccess)
 
-const accessOptions = computed(() => {
-  return [
+const accessOptions = computed(() => [
     { value: 'public', label: t('agora', 'Public - Visible to everyone') },
     { value: 'participants', label: t('agora', 'Participants only') },
     { value: 'moderators', label: t('agora', 'Moderators only') }
-  ]
-})
+  ])
 
 const isFormValid = computed(() => {
   // Check required fields
@@ -305,12 +294,10 @@ const getIcon = (iconName: string) => {
   return iconMap[iconName] || InquiryGeneralIcons.File
 }
 
-const getSelectOptions = (field: any) => {
-  return field.options?.map((option: any) => ({
+const getSelectOptions = (field: any) => field.options?.map((option: any) => ({
     value: option.value,
     label: t('agora', option.label)
   })) || []
-}
 
 const getAccessDescription = (access: string) => {
   switch (access) {

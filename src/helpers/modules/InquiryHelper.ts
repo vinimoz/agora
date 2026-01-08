@@ -7,7 +7,7 @@ import { computed, type Ref } from 'vue'
 import { InquiryGeneralIcons, StatusIcons } from '../../utils/icons.ts'
 import type { useInquiryStore } from '../../stores/inquiry.ts'
 import type { useAppSettingsStore } from '../../stores/appSettings.ts'
-import type { InquiryStatus } from '../../Types/index.ts'
+import type { InquiryStatus, InquiryType } from '../../Types/index.ts'
 import type { InquiryGroupType } from '../stores/inquiryGroups.types.ts'
 
 export interface InquiryFamily {
@@ -18,18 +18,6 @@ export interface InquiryFamily {
   description?: string
 }
 
-export interface InquiryType {
-  id: number | string
-  inquiry_type: string
-  label: string
-  family: string
-  icon?: string
-  description?: string
-  allowed_response?: string | string[]
-  allowed_transformation?: string | string[]
-  is_root: boolean| true
-  fields?: string | string[]
-}
 
 export async function confirmAction(message: string): Promise<boolean> {
   return Promise.resolve(window.confirm(message))

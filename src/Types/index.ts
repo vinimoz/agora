@@ -94,6 +94,19 @@ export interface InquiryType {
   created: number
 }
 
+export interface InquiryOptionType {
+  id: number
+  inquiry_type: string
+  family: string
+  icon: string
+  label: string
+  description?: string
+  fields: string[]
+  allowed_response: string[]
+}
+
+
+
 
 export type ButtonMode = 'navigation' | 'actionMenu' | 'native'
 

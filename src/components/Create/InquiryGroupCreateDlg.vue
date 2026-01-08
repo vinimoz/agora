@@ -103,10 +103,23 @@ const availableInquiryGroupTypes = computed(() => {
   return result
 })
 
-const selectedInquiryGroupType = computed(() => localInquiryGroupType.value
-    || initialInquiryGroupType.value?.group_type
-    || availableInquiryGroupTypes.value[0]?.group_type)
+const selectedInquiryGroupType = computed(() => 
+  localInquiryGroupType.value
+  || props.inquiryGroupType  
+  || availableInquiryGroupTypes.value[0]?.group_type
+)
 
+watch(
+  [
+    () => localInquiryGroupType.value,
+    () => initialInquiryGroupType.value?.group_type,
+    () => availableInquiryGroupTypes.value[0]?.group_type
+  ],
+  ([localType, initialType, firstAvailableType]) => {
+    selectedInquiryGroupType.value = localType || initialType || firstAvailableType || ''
+  },
+  { immediate: true }
+)
 
 // Data for display
 const currentInquiryGroupTypeData = computed(() => {
@@ -145,14 +158,15 @@ const contextDescription = computed(() => {
 
 // Initialize local type when component mounts
 onMounted(() => {
-  
-  if (availableInquiryGroupTypes.value.length > 0 && !localInquiryGroupType.value) {
+  if (availableInquiryGroupTypes.value.length > 0 && !selectedInquiryGroupType.value) {
     // Default to parent type if available, otherwise first available
     const parentType = initialInquiryGroupType.value?.group_type
     
     if (parentType && availableInquiryGroupTypes.value.some(t => t.group_type === parentType)) {
-      localInquiryGroupType.value = parentType
+      selectedInquiryGroupType.value = parentType
+      localInquiryGroupType.value = parentType // Also set local type for consistency
     } else if (availableInquiryGroupTypes.value[0]) {
+      selectedInquiryGroupType.value = availableInquiryGroupTypes.value[0].group_type
       localInquiryGroupType.value = availableInquiryGroupTypes.value[0].group_type
     }
   }

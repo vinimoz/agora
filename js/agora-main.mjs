@@ -3551,8 +3551,16 @@ to {
   align-items: center;
   gap: 8px;
 }
-.family-content .family-header .family-actions .add-option-btn.type-argument_for[data-v-165eaf2d] {
+.family-content .family-header .family-actions .add-option-btn.type-position_for[data-v-165eaf2d] {
   background: linear-gradient(135deg, #4a86e8, #6aa84f);
+  border-color: #4a86e8;
+}
+.family-content .family-header .family-actions .add-option-btn.type-position_against[data-v-165eaf2d] {
+  background: linear-gradient(135deg, #cc0000, #e69138);
+  border-color: #cc0000;
+}
+.family-content .family-header .family-actions .add-option-btn.type-argument_for[data-v-165eaf2d] {
+  background: linear-gradient(135deg, #4a86e8, #3c8dbc);
   border-color: #4a86e8;
 }
 .family-content .family-header .family-actions .add-option-btn.type-argument_against[data-v-165eaf2d] {
@@ -3560,16 +3568,12 @@ to {
   border-color: #cc0000;
 }
 .family-content .family-header .family-actions .add-option-btn.type-proposal[data-v-165eaf2d] {
-  background: linear-gradient(135deg, #6aa84f, #4a86e8);
-  border-color: #6aa84f;
-}
-.family-content .family-header .family-actions .add-option-btn.type-question[data-v-165eaf2d] {
-  background: linear-gradient(135deg, #3c8dbc, #4a86e8);
-  border-color: #3c8dbc;
-}
-.family-content .family-header .family-actions .add-option-btn.type-idea[data-v-165eaf2d] {
   background: linear-gradient(135deg, #f1c232, #e69138);
   border-color: #f1c232;
+}
+.family-content .family-header .family-actions .add-option-btn.type-consultation_question[data-v-165eaf2d] {
+  background: linear-gradient(135deg, #3c8dbc, #4a86e8);
+  border-color: #3c8dbc;
 }
 .family-content .family-header .family-actions .add-option-btn[data-v-165eaf2d]:hover {
   transform: translateY(-2px);
@@ -3621,89 +3625,250 @@ to {
   margin-top: 4px;
 }
 .family-content .options-container .debate-layout[data-v-165eaf2d] {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
-  margin-bottom: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
 }
-.family-content .options-container .debate-layout .debate-column .column-header[data-v-165eaf2d] {
+.family-content .options-container .debate-layout .positions-section .positions-header[data-v-165eaf2d],
+.family-content .options-container .debate-layout .positions-section .arguments-header[data-v-165eaf2d],
+.family-content .options-container .debate-layout .arguments-section .positions-header[data-v-165eaf2d],
+.family-content .options-container .debate-layout .arguments-section .arguments-header[data-v-165eaf2d] {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-bottom: 12px;
   margin-bottom: 20px;
-  border-bottom: 3px solid;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--color-border);
 }
-.family-content .options-container .debate-layout .debate-column .column-header .column-title[data-v-165eaf2d] {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 16px;
-  font-weight: 600;
+.family-content .options-container .debate-layout .positions-section .positions-header .section-title[data-v-165eaf2d],
+.family-content .options-container .debate-layout .positions-section .arguments-header .section-title[data-v-165eaf2d],
+.family-content .options-container .debate-layout .arguments-section .positions-header .section-title[data-v-165eaf2d],
+.family-content .options-container .debate-layout .arguments-section .arguments-header .section-title[data-v-165eaf2d] {
   margin: 0;
+  font-size: 18px;
+  font-weight: 600;
   color: var(--color-main-text);
 }
-.family-content .options-container .debate-layout .debate-column .column-header .column-count[data-v-165eaf2d] {
-  background: var(--color-background-darker);
-  padding: 4px 12px;
+.family-content .options-container .debate-layout .positions-section .positions-header .positions-tabs[data-v-165eaf2d],
+.family-content .options-container .debate-layout .positions-section .positions-header .arguments-tabs[data-v-165eaf2d],
+.family-content .options-container .debate-layout .positions-section .arguments-header .positions-tabs[data-v-165eaf2d],
+.family-content .options-container .debate-layout .positions-section .arguments-header .arguments-tabs[data-v-165eaf2d],
+.family-content .options-container .debate-layout .arguments-section .positions-header .positions-tabs[data-v-165eaf2d],
+.family-content .options-container .debate-layout .arguments-section .positions-header .arguments-tabs[data-v-165eaf2d],
+.family-content .options-container .debate-layout .arguments-section .arguments-header .positions-tabs[data-v-165eaf2d],
+.family-content .options-container .debate-layout .arguments-section .arguments-header .arguments-tabs[data-v-165eaf2d] {
+  display: flex;
+  gap: 8px;
+}
+.family-content .options-container .debate-layout .positions-section .positions-header .positions-tabs .position-tab[data-v-165eaf2d],
+.family-content .options-container .debate-layout .positions-section .positions-header .positions-tabs .argument-tab[data-v-165eaf2d],
+.family-content .options-container .debate-layout .positions-section .positions-header .arguments-tabs .position-tab[data-v-165eaf2d],
+.family-content .options-container .debate-layout .positions-section .positions-header .arguments-tabs .argument-tab[data-v-165eaf2d],
+.family-content .options-container .debate-layout .positions-section .arguments-header .positions-tabs .position-tab[data-v-165eaf2d],
+.family-content .options-container .debate-layout .positions-section .arguments-header .positions-tabs .argument-tab[data-v-165eaf2d],
+.family-content .options-container .debate-layout .positions-section .arguments-header .arguments-tabs .position-tab[data-v-165eaf2d],
+.family-content .options-container .debate-layout .positions-section .arguments-header .arguments-tabs .argument-tab[data-v-165eaf2d],
+.family-content .options-container .debate-layout .arguments-section .positions-header .positions-tabs .position-tab[data-v-165eaf2d],
+.family-content .options-container .debate-layout .arguments-section .positions-header .positions-tabs .argument-tab[data-v-165eaf2d],
+.family-content .options-container .debate-layout .arguments-section .positions-header .arguments-tabs .position-tab[data-v-165eaf2d],
+.family-content .options-container .debate-layout .arguments-section .positions-header .arguments-tabs .argument-tab[data-v-165eaf2d],
+.family-content .options-container .debate-layout .arguments-section .arguments-header .positions-tabs .position-tab[data-v-165eaf2d],
+.family-content .options-container .debate-layout .arguments-section .arguments-header .positions-tabs .argument-tab[data-v-165eaf2d],
+.family-content .options-container .debate-layout .arguments-section .arguments-header .arguments-tabs .position-tab[data-v-165eaf2d],
+.family-content .options-container .debate-layout .arguments-section .arguments-header .arguments-tabs .argument-tab[data-v-165eaf2d] {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: var(--color-background-dark);
+  border: 2px solid transparent;
   border-radius: 12px;
   font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.family-content .options-container .debate-layout .positions-section .positions-header .positions-tabs .position-tab[data-v-165eaf2d]:hover,
+.family-content .options-container .debate-layout .positions-section .positions-header .positions-tabs .argument-tab[data-v-165eaf2d]:hover,
+.family-content .options-container .debate-layout .positions-section .positions-header .arguments-tabs .position-tab[data-v-165eaf2d]:hover,
+.family-content .options-container .debate-layout .positions-section .positions-header .arguments-tabs .argument-tab[data-v-165eaf2d]:hover,
+.family-content .options-container .debate-layout .positions-section .arguments-header .positions-tabs .position-tab[data-v-165eaf2d]:hover,
+.family-content .options-container .debate-layout .positions-section .arguments-header .positions-tabs .argument-tab[data-v-165eaf2d]:hover,
+.family-content .options-container .debate-layout .positions-section .arguments-header .arguments-tabs .position-tab[data-v-165eaf2d]:hover,
+.family-content .options-container .debate-layout .positions-section .arguments-header .arguments-tabs .argument-tab[data-v-165eaf2d]:hover,
+.family-content .options-container .debate-layout .arguments-section .positions-header .positions-tabs .position-tab[data-v-165eaf2d]:hover,
+.family-content .options-container .debate-layout .arguments-section .positions-header .positions-tabs .argument-tab[data-v-165eaf2d]:hover,
+.family-content .options-container .debate-layout .arguments-section .positions-header .arguments-tabs .position-tab[data-v-165eaf2d]:hover,
+.family-content .options-container .debate-layout .arguments-section .positions-header .arguments-tabs .argument-tab[data-v-165eaf2d]:hover,
+.family-content .options-container .debate-layout .arguments-section .arguments-header .positions-tabs .position-tab[data-v-165eaf2d]:hover,
+.family-content .options-container .debate-layout .arguments-section .arguments-header .positions-tabs .argument-tab[data-v-165eaf2d]:hover,
+.family-content .options-container .debate-layout .arguments-section .arguments-header .arguments-tabs .position-tab[data-v-165eaf2d]:hover,
+.family-content .options-container .debate-layout .arguments-section .arguments-header .arguments-tabs .argument-tab[data-v-165eaf2d]:hover {
+  background: var(--color-background-darker);
+}
+.family-content .options-container .debate-layout .positions-section .positions-header .positions-tabs .position-tab.active[data-v-165eaf2d],
+.family-content .options-container .debate-layout .positions-section .positions-header .positions-tabs .argument-tab.active[data-v-165eaf2d],
+.family-content .options-container .debate-layout .positions-section .positions-header .arguments-tabs .position-tab.active[data-v-165eaf2d],
+.family-content .options-container .debate-layout .positions-section .positions-header .arguments-tabs .argument-tab.active[data-v-165eaf2d],
+.family-content .options-container .debate-layout .positions-section .arguments-header .positions-tabs .position-tab.active[data-v-165eaf2d],
+.family-content .options-container .debate-layout .positions-section .arguments-header .positions-tabs .argument-tab.active[data-v-165eaf2d],
+.family-content .options-container .debate-layout .positions-section .arguments-header .arguments-tabs .position-tab.active[data-v-165eaf2d],
+.family-content .options-container .debate-layout .positions-section .arguments-header .arguments-tabs .argument-tab.active[data-v-165eaf2d],
+.family-content .options-container .debate-layout .arguments-section .positions-header .positions-tabs .position-tab.active[data-v-165eaf2d],
+.family-content .options-container .debate-layout .arguments-section .positions-header .positions-tabs .argument-tab.active[data-v-165eaf2d],
+.family-content .options-container .debate-layout .arguments-section .positions-header .arguments-tabs .position-tab.active[data-v-165eaf2d],
+.family-content .options-container .debate-layout .arguments-section .positions-header .arguments-tabs .argument-tab.active[data-v-165eaf2d],
+.family-content .options-container .debate-layout .arguments-section .arguments-header .positions-tabs .position-tab.active[data-v-165eaf2d],
+.family-content .options-container .debate-layout .arguments-section .arguments-header .positions-tabs .argument-tab.active[data-v-165eaf2d],
+.family-content .options-container .debate-layout .arguments-section .arguments-header .arguments-tabs .position-tab.active[data-v-165eaf2d],
+.family-content .options-container .debate-layout .arguments-section .arguments-header .arguments-tabs .argument-tab.active[data-v-165eaf2d] {
+  background: var(--color-primary-light);
+  border-color: var(--color-primary-element);
+  color: var(--color-primary-element);
+}
+.family-content .options-container .debate-layout .positions-section .positions-header .positions-tabs .position-tab .tab-count[data-v-165eaf2d],
+.family-content .options-container .debate-layout .positions-section .positions-header .positions-tabs .argument-tab .tab-count[data-v-165eaf2d],
+.family-content .options-container .debate-layout .positions-section .positions-header .arguments-tabs .position-tab .tab-count[data-v-165eaf2d],
+.family-content .options-container .debate-layout .positions-section .positions-header .arguments-tabs .argument-tab .tab-count[data-v-165eaf2d],
+.family-content .options-container .debate-layout .positions-section .arguments-header .positions-tabs .position-tab .tab-count[data-v-165eaf2d],
+.family-content .options-container .debate-layout .positions-section .arguments-header .positions-tabs .argument-tab .tab-count[data-v-165eaf2d],
+.family-content .options-container .debate-layout .positions-section .arguments-header .arguments-tabs .position-tab .tab-count[data-v-165eaf2d],
+.family-content .options-container .debate-layout .positions-section .arguments-header .arguments-tabs .argument-tab .tab-count[data-v-165eaf2d],
+.family-content .options-container .debate-layout .arguments-section .positions-header .positions-tabs .position-tab .tab-count[data-v-165eaf2d],
+.family-content .options-container .debate-layout .arguments-section .positions-header .positions-tabs .argument-tab .tab-count[data-v-165eaf2d],
+.family-content .options-container .debate-layout .arguments-section .positions-header .arguments-tabs .position-tab .tab-count[data-v-165eaf2d],
+.family-content .options-container .debate-layout .arguments-section .positions-header .arguments-tabs .argument-tab .tab-count[data-v-165eaf2d],
+.family-content .options-container .debate-layout .arguments-section .arguments-header .positions-tabs .position-tab .tab-count[data-v-165eaf2d],
+.family-content .options-container .debate-layout .arguments-section .arguments-header .positions-tabs .argument-tab .tab-count[data-v-165eaf2d],
+.family-content .options-container .debate-layout .arguments-section .arguments-header .arguments-tabs .position-tab .tab-count[data-v-165eaf2d],
+.family-content .options-container .debate-layout .arguments-section .arguments-header .arguments-tabs .argument-tab .tab-count[data-v-165eaf2d] {
+  background: var(--color-background-darker);
+  padding: 2px 8px;
+  border-radius: 8px;
+  font-size: 12px;
   font-weight: 700;
 }
-.family-content .options-container .debate-layout .debate-column .column-content[data-v-165eaf2d] {
+.family-content .options-container .debate-layout .positions-section .positions-content[data-v-165eaf2d],
+.family-content .options-container .debate-layout .positions-section .arguments-content[data-v-165eaf2d],
+.family-content .options-container .debate-layout .arguments-section .positions-content[data-v-165eaf2d],
+.family-content .options-container .debate-layout .arguments-section .arguments-content[data-v-165eaf2d] {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
-.family-content .options-container .debate-layout .debate-column .column-content .empty-column[data-v-165eaf2d] {
+.family-content .options-container .debate-layout .positions-section .positions-content .position-column .empty-column[data-v-165eaf2d],
+.family-content .options-container .debate-layout .positions-section .positions-content .argument-column .empty-column[data-v-165eaf2d],
+.family-content .options-container .debate-layout .positions-section .arguments-content .position-column .empty-column[data-v-165eaf2d],
+.family-content .options-container .debate-layout .positions-section .arguments-content .argument-column .empty-column[data-v-165eaf2d],
+.family-content .options-container .debate-layout .arguments-section .positions-content .position-column .empty-column[data-v-165eaf2d],
+.family-content .options-container .debate-layout .arguments-section .positions-content .argument-column .empty-column[data-v-165eaf2d],
+.family-content .options-container .debate-layout .arguments-section .arguments-content .position-column .empty-column[data-v-165eaf2d],
+.family-content .options-container .debate-layout .arguments-section .arguments-content .argument-column .empty-column[data-v-165eaf2d] {
   text-align: center;
   padding: 40px 20px;
   background: var(--color-background-dark);
   border: 2px dashed var(--color-border);
   border-radius: 16px;
 }
-.family-content .options-container .debate-layout .debate-column .column-content .empty-column svg[data-v-165eaf2d] {
+.family-content .options-container .debate-layout .positions-section .positions-content .position-column .empty-column svg[data-v-165eaf2d],
+.family-content .options-container .debate-layout .positions-section .positions-content .argument-column .empty-column svg[data-v-165eaf2d],
+.family-content .options-container .debate-layout .positions-section .arguments-content .position-column .empty-column svg[data-v-165eaf2d],
+.family-content .options-container .debate-layout .positions-section .arguments-content .argument-column .empty-column svg[data-v-165eaf2d],
+.family-content .options-container .debate-layout .arguments-section .positions-content .position-column .empty-column svg[data-v-165eaf2d],
+.family-content .options-container .debate-layout .arguments-section .positions-content .argument-column .empty-column svg[data-v-165eaf2d],
+.family-content .options-container .debate-layout .arguments-section .arguments-content .position-column .empty-column svg[data-v-165eaf2d],
+.family-content .options-container .debate-layout .arguments-section .arguments-content .argument-column .empty-column svg[data-v-165eaf2d] {
   color: var(--color-text-lighter);
   margin-bottom: 16px;
 }
-.family-content .options-container .debate-layout .debate-column .column-content .empty-column p[data-v-165eaf2d] {
+.family-content .options-container .debate-layout .positions-section .positions-content .position-column .empty-column p[data-v-165eaf2d],
+.family-content .options-container .debate-layout .positions-section .positions-content .argument-column .empty-column p[data-v-165eaf2d],
+.family-content .options-container .debate-layout .positions-section .arguments-content .position-column .empty-column p[data-v-165eaf2d],
+.family-content .options-container .debate-layout .positions-section .arguments-content .argument-column .empty-column p[data-v-165eaf2d],
+.family-content .options-container .debate-layout .arguments-section .positions-content .position-column .empty-column p[data-v-165eaf2d],
+.family-content .options-container .debate-layout .arguments-section .positions-content .argument-column .empty-column p[data-v-165eaf2d],
+.family-content .options-container .debate-layout .arguments-section .arguments-content .position-column .empty-column p[data-v-165eaf2d],
+.family-content .options-container .debate-layout .arguments-section .arguments-content .argument-column .empty-column p[data-v-165eaf2d] {
   margin: 0;
   color: var(--color-text-lighter);
   font-style: italic;
 }
-.family-content .options-container .debate-layout .proposals-section[data-v-165eaf2d] {
-  grid-column: span 2;
-  margin-top: 24px;
+.family-content .options-container .debate-layout .other-options-section .options-grid[data-v-165eaf2d] {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
 }
-.family-content .options-container .debate-layout .proposals-section .section-header[data-v-165eaf2d] {
+.family-content .options-container .debate-layout .other-options-section .options-grid .options-column .column-header[data-v-165eaf2d] {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--color-border);
 }
-.family-content .options-container .debate-layout .proposals-section .section-header .section-title[data-v-165eaf2d] {
+.family-content .options-container .debate-layout .other-options-section .options-grid .options-column .column-header .column-title[data-v-165eaf2d] {
   display: flex;
   align-items: center;
   gap: 8px;
+  margin: 0;
   font-size: 16px;
   font-weight: 600;
-  margin: 0;
   color: var(--color-main-text);
 }
-.family-content .options-container .debate-layout .proposals-section .section-header .section-count[data-v-165eaf2d] {
-  background: var(--color-background-darker);
+.family-content .options-container .debate-layout .other-options-section .options-grid .options-column .column-header .column-count[data-v-165eaf2d] {
+  background: var(--color-background-dark);
   padding: 4px 12px;
   border-radius: 12px;
   font-size: 14px;
   font-weight: 700;
 }
-.family-content .options-container .debate-layout .proposals-section .proposals-grid[data-v-165eaf2d] {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+.family-content .options-container .debate-layout .other-options-section .options-grid .options-column .column-content[data-v-165eaf2d] {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.family-content .options-container .consensus-layout .consultation-questions[data-v-165eaf2d] {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-bottom: 32px;
+}
+.family-content .options-container .consensus-layout .objections-section .section-title[data-v-165eaf2d] {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 16px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-main-text);
+}
+.family-content .options-container .consensus-layout .objections-section .section-title .section-count[data-v-165eaf2d] {
+  background: var(--color-background-dark);
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+}
+.family-content .options-container .consensus-layout .objections-section .objections-list[data-v-165eaf2d] {
+  display: flex;
+  flex-direction: column;
   gap: 16px;
 }
-.family-content .options-container .consultative-layout .empty-state[data-v-165eaf2d],
-.family-content .options-container .creative-layout .empty-state[data-v-165eaf2d],
+.family-content .options-container .proposal-layout .proposals-grid[data-v-165eaf2d],
+.family-content .options-container .proposal-layout .official-results[data-v-165eaf2d],
+.family-content .options-container .proposal-layout .options-grid[data-v-165eaf2d],
+.family-content .options-container .decision-layout .proposals-grid[data-v-165eaf2d],
+.family-content .options-container .decision-layout .official-results[data-v-165eaf2d],
+.family-content .options-container .decision-layout .options-grid[data-v-165eaf2d],
+.family-content .options-container .default-layout .proposals-grid[data-v-165eaf2d],
+.family-content .options-container .default-layout .official-results[data-v-165eaf2d],
+.family-content .options-container .default-layout .options-grid[data-v-165eaf2d] {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+.family-content .options-container .proposal-layout .empty-state[data-v-165eaf2d],
+.family-content .options-container .decision-layout .empty-state[data-v-165eaf2d],
 .family-content .options-container .default-layout .empty-state[data-v-165eaf2d] {
   text-align: center;
   padding: 60px 20px;
@@ -3711,35 +3876,25 @@ to {
   border: 2px dashed var(--color-border);
   border-radius: 16px;
 }
-.family-content .options-container .consultative-layout .empty-state svg[data-v-165eaf2d],
-.family-content .options-container .creative-layout .empty-state svg[data-v-165eaf2d],
+.family-content .options-container .proposal-layout .empty-state svg[data-v-165eaf2d],
+.family-content .options-container .decision-layout .empty-state svg[data-v-165eaf2d],
 .family-content .options-container .default-layout .empty-state svg[data-v-165eaf2d] {
   color: var(--color-text-lighter);
   margin-bottom: 20px;
 }
-.family-content .options-container .consultative-layout .empty-state h4[data-v-165eaf2d],
-.family-content .options-container .creative-layout .empty-state h4[data-v-165eaf2d],
+.family-content .options-container .proposal-layout .empty-state h4[data-v-165eaf2d],
+.family-content .options-container .decision-layout .empty-state h4[data-v-165eaf2d],
 .family-content .options-container .default-layout .empty-state h4[data-v-165eaf2d] {
   margin: 0 0 8px 0;
   color: var(--color-main-text);
   font-size: 18px;
 }
-.family-content .options-container .consultative-layout .empty-state p[data-v-165eaf2d],
-.family-content .options-container .creative-layout .empty-state p[data-v-165eaf2d],
+.family-content .options-container .proposal-layout .empty-state p[data-v-165eaf2d],
+.family-content .options-container .decision-layout .empty-state p[data-v-165eaf2d],
 .family-content .options-container .default-layout .empty-state p[data-v-165eaf2d] {
   margin: 0;
   color: var(--color-text-lighter);
   font-style: italic;
-}
-.family-content .options-container .consultative-layout .questions-list[data-v-165eaf2d] {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-.family-content .options-container .creative-layout .ideas-grid[data-v-165eaf2d] {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 20px;
 }
 .family-content .options-container .hierarchical-layout .tree-view[data-v-165eaf2d] {
   padding: 20px;
@@ -3747,10 +3902,26 @@ to {
   border: 2px solid var(--color-border);
   border-radius: 16px;
 }
-.family-content .options-container .default-layout .options-grid[data-v-165eaf2d] {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
+.family-content .options-container .hierarchical-layout .empty-state[data-v-165eaf2d] {
+  text-align: center;
+  padding: 60px 20px;
+  background: var(--color-background-dark);
+  border: 2px dashed var(--color-border);
+  border-radius: 16px;
+}
+.family-content .options-container .hierarchical-layout .empty-state svg[data-v-165eaf2d] {
+  color: var(--color-text-lighter);
+  margin-bottom: 20px;
+}
+.family-content .options-container .hierarchical-layout .empty-state h4[data-v-165eaf2d] {
+  margin: 0 0 8px 0;
+  color: var(--color-main-text);
+  font-size: 18px;
+}
+.family-content .options-container .hierarchical-layout .empty-state p[data-v-165eaf2d] {
+  margin: 0;
+  color: var(--color-text-lighter);
+  font-style: italic;
 }
 .family-content .load-more[data-v-165eaf2d] {
   text-align: center;
@@ -3799,11 +3970,8 @@ to {
     width: 100%;
     justify-content: center;
 }
-.family-content .debate-layout[data-v-165eaf2d] {
+.family-content .debate-layout .other-options-section .options-grid[data-v-165eaf2d] {
     grid-template-columns: 1fr;
-}
-.family-content .debate-layout .proposals-section[data-v-165eaf2d] {
-    grid-column: span 1;
 }
 }
 @media (max-width: 768px) {
@@ -3821,13 +3989,26 @@ to {
 .family-stats[data-v-165eaf2d] {
     flex-direction: column;
 }
-.options-container .debate-layout .proposals-grid[data-v-165eaf2d] {
-    grid-template-columns: 1fr !important;
+.options-container .debate-layout .positions-header[data-v-165eaf2d],
+  .options-container .debate-layout .arguments-header[data-v-165eaf2d] {
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start !important;
 }
-.options-container .creative-layout .ideas-grid[data-v-165eaf2d] {
-    grid-template-columns: 1fr !important;
+.options-container .debate-layout .positions-tabs[data-v-165eaf2d],
+  .options-container .debate-layout .arguments-tabs[data-v-165eaf2d] {
+    width: 100%;
+    justify-content: space-between;
 }
-.options-container .default-layout .options-grid[data-v-165eaf2d] {
+.options-container .proposal-layout .proposals-grid[data-v-165eaf2d],
+  .options-container .proposal-layout .official-results[data-v-165eaf2d],
+  .options-container .proposal-layout .options-grid[data-v-165eaf2d],
+  .options-container .decision-layout .proposals-grid[data-v-165eaf2d],
+  .options-container .decision-layout .official-results[data-v-165eaf2d],
+  .options-container .decision-layout .options-grid[data-v-165eaf2d],
+  .options-container .default-layout .proposals-grid[data-v-165eaf2d],
+  .options-container .default-layout .official-results[data-v-165eaf2d],
+  .options-container .default-layout .options-grid[data-v-165eaf2d] {
     grid-template-columns: 1fr !important;
 }
 }.inquiry-edit-view[data-v-9e316df6] {
@@ -10946,12 +11127,12 @@ tr.file-picker__row td.row-name[data-v-1f96131b] {
 const appName = "agora";
 const appVersion = "1.6.0";
 import { at as h$1, B as defineStore, s as translate, b6 as emit, bc as Settings, a as _export_sfc, d as defineComponent, b as computed, bd as getCanonicalLocale, c as createElementBlock, o as openBlock, t as toDisplayString, J as normalizeClass, b9 as NcActionButton, _ as _export_sfc$1, f as createBlock, g as withCtx, l as createCommentVNode, h as resolveDynamicComponent, k as createBaseVNode, be as NC_ACTIONS_IS_SEMANTIC_MENU, a4 as createElementId, bf as ActionGlobalMixin, V as withDirectives, bg as vModelRadio, bh as withKeys, Z as withModifiers, u as useModel, bi as useSlots, e as watch, aw as logger, v as onMounted, aK as onBeforeUnmount, r as renderSlot, af as useCssVars, bj as useIsDarkTheme, n as unref, bk as mdiCreation, j as createVNode, a7 as createSlots, C as createTextVNode, K as NcIconSvgWrapper, Y as NcButton, ba as NcActions, $ as resolveComponent, i as mergeProps, W as vShow, x as normalizeProps, y as guardReactiveProps, bl as userStatus, N as NcAvatar, p as normalizeStyle, m as mergeModels, U as ref, bm as provide, w as warn, a1 as useTemplateRef, a0 as useAttrs, L as isLegacy, a2 as mdiCheck, a3 as mdiAlertCircle, M as Fragment$1, O as renderList, ae as NcLoadingIcon, bn as Teleport, bo as useRouter, P as DateTime, R as RouterLink, b8 as onUnmounted, bp as useRoute, bq as translatePlural, br as TransitionGroup, aL as nextTick, E as _$2, bs as NcModal, b7 as shallowRef, bt as markRaw, bu as watchEffect, bv as getCurrentInstance, bw as customRef, bx as global, by as getAugmentedNamespace, aN as process$1, b5 as commonjsGlobal, bz as Buffer, S as getDefaultExportFromCjs, bA as vModelSelect, as as Transition, bB as toRaw, bC as subscribe, bD as unsubscribe, bE as onBeforeRouteUpdate, aR as getCurrentUser, aT as v, aS as cancelableClient, D as purify, bF as onBeforeRouteLeave, bG as createRouter, bH as createWebHistory, bI as axios, z as createApp, A as pinia } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_ef057a6f_lang-Uo9ga7Wd.chunk.mjs";
-import { a as useSessionStore, p as publicInquiry, h as supports, L as Logger, i as useInquiryStore, s as showError$1, o as options, E as Event$1, j as createPermissionContextForContent, C as ContentType, k as canTransfer, l as canDelete, m as canArchive, I as InquiryGeneralIcons, b as useInquiriesStore, n as useInquiryGroupsStore, q as NavigationIcons, r as showSuccess, t as useInquiryGroupStore, v as canCreateInquiryGroup, w as accessFamilyMenu, x as NcEmptyContent, S as StatusIcons, B as BadgeIcons, y as canSupport, z as canComment, A as sortTitlesMapping, D as lodashExports, F as appSettings, G as canRestore, H as getAvailableResponseTypesWithPermissions, J as getAvailableTransformTypesWithPermissions, K as canViewToggle, M as validators, O as inquiries, P as commonjsRequire, Q as useAttachmentsStore, R as useCommentsStore, T as useSharesStore, U as canEdit, V as createPermissionContextForInquiryGroup, d as useAppSettingsStore, W as createDefault, X as inquiryLinks, Y as ShareIcons, Z as canShare, _ as canUseResource } from "./NcDashboardWidget-Bu7bWoUK-ClVy5_jp.chunk.mjs";
-import { u as usePreferencesStore, S as StyleSettings, F as FeatureSettings } from "./StyleSettings-DNf_Fy-n.chunk.mjs";
-import { b as NcAppNavigationItem, u as useAppSettingsDialog, _ as _sfc_main$1P, c as NcAppNavigationList, d as NcAppNavigation, S as Spinner, Q as QRCode, I as InputDiv, e as NcAppContent, f as NcActionButtonGroup, g as NcDialog, h as find$1, r as registerCustomProtocol, t as tokenize, i as reset, j as NcDateTimePicker, O as Options, k as NcActionInput, P as PlusIcon, l as NcDateTimePickerNative, m as NcAppSidebar, a as NcAppSettingsDialog, n as NcContent } from "./index-BCRKNXjB.chunk.mjs";
-import { g as getInquiryTypeData, a as getAvailableInquiryTypesForCreation, b as getInquiryTypeOptions, c as getAllowedResponseGroupTypes, d as getAvailableInquiryGroupTypesForCreation, e as getInquiryGroupTypeData, f as getInquiryTypesByFamily, h as getInquiryTypesForFamily, i as getInquiryItemData, j as getInquiryGroupTypesByFamily, k as getInquiryGroupTypesForFamily, l as isInquiryFinalStatus, m as getAvailableFields, n as getAvailableGroupFields } from "./InquiryHelper-B1nhm6WX.chunk.mjs";
+import { a as useSessionStore, p as publicInquiry, h as supports, L as Logger, i as useInquiryStore, s as showError$1, o as options, E as Event$1, j as createPermissionContextForContent, C as ContentType, k as canTransfer, l as canDelete, m as canArchive, I as InquiryGeneralIcons, b as useInquiriesStore, n as useInquiryGroupsStore, q as NavigationIcons, r as showSuccess, t as useInquiryGroupStore, v as canCreateInquiryGroup, w as accessFamilyMenu, x as NcEmptyContent, S as StatusIcons, B as BadgeIcons, y as canSupport, z as canComment, A as sortTitlesMapping, D as lodashExports, F as appSettings, G as canRestore, H as getAvailableResponseTypesWithPermissions, J as getAvailableTransformTypesWithPermissions, K as canViewToggle, M as validators, O as inquiries, P as commonjsRequire, Q as useAttachmentsStore, R as useCommentsStore, T as useSharesStore, U as canEdit, V as createPermissionContextForInquiryGroup, d as useAppSettingsStore, W as createDefault, X as inquiryLinks, Y as ShareIcons, Z as canShare, _ as canUseResource } from "./NcDashboardWidget-Bu7bWoUK-CM96NQjo.chunk.mjs";
+import { u as usePreferencesStore, S as StyleSettings, F as FeatureSettings } from "./StyleSettings-D-fTMjYB.chunk.mjs";
+import { b as NcAppNavigationItem, u as useAppSettingsDialog, _ as _sfc_main$1P, c as NcAppNavigationList, d as NcAppNavigation, S as Spinner, Q as QRCode, I as InputDiv, e as NcAppContent, f as NcActionButtonGroup, g as NcDialog, h as find$1, r as registerCustomProtocol, t as tokenize, i as reset, j as NcDateTimePicker, O as Options, k as NcActionInput, P as PlusIcon, l as NcDateTimePickerNative, m as NcAppSidebar, a as NcAppSettingsDialog, n as NcContent } from "./index-wp0BViLw.chunk.mjs";
+import { g as getInquiryTypeData, a as getAvailableInquiryTypesForCreation, b as getInquiryTypeOptions, c as getAllowedResponseGroupTypes, d as getAvailableInquiryGroupTypesForCreation, e as getInquiryGroupTypeData, f as getInquiryTypesByFamily, h as getInquiryTypesForFamily, i as getInquiryItemData, j as getInquiryGroupTypesByFamily, k as getInquiryGroupTypesForFamily, l as isInquiryFinalStatus, m as getAvailableFields, n as getAvailableGroupFields } from "./InquiryHelper-D_o8crWJ.chunk.mjs";
 import { _ as _sfc_main$1Q, I as INSIDE_RADIO_GROUP_KEY, a as NcSelect, N as NcCheckboxRadioSwitch, d as _sfc_main$1R, e as NcRichText, b as NcInputField } from "./NcRichText-CETsOVBU-DXRvZeJB.chunk.mjs";
-import { R as RadioGroupDiv, N as NcNoteCard, C as CardDiv } from "./markdown-Cdy4Y-Kv.chunk.mjs";
+import { R as RadioGroupDiv, N as NcNoteCard, C as CardDiv } from "./markdown-HNMm3UzH.chunk.mjs";
 import { A as AgoraAppIcon } from "./AgoraAppIcon-CAXuO7yM.chunk.mjs";
 import { N as NcUserBubble } from "./NcUserBubble-CM66IyhS-CPej_buN.chunk.mjs";
 const setCookie = (cookieName, cookieValue = "", cookieExpiration = 360) => {
@@ -11451,9 +11632,7 @@ const useOptionsStore = defineStore("options", {
       }));
     },
     // Get options by specific type
-    getOptionsByType: (state) => (typeKey) => {
-      return state.options.filter((option2) => option2.type === typeKey);
-    },
+    getOptionsByType: (state) => (typeKey) => state.options.filter((option2) => option2.type === typeKey),
     // Get options for a specific family
     getOptionsByFamily: (state) => (familyKey) => {
       const typesInFamily = Object.values(state.optionTypes).filter((type) => type.family === familyKey).map((type) => type.key);
@@ -11464,9 +11643,7 @@ const useOptionsStore = defineStore("options", {
       return this.options.filter((option2) => option2.parentId === 0);
     },
     // Get child options for a specific parent
-    childOptions: (state) => (parentId) => {
-      return state.options.filter((option2) => option2.parentId === parentId);
-    },
+    childOptions: (state) => (parentId) => state.options.filter((option2) => option2.parentId === parentId),
     // Get hierarchical structure
     hierarchicalOptions() {
       return this.parentOptions.map((parent) => ({
@@ -11687,10 +11864,10 @@ const useOptionsStore = defineStore("options", {
           }
           this.optionsByFamily[familyKey].push(option2);
         } else {
-          if (!this.optionsByFamily["other"]) {
-            this.optionsByFamily["other"] = [];
+          if (!this.optionsByFamily.other) {
+            this.optionsByFamily.other = [];
           }
-          this.optionsByFamily["other"].push(option2);
+          this.optionsByFamily.other.push(option2);
         }
       });
       this.createOptionGroups();
@@ -13626,8 +13803,7 @@ function _sfc_render$1y(_ctx, _cache, $props, $setup, $data, $options) {
               name: "menu"
             },
             exact: true,
-            class: "navigation-item",
-            onClick: $setup.navigateToHome
+            class: "navigation-item"
           }, {
             icon: withCtx(() => [
               (openBlock(), createBlock(resolveDynamicComponent($setup.NavigationIcons.Home)))
@@ -14717,7 +14893,20 @@ const _sfc_main$1n = /* @__PURE__ */ defineComponent({
       const result2 = getAvailableInquiryGroupTypesForCreation(rootTypes);
       return result2;
     });
-    const selectedInquiryGroupType = computed(() => localInquiryGroupType.value || initialInquiryGroupType.value?.group_type || availableInquiryGroupTypes.value[0]?.group_type);
+    const selectedInquiryGroupType = computed(
+      () => localInquiryGroupType.value || props2.inquiryGroupType || availableInquiryGroupTypes.value[0]?.group_type
+    );
+    watch(
+      [
+        () => localInquiryGroupType.value,
+        () => initialInquiryGroupType.value?.group_type,
+        () => availableInquiryGroupTypes.value[0]?.group_type
+      ],
+      ([localType, initialType, firstAvailableType]) => {
+        selectedInquiryGroupType.value = localType || initialType || firstAvailableType || "";
+      },
+      { immediate: true }
+    );
     const currentInquiryGroupTypeData = computed(() => {
       const data = getInquiryGroupTypeData(selectedInquiryGroupType.value, allInquiryGroupTypes.value);
       return data;
@@ -14747,11 +14936,13 @@ const _sfc_main$1n = /* @__PURE__ */ defineComponent({
       return desc;
     });
     onMounted(() => {
-      if (availableInquiryGroupTypes.value.length > 0 && !localInquiryGroupType.value) {
+      if (availableInquiryGroupTypes.value.length > 0 && !selectedInquiryGroupType.value) {
         const parentType = initialInquiryGroupType.value?.group_type;
         if (parentType && availableInquiryGroupTypes.value.some((t2) => t2.group_type === parentType)) {
+          selectedInquiryGroupType.value = parentType;
           localInquiryGroupType.value = parentType;
         } else if (availableInquiryGroupTypes.value[0]) {
+          selectedInquiryGroupType.value = availableInquiryGroupTypes.value[0].group_type;
           localInquiryGroupType.value = availableInquiryGroupTypes.value[0].group_type;
         }
       }
@@ -15662,6 +15853,9 @@ function _sfc_render$1m(_ctx, _cache, $props, $setup, $data, $options) {
 const NavigationMenu = /* @__PURE__ */ _export_sfc$1(_sfc_main$1m, [["render", _sfc_render$1m], ["__file", "/var/www/nextcloud/apps/agora/src/views/NavigationMenu.vue"]]);
 const _sfc_main$1l = /* @__PURE__ */ defineComponent({
   __name: "NavigationGroup",
+  props: {
+    slug: { type: String, required: false }
+  },
   setup(__props, { expose: __expose }) {
     __expose();
     const preferencesStore = usePreferencesStore();
@@ -65995,20 +66189,24 @@ const _sfc_main$T = /* @__PURE__ */ defineComponent({
       if (!props2.maxLength || props2.option.text.length <= props2.maxLength) {
         return props2.option.text;
       }
-      return props2.option.text.substring(0, props2.maxLength) + "...";
+      return `${props2.option.text.substring(0, props2.maxLength)}...`;
     });
-    const isTruncated = computed(() => {
-      return props2.maxLength && props2.option.text.length > props2.maxLength;
-    });
-    const isSelected = computed(() => {
-      return false;
-    });
-    const hasUnreadComments = computed(() => {
-      return false;
-    });
-    const useMarkdown = computed(() => {
-      return sessionStore.appSettings?.optionTypesTab?.[props2.option.type]?.features?.includes("markdown") || false;
-    });
+    const isTruncated = computed(() => props2.maxLength && props2.option.text.length > props2.maxLength);
+    const isSelected = computed(
+      () => (
+        // Check if this option is currently selected in detail view
+        false
+      )
+      // Would need to implement selection logic
+    );
+    const hasUnreadComments = computed(
+      () => (
+        // Check if option has unread comments
+        false
+      )
+      // Would need to implement read tracking
+    );
+    const useMarkdown = computed(() => sessionStore.appSettings?.optionTypesTab?.[props2.option.type]?.features?.includes("markdown") || false);
     const formatDate = (timestamp) => {
       const date = new Date(timestamp * 1e3);
       return date.toLocaleDateString();
@@ -66463,15 +66661,13 @@ const _sfc_main$S = /* @__PURE__ */ defineComponent({
     const optionsStore = useOptionsStore();
     const expanded = ref(false);
     const expandedText = ref(false);
-    const hasChildren = computed(() => {
-      return props2.children && props2.children.length > 0;
-    });
+    const hasChildren = computed(() => props2.children && props2.children.length > 0);
     const truncatedText = computed(() => {
       const maxLength = props2.maxTextLength || 100;
       if (expandedText.value || props2.option.text.length <= maxLength) {
         return props2.option.text;
       }
-      return props2.option.text.substring(0, maxLength) + "...";
+      return `${props2.option.text.substring(0, maxLength)}...`;
     });
     const isTruncated = computed(() => {
       const maxLength = props2.maxTextLength || 100;
@@ -66480,9 +66676,7 @@ const _sfc_main$S = /* @__PURE__ */ defineComponent({
     const toggleExpand = () => {
       expanded.value = !expanded.value;
     };
-    const getChildOptions = (parentId) => {
-      return optionsStore.childOptions(parentId);
-    };
+    const getChildOptions = (parentId) => optionsStore.childOptions(parentId);
     const __returned__ = { props: props2, emit: emit2, inquiryStore, optionsStore, expanded, expandedText, hasChildren, truncatedText, isTruncated, toggleExpand, getChildOptions, get t() {
       return translate;
     }, get NcButton() {
@@ -66727,25 +66921,15 @@ const _sfc_main$R = /* @__PURE__ */ defineComponent({
       }
       return translate("agora", "Add New Option");
     });
-    const supportsMarkdown = computed(() => {
-      return props2.optionType?.features?.includes("markdown") || false;
-    });
-    const miscFields = computed(() => {
-      return props2.optionType?.miscFields || [];
-    });
-    const hasMiscFields = computed(() => {
-      return miscFields.value.length > 0;
-    });
-    const canSetAccess = computed(() => {
-      return inquiryStore.permissions.setAccess;
-    });
-    const accessOptions = computed(() => {
-      return [
-        { value: "public", label: translate("agora", "Public - Visible to everyone") },
-        { value: "participants", label: translate("agora", "Participants only") },
-        { value: "moderators", label: translate("agora", "Moderators only") }
-      ];
-    });
+    const supportsMarkdown = computed(() => props2.optionType?.features?.includes("markdown") || false);
+    const miscFields = computed(() => props2.optionType?.miscFields || []);
+    const hasMiscFields = computed(() => miscFields.value.length > 0);
+    const canSetAccess = computed(() => inquiryStore.permissions.setAccess);
+    const accessOptions = computed(() => [
+      { value: "public", label: translate("agora", "Public - Visible to everyone") },
+      { value: "participants", label: translate("agora", "Participants only") },
+      { value: "moderators", label: translate("agora", "Moderators only") }
+    ]);
     const isFormValid = computed(() => {
       if (!form.value.text.trim()) return false;
       for (const field of miscFields.value) {
@@ -66769,12 +66953,10 @@ const _sfc_main$R = /* @__PURE__ */ defineComponent({
       };
       return iconMap[iconName] || InquiryGeneralIcons.File;
     };
-    const getSelectOptions = (field) => {
-      return field.options?.map((option2) => ({
-        value: option2.value,
-        label: translate("agora", option2.label)
-      })) || [];
-    };
+    const getSelectOptions = (field) => field.options?.map((option2) => ({
+      value: option2.value,
+      label: translate("agora", option2.label)
+    })) || [];
     const getAccessDescription = (access) => {
       switch (access) {
         case "public":
@@ -67302,27 +67484,15 @@ const _sfc_main$Q = /* @__PURE__ */ defineComponent({
       text: ""
     });
     const commentsSection = ref(null);
-    const canComment2 = computed(() => {
-      return option2.value?.allowComment && option2.value?.permissions?.comment;
-    });
-    const canEditOrDelete = computed(() => {
-      return option2.value?.permissions?.edit || option2.value?.permissions?.delete || option2.value?.canAddChildren;
-    });
-    const useMarkdown = computed(() => {
-      return sessionStore.appSettings?.optionTypesTab?.[option2.value?.type || ""]?.features?.includes("markdown") || false;
-    });
-    const supportsMarkdown = computed(() => {
-      return sessionStore.appSettings?.optionTypesTab?.[option2.value?.type || ""]?.features?.includes("markdown") || false;
-    });
-    const miscFields = computed(() => {
-      return sessionStore.appSettings?.optionTypesTab?.[option2.value?.type || ""]?.miscFields || [];
-    });
-    const hasMiscFields = computed(() => {
-      return miscFields.value.length > 0 && Object.keys(option2.value?.miscFields || {}).length > 0;
-    });
+    const canComment2 = computed(() => option2.value?.allowComment && option2.value?.permissions?.comment);
+    const canEditOrDelete = computed(() => option2.value?.permissions?.edit || option2.value?.permissions?.delete || option2.value?.canAddChildren);
+    const useMarkdown = computed(() => sessionStore.appSettings?.optionTypesTab?.[option2.value?.type || ""]?.features?.includes("markdown") || false);
+    const supportsMarkdown = computed(() => sessionStore.appSettings?.optionTypesTab?.[option2.value?.type || ""]?.features?.includes("markdown") || false);
+    const miscFields = computed(() => sessionStore.appSettings?.optionTypesTab?.[option2.value?.type || ""]?.miscFields || []);
+    const hasMiscFields = computed(() => miscFields.value.length > 0 && Object.keys(option2.value?.miscFields || {}).length > 0);
     const formatDate = (timestamp) => {
       const date = new Date(timestamp * 1e3);
-      return date.toLocaleDateString() + " " + date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+      return `${date.toLocaleDateString()} ${date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`;
     };
     const formatMiscField = (field, value) => {
       if (value === null || value === void 0 || value === "") {
@@ -67567,8 +67737,8 @@ const _hoisted_33$8 = { class: "field-label" };
 const _hoisted_34$8 = { class: "field-value" };
 const _hoisted_35$8 = {
   key: 0,
-  class: "comments-section",
-  ref: "commentsSection"
+  ref: "commentsSection",
+  class: "comments-section"
 };
 const _hoisted_36$7 = { class: "section-header" };
 const _hoisted_37$7 = { class: "section-title" };
@@ -67787,8 +67957,8 @@ function _sfc_render$Q(_ctx, _cache, $props, $setup, $data, $options) {
                       }),
                       createVNode($setup["NcButton"], {
                         type: "primary",
-                        onClick: $setup.saveEdit,
-                        disabled: !$setup.editForm.text.trim()
+                        disabled: !$setup.editForm.text.trim(),
+                        onClick: $setup.saveEdit
                       }, {
                         default: withCtx(() => [
                           createTextVNode(
@@ -68019,8 +68189,8 @@ function _sfc_render$Q(_ctx, _cache, $props, $setup, $data, $options) {
                           }),
                           createVNode($setup["NcButton"], {
                             type: "primary",
-                            onClick: $setup.submitComment,
-                            disabled: !$setup.newComment.trim()
+                            disabled: !$setup.newComment.trim(),
+                            onClick: $setup.submitComment
                           }, {
                             default: withCtx(() => [
                               createTextVNode(
@@ -68177,37 +68347,65 @@ const _sfc_main$P = /* @__PURE__ */ defineComponent({
     const activeFamily = ref("");
     const showAddOptionModal = ref(false);
     const showOptionDetail = ref(false);
-    const selectedOptionType = ref(null);
+    const selectedOptionTypeKey = ref(null);
     const selectedParentId = ref(null);
     const selectedOptionId = ref(null);
-    const hasVisibleFamilies = computed(() => {
-      return visibleFamilies.value.length > 0;
-    });
+    const debateView = ref("for");
+    const argumentView = ref("for");
+    const allInquiryTypes = computed(
+      () => (
+        // Get all inquiry types from app settings
+        sessionStore.appSettings?.inquiryTypeTab || []
+      )
+    );
+    const allOptionTypes = computed(
+      () => (
+        // Option types might be stored in a different location
+        // Check different possible locations
+        sessionStore.appSettings?.inquiryOptionTypeTab || []
+      )
+    );
+    const hasVisibleFamilies = computed(() => visibleFamilies.value.length > 0);
     const visibleFamilies = computed(() => {
-      const inquiryType = inquiryStore.type;
-      const families = optionsStore.getFamilies;
-      return families.filter((family) => {
-        const allowedFamilies = sessionStore.appSettings?.inquiryTypeRights?.[inquiryType]?.allowedOptionFamilies;
-        return !allowedFamilies || allowedFamilies.includes(family.key);
+      const allowedOptionTypes = allowedRootOptions.value;
+      const families = /* @__PURE__ */ new Set();
+      allowedOptionTypes.forEach((optionTypeKey) => {
+        const optionConfig = getOptionTypeConfig(optionTypeKey);
+        if (optionConfig) {
+          const family = optionConfig.family || optionConfig.inquiry_type_family;
+          if (family) {
+            families.add(family);
+          }
+        }
+      });
+      return Array.from(families).map((familyKey) => {
+        const familyData = getFamilyData(familyKey);
+        return {
+          key: familyKey,
+          name: familyData.label,
+          description: familyData.description,
+          icon: familyData.icon,
+          color: getFamilyColor(familyKey)
+        };
       });
     });
-    const activeFamilyInfo = computed(() => {
-      const family = visibleFamilies.value.find((f) => f.key === activeFamily.value);
-      if (family) {
-        return {
-          name: family.name,
-          description: family.description,
-          color: family.color,
-          icon: family.icon
-        };
+    const allowedRootOptions = computed(() => {
+      const inquiryType = inquiryStore.type;
+      const inquiryTypeConfig = allInquiryTypes.value.find((t2) => t2.inquiry_type === inquiryType);
+      if (inquiryTypeConfig?.allowed_option_type) {
+        if (typeof inquiryTypeConfig.allowed_option_type === "string") {
+          try {
+            return JSON.parse(inquiryTypeConfig.allowed_option_type);
+          } catch {
+            return [];
+          }
+        } else if (Array.isArray(inquiryTypeConfig.allowed_option_type)) {
+          return inquiryTypeConfig.allowed_option_type;
+        }
       }
-      return {
-        name: "",
-        description: "",
-        color: "#999999",
-        icon: "icon-file"
-      };
+      return [];
     });
+    const activeFamilyInfo = computed(() => getFamilyData(activeFamily.value));
     const familyCounts = computed(() => {
       const counts = {};
       visibleFamilies.value.forEach((family) => {
@@ -68224,92 +68422,145 @@ const _sfc_main$P = /* @__PURE__ */ defineComponent({
         totalComments: familyOptions2.reduce((total, option2) => total + (option2.currentUserStatus?.countComments || 0), 0)
       };
     });
-    const canAddOptions = computed(() => {
-      return inquiryStore.permissions.addOptions;
-    });
+    const canAddOptions = computed(() => inquiryStore.permissions.addOptions);
     const allowedOptionTypesForFamily = computed(() => {
       if (!activeFamily.value) return [];
-      const family = visibleFamilies.value.find((f) => f.key === activeFamily.value);
-      return family?.types || [];
+      return allowedRootOptions.value.filter((optionTypeKey) => {
+        const optionConfig = getOptionTypeConfig(optionTypeKey);
+        if (!optionConfig) return false;
+        const family = optionConfig.family || optionConfig.inquiry_type_family;
+        return family === activeFamily.value;
+      });
     });
-    const argumentsFor = computed(() => {
-      return optionsStore.getOptionsByType("argument_for");
-    });
-    const argumentsAgainst = computed(() => {
-      return optionsStore.getOptionsByType("argument_against");
-    });
-    const proposals = computed(() => {
-      return optionsStore.getOptionsByType("proposal");
-    });
-    const questions = computed(() => {
-      return optionsStore.getOptionsByType("question");
-    });
-    const ideas = computed(() => {
-      return optionsStore.getOptionsByType("idea");
-    });
-    const familyOptions = computed(() => {
-      return optionsStore.getOptionsByFamily(activeFamily.value);
-    });
-    const parentOptions = computed(() => {
-      return optionsStore.parentOptions.filter(
-        (opt) => optionsStore.getOptionsByFamily(activeFamily.value).includes(opt)
-      );
-    });
-    const argumentsForCount = computed(() => argumentsFor.value.length);
-    const argumentsAgainstCount = computed(() => argumentsAgainst.value.length);
-    const proposalsCount = computed(() => proposals.value.length);
-    const hasMoreOptions = computed(() => {
-      return optionsStore.meta.loadedOptions < optionsStore.meta.totalOptions;
-    });
-    const getIcon = (iconName) => {
+    const positionsFor = computed(() => optionsStore.getOptionsByType("position_for"));
+    const positionsAgainst = computed(() => optionsStore.getOptionsByType("position_against"));
+    const argumentsFor = computed(() => optionsStore.getOptionsByType("argument_for"));
+    const argumentsAgainst = computed(() => optionsStore.getOptionsByType("argument_against"));
+    const alternatives = computed(() => optionsStore.getOptionsByType("alternative"));
+    const messages = computed(() => optionsStore.getOptionsByType("message"));
+    const officialSummaries = computed(() => optionsStore.getOptionsByType("official_summary"));
+    const chapters = computed(() => optionsStore.getOptionsByType("chapter"));
+    const articles = computed(() => optionsStore.getOptionsByType("article"));
+    const amendments = computed(() => optionsStore.getOptionsByType("amendment"));
+    const consultationQuestions = computed(() => optionsStore.getOptionsByType("consultation_question"));
+    const pollOptions = computed(() => optionsStore.getOptionsByType("poll_option"));
+    const objections = computed(() => optionsStore.getOptionsByType("objection"));
+    const exceptions = computed(() => optionsStore.getOptionsByType("exception"));
+    const officialResults = computed(() => optionsStore.getOptionsByType("official_result"));
+    const proposals = computed(() => optionsStore.getOptionsByType("proposal"));
+    const familyOptions = computed(() => optionsStore.getOptionsByFamily(activeFamily.value));
+    const hasMoreOptions = computed(() => optionsStore.meta.loadedOptions < optionsStore.meta.totalOptions);
+    const getFamilyData = (familyKey) => {
+      const familyLabels = {
+        "debate": translate("agora", "Debate"),
+        "structure": translate("agora", "Structure"),
+        "consensus": translate("agora", "Consensus"),
+        "decision": translate("agora", "Decision"),
+        "proposal": translate("agora", "Proposal")
+      };
+      const familyDescriptions = {
+        "debate": translate("agora", "Debate positions, arguments, and alternatives"),
+        "structure": translate("agora", "Structured documents with chapters and articles"),
+        "consensus": translate("agora", "Consultation questions and consensus building"),
+        "decision": translate("agora", "Official decisions and results"),
+        "proposal": translate("agora", "Initial proposals and suggestions")
+      };
+      const familyIcons = {
+        "debate": InquiryGeneralIcons.Discussion,
+        "structure": InquiryGeneralIcons.Settings,
+        "consensus": InquiryGeneralIcons.ThumbUp,
+        "decision": InquiryGeneralIcons.Checkmark,
+        "proposal": InquiryGeneralIcons.Lightbulb
+      };
+      return {
+        name: familyLabels[familyKey] || familyKey,
+        label: familyLabels[familyKey] || familyKey,
+        description: familyDescriptions[familyKey] || "",
+        icon: familyIcons[familyKey] || InquiryGeneralIcons.File
+      };
+    };
+    const getFamilyColor = (familyKey) => {
+      const familyColors = {
+        "debate": "#4a86e8",
+        "structure": "#6aa84f",
+        "consensus": "#3c8dbc",
+        "decision": "#f1c232",
+        "proposal": "#cc0000"
+      };
+      return familyColors[familyKey] || "#999999";
+    };
+    const getOptionTypeConfig = (optionTypeKey) => (
+      // Find the option type configuration
+      allOptionTypes.value.find(
+        (opt) => opt.option_type === optionTypeKey || opt.inquiry_type === optionTypeKey
+      ) || null
+    );
+    const getOptionTypeLabel = (optionTypeKey) => {
+      const config = getOptionTypeConfig(optionTypeKey);
+      if (config) {
+        return translate("agora", config.label || config.name || optionTypeKey);
+      }
+      return optionTypeKey;
+    };
+    const getOptionTypeIcon = (optionTypeKey) => {
+      const config = getOptionTypeConfig(optionTypeKey);
+      if (!config) return InquiryGeneralIcons.File;
+      const iconName = config.icon || "";
       const iconMap = {
-        "icon-discussion": InquiryGeneralIcons.Discussion,
-        "icon-question": InquiryGeneralIcons.Question,
-        "icon-lightbulb": InquiryGeneralIcons.Lightbulb,
-        "icon-settings": InquiryGeneralIcons.Settings,
-        "icon-code": InquiryGeneralIcons.Code,
-        "icon-category-other": InquiryGeneralIcons.CategoryOther,
-        "icon-like": InquiryGeneralIcons.ThumbUp,
-        "icon-dislike": InquiryGeneralIcons.ThumbDown,
-        "icon-checkmark": InquiryGeneralIcons.Checkmark
-        // Add more mappings as needed
+        "ThumbUp": InquiryGeneralIcons.ThumbUp,
+        "ThumbDown": InquiryGeneralIcons.ThumbDown,
+        "MessagePlus": InquiryGeneralIcons.MessagePlus,
+        "MessageMinus": InquiryGeneralIcons.MessageMinus,
+        "SwapHorizontal": InquiryGeneralIcons.SwapHorizontal,
+        "MessageText": InquiryGeneralIcons.MessageText,
+        "CheckCircle": InquiryGeneralIcons.Checkmark,
+        "BookOpenVariant": InquiryGeneralIcons.Book,
+        "FileDocument": InquiryGeneralIcons.File,
+        "FileDocumentEdit": InquiryGeneralIcons.Edit,
+        "HelpCircle": InquiryGeneralIcons.Question,
+        "BarChart2": InquiryGeneralIcons.Chart,
+        "AlertCircle": InquiryGeneralIcons.Alert,
+        "AlertOutline": InquiryGeneralIcons.Warning,
+        "Lightbulb": InquiryGeneralIcons.Lightbulb
       };
       return iconMap[iconName] || InquiryGeneralIcons.File;
     };
     const setActiveFamily = (familyKey) => {
       activeFamily.value = familyKey;
+      if (familyKey === "debate") {
+        debateView.value = "for";
+        argumentView.value = "for";
+      }
       if (optionsStore.getOptionsByFamily(familyKey).length === 0) {
         optionsStore.loadByType(familyKey, inquiryStore.id);
       }
     };
-    const hasNewOptions = (familyKey) => {
-      return false;
-    };
-    const hasUnreadComments = (familyKey) => {
-      return false;
-    };
-    const getChildOptions = (parentId) => {
-      return optionsStore.childOptions(parentId).filter(
-        (opt) => optionsStore.getOptionsByFamily(activeFamily.value).includes(opt)
-      );
-    };
-    const openAddOptionModal = (optionType, parentId) => {
-      selectedOptionType.value = optionType;
+    const hasNewOptions = (familyKey) => (
+      // Check if there are new options since last visit
+      false
+    );
+    const hasUnreadComments = (familyKey) => (
+      // Check for unread comments in this family
+      false
+    );
+    const getChildOptions = (parentId) => optionsStore.childOptions(parentId).filter(
+      (opt) => optionsStore.getOptionsByFamily(activeFamily.value).includes(opt)
+    );
+    const openAddOptionModal = (optionTypeKey, parentId) => {
+      selectedOptionTypeKey.value = optionTypeKey;
       selectedParentId.value = parentId || null;
       showAddOptionModal.value = true;
     };
     const openAddChildModal = (parentOption) => {
-      const allowedChildTypes = parentOption.allowedChildTypes || [];
-      if (allowedChildTypes.length > 0) {
-        const childType = sessionStore.appSettings?.optionTypesTab?.[allowedChildTypes[0]];
-        if (childType) {
-          openAddOptionModal(childType, parentOption.id);
-        }
+      const config = getOptionTypeConfig(parentOption.type);
+      if (config && config.allowed_response && config.allowed_response.length > 0) {
+        const childTypeKey = config.allowed_response[0];
+        openAddOptionModal(childTypeKey, parentOption.id);
       }
     };
     const closeAddOptionModal = () => {
       showAddOptionModal.value = false;
-      selectedOptionType.value = null;
+      selectedOptionTypeKey.value = null;
       selectedParentId.value = null;
     };
     const openOptionDetail = (option2) => {
@@ -68349,9 +68600,6 @@ const _sfc_main$P = /* @__PURE__ */ defineComponent({
     const handleAnswer = (option2) => {
       console.log("Answer question:", option2.id);
     };
-    const handleRefine = (option2) => {
-      console.log("Refine idea:", option2.id);
-    };
     const loadMoreOptions = () => {
       optionsStore.loadMore();
     };
@@ -68360,13 +68608,26 @@ const _sfc_main$P = /* @__PURE__ */ defineComponent({
       if (visibleFamilies.value.length > 0) {
         activeFamily.value = visibleFamilies.value[0].key;
       }
+      console.log("Data structure check:", {
+        inquiryType: inquiryStore.type,
+        allInquiryTypes: allInquiryTypes.value,
+        allOptionTypes: allOptionTypes.value,
+        allowedRootOptions: allowedRootOptions.value,
+        visibleFamilies: visibleFamilies.value
+      });
     });
     watch(() => inquiryStore.id, (newId) => {
       if (newId) {
         optionsStore.load(newId);
       }
     });
-    const __returned__ = { props: props2, inquiryStore, optionsStore, sessionStore, activeFamily, showAddOptionModal, showOptionDetail, selectedOptionType, selectedParentId, selectedOptionId, hasVisibleFamilies, visibleFamilies, activeFamilyInfo, familyCounts, familyStats, canAddOptions, allowedOptionTypesForFamily, argumentsFor, argumentsAgainst, proposals, questions, ideas, familyOptions, parentOptions, argumentsForCount, argumentsAgainstCount, proposalsCount, hasMoreOptions, getIcon, setActiveFamily, hasNewOptions, hasUnreadComments, getChildOptions, openAddOptionModal, openAddChildModal, closeAddOptionModal, openOptionDetail, closeOptionDetail, handleOptionCreated, handleOptionUpdated, handleOptionDeleted, handleSupport, handleComment, handleAnswer, handleRefine, loadMoreOptions, get t() {
+    watch(() => inquiryStore.type, (newType) => {
+      activeFamily.value = "";
+      if (visibleFamilies.value.length > 0) {
+        activeFamily.value = visibleFamilies.value[0].key;
+      }
+    });
+    const __returned__ = { props: props2, inquiryStore, optionsStore, sessionStore, activeFamily, showAddOptionModal, showOptionDetail, selectedOptionTypeKey, selectedParentId, selectedOptionId, debateView, argumentView, allInquiryTypes, allOptionTypes, hasVisibleFamilies, visibleFamilies, allowedRootOptions, activeFamilyInfo, familyCounts, familyStats, canAddOptions, allowedOptionTypesForFamily, positionsFor, positionsAgainst, argumentsFor, argumentsAgainst, alternatives, messages, officialSummaries, chapters, articles, amendments, consultationQuestions, pollOptions, objections, exceptions, officialResults, proposals, familyOptions, hasMoreOptions, getFamilyData, getFamilyColor, getOptionTypeConfig, getOptionTypeLabel, getOptionTypeIcon, setActiveFamily, hasNewOptions, hasUnreadComments, getChildOptions, openAddOptionModal, openAddChildModal, closeAddOptionModal, openOptionDetail, closeOptionDetail, handleOptionCreated, handleOptionUpdated, handleOptionDeleted, handleSupport, handleComment, handleAnswer, loadMoreOptions, get t() {
       return translate;
     }, get NcButton() {
       return NcButton;
@@ -68433,60 +68694,106 @@ const _hoisted_35$7 = {
   key: 0,
   class: "debate-layout"
 };
-const _hoisted_36$6 = { class: "debate-column" };
-const _hoisted_37$6 = {
-  class: "column-header",
-  style: { borderColor: "#4a86e8" }
-};
-const _hoisted_38$6 = { class: "column-title" };
-const _hoisted_39$5 = { class: "column-count" };
-const _hoisted_40$5 = { class: "column-content" };
-const _hoisted_41$5 = {
-  key: 0,
-  class: "empty-column"
-};
-const _hoisted_42$4 = { class: "debate-column" };
+const _hoisted_36$6 = { class: "positions-section" };
+const _hoisted_37$6 = { class: "positions-header" };
+const _hoisted_38$6 = { class: "section-title" };
+const _hoisted_39$5 = { class: "positions-tabs" };
+const _hoisted_40$5 = { class: "tab-count" };
+const _hoisted_41$5 = { class: "tab-count" };
+const _hoisted_42$4 = { class: "positions-content" };
 const _hoisted_43$4 = {
-  class: "column-header",
-  style: { borderColor: "#cc0000" }
+  key: 0,
+  class: "position-column"
 };
-const _hoisted_44$4 = { class: "column-title" };
-const _hoisted_45$3 = { class: "column-count" };
-const _hoisted_46$3 = { class: "column-content" };
-const _hoisted_47$3 = {
+const _hoisted_44$4 = {
   key: 0,
   class: "empty-column"
 };
-const _hoisted_48$3 = { class: "proposals-section" };
-const _hoisted_49$3 = { class: "section-header" };
-const _hoisted_50$3 = { class: "section-title" };
-const _hoisted_51$3 = { class: "section-count" };
-const _hoisted_52$3 = { class: "proposals-grid" };
-const _hoisted_53$3 = { class: "consultative-layout" };
-const _hoisted_54$3 = { class: "questions-list" };
+const _hoisted_45$3 = {
+  key: 1,
+  class: "position-column"
+};
+const _hoisted_46$3 = {
+  key: 0,
+  class: "empty-column"
+};
+const _hoisted_47$3 = { class: "arguments-section" };
+const _hoisted_48$3 = { class: "arguments-header" };
+const _hoisted_49$3 = { class: "section-title" };
+const _hoisted_50$3 = { class: "arguments-tabs" };
+const _hoisted_51$3 = { class: "tab-count" };
+const _hoisted_52$3 = { class: "tab-count" };
+const _hoisted_53$3 = { class: "arguments-content" };
+const _hoisted_54$3 = {
+  key: 0,
+  class: "argument-column"
+};
 const _hoisted_55$3 = {
   key: 0,
-  class: "empty-state"
+  class: "empty-column"
 };
-const _hoisted_56$3 = { class: "creative-layout" };
-const _hoisted_57$3 = { class: "ideas-grid" };
-const _hoisted_58$3 = {
+const _hoisted_56$3 = {
+  key: 1,
+  class: "argument-column"
+};
+const _hoisted_57$3 = {
+  key: 0,
+  class: "empty-column"
+};
+const _hoisted_58$3 = { class: "other-options-section" };
+const _hoisted_59$3 = { class: "options-grid" };
+const _hoisted_60$3 = { class: "options-column" };
+const _hoisted_61$3 = { class: "column-header" };
+const _hoisted_62$3 = { class: "column-title" };
+const _hoisted_63$3 = { class: "column-count" };
+const _hoisted_64$3 = { class: "column-content" };
+const _hoisted_65$3 = { class: "options-column" };
+const _hoisted_66$3 = { class: "column-header" };
+const _hoisted_67$3 = { class: "column-title" };
+const _hoisted_68$3 = { class: "column-count" };
+const _hoisted_69$3 = { class: "column-content" };
+const _hoisted_70$3 = { class: "hierarchical-layout" };
+const _hoisted_71$3 = { class: "tree-view" };
+const _hoisted_72$3 = {
   key: 0,
   class: "empty-state"
 };
-const _hoisted_59$3 = { class: "hierarchical-layout" };
-const _hoisted_60$3 = { class: "tree-view" };
-const _hoisted_61$3 = { class: "default-layout" };
-const _hoisted_62$3 = { class: "options-grid" };
-const _hoisted_63$3 = {
+const _hoisted_73$3 = { class: "consensus-layout" };
+const _hoisted_74$3 = { class: "consultation-questions" };
+const _hoisted_75$3 = {
   key: 0,
   class: "empty-state"
 };
-const _hoisted_64$3 = {
+const _hoisted_76$3 = {
+  key: 0,
+  class: "objections-section"
+};
+const _hoisted_77$2 = { class: "section-title" };
+const _hoisted_78$1 = { class: "section-count" };
+const _hoisted_79 = { class: "objections-list" };
+const _hoisted_80 = { class: "proposal-layout" };
+const _hoisted_81 = { class: "proposals-grid" };
+const _hoisted_82 = {
+  key: 0,
+  class: "empty-state"
+};
+const _hoisted_83 = { class: "decision-layout" };
+const _hoisted_84 = { class: "official-results" };
+const _hoisted_85 = {
+  key: 0,
+  class: "empty-state"
+};
+const _hoisted_86 = { class: "default-layout" };
+const _hoisted_87 = { class: "options-grid" };
+const _hoisted_88 = {
+  key: 0,
+  class: "empty-state"
+};
+const _hoisted_89 = {
   key: 1,
   class: "load-more"
 };
-const _hoisted_65$3 = { class: "no-families" };
+const _hoisted_90 = { class: "no-families" };
 function _sfc_render$P(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock("div", _hoisted_1$B, [
     createCommentVNode(" Family Tabs "),
@@ -68525,10 +68832,10 @@ function _sfc_render$P(_ctx, _cache, $props, $setup, $data, $options) {
                 "div",
                 {
                   class: "tab-icon",
-                  style: normalizeStyle({ color: family.color })
+                  style: normalizeStyle({ color: $setup.getFamilyColor(family.key) })
                 },
                 [
-                  (openBlock(), createBlock(resolveDynamicComponent($setup.getIcon(family.icon)), { size: 18 }))
+                  (openBlock(), createBlock(resolveDynamicComponent(_ctx.getFamilyIcon(family.key)), { size: 18 }))
                 ],
                 4
                 /* STYLE */
@@ -68536,7 +68843,7 @@ function _sfc_render$P(_ctx, _cache, $props, $setup, $data, $options) {
               createBaseVNode(
                 "span",
                 _hoisted_8$h,
-                toDisplayString(family.name),
+                toDisplayString(_ctx.getFamilyLabel(family.key)),
                 1
                 /* TEXT */
               ),
@@ -68566,12 +68873,12 @@ function _sfc_render$P(_ctx, _cache, $props, $setup, $data, $options) {
             "div",
             {
               class: "family-icon",
-              style: normalizeStyle({ backgroundColor: $setup.activeFamilyInfo.color + "20" })
+              style: normalizeStyle({ backgroundColor: $setup.getFamilyColor($setup.activeFamily) + "20" })
             },
             [
-              (openBlock(), createBlock(resolveDynamicComponent($setup.getIcon($setup.activeFamilyInfo.icon)), {
+              (openBlock(), createBlock(resolveDynamicComponent(_ctx.getFamilyIcon($setup.activeFamily)), {
                 size: 24,
-                style: normalizeStyle({ color: $setup.activeFamilyInfo.color })
+                style: normalizeStyle({ color: $setup.getFamilyColor($setup.activeFamily) })
               }, null, 8, ["style"]))
             ],
             4
@@ -68581,37 +68888,37 @@ function _sfc_render$P(_ctx, _cache, $props, $setup, $data, $options) {
             createBaseVNode(
               "h3",
               _hoisted_15$e,
-              toDisplayString($setup.activeFamilyInfo.name),
+              toDisplayString(_ctx.getFamilyLabel($setup.activeFamily)),
               1
               /* TEXT */
             ),
             createBaseVNode(
               "p",
               _hoisted_16$e,
-              toDisplayString($setup.activeFamilyInfo.description),
+              toDisplayString(_ctx.getFamilyDescription($setup.activeFamily)),
               1
               /* TEXT */
             )
           ])
         ]),
         createCommentVNode(" Action Buttons for this family "),
-        $setup.canAddOptions ? (openBlock(), createElementBlock("div", _hoisted_17$e, [
+        $setup.canAddOptions && $setup.allowedRootOptions.length > 0 ? (openBlock(), createElementBlock("div", _hoisted_17$e, [
           (openBlock(true), createElementBlock(
             Fragment$1,
             null,
-            renderList($setup.allowedOptionTypesForFamily, (optionType) => {
+            renderList($setup.allowedRootOptions, (optionTypeKey) => {
               return openBlock(), createBlock($setup["NcButton"], {
-                key: optionType.key,
+                key: optionTypeKey,
                 type: "primary",
-                class: normalizeClass(["add-option-btn", `type-${optionType.key}`]),
-                onClick: ($event) => $setup.openAddOptionModal(optionType)
+                class: normalizeClass(["add-option-btn", `type-${optionTypeKey}`]),
+                onClick: ($event) => $setup.openAddOptionModal(optionTypeKey)
               }, {
                 icon: withCtx(() => [
-                  (openBlock(), createBlock(resolveDynamicComponent($setup.getIcon(optionType.icon)), { size: 18 }))
+                  (openBlock(), createBlock(resolveDynamicComponent($setup.getOptionTypeIcon(optionTypeKey)), { size: 18 }))
                 ]),
                 default: withCtx(() => [
                   createTextVNode(
-                    " " + toDisplayString($setup.t("agora", optionType.name)),
+                    " " + toDisplayString($setup.getOptionTypeLabel(optionTypeKey)),
                     1
                     /* TEXT */
                   )
@@ -68693,244 +69000,348 @@ function _sfc_render$P(_ctx, _cache, $props, $setup, $data, $options) {
       ])) : createCommentVNode("v-if", true),
       createCommentVNode(" Options Display "),
       createBaseVNode("div", _hoisted_34$7, [
-        createCommentVNode(" Debate Family - Two Column Layout "),
-        $setup.activeFamily === "deliberative" ? (openBlock(), createElementBlock("div", _hoisted_35$7, [
+        createCommentVNode(" Debate Family Layout "),
+        $setup.activeFamily === "debate" ? (openBlock(), createElementBlock("div", _hoisted_35$7, [
+          createCommentVNode(" Positions Section "),
           createBaseVNode("div", _hoisted_36$6, [
             createBaseVNode("div", _hoisted_37$6, [
-              createBaseVNode("h4", _hoisted_38$6, [
-                (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.ThumbUp), { size: 16 })),
-                createTextVNode(
-                  " " + toDisplayString($setup.t("agora", "Arguments For")),
-                  1
-                  /* TEXT */
-                )
-              ]),
               createBaseVNode(
-                "span",
-                _hoisted_39$5,
-                toDisplayString($setup.argumentsForCount),
+                "h4",
+                _hoisted_38$6,
+                toDisplayString($setup.t("agora", "Positions")),
                 1
                 /* TEXT */
-              )
-            ]),
-            createBaseVNode("div", _hoisted_40$5, [
-              (openBlock(true), createElementBlock(
-                Fragment$1,
-                null,
-                renderList($setup.argumentsFor, (option2) => {
-                  return openBlock(), createBlock($setup["OptionCard"], {
-                    key: option2.id,
-                    option: option2,
-                    "inquiry-id": $setup.inquiryStore.id,
-                    onClick: ($event) => $setup.openOptionDetail(option2),
-                    onSupport: ($event) => $setup.handleSupport(option2),
-                    onComment: ($event) => $setup.handleComment(option2)
-                  }, null, 8, ["option", "inquiry-id", "onClick", "onSupport", "onComment"]);
-                }),
-                128
-                /* KEYED_FRAGMENT */
-              )),
-              $setup.argumentsFor.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_41$5, [
-                (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.ThumbUp), { size: 32 })),
+              ),
+              createBaseVNode("div", _hoisted_39$5, [
                 createBaseVNode(
-                  "p",
-                  null,
-                  toDisplayString($setup.t("agora", "No supporting arguments yet")),
-                  1
-                  /* TEXT */
-                )
-              ])) : createCommentVNode("v-if", true)
-            ])
-          ]),
-          createBaseVNode("div", _hoisted_42$4, [
-            createBaseVNode("div", _hoisted_43$4, [
-              createBaseVNode("h4", _hoisted_44$4, [
-                (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.ThumbDown), { size: 16 })),
-                createTextVNode(
-                  " " + toDisplayString($setup.t("agora", "Arguments Against")),
-                  1
-                  /* TEXT */
-                )
-              ]),
-              createBaseVNode(
-                "span",
-                _hoisted_45$3,
-                toDisplayString($setup.argumentsAgainstCount),
-                1
-                /* TEXT */
-              )
-            ]),
-            createBaseVNode("div", _hoisted_46$3, [
-              (openBlock(true), createElementBlock(
-                Fragment$1,
-                null,
-                renderList($setup.argumentsAgainst, (option2) => {
-                  return openBlock(), createBlock($setup["OptionCard"], {
-                    key: option2.id,
-                    option: option2,
-                    "inquiry-id": $setup.inquiryStore.id,
-                    onClick: ($event) => $setup.openOptionDetail(option2),
-                    onSupport: ($event) => $setup.handleSupport(option2),
-                    onComment: ($event) => $setup.handleComment(option2)
-                  }, null, 8, ["option", "inquiry-id", "onClick", "onSupport", "onComment"]);
-                }),
-                128
-                /* KEYED_FRAGMENT */
-              )),
-              $setup.argumentsAgainst.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_47$3, [
-                (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.ThumbDown), { size: 32 })),
+                  "button",
+                  {
+                    class: normalizeClass(["position-tab", { active: $setup.debateView === "for" }]),
+                    onClick: _cache[0] || (_cache[0] = ($event) => $setup.debateView = "for")
+                  },
+                  [
+                    (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.ThumbUp), { size: 16 })),
+                    createTextVNode(
+                      " " + toDisplayString($setup.t("agora", "For")) + " ",
+                      1
+                      /* TEXT */
+                    ),
+                    createBaseVNode(
+                      "span",
+                      _hoisted_40$5,
+                      toDisplayString($setup.positionsFor.length),
+                      1
+                      /* TEXT */
+                    )
+                  ],
+                  2
+                  /* CLASS */
+                ),
                 createBaseVNode(
-                  "p",
-                  null,
-                  toDisplayString($setup.t("agora", "No opposing arguments yet")),
-                  1
-                  /* TEXT */
+                  "button",
+                  {
+                    class: normalizeClass(["position-tab", { active: $setup.debateView === "against" }]),
+                    onClick: _cache[1] || (_cache[1] = ($event) => $setup.debateView = "against")
+                  },
+                  [
+                    (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.ThumbDown), { size: 16 })),
+                    createTextVNode(
+                      " " + toDisplayString($setup.t("agora", "Against")) + " ",
+                      1
+                      /* TEXT */
+                    ),
+                    createBaseVNode(
+                      "span",
+                      _hoisted_41$5,
+                      toDisplayString($setup.positionsAgainst.length),
+                      1
+                      /* TEXT */
+                    )
+                  ],
+                  2
+                  /* CLASS */
                 )
-              ])) : createCommentVNode("v-if", true)
-            ])
-          ]),
-          createBaseVNode("div", _hoisted_48$3, [
-            createBaseVNode("div", _hoisted_49$3, [
-              createBaseVNode("h4", _hoisted_50$3, [
-                (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.Lightbulb), { size: 16 })),
-                createTextVNode(
-                  " " + toDisplayString($setup.t("agora", "Proposals")),
-                  1
-                  /* TEXT */
-                )
-              ]),
-              createBaseVNode(
-                "span",
-                _hoisted_51$3,
-                toDisplayString($setup.proposalsCount),
-                1
-                /* TEXT */
-              )
+              ])
             ]),
-            createBaseVNode("div", _hoisted_52$3, [
-              (openBlock(true), createElementBlock(
-                Fragment$1,
-                null,
-                renderList($setup.proposals, (option2) => {
-                  return openBlock(), createBlock($setup["OptionCard"], {
-                    key: option2.id,
-                    option: option2,
-                    "inquiry-id": $setup.inquiryStore.id,
-                    compact: true,
-                    onClick: ($event) => $setup.openOptionDetail(option2),
-                    onSupport: ($event) => $setup.handleSupport(option2),
-                    onComment: ($event) => $setup.handleComment(option2)
-                  }, null, 8, ["option", "inquiry-id", "onClick", "onSupport", "onComment"]);
-                }),
-                128
-                /* KEYED_FRAGMENT */
-              ))
-            ])
-          ])
-        ])) : $setup.activeFamily === "consultative" ? (openBlock(), createElementBlock(
-          Fragment$1,
-          { key: 1 },
-          [
-            createCommentVNode(" Consultative Family - Q&A Layout "),
-            createBaseVNode("div", _hoisted_53$3, [
-              createBaseVNode("div", _hoisted_54$3, [
+            createBaseVNode("div", _hoisted_42$4, [
+              createCommentVNode(" For Positions "),
+              $setup.debateView === "for" ? (openBlock(), createElementBlock("div", _hoisted_43$4, [
                 (openBlock(true), createElementBlock(
                   Fragment$1,
                   null,
-                  renderList($setup.questions, (option2) => {
+                  renderList($setup.positionsFor, (option2) => {
                     return openBlock(), createBlock($setup["OptionCard"], {
                       key: option2.id,
                       option: option2,
                       "inquiry-id": $setup.inquiryStore.id,
-                      "show-answers": true,
+                      "show-responses": true,
                       onClick: ($event) => $setup.openOptionDetail(option2),
-                      onAnswer: ($event) => $setup.handleAnswer(option2),
+                      onSupport: ($event) => $setup.handleSupport(option2),
                       onComment: ($event) => $setup.handleComment(option2)
-                    }, null, 8, ["option", "inquiry-id", "onClick", "onAnswer", "onComment"]);
+                    }, null, 8, ["option", "inquiry-id", "onClick", "onSupport", "onComment"]);
                   }),
                   128
                   /* KEYED_FRAGMENT */
                 )),
-                $setup.questions.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_55$3, [
-                  (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.Question), { size: 48 })),
-                  createBaseVNode(
-                    "h4",
-                    null,
-                    toDisplayString($setup.t("agora", "No questions yet")),
-                    1
-                    /* TEXT */
-                  ),
+                $setup.positionsFor.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_44$4, [
+                  (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.ThumbUp), { size: 32 })),
                   createBaseVNode(
                     "p",
                     null,
-                    toDisplayString($setup.t("agora", "Be the first to ask a question")),
+                    toDisplayString($setup.t("agora", "No positions for yet")),
                     1
                     /* TEXT */
                   )
                 ])) : createCommentVNode("v-if", true)
-              ])
-            ])
-          ],
-          2112
-          /* STABLE_FRAGMENT, DEV_ROOT_FRAGMENT */
-        )) : $setup.activeFamily === "creative" ? (openBlock(), createElementBlock(
-          Fragment$1,
-          { key: 2 },
-          [
-            createCommentVNode(" Creative Family - Ideas Grid "),
-            createBaseVNode("div", _hoisted_56$3, [
-              createBaseVNode("div", _hoisted_57$3, [
+              ])) : createCommentVNode("v-if", true),
+              createCommentVNode(" Against Positions "),
+              $setup.debateView === "against" ? (openBlock(), createElementBlock("div", _hoisted_45$3, [
                 (openBlock(true), createElementBlock(
                   Fragment$1,
                   null,
-                  renderList($setup.ideas, (option2) => {
+                  renderList($setup.positionsAgainst, (option2) => {
                     return openBlock(), createBlock($setup["OptionCard"], {
                       key: option2.id,
                       option: option2,
                       "inquiry-id": $setup.inquiryStore.id,
-                      creative: true,
+                      "show-responses": true,
                       onClick: ($event) => $setup.openOptionDetail(option2),
                       onSupport: ($event) => $setup.handleSupport(option2),
-                      onRefine: ($event) => $setup.handleRefine(option2),
                       onComment: ($event) => $setup.handleComment(option2)
-                    }, null, 8, ["option", "inquiry-id", "onClick", "onSupport", "onRefine", "onComment"]);
+                    }, null, 8, ["option", "inquiry-id", "onClick", "onSupport", "onComment"]);
                   }),
                   128
                   /* KEYED_FRAGMENT */
-                ))
-              ]),
-              $setup.ideas.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_58$3, [
-                (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.Lightbulb), { size: 48 })),
-                createBaseVNode(
-                  "h4",
-                  null,
-                  toDisplayString($setup.t("agora", "No ideas yet")),
-                  1
-                  /* TEXT */
-                ),
-                createBaseVNode(
-                  "p",
-                  null,
-                  toDisplayString($setup.t("agora", "Share your creative ideas")),
-                  1
-                  /* TEXT */
-                )
+                )),
+                $setup.positionsAgainst.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_46$3, [
+                  (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.ThumbDown), { size: 32 })),
+                  createBaseVNode(
+                    "p",
+                    null,
+                    toDisplayString($setup.t("agora", "No positions against yet")),
+                    1
+                    /* TEXT */
+                  )
+                ])) : createCommentVNode("v-if", true)
               ])) : createCommentVNode("v-if", true)
             ])
-          ],
-          2112
-          /* STABLE_FRAGMENT, DEV_ROOT_FRAGMENT */
-        )) : $setup.activeFamily === "administrative" ? (openBlock(), createElementBlock(
-          Fragment$1,
-          { key: 3 },
-          [
-            createCommentVNode(" Hierarchical Family - Tree View "),
-            createBaseVNode("div", _hoisted_59$3, [
-              createBaseVNode("div", _hoisted_60$3, [
+          ]),
+          createCommentVNode(" Arguments Section "),
+          createBaseVNode("div", _hoisted_47$3, [
+            createBaseVNode("div", _hoisted_48$3, [
+              createBaseVNode(
+                "h4",
+                _hoisted_49$3,
+                toDisplayString($setup.t("agora", "Arguments")),
+                1
+                /* TEXT */
+              ),
+              createBaseVNode("div", _hoisted_50$3, [
+                createBaseVNode(
+                  "button",
+                  {
+                    class: normalizeClass(["argument-tab", { active: $setup.argumentView === "for" }]),
+                    onClick: _cache[2] || (_cache[2] = ($event) => $setup.argumentView = "for")
+                  },
+                  [
+                    (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.MessagePlus), { size: 16 })),
+                    createTextVNode(
+                      " " + toDisplayString($setup.t("agora", "For")) + " ",
+                      1
+                      /* TEXT */
+                    ),
+                    createBaseVNode(
+                      "span",
+                      _hoisted_51$3,
+                      toDisplayString($setup.argumentsFor.length),
+                      1
+                      /* TEXT */
+                    )
+                  ],
+                  2
+                  /* CLASS */
+                ),
+                createBaseVNode(
+                  "button",
+                  {
+                    class: normalizeClass(["argument-tab", { active: $setup.argumentView === "against" }]),
+                    onClick: _cache[3] || (_cache[3] = ($event) => $setup.argumentView = "against")
+                  },
+                  [
+                    (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.MessageMinus), { size: 16 })),
+                    createTextVNode(
+                      " " + toDisplayString($setup.t("agora", "Against")) + " ",
+                      1
+                      /* TEXT */
+                    ),
+                    createBaseVNode(
+                      "span",
+                      _hoisted_52$3,
+                      toDisplayString($setup.argumentsAgainst.length),
+                      1
+                      /* TEXT */
+                    )
+                  ],
+                  2
+                  /* CLASS */
+                )
+              ])
+            ]),
+            createBaseVNode("div", _hoisted_53$3, [
+              createCommentVNode(" For Arguments "),
+              $setup.argumentView === "for" ? (openBlock(), createElementBlock("div", _hoisted_54$3, [
                 (openBlock(true), createElementBlock(
                   Fragment$1,
                   null,
-                  renderList($setup.parentOptions, (option2) => {
+                  renderList($setup.argumentsFor, (option2) => {
+                    return openBlock(), createBlock($setup["OptionCard"], {
+                      key: option2.id,
+                      option: option2,
+                      "inquiry-id": $setup.inquiryStore.id,
+                      compact: true,
+                      onClick: ($event) => $setup.openOptionDetail(option2),
+                      onSupport: ($event) => $setup.handleSupport(option2),
+                      onComment: ($event) => $setup.handleComment(option2)
+                    }, null, 8, ["option", "inquiry-id", "onClick", "onSupport", "onComment"]);
+                  }),
+                  128
+                  /* KEYED_FRAGMENT */
+                )),
+                $setup.argumentsFor.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_55$3, [
+                  (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.MessagePlus), { size: 32 })),
+                  createBaseVNode(
+                    "p",
+                    null,
+                    toDisplayString($setup.t("agora", "No supporting arguments yet")),
+                    1
+                    /* TEXT */
+                  )
+                ])) : createCommentVNode("v-if", true)
+              ])) : createCommentVNode("v-if", true),
+              createCommentVNode(" Against Arguments "),
+              $setup.argumentView === "against" ? (openBlock(), createElementBlock("div", _hoisted_56$3, [
+                (openBlock(true), createElementBlock(
+                  Fragment$1,
+                  null,
+                  renderList($setup.argumentsAgainst, (option2) => {
+                    return openBlock(), createBlock($setup["OptionCard"], {
+                      key: option2.id,
+                      option: option2,
+                      "inquiry-id": $setup.inquiryStore.id,
+                      compact: true,
+                      onClick: ($event) => $setup.openOptionDetail(option2),
+                      onSupport: ($event) => $setup.handleSupport(option2),
+                      onComment: ($event) => $setup.handleComment(option2)
+                    }, null, 8, ["option", "inquiry-id", "onClick", "onSupport", "onComment"]);
+                  }),
+                  128
+                  /* KEYED_FRAGMENT */
+                )),
+                $setup.argumentsAgainst.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_57$3, [
+                  (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.MessageMinus), { size: 32 })),
+                  createBaseVNode(
+                    "p",
+                    null,
+                    toDisplayString($setup.t("agora", "No opposing arguments yet")),
+                    1
+                    /* TEXT */
+                  )
+                ])) : createCommentVNode("v-if", true)
+              ])) : createCommentVNode("v-if", true)
+            ])
+          ]),
+          createCommentVNode(" Alternatives and Messages "),
+          createBaseVNode("div", _hoisted_58$3, [
+            createBaseVNode("div", _hoisted_59$3, [
+              createBaseVNode("div", _hoisted_60$3, [
+                createBaseVNode("div", _hoisted_61$3, [
+                  createBaseVNode("h5", _hoisted_62$3, [
+                    (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.SwapHorizontal), { size: 14 })),
+                    createTextVNode(
+                      " " + toDisplayString($setup.t("agora", "Alternatives")),
+                      1
+                      /* TEXT */
+                    )
+                  ]),
+                  createBaseVNode(
+                    "span",
+                    _hoisted_63$3,
+                    toDisplayString($setup.alternatives.length),
+                    1
+                    /* TEXT */
+                  )
+                ]),
+                createBaseVNode("div", _hoisted_64$3, [
+                  (openBlock(true), createElementBlock(
+                    Fragment$1,
+                    null,
+                    renderList($setup.alternatives, (option2) => {
+                      return openBlock(), createBlock($setup["OptionCard"], {
+                        key: option2.id,
+                        option: option2,
+                        "inquiry-id": $setup.inquiryStore.id,
+                        compact: true,
+                        onClick: ($event) => $setup.openOptionDetail(option2),
+                        onSupport: ($event) => $setup.handleSupport(option2),
+                        onComment: ($event) => $setup.handleComment(option2)
+                      }, null, 8, ["option", "inquiry-id", "onClick", "onSupport", "onComment"]);
+                    }),
+                    128
+                    /* KEYED_FRAGMENT */
+                  ))
+                ])
+              ]),
+              createBaseVNode("div", _hoisted_65$3, [
+                createBaseVNode("div", _hoisted_66$3, [
+                  createBaseVNode("h5", _hoisted_67$3, [
+                    (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.MessageText), { size: 14 })),
+                    createTextVNode(
+                      " " + toDisplayString($setup.t("agora", "Messages")),
+                      1
+                      /* TEXT */
+                    )
+                  ]),
+                  createBaseVNode(
+                    "span",
+                    _hoisted_68$3,
+                    toDisplayString($setup.messages.length),
+                    1
+                    /* TEXT */
+                  )
+                ]),
+                createBaseVNode("div", _hoisted_69$3, [
+                  (openBlock(true), createElementBlock(
+                    Fragment$1,
+                    null,
+                    renderList($setup.messages, (option2) => {
+                      return openBlock(), createBlock($setup["OptionCard"], {
+                        key: option2.id,
+                        option: option2,
+                        "inquiry-id": $setup.inquiryStore.id,
+                        compact: true,
+                        onClick: ($event) => $setup.openOptionDetail(option2),
+                        onSupport: ($event) => $setup.handleSupport(option2),
+                        onComment: ($event) => $setup.handleComment(option2)
+                      }, null, 8, ["option", "inquiry-id", "onClick", "onSupport", "onComment"]);
+                    }),
+                    128
+                    /* KEYED_FRAGMENT */
+                  ))
+                ])
+              ])
+            ])
+          ])
+        ])) : $setup.activeFamily === "structure" ? (openBlock(), createElementBlock(
+          Fragment$1,
+          { key: 1 },
+          [
+            createCommentVNode(" Structure Family Layout "),
+            createBaseVNode("div", _hoisted_70$3, [
+              createBaseVNode("div", _hoisted_71$3, [
+                (openBlock(true), createElementBlock(
+                  Fragment$1,
+                  null,
+                  renderList($setup.chapters, (option2) => {
                     return openBlock(), createBlock($setup["OptionTreeNode"], {
                       key: option2.id,
                       option: option2,
@@ -68945,6 +69356,194 @@ function _sfc_render$P(_ctx, _cache, $props, $setup, $data, $options) {
                   128
                   /* KEYED_FRAGMENT */
                 ))
+              ]),
+              $setup.chapters.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_72$3, [
+                (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.BookOpenVariant), { size: 48 })),
+                createBaseVNode(
+                  "h4",
+                  null,
+                  toDisplayString($setup.t("agora", "No chapters yet")),
+                  1
+                  /* TEXT */
+                ),
+                createBaseVNode(
+                  "p",
+                  null,
+                  toDisplayString($setup.t("agora", "Start by adding the first chapter")),
+                  1
+                  /* TEXT */
+                )
+              ])) : createCommentVNode("v-if", true)
+            ])
+          ],
+          2112
+          /* STABLE_FRAGMENT, DEV_ROOT_FRAGMENT */
+        )) : $setup.activeFamily === "consensus" ? (openBlock(), createElementBlock(
+          Fragment$1,
+          { key: 2 },
+          [
+            createCommentVNode(" Consensus Family Layout "),
+            createBaseVNode("div", _hoisted_73$3, [
+              createBaseVNode("div", _hoisted_74$3, [
+                (openBlock(true), createElementBlock(
+                  Fragment$1,
+                  null,
+                  renderList($setup.consultationQuestions, (option2) => {
+                    return openBlock(), createBlock($setup["OptionCard"], {
+                      key: option2.id,
+                      option: option2,
+                      "inquiry-id": $setup.inquiryStore.id,
+                      "show-poll-options": true,
+                      onClick: ($event) => $setup.openOptionDetail(option2),
+                      onAnswer: ($event) => $setup.handleAnswer(option2),
+                      onComment: ($event) => $setup.handleComment(option2)
+                    }, null, 8, ["option", "inquiry-id", "onClick", "onAnswer", "onComment"]);
+                  }),
+                  128
+                  /* KEYED_FRAGMENT */
+                )),
+                $setup.consultationQuestions.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_75$3, [
+                  (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.HelpCircle), { size: 48 })),
+                  createBaseVNode(
+                    "h4",
+                    null,
+                    toDisplayString($setup.t("agora", "No consultation questions yet")),
+                    1
+                    /* TEXT */
+                  ),
+                  createBaseVNode(
+                    "p",
+                    null,
+                    toDisplayString($setup.t("agora", "Be the first to ask a question")),
+                    1
+                    /* TEXT */
+                  )
+                ])) : createCommentVNode("v-if", true)
+              ]),
+              $setup.objections.length > 0 ? (openBlock(), createElementBlock("div", _hoisted_76$3, [
+                createBaseVNode("h4", _hoisted_77$2, [
+                  (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.AlertCircle), { size: 16 })),
+                  createTextVNode(
+                    " " + toDisplayString($setup.t("agora", "Formal Objections")) + " ",
+                    1
+                    /* TEXT */
+                  ),
+                  createBaseVNode(
+                    "span",
+                    _hoisted_78$1,
+                    toDisplayString($setup.objections.length),
+                    1
+                    /* TEXT */
+                  )
+                ]),
+                createBaseVNode("div", _hoisted_79, [
+                  (openBlock(true), createElementBlock(
+                    Fragment$1,
+                    null,
+                    renderList($setup.objections, (option2) => {
+                      return openBlock(), createBlock($setup["OptionCard"], {
+                        key: option2.id,
+                        option: option2,
+                        "inquiry-id": $setup.inquiryStore.id,
+                        highlight: option2.miscFields?.blocking,
+                        onClick: ($event) => $setup.openOptionDetail(option2),
+                        onSupport: ($event) => $setup.handleSupport(option2),
+                        onComment: ($event) => $setup.handleComment(option2)
+                      }, null, 8, ["option", "inquiry-id", "highlight", "onClick", "onSupport", "onComment"]);
+                    }),
+                    128
+                    /* KEYED_FRAGMENT */
+                  ))
+                ])
+              ])) : createCommentVNode("v-if", true)
+            ])
+          ],
+          2112
+          /* STABLE_FRAGMENT, DEV_ROOT_FRAGMENT */
+        )) : $setup.activeFamily === "proposal" ? (openBlock(), createElementBlock(
+          Fragment$1,
+          { key: 3 },
+          [
+            createCommentVNode(" Proposal Family Layout "),
+            createBaseVNode("div", _hoisted_80, [
+              createBaseVNode("div", _hoisted_81, [
+                (openBlock(true), createElementBlock(
+                  Fragment$1,
+                  null,
+                  renderList($setup.proposals, (option2) => {
+                    return openBlock(), createBlock($setup["OptionCard"], {
+                      key: option2.id,
+                      option: option2,
+                      "inquiry-id": $setup.inquiryStore.id,
+                      onClick: ($event) => $setup.openOptionDetail(option2),
+                      onSupport: ($event) => $setup.handleSupport(option2),
+                      onComment: ($event) => $setup.handleComment(option2)
+                    }, null, 8, ["option", "inquiry-id", "onClick", "onSupport", "onComment"]);
+                  }),
+                  128
+                  /* KEYED_FRAGMENT */
+                ))
+              ]),
+              $setup.proposals.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_82, [
+                (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.Lightbulb), { size: 48 })),
+                createBaseVNode(
+                  "h4",
+                  null,
+                  toDisplayString($setup.t("agora", "No proposals yet")),
+                  1
+                  /* TEXT */
+                ),
+                createBaseVNode(
+                  "p",
+                  null,
+                  toDisplayString($setup.t("agora", "Share your proposal")),
+                  1
+                  /* TEXT */
+                )
+              ])) : createCommentVNode("v-if", true)
+            ])
+          ],
+          2112
+          /* STABLE_FRAGMENT, DEV_ROOT_FRAGMENT */
+        )) : $setup.activeFamily === "decision" ? (openBlock(), createElementBlock(
+          Fragment$1,
+          { key: 4 },
+          [
+            createCommentVNode(" Decision Family Layout "),
+            createBaseVNode("div", _hoisted_83, [
+              createBaseVNode("div", _hoisted_84, [
+                (openBlock(true), createElementBlock(
+                  Fragment$1,
+                  null,
+                  renderList($setup.officialResults, (option2) => {
+                    return openBlock(), createBlock($setup["OptionCard"], {
+                      key: option2.id,
+                      option: option2,
+                      "inquiry-id": $setup.inquiryStore.id,
+                      official: true,
+                      onClick: ($event) => $setup.openOptionDetail(option2)
+                    }, null, 8, ["option", "inquiry-id", "onClick"]);
+                  }),
+                  128
+                  /* KEYED_FRAGMENT */
+                )),
+                $setup.officialResults.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_85, [
+                  (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.CheckCircle), { size: 48 })),
+                  createBaseVNode(
+                    "h4",
+                    null,
+                    toDisplayString($setup.t("agora", "No official results yet")),
+                    1
+                    /* TEXT */
+                  ),
+                  createBaseVNode(
+                    "p",
+                    null,
+                    toDisplayString($setup.t("agora", "Results will appear here when published")),
+                    1
+                    /* TEXT */
+                  )
+                ])) : createCommentVNode("v-if", true)
               ])
             ])
           ],
@@ -68952,11 +69551,11 @@ function _sfc_render$P(_ctx, _cache, $props, $setup, $data, $options) {
           /* STABLE_FRAGMENT, DEV_ROOT_FRAGMENT */
         )) : (openBlock(), createElementBlock(
           Fragment$1,
-          { key: 4 },
+          { key: 5 },
           [
-            createCommentVNode(" Default Grid Layout "),
-            createBaseVNode("div", _hoisted_61$3, [
-              createBaseVNode("div", _hoisted_62$3, [
+            createCommentVNode(" Default Grid Layout for other families "),
+            createBaseVNode("div", _hoisted_86, [
+              createBaseVNode("div", _hoisted_87, [
                 (openBlock(true), createElementBlock(
                   Fragment$1,
                   null,
@@ -68974,8 +69573,8 @@ function _sfc_render$P(_ctx, _cache, $props, $setup, $data, $options) {
                   /* KEYED_FRAGMENT */
                 ))
               ]),
-              $setup.familyOptions.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_63$3, [
-                (openBlock(), createBlock(resolveDynamicComponent($setup.getIcon($setup.activeFamilyInfo.icon)), { size: 48 })),
+              $setup.familyOptions.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_88, [
+                (openBlock(), createBlock(resolveDynamicComponent(_ctx.getFamilyIcon($setup.activeFamily)), { size: 48 })),
                 createBaseVNode(
                   "h4",
                   null,
@@ -68998,7 +69597,7 @@ function _sfc_render$P(_ctx, _cache, $props, $setup, $data, $options) {
         ))
       ]),
       createCommentVNode(" Load More "),
-      $setup.hasMoreOptions ? (openBlock(), createElementBlock("div", _hoisted_64$3, [
+      $setup.hasMoreOptions ? (openBlock(), createElementBlock("div", _hoisted_89, [
         createVNode($setup["NcButton"], {
           type: "secondary",
           onClick: $setup.loadMoreOptions
@@ -69022,7 +69621,7 @@ function _sfc_render$P(_ctx, _cache, $props, $setup, $data, $options) {
       { key: 2 },
       [
         createCommentVNode(" Empty State when no families "),
-        createBaseVNode("div", _hoisted_65$3, [
+        createBaseVNode("div", _hoisted_90, [
           (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.Options), { size: 64 })),
           createBaseVNode(
             "h3",
@@ -69047,7 +69646,7 @@ function _sfc_render$P(_ctx, _cache, $props, $setup, $data, $options) {
     $setup.showAddOptionModal ? (openBlock(), createBlock($setup["AddOptionModal"], {
       key: 3,
       "inquiry-id": $setup.inquiryStore.id,
-      "option-type": $setup.selectedOptionType,
+      "option-type": $setup.selectedOptionTypeKey,
       "parent-id": $setup.selectedParentId,
       onClose: $setup.closeAddOptionModal,
       onCreated: $setup.handleOptionCreated
@@ -71703,13 +72302,6 @@ const _sfc_main$D = /* @__PURE__ */ defineComponent({
           (i) => i.parentId === Number(id)
         );
         inquiryGroupStore.childs = result2;
-        if (inquiryGroupStore.childs.length === 0) {
-          inquiryGroupStore.status.forceEditMode = true;
-          editMode.value = true;
-        } else {
-          inquiryGroupStore.status.forceEditMode = false;
-          editMode.value = false;
-        }
         await nextTick();
         forceRenderKey.value += 1;
       } catch {
@@ -71787,21 +72379,18 @@ function _sfc_render$D(_ctx, _cache, $props, $setup, $data, $options) {
       createCommentVNode(" Action toolbar component "),
       createBaseVNode("div", _hoisted_1$t, [
         createBaseVNode("div", _hoisted_2$n, [
-          $setup.editMode ? (openBlock(), createBlock($setup["InquiryGroupEditViewForm"], { key: 0 })) : createCommentVNode("v-if", true)
+          createVNode($setup["InquiryGroupEditViewForm"])
         ]),
         createVNode($setup["InquiryInfoCards"], { class: "sticky-left" })
       ]),
       $setup.createGroupDlgToggle ? (openBlock(), createBlock($setup["InquiryGroupCreateDlg"], {
         key: 1,
-        "response-type": $setup.selectedInquiryGroupTypeForCreation,
-        "selected-groups": $setup.selectedGroups,
-        "selected-mode": $setup.selectedMode,
+        "inquiry-group-type": $setup.selectedInquiryGroupTypeForCreation,
+        "parent-group-id": $setup.inquiryGroupStore.id,
         "available-groups": $setup.availableGroups,
-        "parent-inquiry-id": $setup.inquiryGroupStore.id,
         onClose: $setup.handleCloseDialog,
-        onAdded: $setup.inquiryAdded,
-        "onUpdate:selectedGroups": $setup.handleGroupUpdate
-      }, null, 8, ["response-type", "selected-groups", "selected-mode", "available-groups", "parent-inquiry-id"])) : createCommentVNode("v-if", true)
+        onAdded: $setup.inquiryAdded
+      }, null, 8, ["inquiry-group-type", "parent-group-id", "available-groups"])) : createCommentVNode("v-if", true)
     ]),
     _: 1
     /* STABLE */
@@ -79065,9 +79654,9 @@ const _sfc_main$m = /* @__PURE__ */ defineComponent({
       selectedInquiryGroupTypeForCreation.value = inquiryGroupType;
       createGroupDlgToggle.value = true;
     }
+    const BASE_URL = window.location.origin;
     function getNextcloudPreviewUrl(fileId, x = 1920, y = 1080, autoScale = true) {
-      const baseUrl = window.location.origin;
-      return `${baseUrl}/index.php/core/preview?fileId=${fileId}&x=${x}&y=${y}&a=${autoScale ? 1 : 0}`;
+      return `${BASE_URL}/index.php/core/preview?fileId=${fileId}&x=${x}&y=${y}&a=${autoScale ? 1 : 0}`;
     }
     function getCoverUrl(coverId) {
       return getNextcloudPreviewUrl(coverId);
@@ -79143,7 +79732,6 @@ const _sfc_main$m = /* @__PURE__ */ defineComponent({
         if (hasSlug.value) {
           const slug = route.params.slug;
           const group2 = inquiryGroupsStore.bySlug(slug);
-          currentInquiryGroup.value = group2;
           if (!group2) {
             groupNotFound.value = true;
           }
@@ -79167,7 +79755,7 @@ const _sfc_main$m = /* @__PURE__ */ defineComponent({
       }
       isLoading.value = false;
     });
-    const __returned__ = { route, router: router2, sessionStore, inquiriesStore, inquiryGroupsStore, inquiryGroupStore, isLoading, hoveredGroupId, selectedParentId, createGroupDlgToggle, selectedInquiryGroupTypeForCreation, showDeleteDialog, deleteDialogGroup, hasSlug, currentGroupType, currentInquiryGroup, groupNotFound, createGroupPermissionContext, canUserArchiveGroup, canUserEditGroup, canUserDeleteGroup, parentGroups, displayedGroups, totalInquiries, sectionTitle, getGroupTypeIconComponent, getGroupChildren, currentIconComponent, selectedTypeData, selectedTypeLabel, selectedTypeDescription, currentTitle, currentDescription, currentBreadcrumbTitle, deleteDialogTitle, deleteDialogMessage, deleteDialogButtons, navigateToHome, selectGroup, createInquiryGroup, getNextcloudPreviewUrl, getCoverUrl, modifyGroup, deleteGroup, performDeleteGroup, archiveGroup, handleCloseGroupDialog, inquiryGroupAdded, availableGroups, get t() {
+    const __returned__ = { route, router: router2, sessionStore, inquiriesStore, inquiryGroupsStore, inquiryGroupStore, isLoading, hoveredGroupId, selectedParentId, createGroupDlgToggle, selectedInquiryGroupTypeForCreation, showDeleteDialog, deleteDialogGroup, hasSlug, currentGroupType, currentInquiryGroup, groupNotFound, createGroupPermissionContext, canUserArchiveGroup, canUserEditGroup, canUserDeleteGroup, parentGroups, displayedGroups, totalInquiries, sectionTitle, getGroupTypeIconComponent, getGroupChildren, currentIconComponent, selectedTypeData, selectedTypeLabel, selectedTypeDescription, currentTitle, currentDescription, currentBreadcrumbTitle, deleteDialogTitle, deleteDialogMessage, deleteDialogButtons, navigateToHome, selectGroup, createInquiryGroup, BASE_URL, getNextcloudPreviewUrl, getCoverUrl, modifyGroup, deleteGroup, performDeleteGroup, archiveGroup, handleCloseGroupDialog, inquiryGroupAdded, availableGroups, get t() {
       return translate;
     }, get NcAppContent() {
       return NcAppContent;
@@ -83323,7 +83911,10 @@ const routes = [
       default: GroupList,
       navigation: NavigationGroup
     },
-    props: true,
+    props: {
+      default: true,
+      navigation: false
+    },
     meta: {
       listPage: true
     }
@@ -83361,7 +83952,7 @@ const routes = [
     },
     props: {
       default: true,
-      navigation: true
+      navigation: false
     },
     meta: {
       groupPage: true
@@ -83397,7 +83988,10 @@ const routes = [
       navigation: NavigationGroup,
       sidebar: SideBarInquiryGroup
     },
-    props: true,
+    props: {
+      default: true,
+      navigation: false
+    },
     meta: {
       groupPage: true,
       listPage: true

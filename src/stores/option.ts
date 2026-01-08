@@ -293,9 +293,7 @@ export const useOptionStore = defineStore('option', {
         },
 
         // Check if option type supports a specific feature
-        supportsFeature: (state) => (feature: string): boolean => {
-            return state.typeInfo?.features?.includes(feature) || false
-        },
+        supportsFeature: (state) => (feature: string): boolean => state.typeInfo?.features?.includes(feature) || false,
 
         // Get allowed child types for this option
         allowedChildTypes(): string[] {
@@ -308,9 +306,7 @@ export const useOptionStore = defineStore('option', {
         },
 
         // Check if a specific child type is allowed
-        isChildTypeAllowed: (state) => (childType: string): boolean => {
-            return state.allowedChildTypes.includes(childType)
-        },
+        isChildTypeAllowed: (state) => (childType: string): boolean => state.allowedChildTypes.includes(childType),
 
         // Get misc fields configuration for this option type
         miscFieldsConfig(): Array<{
@@ -452,9 +448,7 @@ export const useOptionStore = defineStore('option', {
         },
 
         // Check if status can be changed to target status
-        canChangeStatusTo: (state) => (targetStatus: string): boolean => {
-            return state.availableStatuses.includes(targetStatus)
-        }
+        canChangeStatusTo: (state) => (targetStatus: string): boolean => state.availableStatuses.includes(targetStatus)
     },
 
     actions: {

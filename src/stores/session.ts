@@ -73,7 +73,6 @@ export const useSessionStore = defineStore('session', {
       addSharesExternal: false,
       allAccess: false,
       changeForeignInquiries: false,
-      comboView: false,
       deanonymizeInquiry: false,
       inquiryCreation: false,
       inquiryDownload: false,
@@ -195,6 +194,7 @@ export const useSessionStore = defineStore('session', {
 	 appSettingsStore.$patch({
       		inquiryStatusTab: this.appSettings.inquiryStatusTab,
       		inquiryTypeTab: this.appSettings.inquiryTypeTab,
+      		inquiryOptionTypeTab: this.appSettings.inquiryOptionTypeTab,
       		inquiryGroupTypeTab: this.appSettings.inquiryGroupTypeTab,
       		inquiryFamilyTab: this.appSettings.inquiryFamilyTab,
       		categoryTab: this.appSettings.categoryTab,

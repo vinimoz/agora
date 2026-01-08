@@ -6,7 +6,7 @@
 import { defineStore } from 'pinia'
 import { AppSettingsAPI } from '../Api/index.ts'
 import { Logger } from '../helpers/index.ts'
-import { BaseEntry, InquiryType, InquiryFamily } from '../Types/index.ts'
+import { BaseEntry, InquiryType, InquiryOptionType, InquiryFamily } from '../Types/index.ts'
 import { AxiosError } from '@nextcloud/axios'
 import type { InquiryGroupType } from './inquiryGroups.types'
 
@@ -77,7 +77,6 @@ export type AppSettings = {
 	navigationInquiriesInList: boolean
 	finalPrivacyUrl: string
 	finalImprintUrl: string
-	comboGroups: string[]
 	publicSharesGroups: string[]
 	inquiryCreationGroups: string[]
 	inquiryDownloadGroups: string[]
@@ -87,6 +86,7 @@ export type AppSettings = {
 	locationTab: Location[]
 	inquiryStatusTab: InquiryStatus[]
 	inquiryTypeTab: InquiryType[]
+	inquiryOptionTypeTab: InquiryOptionType[]
 	inquiryGroupTypeTab: InquiryGroupType[]
 	inquiryFamilyTab: InquiryFamily[]
 	groups: Group[]
@@ -129,7 +129,6 @@ export const useAppSettingsStore = defineStore('appSettings', {
 		navigationInquiriesInList: true,
 		finalPrivacyUrl: '',
 		finalImprintUrl: '',
-		comboGroups: [],
 		publicSharesGroups: [],
 		inquiryCreationGroups: [],
 		inquiryDownloadGroups: [],
@@ -137,6 +136,7 @@ export const useAppSettingsStore = defineStore('appSettings', {
 		unrestrictedOwnerGroups: [],
 		categoryTab: [],
 		inquiryTypeTab: [],
+		inquiryOptionTypeTab: [],
 		inquiryGroupTypeTab: [],
 		inquiryFamilyTab: [],
 		locationTab: [],
@@ -154,6 +154,8 @@ export const useAppSettingsStore = defineStore('appSettings', {
 		 getInquiryTypeRights: (state) => (inquiryType: string) => state.inquiryTypeRights[inquiryType],
 
 		 getMainInquiryTypes: (state) => state.inquiryTypeTab,
+		 
+         getMainInquiryOptionTypes: (state) => state.inquiryOptionTypeTab,
 		 
          getMainInquiryGroupTypes: (state) => state.inquiryGroupTypeTab,
 

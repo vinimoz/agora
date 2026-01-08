@@ -20,6 +20,37 @@ export const useInquiryGroupsStore = defineStore('inquiryGroups', () => {
   const updating = ref(false)
   const currentGroupType = ref<string>('assembly')
 
+
+   function addInquiryGroup(group: InquiryGroup) {
+        const exists = inquiryGroups.value.some(g => g.id === group.id)
+        if (!exists) {
+            inquiryGroups.value.push(group)
+        }
+    }
+
+     function updateInquiryGroup(updatedGroup: InquiryGroup) {
+        const index = inquiryGroups.value.findIndex(
+            g => g.id === updatedGroup.id
+        )
+
+        if (index === -1) {
+            inquiryGroups.value.push(updatedGroup)
+            return
+        }
+
+        inquiryGroups.value[index] = {
+            ...inquiryGroups.value[index],
+            ...updatedGroup,
+        }
+    }
+
+    function removeInquiryGroup(groupId: number) {
+        inquiryGroups.value = inquiryGroups.value.filter(
+            g => g.id !== groupId
+        )
+    }
+
+
   /**
    * Get inquiry group by slug
    * @param {string} slug - The slug to search for
@@ -145,6 +176,7 @@ export const useInquiryGroupsStore = defineStore('inquiryGroups', () => {
     return byParentId(currentInquiryGroup.value.id)
   })
 
+
   /**
    * All descendant groups (children, grandchildren, etc.)
    * @return {InquiryGroup[]} Array of all descendant groups
@@ -252,12 +284,6 @@ async function loadGroup(slug: string, forceRefresh: boolean = false): Promise<I
  */
 async function loadGroupFromServer(slug: string): Promise<InquiryGroup | null> {
   try {
-    // Check if API method exists
-    if (typeof InquiryGroupsAPI.getGroupBySlug !== 'function') {
-      Logger.warn('getGroupBySlug API method not available')
-      return null
-    }
-    
     const response = await InquiryGroupsAPI.getGroupBySlug(slug)
     
     if (response.data?.inquiryGroup) {
@@ -344,6 +370,7 @@ async function fetchAllGroups(): Promise<InquiryGroup[]> {
     return slug
   }
 
+
   /**
    * Ensure all groups have slugs
    */
@@ -427,6 +454,7 @@ async function fetchAllGroups(): Promise<InquiryGroup[]> {
     }
   }
 
+    
   function addOrUpdateInquiryGroupInList(payload: { inquiryGroup: InquiryGroup }) {
     inquiryGroups.value = inquiryGroups.value
       .filter((g) => g.id !== payload.inquiryGroup.id)
@@ -536,6 +564,8 @@ async function fetchAllGroups(): Promise<InquiryGroup[]> {
     
     // Action functions
     addableInquiryGroups,
+    addInquiryGroup,
+    updateInquiryGroup,
     setCurrentInquiryGroup,
     setInquiryGroupElement: addOrUpdateInquiryGroupInList,
     writeCurrentInquiryGroup,

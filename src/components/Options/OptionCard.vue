@@ -271,26 +271,22 @@ const truncatedText = computed(() => {
   if (!props.maxLength || props.option.text.length <= props.maxLength) {
     return props.option.text
   }
-  return props.option.text.substring(0, props.maxLength) + '...'
+  return `${props.option.text.substring(0, props.maxLength)  }...`
 })
 
-const isTruncated = computed(() => {
-  return props.maxLength && props.option.text.length > props.maxLength
-})
+const isTruncated = computed(() => props.maxLength && props.option.text.length > props.maxLength)
 
-const isSelected = computed(() => {
+const isSelected = computed(() => 
   // Check if this option is currently selected in detail view
-  return false // Would need to implement selection logic
-})
+   false // Would need to implement selection logic
+)
 
-const hasUnreadComments = computed(() => {
+const hasUnreadComments = computed(() => 
   // Check if option has unread comments
-  return false // Would need to implement read tracking
-})
+   false // Would need to implement read tracking
+)
 
-const useMarkdown = computed(() => {
-  return sessionStore.appSettings?.optionTypesTab?.[props.option.type]?.features?.includes('markdown') || false
-})
+const useMarkdown = computed(() => sessionStore.appSettings?.optionTypesTab?.[props.option.type]?.features?.includes('markdown') || false)
 
 // Methods
 const formatDate = (timestamp: number) => {

@@ -26,10 +26,10 @@
           ]"
           @click="setActiveFamily(family.key)"
         >
-          <div class="tab-icon" :style="{ color: family.color }">
-            <component :is="getIcon(family.icon)" :size="18" />
+          <div class="tab-icon" :style="{ color: getFamilyColor(family.key) }">
+            <component :is="getFamilyIcon(family.key)" :size="18" />
           </div>
-          <span class="tab-label">{{ family.name }}</span>
+          <span class="tab-label">{{ getFamilyLabel(family.key) }}</span>
           <span v-if="familyCounts[family.key]" class="tab-count">
             {{ familyCounts[family.key] }}
           </span>
@@ -45,28 +45,28 @@
       <!-- Family Header -->
       <div class="family-header">
         <div class="family-info">
-          <div class="family-icon" :style="{ backgroundColor: activeFamilyInfo.color + '20' }">
-            <component :is="getIcon(activeFamilyInfo.icon)" :size="24" :style="{ color: activeFamilyInfo.color }" />
+          <div class="family-icon" :style="{ backgroundColor: getFamilyColor(activeFamily) + '20' }">
+            <component :is="getFamilyIcon(activeFamily)" :size="24" :style="{ color: getFamilyColor(activeFamily) }" />
           </div>
           <div class="family-details">
-            <h3 class="family-title">{{ activeFamilyInfo.name }}</h3>
-            <p class="family-description">{{ activeFamilyInfo.description }}</p>
+            <h3 class="family-title">{{ getFamilyLabel(activeFamily) }}</h3>
+            <p class="family-description">{{ getFamilyDescription(activeFamily) }}</p>
           </div>
         </div>
 
         <!-- Action Buttons for this family -->
-        <div v-if="canAddOptions" class="family-actions">
+        <div v-if="canAddOptions && allowedRootOptions.length > 0" class="family-actions">
           <NcButton
-            v-for="optionType in allowedOptionTypesForFamily"
-            :key="optionType.key"
+            v-for="optionTypeKey in allowedRootOptions"
+            :key="optionTypeKey"
             type="primary"
-            :class="['add-option-btn', `type-${optionType.key}`]"
-            @click="openAddOptionModal(optionType)"
+            :class="['add-option-btn', `type-${optionTypeKey}`]"
+            @click="openAddOptionModal(optionTypeKey)"
           >
             <template #icon>
-              <component :is="getIcon(optionType.icon)" :size="18" />
+              <component :is="getOptionTypeIcon(optionTypeKey)" :size="18" />
             </template>
-            {{ t('agora', optionType.name) }}
+            {{ getOptionTypeLabel(optionTypeKey) }}
           </NcButton>
         </div>
       </div>
@@ -104,129 +104,197 @@
 
       <!-- Options Display -->
       <div class="options-container">
-        <!-- Debate Family - Two Column Layout -->
-        <div v-if="activeFamily === 'deliberative'" class="debate-layout">
-          <div class="debate-column">
-            <div class="column-header" :style="{ borderColor: '#4a86e8' }">
-              <h4 class="column-title">
-                <component :is="InquiryGeneralIcons.ThumbUp" :size="16" />
-                {{ t('agora', 'Arguments For') }}
-              </h4>
-              <span class="column-count">{{ argumentsForCount }}</span>
-            </div>
-            <div class="column-content">
-              <OptionCard
-                v-for="option in argumentsFor"
-                :key="option.id"
-                :option="option"
-                :inquiry-id="inquiryStore.id"
-                @click="openOptionDetail(option)"
-                @support="handleSupport(option)"
-                @comment="handleComment(option)"
-              />
-              <div v-if="argumentsFor.length === 0" class="empty-column">
-                <component :is="InquiryGeneralIcons.ThumbUp" :size="32" />
-                <p>{{ t('agora', 'No supporting arguments yet') }}</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="debate-column">
-            <div class="column-header" :style="{ borderColor: '#cc0000' }">
-              <h4 class="column-title">
-                <component :is="InquiryGeneralIcons.ThumbDown" :size="16" />
-                {{ t('agora', 'Arguments Against') }}
-              </h4>
-              <span class="column-count">{{ argumentsAgainstCount }}</span>
-            </div>
-            <div class="column-content">
-              <OptionCard
-                v-for="option in argumentsAgainst"
-                :key="option.id"
-                :option="option"
-                :inquiry-id="inquiryStore.id"
-                @click="openOptionDetail(option)"
-                @support="handleSupport(option)"
-                @comment="handleComment(option)"
-              />
-              <div v-if="argumentsAgainst.length === 0" class="empty-column">
-                <component :is="InquiryGeneralIcons.ThumbDown" :size="32" />
-                <p>{{ t('agora', 'No opposing arguments yet') }}</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="proposals-section">
-            <div class="section-header">
+        <!-- Debate Family Layout -->
+        <div v-if="activeFamily === 'debate'" class="debate-layout">
+          <!-- Positions Section -->
+          <div class="positions-section">
+            <div class="positions-header">
               <h4 class="section-title">
-                <component :is="InquiryGeneralIcons.Lightbulb" :size="16" />
-                {{ t('agora', 'Proposals') }}
+                {{ t('agora', 'Positions') }}
               </h4>
-              <span class="section-count">{{ proposalsCount }}</span>
+              <div class="positions-tabs">
+                <button
+                  class="position-tab"
+                  :class="{ active: debateView === 'for' }"
+                  @click="debateView = 'for'"
+                >
+                  <component :is="InquiryGeneralIcons.ThumbUp" :size="16" />
+                  {{ t('agora', 'For') }}
+                  <span class="tab-count">{{ positionsFor.length }}</span>
+                </button>
+                <button
+                  class="position-tab"
+                  :class="{ active: debateView === 'against' }"
+                  @click="debateView = 'against'"
+                >
+                  <component :is="InquiryGeneralIcons.ThumbDown" :size="16" />
+                  {{ t('agora', 'Against') }}
+                  <span class="tab-count">{{ positionsAgainst.length }}</span>
+                </button>
+              </div>
             </div>
-            <div class="proposals-grid">
-              <OptionCard
-                v-for="option in proposals"
-                :key="option.id"
-                :option="option"
-                :inquiry-id="inquiryStore.id"
-                :compact="true"
-                @click="openOptionDetail(option)"
-                @support="handleSupport(option)"
-                @comment="handleComment(option)"
-              />
+
+            <div class="positions-content">
+              <!-- For Positions -->
+              <div v-if="debateView === 'for'" class="position-column">
+                <OptionCard
+                  v-for="option in positionsFor"
+                  :key="option.id"
+                  :option="option"
+                  :inquiry-id="inquiryStore.id"
+                  :show-responses="true"
+                  @click="openOptionDetail(option)"
+                  @support="handleSupport(option)"
+                  @comment="handleComment(option)"
+                />
+                <div v-if="positionsFor.length === 0" class="empty-column">
+                  <component :is="InquiryGeneralIcons.ThumbUp" :size="32" />
+                  <p>{{ t('agora', 'No positions for yet') }}</p>
+                </div>
+              </div>
+
+              <!-- Against Positions -->
+              <div v-if="debateView === 'against'" class="position-column">
+                <OptionCard
+                  v-for="option in positionsAgainst"
+                  :key="option.id"
+                  :option="option"
+                  :inquiry-id="inquiryStore.id"
+                  :show-responses="true"
+                  @click="openOptionDetail(option)"
+                  @support="handleSupport(option)"
+                  @comment="handleComment(option)"
+                />
+                <div v-if="positionsAgainst.length === 0" class="empty-column">
+                  <component :is="InquiryGeneralIcons.ThumbDown" :size="32" />
+                  <p>{{ t('agora', 'No positions against yet') }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Arguments Section -->
+          <div class="arguments-section">
+            <div class="arguments-header">
+              <h4 class="section-title">
+                {{ t('agora', 'Arguments') }}
+              </h4>
+              <div class="arguments-tabs">
+                <button
+                  class="argument-tab"
+                  :class="{ active: argumentView === 'for' }"
+                  @click="argumentView = 'for'"
+                >
+                  <component :is="InquiryGeneralIcons.MessagePlus" :size="16" />
+                  {{ t('agora', 'For') }}
+                  <span class="tab-count">{{ argumentsFor.length }}</span>
+                </button>
+                <button
+                  class="argument-tab"
+                  :class="{ active: argumentView === 'against' }"
+                  @click="argumentView = 'against'"
+                >
+                  <component :is="InquiryGeneralIcons.MessageMinus" :size="16" />
+                  {{ t('agora', 'Against') }}
+                  <span class="tab-count">{{ argumentsAgainst.length }}</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="arguments-content">
+              <!-- For Arguments -->
+              <div v-if="argumentView === 'for'" class="argument-column">
+                <OptionCard
+                  v-for="option in argumentsFor"
+                  :key="option.id"
+                  :option="option"
+                  :inquiry-id="inquiryStore.id"
+                  :compact="true"
+                  @click="openOptionDetail(option)"
+                  @support="handleSupport(option)"
+                  @comment="handleComment(option)"
+                />
+                <div v-if="argumentsFor.length === 0" class="empty-column">
+                  <component :is="InquiryGeneralIcons.MessagePlus" :size="32" />
+                  <p>{{ t('agora', 'No supporting arguments yet') }}</p>
+                </div>
+              </div>
+
+              <!-- Against Arguments -->
+              <div v-if="argumentView === 'against'" class="argument-column">
+                <OptionCard
+                  v-for="option in argumentsAgainst"
+                  :key="option.id"
+                  :option="option"
+                  :inquiry-id="inquiryStore.id"
+                  :compact="true"
+                  @click="openOptionDetail(option)"
+                  @support="handleSupport(option)"
+                  @comment="handleComment(option)"
+                />
+                <div v-if="argumentsAgainst.length === 0" class="empty-column">
+                  <component :is="InquiryGeneralIcons.MessageMinus" :size="32" />
+                  <p>{{ t('agora', 'No opposing arguments yet') }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Alternatives and Messages -->
+          <div class="other-options-section">
+            <div class="options-grid">
+              <div class="options-column">
+                <div class="column-header">
+                  <h5 class="column-title">
+                    <component :is="InquiryGeneralIcons.SwapHorizontal" :size="14" />
+                    {{ t('agora', 'Alternatives') }}
+                  </h5>
+                  <span class="column-count">{{ alternatives.length }}</span>
+                </div>
+                <div class="column-content">
+                  <OptionCard
+                    v-for="option in alternatives"
+                    :key="option.id"
+                    :option="option"
+                    :inquiry-id="inquiryStore.id"
+                    :compact="true"
+                    @click="openOptionDetail(option)"
+                    @support="handleSupport(option)"
+                    @comment="handleComment(option)"
+                  />
+                </div>
+              </div>
+
+              <div class="options-column">
+                <div class="column-header">
+                  <h5 class="column-title">
+                    <component :is="InquiryGeneralIcons.MessageText" :size="14" />
+                    {{ t('agora', 'Messages') }}
+                  </h5>
+                  <span class="column-count">{{ messages.length }}</span>
+                </div>
+                <div class="column-content">
+                  <OptionCard
+                    v-for="option in messages"
+                    :key="option.id"
+                    :option="option"
+                    :inquiry-id="inquiryStore.id"
+                    :compact="true"
+                    @click="openOptionDetail(option)"
+                    @support="handleSupport(option)"
+                    @comment="handleComment(option)"
+                  />
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- Consultative Family - Q&A Layout -->
-        <div v-else-if="activeFamily === 'consultative'" class="consultative-layout">
-          <div class="questions-list">
-            <OptionCard
-              v-for="option in questions"
-              :key="option.id"
-              :option="option"
-              :inquiry-id="inquiryStore.id"
-              :show-answers="true"
-              @click="openOptionDetail(option)"
-              @answer="handleAnswer(option)"
-              @comment="handleComment(option)"
-            />
-            <div v-if="questions.length === 0" class="empty-state">
-              <component :is="InquiryGeneralIcons.Question" :size="48" />
-              <h4>{{ t('agora', 'No questions yet') }}</h4>
-              <p>{{ t('agora', 'Be the first to ask a question') }}</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Creative Family - Ideas Grid -->
-        <div v-else-if="activeFamily === 'creative'" class="creative-layout">
-          <div class="ideas-grid">
-            <OptionCard
-              v-for="option in ideas"
-              :key="option.id"
-              :option="option"
-              :inquiry-id="inquiryStore.id"
-              :creative="true"
-              @click="openOptionDetail(option)"
-              @support="handleSupport(option)"
-              @refine="handleRefine(option)"
-              @comment="handleComment(option)"
-            />
-          </div>
-          <div v-if="ideas.length === 0" class="empty-state">
-            <component :is="InquiryGeneralIcons.Lightbulb" :size="48" />
-            <h4>{{ t('agora', 'No ideas yet') }}</h4>
-            <p>{{ t('agora', 'Share your creative ideas') }}</p>
-          </div>
-        </div>
-
-        <!-- Hierarchical Family - Tree View -->
-        <div v-else-if="activeFamily === 'administrative'" class="hierarchical-layout">
+        <!-- Structure Family Layout -->
+        <div v-else-if="activeFamily === 'structure'" class="hierarchical-layout">
           <div class="tree-view">
             <OptionTreeNode
-              v-for="option in parentOptions"
+              v-for="option in chapters"
               :key="option.id"
               :option="option"
               :depth="0"
@@ -237,9 +305,94 @@
               @comment="handleComment"
             />
           </div>
+          <div v-if="chapters.length === 0" class="empty-state">
+            <component :is="InquiryGeneralIcons.BookOpenVariant" :size="48" />
+            <h4>{{ t('agora', 'No chapters yet') }}</h4>
+            <p>{{ t('agora', 'Start by adding the first chapter') }}</p>
+          </div>
         </div>
 
-        <!-- Default Grid Layout -->
+        <!-- Consensus Family Layout -->
+        <div v-else-if="activeFamily === 'consensus'" class="consensus-layout">
+          <div class="consultation-questions">
+            <OptionCard
+              v-for="option in consultationQuestions"
+              :key="option.id"
+              :option="option"
+              :inquiry-id="inquiryStore.id"
+              :show-poll-options="true"
+              @click="openOptionDetail(option)"
+              @answer="handleAnswer(option)"
+              @comment="handleComment(option)"
+            />
+            <div v-if="consultationQuestions.length === 0" class="empty-state">
+              <component :is="InquiryGeneralIcons.HelpCircle" :size="48" />
+              <h4>{{ t('agora', 'No consultation questions yet') }}</h4>
+              <p>{{ t('agora', 'Be the first to ask a question') }}</p>
+            </div>
+          </div>
+
+          <div v-if="objections.length > 0" class="objections-section">
+            <h4 class="section-title">
+              <component :is="InquiryGeneralIcons.AlertCircle" :size="16" />
+              {{ t('agora', 'Formal Objections') }}
+              <span class="section-count">{{ objections.length }}</span>
+            </h4>
+            <div class="objections-list">
+              <OptionCard
+                v-for="option in objections"
+                :key="option.id"
+                :option="option"
+                :inquiry-id="inquiryStore.id"
+                :highlight="option.miscFields?.blocking"
+                @click="openOptionDetail(option)"
+                @support="handleSupport(option)"
+                @comment="handleComment(option)"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Proposal Family Layout -->
+        <div v-else-if="activeFamily === 'proposal'" class="proposal-layout">
+          <div class="proposals-grid">
+            <OptionCard
+              v-for="option in proposals"
+              :key="option.id"
+              :option="option"
+              :inquiry-id="inquiryStore.id"
+              @click="openOptionDetail(option)"
+              @support="handleSupport(option)"
+              @comment="handleComment(option)"
+            />
+          </div>
+          <div v-if="proposals.length === 0" class="empty-state">
+            <component :is="InquiryGeneralIcons.Lightbulb" :size="48" />
+            <h4>{{ t('agora', 'No proposals yet') }}</h4>
+            <p>{{ t('agora', 'Share your proposal') }}</p>
+          </div>
+        </div>
+
+        <!-- Decision Family Layout -->
+        <div v-else-if="activeFamily === 'decision'" class="decision-layout">
+          <div class="official-results">
+            <OptionCard
+              v-for="option in officialResults"
+              :key="option.id"
+              :option="option"
+              :inquiry-id="inquiryStore.id"
+              :official="true"
+              @click="openOptionDetail(option)"
+            />
+            <div v-if="officialResults.length === 0" class="empty-state">
+              <component :is="InquiryGeneralIcons.CheckCircle" :size="48" />
+              <h4>{{ t('agora', 'No official results yet') }}</h4>
+              <p>{{ t('agora', 'Results will appear here when published') }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Default Grid Layout for other families -->
         <div v-else class="default-layout">
           <div class="options-grid">
             <OptionCard
@@ -253,7 +406,7 @@
             />
           </div>
           <div v-if="familyOptions.length === 0" class="empty-state">
-            <component :is="getIcon(activeFamilyInfo.icon)" :size="48" />
+            <component :is="getFamilyIcon(activeFamily)" :size="48" />
             <h4>{{ t('agora', 'No options yet') }}</h4>
             <p>{{ t('agora', 'Be the first to contribute') }}</p>
           </div>
@@ -282,7 +435,7 @@
     <AddOptionModal
       v-if="showAddOptionModal"
       :inquiry-id="inquiryStore.id"
-      :option-type="selectedOptionType"
+      :option-type="selectedOptionTypeKey"
       :parent-id="selectedParentId"
       @close="closeAddOptionModal"
       @created="handleOptionCreated"
@@ -299,7 +452,8 @@
     />
   </div>
 </template>
-
+<!-- Updated script section - fixing the option type access -->
+<!-- Updated script section using InquiryHelper.ts -->
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
 import { t } from '@nextcloud/l10n'
@@ -309,12 +463,15 @@ import { useInquiryStore } from '../../stores/inquiry'
 import { useOptionsStore } from '../../stores/options'
 import { useSessionStore } from '../../stores/session'
 import { InquiryGeneralIcons } from '../../utils/icons.ts'
-import { OptionTypeDefinition } from '../../stores/options.ts'
+import { getInquiryItemData, getInquiryTypeData, getAvailableResponseTypes } from '../../helpers/modules/InquiryHelper'
 
 import OptionCard from './OptionCard.vue'
 import OptionTreeNode from './OptionTreeNode.vue'
 import AddOptionModal from './AddOptionModal.vue'
 import OptionDetailDrawer from './OptionDetailDrawer.vue'
+
+// Import types
+import type { InquiryType, OptionType } from '../../Types/index.ts'
 
 // Props
 const props = defineProps<{
@@ -330,46 +487,78 @@ const sessionStore = useSessionStore()
 const activeFamily = ref<string>('')
 const showAddOptionModal = ref(false)
 const showOptionDetail = ref(false)
-const selectedOptionType = ref<OptionTypeDefinition | null>(null)
+const selectedOptionTypeKey = ref<string | null>(null)
 const selectedParentId = ref<number | null>(null)
 const selectedOptionId = ref<number | null>(null)
+const debateView = ref<'for' | 'against'>('for')
+const argumentView = ref<'for' | 'against'>('for')
 
 // Computed
-const hasVisibleFamilies = computed(() => {
-  return visibleFamilies.value.length > 0
-})
+const allInquiryTypes = computed<InquiryType[]>(() => 
+  // Get all inquiry types from app settings
+   sessionStore.appSettings?.inquiryTypeTab || []
+)
+
+const allOptionTypes = computed<OptionType[]>(() => 
+  // Option types might be stored in a different location
+  // Check different possible locations
+   sessionStore.appSettings?.inquiryOptionTypeTab || 
+         []
+)
+
+const hasVisibleFamilies = computed(() => visibleFamilies.value.length > 0)
 
 const visibleFamilies = computed(() => {
-  // Get families that are allowed for this inquiry type
-  const inquiryType = inquiryStore.type
-  const families = optionsStore.getFamilies
+  // Get allowed option types for this inquiry type
+  const allowedOptionTypes = allowedRootOptions.value
   
-  // Filter families based on inquiry type configuration
-  // (This would come from app settings in a real implementation)
-  return families.filter(family => {
-    // Check if family is enabled for this inquiry type
-    const allowedFamilies = sessionStore.appSettings?.inquiryTypeRights?.[inquiryType]?.allowedOptionFamilies
-    return !allowedFamilies || allowedFamilies.includes(family.key)
+  // Get unique families from allowed option types
+  const families = new Set<string>()
+  allowedOptionTypes.forEach(optionTypeKey => {
+    const optionConfig = getOptionTypeConfig(optionTypeKey)
+    if (optionConfig) {
+      // Get the family from the option type config
+      const family = optionConfig.family || optionConfig.inquiry_type_family
+      if (family) {
+        families.add(family)
+      }
+    }
+  })
+  
+  return Array.from(families).map(familyKey => {
+    const familyData = getFamilyData(familyKey)
+    return {
+      key: familyKey,
+      name: familyData.label,
+      description: familyData.description,
+      icon: familyData.icon,
+      color: getFamilyColor(familyKey)
+    }
   })
 })
 
-const activeFamilyInfo = computed(() => {
-  const family = visibleFamilies.value.find(f => f.key === activeFamily.value)
-  if (family) {
-    return {
-      name: family.name,
-      description: family.description,
-      color: family.color,
-      icon: family.icon
+const allowedRootOptions = computed<string[]>(() => {
+  const inquiryType = inquiryStore.type
+  // Check if allowed_option_type exists in inquiryTypeTab
+  const inquiryTypeConfig = allInquiryTypes.value.find(t => t.inquiry_type === inquiryType)
+  
+  if (inquiryTypeConfig?.allowed_option_type) {
+    // Parse allowed_option_type if it's a string (JSON)
+    if (typeof inquiryTypeConfig.allowed_option_type === 'string') {
+      try {
+        return JSON.parse(inquiryTypeConfig.allowed_option_type)
+      } catch {
+        return []
+      }
+    } else if (Array.isArray(inquiryTypeConfig.allowed_option_type)) {
+      return inquiryTypeConfig.allowed_option_type
     }
   }
-  return {
-    name: '',
-    description: '',
-    color: '#999999',
-    icon: 'icon-file'
-  }
+  
+  return []
 })
+
+const activeFamilyInfo = computed(() => getFamilyData(activeFamily.value))
 
 const familyCounts = computed(() => {
   const counts: Record<string, number> = {}
@@ -392,122 +581,189 @@ const familyStats = computed(() => {
   }
 })
 
-const canAddOptions = computed(() => {
-  return inquiryStore.permissions.addOptions
-})
+const canAddOptions = computed(() => inquiryStore.permissions.addOptions)
 
 const allowedOptionTypesForFamily = computed(() => {
   if (!activeFamily.value) return []
   
-  const family = visibleFamilies.value.find(f => f.key === activeFamily.value)
-  return family?.types || []
+  // Filter allowed root options by active family
+  return allowedRootOptions.value.filter(optionTypeKey => {
+    const optionConfig = getOptionTypeConfig(optionTypeKey)
+    if (!optionConfig) return false
+    
+    const family = optionConfig.family || optionConfig.inquiry_type_family
+    return family === activeFamily.value
+  })
 })
 
-// Debate specific computed
-const argumentsFor = computed(() => {
-  return optionsStore.getOptionsByType('argument_for')
-})
+// Family-specific computed properties
+const positionsFor = computed(() => optionsStore.getOptionsByType('position_for'))
 
-const argumentsAgainst = computed(() => {
-  return optionsStore.getOptionsByType('argument_against')
-})
+const positionsAgainst = computed(() => optionsStore.getOptionsByType('position_against'))
 
-const proposals = computed(() => {
-  return optionsStore.getOptionsByType('proposal')
-})
+const argumentsFor = computed(() => optionsStore.getOptionsByType('argument_for'))
 
-const questions = computed(() => {
-  return optionsStore.getOptionsByType('question')
-})
+const argumentsAgainst = computed(() => optionsStore.getOptionsByType('argument_against'))
 
-const ideas = computed(() => {
-  return optionsStore.getOptionsByType('idea')
-})
+const alternatives = computed(() => optionsStore.getOptionsByType('alternative'))
 
-const familyOptions = computed(() => {
-  return optionsStore.getOptionsByFamily(activeFamily.value)
-})
+const messages = computed(() => optionsStore.getOptionsByType('message'))
 
-const parentOptions = computed(() => {
-  return optionsStore.parentOptions.filter(opt => 
-    optionsStore.getOptionsByFamily(activeFamily.value).includes(opt)
-  )
-})
+const officialSummaries = computed(() => optionsStore.getOptionsByType('official_summary'))
 
-// Counts
-const argumentsForCount = computed(() => argumentsFor.value.length)
-const argumentsAgainstCount = computed(() => argumentsAgainst.value.length)
-const proposalsCount = computed(() => proposals.value.length)
+const chapters = computed(() => optionsStore.getOptionsByType('chapter'))
 
-const hasMoreOptions = computed(() => {
-  return optionsStore.meta.loadedOptions < optionsStore.meta.totalOptions
-})
+const articles = computed(() => optionsStore.getOptionsByType('article'))
 
-// Methods
-const getIcon = (iconName: string) => {
-  // Map icon names to actual components
+const amendments = computed(() => optionsStore.getOptionsByType('amendment'))
+
+const consultationQuestions = computed(() => optionsStore.getOptionsByType('consultation_question'))
+
+const pollOptions = computed(() => optionsStore.getOptionsByType('poll_option'))
+
+const objections = computed(() => optionsStore.getOptionsByType('objection'))
+
+const exceptions = computed(() => optionsStore.getOptionsByType('exception'))
+
+const officialResults = computed(() => optionsStore.getOptionsByType('official_result'))
+
+const proposals = computed(() => optionsStore.getOptionsByType('proposal'))
+
+const familyOptions = computed(() => optionsStore.getOptionsByFamily(activeFamily.value))
+
+const hasMoreOptions = computed(() => optionsStore.meta.loadedOptions < optionsStore.meta.totalOptions)
+
+// Helper methods
+const getFamilyData = (familyKey: string) => {
+  const familyLabels: Record<string, string> = {
+    'debate': t('agora', 'Debate'),
+    'structure': t('agora', 'Structure'),
+    'consensus': t('agora', 'Consensus'),
+    'decision': t('agora', 'Decision'),
+    'proposal': t('agora', 'Proposal')
+  }
+  
+  const familyDescriptions: Record<string, string> = {
+    'debate': t('agora', 'Debate positions, arguments, and alternatives'),
+    'structure': t('agora', 'Structured documents with chapters and articles'),
+    'consensus': t('agora', 'Consultation questions and consensus building'),
+    'decision': t('agora', 'Official decisions and results'),
+    'proposal': t('agora', 'Initial proposals and suggestions')
+  }
+  
+  const familyIcons: Record<string, any> = {
+    'debate': InquiryGeneralIcons.Discussion,
+    'structure': InquiryGeneralIcons.Settings,
+    'consensus': InquiryGeneralIcons.ThumbUp,
+    'decision': InquiryGeneralIcons.Checkmark,
+    'proposal': InquiryGeneralIcons.Lightbulb
+  }
+  
+  return {
+    name: familyLabels[familyKey] || familyKey,
+    label: familyLabels[familyKey] || familyKey,
+    description: familyDescriptions[familyKey] || '',
+    icon: familyIcons[familyKey] || InquiryGeneralIcons.File
+  }
+}
+
+const getFamilyColor = (familyKey: string): string => {
+  const familyColors: Record<string, string> = {
+    'debate': '#4a86e8',
+    'structure': '#6aa84f',
+    'consensus': '#3c8dbc',
+    'decision': '#f1c232',
+    'proposal': '#cc0000'
+  }
+  return familyColors[familyKey] || '#999999'
+}
+
+const getOptionTypeConfig = (optionTypeKey: string): OptionType | null => 
+  // Find the option type configuration
+   allOptionTypes.value.find((opt: OptionType) => 
+    opt.option_type === optionTypeKey || 
+    opt.inquiry_type === optionTypeKey
+  ) || null
+
+
+const getOptionTypeLabel = (optionTypeKey: string): string => {
+  const config = getOptionTypeConfig(optionTypeKey)
+  if (config) {
+    return t('agora', config.label || config.name || optionTypeKey)
+  }
+  return optionTypeKey
+}
+
+const getOptionTypeIcon = (optionTypeKey: string) => {
+  const config = getOptionTypeConfig(optionTypeKey)
+  if (!config) return InquiryGeneralIcons.File
+  
+  const iconName = config.icon || ''
   const iconMap: Record<string, any> = {
-    'icon-discussion': InquiryGeneralIcons.Discussion,
-    'icon-question': InquiryGeneralIcons.Question,
-    'icon-lightbulb': InquiryGeneralIcons.Lightbulb,
-    'icon-settings': InquiryGeneralIcons.Settings,
-    'icon-code': InquiryGeneralIcons.Code,
-    'icon-category-other': InquiryGeneralIcons.CategoryOther,
-    'icon-like': InquiryGeneralIcons.ThumbUp,
-    'icon-dislike': InquiryGeneralIcons.ThumbDown,
-    'icon-checkmark': InquiryGeneralIcons.Checkmark,
-    // Add more mappings as needed
+    'ThumbUp': InquiryGeneralIcons.ThumbUp,
+    'ThumbDown': InquiryGeneralIcons.ThumbDown,
+    'MessagePlus': InquiryGeneralIcons.MessagePlus,
+    'MessageMinus': InquiryGeneralIcons.MessageMinus,
+    'SwapHorizontal': InquiryGeneralIcons.SwapHorizontal,
+    'MessageText': InquiryGeneralIcons.MessageText,
+    'CheckCircle': InquiryGeneralIcons.Checkmark,
+    'BookOpenVariant': InquiryGeneralIcons.Book,
+    'FileDocument': InquiryGeneralIcons.File,
+    'FileDocumentEdit': InquiryGeneralIcons.Edit,
+    'HelpCircle': InquiryGeneralIcons.Question,
+    'BarChart2': InquiryGeneralIcons.Chart,
+    'AlertCircle': InquiryGeneralIcons.Alert,
+    'AlertOutline': InquiryGeneralIcons.Warning,
+    'Lightbulb': InquiryGeneralIcons.Lightbulb,
   }
   return iconMap[iconName] || InquiryGeneralIcons.File
 }
 
 const setActiveFamily = (familyKey: string) => {
   activeFamily.value = familyKey
+  // Reset views for debate
+  if (familyKey === 'debate') {
+    debateView.value = 'for'
+    argumentView.value = 'for'
+  }
   // Load options for this family if not already loaded
   if (optionsStore.getOptionsByFamily(familyKey).length === 0) {
     optionsStore.loadByType(familyKey, inquiryStore.id)
   }
 }
 
-const hasNewOptions = (familyKey: string) => {
+const hasNewOptions = (familyKey: string) => 
   // Check if there are new options since last visit
-  // This would require tracking user's last visit time
-  return false
-}
+   false
 
-const hasUnreadComments = (familyKey: string) => {
+
+const hasUnreadComments = (familyKey: string) => 
   // Check for unread comments in this family
-  // This would require tracking read status
-  return false
-}
+   false
 
-const getChildOptions = (parentId: number) => {
-  return optionsStore.childOptions(parentId).filter(opt => 
+
+const getChildOptions = (parentId: number) => optionsStore.childOptions(parentId).filter(opt => 
     optionsStore.getOptionsByFamily(activeFamily.value).includes(opt)
   )
-}
 
-const openAddOptionModal = (optionType: OptionTypeDefinition, parentId?: number) => {
-  selectedOptionType.value = optionType
+const openAddOptionModal = (optionTypeKey: string, parentId?: number) => {
+  selectedOptionTypeKey.value = optionTypeKey
   selectedParentId.value = parentId || null
   showAddOptionModal.value = true
 }
 
 const openAddChildModal = (parentOption: any) => {
-  const allowedChildTypes = parentOption.allowedChildTypes || []
-  if (allowedChildTypes.length > 0) {
-    // Open a modal to select child type
-    // For simplicity, just use the first allowed type
-    const childType = sessionStore.appSettings?.optionTypesTab?.[allowedChildTypes[0]]
-    if (childType) {
-      openAddOptionModal(childType, parentOption.id)
-    }
+  const config = getOptionTypeConfig(parentOption.type)
+  if (config && config.allowed_response && config.allowed_response.length > 0) {
+    // For now, just use the first allowed response type
+    const childTypeKey = config.allowed_response[0]
+    openAddOptionModal(childTypeKey, parentOption.id)
   }
 }
 
 const closeAddOptionModal = () => {
   showAddOptionModal.value = false
-  selectedOptionType.value = null
+  selectedOptionTypeKey.value = null
   selectedParentId.value = null
 }
 
@@ -555,17 +811,11 @@ const handleSupport = (option: any) => {
 const handleComment = (option: any) => {
   // Open comment modal or drawer
   openOptionDetail(option)
-  // Could also focus on comment section
 }
 
 const handleAnswer = (option: any) => {
   // Handle answer to question
   console.log('Answer question:', option.id)
-}
-
-const handleRefine = (option: any) => {
-  // Handle refinement of idea
-  console.log('Refine idea:', option.id)
 }
 
 const loadMoreOptions = () => {
@@ -581,6 +831,15 @@ onMounted(() => {
   if (visibleFamilies.value.length > 0) {
     activeFamily.value = visibleFamilies.value[0].key
   }
+  
+  // Debug log to understand the data structure
+  console.log('Data structure check:', {
+    inquiryType: inquiryStore.type,
+    allInquiryTypes: allInquiryTypes.value,
+    allOptionTypes: allOptionTypes.value,
+    allowedRootOptions: allowedRootOptions.value,
+    visibleFamilies: visibleFamilies.value
+  })
 })
 
 // Watch for inquiry changes
@@ -589,8 +848,16 @@ watch(() => inquiryStore.id, (newId) => {
     optionsStore.load(newId)
   }
 })
-</script>
 
+// Watch for inquiry type changes
+watch(() => inquiryStore.type, (newType) => {
+  // Reset active family when inquiry type changes
+  activeFamily.value = ''
+  if (visibleFamilies.value.length > 0) {
+    activeFamily.value = visibleFamilies.value[0].key
+  }
+})
+</script>
 <style scoped lang="scss">
 .inquiry-options-view {
   margin-top: 32px;
@@ -771,8 +1038,18 @@ watch(() => inquiryStore.id, (newId) => {
         align-items: center;
         gap: 8px;
 
-        &.type-argument_for {
+        &.type-position_for {
           background: linear-gradient(135deg, #4a86e8, #6aa84f);
+          border-color: #4a86e8;
+        }
+
+        &.type-position_against {
+          background: linear-gradient(135deg, #cc0000, #e69138);
+          border-color: #cc0000;
+        }
+
+        &.type-argument_for {
+          background: linear-gradient(135deg, #4a86e8, #3c8dbc);
           border-color: #4a86e8;
         }
 
@@ -782,18 +1059,13 @@ watch(() => inquiryStore.id, (newId) => {
         }
 
         &.type-proposal {
-          background: linear-gradient(135deg, #6aa84f, #4a86e8);
-          border-color: #6aa84f;
-        }
-
-        &.type-question {
-          background: linear-gradient(135deg, #3c8dbc, #4a86e8);
-          border-color: #3c8dbc;
-        }
-
-        &.type-idea {
           background: linear-gradient(135deg, #f1c232, #e69138);
           border-color: #f1c232;
+        }
+
+        &.type-consultation_question {
+          background: linear-gradient(135deg, #3c8dbc, #4a86e8);
+          border-color: #3c8dbc;
         }
 
         &:hover {
@@ -859,87 +1131,162 @@ watch(() => inquiryStore.id, (newId) => {
 
   .options-container {
     .debate-layout {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 24px;
-      margin-bottom: 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
 
-      .debate-column {
-        .column-header {
+      .positions-section,
+      .arguments-section {
+        .positions-header,
+        .arguments-header {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          padding-bottom: 12px;
           margin-bottom: 20px;
-          border-bottom: 3px solid;
+          padding-bottom: 12px;
+          border-bottom: 2px solid var(--color-border);
 
-          .column-title {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 16px;
-            font-weight: 600;
+          .section-title {
             margin: 0;
+            font-size: 18px;
+            font-weight: 600;
             color: var(--color-main-text);
           }
 
-          .column-count {
-            background: var(--color-background-darker);
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: 700;
+          .positions-tabs,
+          .arguments-tabs {
+            display: flex;
+            gap: 8px;
+
+            .position-tab,
+            .argument-tab {
+              display: flex;
+              align-items: center;
+              gap: 6px;
+              padding: 8px 16px;
+              background: var(--color-background-dark);
+              border: 2px solid transparent;
+              border-radius: 12px;
+              font-size: 14px;
+              font-weight: 600;
+              cursor: pointer;
+              transition: all 0.3s ease;
+
+              &:hover {
+                background: var(--color-background-darker);
+              }
+
+              &.active {
+                background: var(--color-primary-light);
+                border-color: var(--color-primary-element);
+                color: var(--color-primary-element);
+              }
+
+              .tab-count {
+                background: var(--color-background-darker);
+                padding: 2px 8px;
+                border-radius: 8px;
+                font-size: 12px;
+                font-weight: 700;
+              }
+            }
           }
         }
 
-        .column-content {
+        .positions-content,
+        .arguments-content {
           display: flex;
           flex-direction: column;
           gap: 16px;
 
-          .empty-column {
-            text-align: center;
-            padding: 40px 20px;
-            background: var(--color-background-dark);
-            border: 2px dashed var(--color-border);
-            border-radius: 16px;
+          .position-column,
+          .argument-column {
+            .empty-column {
+              text-align: center;
+              padding: 40px 20px;
+              background: var(--color-background-dark);
+              border: 2px dashed var(--color-border);
+              border-radius: 16px;
 
-            svg {
-              color: var(--color-text-lighter);
-              margin-bottom: 16px;
-            }
+              svg {
+                color: var(--color-text-lighter);
+                margin-bottom: 16px;
+              }
 
-            p {
-              margin: 0;
-              color: var(--color-text-lighter);
-              font-style: italic;
+              p {
+                margin: 0;
+                color: var(--color-text-lighter);
+                font-style: italic;
+              }
             }
           }
         }
       }
 
-      .proposals-section {
-        grid-column: span 2;
-        margin-top: 24px;
+      .other-options-section {
+        .options-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 24px;
 
-        .section-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 20px;
+          .options-column {
+            .column-header {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              margin-bottom: 16px;
+              padding-bottom: 8px;
+              border-bottom: 2px solid var(--color-border);
 
-          .section-title {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            margin: 0;
-            color: var(--color-main-text);
+              .column-title {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin: 0;
+                font-size: 16px;
+                font-weight: 600;
+                color: var(--color-main-text);
+              }
+
+              .column-count {
+                background: var(--color-background-dark);
+                padding: 4px 12px;
+                border-radius: 12px;
+                font-size: 14px;
+                font-weight: 700;
+              }
+            }
+
+            .column-content {
+              display: flex;
+              flex-direction: column;
+              gap: 12px;
+            }
           }
+        }
+      }
+    }
+
+    .consensus-layout {
+      .consultation-questions {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        margin-bottom: 32px;
+      }
+
+      .objections-section {
+        .section-title {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          margin: 0 0 16px 0;
+          font-size: 18px;
+          font-weight: 600;
+          color: var(--color-main-text);
 
           .section-count {
-            background: var(--color-background-darker);
+            background: var(--color-background-dark);
             padding: 4px 12px;
             border-radius: 12px;
             font-size: 14px;
@@ -947,17 +1294,25 @@ watch(() => inquiryStore.id, (newId) => {
           }
         }
 
-        .proposals-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        .objections-list {
+          display: flex;
+          flex-direction: column;
           gap: 16px;
         }
       }
     }
 
-    .consultative-layout,
-    .creative-layout,
+    .proposal-layout,
+    .decision-layout,
     .default-layout {
+      .proposals-grid,
+      .official-results,
+      .options-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+      }
+
       .empty-state {
         text-align: center;
         padding: 60px 20px;
@@ -984,22 +1339,6 @@ watch(() => inquiryStore.id, (newId) => {
       }
     }
 
-    .consultative-layout {
-      .questions-list {
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-      }
-    }
-
-    .creative-layout {
-      .ideas-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-        gap: 20px;
-      }
-    }
-
     .hierarchical-layout {
       .tree-view {
         padding: 20px;
@@ -1007,13 +1346,30 @@ watch(() => inquiryStore.id, (newId) => {
         border: 2px solid var(--color-border);
         border-radius: 16px;
       }
-    }
 
-    .default-layout {
-      .options-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        gap: 20px;
+      .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        background: var(--color-background-dark);
+        border: 2px dashed var(--color-border);
+        border-radius: 16px;
+
+        svg {
+          color: var(--color-text-lighter);
+          margin-bottom: 20px;
+        }
+
+        h4 {
+          margin: 0 0 8px 0;
+          color: var(--color-main-text);
+          font-size: 18px;
+        }
+
+        p {
+          margin: 0;
+          color: var(--color-text-lighter);
+          font-style: italic;
+        }
       }
     }
   }
@@ -1076,10 +1432,10 @@ watch(() => inquiryStore.id, (newId) => {
     }
 
     .debate-layout {
-      grid-template-columns: 1fr;
-      
-      .proposals-section {
-        grid-column: span 1;
+      .other-options-section {
+        .options-grid {
+          grid-template-columns: 1fr;
+        }
       }
     }
   }
@@ -1106,18 +1462,25 @@ watch(() => inquiryStore.id, (newId) => {
 
   .options-container {
     .debate-layout {
-      .proposals-grid {
-        grid-template-columns: 1fr !important;
+      .positions-header,
+      .arguments-header {
+        flex-direction: column;
+        gap: 16px;
+        align-items: flex-start !important;
+      }
+
+      .positions-tabs,
+      .arguments-tabs {
+        width: 100%;
+        justify-content: space-between;
       }
     }
 
-    .creative-layout {
-      .ideas-grid {
-        grid-template-columns: 1fr !important;
-      }
-    }
-
+    .proposal-layout,
+    .decision-layout,
     .default-layout {
+      .proposals-grid,
+      .official-results,
       .options-grid {
         grid-template-columns: 1fr !important;
       }

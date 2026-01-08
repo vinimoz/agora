@@ -109,7 +109,7 @@
                     <NcButton type="secondary" @click="cancelEdit">
                       {{ t('agora', 'Cancel') }}
                     </NcButton>
-                    <NcButton type="primary" @click="saveEdit" :disabled="!editForm.text.trim()">
+                    <NcButton type="primary" :disabled="!editForm.text.trim()" @click="saveEdit">
                       {{ t('agora', 'Save changes') }}
                     </NcButton>
                   </div>
@@ -181,7 +181,7 @@
             </div>
 
             <!-- Comments Section -->
-            <div v-if="option.allowComment" class="comments-section" ref="commentsSection">
+            <div v-if="option.allowComment" ref="commentsSection" class="comments-section">
               <div class="section-header">
                 <h3 class="section-title">
                   <component :is="InquiryGeneralIcons.Comment" :size="20" />
@@ -215,7 +215,7 @@
                     <NcButton type="secondary" @click="showCommentForm = false">
                       {{ t('agora', 'Cancel') }}
                     </NcButton>
-                    <NcButton type="primary" @click="submitComment" :disabled="!newComment.trim()">
+                    <NcButton type="primary" :disabled="!newComment.trim()" @click="submitComment">
                       {{ t('agora', 'Post comment') }}
                     </NcButton>
                   </div>
@@ -347,34 +347,22 @@ const editForm = ref({
 const commentsSection = ref<HTMLElement | null>(null)
 
 // Computed
-const canComment = computed(() => {
-  return option.value?.allowComment && option.value?.permissions?.comment
-})
+const canComment = computed(() => option.value?.allowComment && option.value?.permissions?.comment)
 
-const canEditOrDelete = computed(() => {
-  return option.value?.permissions?.edit || option.value?.permissions?.delete || option.value?.canAddChildren
-})
+const canEditOrDelete = computed(() => option.value?.permissions?.edit || option.value?.permissions?.delete || option.value?.canAddChildren)
 
-const useMarkdown = computed(() => {
-  return sessionStore.appSettings?.optionTypesTab?.[option.value?.type || '']?.features?.includes('markdown') || false
-})
+const useMarkdown = computed(() => sessionStore.appSettings?.optionTypesTab?.[option.value?.type || '']?.features?.includes('markdown') || false)
 
-const supportsMarkdown = computed(() => {
-  return sessionStore.appSettings?.optionTypesTab?.[option.value?.type || '']?.features?.includes('markdown') || false
-})
+const supportsMarkdown = computed(() => sessionStore.appSettings?.optionTypesTab?.[option.value?.type || '']?.features?.includes('markdown') || false)
 
-const miscFields = computed(() => {
-  return sessionStore.appSettings?.optionTypesTab?.[option.value?.type || '']?.miscFields || []
-})
+const miscFields = computed(() => sessionStore.appSettings?.optionTypesTab?.[option.value?.type || '']?.miscFields || [])
 
-const hasMiscFields = computed(() => {
-  return miscFields.value.length > 0 && Object.keys(option.value?.miscFields || {}).length > 0
-})
+const hasMiscFields = computed(() => miscFields.value.length > 0 && Object.keys(option.value?.miscFields || {}).length > 0)
 
 // Methods
 const formatDate = (timestamp: number) => {
   const date = new Date(timestamp * 1000)
-  return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+  return `${date.toLocaleDateString()  } ${  date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
 }
 
 const formatMiscField = (field: any, value: any) => {

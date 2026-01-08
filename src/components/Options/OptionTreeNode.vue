@@ -159,16 +159,14 @@ const expanded = ref(false)
 const expandedText = ref(false)
 
 // Computed
-const hasChildren = computed(() => {
-  return props.children && props.children.length > 0
-})
+const hasChildren = computed(() => props.children && props.children.length > 0)
 
 const truncatedText = computed(() => {
   const maxLength = props.maxTextLength || 100
   if (expandedText.value || props.option.text.length <= maxLength) {
     return props.option.text
   }
-  return props.option.text.substring(0, maxLength) + '...'
+  return `${props.option.text.substring(0, maxLength)  }...`
 })
 
 const isTruncated = computed(() => {
@@ -181,9 +179,7 @@ const toggleExpand = () => {
   expanded.value = !expanded.value
 }
 
-const getChildOptions = (parentId: number) => {
-  return optionsStore.childOptions(parentId)
-}
+const getChildOptions = (parentId: number) => optionsStore.childOptions(parentId)
 </script>
 
 <style scoped lang="scss">

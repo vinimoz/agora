@@ -47,18 +47,19 @@ const availableGroups = computed(() => {
 async function loadInquiry(id: string) {
   try {
     await inquiryGroupStore.load(id)
+    // console.log(" WE LOAD ID ", id)
     const result = inquiryGroupsStore.inquiryGroups.filter(i => 
       i.parentId === Number(id)
     )
+    // console.log(" WE LOAD RESULT ", result)
     inquiryGroupStore.childs = result
-
+/*
     if (inquiryGroupStore.childs.length === 0) {
-      inquiryGroupStore.status.forceEditMode = true
       editMode.value = true
     } else {
-      inquiryGroupStore.status.forceEditMode = false
       editMode.value = false
     }
+    */
     await nextTick()
     forceRenderKey.value += 1
   } catch  {
@@ -132,7 +133,6 @@ const handleGroupUpdate = (groups) => {
     <div class="area__main">
       <div class="view-content">
         <InquiryGroupEditViewForm 
-          v-if="editMode" 
         />
       </div>
 
@@ -140,115 +140,113 @@ const handleGroupUpdate = (groups) => {
     </div>
 
     <InquiryGroupCreateDlg
-      v-if="createGroupDlgToggle"
-      :response-type="selectedInquiryGroupTypeForCreation"
-      :selected-groups="selectedGroups"
-      :selected-mode="selectedMode"
-      :available-groups="availableGroups"
-      :parent-inquiry-id="inquiryGroupStore.id"
-      @close="handleCloseDialog"
-      @added="inquiryAdded"
-      @update:selected-groups="handleGroupUpdate"
-    />
+            v-if="createGroupDlgToggle"
+            :inquiry-group-type="selectedInquiryGroupTypeForCreation"
+            :parent-group-id="inquiryGroupStore.id"
+            :available-groups="availableGroups"
+            @close="handleCloseDialog"
+            @added="inquiryAdded"
+            />
+
   </NcAppContent>
 </template>
 
 <style lang="scss">
 .type-display {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 
-  .type-icon {
-    flex-shrink: 0;
-  }
+    .type-icon {
+        flex-shrink: 0;
+    }
 
-  .type-label {
-    font-weight: bold;
-    text-transform: capitalize;
-  }
+    .type-label {
+        font-weight: bold;
+        text-transform: capitalize;
+    }
 }
 
 .header-left-content {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding-top: 8px;
-  width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-top: 8px;
+    width: 100%;
 }
-.dates-container {
-  display: flex;
-  gap: 16px;
-  align-items: center;
-  flex-wrap: wrap;
-  justify-content: flex-end;
+    .dates-container {
+        display: flex;
+        gap: 16px;
+        align-items: center;
+        flex-wrap: wrap;
+        justify-content: flex-end;
 
-  @media (max-width: 1000px) {
-    gap: 8px;
+        @media (max-width: 1000px) {
+            gap: 8px;
+
+            .metadata-item {
+                font-size: 0.8em;
+            }
+        }
+    }
+
+    .header-right-content {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+    }
+
+    .dates-container {
+        display: flex;
+        gap: 20px;
+        align-items: center;
+        justify-content: flex-end;
+        flex-shrink: 0;
+        margin-right: 16px;
+    }
 
     .metadata-item {
-      font-size: 0.8em;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.9em;
+        color: var(--color-text-lighter);
+        white-space: nowrap;
     }
-  }
-}
 
-.header-right-content {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-}
+    .date-label {
+        white-space: nowrap;
+    }
 
-.dates-container {
-  display: flex;
-  gap: 20px;
-  align-items: center;
-  justify-content: flex-end;
-  flex-shrink: 0;
-  margin-right: 16px;
-}
+    .inquiry-list__list {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        overflow: scroll;
+        padding-bottom: 14px;
+    }
 
-.metadata-item {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.9em;
-  color: var(--color-text-lighter);
-  white-space: nowrap;
-}
+    .observer_section {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 14px 0;
+    }
 
-.date-label {
-  white-space: nowrap;
-}
+    .clickable_load_more {
+        cursor: pointer;
+        font-weight: bold;
+    }
 
-.inquiry-list__list {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  overflow: scroll;
-  padding-bottom: 14px;
-}
+    #expiring.closing {
+        color: var(--color-warning);
+        font-weight: bold;
+    }
 
-.observer_section {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 14px 0;
-}
-
-.clickable_load_more {
-  cursor: pointer;
-  font-weight: bold;
-}
-
-#expiring.closing {
-  color: var(--color-warning);
-  font-weight: bold;
-}
-
-#expiring.open {
-  color: var(--color-text-lighter);
-}
+    #expiring.open {
+        color: var(--color-text-lighter);
+    }
 </style>

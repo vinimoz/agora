@@ -13,6 +13,7 @@ import { InquiryGroupsAPI } from '../Api/index.ts'
 import { UserType } from '../Types/index.ts'
 import { useSessionStore } from './session.ts'
 import { useInquiriesStore } from './inquiries.ts'
+import { useInquiryGroupsStore } from './inquiryGroups.ts'
 import type { InquiryGroup, InquiryGroupType } from './inquiryGroups.types.ts'
 
 export type InquiryGroupConfiguration = {
@@ -53,7 +54,6 @@ export type CurrentUserInquiryGroupStatus = {
 
 export const useInquiryGroupStore = defineStore('inquiryGroup', {
   state: () => ({
-    // Propriétés directes
     id: 0,
     coverId: null as number | null,
     type: 'default' as InquiryGroupType,
@@ -288,10 +288,12 @@ export const useInquiryGroupStore = defineStore('inquiryGroup', {
             })
 
             if (response.data?.inquiryGroup) {
-                const groupData = response.data.inquiryGroup
-                this.id = groupData.id
-                this.title = groupData.title || ''
-                this.type = groupData.type || 'default'
+                const group = response.data.inquiryGroup
+                this.id = group.id
+                this.title = group.title || ''
+                this.type = group.type || 'default'
+                const inquiryGroupsStore = useInquiryGroupsStore()
+                inquiryGroupsStore.addInquiryGroup(group)
                 return response.data.inquiryGroup
             }
 
@@ -348,17 +350,19 @@ export const useInquiryGroupStore = defineStore('inquiryGroup', {
 
             if (response.data?.inquiryGroup) {
                 if (payload.title !== undefined) this.title = payload.title
-                    if (payload.description !== undefined) this.description = payload.description
-                        if (payload.type !== undefined) this.type = payload.type
-                            if (payload.groupStatus !== undefined) this.groupStatus = payload.groupStatus
+                if (payload.description !== undefined) this.description = payload.description
+                if (payload.type !== undefined) this.type = payload.type
+                if (payload.groupStatus !== undefined) this.groupStatus = payload.groupStatus
+                const inquiryGroupsStore = useInquiryGroupsStore()
+                inquiryGroupsStore.updateInquiryGroup(response.data.inquiryGroup)
             }
 
-            emit('update:inquiry-group', {
-                store: 'inquiryGroup',
-                message: t('agora', 'Inquiry group updated'),
-            })
+emit('update:inquiry-group', {
+    store: 'inquiryGroup',
+    message: t('agora', 'Inquiry group updated'),
+})
 
-            return response.data
+return response.data
         } catch (error) {
             if ((error as AxiosError)?.code === 'ERR_CANCELED') {
                 return
@@ -419,6 +423,8 @@ export const useInquiryGroupStore = defineStore('inquiryGroup', {
             } else if (response.data?.inquiryGroup?.inquiryIds) {
                 this.inquiryIds = response.data.inquiryGroup.inquiryIds
             }
+            const inquiryGroupsStore = useInquiryGroupsStore()
+            inquiryGroupsStore.removeInquiryGroup(response.data.inquiryGroup)
         } catch (error) {
             if ((error as AxiosError)?.code === 'ERR_CANCELED') {
                 return
@@ -449,6 +455,8 @@ export const useInquiryGroupStore = defineStore('inquiryGroup', {
                 groupStatus: 'active',
             })
             this.inquiryGroup = response.data.inquiryGroup
+                const inquiryGroupsStore = useInquiryGroupsStore()
+                inquiryGroupsStore.updateInquiryGroup(response.data.inquiryGroup)
         } catch (error) {
             if ((error as AxiosError)?.code === 'ERR_CANCELED') {
                 return
@@ -475,6 +483,8 @@ export const useInquiryGroupStore = defineStore('inquiryGroup', {
                     groupStatus: 'archived',
                 })
                 this.inquiryGroup = response.data.inquiryGroup
+                const inquiryGroupsStore = useInquiryGroupsStore()
+                inquiryGroupsStore.updateInquiryGroup(response.data.inquiryGroup)
         } catch (error) {
             if ((error as AxiosError)?.code === 'ERR_CANCELED') {
                 return

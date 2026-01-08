@@ -24,7 +24,6 @@ const inquiries = {
       inquiries: Inquiry[]
       permissions: {
         inquiryCreationAllowed: boolean
-        comboAllowed: true
       }
       inquiryGroups: InquiryGroup[]
     }>
