@@ -10,11 +10,11 @@
     console.error("vite-plugin-css-injected-by-js", e);
   }
 })();
-const J = "agora", K = "1.6.0";
-import { _ as u, c as n, o as s, k as o, l as c, t, i as j, d as f, f as d, h as k, g as l, r as g, P as y, j as p, n as r, C as _, s as h, H as v, z as C, A as w } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_f6cfe8f3_lang-DYSogmh5.chunk.mjs";
-import { r as O } from "./NcRichText-CETsOVBU-Bfq-n-JZ.chunk.mjs";
-import { N as q } from "./NcUserBubble-CM66IyhS-D3UA9x1F.chunk.mjs";
-import { _ as H } from "./AgoraAppIcon.vue_vue_type_script_setup_true_lang-VuI8RxYU.chunk.mjs";
+const J = "agora", K = "1.6.1";
+import { _ as u, c as n, o as s, k as o, l as c, t, i as j, d as f, f as d, h as k, g as l, r as g, P as y, j as p, n as r, C as _, s as h, H as v, z as C, A as w } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_f6cfe8f3_lang-BmlkL9Pp.chunk.mjs";
+import { r as O } from "./NcRichText-CETsOVBU-VuURHEcY.chunk.mjs";
+import { N as q } from "./NcUserBubble-CM66IyhS-DGIYyhTi.chunk.mjs";
+import { _ as H } from "./AgoraAppIcon.vue_vue_type_script_setup_true_lang-ChOGByfM.chunk.mjs";
 
 const N = { name: "CalendarEndIcon", emits: ["click"], props: { title: { type: String }, fillColor: { type: String, default: "currentColor" }, size: { type: Number, default: 24 } } }, $ = ["aria-hidden", "aria-label"], B = ["fill", "width", "height"], z = { d: "M22 14V22H20V18L16 22V19H11V17H16V14L20 18V14H22M5 19L9 19V21L5 21C3.9 21 3 20.1 3 19V5C3 3.89 3.9 3 5 3H6V.998H8V3H16V.998H18V3H19C20.11 3 21 3.89 21 5L21 12H19V8H5V19Z" }, D = { key: 0 };
 function I(a, i, e, b, F, G) {
