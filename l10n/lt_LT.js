@@ -100,6 +100,7 @@ OC.L10N.register(
     "Not defined" : "Neapibrėžta",
     "Just now" : "Ką tik",
     "Today" : "Šiandien",
+    "Yesterday" : "Vakar",
     "Yes" : "Taip",
     "No" : "Ne",
     "Supported" : "Palaikoma",
