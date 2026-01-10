@@ -286,8 +286,15 @@ function showSettings() {
               @click="navigateToCreateOrView"
               >
               <template #icon>
-                  <component :is="NavigationIcons.Home" />
-              </template>
+    <component
+        v-if="viewMode === 'create'"
+        :is="NavigationIcons.Plus"
+    />
+    <component
+        v-else
+        :is="NavigationIcons.View"
+    />
+</template>
       </NcAppNavigationItem>
 
       <NcAppNavigationItem

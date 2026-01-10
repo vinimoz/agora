@@ -401,6 +401,8 @@ export const NavigationIcons: Record<string, Component> = {
     Users: makeIconComponent(AccountGroup, '#2196F3'),
     ChevronDown: makeIconComponent(ChevronDown, '#5D4037'),
     ChevronUp: makeIconComponent(ChevronUp, '#1565C'),
+    View: makeIconComponent(ViewListOutline, '#0D47A1'),
+    Plus: makeIconComponent(Plus, '#0097A7'),
 }
 
 export const BadgeIcons: Record<string, Component> = {
