@@ -44,10 +44,8 @@ class InquiryGroupMapper extends QBMapper
         $qb->orderBy('title', 'ASC');
         $inquiryGroups = $this->findEntities($qb);
         
-        // Load dynamic fields for all inquiry groups
-        foreach ($inquiryGroups as $inquiryGroup) {
-            $this->loadDynamicFields($inquiryGroup);
-        }
+        // Load dynamic fields for all inquiry groups in one query
+        $this->loadDynamicFieldsForMultiple($inquiryGroups);
         
         return $inquiryGroups;
     }
@@ -98,10 +96,6 @@ class InquiryGroupMapper extends QBMapper
         if (!$getDeleted) {
             $qb->andWhere($qb->expr()->eq(self::TABLE . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)));
         }
-
-        if ($withMiscFields) {
-            $this->joinMiscs($qb, self::TABLE);
-        }
         
         $inquiryGroup = $this->findEntity($qb);
         
@@ -126,10 +120,8 @@ class InquiryGroupMapper extends QBMapper
            
         $inquiryGroups = $this->findEntities($qb);
         
-        // Load dynamic fields for all inquiry groups
-        foreach ($inquiryGroups as $inquiryGroup) {
-            $this->loadDynamicFields($inquiryGroup);
-        }
+        // Load dynamic fields for all inquiry groups in one query
+        $this->loadDynamicFieldsForMultiple($inquiryGroups);
         
         return $inquiryGroups;
     }
@@ -149,10 +141,8 @@ class InquiryGroupMapper extends QBMapper
            
         $inquiryGroups = $this->findEntities($qb);
         
-        // Load dynamic fields for all inquiry groups
-        foreach ($inquiryGroups as $inquiryGroup) {
-            $this->loadDynamicFields($inquiryGroup);
-        }
+        // Load dynamic fields for all inquiry groups in one query
+        $this->loadDynamicFieldsForMultiple($inquiryGroups);
         
         return $inquiryGroups;
     }
@@ -263,10 +253,8 @@ class InquiryGroupMapper extends QBMapper
            
         $inquiryGroups = $this->findEntities($qb);
         
-        // Load dynamic fields for all inquiry groups
-        foreach ($inquiryGroups as $inquiryGroup) {
-            $this->loadDynamicFields($inquiryGroup);
-        }
+        // Load dynamic fields for all inquiry groups in one query
+        $this->loadDynamicFieldsForMultiple($inquiryGroups);
         
         return $inquiryGroups;
     }
@@ -286,10 +274,8 @@ class InquiryGroupMapper extends QBMapper
            
         $inquiryGroups = $this->findEntities($qb);
         
-        // Load dynamic fields for all inquiry groups
-        foreach ($inquiryGroups as $inquiryGroup) {
-            $this->loadDynamicFields($inquiryGroup);
-        }
+        // Load dynamic fields for all inquiry groups in one query
+        $this->loadDynamicFieldsForMultiple($inquiryGroups);
         
         return $inquiryGroups;
     }
@@ -309,10 +295,8 @@ class InquiryGroupMapper extends QBMapper
            
         $inquiryGroups = $this->findEntities($qb);
         
-        // Load dynamic fields for all inquiry groups
-        foreach ($inquiryGroups as $inquiryGroup) {
-            $this->loadDynamicFields($inquiryGroup);
-        }
+        // Load dynamic fields for all inquiry groups in one query
+        $this->loadDynamicFieldsForMultiple($inquiryGroups);
         
         return $inquiryGroups;
     }
@@ -448,99 +432,8 @@ class InquiryGroupMapper extends QBMapper
     }
 
     /**
-     * Join misc settings from InquiryGroupMisc table
-    protected function joinMiscs(
-        IQueryBuilder &$qb,
-        string $fromAlias,
-        string $joinAlias = 'inq_group_misc_settings'
-    ): void {
-        $qb->addSelect($qb->createFunction('GROUP_CONCAT(DISTINCT CONCAT(' . $joinAlias . '.key, ":", ' . $joinAlias . '.value)) AS misc_group_settings_concat'));
-
-        $qb->leftJoin(
-            $fromAlias,
-            InquiryGroupMisc::TABLE,
-            $joinAlias,
-            $qb->expr()->andX(
-                $qb->expr()->eq($joinAlias . '.inquiry_group_id', $fromAlias . '.id'),
-            )
-        );
-    }
+     * Load dynamic fields for a single inquiry group
      */
-/*
-    protected function joinInquiryIds(
-        IQueryBuilder $qb,
-        string $joinAlias = 'inqs',
-    ): void {
-        SqlHelper::getConcatenatedArray(
-            qb: $qb,
-            concatColumn: $joinAlias . '.inquiry_id',
-            asColumn: 'inquiry_ids',
-            dbProvider: $this->db->getDatabaseProvider(),
-        );
-
-        $qb->leftJoin(
-            self::TABLE,
-            InquiryGroup::RELATION_TABLE,
-            $joinAlias,
-            $qb->expr()->andX(
-                $qb->expr()->eq(self::TABLE . '.id', $joinAlias . '.group_id'),
-            )
-        );
-    }
- */
-    protected function joinMiscs(
-        IQueryBuilder &$qb,
-        string $fromAlias,
-        string $joinAlias = 'inq_group_misc_settings'
-    ): void {
-        $dbProvider = $this->db->getDatabaseProvider();
-
-        if ($dbProvider === IDBConnection::PLATFORM_POSTGRES) {
-            $concatExpr = $joinAlias . '.key || \':\' || ' . $joinAlias . '.value';
-        } else {
-            $concatExpr = 'CONCAT(' . $joinAlias . '.key, \':\', ' . $joinAlias . '.value)';
-        }
-
-        SqlHelper::getConcatenatedArray(
-            qb: $qb,
-            concatColumn: $concatExpr,
-            asColumn: 'misc_group_settings_concat',
-            dbProvider: $dbProvider,
-            separator: ','
-        );
-
-        $qb->leftJoin(
-            $fromAlias,
-            InquiryGroupMisc::TABLE,
-            $joinAlias,
-            $qb->expr()->andX(
-                $qb->expr()->eq($joinAlias . '.inquiry_group_id', $fromAlias . '.id'),
-            )
-        );
-    }
-
-    protected function joinInquiryIds(
-        IQueryBuilder $qb,
-        string $joinAlias = 'inqs',
-    ): void {
-        SqlHelper::getConcatenatedArray(
-            qb: $qb,
-            concatColumn: $joinAlias . '.inquiry_id',
-            asColumn: 'inquiry_ids',
-            dbProvider: $this->db->getDatabaseProvider(),
-            separator: ','
-        );
-
-        $qb->leftJoin(
-            self::TABLE,
-            InquiryGroup::RELATION_TABLE,
-            $joinAlias,
-            $qb->expr()->andX(
-                $qb->expr()->eq(self::TABLE . '.id', $joinAlias . '.group_id'),
-            )
-        );
-    }
-
     private function loadDynamicFields(InquiryGroup $inquiryGroup): void
     {
         $inquiryGroupId = $inquiryGroup->getId();
@@ -565,20 +458,133 @@ class InquiryGroupMapper extends QBMapper
     }
 
     /**
-     * Build the enhanced query with joined tables
+     * Load dynamic fields for multiple inquiry groups in one query
+     * This avoids the N+1 query problem
+     */
+    public function loadDynamicFieldsForMultiple(array $inquiryGroups): void
+    {
+        if (empty($inquiryGroups)) {
+            return;
+        }
+        
+        $ids = array_map(fn($group) => $group->getId(), $inquiryGroups);
+        
+        $qb = $this->db->getQueryBuilder();
+        $qb->select('*')
+           ->from(InquiryGroupMisc::TABLE)
+           ->where($qb->expr()->in('inquiry_group_id', $qb->createNamedParameter($ids, IQueryBuilder::PARAM_INT_ARRAY)));
+        
+        $stmt = $qb->executeQuery();
+        $allData = $stmt->fetchAll();
+        $stmt->closeCursor();
+        
+        // Organize data by inquiry_group_id
+        $groupedData = [];
+        foreach ($allData as $data) {
+            $groupId = (int) $data['inquiry_group_id'];
+            if (!isset($groupedData[$groupId])) {
+                $groupedData[$groupId] = [];
+            }
+            $groupedData[$groupId][] = $data;
+        }
+        
+        // Assign data to each inquiry group
+        foreach ($inquiryGroups as $inquiryGroup) {
+            $groupId = $inquiryGroup->getId();
+            if (isset($groupedData[$groupId])) {
+                foreach ($groupedData[$groupId] as $data) {
+                    if (isset($data['key'], $data['value'])) {
+                        $inquiryGroup->setMiscField((string) $data['key'], $data['value']);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Build a simple query without problematic joins
      */
     protected function buildQuery(): IQueryBuilder
     {
         $qb = $this->db->getQueryBuilder();
         $qb->select(self::TABLE . '.*')
-           ->from($this->getTableName(), self::TABLE)
-           ->groupBy(self::TABLE . '.id');
-
-        // Join inquiries
-        $this->joinInquiryIds($qb);
-        $this->joinMiscs($qb, self::TABLE);
+           ->from($this->getTableName(), self::TABLE);
+        
+        // Remove problematic joins that cause PostgreSQL GROUP BY issues
+        // $this->joinInquiryIds($qb);
+        // $this->joinMiscs($qb, self::TABLE);
 
         return $qb;
+    }
+
+    /**
+     * Load inquiry IDs for an InquiryGroup
+     */
+    public function loadInquiryIds(InquiryGroup $inquiryGroup): void
+    {
+        $inquiryGroupId = $inquiryGroup->getId();
+        
+        $qb = $this->db->getQueryBuilder();
+        $qb->select('inquiry_id')
+           ->from(InquiryGroup::RELATION_TABLE)
+           ->where($qb->expr()->eq('group_id', $qb->createNamedParameter($inquiryGroupId, IQueryBuilder::PARAM_INT)));
+        
+        $result = $qb->executeQuery();
+        $inquiryIds = [];
+        while ($row = $result->fetch()) {
+            $inquiryIds[] = (int) $row['inquiry_id'];
+        }
+        $result->closeCursor();
+        
+        // Assuming InquiryGroup has a method to set inquiry IDs
+        if (method_exists($inquiryGroup, 'setInquiryIds')) {
+            $inquiryGroup->setInquiryIds($inquiryIds);
+        }
+    }
+
+    /**
+     * Load inquiry IDs for multiple inquiry groups in one query
+     */
+    public function loadInquiryIdsForMultiple(array $inquiryGroups): void
+    {
+        if (empty($inquiryGroups)) {
+            return;
+        }
+        
+        $ids = array_map(fn($group) => $group->getId(), $inquiryGroups);
+        
+        $qb = $this->db->getQueryBuilder();
+        $qb->select('*')
+           ->from(InquiryGroup::RELATION_TABLE)
+           ->where($qb->expr()->in('group_id', $qb->createNamedParameter($ids, IQueryBuilder::PARAM_INT_ARRAY)));
+        
+        $stmt = $qb->executeQuery();
+        $allData = $stmt->fetchAll();
+        $stmt->closeCursor();
+        
+        // Organize data by group_id
+        $groupedData = [];
+        foreach ($allData as $data) {
+            $groupId = (int) $data['group_id'];
+            if (!isset($groupedData[$groupId])) {
+                $groupedData[$groupId] = [];
+            }
+            $groupedData[$groupId][] = (int) $data['inquiry_id'];
+        }
+        
+        // Assign data to each inquiry group
+        foreach ($inquiryGroups as $inquiryGroup) {
+            $groupId = $inquiryGroup->getId();
+            if (isset($groupedData[$groupId])) {
+                if (method_exists($inquiryGroup, 'setInquiryIds')) {
+                    $inquiryGroup->setInquiryIds($groupedData[$groupId]);
+                }
+            } else {
+                if (method_exists($inquiryGroup, 'setInquiryIds')) {
+                    $inquiryGroup->setInquiryIds([]);
+                }
+            }
+        }
     }
 
 }
