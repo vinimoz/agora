@@ -11,7 +11,7 @@
 		- 💬 Comments and discussions
 		- 👍 Supports (likes/upvotes)
         - 👍 Supports (likes/neutral/against)
-		- 🧩 Custom inquiry families and types
+        - 🧩 Custom inquiry families and types
         - 🧾 Multiple inquiry formats (proposals, debates, petitions, projects…)
         - 📂 Categorization and filtering by family or location
         - 🧱 Scalable architecture and modern UX
@@ -44,12 +44,8 @@
     <screenshot>https://raw.githubusercontent.com/vinimoz/agora/main/screenshots/EditInquiry.png</screenshot>
     <screenshot>https://raw.githubusercontent.com/vinimoz/agora/main/screenshots/EditGroup.png</screenshot>
     <screenshot>https://raw.githubusercontent.com/vinimoz/agora/main/screenshots/CreateInquiryView.png</screenshot>
-    <screenshot>https://raw.githubusercontent.com/vinimoz/agora/main/screenshots/Grid.png</screenshot>
     <screenshot>https://raw.githubusercontent.com/vinimoz/agora/main/screenshots/Grid2.png</screenshot>
     <screenshot>https://raw.githubusercontent.com/vinimoz/agora/main/screenshots/ListView.png</screenshot>
-    <screenshot>https://raw.githubusercontent.com/vinimoz/agora/main/screenshots/Settings.png</screenshot>
-    <screenshot>https://raw.githubusercontent.com/vinimoz/agora/main/screenshots/SettingsInquiry.png</screenshot>
-    <screenshot>https://raw.githubusercontent.com/vinimoz/agora/main/screenshots/SettingInquiryType.png</screenshot>
     <dependencies>
         <php min-version="8.1"/>
         <nextcloud min-version="31" max-version="32"/>
