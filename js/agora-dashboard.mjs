@@ -3,128 +3,37 @@
   try {
     if (typeof document != "undefined") {
       var elementStyle = document.createElement("style");
-      elementStyle.appendChild(document.createTextNode(".inquiry-item__item[data-v-7f773d42] {\n  display: flex;\n  padding: 4px 0;\n}\n.inquiry-item__item.active[data-v-7f773d42] {\n  background-color: var(--color-primary-element-light);\n}\n.inquiry-item__item[data-v-7f773d42]:hover {\n  background-color: var(--color-background-hover);\n}\n.item__title[data-v-7f773d42] {\n  display: flex;\n  flex-direction: column;\n  overflow: hidden;\n}\n.item__title[data-v-7f773d42] * {\n  display: block;\n  overflow: hidden;\n  white-space: nowrap;\n  text-overflow: ellipsis;\n}\n.item__title .item__title__description[data-v-7f773d42] {\n  opacity: 0.5;\n}\n.item__icon-spacer[data-v-7f773d42] {\n  width: 44px;\n  min-width: 44px;\n}/*!\n * SPDX-FileCopyrightText: 2025 Trappe Vincent \n * SPDX-License-Identifier: AGPL-3.0-or-later\n */\n.icon-agora {\n  background-image: url(../img/agora.svg);\n  filter: var(--background-invert-if-dark);\n}\n\n.icon-agora-dark {\n  background-image: url(../img/agora-dark.svg);\n  filter: var(--background-invert-if-dark);\n}"));
+      elementStyle.appendChild(document.createTextNode(".inquiry-item__item[data-v-150baf40] {\n  display: flex;\n  padding: 4px 0;\n}\n.inquiry-item__item.active[data-v-150baf40] {\n  background-color: var(--color-primary-element-light);\n}\n.inquiry-item__item[data-v-150baf40]:hover {\n  background-color: var(--color-background-hover);\n}\n.item__title[data-v-150baf40] {\n  display: flex;\n  flex-direction: column;\n  overflow: hidden;\n}\n.item__title[data-v-150baf40] * {\n  display: block;\n  overflow: hidden;\n  white-space: nowrap;\n  text-overflow: ellipsis;\n}\n.item__title .item__title__description[data-v-150baf40] {\n  opacity: 0.5;\n}\n.item__icon-spacer[data-v-150baf40] {\n  width: 44px;\n  min-width: 44px;\n}/*!\n * SPDX-FileCopyrightText: 2025 Trappe Vincent \n * SPDX-License-Identifier: AGPL-3.0-or-later\n */\n.icon-agora {\n  background-image: url(../img/agora.svg);\n  filter: var(--background-invert-if-dark);\n}\n\n.icon-agora-dark {\n  background-image: url(../img/agora-dark.svg);\n  filter: var(--background-invert-if-dark);\n}"));
       document.head.appendChild(elementStyle);
     }
   } catch (e) {
     console.error("vite-plugin-css-injected-by-js", e);
   }
 })();
-<<<<<<< HEAD
-const appName = "agora";
-const appVersion = "1.6.0";
-import { d as defineComponent, s as translate, b as computed, v as onMounted, D as purify, E as _, _ as _export_sfc, c as createElementBlock, o as openBlock, j as createVNode, g as withCtx, k as createBaseVNode, f as createBlock, h as resolveDynamicComponent, t as toDisplayString, z as createApp, A as pinia } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_ef057a6f_lang-Uo9ga7Wd.chunk.mjs";
-import { a as useSessionStore, b as useInquiriesStore, L as Logger, s as showError, I as InquiryGeneralIcons, N as NcDashboardWidget } from "./NcDashboardWidget-Bu7bWoUK-CM96NQjo.chunk.mjs";
-import { A as AgoraAppIcon } from "./AgoraAppIcon-CAXuO7yM.chunk.mjs";
-import { g as getInquiryTypeData } from "./InquiryHelper-D_o8crWJ.chunk.mjs";
-=======
-const P = "agora", R = "1.6.1";
-import { d as f, s as o, b, v as q, c as v, o as d, j as p, g as _, k as s, n as e, M as D, f as I, h as C, t as u, O as w, _ as L, z as M, A as N } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_f6cfe8f3_lang-BmlkL9Pp.chunk.mjs";
-import { a as S, b as x, N as T, L as A, s as k, I as l } from "./NcDashboardWidget-Bu7bWoUK-CME8ZdYv.chunk.mjs";
-import { _ as B } from "./AgoraAppIcon.vue_vue_type_script_setup_true_lang-ChOGByfM.chunk.mjs";
-import { g as E } from "./InquiryHelper-ewd0Xqli.chunk.mjs";
->>>>>>> main
+const P = "agora", R = "1.7.0-beta";
+import { d as f, s as o, b, v as q, c as v, o as d, j as p, g as _, k as t, n as e, M as D, f as I, h as C, t as u, O as w, _ as L, z as M, A as N } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_f6cfe8f3_lang-CE0PTvlN.chunk.mjs";
+import { a as S, b as x, N as T, L as A, s as k, I as l } from "./NcDashboardWidget-Bu7bWoUK-CmxdgjJX.chunk.mjs";
+import { _ as B } from "./AgoraAppIcon.vue_vue_type_script_setup_true_lang-DB3pK4ys.chunk.mjs";
+import { g as E } from "./InquiryHelper-DNIixLqk.chunk.mjs";
 
-const _sfc_main = /* @__PURE__ */ defineComponent({
-  __name: "Dashboard",
-  setup(__props, { expose: __expose }) {
-    __expose();
-    const sessionStore = useSessionStore();
-    const dashboardWidgetProperties = {
-      emptyContentMessage: translate("agora", "No inquiries found for this category"),
-      showMoreText: translate("agora", "Relevant inquiries")
-    };
-    const allInquiryTypes = computed(() => sessionStore.appSettings.inquiryTypeTab || []);
-    const inquiriesStore = useInquiriesStore();
-    function loadInquiries() {
-      Logger.debug("Loading inquiries in dashboard widget");
-      try {
-        inquiriesStore.load();
-      } catch {
-        showError(translate("agora", "Error setting dashboard list"));
-      }
+const O = ["href"], V = { class: "inquiry-item__item" }, z = { class: "type-icon" }, F = { class: "item__title" }, W = { class: "item__title__title" }, $ = { class: "item__title__description" }, j = f({ __name: "Dashboard", setup(n) {
+  const r = S(), c = { emptyContentMessage: o("agora", "No inquiries found for this category"), showMoreText: o("agora", "Relevant inquiries") }, m = b(() => r.appSettings.inquiryTypeTab || []), i = x();
+  function g() {
+    A.debug("Loading inquiries in dashboard widget");
+    try {
+      i.load();
+    } catch {
+      k(o("agora", "Error setting dashboard list"));
     }
-    function getInquiryIcon(inquiry) {
-      if (inquiry.type) {
-        const typeData = getInquiryTypeData(inquiry.type, allInquiryTypes.value);
-        return typeData?.icon || InquiryGeneralIcons.Flash;
-      }
-      return InquiryGeneralIcons.Flash;
-    }
-    onMounted(() => {
-      loadInquiries();
-    });
-    const __returned__ = { sessionStore, dashboardWidgetProperties, allInquiryTypes, inquiriesStore, loadInquiries, getInquiryIcon, get generateUrl() {
-      return _;
-    }, get t() {
-      return translate;
-    }, get DOMPurify() {
-      return purify;
-    }, get NcDashboardWidget() {
-      return NcDashboardWidget;
-    }, get AgoraAppIcon() {
-      return AgoraAppIcon;
-    } };
-    Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
-    return __returned__;
   }
-});
-const _hoisted_1 = ["href"];
-const _hoisted_2 = { class: "inquiry-item__item" };
-const _hoisted_3 = { class: "type-icon" };
-const _hoisted_4 = { class: "item__title" };
-const _hoisted_5 = { class: "item__title__title" };
-const _hoisted_6 = { class: "item__title__description" };
-function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", null, [
-    createVNode($setup["NcDashboardWidget"], {
-      items: $setup.inquiriesStore.dashboardList,
-      "empty-content-message": $setup.dashboardWidgetProperties.emptyContentMessage,
-      "show-more-text": $setup.dashboardWidgetProperties.showMoreText,
-      loading: $setup.inquiriesStore.inquiriesLoading
-    }, {
-      emptyContentIcon: withCtx(() => [
-        createVNode($setup["AgoraAppIcon"])
-      ]),
-      default: withCtx(({ item }) => [
-        createBaseVNode("a", {
-          href: $setup.generateUrl(`/apps/agora/inquiry/${item.id}`)
-        }, [
-          createBaseVNode("div", _hoisted_2, [
-            createBaseVNode("div", _hoisted_3, [
-              (openBlock(), createBlock(resolveDynamicComponent($setup.getInquiryIcon(_ctx.inquiry)), { class: "nav-icon" }))
-            ]),
-            createBaseVNode("div", _hoisted_4, [
-              createBaseVNode(
-                "div",
-                _hoisted_5,
-                toDisplayString(item.title),
-                1
-                /* TEXT */
-              ),
-              createBaseVNode(
-                "div",
-                _hoisted_6,
-                toDisplayString($setup.DOMPurify.sanitize(
-                  item.description ? item.description : $setup.t("agora", "No description provided")
-                )),
-                1
-                /* TEXT */
-              )
-            ])
-          ])
-        ], 8, _hoisted_1)
-      ]),
-      _: 1
-      /* STABLE */
-    }, 8, ["items", "empty-content-message", "show-more-text", "loading"])
-  ]);
-}
-const Dashboard = /* @__PURE__ */ _export_sfc(_sfc_main, [["render", _sfc_render], ["__scopeId", "data-v-7f773d42"], ["__file", "/var/www/nextcloud/apps/agora/src/views/Dashboard.vue"]]);
+  function h(s) {
+    return s.type ? E(s.type, m.value)?.icon || l.Flash : l.Flash;
+  }
+  return q(() => {
+    g();
+  }), (s, y) => (d(), v("div", null, [p(e(T), { items: e(i).dashboardList, "empty-content-message": c.emptyContentMessage, "show-more-text": c.showMoreText, loading: e(i).inquiriesLoading }, { emptyContentIcon: _(() => [p(e(B))]), default: _(({ item: a }) => [t("a", { href: e(D)(`/apps/agora/inquiry/${a.id}`) }, [t("div", V, [t("div", z, [(d(), I(C(h(s.inquiry)), { class: "nav-icon" }))]), t("div", F, [t("div", W, u(a.title), 1), t("div", $, u(e(w).sanitize(a.description ? a.description : e(o)("agora", "No description provided"))), 1)])])], 8, O)]), _: 1 }, 8, ["items", "empty-content-message", "show-more-text", "loading"])]));
+} }), G = L(j, [["__scopeId", "data-v-150baf40"]]);
 document.addEventListener("DOMContentLoaded", () => {
-  OCA.Dashboard.register("agora", (el) => {
-    const AgoraDashboard = createApp(Dashboard).use(pinia).mount(el);
-    return AgoraDashboard;
-  });
+  OCA.Dashboard.register("agora", (n) => M(G).use(N).mount(n));
 });
 //# sourceMappingURL=agora-dashboard.mjs.map

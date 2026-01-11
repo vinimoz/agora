@@ -26,7 +26,7 @@
         - 🧮 Quorums and workflow automation  
         - 🧰 Better permission control and moderation tools  
         ]]></description>
-    <version>1.6.1</version>
+    <version>1.7.0-beta</version>
     <licence>AGPL-3.0-or-later</licence>
     <author>Vincent TRAPPE</author>
     <documentation>
@@ -73,6 +73,7 @@
         <command>OCA\Agora\Command\Share\Add</command>
         <command>OCA\Agora\Command\Share\Remove</command>
         <command>OCA\Agora\Command\Db\Purge</command>
+		<command>OCA\Agora\Command\Db\CleanInstance</command>
         <command>OCA\Agora\Command\Db\RemoveIndices</command>
         <command>OCA\Agora\Command\Db\Rebuild</command>
         <command>OCA\Agora\Command\Db\CreateIndices</command>

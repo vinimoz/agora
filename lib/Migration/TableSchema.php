@@ -320,6 +320,8 @@ abstract class TableSchema
     public const GONE_MIGRATIONS = [
         '20250715120000',
         '01050020251027120000',
+        '01060020251115120000',
+
     ];
 
     /**
@@ -366,7 +368,6 @@ abstract class TableSchema
     /**
      * define table structure
      *
-     * IMPORTANT: After adding or deletion check queries in ShareMapper
      */
     public const TABLES = [
         InquiryGroup::TABLE => [
@@ -375,7 +376,7 @@ abstract class TableSchema
             'created' => ['type' => Types::BIGINT, 'options' => ['notnull' => true, 'default' => 0, 'length' => 20]],
             'deleted' => ['type' => Types::BIGINT, 'options' => ['notnull' => true, 'default' => 0, 'length' => 20]],
             'title' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'default' => '', 'length' => 128]],
-            'type' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'default' => 'default', 'length' => 128]], // This is the actual column name
+            'type' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'default' => 'default', 'length' => 128]], 
             'owner' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'default' => '', 'length' => 256]],
             'description' => ['type' => Types::TEXT, 'options' => ['notnull' => false, 'default' => null, 'length' => 65535]],
             'title_ext' => ['type' => Types::STRING, 'options' => ['notnull' => false, 'default' => null, 'length' => 128]],
@@ -404,7 +405,7 @@ abstract class TableSchema
         InquiryGroupType::TABLE => [
             'id' => ['type' => Types::BIGINT, 'options' => ['autoincrement' => true, 'notnull' => true]],
             'family' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'default' => 'collective', 'length' => 64]],
-            'group_type' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'length' => 50]], // This is the actual column name
+            'group_type' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'length' => 50]], 
             'icon' => ['type' => Types::STRING, 'options' => ['notnull' => false, 'default' => '']],
             'label' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'length' => 100]],
             'description' => ['type' => Types::TEXT, 'options' => ['notnull' => false]],
@@ -419,7 +420,7 @@ abstract class TableSchema
         InquiryOptionType::TABLE => [
             'id' => ['type' => Types::BIGINT, 'options' => ['autoincrement' => true, 'notnull' => true]],
             'family' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'default' => 'collective', 'length' => 64]],
-            'option_type' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'length' => 50]], // This is the actual column name
+            'option_type' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'length' => 50]], 
             'icon' => ['type' => Types::STRING, 'options' => ['notnull' => false, 'default' => '']],
             'label' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'length' => 100]],
             'description' => ['type' => Types::TEXT, 'options' => ['notnull' => false]],

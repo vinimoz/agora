@@ -1,88 +1,10 @@
-<<<<<<< HEAD
-const appName = "agora";
-const appVersion = "1.6.0";
-import { d as defineComponent, s as translate, v as onMounted, _ as _export_sfc, f as createBlock, o as openBlock, g as withCtx, j as createVNode, x as normalizeProps, y as guardReactiveProps, z as createApp, A as pinia } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_ef057a6f_lang-Uo9ga7Wd.chunk.mjs";
-import { N as NcSettingsSection } from "./index-wp0BViLw.chunk.mjs";
-import "./NcDashboardWidget-Bu7bWoUK-CM96NQjo.chunk.mjs";
-import { F as FlexSettings } from "./FlexSettings-Cvh2LiQF.chunk.mjs";
-import { u as usePreferencesStore, S as StyleSettings, F as FeatureSettings } from "./StyleSettings-D-fTMjYB.chunk.mjs";
-import "./NcRichText-CETsOVBU-DXRvZeJB.chunk.mjs";
-const _sfc_main = /* @__PURE__ */ defineComponent({
-  __name: "UserSettingsPage",
-  setup(__props, { expose: __expose }) {
-    __expose();
-    const preferencesStore = usePreferencesStore();
-    const sections = {
-      personalSettings: {
-        name: translate("agora", "Personal preferences"),
-        description: translate("agora", "Set your personal preferences for the agora app")
-      },
-      styleSettings: {
-        name: translate("agora", "Experimental styles"),
-        description: translate("agora", "Some visual styling options")
-      }
-    };
-    onMounted(() => {
-      preferencesStore.load();
-    });
-    const __returned__ = { preferencesStore, sections, get NcSettingsSection() {
-      return NcSettingsSection;
-    }, get FlexSettings() {
-      return FlexSettings;
-    }, get FeatureSettings() {
-      return FeatureSettings;
-    }, get StyleSettings() {
-      return StyleSettings;
-    } };
-    Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
-    return __returned__;
-  }
-});
-function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createBlock($setup["FlexSettings"], null, {
-    default: withCtx(() => [
-      createVNode(
-        $setup["NcSettingsSection"],
-        normalizeProps(guardReactiveProps($setup.sections.personalSettings)),
-        {
-          default: withCtx(() => [
-            createVNode($setup["FeatureSettings"])
-          ]),
-          _: 1
-          /* STABLE */
-        },
-        16
-        /* FULL_PROPS */
-      ),
-      createVNode(
-        $setup["NcSettingsSection"],
-        normalizeProps(guardReactiveProps($setup.sections.styleSettings)),
-        {
-          default: withCtx(() => [
-            createVNode($setup["StyleSettings"])
-          ]),
-          _: 1
-          /* STABLE */
-        },
-        16
-        /* FULL_PROPS */
-      )
-    ]),
-    _: 1
-    /* STABLE */
-  });
-}
-const UserSettingsPage = /* @__PURE__ */ _export_sfc(_sfc_main, [["render", _sfc_render], ["__file", "/var/www/nextcloud/apps/agora/src/views/UserSettingsPage.vue"]]);
-const Agora = createApp(UserSettingsPage).use(pinia);
-Agora.mount("#content_agora");
-=======
-const A = "agora", k = "1.6.1";
-import { d as c, s as a, v as m, f as l, o as g, g as t, j as s, n as e, x as r, y as n, z as f, A as _ } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_f6cfe8f3_lang-BmlkL9Pp.chunk.mjs";
-import { N as i } from "./index-368g4R_C.chunk.mjs";
-import "./NcDashboardWidget-Bu7bWoUK-CME8ZdYv.chunk.mjs";
-import { F as u } from "./FlexSettings-9jd5F3Aa.chunk.mjs";
-import { u as S, _ as d, a as y } from "./StyleSettings-DFRJdGSS.chunk.mjs";
-import "./NcRichText-CETsOVBU-VuURHEcY.chunk.mjs";
+const A = "agora", k = "1.7.0-beta";
+import { d as c, s as a, v as m, f as l, o as g, g as t, j as s, n as e, x as r, y as n, z as f, A as _ } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_f6cfe8f3_lang-CE0PTvlN.chunk.mjs";
+import { N as i } from "./index-BxQWGX_w.chunk.mjs";
+import "./NcDashboardWidget-Bu7bWoUK-CmxdgjJX.chunk.mjs";
+import { F as u } from "./FlexSettings-Di9t0PqU.chunk.mjs";
+import { u as S, _ as d, a as y } from "./StyleSettings-C6ll0vLH.chunk.mjs";
+import "./NcRichText-CETsOVBU-B2YhW1cH.chunk.mjs";
 const x = c({ __name: "UserSettingsPage", setup(N) {
   const p = S(), o = { personalSettings: { name: a("agora", "Personal preferences"), description: a("agora", "Set your personal preferences for the agora app") }, styleSettings: { name: a("agora", "Experimental styles"), description: a("agora", "Some visual styling options") } };
   return m(() => {
@@ -90,5 +12,4 @@ const x = c({ __name: "UserSettingsPage", setup(N) {
   }), (h, v) => (g(), l(e(u), null, { default: t(() => [s(e(i), r(n(o.personalSettings)), { default: t(() => [s(e(d))]), _: 1 }, 16), s(e(i), r(n(o.styleSettings)), { default: t(() => [s(e(y))]), _: 1 }, 16)]), _: 1 }));
 } }), P = f(x).use(_);
 P.mount("#content_agora");
->>>>>>> main
 //# sourceMappingURL=agora-userSettings.mjs.map
