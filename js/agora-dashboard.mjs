@@ -10,12 +10,20 @@
     console.error("vite-plugin-css-injected-by-js", e);
   }
 })();
+<<<<<<< HEAD
 const appName = "agora";
 const appVersion = "1.6.0";
 import { d as defineComponent, s as translate, b as computed, v as onMounted, D as purify, E as _, _ as _export_sfc, c as createElementBlock, o as openBlock, j as createVNode, g as withCtx, k as createBaseVNode, f as createBlock, h as resolveDynamicComponent, t as toDisplayString, z as createApp, A as pinia } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_ef057a6f_lang-Uo9ga7Wd.chunk.mjs";
 import { a as useSessionStore, b as useInquiriesStore, L as Logger, s as showError, I as InquiryGeneralIcons, N as NcDashboardWidget } from "./NcDashboardWidget-Bu7bWoUK-CM96NQjo.chunk.mjs";
 import { A as AgoraAppIcon } from "./AgoraAppIcon-CAXuO7yM.chunk.mjs";
 import { g as getInquiryTypeData } from "./InquiryHelper-D_o8crWJ.chunk.mjs";
+=======
+const P = "agora", R = "1.6.1";
+import { d as f, s as o, b, v as q, c as v, o as d, j as p, g as _, k as s, n as e, M as D, f as I, h as C, t as u, O as w, _ as L, z as M, A as N } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_f6cfe8f3_lang-BmlkL9Pp.chunk.mjs";
+import { a as S, b as x, N as T, L as A, s as k, I as l } from "./NcDashboardWidget-Bu7bWoUK-CME8ZdYv.chunk.mjs";
+import { _ as B } from "./AgoraAppIcon.vue_vue_type_script_setup_true_lang-ChOGByfM.chunk.mjs";
+import { g as E } from "./InquiryHelper-ewd0Xqli.chunk.mjs";
+>>>>>>> main
 
 const _sfc_main = /* @__PURE__ */ defineComponent({
   __name: "Dashboard",

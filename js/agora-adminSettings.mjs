@@ -10,6 +10,7 @@
     console.error("vite-plugin-css-injected-by-js", e);
   }
 })();
+<<<<<<< HEAD
 const appName = "agora";
 const appVersion = "1.6.0";
 import { _ as _export_sfc, c as createElementBlock, o as openBlock, j as createVNode, g as withCtx, C as createTextVNode, t as toDisplayString, s as translate, f as createBlock, l as createCommentVNode, k as createBaseVNode, i as mergeProps, U as ref, b as computed, D as purify, V as withDirectives, W as vShow, X as vModelText, Y as NcButton, M as Fragment, O as renderList, h as resolveDynamicComponent, Z as withModifiers, d as defineComponent, e as watch, J as normalizeClass, $ as resolveComponent, p as normalizeStyle, v as onMounted, x as normalizeProps, y as guardReactiveProps, z as createApp, A as pinia } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_ef057a6f_lang-Uo9ga7Wd.chunk.mjs";
@@ -56,6 +57,30 @@ function _sfc_render$r(_ctx, _cache, $props, $setup, $data, $options) {
       /* STABLE */
     }, 8, ["modelValue"])
   ]);
+=======
+const Lo = "agora", Eo = "1.6.1";
+import { c as y, o as p, j as s, g, C as _, t as n, n as e, s as t, f as R, l as T, _ as j, k as i, i as ge, U as L, b as E, O as ye, V as ie, W as se, X as ve, Y as C, K as G, L as z, h as W, Z as X, d as Z, e as ne, H as Q, $ as fe, p as _e, v as re, x as P, y as J, z as be, A as he } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_f6cfe8f3_lang-BmlkL9Pp.chunk.mjs";
+import { I as Y, a as $e, N as O } from "./index-368g4R_C.chunk.mjs";
+import { d as x, e as de, g as Ve, f as ee, L as te, I as H, s as ae, S as le } from "./NcDashboardWidget-Bu7bWoUK-CME8ZdYv.chunk.mjs";
+import { F as we } from "./FlexSettings-9jd5F3Aa.chunk.mjs";
+import { N as I, a as A, b as N } from "./NcRichText-CETsOVBU-VuURHEcY.chunk.mjs";
+import { _ as Se, a as qe } from "./markdown-Bum8XEqX.chunk.mjs";
+const ke = { class: "user_settings" }, Ce = { __name: "AdminActivities", setup(V) {
+  const l = x();
+  return (u, a) => (p(), y("div", ke, [s(e(I), { modelValue: e(l).useActivity, "onUpdate:modelValue": [a[0] || (a[0] = (o) => e(l).useActivity = o), a[1] || (a[1] = (o) => e(l).write())], type: "switch" }, { default: g(() => [_(n(e(t)("agora", "Enable the tracking of activities with the Activities app")), 1)]), _: 1 }, 8, ["modelValue"])]));
+} }, Ie = { class: "user_settings" }, Te = { __name: "AdminArchiveInquiries", setup(V) {
+  const l = x();
+  return (u, a) => (p(), y("div", Ie, [s(e(I), { modelValue: e(l).autoArchive, "onUpdate:modelValue": [a[0] || (a[0] = (o) => e(l).autoArchive = o), a[1] || (a[1] = (o) => e(l).write())], type: "switch" }, { default: g(() => [_(n(e(t)("agora", "Enable the automatic inquiry archiving")), 1)]), _: 1 }, 8, ["modelValue"]), e(l).autoArchive ? (p(), R(e(Y), { key: 0, modelValue: e(l).autoArchiveOffset, "onUpdate:modelValue": a[2] || (a[2] = (o) => e(l).autoArchiveOffset = o), class: "settings_details", type: "number", inputmode: "numeric", "use-num-modifiers": "", label: e(t)("agora", "Days after which inquiries should be archived after closing"), onChange: a[3] || (a[3] = (o) => e(l).write()) }, null, 8, ["modelValue", "label"])) : T("", true)]));
+} }, Ae = { class: "user_settings" }, Ue = { __name: "AdminDeleteInquiries", setup(V) {
+  const l = x();
+  return (u, a) => (p(), y("div", Ae, [s(e(I), { modelValue: e(l).autoDelete, "onUpdate:modelValue": [a[0] || (a[0] = (o) => e(l).autoDelete = o), a[1] || (a[1] = (o) => e(l).write())], type: "switch" }, { default: g(() => [_(n(e(t)("agora", "Enable the automatic deletion of archived inquiries")), 1)]), _: 1 }, 8, ["modelValue"]), e(l).autoDelete ? (p(), R(e(Y), { key: 0, modelValue: e(l).autoDeleteOffset, "onUpdate:modelValue": a[2] || (a[2] = (o) => e(l).autoDeleteOffset = o), class: "settings_details", type: "number", inputmode: "numeric", "use-num-modifiers": "", label: e(t)("inquiries", "Days after which archived inquiries should be finally deleted"), onChange: a[3] || (a[3] = (o) => e(l).write()) }, null, 8, ["modelValue", "label"])) : T("", true)]));
+} }, xe = { class: "user_settings" }, Le = { __name: "AdminExpireInquiries", setup(V) {
+  const l = x();
+  return (u, a) => (p(), y("div", xe, [s(e(I), { modelValue: e(l).autoExpire, "onUpdate:modelValue": [a[0] || (a[0] = (o) => e(l).autoExpire = o), a[1] || (a[1] = (o) => e(l).write())], type: "switch" }, { default: g(() => [_(n(e(t)("agora", "Enable the automatic inquiry expiration")), 1)]), _: 1 }, 8, ["modelValue"]), e(l).autoExpire ? (p(), R(e(Y), { key: 0, modelValue: e(l).autoExpireOffset, "onUpdate:modelValue": a[2] || (a[2] = (o) => e(l).autoExpireOffset = o), class: "settings_details", type: "number", inputmode: "numeric", "use-num-modifiers": "", label: e(t)("agora", "Days after which inquiries should expire after being opened"), onChange: a[3] || (a[3] = (o) => e(l).write()) }, null, 8, ["modelValue", "label"])) : T("", true)]));
+} }, Ee = { name: "LanguageMarkdownIcon", emits: ["click"], props: { title: { type: String }, fillColor: { type: String, default: "currentColor" }, size: { type: Number, default: 24 } } }, Fe = ["aria-hidden", "aria-label"], Ne = ["fill", "width", "height"], Me = { d: "M20.56 18H3.44C2.65 18 2 17.37 2 16.59V7.41C2 6.63 2.65 6 3.44 6H20.56C21.35 6 22 6.63 22 7.41V16.59C22 17.37 21.35 18 20.56 18M6.81 15.19V11.53L8.73 13.88L10.65 11.53V15.19H12.58V8.81H10.65L8.73 11.16L6.81 8.81H4.89V15.19H6.81M19.69 12H17.77V8.81H15.85V12H13.92L16.81 15.28L19.69 12Z" }, Re = { key: 0 };
+function De(V, l, u, a, o, v) {
+  return p(), y("span", ge(V.$attrs, { "aria-hidden": u.title ? null : "true", "aria-label": u.title, class: "material-design-icon language-markdown-icon", role: "img", onClick: l[0] || (l[0] = (m) => V.$emit("click", m)) }), [(p(), y("svg", { fill: u.fillColor, class: "material-design-icon__svg", width: u.size, height: u.size, viewBox: "0 0 24 24" }, [i("path", Me, [u.title ? (p(), y("title", Re, n(u.title), 1)) : T("", true)])], 8, Ne))], 16, Fe);
+>>>>>>> main
 }
 const AdminActivities = /* @__PURE__ */ _export_sfc(_sfc_main$r, [["render", _sfc_render$r], ["__file", "/var/www/nextcloud/apps/agora/src/components/Settings/AdminSettings/AdminActivities.vue"]]);
 const _sfc_main$q = {

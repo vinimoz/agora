@@ -47,38 +47,40 @@ class TableManager extends DbManager {
 
 	/**
 	 * Purge all tables and all data
-	 *
 	 * @return string[] Messages as array
 	 */
 	public function purgeTables(): array {
 		$messages = [];
 		$droppedTables = [];
 
-		// Disable foreign key checks
-		$this->connection->executeStatement('SET FOREIGN_KEY_CHECKS = 0');
+		$platform = $this->connection->getDatabasePlatform()->getName();
+		$tables = array_keys(TableSchema::TABLES);
+
+		if ($platform === 'mysql') {
+			$this->connection->executeStatement('SET FOREIGN_KEY_CHECKS = 0');
+		}
 
 		try {
-			// Get all tables for this app
-			$tables = array_keys(TableSchema::TABLES);
-
-			// First, drop all tables without worrying about order
 			foreach ($tables as $tableName) {
-				if ($this->connection->tableExists($tableName)) {
-					try {
+				if (!$this->connection->tableExists($tableName)) {
+					continue;
+				}
+
+				$fullTableName = $this->dbPrefix . $tableName;
+
+				try {
+					if ($platform === 'postgresql') {
+						$this->connection->executeStatement(
+							'DROP TABLE IF EXISTS ' . $fullTableName . ' CASCADE'
+						);
+					} else {
 						$this->connection->dropTable($tableName);
-						$droppedTables[] = $this->dbPrefix . $tableName;
-						$messages[] = 'Dropped ' . $this->dbPrefix . $tableName;
-					} catch (\Exception $e) {
-						// If drop fails, try truncate first then drop
-						try {
-							$this->connection->executeStatement("TRUNCATE TABLE `{$this->dbPrefix}{$tableName}`");
-							$this->connection->dropTable($tableName);
-							$droppedTables[] = $this->dbPrefix . $tableName;
-							$messages[] = 'Truncated and dropped ' . $this->dbPrefix . $tableName;
-						} catch (\Exception $e2) {
-							$messages[] = 'Failed to drop ' . $this->dbPrefix . $tableName . ': ' . $e2->getMessage();
-						}
 					}
+
+					$droppedTables[] = $fullTableName;
+					$messages[] = 'Dropped ' . $fullTableName;
+				} catch (\Throwable $e) {
+					$messages[] = 'Failed to drop ' . $fullTableName . ': ' . $e->getMessage();
 				}
 			}
 
@@ -87,27 +89,23 @@ class TableManager extends DbManager {
 			}
 
 			// Delete migration records
-			$query = $this->connection->getQueryBuilder();
-			$query->delete('migrations')
-	 ->where('app = :appName')
-	 ->setParameter('appName', AppConstants::APP_ID)
-	 ->executeStatement();
-
-			$this->logger->info('Removed all migration records from {dbPrefix}migrations', ['dbPrefix' => $this->dbPrefix]);
+			$this->connection->executeStatement(
+				'DELETE FROM ' . $this->dbPrefix . 'migrations WHERE app = ?',
+				[AppConstants::APP_ID]
+			);
 			$messages[] = 'Removed all migration records from ' . $this->dbPrefix . 'migrations';
 
-			// Delete app configs
-			$query->delete('appconfig')
-	 ->where('appid = :appid')
-	 ->setParameter('appid', AppConstants::APP_ID)
-	 ->executeStatement();
-
-			$this->logger->info('Removed all app config records from {dbPrefix}appconfig', ['dbPrefix' => $this->dbPrefix]);
+			// Delete app config records
+			$this->connection->executeStatement(
+				'DELETE FROM ' . $this->dbPrefix . 'appconfig WHERE appid = ?',
+				[AppConstants::APP_ID]
+			);
 			$messages[] = 'Removed all app config records from ' . $this->dbPrefix . 'appconfig';
 
 		} finally {
-			// Re-enable foreign key checks
-			$this->connection->executeStatement('SET FOREIGN_KEY_CHECKS = 1');
+			if ($platform === 'mysql') {
+				$this->connection->executeStatement('SET FOREIGN_KEY_CHECKS = 1');
+			}
 		}
 
 		$messages[] = 'Done.';
@@ -116,6 +114,7 @@ class TableManager extends DbManager {
 
 		return $messages;
 	}
+
 	/**
 	 * Create or update a table defined in TableSchema::TABLES
 	 *
@@ -184,19 +183,24 @@ class TableManager extends DbManager {
 	 public function removeObsoleteTables(): array {
 		 $dropped = false;
 		 $messages = [];
-		 $this->connection->executeStatement('SET FOREIGN_KEY_CHECKS = 0');
-		 foreach (TableSchema::GONE_TABLES as $tableName) {
-			 $this->logger->warning('INTO REMOVE table {table}: {error}', [
-				 'table' => $tableName,
-	    ]);
-			 if ($this->connection->tableExists($tableName)) {
-				 $dropped = true;
-				 $this->connection->dropTable($tableName);
-				 $messages[] = 'Dropped ' . $this->dbPrefix . $tableName;
+		 $platform = $this->connection->getDatabasePlatform()->getName();
+		 if ($platform === 'mysql') {
+			 $this->connection->executeStatement('SET FOREIGN_KEY_CHECKS = 0');
+}
+foreach (TableSchema::GONE_TABLES as $tableName) {
+	$this->logger->warning('INTO REMOVE table {table}: {error}', [
+		'table' => $tableName,
+	]);
+	if ($this->connection->tableExists($tableName)) {
+		$dropped = true;
+		$this->connection->dropTable($tableName);
+		$messages[] = 'Dropped ' . $this->dbPrefix . $tableName;
 }
 }
-$this->connection->executeStatement('SET FOREIGN_KEY_CHECKS = 1');
-
+$platform = $this->connection->getDatabasePlatform()->getName();
+if ($platform === 'mysql') {
+	$this->connection->executeStatement('SET FOREIGN_KEY_CHECKS = 1');
+}
 if (!$dropped) {
 	$messages[] = 'No orphaned tables found';
 }
@@ -232,12 +236,15 @@ return $messages;
 
 		foreach (TableSchema::GONE_TABLES as $tableName) {
 			try {
-				$this->connection->executeStatement('SET FOREIGN_KEY_CHECKS = 0');
-
+				$platform = $this->connection->getDatabasePlatform()->getName();
+				if ($platform === 'mysql') {
+					$this->connection->executeStatement('SET FOREIGN_KEY_CHECKS = 0');
+				}
 				$this->connection->executeStatement("DROP TABLE IF EXISTS `$tableName`");
 
-				$this->connection->executeStatement('SET FOREIGN_KEY_CHECKS = 1');
-
+				if ($platform === 'mysql') {
+					$this->connection->executeStatement('SET FOREIGN_KEY_CHECKS = 1');
+				}
 				$dropped = true;
 				$messages[] = 'Dropped obsolete table ' . $tableName;
 				$this->logger->info('Dropped obsolete table {table}', ['table' => $tableName]);
@@ -247,8 +254,10 @@ return $messages;
 					'table' => $tableName,
 					'error' => $e->getMessage()
 				]);
-
-				$this->connection->executeStatement('SET FOREIGN_KEY_CHECKS = 1');
+				$platform = $this->connection->getDatabasePlatform()->getName();
+				if ($platform === 'mysql') {
+					$this->connection->executeStatement('SET FOREIGN_KEY_CHECKS = 1');
+				}
 			}
 		}
 
@@ -303,27 +312,27 @@ return $messages;
 
 			// Transfert des données
 			$this->connection->executeStatement("
-	    INSERT INTO oc_agora_inq_status
-	    (inquiry_type, status_key, label, description, is_final, icon, sort_order, created, updated)
-	    SELECT
-		inquiry_type,
-		status_key,
-		label,
-		description,
-		is_final,
-		icon,
-		sort_order,
-		created,
-		updated
-	    FROM oc_agora_mod_status
-	");
+	INSERT INTO oc_agora_inq_status
+	(inquiry_type, status_key, label, description, is_final, icon, sort_order, created, updated)
+	SELECT
+	inquiry_type,
+	status_key,
+	label,
+	description,
+	is_final,
+	icon,
+	sort_order,
+	created,
+	updated
+	FROM oc_agora_mod_status
+    ");
 
-	$messages[] = "Transferred $sourceCount records from mod_status to inq_status";
-	$this->logger->info('Transferred {count} records from mod_status to inq_status', ['count' => $sourceCount]);
+    $messages[] = "Transferred $sourceCount records from mod_status to inq_status";
+    $this->logger->info('Transferred {count} records from mod_status to inq_status', ['count' => $sourceCount]);
 
     } catch (\Exception $e) {
-	$messages[] = 'Failed to transfer mod_status data: ' . $e->getMessage();
-	$this->logger->error('Failed to transfer mod_status data: {error}', ['error' => $e->getMessage()]);
+    $messages[] = 'Failed to transfer mod_status data: ' . $e->getMessage();
+    $this->logger->error('Failed to transfer mod_status data: {error}', ['error' => $e->getMessage()]);
     }
 
     // LOG pour debug
@@ -331,45 +340,45 @@ return $messages;
 
     return $messages;
 }
-	/**
-	 * Remove obsolete columns if they still exist
-	 *
-	 * @return string[] Messages as array
-	public function removeObsoleteColumns(): array {
-		$messages = [];
-		$dropped = false;
+    /**
+     * Remove obsolete columns if they still exist
+     *
+     * @return string[] Messages as array
+    public function removeObsoleteColumns(): array {
+	$messages = [];
+	$dropped = false;
 
-		foreach (TableSchema::GONE_COLUMNS as $tableName => $columns) {
-			$prefixedTableName = $this->dbPrefix . $tableName;
-			 $this->logger->error('Failed to drop obsolete column from table {table}: {error}', ['table' => $prefixedTableName]);
+	foreach (TableSchema::GONE_COLUMNS as $tableName => $columns) {
+	    $prefixedTableName = $this->dbPrefix . $tableName;
+	     $this->logger->error('Failed to drop obsolete column from table {table}: {error}', ['table' => $prefixedTableName]);
 
-			if (!$this->schema->hasTable($prefixedTableName)) {
-				continue;
-			}
+	    if (!$this->schema->hasTable($prefixedTableName)) {
+		continue;
+	    }
 
-			$table = $this->schema->getTable($prefixedTableName);
+	    $table = $this->schema->getTable($prefixedTableName);
 
-			foreach ($columns as $columnName) {
-			 $this->logger->error('Failed to drop obsolete column {columns}: {error}', [
-		'columns' => $columnName]);
+	    foreach ($columns as $columnName) {
+	     $this->logger->error('Failed to drop obsolete column {columns}: {error}', [
+	'columns' => $columnName]);
 
-				if ($table->hasColumn($columnName)) {
-					$dropped = true;
-					$table->dropColumn($columnName);
-					$messages[] = 'Dropped ' . $columnName . ' from ' . $prefixedTableName;
-				}
-			}
+		if ($table->hasColumn($columnName)) {
+		    $dropped = true;
+		    $table->dropColumn($columnName);
+		    $messages[] = 'Dropped ' . $columnName . ' from ' . $prefixedTableName;
 		}
-
-		if (!$dropped) {
-			$messages[] = 'No orphaned columns found';
-		}
-
-		return $messages;
+	    }
 	}
 
-	 */
-	/**
+	if (!$dropped) {
+	    $messages[] = 'No orphaned columns found';
+	}
+
+	return $messages;
+    }
+
+     */
+    /**
  * Remove obsolete columns if they still exist - Version ultra simple
  */
 public function removeObsoleteColumns(): array {
@@ -377,143 +386,143 @@ public function removeObsoleteColumns(): array {
     $dropped = false;
 
     foreach (TableSchema::GONE_COLUMNS as $tableName => $columns) {
-	foreach ($columns as $columnName) {
-	    try {
-		$this->connection->executeStatement(
-		    "ALTER TABLE `$tableName` DROP COLUMN IF EXISTS `$columnName`"
-		);
-		$dropped = true;
-		$messages[] = 'Dropped obsolete column ' . $columnName . ' from ' . $tableName;
-	    } catch (\Exception $e) {
-		$messages[] = 'Failed to drop column ' . $columnName . ' from ' . $tableName . ': ' . $e->getMessage();
-	    }
+    foreach ($columns as $columnName) {
+	try {
+	$this->connection->executeStatement(
+	    "ALTER TABLE `$tableName` DROP COLUMN IF EXISTS `$columnName`"
+	);
+	$dropped = true;
+	$messages[] = 'Dropped obsolete column ' . $columnName . ' from ' . $tableName;
+	} catch (\Exception $e) {
+	$messages[] = 'Failed to drop column ' . $columnName . ' from ' . $tableName . ': ' . $e->getMessage();
 	}
+    }
     }
 
     if (!$dropped) {
-	$messages[] = 'No obsolete columns found';
+    $messages[] = 'No obsolete columns found';
     }
     return $messages;
 }
-	/**
-	 * delete all orphaned entries by selecting all rows
-	 * those inquiry_ids are not present in the agora table
-	 *
-	 * Because we allowed nullish inquiry_ids between version 8.0.0 and 8.1.0,
-	 * we also delete all entries with a nullish inquiry_id.
-	 *
-	 * This method is used to clean up orphaned entries in the database and
-	 * is used by the occ command `occ agora:db:rebuild and while updating
-	 *
-	 * @return string[] Messages as array
-	 */
-	/**
-	 * delete all orphaned entries by selecting all rows
-	 * those inquiry_ids are not present in the inquiry table
-	 *
-	 * @return string[] Messages as array
-	 */
-	public function removeOrphaned(): array {
-		$orphanedCount = [];
+    /**
+     * delete all orphaned entries by selecting all rows
+     * those inquiry_ids are not present in the agora table
+     *
+     * Because we allowed nullish inquiry_ids between version 8.0.0 and 8.1.0,
+     * we also delete all entries with a nullish inquiry_id.
+     *
+     * This method is used to clean up orphaned entries in the database and
+     * is used by the occ command `occ agora:db:rebuild and while updating
+     *
+     * @return string[] Messages as array
+     */
+    /**
+     * delete all orphaned entries by selecting all rows
+     * those inquiry_ids are not present in the inquiry table
+     *
+     * @return string[] Messages as array
+     */
+    public function removeOrphaned(): array {
+	$orphanedCount = [];
 
-		// collects all inquiryIds
-		$subqueryInquiry = $this->connection->getQueryBuilder();
-		$subqueryInquiry->selectDistinct('id')->from(Inquiry::TABLE);
+	// collects all inquiryIds
+	$subqueryInquiry = $this->connection->getQueryBuilder();
+	$subqueryInquiry->selectDistinct('id')->from(Inquiry::TABLE);
 
-		// Only process essential tables that definitely have inquiry_id
-		$essentialTables = [
-			Support::TABLE,
-			Share::TABLE,
-			InquiryGroup::RELATION_TABLE
-		];
+	// Only process essential tables that definitely have inquiry_id
+	$essentialTables = [
+	    Support::TABLE,
+	    Share::TABLE,
+	    InquiryGroup::RELATION_TABLE
+	];
 
-		foreach ($essentialTables as $tableName) {
-			if (!$this->connection->tableExists($tableName)) {
-				continue;
-			}
+	foreach ($essentialTables as $tableName) {
+	    if (!$this->connection->tableExists($tableName)) {
+		continue;
+	    }
 
-			try {
-				$query = $this->connection->getQueryBuilder();
-				$query->delete($tableName)
-	  ->where(
-		  $query->expr()->orX(
-			  $query->expr()->notIn('inquiry_id', $query->createFunction($subqueryInquiry->getSQL()), IQueryBuilder::PARAM_INT_ARRAY),
-			  $query->expr()->isNull('inquiry_id')
-		  )
-	  );
-				$executed = $query->executeStatement();
-				$orphanedCount[$tableName] = $executed;
-			} catch (\Exception $e) {
-				// Skip tables that don't have inquiry_id column
-				$this->logger->info('Skipping table {table} - no inquiry_id column', ['table' => $tableName]);
-			}
-		}
-
-		$messages = [];
-		foreach ($orphanedCount as $tableName => $count) {
-			if ($count > 0) {
-				$this->logger->info(
-					'Removed {count} orphaned record(s) from {tableName}',
-					['count' => $count, 'tableName' => $this->dbPrefix . $tableName]
-				);
-				$messages[] = 'Removed ' . $count . ' orphaned record(s) from ' . $this->dbPrefix . $tableName;
-			} else {
-				$messages[] = 'No orphaned records found in ' . $this->dbPrefix . $tableName;
-			}
-		}
-
-		if (empty($messages)) {
-			$messages[] = 'No orphaned records found in any tables';
-		}
-
-		return $messages;
-	}
-
-	/**
-	 * Set last interaction to current timestamp for all agora
-	 * where last interaction is 0
-	 *
-	 * @param int|null $timestamp
-	 * @return string
-	 */
-	public function setLastInteraction(?int $timestamp = null): string {
-		$timestamp = $timestamp ?? time();
+	    try {
 		$query = $this->connection->getQueryBuilder();
-
-		$query->update(Inquiry::TABLE)
-	->set('last_interaction', $query->createNamedParameter($timestamp))
-	->where($query->expr()->eq('last_interaction', $query->expr()->literal(0, IQueryBuilder::PARAM_INT)));
-		$count = $query->executeStatement();
-
-		if ($count > 0) {
-			$this->logger->info('Updated {number} agora in {db} and set last_interaction to current timestamp {timestamp}', ['number' => $count, 'db' => $this->dbPrefix . InquiryMapper::TABLE, 'last_interaction' => $timestamp]);
-			return 'Updated last interaction in ' . $count . ' agora';
-		}
-
-		$this->logger->info('No agora needed to get updated with last interaction info');
-		return 'Last interaction all set';
-
+		$query->delete($tableName)
+      ->where(
+	  $query->expr()->orX(
+	      $query->expr()->notIn('inquiry_id', $query->createFunction($subqueryInquiry->getSQL()), IQueryBuilder::PARAM_INT_ARRAY),
+	      $query->expr()->isNull('inquiry_id')
+	  )
+      );
+		$executed = $query->executeStatement();
+		$orphanedCount[$tableName] = $executed;
+	    } catch (\Exception $e) {
+		// Skip tables that don't have inquiry_id column
+		$this->logger->info('Skipping table {table} - no inquiry_id column', ['table' => $tableName]);
+	    }
 	}
 
-	public function updateHashes(): array {
+	$messages = [];
+	foreach ($orphanedCount as $tableName => $count) {
+	    if ($count > 0) {
+		$this->logger->info(
+		    'Removed {count} orphaned record(s) from {tableName}',
+		    ['count' => $count, 'tableName' => $this->dbPrefix . $tableName]
+		);
+		$messages[] = 'Removed ' . $count . ' orphaned record(s) from ' . $this->dbPrefix . $tableName;
+	    } else {
+		$messages[] = 'No orphaned records found in ' . $this->dbPrefix . $tableName;
+	    }
+	}
+
+	if (empty($messages)) {
+	    $messages[] = 'No orphaned records found in any tables';
+	}
+
+	return $messages;
+    }
+
+    /**
+     * Set last interaction to current timestamp for all agora
+     * where last interaction is 0
+     *
+     * @param int|null $timestamp
+     * @return string
+     */
+    public function setLastInteraction(?int $timestamp = null): string {
+	$timestamp = $timestamp ?? time();
+	$query = $this->connection->getQueryBuilder();
+
+	$query->update(Inquiry::TABLE)
+    ->set('last_interaction', $query->createNamedParameter($timestamp))
+    ->where($query->expr()->eq('last_interaction', $query->expr()->literal(0, IQueryBuilder::PARAM_INT)));
+	$count = $query->executeStatement();
+
+	if ($count > 0) {
+	    $this->logger->info('Updated {number} agora in {db} and set last_interaction to current timestamp {timestamp}', ['number' => $count, 'db' => $this->dbPrefix . InquiryMapper::TABLE, 'last_interaction' => $timestamp]);
+	    return 'Updated last interaction in ' . $count . ' agora';
+	}
+
+	$this->logger->info('No agora needed to get updated with last interaction info');
+	return 'Last interaction all set';
+
+    }
+
+    public function updateHashes(): array {
     $messages = [];
 
     try {
-	$messages[] = 'Starting hash updates...';
+    $messages[] = 'Starting hash updates...';
 
-	// Update support hashes
-	$supportCount = $this->updateSupportHashes();
-	$messages[] = "Updated hashes for {$supportCount} support entries";
+    // Update support hashes
+    $supportCount = $this->updateSupportHashes();
+    $messages[] = "Updated hashes for {$supportCount} support entries";
 
-	// Update option hashes if needed
-	$optionCount = $this->updateOptionHashes();
-	$messages[] = "Updated hashes for {$optionCount} option entries";
+    // Update option hashes if needed
+    $optionCount = $this->updateOptionHashes();
+    $messages[] = "Updated hashes for {$optionCount} option entries";
 
-	$messages[] = 'Hash updates completed successfully';
+    $messages[] = 'Hash updates completed successfully';
 
     } catch (\Exception $e) {
-	$messages[] = 'Error during hash updates: ' . $e->getMessage();
-	$this->logger->error('Hash update failed', ['exception' => $e]);
+    $messages[] = 'Error during hash updates: ' . $e->getMessage();
+    $this->logger->error('Hash update failed', ['exception' => $e]);
     }
 
     return $messages;
@@ -521,116 +530,116 @@ public function removeObsoleteColumns(): array {
 
 
     private function updateSupportHashes(): int {
-        $updatedCount = 0;
-        $supports = $this->supportMapper->getAll();
+	$updatedCount = 0;
+	$supports = $this->supportMapper->getAll();
 
-        foreach ($supports as $support) {
-            try {
-                // Skip if hash already exists and looks valid
-                $currentHash = $support->getSupportHash();
-                if ($currentHash && $this->isValidHash($currentHash)) {
-                    continue;
-                }
+	foreach ($supports as $support) {
+	    try {
+		// Skip if hash already exists and looks valid
+		$currentHash = $support->getSupportHash();
+		if ($currentHash && $this->isValidHash($currentHash)) {
+		    continue;
+		}
 
-                // Generate new hash
-                $newHash = $this->generateSupportHash(
-                    $support->getUserId(),
-                    $support->getOptionId(),
-                    $support->getInquiryId()
-                );
+		// Generate new hash
+		$newHash = $this->generateSupportHash(
+		    $support->getUserId(),
+		    $support->getOptionId(),
+		    $support->getInquiryId()
+		);
 
-                $support->setSupportHash($newHash);
-                $this->supportMapper->update($support);
-                $updatedCount++;
+		$support->setSupportHash($newHash);
+		$this->supportMapper->update($support);
+		$updatedCount++;
 
-            } catch (\Exception $e) {
-                $this->logger->error('Failed to update hash for support ID: ' . $support->getId(), [
-                    'exception' => $e
-                ]);
-                // Continue with next record
-            }
-        }
+	    } catch (\Exception $e) {
+		$this->logger->error('Failed to update hash for support ID: ' . $support->getId(), [
+		    'exception' => $e
+		]);
+		// Continue with next record
+	    }
+	}
 
-        return $updatedCount;
+	return $updatedCount;
     }
 
     private function updateOptionHashes(): int {
-        $updatedCount = 0;
+	$updatedCount = 0;
 
-        try {
-            // If you have an option mapper, use it here
-            if (method_exists($this, 'getOptionMapper')) {
-                $options = $this->getOptionMapper()->getAll();
+	try {
+	    // If you have an option mapper, use it here
+	    if (method_exists($this, 'getOptionMapper')) {
+		$options = $this->getOptionMapper()->getAll();
 
-                foreach ($options as $option) {
-                    try {
-                        // Skip if hash already exists
-                        if ($option->getOptionHash()) {
-                            continue;
-                        }
+		foreach ($options as $option) {
+		    try {
+			// Skip if hash already exists
+			if ($option->getOptionHash()) {
+			    continue;
+			}
 
-                        // Generate hash based on option text and inquiry ID
-                        $newHash = $this->generateOptionHash(
-                            $option->getText(),
-                            $option->getInquiryId()
-                        );
+			// Generate hash based on option text and inquiry ID
+			$newHash = $this->generateOptionHash(
+			    $option->getText(),
+			    $option->getInquiryId()
+			);
 
-                        $option->setOptionHash($newHash);
-                        $this->getOptionMapper()->update($option);
-                        $updatedCount++;
+			$option->setOptionHash($newHash);
+			$this->getOptionMapper()->update($option);
+			$updatedCount++;
 
-                    } catch (\Exception $e) {
-                        $this->logger->error('Failed to update hash for option ID: ' . $option->getId());
-                    }
-                }
-            }
-        } catch (\Exception $e) {
-            // Option hash update is optional, just log and continue
-            $this->logger->info('Option hash update skipped: ' . $e->getMessage());
-        }
+		    } catch (\Exception $e) {
+			$this->logger->error('Failed to update hash for option ID: ' . $option->getId());
+		    }
+		}
+	    }
+	} catch (\Exception $e) {
+	    // Option hash update is optional, just log and continue
+	    $this->logger->info('Option hash update skipped: ' . $e->getMessage());
+	}
 
-        return $updatedCount;
+	return $updatedCount;
     }
 
     /**
      * Generate support hash without external helper
      */
     private function generateSupportHash(string $userId, int $optionId, int $inquiryId): string {
-        $data = implode('|', [
-            $userId,
-            (string)$optionId,
-            (string)$inquiryId,
-            $this->generateRandomString()
-        ]);
-        return hash('sha256', $data);
+	$data = implode('|', [
+	    $userId,
+	    (string)$optionId,
+	    (string)$inquiryId,
+	    $this->generateRandomString()
+	]);
+	return hash('sha256', $data);
     }
 
     /**
      * Generate option hash without external helper
      */
     private function generateOptionHash(string $text, int $inquiryId): string {
-        $normalizedText = trim(mb_strtolower($text));
-        $data = $normalizedText . '|' . $inquiryId;
-        return hash('sha256', $data);
+	$normalizedText = trim(mb_strtolower($text));
+	$data = $normalizedText . '|' . $inquiryId;
+	return hash('sha256', $data);
     }
 
     /**
      * Check if hash looks valid
      */
     private function isValidHash(string $hash): bool {
-        return preg_match('/^[a-f0-9]{64}$/', $hash) === 1;
+	return preg_match('/^[a-f0-9]{64}$/', $hash) === 1;
     }
 
     /**
      * Generate random string for hash salting
      */
     private function generateRandomString(int $length = 16): string {
-        $chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        $result = '';
-        for ($i = 0; $i < $length; $i++) {
-            $result .= $chars[random_int(0, strlen($chars) - 1)];
-        }
-        return $result;
+	$chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+	$result = '';
+	for ($i = 0; $i < $length; $i++) {
+	    $result .= $chars[random_int(0, strlen($chars) - 1)];
+	}
+	return $result;
     }
     /**
      * Delete all duplicate entries in all tables based on the unique indices defined in TableSchema::UNIQUE_INDICES
@@ -638,24 +647,24 @@ public function removeObsoleteColumns(): array {
      * @return string[] Messages as array
      */
     public function deleteAllDuplicates(?IOutput $output = null): array {
-        $messages = [];
-        foreach (TableSchema::UNIQUE_INDICES as $tableName => $uniqueIndices) {
-            foreach ($uniqueIndices as $definition) {
+	$messages = [];
+	foreach (TableSchema::UNIQUE_INDICES as $tableName => $uniqueIndices) {
+	    foreach ($uniqueIndices as $definition) {
 
-                // delete all duplicates based on the unique index definition
-                $count = $this->deleteDuplicates($tableName, $definition['columns']);
+		// delete all duplicates based on the unique index definition
+		$count = $this->deleteDuplicates($tableName, $definition['columns']);
 
-                if ($count) {
-                    $messages[] = 'Removed ' . $count . ' duplicate records from ' . $this->dbPrefix . $tableName;
-                    $this->logger->info(end($messages));
-                }
+		if ($count) {
+		    $messages[] = 'Removed ' . $count . ' duplicate records from ' . $this->dbPrefix . $tableName;
+		    $this->logger->info(end($messages));
+		}
 
-                if ($output && $count) {
-                    $output->info(end($messages));
-                }
-            }
-        }
-        return $messages;
+		if ($output && $count) {
+		    $output->info(end($messages));
+		}
+	    }
+	}
+	return $messages;
     }
 
     /**
@@ -667,37 +676,37 @@ public function removeObsoleteColumns(): array {
      * @return int number of deleted entries
      */
     private function deleteDuplicates(string $table, array $columns):int {
-        $this->needsSchema();
-        if (!$this->schema->hasTable($this->dbPrefix . $table)) {
-            return 0;
-        }
+	$this->needsSchema();
+	if (!$this->schema->hasTable($this->dbPrefix . $table)) {
+	    return 0;
+	}
 
-        $qb = $this->connection->getQueryBuilder();
+	$qb = $this->connection->getQueryBuilder();
 
-        // identify duplicates
-        $selection = $qb->selectDistinct('t1.id')
-                        ->from($table, 't1')
-                        ->innerJoin('t1', $table, 't2', $qb->expr()->lt('t1.id', 't2.id'));
+	// identify duplicates
+	$selection = $qb->selectDistinct('t1.id')
+			->from($table, 't1')
+			->innerJoin('t1', $table, 't2', $qb->expr()->lt('t1.id', 't2.id'));
 
-        $i = 0;
+	$i = 0;
 
-        foreach ($columns as $column) {
-            if ($i > 0) {
-                $selection->andWhere($qb->expr()->eq('t1.' . $column, 't2.' . $column));
-            } else {
-                $selection->where($qb->expr()->eq('t1.' . $column, 't2.' . $column));
-            }
-            $i++;
-        }
+	foreach ($columns as $column) {
+	    if ($i > 0) {
+		$selection->andWhere($qb->expr()->eq('t1.' . $column, 't2.' . $column));
+	    } else {
+		$selection->where($qb->expr()->eq('t1.' . $column, 't2.' . $column));
+	    }
+	    $i++;
+	}
 
-        $duplicates = $qb->executeQuery()->fetchAll(PDO::FETCH_COLUMN);
+	$duplicates = $qb->executeQuery()->fetchAll(PDO::FETCH_COLUMN);
 
-        $this->connection->getQueryBuilder()
-                         ->delete($table)
-                         ->where('id in (:ids)')
-                         ->setParameter('ids', $duplicates, IQueryBuilder::PARAM_INT_ARRAY)
-                         ->executeStatement();
-        return count($duplicates);
+	$this->connection->getQueryBuilder()
+			 ->delete($table)
+			 ->where('id in (:ids)')
+			 ->setParameter('ids', $duplicates, IQueryBuilder::PARAM_INT_ARRAY)
+			 ->executeStatement();
+	return count($duplicates);
     }
 
     /**
@@ -706,20 +715,20 @@ public function removeObsoleteColumns(): array {
      * @return string Message
      */
     public function tidyWatchTable(int $offset): string {
-        $query = $this->connection->getQueryBuilder();
-        $query->delete(Watch::TABLE)
-              ->where(
-                  $query->expr()->lt('updated', $query->createNamedParameter($offset))
-              );
-        $count = $query->executeStatement();
+	$query = $this->connection->getQueryBuilder();
+	$query->delete(Watch::TABLE)
+	      ->where(
+		  $query->expr()->lt('updated', $query->createNamedParameter($offset))
+	      );
+	$count = $query->executeStatement();
 
-        if ($count > 0) {
-            $this->logger->info('Removed {number} old watch records', ['number' => $count, 'db' => $this->dbPrefix . Watch::TABLE]);
-            return 'Removed ' . $count . ' old watch records';
-        }
+	if ($count > 0) {
+	    $this->logger->info('Removed {number} old watch records', ['number' => $count, 'db' => $this->dbPrefix . Watch::TABLE]);
+	    return 'Removed ' . $count . ' old watch records';
+	}
 
-        $this->logger->info('Watch table is clean');
-        return 'Watch table is clean';
+	$this->logger->info('Watch table is clean');
+	return 'Watch table is clean';
     }
 
 
@@ -730,32 +739,32 @@ public function removeObsoleteColumns(): array {
      * @return string[] Messages as array
      */
     public function fixNullishShares(): array {
-        $messages = [];
+	$messages = [];
 
-        try {
-            $tableName = Share::TABLE;
-            $affectedColumns = ['group_id', 'inquiry_id'];
-            $this->checkPrecondition($tableName, $affectedColumns);
+	try {
+	    $tableName = Share::TABLE;
+	    $affectedColumns = ['group_id', 'inquiry_id'];
+	    $this->checkPrecondition($tableName, $affectedColumns);
 
-            // set all nullish group_id and inquiry_id to 0
-            foreach ($affectedColumns as $affectedColumn) {
-                $count = $this->migrateNullishColumnToZero($tableName, $affectedColumn);
+	    // set all nullish group_id and inquiry_id to 0
+	    foreach ($affectedColumns as $affectedColumn) {
+		$count = $this->migrateNullishColumnToZero($tableName, $affectedColumn);
 
-                if ($count > 0) {
-                    $messages[] = 'Updated ' . $count . ' shares with nullish ' . $affectedColumn . ' to 0';
-                }
-            }
+		if ($count > 0) {
+		    $messages[] = 'Updated ' . $count . ' shares with nullish ' . $affectedColumn . ' to 0';
+		}
+	    }
 
-        } catch (PreconditionException $e) {
-            $messages[] = $e->getMessage() . ' - aborted fix nullish shares';
-            return $messages;
-        }
+	} catch (PreconditionException $e) {
+	    $messages[] = $e->getMessage() . ' - aborted fix nullish shares';
+	    return $messages;
+	}
 
-        if (empty($messages)) {
-            $messages[] = 'All shares are valid';
-        }
+	if (empty($messages)) {
+	    $messages[] = 'All shares are valid';
+	}
 
-        return $messages;
+	return $messages;
     }
 
     /**
@@ -764,18 +773,18 @@ public function removeObsoleteColumns(): array {
      * @return string[] Messages as array
      */
     public function removeObsoleteMigrations(): array {
-        $messages = [];
-        $query = $this->connection->getQueryBuilder();
-        $messages[] = 'tidy migration entries';
-        foreach (TableSchema::GONE_MIGRATIONS as $version) {
-            $query->delete('migrations')
-                  ->where('app = :appName')
-                  ->andWhere('version = :version')
-                  ->setParameter('appName', AppConstants::APP_ID)
-                  ->setParameter('version', $version)
-                  ->executeStatement();
-        }
-        return $messages;
+	$messages = [];
+	$query = $this->connection->getQueryBuilder();
+	$messages[] = 'tidy migration entries';
+	foreach (TableSchema::GONE_MIGRATIONS as $version) {
+	    $query->delete('migrations')
+		  ->where('app = :appName')
+		  ->andWhere('version = :version')
+		  ->setParameter('appName', AppConstants::APP_ID)
+		  ->setParameter('version', $version)
+		  ->executeStatement();
+	}
+	return $messages;
     }
 
     /**
@@ -785,34 +794,34 @@ public function removeObsoleteColumns(): array {
      * @return string[] Messages as array
      */
     public function fixNullishPollGroupRelations(): array {
-        $messages = [];
+	$messages = [];
 
-        try {
-            $tableName = PollGroup::RELATION_TABLE;
-            $affectedColumns = ['group_id', 'inquiry_id'];
-            $this->checkPrecondition($tableName, $affectedColumns);
+	try {
+	    $tableName = PollGroup::RELATION_TABLE;
+	    $affectedColumns = ['group_id', 'inquiry_id'];
+	    $this->checkPrecondition($tableName, $affectedColumns);
 
-            $countAll = 0;
-            // set all nullish group_id and inquiry_id to 0
-            foreach ($affectedColumns as $affectedColumn) {
-                $updateCount = $this->migrateNullishColumnToZero($tableName, $affectedColumn);
+	    $countAll = 0;
+	    // set all nullish group_id and inquiry_id to 0
+	    foreach ($affectedColumns as $affectedColumn) {
+		$updateCount = $this->migrateNullishColumnToZero($tableName, $affectedColumn);
 
-                if ($updateCount > 0) {
-                    $countAll += $updateCount;
-                    $messages[] = 'Updated ' . $updateCount . ' inquirygroup relations and set ' . $affectedColumn . ' to 0 for nullish values';
-                }
-            }
+		if ($updateCount > 0) {
+		    $countAll += $updateCount;
+		    $messages[] = 'Updated ' . $updateCount . ' inquirygroup relations and set ' . $affectedColumn . ' to 0 for nullish values';
+		}
+	    }
 
-        } catch (PreconditionException $e) {
-            $messages[] = $e->getMessage() . ' - aborted fix nullish inquiry group relations';
-            return $messages;
-        }
+	} catch (PreconditionException $e) {
+	    $messages[] = $e->getMessage() . ' - aborted fix nullish inquiry group relations';
+	    return $messages;
+	}
 
-        if ($countAll === 0) {
-            $messages[] = 'All inquiry group relations are valid';
-        }
+	if ($countAll === 0) {
+	    $messages[] = 'All inquiry group relations are valid';
+	}
 
-        return $messages;
+	return $messages;
     }
 
     /**
@@ -822,42 +831,42 @@ public function removeObsoleteColumns(): array {
      *
      */
     public function migrateShareLabels(): array {
-        $messages = [];
+	$messages = [];
 
-        $tableName = Share::TABLE;
-        $affectedColumn = 'label';
+	$tableName = Share::TABLE;
+	$affectedColumn = 'label';
 
-        try {
-            $this->checkPrecondition($tableName, $affectedColumn);
-        } catch (PreconditionException $e) {
-            $messages[] = $e->getMessage() . ' - aborted migrating labels';
-            return $messages;
-        }
+	try {
+	    $this->checkPrecondition($tableName, $affectedColumn);
+	} catch (PreconditionException $e) {
+	    $messages[] = $e->getMessage() . ' - aborted migrating labels';
+	    return $messages;
+	}
 
-        $prefixedTableName = $this->dbPrefix . $tableName;
-        $qb = $this->connection->getQueryBuilder();
+	$prefixedTableName = $this->dbPrefix . $tableName;
+	$qb = $this->connection->getQueryBuilder();
 
-        $qb->update($tableName)
-           ->set('display_name', $affectedColumn)
-           ->andWhere($qb->expr()->isNotNull($prefixedTableName . '.' . $affectedColumn))
-           ->andWhere($qb->expr()->eq($prefixedTableName . '.' . $affectedColumn, $qb->expr()->literal('')));
-        $updated = $qb->executeStatement();
+	$qb->update($tableName)
+	   ->set('display_name', $affectedColumn)
+	   ->andWhere($qb->expr()->isNotNull($prefixedTableName . '.' . $affectedColumn))
+	   ->andWhere($qb->expr()->eq($prefixedTableName . '.' . $affectedColumn, $qb->expr()->literal('')));
+	$updated = $qb->executeStatement();
 
-        if ($updated === 0) {
-            $this->logger->info('Verified all share labels in {db}', [
-                'db' => $prefixedTableName
-            ]);
-            $messages[] = 'No share labels to update';
+	if ($updated === 0) {
+	    $this->logger->info('Verified all share labels in {db}', [
+		'db' => $prefixedTableName
+	    ]);
+	    $messages[] = 'No share labels to update';
 
-        } else {
-            $this->logger->info('Updated {updated} share labels in {db}', [
-                'updated' => $updated,
-                'db' => $prefixedTableName
-            ]);
-            $messages[] = 'Updated ' . $updated . ' labels';
-        }
+	} else {
+	    $this->logger->info('Updated {updated} share labels in {db}', [
+		'updated' => $updated,
+		'db' => $prefixedTableName
+	    ]);
+	    $messages[] = 'Updated ' . $updated . ' labels';
+	}
 
-        return $messages;
+	return $messages;
     }
 
 
@@ -870,13 +879,13 @@ public function removeObsoleteColumns(): array {
      * @return int number of updated entries
      */
     private function migrateNullishColumnToZero(string $tableName, string $columnName): int {
-        $query = $this->connection->getQueryBuilder();
-        $query->update($tableName)
-              ->set($columnName, $query->createNamedParameter(0, IQueryBuilder::PARAM_INT))
-              ->where($query->expr()->isNull($columnName));
+	$query = $this->connection->getQueryBuilder();
+	$query->update($tableName)
+	      ->set($columnName, $query->createNamedParameter(0, IQueryBuilder::PARAM_INT))
+	      ->where($query->expr()->isNull($columnName));
 
-        $count = $query->executeStatement();
-        return $count;
+	$count = $query->executeStatement();
+	return $count;
     }
     /**
      * Migrate all agora with access 'public' to access 'open'
@@ -885,42 +894,42 @@ public function removeObsoleteColumns(): array {
      *
      */
     public function migratePublicToOpen(): array {
-        $messages = [];
+	$messages = [];
 
-        $tableName = Inquiry::TABLE;
-        $affectedColumn = 'access';
-        $prefixedTableName = $this->dbPrefix . $tableName;
+	$tableName = Inquiry::TABLE;
+	$affectedColumn = 'access';
+	$prefixedTableName = $this->dbPrefix . $tableName;
 
-        try {
-            $this->checkPrecondition($tableName, $affectedColumn);
-        } catch (PreconditionException $e) {
-            $messages[] = $e->getMessage() . ' - aborted migrating public to open';
-            return $messages;
-        }
+	try {
+	    $this->checkPrecondition($tableName, $affectedColumn);
+	} catch (PreconditionException $e) {
+	    $messages[] = $e->getMessage() . ' - aborted migrating public to open';
+	    return $messages;
+	}
 
-        $qb = $this->connection->getQueryBuilder();
+	$qb = $this->connection->getQueryBuilder();
 
-        $qb->update($tableName)
-           ->set('access', $qb->expr()->literal(Inquiry::ACCESS_OPEN))
-           ->where($qb->expr()->eq($prefixedTableName . '.' . $affectedColumn, $qb->expr()->literal(Inquiry::ACCESS_PUBLIC)));
-        $updated = $qb->executeStatement();
+	$qb->update($tableName)
+	   ->set('access', $qb->expr()->literal(Inquiry::ACCESS_OPEN))
+	   ->where($qb->expr()->eq($prefixedTableName . '.' . $affectedColumn, $qb->expr()->literal(Inquiry::ACCESS_PUBLIC)));
+	$updated = $qb->executeStatement();
 
-        if ($updated === 0) {
-            $this->logger->info('Verified inquiry access to be \'open\' instead of \'public\' in {db}', [
-                'db' => $prefixedTableName
-            ]);
-            $messages[] = 'No inquiry access values to update';
+	if ($updated === 0) {
+	    $this->logger->info('Verified inquiry access to be \'open\' instead of \'public\' in {db}', [
+		'db' => $prefixedTableName
+	    ]);
+	    $messages[] = 'No inquiry access values to update';
 
-        } else {
-            $this->logger->info('Updated {updated} access values in {db}', [
-                'updated' => $updated,
-                'db' => $prefixedTableName
-            ]);
-            $messages[] = 'Updated ' . $updated . ' inquiry access value';
+	} else {
+	    $this->logger->info('Updated {updated} access values in {db}', [
+		'updated' => $updated,
+		'db' => $prefixedTableName
+	    ]);
+	    $messages[] = 'Updated ' . $updated . ' inquiry access value';
 
-        }
+	}
 
-        return $messages;
+	return $messages;
     }
 
     /**

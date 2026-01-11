@@ -181,6 +181,7 @@ class InquiryGroup extends EntityWithUser implements JsonSerializable
         $this->miscFields[$key] = $value;
     }
 
+    
 
 
     public function setMiscFields(array $misc): void
