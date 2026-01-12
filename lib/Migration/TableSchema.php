@@ -426,6 +426,8 @@ abstract class TableSchema
             'description' => ['type' => Types::TEXT, 'options' => ['notnull' => false]],
             'fields' => ['type' => Types::TEXT, 'options' => ['notnull' => false]],
             'allowed_response' => ['type' => Types::TEXT, 'options' => ['notnull' => false]],
+            'allow_comment' => ['type' => Types::BIGINT, 'options' => ['notnull' => true, 'default' => 1, 'length' => 20]],
+            'support_feature' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'default' => 'none', 'length' => 20]],
             'created' => ['type' => Types::BIGINT, 'options' => ['notnull' => true, 'default' => 0]],
         ],
 
@@ -518,6 +520,8 @@ abstract class TableSchema
             'allowed_response' => ['type' => Types::TEXT, 'options' => ['notnull' => false]],
             'allowed_transformation' => ['type' => Types::TEXT, 'options' => ['notnull' => false]],
             'allowed_option_type' => ['type' => Types::TEXT, 'options' => ['notnull' => false]],
+            'allow_comment' => ['type' => Types::BIGINT, 'options' => ['notnull' => true, 'default' => 1, 'length' => 20]],
+            'support_feature' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'default' => 'none', 'length' => 20]],
             'is_root' => ['type' => Types::BOOLEAN, 'options' => ['notnull' => false, 'default' => true]],
             'created' => ['type' => Types::BIGINT, 'options' => ['notnull' => true, 'default' => 0, 'length' => 20]],
         ],

@@ -104,6 +104,8 @@ class InitDbDefault extends Command
                 'message',
                 'official_summary',
             ],
+            'allow_comment' => true,
+            'support_feature' => 'binary',
         ],
         [
             'family' => 'debate',
@@ -121,6 +123,8 @@ class InitDbDefault extends Command
                 'message',
                 'official_summary',
             ],
+            'allow_comment' => true,
+            'support_feature' => 'binary',
         ],
 
         // ====================================================
@@ -137,6 +141,8 @@ class InitDbDefault extends Command
                 'message',
                 'official_summary',
             ],
+            'allow_comment' => true,
+            'support_feature' => 'binary',
         ],
         [
             'family' => 'debate',
@@ -149,6 +155,8 @@ class InitDbDefault extends Command
                 'message',
                 'official_summary',
             ],
+            'allow_comment' => true,
+            'support_feature' => 'binary',
         ],
 
         // ====================================================
@@ -167,6 +175,8 @@ class InitDbDefault extends Command
                 'message',
                 'official_summary',
             ],
+            'allow_comment' => true,
+            'support_feature' => 'binary',
         ],
 
         // ====================================================
@@ -182,6 +192,8 @@ class InitDbDefault extends Command
             'allowed_response' => [
                 'message',
             ],
+            'allow_comment' => true,
+            'support_feature' => 'binary',
         ],
 
         // ====================================================
@@ -197,6 +209,8 @@ class InitDbDefault extends Command
                 ['key' => 'resolved_option_ids', 'type' => 'json', 'required' => false],
             ],
             'allowed_response' => [],
+            'allow_comment' => true,
+            'support_feature' => 'binary',
         ],
 
         // ====================================================
@@ -213,6 +227,8 @@ class InitDbDefault extends Command
                 'article',
                 'official_summary',
             ],
+            'allow_comment' => true,
+            'support_feature' => 'binary',
         ],
         [
             'family' => 'structure',
@@ -225,6 +241,8 @@ class InitDbDefault extends Command
                 'amendment',
                 'official_summary',
             ],
+            'allow_comment' => true,
+            'support_feature' => 'binary',
         ],
         [
             'family' => 'structure',
@@ -240,6 +258,8 @@ class InitDbDefault extends Command
                 'argument_against',
                 'official_summary',
             ],
+            'allow_comment' => true,
+            'support_feature' => 'binary',
         ],
 
         // ====================================================
@@ -258,6 +278,8 @@ class InitDbDefault extends Command
                 'argument_against',
                 'official_result',
             ],
+            'allow_comment' => true,
+            'support_feature' => 'binary',
         ],
         [
             'family' => 'consensus',
@@ -269,6 +291,8 @@ class InitDbDefault extends Command
             'allowed_response' => [
                 'official_result',
             ],
+            'allow_comment' => true,
+            'support_feature' => 'binary',
         ],
         [
             'family' => 'consensus',
@@ -284,6 +308,8 @@ class InitDbDefault extends Command
                 'exception',
                 'official_summary',
             ],
+            'allow_comment' => true,
+            'support_feature' => 'binary',
         ],
         [
             'family' => 'consensus',
@@ -297,6 +323,8 @@ class InitDbDefault extends Command
                 'message',
                 'official_summary',
             ],
+            'allow_comment' => true,
+            'support_feature' => 'binary',
         ],
 
         // ====================================================
@@ -313,6 +341,8 @@ class InitDbDefault extends Command
                 ['key' => 'poll_id', 'type' => 'string', 'required' => false],
             ],
             'allowed_response' => [],
+            'allow_comment' => true,
+            'support_feature' => 'binary',
         ],
 
         // ====================================================
@@ -332,6 +362,8 @@ class InitDbDefault extends Command
                 'amendment',
                 'official_summary',
             ],
+            'allow_comment' => true,
+            'support_feature' => 'binary',
         ],
 
     ];
@@ -363,6 +395,8 @@ class InitDbDefault extends Command
             'allowed_response' => ['amendment','objection','official'],
             'allowed_transformation' => [],
             'allowed_option_type' => ['chapter','position_for','position_against','alternative','official_summary'],
+            'allow_comment' => true,
+            'support_feature' => 'binary',
             'is_root' => true,
             'created' => '',
         ],
@@ -384,6 +418,8 @@ class InitDbDefault extends Command
             'allowed_response' => null,
             'allowed_transformation' => null,
             'allowed_option_type' => ['amendment','argument_for','argument_against','official_summary'],
+            'allow_comment' => true,
+            'support_feature' => 'binary',
             'is_root' => false,
             'created' => '',
         ],
@@ -405,6 +441,8 @@ class InitDbDefault extends Command
             'allowed_response' => ['law_proposal'],
             'allowed_transformation' => null,
             'allowed_option_type' => ['chapter','position_for','position_against','alternative'],
+            'allow_comment' => true,
+            'support_feature' => 'binary',
             'is_root' => true,
             'created' => '',
         ],
@@ -425,6 +463,8 @@ class InitDbDefault extends Command
             'allowed_response' => ['law_proposal','response'],
             'allowed_transformation' => null,
             'allowed_option_type' => ['consultation_question','position_for','position_against','official_result'],
+            'allow_comment' => true,
+            'support_feature' => 'binary',
             'is_root' => true,
             'created' => '',
         ],
@@ -444,6 +484,8 @@ class InitDbDefault extends Command
             'allowed_response' => ['suggestion'],
             'allowed_transformation' => null,
             'allowed_option_type' => ['proposal','position_for','position_against','alternative','official_summary'],
+            'allow_comment' => true,
+            'support_feature' => 'binary',
             'is_root' => false,
             'created' => '',
         ],
@@ -462,6 +504,8 @@ class InitDbDefault extends Command
             'allowed_response' => null,
             'allowed_transformation' => ['proposal','law_proposal'],
             'allowed_option_type' => ['objection','amendment','exception'],
+            'allow_comment' => true,
+            'support_feature' => 'binary',
             'is_root' => false,
             'created' => '',
         ],
@@ -487,6 +531,8 @@ class InitDbDefault extends Command
             'allowed_response' => ['objection','suggestion','official'],
             'allowed_transformation' => ['law_proposal'],
             'allowed_option_type' => ['suggestion','position_for','position_against'],
+            'allow_comment' => true,
+            'support_feature' => 'binary',
             'is_root' => true,
             'created' => '',
         ],
@@ -510,6 +556,8 @@ class InitDbDefault extends Command
             'allowed_response' => ['official'],
             'allowed_transformation' => ['initiative'],
             'allowed_option_type' => ['proposal','position_for','official_summary'],
+            'allow_comment' => true,
+            'support_feature' => 'binary',
             'is_root' => true,
             'created' => '',
         ],
@@ -553,6 +601,8 @@ class InitDbDefault extends Command
             'allowed_response' => ['proposal','objection','suggestion','official'],
             'allowed_transformation' => ['law_proposal'],
             'allowed_option_type' => ['proposal','position_for','position_against','official_summary'],
+            'allow_comment' => true,
+            'support_feature' => 'binary',
             'is_root' => true,
             'created' => '',
         ],
@@ -572,6 +622,8 @@ class InitDbDefault extends Command
             'allowed_response' => ['proposal','suggestion','official'],
             'allowed_transformation' => null,
             'allowed_option_type' => ['position_for','position_against','alternative','official_summary'],
+            'allow_comment' => true,
+            'support_feature' => 'binary',
             'is_root' => true,
             'created' => '',
         ],
@@ -600,6 +652,8 @@ class InitDbDefault extends Command
             'allowed_response' => ['project_review','suggestion','objection','official'],
             'allowed_transformation' => [],
             'allowed_option_type' => ['proposal','chapter','official_summary'],
+            'allow_comment' => true,
+            'support_feature' => 'binary',
             'is_root' => true,
             'created' => '',
         ],
@@ -621,6 +675,8 @@ class InitDbDefault extends Command
             'allowed_response' => ['suggestion'],
             'allowed_transformation' => null,
             'allowed_option_type' => ['position_for','position_against','objection','official_summary'],
+            'allow_comment' => true,
+            'support_feature' => 'binary',
             'is_root' => false,
             'created' => '',
         ],
@@ -642,6 +698,8 @@ class InitDbDefault extends Command
             'allowed_response' => ['proposal','recommendation'],
             'allowed_transformation' => ['policy_consultation'],
             'allowed_option_type' => ['position_for','position_against','message','official_summary'],
+            'allow_comment' => true,
+            'support_feature' => 'binary',
             'is_root' => true,
             'created' => '',
         ],
@@ -662,6 +720,8 @@ class InitDbDefault extends Command
             'allowed_response' => [],
             'allowed_transformation' => null,
             'allowed_option_type' => ['message'],
+            'allow_comment' => true,
+            'support_feature' => 'none',
             'is_root' => true,
             'created' => '',
         ],
@@ -683,6 +743,8 @@ class InitDbDefault extends Command
             'allowed_response' => [],
             'allowed_transformation' => null,
             'allowed_option_type' => ['message'],
+            'allow_comment' => true,
+            'support_feature' => 'none',
             'is_root' => true,
             'created' => '',
         ],
@@ -702,6 +764,8 @@ class InitDbDefault extends Command
             'allowed_response' => [],
             'allowed_transformation' => null,
             'allowed_option_type' => ['message'],
+            'allow_comment' => true,
+            'support_feature' => 'none',
             'is_root' => true,
             'created' => '',
         ],
@@ -723,6 +787,8 @@ class InitDbDefault extends Command
             'allowed_response' => ['suggestion'],
             'allowed_transformation' => null,
             'allowed_option_type' => ['agenda_item','message','official_summary'],
+            'allow_comment' => false,
+            'support_feature' => 'none',
             'is_root' => true,
             'created' => '',
         ],
@@ -744,6 +810,8 @@ class InitDbDefault extends Command
             'allowed_response' => ['suggestion'],
             'allowed_transformation' => null,
             'allowed_option_type' => ['agenda_item','message','official_summary'],
+            'allow_comment' => false,
+            'support_feature' => 'none',
             'is_root' => true,
             'created' => '',
         ],
@@ -766,6 +834,8 @@ class InitDbDefault extends Command
             'allowed_response' => ['suggestion'],
             'allowed_transformation' => null,
             'allowed_option_type' => ['agenda_item','message','official_summary'],
+            'allow_comment' => false,
+            'support_feature' => 'none',
             'is_root' => true,
             'created' => '',
         ],
@@ -796,6 +866,8 @@ class InitDbDefault extends Command
             'allowed_response' => ['suggestion','proposal','petition','official'],
             'allowed_transformation' => ['law_proposal','policy_consultation'],
             'allowed_option_type' => ['position_for','position_against','alternative','official_summary'],
+            'allow_comment' => false,
+            'support_feature' => 'none',
             'is_root' => true,
             'created' => '',
         ],
@@ -829,6 +901,8 @@ class InitDbDefault extends Command
             'allowed_response' => ['official'],
             'allowed_transformation' => null,
             'allowed_option_type' => ['poll_option','official_result'],
+            'allow_comment' => false,
+            'support_feature' => 'none',
             'is_root' => true,
             'created' => '',
         ],
@@ -851,6 +925,8 @@ class InitDbDefault extends Command
             'allowed_response' => ['proposal','law_proposal','official'],
             'allowed_transformation' => null,
             'allowed_option_type' => ['recommendation','objection','official_result'],
+            'allow_comment' => true,
+            'support_feature' => 'none',
             'is_root' => true,
             'created' => '',
         ],
@@ -886,6 +962,8 @@ class InitDbDefault extends Command
             'allowed_response' => ['proposal', 'law_proposal', 'official'],
             'allowed_transformation' => null,
             'allowed_option_type' => ['consultation_question','poll_option','objection','exception','official_result'],
+            'allow_comment' => false,
+            'support_feature' => 'none',
             'is_root' => true,
             'created' => '',
         ],
@@ -909,6 +987,8 @@ class InitDbDefault extends Command
             'allowed_response' => null,
             'allowed_transformation' => null,
             'allowed_option_type' => [],
+            'allow_comment' => false,
+            'support_feature' => 'none',
             'is_root' => true,
             'created' => '',
         ],
@@ -933,6 +1013,8 @@ class InitDbDefault extends Command
             ],
             'allowed_response' => ['official'],
             'allowed_transformation' => null,
+            'allow_comment' => false,
+            'support_feature' => 'none',
             'is_root' => true,
             'created' => '',
         ],
@@ -955,6 +1037,8 @@ class InitDbDefault extends Command
             'allowed_response' => ['official'],
             'allowed_transformation' => null,
             'allowed_option_type' => [],
+            'allow_comment' => false,
+            'support_feature' => 'none',
             'is_root' => true,
             'created' => '',
         ],
@@ -976,6 +1060,8 @@ class InitDbDefault extends Command
             'allowed_response' => ['official'],
             'allowed_transformation' => null,
             'allowed_option_type' => [],
+            'allow_comment' => false,
+            'support_feature' => 'none',
             'is_root' => true,
             'created' => '',
         ],
@@ -997,6 +1083,8 @@ class InitDbDefault extends Command
             'allowed_response' => ['official'],
             'allowed_transformation' => null,
             'allowed_option_type' => [],
+            'allow_comment' => false,
+            'support_feature' => 'none',
             'is_root' => true,
             'created' => '',
         ],
@@ -1015,6 +1103,8 @@ class InitDbDefault extends Command
             'allowed_response' => ['official'],
             'allowed_transformation' => null,
             'allowed_option_type' => [],
+            'allow_comment' => false,
+            'support_feature' => 'none',
             'is_root' => true,
             'created' => '',
         ],
@@ -1034,6 +1124,8 @@ class InitDbDefault extends Command
             'allowed_response' => ['official'],
             'allowed_transformation' => null,
             'allowed_option_type' => [],
+            'allow_comment' => false,
+            'support_feature' => 'none',
             'is_root' => true,
             'created' => '',
         ]
@@ -1762,8 +1854,8 @@ class InitDbDefault extends Command
 
             $insert = $this->connection->prepare(
                 'INSERT INTO `' . $tableName . '`
-                (`inquiry_type`, `family`, `icon`, `label`, `description`, `fields`, `allowed_response`, `allowed_transformation`, `allowed_option_type`,`is_root`,`created`)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+                (`inquiry_type`, `family`, `icon`, `label`, `description`, `fields`, `allowed_response`, `allowed_transformation`, `allowed_option_type`, `allow_comment`,`support_feature`,`is_root`,`created`)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
             );
 
             $created = !empty($inquiryType['created']) ? (int)$inquiryType['created'] : time();
@@ -1774,6 +1866,8 @@ class InitDbDefault extends Command
             $allowedResponse = !empty($inquiryType['allowed_response']) ? json_encode($inquiryType['allowed_response']) : '';
             $allowedOptionType = !empty($inquiryType['allowed_option_type']) ? json_encode($inquiryType['allowed_option_type']) : '';
             $allowedTransformation = !empty($inquiryType['allowed_transformation']) ? json_encode($inquiryType['allowed_transformation']) : '';
+            $supportFeature = !empty($inquiryType['support_feature']) ? json_encode($inquiryType['support_feature']) : 'none';
+            $allowComment = $inquiryType['allow_comment'] ? 1 : 0;
 
             try {
                         $insert->execute(
@@ -1787,6 +1881,8 @@ class InitDbDefault extends Command
                             $allowedResponse,
                             $allowedTransformation,
                             $allowedOptionType,
+                            $allowComment,
+                            $supportFeature,
                             $isRoot,
                             $created,
                             ]
@@ -1840,8 +1936,8 @@ class InitDbDefault extends Command
 
             $insert = $this->connection->prepare(
                 'INSERT INTO `' . $tableName . '`
-                (`option_type`, `family`, `icon`, `label`, `description`, `fields`, `allowed_response`, `created`)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
+                (`option_type`, `family`, `icon`, `label`, `description`, `fields`, `allowed_response`, `allow_comment`,`support_feature`,`created`)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?,?, ?)'
             );
 
             $created = !empty($optionType['created']) ? (int)$optionType['created'] : time();
@@ -1849,6 +1945,8 @@ class InitDbDefault extends Command
             $description = !empty($optionType['description']) ? $optionType['description'] : '';
             $fields = !empty($optionType['fields']) ? json_encode($optionType['fields']) : '';
             $allowedResponse = !empty($optionType['allowed_response']) ? json_encode($optionType['allowed_response']) : '';
+            $supportFeature = !empty($inquiryType['support_feature']) ? json_encode($inquiryType['support_feature']) : 'none';
+            $allowComment = $inquiryType['allow_comment'] ? 1 : 0;
 
             try {
                         $insert->execute(
@@ -1860,6 +1958,8 @@ class InitDbDefault extends Command
                             $description,
                             $fields,
                             $allowedResponse,
+                            $allowComment,
+                            $supportFeature,
                             $created,
                             ]
                         );

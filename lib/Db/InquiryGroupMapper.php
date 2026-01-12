@@ -432,104 +432,8 @@ class InquiryGroupMapper extends QBMapper
     }
 
     /**
-<<<<<<< HEAD
-     * Join misc settings from InquiryGroupMisc table
-    protected function joinMiscs(
-        IQueryBuilder &$qb,
-        string $fromAlias,
-        string $joinAlias = 'inq_group_misc_settings'
-    ): void {
-        $qb->addSelect($qb->createFunction('GROUP_CONCAT(DISTINCT CONCAT(' . $joinAlias . '.key, ":", ' . $joinAlias . '.value)) AS misc_group_settings_concat'));
-
-        $qb->leftJoin(
-            $fromAlias,
-            InquiryGroupMisc::TABLE,
-            $joinAlias,
-            $qb->expr()->andX(
-                $qb->expr()->eq($joinAlias . '.inquiry_group_id', $fromAlias . '.id'),
-            )
-        );
-    }
-     */
-/*
-    protected function joinInquiryIds(
-        IQueryBuilder $qb,
-        string $joinAlias = 'inqs',
-    ): void {
-        SqlHelper::getConcatenatedArray(
-            qb: $qb,
-            concatColumn: $joinAlias . '.inquiry_id',
-            asColumn: 'inquiry_ids',
-            dbProvider: $this->db->getDatabaseProvider(),
-        );
-
-        $qb->leftJoin(
-            self::TABLE,
-            InquiryGroup::RELATION_TABLE,
-            $joinAlias,
-            $qb->expr()->andX(
-                $qb->expr()->eq(self::TABLE . '.id', $joinAlias . '.group_id'),
-            )
-        );
-    }
- */
-    protected function joinMiscs(
-        IQueryBuilder &$qb,
-        string $fromAlias,
-        string $joinAlias = 'inq_group_misc_settings'
-    ): void {
-        $dbProvider = $this->db->getDatabaseProvider();
-
-        if ($dbProvider === IDBConnection::PLATFORM_POSTGRES) {
-            $concatExpr = $joinAlias . '.key || \':\' || ' . $joinAlias . '.value';
-        } else {
-            $concatExpr = 'CONCAT(' . $joinAlias . '.key, \':\', ' . $joinAlias . '.value)';
-        }
-
-        SqlHelper::getConcatenatedArray(
-            qb: $qb,
-            concatColumn: $concatExpr,
-            asColumn: 'misc_group_settings_concat',
-            dbProvider: $dbProvider,
-            separator: ','
-        );
-
-        $qb->leftJoin(
-            $fromAlias,
-            InquiryGroupMisc::TABLE,
-            $joinAlias,
-            $qb->expr()->andX(
-                $qb->expr()->eq($joinAlias . '.inquiry_group_id', $fromAlias . '.id'),
-            )
-        );
-    }
-
-    protected function joinInquiryIds(
-        IQueryBuilder $qb,
-        string $joinAlias = 'inqs',
-    ): void {
-        SqlHelper::getConcatenatedArray(
-            qb: $qb,
-            concatColumn: $joinAlias . '.inquiry_id',
-            asColumn: 'inquiry_ids',
-            dbProvider: $this->db->getDatabaseProvider(),
-            separator: ','
-        );
-
-        $qb->leftJoin(
-            self::TABLE,
-            InquiryGroup::RELATION_TABLE,
-            $joinAlias,
-            $qb->expr()->andX(
-                $qb->expr()->eq(self::TABLE . '.id', $joinAlias . '.group_id'),
-            )
-        );
-    }
-
-=======
      * Load dynamic fields for a single inquiry group
      */
->>>>>>> main
     private function loadDynamicFields(InquiryGroup $inquiryGroup): void
     {
         $inquiryGroupId = $inquiryGroup->getId();
@@ -613,8 +517,6 @@ class InquiryGroupMapper extends QBMapper
         return $qb;
     }
 
-<<<<<<< HEAD
-=======
     /**
      * Load inquiry IDs for an InquiryGroup
      */
@@ -685,5 +587,4 @@ class InquiryGroupMapper extends QBMapper
         }
     }
 
->>>>>>> main
 }

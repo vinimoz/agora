@@ -14,20 +14,24 @@ use JsonSerializable;
  * @psalm-suppress UnusedProperty
  * @method         int getId()
  * @method         void setId(int $value)
- * @method         string getType()
- * @method         void setType(string $value)
  * @method         string getOptionType()
  * @method         void setOptionType(string $value)
- * @method         string getFamily()
- * @method         void setFamily(string $value)
  * @method         string getLabel()
  * @method         void setLabel(string $value)
+ * @method         string getIcon()
+ * @method         void setIcon(string $value)
+ * @method         string getFamily()
+ * @method         void setFamily(string $value)
  * @method         ?string getDescription()
  * @method         void setDescription(?string $value)
  * @method         ?array getFields()
  * @method         void setFields(?array $value)
  * @method         ?array getAllowedResponse()
  * @method         void setAllowedResponse(?array $value)
+ * @method         int getAllowComment()
+ * @method         void setAllowComment(int $value)
+ * @method         string getSupportFeature()
+ * @method         void setSupportFeature(string $value)
  * @method         int getCreated()
  * @method         void setCreated(int $value)
  */
@@ -45,16 +49,20 @@ class InquiryOptionType extends EntityWithUser implements JsonSerializable
     protected ?string $description = null;
     protected ?array $fields = null;
     protected ?array $allowedResponse = null;
+    protected int $allowComment = 0;
+    protected string $supportFeature = 'none';
     protected int $created = 0;
 
     public function __construct()
     {
         $this->addType('id', 'integer');
         $this->addType('created', 'integer');
+        $this->addType('allowComment', 'integer');
         $this->addType('description', 'string');
         $this->addType('fields', 'json');
         $this->addType('family', 'string');
         $this->addType('allowedResponse', 'json');
+        $this->addType('supportFeature', 'string');
     }
 
     /**
@@ -72,7 +80,9 @@ class InquiryOptionType extends EntityWithUser implements JsonSerializable
             'icon' => $this->getIcon(),
             'description' => $this->getDescription(),
             'fields' => $this->getFields(),
-            'allowedResponse' => $this->getAllowedResponse(),
+            'allow_response' => $this->getAllowedResponse(),
+            'allow_comment' => $this->getAllowComment(),
+            'support_feature' => $this->getSupportFeature(),
             'created' => $this->getCreated(),
         ];
     }

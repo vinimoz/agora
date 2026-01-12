@@ -20,6 +20,8 @@ use JsonSerializable;
  * @method         void setFamily(string $value)
  * @method         string getLabel()
  * @method         void setLabel(string $value)
+ * @method         string getIcon()
+ * @method         void setIcon(string $value)
  * @method         ?string getDescription()
  * @method         void setDescription(?string $value)
  * @method         ?array getFields()
@@ -30,6 +32,10 @@ use JsonSerializable;
  * @method         void setAllowedTransformation(?array $value)
  * @method         ?array getAllowedOptionType()
  * @method         void setAllowedOptionType(?array $value)
+ * @method         int getAllowComment()
+ * @method         void setAllowComment(int $value)
+ * @method         string getSupportFeature()
+ * @method         void setSupportFeature(string $value)
  * @method         bool getIsRoot()
  * @method         void setIsRoot(bool $value)
  * @method         int getCreated()
@@ -51,6 +57,8 @@ class InquiryType extends EntityWithUser implements JsonSerializable
     protected ?array $allowedResponse = null;
     protected ?array $allowedTransformation = null;
     protected ?array $allowedOptionType = null;
+    protected int $allowComment = 0;
+    protected string $supportFeature = 'none';
     protected bool $isRoot = false;
     protected int $created = 0;
 
@@ -58,10 +66,12 @@ class InquiryType extends EntityWithUser implements JsonSerializable
     {
         $this->addType('id', 'integer');
         $this->addType('created', 'integer');
+        $this->addType('allowComment', 'integer');
         $this->addType('icon', 'string');
         $this->addType('family', 'string');
         $this->addType('description', 'string');
         $this->addType('inquiryType', 'string');
+        $this->addType('supportFeature', 'string');
         $this->addType('fields', 'json');
         $this->addType('allowedResponse', 'json');
         $this->addType('isRoot', 'boolean');
@@ -87,6 +97,8 @@ class InquiryType extends EntityWithUser implements JsonSerializable
             'allowed_response' => $this->getAllowedResponse(),
             'allowed_transformation' => $this->getAllowedTransformation(),
             'allowed_option_type' => $this->getAllowedOptionType(),
+            'allow_comment' => $this->getAllowComment(),
+            'support_feature' => $this->getSupportFeature(),
             'is_root' => $this->getIsRoot(),
             'created' => $this->getCreated(),
         ];
