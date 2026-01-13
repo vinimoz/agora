@@ -13,11 +13,11 @@
 const appName = "agora";
 const appVersion = "1.7.0-beta";
 import { _ as _export_sfc, c as createElementBlock, o as openBlock, j as createVNode, g as withCtx, C as createTextVNode, t as toDisplayString, s as translate, f as createBlock, l as createCommentVNode, k as createBaseVNode, i as mergeProps, U as ref, b as computed, D as purify, V as withDirectives, W as vShow, X as vModelText, Y as NcButton, M as Fragment, O as renderList, h as resolveDynamicComponent, Z as withModifiers, d as defineComponent, e as watch, J as normalizeClass, $ as resolveComponent, p as normalizeStyle, v as onMounted, x as normalizeProps, y as guardReactiveProps, z as createApp, A as pinia } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_ef057a6f_lang-CVwe8pgH.chunk.mjs";
-import { I as InputDiv, a as NcAppSettingsDialog, N as NcSettingsSection } from "./index-B7pEEOEz.chunk.mjs";
-import { d as useAppSettingsStore, e as d, g as gfmHeadingId, f as adminJobs, L as Logger, I as InquiryGeneralIcons, s as showError, S as StatusIcons } from "./NcDashboardWidget-Bu7bWoUK-Clxw7iI1.chunk.mjs";
-import { F as FlexSettings } from "./FlexSettings-a6yzAHld.chunk.mjs";
+import { I as InputDiv, a as NcAppSettingsDialog, N as NcSettingsSection } from "./index-BRUGFm4l.chunk.mjs";
+import { d as useAppSettingsStore, e as d, g as gfmHeadingId, f as adminJobs, L as Logger, I as InquiryGeneralIcons, s as showError, S as StatusIcons } from "./NcDashboardWidget-Bu7bWoUK-CVr4qFvh.chunk.mjs";
+import { F as FlexSettings } from "./FlexSettings-rmi9DipD.chunk.mjs";
 import { N as NcCheckboxRadioSwitch, a as NcSelect, b as NcInputField } from "./NcRichText-CETsOVBU-DheldUBo.chunk.mjs";
-import { R as RadioGroupDiv, C as CardDiv } from "./markdown-DRLYV8ch.chunk.mjs";
+import { R as RadioGroupDiv, C as CardDiv } from "./markdown-B_3V92b7.chunk.mjs";
 const _sfc_main$r = {
   __name: "AdminActivities",
   setup(__props, { expose: __expose }) {

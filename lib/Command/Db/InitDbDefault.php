@@ -530,7 +530,7 @@ class InitDbDefault extends Command
             ],
             'allowed_response' => ['objection','suggestion','official'],
             'allowed_transformation' => ['law_proposal'],
-            'allowed_option_type' => ['suggestion','position_for','position_against'],
+            'allowed_option_type' => ['message','position_for','position_against'],
             'allow_comment' => true,
             'support_feature' => 'binary',
             'is_root' => true,

@@ -29,7 +29,7 @@
           @click.stop="toggleMenu"
         >
           <template #icon>
-            <component :is="InquiryGeneralIcons.More" :size="16" />
+            <component :is="InquiryOptionIcons.More" :size="16" />
           </template>
         </NcButton>
         
@@ -42,7 +42,7 @@
               @click="editOption"
             >
               <template #icon>
-                <component :is="InquiryGeneralIcons.Edit" :size="16" />
+                <component :is="InquiryOptionIcons.Edit" :size="16" />
               </template>
               {{ t('agora', 'Edit') }}
             </NcButton>
@@ -54,7 +54,7 @@
               @click="deleteOption"
             >
               <template #icon>
-                <component :is="InquiryGeneralIcons.Delete" :size="16" />
+                <component :is="InquiryOptionIcons.Delete" :size="16" />
               </template>
               {{ t('agora', 'Delete') }}
             </NcButton>
@@ -66,7 +66,7 @@
               @click="addChildOption"
             >
               <template #icon>
-                <component :is="InquiryGeneralIcons.Add" :size="16" />
+                <component :is="InquiryOptionIcons.Add" :size="16" />
               </template>
               {{ t('agora', 'Add child') }}
             </NcButton>
@@ -134,7 +134,7 @@
         @click.stop="$emit('comment', option)"
       >
         <div class="stat-icon">
-          <component :is="InquiryGeneralIcons.Comment" :size="18" />
+          <component :is="InquiryOptionIcons.Comment" :size="18" />
         </div>
         <span class="stat-count">{{ option.currentUserStatus?.countComments || 0 }}</span>
       </div>
@@ -146,7 +146,7 @@
         @click.stop="$emit('answer', option)"
       >
         <div class="stat-icon">
-          <component :is="InquiryGeneralIcons.Answer" :size="18" />
+          <component :is="InquiryOptionIcons.Answer" :size="18" />
         </div>
         <span class="stat-count">{{ option.currentUserStatus?.countAnswers || 0 }}</span>
       </div>
@@ -158,7 +158,7 @@
         @click.stop="$emit('refine', option)"
       >
         <div class="stat-icon">
-          <component :is="InquiryGeneralIcons.Refine" :size="18" />
+          <component :is="InquiryOptionIcons.Refine" :size="18" />
         </div>
         <span class="stat-count">{{ option.currentUserStatus?.countRefinements || 0 }}</span>
       </div>
@@ -169,7 +169,7 @@
         class="stat-item children"
       >
         <div class="stat-icon">
-          <component :is="InquiryGeneralIcons.Children" :size="18" />
+          <component :is="InquiryOptionIcons.Children" :size="18" />
         </div>
         <span class="stat-count">{{ option.children.length }}</span>
       </div>
@@ -203,7 +203,7 @@
         @click.stop="$emit('comment', option)"
       >
         <template #icon>
-          <component :is="InquiryGeneralIcons.Comment" :size="16" />
+          <component :is="InquiryOptionIcons.Comment" :size="16" />
         </template>
         {{ t('agora', 'Comment') }}
       </NcButton>
@@ -214,7 +214,7 @@
         @click.stop="$emit('refine', option)"
       >
         <template #icon>
-          <component :is="InquiryGeneralIcons.Refine" :size="16" />
+          <component :is="InquiryOptionIcons.Refine" :size="16" />
         </template>
         {{ t('agora', 'Refine') }}
       </NcButton>
@@ -231,7 +231,7 @@ import NcAvatar from '@nextcloud/vue/components/NcAvatar'
 import { useInquiryStore } from '../../stores/inquiry'
 import { useOptionsStore } from '../../stores/options'
 import { useSessionStore } from '../../stores/session'
-import { InquiryGeneralIcons } from '../../utils/icons.ts'
+import { InquiryOptionIcons } from '../../utils/icons.ts'
 import { TernarySupportIcon, ThumbIcon } from '../AppIcons'
 import { Option } from '../../stores/option.ts'
 

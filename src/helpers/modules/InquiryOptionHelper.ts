@@ -32,15 +32,14 @@ export function getAllowedOptionTypes(
   } else if (Array.isArray(inquiryTypeConfig.allowed_option_type)) {
     allowedOptionTypeKeys = inquiryTypeConfig.allowed_option_type
   }
-
+    console.log("ALLLOPTYPE KEYSSSSSS",allowedOptionTypeKeys)
   // Map keys to OptionType objects
   const result: OptionType[] = []
 
   for (const key of allowedOptionTypeKeys) {
     // Try to find the option type - check multiple possible fields
     const optionType = optionTypes.find(opt =>
-      opt.option_type === key || // Try option_type
-      opt.optionType === key     // Try optionType (from your data)
+      opt.optionType === key   
     )
 
     if (optionType) {
@@ -93,8 +92,12 @@ export function getFamiliesWithOptionTypes(
   optionTypes: OptionType[];
 }> {
   // Get allowed option types
+  console.log(" ALLLLLLLLLLL OPTION TYPE KEY ",inquiryTypeKey)
+  console.log(" ALLLLLLLLLLL INQYUIRY TYPE  ",inquiryTypes)
+  console.log(" ALLLLLLLLLLL OPTION TYES ",optionTypes)
   const allowedOptionTypes = getAllowedOptionTypes(inquiryTypeKey, inquiryTypes, optionTypes)
-  
+  console.log(" ALLLLLLLLLLL OPTION TYPEs REDCEIVED ",allowedOptionTypes)
+
   // Group by family
   const groupedByFamily = groupOptionTypesByFamily(allowedOptionTypes)
   

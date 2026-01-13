@@ -10913,12 +10913,12 @@ tr.file-picker__row td.row-name[data-v-1f96131b] {
 const appName = "agora";
 const appVersion = "1.7.0-beta";
 import { at as h$1, B as defineStore, s as translate, b6 as emit, bc as Settings, a as _export_sfc, d as defineComponent, b as computed, bd as getCanonicalLocale, c as createElementBlock, o as openBlock, t as toDisplayString, J as normalizeClass, b9 as NcActionButton, _ as _export_sfc$1, f as createBlock, g as withCtx, l as createCommentVNode, h as resolveDynamicComponent, k as createBaseVNode, be as NC_ACTIONS_IS_SEMANTIC_MENU, a4 as createElementId, bf as ActionGlobalMixin, V as withDirectives, bg as vModelRadio, bh as withKeys, Z as withModifiers, u as useModel, bi as useSlots, e as watch, aw as logger, v as onMounted, aK as onBeforeUnmount, r as renderSlot, af as useCssVars, bj as useIsDarkTheme, n as unref, bk as mdiCreation, j as createVNode, a7 as createSlots, C as createTextVNode, K as NcIconSvgWrapper, Y as NcButton, ba as NcActions, $ as resolveComponent, i as mergeProps, W as vShow, x as normalizeProps, y as guardReactiveProps, bl as userStatus, N as NcAvatar, p as normalizeStyle, m as mergeModels, U as ref, bm as provide, w as warn, a1 as useTemplateRef, a0 as useAttrs, L as isLegacy, a2 as mdiCheck, a3 as mdiAlertCircle, M as Fragment$1, O as renderList, ae as NcLoadingIcon, bn as Teleport, bo as useRouter, P as DateTime, R as RouterLink, b8 as onUnmounted, bp as useRoute, bq as translatePlural, br as TransitionGroup, aL as nextTick, E as _$2, bs as NcModal, b7 as shallowRef, bt as markRaw, bu as watchEffect, bv as getCurrentInstance, bw as customRef, bx as global, by as getAugmentedNamespace, aN as process$1, b5 as commonjsGlobal, bz as Buffer, S as getDefaultExportFromCjs, bA as vModelSelect, as as Transition, bB as toRaw, bC as subscribe, bD as unsubscribe, bE as onBeforeRouteUpdate, aR as getCurrentUser, aT as v, aS as cancelableClient, D as purify, bF as onBeforeRouteLeave, bG as createRouter, bH as createWebHistory, bI as axios, z as createApp, A as pinia } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_ef057a6f_lang-CVwe8pgH.chunk.mjs";
-import { a as useSessionStore, p as publicInquiry, h as supports, L as Logger, i as useInquiryStore, s as showError$1, o as options, E as Event$1, I as InquiryGeneralIcons, j as createPermissionContextForContent, C as ContentType, k as canTransfer, l as canDelete, m as canArchive, b as useInquiriesStore, n as useInquiryGroupsStore, q as NavigationIcons, r as showSuccess, t as useInquiryGroupStore, v as canCreateInquiryGroup, w as accessFamilyMenu, x as NcEmptyContent, S as StatusIcons, B as BadgeIcons, y as canSupport, z as canComment, A as sortTitlesMapping, D as lodashExports, F as appSettings, G as canRestore, H as getAvailableResponseTypesWithPermissions, J as getAvailableTransformTypesWithPermissions, K as canViewToggle, M as validators, O as inquiries, P as commonjsRequire, Q as useAttachmentsStore, R as useCommentsStore, T as useSharesStore, U as canEdit, V as createPermissionContextForInquiryGroup, d as useAppSettingsStore, W as createDefault, X as inquiryLinks, Y as ShareIcons, Z as canShare, _ as canUseResource } from "./NcDashboardWidget-Bu7bWoUK-Clxw7iI1.chunk.mjs";
-import { u as usePreferencesStore, S as StyleSettings, F as FeatureSettings } from "./StyleSettings-vmEWHuUU.chunk.mjs";
-import { b as NcAppNavigationItem, u as useAppSettingsDialog, _ as _sfc_main$1O, c as NcAppNavigationList, d as NcAppNavigation, S as Spinner, Q as QRCode, I as InputDiv, e as NcAppContent, f as NcActionButtonGroup, g as NcDialog, h as find$1, r as registerCustomProtocol, t as tokenize, i as reset, j as NcDateTimePicker, O as Options, k as NcActionInput, P as PlusIcon, l as NcDateTimePickerNative, m as NcAppSidebar, a as NcAppSettingsDialog, n as NcContent } from "./index-B7pEEOEz.chunk.mjs";
-import { g as getInquiryTypeData, a as getAvailableInquiryTypesForCreation, b as getInquiryTypeOptions, c as getAllowedResponseGroupTypes, d as getAvailableInquiryGroupTypesForCreation, e as getInquiryGroupTypeData, f as getInquiryTypesByFamily, h as getInquiryTypesForFamily, i as getInquiryItemData, j as getInquiryGroupTypesByFamily, k as getInquiryGroupTypesForFamily, l as isInquiryFinalStatus, m as getAvailableFields, n as getAvailableGroupFields } from "./InquiryHelper-Dc_hXJI2.chunk.mjs";
+import { a as useSessionStore, p as publicInquiry, h as supports, L as Logger, i as useInquiryStore, s as showError$1, o as options, E as Event$1, I as InquiryGeneralIcons, j as createPermissionContextForContent, C as ContentType, k as canTransfer, l as canDelete, m as canArchive, b as useInquiriesStore, n as useInquiryGroupsStore, q as NavigationIcons, r as showSuccess, t as useInquiryGroupStore, v as canCreateInquiryGroup, w as accessFamilyMenu, x as NcEmptyContent, S as StatusIcons, B as BadgeIcons, y as canSupport, z as canComment, A as sortTitlesMapping, D as lodashExports, F as appSettings, G as canRestore, H as getAvailableResponseTypesWithPermissions, J as getAvailableTransformTypesWithPermissions, K as canViewToggle, M as validators, O as inquiries, P as commonjsRequire, Q as useAttachmentsStore, R as InquiryOptionIcons, T as useCommentsStore, U as useSharesStore, V as canEdit, W as createPermissionContextForInquiryGroup, d as useAppSettingsStore, X as createDefault, Y as inquiryLinks, Z as ShareIcons, _ as canShare, $ as canUseResource } from "./NcDashboardWidget-Bu7bWoUK-CVr4qFvh.chunk.mjs";
+import { u as usePreferencesStore, S as StyleSettings, F as FeatureSettings } from "./StyleSettings-BRlRGjs9.chunk.mjs";
+import { b as NcAppNavigationItem, u as useAppSettingsDialog, _ as _sfc_main$1O, c as NcAppNavigationList, d as NcAppNavigation, S as Spinner, Q as QRCode, I as InputDiv, e as NcAppContent, f as NcActionButtonGroup, g as NcDialog, h as find$1, r as registerCustomProtocol, t as tokenize, i as reset, j as NcDateTimePicker, O as Options, k as NcActionInput, P as PlusIcon, l as NcDateTimePickerNative, m as NcAppSidebar, a as NcAppSettingsDialog, n as NcContent } from "./index-BRUGFm4l.chunk.mjs";
+import { g as getInquiryTypeData, a as getAvailableInquiryTypesForCreation, b as getInquiryTypeOptions, c as getAllowedResponseGroupTypes, d as getAvailableInquiryGroupTypesForCreation, e as getInquiryGroupTypeData, f as getInquiryTypesByFamily, h as getInquiryTypesForFamily, i as getInquiryItemData, j as getInquiryGroupTypesByFamily, k as getInquiryGroupTypesForFamily, l as isInquiryFinalStatus, m as getAvailableFields, n as getAvailableGroupFields } from "./InquiryHelper-DOQuWZrz.chunk.mjs";
 import { _ as _sfc_main$1P, I as INSIDE_RADIO_GROUP_KEY, a as NcSelect, N as NcCheckboxRadioSwitch, d as _sfc_main$1Q, e as NcRichText, b as NcInputField } from "./NcRichText-CETsOVBU-DheldUBo.chunk.mjs";
-import { R as RadioGroupDiv, N as NcNoteCard, C as CardDiv } from "./markdown-DRLYV8ch.chunk.mjs";
+import { R as RadioGroupDiv, N as NcNoteCard, C as CardDiv } from "./markdown-B_3V92b7.chunk.mjs";
 import { A as AgoraAppIcon } from "./AgoraAppIcon-Cq8JxIdv.chunk.mjs";
 import { N as NcUserBubble } from "./NcUserBubble-CM66IyhS-n-KU5uap.chunk.mjs";
 const setCookie = (cookieName, cookieValue = "", cookieExpiration = 360) => {
@@ -11837,12 +11837,11 @@ function getAllowedOptionTypes(inquiryTypeKey, inquiryTypes, optionTypes) {
   } else if (Array.isArray(inquiryTypeConfig.allowed_option_type)) {
     allowedOptionTypeKeys = inquiryTypeConfig.allowed_option_type;
   }
+  console.log("ALLLOPTYPE KEYSSSSSS", allowedOptionTypeKeys);
   const result2 = [];
   for (const key of allowedOptionTypeKeys) {
     const optionType = optionTypes.find(
-      (opt) => opt.option_type === key || // Try option_type
-      opt.optionType === key
-      // Try optionType (from your data)
+      (opt) => opt.optionType === key
     );
     if (optionType) {
       const optionWithType = {
@@ -11868,7 +11867,11 @@ function groupOptionTypesByFamily(optionTypes) {
   return grouped;
 }
 function getFamiliesWithOptionTypes(inquiryTypeKey, inquiryTypes, optionTypes) {
+  console.log(" ALLLLLLLLLLL OPTION TYPE KEY ", inquiryTypeKey);
+  console.log(" ALLLLLLLLLLL INQYUIRY TYPE  ", inquiryTypes);
+  console.log(" ALLLLLLLLLLL OPTION TYES ", optionTypes);
   const allowedOptionTypes = getAllowedOptionTypes(inquiryTypeKey, inquiryTypes, optionTypes);
+  console.log(" ALLLLLLLLLLL OPTION TYPEs REDCEIVED ", allowedOptionTypes);
   const groupedByFamily = groupOptionTypesByFamily(allowedOptionTypes);
   return Object.entries(groupedByFamily).map(([familyKey, familyOptionTypes]) => {
     const fallbackData = getFamilyFallbackData();
@@ -66179,8 +66182,8 @@ const _sfc_main$S = /* @__PURE__ */ defineComponent({
       return NcButton;
     }, get NcAvatar() {
       return NcAvatar;
-    }, get InquiryGeneralIcons() {
-      return InquiryGeneralIcons;
+    }, get InquiryOptionIcons() {
+      return InquiryOptionIcons;
     }, get TernarySupportIcon() {
       return TernarySupportIcon;
     }, get ThumbIcon() {
@@ -66273,7 +66276,7 @@ function _sfc_render$S(_ctx, _cache, $props, $setup, $data, $options) {
             onClick: withModifiers($setup.toggleMenu, ["stop"])
           }, {
             icon: withCtx(() => [
-              (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.More), { size: 16 }))
+              (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons.More), { size: 16 }))
             ]),
             _: 1
             /* STABLE */
@@ -66288,7 +66291,7 @@ function _sfc_render$S(_ctx, _cache, $props, $setup, $data, $options) {
                   onClick: $setup.editOption
                 }, {
                   icon: withCtx(() => [
-                    (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.Edit), { size: 16 }))
+                    (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons.Edit), { size: 16 }))
                   ]),
                   default: withCtx(() => [
                     createTextVNode(
@@ -66307,7 +66310,7 @@ function _sfc_render$S(_ctx, _cache, $props, $setup, $data, $options) {
                   onClick: $setup.deleteOption
                 }, {
                   icon: withCtx(() => [
-                    (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.Delete), { size: 16 }))
+                    (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons.Delete), { size: 16 }))
                   ]),
                   default: withCtx(() => [
                     createTextVNode(
@@ -66326,7 +66329,7 @@ function _sfc_render$S(_ctx, _cache, $props, $setup, $data, $options) {
                   onClick: $setup.addChildOption
                 }, {
                   icon: withCtx(() => [
-                    (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.Add), { size: 16 }))
+                    (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons.Add), { size: 16 }))
                   ]),
                   default: withCtx(() => [
                     createTextVNode(
@@ -66443,7 +66446,7 @@ function _sfc_render$S(_ctx, _cache, $props, $setup, $data, $options) {
           onClick: _cache[2] || (_cache[2] = withModifiers(($event) => _ctx.$emit("comment", $props.option), ["stop"]))
         }, [
           createBaseVNode("div", _hoisted_15$h, [
-            (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.Comment), { size: 18 }))
+            (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons.Comment), { size: 18 }))
           ]),
           createBaseVNode(
             "span",
@@ -66460,7 +66463,7 @@ function _sfc_render$S(_ctx, _cache, $props, $setup, $data, $options) {
           onClick: _cache[3] || (_cache[3] = withModifiers(($event) => _ctx.$emit("answer", $props.option), ["stop"]))
         }, [
           createBaseVNode("div", _hoisted_17$h, [
-            (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.Answer), { size: 18 }))
+            (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons.Answer), { size: 18 }))
           ]),
           createBaseVNode(
             "span",
@@ -66477,7 +66480,7 @@ function _sfc_render$S(_ctx, _cache, $props, $setup, $data, $options) {
           onClick: _cache[4] || (_cache[4] = withModifiers(($event) => _ctx.$emit("refine", $props.option), ["stop"]))
         }, [
           createBaseVNode("div", _hoisted_19$h, [
-            (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.Refine), { size: 18 }))
+            (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons.Refine), { size: 18 }))
           ]),
           createBaseVNode(
             "span",
@@ -66490,7 +66493,7 @@ function _sfc_render$S(_ctx, _cache, $props, $setup, $data, $options) {
         createCommentVNode(" Children count "),
         $props.option.children && $props.option.children.length > 0 ? (openBlock(), createElementBlock("div", _hoisted_21$h, [
           createBaseVNode("div", _hoisted_22$h, [
-            (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.Children), { size: 18 }))
+            (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons.Children), { size: 18 }))
           ]),
           createBaseVNode(
             "span",
@@ -66535,7 +66538,7 @@ function _sfc_render$S(_ctx, _cache, $props, $setup, $data, $options) {
           onClick: _cache[6] || (_cache[6] = withModifiers(($event) => _ctx.$emit("comment", $props.option), ["stop"]))
         }, {
           icon: withCtx(() => [
-            (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.Comment), { size: 16 }))
+            (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons.Comment), { size: 16 }))
           ]),
           default: withCtx(() => [
             createTextVNode(
@@ -66553,7 +66556,7 @@ function _sfc_render$S(_ctx, _cache, $props, $setup, $data, $options) {
           onClick: _cache[7] || (_cache[7] = withModifiers(($event) => _ctx.$emit("refine", $props.option), ["stop"]))
         }, {
           icon: withCtx(() => [
-            (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.Refine), { size: 16 }))
+            (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons.Refine), { size: 16 }))
           ]),
           default: withCtx(() => [
             createTextVNode(
@@ -66626,17 +66629,17 @@ const _sfc_main$R = /* @__PURE__ */ defineComponent({
     });
     const getIcon = (iconName) => {
       const iconMap = {
-        "icon-discussion": InquiryGeneralIcons.Discussion,
-        "icon-question": InquiryGeneralIcons.Question,
-        "icon-lightbulb": InquiryGeneralIcons.Lightbulb,
-        "icon-settings": InquiryGeneralIcons.Settings,
-        "icon-code": InquiryGeneralIcons.Code,
-        "icon-category-other": InquiryGeneralIcons.CategoryOther,
-        "icon-like": InquiryGeneralIcons.ThumbUp,
-        "icon-dislike": InquiryGeneralIcons.ThumbDown,
-        "icon-checkmark": InquiryGeneralIcons.Checkmark
+        "icon-discussion": InquiryOptionIcons.Discussion,
+        "icon-question": InquiryOptionIcons.Question,
+        "icon-lightbulb": InquiryOptionIcons.Lightbulb,
+        "icon-settings": InquiryOptionIcons.Settings,
+        "icon-code": InquiryOptionIcons.Code,
+        "icon-category-other": InquiryOptionIcons.CategoryOther,
+        "icon-like": InquiryOptionIcons.ThumbUp,
+        "icon-dislike": InquiryOptionIcons.ThumbDown,
+        "icon-checkmark": InquiryOptionIcons.Checkmark
       };
-      return iconMap[iconName] || InquiryGeneralIcons.File;
+      return iconMap[iconName] || InquiryOptionIcons.File;
     };
     const getSelectOptions = (field) => field.options?.map((option2) => ({
       value: option2.value,
@@ -66765,8 +66768,8 @@ const _sfc_main$R = /* @__PURE__ */ defineComponent({
       return NcNoteCard;
     }, get NcLoadingIcon() {
       return NcLoadingIcon;
-    }, get InquiryGeneralIcons() {
-      return InquiryGeneralIcons;
+    }, get InquiryOptionIcons() {
+      return InquiryOptionIcons;
     } };
     Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
     return __returned__;
@@ -67117,7 +67120,7 @@ function _sfc_render$R(_ctx, _cache, $props, $setup, $data, $options) {
             onClick: $setup.submitForm
           }, {
             icon: withCtx(() => [
-              !$setup.submitting ? (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.Add), {
+              !$setup.submitting ? (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons.Add), {
                 key: 0,
                 size: 18
               })) : (openBlock(), createBlock($setup["NcLoadingIcon"], {
@@ -67351,8 +67354,8 @@ const _sfc_main$Q = /* @__PURE__ */ defineComponent({
       return NcLoadingIcon;
     }, get NcNoteCard() {
       return NcNoteCard;
-    }, get InquiryGeneralIcons() {
-      return InquiryGeneralIcons;
+    }, get InquiryOptionIcons() {
+      return InquiryOptionIcons;
     }, get TernarySupportIcon() {
       return TernarySupportIcon;
     }, get ThumbIcon() {
@@ -67476,7 +67479,7 @@ function _sfc_render$Q(_ctx, _cache, $props, $setup, $data, $options) {
                 onClick: $setup.closeDrawer
               }, {
                 icon: withCtx(() => [
-                  (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.Close), { size: 20 }))
+                  (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons.Close), { size: 20 }))
                 ]),
                 _: 1
                 /* STABLE */
@@ -67514,7 +67517,7 @@ function _sfc_render$Q(_ctx, _cache, $props, $setup, $data, $options) {
                     onClick: $setup.editOption
                   }, {
                     icon: withCtx(() => [
-                      (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.Edit), { size: 20 }))
+                      (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons.Edit), { size: 20 }))
                     ]),
                     default: withCtx(() => [
                       createTextVNode(
@@ -67532,7 +67535,7 @@ function _sfc_render$Q(_ctx, _cache, $props, $setup, $data, $options) {
                     onClick: $setup.confirmDelete
                   }, {
                     icon: withCtx(() => [
-                      (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.Delete), { size: 20 }))
+                      (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons.Delete), { size: 20 }))
                     ]),
                     default: withCtx(() => [
                       createTextVNode(
@@ -67551,7 +67554,7 @@ function _sfc_render$Q(_ctx, _cache, $props, $setup, $data, $options) {
                     onClick: $setup.addChildOption
                   }, {
                     icon: withCtx(() => [
-                      (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.Add), { size: 20 }))
+                      (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons.Add), { size: 20 }))
                     ]),
                     default: withCtx(() => [
                       createTextVNode(
@@ -67700,7 +67703,7 @@ function _sfc_render$Q(_ctx, _cache, $props, $setup, $data, $options) {
                       class: "stat-item",
                       onClick: $setup.scrollToComments
                     }, [
-                      (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.Comment), { size: 16 })),
+                      (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons.Comment), { size: 16 })),
                       createBaseVNode(
                         "span",
                         _hoisted_23$d,
@@ -67746,7 +67749,7 @@ function _sfc_render$Q(_ctx, _cache, $props, $setup, $data, $options) {
                       )
                     ])) : createCommentVNode("v-if", true),
                     $setup.option.children?.length ? (openBlock(), createElementBlock("div", _hoisted_27$c, [
-                      (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.Children), { size: 16 })),
+                      (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons.Children), { size: 16 })),
                       createBaseVNode(
                         "span",
                         _hoisted_28$b,
@@ -67811,7 +67814,7 @@ function _sfc_render$Q(_ctx, _cache, $props, $setup, $data, $options) {
                 [
                   createBaseVNode("div", _hoisted_36$7, [
                     createBaseVNode("h3", _hoisted_37$7, [
-                      (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.Comment), { size: 20 })),
+                      (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons.Comment), { size: 20 })),
                       createTextVNode(
                         " " + toDisplayString($setup.t("agora", "Comments")) + " ",
                         1
@@ -67831,7 +67834,7 @@ function _sfc_render$Q(_ctx, _cache, $props, $setup, $data, $options) {
                       onClick: _cache[2] || (_cache[2] = ($event) => $setup.showCommentForm = !$setup.showCommentForm)
                     }, {
                       icon: withCtx(() => [
-                        (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.Add), { size: 16 }))
+                        (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons.Add), { size: 16 }))
                       ]),
                       default: withCtx(() => [
                         createTextVNode(
@@ -67932,7 +67935,7 @@ function _sfc_render$Q(_ctx, _cache, $props, $setup, $data, $options) {
                                 onClick: ($event) => $setup.deleteComment(comment.id)
                               }, {
                                 icon: withCtx(() => [
-                                  (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.Delete), { size: 14 }))
+                                  (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons.Delete), { size: 14 }))
                                 ]),
                                 _: 2
                                 /* DYNAMIC */
@@ -67951,7 +67954,7 @@ function _sfc_render$Q(_ctx, _cache, $props, $setup, $data, $options) {
                       /* KEYED_FRAGMENT */
                     ))
                   ])) : (openBlock(), createElementBlock("div", _hoisted_49$4, [
-                    (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.Comment), { size: 48 })),
+                    (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons.Comment), { size: 48 })),
                     createBaseVNode(
                       "h4",
                       null,
@@ -67974,7 +67977,7 @@ function _sfc_render$Q(_ctx, _cache, $props, $setup, $data, $options) {
               createCommentVNode(" Children Section "),
               $setup.option.children?.length ? (openBlock(), createElementBlock("div", _hoisted_50$4, [
                 createBaseVNode("h3", _hoisted_51$4, [
-                  (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.Children), { size: 20 })),
+                  (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons.Children), { size: 20 })),
                   createTextVNode(
                     " " + toDisplayString($setup.t("agora", "Child Options")) + " ",
                     1
@@ -68129,11 +68132,10 @@ const _sfc_main$P = /* @__PURE__ */ defineComponent({
         (opt) => opt.option_type === optionTypeKey || opt.optionType === optionTypeKey
       );
       if (optionType?.icon) {
-        return InquiryGeneralIcons[optionType.icon] || InquiryGeneralIcons.File;
+        return InquiryOptionIcons[optionType.icon] || InquiryOptionIcons.File;
       }
-      return InquiryGeneralIcons.File;
+      return InquiryOptionIcons.File;
     };
-    const canAddOptions = computed(() => inquiryStore.permissions.addOptions);
     const setActiveFamily = (familyKey) => {
       activeFamily.value = familyKey;
     };
@@ -68193,12 +68195,12 @@ const _sfc_main$P = /* @__PURE__ */ defineComponent({
     });
     watch(debugInfo, () => {
     }, { immediate: true });
-    const __returned__ = { props: props2, inquiryStore, optionsStore, sessionStore, activeFamily, showAddOptionModal, showOptionDetail, selectedOptionTypeKey, selectedParentId, selectedOptionId, allInquiryTypes, allOptionTypes, debugInfo, familiesWithOptions, hasVisibleFamilies, activeFamilyData, familyCounts, activeFamilyOptions, positionsFor, positionsAgainst, argumentsFor, argumentsAgainst, alternatives, messages, chapters, objections, exceptions, consultationQuestions, officialResults, pollOptions, getChildOptions, getFamilyIcon, getOptionTypeLabel, getOptionTypeIcon, canAddOptions, setActiveFamily, openAddOptionModal, closeAddOptionModal, openOptionDetail, closeOptionDetail, handleOptionCreated, handleOptionUpdated, handleOptionDeleted, get t() {
+    const __returned__ = { props: props2, inquiryStore, optionsStore, sessionStore, activeFamily, showAddOptionModal, showOptionDetail, selectedOptionTypeKey, selectedParentId, selectedOptionId, allInquiryTypes, allOptionTypes, debugInfo, familiesWithOptions, hasVisibleFamilies, activeFamilyData, familyCounts, activeFamilyOptions, positionsFor, positionsAgainst, argumentsFor, argumentsAgainst, alternatives, messages, chapters, objections, exceptions, consultationQuestions, officialResults, pollOptions, getChildOptions, getFamilyIcon, getOptionTypeLabel, getOptionTypeIcon, setActiveFamily, openAddOptionModal, closeAddOptionModal, openOptionDetail, closeOptionDetail, handleOptionCreated, handleOptionUpdated, handleOptionDeleted, get t() {
       return translate;
     }, get NcButton() {
       return NcButton;
-    }, get InquiryGeneralIcons() {
-      return InquiryGeneralIcons;
+    }, get InquiryOptionIcons() {
+      return InquiryOptionIcons;
     }, get getFamilyColor() {
       return getFamilyColor;
     }, OptionCard, AddOptionModal, OptionDetailDrawer };
@@ -68223,91 +68225,90 @@ const _hoisted_7$h = {
   class: "family-content"
 };
 const _hoisted_8$h = { class: "family-header" };
-const _hoisted_9$h = { class: "family-title" };
-const _hoisted_10$h = { class: "family-description" };
-const _hoisted_11$h = {
+const _hoisted_9$h = { class: "family-description" };
+const _hoisted_10$h = {
   key: 0,
   class: "family-actions-bar"
 };
-const _hoisted_12$h = { class: "family-layout" };
-const _hoisted_13$g = {
+const _hoisted_11$h = { class: "family-layout" };
+const _hoisted_12$h = {
   key: 0,
   class: "debate-layout"
 };
-const _hoisted_14$e = { class: "debate-section positions-section" };
-const _hoisted_15$e = { class: "section-title" };
-const _hoisted_16$e = { class: "positions-grid" };
-const _hoisted_17$e = { class: "positions-column" };
-const _hoisted_18$e = { class: "column-title" };
-const _hoisted_19$e = { class: "options-list" };
-const _hoisted_20$e = {
+const _hoisted_13$g = { class: "debate-section positions-section" };
+const _hoisted_14$e = { class: "section-title" };
+const _hoisted_15$e = { class: "positions-grid" };
+const _hoisted_16$e = { class: "positions-column" };
+const _hoisted_17$e = { class: "column-title" };
+const _hoisted_18$e = { class: "options-list" };
+const _hoisted_19$e = {
   key: 0,
   class: "empty-column"
 };
-const _hoisted_21$e = { class: "positions-column" };
-const _hoisted_22$e = { class: "column-title" };
-const _hoisted_23$c = { class: "options-list" };
-const _hoisted_24$b = {
+const _hoisted_20$e = { class: "positions-column" };
+const _hoisted_21$e = { class: "column-title" };
+const _hoisted_22$e = { class: "options-list" };
+const _hoisted_23$c = {
   key: 0,
   class: "empty-column"
 };
-const _hoisted_25$b = { class: "debate-section arguments-section" };
-const _hoisted_26$b = { class: "section-title" };
-const _hoisted_27$b = { class: "arguments-grid" };
-const _hoisted_28$a = { class: "arguments-column" };
-const _hoisted_29$a = { class: "column-title" };
-const _hoisted_30$a = { class: "arguments-column" };
-const _hoisted_31$8 = { class: "column-title" };
-const _hoisted_32$7 = { class: "debate-section other-section" };
-const _hoisted_33$7 = { class: "other-grid" };
-const _hoisted_34$7 = { class: "other-column" };
-const _hoisted_35$7 = { class: "column-title" };
-const _hoisted_36$6 = { class: "other-column" };
-const _hoisted_37$6 = { class: "column-title" };
-const _hoisted_38$6 = { class: "structure-layout" };
-const _hoisted_39$5 = { class: "tree-view" };
-const _hoisted_40$5 = { class: "node-content" };
-const _hoisted_41$5 = { class: "node-label" };
-const _hoisted_42$4 = { class: "node-content" };
-const _hoisted_43$4 = { class: "node-label" };
-const _hoisted_44$4 = { class: "node-content" };
-const _hoisted_45$3 = { class: "node-label" };
-const _hoisted_46$3 = { class: "consensus-layout" };
-const _hoisted_47$3 = {
+const _hoisted_24$b = { class: "debate-section arguments-section" };
+const _hoisted_25$b = { class: "section-title" };
+const _hoisted_26$b = { class: "arguments-grid" };
+const _hoisted_27$b = { class: "arguments-column" };
+const _hoisted_28$a = { class: "column-title" };
+const _hoisted_29$a = { class: "arguments-column" };
+const _hoisted_30$a = { class: "column-title" };
+const _hoisted_31$8 = { class: "debate-section other-section" };
+const _hoisted_32$7 = { class: "other-grid" };
+const _hoisted_33$7 = { class: "other-column" };
+const _hoisted_34$7 = { class: "column-title" };
+const _hoisted_35$7 = { class: "other-column" };
+const _hoisted_36$6 = { class: "column-title" };
+const _hoisted_37$6 = { class: "structure-layout" };
+const _hoisted_38$6 = { class: "tree-view" };
+const _hoisted_39$5 = { class: "node-content" };
+const _hoisted_40$5 = { class: "node-label" };
+const _hoisted_41$5 = { class: "node-content" };
+const _hoisted_42$4 = { class: "node-label" };
+const _hoisted_43$4 = { class: "node-content" };
+const _hoisted_44$4 = { class: "node-label" };
+const _hoisted_45$3 = { class: "consensus-layout" };
+const _hoisted_46$3 = {
   key: 0,
   class: "consensus-section"
 };
-const _hoisted_48$3 = { class: "section-title blocking" };
-const _hoisted_49$3 = { class: "options-list" };
-const _hoisted_50$3 = {
+const _hoisted_47$3 = { class: "section-title blocking" };
+const _hoisted_48$3 = { class: "options-list" };
+const _hoisted_49$3 = {
   key: 1,
   class: "consensus-section"
 };
-const _hoisted_51$3 = { class: "section-title non-blocking" };
-const _hoisted_52$3 = { class: "options-list" };
-const _hoisted_53$3 = {
+const _hoisted_50$3 = { class: "section-title non-blocking" };
+const _hoisted_51$3 = { class: "options-list" };
+const _hoisted_52$3 = {
   key: 2,
   class: "consensus-section"
 };
-const _hoisted_54$3 = { class: "section-title" };
-const _hoisted_55$3 = { class: "options-list" };
-const _hoisted_56$3 = { class: "decision-layout" };
-const _hoisted_57$3 = { class: "decision-section" };
-const _hoisted_58$3 = { class: "section-title" };
-const _hoisted_59$3 = { class: "options-list" };
-const _hoisted_60$3 = {
+const _hoisted_53$3 = { class: "section-title" };
+const _hoisted_54$3 = { class: "options-list" };
+const _hoisted_55$3 = { class: "decision-layout" };
+const _hoisted_56$3 = { class: "decision-section" };
+const _hoisted_57$3 = { class: "section-title" };
+const _hoisted_58$3 = { class: "options-list" };
+const _hoisted_59$3 = {
   key: 0,
   class: "decision-section"
 };
-const _hoisted_61$3 = { class: "section-title" };
-const _hoisted_62$3 = { class: "options-list" };
-const _hoisted_63$3 = { class: "default-layout" };
-const _hoisted_64$3 = { class: "options-grid" };
-const _hoisted_65$3 = {
+const _hoisted_60$3 = { class: "section-title" };
+const _hoisted_61$3 = { class: "options-list" };
+const _hoisted_62$3 = { class: "default-layout" };
+const _hoisted_63$3 = { class: "options-grid" };
+const _hoisted_64$3 = {
   key: 0,
   class: "empty-state"
 };
-const _hoisted_66$3 = { class: "no-families" };
+const _hoisted_65$3 = { class: "no-families" };
 function _sfc_render$P(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock("div", _hoisted_1$B, [
     createCommentVNode(" Family Tabs "),
@@ -68363,21 +68364,14 @@ function _sfc_render$P(_ctx, _cache, $props, $setup, $data, $options) {
       createCommentVNode(" Family Header with Action Buttons "),
       createBaseVNode("div", _hoisted_8$h, [
         createBaseVNode(
-          "h3",
-          _hoisted_9$h,
-          toDisplayString($setup.activeFamilyData.label),
-          1
-          /* TEXT */
-        ),
-        createBaseVNode(
           "p",
-          _hoisted_10$h,
+          _hoisted_9$h,
           toDisplayString($setup.activeFamilyData.description),
           1
           /* TEXT */
         ),
         createCommentVNode(" Action Bar for creating options "),
-        $setup.canAddOptions && $setup.activeFamilyData.optionTypes.length > 0 ? (openBlock(), createElementBlock("div", _hoisted_11$h, [
+        $setup.activeFamilyData.optionTypes.length > 0 ? (openBlock(), createElementBlock("div", _hoisted_10$h, [
           (openBlock(true), createElementBlock(
             Fragment$1,
             null,
@@ -68389,8 +68383,8 @@ function _sfc_render$P(_ctx, _cache, $props, $setup, $data, $options) {
                 onClick: ($event) => $setup.openAddOptionModal(optionType.option_type)
               }, {
                 icon: withCtx(() => [
-                  createCommentVNode(" Direct icon lookup from InquiryGeneralIcons "),
-                  (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons[optionType.icon] || $setup.InquiryGeneralIcons.File), { size: 18 }))
+                  createCommentVNode(" Direct icon lookup from InquiryOptionIcons "),
+                  (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons[optionType.icon] || $setup.InquiryOptionIcons.File), { size: 18 }))
                 ]),
                 default: withCtx(() => [
                   createTextVNode(
@@ -68409,30 +68403,30 @@ function _sfc_render$P(_ctx, _cache, $props, $setup, $data, $options) {
         ])) : createCommentVNode("v-if", true)
       ]),
       createCommentVNode(" Family-specific layout "),
-      createBaseVNode("div", _hoisted_12$h, [
+      createBaseVNode("div", _hoisted_11$h, [
         createCommentVNode(" DEBATE Family Layout "),
-        $setup.activeFamily === "debate" ? (openBlock(), createElementBlock("div", _hoisted_13$g, [
+        $setup.activeFamily === "debate" ? (openBlock(), createElementBlock("div", _hoisted_12$h, [
           createCommentVNode(" Positions Section "),
-          createBaseVNode("div", _hoisted_14$e, [
+          createBaseVNode("div", _hoisted_13$g, [
             createBaseVNode(
               "h4",
-              _hoisted_15$e,
+              _hoisted_14$e,
               toDisplayString($setup.t("agora", "Positions")),
               1
               /* TEXT */
             ),
-            createBaseVNode("div", _hoisted_16$e, [
+            createBaseVNode("div", _hoisted_15$e, [
               createCommentVNode(" For Positions "),
-              createBaseVNode("div", _hoisted_17$e, [
-                createBaseVNode("h5", _hoisted_18$e, [
-                  (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.ThumbUp), { size: 16 })),
+              createBaseVNode("div", _hoisted_16$e, [
+                createBaseVNode("h5", _hoisted_17$e, [
+                  (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons.ThumbUp), { size: 16 })),
                   createTextVNode(
                     " " + toDisplayString($setup.t("agora", "Position – For")),
                     1
                     /* TEXT */
                   )
                 ]),
-                createBaseVNode("div", _hoisted_19$e, [
+                createBaseVNode("div", _hoisted_18$e, [
                   (openBlock(true), createElementBlock(
                     Fragment$1,
                     null,
@@ -68447,7 +68441,7 @@ function _sfc_render$P(_ctx, _cache, $props, $setup, $data, $options) {
                     128
                     /* KEYED_FRAGMENT */
                   )),
-                  $setup.positionsFor.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_20$e, [
+                  $setup.positionsFor.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_19$e, [
                     createBaseVNode(
                       "p",
                       null,
@@ -68459,16 +68453,16 @@ function _sfc_render$P(_ctx, _cache, $props, $setup, $data, $options) {
                 ])
               ]),
               createCommentVNode(" Against Positions "),
-              createBaseVNode("div", _hoisted_21$e, [
-                createBaseVNode("h5", _hoisted_22$e, [
-                  (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.ThumbDown), { size: 16 })),
+              createBaseVNode("div", _hoisted_20$e, [
+                createBaseVNode("h5", _hoisted_21$e, [
+                  (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons.ThumbDown), { size: 16 })),
                   createTextVNode(
                     " " + toDisplayString($setup.t("agora", "Position – Against")),
                     1
                     /* TEXT */
                   )
                 ]),
-                createBaseVNode("div", _hoisted_23$c, [
+                createBaseVNode("div", _hoisted_22$e, [
                   (openBlock(true), createElementBlock(
                     Fragment$1,
                     null,
@@ -68483,7 +68477,7 @@ function _sfc_render$P(_ctx, _cache, $props, $setup, $data, $options) {
                     128
                     /* KEYED_FRAGMENT */
                   )),
-                  $setup.positionsAgainst.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_24$b, [
+                  $setup.positionsAgainst.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_23$c, [
                     createBaseVNode(
                       "p",
                       null,
@@ -68497,18 +68491,18 @@ function _sfc_render$P(_ctx, _cache, $props, $setup, $data, $options) {
             ])
           ]),
           createCommentVNode(" Arguments Section "),
-          createBaseVNode("div", _hoisted_25$b, [
+          createBaseVNode("div", _hoisted_24$b, [
             createBaseVNode(
               "h4",
-              _hoisted_26$b,
+              _hoisted_25$b,
               toDisplayString($setup.t("agora", "Arguments")),
               1
               /* TEXT */
             ),
-            createBaseVNode("div", _hoisted_27$b, [
-              createBaseVNode("div", _hoisted_28$a, [
-                createBaseVNode("h5", _hoisted_29$a, [
-                  (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.MessagePlus), { size: 16 })),
+            createBaseVNode("div", _hoisted_26$b, [
+              createBaseVNode("div", _hoisted_27$b, [
+                createBaseVNode("h5", _hoisted_28$a, [
+                  (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons.MessagePlus), { size: 16 })),
                   createTextVNode(
                     " " + toDisplayString($setup.t("agora", "For")),
                     1
@@ -68531,9 +68525,9 @@ function _sfc_render$P(_ctx, _cache, $props, $setup, $data, $options) {
                   /* KEYED_FRAGMENT */
                 ))
               ]),
-              createBaseVNode("div", _hoisted_30$a, [
-                createBaseVNode("h5", _hoisted_31$8, [
-                  (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.MessageMinus), { size: 16 })),
+              createBaseVNode("div", _hoisted_29$a, [
+                createBaseVNode("h5", _hoisted_30$a, [
+                  (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons.MessageMinus), { size: 16 })),
                   createTextVNode(
                     " " + toDisplayString($setup.t("agora", "Against")),
                     1
@@ -68559,11 +68553,11 @@ function _sfc_render$P(_ctx, _cache, $props, $setup, $data, $options) {
             ])
           ]),
           createCommentVNode(" Alternatives & Messages "),
-          createBaseVNode("div", _hoisted_32$7, [
-            createBaseVNode("div", _hoisted_33$7, [
-              createBaseVNode("div", _hoisted_34$7, [
-                createBaseVNode("h5", _hoisted_35$7, [
-                  (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.SwapHorizontal), { size: 16 })),
+          createBaseVNode("div", _hoisted_31$8, [
+            createBaseVNode("div", _hoisted_32$7, [
+              createBaseVNode("div", _hoisted_33$7, [
+                createBaseVNode("h5", _hoisted_34$7, [
+                  (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons.SwapHorizontal), { size: 16 })),
                   createTextVNode(
                     " " + toDisplayString($setup.t("agora", "Alternatives")),
                     1
@@ -68586,9 +68580,9 @@ function _sfc_render$P(_ctx, _cache, $props, $setup, $data, $options) {
                   /* KEYED_FRAGMENT */
                 ))
               ]),
-              createBaseVNode("div", _hoisted_36$6, [
-                createBaseVNode("h5", _hoisted_37$6, [
-                  (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.MessageText), { size: 16 })),
+              createBaseVNode("div", _hoisted_35$7, [
+                createBaseVNode("h5", _hoisted_36$6, [
+                  (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons.MessageText), { size: 16 })),
                   createTextVNode(
                     " " + toDisplayString($setup.t("agora", "Messages")),
                     1
@@ -68618,8 +68612,8 @@ function _sfc_render$P(_ctx, _cache, $props, $setup, $data, $options) {
           { key: 1 },
           [
             createCommentVNode(" STRUCTURE Family Layout "),
-            createBaseVNode("div", _hoisted_38$6, [
-              createBaseVNode("div", _hoisted_39$5, [
+            createBaseVNode("div", _hoisted_37$6, [
+              createBaseVNode("div", _hoisted_38$6, [
                 createCommentVNode(" Hierarchical tree view for chapters/articles "),
                 (openBlock(true), createElementBlock(
                   Fragment$1,
@@ -68629,11 +68623,11 @@ function _sfc_render$P(_ctx, _cache, $props, $setup, $data, $options) {
                       key: chapter.id,
                       class: "tree-node"
                     }, [
-                      createBaseVNode("div", _hoisted_40$5, [
-                        (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.BookOpenVariant), { size: 16 })),
+                      createBaseVNode("div", _hoisted_39$5, [
+                        (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons.BookOpenVariant), { size: 16 })),
                         createBaseVNode(
                           "span",
-                          _hoisted_41$5,
+                          _hoisted_40$5,
                           toDisplayString(chapter.label),
                           1
                           /* TEXT */
@@ -68662,11 +68656,11 @@ function _sfc_render$P(_ctx, _cache, $props, $setup, $data, $options) {
                             key: article.id,
                             class: "tree-node child"
                           }, [
-                            createBaseVNode("div", _hoisted_42$4, [
-                              (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.FileDocument), { size: 16 })),
+                            createBaseVNode("div", _hoisted_41$5, [
+                              (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons.FileDocument), { size: 16 })),
                               createBaseVNode(
                                 "span",
-                                _hoisted_43$4,
+                                _hoisted_42$4,
                                 toDisplayString(article.label),
                                 1
                                 /* TEXT */
@@ -68695,11 +68689,11 @@ function _sfc_render$P(_ctx, _cache, $props, $setup, $data, $options) {
                                   key: amendment.id,
                                   class: "tree-node grandchild"
                                 }, [
-                                  createBaseVNode("div", _hoisted_44$4, [
-                                    (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.FileDocumentEdit), { size: 16 })),
+                                  createBaseVNode("div", _hoisted_43$4, [
+                                    (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons.FileDocumentEdit), { size: 16 })),
                                     createBaseVNode(
                                       "span",
-                                      _hoisted_45$3,
+                                      _hoisted_44$4,
                                       toDisplayString(amendment.label),
                                       1
                                       /* TEXT */
@@ -68730,18 +68724,18 @@ function _sfc_render$P(_ctx, _cache, $props, $setup, $data, $options) {
           { key: 2 },
           [
             createCommentVNode(" CONSENSUS Family Layout "),
-            createBaseVNode("div", _hoisted_46$3, [
+            createBaseVNode("div", _hoisted_45$3, [
               createCommentVNode(" Blocking Objections "),
-              $setup.objections.length > 0 ? (openBlock(), createElementBlock("div", _hoisted_47$3, [
-                createBaseVNode("h4", _hoisted_48$3, [
-                  (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.AlertCircle), { size: 16 })),
+              $setup.objections.length > 0 ? (openBlock(), createElementBlock("div", _hoisted_46$3, [
+                createBaseVNode("h4", _hoisted_47$3, [
+                  (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons.AlertCircle), { size: 16 })),
                   createTextVNode(
                     " " + toDisplayString($setup.t("agora", "Blocking Objections")) + " (" + toDisplayString($setup.objections.length) + ") ",
                     1
                     /* TEXT */
                   )
                 ]),
-                createBaseVNode("div", _hoisted_49$3, [
+                createBaseVNode("div", _hoisted_48$3, [
                   (openBlock(true), createElementBlock(
                     Fragment$1,
                     null,
@@ -68760,16 +68754,16 @@ function _sfc_render$P(_ctx, _cache, $props, $setup, $data, $options) {
                 ])
               ])) : createCommentVNode("v-if", true),
               createCommentVNode(" Exceptions "),
-              $setup.exceptions.length > 0 ? (openBlock(), createElementBlock("div", _hoisted_50$3, [
-                createBaseVNode("h4", _hoisted_51$3, [
-                  (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.AlertOutline), { size: 16 })),
+              $setup.exceptions.length > 0 ? (openBlock(), createElementBlock("div", _hoisted_49$3, [
+                createBaseVNode("h4", _hoisted_50$3, [
+                  (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons.AlertOutline), { size: 16 })),
                   createTextVNode(
                     " " + toDisplayString($setup.t("agora", "Exceptions")) + " (" + toDisplayString($setup.exceptions.length) + ") ",
                     1
                     /* TEXT */
                   )
                 ]),
-                createBaseVNode("div", _hoisted_52$3, [
+                createBaseVNode("div", _hoisted_51$3, [
                   (openBlock(true), createElementBlock(
                     Fragment$1,
                     null,
@@ -68787,16 +68781,16 @@ function _sfc_render$P(_ctx, _cache, $props, $setup, $data, $options) {
                 ])
               ])) : createCommentVNode("v-if", true),
               createCommentVNode(" Consultation Questions "),
-              $setup.consultationQuestions.length > 0 ? (openBlock(), createElementBlock("div", _hoisted_53$3, [
-                createBaseVNode("h4", _hoisted_54$3, [
-                  (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.HelpCircle), { size: 16 })),
+              $setup.consultationQuestions.length > 0 ? (openBlock(), createElementBlock("div", _hoisted_52$3, [
+                createBaseVNode("h4", _hoisted_53$3, [
+                  (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons.HelpCircle), { size: 16 })),
                   createTextVNode(
                     " " + toDisplayString($setup.t("agora", "Consultation Questions")) + " (" + toDisplayString($setup.consultationQuestions.length) + ") ",
                     1
                     /* TEXT */
                   )
                 ]),
-                createBaseVNode("div", _hoisted_55$3, [
+                createBaseVNode("div", _hoisted_54$3, [
                   (openBlock(true), createElementBlock(
                     Fragment$1,
                     null,
@@ -68822,18 +68816,18 @@ function _sfc_render$P(_ctx, _cache, $props, $setup, $data, $options) {
           { key: 3 },
           [
             createCommentVNode(" DECISION Family Layout "),
-            createBaseVNode("div", _hoisted_56$3, [
+            createBaseVNode("div", _hoisted_55$3, [
               createCommentVNode(" Official Results "),
-              createBaseVNode("div", _hoisted_57$3, [
-                createBaseVNode("h4", _hoisted_58$3, [
-                  (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.CheckCircle), { size: 16 })),
+              createBaseVNode("div", _hoisted_56$3, [
+                createBaseVNode("h4", _hoisted_57$3, [
+                  (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons.CheckCircle), { size: 16 })),
                   createTextVNode(
                     " " + toDisplayString($setup.t("agora", "Official Results")),
                     1
                     /* TEXT */
                   )
                 ]),
-                createBaseVNode("div", _hoisted_59$3, [
+                createBaseVNode("div", _hoisted_58$3, [
                   (openBlock(true), createElementBlock(
                     Fragment$1,
                     null,
@@ -68852,16 +68846,16 @@ function _sfc_render$P(_ctx, _cache, $props, $setup, $data, $options) {
                 ])
               ]),
               createCommentVNode(" Poll Options "),
-              $setup.pollOptions.length > 0 ? (openBlock(), createElementBlock("div", _hoisted_60$3, [
-                createBaseVNode("h4", _hoisted_61$3, [
-                  (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.BarChart2), { size: 16 })),
+              $setup.pollOptions.length > 0 ? (openBlock(), createElementBlock("div", _hoisted_59$3, [
+                createBaseVNode("h4", _hoisted_60$3, [
+                  (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons.BarChart2), { size: 16 })),
                   createTextVNode(
                     " " + toDisplayString($setup.t("agora", "Poll Options")),
                     1
                     /* TEXT */
                   )
                 ]),
-                createBaseVNode("div", _hoisted_62$3, [
+                createBaseVNode("div", _hoisted_61$3, [
                   (openBlock(true), createElementBlock(
                     Fragment$1,
                     null,
@@ -68888,8 +68882,8 @@ function _sfc_render$P(_ctx, _cache, $props, $setup, $data, $options) {
           { key: 4 },
           [
             createCommentVNode(" DEFAULT Layout for other families "),
-            createBaseVNode("div", _hoisted_63$3, [
-              createBaseVNode("div", _hoisted_64$3, [
+            createBaseVNode("div", _hoisted_62$3, [
+              createBaseVNode("div", _hoisted_63$3, [
                 (openBlock(true), createElementBlock(
                   Fragment$1,
                   null,
@@ -68905,7 +68899,7 @@ function _sfc_render$P(_ctx, _cache, $props, $setup, $data, $options) {
                   /* KEYED_FRAGMENT */
                 ))
               ]),
-              $setup.activeFamilyOptions.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_65$3, [
+              $setup.activeFamilyOptions.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_64$3, [
                 (openBlock(), createBlock(resolveDynamicComponent($setup.getFamilyIcon($setup.activeFamily)), { size: 48 })),
                 createBaseVNode(
                   "h4",
@@ -68933,8 +68927,8 @@ function _sfc_render$P(_ctx, _cache, $props, $setup, $data, $options) {
       { key: 2 },
       [
         createCommentVNode(" Empty State when no families "),
-        createBaseVNode("div", _hoisted_66$3, [
-          (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.Options), { size: 64 })),
+        createBaseVNode("div", _hoisted_65$3, [
+          (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons.Options), { size: 64 })),
           createBaseVNode(
             "h3",
             null,

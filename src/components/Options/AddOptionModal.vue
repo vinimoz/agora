@@ -178,7 +178,7 @@
           @click="submitForm"
         >
           <template #icon>
-            <component :is="InquiryGeneralIcons.Add" v-if="!submitting" :size="18" />
+            <component :is="InquiryOptionIcons.Add" v-if="!submitting" :size="18" />
             <NcLoadingIcon v-else :size="18" />
           </template>
           {{ t('agora', 'Add Option') }}
@@ -205,7 +205,7 @@ import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import { useInquiryStore } from '../../stores/inquiry'
 import { useOptionsStore , OptionTypeDefinition } from '../../stores/options'
 import { useSessionStore } from '../../stores/session'
-import { InquiryGeneralIcons } from '../../utils/icons.ts'
+import { InquiryOptionIcons } from '../../utils/icons.ts'
 
 // Props
 const props = defineProps<{
@@ -281,17 +281,17 @@ const isFormValid = computed(() => {
 // Methods
 const getIcon = (iconName: string) => {
   const iconMap: Record<string, any> = {
-    'icon-discussion': InquiryGeneralIcons.Discussion,
-    'icon-question': InquiryGeneralIcons.Question,
-    'icon-lightbulb': InquiryGeneralIcons.Lightbulb,
-    'icon-settings': InquiryGeneralIcons.Settings,
-    'icon-code': InquiryGeneralIcons.Code,
-    'icon-category-other': InquiryGeneralIcons.CategoryOther,
-    'icon-like': InquiryGeneralIcons.ThumbUp,
-    'icon-dislike': InquiryGeneralIcons.ThumbDown,
-    'icon-checkmark': InquiryGeneralIcons.Checkmark,
+    'icon-discussion': InquiryOptionIcons.Discussion,
+    'icon-question': InquiryOptionIcons.Question,
+    'icon-lightbulb': InquiryOptionIcons.Lightbulb,
+    'icon-settings': InquiryOptionIcons.Settings,
+    'icon-code': InquiryOptionIcons.Code,
+    'icon-category-other': InquiryOptionIcons.CategoryOther,
+    'icon-like': InquiryOptionIcons.ThumbUp,
+    'icon-dislike': InquiryOptionIcons.ThumbDown,
+    'icon-checkmark': InquiryOptionIcons.Checkmark,
   }
-  return iconMap[iconName] || InquiryGeneralIcons.File
+  return iconMap[iconName] || InquiryOptionIcons.File
 }
 
 const getSelectOptions = (field: any) => field.options?.map((option: any) => ({

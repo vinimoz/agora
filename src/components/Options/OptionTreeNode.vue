@@ -17,7 +17,7 @@
         :aria-label="expanded ? t('agora', 'Collapse') : t('agora', 'Expand')"
         @click.stop="toggleExpand"
       >
-        <component :is="expanded ? InquiryGeneralIcons.ChevronDown : InquiryGeneralIcons.ChevronRight" :size="16" />
+        <component :is="expanded ? InquiryOptionIcons.ChevronDown : InquiryOptionIcons.ChevronRight" :size="16" />
       </button>
 
       <!-- Node Header -->
@@ -54,7 +54,7 @@
           </span>
 
           <span class="stat-item">
-            <component :is="InquiryGeneralIcons.Comment" :size="14" />
+            <component :is="InquiryOptionIcons.Comment" :size="14" />
             <span class="stat-count">{{ option.currentUserStatus?.countComments || 0 }}</span>
           </span>
         </div>
@@ -67,7 +67,7 @@
             @click.stop="$emit('add-child', option)"
           >
             <template #icon>
-              <component :is="InquiryGeneralIcons.Add" :size="14" />
+              <component :is="InquiryOptionIcons.Add" :size="14" />
             </template>
           </NcButton>
 
@@ -98,7 +98,7 @@
             @click.stop="$emit('comment', option)"
           >
             <template #icon>
-              <component :is="InquiryGeneralIcons.Comment" :size="14" />
+              <component :is="InquiryOptionIcons.Comment" :size="14" />
             </template>
           </NcButton>
         </div>
@@ -131,7 +131,7 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 
 import { useInquiryStore } from '../../stores/inquiry'
 import { useOptionsStore } from '../../stores/options'
-import { InquiryGeneralIcons } from '../../utils/icons.ts'
+import { InquiryOptionIcons } from '../../utils/icons.ts'
 import { TernarySupportIcon, ThumbIcon } from '../AppIcons'
 import { Option } from '../../stores/option.ts'
 

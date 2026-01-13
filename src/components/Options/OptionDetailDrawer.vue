@@ -15,7 +15,7 @@
               @click="closeDrawer"
             >
               <template #icon>
-                <component :is="InquiryGeneralIcons.Close" :size="20" />
+                <component :is="InquiryOptionIcons.Close" :size="20" />
               </template>
             </NcButton>
             <div class="option-type-badge" :style="{ backgroundColor: option?.typeColor + '20', color: option?.typeColor }">
@@ -36,7 +36,7 @@
                 @click="editOption"
               >
                 <template #icon>
-                  <component :is="InquiryGeneralIcons.Edit" :size="20" />
+                  <component :is="InquiryOptionIcons.Edit" :size="20" />
                 </template>
                 {{ t('agora', 'Edit option') }}
               </NcActionButton>
@@ -47,7 +47,7 @@
                 @click="confirmDelete"
               >
                 <template #icon>
-                  <component :is="InquiryGeneralIcons.Delete" :size="20" />
+                  <component :is="InquiryOptionIcons.Delete" :size="20" />
                 </template>
                 {{ t('agora', 'Delete option') }}
               </NcActionButton>
@@ -60,7 +60,7 @@
                 @click="addChildOption"
               >
                 <template #icon>
-                  <component :is="InquiryGeneralIcons.Add" :size="20" />
+                  <component :is="InquiryOptionIcons.Add" :size="20" />
                 </template>
                 {{ t('agora', 'Add child option') }}
               </NcActionButton>
@@ -136,7 +136,7 @@
                 
                 <div class="option-stats">
                   <div class="stat-item" @click="scrollToComments">
-                    <component :is="InquiryGeneralIcons.Comment" :size="16" />
+                    <component :is="InquiryOptionIcons.Comment" :size="16" />
                     <span class="stat-count">{{ option.currentUserStatus?.countComments || 0 }}</span>
                     <span class="stat-label">{{ t('agora', 'Comments') }}</span>
                   </div>
@@ -157,7 +157,7 @@
                   </div>
                   
                   <div v-if="option.children?.length" class="stat-item">
-                    <component :is="InquiryGeneralIcons.Children" :size="16" />
+                    <component :is="InquiryOptionIcons.Children" :size="16" />
                     <span class="stat-count">{{ option.children.length }}</span>
                     <span class="stat-label">{{ t('agora', 'Children') }}</span>
                   </div>
@@ -184,7 +184,7 @@
             <div v-if="option.allowComment" ref="commentsSection" class="comments-section">
               <div class="section-header">
                 <h3 class="section-title">
-                  <component :is="InquiryGeneralIcons.Comment" :size="20" />
+                  <component :is="InquiryOptionIcons.Comment" :size="20" />
                   {{ t('agora', 'Comments') }}
                   <span class="comment-count">({{ option.currentUserStatus?.countComments || 0 }})</span>
                 </h3>
@@ -194,7 +194,7 @@
                   @click="showCommentForm = !showCommentForm"
                 >
                   <template #icon>
-                    <component :is="InquiryGeneralIcons.Add" :size="16" />
+                    <component :is="InquiryOptionIcons.Add" :size="16" />
                   </template>
                   {{ t('agora', 'Add comment') }}
                 </NcButton>
@@ -246,7 +246,7 @@
                         @click="deleteComment(comment.id)"
                       >
                         <template #icon>
-                          <component :is="InquiryGeneralIcons.Delete" :size="14" />
+                          <component :is="InquiryOptionIcons.Delete" :size="14" />
                         </template>
                       </NcButton>
                     </div>
@@ -258,7 +258,7 @@
               </div>
 
               <div v-else class="no-comments">
-                <component :is="InquiryGeneralIcons.Comment" :size="48" />
+                <component :is="InquiryOptionIcons.Comment" :size="48" />
                 <h4>{{ t('agora', 'No comments yet') }}</h4>
                 <p>{{ t('agora', 'Be the first to comment on this option') }}</p>
               </div>
@@ -267,7 +267,7 @@
             <!-- Children Section -->
             <div v-if="option.children?.length" class="children-section">
               <h3 class="section-title">
-                <component :is="InquiryGeneralIcons.Children" :size="20" />
+                <component :is="InquiryOptionIcons.Children" :size="20" />
                 {{ t('agora', 'Child Options') }}
                 <span class="children-count">({{ option.children.length }})</span>
               </h3>
@@ -308,7 +308,7 @@ import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import { useInquiryStore } from '../../stores/inquiry'
 import { useOptionsStore } from '../../stores/options'
 import { useSessionStore } from '../../stores/session'
-import { InquiryGeneralIcons } from '../../utils/icons.ts'
+import { InquiryOptionIcons } from '../../utils/icons.ts'
 import { TernarySupportIcon, ThumbIcon } from '../AppIcons'
 import { Option } from '../../stores/option.ts'
 

@@ -31,11 +31,10 @@
     <div v-if="activeFamilyData" class="family-content">
       <!-- Family Header with Action Buttons -->
       <div class="family-header">
-        <h3 class="family-title">{{ activeFamilyData.label }}</h3>
         <p class="family-description">{{ activeFamilyData.description }}</p>
 
         <!-- Action Bar for creating options -->
-        <div v-if="canAddOptions && activeFamilyData.optionTypes.length > 0" class="family-actions-bar">
+        <div v-if="activeFamilyData.optionTypes.length > 0" class="family-actions-bar">
           <NcButton
             v-for="optionType in activeFamilyData.optionTypes"
             :key="optionType.option_type"
@@ -44,8 +43,8 @@
             @click="openAddOptionModal(optionType.option_type)"
           >
             <template #icon>
-              <!-- Direct icon lookup from InquiryGeneralIcons -->
-              <component :is="InquiryGeneralIcons[optionType.icon] || InquiryGeneralIcons.File" :size="18" />
+              <!-- Direct icon lookup from InquiryOptionIcons -->
+              <component :is="InquiryOptionIcons[optionType.icon] || InquiryOptionIcons.File" :size="18" />
             </template>
             + {{ optionType.label || optionType.option_type }}
           </NcButton>
@@ -63,7 +62,7 @@
               <!-- For Positions -->
               <div class="positions-column">
                 <h5 class="column-title">
-                  <component :is="InquiryGeneralIcons.ThumbUp" :size="16" />
+                  <component :is="InquiryOptionIcons.ThumbUp" :size="16" />
                   {{ t('agora', 'Position – For') }}
                 </h5>
                 <div class="options-list">
@@ -83,7 +82,7 @@
               <!-- Against Positions -->
               <div class="positions-column">
                 <h5 class="column-title">
-                  <component :is="InquiryGeneralIcons.ThumbDown" :size="16" />
+                  <component :is="InquiryOptionIcons.ThumbDown" :size="16" />
                   {{ t('agora', 'Position – Against') }}
                 </h5>
                 <div class="options-list">
@@ -108,7 +107,7 @@
             <div class="arguments-grid">
               <div class="arguments-column">
                 <h5 class="column-title">
-                  <component :is="InquiryGeneralIcons.MessagePlus" :size="16" />
+                  <component :is="InquiryOptionIcons.MessagePlus" :size="16" />
                   {{ t('agora', 'For') }}
                 </h5>
                 <OptionCard
@@ -122,7 +121,7 @@
               </div>
               <div class="arguments-column">
                 <h5 class="column-title">
-                  <component :is="InquiryGeneralIcons.MessageMinus" :size="16" />
+                  <component :is="InquiryOptionIcons.MessageMinus" :size="16" />
                   {{ t('agora', 'Against') }}
                 </h5>
                 <OptionCard
@@ -142,7 +141,7 @@
             <div class="other-grid">
               <div class="other-column">
                 <h5 class="column-title">
-                  <component :is="InquiryGeneralIcons.SwapHorizontal" :size="16" />
+                  <component :is="InquiryOptionIcons.SwapHorizontal" :size="16" />
                   {{ t('agora', 'Alternatives') }}
                 </h5>
                 <OptionCard
@@ -156,7 +155,7 @@
               </div>
               <div class="other-column">
                 <h5 class="column-title">
-                  <component :is="InquiryGeneralIcons.MessageText" :size="16" />
+                  <component :is="InquiryOptionIcons.MessageText" :size="16" />
                   {{ t('agora', 'Messages') }}
                 </h5>
                 <OptionCard
@@ -178,7 +177,7 @@
             <!-- Hierarchical tree view for chapters/articles -->
             <div v-for="chapter in chapters" :key="chapter.id" class="tree-node">
               <div class="node-content">
-                <component :is="InquiryGeneralIcons.BookOpenVariant" :size="16" />
+                <component :is="InquiryOptionIcons.BookOpenVariant" :size="16" />
                 <span class="node-label">{{ chapter.label }}</span>
                 <NcButton type="tertiary" @click="openAddOptionModal('article', chapter.id)">
                   + {{ t('agora', 'Article') }}
@@ -188,7 +187,7 @@
               <!-- Articles -->
               <div v-for="article in getChildOptions(chapter.id, 'article')" :key="article.id" class="tree-node child">
                 <div class="node-content">
-                  <component :is="InquiryGeneralIcons.FileDocument" :size="16" />
+                  <component :is="InquiryOptionIcons.FileDocument" :size="16" />
                   <span class="node-label">{{ article.label }}</span>
                   <NcButton type="tertiary" @click="openAddOptionModal('amendment', article.id)">
                     + {{ t('agora', 'Amendment') }}
@@ -198,7 +197,7 @@
                 <!-- Amendments -->
                 <div v-for="amendment in getChildOptions(article.id, 'amendment')" :key="amendment.id" class="tree-node grandchild">
                   <div class="node-content">
-                    <component :is="InquiryGeneralIcons.FileDocumentEdit" :size="16" />
+                    <component :is="InquiryOptionIcons.FileDocumentEdit" :size="16" />
                     <span class="node-label">{{ amendment.label }}</span>
                   </div>
                 </div>
@@ -212,7 +211,7 @@
           <!-- Blocking Objections -->
           <div v-if="objections.length > 0" class="consensus-section">
             <h4 class="section-title blocking">
-              <component :is="InquiryGeneralIcons.AlertCircle" :size="16" />
+              <component :is="InquiryOptionIcons.AlertCircle" :size="16" />
               {{ t('agora', 'Blocking Objections') }} ({{ objections.length }})
             </h4>
             <div class="options-list">
@@ -230,7 +229,7 @@
           <!-- Exceptions -->
           <div v-if="exceptions.length > 0" class="consensus-section">
             <h4 class="section-title non-blocking">
-              <component :is="InquiryGeneralIcons.AlertOutline" :size="16" />
+              <component :is="InquiryOptionIcons.AlertOutline" :size="16" />
               {{ t('agora', 'Exceptions') }} ({{ exceptions.length }})
             </h4>
             <div class="options-list">
@@ -247,7 +246,7 @@
           <!-- Consultation Questions -->
           <div v-if="consultationQuestions.length > 0" class="consensus-section">
             <h4 class="section-title">
-              <component :is="InquiryGeneralIcons.HelpCircle" :size="16" />
+              <component :is="InquiryOptionIcons.HelpCircle" :size="16" />
               {{ t('agora', 'Consultation Questions') }} ({{ consultationQuestions.length }})
             </h4>
             <div class="options-list">
@@ -267,7 +266,7 @@
           <!-- Official Results -->
           <div class="decision-section">
             <h4 class="section-title">
-              <component :is="InquiryGeneralIcons.CheckCircle" :size="16" />
+              <component :is="InquiryOptionIcons.CheckCircle" :size="16" />
               {{ t('agora', 'Official Results') }}
             </h4>
             <div class="options-list">
@@ -285,7 +284,7 @@
           <!-- Poll Options -->
           <div v-if="pollOptions.length > 0" class="decision-section">
             <h4 class="section-title">
-              <component :is="InquiryGeneralIcons.BarChart2" :size="16" />
+              <component :is="InquiryOptionIcons.BarChart2" :size="16" />
               {{ t('agora', 'Poll Options') }}
             </h4>
             <div class="options-list">
@@ -323,7 +322,7 @@
 
     <!-- Empty State when no families -->
     <div v-else-if="!hasVisibleFamilies && inquiryStore.type" class="no-families">
-      <component :is="InquiryGeneralIcons.Options" :size="64" />
+      <component :is="InquiryOptionIcons.Options" :size="64" />
       <h3>{{ t('agora', 'No option families available') }}</h3>
       <p>{{ t('agora', 'This inquiry type doesn\'t support any option families') }}</p>
     </div>
@@ -357,7 +356,7 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import { useInquiryStore } from '../../stores/inquiry'
 import { useOptionsStore } from '../../stores/options'
 import { useSessionStore } from '../../stores/session'
-import { InquiryGeneralIcons } from '../../utils/icons.ts'
+import { InquiryOptionIcons } from '../../utils/icons.ts'
 import {
   getFamiliesWithOptionTypes,
   getFamilyIconComponent,
@@ -510,14 +509,14 @@ const getOptionTypeIcon = (optionTypeKey: string) => {
   )
   
   if (optionType?.icon) {
-    // Direct icon lookup from InquiryGeneralIcons
-    return InquiryGeneralIcons[optionType.icon] || InquiryGeneralIcons.File
+    // Direct icon lookup from InquiryOptionIcons
+    return InquiryOptionIcons[optionType.icon] || InquiryOptionIcons.File
   }
   
-  return InquiryGeneralIcons.File
+  return InquiryOptionIcons.File
 }
 
-const canAddOptions = computed(() => inquiryStore.permissions.addOptions)
+// const canAddOptions = computed(() => inquiryStore.permissions.addOptions)
 
 const setActiveFamily = (familyKey: string) => {
   activeFamily.value = familyKey
