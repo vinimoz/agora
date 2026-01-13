@@ -3,6 +3,7 @@ OC.L10N.register(
     {
     "Team" : "팀",
     "Contact group" : "연락처 그룹",
+    "Group" : "구룹",
     "_Confirmed option:_::_Confirmed options:_" : ["확인된 옵션:"],
     "Legal Notice" : "법적 고지",
     "Privacy Policy" : "프라이버시 정책",
@@ -64,6 +65,8 @@ OC.L10N.register(
     "Heading 1" : "제목 1",
     "Heading 2" : "제목 2",
     "Heading 3" : "제목 3",
+    "Bullet list" : "글머리 기호 목록",
+    "Numbered list" : "번호가 매겨짐목록",
     "Blockquote" : "블록 인용",
     "Link" : "링크",
     "Insert image" : "이미지 삽입",
