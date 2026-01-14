@@ -1,4 +1,5 @@
 { "translations": {
+    "Team" : "Tim",
     "Group" : "Grup",
     "Contact" : "Kontak",
     "User" : "Pengguna",
@@ -30,9 +31,11 @@
     "Created" : "Dibuat",
     "Filters" : "Penyaring",
     "Type" : "tipe",
+    "Active filters" : "Filter aktif",
     "Search" : "Cari",
     "{count} participants" : "{count} partisipan",
     "Created on {date}" : "Terbuat pada {date}",
+    "Back" : "Kembali",
     "Descending" : "Menurun",
     "Ascending" : "Menaik",
     "List" : "Daftar",
@@ -46,7 +49,10 @@
     "Remove" : "Hapus",
     "Show less" : "Lihat sedikit",
     "None" : "Tidak ada",
+    "Files" : "File",
     "Title is required" : "Judul dibutuhkan",
+    "Files uploaded successfully" : "File berhasil diunggah",
+    "Failed to create {resource}" : "Gagal membuat {resource}",
     "Uploading..." : "Mengunggah...",
     "OK" : "OK",
     "Sort" : "Urutkan",
@@ -71,8 +77,10 @@
     "Expiration" : "Kedaluwarsa",
     "Saving..." : "Menyimpan...",
     "Deck" : "Longgok",
+    "Delete file" : "Hapus file",
     "Delete link" : "Hapus tautan",
     "Public link" : "Tautan publik",
+    "Switch to list view" : "Beralih ke tampilan daftar",
     "Home" : "Beranda",
     "Archive" : "Arsip",
     "Restore" : "Pulihkan",
@@ -86,6 +94,8 @@
     "Week" : "Minggu",
     "Month" : "Bulan",
     "Year" : "Tahun",
+    "Not found" : "Tidak ditemukan",
+    "Owner" : "Pemilik",
     "Administration" : "Administrasi"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

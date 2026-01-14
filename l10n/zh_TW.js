@@ -361,6 +361,7 @@ OC.L10N.register(
     "File" : "檔案",
     "Deck" : "Deck",
     "Delete file" : "刪除檔案",
+    "Delete link" : "刪除連結",
     "Receive notification email on activity to {emailAddress}" : "接收有關活動的通知電子郵件到 {emailAddress}",
     "Receive notification email on activity" : "接收電子郵件活動通知",
     "Change name" : "更改名稱",
