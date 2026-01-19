@@ -44,59 +44,17 @@
               </div>
             </div>
 
-            <!-- Allowed responses info -->
-            <div v-if="allowedResponses.length > 0" class="responses-info">
-              <div class="responses-label">
-                <component :is="InquiryOptionIcons.ArrowDown" :size="14" />
-                {{ t('agora', 'Can have responses') }}:
-              </div>
-              <div class="responses-list">
-                <span 
-                  v-for="response in allowedResponses" 
-                  :key="response"
-                  class="response-type"
-                >
-                  <component :is="getOptionTypeIcon(response)" :size="12" />
-                  {{ getOptionTypeLabel(response) }}
-                </span>
-              </div>
-            </div>
-
-            <!-- Support & Comment info -->
-            <div class="features-info">
-              <div class="features-grid">
-                <!-- Support feature -->
-                <div v-if="hasSupportFeature" class="feature-item">
-                  <component :is="InquiryOptionIcons.ThumbUp" :size="16" />
-                  <span class="feature-label">{{ supportFeatureLabel }}</span>
-                </div>
-                
-                <!-- Comments feature -->
-                <div v-if="allowComment" class="feature-item">
-                  <component :is="InquiryOptionIcons.Comment" :size="16" />
-                  <span class="feature-label">{{ t('agora', 'Comments allowed') }}</span>
-                </div>
-                
-                <!-- Statuses -->
-                <div v-if="hasStatuses" class="feature-item">
-                  <component :is="InquiryOptionIcons.Circle" :size="16" />
-                  <span class="feature-label">{{ t('agora', 'Has statuses') }}</span>
-                </div>
-              </div>
-            </div>
-
             <!-- Form fields -->
             <div class="form-fields">
               <!-- Label -->
               <div class="form-field">
-                <label for="option-label">{{ t('agora', 'Title') }} *</label>
+                <label for="option-label">{{ t('agora', 'Title') }}</label>
                 <NcTextField
                   id="option-label"
                   v-model="formData.label"
                   :placeholder="t('agora', 'Enter a title for this option')"
                   required
                   full-width
-                  @keyup.enter="formData.description && createOption()"
                 />
               </div>
 
@@ -110,7 +68,6 @@
                   type="textarea"
                   :rows="4"
                   full-width
-                  @keydown.ctrl.enter="createOption"
                 />
               </div>
 
@@ -121,12 +78,8 @@
                   :key="field.key"
                   class="form-field"
                 >
-                  <label :for="`field-${field.key}`">
-                    {{ getFieldLabel(field) }}
-                    <span v-if="field.required" class="required">*</span>
-                  </label>
+                  <label :for="`field-${field.key}`">{{ getFieldLabel(field) }}</label>
                   
-                  <!-- Text field -->
                   <template v-if="field.type === 'text'">
                     <NcTextField
                       :id="`field-${field.key}`"
@@ -137,7 +90,6 @@
                     />
                   </template>
                   
-                  <!-- Textarea -->
                   <template v-else-if="field.type === 'textarea'">
                     <NcTextField
                       :id="`field-${field.key}`"
@@ -150,7 +102,6 @@
                     />
                   </template>
                   
-                  <!-- Boolean (switch) -->
                   <template v-else-if="field.type === 'boolean'">
                     <div class="checkbox-field">
                       <NcCheckboxRadioSwitch
@@ -163,40 +114,11 @@
                     </div>
                   </template>
                   
-                  <!-- Number -->
                   <template v-else-if="field.type === 'number'">
                     <NcTextField
                       :id="`field-${field.key}`"
                       v-model="additionalFormData[field.key]"
                       type="number"
-                      :placeholder="field.placeholder || ''"
-                      :required="field.required"
-                      full-width
-                    />
-                  </template>
-                  
-                  <!-- JSON (textarea for now) -->
-                  <template v-else-if="field.type === 'json'">
-                    <NcTextField
-                      :id="`field-${field.key}`"
-                      v-model="additionalFormData[field.key]"
-                      :placeholder="field.placeholder || t('agora', 'Enter JSON data')"
-                      type="textarea"
-                      :rows="3"
-                      :required="field.required"
-                      full-width
-                    />
-                    <div class="field-hint">
-                      {{ t('agora', 'Enter valid JSON data (e.g., ["item1", "item2"])') }}
-                    </div>
-                  </template>
-                  
-                  <!-- Select/dropdown -->
-                  <template v-else-if="field.type === 'select'">
-                    <NcSelect
-                      :id="`field-${field.key}`"
-                      v-model="additionalFormData[field.key]"
-                      :options="getSelectOptions(field)"
                       :placeholder="field.placeholder || ''"
                       :required="field.required"
                       full-width
@@ -215,7 +137,6 @@
                 :option="previewOption"
                 :inquiry-id="inquiryId"
                 :compact="false"
-                prevent-click
               />
             </div>
             
@@ -224,39 +145,12 @@
               <component :is="InquiryOptionIcons.Information" :size="16" />
               <p>{{ optionTypeHelp }}</p>
             </div>
-            
-            <!-- Statuses preview (if available) -->
-            <div v-if="hasStatuses" class="statuses-preview">
-              <h5>{{ t('agora', 'Available Statuses') }}</h5>
-              <div class="statuses-list">
-                <span 
-                  v-for="status in statusesList" 
-                  :key="status.value"
-                  class="status-badge"
-                  :class="`status-${status.value}`"
-                >
-                  <component :is="getStatusIcon(status.value)" :size="12" />
-                  {{ status.label }}
-                </span>
-              </div>
-            </div>
           </div>
         </div>
       </div>
 
       <!-- Footer -->
       <div class="modal-footer">
-        <div class="form-errors" v-if="formErrors.length > 0">
-          <span 
-            v-for="error in formErrors" 
-            :key="error"
-            class="error-item"
-          >
-            <component :is="InquiryOptionIcons.AlertCircle" :size="14" />
-            {{ error }}
-          </span>
-        </div>
-        
         <div class="footer-actions">
           <NcButton type="tertiary" @click="$emit('close')">
             {{ t('agora', 'Cancel') }}
@@ -284,7 +178,6 @@ import NcModal from '@nextcloud/vue/components/NcModal'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
-import NcSelect from '@nextcloud/vue/components/NcSelect'
 
 import { useOptionsStore } from '../../stores/options'
 import { useSessionStore } from '../../stores/session'
@@ -320,7 +213,6 @@ const formData = ref({
   description: ''
 })
 const additionalFormData = ref<Record<string, any>>({})
-const formErrors = ref<string[]>([])
 
 // Computed
 const modalTitle = computed(() => {
@@ -361,81 +253,8 @@ const optionTypeColor = computed(() => {
   return getFamilyColor(optionTypeData.value.family)
 })
 
-const parentOption = computed(() => {
-  if (!props.parentId) return null
-  return optionsStore.options.find(opt => opt.id === props.parentId)
-})
-
-const allowedResponses = computed(() => {
-  if (!optionTypeData.value?.allowed_response) return []
-  
-  if (typeof optionTypeData.value.allowed_response === 'string') {
-    try {
-      return JSON.parse(optionTypeData.value.allowed_response)
-    } catch {
-      return []
-    }
-  }
-  
-  return optionTypeData.value.allowed_response || []
-})
-
-const hasSupportFeature = computed(() => {
-  const feature = optionTypeData.value?.support_feature
-  return feature && feature !== 'none'
-})
-
-const supportFeatureLabel = computed(() => {
-  const feature = optionTypeData.value?.support_feature
-  if (!feature || feature === 'none') return ''
-  
-  if (feature === 'ternary') return t('agora', 'Ternary support (for/against/neutral)')
-  if (feature === 'binary') return t('agora', 'Binary support (like/dislike)')
-  return t('agora', 'Support enabled')
-})
-
-const allowComment = computed(() => {
-  return optionTypeData.value?.allow_comment || false
-})
-
-const hasStatuses = computed(() => {
-  const statuses = optionTypeData.value?.statuses || []
-  return statuses.length > 0
-})
-
-const statusesList = computed(() => {
-  if (!optionTypeData.value?.statuses) return []
-  
-  const statuses = optionTypeData.value.statuses
-  if (Array.isArray(statuses)) {
-    return statuses.map((status: string) => {
-      const [value, label] = status.split(':')
-      return { value, label: label || value }
-    })
-  }
-  
-  return []
-})
-
-const hasAdditionalFields = computed(() => {
-  return additionalFields.value.length > 0
-})
-
-const additionalFields = computed(() => {
-  if (!optionTypeData.value?.fields) return []
-  
-  if (typeof optionTypeData.value.fields === 'string') {
-    try {
-      return JSON.parse(optionTypeData.value.fields)
-    } catch {
-      return []
-    }
-  }
-  
-  return optionTypeData.value.fields || []
-})
-
 const optionTypeHelp = computed(() => {
+  // Provide contextual help based on option type
   if (!props.optionType) return ''
   
   const helpTexts: Record<string, string> = {
@@ -448,43 +267,44 @@ const optionTypeHelp = computed(() => {
     'argument_against': t('agora', 'An argument opposing a position. Be constructive in your criticism.'),
     'alternative': t('agora', 'An alternative proposal that addresses objections while maintaining the original intent.'),
     'objection': t('agora', 'A formal objection that blocks consensus. Must be resolved before proceeding.'),
-    'exception': t('agora', 'Negative feedback that does not block consensus but should be noted.'),
-    'consultation_question': t('agora', 'A question posed to the collective for consultation and consensus building.'),
-    'poll_option': t('agora', 'A selectable option in a poll for gathering opinions and preferences.'),
-    'official_summary': t('agora', 'Final synthesis or accepted outcome of a discussion or debate.'),
-    'official_result': t('agora', 'Official decision or result, typically locked and authoritative.')
+    'exception': t('agora', 'Negative feedback that does not block consensus but should be noted.')
   }
   
-  return helpTexts[props.optionType] || t('agora', 'Create a new option to contribute to the discussion.')
+  return helpTexts[props.optionType] || ''
+})
+
+const parentOption = computed(() => {
+  if (!props.parentId) return null
+  return optionsStore.options.find(opt => opt.id === props.parentId)
+})
+
+const hasAdditionalFields = computed(() => {
+  return additionalFields.value.length > 0
+})
+
+const additionalFields = computed(() => {
+  if (!optionTypeData.value?.fields) return []
+  
+  // Parse fields if they're stored as JSON string
+  if (typeof optionTypeData.value.fields === 'string') {
+    try {
+      return JSON.parse(optionTypeData.value.fields)
+    } catch {
+      return []
+    }
+  }
+  
+  return optionTypeData.value.fields || []
 })
 
 const formValid = computed(() => {
-  formErrors.value = []
-  
   // Basic validation
-  if (!formData.value.label.trim()) {
-    formErrors.value.push(t('agora', 'Title is required'))
-    return false
-  }
+  if (!formData.value.label.trim()) return false
   
   // Check required additional fields
   for (const field of additionalFields.value) {
-    if (field.required) {
-      const value = additionalFormData.value[field.key]
-      if (value === undefined || value === null || value === '') {
-        formErrors.value.push(t('agora', '{field} is required', { field: getFieldLabel(field) }))
-        return false
-      }
-      
-      // Validate JSON fields
-      if (field.type === 'json' && value) {
-        try {
-          JSON.parse(value)
-        } catch {
-          formErrors.value.push(t('agora', '{field} must be valid JSON', { field: getFieldLabel(field) }))
-          return false
-        }
-      }
+    if (field.required && !additionalFormData.value[field.key]) {
+      return false
     }
   }
   
@@ -500,8 +320,7 @@ const previewOption = computed(() => {
     parentId: props.parentId || 0,
     created: new Date().toISOString(),
     author: {
-      id: sessionStore.currentUser?.id || '',
-      displayName: sessionStore.currentUser?.displayName || t('agora', 'Current User')
+      displayName: sessionStore.user?.displayName || t('agora', 'Current User')
     },
     support_for: 0,
     support_against: 0,
@@ -524,27 +343,6 @@ const getParentIcon = (parent: Option) => {
   return InquiryOptionIcons.File
 }
 
-const getOptionTypeIcon = (type: string) => {
-  const optionTypes = sessionStore.appSettings?.inquiryOptionTypeTab || []
-  const optionType = optionTypes.find(opt => 
-    opt.option_type === type || opt.optionType === type
-  )
-  
-  if (optionType?.icon) {
-    return InquiryOptionIcons[optionType.icon] || InquiryOptionIcons.File
-  }
-  return InquiryOptionIcons.File
-}
-
-const getOptionTypeLabel = (type: string) => {
-  const optionTypes = sessionStore.appSettings?.inquiryOptionTypeTab || []
-  const optionType = optionTypes.find(opt => 
-    opt.option_type === type || opt.optionType === type
-  )
-  
-  return optionType?.label || type
-}
-
 const getFieldLabel = (field: any) => {
   if (field.label) return field.label
   
@@ -552,32 +350,6 @@ const getFieldLabel = (field: any) => {
   return field.key
     .replace(/_/g, ' ')
     .replace(/\b\w/g, l => l.toUpperCase())
-}
-
-const getSelectOptions = (field: any) => {
-  if (field.options && Array.isArray(field.options)) {
-    return field.options.map((opt: any) => ({
-      value: typeof opt === 'string' ? opt : opt.value,
-      label: typeof opt === 'string' ? opt : opt.label || opt.value
-    }))
-  }
-  
-  return []
-}
-
-const getStatusIcon = (status: string) => {
-  const statusIconMap: Record<string, any> = {
-    'draft': InquiryOptionIcons.Pencil,
-    'published': InquiryOptionIcons.Check,
-    'accepted': InquiryOptionIcons.CheckCircle,
-    'rejected': InquiryOptionIcons.CloseCircle,
-    'proposed': InquiryOptionIcons.Lightbulb,
-    'under_review': InquiryOptionIcons.ClockOutline,
-    'active': InquiryOptionIcons.Check,
-    'resolved': InquiryOptionIcons.ThumbUp
-  }
-  
-  return statusIconMap[status] || InquiryOptionIcons.Circle
 }
 
 const initializeAdditionalFields = () => {
@@ -590,7 +362,7 @@ const initializeAdditionalFields = () => {
     } else if (field.type === 'number') {
       additionalFormData.value[field.key] = field.default || 0
     } else if (field.type === 'json') {
-      additionalFormData.value[field.key] = field.default || ''
+      additionalFormData.value[field.key] = field.default || []
     } else {
       additionalFormData.value[field.key] = field.default || ''
     }
@@ -615,7 +387,7 @@ const createOption = async () => {
     for (const field of additionalFields.value) {
       if (additionalFormData.value[field.key] !== undefined) {
         // Handle JSON fields
-        if (field.type === 'json' && additionalFormData.value[field.key]) {
+        if (field.type === 'json') {
           try {
             optionData.fields[field.key] = typeof additionalFormData.value[field.key] === 'string'
               ? JSON.parse(additionalFormData.value[field.key])
@@ -644,8 +416,8 @@ const createOption = async () => {
       created: new Date().toISOString(),
       modified: new Date().toISOString(),
       author: {
-        id: sessionStore.currentUser?.id || '',
-        displayName: sessionStore.currentUser?.displayName || t('agora', 'Current User')
+        id: sessionStore.user?.id || '',
+        displayName: sessionStore.user?.displayName || t('agora', 'Current User')
       },
       support_for: 0,
       support_against: 0,
@@ -661,7 +433,7 @@ const createOption = async () => {
     
   } catch (error) {
     console.error('Error creating option:', error)
-    formErrors.value.push(t('agora', 'Error creating option: {error}', { error: error.message }))
+    // TODO: Show error message to user
   }
 }
 
@@ -671,6 +443,14 @@ watch(() => props.optionType, (newType) => {
     initializeAdditionalFields()
   }
 }, { immediate: true })
+
+// Watch for parent ID changes
+watch(() => props.parentId, (newParentId) => {
+  if (newParentId) {
+    // Update form data based on parent if needed
+    console.log('Parent changed:', newParentId)
+  }
+})
 
 // Lifecycle
 onMounted(() => {
@@ -766,26 +546,23 @@ onMounted(() => {
           }
         }
 
-        .parent-info,
-        .responses-info {
+        .parent-info {
           display: flex;
-          align-items: flex-start;
+          align-items: center;
           gap: 12px;
-          margin-bottom: 16px;
+          margin-bottom: 20px;
           padding: 12px;
           background: var(--color-background-dark);
           border-radius: 8px;
           border: 1px solid var(--color-border);
 
-          .parent-label,
-          .responses-label {
+          .parent-label {
             font-size: 13px;
             font-weight: 600;
             color: var(--color-text-light);
             display: flex;
             align-items: center;
             gap: 4px;
-            flex-shrink: 0;
           }
 
           .parent-details {
@@ -799,52 +576,7 @@ onMounted(() => {
               color: var(--color-main-text);
               overflow: hidden;
               text-overflow: ellipsis;
-            }
-          }
-
-          .responses-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            flex: 1;
-
-            .response-type {
-              display: flex;
-              align-items: center;
-              gap: 4px;
-              font-size: 12px;
-              padding: 2px 6px;
-              background: var(--color-background-darker);
-              border-radius: 6px;
-              color: var(--color-text-lighter);
-            }
-          }
-        }
-
-        .features-info {
-          margin-bottom: 24px;
-          padding: 12px;
-          background: var(--color-background-dark);
-          border-radius: 8px;
-          border: 1px solid var(--color-border);
-
-          .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 12px;
-
-            .feature-item {
-              display: flex;
-              align-items: center;
-              gap: 8px;
-              font-size: 13px;
-              color: var(--color-text-light);
-
-              .feature-label {
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: nowrap;
-              }
+              white-space: nowrap;
             }
           }
         }
@@ -861,11 +593,6 @@ onMounted(() => {
               font-size: 14px;
               font-weight: 600;
               color: var(--color-main-text);
-
-              .required {
-                color: var(--color-error);
-                margin-left: 2px;
-              }
             }
 
             .checkbox-field {
@@ -878,13 +605,6 @@ onMounted(() => {
                 font-weight: normal;
                 cursor: pointer;
               }
-            }
-
-            .field-hint {
-              font-size: 12px;
-              color: var(--color-text-lighter);
-              margin-top: 4px;
-              font-style: italic;
             }
           }
         }
@@ -910,7 +630,6 @@ onMounted(() => {
           background: var(--color-background-dark);
           border-radius: 12px;
           border: 1px solid var(--color-border);
-          margin-bottom: 20px;
 
           display: flex;
           gap: 12px;
@@ -928,59 +647,6 @@ onMounted(() => {
             line-height: 1.5;
           }
         }
-
-        .statuses-preview {
-          h5 {
-            margin: 0 0 12px 0;
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--color-text-light);
-          }
-
-          .statuses-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-
-            .status-badge {
-              display: inline-flex;
-              align-items: center;
-              gap: 4px;
-              font-size: 11px;
-              padding: 2px 8px;
-              border-radius: 10px;
-              font-weight: 600;
-
-              &.status-draft {
-                background: var(--color-background-darker);
-                color: var(--color-text-lighter);
-              }
-
-              &.status-published,
-              &.status-accepted,
-              &.status-resolved {
-                background: var(--color-success-light);
-                color: var(--color-success);
-              }
-
-              &.status-rejected {
-                background: var(--color-error-light);
-                color: var(--color-error);
-              }
-
-              &.status-proposed,
-              &.status-active {
-                background: var(--color-warning-light);
-                color: var(--color-warning);
-              }
-
-              &.status-review {
-                background: var(--color-info-light);
-                color: var(--color-info);
-              }
-            }
-          }
-        }
       }
     }
   }
@@ -989,23 +655,6 @@ onMounted(() => {
     padding: 16px 24px;
     border-top: 1px solid var(--color-border);
     background: var(--color-background-dark);
-
-    .form-errors {
-      margin-bottom: 12px;
-
-      .error-item {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        font-size: 13px;
-        color: var(--color-error);
-        margin-bottom: 4px;
-
-        &:last-child {
-          margin-bottom: 0;
-        }
-      }
-    }
 
     .footer-actions {
       display: flex;
@@ -1031,12 +680,6 @@ onMounted(() => {
 
             .type-info {
               text-align: center;
-            }
-          }
-
-          .features-info {
-            .features-grid {
-              grid-template-columns: 1fr;
             }
           }
         }

@@ -12,12 +12,12 @@
 })();
 const appName = "agora";
 const appVersion = "1.7.0-beta";
-import { _ as _export_sfc, c as createElementBlock, o as openBlock, j as createVNode, g as withCtx, C as createTextVNode, t as toDisplayString, s as translate, f as createBlock, l as createCommentVNode, k as createBaseVNode, i as mergeProps, U as ref, b as computed, D as purify, V as withDirectives, W as vShow, X as vModelText, Y as NcButton, M as Fragment, O as renderList, h as resolveDynamicComponent, Z as withModifiers, d as defineComponent, e as watch, J as normalizeClass, $ as resolveComponent, p as normalizeStyle, v as onMounted, x as normalizeProps, y as guardReactiveProps, z as createApp, A as pinia } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_ef057a6f_lang-CVwe8pgH.chunk.mjs";
-import { I as InputDiv, a as NcAppSettingsDialog, N as NcSettingsSection } from "./index-BRUGFm4l.chunk.mjs";
-import { d as useAppSettingsStore, e as d, g as gfmHeadingId, f as adminJobs, L as Logger, I as InquiryGeneralIcons, s as showError, S as StatusIcons } from "./NcDashboardWidget-Bu7bWoUK-CVr4qFvh.chunk.mjs";
-import { F as FlexSettings } from "./FlexSettings-rmi9DipD.chunk.mjs";
-import { N as NcCheckboxRadioSwitch, a as NcSelect, b as NcInputField } from "./NcRichText-CETsOVBU-DheldUBo.chunk.mjs";
-import { R as RadioGroupDiv, C as CardDiv } from "./markdown-B_3V92b7.chunk.mjs";
+import { _ as _export_sfc, c as createElementBlock, o as openBlock, j as createVNode, g as withCtx, C as createTextVNode, t as toDisplayString, s as translate, f as createBlock, l as createCommentVNode, k as createBaseVNode, i as mergeProps, aB as ref, b as computed, D as purify, T as withDirectives, U as vShow, aC as vModelText, V as NcButton, M as Fragment, O as renderList, h as resolveDynamicComponent, am as withModifiers, d as defineComponent, e as watch, J as normalizeClass, a6 as resolveComponent, p as normalizeStyle, v as onMounted, x as normalizeProps, y as guardReactiveProps, z as createApp, A as pinia } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_ef057a6f_lang-CClJnuqR.chunk.mjs";
+import { I as InputDiv, a as NcAppSettingsDialog, N as NcSettingsSection } from "./index-BBweHR0O.chunk.mjs";
+import { d as useAppSettingsStore, e as d, f as gfmHeadingId, h as adminJobs, L as Logger, I as InquiryGeneralIcons, s as showError, S as StatusIcons } from "./NcDashboardWidget-Bu7bWoUK-DQHrnZH0.chunk.mjs";
+import { F as FlexSettings } from "./FlexSettings-DwXcQM8S.chunk.mjs";
+import { N as NcCheckboxRadioSwitch, a as NcSelect, b as NcInputField } from "./NcRichText-CETsOVBU-BVQiLfnA.chunk.mjs";
+import { R as RadioGroupDiv, C as CardDiv } from "./markdown-Csw6ksxE.chunk.mjs";
 const _sfc_main$r = {
   __name: "AdminActivities",
   setup(__props, { expose: __expose }) {
@@ -1566,7 +1566,7 @@ const _sfc_main$g = /* @__PURE__ */ defineComponent({
     });
     const getDefaultRights = () => ({
       supportInquiry: true,
-      supportMode: "simple",
+      supportFeature: "binary",
       commentInquiry: true,
       useResourceInquiry: true,
       editorType: "wysiwyg"
@@ -1584,7 +1584,7 @@ const _sfc_main$g = /* @__PURE__ */ defineComponent({
     };
     watch(() => typeRights.value.supportInquiry, (enabled) => {
       if (!enabled) {
-        typeRights.value.supportMode = "simple";
+        typeRights.value.supportFeature = "binary";
       }
       updateRights();
     });
@@ -1694,14 +1694,14 @@ function _sfc_render$g(_ctx, _cache, $props, $setup, $data, $options) {
           ),
           createBaseVNode("div", _hoisted_11$3, [
             createVNode($setup["NcCheckboxRadioSwitch"], {
-              modelValue: $setup.typeRights.supportMode,
+              modelValue: $setup.typeRights.supportFeature,
               "onUpdate:modelValue": [
-                _cache[1] || (_cache[1] = ($event) => $setup.typeRights.supportMode = $event),
+                _cache[1] || (_cache[1] = ($event) => $setup.typeRights.supportFeature = $event),
                 $setup.updateRights
               ],
               type: "radio",
-              value: "simple",
-              name: "supportMode"
+              value: "binary",
+              name: "supportFeature"
             }, {
               default: withCtx(() => [
                 createTextVNode(
@@ -1723,14 +1723,14 @@ function _sfc_render$g(_ctx, _cache, $props, $setup, $data, $options) {
           ]),
           createBaseVNode("div", _hoisted_13$2, [
             createVNode($setup["NcCheckboxRadioSwitch"], {
-              modelValue: $setup.typeRights.supportMode,
+              modelValue: $setup.typeRights.supportFeature,
               "onUpdate:modelValue": [
-                _cache[2] || (_cache[2] = ($event) => $setup.typeRights.supportMode = $event),
+                _cache[2] || (_cache[2] = ($event) => $setup.typeRights.supportFeature = $event),
                 $setup.updateRights
               ],
               type: "radio",
               value: "ternary",
-              name: "supportMode"
+              name: "supportFeature"
             }, {
               default: withCtx(() => [
                 createTextVNode(

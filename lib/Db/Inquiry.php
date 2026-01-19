@@ -65,8 +65,6 @@ use OCP\IURLGenerator;
  * @method    void setParentId(int $value)
  * @method    int getArchived()
  * @method    void setArchived(int $value)
- * @method    string getSupportMode()
- * @method    void setSupportMode(string $value)
  *
  * Magic functions for joined columns
  * @method    string getShareToken()
@@ -153,6 +151,7 @@ class Inquiry extends EntityWithUser implements JsonSerializable
     protected string $access = '';
     protected string $showResults = '';
     protected int $lastInteraction = 0;
+    protected int $forceConfidentialComments = 0;
     protected ?int $parentId = 0;
     protected string $moderationStatus = self::DEFAULT_STATUS_DRAFT;
     protected string $inquiryStatus = self::DEFAULT_STATUS_DRAFT;
@@ -160,7 +159,6 @@ class Inquiry extends EntityWithUser implements JsonSerializable
     protected string $supportFeature = 'none';
     protected bool $hasSupported = false; 
     protected ?int $supportValue = null; 
-    protected string $supportMode = 'simple'; 
     protected string $family='';
 
     // joined columns
@@ -304,7 +302,6 @@ class Inquiry extends EntityWithUser implements JsonSerializable
         'allowComment' => boolval($this->getAllowComment()),
         'supportFeature' => $this->getSupportFeature(),
         'showResults' => $this->getShowResults(),
-        'supportMode' => $this->getSupportMode(),
         ];
     }
 
@@ -339,6 +336,7 @@ class Inquiry extends EntityWithUser implements JsonSerializable
         $this->setAccess($inquiryConfiguration['access'] ?? $this->getAccess());
         $this->setAutoReminder($inquiryConfiguration['autoReminder'] ?? $this->getAutoReminder());
         $this->setAllowComment($inquiryConfiguration['allowComment'] ?? $this->getAllowComment()); 
+        $this->setAllowComment($inquiryConfiguration['supportFeature'] ?? $this->getSupportFeature()); 
         $this->setExpire($inquiryConfiguration['expire'] ?? $this->getExpire());
         $this->setForceConfidentialComments($inquiryConfiguration['forceConfidentialComments'] ?? $this->getForceConfidentialComments());
         $this->setShowResults($inquiryConfiguration['showResults'] ?? $this->getShowResults());
@@ -409,10 +407,6 @@ class Inquiry extends EntityWithUser implements JsonSerializable
         return $this->miscFields[$key] ?? null;
     }
 
-    public function setSupportModestring(string $mode)
-    {
-        return $this->supportMode=$mode;
-    }
 
     public function setMiscField(string $key, mixed $value): void
     {
@@ -500,7 +494,7 @@ class Inquiry extends EntityWithUser implements JsonSerializable
         $this->setMiscField('autoReminder', (bool)$value);
     }
 
-    private function setForceConfidentialComments(bool|int $value): void
+    public function setForceConfidentialComments(bool|int $value): void
     {
         $this->setMiscField('forceConfidentialComments', (bool)$value);
     }
@@ -776,20 +770,6 @@ class Inquiry extends EntityWithUser implements JsonSerializable
     private function getAllowDeanonymize(): bool
     {
         return $this->getAllowEditInquiry() && $this->getUser()->getIsUnrestrictedInquiryOwner();
-    }
-
-    private function getSupportFeature(): string
-    {
-        if (!$this->getAllowAccessInquiry()) {
-            return 'none';
-        }
-
-        if ($this->userSession->getShare()->getType() === 'public') {
-            return 'none';
-        }
-
-      if (!$this->getExpired()) return 'binary';
-      else return 'none';
     }
 
     private function getAllowSubscribeToInquiry(): bool

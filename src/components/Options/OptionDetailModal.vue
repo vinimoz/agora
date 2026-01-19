@@ -1,0 +1,1388 @@
+<!--
+  SPDX-FileCopyrightText: 2024 Nextcloud contributors
+  SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+<template>
+  <NcModal
+    v-if="show && optionId"
+    :name="modalTitle"
+    size="large"
+    @close="closeModal"
+  >
+    <div class="option-detail-modal">
+      <!-- Loading state -->
+      <div v-if="loading" class="loading-state">
+        <NcLoadingIcon :size="48" />
+        <p>{{ t('agora', 'Loading option details...') }}</p>
+      </div>
+
+      <!-- Error state -->
+      <div v-else-if="error" class="error-state">
+        <NcNoteCard type="error">
+          {{ error }}
+        </NcNoteCard>
+        <NcButton @click="loadOption">
+          {{ t('agora', 'Retry') }}
+        </NcButton>
+      </div>
+
+      <!-- Content -->
+      <div v-else-if="option" class="modal-content">
+        <!-- Header with option type and actions -->
+        <div class="modal-header">
+          <div class="header-left">
+            <div class="option-type-indicator" :style="{ color: optionTypeColor }">
+              <component :is="optionIcon" :size="24" />
+            </div>
+            <div class="header-text">
+              <h2 class="option-title">{{ option.label }}</h2>
+              <div class="option-meta">
+                <span class="option-type">{{ optionTypeLabel }}</span>
+                <span class="option-date">{{ formatDate(option.created) }}</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="header-right">
+            <!-- Quick actions -->
+            <div class="quick-actions">
+              <TernarySupportIcon
+                v-if="supportFeature === 'ternary'"
+                :support-value="userSupport"
+                :size="20"
+                class="support-icon"
+                @click="toggleSupport"
+              />
+              <ThumbIcon
+                v-else-if="supportFeature === 'binary'"
+                :supported="userSupport === 'for'"
+                :size="20"
+                class="support-icon"
+                @click="toggleSupport"
+              />
+              
+              <NcButton
+                v-if="allowComment"
+                type="tertiary"
+                class="comment-btn"
+                @click="scrollToComments"
+              >
+                <component :is="InquiryOptionIcons.Comment" :size="16" />
+                <span>{{ option.comment_count || 0 }}</span>
+              </NcButton>
+            </div>
+
+            <!-- Main actions menu -->
+            <NcActions
+              v-if="canEditOrDelete"
+              :force-menu="true"
+              :aria-label="t('agora', 'Option actions')"
+            >
+              <!-- Edit action -->
+              <NcActionButton
+                v-if="canEdit"
+                :close-after-click="true"
+                @click="editOption"
+              >
+                <template #icon>
+                  <component :is="InquiryOptionIcons.Edit" :size="20" />
+                </template>
+                {{ t('agora', 'Edit') }}
+              </NcActionButton>
+
+              <!-- Add response submenu -->
+              <NcActionButton
+                v-if="hasAllowedResponses && canAddChild"
+                :is-menu="true"
+              >
+                <template #icon>
+                  <component :is="InquiryOptionIcons.Plus" :size="20" />
+                </template>
+                {{ t('agora', 'Add Response') }}
+
+                <!-- Response type submenu -->
+                <NcActionButton
+                  v-for="responseType in availableResponseTypes"
+                  :key="responseType.option_type"
+                  :close-after-click="true"
+                  @click="openAddResponseModal(responseType.option_type)"
+                >
+                  <template #icon>
+                    <component :is="getOptionTypeIcon(responseType.option_type)" :size="16" />
+                  </template>
+                  {{ responseType.label }}
+                </NcActionButton>
+              </NcActionButton>
+
+              <!-- Delete action -->
+              <NcActionButton
+                v-if="canDelete"
+                :close-after-click="true"
+                @click="confirmDelete"
+              >
+                <template #icon>
+                  <component :is="InquiryOptionIcons.Delete" :size="20" />
+                </template>
+                {{ t('agora', 'Delete') }}
+              </NcActionButton>
+            </NcActions>
+          </div>
+        </div>
+
+        <!-- Main content area -->
+        <div class="main-content">
+          <!-- Author info -->
+          <div class="author-section">
+            <NcAvatar
+              v-if="option.author?.id"
+              :user="option.author.id"
+              :display-name="option.author.displayName"
+              :size="32"
+            />
+            <div class="author-details">
+              <span class="author-name">{{ option.author?.displayName || t('agora', 'Unknown author') }}</span>
+              <span class="author-role">{{ getAuthorRole() }}</span>
+            </div>
+            <div class="support-counts" v-if="hasSupportFeature">
+              <div class="support-count positive">
+                <TernarySupportIcon
+                  v-if="supportFeature === 'ternary'"
+                  :support-value="'for'"
+                  :size="14"
+                />
+                <ThumbIcon
+                  v-else-if="supportFeature === 'binary'"
+                  :supported="true"
+                  :size="14"
+                />
+                <span>{{ option.support_for || 0 }}</span>
+              </div>
+              <div v-if="supportFeature === 'ternary'" class="support-count negative">
+                <TernarySupportIcon
+                  :support-value="'against'"
+                  :size="14"
+                  :invert="true"
+                />
+                <span>{{ option.support_against || 0 }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Option description/content -->
+          <div class="content-section">
+            <div v-if="isEditing" class="editor-container">
+              <NcTextField
+                v-model="editForm.label"
+                :label="t('agora', 'Title')"
+                :placeholder="t('agora', 'Enter option title')"
+                required
+                full-width
+              />
+              <NcTextField
+                v-model="editForm.description"
+                :label="t('agora', 'Description')"
+                :placeholder="t('agora', 'Enter option description')"
+                type="textarea"
+                :rows="6"
+                full-width
+              />
+
+              <!-- Additional fields -->
+              <div v-if="hasAdditionalFields" class="additional-fields">
+                <h4>{{ t('agora', 'Additional Information') }}</h4>
+                <div class="fields-grid">
+                  <div
+                    v-for="field in additionalFields"
+                    :key="field.key"
+                    class="field-item"
+                  >
+                    <label :for="`field-${field.key}`">{{ getFieldLabel(field) }}</label>
+                    <NcTextField
+                      v-if="field.type === 'text' || field.type === 'number'"
+                      :id="`field-${field.key}`"
+                      v-model="editForm.fields[field.key]"
+                      :type="field.type === 'number' ? 'number' : 'text'"
+                      :placeholder="field.placeholder || ''"
+                      full-width
+                    />
+                    <NcCheckboxRadioSwitch
+                      v-else-if="field.type === 'boolean'"
+                      :id="`field-${field.key}`"
+                      type="switch"
+                      :checked="editForm.fields[field.key] || false"
+                      @update:checked="editForm.fields[field.key] = $event"
+                    >
+                      {{ field.label || field.key }}
+                    </NcCheckboxRadioSwitch>
+                  </div>
+                </div>
+              </div>
+
+              <div class="edit-actions">
+                <NcButton type="tertiary" @click="cancelEdit">
+                  {{ t('agora', 'Cancel') }}
+                </NcButton>
+                <NcButton type="primary" :disabled="!canSaveEdit" @click="saveEdit">
+                  {{ t('agora', 'Save') }}
+                </NcButton>
+              </div>
+            </div>
+
+            <div v-else class="content-display">
+              <div v-if="option.description" class="description-content">
+                <div class="description-text">{{ option.description }}</div>
+              </div>
+
+              <!-- Additional fields display -->
+              <div v-if="hasAdditionalFieldsData" class="additional-fields-display">
+                <h4>{{ t('agora', 'Additional Information') }}</h4>
+                <div class="fields-grid">
+                  <div
+                    v-for="field in additionalFields"
+                    :key="field.key"
+                    class="field-item-display"
+                  >
+                    <strong>{{ getFieldLabel(field) }}:</strong>
+                    <span>{{ formatFieldValue(field, option.fields?.[field.key]) }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Responses preview -->
+          <div v-if="hasAllowedResponses" class="responses-section">
+            <div class="section-header">
+              <h3>{{ t('agora', 'Responses') }}</h3>
+              <NcButton
+                v-if="canAddChild"
+                type="primary"
+                @click="openAddChildModal"
+              >
+                <template #icon>
+                  <component :is="InquiryOptionIcons.Plus" :size="16" />
+                </template>
+                {{ t('agora', 'Add response') }}
+              </NcButton>
+            </div>
+
+            <div class="responses-preview">
+              <div v-if="childCountsTotal === 0" class="empty-responses">
+                <component :is="InquiryOptionIcons.MessageText" :size="48" />
+                <h4>{{ t('agora', 'No responses yet') }}</h4>
+                <p>{{ t('agora', 'Be the first to respond to this option') }}</p>
+              </div>
+
+              <div v-else class="responses-grid">
+                <div
+                  v-for="childType in allowedResponses"
+                  :key="childType"
+                  class="response-type-card"
+                  @click="showChildren(childType)"
+                >
+                  <div class="response-type-icon">
+                    <component :is="getOptionTypeIcon(childType)" :size="24" />
+                  </div>
+                  <h4>{{ getOptionTypeLabel(childType) }}</h4>
+                  <div class="response-count">{{ childCounts[childType] || 0 }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Comments section -->
+          <div ref="commentsSection" class="comments-section">
+            <div class="section-header">
+              <h3>{{ t('agora', 'Comments') }}</h3>
+              <NcButton
+                v-if="allowComment"
+                type="primary"
+                @click="showCommentForm = !showCommentForm"
+              >
+                <template #icon>
+                  <component :is="showCommentForm ? InquiryOptionIcons.Close : InquiryOptionIcons.Comment" :size="16" />
+                </template>
+                {{ showCommentForm ? t('agora', 'Cancel') : t('agora', 'Add comment') }}
+              </NcButton>
+            </div>
+
+            <!-- Comment form -->
+            <transition name="fade">
+              <div v-if="showCommentForm" class="comment-form">
+                <CommentAdd
+                  :inquiry-id="inquiryId"
+                  :option-id="option.id"
+                  @comment-added="handleCommentAdded"
+                />
+              </div>
+            </transition>
+
+            <!-- Comments list -->
+            <div v-if="comments.length > 0" class="comments-list">
+              <Comments
+                :inquiry-id="inquiryId"
+                :option-id="option.id"
+              />
+            </div>
+
+            <div v-else-if="!showCommentForm" class="no-comments">
+              <component :is="InquiryOptionIcons.Comment" :size="48" />
+              <h4>{{ t('agora', 'No comments yet') }}</h4>
+              <p>{{ t('agora', 'Start the discussion') }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </NcModal>
+
+  <!-- Child modal -->
+  <OptionDetailModal
+    v-if="showChildModal"
+    :option-id="selectedChildId"
+    :inquiry-id="inquiryId"
+    @close="closeChildModal"
+    @updated="handleChildUpdated"
+    @deleted="handleChildDeleted"
+  />
+
+  <!-- Add child modal -->
+  <AddOptionModal
+    v-if="showAddChildModal"
+    :inquiry-id="inquiryId"
+    :option-type="selectedChildType"
+    :parent-id="option?.id"
+    @close="closeAddChildModal"
+    @created="handleChildCreated"
+  />
+</template>
+
+<script setup lang="ts">
+    import { ref, computed, onMounted, watch } from 'vue'
+import { t } from '@nextcloud/l10n'
+import NcModal from '@nextcloud/vue/components/NcModal'
+import NcButton from '@nextcloud/vue/components/NcButton'
+import NcAvatar from '@nextcloud/vue/components/NcAvatar'
+import NcActions from '@nextcloud/vue/components/NcActions'
+import NcActionButton from '@nextcloud/vue/components/NcActionButton'
+import NcActionSeparator from '@nextcloud/vue/components/NcActionSeparator'
+import NcTextField from '@nextcloud/vue/components/NcTextField'
+import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
+import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
+import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
+
+import { useOptionsStore } from '../../stores/options'
+import { useSessionStore } from '../../stores/session'
+import { InquiryOptionIcons } from '../../utils/icons.ts'
+import { TernarySupportIcon, ThumbIcon } from '../AppIcons'
+import { 
+  getOptionTypeData,
+  getFamilyColor,
+  getOptionTypeOptions
+} from '../../helpers/modules/InquiryOptionHelper'
+
+// Import components
+import Comments from '../Comments/Comments.vue'
+import CommentAdd from '../Comments/CommentAdd.vue'
+import AddOptionModal from './AddOptionModal.vue'
+
+// Types
+import type { Option, OptionType } from '../../Types/index.ts'
+
+// Props
+const props = defineProps<{
+  optionId: number | null
+  inquiryId: number
+}>()
+
+// Emits
+const emit = defineEmits<{
+  close: []
+  updated: [option: Option]
+  deleted: [optionId: number]
+}>()
+
+// Stores
+const optionsStore = useOptionsStore()
+const sessionStore = useSessionStore()
+
+// State
+const show = ref(true)
+const loading = ref(false)
+const error = ref<string | null>(null)
+const option = ref<Option | null>(null)
+const comments = ref<any[]>([])
+const showCommentForm = ref(false)
+const isEditing = ref(false)
+const editForm = ref({
+  label: '',
+  description: '',
+  fields: {} as Record<string, any>
+})
+const userSupport = ref<'for' | 'against' | null>(null)
+const showChildModal = ref(false)
+const selectedChildId = ref<number | null>(null)
+const showAddChildModal = ref(false)
+const selectedChildType = ref<string | null>(null)
+
+
+
+// Computed properties
+const availableResponseTypes = computed(() => {
+  if (!allowedResponses.value.length) return []
+
+  const allOptionTypes = sessionStore.appSettings?.inquiryOptionTypeTab || []
+
+  return allowedResponses.value
+    .map(responseType => {
+      const optionType = allOptionTypes.find(opt =>
+        opt.option_type === responseType || opt.optionType === responseType
+      )
+      return optionType ? {
+        option_type: optionType.option_type || optionType.optionType || responseType,
+        label: optionType.label || responseType,
+        icon: optionType.icon || 'File'
+      } : null
+    })
+    .filter((type): type is { option_type: string; label: string; icon: string } => type !== null)
+    .sort((a, b) => a.label.localeCompare(b.label))
+})
+
+// Methods
+const openAddResponseModal = (responseType: string) => {
+  selectedChildType.value = responseType
+  showAddChildModal.value = true
+}
+
+// Helper method
+const getOptionTypeIcon = (type: string) => {
+  const optionTypes = sessionStore.appSettings?.inquiryOptionTypeTab || []
+  const optionType = optionTypes.find(opt =>
+    opt.option_type === type || opt.optionType === type
+  )
+
+  if (optionType?.icon) {
+    return InquiryOptionIcons[optionType.icon] || InquiryOptionIcons.File
+  }
+  return InquiryOptionIcons.File
+}
+
+const commentsSection = ref<HTMLElement | null>(null)
+
+// Computed
+const modalTitle = computed(() => {
+  return option.value?.label || t('agora', 'Option Details')
+})
+
+const optionTypeConfig = computed(() => {
+  if (!option.value?.type) return null
+  const optionTypes = sessionStore.appSettings?.inquiryOptionTypeTab || []
+  return optionTypes.find(opt => 
+    opt.option_type === option.value?.type || opt.optionType === option.value?.type
+  )
+})
+
+const optionTypeLabel = computed(() => {
+  if (!optionTypeConfig.value) return option.value?.type || ''
+  return optionTypeConfig.value.label || option.value?.type || ''
+})
+
+const optionIcon = computed(() => {
+  if (!optionTypeConfig.value?.icon) return InquiryOptionIcons.File
+  return InquiryOptionIcons[optionTypeConfig.value.icon] || InquiryOptionIcons.File
+})
+
+const optionTypeColor = computed(() => {
+  if (!optionTypeConfig.value?.family) return '#999999'
+  // Get color from helper
+  const familyColors: Record<string, string> = {
+    'debate': '#6aa84f',
+    'structure': '#3c8dbc',
+    'consensus': '#f1c232',
+    'decision': '#cc0000',
+    'proposal': '#e69138'
+  }
+  return familyColors[optionTypeConfig.value.family] || '#999999'
+})
+
+const supportFeature = computed(() => {
+  return optionTypeConfig.value?.support_feature || 'none'
+})
+
+const allowComment = computed(() => {
+  return optionTypeConfig.value?.allow_comment || false
+})
+
+const hasSupportFeature = computed(() => {
+  return supportFeature.value !== 'none'
+})
+
+const canEdit = computed(() => {
+  if (!option.value?.author) return false
+  // Check if current user is the author or has admin permissions
+  return sessionStore.currentUser?.id === option.value.author.id
+})
+
+const canDelete = computed(() => {
+  if (!option.value?.author) return false
+  // Check if current user is the author or has admin permissions
+  return sessionStore.currentUser?.id === option.value.author.id
+})
+
+const canAddChild = computed(() => {
+  if (!option.value?.id) return false
+  // Check if user can add child options
+  // TODO: Implement proper permission check
+  return sessionStore.currentUser?.id !== undefined
+})
+
+const canEditOrDelete = computed(() => {
+  return canEdit.value || canDelete.value || canAddChild.value
+})
+
+const canSaveEdit = computed(() => {
+  return editForm.value.label.trim().length > 0
+})
+
+const additionalFields = computed(() => {
+  if (!optionTypeConfig.value?.fields) return []
+
+  if (typeof optionTypeConfig.value.fields === 'string') {
+    try {
+      return JSON.parse(optionTypeConfig.value.fields)
+    } catch {
+      return []
+    }
+  }
+
+  return optionTypeConfig.value.fields || []
+})
+
+const hasAdditionalFields = computed(() => {
+  return additionalFields.value.length > 0
+})
+
+const hasAdditionalFieldsData = computed(() => {
+  if (!option.value?.fields) return false
+  return Object.keys(option.value.fields).length > 0
+})
+
+const allowedResponses = computed(() => {
+  if (!optionTypeConfig.value?.allowed_response) return []
+
+  // Parse if string, otherwise use array
+  let responses: string[] = []
+  if (typeof optionTypeConfig.value.allowed_response === 'string') {
+    try {
+      responses = JSON.parse(optionTypeConfig.value.allowed_response)
+    } catch {
+      responses = []
+    }
+  } else if (Array.isArray(optionTypeConfig.value.allowed_response)) {
+    responses = optionTypeConfig.value.allowed_response
+  }
+
+  // Filter out any invalid response types
+  const allOptionTypes = sessionStore.appSettings?.inquiryOptionTypeTab || []
+  return responses.filter(responseType => 
+    allOptionTypes.some(opt => 
+      opt.option_type === responseType || opt.optionType === responseType
+    )
+  )
+})
+
+const hasAllowedResponses = computed(() => {
+  return allowedResponses.value.length > 0
+})
+
+const childCounts = computed(() => {
+  const counts: Record<string, number> = {}
+
+  if (!option.value?.id) return counts
+
+  const children = optionsStore.options.filter(opt => opt.parentId === option.value?.id)
+
+  // Initialize counts for allowed responses
+  allowedResponses.value.forEach((type: string) => {
+    counts[type] = 0
+  })
+
+  // Count children by type
+  children.forEach(child => {
+    if (counts[child.type] !== undefined) {
+      counts[child.type]++
+    }
+  })
+
+  return counts
+})
+
+const childCountsTotal = computed(() => {
+  return Object.values(childCounts.value).reduce((sum, count) => sum + count, 0)
+})
+
+// Methods
+const formatDate = (dateString: string) => {
+  const date = new Date(dateString)
+  return new Intl.DateTimeFormat(undefined, {
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  }).format(date)
+}
+
+const getAuthorRole = () => {
+  if (!option.value?.author?.id || !sessionStore.currentUser?.id) {
+    return t('agora', 'Author')
+  }
+
+  if (option.value.author.id === sessionStore.currentUser.id) {
+    return t('agora', 'You')
+  }
+
+  return t('agora', 'Author')
+}
+
+const getFieldLabel = (field: any) => {
+  if (field.label) return field.label
+
+  // Generate label from key
+  return field.key
+    .replace(/_/g, ' ')
+    .replace(/\b\w/g, l => l.toUpperCase())
+}
+
+const formatFieldValue = (field: any, value: any) => {
+  if (value === null || value === undefined || value === '') {
+    return t('agora', 'Not specified')
+  }
+
+  if (field.type === 'boolean') {
+    return value ? t('agora', 'Yes') : t('agora', 'No')
+  }
+
+  if (field.type === 'json' && Array.isArray(value)) {
+    return value.join(', ')
+  }
+
+  return value.toString()
+}
+
+
+const getOptionTypeLabel = (type: string) => {
+  const optionTypes = sessionStore.appSettings?.inquiryOptionTypeTab || []
+  const optionType = optionTypes.find(opt => 
+    opt.option_type === type || opt.optionType === type
+  )
+
+  return optionType?.label || type
+}
+
+const loadOption = async () => {
+  if (!props.optionId) return
+
+  loading.value = true
+  error.value = null
+
+  try {
+    // For now, find in store
+    const foundOption = optionsStore.options.find(opt => opt.id === props.optionId)
+    if (foundOption) {
+      option.value = foundOption
+      editForm.value = {
+        label: foundOption.label || '',
+        description: foundOption.description || '',
+        fields: { ...foundOption.fields }
+      }
+
+      // Load user support state
+      if (foundOption.user_support !== undefined) {
+        userSupport.value = foundOption.user_support
+      }
+
+      // Load comments
+      // TODO: Load actual comments
+      comments.value = []
+    } else {
+      error.value = t('agora', 'Option not found')
+    }
+  } catch (err) {
+    console.error('Error loading option:', err)
+    error.value = t('agora', 'Failed to load option details')
+  } finally {
+    loading.value = false
+  }
+}
+
+const closeModal = () => {
+  show.value = false
+  setTimeout(() => {
+    emit('close')
+  }, 300)
+}
+
+const toggleSupport = () => {
+  if (!hasSupportFeature.value || !option.value) return
+
+  // Toggle support
+  if (userSupport.value === 'for') {
+    userSupport.value = null
+    if (option.value.support_for > 0) {
+      option.value.support_for--
+    }
+  } else {
+    userSupport.value = 'for'
+    option.value.support_for = (option.value.support_for || 0) + 1
+
+    // If previously against, decrement against count
+    if (userSupport.value === 'for' && option.value.support_against > 0) {
+      option.value.support_against--
+    }
+  }
+
+  // Update option in store
+  const index = optionsStore.options.findIndex(opt => opt.id === option.value?.id)
+  if (index >= 0) {
+    optionsStore.options[index] = {
+      ...optionsStore.options[index],
+      user_support: userSupport.value,
+      support_for: option.value.support_for,
+      support_against: option.value.support_against
+    }
+  }
+
+  emit('updated', option.value)
+}
+
+const scrollToComments = () => {
+  if (commentsSection.value) {
+    commentsSection.value.scrollIntoView({ behavior: 'smooth' })
+  }
+}
+
+const editOption = () => {
+  isEditing.value = true
+}
+
+const cancelEdit = () => {
+  isEditing.value = false
+  if (option.value) {
+    editForm.value = {
+      label: option.value.label || '',
+      description: option.value.description || '',
+      fields: { ...option.value.fields }
+    }
+  }
+}
+
+const saveEdit = async () => {
+  if (!option.value || !canSaveEdit.value) return
+
+  try {
+    // Update option in store
+    const updatedOption = {
+      ...option.value,
+      label: editForm.value.label,
+      description: editForm.value.description,
+      fields: editForm.value.fields,
+      modified: new Date().toISOString()
+    }
+
+    const index = optionsStore.options.findIndex(opt => opt.id === option.value?.id)
+    if (index >= 0) {
+      optionsStore.options[index] = updatedOption
+    }
+
+    option.value = updatedOption
+    isEditing.value = false
+
+    emit('updated', updatedOption)
+  } catch (err) {
+    console.error('Error saving edit:', err)
+    error.value = t('agora', 'Failed to save changes')
+  }
+}
+
+const confirmDelete = () => {
+  if (confirm(t('agora', 'Are you sure you want to delete this option?'))) {
+    deleteOption()
+  }
+}
+
+const deleteOption = async () => {
+  if (!option.value) return
+
+  try {
+    // Remove from store
+    const index = optionsStore.options.findIndex(opt => opt.id === option.value?.id)
+    if (index >= 0) {
+      optionsStore.options.splice(index, 1)
+    }
+
+    emit('deleted', option.value.id)
+    closeModal()
+  } catch (err) {
+    console.error('Error deleting option:', err)
+    error.value = t('agora', 'Failed to delete option')
+  }
+}
+
+const openAddChildModal = () => {
+  if (!canAddChild.value) return
+
+  if (allowedResponses.value.length === 1) {
+    selectedChildType.value = allowedResponses.value[0]
+    showAddChildModal.value = true
+  } else {
+    // Show modal with response type selection
+    // This would be handled by the OptionCard's child modal
+    // For now, just open with first type
+    selectedChildType.value = allowedResponses.value[0]
+    showAddChildModal.value = true
+  }
+}
+
+const closeAddChildModal = () => {
+  showAddChildModal.value = false
+  selectedChildType.value = null
+}
+
+const handleChildCreated = (newChild: Option) => {
+  optionsStore.options.push(newChild)
+  closeAddChildModal()
+
+  // Refresh option to update child counts
+  loadOption()
+}
+
+const showChildren = (childType: string) => {
+  // This would open a modal showing all children of this type
+  // For now, we'll just reload with a focus on children
+  console.log('Show children of type:', childType)
+}
+
+const handleCommentAdded = () => {
+  // Update comment count
+  if (option.value) {
+    option.value.comment_count = (option.value.comment_count || 0) + 1
+
+    // Update in store
+    const index = optionsStore.options.findIndex(opt => opt.id === option.value?.id)
+    if (index >= 0) {
+      optionsStore.options[index] = option.value
+    }
+
+    emit('updated', option.value)
+  }
+}
+
+const openChildModal = (childId: number) => {
+  selectedChildId.value = childId
+  showChildModal.value = true
+}
+
+const closeChildModal = () => {
+  showChildModal.value = false
+  selectedChildId.value = null
+}
+
+const handleChildUpdated = (updatedChild: Option) => {
+  // Update child in store
+  const index = optionsStore.options.findIndex(opt => opt.id === updatedChild.id)
+  if (index >= 0) {
+    optionsStore.options[index] = updatedChild
+  }
+}
+
+const handleChildDeleted = (deletedChildId: number) => {
+  // Remove child from store
+  const index = optionsStore.options.findIndex(opt => opt.id === deletedChildId)
+  if (index >= 0) {
+    optionsStore.options.splice(index, 1)
+  }
+
+  // Refresh current option to update child counts
+  loadOption()
+}
+
+// Lifecycle
+onMounted(() => {
+  loadOption()
+})
+
+watch(() => props.optionId, (newId) => {
+  if (newId) {
+    loadOption()
+  }
+})
+</script>
+
+<style scoped lang="scss">
+.option-detail-modal {
+    display: flex;
+    flex-direction: column;
+    height: 80vh;
+    max-height: 800px;
+
+    .loading-state,
+    .error-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        flex: 1;
+        padding: 40px;
+        text-align: center;
+
+        p {
+            margin-top: 16px;
+            color: var(--color-text-lighter);
+        }
+    }
+
+    .modal-content {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        overflow: hidden;
+    }
+
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 24px;
+        border-bottom: 1px solid var(--color-border);
+        background: var(--color-main-background);
+        flex-shrink: 0;
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex: 1;
+            min-width: 0;
+
+            .option-type-indicator {
+                flex-shrink: 0;
+                width: 48px;
+                height: 48px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: var(--color-background-darker);
+                border-radius: 10px;
+            }
+
+            .header-text {
+                flex: 1;
+                min-width: 0;
+
+                .option-title {
+                    margin: 0 0 4px 0;
+                    font-size: 20px;
+                    font-weight: 700;
+                    color: var(--color-main-text);
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                }
+
+                .option-meta {
+                    display: flex;
+                    align-items: center;
+                    gap: 12px;
+                    font-size: 14px;
+                    color: var(--color-text-lighter);
+
+                    .option-type {
+                        background: var(--color-background-dark);
+                        padding: 2px 8px;
+                        border-radius: 8px;
+                        font-weight: 600;
+                    }
+                }
+            }
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            .quick-actions {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+
+                .support-icon {
+                    cursor: pointer;
+                    color: var(--color-text-light);
+                    transition: color 0.2s ease;
+
+                    &:hover {
+                        color: var(--color-primary-element);
+                    }
+                }
+
+                .comment-btn {
+                    display: flex;
+                    align-items: center;
+                    gap: 4px;
+                }
+            }
+        }
+    }
+
+    .main-content {
+        flex: 1;
+        overflow-y: auto;
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 32px;
+
+        .author-section {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            background: var(--color-background-dark);
+            border-radius: 12px;
+            border: 1px solid var(--color-border);
+
+            .author-details {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                gap: 2px;
+
+                .author-name {
+                    font-size: 14px;
+                    font-weight: 600;
+                    color: var(--color-main-text);
+                }
+
+                .author-role {
+                    font-size: 12px;
+                    color: var(--color-text-lighter);
+                }
+            }
+
+            .support-counts {
+                display: flex;
+                gap: 12px;
+
+                .support-count {
+                    display: flex;
+                    align-items: center;
+                    gap: 4px;
+                    font-size: 14px;
+                    font-weight: 600;
+                    padding: 4px 8px;
+                    border-radius: 8px;
+
+                    &.positive {
+                        color: var(--color-success);
+                        background: var(--color-success-light);
+                    }
+
+                    &.negative {
+                        color: var(--color-error);
+                        background: var(--color-error-light);
+                    }
+                }
+            }
+        }
+
+        .content-section {
+            .editor-container {
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+                padding: 20px;
+                background: var(--color-background-dark);
+                border-radius: 12px;
+                border: 1px solid var(--color-border);
+
+                .additional-fields {
+                    margin-top: 20px;
+                    padding-top: 20px;
+                    border-top: 1px solid var(--color-border);
+
+                    h4 {
+                        margin: 0 0 16px 0;
+                        font-size: 16px;
+                        font-weight: 600;
+                        color: var(--color-main-text);
+                    }
+
+                    .fields-grid {
+                        display: grid;
+                        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                        gap: 16px;
+                    }
+                }
+
+                .edit-actions {
+                    display: flex;
+                    justify-content: flex-end;
+                    gap: 12px;
+                    margin-top: 20px;
+                }
+            }
+
+            .content-display {
+                .description-content {
+                    margin-bottom: 24px;
+
+                    .description-text {
+                        font-size: 16px;
+                        line-height: 1.6;
+                        color: var(--color-main-text);
+                        white-space: pre-wrap;
+                    }
+                }
+
+                .additional-fields-display {
+                    h4 {
+                        margin: 0 0 16px 0;
+                        font-size: 16px;
+                        font-weight: 600;
+                        color: var(--color-main-text);
+                    }
+
+                    .fields-grid {
+                        display: grid;
+                        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                        gap: 16px;
+                        background: var(--color-background-dark);
+                        border: 1px solid var(--color-border);
+                        border-radius: 12px;
+                        padding: 20px;
+
+                        .field-item-display {
+                            display: flex;
+                            flex-direction: column;
+                            gap: 4px;
+
+                            strong {
+                                font-size: 14px;
+                                color: var(--color-text-light);
+                            }
+
+                            span {
+                                font-size: 14px;
+                                color: var(--color-main-text);
+                                word-break: break-word;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        .responses-section {
+            .section-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 16px;
+
+                h3 {
+                    margin: 0;
+                    font-size: 18px;
+                    font-weight: 600;
+                    color: var(--color-main-text);
+                }
+            }
+
+            .responses-preview {
+                .empty-responses {
+                    text-align: center;
+                    padding: 40px 20px;
+                    background: var(--color-background-dark);
+                    border: 2px dashed var(--color-border);
+                    border-radius: 16px;
+
+                    svg {
+                        color: var(--color-text-lighter);
+                        margin-bottom: 16px;
+                    }
+
+                    h4 {
+                        margin: 0 0 8px 0;
+                        color: var(--color-main-text);
+                        font-size: 16px;
+                    }
+
+                    p {
+                        margin: 0;
+                        color: var(--color-text-lighter);
+                        font-style: italic;
+                    }
+                }
+
+                .responses-grid {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                    gap: 16px;
+
+                    .response-type-card {
+                        padding: 20px;
+                        background: var(--color-background-dark);
+                        border: 2px solid var(--color-border);
+                        border-radius: 12px;
+                        text-align: center;
+                        cursor: pointer;
+                        transition: all 0.3s ease;
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        gap: 8px;
+
+                        &:hover {
+                            transform: translateY(-4px);
+                            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+                            border-color: var(--color-primary-element);
+                            background: var(--color-primary-light);
+                        }
+
+                        .response-type-icon {
+                            width: 48px;
+                            height: 48px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            background: var(--color-background-darker);
+                            border-radius: 10px;
+                            margin-bottom: 8px;
+                        }
+
+                        h4 {
+                            margin: 0;
+                            font-size: 14px;
+                            font-weight: 600;
+                            color: var(--color-main-text);
+                        }
+
+                        .response-count {
+                            font-size: 20px;
+                            font-weight: 700;
+                            color: var(--color-primary-element);
+                        }
+                    }
+                }
+            }
+        }
+
+        .comments-section {
+            .section-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 16px;
+
+                h3 {
+                    margin: 0;
+                    font-size: 18px;
+                    font-weight: 600;
+                    color: var(--color-main-text);
+                }
+            }
+
+            .comment-form {
+                margin-bottom: 24px;
+                padding: 20px;
+                background: var(--color-background-dark);
+                border-radius: 12px;
+                border: 1px solid var(--color-border);
+            }
+
+            .no-comments {
+                text-align: center;
+                padding: 40px 20px;
+                background: var(--color-background-dark);
+                border: 2px dashed var(--color-border);
+                border-radius: 16px;
+
+                svg {
+                    color: var(--color-text-lighter);
+                    margin-bottom: 16px;
+                }
+
+                h4 {
+                    margin: 0 0 8px 0;
+                    color: var(--color-main-text);
+                    font-size: 16px;
+                }
+
+                p {
+                    margin: 0;
+                    color: var(--color-text-lighter);
+                    font-style: italic;
+                }
+            }
+        }
+    }
+}
+
+// Fade transition for comment form
+    .fade-enter-active,
+.fade-leave-active {
+    transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+}
+
+      @media (max-width: 768px) {
+          .option-detail-modal {
+              height: 90vh;
+
+              .modal-header {
+                  flex-direction: column;
+                  align-items: flex-start;
+                  gap: 16px;
+
+                  .header-left {
+                      width: 100%;
+                  }
+
+                  .header-right {
+                      width: 100%;
+                      justify-content: space-between;
+                  }
+              }
+
+              .main-content {
+                  padding: 16px;
+
+                  .responses-section {
+                      .responses-grid {
+                          grid-template-columns: 1fr;
+                      }
+                  }
+
+                  .content-section {
+                      .editor-container {
+                          .fields-grid {
+                              grid-template-columns: 1fr;
+                          }
+                      }
+
+                      .content-display {
+                          .additional-fields-display {
+                              .fields-grid {
+                                  grid-template-columns: 1fr;
+                              }
+                          }
+                      }
+                  }
+              }
+          }
+      }
+</style>

@@ -38,13 +38,10 @@ export type InquiryConfiguration = {
   access: AccessType
   autoReminder: boolean
   collapseDescription: boolean
-  description: string
   expire: number
   forceConfidentialComments: boolean
-  maxInquiriesPerUser: number
-  supportMode: string
   supportFeature: string
-  quorum: number
+  allowComment: boolean
 }
 
 export type InquiryStatus = {
@@ -139,16 +136,13 @@ export const useInquiryStore = defineStore('inquiry', {
     childs: [],
     miscFields: [],
     configuration: {
-      description: '',
       access: 'private',
       autoReminder: false,
-      collapseDescription: true,
       expire: 0,
       forceConfidentialComments: false,
       suggestionsExpire: 0,
-      supportMode: new Map<number, 'simple' | 'ternary'>(), // standard: 0/1, ternary: -1/0/1
       supportFeature: 'none',
-      quorum: 0,
+      allowComment: 0,
     },
     owner: createDefault<User>(),
     ownedGroup: '',
@@ -548,7 +542,9 @@ export const useInquiryStore = defineStore('inquiry', {
 		    }
 
 		    try {
-			    const response = await InquiriesAPI.updateInquiryConfig(this.id, this.configuration,this.status)
+                console.log(' INTO WRITE ID ',this.id)
+                console.log(' INTO WRITE ID ',this.configuration)
+			    const response = await InquiriesAPI.updateInquiryConfig(this.id, this.configuration)
 			    this.$patch(response.data.inquiry)
 			    emit(Event.UpdateInquiry, {
 				    store: 'inquiry',

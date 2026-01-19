@@ -23,8 +23,8 @@ import {
   canDelete,
   canTransfer,
   // canEdit,
-  createPermissionContextForContent,
-  ContentType,
+  creatorContent,
+  createInquiryContext,
 } from '../../utils/permissions.ts'
 
 const sessionStore = useSessionStore()
@@ -38,25 +38,8 @@ const inquiryTypeData = computed(() => {
   return getInquiryTypeData(inquiry.type, inquiryTypes)
 })
 
-// Context for permissions
-const context = computed(() =>
-  createPermissionContextForContent(
-    ContentType.Inquiry,
-    inquiry.owner.id,
-    inquiry.configuration.access === 'public',
-    inquiry.status.isLocked,
-    inquiry.status.isExpired,
-    inquiry.status.deletionDate > 0,
-    inquiry.status.isArchived,
-    inquiry.inquiryGroups.length > 0,
-    inquiry.inquiryGroups,
-    inquiry.type,
-    inquiry.family,
-    inquiry.configuration.access,
-    inquiry.status.isFinalStatus,
-    inquiry.status.moderationStatus
-  )
-)
+const context = createInquiryContext(inquiry, sessionStore.appSettings)
+
 </script>
 
 <template>

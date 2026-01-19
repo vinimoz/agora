@@ -44,7 +44,7 @@ const typeRights = computed({
 
 const getDefaultRights = () => ({
   supportInquiry: true,
-  supportMode: 'simple',
+  supportFeature: 'binary',
   commentInquiry: true,
   useResourceInquiry: true,
   editorType: 'wysiwyg'
@@ -65,7 +65,7 @@ const updateRights = () => {
 
 watch(() => typeRights.value.supportInquiry, (enabled) => {
   if (!enabled) {
-    typeRights.value.supportMode = 'simple'
+    typeRights.value.supportFeature = 'binary'
   }
   updateRights()
 })
@@ -109,10 +109,10 @@ watch(() => typeRights.value.supportInquiry, (enabled) => {
                 </div>
                 <div class="mode-options">
                     <NcCheckboxRadioSwitch
-                            v-model="typeRights.supportMode"
+                            v-model="typeRights.supportFeature"
                             type="radio"
-                            value="simple"
-                            name="supportMode"
+                            value="binary"
+                            name="supportFeature"
                             @update:model-value="updateRights"
                             >
                             {{ t('agora', 'Simple mode') }}
@@ -124,10 +124,10 @@ watch(() => typeRights.value.supportInquiry, (enabled) => {
 
                 <div class="mode-options">
                     <NcCheckboxRadioSwitch
-                            v-model="typeRights.supportMode"
+                            v-model="typeRights.supportFeature"
                             type="radio"
                             value="ternary"
-                            name="supportMode"
+                            name="supportFeature"
                             @update:model-value="updateRights"
                             >
                             {{ t('agora', 'Ternary mode') }}

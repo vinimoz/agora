@@ -7,6 +7,37 @@ import { InquiryGeneralIcons } from '../../utils/icons.ts'
 import type { InquiryType, OptionType } from '../../Types/index.ts'
 
 /**
+ * Get option item data
+ */
+export function getOptionItemData(item: OptionType | null, fallbackLabel: string = '') {
+  if (!item) {
+    return {
+      icon: InquiryGeneralIcons.File,
+      label: fallbackLabel,
+      description: ''
+    }
+  }
+
+  // Get icon component directly from InquiryGeneralIcons
+  const iconName = item?.icon || 'File'
+  const iconComponent = InquiryGeneralIcons[iconName] || InquiryGeneralIcons.File
+  
+  return {
+    icon: iconComponent,
+    label: item.label || fallbackLabel,
+    description: item.description || ''
+  }
+}
+
+/**
+ * Get option type data from type string
+ */
+export function getOptionTypeData(optionTypeKey: string, optionTypes: OptionType[], fallbackLabel: string = '') {
+  const typeInfo = optionTypes.find(t => t.option_type === optionTypeKey)
+  return getOptionItemData(typeInfo, fallbackLabel || optionTypeKey)
+}
+
+/**
  * Get allowed option types for an inquiry type
  */
 export function getAllowedOptionTypes(
@@ -32,14 +63,15 @@ export function getAllowedOptionTypes(
   } else if (Array.isArray(inquiryTypeConfig.allowed_option_type)) {
     allowedOptionTypeKeys = inquiryTypeConfig.allowed_option_type
   }
-    console.log("ALLLOPTYPE KEYSSSSSS",allowedOptionTypeKeys)
+
   // Map keys to OptionType objects
   const result: OptionType[] = []
 
   for (const key of allowedOptionTypeKeys) {
     // Try to find the option type - check multiple possible fields
     const optionType = optionTypes.find(opt =>
-      opt.optionType === key   
+      opt.option_type === key || // Try option_type
+      opt.optionType === key     // Try optionType (from your data)
     )
 
     if (optionType) {
@@ -92,12 +124,8 @@ export function getFamiliesWithOptionTypes(
   optionTypes: OptionType[];
 }> {
   // Get allowed option types
-  console.log(" ALLLLLLLLLLL OPTION TYPE KEY ",inquiryTypeKey)
-  console.log(" ALLLLLLLLLLL INQYUIRY TYPE  ",inquiryTypes)
-  console.log(" ALLLLLLLLLLL OPTION TYES ",optionTypes)
   const allowedOptionTypes = getAllowedOptionTypes(inquiryTypeKey, inquiryTypes, optionTypes)
-  console.log(" ALLLLLLLLLLL OPTION TYPEs REDCEIVED ",allowedOptionTypes)
-
+  
   // Group by family
   const groupedByFamily = groupOptionTypesByFamily(allowedOptionTypes)
   
@@ -243,3 +271,4 @@ export function getOptionTypeOptions(optionTypes: OptionType[]) {
     icon: type.icon
   }))
 }
+

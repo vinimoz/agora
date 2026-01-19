@@ -10,32 +10,11 @@ import { emit } from '@nextcloud/event-bus'
 import { Logger } from '../helpers/index.ts'
 import { OptionsAPI } from '../Api/index.ts'
 import { Event } from '../Types/index.ts'
+import { InquiryOptionType } from '../Types/index.ts'
 import { useInquiryStore } from './inquiry.ts'
 import { useOptionStore } from './option.ts'
 import { useSessionStore } from './session.ts'
 import { AxiosError } from '@nextcloud/axios'
-
-export type OptionTypeDefinition = {
-    key: string
-    name: string
-    description: string
-    family: string
-    color: string
-    icon: string
-    features: string[]
-    allowed_child_types?: string[]
-    sortOrder: number
-    defaultStatus: string
-    miscFields?: Array<{
-        key: string
-        type: string
-        label: string
-        description?: string
-        default?: any
-        required?: boolean
-        options?: Array<{ value: string; label: string }>
-    }>
-}
 
 export type OptionFamily = {
     key: string
@@ -44,7 +23,7 @@ export type OptionFamily = {
     color: string
     icon: string
     sortOrder: number
-    types: OptionTypeDefinition[]
+    types: InquiryOptionType[]
 }
 
 export type OptionGroup = {
@@ -63,7 +42,7 @@ export type OptionsByFamily = {
 
 export type OptionsState = {
     options: Option[]
-    optionTypes: Record<string, OptionTypeDefinition>
+    optionTypes: Record<string, InquiryOptionType>
     families: OptionFamily[]
     groups: OptionGroup[]
     optionsByFamily: OptionsByFamily
@@ -103,7 +82,7 @@ export const useOptionsStore = defineStore('options', {
         },
 
         // Get option type definitions from session store
-        getOptionTypes(): Record<string, OptionTypeDefinition> {
+        getOptionTypes(): Record<string, InquiryOptionType> {
             const sessionStore = useSessionStore()
             return sessionStore.appSettings?.optionTypesTab || {}
         },
@@ -114,7 +93,7 @@ export const useOptionsStore = defineStore('options', {
             const familiesMap: Record<string, OptionFamily> = {}
             
             // Group types by family
-            Object.values(types).forEach((type: OptionTypeDefinition) => {
+            Object.values(types).forEach((type: InquiryOptionType) => {
                 if (!familiesMap[type.family]) {
                     familiesMap[type.family] = {
                         key: type.family,
@@ -167,7 +146,7 @@ export const useOptionsStore = defineStore('options', {
         },
 
         // Get type information for an option
-        getOptionTypeInfo: () => (typeKey: string): OptionTypeDefinition | undefined => {
+        getOptionTypeInfo: () => (typeKey: string): InquiryOptionType | undefined => {
             const sessionStore = useSessionStore()
             return sessionStore.appSettings?.optionTypesTab?.[typeKey]
         },
@@ -185,7 +164,7 @@ export const useOptionsStore = defineStore('options', {
         },
 
         // Get all allowed types for creating new options
-        getAllowedTypes(): OptionTypeDefinition[] {
+        getAllowedTypes(): InquiryOptionType[] {
             const inquiryStore = useInquiryStore()
             const sessionStore = useSessionStore()
             const types = sessionStore.appSettings?.optionTypesTab || {}
@@ -201,8 +180,8 @@ export const useOptionsStore = defineStore('options', {
         },
 
         // Get types by family
-        getTypesByFamily(): Record<string, OptionTypeDefinition[]> {
-            const families: Record<string, OptionTypeDefinition[]> = {}
+        getTypesByFamily(): Record<string, InquiryOptionType[]> {
+            const families: Record<string, InquiryOptionType[]> = {}
             
             this.getAllowedTypes.forEach(type => {
                 if (!families[type.family]) {
@@ -554,7 +533,7 @@ export const useOptionsStore = defineStore('options', {
         },
 
         // Get allowed child types for a parent option
-        getAllowedChildTypes(parentOptionId: number): OptionTypeDefinition[] {
+        getAllowedChildTypes(parentOptionId: number): InquiryOptionType[] {
             const parentOption = this.options.find(opt => opt.id === parentOptionId)
             if (!parentOption) return []
             

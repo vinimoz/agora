@@ -22,7 +22,7 @@ import { useSessionStore } from '../stores/session.ts'
 import Collapsible from '../components/Base/modules/Collapsible.vue'
 import type { CollapsibleProps } from '../components/Base/modules/Collapsible.vue'
 import InquiryInfoCards from '../components/Cards/InquiryInfoCards.vue'
-import { createPermissionContextForContent, ContentType, canEdit } from '../utils/permissions.ts'
+import { createInquiryContext, ContentType, canEdit } from '../utils/permissions.ts'
 
 
 
@@ -43,23 +43,7 @@ const isSaving = ref(false)
 
 // Context for permissions
 const context = computed(() => {
-  const ctx = createPermissionContextForContent(
-    ContentType.Inquiry,
-    inquiryStore.owner.id,
-    inquiryStore.configuration.access === 'public',
-    inquiryStore.status.isLocked,
-    inquiryStore.status.isExpired,
-    inquiryStore.status.deletionDate > 0,
-    inquiryStore.status.isArchived,
-    inquiryStore.inquiryGroups.length > 0,
-    inquiryStore.inquiryGroups,
-    inquiryStore.type,
-    inquiryStore.family, 
-    inquiryStore.configuration.access as AccessLevel,
-    inquiryStore.status.isFinalStatus,
-    inquiryStore.status.moderationStatus 
-  )
-  return ctx
+  return createInquiryContext(inquiryStore, sessionStore.appSettings)
 })
 
 const availableGroups = computed(() => {

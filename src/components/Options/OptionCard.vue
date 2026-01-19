@@ -6,336 +6,797 @@
   <div 
     :class="[
       'option-card',
+      `family-${optionFamily}`,
       `type-${option.type}`,
-      { 'compact': compact },
-      { 'creative': creative },
-      { 'selected': isSelected },
-      { 'has-unread': hasUnreadComments }
+      { 
+        'compact': compact,
+        'official': official,
+        'highlight': highlight,
+        'show-poll': showPoll,
+        'has-support': hasSupportFeature,
+        'has-comments': hasComments,
+        'has-children': hasChildren
+      }
     ]"
-    @click="$emit('click', option)"
+    @click="!preventClick && $emit('click', option)"
   >
-    <!-- Option Header -->
-    <div class="option-header">
-      <div class="option-type-badge" :style="{ backgroundColor: option.typeColor + '20', color: option.typeColor }">
-        <component :is="option.typeIcon" :size="14" />
-        <span class="type-name">{{ option.typeDisplayName }}</span>
+    <!-- Header section -->
+    <div class="card-header">
+      <div class="header-left">
+        <!-- Type icon -->
+        <div class="type-icon" :style="{ color: getFamilyColor(optionFamily) }">
+          <component :is="optionIcon" :size="compact ? 16 : 20" />
+        </div>
+        
+        <!-- Title with status -->
+        <div class="title-section">
+          <h4 class="card-title">{{ option.label }}</h4>
+          
+          <!-- Status badge (if any) -->
+          <span v-if="statusBadge" class="status-badge" :class="statusClass">
+            <component :is="statusIcon" :size="12" />
+            {{ statusText }}
+          </span>
+          
+          <!-- Official badge -->
+          <span v-if="official" class="official-badge">
+            <component :is="InquiryOptionIcons.ShieldCheck" :size="12" />
+            {{ t('agora', 'Official') }}
+          </span>
+        </div>
       </div>
       
-      <div class="option-actions">
-        <NcButton 
-          v-if="showMenu"
-          type="tertiary"
-          :aria-label="t('agora', 'More actions')"
-          @click.stop="toggleMenu"
+      <!-- Metadata -->
+      <div class="header-right">
+        <!-- Timestamp -->
+        <span v-if="option.created" class="timestamp">
+          {{ formatDate(option.created) }}
+        </span>
+        
+        <!-- Poll percentage (if showPoll) -->
+        <span v-if="showPoll && option.poll_percentage !== undefined" class="poll-percentage">
+          {{ Math.round(option.poll_percentage) }}%
+        </span>
+    <NcActions
+      v-if="canEditOrDelete || hasChildren"
+      :force-menu="true"
+      :aria-label="t('agora', 'Option actions')"
+      class="card-actions"
+    >
+      <!-- Edit action -->
+      <NcActionButton
+        v-if="canEdit"
+        :close-after-click="true"
+        @click.stop="editOption"
+      >
+        <template #icon>
+          <component :is="InquiryOptionIcons.Edit" :size="20" />
+        </template>
+        {{ t('agora', 'Edit') }}
+      </NcActionButton>
+
+      <!-- Add response submenu -->
+      <NcActionButton
+        v-if="hasChildren && canAddChild"
+        :is-menu="true"
+      >
+        <template #icon>
+          <component :is="InquiryOptionIcons.Plus" :size="20" />
+        </template>
+        {{ t('agora', 'Add Response') }}
+        
+        <!-- Response type submenu -->
+        <NcActionButton
+          v-for="responseType in availableResponseTypes"
+          :key="responseType.option_type"
+          :close-after-click="true"
+          @click.stop="openAddResponseModal(responseType.option_type)"
         >
           <template #icon>
-            <component :is="InquiryOptionIcons.More" :size="16" />
+            <component :is="getOptionTypeIcon(responseType.option_type)" :size="16" />
           </template>
-        </NcButton>
-        
-        <transition name="fade">
-          <div v-if="showContextMenu" class="context-menu">
-            <NcButton
-              v-if="option.permissions.edit"
-              type="tertiary"
-              :aria-label="t('agora', 'Edit option')"
-              @click="editOption"
-            >
-              <template #icon>
-                <component :is="InquiryOptionIcons.Edit" :size="16" />
-              </template>
-              {{ t('agora', 'Edit') }}
-            </NcButton>
-            
-            <NcButton
-              v-if="option.permissions.delete"
-              type="tertiary-error"
-              :aria-label="t('agora', 'Delete option')"
-              @click="deleteOption"
-            >
-              <template #icon>
-                <component :is="InquiryOptionIcons.Delete" :size="16" />
-              </template>
-              {{ t('agora', 'Delete') }}
-            </NcButton>
-            
-            <NcButton
-              v-if="option.canAddChildren"
-              type="tertiary"
-              :aria-label="t('agora', 'Add child option')"
-              @click="addChildOption"
-            >
-              <template #icon>
-                <component :is="InquiryOptionIcons.Add" :size="16" />
-              </template>
-              {{ t('agora', 'Add child') }}
-            </NcButton>
-          </div>
-        </transition>
+          {{ responseType.label }}
+        </NcActionButton>
+      </NcActionButton>
+
+      <!-- Delete action -->
+      <NcActionButton
+        v-if="canDelete"
+        :close-after-click="true"
+        @click.stop="confirmDelete"
+      >
+        <template #icon>
+          <component :is="InquiryOptionIcons.Delete" :size="20" />
+        </template>
+        {{ t('agora', 'Delete') }}
+      </NcActionButton>
+    </NcActions>
+
       </div>
     </div>
-
-    <!-- Option Content -->
-    <div class="option-content">
-      <div class="option-text" :class="{ 'truncated': isTruncated && !expanded }">
-        <div v-if="useMarkdown" class="markdown-content" v-html="option.textMarkDown" />
-        <p v-else class="plain-text">{{ truncatedText }}</p>
+    
+    <!-- Content section -->
+    <div v-if="!compact" class="card-content">
+      <!-- Description -->
+      <p v-if="option.description" class="card-description">
+        {{ truncateText(option.description, 200) }}
+      </p>
+      
+      <!-- Structure-specific: Parent reference -->
+      <div v-if="option.parentId && optionFamily === 'structure'" class="parent-ref">
+        <component :is="InquiryOptionIcons.ArrowUp" :size="12" />
+        {{ getParentLabel(option.parentId) }}
+      </div>
+      
+      <!-- Support summary -->
+      <div v-if="hasSupportFeature" class="support-summary">
+        <div class="support-item positive">
+          <TernarySupportIcon
+            v-if="supportFeature === 'ternary'"
+            :support-value="userSupport"
+            :size="14"
+          />
+          <ThumbIcon
+            v-else-if="supportFeature === 'binary'"
+            :supported="userSupport === 'for'"
+            :size="14"
+          />
+          <span>{{ option.support_for || 0 }}</span>
+        </div>
         
-        <button
-          v-if="isTruncated && !expanded"
-          class="read-more-btn"
-          @click.stop="expanded = true"
+        <div v-if="supportFeature === 'ternary'" class="support-item negative">
+          <TernarySupportIcon
+            :support-value="userSupport === 'against' ? 'against' : null"
+            :size="14"
+            :invert="true"
+          />
+          <span>{{ option.support_against || 0 }}</span>
+        </div>
+      </div>
+      
+      <!-- Consensus-specific: Objection indicator -->
+      <div v-if="option.type === 'objection' && option.blocking" class="blocking-indicator">
+        <component :is="InquiryOptionIcons.AlertCircle" :size="14" />
+        {{ t('agora', 'Blocking') }}
+      </div>
+      
+      <!-- Children preview -->
+      <div v-if="hasChildren && !compact" class="children-preview">
+        <div class="children-preview-header">
+          <h6>{{ t('agora', 'Responses') }}</h6>
+          <NcButton 
+            v-if="canAddChild"
+            type="tertiary"
+            size="small"
+            @click.stop="openAddChildModal"
+          >
+            <template #icon>
+              <component :is="InquiryOptionIcons.Plus" :size="12" />
+            </template>
+            {{ t('agora', 'Add response') }}
+          </NcButton>
+        </div>
+        <div class="children-preview-list">
+          <div 
+            v-for="childType in allowedResponses" 
+            :key="childType"
+            class="child-type-preview"
+            @click.stop="showChildren(childType)"
+          >
+            <component :is="getOptionTypeIcon(childType)" :size="14" />
+            <span class="child-type-label">{{ getOptionTypeLabel(childType) }}</span>
+            <span class="child-count">{{ childCounts[childType] || 0 }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Footer section -->
+    <div class="card-footer">
+      <!-- Quick action buttons (support/comment) -->
+      <div class="quick-actions">
+        <!-- Support buttons based on support feature type -->
+        <template v-if="supportFeature === 'ternary'">
+          <button 
+            class="support-btn for"
+            :class="{ 'active': userSupport === 'for' }"
+            @click.stop="toggleSupport('for')"
+            :title="t('agora', 'Support')"
+          >
+            <TernarySupportIcon
+              :support-value="userSupport === 'for' ? 'for' : null"
+              :size="14"
+            />
+            <span v-if="option.support_for">{{ option.support_for }}</span>
+          </button>
+          
+          <button 
+            class="support-btn against"
+            :class="{ 'active': userSupport === 'against' }"
+            @click.stop="toggleSupport('against')"
+            :title="t('agora', 'Oppose')"
+          >
+            <TernarySupportIcon
+              :support-value="userSupport === 'against' ? 'against' : null"
+              :size="14"
+              :invert="true"
+            />
+            <span v-if="option.support_against">{{ option.support_against }}</span>
+          </button>
+        </template>
+        
+        <template v-else-if="supportFeature === 'binary'">
+          <button 
+            class="support-btn binary"
+            :class="{ 'active': userSupport === 'for' }"
+            @click.stop="toggleSupport('for')"
+            :title="t('agora', userSupport === 'for' ? 'Remove support' : 'Support')"
+          >
+            <ThumbIcon
+              :supported="userSupport === 'for'"
+              :size="14"
+            />
+            <span v-if="option.support_for">{{ option.support_for }}</span>
+          </button>
+        </template>
+        
+        <!-- Comment button -->
+        <button 
+          v-if="allowComment"
+          class="comment-btn"
+          @click.stop="toggleCommentsPanel"
+          :class="{ 'active': showCommentsPanel }"
+          :title="t('agora', 'Comments')"
         >
-          {{ t('agora', 'Read more') }}
+          <component :is="InquiryOptionIcons.Comment" :size="14" />
+          <span>{{ option.comment_count || 0 }}</span>
         </button>
       </div>
-
-      <!-- Author Info -->
-      <div v-if="!compact" class="option-author">
-        <NcAvatar
-          :user="option.owner.id"
-          :display-name="option.owner.displayName"
-          :size="24"
+      
+      <!-- Author info -->
+      <div v-if="option.author" class="author-info">
+        <NcAvatar 
+          v-if="option.author.id" 
+          :user="option.author.id" 
+          :display-name="option.author.displayName" 
+          :size="20" 
         />
-        <div class="author-info">
-          <span class="author-name">{{ option.owner.displayName }}</span>
-          <span class="option-date">{{ formatDate(option.created) }}</span>
-        </div>
+        <span class="author-name">{{ option.author.displayName }}</span>
       </div>
     </div>
-
-    <!-- Option Stats -->
-    <div class="option-stats">
-      <!-- Supports -->
-      <div 
-        v-if="option.canSupport"
-        class="stat-item supports"
-        :class="{ 'supported': option.currentUserStatus?.hasSupported }"
-        @click.stop="$emit('support', option)"
-      >
-        <div class="stat-icon">
-          <TernarySupportIcon
-            v-if="inquiryStore.configuration.supportMode === 'ternary'"
-            :support-value="option.currentUserStatus?.supportValue"
-            :size="18"
+    
+    <!-- Inline comments panel (Google Docs style) -->
+    <Transition name="slide-fade">
+      <div v-if="showCommentsPanel" class="side-panel comments-panel">
+        <div class="panel-header">
+          <h5>{{ t('agora', 'Comments') }}</h5>
+          <button class="close-panel" @click.stop="showCommentsPanel = false">
+            <component :is="InquiryOptionIcons.Close" :size="16" />
+          </button>
+        </div>
+        <div class="panel-content">
+          <Comments
+            v-if="option.id"
+            :inquiry-id="inquiryId"
+            :option-id="option.id"
           />
-          <ThumbIcon
-            v-else
-            :supported="option.currentUserStatus?.hasSupported"
-            :size="18"
+          <CommentAdd
+            v-if="allowComment"
+            :inquiry-id="inquiryId"
+            :option-id="option.id"
+            @comment-added="handleCommentAdded"
           />
         </div>
-        <span class="stat-count">{{ option.currentUserStatus?.countSupports || 0 }}</span>
       </div>
-
-      <!-- Comments -->
-      <div 
-        class="stat-item comments"
-        @click.stop="$emit('comment', option)"
-      >
-        <div class="stat-icon">
-          <component :is="InquiryOptionIcons.Comment" :size="18" />
+    </Transition>
+    
+    <!-- Child details modal -->
+    <NcModal
+      v-if="showChildrenModal"
+      :name="childrenModalTitle"
+      size="large"
+      @close="closeChildrenModal"
+    >
+      <div class="children-modal">
+        <div class="modal-header">
+          <h2>{{ childrenModalTitle }}</h2>
+          <p class="modal-subtitle">{{ t('agora', 'Responses to: {option}', { option: option.label }) }}</p>
         </div>
-        <span class="stat-count">{{ option.currentUserStatus?.countComments || 0 }}</span>
-      </div>
-
-      <!-- Answers (for questions) -->
-      <div 
-        v-if="option.type === 'question' && showAnswers"
-        class="stat-item answers"
-        @click.stop="$emit('answer', option)"
-      >
-        <div class="stat-icon">
-          <component :is="InquiryOptionIcons.Answer" :size="18" />
+        
+        <div class="modal-content">
+          <!-- Child type tabs -->
+          <div v-if="allowedResponses.length > 1" class="child-type-tabs">
+            <button
+              v-for="childType in allowedResponses"
+              :key="childType"
+              :class="['child-type-tab', { 'active': activeChildType === childType }]"
+              @click="activeChildType = childType"
+            >
+              <component :is="getOptionTypeIcon(childType)" :size="16" />
+              {{ getOptionTypeLabel(childType) }}
+              <span class="tab-count">{{ childCounts[childType] || 0 }}</span>
+            </button>
+          </div>
+          
+          <!-- Children list for active type -->
+          <div class="children-list-section">
+            <div class="section-header">
+              <h4>{{ getOptionTypeLabel(activeChildType || allowedResponses[0]) }}</h4>
+              <NcButton 
+                v-if="canAddChild"
+                type="primary"
+                @click="openAddChildModalFromModal"
+              >
+                <template #icon>
+                  <component :is="InquiryOptionIcons.Plus" :size="16" />
+                </template>
+                {{ t('agora', 'Add {type}', { type: getOptionTypeLabel(activeChildType || allowedResponses[0]) }) }}
+              </NcButton>
+            </div>
+            
+            <div class="children-list">
+              <div v-if="filteredChildren.length === 0" class="empty-children">
+                <component :is="getOptionTypeIcon(activeChildType || allowedResponses[0])" :size="48" />
+                <h5>{{ t('agora', 'No responses yet') }}</h5>
+                <p>{{ t('agora', 'Be the first to add a response') }}</p>
+                <NcButton 
+                  v-if="canAddChild"
+                  type="primary"
+                  @click="openAddChildModalFromModal"
+                >
+                  + {{ t('agora', 'Add {type}', { type: getOptionTypeLabel(activeChildType || allowedResponses[0]) }) }}
+                </NcButton>
+              </div>
+              
+              <div v-else class="children-items">
+                <OptionCard
+                  v-for="child in filteredChildren"
+                  :key="child.id"
+                  :option="child"
+                  :inquiry-id="inquiryId"
+                  @click="handleChildClick(child)"
+                />
+              </div>
+            </div>
+          </div>
+          
+          <!-- Add response options -->
+          <div v-if="allowedResponses.length > 0" class="add-response-section">
+            <h4>{{ t('agora', 'Add a response') }}</h4>
+            <p class="section-description">{{ t('agora', 'Choose the type of response you want to add') }}</p>
+            
+            <div class="response-type-grid">
+              <button
+                v-for="responseType in allowedResponses"
+                :key="responseType"
+                class="response-type-card"
+                @click="openAddChildModalWithType(responseType)"
+              >
+                <div class="response-type-icon">
+                  <component :is="getOptionTypeIcon(responseType)" :size="24" />
+                </div>
+                <h5>{{ getOptionTypeLabel(responseType) }}</h5>
+                <p class="response-description">
+                  {{ getOptionTypeDescription(responseType) }}
+                </p>
+                <div class="response-count">
+                  {{ childCounts[responseType] || 0 }} {{ t('agora', 'existing') }}
+                </div>
+              </button>
+            </div>
+          </div>
         </div>
-        <span class="stat-count">{{ option.currentUserStatus?.countAnswers || 0 }}</span>
-      </div>
-
-      <!-- Refinements (for ideas) -->
-      <div 
-        v-if="creative && option.type === 'idea'"
-        class="stat-item refinements"
-        @click.stop="$emit('refine', option)"
-      >
-        <div class="stat-icon">
-          <component :is="InquiryOptionIcons.Refine" :size="18" />
+        
+        <div class="modal-footer">
+          <NcButton type="tertiary" @click="closeChildrenModal">
+            {{ t('agora', 'Close') }}
+          </NcButton>
         </div>
-        <span class="stat-count">{{ option.currentUserStatus?.countRefinements || 0 }}</span>
       </div>
-
-      <!-- Children count -->
-      <div 
-        v-if="option.children && option.children.length > 0"
-        class="stat-item children"
-      >
-        <div class="stat-icon">
-          <component :is="InquiryOptionIcons.Children" :size="18" />
-        </div>
-        <span class="stat-count">{{ option.children.length }}</span>
-      </div>
-    </div>
-
-    <!-- Quick Actions -->
-    <div v-if="!compact" class="quick-actions">
-      <NcButton
-        v-if="option.canSupport"
-        type="secondary"
-        :class="['support-btn', { 'supported': option.currentUserStatus?.hasSupported }]"
-        @click.stop="$emit('support', option)"
-      >
-        <template #icon>
-          <TernarySupportIcon
-            v-if="inquiryStore.configuration.supportMode === 'ternary'"
-            :support-value="option.currentUserStatus?.supportValue"
-            :size="16"
-          />
-          <ThumbIcon
-            v-else
-            :supported="option.currentUserStatus?.hasSupported"
-            :size="16"
-          />
-        </template>
-        {{ getSupportLabel() }}
-      </NcButton>
-
-      <NcButton
-        type="secondary"
-        @click.stop="$emit('comment', option)"
-      >
-        <template #icon>
-          <component :is="InquiryOptionIcons.Comment" :size="16" />
-        </template>
-        {{ t('agora', 'Comment') }}
-      </NcButton>
-
-      <NcButton
-        v-if="creative && option.type === 'idea'"
-        type="secondary"
-        @click.stop="$emit('refine', option)"
-      >
-        <template #icon>
-          <component :is="InquiryOptionIcons.Refine" :size="16" />
-        </template>
-        {{ t('agora', 'Refine') }}
-      </NcButton>
-    </div>
+    </NcModal>
+    
+    <!-- Add child modal -->
+    <AddOptionModal
+      v-if="showAddChildModal"
+      :inquiry-id="inquiryId"
+      :option-type="selectedChildType"
+      :parent-id="option.id"
+      @close="closeAddChildModal"
+      @created="handleChildCreated"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { t } from '@nextcloud/l10n'
-import NcButton from '@nextcloud/vue/components/NcButton'
 import NcAvatar from '@nextcloud/vue/components/NcAvatar'
+import NcButton from '@nextcloud/vue/components/NcButton'
+import NcModal from '@nextcloud/vue/components/NcModal'
+import NcActions from '@nextcloud/vue/components/NcActions'
+import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 
-import { useInquiryStore } from '../../stores/inquiry'
 import { useOptionsStore } from '../../stores/options'
 import { useSessionStore } from '../../stores/session'
 import { InquiryOptionIcons } from '../../utils/icons.ts'
 import { TernarySupportIcon, ThumbIcon } from '../AppIcons'
-import { Option } from '../../stores/option.ts'
+import { 
+  getOptionTypeData,
+  getFamilyColor,
+  getFamilyIconComponent,
+  getOptionTypeOptions
+} from '../../helpers/modules/InquiryOptionHelper'
+
+// Import comment components
+import Comments from '../Comments/Comments.vue'
+import CommentAdd from '../Comments/CommentAdd.vue'
+import AddOptionModal from './AddOptionModal.vue'
+
+// Types
+import type { Option, OptionType } from '../../Types/index.ts'
 
 // Props
 const props = defineProps<{
   option: Option
   inquiryId: number
   compact?: boolean
-  creative?: boolean
-  showAnswers?: boolean
-  showMenu?: boolean
-  maxLength?: number
+  official?: boolean
+  highlight?: boolean
+  showPoll?: boolean
+  preventClick?: boolean
 }>()
 
+// Emits
 const emit = defineEmits<{
   click: [option: Option]
-  support: [option: Option]
-  comment: [option: Option]
-  answer: [option: Option]
-  refine: [option: Option]
-  edit: [option: Option]
-  delete: [option: Option]
-  'add-child': [option: Option]
+  supportChanged: [optionId: number, support: string]
+  commentAdded: [optionId: number]
+  childAdded: [parentId: number, childType: string]
+  childClicked: [child: Option]
 }>()
 
+// State
+const showCommentsPanel = ref(false)
+const showChildrenModal = ref(false)
+const showAddChildModal = ref(false)
+const activeChildType = ref<string | null>(null)
+const userSupport = ref<'for' | 'against' | null>(null)
+const selectedChildType = ref<string | null>(null)
+
 // Stores
-const inquiryStore = useInquiryStore()
 const optionsStore = useOptionsStore()
 const sessionStore = useSessionStore()
 
-// State
-const expanded = ref(false)
-const showContextMenu = ref(false)
-
 // Computed
-const truncatedText = computed(() => {
-  if (!props.maxLength || props.option.text.length <= props.maxLength) {
-    return props.option.text
-  }
-  return `${props.option.text.substring(0, props.maxLength)  }...`
+const optionFamily = computed(() => {
+  const optionTypes = sessionStore.appSettings?.inquiryOptionTypeTab || []
+  const optionType = optionTypes.find(opt => 
+    opt.option_type === props.option.type || opt.optionType === props.option.type
+  )
+  return optionType?.family || 'default'
 })
 
-const isTruncated = computed(() => props.maxLength && props.option.text.length > props.maxLength)
+const optionIcon = computed(() => {
+  const optionTypes = sessionStore.appSettings?.inquiryOptionTypeTab || []
+  const optionType = optionTypes.find(opt => 
+    opt.option_type === props.option.type || opt.optionType === props.option.type
+  )
+  
+  if (optionType?.icon) {
+    return InquiryOptionIcons[optionType.icon] || InquiryOptionIcons.File
+  }
+  return InquiryOptionIcons.File
+})
 
-const isSelected = computed(() => 
-  // Check if this option is currently selected in detail view
-   false // Would need to implement selection logic
-)
+const optionTypeConfig = computed(() => {
+  const optionTypes = sessionStore.appSettings?.inquiryOptionTypeTab || []
+  return optionTypes.find(opt => 
+    opt.option_type === props.option.type || opt.optionType === props.option.type
+  )
+})
 
-const hasUnreadComments = computed(() => 
-  // Check if option has unread comments
-   false // Would need to implement read tracking
-)
+const supportFeature = computed(() => {
+  return optionTypeConfig.value?.support_feature || 'none'
+})
 
-const useMarkdown = computed(() => sessionStore.appSettings?.optionTypesTab?.[props.option.type]?.features?.includes('markdown') || false)
+const allowComment = computed(() => {
+  return optionTypeConfig.value?.allow_comment || false
+})
+
+const hasSupportFeature = computed(() => {
+  return supportFeature.value !== 'none'
+})
+
+const hasComments = computed(() => {
+  return allowComment.value && props.option.comment_count > 0
+})
+
+const allowedResponses = computed(() => {
+  if (!optionTypeConfig.value?.allowed_response) return []
+  
+  // Parse if string, otherwise use array
+  let responses: string[] = []
+  if (typeof optionTypeConfig.value.allowed_response === 'string') {
+    try {
+      responses = JSON.parse(optionTypeConfig.value.allowed_response)
+    } catch {
+      responses = []
+    }
+  } else if (Array.isArray(optionTypeConfig.value.allowed_response)) {
+    responses = optionTypeConfig.value.allowed_response
+  }
+  
+  // Filter out any invalid response types
+  const allOptionTypes = sessionStore.appSettings?.inquiryOptionTypeTab || []
+  return responses.filter(responseType => 
+    allOptionTypes.some(opt => 
+      opt.option_type === responseType || opt.optionType === responseType
+    )
+  )
+})
+
+const hasChildren = computed(() => {
+  return allowedResponses.value.length > 0
+})
+
+const childCounts = computed(() => {
+  const counts: Record<string, number> = {}
+  
+  if (!props.option.id) return counts
+  
+  const children = optionsStore.options.filter(opt => opt.parentId === props.option.id)
+  
+  // Initialize counts for allowed responses
+  allowedResponses.value.forEach((type: string) => {
+    counts[type] = 0
+  })
+  
+  // Count children by type
+  children.forEach(child => {
+    if (counts[child.type] !== undefined) {
+      counts[child.type]++
+    }
+  })
+  
+  return counts
+})
+
+const totalChildrenCount = computed(() => {
+  return Object.values(childCounts.value).reduce((sum, count) => sum + count, 0)
+})
+
+const filteredChildren = computed(() => {
+  const typeToFilter = activeChildType.value || allowedResponses.value[0]
+  if (!typeToFilter || !props.option.id) return []
+  
+  return optionsStore.options.filter(opt => 
+    opt.parentId === props.option.id && opt.type === typeToFilter
+  )
+})
+
+const canAddChild = computed(() => {
+  if (!props.option.id) return false
+  
+  // Check if current user can add child options
+  // TODO: Implement proper permission check based on inquiry/option permissions
+  return sessionStore.currentUser?.id !== undefined
+})
+
+const childrenModalTitle = computed(() => {
+  return t('agora', 'Responses to "{option}"', { option: props.option.label })
+})
+
+// Status handling
+const statusBadge = computed(() => {
+  if (!props.option.status) return null
+  
+  const statuses = optionTypeConfig.value?.statuses || []
+  if (Array.isArray(statuses)) {
+    const statusConfig = statuses.find((s: any) => s === props.option.status)
+    return statusConfig
+  }
+  
+  return props.option.status
+})
+
+const statusClass = computed(() => {
+  if (!props.option.status) return ''
+  
+  const statusMap: Record<string, string> = {
+    'draft': 'status-draft',
+    'published': 'status-published',
+    'accepted': 'status-accepted',
+    'rejected': 'status-rejected',
+    'proposed': 'status-proposed',
+    'under_review': 'status-review',
+    'active': 'status-active',
+    'resolved': 'status-resolved'
+  }
+  
+  return statusMap[props.option.status] || ''
+})
+
+const statusText = computed(() => {
+  if (!props.option.status) return ''
+  
+  const statusTextMap: Record<string, string> = {
+    'draft': t('agora', 'Draft'),
+    'published': t('agora', 'Published'),
+    'accepted': t('agora', 'Accepted'),
+    'rejected': t('agora', 'Rejected'),
+    'proposed': t('agora', 'Proposed'),
+    'under_review': t('agora', 'Under Review'),
+    'active': t('agora', 'Active'),
+    'resolved': t('agora', 'Resolved')
+  }
+  
+  return statusTextMap[props.option.status] || props.option.status
+})
+
+const statusIcon = computed(() => {
+  if (!props.option.status) return InquiryOptionIcons.Circle
+  
+  const statusIconMap: Record<string, any> = {
+    'draft': InquiryOptionIcons.Pencil,
+    'published': InquiryOptionIcons.Check,
+    'accepted': InquiryOptionIcons.CheckCircle,
+    'rejected': InquiryOptionIcons.CloseCircle,
+    'proposed': InquiryOptionIcons.Lightbulb,
+    'under_review': InquiryOptionIcons.ClockOutline,
+    'active': InquiryOptionIcons.Check,
+    'resolved': InquiryOptionIcons.ThumbUp
+  }
+  
+  return statusIconMap[props.option.status] || InquiryOptionIcons.Circle
+})
+
+// Helper methods
+const formatDate = (dateString: string) => {
+  const date = new Date(dateString)
+  return new Intl.DateTimeFormat(undefined, {
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  }).format(date)
+}
+
+const truncateText = (text: string, maxLength: number) => {
+  if (!text) return ''
+  if (text.length <= maxLength) return text
+  return text.substring(0, maxLength) + '...'
+}
+
+const getParentLabel = (parentId: number) => {
+  const parent = optionsStore.options.find(opt => opt.id === parentId)
+  return parent?.label || t('agora', 'Parent')
+}
+
+const getOptionTypeIcon = (type: string) => {
+  const optionTypes = sessionStore.appSettings?.inquiryOptionTypeTab || []
+  const optionType = optionTypes.find(opt => 
+    opt.option_type === type || opt.optionType === type
+  )
+  
+  if (optionType?.icon) {
+    return InquiryOptionIcons[optionType.icon] || InquiryOptionIcons.File
+  }
+  return InquiryOptionIcons.File
+}
+
+const getOptionTypeLabel = (type: string) => {
+  const optionTypes = sessionStore.appSettings?.inquiryOptionTypeTab || []
+  const optionType = optionTypes.find(opt => 
+    opt.option_type === type || opt.optionType === type
+  )
+  
+  return optionType?.label || type
+}
+
+const getOptionTypeDescription = (type: string) => {
+  const optionTypes = sessionStore.appSettings?.inquiryOptionTypeTab || []
+  const optionType = optionTypes.find(opt => 
+    opt.option_type === type || opt.optionType === type
+  )
+  
+  return optionType?.description || ''
+}
 
 // Methods
-const formatDate = (timestamp: number) => {
-  const date = new Date(timestamp * 1000)
-  return date.toLocaleDateString()
+const toggleCommentsPanel = () => {
+  showCommentsPanel.value = !showCommentsPanel.value
 }
 
-const getSupportLabel = () => {
-  if (!props.option.currentUserStatus?.hasSupported) {
-    return t('agora', 'Support')
+const showChildren = (childType?: string) => {
+  if (childType) {
+    activeChildType.value = childType
+  } else if (allowedResponses.value.length > 0) {
+    activeChildType.value = allowedResponses.value[0]
   }
+  showChildrenModal.value = true
+}
+
+const closeChildrenModal = () => {
+  showChildrenModal.value = false
+  activeChildType.value = null
+}
+
+const openAddChildModal = () => {
+  if (!canAddChild.value) return
   
-  if (inquiryStore.configuration.supportMode === 'ternary') {
-    const value = props.option.currentUserStatus.supportValue
-    if (value === 1) return t('agora', 'Supported')
-    if (value === 0) return t('agora', 'Neutral')
-    if (value === -1) return t('agora', 'Against')
-  }
-  
-  return t('agora', 'Supported')
-}
-
-const toggleMenu = () => {
-  showContextMenu.value = !showContextMenu.value
-}
-
-const editOption = () => {
-  emit('edit', props.option)
-  showContextMenu.value = false
-}
-
-const deleteOption = () => {
-  if (confirm(t('agora', 'Are you sure you want to delete this option?'))) {
-    emit('delete', props.option)
-    showContextMenu.value = false
+  if (allowedResponses.value.length === 1) {
+    // If only one response type is allowed, use it directly
+    selectedChildType.value = allowedResponses.value[0]
+    showAddChildModal.value = true
+  } else {
+    // Show the children modal which has the response type selection
+    showChildrenModal.value = true
   }
 }
 
-const addChildOption = () => {
-  emit('add-child', props.option)
-  showContextMenu.value = false
+const openAddChildModalFromModal = () => {
+  selectedChildType.value = activeChildType.value || allowedResponses.value[0]
+  showAddChildModal.value = true
 }
 
-// Close menu when clicking outside
+const openAddChildModalWithType = (type: string) => {
+  selectedChildType.value = type
+  showAddChildModal.value = true
+}
+
+const closeAddChildModal = () => {
+  showAddChildModal.value = false
+  selectedChildType.value = null
+}
+
+const handleChildClick = (child: Option) => {
+  emit('childClicked', child)
+}
+
+const handleChildCreated = (newChild: Option) => {
+  optionsStore.options.push(newChild)
+  closeAddChildModal()
+  emit('childAdded', props.option.id, newChild.type)
+}
+
+const toggleSupport = (type: 'for' | 'against') => {
+  // Toggle support: if already this type, remove support
+  if (userSupport.value === type) {
+    userSupport.value = null
+    emit('supportChanged', props.option.id, 'neutral')
+  } else {
+    userSupport.value = type
+    emit('supportChanged', props.option.id, type)
+  }
+}
+
+const handleCommentAdded = () => {
+  // Update comment count
+  if (props.option.comment_count !== undefined) {
+    props.option.comment_count++
+  }
+  emit('commentAdded', props.option.id)
+}
+
+// Load user support state
 onMounted(() => {
-  document.addEventListener('click', () => {
-    showContextMenu.value = false
-  })
+  // Load initial user support from option data
+  if (props.option.user_support !== undefined) {
+    userSupport.value = props.option.user_support
+  }
 })
+
+// Watch for option updates
+watch(() => props.option, (newOption) => {
+  if (newOption.user_support !== undefined) {
+    userSupport.value = newOption.user_support
+  }
+}, { deep: true })
+
+// Watch for children changes
+watch(() => optionsStore.options, () => {
+  // Child counts will automatically update through computed property
+}, { deep: true })
 </script>
 
 <style scoped lang="scss">
@@ -343,338 +804,558 @@ onMounted(() => {
   background: var(--color-main-background);
   border: 2px solid var(--color-border);
   border-radius: 16px;
-  padding: 20px;
-  transition: all 0.3s ease;
+  padding: 16px;
   cursor: pointer;
+  transition: all 0.3s ease;
   position: relative;
+  margin-bottom: 8px;
 
   &:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-    border-color: var(--color-primary-light);
-  }
-
-  &.selected {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
     border-color: var(--color-primary-element);
-    background: var(--color-primary-light);
-  }
-
-  &.has-unread {
-    border-left: 4px solid var(--color-primary-element);
   }
 
   &.compact {
-    padding: 16px;
+    padding: 12px;
     
-    .option-header {
-      margin-bottom: 12px;
+    .card-content,
+    .card-footer .author-info {
+      display: none;
     }
-    
-    .option-text {
+  }
+
+  // ... (other styles remain the same as before)
+
+  .card-content {
+    margin-bottom: 12px;
+
+    .card-description {
+      margin: 0 0 8px 0;
+      color: var(--color-text-light);
       font-size: 14px;
-    }
-    
-    .option-stats {
-      margin-top: 12px;
-    }
-  }
-
-  &.creative {
-    background: linear-gradient(135deg, var(--color-background-dark), var(--color-main-background));
-    border-color: var(--color-warning-light);
-    
-    &:hover {
-      border-color: var(--color-warning);
-      background: linear-gradient(135deg, var(--color-warning-light), var(--color-background-dark));
-    }
-  }
-
-  // Type-specific styling
-  &.type-argument_for {
-    border-left: 4px solid #4a86e8;
-    
-    &:hover {
-      border-color: #4a86e8;
-    }
-  }
-
-  &.type-argument_against {
-    border-left: 4px solid #cc0000;
-    
-    &:hover {
-      border-color: #cc0000;
-    }
-  }
-
-  &.type-proposal {
-    border-left: 4px solid #6aa84f;
-    
-    &:hover {
-      border-color: #6aa84f;
-    }
-  }
-
-  &.type-question {
-    border-left: 4px solid #3c8dbc;
-    
-    &:hover {
-      border-color: #3c8dbc;
-    }
-  }
-
-  &.type-idea {
-    border-left: 4px solid #f1c232;
-    
-    &:hover {
-      border-color: #f1c232;
-    }
-  }
-}
-
-.option-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-
-  .option-type-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 12px;
-    border-radius: 12px;
-    font-size: 12px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-
-  .option-actions {
-    position: relative;
-
-    .context-menu {
-      position: absolute;
-      top: 100%;
-      right: 0;
-      background: var(--color-main-background);
-      border: 2px solid var(--color-border);
-      border-radius: 12px;
-      padding: 8px;
-      min-width: 160px;
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-      z-index: 1000;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-
-      button {
-        justify-content: flex-start;
-        padding: 8px 12px;
-        border-radius: 8px;
-        
-        &:hover {
-          background: var(--color-background-dark);
-        }
-      }
-    }
-  }
-}
-
-.option-content {
-  margin-bottom: 16px;
-
-  .option-text {
-    font-size: 16px;
-    line-height: 1.6;
-    color: var(--color-main-text);
-    margin-bottom: 16px;
-
-    &.truncated {
-      max-height: 120px;
+      line-height: 1.5;
       overflow: hidden;
-      position: relative;
-      
-      &::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        height: 40px;
-        background: linear-gradient(transparent, var(--color-main-background));
-      }
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
     }
 
-    .markdown-content {
-      :deep(*) {
-        margin: 0 0 8px 0;
-        
-        &:last-child {
-          margin-bottom: 0;
+    .parent-ref {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+      color: var(--color-text-lighter);
+      background: var(--color-background-dark);
+      padding: 2px 8px;
+      border-radius: 8px;
+      margin-top: 4px;
+    }
+
+    .support-summary {
+      display: flex;
+      gap: 12px;
+      margin-top: 8px;
+
+      .support-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 13px;
+        padding: 4px 8px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+
+        &:hover {
+          background: var(--color-background-hover);
+        }
+
+        &.positive {
+          color: var(--color-success);
+        }
+
+        &.negative {
+          color: var(--color-error);
         }
       }
-      
-      :deep(h1), :deep(h2), :deep(h3), :deep(h4) {
-        margin-top: 16px;
-        margin-bottom: 8px;
-      }
-      
-      :deep(ul), :deep(ol) {
-        padding-left: 20px;
-        margin-bottom: 8px;
-      }
     }
 
-    .plain-text {
-      margin: 0;
-      white-space: pre-wrap;
+    .blocking-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+      color: var(--color-error);
+      background: var(--color-error-light);
+      padding: 2px 8px;
+      border-radius: 8px;
+      margin-top: 8px;
     }
 
-    .read-more-btn {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: transparent;
-      border: none;
-      color: var(--color-primary-element);
-      font-size: 14px;
-      font-weight: 600;
-      padding: 8px;
-      text-align: center;
-      cursor: pointer;
-      z-index: 1;
-      
-      &:hover {
-        color: var(--color-primary-element-hover);
+    .children-preview {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--color-border);
+
+      .children-preview-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+
+        h6 {
+          margin: 0;
+          font-size: 14px;
+          font-weight: 600;
+          color: var(--color-text-light);
+        }
+      }
+
+      .children-preview-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+
+        .child-type-preview {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          padding: 4px 8px;
+          background: var(--color-background-dark);
+          border: 1px solid var(--color-border);
+          border-radius: 8px;
+          font-size: 12px;
+          color: var(--color-text-lighter);
+          cursor: pointer;
+          transition: all 0.2s ease;
+
+          &:hover {
+            background: var(--color-background-darker);
+            color: var(--color-primary-element);
+            border-color: var(--color-primary-element);
+          }
+
+          .child-type-label {
+            white-space: nowrap;
+          }
+
+          .child-count {
+            background: var(--color-background-darker);
+            padding: 0 4px;
+            border-radius: 4px;
+            font-weight: 600;
+            min-width: 20px;
+            text-align: center;
+          }
+        }
       }
     }
   }
 
-  .option-author {
+  .card-footer {
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--color-border);
+
+    .quick-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+
+      .support-btn,
+      .comment-btn {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        padding: 4px 8px;
+        background: var(--color-background-dark);
+        border: 1px solid var(--color-border);
+        border-radius: 8px;
+        font-size: 12px;
+        color: var(--color-text-light);
+        cursor: pointer;
+        transition: all 0.2s ease;
+        min-height: 28px;
+
+        &:hover {
+          background: var(--color-background-darker);
+        }
+
+        &.active {
+          &.for {
+            background: var(--color-success-light);
+            color: var(--color-success);
+            border-color: var(--color-success);
+          }
+
+          &.against {
+            background: var(--color-error-light);
+            color: var(--color-error);
+            border-color: var(--color-error);
+          }
+
+          &.binary {
+            background: var(--color-primary-light);
+            color: var(--color-primary-element);
+            border-color: var(--color-primary-element);
+          }
+        }
+      }
+
+      .comment-btn.active {
+        background: var(--color-primary-light);
+        color: var(--color-primary-element);
+        border-color: var(--color-primary-element);
+      }
+    }
 
     .author-info {
       display: flex;
-      flex-direction: column;
-      gap: 2px;
+      align-items: center;
+      gap: 6px;
 
       .author-name {
-        font-size: 14px;
-        font-weight: 600;
-        color: var(--color-main-text);
-      }
-
-      .option-date {
         font-size: 12px;
         color: var(--color-text-lighter);
       }
     }
   }
-}
 
-.option-stats {
-  display: flex;
-  gap: 16px;
-  padding-top: 16px;
-  border-top: 2px solid var(--color-border);
-
-  .stat-item {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 12px;
+  // Side panel for comments
+  .side-panel.comments-panel {
+    position: absolute;
+    right: -320px;
+    top: 0;
+    width: 300px;
+    height: 400px;
+    background: var(--color-main-background);
+    border: 2px solid var(--color-border);
     border-radius: 12px;
-    background: var(--color-background-dark);
-    transition: all 0.2s ease;
-    cursor: pointer;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
 
-    &:hover {
-      background: var(--color-background-darker);
-      transform: translateY(-2px);
-    }
-
-    &.supported {
-      background: var(--color-success-light);
-      border-color: var(--color-success);
-    }
-
-    .stat-icon {
+    .panel-header {
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      
-      svg {
-        color: var(--color-text-light);
+      padding: 12px;
+      border-bottom: 1px solid var(--color-border);
+      flex-shrink: 0;
+
+      h5 {
+        margin: 0;
+        font-size: 14px;
+        font-weight: 600;
+      }
+
+      .close-panel {
+        background: none;
+        border: none;
+        color: var(--color-text-lighter);
+        cursor: pointer;
+        padding: 4px;
       }
     }
 
-    &.supports.supported .stat-icon svg {
-      color: var(--color-success);
+    .panel-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px;
     }
+  }
+}
 
-    .stat-count {
-      font-size: 14px;
-      font-weight: 600;
+// Children Modal
+.children-modal {
+  display: flex;
+  flex-direction: column;
+  max-height: 80vh;
+
+  .modal-header {
+    padding: 24px 24px 16px 24px;
+    border-bottom: 1px solid var(--color-border);
+
+    h2 {
+      margin: 0 0 8px 0;
+      font-size: 20px;
+      font-weight: 700;
       color: var(--color-main-text);
     }
+
+    .modal-subtitle {
+      margin: 0;
+      color: var(--color-text-lighter);
+      font-size: 14px;
+      line-height: 1.4;
+    }
+  }
+
+  .modal-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px;
+
+    .child-type-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid var(--color-border);
+      overflow-x: auto;
+
+      .child-type-tab {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        background: var(--color-background-dark);
+        border: 2px solid transparent;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--color-text-light);
+        cursor: pointer;
+        white-space: nowrap;
+        transition: all 0.3s ease;
+
+        &:hover {
+          background: var(--color-background-darker);
+        }
+
+        &.active {
+          background: var(--color-primary-light);
+          border-color: var(--color-primary-element);
+          color: var(--color-primary-element);
+        }
+
+        .tab-count {
+          background: var(--color-background-darker);
+          padding: 2px 6px;
+          border-radius: 10px;
+          font-size: 12px;
+          font-weight: 700;
+        }
+      }
+    }
+
+    .children-list-section {
+      margin-bottom: 32px;
+
+      .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+
+        h4 {
+          margin: 0;
+          font-size: 18px;
+          font-weight: 600;
+          color: var(--color-main-text);
+        }
+      }
+
+      .children-list {
+        .empty-children {
+          text-align: center;
+          padding: 40px 20px;
+          background: var(--color-background-dark);
+          border: 2px dashed var(--color-border);
+          border-radius: 16px;
+
+          svg {
+            color: var(--color-text-lighter);
+            margin-bottom: 16px;
+          }
+
+          h5 {
+            margin: 0 0 8px 0;
+            font-size: 16px;
+            color: var(--color-main-text);
+          }
+
+          p {
+            margin: 0 0 16px 0;
+            color: var(--color-text-lighter);
+            font-style: italic;
+          }
+        }
+
+        .children-items {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+        }
+      }
+    }
+
+    .add-response-section {
+      padding-top: 24px;
+      border-top: 2px solid var(--color-border);
+
+      h4 {
+        margin: 0 0 8px 0;
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--color-main-text);
+      }
+
+      .section-description {
+        margin: 0 0 20px 0;
+        color: var(--color-text-lighter);
+        font-size: 14px;
+      }
+
+      .response-type-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 16px;
+
+        .response-type-card {
+          padding: 20px;
+          background: var(--color-background-dark);
+          border: 2px solid var(--color-border);
+          border-radius: 12px;
+          text-align: center;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 8px;
+
+          &:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            border-color: var(--color-primary-element);
+            background: var(--color-primary-light);
+          }
+
+          .response-type-icon {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--color-background-darker);
+            border-radius: 10px;
+            margin-bottom: 8px;
+          }
+
+          h5 {
+            margin: 0;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--color-main-text);
+          }
+
+          .response-description {
+            margin: 0;
+            font-size: 12px;
+            color: var(--color-text-lighter);
+            line-height: 1.4;
+            flex: 1;
+          }
+
+          .response-count {
+            font-size: 11px;
+            color: var(--color-text-lighter);
+            background: var(--color-background-darker);
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-weight: 600;
+          }
+        }
+      }
+    }
+  }
+
+  .modal-footer {
+    padding: 16px 24px;
+    border-top: 1px solid var(--color-border);
+    background: var(--color-background-dark);
+    display: flex;
+    justify-content: flex-end;
   }
 }
 
-.quick-actions {
-  display: flex;
-  gap: 8px;
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 2px solid var(--color-border);
+card-header {
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
 
-  .support-btn {
-    &.supported {
-      background: var(--color-success-light);
-      border-color: var(--color-success);
-      color: var(--color-success);
-      
-      &:hover {
-        background: var(--color-success);
-        border-color: var(--color-success-hover);
+    .card-actions {
+      :deep(button) {
+        background: transparent;
+        border: none;
+        padding: 4px;
+        color: var(--color-text-lighter);
+        cursor: pointer;
+
+        &:hover {
+          color: var(--color-primary-element);
+        }
       }
     }
   }
 }
 
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.2s ease;
+// Animation for side panel
+.slide-fade-enter-active {
+  transition: all 0.3s ease;
 }
 
-.fade-enter-from,
-.fade-leave-to {
+.slide-fade-leave-active {
+  transition: all 0.3s ease;
+}
+
+.slide-fade-enter-from {
+  transform: translateX(20px);
+  opacity: 0;
+}
+
+.slide-fade-leave-to {
+  transform: translateX(20px);
   opacity: 0;
 }
 
 @media (max-width: 768px) {
   .option-card {
-    padding: 16px;
-  }
-
-  .option-stats {
-    gap: 12px;
-    flex-wrap: wrap;
+    .side-panel.comments-panel {
+      position: fixed;
+      right: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 0;
+      z-index: 1000;
+    }
     
-    .stat-item {
-      flex: 1;
-      min-width: 60px;
-      justify-content: center;
+    .card-footer {
+      flex-wrap: wrap;
+      gap: 8px;
+      
+      .author-info {
+        order: -1;
+        width: 100%;
+        margin-bottom: 8px;
+      }
     }
   }
 
-  .quick-actions {
-    flex-direction: column;
-    
-    button {
-      width: 100%;
-      justify-content: center;
+  .children-modal {
+    .modal-content {
+      .response-type-grid {
+        grid-template-columns: 1fr;
+      }
     }
   }
 }

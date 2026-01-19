@@ -69,26 +69,28 @@ export const useSupportsStore = defineStore('supports', {
         },
 
         // Helper method to get support mode
-         getSupportMode(inquiryId: number, inquiryStore: Inquiry | null, inquiriesStore: { inquiries: Inquiry[] }): string {
+         getSupportFeature(inquiryId: number, inquiryStore: Inquiry | null, inquiriesStore: { inquiries: Inquiry[] }): string {
     // Handle null inquiryStore
     if (inquiryStore && inquiryStore.id === inquiryId) {
-        return inquiryStore.configuration?.supportMode;
+        return inquiryStore.configuration?.supportFeature;
     }
 
     // Otherwise search in inquiriesStore
     const inquiry = inquiriesStore.inquiries.find((inq: Inquiry) => inq.id === inquiryId);
-    return inquiry?.configuration?.supportMode;
+    return inquiry?.configuration?.supportFeature;
 },
 
         // Main toggle method that handles both modes
         async toggleSupport(inquiryId: number, userId: string, inquiryStore: Inquiry, inquiriesStore: { inquiries: Inquiry[] }) {
-            const supportMode =  this.getSupportMode(inquiryId, inquiryStore, inquiriesStore);
+            const supportFeature =  this.getSupportFeature(inquiryId, inquiryStore, inquiriesStore);
 
-            if (supportMode === 'simple') {
+            if (supportFeature === 'binary') {
                 return this.toggleStandardSupport(inquiryId, userId, inquiryStore, inquiriesStore)
-            } 
-            return this.toggleTernarySupport(inquiryId, userId, inquiryStore, inquiriesStore)
-
+            }
+            else if (supportFeature === 'ternary') {
+                return this.toggleTernarySupport(inquiryId, userId, inquiryStore, inquiriesStore)
+            }
+            return []
         },
 
         // Standard mode: 0/1 toggle (existing behavior)

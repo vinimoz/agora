@@ -9,6 +9,7 @@ import { computed, ref } from 'vue'
 import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { InquiryGeneralIcons } from '../../utils/icons.ts'
+import { useSessionStore } from '../../stores/session.ts'
 
 import NcActions from '@nextcloud/vue/components/NcActions'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
@@ -25,9 +26,10 @@ import {
   canRestore,
   canDelete,
   canTransfer,
-  createPermissionContextForContent,
-  ContentType,
+  createInquiryContext,
 } from '../../utils/permissions.ts'
+
+const sessionStore= useSessionStore
 
 const { inquiry } = defineProps<{ inquiry: Inquiry }>()
 
@@ -37,20 +39,11 @@ const showDeleteDialog = ref(false)
 const showTransferDialog = ref(false)
 const subMenu = ref<'addToGroup' | 'removeFromGroup' | null>(null)
 
-const context = computed(() =>
-  createPermissionContextForContent(
-    ContentType.Inquiry,
-    inquiry.owner.id,
-    inquiry.configuration.access === 'public',
-    inquiry.status.isLocked,
-    inquiry.status.isExpired,
-    inquiry.status.deletionDate > 0,
-    inquiry.status.isArchived,
-    inquiry.inquiryGroups.length > 0,
-    inquiry.inquiryGroups,
-    inquiry.type
-  )
-)
+// Context for permissions
+const context = computed(() => {
+  return createInquiryContext(inquiry, sessionStore.appSettings)
+})
+
 
 async function toggleArchive() {
   try {

@@ -20,7 +20,7 @@ import { InquiryGeneralIcons } from '../../utils/icons.ts'
 import { Inquiry } from '../../Types/index.ts'
 import {
   canEdit,
-  createPermissionContextForContent,
+  createInquiryContext,
   ContentType,
   AccessLevel,
 } from '../../utils/permissions.ts'
@@ -87,23 +87,7 @@ interface GroupedResources {
 
 // Context for permissions
 const context = computed(() => {
-  const ctx = createPermissionContextForContent(
-    ContentType.Inquiry,
-    currentInquiry.value.owner.id,
-    currentInquiry.value.configuration.access === 'public',
-    currentInquiry.value.status.isLocked,
-    currentInquiry.value.status.isExpired,
-    currentInquiry.value.status.deletionDate > 0,
-    currentInquiry.value.status.isArchived,
-    currentInquiry.value.inquiryGroups.length > 0,
-    currentInquiry.value.inquiryGroups,
-    currentInquiry.value.type,
-    currentInquiry.value.family, 
-    currentInquiry.value.configuration.access as AccessLevel,
-    isInquiryFinalStatus(currentInquiry.value,sessionStore.appSettings),
-    currentInquiry.value.status.moderationStatus 
-  )
-  return ctx
+  return createInquiryContext(inquiry, sessionStore.appSettings)
 })
 
 // Helper function to parse metadata

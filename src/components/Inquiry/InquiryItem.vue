@@ -15,7 +15,7 @@ import { useSupportsStore } from '../../stores/supports'
 import {
   canComment,
   canSupport,
-  createPermissionContextForContent,
+  createInquiryContext,
   ContentType,
 } from '../../utils/permissions.ts'
 
@@ -39,25 +39,10 @@ interface Props {
 
 const { inquiry, noLink = false, gridView = false } = defineProps<Props>()
 
+
 // Context for permissions
 const context = computed(() => {
-  const ctx = createPermissionContextForContent(
-    ContentType.Inquiry,
-    inquiry.owner.id,
-    inquiry.configuration.access === 'public',
-    inquiry.status.isLocked,
-    inquiry.status.isExpired,
-    inquiry.status.deletionDate > 0,
-    inquiry.status.isArchived,
-    inquiry.inquiryGroups.length > 0,
-    inquiry.inquiryGroups,
-    inquiry.type,
-    inquiry.family, 
-    inquiry.configuration.access as string,
-    inquiry.status.isFinalStatus,
-    inquiry.status.moderationStatus 
-  )
-  return ctx
+  return createInquiryContext(inquiry, sessionStore.appSettings)
 })
 
 const onToggleSupport = async () => {
@@ -71,14 +56,14 @@ const onToggleSupport = async () => {
     const hasSupportedAfter = inquiry.currentUserStatus.hasSupported
     const supportValueAfter = inquiry.currentUserStatus.supportValue
     
-    if (inquiryStore.configuration.supportMode === 'simple') {
+    if (inquiryStore.configuration.supportFeature === 'binary') {
       if (hasSupportedAfter && !hadSupportedBefore) {
         showSuccess(t('agora', 'Inquiry supported, thanks for your support!'), { timeout: 2000 })
       } else if (!hasSupportedAfter && hadSupportedBefore) {
         showSuccess(t('agora', 'Inquiry support removed!'), { timeout: 2000 })
       }
     } 
-    else if (inquiryStore.configuration.supportMode === 'ternary') {
+    else if (inquiryStore.configuration.supportFeature === 'ternary') {
       if (supportValueAfter === 1) {
         showSuccess(t('agora', 'Inquiry supported, thanks for your support!'), { timeout: 2000 })
       } else if (supportValueAfter === 0) {
@@ -140,13 +125,10 @@ const formatDate = (timestamp: number) =>
 const formatVoteDate = (dateString: string, locale: string = navigator.language) => {
   if (!dateString) return ''
 
-  // Enlever les guillemets parasites
   const cleaned = dateString.replace(/^"+|"+$/g, '')
 
-  // Créer la date depuis l'ISO
   const date = new Date(cleaned)
 
-  // Format local : dd/mm/yyyy ou mm/dd/yyyy selon le pays
   return date.toLocaleDateString(locale)
 }
 
@@ -340,7 +322,7 @@ const hasVotePeriod = computed(() => inquiry.miscFields?.support_start && inquir
           @click="onToggleSupport"
           >
           <TernarySupportIcon
-                  v-if="inquiry.configuration.supportMode === 'ternary'"
+                  v-if="inquiry.configuration.supportFeature === 'ternary'"
                   :support-value="inquiry.currentUserStatus.supportValue"
                   :size="22"
                   />
@@ -370,6 +352,7 @@ const hasVotePeriod = computed(() => inquiry.miscFields?.support_start && inquir
                 <span>{{ inquiry.status.countParticipants }}</span>
         </div>
 
+        <!-- 
         <NcAvatar
                 :user="inquiry.owner.id"
                 class="user-avatar"
@@ -377,6 +360,31 @@ const hasVotePeriod = computed(() => inquiry.miscFields?.support_start && inquir
                 :show-name="false"
                 :size="32"
                 />
+                -->
+           <!-- User info section -->
+            <div class="user-info-section">
+                <div class="user-avatar">
+                    <component
+                        :is="NcAvatar"
+                        v-if="inquiry.ownedGroup !== ''"
+                        class="user-avatar"
+                        :style="{ marginLeft: '-8px', marginRight: '4px' }"
+                        :display-name="inquiry.ownedGroup"
+                        :show-user-status="false"
+                        :size="32"
+                    />
+                    <component
+                        :is="NcAvatar"
+                        v-else
+                        :user="inquiry.owner.id"
+                        :display-name="inquiry.owner.displayName"
+                        :style="{ marginLeft: '-8px', marginRight: '4px' }"
+                        class="user-avatar"
+                        :size="32"
+                    />
+                </div>
+            </div>
+
 
         <!-- Updated and Expire only when no vote period -->
         <div v-if="!hasVotePeriod && inquiry.configuration.expire" class="metadata-item">
@@ -404,12 +412,24 @@ const hasVotePeriod = computed(() => inquiry.miscFields?.support_start && inquir
                 </div>
                 <!-- User Avatar top left -->
                 <div class="user-avatar-top">
-                    <NcAvatar
-                            :user="inquiry.owner.id"
-                            :size="44"
-                            class="user-avatar-main"
-                            :show-name="false"
-                            />
+                       <div class="user-avatar">
+                    <component
+                        :is="NcAvatar"
+                        v-if="inquiry.ownedGroup !== ''"
+                        :display-name="inquiry.ownedGroup"
+                        class="user-avatar-main"
+                        :show-user-status="false"
+                        :size="44"
+                    />
+                    <component
+                        :is="NcAvatar"
+                        v-else
+                        :user="inquiry.owner.id"
+                        :display-name="inquiry.owner.displayName"
+                        :size="44"
+                    />
+                </div>
+
                 </div>
             </div>
 
@@ -514,7 +534,7 @@ const hasVotePeriod = computed(() => inquiry.miscFields?.support_start && inquir
                                     @click="onToggleSupport"
                                     >
                                     <TernarySupportIcon
-                                            v-if="inquiry.configuration.supportMode === 'ternary'"
+                                            v-if="inquiry.configuration.supportFeature === 'ternary'"
                                             :support-value="inquiry.currentUserStatus.supportValue"
                                             :size="22"
                                             />

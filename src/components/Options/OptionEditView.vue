@@ -336,17 +336,18 @@
       @close="closeAddOptionModal"
       @created="handleOptionCreated"
     />
+    <OptionDetailModal
+  v-if="showOptionDetail"
+  :option-id="selectedOptionId"
+  :inquiry-id="inquiryStore.id"
+  @close="closeOptionDetail"
+  @updated="handleOptionUpdated"
+  @deleted="handleOptionDeleted"
+/>
 
-    <OptionDetailDrawer
-      v-if="showOptionDetail"
-      :option-id="selectedOptionId"
-      :inquiry-id="inquiryStore.id"
-      @close="closeOptionDetail"
-      @updated="handleOptionUpdated"
-      @deleted="handleOptionDeleted"
-    />
   </div>
 </template>
+
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
@@ -356,19 +357,25 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import { useInquiryStore } from '../../stores/inquiry'
 import { useOptionsStore } from '../../stores/options'
 import { useSessionStore } from '../../stores/session'
+import { InquiryGeneralIcons } from '../../utils/icons.ts'
 import { InquiryOptionIcons } from '../../utils/icons.ts'
 import {
   getFamiliesWithOptionTypes,
   getFamilyIconComponent,
   getFamilyColor
 } from '../../helpers/modules/InquiryOptionHelper'
+import { getFamily } from '../../stores/option.type.ts'
 
 import OptionCard from './OptionCard.vue'
 import AddOptionModal from './AddOptionModal.vue'
-import OptionDetailDrawer from './OptionDetailDrawer.vue'
+import OptionDetailModal from './OptionDetailModal.vue'
 
 // Import types
 import type { InquiryType, OptionType } from '../../Types/index.ts'
+
+// Helper methods
+const getFamilyIcon = (familyKey: string) => getFamilyIconComponent(familyKey)
+
 
 // Props
 const props = defineProps<{
@@ -494,7 +501,6 @@ const getChildOptions = (parentId: number, type?: string) => {
   return children
 }
 
-const getFamilyIcon = (familyKey: string) => getFamilyIconComponent(familyKey)
 
 const getOptionTypeLabel = (optionTypeKey: string): string => {
   const optionType = allOptionTypes.value.find(opt => 

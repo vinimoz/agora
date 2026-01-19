@@ -253,7 +253,7 @@ const shortDescription = computed(() => {
 const isSupported = computed(() => props.inquiry.currentUserStatus?.hasSupported || false)
 
 const supportIconComponent = computed(() => {
-  if (props.inquiry.configuration?.supportMode === 'ternary') {
+  if (props.inquiry.configuration?.supportFeature === 'ternary') {
     return TernarySupportIcon
   }
   return ThumbIcon

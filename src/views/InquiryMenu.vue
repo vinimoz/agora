@@ -32,7 +32,7 @@ import {
   type InquiryGroupType
 } from '../helpers/modules/InquiryHelper.ts'
 import { accessFamilyMenu,
-  canCreateInquiryGroup,
+  canCreateInquiryGroupInGeneral,
   createPermissionContextForContent,
   ContentType,
 } from '../utils/permissions.ts'
@@ -49,23 +49,8 @@ const selectedGroups = ref<string[]>([])
 const preferencesStore = usePreferencesStore()
 
 const canUserCreateInquiryGroup = computed(() => {
-  // Create a basic permission context for checking creation rights
-  const context = createPermissionContextForContent(
-    ContentType.InquiryGroup,
-    '', 
-    true, // isPublic
-    false, // isLocked
-    false, // isExpired
-    false, // isDeleted
-    false, // isArchived
-    false, // hasGroupRestrictions
-    [] // allowedGroups
-  )
-  
-  // Check if user can create inquiry groups in general
-  return canCreateInquiryGroup(context)
+    canCreateInquiryGroupInGeneral()
 })
-
 
 
 

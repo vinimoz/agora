@@ -428,6 +428,8 @@ abstract class TableSchema
             'allowed_response' => ['type' => Types::TEXT, 'options' => ['notnull' => false]],
             'allow_comment' => ['type' => Types::BIGINT, 'options' => ['notnull' => true, 'default' => 1, 'length' => 20]],
             'support_feature' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'default' => 'none', 'length' => 20]],
+            'statuses' => ['type' => Types::TEXT, 'options' => ['notnull' => false]],
+            'use_title' => ['type' => Types::BIGINT, 'options' => ['notnull' => true, 'default' => 1, 'length' => 20]],
             'created' => ['type' => Types::BIGINT, 'options' => ['notnull' => true, 'default' => 0]],
         ],
 
@@ -539,6 +541,7 @@ abstract class TableSchema
 
         Option::TABLE => [
             'id' => ['type' => Types::BIGINT, 'options' => ['autoincrement' => true, 'notnull' => true, 'length' => 20]],
+            'title' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'default' => '', 'length' => 128]],
             'target_id' => ['type' => Types::BIGINT, 'options' => ['notnull' => true, 'default' => 0, 'length' => 20]],
             'parent_id' => ['type' => Types::BIGINT, 'options' => ['notnull' => true, 'default' => 0, 'length' => 20]],
             'type' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'default' => 'debate', 'length' => 64]], 

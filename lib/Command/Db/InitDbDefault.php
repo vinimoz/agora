@@ -105,7 +105,9 @@ class InitDbDefault extends Command
                 'official_summary',
             ],
             'allow_comment' => true,
-            'support_feature' => 'binary',
+            'support_feature' => 'ternary',
+            'statuses' => [],
+            'use_title' => false,
         ],
         [
             'family' => 'debate',
@@ -124,7 +126,9 @@ class InitDbDefault extends Command
                 'official_summary',
             ],
             'allow_comment' => true,
-            'support_feature' => 'binary',
+            'support_feature' => 'ternary',
+            'statuses' => [],
+            'use_title' => false,
         ],
 
         // ====================================================
@@ -143,6 +147,8 @@ class InitDbDefault extends Command
             ],
             'allow_comment' => true,
             'support_feature' => 'binary',
+            'statuses' => [],
+            'use_title' => false,
         ],
         [
             'family' => 'debate',
@@ -157,6 +163,8 @@ class InitDbDefault extends Command
             ],
             'allow_comment' => true,
             'support_feature' => 'binary',
+            'statuses' => [],
+            'use_title' => false,
         ],
 
         // ====================================================
@@ -176,7 +184,9 @@ class InitDbDefault extends Command
                 'official_summary',
             ],
             'allow_comment' => true,
-            'support_feature' => 'binary',
+            'support_feature' => 'ternary',
+            'statuses' => ['active:Check', 'resolved:ThumbUp'],
+            'use_title' => true,
         ],
 
         // ====================================================
@@ -193,7 +203,9 @@ class InitDbDefault extends Command
                 'message',
             ],
             'allow_comment' => true,
-            'support_feature' => 'binary',
+            'support_feature' => 'none',
+            'statuses' => [],
+            'use_title' => false,
         ],
 
         // ====================================================
@@ -210,46 +222,108 @@ class InitDbDefault extends Command
             ],
             'allowed_response' => [],
             'allow_comment' => true,
-            'support_feature' => 'binary',
+            'support_feature' => 'none',
+            'statuses' => [
+                'draft:Draft',
+                'published:Check',
+            ],
+            'use_title' => true,
         ],
 
         // ====================================================
-        // Structure
+        // Structure – Introduction
+        // ====================================================
+        [
+            'family' => 'structure',
+            'option_type' => 'structure_intro',
+            'icon' => 'TextBox',
+            'label' => 'Introduction',
+            'description' => 'Preamble or introductory text of a structured document.',
+            'fields' => [],
+            'allowed_response' => [
+                'chapter',
+            ],
+            'allow_comment' => true,
+            'support_feature' => 'none',
+            'use_title' => true,
+        ],
+
+        // ====================================================
+        // Structure – Chapter
         // ====================================================
         [
             'family' => 'structure',
             'option_type' => 'chapter',
             'icon' => 'BookOpenVariant',
             'label' => 'Chapter',
-            'description' => 'Chapter in a structured proposal.',
+            'description' => 'Top-level chapter in a structured proposal.',
+            'fields' => [],
+            'allowed_response' => [
+                'section',
+                'article',
+            ],
+            'allow_comment' => false,
+            'support_feature' => 'none',
+            'statuses' => [
+                'draft:Draft',
+                'published:Check',
+            ],
+            'statuses' => [],
+            'use_title' => true,
+        ],
+
+        // ====================================================
+        // Structure – Section / Sub-chapter
+        // ====================================================
+        [
+            'family' => 'structure',
+            'option_type' => 'section',
+            'icon' => 'FormatListBulleted',
+            'label' => 'Section',
+            'description' => 'Subdivision of a chapter to organize articles.',
             'fields' => [],
             'allowed_response' => [
                 'article',
-                'official_summary',
             ],
-            'allow_comment' => true,
-            'support_feature' => 'binary',
+            'allow_comment' => false,
+            'support_feature' => 'none',
+            'statuses' => [
+                'draft:Draft',
+                'published:Check',
+            ],
+            'statuses' => [],
+            'use_title' => true,
         ],
+
+        // ====================================================
+        // Structure – Article
+        // ====================================================
         [
             'family' => 'structure',
             'option_type' => 'article',
             'icon' => 'FileDocument',
             'label' => 'Article',
-            'description' => 'Article within a chapter.',
+            'description' => 'Normative article within a chapter or section.',
             'fields' => [],
             'allowed_response' => [
                 'amendment',
                 'official_summary',
             ],
             'allow_comment' => true,
-            'support_feature' => 'binary',
+            'support_feature' => 'none',
+            'statuses' => [],
+            'use_title' => true,
         ],
+
+        // ====================================================
+        // Structure – Amendment
+        // ====================================================
         [
             'family' => 'structure',
             'option_type' => 'amendment',
             'icon' => 'FileDocumentEdit',
             'label' => 'Amendment',
-            'description' => 'Amendment to an article.',
+            'description' => 'Proposed modification to an article.',
             'fields' => [
                 ['key' => 'article_ref', 'type' => 'integer', 'required' => true],
             ],
@@ -259,7 +333,14 @@ class InitDbDefault extends Command
                 'official_summary',
             ],
             'allow_comment' => true,
-            'support_feature' => 'binary',
+            'support_feature' => 'ternary',
+            'statuses' => [
+                'proposed:Lightbulb',
+                'under_review:ClockOutline',
+                'accepted:Check',
+                'rejected:Cancel',
+            ],
+            'use_title' => true,
         ],
 
         // ====================================================
@@ -279,7 +360,9 @@ class InitDbDefault extends Command
                 'official_result',
             ],
             'allow_comment' => true,
-            'support_feature' => 'binary',
+            'support_feature' => 'none',
+            'statuses' => [],
+            'use_title' => true,
         ],
         [
             'family' => 'consensus',
@@ -291,8 +374,10 @@ class InitDbDefault extends Command
             'allowed_response' => [
                 'official_result',
             ],
-            'allow_comment' => true,
+            'allow_comment' => 'none',
             'support_feature' => 'binary',
+            'statuses' => [],
+            'use_title' => true,
         ],
         [
             'family' => 'consensus',
@@ -309,7 +394,9 @@ class InitDbDefault extends Command
                 'official_summary',
             ],
             'allow_comment' => true,
-            'support_feature' => 'binary',
+            'support_feature' => 'none',
+            'statuses' => [],
+            'use_title' => true,
         ],
         [
             'family' => 'consensus',
@@ -324,7 +411,9 @@ class InitDbDefault extends Command
                 'official_summary',
             ],
             'allow_comment' => true,
-            'support_feature' => 'binary',
+            'support_feature' => 'none',
+            'statuses' => [],
+            'use_title' => true,
         ],
 
         // ====================================================
@@ -342,7 +431,9 @@ class InitDbDefault extends Command
             ],
             'allowed_response' => [],
             'allow_comment' => true,
-            'support_feature' => 'binary',
+            'support_feature' => 'none',
+            'statuses' => [],
+            'use_title' => true,
         ],
 
         // ====================================================
@@ -363,7 +454,9 @@ class InitDbDefault extends Command
                 'official_summary',
             ],
             'allow_comment' => true,
-            'support_feature' => 'binary',
+            'support_feature' => 'ternary',
+            'statuses' => [],
+            'use_title' => true,
         ],
 
     ];
@@ -394,7 +487,7 @@ class InitDbDefault extends Command
             ],
             'allowed_response' => ['amendment','objection','official'],
             'allowed_transformation' => [],
-            'allowed_option_type' => ['chapter','position_for','position_against','alternative','official_summary'],
+            'allowed_option_type' => ['structure_intro','position_for','position_against','alternative','official_summary'],
             'allow_comment' => true,
             'support_feature' => 'binary',
             'is_root' => true,
@@ -1936,8 +2029,8 @@ class InitDbDefault extends Command
 
             $insert = $this->connection->prepare(
                 'INSERT INTO `' . $tableName . '`
-                (`option_type`, `family`, `icon`, `label`, `description`, `fields`, `allowed_response`, `allow_comment`,`support_feature`,`created`)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?,?, ?)'
+                (`option_type`, `family`, `icon`, `label`, `description`, `fields`, `allowed_response`, `allow_comment`,`support_feature`,`statuses`,`use_title`,`created`)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
             );
 
             $created = !empty($optionType['created']) ? (int)$optionType['created'] : time();
@@ -1945,8 +2038,10 @@ class InitDbDefault extends Command
             $description = !empty($optionType['description']) ? $optionType['description'] : '';
             $fields = !empty($optionType['fields']) ? json_encode($optionType['fields']) : '';
             $allowedResponse = !empty($optionType['allowed_response']) ? json_encode($optionType['allowed_response']) : '';
-            $supportFeature = !empty($inquiryType['support_feature']) ? json_encode($inquiryType['support_feature']) : 'none';
-            $allowComment = $inquiryType['allow_comment'] ? 1 : 0;
+            $statuses = !empty($optionType['statuses']) ? json_encode($optionType['statuses']) : '';
+            $supportFeature = !empty($optionType['support_feature']) ? $optionType['support_feature'] : 'none';
+            $allowComment = $optionType['allow_comment'] ? 1 : 0;
+            $useTitle = $optionType['use_title'] ? 1 : 0;
 
             try {
                         $insert->execute(
@@ -1960,6 +2055,8 @@ class InitDbDefault extends Command
                             $allowedResponse,
                             $allowComment,
                             $supportFeature,
+                            $statuses,
+                            $useTitle,
                             $created,
                             ]
                         );

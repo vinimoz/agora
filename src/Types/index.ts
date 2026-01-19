@@ -107,6 +107,8 @@ export interface InquiryOptionType {
   allowed_response: string[]
   allow_comment: bool
   support_feature: string
+  statuses: string[]
+  use_title: bool
 }
 
 

@@ -363,6 +363,7 @@ class OptionService
         $this->option = new Option();
         $this->option->setText($data['text']);
         $this->option->setType($data['type']);
+        $this->option->setTitle($data['title']);
         $this->option->setTargetId($data['targetId'] ?? 0);
         $this->option->setParentId($data['parentId'] ?? 0);
         $this->option->setOwnedGroup($data['ownedGroup'] ?? '');
@@ -433,6 +434,11 @@ class OptionService
         }
 
         $timestamp = time();
+
+        // Update only provided fields
+        if (isset($data['title'])) {
+            $this->option->setTitle($data['title']);
+        }
 
         // Update only provided fields
         if (isset($data['text'])) {

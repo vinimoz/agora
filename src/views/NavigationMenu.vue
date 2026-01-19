@@ -31,9 +31,7 @@ import {
 
 import {
   accessFamilyMenu,
-  canCreateInquiryGroup,
-  createPermissionContextForContent,
-  ContentType,
+  canCreateInquiryGroupInGeneral,
 } from '../utils/permissions.ts'
 
 const preferencesStore = usePreferencesStore()
@@ -46,22 +44,9 @@ const selectedInquiryTypeForCreation = ref<InquiryType | null>(null)
 const selectedInquiryGroupTypeForCreation = ref(null)
 
 // Add this computed property to check if user can create groups
-const canUserCreateInquiryGroup = computed(() => {
-  // Create a basic permission context for checking creation rights
-  const context = createPermissionContextForContent(
-    ContentType.InquiryGroup,
-    '', // ownerId not needed for creation check
-    true, // isPublic
-    false, // isLocked
-    false, // isExpired
-    false, // isDeleted
-    false, // isArchived
-    false, // hasGroupRestrictions
-    [] // allowedGroups
-  )
-  // Check if user can create inquiry groups in general
-  return canCreateInquiryGroup(context)
-})
+const canUserCreateInquiryGroup = computed(() => 
+  canCreateInquiryGroupInGeneral()
+)
 
 // Function to check if user can create inquiry group for current family
 function canCreateInquiryGroupForFamily(familyType: string): boolean {

@@ -355,14 +355,14 @@ class SettingsService
         return $data;
     }
 
-    public function getSupportModeForType(string $type): string {
+    public function getSupportFeatureForType(string $type): string {
         $settings = $this->getInquirySettings();
 
-        if (isset($settings[$type]['supportMode'])) {
-            return $settings[$type]['supportMode'];
+        if (isset($settings[$type]['support_feature'])) {
+            return $settings[$type]['support_feature'];
         }
 
-        return 'simple'; 
+        return 'none'; 
     }
 
     public function isSupportEnabled(string $type): bool {

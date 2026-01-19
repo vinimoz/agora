@@ -344,11 +344,15 @@ class InquiryController extends BaseController
 
     #[NoAdminRequired]
     #[FrontpageRoute(verb: 'PUT', url: '/inquiry/updateconfig/{inquiryId}')]
-    public function updateConfiguration(int $inquiryId, array $inquiry): JSONResponse
+    public function updateConfiguration(int $inquiryId): JSONResponse
     {
+        $rawData = $this->request->getParams('data');
+    
+    
+		$this->logger->error('RAWWWWWWWWWWWWWWDATaAAAAAAAAAAAAAAAAAAA', ['data' => $rawData]);
 	    return $this->response(
 		    fn () => [
-			    'inquiry' => $this->inquiryService->updateConfig($inquiryId, $inquiry),
+			    'inquiry' => $this->inquiryService->updateConfig($inquiryId, $rawData['inquiryConfiguration']),
 		    ]
 	    );
     }

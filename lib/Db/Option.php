@@ -27,6 +27,8 @@ use OCP\IURLGenerator;
  * @method    void setParentId(int $value)
  * @method    string getType()
  * @method    void setType(string $value)
+ * @method    string getTitle()
+ * @method    void setTitle(string $value)
  * @method    string getAccess()
  * @method    void setAccess(string $value)
  * @method    string getText()
@@ -130,6 +132,7 @@ class Option extends EntityWithUser implements JsonSerializable
     protected string $type = 'debate';
     protected string $access = 'private';
     protected string $text = '';
+    protected string $title = '';
     protected string $owner = '';
     protected string $ownedGroup = '';
     protected int $created = 0;
@@ -179,6 +182,8 @@ class Option extends EntityWithUser implements JsonSerializable
         $this->addType('archived', 'integer');
         $this->addType('allowComment', 'integer');
         $this->addType('sortOrder', 'integer');
+        $this->addType('type', 'string');
+        $this->addType('title', 'string');
 
         // joined Attributes
         $this->addType('currentUserSupports', 'integer');
@@ -206,6 +211,7 @@ class Option extends EntityWithUser implements JsonSerializable
             'targetId' => $this->getTargetId(),
             'parentId' => $this->getParentId(),
             'type' => $this->getType(),
+            'title' => $this->getTitle(),
             'access' => $this->getAccess(),
             'text' => $this->getText(),
             'owner' => $this->getUser(),

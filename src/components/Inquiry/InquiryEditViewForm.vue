@@ -23,7 +23,7 @@ import {
 import NcSelect from '@nextcloud/vue/components/NcSelect'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcAvatar from '@nextcloud/vue/components/NcAvatar'
-import { NcTextArea, NcRichText } from '@nextcloud/vue'
+import { NcTextArea, NcRichTextContenteditatble } from '@nextcloud/vue'
 
 import { TernarySupportIcon, ThumbIcon } from '../AppIcons'
 import InquiryEditor from '../Editor/InquiryEditor.vue'
@@ -32,7 +32,7 @@ import { InquiryGeneralIcons, StatusIcons } from '../../utils/icons.ts'
 import {
   canSupport,
   canComment,
-  createPermissionContextForContent,
+  createInquiryContext,
   ContentType,
   AccessLevel,
 } from '../../utils/permissions.ts'
@@ -59,27 +59,11 @@ const triggerImageUpload = () => {
   imageFileInput.value?.click()
 }
 
-
 // Context for permissions
 const context = computed(() => {
-  const ctx = createPermissionContextForContent(
-    ContentType.Inquiry,
-    inquiryStore.owner.id,
-    inquiryStore.configuration.access === 'public',
-    inquiryStore.status.isLocked,
-    inquiryStore.status.isExpired,
-    inquiryStore.status.deletionDate > 0,
-    inquiryStore.status.isArchived,
-    inquiryStore.inquiryGroups.length > 0,
-    inquiryStore.inquiryGroups,
-    inquiryStore.type,
-    inquiryStore.family, 
-    inquiryStore.configuration.access as AccessLevel,
-    isInquiryFinalStatus(inquiryStore,sessionStore.appSettings),
-    inquiryStore.status.moderationStatus 
-  )
-  return ctx
+  return createInquiryContext(inquiryStore, sessionStore.appSettings)
 })
+
 
 // Form fields
 const selectedCategory = ref(inquiryStore.categoryId || 0)
@@ -325,14 +309,14 @@ const onToggleSupport = async () => {
     const hasSupportedAfter = inquiryStore.currentUserStatus.hasSupported
     const supportValueAfter = inquiryStore.currentUserStatus.supportValue
 
-    if (inquiryStore.configuration.supportMode === 'simple') {
+    if (inquiryStore.configuration.supportFeature === 'binary') {
       if (hasSupportedAfter && !hadSupportedBefore) {
         showSuccess(t('agora', 'Inquiry supported, thanks for your support!'), { timeout: 2000 })
       } else if (!hasSupportedAfter && hadSupportedBefore) {
         showSuccess(t('agora', 'Inquiry support removed!'), { timeout: 2000 })
       }
     }
-    else if (inquiryStore.configuration.supportMode === 'ternary') {
+    else if (inquiryStore.configuration.supportFeature === 'ternary') {
       if (supportValueAfter === 1) {
         showSuccess(t('agora', 'Inquiry supported, thanks for your support!'), { timeout: 2000 })
       } else if (supportValueAfter === 0) {
@@ -565,7 +549,7 @@ const formatDate = (timestamp: number) => new Date(timestamp * 1000).toLocaleDat
 					>
 						<div class="counter-icon">
 							<TernarySupportIcon
-								v-if="inquiryStore.configuration.supportMode === 'ternary'"
+								v-if="inquiryStore.configuration.supportFeature === 'ternary'"
 								:support-value="inquiryStore.currentUserStatus.supportValue"
 								:size="22"
 							/>
@@ -714,10 +698,11 @@ const formatDate = (timestamp: number) => new Date(timestamp * 1000).toLocaleDat
 						v-else-if="sessionStore.appSettings.inquiryTypeRights[inquiryStore.type]?.editorType === 'texteditor'"
 						class="editor-container"
 					>
-						<NcRichText
+						<NcRichTextContenteditable
 							v-model="inquiryStore.description"
 							:autolink="true"
 							:use-markdown="true"
+                            :multiline="true"
 							:disabled="props.isReadonlyDescription"
 							class="rich-text-editor"
 						/>

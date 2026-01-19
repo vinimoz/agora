@@ -258,7 +258,7 @@
   </NcAppContent>
 </template>
 <script setup lang="ts">
-    import { computed, ref, watch, onMounted} from 'vue'
+import { computed, ref, watch, onMounted} from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { t } from '@nextcloud/l10n'
 import { showError, showSuccess } from '@nextcloud/dialogs'
@@ -276,7 +276,7 @@ import type { InquiryGroupType, InquiryGroup } from '../stores/inquiryGroups.typ
 import InquiryGroupViewMiddle from '../components/InquiryGroup/InquiryGroupViewMiddle.vue'
 import InquiryGroupViewMain from '../components/InquiryGroup/InquiryGroupViewMain.vue'
 import { 
-  createPermissionContextForInquiryGroup, 
+  createInquiryGroupContext, 
   canArchive,
   canEdit,
   canDelete,
@@ -306,6 +306,10 @@ const hasSlug = computed(() => {
   return slug && slug !== 'none' && slug !== 'undefined' && slug !== ''
 })
 
+function createGroupPermissionContext(group: InquiryGroup) {
+  return createInquiryGroupContext(group)
+}
+
 // Get current group type
 const currentGroupType = computed(() => {
   if (hasSlug.value && currentInquiryGroup.value) {
@@ -333,34 +337,10 @@ const currentInquiryGroup = computed(() => {
 // Compute whether group was found
 const groupNotFound = computed(() => hasSlug.value && !currentInquiryGroup.value)
 
-
-// Create permission context for a specific group (WITH NULL CHECK)
-function createGroupPermissionContext(group: InquiryGroup | null) {
-  if (!group || !group.owner) {
-    return null
-  }
-
-  const currentUser = sessionStore.currentUser
-  const currentUserId = currentUser?.id || ''
-
-  const isOwner = currentUserId === group.owner.id
-  const isGroupEditor = sessionStore.userStatus.isGroupEditore || group.allowEdit || false
-  const isPublic = group.protected === false || group.protected === 0
-
-  return createPermissionContextForInquiryGroup(
-    group.owner.id,
-    isPublic, 
-    group.deleted > 0,
-    group.group_status === 'archived', 
-    group.owned_group !== null, 
-    group.owned_group ? [group.owned_group] : [], 
-    isGroupEditor || isOwner, 
-    false,                    
-    isGroupEditor,        
-    group.type,          
-    group.owned_group   
-  )
-}
+// Context for permissions
+const context = computed(() => {
+  return createInquiryContext(inquiry, sessionStore.appSettings)
+})
 
 // Helper functions 
 function canUserArchiveGroup(group: InquiryGroup | null): boolean {

@@ -3,6 +3,8 @@
 
 import { useSessionStore } from '../stores/session.ts'
 import { useAppSettingsStore } from '../stores/appSettings.ts'
+import { isInquiryFinalStatus } from '../helpers/modules/InquiryHelper' 
+import type { InquiryGroup } from '../stores/inquiryGroups.types.ts'
 
 export interface InquiryTypeSettings {
   supportInquiry: boolean
@@ -14,7 +16,7 @@ export interface InquiryTypeSettings {
 
 export interface InquiryTypeRights {
   supportInquiry: boolean
-  supportMode: string  // Changed from boolean to string based on DefaultInquiryRights
+  supportFeature: string 
   commentInquiry: boolean
   useResourceInquiry: boolean
   shareInquiry?: boolean
@@ -58,10 +60,45 @@ export interface InquiryGroupRights {
   viewGroup?: boolean
 }
 
+
+export interface InquiryStoreLike {
+  owner: { id: string }
+  configuration: { access: AccessLevel | string }
+  status: {
+    isLocked: boolean
+    isExpired: boolean
+    deletionDate: number
+    isArchived: boolean
+    moderationStatus?: string
+    inquiryStatus?: string
+  }
+  inquiryGroups: any[]
+  type: string
+  family: InquiryFamily
+}
+
+export interface OptionStoreLike {
+  owner: { id: string }
+  type: string // option_type
+  isDeleted?: boolean
+  isArchived?: boolean
+}
+
+export interface InquiryGroupStoreLike {
+  owner: { id: string }
+  deleted: number
+  group_status: string
+  owned_group: string | null
+  type: string
+  isPublic?: boolean
+}
+
+
+
 // ADD THESE DEFAULT VALUES BACK:
 export const DefaultInquiryRights: InquiryTypeRights = {
   supportInquiry: true, 
-  supportMode: 'simple', 
+  supportFeature: 'none', 
   commentInquiry: false,
   useResourceInquiry: false,
   shareInquiry: false,
@@ -120,6 +157,7 @@ export enum ContentType {
   Attachment = 'attachment',
   Share = 'share',
   InquiryGroup = 'inquiry_group',
+  Option = 'option',
 }
 
 /**
@@ -222,6 +260,181 @@ export function canInquiryTypePerformAction(
   const sessionStore = useSessionStore()
   const typeRights = sessionStore.appSettings.inquiryTypeRights?.[inquiryType]
   return typeRights?.[action] ?? false
+}
+
+
+export function createInquiryContext(inquiry: InquiryStoreLike, appSettings: any): PermissionContext {
+  const isFinalStatus = isInquiryFinalStatus(inquiry, appSettings)
+  
+  return {
+    userType: getCurrentUserType(),
+    contentType: ContentType.Inquiry,
+    isOwner: isContentOwner(inquiry.owner.id),
+    isPublic: inquiry.configuration.access === 'public',
+    isLocked: inquiry.status.isLocked,
+    isExpired: inquiry.status.isExpired,
+    isDeleted: inquiry.status.deletionDate > 0,
+    isArchived: inquiry.status.isArchived,
+    hasGroupRestrictions: inquiry.inquiryGroups.length > 0,
+    userGroups: getCurrentUserGroups(),
+    allowedGroups: inquiry.inquiryGroups,
+    inquiryType: inquiry.type,
+    inquiryFamily: inquiry.family,
+    accessLevel: inquiry.configuration.access as AccessLevel,
+    isFinalStatus,
+    moderationStatus: inquiry.status.moderationStatus,
+  }
+}
+
+export function createOptionContext(option: OptionStoreLike): PermissionContext {
+  return {
+    userType: getCurrentUserType(),
+    contentType: ContentType.Option, // Use new Option type
+    isOwner: isContentOwner(option.owner.id),
+    isPublic: true,
+    isLocked: false,
+    isExpired: false,
+    isDeleted: option.isDeleted || false,
+    isArchived: option.isArchived || false,
+    hasGroupRestrictions: false,
+    userGroups: getCurrentUserGroups(),
+    allowedGroups: [],
+    inquiryType: option.type, // This is option_type
+    accessLevel: AccessLevel.Open,
+  }
+}
+
+export function createInquiryGroupContext(group: any): PermissionContext {
+  const sessionStore = useSessionStore()
+  const isOwner = isContentOwner(group.owner.id)
+  const isGroupEditor = sessionStore.currentUser.isGroupEditor
+  
+  // Handle different field name variations
+  const deleted = group.deleted !== undefined ? group.deleted : 0
+  const groupStatus = group.group_status || group.groupStatus || ''
+  const ownedGroup = group.owned_group || group.ownedGroup || null
+  const isPublic = group.isPublic !== undefined 
+    ? group.isPublic 
+    : (group.protected === false || group.protected === 0)
+  
+  return {
+    userType: getCurrentUserType(),
+    contentType: ContentType.InquiryGroup,
+    isOwner,
+    isPublic,
+    isLocked: false,
+    isExpired: false,
+    isDeleted: deleted > 0,
+    isArchived: groupStatus === 'archived',
+    hasGroupRestrictions: ownedGroup !== null,
+    userGroups: getCurrentUserGroups(),
+    allowedGroups: ownedGroup ? [ownedGroup] : [],
+    isGroupMember: true,
+    isGroupEditor: isGroupEditor || isOwner,
+    groupType: group.type,
+    ownedGroup: ownedGroup,
+  }
+}
+
+// Helper to get type-specific permissions
+function getTypePermissions(context: PermissionContext): {
+  canSupport: boolean
+  canComment: boolean
+} {
+  const sessionStore = useSessionStore()
+  
+  if (context.contentType === ContentType.Inquiry && context.inquiryType) {
+    // For inquiries, check inquiry type rights
+    const typeRights = sessionStore.appSettings.inquiryTypeRights?.[context.inquiryType]
+    if (typeRights) {
+      return {
+        canSupport: typeRights.supportInquiry && typeRights.supportFeature !== 'none',
+        canComment: typeRights.commentInquiry
+      }
+    }
+  } else if ((context.contentType === ContentType.Comment || context.contentType === ContentType.Option) && context.inquiryType) {
+    // For options (treated as comments or Option type), check option type settings
+    const optionTypes = sessionStore.appSettings.optionTypes || []
+    const optionConfig = optionTypes.find((type: any) => type.option_type === context.inquiryType)
+    if (optionConfig) {
+      return {
+        canSupport: optionConfig.support_feature && optionConfig.support_feature !== 'none',
+        canComment: optionConfig.allow_comment || false
+      }
+    }
+  }
+  
+  // Default permissions for other content types
+  return {
+    canSupport: true,
+    canComment: true
+  }
+}
+
+// Updated canSupport - works for ALL context types
+export function canSupport(context: PermissionContext): boolean {
+  const appSettings = useSessionStore().appSettings
+
+  // Content blocked check
+  if (isContentBlocked(context)) {
+    return false
+  }
+
+  // Access restriction check (only for inquiries)
+  if (context.contentType === ContentType.Inquiry && isAccessRestrictedForSupports(context)) {
+    return false
+  }
+  
+  // Check type-specific permissions
+  const typePerms = getTypePermissions(context)
+  if (!typePerms.canSupport) {
+    return false
+  }
+
+  // Group access check
+  if (!hasGroupAccess(context)) {
+    return false
+  }
+
+  // Guest user check
+  if (context.userType === UserType.Guest) {
+    return context.isPublic && appSettings.allowGuestSupport
+  }
+
+  return true
+}
+
+// Updated canComment - works for ALL context types
+export function canComment(context: PermissionContext): boolean {
+  const appSettings = useAppSettingsStore()
+  
+  // Content blocked check
+  if (isContentBlocked(context)) {
+    return false
+  }
+
+  // Access restriction check (only for inquiries)
+  if (context.contentType === ContentType.Inquiry && isAccessRestrictedForComments(context)) {
+    return false
+  }
+
+  // Check type-specific permissions
+  const typePerms = getTypePermissions(context)
+  if (!typePerms.canComment) {
+    return false
+  }
+
+  // Group access check
+  if (!hasGroupAccess(context)) {
+    return false
+  }
+
+  // Guest user check
+  if (context.userType === UserType.Guest) {
+    return context.isPublic && appSettings.allowGuestComments
+  }
+
+  return true
 }
 
 function hasGroupAccess(context: PermissionContext): boolean {
@@ -556,6 +769,26 @@ export function canRestore(context: PermissionContext): boolean {
   return false
 }
 
+export function canCreateInquiryGroupInGeneral(): boolean {
+  const sessionStore = useSessionStore()
+  const context: PermissionContext = {
+    userType: getCurrentUserType(),
+    contentType: ContentType.InquiryGroup,
+    isOwner: false,
+    isPublic: true,
+    isLocked: false,
+    isExpired: false,
+    isDeleted: false,
+    isArchived: false,
+    hasGroupRestrictions: false,
+    userGroups: getCurrentUserGroups(),
+    allowedGroups: [],
+    isGroupEditor: sessionStore.currentUser.isGroupEditor
+  }
+  
+  return canCreateInquiryGroup(context)
+}
+
 /**
  * @param context
  */
@@ -708,63 +941,6 @@ export function canEdit(context: PermissionContext): boolean {
 /**
  * @param context
  */
-export function canComment(context: PermissionContext): boolean {
-  const appSettings = useAppSettingsStore()
-  if (isContentBlocked(context)) {
-    return false
-  }
-
-  if (isAccessRestrictedForComments(context)) {
-    return false
-  }
-
-  if (context.inquiryType && !canInquiryTypePerformAction(context.inquiryType, 'commentInquiry')) {
-    return false
-  }
-
-  if (!hasGroupAccess(context)) {
-    return false
-  }
-
-  if (context.userType === UserType.Guest) {
-    return context.isPublic && appSettings.allowGuestComments
-  }
-
-  return true
-}
-
-/**
- * @param context
- */
-export function canSupport(context: PermissionContext): boolean {
-  const appSettings = useSessionStore().appSettings
-
-  if (isContentBlocked(context)) {
-    return false
-  }
-
-  if (isAccessRestrictedForSupports(context)) {
-    return false
-  }
-
-  if (context.inquiryType && !canInquiryTypePerformAction(context.inquiryType, 'supportInquiry')) {
-    return false
-  }
-  
-  if (!hasGroupAccess(context)) {
-    return false
-  }
-
-  if (context.userType === UserType.Guest) {
-    return context.isPublic && appSettings.allowGuestSupport
-  }
-
-  return true
-}
-
-/**
- * @param context
- */
 export function canShare(context: PermissionContext): boolean {
   const sessionStore = useSessionStore()
 
@@ -802,20 +978,22 @@ export function canShare(context: PermissionContext): boolean {
 /**
  * @param context
  */
+
 export function canUseResource(context: PermissionContext): boolean {
   if (context.isArchived || context.isDeleted || context.isLocked) {
     return false
   }
+  
   // Check moderation status restrictions
   if (context.moderationStatus === 'rejected' || context.moderationStatus === 'pending') {
     return false
   }
 
-  if (
-    context.inquiryType &&
-    !canInquiryTypePerformAction(context.inquiryType, 'useResourceInquiry')
-  ) {
-    return false
+  // Only check resource permissions for inquiries
+  if (context.contentType === ContentType.Inquiry && context.inquiryType) {
+    if (!canInquiryTypePerformAction(context.inquiryType, 'useResourceInquiry')) {
+      return false
+    }
   }
 
   if (!hasGroupAccess(context)) {
@@ -828,6 +1006,7 @@ export function canUseResource(context: PermissionContext): boolean {
 
   return true
 }
+
 
 /**
  * @param context
@@ -1257,114 +1436,6 @@ export function getAvailableTransformTypesWithPermissions(
   return availableTypes
 }
 
-/**
- * Create permission context for inquiry group (SIMPLIFIED - no groupAccessLevel)
- * @param groupOwnerId
- * @param isPublic
- * @param isDeleted
- * @param isArchived
- * @param hasGroupRestrictions
- * @param allowedGroups
- * @param isGroupMember
- * @param isGroupModerator
- * @param isGroupEditor
- * @param groupType
- * @param ownedGroup
- */
-export function createPermissionContextForInquiryGroup(
-  groupOwnerId: string,
-  isPublic: boolean = true,
-  isDeleted: boolean = false,
-  isArchived: boolean = false,
-  hasGroupRestrictions: boolean = false,
-  allowedGroups: string[] = [],
-  isGroupMember?: boolean,
-  isGroupModerator?: boolean,
-  isGroupEditor?: boolean,
-  groupType?: string,
-  ownedGroup?: string
-): PermissionContext {
-  const userType = getCurrentUserType()
-  const userGroups = getCurrentUserGroups()
-  const isOwner = isContentOwner(groupOwnerId)
-
-  return {
-    userType,
-    contentType: ContentType.InquiryGroup,
-    isOwner,
-    isPublic,
-    isLocked: false, // Groups don't have locked state
-    isExpired: false, // Groups don't have expired state
-    isDeleted,
-    isArchived,
-    hasGroupRestrictions,
-    userGroups,
-    allowedGroups,
-    isGroupMember: isGroupMember || false,
-    isGroupModerator: isGroupModerator || false,
-    isGroupEditor: isGroupEditor || false,
-    groupType,
-    ownedGroup,
-  }
-}
-
-/**
- * Create permission context for content
- * @param contentType
- * @param contentOwnerId
- * @param isPublic
- * @param isLocked
- * @param isExpired
- * @param isDeleted
- * @param isArchived
- * @param hasGroupRestrictions
- * @param allowedGroups
- * @param inquiryType
- * @param inquiryFamily
- * @param accessLevel
- * @param isFinalStatus
- * @param moderationStatus
- */
-export function createPermissionContextForContent(
-  contentType: ContentType,
-  contentOwnerId: string,
-  isPublic: boolean = true,
-  isLocked: boolean = false,
-  isExpired: boolean = false,
-  isDeleted: boolean = false,
-  isArchived: boolean = false,
-  hasGroupRestrictions: boolean = false,
-  allowedGroups: string[] = [],
-  inquiryType?: string,
-  inquiryFamily?: InquiryFamily,
-  accessLevel?: AccessLevel,
-  isFinalStatus?: boolean,
-  moderationStatus?: string
-): PermissionContext {
-  const userType = getCurrentUserType()
-  const userGroups = getCurrentUserGroups()
-  const isOwner = isContentOwner(contentOwnerId)
-
-  return {
-    userType,
-    contentType,
-    isOwner,
-    isPublic,
-    isLocked,
-    isExpired,
-    isDeleted,
-    isArchived,
-    hasGroupRestrictions,
-    userGroups,
-    allowedGroups,
-    inquiryType,
-    inquiryFamily,
-    accessLevel,
-    isFinalStatus,
-    moderationStatus,
-  }
-}
-
 export default {
   // Enums
   UserType,
@@ -1413,6 +1484,7 @@ export default {
   // Inquiry Group specific permissions
   canViewInquiryGroup,
   canCreateInquiryGroup,
+  canCreateInquiryGroupInGeneral,
   canModifyInquiryGroup,
   canDeleteInquiryGroup,
   canAddInquiryToGroup,
@@ -1421,8 +1493,9 @@ export default {
   canManageGroupPermissions,
 
   // Context functions
-  createPermissionContextForContent,
-  createPermissionContextForInquiryGroup,
+  createInquiryContext,
+  createOptionContext,
+  createInquiryGroupContext,
 
   // Helper functions
   getCurrentUserType,

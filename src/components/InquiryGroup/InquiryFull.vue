@@ -180,7 +180,7 @@
 
           <!-- Ternary Details Button -->
           <div
-v-if="canSupportValue && storeInquiry.configuration?.supportMode === 'ternary'" 
+v-if="canSupportValue && storeInquiry.configuration?.supportFeature === 'ternary'" 
                class="ternary-details-button"
                @click.stop="openTernaryDetails">
             <NcButton
@@ -219,7 +219,7 @@ v-if="canSupportValue && storeInquiry.configuration?.supportMode === 'ternary'"
         </div>
 
         <!-- Ternary Support Buttons -->
-        <div v-if="canSupportValue && storeInquiry.configuration?.supportMode === 'ternary'" class="ternary-support-section">
+        <div v-if="canSupportValue && storeInquiry.configuration?.supportFeature === 'ternary'" class="ternary-support-section">
           <div class="section-header">
             <h3 class="section-title">{{ t('agora', 'Express your position') }}</h3>
           </div>
@@ -359,7 +359,7 @@ const context = computed(() => ({
       isArchived: props.inquiry.status?.inquiryStatus === 'archived',
       hasDeletionDate: props.inquiry.status?.deletionDate > 0,
       isPublic: props.inquiry.configuration?.access === 'public',
-      supportMode: props.inquiry.configuration?.supportMode,
+      supportFeature: props.inquiry.configuration?.supportFeature,
     }),
     canComment: canComment({
       inquiryType: props.inquiry.type,
@@ -455,7 +455,7 @@ const statusIconComponent = computed(() => {
 const isSupported = computed(() => storeInquiry.value.currentUserStatus?.hasSupported || false)
 
 const supportIconComponent = computed(() => {
-  if (props.inquiry.configuration?.supportMode === 'ternary') {
+  if (props.inquiry.configuration?.supportFeature === 'ternary') {
     return TernarySupportIcon
   }
   return ThumbIcon
@@ -745,13 +745,13 @@ async function toggleSupport(value: number) {
     const newSupportValue = updatedInquiry?.currentUserStatus?.supportValue || value
     const hadSupportedBefore = storeInquiry.value.currentUserStatus?.hasSupported
     
-    if (storeInquiry.value.configuration?.supportMode === 'simple') {
+    if (storeInquiry.value.configuration?.supportFeature === 'binary') {
       if (newSupportValue === 1) {
         showSuccess(t('agora', 'Inquiry supported, thanks for your support!'), { timeout: 2000 })
       } else if (newSupportValue === null) {
         showSuccess(t('agora', 'Inquiry support removed!'), { timeout: 2000 })
       }
-    } else if (storeInquiry.value.configuration?.supportMode === 'ternary') {
+    } else if (storeInquiry.value.configuration?.supportFeature === 'ternary') {
       if (newSupportValue === 1) {
         showSuccess(t('agora', 'Inquiry supported, thanks for your support!'), { timeout: 2000 })
       } else if (newSupportValue === 0) {

@@ -22,7 +22,9 @@ import { useSharesStore } from './shares.ts'
 import { useCommentsStore } from './comments.ts'
 import { useSupportsStore } from './supports.ts'
 import { useAppSettingsStore } from '../stores/appSettings.ts'
+import { InquiryOptionType } from '../Types/index.ts'
 import { AxiosError } from '@nextcloud/axios'
+import { getFamily, DEFAULT_FAMILY } from './option.type.ts'
 
 export type OptionAccessType = 'private' | 'public' | 'open' | 'hidden'
 export type OptionStatus = 'draft' | 'published' | 'archived' | 'deleted'
@@ -80,7 +82,7 @@ export type OptionPermissions = {
     confirmOption: boolean
 }
 
-export type OptionTypeDefinition = {
+export type InquiryOptionType = {
     key: string
     name: string
     description: string
@@ -100,6 +102,7 @@ export type OptionTypeDefinition = {
         required?: boolean
         options?: Array<{ value: string; label: string }>
     }>
+    statuses: string
 }
 
 export type Option = {
@@ -107,6 +110,7 @@ export type Option = {
     targetId: number
     parentId: number
     type: string
+    title: string
     text: string
     textSafe: string
     status: string
@@ -130,7 +134,7 @@ export type Option = {
         inquiryAccess: string
     }
     // Computed properties (not in API response)
-    _typeInfo?: OptionTypeDefinition
+    _typeInfo?: InquiryOptionType
     _familyInfo?: {
         name: string
         color: string
@@ -150,6 +154,7 @@ export const useOptionStore = defineStore('option', {
         parentId: 0,
         type: 'debate',
         text: '',
+        title: '',
         textSafe: '',
         status: 'draft',
         sortOrder: 0,
@@ -212,633 +217,652 @@ export const useOptionStore = defineStore('option', {
         _familyInfo: undefined,
     }),
 
-    getters: {
-        // Get option type definition from session store
-        typeInfo(): OptionTypeDefinition | undefined {
-            const sessionStore = useSessionStore()
-            return sessionStore.appSettings?.optionTypesTab?.[this.type]
-        },
+getters: {
+    // Get option type definition from session store
+    typeInfo(): InquiryOptionType | undefined {
+        const sessionStore = useSessionStore()
+        const optionTypes = sessionStore.appSettings?.inquiryOptionTypeTab || []
+        return optionTypes.find((opt: any) => 
+                                opt.option_type === this.type || opt.optionType === this.type
+                               )
+    },
 
-        // Get family info from type definition
-        familyInfo(): { name: string; color: string; icon: string; description: string } | undefined {
-            if (!this.typeInfo) return undefined
-            
-            const familyNames: Record<string, string> = {
-                'deliberative': t('agora', 'Deliberative'),
-                'consultative': t('agora', 'Consultative'),
-                'creative': t('agora', 'Creative'),
-                'administrative': t('agora', 'Administrative'),
-                'technical': t('agora', 'Technical'),
-                'other': t('agora', 'Other')
-            }
-            
-            const familyColors: Record<string, string> = {
-                'deliberative': '#4a86e8',
-                'consultative': '#6aa84f',
-                'creative': '#f1c232',
-                'administrative': '#a64d79',
-                'technical': '#e69138',
-                'other': '#999999'
-            }
-            
-            const familyIcons: Record<string, string> = {
-                'deliberative': 'icon-discussion',
-                'consultative': 'icon-question',
-                'creative': 'icon-lightbulb',
-                'administrative': 'icon-settings',
-                'technical': 'icon-code',
-                'other': 'icon-category-other'
-            }
-            
-            const familyDescriptions: Record<string, string> = {
-                'deliberative': t('agora', 'Discussion, arguments, and proposals'),
-                'consultative': t('agora', 'Questions and feedback gathering'),
-                'creative': t('agora', 'Ideas and innovative suggestions'),
-                'administrative': t('agora', 'Procedural and organizational matters'),
-                'technical': t('agora', 'Technical details and implementation'),
-                'other': t('agora', 'Other types of contributions')
-            }
-            
+    familyInfo(): { name: string; color: string; icon: string; description: string } | undefined {
+        if (!this.typeInfo) return undefined
+
+            const family = getFamily(this.typeInfo.family || 'default')
+
             return {
-                name: familyNames[this.typeInfo.family] || this.typeInfo.family,
-                color: this.typeInfo.color || familyColors[this.typeInfo.family] || '#cccccc',
-                icon: this.typeInfo.icon || familyIcons[this.typeInfo.family] || 'icon-file',
-                description: familyDescriptions[this.typeInfo.family] || ''
+                name: family.name,
+                color: family.color,
+                icon: family.icon,
+                description: family.description
             }
-        },
+    },
 
-        // Get type display name
-        typeDisplayName(): string {
-            return this.typeInfo?.name || this.type
-        },
+    // Get type icon - returns component
+    typeIcon(): any {
+        const iconName = this.typeInfo?.icon || this.familyInfo?.icon || 'File'
+        return InquiryGeneralIcons[iconName] || InquiryGeneralIcons.File
+    },
 
-        // Get type color
-        typeColor(): string {
-            return this.typeInfo?.color || this.familyInfo?.color || '#999999'
-        },
+    // Get type display name
+    typeDisplayName(): string {
+        return this.typeInfo?.label || this.typeInfo?.name || this.type
+    },
 
-        // Get type icon
-        typeIcon(): string {
-            return this.typeInfo?.icon || this.familyInfo?.icon || 'icon-file'
-        },
+    // Get type color
+    typeColor(): string {
+        return this.typeInfo?.color || this.familyInfo?.color || '#999999'
+    },
 
-        // Get type description
-        typeDescription(): string {
-            return this.typeInfo?.description || ''
-        },
+    // Get type description
+    typeDescription(): string {
+        return this.typeInfo?.description || this.familyInfo?.description || ''
+    },
 
-        // Get allowed features for this option type
-        typeFeatures(): string[] {
-            return this.typeInfo?.features || []
-        },
+    // Get allowed features for this option type
+    typeFeatures(): string[] {
+        const features = []
+        const typeInfo = this.typeInfo as any
 
-        // Check if option type supports a specific feature
-        supportsFeature: (state) => (feature: string): boolean => state.typeInfo?.features?.includes(feature) || false,
+        if (typeInfo?.allow_comment === 1 || typeInfo?.allow_comment === true) {
+            features.push('comments')
+        }
+
+        if (typeInfo?.support_feature && typeInfo.support_feature !== 'none') {
+            features.push('supports')
+        }
+
+        if (typeInfo?.allow_response && Array.isArray(typeInfo.allow_response) && typeInfo.allow_response.length > 0) {
+            features.push('children')
+        }
+
+        return features
+    },
+
+    // Check if option type supports a specific feature
+    supportsFeature: (state) => (feature: string): boolean => state.typeFeatures.includes(feature),
 
         // Get allowed child types for this option
         allowedChildTypes(): string[] {
-            return this.typeInfo?.allowed_child_types || []
-        },
+        const typeInfo = this.typeInfo as any
+        if (!typeInfo?.allow_response) return []
 
-        // Check if this option can have children
-        canHaveChildren(): boolean {
-            return this.allowedChildTypes.length > 0
-        },
+            if (Array.isArray(typeInfo.allow_response)) {
+                return typeInfo.allow_response
+            }
 
-        // Check if a specific child type is allowed
-        isChildTypeAllowed: (state) => (childType: string): boolean => state.allowedChildTypes.includes(childType),
+            if (typeof typeInfo.allow_response === 'string') {
+                try {
+                    return JSON.parse(typeInfo.allow_response)
+                } catch {
+                    return []
+                }
+            }
+
+            return []
+    },
+
+    // Check if this option can have children
+    canHaveChildren(): boolean {
+        return this.allowedChildTypes.length > 0
+    },
+
+    // Check if a specific child type is allowed
+    isChildTypeAllowed: (state) => (childType: string): boolean => state.allowedChildTypes.includes(childType),
 
         // Get misc fields configuration for this option type
         miscFieldsConfig(): Array<{
-            key: string
-            type: string
-            label: string
-            description?: string
-            default?: any
-            required?: boolean
-            options?: Array<{ value: string; label: string }>
-        }> {
-            return this.typeInfo?.miscFields || []
-        },
+        key: string
+        type: string
+        label: string
+        description?: string
+        default?: any
+        required?: boolean
+        options?: Array<{ value: string; label: string }>
+    }> {
+        const typeInfo = this.typeInfo as any
+        if (!typeInfo?.fields) return []
 
-        // Check if option has required misc fields
-        hasRequiredMiscFields(): boolean {
-            return this.miscFieldsConfig.some(field => field.required)
-        },
-
-        // Check if all required misc fields are filled
-        allRequiredMiscFieldsFilled(): boolean {
-            return this.miscFieldsConfig
-                .filter(field => field.required)
-                .every(field => {
-                    const value = this.miscFields[field.key]
-                    return value !== undefined && value !== null && value !== ''
+            // Convert fields array to config array
+            if (Array.isArray(typeInfo.fields)) {
+                return typeInfo.fields.map((field: any) => {
+                    if (typeof field === 'string') {
+                        return {
+                            key: field,
+                            type: 'text',
+                            label: field.split('_').map((word: string) => 
+                                                        word.charAt(0).toUpperCase() + word.slice(1)
+                                                       ).join(' '),
+                                                       required: false
+                        }
+                    }
+                    return field
                 })
-        },
-
-        // Status checks
-        isClosed(): boolean {
-            return this.status === 'archived' || this.status === 'deleted'
-        },
-
-        isPublished(): boolean {
-            return this.status === 'published'
-        },
-
-        isDraft(): boolean {
-            return this.status === 'draft'
-        },
-
-        // Permission checks with type features
-        canComment(): boolean {
-            return this.permissions.comment && 
-                   this.configuration.allowComment === 1 &&
-                   this.supportsFeature('comments')
-        },
-
-        canSupport(): boolean {
-            return this.permissions.support && 
-                   this.configuration.supportFeature !== 'none' &&
-                   this.supportsFeature('supports')
-        },
-
-        canAddChildren(): boolean {
-            return this.permissions.addOption && 
-                   this.canHaveChildren &&
-                   !this.isClosed
-        },
-
-        hasChildren(): boolean {
-            return this.children && this.children.length > 0
-        },
-
-        // Type-specific checks
-        isArgumentFor(): boolean {
-            return this.type === 'argument_for'
-        },
-
-        isArgumentAgainst(): boolean {
-            return this.type === 'argument_against'
-        },
-
-        isDebateArgument(): boolean {
-            return this.isArgumentFor || this.isArgumentAgainst
-        },
-
-        isProposal(): boolean {
-            return this.type === 'proposal'
-        },
-
-        isQuestion(): boolean {
-            return this.type === 'question'
-        },
-
-        isIdea(): boolean {
-            return this.type === 'idea'
-        },
-
-        // Text rendering
-        textMarkDown(): string {
-            marked.use(gfmHeadingId(markedPrefix))
-            return domPurify.sanitize(marked.parse(this.text).toString())
-        },
-
-        formattedCreatedDate(): string {
-            return moment.unix(this.meta.chunking.loaded).format('LLL')
-        },
-
-        formattedUpdatedDate(): string {
-            return moment.unix(this.meta.chunking.size).format('LLL')
-        },
-
-        // Parent inquiry information
-        parentInquiry(): any {
-            const inquiryStore = useInquiryStore()
-            return inquiryStore.id === this.targetId ? inquiryStore : null
-        },
-
-        belongsToCurrentInquiry(): boolean {
-            const inquiryStore = useInquiryStore()
-            return this.targetId === inquiryStore.id
-        },
-
-        // Validation
-        isValid(): boolean {
-            if (this.text.trim() === '') return false
-            if (this.hasRequiredMiscFields && !this.allRequiredMiscFieldsFilled) return false
-            return true
-        },
-
-        // Get default status from type definition
-        defaultStatus(): string {
-            return this.typeInfo?.defaultStatus || 'draft'
-        },
-
-        // Get available status transitions for this type
-        availableStatuses(): string[] {
-            // This would come from type configuration in a real app
-            // For now, return basic statuses
-            const baseStatuses = ['draft', 'published']
-            
-            if (this.typeInfo?.features?.includes('archivable')) {
-                baseStatuses.push('archived')
             }
-            
-            return baseStatuses
-        },
 
-        // Check if status can be changed to target status
-        canChangeStatusTo: (state) => (targetStatus: string): boolean => state.availableStatuses.includes(targetStatus)
+            return []
     },
 
-    actions: {
-        reset(): void {
-            this.$reset()
-        },
+    // Check if option has required misc fields
+    hasRequiredMiscFields(): boolean {
+        return this.miscFieldsConfig.some(field => field.required)
+    },
 
-        // Initialize type info after loading option
-        initializeTypeInfo(): void {
-            const sessionStore = useSessionStore()
-            this._typeInfo = sessionStore.appSettings?.optionTypesTab?.[this.type]
-            
-            if (this._typeInfo) {
-                this._familyInfo = {
-                    name: this.familyInfo?.name || '',
-                    color: this.familyInfo?.color || '',
-                    icon: this.familyInfo?.icon || '',
-                    description: this.familyInfo?.description || ''
-                }
+    // Check if all required misc fields are filled
+    allRequiredMiscFieldsFilled(): boolean {
+        return this.miscFieldsConfig
+        .filter(field => field.required)
+        .every(field => {
+            const value = this.miscFields[field.key]
+            return value !== undefined && value !== null && value !== ''
+        })
+    },
+
+    // Status checks
+    isClosed(): boolean {
+        return this.status === 'archived' || this.status === 'deleted'
+    },
+
+    isPublished(): boolean {
+        return this.status === 'published'
+    },
+
+    isDraft(): boolean {
+        return this.status === 'draft'
+    },
+
+    // Permission checks with type features
+    canComment(): boolean {
+        return this.permissions.comment && 
+            this.configuration.allowComment === 1 &&
+            this.supportsFeature('comments')
+    },
+
+    canSupport(): boolean {
+        return this.permissions.support && 
+            this.configuration.supportFeature !== 'none' &&
+            this.supportsFeature('supports')
+    },
+
+    canAddChildren(): boolean {
+        return this.permissions.addOption && 
+            this.canHaveChildren &&
+            !this.isClosed
+    },
+
+    hasChildren(): boolean {
+        return this.children && this.children.length > 0
+    },
+
+    // Type-specific checks
+    isArgumentFor(): boolean {
+        return this.type === 'argument_for'
+    },
+
+    isArgumentAgainst(): boolean {
+        return this.type === 'argument_against'
+    },
+
+    isDebateArgument(): boolean {
+        return this.isArgumentFor || this.isArgumentAgainst
+    },
+
+    isProposal(): boolean {
+        return this.type === 'proposal'
+    },
+
+    isQuestion(): boolean {
+        return this.type === 'question'
+    },
+
+    isIdea(): boolean {
+        return this.type === 'idea'
+    },
+
+    // Text rendering
+    textMarkDown(): string {
+        marked.use(gfmHeadingId(markedPrefix))
+        return domPurify.sanitize(marked.parse(this.text).toString())
+    },
+
+    formattedCreatedDate(): string {
+        return moment.unix(this.meta.chunking.loaded).format('LLL')
+    },
+
+    formattedUpdatedDate(): string {
+        return moment.unix(this.meta.chunking.size).format('LLL')
+    },
+
+    // Parent inquiry information
+    parentInquiry(): any {
+        const inquiryStore = useInquiryStore()
+        return inquiryStore.id === this.targetId ? inquiryStore : null
+    },
+
+    belongsToCurrentInquiry(): boolean {
+        const inquiryStore = useInquiryStore()
+        return this.targetId === inquiryStore.id
+    },
+
+    // Validation
+    isValid(): boolean {
+        if (this.text.trim() === '') return false
+            if (this.hasRequiredMiscFields && !this.allRequiredMiscFieldsFilled) return false
+                return true
+    },
+
+    // Get default status from type definition
+    defaultStatus(): string {
+        return this.typeInfo?.defaultStatus || 'draft'
+    },
+
+    // Get available status transitions for this type
+    availableStatuses(): string[] {
+        // This would come from type configuration in a real app
+        // For now, return basic statuses
+        const baseStatuses = ['draft', 'published']
+
+        if (this.typeInfo?.features?.includes('archivable')) {
+            baseStatuses.push('archived')
+        }
+
+        return baseStatuses
+    },
+
+    // Check if status can be changed to target status
+    canChangeStatusTo: (state) => (targetStatus: string): boolean => state.availableStatuses.includes(targetStatus)
+},
+
+actions: {
+    reset(): void {
+        this.$reset()
+    },
+
+    // Initialize type info after loading option
+    initializeTypeInfo(): void {
+        const sessionStore = useSessionStore()
+        this._typeInfo = sessionStore.appSettings?.optionTypesTab?.[this.type]
+
+        if (this._typeInfo) {
+            this._familyInfo = {
+                name: this.familyInfo?.name || '',
+                color: this.familyInfo?.color || '',
+                icon: this.familyInfo?.icon || '',
+                description: this.familyInfo?.description || ''
             }
-        },
+        }
+    },
 
-        async load(optionId: number | null = null): Promise<void> {
-            const sessionStore = useSessionStore()
-            const sharesStore = useSharesStore()
-            const commentsStore = useCommentsStore()
-            const supportsStore = useSupportsStore()
-            const subscriptionStore = useSubscriptionStore()
+    async load(optionId: number | null = null): Promise<void> {
+        const sessionStore = useSessionStore()
+        const sharesStore = useSharesStore()
+        const commentsStore = useCommentsStore()
+        const supportsStore = useSupportsStore()
+        const subscriptionStore = useSubscriptionStore()
 
-            this.meta.status = 'loading'
-            try {
-                const response = await (() => {
-                    if (sessionStore.route.name === 'publicOption') {
-                        return PublicAPI.getOption(sessionStore.route.params.token)
-                    }
-                    if (sessionStore.route.name === 'option') {
-                        return OptionsAPI.getFullOption(optionId ?? sessionStore.currentOptionId)
-                    }
-                })()
-
-                if (!response) {
-                    this.$reset()
-                    return
+        this.meta.status = 'loading'
+        try {
+            const response = await (() => {
+                if (sessionStore.route.name === 'publicOption') {
+                    return PublicAPI.getOption(sessionStore.route.params.token)
                 }
-                this.$patch(response.data.option)
-                sharesStore.shares = response.data.shares
-                commentsStore.comments = response.data.comments
-                supportsStore.supports = response.data.supports
-                subscriptionStore.subscribed = response.data.subscribed
+                if (sessionStore.route.name === 'option') {
+                    return OptionsAPI.getFullOption(optionId ?? sessionStore.currentOptionId)
+                }
+            })()
 
-                if (response.data.option.owner.id === sessionStore.currentUser.id)
-                    sessionStore.currentUser.isOwner = true
-                else sessionStore.currentUser.isOwner = false
-                
+            if (!response) {
+                this.$reset()
+                return
+            }
+            this.$patch(response.data.option)
+            sharesStore.shares = response.data.shares
+            commentsStore.comments = response.data.comments
+            supportsStore.supports = response.data.supports
+            subscriptionStore.subscribed = response.data.subscribed
+
+            if (response.data.option.owner.id === sessionStore.currentUser.id)
+                sessionStore.currentUser.isOwner = true
+            else sessionStore.currentUser.isOwner = false
+
                 // Initialize type info after loading
                 this.initializeTypeInfo()
-                
+
                 this.meta.status = 'loaded'
                 return response
-            } catch (error) {
-                if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-                    return
-                }
-                this.meta.status = 'error'
-                Logger.error('Error loading option', { error })
-                throw error
+        } catch (error) {
+            if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+                return
             }
-        },
+            this.meta.status = 'error'
+            Logger.error('Error loading option', { error })
+            throw error
+        }
+    },
 
-        async loadChildren(): Promise<void> {
-            try {
-                const response = await OptionsAPI.getChildOptions(this.id)
-                this.children = response.data.options
-                
-                // Initialize type info for children
-                this.children.forEach(child => {
-                    const sessionStore = useSessionStore()
-                    child._typeInfo = sessionStore.appSettings?.optionTypesTab?.[child.type]
-                })
-            } catch (error) {
-                if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-                    return
-                }
-                Logger.error('Error loading option children', { error })
-                throw error
+    async loadChildren(): Promise<void> {
+        try {
+            const response = await OptionsAPI.getChildOptions(this.id)
+            this.children = response.data.options
+
+            // Initialize type info for children
+            this.children.forEach(child => {
+                const sessionStore = useSessionStore()
+                child._typeInfo = sessionStore.appSettings?.optionTypesTab?.[child.type]
+            })
+        } catch (error) {
+            if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+                return
             }
-        },
+            Logger.error('Error loading option children', { error })
+            throw error
+        }
+    },
 
-        async create(payload: {
-            text: string
-            type: string
-            targetId?: number
-            parentId?: number
-            ownedGroup?: string
-            access?: string
-            showResults?: string
-            allowComment?: number
-            supportFeature?: string
-            family?: string
-            status?: string
-            miscFields?: Record<string, any>
-        }): Promise<Option | void> {
-            const inquiryStore = useInquiryStore()
-            const sessionStore = useSessionStore()
+    async create(payload: {
+        text: string
+        type: string
+        targetId?: number
+        parentId?: number
+        ownedGroup?: string
+        access?: string
+        showResults?: string
+        allowComment?: number
+        supportFeature?: string
+        family?: string
+        status?: string
+        miscFields?: Record<string, any>
+    }): Promise<Option | void> {
+        const inquiryStore = useInquiryStore()
+        const sessionStore = useSessionStore()
 
-            // Validate option type exists
-            const typeInfo = sessionStore.appSettings?.optionTypesTab?.[payload.type]
-            if (!typeInfo) {
+        // Validate option type exists
+        const typeInfo = sessionStore.appSettings?.optionTypesTab?.[payload.type]
+        if (!typeInfo) {
+            showError(t('agora', 'Invalid option type'))
+            return
+        }
+
+        // Validate parent if provided
+        if (payload.parentId) {
+            const parentOption = await this.getOptionById(payload.parentId)
+            if (parentOption && parentOption.typeInfo) {
+                if (parentOption.typeInfo.allowed_child_types && 
+                    !parentOption.typeInfo.allowed_child_types.includes(payload.type)) {
+                    showError(t('agora', 'This option type cannot be added as a child to the selected parent'))
+                return
+                }
+            }
+        }
+
+        try {
+            // Set defaults from type definition
+            const defaultMiscFields = this.getDefaultMiscFieldsForType(payload.type)
+            const mergedMiscFields = { ...defaultMiscFields, ...(payload.miscFields || {}) }
+
+            const response = await OptionsAPI.createOption({
+                text: payload.text,
+                type: payload.type,
+                targetId: payload.targetId || inquiryStore.id,
+                parentId: payload.parentId || 0,
+                ownedGroup: payload.ownedGroup || '',
+                access: payload.access || typeInfo?.defaultAccess || 'private',
+                showResults: payload.showResults || 'always',
+                allowComment: payload.allowComment !== undefined ? payload.allowComment : 
+                    (typeInfo?.features?.includes('comments') ? 1 : 0),
+                supportFeature: payload.supportFeature || 
+                    (typeInfo?.features?.includes('supports') ? 'binary' : 'none'),
+                family: payload.family || typeInfo?.family || 'deliberative',
+                status: payload.status || typeInfo?.defaultStatus || 'draft',
+                miscFields: mergedMiscFields,
+            })
+
+            const newOption = response.data.option
+            // Initialize type info for the new option
+            newOption._typeInfo = typeInfo
+
+            return newOption
+        } catch (error) {
+            if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+                return
+            }
+            Logger.error('Error creating option:', {
+                error,
+                payload,
+                state: this.$state,
+            })
+
+            throw error
+        } finally {
+            // Reload parent inquiry to update option list
+            if (inquiryStore.id) {
+                inquiryStore.load()
+            }
+        }
+    },
+
+    // Get default misc fields for a type
+    getDefaultMiscFieldsForType(typeKey: string): Record<string, any> {
+        const sessionStore = useSessionStore()
+        const typeInfo = sessionStore.appSettings?.optionTypesTab?.[typeKey]
+        const defaults: Record<string, any> = {}
+
+        if (typeInfo?.miscFields) {
+            typeInfo.miscFields.forEach(field => {
+                if (field.default !== undefined) {
+                    defaults[field.key] = field.default
+                }
+            })
+        }
+
+        return defaults
+    },
+
+    // Validate misc fields against type configuration
+    validateMiscFields(): { valid: boolean; errors: string[] } {
+        const errors: string[] = []
+
+        if (!this.typeInfo) {
+            return { valid: true, errors } // No validation without type info
+        }
+
+        this.miscFieldsConfig.forEach(field => {
+            if (field.required) {
+                const value = this.miscFields[field.key]
+                if (value === undefined || value === null || value === '') {
+                    errors.push(t('agora', '{field} is required', { field: field.label }))
+                }
+            }
+
+            // Add more validation based on field type if needed
+            if (field.type === 'number' && this.miscFields[field.key]) {
+                const numValue = Number(this.miscFields[field.key])
+                if (isNaN(numValue)) {
+                    errors.push(t('agora', '{field} must be a number', { field: field.label }))
+                }
+            }
+        })
+
+        return {
+            valid: errors.length === 0,
+            errors
+        }
+    },
+
+    async update(payload: {
+        id?: number
+        text?: string
+        type?: string
+        targetId?: number
+        parentId?: number
+        ownedGroup?: string
+        access?: string
+        showResults?: string
+        allowComment?: number
+        supportFeature?: string
+        family?: string
+        status?: string
+        miscFields?: Record<string, any>
+    }): Promise<Option | void> {
+        const inquiryStore = useInquiryStore()
+        const sessionStore = useSessionStore()
+
+        // Validate type change if provided
+        if (payload.type && payload.type !== this.type) {
+            const newTypeInfo = sessionStore.appSettings?.optionTypesTab?.[payload.type]
+            if (!newTypeInfo) {
                 showError(t('agora', 'Invalid option type'))
                 return
             }
 
-            // Validate parent if provided
-            if (payload.parentId) {
-                const parentOption = await this.getOptionById(payload.parentId)
-                if (parentOption && parentOption.typeInfo) {
-                    if (parentOption.typeInfo.allowed_child_types && 
-                        !parentOption.typeInfo.allowed_child_types.includes(payload.type)) {
-                        showError(t('agora', 'This option type cannot be added as a child to the selected parent'))
-                        return
-                    }
+            // Validate misc fields for new type
+            if (payload.miscFields) {
+                const newTypeMiscConfig = newTypeInfo.miscFields || []
+                const requiredFields = newTypeMiscConfig.filter(f => f.required)
+                const missingFields = requiredFields.filter(f => !(f.key in payload.miscFields))
+
+                if (missingFields.length > 0) {
+                    showError(t('agora', 'Missing required fields for new type: {fields}', {
+                        fields: missingFields.map(f => f.label).join(', ')
+                    }))
+                    return
                 }
             }
+        }
 
+        const debouncedLoad = this.$debounce(async () => {
             try {
-                // Set defaults from type definition
-                const defaultMiscFields = this.getDefaultMiscFieldsForType(payload.type)
-                const mergedMiscFields = { ...defaultMiscFields, ...(payload.miscFields || {}) }
-
-                const response = await OptionsAPI.createOption({
+                const response = await OptionsAPI.updateOption(payload.id || this.id, {
                     text: payload.text,
                     type: payload.type,
-                    targetId: payload.targetId || inquiryStore.id,
-                    parentId: payload.parentId || 0,
-                    ownedGroup: payload.ownedGroup || '',
-                    access: payload.access || typeInfo?.defaultAccess || 'private',
-                    showResults: payload.showResults || 'always',
-                    allowComment: payload.allowComment !== undefined ? payload.allowComment : 
-                                 (typeInfo?.features?.includes('comments') ? 1 : 0),
-                    supportFeature: payload.supportFeature || 
-                                   (typeInfo?.features?.includes('supports') ? 'binary' : 'none'),
-                    family: payload.family || typeInfo?.family || 'deliberative',
-                    status: payload.status || typeInfo?.defaultStatus || 'draft',
-                    miscFields: mergedMiscFields,
+                    targetId: payload.targetId,
+                    parentId: payload.parentId,
+                    ownedGroup: payload.ownedGroup,
+                    access: payload.access,
+                    showResults: payload.showResults,
+                    allowComment: payload.allowComment,
+                    supportFeature: payload.supportFeature,
+                    family: payload.family,
+                    status: payload.status,
+                    miscFields: payload.miscFields,
                 })
 
-                const newOption = response.data.option
-                // Initialize type info for the new option
-                newOption._typeInfo = typeInfo
-                
-                return newOption
+                const updatedOption = response.data.option
+
+                // Update type info if type changed
+                if (payload.type && payload.type !== this.type) {
+                    updatedOption._typeInfo = sessionStore.appSettings?.optionTypesTab?.[payload.type]
+                }
+
+                return updatedOption
             } catch (error) {
                 if ((error as AxiosError)?.code === 'ERR_CANCELED') {
                     return
                 }
-                Logger.error('Error creating option:', {
+                Logger.error('Error updating option', {
                     error,
-                    payload,
                     state: this.$state,
                 })
-
                 throw error
             } finally {
-                // Reload parent inquiry to update option list
+                this.load()
                 if (inquiryStore.id) {
                     inquiryStore.load()
                 }
             }
-        },
+        }, 500)
+        debouncedLoad()
+    },
 
-        // Get default misc fields for a type
-        getDefaultMiscFieldsForType(typeKey: string): Record<string, any> {
-            const sessionStore = useSessionStore()
-            const typeInfo = sessionStore.appSettings?.optionTypesTab?.[typeKey]
-            const defaults: Record<string, any> = {}
-            
-            if (typeInfo?.miscFields) {
-                typeInfo.miscFields.forEach(field => {
-                    if (field.default !== undefined) {
-                        defaults[field.key] = field.default
-                    }
-                })
-            }
-            
-            return defaults
-        },
+    // Helper method to get option by ID (would need to be implemented)
+    async getOptionById(optionId: number): Promise<Option | undefined> {
+        // This would typically call an API or check a store
+        // For now, return undefined
+        return undefined
+    },
 
-        // Validate misc fields against type configuration
-        validateMiscFields(): { valid: boolean; errors: string[] } {
-            const errors: string[] = []
-            
-            if (!this.typeInfo) {
-                return { valid: true, errors } // No validation without type info
-            }
-            
-            this.miscFieldsConfig.forEach(field => {
-                if (field.required) {
-                    const value = this.miscFields[field.key]
-                    if (value === undefined || value === null || value === '') {
-                        errors.push(t('agora', '{field} is required', { field: field.label }))
-                    }
-                }
-                
-                // Add more validation based on field type if needed
-                if (field.type === 'number' && this.miscFields[field.key]) {
-                    const numValue = Number(this.miscFields[field.key])
-                    if (isNaN(numValue)) {
-                        errors.push(t('agora', '{field} must be a number', { field: field.label }))
-                    }
-                }
-            })
-            
-            return {
-                valid: errors.length === 0,
-                errors
-            }
-        },
+    // ... rest of the actions remain similar but enhanced with type info
+    // (write, delete, archive, restore, clone, transfer, etc.)
+    // All should call initializeTypeInfo() after loading/updating
 
-        async update(payload: {
-            id?: number
-            text?: string
-            type?: string
-            targetId?: number
-            parentId?: number
-            ownedGroup?: string
-            access?: string
-            showResults?: string
-            allowComment?: number
-            supportFeature?: string
-            family?: string
-            status?: string
-            miscFields?: Record<string, any>
-        }): Promise<Option | void> {
-            const inquiryStore = useInquiryStore()
-            const sessionStore = useSessionStore()
-            
-            // Validate type change if provided
-            if (payload.type && payload.type !== this.type) {
-                const newTypeInfo = sessionStore.appSettings?.optionTypesTab?.[payload.type]
-                if (!newTypeInfo) {
-                    showError(t('agora', 'Invalid option type'))
-                    return
-                }
-                
-                // Validate misc fields for new type
-                if (payload.miscFields) {
-                    const newTypeMiscConfig = newTypeInfo.miscFields || []
-                    const requiredFields = newTypeMiscConfig.filter(f => f.required)
-                    const missingFields = requiredFields.filter(f => !(f.key in payload.miscFields))
-                    
-                    if (missingFields.length > 0) {
-                        showError(t('agora', 'Missing required fields for new type: {fields}', {
-                            fields: missingFields.map(f => f.label).join(', ')
-                        }))
-                        return
-                    }
-                }
+    // Enhanced write action with type validation
+    write(): void {
+        const inquiryStore = useInquiryStore()
+        const debouncedLoad = this.$debounce(async () => {
+            if (this.text === '') {
+                showError(t('agora', 'Text must not be empty!'))
+                return
             }
 
-            const debouncedLoad = this.$debounce(async () => {
-                try {
-                    const response = await OptionsAPI.updateOption(payload.id || this.id, {
-                        text: payload.text,
-                        type: payload.type,
-                        targetId: payload.targetId,
-                        parentId: payload.parentId,
-                        ownedGroup: payload.ownedGroup,
-                        access: payload.access,
-                        showResults: payload.showResults,
-                        allowComment: payload.allowComment,
-                        supportFeature: payload.supportFeature,
-                        family: payload.family,
-                        status: payload.status,
-                        miscFields: payload.miscFields,
-                    })
-                    
-                    const updatedOption = response.data.option
-                    
-                    // Update type info if type changed
-                    if (payload.type && payload.type !== this.type) {
-                        updatedOption._typeInfo = sessionStore.appSettings?.optionTypesTab?.[payload.type]
-                    }
-                    
-                    return updatedOption
-                } catch (error) {
-                    if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-                        return
-                    }
-                    Logger.error('Error updating option', {
-                        error,
-                        state: this.$state,
-                    })
-                    throw error
-                } finally {
-                    this.load()
-                    if (inquiryStore.id) {
-                        inquiryStore.load()
-                    }
-                }
-            }, 500)
-            debouncedLoad()
-        },
-
-        // Helper method to get option by ID (would need to be implemented)
-        async getOptionById(optionId: number): Promise<Option | undefined> {
-            // This would typically call an API or check a store
-            // For now, return undefined
-            return undefined
-        },
-
-        // ... rest of the actions remain similar but enhanced with type info
-        // (write, delete, archive, restore, clone, transfer, etc.)
-        // All should call initializeTypeInfo() after loading/updating
-
-        // Enhanced write action with type validation
-        write(): void {
-            const inquiryStore = useInquiryStore()
-            const debouncedLoad = this.$debounce(async () => {
-                if (this.text === '') {
-                    showError(t('agora', 'Text must not be empty!'))
-                    return
-                }
-
-                // Validate misc fields
-                const validation = this.validateMiscFields()
-                if (!validation.valid) {
-                    showError(t('agora', 'Validation errors: {errors}', {
-                        errors: validation.errors.join(', ')
-                    }))
-                    return
-                }
-
-                try {
-                    const response = await OptionsAPI.updateOptionConfig(this.id, this.configuration)
-                    this.$patch(response.data.option)
-                    this.initializeTypeInfo() // Re-initialize type info
-                    
-                    emit(Event.UpdateOption, {
-                        store: 'option',
-                        message: t('agora', 'Option updated'),
-                    })
-                } catch (error) {
-                    if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-                        return
-                    }
-                    Logger.error('Error updating option:', {
-                        error,
-                        option: this.$state,
-                    })
-                    showError(t('agora', 'Error writing option'))
-                    throw error
-                } finally {
-                    this.load()
-                    if (inquiryStore.id) {
-                        inquiryStore.load()
-                    }
-                }
-            }, 500)
-            debouncedLoad()
-        },
-
-        // Enhanced updateMiscField with type validation
-        async updateMiscField(key: string, value: any): Promise<void> {
-            // Validate against field configuration if exists
-            const fieldConfig = this.miscFieldsConfig.find(f => f.key === key)
-            if (fieldConfig) {
-                if (fieldConfig.type === 'number' && value && isNaN(Number(value))) {
-                    showError(t('agora', '{field} must be a number', { field: fieldConfig.label }))
-                    return
-                }
-                
-                if (fieldConfig.options && !fieldConfig.options.some(opt => opt.value === value)) {
-                    showError(t('agora', 'Invalid value for {field}', { field: fieldConfig.label }))
-                    return
-                }
+            // Validate misc fields
+            const validation = this.validateMiscFields()
+            if (!validation.valid) {
+                showError(t('agora', 'Validation errors: {errors}', {
+                    errors: validation.errors.join(', ')
+                }))
+                return
             }
 
             try {
-                await OptionsAPI.updateOptionMiscField(this.id, { key, value })
-                this.miscFields[key] = value
+                const response = await OptionsAPI.updateOptionConfig(this.id, this.configuration)
+                this.$patch(response.data.option)
+                this.initializeTypeInfo() // Re-initialize type info
+
+                emit(Event.UpdateOption, {
+                    store: 'option',
+                    message: t('agora', 'Option updated'),
+                })
             } catch (error) {
                 if ((error as AxiosError)?.code === 'ERR_CANCELED') {
                     return
                 }
-                Logger.error('Error updating option misc field:', {
+                Logger.error('Error updating option:', {
                     error,
-                    state: this.$state,
+                    option: this.$state,
                 })
+                showError(t('agora', 'Error writing option'))
                 throw error
+            } finally {
+                this.load()
+                if (inquiryStore.id) {
+                    inquiryStore.load()
+                }
+            }
+        }, 500)
+        debouncedLoad()
+    },
+
+    // Enhanced updateMiscField with type validation
+    async updateMiscField(key: string, value: any): Promise<void> {
+        // Validate against field configuration if exists
+        const fieldConfig = this.miscFieldsConfig.find(f => f.key === key)
+        if (fieldConfig) {
+            if (fieldConfig.type === 'number' && value && isNaN(Number(value))) {
+                showError(t('agora', '{field} must be a number', { field: fieldConfig.label }))
+                return
+            }
+
+            if (fieldConfig.options && !fieldConfig.options.some(opt => opt.value === value)) {
+                showError(t('agora', 'Invalid value for {field}', { field: fieldConfig.label }))
+                return
             }
         }
+
+        try {
+            await OptionsAPI.updateOptionMiscField(this.id, { key, value })
+            this.miscFields[key] = value
+        } catch (error) {
+            if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+                return
+            }
+            Logger.error('Error updating option misc field:', {
+                error,
+                state: this.$state,
+            })
+            throw error
+        }
     }
+}
 })
