@@ -498,7 +498,7 @@ OC.L10N.register(
     "Registered accounts" : "Зареєстровані облікові записи",
     "Login" : "Вхід",
     "You can also log in and participate with your regular account." : "Ви також можете увійти і проголосувати із застосуванням свого звичайного акаунту.",
-    "Enable the tracking of activities with the Activities app" : "Увімкніть відстеження дій за допомогою програми Дії",
+    "Enable the tracking of activities with the Activities app" : "Увімкнути відстеження змін за допомогою застосунку Події",
     "Enable the automatic inquiry archiving" : "Увімкнути автоматичне архівування запитів",
     "Days after which inquiries should be archived after closing" : "Дні, після закінчення яких запити мають архівуватися після закриття",
     "No parent" : "Без батьків.",

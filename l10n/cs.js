@@ -258,6 +258,7 @@ OC.L10N.register(
     "Reveal them" : "Zobrazit je",
     "Toggle sidebar" : "(Ne)zobrazovat postranní panel",
     "Loading" : "Načítání",
+    "Support - Click for neutral" : "Podpora - Klikněte pro neutrální",
     "Click" : "Klikněte",
     "Previous day" : "Předchozí den",
     "Next day" : "Příští den",
