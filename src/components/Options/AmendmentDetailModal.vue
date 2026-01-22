@@ -161,7 +161,7 @@
               />
               
               <NcTextField
-                v-model="editForm.description"
+                v-model="editForm.text"
                 :label="t('agora', 'Amendment text')"
                 :placeholder="t('agora', 'Describe the proposed changes...')"
                 type="textarea"
@@ -180,10 +180,10 @@
             </div>
             
             <div v-else class="content-display">
-              <div v-if="amendment.description" class="description-content">
+              <div v-if="amendment.text" class="text-content">
                 <h4>{{ t('agora', 'Proposed Change') }}</h4>
-                <div class="description-text">
-                  {{ amendment.description }}
+                <div class="text-text">
+                  {{ amendment.text }}
                 </div>
               </div>
               
@@ -402,7 +402,7 @@ const showCommentForm = ref(false)
 const isEditing = ref(false)
 const editForm = ref({
   label: '',
-  description: ''
+  text: ''
 })
 const userSupport = ref<'for' | 'against' | null>(null)
 const showResponseModal = ref(false)
@@ -418,13 +418,13 @@ const modalTitle = computed(() => {
 })
 
 const canEdit = computed(() => {
-  if (!amendment.value?.author) return false
-  return sessionStore.currentUser?.id === amendment.value.author.id
+  if (!amendment.value?.owner) return false
+  return sessionStore.currentUser?.id === amendment.value.owner.id
 })
 
 const canDelete = computed(() => {
-  if (!amendment.value?.author) return false
-  return sessionStore.currentUser?.id === amendment.value.author.id
+  if (!amendment.value?.owner) return false
+  return sessionStore.currentUser?.id === amendment.value.owner.id
 })
 
 const canAddResponse = computed(() => {
@@ -437,11 +437,11 @@ const canEditOrDelete = computed(() => {
 })
 
 const canChangeStatus = computed(() => {
-  // Check if user can change amendment status (e.g., article author or admin)
+  // Check if user can change amendment status (e.g., article owner or admin)
   if (!amendment.value?.parentId || !parentArticle.value) return false
   
-  // Article author can change amendment status
-  return parentArticle.value.author?.id === sessionStore.currentUser?.id
+  // Article owner can change amendment status
+  return parentArticle.value.owner?.id === sessionStore.currentUser?.id
 })
 
 const canSaveEdit = computed(() => {
@@ -524,7 +524,7 @@ const loadAmendment = async () => {
       amendment.value = foundAmendment
       editForm.value = {
         label: foundAmendment.label || '',
-        description: foundAmendment.description || ''
+        text: foundAmendment.text || ''
       }
       
       // Load user support
@@ -667,7 +667,7 @@ const cancelEdit = () => {
   if (amendment.value) {
     editForm.value = {
       label: amendment.value.label || '',
-      description: amendment.value.description || ''
+      text: amendment.value.text || ''
     }
   }
 }
@@ -680,7 +680,7 @@ const saveEdit = async () => {
     const updatedAmendment = {
       ...amendment.value,
       label: editForm.value.label,
-      description: editForm.value.description,
+      text: editForm.value.text,
       modified: new Date().toISOString()
     }
     
@@ -1021,7 +1021,7 @@ watch(() => props.amendmentId, (newId) => {
       }
 
       .content-display {
-        .description-content {
+        .text-content {
           margin-bottom: 20px;
 
           h4 {
@@ -1031,7 +1031,7 @@ watch(() => props.amendmentId, (newId) => {
             color: var(--color-main-text);
           }
 
-          .description-text {
+          .text-text {
             font-size: 16px;
             line-height: 1.6;
             color: var(--color-main-text);

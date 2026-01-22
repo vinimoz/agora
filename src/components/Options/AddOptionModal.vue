@@ -88,26 +88,26 @@
             <!-- Form fields -->
             <div class="form-fields">
               <!-- Label -->
-              <div class="form-field">
+              <div v-if="optionTypeData.use_title" class="form-field">
                 <label for="option-label">{{ t('agora', 'Title') }} *</label>
-                <NcTextField
+                <NcRichContenteditable
                   id="option-label"
                   v-model="formData.label"
                   :placeholder="t('agora', 'Enter a title for this option')"
-                  required
                   full-width
-                  @keyup.enter="formData.description && createOption()"
+                  @keyup.enter="formData.text && createOption()"
                 />
               </div>
 
               <!-- Description -->
               <div class="form-field">
-                <label for="option-description">{{ t('agora', 'Description') }}</label>
-                <NcTextField
-                  id="option-description"
-                  v-model="formData.description"
-                  :placeholder="t('agora', 'Add a description (optional)')"
-                  type="textarea"
+                <label for="option-text">{{ t('agora', 'Description') }}</label>
+                <NcRichContenteditable
+                  id="option-text"
+                  v-model="formData.text"
+                  :placeholder="t('agora', 'Add a text (optional)')"
+                  :multiline="true"
+                  required
                   :rows="4"
                   full-width
                   @keydown.ctrl.enter="createOption"
@@ -128,7 +128,7 @@
                   
                   <!-- Text field -->
                   <template v-if="field.type === 'text'">
-                    <NcTextField
+                    <NcRichContenteditable
                       :id="`field-${field.key}`"
                       v-model="additionalFormData[field.key]"
                       :placeholder="field.placeholder || ''"
@@ -139,7 +139,7 @@
                   
                   <!-- Textarea -->
                   <template v-else-if="field.type === 'textarea'">
-                    <NcTextField
+                    <NcTextArea
                       :id="`field-${field.key}`"
                       v-model="additionalFormData[field.key]"
                       :placeholder="field.placeholder || ''"
@@ -177,11 +177,10 @@
                   
                   <!-- JSON (textarea for now) -->
                   <template v-else-if="field.type === 'json'">
-                    <NcTextField
+                    <NcTextArea
                       :id="`field-${field.key}`"
                       v-model="additionalFormData[field.key]"
                       :placeholder="field.placeholder || t('agora', 'Enter JSON data')"
-                      type="textarea"
                       :rows="3"
                       :required="field.required"
                       full-width
@@ -282,11 +281,14 @@ import { ref, computed, watch, onMounted } from 'vue'
 import { t } from '@nextcloud/l10n'
 import NcModal from '@nextcloud/vue/components/NcModal'
 import NcButton from '@nextcloud/vue/components/NcButton'
+import NcRichContenteditable from '@nextcloud/vue/components/NcRichContenteditable'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
+import NcTextArea from '@nextcloud/vue/components/NcTextArea'
 
 import { useOptionsStore } from '../../stores/options'
+import { useOptionStore } from '../../stores/option'
 import { useSessionStore } from '../../stores/session'
 import { InquiryOptionIcons } from '../../utils/icons.ts'
 import { getFamilyColor } from '../../helpers/modules/InquiryOptionHelper'
@@ -295,6 +297,8 @@ import OptionCard from './OptionCard.vue'
 
 // Types
 import type { Option, OptionType } from '../../Types/index.ts'
+
+
 
 // Props
 const props = defineProps<{
@@ -311,13 +315,15 @@ const emit = defineEmits<{
 
 // Stores
 const optionsStore = useOptionsStore()
+const optionStore = useOptionStore()
 const sessionStore = useSessionStore()
+
 
 // State
 const visible = ref(true)
 const formData = ref({
   label: '',
-  description: ''
+  text: ''
 })
 const additionalFormData = ref<Record<string, any>>({})
 const formErrors = ref<string[]>([])
@@ -348,7 +354,7 @@ const optionTypeLabel = computed(() => {
 
 const optionTypeDescription = computed(() => {
   if (!optionTypeData.value) return ''
-  return optionTypeData.value.description || ''
+  return optionTypeData.value.text || ''
 })
 
 const optionTypeIcon = computed(() => {
@@ -462,8 +468,8 @@ const formValid = computed(() => {
   formErrors.value = []
   
   // Basic validation
-  if (!formData.value.label.trim()) {
-    formErrors.value.push(t('agora', 'Title is required'))
+  if (!formData.value.text.trim()) {
+    formErrors.value.push(t('agora', 'at least a text is required'))
     return false
   }
   
@@ -496,10 +502,11 @@ const previewOption = computed(() => {
     id: 0,
     type: props.optionType || '',
     label: formData.value.label || t('agora', 'Preview Title'),
-    description: formData.value.description || t('agora', 'Preview description...'),
+    text: formData.value.text || t('agora', 'Preview text...'),
     parentId: props.parentId || 0,
+    family: optionTypeData.value?.family,
     created: new Date().toISOString(),
-    author: {
+    owner: {
       id: sessionStore.currentUser?.id || '',
       displayName: sessionStore.currentUser?.displayName || t('agora', 'Current User')
     },
@@ -602,12 +609,16 @@ const createOption = async () => {
   
   try {
     // Prepare the option data
+
     const optionData: any = {
-      inquiryId: props.inquiryId,
+      targetId: props.inquiryId,
       type: props.optionType,
-      label: formData.value.label.trim(),
-      description: formData.value.description.trim() || null,
+      allowComment: optionTypeData.value.allow_comment,
+      supportFeature: optionTypeData.value.support_feature,
+      family: optionTypeData?.value.family,
+      text: formData.value.text.trim() || null,
       parentId: props.parentId || null,
+
       fields: {}
     }
     
@@ -629,34 +640,13 @@ const createOption = async () => {
       }
     }
     
-    // TODO: Replace with actual API call
     console.log('Creating option:', optionData)
-    
-    // Simulate API response
-    const newOption: Option = {
-      id: Date.now(), // Temporary ID
-      inquiryId: props.inquiryId,
-      type: props.optionType,
-      label: optionData.label,
-      description: optionData.description,
-      parentId: optionData.parentId,
-      fields: optionData.fields,
-      created: new Date().toISOString(),
-      modified: new Date().toISOString(),
-      author: {
-        id: sessionStore.currentUser?.id || '',
-        displayName: sessionStore.currentUser?.displayName || t('agora', 'Current User')
-      },
-      support_for: 0,
-      support_against: 0,
-      comment_count: 0,
-      status: 'draft'
-    }
-    
+    const newOption= await optionStore.create(optionData)
+
     emit('created', newOption)
     
     // Reset form
-    formData.value = { label: '', description: '' }
+    formData.value = { label: '', text: '' }
     additionalFormData.value = {}
     
   } catch (error) {

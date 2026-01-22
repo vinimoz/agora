@@ -155,7 +155,7 @@ class Inquiry extends EntityWithUser implements JsonSerializable
     protected ?int $parentId = 0;
     protected string $moderationStatus = self::DEFAULT_STATUS_DRAFT;
     protected string $inquiryStatus = self::DEFAULT_STATUS_DRAFT;
-    protected int $allowComment = 0;
+    protected ?int $allowComment = null;
     protected string $supportFeature = 'none';
     protected bool $hasSupported = false; 
     protected ?int $supportValue = null; 
@@ -336,13 +336,25 @@ class Inquiry extends EntityWithUser implements JsonSerializable
         $this->setAccess($inquiryConfiguration['access'] ?? $this->getAccess());
         $this->setAutoReminder($inquiryConfiguration['autoReminder'] ?? $this->getAutoReminder());
         $this->setAllowComment($inquiryConfiguration['allowComment'] ?? $this->getAllowComment()); 
-        $this->setAllowComment($inquiryConfiguration['supportFeature'] ?? $this->getSupportFeature()); 
+        $this->setSupportFeature($inquiryConfiguration['supportFeature'] ?? $this->getSupportFeature()); 
         $this->setExpire($inquiryConfiguration['expire'] ?? $this->getExpire());
         $this->setForceConfidentialComments($inquiryConfiguration['forceConfidentialComments'] ?? $this->getForceConfidentialComments());
         $this->setShowResults($inquiryConfiguration['showResults'] ?? $this->getShowResults());
         return $this;
     }
-
+/*
+    public function setAllowComment($allowComment): self {
+        // Convert various inputs to proper boolean
+        if ($allowComment === '' || $allowComment === '0' || $allowComment === 0 || $allowComment === false) {
+            $this->allowComment = false;
+        } elseif ($allowComment === '1' || $allowComment === 1 || $allowComment === true) {
+            $this->allowComment = true;
+        } else {
+            $this->allowComment = $allowComment; // null or other
+        }
+        return $this;
+    }    
+ */
 
     public function getExpired(): bool
     {
@@ -391,8 +403,8 @@ class Inquiry extends EntityWithUser implements JsonSerializable
     {
         foreach ($misc as $field) {
             $key = $field->getKey();
-	    $this->miscFields[$key] = $field->getValue() ?? null;
-	}
+            $this->miscFields[$key] = $field->getValue() ?? null;
+        }
     }
 
     public function initializeMiscFields(array $fieldsDefinition): void
@@ -543,10 +555,10 @@ class Inquiry extends EntityWithUser implements JsonSerializable
     private function getIsInvolved(): bool
     {
         return (
-        $this->getIsInquiryOwner()
-        || $this->getIsParticipant()
-        || $this->getIsPersonallyInvited()
-        || $this->getIsInvitedViaGroupShare()
+            $this->getIsInquiryOwner()
+            || $this->getIsParticipant()
+            || $this->getIsPersonallyInvited()
+            || $this->getIsInvitedViaGroupShare()
         );
     }
 
@@ -599,11 +611,11 @@ class Inquiry extends EntityWithUser implements JsonSerializable
         return in_array(
             $this->getUserRole(),
             [
-            self::ROLE_ADMIN,
-            self::ROLE_USER,
-            self::ROLE_EXTERNAL,
-            self::ROLE_EMAIL,
-            self::ROLE_CONTACT,
+                self::ROLE_ADMIN,
+                self::ROLE_USER,
+                self::ROLE_EXTERNAL,
+                self::ROLE_EMAIL,
+                self::ROLE_CONTACT,
             ]
         );
     }
@@ -630,7 +642,7 @@ class Inquiry extends EntityWithUser implements JsonSerializable
         if ($this->getAccess()) {
             return true;
         }
-        
+
         if ($this->getIsOpenInquiry()) {
             return true;
         }
@@ -644,7 +656,7 @@ class Inquiry extends EntityWithUser implements JsonSerializable
     private function getAllowChangeOwner(): bool
     {
         return $this->getAllowEditInquiry()
-        || $this->userSession->getCurrentUser()->getIsAdmin();
+            || $this->userSession->getCurrentUser()->getIsAdmin();
     }
 
     private function getAllowAccessInquiry(): bool
@@ -748,8 +760,8 @@ class Inquiry extends EntityWithUser implements JsonSerializable
             return 'false';
         }
 
-     if ($this->getSupportFeature()!=='none') return false; 
-    return true;
+        if ($this->getSupportFeature()!=='none') return false; 
+        return true;
     }
 
     private function getAllowDeleteSupport(): bool

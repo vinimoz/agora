@@ -335,9 +335,6 @@ class OptionService
      */
     public function create(array $data): Option
     {
-        if (!$this->appSettings->getOptionCreationAllowed()) {
-            throw new ForbiddenException('Option creation is disabled');
-        }
 
         if (empty($data['text'])) {
             throw new EmptyTextException('Text must not be empty');
@@ -358,24 +355,27 @@ class OptionService
                 throw new ForbiddenException('No access to target inquiry');
             }
         }
+        
+        $title = $data['title'] ?? '';
 
         $timestamp = time();
         $this->option = new Option();
         $this->option->setText($data['text']);
         $this->option->setType($data['type']);
-        $this->option->setTitle($data['title']);
+        $this->option->setTitle($title);
         $this->option->setTargetId($data['targetId'] ?? 0);
         $this->option->setParentId($data['parentId'] ?? 0);
         $this->option->setOwnedGroup($data['ownedGroup'] ?? '');
         $this->option->setCreated($timestamp);
         $this->option->setUpdated($timestamp);
+        $this->option->setAllowComment($data['allowComment']);
+        $this->option->setSupportFeature($data['supportFeature']);
+
         $this->option->setOwner($this->userSession->getCurrentUserId());
 
         // Set defaults
         $this->option->setAccess($data['access'] ?? Option::ACCESS_PRIVATE);
         $this->option->setShowResults($data['showResults'] ?? Option::SHOW_RESULTS_ALWAYS);
-        $this->option->setAllowComment($data['allowComment'] ?? 1);
-        $this->option->setSupportFeature($data['supportFeature'] ?? 'none');
         $this->option->setFamily($data['family'] ?? 'deliberative');
         $this->option->setStatus($data['status'] ?? Option::DEFAULT_STATUS_DRAFT);
 
@@ -401,7 +401,7 @@ class OptionService
 
         $this->optionMapper->saveDynamicFields($this->option, $fieldsDefinition);
 
-        $this->eventDispatcher->dispatchTyped(new OptionCreatedEvent($this->option));
+        //$this->eventDispatcher->dispatchTyped(new OptionCreatedEvent($this->option));
 
         return $this->option;
     }

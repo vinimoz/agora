@@ -28,8 +28,8 @@
             <component :is="getOptionTypeIcon(parentOption.type)" :size="20" />
             <div class="parent-text">
               <h4>{{ parentOption.label }}</h4>
-              <p v-if="parentOption.description" class="parent-description">
-                {{ truncateText(parentOption.description, 100) }}
+              <p v-if="parentOption.text" class="parent-text">
+                {{ truncateText(parentOption.text, 100) }}
               </p>
             </div>
           </div>
@@ -38,7 +38,7 @@
         <!-- Available response types -->
         <div class="response-types-section">
           <h3>{{ t('agora', 'Choose response type') }}</h3>
-          <p class="section-description">
+          <p class="section-text">
             {{ t('agora', 'Select the type of response you want to create') }}
           </p>
 
@@ -57,7 +57,7 @@
                 <h4>{{ responseType.label }}</h4>
               </div>
               
-              <p class="type-description">{{ responseType.description }}</p>
+              <p class="type-text">{{ responseType.text }}</p>
               
               <div class="type-features">
                 <span v-if="responseType.support_feature && responseType.support_feature !== 'none'" class="feature-tag">
@@ -241,16 +241,16 @@ const existingChildren = computed(() => {
 
 const previewOption = computed(() => {
   const typeLabel = selectedTypeConfig.value?.label || selectedType.value || t('agora', 'Response')
-  const typeDescription = selectedTypeConfig.value?.description || ''
+  const typeDescription = selectedTypeConfig.value?.text || ''
   
   return {
     id: 0,
     type: selectedType.value || '',
     label: t('agora', 'New {type}', { type: typeLabel }),
-    description: typeDescription,
+    text: typeDescription,
     parentId: props.parentOptionId,
     created: new Date().toISOString(),
-    author: {
+    owner: {
       id: sessionStore.currentUser?.id || '',
       displayName: sessionStore.currentUser?.displayName || t('agora', 'Current User')
     },
@@ -400,7 +400,7 @@ onMounted(() => {
             -webkit-box-orient: vertical;
           }
 
-          .parent-description {
+          .parent-text {
             margin: 0;
             font-size: 14px;
             color: var(--color-text-light);
@@ -418,7 +418,7 @@ onMounted(() => {
         color: var(--color-main-text);
       }
 
-      .section-description {
+      .section-text {
         margin: 0 0 20px 0;
         color: var(--color-text-lighter);
         font-size: 14px;
@@ -482,7 +482,7 @@ onMounted(() => {
             }
           }
 
-          .type-description {
+          .type-text {
             margin: 0;
             font-size: 13px;
             color: var(--color-text-light);

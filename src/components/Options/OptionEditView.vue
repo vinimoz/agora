@@ -31,7 +31,7 @@
     <div v-if="activeFamilyData" class="family-content">
       <!-- Family Header with Action Buttons -->
       <div class="family-header">
-        <p class="family-description">{{ activeFamilyData.description }}</p>
+        <p class="family-text">{{ activeFamilyData.text }}</p>
 
         <!-- Action Bar for creating options -->
         <div v-if="activeFamilyData.optionTypes.length > 0" class="family-actions-bar">
@@ -444,7 +444,7 @@ const familiesWithOptions = computed(() => {
     ...family,
     name: t('agora', family.name),
     label: t('agora', family.label),
-    description: t('agora', family.description)
+    text: t('agora', family.text)
   }))
 })
 
@@ -690,7 +690,7 @@ watch(debugInfo, () => {}, { immediate: true })
       color: var(--color-main-text);
     }
 
-    .family-description {
+    .family-text {
       font-size: 16px;
       color: var(--color-text-lighter);
       margin: 0 0 20px 0;

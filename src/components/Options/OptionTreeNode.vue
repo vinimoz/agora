@@ -384,7 +384,7 @@ const canAddOption = (type: string, parentId?: number) => {
 const canEditArticle = (article: any) => {
   // Check if user can edit this article
   // TODO: Implement proper permission check
-  return sessionStore.currentUser?.id === article.author?.id
+  return sessionStore.currentUser?.id === article.owner?.id
 }
 
 const canSupportArticle = (article: any) => {
@@ -421,7 +421,7 @@ const toggleArticleDetails = (articleId: number) => {
     // Initialize edited content if not already set
     if (!editedContents.value[articleId]) {
       const article = optionsStore.options.find(opt => opt.id === articleId)
-      editedContents.value[articleId] = article?.description || ''
+      editedContents.value[articleId] = article?.text || ''
     }
   } else {
     if (activeArticleId.value === articleId) {
@@ -450,7 +450,7 @@ const saveArticle = async (article: any) => {
     if (index >= 0) {
       optionsStore.options[index] = {
         ...optionsStore.options[index],
-        description: editedContents.value[article.id],
+        text: editedContents.value[article.id],
         modified: new Date().toISOString()
       }
     }

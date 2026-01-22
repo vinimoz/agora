@@ -1,349 +1,360 @@
 <!--
-    SPDX-FileCopyrightText: 2024 Nextcloud contributors
-    SPDX-License-Identifier: AGPL-3.0-or-later
+  SPDX-FileCopyrightText: 2024 Nextcloud contributors
+  SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <template>
-    <NcModal
-            v-if="show && optionId"
-            :name="modalTitle"
-            size="large"
-            @close="closeModal"
-            >
-            <div class="option-detail-modal">
-                <!-- Loading state -->
-    <div v-if="loading" class="loading-state">
+  <NcModal
+    v-if="show && optionId"
+    :name="modalTitle"
+    size="large"
+    @close="closeModal"
+  >
+    <div class="option-detail-modal">
+      <!-- Loading state -->
+      <div v-if="loading" class="loading-state">
         <NcLoadingIcon :size="48" />
         <p>{{ t('agora', 'Loading option details...') }}</p>
-    </div>
+      </div>
 
-    <!-- Error state -->
-    <div v-else-if="error" class="error-state">
+      <!-- Error state -->
+      <div v-else-if="error" class="error-state">
         <NcNoteCard type="error">
-        {{ error }}
+          {{ error }}
         </NcNoteCard>
         <NcButton @click="loadOption">
-        {{ t('agora', 'Retry') }}
+          {{ t('agora', 'Retry') }}
         </NcButton>
-    </div>
+      </div>
 
-    <!-- Content -->
-    <div v-else-if="option" class="modal-content">
+      <!-- Content -->
+      <div v-else-if="option" class="modal-content">
         <!-- Header with option type and actions -->
         <div class="modal-header">
-            <div class="header-left">
-                <div class="option-type-indicator" :style="{ color: optionTypeColor }">
-                    <component :is="optionIcon" :size="24" />
-                </div>
-                <div class="header-text">
-                    <h2 class="option-title">{{ option.label }}</h2>
-                    <div class="option-meta">
-                        <span class="option-type">{{ optionTypeLabel }}</span>
-                        <span class="option-date">{{ formatDate(option.created) }}</span>
-                    </div>
-                </div>
+          <div class="header-left">
+            <div class="option-type-indicator" :style="{ color: optionTypeColor }">
+              <component :is="optionIcon" :size="24" />
+            </div>
+            <div class="header-text">
+              <h2 class="option-title">{{ option.label }}</h2>
+              <div class="option-meta">
+                <span class="option-type">{{ optionTypeLabel }}</span>
+                <span class="option-date">{{ formatDate(option.created) }}</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="header-right">
+            <!-- Quick actions -->
+            <div class="quick-actions">
+              <TernarySupportIcon
+                v-if="supportFeature === 'ternary'"
+                :support-value="userSupport"
+                :size="20"
+                class="support-icon"
+                @click="toggleSupport"
+              />
+              <ThumbIcon
+                v-else-if="supportFeature === 'binary'"
+                :supported="userSupport === 'for'"
+                :size="20"
+                class="support-icon"
+                @click="toggleSupport"
+              />
+              
+              <NcButton
+                v-if="allowComment"
+                type="tertiary"
+                class="comment-btn"
+                @click="scrollToComments"
+              >
+                <component :is="InquiryOptionIcons.Comment" :size="16" />
+                <span>{{ option.comment_count || 0 }}</span>
+              </NcButton>
             </div>
 
-            <div class="header-right">
-                <!-- Quick actions -->
-                <div class="quick-actions">
-                </div> <!-- This closing div was missing -->
-
-                <!-- Main actions menu -->
-                <NcActions
-                        v-if="canEditOrDelete"
-                        :force-menu="true"
-                        :aria-label="t('agora', 'Option actions')"
-                        >
-                        <!-- Edit action -->
-                <NcActionButton
-                        v-if="canEdit"
-                        :close-after-click="true"
-                        @click="editOption"
-                        >
-                        <template #icon>
-                            <component :is="InquiryOptionIcons.Edit" :size="20" />
-                        </template>
+            <!-- Main actions menu -->
+            <NcActions
+              v-if="canEditOrDelete"
+              :force-menu="true"
+              :aria-label="t('agora', 'Option actions')"
+            >
+              <!-- Edit action -->
+              <NcActionButton
+                v-if="canEdit"
+                :close-after-click="true"
+                @click="editOption"
+              >
+                <template #icon>
+                  <component :is="InquiryOptionIcons.Edit" :size="20" />
+                </template>
                 {{ t('agora', 'Edit') }}
-                </NcActionButton>
+              </NcActionButton>
 
-                <!-- Add response submenu -->
-                <NcActionButton
-                        v-if="hasAllowedResponses && canAddChild"
-                        :is-menu="true"
-                        >
-                        <template #icon>
-                            <component :is="InquiryOptionIcons.Plus" :size="20" />
-                        </template>
+              <!-- Add response submenu -->
+              <NcActionButton
+                v-if="hasAllowedResponses && canAddChild"
+                :is-menu="true"
+              >
+                <template #icon>
+                  <component :is="InquiryOptionIcons.Plus" :size="20" />
+                </template>
                 {{ t('agora', 'Add Response') }}
 
                 <!-- Response type submenu -->
                 <NcActionButton
-                        v-for="responseType in availableResponseTypes"
-                        :key="responseType.option_type"
-                        :close-after-click="true"
-                        @click="openAddResponseModal(responseType.option_type)"
-                        >
-                        <template #icon>
-                            <component :is="getOptionTypeIcon(responseType.option_type)" :size="16" />
-                        </template>
-                {{ responseType.label }}
+                  v-for="responseType in availableResponseTypes"
+                  :key="responseType.option_type"
+                  :close-after-click="true"
+                  @click="openAddResponseModal(responseType.option_type)"
+                >
+                  <template #icon>
+                    <component :is="getOptionTypeIcon(responseType.option_type)" :size="16" />
+                  </template>
+                  {{ responseType.label }}
                 </NcActionButton>
-                </NcActionButton>
+              </NcActionButton>
 
-                <!-- Delete action -->
-                <NcActionButton
-                        v-if="canDelete"
-                        :close-after-click="true"
-                        @click="confirmDelete"
-                        >
-                        <template #icon>
-                            <component :is="InquiryOptionIcons.Delete" :size="20" />
-                        </template>
+              <!-- Delete action -->
+              <NcActionButton
+                v-if="canDelete"
+                :close-after-click="true"
+                @click="confirmDelete"
+              >
+                <template #icon>
+                  <component :is="InquiryOptionIcons.Delete" :size="20" />
+                </template>
                 {{ t('agora', 'Delete') }}
-                </NcActionButton>
-                </NcActions>
-            </div>
+              </NcActionButton>
+            </NcActions>
+          </div>
         </div>
 
         <!-- Main content area -->
         <div class="main-content">
-            <!-- Owner info moved to right side -->
-
-            <!-- Option text/content -->
-            <div class="content-section">
-                <div v-if="isEditing" class="editor-container">
-                    <NcTextField
-                            v-model="editForm.label"
-                            :label="t('agora', 'Title')"
-                            :placeholder="t('agora', 'Enter option title')"
-                            required
-                            full-width
-                            />
-                    <NcTextField
-                            v-model="editForm.text"
-                            :label="t('agora', 'Description')"
-                            :placeholder="t('agora', 'Enter option text')"
-                            type="textarea"
-                            :rows="6"
-                            full-width
-                            />
-
-                    <!-- Additional fields -->
-                    <div v-if="hasAdditionalFields" class="additional-fields">
-                        <h4>{{ t('agora', 'Additional Information') }}</h4>
-                        <div class="fields-grid">
-                            <div
-                                    v-for="field in additionalFields"
-                                    :key="field.key"
-                                    class="field-item"
-                                    >
-                                    <label :for="`field-${field.key}`">{{ getFieldLabel(field) }}</label>
-                                    <NcTextField
-                                            v-if="field.type === 'text' || field.type === 'number'"
-                                            :id="`field-${field.key}`"
-                                            v-model="editForm.fields[field.key]"
-                                            :type="field.type === 'number' ? 'number' : 'text'"
-                                            :placeholder="field.placeholder || ''"
-                                            full-width
-                                            />
-                                    <NcCheckboxRadioSwitch
-                                            v-else-if="field.type === 'boolean'"
-                                            :id="`field-${field.key}`"
-                                            type="switch"
-                                            :checked="editForm.fields[field.key] || false"
-                                            @update:checked="editForm.fields[field.key] = $event"
-                                            >
-                                            {{ field.label || field.key }}
-                                    </NcCheckboxRadioSwitch>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="edit-actions">
-                        <NcButton type="tertiary" @click="cancelEdit">
-                        {{ t('agora', 'Cancel') }}
-                        </NcButton>
-                        <NcButton type="primary" :disabled="!canSaveEdit" @click="saveEdit">
-                        {{ t('agora', 'Save') }}
-                        </NcButton>
-                    </div>
-                </div>
-
-                <div v-else class="content-display">
-                    <div v-if="option.text" class="text-content">
-                        <div class="text-text">{{ option.text }}</div>
-                    </div>
-
-                    <!-- Additional fields display -->
-                    <div v-if="hasAdditionalFieldsData" class="additional-fields-display">
-                        <h4>{{ t('agora', 'Additional Information') }}</h4>
-                        <div class="fields-grid">
-                            <div
-                                    v-for="field in additionalFields"
-                                    :key="field.key"
-                                    class="field-item-display"
-                                    >
-                                    <strong>{{ getFieldLabel(field) }}:</strong>
-                                    <span>{{ formatFieldValue(field, option.fields?.[field.key]) }}</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Feature buttons moved under description -->
-                    <div class="feature-buttons-container">
-                        <!-- Left side: Support and comment features -->
-                        <div class="features-left">
-                            <!-- Support feature -->
-                            <div v-if="hasSupportFeature" class="feature-group">
-                                <div class="support-container">
-                                    <TernarySupportIcon
-                                            v-if="supportFeature === 'ternary'"
-                                            :support-value="userSupport"
-                                            :size="24"
-                                            class="support-icon-large"
-                                            @click="toggleSupport"
-                                            />
-                                    <ThumbIcon
-                                            v-else-if="supportFeature === 'binary'"
-                                            :supported="userSupport === 'for'"
-                                            :size="24"
-                                            class="support-icon-large"
-                                            @click="toggleSupport"
-                                            />
-                                </div>
-                            </div>
-
-                            <!-- Comment features -->
-                            <div v-if="allowComment" class="feature-group">
-                                <div class="comment-container">
-                                    <div class="comment-count-badge">
-                                        <component :is="InquiryOptionIcons.Comment" :size="16" />
-                                        <span>{{ option.comment_count || 0 }}</span>
-                                    </div>
-                                    <NcButton
-                                            type="tertiary"
-                                            class="add-comment-btn"
-                                            @click="showCommentForm = !showCommentForm"
-                                            >
-                                            <template #icon>
-                                                <component :is="showCommentForm ? InquiryOptionIcons.Close : InquiryOptionIcons.Comment" :size="16" />
-                                            </template>
-                                    {{ showCommentForm ? t('agora', 'Cancel') : t('agora', 'Add comment') }}
-                                    </NcButton>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Right side: Owner section -->
-                        <div class="owner-section-right">
-                            <div class="owner-details-right">
-                                <NcAvatar
-                                        v-if="option.owner?.id"
-                                        :user="option.owner.id"
-                                        :display-name="option.owner.displayName"
-                                        :size="22"
-                                        />
-                                <div class="owner-text">
-                                    <span class="owner-name">{{ option.owner?.displayName || t('agora', 'Unknown owner') }}</span>
-                                    <span class="owner-role">{{ getAuthorRole() }}</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                </div>
-
-                <!-- Responses preview -->
-                <div v-if="hasAllowedResponses" class="responses-section">
-                    <div class="section-header">
-                        <h3>{{ t('agora', 'Responses') }}</h3>
-                        <NcButton
-                                v-if="canAddChild"
-                                type="primary"
-                                @click="openAddChildModal"
-                                >
-                                <template #icon>
-                                    <component :is="InquiryOptionIcons.Plus" :size="16" />
-                                </template>
-                        {{ t('agora', 'Add response') }}
-                        </NcButton>
-                    </div>
-
-                    <div class="responses-preview">
-                        <div v-if="childCountsTotal === 0" class="empty-responses">
-                            <component :is="InquiryOptionIcons.MessageText" :size="48" />
-                            <h4>{{ t('agora', 'No responses yet') }}</h4>
-                            <p>{{ t('agora', 'Be the first to respond to this option') }}</p>
-                        </div>
-
-                        <div v-else class="responses-grid">
-                            <div
-                                    v-for="childType in allowedResponses"
-                                    :key="childType"
-                                    class="response-type-card"
-                                    @click="showChildren(childType)"
-                                    >
-                                    <div class="response-type-icon">
-                                        <component :is="getOptionTypeIcon(childType)" :size="24" />
-                                    </div>
-                                <h4>{{ getOptionTypeLabel(childType) }}</h4>
-                                <div class="response-count">{{ childCounts[childType] || 0 }}</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Comments section -->
-                <div ref="commentsSection" class="comments-section">
-                    <!-- Comment form -->
-                    <transition name="fade">
-                    <div v-if="showCommentForm" class="comment-form">
-                        <CommentAdd
-                                :inquiry-id="inquiryId"
-                                :option-id="option.id"
-                                @comment-added="handleCommentAdded"
-                                />
-                    </div>
-                    </transition>
-
-                    <!-- Comments list -->
-                    <div v-if="comments.length > 0" class="comments-list">
-                        <Comments
-                                :inquiry-id="inquiryId"
-                                :option-id="option.id"
-                                />
-                    </div>
-
-                    <div v-else-if="!showCommentForm" class="no-comments">
-                        <component :is="InquiryOptionIcons.Comment" :size="48" />
-                        <h4>{{ t('agora', 'No comments yet') }}</h4>
-                        <p>{{ t('agora', 'Start the discussion') }}</p>
-                    </div>
-                </div>
+          <!-- Author info -->
+          <div class="owner-section">
+            <NcAvatar
+              v-if="option.owner?.id"
+              :user="option.owner.id"
+              :display-name="option.owner.displayName"
+              :size="32"
+            />
+            <div class="owner-details">
+              <span class="owner-name">{{ option.owner?.displayName || t('agora', 'Unknown owner') }}</span>
+              <span class="owner-role">{{ getAuthorRole() }}</span>
             </div>
+            <div class="support-counts" v-if="hasSupportFeature">
+              <div class="support-count positive">
+                <TernarySupportIcon
+                  v-if="supportFeature === 'ternary'"
+                  :support-value="'for'"
+                  :size="14"
+                />
+                <ThumbIcon
+                  v-else-if="supportFeature === 'binary'"
+                  :supported="true"
+                  :size="14"
+                />
+                <span>{{ option.support_for || 0 }}</span>
+              </div>
+              <div v-if="supportFeature === 'ternary'" class="support-count negative">
+                <TernarySupportIcon
+                  :support-value="'against'"
+                  :size="14"
+                  :invert="true"
+                />
+                <span>{{ option.support_against || 0 }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Option text/content -->
+          <div class="content-section">
+            <div v-if="isEditing" class="editor-container">
+              <NcTextField
+                v-model="editForm.label"
+                :label="t('agora', 'Title')"
+                :placeholder="t('agora', 'Enter option title')"
+                required
+                full-width
+              />
+              <NcTextField
+                v-model="editForm.text"
+                :label="t('agora', 'Description')"
+                :placeholder="t('agora', 'Enter option text')"
+                type="textarea"
+                :rows="6"
+                full-width
+              />
+
+              <!-- Additional fields -->
+              <div v-if="hasAdditionalFields" class="additional-fields">
+                <h4>{{ t('agora', 'Additional Information') }}</h4>
+                <div class="fields-grid">
+                  <div
+                    v-for="field in additionalFields"
+                    :key="field.key"
+                    class="field-item"
+                  >
+                    <label :for="`field-${field.key}`">{{ getFieldLabel(field) }}</label>
+                    <NcTextField
+                      v-if="field.type === 'text' || field.type === 'number'"
+                      :id="`field-${field.key}`"
+                      v-model="editForm.fields[field.key]"
+                      :type="field.type === 'number' ? 'number' : 'text'"
+                      :placeholder="field.placeholder || ''"
+                      full-width
+                    />
+                    <NcCheckboxRadioSwitch
+                      v-else-if="field.type === 'boolean'"
+                      :id="`field-${field.key}`"
+                      type="switch"
+                      :checked="editForm.fields[field.key] || false"
+                      @update:checked="editForm.fields[field.key] = $event"
+                    >
+                      {{ field.label || field.key }}
+                    </NcCheckboxRadioSwitch>
+                  </div>
+                </div>
+              </div>
+
+              <div class="edit-actions">
+                <NcButton type="tertiary" @click="cancelEdit">
+                  {{ t('agora', 'Cancel') }}
+                </NcButton>
+                <NcButton type="primary" :disabled="!canSaveEdit" @click="saveEdit">
+                  {{ t('agora', 'Save') }}
+                </NcButton>
+              </div>
+            </div>
+
+            <div v-else class="content-display">
+              <div v-if="option.text" class="text-content">
+                <div class="text-text">{{ option.text }}</div>
+              </div>
+
+              <!-- Additional fields display -->
+              <div v-if="hasAdditionalFieldsData" class="additional-fields-display">
+                <h4>{{ t('agora', 'Additional Information') }}</h4>
+                <div class="fields-grid">
+                  <div
+                    v-for="field in additionalFields"
+                    :key="field.key"
+                    class="field-item-display"
+                  >
+                    <strong>{{ getFieldLabel(field) }}:</strong>
+                    <span>{{ formatFieldValue(field, option.fields?.[field.key]) }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Responses preview -->
+          <div v-if="hasAllowedResponses" class="responses-section">
+            <div class="section-header">
+              <h3>{{ t('agora', 'Responses') }}</h3>
+              <NcButton
+                v-if="canAddChild"
+                type="primary"
+                @click="openAddChildModal"
+              >
+                <template #icon>
+                  <component :is="InquiryOptionIcons.Plus" :size="16" />
+                </template>
+                {{ t('agora', 'Add response') }}
+              </NcButton>
+            </div>
+
+            <div class="responses-preview">
+              <div v-if="childCountsTotal === 0" class="empty-responses">
+                <component :is="InquiryOptionIcons.MessageText" :size="48" />
+                <h4>{{ t('agora', 'No responses yet') }}</h4>
+                <p>{{ t('agora', 'Be the first to respond to this option') }}</p>
+              </div>
+
+              <div v-else class="responses-grid">
+                <div
+                  v-for="childType in allowedResponses"
+                  :key="childType"
+                  class="response-type-card"
+                  @click="showChildren(childType)"
+                >
+                  <div class="response-type-icon">
+                    <component :is="getOptionTypeIcon(childType)" :size="24" />
+                  </div>
+                  <h4>{{ getOptionTypeLabel(childType) }}</h4>
+                  <div class="response-count">{{ childCounts[childType] || 0 }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Comments section -->
+          <div ref="commentsSection" class="comments-section">
+            <div class="section-header">
+              <h3>{{ t('agora', 'Comments') }}</h3>
+              <NcButton
+                v-if="allowComment"
+                type="primary"
+                @click="showCommentForm = !showCommentForm"
+              >
+                <template #icon>
+                  <component :is="showCommentForm ? InquiryOptionIcons.Close : InquiryOptionIcons.Comment" :size="16" />
+                </template>
+                {{ showCommentForm ? t('agora', 'Cancel') : t('agora', 'Add comment') }}
+              </NcButton>
+            </div>
+
+            <!-- Comment form -->
+            <transition name="fade">
+              <div v-if="showCommentForm" class="comment-form">
+                <CommentAdd
+                  :inquiry-id="inquiryId"
+                  :option-id="option.id"
+                  @comment-added="handleCommentAdded"
+                />
+              </div>
+            </transition>
+
+            <!-- Comments list -->
+            <div v-if="comments.length > 0" class="comments-list">
+              <Comments
+                :inquiry-id="inquiryId"
+                :option-id="option.id"
+              />
+            </div>
+
+            <div v-else-if="!showCommentForm" class="no-comments">
+              <component :is="InquiryOptionIcons.Comment" :size="48" />
+              <h4>{{ t('agora', 'No comments yet') }}</h4>
+              <p>{{ t('agora', 'Start the discussion') }}</p>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
-    </NcModal>
+  </NcModal>
 
-    <!-- Child modal -->
-    <OptionDetailModal
-            v-if="showChildModal"
-            :option-id="selectedChildId"
-            :inquiry-id="inquiryId"
-            @close="closeChildModal"
-            @updated="handleChildUpdated"
-            @deleted="handleChildDeleted"
-            />
+  <!-- Child modal -->
+  <OptionDetailModal
+    v-if="showChildModal"
+    :option-id="selectedChildId"
+    :inquiry-id="inquiryId"
+    @close="closeChildModal"
+    @updated="handleChildUpdated"
+    @deleted="handleChildDeleted"
+  />
 
-    <!-- Add child modal -->
-    <AddOptionModal
-            v-if="showAddChildModal"
-            :inquiry-id="inquiryId"
-            :option-type="selectedChildType"
-            :parent-id="option?.id"
-            @close="closeAddChildModal"
-            @created="handleChildCreated"
-            />
+  <!-- Add child modal -->
+  <AddOptionModal
+    v-if="showAddChildModal"
+    :inquiry-id="inquiryId"
+    :option-type="selectedChildType"
+    :parent-id="option?.id"
+    @close="closeAddChildModal"
+    @created="handleChildCreated"
+  />
 </template>
 
 <script setup lang="ts">
@@ -916,6 +927,7 @@ watch(() => props.optionId, (newId) => {
   }
 })
 </script>
+
 <style scoped lang="scss">
 .option-detail-modal {
     display: flex;
@@ -1041,6 +1053,59 @@ watch(() => props.optionId, (newId) => {
         flex-direction: column;
         gap: 32px;
 
+        .owner-section {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            background: var(--color-background-dark);
+            border-radius: 12px;
+            border: 1px solid var(--color-border);
+
+            .owner-details {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                gap: 2px;
+
+                .owner-name {
+                    font-size: 14px;
+                    font-weight: 600;
+                    color: var(--color-main-text);
+                }
+
+                .owner-role {
+                    font-size: 12px;
+                    color: var(--color-text-lighter);
+                }
+            }
+
+            .support-counts {
+                display: flex;
+                gap: 12px;
+
+                .support-count {
+                    display: flex;
+                    align-items: center;
+                    gap: 4px;
+                    font-size: 14px;
+                    font-weight: 600;
+                    padding: 4px 8px;
+                    border-radius: 8px;
+
+                    &.positive {
+                        color: var(--color-success);
+                        background: var(--color-success-light);
+                    }
+
+                    &.negative {
+                        color: var(--color-error);
+                        background: var(--color-error-light);
+                    }
+                }
+            }
+        }
+
         .content-section {
             .editor-container {
                 display: flex;
@@ -1121,128 +1186,6 @@ watch(() => props.optionId, (newId) => {
                                 font-size: 14px;
                                 color: var(--color-main-text);
                                 word-break: break-word;
-                            }
-                        }
-                    }
-                }
-
-                /* Feature buttons container with owner aligned to right */
-                /* Feature buttons container with owner aligned to right */
-                .feature-buttons-container {
-                    display: flex;
-                    justify-content: space-between; /* This creates left and right sections */
-                    align-items: center;
-                    margin-top: 24px;
-                    padding-top: 24px;
-                    border-top: 1px solid var(--color-border);
-                    width: 100%;
-
-                    .features-left {
-                        display: flex;
-                        align-items: center;
-                        gap: 32px; /* Space between support and comment sections */
-                        flex-shrink: 0;
-                    }
-
-                    .feature-group {
-                        display: flex;
-                        align-items: center;
-
-                        .support-container {
-                            display: flex;
-                            align-items: center;
-                            gap: 8px;
-
-                            .support-icon-large {
-                                cursor: pointer;
-                                color: var(--color-text-light);
-                                transition: color 0.2s ease;
-
-                                &:hover {
-                                    color: var(--color-primary-element);
-                                }
-                            }
-                        }
-
-                        .comment-container {
-                            display: flex;
-                            align-items: center;
-                            gap: 8px;
-
-                            .comment-count-badge {
-                                display: flex;
-                                align-items: center;
-                                gap: 4px;
-                                padding: 4px 8px;
-                                background: var(--color-background-dark);
-                                border-radius: 8px;
-                                font-size: 14px;
-                                font-weight: 600;
-                                color: var(--color-text-lighter);
-                            }
-
-                            .add-comment-btn {
-                                display: flex;
-                                align-items: center;
-                                gap: 4px;
-                            }
-                        }
-                    }
-
-                    /* Owner section on the right - pushed completely to the right */
-                    .owner-section-right {
-                        flex-shrink: 0;
-                        margin-left: auto; /* This pushes it to the right */
-
-                        .owner-details-right {
-                            display: flex;
-                            align-items: center;
-                            gap: 8px;
-                            padding: 8px 12px;
-                            background: var(--color-background-dark);
-                            border-radius: 12px;
-                            border: 1px solid var(--color-border);
-                            max-width: 300px;
-
-                            .owner-text {
-                                display: flex;
-                                flex-direction: column;
-                                gap: 2px;
-
-                                .owner-name {
-                                    font-size: 12px;
-                                    font-weight: 600;
-                                    color: var(--color-main-text);
-                                }
-
-                                .owner-role {
-                                    font-size: 10px;
-                                    color: var(--color-text-lighter);
-                                }
-                            }
-                        }
-                    }
-                }
-
-                @media (max-width: 768px) {
-                    .feature-buttons-container {
-                        flex-direction: column;
-                        align-items: stretch;
-                        gap: 16px;
-
-                        .features-left {
-                            width: 100%;
-                            justify-content: space-between;
-                            gap: 16px;
-                        }
-
-                        .owner-section-right {
-                            margin-left: 0;
-                            width: 100%;
-
-                            .owner-details-right {
-                                max-width: 100%;
-                                width: 100%;
                             }
                         }
                     }
@@ -1406,72 +1349,50 @@ watch(() => props.optionId, (newId) => {
     opacity: 0;
 }
 
-            @media (max-width: 768px) {
-                .option-detail-modal {
-                    height: 90vh;
+      @media (max-width: 768px) {
+          .option-detail-modal {
+              height: 90vh;
 
-                    .modal-header {
-                        flex-direction: column;
-                        align-items: flex-start;
-                        gap: 16px;
+              .modal-header {
+                  flex-direction: column;
+                  align-items: flex-start;
+                  gap: 16px;
 
-                        .header-left {
-                            width: 100%;
-                        }
+                  .header-left {
+                      width: 100%;
+                  }
 
-                        .header-right {
-                            width: 100%;
-                            justify-content: space-between;
-                        }
-                    }
+                  .header-right {
+                      width: 100%;
+                      justify-content: space-between;
+                  }
+              }
 
-                    .main-content {
-                        padding: 16px;
+              .main-content {
+                  padding: 16px;
 
-                        .content-section {
-                            .content-display {
-                                .feature-buttons-container {
-                                    flex-direction: column;
-                                    align-items: stretch;
-                                    gap: 16px;
+                  .responses-section {
+                      .responses-grid {
+                          grid-template-columns: 1fr;
+                      }
+                  }
 
-                                    .features-left {
-                                        width: 100%;
-                                        justify-content: space-between;
-                                    }
+                  .content-section {
+                      .editor-container {
+                          .fields-grid {
+                              grid-template-columns: 1fr;
+                          }
+                      }
 
-                                    .owner-section-right {
-                                        width: 100%;
-
-                                        .owner-details-right {
-                                            max-width: 100%;
-                                            width: 100%;
-                                        }
-                                    }
-                                }
-                            }
-
-                            .editor-container {
-                                .fields-grid {
-                                    grid-template-columns: 1fr;
-                                }
-                            }
-
-                            .content-display {
-                                .additional-fields-display {
-                                    .fields-grid {
-                                        grid-template-columns: 1fr;
-                                    }
-                                }
-                            }
-                        }
-
-                        .responses-section {
-                            .responses-grid {
-                                grid-template-columns: 1fr;
-                            }
-                        }
-                    }
-                }
-            }
+                      .content-display {
+                          .additional-fields-display {
+                              .fields-grid {
+                                  grid-template-columns: 1fr;
+                              }
+                          }
+                      }
+                  }
+              }
+          }
+      }
 </style>

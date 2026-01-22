@@ -20,6 +20,7 @@ use OCA\Agora\Service\ActivityService;
 use OCA\Agora\Service\LogService;
 use OCA\Agora\Service\NotificationService;
 use OCA\Agora\Service\InquiryService;
+use OCA\Agora\Service\OptionService;
 use OCA\Agora\Service\WatchService;
 use OCP\BackgroundJob\IJobList;
 use OCP\DB\Exception;
@@ -47,6 +48,7 @@ abstract class BaseListener implements IEventListener
         protected NotificationService $notificationService,
         protected WatchService $watchService,
         protected InquiryService $inquiryService,
+        protected OptionService $optionService,
     ) {
     }
 

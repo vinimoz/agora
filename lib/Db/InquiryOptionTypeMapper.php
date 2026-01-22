@@ -146,4 +146,17 @@ class InquiryOptionTypeMapper extends QBMapper
         return $result ? json_decode($result['allowed_response'], true) ?? [] : [];
     }
 
+    public function getFamilyFromType(string $type): string
+    {
+        $qb = $this->db->getQueryBuilder();
+        $qb->select('family')
+            ->from($this->getTableName())
+            ->where($qb->expr()->eq('option_type', $qb->createNamedParameter($type)));
+
+        $result = $qb->execute()->fetch();
+
+        return $result['family'];
+    }
+
+
 }

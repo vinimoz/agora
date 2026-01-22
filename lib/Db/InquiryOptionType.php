@@ -28,8 +28,8 @@ use JsonSerializable;
  * @method         void setFields(?array $value)
  * @method         ?array getAllowedResponse()
  * @method         void setAllowedResponse(?array $value)
- * @method         int getAllowComment()
- * @method         void setAllowComment(int $value)
+ * @method    int getAllowComment()
+ * @method    void setAllowComment(int $value)
  * @method         int getUseTitle()
  * @method         void setUseTitle(int $value)
  * @method         string getSupportFeature()
@@ -53,8 +53,8 @@ class InquiryOptionType extends EntityWithUser implements JsonSerializable
     protected ?string $description = null;
     protected ?array $fields = null;
     protected ?array $allowedResponse = null;
-    protected int $allowComment = 0;
-    protected string $supportFeature = 'none';
+    protected ?int $allowComment = null;
+    protected string $supportFeature = '';
     protected ?array $statuses = null;
     protected int $useTitle = 0;
     protected int $created = 0;

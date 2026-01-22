@@ -63,6 +63,12 @@ export const OPTION_FAMILIES: Record<string, OptionFamily> = {
     color: '#e69138',
     iconComponent: InquiryGeneralIcons.Lightbulb
   },
+  'question': {
+    key: 'question',
+    name: 'Question',
+    label: 'Question',
+    description: 'Questions and polls',
+    icon: 'Question',
     color: '#6aa84f',
     iconComponent: InquiryGeneralIcons.Question
   },

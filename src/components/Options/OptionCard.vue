@@ -67,7 +67,6 @@
       <NcActionButton
         v-if="canEdit"
         :close-after-click="true"
-        @click.stop="editOption"
       >
         <template #icon>
           <component :is="InquiryOptionIcons.Edit" :size="20" />
@@ -77,7 +76,7 @@
 
       <!-- Add response submenu -->
       <NcActionButton
-        v-if="hasChildren && canAddChild"
+        v-if="hasChildren"
         :is-menu="true"
       >
         <template #icon>
@@ -118,8 +117,8 @@
     <!-- Content section -->
     <div v-if="!compact" class="card-content">
       <!-- Description -->
-      <p v-if="option.description" class="card-description">
-        {{ truncateText(option.description, 200) }}
+      <p v-if="option.text" class="card-text">
+        {{ truncateText(option.text, 200) }}
       </p>
       
       <!-- Structure-specific: Parent reference -->
@@ -165,7 +164,6 @@
         <div class="children-preview-header">
           <h6>{{ t('agora', 'Responses') }}</h6>
           <NcButton 
-            v-if="canAddChild"
             type="tertiary"
             size="small"
             @click.stop="openAddChildModal"
@@ -254,14 +252,14 @@
       </div>
       
       <!-- Author info -->
-      <div v-if="option.author" class="author-info">
+      <div v-if="option.owner" class="owner-info">
         <NcAvatar 
-          v-if="option.author.id" 
-          :user="option.author.id" 
-          :display-name="option.author.displayName" 
+          v-if="option.owner.id" 
+          :user="option.owner.id" 
+          :display-name="option.owner.displayName" 
           :size="20" 
         />
-        <span class="author-name">{{ option.author.displayName }}</span>
+        <span class="owner-name">{{ option.owner.displayName }}</span>
       </div>
     </div>
     
@@ -323,7 +321,6 @@
             <div class="section-header">
               <h4>{{ getOptionTypeLabel(activeChildType || allowedResponses[0]) }}</h4>
               <NcButton 
-                v-if="canAddChild"
                 type="primary"
                 @click="openAddChildModalFromModal"
               >
@@ -340,7 +337,6 @@
                 <h5>{{ t('agora', 'No responses yet') }}</h5>
                 <p>{{ t('agora', 'Be the first to add a response') }}</p>
                 <NcButton 
-                  v-if="canAddChild"
                   type="primary"
                   @click="openAddChildModalFromModal"
                 >
@@ -363,7 +359,7 @@
           <!-- Add response options -->
           <div v-if="allowedResponses.length > 0" class="add-response-section">
             <h4>{{ t('agora', 'Add a response') }}</h4>
-            <p class="section-description">{{ t('agora', 'Choose the type of response you want to add') }}</p>
+            <p class="section-text">{{ t('agora', 'Choose the type of response you want to add') }}</p>
             
             <div class="response-type-grid">
               <button
@@ -376,7 +372,7 @@
                   <component :is="getOptionTypeIcon(responseType)" :size="24" />
                 </div>
                 <h5>{{ getOptionTypeLabel(responseType) }}</h5>
-                <p class="response-description">
+                <p class="response-text">
                   {{ getOptionTypeDescription(responseType) }}
                 </p>
                 <div class="response-count">
@@ -427,6 +423,15 @@ import {
   getOptionTypeOptions
 } from '../../helpers/modules/InquiryOptionHelper'
 
+import { 
+  createOptionContext,
+  canEditOption,
+  canDeleteOption,
+  canChangeStatus,
+  canCommentOption,
+  canSupportOption
+} from '../../utils/permissions.ts'
+
 // Import comment components
 import Comments from '../Comments/Comments.vue'
 import CommentAdd from '../Comments/CommentAdd.vue'
@@ -437,7 +442,10 @@ import type { Option, OptionType } from '../../Types/index.ts'
 
 // Props
 const props = defineProps<{
-  option: Option
+  option: {
+    type: Option,
+    default: null 
+  }
   inquiryId: number
   compact?: boolean
   official?: boolean
@@ -466,6 +474,76 @@ const selectedChildType = ref<string | null>(null)
 // Stores
 const optionsStore = useOptionsStore()
 const sessionStore = useSessionStore()
+
+// Create context once as computed
+
+const optionContext = computed(() => {
+  if (!props.option) {
+    return null
+  }
+  console.log(" PROP OPTION PAS NULLLLLLLLLLLLLLLL ", props.option)
+  return createOptionContext(props.option)
+})
+
+// Permission checks as computed properties
+const canEdit = computed(() => {
+  if (!props.option || optionContext.value === null) {
+    return true
+  }
+  return canEditOption(optionContext.value)
+})
+
+const canDelete = computed(() => {
+  if (!props.option || optionContext.value === null) {
+    return true
+  }
+  return canDeleteOption(optionContext.value)
+})
+
+const canChangeOptionStatus = computed(() => {
+  if (!props.option || optionContext.value === null) {
+    return true
+  }
+  return canChangeStatus(optionContext.value)
+})
+
+const canComment = computed(() => {
+  if (!props.option || optionContext.value === null) {
+    return false
+  }
+  return canCommentOption(optionContext.value)
+})
+
+const canSupport = computed(() => {
+  if (!props.option || optionContext.value === null) {
+    return false
+  }
+  return canSupportOption(optionContext.value)
+})
+
+const isCreationMode = computed(() => !props.option)
+
+              
+// Computed properties
+const availableResponseTypes = computed(() => {
+  if (!allowedResponses.value.length) return []
+
+  const allOptionTypes = sessionStore.appSettings?.inquiryOptionTypeTab || []
+                
+  return allowedResponses.value
+    .map(responseType => {
+      const optionType = allOptionTypes.find(opt =>
+        opt.option_type === responseType || opt.optionType === responseType
+      )
+      return optionType ? {
+        option_type: optionType.option_type || optionType.optionType || responseType,
+        label: optionType.label || responseType,
+        icon: optionType.icon || 'File'
+      } : null
+    })
+    .filter((type): type is { option_type: string; label: string; icon: string } => type !== null)
+    .sort((a, b) => a.label.localeCompare(b.label))
+})
 
 // Computed
 const optionFamily = computed(() => {
@@ -535,6 +613,16 @@ const allowedResponses = computed(() => {
   )
 })
 
+const confirmDelete = () => {
+  if (confirm(t('agora', 'Are you sure you want to delete this option?'))) {
+    deleteOption()
+  }
+}
+
+const canEditOrDelete = computed(() => {
+  return canEdit.value || canDelete.value
+})
+
 const hasChildren = computed(() => {
   return allowedResponses.value.length > 0
 })
@@ -572,14 +660,6 @@ const filteredChildren = computed(() => {
   return optionsStore.options.filter(opt => 
     opt.parentId === props.option.id && opt.type === typeToFilter
   )
-})
-
-const canAddChild = computed(() => {
-  if (!props.option.id) return false
-  
-  // Check if current user can add child options
-  // TODO: Implement proper permission check based on inquiry/option permissions
-  return sessionStore.currentUser?.id !== undefined
 })
 
 const childrenModalTitle = computed(() => {
@@ -699,7 +779,7 @@ const getOptionTypeDescription = (type: string) => {
     opt.option_type === type || opt.optionType === type
   )
   
-  return optionType?.description || ''
+  return optionType?.text || ''
 }
 
 // Methods
@@ -722,8 +802,6 @@ const closeChildrenModal = () => {
 }
 
 const openAddChildModal = () => {
-  if (!canAddChild.value) return
-  
   if (allowedResponses.value.length === 1) {
     // If only one response type is allowed, use it directly
     selectedChildType.value = allowedResponses.value[0]
@@ -820,7 +898,7 @@ watch(() => optionsStore.options, () => {
     padding: 12px;
     
     .card-content,
-    .card-footer .author-info {
+    .card-footer .owner-info {
       display: none;
     }
   }
@@ -830,7 +908,7 @@ watch(() => optionsStore.options, () => {
   .card-content {
     margin-bottom: 12px;
 
-    .card-description {
+    .card-text {
       margin: 0 0 8px 0;
       color: var(--color-text-light);
       font-size: 14px;
@@ -1014,12 +1092,12 @@ watch(() => optionsStore.options, () => {
       }
     }
 
-    .author-info {
+    .owner-info {
       display: flex;
       align-items: center;
       gap: 6px;
 
-      .author-name {
+      .owner-name {
         font-size: 12px;
         color: var(--color-text-lighter);
       }
@@ -1207,7 +1285,7 @@ watch(() => optionsStore.options, () => {
         color: var(--color-main-text);
       }
 
-      .section-description {
+      .section-text {
         margin: 0 0 20px 0;
         color: var(--color-text-lighter);
         font-size: 14px;
@@ -1256,7 +1334,7 @@ watch(() => optionsStore.options, () => {
             color: var(--color-main-text);
           }
 
-          .response-description {
+          .response-text {
             margin: 0;
             font-size: 12px;
             color: var(--color-text-lighter);
@@ -1343,7 +1421,7 @@ card-header {
       flex-wrap: wrap;
       gap: 8px;
       
-      .author-info {
+      .owner-info {
         order: -1;
         width: 100%;
         margin-bottom: 8px;

@@ -41,7 +41,7 @@ export type InquiryConfiguration = {
   expire: number
   forceConfidentialComments: boolean
   supportFeature: string
-  allowComment: boolean
+  allowComment: number
 }
 
 export type InquiryStatus = {
@@ -142,7 +142,7 @@ export const useInquiryStore = defineStore('inquiry', {
       forceConfidentialComments: false,
       suggestionsExpire: 0,
       supportFeature: 'none',
-      allowComment: 0,
+      allowComment: null,
     },
     owner: createDefault<User>(),
     ownedGroup: '',

@@ -374,7 +374,7 @@ class InitDbDefault extends Command
             'allowed_response' => [
                 'official_result',
             ],
-            'allow_comment' => 'none',
+            'allow_comment' => true,
             'support_feature' => 'binary',
             'statuses' => [],
             'use_title' => true,
@@ -1960,7 +1960,8 @@ class InitDbDefault extends Command
             $allowedOptionType = !empty($inquiryType['allowed_option_type']) ? json_encode($inquiryType['allowed_option_type']) : '';
             $allowedTransformation = !empty($inquiryType['allowed_transformation']) ? json_encode($inquiryType['allowed_transformation']) : '';
             $supportFeature = !empty($inquiryType['support_feature']) ? json_encode($inquiryType['support_feature']) : 'none';
-            $allowComment = $inquiryType['allow_comment'] ? 1 : 0;
+            $allowComment = array_key_exists('allow_comment', $inquiryType) ? (int) (bool) $inquiryType['allow_comment']: null;
+
 
             try {
                         $insert->execute(
@@ -2040,8 +2041,9 @@ class InitDbDefault extends Command
             $allowedResponse = !empty($optionType['allowed_response']) ? json_encode($optionType['allowed_response']) : '';
             $statuses = !empty($optionType['statuses']) ? json_encode($optionType['statuses']) : '';
             $supportFeature = !empty($optionType['support_feature']) ? $optionType['support_feature'] : 'none';
-            $allowComment = $optionType['allow_comment'] ? 1 : 0;
-            $useTitle = $optionType['use_title'] ? 1 : 0;
+            $allowComment = array_key_exists('allow_comment', $optionType) ? (int) (bool) $optionType['allow_comment']: null;
+
+            $useTitle = !empty($optionType['use_title']) ? 1 : 0;
 
             try {
                         $insert->execute(

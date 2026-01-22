@@ -161,7 +161,7 @@ export const useOptionStore = defineStore('option', {
         configuration: {
             access: 'private',
             showResults: 'always',
-            allowComment: 1,
+            allowComment: null,
             supportFeature: 'none',
             family: 'deliberative',
         },
@@ -568,22 +568,15 @@ actions: {
         parentId?: number
         ownedGroup?: string
         access?: string
-        showResults?: string
-        allowComment?: number
         supportFeature?: string
-        family?: string
+        allowComment?: number
+        family: string
         status?: string
         miscFields?: Record<string, any>
     }): Promise<Option | void> {
         const inquiryStore = useInquiryStore()
         const sessionStore = useSessionStore()
 
-        // Validate option type exists
-        const typeInfo = sessionStore.appSettings?.optionTypesTab?.[payload.type]
-        if (!typeInfo) {
-            showError(t('agora', 'Invalid option type'))
-            return
-        }
 
         // Validate parent if provided
         if (payload.parentId) {
@@ -597,7 +590,8 @@ actions: {
             }
         }
 
-        try {
+        try{
+            console.log(" OD LETS CREATE IT ",payload)
             // Set defaults from type definition
             const defaultMiscFields = this.getDefaultMiscFieldsForType(payload.type)
             const mergedMiscFields = { ...defaultMiscFields, ...(payload.miscFields || {}) }
@@ -608,21 +602,15 @@ actions: {
                 targetId: payload.targetId || inquiryStore.id,
                 parentId: payload.parentId || 0,
                 ownedGroup: payload.ownedGroup || '',
-                access: payload.access || typeInfo?.defaultAccess || 'private',
-                showResults: payload.showResults || 'always',
-                allowComment: payload.allowComment !== undefined ? payload.allowComment : 
-                    (typeInfo?.features?.includes('comments') ? 1 : 0),
-                supportFeature: payload.supportFeature || 
-                    (typeInfo?.features?.includes('supports') ? 'binary' : 'none'),
-                family: payload.family || typeInfo?.family || 'deliberative',
-                status: payload.status || typeInfo?.defaultStatus || 'draft',
+                family: payload.family || '',
+                access: payload.access || 'private',
+                status: payload.status || 'draft',
+                supportFeature: payload.supportFeature || 'none',
+                allowComment: payload.allowComment || 0,
                 miscFields: mergedMiscFields,
             })
 
             const newOption = response.data.option
-            // Initialize type info for the new option
-            newOption._typeInfo = typeInfo
-
             return newOption
         } catch (error) {
             if ((error as AxiosError)?.code === 'ERR_CANCELED') {

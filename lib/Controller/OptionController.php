@@ -134,11 +134,12 @@ class OptionController extends BaseController
      */
     #[NoAdminRequired]
     #[FrontpageRoute(verb: 'POST', url: '/option')]
-    public function create(array $data): JSONResponse
+    public function create(): JSONResponse
     {
+        $rawData = $this->request->getParams('data');
         return $this->response(
-            function () use ($data) {
-                return ['option' => $this->optionService->create($data)];
+            function () use ($rawData) {
+                return ['option' => $this->optionService->create($rawData)];
             },
             Http::STATUS_CREATED
         );

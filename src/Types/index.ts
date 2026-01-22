@@ -91,7 +91,7 @@ export interface InquiryType {
   fields: string[]
   allowed_response: string[]
   allowed_transformation: string[]
-  allow_comment: bool
+  allow_comment: number
   support_feature: string
   created: number
 }
@@ -105,7 +105,7 @@ export interface InquiryOptionType {
   description?: string
   fields: string[]
   allowed_response: string[]
-  allow_comment: bool
+  allow_comment: number
   support_feature: string
   statuses: string[]
   use_title: bool

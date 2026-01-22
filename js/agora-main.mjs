@@ -2873,13 +2873,13 @@ to { transform: rotate(360deg);
   padding: 12px;
 }
 .option-card.compact .card-content[data-v-7f2059a4],
-.option-card.compact .card-footer .author-info[data-v-7f2059a4] {
+.option-card.compact .card-footer .owner-info[data-v-7f2059a4] {
   display: none;
 }
 .option-card .card-content[data-v-7f2059a4] {
   margin-bottom: 12px;
 }
-.option-card .card-content .card-description[data-v-7f2059a4] {
+.option-card .card-content .card-text[data-v-7f2059a4] {
   margin: 0 0 8px 0;
   color: var(--color-text-light);
   font-size: 14px;
@@ -3041,12 +3041,12 @@ to { transform: rotate(360deg);
   color: var(--color-primary-element);
   border-color: var(--color-primary-element);
 }
-.option-card .card-footer .author-info[data-v-7f2059a4] {
+.option-card .card-footer .owner-info[data-v-7f2059a4] {
   display: flex;
   align-items: center;
   gap: 6px;
 }
-.option-card .card-footer .author-info .author-name[data-v-7f2059a4] {
+.option-card .card-footer .owner-info .owner-name[data-v-7f2059a4] {
   font-size: 12px;
   color: var(--color-text-lighter);
 }
@@ -3204,7 +3204,7 @@ to { transform: rotate(360deg);
   font-weight: 600;
   color: var(--color-main-text);
 }
-.children-modal .modal-content .add-response-section .section-description[data-v-7f2059a4] {
+.children-modal .modal-content .add-response-section .section-text[data-v-7f2059a4] {
   margin: 0 0 20px 0;
   color: var(--color-text-lighter);
   font-size: 14px;
@@ -3249,7 +3249,7 @@ to { transform: rotate(360deg);
   font-weight: 600;
   color: var(--color-main-text);
 }
-.children-modal .modal-content .add-response-section .response-type-grid .response-type-card .response-description[data-v-7f2059a4] {
+.children-modal .modal-content .add-response-section .response-type-grid .response-type-card .response-text[data-v-7f2059a4] {
   margin: 0;
   font-size: 12px;
   color: var(--color-text-lighter);
@@ -3314,7 +3314,7 @@ card-header .header-right .card-actions[data-v-7f2059a4] button:hover {
     flex-wrap: wrap;
     gap: 8px;
 }
-.option-card .card-footer .author-info[data-v-7f2059a4] {
+.option-card .card-footer .owner-info[data-v-7f2059a4] {
     order: -1;
     width: 100%;
     margin-bottom: 8px;
@@ -3432,51 +3432,6 @@ card-header .header-right .card-actions[data-v-7f2059a4] button:hover {
   flex-direction: column;
   gap: 32px;
 }
-.option-detail-modal .main-content .author-section[data-v-d24a853a] {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 16px;
-  background: var(--color-background-dark);
-  border-radius: 12px;
-  border: 1px solid var(--color-border);
-}
-.option-detail-modal .main-content .author-section .author-details[data-v-d24a853a] {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-.option-detail-modal .main-content .author-section .author-details .author-name[data-v-d24a853a] {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--color-main-text);
-}
-.option-detail-modal .main-content .author-section .author-details .author-role[data-v-d24a853a] {
-  font-size: 12px;
-  color: var(--color-text-lighter);
-}
-.option-detail-modal .main-content .author-section .support-counts[data-v-d24a853a] {
-  display: flex;
-  gap: 12px;
-}
-.option-detail-modal .main-content .author-section .support-counts .support-count[data-v-d24a853a] {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 14px;
-  font-weight: 600;
-  padding: 4px 8px;
-  border-radius: 8px;
-}
-.option-detail-modal .main-content .author-section .support-counts .support-count.positive[data-v-d24a853a] {
-  color: var(--color-success);
-  background: var(--color-success-light);
-}
-.option-detail-modal .main-content .author-section .support-counts .support-count.negative[data-v-d24a853a] {
-  color: var(--color-error);
-  background: var(--color-error-light);
-}
 .option-detail-modal .main-content .content-section .editor-container[data-v-d24a853a] {
   display: flex;
   flex-direction: column;
@@ -3508,10 +3463,14 @@ card-header .header-right .card-actions[data-v-7f2059a4] button:hover {
   gap: 12px;
   margin-top: 20px;
 }
-.option-detail-modal .main-content .content-section .content-display .description-content[data-v-d24a853a] {
+.option-detail-modal .main-content .content-section .content-display[data-v-d24a853a] {
+  /* Feature buttons container with owner aligned to right */
+  /* Feature buttons container with owner aligned to right */
+}
+.option-detail-modal .main-content .content-section .content-display .text-content[data-v-d24a853a] {
   margin-bottom: 24px;
 }
-.option-detail-modal .main-content .content-section .content-display .description-content .description-text[data-v-d24a853a] {
+.option-detail-modal .main-content .content-section .content-display .text-content .text-text[data-v-d24a853a] {
   font-size: 16px;
   line-height: 1.6;
   color: var(--color-main-text);
@@ -3545,6 +3504,108 @@ card-header .header-right .card-actions[data-v-7f2059a4] button:hover {
   font-size: 14px;
   color: var(--color-main-text);
   word-break: break-word;
+}
+.option-detail-modal .main-content .content-section .content-display .feature-buttons-container[data-v-d24a853a] {
+  display: flex;
+  justify-content: space-between; /* This creates left and right sections */
+  align-items: center;
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid var(--color-border);
+  width: 100%;
+  /* Owner section on the right - pushed completely to the right */
+}
+.option-detail-modal .main-content .content-section .content-display .feature-buttons-container .features-left[data-v-d24a853a] {
+  display: flex;
+  align-items: center;
+  gap: 32px; /* Space between support and comment sections */
+  flex-shrink: 0;
+}
+.option-detail-modal .main-content .content-section .content-display .feature-buttons-container .feature-group[data-v-d24a853a] {
+  display: flex;
+  align-items: center;
+}
+.option-detail-modal .main-content .content-section .content-display .feature-buttons-container .feature-group .support-container[data-v-d24a853a] {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.option-detail-modal .main-content .content-section .content-display .feature-buttons-container .feature-group .support-container .support-icon-large[data-v-d24a853a] {
+  cursor: pointer;
+  color: var(--color-text-light);
+  transition: color 0.2s ease;
+}
+.option-detail-modal .main-content .content-section .content-display .feature-buttons-container .feature-group .support-container .support-icon-large[data-v-d24a853a]:hover {
+  color: var(--color-primary-element);
+}
+.option-detail-modal .main-content .content-section .content-display .feature-buttons-container .feature-group .comment-container[data-v-d24a853a] {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.option-detail-modal .main-content .content-section .content-display .feature-buttons-container .feature-group .comment-container .comment-count-badge[data-v-d24a853a] {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  background: var(--color-background-dark);
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-lighter);
+}
+.option-detail-modal .main-content .content-section .content-display .feature-buttons-container .feature-group .comment-container .add-comment-btn[data-v-d24a853a] {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.option-detail-modal .main-content .content-section .content-display .feature-buttons-container .owner-section-right[data-v-d24a853a] {
+  flex-shrink: 0;
+  margin-left: auto; /* This pushes it to the right */
+}
+.option-detail-modal .main-content .content-section .content-display .feature-buttons-container .owner-section-right .owner-details-right[data-v-d24a853a] {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--color-background-dark);
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+  max-width: 300px;
+}
+.option-detail-modal .main-content .content-section .content-display .feature-buttons-container .owner-section-right .owner-details-right .owner-text[data-v-d24a853a] {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.option-detail-modal .main-content .content-section .content-display .feature-buttons-container .owner-section-right .owner-details-right .owner-text .owner-name[data-v-d24a853a] {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-main-text);
+}
+.option-detail-modal .main-content .content-section .content-display .feature-buttons-container .owner-section-right .owner-details-right .owner-text .owner-role[data-v-d24a853a] {
+  font-size: 10px;
+  color: var(--color-text-lighter);
+}
+@media (max-width: 768px) {
+.option-detail-modal .main-content .content-section .content-display .feature-buttons-container[data-v-d24a853a] {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+}
+.option-detail-modal .main-content .content-section .content-display .feature-buttons-container .features-left[data-v-d24a853a] {
+    width: 100%;
+    justify-content: space-between;
+    gap: 16px;
+}
+.option-detail-modal .main-content .content-section .content-display .feature-buttons-container .owner-section-right[data-v-d24a853a] {
+    margin-left: 0;
+    width: 100%;
+}
+.option-detail-modal .main-content .content-section .content-display .feature-buttons-container .owner-section-right .owner-details-right[data-v-d24a853a] {
+    max-width: 100%;
+    width: 100%;
+}
 }
 .option-detail-modal .main-content .responses-section .section-header[data-v-d24a853a] {
   display: flex;
@@ -3691,13 +3752,29 @@ card-header .header-right .card-actions[data-v-7f2059a4] button:hover {
 .option-detail-modal .main-content[data-v-d24a853a] {
     padding: 16px;
 }
-.option-detail-modal .main-content .responses-section .responses-grid[data-v-d24a853a] {
-    grid-template-columns: 1fr;
+.option-detail-modal .main-content .content-section .content-display .feature-buttons-container[data-v-d24a853a] {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+}
+.option-detail-modal .main-content .content-section .content-display .feature-buttons-container .features-left[data-v-d24a853a] {
+    width: 100%;
+    justify-content: space-between;
+}
+.option-detail-modal .main-content .content-section .content-display .feature-buttons-container .owner-section-right[data-v-d24a853a] {
+    width: 100%;
+}
+.option-detail-modal .main-content .content-section .content-display .feature-buttons-container .owner-section-right .owner-details-right[data-v-d24a853a] {
+    max-width: 100%;
+    width: 100%;
 }
 .option-detail-modal .main-content .content-section .editor-container .fields-grid[data-v-d24a853a] {
     grid-template-columns: 1fr;
 }
 .option-detail-modal .main-content .content-section .content-display .additional-fields-display .fields-grid[data-v-d24a853a] {
+    grid-template-columns: 1fr;
+}
+.option-detail-modal .main-content .responses-section .responses-grid[data-v-d24a853a] {
     grid-template-columns: 1fr;
 }
 }.inquiry-options-view[data-v-165eaf2d] {
@@ -3778,7 +3855,7 @@ card-header .header-right .card-actions[data-v-7f2059a4] button:hover {
   margin: 0 0 8px 0;
   color: var(--color-main-text);
 }
-.family-content .family-header .family-description[data-v-165eaf2d] {
+.family-content .family-header .family-text[data-v-165eaf2d] {
   font-size: 16px;
   color: var(--color-text-lighter);
   margin: 0 0 20px 0;
@@ -11200,14 +11277,14 @@ tr.file-picker__row td.row-name[data-v-1f96131b] {
 })();
 const appName = "agora";
 const appVersion = "1.7.0-beta";
-import { ao as h$1, B as defineStore, s as translate, aS as emit, aZ as Settings, a as _export_sfc, d as defineComponent, b as computed, a_ as getCanonicalLocale, c as createElementBlock, o as openBlock, t as toDisplayString, J as normalizeClass, aW as NcActionButton, _ as _export_sfc$1, f as createBlock, g as withCtx, l as createCommentVNode, h as resolveDynamicComponent, k as createBaseVNode, a$ as NC_ACTIONS_IS_SEMANTIC_MENU, Y as createElementId, b0 as ActionGlobalMixin, T as withDirectives, b1 as vModelRadio, b2 as withKeys, am as withModifiers, u as useModel, b3 as useSlots, e as watch, ar as logger, v as onMounted, b4 as onBeforeUnmount, r as renderSlot, a9 as useCssVars, b5 as useIsDarkTheme, n as unref, b6 as mdiCreation, j as createVNode, a0 as createSlots, C as createTextVNode, K as NcIconSvgWrapper, V as NcButton, aX as NcActions, a6 as resolveComponent, i as mergeProps, U as vShow, x as normalizeProps, y as guardReactiveProps, b7 as userStatus, N as NcAvatar, p as normalizeStyle, m as mergeModels, aB as ref, b8 as provide, w as warn, S as useTemplateRef, Q as useAttrs, L as isLegacy, W as mdiCheck, X as mdiAlertCircle, M as Fragment$1, O as renderList, a8 as NcLoadingIcon, b9 as Teleport, ba as useRouter, P as DateTime, R as RouterLink, aI as onUnmounted, bb as useRoute, bc as translatePlural, bd as TransitionGroup, aJ as nextTick, E as _$2, be as NcModal, aH as shallowRef, bf as markRaw, bg as watchEffect, bh as getCurrentInstance, bi as customRef, bj as global, bk as getAugmentedNamespace, bl as process$1, aR as commonjsGlobal, bm as Buffer, aE as getDefaultExportFromCjs, bn as vModelSelect, aT as getCurrentUser, an as Transition, bo as toRaw, bp as subscribe, bq as unsubscribe, br as onBeforeRouteUpdate, aU as v, aV as cancelableClient, D as purify, bs as onBeforeRouteLeave, bt as createRouter, bu as createWebHistory, bv as axios, z as createApp, A as pinia } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_ef057a6f_lang-CClJnuqR.chunk.mjs";
-import { a as useSessionStore, p as publicInquiry, i as supports, L as Logger, j as useInquiryStore, s as showError$1, o as options, E as Event$1, I as InquiryGeneralIcons, g as getInquiryTypeData, k as createInquiryContext$1, l as canTransfer, m as canDelete, n as canArchive, b as useInquiriesStore, q as useInquiryGroupsStore, r as NavigationIcons, t as getAvailableInquiryTypesForCreation, v as getInquiryTypeOptions, w as showSuccess, x as useInquiryGroupStore, y as getAllowedResponseGroupTypes, z as getAvailableInquiryGroupTypesForCreation, A as getInquiryGroupTypeData, B as canCreateInquiryGroupInGeneral, C as getInquiryTypesByFamily, D as accessFamilyMenu, F as getInquiryTypesForFamily, G as getInquiryItemData, H as NcEmptyContent, S as StatusIcons, J as BadgeIcons, K as canSupport, M as canComment, O as sortTitlesMapping, P as lodashExports, Q as appSettings, R as canRestore, T as getInquiryGroupTypesByFamily, U as getInquiryGroupTypesForFamily, V as getAvailableResponseTypesWithPermissions, W as getAvailableTransformTypesWithPermissions, X as canViewToggle, Y as validators, Z as inquiries, _ as commonjsRequire, $ as useAttachmentsStore, a0 as createDefault, a1 as useCommentsStore, a2 as InquiryOptionIcons, a3 as useSharesStore, a4 as canEdit, a5 as createInquiryGroupContext, d as useAppSettingsStore, a6 as inquiryLinks, a7 as ShareIcons, a8 as getAvailableFields, a9 as getAvailableGroupFields, aa as canShare, ab as canUseResource } from "./NcDashboardWidget-Bu7bWoUK-DQHrnZH0.chunk.mjs";
-import { u as usePreferencesStore, S as StyleSettings, F as FeatureSettings } from "./StyleSettings-oJV0Xk22.chunk.mjs";
-import { b as NcAppNavigationItem, u as useAppSettingsDialog, _ as _sfc_main$1O, c as NcAppNavigationList, d as NcAppNavigation, S as Spinner, Q as QRCode, I as InputDiv, e as NcAppContent, f as NcActionButtonGroup, g as NcDialog, h as find$1, r as registerCustomProtocol, t as tokenize, i as reset, O as Options, j as NcActionInput, P as PlusIcon, k as NcDateTimePickerNative, l as NcAppSidebar, a as NcAppSettingsDialog, m as NcContent } from "./index-BBweHR0O.chunk.mjs";
-import { _ as _sfc_main$1P, I as INSIDE_RADIO_GROUP_KEY, a as NcSelect, N as NcCheckboxRadioSwitch, c as _sfc_main$1Q, b as NcInputField } from "./NcRichText-CETsOVBU-BVQiLfnA.chunk.mjs";
-import { R as RadioGroupDiv, N as NcNoteCard, C as CardDiv } from "./markdown-Csw6ksxE.chunk.mjs";
-import { A as AgoraAppIcon } from "./AgoraAppIcon-BCYMQ8lr.chunk.mjs";
-import { N as NcUserBubble } from "./NcUserBubble-CM66IyhS-CmvlN4RW.chunk.mjs";
+import { ap as h$1, B as defineStore, s as translate, aD as emit, b6 as Settings, a as _export_sfc, d as defineComponent, b as computed, b7 as getCanonicalLocale, c as createElementBlock, o as openBlock, t as toDisplayString, J as normalizeClass, b3 as NcActionButton, _ as _export_sfc$1, f as createBlock, g as withCtx, l as createCommentVNode, h as resolveDynamicComponent, k as createBaseVNode, b8 as NC_ACTIONS_IS_SEMANTIC_MENU, Z as createElementId, b9 as ActionGlobalMixin, U as withDirectives, ba as vModelRadio, aE as withKeys, an as withModifiers, u as useModel, bb as useSlots, e as watch, as as logger, v as onMounted, aO as onBeforeUnmount, r as renderSlot, aa as useCssVars, bc as useIsDarkTheme, n as unref, bd as mdiCreation, j as createVNode, a1 as createSlots, C as createTextVNode, K as NcIconSvgWrapper, W as NcButton, b4 as NcActions, a7 as resolveComponent, i as mergeProps, V as vShow, x as normalizeProps, y as guardReactiveProps, be as userStatus, N as NcAvatar, p as normalizeStyle, m as mergeModels, aK as ref, bf as provide, w as warn, T as useTemplateRef, S as useAttrs, L as isLegacy, X as mdiCheck, Y as mdiAlertCircle, M as Fragment$1, O as renderList, a9 as NcLoadingIcon, bg as Teleport, bh as useRouter, aF as NcEmptyContent, P as DateTime, R as RouterLink, aV as onUnmounted, bi as useRoute, bj as translatePlural, bk as TransitionGroup, aP as nextTick, E as _$2, aC as NcModal, aU as shallowRef, bl as markRaw, bm as watchEffect, bn as getCurrentInstance, bo as customRef, bp as global, bq as getAugmentedNamespace, br as process$1, b1 as commonjsGlobal, bs as Buffer, Q as getDefaultExportFromCjs, bt as vModelSelect, b2 as getCurrentUser, D as purify, ao as Transition, bu as toRaw, bv as subscribe, bw as unsubscribe, bx as onBeforeRouteUpdate, aH as v, aI as cancelableClient, by as onBeforeRouteLeave, bz as createRouter, bA as createWebHistory, bB as axios, z as createApp, A as pinia } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_ef057a6f_lang-CvBTwrDO.chunk.mjs";
+import { a as useSessionStore, p as publicInquiry, i as supports, L as Logger, j as useInquiryStore, s as showError$1, o as options, E as Event$1, I as InquiryGeneralIcons$1, g as getInquiryTypeData, k as createInquiryContext$1, l as canTransfer, m as canDelete, n as canArchive, b as useInquiriesStore, q as useInquiryGroupsStore, r as NavigationIcons, t as getAvailableInquiryTypesForCreation, v as getInquiryTypeOptions, w as showSuccess, x as useInquiryGroupStore, y as getAllowedResponseGroupTypes, z as getAvailableInquiryGroupTypesForCreation, A as getInquiryGroupTypeData, B as canCreateInquiryGroupInGeneral, C as getInquiryTypesByFamily, D as accessFamilyMenu, F as getInquiryTypesForFamily, G as getInquiryItemData, S as StatusIcons, H as BadgeIcons, J as canSupport, K as canComment, M as sortTitlesMapping, O as lodashExports, P as appSettings, Q as canRestore, R as getInquiryGroupTypesByFamily, T as getInquiryGroupTypesForFamily, U as getAvailableResponseTypesWithPermissions, V as getAvailableTransformTypesWithPermissions, W as canViewToggle, X as validators, Y as inquiries, Z as commonjsRequire, _ as useAttachmentsStore, $ as createDefault, a0 as useCommentsStore, a1 as useSharesStore, a2 as useSubscriptionStore, a3 as moment, e as d, f as gfmHeadingId, a4 as InquiryOptionIcons, a5 as createOptionContext, a6 as canEditOption, a7 as canDeleteOption, a8 as canChangeStatus, a9 as canCommentOption, aa as canSupportOption, ab as canEdit, ac as createInquiryGroupContext, d as useAppSettingsStore, ad as inquiryLinks, ae as ShareIcons, af as getEditPermissions, ag as getAvailableFields, ah as getAvailableGroupFields, ai as canShare, aj as canUseResource } from "./NcDashboardWidget-Bu7bWoUK-C25-pWFw.chunk.mjs";
+import { u as usePreferencesStore, S as StyleSettings, F as FeatureSettings } from "./StyleSettings-B1pDiYlk.chunk.mjs";
+import { b as NcAppNavigationItem, u as useAppSettingsDialog, _ as _sfc_main$1O, c as NcAppNavigationList, d as NcAppNavigation, S as Spinner, Q as QRCode, I as InputDiv, e as NcAppContent, f as NcActionButtonGroup, g as NcDialog, h as find$1, r as registerCustomProtocol, t as tokenize, i as reset, O as Options, j as NcRichContenteditable, k as NcActionInput, P as PlusIcon, l as NcDateTimePickerNative, m as NcAppSidebar, a as NcAppSettingsDialog, n as NcContent } from "./index-BgC50yCj.chunk.mjs";
+import { _ as _sfc_main$1P, I as INSIDE_RADIO_GROUP_KEY, a as NcSelect, N as NcCheckboxRadioSwitch, c as _sfc_main$1Q, b as NcInputField } from "./NcRichText-CETsOVBU-Dnxob6Wk.chunk.mjs";
+import { R as RadioGroupDiv, N as NcNoteCard, C as CardDiv } from "./markdown-wYf8CNMX.chunk.mjs";
+import { A as AgoraAppIcon } from "./AgoraAppIcon-CSH-ufz_.chunk.mjs";
+import { N as NcUserBubble } from "./NcUserBubble-CM66IyhS-DR6eAA-M.chunk.mjs";
 const setCookie = (cookieName, cookieValue = "", cookieExpiration = 360) => {
   const expirationTime = /* @__PURE__ */ new Date();
   expirationTime.setTime(expirationTime.getTime() + cookieExpiration);
@@ -12229,14 +12306,14 @@ function getFamilyFallbackData() {
 }
 function getFamilyIconComponent(familyKey) {
   const familyIcons = {
-    "deliberative": InquiryGeneralIcons.Lightbulb,
-    "debate": InquiryGeneralIcons.Discussion,
-    "structure": InquiryGeneralIcons.Settings,
-    "consensus": InquiryGeneralIcons.ThumbUp,
-    "decision": InquiryGeneralIcons.Checkmark,
-    "proposal": InquiryGeneralIcons.Lightbulb,
-    "reactive": InquiryGeneralIcons.Bolt,
-    "default": InquiryGeneralIcons.File
+    "deliberative": InquiryGeneralIcons$1.Lightbulb,
+    "debate": InquiryGeneralIcons$1.Discussion,
+    "structure": InquiryGeneralIcons$1.Settings,
+    "consensus": InquiryGeneralIcons$1.ThumbUp,
+    "decision": InquiryGeneralIcons$1.Checkmark,
+    "proposal": InquiryGeneralIcons$1.Lightbulb,
+    "reactive": InquiryGeneralIcons$1.Bolt,
+    "default": InquiryGeneralIcons$1.File
   };
   return familyIcons[familyKey] || familyIcons.default;
 }
@@ -12332,7 +12409,7 @@ const _sfc_main$1M = /* @__PURE__ */ defineComponent({
     }, get NcAppNavigationItem() {
       return NcAppNavigationItem;
     }, get InquiryGeneralIcons() {
-      return InquiryGeneralIcons;
+      return InquiryGeneralIcons$1;
     }, get canArchive() {
       return canArchive;
     }, get canDelete() {
@@ -14796,7 +14873,7 @@ const _sfc_main$1n = /* @__PURE__ */ defineComponent({
     }, get InputDiv() {
       return InputDiv;
     }, get InquiryGeneralIcons() {
-      return InquiryGeneralIcons;
+      return InquiryGeneralIcons$1;
     } };
     Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
     return __returned__;
@@ -15221,7 +15298,7 @@ const _sfc_main$1m = /* @__PURE__ */ defineComponent({
     }, get InputDiv() {
       return InputDiv;
     }, get InquiryGeneralIcons() {
-      return InquiryGeneralIcons;
+      return InquiryGeneralIcons$1;
     } };
     Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
     return __returned__;
@@ -15710,9 +15787,9 @@ const _sfc_main$1l = /* @__PURE__ */ defineComponent({
     function getInquiryIcon(inquiry2) {
       if (inquiry2.type) {
         const typeData = getInquiryTypeData(inquiry2.type, allInquiryTypes.value);
-        return typeData?.icon || InquiryGeneralIcons.Flash;
+        return typeData?.icon || InquiryGeneralIcons$1.Flash;
       }
-      return InquiryGeneralIcons.Flash;
+      return InquiryGeneralIcons$1.Flash;
     }
     function handleCloseDialog() {
       createDlgToggle.value = false;
@@ -16571,7 +16648,7 @@ const _sfc_main$1h = /* @__PURE__ */ defineComponent({
     }, get canSupport() {
       return canSupport;
     }, get InquiryGeneralIcons() {
-      return InquiryGeneralIcons;
+      return InquiryGeneralIcons$1;
     }, get BadgeIcons() {
       return BadgeIcons;
     }, get StatusIcons() {
@@ -16641,12 +16718,12 @@ const _hoisted_42$7 = { class: "description-line" };
 const _hoisted_43$7 = { class: "grid-description" };
 const _hoisted_44$7 = { class: "bottom-section" };
 const _hoisted_45$6 = { class: "second-line" };
-const _hoisted_46$5 = { class: "left-items" };
-const _hoisted_47$5 = {
+const _hoisted_46$6 = { class: "left-items" };
+const _hoisted_47$6 = {
   key: 0,
   class: "metadata-item parent-link"
 };
-const _hoisted_48$5 = ["title"];
+const _hoisted_48$6 = ["title"];
 const _hoisted_49$5 = {
   key: 2,
   class: "metadata-item"
@@ -17078,8 +17155,8 @@ function _sfc_render$1h(_ctx, _cache, $props, $setup, $data, $options) {
                 createBaseVNode("div", _hoisted_44$7, [
                   createCommentVNode(" Second Line: Parent Link + Participated + Comments + Supports "),
                   createBaseVNode("div", _hoisted_45$6, [
-                    createBaseVNode("div", _hoisted_46$5, [
-                      $props.inquiry.parentId !== null ? (openBlock(), createElementBlock("div", _hoisted_47$5, [
+                    createBaseVNode("div", _hoisted_46$6, [
+                      $props.inquiry.parentId !== null ? (openBlock(), createElementBlock("div", _hoisted_47$6, [
                         createVNode($setup["RouterLink"], {
                           to: `/inquiry/${$props.inquiry.parentId}`
                         }, {
@@ -17108,7 +17185,7 @@ function _sfc_render$1h(_ctx, _cache, $props, $setup, $data, $options) {
                           1
                           /* TEXT */
                         )
-                      ], 8, _hoisted_48$5)) : createCommentVNode("v-if", true),
+                      ], 8, _hoisted_48$6)) : createCommentVNode("v-if", true),
                       createCommentVNode(" Only show expire when no vote period "),
                       !$setup.hasVotePeriod && $props.inquiry.configuration.expire ? (openBlock(), createElementBlock("div", _hoisted_49$5, [
                         (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.Expiration), { size: 12 })),
@@ -17803,7 +17880,7 @@ const _sfc_main$1f = /* @__PURE__ */ defineComponent({
     }, get NcActionButtonGroup() {
       return NcActionButtonGroup;
     }, get InquiryGeneralIcons() {
-      return InquiryGeneralIcons;
+      return InquiryGeneralIcons$1;
     } };
     Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
     return __returned__;
@@ -18259,7 +18336,7 @@ const _sfc_main$1b = /* @__PURE__ */ defineComponent({
     const __returned__ = { sessionStore, inquiriesStore, showDeleteDialog, showTransferDialog, subMenu, context: context2, toggleArchive, get t() {
       return translate;
     }, get InquiryGeneralIcons() {
-      return InquiryGeneralIcons;
+      return InquiryGeneralIcons$1;
     }, get NcActions() {
       return NcActions;
     }, get NcActionButton() {
@@ -18600,7 +18677,7 @@ const _sfc_main$18 = /* @__PURE__ */ defineComponent({
     }, get AgoraAppIcon() {
       return AgoraAppIcon;
     }, InquiryItem, InquiryFilter, InquiryListSort, InquiryItemActions, ActionToggleSidebar, LoadingOverlay, get InquiryGeneralIcons() {
-      return InquiryGeneralIcons;
+      return InquiryGeneralIcons$1;
     } };
     Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
     return __returned__;
@@ -19671,7 +19748,7 @@ const _sfc_main$14 = /* @__PURE__ */ defineComponent({
     }, get NcCheckboxRadioSwitch() {
       return NcCheckboxRadioSwitch;
     }, InquiryItemActions, get InquiryGeneralIcons() {
-      return InquiryGeneralIcons;
+      return InquiryGeneralIcons$1;
     }, get canViewToggle() {
       return canViewToggle;
     } };
@@ -21901,9 +21978,9 @@ class ResolvedPos {
   blockRange(other = this, pred) {
     if (other.pos < this.pos)
       return other.blockRange(this);
-    for (let d = this.depth - (this.parent.inlineContent || this.pos == other.pos ? 1 : 0); d >= 0; d--)
-      if (other.pos <= this.end(d) && (!pred || pred(this.node(d))))
-        return new NodeRange(this, other, d);
+    for (let d2 = this.depth - (this.parent.inlineContent || this.pos == other.pos ? 1 : 0); d2 >= 0; d2--)
+      if (other.pos <= this.end(d2) && (!pred || pred(this.node(d2))))
+        return new NodeRange(this, other, d2);
     return null;
   }
   /**
@@ -23912,8 +23989,8 @@ class ParseContext {
   textblockFromContext() {
     let $context = this.options.context;
     if ($context)
-      for (let d = $context.depth; d >= 0; d--) {
-        let deflt = $context.node(d).contentMatchAt($context.indexAfter(d)).defaultType;
+      for (let d2 = $context.depth; d2 >= 0; d2--) {
+        let deflt = $context.node(d2).contentMatchAt($context.indexAfter(d2)).defaultType;
         if (deflt && deflt.isTextblock && deflt.defaultAttrs)
           return deflt;
       }
@@ -25007,19 +25084,19 @@ function lift$2(tr, range2, target) {
   let gapStart = $from.before(depth + 1), gapEnd = $to.after(depth + 1);
   let start = gapStart, end = gapEnd;
   let before2 = Fragment.empty, openStart = 0;
-  for (let d = depth, splitting = false; d > target; d--)
-    if (splitting || $from.index(d) > 0) {
+  for (let d2 = depth, splitting = false; d2 > target; d2--)
+    if (splitting || $from.index(d2) > 0) {
       splitting = true;
-      before2 = Fragment.from($from.node(d).copy(before2));
+      before2 = Fragment.from($from.node(d2).copy(before2));
       openStart++;
     } else {
       start--;
     }
   let after2 = Fragment.empty, openEnd = 0;
-  for (let d = depth, splitting = false; d > target; d--)
-    if (splitting || $to.after(d + 1) < $to.end(d)) {
+  for (let d2 = depth, splitting = false; d2 > target; d2--)
+    if (splitting || $to.after(d2 + 1) < $to.end(d2)) {
       splitting = true;
-      after2 = Fragment.from($to.node(d).copy(after2));
+      after2 = Fragment.from($to.node(d2).copy(after2));
       openEnd++;
     } else {
       end++;
@@ -25139,8 +25216,8 @@ function canSplit(doc2, pos, depth = 1, typesAfter) {
   let innerType = typesAfter && typesAfter[typesAfter.length - 1] || $pos.parent;
   if (base2 < 0 || $pos.parent.type.spec.isolating || !$pos.parent.canReplace($pos.index(), $pos.parent.childCount) || !innerType.type.validContent($pos.parent.content.cutByIndex($pos.index(), $pos.parent.childCount)))
     return false;
-  for (let d = $pos.depth - 1, i = depth - 2; d > base2; d--, i--) {
-    let node = $pos.node(d), index2 = $pos.index(d);
+  for (let d2 = $pos.depth - 1, i = depth - 2; d2 > base2; d2--, i--) {
+    let node = $pos.node(d2), index2 = $pos.index(d2);
     if (node.type.spec.isolating)
       return false;
     let rest2 = node.content.cutByIndex(index2, node.childCount);
@@ -25157,10 +25234,10 @@ function canSplit(doc2, pos, depth = 1, typesAfter) {
 }
 function split(tr, pos, depth = 1, typesAfter) {
   let $pos = tr.doc.resolve(pos), before2 = Fragment.empty, after2 = Fragment.empty;
-  for (let d = $pos.depth, e = $pos.depth - depth, i = depth - 1; d > e; d--, i--) {
-    before2 = Fragment.from($pos.node(d).copy(before2));
+  for (let d2 = $pos.depth, e = $pos.depth - depth, i = depth - 1; d2 > e; d2--, i--) {
+    before2 = Fragment.from($pos.node(d2).copy(before2));
     let typeAfter = typesAfter && typesAfter[i];
-    after2 = Fragment.from(typeAfter ? typeAfter.type.create(typeAfter.attrs, after2) : $pos.node(d).copy(after2));
+    after2 = Fragment.from(typeAfter ? typeAfter.type.create(typeAfter.attrs, after2) : $pos.node(d2).copy(after2));
   }
   tr.step(new ReplaceStep(pos, pos, new Slice(before2.append(after2), depth, depth), true));
 }
@@ -25189,24 +25266,24 @@ function joinable(a, b) {
 }
 function joinPoint(doc2, pos, dir = -1) {
   let $pos = doc2.resolve(pos);
-  for (let d = $pos.depth; ; d--) {
-    let before2, after2, index = $pos.index(d);
-    if (d == $pos.depth) {
+  for (let d2 = $pos.depth; ; d2--) {
+    let before2, after2, index = $pos.index(d2);
+    if (d2 == $pos.depth) {
       before2 = $pos.nodeBefore;
       after2 = $pos.nodeAfter;
     } else if (dir > 0) {
-      before2 = $pos.node(d + 1);
+      before2 = $pos.node(d2 + 1);
       index++;
-      after2 = $pos.node(d).maybeChild(index);
+      after2 = $pos.node(d2).maybeChild(index);
     } else {
-      before2 = $pos.node(d).maybeChild(index - 1);
-      after2 = $pos.node(d + 1);
+      before2 = $pos.node(d2).maybeChild(index - 1);
+      after2 = $pos.node(d2 + 1);
     }
-    if (before2 && !before2.isTextblock && joinable(before2, after2) && $pos.node(d).canReplace(index, index + 1))
+    if (before2 && !before2.isTextblock && joinable(before2, after2) && $pos.node(d2).canReplace(index, index + 1))
       return pos;
-    if (d == 0)
+    if (d2 == 0)
       break;
-    pos = dir < 0 ? $pos.before(d) : $pos.after(d);
+    pos = dir < 0 ? $pos.before(d2) : $pos.after(d2);
   }
 }
 function join$1(tr, pos, depth) {
@@ -25241,19 +25318,19 @@ function insertPoint(doc2, pos, nodeType) {
   if ($pos.parent.canReplaceWith($pos.index(), $pos.index(), nodeType))
     return pos;
   if ($pos.parentOffset == 0)
-    for (let d = $pos.depth - 1; d >= 0; d--) {
-      let index = $pos.index(d);
-      if ($pos.node(d).canReplaceWith(index, index, nodeType))
-        return $pos.before(d + 1);
+    for (let d2 = $pos.depth - 1; d2 >= 0; d2--) {
+      let index = $pos.index(d2);
+      if ($pos.node(d2).canReplaceWith(index, index, nodeType))
+        return $pos.before(d2 + 1);
       if (index > 0)
         return null;
     }
   if ($pos.parentOffset == $pos.parent.content.size)
-    for (let d = $pos.depth - 1; d >= 0; d--) {
-      let index = $pos.indexAfter(d);
-      if ($pos.node(d).canReplaceWith(index, index, nodeType))
-        return $pos.after(d + 1);
-      if (index < $pos.node(d).childCount)
+    for (let d2 = $pos.depth - 1; d2 >= 0; d2--) {
+      let index = $pos.indexAfter(d2);
+      if ($pos.node(d2).canReplaceWith(index, index, nodeType))
+        return $pos.after(d2 + 1);
+      if (index < $pos.node(d2).childCount)
         return null;
     }
   return null;
@@ -25266,10 +25343,10 @@ function dropPoint(doc2, pos, slice3) {
   for (let i = 0; i < slice3.openStart; i++)
     content = content.firstChild.content;
   for (let pass = 1; pass <= (slice3.openStart == 0 && slice3.size ? 2 : 1); pass++) {
-    for (let d = $pos.depth; d >= 0; d--) {
-      let bias = d == $pos.depth ? 0 : $pos.pos <= ($pos.start(d + 1) + $pos.end(d + 1)) / 2 ? -1 : 1;
-      let insertPos = $pos.index(d) + (bias > 0 ? 1 : 0);
-      let parent = $pos.node(d), fits = false;
+    for (let d2 = $pos.depth; d2 >= 0; d2--) {
+      let bias = d2 == $pos.depth ? 0 : $pos.pos <= ($pos.start(d2 + 1) + $pos.end(d2 + 1)) / 2 ? -1 : 1;
+      let insertPos = $pos.index(d2) + (bias > 0 ? 1 : 0);
+      let parent = $pos.node(d2), fits = false;
       if (pass == 1) {
         fits = parent.canReplace(insertPos, insertPos, content);
       } else {
@@ -25277,7 +25354,7 @@ function dropPoint(doc2, pos, slice3) {
         fits = wrapping && parent.canReplaceWith(insertPos, insertPos, wrapping[0]);
       }
       if (fits)
-        return bias == 0 ? $pos.pos : bias < 0 ? $pos.before(d + 1) : $pos.after(d + 1);
+        return bias == 0 ? $pos.pos : bias < 0 ? $pos.before(d2 + 1) : $pos.after(d2 + 1);
     }
   }
   return null;
@@ -25343,12 +25420,12 @@ class Fitter {
   // depths, one for the slice and one for the frontier.
   findFittable() {
     let startDepth = this.unplaced.openStart;
-    for (let cur = this.unplaced.content, d = 0, openEnd = this.unplaced.openEnd; d < startDepth; d++) {
+    for (let cur = this.unplaced.content, d2 = 0, openEnd = this.unplaced.openEnd; d2 < startDepth; d2++) {
       let node = cur.firstChild;
       if (cur.childCount > 1)
         openEnd = 0;
-      if (node.type.spec.isolating && openEnd <= d) {
-        startDepth = d;
+      if (node.type.spec.isolating && openEnd <= d2) {
+        startDepth = d2;
         break;
       }
       cur = node.content;
@@ -25454,9 +25531,9 @@ class Fitter {
       let fit = contentAfterFits($to, i, type, match, dropInner);
       if (!fit)
         continue;
-      for (let d = i - 1; d >= 0; d--) {
-        let { match: match2, type: type2 } = this.frontier[d];
-        let matches2 = contentAfterFits($to, d, type2, match2, true);
+      for (let d2 = i - 1; d2 >= 0; d2--) {
+        let { match: match2, type: type2 } = this.frontier[d2];
+        let matches2 = contentAfterFits($to, d2, type2, match2, true);
         if (!matches2 || matches2.childCount)
           continue scan;
       }
@@ -25472,8 +25549,8 @@ class Fitter {
     if (close2.fit.childCount)
       this.placed = addToFragment(this.placed, close2.depth, close2.fit);
     $to = close2.move;
-    for (let d = close2.depth + 1; d <= $to.depth; d++) {
-      let node = $to.node(d), add = node.type.contentMatch.fillBefore(node.content, true, $to.index(d));
+    for (let d2 = close2.depth + 1; d2 <= $to.depth; d2++) {
+      let node = $to.node(d2), add = node.type.contentMatch.fillBefore(node.content, true, $to.index(d2));
       this.openFrontierNode(node.type, node.attrs, add);
     }
     return $to;
@@ -25546,14 +25623,14 @@ function replaceRange(tr, from2, to, slice3) {
     targetDepths.pop();
   let preferredTarget = -($from.depth + 1);
   targetDepths.unshift(preferredTarget);
-  for (let d = $from.depth, pos = $from.pos - 1; d > 0; d--, pos--) {
-    let spec = $from.node(d).type.spec;
+  for (let d2 = $from.depth, pos = $from.pos - 1; d2 > 0; d2--, pos--) {
+    let spec = $from.node(d2).type.spec;
     if (spec.defining || spec.definingAsContext || spec.isolating)
       break;
-    if (targetDepths.indexOf(d) > -1)
-      preferredTarget = d;
-    else if ($from.before(d) == pos)
-      targetDepths.splice(1, 0, -d);
+    if (targetDepths.indexOf(d2) > -1)
+      preferredTarget = d2;
+    else if ($from.before(d2) == pos)
+      targetDepths.splice(1, 0, -d2);
   }
   let preferredTargetIndex = targetDepths.indexOf(preferredTarget);
   let leftNodes = [], preferredDepth = slice3.openStart;
@@ -25564,10 +25641,10 @@ function replaceRange(tr, from2, to, slice3) {
       break;
     content = node.content;
   }
-  for (let d = preferredDepth - 1; d >= 0; d--) {
-    let leftNode = leftNodes[d], def = definesContent(leftNode.type);
+  for (let d2 = preferredDepth - 1; d2 >= 0; d2--) {
+    let leftNode = leftNodes[d2], def = definesContent(leftNode.type);
     if (def && !leftNode.sameMarkup($from.node(Math.abs(preferredTarget) - 1)))
-      preferredDepth = d;
+      preferredDepth = d2;
     else if (def || !leftNode.type.isTextblock)
       break;
   }
@@ -25629,20 +25706,20 @@ function deleteRange$1(tr, from2, to) {
     if (depth > 0 && (last2 || $from.node(depth - 1).canReplace($from.index(depth - 1), $to.indexAfter(depth - 1))))
       return tr.delete($from.before(depth), $to.after(depth));
   }
-  for (let d = 1; d <= $from.depth && d <= $to.depth; d++) {
-    if (from2 - $from.start(d) == $from.depth - d && to > $from.end(d) && $to.end(d) - to != $to.depth - d && $from.start(d - 1) == $to.start(d - 1) && $from.node(d - 1).canReplace($from.index(d - 1), $to.index(d - 1)))
-      return tr.delete($from.before(d), to);
+  for (let d2 = 1; d2 <= $from.depth && d2 <= $to.depth; d2++) {
+    if (from2 - $from.start(d2) == $from.depth - d2 && to > $from.end(d2) && $to.end(d2) - to != $to.depth - d2 && $from.start(d2 - 1) == $to.start(d2 - 1) && $from.node(d2 - 1).canReplace($from.index(d2 - 1), $to.index(d2 - 1)))
+      return tr.delete($from.before(d2), to);
   }
   tr.delete(from2, to);
 }
 function coveredDepths($from, $to) {
   let result2 = [], minDepth = Math.min($from.depth, $to.depth);
-  for (let d = minDepth; d >= 0; d--) {
-    let start = $from.start(d);
-    if (start < $from.pos - ($from.depth - d) || $to.end(d) > $to.pos + ($to.depth - d) || $from.node(d).type.spec.isolating || $to.node(d).type.spec.isolating)
+  for (let d2 = minDepth; d2 >= 0; d2--) {
+    let start = $from.start(d2);
+    if (start < $from.pos - ($from.depth - d2) || $to.end(d2) > $to.pos + ($to.depth - d2) || $from.node(d2).type.spec.isolating || $to.node(d2).type.spec.isolating)
       break;
-    if (start == $to.start(d) || d == $from.depth && d == $to.depth && $from.parent.inlineContent && $to.parent.inlineContent && d && $to.start(d - 1) == start - 1)
-      result2.push(d);
+    if (start == $to.start(d2) || d2 == $from.depth && d2 == $to.depth && $from.parent.inlineContent && $to.parent.inlineContent && d2 && $to.start(d2 - 1) == start - 1)
+      result2.push(d2);
   }
   return result2;
 }
@@ -28813,7 +28890,7 @@ function iterDeco(parent, deco, onWidget, onNode) {
       while (decoIndex < locals.length && locals[decoIndex].to < end)
         decoIndex++;
     }
-    let outerDeco = child.isInline && !child.isLeaf ? active.filter((d) => !d.inline) : active.slice();
+    let outerDeco = child.isInline && !child.isLeaf ? active.filter((d2) => !d2.inline) : active.slice();
     onNode(child, outerDeco, deco.forChild(offset, child), index);
     offset = end;
   }
@@ -29497,9 +29574,9 @@ const inlineParents = /^(a|abbr|acronym|b|cite|code|del|em|i|ins|kbd|label|outpu
 function normalizeSiblings(fragment, $context) {
   if (fragment.childCount < 2)
     return fragment;
-  for (let d = $context.depth; d >= 0; d--) {
-    let parent = $context.node(d);
-    let match = parent.contentMatchAt($context.index(d));
+  for (let d2 = $context.depth; d2 >= 0; d2--) {
+    let parent = $context.node(d2);
+    let match = parent.contentMatchAt($context.index(d2));
     let lastWrap, result2 = [];
     fragment.forEach((node) => {
       if (!result2)
@@ -32549,17 +32626,17 @@ function splitBlockAs(splitNode) {
       return false;
     let types = [];
     let splitDepth, deflt, atEnd = false, atStart = false;
-    for (let d = $from.depth; ; d--) {
-      let node = $from.node(d);
+    for (let d2 = $from.depth; ; d2--) {
+      let node = $from.node(d2);
       if (node.isBlock) {
-        atEnd = $from.end(d) == $from.pos + ($from.depth - d);
-        atStart = $from.start(d) == $from.pos - ($from.depth - d);
-        deflt = defaultBlockAt$1($from.node(d - 1).contentMatchAt($from.indexAfter(d - 1)));
+        atEnd = $from.end(d2) == $from.pos + ($from.depth - d2);
+        atStart = $from.start(d2) == $from.pos - ($from.depth - d2);
+        deflt = defaultBlockAt$1($from.node(d2 - 1).contentMatchAt($from.indexAfter(d2 - 1)));
         types.unshift(atEnd && deflt ? { type: deflt } : null);
-        splitDepth = d;
+        splitDepth = d2;
         break;
       } else {
-        if (d == 1)
+        if (d2 == 1)
           return false;
         types.unshift(null);
       }
@@ -35720,8 +35797,8 @@ var splitListItem = (typeOrName, overrideAttrs = {}) => ({ tr, state, dispatch, 
     if (dispatch) {
       let wrap2 = Fragment.empty;
       const depthBefore = $from.index(-1) ? 1 : $from.index(-2) ? 2 : 3;
-      for (let d = $from.depth - depthBefore; d >= $from.depth - 3; d -= 1) {
-        wrap2 = Fragment.from($from.node(d).copy(wrap2));
+      for (let d2 = $from.depth - depthBefore; d2 >= $from.depth - 3; d2 -= 1) {
+        wrap2 = Fragment.from($from.node(d2).copy(wrap2));
       }
       const depthAfter = (
         // eslint-disable-next-line no-nested-ternary
@@ -39552,12 +39629,12 @@ class GapCursor extends Selection {
       if (!mustMove && GapCursor.valid($pos))
         return $pos;
       let pos = $pos.pos, next = null;
-      for (let d = $pos.depth; ; d--) {
-        let parent = $pos.node(d);
-        if (dir > 0 ? $pos.indexAfter(d) < parent.childCount : $pos.index(d) > 0) {
-          next = parent.child(dir > 0 ? $pos.indexAfter(d) : $pos.index(d) - 1);
+      for (let d2 = $pos.depth; ; d2--) {
+        let parent = $pos.node(d2);
+        if (dir > 0 ? $pos.indexAfter(d2) < parent.childCount : $pos.index(d2) > 0) {
+          next = parent.child(dir > 0 ? $pos.indexAfter(d2) : $pos.index(d2) - 1);
           break;
-        } else if (d == 0) {
+        } else if (d2 == 0) {
           return null;
         }
         pos += dir;
@@ -39601,8 +39678,8 @@ class GapBookmark {
   }
 }
 function closedBefore($pos) {
-  for (let d = $pos.depth; d >= 0; d--) {
-    let index = $pos.index(d), parent = $pos.node(d);
+  for (let d2 = $pos.depth; d2 >= 0; d2--) {
+    let index = $pos.index(d2), parent = $pos.node(d2);
     if (index == 0) {
       if (parent.type.spec.isolating)
         return true;
@@ -39618,8 +39695,8 @@ function closedBefore($pos) {
   return true;
 }
 function closedAfter($pos) {
-  for (let d = $pos.depth; d >= 0; d--) {
-    let index = $pos.indexAfter(d), parent = $pos.node(d);
+  for (let d2 = $pos.depth; d2 >= 0; d2--) {
+    let index = $pos.indexAfter(d2), parent = $pos.node(d2);
     if (index == parent.childCount) {
       if (parent.type.spec.isolating)
         return true;
@@ -41129,22 +41206,22 @@ function tableNodeTypes(schema) {
 }
 var tableEditingKey = new PluginKey("selectingCells");
 function cellAround($pos) {
-  for (let d = $pos.depth - 1; d > 0; d--)
-    if ($pos.node(d).type.spec.tableRole == "row")
-      return $pos.node(0).resolve($pos.before(d + 1));
+  for (let d2 = $pos.depth - 1; d2 > 0; d2--)
+    if ($pos.node(d2).type.spec.tableRole == "row")
+      return $pos.node(0).resolve($pos.before(d2 + 1));
   return null;
 }
 function cellWrapping($pos) {
-  for (let d = $pos.depth; d > 0; d--) {
-    const role = $pos.node(d).type.spec.tableRole;
-    if (role === "cell" || role === "header_cell") return $pos.node(d);
+  for (let d2 = $pos.depth; d2 > 0; d2--) {
+    const role = $pos.node(d2).type.spec.tableRole;
+    if (role === "cell" || role === "header_cell") return $pos.node(d2);
   }
   return null;
 }
 function isInTable(state) {
   const $head = state.selection.$head;
-  for (let d = $head.depth; d > 0; d--)
-    if ($head.node(d).type.spec.tableRole == "row") return true;
+  for (let d2 = $head.depth; d2 > 0; d2--)
+    if ($head.node(d2).type.spec.tableRole == "row") return true;
   return false;
 }
 function selectionCell(state) {
@@ -41485,8 +41562,8 @@ function isCellBoundarySelection({ $from, $to }) {
   let depth = $from.depth;
   for (; depth >= 0; depth--, afterFrom++)
     if ($from.after(depth + 1) < $from.end(depth)) break;
-  for (let d = $to.depth; d >= 0; d--, beforeTo--)
-    if ($to.before(d + 1) > $to.start(d)) break;
+  for (let d2 = $to.depth; d2 >= 0; d2--, beforeTo--)
+    if ($to.before(d2 + 1) > $to.start(d2)) break;
   return afterFrom == beforeTo && /row|table/.test($from.node(depth).type.spec.tableRole);
 }
 function isTextSelectionAcrossCells({ $from, $to }) {
@@ -42132,12 +42209,12 @@ function goToNextCell(direction) {
 }
 function deleteTable(state, dispatch) {
   const $pos = state.selection.$anchor;
-  for (let d = $pos.depth; d > 0; d--) {
-    const node = $pos.node(d);
+  for (let d2 = $pos.depth; d2 > 0; d2--) {
+    const node = $pos.node(d2);
     if (node.type.spec.tableRole == "table") {
       if (dispatch)
         dispatch(
-          state.tr.delete($pos.before(d), $pos.after(d)).scrollIntoView()
+          state.tr.delete($pos.before(d2), $pos.after(d2)).scrollIntoView()
         );
       return true;
     }
@@ -42579,11 +42656,11 @@ function handleMouseDown(view, startEvent) {
 function atEndOfCell(view, axis, dir) {
   if (!(view.state.selection instanceof TextSelection)) return null;
   const { $head } = view.state.selection;
-  for (let d = $head.depth - 1; d >= 0; d--) {
-    const parent = $head.node(d), index = dir < 0 ? $head.index(d) : $head.indexAfter(d);
+  for (let d2 = $head.depth - 1; d2 >= 0; d2--) {
+    const parent = $head.node(d2), index = dir < 0 ? $head.index(d2) : $head.indexAfter(d2);
     if (index != (dir < 0 ? 0 : parent.childCount)) return null;
     if (parent.type.spec.tableRole == "cell" || parent.type.spec.tableRole == "header_cell") {
-      const cellPos = $head.before(d);
+      const cellPos = $head.before(d2);
       const dirStr = axis == "vert" ? dir > 0 ? "down" : "up" : dir > 0 ? "right" : "left";
       return view.endOfTextblock(dirStr) ? cellPos : null;
     }
@@ -48037,8 +48114,8 @@ function requireUsing() {
       this._data = null;
       return ret;
     };
-    Disposer.isDisposer = function(d) {
-      return d != null && typeof d.resource === "function" && typeof d.tryDispose === "function";
+    Disposer.isDisposer = function(d2) {
+      return d2 != null && typeof d2.resource === "function" && typeof d2.tryDispose === "function";
     };
     function FunctionDisposer(fn, promise2, context2) {
       this.constructor$(fn, promise2, context2);
@@ -50517,9 +50594,9 @@ function requireJszip_min() {
         for (var l = "function" == typeof commonjsRequire && commonjsRequire, e = 0; e < h2.length; e++) u(h2[e]);
         return u;
       })({ 1: [function(e, t, r) {
-        var d = e("./utils"), c = e("./support"), p = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+        var d2 = e("./utils"), c = e("./support"), p = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
         r.encode = function(e2) {
-          for (var t2, r2, n, i, s, a, o, h2 = [], u = 0, l = e2.length, f = l, c2 = "string" !== d.getTypeOf(e2); u < e2.length; ) f = l - u, n = c2 ? (t2 = e2[u++], r2 = u < l ? e2[u++] : 0, u < l ? e2[u++] : 0) : (t2 = e2.charCodeAt(u++), r2 = u < l ? e2.charCodeAt(u++) : 0, u < l ? e2.charCodeAt(u++) : 0), i = t2 >> 2, s = (3 & t2) << 4 | r2 >> 4, a = 1 < f ? (15 & r2) << 2 | n >> 6 : 64, o = 2 < f ? 63 & n : 64, h2.push(p.charAt(i) + p.charAt(s) + p.charAt(a) + p.charAt(o));
+          for (var t2, r2, n, i, s, a, o, h2 = [], u = 0, l = e2.length, f = l, c2 = "string" !== d2.getTypeOf(e2); u < e2.length; ) f = l - u, n = c2 ? (t2 = e2[u++], r2 = u < l ? e2[u++] : 0, u < l ? e2[u++] : 0) : (t2 = e2.charCodeAt(u++), r2 = u < l ? e2.charCodeAt(u++) : 0, u < l ? e2.charCodeAt(u++) : 0), i = t2 >> 2, s = (3 & t2) << 4 | r2 >> 4, a = 1 < f ? (15 & r2) << 2 | n >> 6 : 64, o = 2 < f ? 63 & n : 64, h2.push(p.charAt(i) + p.charAt(s) + p.charAt(a) + p.charAt(o));
           return h2.join("");
         }, r.decode = function(e2) {
           var t2, r2, n, i, s, a, o = 0, h2 = 0, u = "data:";
@@ -50608,7 +50685,7 @@ function requireJszip_min() {
           return n2;
         }
         function n(e2, t2, r2, n2, i2, s2) {
-          var a, o, h2 = e2.file, u = e2.compression, l = s2 !== O.utf8encode, f = I.transformTo("string", s2(h2.name)), c = I.transformTo("string", O.utf8encode(h2.name)), d = h2.comment, p = I.transformTo("string", s2(d)), m = I.transformTo("string", O.utf8encode(d)), _2 = c.length !== h2.name.length, g = m.length !== d.length, b = "", v2 = "", y = "", w = h2.dir, k = h2.date, x = { crc32: 0, compressedSize: 0, uncompressedSize: 0 };
+          var a, o, h2 = e2.file, u = e2.compression, l = s2 !== O.utf8encode, f = I.transformTo("string", s2(h2.name)), c = I.transformTo("string", O.utf8encode(h2.name)), d2 = h2.comment, p = I.transformTo("string", s2(d2)), m = I.transformTo("string", O.utf8encode(d2)), _2 = c.length !== h2.name.length, g = m.length !== d2.length, b = "", v2 = "", y = "", w = h2.dir, k = h2.date, x = { crc32: 0, compressedSize: 0, uncompressedSize: 0 };
           t2 && !r2 || (x.crc32 = e2.crc32, x.compressedSize = e2.compressedSize, x.uncompressedSize = e2.uncompressedSize);
           var S = 0;
           t2 && (S |= 8), l || !_2 && !g || (S |= 2048);
@@ -50795,10 +50872,10 @@ function requireJszip_min() {
           r2 && void 0 !== r2.binary || (s2.binary = !a2), (t2 instanceof c && 0 === t2.uncompressedSize || s2.dir || !t2 || 0 === t2.length) && (s2.base64 = false, s2.binary = true, t2 = "", s2.compression = "STORE", i2 = "string");
           var o2 = null;
           o2 = t2 instanceof c || t2 instanceof l ? t2 : p.isNode && p.isStream(t2) ? new m(e2, t2) : u.prepareContent(e2, t2, s2.binary, s2.optimizedBinaryString, s2.base64);
-          var h3 = new d(e2, o2, s2);
+          var h3 = new d2(e2, o2, s2);
           this.files[e2] = h3;
         }
-        var i = e("./utf8"), u = e("./utils"), l = e("./stream/GenericWorker"), a = e("./stream/StreamHelper"), f = e("./defaults"), c = e("./compressedObject"), d = e("./zipObject"), o = e("./generate"), p = e("./nodejsUtils"), m = e("./nodejs/NodejsStreamInputAdapter"), _2 = function(e2) {
+        var i = e("./utf8"), u = e("./utils"), l = e("./stream/GenericWorker"), a = e("./stream/StreamHelper"), f = e("./defaults"), c = e("./compressedObject"), d2 = e("./zipObject"), o = e("./generate"), p = e("./nodejsUtils"), m = e("./nodejs/NodejsStreamInputAdapter"), _2 = function(e2) {
           "/" === e2.slice(-1) && (e2 = e2.substring(0, e2.length - 1));
           var t2 = e2.lastIndexOf("/");
           return 0 < t2 ? e2.substring(0, t2) : "";
@@ -51557,7 +51634,7 @@ function requireJszip_min() {
         var l = {}, s = ["REJECTED"], a = ["FULFILLED"], n = ["PENDING"];
         function o(e2) {
           if ("function" != typeof e2) throw new TypeError("resolver must be a function");
-          this.state = n, this.queue = [], this.outcome = void 0, e2 !== u && d(this, e2);
+          this.state = n, this.queue = [], this.outcome = void 0, e2 !== u && d2(this, e2);
         }
         function h2(e2, t2, r2) {
           this.promise = e2, "function" == typeof t2 && (this.onFulfilled = t2, this.callFulfilled = this.otherCallFulfilled), "function" == typeof r2 && (this.onRejected = r2, this.callRejected = this.otherCallRejected);
@@ -51579,7 +51656,7 @@ function requireJszip_min() {
             t2.apply(e2, arguments);
           };
         }
-        function d(t2, e2) {
+        function d2(t2, e2) {
           var r2 = false;
           function n2(e3) {
             r2 || (r2 = true, l.reject(t2, e3));
@@ -51632,7 +51709,7 @@ function requireJszip_min() {
           var r2 = p(c, t2);
           if ("error" === r2.status) return l.reject(e2, r2.value);
           var n2 = r2.value;
-          if (n2) d(e2, n2);
+          if (n2) d2(e2, n2);
           else {
             e2.state = a, e2.outcome = t2;
             for (var i2 = -1, s2 = e2.queue.length; ++i2 < s2; ) e2.queue[i2].callFulfilled(t2);
@@ -51681,10 +51758,10 @@ function requireJszip_min() {
         var n = {};
         (0, e("./lib/utils/common").assign)(n, e("./lib/deflate"), e("./lib/inflate"), e("./lib/zlib/constants")), t.exports = n;
       }, { "./lib/deflate": 39, "./lib/inflate": 40, "./lib/utils/common": 41, "./lib/zlib/constants": 44 }], 39: [function(e, t, r) {
-        var a = e("./zlib/deflate"), o = e("./utils/common"), h2 = e("./utils/strings"), i = e("./zlib/messages"), s = e("./zlib/zstream"), u = Object.prototype.toString, l = 0, f = -1, c = 0, d = 8;
+        var a = e("./zlib/deflate"), o = e("./utils/common"), h2 = e("./utils/strings"), i = e("./zlib/messages"), s = e("./zlib/zstream"), u = Object.prototype.toString, l = 0, f = -1, c = 0, d2 = 8;
         function p(e2) {
           if (!(this instanceof p)) return new p(e2);
-          this.options = o.assign({ level: f, method: d, chunkSize: 16384, windowBits: 15, memLevel: 8, strategy: c, to: "" }, e2 || {});
+          this.options = o.assign({ level: f, method: d2, chunkSize: 16384, windowBits: 15, memLevel: 8, strategy: c, to: "" }, e2 || {});
           var t2 = this.options;
           t2.raw && 0 < t2.windowBits ? t2.windowBits = -t2.windowBits : t2.gzip && 0 < t2.windowBits && t2.windowBits < 16 && (t2.windowBits += 16), this.err = 0, this.msg = "", this.ended = false, this.chunks = [], this.strm = new s(), this.strm.avail_out = 0;
           var r2 = a.deflateInit2(this.strm, t2.level, t2.method, t2.windowBits, t2.memLevel, t2.strategy);
@@ -51719,10 +51796,10 @@ function requireJszip_min() {
           return (t2 = t2 || {}).gzip = true, n(e2, t2);
         };
       }, { "./utils/common": 41, "./utils/strings": 42, "./zlib/deflate": 46, "./zlib/messages": 51, "./zlib/zstream": 53 }], 40: [function(e, t, r) {
-        var c = e("./zlib/inflate"), d = e("./utils/common"), p = e("./utils/strings"), m = e("./zlib/constants"), n = e("./zlib/messages"), i = e("./zlib/zstream"), s = e("./zlib/gzheader"), _2 = Object.prototype.toString;
+        var c = e("./zlib/inflate"), d2 = e("./utils/common"), p = e("./utils/strings"), m = e("./zlib/constants"), n = e("./zlib/messages"), i = e("./zlib/zstream"), s = e("./zlib/gzheader"), _2 = Object.prototype.toString;
         function a(e2) {
           if (!(this instanceof a)) return new a(e2);
-          this.options = d.assign({ chunkSize: 16384, windowBits: 0, to: "" }, e2 || {});
+          this.options = d2.assign({ chunkSize: 16384, windowBits: 0, to: "" }, e2 || {});
           var t2 = this.options;
           t2.raw && 0 <= t2.windowBits && t2.windowBits < 16 && (t2.windowBits = -t2.windowBits, 0 === t2.windowBits && (t2.windowBits = -15)), !(0 <= t2.windowBits && t2.windowBits < 16) || e2 && e2.windowBits || (t2.windowBits += 32), 15 < t2.windowBits && t2.windowBits < 48 && 0 == (15 & t2.windowBits) && (t2.windowBits |= 15), this.err = 0, this.msg = "", this.ended = false, this.chunks = [], this.strm = new i(), this.strm.avail_out = 0;
           var r2 = c.inflateInit2(this.strm, t2.windowBits);
@@ -51739,14 +51816,14 @@ function requireJszip_min() {
           if (this.ended) return false;
           n2 = t2 === ~~t2 ? t2 : true === t2 ? m.Z_FINISH : m.Z_NO_FLUSH, "string" == typeof e2 ? h2.input = p.binstring2buf(e2) : "[object ArrayBuffer]" === _2.call(e2) ? h2.input = new Uint8Array(e2) : h2.input = e2, h2.next_in = 0, h2.avail_in = h2.input.length;
           do {
-            if (0 === h2.avail_out && (h2.output = new d.Buf8(u), h2.next_out = 0, h2.avail_out = u), (r2 = c.inflate(h2, m.Z_NO_FLUSH)) === m.Z_NEED_DICT && l && (o2 = "string" == typeof l ? p.string2buf(l) : "[object ArrayBuffer]" === _2.call(l) ? new Uint8Array(l) : l, r2 = c.inflateSetDictionary(this.strm, o2)), r2 === m.Z_BUF_ERROR && true === f && (r2 = m.Z_OK, f = false), r2 !== m.Z_STREAM_END && r2 !== m.Z_OK) return this.onEnd(r2), !(this.ended = true);
-            h2.next_out && (0 !== h2.avail_out && r2 !== m.Z_STREAM_END && (0 !== h2.avail_in || n2 !== m.Z_FINISH && n2 !== m.Z_SYNC_FLUSH) || ("string" === this.options.to ? (i2 = p.utf8border(h2.output, h2.next_out), s2 = h2.next_out - i2, a2 = p.buf2string(h2.output, i2), h2.next_out = s2, h2.avail_out = u - s2, s2 && d.arraySet(h2.output, h2.output, i2, s2, 0), this.onData(a2)) : this.onData(d.shrinkBuf(h2.output, h2.next_out)))), 0 === h2.avail_in && 0 === h2.avail_out && (f = true);
+            if (0 === h2.avail_out && (h2.output = new d2.Buf8(u), h2.next_out = 0, h2.avail_out = u), (r2 = c.inflate(h2, m.Z_NO_FLUSH)) === m.Z_NEED_DICT && l && (o2 = "string" == typeof l ? p.string2buf(l) : "[object ArrayBuffer]" === _2.call(l) ? new Uint8Array(l) : l, r2 = c.inflateSetDictionary(this.strm, o2)), r2 === m.Z_BUF_ERROR && true === f && (r2 = m.Z_OK, f = false), r2 !== m.Z_STREAM_END && r2 !== m.Z_OK) return this.onEnd(r2), !(this.ended = true);
+            h2.next_out && (0 !== h2.avail_out && r2 !== m.Z_STREAM_END && (0 !== h2.avail_in || n2 !== m.Z_FINISH && n2 !== m.Z_SYNC_FLUSH) || ("string" === this.options.to ? (i2 = p.utf8border(h2.output, h2.next_out), s2 = h2.next_out - i2, a2 = p.buf2string(h2.output, i2), h2.next_out = s2, h2.avail_out = u - s2, s2 && d2.arraySet(h2.output, h2.output, i2, s2, 0), this.onData(a2)) : this.onData(d2.shrinkBuf(h2.output, h2.next_out)))), 0 === h2.avail_in && 0 === h2.avail_out && (f = true);
           } while ((0 < h2.avail_in || 0 === h2.avail_out) && r2 !== m.Z_STREAM_END);
           return r2 === m.Z_STREAM_END && (n2 = m.Z_FINISH), n2 === m.Z_FINISH ? (r2 = c.inflateEnd(this.strm), this.onEnd(r2), this.ended = true, r2 === m.Z_OK) : n2 !== m.Z_SYNC_FLUSH || (this.onEnd(m.Z_OK), !(h2.avail_out = 0));
         }, a.prototype.onData = function(e2) {
           this.chunks.push(e2);
         }, a.prototype.onEnd = function(e2) {
-          e2 === m.Z_OK && ("string" === this.options.to ? this.result = this.chunks.join("") : this.result = d.flattenChunks(this.chunks)), this.chunks = [], this.err = e2, this.msg = this.strm.msg;
+          e2 === m.Z_OK && ("string" === this.options.to ? this.result = this.chunks.join("") : this.result = d2.flattenChunks(this.chunks)), this.chunks = [], this.err = e2, this.msg = this.strm.msg;
         }, r.Inflate = a, r.inflate = o, r.inflateRaw = function(e2, t2) {
           return (t2 = t2 || {}).raw = true, o(e2, t2);
         }, r.ungzip = o;
@@ -51848,7 +51925,7 @@ function requireJszip_min() {
           return -1 ^ e2;
         };
       }, {}], 46: [function(e, t, r) {
-        var h2, c = e("../utils/common"), u = e("./trees"), d = e("./adler32"), p = e("./crc32"), n = e("./messages"), l = 0, f = 4, m = 0, _2 = -2, g = -1, b = 4, i = 2, v2 = 8, y = 9, s = 286, a = 30, o = 19, w = 2 * s + 1, k = 15, x = 3, S = 258, z = S + x + 1, C = 42, E = 113, A = 1, I = 2, O = 3, B = 4;
+        var h2, c = e("../utils/common"), u = e("./trees"), d2 = e("./adler32"), p = e("./crc32"), n = e("./messages"), l = 0, f = 4, m = 0, _2 = -2, g = -1, b = 4, i = 2, v2 = 8, y = 9, s = 286, a = 30, o = 19, w = 2 * s + 1, k = 15, x = 3, S = 258, z = S + x + 1, C = 42, E = 113, A = 1, I = 2, O = 3, B = 4;
         function R(e2, t2) {
           return e2.msg = n[t2], t2;
         }
@@ -51872,16 +51949,16 @@ function requireJszip_min() {
           e2.pending_buf[e2.pending++] = t2 >>> 8 & 255, e2.pending_buf[e2.pending++] = 255 & t2;
         }
         function L(e2, t2) {
-          var r2, n2, i2 = e2.max_chain_length, s2 = e2.strstart, a2 = e2.prev_length, o2 = e2.nice_match, h3 = e2.strstart > e2.w_size - z ? e2.strstart - (e2.w_size - z) : 0, u2 = e2.window, l2 = e2.w_mask, f2 = e2.prev, c2 = e2.strstart + S, d2 = u2[s2 + a2 - 1], p2 = u2[s2 + a2];
+          var r2, n2, i2 = e2.max_chain_length, s2 = e2.strstart, a2 = e2.prev_length, o2 = e2.nice_match, h3 = e2.strstart > e2.w_size - z ? e2.strstart - (e2.w_size - z) : 0, u2 = e2.window, l2 = e2.w_mask, f2 = e2.prev, c2 = e2.strstart + S, d3 = u2[s2 + a2 - 1], p2 = u2[s2 + a2];
           e2.prev_length >= e2.good_match && (i2 >>= 2), o2 > e2.lookahead && (o2 = e2.lookahead);
           do {
-            if (u2[(r2 = t2) + a2] === p2 && u2[r2 + a2 - 1] === d2 && u2[r2] === u2[s2] && u2[++r2] === u2[s2 + 1]) {
+            if (u2[(r2 = t2) + a2] === p2 && u2[r2 + a2 - 1] === d3 && u2[r2] === u2[s2] && u2[++r2] === u2[s2 + 1]) {
               s2 += 2, r2++;
               do {
               } while (u2[++s2] === u2[++r2] && u2[++s2] === u2[++r2] && u2[++s2] === u2[++r2] && u2[++s2] === u2[++r2] && u2[++s2] === u2[++r2] && u2[++s2] === u2[++r2] && u2[++s2] === u2[++r2] && u2[++s2] === u2[++r2] && s2 < c2);
               if (n2 = S - (c2 - s2), s2 = c2 - S, a2 < n2) {
                 if (e2.match_start = t2, o2 <= (a2 = n2)) break;
-                d2 = u2[s2 + a2 - 1], p2 = u2[s2 + a2];
+                d3 = u2[s2 + a2 - 1], p2 = u2[s2 + a2];
               }
             }
           } while ((t2 = f2[t2 & l2]) > h3 && 0 != --i2);
@@ -51896,7 +51973,7 @@ function requireJszip_min() {
               i2 += f2;
             }
             if (0 === e2.strm.avail_in) break;
-            if (a2 = e2.strm, o2 = e2.window, h3 = e2.strstart + e2.lookahead, u2 = i2, l2 = void 0, l2 = a2.avail_in, u2 < l2 && (l2 = u2), r2 = 0 === l2 ? 0 : (a2.avail_in -= l2, c.arraySet(o2, a2.input, a2.next_in, l2, h3), 1 === a2.state.wrap ? a2.adler = d(a2.adler, o2, l2, h3) : 2 === a2.state.wrap && (a2.adler = p(a2.adler, o2, l2, h3)), a2.next_in += l2, a2.total_in += l2, l2), e2.lookahead += r2, e2.lookahead + e2.insert >= x) for (s2 = e2.strstart - e2.insert, e2.ins_h = e2.window[s2], e2.ins_h = (e2.ins_h << e2.hash_shift ^ e2.window[s2 + 1]) & e2.hash_mask; e2.insert && (e2.ins_h = (e2.ins_h << e2.hash_shift ^ e2.window[s2 + x - 1]) & e2.hash_mask, e2.prev[s2 & e2.w_mask] = e2.head[e2.ins_h], e2.head[e2.ins_h] = s2, s2++, e2.insert--, !(e2.lookahead + e2.insert < x)); ) ;
+            if (a2 = e2.strm, o2 = e2.window, h3 = e2.strstart + e2.lookahead, u2 = i2, l2 = void 0, l2 = a2.avail_in, u2 < l2 && (l2 = u2), r2 = 0 === l2 ? 0 : (a2.avail_in -= l2, c.arraySet(o2, a2.input, a2.next_in, l2, h3), 1 === a2.state.wrap ? a2.adler = d2(a2.adler, o2, l2, h3) : 2 === a2.state.wrap && (a2.adler = p(a2.adler, o2, l2, h3)), a2.next_in += l2, a2.total_in += l2, l2), e2.lookahead += r2, e2.lookahead + e2.insert >= x) for (s2 = e2.strstart - e2.insert, e2.ins_h = e2.window[s2], e2.ins_h = (e2.ins_h << e2.hash_shift ^ e2.window[s2 + 1]) & e2.hash_mask; e2.insert && (e2.ins_h = (e2.ins_h << e2.hash_shift ^ e2.window[s2 + x - 1]) & e2.hash_mask, e2.prev[s2 & e2.w_mask] = e2.head[e2.ins_h], e2.head[e2.ins_h] = s2, s2++, e2.insert--, !(e2.lookahead + e2.insert < x)); ) ;
           } while (e2.lookahead < z && 0 !== e2.strm.avail_in);
         }
         function Z(e2, t2) {
@@ -52046,7 +52123,7 @@ function requireJszip_min() {
           var r2, n2, i2, s2, a2, o2, h3, u2, l2 = t2.length;
           if (!e2 || !e2.state) return _2;
           if (2 === (s2 = (r2 = e2.state).wrap) || 1 === s2 && r2.status !== C || r2.lookahead) return _2;
-          for (1 === s2 && (e2.adler = d(e2.adler, t2, l2, 0)), r2.wrap = 0, l2 >= r2.w_size && (0 === s2 && (D(r2.head), r2.strstart = 0, r2.block_start = 0, r2.insert = 0), u2 = new c.Buf8(r2.w_size), c.arraySet(u2, t2, l2 - r2.w_size, r2.w_size, 0), t2 = u2, l2 = r2.w_size), a2 = e2.avail_in, o2 = e2.next_in, h3 = e2.input, e2.avail_in = l2, e2.next_in = 0, e2.input = t2, j(r2); r2.lookahead >= x; ) {
+          for (1 === s2 && (e2.adler = d2(e2.adler, t2, l2, 0)), r2.wrap = 0, l2 >= r2.w_size && (0 === s2 && (D(r2.head), r2.strstart = 0, r2.block_start = 0, r2.insert = 0), u2 = new c.Buf8(r2.w_size), c.arraySet(u2, t2, l2 - r2.w_size, r2.w_size, 0), t2 = u2, l2 = r2.w_size), a2 = e2.avail_in, o2 = e2.next_in, h3 = e2.input, e2.avail_in = l2, e2.next_in = 0, e2.input = t2, j(r2); r2.lookahead >= x; ) {
             for (n2 = r2.strstart, i2 = r2.lookahead - (x - 1); r2.ins_h = (r2.ins_h << r2.hash_shift ^ r2.window[n2 + x - 1]) & r2.hash_mask, r2.prev[n2 & r2.w_mask] = r2.head[r2.ins_h], r2.head[r2.ins_h] = n2, n2++, --i2; ) ;
             r2.strstart = n2, r2.lookahead = x - 1, j(r2);
           }
@@ -52058,16 +52135,16 @@ function requireJszip_min() {
         };
       }, {}], 48: [function(e, t, r) {
         t.exports = function(e2, t2) {
-          var r2, n, i, s, a, o, h2, u, l, f, c, d, p, m, _2, g, b, v2, y, w, k, x, S, z, C;
-          r2 = e2.state, n = e2.next_in, z = e2.input, i = n + (e2.avail_in - 5), s = e2.next_out, C = e2.output, a = s - (t2 - e2.avail_out), o = s + (e2.avail_out - 257), h2 = r2.dmax, u = r2.wsize, l = r2.whave, f = r2.wnext, c = r2.window, d = r2.hold, p = r2.bits, m = r2.lencode, _2 = r2.distcode, g = (1 << r2.lenbits) - 1, b = (1 << r2.distbits) - 1;
+          var r2, n, i, s, a, o, h2, u, l, f, c, d2, p, m, _2, g, b, v2, y, w, k, x, S, z, C;
+          r2 = e2.state, n = e2.next_in, z = e2.input, i = n + (e2.avail_in - 5), s = e2.next_out, C = e2.output, a = s - (t2 - e2.avail_out), o = s + (e2.avail_out - 257), h2 = r2.dmax, u = r2.wsize, l = r2.whave, f = r2.wnext, c = r2.window, d2 = r2.hold, p = r2.bits, m = r2.lencode, _2 = r2.distcode, g = (1 << r2.lenbits) - 1, b = (1 << r2.distbits) - 1;
           e: do {
-            p < 15 && (d += z[n++] << p, p += 8, d += z[n++] << p, p += 8), v2 = m[d & g];
+            p < 15 && (d2 += z[n++] << p, p += 8, d2 += z[n++] << p, p += 8), v2 = m[d2 & g];
             t: for (; ; ) {
-              if (d >>>= y = v2 >>> 24, p -= y, 0 === (y = v2 >>> 16 & 255)) C[s++] = 65535 & v2;
+              if (d2 >>>= y = v2 >>> 24, p -= y, 0 === (y = v2 >>> 16 & 255)) C[s++] = 65535 & v2;
               else {
                 if (!(16 & y)) {
                   if (0 == (64 & y)) {
-                    v2 = m[(65535 & v2) + (d & (1 << y) - 1)];
+                    v2 = m[(65535 & v2) + (d2 & (1 << y) - 1)];
                     continue t;
                   }
                   if (32 & y) {
@@ -52077,21 +52154,21 @@ function requireJszip_min() {
                   e2.msg = "invalid literal/length code", r2.mode = 30;
                   break e;
                 }
-                w = 65535 & v2, (y &= 15) && (p < y && (d += z[n++] << p, p += 8), w += d & (1 << y) - 1, d >>>= y, p -= y), p < 15 && (d += z[n++] << p, p += 8, d += z[n++] << p, p += 8), v2 = _2[d & b];
+                w = 65535 & v2, (y &= 15) && (p < y && (d2 += z[n++] << p, p += 8), w += d2 & (1 << y) - 1, d2 >>>= y, p -= y), p < 15 && (d2 += z[n++] << p, p += 8, d2 += z[n++] << p, p += 8), v2 = _2[d2 & b];
                 r: for (; ; ) {
-                  if (d >>>= y = v2 >>> 24, p -= y, !(16 & (y = v2 >>> 16 & 255))) {
+                  if (d2 >>>= y = v2 >>> 24, p -= y, !(16 & (y = v2 >>> 16 & 255))) {
                     if (0 == (64 & y)) {
-                      v2 = _2[(65535 & v2) + (d & (1 << y) - 1)];
+                      v2 = _2[(65535 & v2) + (d2 & (1 << y) - 1)];
                       continue r;
                     }
                     e2.msg = "invalid distance code", r2.mode = 30;
                     break e;
                   }
-                  if (k = 65535 & v2, p < (y &= 15) && (d += z[n++] << p, (p += 8) < y && (d += z[n++] << p, p += 8)), h2 < (k += d & (1 << y) - 1)) {
+                  if (k = 65535 & v2, p < (y &= 15) && (d2 += z[n++] << p, (p += 8) < y && (d2 += z[n++] << p, p += 8)), h2 < (k += d2 & (1 << y) - 1)) {
                     e2.msg = "invalid distance too far back", r2.mode = 30;
                     break e;
                   }
-                  if (d >>>= y, p -= y, (y = s - a) < k) {
+                  if (d2 >>>= y, p -= y, (y = s - a) < k) {
                     if (l < (y = k - y) && r2.sane) {
                       e2.msg = "invalid distance too far back", r2.mode = 30;
                       break e;
@@ -52125,7 +52202,7 @@ function requireJszip_min() {
               break;
             }
           } while (n < i && s < o);
-          n -= w = p >> 3, d &= (1 << (p -= w << 3)) - 1, e2.next_in = n, e2.next_out = s, e2.avail_in = n < i ? i - n + 5 : 5 - (n - i), e2.avail_out = s < o ? o - s + 257 : 257 - (s - o), r2.hold = d, r2.bits = p;
+          n -= w = p >> 3, d2 &= (1 << (p -= w << 3)) - 1, e2.next_in = n, e2.next_out = s, e2.avail_in = n < i ? i - n + 5 : 5 - (n - i), e2.avail_out = s < o ? o - s + 257 : 257 - (s - o), r2.hold = d2, r2.bits = p;
         };
       }, {}], 49: [function(e, t, r) {
         var I = e("../utils/common"), O = e("./adler32"), B = e("./crc32"), R = e("./inffast"), T = e("./inftrees"), D = 1, F = 2, N = 0, U = -2, P = 1, n = 852, i = 592;
@@ -52171,7 +52248,7 @@ function requireJszip_min() {
         r.inflateReset = o, r.inflateReset2 = h2, r.inflateResetKeep = a, r.inflateInit = function(e2) {
           return u(e2, 15);
         }, r.inflateInit2 = u, r.inflate = function(e2, t2) {
-          var r2, n2, i2, s2, a2, o2, h3, u2, l2, f2, c2, d, p, m, _2, g, b, v2, y, w, k, x, S, z, C = 0, E = new I.Buf8(4), A = [16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15];
+          var r2, n2, i2, s2, a2, o2, h3, u2, l2, f2, c2, d2, p, m, _2, g, b, v2, y, w, k, x, S, z, C = 0, E = new I.Buf8(4), A = [16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15];
           if (!e2 || !e2.state || !e2.output || !e2.input && 0 !== e2.avail_in) return U;
           12 === (r2 = e2.state).mode && (r2.mode = 13), a2 = e2.next_out, i2 = e2.output, h3 = e2.avail_out, s2 = e2.next_in, n2 = e2.input, o2 = e2.avail_in, u2 = r2.hold, l2 = r2.bits, f2 = o2, c2 = h3, x = N;
           e: for (; ; ) switch (r2.mode) {
@@ -52239,20 +52316,20 @@ function requireJszip_min() {
               } else r2.head && (r2.head.extra = null);
               r2.mode = 6;
             case 6:
-              if (1024 & r2.flags && (o2 < (d = r2.length) && (d = o2), d && (r2.head && (k = r2.head.extra_len - r2.length, r2.head.extra || (r2.head.extra = new Array(r2.head.extra_len)), I.arraySet(r2.head.extra, n2, s2, d, k)), 512 & r2.flags && (r2.check = B(r2.check, n2, d, s2)), o2 -= d, s2 += d, r2.length -= d), r2.length)) break e;
+              if (1024 & r2.flags && (o2 < (d2 = r2.length) && (d2 = o2), d2 && (r2.head && (k = r2.head.extra_len - r2.length, r2.head.extra || (r2.head.extra = new Array(r2.head.extra_len)), I.arraySet(r2.head.extra, n2, s2, d2, k)), 512 & r2.flags && (r2.check = B(r2.check, n2, d2, s2)), o2 -= d2, s2 += d2, r2.length -= d2), r2.length)) break e;
               r2.length = 0, r2.mode = 7;
             case 7:
               if (2048 & r2.flags) {
                 if (0 === o2) break e;
-                for (d = 0; k = n2[s2 + d++], r2.head && k && r2.length < 65536 && (r2.head.name += String.fromCharCode(k)), k && d < o2; ) ;
-                if (512 & r2.flags && (r2.check = B(r2.check, n2, d, s2)), o2 -= d, s2 += d, k) break e;
+                for (d2 = 0; k = n2[s2 + d2++], r2.head && k && r2.length < 65536 && (r2.head.name += String.fromCharCode(k)), k && d2 < o2; ) ;
+                if (512 & r2.flags && (r2.check = B(r2.check, n2, d2, s2)), o2 -= d2, s2 += d2, k) break e;
               } else r2.head && (r2.head.name = null);
               r2.length = 0, r2.mode = 8;
             case 8:
               if (4096 & r2.flags) {
                 if (0 === o2) break e;
-                for (d = 0; k = n2[s2 + d++], r2.head && k && r2.length < 65536 && (r2.head.comment += String.fromCharCode(k)), k && d < o2; ) ;
-                if (512 & r2.flags && (r2.check = B(r2.check, n2, d, s2)), o2 -= d, s2 += d, k) break e;
+                for (d2 = 0; k = n2[s2 + d2++], r2.head && k && r2.length < 65536 && (r2.head.comment += String.fromCharCode(k)), k && d2 < o2; ) ;
+                if (512 & r2.flags && (r2.check = B(r2.check, n2, d2, s2)), o2 -= d2, s2 += d2, k) break e;
               } else r2.head && (r2.head.comment = null);
               r2.mode = 9;
             case 9:
@@ -52318,9 +52395,9 @@ function requireJszip_min() {
             case 15:
               r2.mode = 16;
             case 16:
-              if (d = r2.length) {
-                if (o2 < d && (d = o2), h3 < d && (d = h3), 0 === d) break e;
-                I.arraySet(i2, n2, s2, d, a2), o2 -= d, s2 += d, h3 -= d, a2 += d, r2.length -= d;
+              if (d2 = r2.length) {
+                if (o2 < d2 && (d2 = o2), h3 < d2 && (d2 = h3), 0 === d2) break e;
+                I.arraySet(i2, n2, s2, d2, a2), o2 -= d2, s2 += d2, h3 -= d2, a2 += d2, r2.length -= d2;
                 break;
               }
               r2.mode = 12;
@@ -52366,25 +52443,25 @@ function requireJszip_min() {
                       e2.msg = "invalid bit length repeat", r2.mode = 30;
                       break;
                     }
-                    k = r2.lens[r2.have - 1], d = 3 + (3 & u2), u2 >>>= 2, l2 -= 2;
+                    k = r2.lens[r2.have - 1], d2 = 3 + (3 & u2), u2 >>>= 2, l2 -= 2;
                   } else if (17 === b) {
                     for (z = _2 + 3; l2 < z; ) {
                       if (0 === o2) break e;
                       o2--, u2 += n2[s2++] << l2, l2 += 8;
                     }
-                    l2 -= _2, k = 0, d = 3 + (7 & (u2 >>>= _2)), u2 >>>= 3, l2 -= 3;
+                    l2 -= _2, k = 0, d2 = 3 + (7 & (u2 >>>= _2)), u2 >>>= 3, l2 -= 3;
                   } else {
                     for (z = _2 + 7; l2 < z; ) {
                       if (0 === o2) break e;
                       o2--, u2 += n2[s2++] << l2, l2 += 8;
                     }
-                    l2 -= _2, k = 0, d = 11 + (127 & (u2 >>>= _2)), u2 >>>= 7, l2 -= 7;
+                    l2 -= _2, k = 0, d2 = 11 + (127 & (u2 >>>= _2)), u2 >>>= 7, l2 -= 7;
                   }
-                  if (r2.have + d > r2.nlen + r2.ndist) {
+                  if (r2.have + d2 > r2.nlen + r2.ndist) {
                     e2.msg = "invalid bit length repeat", r2.mode = 30;
                     break;
                   }
-                  for (; d--; ) r2.lens[r2.have++] = k;
+                  for (; d2--; ) r2.lens[r2.have++] = k;
                 }
               }
               if (30 === r2.mode) break;
@@ -52473,14 +52550,14 @@ function requireJszip_min() {
               r2.mode = 25;
             case 25:
               if (0 === h3) break e;
-              if (d = c2 - h3, r2.offset > d) {
-                if ((d = r2.offset - d) > r2.whave && r2.sane) {
+              if (d2 = c2 - h3, r2.offset > d2) {
+                if ((d2 = r2.offset - d2) > r2.whave && r2.sane) {
                   e2.msg = "invalid distance too far back", r2.mode = 30;
                   break;
                 }
-                p = d > r2.wnext ? (d -= r2.wnext, r2.wsize - d) : r2.wnext - d, d > r2.length && (d = r2.length), m = r2.window;
-              } else m = i2, p = a2 - r2.offset, d = r2.length;
-              for (h3 < d && (d = h3), h3 -= d, r2.length -= d; i2[a2++] = m[p++], --d; ) ;
+                p = d2 > r2.wnext ? (d2 -= r2.wnext, r2.wsize - d2) : r2.wnext - d2, d2 > r2.length && (d2 = r2.length), m = r2.window;
+              } else m = i2, p = a2 - r2.offset, d2 = r2.length;
+              for (h3 < d2 && (d2 = h3), h3 -= d2, r2.length -= d2; i2[a2++] = m[p++], --d2; ) ;
               0 === r2.length && (r2.mode = 21);
               break;
             case 26:
@@ -52540,7 +52617,7 @@ function requireJszip_min() {
       }, { "../utils/common": 41, "./adler32": 43, "./crc32": 45, "./inffast": 48, "./inftrees": 50 }], 50: [function(e, t, r) {
         var D = e("../utils/common"), F = [3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 15, 17, 19, 23, 27, 31, 35, 43, 51, 59, 67, 83, 99, 115, 131, 163, 195, 227, 258, 0, 0], N = [16, 16, 16, 16, 16, 16, 16, 16, 17, 17, 17, 17, 18, 18, 18, 18, 19, 19, 19, 19, 20, 20, 20, 20, 21, 21, 21, 21, 16, 72, 78], U = [1, 2, 3, 4, 5, 7, 9, 13, 17, 25, 33, 49, 65, 97, 129, 193, 257, 385, 513, 769, 1025, 1537, 2049, 3073, 4097, 6145, 8193, 12289, 16385, 24577, 0, 0], P = [16, 16, 16, 16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29, 64, 64];
         t.exports = function(e2, t2, r2, n, i, s, a, o) {
-          var h2, u, l, f, c, d, p, m, _2, g = o.bits, b = 0, v2 = 0, y = 0, w = 0, k = 0, x = 0, S = 0, z = 0, C = 0, E = 0, A = null, I = 0, O = new D.Buf16(16), B = new D.Buf16(16), R = null, T = 0;
+          var h2, u, l, f, c, d2, p, m, _2, g = o.bits, b = 0, v2 = 0, y = 0, w = 0, k = 0, x = 0, S = 0, z = 0, C = 0, E = 0, A = null, I = 0, O = new D.Buf16(16), B = new D.Buf16(16), R = null, T = 0;
           for (b = 0; b <= 15; b++) O[b] = 0;
           for (v2 = 0; v2 < n; v2++) O[t2[r2 + v2]]++;
           for (k = g, w = 15; 1 <= w && 0 === O[w]; w--) ;
@@ -52550,9 +52627,9 @@ function requireJszip_min() {
           if (0 < z && (0 === e2 || 1 !== w)) return -1;
           for (B[1] = 0, b = 1; b < 15; b++) B[b + 1] = B[b] + O[b];
           for (v2 = 0; v2 < n; v2++) 0 !== t2[r2 + v2] && (a[B[t2[r2 + v2]]++] = v2);
-          if (d = 0 === e2 ? (A = R = a, 19) : 1 === e2 ? (A = F, I -= 257, R = N, T -= 257, 256) : (A = U, R = P, -1), b = y, c = s, S = v2 = E = 0, l = -1, f = (C = 1 << (x = k)) - 1, 1 === e2 && 852 < C || 2 === e2 && 592 < C) return 1;
+          if (d2 = 0 === e2 ? (A = R = a, 19) : 1 === e2 ? (A = F, I -= 257, R = N, T -= 257, 256) : (A = U, R = P, -1), b = y, c = s, S = v2 = E = 0, l = -1, f = (C = 1 << (x = k)) - 1, 1 === e2 && 852 < C || 2 === e2 && 592 < C) return 1;
           for (; ; ) {
-            for (p = b - S, _2 = a[v2] < d ? (m = 0, a[v2]) : a[v2] > d ? (m = R[T + a[v2]], A[I + a[v2]]) : (m = 96, 0), h2 = 1 << b - S, y = u = 1 << x; i[c + (E >> S) + (u -= h2)] = p << 24 | m << 16 | _2 | 0, 0 !== u; ) ;
+            for (p = b - S, _2 = a[v2] < d2 ? (m = 0, a[v2]) : a[v2] > d2 ? (m = R[T + a[v2]], A[I + a[v2]]) : (m = 96, 0), h2 = 1 << b - S, y = u = 1 << x; i[c + (E >> S) + (u -= h2)] = p << 24 | m << 16 | _2 | 0, 0 !== u; ) ;
             for (h2 = 1 << b - 1; E & h2; ) h2 >>= 1;
             if (0 !== h2 ? (E &= h2 - 1, E += h2) : E = 0, v2++, 0 == --O[b]) {
               if (b === w) break;
@@ -52573,7 +52650,7 @@ function requireJszip_min() {
         function n(e2) {
           for (var t2 = e2.length; 0 <= --t2; ) e2[t2] = 0;
         }
-        var s = 0, a = 29, u = 256, l = u + 1 + a, f = 30, c = 19, _2 = 2 * l + 1, g = 15, d = 16, p = 7, m = 256, b = 16, v2 = 17, y = 18, w = [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 0], k = [0, 0, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13], x = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 7], S = [16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15], z = new Array(2 * (l + 2));
+        var s = 0, a = 29, u = 256, l = u + 1 + a, f = 30, c = 19, _2 = 2 * l + 1, g = 15, d2 = 16, p = 7, m = 256, b = 16, v2 = 17, y = 18, w = [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 0], k = [0, 0, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13], x = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 7], S = [16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15], z = new Array(2 * (l + 2));
         n(z);
         var C = new Array(2 * f);
         n(C);
@@ -52597,7 +52674,7 @@ function requireJszip_min() {
           e2.pending_buf[e2.pending++] = 255 & t2, e2.pending_buf[e2.pending++] = t2 >>> 8 & 255;
         }
         function P(e2, t2, r2) {
-          e2.bi_valid > d - r2 ? (e2.bi_buf |= t2 << e2.bi_valid & 65535, U(e2, e2.bi_buf), e2.bi_buf = t2 >> d - e2.bi_valid, e2.bi_valid += r2 - d) : (e2.bi_buf |= t2 << e2.bi_valid & 65535, e2.bi_valid += r2);
+          e2.bi_valid > d2 - r2 ? (e2.bi_buf |= t2 << e2.bi_valid & 65535, U(e2, e2.bi_buf), e2.bi_buf = t2 >> d2 - e2.bi_valid, e2.bi_valid += r2 - d2) : (e2.bi_buf |= t2 << e2.bi_valid & 65535, e2.bi_valid += r2);
         }
         function L(e2, t2, r2) {
           P(e2, r2[2 * t2], r2[2 * t2 + 1]);
@@ -52644,9 +52721,9 @@ function requireJszip_min() {
           for (t2.max_code = u2, r2 = e2.heap_len >> 1; 1 <= r2; r2--) G(e2, s2, r2);
           for (i2 = h3; r2 = e2.heap[1], e2.heap[1] = e2.heap[e2.heap_len--], G(e2, s2, 1), n2 = e2.heap[1], e2.heap[--e2.heap_max] = r2, e2.heap[--e2.heap_max] = n2, s2[2 * i2] = s2[2 * r2] + s2[2 * n2], e2.depth[i2] = (e2.depth[r2] >= e2.depth[n2] ? e2.depth[r2] : e2.depth[n2]) + 1, s2[2 * r2 + 1] = s2[2 * n2 + 1] = i2, e2.heap[1] = i2++, G(e2, s2, 1), 2 <= e2.heap_len; ) ;
           e2.heap[--e2.heap_max] = e2.heap[1], (function(e3, t3) {
-            var r3, n3, i3, s3, a3, o3, h4 = t3.dyn_tree, u3 = t3.max_code, l2 = t3.stat_desc.static_tree, f2 = t3.stat_desc.has_stree, c2 = t3.stat_desc.extra_bits, d2 = t3.stat_desc.extra_base, p2 = t3.stat_desc.max_length, m2 = 0;
+            var r3, n3, i3, s3, a3, o3, h4 = t3.dyn_tree, u3 = t3.max_code, l2 = t3.stat_desc.static_tree, f2 = t3.stat_desc.has_stree, c2 = t3.stat_desc.extra_bits, d3 = t3.stat_desc.extra_base, p2 = t3.stat_desc.max_length, m2 = 0;
             for (s3 = 0; s3 <= g; s3++) e3.bl_count[s3] = 0;
-            for (h4[2 * e3.heap[e3.heap_max] + 1] = 0, r3 = e3.heap_max + 1; r3 < _2; r3++) p2 < (s3 = h4[2 * h4[2 * (n3 = e3.heap[r3]) + 1] + 1] + 1) && (s3 = p2, m2++), h4[2 * n3 + 1] = s3, u3 < n3 || (e3.bl_count[s3]++, a3 = 0, d2 <= n3 && (a3 = c2[n3 - d2]), o3 = h4[2 * n3], e3.opt_len += o3 * (s3 + a3), f2 && (e3.static_len += o3 * (l2[2 * n3 + 1] + a3)));
+            for (h4[2 * e3.heap[e3.heap_max] + 1] = 0, r3 = e3.heap_max + 1; r3 < _2; r3++) p2 < (s3 = h4[2 * h4[2 * (n3 = e3.heap[r3]) + 1] + 1] + 1) && (s3 = p2, m2++), h4[2 * n3 + 1] = s3, u3 < n3 || (e3.bl_count[s3]++, a3 = 0, d3 <= n3 && (a3 = c2[n3 - d3]), o3 = h4[2 * n3], e3.opt_len += o3 * (s3 + a3), f2 && (e3.static_len += o3 * (l2[2 * n3 + 1] + a3)));
             if (0 !== m2) {
               do {
                 for (s3 = p2 - 1; 0 === e3.bl_count[s3]; ) s3--;
@@ -52733,7 +52810,7 @@ function requireJszip_min() {
                     e4 = false;
                   }, r2.postMessage("", "*"), r2.onmessage = t3, e4;
                 }
-              })() ? (a = "setImmediate$" + Math.random() + "$", r2.addEventListener ? r2.addEventListener("message", d, false) : r2.attachEvent("onmessage", d), function(e4) {
+              })() ? (a = "setImmediate$" + Math.random() + "$", r2.addEventListener ? r2.addEventListener("message", d2, false) : r2.attachEvent("onmessage", d2), function(e4) {
                 r2.postMessage(a + e4, "*");
               }) : r2.MessageChannel ? ((t2 = new MessageChannel()).port1.onmessage = function(e4) {
                 c(e4.data);
@@ -52788,7 +52865,7 @@ function requireJszip_min() {
                 }
               }
             }
-            function d(e4) {
+            function d2(e4) {
               e4.source === r2 && "string" == typeof e4.data && 0 === e4.data.indexOf(a) && c(+e4.data.slice(a.length));
             }
           })("undefined" == typeof self ? void 0 === e2 ? this : e2 : self);
@@ -66995,6 +67072,633 @@ function _sfc_render$O(_ctx, _cache, $props, $setup, $data, $options) {
   ]);
 }
 const CommentAdd = /* @__PURE__ */ _export_sfc$1(_sfc_main$O, [["render", _sfc_render$O], ["__file", "/var/www/nextcloud/apps/agora/src/components/Comments/CommentAdd.vue"]]);
+const OPTION_FAMILIES = {
+  "debate": {
+    key: "debate",
+    name: "Debate",
+    label: "Debate",
+    description: "Debate positions, arguments, and alternatives",
+    icon: "Discussion",
+    color: "#6aa84f",
+    iconComponent: InquiryGeneralIcons$1.Discussion
+  },
+  "structure": {
+    key: "structure",
+    name: "Structure",
+    label: "Structure",
+    description: "Structured documents with chapters and articles",
+    icon: "Settings",
+    color: "#3c8dbc",
+    iconComponent: InquiryGeneralIcons$1.Settings
+  },
+  "consensus": {
+    key: "consensus",
+    name: "Consensus",
+    label: "Consensus",
+    description: "Consultation questions and consensus building",
+    icon: "ThumbUp",
+    color: "#f1c232",
+    iconComponent: InquiryGeneralIcons$1.ThumbUp
+  },
+  "decision": {
+    key: "decision",
+    name: "Decision",
+    label: "Decision",
+    description: "Official decisions and results",
+    icon: "Checkmark",
+    color: "#cc0000",
+    iconComponent: InquiryGeneralIcons$1.Checkmark
+  },
+  "proposal": {
+    key: "proposal",
+    name: "Proposal",
+    label: "Proposal",
+    description: "Initial proposals and suggestions",
+    icon: "Lightbulb",
+    color: "#e69138",
+    iconComponent: InquiryGeneralIcons$1.Lightbulb
+  },
+  "question": {
+    key: "question",
+    name: "Question",
+    label: "Question",
+    description: "Questions and polls",
+    icon: "Question",
+    color: "#6aa84f",
+    iconComponent: InquiryGeneralIcons$1.Question
+  }
+};
+const DEFAULT_FAMILY = {
+  key: "default",
+  name: "Options",
+  label: "Options",
+  description: "Various option types",
+  icon: "File",
+  color: "#999999",
+  iconComponent: InquiryGeneralIcons$1.File
+};
+function getFamily(key) {
+  return OPTION_FAMILIES[key] || DEFAULT_FAMILY;
+}
+const markedPrefix = {
+  prefix: "opt-"
+};
+const useOptionStore = defineStore("option", {
+  state: () => ({
+    id: 0,
+    targetId: 0,
+    parentId: 0,
+    type: "debate",
+    text: "",
+    title: "",
+    textSafe: "",
+    status: "draft",
+    sortOrder: 0,
+    configuration: {
+      access: "private",
+      showResults: "always",
+      allowComment: null,
+      supportFeature: "none",
+      family: "deliberative"
+    },
+    miscFields: {},
+    ownedGroup: "",
+    owner: createDefault(),
+    optionGroups: [],
+    currentUserStatus: {
+      isInvolved: false,
+      hasSupported: false,
+      supportValue: null,
+      isLoggedIn: false,
+      isOwner: false,
+      shareToken: "",
+      userId: "",
+      userRole: "",
+      optionGroupUserShares: []
+    },
+    permissions: {
+      view: false,
+      edit: false,
+      delete: false,
+      archive: false,
+      support: false,
+      comment: false,
+      addShares: false,
+      addSharesExternal: false,
+      changeForeignSupports: false,
+      changeOwner: false,
+      reorderOptions: false,
+      seeResults: false,
+      seeUsernames: false,
+      subscribe: false,
+      takeOver: false,
+      addOption: false,
+      confirmOption: false
+    },
+    children: [],
+    meta: {
+      chunking: {
+        size: 0,
+        loaded: 0
+      },
+      status: "loaded"
+    },
+    inquiryInfo: {
+      targetId: 0,
+      inquiryTitle: "",
+      inquiryType: "",
+      inquiryAccess: ""
+    },
+    _typeInfo: void 0,
+    _familyInfo: void 0
+  }),
+  getters: {
+    // Get option type definition from session store
+    typeInfo() {
+      const sessionStore = useSessionStore();
+      const optionTypes = sessionStore.appSettings?.inquiryOptionTypeTab || [];
+      return optionTypes.find(
+        (opt) => opt.option_type === this.type || opt.optionType === this.type
+      );
+    },
+    familyInfo() {
+      if (!this.typeInfo) return void 0;
+      const family = getFamily(this.typeInfo.family || "default");
+      return {
+        name: family.name,
+        color: family.color,
+        icon: family.icon,
+        description: family.description
+      };
+    },
+    // Get type icon - returns component
+    typeIcon() {
+      const iconName = this.typeInfo?.icon || this.familyInfo?.icon || "File";
+      return InquiryGeneralIcons[iconName] || InquiryGeneralIcons.File;
+    },
+    // Get type display name
+    typeDisplayName() {
+      return this.typeInfo?.label || this.typeInfo?.name || this.type;
+    },
+    // Get type color
+    typeColor() {
+      return this.typeInfo?.color || this.familyInfo?.color || "#999999";
+    },
+    // Get type description
+    typeDescription() {
+      return this.typeInfo?.description || this.familyInfo?.description || "";
+    },
+    // Get allowed features for this option type
+    typeFeatures() {
+      const features = [];
+      const typeInfo = this.typeInfo;
+      if (typeInfo?.allow_comment === 1 || typeInfo?.allow_comment === true) {
+        features.push("comments");
+      }
+      if (typeInfo?.support_feature && typeInfo.support_feature !== "none") {
+        features.push("supports");
+      }
+      if (typeInfo?.allow_response && Array.isArray(typeInfo.allow_response) && typeInfo.allow_response.length > 0) {
+        features.push("children");
+      }
+      return features;
+    },
+    // Check if option type supports a specific feature
+    supportsFeature: (state) => (feature) => state.typeFeatures.includes(feature),
+    // Get allowed child types for this option
+    allowedChildTypes() {
+      const typeInfo = this.typeInfo;
+      if (!typeInfo?.allow_response) return [];
+      if (Array.isArray(typeInfo.allow_response)) {
+        return typeInfo.allow_response;
+      }
+      if (typeof typeInfo.allow_response === "string") {
+        try {
+          return JSON.parse(typeInfo.allow_response);
+        } catch {
+          return [];
+        }
+      }
+      return [];
+    },
+    // Check if this option can have children
+    canHaveChildren() {
+      return this.allowedChildTypes.length > 0;
+    },
+    // Check if a specific child type is allowed
+    isChildTypeAllowed: (state) => (childType) => state.allowedChildTypes.includes(childType),
+    // Get misc fields configuration for this option type
+    miscFieldsConfig() {
+      const typeInfo = this.typeInfo;
+      if (!typeInfo?.fields) return [];
+      if (Array.isArray(typeInfo.fields)) {
+        return typeInfo.fields.map((field) => {
+          if (typeof field === "string") {
+            return {
+              key: field,
+              type: "text",
+              label: field.split("_").map(
+                (word) => word.charAt(0).toUpperCase() + word.slice(1)
+              ).join(" "),
+              required: false
+            };
+          }
+          return field;
+        });
+      }
+      return [];
+    },
+    // Check if option has required misc fields
+    hasRequiredMiscFields() {
+      return this.miscFieldsConfig.some((field) => field.required);
+    },
+    // Check if all required misc fields are filled
+    allRequiredMiscFieldsFilled() {
+      return this.miscFieldsConfig.filter((field) => field.required).every((field) => {
+        const value = this.miscFields[field.key];
+        return value !== void 0 && value !== null && value !== "";
+      });
+    },
+    // Status checks
+    isClosed() {
+      return this.status === "archived" || this.status === "deleted";
+    },
+    isPublished() {
+      return this.status === "published";
+    },
+    isDraft() {
+      return this.status === "draft";
+    },
+    // Permission checks with type features
+    canComment() {
+      return this.permissions.comment && this.configuration.allowComment === 1 && this.supportsFeature("comments");
+    },
+    canSupport() {
+      return this.permissions.support && this.configuration.supportFeature !== "none" && this.supportsFeature("supports");
+    },
+    canAddChildren() {
+      return this.permissions.addOption && this.canHaveChildren && !this.isClosed;
+    },
+    hasChildren() {
+      return this.children && this.children.length > 0;
+    },
+    // Type-specific checks
+    isArgumentFor() {
+      return this.type === "argument_for";
+    },
+    isArgumentAgainst() {
+      return this.type === "argument_against";
+    },
+    isDebateArgument() {
+      return this.isArgumentFor || this.isArgumentAgainst;
+    },
+    isProposal() {
+      return this.type === "proposal";
+    },
+    isQuestion() {
+      return this.type === "question";
+    },
+    isIdea() {
+      return this.type === "idea";
+    },
+    // Text rendering
+    textMarkDown() {
+      d.use(gfmHeadingId(markedPrefix));
+      return purify.sanitize(d.parse(this.text).toString());
+    },
+    formattedCreatedDate() {
+      return moment.unix(this.meta.chunking.loaded).format("LLL");
+    },
+    formattedUpdatedDate() {
+      return moment.unix(this.meta.chunking.size).format("LLL");
+    },
+    // Parent inquiry information
+    parentInquiry() {
+      const inquiryStore = useInquiryStore();
+      return inquiryStore.id === this.targetId ? inquiryStore : null;
+    },
+    belongsToCurrentInquiry() {
+      const inquiryStore = useInquiryStore();
+      return this.targetId === inquiryStore.id;
+    },
+    // Validation
+    isValid() {
+      if (this.text.trim() === "") return false;
+      if (this.hasRequiredMiscFields && !this.allRequiredMiscFieldsFilled) return false;
+      return true;
+    },
+    // Get default status from type definition
+    defaultStatus() {
+      return this.typeInfo?.defaultStatus || "draft";
+    },
+    // Get available status transitions for this type
+    availableStatuses() {
+      const baseStatuses = ["draft", "published"];
+      if (this.typeInfo?.features?.includes("archivable")) {
+        baseStatuses.push("archived");
+      }
+      return baseStatuses;
+    },
+    // Check if status can be changed to target status
+    canChangeStatusTo: (state) => (targetStatus) => state.availableStatuses.includes(targetStatus)
+  },
+  actions: {
+    reset() {
+      this.$reset();
+    },
+    // Initialize type info after loading option
+    initializeTypeInfo() {
+      const sessionStore = useSessionStore();
+      this._typeInfo = sessionStore.appSettings?.optionTypesTab?.[this.type];
+      if (this._typeInfo) {
+        this._familyInfo = {
+          name: this.familyInfo?.name || "",
+          color: this.familyInfo?.color || "",
+          icon: this.familyInfo?.icon || "",
+          description: this.familyInfo?.description || ""
+        };
+      }
+    },
+    async load(optionId = null) {
+      const sessionStore = useSessionStore();
+      const sharesStore = useSharesStore();
+      const commentsStore = useCommentsStore();
+      const supportsStore = useSupportsStore();
+      const subscriptionStore = useSubscriptionStore();
+      this.meta.status = "loading";
+      try {
+        const response = await (() => {
+          if (sessionStore.route.name === "publicOption") {
+            return publicInquiry.getOption(sessionStore.route.params.token);
+          }
+          if (sessionStore.route.name === "option") {
+            return options.getFullOption(optionId ?? sessionStore.currentOptionId);
+          }
+        })();
+        if (!response) {
+          this.$reset();
+          return;
+        }
+        this.$patch(response.data.option);
+        sharesStore.shares = response.data.shares;
+        commentsStore.comments = response.data.comments;
+        supportsStore.supports = response.data.supports;
+        subscriptionStore.subscribed = response.data.subscribed;
+        if (response.data.option.owner.id === sessionStore.currentUser.id)
+          sessionStore.currentUser.isOwner = true;
+        else sessionStore.currentUser.isOwner = false;
+        this.initializeTypeInfo();
+        this.meta.status = "loaded";
+        return response;
+      } catch (error) {
+        if (error?.code === "ERR_CANCELED") {
+          return;
+        }
+        this.meta.status = "error";
+        Logger.error("Error loading option", { error });
+        throw error;
+      }
+    },
+    async loadChildren() {
+      try {
+        const response = await options.getChildOptions(this.id);
+        this.children = response.data.options;
+        this.children.forEach((child) => {
+          const sessionStore = useSessionStore();
+          child._typeInfo = sessionStore.appSettings?.optionTypesTab?.[child.type];
+        });
+      } catch (error) {
+        if (error?.code === "ERR_CANCELED") {
+          return;
+        }
+        Logger.error("Error loading option children", { error });
+        throw error;
+      }
+    },
+    async create(payload) {
+      const inquiryStore = useInquiryStore();
+      useSessionStore();
+      if (payload.parentId) {
+        const parentOption = await this.getOptionById(payload.parentId);
+        if (parentOption && parentOption.typeInfo) {
+          if (parentOption.typeInfo.allowed_child_types && !parentOption.typeInfo.allowed_child_types.includes(payload.type)) {
+            showError$1(translate("agora", "This option type cannot be added as a child to the selected parent"));
+            return;
+          }
+        }
+      }
+      try {
+        console.log(" OD LETS CREATE IT ", payload);
+        const defaultMiscFields = this.getDefaultMiscFieldsForType(payload.type);
+        const mergedMiscFields = { ...defaultMiscFields, ...payload.miscFields || {} };
+        const response = await options.createOption({
+          text: payload.text,
+          type: payload.type,
+          targetId: payload.targetId || inquiryStore.id,
+          parentId: payload.parentId || 0,
+          ownedGroup: payload.ownedGroup || "",
+          family: payload.family || "",
+          access: payload.access || "private",
+          status: payload.status || "draft",
+          supportFeature: payload.supportFeature || "none",
+          allowComment: payload.allowComment || 0,
+          miscFields: mergedMiscFields
+        });
+        const newOption = response.data.option;
+        return newOption;
+      } catch (error) {
+        if (error?.code === "ERR_CANCELED") {
+          return;
+        }
+        Logger.error("Error creating option:", {
+          error,
+          payload,
+          state: this.$state
+        });
+        throw error;
+      } finally {
+        if (inquiryStore.id) {
+          inquiryStore.load();
+        }
+      }
+    },
+    // Get default misc fields for a type
+    getDefaultMiscFieldsForType(typeKey) {
+      const sessionStore = useSessionStore();
+      const typeInfo = sessionStore.appSettings?.optionTypesTab?.[typeKey];
+      const defaults2 = {};
+      if (typeInfo?.miscFields) {
+        typeInfo.miscFields.forEach((field) => {
+          if (field.default !== void 0) {
+            defaults2[field.key] = field.default;
+          }
+        });
+      }
+      return defaults2;
+    },
+    // Validate misc fields against type configuration
+    validateMiscFields() {
+      const errors2 = [];
+      if (!this.typeInfo) {
+        return { valid: true, errors: errors2 };
+      }
+      this.miscFieldsConfig.forEach((field) => {
+        if (field.required) {
+          const value = this.miscFields[field.key];
+          if (value === void 0 || value === null || value === "") {
+            errors2.push(translate("agora", "{field} is required", { field: field.label }));
+          }
+        }
+        if (field.type === "number" && this.miscFields[field.key]) {
+          const numValue = Number(this.miscFields[field.key]);
+          if (isNaN(numValue)) {
+            errors2.push(translate("agora", "{field} must be a number", { field: field.label }));
+          }
+        }
+      });
+      return {
+        valid: errors2.length === 0,
+        errors: errors2
+      };
+    },
+    async update(payload) {
+      const inquiryStore = useInquiryStore();
+      const sessionStore = useSessionStore();
+      if (payload.type && payload.type !== this.type) {
+        const newTypeInfo = sessionStore.appSettings?.optionTypesTab?.[payload.type];
+        if (!newTypeInfo) {
+          showError$1(translate("agora", "Invalid option type"));
+          return;
+        }
+        if (payload.miscFields) {
+          const newTypeMiscConfig = newTypeInfo.miscFields || [];
+          const requiredFields = newTypeMiscConfig.filter((f) => f.required);
+          const missingFields = requiredFields.filter((f) => !(f.key in payload.miscFields));
+          if (missingFields.length > 0) {
+            showError$1(translate("agora", "Missing required fields for new type: {fields}", {
+              fields: missingFields.map((f) => f.label).join(", ")
+            }));
+            return;
+          }
+        }
+      }
+      const debouncedLoad = this.$debounce(async () => {
+        try {
+          const response = await options.updateOption(payload.id || this.id, {
+            text: payload.text,
+            type: payload.type,
+            targetId: payload.targetId,
+            parentId: payload.parentId,
+            ownedGroup: payload.ownedGroup,
+            access: payload.access,
+            showResults: payload.showResults,
+            allowComment: payload.allowComment,
+            supportFeature: payload.supportFeature,
+            family: payload.family,
+            status: payload.status,
+            miscFields: payload.miscFields
+          });
+          const updatedOption = response.data.option;
+          if (payload.type && payload.type !== this.type) {
+            updatedOption._typeInfo = sessionStore.appSettings?.optionTypesTab?.[payload.type];
+          }
+          return updatedOption;
+        } catch (error) {
+          if (error?.code === "ERR_CANCELED") {
+            return;
+          }
+          Logger.error("Error updating option", {
+            error,
+            state: this.$state
+          });
+          throw error;
+        } finally {
+          this.load();
+          if (inquiryStore.id) {
+            inquiryStore.load();
+          }
+        }
+      }, 500);
+      debouncedLoad();
+    },
+    // Helper method to get option by ID (would need to be implemented)
+    async getOptionById(optionId) {
+      return void 0;
+    },
+    // ... rest of the actions remain similar but enhanced with type info
+    // (write, delete, archive, restore, clone, transfer, etc.)
+    // All should call initializeTypeInfo() after loading/updating
+    // Enhanced write action with type validation
+    write() {
+      const inquiryStore = useInquiryStore();
+      const debouncedLoad = this.$debounce(async () => {
+        if (this.text === "") {
+          showError$1(translate("agora", "Text must not be empty!"));
+          return;
+        }
+        const validation = this.validateMiscFields();
+        if (!validation.valid) {
+          showError$1(translate("agora", "Validation errors: {errors}", {
+            errors: validation.errors.join(", ")
+          }));
+          return;
+        }
+        try {
+          const response = await options.updateOptionConfig(this.id, this.configuration);
+          this.$patch(response.data.option);
+          this.initializeTypeInfo();
+          emit(Event$1.UpdateOption, {
+            store: "option",
+            message: translate("agora", "Option updated")
+          });
+        } catch (error) {
+          if (error?.code === "ERR_CANCELED") {
+            return;
+          }
+          Logger.error("Error updating option:", {
+            error,
+            option: this.$state
+          });
+          showError$1(translate("agora", "Error writing option"));
+          throw error;
+        } finally {
+          this.load();
+          if (inquiryStore.id) {
+            inquiryStore.load();
+          }
+        }
+      }, 500);
+      debouncedLoad();
+    },
+    // Enhanced updateMiscField with type validation
+    async updateMiscField(key, value) {
+      const fieldConfig = this.miscFieldsConfig.find((f) => f.key === key);
+      if (fieldConfig) {
+        if (fieldConfig.type === "number" && value && isNaN(Number(value))) {
+          showError$1(translate("agora", "{field} must be a number", { field: fieldConfig.label }));
+          return;
+        }
+        if (fieldConfig.options && !fieldConfig.options.some((opt) => opt.value === value)) {
+          showError$1(translate("agora", "Invalid value for {field}", { field: fieldConfig.label }));
+          return;
+        }
+      }
+      try {
+        await options.updateOptionMiscField(this.id, { key, value });
+        this.miscFields[key] = value;
+      } catch (error) {
+        if (error?.code === "ERR_CANCELED") {
+          return;
+        }
+        Logger.error("Error updating option misc field:", {
+          error,
+          state: this.$state
+        });
+        throw error;
+      }
+    }
+  }
+});
 const _sfc_main$N = /* @__PURE__ */ defineComponent({
   __name: "AddOptionModal",
   props: {
@@ -67008,11 +67712,12 @@ const _sfc_main$N = /* @__PURE__ */ defineComponent({
     const props2 = __props;
     const emit2 = __emit;
     const optionsStore = useOptionsStore();
+    const optionStore = useOptionStore();
     const sessionStore = useSessionStore();
     const visible = ref(true);
     const formData = ref({
       label: "",
-      description: ""
+      text: ""
     });
     const additionalFormData = ref({});
     const formErrors = ref([]);
@@ -67036,7 +67741,7 @@ const _sfc_main$N = /* @__PURE__ */ defineComponent({
     });
     const optionTypeDescription = computed(() => {
       if (!optionTypeData.value) return "";
-      return optionTypeData.value.description || "";
+      return optionTypeData.value.text || "";
     });
     const optionTypeIcon = computed(() => {
       if (!optionTypeData.value?.icon) return InquiryOptionIcons.File;
@@ -67126,8 +67831,8 @@ const _sfc_main$N = /* @__PURE__ */ defineComponent({
     });
     const formValid = computed(() => {
       formErrors.value = [];
-      if (!formData.value.label.trim()) {
-        formErrors.value.push(translate("agora", "Title is required"));
+      if (!formData.value.text.trim()) {
+        formErrors.value.push(translate("agora", "at least a text is required"));
         return false;
       }
       for (const field of additionalFields.value) {
@@ -67154,10 +67859,11 @@ const _sfc_main$N = /* @__PURE__ */ defineComponent({
         id: 0,
         type: props2.optionType || "",
         label: formData.value.label || translate("agora", "Preview Title"),
-        description: formData.value.description || translate("agora", "Preview description..."),
+        text: formData.value.text || translate("agora", "Preview text..."),
         parentId: props2.parentId || 0,
+        family: optionTypeData.value?.family,
         created: (/* @__PURE__ */ new Date()).toISOString(),
-        author: {
+        owner: {
           id: sessionStore.currentUser?.id || "",
           displayName: sessionStore.currentUser?.displayName || translate("agora", "Current User")
         },
@@ -67239,10 +67945,12 @@ const _sfc_main$N = /* @__PURE__ */ defineComponent({
       if (!formValid.value || !props2.optionType) return;
       try {
         const optionData = {
-          inquiryId: props2.inquiryId,
+          targetId: props2.inquiryId,
           type: props2.optionType,
-          label: formData.value.label.trim(),
-          description: formData.value.description.trim() || null,
+          allowComment: optionTypeData.value.allow_comment,
+          supportFeature: optionTypeData.value.support_feature,
+          family: optionTypeData?.value.family,
+          text: formData.value.text.trim() || null,
           parentId: props2.parentId || null,
           fields: {}
         };
@@ -67260,28 +67968,9 @@ const _sfc_main$N = /* @__PURE__ */ defineComponent({
           }
         }
         console.log("Creating option:", optionData);
-        const newOption = {
-          id: Date.now(),
-          // Temporary ID
-          inquiryId: props2.inquiryId,
-          type: props2.optionType,
-          label: optionData.label,
-          description: optionData.description,
-          parentId: optionData.parentId,
-          fields: optionData.fields,
-          created: (/* @__PURE__ */ new Date()).toISOString(),
-          modified: (/* @__PURE__ */ new Date()).toISOString(),
-          author: {
-            id: sessionStore.currentUser?.id || "",
-            displayName: sessionStore.currentUser?.displayName || translate("agora", "Current User")
-          },
-          support_for: 0,
-          support_against: 0,
-          comment_count: 0,
-          status: "draft"
-        };
+        const newOption = await optionStore.create(optionData);
         emit2("created", newOption);
-        formData.value = { label: "", description: "" };
+        formData.value = { label: "", text: "" };
         additionalFormData.value = {};
       } catch (error) {
         console.error("Error creating option:", error);
@@ -67299,18 +67988,22 @@ const _sfc_main$N = /* @__PURE__ */ defineComponent({
         if (input) input.focus();
       }, 100);
     });
-    const __returned__ = { props: props2, emit: emit2, optionsStore, sessionStore, visible, formData, additionalFormData, formErrors, modalTitle, modalSubtitle, optionTypeData, optionTypeLabel, optionTypeDescription, optionTypeIcon, optionTypeColor, parentOption, allowedResponses, hasSupportFeature, supportFeatureLabel, allowComment, hasStatuses, statusesList, hasAdditionalFields, additionalFields, optionTypeHelp, formValid, previewOption, getParentIcon, getOptionTypeIcon, getOptionTypeLabel, getFieldLabel, getSelectOptions, getStatusIcon, initializeAdditionalFields, createOption, get t() {
+    const __returned__ = { props: props2, emit: emit2, optionsStore, optionStore, sessionStore, visible, formData, additionalFormData, formErrors, modalTitle, modalSubtitle, optionTypeData, optionTypeLabel, optionTypeDescription, optionTypeIcon, optionTypeColor, parentOption, allowedResponses, hasSupportFeature, supportFeatureLabel, allowComment, hasStatuses, statusesList, hasAdditionalFields, additionalFields, optionTypeHelp, formValid, previewOption, getParentIcon, getOptionTypeIcon, getOptionTypeLabel, getFieldLabel, getSelectOptions, getStatusIcon, initializeAdditionalFields, createOption, get t() {
       return translate;
     }, get NcModal() {
       return NcModal;
     }, get NcButton() {
       return NcButton;
+    }, get NcRichContenteditable() {
+      return NcRichContenteditable;
     }, get NcTextField() {
       return _sfc_main$1Q;
     }, get NcCheckboxRadioSwitch() {
       return NcCheckboxRadioSwitch;
     }, get NcSelect() {
       return NcSelect;
+    }, get NcTextArea() {
+      return NcTextArea;
     }, get InquiryOptionIcons() {
       return InquiryOptionIcons;
     }, OptionCard };
@@ -67356,10 +68049,13 @@ const _hoisted_21$h = {
 };
 const _hoisted_22$h = { class: "feature-label" };
 const _hoisted_23$f = { class: "form-fields" };
-const _hoisted_24$e = { class: "form-field" };
+const _hoisted_24$e = {
+  key: 0,
+  class: "form-field"
+};
 const _hoisted_25$e = { for: "option-label" };
 const _hoisted_26$e = { class: "form-field" };
-const _hoisted_27$e = { for: "option-description" };
+const _hoisted_27$e = { for: "option-text" };
 const _hoisted_28$e = ["for"];
 const _hoisted_29$e = {
   key: 0,
@@ -67541,7 +68237,7 @@ function _sfc_render$N(_ctx, _cache, $props, $setup, $data, $options) {
               createCommentVNode(" Form fields "),
               createBaseVNode("div", _hoisted_23$f, [
                 createCommentVNode(" Label "),
-                createBaseVNode("div", _hoisted_24$e, [
+                $setup.optionTypeData.use_title ? (openBlock(), createElementBlock("div", _hoisted_24$e, [
                   createBaseVNode(
                     "label",
                     _hoisted_25$e,
@@ -67549,16 +68245,15 @@ function _sfc_render$N(_ctx, _cache, $props, $setup, $data, $options) {
                     1
                     /* TEXT */
                   ),
-                  createVNode($setup["NcTextField"], {
+                  createVNode($setup["NcRichContenteditable"], {
                     id: "option-label",
                     modelValue: $setup.formData.label,
                     "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => $setup.formData.label = $event),
                     placeholder: $setup.t("agora", "Enter a title for this option"),
-                    required: "",
                     "full-width": "",
-                    onKeyup: _cache[1] || (_cache[1] = withKeys(($event) => $setup.formData.description && $setup.createOption(), ["enter"]))
+                    onKeyup: _cache[1] || (_cache[1] = withKeys(($event) => $setup.formData.text && $setup.createOption(), ["enter"]))
                   }, null, 8, ["modelValue", "placeholder"])
-                ]),
+                ])) : createCommentVNode("v-if", true),
                 createCommentVNode(" Description "),
                 createBaseVNode("div", _hoisted_26$e, [
                   createBaseVNode(
@@ -67568,12 +68263,13 @@ function _sfc_render$N(_ctx, _cache, $props, $setup, $data, $options) {
                     1
                     /* TEXT */
                   ),
-                  createVNode($setup["NcTextField"], {
-                    id: "option-description",
-                    modelValue: $setup.formData.description,
-                    "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => $setup.formData.description = $event),
-                    placeholder: $setup.t("agora", "Add a description (optional)"),
-                    type: "textarea",
+                  createVNode($setup["NcRichContenteditable"], {
+                    id: "option-text",
+                    modelValue: $setup.formData.text,
+                    "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => $setup.formData.text = $event),
+                    placeholder: $setup.t("agora", "Add a text (optional)"),
+                    multiline: true,
+                    required: "",
                     rows: 4,
                     "full-width": "",
                     onKeydown: withKeys(withModifiers($setup.createOption, ["ctrl"]), ["enter"])
@@ -67582,7 +68278,7 @@ function _sfc_render$N(_ctx, _cache, $props, $setup, $data, $options) {
                 createCommentVNode(" Additional fields based on option type "),
                 $setup.hasAdditionalFields ? (openBlock(true), createElementBlock(
                   Fragment$1,
-                  { key: 0 },
+                  { key: 1 },
                   renderList($setup.additionalFields, (field) => {
                     return openBlock(), createElementBlock("div", {
                       key: field.key,
@@ -67599,7 +68295,7 @@ function _sfc_render$N(_ctx, _cache, $props, $setup, $data, $options) {
                         field.required ? (openBlock(), createElementBlock("span", _hoisted_29$e, "*")) : createCommentVNode("v-if", true)
                       ], 8, _hoisted_28$e),
                       createCommentVNode(" Text field "),
-                      field.type === "text" ? (openBlock(), createBlock($setup["NcTextField"], {
+                      field.type === "text" ? (openBlock(), createBlock($setup["NcRichContenteditable"], {
                         key: 0,
                         id: `field-${field.key}`,
                         modelValue: $setup.additionalFormData[field.key],
@@ -67612,7 +68308,7 @@ function _sfc_render$N(_ctx, _cache, $props, $setup, $data, $options) {
                         { key: 1 },
                         [
                           createCommentVNode(" Textarea "),
-                          createVNode($setup["NcTextField"], {
+                          createVNode($setup["NcTextArea"], {
                             id: `field-${field.key}`,
                             modelValue: $setup.additionalFormData[field.key],
                             "onUpdate:modelValue": ($event) => $setup.additionalFormData[field.key] = $event,
@@ -67666,12 +68362,11 @@ function _sfc_render$N(_ctx, _cache, $props, $setup, $data, $options) {
                         { key: 4 },
                         [
                           createCommentVNode(" JSON (textarea for now) "),
-                          createVNode($setup["NcTextField"], {
+                          createVNode($setup["NcTextArea"], {
                             id: `field-${field.key}`,
                             modelValue: $setup.additionalFormData[field.key],
                             "onUpdate:modelValue": ($event) => $setup.additionalFormData[field.key] = $event,
                             placeholder: field.placeholder || $setup.t("agora", "Enter JSON data"),
-                            type: "textarea",
                             rows: 3,
                             required: field.required,
                             "full-width": ""
@@ -67847,7 +68542,7 @@ const AddOptionModal = /* @__PURE__ */ _export_sfc$1(_sfc_main$N, [["render", _s
 const _sfc_main$M = /* @__PURE__ */ defineComponent({
   __name: "OptionCard",
   props: {
-    option: { type: null, required: true },
+    option: { type: Object, required: true },
     inquiryId: { type: Number, required: true },
     compact: { type: Boolean, required: false },
     official: { type: Boolean, required: false },
@@ -67868,6 +68563,58 @@ const _sfc_main$M = /* @__PURE__ */ defineComponent({
     const selectedChildType = ref(null);
     const optionsStore = useOptionsStore();
     const sessionStore = useSessionStore();
+    const optionContext = computed(() => {
+      if (!props2.option) {
+        return null;
+      }
+      console.log(" PROP OPTION PAS NULLLLLLLLLLLLLLLL ", props2.option);
+      return createOptionContext(props2.option);
+    });
+    const canEdit2 = computed(() => {
+      if (!props2.option || optionContext.value === null) {
+        return true;
+      }
+      return canEditOption(optionContext.value);
+    });
+    const canDelete2 = computed(() => {
+      if (!props2.option || optionContext.value === null) {
+        return true;
+      }
+      return canDeleteOption(optionContext.value);
+    });
+    const canChangeOptionStatus = computed(() => {
+      if (!props2.option || optionContext.value === null) {
+        return true;
+      }
+      return canChangeStatus(optionContext.value);
+    });
+    const canComment2 = computed(() => {
+      if (!props2.option || optionContext.value === null) {
+        return false;
+      }
+      return canCommentOption(optionContext.value);
+    });
+    const canSupport2 = computed(() => {
+      if (!props2.option || optionContext.value === null) {
+        return false;
+      }
+      return canSupportOption(optionContext.value);
+    });
+    const isCreationMode = computed(() => !props2.option);
+    const availableResponseTypes = computed(() => {
+      if (!allowedResponses.value.length) return [];
+      const allOptionTypes = sessionStore.appSettings?.inquiryOptionTypeTab || [];
+      return allowedResponses.value.map((responseType) => {
+        const optionType = allOptionTypes.find(
+          (opt) => opt.option_type === responseType || opt.optionType === responseType
+        );
+        return optionType ? {
+          option_type: optionType.option_type || optionType.optionType || responseType,
+          label: optionType.label || responseType,
+          icon: optionType.icon || "File"
+        } : null;
+      }).filter((type) => type !== null).sort((a, b) => a.label.localeCompare(b.label));
+    });
     const optionFamily = computed(() => {
       const optionTypes = sessionStore.appSettings?.inquiryOptionTypeTab || [];
       const optionType = optionTypes.find(
@@ -67922,6 +68669,14 @@ const _sfc_main$M = /* @__PURE__ */ defineComponent({
         )
       );
     });
+    const confirmDelete = () => {
+      if (confirm(translate("agora", "Are you sure you want to delete this option?"))) {
+        deleteOption();
+      }
+    };
+    const canEditOrDelete = computed(() => {
+      return canEdit2.value || canDelete2.value;
+    });
     const hasChildren = computed(() => {
       return allowedResponses.value.length > 0;
     });
@@ -67948,10 +68703,6 @@ const _sfc_main$M = /* @__PURE__ */ defineComponent({
       return optionsStore.options.filter(
         (opt) => opt.parentId === props2.option.id && opt.type === typeToFilter
       );
-    });
-    const canAddChild = computed(() => {
-      if (!props2.option.id) return false;
-      return sessionStore.currentUser?.id !== void 0;
     });
     const childrenModalTitle = computed(() => {
       return translate("agora", 'Responses to "{option}"', { option: props2.option.label });
@@ -68047,7 +68798,7 @@ const _sfc_main$M = /* @__PURE__ */ defineComponent({
       const optionType = optionTypes.find(
         (opt) => opt.option_type === type || opt.optionType === type
       );
-      return optionType?.description || "";
+      return optionType?.text || "";
     };
     const toggleCommentsPanel = () => {
       showCommentsPanel.value = !showCommentsPanel.value;
@@ -68065,7 +68816,6 @@ const _sfc_main$M = /* @__PURE__ */ defineComponent({
       activeChildType.value = null;
     };
     const openAddChildModal = () => {
-      if (!canAddChild.value) return;
       if (allowedResponses.value.length === 1) {
         selectedChildType.value = allowedResponses.value[0];
         showAddChildModal.value = true;
@@ -68120,7 +68870,7 @@ const _sfc_main$M = /* @__PURE__ */ defineComponent({
     }, { deep: true });
     watch(() => optionsStore.options, () => {
     }, { deep: true });
-    const __returned__ = { props: props2, emit: emit2, showCommentsPanel, showChildrenModal, showAddChildModal, activeChildType, userSupport, selectedChildType, optionsStore, sessionStore, optionFamily, optionIcon, optionTypeConfig, supportFeature, allowComment, hasSupportFeature, hasComments, allowedResponses, hasChildren, childCounts, totalChildrenCount, filteredChildren, canAddChild, childrenModalTitle, statusBadge, statusClass, statusText, statusIcon, formatDate, truncateText, getParentLabel, getOptionTypeIcon, getOptionTypeLabel, getOptionTypeDescription, toggleCommentsPanel, showChildren, closeChildrenModal, openAddChildModal, openAddChildModalFromModal, openAddChildModalWithType, closeAddChildModal, handleChildClick, handleChildCreated, toggleSupport, handleCommentAdded, get t() {
+    const __returned__ = { props: props2, emit: emit2, showCommentsPanel, showChildrenModal, showAddChildModal, activeChildType, userSupport, selectedChildType, optionsStore, sessionStore, optionContext, canEdit: canEdit2, canDelete: canDelete2, canChangeOptionStatus, canComment: canComment2, canSupport: canSupport2, isCreationMode, availableResponseTypes, optionFamily, optionIcon, optionTypeConfig, supportFeature, allowComment, hasSupportFeature, hasComments, allowedResponses, confirmDelete, canEditOrDelete, hasChildren, childCounts, totalChildrenCount, filteredChildren, childrenModalTitle, statusBadge, statusClass, statusText, statusIcon, formatDate, truncateText, getParentLabel, getOptionTypeIcon, getOptionTypeLabel, getOptionTypeDescription, toggleCommentsPanel, showChildren, closeChildrenModal, openAddChildModal, openAddChildModalFromModal, openAddChildModalWithType, closeAddChildModal, handleChildClick, handleChildCreated, toggleSupport, handleCommentAdded, get t() {
       return translate;
     }, get NcAvatar() {
       return NcAvatar;
@@ -68168,7 +68918,7 @@ const _hoisted_9$j = {
 };
 const _hoisted_10$j = {
   key: 0,
-  class: "card-description"
+  class: "card-text"
 };
 const _hoisted_11$j = {
   key: 1,
@@ -68207,9 +68957,9 @@ const _hoisted_29$d = { key: 0 };
 const _hoisted_30$d = ["title"];
 const _hoisted_31$b = {
   key: 0,
-  class: "author-info"
+  class: "owner-info"
 };
-const _hoisted_32$a = { class: "author-name" };
+const _hoisted_32$a = { class: "owner-name" };
 const _hoisted_33$a = {
   key: 0,
   class: "side-panel comments-panel"
@@ -68229,23 +68979,23 @@ const _hoisted_42$6 = { class: "tab-count" };
 const _hoisted_43$6 = { class: "children-list-section" };
 const _hoisted_44$6 = { class: "section-header" };
 const _hoisted_45$5 = { class: "children-list" };
-const _hoisted_46$4 = {
+const _hoisted_46$5 = {
   key: 0,
   class: "empty-children"
 };
-const _hoisted_47$4 = {
+const _hoisted_47$5 = {
   key: 1,
   class: "children-items"
 };
-const _hoisted_48$4 = {
+const _hoisted_48$5 = {
   key: 1,
   class: "add-response-section"
 };
-const _hoisted_49$4 = { class: "section-description" };
+const _hoisted_49$4 = { class: "section-text" };
 const _hoisted_50$4 = { class: "response-type-grid" };
 const _hoisted_51$4 = ["onClick"];
 const _hoisted_52$4 = { class: "response-type-icon" };
-const _hoisted_53$4 = { class: "response-description" };
+const _hoisted_53$4 = { class: "response-text" };
 const _hoisted_54$4 = { class: "response-count" };
 const _hoisted_55$4 = { class: "modal-footer" };
 function _sfc_render$M(_ctx, _cache, $props, $setup, $data, $options) {
@@ -68344,7 +69094,7 @@ function _sfc_render$M(_ctx, _cache, $props, $setup, $data, $options) {
             1
             /* TEXT */
           )) : createCommentVNode("v-if", true),
-          _ctx.canEditOrDelete || $setup.hasChildren ? (openBlock(), createBlock($setup["NcActions"], {
+          $setup.canEditOrDelete || $setup.hasChildren ? (openBlock(), createBlock($setup["NcActions"], {
             key: 2,
             "force-menu": true,
             "aria-label": $setup.t("agora", "Option actions"),
@@ -68352,10 +69102,9 @@ function _sfc_render$M(_ctx, _cache, $props, $setup, $data, $options) {
           }, {
             default: withCtx(() => [
               createCommentVNode(" Edit action "),
-              _ctx.canEdit ? (openBlock(), createBlock($setup["NcActionButton"], {
+              $setup.canEdit ? (openBlock(), createBlock($setup["NcActionButton"], {
                 key: 0,
-                "close-after-click": true,
-                onClick: withModifiers(_ctx.editOption, ["stop"])
+                "close-after-click": true
               }, {
                 icon: withCtx(() => [
                   (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons.Edit), { size: 20 }))
@@ -68369,9 +69118,9 @@ function _sfc_render$M(_ctx, _cache, $props, $setup, $data, $options) {
                 ]),
                 _: 1
                 /* STABLE */
-              }, 8, ["onClick"])) : createCommentVNode("v-if", true),
+              })) : createCommentVNode("v-if", true),
               createCommentVNode(" Add response submenu "),
-              $setup.hasChildren && $setup.canAddChild ? (openBlock(), createBlock($setup["NcActionButton"], {
+              $setup.hasChildren ? (openBlock(), createBlock($setup["NcActionButton"], {
                 key: 1,
                 "is-menu": true
               }, {
@@ -68387,7 +69136,7 @@ function _sfc_render$M(_ctx, _cache, $props, $setup, $data, $options) {
                   (openBlock(true), createElementBlock(
                     Fragment$1,
                     null,
-                    renderList(_ctx.availableResponseTypes, (responseType) => {
+                    renderList($setup.availableResponseTypes, (responseType) => {
                       return openBlock(), createBlock($setup["NcActionButton"], {
                         key: responseType.option_type,
                         "close-after-click": true,
@@ -68415,10 +69164,10 @@ function _sfc_render$M(_ctx, _cache, $props, $setup, $data, $options) {
                 /* STABLE */
               })) : createCommentVNode("v-if", true),
               createCommentVNode(" Delete action "),
-              _ctx.canDelete ? (openBlock(), createBlock($setup["NcActionButton"], {
+              $setup.canDelete ? (openBlock(), createBlock($setup["NcActionButton"], {
                 key: 2,
                 "close-after-click": true,
-                onClick: withModifiers(_ctx.confirmDelete, ["stop"])
+                onClick: withModifiers($setup.confirmDelete, ["stop"])
               }, {
                 icon: withCtx(() => [
                   (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons.Delete), { size: 20 }))
@@ -68432,7 +69181,7 @@ function _sfc_render$M(_ctx, _cache, $props, $setup, $data, $options) {
                 ]),
                 _: 1
                 /* STABLE */
-              }, 8, ["onClick"])) : createCommentVNode("v-if", true)
+              })) : createCommentVNode("v-if", true)
             ]),
             _: 1
             /* STABLE */
@@ -68442,10 +69191,10 @@ function _sfc_render$M(_ctx, _cache, $props, $setup, $data, $options) {
       createCommentVNode(" Content section "),
       !$props.compact ? (openBlock(), createElementBlock("div", _hoisted_9$j, [
         createCommentVNode(" Description "),
-        $props.option.description ? (openBlock(), createElementBlock(
+        $props.option.text ? (openBlock(), createElementBlock(
           "p",
           _hoisted_10$j,
-          toDisplayString($setup.truncateText($props.option.description, 200)),
+          toDisplayString($setup.truncateText($props.option.text, 200)),
           1
           /* TEXT */
         )) : createCommentVNode("v-if", true),
@@ -68512,8 +69261,7 @@ function _sfc_render$M(_ctx, _cache, $props, $setup, $data, $options) {
               1
               /* TEXT */
             ),
-            $setup.canAddChild ? (openBlock(), createBlock($setup["NcButton"], {
-              key: 0,
+            createVNode($setup["NcButton"], {
               type: "tertiary",
               size: "small",
               onClick: withModifiers($setup.openAddChildModal, ["stop"])
@@ -68530,7 +69278,7 @@ function _sfc_render$M(_ctx, _cache, $props, $setup, $data, $options) {
               ]),
               _: 1
               /* STABLE */
-            })) : createCommentVNode("v-if", true)
+            })
           ]),
           createBaseVNode("div", _hoisted_18$g, [
             (openBlock(true), createElementBlock(
@@ -68648,17 +69396,17 @@ function _sfc_render$M(_ctx, _cache, $props, $setup, $data, $options) {
           ], 10, _hoisted_30$d)) : createCommentVNode("v-if", true)
         ]),
         createCommentVNode(" Author info "),
-        $props.option.author ? (openBlock(), createElementBlock("div", _hoisted_31$b, [
-          $props.option.author.id ? (openBlock(), createBlock($setup["NcAvatar"], {
+        $props.option.owner ? (openBlock(), createElementBlock("div", _hoisted_31$b, [
+          $props.option.owner.id ? (openBlock(), createBlock($setup["NcAvatar"], {
             key: 0,
-            user: $props.option.author.id,
-            "display-name": $props.option.author.displayName,
+            user: $props.option.owner.id,
+            "display-name": $props.option.owner.displayName,
             size: 20
           }, null, 8, ["user", "display-name"])) : createCommentVNode("v-if", true),
           createBaseVNode(
             "span",
             _hoisted_32$a,
-            toDisplayString($props.option.author.displayName),
+            toDisplayString($props.option.owner.displayName),
             1
             /* TEXT */
           )
@@ -68767,8 +69515,7 @@ function _sfc_render$M(_ctx, _cache, $props, $setup, $data, $options) {
                     1
                     /* TEXT */
                   ),
-                  $setup.canAddChild ? (openBlock(), createBlock($setup["NcButton"], {
-                    key: 0,
+                  createVNode($setup["NcButton"], {
                     type: "primary",
                     onClick: $setup.openAddChildModalFromModal
                   }, {
@@ -68784,10 +69531,10 @@ function _sfc_render$M(_ctx, _cache, $props, $setup, $data, $options) {
                     ]),
                     _: 1
                     /* STABLE */
-                  })) : createCommentVNode("v-if", true)
+                  })
                 ]),
                 createBaseVNode("div", _hoisted_45$5, [
-                  $setup.filteredChildren.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_46$4, [
+                  $setup.filteredChildren.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_46$5, [
                     (openBlock(), createBlock(resolveDynamicComponent($setup.getOptionTypeIcon($setup.activeChildType || $setup.allowedResponses[0])), { size: 48 })),
                     createBaseVNode(
                       "h5",
@@ -68803,8 +69550,7 @@ function _sfc_render$M(_ctx, _cache, $props, $setup, $data, $options) {
                       1
                       /* TEXT */
                     ),
-                    $setup.canAddChild ? (openBlock(), createBlock($setup["NcButton"], {
-                      key: 0,
+                    createVNode($setup["NcButton"], {
                       type: "primary",
                       onClick: $setup.openAddChildModalFromModal
                     }, {
@@ -68817,8 +69563,8 @@ function _sfc_render$M(_ctx, _cache, $props, $setup, $data, $options) {
                       ]),
                       _: 1
                       /* STABLE */
-                    })) : createCommentVNode("v-if", true)
-                  ])) : (openBlock(), createElementBlock("div", _hoisted_47$4, [
+                    })
+                  ])) : (openBlock(), createElementBlock("div", _hoisted_47$5, [
                     (openBlock(true), createElementBlock(
                       Fragment$1,
                       null,
@@ -68837,7 +69583,7 @@ function _sfc_render$M(_ctx, _cache, $props, $setup, $data, $options) {
                 ])
               ]),
               createCommentVNode(" Add response options "),
-              $setup.allowedResponses.length > 0 ? (openBlock(), createElementBlock("div", _hoisted_48$4, [
+              $setup.allowedResponses.length > 0 ? (openBlock(), createElementBlock("div", _hoisted_48$5, [
                 createBaseVNode(
                   "h4",
                   null,
@@ -68952,7 +69698,7 @@ const _sfc_main$L = /* @__PURE__ */ defineComponent({
     const isEditing = ref(false);
     const editForm = ref({
       label: "",
-      description: "",
+      text: "",
       fields: {}
     });
     const userSupport = ref(null);
@@ -68960,8 +69706,17 @@ const _sfc_main$L = /* @__PURE__ */ defineComponent({
     const selectedChildId = ref(null);
     const showAddChildModal = ref(false);
     const selectedChildType = ref(null);
+    const optionContext = computed(() => {
+      if (!option2.value) return null;
+      return createOptionContext(option2.value);
+    });
+    const canEdit2 = computed(() => canEditOption(optionContext.value));
+    const canDelete2 = computed(() => canDeleteOption(optionContext.value));
+    const canChangeOptionStatus = computed(() => canChangeStatus(optionContext.value));
+    const canComment2 = computed(() => canCommentOption(optionContext.value));
+    const canSupport2 = computed(() => canSupportOption(optionContext.value));
     const availableResponseTypes = computed(() => {
-      if (!allowedResponses.value.length) return [];
+      if (!allowedResponses.value?.length) return [];
       const allOptionTypes = sessionStore.appSettings?.inquiryOptionTypeTab || [];
       return allowedResponses.value.map((responseType) => {
         const optionType = allOptionTypes.find(
@@ -69027,20 +69782,8 @@ const _sfc_main$L = /* @__PURE__ */ defineComponent({
     const hasSupportFeature = computed(() => {
       return supportFeature.value !== "none";
     });
-    const canEdit2 = computed(() => {
-      if (!option2.value?.author) return false;
-      return sessionStore.currentUser?.id === option2.value.author.id;
-    });
-    const canDelete2 = computed(() => {
-      if (!option2.value?.author) return false;
-      return sessionStore.currentUser?.id === option2.value.author.id;
-    });
-    const canAddChild = computed(() => {
-      if (!option2.value?.id) return false;
-      return sessionStore.currentUser?.id !== void 0;
-    });
     const canEditOrDelete = computed(() => {
-      return canEdit2.value || canDelete2.value || canAddChild.value;
+      return canEdit2.value || canDelete2.value;
     });
     const canSaveEdit = computed(() => {
       return editForm.value.label.trim().length > 0;
@@ -69055,6 +69798,9 @@ const _sfc_main$L = /* @__PURE__ */ defineComponent({
         }
       }
       return optionTypeConfig.value.fields || [];
+    });
+    const canAddChild = computed(() => {
+      return hasAllowedResponses.value && sessionStore.currentUser;
     });
     const hasAdditionalFields = computed(() => {
       return additionalFields.value.length > 0;
@@ -69112,10 +69858,10 @@ const _sfc_main$L = /* @__PURE__ */ defineComponent({
       }).format(date);
     };
     const getAuthorRole = () => {
-      if (!option2.value?.author?.id || !sessionStore.currentUser?.id) {
+      if (!option2.value?.owner?.id || !sessionStore.currentUser?.id) {
         return translate("agora", "Author");
       }
-      if (option2.value.author.id === sessionStore.currentUser.id) {
+      if (option2.value.owner.id === sessionStore.currentUser.id) {
         return translate("agora", "You");
       }
       return translate("agora", "Author");
@@ -69150,10 +69896,11 @@ const _sfc_main$L = /* @__PURE__ */ defineComponent({
       try {
         const foundOption = optionsStore.options.find((opt) => opt.id === props2.optionId);
         if (foundOption) {
+          console.log(" FOUND OPTION IN LOAD OPTION");
           option2.value = foundOption;
           editForm.value = {
             label: foundOption.label || "",
-            description: foundOption.description || "",
+            text: foundOption.text || "",
             fields: { ...foundOption.fields }
           };
           if (foundOption.user_support !== void 0) {
@@ -69214,7 +69961,7 @@ const _sfc_main$L = /* @__PURE__ */ defineComponent({
       if (option2.value) {
         editForm.value = {
           label: option2.value.label || "",
-          description: option2.value.description || "",
+          text: option2.value.text || "",
           fields: { ...option2.value.fields }
         };
       }
@@ -69225,7 +69972,7 @@ const _sfc_main$L = /* @__PURE__ */ defineComponent({
         const updatedOption = {
           ...option2.value,
           label: editForm.value.label,
-          description: editForm.value.description,
+          text: editForm.value.text,
           fields: editForm.value.fields,
           modified: (/* @__PURE__ */ new Date()).toISOString()
         };
@@ -69243,10 +69990,10 @@ const _sfc_main$L = /* @__PURE__ */ defineComponent({
     };
     const confirmDelete = () => {
       if (confirm(translate("agora", "Are you sure you want to delete this option?"))) {
-        deleteOption();
+        deleteOption2();
       }
     };
-    const deleteOption = async () => {
+    const deleteOption2 = async () => {
       if (!option2.value) return;
       try {
         const index = optionsStore.options.findIndex((opt) => opt.id === option2.value?.id);
@@ -69321,7 +70068,7 @@ const _sfc_main$L = /* @__PURE__ */ defineComponent({
         loadOption();
       }
     });
-    const __returned__ = { props: props2, emit: emit2, optionsStore, sessionStore, show, loading, error, option: option2, comments, showCommentForm, isEditing, editForm, userSupport, showChildModal, selectedChildId, showAddChildModal, selectedChildType, availableResponseTypes, openAddResponseModal, getOptionTypeIcon, commentsSection, modalTitle, optionTypeConfig, optionTypeLabel, optionIcon, optionTypeColor, supportFeature, allowComment, hasSupportFeature, canEdit: canEdit2, canDelete: canDelete2, canAddChild, canEditOrDelete, canSaveEdit, additionalFields, hasAdditionalFields, hasAdditionalFieldsData, allowedResponses, hasAllowedResponses, childCounts, childCountsTotal, formatDate, getAuthorRole, getFieldLabel, formatFieldValue, getOptionTypeLabel, loadOption, closeModal, toggleSupport, scrollToComments, editOption, cancelEdit, saveEdit, confirmDelete, deleteOption, openAddChildModal, closeAddChildModal, handleChildCreated, showChildren, handleCommentAdded, openChildModal, closeChildModal, handleChildUpdated, handleChildDeleted, get t() {
+    const __returned__ = { props: props2, emit: emit2, optionsStore, sessionStore, show, loading, error, option: option2, comments, showCommentForm, isEditing, editForm, userSupport, showChildModal, selectedChildId, showAddChildModal, selectedChildType, optionContext, canEdit: canEdit2, canDelete: canDelete2, canChangeOptionStatus, canComment: canComment2, canSupport: canSupport2, availableResponseTypes, openAddResponseModal, getOptionTypeIcon, commentsSection, modalTitle, optionTypeConfig, optionTypeLabel, optionIcon, optionTypeColor, supportFeature, allowComment, hasSupportFeature, canEditOrDelete, canSaveEdit, additionalFields, canAddChild, hasAdditionalFields, hasAdditionalFieldsData, allowedResponses, hasAllowedResponses, childCounts, childCountsTotal, formatDate, getAuthorRole, getFieldLabel, formatFieldValue, getOptionTypeLabel, loadOption, closeModal, toggleSupport, scrollToComments, editOption, cancelEdit, saveEdit, confirmDelete, deleteOption: deleteOption2, openAddChildModal, closeAddChildModal, handleChildCreated, showChildren, handleCommentAdded, openChildModal, closeChildModal, handleChildUpdated, handleChildDeleted, get t() {
       return translate;
     }, get NcModal() {
       return NcModal;
@@ -69367,78 +70114,81 @@ const _hoisted_9$i = { class: "option-meta" };
 const _hoisted_10$i = { class: "option-type" };
 const _hoisted_11$i = { class: "option-date" };
 const _hoisted_12$i = { class: "header-right" };
-const _hoisted_13$h = { class: "quick-actions" };
-const _hoisted_14$f = { class: "main-content" };
-const _hoisted_15$f = { class: "author-section" };
-const _hoisted_16$f = { class: "author-details" };
-const _hoisted_17$f = { class: "author-name" };
-const _hoisted_18$f = { class: "author-role" };
-const _hoisted_19$f = {
-  key: 1,
-  class: "support-counts"
-};
-const _hoisted_20$f = { class: "support-count positive" };
-const _hoisted_21$f = {
-  key: 0,
-  class: "support-count negative"
-};
-const _hoisted_22$f = { class: "content-section" };
-const _hoisted_23$d = {
+const _hoisted_13$h = { class: "main-content" };
+const _hoisted_14$f = { class: "content-section" };
+const _hoisted_15$f = {
   key: 0,
   class: "editor-container"
 };
-const _hoisted_24$c = {
+const _hoisted_16$f = {
   key: 0,
   class: "additional-fields"
 };
-const _hoisted_25$c = { class: "fields-grid" };
-const _hoisted_26$c = ["for"];
-const _hoisted_27$c = { class: "edit-actions" };
-const _hoisted_28$c = {
+const _hoisted_17$f = { class: "fields-grid" };
+const _hoisted_18$f = ["for"];
+const _hoisted_19$f = { class: "edit-actions" };
+const _hoisted_20$f = {
   key: 1,
   class: "content-display"
 };
-const _hoisted_29$c = {
+const _hoisted_21$f = {
   key: 0,
-  class: "description-content"
+  class: "text-content"
 };
-const _hoisted_30$c = { class: "description-text" };
-const _hoisted_31$a = {
+const _hoisted_22$f = { class: "text-text" };
+const _hoisted_23$d = {
   key: 1,
   class: "additional-fields-display"
 };
-const _hoisted_32$9 = { class: "fields-grid" };
-const _hoisted_33$9 = {
+const _hoisted_24$c = { class: "fields-grid" };
+const _hoisted_25$c = { class: "feature-buttons-container" };
+const _hoisted_26$c = { class: "features-left" };
+const _hoisted_27$c = {
+  key: 0,
+  class: "feature-group"
+};
+const _hoisted_28$c = { class: "support-container" };
+const _hoisted_29$c = {
+  key: 1,
+  class: "feature-group"
+};
+const _hoisted_30$c = { class: "comment-container" };
+const _hoisted_31$a = { class: "comment-count-badge" };
+const _hoisted_32$9 = { class: "owner-section-right" };
+const _hoisted_33$9 = { class: "owner-details-right" };
+const _hoisted_34$9 = { class: "owner-text" };
+const _hoisted_35$9 = { class: "owner-name" };
+const _hoisted_36$8 = { class: "owner-role" };
+const _hoisted_37$8 = {
   key: 0,
   class: "responses-section"
 };
-const _hoisted_34$9 = { class: "section-header" };
-const _hoisted_35$9 = { class: "responses-preview" };
-const _hoisted_36$8 = {
+const _hoisted_38$8 = { class: "section-header" };
+const _hoisted_39$6 = { class: "responses-preview" };
+const _hoisted_40$6 = {
   key: 0,
   class: "empty-responses"
 };
-const _hoisted_37$8 = {
+const _hoisted_41$6 = {
   key: 1,
   class: "responses-grid"
 };
-const _hoisted_38$8 = ["onClick"];
-const _hoisted_39$6 = { class: "response-type-icon" };
-const _hoisted_40$6 = { class: "response-count" };
-const _hoisted_41$6 = {
+const _hoisted_42$5 = ["onClick"];
+const _hoisted_43$5 = { class: "response-type-icon" };
+const _hoisted_44$5 = { class: "response-count" };
+const _hoisted_45$4 = {
   ref: "commentsSection",
   class: "comments-section"
 };
-const _hoisted_42$5 = { class: "section-header" };
-const _hoisted_43$5 = {
+const _hoisted_46$4 = {
   key: 0,
   class: "comment-form"
 };
-const _hoisted_44$5 = {
+const _hoisted_47$4 = {
   key: 0,
   class: "comments-list"
 };
-const _hoisted_45$4 = {
+const _hoisted_48$4 = {
   key: 1,
   class: "no-comments"
 };
@@ -69547,40 +70297,14 @@ function _sfc_render$L(_ctx, _cache, $props, $setup, $data, $options) {
                     ]),
                     createBaseVNode("div", _hoisted_12$i, [
                       createCommentVNode(" Quick actions "),
-                      createBaseVNode("div", _hoisted_13$h, [
-                        $setup.supportFeature === "ternary" ? (openBlock(), createBlock($setup["TernarySupportIcon"], {
-                          key: 0,
-                          "support-value": $setup.userSupport,
-                          size: 20,
-                          class: "support-icon",
-                          onClick: $setup.toggleSupport
-                        }, null, 8, ["support-value"])) : $setup.supportFeature === "binary" ? (openBlock(), createBlock($setup["ThumbIcon"], {
-                          key: 1,
-                          supported: $setup.userSupport === "for",
-                          size: 20,
-                          class: "support-icon",
-                          onClick: $setup.toggleSupport
-                        }, null, 8, ["supported"])) : createCommentVNode("v-if", true),
-                        $setup.allowComment ? (openBlock(), createBlock($setup["NcButton"], {
-                          key: 2,
-                          type: "tertiary",
-                          class: "comment-btn",
-                          onClick: $setup.scrollToComments
-                        }, {
-                          default: withCtx(() => [
-                            (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons.Comment), { size: 16 })),
-                            createBaseVNode(
-                              "span",
-                              null,
-                              toDisplayString($setup.option.comment_count || 0),
-                              1
-                              /* TEXT */
-                            )
-                          ]),
-                          _: 1
-                          /* STABLE */
-                        })) : createCommentVNode("v-if", true)
-                      ]),
+                      _cache[3] || (_cache[3] = createBaseVNode(
+                        "div",
+                        { class: "quick-actions" },
+                        null,
+                        -1
+                        /* CACHED */
+                      )),
+                      createCommentVNode(" This closing div was missing "),
                       createCommentVNode(" Main actions menu "),
                       $setup.canEditOrDelete ? (openBlock(), createBlock($setup["NcActions"], {
                         key: 0,
@@ -69677,69 +70401,11 @@ function _sfc_render$L(_ctx, _cache, $props, $setup, $data, $options) {
                     ])
                   ]),
                   createCommentVNode(" Main content area "),
-                  createBaseVNode("div", _hoisted_14$f, [
-                    createCommentVNode(" Author info "),
-                    createBaseVNode("div", _hoisted_15$f, [
-                      $setup.option.author?.id ? (openBlock(), createBlock($setup["NcAvatar"], {
-                        key: 0,
-                        user: $setup.option.author.id,
-                        "display-name": $setup.option.author.displayName,
-                        size: 32
-                      }, null, 8, ["user", "display-name"])) : createCommentVNode("v-if", true),
-                      createBaseVNode("div", _hoisted_16$f, [
-                        createBaseVNode(
-                          "span",
-                          _hoisted_17$f,
-                          toDisplayString($setup.option.author?.displayName || $setup.t("agora", "Unknown author")),
-                          1
-                          /* TEXT */
-                        ),
-                        createBaseVNode(
-                          "span",
-                          _hoisted_18$f,
-                          toDisplayString($setup.getAuthorRole()),
-                          1
-                          /* TEXT */
-                        )
-                      ]),
-                      $setup.hasSupportFeature ? (openBlock(), createElementBlock("div", _hoisted_19$f, [
-                        createBaseVNode("div", _hoisted_20$f, [
-                          $setup.supportFeature === "ternary" ? (openBlock(), createBlock($setup["TernarySupportIcon"], {
-                            key: 0,
-                            "support-value": "for",
-                            size: 14
-                          })) : $setup.supportFeature === "binary" ? (openBlock(), createBlock($setup["ThumbIcon"], {
-                            key: 1,
-                            supported: true,
-                            size: 14
-                          })) : createCommentVNode("v-if", true),
-                          createBaseVNode(
-                            "span",
-                            null,
-                            toDisplayString($setup.option.support_for || 0),
-                            1
-                            /* TEXT */
-                          )
-                        ]),
-                        $setup.supportFeature === "ternary" ? (openBlock(), createElementBlock("div", _hoisted_21$f, [
-                          createVNode($setup["TernarySupportIcon"], {
-                            "support-value": "against",
-                            size: 14,
-                            invert: true
-                          }),
-                          createBaseVNode(
-                            "span",
-                            null,
-                            toDisplayString($setup.option.support_against || 0),
-                            1
-                            /* TEXT */
-                          )
-                        ])) : createCommentVNode("v-if", true)
-                      ])) : createCommentVNode("v-if", true)
-                    ]),
-                    createCommentVNode(" Option description/content "),
-                    createBaseVNode("div", _hoisted_22$f, [
-                      $setup.isEditing ? (openBlock(), createElementBlock("div", _hoisted_23$d, [
+                  createBaseVNode("div", _hoisted_13$h, [
+                    createCommentVNode(" Owner info moved to right side "),
+                    createCommentVNode(" Option text/content "),
+                    createBaseVNode("div", _hoisted_14$f, [
+                      $setup.isEditing ? (openBlock(), createElementBlock("div", _hoisted_15$f, [
                         createVNode($setup["NcTextField"], {
                           modelValue: $setup.editForm.label,
                           "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => $setup.editForm.label = $event),
@@ -69749,16 +70415,16 @@ function _sfc_render$L(_ctx, _cache, $props, $setup, $data, $options) {
                           "full-width": ""
                         }, null, 8, ["modelValue", "label", "placeholder"]),
                         createVNode($setup["NcTextField"], {
-                          modelValue: $setup.editForm.description,
-                          "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => $setup.editForm.description = $event),
+                          modelValue: $setup.editForm.text,
+                          "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => $setup.editForm.text = $event),
                           label: $setup.t("agora", "Description"),
-                          placeholder: $setup.t("agora", "Enter option description"),
+                          placeholder: $setup.t("agora", "Enter option text"),
                           type: "textarea",
                           rows: 6,
                           "full-width": ""
                         }, null, 8, ["modelValue", "label", "placeholder"]),
                         createCommentVNode(" Additional fields "),
-                        $setup.hasAdditionalFields ? (openBlock(), createElementBlock("div", _hoisted_24$c, [
+                        $setup.hasAdditionalFields ? (openBlock(), createElementBlock("div", _hoisted_16$f, [
                           createBaseVNode(
                             "h4",
                             null,
@@ -69766,7 +70432,7 @@ function _sfc_render$L(_ctx, _cache, $props, $setup, $data, $options) {
                             1
                             /* TEXT */
                           ),
-                          createBaseVNode("div", _hoisted_25$c, [
+                          createBaseVNode("div", _hoisted_17$f, [
                             (openBlock(true), createElementBlock(
                               Fragment$1,
                               null,
@@ -69777,7 +70443,7 @@ function _sfc_render$L(_ctx, _cache, $props, $setup, $data, $options) {
                                 }, [
                                   createBaseVNode("label", {
                                     for: `field-${field.key}`
-                                  }, toDisplayString($setup.getFieldLabel(field)), 9, _hoisted_26$c),
+                                  }, toDisplayString($setup.getFieldLabel(field)), 9, _hoisted_18$f),
                                   field.type === "text" || field.type === "number" ? (openBlock(), createBlock($setup["NcTextField"], {
                                     key: 0,
                                     id: `field-${field.key}`,
@@ -69810,7 +70476,7 @@ function _sfc_render$L(_ctx, _cache, $props, $setup, $data, $options) {
                             ))
                           ])
                         ])) : createCommentVNode("v-if", true),
-                        createBaseVNode("div", _hoisted_27$c, [
+                        createBaseVNode("div", _hoisted_19$f, [
                           createVNode($setup["NcButton"], {
                             type: "tertiary",
                             onClick: $setup.cancelEdit
@@ -69841,18 +70507,18 @@ function _sfc_render$L(_ctx, _cache, $props, $setup, $data, $options) {
                             /* STABLE */
                           }, 8, ["disabled"])
                         ])
-                      ])) : (openBlock(), createElementBlock("div", _hoisted_28$c, [
-                        $setup.option.description ? (openBlock(), createElementBlock("div", _hoisted_29$c, [
+                      ])) : (openBlock(), createElementBlock("div", _hoisted_20$f, [
+                        $setup.option.text ? (openBlock(), createElementBlock("div", _hoisted_21$f, [
                           createBaseVNode(
                             "div",
-                            _hoisted_30$c,
-                            toDisplayString($setup.option.description),
+                            _hoisted_22$f,
+                            toDisplayString($setup.option.text),
                             1
                             /* TEXT */
                           )
                         ])) : createCommentVNode("v-if", true),
                         createCommentVNode(" Additional fields display "),
-                        $setup.hasAdditionalFieldsData ? (openBlock(), createElementBlock("div", _hoisted_31$a, [
+                        $setup.hasAdditionalFieldsData ? (openBlock(), createElementBlock("div", _hoisted_23$d, [
                           createBaseVNode(
                             "h4",
                             null,
@@ -69860,7 +70526,7 @@ function _sfc_render$L(_ctx, _cache, $props, $setup, $data, $options) {
                             1
                             /* TEXT */
                           ),
-                          createBaseVNode("div", _hoisted_32$9, [
+                          createBaseVNode("div", _hoisted_24$c, [
                             (openBlock(true), createElementBlock(
                               Fragment$1,
                               null,
@@ -69889,12 +70555,96 @@ function _sfc_render$L(_ctx, _cache, $props, $setup, $data, $options) {
                               /* KEYED_FRAGMENT */
                             ))
                           ])
-                        ])) : createCommentVNode("v-if", true)
+                        ])) : createCommentVNode("v-if", true),
+                        createCommentVNode(" Feature buttons moved under description "),
+                        createBaseVNode("div", _hoisted_25$c, [
+                          createCommentVNode(" Left side: Support and comment features "),
+                          createBaseVNode("div", _hoisted_26$c, [
+                            createCommentVNode(" Support feature "),
+                            $setup.hasSupportFeature ? (openBlock(), createElementBlock("div", _hoisted_27$c, [
+                              createBaseVNode("div", _hoisted_28$c, [
+                                $setup.supportFeature === "ternary" ? (openBlock(), createBlock($setup["TernarySupportIcon"], {
+                                  key: 0,
+                                  "support-value": $setup.userSupport,
+                                  size: 24,
+                                  class: "support-icon-large",
+                                  onClick: $setup.toggleSupport
+                                }, null, 8, ["support-value"])) : $setup.supportFeature === "binary" ? (openBlock(), createBlock($setup["ThumbIcon"], {
+                                  key: 1,
+                                  supported: $setup.userSupport === "for",
+                                  size: 24,
+                                  class: "support-icon-large",
+                                  onClick: $setup.toggleSupport
+                                }, null, 8, ["supported"])) : createCommentVNode("v-if", true)
+                              ])
+                            ])) : createCommentVNode("v-if", true),
+                            createCommentVNode(" Comment features "),
+                            $setup.allowComment ? (openBlock(), createElementBlock("div", _hoisted_29$c, [
+                              createBaseVNode("div", _hoisted_30$c, [
+                                createBaseVNode("div", _hoisted_31$a, [
+                                  (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons.Comment), { size: 16 })),
+                                  createBaseVNode(
+                                    "span",
+                                    null,
+                                    toDisplayString($setup.option.comment_count || 0),
+                                    1
+                                    /* TEXT */
+                                  )
+                                ]),
+                                createVNode($setup["NcButton"], {
+                                  type: "tertiary",
+                                  class: "add-comment-btn",
+                                  onClick: _cache[2] || (_cache[2] = ($event) => $setup.showCommentForm = !$setup.showCommentForm)
+                                }, {
+                                  icon: withCtx(() => [
+                                    (openBlock(), createBlock(resolveDynamicComponent($setup.showCommentForm ? $setup.InquiryOptionIcons.Close : $setup.InquiryOptionIcons.Comment), { size: 16 }))
+                                  ]),
+                                  default: withCtx(() => [
+                                    createTextVNode(
+                                      " " + toDisplayString($setup.showCommentForm ? $setup.t("agora", "Cancel") : $setup.t("agora", "Add comment")),
+                                      1
+                                      /* TEXT */
+                                    )
+                                  ]),
+                                  _: 1
+                                  /* STABLE */
+                                })
+                              ])
+                            ])) : createCommentVNode("v-if", true)
+                          ]),
+                          createCommentVNode(" Right side: Owner section "),
+                          createBaseVNode("div", _hoisted_32$9, [
+                            createBaseVNode("div", _hoisted_33$9, [
+                              $setup.option.owner?.id ? (openBlock(), createBlock($setup["NcAvatar"], {
+                                key: 0,
+                                user: $setup.option.owner.id,
+                                "display-name": $setup.option.owner.displayName,
+                                size: 22
+                              }, null, 8, ["user", "display-name"])) : createCommentVNode("v-if", true),
+                              createBaseVNode("div", _hoisted_34$9, [
+                                createBaseVNode(
+                                  "span",
+                                  _hoisted_35$9,
+                                  toDisplayString($setup.option.owner?.displayName || $setup.t("agora", "Unknown owner")),
+                                  1
+                                  /* TEXT */
+                                ),
+                                createBaseVNode(
+                                  "span",
+                                  _hoisted_36$8,
+                                  toDisplayString($setup.getAuthorRole()),
+                                  1
+                                  /* TEXT */
+                                )
+                              ])
+                            ])
+                          ])
+                        ])
                       ]))
                     ]),
                     createCommentVNode(" Responses preview "),
-                    $setup.hasAllowedResponses ? (openBlock(), createElementBlock("div", _hoisted_33$9, [
-                      createBaseVNode("div", _hoisted_34$9, [
+                    $setup.hasAllowedResponses ? (openBlock(), createElementBlock("div", _hoisted_37$8, [
+                      createBaseVNode("div", _hoisted_38$8, [
                         createBaseVNode(
                           "h3",
                           null,
@@ -69921,8 +70671,8 @@ function _sfc_render$L(_ctx, _cache, $props, $setup, $data, $options) {
                           /* STABLE */
                         })) : createCommentVNode("v-if", true)
                       ]),
-                      createBaseVNode("div", _hoisted_35$9, [
-                        $setup.childCountsTotal === 0 ? (openBlock(), createElementBlock("div", _hoisted_36$8, [
+                      createBaseVNode("div", _hoisted_39$6, [
+                        $setup.childCountsTotal === 0 ? (openBlock(), createElementBlock("div", _hoisted_40$6, [
                           (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons.MessageText), { size: 48 })),
                           createBaseVNode(
                             "h4",
@@ -69938,7 +70688,7 @@ function _sfc_render$L(_ctx, _cache, $props, $setup, $data, $options) {
                             1
                             /* TEXT */
                           )
-                        ])) : (openBlock(), createElementBlock("div", _hoisted_37$8, [
+                        ])) : (openBlock(), createElementBlock("div", _hoisted_41$6, [
                           (openBlock(true), createElementBlock(
                             Fragment$1,
                             null,
@@ -69948,7 +70698,7 @@ function _sfc_render$L(_ctx, _cache, $props, $setup, $data, $options) {
                                 class: "response-type-card",
                                 onClick: ($event) => $setup.showChildren(childType)
                               }, [
-                                createBaseVNode("div", _hoisted_39$6, [
+                                createBaseVNode("div", _hoisted_43$5, [
                                   (openBlock(), createBlock(resolveDynamicComponent($setup.getOptionTypeIcon(childType)), { size: 24 }))
                                 ]),
                                 createBaseVNode(
@@ -69960,12 +70710,12 @@ function _sfc_render$L(_ctx, _cache, $props, $setup, $data, $options) {
                                 ),
                                 createBaseVNode(
                                   "div",
-                                  _hoisted_40$6,
+                                  _hoisted_44$5,
                                   toDisplayString($setup.childCounts[childType] || 0),
                                   1
                                   /* TEXT */
                                 )
-                              ], 8, _hoisted_38$8);
+                              ], 8, _hoisted_42$5);
                             }),
                             128
                             /* KEYED_FRAGMENT */
@@ -69976,39 +70726,12 @@ function _sfc_render$L(_ctx, _cache, $props, $setup, $data, $options) {
                     createCommentVNode(" Comments section "),
                     createBaseVNode(
                       "div",
-                      _hoisted_41$6,
+                      _hoisted_45$4,
                       [
-                        createBaseVNode("div", _hoisted_42$5, [
-                          createBaseVNode(
-                            "h3",
-                            null,
-                            toDisplayString($setup.t("agora", "Comments")),
-                            1
-                            /* TEXT */
-                          ),
-                          $setup.allowComment ? (openBlock(), createBlock($setup["NcButton"], {
-                            key: 0,
-                            type: "primary",
-                            onClick: _cache[2] || (_cache[2] = ($event) => $setup.showCommentForm = !$setup.showCommentForm)
-                          }, {
-                            icon: withCtx(() => [
-                              (openBlock(), createBlock(resolveDynamicComponent($setup.showCommentForm ? $setup.InquiryOptionIcons.Close : $setup.InquiryOptionIcons.Comment), { size: 16 }))
-                            ]),
-                            default: withCtx(() => [
-                              createTextVNode(
-                                " " + toDisplayString($setup.showCommentForm ? $setup.t("agora", "Cancel") : $setup.t("agora", "Add comment")),
-                                1
-                                /* TEXT */
-                              )
-                            ]),
-                            _: 1
-                            /* STABLE */
-                          })) : createCommentVNode("v-if", true)
-                        ]),
                         createCommentVNode(" Comment form "),
                         createVNode(Transition, { name: "fade" }, {
                           default: withCtx(() => [
-                            $setup.showCommentForm ? (openBlock(), createElementBlock("div", _hoisted_43$5, [
+                            $setup.showCommentForm ? (openBlock(), createElementBlock("div", _hoisted_46$4, [
                               createVNode($setup["CommentAdd"], {
                                 "inquiry-id": $props.inquiryId,
                                 "option-id": $setup.option.id,
@@ -70020,12 +70743,12 @@ function _sfc_render$L(_ctx, _cache, $props, $setup, $data, $options) {
                           /* STABLE */
                         }),
                         createCommentVNode(" Comments list "),
-                        $setup.comments.length > 0 ? (openBlock(), createElementBlock("div", _hoisted_44$5, [
+                        $setup.comments.length > 0 ? (openBlock(), createElementBlock("div", _hoisted_47$4, [
                           createVNode($setup["Comments"], {
                             "inquiry-id": $props.inquiryId,
                             "option-id": $setup.option.id
                           }, null, 8, ["inquiry-id", "option-id"])
-                        ])) : !$setup.showCommentForm ? (openBlock(), createElementBlock("div", _hoisted_45$4, [
+                        ])) : !$setup.showCommentForm ? (openBlock(), createElementBlock("div", _hoisted_48$4, [
                           (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons.Comment), { size: 48 })),
                           createBaseVNode(
                             "h4",
@@ -70137,7 +70860,7 @@ const _sfc_main$K = /* @__PURE__ */ defineComponent({
         ...family,
         name: translate("agora", family.name),
         label: translate("agora", family.label),
-        description: translate("agora", family.description)
+        text: translate("agora", family.text)
       }));
     });
     const hasVisibleFamilies = computed(() => familiesWithOptions.value.length > 0);
@@ -70285,7 +71008,7 @@ const _hoisted_7$h = {
   class: "family-content"
 };
 const _hoisted_8$h = { class: "family-header" };
-const _hoisted_9$h = { class: "family-description" };
+const _hoisted_9$h = { class: "family-text" };
 const _hoisted_10$h = {
   key: 0,
   class: "family-actions-bar"
@@ -70426,7 +71149,7 @@ function _sfc_render$K(_ctx, _cache, $props, $setup, $data, $options) {
         createBaseVNode(
           "p",
           _hoisted_9$h,
-          toDisplayString($setup.activeFamilyData.description),
+          toDisplayString($setup.activeFamilyData.text),
           1
           /* TEXT */
         ),
@@ -71271,6 +71994,9 @@ const _sfc_main$J = /* @__PURE__ */ defineComponent({
       }
     };
     onMounted(() => {
+      console.log(" CANNNNNNNNN CONTEXT ", context2.value);
+      console.log(" CANNNNNNNNN SPPPOR ", canSupport(context2.value));
+      console.log(" CANNNNNNNNN COMMENT ", canComment(context2.value));
       if (inquiryStore.coverId) {
         currentCoverUrl.value = getNextcloudPreviewUrl(inquiryStore.coverId);
       }
@@ -71340,12 +72066,14 @@ const _sfc_main$J = /* @__PURE__ */ defineComponent({
       return NcAvatar;
     }, get NcTextArea() {
       return NcTextArea;
+    }, get NcRichContenteditable() {
+      return NcRichContenteditable;
     }, get TernarySupportIcon() {
       return TernarySupportIcon;
     }, get ThumbIcon() {
       return ThumbIcon;
     }, InquiryEditor, OptionEditView, get InquiryGeneralIcons() {
-      return InquiryGeneralIcons;
+      return InquiryGeneralIcons$1;
     }, get StatusIcons() {
       return StatusIcons;
     }, get canSupport() {
@@ -71480,7 +72208,6 @@ const _hoisted_77$1 = {
   class: "editor-container"
 };
 function _sfc_render$J(_ctx, _cache, $props, $setup, $data, $options) {
-  const _component_NcRichTextContenteditable = resolveComponent("NcRichTextContenteditable");
   return $setup.isLoaded ? (openBlock(), createElementBlock("div", _hoisted_1$x, [
     createCommentVNode(" Cover Image Section "),
     $setup.inquiryStore.currentUserStatus?.isOwner ? (openBlock(), createElementBlock("div", _hoisted_2$p, [
@@ -71927,7 +72654,7 @@ function _sfc_render$J(_ctx, _cache, $props, $setup, $data, $options) {
               readonly: $setup.props.isReadonlyDescription
             }, null, 8, ["modelValue", "readonly"])
           ])) : $setup.sessionStore.appSettings.inquiryTypeRights[$setup.inquiryStore.type]?.editorType === "texteditor" ? (openBlock(), createElementBlock("div", _hoisted_76$2, [
-            createVNode(_component_NcRichTextContenteditable, {
+            createVNode($setup["NcRichContenteditable"], {
               modelValue: $setup.inquiryStore.description,
               "onUpdate:modelValue": _cache[5] || (_cache[5] = ($event) => $setup.inquiryStore.description = $event),
               autolink: true,
@@ -72098,7 +72825,7 @@ const _sfc_main$I = /* @__PURE__ */ defineComponent({
     }, InquiryItem, get NcCheckboxRadioSwitch() {
       return NcCheckboxRadioSwitch;
     }, get InquiryGeneralIcons() {
-      return InquiryGeneralIcons;
+      return InquiryGeneralIcons$1;
     } };
     Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
     return __returned__;
@@ -72899,7 +73626,7 @@ const _sfc_main$z = /* @__PURE__ */ defineComponent({
     const groupTypeData = computed(() => {
       if (!inquiryGroupStore.type || !sessionStore.appSettings.inquiryGroupTypeTab) {
         return {
-          icon: InquiryGeneralIcons.Question,
+          icon: InquiryGeneralIcons$1.Question,
           label: inquiryGroupStore.type || translate("agora", "Unknown"),
           description: ""
         };
@@ -72912,7 +73639,7 @@ const _sfc_main$z = /* @__PURE__ */ defineComponent({
     const getInquiryTypeInfo = (inquiryType) => {
       if (!inquiryType || !sessionStore.appSettings.inquiryTypeTab) {
         return {
-          icon: InquiryGeneralIcons.Question,
+          icon: InquiryGeneralIcons$1.Question,
           label: inquiryType || translate("agora", "Unknown"),
           description: ""
         };
@@ -73021,7 +73748,7 @@ const _sfc_main$z = /* @__PURE__ */ defineComponent({
     }, get NcButton() {
       return NcButton;
     }, get InquiryGeneralIcons() {
-      return InquiryGeneralIcons;
+      return InquiryGeneralIcons$1;
     } };
     Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
     return __returned__;
@@ -73882,7 +74609,7 @@ const _sfc_main$x = /* @__PURE__ */ defineComponent({
     }, get NcDialog() {
       return NcDialog;
     }, get InquiryGeneralIcons() {
-      return InquiryGeneralIcons;
+      return InquiryGeneralIcons$1;
     }, get NavigationIcons() {
       return NavigationIcons;
     } };
@@ -74704,8 +75431,8 @@ const _sfc_main$v = /* @__PURE__ */ defineComponent({
     const typeIconComponent = computed(() => {
       if (typeData.value?.icon) {
         const iconName2 = typeData.value.icon;
-        if (typeof iconName2 === "string" && InquiryGeneralIcons[iconName2]) {
-          return InquiryGeneralIcons[iconName2];
+        if (typeof iconName2 === "string" && InquiryGeneralIcons$1[iconName2]) {
+          return InquiryGeneralIcons$1[iconName2];
         }
         if (typeof iconName2 === "function" || typeof iconName2 === "object") {
           return iconName2;
@@ -74725,7 +75452,7 @@ const _sfc_main$v = /* @__PURE__ */ defineComponent({
         "draft": "Empty"
       };
       const iconName = iconMap[props2.inquiry.type?.toLowerCase()] || "FolderMultiple";
-      return InquiryGeneralIcons[iconName] || InquiryGeneralIcons.FolderMultiple;
+      return InquiryGeneralIcons$1[iconName] || InquiryGeneralIcons$1.FolderMultiple;
     });
     const currentInquiryStatus = computed(() => {
       if (!props2.inquiry.status?.inquiryStatus) return null;
@@ -74880,7 +75607,7 @@ const _sfc_main$v = /* @__PURE__ */ defineComponent({
     const __returned__ = { props: props2, emit: emit2, sessionStore, cardClasses, inquiryTypes, typeData, typeLabel, typeIconComponent, currentInquiryStatus, statusText, statusIconComponent, coverUrl, getNextcloudPreviewUrl, shortDescription, isSupported, supportIconComponent, getHierarchyPath, locationPath, categoryPath, truncatedLocation, truncatedCategory, truncatedAuthorName, formattedTime, showExpiryBadge, expiryText, expiryBadgeClass, handleClick: handleClick2, handleSupportClick, handleCommentsClick, get NcAvatar() {
       return NcAvatar;
     }, get InquiryGeneralIcons() {
-      return InquiryGeneralIcons;
+      return InquiryGeneralIcons$1;
     } };
     Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
     return __returned__;
@@ -75149,7 +75876,7 @@ const _sfc_main$u = /* @__PURE__ */ defineComponent({
     const props2 = __props;
     const emit2 = __emit;
     const sessionStore = useSessionStore();
-    const InquiryGeneralIconsComponents = InquiryGeneralIcons;
+    const InquiryGeneralIconsComponents = InquiryGeneralIcons$1;
     const listItemDetails = computed(() => {
       const details = [];
       if (props2.inquiry.owner?.displayName || props2.inquiry.ownedGroup) {
@@ -75245,7 +75972,7 @@ const _sfc_main$u = /* @__PURE__ */ defineComponent({
     const __returned__ = { props: props2, emit: emit2, sessionStore, InquiryGeneralIconsComponents, listItemDetails, isActiveListItem, isBold, listItemAriaLabel, ownerDisplayName, inquiryTypes, typeData, typeIconComponent, shortDescription, formattedCreationDate, showExpiryBadge, expiryText, expiryBadgeClass, handleClick: handleClick2, get NcListItem() {
       return NcListItem;
     }, get InquiryGeneralIcons() {
-      return InquiryGeneralIcons;
+      return InquiryGeneralIcons$1;
     } };
     Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
     return __returned__;
@@ -76399,37 +77126,37 @@ const _sfc_main$s = /* @__PURE__ */ defineComponent({
       {
         id: "files",
         name: translate("agora", "Files"),
-        icon: InquiryGeneralIcons.Document,
+        icon: InquiryGeneralIcons$1.Document,
         description: translate("agora", "Upload and share files")
       },
       {
         id: "forms",
         name: translate("agora", "Forms"),
-        icon: InquiryGeneralIcons.Form,
+        icon: InquiryGeneralIcons$1.Form,
         description: translate("agora", "Create surveys and collect responses")
       },
       {
         id: "polls",
         name: translate("agora", "Polls"),
-        icon: InquiryGeneralIcons.Poll,
+        icon: InquiryGeneralIcons$1.Poll,
         description: translate("agora", "Create simple polls and votes")
       },
       {
         id: "deck",
         name: translate("agora", "Deck Cards"),
-        icon: InquiryGeneralIcons.Deck,
+        icon: InquiryGeneralIcons$1.Deck,
         description: translate("agora", "Create task cards in Deck")
       },
       {
         id: "cospend",
         name: translate("agora", "Cospend Expenses"),
-        icon: InquiryGeneralIcons.Money,
+        icon: InquiryGeneralIcons$1.Money,
         description: translate("agora", "Track shared expenses")
       },
       {
         id: "collectives",
         name: translate("agora", "Collectives"),
-        icon: InquiryGeneralIcons.Collectives,
+        icon: InquiryGeneralIcons$1.Collectives,
         description: translate("agora", "Link to collective pages")
       }
     ];
@@ -76799,7 +77526,7 @@ const _sfc_main$s = /* @__PURE__ */ defineComponent({
     }, get NcNoteCard() {
       return NcNoteCard;
     }, get InquiryGeneralIcons() {
-      return InquiryGeneralIcons;
+      return InquiryGeneralIcons$1;
     } };
     Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
     return __returned__;
@@ -77348,7 +78075,7 @@ const _sfc_main$r = /* @__PURE__ */ defineComponent({
           target_id: attachment.id?.toString() || "",
           type: "attachment",
           displayName: attachment.name,
-          icon: InquiryGeneralIcons.Document,
+          icon: InquiryGeneralIcons$1.Document,
           attachment,
           sort_order: 0,
           size: attachment.size
@@ -77398,14 +78125,14 @@ const _sfc_main$r = /* @__PURE__ */ defineComponent({
     };
     const getAppIcon = (appId) => {
       const icons = {
-        polls: InquiryGeneralIcons.Poll,
-        forms: InquiryGeneralIcons.Form,
-        deck: InquiryGeneralIcons.Deck,
-        cospend: InquiryGeneralIcons.Money,
-        files: InquiryGeneralIcons.Document,
-        collectives: InquiryGeneralIcons.Collectives
+        polls: InquiryGeneralIcons$1.Poll,
+        forms: InquiryGeneralIcons$1.Form,
+        deck: InquiryGeneralIcons$1.Deck,
+        cospend: InquiryGeneralIcons$1.Money,
+        files: InquiryGeneralIcons$1.Document,
+        collectives: InquiryGeneralIcons$1.Collectives
       };
-      return icons[appId] || InquiryGeneralIcons.Link;
+      return icons[appId] || InquiryGeneralIcons$1.Link;
     };
     const deleteResource = async (resource) => {
       try {
@@ -77620,7 +78347,7 @@ const _sfc_main$r = /* @__PURE__ */ defineComponent({
     }, get NcActionButton() {
       return NcActionButton;
     }, get InquiryGeneralIcons() {
-      return InquiryGeneralIcons;
+      return InquiryGeneralIcons$1;
     }, AddResourceModal };
     Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
     return __returned__;
@@ -77856,22 +78583,22 @@ const _sfc_main$q = /* @__PURE__ */ defineComponent({
         if (typeof iconName === "function" || typeof iconName === "object") {
           return iconName;
         }
-        if (typeof iconName === "string" && InquiryGeneralIcons[iconName]) {
-          return InquiryGeneralIcons[iconName];
+        if (typeof iconName === "string" && InquiryGeneralIcons$1[iconName]) {
+          return InquiryGeneralIcons$1[iconName];
         }
       }
       const iconMap = {
-        "proposal": InquiryGeneralIcons.Scale,
-        "survey": InquiryGeneralIcons.ClipboardList,
-        "poll": InquiryGeneralIcons.CheckCircle,
-        "question": InquiryGeneralIcons.Question,
-        "discussion": InquiryGeneralIcons.MessageSquare,
-        "news": InquiryGeneralIcons.Newspaper,
-        "announcement": InquiryGeneralIcons.Megaphone,
-        "meeting": InquiryGeneralIcons.Users,
-        "document": InquiryGeneralIcons.Document
+        "proposal": InquiryGeneralIcons$1.Scale,
+        "survey": InquiryGeneralIcons$1.ClipboardList,
+        "poll": InquiryGeneralIcons$1.CheckCircle,
+        "question": InquiryGeneralIcons$1.Question,
+        "discussion": InquiryGeneralIcons$1.MessageSquare,
+        "news": InquiryGeneralIcons$1.Newspaper,
+        "announcement": InquiryGeneralIcons$1.Megaphone,
+        "meeting": InquiryGeneralIcons$1.Users,
+        "document": InquiryGeneralIcons$1.Document
       };
-      return iconMap[props2.inquiry.type] || InquiryGeneralIcons.FolderMultiple;
+      return iconMap[props2.inquiry.type] || InquiryGeneralIcons$1.FolderMultiple;
     });
     const currentInquiryStatus = computed(() => {
       if (!storeInquiry.value.status?.inquiryStatus) return null;
@@ -78186,7 +78913,7 @@ const _sfc_main$q = /* @__PURE__ */ defineComponent({
     }, get NcModal() {
       return NcModal;
     }, TernarySupportDetails, get InquiryGeneralIcons() {
-      return InquiryGeneralIcons;
+      return InquiryGeneralIcons$1;
     }, get TernarySupportIcon() {
       return TernarySupportIcon;
     }, CommentAdd, Comments, SideBarTabResources };
@@ -78838,7 +79565,7 @@ const _sfc_main$p = /* @__PURE__ */ defineComponent({
     __expose();
     const props2 = __props;
     const sessionStore = useSessionStore();
-    const InquiryGeneralIconsComponents = InquiryGeneralIcons;
+    const InquiryGeneralIconsComponents = InquiryGeneralIcons$1;
     const inquiryTypes = computed(() => sessionStore.appSettings?.inquiryTypeTab || []);
     const typeData = computed(() => getInquiryTypeData(props2.inquiry.type, inquiryTypes.value));
     const typeLabel = computed(() => typeData.value?.label || props2.inquiry.type);
@@ -79204,7 +79931,7 @@ const _sfc_main$o = /* @__PURE__ */ defineComponent({
     const props2 = __props;
     const emit2 = __emit;
     const sessionStore = useSessionStore();
-    const InquiryGeneralIconsComponents = InquiryGeneralIcons;
+    const InquiryGeneralIconsComponents = InquiryGeneralIcons$1;
     const inquiryTypes = computed(() => sessionStore.appSettings?.inquiryTypeTab || []);
     const summaryClasses = computed(() => ({
       "is-compact": props2.compact,
@@ -79217,8 +79944,8 @@ const _sfc_main$o = /* @__PURE__ */ defineComponent({
     const typeIconComponent = computed(() => {
       if (typeData.value?.icon) {
         const iconName2 = typeData.value.icon;
-        if (typeof iconName2 === "string" && InquiryGeneralIcons[iconName2]) {
-          return InquiryGeneralIcons[iconName2];
+        if (typeof iconName2 === "string" && InquiryGeneralIcons$1[iconName2]) {
+          return InquiryGeneralIcons$1[iconName2];
         }
         if (typeof iconName2 === "function" || typeof iconName2 === "object") {
           return iconName2;
@@ -79369,7 +80096,7 @@ const _sfc_main$o = /* @__PURE__ */ defineComponent({
     const __returned__ = { props: props2, emit: emit2, sessionStore, InquiryGeneralIconsComponents, inquiryTypes, summaryClasses, typeData, typeLabel, typeIconComponent, typeBadgeClass, isSupported, supportIconComponent, ownerDisplayName, truncatedTitle, truncatedAuthorName, safeDescription, coverUrl, getNextcloudPreviewUrl, imageLoaded, handleImageLoad, showExpiryBadge, expiryText, expiryBadgeClass, formattedTime, getHierarchyPath, locationPath, categoryPath, truncatedLocation, truncatedCategory, handleClick: handleClick2, get NcAvatar() {
       return NcAvatar;
     }, get InquiryGeneralIcons() {
-      return InquiryGeneralIcons;
+      return InquiryGeneralIcons$1;
     } };
     Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
     return __returned__;
@@ -80360,7 +81087,7 @@ const _sfc_main$m = /* @__PURE__ */ defineComponent({
     }, get NcDialog() {
       return NcDialog;
     }, get InquiryGeneralIcons() {
-      return InquiryGeneralIcons;
+      return InquiryGeneralIcons$1;
     }, InquiryGroupCreateDlg, InquiryGroupViewMiddle, InquiryGroupViewMain };
     Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
     return __returned__;
@@ -82240,10 +82967,10 @@ const _sfc_main$6 = /* @__PURE__ */ defineComponent({
       () => createInquiryContext$1(inquiryStore, sessionStore.appSettings)
     );
     const userCanConfigureSupport = computed(
-      () => canSupport(permissionContext.value)
+      () => getEditPermissions(permissionContext.value).canSupport
     );
     const userCanConfigureComments = computed(
-      () => canComment(permissionContext.value)
+      () => getEditPermissions(permissionContext.value).canComment
     );
     const inquiryTypeConfig = computed(() => {
       if (!inquiryStore.type || !sessionStore.appSettings.inquiryTypeTab) {
@@ -83967,7 +84694,7 @@ const _sfc_main$4 = /* @__PURE__ */ defineComponent({
     }, get NcSelect() {
       return NcSelect;
     }, get InquiryGeneralIcons() {
-      return InquiryGeneralIcons;
+      return InquiryGeneralIcons$1;
     } };
     Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
     return __returned__;
@@ -84433,7 +85160,7 @@ const _sfc_main$3 = /* @__PURE__ */ defineComponent({
     }, get NcAppSidebarTab() {
       return NcAppSidebarTab;
     }, get InquiryGeneralIcons() {
-      return InquiryGeneralIcons;
+      return InquiryGeneralIcons$1;
     }, get canComment() {
       return canComment;
     }, get canUseResource() {
@@ -84564,7 +85291,7 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
     }, get NcAppSidebarTab() {
       return NcAppSidebarTab;
     }, get InquiryGeneralIcons() {
-      return InquiryGeneralIcons;
+      return InquiryGeneralIcons$1;
     }, get SideBarTabConfigurationInquiryGroup() {
       return SideBarTabConfigurationInquiryGroup;
     }, get SideBarTabInquiryGroupShare() {

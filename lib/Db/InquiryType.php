@@ -32,8 +32,8 @@ use JsonSerializable;
  * @method         void setAllowedTransformation(?array $value)
  * @method         ?array getAllowedOptionType()
  * @method         void setAllowedOptionType(?array $value)
- * @method         int getAllowComment()
- * @method         void setAllowComment(int $value)
+ * @method    int getAllowComment()
+ * @method    void setAllowComment(int $value)
  * @method         string getSupportFeature()
  * @method         void setSupportFeature(string $value)
  * @method         bool getIsRoot()
@@ -57,8 +57,8 @@ class InquiryType extends EntityWithUser implements JsonSerializable
     protected ?array $allowedResponse = null;
     protected ?array $allowedTransformation = null;
     protected ?array $allowedOptionType = null;
-    protected int $allowComment = 0;
-    protected string $supportFeature = 'none';
+    protected ?int $allowComment = null;
+    protected string $supportFeature = '';
     protected bool $isRoot = false;
     protected int $created = 0;
 

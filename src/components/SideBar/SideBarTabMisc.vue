@@ -9,7 +9,7 @@ import { useSessionStore } from '../../stores/session.ts'
 import { getAvailableFields } from '../../helpers/modules/InquiryHelper.ts'
 import { StatusIcons } from '../../utils/icons.ts'
 import { t } from '@nextcloud/l10n'
-import { createInquiryContext, canSupport, canComment } from '../../utils/permissions.ts'
+import { createInquiryContext, getEditPermissions } from '../../utils/permissions.ts'
 
 // Components
 import NcSelect from '@nextcloud/vue/components/NcSelect'
@@ -56,11 +56,11 @@ const permissionContext = computed(() =>
 )
 
 const userCanConfigureSupport = computed(() => 
-  canSupport(permissionContext.value)
+  getEditPermissions(permissionContext.value).canSupport
 )
 
 const userCanConfigureComments = computed(() => 
-  canComment(permissionContext.value)
+  getEditPermissions(permissionContext.value).canComment
 )
 
 const inquiryTypeConfig = computed(() => {

@@ -23,7 +23,8 @@ import {
 import NcSelect from '@nextcloud/vue/components/NcSelect'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcAvatar from '@nextcloud/vue/components/NcAvatar'
-import { NcTextArea, NcRichTextContenteditatble } from '@nextcloud/vue'
+import { NcTextArea } from '@nextcloud/vue'
+import NcRichContenteditable from '@nextcloud/vue/components/NcRichContenteditable'
 
 import { TernarySupportIcon, ThumbIcon } from '../AppIcons'
 import InquiryEditor from '../Editor/InquiryEditor.vue'
@@ -337,6 +338,10 @@ const onToggleSupport = async () => {
 
 // Event subscriptions
 onMounted(() => {
+  console.log(" CANNNNNNNNN CONTEXT ",context.value)
+  console.log(" CANNNNNNNNN SPPPOR ",canSupport(context.value))
+  console.log(" CANNNNNNNNN COMMENT ",canComment(context.value))
+
   if (inquiryStore.coverId) { 
         currentCoverUrl.value = getNextcloudPreviewUrl(inquiryStore.coverId)
    }
@@ -698,7 +703,7 @@ const formatDate = (timestamp: number) => new Date(timestamp * 1000).toLocaleDat
 						v-else-if="sessionStore.appSettings.inquiryTypeRights[inquiryStore.type]?.editorType === 'texteditor'"
 						class="editor-container"
 					>
-						<NcRichTextContenteditable
+						<NcRichContenteditable
 							v-model="inquiryStore.description"
 							:autolink="true"
 							:use-markdown="true"

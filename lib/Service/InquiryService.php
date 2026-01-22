@@ -453,11 +453,23 @@ public function updateConfig(int $inquiryId, array $inquiryConfiguration): Inqui
         }
         $this->inquiry->setAccess($inquiryConfiguration['access']);
     }
+    $this->logger->debug(
+    'DEBUG allowComment = ' . var_export($inquiryConfiguration['allowComment'] ?? 'KEY_MISSING', true),
+    ['app' => 'agora']
+    );
+     
+    if (array_key_exists('allowComment', $inquiryConfiguration)) {
+        $value = $inquiryConfiguration['allowComment'];
 
-    if (isset($inquiryConfiguration['allowComment'])) {
-        $this->inquiry->setAllowComment($inquiryConfiguration['allowComment'] ? 1 : 0);
+        if ($value === null) {
+            $this->inquiry->setAllowComment(null);
+        } elseif (!$value) {
+            $this->inquiry->setAllowComment(0); 
+        } else {
+            $this->inquiry->setAllowComment(1); 
+        }
     }
-
+     
 
     if (isset($inquiryConfiguration['expire'])) {
         $this->inquiry->setExpire($inquiryConfiguration['expire']);

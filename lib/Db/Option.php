@@ -141,8 +141,8 @@ class Option extends EntityWithUser implements JsonSerializable
     protected int $deleted = 0;
     protected int $archived = 0;
     protected string $status = self::DEFAULT_STATUS_DRAFT;
-    protected int $allowComment = 1;
-    protected string $supportFeature = 'none';
+    protected ?int $allowComment = null;
+    protected string $supportFeature = '';
     protected string $family = 'debate';
     protected int $sortOrder = 0;
     protected bool $hasSupported = false;
@@ -200,8 +200,6 @@ class Option extends EntityWithUser implements JsonSerializable
         $this->appSettings = Container::queryClass(AppSettings::class);
         $this->userSession = Container::queryClass(UserSession::class);
 
-        // Load option type configurations
-        $this->loadOptionTypeConfig();
     }
 
     public function jsonSerialize(): array
@@ -435,6 +433,7 @@ class Option extends EntityWithUser implements JsonSerializable
     {
         $this->setAccess($optionConfiguration['access'] ?? $this->getAccess());
         $this->setAllowComment($optionConfiguration['allowComment'] ?? $this->getAllowComment());
+        $this->setSupportFeature($optionConfiguration['supportFeature'] ?? $this->getSupportFeature());
         $this->setShowResults($optionConfiguration['showResults'] ?? $this->getShowResults());
         
         // Set misc fields from configuration
@@ -716,12 +715,12 @@ class Option extends EntityWithUser implements JsonSerializable
 
     private function getAllowChangeForeignSupports(): bool
     {
-        return $this->getAllowEditOption() && $this->getUser()->getIsUnrestrictedOptionOwner();
+        return $this->getAllowEditOption();
     }
 
     private function getAllowDeanonymize(): bool
     {
-        return $this->getAllowEditOption() && $this->getUser()->getIsUnrestrictedOptionOwner();
+        return $this->getAllowEditOption();
     }
 
     private function getAllowSubscribeToOption(): bool
