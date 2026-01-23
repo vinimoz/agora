@@ -200,6 +200,7 @@ OC.L10N.register(
     "Direction" : "方向",
     "Descending" : "遞減",
     "Ascending" : "遞增",
+    "Grid" : "網格",
     "List" : "清單",
     "Not defined" : "無定義",
     "Just now" : "剛剛",

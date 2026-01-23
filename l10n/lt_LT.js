@@ -96,6 +96,8 @@ OC.L10N.register(
     "Sort by last interaction" : "Rikiuoti pagal paskutinę sąveiką",
     "Sort by creation date" : "Rikiuoti pagal sukūrimo datą",
     "Sort by owner name" : "Rikiuoti pagal savininko vardą",
+    "Descending" : "Mažėjančia tvarka",
+    "Ascending" : "Didėjančia tvarka",
     "List" : "Sąrašas",
     "Not defined" : "Neapibrėžta",
     "Just now" : "Ką tik",
