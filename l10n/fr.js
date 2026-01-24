@@ -430,6 +430,7 @@ OC.L10N.register(
     "Deck" : "Deck",
     "Confirm file deletion" : "Confirmer la suppression du fichier",
     "Delete file" : "Supprimer le fichier ",
+    "Delete link" : "Supprimer le lien",
     "Receive notification email on activity to {emailAddress}" : "Recevoir un mail de notification d'activité à {emailAddress}",
     "Receive notification email on activity" : "Recevoir une notification par e-mail en cas d'activité",
     "Change name" : "Modifier le nom",

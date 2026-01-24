@@ -73,6 +73,7 @@ OC.L10N.register(
     "Edit" : "Tahrirlash",
     "Label" : "Yorliq",
     "Share label" : "Yorliq almashish",
+    "Shares" : "Ulashishlar",
     "No activity yet" : "Afsuski, faollik mavjud emas",
     "Failed to save settings" : "Sozlamalarni saqlab bo'lmadi",
     "Never" : "Hech qachon",

@@ -127,6 +127,7 @@ OC.L10N.register(
     "Direction" : "Riktning",
     "Descending" : "Fallande",
     "Ascending" : "Stigande",
+    "List" : "Lista",
     "Not defined" : "Ej definierad",
     "Just now" : "Just nu",
     "Today" : "Idag",
