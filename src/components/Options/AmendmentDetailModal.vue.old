@@ -32,7 +32,7 @@
         <div class="modal-header">
           <div class="header-left">
             <div class="amendment-type-indicator">
-              <component :is="optionIcon" :size="24" />
+              <component :is="InquiryOptionIcons.FileDocumentEdit" :size="24" />
             </div>
             <div class="header-text">
               <h2 class="amendment-title">{{ amendment.label }}</h2>
@@ -49,7 +49,7 @@
             <!-- Quick actions -->
             <div class="quick-actions">
               <TernarySupportIcon
-                :support-value="numericSupportValue"
+                :support-value="userSupport"
                 :size="20"
                 class="support-icon"
                 @click="toggleSupport"
@@ -103,25 +103,13 @@
               
               <NcActionButton
                 v-if="canAddResponse"
-                :is-menu="true"
+                :close-after-click="true"
+                @click="openAddResponseModal"
               >
                 <template #icon>
                   <component :is="InquiryOptionIcons.Plus" :size="20" />
                 </template>
                 {{ t('agora', 'Add response') }}
-                
-                <!-- Response type submenu -->
-                <NcActionButton
-                  v-for="responseType in availableResponseTypes"
-                  :key="responseType.option_type"
-                  :close-after-click="true"
-                  @click="openAddResponseModal(responseType.option_type)"
-                >
-                  <template #icon>
-                    <component :is="getOptionTypeIcon(responseType.option_type)" :size="16" />
-                  </template>
-                  {{ responseType.label }}
-                </NcActionButton>
               </NcActionButton>
               
               <NcActionSeparator v-if="canDelete" />
@@ -149,7 +137,7 @@
               {{ t('agora', 'Proposed amendment to:') }}
             </div>
             <div class="article-info">
-              <component :is="getOptionTypeIcon('article')" :size="20" />
+              <component :is="InquiryOptionIcons.FileDocument" :size="20" />
               <span class="article-title">{{ parentArticle.label }}</span>
               <NcButton
                 type="tertiary"
@@ -210,37 +198,44 @@
           </div>
 
           <!-- Support stats -->
-          <div v-if="hasSupportFeature" class="support-section">
+          <div class="support-section">
             <h4>{{ t('agora', 'Support') }}</h4>
             <div class="support-stats">
               <div class="stat-item positive">
                 <TernarySupportIcon
-                  :support-value="1"
+                  :support-value="'for'"
                   :size="20"
                 />
                 <div class="stat-content">
-                  <span class="stat-value">{{ amendment.status?.countPositiveSupports || amendment.support_for || 0 }}</span>
+                  <span class="stat-value">{{ amendment.support_for || 0 }}</span>
                   <span class="stat-label">{{ t('agora', 'In favor') }}</span>
                 </div>
               </div>
               
               <div class="stat-item negative">
                 <TernarySupportIcon
-                  :support-value="-1"
+                  :support-value="'against'"
                   :size="20"
                   :invert="true"
                 />
                 <div class="stat-content">
-                  <span class="stat-value">{{ amendment.status?.countNegativeSupports || amendment.support_against || 0 }}</span>
+                  <span class="stat-value">{{ amendment.support_against || 0 }}</span>
                   <span class="stat-label">{{ t('agora', 'Against') }}</span>
                 </div>
               </div>
               
               <div class="stat-actions">
                 <TernarySupportIcon
-                  :support-value="numericSupportValue"
+                  v-if="!userSupport || userSupport === 'neutral'"
+                  :support-value="null"
                   :size="24"
-                  class="support-toggle"
+                  class="neutral-support"
+                  @click="setSupport('for')"
+                />
+                <TernarySupportIcon
+                  v-else
+                  :support-value="userSupport"
+                  :size="24"
                   @click="toggleSupport"
                 />
                 <span class="support-hint">{{ getSupportHint() }}</span>
@@ -249,9 +244,19 @@
           </div>
 
           <!-- Responses -->
-          <div v-if="hasAllowedResponses" class="responses-section">
+          <div class="responses-section">
             <div class="section-header">
               <h4>{{ t('agora', 'Responses') }}</h4>
+              <NcButton
+                v-if="canAddResponse"
+                type="primary"
+                @click="openAddResponseModal"
+              >
+                <template #icon>
+                  <component :is="InquiryOptionIcons.Plus" :size="16" />
+                </template>
+                {{ t('agora', 'Add response') }}
+              </NcButton>
             </div>
             
             <div class="responses-list">
@@ -275,7 +280,7 @@
           </div>
 
           <!-- Comments -->
-          <div v-if="allowComment" ref="commentsSection" class="comments-section">
+          <div ref="commentsSection" class="comments-section">
             <div class="section-header">
               <h4>{{ t('agora', 'Comments') }}</h4>
               <NcButton
@@ -301,7 +306,7 @@
             </transition>
             
             <!-- Comments list -->
-            <div v-if="amendment.comment_count > 0" class="comments-list">
+            <div v-if="comments.length > 0" class="comments-list">
               <Comments
                 :inquiry-id="inquiryId"
                 :option-id="amendment.id"
@@ -356,7 +361,6 @@ import { useOptionsStore } from '../../stores/options'
 import { useSessionStore } from '../../stores/session'
 import { InquiryOptionIcons } from '../../utils/icons.ts'
 import { TernarySupportIcon } from '../../utils/AppIcons.ts'
-import { getOptionTypeData, getFamilyColor } from '../../helpers/modules/InquiryOptionHelper'
 
 // Import components
 import Comments from '../Comments/Comments.vue'
@@ -393,112 +397,20 @@ const error = ref<string | null>(null)
 const amendment = ref<Option | null>(null)
 const parentArticle = ref<Option | null>(null)
 const responses = ref<Option[]>([])
+const comments = ref<any[]>([])
 const showCommentForm = ref(false)
 const isEditing = ref(false)
 const editForm = ref({
   label: '',
   text: ''
 })
+const userSupport = ref<'for' | 'against' | null>(null)
 const showResponseModal = ref(false)
 const selectedResponseId = ref<number | null>(null)
 const showAddResponseModal = ref(false)
 const selectedResponseType = ref<string | null>(null)
 
 const commentsSection = ref<HTMLElement | null>(null)
-
-// Get all option types
-const allOptionTypes = computed(() => {
-  return sessionStore.appSettings?.inquiryOptionTypeTab || []
-})
-
-// Get amendment type data
-const amendmentTypeData = computed(() => {
-  return getOptionTypeData('amendment', allOptionTypes.value, 'amendment')
-})
-
-// Get option type icon
-const getOptionTypeIcon = (type: string) => {
-  const optionTypeData = getOptionTypeData(type, allOptionTypes.value, type)
-  const iconName = optionTypeData?.icon || 'File'
-  
-  if (iconName in InquiryOptionIcons) {
-    return InquiryOptionIcons[iconName as keyof typeof InquiryOptionIcons]
-  }
-  return InquiryOptionIcons.File
-}
-
-// Amendment icon
-const optionIcon = computed(() => {
-  const iconName = amendmentTypeData.value?.icon || 'FileDocumentEdit'
-  
-  if (iconName in InquiryOptionIcons) {
-    return InquiryOptionIcons[iconName as keyof typeof InquiryOptionIcons]
-  }
-  return InquiryOptionIcons.FileDocumentEdit
-})
-
-// Feature checks
-const hasSupportFeature = computed(() => {
-  return amendmentTypeData.value?.support_feature === 'ternary'
-})
-
-const allowComment = computed(() => {
-  return amendmentTypeData.value?.allow_comment || false
-})
-
-// Get allowed responses
-const allowedResponses = computed(() => {
-  if (!amendmentTypeData.value?.allowed_response) return []
-
-  let responses: string[] = []
-  
-  if (typeof amendmentTypeData.value.allowed_response === 'string') {
-    try {
-      responses = JSON.parse(amendmentTypeData.value.allowed_response)
-    } catch {
-      responses = []
-    }
-  } else if (Array.isArray(amendmentTypeData.value.allowed_response)) {
-    responses = amendmentTypeData.value.allowed_response
-  }
-  
-  return responses.filter(responseType => 
-    allOptionTypes.value.some(opt => 
-      opt.option_type === responseType || opt.optionType === responseType
-    )
-  )
-})
-
-const hasAllowedResponses = computed(() => {
-  return allowedResponses.value.length > 0
-})
-
-const availableResponseTypes = computed(() => {
-  if (!allowedResponses.value?.length) return []
-  
-  return allowedResponses.value
-    .map(responseType => {
-      const optionType = allOptionTypes.value.find(opt =>
-        opt.option_type === responseType || opt.optionType === responseType
-      )
-      return optionType ? {
-        option_type: optionType.option_type || optionType.optionType || responseType,
-        label: optionType.label || responseType,
-        icon: optionType.icon || 'File'
-      } : null
-    })
-    .filter((type): type is { option_type: string; label: string; icon: string } => type !== null)
-    .sort((a, b) => a.label.localeCompare(b.label))
-})
-
-// Support value conversion
-const numericSupportValue = computed(() => {
-  // Convert user_support string to numeric value
-  if (!amendment.value?.user_support) return null
-  if (amendment.value.user_support === 'for') return 1
-  if (amendment.value.user_support === 'against') return -1
-  return null
-})
 
 // Computed
 const modalTitle = computed(() => {
@@ -516,7 +428,8 @@ const canDelete = computed(() => {
 })
 
 const canAddResponse = computed(() => {
-  return hasAllowedResponses.value && sessionStore.currentUser?.id !== undefined
+  if (!amendment.value?.id) return false
+  return sessionStore.currentUser?.id !== undefined
 })
 
 const canEditOrDelete = computed(() => {
@@ -592,9 +505,9 @@ const formatArticleRef = (articleRef: any) => {
 }
 
 const getSupportHint = () => {
-  if (!amendment.value?.user_support) return t('agora', 'Click to support')
-  if (amendment.value.user_support === 'for') return t('agora', 'You support this amendment')
-  if (amendment.value.user_support === 'against') return t('agora', 'You oppose this amendment')
+  if (!userSupport.value) return t('agora', 'Click to support')
+  if (userSupport.value === 'for') return t('agora', 'You support this amendment')
+  if (userSupport.value === 'against') return t('agora', 'You oppose this amendment')
   return t('agora', 'Click to support')
 }
 
@@ -614,6 +527,11 @@ const loadAmendment = async () => {
         text: foundAmendment.text || ''
       }
       
+      // Load user support
+      if (foundAmendment.user_support !== undefined) {
+        userSupport.value = foundAmendment.user_support
+      }
+      
       // Load parent article
       if (foundAmendment.parentId) {
         parentArticle.value = optionsStore.options.find(opt => opt.id === foundAmendment.parentId) || null
@@ -631,6 +549,9 @@ const loadAmendment = async () => {
       responses.value = optionsStore.options.filter(opt => 
         opt.parentId === foundAmendment.id
       )
+      
+      // Load comments (TODO: Load actual comments)
+      comments.value = []
     } else {
       error.value = t('agora', 'Amendment not found')
     }
@@ -652,33 +573,77 @@ const closeModal = () => {
 const toggleSupport = () => {
   if (!amendment.value) return
   
-  const currentSupport = amendment.value.user_support
-  let newSupport: 'for' | 'against' | null = null
-  
-  if (!currentSupport) {
-    newSupport = 'for'
-    amendment.value.support_for = (amendment.value.support_for || 0) + 1
-  } else if (currentSupport === 'for') {
-    newSupport = null
+  if (userSupport.value === 'for') {
+    userSupport.value = null
     if (amendment.value.support_for > 0) {
       amendment.value.support_for--
     }
-  } else if (currentSupport === 'against') {
-    newSupport = 'for'
+  } else if (userSupport.value === 'against') {
+    userSupport.value = 'for'
     amendment.value.support_for = (amendment.value.support_for || 0) + 1
     if (amendment.value.support_against > 0) {
       amendment.value.support_against--
     }
+  } else {
+    userSupport.value = 'for'
+    amendment.value.support_for = (amendment.value.support_for || 0) + 1
   }
-  
-  amendment.value.user_support = newSupport
   
   // Update in store
   const index = optionsStore.options.findIndex(opt => opt.id === amendment.value?.id)
   if (index >= 0) {
     optionsStore.options[index] = {
       ...optionsStore.options[index],
-      user_support: newSupport,
+      user_support: userSupport.value,
+      support_for: amendment.value.support_for,
+      support_against: amendment.value.support_against
+    }
+  }
+  
+  emit('updated', amendment.value)
+}
+
+const setSupport = (support: 'for' | 'against') => {
+  if (!amendment.value) return
+  
+  if (support === 'for') {
+    if (userSupport.value === 'for') {
+      userSupport.value = null
+      if (amendment.value.support_for > 0) {
+        amendment.value.support_for--
+      }
+    } else {
+      userSupport.value = 'for'
+      amendment.value.support_for = (amendment.value.support_for || 0) + 1
+      
+      // If previously against, decrement against count
+      if (userSupport.value === 'against' && amendment.value.support_against > 0) {
+        amendment.value.support_against--
+      }
+    }
+  } else if (support === 'against') {
+    if (userSupport.value === 'against') {
+      userSupport.value = null
+      if (amendment.value.support_against > 0) {
+        amendment.value.support_against--
+      }
+    } else {
+      userSupport.value = 'against'
+      amendment.value.support_against = (amendment.value.support_against || 0) + 1
+      
+      // If previously for, decrement for count
+      if (userSupport.value === 'for' && amendment.value.support_for > 0) {
+        amendment.value.support_for--
+      }
+    }
+  }
+  
+  // Update in store
+  const index = optionsStore.options.findIndex(opt => opt.id === amendment.value?.id)
+  if (index >= 0) {
+    optionsStore.options[index] = {
+      ...optionsStore.options[index],
+      user_support: userSupport.value,
       support_for: amendment.value.support_for,
       support_against: amendment.value.support_against
     }
@@ -789,8 +754,10 @@ const viewParentArticle = () => {
   }
 }
 
-const openAddResponseModal = (responseType: string) => {
-  selectedResponseType.value = responseType
+const openAddResponseModal = () => {
+  // Amendments can have arguments_for, arguments_against, official_summary as responses
+  // Let user choose
+  selectedResponseType.value = 'argument_for' // Default
   showAddResponseModal.value = true
 }
 

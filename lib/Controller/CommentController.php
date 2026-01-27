@@ -51,11 +51,11 @@ class CommentController extends BaseController
      */
     #[NoAdminRequired]
     #[FrontpageRoute(verb: 'POST', url: '/inquiry/{inquiryId}/comment')]
-    public function add(int $inquiryId, string $message, bool $confidential): JSONResponse
+    public function add(int $inquiryId, string $message, int $optionId,bool $confidential): JSONResponse
     {
         return $this->response(
             fn () => [
-                'comment' => $this->commentService->add($message, $inquiryId, $confidential)
+                'comment' => $this->commentService->add($message, $inquiryId,$optionId,$confidential)
             ]
         );
     }

@@ -30,11 +30,11 @@ const emptyContentProps = {
 const showEmptyContent = computed(() => commentsStore.comments.length === 0)
 
 onMounted(() => {
-	commentsStore.load()
+	commentsStore.load(inquiryStore.id)
 })
 
 onBeforeRouteUpdate(async () => {
-	commentsStore.load()
+	commentsStore.load(inquriyStore.id)
 })
 
 onBeforeRouteLeave(() => {
@@ -44,7 +44,7 @@ onBeforeRouteLeave(() => {
 watch(
 	[() => inquiryStore.permissions.comment, () => inquiryStore.permissions.seeUsernames],
 	() => {
-		commentsStore.load()
+		commentsStore.load(inquiryStore.id)
 	},
 )
 </script>
@@ -64,7 +64,7 @@ watch(
 	</ConfigBox>
 
 	<CommentAdd />
-	<Comments v-if="!showEmptyContent" />
+	<Comments :inquiry-only='true' v-if="!showEmptyContent" />
 	<NcEmptyContent v-else v-bind="emptyContentProps">
 		<template #icon>
 			<CommentsIcon />

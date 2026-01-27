@@ -4,13 +4,47 @@
 -->
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import CommentItem from './CommentItem.vue'
 import { t } from '@nextcloud/l10n'
 import { usePreferencesStore } from '../../stores/preferences.ts'
 import { useCommentsStore } from '../../stores/comments.ts'
+import { useSessionStore } from '../../stores/session.ts' // Add this
 
 const commentsStore = useCommentsStore()
 const preferencesStore = usePreferencesStore()
+const sessionStore = useSessionStore() // Add this
+
+// Define props for filtering
+const props = defineProps<{
+  optionId?: number // Optional: if provided, show only this option's comments
+  inquiryOnly?: boolean // Optional: if true, show only inquiry-level comments
+}>()
+
+// Computed property to get filtered comments
+const filteredComments = computed(() => {
+  console.log(" INTO COMMMENT ",props.optionId)
+  console.log(" INTO COMMMENT ",props.inquiryOnly)
+  console.log(" FILTER COMMMENT ",commentsStore.groupedComments.filter( comment => comment.optionId === 0))
+  console.log(" FILTER COMMMENT ",commentsStore.groupedComments.length)
+  if (props.optionId) {
+    // Show only comments for specific option
+    return commentsStore.groupedComments.filter(
+      comment => comment.optionId === props.optionId
+    )
+  }
+  
+  if (props.inquiryOnly) {
+    // Show only inquiry-level comments (optionId = 0)
+    return commentsStore.groupedComments.filter(
+      comment => comment.optionId === 0
+    )
+  }
+  
+  // Default: show all comments (original behavior)
+  return commentsStore.groupedComments
+})
+
 const cssVar = {
   '--content-deleted': `"(${t('agora', 'deleted')})"`,
 }
@@ -20,7 +54,7 @@ const alternativestyle = preferencesStore.user.useCommentsAlternativeStyling
 <template>
   <TransitionGroup tag="ul" name="list" :class="['comments', { alternativestyle }]" :style="cssVar">
     <CommentItem
-      v-for="comment in commentsStore.groupedComments"
+      v-for="comment in filteredComments"
       :key="comment.id"
       :comment="comment"
       tag="li"

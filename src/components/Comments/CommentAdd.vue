@@ -16,6 +16,7 @@ import { useInquiryStore } from '../../stores/inquiry.ts'
 
 interface Props {
   inquiryId?: number
+  optionId?: number
 }
 
 const props = defineProps<Props>()
@@ -94,13 +95,17 @@ async function writeComment() {
     await commentsStore.add({
       message: comment.value,
       confidential: confidential.value || isConfidentialForced.value,
+      optionId: props.optionId,
     },inquiryId)
     
     comment.value = ''
     confidential.value = false
     
     // Reload comments to show the new one
-    commentsStore.load(inquiryId)
+    if (props.optionId){
+        commentsStore.load(inquiryId,props.optionId)
+    }
+    else commentsStore.load(inquiryId)
     
   } catch (error) {
     console.error('Error saving comment:', error)

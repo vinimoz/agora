@@ -46,7 +46,6 @@ class OptionMapper extends QBMapper
         
             //$this->joinUserRole($qb, self::TABLE, $currentUserId);
             $this->joinHasSupported($qb, self::TABLE, $currentUserId);
-            $this->joinOptionGroups($qb, self::TABLE, $optionGroupsAlias);
             $this->joinSupportValue($qb, self::TABLE, $currentUserId);
             $this->joinParticipantsCount($qb, self::TABLE);
             $this->joinSupportsCount($qb, self::TABLE);
@@ -55,7 +54,7 @@ class OptionMapper extends QBMapper
             $this->joinNeutralSupportsCount($qb, self::TABLE);
             $this->joinCommentsCount($qb, self::TABLE);
             $this->joinMiscs($qb, self::TABLE);
-            $this->joinInquiryInfo($qb, self::TABLE);
+            // $this->joinInquiryInfo($qb, self::TABLE);
         }
         return $this->findEntity($qb);
     }

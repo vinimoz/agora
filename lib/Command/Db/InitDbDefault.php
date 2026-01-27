@@ -268,7 +268,6 @@ class InitDbDefault extends Command
                 'draft:Draft',
                 'published:Check',
             ],
-            'statuses' => [],
             'use_title' => true,
         ],
 
@@ -291,7 +290,6 @@ class InitDbDefault extends Command
                 'draft:Draft',
                 'published:Check',
             ],
-            'statuses' => [],
             'use_title' => true,
         ],
 

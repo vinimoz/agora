@@ -730,7 +730,7 @@ class Inquiry extends EntityWithUser implements JsonSerializable
     public function getIsHaveParticipated(): bool
     {
         $userId = $this->userSession->getCurrentUser()->getId();
-        foreach ($this->children as $child) {
+        foreach ($this->childs as $child) {
             if (method_exists($child, 'getUserId') && $child->getUserId() === $userId) {
                 return true;
             }

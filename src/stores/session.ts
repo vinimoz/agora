@@ -116,6 +116,14 @@ export const useSessionStore = defineStore('session', {
       return ''
     },
 
+    currentOptionId(state): number {
+      if (state.route.name === 'option') {
+        return Number(state.route.params.id)
+      }
+      return 0
+    },
+
+
     currentInquiryId(state): number {
       if (state.route.name === 'inquiry') {
         return Number(state.route.params.id)

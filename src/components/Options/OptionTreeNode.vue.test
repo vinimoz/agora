@@ -1,4 +1,4 @@
-!--
+<!--
   SPDX-FileCopyrightText: 2024 Nextcloud contributors
   SPDX-License-Identifier: AGPL-3.0-or-later
 -->
@@ -160,112 +160,63 @@
             </div>
           </div>
 
-          <!-- STRUCTURE Family Layout -->
-          <div class="structure-layout">
-            <div class="structure-header">
-              <h3>{{ t('agora', 'Structure') }}</h3>
-              <p class="structure-description">{{ t('agora', 'Click on any item to edit its details') }}</p>
-            </div>
-            
-            <div class="tree-view">
-              <!-- Hierarchical tree view for chapters/articles -->
-              <div v-for="chapter in chapters" :key="chapter.id" class="tree-node">
-                <div class="node-content" @click="openNodeDetail(chapter)">
-                  <component :is="InquiryOptionIcons.BookOpenVariant" :size="18" />
-                  <span class="node-label">{{ chapter.title || chapter.label || t('agora', 'Untitled Chapter') }}</span>
-                  <div class="node-actions">
-                    <NcButton 
-                      type="tertiary" 
-                      size="small"
-                      @click.stop="openAddOptionModal('article', chapter.id)"
-                      :title="t('agora', 'Add Article to this Chapter')"
-                    >
-                      <template #icon>
-                        <component :is="InquiryOptionIcons.Plus" :size="14" />
-                      </template>
-                      {{ t('agora', 'Article') }}
-                    </NcButton>
-                    <NcButton 
-                      type="tertiary-no-background" 
-                      size="small"
-                      @click.stop="openNodeDetail(chapter)"
-                      :title="t('agora', 'Edit Chapter')"
-                    >
-                      <template #icon>
-                        <component :is="InquiryOptionIcons.Pencil" :size="14" />
-                      </template>
-                    </NcButton>
-                  </div>
-                </div>
-
-                <!-- Articles -->
-                <div v-for="article in getChildOptions(chapter.id, 'article')" :key="article.id" class="tree-node child">
-                  <div class="node-content" @click="openNodeDetail(article)">
-                    <component :is="InquiryOptionIcons.FileDocument" :size="16" />
-                    <span class="node-label">{{ article.title || article.label || t('agora', 'Untitled Article') }}</span>
-                    <div class="node-actions">
-                      <NcButton 
-                        type="tertiary" 
-                        size="small"
-                        @click.stop="openAddOptionModal('amendment', article.id)"
-                        :title="t('agora', 'Add Amendment to this Article')"
-                      >
-                        <template #icon>
-                          <component :is="InquiryOptionIcons.Plus" :size="14" />
-                        </template>
-                        {{ t('agora', 'Amendment') }}
-                      </NcButton>
-                      <NcButton 
-                        type="tertiary-no-background" 
-                        size="small"
-                        @click.stop="openNodeDetail(article)"
-                        :title="t('agora', 'Edit Article')"
-                      >
-                        <template #icon>
-                          <component :is="InquiryOptionIcons.Pencil" :size="14" />
-                        </template>
-                      </NcButton>
-                    </div>
-                  </div>
-
-                  <!-- Amendments -->
-                  <div v-for="amendment in getChildOptions(article.id, 'amendment')" :key="amendment.id" class="tree-node grandchild">
-                    <div class="node-content" @click="openNodeDetail(amendment)">
-                      <component :is="InquiryOptionIcons.FileDocumentEdit" :size="14" />
-                      <span class="node-label">{{ amendment.title || amendment.label || t('agora', 'Untitled Amendment') }}</span>
-                      <div class="node-actions">
-                        <NcButton 
-                          type="tertiary-no-background" 
-                          size="small"
-                          @click.stop="openNodeDetail(amendment)"
-                          :title="t('agora', 'Edit Amendment')"
-                        >
-                          <template #icon>
-                            <component :is="InquiryOptionIcons.Pencil" :size="14" />
-                          </template>
-                        </NcButton>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              <!-- Empty structure state -->
-              <div v-if="chapters.length === 0" class="empty-structure">
-                <component :is="InquiryOptionIcons.BookOpenVariant" :size="48" />
-                <h4>{{ t('agora', 'No structure yet') }}</h4>
-                <p>{{ t('agora', 'Start by creating your first chapter') }}</p>
-                <NcButton 
-                  type="primary"
-                  @click="openAddOptionModal('chapter')"
+          <!-- Child items grid -->
+          <div v-if="hasChildren(activeNode)" class="children-section">
+            <h3>{{ t('agora', 'Contents') }}</h3>
+            <div class="children-grid">
+              <!-- For chapters, show articles -->
+              <template v-if="activeNode.type === 'chapter'">
+                <div 
+                  v-for="article in getChildOptions(activeNode.id, 'article')" 
+                  :key="article.id"
+                  class="child-card"
+                  @click="setActiveNode(article)"
                 >
-                  <template #icon>
-                    <component :is="InquiryOptionIcons.Plus" :size="16" />
-                  </template>
-                  {{ t('agora', 'Create Chapter') }}
-                </NcButton>
-              </div>
+                  <div class="card-header">
+                    <component :is="InquiryOptionIcons.FileDocument" :size="18" />
+                    <h4>{{ article.title || article.label || t('agora', 'Untitled Article') }}</h4>
+                  </div>
+                  <div v-if="article.text" class="card-preview">
+                    {{ truncateText(article.text, 100) }}
+                  </div>
+                </div>
+              </template>
+              
+              <!-- For articles, show amendments -->
+              <template v-else-if="activeNode.type === 'article'">
+                <div 
+                  v-for="amendment in getChildOptions(activeNode.id, 'amendment')" 
+                  :key="amendment.id"
+                  class="child-card"
+                  @click="setActiveNode(amendment)"
+                >
+                  <div class="card-header">
+                    <component :is="InquiryOptionIcons.FileDocumentEdit" :size="18" />
+                    <h4>{{ amendment.title || amendment.label || t('agora', 'Untitled Amendment') }}</h4>
+                  </div>
+                  <div v-if="amendment.text" class="card-preview">
+                    {{ truncateText(amendment.text, 100) }}
+                  </div>
+                </div>
+              </template>
             </div>
+          </div>
+
+          <!-- Empty children state -->
+          <div v-else-if="activeNode.type === 'chapter' || activeNode.type === 'article'" class="empty-children">
+            <component :is="InquiryOptionIcons.PlusCircleOutline" :size="48" />
+            <h4>{{ t('agora', 'No content yet') }}</h4>
+            <p v-if="activeNode.type === 'chapter'">{{ t('agora', 'Add articles to this chapter') }}</p>
+            <p v-else>{{ t('agora', 'Add amendments to this article') }}</p>
+            <NcButton 
+              type="primary"
+              @click="openAddOptionModal(activeNode.type === 'chapter' ? 'article' : 'amendment', activeNode.id)"
+            >
+              <template #icon>
+                <component :is="InquiryOptionIcons.Plus" :size="16" />
+              </template>
+              {{ t('agora', activeNode.type === 'chapter' ? 'Add Article' : 'Add Amendment') }}
+            </NcButton>
           </div>
         </div>
 
@@ -368,6 +319,10 @@ const getChildOptions = (parentId: number, type?: string) => {
     return children.filter(opt => opt.type === type)
   }
   return children
+}
+
+const hasChildren = (node: any): boolean => {
+  return getChildOptions(node.id).length > 0
 }
 
 const truncateText = (text: string, maxLength: number): string => {
@@ -646,7 +601,7 @@ onMounted(() => {
   background: var(--color-main-background);
   
   .content-panel {
-    max-width: 1000px;
+    max-width: 800px;
     margin: 0 auto;
   }
   
@@ -676,7 +631,7 @@ onMounted(() => {
     border: 1px solid var(--color-border);
     border-radius: 12px;
     padding: 20px;
-    margin-bottom: 32px;
+    margin-bottom: 24px;
     
     .editor-actions {
       display: flex;
@@ -685,122 +640,88 @@ onMounted(() => {
     }
   }
   
-  /* STRUCTURE LAYOUT STYLES */
-  .structure-layout {
-    margin-top: 32px;
-    padding-top: 24px;
-    border-top: 2px solid var(--color-border);
-    
-    .structure-header {
-      margin-bottom: 24px;
-      
-      h3 {
-        margin: 0 0 8px 0;
-        font-size: 20px;
-        font-weight: 600;
-        color: var(--color-main-text);
-      }
-      
-      .structure-description {
-        margin: 0;
-        font-size: 14px;
-        color: var(--color-text-lighter);
-        font-style: italic;
-      }
+  .children-section {
+    h3 {
+      margin: 0 0 16px 0;
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--color-main-text);
     }
     
-    .tree-view {
-      .tree-node {
-        margin-bottom: 8px;
+    .children-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+      
+      .child-card {
+        background: var(--color-background-dark);
+        border: 1px solid var(--color-border);
+        border-radius: 8px;
+        padding: 16px;
+        cursor: pointer;
+        transition: all 0.2s ease;
         
-        &.child {
-          margin-left: 32px;
-          margin-top: 8px;
+        &:hover {
+          border-color: var(--color-primary-element);
+          transform: translateY(-2px);
         }
         
-        &.grandchild {
-          margin-left: 64px;
-          margin-top: 6px;
-        }
-        
-        .node-content {
+        .card-header {
           display: flex;
           align-items: center;
-          gap: 12px;
-          padding: 12px 16px;
-          background: var(--color-background-dark);
-          border: 1px solid var(--color-border);
-          border-radius: 8px;
-          cursor: pointer;
-          transition: all 0.2s ease;
+          gap: 8px;
+          margin-bottom: 8px;
           
-          &:hover {
-            background: var(--color-background-darker);
-            border-color: var(--color-primary-element);
-            transform: translateX(4px);
-          }
-          
-          svg {
-            flex-shrink: 0;
-            color: var(--color-primary-element);
-          }
-          
-          .node-label {
-            flex: 1;
-            font-weight: 500;
+          h4 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
             color: var(--color-main-text);
-            font-size: 15px;
-          }
-          
-          .node-actions {
-            display: flex;
-            gap: 4px;
-            flex-shrink: 0;
-            
-            button {
-              white-space: nowrap;
-            }
+            flex: 1;
           }
         }
-      }
-      
-      .empty-structure {
-        text-align: center;
-        padding: 48px 24px;
-        background: var(--color-background-dark);
-        border: 2px dashed var(--color-border);
-        border-radius: 16px;
         
-        svg {
-          color: var(--color-primary-element);
-          margin-bottom: 20px;
-          opacity: 0.6;
-        }
-        
-        h4 {
-          margin: 0 0 8px 0;
-          font-size: 18px;
-          font-weight: 600;
-          color: var(--color-main-text);
-        }
-        
-        p {
-          margin: 0 0 20px 0;
+        .card-preview {
+          font-size: 14px;
           color: var(--color-text-lighter);
-          font-style: italic;
+          line-height: 1.4;
         }
       }
     }
   }
   
+  .empty-children {
+    text-align: center;
+    padding: 40px 20px;
+    background: var(--color-background-dark);
+    border: 2px dashed var(--color-border);
+    border-radius: 16px;
+    margin: 24px 0;
+    
+    svg {
+      color: var(--color-text-lighter);
+      margin-bottom: 16px;
+      opacity: 0.5;
+    }
+    
+    h4 {
+      margin: 0 0 8px 0;
+      font-size: 18px;
+      color: var(--color-main-text);
+    }
+    
+    p {
+      margin: 0 0 16px 0;
+      color: var(--color-text-lighter);
+      font-style: italic;
+    }
+  }
+  
   .welcome-state {
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
     min-height: 400px;
-    text-align: center;
-    padding: 40px;
     
     svg {
       color: var(--color-primary-element);
@@ -820,7 +741,6 @@ onMounted(() => {
       font-size: 16px;
       color: var(--color-text-lighter);
       line-height: 1.5;
-      max-width: 500px;
     }
   }
 }
@@ -848,49 +768,6 @@ onMounted(() => {
     
     .content-actions {
       justify-content: flex-start;
-    }
-  }
-  
-  .structure-layout {
-    .tree-view {
-      .tree-node {
-        &.child {
-          margin-left: 24px;
-        }
-        
-        &.grandchild {
-          margin-left: 48px;
-        }
-        
-        .node-content {
-          flex-direction: column;
-          align-items: flex-start;
-          gap: 8px;
-          
-          .node-label {
-            width: 100%;
-          }
-          
-          .node-actions {
-            width: 100%;
-            justify-content: flex-end;
-          }
-        }
-      }
-    }
-  }
-}
-
-@media (max-width: 480px) {
-  .tree-view {
-    .tree-node {
-      &.child {
-        margin-left: 16px !important;
-      }
-      
-      &.grandchild {
-        margin-left: 32px !important;
-      }
     }
   }
 }

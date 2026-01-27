@@ -11,10 +11,13 @@ namespace OCA\Agora\Controller;
 use OCA\Agora\Service\CalendarService;
 use OCA\Agora\Service\OptionService;
 use OCA\Agora\Service\SupportService;
+use OCA\Agora\Service\OptionMiscService;
+use OCA\Agora\Service\CommentService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\FrontpageRoute;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\JSONResponse;
+use Psr\Log\LoggerInterface;
 use OCP\IRequest;
 
 /**
@@ -28,6 +31,9 @@ class OptionController extends BaseController
         private OptionService $optionService,
         private CalendarService $calendarService,
         private SupportService $supportService,
+        private CommentService $commentService,
+        private OptionMiscService $optionMiscService,
+        private LoggerInterface $logger,
     ) {
         parent::__construct($appName, $request);
     }
@@ -110,6 +116,54 @@ class OptionController extends BaseController
             }
         );
     }
+
+
+    /**
+     * get complete option
+  *
+     * @param int $optionId Inquiry id
+     *
+     *                       psalm-return JSONResponse<array{
+     *                       option: Inquiry,
+     *                       comments: array<int, Comment>,
+     *                       }>
+     */
+    #[NoAdminRequired]
+    #[FrontpageRoute(verb: 'GET', url: '/option/{optionId}/full')]
+    public function getFull(int $optionId): JSONResponse
+    {
+        return $this->response(fn () => $this->getFullOption($optionId, true), Http::STATUS_OK);
+    }
+
+    private function getFullOption(int $optionId, bool $withTimings = false): array
+    {
+	    $this->logger->error(' OPTIONNNNNNNNNNNNNNNNN ', ['data' => $optionId]);
+        $timerMicro['start'] = microtime(true);
+
+        $option = $this->optionService->get($optionId);
+	    $option->setMiscFields($this->optionMiscService->findByOptionId($optionId));
+	    $this->logger->error(' OPTIONNNNNNNNNNNNNNNNN FULL LOAD ', ['data' => $option]);
+
+        $diffMicro['total'] = microtime(true) - $timerMicro['start'];
+        $timerMicro['option'] = microtime(true);
+
+        // $subscribed = $this->subscriptionService->get($inquiryId);
+       // $timerMicro['subscribed'] = microtime(true);
+
+        $diffMicro['option'] = $timerMicro['option'] - $timerMicro['start'];
+
+
+        if ($withTimings) {
+            return [
+            'option' => $option,
+            'diffMicro' => $diffMicro,
+            ];
+        }
+        return [
+        'option' => $option,
+        ];
+    }
+
 
     /**
      * Get child options

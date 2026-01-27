@@ -88,7 +88,7 @@ class InquiryOptionType extends EntityWithUser implements JsonSerializable
             'icon' => $this->getIcon(),
             'description' => $this->getDescription(),
             'fields' => $this->getFields(),
-            'allow_response' => $this->getAllowedResponse(),
+            'allowed_response' => $this->getAllowedResponse(),
             'allow_comment' => $this->getAllowComment(),
             'use_title' => $this->getUseTitle(),
             'support_feature' => $this->getSupportFeature(),

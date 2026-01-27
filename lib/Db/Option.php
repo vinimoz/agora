@@ -170,7 +170,7 @@ class Option extends EntityWithUser implements JsonSerializable
     protected array $miscFields = [];
     private array $optionTypeConfig = [];
 
-    private array $children = [];
+    private array $childs = [];
 
     public function __construct()
     {
@@ -214,23 +214,18 @@ class Option extends EntityWithUser implements JsonSerializable
             'text' => $this->getText(),
             'owner' => $this->getUser(),
             'ownedGroup' => $this->getOwnedGroup(),
-            'created' => $this->getCreated(),
-            'updated' => $this->getUpdated(),
             'showResults' => $this->getShowResults(),
-            'deleted' => $this->getDeleted(),
-            'archived' => $this->getArchived(),
-            'status' => $this->getStatus(),
+            'status' => $this->getStatusArray(),
             'allowComment' => $this->getAllowComment(),
             'supportFeature' => $this->getSupportFeature(),
             'family' => $this->getFamily(),
             'sortOrder' => $this->getSortOrder(),
-            'statusInfo' => $this->getStatusArray(),
             'currentUserStatus' => $this->getCurrentUserStatus(),
             'permissions' => $this->getPermissionsArray(),
             'optionGroups' => $this->getOptionGroups(),
             'inquiryInfo' => $this->getInquiryInfoArray(),
             'miscFields' => $this->getMiscArray(),
-            'children' => $this->getChildren(),
+            'childs' => $this->getChildren(),
         ];
 
         return $baseData;
@@ -250,6 +245,7 @@ class Option extends EntityWithUser implements JsonSerializable
         return [
             'created' => $this->getCreated(),
             'updated' => $this->getUpdated(),
+            'optionStatus' => $this->getStatus(),
             'isArchived' => (bool)$this->getArchived(),
             'isDeleted' => (bool)$this->getDeleted(),
             'countParticipants' => $this->getIsAllowed(self::PERMISSION_OPTION_RESULTS_VIEW) ? $this->getCountParticipants() : 0,
@@ -353,12 +349,12 @@ class Option extends EntityWithUser implements JsonSerializable
 
     public function setChildren(array $children): void
     {
-        $this->children = $children;
+        $this->childs = $children;
     }
 
     public function getChildren(): array
     {
-        return $this->children;
+        return $this->childs;
     }
 
     public function getOptionId(): int
@@ -666,7 +662,7 @@ class Option extends EntityWithUser implements JsonSerializable
     public function getIsHaveParticipated(): bool
     {
         $userId = $this->userSession->getCurrentUser()->getId();
-        foreach ($this->children as $child) {
+        foreach ($this->childs as $child) {
             if (method_exists($child, 'getUserId') && $child->getUserId() === $userId) {
                 return true;
             }

@@ -24,7 +24,16 @@ import { useSupportsStore } from './supports.ts'
 import { useAppSettingsStore } from '../stores/appSettings.ts'
 import { InquiryOptionType } from '../Types/index.ts'
 import { AxiosError } from '@nextcloud/axios'
-import { getFamily, DEFAULT_FAMILY } from './option.type.ts'
+import { 
+    getOptionTypeData,
+    getAllowedOptionTypes,
+    groupOptionTypesByFamily,
+    getFamiliesWithOptionTypes,
+    getFamilyIconComponent,
+    getFamilyColor,
+    getOptionTypesForFamily,
+    getOptionTypeOptions
+} from '../helpers/modules/InquiryOptionHelper.ts'
 
 export type OptionAccessType = 'private' | 'public' | 'open' | 'hidden'
 export type OptionStatus = 'draft' | 'published' | 'archived' | 'deleted'
@@ -45,6 +54,7 @@ export type OptionCurrentStatus = {
     countParticipants: number
     countComments: number
     countSupports: number
+    optionStatus: string
     countPositiveSupports: number
     countNegativeSupports: number
     countNeutralSupports: number
@@ -59,7 +69,6 @@ export type CurrentUserOptionStatus = {
     shareToken: string
     userId: string
     userRole: UserType
-    optionGroupUserShares: string[]
 }
 
 export type OptionPermissions = {
@@ -90,7 +99,7 @@ export type InquiryOptionType = {
     color: string
     icon: string
     features: string[]
-    allowed_child_types?: string[]
+    allowed_response?: string[]
     sortOrder: number
     defaultStatus: string
     miscFields?: Array<{
@@ -113,16 +122,15 @@ export type Option = {
     title: string
     text: string
     textSafe: string
-    status: string
     sortOrder: number
     configuration: OptionConfiguration
     miscFields: Record<string, any>
     ownedGroup: string
     owner: User
-    optionGroups: number[]
     currentUserStatus: CurrentUserOptionStatus
     permissions: OptionPermissions
-    children: Option[]
+    status: OptionCurrentStatus
+    childs: Option[]
     meta: {
         chunking: Chunking
         status: StatusResults
@@ -133,7 +141,6 @@ export type Option = {
         inquiryType: string
         inquiryAccess: string
     }
-    // Computed properties (not in API response)
     _typeInfo?: InquiryOptionType
     _familyInfo?: {
         name: string
@@ -156,7 +163,6 @@ export const useOptionStore = defineStore('option', {
         text: '',
         title: '',
         textSafe: '',
-        status: 'draft',
         sortOrder: 0,
         configuration: {
             access: 'private',
@@ -168,7 +174,6 @@ export const useOptionStore = defineStore('option', {
         miscFields: {},
         ownedGroup: '',
         owner: createDefault<User>(),
-        optionGroups: [],
         currentUserStatus: {
             isInvolved: false,
             hasSupported: false,
@@ -178,8 +183,20 @@ export const useOptionStore = defineStore('option', {
             shareToken: '',
             userId: '',
             userRole: '',
-            optionGroupUserShares: [],
         },
+    status: {
+      created: 0,
+      isArchived: false,
+      isExpired: false,
+      isDeleted: false,
+      countParticipants: 0,
+      countComments: 0,
+      countSupports: 0,
+      countNegativeSupports: 0,
+      countNeutralSupports: 0,
+      countPostiveSupports: 0,
+      optionStatus: 'draft',
+    },
         permissions: {
             view: false,
             edit: false,
@@ -199,7 +216,7 @@ export const useOptionStore = defineStore('option', {
             addOption: false,
             confirmOption: false,
         },
-        children: [],
+        childs: [],
         meta: {
             chunking: {
                 size: 0,
@@ -218,6 +235,41 @@ export const useOptionStore = defineStore('option', {
     }),
 
 getters: {
+      formattedExpireDate(): string {
+        if (this.configuration.expire > 0) {
+            return moment.unix(this.configuration.expire).format('LLL')
+        }
+        return ''
+    },
+
+    isExpired(): boolean {
+        return (
+            this.configuration.expire > 0 &&
+            moment.unix(this.configuration.expire).diff() < 1000
+        )
+    },
+
+    isClosed(): boolean {
+        return this.status.optionStatus === 'archived' || this.status.optionStatus === 'deleted' || this.status.isExpired
+    },
+
+    isDraft(): boolean {
+        return this.status.optionStatus === 'draft'
+    },
+
+    isPublished(): boolean {
+        return this.status.optionStatus === 'published'
+    },
+
+    hasChildren(): boolean {
+        return (this.childs && this.childs.length > 0) ||
+               (this.childs && this.childs.length > 0)
+    },
+
+    childCount(): number {
+        return (this.childs?.length || 0) + (this.childs?.length || 0)
+    },
+
     // Get option type definition from session store
     typeInfo(): InquiryOptionType | undefined {
         const sessionStore = useSessionStore()
@@ -227,90 +279,18 @@ getters: {
                                )
     },
 
-    familyInfo(): { name: string; color: string; icon: string; description: string } | undefined {
-        if (!this.typeInfo) return undefined
-
-            const family = getFamily(this.typeInfo.family || 'default')
-
-            return {
-                name: family.name,
-                color: family.color,
-                icon: family.icon,
-                description: family.description
-            }
-    },
-
-    // Get type icon - returns component
-    typeIcon(): any {
-        const iconName = this.typeInfo?.icon || this.familyInfo?.icon || 'File'
-        return InquiryGeneralIcons[iconName] || InquiryGeneralIcons.File
-    },
-
-    // Get type display name
-    typeDisplayName(): string {
-        return this.typeInfo?.label || this.typeInfo?.name || this.type
-    },
-
-    // Get type color
-    typeColor(): string {
-        return this.typeInfo?.color || this.familyInfo?.color || '#999999'
-    },
-
-    // Get type description
-    typeDescription(): string {
-        return this.typeInfo?.description || this.familyInfo?.description || ''
-    },
-
-    // Get allowed features for this option type
-    typeFeatures(): string[] {
-        const features = []
-        const typeInfo = this.typeInfo as any
-
-        if (typeInfo?.allow_comment === 1 || typeInfo?.allow_comment === true) {
-            features.push('comments')
-        }
-
-        if (typeInfo?.support_feature && typeInfo.support_feature !== 'none') {
-            features.push('supports')
-        }
-
-        if (typeInfo?.allow_response && Array.isArray(typeInfo.allow_response) && typeInfo.allow_response.length > 0) {
-            features.push('children')
-        }
-
-        return features
-    },
-
-    // Check if option type supports a specific feature
-    supportsFeature: (state) => (feature: string): boolean => state.typeFeatures.includes(feature),
-
-        // Get allowed child types for this option
-        allowedChildTypes(): string[] {
-        const typeInfo = this.typeInfo as any
-        if (!typeInfo?.allow_response) return []
-
-            if (Array.isArray(typeInfo.allow_response)) {
-                return typeInfo.allow_response
-            }
-
-            if (typeof typeInfo.allow_response === 'string') {
-                try {
-                    return JSON.parse(typeInfo.allow_response)
-                } catch {
-                    return []
-                }
-            }
-
-            return []
-    },
-
-    // Check if this option can have children
-    canHaveChildren(): boolean {
-        return this.allowedChildTypes.length > 0
-    },
+familyInfo(): { name: string; color: string; icon: string; description: string } | undefined {
+    if (!this.typeInfo?.family) return undefined
+    
+    return {
+        name: this.typeInfo.family,
+        color: getFamilyColor(this.typeInfo.family),
+        icon: getFamilyIconComponent(this.typeInfo.family),
+        description: this.typeInfo.description || ''
+    }
+},
 
     // Check if a specific child type is allowed
-    isChildTypeAllowed: (state) => (childType: string): boolean => state.allowedChildTypes.includes(childType),
 
         // Get misc fields configuration for this option type
         miscFieldsConfig(): Array<{
@@ -322,29 +302,26 @@ getters: {
         required?: boolean
         options?: Array<{ value: string; label: string }>
     }> {
-        const typeInfo = this.typeInfo as any
+        const typeInfo = this.typeInfo
         if (!typeInfo?.fields) return []
 
-            // Convert fields array to config array
-            if (Array.isArray(typeInfo.fields)) {
-                return typeInfo.fields.map((field: any) => {
-                    if (typeof field === 'string') {
-                        return {
-                            key: field,
-                            type: 'text',
-                            label: field.split('_').map((word: string) => 
-                                                        word.charAt(0).toUpperCase() + word.slice(1)
-                                                       ).join(' '),
-                                                       required: false
-                        }
+            // Ensure fields is an array
+            const fields = Array.isArray(typeInfo.fields) ? typeInfo.fields : []
+
+            return fields.map((field: any) => {
+                if (typeof field === 'string') {
+                    return {
+                        key: field,
+                        type: 'text',
+                        label: field.split('_').map((word: string) => 
+                                                    word.charAt(0).toUpperCase() + word.slice(1)
+                                                   ).join(' '),
+                                                   required: false
                     }
-                    return field
-                })
-            }
-
-            return []
+                }
+                return field
+            })
     },
-
     // Check if option has required misc fields
     hasRequiredMiscFields(): boolean {
         return this.miscFieldsConfig.some(field => field.required)
@@ -358,42 +335,6 @@ getters: {
             const value = this.miscFields[field.key]
             return value !== undefined && value !== null && value !== ''
         })
-    },
-
-    // Status checks
-    isClosed(): boolean {
-        return this.status === 'archived' || this.status === 'deleted'
-    },
-
-    isPublished(): boolean {
-        return this.status === 'published'
-    },
-
-    isDraft(): boolean {
-        return this.status === 'draft'
-    },
-
-    // Permission checks with type features
-    canComment(): boolean {
-        return this.permissions.comment && 
-            this.configuration.allowComment === 1 &&
-            this.supportsFeature('comments')
-    },
-
-    canSupport(): boolean {
-        return this.permissions.support && 
-            this.configuration.supportFeature !== 'none' &&
-            this.supportsFeature('supports')
-    },
-
-    canAddChildren(): boolean {
-        return this.permissions.addOption && 
-            this.canHaveChildren &&
-            !this.isClosed
-    },
-
-    hasChildren(): boolean {
-        return this.children && this.children.length > 0
     },
 
     // Type-specific checks
@@ -480,17 +421,143 @@ actions: {
         this.$reset()
     },
 
+    async setOptionStatus(optionStatus: string): Promise<void> {
+        try {
+            await OptionsAPI.updateOptionStatus(this.id, optionStatus)
+            this.status.optionStatus = optionStatus
+        } catch (error) {
+            if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+                return
+            }
+            Logger.error('Error setting option status:', {
+                error,
+                state: this.$state,
+            })
+            throw error
+        }
+    },
+    async toggleArchive(payload: { optionId: number }): Promise<void> {
+        const inquiryStore = useInquiryStore()
+        try {
+            const response = await OptionsAPI.toggleArchive(payload.optionId)
+            if (this.id === payload.optionId) {
+                this.$patch(response.data.option)
+            }
+        } catch (error) {
+            if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+                return
+            }
+            Logger.error('Error archiving/restoring option', {
+                error,
+                payload,
+            })
+            throw error
+        } finally {
+            if (inquiryStore.id) {
+                inquiryStore.load()
+            }
+        }
+    },
+
+    async getEnhancedText(payload: {text: string}): Promise<void> {
+        try {
+            const response = await OptionsAPI.getEnhancedText(payload.text)
+            this.text = response.data.enhancedText || this.text
+        } catch (error) {
+            if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+                return
+            }
+            Logger.error('Error getting AI response for option text', {
+                error,
+            })
+            throw error
+        }
+    },
+
+    async submitOption(action: string): Promise<void> {
+        const appSettingsStore = useAppSettingsStore()
+        try {
+            if (action === 'submit_for_accepted') {
+                this.status.optionStatus = 'published'
+                this.configuration.access = 'open'
+            } else if (action === 'submit_for_rejected') {
+                this.status.optionStatus = 'rejected'
+                this.configuration.access = 'private'
+            } else if (action === 'submit_for_moderate') {
+                this.status.optionStatus = 'pending'
+                this.configuration.access = 'moderate'
+            }
+            const response = await OptionsAPI.submitOption(this.id, action)
+            if (!response || !response.data) {
+                this.$reset()
+            }
+        } catch (error) {
+            if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+                return
+            }
+            Logger.error('Error submitting option', { error })
+            throw error
+        }
+    },
+
+    async close(): Promise<void> {
+        const inquiryStore = useInquiryStore()
+        try {
+            const response = await OptionsAPI.closeOption(this.id)
+            this.$patch(response.data.option)
+            this.status.optionStatus = 'archived'
+        } catch (error) {
+            if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+                return
+            }
+            Logger.error('Error closing option', {
+                error,
+                optionId: this.id,
+            })
+            this.load()
+            throw error
+        } finally {
+            if (inquiryStore.id) {
+                inquiryStore.load()
+            }
+        }
+    },
+
+    async reopen(): Promise<void> {
+        const inquiryStore = useInquiryStore()
+        try {
+            const response = await OptionsAPI.reopenOption(this.id)
+            this.$patch(response.data.option)
+            this.status.optionStatus = 'published'
+        } catch (error) {
+            if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+                return
+            }
+            Logger.error('Error reopening option', {
+                error,
+                optionId: this.id,
+            })
+            this.load()
+            throw error
+        } finally {
+            if (inquiryStore.id) {
+                inquiryStore.load()
+            }
+        }
+    },
+
     // Initialize type info after loading option
     initializeTypeInfo(): void {
         const sessionStore = useSessionStore()
-        this._typeInfo = sessionStore.appSettings?.optionTypesTab?.[this.type]
+        const optionTypes = sessionStore.appSettings?.inquiryOptionTypeTab || []
+        this._typeInfo = optionTypes.find((opt: InquiryOptionType) => opt.option_type === this.type)
 
-        if (this._typeInfo) {
+        if (this._typeInfo?.family) {
             this._familyInfo = {
-                name: this.familyInfo?.name || '',
-                color: this.familyInfo?.color || '',
-                icon: this.familyInfo?.icon || '',
-                description: this.familyInfo?.description || ''
+                name: this._typeInfo.family,
+                color: getFamilyColor(this._typeInfo.family),
+                icon: getFamilyIconComponent(this._typeInfo.family),
+                description: this._typeInfo.description || ''
             }
         }
     },
@@ -504,6 +571,7 @@ actions: {
 
         this.meta.status = 'loading'
         try {
+            /*
             const response = await (() => {
                 if (sessionStore.route.name === 'publicOption') {
                     return PublicAPI.getOption(sessionStore.route.params.token)
@@ -512,16 +580,16 @@ actions: {
                     return OptionsAPI.getFullOption(optionId ?? sessionStore.currentOptionId)
                 }
             })()
+            */
+            const response = await (() => {
+                    return OptionsAPI.getFullOption(optionId ?? sessionStore.currentOptionId)
+                })()
 
             if (!response) {
                 this.$reset()
                 return
             }
             this.$patch(response.data.option)
-            sharesStore.shares = response.data.shares
-            commentsStore.comments = response.data.comments
-            supportsStore.supports = response.data.supports
-            subscriptionStore.subscribed = response.data.subscribed
 
             if (response.data.option.owner.id === sessionStore.currentUser.id)
                 sessionStore.currentUser.isOwner = true
@@ -538,25 +606,6 @@ actions: {
             }
             this.meta.status = 'error'
             Logger.error('Error loading option', { error })
-            throw error
-        }
-    },
-
-    async loadChildren(): Promise<void> {
-        try {
-            const response = await OptionsAPI.getChildOptions(this.id)
-            this.children = response.data.options
-
-            // Initialize type info for children
-            this.children.forEach(child => {
-                const sessionStore = useSessionStore()
-                child._typeInfo = sessionStore.appSettings?.optionTypesTab?.[child.type]
-            })
-        } catch (error) {
-            if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-                return
-            }
-            Logger.error('Error loading option children', { error })
             throw error
         }
     },
@@ -582,8 +631,8 @@ actions: {
         if (payload.parentId) {
             const parentOption = await this.getOptionById(payload.parentId)
             if (parentOption && parentOption.typeInfo) {
-                if (parentOption.typeInfo.allowed_child_types && 
-                    !parentOption.typeInfo.allowed_child_types.includes(payload.type)) {
+                if (parentOption.typeInfo.allowed_response && 
+                    !parentOption.typeInfo.allowed_response.includes(payload.type)) {
                     showError(t('agora', 'This option type cannot be added as a child to the selected parent'))
                 return
                 }
@@ -593,8 +642,23 @@ actions: {
         try{
             console.log(" OD LETS CREATE IT ",payload)
             // Set defaults from type definition
-            const defaultMiscFields = this.getDefaultMiscFieldsForType(payload.type)
-            const mergedMiscFields = { ...defaultMiscFields, ...(payload.miscFields || {}) }
+            const sessionStore = useSessionStore()
+            const typeInfo = sessionStore.appSettings?.inquiryOptionTypeTab?.find((opt: OptionType) => 
+                opt.option_type === payload.type
+            )
+
+            const defaultMiscFields: Record<string, any> = {}
+            if (typeInfo?.fields) {
+                const fields = Array.isArray(typeInfo.fields) ? typeInfo.fields : []
+                fields.forEach((field: any) => {
+                if (field.default !== undefined) {
+                    defaultMiscFields[field.key] = field.default
+                }
+            })
+    }
+
+    const mergedMiscFields = { ...defaultMiscFields, ...(payload.miscFields || {}) }
+
 
             const response = await OptionsAPI.createOption({
                 text: payload.text,
@@ -631,23 +695,6 @@ actions: {
         }
     },
 
-    // Get default misc fields for a type
-    getDefaultMiscFieldsForType(typeKey: string): Record<string, any> {
-        const sessionStore = useSessionStore()
-        const typeInfo = sessionStore.appSettings?.optionTypesTab?.[typeKey]
-        const defaults: Record<string, any> = {}
-
-        if (typeInfo?.miscFields) {
-            typeInfo.miscFields.forEach(field => {
-                if (field.default !== undefined) {
-                    defaults[field.key] = field.default
-                }
-            })
-        }
-
-        return defaults
-    },
-
     // Validate misc fields against type configuration
     validateMiscFields(): { valid: boolean; errors: string[] } {
         const errors: string[] = []
@@ -681,6 +728,7 @@ actions: {
 
     async update(payload: {
         id?: number
+        title?: string
         text?: string
         type?: string
         targetId?: number
@@ -697,32 +745,10 @@ actions: {
         const inquiryStore = useInquiryStore()
         const sessionStore = useSessionStore()
 
-        // Validate type change if provided
-        if (payload.type && payload.type !== this.type) {
-            const newTypeInfo = sessionStore.appSettings?.optionTypesTab?.[payload.type]
-            if (!newTypeInfo) {
-                showError(t('agora', 'Invalid option type'))
-                return
-            }
-
-            // Validate misc fields for new type
-            if (payload.miscFields) {
-                const newTypeMiscConfig = newTypeInfo.miscFields || []
-                const requiredFields = newTypeMiscConfig.filter(f => f.required)
-                const missingFields = requiredFields.filter(f => !(f.key in payload.miscFields))
-
-                if (missingFields.length > 0) {
-                    showError(t('agora', 'Missing required fields for new type: {fields}', {
-                        fields: missingFields.map(f => f.label).join(', ')
-                    }))
-                    return
-                }
-            }
-        }
-
         const debouncedLoad = this.$debounce(async () => {
             try {
                 const response = await OptionsAPI.updateOption(payload.id || this.id, {
+                    title: payload.title,
                     text: payload.text,
                     type: payload.type,
                     targetId: payload.targetId,
@@ -741,7 +767,10 @@ actions: {
 
                 // Update type info if type changed
                 if (payload.type && payload.type !== this.type) {
-                    updatedOption._typeInfo = sessionStore.appSettings?.optionTypesTab?.[payload.type]
+                    const optionTypes = sessionStore.appSettings?.inquiryOptionTypeTab || []
+                    updatedOption._typeInfo = optionTypes.find((opt: InquiryOptionType) => 
+                                                               opt.option_type === payload.type
+                                                              )
                 }
 
                 return updatedOption
@@ -764,6 +793,167 @@ actions: {
         debouncedLoad()
     },
 
+    async loadChildren(): Promise<void> {
+        try {
+            const response = await OptionsAPI.getChildOptions(this.id)
+            this.childs = response.data.options
+
+            // Initialize type info for childs
+            const sessionStore = useSessionStore()
+            const optionTypes = sessionStore.appSettings?.inquiryOptionTypeTab || []
+
+            this.childs.forEach(child => {
+                child._typeInfo = optionTypes.find((opt: InquiryOptionType) => opt.option_type === child.type)
+            })
+        } catch (error) {
+            if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+                return
+            }
+            Logger.error('Error loading option children', { error })
+            throw error
+        }
+    },
+
+    async addChild(payload: {
+        text?: string
+        type?: string
+        ownedGroup?: string
+        access?: string
+        status?: string
+        miscFields?: Record<string, any>
+    }): Promise<Option | void> {
+        try {
+            const response = await OptionsAPI.addChildOption(this.id, {
+                text: payload.text || '',
+                type: payload.type || 'debate',
+                ownedGroup: payload.ownedGroup || '',
+                access: payload.access || 'private',
+                status: payload.status || 'draft',
+                miscFields: payload.miscFields || {},
+            })
+
+            const newChild = response.data.option
+            this.childs.push(newChild)
+
+            return newChild
+        } catch (error) {
+            if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+                return
+            }
+            Logger.error('Error adding child option:', {
+                error,
+                payload,
+            })
+            throw error
+        }
+    },
+
+    async delete(): Promise<void> {
+        const inquiryStore = useInquiryStore()
+        const sessionStore = useSessionStore()
+
+        try {
+            // Check if option can be deleted
+            if (!this.permissions.delete) {
+                showError(t('agora', 'You do not have permission to delete this option'))
+                return
+            }
+
+            // Confirm deletion for published/archived options
+            if (this.isPublished || this.isClosed) {
+                // Should show a confirmation dialog in UI
+                const confirmed = confirm(t('agora', 'Are you sure you want to delete this option?'))
+                if (!confirmed) return
+            }
+
+        // Call API
+        const response = await OptionsAPI.deleteOption(this.id)
+
+        // Emit event
+        emit(Event.DeleteOption, {
+            optionId: this.id,
+            message: t('agora', 'Option deleted'),
+        })
+
+        // Reset store if this is the current option
+        if (sessionStore.currentOptionId === this.id) {
+            this.reset()
+        }
+
+        } catch (error) {
+            if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+                return
+            }
+            Logger.error('Error deleting option:', {
+                error,
+                optionId: this.id,
+            })
+
+            if (error.response?.status === 403) {
+                showError(t('agora', 'You do not have permission to delete this option'))
+            } else if (error.response?.status === 409) {
+                showError(t('agora', 'Cannot delete option with children. Please delete children first.'))
+            } else {
+                showError(t('agora', 'Error deleting option'))
+            }
+            throw error
+        }
+    },
+
+    async deleteRecursive(): Promise<void> {
+        const inquiryStore = useInquiryStore()
+
+        try {
+            // Check if has children
+            if (!this.hasChildren) {
+                return this.delete() // Use regular delete if no children
+            }
+
+            // Confirm recursive deletion
+            const confirmed = confirm(
+                t('agora', 'This option has {count} children. Delete them too?',
+                  { count: this.children.length })
+            )
+            if (!confirmed) return
+
+                const deleteChildrenRecursively = async (option: Option): Promise<void> => {
+                    // Load children if not loaded
+                    if (!option.children || option.children.length === 0) {
+                        await this.loadChildren()
+                    }
+
+                    // Delete children first (depth-first)
+                    for (const child of option.children) {
+                        await deleteChildrenRecursively(child)
+                    }
+
+                    // Delete this option
+                    await OptionsAPI.deleteOption(option.id)
+                }
+
+                await deleteChildrenRecursively(this)
+
+                emit(Event.DeleteOption, {
+                    optionId: this.id,
+                    recursive: true,
+                    message: t('agora', 'Option and children deleted'),
+                })
+
+                this.reset()
+
+                if (inquiryStore.id) {
+                    inquiryStore.load()
+                }
+
+        } catch (error) {
+            Logger.error('Error recursively deleting option:', {
+                error,
+                optionId: this.id,
+            })
+            throw error
+        }
+    },
+
     // Helper method to get option by ID (would need to be implemented)
     async getOptionById(optionId: number): Promise<Option | undefined> {
         // This would typically call an API or check a store
@@ -771,9 +961,6 @@ actions: {
         return undefined
     },
 
-    // ... rest of the actions remain similar but enhanced with type info
-    // (write, delete, archive, restore, clone, transfer, etc.)
-    // All should call initializeTypeInfo() after loading/updating
 
     // Enhanced write action with type validation
     write(): void {

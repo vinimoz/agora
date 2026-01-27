@@ -173,11 +173,37 @@
 
         <!-- STRUCTURE Family Layout -->
         <div v-else-if="activeFamily === 'structure'" class="structure-layout">
-              <OptionTreeNode
-    :inquiry-id="inquiryStore.id"
-    :use-title="true"
-    :use-description="true"
-  />
+          <div class="tree-view">
+            <!-- Hierarchical tree view for chapters/articles -->
+            <div v-for="chapter in chapters" :key="chapter.id" class="tree-node">
+              <div class="node-content">
+                <component :is="InquiryOptionIcons.BookOpenVariant" :size="16" />
+                <span class="node-label">{{ chapter.label }}</span>
+                <NcButton type="tertiary" @click="openAddOptionModal('article', chapter.id)">
+                  + {{ t('agora', 'Article') }}
+                </NcButton>
+              </div>
+
+              <!-- Articles -->
+              <div v-for="article in getChildOptions(chapter.id, 'article')" :key="article.id" class="tree-node child">
+                <div class="node-content">
+                  <component :is="InquiryOptionIcons.FileDocument" :size="16" />
+                  <span class="node-label">{{ article.label }}</span>
+                  <NcButton type="tertiary" @click="openAddOptionModal('amendment', article.id)">
+                    + {{ t('agora', 'Amendment') }}
+                  </NcButton>
+                </div>
+
+                <!-- Amendments -->
+                <div v-for="amendment in getChildOptions(article.id, 'amendment')" :key="amendment.id" class="tree-node grandchild">
+                  <div class="node-content">
+                    <component :is="InquiryOptionIcons.FileDocumentEdit" :size="16" />
+                    <span class="node-label">{{ amendment.label }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- CONSENSUS Family Layout -->

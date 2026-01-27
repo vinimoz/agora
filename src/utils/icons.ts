@@ -62,7 +62,6 @@ import ForumOutline from '@iconify-icons/mdi/forum-outline'
 import Offer from '@iconify-icons/mdi/offer'
 import CogOutline from '@iconify-icons/mdi/cog-outline'
 import PlayOutline from '@iconify-icons/mdi/play-outline'
-import Plus from '@iconify-icons/mdi/plus'
 import Star from '@iconify-icons/mdi/star'
 import LockOpen from '@iconify-icons/mdi/lock-open'
 import Pencil from '@iconify-icons/mdi/pencil'
@@ -118,7 +117,6 @@ import CheckCircleOutline from '@iconify-icons/mdi/check-circle-outline'
 import NoteText from '@iconify-icons/mdi/note-text'
 
 import DotsVertical from '@iconify-icons/mdi/dots-vertical'
-import Pencil from '@iconify-icons/mdi/pencil'
 import DeleteOutline from '@iconify-icons/mdi/delete-outline'
 import Plus from '@iconify-icons/mdi/plus'
 import Close from '@iconify-icons/mdi/close'
@@ -520,55 +518,60 @@ export const StatusIcons: Record<string, Component> = {
 
 export const InquiryOptionIcons = {
   // Families / types
-  Discussion: makeIconComponent(ChatOutline),
-  Question: makeIconComponent(HelpCircleOutline),
-  Lightbulb: makeIconComponent(Lightbulb),
-  Settings: makeIconComponent(Presentation),
-  Code: makeIconComponent(CodeTags),
-  CategoryOther: makeIconComponent(TagOutline),
+    // Families / types
+Plus: makeIconComponent(Plus, '#4CAF50'),
+Discussion: makeIconComponent(ChatOutline, '#2196F3'),
+Question: makeIconComponent(HelpCircleOutline, '#03A9F4'),
+Lightbulb: makeIconComponent(Lightbulb, '#FFC107'),
+Settings: makeIconComponent(Presentation, '#607D8B'),
+Code: makeIconComponent(CodeTags, '#9C27B0'),
+CategoryOther: makeIconComponent(TagOutline, '#795548'),
 
-  ThumbUp: makeIconComponent(ThumbUpOutline),
-  ThumbDown: makeIconComponent(ThumbDownOutline),
-  Checkmark: makeIconComponent(CheckCircleOutline),
-  File: makeIconComponent(NoteText),
+ThumbUp: makeIconComponent(ThumbUpOutline, '#4CAF50'),
+ThumbDown: makeIconComponent(ThumbDownOutline, '#F44336'),
+Checkmark: makeIconComponent(CheckCircleOutline, '#4CAF50'),
+File: makeIconComponent(NoteText, '#3F51B5'),
 
-  // Actions
-  More: makeIconComponent(DotsVertical),
-  Edit: makeIconComponent(Pencil),
-  Delete: makeIconComponent(DeleteOutline),
-  Add: makeIconComponent(Plus),
-  Close: makeIconComponent(Close),
+// Actions
+More: makeIconComponent(DotsVertical, '#9E9E9E'),
+Edit: makeIconComponent(Pencil, '#2196F3'),
+Pencil: makeIconComponent(Pencil, '#FF8F00'),
+Delete: makeIconComponent(DeleteOutline, '#F44336'),
+Add: makeIconComponent(Plus, '#4CAF50'),
+Close: makeIconComponent(Close, '#9E9E9E'),
 
-  // Interaction
-  Comment: makeIconComponent(CommentOutline),
-  Answer: makeIconComponent(Reply),
-  Refine: makeIconComponent(AutoFix),
-  Children: makeIconComponent(FileTree),
+// Interaction
+Comment: makeIconComponent(CommentOutline, '#2196F3'),
+Answer: makeIconComponent(Reply, '#4CAF50'),
+Refine: makeIconComponent(AutoFix, '#FF9800'),
+Children: makeIconComponent(FileTree, '#607D8B'),
 
-  // Messaging / support
-  MessagePlus: makeIconComponent(MessagePlus),
-  MessageMinus: makeIconComponent(MessageMinus),
-  MessageText: makeIconComponent(MessageText),
-  SwapHorizontal: makeIconComponent(SwapHorizontal),
+// Messaging / support
+MessagePlus: makeIconComponent(MessagePlus, '#4CAF50'),
+MessageMinus: makeIconComponent(MessageMinus, '#F44336'),
+MessageText: makeIconComponent(MessageText, '#2196F3'),
+SwapHorizontal: makeIconComponent(SwapHorizontal, '#00BCD4'),
 
-  // Documents
-  BookOpenVariant: makeIconComponent(BookOpenVariant),
-  FileDocument: makeIconComponent(FileDocument),
-  FileDocumentEdit: makeIconComponent(FileDocumentEdit),
-  Options: makeIconComponent(NoteText),
+// Documents
+BookOpenVariant: makeIconComponent(BookOpenVariant, '#3F51B5'),
+FileDocument: makeIconComponent(FileDocument, '#3F51B5'),
+FileDocumentEdit: makeIconComponent(FileDocumentEdit, '#2196F3'),
+Options: makeIconComponent(NoteText, '#607D8B'),
 
-  // Alerts / help
-  AlertCircle: makeIconComponent(AlertCircle),
-  AlertOutline: makeIconComponent(AlertOutline),
-  HelpCircle: makeIconComponent(HelpCircle),
-  CheckCircle: makeIconComponent(CheckCircle),
+// Alerts / help
+AlertCircle: makeIconComponent(AlertCircle, '#FF5722'),
+AlertOutline: makeIconComponent(AlertOutline, '#FF9800'),
+HelpCircle: makeIconComponent(HelpCircle, '#03A9F4'),
+CheckCircle: makeIconComponent(CheckCircle, '#4CAF50'),
 
-  // Stats
-  BarChart2: makeIconComponent(ChartBar),
+// Stats
+BarChart2: makeIconComponent(ChartBar, '#673AB7'),
 
-  // Navigation
-  ChevronDown: makeIconComponent(ChevronDown),
-  ChevronRight: makeIconComponent(ChevronRight),
+// Navigation
+ChevronDown: makeIconComponent(ChevronDown, '#9E9E9E'),
+ChevronRight: makeIconComponent(ChevronRight, '#9E9E9E'),
+
+
 }
 
 

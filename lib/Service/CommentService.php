@@ -70,7 +70,7 @@ class CommentService
     /**
      * Add comment
      */
-    public function add(string $message, int $inquiryId, ?bool $confidential = false): Comment
+    public function add(string $message, int $inquiryId,int $optionId, ?bool $confidential = false): Comment
     {
         $inquiry = $this->inquiryMapper->get($inquiryId, withRoles: true);
         $inquiry->request(Inquiry::PERMISSION_COMMENT_ADD);
@@ -81,6 +81,7 @@ class CommentService
 
         $this->comment = new Comment();
         $this->comment->setInquiryId($inquiryId);
+        $this->comment->setOptionId($optionId);
         $this->comment->setUserId($this->userSession->getCurrentUserId());
         $this->comment->setComment($message);
         $this->comment->setConfidential($confidential ? Comment::CONFIDENTIAL_YES : Comment::CONFIDENTIAL_NO);

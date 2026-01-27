@@ -3,8 +3,50 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { InquiryGeneralIcons } from '../../utils/icons.ts'
-import type { InquiryType, OptionType } from '../../Types/index.ts'
+import { InquiryGeneralIcons, InquiryOptionIcons } from '../../utils/icons.ts'
+
+import type { InquiryStatus, InquiryType, OptionType } from '../../Types/index.ts'
+import { StatusIcons } from '../../utils/icons.ts'
+
+// For option type
+export const getOptionTypeData = (optionType: string, allOptionTypes: any[], defaultType = 'default') => {
+  // Find the option type in the array
+  const found = allOptionTypes.find(opt => 
+    opt.option_type === optionType || opt.optionType === optionType
+  )
+  
+  if (found) {
+    return {
+      option_type: found.option_type || found.optionType || optionType,
+      label: found.label || optionType,
+      icon: found.icon || 'File',
+      family: found.family || 'default',
+      use_title: found.use_title !== undefined ? found.use_title : true,
+      support_feature: found.support_feature || 'none',
+      allow_comment: found.allow_comment || false,
+      allowed_response: found.allowed_response || [],
+      fields: found.fields || [],
+      description: found.description || '',
+      statuses: found.statuses || []
+    }
+  }
+  
+  // Return a default structure if not found
+  return {
+    option_type: optionType,
+    label: optionType,
+    icon: 'File',
+    family: 'default',
+    use_title: true,
+    support_feature: 'none',
+    allow_comment: false,
+    allowed_response: [],
+    fields: [],
+    description: '',
+    statuses: []
+  }
+}
+
 
 /**
  * Get option item data
@@ -20,10 +62,9 @@ export function getOptionItemData(item: OptionType | null, fallbackLabel: string
 
   // Get icon component directly from InquiryGeneralIcons
   const iconName = item?.icon || 'File'
-  const iconComponent = InquiryGeneralIcons[iconName] || InquiryGeneralIcons.File
   
   return {
-    icon: iconComponent,
+    icon: InquiryGeneralIcons[iconName] || StatusIcons[iconName] || InquiryOptionIcons[iconName] || InquiryGeneralIcons.Activity,
     label: item.label || fallbackLabel,
     description: item.description || ''
   }
@@ -32,10 +73,6 @@ export function getOptionItemData(item: OptionType | null, fallbackLabel: string
 /**
  * Get option type data from type string
  */
-export function getOptionTypeData(optionTypeKey: string, optionTypes: OptionType[], fallbackLabel: string = '') {
-  const typeInfo = optionTypes.find(t => t.option_type === optionTypeKey)
-  return getOptionItemData(typeInfo, fallbackLabel || optionTypeKey)
-}
 
 /**
  * Get allowed option types for an inquiry type

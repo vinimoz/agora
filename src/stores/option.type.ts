@@ -4,7 +4,6 @@
  */
 
 import { InquiryGeneralIcons } from '../utils/icons.ts'
-import type { OptionType } from '../Types/index.ts'
 
 export interface OptionFamily {
   key: string
