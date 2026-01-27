@@ -124,7 +124,7 @@ OC.L10N.register(
     "No valid email address" : "Pas d'adresse e-mail valide",
     "Unknown error" : "Erreur inconnue",
     "Reveal them" : "Révélez-les",
-    "Toggle sidebar" : "Afficher la barre latérale",
+    "Toggle sidebar" : "Afficher le panneau latéral",
     "Loading" : "Chargement",
     "Click" : "Cliquer",
     "Previous day" : "Jour précédent",
