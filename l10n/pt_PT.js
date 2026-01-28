@@ -75,6 +75,7 @@ OC.L10N.register(
     "None" : "Nenhum",
     "Files" : "Ficheiros",
     "Forms" : "Formulários",
+    "Collectives" : "Coletivos",
     "Uploading..." : "A enviar...",
     "OK" : "OK",
     "Sort" : "Ordenar",
