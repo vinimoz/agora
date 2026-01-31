@@ -1,7 +1,9 @@
 OC.L10N.register(
     "agora",
     {
+    "Team" : "Tim",
     "Contact group" : "Grupa za kontakt",
+    "Group" : "Grupa",
     "Legal Notice" : "Pravna obavijest",
     "\"{title}\" has recent activity:" : "„{title}” ima nedavnu aktivnost:",
     "A voting option has been added." : "Dodana je mogućnost glasanja.",
@@ -93,6 +95,7 @@ OC.L10N.register(
     "Polls" : "Ankete",
     "Title is required" : "Naslov je obavezan",
     "Files uploaded successfully" : "Datoteke su uspješno priložene.",
+    "Failed to create {resource}" : "Stvaranje {resource} nije uspjelo",
     "OK" : "OK",
     "Clone to option sequence" : "Redoslijed kloniranja",
     "Create a sequence of date options starting with {dateOption}." : "Stvorite redoslijed mogućnosti datuma počevši od {dateOption}.",
