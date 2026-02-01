@@ -297,19 +297,18 @@ class AppSettings implements JsonSerializable
         'officialBypassModeration' => $this->getOfficialBypassModeration(),
         'navigationInquiriesInList' => $this->getLoadInquiriesInNavigation(),
         // Array settings for internal use only
-        'categoryTab' =>  $this->categoryService->findAll(),
-        'locationTab' =>  $this->locationService->findAll(),
-        'inquiryTypeTab' =>  $this->inquiryTypeService->findAll(),
-        'inquiryGroupTypeTab' =>  $this->inquiryGroupTypeService->findAll(),
-        'inquiryOptionTypeTab' =>  $this->inquiryOptionTypeService->findAll(),
-        'inquiryFamilyTab' =>  $this->inquiryFamilyService->findAll(),
-        'inquiryStatusTab' =>  $this->inquiryStatusService->findAll(),
-        'inquiryTypeRights' => $this->getInquiryTypeRights(), 
+        'categoryTab' =>  $this->categoryService?->findAll() ?? [],
+        'locationTab' =>  $this->locationService?->findAll() ?? [],
+        'inquiryTypeTab' =>  $this->inquiryTypeService?->findAll() ?? [],
+        'inquiryGroupTypeTab' =>  $this->inquiryGroupTypeService?->findAll() ?? [],
+        'inquiryOptionTypeTab' =>  $this->inquiryOptionTypeService?->findAll() ?? [],
+        'inquiryFamilyTab' =>  $this->inquiryFamilyService?->findAll() ?? [],
+        'inquiryStatusTab' =>  $this->inquiryStatusService?->findAll() ?? [],
+        'inquiryTypeRights' => $this->getInquiryTypeRights(),
         'moderatorRights' => $this->getModeratorRights(),
         'officialRights' => $this->getOfficialRights(),
         ];
     }
-/*
     private function checkSettingType(string $key, int $expectedType, string $app = AppConstants::APP_ID): bool
     {
         try {
@@ -317,8 +316,6 @@ class AppSettings implements JsonSerializable
             if ($actualType === $expectedType || $actualType === IAppConfig::VALUE_MIXED) {
                 return true;
             }
-
-
         } catch (\Exception $e) {
             $this->logger->debug(
                 'Could not get setting type', [
@@ -331,38 +328,6 @@ class AppSettings implements JsonSerializable
             );
         }
         return false;
-    } */
-
-    private function checkSettingType(string $key, $value) {
-        $expectedType = $this->settingsSchema[$key]['type'] ?? null;
-        if ($expectedType === null) {
-            return; // or throw your own exception
-        }
-
-        switch ($expectedType) {
-        case 'boolean':
-            if (!is_bool($value)) {
-                throw new \InvalidArgumentException("Invalid boolean value for $key");
-            }
-            break;
-
-        case 'integer':
-            if (!is_int($value)) {
-                throw new \InvalidArgumentException("Invalid integer value for $key");
-            }
-            break;
-
-        case 'string':
-            if (!is_string($value)) {
-                throw new \InvalidArgumentException("Invalid string value for $key");
-            }
-            break;
-
-            // ... etc
-
-        default:
-            throw new \Exception("Unknown type for setting $key");
-        }
     }
 
 
@@ -786,13 +751,13 @@ class AppSettings implements JsonSerializable
             'defaultImprintUrl' => $this->getDefaultImprintUrl(),
 
             // Array settings (only for internal users)
-            self::SETTING_CATEGORY_TAB => $this->categoryService->findAll(),
-            self::SETTING_LOCATION_TAB => $this->locationService->findAll(),
-            self::SETTING_INQUIRY_STATUS => $this->inquiryStatusService->findAll(),
-            self::SETTING_INQUIRY_TYPE => $this->inquiryTypeService->findAll(),
-            self::SETTING_INQUIRY_GROUP_TYPE => $this->inquiryGroupTypeService->findAll(),
-            self::SETTING_INQUIRY_OPTION_TYPE => $this->inquiryOptionTypeService->findAll(),
-            self::SETTING_INQUIRY_FAMILY => $this->inquiryFamilyService->findAll(),
+            self::SETTING_CATEGORY_TAB => $this->categoryService?->findAll() ?? [],
+            self::SETTING_LOCATION_TAB => $this->locationService?->findAll() ?? [],
+            self::SETTING_INQUIRY_STATUS => $this->inquiryStatusService?->findAll() ?? [],
+            self::SETTING_INQUIRY_TYPE => $this->inquiryTypeService?->findAll() ?? [],
+            self::SETTING_INQUIRY_GROUP_TYPE => $this->inquiryGroupTypeService?->findAll() ?? [],
+            self::SETTING_INQUIRY_OPTION_TYPE => $this->inquiryOptionTypeService?->findAll() ?? [],
+            self::SETTING_INQUIRY_FAMILY => $this->inquiryFamilyService?->findAll() ?? [],
             self::SETTING_INQUIRY_TYPE_RIGHTS => $this->getInquiryTypeRights(),
             self::SETTING_MODERATOR_RIGHTS => $this->getModeratorRights(),
             self::SETTING_OFFICIAL_RIGHTS => $this->getOfficialRights(),
@@ -801,8 +766,12 @@ class AppSettings implements JsonSerializable
 
     private function isMember(array $groups): bool
     {
+        $user = $this->userSession?->getCurrentUser();
+        if ($user === null) {
+            return false;
+        }
         foreach ($groups as $GID) {
-            if ($this->userSession->getCurrentUser()->getIsInGroup($GID)) {
+            if ($user->getIsInGroup($GID)) {
                 return true;
             }
         }

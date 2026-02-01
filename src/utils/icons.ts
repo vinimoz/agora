@@ -44,7 +44,6 @@ import Megaphone from '@iconify-icons/mdi/megaphone'
 import ClipboardList from '@iconify-icons/mdi/clipboard-list'
 import HelpCircle from '@iconify-icons/mdi/help-circle'
 import Wrench from '@iconify-icons/mdi/wrench'
-import ThumbDownOutline from '@iconify-icons/mdi/thumb-down-outline'
 
 
 import Update from '@iconify-icons/mdi/update'
@@ -62,6 +61,7 @@ import ForumOutline from '@iconify-icons/mdi/forum-outline'
 import Offer from '@iconify-icons/mdi/offer'
 import CogOutline from '@iconify-icons/mdi/cog-outline'
 import PlayOutline from '@iconify-icons/mdi/play-outline'
+import Plus from '@iconify-icons/mdi/plus'
 import Star from '@iconify-icons/mdi/star'
 import LockOpen from '@iconify-icons/mdi/lock-open'
 import Pencil from '@iconify-icons/mdi/pencil'
@@ -79,15 +79,6 @@ import InquiryGroupIcon from '@iconify-icons/mdi/code-braces'
 import ChevronDown from '@iconify-icons/mdi/chevron-down'
 import ChevronUp from '@iconify-icons/mdi/chevron-up'
 import BarChart from '@iconify-icons/mdi/bar-chart'
-import LightbulbOutline from '@iconify-icons/mdi/lightbulb-outline'
-import ChatOutline from '@iconify-icons/mdi/chat-outline'
-import Presentation from '@iconify-icons/mdi/presentation'
-import ThumbUpOutline from '@iconify-icons/mdi/thumb-up-outline'
-import CheckCircleOutline from '@iconify-icons/mdi/check-circle-outline'
-import Lightbulb from '@iconify-icons/mdi/lightbulb'
-import Bolt from '@iconify-icons/mdi/bolt'
-import NoteText from '@iconify-icons/mdi/note-text'
-
 
 import CommentIcon from '@iconify-icons/mdi/comment'
 import CommentProcessing from '@iconify-icons/mdi/comment-processing'
@@ -104,46 +95,6 @@ import AccountCircle from '@iconify-icons/mdi/account-circle-outline'
 import SortDescending from '@iconify-icons/mdi/sort-descending'
 import SortAscending from '@iconify-icons/mdi/sort-ascending'
 import WrenchOutline from '@iconify-icons/mdi/wrench-outline'
-import ChatOutline from '@iconify-icons/mdi/chat-outline'
-import HelpCircleOutline from '@iconify-icons/mdi/help-circle-outline'
-import Lightbulb from '@iconify-icons/mdi/lightbulb'
-import Presentation from '@iconify-icons/mdi/presentation'
-import CodeTags from '@iconify-icons/mdi/code-tags'
-import TagOutline from '@iconify-icons/mdi/tag-outline'
-
-import ThumbUpOutline from '@iconify-icons/mdi/thumb-up-outline'
-import ThumbDownOutline from '@iconify-icons/mdi/thumb-down-outline'
-import CheckCircleOutline from '@iconify-icons/mdi/check-circle-outline'
-import NoteText from '@iconify-icons/mdi/note-text'
-
-import DotsVertical from '@iconify-icons/mdi/dots-vertical'
-import DeleteOutline from '@iconify-icons/mdi/delete-outline'
-import Plus from '@iconify-icons/mdi/plus'
-import Close from '@iconify-icons/mdi/close'
-
-import CommentOutline from '@iconify-icons/mdi/comment-outline'
-import Reply from '@iconify-icons/mdi/reply'
-import AutoFix from '@iconify-icons/mdi/auto-fix'
-import FileTree from '@iconify-icons/mdi/file-tree'
-
-import MessagePlus from '@iconify-icons/mdi/message-plus-outline'
-import MessageMinus from '@iconify-icons/mdi/message-minus-outline'
-import MessageText from '@iconify-icons/mdi/message-text-outline'
-import SwapHorizontal from '@iconify-icons/mdi/swap-horizontal'
-
-import BookOpenVariant from '@iconify-icons/mdi/book-open-variant'
-import FileDocument from '@iconify-icons/mdi/file-document'
-import FileDocumentEdit from '@iconify-icons/mdi/file-document-edit'
-
-import AlertCircle from '@iconify-icons/mdi/alert-circle'
-import AlertOutline from '@iconify-icons/mdi/alert-outline'
-import HelpCircle from '@iconify-icons/mdi/help-circle'
-import CheckCircle from '@iconify-icons/mdi/check-circle'
-
-import ChartBar from '@iconify-icons/mdi/chart-bar'
-
-import ChevronDown from '@iconify-icons/mdi/chevron-down'
-import ChevronRight from '@iconify-icons/mdi/chevron-right'
 
 
 // Navigation Icons (Iconify MDI)
@@ -231,10 +182,41 @@ import LinkVariant from '@iconify-icons/mdi/link-variant'
 import Poll from '@iconify-icons/mdi/poll'
 import CardsPlaying from '@iconify-icons/mdi/cards-playing'
 import Cash from '@iconify-icons/mdi/cash'
+import CashMultiple from '@iconify-icons/mdi/cash-multiple'
 import IdCard from '@iconify-icons/mdi/id-card'
 import DragHorizontal from '@iconify-icons/mdi/drag-horizontal'
 import InboxRemove from '@iconify-icons/mdi/inbox-remove'
+import NoteText from '@iconify-icons/mdi/note-text'
 import Presentation from '@iconify-icons/mdi/presentation'
+import Flask from '@iconify-icons/mdi/flask'
+import Microscope from '@iconify-icons/mdi/microscope'
+import ShieldCheck from '@iconify-icons/mdi/shield-check'
+import BookEducation from '@iconify-icons/mdi/book-education'
+import Domain from '@iconify-icons/mdi/domain'
+import AccountMultiplePlus from '@iconify-icons/mdi/account-multiple-plus'
+import LeafCircle from '@iconify-icons/mdi/leaf-circle'
+import RobotExcited from '@iconify-icons/mdi/robot-excited'
+import TrendingUp from '@iconify-icons/mdi/trending-up'
+import SwapHorizontal from '@iconify-icons/mdi/swap-horizontal'
+import Application from '@iconify-icons/mdi/application'
+import MessageReply from '@iconify-icons/mdi/message-reply'
+import Monitor from '@iconify-icons/mdi/monitor'
+import LaptopAccount from '@iconify-icons/mdi/laptop-account'
+
+// Facility Management icons
+import Leaf from '@iconify-icons/mdi/leaf'
+import Desk from '@iconify-icons/mdi/desk'
+import Tools from '@iconify-icons/mdi/tools'
+import OfficeBuildingCog from '@iconify-icons/mdi/office-building-cog'
+import Parking from '@iconify-icons/mdi/parking'
+import Hammer from '@iconify-icons/mdi/hammer'
+import Thermometer from '@iconify-icons/mdi/thermometer'
+import Water from '@iconify-icons/mdi/water'
+import Fire from '@iconify-icons/mdi/fire'
+import Bike from '@iconify-icons/mdi/bike'
+import EvStation from '@iconify-icons/mdi/ev-station'
+import Bus from '@iconify-icons/mdi/bus'
+import CarMultiple from '@iconify-icons/mdi/car-multiple'
 
 // -------------------------------
 // -------------------------------
@@ -250,11 +232,6 @@ export const makeIconComponent = (icon: Component, color = '#000', size = 24) =>
   },
 })
 export const InquiryGeneralIcons: Record<string, Component> = {
-      Discussion: makeIconComponent(ChatOutline, '#455A64'),
-    Lightbulb: makeIconComponent(Lightbulb, '#FB8C00'),
-  Checkmark: makeIconComponent(CheckCircleOutline, '#388E3C'),
-  Bolt: makeIconComponent(Bolt, '#E53935'),
-  File: makeIconComponent(NoteText, '#546E7A'),
     Description: makeIconComponent(NoteText, '#1976D2'),
     Category: makeIconComponent(TagMultiple, '#5E35B1'),
     Location: makeIconComponent(MapMarkerRadius, '#2E7D32'),
@@ -310,8 +287,6 @@ export const InquiryGeneralIcons: Record<string, Component> = {
     Seal: makeIconComponent(Seal, '#FF9800'),
     ClipboardText: makeIconComponent(ClipboardText, '#00BCD4'),
     Comment: makeIconComponent(CommentIcon, '#2196F3'),
-    ThumbUp: makeIconComponent(ThumbUpOutline, '#2E7D32'),
-    ThumbDown: makeIconComponent(ThumbDownOutline, '#C62828'),
     Thumb: makeIconComponent(ThumbUp, '#1976D2'),
     TownHall: makeIconComponent(TownHall, '#1976D2'),
     Talk: makeIconComponent(ChatOutline, '#0097A7'),
@@ -387,6 +362,39 @@ export const InquiryGeneralIcons: Record<string, Component> = {
     Paste: makeIconComponent(ClipboardTextMultiple, '#5D4037'),
     Calendar: makeIconComponent(Calendar, '#3949AB'),
     Updated: makeIconComponent(Update, '#FF8F00'),
+    // Template-specific icons
+    CashMultiple: makeIconComponent(CashMultiple, '#4CAF50'),
+    Flask: makeIconComponent(Flask, '#00897B'),
+    Microscope: makeIconComponent(Microscope, '#1565C0'),
+    ShieldCheck: makeIconComponent(ShieldCheck, '#2E7D32'),
+    BookEducation: makeIconComponent(BookEducation, '#5E35B1'),
+    Domain: makeIconComponent(Domain, '#546E7A'),
+    AccountMultiplePlus: makeIconComponent(AccountMultiplePlus, '#00897B'),
+    LeafCircle: makeIconComponent(LeafCircle, '#388E3C'),
+    RobotExcited: makeIconComponent(RobotExcited, '#7B1FA2'),
+    TrendingUp: makeIconComponent(TrendingUp, '#43A047'),
+    SwapHorizontal: makeIconComponent(SwapHorizontal, '#FF9800'),
+    Application: makeIconComponent(Application, '#1976D2'),
+    MessageReply: makeIconComponent(MessageReply, '#0288D1'),
+    Cog: makeIconComponent(Cog, '#607D8B'),
+    Lightbulb: makeIconComponent(LightbulbOn, '#F57C00'),
+    Monitor: makeIconComponent(Monitor, '#1565C0'),
+    LaptopAccount: makeIconComponent(LaptopAccount, '#0288D1'),
+    // Facility Management icons
+    Leaf: makeIconComponent(Leaf, '#4CAF50'),
+    Desk: makeIconComponent(Desk, '#795548'),
+    Tools: makeIconComponent(Tools, '#607D8B'),
+    OfficeBuildingCog: makeIconComponent(OfficeBuildingCog, '#546E7A'),
+    Parking: makeIconComponent(Parking, '#1976D2'),
+    CarParking: makeIconComponent(Parking, '#1976D2'),
+    Hammer: makeIconComponent(Hammer, '#795548'),
+    Thermometer: makeIconComponent(Thermometer, '#F44336'),
+    Water: makeIconComponent(Water, '#2196F3'),
+    Fire: makeIconComponent(Fire, '#FF5722'),
+    Bike: makeIconComponent(Bike, '#4CAF50'),
+    EvStation: makeIconComponent(EvStation, '#4CAF50'),
+    Bus: makeIconComponent(Bus, '#FF9800'),
+    CarMultiple: makeIconComponent(CarMultiple, '#607D8B'),
 }
 
 export const ShareIcons: Record<string, Component> = {
@@ -456,8 +464,6 @@ export const NavigationIcons: Record<string, Component> = {
     Users: makeIconComponent(AccountGroup, '#2196F3'),
     ChevronDown: makeIconComponent(ChevronDown, '#5D4037'),
     ChevronUp: makeIconComponent(ChevronUp, '#1565C'),
-    View: makeIconComponent(ViewListOutline, '#0D47A1'),
-    Plus: makeIconComponent(Plus, '#0097A7'),
 }
 
 export const BadgeIcons: Record<string, Component> = {
@@ -515,65 +521,6 @@ export const StatusIcons: Record<string, Component> = {
     Draft: makeIconComponent(FileDocumentEdit, '#6A1B9A'),
     Default: makeIconComponent(FileDocumentEdit, '#757575'),
 }
-
-export const InquiryOptionIcons = {
-  // Families / types
-    // Families / types
-Plus: makeIconComponent(Plus, '#4CAF50'),
-Discussion: makeIconComponent(ChatOutline, '#2196F3'),
-Question: makeIconComponent(HelpCircleOutline, '#03A9F4'),
-Lightbulb: makeIconComponent(Lightbulb, '#FFC107'),
-Settings: makeIconComponent(Presentation, '#607D8B'),
-Code: makeIconComponent(CodeTags, '#9C27B0'),
-CategoryOther: makeIconComponent(TagOutline, '#795548'),
-
-ThumbUp: makeIconComponent(ThumbUpOutline, '#4CAF50'),
-ThumbDown: makeIconComponent(ThumbDownOutline, '#F44336'),
-Checkmark: makeIconComponent(CheckCircleOutline, '#4CAF50'),
-File: makeIconComponent(NoteText, '#3F51B5'),
-
-// Actions
-More: makeIconComponent(DotsVertical, '#9E9E9E'),
-Edit: makeIconComponent(Pencil, '#2196F3'),
-Pencil: makeIconComponent(Pencil, '#FF8F00'),
-Delete: makeIconComponent(DeleteOutline, '#F44336'),
-Add: makeIconComponent(Plus, '#4CAF50'),
-Close: makeIconComponent(Close, '#9E9E9E'),
-
-// Interaction
-Comment: makeIconComponent(CommentOutline, '#2196F3'),
-Answer: makeIconComponent(Reply, '#4CAF50'),
-Refine: makeIconComponent(AutoFix, '#FF9800'),
-Children: makeIconComponent(FileTree, '#607D8B'),
-
-// Messaging / support
-MessagePlus: makeIconComponent(MessagePlus, '#4CAF50'),
-MessageMinus: makeIconComponent(MessageMinus, '#F44336'),
-MessageText: makeIconComponent(MessageText, '#2196F3'),
-SwapHorizontal: makeIconComponent(SwapHorizontal, '#00BCD4'),
-
-// Documents
-BookOpenVariant: makeIconComponent(BookOpenVariant, '#3F51B5'),
-FileDocument: makeIconComponent(FileDocument, '#3F51B5'),
-FileDocumentEdit: makeIconComponent(FileDocumentEdit, '#2196F3'),
-Options: makeIconComponent(NoteText, '#607D8B'),
-
-// Alerts / help
-AlertCircle: makeIconComponent(AlertCircle, '#FF5722'),
-AlertOutline: makeIconComponent(AlertOutline, '#FF9800'),
-HelpCircle: makeIconComponent(HelpCircle, '#03A9F4'),
-CheckCircle: makeIconComponent(CheckCircle, '#4CAF50'),
-
-// Stats
-BarChart2: makeIconComponent(ChartBar, '#673AB7'),
-
-// Navigation
-ChevronDown: makeIconComponent(ChevronDown, '#9E9E9E'),
-ChevronRight: makeIconComponent(ChevronRight, '#9E9E9E'),
-
-
-}
-
 
 export const getStatusIcon = (iconName: string) => StatusIcons[iconName] || StatusIcons.Default
 

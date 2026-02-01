@@ -25,7 +25,7 @@ class Category extends Entity implements JsonSerializable
     public const TABLE = 'agora_category';
 
     protected string $name = '';
-    protected ?int $parentId = 0;
+    protected int $parentId = 0;
 
     public function __construct()
     {

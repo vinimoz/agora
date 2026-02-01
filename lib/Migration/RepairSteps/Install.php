@@ -14,14 +14,12 @@ use OCA\Agora\Db\IndexManager;
 use OCP\IDBConnection;
 use OCP\Migration\IOutput;
 use OCP\Migration\IRepairStep;
-use OCA\Agora\Command\Db\InitDbDefault;
 
 class Install implements IRepairStep {
 	public function __construct(
 		private IndexManager $indexManager,
 		private IDBConnection $connection,
 		private Schema $schema,
-        private InitDbDefault $initDbDefault
 	) {
 	}
 
@@ -45,7 +43,9 @@ class Install implements IRepairStep {
 
 		$output->info('Agora - Foreign key contraints created.');
 		$output->info('Agora - Indices created.');
-		$output->info('Agora - Initialization begin.');
-        $this->initDbDefault->runCommands($output);
+
+		// Note: Default data initialization removed - users should use the Template Wizard instead
+		// to have full control over which templates to import
+		$output->info('Agora - Installation complete. Use the Template Wizard to import data.');
 	}
 }

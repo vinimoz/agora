@@ -55,23 +55,44 @@ class CategoryMapper extends QBMapper
         $qb = $this->db->getQueryBuilder();
         $qb->select('*')
             ->from($this->getTableName());
-        
+
         if ($parentId === null) {
             $qb->where($qb->expr()->isNull('parent_id'));
         } else {
             $qb->where($qb->expr()->eq('parent_id', $qb->createNamedParameter($parentId, IQueryBuilder::PARAM_INT)));
         }
-        
+
         $qb->orderBy('name', 'ASC');
-        
+
         return $this->findEntities($qb);
+    }
+
+    /**
+     * Find a category by name
+     * @return Category|null
+     */
+    public function findByName(string $name): ?Category
+    {
+        $qb = $this->db->getQueryBuilder();
+        $qb->select('*')
+            ->from($this->getTableName())
+            ->where($qb->expr()->eq('name', $qb->createNamedParameter($name, IQueryBuilder::PARAM_STR)));
+
+        try {
+            return $this->findEntity($qb);
+        } catch (\OCP\AppFramework\Db\DoesNotExistException $e) {
+            return null;
+        } catch (\OCP\AppFramework\Db\MultipleObjectsReturnedException $e) {
+            // If multiple exist, return the first one
+            return $this->findEntities($qb)[0] ?? null;
+        }
     }
 
     public function deleteById(int $id): void
     {
         $category = $this->find($id);
         $this->delete($category);
-        
+
         // Delete children recursively
         $this->deleteChildren($id);
     }
