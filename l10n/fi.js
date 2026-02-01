@@ -130,6 +130,7 @@ OC.L10N.register(
     "No description" : "Ei kuvausta",
     "Title is required" : "Otsikko on pakollinen",
     "Files uploaded successfully" : "Tiedostot lähetetty onnistuneesti",
+    "Failed to create {resource}" : "Kokoelman {resource} luominen epäonnistui",
     "OR" : "TAI",
     "Remove file" : "Poista tiedosto",
     "Uploading..." : "Lähetetään...",
