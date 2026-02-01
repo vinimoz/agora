@@ -9,14 +9,12 @@ import { useSessionStore } from '../../stores/session.ts'
 import { getAvailableFields } from '../../helpers/modules/InquiryHelper.ts'
 import { StatusIcons } from '../../utils/icons.ts'
 import { t } from '@nextcloud/l10n'
-import { createInquiryContext, getEditPermissions } from '../../utils/permissions.ts'
 
 // Components
 import NcSelect from '@nextcloud/vue/components/NcSelect'
 import NcInputField from '@nextcloud/vue/components/NcInputField'
 import NcDateTimePickerNative from '@nextcloud/vue/components/NcDateTimePickerNative'
-import NcCheckboxRadio from '@nextcloud/vue/components/NcCheckboxRadio'
-import UserSearch from '../User/UserSearch.vue'
+import UserSearch from '../User/UserSearch.vue' 
 
 const props = withDefaults(defineProps<{
   isReadonly?: boolean
@@ -28,12 +26,37 @@ const props = withDefaults(defineProps<{
 const inquiryStore = useInquiryStore()
 const sessionStore = useSessionStore()
 
+// Get current language from session
+const currentLanguage = computed(() => sessionStore.language || 'en')
+
+// Helper to check if object is multi-language
+const isMultiLangObject = (obj: any): boolean => {
+  if (!obj || typeof obj !== 'object' || Array.isArray(obj)) return false
+  const keys = Object.keys(obj)
+  const langKeys = ['en', 'fr', 'de', 'gsw', 'it', 'es', 'pt']
+  return keys.some(k => langKeys.includes(k)) &&
+         keys.every(k => typeof obj[k] === 'string' || obj[k] === undefined)
+}
+
+// Extract language string from multi-language object
+const extractLangString = (obj: any, lang: string = 'en'): string => {
+  if (typeof obj === 'string') return obj
+  if (!obj || typeof obj !== 'object') return String(obj)
+
+  // Try current language, then English, then first available
+  if (obj[lang]) return obj[lang]
+  if (obj.en) return obj.en
+  const firstKey = Object.keys(obj).find(k => obj[k])
+  return firstKey ? obj[firstKey] : ''
+}
+
 // Reactive state
 const isLoading = ref(true)
 const error = ref<string | null>(null)
 const isSaving = ref(false)
 const saveTimeouts = ref<Record<string, NodeJS.Timeout>>({})
 const selectedUsers = ref<Record<string, User | undefined>>({})
+
 
 // Reactive state for checkbox values
 const localCheckboxes = ref<Record<string, boolean>>({})
@@ -47,75 +70,9 @@ interface Field {
   required?: boolean
   default?: MiscValue
   description?: string
-  allowed_values?: string[]
+  allowed_values?: any[]
 }
 
-// Permissions context
-const permissionContext = computed(() => 
-  createInquiryContext(inquiryStore, sessionStore.appSettings)
-)
-
-const userCanConfigureSupport = computed(() => 
-  getEditPermissions(permissionContext.value).canSupport
-)
-
-const userCanConfigureComments = computed(() => 
-  getEditPermissions(permissionContext.value).canComment
-)
-
-const inquiryTypeConfig = computed(() => {
-  if (!inquiryStore.type || !sessionStore.appSettings.inquiryTypeTab) {
-    return null
-  }
-  
-  return sessionStore.appSettings.inquiryTypeTab.find(
-    (type: any) => type.inquiry_type === inquiryStore.type
-  )
-})
-
-// Get default values from template
-const getDefaultFromTemplate = (field: string) => {
-  if (!inquiryTypeConfig.value) {
-    return null
-  }
-  
-  switch (field) {
-    case 'supportFeature':
-      return inquiryTypeConfig.value.support_feature || 'none'
-    case 'allowComment':
-      const value = inquiryTypeConfig.value.allow_comment
-      if (typeof value === 'number') {
-        return value === 1
-      }
-      return value || false
-    default:
-      return null
-  }
-}
-
-// Get current support feature value
-const getSupportFeatureValue = computed(() => {
-  console.log(' SUUUUUUUUUUUUUUUUUU P FEATURE IN STORE OR DEFAULT ',inquiryStore.configuration.supportFeature)
-  if (inquiryStore.configuration.supportFeature !== null) {
-    return inquiryStore.configuration.supportFeature
-  }
-  return getDefaultFromTemplate('supportFeature') || 'none'
-})
-
-// Get current allow comment value
-const getAllowCommentValue = computed(() => {
-  if (inquiryStore.configuration.allowComment !== null) {
-    return inquiryStore.configuration.allowComment
-  }
-  return getDefaultFromTemplate('allowComment') || false
-})
-
-// Support feature options
-const supportFeatureOptions = [
-  { id: 'none', label: t('agora','None') },
-  { id: 'binary', label: t('agora','Binary (Yes/No)') },
-  { id: 'ternary', label: t('agora','Ternary (Yes/No/Abstain)') }
-]
 
 // Get fields using your working helper function
 const dynamicFields = computed(() => {
@@ -197,32 +154,93 @@ const getDisplayValue = (value: MiscValue, field: Field) => {
 
     switch (fieldType) {
       case 'boolean':
-        return value ? t('Yes') : t('No')
+	return value ? t('Yes') : t('No')
       case 'datetime':
-        return new Date(value).toLocaleString()
+	return new Date(value).toLocaleString()
       case 'json': {
         const parsed = typeof value === 'string' ? JSON.parse(value) : value
-        return typeof parsed === 'object' ? JSON.stringify(parsed, null, 2) : String(value)
-      }
+  	return typeof parsed === 'object' ? JSON.stringify(parsed, null, 2) : String(value)
+	}
       case 'integer':
-        return String(value)
-      case 'enum':
-        return String(value).charAt(0).toUpperCase() + String(value).slice(1)
+	return String(value)
+      case 'enum': {
+        // Handle case where value is already an object with label (stored as full option)
+        if (typeof value === 'object' && value !== null && 'label' in value) {
+          const label = (value as any).label
+          if (typeof label === 'string') return label
+          return extractLangString(label, currentLanguage.value)
+        }
+
+        // Look up the label from allowed_values
+        const allowedValues = field.allowed_values || []
+
+        // Extract value key if value is an object with 'value' property
+        const valueKey = typeof value === 'object' && value !== null && 'value' in value
+          ? (value as any).value
+          : value
+
+        // Find matching option
+        const option = allowedValues.find((opt: any) => {
+          if (typeof opt === 'string') return opt === valueKey
+          return opt.value === valueKey
+        })
+
+        if (!option) {
+          // Fallback: capitalize raw value (or value key if extracted from object)
+          const displayVal = String(valueKey)
+          return displayVal.charAt(0).toUpperCase() + displayVal.slice(1)
+        }
+
+        // Handle string option
+        if (typeof option === 'string') {
+          return option.charAt(0).toUpperCase() + option.slice(1)
+        }
+
+        // Handle localized label
+        const label = option.label
+        if (typeof label === 'string') return label
+
+        // Extract from multi-language object
+        return extractLangString(label, currentLanguage.value)
+      }
       case 'users':
       case 'groups':
-        return Array.isArray(value) ? value.join(', ') : String(value)
+	return Array.isArray(value) ? value.join(', ') : String(value)
       default:
-        return String(value)
+	return String(value)
     }
   } catch {
     return String(value)
   }
 }
 
-// Format support feature for display
-const getSupportFeatureDisplay = (value: string) => {
-  const option = supportFeatureOptions.find(opt => opt.value === value)
-  return option ? option.label : value
+// Get the current model value for NcSelect enum
+const getEnumModelValue = (field: Field) => {
+  const value = getMiscValue(field.key) || field.default
+  const options = field.allowed_values || []
+
+  // Extract value key if stored value is an object with 'value' property
+  const valueKey = typeof value === 'object' && value !== null && 'value' in value
+    ? (value as any).value
+    : value
+
+  // Find matching option object for NcSelect
+  return options.find((opt: any) => {
+    if (typeof opt === 'string') return opt === valueKey
+    return opt.value === valueKey
+  }) || value
+}
+
+// Get display label for an enum option
+const getEnumLabel = (option: any): string => {
+  if (typeof option === 'string') {
+    return option.charAt(0).toUpperCase() + option.slice(1)
+  }
+  if (option?.label) {
+    if (typeof option.label === 'string') return option.label
+    return extractLangString(option.label, currentLanguage.value)
+  }
+  return String(option?.value || option)
 }
 
 // Check if field should be displayed (has value or has default)
@@ -248,50 +266,19 @@ const shouldDisplayField = (field: Field, value: MiscValue) => {
 }
 
 // Get fields that should be displayed (for readonly mode)
-const displayFields = computed(() => {
-  const fields = [...dynamicFields.value]
-  
-  // Add support feature field if user can configure it
-  if (userCanConfigureSupport.value) {
-    fields.unshift({
-      key: 'supportFeature',
-      type: 'enum',
-      label: t('agora','Support feature'),
-      value: getSupportFeatureValue.value,
-      displayValue: getSupportFeatureDisplay(getSupportFeatureValue.value),
-      hasValue: true
-    } as any)
-  }
-  
-  // Add allow comment field if user can configure it
-  if (userCanConfigureComments.value) {
-    fields.unshift({
-      key: 'allowComment',
-      type: 'boolean',
-      label: t('agora','Allow comments'),
-      value: getAllowCommentValue.value,
-      displayValue: getAllowCommentValue.value ? t('Yes') : t('No'),
-      hasValue: true
-    } as any)
-  }
-  
-  return fields
-    .map(field => {
-      // Skip if it's one of our special fields that we already processed
-      if (field.key === 'supportFeature' || field.key === 'allowComment') {
-        return field
-      }
-      
-      const value = getMiscValue(field.key)
-      return {
-        ...field,
-        value,
-        displayValue: getDisplayValue(value, field),
-        hasValue: field.type === 'boolean' ? true : shouldDisplayField(field, value)
-      }
-    })
-    .filter(field => field.hasValue)
-})
+const displayFields = computed(() => dynamicFields.value
+  .map(field => {
+    const value = getMiscValue(field.key)
+    return {
+      ...field,
+      value,
+      displayValue: getDisplayValue(value, field),
+      hasValue: field.type === 'boolean' ? true : shouldDisplayField(field, value)
+    }
+  })
+  .filter(field => field.hasValue)
+)
+
 
 // Load misc data
 const loadMiscData = () => {
@@ -317,12 +304,13 @@ const loadMiscData = () => {
     })
 
   } catch (e) {
-    console.error('❌ Error loading misc data:', e)
+    console.error('Error loading misc data:', e)
     error.value = t('Error loading settings data')
   } finally {
     isLoading.value = false
   }
 }
+
 
 // Save individual field to database
 const saveFieldToDatabase = async (fieldKey: string, value: Field) => {
@@ -342,10 +330,10 @@ const saveFieldToDatabase = async (fieldKey: string, value: Field) => {
     }
 
     // Save to database using the API method with object parameter
-    await inquiryStore.updateMiscField(fieldKey, stringValue)
+    await inquiryStore.updateMiscField(fieldKey,stringValue)
 
   } catch (e) {
-    console.error(`❌ Error saving field ${fieldKey}:`, e)
+    console.error(`Error saving field ${fieldKey}:`, e)
   } finally {
     isSaving.value = false
   }
@@ -381,7 +369,8 @@ const initializeLocalCheckboxes = () => {
       localCheckboxes.value[field.key] = raw === true || raw === 'true'
     }
   })
-}
+  }
+	
 
 // Update the updateFieldValue method to handle user objects
 const updateFieldValue = (fieldKey: string, value: string, fieldType: string) => {
@@ -440,468 +429,383 @@ const getFormattedDate = (key: string) => {
 
 const getCheckboxValue = (key: string) => localCheckboxes.value[key] || false
 
-// Handle support feature change
-const handleSupportFeatureChange = async (id: string) => {
-   try {
-       isSaving.value = true
-    
-       console.log(" TOOOOOOOOOOOOOOOOOOOOOOO ",id)
-       inquiryStore.configuration.supportFeature = id
-    
-    // Save to backend (you need to implement this method in your store)
-    await inquiryStore.write()
-    
-  } catch (e) {
-    console.error(`❌ Error saving configuration field `, e)
-    // Revert on error
-     inquiryStore.configuration.supportFeature = getSupportFeatureValue.value
-  } finally {
-    isSaving.value = false
-  }   
-
-}
-
-// Handle allow comment change
-const handleAllowCommentChange = async (id: boolean) => {
-  try {
-    isSaving.value = true
-    
-      inquiryStore.configuration.allowComment = id
-    // Save to backend (you need to implement this method in your store)
-    await inquiryStore.write()
-    
-  } catch (e) { 
-    console.error(`❌ Error saving configuration field`, e)
-      inquiryStore.configuration.allowComment = getAllowCommentValue.value
-  } finally {
-    isSaving.value = false
-  }
-
-}
-
 onMounted(() => {
   loadMiscData()
 })
 </script>
 <template>
-  <div class="sidebar-tab-misc">
-    <div class="tab-content">
-      <!-- Loading state -->
-      <div v-if="isLoading" class="loading-state">
-        <div class="icon-loading"></div>
-        <p>{{ t('agora','Loading settings...') }}</p>
-      </div>
+	<div class="sidebar-tab-misc">
+		<div class="tab-content">
+			<!-- Loading state -->
+			<div v-if="isLoading" class="loading-state">
+				<div class="icon-loading"></div>
+				<p>{{ t('Loading settings...') }}</p>
+			</div>
 
-      <!-- Error state -->
-      <div v-else-if="error" class="error-state">
-        <component :is="StatusIcons.AlertCircleOutline" class="error-icon" />
-        <p>{{ error }}</p>
-      </div>
+			<!-- Error state -->
+			<div v-else-if="error" class="error-state">
+				<component :is="StatusIcons.AlertCircleOutline" class="error-icon" />
+				<p>{{ error }}</p>
+			</div>
 
-      <!-- No data state -->
-      <div v-else-if="!displayFields.length && props.isReadonly" class="no-data-state">
-        <component :is="StatusIcons.Info" class="no-data-icon" />
-        <p>{{ t('agora','No additional settings configured.') }}</p>
-      </div>
+			<!-- No data state -->
+			<div v-else-if="!displayFields.length && props.isReadonly" class="no-data-state">
+				<component :is="StatusIcons.Info" class="no-data-icon" />
+				<p>{{ t('No additional settings configured.') }}</p>
+			</div>
 
-      <!-- Readonly mode -->
-      <div v-else-if="props.isReadonly" class="misc-fields-readonly">
-        <div class="misc-fields-list">
-          <div
-            v-for="field in displayFields"
-            :key="field.key"
-            class="misc-field-item"
-          >
-            <div class="field-row">
-              <label class="field-label">{{ field.label }}:</label>
-              <div class="field-value">
-                <pre v-if="field.type === 'json'" class="json-value">{{ field.displayValue }}</pre>
-                <span v-else>{{ field.displayValue }}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+			<!-- Readonly mode -->
+			<div v-else-if="props.isReadonly" class="misc-fields-readonly">
+				<div class="misc-fields-list">
+					<div
+							v-for="field in displayFields"
+							:key="field.key"
+							class="misc-field-item"
+							>
+							<div class="field-row">
+								<label class="field-label">{{ field.label }}:</label>
+								<div class="field-value">
+									<pre v-if="field.type === 'json'" class="json-value">{{ field.displayValue }}</pre>
+									<span v-else>{{ field.displayValue }}</span>
+								</div>
+							</div>
+					</div>
+				</div>
+			</div>
+			<!-- Editable fields -->
+			<div v-else class="misc-fields-edit">
+				<div v-if="isSaving" class="saving-indicator">
+					<div class="icon-loading-small"></div>
+					<span>{{ t('agora','Saving...') }}</span>
+				</div>
 
-      <!-- Editable fields -->
-      <div v-else class="misc-fields-edit">
-        <div v-if="isSaving" class="saving-indicator">
-          <div class="icon-loading-small"></div>
-          <span>{{ t('Saving...') }}</span>
-        </div>
+				<div class="edit-fields">
+					<div
+							v-for="field in dynamicFields.slice()" 
+							:key="field.key"
+							class="edit-field-item"
+							>
+							<!-- Checkbox field -->
+						<div v-if="field.type === 'boolean'" class="checkbox-field">
+							<div class="checkbox-wrapper">
+								<input
+										:id="`checkbox-${field.key}`"
+										type="checkbox"
+										:checked="getCheckboxValue(field.key)"
+										:name="field.key"
+										:disabled="isSaving"
+										@change="(e) => updateFieldValue(field.key, (e.target as HTMLInputElement).checked, 'boolean')"
+										/>
+										<label :for="`checkbox-${field.key}`" class="checkbox-label">
+											{{ field.label }}
+											<span v-if="!field.required" class="optional-label">({{ t('agora','optional') }})</span>
+										</label>
+							</div>
+						</div>
 
-        <div class="edit-fields">
-          <!-- Support feature field -->
-          <div v-if="userCanConfigureSupport" class="edit-field-item">
-            <label class="edit-field-label">
-              {{ t('agora',"Support feature") }}
-            </label>
-            <div class="edit-field-input">
-              <NcSelect
-                :model-value="getSupportFeatureValue"
-                :options="supportFeatureOptions"
-                :reduce="(option: any) => option.id"
-                :label-outside="true"
-                :input-label="t('Support feature')"
-                :disabled="isSaving"
-                :placeholder="t('Select support feature')"
-                @update:model-value="handleSupportFeatureChange"
-              />
-            </div>
-            <div class="field-description">
-              {{ t('agora','Choose the type of support feature for this inquiry') }}
-            </div>
-          </div>
+						<!-- Other fields -->
+						<div v-else class="standard-field">
+							<label class="edit-field-label">
+								{{ field.label }}
+								<span v-if="field.required" class="required-asterisk">*</span>
+								<span v-else class="optional-label">({{ t('agora','optional') }})</span>
+							</label>
 
-          <!-- Allow comment field - -->
-          <div v-if="userCanConfigureComments" class="edit-field-item">
-            <div class="checkbox-field">
-              <div class="checkbox-wrapper">
-                <!-- Using simple checkbox for now to avoid component issues -->
-                <input
-                  :id="'checkbox-allowComment'"
-                  type="checkbox"
-                  :checked="getAllowCommentValue"
-                  :name="'allowComment'"
-                  :disabled="isSaving"
-                  @change="(e) => handleAllowCommentChange((e.target as HTMLInputElement).checked)"
-                  class="simple-checkbox"
-                />
-                <label :for="'checkbox-allowComment'" class="checkbox-label">
-                  {{ t('agora','Allow comments') }}
-                  <span class="optional-label">({{ t('agora','optional') }})</span>
-                </label>
-              </div>
-            </div>
-            <div class="field-description">
-              {{ t('agora','Allow users to add comments to their votes') }}
-            </div>
-          </div>
+							<div class="edit-field-input">
+								<!-- Enum field -->
+								<NcSelect
+										v-if="field.type === 'enum'"
+										:model-value="getEnumModelValue(field)"
+										:options="field.allowed_values || []"
+										:reduce="(option: any) => typeof option === 'string' ? option : option.value"
+										:get-option-label="getEnumLabel"
+										:clearable="!field.required"
+										:label-outside="true"
+										:input-label="field.label"
+										:disabled="isSaving"
+										:placeholder="t('Select an option')"
+										@update:model-value="(val: string) => updateFieldValue(field.key, val, 'enum')"
+										/>
 
-          <!-- Dynamic fields -->
-          <div
-            v-for="field in dynamicFields.slice()" 
-            :key="field.key"
-            class="edit-field-item"
-          >
-            <!-- Checkbox field -->
-            <div v-if="field.type === 'boolean'" class="checkbox-field">
-              <div class="checkbox-wrapper">
-                <input
-                  :id="`checkbox-${field.key}`"
-                  type="checkbox"
-                  :checked="getCheckboxValue(field.key)"
-                  :name="field.key"
-                  :disabled="isSaving"
-                  @change="(e) => updateFieldValue(field.key, (e.target as HTMLInputElement).checked, 'boolean')"
-                />
-                <label :for="`checkbox-${field.key}`" class="checkbox-label">
-                  {{ field.label }}
-                  <span v-if="!field.required" class="optional-label">({{ t('agora','optional') }})</span>
-                </label>
-              </div>
-            </div>
+										<!-- Integer field -->
+										<NcInputField
+												v-else-if="field.type === 'integer'"
+												v-model="inquiryStore.miscFields[field.key]"
+												type="number"
+												:label="field.label"
+												:disabled="isSaving"
+												@update:model-value="(val: string) => updateFieldValue(field.key, parseInt(val) || null, 'integer')"
+												/>
 
-            <!-- Other fields -->
-            <div v-else class="standard-field">
-              <label class="edit-field-label">
-                {{ field.label }}
-                <span v-if="field.required" class="required-asterisk">*</span>
-                <span v-else class="optional-label">({{ t('agora','optional') }})</span>
-              </label>
+												<!-- Datetime field -->
+												<NcDateTimePickerNative
+														v-else-if="field.type === 'datetime'"
+														:model-value="getFormattedDate(field.key)"
+														type="date"
+                                                        :label="field.label"
+                                                        :disabled="isSaving"
+                                                        @update:model-value="(val: string) => updateFieldValue(field.key, val, 'datetime')"
+                                                        />
 
-              <div class="edit-field-input">
-                <!-- Enum field -->
-                <NcSelect
-                  v-if="field.type === 'enum'"
-                  :model-value="getMiscValue(field.key) || field.default"
-                  :options="field.allowed_values || []"
-                  :reduce="(option: string) => option"
-                  :clearable="!field.required"
-                  :label-outside="true"
-                  :input-label="field.label"
-                  :disabled="isSaving"
-                  :placeholder="t('Select an option')"
-                  @update:model-value="(val: string) => updateFieldValue(field.key, val, 'enum')"
-                />
+                                                        <!-- Users/Groups field -->
+                                                        <UserSearch
+                                                                v-else-if="field.type === 'users' || field.type === 'groups'"
+                                                                v-model="selectedUsers[field.key]"
+                                                                :search-types="field.type === 'users' ? [99] : [1]"
+                                                                :placeholder="t('Type to search for users')"
+                                                                :aria-label="field.label"
+                                                                :close-on-select="true"
+                                                                @user-selected="(user) => handleUserSelected(field.key, user)"
+                                                                />
 
-                <!-- Integer field -->
-                <NcInputField
-                  v-else-if="field.type === 'integer'"
-                  v-model="inquiryStore.miscFields[field.key]"
-                  type="number"
-                  :label="field.label"
-                  :disabled="isSaving"
-                  @update:model-value="(val: string) => updateFieldValue(field.key, parseInt(val) || null, 'integer')"
-                />
+                                                                <!-- JSON field -->
+                                                                <div v-else-if="field.type === 'json'" class="json-field">
+                                                                    <NcInputField
+                                                                            v-model="inquiryStore.miscFields[field.key]"
+                                                                            type="textarea"
+                                                                            :rows="5"
+                                                                            :label="field.label"
+                                                                            :disabled="isSaving"
+                                                                            @update:model-value="(val: string) => {
+                                                                                                 try {
+                                                                                                 const parsed = val ? JSON.parse(val) : null
+                                                                                                 updateFieldValue(field.key, parsed, 'json')
+                                                                                                 } catch {
+                                                                                                 updateFieldValue(field.key, val, 'json')
+                                                                                                 }
+                                                                                                 }"
+                                                                            />
+                                                                </div>
 
-                <!-- Datetime field -->
-                <NcDateTimePickerNative
-                  v-else-if="field.type === 'datetime'"
-                  :model-value="getFormattedDate(field.key)"
-                  type="date"
-                  :label="field.label"
-                  :disabled="isSaving"
-                  @update:model-value="(val: string) => updateFieldValue(field.key, val, 'datetime')"
-                />
+                                                                <!-- Default string field -->
+                                                                <NcInputField
+                                                                        v-else
+                                                                        v-model="inquiryStore.miscFields[field.key]"
+                                                                        type="text"
+                                                                        :label="field.label"
+                                                                        :disabled="isSaving"
+                                                                        @update:model-value="(val: string) => updateFieldValue(field.key, val, 'string')"
+                                                                        />
+                            </div>
+                        </div>
 
-                <!-- Users/Groups field -->
-                <UserSearch
-                  v-else-if="field.type === 'users' || field.type === 'groups'"
-                  v-model="selectedUsers[field.key]"
-                  :search-types="field.type === 'users' ? [99] : [1]"
-                  :placeholder="t('Type to search for users')"
-                  :aria-label="field.label"
-                  :close-on-select="true"
-                  @user-selected="(user) => handleUserSelected(field.key, user)"
-                />
-
-                <!-- JSON field -->
-                <div v-else-if="field.type === 'json'" class="json-field">
-                  <NcInputField
-                    v-model="inquiryStore.miscFields[field.key]"
-                    type="textarea"
-                    :rows="5"
-                    :label="field.label"
-                    :disabled="isSaving"
-                    @update:model-value="(val: string) => {
-                      try {
-                        const parsed = val ? JSON.parse(val) : null
-                        updateFieldValue(field.key, parsed, 'json')
-                      } catch {
-                        updateFieldValue(field.key, val, 'json')
-                      }
-                    }"
-                  />
+                        <div v-if="field.description" class="field-description">
+                            {{ field.description }}
+                        </div>
+                    </div>
                 </div>
-
-                <!-- Default string field -->
-                <NcInputField
-                  v-else
-                  v-model="inquiryStore.miscFields[field.key]"
-                  type="text"
-                  :label="field.label"
-                  :disabled="isSaving"
-                  @update:model-value="(val: string) => updateFieldValue(field.key, val, 'string')"
-                />
-              </div>
             </div>
-
-            <div v-if="field.description" class="field-description">
-              {{ field.description }}
-            </div>
-          </div>
         </div>
-      </div>
     </div>
-  </div>
 </template>
 
 <style scoped>
 .optional-label {
-  color: var(--color-text-maxcontrast);
-  font-size: 0.75rem;
-  font-weight: normal;
-  font-style: italic;
-  margin-left: 4px;
+    color: var(--color-text-maxcontrast);
+    font-size: 0.75rem;
+    font-weight: normal;
+    font-style: italic;
+    margin-left: 4px;
 }
 
 .checkbox-main-label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-weight: 600;
-  cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    cursor: pointer;
 }
 
 .checkbox-wrapper {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .standard-field {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
 .sidebar-tab-misc {
-  padding: 12px;
-  height: 100%;
+    padding: 12px;
+    height: 100%;
 }
 
 .tab-content {
-  height: 100%;
-  overflow-y: auto;
+    height: 100%;
+    overflow-y: auto;
 }
 
 .field-row {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  padding: 8px 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 8px 0;
 }
 
 .field-label {
-  font-weight: 600;
-  min-width: 120px;
-  color: var(--color-text-lighter);
+    font-weight: 600;
+    min-width: 120px;
+    color: var(--color-text-lighter);
 }
 
 .field-value {
-  flex: 1;
-  word-break: break-word;
+    flex: 1;
+    word-break: break-word;
 }
 
 .loading-state,
 .error-state,
 .no-data-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
-  text-align: center;
-  color: var(--color-text-maxcontrast);
-  height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    text-align: center;
+    color: var(--color-text-maxcontrast);
+    height: 100%;
 }
 
 .loading-state .icon-loading,
 .error-state .icon-error {
-  width: 24px;
-  height: 24px;
-  margin-bottom: 1rem;
+    width: 24px;
+    height: 24px;
+    margin-bottom: 1rem;
 }
 
 .loading-state .icon-loading {
-  background-image: var(--icon-loading);
-  animation: rotate 1s linear infinite;
+    background-image: var(--icon-loading);
+    animation: rotate 1s linear infinite;
 }
 
 .error-icon,
 .no-data-icon {
-  width: 48px;
-  height: 48px;
-  margin-bottom: 1rem;
-  opacity: 0.5;
+    width: 48px;
+    height: 48px;
+    margin-bottom: 1rem;
+    opacity: 0.5;
 }
 
 /* Readonly styles */
 .misc-fields-list {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
 }
 
 .misc-field-item {
-  border-bottom: 1px solid var(--color-border);
-  padding-bottom: 16px;
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 16px;
 }
 
 .misc-field-item:last-child {
-  border-bottom: none;
-  padding-bottom: 0;
+    border-bottom: none;
+    padding-bottom: 0;
 }
 
 .field-row {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
 }
 
 .field-label {
-  font-weight: 600;
-  font-size: 0.875rem;
-  color: var(--color-text-lighter);
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: var(--color-text-lighter);
 }
 
 .field-value {
-  font-size: 0.875rem;
-  word-break: break-word;
-  line-height: 1.4;
+    font-size: 0.875rem;
+    word-break: break-word;
+    line-height: 1.4;
 }
 
 .json-value {
-  background: var(--color-background-dark);
-  padding: 8px;
-  border-radius: 4px;
-  font-size: 0.75rem;
-  white-space: pre-wrap;
-  word-break: break-all;
-  max-height: 150px;
-  overflow-y: auto;
-  margin: 0;
-  font-family: monospace;
+    background: var(--color-background-dark);
+    padding: 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    white-space: pre-wrap;
+    word-break: break-all;
+    max-height: 150px;
+    overflow-y: auto;
+    margin: 0;
+    font-family: monospace;
 }
 
 /* Saving indicator */
 .saving-indicator {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  background: var(--color-background-dark);
-  border-radius: 4px;
-  margin-bottom: 1rem;
-  font-size: 0.875rem;
-  color: var(--color-text-maxcontrast);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: var(--color-background-dark);
+    border-radius: 4px;
+    margin-bottom: 1rem;
+    font-size: 0.875rem;
+    color: var(--color-text-maxcontrast);
 }
 
 .icon-loading-small {
-  width: 16px;
-  height: 16px;
-  background-image: var(--icon-loading);
-  animation: rotate 1s linear infinite;
+    width: 16px;
+    height: 16px;
+    background-image: var(--icon-loading);
+    animation: rotate 1s linear infinite;
 }
 
 /* Edit mode styles */
 .edit-fields {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
 }
 
 .edit-field-item {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 1rem;
-  background: var(--color-background-dark);
-  border-radius: 8px;
-  border: 1px solid var(--color-border);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 1rem;
+    background: var(--color-background-dark);
+    border-radius: 8px;
+    border: 1px solid var(--color-border);
 }
 
 .edit-field-label {
-  font-weight: 600;
-  font-size: 0.875rem;
-  color: var(--color-text-lighter);
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: var(--color-text-lighter);
 }
 
 .required-asterisk {
-  color: var(--color-error);
+    color: var(--color-error);
+}
+
+.optional-label {
+    color: var(--color-text-maxcontrast);
+    font-size: 0.75rem;
+    font-weight: normal;
 }
 
 .field-description {
-  font-size: 0.75rem;
-  color: var(--color-text-maxcontrast);
-  font-style: italic;
+    font-size: 0.75rem;
+    color: var(--color-text-maxcontrast);
+    font-style: italic;
 }
 
 .json-field {
-  width: 100%;
+    width: 100%;
 }
 
-.simple-checkbox {
-  margin-right: 8px;
-}
-
-@keyframes rotate {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
+                                                                                              @keyframes rotate {
+                                                                                                  from {
+                                                                                                      transform: rotate(0deg);
+                                                                                                  }
+                                                                                                  to {
+                                                                                                      transform: rotate(360deg);
+                                                                                                  }
+                                                                                              }
 </style>

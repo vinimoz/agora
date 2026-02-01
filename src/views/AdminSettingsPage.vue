@@ -8,8 +8,10 @@ import { onMounted, ref } from 'vue'
 import { t } from '@nextcloud/l10n'
 
 import NcSettingsSection from '@nextcloud/vue/components/NcSettingsSection'
+import NcButton from '@nextcloud/vue/components/NcButton'
 
 import { FlexSettings } from '../components/Base/index.ts'
+import TemplateSetupWizard from '../components/Wizard/TemplateSetupWizard.vue'
 import {
   AdminActivities,
   AdminArchiveInquiries,
@@ -33,12 +35,22 @@ import {
   AdminUnrescrictedOwners,
 } from '../components/Settings/AdminSettings/index.ts'
 import { useAppSettingsStore } from '../stores/appSettings.ts'
+import { useTemplateWizardStore } from '../stores/templateWizard.ts'
 import '../assets/scss/markdown.scss'
 
 const appSettingsStore = useAppSettingsStore()
+const wizardStore = useTemplateWizardStore()
 const isLoaded = ref(false)
 
+const launchWizard = () => {
+	wizardStore.openWizard()
+}
+
 const sections = {
+  templateSetup: {
+    name: t('agora', 'Template Setup Wizard'),
+    description: t('agora', 'Configure your Agora instance using pre-built templates'),
+  },
   inquiryCategoryLocation: {
     name: t('agora', 'Categories and Locations Management'),
     description: t('agora', 'Change globally location and category (for all accounts)'),
@@ -100,6 +112,13 @@ const sections = {
 onMounted(async () => {
   try {
     await appSettingsStore.load()
+
+    // Check if database is empty for auto-launch
+    await wizardStore.checkDatabaseEmpty()
+    if (wizardStore.isDatabaseEmpty) {
+      // Auto-launch wizard if database is empty
+      wizardStore.openWizard()
+    }
   } catch (error) {
     console.error('Failed to load data:', error)
   } finally {
@@ -110,8 +129,21 @@ onMounted(async () => {
 
 <template>
 	<div v-if="isLoaded">
+		<!-- Template Setup Wizard -->
+		<TemplateSetupWizard />
+
 		<FlexSettings>
 		<NcSettingsSection>
+		<!-- Template Setup Wizard Section -->
+		<NcSettingsSection v-bind="sections.templateSetup">
+			<p>{{ t('agora', 'Use the setup wizard to quickly configure your Agora instance with pre-built templates for citizen participation, enterprise, or education use cases.') }}</p>
+			<NcButton
+				type="primary"
+				@click="launchWizard">
+				{{ t('agora', 'Launch Setup Wizard') }}
+			</NcButton>
+		</NcSettingsSection>
+
 		<NcSettingsSection v-bind="sections.globalSettings">
 		<AdminSettings />
 		</NcSettingsSection>
