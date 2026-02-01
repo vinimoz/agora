@@ -1,0 +1,2731 @@
+{
+  "template_info": {
+    "name": "enterprise_it_services",
+    "version": "1.0.0",
+    "description": "Template for enterprise IT services supporting new service requests, improvement suggestions, automation proposals, AI use cases, and business applications with advanced capabilities including voting, hierarchies, and collaborative workflows",
+    "author": "Agora Team",
+    "use_case": "enterprise_it",
+    "available_languages": [
+      "en",
+      "fr",
+      "de",
+      "gsw"
+    ]
+  },
+  "inquiry_families": [
+    {
+      "family_type": "it_services",
+      "label": {
+        "en": "IT Services",
+        "fr": "Services IT",
+        "de": "IT-Dienste",
+        "gsw": "IT-Dienscht"
+      },
+      "description": {
+        "en": "IT department initiatives including ideas, automation, and service improvements",
+        "fr": "Initiatives du département IT incluant idées, automatisation et améliorations de services",
+        "de": "IT-Abteilungsinitiativen einschließlich Ideen, Automatisierung und Serviceverbesserungen",
+        "gsw": "IT-Abteilig-Initiative inkl. Idee, Automatisierig und Service-Verbesserige"
+      },
+      "icon": "LaptopAccount",
+      "sort_order": 1
+    },
+    {
+      "family_type": "official_it_services",
+      "label": {
+        "en": "Official Response",
+        "fr": "Réponse officielle",
+        "de": "Offizielle Antwort",
+        "gsw": "Offizielle Antwort"
+      },
+      "description": {
+        "en": "Official responses from IT management and technical teams",
+        "fr": "Réponses officielles de la direction IT et des équipes techniques",
+        "de": "Offizielle Antworten vom IT-Management und technischen Teams",
+        "gsw": "Offizelli Antworte vom IT-Management und technische Teams"
+      },
+      "icon": "Seal",
+      "sort_order": 2
+    }
+  ],
+  "inquiry_types": [
+    {
+      "inquiry_type": "new_idea",
+      "family": "it_services",
+      "icon": "Lightbulb",
+      "label": {
+        "en": "New Ideas",
+        "fr": "Nouvelles idées",
+        "de": "Neue Ideen",
+        "gsw": "Nöii Idee"
+      },
+      "description": {
+        "en": "Innovative ideas to improve IT services and operations",
+        "fr": "Idées innovantes pour améliorer les services et opérations IT",
+        "de": "Innovative Ideen zur Verbesserung von IT-Services und -Betrieb",
+        "gsw": "Innovativi Idee zur Verbesserig vo IT-Services und -Betrieb"
+      },
+      "is_root": true,
+      "allowed_response": [
+        "official_response_it_services"
+      ],
+      "allowed_option_type": [
+        "position_for",
+        "position_against",
+        "alternative",
+        "official_summary"
+      ],
+      "support_feature": "binary",
+      "allowed_transformation": [
+        "ai_use_case",
+        "process_automation",
+        "new_service",
+        "improve_service",
+        "replace_service",
+        "business_application"
+      ],
+      "fields": [
+        {
+          "key": "type_of_vote",
+          "label": {
+            "en": "Type of Vote",
+            "fr": "Type de vote",
+            "de": "Abstimmungstyp",
+            "gsw": "Abstimmigs-Typ"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "simple",
+          "allowed_values": [
+            "simple",
+            "approval",
+            "majority_judgement_beneficial"
+          ]
+        },
+        {
+          "key": "quorum",
+          "label": {
+            "en": "Required Votes",
+            "fr": "Votes requis",
+            "de": "Erforderliche Stimmen",
+            "gsw": "Erforderlich Stimme"
+          },
+          "type": "integer",
+          "required": false,
+          "default": 50
+        },
+        {
+          "key": "voting_deadline",
+          "label": {
+            "en": "Voting Deadline",
+            "fr": "Date limite de vote",
+            "de": "Abstimmungsfrist",
+            "gsw": "Abstimmigs-Frischt"
+          },
+          "type": "date",
+          "required": false
+        },
+        {
+          "key": "approval_threshold",
+          "label": {
+            "en": "Approval Threshold (%)",
+            "fr": "Seuil d'approbation (%)",
+            "de": "Genehmigungsschwelle (%)",
+            "gsw": "Genehmigigs-Schwelle (%)"
+          },
+          "type": "integer",
+          "required": false,
+          "default": 50
+        },
+        {
+          "key": "layout_zone",
+          "label": {
+            "en": "Layout Zone",
+            "fr": "Zone de mise en page",
+            "de": "Layout-Zone",
+            "gsw": "Layout-Zone"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "main",
+          "allowed_values": ["sidebar", "main", "footer", "header"]
+        },
+        {
+          "key": "render_mode",
+          "label": {
+            "en": "Render Mode",
+            "fr": "Mode de rendu",
+            "de": "Darstellungsmodus",
+            "gsw": "Darstelligs-Modus"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "rich_html",
+          "allowed_values": ["cards", "list", "full", "summary", "rich_html"]
+        },
+        {
+          "key": "open_mode",
+          "label": {
+            "en": "Open Mode",
+            "fr": "Mode d'ouverture",
+            "de": "Öffnungsmodus",
+            "gsw": "Öffnigs-Modus"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "page",
+          "allowed_values": ["page", "modal", "popup"]
+        },
+        {
+          "key": "allow_anonymous",
+          "label": {
+            "en": "Allow Anonymous Feedback",
+            "fr": "Autoriser les retours anonymes",
+            "de": "Anonymes Feedback erlauben",
+            "gsw": "Anonyms Feedback erlaube"
+          },
+          "type": "boolean",
+          "required": false,
+          "default": false
+        }
+      ]
+    },
+    {
+      "inquiry_type": "ai_use_case",
+      "family": "it_services",
+      "icon": "RobotExcited",
+      "label": {
+        "en": "AI Use-Cases",
+        "fr": "Cas d'usage IA",
+        "de": "KI-Anwendungsfälle",
+        "gsw": "KI-Aawändigsfäll"
+      },
+      "description": {
+        "en": "Proposals for AI and machine learning implementations",
+        "fr": "Propositions d'implémentations d'IA et d'apprentissage automatique",
+        "de": "Vorschläge für KI- und Machine-Learning-Implementierungen",
+        "gsw": "Vorschläg für KI- und Machine-Learning-Implementierige"
+      },
+      "is_root": true,
+      "allowed_response": [
+        "official_response_it_services"
+      ],
+      "allowed_option_type": [
+        "position_for",
+        "position_against",
+        "alternative",
+        "official_summary"
+      ],
+      "support_feature": "binary",
+      "fields": [
+        {
+          "key": "ai_category",
+          "label": {
+            "en": "AI Category",
+            "fr": "Catégorie IA",
+            "de": "KI-Kategorie",
+            "gsw": "KI-Kategorie"
+          },
+          "type": "enum",
+          "required": true,
+          "default": "generative",
+          "allowed_values": [
+            {"value": "generative", "label": {"en": "Generative AI", "fr": "IA générative", "de": "Generative KI", "gsw": "Generativi KI"}},
+            {"value": "predictive", "label": {"en": "Predictive AI", "fr": "IA prédictive", "de": "Prädiktive KI", "gsw": "Prädiktivi KI"}},
+            {"value": "classification", "label": {"en": "Classification", "fr": "Classification", "de": "Klassifikation", "gsw": "Klassifikation"}},
+            {"value": "nlp", "label": {"en": "Natural Language Processing", "fr": "Traitement du langage naturel", "de": "Sprachverarbeitung", "gsw": "Spraachverarbeitig"}},
+            {"value": "computer_vision", "label": {"en": "Computer Vision", "fr": "Vision par ordinateur", "de": "Bildverarbeitung", "gsw": "Bildverarbeitig"}},
+            {"value": "recommendation", "label": {"en": "Recommendation", "fr": "Recommandation", "de": "Empfehlung", "gsw": "Empfählig"}}
+          ]
+        },
+        {
+          "key": "data_sensitivity",
+          "label": {
+            "en": "Data Sensitivity",
+            "fr": "Sensibilité des données",
+            "de": "Datensensibilität",
+            "gsw": "Date-Sensibilität"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "internal",
+          "allowed_values": [
+            {"value": "public", "label": {"en": "Public", "fr": "Public", "de": "Öffentlich", "gsw": "Öffentlich"}},
+            {"value": "internal", "label": {"en": "Internal", "fr": "Interne", "de": "Intern", "gsw": "Intern"}},
+            {"value": "confidential", "label": {"en": "Confidential", "fr": "Confidentiel", "de": "Vertraulich", "gsw": "Vertraulich"}},
+            {"value": "restricted", "label": {"en": "Restricted", "fr": "Restreint", "de": "Eingeschränkt", "gsw": "Iigschränkt"}}
+          ]
+        },
+        {
+          "key": "layout_zone",
+          "label": {
+            "en": "Layout Zone",
+            "fr": "Zone de mise en page",
+            "de": "Layout-Zone",
+            "gsw": "Layout-Zone"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "main",
+          "allowed_values": ["sidebar", "main", "footer", "header"]
+        },
+        {
+          "key": "render_mode",
+          "label": {
+            "en": "Render Mode",
+            "fr": "Mode de rendu",
+            "de": "Darstellungsmodus",
+            "gsw": "Darstelligs-Modus"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "rich_html",
+          "allowed_values": ["cards", "list", "full", "summary", "rich_html"]
+        },
+        {
+          "key": "open_mode",
+          "label": {
+            "en": "Open Mode",
+            "fr": "Mode d'ouverture",
+            "de": "Öffnungsmodus",
+            "gsw": "Öffnigs-Modus"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "page",
+          "allowed_values": ["page", "modal", "popup"]
+        },
+        {
+          "key": "allow_anonymous",
+          "label": {
+            "en": "Allow Anonymous Feedback",
+            "fr": "Autoriser les retours anonymes",
+            "de": "Anonymes Feedback erlauben",
+            "gsw": "Anonyms Feedback erlaube"
+          },
+          "type": "boolean",
+          "required": false,
+          "default": false
+        }
+      ]
+    },
+    {
+      "inquiry_type": "process_automation",
+      "family": "it_services",
+      "icon": "Cog",
+      "label": {
+        "en": "Process Automation",
+        "fr": "Automatisation de processus",
+        "de": "Prozessautomatisierung",
+        "gsw": "Prozess-Automatisierig"
+      },
+      "description": {
+        "en": "Requests to automate manual processes and workflows",
+        "fr": "Demandes d'automatisation de processus et flux de travail manuels",
+        "de": "Anfragen zur Automatisierung manueller Prozesse und Workflows",
+        "gsw": "Aafraage zur Automatisierig vo manuelle Prozäss und Workflows"
+      },
+      "is_root": true,
+      "allowed_response": [
+        "official_response_it_services"
+      ],
+      "allowed_option_type": [
+        "position_for",
+        "position_against",
+        "alternative",
+        "official_summary"
+      ],
+      "support_feature": "binary",
+      "fields": [
+        {
+          "key": "automation_type",
+          "label": {
+            "en": "Automation Type",
+            "fr": "Type d'automatisation",
+            "de": "Automatisierungstyp",
+            "gsw": "Automatisierigs-Typ"
+          },
+          "type": "enum",
+          "required": true,
+          "default": "workflow",
+          "allowed_values": [
+            {"value": "workflow", "label": {"en": "Workflow Automation", "fr": "Automatisation de flux", "de": "Workflow-Automatisierung", "gsw": "Workflow-Automatisierig"}},
+            {"value": "data_processing", "label": {"en": "Data Processing", "fr": "Traitement des données", "de": "Datenverarbeitung", "gsw": "Dateverarbeitig"}},
+            {"value": "reporting", "label": {"en": "Reporting", "fr": "Rapports", "de": "Berichtswesen", "gsw": "Berichtswäse"}},
+            {"value": "integration", "label": {"en": "System Integration", "fr": "Intégration système", "de": "Systemintegration", "gsw": "Systemintegration"}},
+            {"value": "scheduling", "label": {"en": "Task Scheduling", "fr": "Planification des tâches", "de": "Aufgabenplanung", "gsw": "Ufgabe-Planig"}},
+            {"value": "monitoring", "label": {"en": "Monitoring", "fr": "Surveillance", "de": "Überwachung", "gsw": "Überwachig"}}
+          ]
+        },
+        {
+          "key": "estimated_time_savings_hours",
+          "label": {
+            "en": "Estimated Time Savings (hours/month)",
+            "fr": "Économie de temps estimée (heures/mois)",
+            "de": "Geschätzte Zeitersparnis (Stunden/Monat)",
+            "gsw": "Gschätzt Zit-Ersparnis (Stunde/Monat)"
+          },
+          "type": "integer",
+          "required": false,
+          "default": null
+        },
+        {
+          "key": "layout_zone",
+          "label": {
+            "en": "Layout Zone",
+            "fr": "Zone de mise en page",
+            "de": "Layout-Zone",
+            "gsw": "Layout-Zone"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "main",
+          "allowed_values": ["sidebar", "main", "footer", "header"]
+        },
+        {
+          "key": "render_mode",
+          "label": {
+            "en": "Render Mode",
+            "fr": "Mode de rendu",
+            "de": "Darstellungsmodus",
+            "gsw": "Darstelligs-Modus"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "rich_html",
+          "allowed_values": ["cards", "list", "full", "summary", "rich_html"]
+        },
+        {
+          "key": "open_mode",
+          "label": {
+            "en": "Open Mode",
+            "fr": "Mode d'ouverture",
+            "de": "Öffnungsmodus",
+            "gsw": "Öffnigs-Modus"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "page",
+          "allowed_values": ["page", "modal", "popup"]
+        },
+        {
+          "key": "allow_anonymous",
+          "label": {
+            "en": "Allow Anonymous Feedback",
+            "fr": "Autoriser les retours anonymes",
+            "de": "Anonymes Feedback erlauben",
+            "gsw": "Anonyms Feedback erlaube"
+          },
+          "type": "boolean",
+          "required": false,
+          "default": false
+        }
+      ]
+    },
+    {
+      "inquiry_type": "new_service",
+      "family": "it_services",
+      "icon": "Plus",
+      "label": {
+        "en": "New Services",
+        "fr": "Nouveaux services",
+        "de": "Neue Dienste",
+        "gsw": "Nöii Dienscht"
+      },
+      "description": {
+        "en": "Proposals for new IT services or tools",
+        "fr": "Propositions de nouveaux services ou outils IT",
+        "de": "Vorschläge für neue IT-Services oder Tools",
+        "gsw": "Vorschläg für nöii IT-Services oder Tools"
+      },
+      "is_root": true,
+      "allowed_response": [
+        "official_response_it_services"
+      ],
+      "allowed_option_type": [
+        "position_for",
+        "position_against",
+        "alternative",
+        "official_summary"
+      ],
+      "support_feature": "binary",
+      "fields": [
+        {
+          "key": "service_category",
+          "label": {
+            "en": "Service Category",
+            "fr": "Catégorie de service",
+            "de": "Servicekategorie",
+            "gsw": "Service-Kategorie"
+          },
+          "type": "enum",
+          "required": true,
+          "default": "application",
+          "allowed_values": [
+            {"value": "infrastructure", "label": {"en": "Infrastructure", "fr": "Infrastructure", "de": "Infrastruktur", "gsw": "Infrastruktur"}},
+            {"value": "application", "label": {"en": "Application", "fr": "Application", "de": "Anwendung", "gsw": "Awändig"}},
+            {"value": "security", "label": {"en": "Security", "fr": "Sécurité", "de": "Sicherheit", "gsw": "Sicherhäit"}},
+            {"value": "support", "label": {"en": "Support", "fr": "Support", "de": "Support", "gsw": "Support"}},
+            {"value": "collaboration", "label": {"en": "Collaboration", "fr": "Collaboration", "de": "Zusammenarbeit", "gsw": "Zämearbeit"}},
+            {"value": "analytics", "label": {"en": "Analytics", "fr": "Analytique", "de": "Analytik", "gsw": "Analytik"}}
+          ]
+        },
+        {
+          "key": "estimated_users",
+          "label": {
+            "en": "Estimated Users",
+            "fr": "Utilisateurs estimés",
+            "de": "Geschätzte Benutzer",
+            "gsw": "Gschätzt Benutzer"
+          },
+          "type": "integer",
+          "required": false,
+          "default": null
+        },
+        {
+          "key": "layout_zone",
+          "label": {
+            "en": "Layout Zone",
+            "fr": "Zone de mise en page",
+            "de": "Layout-Zone",
+            "gsw": "Layout-Zone"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "main",
+          "allowed_values": ["sidebar", "main", "footer", "header"]
+        },
+        {
+          "key": "render_mode",
+          "label": {
+            "en": "Render Mode",
+            "fr": "Mode de rendu",
+            "de": "Darstellungsmodus",
+            "gsw": "Darstelligs-Modus"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "rich_html",
+          "allowed_values": ["cards", "list", "full", "summary", "rich_html"]
+        },
+        {
+          "key": "open_mode",
+          "label": {
+            "en": "Open Mode",
+            "fr": "Mode d'ouverture",
+            "de": "Öffnungsmodus",
+            "gsw": "Öffnigs-Modus"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "page",
+          "allowed_values": ["page", "modal", "popup"]
+        },
+        {
+          "key": "allow_anonymous",
+          "label": {
+            "en": "Allow Anonymous Feedback",
+            "fr": "Autoriser les retours anonymes",
+            "de": "Anonymes Feedback erlauben",
+            "gsw": "Anonyms Feedback erlaube"
+          },
+          "type": "boolean",
+          "required": false,
+          "default": false
+        }
+      ]
+    },
+    {
+      "inquiry_type": "improve_service",
+      "family": "it_services",
+      "icon": "TrendingUp",
+      "label": {
+        "en": "Improve Existing Services",
+        "fr": "Améliorer les services existants",
+        "de": "Bestehende Dienste verbessern",
+        "gsw": "Bestehendi Dienscht verbessere"
+      },
+      "description": {
+        "en": "Suggestions to enhance current IT services",
+        "fr": "Suggestions pour améliorer les services IT actuels",
+        "de": "Vorschläge zur Verbesserung aktueller IT-Services",
+        "gsw": "Vorschläg zur Verbesserig vo aktuelle IT-Services"
+      },
+      "is_root": true,
+      "allowed_response": [
+        "official_response_it_services"
+      ],
+      "allowed_option_type": [
+        "position_for",
+        "position_against",
+        "alternative",
+        "official_summary"
+      ],
+      "support_feature": "binary",
+      "fields": [
+        {
+          "key": "improvement_type",
+          "label": {
+            "en": "Improvement Type",
+            "fr": "Type d'amélioration",
+            "de": "Verbesserungstyp",
+            "gsw": "Verbesserigs-Typ"
+          },
+          "type": "enum",
+          "required": true,
+          "default": "performance",
+          "allowed_values": [
+            {"value": "performance", "label": {"en": "Performance", "fr": "Performance", "de": "Leistung", "gsw": "Leistig"}},
+            {"value": "usability", "label": {"en": "Usability", "fr": "Ergonomie", "de": "Benutzerfreundlichkeit", "gsw": "Benutzerfrüündlichkeit"}},
+            {"value": "security", "label": {"en": "Security", "fr": "Sécurité", "de": "Sicherheit", "gsw": "Sicherhäit"}},
+            {"value": "reliability", "label": {"en": "Reliability", "fr": "Fiabilité", "de": "Zuverlässigkeit", "gsw": "Zuverlässigkeit"}},
+            {"value": "scalability", "label": {"en": "Scalability", "fr": "Évolutivité", "de": "Skalierbarkeit", "gsw": "Skalierbarkeit"}},
+            {"value": "integration", "label": {"en": "Integration", "fr": "Intégration", "de": "Integration", "gsw": "Integration"}}
+          ]
+        },
+        {
+          "key": "affected_service",
+          "label": {
+            "en": "Affected Service",
+            "fr": "Service concerné",
+            "de": "Betroffener Service",
+            "gsw": "Betroffene Service"
+          },
+          "type": "string",
+          "required": true,
+          "default": null
+        },
+        {
+          "key": "layout_zone",
+          "label": {
+            "en": "Layout Zone",
+            "fr": "Zone de mise en page",
+            "de": "Layout-Zone",
+            "gsw": "Layout-Zone"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "main",
+          "allowed_values": ["sidebar", "main", "footer", "header"]
+        },
+        {
+          "key": "render_mode",
+          "label": {
+            "en": "Render Mode",
+            "fr": "Mode de rendu",
+            "de": "Darstellungsmodus",
+            "gsw": "Darstelligs-Modus"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "rich_html",
+          "allowed_values": ["cards", "list", "full", "summary", "rich_html"]
+        },
+        {
+          "key": "open_mode",
+          "label": {
+            "en": "Open Mode",
+            "fr": "Mode d'ouverture",
+            "de": "Öffnungsmodus",
+            "gsw": "Öffnigs-Modus"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "page",
+          "allowed_values": ["page", "modal", "popup"]
+        },
+        {
+          "key": "allow_anonymous",
+          "label": {
+            "en": "Allow Anonymous Feedback",
+            "fr": "Autoriser les retours anonymes",
+            "de": "Anonymes Feedback erlauben",
+            "gsw": "Anonyms Feedback erlaube"
+          },
+          "type": "boolean",
+          "required": false,
+          "default": false
+        }
+      ]
+    },
+    {
+      "inquiry_type": "replace_service",
+      "family": "it_services",
+      "icon": "SwapHorizontal",
+      "label": {
+        "en": "Replace IT-Services",
+        "fr": "Remplacer des services IT",
+        "de": "IT-Services ersetzen",
+        "gsw": "IT-Services ersetze"
+      },
+      "description": {
+        "en": "Proposals to replace outdated or inefficient services",
+        "fr": "Propositions pour remplacer des services obsolètes ou inefficaces",
+        "de": "Vorschläge zum Ersatz veralteter oder ineffizienter Services",
+        "gsw": "Vorschläg zum Ersatz vo veraltete oder ineffiziente Services"
+      },
+      "is_root": true,
+      "allowed_response": [
+        "official_response_it_services"
+      ],
+      "allowed_option_type": [
+        "position_for",
+        "position_against",
+        "alternative",
+        "official_summary"
+      ],
+      "support_feature": "binary",
+      "fields": [
+        {
+          "key": "current_service",
+          "label": {
+            "en": "Current Service",
+            "fr": "Service actuel",
+            "de": "Aktueller Service",
+            "gsw": "Aktuelle Service"
+          },
+          "type": "string",
+          "required": true,
+          "default": null
+        },
+        {
+          "key": "replacement_reason",
+          "label": {
+            "en": "Replacement Reason",
+            "fr": "Raison du remplacement",
+            "de": "Ersatzgrund",
+            "gsw": "Ersatz-Grund"
+          },
+          "type": "enum",
+          "required": true,
+          "default": "obsolete",
+          "allowed_values": [
+            {"value": "obsolete", "label": {"en": "Obsolete", "fr": "Obsolète", "de": "Veraltet", "gsw": "Veraltet"}},
+            {"value": "cost", "label": {"en": "Cost Reduction", "fr": "Réduction des coûts", "de": "Kostenreduzierung", "gsw": "Kostereduzierig"}},
+            {"value": "functionality", "label": {"en": "Missing Functionality", "fr": "Fonctionnalité manquante", "de": "Fehlende Funktionalität", "gsw": "Fählendi Funktionalität"}},
+            {"value": "security", "label": {"en": "Security Concerns", "fr": "Problèmes de sécurité", "de": "Sicherheitsbedenken", "gsw": "Sicherhäitsbedenke"}},
+            {"value": "support_ended", "label": {"en": "Support Ended", "fr": "Fin du support", "de": "Support beendet", "gsw": "Support beändet"}},
+            {"value": "better_alternative", "label": {"en": "Better Alternative", "fr": "Meilleure alternative", "de": "Bessere Alternative", "gsw": "Besseri Alternative"}}
+          ]
+        },
+        {
+          "key": "layout_zone",
+          "label": {
+            "en": "Layout Zone",
+            "fr": "Zone de mise en page",
+            "de": "Layout-Zone",
+            "gsw": "Layout-Zone"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "main",
+          "allowed_values": ["sidebar", "main", "footer", "header"]
+        },
+        {
+          "key": "render_mode",
+          "label": {
+            "en": "Render Mode",
+            "fr": "Mode de rendu",
+            "de": "Darstellungsmodus",
+            "gsw": "Darstelligs-Modus"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "rich_html",
+          "allowed_values": ["cards", "list", "full", "summary", "rich_html"]
+        },
+        {
+          "key": "open_mode",
+          "label": {
+            "en": "Open Mode",
+            "fr": "Mode d'ouverture",
+            "de": "Öffnungsmodus",
+            "gsw": "Öffnigs-Modus"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "page",
+          "allowed_values": ["page", "modal", "popup"]
+        },
+        {
+          "key": "allow_anonymous",
+          "label": {
+            "en": "Allow Anonymous Feedback",
+            "fr": "Autoriser les retours anonymes",
+            "de": "Anonymes Feedback erlauben",
+            "gsw": "Anonyms Feedback erlaube"
+          },
+          "type": "boolean",
+          "required": false,
+          "default": false
+        }
+      ]
+    },
+    {
+      "inquiry_type": "business_application",
+      "family": "it_services",
+      "icon": "Application",
+      "label": {
+        "en": "Business Applications",
+        "fr": "Applications métier",
+        "de": "Geschäftsanwendungen",
+        "gsw": "Gschäftsaawändige"
+      },
+      "description": {
+        "en": "Requests for new business applications or integrations",
+        "fr": "Demandes de nouvelles applications métier ou intégrations",
+        "de": "Anfragen für neue Geschäftsanwendungen oder Integrationen",
+        "gsw": "Aafraage für nöii Gschäftsaawändige oder Integratione"
+      },
+      "is_root": true,
+      "allowed_response": [
+        "official_response_it_services"
+      ],
+      "allowed_option_type": [
+        "position_for",
+        "position_against",
+        "alternative",
+        "official_summary"
+      ],
+      "support_feature": "binary",
+      "fields": [
+        {
+          "key": "application_type",
+          "label": {
+            "en": "Application Type",
+            "fr": "Type d'application",
+            "de": "Anwendungstyp",
+            "gsw": "Awändigs-Typ"
+          },
+          "type": "enum",
+          "required": true,
+          "default": "saas",
+          "allowed_values": [
+            {"value": "saas", "label": {"en": "SaaS (Cloud)", "fr": "SaaS (Cloud)", "de": "SaaS (Cloud)", "gsw": "SaaS (Cloud)"}},
+            {"value": "on_premise", "label": {"en": "On-Premise", "fr": "Sur site", "de": "On-Premise", "gsw": "On-Premise"}},
+            {"value": "hybrid", "label": {"en": "Hybrid", "fr": "Hybride", "de": "Hybrid", "gsw": "Hybrid"}},
+            {"value": "custom", "label": {"en": "Custom Development", "fr": "Développement sur mesure", "de": "Eigenentwicklung", "gsw": "Eigenentwicklig"}},
+            {"value": "integration", "label": {"en": "Integration", "fr": "Intégration", "de": "Integration", "gsw": "Integration"}},
+            {"value": "mobile", "label": {"en": "Mobile App", "fr": "Application mobile", "de": "Mobile App", "gsw": "Mobile App"}}
+          ]
+        },
+        {
+          "key": "business_unit",
+          "label": {
+            "en": "Business Unit",
+            "fr": "Unité commerciale",
+            "de": "Geschäftseinheit",
+            "gsw": "Gschäfts-Einheit"
+          },
+          "type": "string",
+          "required": false,
+          "default": null
+        },
+        {
+          "key": "layout_zone",
+          "label": {
+            "en": "Layout Zone",
+            "fr": "Zone de mise en page",
+            "de": "Layout-Zone",
+            "gsw": "Layout-Zone"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "main",
+          "allowed_values": ["sidebar", "main", "footer", "header"]
+        },
+        {
+          "key": "render_mode",
+          "label": {
+            "en": "Render Mode",
+            "fr": "Mode de rendu",
+            "de": "Darstellungsmodus",
+            "gsw": "Darstelligs-Modus"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "rich_html",
+          "allowed_values": ["cards", "list", "full", "summary", "rich_html"]
+        },
+        {
+          "key": "open_mode",
+          "label": {
+            "en": "Open Mode",
+            "fr": "Mode d'ouverture",
+            "de": "Öffnungsmodus",
+            "gsw": "Öffnigs-Modus"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "page",
+          "allowed_values": ["page", "modal", "popup"]
+        },
+        {
+          "key": "allow_anonymous",
+          "label": {
+            "en": "Allow Anonymous Feedback",
+            "fr": "Autoriser les retours anonymes",
+            "de": "Anonymes Feedback erlauben",
+            "gsw": "Anonyms Feedback erlaube"
+          },
+          "type": "boolean",
+          "required": false,
+          "default": false
+        }
+      ]
+    },
+    {
+      "inquiry_type": "official_response_it_services",
+      "family": "official_it_services",
+      "icon": "MessageReply",
+      "label": {
+        "en": "Official Response",
+        "fr": "Réponse officielle",
+        "de": "Offizielle Antwort",
+        "gsw": "Offizielle Antwort"
+      },
+      "description": {
+        "en": "Official response from IT management",
+        "fr": "Réponse officielle de la direction IT",
+        "de": "Offizielle Antwort vom IT-Management",
+        "gsw": "Offizelli Antwort vom IT-Management"
+      },
+      "is_root": false,
+      "allowed_response": [],
+      "allowed_option_type": [
+        "position_for",
+        "position_against",
+        "alternative",
+        "official_summary"
+      ],
+      "support_feature": "none",
+      "fields": [
+        {
+          "key": "response_type",
+          "label": {
+            "en": "Response Type",
+            "fr": "Type de réponse",
+            "de": "Antworttyp",
+            "gsw": "Antwort-Typ"
+          },
+          "type": "enum",
+          "required": true,
+          "default": "acknowledgment",
+          "allowed_values": [
+            {"value": "acknowledgment", "label": {"en": "Acknowledgment", "fr": "Accusé de réception", "de": "Bestätigung", "gsw": "Bestätigung"}},
+            {"value": "clarification", "label": {"en": "Clarification", "fr": "Clarification", "de": "Klärung", "gsw": "Klärig"}},
+            {"value": "decision", "label": {"en": "Decision", "fr": "Décision", "de": "Entscheidung", "gsw": "Entscheidig"}},
+            {"value": "action_plan", "label": {"en": "Action Plan", "fr": "Plan d'action", "de": "Aktionsplan", "gsw": "Aktions-Plan"}},
+            {"value": "rejection", "label": {"en": "Rejection", "fr": "Rejet", "de": "Ablehnung", "gsw": "Ablehning"}}
+          ]
+        },
+        {
+          "key": "layout_zone",
+          "label": {
+            "en": "Layout Zone",
+            "fr": "Zone de mise en page",
+            "de": "Layout-Zone",
+            "gsw": "Layout-Zone"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "main",
+          "allowed_values": ["sidebar", "main", "footer", "header"]
+        },
+        {
+          "key": "render_mode",
+          "label": {
+            "en": "Render Mode",
+            "fr": "Mode de rendu",
+            "de": "Darstellungsmodus",
+            "gsw": "Darstelligs-Modus"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "rich_html",
+          "allowed_values": ["cards", "list", "full", "summary", "rich_html"]
+        },
+        {
+          "key": "open_mode",
+          "label": {
+            "en": "Open Mode",
+            "fr": "Mode d'ouverture",
+            "de": "Öffnungsmodus",
+            "gsw": "Öffnigs-Modus"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "page",
+          "allowed_values": ["page", "modal", "popup"]
+        }
+      ]
+    }
+  ],
+  "inquiry_statuses": [
+    {
+      "inquiry_type": "new_idea",
+      "status_key": "submitted",
+      "label": {
+        "en": "Submitted",
+        "fr": "Soumis",
+        "de": "Eingereicht",
+        "gsw": "Iigräicht"
+      },
+      "description": {
+        "en": "Idea has been submitted and is awaiting review",
+        "fr": "L'idée a été soumise et est en attente d'examen",
+        "de": "Idee wurde eingereicht und wartet auf Prüfung",
+        "gsw": "Idee isch iigräicht und wartet uf Prüefig"
+      },
+      "is_final": false,
+      "icon": "Send",
+      "sort_order": 1
+    },
+    {
+      "inquiry_type": "new_idea",
+      "status_key": "under_review",
+      "label": {
+        "en": "Under Review",
+        "fr": "En cours d'examen",
+        "de": "In Prüfung",
+        "gsw": "In Prüefig"
+      },
+      "description": {
+        "en": "IT team is reviewing the idea",
+        "fr": "L'équipe IT examine l'idée",
+        "de": "IT-Team prüft die Idee",
+        "gsw": "IT-Team prüeft d'Idee"
+      },
+      "is_final": false,
+      "icon": "Eye",
+      "sort_order": 2
+    },
+    {
+      "inquiry_type": "new_idea",
+      "status_key": "approved",
+      "label": {
+        "en": "Approved",
+        "fr": "Approuvé",
+        "de": "Genehmigt",
+        "gsw": "Gnehmigt"
+      },
+      "description": {
+        "en": "Idea approved for implementation",
+        "fr": "Idée approuvée pour mise en œuvre",
+        "de": "Idee zur Umsetzung genehmigt",
+        "gsw": "Idee zur Umsetzig gnehmigt"
+      },
+      "is_final": false,
+      "icon": "CheckCircle",
+      "sort_order": 3
+    },
+    {
+      "inquiry_type": "new_idea",
+      "status_key": "in_progress",
+      "label": {
+        "en": "In Progress",
+        "fr": "En cours",
+        "de": "In Bearbeitung",
+        "gsw": "In Bearbeitig"
+      },
+      "description": {
+        "en": "Implementation is in progress",
+        "fr": "La mise en œuvre est en cours",
+        "de": "Umsetzung läuft",
+        "gsw": "Umsetzig lauft"
+      },
+      "is_final": false,
+      "icon": "Progress",
+      "sort_order": 4
+    },
+    {
+      "inquiry_type": "new_idea",
+      "status_key": "completed",
+      "label": {
+        "en": "Completed",
+        "fr": "Terminé",
+        "de": "Abgeschlossen",
+        "gsw": "Abgschlosse"
+      },
+      "description": {
+        "en": "Implementation completed successfully",
+        "fr": "Mise en œuvre terminée avec succès",
+        "de": "Umsetzung erfolgreich abgeschlossen",
+        "gsw": "Umsetzig erfolgriich abgschlosse"
+      },
+      "is_final": true,
+      "icon": "CheckAll",
+      "sort_order": 5
+    },
+    {
+      "inquiry_type": "new_idea",
+      "status_key": "rejected",
+      "label": {
+        "en": "Rejected",
+        "fr": "Rejeté",
+        "de": "Abgelehnt",
+        "gsw": "Abglehnt"
+      },
+      "description": {
+        "en": "Idea rejected - not feasible or not aligned with strategy",
+        "fr": "Idée rejetée - non réalisable ou non alignée avec la stratégie",
+        "de": "Idee abgelehnt - nicht machbar oder nicht mit Strategie vereinbar",
+        "gsw": "Idee abglehnt - nöd machbar oder nöd mit Strategie vereinbar"
+      },
+      "is_final": true,
+      "icon": "CloseCircle",
+      "sort_order": 6
+    },
+    {
+      "inquiry_type": "new_idea",
+      "status_key": "employee_voting",
+      "label": {
+        "en": "Employee Voting",
+        "fr": "Vote des employés",
+        "de": "Mitarbeiterabstimmung",
+        "gsw": "Mitarbeiter-Abstimmig"
+      },
+      "description": {
+        "en": "Idea is open for employee voting",
+        "fr": "L'idée est ouverte au vote des employés",
+        "de": "Idee ist offen für Mitarbeiterabstimmung",
+        "gsw": "Idee isch offe für Mitarbeiter-Abstimmig"
+      },
+      "is_final": false,
+      "icon": "VoteOutline",
+      "sort_order": 2.5
+    },
+    {
+      "inquiry_type": "new_idea",
+      "status_key": "committee_review",
+      "label": {
+        "en": "IT Committee Review",
+        "fr": "Examen du comité IT",
+        "de": "IT-Komiteeprüfung",
+        "gsw": "IT-Komitee-Prüefig"
+      },
+      "description": {
+        "en": "IT committee is reviewing and voting",
+        "fr": "Le comité IT examine et vote",
+        "de": "IT-Komitee prüft und stimmt ab",
+        "gsw": "IT-Komitee prüeft und stimmt ab"
+      },
+      "is_final": false,
+      "icon": "AccountGroup",
+      "sort_order": 3.5
+    },
+    {
+      "inquiry_type": "new_idea",
+      "status_key": "management_approval",
+      "label": {
+        "en": "Management Approval Vote",
+        "fr": "Vote d'approbation de la direction",
+        "de": "Management-Genehmigungsabstimmung",
+        "gsw": "Management-Genehmigigs-Abstimmig"
+      },
+      "description": {
+        "en": "Awaiting management approval vote",
+        "fr": "En attente du vote d'approbation de la direction",
+        "de": "Wartet auf Management-Genehmigungsabstimmung",
+        "gsw": "Wartet uf Management-Genehmigigs-Abstimmig"
+      },
+      "is_final": false,
+      "icon": "AccountTie",
+      "sort_order": 3.8
+    },
+    {
+      "inquiry_type": "new_idea",
+      "status_key": "testing_uat",
+      "label": {
+        "en": "Testing/UAT",
+        "fr": "Test/UAT",
+        "de": "Test/UAT",
+        "gsw": "Test/UAT"
+      },
+      "description": {
+        "en": "In testing and user acceptance testing phase",
+        "fr": "En phase de test et d'acceptance utilisateur",
+        "de": "In Test- und Benutzerakzeptanz-Phase",
+        "gsw": "In Test- und Benutzer-Akzeptanz-Phas"
+      },
+      "is_final": false,
+      "icon": "TestTube",
+      "sort_order": 4.5
+    },
+    {
+      "inquiry_type": "ai_use_case",
+      "status_key": "stakeholder_poll",
+      "label": {
+        "en": "Stakeholder Poll",
+        "fr": "Sondage des parties prenantes",
+        "de": "Stakeholder-Umfrage",
+        "gsw": "Stakeholder-Umfraag"
+      },
+      "description": {
+        "en": "Gathering feedback from department stakeholders",
+        "fr": "Collecte de retours des parties prenantes du département",
+        "de": "Sammeln von Feedback von Abteilungs-Stakeholdern",
+        "gsw": "Sammle vo Feedback vo Abteilig-Stakeholder"
+      },
+      "is_final": false,
+      "icon": "Poll",
+      "sort_order": 2.5
+    },
+    {
+      "inquiry_type": "process_automation",
+      "status_key": "employee_vote",
+      "label": {
+        "en": "Employee Vote",
+        "fr": "Vote des employés",
+        "de": "Mitarbeiterabstimmung",
+        "gsw": "Mitarbeiter-Abstimmig"
+      },
+      "description": {
+        "en": "Employees voting on automation priority",
+        "fr": "Les employés votent sur la priorité d'automatisation",
+        "de": "Mitarbeiter stimmen über Automatisierungspriorität ab",
+        "gsw": "Mitarbeiter stimme über Automatisierigs-Priorität ab"
+      },
+      "is_final": false,
+      "icon": "VoteOutline",
+      "sort_order": 2.5
+    },
+    {
+      "inquiry_type": "new_service",
+      "status_key": "budget_approval_vote",
+      "label": {
+        "en": "Budget Approval Vote",
+        "fr": "Vote d'approbation budgétaire",
+        "de": "Budgetgenehmigungsabstimmung",
+        "gsw": "Budget-Genehmigigs-Abstimmig"
+      },
+      "description": {
+        "en": "IT committee voting on budget allocation",
+        "fr": "Le comité IT vote sur l'allocation budgétaire",
+        "de": "IT-Komitee stimmt über Budgetzuweisung ab",
+        "gsw": "IT-Komitee stimmt über Budget-Zuewisig ab"
+      },
+      "is_final": false,
+      "icon": "CashCheck",
+      "sort_order": 3.5
+    },
+    {
+      "inquiry_type": "business_application",
+      "status_key": "stakeholder_approval",
+      "label": {
+        "en": "Stakeholder Approval",
+        "fr": "Approbation des parties prenantes",
+        "de": "Stakeholder-Genehmigung",
+        "gsw": "Stakeholder-Genehmigung"
+      },
+      "description": {
+        "en": "Key stakeholders reviewing and voting",
+        "fr": "Les parties prenantes clés examinent et votent",
+        "de": "Wichtige Stakeholder prüfen und stimmen ab",
+        "gsw": "Wichtigi Stakeholder prüefe und stimme ab"
+      },
+      "is_final": false,
+      "icon": "AccountGroupOutline",
+      "sort_order": 3.5
+    },
+
+    {
+      "inquiry_type": "ai_use_case",
+      "status_key": "submitted",
+      "label": {
+        "en": "Submitted",
+        "fr": "Soumis",
+        "de": "Eingereicht",
+        "gsw": "Iigräicht"
+      },
+      "description": {
+        "en": "AI use case has been submitted for review",
+        "fr": "Le cas d'usage IA a été soumis pour examen",
+        "de": "KI-Anwendungsfall wurde zur Prüfung eingereicht",
+        "gsw": "KI-Aawändigsfall isch zur Prüefig iigräicht"
+      },
+      "is_final": false,
+      "icon": "Send",
+      "sort_order": 1
+    },
+    {
+      "inquiry_type": "ai_use_case",
+      "status_key": "feasibility_study",
+      "label": {
+        "en": "Feasibility Study",
+        "fr": "Étude de faisabilité",
+        "de": "Machbarkeitsstudie",
+        "gsw": "Machbarkeitsstudie"
+      },
+      "description": {
+        "en": "Technical and business feasibility being evaluated",
+        "fr": "Faisabilité technique et commerciale en cours d'évaluation",
+        "de": "Technische und geschäftliche Machbarkeit wird bewertet",
+        "gsw": "Technischi und gschäftlichi Machbarkeit wird bewertet"
+      },
+      "is_final": false,
+      "icon": "FileSearch",
+      "sort_order": 2
+    },
+    {
+      "inquiry_type": "ai_use_case",
+      "status_key": "ethics_review",
+      "label": {
+        "en": "Ethics Review",
+        "fr": "Examen éthique",
+        "de": "Ethikprüfung",
+        "gsw": "Ethik-Prüefig"
+      },
+      "description": {
+        "en": "AI ethics and compliance review in progress",
+        "fr": "Examen éthique et conformité IA en cours",
+        "de": "KI-Ethik- und Compliance-Prüfung läuft",
+        "gsw": "KI-Ethik- und Compliance-Prüefig lauft"
+      },
+      "is_final": false,
+      "icon": "ScaleBalance",
+      "sort_order": 4
+    },
+    {
+      "inquiry_type": "ai_use_case",
+      "status_key": "approved",
+      "label": {
+        "en": "Approved",
+        "fr": "Approuvé",
+        "de": "Genehmigt",
+        "gsw": "Gnehmigt"
+      },
+      "description": {
+        "en": "AI use case approved for implementation",
+        "fr": "Cas d'usage IA approuvé pour mise en œuvre",
+        "de": "KI-Anwendungsfall zur Umsetzung genehmigt",
+        "gsw": "KI-Aawändigsfall zur Umsetzig gnehmigt"
+      },
+      "is_final": false,
+      "icon": "CheckCircle",
+      "sort_order": 5
+    },
+    {
+      "inquiry_type": "ai_use_case",
+      "status_key": "pilot",
+      "label": {
+        "en": "Pilot Phase",
+        "fr": "Phase pilote",
+        "de": "Pilotphase",
+        "gsw": "Pilot-Phas"
+      },
+      "description": {
+        "en": "AI solution in pilot testing",
+        "fr": "Solution IA en test pilote",
+        "de": "KI-Lösung im Pilottest",
+        "gsw": "KI-Lösig im Pilot-Test"
+      },
+      "is_final": false,
+      "icon": "TestTube",
+      "sort_order": 6
+    },
+    {
+      "inquiry_type": "ai_use_case",
+      "status_key": "in_progress",
+      "label": {
+        "en": "In Progress",
+        "fr": "En cours",
+        "de": "In Bearbeitung",
+        "gsw": "In Bearbeitig"
+      },
+      "description": {
+        "en": "Full implementation in progress",
+        "fr": "Mise en œuvre complète en cours",
+        "de": "Vollständige Umsetzung läuft",
+        "gsw": "Vollständigi Umsetzig lauft"
+      },
+      "is_final": false,
+      "icon": "Progress",
+      "sort_order": 7
+    },
+    {
+      "inquiry_type": "ai_use_case",
+      "status_key": "completed",
+      "label": {
+        "en": "Completed",
+        "fr": "Terminé",
+        "de": "Abgeschlossen",
+        "gsw": "Abgschlosse"
+      },
+      "description": {
+        "en": "AI use case successfully implemented",
+        "fr": "Cas d'usage IA mis en œuvre avec succès",
+        "de": "KI-Anwendungsfall erfolgreich umgesetzt",
+        "gsw": "KI-Aawändigsfall erfolgriich umgsetzt"
+      },
+      "is_final": true,
+      "icon": "CheckAll",
+      "sort_order": 8
+    },
+    {
+      "inquiry_type": "ai_use_case",
+      "status_key": "rejected",
+      "label": {
+        "en": "Rejected",
+        "fr": "Rejeté",
+        "de": "Abgelehnt",
+        "gsw": "Abglehnt"
+      },
+      "description": {
+        "en": "AI use case rejected - not feasible or ethical concerns",
+        "fr": "Cas d'usage IA rejeté - non réalisable ou préoccupations éthiques",
+        "de": "KI-Anwendungsfall abgelehnt - nicht machbar oder ethische Bedenken",
+        "gsw": "KI-Aawändigsfall abglehnt - nöd machbar oder ethischi Bedenke"
+      },
+      "is_final": true,
+      "icon": "CloseCircle",
+      "sort_order": 9
+    },
+
+    {
+      "inquiry_type": "process_automation",
+      "status_key": "submitted",
+      "label": {
+        "en": "Submitted",
+        "fr": "Soumis",
+        "de": "Eingereicht",
+        "gsw": "Iigräicht"
+      },
+      "description": {
+        "en": "Automation request has been submitted",
+        "fr": "La demande d'automatisation a été soumise",
+        "de": "Automatisierungsanfrage wurde eingereicht",
+        "gsw": "Automatisierigs-Aafraag isch iigräicht"
+      },
+      "is_final": false,
+      "icon": "Send",
+      "sort_order": 1
+    },
+    {
+      "inquiry_type": "process_automation",
+      "status_key": "process_mapping",
+      "label": {
+        "en": "Process Mapping",
+        "fr": "Cartographie du processus",
+        "de": "Prozessabbildung",
+        "gsw": "Prozess-Abbillig"
+      },
+      "description": {
+        "en": "Current process being documented and analyzed",
+        "fr": "Processus actuel en cours de documentation et d'analyse",
+        "de": "Aktueller Prozess wird dokumentiert und analysiert",
+        "gsw": "Aktuelle Prozäss wird dokumentiert und analysiert"
+      },
+      "is_final": false,
+      "icon": "MapSearch",
+      "sort_order": 2
+    },
+    {
+      "inquiry_type": "process_automation",
+      "status_key": "roi_analysis",
+      "label": {
+        "en": "ROI Analysis",
+        "fr": "Analyse du ROI",
+        "de": "ROI-Analyse",
+        "gsw": "ROI-Analys"
+      },
+      "description": {
+        "en": "Return on investment being calculated",
+        "fr": "Retour sur investissement en cours de calcul",
+        "de": "Kapitalrendite wird berechnet",
+        "gsw": "Kapitalrendite wird berechnet"
+      },
+      "is_final": false,
+      "icon": "ChartLine",
+      "sort_order": 4
+    },
+    {
+      "inquiry_type": "process_automation",
+      "status_key": "approved",
+      "label": {
+        "en": "Approved",
+        "fr": "Approuvé",
+        "de": "Genehmigt",
+        "gsw": "Gnehmigt"
+      },
+      "description": {
+        "en": "Automation approved for development",
+        "fr": "Automatisation approuvée pour développement",
+        "de": "Automatisierung für Entwicklung genehmigt",
+        "gsw": "Automatisierig für Entwicklig gnehmigt"
+      },
+      "is_final": false,
+      "icon": "CheckCircle",
+      "sort_order": 5
+    },
+    {
+      "inquiry_type": "process_automation",
+      "status_key": "development",
+      "label": {
+        "en": "Development",
+        "fr": "Développement",
+        "de": "Entwicklung",
+        "gsw": "Entwicklig"
+      },
+      "description": {
+        "en": "Automation solution being developed",
+        "fr": "Solution d'automatisation en cours de développement",
+        "de": "Automatisierungslösung wird entwickelt",
+        "gsw": "Automatisierigs-Lösig wird entwicklet"
+      },
+      "is_final": false,
+      "icon": "CodeBraces",
+      "sort_order": 6
+    },
+    {
+      "inquiry_type": "process_automation",
+      "status_key": "testing",
+      "label": {
+        "en": "Testing",
+        "fr": "Test",
+        "de": "Test",
+        "gsw": "Test"
+      },
+      "description": {
+        "en": "Automation being tested and validated",
+        "fr": "Automatisation en cours de test et validation",
+        "de": "Automatisierung wird getestet und validiert",
+        "gsw": "Automatisierig wird testet und validiert"
+      },
+      "is_final": false,
+      "icon": "TestTube",
+      "sort_order": 7
+    },
+    {
+      "inquiry_type": "process_automation",
+      "status_key": "deployed",
+      "label": {
+        "en": "Deployed",
+        "fr": "Déployé",
+        "de": "Bereitgestellt",
+        "gsw": "Bereitgstellt"
+      },
+      "description": {
+        "en": "Automation successfully deployed to production",
+        "fr": "Automatisation déployée avec succès en production",
+        "de": "Automatisierung erfolgreich in Produktion bereitgestellt",
+        "gsw": "Automatisierig erfolgriich in Produktion bereitgstellt"
+      },
+      "is_final": true,
+      "icon": "RocketLaunch",
+      "sort_order": 8
+    },
+    {
+      "inquiry_type": "process_automation",
+      "status_key": "rejected",
+      "label": {
+        "en": "Rejected",
+        "fr": "Rejeté",
+        "de": "Abgelehnt",
+        "gsw": "Abglehnt"
+      },
+      "description": {
+        "en": "Automation request rejected - not viable",
+        "fr": "Demande d'automatisation rejetée - non viable",
+        "de": "Automatisierungsanfrage abgelehnt - nicht durchführbar",
+        "gsw": "Automatisierigs-Aafraag abglehnt - nöd durchfüehrbar"
+      },
+      "is_final": true,
+      "icon": "CloseCircle",
+      "sort_order": 9
+    },
+
+    {
+      "inquiry_type": "new_service",
+      "status_key": "submitted",
+      "label": {
+        "en": "Submitted",
+        "fr": "Soumis",
+        "de": "Eingereicht",
+        "gsw": "Iigräicht"
+      },
+      "description": {
+        "en": "New service request has been submitted",
+        "fr": "La demande de nouveau service a été soumise",
+        "de": "Neue Service-Anfrage wurde eingereicht",
+        "gsw": "Nöii Service-Aafraag isch iigräicht"
+      },
+      "is_final": false,
+      "icon": "Send",
+      "sort_order": 1
+    },
+    {
+      "inquiry_type": "new_service",
+      "status_key": "needs_assessment",
+      "label": {
+        "en": "Needs Assessment",
+        "fr": "Évaluation des besoins",
+        "de": "Bedarfsanalyse",
+        "gsw": "Bedarfs-Analys"
+      },
+      "description": {
+        "en": "Business needs and requirements being assessed",
+        "fr": "Besoins métier et exigences en cours d'évaluation",
+        "de": "Geschäftsanforderungen werden bewertet",
+        "gsw": "Gschäfts-Aforderige wärde bewertet"
+      },
+      "is_final": false,
+      "icon": "ClipboardCheck",
+      "sort_order": 2
+    },
+    {
+      "inquiry_type": "new_service",
+      "status_key": "vendor_evaluation",
+      "label": {
+        "en": "Vendor Evaluation",
+        "fr": "Évaluation des fournisseurs",
+        "de": "Anbieterbewertung",
+        "gsw": "Aabieter-Bewertig"
+      },
+      "description": {
+        "en": "Potential vendors being evaluated",
+        "fr": "Fournisseurs potentiels en cours d'évaluation",
+        "de": "Potenzielle Anbieter werden bewertet",
+        "gsw": "Potenzielle Aabieter wärde bewertet"
+      },
+      "is_final": false,
+      "icon": "AccountSearch",
+      "sort_order": 3
+    },
+    {
+      "inquiry_type": "new_service",
+      "status_key": "approved",
+      "label": {
+        "en": "Approved",
+        "fr": "Approuvé",
+        "de": "Genehmigt",
+        "gsw": "Gnehmigt"
+      },
+      "description": {
+        "en": "New service approved for procurement",
+        "fr": "Nouveau service approuvé pour acquisition",
+        "de": "Neuer Service zur Beschaffung genehmigt",
+        "gsw": "Nöie Service zur Beschaffig gnehmigt"
+      },
+      "is_final": false,
+      "icon": "CheckCircle",
+      "sort_order": 5
+    },
+    {
+      "inquiry_type": "new_service",
+      "status_key": "procurement",
+      "label": {
+        "en": "Procurement",
+        "fr": "Acquisition",
+        "de": "Beschaffung",
+        "gsw": "Beschaffig"
+      },
+      "description": {
+        "en": "Service procurement in progress",
+        "fr": "Acquisition du service en cours",
+        "de": "Service-Beschaffung läuft",
+        "gsw": "Service-Beschaffig lauft"
+      },
+      "is_final": false,
+      "icon": "CartPlus",
+      "sort_order": 6
+    },
+    {
+      "inquiry_type": "new_service",
+      "status_key": "implementation",
+      "label": {
+        "en": "Implementation",
+        "fr": "Mise en œuvre",
+        "de": "Implementierung",
+        "gsw": "Implementierig"
+      },
+      "description": {
+        "en": "Service being implemented and configured",
+        "fr": "Service en cours de mise en œuvre et configuration",
+        "de": "Service wird implementiert und konfiguriert",
+        "gsw": "Service wird implementiert und konfiguriert"
+      },
+      "is_final": false,
+      "icon": "Wrench",
+      "sort_order": 7
+    },
+    {
+      "inquiry_type": "new_service",
+      "status_key": "go_live",
+      "label": {
+        "en": "Go Live",
+        "fr": "Mise en service",
+        "de": "Go-Live",
+        "gsw": "Go-Live"
+      },
+      "description": {
+        "en": "Service successfully launched and operational",
+        "fr": "Service lancé avec succès et opérationnel",
+        "de": "Service erfolgreich gestartet und betriebsbereit",
+        "gsw": "Service erfolgriich gstartet und betriebsbereit"
+      },
+      "is_final": true,
+      "icon": "RocketLaunch",
+      "sort_order": 8
+    },
+    {
+      "inquiry_type": "new_service",
+      "status_key": "rejected",
+      "label": {
+        "en": "Rejected",
+        "fr": "Rejeté",
+        "de": "Abgelehnt",
+        "gsw": "Abglehnt"
+      },
+      "description": {
+        "en": "New service request rejected",
+        "fr": "Demande de nouveau service rejetée",
+        "de": "Neue Service-Anfrage abgelehnt",
+        "gsw": "Nöii Service-Aafraag abglehnt"
+      },
+      "is_final": true,
+      "icon": "CloseCircle",
+      "sort_order": 9
+    },
+
+    {
+      "inquiry_type": "improve_service",
+      "status_key": "submitted",
+      "label": {
+        "en": "Submitted",
+        "fr": "Soumis",
+        "de": "Eingereicht",
+        "gsw": "Iigräicht"
+      },
+      "description": {
+        "en": "Improvement suggestion has been submitted",
+        "fr": "La suggestion d'amélioration a été soumise",
+        "de": "Verbesserungsvorschlag wurde eingereicht",
+        "gsw": "Verbesserigs-Vorschlag isch iigräicht"
+      },
+      "is_final": false,
+      "icon": "Send",
+      "sort_order": 1
+    },
+    {
+      "inquiry_type": "improve_service",
+      "status_key": "impact_analysis",
+      "label": {
+        "en": "Impact Analysis",
+        "fr": "Analyse d'impact",
+        "de": "Auswirkungsanalyse",
+        "gsw": "Uswirkigs-Analys"
+      },
+      "description": {
+        "en": "Analyzing impact of proposed improvement",
+        "fr": "Analyse de l'impact de l'amélioration proposée",
+        "de": "Auswirkung der vorgeschlagenen Verbesserung wird analysiert",
+        "gsw": "Uswirkig vo dr vorgschlagne Verbesserig wird analysiert"
+      },
+      "is_final": false,
+      "icon": "ChartBubble",
+      "sort_order": 2
+    },
+    {
+      "inquiry_type": "improve_service",
+      "status_key": "user_feedback",
+      "label": {
+        "en": "User Feedback",
+        "fr": "Retours utilisateurs",
+        "de": "Benutzerfeedback",
+        "gsw": "Benutzer-Feedback"
+      },
+      "description": {
+        "en": "Gathering feedback from service users",
+        "fr": "Collecte de retours des utilisateurs du service",
+        "de": "Feedback von Service-Nutzern wird gesammelt",
+        "gsw": "Feedback vo Service-Nutzer wird gsammlet"
+      },
+      "is_final": false,
+      "icon": "CommentAccount",
+      "sort_order": 3
+    },
+    {
+      "inquiry_type": "improve_service",
+      "status_key": "prioritized",
+      "label": {
+        "en": "Prioritized",
+        "fr": "Priorisé",
+        "de": "Priorisiert",
+        "gsw": "Priorisiert"
+      },
+      "description": {
+        "en": "Improvement prioritized for development",
+        "fr": "Amélioration priorisée pour développement",
+        "de": "Verbesserung für Entwicklung priorisiert",
+        "gsw": "Verbesserig für Entwicklig priorisiert"
+      },
+      "is_final": false,
+      "icon": "FormatListNumbered",
+      "sort_order": 4
+    },
+    {
+      "inquiry_type": "improve_service",
+      "status_key": "in_development",
+      "label": {
+        "en": "In Development",
+        "fr": "En développement",
+        "de": "In Entwicklung",
+        "gsw": "In Entwicklig"
+      },
+      "description": {
+        "en": "Improvement being developed",
+        "fr": "Amélioration en cours de développement",
+        "de": "Verbesserung wird entwickelt",
+        "gsw": "Verbesserig wird entwicklet"
+      },
+      "is_final": false,
+      "icon": "CodeBraces",
+      "sort_order": 5
+    },
+    {
+      "inquiry_type": "improve_service",
+      "status_key": "testing",
+      "label": {
+        "en": "Testing",
+        "fr": "Test",
+        "de": "Test",
+        "gsw": "Test"
+      },
+      "description": {
+        "en": "Improvement being tested",
+        "fr": "Amélioration en cours de test",
+        "de": "Verbesserung wird getestet",
+        "gsw": "Verbesserig wird testet"
+      },
+      "is_final": false,
+      "icon": "TestTube",
+      "sort_order": 6
+    },
+    {
+      "inquiry_type": "improve_service",
+      "status_key": "released",
+      "label": {
+        "en": "Released",
+        "fr": "Publié",
+        "de": "Veröffentlicht",
+        "gsw": "Veröffentlicht"
+      },
+      "description": {
+        "en": "Improvement successfully released",
+        "fr": "Amélioration publiée avec succès",
+        "de": "Verbesserung erfolgreich veröffentlicht",
+        "gsw": "Verbesserig erfolgriich veröffentlicht"
+      },
+      "is_final": true,
+      "icon": "CheckAll",
+      "sort_order": 7
+    },
+    {
+      "inquiry_type": "improve_service",
+      "status_key": "deferred",
+      "label": {
+        "en": "Deferred",
+        "fr": "Reporté",
+        "de": "Zurückgestellt",
+        "gsw": "Zruggstellt"
+      },
+      "description": {
+        "en": "Improvement deferred to future release",
+        "fr": "Amélioration reportée à une version future",
+        "de": "Verbesserung auf zukünftige Version verschoben",
+        "gsw": "Verbesserig uf zukünftigi Version verschobe"
+      },
+      "is_final": true,
+      "icon": "ClockOutline",
+      "sort_order": 8
+    },
+
+    {
+      "inquiry_type": "replace_service",
+      "status_key": "submitted",
+      "label": {
+        "en": "Submitted",
+        "fr": "Soumis",
+        "de": "Eingereicht",
+        "gsw": "Iigräicht"
+      },
+      "description": {
+        "en": "Service replacement request has been submitted",
+        "fr": "La demande de remplacement de service a été soumise",
+        "de": "Service-Ersatzanfrage wurde eingereicht",
+        "gsw": "Service-Ersatz-Aafraag isch iigräicht"
+      },
+      "is_final": false,
+      "icon": "Send",
+      "sort_order": 1
+    },
+    {
+      "inquiry_type": "replace_service",
+      "status_key": "comparison_analysis",
+      "label": {
+        "en": "Comparison Analysis",
+        "fr": "Analyse comparative",
+        "de": "Vergleichsanalyse",
+        "gsw": "Verglichs-Analys"
+      },
+      "description": {
+        "en": "Comparing current service with proposed replacement",
+        "fr": "Comparaison du service actuel avec le remplacement proposé",
+        "de": "Vergleich des aktuellen Services mit dem vorgeschlagenen Ersatz",
+        "gsw": "Vergliich vom aktuelle Service mit em vorgschlagne Ersatz"
+      },
+      "is_final": false,
+      "icon": "CompareHorizontal",
+      "sort_order": 2
+    },
+    {
+      "inquiry_type": "replace_service",
+      "status_key": "migration_planning",
+      "label": {
+        "en": "Migration Planning",
+        "fr": "Planification de migration",
+        "de": "Migrationsplanung",
+        "gsw": "Migrations-Planig"
+      },
+      "description": {
+        "en": "Planning the migration strategy",
+        "fr": "Planification de la stratégie de migration",
+        "de": "Migrationsstrategie wird geplant",
+        "gsw": "Migrations-Strategie wird plant"
+      },
+      "is_final": false,
+      "icon": "MapMarkerPath",
+      "sort_order": 3
+    },
+    {
+      "inquiry_type": "replace_service",
+      "status_key": "stakeholder_approval",
+      "label": {
+        "en": "Stakeholder Approval",
+        "fr": "Approbation des parties prenantes",
+        "de": "Stakeholder-Genehmigung",
+        "gsw": "Stakeholder-Genehmigung"
+      },
+      "description": {
+        "en": "Stakeholders reviewing and approving replacement",
+        "fr": "Les parties prenantes examinent et approuvent le remplacement",
+        "de": "Stakeholder prüfen und genehmigen den Ersatz",
+        "gsw": "Stakeholder prüefe und gnehmige de Ersatz"
+      },
+      "is_final": false,
+      "icon": "AccountGroupOutline",
+      "sort_order": 4
+    },
+    {
+      "inquiry_type": "replace_service",
+      "status_key": "approved",
+      "label": {
+        "en": "Approved",
+        "fr": "Approuvé",
+        "de": "Genehmigt",
+        "gsw": "Gnehmigt"
+      },
+      "description": {
+        "en": "Service replacement approved",
+        "fr": "Remplacement de service approuvé",
+        "de": "Service-Ersatz genehmigt",
+        "gsw": "Service-Ersatz gnehmigt"
+      },
+      "is_final": false,
+      "icon": "CheckCircle",
+      "sort_order": 5
+    },
+    {
+      "inquiry_type": "replace_service",
+      "status_key": "migration",
+      "label": {
+        "en": "Migration",
+        "fr": "Migration",
+        "de": "Migration",
+        "gsw": "Migration"
+      },
+      "description": {
+        "en": "Migration to new service in progress",
+        "fr": "Migration vers le nouveau service en cours",
+        "de": "Migration zum neuen Service läuft",
+        "gsw": "Migration zum nöie Service lauft"
+      },
+      "is_final": false,
+      "icon": "DatabaseExport",
+      "sort_order": 6
+    },
+    {
+      "inquiry_type": "replace_service",
+      "status_key": "validation",
+      "label": {
+        "en": "Validation",
+        "fr": "Validation",
+        "de": "Validierung",
+        "gsw": "Validierig"
+      },
+      "description": {
+        "en": "Validating new service functionality",
+        "fr": "Validation de la fonctionnalité du nouveau service",
+        "de": "Funktionalität des neuen Services wird validiert",
+        "gsw": "Funktionalität vom nöie Service wird validiert"
+      },
+      "is_final": false,
+      "icon": "CheckDecagram",
+      "sort_order": 7
+    },
+    {
+      "inquiry_type": "replace_service",
+      "status_key": "completed",
+      "label": {
+        "en": "Completed",
+        "fr": "Terminé",
+        "de": "Abgeschlossen",
+        "gsw": "Abgschlosse"
+      },
+      "description": {
+        "en": "Service replacement completed successfully",
+        "fr": "Remplacement de service terminé avec succès",
+        "de": "Service-Ersatz erfolgreich abgeschlossen",
+        "gsw": "Service-Ersatz erfolgriich abgschlosse"
+      },
+      "is_final": true,
+      "icon": "CheckAll",
+      "sort_order": 8
+    },
+    {
+      "inquiry_type": "replace_service",
+      "status_key": "rejected",
+      "label": {
+        "en": "Rejected",
+        "fr": "Rejeté",
+        "de": "Abgelehnt",
+        "gsw": "Abglehnt"
+      },
+      "description": {
+        "en": "Service replacement request rejected",
+        "fr": "Demande de remplacement de service rejetée",
+        "de": "Service-Ersatzanfrage abgelehnt",
+        "gsw": "Service-Ersatz-Aafraag abglehnt"
+      },
+      "is_final": true,
+      "icon": "CloseCircle",
+      "sort_order": 9
+    },
+
+    {
+      "inquiry_type": "business_application",
+      "status_key": "submitted",
+      "label": {
+        "en": "Submitted",
+        "fr": "Soumis",
+        "de": "Eingereicht",
+        "gsw": "Iigräicht"
+      },
+      "description": {
+        "en": "Business application request has been submitted",
+        "fr": "La demande d'application métier a été soumise",
+        "de": "Geschäftsanwendungsanfrage wurde eingereicht",
+        "gsw": "Gschäftsaawändigs-Aafraag isch iigräicht"
+      },
+      "is_final": false,
+      "icon": "Send",
+      "sort_order": 1
+    },
+    {
+      "inquiry_type": "business_application",
+      "status_key": "requirements_review",
+      "label": {
+        "en": "Requirements Review",
+        "fr": "Examen des exigences",
+        "de": "Anforderungsprüfung",
+        "gsw": "Aforderigs-Prüefig"
+      },
+      "description": {
+        "en": "Business requirements being reviewed",
+        "fr": "Exigences métier en cours d'examen",
+        "de": "Geschäftsanforderungen werden geprüft",
+        "gsw": "Gschäfts-Aforderige wärde prüeft"
+      },
+      "is_final": false,
+      "icon": "FileDocumentEdit",
+      "sort_order": 2
+    },
+    {
+      "inquiry_type": "business_application",
+      "status_key": "vendor_selection",
+      "label": {
+        "en": "Vendor Selection",
+        "fr": "Sélection du fournisseur",
+        "de": "Anbieterauswahl",
+        "gsw": "Aabieter-Uswahl"
+      },
+      "description": {
+        "en": "Selecting vendor for business application",
+        "fr": "Sélection du fournisseur pour l'application métier",
+        "de": "Anbieter für Geschäftsanwendung wird ausgewählt",
+        "gsw": "Aabieter für Gschäftsaawändig wird usgwählt"
+      },
+      "is_final": false,
+      "icon": "AccountSearch",
+      "sort_order": 4
+    },
+    {
+      "inquiry_type": "business_application",
+      "status_key": "contract_negotiation",
+      "label": {
+        "en": "Contract Negotiation",
+        "fr": "Négociation du contrat",
+        "de": "Vertragsverhandlung",
+        "gsw": "Vertrags-Verhandlig"
+      },
+      "description": {
+        "en": "Negotiating contract terms with vendor",
+        "fr": "Négociation des termes du contrat avec le fournisseur",
+        "de": "Vertragsbedingungen mit Anbieter werden verhandelt",
+        "gsw": "Vertrags-Bedingige mit Aabieter wärde verhandlet"
+      },
+      "is_final": false,
+      "icon": "FileSign",
+      "sort_order": 5
+    },
+    {
+      "inquiry_type": "business_application",
+      "status_key": "implementation",
+      "label": {
+        "en": "Implementation",
+        "fr": "Mise en œuvre",
+        "de": "Implementierung",
+        "gsw": "Implementierig"
+      },
+      "description": {
+        "en": "Business application being implemented",
+        "fr": "Application métier en cours de mise en œuvre",
+        "de": "Geschäftsanwendung wird implementiert",
+        "gsw": "Gschäftsaawändig wird implementiert"
+      },
+      "is_final": false,
+      "icon": "Wrench",
+      "sort_order": 6
+    },
+    {
+      "inquiry_type": "business_application",
+      "status_key": "training",
+      "label": {
+        "en": "Training",
+        "fr": "Formation",
+        "de": "Schulung",
+        "gsw": "Schulig"
+      },
+      "description": {
+        "en": "User training being conducted",
+        "fr": "Formation des utilisateurs en cours",
+        "de": "Benutzerschulung wird durchgeführt",
+        "gsw": "Benutzer-Schulig wird durchgfüehrt"
+      },
+      "is_final": false,
+      "icon": "School",
+      "sort_order": 7
+    },
+    {
+      "inquiry_type": "business_application",
+      "status_key": "live",
+      "label": {
+        "en": "Live",
+        "fr": "En service",
+        "de": "Live",
+        "gsw": "Live"
+      },
+      "description": {
+        "en": "Business application live and operational",
+        "fr": "Application métier en service et opérationnelle",
+        "de": "Geschäftsanwendung live und betriebsbereit",
+        "gsw": "Gschäftsaawändig live und betriebsbereit"
+      },
+      "is_final": true,
+      "icon": "CheckAll",
+      "sort_order": 8
+    },
+    {
+      "inquiry_type": "business_application",
+      "status_key": "rejected",
+      "label": {
+        "en": "Rejected",
+        "fr": "Rejeté",
+        "de": "Abgelehnt",
+        "gsw": "Abglehnt"
+      },
+      "description": {
+        "en": "Business application request rejected",
+        "fr": "Demande d'application métier rejetée",
+        "de": "Geschäftsanwendungsanfrage abgelehnt",
+        "gsw": "Gschäftsaawändigs-Aafraag abglehnt"
+      },
+      "is_final": true,
+      "icon": "CloseCircle",
+      "sort_order": 9
+    }
+  ],
+  "categories": [
+    {
+      "category_id": "infrastructure",
+      "name": {
+        "en": "Infrastructure",
+        "fr": "Infrastructure",
+        "de": "Infrastruktur",
+        "gsw": "Infrastruktur"
+      },
+      "parent": null
+    },
+    {
+      "category_id": "network",
+      "name": {
+        "en": "Network",
+        "fr": "Réseau",
+        "de": "Netzwerk",
+        "gsw": "Netzwärch"
+      },
+      "parent": "infrastructure"
+    },
+    {
+      "category_id": "servers",
+      "name": {
+        "en": "Servers",
+        "fr": "Serveurs",
+        "de": "Server",
+        "gsw": "Server"
+      },
+      "parent": "infrastructure"
+    },
+    {
+      "category_id": "cloud",
+      "name": {
+        "en": "Cloud",
+        "fr": "Cloud",
+        "de": "Cloud",
+        "gsw": "Cloud"
+      },
+      "parent": "infrastructure"
+    },
+    {
+      "category_id": "storage",
+      "name": {
+        "en": "Storage",
+        "fr": "Stockage",
+        "de": "Speicher",
+        "gsw": "Spicher"
+      },
+      "parent": "infrastructure"
+    },
+    {
+      "category_id": "security",
+      "name": {
+        "en": "Security",
+        "fr": "Sécurité",
+        "de": "Sicherheit",
+        "gsw": "Sicherhäit"
+      },
+      "parent": null
+    },
+    {
+      "category_id": "access_control",
+      "name": {
+        "en": "Access Control",
+        "fr": "Contrôle d'accès",
+        "de": "Zugriffskontrolle",
+        "gsw": "Zuegriffs-Kontroll"
+      },
+      "parent": "security"
+    },
+    {
+      "category_id": "data_protection",
+      "name": {
+        "en": "Data Protection",
+        "fr": "Protection des données",
+        "de": "Datenschutz",
+        "gsw": "Date-Schutz"
+      },
+      "parent": "security"
+    },
+    {
+      "category_id": "compliance",
+      "name": {
+        "en": "Compliance",
+        "fr": "Conformité",
+        "de": "Compliance",
+        "gsw": "Compliance"
+      },
+      "parent": "security"
+    },
+    {
+      "category_id": "applications",
+      "name": {
+        "en": "Applications",
+        "fr": "Applications",
+        "de": "Anwendungen",
+        "gsw": "Awändige"
+      },
+      "parent": null
+    },
+    {
+      "category_id": "business_apps",
+      "name": {
+        "en": "Business Applications",
+        "fr": "Applications métier",
+        "de": "Geschäftsanwendungen",
+        "gsw": "Gschäfts-Awändige"
+      },
+      "parent": "applications"
+    },
+    {
+      "category_id": "productivity_tools",
+      "name": {
+        "en": "Productivity Tools",
+        "fr": "Outils de productivité",
+        "de": "Produktivitätstools",
+        "gsw": "Produktivitäts-Tools"
+      },
+      "parent": "applications"
+    },
+    {
+      "category_id": "custom_dev",
+      "name": {
+        "en": "Custom Development",
+        "fr": "Développement personnalisé",
+        "de": "Individuelle Entwicklung",
+        "gsw": "Individuelli Entwicklig"
+      },
+      "parent": "applications"
+    },
+    {
+      "category_id": "data_analytics",
+      "name": {
+        "en": "Data & Analytics",
+        "fr": "Données et analyse",
+        "de": "Daten & Analytik",
+        "gsw": "Date & Analytik"
+      },
+      "parent": null
+    },
+    {
+      "category_id": "bi_tools",
+      "name": {
+        "en": "BI Tools",
+        "fr": "Outils BI",
+        "de": "BI-Tools",
+        "gsw": "BI-Tools"
+      },
+      "parent": "data_analytics"
+    },
+    {
+      "category_id": "databases",
+      "name": {
+        "en": "Databases",
+        "fr": "Bases de données",
+        "de": "Datenbanken",
+        "gsw": "Date-Banke"
+      },
+      "parent": "data_analytics"
+    },
+    {
+      "category_id": "data_warehouse",
+      "name": {
+        "en": "Data Warehouse",
+        "fr": "Entrepôt de données",
+        "de": "Data Warehouse",
+        "gsw": "Data Warehouse"
+      },
+      "parent": "data_analytics"
+    },
+    {
+      "category_id": "user_support",
+      "name": {
+        "en": "User Support",
+        "fr": "Support utilisateur",
+        "de": "Benutzerunterstützung",
+        "gsw": "Benutzer-Unterstützig"
+      },
+      "parent": null
+    }
+  ],
+  "option_types": [
+    {
+      "option_type": "technical_requirement",
+      "label": {
+        "en": "Technical Requirement",
+        "fr": "Exigence technique",
+        "de": "Technische Anforderung",
+        "gsw": "Technischi Aforderig"
+      },
+      "description": {
+        "en": "Technical specifications for project proposals",
+        "fr": "Spécifications techniques pour les propositions de projet",
+        "de": "Technische Spezifikationen für Projektvorschläge",
+        "gsw": "Technischi Spezifikatione für Projäkt-Vorschläg"
+      },
+      "fields": [
+        {
+          "key": "requirement_type",
+          "label": {
+            "en": "Requirement Type",
+            "fr": "Type d'exigence",
+            "de": "Anforderungstyp",
+            "gsw": "Aforderigs-Typ"
+          },
+          "type": "string",
+          "required": true
+        },
+        {
+          "key": "priority",
+          "label": {
+            "en": "Priority",
+            "fr": "Priorité",
+            "de": "Priorität",
+            "gsw": "Prioritäät"
+          },
+          "type": "enum",
+          "required": true,
+          "allowed_values": [
+            {"value": "low", "label": {"en": "Low", "fr": "Basse", "de": "Niedrig", "gsw": "Niidrig"}},
+            {"value": "medium", "label": {"en": "Medium", "fr": "Moyenne", "de": "Mittel", "gsw": "Mittel"}},
+            {"value": "high", "label": {"en": "High", "fr": "Haute", "de": "Hoch", "gsw": "Hoch"}},
+            {"value": "critical", "label": {"en": "Critical", "fr": "Critique", "de": "Kritisch", "gsw": "Kritisch"}}
+          ]
+        },
+        {
+          "key": "feasibility",
+          "label": {
+            "en": "Feasibility",
+            "fr": "Faisabilité",
+            "de": "Durchführbarkeit",
+            "gsw": "Durchfüehrbarkeit"
+          },
+          "type": "enum",
+          "required": false,
+          "allowed_values": [
+            {"value": "easy", "label": {"en": "Easy", "fr": "Facile", "de": "Einfach", "gsw": "Eifach"}},
+            {"value": "moderate", "label": {"en": "Moderate", "fr": "Modéré", "de": "Moderat", "gsw": "Moderat"}},
+            {"value": "complex", "label": {"en": "Complex", "fr": "Complexe", "de": "Komplex", "gsw": "Komplex"}}
+          ]
+        },
+        {
+          "key": "estimated_effort",
+          "label": {
+            "en": "Estimated Effort (hours)",
+            "fr": "Effort estimé (heures)",
+            "de": "Geschätzter Aufwand (Stunden)",
+            "gsw": "Gschätzte Ufwand (Stunde)"
+          },
+          "type": "integer",
+          "required": false
+        }
+      ]
+    },
+    {
+      "option_type": "cost_estimate",
+      "label": {
+        "en": "Cost Estimate",
+        "fr": "Estimation des coûts",
+        "de": "Kostenschätzung",
+        "gsw": "Koste-Schätzig"
+      },
+      "description": {
+        "en": "Budget breakdown for new services and automation",
+        "fr": "Répartition budgétaire pour nouveaux services et automatisation",
+        "de": "Budgetaufschlüsselung für neue Services und Automatisierung",
+        "gsw": "Budget-Ufschlüsselig für nöii Services und Automatisierig"
+      },
+      "fields": [
+        {
+          "key": "item_description",
+          "label": {
+            "en": "Item Description",
+            "fr": "Description de l'élément",
+            "de": "Artikelbeschreibung",
+            "gsw": "Artikel-Beschriibig"
+          },
+          "type": "string",
+          "required": true
+        },
+        {
+          "key": "cost",
+          "label": {
+            "en": "Cost",
+            "fr": "Coût",
+            "de": "Kosten",
+            "gsw": "Koste"
+          },
+          "type": "float",
+          "required": true
+        },
+        {
+          "key": "vendor",
+          "label": {
+            "en": "Vendor",
+            "fr": "Fournisseur",
+            "de": "Anbieter",
+            "gsw": "Aabieter"
+          },
+          "type": "string",
+          "required": false
+        },
+        {
+          "key": "timeline",
+          "label": {
+            "en": "Timeline",
+            "fr": "Calendrier",
+            "de": "Zeitplan",
+            "gsw": "Zitplan"
+          },
+          "type": "string",
+          "required": false
+        }
+      ]
+    },
+    {
+      "option_type": "implementation_milestone",
+      "label": {
+        "en": "Implementation Milestone",
+        "fr": "Jalon de mise en œuvre",
+        "de": "Implementierungsmeilenstein",
+        "gsw": "Implementierigs-Meilestei"
+      },
+      "description": {
+        "en": "Project milestones and deliverables",
+        "fr": "Jalons et livrables du projet",
+        "de": "Projektmeilensteine und Ergebnisse",
+        "gsw": "Projäkt-Meilestei und Ergäbnis"
+      },
+      "fields": [
+        {
+          "key": "milestone_name",
+          "label": {
+            "en": "Milestone Name",
+            "fr": "Nom du jalon",
+            "de": "Meilensteinname",
+            "gsw": "Meilestei-Name"
+          },
+          "type": "string",
+          "required": true
+        },
+        {
+          "key": "due_date",
+          "label": {
+            "en": "Due Date",
+            "fr": "Date d'échéance",
+            "de": "Fälligkeitsdatum",
+            "gsw": "Fälligkeits-Datum"
+          },
+          "type": "date",
+          "required": true
+        },
+        {
+          "key": "dependencies",
+          "label": {
+            "en": "Dependencies",
+            "fr": "Dépendances",
+            "de": "Abhängigkeiten",
+            "gsw": "Abhängigkeite"
+          },
+          "type": "text",
+          "required": false
+        },
+        {
+          "key": "success_criteria",
+          "label": {
+            "en": "Success Criteria",
+            "fr": "Critères de succès",
+            "de": "Erfolgskriterien",
+            "gsw": "Erfolgs-Kriterie"
+          },
+          "type": "text",
+          "required": false
+        }
+      ]
+    }
+  ],
+  "inquiry_group_types": [
+    {
+      "group_type": "it_portfolio",
+      "label": {
+        "en": "IT Portfolio",
+        "fr": "Portefeuille IT",
+        "de": "IT-Portfolio",
+        "gsw": "IT-Portfolio"
+      },
+      "description": {
+        "en": "Overall IT portfolio management",
+        "fr": "Gestion globale du portefeuille IT",
+        "de": "Gesamtes IT-Portfolio-Management",
+        "gsw": "Gsamts IT-Portfolio-Management"
+      },
+      "is_root": true
+    },
+    {
+      "group_type": "it_department",
+      "label": {
+        "en": "IT Department",
+        "fr": "Département IT",
+        "de": "IT-Abteilung",
+        "gsw": "IT-Abteilig"
+      },
+      "description": {
+        "en": "IT department groupings",
+        "fr": "Regroupements de départements IT",
+        "de": "IT-Abteilungsgruppierungen",
+        "gsw": "IT-Abteiligs-Gruppierige"
+      },
+      "is_root": false
+    },
+    {
+      "group_type": "project_stream",
+      "label": {
+        "en": "Project Stream",
+        "fr": "Flux de projets",
+        "de": "Projektstrom",
+        "gsw": "Projäkt-Strom"
+      },
+      "description": {
+        "en": "Related projects (infrastructure, applications, security)",
+        "fr": "Projets liés (infrastructure, applications, sécurité)",
+        "de": "Verwandte Projekte (Infrastruktur, Anwendungen, Sicherheit)",
+        "gsw": "Verwandti Projäkte (Infrastruktur, Awändige, Sicherhäit)"
+      },
+      "is_root": false
+    },
+    {
+      "group_type": "cost_center",
+      "label": {
+        "en": "Cost Center",
+        "fr": "Centre de coûts",
+        "de": "Kostenstelle",
+        "gsw": "Koste-Stell"
+      },
+      "description": {
+        "en": "Budget allocation groups",
+        "fr": "Groupes d'allocation budgétaire",
+        "de": "Budgetzuweisungsgruppen",
+        "gsw": "Budget-Zuewisigs-Gruppe"
+      },
+      "is_root": false
+    },
+    {
+      "group_type": "service_category",
+      "label": {
+        "en": "Service Category",
+        "fr": "Catégorie de service",
+        "de": "Servicekategorie",
+        "gsw": "Service-Kategorie"
+      },
+      "description": {
+        "en": "Service type groupings",
+        "fr": "Regroupements par type de service",
+        "de": "Service-Typ-Gruppierungen",
+        "gsw": "Service-Typ-Gruppierige"
+      },
+      "is_root": false
+    }
+  ],
+  "locations": [
+    {
+      "location_id": "global_hq",
+      "name": {
+        "en": "Global HQ",
+        "fr": "Siège mondial",
+        "de": "Globale Zentrale",
+        "gsw": "Globali Zentral"
+      },
+      "parent_id": null
+    },
+    {
+      "location_id": "emea",
+      "name": {
+        "en": "EMEA Region",
+        "fr": "Région EMEA",
+        "de": "EMEA-Region",
+        "gsw": "EMEA-Region"
+      },
+      "parent_id": null
+    },
+    {
+      "location_id": "americas",
+      "name": {
+        "en": "Americas Region",
+        "fr": "Région Amériques",
+        "de": "Amerika-Region",
+        "gsw": "Amerika-Region"
+      },
+      "parent_id": null
+    },
+    {
+      "location_id": "apac",
+      "name": {
+        "en": "APAC Region",
+        "fr": "Région APAC",
+        "de": "APAC-Region",
+        "gsw": "APAC-Region"
+      },
+      "parent_id": null
+    },
+    {
+      "location_id": "hq_datacenter",
+      "name": {
+        "en": "HQ Data Center",
+        "fr": "Centre de données du siège",
+        "de": "Rechenzentrum der Zentrale",
+        "gsw": "Reche-Zentrum vo dr Zentral"
+      },
+      "parent_id": "global_hq"
+    },
+    {
+      "location_id": "london_office",
+      "name": {
+        "en": "London Office",
+        "fr": "Bureau de Londres",
+        "de": "Büro London",
+        "gsw": "Büro London"
+      },
+      "parent_id": "emea"
+    },
+    {
+      "location_id": "frankfurt_office",
+      "name": {
+        "en": "Frankfurt Office",
+        "fr": "Bureau de Francfort",
+        "de": "Büro Frankfurt",
+        "gsw": "Büro Frankfurt"
+      },
+      "parent_id": "emea"
+    },
+    {
+      "location_id": "ny_office",
+      "name": {
+        "en": "New York Office",
+        "fr": "Bureau de New York",
+        "de": "Büro New York",
+        "gsw": "Büro New York"
+      },
+      "parent_id": "americas"
+    },
+    {
+      "location_id": "tokyo_office",
+      "name": {
+        "en": "Tokyo Office",
+        "fr": "Bureau de Tokyo",
+        "de": "Büro Tokio",
+        "gsw": "Büro Tokio"
+      },
+      "parent_id": "apac"
+    },
+    {
+      "location_id": "singapore_datacenter",
+      "name": {
+        "en": "Singapore Data Center",
+        "fr": "Centre de données de Singapour",
+        "de": "Rechenzentrum Singapur",
+        "gsw": "Reche-Zentrum Singapur"
+      },
+      "parent_id": "apac"
+    }
+  ]
+}

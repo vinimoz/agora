@@ -1,0 +1,2943 @@
+{
+  "template_info": {
+    "name": "citizen_participation",
+    "version": "1.0.0",
+    "description": "Comprehensive template for citizen participation and democratic processes matching Agora default configuration",
+    "author": "Agora Team",
+    "use_case": "citizen_participation",
+    "available_languages": [
+      "en",
+      "fr",
+      "de",
+      "gsw"
+    ]
+  },
+  "inquiry_families": [
+    {
+      "family_type": "deliberative",
+      "label": {
+        "en": "Deliberative",
+        "fr": "Délibératif",
+        "de": "Beratend",
+        "gsw": "Berotend"
+      },
+      "description": {
+        "en": "Citizen-driven deliberative processes including proposals, petitions, initiatives, debates, and deliberations",
+        "fr": "Processus délibératifs citoyens incluant propositions, pétitions, initiatives, débats et délibérations",
+        "de": "Bürgergetriebene Beratungsprozesse einschließlich Vorschläge, Petitionen, Initiativen, Debatten und Beratungen",
+        "gsw": "Bürger-tribeeni Berotigsprozäss inkl. Vorschläg, Petitione, Initiative, Debatte und Berotige"
+      },
+      "icon": "AccountGroup",
+      "sort_order": 1
+    },
+    {
+      "family_type": "legislative",
+      "label": {
+        "en": "Legislative",
+        "fr": "Législatif",
+        "de": "Legislative",
+        "gsw": "Gsetzgebend"
+      },
+      "description": {
+        "en": "Legislative processes including law proposals, amendments, constitutional workshops, and policy consultations",
+        "fr": "Processus législatifs incluant propositions de loi, amendements, ateliers constitutionnels et consultations politiques",
+        "de": "Gesetzgebungsverfahren einschließlich Gesetzesvorschläge, Änderungsanträge, Verfassungsworkshops und Politikberatungen",
+        "gsw": "Gsetzgeberisch Verfahre inkl. Gsetzesvorschläg, Änderigsdräg, Verfassigs-Workshops und Politik-Berotige"
+      },
+      "icon": "Gavel",
+      "sort_order": 2
+    },
+    {
+      "family_type": "administrative",
+      "label": {
+        "en": "Administrative",
+        "fr": "Administratif",
+        "de": "Verwaltung",
+        "gsw": "Verwautig"
+      },
+      "description": {
+        "en": "Administrative requests and grievances addressed to public institutions",
+        "fr": "Demandes administratives et réclamations adressées aux institutions publiques",
+        "de": "Verwaltungsanfragen und Beschwerden an öffentliche Institutionen",
+        "gsw": "Verwautigsaafrage und Beschweärde a öffentlichi Institutione"
+      },
+      "icon": "OfficeBuilding",
+      "sort_order": 3
+    },
+    {
+      "family_type": "service",
+      "label": {
+        "en": "Service",
+        "fr": "Service",
+        "de": "Dienst",
+        "gsw": "Dienscht"
+      },
+      "description": {
+        "en": "Social and citizen service requests including housing, childcare, scholarships, and social support",
+        "fr": "Demandes de services sociaux et citoyens incluant logement, garde d'enfants, bourses et aide sociale",
+        "de": "Sozial- und Bürgerdienstanfragen einschließlich Wohnraum, Kinderbetreuung, Stipendien und Sozialhilfe",
+        "gsw": "Sozial- und Bürger-Dienschtaafrage inkl. Wohnruum, Chinderbetreuig, Stipendie und Sozialhilf"
+      },
+      "icon": "Offer",
+      "sort_order": 4
+    },
+    {
+      "family_type": "collective",
+      "label": {
+        "en": "Collective",
+        "fr": "Collectif",
+        "de": "Kollektiv",
+        "gsw": "Kollektiv"
+      },
+      "description": {
+        "en": "Collective processes including assemblies, consultations, polls, and grouped deliberations",
+        "fr": "Processus collectifs incluant assemblées, consultations, sondages et délibérations groupées",
+        "de": "Kollektive Prozesse einschließlich Versammlungen, Konsultationen, Umfragen und gruppierte Beratungen",
+        "gsw": "Kollektivi Prozäss inkl. Versammlige, Konsultatione, Umfrage und gruppierti Berotige"
+      },
+      "icon": "AccountMultiple",
+      "sort_order": 5
+    },
+    {
+      "family_type": "social",
+      "label": {
+        "en": "Social",
+        "fr": "Social",
+        "de": "Sozial",
+        "gsw": "Sozial"
+      },
+      "description": {
+        "en": "Social assistance requests from citizens for daily life support",
+        "fr": "Demandes d'aide sociale des citoyens pour le soutien quotidien",
+        "de": "Sozialhilfeanfragen von Bürgern zur Unterstützung im Alltag",
+        "gsw": "Sozialhilf-Aafrage vo Bürger zur Understützig im Alltag"
+      },
+      "icon": "Heart",
+      "sort_order": 6
+    },
+    {
+      "family_type": "official_citizen_participation",
+      "label": {
+        "en": "Official",
+        "fr": "Officiel",
+        "de": "Offiziell",
+        "gsw": "Offiziell"
+      },
+      "description": {
+        "en": "Official responses and contributions from government entities, experts, and commissions",
+        "fr": "Réponses et contributions officielles d'entités gouvernementales, d'experts et de commissions",
+        "de": "Offizielle Antworten und Beiträge von Regierungsstellen, Experten und Kommissionen",
+        "gsw": "Offizelli Antworte und Biiträg vo Regierigsstelle, Experte und Kommissione"
+      },
+      "icon": "Seal",
+      "sort_order": 7
+    }
+  ],
+  "inquiry_types": [
+    {
+      "inquiry_type": "proposal",
+      "family": "deliberative",
+      "icon": "LightbulbOn",
+      "label": {
+        "en": "Proposal",
+        "fr": "Proposition",
+        "de": "Vorschlag",
+        "gsw": "Vorschlag"
+      },
+      "description": {
+        "en": "Citizen proposal for community or organizational improvement with support collection",
+        "fr": "Proposition citoyenne pour l'amélioration communautaire ou organisationnelle avec collecte de soutien",
+        "de": "Bürgervorschlag zur Verbesserung der Gemeinschaft oder Organisation mit Unterstützungssammlung",
+        "gsw": "Bürger-Vorschlag zur Verbesserig vo de Gmeinschaft oder Organisation mit Understützig-Sammlig"
+      },
+      "is_root": true,
+      "fields": [
+        {"key": "quorum", "label": "Quorum", "type": "integer", "required": false, "default": null, "rules": []},
+        {"key": "parent_law_id", "label": "Parent Law", "type": "integer", "required": false, "default": null, "rules": []},
+        {"key": "topic", "label": "Topic", "type": "string", "required": true, "default": null, "rules": []},
+        {"key": "form_schema", "label": "Form Schema", "type": "json", "required": false, "default": null, "rules": []},
+        {"key": "type_of_vote", "label": "Type of Vote", "type": "enum", "required": false, "default": "simple", "allowed_values": ["simple", "majority_judgement_beneficial", "majority_judgement_number"], "rules": []},
+        {"key": "support_start", "label": "Supporting Start", "type": "datetime", "required": false, "default": null, "rules": []},
+        {"key": "support_end", "label": "Supporting End", "type": "datetime", "required": false, "default": null, "rules": []},
+        {"key": "auto_reminder", "label": "Auto Reminder", "type": "boolean", "required": true, "default": true, "rules": []},
+        {"key": "layout_zone", "label": "Position display into the layout", "type": "enum", "required": false, "default": "footer", "allowed_values": ["sidebar", "main", "footer", "header"], "rules": []},
+        {"key": "render_mode", "label": "Render mode of inquiries", "type": "enum", "required": false, "default": "rich_html", "allowed_values": ["cards", "list", "full", "summary", "rich_html"], "rules": []},
+        {"key": "open_mode", "label": "Open Mode", "type": "enum", "required": false, "default": "page", "allowed_values": ["page", "modal", "popup"], "rules": []},
+        {"key": "allow_anonymous", "label": "Allow Anonymous Feedback", "type": "boolean", "required": false, "default": false, "rules": []}
+      ],
+      "allowed_response": [
+        "objection",
+        "suggestion",
+        "official_citizen_participation"
+      ],
+      "allowed_transformation": [
+        "law_proposal"
+      ]
+    },
+    {
+      "inquiry_type": "petition",
+      "family": "deliberative",
+      "icon": "ClipboardText",
+      "label": {
+        "en": "Petition",
+        "fr": "Pétition",
+        "de": "Petition",
+        "gsw": "Petition"
+      },
+      "description": {
+        "en": "Formal petition requiring citizen signatures for a specific cause or request",
+        "fr": "Pétition formelle nécessitant des signatures citoyennes pour une cause ou demande spécifique",
+        "de": "Formale Petition, die Bürgersignaturen für ein bestimmtes Anliegen oder eine Anfrage erfordert",
+        "gsw": "Formelli Petition wo Bürger-Unterschrifte brucht für es bestimmts Aalige oder Aafrag"
+      },
+      "is_root": true,
+      "fields": [
+        {"key": "topic", "label": "Topic", "type": "string", "required": true, "default": null, "rules": []},
+        {"key": "form_schema", "label": "Form Schema", "type": "json", "required": false, "default": null, "rules": []},
+        {"key": "type_of_vote", "label": "Type of Vote", "type": "enum", "required": false, "default": "simple", "allowed_values": ["simple", "majority_judgement_beneficial", "majority_judgement_number"], "rules": []},
+        {"key": "support_start", "label": "Supporting Start", "type": "datetime", "required": false, "default": null, "rules": []},
+        {"key": "support_end", "label": "Supporting End", "type": "datetime", "required": false, "default": null, "rules": []},
+        {"key": "auto_reminder", "label": "Auto Reminder", "type": "boolean", "required": true, "default": true, "rules": []},
+        {"key": "layout_zone", "label": "Position display into the layout", "type": "enum", "required": false, "default": "footer", "allowed_values": ["sidebar", "main", "footer", "header"], "rules": []},
+        {"key": "render_mode", "label": "Render mode of inquiries", "type": "enum", "required": false, "default": "rich_html", "allowed_values": ["cards", "list", "full", "summary", "rich_html"], "rules": []},
+        {"key": "open_mode", "label": "Open Mode", "type": "enum", "required": false, "default": "page", "allowed_values": ["page", "modal", "popup"], "rules": []},
+        {"key": "allow_anonymous", "label": "Allow Anonymous Feedback", "type": "boolean", "required": false, "default": false, "rules": []}
+      ],
+      "allowed_response": [
+        "official_citizen_participation"
+      ],
+      "allowed_transformation": [
+        "initiative"
+      ]
+    },
+    {
+      "inquiry_type": "initiative",
+      "family": "deliberative",
+      "icon": "RocketLaunch",
+      "label": {
+        "en": "Initiative",
+        "fr": "Initiative",
+        "de": "Initiative",
+        "gsw": "Initiative"
+      },
+      "description": {
+        "en": "Citizen initiative requiring a threshold of signatures for formal consideration",
+        "fr": "Initiative citoyenne nécessitant un seuil de signatures pour examen formel",
+        "de": "Bürgerinitiative, die eine Schwelle von Unterschriften zur formellen Prüfung erfordert",
+        "gsw": "Bürger-Initiative wo en Schwelle vo Unterschrifte brucht zur formelle Prüefig"
+      },
+      "is_root": true,
+      "fields": [
+        {"key": "co_owners", "label": "Co-owners", "type": "string", "required": true, "default": null, "rules": []},
+        {"key": "quorum", "label": "Quorum", "type": "integer", "required": false, "default": null, "rules": []},
+        {"key": "topic", "label": "Topic", "type": "string", "required": true, "default": null, "rules": []},
+        {"key": "form_schema", "label": "Form Schema", "type": "json", "required": false, "default": null, "rules": []},
+        {"key": "type_of_vote", "label": "Type of Vote", "type": "enum", "required": false, "default": "simple", "allowed_values": ["simple", "majority_judgement_beneficial", "majority_judgement_number"], "rules": []},
+        {"key": "support_start", "label": "Supporting Start", "type": "datetime", "required": false, "default": null, "rules": []},
+        {"key": "support_end", "label": "Supporting End", "type": "datetime", "required": false, "default": null, "rules": []},
+        {"key": "auto_reminder", "label": "Auto Reminder", "type": "boolean", "required": true, "default": true, "rules": []},
+        {"key": "layout_zone", "label": "Position display into the layout", "type": "enum", "required": false, "default": "footer", "allowed_values": ["sidebar", "main", "footer", "header"], "rules": []},
+        {"key": "render_mode", "label": "Render mode of inquiries", "type": "enum", "required": false, "default": "rich_html", "allowed_values": ["cards", "list", "full", "summary", "rich_html"], "rules": []},
+        {"key": "open_mode", "label": "Open Mode", "type": "enum", "required": false, "default": "page", "allowed_values": ["page", "modal", "popup"], "rules": []},
+        {"key": "allow_anonymous", "label": "Allow Anonymous Feedback", "type": "boolean", "required": false, "default": false, "rules": []}
+      ],
+      "allowed_response": [
+        "proposal",
+        "objection",
+        "suggestion",
+        "official_citizen_participation"
+      ],
+      "allowed_transformation": [
+        "law_proposal"
+      ]
+    },
+    {
+      "inquiry_type": "debate",
+      "family": "collective",
+      "icon": "Forum",
+      "label": {
+        "en": "Debate",
+        "fr": "Débat",
+        "de": "Debatte",
+        "gsw": "Debatte"
+      },
+      "description": {
+        "en": "Structured debate with arguments for and against a topic",
+        "fr": "Débat structuré avec des arguments pour et contre un sujet",
+        "de": "Strukturierte Debatte mit Argumenten dafür und dagegen ein Thema",
+        "gsw": "Strukturierti Debatte mit Argumänt defür und dergege es Thema"
+      },
+      "is_root": true,
+      "fields": [
+        {"key": "facilitator_id", "label": "Facilitator", "type": "users", "required": false, "default": null, "rules": []},
+        {"key": "quorum", "label": "Quorum", "type": "integer", "required": false, "default": null, "rules": []},
+        {"key": "topic", "label": "Topic", "type": "string", "required": true, "default": null, "rules": []},
+        {"key": "form_schema", "label": "Form Schema", "type": "json", "required": false, "default": null, "rules": []},
+        {"key": "type_of_vote", "label": "Type of Vote", "type": "enum", "required": false, "default": "simple", "allowed_values": ["simple", "majority_judgement_beneficial", "majority_judgement_number"], "rules": []},
+        {"key": "support_start", "label": "Supporting Start", "type": "datetime", "required": false, "default": null, "rules": []},
+        {"key": "support_end", "label": "Supporting End", "type": "datetime", "required": false, "default": null, "rules": []},
+        {"key": "auto_reminder", "label": "Auto Reminder", "type": "boolean", "required": true, "default": true, "rules": []},
+        {"key": "layout_zone", "label": "Position display into the layout", "type": "enum", "required": false, "default": "footer", "allowed_values": ["sidebar", "main", "footer", "header"], "rules": []},
+        {"key": "render_mode", "label": "Render mode of inquiries", "type": "enum", "required": false, "default": "rich_html", "allowed_values": ["cards", "list", "full", "summary", "rich_html"], "rules": []},
+        {"key": "open_mode", "label": "Open Mode", "type": "enum", "required": false, "default": "page", "allowed_values": ["page", "modal", "popup"], "rules": []},
+        {"key": "allow_anonymous", "label": "Allow Anonymous Feedback", "type": "boolean", "required": false, "default": false, "rules": []}
+      ],
+      "allowed_response": [
+        "suggestion",
+        "proposal",
+        "petition",
+        "official_citizen_participation"
+      ],
+      "allowed_transformation": [
+        "law_proposal",
+        "policy_consultation"
+      ]
+    },
+    {
+      "inquiry_type": "deliberation",
+      "family": "deliberative",
+      "icon": "AccountMultipleCheck",
+      "label": {
+        "en": "Deliberation",
+        "fr": "Délibération",
+        "de": "Beratung",
+        "gsw": "Berotig"
+      },
+      "description": {
+        "en": "Structured deliberative process for in-depth discussion and decision-making",
+        "fr": "Processus délibératif structuré pour discussion approfondie et prise de décision",
+        "de": "Strukturierter Beratungsprozess für vertiefte Diskussion und Entscheidungsfindung",
+        "gsw": "Strukturierte Berotigsprozäss für vertiefti Diskussion und Entscheidigsfindigs"
+      },
+      "is_root": true,
+      "fields": [
+        {"key": "facilitator_id", "label": "Facilitator", "type": "users", "required": false, "default": null, "rules": []},
+        {"key": "participants_list", "label": "Participants List", "type": "groups", "required": true, "default": null, "rules": []},
+        {"key": "layout_zone", "label": "Position display into the layout", "type": "enum", "required": false, "default": "footer", "allowed_values": ["sidebar", "main", "footer", "header"], "rules": []},
+        {"key": "render_mode", "label": "Render mode of inquiries", "type": "enum", "required": false, "default": "rich_html", "allowed_values": ["cards", "list", "full", "summary", "rich_html"], "rules": []},
+        {"key": "open_mode", "label": "Open Mode", "type": "enum", "required": false, "default": "page", "allowed_values": ["page", "modal", "popup"], "rules": []},
+        {"key": "allow_anonymous", "label": "Allow Anonymous Feedback", "type": "boolean", "required": false, "default": false, "rules": []}
+      ],
+      "allowed_response": [
+        "proposal",
+        "suggestion",
+        "official_citizen_participation"
+      ],
+      "allowed_transformation": null
+    },
+    {
+      "inquiry_type": "objection",
+      "family": "deliberative",
+      "icon": "AlertCircle",
+      "label": {
+        "en": "Objection",
+        "fr": "Objection",
+        "de": "Einwand",
+        "gsw": "Iiwand"
+      },
+      "description": {
+        "en": "Objection to another inquiry that can be resolved through suggestions",
+        "fr": "Objection à une autre demande pouvant être résolue par des suggestions",
+        "de": "Einwand gegen eine andere Anfrage, der durch Vorschläge gelöst werden kann",
+        "gsw": "Iiwand gege en anderi Aafrag wo dur Vorschläg cha glöst werde"
+      },
+      "is_root": false,
+      "fields": [
+        {"key": "layout_zone", "label": "Position display into the layout", "type": "enum", "required": false, "default": "footer", "allowed_values": ["sidebar", "main", "footer", "header"], "rules": []},
+        {"key": "render_mode", "label": "Render mode of inquiries", "type": "enum", "required": false, "default": "rich_html", "allowed_values": ["cards", "list", "full", "summary", "rich_html"], "rules": []},
+        {"key": "open_mode", "label": "Open Mode", "type": "enum", "required": false, "default": "page", "allowed_values": ["page", "modal", "popup"], "rules": []},
+        {"key": "allow_anonymous", "label": "Allow Anonymous Feedback", "type": "boolean", "required": false, "default": false, "rules": []}
+      ],
+      "allowed_response": [
+        "suggestion"
+      ],
+      "allowed_transformation": null
+    },
+    {
+      "inquiry_type": "suggestion",
+      "family": "deliberative",
+      "icon": "Lightbulb",
+      "label": {
+        "en": "Suggestion",
+        "fr": "Suggestion",
+        "de": "Vorschlag",
+        "gsw": "Vorschlag"
+      },
+      "description": {
+        "en": "Suggestion to resolve objections or improve debates and deliberations",
+        "fr": "Suggestion pour résoudre des objections ou améliorer débats et délibérations",
+        "de": "Vorschlag zur Lösung von Einwänden oder Verbesserung von Debatten und Beratungen",
+        "gsw": "Vorschlag zum Löse vo Iiwänd oder Verbesserig vo Debatte und Berotige"
+      },
+      "is_root": false,
+      "fields": [
+        {"key": "layout_zone", "label": "Position display into the layout", "type": "enum", "required": false, "default": "footer", "allowed_values": ["sidebar", "main", "footer", "header"], "rules": []},
+        {"key": "render_mode", "label": "Render mode of inquiries", "type": "enum", "required": false, "default": "rich_html", "allowed_values": ["cards", "list", "full", "summary", "rich_html"], "rules": []},
+        {"key": "open_mode", "label": "Open Mode", "type": "enum", "required": false, "default": "page", "allowed_values": ["page", "modal", "popup"], "rules": []},
+        {"key": "allow_anonymous", "label": "Allow Anonymous Feedback", "type": "boolean", "required": false, "default": false, "rules": []}
+      ],
+      "allowed_response": null,
+      "allowed_transformation": [
+        "proposal",
+        "law_proposal"
+      ]
+    },
+    {
+      "inquiry_type": "project",
+      "family": "deliberative",
+      "icon": "BriefcaseCheck",
+      "label": {
+        "en": "Project",
+        "fr": "Projet",
+        "de": "Projekt",
+        "gsw": "Projäkt"
+      },
+      "description": {
+        "en": "Project proposal with feasibility review and funding consideration",
+        "fr": "Proposition de projet avec examen de faisabilité et considération de financement",
+        "de": "Projektvorschlag mit Machbarkeitsprüfung und Finanzierungsüberlegung",
+        "gsw": "Projäkt-Vorschlag mit Machbarkeits-Prüefig und Finanzierigs-Überlegig"
+      },
+      "is_root": true,
+      "fields": [
+        {"key": "budget", "label": "Budget", "type": "integer", "required": true, "default": null, "rules": []},
+        {"key": "deadline", "label": "Deadline", "type": "datetime", "required": false, "default": null, "rules": []},
+        {"key": "assigned_unit", "label": "Assigned Unit", "type": "string", "required": false, "default": null, "rules": []},
+        {"key": "topic", "label": "Topic", "type": "string", "required": true, "default": null, "rules": []},
+        {"key": "form_schema", "label": "Form Schema", "type": "json", "required": false, "default": null, "rules": []},
+        {"key": "type_of_vote", "label": "Type of Vote", "type": "enum", "required": false, "default": "simple", "allowed_values": ["simple", "majority_judgement_beneficial", "majority_judgement_number"], "rules": []},
+        {"key": "support_start", "label": "Supporting Start", "type": "datetime", "required": false, "default": null, "rules": []},
+        {"key": "support_end", "label": "Supporting End", "type": "datetime", "required": false, "default": null, "rules": []},
+        {"key": "auto_reminder", "label": "Auto Reminder", "type": "boolean", "required": true, "default": true, "rules": []},
+        {"key": "layout_zone", "label": "Position display into the layout", "type": "enum", "required": false, "default": "footer", "allowed_values": ["sidebar", "main", "footer", "header"], "rules": []},
+        {"key": "render_mode", "label": "Render mode of inquiries", "type": "enum", "required": false, "default": "rich_html", "allowed_values": ["cards", "list", "full", "summary", "rich_html"], "rules": []},
+        {"key": "open_mode", "label": "Open Mode", "type": "enum", "required": false, "default": "page", "allowed_values": ["page", "modal", "popup"], "rules": []},
+        {"key": "allow_anonymous", "label": "Allow Anonymous Feedback", "type": "boolean", "required": false, "default": false, "rules": []}
+      ],
+      "allowed_response": [
+        "project_review",
+        "suggestion",
+        "objection",
+        "official_citizen_participation"
+      ],
+      "allowed_transformation": []
+    },
+    {
+      "inquiry_type": "vision",
+      "family": "deliberative",
+      "icon": "Map",
+      "label": {
+        "en": "Vision / Roadmap",
+        "fr": "Vision / Feuille de route",
+        "de": "Vision / Fahrplan",
+        "gsw": "Vision / Fahrplan"
+      },
+      "description": {
+        "en": "Long-term citizen roadmap or strategic vision",
+        "fr": "Feuille de route citoyenne à long terme ou vision stratégique",
+        "de": "Langfristige Bürger-Roadmap oder strategische Vision",
+        "gsw": "Langfristigi Bürger-Roadmap oder strategischi Vision"
+      },
+      "is_root": true,
+      "fields": [
+        {"key": "horizon_year", "label": "Horizon Year", "type": "integer", "required": false, "default": null, "rules": []},
+        {"key": "layout_zone", "label": "Position display into the layout", "type": "enum", "required": false, "default": "footer", "allowed_values": ["sidebar", "main", "footer", "header"], "rules": []},
+        {"key": "render_mode", "label": "Render mode of inquiries", "type": "enum", "required": false, "default": "rich_html", "allowed_values": ["cards", "list", "full", "summary", "rich_html"], "rules": []},
+        {"key": "open_mode", "label": "Open Mode", "type": "enum", "required": false, "default": "page", "allowed_values": ["page", "modal", "popup"], "rules": []},
+        {"key": "allow_anonymous", "label": "Allow Anonymous Feedback", "type": "boolean", "required": false, "default": false, "rules": []}
+      ],
+      "allowed_response": [
+        "suggestion"
+      ],
+      "allowed_transformation": [
+        "roadmap"
+      ]
+    },
+    {
+      "inquiry_type": "hearing",
+      "family": "deliberative",
+      "icon": "Mic",
+      "label": {
+        "en": "Hearing",
+        "fr": "Audition",
+        "de": "Anhörung",
+        "gsw": "Aahörig"
+      },
+      "description": {
+        "en": "Public hearing collecting feedback",
+        "fr": "Audition publique recueillant des retours",
+        "de": "Öffentliche Anhörung zur Sammlung von Feedback",
+        "gsw": "Öffentlichi Aahörig zum Sammle vo Feedback"
+      },
+      "is_root": true,
+      "fields": [
+        {"key": "topic", "label": "Topic", "type": "string", "required": true, "default": null, "rules": []},
+        {"key": "layout_zone", "label": "Position display into the layout", "type": "enum", "required": false, "default": "footer", "allowed_values": ["sidebar", "main", "footer", "header"], "rules": []},
+        {"key": "render_mode", "label": "Render mode of inquiries", "type": "enum", "required": false, "default": "rich_html", "allowed_values": ["cards", "list", "full", "summary", "rich_html"], "rules": []},
+        {"key": "open_mode", "label": "Open Mode", "type": "enum", "required": false, "default": "page", "allowed_values": ["page", "modal", "popup"], "rules": []},
+        {"key": "allow_anonymous", "label": "Allow Anonymous Feedback", "type": "boolean", "required": false, "default": false, "rules": []}
+      ],
+      "allowed_response": [
+        "suggestion",
+        "objection"
+      ],
+      "allowed_transformation": null
+    },
+    {
+      "inquiry_type": "project_review",
+      "family": "deliberative",
+      "icon": "ClipboardCheck",
+      "label": {
+        "en": "Project Review",
+        "fr": "Évaluation de projet",
+        "de": "Projektbewertung",
+        "gsw": "Projäkt-Bewertig"
+      },
+      "description": {
+        "en": "Evaluation of an ongoing or completed project",
+        "fr": "Évaluation d'un projet en cours ou terminé",
+        "de": "Bewertung eines laufenden oder abgeschlossenen Projekts",
+        "gsw": "Bewertig vomene laufende oder abgschlossnige Projäkt"
+      },
+      "is_root": false,
+      "fields": [
+        {"key": "project_id", "label": "Project ID", "type": "integer", "required": true, "default": null, "rules": []},
+        {"key": "evaluation", "label": "Evaluation", "type": "text", "required": false, "default": null, "rules": []},
+        {"key": "layout_zone", "label": "Position display into the layout", "type": "enum", "required": false, "default": "footer", "allowed_values": ["sidebar", "main", "footer", "header"], "rules": []},
+        {"key": "render_mode", "label": "Render mode of inquiries", "type": "enum", "required": false, "default": "rich_html", "allowed_values": ["cards", "list", "full", "summary", "rich_html"], "rules": []},
+        {"key": "open_mode", "label": "Open Mode", "type": "enum", "required": false, "default": "page", "allowed_values": ["page", "modal", "popup"], "rules": []},
+        {"key": "allow_anonymous", "label": "Allow Anonymous Feedback", "type": "boolean", "required": false, "default": false, "rules": []}
+      ],
+      "allowed_response": [
+        "suggestion"
+      ],
+      "allowed_transformation": null
+    },
+    {
+      "inquiry_type": "law_proposal",
+      "family": "legislative",
+      "icon": "BookOpenVariant",
+      "label": {
+        "en": "Law Proposal",
+        "fr": "Proposition de loi",
+        "de": "Gesetzesvorschlag",
+        "gsw": "Gsetzesvorschlag"
+      },
+      "description": {
+        "en": "Draft or amendment of a law with mapped articles and legislative status",
+        "fr": "Projet ou amendement de loi avec articles cartographiés et statut législatif",
+        "de": "Entwurf oder Änderung eines Gesetzes mit zugeordneten Artikeln und Gesetzgebungsstatus",
+        "gsw": "Entwurf oder Änderig vomene Gsetz mit zuegordnete Artikel und Gsetzgebigs-Status"
+      },
+      "is_root": true,
+      "fields": [
+        {"key": "parent_law_id", "label": "Parent Law", "type": "integer", "required": false, "default": null, "rules": []},
+        {"key": "article_map", "label": "Article Map", "type": "string", "required": false, "default": null, "rules": []},
+        {"key": "legal_status", "label": "Legal Status", "type": "enum", "required": true, "default": "pending", "allowed_values": ["pending", "validated", "rejected"], "rules": []},
+        {"key": "topic", "label": "Topic", "type": "string", "required": true, "default": null, "rules": []},
+        {"key": "form_schema", "label": "Form Schema", "type": "json", "required": false, "default": null, "rules": []},
+        {"key": "type_of_vote", "label": "Type of Vote", "type": "enum", "required": false, "default": "simple", "allowed_values": ["simple", "majority_judgement_beneficial", "majority_judgement_number"], "rules": []},
+        {"key": "support_start", "label": "Supporting Start", "type": "datetime", "required": false, "default": null, "rules": []},
+        {"key": "support_end", "label": "Supporting End", "type": "datetime", "required": false, "default": null, "rules": []},
+        {"key": "facilitator_id", "label": "Facilitator", "type": "users", "required": false, "default": null, "rules": []},
+        {"key": "auto_reminder", "label": "Auto Reminder", "type": "boolean", "required": true, "default": true, "rules": []},
+        {"key": "layout_zone", "label": "Position display into the layout", "type": "enum", "required": false, "default": "footer", "allowed_values": ["sidebar", "main", "footer", "header"], "rules": []},
+        {"key": "render_mode", "label": "Render mode of inquiries", "type": "enum", "required": false, "default": "rich_html", "allowed_values": ["cards", "list", "full", "summary", "rich_html"], "rules": []},
+        {"key": "open_mode", "label": "Open Mode", "type": "enum", "required": false, "default": "page", "allowed_values": ["page", "modal", "popup"], "rules": []},
+        {"key": "allow_anonymous", "label": "Allow Anonymous Feedback", "type": "boolean", "required": false, "default": false, "rules": []}
+      ],
+      "allowed_response": [
+        "amendment",
+        "objection",
+        "official_citizen_participation"
+      ],
+      "allowed_transformation": []
+    },
+    {
+      "inquiry_type": "amendment",
+      "family": "legislative",
+      "icon": "FileDocumentEdit",
+      "label": {
+        "en": "Amendment",
+        "fr": "Amendement",
+        "de": "Änderungsantrag",
+        "gsw": "Änderigsdrag"
+      },
+      "description": {
+        "en": "Amendment targeting a specific article of a law or proposal",
+        "fr": "Amendement ciblant un article spécifique d'une loi ou proposition",
+        "de": "Änderungsantrag zu einem bestimmten Artikel eines Gesetzes oder Vorschlags",
+        "gsw": "Änderigsdrag zu eme bestimmte Artikel vomene Gsetz oder Vorschlag"
+      },
+      "is_root": false,
+      "fields": [
+        {"key": "parent_law_id", "label": "Parent Law", "type": "integer", "required": true, "default": null, "rules": []},
+        {"key": "article_ref", "label": "Article Reference", "type": "integer", "required": true, "default": null, "rules": []},
+        {"key": "facilitator_id", "label": "Facilitator", "type": "users", "required": false, "default": null, "rules": []},
+        {"key": "topic", "label": "Topic", "type": "string", "required": true, "default": null, "rules": []},
+        {"key": "layout_zone", "label": "Position display into the layout", "type": "enum", "required": false, "default": "footer", "allowed_values": ["sidebar", "main", "footer", "header"], "rules": []},
+        {"key": "render_mode", "label": "Render mode of inquiries", "type": "enum", "required": false, "default": "rich_html", "allowed_values": ["cards", "list", "full", "summary", "rich_html"], "rules": []},
+        {"key": "open_mode", "label": "Open Mode", "type": "enum", "required": false, "default": "page", "allowed_values": ["page", "modal", "popup"], "rules": []},
+        {"key": "allow_anonymous", "label": "Allow Anonymous Feedback", "type": "boolean", "required": false, "default": false, "rules": []}
+      ],
+      "allowed_response": null,
+      "allowed_transformation": null
+    },
+    {
+      "inquiry_type": "constitutional_workshop",
+      "family": "legislative",
+      "icon": "Library",
+      "label": {
+        "en": "Constitutional Workshop",
+        "fr": "Atelier constitutionnel",
+        "de": "Verfassungsworkshop",
+        "gsw": "Verfassigs-Workshop"
+      },
+      "description": {
+        "en": "Workshop for drafting or revising constitutional texts and fundamental law",
+        "fr": "Atelier pour la rédaction ou révision de textes constitutionnels et loi fondamentale",
+        "de": "Workshop zum Entwurf oder zur Überarbeitung von Verfassungstexten und Grundgesetz",
+        "gsw": "Workshop zum Entwurf oder zur Überarbeitig vo Verfassigstexte und Grundgsetz"
+      },
+      "is_root": true,
+      "fields": [
+        {"key": "draft_text", "label": "Draft Text", "type": "text", "required": true, "default": null, "rules": []},
+        {"key": "article_map", "label": "Article Map", "type": "json", "required": false, "default": null, "rules": []},
+        {"key": "facilitator_id", "label": "Facilitator", "type": "users", "required": false, "default": null, "rules": []},
+        {"key": "topic", "label": "Topic", "type": "string", "required": true, "default": null, "rules": []},
+        {"key": "layout_zone", "label": "Position display into the layout", "type": "enum", "required": false, "default": "footer", "allowed_values": ["sidebar", "main", "footer", "header"], "rules": []},
+        {"key": "render_mode", "label": "Render mode of inquiries", "type": "enum", "required": false, "default": "rich_html", "allowed_values": ["cards", "list", "full", "summary", "rich_html"], "rules": []},
+        {"key": "open_mode", "label": "Open Mode", "type": "enum", "required": false, "default": "page", "allowed_values": ["page", "modal", "popup"], "rules": []},
+        {"key": "allow_anonymous", "label": "Allow Anonymous Feedback", "type": "boolean", "required": false, "default": false, "rules": []}
+      ],
+      "allowed_response": [
+        "law_proposal"
+      ],
+      "allowed_transformation": null
+    },
+    {
+      "inquiry_type": "policy_consultation",
+      "family": "legislative",
+      "icon": "AccountVoice",
+      "label": {
+        "en": "Policy Consultation",
+        "fr": "Consultation politique",
+        "de": "Politikberatung",
+        "gsw": "Politik-Berotig"
+      },
+      "description": {
+        "en": "Public consultation on policies with impact assessment and stakeholder input",
+        "fr": "Consultation publique sur les politiques avec évaluation d'impact et contribution des parties prenantes",
+        "de": "Öffentliche Konsultation zu Politiken mit Folgenabschätzung und Stakeholder-Input",
+        "gsw": "Öffentlichi Konsultation zu Politike mit Folge-Abschätzig und Stakeholder-Input"
+      },
+      "is_root": true,
+      "fields": [
+        {"key": "policy_area", "label": "Policy Area", "type": "string", "required": true, "default": null, "rules": []},
+        {"key": "impact_assessment", "label": "Impact Assessment", "type": "text", "required": false, "default": null, "rules": []},
+        {"key": "topic", "label": "Topic", "type": "string", "required": true, "default": null, "rules": []},
+        {"key": "layout_zone", "label": "Position display into the layout", "type": "enum", "required": false, "default": "footer", "allowed_values": ["sidebar", "main", "footer", "header"], "rules": []},
+        {"key": "render_mode", "label": "Render mode of inquiries", "type": "enum", "required": false, "default": "rich_html", "allowed_values": ["cards", "list", "full", "summary", "rich_html"], "rules": []},
+        {"key": "open_mode", "label": "Open Mode", "type": "enum", "required": false, "default": "page", "allowed_values": ["page", "modal", "popup"], "rules": []},
+        {"key": "allow_anonymous", "label": "Allow Anonymous Feedback", "type": "boolean", "required": false, "default": false, "rules": []}
+      ],
+      "allowed_response": [
+        "law_proposal",
+        "suggestion",
+        "official_citizen_participation"
+      ],
+      "allowed_transformation": null
+    },
+    {
+      "inquiry_type": "admin_request",
+      "family": "administrative",
+      "icon": "FileDocument",
+      "label": {
+        "en": "Administrative Request",
+        "fr": "Demande administrative",
+        "de": "Verwaltungsanfrage",
+        "gsw": "Verwautigsaafrag"
+      },
+      "description": {
+        "en": "Administrative request or inquiry directed to public institutions",
+        "fr": "Demande ou demande administrative adressée aux institutions publiques",
+        "de": "Verwaltungsanfrage oder Anfrage an öffentliche Institutionen",
+        "gsw": "Verwautigsaafrag oder Aafrag a öffentlichi Institutione"
+      },
+      "is_root": true,
+      "fields": [
+        {"key": "request_type", "label": "Request Type", "type": "string", "required": true, "default": null, "rules": []},
+        {"key": "assigned_unit", "label": "Assigned Unit", "type": "string", "required": false, "default": null, "rules": []},
+        {"key": "processing_deadline", "label": "Processing Deadline", "type": "datetime", "required": false, "default": null, "rules": []},
+        {"key": "resolution_date", "label": "Resolution Date", "type": "datetime", "required": false, "default": null, "rules": []},
+        {"key": "auto_load", "label": "Auto load forms", "type": "boolean", "required": true, "default": true, "rules": []},
+        {"key": "auto_reminder", "label": "Auto Reminder", "type": "boolean", "required": true, "default": true, "rules": []},
+        {"key": "layout_zone", "label": "Position display into the layout", "type": "enum", "required": false, "default": "footer", "allowed_values": ["sidebar", "main", "footer", "header"], "rules": []},
+        {"key": "render_mode", "label": "Render mode of inquiries", "type": "enum", "required": false, "default": "rich_html", "allowed_values": ["cards", "list", "full", "summary", "rich_html"], "rules": []},
+        {"key": "open_mode", "label": "Open Mode", "type": "enum", "required": false, "default": "page", "allowed_values": ["page", "modal", "popup"], "rules": []},
+        {"key": "allow_anonymous", "label": "Allow Anonymous Feedback", "type": "boolean", "required": false, "default": false, "rules": []}
+      ],
+      "allowed_response": [
+        "official_citizen_participation"
+      ],
+      "allowed_transformation": null
+    },
+    {
+      "inquiry_type": "grievance",
+      "family": "administrative",
+      "icon": "AlertOctagon",
+      "label": {
+        "en": "Grievance",
+        "fr": "Réclamation",
+        "de": "Beschwerde",
+        "gsw": "Beschweärd"
+      },
+      "description": {
+        "en": "Formal grievance or complaint that requires investigation and resolution",
+        "fr": "Réclamation ou plainte formelle nécessitant une enquête et une résolution",
+        "de": "Formale Beschwerde oder Klage, die Untersuchung und Lösung erfordert",
+        "gsw": "Formelli Beschweärd oder Klag wo Undersuechig und Lösig brucht"
+      },
+      "is_root": true,
+      "fields": [
+        {"key": "severity", "label": "Severity", "type": "string", "required": false, "default": null, "rules": []},
+        {"key": "assigned_unit", "label": "Assigned Unit", "type": "string", "required": false, "default": null, "rules": []},
+        {"key": "resolution_date", "label": "Resolution Date", "type": "datetime", "required": false, "default": null, "rules": []},
+        {"key": "auto_load", "label": "Auto load forms", "type": "boolean", "required": true, "default": true, "rules": []},
+        {"key": "auto_reminder", "label": "Auto Reminder", "type": "boolean", "required": true, "default": true, "rules": []},
+        {"key": "layout_zone", "label": "Position display into the layout", "type": "enum", "required": false, "default": "footer", "allowed_values": ["sidebar", "main", "footer", "header"], "rules": []},
+        {"key": "render_mode", "label": "Render mode of inquiries", "type": "enum", "required": false, "default": "rich_html", "allowed_values": ["cards", "list", "full", "summary", "rich_html"], "rules": []},
+        {"key": "open_mode", "label": "Open Mode", "type": "enum", "required": false, "default": "page", "allowed_values": ["page", "modal", "popup"], "rules": []},
+        {"key": "allow_anonymous", "label": "Allow Anonymous Feedback", "type": "boolean", "required": false, "default": false, "rules": []}
+      ],
+      "allowed_response": [
+        "official_citizen_participation"
+      ],
+      "allowed_transformation": null
+    },
+    {
+      "inquiry_type": "service_request",
+      "family": "service",
+      "icon": "Offer",
+      "label": {
+        "en": "Service Request",
+        "fr": "Demande de service",
+        "de": "Dienstanfrage",
+        "gsw": "Dienschtaafrag"
+      },
+      "description": {
+        "en": "General service request for social or citizen services",
+        "fr": "Demande de service générale pour services sociaux ou citoyens",
+        "de": "Allgemeine Dienstanfrage für Sozial- oder Bürgerdienste",
+        "gsw": "Allgemeini Dienschtaafrag für Sozial- oder Bürger-Dienscht"
+      },
+      "is_root": true,
+      "fields": [
+        {"key": "support_type", "label": "Support Type", "type": "string", "required": true, "default": null, "rules": []},
+        {"key": "eligibility", "label": "Eligibility", "type": "string", "required": false, "default": null, "rules": []},
+        {"key": "assigned_unit", "label": "Assigned Unit", "type": "string", "required": false, "default": null, "rules": []},
+        {"key": "processing_deadline", "label": "Processing Deadline", "type": "datetime", "required": false, "default": null, "rules": []},
+        {"key": "resolution_date", "label": "Resolution Date", "type": "datetime", "required": false, "default": null, "rules": []},
+        {"key": "auto_load", "label": "Auto load forms", "type": "boolean", "required": true, "default": true, "rules": []},
+        {"key": "auto_reminder", "label": "Auto Reminder", "type": "boolean", "required": true, "default": true, "rules": []}
+      ],
+      "allowed_response": [
+        "official_citizen_participation"
+      ],
+      "allowed_transformation": null
+    },
+    {
+      "inquiry_type": "assembly",
+      "family": "collective",
+      "icon": "AccountMultiple",
+      "label": {
+        "en": "Assembly",
+        "fr": "Assemblée",
+        "de": "Versammlung",
+        "gsw": "Versammlig"
+      },
+      "description": {
+        "en": "Citizen assembly or gathering for collective decision-making",
+        "fr": "Assemblée citoyenne ou rassemblement pour prise de décision collective",
+        "de": "Bürgerversammlung oder Zusammenkunft zur kollektiven Entscheidungsfindung",
+        "gsw": "Bürger-Versammlig oder Zämekunft zur kollektive Entscheidigsfindigs"
+      },
+      "is_root": true,
+      "fields": [
+        {"key": "quorum", "label": "Quorum", "type": "integer", "required": false, "default": null, "rules": []},
+        {"key": "meeting_frequency", "label": "Meeting Frequency", "type": "string", "required": false, "default": null, "rules": []},
+        {"key": "voting_rules", "label": "Voting Rules", "type": "text", "required": false, "default": null, "rules": []},
+        {"key": "agenda", "label": "Agenda", "type": "text", "required": true, "default": null, "rules": []},
+        {"key": "facilitator_id", "label": "Facilitator", "type": "users", "required": false, "default": null, "rules": []},
+        {"key": "location", "label": "Location", "type": "location", "required": false, "default": null, "rules": []},
+        {"key": "layout_zone", "label": "Position display into the layout", "type": "enum", "required": false, "default": "footer", "allowed_values": ["sidebar", "main", "footer", "header"], "rules": []},
+        {"key": "render_mode", "label": "Render mode of inquiries", "type": "enum", "required": false, "default": "rich_html", "allowed_values": ["cards", "list", "full", "summary", "rich_html"], "rules": []},
+        {"key": "open_mode", "label": "Open Mode", "type": "enum", "required": false, "default": "page", "allowed_values": ["page", "modal", "popup"], "rules": []},
+        {"key": "allow_anonymous", "label": "Allow Anonymous Feedback", "type": "boolean", "required": false, "default": false, "rules": []}
+      ],
+      "allowed_response": [
+        "deliberation",
+        "consultation",
+        "proposal",
+        "law_proposal"
+      ],
+      "allowed_transformation": null
+    },
+    {
+      "inquiry_type": "consultation",
+      "family": "collective",
+      "icon": "Gavel",
+      "label": {
+        "en": "Consultation",
+        "fr": "Consultation",
+        "de": "Konsultation",
+        "gsw": "Konsultation"
+      },
+      "description": {
+        "en": "Public consultation process for gathering opinions and feedback",
+        "fr": "Processus de consultation publique pour recueillir avis et retours",
+        "de": "Öffentlicher Konsultationsprozess zur Sammlung von Meinungen und Feedback",
+        "gsw": "Öffentliche Konsultatione-Prozäss zum Sammle vo Meinige und Feedback"
+      },
+      "is_root": true,
+      "fields": [
+        {"key": "mandate", "label": "Mandate", "type": "text", "required": false, "default": null, "rules": []},
+        {"key": "deadline", "label": "Deadline", "type": "date", "required": false, "default": null, "rules": []},
+        {"key": "layout_zone", "label": "Position display into the layout", "type": "enum", "required": false, "default": "footer", "allowed_values": ["sidebar", "main", "footer", "header"], "rules": []},
+        {"key": "render_mode", "label": "Render mode of inquiries", "type": "enum", "required": false, "default": "rich_html", "allowed_values": ["cards", "list", "full", "summary", "rich_html"], "rules": []},
+        {"key": "open_mode", "label": "Open Mode", "type": "enum", "required": false, "default": "page", "allowed_values": ["page", "modal", "popup"], "rules": []},
+        {"key": "allow_anonymous", "label": "Allow Anonymous Feedback", "type": "boolean", "required": false, "default": false, "rules": []}
+      ],
+      "allowed_response": [
+        "proposal",
+        "law_proposal",
+        "official_citizen_participation"
+      ],
+      "allowed_transformation": null
+    },
+    {
+      "inquiry_type": "poll",
+      "family": "collective",
+      "icon": "BarChart",
+      "label": {
+        "en": "Poll",
+        "fr": "Sondage",
+        "de": "Umfrage",
+        "gsw": "Umfrag"
+      },
+      "description": {
+        "en": "Voting poll with multiple choice options and result tallying",
+        "fr": "Sondage avec options à choix multiples et décompte des résultats",
+        "de": "Abstimmungsumfrage mit Multiple-Choice-Optionen und Ergebnisauszählung",
+        "gsw": "Abstimmigs-Umfrag mit Multiple-Choice-Optione und Ergebnis-Uszählig"
+      },
+      "is_root": true,
+      "fields": [
+        {"key": "topic", "label": "Topic", "type": "string", "required": true, "default": null, "rules": []},
+        {"key": "voting_start", "label": "Voting Start", "type": "datetime", "required": true, "default": null, "rules": []},
+        {"key": "voting_end", "label": "Voting End", "type": "datetime", "required": true, "default": null, "rules": []},
+        {"key": "poll_method", "label": "Poll Method", "type": "enum", "required": true, "default": "simple", "allowed_values": ["simple", "majority_judgement_beneficial", "majority_judgement_number", "condorcet", "approval", "nauru"], "rules": []},
+        {"key": "allow_multiple_choices", "label": "Allow Multiple Choices", "type": "boolean", "required": true, "default": false, "rules": []},
+        {"key": "tie_break_rule", "label": "Tie Break Rule", "type": "enum", "required": true, "default": "random", "allowed_values": ["random", "condorcet_priority", "highest_median"], "rules": []},
+        {"key": "result_visibility", "label": "Result Visibility", "type": "enum", "required": true, "default": "after_close", "allowed_values": ["always", "after_close", "partial"], "rules": []},
+        {"key": "vote_secret", "label": "Secret Vote", "type": "boolean", "required": true, "default": true, "rules": []},
+        {"key": "layout_zone", "label": "Position display into the layout", "type": "enum", "required": false, "default": "footer", "allowed_values": ["sidebar", "main", "footer", "header"], "rules": []},
+        {"key": "render_mode", "label": "Render mode of inquiries", "type": "enum", "required": false, "default": "rich_html", "allowed_values": ["cards", "list", "full", "summary", "rich_html"], "rules": []},
+        {"key": "open_mode", "label": "Open Mode", "type": "enum", "required": false, "default": "page", "allowed_values": ["page", "modal", "popup"], "rules": []},
+        {"key": "allow_anonymous", "label": "Allow Anonymous Feedback", "type": "boolean", "required": false, "default": false, "rules": []}
+      ],
+      "allowed_response": [
+        "official_citizen_participation"
+      ],
+      "allowed_transformation": null
+    },
+    {
+      "inquiry_type": "news",
+      "family": "collective",
+      "icon": "Newspaper",
+      "label": {
+        "en": "News",
+        "fr": "Actualités",
+        "de": "Nachrichten",
+        "gsw": "Nachrichte"
+      },
+      "description": {
+        "en": "Public informational notice",
+        "fr": "Avis informatif public",
+        "de": "Öffentliche Informationsmitteilung",
+        "gsw": "Öffentlichi Informatione-Mitteilig"
+      },
+      "is_root": true,
+      "fields": [
+        {"key": "layout_zone", "label": "Position display into the layout", "type": "enum", "required": false, "default": "footer", "allowed_values": ["sidebar", "main", "footer", "header"], "rules": []},
+        {"key": "render_mode", "label": "Render mode of inquiries", "type": "enum", "required": false, "default": "rich_html", "allowed_values": ["cards", "list", "full", "summary", "rich_html"], "rules": []},
+        {"key": "open_mode", "label": "Open Mode", "type": "enum", "required": false, "default": "page", "allowed_values": ["page", "modal", "popup"], "rules": []},
+        {"key": "allow_anonymous", "label": "Allow Anonymous Feedback", "type": "boolean", "required": false, "default": false, "rules": []}
+      ],
+      "allowed_response": [],
+      "allowed_transformation": null
+    },
+    {
+      "inquiry_type": "announcement",
+      "family": "collective",
+      "icon": "Megaphone",
+      "label": {
+        "en": "Announcement",
+        "fr": "Annonce",
+        "de": "Ankündigung",
+        "gsw": "Aakündig"
+      },
+      "description": {
+        "en": "Administrative or public announcement",
+        "fr": "Annonce administrative ou publique",
+        "de": "Administrative oder öffentliche Ankündigung",
+        "gsw": "Administrativi oder öffentlichi Aakündig"
+      },
+      "is_root": true,
+      "fields": [
+        {"key": "layout_zone", "label": "Position display into the layout", "type": "enum", "required": false, "default": "footer", "allowed_values": ["sidebar", "main", "footer", "header"], "rules": []},
+        {"key": "render_mode", "label": "Render mode of inquiries", "type": "enum", "required": false, "default": "rich_html", "allowed_values": ["cards", "list", "full", "summary", "rich_html"], "rules": []},
+        {"key": "open_mode", "label": "Open Mode", "type": "enum", "required": false, "default": "page", "allowed_values": ["page", "modal", "popup"], "rules": []},
+        {"key": "allow_anonymous", "label": "Allow Anonymous Feedback", "type": "boolean", "required": false, "default": false, "rules": []}
+      ],
+      "allowed_response": [],
+      "allowed_transformation": null
+    },
+    {
+      "inquiry_type": "bulletin",
+      "family": "collective",
+      "icon": "ClipboardList",
+      "label": {
+        "en": "Bulletin",
+        "fr": "Bulletin",
+        "de": "Bulletin",
+        "gsw": "Bulletin"
+      },
+      "description": {
+        "en": "Periodic update or report",
+        "fr": "Mise à jour ou rapport périodique",
+        "de": "Periodische Aktualisierung oder Bericht",
+        "gsw": "Periodischi Aktualisierig oder Bericht"
+      },
+      "is_root": true,
+      "fields": [
+        {"key": "layout_zone", "label": "Position display into the layout", "type": "enum", "required": false, "default": "footer", "allowed_values": ["sidebar", "main", "footer", "header"], "rules": []},
+        {"key": "render_mode", "label": "Render mode of inquiries", "type": "enum", "required": false, "default": "rich_html", "allowed_values": ["cards", "list", "full", "summary", "rich_html"], "rules": []},
+        {"key": "open_mode", "label": "Open Mode", "type": "enum", "required": false, "default": "page", "allowed_values": ["page", "modal", "popup"], "rules": []},
+        {"key": "allow_anonymous", "label": "Allow Anonymous Feedback", "type": "boolean", "required": false, "default": false, "rules": []}
+      ],
+      "allowed_response": [],
+      "allowed_transformation": null
+    },
+    {
+      "inquiry_type": "meeting",
+      "family": "collective",
+      "icon": "Calendar",
+      "label": {
+        "en": "Meeting",
+        "fr": "Réunion",
+        "de": "Sitzung",
+        "gsw": "Sitzig"
+      },
+      "description": {
+        "en": "Scheduled in-person or online meeting",
+        "fr": "Réunion planifiée en personne ou en ligne",
+        "de": "Geplante persönliche oder Online-Sitzung",
+        "gsw": "Gplanti persönlichi oder Online-Sitzig"
+      },
+      "is_root": true,
+      "fields": [
+        {"key": "location", "label": "Location", "type": "string", "required": false, "default": null, "rules": []},
+        {"key": "meeting_date", "label": "Meeting Date", "type": "datetime", "required": true, "default": null, "rules": []},
+        {"key": "layout_zone", "label": "Position display into the layout", "type": "enum", "required": false, "default": "footer", "allowed_values": ["sidebar", "main", "footer", "header"], "rules": []},
+        {"key": "render_mode", "label": "Render mode of inquiries", "type": "enum", "required": false, "default": "rich_html", "allowed_values": ["cards", "list", "full", "summary", "rich_html"], "rules": []},
+        {"key": "open_mode", "label": "Open Mode", "type": "enum", "required": false, "default": "page", "allowed_values": ["page", "modal", "popup"], "rules": []},
+        {"key": "allow_anonymous", "label": "Allow Anonymous Feedback", "type": "boolean", "required": false, "default": false, "rules": []}
+      ],
+      "allowed_response": [
+        "suggestion"
+      ],
+      "allowed_transformation": null
+    },
+    {
+      "inquiry_type": "gathering",
+      "family": "collective",
+      "icon": "Users",
+      "label": {
+        "en": "Gathering",
+        "fr": "Rassemblement",
+        "de": "Versammlung",
+        "gsw": "Versammlig"
+      },
+      "description": {
+        "en": "Public citizen gathering or workshop",
+        "fr": "Rassemblement citoyen ou atelier public",
+        "de": "Öffentliche Bürgerversammlung oder Workshop",
+        "gsw": "Öffentlichi Bürger-Versammlig oder Workshop"
+      },
+      "is_root": true,
+      "fields": [
+        {"key": "location", "label": "Location", "type": "string", "required": false, "default": null, "rules": []},
+        {"key": "start", "label": "Start Date", "type": "datetime", "required": true, "default": null, "rules": []},
+        {"key": "layout_zone", "label": "Position display into the layout", "type": "enum", "required": false, "default": "footer", "allowed_values": ["sidebar", "main", "footer", "header"], "rules": []},
+        {"key": "render_mode", "label": "Render mode of inquiries", "type": "enum", "required": false, "default": "rich_html", "allowed_values": ["cards", "list", "full", "summary", "rich_html"], "rules": []},
+        {"key": "open_mode", "label": "Open Mode", "type": "enum", "required": false, "default": "page", "allowed_values": ["page", "modal", "popup"], "rules": []},
+        {"key": "allow_anonymous", "label": "Allow Anonymous Feedback", "type": "boolean", "required": false, "default": false, "rules": []}
+      ],
+      "allowed_response": [
+        "suggestion"
+      ],
+      "allowed_transformation": null
+    },
+    {
+      "inquiry_type": "conference",
+      "family": "collective",
+      "icon": "Presentation",
+      "label": {
+        "en": "Conference",
+        "fr": "Conférence",
+        "de": "Konferenz",
+        "gsw": "Konferenz"
+      },
+      "description": {
+        "en": "Public event presenting information or expert insights",
+        "fr": "Événement public présentant des informations ou des analyses d'experts",
+        "de": "Öffentliche Veranstaltung mit Informationen oder Experteneinblicken",
+        "gsw": "Öffentlichi Veranstaltig mit Informatione oder Experte-Iiblick"
+      },
+      "is_root": true,
+      "fields": [
+        {"key": "topic", "label": "Topic", "type": "string", "required": true, "default": null, "rules": []},
+        {"key": "speakers", "label": "Speakers", "type": "json", "required": false, "default": null, "rules": []},
+        {"key": "layout_zone", "label": "Position display into the layout", "type": "enum", "required": false, "default": "footer", "allowed_values": ["sidebar", "main", "footer", "header"], "rules": []},
+        {"key": "render_mode", "label": "Render mode of inquiries", "type": "enum", "required": false, "default": "rich_html", "allowed_values": ["cards", "list", "full", "summary", "rich_html"], "rules": []},
+        {"key": "open_mode", "label": "Open Mode", "type": "enum", "required": false, "default": "page", "allowed_values": ["page", "modal", "popup"], "rules": []},
+        {"key": "allow_anonymous", "label": "Allow Anonymous Feedback", "type": "boolean", "required": false, "default": false, "rules": []}
+      ],
+      "allowed_response": [
+        "suggestion"
+      ],
+      "allowed_transformation": null
+    },
+    {
+      "inquiry_type": "citizen_jury_recommendation",
+      "family": "collective",
+      "icon": "Gavel",
+      "label": {
+        "en": "Citizen Jury Recommendation",
+        "fr": "Recommandation du jury citoyen",
+        "de": "Bürgerjury-Empfehlung",
+        "gsw": "Bürger-Jury-Empfehlig"
+      },
+      "description": {
+        "en": "Recommendation issued by a randomly selected citizen jury",
+        "fr": "Recommandation émise par un jury citoyen sélectionné aléatoirement",
+        "de": "Empfehlung einer zufällig ausgewählten Bürgerjury",
+        "gsw": "Empfehlig vonere zuefällig uusgwählte Bürger-Jury"
+      },
+      "is_root": true,
+      "fields": [
+        {"key": "title", "label": "Title", "type": "string", "required": true, "default": null, "rules": []},
+        {"key": "mandate", "label": "Mandate", "type": "text", "required": false, "default": null, "rules": []},
+        {"key": "jury_id", "label": "Jury ID", "type": "users", "required": true, "default": null, "rules": []},
+        {"key": "layout_zone", "label": "Position display into the layout", "type": "enum", "required": false, "default": "footer", "allowed_values": ["sidebar", "main", "footer", "header"], "rules": []},
+        {"key": "render_mode", "label": "Render mode of inquiries", "type": "enum", "required": false, "default": "rich_html", "allowed_values": ["cards", "list", "full", "summary", "rich_html"], "rules": []},
+        {"key": "open_mode", "label": "Open Mode", "type": "enum", "required": false, "default": "page", "allowed_values": ["page", "modal", "popup"], "rules": []},
+        {"key": "allow_anonymous", "label": "Allow Anonymous Feedback", "type": "boolean", "required": false, "default": false, "rules": []}
+      ],
+      "allowed_response": [
+        "proposal",
+        "law_proposal",
+        "official_citizen_participation"
+      ],
+      "allowed_transformation": null
+    },
+    {
+      "inquiry_type": "scholarship_request",
+      "family": "social",
+      "icon": "School",
+      "label": {
+        "en": "Scholarship Request",
+        "fr": "Demande de bourse",
+        "de": "Stipendienantrag",
+        "gsw": "Stipendiums-Aatrag"
+      },
+      "description": {
+        "en": "Request for scholarship or educational aid",
+        "fr": "Demande de bourse ou d'aide éducative",
+        "de": "Antrag auf Stipendium oder Bildungshilfe",
+        "gsw": "Aatrag uf Stipendium oder Bildigshilf"
+      },
+      "is_root": true,
+      "fields": [
+        {"key": "student_id", "label": "Student ID", "type": "users", "required": true, "default": null, "rules": []},
+        {"key": "requested_amount", "label": "Requested Amount", "type": "integer", "required": true, "default": null, "rules": []},
+        {"key": "assigned_unit", "label": "Assigned Unit", "type": "string", "required": false, "default": null, "rules": []},
+        {"key": "auto_load", "label": "Auto load forms", "type": "boolean", "required": true, "default": true, "rules": []},
+        {"key": "auto_reminder", "label": "Auto Reminder", "type": "boolean", "required": true, "default": true, "rules": []}
+      ],
+      "allowed_response": [
+        "official_citizen_participation"
+      ],
+      "allowed_transformation": null
+    },
+    {
+      "inquiry_type": "childcare_request",
+      "family": "social",
+      "icon": "BabyCarriage",
+      "label": {
+        "en": "Childcare Request",
+        "fr": "Demande de garde d'enfants",
+        "de": "Kinderbetreuungsantrag",
+        "gsw": "Chinderbetreuigs-Aatrag"
+      },
+      "description": {
+        "en": "Request for childcare support or enrollment",
+        "fr": "Demande de soutien ou d'inscription à la garde d'enfants",
+        "de": "Antrag auf Kinderbetreuung oder Anmeldung",
+        "gsw": "Aatrag uf Chinderbetreuig oder Aamäldig"
+      },
+      "is_root": true,
+      "fields": [
+        {"key": "child_id", "label": "Child ID", "type": "users", "required": true, "default": null, "rules": []},
+        {"key": "assigned_unit", "label": "Assigned Unit", "type": "string", "required": false, "default": null, "rules": []},
+        {"key": "auto_load", "label": "Auto load forms", "type": "boolean", "required": true, "default": true, "rules": []},
+        {"key": "auto_reminder", "label": "Auto Reminder", "type": "boolean", "required": true, "default": true, "rules": []}
+      ],
+      "allowed_response": [
+        "official_citizen_participation"
+      ],
+      "allowed_transformation": null
+    },
+    {
+      "inquiry_type": "housing_request",
+      "family": "social",
+      "icon": "Home",
+      "label": {
+        "en": "Housing Request",
+        "fr": "Demande de logement",
+        "de": "Wohnungsantrag",
+        "gsw": "Wohnigs-Aatrag"
+      },
+      "description": {
+        "en": "Request for housing support or allocation",
+        "fr": "Demande de soutien ou d'allocation de logement",
+        "de": "Antrag auf Wohnungsunterstützung oder -zuweisung",
+        "gsw": "Aatrag uf Wohnigs-Understützig oder -Zuewisig"
+      },
+      "is_root": true,
+      "fields": [
+        {"key": "applicant_id", "label": "Applicant ID", "type": "users", "required": true, "default": null, "rules": []},
+        {"key": "priority_status", "label": "Priority Status", "type": "string", "required": false, "default": null, "rules": []},
+        {"key": "assigned_unit", "label": "Assigned Unit", "type": "string", "required": false, "default": null, "rules": []},
+        {"key": "auto_load", "label": "Auto load forms", "type": "boolean", "required": true, "default": true, "rules": []},
+        {"key": "auto_reminder", "label": "Auto Reminder", "type": "boolean", "required": true, "default": true, "rules": []}
+      ],
+      "allowed_response": [
+        "official_citizen_participation"
+      ],
+      "allowed_transformation": null
+    },
+    {
+      "inquiry_type": "official_citizen_participation",
+      "family": "official_citizen_participation",
+      "icon": "ClipboardCheck",
+      "label": {
+        "en": "Official Response",
+        "fr": "Réponse officielle",
+        "de": "Offizielle Antwort",
+        "gsw": "Offizelli Antwort"
+      },
+      "description": {
+        "en": "Official response from government, experts, or commissions",
+        "fr": "Réponse officielle du gouvernement, d'experts ou de commissions",
+        "de": "Offizielle Antwort von Regierung, Experten oder Kommissionen",
+        "gsw": "Offizelli Antwort vo Regierig, Experte oder Kommissione"
+      },
+      "is_root": true,
+      "fields": [
+        {"key": "responder_id", "label": "Responder", "type": "users", "required": true, "default": null, "rules": []},
+        {"key": "resolution_status", "label": "Resolution Status", "type": "enum", "required": true, "default": "pending", "allowed_values": ["pending", "accepted", "rejected"], "rules": []},
+        {"key": "layout_zone", "label": "Position display into the layout", "type": "enum", "required": false, "default": "footer", "allowed_values": ["sidebar", "main", "footer", "header"], "rules": []},
+        {"key": "render_mode", "label": "Render mode of inquiries", "type": "enum", "required": false, "default": "rich_html", "allowed_values": ["cards", "list", "full", "summary", "rich_html"], "rules": []},
+        {"key": "open_mode", "label": "Open Mode", "type": "enum", "required": false, "default": "page", "allowed_values": ["page", "modal", "popup"], "rules": []},
+        {"key": "allow_anonymous", "label": "Allow Anonymous Feedback", "type": "boolean", "required": false, "default": false, "rules": []}
+      ],
+      "allowed_response": null,
+      "allowed_transformation": null
+    }
+  ],
+  "inquiry_statuses": [
+    {
+      "inquiry_type": "proposal",
+      "status_key": "draft",
+      "label": {
+        "en": "Draft",
+        "fr": "Brouillon",
+        "de": "Entwurf",
+        "gsw": "Entwurf"
+      },
+      "description": {
+        "en": "Work in progress",
+        "fr": "Travail en cours",
+        "de": "In Arbeit",
+        "gsw": "In Arbeit"
+      },
+      "is_final": false,
+      "icon": "FileDocumentEdit",
+      "sort_order": 1
+    },
+    {
+      "inquiry_type": "proposal",
+      "status_key": "published",
+      "label": {
+        "en": "Published",
+        "fr": "Publié",
+        "de": "Veröffentlicht",
+        "gsw": "Veröffentlicht"
+      },
+      "description": {
+        "en": "Published and open",
+        "fr": "Publié et ouvert",
+        "de": "Veröffentlicht und offen",
+        "gsw": "Veröffentlicht und offe"
+      },
+      "is_final": false,
+      "icon": "Send",
+      "sort_order": 2
+    },
+    {
+      "inquiry_type": "proposal",
+      "status_key": "under_review",
+      "label": {
+        "en": "Under Review",
+        "fr": "En révision",
+        "de": "In Prüfung",
+        "gsw": "In Prüefig"
+      },
+      "description": {
+        "en": "Being reviewed",
+        "fr": "En cours d'examen",
+        "de": "Wird geprüft",
+        "gsw": "Wird gprüeft"
+      },
+      "is_final": false,
+      "icon": "ClipboardText",
+      "sort_order": 3
+    },
+    {
+      "inquiry_type": "proposal",
+      "status_key": "collecting_support",
+      "label": {
+        "en": "Collecting Support",
+        "fr": "Collecte de soutien",
+        "de": "Sammelt Unterstützung",
+        "gsw": "Sammlet Understützig"
+      },
+      "description": {
+        "en": "Open for support",
+        "fr": "Ouvert au soutien",
+        "de": "Offen für Unterstützung",
+        "gsw": "Offe für Understützig"
+      },
+      "is_final": false,
+      "icon": "Offer",
+      "sort_order": 4
+    },
+    {
+      "inquiry_type": "proposal",
+      "status_key": "accepted",
+      "label": {
+        "en": "Accepted",
+        "fr": "Accepté",
+        "de": "Akzeptiert",
+        "gsw": "Akzeptiert"
+      },
+      "description": {
+        "en": "Accepted for implementation",
+        "fr": "Accepté pour mise en œuvre",
+        "de": "Zur Umsetzung angenommen",
+        "gsw": "Zur Umsetzig agnoh"
+      },
+      "is_final": true,
+      "icon": "CheckCircle",
+      "sort_order": 5
+    },
+    {
+      "inquiry_type": "proposal",
+      "status_key": "rejected",
+      "label": {
+        "en": "Rejected",
+        "fr": "Rejeté",
+        "de": "Abgelehnt",
+        "gsw": "Abglehnt"
+      },
+      "description": {
+        "en": "Rejected",
+        "fr": "Rejeté",
+        "de": "Abgelehnt",
+        "gsw": "Abglehnt"
+      },
+      "is_final": true,
+      "icon": "CloseCircle",
+      "sort_order": 6
+    },
+    {
+      "inquiry_type": "petition",
+      "status_key": "draft",
+      "label": {
+        "en": "Draft",
+        "fr": "Brouillon",
+        "de": "Entwurf",
+        "gsw": "Entwurf"
+      },
+      "description": {
+        "en": "Petition is being prepared",
+        "fr": "La pétition est en cours de préparation",
+        "de": "Petition wird vorbereitet",
+        "gsw": "Petition wird vorbereitet"
+      },
+      "is_final": false,
+      "icon": "FileDocumentEdit",
+      "sort_order": 1
+    },
+    {
+      "inquiry_type": "petition",
+      "status_key": "published",
+      "label": {
+        "en": "Published",
+        "fr": "Publié",
+        "de": "Veröffentlicht",
+        "gsw": "Veröffentlicht"
+      },
+      "description": {
+        "en": "Petition has been published",
+        "fr": "La pétition a été publiée",
+        "de": "Petition wurde veröffentlicht",
+        "gsw": "Petition isch veröffentlicht"
+      },
+      "is_final": false,
+      "icon": "Send",
+      "sort_order": 2
+    },
+    {
+      "inquiry_type": "petition",
+      "status_key": "collecting_signatures",
+      "label": {
+        "en": "Collecting Signatures",
+        "fr": "Collecte de signatures",
+        "de": "Sammelt Unterschriften",
+        "gsw": "Sammlet Unterschrifte"
+      },
+      "description": {
+        "en": "Petition is actively collecting citizen signatures",
+        "fr": "La pétition collecte activement les signatures des citoyens",
+        "de": "Petition sammelt aktiv Bürgerunterschriften",
+        "gsw": "Petition sammlet aktiv Bürger-Unterschrifte"
+      },
+      "is_final": false,
+      "icon": "AccountMultiplePlus",
+      "sort_order": 3
+    },
+    {
+      "inquiry_type": "petition",
+      "status_key": "threshold_check",
+      "label": {
+        "en": "Threshold Check",
+        "fr": "Vérification du seuil",
+        "de": "Schwellenprüfung",
+        "gsw": "Schwelle-Prüefig"
+      },
+      "description": {
+        "en": "Verifying if signature threshold has been met",
+        "fr": "Vérification si le seuil de signatures est atteint",
+        "de": "Überprüfung ob Unterschriftenschwelle erreicht wurde",
+        "gsw": "Überprüefig ob Unterschrifte-Schwelle erreicht isch"
+      },
+      "is_final": false,
+      "icon": "CheckboxMarked",
+      "sort_order": 4
+    },
+    {
+      "inquiry_type": "petition",
+      "status_key": "under_official_review",
+      "label": {
+        "en": "Under Official Review",
+        "fr": "En examen officiel",
+        "de": "In offizieller Prüfung",
+        "gsw": "In offizieller Prüefig"
+      },
+      "description": {
+        "en": "Government officials are reviewing the petition",
+        "fr": "Les responsables gouvernementaux examinent la pétition",
+        "de": "Regierungsbeamte prüfen die Petition",
+        "gsw": "Regierigs-Beamti prüefe d'Petition"
+      },
+      "is_final": false,
+      "icon": "AccountTie",
+      "sort_order": 5
+    },
+    {
+      "inquiry_type": "petition",
+      "status_key": "response_issued",
+      "label": {
+        "en": "Response Issued",
+        "fr": "Réponse émise",
+        "de": "Antwort erteilt",
+        "gsw": "Antwort erteilt"
+      },
+      "description": {
+        "en": "Official response has been issued to the petition",
+        "fr": "Une réponse officielle a été émise à la pétition",
+        "de": "Offizielle Antwort auf die Petition wurde erteilt",
+        "gsw": "Offizielli Antwort uf d'Petition isch erteilt"
+      },
+      "is_final": true,
+      "icon": "CheckCircle",
+      "sort_order": 6
+    },
+    {
+      "inquiry_type": "petition",
+      "status_key": "insufficient_signatures",
+      "label": {
+        "en": "Insufficient Signatures",
+        "fr": "Signatures insuffisantes",
+        "de": "Unzureichende Unterschriften",
+        "gsw": "Unzureichendi Unterschrifte"
+      },
+      "description": {
+        "en": "Petition did not reach required signature threshold",
+        "fr": "La pétition n'a pas atteint le seuil de signatures requis",
+        "de": "Petition hat erforderliche Unterschriftenschwelle nicht erreicht",
+        "gsw": "Petition het erforderlich Unterschrifte-Schwelle nöd erreicht"
+      },
+      "is_final": true,
+      "icon": "CloseCircle",
+      "sort_order": 7
+    },
+    {
+      "inquiry_type": "initiative",
+      "status_key": "draft",
+      "label": {
+        "en": "Draft",
+        "fr": "Brouillon",
+        "de": "Entwurf",
+        "gsw": "Entwurf"
+      },
+      "description": {
+        "en": "Initiative is being drafted",
+        "fr": "L'initiative est en cours de rédaction",
+        "de": "Initiative wird entworfen",
+        "gsw": "Initiative wird entworfe"
+      },
+      "is_final": false,
+      "icon": "FileDocumentEdit",
+      "sort_order": 1
+    },
+    {
+      "inquiry_type": "initiative",
+      "status_key": "published",
+      "label": {
+        "en": "Published",
+        "fr": "Publié",
+        "de": "Veröffentlicht",
+        "gsw": "Veröffentlicht"
+      },
+      "description": {
+        "en": "Initiative has been published for public viewing",
+        "fr": "L'initiative a été publiée pour consultation publique",
+        "de": "Initiative wurde zur öffentlichen Einsicht veröffentlicht",
+        "gsw": "Initiative isch zur öffentliche Iisicht veröffentlicht"
+      },
+      "is_final": false,
+      "icon": "Send",
+      "sort_order": 2
+    },
+    {
+      "inquiry_type": "initiative",
+      "status_key": "support_gathering",
+      "label": {
+        "en": "Support Gathering",
+        "fr": "Collecte de soutien",
+        "de": "Unterstützungssammlung",
+        "gsw": "Understützig-Sammlig"
+      },
+      "description": {
+        "en": "Gathering citizen support for the initiative",
+        "fr": "Collecte du soutien citoyen pour l'initiative",
+        "de": "Bürgerunterstützung für die Initiative wird gesammelt",
+        "gsw": "Bürger-Understützig für d'Initiative wird gsammlet"
+      },
+      "is_final": false,
+      "icon": "AccountMultiplePlus",
+      "sort_order": 3
+    },
+    {
+      "inquiry_type": "initiative",
+      "status_key": "qualification",
+      "label": {
+        "en": "Qualification",
+        "fr": "Qualification",
+        "de": "Qualifikation",
+        "gsw": "Qualifikation"
+      },
+      "description": {
+        "en": "Verifying initiative meets all legal requirements",
+        "fr": "Vérification que l'initiative remplit toutes les exigences légales",
+        "de": "Überprüfung ob Initiative alle rechtlichen Anforderungen erfüllt",
+        "gsw": "Überprüefig ob Initiative alli rächtliche Aforderige erfüllt"
+      },
+      "is_final": false,
+      "icon": "ScaleBalance",
+      "sort_order": 4
+    },
+    {
+      "inquiry_type": "initiative",
+      "status_key": "committee_review",
+      "label": {
+        "en": "Committee Review",
+        "fr": "Examen du comité",
+        "de": "Ausschussprüfung",
+        "gsw": "Usschuss-Prüefig"
+      },
+      "description": {
+        "en": "Parliamentary or civic committee reviewing the initiative",
+        "fr": "Comité parlementaire ou civique examine l'initiative",
+        "de": "Parlamentarischer oder bürgerlicher Ausschuss prüft die Initiative",
+        "gsw": "Parlamentarische oder bürgerliche Usschuss prüeft d'Initiative"
+      },
+      "is_final": false,
+      "icon": "AccountGroup",
+      "sort_order": 5
+    },
+    {
+      "inquiry_type": "initiative",
+      "status_key": "ballot_scheduled",
+      "label": {
+        "en": "Ballot Scheduled",
+        "fr": "Vote programmé",
+        "de": "Abstimmung geplant",
+        "gsw": "Abstimmig plant"
+      },
+      "description": {
+        "en": "Initiative qualified and scheduled for public vote",
+        "fr": "Initiative qualifiée et programmée pour vote public",
+        "de": "Initiative qualifiziert und zur öffentlichen Abstimmung geplant",
+        "gsw": "Initiative qualifiziert und zur öffentliche Abstimmig plant"
+      },
+      "is_final": true,
+      "icon": "VoteOutline",
+      "sort_order": 6
+    },
+    {
+      "inquiry_type": "initiative",
+      "status_key": "rejected",
+      "label": {
+        "en": "Rejected",
+        "fr": "Rejeté",
+        "de": "Abgelehnt",
+        "gsw": "Abglehnt"
+      },
+      "description": {
+        "en": "Initiative did not qualify or was rejected",
+        "fr": "L'initiative n'a pas été qualifiée ou a été rejetée",
+        "de": "Initiative wurde nicht qualifiziert oder abgelehnt",
+        "gsw": "Initiative isch nöd qualifiziert oder abglehnt worde"
+      },
+      "is_final": true,
+      "icon": "CloseCircle",
+      "sort_order": 7
+    },
+    {
+      "inquiry_type": "debate",
+      "status_key": "open",
+      "label": {
+        "en": "Open",
+        "fr": "Ouvert",
+        "de": "Offen",
+        "gsw": "Offe"
+      },
+      "description": {
+        "en": "Debate has been opened for discussion",
+        "fr": "Le débat a été ouvert pour discussion",
+        "de": "Debatte wurde zur Diskussion eröffnet",
+        "gsw": "Debatte isch zur Diskussion eröffnet"
+      },
+      "is_final": false,
+      "icon": "ForumOutline",
+      "sort_order": 1
+    },
+    {
+      "inquiry_type": "debate",
+      "status_key": "contributions_welcome",
+      "label": {
+        "en": "Contributions Welcome",
+        "fr": "Contributions bienvenues",
+        "de": "Beiträge willkommen",
+        "gsw": "Biträg willkomme"
+      },
+      "description": {
+        "en": "Actively seeking citizen contributions and arguments",
+        "fr": "Recherche active de contributions et arguments citoyens",
+        "de": "Aktiv auf der Suche nach Bürgerbeiträgen und Argumenten",
+        "gsw": "Aktiv uf de Suechi nach Bürger-Biträg und Argumänt"
+      },
+      "is_final": false,
+      "icon": "CommentPlus",
+      "sort_order": 2
+    },
+    {
+      "inquiry_type": "debate",
+      "status_key": "synthesis_phase",
+      "label": {
+        "en": "Synthesis Phase",
+        "fr": "Phase de synthèse",
+        "de": "Synthesephase",
+        "gsw": "Synthese-Phas"
+      },
+      "description": {
+        "en": "Key arguments being synthesized and organized",
+        "fr": "Arguments clés en cours de synthèse et d'organisation",
+        "de": "Hauptargumente werden zusammengefasst und organisiert",
+        "gsw": "Hauptargumänt wärde zämegfasst und organisiert"
+      },
+      "is_final": false,
+      "icon": "TextBoxMultiple",
+      "sort_order": 3
+    },
+    {
+      "inquiry_type": "debate",
+      "status_key": "moderator_summary",
+      "label": {
+        "en": "Moderator Summary",
+        "fr": "Résumé du modérateur",
+        "de": "Moderatorzusammenfassung",
+        "gsw": "Moderator-Zämefassig"
+      },
+      "description": {
+        "en": "Moderator is preparing final summary of the debate",
+        "fr": "Le modérateur prépare le résumé final du débat",
+        "de": "Moderator bereitet finale Zusammenfassung der Debatte vor",
+        "gsw": "Moderator bereitet finali Zämefassig vo dr Debatte vor"
+      },
+      "is_final": false,
+      "icon": "AccountEdit",
+      "sort_order": 4
+    },
+    {
+      "inquiry_type": "debate",
+      "status_key": "concluded",
+      "label": {
+        "en": "Concluded",
+        "fr": "Conclu",
+        "de": "Abgeschlossen",
+        "gsw": "Abgschlosse"
+      },
+      "description": {
+        "en": "Debate has concluded with final summary available",
+        "fr": "Le débat est conclu avec le résumé final disponible",
+        "de": "Debatte wurde mit verfügbarer Endzusammenfassung abgeschlossen",
+        "gsw": "Debatte isch mit verfüegbarer Ändzämefassig abgschlosse"
+      },
+      "is_final": true,
+      "icon": "CheckCircle",
+      "sort_order": 5
+    },
+    {
+      "inquiry_type": "deliberation",
+      "status_key": "open",
+      "label": {
+        "en": "Open",
+        "fr": "Ouvert",
+        "de": "Offen",
+        "gsw": "Offe"
+      },
+      "description": {
+        "en": "Deliberation has been opened",
+        "fr": "La délibération a été ouverte",
+        "de": "Beratung wurde eröffnet",
+        "gsw": "Beratig isch eröffnet"
+      },
+      "is_final": false,
+      "icon": "ForumOutline",
+      "sort_order": 1
+    },
+    {
+      "inquiry_type": "deliberation",
+      "status_key": "evidence_gathering",
+      "label": {
+        "en": "Evidence Gathering",
+        "fr": "Collecte de preuves",
+        "de": "Beweissammlung",
+        "gsw": "Bewiis-Sammlig"
+      },
+      "description": {
+        "en": "Collecting evidence and expert input",
+        "fr": "Collecte de preuves et d'avis d'experts",
+        "de": "Sammeln von Beweisen und Expertenmeinungen",
+        "gsw": "Sammle vo Bewiis und Experte-Meinige"
+      },
+      "is_final": false,
+      "icon": "FileDocumentMultiple",
+      "sort_order": 2
+    },
+    {
+      "inquiry_type": "deliberation",
+      "status_key": "structured_discussion",
+      "label": {
+        "en": "Structured Discussion",
+        "fr": "Discussion structurée",
+        "de": "Strukturierte Diskussion",
+        "gsw": "Strukturierti Diskussion"
+      },
+      "description": {
+        "en": "Participants engaging in structured deliberation",
+        "fr": "Les participants s'engagent dans une délibération structurée",
+        "de": "Teilnehmer führen strukturierte Beratung durch",
+        "gsw": "Teilnähmer füehre strukturierti Beratig durch"
+      },
+      "is_final": false,
+      "icon": "AccountGroup",
+      "sort_order": 3
+    },
+    {
+      "inquiry_type": "deliberation",
+      "status_key": "consensus_building",
+      "label": {
+        "en": "Consensus Building",
+        "fr": "Construction du consensus",
+        "de": "Konsensbildung",
+        "gsw": "Konsens-Bildig"
+      },
+      "description": {
+        "en": "Working towards consensus among participants",
+        "fr": "Travail vers un consensus entre les participants",
+        "de": "Arbeiten an Konsens unter den Teilnehmern",
+        "gsw": "Arbeite a Konsens under de Teilnähmer"
+      },
+      "is_final": false,
+      "icon": "Handshake",
+      "sort_order": 4
+    },
+    {
+      "inquiry_type": "deliberation",
+      "status_key": "recommendation_formed",
+      "label": {
+        "en": "Recommendation Formed",
+        "fr": "Recommandation formée",
+        "de": "Empfehlung gebildet",
+        "gsw": "Empfählig bildet"
+      },
+      "description": {
+        "en": "Deliberation has produced a formal recommendation",
+        "fr": "La délibération a produit une recommandation formelle",
+        "de": "Beratung hat eine formale Empfehlung hervorgebracht",
+        "gsw": "Beratig het e formali Empfählig hervorbracht"
+      },
+      "is_final": false,
+      "icon": "ClipboardCheck",
+      "sort_order": 5
+    },
+    {
+      "inquiry_type": "deliberation",
+      "status_key": "concluded",
+      "label": {
+        "en": "Concluded",
+        "fr": "Conclu",
+        "de": "Abgeschlossen",
+        "gsw": "Abgschlosse"
+      },
+      "description": {
+        "en": "Deliberation has concluded with final recommendation",
+        "fr": "La délibération est conclue avec une recommandation finale",
+        "de": "Beratung wurde mit finaler Empfehlung abgeschlossen",
+        "gsw": "Beratig isch mit finaler Empfählig abgschlosse"
+      },
+      "is_final": true,
+      "icon": "CheckCircle",
+      "sort_order": 6
+    },
+    {
+      "inquiry_type": "objection",
+      "status_key": "under_process",
+      "label": {
+        "en": "Under Process",
+        "fr": "En cours",
+        "de": "In Bearbeitung",
+        "gsw": "In Bearbeitig"
+      },
+      "description": {
+        "en": "Being processed",
+        "fr": "Being processed",
+        "de": "Being processed",
+        "gsw": "Being processed"
+      },
+      "is_final": false,
+      "icon": "ClockOutline",
+      "sort_order": 1
+    },
+    {
+      "inquiry_type": "objection",
+      "status_key": "resolved",
+      "label": {
+        "en": "Resolved",
+        "fr": "Résolu",
+        "de": "Gelöst",
+        "gsw": "Glöst"
+      },
+      "description": {
+        "en": "Resolved",
+        "fr": "Resolved",
+        "de": "Resolved",
+        "gsw": "Resolved"
+      },
+      "is_final": true,
+      "icon": "Check",
+      "sort_order": 2
+    },
+    {
+      "inquiry_type": "objection",
+      "status_key": "unresolved",
+      "label": {
+        "en": "Unresolved",
+        "fr": "Non résolu",
+        "de": "Ungelöst",
+        "gsw": "Unglöst"
+      },
+      "description": {
+        "en": "Could not be resolved",
+        "fr": "Could not be resolved",
+        "de": "Could not be resolved",
+        "gsw": "Could not be resolved"
+      },
+      "is_final": true,
+      "icon": "Cancel",
+      "sort_order": 3
+    },
+    {
+      "inquiry_type": "suggestion",
+      "status_key": "under_process",
+      "label": {
+        "en": "Under Process",
+        "fr": "En cours",
+        "de": "In Bearbeitung",
+        "gsw": "In Bearbeitig"
+      },
+      "description": {
+        "en": "Being processed",
+        "fr": "Being processed",
+        "de": "Being processed",
+        "gsw": "Being processed"
+      },
+      "is_final": false,
+      "icon": "ClockOutline",
+      "sort_order": 1
+    },
+    {
+      "inquiry_type": "suggestion",
+      "status_key": "resolved",
+      "label": {
+        "en": "Resolved",
+        "fr": "Résolu",
+        "de": "Gelöst",
+        "gsw": "Glöst"
+      },
+      "description": {
+        "en": "Resolved",
+        "fr": "Resolved",
+        "de": "Resolved",
+        "gsw": "Resolved"
+      },
+      "is_final": true,
+      "icon": "Check",
+      "sort_order": 2
+    },
+    {
+      "inquiry_type": "suggestion",
+      "status_key": "unresolved",
+      "label": {
+        "en": "Unresolved",
+        "fr": "Non résolu",
+        "de": "Ungelöst",
+        "gsw": "Unglöst"
+      },
+      "description": {
+        "en": "Could not be resolved",
+        "fr": "Could not be resolved",
+        "de": "Could not be resolved",
+        "gsw": "Could not be resolved"
+      },
+      "is_final": true,
+      "icon": "Cancel",
+      "sort_order": 3
+    },
+    {
+      "inquiry_type": "project",
+      "status_key": "under_process",
+      "label": {
+        "en": "Under Process",
+        "fr": "En cours",
+        "de": "In Bearbeitung",
+        "gsw": "In Bearbeitig"
+      },
+      "description": {
+        "en": "Being processed",
+        "fr": "Being processed",
+        "de": "Being processed",
+        "gsw": "Being processed"
+      },
+      "is_final": false,
+      "icon": "ClockOutline",
+      "sort_order": 1
+    },
+    {
+      "inquiry_type": "project",
+      "status_key": "resolved",
+      "label": {
+        "en": "Resolved",
+        "fr": "Résolu",
+        "de": "Gelöst",
+        "gsw": "Glöst"
+      },
+      "description": {
+        "en": "Resolved",
+        "fr": "Resolved",
+        "de": "Resolved",
+        "gsw": "Resolved"
+      },
+      "is_final": true,
+      "icon": "Check",
+      "sort_order": 2
+    },
+    {
+      "inquiry_type": "project",
+      "status_key": "unresolved",
+      "label": {
+        "en": "Unresolved",
+        "fr": "Non résolu",
+        "de": "Ungelöst",
+        "gsw": "Unglöst"
+      },
+      "description": {
+        "en": "Could not be resolved",
+        "fr": "Could not be resolved",
+        "de": "Could not be resolved",
+        "gsw": "Could not be resolved"
+      },
+      "is_final": true,
+      "icon": "Cancel",
+      "sort_order": 3
+    },
+    {
+      "inquiry_type": "law_proposal",
+      "status_key": "draft",
+      "label": {
+        "en": "Draft",
+        "fr": "Brouillon",
+        "de": "Entwurf",
+        "gsw": "Entwurf"
+      },
+      "description": {
+        "en": "Being prepared",
+        "fr": "Being prepared",
+        "de": "Being prepared",
+        "gsw": "Being prepared"
+      },
+      "is_final": false,
+      "icon": "FileDocumentEdit",
+      "sort_order": 1
+    },
+    {
+      "inquiry_type": "law_proposal",
+      "status_key": "published",
+      "label": {
+        "en": "Published",
+        "fr": "Publié",
+        "de": "Veröffentlicht",
+        "gsw": "Veröffentlicht"
+      },
+      "description": {
+        "en": "Published",
+        "fr": "Published",
+        "de": "Published",
+        "gsw": "Published"
+      },
+      "is_final": false,
+      "icon": "Send",
+      "sort_order": 2
+    },
+    {
+      "inquiry_type": "law_proposal",
+      "status_key": "completed",
+      "label": {
+        "en": "Completed",
+        "fr": "Terminé",
+        "de": "Abgeschlossen",
+        "gsw": "Abgschlosse"
+      },
+      "description": {
+        "en": "Completed",
+        "fr": "Completed",
+        "de": "Completed",
+        "gsw": "Completed"
+      },
+      "is_final": true,
+      "icon": "CheckCircle",
+      "sort_order": 3
+    },
+    {
+      "inquiry_type": "amendment",
+      "status_key": "draft",
+      "label": {
+        "en": "Draft",
+        "fr": "Brouillon",
+        "de": "Entwurf",
+        "gsw": "Entwurf"
+      },
+      "description": {
+        "en": "Being prepared",
+        "fr": "Being prepared",
+        "de": "Being prepared",
+        "gsw": "Being prepared"
+      },
+      "is_final": false,
+      "icon": "FileDocumentEdit",
+      "sort_order": 1
+    },
+    {
+      "inquiry_type": "amendment",
+      "status_key": "published",
+      "label": {
+        "en": "Published",
+        "fr": "Publié",
+        "de": "Veröffentlicht",
+        "gsw": "Veröffentlicht"
+      },
+      "description": {
+        "en": "Published",
+        "fr": "Published",
+        "de": "Published",
+        "gsw": "Published"
+      },
+      "is_final": false,
+      "icon": "Send",
+      "sort_order": 2
+    },
+    {
+      "inquiry_type": "amendment",
+      "status_key": "completed",
+      "label": {
+        "en": "Completed",
+        "fr": "Terminé",
+        "de": "Abgeschlossen",
+        "gsw": "Abgschlosse"
+      },
+      "description": {
+        "en": "Completed",
+        "fr": "Completed",
+        "de": "Completed",
+        "gsw": "Completed"
+      },
+      "is_final": true,
+      "icon": "CheckCircle",
+      "sort_order": 3
+    },
+    {
+      "inquiry_type": "constitutional_workshop",
+      "status_key": "open",
+      "label": {
+        "en": "Open",
+        "fr": "Ouvert",
+        "de": "Offen",
+        "gsw": "Offe"
+      },
+      "description": {
+        "en": "Open",
+        "fr": "Open",
+        "de": "Open",
+        "gsw": "Open"
+      },
+      "is_final": false,
+      "icon": "ForumOutline",
+      "sort_order": 1
+    },
+    {
+      "inquiry_type": "constitutional_workshop",
+      "status_key": "closed",
+      "label": {
+        "en": "Closed",
+        "fr": "Fermé",
+        "de": "Geschlossen",
+        "gsw": "Gschlosse"
+      },
+      "description": {
+        "en": "Closed",
+        "fr": "Closed",
+        "de": "Closed",
+        "gsw": "Closed"
+      },
+      "is_final": true,
+      "icon": "Check",
+      "sort_order": 2
+    },
+    {
+      "inquiry_type": "policy_consultation",
+      "status_key": "open",
+      "label": {
+        "en": "Open",
+        "fr": "Ouvert",
+        "de": "Offen",
+        "gsw": "Offe"
+      },
+      "description": {
+        "en": "Open",
+        "fr": "Open",
+        "de": "Open",
+        "gsw": "Open"
+      },
+      "is_final": false,
+      "icon": "ForumOutline",
+      "sort_order": 1
+    },
+    {
+      "inquiry_type": "policy_consultation",
+      "status_key": "closed",
+      "label": {
+        "en": "Closed",
+        "fr": "Fermé",
+        "de": "Geschlossen",
+        "gsw": "Gschlosse"
+      },
+      "description": {
+        "en": "Closed",
+        "fr": "Closed",
+        "de": "Closed",
+        "gsw": "Closed"
+      },
+      "is_final": true,
+      "icon": "Check",
+      "sort_order": 2
+    },
+    {
+      "inquiry_type": "admin_request",
+      "status_key": "under_process",
+      "label": {
+        "en": "Under Process",
+        "fr": "En cours",
+        "de": "In Bearbeitung",
+        "gsw": "In Bearbeitig"
+      },
+      "description": {
+        "en": "Being processed",
+        "fr": "Being processed",
+        "de": "Being processed",
+        "gsw": "Being processed"
+      },
+      "is_final": false,
+      "icon": "ClockOutline",
+      "sort_order": 1
+    },
+    {
+      "inquiry_type": "admin_request",
+      "status_key": "resolved",
+      "label": {
+        "en": "Resolved",
+        "fr": "Résolu",
+        "de": "Gelöst",
+        "gsw": "Glöst"
+      },
+      "description": {
+        "en": "Resolved",
+        "fr": "Resolved",
+        "de": "Resolved",
+        "gsw": "Resolved"
+      },
+      "is_final": true,
+      "icon": "Check",
+      "sort_order": 2
+    },
+    {
+      "inquiry_type": "admin_request",
+      "status_key": "unresolved",
+      "label": {
+        "en": "Unresolved",
+        "fr": "Non résolu",
+        "de": "Ungelöst",
+        "gsw": "Unglöst"
+      },
+      "description": {
+        "en": "Could not be resolved",
+        "fr": "Could not be resolved",
+        "de": "Could not be resolved",
+        "gsw": "Could not be resolved"
+      },
+      "is_final": true,
+      "icon": "Cancel",
+      "sort_order": 3
+    },
+    {
+      "inquiry_type": "grievance",
+      "status_key": "under_process",
+      "label": {
+        "en": "Under Process",
+        "fr": "En cours",
+        "de": "In Bearbeitung",
+        "gsw": "In Bearbeitig"
+      },
+      "description": {
+        "en": "Being processed",
+        "fr": "Being processed",
+        "de": "Being processed",
+        "gsw": "Being processed"
+      },
+      "is_final": false,
+      "icon": "ClockOutline",
+      "sort_order": 1
+    },
+    {
+      "inquiry_type": "grievance",
+      "status_key": "resolved",
+      "label": {
+        "en": "Resolved",
+        "fr": "Résolu",
+        "de": "Gelöst",
+        "gsw": "Glöst"
+      },
+      "description": {
+        "en": "Resolved",
+        "fr": "Resolved",
+        "de": "Resolved",
+        "gsw": "Resolved"
+      },
+      "is_final": true,
+      "icon": "Check",
+      "sort_order": 2
+    },
+    {
+      "inquiry_type": "grievance",
+      "status_key": "unresolved",
+      "label": {
+        "en": "Unresolved",
+        "fr": "Non résolu",
+        "de": "Ungelöst",
+        "gsw": "Unglöst"
+      },
+      "description": {
+        "en": "Could not be resolved",
+        "fr": "Could not be resolved",
+        "de": "Could not be resolved",
+        "gsw": "Could not be resolved"
+      },
+      "is_final": true,
+      "icon": "Cancel",
+      "sort_order": 3
+    },
+    {
+      "inquiry_type": "service_request",
+      "status_key": "under_process",
+      "label": {
+        "en": "Under Process",
+        "fr": "En cours",
+        "de": "In Bearbeitung",
+        "gsw": "In Bearbeitig"
+      },
+      "description": {
+        "en": "Being processed",
+        "fr": "Being processed",
+        "de": "Being processed",
+        "gsw": "Being processed"
+      },
+      "is_final": false,
+      "icon": "ClockOutline",
+      "sort_order": 1
+    },
+    {
+      "inquiry_type": "service_request",
+      "status_key": "resolved",
+      "label": {
+        "en": "Resolved",
+        "fr": "Résolu",
+        "de": "Gelöst",
+        "gsw": "Glöst"
+      },
+      "description": {
+        "en": "Resolved",
+        "fr": "Resolved",
+        "de": "Resolved",
+        "gsw": "Resolved"
+      },
+      "is_final": true,
+      "icon": "Check",
+      "sort_order": 2
+    },
+    {
+      "inquiry_type": "service_request",
+      "status_key": "unresolved",
+      "label": {
+        "en": "Unresolved",
+        "fr": "Non résolu",
+        "de": "Ungelöst",
+        "gsw": "Unglöst"
+      },
+      "description": {
+        "en": "Could not be resolved",
+        "fr": "Could not be resolved",
+        "de": "Could not be resolved",
+        "gsw": "Could not be resolved"
+      },
+      "is_final": true,
+      "icon": "Cancel",
+      "sort_order": 3
+    },
+    {
+      "inquiry_type": "assembly",
+      "status_key": "open",
+      "label": {
+        "en": "Open",
+        "fr": "Ouvert",
+        "de": "Offen",
+        "gsw": "Offe"
+      },
+      "description": {
+        "en": "Open",
+        "fr": "Open",
+        "de": "Open",
+        "gsw": "Open"
+      },
+      "is_final": false,
+      "icon": "ForumOutline",
+      "sort_order": 1
+    },
+    {
+      "inquiry_type": "assembly",
+      "status_key": "closed",
+      "label": {
+        "en": "Closed",
+        "fr": "Fermé",
+        "de": "Geschlossen",
+        "gsw": "Gschlosse"
+      },
+      "description": {
+        "en": "Closed",
+        "fr": "Closed",
+        "de": "Closed",
+        "gsw": "Closed"
+      },
+      "is_final": true,
+      "icon": "Check",
+      "sort_order": 2
+    },
+    {
+      "inquiry_type": "consultation",
+      "status_key": "open",
+      "label": {
+        "en": "Open",
+        "fr": "Ouvert",
+        "de": "Offen",
+        "gsw": "Offe"
+      },
+      "description": {
+        "en": "Open",
+        "fr": "Open",
+        "de": "Open",
+        "gsw": "Open"
+      },
+      "is_final": false,
+      "icon": "ForumOutline",
+      "sort_order": 1
+    },
+    {
+      "inquiry_type": "consultation",
+      "status_key": "closed",
+      "label": {
+        "en": "Closed",
+        "fr": "Fermé",
+        "de": "Geschlossen",
+        "gsw": "Gschlosse"
+      },
+      "description": {
+        "en": "Closed",
+        "fr": "Closed",
+        "de": "Closed",
+        "gsw": "Closed"
+      },
+      "is_final": true,
+      "icon": "Check",
+      "sort_order": 2
+    },
+    {
+      "inquiry_type": "poll",
+      "status_key": "open",
+      "label": {
+        "en": "Open",
+        "fr": "Ouvert",
+        "de": "Offen",
+        "gsw": "Offe"
+      },
+      "description": {
+        "en": "Open",
+        "fr": "Open",
+        "de": "Open",
+        "gsw": "Open"
+      },
+      "is_final": false,
+      "icon": "ForumOutline",
+      "sort_order": 1
+    },
+    {
+      "inquiry_type": "poll",
+      "status_key": "closed",
+      "label": {
+        "en": "Closed",
+        "fr": "Fermé",
+        "de": "Geschlossen",
+        "gsw": "Gschlosse"
+      },
+      "description": {
+        "en": "Closed",
+        "fr": "Closed",
+        "de": "Closed",
+        "gsw": "Closed"
+      },
+      "is_final": true,
+      "icon": "Check",
+      "sort_order": 2
+    },
+    {
+      "inquiry_type": "official_citizen_participation",
+      "status_key": "open",
+      "label": {
+        "en": "Open",
+        "fr": "Ouvert",
+        "de": "Offen",
+        "gsw": "Offe"
+      },
+      "description": {
+        "en": "Open",
+        "fr": "Open",
+        "de": "Open",
+        "gsw": "Open"
+      },
+      "is_final": false,
+      "icon": "ForumOutline",
+      "sort_order": 1
+    },
+    {
+      "inquiry_type": "official_citizen_participation",
+      "status_key": "closed",
+      "label": {
+        "en": "Closed",
+        "fr": "Fermé",
+        "de": "Geschlossen",
+        "gsw": "Gschlosse"
+      },
+      "description": {
+        "en": "Closed",
+        "fr": "Closed",
+        "de": "Closed",
+        "gsw": "Closed"
+      },
+      "is_final": true,
+      "icon": "Check",
+      "sort_order": 2
+    }
+  ],
+  "option_types": [
+    {
+      "family": "debate",
+      "option_type": "debate_for",
+      "icon": "ThumbUp",
+      "label": {
+        "en": "For",
+        "fr": "Pour",
+        "de": "Dafür",
+        "gsw": "Defür"
+      },
+      "description": {
+        "en": "Argument in favour",
+        "fr": "Argument en faveur",
+        "de": "Argument dafür",
+        "gsw": "Argumänt defür"
+      },
+      "allowed_response": [
+        "suggestion",
+        "proposal",
+        "official_citizen_participation"
+      ]
+    },
+    {
+      "family": "debate",
+      "option_type": "debate_against",
+      "icon": "ThumbDown",
+      "label": {
+        "en": "Against",
+        "fr": "Contre",
+        "de": "Dagegen",
+        "gsw": "Dergege"
+      },
+      "description": {
+        "en": "Argument against",
+        "fr": "Argument contre",
+        "de": "Argument dagegen",
+        "gsw": "Argumänt dergege"
+      },
+      "allowed_response": [
+        "suggestion",
+        "proposal",
+        "official_citizen_participation"
+      ]
+    },
+    {
+      "family": "debate",
+      "option_type": "debate_choice",
+      "icon": "CheckboxMultiple",
+      "label": {
+        "en": "Choice",
+        "fr": "Choix",
+        "de": "Auswahl",
+        "gsw": "Uswahl"
+      },
+      "description": {
+        "en": "Selectable choice",
+        "fr": "Choix sélectionnable",
+        "de": "Wählbare Option",
+        "gsw": "Wählbari Option"
+      },
+      "allowed_response": []
+    },
+    {
+      "family": "law_proposal",
+      "option_type": "chapter",
+      "icon": "BookOpenVariant",
+      "label": {
+        "en": "Chapter",
+        "fr": "Chapitre",
+        "de": "Kapitel",
+        "gsw": "Kapitel"
+      },
+      "description": {
+        "en": "Law chapter",
+        "fr": "Chapitre de loi",
+        "de": "Gesetzeskapitel",
+        "gsw": "Gsetzeskapitel"
+      },
+      "allowed_response": [
+        "article",
+        "official_citizen_participation"
+      ]
+    },
+    {
+      "family": "law_proposal",
+      "option_type": "article",
+      "icon": "FileDocument",
+      "label": {
+        "en": "Article",
+        "fr": "Article",
+        "de": "Artikel",
+        "gsw": "Artikel"
+      },
+      "description": {
+        "en": "Law article",
+        "fr": "Article de loi",
+        "de": "Gesetzesartikel",
+        "gsw": "Gsetzesartikel"
+      },
+      "allowed_response": [
+        "amendment",
+        "official_citizen_participation"
+      ]
+    }
+  ],
+  "inquiry_group_types": [
+    {
+      "group_type": "theme",
+      "label": {
+        "en": "Theme",
+        "fr": "Thème",
+        "de": "Thema",
+        "gsw": "Thema"
+      },
+      "description": {
+        "en": "Group inquiries by theme",
+        "fr": "Regrouper par thème",
+        "de": "Nach Thema gruppieren",
+        "gsw": "Nach Thema gruppiere"
+      },
+      "icon": "Tag",
+      "is_root": false,
+      "sort_order": 1
+    },
+    {
+      "group_type": "project",
+      "label": {
+        "en": "Project",
+        "fr": "Projet",
+        "de": "Projekt",
+        "gsw": "Projäkt"
+      },
+      "description": {
+        "en": "Group inquiries by project",
+        "fr": "Regrouper par projet",
+        "de": "Nach Projekt gruppieren",
+        "gsw": "Nach Projäkt gruppiere"
+      },
+      "icon": "FolderMultiple",
+      "is_root": false,
+      "sort_order": 2
+    },
+    {
+      "group_type": "initiative_group",
+      "label": {
+        "en": "Citizens Initiative",
+        "fr": "Initiative citoyenne",
+        "de": "Bürgerinitiative",
+        "gsw": "Bürger-Initiative"
+      },
+      "description": {
+        "en": "Citizen-driven initiative",
+        "fr": "Initiative citoyenne",
+        "de": "Bürgergetriebene Initiative",
+        "gsw": "Bürger-tribeeni Initiative"
+      },
+      "icon": "Flag",
+      "is_root": true,
+      "sort_order": 3
+    },
+    {
+      "group_type": "assembly",
+      "label": {
+        "en": "Assembly",
+        "fr": "Assemblée",
+        "de": "Versammlung",
+        "gsw": "Versammlig"
+      },
+      "description": {
+        "en": "Citizen assembly",
+        "fr": "Assemblée citoyenne",
+        "de": "Bürgerversammlung",
+        "gsw": "Bürger-Versammlig"
+      },
+      "icon": "AccountMultiple",
+      "is_root": true,
+      "sort_order": 4
+    },
+    {
+      "group_type": "canton",
+      "label": {
+        "en": "Canton",
+        "fr": "Canton",
+        "de": "Kanton",
+        "gsw": "Kanton"
+      },
+      "description": {
+        "en": "Swiss canton",
+        "fr": "Canton suisse",
+        "de": "Schweizer Kanton",
+        "gsw": "Schwiizer Kanton"
+      },
+      "icon": "MapMarker",
+      "is_root": true,
+      "sort_order": 10
+    },
+    {
+      "group_type": "district",
+      "label": {
+        "en": "District",
+        "fr": "District",
+        "de": "Bezirk",
+        "gsw": "Bezirk"
+      },
+      "description": {
+        "en": "District within canton",
+        "fr": "District dans le canton",
+        "de": "Bezirk im Kanton",
+        "gsw": "Bezirk im Kanton"
+      },
+      "icon": "MapMarkerRadius",
+      "is_root": false,
+      "sort_order": 11
+    },
+    {
+      "group_type": "commune",
+      "label": {
+        "en": "Commune",
+        "fr": "Commune",
+        "de": "Gemeinde",
+        "gsw": "Gmei"
+      },
+      "description": {
+        "en": "Local commune",
+        "fr": "Commune locale",
+        "de": "Lokale Gemeinde",
+        "gsw": "Lokali Gmei"
+      },
+      "icon": "HomeCity",
+      "is_root": false,
+      "sort_order": 12
+    }
+  ],
+  "categories": [
+    {
+      "category_id": "ecology",
+      "name": {
+        "en": "Ecology & Resources",
+        "fr": "Écologie & Ressources",
+        "de": "Ökologie & Ressourcen",
+        "gsw": "Ökologie & Ressurce"
+      },
+      "parent": null
+    },
+    {
+      "category_id": "biodiversity",
+      "name": {
+        "en": "Biodiversity",
+        "fr": "Biodiversité",
+        "de": "Biodiversität",
+        "gsw": "Biodiversität"
+      },
+      "parent": null
+    },
+    {
+      "category_id": "water",
+      "name": {
+        "en": "Water & Lagoon",
+        "fr": "Eau & Lagune",
+        "de": "Wasser & Lagune",
+        "gsw": "Wasser & Lagun"
+      },
+      "parent": null
+    },
+    {
+      "category_id": "energy",
+      "name": {
+        "en": "Energy",
+        "fr": "Énergie",
+        "de": "Energie",
+        "gsw": "Energie"
+      },
+      "parent": null
+    },
+    {
+      "category_id": "planning",
+      "name": {
+        "en": "Planning & Development",
+        "fr": "Planification & Développement",
+        "de": "Planung & Entwicklung",
+        "gsw": "Planig & Entwicklig"
+      },
+      "parent": null
+    },
+    {
+      "category_id": "housing",
+      "name": {
+        "en": "Housing & Urbanism",
+        "fr": "Logement & Urbanisme",
+        "de": "Wohnen & Städtebau",
+        "gsw": "Wohne & Städtebau"
+      },
+      "parent": null
+    },
+    {
+      "category_id": "transport",
+      "name": {
+        "en": "Transport",
+        "fr": "Transport",
+        "de": "Verkehr",
+        "gsw": "Verchehr"
+      },
+      "parent": null
+    },
+    {
+      "category_id": "health",
+      "name": {
+        "en": "Health & Wellbeing",
+        "fr": "Santé & Bien-être",
+        "de": "Gesundheit & Wohlbefinden",
+        "gsw": "Gsundheit & Wohlbefinde"
+      },
+      "parent": null
+    },
+    {
+      "category_id": "healthcare",
+      "name": {
+        "en": "Healthcare",
+        "fr": "Soins de santé",
+        "de": "Gesundheitswesen",
+        "gsw": "Gsundheitswese"
+      },
+      "parent": null
+    },
+    {
+      "category_id": "sports",
+      "name": {
+        "en": "Sports",
+        "fr": "Sports",
+        "de": "Sport",
+        "gsw": "Sport"
+      },
+      "parent": null
+    },
+    {
+      "category_id": "citizenship",
+      "name": {
+        "en": "Citizenship & Society",
+        "fr": "Citoyenneté & Société",
+        "de": "Staatsbürgerschaft & Gesellschaft",
+        "gsw": "Staatsbürgerschaft & Gsellschaft"
+      },
+      "parent": null
+    },
+    {
+      "category_id": "participation",
+      "name": {
+        "en": "Participation",
+        "fr": "Participation",
+        "de": "Teilnahme",
+        "gsw": "Teilnahm"
+      },
+      "parent": null
+    },
+    {
+      "category_id": "culture",
+      "name": {
+        "en": "Culture & Heritage",
+        "fr": "Culture & Patrimoine",
+        "de": "Kultur & Erbe",
+        "gsw": "Kultur & Erb"
+      },
+      "parent": null
+    },
+    {
+      "category_id": "education",
+      "name": {
+        "en": "Education & Spirituality",
+        "fr": "Éducation & Spiritualité",
+        "de": "Bildung & Spiritualität",
+        "gsw": "Bildig & Spiritualität"
+      },
+      "parent": null
+    },
+    {
+      "category_id": "school",
+      "name": {
+        "en": "School",
+        "fr": "École",
+        "de": "Schule",
+        "gsw": "Schuell"
+      },
+      "parent": null
+    },
+    {
+      "category_id": "training",
+      "name": {
+        "en": "Training",
+        "fr": "Formation",
+        "de": "Ausbildung",
+        "gsw": "Uusbildig"
+      },
+      "parent": null
+    }
+  ],
+  "locations": [
+    {
+      "location_id": "switzerland",
+      "name": {
+        "en": "Switzerland",
+        "fr": "Suisse",
+        "de": "Schweiz",
+        "gsw": "Schwiz"
+      },
+      "parent_id": null
+    },
+    {
+      "location_id": "geneva_canton",
+      "name": {
+        "en": "Geneva",
+        "fr": "Genève",
+        "de": "Genf",
+        "gsw": "Gämf"
+      },
+      "parent_id": null
+    },
+    {
+      "location_id": "city_geneva",
+      "name": {
+        "en": "City of Geneva",
+        "fr": "Ville de Genève",
+        "de": "Stadt Genf",
+        "gsw": "Stadt Gämf"
+      },
+      "parent_id": null
+    },
+    {
+      "location_id": "vaud_canton",
+      "name": {
+        "en": "Vaud",
+        "fr": "Vaud",
+        "de": "Waadt",
+        "gsw": "Waadt"
+      },
+      "parent_id": null
+    },
+    {
+      "location_id": "nyon_district",
+      "name": {
+        "en": "Nyon District",
+        "fr": "District de Nyon",
+        "de": "Bezirk Nyon",
+        "gsw": "Bezirk Nyon"
+      },
+      "parent_id": null
+    },
+    {
+      "location_id": "nyon_city",
+      "name": {
+        "en": "Nyon",
+        "fr": "Nyon",
+        "de": "Nyon",
+        "gsw": "Nyon"
+      },
+      "parent_id": null
+    },
+    {
+      "location_id": "bern_canton",
+      "name": {
+        "en": "Bern",
+        "fr": "Berne",
+        "de": "Bern",
+        "gsw": "Bärn"
+      },
+      "parent_id": null
+    },
+    {
+      "location_id": "bern_city",
+      "name": {
+        "en": "City of Bern",
+        "fr": "Ville de Berne",
+        "de": "Stadt Bern",
+        "gsw": "Stadt Bärn"
+      },
+      "parent_id": null
+    },
+    {
+      "location_id": "zurich_canton",
+      "name": {
+        "en": "Zürich",
+        "fr": "Zurich",
+        "de": "Zürich",
+        "gsw": "Züri"
+      },
+      "parent_id": null
+    },
+    {
+      "location_id": "zurich_city",
+      "name": {
+        "en": "City of Zürich",
+        "fr": "Ville de Zurich",
+        "de": "Stadt Zürich",
+        "gsw": "Stadt Züri"
+      },
+      "parent_id": null
+    }
+  ]
+}

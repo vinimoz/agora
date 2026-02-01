@@ -11,97 +11,99 @@
 		- 💬 Comments and discussions
 		- 👍 Supports (likes/upvotes)
         - 👍 Supports (likes/neutral/against)
-        - 🧩 Custom inquiry families and types
-        - 🧾 Multiple inquiry formats (proposals, debates, petitions, projects…)
-        - 📂 Categorization and filtering by family or location
-        - 🧱 Scalable architecture and modern UX
-        - 🔒 Secure and private — all data stays on your Nextcloud server
-        - 🔗 Integration with Forms, Polls, Deck, Collectives,...
-        - 🏛 Collectives desgin UX
+		- 🧩 Custom inquiry families and types
+		- 🧾 Multiple inquiry formats (proposals, debates, petitions, projects…)
+		- 📂 Categorization and filtering by family or location
+		- 🧱 Scalable architecture and modern UX
+		- 🔒 Secure and private — all data stays on your Nextcloud server
+		- 🔗 Integration with Forms, Polls, Deck, Collectives,...
+		- 🏛 Collectives desgin UX
 
-        ### 🧭 Coming Next
-        - 🗣 Real debate features (structured replies, multi-thread discussions)  
-        - 📜 Project law reading with article-level comments and supports  
-        - 🏛 Collectives → Submit group of inquiries to Polls application for consultation or referendum  
-        - 🧮 Quorums and workflow automation  
-        - 🧰 Better permission control and moderation tools  
-        ]]></description>
-    <version>1.7.0-beta</version>
-    <licence>AGPL-3.0-or-later</licence>
-    <author>Vincent TRAPPE</author>
-    <documentation>
-        <admin>https://github.com/vinimoz/agora/blob/master/README.md</admin>
-    </documentation>
-    <category>tools</category>
-    <category>social</category>
-    <category>organization</category>
-    <website>https://github.com/vinimoz/agora</website>
-    <bugs>https://github.com/vinimoz/agora/issues</bugs>
-    <repository type="git">https://github.com/vinimoz/agora.git</repository>
-    <screenshot>https://raw.githubusercontent.com/vinimoz/agora/main/screenshots/Family.png</screenshot>
-    <screenshot>https://raw.githubusercontent.com/vinimoz/agora/main/screenshots/GroupView.png</screenshot>
-    <screenshot>https://raw.githubusercontent.com/vinimoz/agora/main/screenshots/GroupView2.png</screenshot>
-    <screenshot>https://raw.githubusercontent.com/vinimoz/agora/main/screenshots/EditInquiry.png</screenshot>
-    <screenshot>https://raw.githubusercontent.com/vinimoz/agora/main/screenshots/EditGroup.png</screenshot>
-    <screenshot>https://raw.githubusercontent.com/vinimoz/agora/main/screenshots/CreateInquiryView.png</screenshot>
-    <screenshot>https://raw.githubusercontent.com/vinimoz/agora/main/screenshots/Grid2.png</screenshot>
-    <screenshot>https://raw.githubusercontent.com/vinimoz/agora/main/screenshots/ListView.png</screenshot>
-    <dependencies>
-        <php min-version="8.1"/>
-        <nextcloud min-version="31" max-version="32"/>
-    </dependencies>
-    <background-jobs>
-        <job>OCA\Agora\Cron\NotificationCron</job>
-        <job>OCA\Agora\Cron\AutoReminderCron</job>
-    </background-jobs>
-    <repair-steps>
-        <pre-migration>
-            <step>OCA\Agora\Migration\RepairSteps\RemoveObsoleteMigrations</step>
-        </pre-migration>
-        <post-migration>
-            <step>OCA\Agora\Migration\RepairSteps\DropOrphanedTables</step>
-            <step>OCA\Agora\Migration\RepairSteps\DropOrphanedColumns</step>
-            <step>OCA\Agora\Migration\RepairSteps\DeleteInvalidRecords</step>
-            <step>OCA\Agora\Migration\RepairSteps\UpdateHashes</step>
-            <step>OCA\Agora\Migration\RepairSteps\CreateIndices</step>
-        </post-migration>
-        <install>
-            <step>OCA\Agora\Migration\RepairSteps\Install</step>
-        </install>
-    </repair-steps>
-    <commands>
-        <command>OCA\Agora\Command\Share\Add</command>
-        <command>OCA\Agora\Command\Share\Remove</command>
-        <command>OCA\Agora\Command\Db\Purge</command>
+		### 🧭 Coming Next
+		- 🗣 Structured debates and multi-thread replies
+		- 🏛 Collectives and referendums
+		]]></description>
+	<version>1.6.0</version>
+	<licence>AGPL-3.0-or-later</licence>
+	<author>Vincent TRAPPE</author>
+	<documentation>
+		<admin>https://github.com/vinimoz/agora/blob/master/README.md</admin>
+	</documentation>
+	<category>tools</category>
+	<category>social</category>
+	<category>organization</category>
+	<website>https://github.com/vinimoz/agora</website>
+	<bugs>https://github.com/vinimoz/agora/issues</bugs>
+	<repository type="git">https://github.com/vinimoz/agora.git</repository>
+	<screenshot>https://raw.githubusercontent.com/vinimoz/agora/main/screenshots/Family.png</screenshot>
+	<screenshot>https://raw.githubusercontent.com/vinimoz/agora/main/screenshots/GroupView.png</screenshot>
+	<screenshot>https://raw.githubusercontent.com/vinimoz/agora/main/screenshots/GroupView2.png</screenshot>
+	<screenshot>https://raw.githubusercontent.com/vinimoz/agora/main/screenshots/EditInquiry.png</screenshot>
+	<screenshot>https://raw.githubusercontent.com/vinimoz/agora/main/screenshots/EditGroup.png</screenshot>
+	<screenshot>https://raw.githubusercontent.com/vinimoz/agora/main/screenshots/CreateInquiryView.png</screenshot>
+	<screenshot>https://raw.githubusercontent.com/vinimoz/agora/main/screenshots/Grid.png</screenshot>
+	<screenshot>https://raw.githubusercontent.com/vinimoz/agora/main/screenshots/Grid2.png</screenshot>
+	<screenshot>https://raw.githubusercontent.com/vinimoz/agora/main/screenshots/ListView.png</screenshot>
+	<screenshot>https://raw.githubusercontent.com/vinimoz/agora/main/screenshots/Settings.png</screenshot>
+	<screenshot>https://raw.githubusercontent.com/vinimoz/agora/main/screenshots/SettingsInquiry.png</screenshot>
+	<screenshot>https://raw.githubusercontent.com/vinimoz/agora/main/screenshots/SettingInquiryType.png</screenshot>
+	<dependencies>
+		<php min-version="8.1"/>
+		<nextcloud min-version="31" max-version="32"/>
+	</dependencies>
+	<background-jobs>
+		<job>OCA\Agora\Cron\NotificationCron</job>
+		<job>OCA\Agora\Cron\AutoReminderCron</job>
+	</background-jobs>
+	<repair-steps>
+		<pre-migration>
+			<step>OCA\Agora\Migration\RepairSteps\RemoveObsoleteMigrations</step>
+		</pre-migration>
+		<post-migration>
+			<step>OCA\Agora\Migration\RepairSteps\DropOrphanedTables</step>
+			<step>OCA\Agora\Migration\RepairSteps\DropOrphanedColumns</step>
+			<step>OCA\Agora\Migration\RepairSteps\DeleteInvalidRecords</step>
+			<step>OCA\Agora\Migration\RepairSteps\UpdateHashes</step>
+			<step>OCA\Agora\Migration\RepairSteps\CreateIndices</step>
+		</post-migration>
+		<install>
+			<step>OCA\Agora\Migration\RepairSteps\Install</step>
+		</install>
+	</repair-steps>
+	<commands>
+		<command>OCA\Agora\Command\Share\Add</command>
+		<command>OCA\Agora\Command\Share\Remove</command>
+		<command>OCA\Agora\Command\Db\Purge</command>
 		<command>OCA\Agora\Command\Db\CleanInstance</command>
-        <command>OCA\Agora\Command\Db\RemoveIndices</command>
-        <command>OCA\Agora\Command\Db\Rebuild</command>
-        <command>OCA\Agora\Command\Db\CreateIndices</command>
-        <command>OCA\Agora\Command\Db\CleanMigrations</command>
-        <command>OCA\Agora\Command\Db\ResetWatch</command>
-        <command>OCA\Agora\Command\Db\InitDbDefault</command>
-        <command>OCA\Agora\Command\Inquiry\TransferOwnership</command>
-    </commands>
-    <settings>
-        <admin>OCA\Agora\Settings\AdminSettings</admin>
-        <admin-section>OCA\Agora\Settings\AdminSection</admin-section>
-        <personal>OCA\Agora\Settings\PersonalSettings</personal>
-        <personal-section>OCA\Agora\Settings\PersonalSection</personal-section>
-    </settings>
-    <activity>
-        <filters>
-            <filter>OCA\Agora\Filter\ActivityFilter</filter>
-        </filters>
-        <providers>
-            <provider>OCA\Agora\Provider\ActivityProvider</provider>
-        </providers>
-    </activity>
-    <navigations>
-        <navigation>
-            <name>Agora</name>
-            <route>agora.page.indexindex</route>
-            <icon>app.svg</icon>
-            <order>77</order>
-        </navigation>
-    </navigations>
+		<command>OCA\Agora\Command\Db\RemoveIndices</command>
+		<command>OCA\Agora\Command\Db\Rebuild</command>
+		<command>OCA\Agora\Command\Db\CreateIndices</command>
+		<command>OCA\Agora\Command\Db\CleanMigrations</command>
+		<command>OCA\Agora\Command\Db\ResetWatch</command>
+		<command>OCA\Agora\Command\Db\InitDbDefault</command>
+		<command>OCA\Agora\Command\Db\LoadTemplate</command>
+		<command>OCA\Agora\Command\Inquiry\TransferOwnership</command>
+	</commands>
+	<settings>
+		<admin>OCA\Agora\Settings\AdminSettings</admin>
+		<admin-section>OCA\Agora\Settings\AdminSection</admin-section>
+		<personal>OCA\Agora\Settings\PersonalSettings</personal>
+		<personal-section>OCA\Agora\Settings\PersonalSection</personal-section>
+	</settings>
+	<activity>
+		<filters>
+			<filter>OCA\Agora\Filter\ActivityFilter</filter>
+		</filters>
+		<providers>
+			<provider>OCA\Agora\Provider\ActivityProvider</provider>
+		</providers>
+	</activity>
+	<navigations>
+		<navigation>
+			<name>Agora</name>
+			<route>agora.page.indexindex</route>
+			<icon>app.svg</icon>
+			<order>77</order>
+		</navigation>
+	</navigations>
 </info>

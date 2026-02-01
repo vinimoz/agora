@@ -1,0 +1,1759 @@
+{
+  "template_info": {
+    "name": "education_research",
+    "version": "1.0.0",
+    "description": "Template for academic research institutions supporting research proposals, grant applications, ethics reviews, and collaborative research with extensive voting workflows for ethics committees, peer review, and funding decisions",
+    "author": "Agora Team",
+    "use_case": "education_research",
+    "available_languages": [
+      "en",
+      "fr",
+      "de",
+      "gsw"
+    ]
+  },
+  "inquiry_families": [
+    {
+      "family_type": "research",
+      "label": {
+        "en": "Research",
+        "fr": "Recherche",
+        "de": "Forschung",
+        "gsw": "Forschig"
+      },
+      "description": {
+        "en": "Academic research proposals, grants, and collaboration requests",
+        "fr": "Propositions de recherche académique, subventions et demandes de collaboration",
+        "de": "Akademische Forschungsanträge, Stipendien und Kooperationsanfragen",
+        "gsw": "Akademischi Forschigs-Aaträg, Stipendie und Kooperations-Aafraage"
+      },
+      "icon": "Microscope",
+      "sort_order": 1
+    },
+    {
+      "family_type": "official_research",
+      "label": {
+        "en": "Official Response",
+        "fr": "Réponse officielle",
+        "de": "Offizielle Antwort",
+        "gsw": "Offizielle Antwort"
+      },
+      "description": {
+        "en": "Official responses from research administration and review committees",
+        "fr": "Réponses officielles de l'administration de la recherche et des comités d'examen",
+        "de": "Offizielle Antworten von Forschungsverwaltung und Prüfungsausschüssen",
+        "gsw": "Offizelli Antworte vo Forschigsverwaltung und Prüefungsusschüss"
+      },
+      "icon": "Seal",
+      "sort_order": 2
+    }
+  ],
+  "inquiry_types": [
+    {
+      "inquiry_type": "research_proposal",
+      "family": "research",
+      "icon": "FileDocument",
+      "label": {
+        "en": "Research Proposals",
+        "fr": "Propositions de recherche",
+        "de": "Forschungsanträge",
+        "gsw": "Forschigs-Aaträg"
+      },
+      "description": {
+        "en": "Submit research proposals for review and approval",
+        "fr": "Soumettre des propositions de recherche pour examen et approbation",
+        "de": "Forschungsanträge zur Prüfung und Genehmigung einreichen",
+        "gsw": "Forschigs-Aaträg zur Prüefig und Genehmigung iireiche"
+      },
+      "is_root": true,
+      "allowed_response": [
+        "official_response_research"
+      ],
+      "allowed_option_type": [
+        "position_for",
+        "position_against",
+        "alternative",
+        "official_summary"
+      ],
+      "support_feature": "binary",
+      "allowed_transformation": [
+        "grant_application"
+      ],
+      "fields": [
+        {
+          "key": "type_of_vote",
+          "label": {
+            "en": "Type of Vote",
+            "fr": "Type de vote",
+            "de": "Abstimmungstyp",
+            "gsw": "Abstimmigs-Typ"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "approval",
+          "allowed_values": [
+            "simple",
+            "approval",
+            "majority_judgement_beneficial"
+          ]
+        },
+        {
+          "key": "peer_reviewers",
+          "label": {
+            "en": "Number of Peer Reviewers",
+            "fr": "Nombre de réviseurs",
+            "de": "Anzahl der Gutachter",
+            "gsw": "Aazahl vo Guetachter"
+          },
+          "type": "integer",
+          "required": false,
+          "default": 3
+        },
+        {
+          "key": "quorum",
+          "label": {
+            "en": "Required Votes",
+            "fr": "Votes requis",
+            "de": "Erforderliche Stimmen",
+            "gsw": "Erforderlich Stimme"
+          },
+          "type": "integer",
+          "required": false,
+          "default": 3
+        },
+        {
+          "key": "voting_deadline",
+          "label": {
+            "en": "Voting Deadline",
+            "fr": "Date limite de vote",
+            "de": "Abstimmungsfrist",
+            "gsw": "Abstimmigs-Frischt"
+          },
+          "type": "date",
+          "required": false
+        }
+      ]
+    },
+    {
+      "inquiry_type": "grant_application",
+      "family": "research",
+      "icon": "CashMultiple",
+      "label": {
+        "en": "Grant Applications",
+        "fr": "Demandes de subventions",
+        "de": "Stipendienanträge",
+        "gsw": "Stipendie-Aaträg"
+      },
+      "description": {
+        "en": "Apply for research grants and funding opportunities",
+        "fr": "Demander des subventions et opportunités de financement de recherche",
+        "de": "Forschungsstipendien und Finanzierungsmöglichkeiten beantragen",
+        "gsw": "Forschigs-Stipendie und Finanzierigsmöglichkeite beantrage"
+      },
+      "is_root": true,
+      "allowed_response": [
+        "official_response_research"
+      ],
+      "allowed_option_type": [
+        "position_for",
+        "position_against",
+        "alternative",
+        "official_summary"
+      ],
+      "support_feature": "binary",
+      "allowed_transformation": [
+        "publication_support"
+      ],
+      "fields": [
+        {
+          "key": "type_of_vote",
+          "label": {
+            "en": "Type of Vote",
+            "fr": "Type de vote",
+            "de": "Abstimmungstyp",
+            "gsw": "Abstimmigs-Typ"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "approval",
+          "allowed_values": [
+            "simple",
+            "approval"
+          ]
+        },
+        {
+          "key": "quorum",
+          "label": {
+            "en": "Committee Quorum",
+            "fr": "Quorum du comité",
+            "de": "Ausschussquorum",
+            "gsw": "Usschuss-Quorum"
+          },
+          "type": "integer",
+          "required": false,
+          "default": 5
+        },
+        {
+          "key": "approval_threshold",
+          "label": {
+            "en": "Approval Threshold (%)",
+            "fr": "Seuil d'approbation (%)",
+            "de": "Genehmigungsschwelle (%)",
+            "gsw": "Genehmigigs-Schwelle (%)"
+          },
+          "type": "integer",
+          "required": false,
+          "default": 60
+        }
+      ]
+    },
+    {
+      "inquiry_type": "collaboration_request",
+      "family": "research",
+      "icon": "AccountMultiple",
+      "label": {
+        "en": "Collaboration Requests",
+        "fr": "Demandes de collaboration",
+        "de": "Kooperationsanfragen",
+        "gsw": "Kooperations-Aafraage"
+      },
+      "description": {
+        "en": "Seek collaboration with other researchers or institutions",
+        "fr": "Rechercher une collaboration avec d'autres chercheurs ou institutions",
+        "de": "Zusammenarbeit mit anderen Forschern oder Institutionen suchen",
+        "gsw": "Zämmearbet mit andere Forscher oder Institutione sueche"
+      },
+      "is_root": true,
+      "allowed_response": [
+        "official_response_research"
+      ],
+      "allowed_option_type": [
+        "position_for",
+        "position_against",
+        "alternative",
+        "official_summary"
+      ],
+      "support_feature": "binary",
+      "fields": [
+        {"key": "partner_institutions", "label": "Partner Institutions", "type": "text", "required": false, "default": null, "rules": []},
+        {"key": "collaboration_type", "label": {"en": "Collaboration Type", "fr": "Type de collaboration", "de": "Kooperationstyp", "gsw": "Kooperations-Typ"}, "type": "enum", "required": true, "default": "research", "allowed_values": [{"value": "research", "label": {"en": "Research", "fr": "Recherche", "de": "Forschung", "gsw": "Forschig"}}, {"value": "teaching", "label": {"en": "Teaching", "fr": "Enseignement", "de": "Lehre", "gsw": "Lehr"}}, {"value": "joint_program", "label": {"en": "Joint Program", "fr": "Programme conjoint", "de": "Gemeinsames Programm", "gsw": "Gmeinsams Programm"}}, {"value": "data_sharing", "label": {"en": "Data Sharing", "fr": "Partage de données", "de": "Datenaustausch", "gsw": "Date-Uustausch"}}], "rules": []},
+        {"key": "duration_months", "label": "Duration (months)", "type": "integer", "required": false, "default": null, "rules": []},
+        {"key": "layout_zone", "label": "Layout Zone", "type": "enum", "required": false, "default": "main", "allowed_values": ["sidebar", "main", "footer", "header"], "rules": []},
+        {"key": "render_mode", "label": "Render Mode", "type": "enum", "required": false, "default": "rich_html", "allowed_values": ["cards", "list", "full", "summary", "rich_html"], "rules": []},
+        {"key": "open_mode", "label": "Open Mode", "type": "enum", "required": false, "default": "page", "allowed_values": ["page", "modal", "popup"], "rules": []},
+        {"key": "allow_anonymous", "label": "Allow Anonymous Feedback", "type": "boolean", "required": false, "default": false, "rules": []}
+      ]
+    },
+    {
+      "inquiry_type": "lab_equipment",
+      "family": "research",
+      "icon": "Flask",
+      "label": {
+        "en": "Lab & Equipment Requests",
+        "fr": "Demandes de laboratoire et équipement",
+        "de": "Labor- und Geräteanfragen",
+        "gsw": "Labor- und Grät-Aafraage"
+      },
+      "description": {
+        "en": "Request laboratory space, equipment, or technical resources",
+        "fr": "Demander un espace de laboratoire, de l'équipement ou des ressources techniques",
+        "de": "Laborraum, Ausrüstung oder technische Ressourcen anfordern",
+        "gsw": "Laborruum, Usrüschtig oder technischi Ressource aafordere"
+      },
+      "is_root": true,
+      "allowed_response": [
+        "official_response_research"
+      ],
+      "allowed_option_type": [
+        "position_for",
+        "position_against",
+        "alternative",
+        "official_summary"
+      ],
+      "support_feature": "binary",
+      "fields": [
+        {"key": "equipment_type", "label": "Equipment Type", "type": "string", "required": true, "default": null, "rules": []},
+        {"key": "estimated_cost", "label": "Estimated Cost", "type": "integer", "required": false, "default": null, "rules": []},
+        {"key": "space_required", "label": "Space Required (sq m)", "type": "integer", "required": false, "default": null, "rules": []},
+        {"key": "urgency", "label": {"en": "Urgency", "fr": "Urgence", "de": "Dringlichkeit", "gsw": "Dringlichkeit"}, "type": "enum", "required": false, "default": "normal", "allowed_values": [{"value": "low", "label": {"en": "Low", "fr": "Basse", "de": "Niedrig", "gsw": "Niidrig"}}, {"value": "normal", "label": {"en": "Normal", "fr": "Normale", "de": "Normal", "gsw": "Normal"}}, {"value": "high", "label": {"en": "High", "fr": "Haute", "de": "Hoch", "gsw": "Hoch"}}, {"value": "critical", "label": {"en": "Critical", "fr": "Critique", "de": "Kritisch", "gsw": "Kritisch"}}], "rules": []},
+        {"key": "layout_zone", "label": "Layout Zone", "type": "enum", "required": false, "default": "main", "allowed_values": ["sidebar", "main", "footer", "header"], "rules": []},
+        {"key": "render_mode", "label": "Render Mode", "type": "enum", "required": false, "default": "rich_html", "allowed_values": ["cards", "list", "full", "summary", "rich_html"], "rules": []},
+        {"key": "open_mode", "label": "Open Mode", "type": "enum", "required": false, "default": "page", "allowed_values": ["page", "modal", "popup"], "rules": []},
+        {"key": "allow_anonymous", "label": "Allow Anonymous Feedback", "type": "boolean", "required": false, "default": false, "rules": []}
+      ]
+    },
+    {
+      "inquiry_type": "ethics_review",
+      "family": "research",
+      "icon": "ShieldCheck",
+      "label": {
+        "en": "Ethics Review Requests",
+        "fr": "Demandes d'examen éthique",
+        "de": "Ethikprüfungsanträge",
+        "gsw": "Ethikprüefigs-Aaträg"
+      },
+      "description": {
+        "en": "Submit research for ethics committee review",
+        "fr": "Soumettre une recherche pour examen du comité d'éthique",
+        "de": "Forschung zur Ethikkommission einreichen",
+        "gsw": "Forschig zur Ethikkommission iireiche"
+      },
+      "is_root": true,
+      "allowed_response": [
+        "official_response_research"
+      ],
+      "allowed_option_type": [
+        "position_for",
+        "position_against",
+        "alternative",
+        "official_summary"
+      ],
+      "support_feature": "binary",
+      "fields": [
+        {
+          "key": "type_of_vote",
+          "label": {
+            "en": "Type of Vote",
+            "fr": "Type de vote",
+            "de": "Abstimmungstyp",
+            "gsw": "Abstimmigs-Typ"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "approval",
+          "allowed_values": [
+            "approval",
+            "unanimous"
+          ]
+        },
+        {
+          "key": "quorum",
+          "label": {
+            "en": "IRB Quorum",
+            "fr": "Quorum du comité d'éthique",
+            "de": "Ethikkommission Quorum",
+            "gsw": "Ethik-Kommission Quorum"
+          },
+          "type": "integer",
+          "required": false,
+          "default": 5
+        },
+        {
+          "key": "requires_unanimous",
+          "label": {
+            "en": "Requires Unanimous Approval",
+            "fr": "Nécessite l'approbation unanime",
+            "de": "Erfordert einstimmige Genehmigung",
+            "gsw": "Erforderet eistimmigi Genehmiging"
+          },
+          "type": "boolean",
+          "required": false,
+          "default": false
+        }
+      ]
+    },
+    {
+      "inquiry_type": "publication_support",
+      "family": "research",
+      "icon": "BookOpenPageVariant",
+      "label": {
+        "en": "Publication Support",
+        "fr": "Support de publication",
+        "de": "Publikationsunterstützung",
+        "gsw": "Publikations-Unterstützig"
+      },
+      "description": {
+        "en": "Request support for academic publications and open access",
+        "fr": "Demander un soutien pour les publications académiques et l'accès ouvert",
+        "de": "Unterstützung für akademische Publikationen und Open Access beantragen",
+        "gsw": "Unterstützig für akademischi Publikatione und Open Access beantrage"
+      },
+      "is_root": true,
+      "allowed_response": [
+        "official_response_research"
+      ],
+      "allowed_option_type": [
+        "position_for",
+        "position_against",
+        "alternative",
+        "official_summary"
+      ],
+      "support_feature": "binary",
+      "fields": [
+        {"key": "journal_name", "label": "Journal Name", "type": "string", "required": true, "default": null, "rules": []},
+        {"key": "publication_type", "label": {"en": "Publication Type", "fr": "Type de publication", "de": "Publikationstyp", "gsw": "Publikations-Typ"}, "type": "enum", "required": true, "default": "article", "allowed_values": [{"value": "article", "label": {"en": "Journal Article", "fr": "Article de revue", "de": "Zeitschriftenartikel", "gsw": "Zitschrifte-Artikel"}}, {"value": "conference", "label": {"en": "Conference Paper", "fr": "Acte de conférence", "de": "Konferenzbeitrag", "gsw": "Konferenz-Biitrag"}}, {"value": "book_chapter", "label": {"en": "Book Chapter", "fr": "Chapitre de livre", "de": "Buchkapitel", "gsw": "Buech-Kapitel"}}, {"value": "monograph", "label": {"en": "Monograph", "fr": "Monographie", "de": "Monographie", "gsw": "Monographie"}}], "rules": []},
+        {"key": "open_access", "label": "Open Access Required", "type": "boolean", "required": false, "default": false, "rules": []},
+        {"key": "estimated_apc", "label": "Estimated APC", "type": "integer", "required": false, "default": null, "rules": []},
+        {"key": "layout_zone", "label": "Layout Zone", "type": "enum", "required": false, "default": "main", "allowed_values": ["sidebar", "main", "footer", "header"], "rules": []},
+        {"key": "render_mode", "label": "Render Mode", "type": "enum", "required": false, "default": "rich_html", "allowed_values": ["cards", "list", "full", "summary", "rich_html"], "rules": []},
+        {"key": "open_mode", "label": "Open Mode", "type": "enum", "required": false, "default": "page", "allowed_values": ["page", "modal", "popup"], "rules": []},
+        {"key": "allow_anonymous", "label": "Allow Anonymous Feedback", "type": "boolean", "required": false, "default": false, "rules": []}
+      ]
+    },
+    {
+      "inquiry_type": "official_response_research",
+      "family": "official_research",
+      "icon": "MessageReply",
+      "label": {
+        "en": "Official Response",
+        "fr": "Réponse officielle",
+        "de": "Offizielle Antwort",
+        "gsw": "Offizielle Antwort"
+      },
+      "description": {
+        "en": "Official response from research administration",
+        "fr": "Réponse officielle de l'administration de la recherche",
+        "de": "Offizielle Antwort von der Forschungsverwaltung",
+        "gsw": "Offizelli Antwort vo de Forschigsverwaltung"
+      },
+      "is_root": false,
+      "allowed_response": [],
+      "allowed_option_type": [
+        "position_for",
+        "position_against",
+        "alternative",
+        "official_summary"
+      ],
+      "support_feature": "none"
+    }
+  ],
+  "inquiry_statuses": [
+    {
+      "inquiry_type": "research_proposal",
+      "status_key": "submitted",
+      "label": {
+        "en": "Submitted",
+        "fr": "Soumis",
+        "de": "Eingereicht",
+        "gsw": "Iigräicht"
+      },
+      "description": {
+        "en": "Proposal submitted and awaiting review",
+        "fr": "Proposition soumise en attente d'examen",
+        "de": "Antrag eingereicht und wartet auf Prüfung",
+        "gsw": "Aatrag iigräicht und wartet uf Prüefig"
+      },
+      "is_final": false,
+      "icon": "Send",
+      "sort_order": 1
+    },
+    {
+      "inquiry_type": "research_proposal",
+      "status_key": "under_review",
+      "label": {
+        "en": "Under Review",
+        "fr": "En cours d'examen",
+        "de": "In Prüfung",
+        "gsw": "In Prüefig"
+      },
+      "description": {
+        "en": "Proposal is being reviewed by committee",
+        "fr": "La proposition est en cours d'examen par le comité",
+        "de": "Antrag wird vom Ausschuss geprüft",
+        "gsw": "Aatrag wird vom Usschuss prüeft"
+      },
+      "is_final": false,
+      "icon": "Eye",
+      "sort_order": 2
+    },
+    {
+      "inquiry_type": "research_proposal",
+      "status_key": "approved",
+      "label": {
+        "en": "Approved",
+        "fr": "Approuvé",
+        "de": "Genehmigt",
+        "gsw": "Gnehmigt"
+      },
+      "description": {
+        "en": "Proposal approved for implementation",
+        "fr": "Proposition approuvée pour mise en œuvre",
+        "de": "Antrag zur Umsetzung genehmigt",
+        "gsw": "Aatrag zur Umsetzig gnehmigt"
+      },
+      "is_final": false,
+      "icon": "CheckCircle",
+      "sort_order": 3
+    },
+    {
+      "inquiry_type": "research_proposal",
+      "status_key": "in_progress",
+      "label": {
+        "en": "In Progress",
+        "fr": "En cours",
+        "de": "In Bearbeitung",
+        "gsw": "In Bearbeitig"
+      },
+      "description": {
+        "en": "Research project is in progress",
+        "fr": "Le projet de recherche est en cours",
+        "de": "Forschungsprojekt läuft",
+        "gsw": "Forschigsprojekt lauft"
+      },
+      "is_final": false,
+      "icon": "Progress",
+      "sort_order": 4
+    },
+    {
+      "inquiry_type": "research_proposal",
+      "status_key": "completed",
+      "label": {
+        "en": "Completed",
+        "fr": "Terminé",
+        "de": "Abgeschlossen",
+        "gsw": "Abgschlosse"
+      },
+      "description": {
+        "en": "Research project completed successfully",
+        "fr": "Projet de recherche terminé avec succès",
+        "de": "Forschungsprojekt erfolgreich abgeschlossen",
+        "gsw": "Forschigsprojekt erfolgriich abgschlosse"
+      },
+      "is_final": true,
+      "icon": "CheckAll",
+      "sort_order": 5
+    },
+    {
+      "inquiry_type": "research_proposal",
+      "status_key": "rejected",
+      "label": {
+        "en": "Rejected",
+        "fr": "Rejeté",
+        "de": "Abgelehnt",
+        "gsw": "Abglehnt"
+      },
+      "description": {
+        "en": "Proposal rejected - does not meet requirements",
+        "fr": "Proposition rejetée - ne répond pas aux exigences",
+        "de": "Antrag abgelehnt - erfüllt Anforderungen nicht",
+        "gsw": "Aatrag abglehnt - erfüllt Aaforderige nöd"
+      },
+      "is_final": true,
+      "icon": "CloseCircle",
+      "sort_order": 6
+    },
+    {
+      "inquiry_type": "research_proposal",
+      "status_key": "peer_review_voting",
+      "label": {
+        "en": "Peer Review Voting",
+        "fr": "Vote d'examen par les pairs",
+        "de": "Peer-Review-Abstimmung",
+        "gsw": "Peer-Review-Abstimmig"
+      },
+      "description": {
+        "en": "Under peer review voting process",
+        "fr": "En cours de vote d'examen par les pairs",
+        "de": "Im Peer-Review-Abstimmungsprozess",
+        "gsw": "Im Peer-Review-Abstimmigs-Prozäss"
+      },
+      "is_final": false,
+      "icon": "AccountMultipleCheck",
+      "sort_order": 2.5
+    },
+    {
+      "inquiry_type": "research_proposal",
+      "status_key": "department_vote",
+      "label": {
+        "en": "Department Vote",
+        "fr": "Vote du département",
+        "de": "Abteilungsabstimmung",
+        "gsw": "Abteiligs-Abstimmig"
+      },
+      "description": {
+        "en": "Department faculty voting on proposal",
+        "fr": "Vote de la faculté du département sur la proposition",
+        "de": "Abteilungsfakultät stimmt über Antrag ab",
+        "gsw": "Abteiligs-Fakultäät stimmt über Aatrag ab"
+      },
+      "is_final": false,
+      "icon": "VoteOutline",
+      "sort_order": 3.5
+    },
+    {
+      "inquiry_type": "grant_application",
+      "status_key": "funding_committee_vote",
+      "label": {
+        "en": "Funding Committee Vote",
+        "fr": "Vote du comité de financement",
+        "de": "Finanzierungsausschuss-Abstimmung",
+        "gsw": "Finanzierigs-Usschuss-Abstimmig"
+      },
+      "description": {
+        "en": "Funding committee reviewing and voting",
+        "fr": "Le comité de financement examine et vote",
+        "de": "Finanzierungsausschuss prüft und stimmt ab",
+        "gsw": "Finanzierigs-Usschuss prüeft und stimmt ab"
+      },
+      "is_final": false,
+      "icon": "CashCheck",
+      "sort_order": 3.5
+    },
+    {
+      "inquiry_type": "grant_application",
+      "status_key": "faculty_senate_approval",
+      "label": {
+        "en": "Faculty Senate Approval",
+        "fr": "Approbation du sénat de la faculté",
+        "de": "Fakultätssenats-Genehmigung",
+        "gsw": "Fakultäts-Senats-Genehmiging"
+      },
+      "description": {
+        "en": "Faculty senate voting on major grant",
+        "fr": "Le sénat de la faculté vote sur une subvention majeure",
+        "de": "Fakultätssenat stimmt über großen Zuschuss ab",
+        "gsw": "Fakultäts-Senat stimmt über grosse Zueschuss ab"
+      },
+      "is_final": false,
+      "icon": "AccountTie",
+      "sort_order": 4.5
+    },
+    {
+      "inquiry_type": "ethics_review",
+      "status_key": "ethics_committee_vote",
+      "label": {
+        "en": "Ethics Committee Vote",
+        "fr": "Vote du comité d'éthique",
+        "de": "Ethikkommissions-Abstimmung",
+        "gsw": "Ethik-Kommissions-Abstimmig"
+      },
+      "description": {
+        "en": "Ethics committee reviewing and voting",
+        "fr": "Le comité d'éthique examine et vote",
+        "de": "Ethikkommission prüft und stimmt ab",
+        "gsw": "Ethik-Kommission prüeft und stimmt ab"
+      },
+      "is_final": false,
+      "icon": "ShieldCheck",
+      "sort_order": 2.5
+    },
+    {
+      "inquiry_type": "ethics_review",
+      "status_key": "irb_approval_vote",
+      "label": {
+        "en": "IRB Approval Vote",
+        "fr": "Vote d'approbation du comité d'éthique",
+        "de": "IRB-Genehmigungsabstimmung",
+        "gsw": "IRB-Genehmigiigs-Abstimmig"
+      },
+      "description": {
+        "en": "Institutional Review Board voting",
+        "fr": "Vote du comité d'examen institutionnel",
+        "de": "Institutionelles Prüfungsgremium stimmt ab",
+        "gsw": "Institutionells Prüefigs-Gremium stimmt ab"
+      },
+      "is_final": false,
+      "icon": "CheckDecagram",
+      "sort_order": 3.5
+    },
+    {
+      "inquiry_type": "publication_support",
+      "status_key": "publication_board_vote",
+      "label": {
+        "en": "Publication Board Vote",
+        "fr": "Vote du conseil de publication",
+        "de": "Publikationsrat-Abstimmung",
+        "gsw": "Publikations-Rat-Abstimmig"
+      },
+      "description": {
+        "en": "Publication board voting on funding",
+        "fr": "Le conseil de publication vote sur le financement",
+        "de": "Publikationsrat stimmt über Finanzierung ab",
+        "gsw": "Publikations-Rat stimmt über Finanzierig ab"
+      },
+      "is_final": false,
+      "icon": "BookOpenVariant",
+      "sort_order": 2.5
+    },
+    {
+      "inquiry_type": "collaborative_research",
+      "status_key": "partner_institution_poll",
+      "label": {
+        "en": "Partner Institution Poll",
+        "fr": "Sondage des institutions partenaires",
+        "de": "Partner-Institutions-Umfrage",
+        "gsw": "Partner-Institutions-Umfraag"
+      },
+      "description": {
+        "en": "Polling partner institutions for collaboration",
+        "fr": "Sondage des institutions partenaires pour la collaboration",
+        "de": "Befragung von Partnerinstitutionen zur Zusammenarbeit",
+        "gsw": "Befraagig vo Partner-Institutione zur Zämearbet"
+      },
+      "is_final": false,
+      "icon": "AccountGroup",
+      "sort_order": 2.5
+    },
+
+    {
+      "inquiry_type": "collaboration_request",
+      "status_key": "submitted",
+      "label": {
+        "en": "Submitted",
+        "fr": "Soumis",
+        "de": "Eingereicht",
+        "gsw": "Iigräicht"
+      },
+      "description": {
+        "en": "Collaboration request has been submitted",
+        "fr": "La demande de collaboration a été soumise",
+        "de": "Kooperationsanfrage wurde eingereicht",
+        "gsw": "Kooperations-Aafraag isch iigräicht"
+      },
+      "is_final": false,
+      "icon": "Send",
+      "sort_order": 1
+    },
+    {
+      "inquiry_type": "collaboration_request",
+      "status_key": "partner_review",
+      "label": {
+        "en": "Partner Review",
+        "fr": "Examen du partenaire",
+        "de": "Partnerprüfung",
+        "gsw": "Partner-Prüefig"
+      },
+      "description": {
+        "en": "Potential partners reviewing the request",
+        "fr": "Les partenaires potentiels examinent la demande",
+        "de": "Potenzielle Partner prüfen die Anfrage",
+        "gsw": "Potenzielle Partner prüefe d'Aafraag"
+      },
+      "is_final": false,
+      "icon": "AccountSearch",
+      "sort_order": 2
+    },
+    {
+      "inquiry_type": "collaboration_request",
+      "status_key": "terms_negotiation",
+      "label": {
+        "en": "Terms Negotiation",
+        "fr": "Négociation des termes",
+        "de": "Verhandlung der Bedingungen",
+        "gsw": "Verhandlig vo de Bedingige"
+      },
+      "description": {
+        "en": "Negotiating collaboration terms and agreements",
+        "fr": "Négociation des termes et accords de collaboration",
+        "de": "Verhandlung von Kooperationsbedingungen und Vereinbarungen",
+        "gsw": "Verhandlig vo Kooperations-Bedingige und Vereinbarige"
+      },
+      "is_final": false,
+      "icon": "FileSign",
+      "sort_order": 3
+    },
+    {
+      "inquiry_type": "collaboration_request",
+      "status_key": "agreement_signed",
+      "label": {
+        "en": "Agreement Signed",
+        "fr": "Accord signé",
+        "de": "Vereinbarung unterzeichnet",
+        "gsw": "Vereinbarig unterzeichnet"
+      },
+      "description": {
+        "en": "Collaboration agreement has been signed by all parties",
+        "fr": "L'accord de collaboration a été signé par toutes les parties",
+        "de": "Kooperationsvereinbarung wurde von allen Parteien unterzeichnet",
+        "gsw": "Kooperations-Vereinbarig isch vo alle Parteie unterzeichnet"
+      },
+      "is_final": false,
+      "icon": "CheckDecagram",
+      "sort_order": 4
+    },
+    {
+      "inquiry_type": "collaboration_request",
+      "status_key": "active",
+      "label": {
+        "en": "Active",
+        "fr": "Actif",
+        "de": "Aktiv",
+        "gsw": "Aktiv"
+      },
+      "description": {
+        "en": "Collaboration is actively underway",
+        "fr": "La collaboration est en cours",
+        "de": "Kooperation ist aktiv im Gange",
+        "gsw": "Kooperation isch aktiv am Laufe"
+      },
+      "is_final": false,
+      "icon": "AccountMultiple",
+      "sort_order": 5
+    },
+    {
+      "inquiry_type": "collaboration_request",
+      "status_key": "completed",
+      "label": {
+        "en": "Completed",
+        "fr": "Terminé",
+        "de": "Abgeschlossen",
+        "gsw": "Abgschlosse"
+      },
+      "description": {
+        "en": "Collaboration has been successfully completed",
+        "fr": "La collaboration a été terminée avec succès",
+        "de": "Kooperation wurde erfolgreich abgeschlossen",
+        "gsw": "Kooperation isch erfolgriich abgschlosse"
+      },
+      "is_final": true,
+      "icon": "CheckAll",
+      "sort_order": 6
+    },
+    {
+      "inquiry_type": "collaboration_request",
+      "status_key": "declined",
+      "label": {
+        "en": "Declined",
+        "fr": "Refusé",
+        "de": "Abgelehnt",
+        "gsw": "Abglehnt"
+      },
+      "description": {
+        "en": "Collaboration request was declined by partners",
+        "fr": "La demande de collaboration a été refusée par les partenaires",
+        "de": "Kooperationsanfrage wurde von Partnern abgelehnt",
+        "gsw": "Kooperations-Aafraag isch vo Partner abglehnt worde"
+      },
+      "is_final": true,
+      "icon": "CloseCircle",
+      "sort_order": 7
+    },
+
+    {
+      "inquiry_type": "lab_equipment",
+      "status_key": "submitted",
+      "label": {
+        "en": "Submitted",
+        "fr": "Soumis",
+        "de": "Eingereicht",
+        "gsw": "Iigräicht"
+      },
+      "description": {
+        "en": "Equipment request has been submitted",
+        "fr": "La demande d'équipement a été soumise",
+        "de": "Geräteanfrage wurde eingereicht",
+        "gsw": "Geräät-Aafraag isch iigräicht"
+      },
+      "is_final": false,
+      "icon": "Send",
+      "sort_order": 1
+    },
+    {
+      "inquiry_type": "lab_equipment",
+      "status_key": "needs_justification",
+      "label": {
+        "en": "Needs Justification",
+        "fr": "Justification requise",
+        "de": "Begründung erforderlich",
+        "gsw": "Begründig erforderlich"
+      },
+      "description": {
+        "en": "Research justification being evaluated",
+        "fr": "Justification de recherche en cours d'évaluation",
+        "de": "Forschungsbegründung wird bewertet",
+        "gsw": "Forschigs-Begründig wird bewertet"
+      },
+      "is_final": false,
+      "icon": "FileDocumentEdit",
+      "sort_order": 2
+    },
+    {
+      "inquiry_type": "lab_equipment",
+      "status_key": "budget_review",
+      "label": {
+        "en": "Budget Review",
+        "fr": "Examen du budget",
+        "de": "Budgetprüfung",
+        "gsw": "Budget-Prüefig"
+      },
+      "description": {
+        "en": "Budget availability being reviewed",
+        "fr": "Disponibilité budgétaire en cours d'examen",
+        "de": "Budgetverfügbarkeit wird geprüft",
+        "gsw": "Budget-Verfügbarkeit wird prüeft"
+      },
+      "is_final": false,
+      "icon": "CashCheck",
+      "sort_order": 3
+    },
+    {
+      "inquiry_type": "lab_equipment",
+      "status_key": "procurement_approved",
+      "label": {
+        "en": "Procurement Approved",
+        "fr": "Acquisition approuvée",
+        "de": "Beschaffung genehmigt",
+        "gsw": "Beschaffig gnehmigt"
+      },
+      "description": {
+        "en": "Equipment procurement has been approved",
+        "fr": "L'acquisition de l'équipement a été approuvée",
+        "de": "Gerätebeschaffung wurde genehmigt",
+        "gsw": "Geräät-Beschaffig isch gnehmigt"
+      },
+      "is_final": false,
+      "icon": "CheckCircle",
+      "sort_order": 4
+    },
+    {
+      "inquiry_type": "lab_equipment",
+      "status_key": "ordered",
+      "label": {
+        "en": "Ordered",
+        "fr": "Commandé",
+        "de": "Bestellt",
+        "gsw": "Bestellt"
+      },
+      "description": {
+        "en": "Equipment has been ordered from vendor",
+        "fr": "L'équipement a été commandé auprès du fournisseur",
+        "de": "Gerät wurde beim Anbieter bestellt",
+        "gsw": "Geräät isch bim Aabieter bestellt"
+      },
+      "is_final": false,
+      "icon": "CartCheck",
+      "sort_order": 5
+    },
+    {
+      "inquiry_type": "lab_equipment",
+      "status_key": "delivered",
+      "label": {
+        "en": "Delivered",
+        "fr": "Livré",
+        "de": "Geliefert",
+        "gsw": "Gliiferet"
+      },
+      "description": {
+        "en": "Equipment has been delivered",
+        "fr": "L'équipement a été livré",
+        "de": "Gerät wurde geliefert",
+        "gsw": "Geräät isch gliiferet"
+      },
+      "is_final": false,
+      "icon": "TruckDelivery",
+      "sort_order": 6
+    },
+    {
+      "inquiry_type": "lab_equipment",
+      "status_key": "operational",
+      "label": {
+        "en": "Operational",
+        "fr": "Opérationnel",
+        "de": "Betriebsbereit",
+        "gsw": "Betriebsbereit"
+      },
+      "description": {
+        "en": "Equipment installed and operational",
+        "fr": "Équipement installé et opérationnel",
+        "de": "Gerät installiert und betriebsbereit",
+        "gsw": "Geräät installiert und betriebsbereit"
+      },
+      "is_final": true,
+      "icon": "CheckAll",
+      "sort_order": 7
+    },
+    {
+      "inquiry_type": "lab_equipment",
+      "status_key": "rejected",
+      "label": {
+        "en": "Rejected",
+        "fr": "Rejeté",
+        "de": "Abgelehnt",
+        "gsw": "Abglehnt"
+      },
+      "description": {
+        "en": "Equipment request rejected - budget or justification issues",
+        "fr": "Demande d'équipement rejetée - problèmes de budget ou de justification",
+        "de": "Geräteanfrage abgelehnt - Budget- oder Begründungsprobleme",
+        "gsw": "Geräät-Aafraag abglehnt - Budget- oder Begründigs-Probleem"
+      },
+      "is_final": true,
+      "icon": "CloseCircle",
+      "sort_order": 8
+    },
+
+    {
+      "inquiry_type": "publication_support",
+      "status_key": "submitted",
+      "label": {
+        "en": "Submitted",
+        "fr": "Soumis",
+        "de": "Eingereicht",
+        "gsw": "Iigräicht"
+      },
+      "description": {
+        "en": "Publication support request submitted",
+        "fr": "Demande de support de publication soumise",
+        "de": "Publikationsunterstützungsanfrage eingereicht",
+        "gsw": "Publikations-Understützig-Aafraag iigräicht"
+      },
+      "is_final": false,
+      "icon": "Send",
+      "sort_order": 1
+    },
+    {
+      "inquiry_type": "publication_support",
+      "status_key": "revision_requested",
+      "label": {
+        "en": "Revision Requested",
+        "fr": "Révision demandée",
+        "de": "Überarbeitung angefordert",
+        "gsw": "Überarbeitig aagforderet"
+      },
+      "description": {
+        "en": "Manuscript revisions requested by reviewers",
+        "fr": "Révisions du manuscrit demandées par les examinateurs",
+        "de": "Manuskriptüberarbeitungen von Gutachtern angefordert",
+        "gsw": "Manuskript-Überarbeitige vo Gutachter aagforderet"
+      },
+      "is_final": false,
+      "icon": "FileDocumentEdit",
+      "sort_order": 3
+    },
+    {
+      "inquiry_type": "publication_support",
+      "status_key": "approved",
+      "label": {
+        "en": "Approved",
+        "fr": "Approuvé",
+        "de": "Genehmigt",
+        "gsw": "Gnehmigt"
+      },
+      "description": {
+        "en": "Publication support approved",
+        "fr": "Support de publication approuvé",
+        "de": "Publikationsunterstützung genehmigt",
+        "gsw": "Publikations-Understützig gnehmigt"
+      },
+      "is_final": false,
+      "icon": "CheckCircle",
+      "sort_order": 4
+    },
+    {
+      "inquiry_type": "publication_support",
+      "status_key": "in_preparation",
+      "label": {
+        "en": "In Preparation",
+        "fr": "En préparation",
+        "de": "In Vorbereitung",
+        "gsw": "In Vorbereitung"
+      },
+      "description": {
+        "en": "Publication being prepared for submission",
+        "fr": "Publication en cours de préparation pour soumission",
+        "de": "Publikation wird für Einreichung vorbereitet",
+        "gsw": "Publikation wird für Iiriichig vorbereitet"
+      },
+      "is_final": false,
+      "icon": "FileEdit",
+      "sort_order": 5
+    },
+    {
+      "inquiry_type": "publication_support",
+      "status_key": "submitted_to_journal",
+      "label": {
+        "en": "Submitted to Journal",
+        "fr": "Soumis à la revue",
+        "de": "Bei Zeitschrift eingereicht",
+        "gsw": "Bi Zitschrift iigräicht"
+      },
+      "description": {
+        "en": "Manuscript submitted to academic journal",
+        "fr": "Manuscrit soumis à une revue académique",
+        "de": "Manuskript bei wissenschaftlicher Zeitschrift eingereicht",
+        "gsw": "Manuskript bi wüsseschaftliche Zitschrift iigräicht"
+      },
+      "is_final": false,
+      "icon": "BookOpenVariant",
+      "sort_order": 6
+    },
+    {
+      "inquiry_type": "publication_support",
+      "status_key": "published",
+      "label": {
+        "en": "Published",
+        "fr": "Publié",
+        "de": "Veröffentlicht",
+        "gsw": "Veröffentlicht"
+      },
+      "description": {
+        "en": "Research successfully published",
+        "fr": "Recherche publiée avec succès",
+        "de": "Forschung erfolgreich veröffentlicht",
+        "gsw": "Forschig erfolgriich veröffentlicht"
+      },
+      "is_final": true,
+      "icon": "CheckAll",
+      "sort_order": 7
+    },
+    {
+      "inquiry_type": "publication_support",
+      "status_key": "rejected",
+      "label": {
+        "en": "Rejected",
+        "fr": "Rejeté",
+        "de": "Abgelehnt",
+        "gsw": "Abglehnt"
+      },
+      "description": {
+        "en": "Publication support request rejected",
+        "fr": "Demande de support de publication rejetée",
+        "de": "Publikationsunterstützungsanfrage abgelehnt",
+        "gsw": "Publikations-Understützig-Aafraag abglehnt"
+      },
+      "is_final": true,
+      "icon": "CloseCircle",
+      "sort_order": 8
+    }
+  ],
+  "categories": [
+    {
+      "category_id": "stem",
+      "name": {
+        "en": "STEM",
+        "fr": "STIM",
+        "de": "MINT",
+        "gsw": "MINT"
+      },
+      "parent": null
+    },
+    {
+      "category_id": "computer_science",
+      "name": {
+        "en": "Computer Science",
+        "fr": "Informatique",
+        "de": "Informatik",
+        "gsw": "Informatik"
+      },
+      "parent": "stem"
+    },
+    {
+      "category_id": "engineering",
+      "name": {
+        "en": "Engineering",
+        "fr": "Ingénierie",
+        "de": "Ingenieurwesen",
+        "gsw": "Ingenieurwese"
+      },
+      "parent": "stem"
+    },
+    {
+      "category_id": "life_sciences",
+      "name": {
+        "en": "Life Sciences",
+        "fr": "Sciences de la vie",
+        "de": "Lebenswissenschaften",
+        "gsw": "Läbenswüsseschaften"
+      },
+      "parent": "stem"
+    },
+    {
+      "category_id": "mathematics",
+      "name": {
+        "en": "Mathematics",
+        "fr": "Mathématiques",
+        "de": "Mathematik",
+        "gsw": "Mathematik"
+      },
+      "parent": "stem"
+    },
+    {
+      "category_id": "physics",
+      "name": {
+        "en": "Physics",
+        "fr": "Physique",
+        "de": "Physik",
+        "gsw": "Physik"
+      },
+      "parent": "stem"
+    },
+    {
+      "category_id": "humanities",
+      "name": {
+        "en": "Humanities",
+        "fr": "Sciences humaines",
+        "de": "Geisteswissenschaften",
+        "gsw": "Geisteswüsseschaften"
+      },
+      "parent": null
+    },
+    {
+      "category_id": "literature",
+      "name": {
+        "en": "Literature",
+        "fr": "Littérature",
+        "de": "Literatur",
+        "gsw": "Literatur"
+      },
+      "parent": "humanities"
+    },
+    {
+      "category_id": "philosophy",
+      "name": {
+        "en": "Philosophy",
+        "fr": "Philosophie",
+        "de": "Philosophie",
+        "gsw": "Philosophie"
+      },
+      "parent": "humanities"
+    },
+    {
+      "category_id": "history",
+      "name": {
+        "en": "History",
+        "fr": "Histoire",
+        "de": "Geschichte",
+        "gsw": "Gschicht"
+      },
+      "parent": "humanities"
+    },
+    {
+      "category_id": "social_sciences",
+      "name": {
+        "en": "Social Sciences",
+        "fr": "Sciences sociales",
+        "de": "Sozialwissenschaften",
+        "gsw": "Sozialwüsseschaften"
+      },
+      "parent": null
+    },
+    {
+      "category_id": "psychology",
+      "name": {
+        "en": "Psychology",
+        "fr": "Psychologie",
+        "de": "Psychologie",
+        "gsw": "Psychologii"
+      },
+      "parent": "social_sciences"
+    },
+    {
+      "category_id": "sociology",
+      "name": {
+        "en": "Sociology",
+        "fr": "Sociologie",
+        "de": "Soziologie",
+        "gsw": "Soziologii"
+      },
+      "parent": "social_sciences"
+    },
+    {
+      "category_id": "economics",
+      "name": {
+        "en": "Economics",
+        "fr": "Économie",
+        "de": "Wirtschaftswissenschaften",
+        "gsw": "Wirtschaftswüsseschaften"
+      },
+      "parent": "social_sciences"
+    },
+    {
+      "category_id": "medical_health",
+      "name": {
+        "en": "Medical & Health",
+        "fr": "Médical et santé",
+        "de": "Medizin & Gesundheit",
+        "gsw": "Medizin & Gsundheit"
+      },
+      "parent": null
+    },
+    {
+      "category_id": "clinical_research",
+      "name": {
+        "en": "Clinical Research",
+        "fr": "Recherche clinique",
+        "de": "Klinische Forschung",
+        "gsw": "Klinischi Forschig"
+      },
+      "parent": "medical_health"
+    },
+    {
+      "category_id": "public_health",
+      "name": {
+        "en": "Public Health",
+        "fr": "Santé publique",
+        "de": "Öffentliche Gesundheit",
+        "gsw": "Öffentlichi Gsundheit"
+      },
+      "parent": "medical_health"
+    },
+    {
+      "category_id": "interdisciplinary",
+      "name": {
+        "en": "Interdisciplinary",
+        "fr": "Interdisciplinaire",
+        "de": "Interdisziplinär",
+        "gsw": "Interdisziplinäär"
+      },
+      "parent": null
+    },
+    {
+      "category_id": "data_science",
+      "name": {
+        "en": "Data Science",
+        "fr": "Science des données",
+        "de": "Datenwissenschaft",
+        "gsw": "Date-Wüsseschaft"
+      },
+      "parent": "interdisciplinary"
+    },
+    {
+      "category_id": "sustainability",
+      "name": {
+        "en": "Sustainability",
+        "fr": "Durabilité",
+        "de": "Nachhaltigkeit",
+        "gsw": "Nachhaltikeit"
+      },
+      "parent": "interdisciplinary"
+    }
+  ],
+  "option_types": [
+    {
+      "option_type": "grant_budget_item",
+      "label": {
+        "en": "Grant Budget Item",
+        "fr": "Poste budgétaire de subvention",
+        "de": "Förderbudgetposten",
+        "gsw": "Förder-Budget-Poschte"
+      },
+      "description": {
+        "en": "Budget line items for grant applications",
+        "fr": "Postes budgétaires pour les demandes de subvention",
+        "de": "Budgetposten für Förderanträge",
+        "gsw": "Budget-Poschte für Förder-Aaträg"
+      },
+      "fields": [
+        {
+          "key": "category",
+          "label": {
+            "en": "Category",
+            "fr": "Catégorie",
+            "de": "Kategorie",
+            "gsw": "Kategorie"
+          },
+          "type": "string",
+          "required": true
+        },
+        {
+          "key": "amount",
+          "label": {
+            "en": "Amount",
+            "fr": "Montant",
+            "de": "Betrag",
+            "gsw": "Betrag"
+          },
+          "type": "float",
+          "required": true
+        },
+        {
+          "key": "justification",
+          "label": {
+            "en": "Justification",
+            "fr": "Justification",
+            "de": "Begründung",
+            "gsw": "Begründig"
+          },
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "funding_source",
+          "label": {
+            "en": "Funding Source",
+            "fr": "Source de financement",
+            "de": "Finanzierungsquelle",
+            "gsw": "Finanzierigs-Quälle"
+          },
+          "type": "string",
+          "required": false
+        }
+      ]
+    },
+    {
+      "option_type": "research_milestone",
+      "label": {
+        "en": "Research Milestone",
+        "fr": "Jalon de recherche",
+        "de": "Forschungsmeilenstein",
+        "gsw": "Forschigs-Meilestei"
+      },
+      "description": {
+        "en": "Project milestones and deliverables",
+        "fr": "Jalons et livrables du projet",
+        "de": "Projektmeilensteine und Ergebnisse",
+        "gsw": "Projäkt-Meilestei und Ergäbnis"
+      },
+      "fields": [
+        {
+          "key": "milestone_name",
+          "label": {
+            "en": "Milestone Name",
+            "fr": "Nom du jalon",
+            "de": "Meilensteinname",
+            "gsw": "Meilestei-Name"
+          },
+          "type": "string",
+          "required": true
+        },
+        {
+          "key": "deadline",
+          "label": {
+            "en": "Deadline",
+            "fr": "Date limite",
+            "de": "Frist",
+            "gsw": "Frischt"
+          },
+          "type": "date",
+          "required": true
+        },
+        {
+          "key": "deliverable_type",
+          "label": {
+            "en": "Deliverable Type",
+            "fr": "Type de livrable",
+            "de": "Ergebnistyp",
+            "gsw": "Ergäbnis-Typ"
+          },
+          "type": "string",
+          "required": false
+        },
+        {
+          "key": "success_criteria",
+          "label": {
+            "en": "Success Criteria",
+            "fr": "Critères de succès",
+            "de": "Erfolgskriterien",
+            "gsw": "Erfolgs-Kriterie"
+          },
+          "type": "text",
+          "required": false
+        }
+      ]
+    },
+    {
+      "option_type": "collaboration_partner",
+      "label": {
+        "en": "Collaboration Partner",
+        "fr": "Partenaire de collaboration",
+        "de": "Kooperationspartner",
+        "gsw": "Kooperations-Partner"
+      },
+      "description": {
+        "en": "Partner institutions and researchers",
+        "fr": "Institutions et chercheurs partenaires",
+        "de": "Partnerinstitutionen und Forscher",
+        "gsw": "Partner-Institutione und Forscher"
+      },
+      "fields": [
+        {
+          "key": "partner_name",
+          "label": {
+            "en": "Partner Name",
+            "fr": "Nom du partenaire",
+            "de": "Partnername",
+            "gsw": "Partner-Name"
+          },
+          "type": "string",
+          "required": true
+        },
+        {
+          "key": "role",
+          "label": {
+            "en": "Role",
+            "fr": "Rôle",
+            "de": "Rolle",
+            "gsw": "Roll"
+          },
+          "type": "string",
+          "required": true
+        },
+        {
+          "key": "contribution",
+          "label": {
+            "en": "Contribution",
+            "fr": "Contribution",
+            "de": "Beitrag",
+            "gsw": "Biitrag"
+          },
+          "type": "text",
+          "required": false
+        },
+        {
+          "key": "agreement_status",
+          "label": {
+            "en": "Agreement Status",
+            "fr": "Statut de l'accord",
+            "de": "Vertragsstatus",
+            "gsw": "Vertrags-Status"
+          },
+          "type": "enum",
+          "required": false,
+          "allowed_values": [
+            {"value": "pending", "label": {"en": "Pending", "fr": "En attente", "de": "Ausstehend", "gsw": "Usstehend"}},
+            {"value": "signed", "label": {"en": "Signed", "fr": "Signé", "de": "Unterzeichnet", "gsw": "Unterzeichnet"}},
+            {"value": "in_negotiation", "label": {"en": "In Negotiation", "fr": "En négociation", "de": "In Verhandlung", "gsw": "In Verhandlig"}}
+          ]
+        }
+      ]
+    },
+    {
+      "option_type": "publication_target",
+      "label": {
+        "en": "Publication Target",
+        "fr": "Cible de publication",
+        "de": "Publikationsziel",
+        "gsw": "Publikations-Ziil"
+      },
+      "description": {
+        "en": "Publication goals and venues",
+        "fr": "Objectifs et lieux de publication",
+        "de": "Publikationsziele und -orte",
+        "gsw": "Publikations-Ziil und -Ort"
+      },
+      "fields": [
+        {
+          "key": "venue",
+          "label": {
+            "en": "Venue",
+            "fr": "Lieu",
+            "de": "Veranstaltungsort",
+            "gsw": "Ort"
+          },
+          "type": "string",
+          "required": true
+        },
+        {
+          "key": "submission_deadline",
+          "label": {
+            "en": "Submission Deadline",
+            "fr": "Date limite de soumission",
+            "de": "Einreichungsfrist",
+            "gsw": "Iireichigs-Frischt"
+          },
+          "type": "date",
+          "required": false
+        },
+        {
+          "key": "author_list",
+          "label": {
+            "en": "Author List",
+            "fr": "Liste des auteurs",
+            "de": "Autorenliste",
+            "gsw": "Autore-Lischt"
+          },
+          "type": "text",
+          "required": false
+        },
+        {
+          "key": "status",
+          "label": {
+            "en": "Status",
+            "fr": "Statut",
+            "de": "Status",
+            "gsw": "Status"
+          },
+          "type": "enum",
+          "required": false,
+          "allowed_values": [
+            {"value": "draft", "label": {"en": "Draft", "fr": "Brouillon", "de": "Entwurf", "gsw": "Entwurf"}},
+            {"value": "submitted", "label": {"en": "Submitted", "fr": "Soumis", "de": "Eingereicht", "gsw": "Iigräicht"}},
+            {"value": "under_review", "label": {"en": "Under Review", "fr": "En cours d'examen", "de": "In Prüfung", "gsw": "In Prüefig"}},
+            {"value": "accepted", "label": {"en": "Accepted", "fr": "Accepté", "de": "Angenommen", "gsw": "Aagnoh"}},
+            {"value": "published", "label": {"en": "Published", "fr": "Publié", "de": "Veröffentlicht", "gsw": "Veröffentlicht"}}
+          ]
+        }
+      ]
+    }
+  ],
+  "inquiry_group_types": [
+    {
+      "group_type": "university",
+      "label": {
+        "en": "University",
+        "fr": "Université",
+        "de": "Universität",
+        "gsw": "Universitäät"
+      },
+      "description": {
+        "en": "University-level research initiatives",
+        "fr": "Initiatives de recherche au niveau universitaire",
+        "de": "Forschungsinitiativen auf Universitätsebene",
+        "gsw": "Forschigs-Initiative uf Universitäts-Ebeni"
+      },
+      "is_root": true
+    },
+    {
+      "group_type": "faculty",
+      "label": {
+        "en": "Faculty/College",
+        "fr": "Faculté/Collège",
+        "de": "Fakultät/Hochschule",
+        "gsw": "Fakultäät/Hochschuel"
+      },
+      "description": {
+        "en": "Faculty or college groupings",
+        "fr": "Regroupements de facultés ou de collèges",
+        "de": "Fakultäts- oder Hochschulgruppierungen",
+        "gsw": "Fakultäts- oder Hochschuel-Gruppierige"
+      },
+      "is_root": false
+    },
+    {
+      "group_type": "department",
+      "label": {
+        "en": "Department",
+        "fr": "Département",
+        "de": "Abteilung",
+        "gsw": "Abteilig"
+      },
+      "description": {
+        "en": "Department research groups",
+        "fr": "Groupes de recherche départementaux",
+        "de": "Abteilungs-Forschungsgruppen",
+        "gsw": "Abteiligs-Forschigs-Gruppe"
+      },
+      "is_root": false
+    },
+    {
+      "group_type": "research_lab",
+      "label": {
+        "en": "Research Lab",
+        "fr": "Laboratoire de recherche",
+        "de": "Forschungslabor",
+        "gsw": "Forschigs-Labor"
+      },
+      "description": {
+        "en": "Individual research laboratories",
+        "fr": "Laboratoires de recherche individuels",
+        "de": "Einzelne Forschungslabore",
+        "gsw": "Einzelni Forschigs-Labor"
+      },
+      "is_root": false
+    },
+    {
+      "group_type": "research_center",
+      "label": {
+        "en": "Research Center",
+        "fr": "Centre de recherche",
+        "de": "Forschungszentrum",
+        "gsw": "Forschigs-Zentrum"
+      },
+      "description": {
+        "en": "Interdisciplinary research centers",
+        "fr": "Centres de recherche interdisciplinaires",
+        "de": "Interdisziplinäre Forschungszentren",
+        "gsw": "Interdisziplinäri Forschigs-Zentre"
+      },
+      "is_root": false
+    },
+    {
+      "group_type": "grant_program",
+      "label": {
+        "en": "Grant Program",
+        "fr": "Programme de subventions",
+        "de": "Förderprogramm",
+        "gsw": "Förder-Programm"
+      },
+      "description": {
+        "en": "Grant-funded project portfolios",
+        "fr": "Portefeuilles de projets financés par des subventions",
+        "de": "Von Zuschüssen finanzierte Projektportfolios",
+        "gsw": "Vo Zueschüss finanzierti Projäkt-Portfolio"
+      },
+      "is_root": false
+    }
+  ],
+  "locations": [
+    {
+      "location_id": "uni_main",
+      "name": {
+        "en": "Main Campus",
+        "fr": "Campus principal",
+        "de": "Hauptcampus",
+        "gsw": "Hauptcampus"
+      },
+      "parent_id": null
+    },
+    {
+      "location_id": "uni_north",
+      "name": {
+        "en": "North Campus",
+        "fr": "Campus nord",
+        "de": "Nordcampus",
+        "gsw": "Nord-Campus"
+      },
+      "parent_id": null
+    },
+    {
+      "location_id": "science_building",
+      "name": {
+        "en": "Science Building",
+        "fr": "Bâtiment des sciences",
+        "de": "Wissenschaftsgebäude",
+        "gsw": "Wüsseschafts-Gebäude"
+      },
+      "parent_id": "uni_main"
+    },
+    {
+      "location_id": "medical_complex",
+      "name": {
+        "en": "Medical Complex",
+        "fr": "Complexe médical",
+        "de": "Medizinischer Komplex",
+        "gsw": "Medizinisch Komplex"
+      },
+      "parent_id": "uni_main"
+    },
+    {
+      "location_id": "library_tower",
+      "name": {
+        "en": "Library Tower",
+        "fr": "Tour de la bibliothèque",
+        "de": "Bibliotheksturm",
+        "gsw": "Bibliotheks-Turm"
+      },
+      "parent_id": "uni_main"
+    },
+    {
+      "location_id": "engineering_hub",
+      "name": {
+        "en": "Engineering Hub",
+        "fr": "Pôle d'ingénierie",
+        "de": "Ingenieurszentrum",
+        "gsw": "Ingenieur-Zentrum"
+      },
+      "parent_id": "uni_north"
+    },
+    {
+      "location_id": "chemistry_lab",
+      "name": {
+        "en": "Chemistry Lab (Floor 3)",
+        "fr": "Laboratoire de chimie (Étage 3)",
+        "de": "Chemielabor (Etage 3)",
+        "gsw": "Chemie-Labor (Stock 3)"
+      },
+      "parent_id": "science_building"
+    },
+    {
+      "location_id": "biology_lab",
+      "name": {
+        "en": "Biology Lab (Floor 4)",
+        "fr": "Laboratoire de biologie (Étage 4)",
+        "de": "Biologielabor (Etage 4)",
+        "gsw": "Biologie-Labor (Stock 4)"
+      },
+      "parent_id": "science_building"
+    },
+    {
+      "location_id": "data_center",
+      "name": {
+        "en": "Research Data Center",
+        "fr": "Centre de données de recherche",
+        "de": "Forschungsdatenzentrum",
+        "gsw": "Forschigs-Date-Zentrum"
+      },
+      "parent_id": "library_tower"
+    }
+  ]
+}
