@@ -146,6 +146,7 @@ OC.L10N.register(
     "Direction" : "Irány",
     "Descending" : "Csökkenő",
     "Ascending" : "Növekvő",
+    "Grid" : "Rács",
     "List" : "Lista",
     "Not defined" : "Nem definiált",
     "Just now" : "Épp most",
