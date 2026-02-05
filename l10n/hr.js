@@ -54,6 +54,7 @@ OC.L10N.register(
     "Summary" : "Sažetak",
     "Generating…" : "Generiranje…",
     "Pending" : "Na čekanju",
+    "Accepted" : "Prihvaćeno",
     "Rejected" : "Odbijeno",
     "Save" : "Spremi",
     "Moderate" : "Umjereni",
