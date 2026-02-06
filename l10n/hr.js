@@ -42,6 +42,7 @@ OC.L10N.register(
     "URL" : "URL",
     "Bold" : "Podebljano",
     "Italic" : "U kurzivu",
+    "Underline" : "Podcrtano",
     "Strikethrough" : "Precrtano",
     "Heading 1" : "Naslov 1",
     "Heading 2" : "Naslov 2",
