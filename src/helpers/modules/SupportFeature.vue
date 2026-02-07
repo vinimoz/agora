@@ -5,11 +5,11 @@
 
 <template>
   <div 
+    ref="containerRef"
     class="counter-item supports"
     :class="{ 'clickable': canSupport, 'disabled': !canSupport }"
-    @click="toggleSupport"
-    ref="containerRef"
     :style="containerStyles"
+    @click="toggleSupport"
   >
     <div class="counter-icon" :style="iconContainerStyles">
       <TernarySupportIcon
@@ -195,74 +195,46 @@ const tooltipHovered = ref(false)
 const tooltipTimeout = ref<NodeJS.Timeout | null>(null)
 
 // Computed properties for dynamic sizing
-const containerStyles = computed(() => {
-  return {
+const containerStyles = computed(() => ({
     padding: `${props.iconSize * 0.3}px ${props.iconSize * 0.6}px`,
     gap: `${props.iconSize * 0.5}px`,
     borderRadius: `${props.iconSize * 0.6}px`,
     borderWidth: `${props.iconSize * 0.05}px`
-  }
-})
+  }))
 
-const iconContainerStyles = computed(() => {
-  return {
+const iconContainerStyles = computed(() => ({
     width: `${props.iconSize * 1.2}px`,
     height: `${props.iconSize * 1.2}px`,
     borderRadius: `${props.iconSize * 0.3}px`
-  }
-})
+  }))
 
-const tooltipStyles = computed(() => {
-  return {
+const tooltipStyles = computed(() => ({
     minWidth: `${props.iconSize * 12}px`,
     maxWidth: `${props.iconSize * 14}px`
-  }
-})
+  }))
 
-const isTernary = computed(() => {
-  return props.item?.configuration?.supportFeature === 'ternary'
-})
+const isTernary = computed(() => props.item?.configuration?.supportFeature === 'ternary')
 
-const isBinary = computed(() => {
-  return props.item?.configuration?.supportFeature === 'binary'
-})
+const isBinary = computed(() => props.item?.configuration?.supportFeature === 'binary')
 
-const isSupportEnabled = computed(() => {
-  return isTernary.value || isBinary.value
-})
+const isSupportEnabled = computed(() => isTernary.value || isBinary.value)
 
-const supportValue = computed(() => {
-  return props.item?.currentUserStatus?.supportValue ?? null
-})
+const supportValue = computed(() => props.item?.currentUserStatus?.supportValue ?? null)
 
-const hasSupported = computed(() => {
-  return props.item?.currentUserStatus?.hasSupported ?? false
-})
+const hasSupported = computed(() => props.item?.currentUserStatus?.hasSupported ?? false)
 
-const displayCount = computed(() => {
-  return props.item?.status?.countSupports ?? 0
-})
+const displayCount = computed(() => props.item?.status?.countSupports ?? 0)
 
-const quorumValue = computed(() => {
-  return props.item?.miscFields?.quorum ?? 0
-})
+const quorumValue = computed(() => props.item?.miscFields?.quorum ?? 0)
 
-const positiveCount = computed(() => {
-  return props.item?.status?.countPositiveSupports ?? 0
-})
+const positiveCount = computed(() => props.item?.status?.countPositiveSupports ?? 0)
 
-const neutralCount = computed(() => {
-  return props.item?.status?.countNeutralSupports ?? 0
-})
+const neutralCount = computed(() => props.item?.status?.countNeutralSupports ?? 0)
 
-const negativeCount = computed(() => {
-  return props.item?.status?.countNegativeSupports ?? 0
-})
+const negativeCount = computed(() => props.item?.status?.countNegativeSupports ?? 0)
 
-const totalParticipants = computed(() => {
-  return props.item?.status?.countParticipants ?? 
-    (positiveCount.value + neutralCount.value + negativeCount.value)
-})
+const totalParticipants = computed(() => props.item?.status?.countParticipants ?? 
+    (positiveCount.value + neutralCount.value + negativeCount.value))
 
 const positivePercentage = computed(() => {
   if (totalParticipants.value === 0) return 0
@@ -285,9 +257,9 @@ const canSupport = computed(() => {
   // props.context should never be undefined due to default value
   if (props.itemType === 'option') {
     return canSupportOption(props.context)
-  } else {
+  } 
     return canSupportInquiry(props.context)
-  }
+  
 })
 
 

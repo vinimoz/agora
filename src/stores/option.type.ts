@@ -86,6 +86,7 @@ export const DEFAULT_FAMILY: OptionFamily = {
 
 /**
  * Get family by key
+ * @param key
  */
 export function getFamily(key: string): OptionFamily {
   return OPTION_FAMILIES[key] || DEFAULT_FAMILY
@@ -107,6 +108,7 @@ export function getFamilyKeys(): string[] {
 
 /**
  * Check if family exists
+ * @param key
  */
 export function hasFamily(key: string): boolean {
   return key in OPTION_FAMILIES

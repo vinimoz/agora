@@ -86,6 +86,7 @@
                                     :show-quorum="true"
                                     :show-details-on-hover="true"
                                     :icon-size="22"
+                                    @click.stop
                                     />
           <div v-if="inquiry.status?.countComments" class="counter-item comments" @click.stop="handleCommentsClick">
             <component :is="InquiryGeneralIcons.Comment" class="counter-icon" :size="14" />
@@ -150,9 +151,7 @@ const cardClasses = computed(() => ({
 const inquiryTypes = computed(() => sessionStore.appSettings?.inquiryTypeTab || [])
 
 // Context for permissions
-const context = computed(() => {
-  return createInquiryContext(props.inquiry, sessionStore.appSettings)
-})
+const context = computed(() => createInquiryContext(props.inquiry, sessionStore.appSettings))
 
 // Get type data
 const typeData = computed(() => getInquiryTypeData(props.inquiry.type, inquiryTypes.value))

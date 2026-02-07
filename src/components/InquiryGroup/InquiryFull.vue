@@ -15,7 +15,6 @@ import { DateTime } from 'luxon'
 
 // Import icons and components
 import { InquiryGeneralIcons, StatusIcons } from '../../utils/icons.ts'
-import { TernarySupportIcon, ThumbIcon } from '../AppIcons'
 
 // Import components
 import CommentAdd from '../Comments/CommentAdd.vue'
@@ -58,12 +57,8 @@ function closeSidebar() {
 
 // Create permission context
 
-const showTernaryModal = ref(false)
-
 // Context for permissions
-const context = computed(() => {
-  return createInquiryContext(props.inquiry, sessionStore.appSettings)
-})
+const context = computed(() => createInquiryContext(props.inquiry, sessionStore.appSettings))
 
 // Computed Properties
 const canSupportValue = computed(() => canSupport(context))
@@ -142,13 +137,6 @@ const statusIconComponent = computed(() => {
 
 // Support
 const isSupported = computed(() => storeInquiry.value.currentUserStatus?.hasSupported || false)
-
-const supportIconComponent = computed(() => {
-  if (props.inquiry.configuration?.supportFeature === 'ternary') {
-    return TernarySupportIcon
-  }
-  return ThumbIcon
-})
 
 // Replace all props.inquiry references with storeInquiry computed property
 const storeInquiry = computed(() => {
@@ -490,16 +478,6 @@ watch(() => storeInquiry.value.currentUserStatus?.supportValue, (newValue) => {
                 <span class="action-text">{{ t('agora', 'Participants') }}</span>
                 <span class="action-count">{{ participantsCount }}</span>
               </div>
-
-              <!-- Ternary Details Button -->
-              <button
-                v-if="canSupportValue && storeInquiry.configuration?.supportFeature === 'ternary'"
-                class="action-button details-button"
-                @click="openTernaryDetails"
-              >
-                <component :is="InquiryGeneralIcons.ChartBar" class="action-icon" :size="16" />
-                <span class="action-text">{{ t('agora', 'View details') }}</span>
-              </button>
             </div>
           </div>
         </div>
@@ -585,12 +563,12 @@ watch(() => storeInquiry.value.currentUserStatus?.supportValue, (newValue) => {
 
           <!-- Right side metadata -->
           <div class="meta-actions">
-            <div class="meta-item" v-if="hasQuorum">
+            <div v-if="hasQuorum" class="meta-item">
               <span class="meta-label">{{ t('agora', 'Quorum') }}:</span>
               <span class="meta-value">{{ storeInquiry.status?.countSupports || 0 }} / {{ quorumValue }}</span>
             </div>
 
-            <div class="meta-item" v-if="timeExpirationRelative">
+            <div v-if="timeExpirationRelative" class="meta-item">
               <component :is="InquiryGeneralIcons.Expiration" class="meta-icon" :size="14" />
               <span class="meta-value">{{ timeExpirationRelative }}</span>
             </div>
@@ -674,6 +652,7 @@ watch(() => storeInquiry.value.currentUserStatus?.supportValue, (newValue) => {
                                     :show-quorum="true"
                                     :show-details-on-hover="true"
                                     :icon-size="22"
+                                    @click.stop
                                     />
         </div>
       </div>

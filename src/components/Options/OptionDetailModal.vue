@@ -114,8 +114,8 @@
                     <NcRichContenteditable 
                                       v-if="optionTypeData.use_title"
                                       v-model="editForm.label"
-                                      :emojiAutocomplete="true"
-                                      :linkAutocomplete="true"
+                                      :emoji-autocomplete="true"
+                                      :link-autocomplete="true"
 							          :autolink="true"
 							          :use-markdown="true"
                                       :label="t('agora', 'Title')"
@@ -126,8 +126,8 @@
                                       v-model="editForm.text"
                                       :label="t('agora', 'Description')"
                                       :placeholder="t('agora', 'Enter option text')"
-                                      :emojiAutocomplete="true"
-                                      :linkAutocomplete="true"
+                                      :emoji-autocomplete="true"
+                                      :link-autocomplete="true"
 							          :autolink="true"
 							          :use-markdown="true"
 			                          :maxlength="400"
@@ -278,7 +278,7 @@
                             <div class="child-content">
                                     <span class="child-type">{{ getOptionTypeLabel(child.type) }}</span>
                                 <h4>{{ child.title || child.label }}</h4>
-                                  <p class="child-description" v-if="getOptionTypeDescription(child.type)">
+                                  <p v-if="getOptionTypeDescription(child.type)" class="child-description">
                                     {{ child.text }}
                                     <span class="child-date">{{ formatDate(child.status.created) }}</span>
                                  </p>
@@ -440,9 +440,7 @@ const toggleSubMenu = (menu: string | null = null) => {
 }
 
 // Get option types from session store
-const allOptionTypes = computed(() => {
-    return sessionStore.appSettings?.inquiryOptionTypeTab || []
-})
+const allOptionTypes = computed(() => sessionStore.appSettings?.inquiryOptionTypeTab || [])
 
 // Use helper function to get option type data
 const optionTypeData = computed(() => {
@@ -479,15 +477,10 @@ const canComment = computed(() => canCommentOption(optionContext.value))
 const canSupport = computed(() => canSupportOption(optionContext.value))
 
 // Computed properties
-const modalTitle = computed(() => {
-    return optionStore.title || t('agora', 'Option Details')
-})
+const modalTitle = computed(() => optionStore.title || t('agora', 'Option Details'))
 console.log(" OPPTTION TYPE DATA ",optionTypeData.value)
 
-const optionTypeLabel = computed(() => {
-
-    return optionTypeData.value.label || optionStore.type || ''
-})
+const optionTypeLabel = computed(() => optionTypeData.value.label || optionStore.type || '')
 
 const optionIcon = computed(() => {
     const iconName = optionTypeData.value?.icon
@@ -507,21 +500,13 @@ const optionTypeColor = computed(() => {
 })
 
 
-const allowComment = computed(() => {
-    return optionTypeData.value?.allow_comment || false
-})
+const allowComment = computed(() => optionTypeData.value?.allow_comment || false)
 
-const hasSupportFeature = computed(() => {
-    return optionTypeData.value?.support_feature !== 'none' || false
-})
+const hasSupportFeature = computed(() => optionTypeData.value?.support_feature !== 'none' || false)
 
-const canEditOrDelete = computed(() => {
-    return canEdit.value || canDelete.value 
-})
+const canEditOrDelete = computed(() => canEdit.value || canDelete.value)
 
-const canSaveEdit = computed(() => {
-    return editForm.value.text.trim().length > 0
-})
+const canSaveEdit = computed(() => editForm.value.text.trim().length > 0)
 
 const additionalFields = computed(() => {
     if (!optionTypeData.value?.fields) return []
@@ -557,9 +542,7 @@ const allowedResponses = computed(() => {
     return responses
 })
 
-const hasAllowedResponses = computed(() => {
-    return allowedResponses.value.length > 0
-})
+const hasAllowedResponses = computed(() => allowedResponses.value.length > 0)
 
 console.log(" RESPONSE TYPE INTO AVAILABLE RESPONSE YT ",allowedResponses.value)
 
@@ -611,9 +594,7 @@ const availableResponseTypes = computed(() => {
 })
 
 
-const canAddChild = computed(() => {
-    return hasAllowedResponses.value && sessionStore.currentUser 
-})
+const canAddChild = computed(() => hasAllowedResponses.value && sessionStore.currentUser)
 
 // Get actual child options
 const childOptions = computed(() => {
@@ -621,17 +602,11 @@ const childOptions = computed(() => {
     return optionsStore.options.filter(opt => opt.parentId === optionStore.id)
 })
 
-const hasChildOptions = computed(() => {
-    return childOptions.value.length > 0
-})
+const hasChildOptions = computed(() => childOptions.value.length > 0)
 
-const getChildCountByType = (type: string) => {
-    return childOptions.value.filter(child => child.type === type).length
-}
+const getChildCountByType = (type: string) => childOptions.value.filter(child => child.type === type).length
 
-const hasAdditionalFields = computed(() => {
-    return additionalFields.value.length > 0
-})
+const hasAdditionalFields = computed(() => additionalFields.value.length > 0)
 
 const hasAdditionalFieldsData = computed(() => {
     if (!optionStore.miscFields) return false
@@ -764,7 +739,7 @@ const saveEdit = async () => {
     }
 }
 
-//DEBUGH
+// DEBUGH
 const logActionMenu = () => {
     console.log('Action menu rendering:', {
         canEditOrDelete: canEditOrDelete.value,

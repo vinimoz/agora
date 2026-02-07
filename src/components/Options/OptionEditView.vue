@@ -330,8 +330,7 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import { useInquiryStore } from '../../stores/inquiry'
 import { useOptionsStore } from '../../stores/options'
 import { useSessionStore } from '../../stores/session'
-import { InquiryGeneralIcons } from '../../utils/icons.ts'
-import { InquiryOptionIcons } from '../../utils/icons.ts'
+import { InquiryGeneralIcons , InquiryOptionIcons } from '../../utils/icons.ts'
 import {
   getFamiliesWithOptionTypes,
   getFamilyIconComponent,

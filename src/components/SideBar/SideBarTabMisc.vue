@@ -15,7 +15,7 @@ import { createInquiryContext, getEditPermissions } from '../../utils/permission
 import NcSelect from '@nextcloud/vue/components/NcSelect'
 import NcInputField from '@nextcloud/vue/components/NcInputField'
 import NcDateTimePickerNative from '@nextcloud/vue/components/NcDateTimePickerNative'
-import NcCheckboxRadio from '@nextcloud/vue/components/NcCheckboxRadio'
+import NcCheckboxRadioSwitchSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
 import UserSearch from '../User/UserSearch.vue'
 
 const props = withDefaults(defineProps<{
@@ -564,8 +564,8 @@ onMounted(() => {
                   :checked="getAllowCommentValue"
                   :name="'allowComment'"
                   :disabled="isSaving"
-                  @change="(e) => handleAllowCommentChange((e.target as HTMLInputElement).checked)"
                   class="simple-checkbox"
+                  @change="(e) => handleAllowCommentChange((e.target as HTMLInputElement).checked)"
                 />
                 <label :for="'checkbox-allowComment'" class="checkbox-label">
                   {{ t('agora','Allow comments') }}

@@ -40,8 +40,7 @@ export const useSupportsStore = defineStore('supports', {
         groupedSupports: (state) => groupSupports(state.supports),
 
         // Get support by inquiryId/optionId and userId
-        getSupport: (state) => (inquiryId: number, userId: string, optionId?: number) => {
-            return state.supports.find(support => {
+        getSupport: (state) => (inquiryId: number, userId: string, optionId?: number) => state.supports.find(support => {
                 const inquiryMatch = support.inquiryId === inquiryId && 
                                     support.userId === userId
                 
@@ -51,20 +50,15 @@ export const useSupportsStore = defineStore('supports', {
                 }
                 // If no optionId or optionId === 0, it's an inquiry support
                 return inquiryMatch && (!support.optionId || support.optionId === 0)
-            })
-        },
+            }),
         
         // Get all supports for an inquiry (including option supports)
-        getSupportsByInquiryId: (state) => (inquiryId: number) => {
-            return state.supports.filter(support => support.inquiryId === inquiryId)
-        },
+        getSupportsByInquiryId: (state) => (inquiryId: number) => state.supports.filter(support => support.inquiryId === inquiryId),
         
         // Get option supports only
-        getOptionSupports: (state) => (inquiryId: number, optionId: number) => {
-            return state.supports.filter(support => 
+        getOptionSupports: (state) => (inquiryId: number, optionId: number) => state.supports.filter(support => 
                 support.inquiryId === inquiryId && support.optionId === optionId
-            )
-        },
+            ),
     },
 
     actions: {
@@ -119,7 +113,7 @@ export const useSupportsStore = defineStore('supports', {
             if (supportFeature === 'binary') {
                 return this.toggleStandardSupport(itemId, userId, item, itemType)
             }
-            else if (supportFeature === 'ternary') {
+            if (supportFeature === 'ternary') {
                 return this.toggleTernarySupport(itemId, userId, item, itemType)
             }
             return null
@@ -150,7 +144,7 @@ export const useSupportsStore = defineStore('supports', {
             try {
                 // For options, we need to know the parent inquiry ID
                 let inquiryId = itemId
-                let optionId: number | undefined = undefined
+                let optionId: number | undefined
                 
                 if (itemType === 'option') {
                     // For options, we need the parent inquiry ID
@@ -215,7 +209,7 @@ export const useSupportsStore = defineStore('supports', {
 
                 // For options, we need to know the parent inquiry ID
                 let inquiryId = itemId
-                let optionId: number | undefined = undefined
+                let optionId: number | undefined
                 
                 if (itemType === 'option') {
                     // For options, we need the parent inquiry ID
@@ -465,6 +459,8 @@ export const useSupportsStore = defineStore('supports', {
 
         /**
          * Restore support for an inquiry
+         * @param payload
+         * @param payload.support
          */
         async restore(payload: { support: Support }) {
             const sessionStore = useSessionStore()

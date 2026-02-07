@@ -140,8 +140,8 @@
                       v-model="additionalFormData[field.key]"
                       :autolink="true"
                       :use-markdown="true"
-                      :emojiAutocomplete="true"
-                      :linkAutocomplete="true"
+                      :emoji-autocomplete="true"
+                      :link-autocomplete="true"
                       :placeholder="field.placeholder || ''"
                       :required="field.required"
                       full-width
@@ -256,7 +256,7 @@
 
       <!-- Footer -->
       <div class="modal-footer">
-        <div class="form-errors" v-if="formErrors.length > 0">
+        <div v-if="formErrors.length > 0" class="form-errors">
           <span 
             v-for="error in formErrors" 
             :key="error"
@@ -349,9 +349,7 @@ const modalTitle = computed(() => {
   return t('agora', 'Add {type}', { type: optionTypeLabel.value })
 })
 
-const modalSubtitle = computed(() => {
-  return optionTypeDescription.value || ''
-})
+const modalSubtitle = computed(() => optionTypeDescription.value || '')
 
 const optionTypeData = computed(() => {
   if (!props.optionType) return null
@@ -415,9 +413,7 @@ const supportFeatureLabel = computed(() => {
   return t('agora', 'Support enabled')
 })
 
-const allowComment = computed(() => {
-  return optionTypeData.value?.allow_comment || false
-})
+const allowComment = computed(() => optionTypeData.value?.allow_comment || false)
 
 const hasStatuses = computed(() => {
   const statuses = optionTypeData.value?.statuses || []
@@ -438,9 +434,7 @@ const statusesList = computed(() => {
   return []
 })
 
-const hasAdditionalFields = computed(() => {
-  return additionalFields.value.length > 0
-})
+const hasAdditionalFields = computed(() => additionalFields.value.length > 0)
 
 const additionalFields = computed(() => {
   if (!optionTypeData.value?.fields) return []

@@ -27,7 +27,6 @@ import NcAvatar from '@nextcloud/vue/components/NcAvatar'
 import { NcTextArea } from '@nextcloud/vue'
 import NcRichContenteditable from '@nextcloud/vue/components/NcRichContenteditable'
 
-import { TernarySupportIcon, ThumbIcon } from '../AppIcons'
 import InquiryEditor from '../Editor/InquiryEditor.vue'
 import OptionEditView from '../Options/OptionEditView.vue'
 import { InquiryGeneralIcons, StatusIcons } from '../../utils/icons.ts'
@@ -62,9 +61,7 @@ const triggerImageUpload = () => {
 }
 
 // Context for permissions
-const context = computed(() => {
-  return createInquiryContext(inquiryStore, sessionStore.appSettings)
-})
+const context = computed(() => createInquiryContext(inquiryStore, sessionStore.appSettings))
 
 
 // Form fields
@@ -558,35 +555,6 @@ const formatDate = (timestamp: number) => new Date(timestamp * 1000).toLocaleDat
                                     :icon-size="20"
                                     />
                     </div>
-                        <!-- 
-                            <div
-                            v-if="canSupport(context)"
-                            class="counter-item supports"
-                            @click="onToggleSupport"
-                            >
-                            <div class="counter-icon">
-                            <TernarySupportIcon
-                            v-if="inquiryStore.configuration.supportFeature === 'ternary'"
-                            :support-value="inquiryStore.currentUserStatus.supportValue"
-                            :size="22"
-                            />
-                            <ThumbIcon
-                            v-else
-                            :supported="inquiryStore.currentUserStatus.hasSupported"
-                            :size="22"
-                            />
-                            </div>
-                            <div class="counter-content">
-                            <div class="support-count">
-                            <span class="counter-value">{{ inquiryStore.status.countSupports }}</span>
-                            <span v-if="hasQuorum" class="quorum-compact">
-                            <span class="quorum-separator"> / </span>
-                            <span class="quorum-target">{{ quorumValue }}</span>
-                            </span>
-                            </div>
-                            <span class="counter-label">{{ t('agora', 'Supports') }}</span>
-                            </div>
-                            </div> -->
                 </div>
             </div>
 
@@ -719,8 +687,8 @@ const formatDate = (timestamp: number) => new Date(timestamp * 1000).toLocaleDat
                                         v-model="inquiryStore.description"
                                         :autolink="true"
                                         :use-markdown="true"
-                                        :emojiAutocomplete="true"
-                                        :linkAutocomplete="true"
+                                        :emoji-autocomplete="true"
+                                        :link-autocomplete="true"
                                         :multiline="true"
                                         :disabled="props.isReadonlyDescription"
                                         class="rich-text-editor"
@@ -744,14 +712,14 @@ const formatDate = (timestamp: number) => new Date(timestamp * 1000).toLocaleDat
 
 <style scoped lang="scss">
 :root {
-  --sharepoint-primary: #0078d4;
-  --sharepoint-primary-light: #e1f5fe;
-  --sharepoint-success: #107c10;
-  --sharepoint-success-light: #dff6dd;
-  --sharepoint-neutral-bg: #f3f2f1;
-  --sharepoint-border: #edebe9;
-  --sharepoint-card-shadow: 0 2.4px 7.2px rgba(0, 0, 0, .08), 0 0.2px 0.6px rgba(0, 0, 0, .04);
-  --sharepoint-elevation-shadow: 0 6.4px 28.8px rgba(0, 0, 0, .12), 0 1.2px 3.6px rgba(0, 0, 0, .08);
+  --squareux-primary: #0078d4;
+  --squareux-primary-light: #e1f5fe;
+  --squareux-success: #107c10;
+  --squareux-success-light: #dff6dd;
+  --squareux-neutral-bg: #f3f2f1;
+  --squareux-border: #edebe9;
+  --squareux-card-shadow: 0 2.4px 7.2px rgba(0, 0, 0, .08), 0 0.2px 0.6px rgba(0, 0, 0, .04);
+  --squareux-elevation-shadow: 0 6.4px 28.8px rgba(0, 0, 0, .12), 0 1.2px 3.6px rgba(0, 0, 0, .08);
 }
 
 .inquiry-edit-view {
@@ -979,19 +947,19 @@ const formatDate = (timestamp: number) => new Date(timestamp * 1000).toLocaleDat
       background: white;
       border: 2px solid var(--color-border);
       min-width: 160px;
-      box-shadow: var(--sharepoint-card-shadow);
+      box-shadow: var(--squareux-card-shadow);
 
       &:hover {
         transform: translateY(-4px);
         box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-        border-color: var(--sharepoint-primary);
+        border-color: var(--squareux-primary);
       }
 
       &.supports {
-        border-left: 4px solid var(--sharepoint-success);
+        border-left: 4px solid var(--squareux-success);
 
         &:hover {
-          border-color: var(--sharepoint-success);
+          border-color: var(--squareux-success);
         }
       }
 
@@ -1005,7 +973,7 @@ const formatDate = (timestamp: number) => new Date(timestamp * 1000).toLocaleDat
         justify-content: center;
 
         &:deep(svg) {
-          color: var(--sharepoint-primary);
+          color: var(--squareux-primary);
         }
       }
 
@@ -1039,7 +1007,7 @@ const formatDate = (timestamp: number) => new Date(timestamp * 1000).toLocaleDat
             color: var(--color-text-lighter);
 
             .quorum-target {
-              color: var(--sharepoint-success);
+              color: var(--squareux-success);
               font-weight: 600;
             }
           }
@@ -1049,15 +1017,15 @@ const formatDate = (timestamp: number) => new Date(timestamp * 1000).toLocaleDat
       /* Support counter specific styling */
       &.supports {
         .counter-icon {
-          background: var(--sharepoint-success-light);
+          background: var(--squareux-success-light);
 
           &:deep(svg) {
-            color: var(--sharepoint-success);
+            color: var(--squareux-success);
           }
         }
 
         .counter-value {
-          color: var(--sharepoint-success);
+          color: var(--squareux-success);
         }
       }
     }
@@ -1067,10 +1035,10 @@ const formatDate = (timestamp: number) => new Date(timestamp * 1000).toLocaleDat
 .metadata-section {
   margin-bottom: 32px;
   background: white;
-  border: 1px solid var(--sharepoint-border);
+  border: 1px solid var(--squareux-border);
   border-radius: 4px;
   padding: 24px;
-  box-shadow: var(--sharepoint-card-shadow);
+  box-shadow: var(--squareux-card-shadow);
 
   .section-subtitle {
     font-size: 12px;
@@ -1080,7 +1048,7 @@ const formatDate = (timestamp: number) => new Date(timestamp * 1000).toLocaleDat
     margin-bottom: 20px;
     font-weight: 600;
     padding-bottom: 12px;
-    border-bottom: 1px solid var(--sharepoint-border);
+    border-bottom: 1px solid var(--squareux-border);
   }
 
   .metadata-grid {
@@ -1094,19 +1062,19 @@ const formatDate = (timestamp: number) => new Date(timestamp * 1000).toLocaleDat
       gap: 12px;
       padding: 16px;
       background: white;
-      border: 1px solid var(--sharepoint-border);
+      border: 1px solid var(--squareux-border);
       border-radius: 2px;
       transition: all 0.2s ease;
 
       &:hover {
         background: #faf9f8;
-        border-color: var(--sharepoint-primary);
-        box-shadow: var(--sharepoint-card-shadow);
+        border-color: var(--squareux-primary);
+        box-shadow: var(--squareux-card-shadow);
       }
 
       &.highlight {
         background: #e1f5fe;
-        border-left: 3px solid var(--sharepoint-primary);
+        border-left: 3px solid var(--squareux-primary);
       }
 
       .metadata-icon {
@@ -1121,7 +1089,7 @@ const formatDate = (timestamp: number) => new Date(timestamp * 1000).toLocaleDat
         margin-top: 2px;
 
         &:deep(svg) {
-          color: var(--sharepoint-primary);
+          color: var(--squareux-primary);
         }
       }
 
@@ -1158,7 +1126,7 @@ const formatDate = (timestamp: number) => new Date(timestamp * 1000).toLocaleDat
 
             :deep(.v-select) {
               .vs__dropdown-toggle {
-                border: 1px solid var(--sharepoint-border);
+                border: 1px solid var(--squareux-border);
                 border-radius: 2px;
                 padding: 6px 8px;
                 background: white;
@@ -1166,7 +1134,7 @@ const formatDate = (timestamp: number) => new Date(timestamp * 1000).toLocaleDat
                 font-size: 14px;
 
                 &:hover {
-                  border-color: var(--sharepoint-primary);
+                  border-color: var(--squareux-primary);
                 }
               }
 
@@ -1187,10 +1155,10 @@ const formatDate = (timestamp: number) => new Date(timestamp * 1000).toLocaleDat
               }
 
               .vs__dropdown-menu {
-                border: 1px solid var(--sharepoint-border);
+                border: 1px solid var(--squareux-border);
                 border-radius: 2px;
                 margin-top: 4px;
-                box-shadow: var(--sharepoint-card-shadow);
+                box-shadow: var(--squareux-card-shadow);
                 max-height: 280px;
               }
 
@@ -1221,10 +1189,10 @@ const formatDate = (timestamp: number) => new Date(timestamp * 1000).toLocaleDat
 
 .description-section {
   background: white;
-  border: 1px solid var(--sharepoint-border);
+  border: 1px solid var(--squareux-border);
   border-radius: 4px;
   padding: 24px;
-  box-shadow: var(--sharepoint-card-shadow);
+  box-shadow: var(--squareux-card-shadow);
 
   .section-header-with-icon {
     display: flex;
@@ -1232,12 +1200,12 @@ const formatDate = (timestamp: number) => new Date(timestamp * 1000).toLocaleDat
     gap: 12px;
     margin-bottom: 20px;
     padding-bottom: 16px;
-    border-bottom: 1px solid var(--sharepoint-border);
+    border-bottom: 1px solid var(--squareux-border);
 
     .section-icon {
       width: 40px;
       height: 40px;
-      background: var(--sharepoint-primary);
+      background: var(--squareux-primary);
       border-radius: 2px;
       display: flex;
       align-items: center;
@@ -1264,7 +1232,7 @@ const formatDate = (timestamp: number) => new Date(timestamp * 1000).toLocaleDat
   }
 
   .description-content {
-    border: 1px solid var(--sharepoint-border);
+    border: 1px solid var(--squareux-border);
     border-radius: 2px;
     background: white;
     min-height: 200px;
@@ -1272,7 +1240,7 @@ const formatDate = (timestamp: number) => new Date(timestamp * 1000).toLocaleDat
     transition: border-color 0.2s ease;
 
     &:hover {
-      border-color: var(--sharepoint-primary);
+      border-color: var(--squareux-primary);
     }
 
     .editor-container {

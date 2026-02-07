@@ -13,7 +13,7 @@
 const appName = "agora";
 const appVersion = "1.7.0-beta";
 import { d as defineComponent, s as translate, b as computed, v as onMounted, D as purify, E as _, _ as _export_sfc, c as createElementBlock, o as openBlock, j as createVNode, g as withCtx, k as createBaseVNode, f as createBlock, h as resolveDynamicComponent, t as toDisplayString, z as createApp, A as pinia } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_ef057a6f_lang-CvBTwrDO.chunk.mjs";
-import { a as useSessionStore, b as useInquiriesStore, L as Logger, s as showError, g as getInquiryTypeData, I as InquiryGeneralIcons, N as NcDashboardWidget } from "./NcDashboardWidget-Bu7bWoUK-Dvu74air.chunk.mjs";
+import { a as useSessionStore, b as useInquiriesStore, L as Logger, s as showError, g as getInquiryTypeData, I as InquiryGeneralIcons, N as NcDashboardWidget } from "./NcDashboardWidget-Bu7bWoUK-BNfTM9dC.chunk.mjs";
 import { A as AgoraAppIcon } from "./AgoraAppIcon-CSH-ufz_.chunk.mjs";
 
 const _sfc_main = /* @__PURE__ */ defineComponent({

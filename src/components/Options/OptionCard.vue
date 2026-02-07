@@ -236,14 +236,10 @@ const canSupport = computed(() => {
   return canSupportOption(optionContext.value)
 })
 
-const canEditOrDelete = computed(() => {
-  return canEdit.value || canDelete.value
-})
+const canEditOrDelete = computed(() => canEdit.value || canDelete.value)
 
 // Get option types from session store
-const allOptionTypes = computed(() => {
-  return sessionStore.appSettings?.inquiryOptionTypeTab || []
-})
+const allOptionTypes = computed(() => sessionStore.appSettings?.inquiryOptionTypeTab || [])
 
 
 const optionTypeData = computed(() => {
@@ -267,9 +263,7 @@ const optionTypeData = computed(() => {
 
 
 // Computed properties - USING optionTypeData ONLY
-const optionTypeLabel = computed(() => {
-  return optionTypeData.value.label || props.option.type || ''
-})
+const optionTypeLabel = computed(() => optionTypeData.value.label || props.option.type || '')
 
 const optionIcon = computed(() => {
     const iconName = optionTypeData.value?.icon
@@ -288,26 +282,15 @@ const optionTypeColor = computed(() => {
   return getFamilyColor(optionTypeData.value.family)
 })
 
-const showTitle = computed(() => {
-  return optionTypeData.value?.use_title !== false
-})
+const showTitle = computed(() => optionTypeData.value?.use_title !== false)
 
-const supportFeature = computed(() => {
-  return optionTypeData.value?.support_feature || 'none'
-})
+const supportFeature = computed(() => optionTypeData.value?.support_feature || 'none')
 
-const allowComment = computed(() => {
-  return optionTypeData.value?.allow_comment || false
-})
+const allowComment = computed(() => optionTypeData.value?.allow_comment || false)
 
-const hasSupportFeature = computed(() => {
-  return optionTypeData.value?.support_feature !== 'none' || false
-  
-})
+const hasSupportFeature = computed(() => optionTypeData.value?.support_feature !== 'none' || false)
 
-const hasComments = computed(() => {
-  return allowComment.value && (props.option.status?.countComments || 0) > 0
-})
+const hasComments = computed(() => allowComment.value && (props.option.status?.countComments || 0) > 0)
 
 // Get allowed responses from option type data
 const allowedResponses = computed(() => {
@@ -333,9 +316,7 @@ const allowedResponses = computed(() => {
   )
 })
 
-const hasAllowedResponses = computed(() => {
-  return allowedResponses.value.length > 0
-})
+const hasAllowedResponses = computed(() => allowedResponses.value.length > 0)
 
 // Get child options
 const childOptions = computed(() => {
@@ -365,9 +346,7 @@ const childCounts = computed(() => {
   return counts
 })
 
-const childCountsTotal = computed(() => {
-  return Object.values(childCounts.value).reduce((sum, count) => sum + count, 0)
-})
+const childCountsTotal = computed(() => Object.values(childCounts.value).reduce((sum, count) => sum + count, 0))
 
 // Support value computation - FIXED: Return numeric values
 const numericSupportValue = computed(() => {
@@ -393,7 +372,7 @@ const formatDate = (timestamp: number) => {
 const truncateText = (text: string, maxLength: number) => {
   if (!text) return ''
   if (text.length <= maxLength) return text
-  return text.substring(0, maxLength) + '...'
+  return `${text.substring(0, maxLength)  }...`
 }
 
 const getOptionTypeIcon = (type: string) => {

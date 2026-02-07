@@ -51,6 +51,7 @@
                                     :show-quorum="true"
                                     :show-details-on-hover="true"
                                     :icon-size="22"
+                                    @click.stop
                                     />
             <div v-if="inquiry.status?.countComments" class="stat-item comments">
               <component :is="InquiryGeneralIconsComponents.Comment" class="comments-icon" :size="10" />
@@ -140,14 +141,6 @@
 
         <!-- Stats Icons -->
         <div class="footer-stats">
-          <div
-v-if="inquiry.status?.countSupports"
-               class="stat-item supports"
-               :class="{ 'is-supported': isSupported }">
-            <component :is="supportIconComponent" class="support-icon" :size="16" />
-            <span>{{ inquiry.status.countSupports }}</span>
-          </div>
-
           <div v-if="inquiry.status?.countComments" class="stat-item comments">
             <component :is="InquiryGeneralIconsComponents.Comment" class="comments-icon" :size="16" />
             <span>{{ inquiry.status.countComments }}</span>
@@ -200,9 +193,7 @@ const summaryClasses = computed(() => ({
 }))
 
 // Context for permissions
-const context = computed(() => {
-  return createInquiryContext(props.inquiry, sessionStore.appSettings)
-})
+const context = computed(() => createInquiryContext(props.inquiry, sessionStore.appSettings))
 
 // Get type data
 const typeData = computed(() => getInquiryTypeData(props.inquiry.type, inquiryTypes.value))
@@ -246,16 +237,6 @@ const typeBadgeClass = computed(() => {
 
 // Support icon
 const isSupported = computed(() => props.inquiry.currentUserStatus?.hasSupported || false)
-
-const supportIconComponent = computed(() => {
-  if (props.inquiry.configuration?.supportFeature === 'ternary') {
-    return TernarySupportIcon
-  }
-  else if (props.inquiry.configuration?.supportFeature === 'binary') {
-  return ThumbIcon
-  }
-
-})
 
 // Owner display
 const ownerDisplayName = computed(() => 

@@ -287,12 +287,12 @@ function showSettings() {
               >
               <template #icon>
     <component
-        v-if="viewMode === 'create'"
         :is="NavigationIcons.Plus"
+        v-if="viewMode === 'create'"
     />
     <component
-        v-else
         :is="NavigationIcons.View"
+        v-else
     />
 </template>
       </NcAppNavigationItem>

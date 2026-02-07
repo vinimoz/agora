@@ -40,9 +40,7 @@ const showTransferDialog = ref(false)
 const subMenu = ref<'addToGroup' | 'removeFromGroup' | null>(null)
 
 // Context for permissions
-const context = computed(() => {
-  return createInquiryContext(inquiry, sessionStore.appSettings)
-})
+const context = computed(() => createInquiryContext(inquiry, sessionStore.appSettings))
 
 
 async function toggleArchive() {

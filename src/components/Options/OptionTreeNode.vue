@@ -173,8 +173,8 @@
                                                         <label class="edit-label">{{ t('agora', 'Title') }}</label>
                                                         <NcRichContenteditable
                                                             v-model="inlineEditTitle"
-                                                            :emojiAutocomplete="true"
-                                                            :linkAutocomplete="true"
+                                                            :emoji-autocomplete="true"
+                                                            :link-autocomplete="true"
                                                             :autolink="true"
                                                             :use-markdown="true"
                                                             :placeholder="t('agora', 'Enter title')"
@@ -187,8 +187,8 @@
                                                         <label class="edit-label">{{ t('agora', 'Description') }}</label>
                                                         <NcRichContenteditable
                                                             v-model="inlineEditText"
-                                                            :emojiAutocomplete="true"
-                                                            :linkAutocomplete="true"
+                                                            :emoji-autocomplete="true"
+                                                            :link-autocomplete="true"
                                                             :autolink="true"
                                                             :use-markdown="true"
                                                             :multiline="true"
@@ -261,8 +261,8 @@
                                                         v-if="canEditNode(rootNode)"
                                                         type="tertiary-no-background" 
                                                         size="small"
-                                                        @click.stop="startInlineEdit(rootNode)"
                                                         :title="t('agora', 'Edit')"
+                                                        @click.stop="startInlineEdit(rootNode)"
                                                     >
                                                         <template #icon>
                                                             <component :is="InquiryOptionIcons.Pencil" :size="12" />
@@ -271,8 +271,8 @@
                                                     <NcButton 
                                                         type="tertiary-no-background" 
                                                         size="small"
-                                                        @click.stop="openNodeDetail(rootNode)"
                                                         :title="t('agora', 'Details')"
+                                                        @click.stop="openNodeDetail(rootNode)"
                                                     >
                                                         <template #icon>
                                                             <component :is="InquiryOptionIcons.Comment" :size="12" />
@@ -308,8 +308,8 @@
                                                         :key="responseType"
                                                         type="tertiary"
                                                         size="small"
-                                                        @click.stop="openAddOptionModal(responseType, rootNode.id)"
                                                         class="response-type-btn"
+                                                        @click.stop="openAddOptionModal(responseType, rootNode.id)"
                                                     >
                                                         <template #icon>
                                                             <component :is="getOptionTypeIcon(responseType)" :size="12" />
@@ -346,8 +346,8 @@
                                                                 <label class="edit-label">{{ t('agora', 'Title') }}</label>
                                                                 <NcRichContenteditable
                                                                     v-model="inlineEditTitle"
-                                                                    :emojiAutocomplete="true"
-                                                                    :linkAutocomplete="true"
+                                                                    :emoji-autocomplete="true"
+                                                                    :link-autocomplete="true"
                                                                     :autolink="true"
                                                                     :use-markdown="true"
                                                                     :placeholder="t('agora', 'Enter title')"
@@ -360,8 +360,8 @@
                                                                 <label class="edit-label">{{ t('agora', 'Description') }}</label>
                                                                 <NcRichContenteditable
                                                                     v-model="inlineEditText"
-                                                                    :emojiAutocomplete="true"
-                                                                    :linkAutocomplete="true"
+                                                                    :emoji-autocomplete="true"
+                                                                    :link-autocomplete="true"
                                                                     :autolink="true"
                                                                     :use-markdown="true"
                                                                     :multiline="true"
@@ -434,8 +434,8 @@
                                                                 v-if="canEditNode(child)"
                                                                 type="tertiary-no-background" 
                                                                 size="small"
-                                                                @click.stop="startInlineEdit(child)"
                                                                 :title="t('agora', 'Edit')"
+                                                                @click.stop="startInlineEdit(child)"
                                                             >
                                                                 <template #icon>
                                                                     <component :is="InquiryOptionIcons.Pencil" :size="12" />
@@ -444,8 +444,8 @@
                                                             <NcButton 
                                                                 type="tertiary-no-background" 
                                                                 size="small"
-                                                                @click.stop="openNodeDetail(child)"
                                                                 :title="t('agora', 'Details')"
+                                                                @click.stop="openNodeDetail(child)"
                                                             >
                                                                 <template #icon>
                                                                     <component :is="InquiryOptionIcons.Comment" :size="12" />
@@ -481,8 +481,8 @@
                                                                 :key="responseType"
                                                                 type="tertiary"
                                                                 size="small"
-                                                                @click.stop="openAddOptionModal(responseType, child.id)"
                                                                 class="response-type-btn"
+                                                                @click.stop="openAddOptionModal(responseType, child.id)"
                                                             >
                                                                 <template #icon>
                                                                     <component :is="getOptionTypeIcon(responseType)" :size="12" />
@@ -518,8 +518,8 @@
                                                                         <label class="edit-label">{{ t('agora', 'Title') }}</label>
                                                                         <NcRichContenteditable
                                                                             v-model="inlineEditTitle"
-                                                                            :emojiAutocomplete="true"
-                                                                            :linkAutocomplete="true"
+                                                                            :emoji-autocomplete="true"
+                                                                            :link-autocomplete="true"
                                                                             :autolink="true"
                                                                             :use-markdown="true"
                                                                             :placeholder="t('agora', 'Enter title')"
@@ -532,8 +532,8 @@
                                                                         <label class="edit-label">{{ t('agora', 'Description') }}</label>
                                                                         <NcRichContenteditable
                                                                             v-model="inlineEditText"
-                                                                            :emojiAutocomplete="true"
-                                                                            :linkAutocomplete="true"
+                                                                            :emoji-autocomplete="true"
+                                                                            :link-autocomplete="true"
                                                                             :autolink="true"
                                                                             :use-markdown="true"
                                                                             :multiline="true"
@@ -606,8 +606,8 @@
                                                                         v-if="canEditNode(grandChild)"
                                                                         type="tertiary-no-background" 
                                                                         size="small"
-                                                                        @click.stop="startInlineEdit(grandChild)"
                                                                         :title="t('agora', 'Edit')"
+                                                                        @click.stop="startInlineEdit(grandChild)"
                                                                     >
                                                                         <template #icon>
                                                                             <component :is="InquiryOptionIcons.Pencil" :size="12" />
@@ -616,8 +616,8 @@
                                                                     <NcButton 
                                                                         type="tertiary-no-background" 
                                                                         size="small"
-                                                                        @click.stop="openNodeDetail(grandChild)"
                                                                         :title="t('agora', 'Details')"
+                                                                        @click.stop="openNodeDetail(grandChild)"
                                                                     >
                                                                         <template #icon>
                                                                             <component :is="InquiryOptionIcons.Comment" :size="12" />
@@ -653,8 +653,8 @@
                                                                         :key="responseType"
                                                                         type="tertiary"
                                                                         size="small"
-                                                                        @click.stop="openAddOptionModal(responseType, grandChild.id)"
                                                                         class="response-type-btn"
+                                                                        @click.stop="openAddOptionModal(responseType, grandChild.id)"
                                                                     >
                                                                         <template #icon>
                                                                             <component :is="getOptionTypeIcon(responseType)" :size="12" />
@@ -775,9 +775,7 @@ const selectedOptionTypeKey = ref<string | null>(null)
 const selectedParentId = ref<number | null>(null)
 
 // Get all option types
-const allOptionTypes = computed<OptionType[]>(() => {
-  return sessionStore.appSettings?.inquiryOptionTypeTab || []
-})
+const allOptionTypes = computed<OptionType[]>(() => sessionStore.appSettings?.inquiryOptionTypeTab || [])
 
 // Create context for active node
 const activeNodeContext = computed(() => {
@@ -794,29 +792,23 @@ const activeNodeContext = computed(() => {
 })
 
 // Get structure family types (filter by family 'structure')
-const structureTypes = computed<OptionType[]>(() => {
-  return allOptionTypes.value.filter(type => type.family === 'structure')
-})
+const structureTypes = computed<OptionType[]>(() => allOptionTypes.value.filter(type => type.family === 'structure'))
 
 // Get root structure types
-const rootStructureTypes = computed<OptionType[]>(() => {
-  return structureTypes.value.filter(type => {
+const rootStructureTypes = computed<OptionType[]>(() => structureTypes.value.filter(type => 
     // Types that can be root (e.g., chapter, introduction)
-    return ['chapter', 'structure_intro'].includes(type.option_type) ||
+     ['chapter', 'structure_intro'].includes(type.option_type) ||
            !allOptionTypes.value.some(parentType => 
              parentType.allowed_response?.includes(type.option_type)
            )
-  })
-})
+  ))
 
 // Get only structure family root options
-const structureRootOptions = computed<Option[]>(() => {
-  return optionsStore.options.filter(opt => {
+const structureRootOptions = computed<Option[]>(() => optionsStore.options.filter(opt => {
     // Check if it's a structure family type and has no parent
     const typeData = getOptionTypeDataByType(opt.type)
     return typeData?.family === 'structure' && (!opt.parentId || opt.parentId === 0)
-  })
-})
+  }))
 
 const activeNode = computed<Option | null>(() => {
   if (!activeNodeId.value) return null
@@ -836,11 +828,9 @@ const getOptionTypeDataForNode = (node: Option | null) => {
   return getOptionTypeData(node.type, allOptionTypes.value, node.type)
 }
 
-const getOptionTypeDataByType = (type: string) => {
-  return allOptionTypes.value.find(opt => 
+const getOptionTypeDataByType = (type: string) => allOptionTypes.value.find(opt => 
     opt.option_type === type || opt.optionType === type
   )
-}
 
 const getOptionTypeLabel = (type: string): string => {
   const optionType = getOptionTypeDataByType(type)
@@ -900,13 +890,9 @@ const canAddChild = (node: Option): boolean => {
   return allowedResponses.length > 0
 }
 
-const getRootType = (): string => {
-  return rootStructureTypes.value[0]?.option_type || 'chapter'
-}
+const getRootType = (): string => rootStructureTypes.value[0]?.option_type || 'chapter'
 
-const getRootTypeLabel = (): string => {
-  return getOptionTypeLabel(getRootType())
-}
+const getRootTypeLabel = (): string => getOptionTypeLabel(getRootType())
 
 const getDepth = (node: Option, depth = 0): number => {
   if (!node.parentId || node.parentId === 0) return depth
@@ -973,7 +959,7 @@ const formatDate = (timestamp?: number): string => {
 const truncateText = (text: string, maxLength: number): string => {
   if (!text) return ''
   if (text.length <= maxLength) return text
-  return text.substring(0, maxLength) + '...'
+  return `${text.substring(0, maxLength)  }...`
 }
 
 // Check if node has allowed responses
@@ -1007,6 +993,68 @@ const cancelInlineEdit = (): void => {
   inlineEditText.value = ''
 }
 
+
+const saveInlineEdit = async (node: Option): Promise<void> => {
+  try {
+    // Use option store for backend update
+    await optionStore.load(node.id)
+    const updatedOption = await optionStore.update({
+      id: node.id,
+      title: inlineEditTitle.value || '',
+      text: inlineEditText.value || '',
+      type: node.type,
+      parentId: node.parentId
+    })
+
+    console.log('BEFORE update:', {
+      nodeTitle: node.title,
+      nodeText: node.text,
+      storeNode: optionsStore.options.find(opt => opt.id === node.id)
+    })
+
+    const index = optionsStore.options.findIndex(opt => opt.id === node.id)
+    if (index >= 0) {
+      const newOption = {
+        ...optionsStore.options[index],
+        ...updatedOption,
+        title: inlineEditTitle.value || '',
+        text: inlineEditText.value || '',
+        label: inlineEditTitle.value || optionsStore.options[index].label || ''
+      }
+      
+      // Replace in array using splice for reactivity
+      optionsStore.options.splice(index, 1, newOption)
+      
+      // OR use Vue.set for Vue 2 compatibility
+      // import { set } from 'vue'
+      // set(optionsStore.options, index, newOption)
+    }
+    
+    // Force computed properties to re-evaluate
+    if (activeNode.value && activeNode.value.id === node.id) {
+      // Trigger a small delay to ensure DOM updates
+      await nextTick()
+      
+      // Force re-evaluation by toggling active node
+      const tempId = activeNodeId.value
+      activeNodeId.value = null
+      setTimeout(() => {
+        activeNodeId.value = tempId
+      }, 50)
+    }
+    
+    editingNodeId.value = null
+    inlineEditTitle.value = ''
+    inlineEditText.value = ''
+    
+    showSuccess(t('agora', 'Option updated'))
+  } catch (error) {
+    console.error('Error saving inline edit:', error)
+    showError(t('agora', 'Failed to update option'))
+  }
+}
+
+/*
 const saveInlineEdit = async (node: Option): Promise<void> => {
   try {
     // Use option store for backend update
@@ -1035,6 +1083,7 @@ const saveInlineEdit = async (node: Option): Promise<void> => {
     showError(t('agora', 'Failed to update option'))
   }
 }
+*/
 
 const toggleSupportForNode = async (node: Option): Promise<void> => {
   if (!node || !hasSupportFeature(node) || !sessionStore.currentUser?.id) return

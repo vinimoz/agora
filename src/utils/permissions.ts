@@ -347,7 +347,7 @@ export function createInquiryGroupContext(group: any): PermissionContext {
     isGroupMember: true,
     isGroupEditor: isGroupEditor || isOwner,
     groupType: group.type,
-    ownedGroup: ownedGroup,
+    ownedGroup,
   }
 }
 
@@ -1766,7 +1766,7 @@ export default {
     canManageGroupMembers,
     canManageGroupPermissions,
 
-    //Option 
+    // Option 
      canEditOption,
     canDeleteOption,
     canChangeStatus,      

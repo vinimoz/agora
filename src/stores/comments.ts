@@ -25,58 +25,53 @@ export const useCommentsStore = defineStore('comments', {
 		
 		/**
 		 * Get ONLY inquiry-level comments (optionId = 0)
+		 * @param state
 		 */
-		getInquiryComments: (state) => (inquiryId: number): Comment[] => {
-			return state.comments.filter(
+		getInquiryComments: (state) => (inquiryId: number): Comment[] => state.comments.filter(
 				comment => comment.inquiryId === inquiryId && comment.optionId === 0
-			)
-		},
+			),
 		
 		/**
 		 * Get ONLY option-specific comments (optionId > 0)
+		 * @param state
 		 */
-		getOptionComments: (state) => (inquiryId: number, optionId: number): Comment[] => {
-			return state.comments.filter(
+		getOptionComments: (state) => (inquiryId: number, optionId: number): Comment[] => state.comments.filter(
 				comment => comment.inquiryId === inquiryId && comment.optionId === optionId
-			)
-		},
+			),
 		
 		/**
 		 * Get ALL comments for an inquiry (both inquiry and option comments)
 		 * This is what your original load() returns
+		 * @param state
 		 */
-		getAllInquiryComments: (state) => (inquiryId: number): Comment[] => {
-			return state.comments.filter(comment => comment.inquiryId === inquiryId)
-		},
+		getAllInquiryComments: (state) => (inquiryId: number): Comment[] => state.comments.filter(comment => comment.inquiryId === inquiryId),
 		
 		/**
 		 * Get ALL comments for a specific option (across all inquiries if needed)
+		 * @param state
 		 */
-		getAllCommentsForOption: (state) => (optionId: number): Comment[] => {
-			return state.comments.filter(comment => comment.optionId === optionId)
-		},
+		getAllCommentsForOption: (state) => (optionId: number): Comment[] => state.comments.filter(comment => comment.optionId === optionId),
 		
 		/**
 		 * Count inquiry comments
+		 * @param state
 		 */
-		inquiryCommentsCount: (state) => (inquiryId: number): number => {
-			return state.comments.filter(
+		inquiryCommentsCount: (state) => (inquiryId: number): number => state.comments.filter(
 				comment => comment.inquiryId === inquiryId && comment.optionId === 0
-			).length
-		},
+			).length,
 		
 		/**
 		 * Count option comments
+		 * @param state
 		 */
-		optionCommentsCount: (state) => (inquiryId: number, optionId: number): number => {
-			return state.comments.filter(
+		optionCommentsCount: (state) => (inquiryId: number, optionId: number): number => state.comments.filter(
 				comment => comment.inquiryId === inquiryId && comment.optionId === optionId
-			).length
-		},
+			).length,
 	},
 
 	actions: {
 		/**
+		 * @param inquiryId
 		 */
 		async load(inquiryId: number | null = null): Promise<void> {
 			const sessionStore = useSessionStore()
@@ -112,6 +107,7 @@ export const useCommentsStore = defineStore('comments', {
 		},
 
 		/**
+		 * @param inquiryId
 		 */
 		async loadInquiryComments(inquiryId: number): Promise<void> {
 			try {
@@ -137,6 +133,8 @@ export const useCommentsStore = defineStore('comments', {
 		},
 
 		/**
+		 * @param optionId
+		 * @param inquiryId
 		 */
 		async loadOptionComments(optionId: number, inquiryId?: number): Promise<void> {
 			const sessionStore = useSessionStore()
@@ -172,6 +170,10 @@ export const useCommentsStore = defineStore('comments', {
 
 		/**
 		 * Add a comment - 
+		 * @param payload
+		 * @param payload.message
+		 * @param payload.confidential
+		 * @param payload.optionId
 		 */
 		async add(payload: { 
 			message: string; 
@@ -229,6 +231,8 @@ export const useCommentsStore = defineStore('comments', {
 
 		/**
 		 * Set item -
+		 * @param payload
+		 * @param payload.comment
 		 */
 		setItem(payload: { comment: Comment }) {
 			const index = this.comments.findIndex(
@@ -247,6 +251,8 @@ export const useCommentsStore = defineStore('comments', {
 
 		/**
 		 * Delete -
+		 * @param payload
+		 * @param payload.comment
 		 */
 		async delete(payload: { comment: Comment }) {
 			const sessionStore = useSessionStore()
@@ -277,6 +283,8 @@ export const useCommentsStore = defineStore('comments', {
 
 		/**
 		 * Restore - 
+		 * @param payload
+		 * @param payload.comment
 		 */
 		async restore(payload: { comment: Comment }) {
 			const sessionStore = useSessionStore()
@@ -306,6 +314,7 @@ export const useCommentsStore = defineStore('comments', {
 
 		/**
 		 * Clear ONLY inquiry-level comments
+		 * @param inquiryId
 		 */
 		clearInquiryComments(inquiryId: number): void {
 			this.comments = this.comments.filter(
@@ -315,6 +324,8 @@ export const useCommentsStore = defineStore('comments', {
 
 		/**
 		 * Clear ONLY option-specific comments
+		 * @param inquiryId
+		 * @param optionId
 		 */
 		clearOptionComments(inquiryId: number, optionId: number): void {
 			this.comments = this.comments.filter(
@@ -324,6 +335,7 @@ export const useCommentsStore = defineStore('comments', {
 
 		/**
 		 * Clear ALL comments for an inquiry (both inquiry and option)
+		 * @param inquiryId
 		 */
 		clearAllInquiryComments(inquiryId: number): void {
 			this.comments = this.comments.filter(

@@ -86,9 +86,7 @@ interface GroupedResources {
 }
 
 // Context for permissions
-const context = computed(() => {
-  return createInquiryContext(inquiry, sessionStore.appSettings)
-})
+const context = computed(() => createInquiryContext(inquiry, sessionStore.appSettings))
 
 // Helper function to parse metadata
 const parseMetadata = (metadata: string) => {

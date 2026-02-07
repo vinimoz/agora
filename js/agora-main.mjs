@@ -5309,14 +5309,14 @@ to {
     justify-content: center;
 }
 }[data-v-9e316df6]:root {
-  --sharepoint-primary: #0078d4;
-  --sharepoint-primary-light: #e1f5fe;
-  --sharepoint-success: #107c10;
-  --sharepoint-success-light: #dff6dd;
-  --sharepoint-neutral-bg: #f3f2f1;
-  --sharepoint-border: #edebe9;
-  --sharepoint-card-shadow: 0 2.4px 7.2px rgba(0, 0, 0, .08), 0 0.2px 0.6px rgba(0, 0, 0, .04);
-  --sharepoint-elevation-shadow: 0 6.4px 28.8px rgba(0, 0, 0, .12), 0 1.2px 3.6px rgba(0, 0, 0, .08);
+  --squareux-primary: #0078d4;
+  --squareux-primary-light: #e1f5fe;
+  --squareux-success: #107c10;
+  --squareux-success-light: #dff6dd;
+  --squareux-neutral-bg: #f3f2f1;
+  --squareux-border: #edebe9;
+  --squareux-card-shadow: 0 2.4px 7.2px rgba(0, 0, 0, .08), 0 0.2px 0.6px rgba(0, 0, 0, .04);
+  --squareux-elevation-shadow: 0 6.4px 28.8px rgba(0, 0, 0, .12), 0 1.2px 3.6px rgba(0, 0, 0, .08);
 }
 .inquiry-edit-view[data-v-9e316df6] {
   padding: 24px;
@@ -5514,19 +5514,19 @@ to {
   background: white;
   border: 2px solid var(--color-border);
   min-width: 160px;
-  box-shadow: var(--sharepoint-card-shadow);
+  box-shadow: var(--squareux-card-shadow);
   /* Support counter specific styling */
 }
 .title-section .counters-section .counter-item[data-v-9e316df6]:hover {
   transform: translateY(-4px);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-  border-color: var(--sharepoint-primary);
+  border-color: var(--squareux-primary);
 }
 .title-section .counters-section .counter-item.supports[data-v-9e316df6] {
-  border-left: 4px solid var(--sharepoint-success);
+  border-left: 4px solid var(--squareux-success);
 }
 .title-section .counters-section .counter-item.supports[data-v-9e316df6]:hover {
-  border-color: var(--sharepoint-success);
+  border-color: var(--squareux-success);
 }
 .title-section .counters-section .counter-item .counter-icon[data-v-9e316df6] {
   width: 36px;
@@ -5538,7 +5538,7 @@ to {
   justify-content: center;
 }
 .title-section .counters-section .counter-item .counter-icon[data-v-9e316df6] svg {
-  color: var(--sharepoint-primary);
+  color: var(--squareux-primary);
 }
 .title-section .counters-section .counter-item .counter-content[data-v-9e316df6] {
   display: flex;
@@ -5568,25 +5568,25 @@ to {
   color: var(--color-text-lighter);
 }
 .title-section .counters-section .counter-item .counter-content .support-count .quorum-compact .quorum-target[data-v-9e316df6] {
-  color: var(--sharepoint-success);
+  color: var(--squareux-success);
   font-weight: 600;
 }
 .title-section .counters-section .counter-item.supports .counter-icon[data-v-9e316df6] {
-  background: var(--sharepoint-success-light);
+  background: var(--squareux-success-light);
 }
 .title-section .counters-section .counter-item.supports .counter-icon[data-v-9e316df6] svg {
-  color: var(--sharepoint-success);
+  color: var(--squareux-success);
 }
 .title-section .counters-section .counter-item.supports .counter-value[data-v-9e316df6] {
-  color: var(--sharepoint-success);
+  color: var(--squareux-success);
 }
 .metadata-section[data-v-9e316df6] {
   margin-bottom: 32px;
   background: white;
-  border: 1px solid var(--sharepoint-border);
+  border: 1px solid var(--squareux-border);
   border-radius: 4px;
   padding: 24px;
-  box-shadow: var(--sharepoint-card-shadow);
+  box-shadow: var(--squareux-card-shadow);
 }
 .metadata-section .section-subtitle[data-v-9e316df6] {
   font-size: 12px;
@@ -5596,7 +5596,7 @@ to {
   margin-bottom: 20px;
   font-weight: 600;
   padding-bottom: 12px;
-  border-bottom: 1px solid var(--sharepoint-border);
+  border-bottom: 1px solid var(--squareux-border);
 }
 .metadata-section .metadata-grid[data-v-9e316df6] {
   display: grid;
@@ -5609,18 +5609,18 @@ to {
   gap: 12px;
   padding: 16px;
   background: white;
-  border: 1px solid var(--sharepoint-border);
+  border: 1px solid var(--squareux-border);
   border-radius: 2px;
   transition: all 0.2s ease;
 }
 .metadata-section .metadata-grid .metadata-item[data-v-9e316df6]:hover {
   background: #faf9f8;
-  border-color: var(--sharepoint-primary);
-  box-shadow: var(--sharepoint-card-shadow);
+  border-color: var(--squareux-primary);
+  box-shadow: var(--squareux-card-shadow);
 }
 .metadata-section .metadata-grid .metadata-item.highlight[data-v-9e316df6] {
   background: #e1f5fe;
-  border-left: 3px solid var(--sharepoint-primary);
+  border-left: 3px solid var(--squareux-primary);
 }
 .metadata-section .metadata-grid .metadata-item .metadata-icon[data-v-9e316df6] {
   width: 32px;
@@ -5634,7 +5634,7 @@ to {
   margin-top: 2px;
 }
 .metadata-section .metadata-grid .metadata-item .metadata-icon[data-v-9e316df6] svg {
-  color: var(--sharepoint-primary);
+  color: var(--squareux-primary);
 }
 .metadata-section .metadata-grid .metadata-item .metadata-content[data-v-9e316df6] {
   flex: 1;
@@ -5667,7 +5667,7 @@ to {
 }
 .metadata-section .metadata-grid .metadata-item .metadata-content .select-container .metadata-select[data-v-9e316df6] .v-select .vs__dropdown-toggle,
 .metadata-section .metadata-grid .metadata-item .metadata-content .select-container .status-select[data-v-9e316df6] .v-select .vs__dropdown-toggle {
-  border: 1px solid var(--sharepoint-border);
+  border: 1px solid var(--squareux-border);
   border-radius: 2px;
   padding: 6px 8px;
   background: white;
@@ -5676,7 +5676,7 @@ to {
 }
 .metadata-section .metadata-grid .metadata-item .metadata-content .select-container .metadata-select[data-v-9e316df6] .v-select .vs__dropdown-toggle:hover,
 .metadata-section .metadata-grid .metadata-item .metadata-content .select-container .status-select[data-v-9e316df6] .v-select .vs__dropdown-toggle:hover {
-  border-color: var(--sharepoint-primary);
+  border-color: var(--squareux-primary);
 }
 .metadata-section .metadata-grid .metadata-item .metadata-content .select-container .metadata-select[data-v-9e316df6] .v-select .vs__selected,
 .metadata-section .metadata-grid .metadata-item .metadata-content .select-container .status-select[data-v-9e316df6] .v-select .vs__selected {
@@ -5697,10 +5697,10 @@ to {
 }
 .metadata-section .metadata-grid .metadata-item .metadata-content .select-container .metadata-select[data-v-9e316df6] .v-select .vs__dropdown-menu,
 .metadata-section .metadata-grid .metadata-item .metadata-content .select-container .status-select[data-v-9e316df6] .v-select .vs__dropdown-menu {
-  border: 1px solid var(--sharepoint-border);
+  border: 1px solid var(--squareux-border);
   border-radius: 2px;
   margin-top: 4px;
-  box-shadow: var(--sharepoint-card-shadow);
+  box-shadow: var(--squareux-card-shadow);
   max-height: 280px;
 }
 .metadata-section .metadata-grid .metadata-item .metadata-content .select-container .metadata-select[data-v-9e316df6] .v-select .vs__dropdown-option,
@@ -5718,10 +5718,10 @@ to {
 }
 .description-section[data-v-9e316df6] {
   background: white;
-  border: 1px solid var(--sharepoint-border);
+  border: 1px solid var(--squareux-border);
   border-radius: 4px;
   padding: 24px;
-  box-shadow: var(--sharepoint-card-shadow);
+  box-shadow: var(--squareux-card-shadow);
 }
 .description-section .section-header-with-icon[data-v-9e316df6] {
   display: flex;
@@ -5729,12 +5729,12 @@ to {
   gap: 12px;
   margin-bottom: 20px;
   padding-bottom: 16px;
-  border-bottom: 1px solid var(--sharepoint-border);
+  border-bottom: 1px solid var(--squareux-border);
 }
 .description-section .section-header-with-icon .section-icon[data-v-9e316df6] {
   width: 40px;
   height: 40px;
-  background: var(--sharepoint-primary);
+  background: var(--squareux-primary);
   border-radius: 2px;
   display: flex;
   align-items: center;
@@ -5756,7 +5756,7 @@ to {
   font-weight: 400;
 }
 .description-section .description-content[data-v-9e316df6] {
-  border: 1px solid var(--sharepoint-border);
+  border: 1px solid var(--squareux-border);
   border-radius: 2px;
   background: white;
   min-height: 200px;
@@ -5764,7 +5764,7 @@ to {
   transition: border-color 0.2s ease;
 }
 .description-section .description-content[data-v-9e316df6]:hover {
-  border-color: var(--sharepoint-primary);
+  border-color: var(--squareux-primary);
 }
 .description-section .description-content .editor-container[data-v-9e316df6] {
   width: 100%;
@@ -12500,12 +12500,12 @@ tr.file-picker__row td.row-name[data-v-1f96131b] {
 })();
 const appName = "agora";
 const appVersion = "1.7.0-beta";
-import { ap as h$1, B as defineStore, s as translate, aD as emit, b6 as Settings, a as _export_sfc, d as defineComponent, b as computed, b7 as getCanonicalLocale, c as createElementBlock, o as openBlock, t as toDisplayString, J as normalizeClass, b3 as NcActionButton, _ as _export_sfc$1, f as createBlock, g as withCtx, l as createCommentVNode, h as resolveDynamicComponent, k as createBaseVNode, b8 as NC_ACTIONS_IS_SEMANTIC_MENU, Z as createElementId, b9 as ActionGlobalMixin, U as withDirectives, ba as vModelRadio, aE as withKeys, an as withModifiers, u as useModel, bb as useSlots, e as watch, as as logger, v as onMounted, aO as onBeforeUnmount, r as renderSlot, aa as useCssVars, bc as useIsDarkTheme, n as unref, bd as mdiCreation, j as createVNode, a1 as createSlots, C as createTextVNode, K as NcIconSvgWrapper, W as NcButton, b4 as NcActions, a7 as resolveComponent, i as mergeProps, V as vShow, x as normalizeProps, y as guardReactiveProps, be as userStatus, N as NcAvatar, p as normalizeStyle, m as mergeModels, aK as ref, bf as provide, w as warn, T as useTemplateRef, S as useAttrs, L as isLegacy, X as mdiCheck, Y as mdiAlertCircle, M as Fragment$1, O as renderList, a9 as NcLoadingIcon, bg as Teleport, bh as useRouter, aF as NcEmptyContent, aV as onUnmounted, P as DateTime, R as RouterLink, bi as useRoute, bj as translatePlural, bk as TransitionGroup, aP as nextTick, E as _$2, aC as NcModal, aU as shallowRef, bl as markRaw, bm as watchEffect, bn as getCurrentInstance, bo as customRef, bp as global, bq as getAugmentedNamespace, br as process$1, b1 as commonjsGlobal, bs as Buffer, Q as getDefaultExportFromCjs, bt as vModelSelect, D as purify, b2 as getCurrentUser, ao as Transition, bu as toRaw, bv as subscribe, bw as unsubscribe, bx as onBeforeRouteUpdate, aH as v, aI as cancelableClient, by as onBeforeRouteLeave, bz as createRouter, bA as createWebHistory, bB as axios, z as createApp, A as pinia } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_ef057a6f_lang-CvBTwrDO.chunk.mjs";
-import { a as useSessionStore, p as publicInquiry, i as supports, L as Logger, j as useInquiryStore, s as showError, o as options, E as Event$1, I as InquiryGeneralIcons, g as getInquiryTypeData, k as createInquiryContext$1, l as canTransfer, m as canDelete, n as canArchive, b as useInquiriesStore, q as useInquiryGroupsStore, r as NavigationIcons, t as getAvailableInquiryTypesForCreation, v as getInquiryTypeOptions, w as showSuccess, x as useInquiryGroupStore, y as getAllowedResponseGroupTypes, z as getAvailableInquiryGroupTypesForCreation, A as getInquiryGroupTypeData, B as canCreateInquiryGroupInGeneral, C as getInquiryTypesByFamily, D as accessFamilyMenu, F as getInquiryTypesForFamily, G as getInquiryItemData, H as canSupportOption, J as canSupport, S as StatusIcons, K as BadgeIcons, M as canComment, O as sortTitlesMapping, P as lodashExports, Q as appSettings, R as canRestore, T as getInquiryGroupTypesByFamily, U as getInquiryGroupTypesForFamily, V as getAvailableResponseTypesWithPermissions, W as getAvailableTransformTypesWithPermissions, X as canViewToggle, Y as validators, Z as inquiries, _ as commonjsRequire, $ as useAttachmentsStore, a0 as createOptionContext, a1 as canEditOption, a2 as canDeleteOption, a3 as canCommentOption, a4 as InquiryOptionIcons, a5 as createDefault, a6 as useSharesStore, a7 as useCommentsStore, a8 as useSubscriptionStore, d as useAppSettingsStore, a9 as moment, e as d, f as gfmHeadingId, aa as canChangeStatus, ab as canEdit, ac as createInquiryGroupContext, ad as inquiryLinks, ae as ShareIcons, af as getEditPermissions, ag as getAvailableFields, ah as getAvailableGroupFields, ai as canShare, aj as canUseResource } from "./NcDashboardWidget-Bu7bWoUK-Dvu74air.chunk.mjs";
-import { u as usePreferencesStore, S as StyleSettings, F as FeatureSettings } from "./StyleSettings-3gBx8C4V.chunk.mjs";
-import { b as NcAppNavigationItem, u as useAppSettingsDialog, _ as _sfc_main$1P, c as NcAppNavigationList, d as NcAppNavigation, S as Spinner, Q as QRCode, I as InputDiv, e as NcAppContent, f as NcActionButtonGroup, g as NcDialog, h as find$1, r as registerCustomProtocol, t as tokenize, i as reset, j as NcRichContenteditable, O as Options, k as NcActionInput, P as PlusIcon, l as NcDateTimePickerNative, m as NcAppSidebar, a as NcAppSettingsDialog, n as NcContent } from "./index-2wJhJDaT.chunk.mjs";
+import { ap as h$1, B as defineStore, s as translate, aD as emit, b6 as Settings, a as _export_sfc, d as defineComponent, b as computed, b7 as getCanonicalLocale, c as createElementBlock, o as openBlock, t as toDisplayString, J as normalizeClass, b3 as NcActionButton, _ as _export_sfc$1, f as createBlock, g as withCtx, l as createCommentVNode, h as resolveDynamicComponent, k as createBaseVNode, b8 as NC_ACTIONS_IS_SEMANTIC_MENU, Z as createElementId, b9 as ActionGlobalMixin, U as withDirectives, ba as vModelRadio, aE as withKeys, an as withModifiers, u as useModel, bb as useSlots, e as watch, as as logger, v as onMounted, aO as onBeforeUnmount, r as renderSlot, aa as useCssVars, bc as useIsDarkTheme, n as unref, bd as mdiCreation, j as createVNode, a1 as createSlots, C as createTextVNode, K as NcIconSvgWrapper, W as NcButton, b4 as NcActions, a7 as resolveComponent, i as mergeProps, V as vShow, x as normalizeProps, y as guardReactiveProps, be as userStatus, N as NcAvatar, p as normalizeStyle, m as mergeModels, aK as ref, bf as provide, w as warn, T as useTemplateRef, S as useAttrs, L as isLegacy, X as mdiCheck, Y as mdiAlertCircle, M as Fragment$1, O as renderList, a9 as NcLoadingIcon, bg as Teleport, bh as useRouter, aF as NcEmptyContent, aV as onUnmounted, P as DateTime, R as RouterLink, bi as useRoute, bj as translatePlural, bk as TransitionGroup, aP as nextTick$1, E as _$2, aC as NcModal, aU as shallowRef, bl as markRaw, bm as watchEffect, bn as getCurrentInstance, bo as customRef, bp as global, bq as getAugmentedNamespace, br as process$1, b1 as commonjsGlobal, bs as Buffer, Q as getDefaultExportFromCjs, bt as vModelSelect, D as purify, b2 as getCurrentUser, ao as Transition, bu as toRaw, bv as subscribe, bw as unsubscribe, bx as onBeforeRouteUpdate, aH as v, aI as cancelableClient, by as onBeforeRouteLeave, bz as createRouter, bA as createWebHistory, bB as axios, z as createApp, A as pinia } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_ef057a6f_lang-CvBTwrDO.chunk.mjs";
+import { a as useSessionStore, p as publicInquiry, i as supports, L as Logger, j as useInquiryStore, s as showError, o as options, E as Event$1, I as InquiryGeneralIcons, g as getInquiryTypeData, k as createInquiryContext$1, l as canTransfer, m as canDelete, n as canArchive, b as useInquiriesStore, q as useInquiryGroupsStore, r as NavigationIcons, t as getAvailableInquiryTypesForCreation, v as getInquiryTypeOptions, w as showSuccess, x as useInquiryGroupStore, y as getAllowedResponseGroupTypes, z as getAvailableInquiryGroupTypesForCreation, A as getInquiryGroupTypeData, B as canCreateInquiryGroupInGeneral, C as getInquiryTypesByFamily, D as accessFamilyMenu, F as getInquiryTypesForFamily, G as getInquiryItemData, H as canSupportOption, J as canSupport, S as StatusIcons, K as BadgeIcons, M as canComment, O as sortTitlesMapping, P as lodashExports, Q as appSettings, R as canRestore, T as getInquiryGroupTypesByFamily, U as getInquiryGroupTypesForFamily, V as getAvailableResponseTypesWithPermissions, W as getAvailableTransformTypesWithPermissions, X as canViewToggle, Y as validators, Z as inquiries, _ as commonjsRequire, $ as useAttachmentsStore, a0 as createOptionContext, a1 as canEditOption, a2 as canDeleteOption, a3 as canCommentOption, a4 as InquiryOptionIcons, a5 as createDefault, a6 as useSharesStore, a7 as useCommentsStore, a8 as useSubscriptionStore, d as useAppSettingsStore, a9 as moment, e as d, f as gfmHeadingId, aa as canChangeStatus, ab as canEdit, ac as createInquiryGroupContext, ad as inquiryLinks, ae as ShareIcons, af as getEditPermissions, ag as getAvailableFields, ah as getAvailableGroupFields, ai as canShare, aj as canUseResource } from "./NcDashboardWidget-Bu7bWoUK-BNfTM9dC.chunk.mjs";
+import { u as usePreferencesStore, S as StyleSettings, F as FeatureSettings } from "./StyleSettings-BEyyI56_.chunk.mjs";
+import { b as NcAppNavigationItem, u as useAppSettingsDialog, _ as _sfc_main$1P, c as NcAppNavigationList, d as NcAppNavigation, S as Spinner, Q as QRCode, I as InputDiv, e as NcAppContent, f as NcActionButtonGroup, g as NcDialog, h as find$1, r as registerCustomProtocol, t as tokenize, i as reset, j as NcRichContenteditable, O as Options, k as NcActionInput, P as PlusIcon, l as NcDateTimePickerNative, m as NcAppSidebar, a as NcAppSettingsDialog, n as NcContent } from "./index-D_M-5wsx.chunk.mjs";
 import { _ as _sfc_main$1Q, I as INSIDE_RADIO_GROUP_KEY, a as NcSelect, N as NcCheckboxRadioSwitch, c as _sfc_main$1R, b as NcInputField } from "./NcRichText-CETsOVBU-Dnxob6Wk.chunk.mjs";
-import { R as RadioGroupDiv, N as NcNoteCard, C as CardDiv } from "./markdown-DA_k96Oa.chunk.mjs";
+import { R as RadioGroupDiv, N as NcNoteCard, C as CardDiv } from "./markdown-DxT43Iu7.chunk.mjs";
 import { A as AgoraAppIcon } from "./AgoraAppIcon-CSH-ufz_.chunk.mjs";
 import { N as NcUserBubble } from "./NcUserBubble-CM66IyhS-DR6eAA-M.chunk.mjs";
 const setCookie = (cookieName, cookieValue = "", cookieExpiration = 360) => {
@@ -12601,25 +12601,19 @@ const useSupportsStore = defineStore("supports", {
     count: (state) => state.supports.length,
     groupedSupports: (state) => groupSupports(state.supports),
     // Get support by inquiryId/optionId and userId
-    getSupport: (state) => (inquiryId, userId, optionId) => {
-      return state.supports.find((support) => {
-        const inquiryMatch = support.inquiryId === inquiryId && support.userId === userId;
-        if (optionId !== void 0 && optionId > 0) {
-          return inquiryMatch && support.optionId === optionId;
-        }
-        return inquiryMatch && (!support.optionId || support.optionId === 0);
-      });
-    },
+    getSupport: (state) => (inquiryId, userId, optionId) => state.supports.find((support) => {
+      const inquiryMatch = support.inquiryId === inquiryId && support.userId === userId;
+      if (optionId !== void 0 && optionId > 0) {
+        return inquiryMatch && support.optionId === optionId;
+      }
+      return inquiryMatch && (!support.optionId || support.optionId === 0);
+    }),
     // Get all supports for an inquiry (including option supports)
-    getSupportsByInquiryId: (state) => (inquiryId) => {
-      return state.supports.filter((support) => support.inquiryId === inquiryId);
-    },
+    getSupportsByInquiryId: (state) => (inquiryId) => state.supports.filter((support) => support.inquiryId === inquiryId),
     // Get option supports only
-    getOptionSupports: (state) => (inquiryId, optionId) => {
-      return state.supports.filter(
-        (support) => support.inquiryId === inquiryId && support.optionId === optionId
-      );
-    }
+    getOptionSupports: (state) => (inquiryId, optionId) => state.supports.filter(
+      (support) => support.inquiryId === inquiryId && support.optionId === optionId
+    )
   },
   actions: {
     // Set or update a support in the store
@@ -12662,7 +12656,8 @@ const useSupportsStore = defineStore("supports", {
       console.log(" INTO TOGGLE SUPPORT", itemType);
       if (supportFeature === "binary") {
         return this.toggleStandardSupport(itemId, userId, item, itemType);
-      } else if (supportFeature === "ternary") {
+      }
+      if (supportFeature === "ternary") {
         return this.toggleTernarySupport(itemId, userId, item, itemType);
       }
       return null;
@@ -12685,7 +12680,7 @@ const useSupportsStore = defineStore("supports", {
       const hasSupported = !oldState;
       try {
         let inquiryId = itemId;
-        let optionId = void 0;
+        let optionId;
         if (itemType === "option") {
           inquiryId = item.targetId;
           optionId = itemId;
@@ -12732,7 +12727,7 @@ const useSupportsStore = defineStore("supports", {
       try {
         this.updateTernaryUIState(item, currentValue, nextValue, shouldRemove);
         let inquiryId = itemId;
-        let optionId = void 0;
+        let optionId;
         if (itemType === "option") {
           inquiryId = item.targetId;
           optionId = itemId;
@@ -12939,6 +12934,8 @@ const useSupportsStore = defineStore("supports", {
     },
     /**
      * Restore support for an inquiry
+     * @param payload
+     * @param payload.support
      */
     async restore(payload) {
       const sessionStore = useSessionStore();
@@ -15541,7 +15538,7 @@ function _sfc_render$1u(_ctx, _cache, $props, $setup, $data, $options) {
     })
   }, toDisplayString($setup.emojiSymbol), 15, _hoisted_1$1a);
 }
-const ThumbIcon$1 = /* @__PURE__ */ _export_sfc$1(_sfc_main$1u, [["render", _sfc_render$1u], ["__scopeId", "data-v-24ed4f43"], ["__file", "/var/www/nextcloud/apps/agora/src/components/AppIcons/modules/ThumbIcon.vue"]]);
+const ThumbIcon = /* @__PURE__ */ _export_sfc$1(_sfc_main$1u, [["render", _sfc_render$1u], ["__scopeId", "data-v-24ed4f43"], ["__file", "/var/www/nextcloud/apps/agora/src/components/AppIcons/modules/ThumbIcon.vue"]]);
 const _sfc_main$1t = /* @__PURE__ */ defineComponent({
   __name: "TernarySupportIcon",
   props: {
@@ -15594,7 +15591,7 @@ function _sfc_render$1t(_ctx, _cache, $props, $setup, $data, $options) {
     })
   }, toDisplayString($setup.emojiSymbol), 15, _hoisted_1$19);
 }
-const TernarySupportIcon$1 = /* @__PURE__ */ _export_sfc$1(_sfc_main$1t, [["render", _sfc_render$1t], ["__scopeId", "data-v-ef057a6f"], ["__file", "/var/www/nextcloud/apps/agora/src/components/AppIcons/modules/TernarySupportIcon.vue"]]);
+const TernarySupportIcon = /* @__PURE__ */ _export_sfc$1(_sfc_main$1t, [["render", _sfc_render$1t], ["__scopeId", "data-v-ef057a6f"], ["__file", "/var/www/nextcloud/apps/agora/src/components/AppIcons/modules/TernarySupportIcon.vue"]]);
 const _sfc_main$1s = /* @__PURE__ */ defineComponent({
   __name: "IntersectionObserver",
   props: /* @__PURE__ */ mergeModels({
@@ -16951,11 +16948,7 @@ const _sfc_main$1m = /* @__PURE__ */ defineComponent({
     const selectedFamily = ref(inquiriesStore.familyType || null);
     const expandedFamilies = ref(/* @__PURE__ */ new Set());
     const inquiryFamilies = computed(() => sessionStore.appSettings.inquiryFamilyTab || []);
-    const sortedInquiries = computed(() => {
-      return [...inquiriesStore.inquiries].sort((a, b) => {
-        return new Date(b.status.lastInteraction) - new Date(a.status.lastInteraction);
-      });
-    });
+    const sortedInquiries = computed(() => [...inquiriesStore.inquiries].sort((a, b) => new Date(b.status.lastInteraction) - new Date(a.status.lastInteraction)));
     const recentInquiries = computed(() => sortedInquiries.value.slice(0, 5));
     const shouldRedirectToGroupView = (familyType) => {
       const hasGroupTypes = getInquiryGroupTypesForCurrentFamily(familyType).length > 0;
@@ -17793,60 +17786,32 @@ const _sfc_main$1i = /* @__PURE__ */ defineComponent({
     const showTooltip = ref(false);
     const tooltipHovered = ref(false);
     const tooltipTimeout = ref(null);
-    const containerStyles = computed(() => {
-      return {
-        padding: `${props2.iconSize * 0.3}px ${props2.iconSize * 0.6}px`,
-        gap: `${props2.iconSize * 0.5}px`,
-        borderRadius: `${props2.iconSize * 0.6}px`,
-        borderWidth: `${props2.iconSize * 0.05}px`
-      };
-    });
-    const iconContainerStyles = computed(() => {
-      return {
-        width: `${props2.iconSize * 1.2}px`,
-        height: `${props2.iconSize * 1.2}px`,
-        borderRadius: `${props2.iconSize * 0.3}px`
-      };
-    });
-    const tooltipStyles = computed(() => {
-      return {
-        minWidth: `${props2.iconSize * 12}px`,
-        maxWidth: `${props2.iconSize * 14}px`
-      };
-    });
-    const isTernary = computed(() => {
-      return props2.item?.configuration?.supportFeature === "ternary";
-    });
-    const isBinary = computed(() => {
-      return props2.item?.configuration?.supportFeature === "binary";
-    });
-    const isSupportEnabled = computed(() => {
-      return isTernary.value || isBinary.value;
-    });
-    const supportValue = computed(() => {
-      return props2.item?.currentUserStatus?.supportValue ?? null;
-    });
-    const hasSupported = computed(() => {
-      return props2.item?.currentUserStatus?.hasSupported ?? false;
-    });
-    const displayCount = computed(() => {
-      return props2.item?.status?.countSupports ?? 0;
-    });
-    const quorumValue = computed(() => {
-      return props2.item?.miscFields?.quorum ?? 0;
-    });
-    const positiveCount = computed(() => {
-      return props2.item?.status?.countPositiveSupports ?? 0;
-    });
-    const neutralCount = computed(() => {
-      return props2.item?.status?.countNeutralSupports ?? 0;
-    });
-    const negativeCount = computed(() => {
-      return props2.item?.status?.countNegativeSupports ?? 0;
-    });
-    const totalParticipants = computed(() => {
-      return props2.item?.status?.countParticipants ?? positiveCount.value + neutralCount.value + negativeCount.value;
-    });
+    const containerStyles = computed(() => ({
+      padding: `${props2.iconSize * 0.3}px ${props2.iconSize * 0.6}px`,
+      gap: `${props2.iconSize * 0.5}px`,
+      borderRadius: `${props2.iconSize * 0.6}px`,
+      borderWidth: `${props2.iconSize * 0.05}px`
+    }));
+    const iconContainerStyles = computed(() => ({
+      width: `${props2.iconSize * 1.2}px`,
+      height: `${props2.iconSize * 1.2}px`,
+      borderRadius: `${props2.iconSize * 0.3}px`
+    }));
+    const tooltipStyles = computed(() => ({
+      minWidth: `${props2.iconSize * 12}px`,
+      maxWidth: `${props2.iconSize * 14}px`
+    }));
+    const isTernary = computed(() => props2.item?.configuration?.supportFeature === "ternary");
+    const isBinary = computed(() => props2.item?.configuration?.supportFeature === "binary");
+    const isSupportEnabled = computed(() => isTernary.value || isBinary.value);
+    const supportValue = computed(() => props2.item?.currentUserStatus?.supportValue ?? null);
+    const hasSupported = computed(() => props2.item?.currentUserStatus?.hasSupported ?? false);
+    const displayCount = computed(() => props2.item?.status?.countSupports ?? 0);
+    const quorumValue = computed(() => props2.item?.miscFields?.quorum ?? 0);
+    const positiveCount = computed(() => props2.item?.status?.countPositiveSupports ?? 0);
+    const neutralCount = computed(() => props2.item?.status?.countNeutralSupports ?? 0);
+    const negativeCount = computed(() => props2.item?.status?.countNegativeSupports ?? 0);
+    const totalParticipants = computed(() => props2.item?.status?.countParticipants ?? positiveCount.value + neutralCount.value + negativeCount.value);
     const positivePercentage = computed(() => {
       if (totalParticipants.value === 0) return 0;
       return Math.round(positiveCount.value / totalParticipants.value * 100);
@@ -17863,9 +17828,8 @@ const _sfc_main$1i = /* @__PURE__ */ defineComponent({
       if (!props2.item) return false;
       if (props2.itemType === "option") {
         return canSupportOption(props2.context);
-      } else {
-        return canSupport(props2.context);
       }
+      return canSupport(props2.context);
     });
     const handleMouseEnter = () => {
       if (!props2.showDetailsOnHover || !isTernary.value) return;
@@ -17944,7 +17908,7 @@ const _sfc_main$1i = /* @__PURE__ */ defineComponent({
     });
     const __returned__ = { props: props2, containerRef, showTooltip, tooltipHovered, tooltipTimeout, containerStyles, iconContainerStyles, tooltipStyles, isTernary, isBinary, isSupportEnabled, supportValue, hasSupported, displayCount, quorumValue, positiveCount, neutralCount, negativeCount, totalParticipants, positivePercentage, neutralPercentage, negativePercentage, canSupport: canSupport$1, handleMouseEnter, handleMouseLeave: handleMouseLeave2, handleTooltipMouseEnter, handleTooltipMouseLeave, clearTimeouts, toggleSupport, get t() {
       return translate;
-    }, TernarySupportIcon: TernarySupportIcon$1, ThumbIcon: ThumbIcon$1 };
+    }, TernarySupportIcon, ThumbIcon };
     Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
     return __returned__;
   }
@@ -17977,10 +17941,10 @@ function _sfc_render$1i(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock(
     "div",
     {
-      class: normalizeClass(["counter-item supports", { "clickable": $setup.canSupport, "disabled": !$setup.canSupport }]),
-      onClick: $setup.toggleSupport,
       ref: "containerRef",
-      style: normalizeStyle($setup.containerStyles)
+      class: normalizeClass(["counter-item supports", { "clickable": $setup.canSupport, "disabled": !$setup.canSupport }]),
+      style: normalizeStyle($setup.containerStyles),
+      onClick: $setup.toggleSupport
     },
     [
       createBaseVNode(
@@ -18323,9 +18287,7 @@ const _sfc_main$1h = /* @__PURE__ */ defineComponent({
     const inquiriesStore = useInquiriesStore();
     const sessionStore = useSessionStore();
     const supportsStore = useSupportsStore();
-    const context2 = computed(() => {
-      return createInquiryContext$1(__props.inquiry, sessionStore.appSettings);
-    });
+    const context2 = computed(() => createInquiryContext$1(__props.inquiry, sessionStore.appSettings));
     function htmlToFirstLine(html2) {
       const tempDiv = document.createElement("div");
       tempDiv.innerHTML = html2;
@@ -20001,9 +19963,7 @@ const _sfc_main$1b = /* @__PURE__ */ defineComponent({
     const showDeleteDialog = ref(false);
     const showTransferDialog = ref(false);
     const subMenu = ref(null);
-    const context2 = computed(() => {
-      return createInquiryContext$1(__props.inquiry, sessionStore.appSettings);
-    });
+    const context2 = computed(() => createInquiryContext$1(__props.inquiry, sessionStore.appSettings));
     async function toggleArchive() {
       try {
         await inquiriesStore.toggleArchive({ inquiryId: __props.inquiry.id });
@@ -21304,9 +21264,7 @@ const _sfc_main$14 = /* @__PURE__ */ defineComponent({
     const props2 = __props;
     const inquiriesStore = useInquiriesStore();
     const emit2 = __emit;
-    const context2 = computed(() => {
-      return createInquiryContext$1(props2.inquiryStore, props2.sessionStore.appSettings);
-    });
+    const context2 = computed(() => createInquiryContext$1(props2.inquiryStore, props2.sessionStore.appSettings));
     const selectedStatus = ref(props2.inquiryStore.status.moderationStatus || "pending");
     const statusOptions = [
       { id: "pending", label: translate("agora", "Pending"), value: "pending" },
@@ -21349,7 +21307,7 @@ const _sfc_main$14 = /* @__PURE__ */ defineComponent({
           inquiriesStore.submitInquiry(props2.inquiryStore.id, "submit_for_moderate");
           showSuccess(translate("agora", "Inquiry submitted for moderation"));
         }
-        await nextTick();
+        await nextTick$1();
       } catch {
         showError(translate("agora", "Failed to submit inquiry for moderation"));
       }
@@ -39193,7 +39151,7 @@ var EditorContent = defineComponent({
     watchEffect(() => {
       const editor = props2.editor;
       if (editor && editor.options.element && rootEl.value) {
-        nextTick(() => {
+        nextTick$1(() => {
           var _a;
           if (!rootEl.value || !((_a = editor.view.dom) == null ? void 0 : _a.firstChild)) {
             return;
@@ -67237,7 +67195,7 @@ const _sfc_main$T = {
       () => inquiryStore.description,
       (newVal) => {
         if (editor.value && newVal !== editor.value.getHTML()) {
-          nextTick(() => {
+          nextTick$1(() => {
             editor.value.commands.setContent(newVal || "<p></p>");
           });
         }
@@ -67337,7 +67295,7 @@ const _sfc_main$T = {
       }
     };
     onMounted(() => {
-      nextTick(() => {
+      nextTick$1(() => {
         if (editor.value && inquiryStore.description) {
           editor.value.commands.setContent(inquiryStore.description);
         }
@@ -67348,7 +67306,7 @@ const _sfc_main$T = {
         editor.value.destroy();
       }
     });
-    const __returned__ = { attachmentsStore, inquiryStore, props: props2, imageFileInput, wordFileInput, editorContainer, showAIModal, aiLoading, aiPrompt, aiGeneratedContent, getNextcloudPreviewUrl, triggerImageUpload, getContentSummary, handleImageUpload, CustomImage, editor, handlePastedImage, isImageSelected, getSelectedImageAlign, alignImage, selectedHeading, setHeading, setLink, importWord, handleWordImport, openAIModal, closeAIModal, onPromptUpdate, generateWithAI, insertAIContent, ref, onMounted, onUnmounted, watch, nextTick, computed, get useEditor() {
+    const __returned__ = { attachmentsStore, inquiryStore, props: props2, imageFileInput, wordFileInput, editorContainer, showAIModal, aiLoading, aiPrompt, aiGeneratedContent, getNextcloudPreviewUrl, triggerImageUpload, getContentSummary, handleImageUpload, CustomImage, editor, handlePastedImage, isImageSelected, getSelectedImageAlign, alignImage, selectedHeading, setHeading, setLink, importWord, handleWordImport, openAIModal, closeAIModal, onPromptUpdate, generateWithAI, insertAIContent, ref, onMounted, onUnmounted, watch, nextTick: nextTick$1, computed, get useEditor() {
       return useEditor;
     }, get EditorContent() {
       return EditorContent;
@@ -68117,12 +68075,8 @@ const _sfc_main$S = /* @__PURE__ */ defineComponent({
       if (!props2.option || optionContext.value === null) return false;
       return canSupportOption(optionContext.value);
     });
-    const canEditOrDelete = computed(() => {
-      return canEdit2.value || canDelete2.value;
-    });
-    const allOptionTypes = computed(() => {
-      return sessionStore.appSettings?.inquiryOptionTypeTab || [];
-    });
+    const canEditOrDelete = computed(() => canEdit2.value || canDelete2.value);
+    const allOptionTypes = computed(() => sessionStore.appSettings?.inquiryOptionTypeTab || []);
     const optionTypeData = computed(() => {
       const data = getOptionTypeData(props2.option.type, allOptionTypes.value, props2.option.type);
       if (!data) {
@@ -68139,9 +68093,7 @@ const _sfc_main$S = /* @__PURE__ */ defineComponent({
       }
       return data;
     });
-    const optionTypeLabel = computed(() => {
-      return optionTypeData.value.label || props2.option.type || "";
-    });
+    const optionTypeLabel = computed(() => optionTypeData.value.label || props2.option.type || "");
     const optionIcon = computed(() => {
       const iconName = optionTypeData.value?.icon;
       if (iconName in InquiryOptionIcons) {
@@ -68155,21 +68107,11 @@ const _sfc_main$S = /* @__PURE__ */ defineComponent({
       if (!optionTypeData.value?.family) return "#999999";
       return getFamilyColor(optionTypeData.value.family);
     });
-    const showTitle = computed(() => {
-      return optionTypeData.value?.use_title !== false;
-    });
-    const supportFeature = computed(() => {
-      return optionTypeData.value?.support_feature || "none";
-    });
-    const allowComment = computed(() => {
-      return optionTypeData.value?.allow_comment || false;
-    });
-    const hasSupportFeature = computed(() => {
-      return optionTypeData.value?.support_feature !== "none" || false;
-    });
-    const hasComments = computed(() => {
-      return allowComment.value && (props2.option.status?.countComments || 0) > 0;
-    });
+    const showTitle = computed(() => optionTypeData.value?.use_title !== false);
+    const supportFeature = computed(() => optionTypeData.value?.support_feature || "none");
+    const allowComment = computed(() => optionTypeData.value?.allow_comment || false);
+    const hasSupportFeature = computed(() => optionTypeData.value?.support_feature !== "none" || false);
+    const hasComments = computed(() => allowComment.value && (props2.option.status?.countComments || 0) > 0);
     const allowedResponses = computed(() => {
       if (!optionTypeData.value?.allowed_response) return [];
       let responses = [];
@@ -68188,9 +68130,7 @@ const _sfc_main$S = /* @__PURE__ */ defineComponent({
         )
       );
     });
-    const hasAllowedResponses = computed(() => {
-      return allowedResponses.value.length > 0;
-    });
+    const hasAllowedResponses = computed(() => allowedResponses.value.length > 0);
     const childOptions = computed(() => {
       if (!props2.option?.id) return [];
       return optionsStore.options.filter((opt) => opt.parentId === props2.option.id);
@@ -68209,9 +68149,7 @@ const _sfc_main$S = /* @__PURE__ */ defineComponent({
       });
       return counts;
     });
-    const childCountsTotal = computed(() => {
-      return Object.values(childCounts.value).reduce((sum, count) => sum + count, 0);
-    });
+    const childCountsTotal = computed(() => Object.values(childCounts.value).reduce((sum, count) => sum + count, 0));
     const numericSupportValue = computed(() => {
       if (supportFeature.value === "ternary" || supportFeature.value === "binary") {
         return props2.option.currentUserStatus?.supportValue ?? null;
@@ -68231,7 +68169,7 @@ const _sfc_main$S = /* @__PURE__ */ defineComponent({
     const truncateText = (text, maxLength) => {
       if (!text) return "";
       if (text.length <= maxLength) return text;
-      return text.substring(0, maxLength) + "...";
+      return `${text.substring(0, maxLength)}...`;
     };
     const getOptionTypeIcon = (type) => {
       const optionType = allOptionTypes.value.find(
@@ -68922,9 +68860,7 @@ const useOptionStore = defineStore("option", {
       useSubscriptionStore();
       this.meta.status = "loading";
       try {
-        const response = await (() => {
-          return options.getFullOption(optionId ?? sessionStore.currentOptionId);
-        })();
+        const response = await (() => options.getFullOption(optionId ?? sessionStore.currentOptionId))();
         if (!response) {
           this.$reset();
           return;
@@ -69302,9 +69238,7 @@ const _sfc_main$R = /* @__PURE__ */ defineComponent({
       if (!props2.optionType) return translate("agora", "Add Option");
       return translate("agora", "Add {type}", { type: optionTypeLabel.value });
     });
-    const modalSubtitle = computed(() => {
-      return optionTypeDescription.value || "";
-    });
+    const modalSubtitle = computed(() => optionTypeDescription.value || "");
     const optionTypeData = computed(() => {
       if (!props2.optionType) return null;
       const optionTypes = sessionStore.appSettings?.inquiryOptionTypeTab || [];
@@ -69354,9 +69288,7 @@ const _sfc_main$R = /* @__PURE__ */ defineComponent({
       if (feature === "binary") return translate("agora", "Binary support (like/dislike)");
       return translate("agora", "Support enabled");
     });
-    const allowComment = computed(() => {
-      return optionTypeData.value?.allow_comment || false;
-    });
+    const allowComment = computed(() => optionTypeData.value?.allow_comment || false);
     const hasStatuses = computed(() => {
       const statuses = optionTypeData.value?.statuses || [];
       return statuses.length > 0;
@@ -69372,9 +69304,7 @@ const _sfc_main$R = /* @__PURE__ */ defineComponent({
       }
       return [];
     });
-    const hasAdditionalFields = computed(() => {
-      return additionalFields.value.length > 0;
-    });
+    const hasAdditionalFields = computed(() => additionalFields.value.length > 0);
     const additionalFields = computed(() => {
       if (!optionTypeData.value?.fields) return [];
       if (typeof optionTypeData.value.fields === "string") {
@@ -69948,8 +69878,8 @@ function _sfc_render$R(_ctx, _cache, $props, $setup, $data, $options) {
                         "onUpdate:modelValue": ($event) => $setup.additionalFormData[field.key] = $event,
                         autolink: true,
                         "use-markdown": true,
-                        emojiAutocomplete: true,
-                        linkAutocomplete: true,
+                        "emoji-autocomplete": true,
+                        "link-autocomplete": true,
                         placeholder: field.placeholder || "",
                         required: field.required,
                         "full-width": ""
@@ -70927,9 +70857,7 @@ const _sfc_main$L = /* @__PURE__ */ defineComponent({
     const toggleSubMenu = (menu = null) => {
       subMenu.value = subMenu.value === menu ? null : menu;
     };
-    const allOptionTypes = computed(() => {
-      return sessionStore.appSettings?.inquiryOptionTypeTab || [];
-    });
+    const allOptionTypes = computed(() => sessionStore.appSettings?.inquiryOptionTypeTab || []);
     const optionTypeData = computed(() => {
       const data = getOptionTypeData(optionStore.type, allOptionTypes.value, optionStore.type);
       if (!data) {
@@ -70954,13 +70882,9 @@ const _sfc_main$L = /* @__PURE__ */ defineComponent({
     const canChangeOptionStatus = computed(() => canChangeStatus(optionContext.value));
     const canComment2 = computed(() => canCommentOption(optionContext.value));
     const canSupport2 = computed(() => canSupportOption(optionContext.value));
-    const modalTitle = computed(() => {
-      return optionStore.title || translate("agora", "Option Details");
-    });
+    const modalTitle = computed(() => optionStore.title || translate("agora", "Option Details"));
     console.log(" OPPTTION TYPE DATA ", optionTypeData.value);
-    const optionTypeLabel = computed(() => {
-      return optionTypeData.value.label || optionStore.type || "";
-    });
+    const optionTypeLabel = computed(() => optionTypeData.value.label || optionStore.type || "");
     const optionIcon = computed(() => {
       const iconName = optionTypeData.value?.icon;
       if (iconName in InquiryOptionIcons) {
@@ -70974,18 +70898,10 @@ const _sfc_main$L = /* @__PURE__ */ defineComponent({
       if (!optionTypeData.value?.family) return "#999999";
       return getFamilyColor(optionTypeData.value.family);
     });
-    const allowComment = computed(() => {
-      return optionTypeData.value?.allow_comment || false;
-    });
-    const hasSupportFeature = computed(() => {
-      return optionTypeData.value?.support_feature !== "none" || false;
-    });
-    const canEditOrDelete = computed(() => {
-      return canEdit2.value || canDelete2.value;
-    });
-    const canSaveEdit = computed(() => {
-      return editForm.value.text.trim().length > 0;
-    });
+    const allowComment = computed(() => optionTypeData.value?.allow_comment || false);
+    const hasSupportFeature = computed(() => optionTypeData.value?.support_feature !== "none" || false);
+    const canEditOrDelete = computed(() => canEdit2.value || canDelete2.value);
+    const canSaveEdit = computed(() => editForm.value.text.trim().length > 0);
     const additionalFields = computed(() => {
       if (!optionTypeData.value?.fields) return [];
       if (typeof optionTypeData.value.fields === "string") {
@@ -71012,9 +70928,7 @@ const _sfc_main$L = /* @__PURE__ */ defineComponent({
       console.log(" ATTEETNNNNNNNNNNNNNN ", responses);
       return responses;
     });
-    const hasAllowedResponses = computed(() => {
-      return allowedResponses.value.length > 0;
-    });
+    const hasAllowedResponses = computed(() => allowedResponses.value.length > 0);
     console.log(" RESPONSE TYPE INTO AVAILABLE RESPONSE YT ", allowedResponses.value);
     const availableResponseTypes = computed(() => {
       if (!allowedResponses.value?.length) return [];
@@ -71040,22 +70954,14 @@ const _sfc_main$L = /* @__PURE__ */ defineComponent({
       console.log("=== END DEBUG ===");
       return result2;
     });
-    const canAddChild = computed(() => {
-      return hasAllowedResponses.value && sessionStore.currentUser;
-    });
+    const canAddChild = computed(() => hasAllowedResponses.value && sessionStore.currentUser);
     const childOptions = computed(() => {
       if (!optionStore?.id) return [];
       return optionsStore.options.filter((opt) => opt.parentId === optionStore.id);
     });
-    const hasChildOptions = computed(() => {
-      return childOptions.value.length > 0;
-    });
-    const getChildCountByType = (type) => {
-      return childOptions.value.filter((child) => child.type === type).length;
-    };
-    const hasAdditionalFields = computed(() => {
-      return additionalFields.value.length > 0;
-    });
+    const hasChildOptions = computed(() => childOptions.value.length > 0);
+    const getChildCountByType = (type) => childOptions.value.filter((child) => child.type === type).length;
+    const hasAdditionalFields = computed(() => additionalFields.value.length > 0);
     const hasAdditionalFieldsData = computed(() => {
       if (!optionStore.miscFields) return false;
       return Object.keys(optionStore.miscFields).length > 0;
@@ -71600,8 +71506,8 @@ function _sfc_render$L(_ctx, _cache, $props, $setup, $data, $options) {
                           key: 0,
                           modelValue: $setup.editForm.label,
                           "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => $setup.editForm.label = $event),
-                          emojiAutocomplete: true,
-                          linkAutocomplete: true,
+                          "emoji-autocomplete": true,
+                          "link-autocomplete": true,
                           autolink: true,
                           "use-markdown": true,
                           label: $setup.t("agora", "Title"),
@@ -71613,8 +71519,8 @@ function _sfc_render$L(_ctx, _cache, $props, $setup, $data, $options) {
                           "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => $setup.editForm.text = $event),
                           label: $setup.t("agora", "Description"),
                           placeholder: $setup.t("agora", "Enter option text"),
-                          emojiAutocomplete: true,
-                          linkAutocomplete: true,
+                          "emoji-autocomplete": true,
+                          "link-autocomplete": true,
                           autolink: true,
                           "use-markdown": true,
                           maxlength: 400,
@@ -72037,9 +71943,7 @@ const _sfc_main$K = /* @__PURE__ */ defineComponent({
     const showDetailModal = ref(false);
     const selectedOptionTypeKey = ref(null);
     const selectedParentId = ref(null);
-    const allOptionTypes = computed(() => {
-      return sessionStore.appSettings?.inquiryOptionTypeTab || [];
-    });
+    const allOptionTypes = computed(() => sessionStore.appSettings?.inquiryOptionTypeTab || []);
     const activeNodeContext = computed(() => {
       if (!activeNode.value) return null;
       const optionLike = {
@@ -72050,22 +71954,19 @@ const _sfc_main$K = /* @__PURE__ */ defineComponent({
       };
       return createOptionContext(optionLike);
     });
-    const structureTypes = computed(() => {
-      return allOptionTypes.value.filter((type) => type.family === "structure");
-    });
-    const rootStructureTypes = computed(() => {
-      return structureTypes.value.filter((type) => {
-        return ["chapter", "structure_intro"].includes(type.option_type) || !allOptionTypes.value.some(
+    const structureTypes = computed(() => allOptionTypes.value.filter((type) => type.family === "structure"));
+    const rootStructureTypes = computed(() => structureTypes.value.filter(
+      (type) => (
+        // Types that can be root (e.g., chapter, introduction)
+        ["chapter", "structure_intro"].includes(type.option_type) || !allOptionTypes.value.some(
           (parentType) => parentType.allowed_response?.includes(type.option_type)
-        );
-      });
-    });
-    const structureRootOptions = computed(() => {
-      return optionsStore.options.filter((opt) => {
-        const typeData = getOptionTypeDataByType(opt.type);
-        return typeData?.family === "structure" && (!opt.parentId || opt.parentId === 0);
-      });
-    });
+        )
+      )
+    ));
+    const structureRootOptions = computed(() => optionsStore.options.filter((opt) => {
+      const typeData = getOptionTypeDataByType(opt.type);
+      return typeData?.family === "structure" && (!opt.parentId || opt.parentId === 0);
+    }));
     const activeNode = computed(() => {
       if (!activeNodeId.value) return null;
       return optionsStore.options.find((opt) => opt.id === activeNodeId.value) || null;
@@ -72078,11 +71979,9 @@ const _sfc_main$K = /* @__PURE__ */ defineComponent({
       if (!node) return null;
       return getOptionTypeData(node.type, allOptionTypes.value, node.type);
     };
-    const getOptionTypeDataByType = (type) => {
-      return allOptionTypes.value.find(
-        (opt) => opt.option_type === type || opt.optionType === type
-      );
-    };
+    const getOptionTypeDataByType = (type) => allOptionTypes.value.find(
+      (opt) => opt.option_type === type || opt.optionType === type
+    );
     const getOptionTypeLabel = (type) => {
       const optionType = getOptionTypeDataByType(type);
       return optionType?.label || type;
@@ -72131,12 +72030,8 @@ const _sfc_main$K = /* @__PURE__ */ defineComponent({
       const allowedResponses = getAllowedResponseTypes(node.type);
       return allowedResponses.length > 0;
     };
-    const getRootType = () => {
-      return rootStructureTypes.value[0]?.option_type || "chapter";
-    };
-    const getRootTypeLabel = () => {
-      return getOptionTypeLabel(getRootType());
-    };
+    const getRootType = () => rootStructureTypes.value[0]?.option_type || "chapter";
+    const getRootTypeLabel = () => getOptionTypeLabel(getRootType());
     const getDepth = (node, depth = 0) => {
       if (!node.parentId || node.parentId === 0) return depth;
       const parent = optionsStore.options.find((opt) => opt.id === node.parentId);
@@ -72186,7 +72081,7 @@ const _sfc_main$K = /* @__PURE__ */ defineComponent({
     const truncateText = (text, maxLength) => {
       if (!text) return "";
       if (text.length <= maxLength) return text;
-      return text.substring(0, maxLength) + "...";
+      return `${text.substring(0, maxLength)}...`;
     };
     const hasAllowedResponses = (node) => {
       if (!node) return false;
@@ -72221,9 +72116,29 @@ const _sfc_main$K = /* @__PURE__ */ defineComponent({
           type: node.type,
           parentId: node.parentId
         });
+        console.log("BEFORE update:", {
+          nodeTitle: node.title,
+          nodeText: node.text,
+          storeNode: optionsStore.options.find((opt) => opt.id === node.id)
+        });
         const index = optionsStore.options.findIndex((opt) => opt.id === node.id);
         if (index >= 0) {
-          optionsStore.options[index] = { ...optionsStore.options[index], ...updatedOption };
+          const newOption = {
+            ...optionsStore.options[index],
+            ...updatedOption,
+            title: inlineEditTitle.value || "",
+            text: inlineEditText.value || "",
+            label: inlineEditTitle.value || optionsStore.options[index].label || ""
+          };
+          optionsStore.options.splice(index, 1, newOption);
+        }
+        if (activeNode.value && activeNode.value.id === node.id) {
+          await nextTick();
+          const tempId = activeNodeId.value;
+          activeNodeId.value = null;
+          setTimeout(() => {
+            activeNodeId.value = tempId;
+          }, 50);
         }
         editingNodeId.value = null;
         inlineEditTitle.value = "";
@@ -72454,7 +72369,7 @@ const _hoisted_75$2 = { class: "edit-section" };
 const _hoisted_76$2 = { class: "edit-label" };
 const _hoisted_77$2 = { class: "edit-section" };
 const _hoisted_78$2 = { class: "edit-label" };
-const _hoisted_79$1 = { class: "edit-actions-full" };
+const _hoisted_79 = { class: "edit-actions-full" };
 const _hoisted_80 = { class: "display-mode" };
 const _hoisted_81 = ["onClick"];
 const _hoisted_82 = {
@@ -72807,8 +72722,8 @@ function _sfc_render$K(_ctx, _cache, $props, $setup, $data, $options) {
                                 createVNode($setup["NcRichContenteditable"], {
                                   modelValue: $setup.inlineEditTitle,
                                   "onUpdate:modelValue": _cache[3] || (_cache[3] = ($event) => $setup.inlineEditTitle = $event),
-                                  emojiAutocomplete: true,
-                                  linkAutocomplete: true,
+                                  "emoji-autocomplete": true,
+                                  "link-autocomplete": true,
                                   autolink: true,
                                   "use-markdown": true,
                                   placeholder: $setup.t("agora", "Enter title"),
@@ -72827,8 +72742,8 @@ function _sfc_render$K(_ctx, _cache, $props, $setup, $data, $options) {
                                 createVNode($setup["NcRichContenteditable"], {
                                   modelValue: $setup.inlineEditText,
                                   "onUpdate:modelValue": _cache[4] || (_cache[4] = ($event) => $setup.inlineEditText = $event),
-                                  emojiAutocomplete: true,
-                                  linkAutocomplete: true,
+                                  "emoji-autocomplete": true,
+                                  "link-autocomplete": true,
                                   autolink: true,
                                   "use-markdown": true,
                                   multiline: true,
@@ -72942,27 +72857,27 @@ function _sfc_render$K(_ctx, _cache, $props, $setup, $data, $options) {
                                 key: 0,
                                 type: "tertiary-no-background",
                                 size: "small",
-                                onClick: withModifiers(($event) => $setup.startInlineEdit(rootNode), ["stop"]),
-                                title: $setup.t("agora", "Edit")
+                                title: $setup.t("agora", "Edit"),
+                                onClick: withModifiers(($event) => $setup.startInlineEdit(rootNode), ["stop"])
                               }, {
                                 icon: withCtx(() => [
                                   (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons.Pencil), { size: 12 }))
                                 ]),
                                 _: 2
                                 /* DYNAMIC */
-                              }, 1032, ["onClick", "title"])) : createCommentVNode("v-if", true),
+                              }, 1032, ["title", "onClick"])) : createCommentVNode("v-if", true),
                               createVNode($setup["NcButton"], {
                                 type: "tertiary-no-background",
                                 size: "small",
-                                onClick: withModifiers(($event) => $setup.openNodeDetail(rootNode), ["stop"]),
-                                title: $setup.t("agora", "Details")
+                                title: $setup.t("agora", "Details"),
+                                onClick: withModifiers(($event) => $setup.openNodeDetail(rootNode), ["stop"])
                               }, {
                                 icon: withCtx(() => [
                                   (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons.Comment), { size: 12 }))
                                 ]),
                                 _: 2
                                 /* DYNAMIC */
-                              }, 1032, ["onClick", "title"]),
+                              }, 1032, ["title", "onClick"]),
                               createCommentVNode(` Add child button - shows on hover 
                                                     <NcButton 
                                                         v-if="canAddChild(rootNode)"
@@ -72999,8 +72914,8 @@ function _sfc_render$K(_ctx, _cache, $props, $setup, $data, $options) {
                                     key: responseType,
                                     type: "tertiary",
                                     size: "small",
-                                    onClick: withModifiers(($event) => $setup.openAddOptionModal(responseType, rootNode.id), ["stop"]),
-                                    class: "response-type-btn"
+                                    class: "response-type-btn",
+                                    onClick: withModifiers(($event) => $setup.openAddOptionModal(responseType, rootNode.id), ["stop"])
                                   }, {
                                     icon: withCtx(() => [
                                       (openBlock(), createBlock(resolveDynamicComponent($setup.getOptionTypeIcon(responseType)), { size: 12 }))
@@ -73060,8 +72975,8 @@ function _sfc_render$K(_ctx, _cache, $props, $setup, $data, $options) {
                                         createVNode($setup["NcRichContenteditable"], {
                                           modelValue: $setup.inlineEditTitle,
                                           "onUpdate:modelValue": _cache[5] || (_cache[5] = ($event) => $setup.inlineEditTitle = $event),
-                                          emojiAutocomplete: true,
-                                          linkAutocomplete: true,
+                                          "emoji-autocomplete": true,
+                                          "link-autocomplete": true,
                                           autolink: true,
                                           "use-markdown": true,
                                           placeholder: $setup.t("agora", "Enter title"),
@@ -73080,8 +72995,8 @@ function _sfc_render$K(_ctx, _cache, $props, $setup, $data, $options) {
                                         createVNode($setup["NcRichContenteditable"], {
                                           modelValue: $setup.inlineEditText,
                                           "onUpdate:modelValue": _cache[6] || (_cache[6] = ($event) => $setup.inlineEditText = $event),
-                                          emojiAutocomplete: true,
-                                          linkAutocomplete: true,
+                                          "emoji-autocomplete": true,
+                                          "link-autocomplete": true,
                                           autolink: true,
                                           "use-markdown": true,
                                           multiline: true,
@@ -73090,7 +73005,7 @@ function _sfc_render$K(_ctx, _cache, $props, $setup, $data, $options) {
                                           rows: "3"
                                         }, null, 8, ["modelValue", "placeholder"])
                                       ]),
-                                      createBaseVNode("div", _hoisted_79$1, [
+                                      createBaseVNode("div", _hoisted_79, [
                                         createVNode($setup["NcButton"], {
                                           type: "primary",
                                           size: "small",
@@ -73195,27 +73110,27 @@ function _sfc_render$K(_ctx, _cache, $props, $setup, $data, $options) {
                                         key: 0,
                                         type: "tertiary-no-background",
                                         size: "small",
-                                        onClick: withModifiers(($event) => $setup.startInlineEdit(child), ["stop"]),
-                                        title: $setup.t("agora", "Edit")
+                                        title: $setup.t("agora", "Edit"),
+                                        onClick: withModifiers(($event) => $setup.startInlineEdit(child), ["stop"])
                                       }, {
                                         icon: withCtx(() => [
                                           (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons.Pencil), { size: 12 }))
                                         ]),
                                         _: 2
                                         /* DYNAMIC */
-                                      }, 1032, ["onClick", "title"])) : createCommentVNode("v-if", true),
+                                      }, 1032, ["title", "onClick"])) : createCommentVNode("v-if", true),
                                       createVNode($setup["NcButton"], {
                                         type: "tertiary-no-background",
                                         size: "small",
-                                        onClick: withModifiers(($event) => $setup.openNodeDetail(child), ["stop"]),
-                                        title: $setup.t("agora", "Details")
+                                        title: $setup.t("agora", "Details"),
+                                        onClick: withModifiers(($event) => $setup.openNodeDetail(child), ["stop"])
                                       }, {
                                         icon: withCtx(() => [
                                           (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons.Comment), { size: 12 }))
                                         ]),
                                         _: 2
                                         /* DYNAMIC */
-                                      }, 1032, ["onClick", "title"]),
+                                      }, 1032, ["title", "onClick"]),
                                       createCommentVNode(` Add child button - shows on hover 
                                                             <NcButton 
                                                                 v-if="canAddChild(child)"
@@ -73252,8 +73167,8 @@ function _sfc_render$K(_ctx, _cache, $props, $setup, $data, $options) {
                                             key: responseType,
                                             type: "tertiary",
                                             size: "small",
-                                            onClick: withModifiers(($event) => $setup.openAddOptionModal(responseType, child.id), ["stop"]),
-                                            class: "response-type-btn"
+                                            class: "response-type-btn",
+                                            onClick: withModifiers(($event) => $setup.openAddOptionModal(responseType, child.id), ["stop"])
                                           }, {
                                             icon: withCtx(() => [
                                               (openBlock(), createBlock(resolveDynamicComponent($setup.getOptionTypeIcon(responseType)), { size: 12 }))
@@ -73312,8 +73227,8 @@ function _sfc_render$K(_ctx, _cache, $props, $setup, $data, $options) {
                                                 createVNode($setup["NcRichContenteditable"], {
                                                   modelValue: $setup.inlineEditTitle,
                                                   "onUpdate:modelValue": _cache[7] || (_cache[7] = ($event) => $setup.inlineEditTitle = $event),
-                                                  emojiAutocomplete: true,
-                                                  linkAutocomplete: true,
+                                                  "emoji-autocomplete": true,
+                                                  "link-autocomplete": true,
                                                   autolink: true,
                                                   "use-markdown": true,
                                                   placeholder: $setup.t("agora", "Enter title"),
@@ -73332,8 +73247,8 @@ function _sfc_render$K(_ctx, _cache, $props, $setup, $data, $options) {
                                                 createVNode($setup["NcRichContenteditable"], {
                                                   modelValue: $setup.inlineEditText,
                                                   "onUpdate:modelValue": _cache[8] || (_cache[8] = ($event) => $setup.inlineEditText = $event),
-                                                  emojiAutocomplete: true,
-                                                  linkAutocomplete: true,
+                                                  "emoji-autocomplete": true,
+                                                  "link-autocomplete": true,
                                                   autolink: true,
                                                   "use-markdown": true,
                                                   multiline: true,
@@ -73447,27 +73362,27 @@ function _sfc_render$K(_ctx, _cache, $props, $setup, $data, $options) {
                                                 key: 0,
                                                 type: "tertiary-no-background",
                                                 size: "small",
-                                                onClick: withModifiers(($event) => $setup.startInlineEdit(grandChild), ["stop"]),
-                                                title: $setup.t("agora", "Edit")
+                                                title: $setup.t("agora", "Edit"),
+                                                onClick: withModifiers(($event) => $setup.startInlineEdit(grandChild), ["stop"])
                                               }, {
                                                 icon: withCtx(() => [
                                                   (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons.Pencil), { size: 12 }))
                                                 ]),
                                                 _: 2
                                                 /* DYNAMIC */
-                                              }, 1032, ["onClick", "title"])) : createCommentVNode("v-if", true),
+                                              }, 1032, ["title", "onClick"])) : createCommentVNode("v-if", true),
                                               createVNode($setup["NcButton"], {
                                                 type: "tertiary-no-background",
                                                 size: "small",
-                                                onClick: withModifiers(($event) => $setup.openNodeDetail(grandChild), ["stop"]),
-                                                title: $setup.t("agora", "Details")
+                                                title: $setup.t("agora", "Details"),
+                                                onClick: withModifiers(($event) => $setup.openNodeDetail(grandChild), ["stop"])
                                               }, {
                                                 icon: withCtx(() => [
                                                   (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons.Comment), { size: 12 }))
                                                 ]),
                                                 _: 2
                                                 /* DYNAMIC */
-                                              }, 1032, ["onClick", "title"]),
+                                              }, 1032, ["title", "onClick"]),
                                               createCommentVNode(` Add child button - shows on hover (if allowed for level 3) -
                                                                     <NcButton 
                                                                         v-if="canAddChild(grandChild)"
@@ -73504,8 +73419,8 @@ function _sfc_render$K(_ctx, _cache, $props, $setup, $data, $options) {
                                                     key: responseType,
                                                     type: "tertiary",
                                                     size: "small",
-                                                    onClick: withModifiers(($event) => $setup.openAddOptionModal(responseType, grandChild.id), ["stop"]),
-                                                    class: "response-type-btn"
+                                                    class: "response-type-btn",
+                                                    onClick: withModifiers(($event) => $setup.openAddOptionModal(responseType, grandChild.id), ["stop"])
                                                   }, {
                                                     icon: withCtx(() => [
                                                       (openBlock(), createBlock(resolveDynamicComponent($setup.getOptionTypeIcon(responseType)), { size: 12 }))
@@ -74455,9 +74370,7 @@ const _sfc_main$I = /* @__PURE__ */ defineComponent({
     const triggerImageUpload = () => {
       imageFileInput.value?.click();
     };
-    const context2 = computed(() => {
-      return createInquiryContext$1(inquiryStore, sessionStore.appSettings);
-    });
+    const context2 = computed(() => createInquiryContext$1(inquiryStore, sessionStore.appSettings));
     const selectedCategory = ref(inquiryStore.categoryId || 0);
     const selectedLocation = ref(inquiryStore.locationId || 0);
     const hasQuorum = computed(() => inquiryStore.miscFields?.quorum);
@@ -75083,36 +74996,7 @@ function _sfc_render$I(_ctx, _cache, $props, $setup, $data, $options) {
               "show-details-on-hover": true,
               "icon-size": 20
             }, null, 8, ["item", "context"])
-          ])) : createCommentVNode("v-if", true),
-          createCommentVNode(` 
-                            <div
-                            v-if="canSupport(context)"
-                            class="counter-item supports"
-                            @click="onToggleSupport"
-                            >
-                            <div class="counter-icon">
-                            <TernarySupportIcon
-                            v-if="inquiryStore.configuration.supportFeature === 'ternary'"
-                            :support-value="inquiryStore.currentUserStatus.supportValue"
-                            :size="22"
-                            />
-                            <ThumbIcon
-                            v-else
-                            :supported="inquiryStore.currentUserStatus.hasSupported"
-                            :size="22"
-                            />
-                            </div>
-                            <div class="counter-content">
-                            <div class="support-count">
-                            <span class="counter-value">{{ inquiryStore.status.countSupports }}</span>
-                            <span v-if="hasQuorum" class="quorum-compact">
-                            <span class="quorum-separator"> / </span>
-                            <span class="quorum-target">{{ quorumValue }}</span>
-                            </span>
-                            </div>
-                            <span class="counter-label">{{ t('agora', 'Supports') }}</span>
-                            </div>
-                            </div> `)
+          ])) : createCommentVNode("v-if", true)
         ])
       ]),
       createCommentVNode(" Metadata section "),
@@ -75318,8 +75202,8 @@ function _sfc_render$I(_ctx, _cache, $props, $setup, $data, $options) {
               "onUpdate:modelValue": _cache[5] || (_cache[5] = ($event) => $setup.inquiryStore.description = $event),
               autolink: true,
               "use-markdown": true,
-              emojiAutocomplete: true,
-              linkAutocomplete: true,
+              "emoji-autocomplete": true,
+              "link-autocomplete": true,
               multiline: true,
               disabled: $setup.props.isReadonlyDescription,
               class: "rich-text-editor"
@@ -76070,9 +75954,7 @@ const _sfc_main$z = /* @__PURE__ */ defineComponent({
     const selectedInquiryTypeForCreation = ref("");
     const selectedGroups = ref([]);
     const isSaving = ref(false);
-    const context2 = computed(() => {
-      return createInquiryContext$1(inquiryStore, sessionStore.appSettings);
-    });
+    const context2 = computed(() => createInquiryContext$1(inquiryStore, sessionStore.appSettings));
     const availableGroups = computed(() => {
       const groups = sessionStore.currentUser.groups || {};
       if (typeof groups === "object" && !Array.isArray(groups)) {
@@ -76097,7 +75979,7 @@ const _sfc_main$z = /* @__PURE__ */ defineComponent({
           inquiryStore.status.forceEditMode = false;
           editMode.value = false;
         }
-        await nextTick();
+        await nextTick$1();
         forceRenderKey.value += 1;
       } catch {
         showError(translate("agora", "Failed to load inquiry"));
@@ -77023,7 +76905,7 @@ const _sfc_main$x = /* @__PURE__ */ defineComponent({
           (i) => i.parentId === Number(id)
         );
         inquiryGroupStore.childs = result2;
-        await nextTick();
+        await nextTick$1();
         forceRenderKey.value += 1;
       } catch {
         showError(translate("agora", "Failed to load inquiry group"));
@@ -77729,7 +77611,7 @@ const _sfc_main$v = /* @__PURE__ */ defineComponent({
       return grouped;
     });
     onMounted(() => {
-      nextTick(() => {
+      nextTick$1(() => {
         if (descriptionText.value) {
           const lineHeight = parseInt(getComputedStyle(descriptionText.value).lineHeight);
           const maxHeight = lineHeight * 6;
@@ -78087,9 +77969,7 @@ const _sfc_main$u = /* @__PURE__ */ defineComponent({
       "has-cover": !!coverUrl.value
     }));
     const inquiryTypes = computed(() => sessionStore.appSettings?.inquiryTypeTab || []);
-    const context2 = computed(() => {
-      return createInquiryContext$1(props2.inquiry, sessionStore.appSettings);
-    });
+    const context2 = computed(() => createInquiryContext$1(props2.inquiry, sessionStore.appSettings));
     const typeData = computed(() => getInquiryTypeData(props2.inquiry.type, inquiryTypes.value));
     const typeLabel = computed(() => typeData.value?.label || props2.inquiry.type);
     const typeIconComponent = computed(() => {
@@ -78318,7 +78198,7 @@ function _sfc_render$u(_ctx, _cache, $props, $setup, $data, $options) {
           alt: $props.inquiry.title,
           class: "cover-image"
         }, null, 8, _hoisted_2$g),
-        _cache[0] || (_cache[0] = createBaseVNode(
+        _cache[1] || (_cache[1] = createBaseVNode(
           "div",
           { class: "cover-overlay" },
           null,
@@ -78450,7 +78330,9 @@ function _sfc_render$u(_ctx, _cache, $props, $setup, $data, $options) {
                 context: $setup.context,
                 "show-quorum": true,
                 "show-details-on-hover": true,
-                "icon-size": 22
+                "icon-size": 22,
+                onClick: _cache[0] || (_cache[0] = withModifiers(() => {
+                }, ["stop"]))
               }, null, 8, ["item", "context"]),
               $props.inquiry.status?.countComments ? (openBlock(), createElementBlock("div", {
                 key: 0,
@@ -80421,9 +80303,7 @@ const _sfc_main$r = /* @__PURE__ */ defineComponent({
       }
       return null;
     });
-    const context2 = computed(() => {
-      return createInquiryContext$1(inquiry, sessionStore.appSettings);
-    });
+    const context2 = computed(() => createInquiryContext$1(inquiry, sessionStore.appSettings));
     const parseMetadata = (metadata) => {
       if (typeof metadata === "string") {
         try {
@@ -80934,10 +80814,7 @@ const _sfc_main$q = /* @__PURE__ */ defineComponent({
     function closeSidebar() {
       showSidebar.value = false;
     }
-    const showTernaryModal = ref(false);
-    const context2 = computed(() => {
-      return createInquiryContext$1(props2.inquiry, sessionStore.appSettings);
-    });
+    const context2 = computed(() => createInquiryContext$1(props2.inquiry, sessionStore.appSettings));
     const canSupportValue = computed(() => canSupport(context2));
     const canCommentValue = computed(() => canComment(context2));
     const inquiryTypeData = computed(() => getInquiryTypeData(props2.inquiry.type, sessionStore.appSettings?.inquiryTypeTab || []));
@@ -80998,12 +80875,6 @@ const _sfc_main$q = /* @__PURE__ */ defineComponent({
       return StatusIcons[iconName] || StatusIcons.Default;
     });
     const isSupported = computed(() => storeInquiry.value.currentUserStatus?.hasSupported || false);
-    const supportIconComponent = computed(() => {
-      if (props2.inquiry.configuration?.supportFeature === "ternary") {
-        return TernarySupportIcon$1;
-      }
-      return ThumbIcon$1;
-    });
     const storeInquiry = computed(() => {
       const fromStore = inquiriesStore.inquiries.find((i) => i.id === props2.inquiry.id);
       return fromStore || props2.inquiry;
@@ -81226,7 +81097,7 @@ const _sfc_main$q = /* @__PURE__ */ defineComponent({
     watch(() => storeInquiry.value.currentUserStatus?.supportValue, (newValue) => {
       currentSupportValue.value = newValue || null;
     }, { immediate: true });
-    const __returned__ = { props: props2, sessionStore, supportsStore, inquiriesStore, showSidebar, currentSupportValue, openSidebar, closeSidebar, showTernaryModal, context: context2, canSupportValue, canCommentValue, inquiryTypeData, typeIconComponent, currentInquiryStatus, statusText, statusIconComponent, isSupported, supportIconComponent, storeInquiry, hasQuorum, quorumValue, coverUrl, getNextcloudPreviewUrl, getHierarchyPath, formattedCreationDate, formattedLastInteraction, timeExpirationRelative, participantsCount, sanitizedContent, hasResources, getAvailableFields: getAvailableFields2, getMiscValue, getDisplayValue, shouldDisplayField, dynamicFields, displayFields, getSupportButtonText, get t() {
+    const __returned__ = { props: props2, sessionStore, supportsStore, inquiriesStore, showSidebar, currentSupportValue, openSidebar, closeSidebar, context: context2, canSupportValue, canCommentValue, inquiryTypeData, typeIconComponent, currentInquiryStatus, statusText, statusIconComponent, isSupported, storeInquiry, hasQuorum, quorumValue, coverUrl, getNextcloudPreviewUrl, getHierarchyPath, formattedCreationDate, formattedLastInteraction, timeExpirationRelative, participantsCount, sanitizedContent, hasResources, getAvailableFields: getAvailableFields2, getMiscValue, getDisplayValue, shouldDisplayField, dynamicFields, displayFields, getSupportButtonText, get t() {
       return translate;
     }, get NcAvatar() {
       return NcAvatar;
@@ -81234,8 +81105,6 @@ const _sfc_main$q = /* @__PURE__ */ defineComponent({
       return NcModal;
     }, get InquiryGeneralIcons() {
       return InquiryGeneralIcons;
-    }, get ThumbIcon() {
-      return ThumbIcon$1;
     }, CommentAdd, Comments, SideBarTabResources, SupportFeature };
     Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
     return __returned__;
@@ -81266,84 +81135,83 @@ const _hoisted_16$6 = { class: "action-count" };
 const _hoisted_17$6 = { class: "action-button participants-button" };
 const _hoisted_18$6 = { class: "action-text" };
 const _hoisted_19$6 = { class: "action-count" };
-const _hoisted_20$6 = { class: "action-text" };
-const _hoisted_21$6 = { class: "header-section" };
-const _hoisted_22$6 = { class: "header-content" };
-const _hoisted_23$6 = { class: "header-badges" };
-const _hoisted_24$5 = { class: "type-badge" };
-const _hoisted_25$5 = { class: "type-label" };
-const _hoisted_26$5 = {
+const _hoisted_20$6 = { class: "header-section" };
+const _hoisted_21$6 = { class: "header-content" };
+const _hoisted_22$6 = { class: "header-badges" };
+const _hoisted_23$6 = { class: "type-badge" };
+const _hoisted_24$5 = { class: "type-label" };
+const _hoisted_25$5 = {
   key: 0,
   class: "status-badge"
 };
-const _hoisted_27$5 = { class: "page-title" };
-const _hoisted_28$5 = { class: "header-actions" };
-const _hoisted_29$5 = { class: "action-text" };
-const _hoisted_30$5 = { class: "action-count" };
-const _hoisted_31$4 = { class: "action-text" };
-const _hoisted_32$3 = { class: "action-count" };
-const _hoisted_33$3 = { class: "action-button participants-button" };
-const _hoisted_34$3 = { class: "action-text" };
-const _hoisted_35$3 = { class: "action-count" };
-const _hoisted_36$2 = { class: "author-meta-section" };
-const _hoisted_37$2 = { class: "author-info" };
-const _hoisted_38$2 = { class: "author-details" };
-const _hoisted_39$1 = { class: "author-name" };
-const _hoisted_40$1 = { class: "creation-date" };
-const _hoisted_41$1 = { class: "meta-actions" };
-const _hoisted_42$1 = {
+const _hoisted_26$5 = { class: "page-title" };
+const _hoisted_27$5 = { class: "header-actions" };
+const _hoisted_28$5 = { class: "action-text" };
+const _hoisted_29$5 = { class: "action-count" };
+const _hoisted_30$5 = { class: "action-text" };
+const _hoisted_31$4 = { class: "action-count" };
+const _hoisted_32$3 = { class: "action-button participants-button" };
+const _hoisted_33$3 = { class: "action-text" };
+const _hoisted_34$3 = { class: "action-count" };
+const _hoisted_35$3 = { class: "author-meta-section" };
+const _hoisted_36$2 = { class: "author-info" };
+const _hoisted_37$2 = { class: "author-details" };
+const _hoisted_38$2 = { class: "author-name" };
+const _hoisted_39$1 = { class: "creation-date" };
+const _hoisted_40$1 = { class: "meta-actions" };
+const _hoisted_41$1 = {
   key: 0,
   class: "meta-item"
 };
-const _hoisted_43$1 = { class: "meta-label" };
-const _hoisted_44$1 = { class: "meta-value" };
-const _hoisted_45 = {
+const _hoisted_42$1 = { class: "meta-label" };
+const _hoisted_43$1 = { class: "meta-value" };
+const _hoisted_44$1 = {
   key: 1,
   class: "meta-item"
 };
-const _hoisted_46 = { class: "meta-value" };
-const _hoisted_47 = { class: "meta-item" };
-const _hoisted_48 = { class: "meta-value" };
-const _hoisted_49 = { class: "location-category-section" };
-const _hoisted_50 = { class: "meta-grid" };
-const _hoisted_51 = { class: "meta-card" };
-const _hoisted_52 = { class: "meta-card-header" };
-const _hoisted_53 = { class: "meta-card-title" };
-const _hoisted_54 = { class: "meta-card-content" };
-const _hoisted_55 = { class: "meta-card" };
-const _hoisted_56 = { class: "meta-card-header" };
-const _hoisted_57 = { class: "meta-card-title" };
-const _hoisted_58 = { class: "meta-card-content" };
-const _hoisted_59 = { class: "description-section" };
-const _hoisted_60 = { class: "section-header" };
-const _hoisted_61 = { class: "section-title" };
-const _hoisted_62 = ["innerHTML"];
-const _hoisted_63 = {
+const _hoisted_45 = { class: "meta-value" };
+const _hoisted_46 = { class: "meta-item" };
+const _hoisted_47 = { class: "meta-value" };
+const _hoisted_48 = { class: "location-category-section" };
+const _hoisted_49 = { class: "meta-grid" };
+const _hoisted_50 = { class: "meta-card" };
+const _hoisted_51 = { class: "meta-card-header" };
+const _hoisted_52 = { class: "meta-card-title" };
+const _hoisted_53 = { class: "meta-card-content" };
+const _hoisted_54 = { class: "meta-card" };
+const _hoisted_55 = { class: "meta-card-header" };
+const _hoisted_56 = { class: "meta-card-title" };
+const _hoisted_57 = { class: "meta-card-content" };
+const _hoisted_58 = { class: "description-section" };
+const _hoisted_59 = { class: "section-header" };
+const _hoisted_60 = { class: "section-title" };
+const _hoisted_61 = ["innerHTML"];
+const _hoisted_62 = {
   key: 2,
   class: "resources-section"
 };
-const _hoisted_64 = { class: "section-header" };
-const _hoisted_65 = { class: "section-title" };
-const _hoisted_66 = { class: "resources-content" };
-const _hoisted_67 = {
+const _hoisted_63 = { class: "section-header" };
+const _hoisted_64 = { class: "section-title" };
+const _hoisted_65 = { class: "resources-content" };
+const _hoisted_66 = {
   key: 3,
   class: "additional-info-section"
 };
-const _hoisted_68 = { class: "section-header" };
-const _hoisted_69 = { class: "section-title" };
-const _hoisted_70 = { class: "info-grid" };
-const _hoisted_71 = { class: "info-label" };
-const _hoisted_72 = { class: "info-value" };
-const _hoisted_73 = {
+const _hoisted_67 = { class: "section-header" };
+const _hoisted_68 = { class: "section-title" };
+const _hoisted_69 = { class: "info-grid" };
+const _hoisted_70 = { class: "info-label" };
+const _hoisted_71 = { class: "info-value" };
+const _hoisted_72 = {
   key: 4,
   class: "ternary-support-section"
 };
-const _hoisted_74 = { class: "section-header" };
-const _hoisted_75 = { class: "section-title" };
-const _hoisted_76 = { class: "modal-header" };
-const _hoisted_77 = { class: "modal-title" };
-const _hoisted_78 = { class: "modal-subtitle" };
-const _hoisted_79 = { class: "modal-comments-container" };
+const _hoisted_73 = { class: "section-header" };
+const _hoisted_74 = { class: "section-title" };
+const _hoisted_75 = { class: "modal-header" };
+const _hoisted_76 = { class: "modal-title" };
+const _hoisted_77 = { class: "modal-subtitle" };
+const _hoisted_78 = { class: "modal-comments-container" };
 function _sfc_render$q(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock("div", _hoisted_1$i, [
     createCommentVNode(" Main Content "),
@@ -81405,7 +81273,7 @@ function _sfc_render$q(_ctx, _cache, $props, $setup, $data, $options) {
                   onClick: _cache[0] || (_cache[0] = (...args) => _ctx.onToggleSupport && _ctx.onToggleSupport(...args))
                 },
                 [
-                  (openBlock(), createBlock(resolveDynamicComponent($setup.ThumbIcon), {
+                  (openBlock(), createBlock(resolveDynamicComponent(_ctx.ThumbIcon), {
                     class: "action-icon",
                     size: 18,
                     supported: $setup.isSupported
@@ -81473,25 +81341,7 @@ function _sfc_render$q(_ctx, _cache, $props, $setup, $data, $options) {
                   1
                   /* TEXT */
                 )
-              ]),
-              createCommentVNode(" Ternary Details Button "),
-              $setup.canSupportValue && $setup.storeInquiry.configuration?.supportFeature === "ternary" ? (openBlock(), createElementBlock("button", {
-                key: 2,
-                class: "action-button details-button",
-                onClick: _cache[1] || (_cache[1] = (...args) => _ctx.openTernaryDetails && _ctx.openTernaryDetails(...args))
-              }, [
-                (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.ChartBar), {
-                  class: "action-icon",
-                  size: 16
-                })),
-                createBaseVNode(
-                  "span",
-                  _hoisted_20$6,
-                  toDisplayString($setup.t("agora", "View details")),
-                  1
-                  /* TEXT */
-                )
-              ])) : createCommentVNode("v-if", true)
+              ])
             ])
           ])
         ])) : (openBlock(), createElementBlock(
@@ -81499,23 +81349,23 @@ function _sfc_render$q(_ctx, _cache, $props, $setup, $data, $options) {
           { key: 1 },
           [
             createCommentVNode(" Header without cover "),
-            createBaseVNode("div", _hoisted_21$6, [
-              createBaseVNode("div", _hoisted_22$6, [
-                createBaseVNode("div", _hoisted_23$6, [
-                  createBaseVNode("div", _hoisted_24$5, [
+            createBaseVNode("div", _hoisted_20$6, [
+              createBaseVNode("div", _hoisted_21$6, [
+                createBaseVNode("div", _hoisted_22$6, [
+                  createBaseVNode("div", _hoisted_23$6, [
                     (openBlock(), createBlock(resolveDynamicComponent($setup.typeIconComponent), {
                       class: "type-icon",
                       size: 16
                     })),
                     createBaseVNode(
                       "span",
-                      _hoisted_25$5,
+                      _hoisted_24$5,
                       toDisplayString($setup.inquiryTypeData.label),
                       1
                       /* TEXT */
                     )
                   ]),
-                  $setup.currentInquiryStatus ? (openBlock(), createElementBlock("div", _hoisted_26$5, [
+                  $setup.currentInquiryStatus ? (openBlock(), createElementBlock("div", _hoisted_25$5, [
                     (openBlock(), createBlock(resolveDynamicComponent($setup.statusIconComponent), {
                       class: "status-icon",
                       size: 12
@@ -81531,36 +81381,36 @@ function _sfc_render$q(_ctx, _cache, $props, $setup, $data, $options) {
                 ]),
                 createBaseVNode(
                   "h1",
-                  _hoisted_27$5,
+                  _hoisted_26$5,
                   toDisplayString($setup.storeInquiry.title),
                   1
                   /* TEXT */
                 ),
                 createCommentVNode(" Quick Actions Bar "),
-                createBaseVNode("div", _hoisted_28$5, [
+                createBaseVNode("div", _hoisted_27$5, [
                   $setup.canSupportValue && $setup.storeInquiry.configuration?.supportFeature === "binary" ? (openBlock(), createElementBlock(
                     "button",
                     {
                       key: 0,
                       class: normalizeClass(["action-button support-button", { "active": $setup.isSupported }]),
-                      onClick: _cache[2] || (_cache[2] = (...args) => _ctx.onToggleSupport && _ctx.onToggleSupport(...args))
+                      onClick: _cache[1] || (_cache[1] = (...args) => _ctx.onToggleSupport && _ctx.onToggleSupport(...args))
                     },
                     [
-                      (openBlock(), createBlock(resolveDynamicComponent($setup.ThumbIcon), {
+                      (openBlock(), createBlock(resolveDynamicComponent(_ctx.ThumbIcon), {
                         class: "action-icon",
                         size: 18,
                         supported: $setup.isSupported
                       }, null, 8, ["supported"])),
                       createBaseVNode(
                         "span",
-                        _hoisted_29$5,
+                        _hoisted_28$5,
                         toDisplayString($setup.isSupported ? $setup.t("agora", "Supported") : $setup.t("agora", "Support")),
                         1
                         /* TEXT */
                       ),
                       createBaseVNode(
                         "span",
-                        _hoisted_30$5,
+                        _hoisted_29$5,
                         toDisplayString($setup.storeInquiry.status?.countSupports || 0),
                         1
                         /* TEXT */
@@ -81580,34 +81430,34 @@ function _sfc_render$q(_ctx, _cache, $props, $setup, $data, $options) {
                     })),
                     createBaseVNode(
                       "span",
-                      _hoisted_31$4,
+                      _hoisted_30$5,
                       toDisplayString($setup.t("agora", "Comments")),
                       1
                       /* TEXT */
                     ),
                     createBaseVNode(
                       "span",
-                      _hoisted_32$3,
+                      _hoisted_31$4,
                       toDisplayString($setup.storeInquiry.status?.countComments || 0),
                       1
                       /* TEXT */
                     )
                   ])) : createCommentVNode("v-if", true),
-                  createBaseVNode("div", _hoisted_33$3, [
+                  createBaseVNode("div", _hoisted_32$3, [
                     (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.Users), {
                       class: "action-icon",
                       size: 18
                     })),
                     createBaseVNode(
                       "span",
-                      _hoisted_34$3,
+                      _hoisted_33$3,
                       toDisplayString($setup.t("agora", "Participants")),
                       1
                       /* TEXT */
                     ),
                     createBaseVNode(
                       "span",
-                      _hoisted_35$3,
+                      _hoisted_34$3,
                       toDisplayString($setup.participantsCount),
                       1
                       /* TEXT */
@@ -81621,8 +81471,8 @@ function _sfc_render$q(_ctx, _cache, $props, $setup, $data, $options) {
           /* STABLE_FRAGMENT, DEV_ROOT_FRAGMENT */
         )),
         createCommentVNode(" Author and Metadata "),
-        createBaseVNode("div", _hoisted_36$2, [
-          createBaseVNode("div", _hoisted_37$2, [
+        createBaseVNode("div", _hoisted_35$3, [
+          createBaseVNode("div", _hoisted_36$2, [
             $setup.storeInquiry.ownedGroup ? (openBlock(), createBlock($setup["NcAvatar"], {
               key: 0,
               "display-name": $setup.storeInquiry.ownedGroup,
@@ -81636,10 +81486,10 @@ function _sfc_render$q(_ctx, _cache, $props, $setup, $data, $options) {
               size: 40,
               class: "author-avatar"
             }, null, 8, ["user", "display-name"])),
-            createBaseVNode("div", _hoisted_38$2, [
+            createBaseVNode("div", _hoisted_37$2, [
               createBaseVNode(
                 "span",
-                _hoisted_39$1,
+                _hoisted_38$2,
                 toDisplayString($setup.storeInquiry.ownedGroup || $setup.storeInquiry.owner?.displayName),
                 1
                 /* TEXT */
@@ -81653,7 +81503,7 @@ function _sfc_render$q(_ctx, _cache, $props, $setup, $data, $options) {
               )),
               createBaseVNode(
                 "span",
-                _hoisted_40$1,
+                _hoisted_39$1,
                 toDisplayString($setup.formattedCreationDate),
                 1
                 /* TEXT */
@@ -81661,44 +81511,44 @@ function _sfc_render$q(_ctx, _cache, $props, $setup, $data, $options) {
             ])
           ]),
           createCommentVNode(" Right side metadata "),
-          createBaseVNode("div", _hoisted_41$1, [
-            $setup.hasQuorum ? (openBlock(), createElementBlock("div", _hoisted_42$1, [
+          createBaseVNode("div", _hoisted_40$1, [
+            $setup.hasQuorum ? (openBlock(), createElementBlock("div", _hoisted_41$1, [
               createBaseVNode(
                 "span",
-                _hoisted_43$1,
+                _hoisted_42$1,
                 toDisplayString($setup.t("agora", "Quorum")) + ":",
                 1
                 /* TEXT */
               ),
               createBaseVNode(
                 "span",
-                _hoisted_44$1,
+                _hoisted_43$1,
                 toDisplayString($setup.storeInquiry.status?.countSupports || 0) + " / " + toDisplayString($setup.quorumValue),
                 1
                 /* TEXT */
               )
             ])) : createCommentVNode("v-if", true),
-            $setup.timeExpirationRelative ? (openBlock(), createElementBlock("div", _hoisted_45, [
+            $setup.timeExpirationRelative ? (openBlock(), createElementBlock("div", _hoisted_44$1, [
               (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.Expiration), {
                 class: "meta-icon",
                 size: 14
               })),
               createBaseVNode(
                 "span",
-                _hoisted_46,
+                _hoisted_45,
                 toDisplayString($setup.timeExpirationRelative),
                 1
                 /* TEXT */
               )
             ])) : createCommentVNode("v-if", true),
-            createBaseVNode("div", _hoisted_47, [
+            createBaseVNode("div", _hoisted_46, [
               (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.Updated), {
                 class: "meta-icon",
                 size: 14
               })),
               createBaseVNode(
                 "span",
-                _hoisted_48,
+                _hoisted_47,
                 toDisplayString($setup.formattedLastInteraction),
                 1
                 /* TEXT */
@@ -81707,18 +81557,18 @@ function _sfc_render$q(_ctx, _cache, $props, $setup, $data, $options) {
           ])
         ]),
         createCommentVNode(" Location and Category - Simplified "),
-        createBaseVNode("div", _hoisted_49, [
-          createBaseVNode("div", _hoisted_50, [
+        createBaseVNode("div", _hoisted_48, [
+          createBaseVNode("div", _hoisted_49, [
             createCommentVNode(" Location "),
-            createBaseVNode("div", _hoisted_51, [
-              createBaseVNode("div", _hoisted_52, [
+            createBaseVNode("div", _hoisted_50, [
+              createBaseVNode("div", _hoisted_51, [
                 (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.Location), {
                   class: "meta-card-icon",
                   size: 18
                 })),
                 createBaseVNode(
                   "span",
-                  _hoisted_53,
+                  _hoisted_52,
                   toDisplayString($setup.t("agora", "Location")),
                   1
                   /* TEXT */
@@ -81726,22 +81576,22 @@ function _sfc_render$q(_ctx, _cache, $props, $setup, $data, $options) {
               ]),
               createBaseVNode(
                 "div",
-                _hoisted_54,
+                _hoisted_53,
                 toDisplayString($setup.getHierarchyPath($setup.sessionStore.appSettings.locationTab, $setup.storeInquiry.locationId) || $setup.t("agora", "Inherited from parent")),
                 1
                 /* TEXT */
               )
             ]),
             createCommentVNode(" Category "),
-            createBaseVNode("div", _hoisted_55, [
-              createBaseVNode("div", _hoisted_56, [
+            createBaseVNode("div", _hoisted_54, [
+              createBaseVNode("div", _hoisted_55, [
                 (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.Category), {
                   class: "meta-card-icon",
                   size: 18
                 })),
                 createBaseVNode(
                   "span",
-                  _hoisted_57,
+                  _hoisted_56,
                   toDisplayString($setup.t("agora", "Category")),
                   1
                   /* TEXT */
@@ -81749,7 +81599,7 @@ function _sfc_render$q(_ctx, _cache, $props, $setup, $data, $options) {
               ]),
               createBaseVNode(
                 "div",
-                _hoisted_58,
+                _hoisted_57,
                 toDisplayString($setup.getHierarchyPath($setup.sessionStore.appSettings.categoryTab, $setup.storeInquiry.categoryId) || $setup.t("agora", "Inherited from parent")),
                 1
                 /* TEXT */
@@ -81758,11 +81608,11 @@ function _sfc_render$q(_ctx, _cache, $props, $setup, $data, $options) {
           ])
         ]),
         createCommentVNode(" Description Content "),
-        createBaseVNode("div", _hoisted_59, [
-          createBaseVNode("div", _hoisted_60, [
+        createBaseVNode("div", _hoisted_58, [
+          createBaseVNode("div", _hoisted_59, [
             createBaseVNode(
               "h2",
-              _hoisted_61,
+              _hoisted_60,
               toDisplayString($setup.t("agora", "Description")),
               1
               /* TEXT */
@@ -81772,35 +81622,35 @@ function _sfc_render$q(_ctx, _cache, $props, $setup, $data, $options) {
           createBaseVNode("div", {
             class: "description-content",
             innerHTML: $setup.sanitizedContent
-          }, null, 8, _hoisted_62)
+          }, null, 8, _hoisted_61)
         ]),
         createCommentVNode(" Resources Section - Only if has resources "),
-        $setup.hasResources ? (openBlock(), createElementBlock("div", _hoisted_63, [
-          createBaseVNode("div", _hoisted_64, [
+        $setup.hasResources ? (openBlock(), createElementBlock("div", _hoisted_62, [
+          createBaseVNode("div", _hoisted_63, [
             createBaseVNode(
               "h2",
-              _hoisted_65,
+              _hoisted_64,
               toDisplayString($setup.t("agora", "Resources")),
               1
               /* TEXT */
             )
           ]),
-          createBaseVNode("div", _hoisted_66, [
+          createBaseVNode("div", _hoisted_65, [
             createVNode($setup["SideBarTabResources"], { inquiry: $setup.storeInquiry }, null, 8, ["inquiry"])
           ])
         ])) : createCommentVNode("v-if", true),
         createCommentVNode(" Additional Information - Only if has fields "),
-        $setup.displayFields.length > 0 ? (openBlock(), createElementBlock("div", _hoisted_67, [
-          createBaseVNode("div", _hoisted_68, [
+        $setup.displayFields.length > 0 ? (openBlock(), createElementBlock("div", _hoisted_66, [
+          createBaseVNode("div", _hoisted_67, [
             createBaseVNode(
               "h2",
-              _hoisted_69,
+              _hoisted_68,
               toDisplayString($setup.t("agora", "Additional Information")),
               1
               /* TEXT */
             )
           ]),
-          createBaseVNode("div", _hoisted_70, [
+          createBaseVNode("div", _hoisted_69, [
             (openBlock(true), createElementBlock(
               Fragment$1,
               null,
@@ -81811,14 +81661,14 @@ function _sfc_render$q(_ctx, _cache, $props, $setup, $data, $options) {
                 }, [
                   createBaseVNode(
                     "div",
-                    _hoisted_71,
+                    _hoisted_70,
                     toDisplayString(field.label),
                     1
                     /* TEXT */
                   ),
                   createBaseVNode(
                     "div",
-                    _hoisted_72,
+                    _hoisted_71,
                     toDisplayString(field.displayValue),
                     1
                     /* TEXT */
@@ -81831,11 +81681,11 @@ function _sfc_render$q(_ctx, _cache, $props, $setup, $data, $options) {
           ])
         ])) : createCommentVNode("v-if", true),
         createCommentVNode(" Ternary Support Section - Only for ternary support "),
-        $setup.canSupportValue && $setup.storeInquiry.configuration?.supportFeature === "ternary" ? (openBlock(), createElementBlock("div", _hoisted_73, [
-          createBaseVNode("div", _hoisted_74, [
+        $setup.canSupportValue && $setup.storeInquiry.configuration?.supportFeature === "ternary" ? (openBlock(), createElementBlock("div", _hoisted_72, [
+          createBaseVNode("div", _hoisted_73, [
             createBaseVNode(
               "h2",
-              _hoisted_75,
+              _hoisted_74,
               toDisplayString($setup.t("agora", "Express your position")),
               1
               /* TEXT */
@@ -81847,7 +81697,9 @@ function _sfc_render$q(_ctx, _cache, $props, $setup, $data, $options) {
             context: $setup.context,
             "show-quorum": true,
             "show-details-on-hover": true,
-            "icon-size": 22
+            "icon-size": 22,
+            onClick: _cache[2] || (_cache[2] = withModifiers(() => {
+            }, ["stop"]))
           }, null, 8, ["item", "context"])
         ])) : createCommentVNode("v-if", true)
       ])
@@ -81859,17 +81711,17 @@ function _sfc_render$q(_ctx, _cache, $props, $setup, $data, $options) {
       onClose: $setup.closeSidebar
     }, {
       header: withCtx(() => [
-        createBaseVNode("div", _hoisted_76, [
+        createBaseVNode("div", _hoisted_75, [
           createBaseVNode(
             "h2",
-            _hoisted_77,
+            _hoisted_76,
             toDisplayString($setup.storeInquiry.title),
             1
             /* TEXT */
           ),
           createBaseVNode(
             "span",
-            _hoisted_78,
+            _hoisted_77,
             toDisplayString($setup.t("agora", "Comments")),
             1
             /* TEXT */
@@ -81877,7 +81729,7 @@ function _sfc_render$q(_ctx, _cache, $props, $setup, $data, $options) {
         ])
       ]),
       default: withCtx(() => [
-        createBaseVNode("div", _hoisted_79, [
+        createBaseVNode("div", _hoisted_78, [
           createVNode($setup["CommentAdd"], {
             "inquiry-id": $setup.storeInquiry.id
           }, null, 8, ["inquiry-id"]),
@@ -81903,9 +81755,7 @@ const _sfc_main$p = /* @__PURE__ */ defineComponent({
     const sessionStore = useSessionStore();
     const InquiryGeneralIconsComponents = InquiryGeneralIcons;
     const inquiryTypes = computed(() => sessionStore.appSettings?.inquiryTypeTab || []);
-    const context2 = computed(() => {
-      return createInquiryContext$1(props2.inquiry, sessionStore.appSettings);
-    });
+    const context2 = computed(() => createInquiryContext$1(props2.inquiry, sessionStore.appSettings));
     const typeData = computed(() => getInquiryTypeData(props2.inquiry.type, inquiryTypes.value));
     const typeLabel = computed(() => typeData.value?.label || props2.inquiry.type);
     const typeIconComponent = computed(() => {
@@ -82278,9 +82128,7 @@ const _sfc_main$o = /* @__PURE__ */ defineComponent({
       "has-expiry": showExpiryBadge.value,
       "has-cover": !!coverUrl.value
     }));
-    const context2 = computed(() => {
-      return createInquiryContext$1(props2.inquiry, sessionStore.appSettings);
-    });
+    const context2 = computed(() => createInquiryContext$1(props2.inquiry, sessionStore.appSettings));
     const typeData = computed(() => getInquiryTypeData(props2.inquiry.type, inquiryTypes.value));
     const typeLabel = computed(() => typeData.value?.label || props2.inquiry.type);
     const typeIconComponent = computed(() => {
@@ -82314,13 +82162,6 @@ const _sfc_main$o = /* @__PURE__ */ defineComponent({
       return `type-${type}`;
     });
     const isSupported = computed(() => props2.inquiry.currentUserStatus?.hasSupported || false);
-    const supportIconComponent = computed(() => {
-      if (props2.inquiry.configuration?.supportFeature === "ternary") {
-        return TernarySupportIcon;
-      } else if (props2.inquiry.configuration?.supportFeature === "binary") {
-        return ThumbIcon;
-      }
-    });
     const ownerDisplayName = computed(
       () => props2.inquiry.ownedGroup || props2.inquiry.owner?.displayName || ""
     );
@@ -82435,7 +82276,7 @@ const _sfc_main$o = /* @__PURE__ */ defineComponent({
     function handleClick2() {
       emit2("view", props2.inquiry.id);
     }
-    const __returned__ = { props: props2, emit: emit2, sessionStore, InquiryGeneralIconsComponents, inquiryTypes, summaryClasses, context: context2, typeData, typeLabel, typeIconComponent, typeBadgeClass, isSupported, supportIconComponent, ownerDisplayName, truncatedTitle, truncatedAuthorName, safeDescription, coverUrl, getNextcloudPreviewUrl, imageLoaded, handleImageLoad, showExpiryBadge, expiryText, expiryBadgeClass, formattedTime, getHierarchyPath, locationPath, categoryPath, truncatedLocation, truncatedCategory, handleClick: handleClick2, get NcAvatar() {
+    const __returned__ = { props: props2, emit: emit2, sessionStore, InquiryGeneralIconsComponents, inquiryTypes, summaryClasses, context: context2, typeData, typeLabel, typeIconComponent, typeBadgeClass, isSupported, ownerDisplayName, truncatedTitle, truncatedAuthorName, safeDescription, coverUrl, getNextcloudPreviewUrl, imageLoaded, handleImageLoad, showExpiryBadge, expiryText, expiryBadgeClass, formattedTime, getHierarchyPath, locationPath, categoryPath, truncatedLocation, truncatedCategory, handleClick: handleClick2, get NcAvatar() {
       return NcAvatar;
     }, get InquiryGeneralIcons() {
       return InquiryGeneralIcons;
@@ -82489,7 +82330,7 @@ const _hoisted_27$4 = { class: "author-name" };
 const _hoisted_28$4 = { class: "post-time" };
 const _hoisted_29$4 = { class: "footer-stats" };
 const _hoisted_30$4 = {
-  key: 1,
+  key: 0,
   class: "stat-item comments"
 };
 function _sfc_render$o(_ctx, _cache, $props, $setup, $data, $options) {
@@ -82574,7 +82415,9 @@ function _sfc_render$o(_ctx, _cache, $props, $setup, $data, $options) {
                 context: $setup.context,
                 "show-quorum": true,
                 "show-details-on-hover": true,
-                "icon-size": 22
+                "icon-size": 22,
+                onClick: _cache[0] || (_cache[0] = withModifiers(() => {
+                }, ["stop"]))
               }, null, 8, ["item", "context"]),
               $props.inquiry.status?.countComments ? (openBlock(), createElementBlock("div", _hoisted_9$5, [
                 (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIconsComponents.Comment), {
@@ -82606,7 +82449,7 @@ function _sfc_render$o(_ctx, _cache, $props, $setup, $data, $options) {
                 class: "cover-image",
                 onLoad: $setup.handleImageLoad
               }, null, 40, _hoisted_12$5),
-              _cache[0] || (_cache[0] = createBaseVNode(
+              _cache[1] || (_cache[1] = createBaseVNode(
                 "div",
                 { class: "cover-overlay" },
                 null,
@@ -82749,28 +82592,6 @@ function _sfc_render$o(_ctx, _cache, $props, $setup, $data, $options) {
               ]),
               createCommentVNode(" Stats Icons "),
               createBaseVNode("div", _hoisted_29$4, [
-                $props.inquiry.status?.countSupports ? (openBlock(), createElementBlock(
-                  "div",
-                  {
-                    key: 0,
-                    class: normalizeClass(["stat-item supports", { "is-supported": $setup.isSupported }])
-                  },
-                  [
-                    (openBlock(), createBlock(resolveDynamicComponent($setup.supportIconComponent), {
-                      class: "support-icon",
-                      size: 16
-                    })),
-                    createBaseVNode(
-                      "span",
-                      null,
-                      toDisplayString($props.inquiry.status.countSupports),
-                      1
-                      /* TEXT */
-                    )
-                  ],
-                  2
-                  /* CLASS */
-                )) : createCommentVNode("v-if", true),
                 $props.inquiry.status?.countComments ? (openBlock(), createElementBlock("div", _hoisted_30$4, [
                   (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIconsComponents.Comment), {
                     class: "comments-icon",
@@ -83159,9 +82980,7 @@ const _sfc_main$m = /* @__PURE__ */ defineComponent({
       return group2;
     });
     const groupNotFound = computed(() => hasSlug.value && !currentInquiryGroup.value);
-    const context2 = computed(() => {
-      return createInquiryContext(inquiry, sessionStore.appSettings);
-    });
+    const context2 = computed(() => createInquiryContext(inquiry, sessionStore.appSettings));
     function canUserArchiveGroup(group2) {
       if (!group2) return false;
       const context22 = createGroupPermissionContext(group2);
@@ -84085,7 +83904,7 @@ const _sfc_main$k = /* @__PURE__ */ defineComponent({
       commentsStore.load(inquiryStore.id);
     });
     onBeforeRouteUpdate(async () => {
-      commentsStore.load(inquriyStore.id);
+      commentsStore.load(inquiryStore.id);
     });
     onBeforeRouteLeave(() => {
       commentsStore.$reset();
@@ -84609,7 +84428,7 @@ const _sfc_main$h = /* @__PURE__ */ defineComponent({
     const __returned__ = { emit: emit2, label, userItemProps, get t() {
       return translate;
     }, get ThumbIcon() {
-      return ThumbIcon$1;
+      return ThumbIcon;
     }, UserItem, ShareMenu };
     Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
     return __returned__;
@@ -85867,8 +85686,8 @@ function _sfc_render$6(_ctx, _cache, $props, $setup, $data, $options) {
                       checked: $setup.getAllowCommentValue,
                       name: "allowComment",
                       disabled: $setup.isSaving,
-                      onChange: _cache[0] || (_cache[0] = (e) => $setup.handleAllowCommentChange(e.target.checked)),
-                      class: "simple-checkbox"
+                      class: "simple-checkbox",
+                      onChange: _cache[0] || (_cache[0] = (e) => $setup.handleAllowCommentChange(e.target.checked))
                     }, null, 40, _hoisted_23$2),
                     createBaseVNode("label", _hoisted_24$2, [
                       createTextVNode(
@@ -87452,9 +87271,7 @@ const _sfc_main$3 = /* @__PURE__ */ defineComponent({
     __expose();
     const inquiryStore = useInquiryStore();
     const sessionStore = useSessionStore();
-    const context2 = computed(() => {
-      return createInquiryContext$1(inquiryStore, sessionStore.appSettings);
-    });
+    const context2 = computed(() => createInquiryContext$1(inquiryStore, sessionStore.appSettings));
     const isReadonly = computed(() => {
       const user = sessionStore.currentUser;
       if (inquiryStore.status.moderationStatus === "rejected" || inquiryStore.status.moderationStatus === "pending") return true;

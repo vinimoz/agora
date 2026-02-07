@@ -116,9 +116,7 @@ const InquiryGeneralIconsComponents = InquiryGeneralIcons
 const inquiryTypes = computed(() => sessionStore.appSettings?.inquiryTypeTab || [])
 
 // Context for permissions
-const context = computed(() => {
-  return createInquiryContext(props.inquiry, sessionStore.appSettings)
-})
+const context = computed(() => createInquiryContext(props.inquiry, sessionStore.appSettings))
 
 const typeData = computed(() => getInquiryTypeData(props.inquiry.type, inquiryTypes.value))
 

@@ -13,7 +13,7 @@ import { emit } from '@nextcloud/event-bus'
 
 import { Logger } from '../helpers/index.ts'
 import { PublicAPI, OptionsAPI } from '../Api/index.ts'
-import { Chunking, createDefault, Event, StatusResults, User, UserType } from '../Types/index.ts'
+import { Chunking, createDefault, Event, StatusResults, User, UserType , InquiryOptionType } from '../Types/index.ts'
 
 import { useInquiryStore } from './inquiry.ts'
 import { useSessionStore } from './session.ts'
@@ -22,7 +22,6 @@ import { useSharesStore } from './shares.ts'
 import { useCommentsStore } from './comments.ts'
 import { useSupportsStore } from './supports.ts'
 import { useAppSettingsStore } from '../stores/appSettings.ts'
-import { InquiryOptionType } from '../Types/index.ts'
 import { AxiosError } from '@nextcloud/axios'
 import { 
     getOptionTypeData,
@@ -581,9 +580,7 @@ actions: {
                 }
             })()
             */
-            const response = await (() => {
-                    return OptionsAPI.getFullOption(optionId ?? sessionStore.currentOptionId)
-                })()
+            const response = await (() => OptionsAPI.getFullOption(optionId ?? sessionStore.currentOptionId))()
 
             if (!response) {
                 this.$reset()

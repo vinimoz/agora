@@ -41,9 +41,7 @@ const { inquiry, noLink = false, gridView = false } = defineProps<Props>()
 
 
 // Context for permissions
-const context = computed(() => {
-  return createInquiryContext(inquiry, sessionStore.appSettings)
-})
+const context = computed(() => createInquiryContext(inquiry, sessionStore.appSettings))
 
 
 function htmlToFirstLine(html: string): string {

@@ -89,11 +89,7 @@ const expandedFamilies = ref<Set<string>>(new Set())
 const inquiryFamilies = computed((): InquiryFamily[] => sessionStore.appSettings.inquiryFamilyTab || [])
 
 // Computed for recent inquiries
-const sortedInquiries = computed(() => {
-  return [...inquiriesStore.inquiries].sort((a, b) => {
-    return new Date(b.status.lastInteraction) - new Date(a.status.lastInteraction);
-  });
-});
+const sortedInquiries = computed(() => [...inquiriesStore.inquiries].sort((a, b) => new Date(b.status.lastInteraction) - new Date(a.status.lastInteraction)));
 const recentInquiries = computed(() => sortedInquiries.value.slice(0, 5));
 
 
