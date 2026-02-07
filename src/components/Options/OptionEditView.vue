@@ -315,7 +315,6 @@
   :option-id="selectedOptionId"
   :inquiry-id="inquiryStore.id"
   @close="closeOptionDetail"
-  @updated="handleOptionUpdated"
   @deleted="handleOptionDeleted"
 />
 
@@ -528,13 +527,6 @@ const closeOptionDetail = () => {
 const handleOptionCreated = (newOption: any) => {
   optionsStore.options.push(newOption)
   closeAddOptionModal()
-}
-
-const handleOptionUpdated = (updatedOption: any) => {
-  const index = optionsStore.options.findIndex(opt => opt.id === updatedOption.id)
-  if (index >= 0) {
-    optionsStore.options[index] = updatedOption
-  }
 }
 
 const handleOptionDeleted = (deletedOptionId: number) => {

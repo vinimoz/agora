@@ -452,6 +452,7 @@ export const useOptionsStore = defineStore('options', {
 
         // Add a new option with type validation
         async add(payload: {
+            title: string
             text: string
             type: string
             parentId?: number
@@ -488,6 +489,7 @@ export const useOptionsStore = defineStore('options', {
 
             try {
                 const response = await OptionsAPI.createOption({
+                    title: payload.title,
                     text: payload.text,
                     type: payload.type,
                     targetId: inquiryStore.id,

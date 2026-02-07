@@ -12,7 +12,7 @@ import { t } from '@nextcloud/l10n'
 const emit = defineEmits(['sendConfirmationSuccess', 'sendConfirmationError'])
 const cardType = ref('info')
 const confirmationSendMessage = ref(
-  t('inquiries', 'You have confirmed options. Inform your participants about the result via email.')
+  t('agora', 'You have confirmed options. Inform your participants about the result via email.')
 )
 
 /**
@@ -20,7 +20,7 @@ const confirmationSendMessage = ref(
  */
 function confirmationSendError() {
   cardType.value = 'error'
-  confirmationSendMessage.value = t('inquiries', 'Some confirmation messages could not been sent.')
+  confirmationSendMessage.value = t('agora', 'Some confirmation messages could not been sent.')
   emit('sendConfirmationSuccess')
 }
 

@@ -10,35 +10,6 @@ import { Share } from '../../stores/shares.ts'
 import { ApiEmailAdressList, Comment } from '../../Types/index.ts'
 import { OptionGroup } from '../../stores/optionGroups.types.ts'
 
-export type OptionCreateData = {
-    text: string
-    type: string
-    targetId?: number
-    parentId?: number
-    ownedGroup?: string
-    access?: string
-    showResults?: string
-    allowComment?: number
-    supportFeature?: string
-    family?: string
-    status?: string
-    miscFields?: Record<string, any>
-}
-
-export type OptionUpdateData = {
-    text?: string
-    type?: string
-    targetId?: number
-    parentId?: number
-    ownedGroup?: string
-    access?: string
-    showResults?: string
-    allowComment?: number
-    supportFeature?: string
-    family?: string
-    status?: string
-    miscFields?: Record<string, any>
-}
 
 export type OptionAction = 'save_draft' | 'submit' | 'archive' | 'restore'
 
@@ -126,17 +97,30 @@ const options = {
     },
 
     // Create a new option
-    createOption(data: OptionCreateData): Promise<AxiosResponse<{ option: Option }>> {
-        return httpInstance.request({
-            method: 'POST',
-            url: 'option',
-            data,
-            cancelToken: cancelTokenHandlerObject[this.createOption.name].handleRequestCancellation().token,
-        })
-    },
+// Create a new option
+createOption(
+    data: {
+        title: string
+        type: string
+        text: string
+        targetId?: number
+        parentId?: number
+        ownedGroup: string
+        owner: string
+        configuration?: OptionConfiguration
+    }
+): Promise<AxiosResponse<{ option: Option }>> {
+    return httpInstance.request({
+        method: 'POST',
+        url: 'option',
+        data,
+        cancelToken: cancelTokenHandlerObject[this.createOption.name]
+            .handleRequestCancellation().token,
+    })
+},
 
     // Update option
-    updateOption(optionId: number, data: OptionUpdateData): Promise<AxiosResponse<{ option: Option }>> {
+    updateOption(optionId: number, data: Option): Promise<AxiosResponse<{ option: Option }>> {
         return httpInstance.request({
             method: 'PUT',
             url: `option/${optionId}`,
@@ -393,7 +377,7 @@ const options = {
     },
 
     // Bulk create options
-    createBulkOptions(inquiryId: number, optionsData: OptionCreateData[]): Promise<AxiosResponse<{ options: Option[] }>> {
+    createBulkOptions(inquiryId: number, optionsData: Option): Promise<AxiosResponse<{ options: Option[] }>> {
         return httpInstance.request({
             method: 'POST',
             url: `inquiry/${inquiryId}/options/bulk`,

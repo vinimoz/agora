@@ -10,7 +10,6 @@ namespace OCA\Agora\Controller;
 
 use OCA\Agora\Db\Inquiry;
 use OCA\Agora\Dto\InquiryDto;
-use OCA\Agora\Helper\Container;
 use OCA\Agora\Model\Settings\AppSettings;
 use OCA\Agora\Service\CommentService;
 use OCA\Agora\Service\MailService;
@@ -48,6 +47,7 @@ class InquiryController extends BaseController
         private SubscriptionService $subscriptionService,
         private ShareService $shareService,
         private AttachmentService $attachmentService,
+            private AppSettings $appSettings,
         private LoggerInterface $logger,
     ) {
         parent::__construct($appName, $request);
@@ -70,7 +70,7 @@ class InquiryController extends BaseController
     {
         return $this->response(
             function () {
-                $appSettings = Container::queryClass(AppSettings::class);
+                $appSettings = $this->appSettings;
                 return [
                 'inquiries' => $this->inquiryService->listInquiries(),
                 'permissions' => [

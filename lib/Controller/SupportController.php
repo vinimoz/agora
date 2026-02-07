@@ -37,17 +37,17 @@ class SupportController extends BaseController
      * @psalm-return JSONResponse<array{status: string, support: Support}>
      */
     #[NoAdminRequired]
-    #[FrontpageRoute(verb: 'POST', url: '/inquiry/support/{inquiryId}/{userId}/{value}')]
-    public function add(int $inquiryId, string $userId, int $value): JSONResponse
+    #[FrontpageRoute(verb: 'POST', url: '/inquiry/support/{inquiryId}/{userId}/{value}/{optionId}')]
+    public function add(int $inquiryId, string $userId, int $value,int $optionId): JSONResponse
     {
         return $this->response(
-            function () use ($inquiryId, $userId, $value) {
+            function () use ($inquiryId, $userId, $value,$optionId) {
                 if (!in_array($value, [-1, 0, 1], true)) {
                     throw new \InvalidArgumentException("Invalid support value");
                 }
 
                 return [
-                    'support' => $this->supportService->addSupport($inquiryId, $userId, $value),
+                    'support' => $this->supportService->addSupport($inquiryId, $userId, $value,$optionId),
                 ];
             }
         );
@@ -61,17 +61,17 @@ class SupportController extends BaseController
      * @psalm-return JSONResponse<array{status: string, support: Support}>
      */
     #[NoAdminRequired]
-    #[FrontpageRoute(verb: 'PUT', url: '/inquiry/support/{inquiryId}/{userId}/{value}')]
-    public function update(int $inquiryId, string $userId, int $value): JSONResponse
+    #[FrontpageRoute(verb: 'PUT', url: '/inquiry/support/{inquiryId}/{userId}/{value}/{optionId}')]
+    public function update(int $inquiryId, string $userId, int $value,int $optionId): JSONResponse
     {
         return $this->response(
-            function () use ($inquiryId, $userId, $value) {
+            function () use ($inquiryId, $userId, $value,$optionId) {
                 if (!in_array($value, [-1, 0, 1], true)) {
                     throw new \InvalidArgumentException("Invalid support value");
                 }
 
                 return [
-                    'support' => $this->supportService->updateSupport($inquiryId, $userId, $value),
+                    'support' => $this->supportService->updateSupport($inquiryId, $userId, $value,$optionId),
                 ];
             }
         );
@@ -87,12 +87,12 @@ class SupportController extends BaseController
      S>
      */
     #[NoAdminRequired]
-    #[FrontpageRoute(verb: 'DELETE', url: '/inquiry/support/{inquiryId}/{userId}')]
-    public function remove(int $inquiryId, string $userId): JSONResponse
+    #[FrontpageRoute(verb: 'DELETE', url: '/inquiry/support/{inquiryId}/{userId}/{optionId}')]
+    public function remove(int $inquiryId, string $userId,int $optionId): JSONResponse
     {
         return $this->response(
             fn () => [
-                'support' => $this->supportService->removeSupport($inquiryId, $userId)
+                'support' => $this->supportService->removeSupport($inquiryId, $userId,$optionId)
             ]
         );
     }

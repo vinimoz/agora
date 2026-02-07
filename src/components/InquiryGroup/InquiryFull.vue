@@ -3,297 +3,6 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
-<template>
-  <div class="inquiry-full-view">
-    <!-- Main Content -->
-    <div class="full-view-wrapper">
-      <div class="full-view-content">
-        
-        <!-- Cover Image -->
-        <div v-if="coverUrl" class="cover-image-section">
-          <img
-            :src="coverUrl"
-            :alt="t('agora', 'Inquiry cover image')"
-            class="cover-image"
-          />
-        </div>
-
-        <!-- Title Section -->
-        <div class="title-section">
-          <div class="title-header">
-            <div class="type-badge">
-              <component :is="typeIconComponent" class="type-icon" :size="20" />
-              <span class="type-label">{{ inquiryTypeData.label }}</span>
-            </div>
-            
-            <!-- Status Badge -->
-            <div v-if="currentInquiryStatus" class="status-badge">
-              <component :is="statusIconComponent" class="status-icon" :size="14" />
-              {{ statusText }}
-            </div>
-          </div>
-          
-          <h1 class="inquiry-title">{{ storeInquiry.title }}</h1>
-          
-          <!-- Author and Metadata -->
-          <div class="author-meta-section">
-            <div class="author-info">
-              <NcAvatar
-                v-if="storeInquiry.ownedGroup"
-                :display-name="storeInquiry.ownedGroup"
-                :show-user-status="false"
-                :size="44"
-                class="author-avatar"
-              />
-              <NcAvatar
-                v-else
-                :user="storeInquiry.owner?.id"
-                :display-name="storeInquiry.owner?.displayName"
-                :size="44"
-                class="author-avatar"
-              />
-              <div class="author-details">
-                <span class="author-name">
-                  {{ storeInquiry.ownedGroup || storeInquiry.owner?.displayName }}
-                </span>
-                <span class="meta-divider">•</span>
-                <span class="creation-date">
-                  {{ formattedCreationDate }}
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Location and Category Section -->
-        <div class="location-category-section">
-          <div class="location-category-grid">
-            <!-- Location -->
-            <div class="meta-item location-item">
-              <div class="meta-icon-container">
-                <component :is="InquiryGeneralIcons.Location" class="meta-icon" :size="20" />
-              </div>
-              <div class="meta-content">
-                <div class="meta-label">{{ t('agora', 'Location') }}</div>
-                <div class="meta-value">{{ getHierarchyPath(sessionStore.appSettings.locationTab, storeInquiry.locationId) || t('agora', 'Inherited from parent') }}</div>
-              </div>
-            </div>
-
-            <!-- Category -->
-            <div class="meta-item category-item">
-              <div class="meta-icon-container">
-                <component :is="InquiryGeneralIcons.Category" class="meta-icon" :size="20" />
-              </div>
-              <div class="meta-content">
-                <div class="meta-label">{{ t('agora', 'Category') }}</div>
-                <div class="meta-value">{{ getHierarchyPath(sessionStore.appSettings.categoryTab, storeInquiry.categoryId) || t('agora', 'Inherited from parent') }}</div>
-              </div>
-            </div>
-
-            <!-- Expiration -->
-            <div v-if="timeExpirationRelative" class="meta-item expiration-item">
-              <div class="meta-icon-container">
-                <component :is="InquiryGeneralIcons.Expiration" class="meta-icon" :size="20" />
-              </div>
-              <div class="meta-content">
-                <div class="meta-label">{{ t('agora', 'Expires') }}</div>
-                <div class="meta-value">{{ timeExpirationRelative }}</div>
-              </div>
-            </div>
-
-            <!-- Last Interaction -->
-            <div class="meta-item interaction-item">
-              <div class="meta-icon-container">
-                <component :is="InquiryGeneralIcons.Updated" class="meta-icon" :size="20" />
-              </div>
-              <div class="meta-content">
-                <div class="meta-label">{{ t('agora', 'Last updated') }}</div>
-                <div class="meta-value">{{ formattedLastInteraction }}</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Description Content -->
-        <div class="description-section">
-          <div class="section-header">
-            <component :is="InquiryGeneralIcons.Presentation" class="section-icon" :size="20" />
-            <h3 class="section-title">{{ t('agora', 'Description') }}</h3>
-          </div>
-          <!-- eslint-disable-next-line vue/no-v-html -->
-          <div class="description-content" v-html="sanitizedContent"></div>
-        </div>
-
-        <!-- Resources Section -->
-        <div v-if="hasResources" class="resources-section">
-          <div class="section-header">
-            <component :is="InquiryGeneralIcons.Attachment" class="section-icon" :size="20" />
-            <h3 class="section-title">{{ t('agora', 'Resources') }}</h3>
-          </div>
-          <div class="resources-content">
-            <SideBarTabResources :inquiry="storeInquiry" />
-          </div>
-        </div>
-
-        <!-- Miscellaneous Fields Section -->
-        <div v-if="displayFields.length > 0" class="misc-fields-section">
-          <div class="section-header">
-            <component :is="InquiryGeneralIcons.Info" class="section-icon" :size="20" />
-            <h3 class="section-title">{{ t('agora', 'Additional Information') }}</h3>
-          </div>
-          <div class="misc-fields-grid">
-            <div v-for="field in displayFields" :key="field.key" class="misc-field-item">
-              <div class="misc-field-label">{{ field.label }}</div>
-              <div class="misc-field-value">{{ field.displayValue }}</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Action Stats Section -->
-        <div class="action-stats-section">
-          <!-- Supports Counter -->
-          <div v-if="canSupportValue" class="stat-item supports-stat" @click.stop="onToggleSupport">
-            <div class="stat-icon-container">
-              <component 
-                :is="supportIconComponent" 
-                class="stat-icon" 
-                :size="24"
-                :supported="isSupported"
-                :support-value="currentSupportValue"
-              />
-            </div>
-            <div class="stat-content">
-              <div class="stat-value">
-                {{ storeInquiry.status?.countSupports || 0 }}
-                <span v-if="hasQuorum" class="quorum-text">
-                  / {{ quorumValue }}
-                </span>
-              </div>
-              <div class="stat-label">
-                {{ t('agora', 'Supports') }}
-                <span v-if="hasQuorum" class="quorum-label">
-                  {{ t('agora', 'needed') }}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Ternary Details Button -->
-          <div
-v-if="canSupportValue && storeInquiry.configuration?.supportFeature === 'ternary'" 
-               class="ternary-details-button"
-               @click.stop="openTernaryDetails">
-            <NcButton
-              type="tertiary"
-              class="details-button"
-              :title="t('agora', 'View detailed support breakdown')"
-            >
-              <template #icon>
-                <component :is="InquiryGeneralIcons.ChartBar" :size="16" />
-              </template>
-              {{ t('agora', 'View detailed support breakdown') }}
-            </NcButton>
-          </div>
-
-          <!-- Comments Counter -->
-          <div v-if="canCommentValue" class="stat-item comments-stat" @click.stop="openSidebar">
-            <div class="stat-icon-container">
-              <component :is="InquiryGeneralIcons.Comment" class="stat-icon" :size="24" />
-            </div>
-            <div class="stat-content">
-              <div class="stat-value">{{ storeInquiry.status?.countComments || 0 }}</div>
-              <div class="stat-label">{{ t('agora', 'Comments') }}</div>
-            </div>
-          </div>
-
-          <!-- Participants Counter -->
-          <div class="stat-item participants-stat">
-            <div class="stat-icon-container">
-              <component :is="InquiryGeneralIcons.Users" class="stat-icon" :size="24" />
-            </div>
-            <div class="stat-content">
-              <div class="stat-value">{{ participantsCount }}</div>
-              <div class="stat-label">{{ t('agora', 'Participants') }}</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Ternary Support Buttons -->
-        <div v-if="canSupportValue && storeInquiry.configuration?.supportFeature === 'ternary'" class="ternary-support-section">
-          <div class="section-header">
-            <h3 class="section-title">{{ t('agora', 'Express your position') }}</h3>
-          </div>
-          <div class="ternary-support-buttons">
-            <NcButton
-              type="secondary"
-              :class="{ 'active-support': currentSupportValue === 1 }"
-              class="support-button"
-              @click.stop="toggleSupport(1)"
-            >
-              <template #icon>
-                <TernarySupportIcon :support-value="currentSupportValue === 1 ? 1 : null" :size="20" />
-              </template>
-              {{ getSupportButtonText(1) }}
-            </NcButton>
-
-            <NcButton
-              type="secondary"
-              :class="{ 'active-neutral': currentSupportValue === 0 }"
-              class="support-button"
-              @click.stop="toggleSupport(0)"
-            >
-              <template #icon>
-                <TernarySupportIcon :support-value="currentSupportValue === 0 ? 0 : null" :size="20" />
-              </template>
-              {{ getSupportButtonText(0) }}
-            </NcButton>
-
-            <NcButton
-              type="secondary"
-              :class="{ 'active-oppose': currentSupportValue === -1 }"
-              class="support-button"
-              @click.stop="toggleSupport(-1)"
-            >
-              <template #icon>
-                <TernarySupportIcon :support-value="currentSupportValue === -1 ? -1 : null" :size="20" />
-              </template>
-              {{ getSupportButtonText(-1) }}
-            </NcButton>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Ternary Support Details Modal -->
-    <TernarySupportDetails
-      v-if="showTernaryModal"
-      :show="showTernaryModal"
-      :inquiry="storeInquiry"
-      @close="showTernaryModal = false"
-    />
-
-        <!-- Comments Modal -->
-    <NcModal
-      v-if="showSidebar"
-      :name="storeInquiry.title"
-      :size="'large'"
-      @close="closeSidebar"
-    >
-      <template #header>
-        <div class="modal-header">
-          <h2 class="modal-title">{{ storeInquiry.title }}</h2>
-          <span class="modal-subtitle">{{ t('agora', 'Comments') }}</span>
-        </div>
-      </template>
-
-      <div class="modal-comments-container">
-        <CommentAdd :inquiry-id="storeInquiry.id" />
-        <Comments :inquiry-id="storeInquiry.id" />
-      </div>
-    </NcModal>
-  </div>
-</template>
-
 <script setup lang="ts">
     import { ref, computed, watch } from 'vue'
 import { t } from '@nextcloud/l10n'
@@ -303,7 +12,6 @@ import NcAvatar from '@nextcloud/vue/components/NcAvatar'
 import NcModal from '@nextcloud/vue/components/NcModal'
 import DOMPurify from 'dompurify'
 import { DateTime } from 'luxon'
-import TernarySupportDetails from './TernarySupportDetails.vue'
 
 // Import icons and components
 import { InquiryGeneralIcons, StatusIcons } from '../../utils/icons.ts'
@@ -320,7 +28,8 @@ import type { Inquiry, InquiryType } from '../../Types/index.ts'
 import { useSessionStore } from '../../stores/session.ts'
 import { useSupportsStore } from '../../stores/supports.ts'
 import { useInquiriesStore } from '../../stores/inquiries.ts'
-import { canSupport, canComment } from '../../utils/permissions.ts'
+import { createInquiryContext, canSupport, canComment } from '../../utils/permissions.ts'
+import SupportFeature from '../../helpers/modules/SupportFeature.vue'
 
 interface Props {
   inquiry: Inquiry
@@ -348,37 +57,17 @@ function closeSidebar() {
 }
 
 // Create permission context
-const context = computed(() => ({
-    canSupport: canSupport({
-      inquiryType: props.inquiry.type,
-      inquiryStatus: props.inquiry.status?.inquiryStatus || 'open',
-      isOwner: props.inquiry.currentUserStatus?.isOwner || false,
-      isModerator: sessionStore.currentUser.isModerator,
-      isLocked: props.inquiry.status?.isLocked || false,
-      isExpired: props.inquiry.status?.isExpired || false,
-      isArchived: props.inquiry.status?.inquiryStatus === 'archived',
-      hasDeletionDate: props.inquiry.status?.deletionDate > 0,
-      isPublic: props.inquiry.configuration?.access === 'public',
-      supportFeature: props.inquiry.configuration?.supportFeature,
-    }),
-    canComment: canComment({
-      inquiryType: props.inquiry.type,
-      inquiryStatus: props.inquiry.status?.inquiryStatus || 'open',
-      isOwner: props.inquiry.currentUserStatus?.isOwner || false,
-      isModerator: sessionStore.currentUser.isModerator,
-      isLocked: props.inquiry.status?.isLocked || false,
-      isExpired: props.inquiry.status?.isExpired || false,
-      isArchived: props.inquiry.status?.inquiryStatus === 'archived',
-      hasDeletionDate: props.inquiry.status?.deletionDate > 0,
-      isPublic: props.inquiry.configuration?.access === 'public',
-    }),
-  }))
 
 const showTernaryModal = ref(false)
 
+// Context for permissions
+const context = computed(() => {
+  return createInquiryContext(props.inquiry, sessionStore.appSettings)
+})
+
 // Computed Properties
-const canSupportValue = computed(() => context.value.canSupport)
-const canCommentValue = computed(() => context.value.canComment)
+const canSupportValue = computed(() => canSupport(context))
+const canCommentValue = computed(() => canComment(context))
 
 const inquiryTypeData = computed(() => getInquiryTypeData(props.inquiry.type, sessionStore.appSettings?.inquiryTypeTab || []))
 
@@ -727,58 +416,6 @@ function getSupportButtonText(value: number) {
   }
   return ''
 }
-async function toggleSupport(value: number) {
-  if (!canSupportValue.value) return
-
-  try {
-    // Pass null as the third parameter to prevent double updates
-    await supportsStore.toggleSupport(
-      props.inquiry.id, 
-      sessionStore.currentUser.id, 
-      null,  
-      inquiriesStore
-    )
-
-    const updatedInquiry = inquiriesStore.inquiries.find(i => i.id === props.inquiry.id)
-    
-    // Show success messages
-    const newSupportValue = updatedInquiry?.currentUserStatus?.supportValue || value
-    const hadSupportedBefore = storeInquiry.value.currentUserStatus?.hasSupported
-    
-    if (storeInquiry.value.configuration?.supportFeature === 'binary') {
-      if (newSupportValue === 1) {
-        showSuccess(t('agora', 'Inquiry supported, thanks for your support!'), { timeout: 2000 })
-      } else if (newSupportValue === null) {
-        showSuccess(t('agora', 'Inquiry support removed!'), { timeout: 2000 })
-      }
-    } else if (storeInquiry.value.configuration?.supportFeature === 'ternary') {
-      if (newSupportValue === 1) {
-        showSuccess(t('agora', 'Inquiry supported, thanks for your support!'), { timeout: 2000 })
-      } else if (newSupportValue === 0) {
-        showSuccess(t('agora', 'Neutral position saved!'), { timeout: 2000 })
-      } else if (newSupportValue === -1) {
-        showSuccess(t('agora', 'Against position saved!'), { timeout: 2000 })
-      } else if (newSupportValue === null && hadSupportedBefore) {
-        showSuccess(t('agora', 'Participation removed!'), { timeout: 2000 })
-      }
-    }
-
-  } catch (error) {
-    console.error('Failed to toggle support:', error)
-    showError(t('agora', 'Failed to update support status'))
-  }
-}
-
-const onToggleSupport = async () => {
-  // For simple support mode, toggle between 1 and null
-  const currentValue = storeInquiry.value.currentUserStatus?.supportValue
-  const newValue = currentValue === 1 ? null : 1
-  await toggleSupport(newValue)
-}
-
-function openTernaryDetails() {
-  showTernaryModal.value = true
-}
 
 
 // Watch for changes in support value
@@ -789,716 +426,838 @@ watch(() => storeInquiry.value.currentUserStatus?.supportValue, (newValue) => {
 
 
 </script>
+<!-- InquiryFull.vue - Professional Redesign -->
+<template>
+  <div class="inquiry-full-view professional-theme">
+    <!-- Main Content -->
+    <div class="full-view-wrapper">
+      <div class="full-view-content">
+
+        <!-- Cover Image with Overlay Content -->
+        <div v-if="coverUrl" class="cover-hero">
+          <img
+            :src="coverUrl"
+            :alt="t('agora', 'Inquiry cover image')"
+            class="cover-image"
+          />
+          <div class="cover-overlay">
+            <!-- Type & Status Badges -->
+            <div class="cover-badges">
+              <div class="type-badge">
+                <component :is="typeIconComponent" class="type-icon" :size="16" />
+                <span class="type-label">{{ inquiryTypeData.label }}</span>
+              </div>
+
+              <div v-if="currentInquiryStatus" class="status-badge">
+                <component :is="statusIconComponent" class="status-icon" :size="12" />
+                <span>{{ statusText }}</span>
+              </div>
+            </div>
+
+            <!-- Title -->
+            <h1 class="cover-title">{{ storeInquiry.title }}</h1>
+
+            <!-- Quick Actions Bar -->
+            <div class="cover-actions">
+              <!-- Support Button -->
+              <button
+                v-if="canSupportValue && storeInquiry.configuration?.supportFeature === 'binary'"
+                class="action-button support-button"
+                :class="{ 'active': isSupported }"
+                @click="onToggleSupport"
+              >
+                <component :is="ThumbIcon" class="action-icon" :size="18" :supported="isSupported" />
+                <span class="action-text">
+                  {{ isSupported ? t('agora', 'Supported') : t('agora', 'Support') }}
+                </span>
+                <span class="action-count">{{ storeInquiry.status?.countSupports || 0 }}</span>
+              </button>
+
+              <!-- Comments Button -->
+              <button
+                v-if="canCommentValue"
+                class="action-button comments-button"
+                @click="openSidebar"
+              >
+                <component :is="InquiryGeneralIcons.Comment" class="action-icon" :size="18" />
+                <span class="action-text">{{ t('agora', 'Comments') }}</span>
+                <span class="action-count">{{ storeInquiry.status?.countComments || 0 }}</span>
+              </button>
+
+              <!-- Participants -->
+              <div class="action-button participants-button">
+                <component :is="InquiryGeneralIcons.Users" class="action-icon" :size="18" />
+                <span class="action-text">{{ t('agora', 'Participants') }}</span>
+                <span class="action-count">{{ participantsCount }}</span>
+              </div>
+
+              <!-- Ternary Details Button -->
+              <button
+                v-if="canSupportValue && storeInquiry.configuration?.supportFeature === 'ternary'"
+                class="action-button details-button"
+                @click="openTernaryDetails"
+              >
+                <component :is="InquiryGeneralIcons.ChartBar" class="action-icon" :size="16" />
+                <span class="action-text">{{ t('agora', 'View details') }}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Header without cover -->
+        <div v-else class="header-section">
+          <div class="header-content">
+            <div class="header-badges">
+              <div class="type-badge">
+                <component :is="typeIconComponent" class="type-icon" :size="16" />
+                <span class="type-label">{{ inquiryTypeData.label }}</span>
+              </div>
+
+              <div v-if="currentInquiryStatus" class="status-badge">
+                <component :is="statusIconComponent" class="status-icon" :size="12" />
+                <span>{{ statusText }}</span>
+              </div>
+            </div>
+
+            <h1 class="page-title">{{ storeInquiry.title }}</h1>
+
+            <!-- Quick Actions Bar -->
+            <div class="header-actions">
+              <button
+                v-if="canSupportValue && storeInquiry.configuration?.supportFeature === 'binary'"
+                class="action-button support-button"
+                :class="{ 'active': isSupported }"
+                @click="onToggleSupport"
+              >
+                <component :is="ThumbIcon" class="action-icon" :size="18" :supported="isSupported" />
+                <span class="action-text">
+                  {{ isSupported ? t('agora', 'Supported') : t('agora', 'Support') }}
+                </span>
+                <span class="action-count">{{ storeInquiry.status?.countSupports || 0 }}</span>
+              </button>
+
+              <button
+                v-if="canCommentValue"
+                class="action-button comments-button"
+                @click="openSidebar"
+              >
+                <component :is="InquiryGeneralIcons.Comment" class="action-icon" :size="18" />
+                <span class="action-text">{{ t('agora', 'Comments') }}</span>
+                <span class="action-count">{{ storeInquiry.status?.countComments || 0 }}</span>
+              </button>
+
+              <div class="action-button participants-button">
+                <component :is="InquiryGeneralIcons.Users" class="action-icon" :size="18" />
+                <span class="action-text">{{ t('agora', 'Participants') }}</span>
+                <span class="action-count">{{ participantsCount }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Author and Metadata -->
+        <div class="author-meta-section">
+          <div class="author-info">
+            <NcAvatar
+              v-if="storeInquiry.ownedGroup"
+              :display-name="storeInquiry.ownedGroup"
+              :show-user-status="false"
+              :size="40"
+              class="author-avatar"
+            />
+            <NcAvatar
+              v-else
+              :user="storeInquiry.owner?.id"
+              :display-name="storeInquiry.owner?.displayName"
+              :size="40"
+              class="author-avatar"
+            />
+            <div class="author-details">
+              <span class="author-name">
+                {{ storeInquiry.ownedGroup || storeInquiry.owner?.displayName }}
+              </span>
+              <span class="meta-divider">•</span>
+              <span class="creation-date">
+                {{ formattedCreationDate }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Right side metadata -->
+          <div class="meta-actions">
+            <div class="meta-item" v-if="hasQuorum">
+              <span class="meta-label">{{ t('agora', 'Quorum') }}:</span>
+              <span class="meta-value">{{ storeInquiry.status?.countSupports || 0 }} / {{ quorumValue }}</span>
+            </div>
+
+            <div class="meta-item" v-if="timeExpirationRelative">
+              <component :is="InquiryGeneralIcons.Expiration" class="meta-icon" :size="14" />
+              <span class="meta-value">{{ timeExpirationRelative }}</span>
+            </div>
+
+            <div class="meta-item">
+              <component :is="InquiryGeneralIcons.Updated" class="meta-icon" :size="14" />
+              <span class="meta-value">{{ formattedLastInteraction }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Location and Category - Simplified -->
+        <div class="location-category-section">
+          <div class="meta-grid">
+            <!-- Location -->
+            <div class="meta-card">
+              <div class="meta-card-header">
+                <component :is="InquiryGeneralIcons.Location" class="meta-card-icon" :size="18" />
+                <span class="meta-card-title">{{ t('agora', 'Location') }}</span>
+              </div>
+              <div class="meta-card-content">
+                {{ getHierarchyPath(sessionStore.appSettings.locationTab, storeInquiry.locationId) || t('agora', 'Inherited from parent') }}
+              </div>
+            </div>
+
+            <!-- Category -->
+            <div class="meta-card">
+              <div class="meta-card-header">
+                <component :is="InquiryGeneralIcons.Category" class="meta-card-icon" :size="18" />
+                <span class="meta-card-title">{{ t('agora', 'Category') }}</span>
+              </div>
+              <div class="meta-card-content">
+                {{ getHierarchyPath(sessionStore.appSettings.categoryTab, storeInquiry.categoryId) || t('agora', 'Inherited from parent') }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Description Content -->
+        <div class="description-section">
+          <div class="section-header">
+            <h2 class="section-title">{{ t('agora', 'Description') }}</h2>
+          </div>
+          <!-- eslint-disable-next-line vue/no-v-html -->
+          <div class="description-content" v-html="sanitizedContent"></div>
+        </div>
+
+        <!-- Resources Section - Only if has resources -->
+        <div v-if="hasResources" class="resources-section">
+          <div class="section-header">
+            <h2 class="section-title">{{ t('agora', 'Resources') }}</h2>
+          </div>
+          <div class="resources-content">
+            <SideBarTabResources :inquiry="storeInquiry" />
+          </div>
+        </div>
+
+        <!-- Additional Information - Only if has fields -->
+        <div v-if="displayFields.length > 0" class="additional-info-section">
+          <div class="section-header">
+            <h2 class="section-title">{{ t('agora', 'Additional Information') }}</h2>
+          </div>
+          <div class="info-grid">
+            <div v-for="field in displayFields" :key="field.key" class="info-item">
+              <div class="info-label">{{ field.label }}</div>
+              <div class="info-value">{{ field.displayValue }}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ternary Support Section - Only for ternary support -->
+        <div v-if="canSupportValue && storeInquiry.configuration?.supportFeature === 'ternary'" class="ternary-support-section">
+          <div class="section-header">
+            <h2 class="section-title">{{ t('agora', 'Express your position') }}</h2>
+          </div>
+
+                            <SupportFeature
+                                    :item="storeInquiry"
+                                    item-type="inquiry"
+                                    :context="context"
+                                    :show-quorum="true"
+                                    :show-details-on-hover="true"
+                                    :icon-size="22"
+                                    />
+        </div>
+      </div>
+    </div>
+
+    <NcModal
+      v-if="showSidebar"
+      :name="storeInquiry.title"
+      :size="'large'"
+      @close="closeSidebar"
+    >
+      <template #header>
+        <div class="modal-header">
+          <h2 class="modal-title">{{ storeInquiry.title }}</h2>
+          <span class="modal-subtitle">{{ t('agora', 'Comments') }}</span>
+        </div>
+      </template>
+
+      <div class="modal-comments-container">
+        <CommentAdd :inquiry-id="storeInquiry.id" />
+        <Comments :inquiry-id="storeInquiry.id" />
+      </div>
+    </NcModal>
+  </div>
+</template>
+
 <style lang="scss" scoped>
-/* This component only provides internal layout, typography, and component styling */
+/* ===== PROFESSIONAL THEME ===== */
+.professional-theme {
+  --color-surface: var(--color-main-background);
+  --color-surface-raised: #ffffff;
+  --color-border-subtle: rgba(0, 0, 0, 0.06);
+  --shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --shadow-medium: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-large: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
 
 .inquiry-full-view {
   width: 100%;
   height: 100%;
-  position: relative;
-  background: transparent;
+  background: var(--color-surface);
 }
 
 .full-view-wrapper {
   width: 100%;
   height: 100%;
   overflow-y: auto;
-  background: transparent;
 }
 
 .full-view-content {
   max-width: 900px;
   margin: 0 auto;
-  padding: 32px;
+  padding: 0 32px 32px;
   box-sizing: border-box;
 
-  /* Internal spacing between sections */
   > * + * {
     margin-top: 32px;
   }
 }
 
-/* All sections get spacing only, parent handles the visual envelope */
-
-.cover-image-section {
-  width: 100%;
-  margin-bottom: 0;
+/* ===== COVER HERO ===== */
+.cover-hero {
+  position: relative;
+  margin: -32px -32px 32px;
+  border-radius: 0 0 8px 8px;
+  overflow: hidden;
 
   .cover-image {
     width: 100%;
     height: 320px;
     object-fit: cover;
     display: block;
-    border-radius: 12px; /* Match parent envelope radius */
+  }
+
+  .cover-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.4) 50%, transparent 100%);
+    padding: 48px 48px 24px;
+    color: white;
   }
 }
 
-.title-section {
-  .title-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 24px;
-    flex-wrap: wrap;
-    gap: 16px;
-
-    .type-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      padding: 8px 16px;
-      background: linear-gradient(135deg, var(--color-primary-element-light), rgba(var(--color-primary-rgb), 0.1));
-      border-radius: 24px;
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--color-primary-element);
-      border: 1px solid rgba(var(--color-primary-rgb), 0.2);
-
-      .type-icon {
-        color: var(--color-primary-element);
-      }
-    }
-
-    .status-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 14px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-
-      &.status-open {
-        background: linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(34, 197, 94, 0.08));
-        color: #16a34a;
-        border: 1px solid rgba(34, 197, 94, 0.3);
-      }
-
-      &.status-closed {
-        background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.08));
-        color: #dc2626;
-        border: 1px solid rgba(239, 68, 68, 0.3);
-      }
-
-      &.status-draft {
-        background: linear-gradient(135deg, rgba(148, 163, 184, 0.15), rgba(148, 163, 184, 0.08));
-        color: #64748b;
-        border: 1px solid rgba(148, 163, 184, 0.3);
-      }
-
-      &.status-waiting {
-        background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(245, 158, 11, 0.08));
-        color: #f59e0b;
-        border: 1px solid rgba(245, 158, 11, 0.3);
-      }
-    }
-  }
-
-  .inquiry-title {
-    font-size: 36px;
-    font-weight: 800;
-    color: var(--color-main-text);
-    margin: 0 0 32px 0;
-    line-height: 1.2;
-    letter-spacing: -0.01em;
-  }
-
-  .author-meta-section {
-    .author-info {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      padding: 20px;
-      background: var(--color-background-dark);
-      border-radius: 12px;
-      border: 1px solid var(--color-border);
-
-      .author-avatar {
-        flex-shrink: 0;
-        border: 3px solid var(--color-main-background);
-      }
-
-      .author-details {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        flex-wrap: wrap;
-
-        .author-name {
-          font-size: 16px;
-          font-weight: 600;
-          color: var(--color-main-text);
-        }
-
-        .meta-divider {
-          color: var(--color-text-maxcontrast);
-          opacity: 0.5;
-        }
-
-        .creation-date {
-          font-size: 14px;
-          color: var(--color-text-lighter);
-          font-weight: 500;
-        }
-      }
-    }
-  }
-}
-
-/* Location and Category Grid */
-.location-category-section {
-  .location-category-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 20px;
-
-    .meta-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 16px;
-      padding: 24px;
-      background: var(--color-main-background);
-      border-radius: 16px;
-      border: 2px solid var(--color-border);
-      cursor: default;
-
-      &:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-        background: var(--color-background-dark);
-        border-color: var(--color-primary-element-light);
-
-        .meta-icon-container {
-          transform: scale(1.1);
-          background: rgba(var(--color-primary-rgb), 0.15);
-        }
-      }
-
-      .meta-icon-container {
-        flex-shrink: 0;
-        width: 56px;
-        height: 56px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: rgba(var(--color-primary-rgb), 0.1);
-        border-radius: 14px;
-        transition: all 0.3s ease;
-
-        .meta-icon {
-          color: var(--color-primary-element);
-        }
-      }
-
-      .meta-content {
-        flex: 1;
-
-        .meta-label {
-          font-size: 12px;
-          font-weight: 600;
-          color: var(--color-text-lighter);
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
-          margin-bottom: 6px;
-        }
-
-        .meta-value {
-          font-size: 16px;
-          font-weight: 600;
-          color: var(--color-main-text);
-          line-height: 1.5;
-          word-break: break-word;
-        }
-      }
-
-      &.location-item .meta-icon {
-        color: #3b82f6;
-      }
-
-      &.category-item .meta-icon {
-        color: #8b5cf6;
-      }
-
-      &.expiration-item .meta-icon {
-        color: #f59e0b;
-      }
-
-      &.interaction-item .meta-icon {
-        color: #10b981;
-      }
-    }
-  }
-}
-
-/* Common Section Header */
-.section-header {
+.cover-badges {
   display: flex;
-  align-items: center;
   gap: 12px;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
 
-  .section-icon {
+.type-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-primary-element);
+
+  .type-icon {
     color: var(--color-primary-element);
   }
+}
 
-  .section-title {
-    font-size: 20px;
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.cover-title {
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 0 0 32px 0;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.cover-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* ===== HEADER WITHOUT COVER ===== */
+.header-section {
+  padding: 32px 0 0;
+  border-bottom: 1px solid var(--color-border-subtle);
+  margin-bottom: 32px;
+}
+
+.header-content {
+  .header-badges {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .page-title {
+    font-size: 40px;
     font-weight: 700;
+    line-height: 1.2;
     color: var(--color-main-text);
-    margin: 0;
+    margin: 0 0 32px 0;
   }
 }
 
-/* Description Content */
+.header-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* ===== ACTION BUTTONS ===== */
+.action-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  .action-icon {
+    opacity: 0.9;
+  }
+
+  .action-count {
+    margin-left: 4px;
+    font-weight: 600;
+    opacity: 0.9;
+  }
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-1px);
+  }
+
+  &.active {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.4);
+  }
+}
+
+/* For light background (no cover) */
+.header-actions .action-button {
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-lighter);
+  box-shadow: var(--shadow-subtle);
+
+  &:hover {
+    background: var(--color-background-hover);
+    border-color: var(--color-primary-element);
+    color: var(--color-primary-element);
+    box-shadow: var(--shadow-medium);
+  }
+
+  &.active {
+    background: var(--color-primary-element);
+    border-color: var(--color-primary-element);
+    color: white;
+  }
+}
+
+/* ===== AUTHOR & METADATA ===== */
+.author-meta-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background: var(--color-surface-raised);
+  border-radius: 8px;
+  box-shadow: var(--shadow-subtle);
+  margin-top: 24px;
+}
+
+.author-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  .author-avatar {
+    border: 2px solid var(--color-surface);
+    box-shadow: var(--shadow-subtle);
+  }
+
+  .author-details {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .author-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--color-main-text);
+    }
+
+    .meta-divider {
+      color: var(--color-text-maxcontrast);
+      opacity: 0.5;
+    }
+
+    .creation-date {
+      font-size: 14px;
+      color: var(--color-text-lighter);
+    }
+  }
+}
+
+.meta-actions {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--color-text-lighter);
+
+  .meta-label {
+    font-weight: 500;
+  }
+
+  .meta-value {
+    font-weight: 600;
+  }
+
+  .meta-icon {
+    color: var(--color-text-maxcontrast);
+  }
+}
+
+/* ===== LOCATION & CATEGORY ===== */
+.location-category-section {
+  .meta-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 16px;
+  }
+}
+
+.meta-card {
+  padding: 20px;
+  background: var(--color-surface-raised);
+  border-radius: 8px;
+  box-shadow: var(--shadow-subtle);
+  border: 1px solid var(--color-border-subtle);
+  transition: all 0.2s ease;
+
+  &:hover {
+    box-shadow: var(--shadow-medium);
+    border-color: var(--color-border);
+  }
+
+  .meta-card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+
+    .meta-card-icon {
+      color: var(--color-primary-element);
+    }
+
+    .meta-card-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--color-text-lighter);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+  }
+
+  .meta-card-content {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--color-main-text);
+    line-height: 1.5;
+  }
+}
+
+/* ===== SECTIONS ===== */
+.section-header {
+  margin-bottom: 24px;
+
+  .section-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--color-main-text);
+    margin: 0;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--color-border-subtle);
+  }
+}
+
 .description-section {
   .description-content {
-    font-size: 16px;
-    line-height: 1.8;
-    color: var(--color-main-text);
+    padding: 24px;
+    background: var(--color-surface-raised);
+    border-radius: 8px;
+    box-shadow: var(--shadow-subtle);
+    border: 1px solid var(--color-border-subtle);
 
     :deep(*) {
-      margin: 0 0 20px 0;
+      margin: 0 0 16px 0;
 
       &:last-child {
         margin-bottom: 0;
       }
     }
 
-    :deep(h1) {
-      font-size: 24px;
-      font-weight: 700;
-      color: var(--color-main-text);
-      margin: 32px 0 16px 0;
-      padding-bottom: 8px;
-      border-bottom: 2px solid var(--color-border);
+    :deep(p) {
+      line-height: 1.7;
+      color: var(--color-text-lighter);
+    }
 
-      &:first-child {
-        margin-top: 0;
-      }
+    :deep(h1) {
+      font-size: 22px;
+      font-weight: 600;
+      margin: 28px 0 16px;
+      color: var(--color-main-text);
     }
 
     :deep(h2) {
       font-size: 20px;
       font-weight: 600;
+      margin: 24px 0 14px;
       color: var(--color-main-text);
-      margin: 28px 0 14px 0;
-    }
-
-    :deep(p) {
-      margin-bottom: 20px;
-      line-height: 1.8;
-    }
-
-    :deep(ul), :deep(ol) {
-      padding-left: 24px;
-      margin: 16px 0;
-
-      li {
-        margin-bottom: 8px;
-        line-height: 1.6;
-      }
-    }
-
-    :deep(a) {
-      color: var(--color-primary-element);
-      text-decoration: none;
-      font-weight: 500;
-      border-bottom: 1px solid transparent;
-      transition: all 0.3s ease;
-
-      &:hover {
-        text-decoration: none;
-        border-bottom-color: var(--color-primary-element);
-      }
-    }
-
-    :deep(img) {
-      max-width: 100%;
-      height: auto;
-      border-radius: 12px;
-      margin: 24px 0;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
-
-    :deep(.no-content) {
-      text-align: center;
-      padding: 60px 20px;
-      color: var(--color-text-maxcontrast);
-      font-style: italic;
-      background: var(--color-background-darker);
-      border-radius: 12px;
     }
   }
 }
 
-/* Resources Section */
+/* ===== RESOURCES ===== */
 .resources-section {
   .resources-content {
-    :deep(.attachments-list) {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 16px;
-
-      .attachment-item {
-        background: var(--color-background-dark);
-        border-radius: 12px;
-        border: 1px solid var(--color-border);
-        padding: 16px;
-        transition: all 0.3s ease;
-
-        &:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-          background: var(--color-background-darker);
-          border-color: var(--color-primary-element);
-        }
-      }
-    }
+    padding: 24px;
+    background: var(--color-surface-raised);
+    border-radius: 8px;
+    box-shadow: var(--shadow-subtle);
+    border: 1px solid var(--color-border-subtle);
   }
 }
 
-/* Miscellaneous Fields */
-.misc-fields-section {
-  .misc-fields-grid {
+/* ===== ADDITIONAL INFO ===== */
+.additional-info-section {
+  .info-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 16px;
+  }
 
-    .misc-field-item {
-      padding: 20px;
-      background: var(--color-background-dark);
-      border-radius: 12px;
-      border: 1px solid var(--color-border);
-      transition: all 0.3s ease;
+  .info-item {
+    padding: 16px;
+    background: var(--color-surface-raised);
+    border-radius: 8px;
+    box-shadow: var(--shadow-subtle);
+    border: 1px solid var(--color-border-subtle);
 
-      &:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        background: var(--color-background-darker);
-        border-color: var(--color-primary-element-light);
-      }
+    .info-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--color-text-lighter);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      margin-bottom: 6px;
+    }
 
-      .misc-field-label {
-        font-size: 12px;
-        font-weight: 600;
-        color: var(--color-text-lighter);
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        margin-bottom: 8px;
-      }
-
-      .misc-field-value {
-        font-size: 14px;
-        font-weight: 500;
-        color: var(--color-main-text);
-        line-height: 1.5;
-        word-break: break-word;
-      }
+    .info-value {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--color-main-text);
+      line-height: 1.5;
     }
   }
 }
 
-/* Action Stats Section */
-.action-stats-section {
-  display: flex;
-  gap: 24px;
-  align-items: center;
-
-  .stat-item {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    padding: 20px;
-    background: var(--color-background-dark);
-    border-radius: 12px;
-    border: 1px solid var(--color-border);
-    transition: all 0.3s ease;
-    cursor: pointer;
-
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      background: var(--color-background-darker);
-      border-color: var(--color-primary-element-light);
-    }
-
-    &.supports-stat:hover {
-      border-color: #10b981;
-    }
-
-    &.comments-stat:hover {
-      border-color: #3b82f6;
-    }
-
-    &.participants-stat:hover {
-      border-color: #8b5cf6;
-    }
-
-    .stat-icon-container {
-      flex-shrink: 0;
-      width: 56px;
-      height: 56px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: rgba(var(--color-primary-rgb), 0.1);
-      border-radius: 14px;
-      transition: all 0.3s ease;
-
-      .stat-icon {
-        color: var(--color-primary-element);
-        transition: transform 0.3s ease;
-      }
-    }
-
-    &:hover .stat-icon-container {
-      background: rgba(var(--color-primary-rgb), 0.15);
-      transform: scale(1.05);
-    }
-
-    .stat-content {
-      .stat-value {
-        font-size: 28px;
-        font-weight: 800;
-        color: var(--color-main-text);
-        margin-bottom: 4px;
-        display: flex;
-        align-items: baseline;
-        gap: 4px;
-
-        .quorum-text {
-          font-size: 20px;
-          font-weight: 600;
-          color: var(--color-text-lighter);
-        }
-      }
-
-      .stat-label {
-        font-size: 14px;
-        font-weight: 600;
-        color: var(--color-text-lighter);
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        display: flex;
-        align-items: center;
-        gap: 4px;
-
-        .quorum-label {
-          font-size: 12px;
-          opacity: 0.8;
-        }
-      }
-    }
-  }
-
-  .ternary-details-button {
-    .details-button {
-      white-space: nowrap;
-    }
-  }
-}
-
-/* Ternary Support Section */
+/* ===== TERNARY BUTTONS ===== */
 .ternary-support-section {
-  .ternary-support-buttons {
+  padding: 24px;
+  background: var(--color-surface-raised);
+  border-radius: 8px;
+  box-shadow: var(--shadow-subtle);
+  border: 1px solid var(--color-border-subtle);
+
+  .ternary-buttons {
     display: flex;
     gap: 12px;
     flex-wrap: wrap;
+  }
 
-    .support-button {
-      flex: 1;
-      min-width: 120px;
-      height: 48px;
-      font-weight: 600;
-      transition: all 0.3s ease;
+  .ternary-button {
+    flex: 1;
+    min-width: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 14px 20px;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    background: var(--color-surface);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-text-lighter);
+    cursor: pointer;
+    transition: all 0.2s ease;
 
-      &:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-      }
+    &:hover {
+      background: var(--color-background-hover);
+      border-color: var(--color-primary-element);
+      color: var(--color-primary-element);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-medium);
+    }
 
-      &.active-support {
-        background: linear-gradient(135deg, #10b981, #059669);
-        color: white;
+    &.active {
+      &.support {
+        background: #10b981;
         border-color: #10b981;
-
-        &:hover {
-          background: linear-gradient(135deg, #059669, #047857);
-        }
+        color: white;
       }
 
-      &.active-neutral {
-        background: linear-gradient(135deg, #6b7280, #4b5563);
-        color: white;
+      &.neutral {
+        background: #6b7280;
         border-color: #6b7280;
+        color: white;
       }
 
-      &.active-oppose {
-        background: linear-gradient(135deg, #ef4444, #dc2626);
-        color: white;
+      &.oppose {
+        background: #ef4444;
         border-color: #ef4444;
+        color: white;
       }
     }
   }
 }
-/* Comments Modal Styling */
-.modal-header {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 16px 24px;
-  border-bottom: 1px solid var(--color-border);
-  
-  .modal-title {
-    font-size: 20px;
-    font-weight: 700;
-    color: var(--color-main-text);
-    margin: 0;
-  }
-  
-  .modal-subtitle {
-    font-size: 14px;
-    color: var(--color-text-lighter);
-    font-weight: 500;
-  }
-}
 
-.modal-comments-container {
-  padding: 24px;
-  max-height: 70vh;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
-
-/* ===== RESPONSIVE DESIGN ===== */
+/* ===== RESPONSIVE ===== */
 @media (max-width: 1024px) {
   .full-view-content {
-    padding: 24px;
-    max-width: 100%;
+    padding: 0 24px 24px;
   }
 
-  .location-category-grid {
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)) !important;
-  }
+  .cover-hero {
+    margin: -24px -24px 24px;
 
-  .action-stats-section {
-    flex-wrap: wrap;
-    gap: 16px;
-
-    .stat-item {
-      min-width: calc(50% - 8px);
+    .cover-overlay {
+      padding: 32px 32px 16px;
     }
 
-    .ternary-details-button {
-      width: 100%;
-      .details-button {
-        width: 100%;
-      }
+    .cover-title {
+      font-size: 32px;
     }
   }
 
-  .ternary-support-buttons {
-    .support-button {
-      min-width: 100px;
-    }
+  .page-title {
+    font-size: 32px;
   }
 }
 
 @media (max-width: 768px) {
-  .full-view-content {
-    padding: 20px;
+  .author-meta-section {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
   }
 
-  .cover-image-section .cover-image {
-    height: 240px;
+  .meta-actions {
+    width: 100%;
+    justify-content: space-between;
   }
 
-  .title-section {
-    .inquiry-title {
-      font-size: 28px;
-    }
-
-    .title-header {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 12px;
-    }
+  .cover-title,
+  .page-title {
+    font-size: 28px;
   }
 
-  .location-category-grid {
-    grid-template-columns: 1fr !important;
-  }
-
-  .action-stats-section {
+  .ternary-buttons {
     flex-direction: column;
 
-    .stat-item {
-      width: 100%;
-      min-width: 100%;
-    }
-  }
-
-  .ternary-support-buttons {
-    flex-direction: column;
-
-    .support-button {
+    .ternary-button {
       width: 100%;
     }
-  }
-
-  .misc-fields-grid {
-    grid-template-columns: 1fr !important;
   }
 }
 
 @media (max-width: 480px) {
   .full-view-content {
-    padding: 16px;
+    padding: 0 16px 16px;
   }
 
-  .cover-image-section .cover-image {
-    height: 200px;
-  }
+  .cover-hero {
+    margin: -16px -16px 16px;
+    height: 240px;
 
-  .title-section {
-    .inquiry-title {
+    .cover-overlay {
+      padding: 24px 24px 12px;
+    }
+
+    .cover-title {
       font-size: 24px;
     }
+  }
 
-    .author-meta-section .author-info {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 12px;
+  .cover-actions,
+  .header-actions {
+    flex-direction: column;
+    align-items: stretch;
 
-      .author-details {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 8px;
-      }
+    .action-button {
+      width: 100%;
+      justify-content: center;
     }
   }
 
-  .meta-item {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-
-    .meta-icon-container {
-      width: 48px;
-      height: 48px;
-    }
-  }
-
-  .section-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
+  .page-title {
+    font-size: 24px;
   }
 }
 </style>
-

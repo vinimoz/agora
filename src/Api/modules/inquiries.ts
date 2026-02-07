@@ -135,7 +135,6 @@ const inquiries = {
   inquiryId: number,
   inquiryConfiguration: InquiryConfiguration
 ): Promise<AxiosResponse<{ inquiry: Inquiry }>> {
-  console.log(' INTO WRITE ID DE L4A PIIIII ', inquiryConfiguration)
 
   // Convert Proxy to plain object before sending
   const plainConfig = JSON.parse(JSON.stringify(inquiryConfiguration));

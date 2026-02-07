@@ -8,11 +8,12 @@ import { SupportsAPI, PublicAPI } from '../Api/index.ts'
 import { groupSupports, Logger } from '../helpers/index.ts'
 import { useSessionStore } from './session.ts'
 import type { AxiosError } from '@nextcloud/axios'
-import  { Inquiry } from '../Types/index.ts'
+import { Inquiry, Option } from '../Types/index.ts'
 
 export type Support = {
     id?: number
     inquiryId: number
+    optionId?: number // Optional: 0 or undefined = inquiry support, >0 = option support
     groupId: number
     userId: string
     value: number
@@ -27,6 +28,8 @@ export interface SupportsGrouped extends Support {
     supports: Support[]
 }
 
+type SupportableItem = Inquiry | Option
+
 export const useSupportsStore = defineStore('supports', {
     state: () => ({
         supports: [] as Support[],
@@ -34,284 +37,287 @@ export const useSupportsStore = defineStore('supports', {
 
     getters: {
         count: (state) => state.supports.length,
-            groupedSupports: (state) => groupSupports(state.supports),
+        groupedSupports: (state) => groupSupports(state.supports),
 
-            // Get support by inquiryId and userId
-            getSupport: (state) => (inquiryId: number, userId: string) => state.supports.find(support => 
-                                                                                              support.inquiryId === inquiryId && support.userId === userId
-                                                                                             ),
+        // Get support by inquiryId/optionId and userId
+        getSupport: (state) => (inquiryId: number, userId: string, optionId?: number) => {
+            return state.supports.find(support => {
+                const inquiryMatch = support.inquiryId === inquiryId && 
+                                    support.userId === userId
+                
+                // If optionId is provided, also check optionId
+                if (optionId !== undefined && optionId > 0) {
+                    return inquiryMatch && support.optionId === optionId
+                }
+                // If no optionId or optionId === 0, it's an inquiry support
+                return inquiryMatch && (!support.optionId || support.optionId === 0)
+            })
+        },
+        
+        // Get all supports for an inquiry (including option supports)
+        getSupportsByInquiryId: (state) => (inquiryId: number) => {
+            return state.supports.filter(support => support.inquiryId === inquiryId)
+        },
+        
+        // Get option supports only
+        getOptionSupports: (state) => (inquiryId: number, optionId: number) => {
+            return state.supports.filter(support => 
+                support.inquiryId === inquiryId && support.optionId === optionId
+            )
+        },
     },
 
     actions: {
-        // Set support mode for an inquiry
         // Set or update a support in the store
         setItem(payload: { support: Support }) {
-            const index = this.supports.findIndex(s => 
-                                                  s.inquiryId === payload.support.inquiryId && s.userId === payload.support.userId
-                                                 )
+            const index = this.supports.findIndex(s => {
+                const inquiryMatch = s.inquiryId === payload.support.inquiryId && 
+                                    s.userId === payload.support.userId
+                
+                // Match both inquiry and option if optionId exists
+                if (payload.support.optionId !== undefined && payload.support.optionId > 0) {
+                    return inquiryMatch && s.optionId === payload.support.optionId
+                }
+                // For inquiry supports (optionId undefined or 0)
+                return inquiryMatch && (!s.optionId || s.optionId === 0)
+            })
 
-                                                 if (index === -1) {
-                                                     this.supports.push(payload.support)
-                                                 } else {
-                                                     this.supports[index] = payload.support
-                                                 }
+            if (index === -1) {
+                this.supports.push(payload.support)
+            } else {
+                this.supports[index] = payload.support
+            }
         },
 
         // Remove a support from the store
-        removeItem(inquiryId: number, userId: string) {
-            const index = this.supports.findIndex(s => 
-                                                  s.inquiryId === inquiryId && s.userId === userId
-                                                 )
+        removeItem(inquiryId: number, userId: string, optionId?: number) {
+            const index = this.supports.findIndex(s => {
+                const inquiryMatch = s.inquiryId === inquiryId && s.userId === userId
+                
+                if (optionId !== undefined && optionId > 0) {
+                    return inquiryMatch && s.optionId === optionId
+                }
+                return inquiryMatch && (!s.optionId || s.optionId === 0)
+            })
 
-                                                 if (index !== -1) {
-                                                     this.supports.splice(index, 1)
-                                                 }
+            if (index !== -1) {
+                this.supports.splice(index, 1)
+            }
         },
 
-        // Helper method to get support mode
-         getSupportFeature(inquiryId: number, inquiryStore: Inquiry | null, inquiriesStore: { inquiries: Inquiry[] }): string {
-    // Handle null inquiryStore
-    if (inquiryStore && inquiryStore.id === inquiryId) {
-        return inquiryStore.configuration?.supportFeature;
-    }
+        // Helper method to get support feature
+        getSupportFeature(item: SupportableItem): string {
+            return item.configuration?.supportFeature || 'none'
+        },
 
-    // Otherwise search in inquiriesStore
-    const inquiry = inquiriesStore.inquiries.find((inq: Inquiry) => inq.id === inquiryId);
-    return inquiry?.configuration?.supportFeature;
-},
-
-        // Main toggle method that handles both modes
-        async toggleSupport(inquiryId: number, userId: string, inquiryStore: Inquiry, inquiriesStore: { inquiries: Inquiry[] }) {
-            const supportFeature =  this.getSupportFeature(inquiryId, inquiryStore, inquiriesStore);
-
+        // Main toggle method that handles both modes and both item types
+        async toggleSupport(itemId: number, userId: string, item: SupportableItem, itemType: 'inquiry' | 'option') {
+            const supportFeature = this.getSupportFeature(item)
+            console.log(" INTO TOGGLE SUPPORT",item)
+            console.log(" INTO TOGGLE SUPPORT",itemId)
+            console.log(" INTO TOGGLE SUPPORT",itemType)
             if (supportFeature === 'binary') {
-                return this.toggleStandardSupport(inquiryId, userId, inquiryStore, inquiriesStore)
+                return this.toggleStandardSupport(itemId, userId, item, itemType)
             }
             else if (supportFeature === 'ternary') {
-                return this.toggleTernarySupport(inquiryId, userId, inquiryStore, inquiriesStore)
+                return this.toggleTernarySupport(itemId, userId, item, itemType)
             }
-            return []
+            return null
         },
 
-        // Standard mode: 0/1 toggle (existing behavior)
-        async toggleStandardSupport(inquiryId: number, userId: string, inquiryStore: Inquiry, inquiriesStore: { inquiries: Inquiry[] }) {
-            const inquiryInList = inquiriesStore.inquiries.find((i) => i.id === inquiryId)
-            const inquiryInChilds = inquiryStore?.childs?.find((i) => i.id === inquiryId)
-            const isCurrentInquiry = inquiryStore?.id === inquiryId
-
-            const sourceInquiry =
-                inquiryInList || inquiryInChilds || (isCurrentInquiry ? inquiryStore : null)
-
-            if (!sourceInquiry) {
+        // Standard mode: 0/1 toggle
+        async toggleStandardSupport(itemId: number, userId: string, item: SupportableItem, itemType: 'inquiry' | 'option') {
+            if (!item) {
                 return
             }
 
-            const oldState = sourceInquiry.currentUserStatus?.hasSupported ?? false
-            const oldCount = sourceInquiry.status?.countSupports ?? 0
+            const oldState = item.currentUserStatus?.hasSupported ?? false
+            const oldCount = item.status?.countSupports ?? 0
 
-
-            if (inquiryInList) {
-                inquiryInList.currentUserStatus.hasSupported = !oldState
-                inquiryInList.status.countSupports += oldState ? -1 : 1
+            // Update UI state immediately
+            if (!item.currentUserStatus) {
+                item.currentUserStatus = {}
+            }
+            if (!item.status) {
+                item.status = {}
             }
 
-            if (inquiryInChilds) {
-                inquiryInChilds.currentUserStatus.hasSupported = !oldState
-                inquiryInChilds.status.countSupports += oldState ? -1 : 1
-            }
-
-            if (isCurrentInquiry) {
-                inquiryStore.currentUserStatus.hasSupported = !oldState
-                inquiryStore.status.countSupports += oldState ? -1 : 1
-            }
+            item.currentUserStatus.hasSupported = !oldState
+            item.status.countSupports = (item.status.countSupports || 0) + (oldState ? -1 : 1)
 
             const hasSupported = !oldState
 
             try {
+                // For options, we need to know the parent inquiry ID
+                let inquiryId = itemId
+                let optionId: number | undefined = undefined
+                
+                if (itemType === 'option') {
+                    // For options, we need the parent inquiry ID
+                    inquiryId = (item as Option).targetId
+                    optionId = itemId
+                }
+                
                 if (hasSupported) {
-                    await SupportsAPI.addSupport(inquiryId, userId)
+                    await SupportsAPI.addSupport(inquiryId, userId, 1, optionId)
                 } else {
-                    await SupportsAPI.removeSupport(inquiryId, userId)
+                    await SupportsAPI.removeSupport(inquiryId, userId, optionId)
                 }
 
                 return hasSupported
             } catch (error) {
-                if (inquiryInList) {
-                    inquiryInList.currentUserStatus.hasSupported = oldState
-                    inquiryInList.status.countSupports = oldCount
-                }
-
-                if (inquiryInChilds) {
-                    inquiryInChilds.currentUserStatus.hasSupported = oldState
-                    inquiryInChilds.status.countSupports = oldCount
-                }
-
-                if (isCurrentInquiry) {
-                    inquiryStore.currentUserStatus.hasSupported = oldState
-                    inquiryStore.status.countSupports = oldCount
-                }
+                // Rollback on error
+                item.currentUserStatus.hasSupported = oldState
+                item.status.countSupports = oldCount
 
                 throw error
             }
         },
 
-        async toggleTernarySupport(inquiryId: number, userId: string, inquiryStore: Inquiry, inquiriesStore: { inquiries: Inquiry[] }) {
-            // Find all potential instances
-            const inquiryInList = inquiriesStore.inquiries.find((i: Inquiry) => i.id === inquiryId)
-            const inquiryInChilds = inquiryStore?.childs?.find((i: Inquiry) => i.id === inquiryId)
-            const isCurrentInquiry = inquiryStore?.id === inquiryId
+        async toggleTernarySupport(itemId: number, userId: string, item: SupportableItem, itemType: 'inquiry' | 'option') {
+            if (!item) {
+                return
+            }
 
-            // Collect all unique instances to update
-            const instancesToUpdate = new Set()
+            const currentValue = item.currentUserStatus?.supportValue ?? null
 
-            if (inquiryInList) instancesToUpdate.add(inquiryInList)
-                if (inquiryInChilds) instancesToUpdate.add(inquiryInChilds)
-                    if (isCurrentInquiry && inquiryStore) instancesToUpdate.add(inquiryStore)
+            let nextValue: number | null
+            let shouldRemove = false
 
-                        if (instancesToUpdate.size === 0) {
-                            return
-                        }
+            // Cycle: 1 -> 0 -> -1 -> remove (null)
+            if (currentValue === 1) {
+                nextValue = 0
+            } else if (currentValue === 0) {
+                nextValue = -1
+            } else if (currentValue === -1) {
+                shouldRemove = true
+                nextValue = null // Remove participation
+            } else {
+                // currentValue is null (no support) - start cycle at 1
+                nextValue = 1
+            }
 
-                        // Use the first instance as source for current value
-                        const sourceInquiry = Array.from(instancesToUpdate)[0] as Inquiry
-                        const currentValue = sourceInquiry.currentUserStatus?.supportValue ?? null
+            // Save old state for rollback
+            const oldState = {
+                value: currentValue,
+                hasSupported: currentValue !== null && currentValue !== undefined,
+                counts: {
+                    positive: item.status?.countPositiveSupports ?? 0,
+                    neutral: item.status?.countNeutralSupports ?? 0,
+                    negative: item.status?.countNegativeSupports ?? 0,
+                },
+                total: item.status?.countSupports ?? 0
+            }
 
-                        let nextValue: number | null
-                        let shouldRemove = false
+            try {
+                // Update UI state
+                this.updateTernaryUIState(item, currentValue, nextValue, shouldRemove)
 
+                // For options, we need to know the parent inquiry ID
+                let inquiryId = itemId
+                let optionId: number | undefined = undefined
+                
+                if (itemType === 'option') {
+                    // For options, we need the parent inquiry ID
+                    inquiryId = (item as Option).targetId 
+                    optionId = itemId
+                }
 
-                        // Cycle: 1 -> 0 -> -1 -> remove (null)
-                        if (currentValue === 1) {
-                            nextValue = 0
-                        } else if (currentValue === 0) {
-                            nextValue = -1
-                        } else if (currentValue === -1) {
-                            shouldRemove = true
-                            nextValue = null // Remove participation
-                        } else {
-                            // currentValue is null (no support) - start cycle at 1
-                            nextValue = 1
-                        }
+                // Make API call
+                if (shouldRemove) {
+                    // Remove from database
+                    await SupportsAPI.removeSupport(inquiryId, userId, optionId)
+                    this.removeItem(inquiryId, userId, optionId)
+                } else if (currentValue === null) {
+                    // Add new support
+                    const result = await SupportsAPI.addSupport(inquiryId, userId, nextValue as number, optionId)
+                    this.setItem({ support: result.data.support })
+                } else {
+                    // Update existing support
+                    const result = await SupportsAPI.updateSupport(inquiryId, userId, nextValue as number, optionId)
+                    this.setItem({ support: result.data.support })
+                }
 
-                        // Save old state for rollback
-                        const oldState = {
-                            value: currentValue,
-                            hasSupported: currentValue !== null && currentValue !== undefined,
-                            counts: {
-                                positive: sourceInquiry.status?.countPositiveSupports ?? 0,
-                                neutral: sourceInquiry.status?.countNeutralSupports ?? 0,
-                                negative: sourceInquiry.status?.countNegativeSupports ?? 0,
-                            },
-                            total: sourceInquiry.status?.countSupports ?? 0
-                        }
-
-                        try {
-                            // Update ALL instances (no duplicates)
-                            instancesToUpdate.forEach((inquiry: Inquiry) => {
-                                this.updateTernaryUIState(inquiry, currentValue, nextValue, shouldRemove)
-                            })
-
-
-                            // Make API call
-                            if (shouldRemove) {
-                                // Remove from database
-                                await SupportsAPI.removeSupport(inquiryId, userId)
-                                this.removeItem(inquiryId, userId)
-                            } else if (currentValue === null) {
-                                // Add new support
-                                const result = await SupportsAPI.addSupport(inquiryId, userId, nextValue as number)
-                                this.setItem({ support: result.data.support })
-                            } else {
-                                // Update existing support
-                                const result = await SupportsAPI.updateSupport(inquiryId, userId, nextValue as number)
-                                this.setItem({ support: result.data.support })
-                            }
-
-                            return nextValue
-                        } catch (error) {
-                            // Rollback ALL instances on error
-                            instancesToUpdate.forEach((inquiry: Inquiry) => {
-                                this.rollbackTernaryUIState(inquiry, oldState)
-                            })
-
-                            throw error
-                        }
+                return nextValue
+            } catch (error) {
+                // Rollback on error
+                this.rollbackTernaryUIState(item, oldState)
+                throw error
+            }
         },
 
         // Helper to update UI state for ternary mode
-        updateTernaryUIState(inquiry: Inquiry, currentValue: number | null, nextValue: number | null, shouldRemove: boolean) {
-            // Update the current user's support status
-            if (!inquiry.currentUserStatus) {
-                inquiry.currentUserStatus = {}
+        updateTernaryUIState(item: SupportableItem, currentValue: number | null, nextValue: number | null, shouldRemove: boolean) {
+            // Initialize objects if they don't exist
+            if (!item.currentUserStatus) {
+                item.currentUserStatus = {}
             }
-
-            if (shouldRemove) {
-                // Remove support entirely
-                inquiry.currentUserStatus.supportValue = null
-                inquiry.currentUserStatus.hasSupported = false
-            } else {
-                // Update to new value
-                inquiry.currentUserStatus.supportValue = nextValue
-                inquiry.currentUserStatus.hasSupported = true
-            }
-
-            // Update support counts based on the transition
-            if (!inquiry.status) {
-                inquiry.status = {}
+            if (!item.status) {
+                item.status = {}
             }
 
             // Initialize counts if they don't exist
-            if (inquiry.status.countPositiveSupports === undefined) inquiry.status.countPositiveSupports = 0
-                if (inquiry.status.countNeutralSupports === undefined) inquiry.status.countNeutralSupports = 0
-                    if (inquiry.status.countNegativeSupports === undefined) inquiry.status.countNegativeSupports = 0
-                        if (inquiry.status.countSupports === undefined) inquiry.status.countSupports = 0
+            if (item.status.countPositiveSupports === undefined) item.status.countPositiveSupports = 0
+            if (item.status.countNeutralSupports === undefined) item.status.countNeutralSupports = 0
+            if (item.status.countNegativeSupports === undefined) item.status.countNegativeSupports = 0
+            if (item.status.countSupports === undefined) item.status.countSupports = 0
 
-                            // Remove the old support value from counts
-                            if (currentValue === 1) {
-                                inquiry.status.countPositiveSupports = Math.max(0, inquiry.status.countPositiveSupports - 1)
-                                inquiry.status.countSupports = Math.max(0, inquiry.status.countSupports - 1)
-                            } else if (currentValue === 0) {
-                                inquiry.status.countNeutralSupports = Math.max(0, inquiry.status.countNeutralSupports - 1)
-                                inquiry.status.countSupports = Math.max(0, inquiry.status.countSupports - 1)
-                            } else if (currentValue === -1) {
-                                inquiry.status.countNegativeSupports = Math.max(0, inquiry.status.countNegativeSupports - 1)
-                                inquiry.status.countSupports = Math.max(0, inquiry.status.countSupports - 1)
-                            }
-                            // Note: if currentValue is null, we don't subtract anything (new support)
+            // Update the current user's support status
+            if (shouldRemove) {
+                // Remove support entirely
+                item.currentUserStatus.supportValue = null
+                item.currentUserStatus.hasSupported = false
+            } else {
+                // Update to new value
+                item.currentUserStatus.supportValue = nextValue
+                item.currentUserStatus.hasSupported = true
+            }
 
-                            // Add the new support value to counts
-                            if (nextValue === 1) {
-                                inquiry.status.countPositiveSupports += 1
-                                inquiry.status.countSupports += 1
-                            } else if (nextValue === 0) {
-                                inquiry.status.countNeutralSupports += 1
-                                inquiry.status.countSupports += 1
-                            } else if (nextValue === -1) {
-                                inquiry.status.countNegativeSupports += 1
-                                inquiry.status.countSupports += 1
-                            }
+            // Update support counts based on the transition
+            // Remove the old support value from counts
+            if (currentValue === 1) {
+                item.status.countPositiveSupports = Math.max(0, item.status.countPositiveSupports - 1)
+                item.status.countSupports = Math.max(0, item.status.countSupports - 1)
+            } else if (currentValue === 0) {
+                item.status.countNeutralSupports = Math.max(0, item.status.countNeutralSupports - 1)
+                item.status.countSupports = Math.max(0, item.status.countSupports - 1)
+            } else if (currentValue === -1) {
+                item.status.countNegativeSupports = Math.max(0, item.status.countNegativeSupports - 1)
+                item.status.countSupports = Math.max(0, item.status.countSupports - 1)
+            }
+            // Note: if currentValue is null, we don't subtract anything (new support)
 
+            // Add the new support value to counts
+            if (nextValue === 1) {
+                item.status.countPositiveSupports += 1
+                item.status.countSupports += 1
+            } else if (nextValue === 0) {
+                item.status.countNeutralSupports += 1
+                item.status.countSupports += 1
+            } else if (nextValue === -1) {
+                item.status.countNegativeSupports += 1
+                item.status.countSupports += 1
+            }
         },
 
-        rollbackTernaryUIState(inquiry: Inquiry, oldState: Inquiry) {
-            // Restore current user status
-            if (!inquiry.currentUserStatus) {
-                inquiry.currentUserStatus = {}
+        rollbackTernaryUIState(item: SupportableItem, oldState: any) {
+            // Initialize objects if they don't exist
+            if (!item.currentUserStatus) {
+                item.currentUserStatus = {}
+            }
+            if (!item.status) {
+                item.status = {}
             }
 
-            inquiry.currentUserStatus.supportValue = oldState.supportValue
-            inquiry.currentUserStatus.hasSupported = oldState.hasSupported
+            // Restore current user status
+            item.currentUserStatus.supportValue = oldState.value
+            item.currentUserStatus.hasSupported = oldState.hasSupported
 
             // Restore counts
-            if (!inquiry.status) {
-                inquiry.status = {}
-            }
-
-            inquiry.status.countPositiveSupports = oldState.counts.positive
-            inquiry.status.countNeutralSupports = oldState.counts.neutral
-            inquiry.status.countNegativeSupports = oldState.counts.negative
-            inquiry.status.countSupports = oldState.total
-
+            item.status.countPositiveSupports = oldState.counts.positive
+            item.status.countNeutralSupports = oldState.counts.neutral
+            item.status.countNegativeSupports = oldState.counts.negative
+            item.status.countSupports = oldState.total
         },
 
         async load() {
@@ -342,7 +348,7 @@ export const useSupportsStore = defineStore('supports', {
             }
         },
 
-        async add(inquiryId: number, userId: string, value: number) {
+        async add(inquiryId: number, userId: string, value: number, optionId?: number) {
             const sessionStore = useSessionStore()
             try {
                 const response = await (() => {
@@ -351,14 +357,16 @@ export const useSupportsStore = defineStore('supports', {
                             sessionStore.publicToken,
                             inquiryId,
                             userId,
-                            value
+                            value,
+                            optionId
                         )
                     }
                     if (sessionStore.route.name === 'inquiry') {
                         return SupportsAPI.addSupport(
                             inquiryId,
                             userId,
-                            value
+                            value,
+                            optionId
                         )
                     }
                     return null
@@ -382,7 +390,7 @@ export const useSupportsStore = defineStore('supports', {
             }
         },
 
-        async update(inquiryId: number, userId: string, value: number) {
+        async update(inquiryId: number, userId: string, value: number, optionId?: number) {
             const sessionStore = useSessionStore()
             try {
                 const response = await (() => {
@@ -391,14 +399,16 @@ export const useSupportsStore = defineStore('supports', {
                             sessionStore.publicToken,
                             inquiryId,
                             userId,
-                            value
+                            value,
+                            optionId
                         )
                     }
                     if (sessionStore.route.name === 'inquiry') {
                         return SupportsAPI.updateSupport(
                             inquiryId,
                             userId,
-                            value
+                            value,
+                            optionId
                         )
                     }
                     return null
@@ -421,7 +431,7 @@ export const useSupportsStore = defineStore('supports', {
             }
         },
 
-        async remove(inquiryId: number, userId: string) {
+        async remove(inquiryId: number, userId: string, optionId?: number) {
             const sessionStore = useSessionStore()
 
             try {
@@ -430,16 +440,18 @@ export const useSupportsStore = defineStore('supports', {
                         return PublicAPI.removeSupport(
                             sessionStore.publicToken,
                             inquiryId,
-                            userId
+                            userId,
+                            optionId
                         )
                     }
                     return SupportsAPI.removeSupport(
                         inquiryId,
-                        userId
+                        userId,
+                        optionId
                     )
                 })()
 
-                this.removeItem(inquiryId, userId)
+                this.removeItem(inquiryId, userId, optionId)
             } catch (error) {
                 if ((error as AxiosError)?.code === 'ERR_CANCELED') {
                     return
@@ -453,8 +465,6 @@ export const useSupportsStore = defineStore('supports', {
 
         /**
          * Restore support for an inquiry
-         * @param payload
-         * @param payload.support
          */
         async restore(payload: { support: Support }) {
             const sessionStore = useSessionStore()

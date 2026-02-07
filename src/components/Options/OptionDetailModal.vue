@@ -114,17 +114,25 @@
                     <NcRichContenteditable 
                                       v-if="optionTypeData.use_title"
                                       v-model="editForm.label"
+                                      :emojiAutocomplete="true"
+                                      :linkAutocomplete="true"
+							          :autolink="true"
+							          :use-markdown="true"
                                       :label="t('agora', 'Title')"
                                       :placeholder="t('agora', 'Enter option title')"
-                                      required
                                       full-width
                                       />
                     <NcRichContenteditable 
                                       v-model="editForm.text"
                                       :label="t('agora', 'Description')"
                                       :placeholder="t('agora', 'Enter option text')"
-                                      type="textarea"
-                                      :rows="6"
+                                      :emojiAutocomplete="true"
+                                      :linkAutocomplete="true"
+							          :autolink="true"
+							          :use-markdown="true"
+			                          :maxlength="400"
+                                      required
+			                          :multiline="true"
                                       full-width
                                       />
 
@@ -195,27 +203,14 @@
                         <div class="features-left">
                             <!-- Support feature -->
                             <div v-if="hasSupportFeature" class="feature-group">
-                                <div class="support-container">
-                                    <TernarySupportIcon
-                                            v-if="supportFeature === 'ternary'"
-                                            :support-value="optionStore.currentUserStatus.supportValue"
-                                            :size="24"
-                                            class="support-icon-large"
-                                            @click="toggleSupport"
-                                            />
-                                    <ThumbIcon
-                                            v-else-if="supportFeature === 'binary'"
-                                            :supported="optionStore.currentUserStatus.hasSupported"
-                                            :size="24"
-                                            class="support-icon-large"
-                                            @click="toggleSupport"
-                                            />
-                                </div>
-                                <!-- Support count display -->
-                                <div v-if="optionStore.status.countSupports > 0" class="support-count-display">
-                                    <span class="support-count-number">{{ optionStore.status.countSupports }}</span>
-                                    <span class="support-count-label">{{ t('agora', 'supports') }}</span>
-                                </div>
+                            <SupportFeature
+                                    :item="optionStore"
+                                    item-type="option"
+                                    :context="optionContext"
+                                    :show-quorum="true"
+                                    :show-details-on-hover="true"
+                                    :icon-size="14"
+                                    />
                             </div>
 
                             <!-- Comment features -->
@@ -381,7 +376,7 @@ import { useOptionsStore } from '../../stores/options'
 import { useOptionStore } from '../../stores/option'
 import { useSessionStore } from '../../stores/session'
 import { InquiryOptionIcons } from '../../utils/icons.ts'
-import { TernarySupportIcon, ThumbIcon } from '../AppIcons'
+import SupportFeature from '../../helpers/modules/SupportFeature.vue'
 import { 
     getOptionTypeData,
     getFamilyColor
@@ -421,7 +416,6 @@ const optionsStore = useOptionsStore()
 const optionStore = useOptionStore()
 const sessionStore = useSessionStore()
 const commentsStore = useCommentsStore()
-const supportsStore = useSupportsStore() // Add supports store
 
 // State
 const show = ref(true)
@@ -462,7 +456,6 @@ const optionTypeData = computed(() => {
       icon: InquiryOptionIcons.File,
       family: 'default',
       use_title: true,
-      support_feature: 'none',
       allow_comment: false,
       allowed_response: [],
       fields: []
@@ -513,16 +506,13 @@ const optionTypeColor = computed(() => {
     return getFamilyColor(optionTypeData.value.family)
 })
 
-const supportFeature = computed(() => {
-    return optionTypeData.value?.support_feature || 'none'
-})
 
 const allowComment = computed(() => {
     return optionTypeData.value?.allow_comment || false
 })
 
 const hasSupportFeature = computed(() => {
-    return supportFeature.value !== 'none'
+    return optionTypeData.value?.support_feature !== 'none' || false
 })
 
 const canEditOrDelete = computed(() => {
@@ -530,7 +520,7 @@ const canEditOrDelete = computed(() => {
 })
 
 const canSaveEdit = computed(() => {
-    return editForm.value.label.trim().length > 0
+    return editForm.value.text.trim().length > 0
 })
 
 const additionalFields = computed(() => {
@@ -739,47 +729,6 @@ const closeModal = () => {
     }, 300)
 }
 
-const toggleSupport = async () => {
-    if (!hasSupportFeature.value || !optionStore || !sessionStore.currentUser?.id) return
-
-    // Store the current state before toggling
-    const hadSupportedBefore = optionStore.currentUserStatus.hasSupported
-    const supportValueBefore = optionStore.currentUserStatus.supportValue
-
-    try {
-        // Use the supports store like in the inquiry example
-        await supportsStore.toggleSupport(optionStore.id, sessionStore.currentUser.id, optionStore, optionsStore)
-
-        // Get the updated state after toggling
-        const hasSupportedAfter = optionStore.currentUserStatus.hasSupported
-        const supportValueAfter = optionStore.currentUserStatus.supportValue
-
-        // Show appropriate success message
-        if (supportFeature.value === 'binary') {
-            if (hasSupportedAfter && !hadSupportedBefore) {
-                showSuccess(t('agora', 'Option supported, thanks for your support!'), { timeout: 2000 })
-            } else if (!hasSupportedAfter && hadSupportedBefore) {
-                showSuccess(t('agora', 'Option support removed!'), { timeout: 2000 })
-            }
-        } else if (supportFeature.value === 'ternary') {
-            if (supportValueAfter === 1) {
-                showSuccess(t('agora', 'Option supported, thanks for your support!'), { timeout: 2000 })
-            } else if (supportValueAfter === 0) {
-                showSuccess(t('agora', 'Neutral position saved!'), { timeout: 2000 })
-            } else if (supportValueAfter === -1) {
-                showSuccess(t('agora', 'Against position saved!'), { timeout: 2000 })
-            } else if (supportValueAfter === null && hadSupportedBefore) {
-                showSuccess(t('agora', 'Participation removed!'), { timeout: 2000 })
-            }
-        }
-
-        emit('updated', optionStore)
-    } catch (err) {
-        console.error('Failed to toggle support:', err)
-        showError(t('agora', 'Failed to update support status'))
-    }
-}
-
 const editOption = () => {
     isEditing.value = true
 }
@@ -801,10 +750,10 @@ const saveEdit = async () => {
     try {
         // Update option using the option store
         const updatedOption = await optionStore.update({
-            ...optionStore.toJSON(),
+            id: props.optionId,
             title: editForm.value.label,
             text: editForm.value.text,
-            miscFields: editForm.fields.value
+            miscFields: editForm.value.fields
         })
 
         isEditing.value = false

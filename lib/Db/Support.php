@@ -20,6 +20,7 @@ use JsonSerializable;
  * @method         void setValue(int $value)
  * @method         string getSupportHash()
  * @method         void setSupportHash(string $value)
+ * @method         string getSupportHash()
  * @method         int getInquiryId()
  * @method         void setInquiryId(int $value)
  * @method         int getOptionId()

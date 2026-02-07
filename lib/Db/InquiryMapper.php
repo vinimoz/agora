@@ -53,8 +53,8 @@ class InquiryMapper extends QBMapper
             $this->joinSupportValue($qb, self::TABLE, $currentUserId);
             $this->joinParticipantsCount($qb, self::TABLE);
             $this->joinSupportsCount($qb, self::TABLE);
-            $this->joinNegatifSupportsCount($qb, self::TABLE);
-            $this->joinPositifSupportsCount($qb, self::TABLE);
+            $this->joinNegativeSupportsCount($qb, self::TABLE);
+            $this->joinPositiveSupportsCount($qb, self::TABLE);
             $this->joinNeutralSupportsCount($qb, self::TABLE);
             $this->joinCommentsCount($qb, self::TABLE);
             $this->joinMiscs($qb, self::TABLE);
@@ -270,8 +270,8 @@ class InquiryMapper extends QBMapper
         $this->joinInquiryGroupShares($qb, $inquiryGroupsAlias, $currentUserId, $inquiryGroupsAlias);
         $this->joinParticipantsCount($qb, self::TABLE);
         $this->joinSupportsCount($qb, self::TABLE);
-        $this->joinNegatifSupportsCount($qb, self::TABLE);
-        $this->joinPositifSupportsCount($qb, self::TABLE);
+        $this->joinNegativeSupportsCount($qb, self::TABLE);
+        $this->joinPositiveSupportsCount($qb, self::TABLE);
         $this->joinNeutralSupportsCount($qb, self::TABLE);
         $this->joinCommentsCount($qb, self::TABLE);
         $this->joinMiscs($qb, self::TABLE);
@@ -653,85 +653,122 @@ protected function joinUserRole(
     }
 
 
-    protected function joinNegatifSupportsCount(
-	    IQueryBuilder &$qb,
-	    string $fromAlias,
-	    string $joinAlias = 'supports_negative',
-    ): void {
-	    $qb->leftJoin(
-		    $fromAlias,
-		    Support::TABLE,
-		    $joinAlias,
-		    $qb->expr()->andX(
-			    $qb->expr()->eq($joinAlias . '.inquiry_id', $fromAlias . '.id'),
-			    $qb->expr()->eq($joinAlias . '.value', $qb->createNamedParameter(-1))
-		    )
-	    )->addSelect($qb->createFunction('COUNT(DISTINCT(' . $joinAlias . '.user_id)) AS count__negative_supports'));
-    }
 
-    protected function joinNeutralSupportsCount(
-	    IQueryBuilder &$qb,
-	    string $fromAlias,
-	    string $joinAlias = 'supports_neutral',
-    ): void {
-	    $qb->leftJoin(
-		    $fromAlias,
-		    Support::TABLE,
-		    $joinAlias,
-		    $qb->expr()->andX(
-			    $qb->expr()->eq($joinAlias . '.inquiry_id', $fromAlias . '.id'),
-			    $qb->expr()->eq($joinAlias . '.value', $qb->createNamedParameter(0))
-		    )
-	    )->addSelect($qb->createFunction('COUNT(DISTINCT(' . $joinAlias . '.user_id)) AS count_neutral_supports'));
-    }
+protected function joinSupportsCount(
+    IQueryBuilder &$qb,
+    string $fromAlias,
+    string $joinAlias = 'supports',
+): void {
+    $qb->leftJoin(
+        $fromAlias,
+        Support::TABLE,
+        $joinAlias,
+        $qb->expr()->andX(
+            $qb->expr()->eq($joinAlias . '.inquiry_id', $fromAlias . '.id')
+        )
+    )
+    ->addSelect(
+        $qb->createFunction(
+            'COUNT(DISTINCT CASE WHEN ' . $joinAlias . '.option_id = 0 THEN ' . $joinAlias . '.user_id ELSE NULL END) AS count_supports'
+        )
+    )
+    ->groupBy($fromAlias . '.id');
+}
 
-    protected function joinPositifSupportsCount(
-	    IQueryBuilder &$qb,
-	    string $fromAlias,
-	    string $joinAlias = 'supports_positive',
-    ): void {
-	    $qb->leftJoin(
-		    $fromAlias,
-		    Support::TABLE,
-		    $joinAlias,
-		    $qb->expr()->andX(
-			    $qb->expr()->eq($joinAlias . '.inquiry_id', $fromAlias . '.id'),
-			    $qb->expr()->eq($joinAlias . '.value', $qb->createNamedParameter(1))
-		    )
-	    )->addSelect($qb->createFunction('COUNT(DISTINCT(' . $joinAlias . '.user_id)) AS count_positive_supports'));
-    }
+// Comments of the inquiry
+protected function joinCommentsCount(
+	IQueryBuilder $qb,
+	string $fromAlias,
+	string $joinAlias = 'comments',
+): void {
+	$qb->leftJoin(
+		$fromAlias,
+		Comment::TABLE,
+		$joinAlias,
+		$qb->expr()->andX(
+			$qb->expr()->eq($joinAlias . '.inquiry_id', $fromAlias . '.id'),
+			$qb->expr()->eq($joinAlias . '.option_id', $qb->createNamedParameter(0))
+		)
+	);
 
-    protected function joinSupportsCount(
-	    IQueryBuilder &$qb,
-	    string $fromAlias,
-	    string $joinAlias = 'supports',
-    ): void {
-	    $qb->leftJoin(
-		    $fromAlias,
-		    Support::TABLE,
-		    $joinAlias,
-		    $qb->expr()->eq($joinAlias . '.inquiry_id', $fromAlias . '.id')
-	    )->addSelect($qb->createFunction('COUNT(DISTINCT(' . $joinAlias . '.user_id)) AS count_supports'));
-	    $qb->groupBy($fromAlias . '.id');
-    }
+	$qb->addSelect(
+		$qb->createFunction(
+			'COUNT(DISTINCT ' . $joinAlias . '.id) AS count_comments'
+		)
+	);
+}
+
+protected function joinNegativeSupportsCount(
+	IQueryBuilder $qb,
+	string $fromAlias,
+	string $joinAlias = 'supports_negative',
+): void {
+	$qb->leftJoin(
+		$fromAlias,
+		Support::TABLE,
+		$joinAlias,
+		$qb->expr()->andX(
+			$qb->expr()->eq($joinAlias . '.inquiry_id', $fromAlias . '.id'),
+            $qb->expr()->eq($joinAlias . '.value', $qb->createNamedParameter(-1)),
+            $qb->expr()->eq($joinAlias . '.option_id', $qb->createNamedParameter(0))
+		)
+	);
+
+	$qb->addSelect(
+		$qb->createFunction(
+			'COUNT(DISTINCT ' . $joinAlias . '.user_id) AS count_negative_supports'
+		)
+	);
+}
 
 
+protected function joinPositiveSupportsCount(
+	IQueryBuilder $qb,
+	string $fromAlias,
+	string $joinAlias = 'supports_positive',
+): void {
+	$qb->leftJoin(
+		$fromAlias,
+		Support::TABLE,
+		$joinAlias,
+		$qb->expr()->andX(
+			$qb->expr()->eq($joinAlias . '.inquiry_id', $fromAlias . '.id'),
+            $qb->expr()->eq($joinAlias . '.value', $qb->createNamedParameter(1)),
+            $qb->expr()->eq($joinAlias . '.option_id', $qb->createNamedParameter(0))
+		)
+	);
 
-    protected function joinCommentsCount(
-	    IQueryBuilder &$qb,
-	    string $fromAlias,
-	    string $joinAlias = 'comments',
-    ): void {
-	    $qb->leftJoin(
-		    $fromAlias,
-		    Comment::TABLE,
-		    $joinAlias,
-		    $qb->expr()->eq($joinAlias . '.inquiry_id', $fromAlias . '.id')
-	    )->addSelect($qb->createFunction('COUNT(DISTINCT(' . $joinAlias . '.id)) AS count_comments'));
-	    $qb->groupBy($fromAlias . '.id');
-    }
+	$qb->addSelect(
+		$qb->createFunction(
+			'COUNT(DISTINCT ' . $joinAlias . '.user_id) AS count_positive_supports'
+		)
+	);
+}
 
-    protected function joinParticipantsCount(
+protected function joinNeutralSupportsCount(
+	IQueryBuilder $qb,
+	string $fromAlias,
+	string $joinAlias = 'supports_neutral',
+): void {
+	$qb->leftJoin(
+		$fromAlias,
+		Support::TABLE,
+		$joinAlias,
+		$qb->expr()->andX(
+			$qb->expr()->eq($joinAlias . '.inquiry_id', $fromAlias . '.id'),
+            $qb->expr()->eq($joinAlias . '.value', $qb->createNamedParameter(0)),
+            $qb->expr()->eq($joinAlias . '.option_id', $qb->createNamedParameter(0))
+		)
+	);
+
+	$qb->addSelect(
+		$qb->createFunction(
+			'COUNT(DISTINCT ' . $joinAlias . '.user_id) AS count_neutral_supports'
+		)
+	);
+}
+
+protected function joinParticipantsCount(
 	    IQueryBuilder &$qb,
 	    string $fromAlias,
 	    string $joinAlias = 'participants',

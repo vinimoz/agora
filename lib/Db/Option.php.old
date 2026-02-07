@@ -216,6 +216,8 @@ class Option extends EntityWithUser implements JsonSerializable
             'showResults' => $this->getShowResults(),
             'status' => $this->getStatusArray(),
             'configuration' => $this->getConfigurationArray(),
+            'allowComment' => $this->getAllowComment(),
+            'supportFeature' => $this->getSupportFeature(),
             'family' => $this->getFamily(),
             'sortOrder' => $this->getSortOrder(),
             'currentUserStatus' => $this->getCurrentUserStatus(),
@@ -233,11 +235,21 @@ class Option extends EntityWithUser implements JsonSerializable
     {
         return [
         'access' => $this->getAccess(),
+        'autoReminder' => $this->getAutoReminder(),
+        'expire' => $this->getExpire(),
+        'forceConfidentialComments' => $this->getForceConfidentialComments(),
         'allowComment' => boolval($this->getAllowComment()),
         'supportFeature' => $this->getSupportFeature(),
         ];
     }
 
+    public function getPermissionsArray(): array
+    {
+        return [
+        'addInquiry' => $this->getIsAllowed(self::PERMISSION_INQUIRY_ADD),
+        'addShares' => $this->getIsAllowed(self::PERMISSION_SHARE_ADD),
+        'addSharesExternal' => $this->getIsAllowed(self::PERMISSION_SHARE_ADD_EXTERNAL),
+        'archive' => $this->getIsAllowed(self::PERMISSION_INQUIRY_ARCHIVE),
 
     public function getMiscArray(): array
     {

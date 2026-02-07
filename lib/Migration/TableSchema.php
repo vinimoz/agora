@@ -289,7 +289,7 @@ abstract class TableSchema
             'UNIQ_token' => ['columns' => ['token']],
         ],
         Support::TABLE => [
-            'UNIQ_supports' => ['columns' => ['support_hash']],
+            'UNIQ_supports' => ['columns' => ['inquiry_id', 'option_id', 'user_id']],
         ],
         Preferences::TABLE => [
             'UNIQ_preferences' => ['columns' => ['user_id']],

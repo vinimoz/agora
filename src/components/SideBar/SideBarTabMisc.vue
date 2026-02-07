@@ -579,118 +579,123 @@ onMounted(() => {
           </div>
 
           <!-- Dynamic fields -->
-          <div
-            v-for="field in dynamicFields.slice()" 
-            :key="field.key"
-            class="edit-field-item"
-          >
-            <!-- Checkbox field -->
-            <div v-if="field.type === 'boolean'" class="checkbox-field">
-              <div class="checkbox-wrapper">
-                <input
-                  :id="`checkbox-${field.key}`"
-                  type="checkbox"
-                  :checked="getCheckboxValue(field.key)"
-                  :name="field.key"
-                  :disabled="isSaving"
-                  @change="(e) => updateFieldValue(field.key, (e.target as HTMLInputElement).checked, 'boolean')"
-                />
-                <label :for="`checkbox-${field.key}`" class="checkbox-label">
-                  {{ field.label }}
-                  <span v-if="!field.required" class="optional-label">({{ t('agora','optional') }})</span>
-                </label>
-              </div>
-            </div>
 
-            <!-- Other fields -->
-            <div v-else class="standard-field">
-              <label class="edit-field-label">
-                {{ field.label }}
-                <span v-if="field.required" class="required-asterisk">*</span>
-                <span v-else class="optional-label">({{ t('agora','optional') }})</span>
-              </label>
+          <!-- Dynamic fields -->
+<div
+  v-for="field in dynamicFields.slice()"
+  :key="field.key"
+  class="edit-field-item"
+>
+  <!-- Checkbox field -->
+  <div v-if="field.type === 'boolean'" class="checkbox-field">
+    <div class="checkbox-wrapper">
+      <input
+        :id="`checkbox-${field.key}`"
+        type="checkbox"
+        :checked="getCheckboxValue(field.key)"
+        :name="field.key"
+        :disabled="isSaving"
+        @change="(e) => updateFieldValue(field.key, (e.target as HTMLInputElement).checked, 'boolean')"
+      />
+      <label :for="`checkbox-${field.key}`" class="checkbox-label">
+        {{ field.label }}
+        <span v-if="!field.required" class="optional-label">({{ t('agora','optional') }})</span>
+      </label>
+    </div>
+  </div>
 
-              <div class="edit-field-input">
-                <!-- Enum field -->
-                <NcSelect
-                  v-if="field.type === 'enum'"
-                  :model-value="getMiscValue(field.key) || field.default"
-                  :options="field.allowed_values || []"
-                  :reduce="(option: string) => option"
-                  :clearable="!field.required"
-                  :label-outside="true"
-                  :input-label="field.label"
-                  :disabled="isSaving"
-                  :placeholder="t('Select an option')"
-                  @update:model-value="(val: string) => updateFieldValue(field.key, val, 'enum')"
-                />
+  <!-- Other fields -->
+  <div v-else class="standard-field">
+    <label class="edit-field-label">
+      {{ field.label }}
+      <span v-if="field.required" class="required-asterisk">*</span>
+      <span v-else class="optional-label">({{ t('agora','optional') }})</span>
+    </label>
 
-                <!-- Integer field -->
-                <NcInputField
-                  v-else-if="field.type === 'integer'"
-                  v-model="inquiryStore.miscFields[field.key]"
-                  type="number"
-                  :label="field.label"
-                  :disabled="isSaving"
-                  @update:model-value="(val: string) => updateFieldValue(field.key, parseInt(val) || null, 'integer')"
-                />
+    <div class="edit-field-input">
+      <!-- Enum field -->
+      <NcSelect
+        v-if="field.type === 'enum'"
+        :model-value="getMiscValue(field.key) || field.default"
+        :options="field.allowed_values || []"
+        :reduce="(option: string) => option"
+        :clearable="!field.required"
+        :label-outside="true"
+        :input-label="field.label"
+        :disabled="isSaving"
+        :placeholder="t('Select an option')"
+        @update:model-value="(val: string) => updateFieldValue(field.key, val, 'enum')"
+      />
 
-                <!-- Datetime field -->
-                <NcDateTimePickerNative
-                  v-else-if="field.type === 'datetime'"
-                  :model-value="getFormattedDate(field.key)"
-                  type="date"
-                  :label="field.label"
-                  :disabled="isSaving"
-                  @update:model-value="(val: string) => updateFieldValue(field.key, val, 'datetime')"
-                />
+      <!-- Integer field -->
+      <NcInputField
+        v-else-if="field.type === 'integer'"
+        :model-value="inquiryStore.miscFields[field.key] || ''"
+        type="number"
+        :label="field.label"
+        :disabled="isSaving"
+        @update:model-value="(val: string) => updateFieldValue(field.key, val ? parseInt(val) : null, 'integer')"
+      />
 
-                <!-- Users/Groups field -->
-                <UserSearch
-                  v-else-if="field.type === 'users' || field.type === 'groups'"
-                  v-model="selectedUsers[field.key]"
-                  :search-types="field.type === 'users' ? [99] : [1]"
-                  :placeholder="t('Type to search for users')"
-                  :aria-label="field.label"
-                  :close-on-select="true"
-                  @user-selected="(user) => handleUserSelected(field.key, user)"
-                />
+      <!-- Datetime field -->
+      <NcDateTimePickerNative
+        v-else-if="field.type === 'datetime'"
+        :model-value="getFormattedDate(field.key)"
+        type="date"
+        :label="field.label"
+        :disabled="isSaving"
+        @update:model-value="(val: string) => updateFieldValue(field.key, val, 'datetime')"
+      />
 
-                <!-- JSON field -->
-                <div v-else-if="field.type === 'json'" class="json-field">
-                  <NcInputField
-                    v-model="inquiryStore.miscFields[field.key]"
-                    type="textarea"
-                    :rows="5"
-                    :label="field.label"
-                    :disabled="isSaving"
-                    @update:model-value="(val: string) => {
-                      try {
-                        const parsed = val ? JSON.parse(val) : null
-                        updateFieldValue(field.key, parsed, 'json')
-                      } catch {
-                        updateFieldValue(field.key, val, 'json')
-                      }
-                    }"
-                  />
-                </div>
+      <!-- Users/Groups field -->
+      <UserSearch
+        v-else-if="field.type === 'users' || field.type === 'groups'"
+        v-model="selectedUsers[field.key]"
+        :search-types="field.type === 'users' ? [99] : [1]"
+        :placeholder="t('Type to search for users')"
+        :aria-label="field.label"
+        :close-on-select="true"
+        @user-selected="(user) => handleUserSelected(field.key, user)"
+      />
 
-                <!-- Default string field -->
-                <NcInputField
-                  v-else
-                  v-model="inquiryStore.miscFields[field.key]"
-                  type="text"
-                  :label="field.label"
-                  :disabled="isSaving"
-                  @update:model-value="(val: string) => updateFieldValue(field.key, val, 'string')"
-                />
-              </div>
-            </div>
+      <!-- JSON field -->
+      <div v-else-if="field.type === 'json'" class="json-field">
+        <NcInputField
+          :model-value="inquiryStore.miscFields[field.key] || ''"
+          type="textarea"
+          :rows="5"
+          :label="field.label"
+          :disabled="isSaving"
+          @update:model-value="(val: string) => {
+            try {
+              const parsed = val ? JSON.parse(val) : null
+              updateFieldValue(field.key, parsed, 'json')
+            } catch {
+              updateFieldValue(field.key, val, 'json')
+            }
+          }"
+        />
+      </div>
 
-            <div v-if="field.description" class="field-description">
-              {{ field.description }}
-            </div>
-          </div>
+      <!-- Default string field -->
+      <NcInputField
+        v-else
+        :model-value="inquiryStore.miscFields[field.key] || ''"
+        type="text"
+        :label="field.label"
+        :disabled="isSaving"
+        @update:model-value="(val: string) => {
+          inquiryStore.miscFields[field.key] = val
+          updateFieldValue(field.key, val, 'string')
+        }"
+      />
+    </div>
+  </div>
+
+  <div v-if="field.description" class="field-description">
+    {{ field.description }}
+  </div>
+</div>
         </div>
       </div>
     </div>

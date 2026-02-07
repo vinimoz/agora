@@ -112,9 +112,7 @@ class UserBase implements JsonSerializable
         protected string $localeCode = '',
         protected string $timeZoneName = '',
         protected string $location = '',
-        array $groups = []
     ) {
-        $this->groups = $groups;
         $this->l10n = Container::getL10N();
         $this->groupManager = Container::queryClass(IGroupManager::class);
         $this->timeZone = Container::queryClass(IDateTimeZone::class);
