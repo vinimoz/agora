@@ -14,7 +14,8 @@ import { t } from '@nextcloud/l10n'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
 import NcInputField from '@nextcloud/vue/components/NcInputField'
 import NcDateTimePickerNative from '@nextcloud/vue/components/NcDateTimePickerNative'
-import UserSearch from '../User/UserSearch.vue' 
+import NcCheckboxRadioSwitchSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
+import UserSearch from '../User/UserSearch.vue'
 
 const props = withDefaults(defineProps<{
   isReadonly?: boolean

@@ -210,14 +210,12 @@ class Option extends EntityWithUser implements JsonSerializable
             'parentId' => $this->getParentId(),
             'type' => $this->getType(),
             'title' => $this->getTitle(),
-            'access' => $this->getAccess(),
             'text' => $this->getText(),
             'owner' => $this->getUser(),
             'ownedGroup' => $this->getOwnedGroup(),
             'showResults' => $this->getShowResults(),
             'status' => $this->getStatusArray(),
-            'allowComment' => $this->getAllowComment(),
-            'supportFeature' => $this->getSupportFeature(),
+            'configuration' => $this->getConfigurationArray(),
             'family' => $this->getFamily(),
             'sortOrder' => $this->getSortOrder(),
             'currentUserStatus' => $this->getCurrentUserStatus(),
@@ -230,6 +228,16 @@ class Option extends EntityWithUser implements JsonSerializable
 
         return $baseData;
     }
+
+    public function getConfigurationArray(): array
+    {
+        return [
+        'access' => $this->getAccess(),
+        'allowComment' => boolval($this->getAllowComment()),
+        'supportFeature' => $this->getSupportFeature(),
+        ];
+    }
+
 
     public function getMiscArray(): array
     {

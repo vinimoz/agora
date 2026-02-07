@@ -10,7 +10,7 @@ import { showSuccess } from '@nextcloud/dialogs'
 import { DateTime } from 'luxon'
 import { t } from '@nextcloud/l10n'
 import NcAvatar from '@nextcloud/vue/components/NcAvatar'
-import { TernarySupportIcon, ThumbIcon } from '../AppIcons'
+import SupportFeature from '../../helpers/modules/SupportFeature.vue'
 import { useSupportsStore } from '../../stores/supports'
 import {
   canComment,
@@ -41,45 +41,8 @@ const { inquiry, noLink = false, gridView = false } = defineProps<Props>()
 
 
 // Context for permissions
-const context = computed(() => {
-  return createInquiryContext(inquiry, sessionStore.appSettings)
-})
+const context = computed(() => createInquiryContext(inquiry, sessionStore.appSettings))
 
-const onToggleSupport = async () => {
-  // Store the current state before toggling
-  const hadSupportedBefore = inquiry.currentUserStatus.hasSupported
-  
-  try {
-    await supportsStore.toggleSupport(inquiry.id, sessionStore.currentUser.id, inquiryStore, inquiriesStore)
-    
-    // Get the updated state after toggling
-    const hasSupportedAfter = inquiry.currentUserStatus.hasSupported
-    const supportValueAfter = inquiry.currentUserStatus.supportValue
-    
-    if (inquiryStore.configuration.supportFeature === 'binary') {
-      if (hasSupportedAfter && !hadSupportedBefore) {
-        showSuccess(t('agora', 'Inquiry supported, thanks for your support!'), { timeout: 2000 })
-      } else if (!hasSupportedAfter && hadSupportedBefore) {
-        showSuccess(t('agora', 'Inquiry support removed!'), { timeout: 2000 })
-      }
-    } 
-    else if (inquiryStore.configuration.supportFeature === 'ternary') {
-      if (supportValueAfter === 1) {
-        showSuccess(t('agora', 'Inquiry supported, thanks for your support!'), { timeout: 2000 })
-      } else if (supportValueAfter === 0) {
-        showSuccess(t('agora', 'Neutral position saved!'), { timeout: 2000 })
-      } else if (supportValueAfter === -1) {
-        showSuccess(t('agora', 'Against position saved!'), { timeout: 2000 })
-      } else if (supportValueAfter === null && hadSupportedBefore) {
-        showSuccess(t('agora', 'Participation removed!'), { timeout: 2000 })
-      }
-    }
-    
-  } catch (error) {
-    console.error('Failed to toggle support:', error)
-    showError(t('agora', 'Failed to update support status'))
-  }
-}
 
 function htmlToFirstLine(html: string): string {
   const tempDiv = document.createElement('div')
@@ -314,29 +277,15 @@ const hasVotePeriod = computed(() => inquiry.miscFields?.support_start && inquir
         <div
           v-if="canSupport(context)"
           class="badge-bubble"
-          :title="
-                  t('agora', '{count} supports', {
-                  count: inquiry.status.countSupports || 0,
-                  })
-                  "
-          @click="onToggleSupport"
           >
-          <TernarySupportIcon
-                  v-if="inquiry.configuration.supportFeature === 'ternary'"
-                  :support-value="inquiry.currentUserStatus.supportValue"
-                  :size="22"
-                  />
-          <ThumbIcon
-                  v-else
-                  :supported="inquiry.currentUserStatus.hasSupported"
-                  :size="22"
-                  />
-          <span>{{ inquiry.status.countSupports }}</span>
-          <span v-if="hasQuorum" class="quorum-compact">
-              <span class="quorum-separator"> / </span>
-              <span class="quorum-target">{{ quorumValue }}</span>
-              <span class="quorum-label">{{ t('agora', 'supports') }}</span>
-          </span>
+                            <SupportFeature
+                                    :item="inquiry"
+                                    item-type="inquiry"
+                                    :context="context"
+                                    :show-quorum="true"
+                                    :show-details-on-hover="true"
+                                    :icon-size="14"
+                                    />
         </div>
 
         <div
@@ -352,15 +301,6 @@ const hasVotePeriod = computed(() => inquiry.miscFields?.support_start && inquir
                 <span>{{ inquiry.status.countParticipants }}</span>
         </div>
 
-        <!-- 
-        <NcAvatar
-                :user="inquiry.owner.id"
-                class="user-avatar"
-                :style="{ marginLeft: '-8px', marginRight: '4px' }"
-                :show-name="false"
-                :size="32"
-                />
-                -->
            <!-- User info section -->
             <div class="user-info-section">
                 <div class="user-avatar">
@@ -523,33 +463,16 @@ const hasVotePeriod = computed(() => inquiry.miscFields?.support_start && inquir
                                     <span>{{ inquiry.status.countComments || 0 }}</span>
                             </div>
 
-                            <div
+                            <SupportFeature
                                     v-if="canSupport(context)"
+                                    :item="inquiry"
+                                    item-type="inquiry"
+                                    :context="context"
+                                    :show-quorum="true"
+                                    :show-details-on-hover="true"
+                                    :icon-size="14"
                                     class="metadata-item supports"
-                                    :title="
-                                            t('agora', '{count} supports', {
-                                            count: inquiry.status.countSupports || 0,
-                                            })
-                                            "
-                                    @click="onToggleSupport"
-                                    >
-                                    <TernarySupportIcon
-                                            v-if="inquiry.configuration.supportFeature === 'ternary'"
-                                            :support-value="inquiry.currentUserStatus.supportValue"
-                                            :size="22"
-                                            />
-                                    <ThumbIcon
-                                            v-else
-                                            :supported="inquiry.currentUserStatus.hasSupported"
-                                            :size="22"
-                                            />
-                                    <span>{{ inquiry.status.countSupports }}</span>
-                                    <span v-if="hasQuorum" class="quorum-compact">
-                                        <span class="quorum-separator"> / </span>
-                                        <span class="quorum-target">{{ quorumValue }}</span>
-                                        <span class="quorum-label">{{ t('agora', 'supports') }}</span>
-                                    </span>
-                            </div>
+                                    />
                         </div>
                     </div>
 

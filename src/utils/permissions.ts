@@ -279,7 +279,7 @@ export function createInquiryContext(inquiry: InquiryStoreLike, appSettings: any
     contentType: ContentType.Inquiry,
     isOwner: isContentOwner(inquiry.owner.id),
     isPublic: inquiry.configuration.access === 'public',
-    isLocked: inquiry.status.isLocked,
+    isLocked: inquiry.currentUserStatus.isLocked,
     isExpired: inquiry.status.isExpired,
     isDeleted: inquiry.status.deletionDate > 0,
     isArchived: inquiry.status.isArchived,
@@ -347,10 +347,9 @@ export function createInquiryGroupContext(group: any): PermissionContext {
     isGroupMember: true,
     isGroupEditor: isGroupEditor || isOwner,
     groupType: group.type,
-    ownedGroup: ownedGroup,
+    ownedGroup,
   }
 }
-
 
 
 function getDisplayPermissions(context: PermissionContext): {
@@ -361,6 +360,10 @@ function getDisplayPermissions(context: PermissionContext): {
   const hasSupportValue = context.supportFeature !== undefined
   const hasCommentValue = context.allowComment !== undefined
   
+  console.log(" HAS SUPPORT ", hasSupportValue )
+  console.log(" HAS COMMENT ", hasCommentValue )
+
+  // If context has explicit values, use them
   if (hasSupportValue || hasCommentValue) {
     
     const canSupport = hasSupportValue 
@@ -371,13 +374,21 @@ function getDisplayPermissions(context: PermissionContext): {
     
     const canComment = hasCommentValue
       ? context.allowComment !== null && Boolean(context.allowComment)
-      : true
+      : true // Default to true if not specified
     
     return { canSupport, canComment }
   }
   
-  return getTypeConfigPermissions(context)
+  // Only fall back to type config if context doesn't have explicit values
+  // But avoid infinite recursion - check if we're already in a type config check
+  if (context.contentType === ContentType.Inquiry || context.contentType === ContentType.Option) {
+    return getTypeConfigPermissions(context)
+  }
+  
+  // Default for other content types
+  return { canSupport: false, canComment: true }
 }
+
 
 export function getEditPermissions(context: PermissionContext): {
   canSupport: boolean
@@ -396,7 +407,7 @@ function getTypeConfigPermissions(context: PermissionContext): {
     ? context.inquiryType 
     : context.optionType
   
-  
+  console.log(" GET TYPE CONGIG IN PERMISSION ",typeKey) 
   if (!typeKey) {
     return { canSupport: false, canComment: false }
   }
@@ -460,15 +471,23 @@ export function canSupport(context: PermissionContext): boolean {
         return false
     }
 
+
+    if (context.supportFeature && context.supportFeature!=='') {
+        return context.supportFeature !=='none'
+    }
+
+
     const typePerms = getDisplayPermissions(context) 
       if (!typePerms.canSupport) {
         return false
     }
 
+
       // Group access check
     if (!hasGroupAccess(context)) {
         return false
     }
+
 
     // Guest user check
     if (context.userType === UserType.Guest) {
@@ -492,6 +511,10 @@ export function canComment(context: PermissionContext): boolean {
         return false
     }
 
+    if (context.allowComment) {
+        return context.allowComment
+    }
+
     const typePerms = getDisplayPermissions(context) // Utilise getDisplayPermissions
     if (!typePerms.canComment) {
         return false
@@ -513,51 +536,67 @@ export function canComment(context: PermissionContext): boolean {
 function hasGroupAccess(context: PermissionContext): boolean {
     // Check if user is admin - they have access to everything
     if (context.userType === UserType.Admin) {
-        return true
+        return true;
     }
 
     // For inquiry groups, check if user belongs to ownedGroup or is group editor
     if (context.contentType === ContentType.InquiryGroup && context.ownedGroup) {
-        const sessionStore = useSessionStore()
-        const currentUser = sessionStore.currentUser
+        const sessionStore = useSessionStore();
+        const currentUser = sessionStore.currentUser;
+
+        if (!currentUser) {
+            return false;
+        }
 
         // Check if user belongs to the owned group
-        if (currentUser?.groups?.includes(context.ownedGroup)) {
-            return true
+        const groups = currentUser.groups;
+        
+        // Check if groups is an array and includes the owned group
+        if (Array.isArray(groups) && groups.includes(context.ownedGroup)) {
+            return true;
         }
 
         // Check if user is a group editor
-        if (sessionStore.currentUser.isGroupEditor) {
-            return true
+        if (currentUser.isGroupEditor) {
+            return true;
         }
 
-        return false
+        return false;
     }
 
     // For other content types with group restrictions
     if (context.hasGroupRestrictions) {
-        const sessionStore = useSessionStore()
-        const currentUser = sessionStore.currentUser
+        const sessionStore = useSessionStore();
+        const currentUser = sessionStore.currentUser;
+
+        if (!currentUser) {
+            return false;
+        }
 
         // Check if user is moderator
         if (context.userType === UserType.Moderator) {
-            return true
+            return true;
         }
 
-        // Check if user belongs to any allowed group
-        if (currentUser?.groups?.some(group => context.allowedGroups.includes(group))) {
-            return true
+        // Check if user's groups intersect with allowed groups
+        const userGroups = currentUser.groups;
+        if (Array.isArray(userGroups) && 
+            Array.isArray(context.allowedGroups) &&
+            userGroups.some(group => context.allowedGroups.includes(group))) {
+            return true;
         }
 
         // Check if user is group editor
-        if (sessionStore.currentUser.isGroupEditor) {
-            return true
+        if (currentUser.isGroupEditor) {
+            return true;
         }
 
-        return false
+        return false;
     }
 
-    return true
+    // If no group restrictions, return true (or false based on your logic)
+    // You might want to add a default return value here
+    return false;
 }
 
 function isContentBlocked(context: PermissionContext): boolean {
@@ -1727,7 +1766,7 @@ export default {
     canManageGroupMembers,
     canManageGroupPermissions,
 
-    //Option 
+    // Option 
      canEditOption,
     canDeleteOption,
     canChangeStatus,      

@@ -48,9 +48,7 @@ const emit = defineEmits<{
 
 
 // Context for permissions
-const context = computed(() => {
-  return createInquiryContext(props.inquiryStore, props.sessionStore.appSettings)
-})
+const context = computed(() => createInquiryContext(props.inquiryStore, props.sessionStore.appSettings))
 
 const selectedStatus = ref(props.inquiryStore.status.moderationStatus || 'pending')
 

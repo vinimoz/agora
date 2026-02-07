@@ -78,15 +78,16 @@
 
         <!-- Counters -->
         <div class="stat-counters">
-          <div
-v-if="inquiry.status?.countSupports" 
-               class="counter-item supports" 
-               :class="{ 'is-supported': isSupported }"
-               @click.stop="handleSupportClick">
-            <component :is="supportIconComponent" class="counter-icon" :size="14" />
-            <span class="counter-value">{{ inquiry.status.countSupports }}</span>
-          </div>
-          
+             
+                            <SupportFeature
+                                    :item="inquiry"
+                                    item-type="inquiry"
+                                    :context="context"
+                                    :show-quorum="true"
+                                    :show-details-on-hover="true"
+                                    :icon-size="22"
+                                    @click.stop
+                                    />
           <div v-if="inquiry.status?.countComments" class="counter-item comments" @click.stop="handleCommentsClick">
             <component :is="InquiryGeneralIcons.Comment" class="counter-icon" :size="14" />
             <span class="counter-value">{{ inquiry.status.countComments }}</span>
@@ -114,7 +115,8 @@ import { getInquiryTypeData } from '../../helpers/modules/InquiryHelper.ts'
 import type { Inquiry } from '../../Types/index.ts'
 import { useSessionStore } from '../../stores/session.ts'
 import { InquiryGeneralIcons, StatusIcons } from '../../utils/icons.ts'
-import { ThumbIcon, TernarySupportIcon } from '../AppIcons'
+import SupportFeature from '../../helpers/modules/SupportFeature.vue'
+import { createInquiryContext, canSupport, canComment } from '../../utils/permissions.ts'
 
 interface Props {
   inquiry: Inquiry
@@ -147,6 +149,9 @@ const cardClasses = computed(() => ({
 
 // Get inquiry types
 const inquiryTypes = computed(() => sessionStore.appSettings?.inquiryTypeTab || [])
+
+// Context for permissions
+const context = computed(() => createInquiryContext(props.inquiry, sessionStore.appSettings))
 
 // Get type data
 const typeData = computed(() => getInquiryTypeData(props.inquiry.type, inquiryTypes.value))
@@ -247,16 +252,6 @@ const shortDescription = computed(() => {
   }
   
   return plainText
-})
-
-// Support
-const isSupported = computed(() => props.inquiry.currentUserStatus?.hasSupported || false)
-
-const supportIconComponent = computed(() => {
-  if (props.inquiry.configuration?.supportFeature === 'ternary') {
-    return TernarySupportIcon
-  }
-  return ThumbIcon
 })
 
 // Get hierarchy path for location and category display
@@ -676,10 +671,6 @@ function handleCommentsClick() {
         .counter-icon {
           opacity: 0.9;
         }
-      }
-      
-      &.is-supported {
-        color: var(--color-primary-element);
       }
       
       .counter-icon {

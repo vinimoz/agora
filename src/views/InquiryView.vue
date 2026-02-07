@@ -42,9 +42,7 @@ const selectedGroups = ref([])
 const isSaving = ref(false)
 
 // Context for permissions
-const context = computed(() => {
-  return createInquiryContext(inquiryStore, sessionStore.appSettings)
-})
+const context = computed(() => createInquiryContext(inquiryStore, sessionStore.appSettings))
 
 const availableGroups = computed(() => {
   const groups = sessionStore.currentUser.groups || {}

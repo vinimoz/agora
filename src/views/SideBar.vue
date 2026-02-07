@@ -36,9 +36,7 @@ const inquiryStore = useInquiryStore()
 const sessionStore = useSessionStore()
 
 // Context for permissions
-const context = computed(() => {
-  return createInquiryContext(inquiryStore, sessionStore.appSettings)
-})
+const context = computed(() => createInquiryContext(inquiryStore, sessionStore.appSettings))
 
 
 // Compute isReadonly

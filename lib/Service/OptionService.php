@@ -362,7 +362,7 @@ class OptionService
         $this->option = new Option();
         $this->option->setText($data['text']);
         $this->option->setType($data['type']);
-        $this->option->setTitle($title);
+        $this->option->setTitle($data['title']);
         $this->option->setTargetId($data['targetId'] ?? 0);
         $this->option->setParentId($data['parentId'] ?? 0);
         $this->option->setOwnedGroup($data['ownedGroup'] ?? '');
@@ -416,7 +416,7 @@ class OptionService
     public function updatePartial(int $optionId, array $data): Option
     {
         $this->option = $this->optionMapper->find($optionId);
-        $this->option->request(Option::PERMISSION_OPTION_EDIT);
+        //$this->option->request(Option::PERMISSION_OPTION_EDIT);
 
         // Validate values
         if (isset($data['showResults']) && !in_array($data['showResults'], $this->getValidShowResults())) {
@@ -494,7 +494,7 @@ class OptionService
             $this->optionMapper->updateDynamicFields($this->option, $data['miscFields'], $fields);
         }
 
-        $this->eventDispatcher->dispatchTyped(new OptionUpdatedEvent($this->option));
+        //$this->eventDispatcher->dispatchTyped(new OptionUpdatedEvent($this->option));
 
         return $this->option;
     }

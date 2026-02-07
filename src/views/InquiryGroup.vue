@@ -338,9 +338,7 @@ const currentInquiryGroup = computed(() => {
 const groupNotFound = computed(() => hasSlug.value && !currentInquiryGroup.value)
 
 // Context for permissions
-const context = computed(() => {
-  return createInquiryContext(inquiry, sessionStore.appSettings)
-})
+const context = computed(() => createInquiryContext(inquiry, sessionStore.appSettings))
 
 // Helper functions 
 function canUserArchiveGroup(group: InquiryGroup | null): boolean {
@@ -647,7 +645,7 @@ onMounted(async () => {
     if (hasSlug.value) {
       const slug = route.params.slug as string
       const group = inquiryGroupsStore.bySlug(slug)
-      //currentInquiryGroup.value=group
+      // currentInquiryGroup.value=group
       if (!group) {
         groupNotFound.value = true
       }

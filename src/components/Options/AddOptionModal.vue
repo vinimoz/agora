@@ -40,7 +40,7 @@
               </div>
               <div class="parent-details">
                 <component :is="getParentIcon(parentOption)" :size="16" />
-                <span>{{ parentOption.label }}</span>
+                <span>{{ parentOption.label || parentOption.title }}</span>
               </div>
             </div>
 
@@ -89,10 +89,14 @@
             <div class="form-fields">
               <!-- Label -->
               <div v-if="optionTypeData.use_title" class="form-field">
-                <label for="option-label">{{ t('agora', 'Title') }} *</label>
+                <label for="option-title">{{ t('agora', 'Title') }} *</label>
                 <NcRichContenteditable
-                  id="option-label"
-                  v-model="formData.label"
+                  id="option-title"
+                  v-model="formData.title"
+                  :autolink="true"
+                  :use-markdown="true"
+                  :emoji-autocomplete="true"
+                  :link-autocomplete="true"
                   :placeholder="t('agora', 'Enter a title for this option')"
                   full-width
                   @keyup.enter="formData.text && createOption()"
@@ -106,8 +110,11 @@
                   id="option-text"
                   v-model="formData.text"
                   :placeholder="t('agora', 'Add a text (optional)')"
+                  :emoji-autocomplete="true"
+                  :link-autocomplete="true"
+                  :autolink="true"
+                  :use-markdown="true"
                   :multiline="true"
-                  required
                   :rows="4"
                   full-width
                   @keydown.ctrl.enter="createOption"
@@ -131,6 +138,10 @@
                     <NcRichContenteditable
                       :id="`field-${field.key}`"
                       v-model="additionalFormData[field.key]"
+                      :autolink="true"
+                      :use-markdown="true"
+                      :emoji-autocomplete="true"
+                      :link-autocomplete="true"
                       :placeholder="field.placeholder || ''"
                       :required="field.required"
                       full-width
@@ -167,7 +178,7 @@
                   <template v-else-if="field.type === 'number'">
                     <NcTextField
                       :id="`field-${field.key}`"
-                      v-model="additionalFormData[field.key]"
+                      v-model.number="additionalFormData[field.key]"
                       type="number"
                       :placeholder="field.placeholder || ''"
                       :required="field.required"
@@ -245,7 +256,7 @@
 
       <!-- Footer -->
       <div class="modal-footer">
-        <div class="form-errors" v-if="formErrors.length > 0">
+        <div v-if="formErrors.length > 0" class="form-errors">
           <span 
             v-for="error in formErrors" 
             :key="error"
@@ -295,10 +306,15 @@ import { getFamilyColor } from '../../helpers/modules/InquiryOptionHelper'
 
 import OptionCard from './OptionCard.vue'
 
-// Types
-import type { Option, OptionType } from '../../Types/index.ts'
-
-
+// Types - Import from your existing types
+import type { 
+  Option, 
+  OptionConfiguration,
+  OptionType,
+  User,
+  CurrentUserOptionStatus,
+  OptionCurrentStatus
+} from '../../Types/index.ts'
 
 // Props
 const props = defineProps<{
@@ -318,11 +334,10 @@ const optionsStore = useOptionsStore()
 const optionStore = useOptionStore()
 const sessionStore = useSessionStore()
 
-
 // State
 const visible = ref(true)
 const formData = ref({
-  label: '',
+  title: '',
   text: ''
 })
 const additionalFormData = ref<Record<string, any>>({})
@@ -334,9 +349,7 @@ const modalTitle = computed(() => {
   return t('agora', 'Add {type}', { type: optionTypeLabel.value })
 })
 
-const modalSubtitle = computed(() => {
-  return optionTypeDescription.value || ''
-})
+const modalSubtitle = computed(() => optionTypeDescription.value || '')
 
 const optionTypeData = computed(() => {
   if (!props.optionType) return null
@@ -359,7 +372,7 @@ const optionTypeDescription = computed(() => {
 
 const optionTypeIcon = computed(() => {
   if (!optionTypeData.value?.icon) return InquiryOptionIcons.File
-  return InquiryOptionIcons[optionTypeData.value.icon] || InquiryOptionIcons.File
+  return InquiryOptionIcons[optionTypeData.value.icon as keyof typeof InquiryOptionIcons] || InquiryOptionIcons.File
 })
 
 const optionTypeColor = computed(() => {
@@ -400,9 +413,7 @@ const supportFeatureLabel = computed(() => {
   return t('agora', 'Support enabled')
 })
 
-const allowComment = computed(() => {
-  return optionTypeData.value?.allow_comment || false
-})
+const allowComment = computed(() => optionTypeData.value?.allow_comment || false)
 
 const hasStatuses = computed(() => {
   const statuses = optionTypeData.value?.statuses || []
@@ -423,9 +434,7 @@ const statusesList = computed(() => {
   return []
 })
 
-const hasAdditionalFields = computed(() => {
-  return additionalFields.value.length > 0
-})
+const hasAdditionalFields = computed(() => additionalFields.value.length > 0)
 
 const additionalFields = computed(() => {
   if (!optionTypeData.value?.fields) return []
@@ -447,7 +456,6 @@ const optionTypeHelp = computed(() => {
   const helpTexts: Record<string, string> = {
     'chapter': t('agora', 'Chapters organize the main sections of your proposal. Add articles and sections within chapters.'),
     'article': t('agora', 'Articles contain the normative text of your proposal. Amendments can be proposed to modify articles.'),
-    'amendment': t('agora', 'Amendments propose changes to articles. They can be discussed and voted on.'),
     'position_for': t('agora', 'A position in favor of the proposal. Others can add arguments supporting or opposing this position.'),
     'position_against': t('agora', 'A position against the proposal. This can include conditional opposition.'),
     'argument_for': t('agora', 'An argument supporting a position. Keep arguments concise and evidence-based.'),
@@ -467,14 +475,15 @@ const optionTypeHelp = computed(() => {
 const formValid = computed(() => {
   formErrors.value = []
   
-  // Basic validation
+  // Basic validation - check if text is provided
   if (!formData.value.text.trim()) {
-    formErrors.value.push(t('agora', 'at least a text is required'))
+    formErrors.value.push(t('agora', 'At least a text is required'))
     return false
   }
   
-  // Check required additional fields
+  /* Check required additional fields
   for (const field of additionalFields.value) {
+    console.log(" FORM VALID CHECKING FIELD ",field)
     if (field.required) {
       const value = additionalFormData.value[field.key]
       if (value === undefined || value === null || value === '') {
@@ -492,29 +501,94 @@ const formValid = computed(() => {
         }
       }
     }
-  }
+  } */
+  console.log(" FORM VALID I RETURN TRUE ")
   
   return true
 })
 
-const previewOption = computed(() => {
+const previewOption = computed((): Option => {
+  const currentUser = sessionStore.currentUser
+  
   return {
     id: 0,
-    type: props.optionType || '',
-    label: formData.value.label || t('agora', 'Preview Title'),
-    text: formData.value.text || t('agora', 'Preview text...'),
+    targetId: props.inquiryId,
     parentId: props.parentId || 0,
-    family: optionTypeData.value?.family,
-    created: new Date().toISOString(),
-    owner: {
-      id: sessionStore.currentUser?.id || '',
-      displayName: sessionStore.currentUser?.displayName || t('agora', 'Current User')
+    type: props.optionType || '',
+    title: formData.value.title || t('agora', 'Preview Title'),
+    text: formData.value.text || t('agora', 'Preview text...'),
+    textSafe: '',
+    sortOrder: 0,
+    configuration: {
+      access: 'private',
+      showResults: 'always',
+      allowComment: optionTypeData.value?.allow_comment ? 1 : 0,
+      supportFeature: optionTypeData.value?.support_feature || 'none',
+      family: optionTypeData.value?.family || ''
     },
-    support_for: 0,
-    support_against: 0,
-    comment_count: 0,
-    status: 'draft',
-    ...additionalFormData.value
+    miscFields: additionalFormData.value,
+    ownedGroup: '',
+    owner: {
+      id: currentUser?.id || '',
+      displayName: currentUser?.displayName || t('agora', 'Current User'),
+      userRole: currentUser?.userRole || ''
+    },
+    currentUserStatus: {
+      isInvolved: false,
+      hasSupported: false,
+      supportValue: null,
+      isLoggedIn: !!currentUser?.id,
+      isOwner: true,
+      shareToken: '',
+      userId: currentUser?.id || '',
+      userRole: currentUser?.userRole || ''
+    },
+    status: {
+      created: Math.floor(Date.now() / 1000),
+      updated: Math.floor(Date.now() / 1000),
+      isArchived: false,
+      isDeleted: false,
+      countParticipants: 0,
+      countComments: 0,
+      countSupports: 0,
+      optionStatus: 'draft',
+      countPositiveSupports: 0,
+      countNegativeSupports: 0,
+      countNeutralSupports: 0
+    },
+    permissions: {
+      view: true,
+      edit: true,
+      delete: true,
+      archive: true,
+      support: true,
+      comment: true,
+      addShares: false,
+      addSharesExternal: false,
+      changeForeignSupports: false,
+      changeOwner: false,
+      reorderOptions: false,
+      seeResults: true,
+      seeUsernames: true,
+      subscribe: true,
+      takeOver: false,
+      addOption: true,
+      confirmOption: false
+    },
+    childs: [],
+    meta: {
+      chunking: {
+        size: 0,
+        loaded: 0
+      },
+      status: 'loaded'
+    },
+    inquiryInfo: {
+      targetId: props.inquiryId,
+      inquiryTitle: '',
+      inquiryType: '',
+      inquiryAccess: ''
+    }
   }
 })
 
@@ -526,7 +600,7 @@ const getParentIcon = (parent: Option) => {
   )
   
   if (typeInfo?.icon) {
-    return InquiryOptionIcons[typeInfo.icon] || InquiryOptionIcons.File
+    return InquiryOptionIcons[typeInfo.icon as keyof typeof InquiryOptionIcons] || InquiryOptionIcons.File
   }
   return InquiryOptionIcons.File
 }
@@ -538,7 +612,7 @@ const getOptionTypeIcon = (type: string) => {
   )
   
   if (optionType?.icon) {
-    return InquiryOptionIcons[optionType.icon] || InquiryOptionIcons.File
+    return InquiryOptionIcons[optionType.icon as keyof typeof InquiryOptionIcons] || InquiryOptionIcons.File
   }
   return InquiryOptionIcons.File
 }
@@ -591,15 +665,13 @@ const initializeAdditionalFields = () => {
   additionalFormData.value = {}
   
   for (const field of additionalFields.value) {
-    // Set default values
+    // Set default values based on field type
     if (field.type === 'boolean') {
-      additionalFormData.value[field.key] = field.default || false
+      additionalFormData.value[field.key] = field.default !== undefined ? field.default : false
     } else if (field.type === 'number') {
-      additionalFormData.value[field.key] = field.default || 0
-    } else if (field.type === 'json') {
-      additionalFormData.value[field.key] = field.default || ''
+      additionalFormData.value[field.key] = field.default !== undefined ? Number(field.default) : 0
     } else {
-      additionalFormData.value[field.key] = field.default || ''
+      additionalFormData.value[field.key] = field.default !== undefined ? field.default : ''
     }
   }
 }
@@ -608,50 +680,68 @@ const createOption = async () => {
   if (!formValid.value || !props.optionType) return
   
   try {
-    // Prepare the option data
+    // Get default values from option type data
+    const defaultAccess = 'private' // Default access level
+    const defaultStatus = 'draft' // Default status
+    const defaultSupportFeature = optionTypeData.value?.support_feature || 'none'
+    const defaultAllowComment = optionTypeData.value?.allow_comment ? 1 : 0
+    const defaultFamily = optionTypeData.value?.family || ''
 
-    const optionData: any = {
-      targetId: props.inquiryId,
-      type: props.optionType,
-      allowComment: optionTypeData.value.allow_comment,
-      supportFeature: optionTypeData.value.support_feature,
-      family: optionTypeData?.value.family,
-      text: formData.value.text.trim() || null,
-      parentId: props.parentId || null,
-
-      fields: {}
-    }
-    
-    // Add additional fields
+    // Prepare misc fields with defaults
+    const miscFields: Record<string, any> = {}
     for (const field of additionalFields.value) {
-      if (additionalFormData.value[field.key] !== undefined) {
+      const value = additionalFormData.value[field.key]
+      if (value !== undefined && value !== '') {
         // Handle JSON fields
-        if (field.type === 'json' && additionalFormData.value[field.key]) {
+        if (field.type === 'json' && value) {
           try {
-            optionData.fields[field.key] = typeof additionalFormData.value[field.key] === 'string'
-              ? JSON.parse(additionalFormData.value[field.key])
-              : additionalFormData.value[field.key]
+            miscFields[field.key] = typeof value === 'string' ? JSON.parse(value) : value
           } catch {
-            optionData.fields[field.key] = additionalFormData.value[field.key]
+            miscFields[field.key] = value
           }
         } else {
-          optionData.fields[field.key] = additionalFormData.value[field.key]
+          miscFields[field.key] = value
         }
+      } else if (field.default !== undefined) {
+        miscFields[field.key] = field.default
       }
     }
-    
-    console.log('Creating option:', optionData)
-    const newOption= await optionStore.create(optionData)
 
-    emit('created', newOption)
+    // Prepare option data matching the store's create method
+    const optionData = {
+      title: formData.value.title.trim() || '',
+      text: formData.value.text.trim() || '',
+      type: props.optionType,
+      targetId: props.inquiryId,
+      parentId: props.parentId || 0,
+      ownedGroup: '',
+      access: defaultAccess,
+      supportFeature: defaultSupportFeature,
+      allowComment: defaultAllowComment,
+      family: defaultFamily,
+      status: defaultStatus,
+      miscFields
+    }
+
+    console.log('Creating option with data:', optionData)
     
-    // Reset form
-    formData.value = { label: '', text: '' }
-    additionalFormData.value = {}
+    // Call the store's create method
+    const newOption = await optionStore.create(optionData)
     
-  } catch (error) {
+    if (newOption) {
+      emit('created', newOption)
+      
+      // Reset form
+      formData.value = { title: '', text: '' }
+      additionalFormData.value = {}
+      initializeAdditionalFields()
+    }
+    
+  } catch (error: any) {
     console.error('Error creating option:', error)
-    formErrors.value.push(t('agora', 'Error creating option: {error}', { error: error.message }))
+    formErrors.value.push(t('agora', 'Error creating option: {error}', { 
+      error: error.message || t('agora', 'Unknown error') 
+    }))
   }
 }
 
@@ -666,7 +756,7 @@ watch(() => props.optionType, (newType) => {
 onMounted(() => {
   // Set initial focus
   setTimeout(() => {
-    const input = document.getElementById('option-label')
+    const input = document.getElementById('option-text')
     if (input) input.focus()
   }, 100)
 })

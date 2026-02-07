@@ -315,7 +315,6 @@
   :option-id="selectedOptionId"
   :inquiry-id="inquiryStore.id"
   @close="closeOptionDetail"
-  @updated="handleOptionUpdated"
   @deleted="handleOptionDeleted"
 />
 
@@ -331,8 +330,7 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import { useInquiryStore } from '../../stores/inquiry'
 import { useOptionsStore } from '../../stores/options'
 import { useSessionStore } from '../../stores/session'
-import { InquiryGeneralIcons } from '../../utils/icons.ts'
-import { InquiryOptionIcons } from '../../utils/icons.ts'
+import { InquiryGeneralIcons , InquiryOptionIcons } from '../../utils/icons.ts'
 import {
   getFamiliesWithOptionTypes,
   getFamilyIconComponent,
@@ -528,13 +526,6 @@ const closeOptionDetail = () => {
 const handleOptionCreated = (newOption: any) => {
   optionsStore.options.push(newOption)
   closeAddOptionModal()
-}
-
-const handleOptionUpdated = (updatedOption: any) => {
-  const index = optionsStore.options.findIndex(opt => opt.id === updatedOption.id)
-  if (index >= 0) {
-    optionsStore.options[index] = updatedOption
-  }
 }
 
 const handleOptionDeleted = (deletedOptionId: number) => {

@@ -13,7 +13,7 @@ import { emit } from '@nextcloud/event-bus'
 
 import { Logger } from '../helpers/index.ts'
 import { PublicAPI, OptionsAPI } from '../Api/index.ts'
-import { Chunking, createDefault, Event, StatusResults, User, UserType } from '../Types/index.ts'
+import { Chunking, createDefault, Event, StatusResults, User, UserType , InquiryOptionType } from '../Types/index.ts'
 
 import { useInquiryStore } from './inquiry.ts'
 import { useSessionStore } from './session.ts'
@@ -22,7 +22,6 @@ import { useSharesStore } from './shares.ts'
 import { useCommentsStore } from './comments.ts'
 import { useSupportsStore } from './supports.ts'
 import { useAppSettingsStore } from '../stores/appSettings.ts'
-import { InquiryOptionType } from '../Types/index.ts'
 import { AxiosError } from '@nextcloud/axios'
 import { 
     getOptionTypeData,
@@ -581,9 +580,7 @@ actions: {
                 }
             })()
             */
-            const response = await (() => {
-                    return OptionsAPI.getFullOption(optionId ?? sessionStore.currentOptionId)
-                })()
+            const response = await (() => OptionsAPI.getFullOption(optionId ?? sessionStore.currentOptionId))()
 
             if (!response) {
                 this.$reset()
@@ -611,6 +608,7 @@ actions: {
     },
 
     async create(payload: {
+        title: string
         text: string
         type: string
         targetId?: number
@@ -661,11 +659,13 @@ actions: {
 
 
             const response = await OptionsAPI.createOption({
+                title: payload.title,
                 text: payload.text,
                 type: payload.type,
                 targetId: payload.targetId || inquiryStore.id,
                 parentId: payload.parentId || 0,
                 ownedGroup: payload.ownedGroup || '',
+                owner: payload.owner || '',
                 family: payload.family || '',
                 access: payload.access || 'private',
                 status: payload.status || 'draft',
@@ -726,30 +726,39 @@ actions: {
         }
     },
 
-    async update(payload: {
-        id?: number
-        title?: string
-        text?: string
-        type?: string
-        targetId?: number
-        parentId?: number
-        ownedGroup?: string
-        access?: string
-        showResults?: string
-        allowComment?: number
-        supportFeature?: string
-        family?: string
-        status?: string
-        miscFields?: Record<string, any>
-    }): Promise<Option | void> {
-        const inquiryStore = useInquiryStore()
-        const sessionStore = useSessionStore()
+    async update(payload: Partial<{
+        id: number
+        title: string
+        text: string
+        type: string
+        targetId: number
+        parentId: number
+        ownedGroup: string
+        access: string
+        showResults: string
+        allowComment: number
+        supportFeature: string
+        family: string
+        status: string
+        miscFields: Record<string, any>
+    }>): Promise<Option | void> {
+    const inquiryStore = useInquiryStore()
+    const sessionStore = useSessionStore()
 
-        const debouncedLoad = this.$debounce(async () => {
-            try {
-                const response = await OptionsAPI.updateOption(payload.id || this.id, {
-                    title: payload.title,
-                    text: payload.text,
+    if (!payload || typeof payload !== 'object') {
+        Logger.error('updateOption called with invalid payload', { payload })
+        return
+    }
+
+    const debouncedLoad = this.$debounce(async () => {
+        let updatedOption: Option | undefined
+
+        try {
+            const response = await OptionsAPI.updateOption(
+                payload.id ?? this.id,
+                {
+                    title: payload.title ?? '',
+                    text: payload.text ?? '',
                     type: payload.type,
                     targetId: payload.targetId,
                     parentId: payload.parentId,
@@ -760,38 +769,37 @@ actions: {
                     supportFeature: payload.supportFeature,
                     family: payload.family,
                     status: payload.status,
-                    miscFields: payload.miscFields,
-                })
-
-                const updatedOption = response.data.option
-
-                // Update type info if type changed
-                if (payload.type && payload.type !== this.type) {
-                    const optionTypes = sessionStore.appSettings?.inquiryOptionTypeTab || []
-                    updatedOption._typeInfo = optionTypes.find((opt: InquiryOptionType) => 
-                                                               opt.option_type === payload.type
-                                                              )
+                    miscFields: payload.miscFields ?? {},
                 }
+            )
 
-                return updatedOption
-            } catch (error) {
-                if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-                    return
-                }
-                Logger.error('Error updating option', {
-                    error,
-                    state: this.$state,
-                })
-                throw error
-            } finally {
-                this.load()
-                if (inquiryStore.id) {
-                    inquiryStore.load()
-                }
+            updatedOption = response?.data?.option
+
+            if (!updatedOption?.id) {
+                throw new Error('No option returned from API')
             }
-        }, 500)
-        debouncedLoad()
-    },
+
+            return updatedOption
+        } catch (error) {
+            if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+                return
+            }
+
+            Logger.error('Error updating option', {
+                error,
+                state: this.$state,
+            })
+
+            throw error
+        } finally {
+            if (updatedOption?.id) {
+                this.load(updatedOption.id)
+            }
+        }
+    }, 500)
+
+    debouncedLoad()
+},
 
     async loadChildren(): Promise<void> {
         try {

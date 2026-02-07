@@ -9,8 +9,7 @@ import { emit } from '@nextcloud/event-bus'
 
 import { Logger } from '../helpers/index.ts'
 import { OptionsAPI } from '../Api/index.ts'
-import { Event } from '../Types/index.ts'
-import { InquiryOptionType } from '../Types/index.ts'
+import { Event , InquiryOptionType } from '../Types/index.ts'
 import { useInquiryStore } from './inquiry.ts'
 import { useOptionStore } from './option.ts'
 import { useSessionStore } from './session.ts'
@@ -452,6 +451,7 @@ export const useOptionsStore = defineStore('options', {
 
         // Add a new option with type validation
         async add(payload: {
+            title: string
             text: string
             type: string
             parentId?: number
@@ -488,6 +488,7 @@ export const useOptionsStore = defineStore('options', {
 
             try {
                 const response = await OptionsAPI.createOption({
+                    title: payload.title,
                     text: payload.text,
                     type: payload.type,
                     targetId: inquiryStore.id,

@@ -89,7 +89,9 @@ const expandedFamilies = ref<Set<string>>(new Set())
 const inquiryFamilies = computed((): InquiryFamily[] => sessionStore.appSettings.inquiryFamilyTab || [])
 
 // Computed for recent inquiries
-const recentInquiries = computed(() => inquiriesStore.inquiries.slice(0, 5))
+const sortedInquiries = computed(() => [...inquiriesStore.inquiries].sort((a, b) => new Date(b.status.lastInteraction) - new Date(a.status.lastInteraction)));
+const recentInquiries = computed(() => sortedInquiries.value.slice(0, 5));
+
 
 // Check if a family has inquiry groups OR inquiry group types defined
 const shouldRedirectToGroupView = (familyType: string) => {

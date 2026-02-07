@@ -36,10 +36,6 @@ export type Route = {
 export type UserStatus = {
   isLoggedin: boolean
   isAdmin: boolean
-  isOfficial: boolean
-  isModerator: boolean
-  isLegislative: boolean
-  isGroupEditor: boolean
 }
 
 export type Watcher = {

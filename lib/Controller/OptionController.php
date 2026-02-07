@@ -207,11 +207,12 @@ class OptionController extends BaseController
      */
     #[NoAdminRequired]
     #[FrontpageRoute(verb: 'PUT', url: '/option/{optionId}')]
-    public function update(int $optionId, array $data): JSONResponse
+    public function update(int $optionId): JSONResponse
     {
+        $rawData = $this->request->getParams('data');
         return $this->response(
-            function () use ($optionId, $data) {
-                return ['option' => $this->optionService->updatePartial($optionId, $data)];
+            function () use ($optionId, $rawData) {
+                return ['option' => $this->optionService->updatePartial($optionId, $rawData)];
             }
         );
     }

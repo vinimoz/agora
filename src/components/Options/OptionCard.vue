@@ -16,7 +16,7 @@
         'has-comments': hasComments
       }
     ]"
-    @click="handleCardClick"Firsti
+    @click="handleCardClick"
   >
     <!-- First Box: Header with icon, date, and actions -->
     <div class="card-header">
@@ -63,7 +63,7 @@
       </div>
       
       <!-- Description -->
-      <div v-if="option.text && !compact" class="content-section description-section">
+      <div v-if="option.text && (!compact || !optionTypeData.use_title)" class="content-section description-section">
         <div class="card-text">
           {{ truncateText(option.text, textMaxLength) }}
         </div>
@@ -73,110 +73,87 @@
     <!-- Separator -->
     <div class="section-separator"></div>
 
-    <!-- Third Box: Support and Comments in single line -->
-    <div v-if="hasSupportFeature || allowComment" class="card-features">
-      <!-- Support feature -->
-      <div v-if="hasSupportFeature" class="feature-item support-feature">
-        <div class="feature-content" @click.stop="handleSupportClick">
-          <TernarySupportIcon
-            v-if="supportFeature === 'ternary'"
-            :support-value="numericSupportValue"
-            :size="16"
-            class="feature-icon"
-          />
-          <ThumbIcon
-            v-else-if="supportFeature === 'binary'"
-            :supported="numericSupportValue === 1"
-            :size="16"
-            class="feature-icon"
-          />
-          
-          <div class="feature-stats">
-            <!-- Support stats -->
-            <div v-if="supportFeature === 'ternary'" class="support-stats">
-              <span class="stat-value positive">{{ option.status.countPositiveSupports || 0 }}</span>
-              <span class="stat-separator">/</span>
-              <span class="stat-value negative">{{ option.status.countNegativeSupports || 0 }}</span>
-            </div>
-            
-            <!-- Binary support stats -->
-            <div v-else-if="supportFeature === 'binary'" class="support-stats binary">
-              <ThumbIcon
-                :supported="true"
-                :size="12"
-              />
-              <span class="stat-value">{{ option.status.countSupports || 0 }}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Comments feature -->
-      <div v-if="allowComment" class="feature-item comments-feature" @click.stop="emit('comment', option)">
-        <div class="feature-content">
-          <component :is="InquiryOptionIcons.Comment" :size="16" class="feature-icon" />
-          <span class="feature-count">{{ option.status.countComments || 0 }}</span>
-        </div>
-      </div>
+<!-- Third Box: Support and Comments in single line -->
+<div v-if="hasSupportFeature || allowComment" class="card-features">
+  <!-- Support feature -->
+  <div v-if="hasSupportFeature" class="feature-item support-feature">
+    <SupportFeature
+      :item="option"
+      item-type="option"
+      :context="optionContext"
+      :show-quorum="true"
+      :show-details-on-hover="true"
+      :icon-size="14"
+      @click.stop
+    />
+  </div>
+  
+  <!-- Comments feature -->
+  <div v-if="allowComment" class="feature-item comments-feature" @click.stop="emit('comment', option)">
+    <div class="feature-content">
+      <component :is="InquiryOptionIcons.Comment" :size="16" class="feature-icon" />
+      <span class="feature-count">{{ option.status.countComments || 0 }}</span>
     </div>
+  </div>
+</div>
 
-    <!-- Fourth Box: Responses -->
-    <div v-if="hasAllowedResponses && !compact" class="card-responses">
+  <!-- Fourth Box: Responses -->
+  <div v-if="hasAllowedResponses && !compact" class="card-responses">
       <div class="responses-header">
-        <component :is="InquiryOptionIcons.MessageReplyText" :size="14" />
-        <span class="responses-title">{{ t('agora', 'Responses') }}</span>
+          <component :is="InquiryOptionIcons.MessageReplyText" :size="14" />
+          <span class="responses-title">{{ t('agora', 'Responses') }}</span>
       </div>
-      
-      <div class="responses-list">
-        <div v-if="childCountsTotal === 0" class="no-responses">
-          <span class="no-responses-text">{{ t('agora', 'None') }}</span>
-        </div>
-        
-        <div v-else class="responses-summary">
-          <div 
-            v-for="responseType in allowedResponses" 
-            :key="responseType"
-            class="response-type-summary"
-            @click.stop="emit('viewResponses', option, responseType)"
-          >
-            <div class="response-type-info">
-              <component :is="getOptionTypeIcon(responseType)" :size="12" />
-              <span class="response-count">{{ childCounts[responseType] || 0 }}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
 
-    <!-- Owner info footer -->
-    <div class="card-footer">
-      <div class="owner-info">
-        <NcAvatar 
-          v-if="option.owner?.id" 
-          :user="option.owner.id" 
-          :display-name="option.owner.displayName" 
-          :size="18" 
-        />
-        <span class="owner-name">{{ option.owner?.displayName || t('agora', 'Unknown owner') }}</span>
+      <div class="responses-list">
+          <div v-if="childCountsTotal === 0" class="no-responses">
+              <span class="no-responses-text">{{ t('agora', 'None') }}</span>
+          </div>
+
+          <div v-else class="responses-summary">
+              <div 
+                      v-for="responseType in allowedResponses" 
+                      :key="responseType"
+                      class="response-type-summary"
+                      @click.stop="emit('viewResponses', option, responseType)"
+                      >
+                      <div class="response-type-info">
+                          <component :is="getOptionTypeIcon(responseType)" :size="12" />
+                          <span class="response-count">{{ childCounts[responseType] || 0 }}</span>
+                      </div>
+              </div>
+          </div>
       </div>
-    </div>
+  </div>
+
+  <!-- Owner info footer -->
+  <div class="card-footer">
+      <div class="owner-info">
+          <NcAvatar 
+           v-if="option.owner?.id" 
+           :user="option.owner.id" 
+           :display-name="option.owner.displayName" 
+           :size="18" 
+           />
+          <span class="owner-name">{{ option.owner?.displayName || t('agora', 'Unknown owner') }}</span>
+      </div>
+  </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
+    import { ref, computed, onMounted, watch } from 'vue'
 import { t } from '@nextcloud/l10n'
 import NcAvatar from '@nextcloud/vue/components/NcAvatar'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcActions from '@nextcloud/vue/components/NcActions'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
+import SupportFeature from '../../helpers/modules/SupportFeature.vue'
 
 import { useOptionsStore } from '../../stores/options'
 import { useSessionStore } from '../../stores/session'
 import { useSupportsStore } from '../../stores/supports'
 import { showSuccess, showError } from '@nextcloud/dialogs'
 import { InquiryOptionIcons } from '../../utils/icons.ts'
-import { TernarySupportIcon, ThumbIcon } from '../AppIcons'
 import { 
   getOptionTypeData,
   getFamilyColor
@@ -209,6 +186,10 @@ const props = defineProps<{
   preventClick?: boolean
   textMaxLength?: number
 }>()
+
+const handleCommentClick = () => {
+  emit('comment', props.option)
+}
 
 // Emits
 const emit = defineEmits<{
@@ -255,19 +236,15 @@ const canSupport = computed(() => {
   return canSupportOption(optionContext.value)
 })
 
-const canEditOrDelete = computed(() => {
-  return canEdit.value || canDelete.value
-})
+const canEditOrDelete = computed(() => canEdit.value || canDelete.value)
 
 // Get option types from session store
-const allOptionTypes = computed(() => {
-  return sessionStore.appSettings?.inquiryOptionTypeTab || []
-})
+const allOptionTypes = computed(() => sessionStore.appSettings?.inquiryOptionTypeTab || [])
 
 
 const optionTypeData = computed(() => {
   const data = getOptionTypeData(props.option.type, allOptionTypes.value, props.option.type)
-  
+
   // Fallback/default option type data if not found
   if (!data) {
     return {
@@ -286,18 +263,16 @@ const optionTypeData = computed(() => {
 
 
 // Computed properties - USING optionTypeData ONLY
-const optionTypeLabel = computed(() => {
-  return optionTypeData.value.label || props.option.type || ''
-})
+const optionTypeLabel = computed(() => optionTypeData.value.label || props.option.type || '')
 
 const optionIcon = computed(() => {
     const iconName = optionTypeData.value?.icon
-  
+
     if (iconName in InquiryOptionIcons) {
     const icon = InquiryOptionIcons[iconName as keyof typeof InquiryOptionIcons]
     return icon
   }
-    
+
   console.log('DEBUG - Icon not found, using File')
   return InquiryOptionIcons.File
 })
@@ -307,32 +282,22 @@ const optionTypeColor = computed(() => {
   return getFamilyColor(optionTypeData.value.family)
 })
 
-const showTitle = computed(() => {
-  return optionTypeData.value?.use_title !== false
-})
+const showTitle = computed(() => optionTypeData.value?.use_title !== false)
 
-const supportFeature = computed(() => {
-  return optionTypeData.value?.support_feature || 'none'
-})
+const supportFeature = computed(() => optionTypeData.value?.support_feature || 'none')
 
-const allowComment = computed(() => {
-  return optionTypeData.value?.allow_comment || false
-})
+const allowComment = computed(() => optionTypeData.value?.allow_comment || false)
 
-const hasSupportFeature = computed(() => {
-  return supportFeature.value !== 'none'
-})
+const hasSupportFeature = computed(() => optionTypeData.value?.support_feature !== 'none' || false)
 
-const hasComments = computed(() => {
-  return allowComment.value && (props.option.status?.countComments || 0) > 0
-})
+const hasComments = computed(() => allowComment.value && (props.option.status?.countComments || 0) > 0)
 
 // Get allowed responses from option type data
 const allowedResponses = computed(() => {
   if (!optionTypeData.value?.allowed_response) return []
 
   let responses: string[] = []
-  
+
   if (typeof optionTypeData.value.allowed_response === 'string') {
     try {
       responses = JSON.parse(optionTypeData.value.allowed_response)
@@ -342,7 +307,7 @@ const allowedResponses = computed(() => {
   } else if (Array.isArray(optionTypeData.value.allowed_response)) {
     responses = optionTypeData.value.allowed_response
   }
-  
+
   // Filter out any invalid response types
   return responses.filter(responseType => 
     allOptionTypes.value.some(opt => 
@@ -351,9 +316,7 @@ const allowedResponses = computed(() => {
   )
 })
 
-const hasAllowedResponses = computed(() => {
-  return allowedResponses.value.length > 0
-})
+const hasAllowedResponses = computed(() => allowedResponses.value.length > 0)
 
 // Get child options
 const childOptions = computed(() => {
@@ -363,29 +326,27 @@ const childOptions = computed(() => {
 
 const childCounts = computed(() => {
   const counts: Record<string, number> = {}
-  
+
   if (!props.option.id) return counts
-  
+
   const children = childOptions.value
-  
+
   // Initialize counts for allowed responses
   allowedResponses.value.forEach((type: string) => {
     counts[type] = 0
   })
-  
+
   // Count children by type
   children.forEach(child => {
     if (counts[child.type] !== undefined) {
       counts[child.type]++
     }
   })
-  
+
   return counts
 })
 
-const childCountsTotal = computed(() => {
-  return Object.values(childCounts.value).reduce((sum, count) => sum + count, 0)
-})
+const childCountsTotal = computed(() => Object.values(childCounts.value).reduce((sum, count) => sum + count, 0))
 
 // Support value computation - FIXED: Return numeric values
 const numericSupportValue = computed(() => {
@@ -411,14 +372,14 @@ const formatDate = (timestamp: number) => {
 const truncateText = (text: string, maxLength: number) => {
   if (!text) return ''
   if (text.length <= maxLength) return text
-  return text.substring(0, maxLength) + '...'
+  return `${text.substring(0, maxLength)  }...`
 }
 
 const getOptionTypeIcon = (type: string) => {
   const optionType = allOptionTypes.value.find(opt => 
     opt.option_type === type || opt.optionType === type
   )
-  
+
   if (optionType?.icon) {
     return InquiryOptionIcons[optionType.icon] || InquiryOptionIcons.File
   }
@@ -432,11 +393,6 @@ const handleCardClick = () => {
   }
 }
 
-const handleSupportClick = () => {
-  if (canSupport.value) {
-    toggleSupport()
-  }
-}
 
 const confirmDelete = () => {
   if (confirm(t('agora', 'Are you sure you want to delete this option?'))) {
@@ -451,53 +407,11 @@ const deleteOption = async () => {
     if (index >= 0) {
       optionsStore.options.splice(index, 1)
     }
-    
+
     emit('delete', props.option.id)
   } catch (err) {
     console.error('Error deleting option:', err)
     showError(t('agora', 'Failed to delete option'))
-  }
-}
-
-const toggleSupport = async () => {
-  if (!canSupport.value || !sessionStore.currentUser?.id) return
-  
-  const hadSupportedBefore = props.option.currentUserStatus?.hasSupported || false
-  const supportValueBefore = props.option.currentUserStatus?.supportValue || null
-  
-  try {
-    await supportsStore.toggleSupport(props.option.id, sessionStore.currentUser.id, props.option, optionsStore)
-    
-    const hasSupportedAfter = props.option.currentUserStatus?.hasSupported || false
-    const supportValueAfter = props.option.currentUserStatus?.supportValue || null
-    
-    // Show appropriate messages
-    if (supportFeature.value === 'binary') {
-      if (hasSupportedAfter && !hadSupportedBefore) {
-        showSuccess(t('agora', 'Option supported, thanks for your support!'), { timeout: 2000 })
-        emit('supportChanged', props.option.id, 'for')
-      } else if (!hasSupportedAfter && hadSupportedBefore) {
-        showSuccess(t('agora', 'Option support removed!'), { timeout: 2000 })
-        emit('supportChanged', props.option.id, 'neutral')
-      }
-    } else if (supportFeature.value === 'ternary') {
-      if (supportValueAfter === 1) {
-        showSuccess(t('agora', 'Option supported, thanks for your support!'), { timeout: 2000 })
-        emit('supportChanged', props.option.id, 'for')
-      } else if (supportValueAfter === 0) {
-        showSuccess(t('agora', 'Neutral position saved!'), { timeout: 2000 })
-        emit('supportChanged', props.option.id, 'neutral')
-      } else if (supportValueAfter === -1) {
-        showSuccess(t('agora', 'Against position saved!'), { timeout: 2000 })
-        emit('supportChanged', props.option.id, 'against')
-      } else if (supportValueAfter === null && hadSupportedBefore) {
-        showSuccess(t('agora', 'Participation removed!'), { timeout: 2000 })
-        emit('supportChanged', props.option.id, 'neutral')
-      }
-    }
-  } catch (err) {
-    console.error('Failed to toggle support:', err)
-    showError(t('agora', 'Failed to update support status'))
   }
 }
 
@@ -509,329 +423,336 @@ watch(() => props.option, (newOption) => {
 
 <style scoped lang="scss">
 .option-card {
-  background: var(--color-main-background);
-  border: 2px solid var(--color-border);
-  border-radius: 12px;
-  padding: 16px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  position: relative;
-  margin-bottom: 8px;
+    background: var(--color-main-background);
+    border: 2px solid var(--color-border);
+    border-radius: 12px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    margin-bottom: 8px;
 
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    border-color: var(--color-primary-element);
-  }
-
-  &.compact {
-    padding: 12px;
-    
-    .card-features,
-    .card-responses,
-    .card-footer {
-      display: none;
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        border-color: var(--color-primary-element);
     }
-  }
 
-  // First Box: Header
-  .card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 12px;
-    min-height: 32px;
+    &.compact {
+        padding: 12px;
 
-    .header-left {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex: 1;
-      min-width: 0;
+        .card-features,
+        .card-responses,
+        .card-footer {
+            display: none;
+        }
+    }
 
-      .type-icon {
-        flex-shrink: 0;
-        width: 32px;
-        height: 32px;
+    // First Box: Header
+    .card-header {
         display: flex;
+        justify-content: space-between;
         align-items: center;
-        justify-content: center;
-        background: var(--color-background-darker);
-        border-radius: 8px;
-      }
+        margin-bottom: 12px;
+        min-height: 32px;
 
-      .header-meta {
-        display: flex;
-        flex-direction: column;
-        gap: 2px;
-        min-width: 0;
-
-        .option-type-label {
-          font-size: 13px;
-          font-weight: 600;
-          color: var(--color-text-light);
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-        }
-
-        .timestamp {
-          font-size: 11px;
-          color: var(--color-text-lighter);
-        }
-      }
-    }
-
-    .header-right {
-      .card-actions {
-        :deep(button) {
-          background: transparent;
-          border: none;
-          padding: 4px;
-          color: var(--color-text-lighter);
-          cursor: pointer;
-
-          &:hover {
-            color: var(--color-primary-element);
-          }
-        }
-      }
-    }
-  }
-
-  // Second Box: Content
-  .card-content {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-bottom: 12px;
-
-    .content-section {
-      &.title-section {
-        .card-title {
-          margin: 0;
-          font-size: 16px;
-          font-weight: 600;
-          color: var(--color-main-text);
-          line-height: 1.4;
-          word-break: break-word;
-        }
-      }
-
-      &.description-section {
-        .card-text {
-          margin: 0;
-          font-size: 13px;
-          line-height: 1.5;
-          color: var(--color-text-light);
-          overflow: hidden;
-          text-overflow: ellipsis;
-          display: -webkit-box;
-          -webkit-line-clamp: 2;
-          -webkit-box-orient: vertical;
-        }
-      }
-    }
-  }
-
-  // Separator
-  .section-separator {
-    height: 1px;
-    background: var(--color-border);
-    margin: 0 0 12px 0;
-  }
-
-  // Third Box: Support and Comments in single line
-  .card-features {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    margin-bottom: 12px;
-
-    .feature-item {
-      display: flex;
-      align-items: center;
-      
-      &.support-feature {
-        .feature-content {
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          cursor: pointer;
-          padding: 4px 8px;
-          border-radius: 6px;
-          transition: background-color 0.2s ease;
-          
-          &:hover {
-            background: var(--color-background-hover);
-          }
-          
-          .feature-icon {
-            color: var(--color-text-lighter);
-          }
-          
-          .feature-stats {
+        .header-left {
             display: flex;
             align-items: center;
-            gap: 4px;
-            
-            .support-stats {
-              display: flex;
-              align-items: center;
-              gap: 2px;
-              font-size: 12px;
-              
-              .stat-value {
-                font-weight: 600;
-                
-                &.positive {
-                  color: var(--color-success);
-                }
-                
-                &.negative {
-                  color: var(--color-error);
-                }
-              }
-              
-              .stat-separator {
-                color: var(--color-text-lighter);
-                margin: 0 2px;
-              }
-              
-              &.binary {
+            gap: 10px;
+            flex: 1;
+            min-width: 0;
+
+            .type-icon {
+                flex-shrink: 0;
+                width: 32px;
+                height: 32px;
                 display: flex;
                 align-items: center;
-                gap: 4px;
-                
-                .stat-value {
-                  color: var(--color-text-light);
-                }
-              }
+                justify-content: center;
+                background: var(--color-background-darker);
+                border-radius: 8px;
             }
-          }
+
+            .header-meta {
+                display: flex;
+                flex-direction: column;
+                gap: 2px;
+                min-width: 0;
+
+                .option-type-label {
+                    font-size: 13px;
+                    font-weight: 600;
+                    color: var(--color-text-light);
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                }
+
+                .timestamp {
+                    font-size: 11px;
+                    color: var(--color-text-lighter);
+                }
+            }
         }
-      }
-      
-      &.comments-feature {
-        .feature-content {
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          cursor: pointer;
-          padding: 4px 8px;
-          border-radius: 6px;
-          transition: background-color 0.2s ease;
-          
-          &:hover {
-            background: var(--color-background-hover);
-          }
-          
-          .feature-icon {
-            color: var(--color-text-lighter);
-          }
-          
-          .feature-count {
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--color-text-light);
-          }
+
+        .header-right {
+            .card-actions {
+                :deep(button) {
+                    background: transparent;
+                    border: none;
+                    padding: 4px;
+                    color: var(--color-text-lighter);
+                    cursor: pointer;
+
+                    &:hover {
+                        color: var(--color-primary-element);
+                    }
+                }
+            }
         }
-      }
-    }
-  }
-
-  // Fourth Box: Responses (smaller)
-  .card-responses {
-    margin-bottom: 12px;
-
-    .responses-header {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      margin-bottom: 8px;
-
-      .responses-title {
-        font-size: 12px;
-        font-weight: 600;
-        color: var(--color-text-light);
-      }
     }
 
-    .responses-list {
-      .no-responses {
-        padding: 6px 10px;
-        background: var(--color-background-dark);
-        border: 1px solid var(--color-border);
-        border-radius: 8px;
-        font-size: 11px;
-        color: var(--color-text-lighter);
-        font-style: italic;
-        text-align: center;
-      }
-
-      .responses-summary {
+    // Second Box: Content
+    .card-content {
         display: flex;
-        flex-wrap: wrap;
-        gap: 6px;
+        flex-direction: column;
+        gap: 8px;
+        margin-bottom: 12px;
 
-        .response-type-summary {
-          display: flex;
-          align-items: center;
-          gap: 4px;
-          padding: 4px 8px;
-          background: var(--color-background-dark);
-          border: 1px solid var(--color-border);
-          border-radius: 8px;
-          cursor: pointer;
-          transition: all 0.2s ease;
-          font-size: 11px;
+        .content-section {
+            &.title-section {
+                .card-title {
+                    margin: 0;
+                    font-size: 16px;
+                    font-weight: 600;
+                    color: var(--color-main-text);
+                    line-height: 1.4;
+                    word-break: break-word;
+                }
+            }
 
-          &:hover {
-            background: var(--color-background-darker);
-            border-color: var(--color-primary-element);
-          }
+            &.description-section {
+                .card-text {
+                    margin: 0;
+                    font-size: 13px;
+                    line-height: 1.5;
+                    color: var(--color-text-light);
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    display: -webkit-box;
+                    -webkit-line-clamp: 2;
+                    -webkit-box-orient: vertical;
+                }
+            }
+        }
+    }
 
-          .response-type-info {
+    // Separator
+    .section-separator {
+        height: 1px;
+        background: var(--color-border);
+        margin: 0 0 12px 0;
+    }
+
+    // Third Box: Support and Comments in single line - FIXED ALIGNMENT
+    .card-features {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        margin-bottom: 12px;
+        min-height: 32px;
+
+        .feature-item {
             display: flex;
             align-items: center;
-            gap: 4px;
+            height: 32px;
 
-            .response-count {
-              font-weight: 600;
-              color: var(--color-primary-element);
+            &.support-feature {
+                display: flex;
+                align-items: center;
+
+                :deep(.support-feature-container) {
+                    display: flex;
+                    align-items: center;
+                    height: 100%;
+                    gap: 6px;
+
+                    .support-button {
+                        height: 24px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+
+                        svg {
+                            width: 16px;
+                            height: 16px;
+                        }
+                    }
+
+                    .support-stats {
+                        display: flex;
+                        align-items: center;
+                        gap: 4px;
+                        font-size: 12px;
+                        height: 100%;
+
+                        .stat-value {
+                            font-weight: 600;
+                            line-height: 1;
+                        }
+                    }
+                }
             }
-          }
+
+            &.comments-feature {
+                .feature-content {
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                    padding: 4px 10px;
+                    border-radius: 6px;
+                    transition: background-color 0.2s ease;
+                    cursor: pointer;
+                    height: 28px;
+
+                    &:hover {
+                        background: var(--color-background-hover);
+                    }
+
+                    .feature-icon {
+                        color: var(--color-text-lighter);
+                        width: 16px;
+                        height: 16px;
+                        flex-shrink: 0;
+                    }
+
+                    .feature-count {
+                        font-size: 12px;
+                        font-weight: 600;
+                        color: var(--color-text-light);
+                        line-height: 1;
+                    }
+                }
+            }
         }
-      }
     }
-  }
 
-  // Footer: Owner info
-  .card-footer {
-    padding-top: 12px;
-    border-top: 1px solid var(--color-border);
+    // Fourth Box: Responses (smaller)
+    .card-responses {
+        margin-bottom: 12px;
 
-    .owner-info {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 11px;
+        .responses-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 8px;
 
-      .owner-name {
-        color: var(--color-text-lighter);
-      }
+            .responses-title {
+                font-size: 12px;
+                font-weight: 600;
+                color: var(--color-text-light);
+            }
+        }
+
+        .responses-list {
+            .no-responses {
+                padding: 6px 10px;
+                background: var(--color-background-dark);
+                border: 1px solid var(--color-border);
+                border-radius: 8px;
+                font-size: 11px;
+                color: var(--color-text-lighter);
+                font-style: italic;
+                text-align: center;
+            }
+
+            .responses-summary {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 6px;
+
+                .response-type-summary {
+                    display: flex;
+                    align-items: center;
+                    gap: 4px;
+                    padding: 4px 8px;
+                    background: var(--color-background-dark);
+                    border: 1px solid var(--color-border);
+                    border-radius: 8px;
+                    cursor: pointer;
+                    transition: all 0.2s ease;
+                    font-size: 11px;
+
+                    &:hover {
+                        background: var(--color-background-darker);
+                        border-color: var(--color-primary-element);
+                    }
+
+                    .response-type-info {
+                        display: flex;
+                        align-items: center;
+                        gap: 4px;
+
+                        svg {
+                            width: 12px;
+                            height: 12px;
+                        }
+
+                        .response-count {
+                            font-weight: 600;
+                            color: var(--color-primary-element);
+                            font-size: 11px;
+                        }
+                    }
+                }
+            }
+        }
     }
-  }
+
+    // Footer: Owner info
+    .card-footer {
+        padding-top: 12px;
+        border-top: 1px solid var(--color-border);
+
+        .owner-info {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+
+            .owner-name {
+                color: var(--color-text-lighter);
+                font-size: 11px;
+            }
+        }
+    }
 }
 
 // Responsive design
 @media (max-width: 768px) {
-  .option-card {
-    padding: 12px;
+    .option-card {
+        padding: 12px;
 
-    .card-features {
-      gap: 12px;
+        .card-features {
+            gap: 16px;
+            flex-wrap: wrap;
+
+            .feature-item {
+                &.support-feature {
+                    :deep(.support-feature-container) {
+                        flex-wrap: wrap;
+                        gap: 4px;
+                    }
+                }
+
+                &.comments-feature {
+                    .feature-content {
+                        padding: 4px 8px;
+                    }
+                }
+            }
+        }
     }
-  }
 }
 </style>

@@ -3,10 +3,9 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { InquiryGeneralIcons, InquiryOptionIcons } from '../../utils/icons.ts'
+import { InquiryGeneralIcons, InquiryOptionIcons , StatusIcons } from '../../utils/icons.ts'
 
 import type { InquiryStatus, InquiryType, OptionType } from '../../Types/index.ts'
-import { StatusIcons } from '../../utils/icons.ts'
 
 // For option type
 export const getOptionTypeData = (optionType: string, allOptionTypes: any[], defaultType = 'default') => {
@@ -50,6 +49,8 @@ export const getOptionTypeData = (optionType: string, allOptionTypes: any[], def
 
 /**
  * Get option item data
+ * @param item
+ * @param fallbackLabel
  */
 export function getOptionItemData(item: OptionType | null, fallbackLabel: string = '') {
   if (!item) {
@@ -76,6 +77,9 @@ export function getOptionItemData(item: OptionType | null, fallbackLabel: string
 
 /**
  * Get allowed option types for an inquiry type
+ * @param inquiryTypeKey
+ * @param inquiryTypes
+ * @param optionTypes
  */
 export function getAllowedOptionTypes(
   inquiryTypeKey: string,
@@ -128,6 +132,7 @@ export function getAllowedOptionTypes(
 
 /**
  * Group option types by their family
+ * @param optionTypes
  */
 export function groupOptionTypesByFamily(optionTypes: OptionType[]): Record<string, OptionType[]> {
   const grouped: Record<string, OptionType[]> = {}
@@ -147,6 +152,9 @@ export function groupOptionTypesByFamily(optionTypes: OptionType[]): Record<stri
 
 /**
  * Get families with their option types
+ * @param inquiryTypeKey
+ * @param inquiryTypes
+ * @param optionTypes
  */
 export function getFamiliesWithOptionTypes(
   inquiryTypeKey: string,
@@ -251,6 +259,7 @@ export function getFamilyFallbackData(): Record<string, any> {
 
 /**
  * Get family icon component
+ * @param familyKey
  */
 export function getFamilyIconComponent(familyKey: string): any {
   const familyIcons: Record<string, any> = {
@@ -269,6 +278,7 @@ export function getFamilyIconComponent(familyKey: string): any {
 
 /**
  * Get family color
+ * @param familyKey
  */
 export function getFamilyColor(familyKey: string): string {
   const familyColors: Record<string, string> = {
@@ -287,6 +297,8 @@ export function getFamilyColor(familyKey: string): string {
 
 /**
  * Get option types for specific family
+ * @param familyKey
+ * @param allowedOptionTypes
  */
 export function getOptionTypesForFamily(
   familyKey: string,
@@ -299,6 +311,7 @@ export function getOptionTypesForFamily(
 
 /**
  * Get option type options for radio/select components
+ * @param optionTypes
  */
 export function getOptionTypeOptions(optionTypes: OptionType[]) {
   return optionTypes.map(type => ({

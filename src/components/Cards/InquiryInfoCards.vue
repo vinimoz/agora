@@ -36,7 +36,7 @@ const showAddSuggestionsCard = computed(
 )
 const showClosedCard = computed(() => inquiryStore.isClosed && !showSendConfirmationsCard.value)
 const showSendConfirmationsCard = computed(
-  () => inquiryStore.permissions.edit && inquiryStore.isClosed && optionsStore.confirmed.length > 0
+  () => inquiryStore.permissions.edit && inquiryStore.isClosed
 )
 const showLimitCard = computed(
   () =>

@@ -60,28 +60,28 @@ class SupportService
         return $this->supportMapper->findSupport($inquiryId, $userId);
     }
 
-    public function addSupport(int $inquiryId, string $userId, int $value): Support
+    public function addSupport(int $inquiryId, string $userId, int $value,int $optionId): Support
     {
         // Check if support already exists
-        $existing = $this->supportMapper->findSupport($inquiryId, $userId);
+        $existing = $this->supportMapper->findSupport($inquiryId, $userId, $optionId);
         if ($existing !== null) {
             return $existing;
         }
-        return $this->supportMapper->addSupport($inquiryId, $userId, $value);
+        return $this->supportMapper->addSupport($inquiryId, $userId, $value, $optionId);
     }
     
-    public function updateSupport(int $inquiryId, string $userId, int $value): Support
+    public function updateSupport(int $inquiryId, string $userId, int $value,int $optionId): Support
     {
         // Check if support already exists
-        $existing = $this->supportMapper->findSupport($inquiryId, $userId);
+        $existing = $this->supportMapper->findSupport($inquiryId, $userId,$optionId);
         $existing->setValue($value);
         return $this->supportMapper->update($existing);
 
     }
 
-    public function removeSupport(int $inquiryId, string $userId): bool
+    public function removeSupport(int $inquiryId, string $userId,int $optionId): bool
     {
-        return $this->supportMapper->removeSupport($inquiryId, $userId);
+        return $this->supportMapper->removeSupport($inquiryId, $userId,$optionId);
     }
 
     public function removeAllSupportForInquiry(int $inquiryId): int
@@ -91,7 +91,7 @@ class SupportService
 
     public function generateHash(Support $support): string
     {
-        return hash('sha256', $support->getInquiryId() . '|' . $support->getUserId());
+        return hash('sha256', $support->getInquiryId() . '|' . $support->getUserId() . '|' . $support->getOptionId() );
     }
 
 

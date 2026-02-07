@@ -34,7 +34,7 @@ onMounted(() => {
 })
 
 onBeforeRouteUpdate(async () => {
-	commentsStore.load(inquriyStore.id)
+	commentsStore.load(inquiryStore.id)
 })
 
 onBeforeRouteLeave(() => {
@@ -64,7 +64,7 @@ watch(
 	</ConfigBox>
 
 	<CommentAdd />
-	<Comments :inquiry-only='true' v-if="!showEmptyContent" />
+	<Comments v-if="!showEmptyContent" :inquiry-only='true' />
 	<NcEmptyContent v-else v-bind="emptyContentProps">
 		<template #icon>
 			<CommentsIcon />
