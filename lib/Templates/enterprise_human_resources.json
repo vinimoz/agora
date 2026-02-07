@@ -1,0 +1,1931 @@
+{
+  "template_info": {
+    "name": "enterprise_human_resources",
+    "version": "1.0.0",
+    "description": "Template for enterprise human resources supporting workplace improvements, policy feedback, training programs, team building, and employee wellbeing with advanced capabilities including voting, hierarchies, and collaborative workflows",
+    "author": "Agora Team",
+    "use_case": "enterprise_hr",
+    "available_languages": [
+      "en",
+      "fr",
+      "de",
+      "gsw"
+    ]
+  },
+  "inquiry_families": [
+    {
+      "family_type": "hr_services",
+      "label": {
+        "en": "HR Services",
+        "fr": "Services RH",
+        "de": "HR-Dienste",
+        "gsw": "HR-Dienscht"
+      },
+      "description": {
+        "en": "Human resources initiatives for employee development and workplace improvement",
+        "fr": "Initiatives RH pour le développement des employés et l'amélioration du lieu de travail",
+        "de": "HR-Initiativen für Mitarbeiterentwicklung und Arbeitsplatzverbesserung",
+        "gsw": "HR-Initiative für Mitarbeiter-Entwicklig und Arbetsplatz-Verbesserig"
+      },
+      "icon": "AccountGroup",
+      "sort_order": 1
+    },
+    {
+      "family_type": "official_human_resources",
+      "label": {
+        "en": "Official Response",
+        "fr": "Réponse officielle",
+        "de": "Offizielle Antwort",
+        "gsw": "Offizielle Antwort"
+      },
+      "description": {
+        "en": "Official responses from HR management",
+        "fr": "Réponses officielles de la direction RH",
+        "de": "Offizielle Antworten vom HR-Management",
+        "gsw": "Offizelli Antworte vom HR-Management"
+      },
+      "icon": "Seal",
+      "sort_order": 2
+    }
+  ],
+  "inquiry_types": [
+    {
+      "inquiry_type": "training_development",
+      "family": "hr_services",
+      "icon": "School",
+      "label": {
+        "en": "Training & Development Ideas",
+        "fr": "Idées de formation et développement",
+        "de": "Schulungs- und Entwicklungsideen",
+        "gsw": "Schuligs- und Entwickligsidee"
+      },
+      "description": {
+        "en": "Suggestions for employee training programs and professional development",
+        "fr": "Suggestions de programmes de formation et développement professionnel",
+        "de": "Vorschläge für Mitarbeiterschulungen und berufliche Entwicklung",
+        "gsw": "Vorschläg für Mitarbeiter-Schulige und berueflichi Entwicklig"
+      },
+      "is_root": true,
+      "allowed_response": [
+        "official_response_human_resources"
+      ],
+      "allowed_option_type": [
+        "position_for",
+        "position_against",
+        "alternative",
+        "official_summary"
+      ],
+      "support_feature": "binary",
+      "fields": [
+        {
+          "key": "training_category",
+          "label": {
+            "en": "Training Category",
+            "fr": "Catégorie de formation",
+            "de": "Schulungskategorie",
+            "gsw": "Schuligs-Kategorie"
+          },
+          "type": "enum",
+          "required": true,
+          "default": "professional",
+          "allowed_values": [
+            {"value": "technical", "label": {"en": "Technical Skills", "fr": "Compétences techniques", "de": "Technische Fähigkeiten", "gsw": "Technischi Fähigkeite"}},
+            {"value": "professional", "label": {"en": "Professional Development", "fr": "Développement professionnel", "de": "Berufliche Entwicklung", "gsw": "Berueflichi Entwicklig"}},
+            {"value": "leadership", "label": {"en": "Leadership", "fr": "Leadership", "de": "Führung", "gsw": "Füehrig"}},
+            {"value": "compliance", "label": {"en": "Compliance", "fr": "Conformité", "de": "Compliance", "gsw": "Compliance"}},
+            {"value": "soft_skills", "label": {"en": "Soft Skills", "fr": "Compétences interpersonnelles", "de": "Soft Skills", "gsw": "Soft Skills"}}
+          ]
+        },
+        {
+          "key": "delivery_method",
+          "label": {
+            "en": "Delivery Method",
+            "fr": "Méthode de livraison",
+            "de": "Bereitstellungsmethode",
+            "gsw": "Bereitstelligs-Method"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "hybrid",
+          "allowed_values": [
+            {"value": "online", "label": {"en": "Online", "fr": "En ligne", "de": "Online", "gsw": "Online"}},
+            {"value": "in_person", "label": {"en": "In Person", "fr": "En personne", "de": "Vor Ort", "gsw": "Vor Ort"}},
+            {"value": "hybrid", "label": {"en": "Hybrid", "fr": "Hybride", "de": "Hybrid", "gsw": "Hybrid"}}
+          ]
+        },
+        {
+          "key": "layout_zone",
+          "label": {
+            "en": "Layout Zone",
+            "fr": "Zone de mise en page",
+            "de": "Layout-Zone",
+            "gsw": "Layout-Zone"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "main",
+          "allowed_values": ["sidebar", "main", "footer", "header"]
+        },
+        {
+          "key": "render_mode",
+          "label": {
+            "en": "Render Mode",
+            "fr": "Mode de rendu",
+            "de": "Darstellungsmodus",
+            "gsw": "Darstelligs-Modus"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "rich_html",
+          "allowed_values": ["cards", "list", "full", "summary", "rich_html"]
+        },
+        {
+          "key": "open_mode",
+          "label": {
+            "en": "Open Mode",
+            "fr": "Mode d'ouverture",
+            "de": "Öffnungsmodus",
+            "gsw": "Öffnigs-Modus"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "page",
+          "allowed_values": ["page", "modal", "popup"]
+        }
+      ]
+    },
+    {
+      "inquiry_type": "workplace_improvement",
+      "family": "hr_services",
+      "icon": "OfficeBuilding",
+      "label": {
+        "en": "Workplace Improvements",
+        "fr": "Améliorations du lieu de travail",
+        "de": "Arbeitsplatzverbesserungen",
+        "gsw": "Arbetsplatz-Verbesserige"
+      },
+      "description": {
+        "en": "Ideas to improve workplace environment and employee experience",
+        "fr": "Idées pour améliorer l'environnement de travail et l'expérience employé",
+        "de": "Ideen zur Verbesserung der Arbeitsumgebung und Mitarbeitererfahrung",
+        "gsw": "Idee zur Verbesserig vo de Arbetsumgäbig und Mitarbeiter-Erfahrig"
+      },
+      "is_root": true,
+      "allowed_response": [
+        "official_response_human_resources"
+      ],
+      "allowed_option_type": [
+        "position_for",
+        "position_against",
+        "alternative",
+        "official_summary"
+      ],
+      "support_feature": "binary",
+      "allowed_transformation": [
+        "policy_feedback"
+      ],
+      "fields": [
+        {
+          "key": "type_of_vote",
+          "label": {
+            "en": "Type of Vote",
+            "fr": "Type de vote",
+            "de": "Abstimmungstyp",
+            "gsw": "Abstimmigs-Typ"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "simple",
+          "allowed_values": [
+            "simple",
+            "approval",
+            "majority_judgement_beneficial"
+          ]
+        },
+        {
+          "key": "anonymous_voting",
+          "label": {
+            "en": "Anonymous Voting",
+            "fr": "Vote anonyme",
+            "de": "Anonyme Abstimmung",
+            "gsw": "Anonymi Abstimmig"
+          },
+          "type": "boolean",
+          "required": false,
+          "default": true
+        },
+        {
+          "key": "quorum",
+          "label": {
+            "en": "Required Votes",
+            "fr": "Votes requis",
+            "de": "Erforderliche Stimmen",
+            "gsw": "Erforderlich Stimme"
+          },
+          "type": "integer",
+          "required": false,
+          "default": 100
+        },
+        {
+          "key": "voting_deadline",
+          "label": {
+            "en": "Voting Deadline",
+            "fr": "Date limite de vote",
+            "de": "Abstimmungsfrist",
+            "gsw": "Abstimmigs-Frischt"
+          },
+          "type": "date",
+          "required": false
+        },
+        {
+          "key": "poll_method",
+          "label": {
+            "en": "Poll Method",
+            "fr": "Méthode de sondage",
+            "de": "Umfragemethode",
+            "gsw": "Umfraag-Method"
+          },
+          "type": "enum",
+          "required": false,
+          "allowed_values": [
+            {"value": "single_choice", "label": {"en": "Single Choice", "fr": "Choix unique", "de": "Einzelauswahl", "gsw": "Einzeluswahl"}},
+            {"value": "multiple_choice", "label": {"en": "Multiple Choice", "fr": "Choix multiples", "de": "Mehrfachauswahl", "gsw": "Mehrfach-Uswahl"}},
+            {"value": "ranking", "label": {"en": "Ranking", "fr": "Classement", "de": "Rangfolge", "gsw": "Rangfolg"}},
+            {"value": "rating", "label": {"en": "Rating", "fr": "Évaluation", "de": "Bewertung", "gsw": "Bewertig"}}
+          ]
+        },
+        {
+          "key": "layout_zone",
+          "label": {
+            "en": "Layout Zone",
+            "fr": "Zone de mise en page",
+            "de": "Layout-Zone",
+            "gsw": "Layout-Zone"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "main",
+          "allowed_values": ["sidebar", "main", "footer", "header"]
+        },
+        {
+          "key": "render_mode",
+          "label": {
+            "en": "Render Mode",
+            "fr": "Mode de rendu",
+            "de": "Darstellungsmodus",
+            "gsw": "Darstelligs-Modus"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "rich_html",
+          "allowed_values": ["cards", "list", "full", "summary", "rich_html"]
+        },
+        {
+          "key": "open_mode",
+          "label": {
+            "en": "Open Mode",
+            "fr": "Mode d'ouverture",
+            "de": "Öffnungsmodus",
+            "gsw": "Öffnigs-Modus"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "page",
+          "allowed_values": ["page", "modal", "popup"]
+        }
+      ]
+    },
+    {
+      "inquiry_type": "team_building",
+      "family": "hr_services",
+      "icon": "AccountMultiple",
+      "label": {
+        "en": "Team Building Suggestions",
+        "fr": "Suggestions de team building",
+        "de": "Teambuilding-Vorschläge",
+        "gsw": "Teambuilding-Vorschläg"
+      },
+      "description": {
+        "en": "Proposals for team building activities and initiatives",
+        "fr": "Propositions d'activités et initiatives de team building",
+        "de": "Vorschläge für Teambuilding-Aktivitäten und -Initiativen",
+        "gsw": "Vorschläg für Teambuilding-Aktivitäte und -Initiative"
+      },
+      "is_root": true,
+      "allowed_response": [
+        "official_response_human_resources"
+      ],
+      "allowed_option_type": [
+        "position_for",
+        "position_against",
+        "alternative",
+        "official_summary"
+      ],
+      "support_feature": "binary",
+      "fields": [
+        {
+          "key": "activity_type",
+          "label": {
+            "en": "Activity Type",
+            "fr": "Type d'activité",
+            "de": "Aktivitätstyp",
+            "gsw": "Aktivitäts-Typ"
+          },
+          "type": "enum",
+          "required": true,
+          "default": "team_event",
+          "allowed_values": [
+            {"value": "team_event", "label": {"en": "Team Event", "fr": "Événement d'équipe", "de": "Team-Event", "gsw": "Team-Event"}},
+            {"value": "offsite", "label": {"en": "Offsite", "fr": "Hors site", "de": "Offsite", "gsw": "Offsite"}},
+            {"value": "workshop", "label": {"en": "Workshop", "fr": "Atelier", "de": "Workshop", "gsw": "Workshop"}},
+            {"value": "social", "label": {"en": "Social Event", "fr": "Événement social", "de": "Soziales Event", "gsw": "Sozials Event"}},
+            {"value": "volunteer", "label": {"en": "Volunteering", "fr": "Bénévolat", "de": "Freiwilligenarbeit", "gsw": "Freiwilligearbeit"}},
+            {"value": "sports", "label": {"en": "Sports", "fr": "Sports", "de": "Sport", "gsw": "Sport"}}
+          ]
+        },
+        {
+          "key": "estimated_budget",
+          "label": {
+            "en": "Estimated Budget",
+            "fr": "Budget estimé",
+            "de": "Geschätztes Budget",
+            "gsw": "Gschätzts Budget"
+          },
+          "type": "integer",
+          "required": false,
+          "default": null
+        },
+        {
+          "key": "layout_zone",
+          "label": {
+            "en": "Layout Zone",
+            "fr": "Zone de mise en page",
+            "de": "Layout-Zone",
+            "gsw": "Layout-Zone"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "main",
+          "allowed_values": ["sidebar", "main", "footer", "header"]
+        },
+        {
+          "key": "render_mode",
+          "label": {
+            "en": "Render Mode",
+            "fr": "Mode de rendu",
+            "de": "Darstellungsmodus",
+            "gsw": "Darstelligs-Modus"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "rich_html",
+          "allowed_values": ["cards", "list", "full", "summary", "rich_html"]
+        },
+        {
+          "key": "open_mode",
+          "label": {
+            "en": "Open Mode",
+            "fr": "Mode d'ouverture",
+            "de": "Öffnungsmodus",
+            "gsw": "Öffnigs-Modus"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "page",
+          "allowed_values": ["page", "modal", "popup"]
+        }
+      ]
+    },
+    {
+      "inquiry_type": "policy_feedback",
+      "family": "hr_services",
+      "icon": "FileDocument",
+      "label": {
+        "en": "Policy Feedback",
+        "fr": "Retour sur les politiques",
+        "de": "Richtlinien-Feedback",
+        "gsw": "Richtlinie-Feedback"
+      },
+      "description": {
+        "en": "Feedback on HR policies and suggestions for improvements",
+        "fr": "Retours sur les politiques RH et suggestions d'améliorations",
+        "de": "Feedback zu HR-Richtlinien und Verbesserungsvorschläge",
+        "gsw": "Feedback zu HR-Richtlinie und Verbesserig-Vorschläg"
+      },
+      "is_root": true,
+      "allowed_response": [
+        "official_response_human_resources"
+      ],
+      "allowed_option_type": [
+        "position_for",
+        "position_against",
+        "alternative",
+        "official_summary"
+      ],
+      "support_feature": "binary",
+      "fields": [
+        {
+          "key": "type_of_vote",
+          "label": {
+            "en": "Type of Vote",
+            "fr": "Type de vote",
+            "de": "Abstimmungstyp",
+            "gsw": "Abstimmigs-Typ"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "simple",
+          "allowed_values": [
+            "simple",
+            "approval",
+            "majority_judgement_beneficial"
+          ]
+        },
+        {
+          "key": "anonymous_voting",
+          "label": {
+            "en": "Anonymous Voting",
+            "fr": "Vote anonyme",
+            "de": "Anonyme Abstimmung",
+            "gsw": "Anonymi Abstimmig"
+          },
+          "type": "boolean",
+          "required": false,
+          "default": true
+        },
+        {
+          "key": "quorum",
+          "label": {
+            "en": "Required Votes",
+            "fr": "Votes requis",
+            "de": "Erforderliche Stimmen",
+            "gsw": "Erforderlich Stimme"
+          },
+          "type": "integer",
+          "required": false,
+          "default": 100
+        },
+        {
+          "key": "voting_deadline",
+          "label": {
+            "en": "Voting Deadline",
+            "fr": "Date limite de vote",
+            "de": "Abstimmungsfrist",
+            "gsw": "Abstimmigs-Frischt"
+          },
+          "type": "date",
+          "required": false
+        },
+        {
+          "key": "poll_method",
+          "label": {
+            "en": "Poll Method",
+            "fr": "Méthode de sondage",
+            "de": "Umfragemethode",
+            "gsw": "Umfraag-Method"
+          },
+          "type": "enum",
+          "required": false,
+          "allowed_values": [
+            {"value": "single_choice", "label": {"en": "Single Choice", "fr": "Choix unique", "de": "Einzelauswahl", "gsw": "Einzeluswahl"}},
+            {"value": "multiple_choice", "label": {"en": "Multiple Choice", "fr": "Choix multiples", "de": "Mehrfachauswahl", "gsw": "Mehrfach-Uswahl"}},
+            {"value": "ranking", "label": {"en": "Ranking", "fr": "Classement", "de": "Rangfolge", "gsw": "Rangfolg"}},
+            {"value": "rating", "label": {"en": "Rating", "fr": "Évaluation", "de": "Bewertung", "gsw": "Bewertig"}}
+          ]
+        },
+        {
+          "key": "layout_zone",
+          "label": {
+            "en": "Layout Zone",
+            "fr": "Zone de mise en page",
+            "de": "Layout-Zone",
+            "gsw": "Layout-Zone"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "main",
+          "allowed_values": ["sidebar", "main", "footer", "header"]
+        },
+        {
+          "key": "render_mode",
+          "label": {
+            "en": "Render Mode",
+            "fr": "Mode de rendu",
+            "de": "Darstellungsmodus",
+            "gsw": "Darstelligs-Modus"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "rich_html",
+          "allowed_values": ["cards", "list", "full", "summary", "rich_html"]
+        },
+        {
+          "key": "open_mode",
+          "label": {
+            "en": "Open Mode",
+            "fr": "Mode d'ouverture",
+            "de": "Öffnungsmodus",
+            "gsw": "Öffnigs-Modus"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "page",
+          "allowed_values": ["page", "modal", "popup"]
+        }
+      ]
+    },
+    {
+      "inquiry_type": "recognition_program",
+      "family": "hr_services",
+      "icon": "Star",
+      "label": {
+        "en": "Recognition Programs",
+        "fr": "Programmes de reconnaissance",
+        "de": "Anerkennungsprogramme",
+        "gsw": "Anerkennigsprogramm"
+      },
+      "description": {
+        "en": "Ideas for employee recognition and reward programs",
+        "fr": "Idées de programmes de reconnaissance et récompense des employés",
+        "de": "Ideen für Mitarbeiteranerkennungs- und Belohnungsprogramme",
+        "gsw": "Idee für Mitarbeiter-Anerkennigs- und Belohnigsprogramm"
+      },
+      "is_root": true,
+      "allowed_response": [
+        "official_response_human_resources"
+      ],
+      "allowed_option_type": [
+        "position_for",
+        "position_against",
+        "alternative",
+        "official_summary"
+      ],
+      "support_feature": "binary",
+      "fields": [
+        {
+          "key": "recognition_type",
+          "label": {
+            "en": "Recognition Type",
+            "fr": "Type de reconnaissance",
+            "de": "Anerkennungstyp",
+            "gsw": "Anerkennigs-Typ"
+          },
+          "type": "enum",
+          "required": true,
+          "default": "peer_recognition",
+          "allowed_values": [
+            {"value": "peer_recognition", "label": {"en": "Peer Recognition", "fr": "Reconnaissance par les pairs", "de": "Kollegiale Anerkennung", "gsw": "Kollegialli Anerkennig"}},
+            {"value": "manager_recognition", "label": {"en": "Manager Recognition", "fr": "Reconnaissance du manager", "de": "Anerkennung durch Vorgesetzte", "gsw": "Anerkennig dür Vorgsetzti"}},
+            {"value": "milestone", "label": {"en": "Milestone Achievement", "fr": "Réalisation d'un jalon", "de": "Meilenstein-Erreichung", "gsw": "Meilestei-Erreichig"}},
+            {"value": "performance", "label": {"en": "Outstanding Performance", "fr": "Performance exceptionnelle", "de": "Herausragende Leistung", "gsw": "Usserordetlichi Leistig"}},
+            {"value": "innovation", "label": {"en": "Innovation", "fr": "Innovation", "de": "Innovation", "gsw": "Innovation"}},
+            {"value": "service_anniversary", "label": {"en": "Service Anniversary", "fr": "Anniversaire de service", "de": "Dienstjubiläum", "gsw": "Dienscht-Jubiläum"}}
+          ]
+        },
+        {
+          "key": "layout_zone",
+          "label": {
+            "en": "Layout Zone",
+            "fr": "Zone de mise en page",
+            "de": "Layout-Zone",
+            "gsw": "Layout-Zone"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "main",
+          "allowed_values": ["sidebar", "main", "footer", "header"]
+        },
+        {
+          "key": "render_mode",
+          "label": {
+            "en": "Render Mode",
+            "fr": "Mode de rendu",
+            "de": "Darstellungsmodus",
+            "gsw": "Darstelligs-Modus"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "rich_html",
+          "allowed_values": ["cards", "list", "full", "summary", "rich_html"]
+        },
+        {
+          "key": "open_mode",
+          "label": {
+            "en": "Open Mode",
+            "fr": "Mode d'ouverture",
+            "de": "Öffnungsmodus",
+            "gsw": "Öffnigs-Modus"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "page",
+          "allowed_values": ["page", "modal", "popup"]
+        }
+      ]
+    },
+    {
+      "inquiry_type": "official_response_human_resources",
+      "family": "official_human_resources",
+      "icon": "MessageReply",
+      "label": {
+        "en": "Official Response",
+        "fr": "Réponse officielle",
+        "de": "Offizielle Antwort",
+        "gsw": "Offizielle Antwort"
+      },
+      "description": {
+        "en": "Official response from HR management",
+        "fr": "Réponse officielle de la direction RH",
+        "de": "Offizielle Antwort vom HR-Management",
+        "gsw": "Offizelli Antwort vom HR-Management"
+      },
+      "is_root": false,
+      "allowed_response": [],
+      "allowed_option_type": [
+        "position_for",
+        "position_against",
+        "alternative",
+        "official_summary"
+      ],
+      "support_feature": "none",
+      "fields": [
+        {
+          "key": "response_type",
+          "label": {
+            "en": "Response Type",
+            "fr": "Type de réponse",
+            "de": "Antworttyp",
+            "gsw": "Antwort-Typ"
+          },
+          "type": "enum",
+          "required": true,
+          "default": "acknowledgment",
+          "allowed_values": [
+            {"value": "acknowledgment", "label": {"en": "Acknowledgment", "fr": "Accusé de réception", "de": "Bestätigung", "gsw": "Bestätigung"}},
+            {"value": "clarification", "label": {"en": "Clarification", "fr": "Clarification", "de": "Klärung", "gsw": "Klärig"}},
+            {"value": "decision", "label": {"en": "Decision", "fr": "Décision", "de": "Entscheidung", "gsw": "Entscheidig"}},
+            {"value": "action_plan", "label": {"en": "Action Plan", "fr": "Plan d'action", "de": "Aktionsplan", "gsw": "Aktions-Plan"}},
+            {"value": "rejection", "label": {"en": "Rejection", "fr": "Rejet", "de": "Ablehnung", "gsw": "Ablehning"}}
+          ]
+        },
+        {
+          "key": "layout_zone",
+          "label": {
+            "en": "Layout Zone",
+            "fr": "Zone de mise en page",
+            "de": "Layout-Zone",
+            "gsw": "Layout-Zone"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "main",
+          "allowed_values": ["sidebar", "main", "footer", "header"]
+        },
+        {
+          "key": "render_mode",
+          "label": {
+            "en": "Render Mode",
+            "fr": "Mode de rendu",
+            "de": "Darstellungsmodus",
+            "gsw": "Darstelligs-Modus"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "rich_html",
+          "allowed_values": ["cards", "list", "full", "summary", "rich_html"]
+        },
+        {
+          "key": "open_mode",
+          "label": {
+            "en": "Open Mode",
+            "fr": "Mode d'ouverture",
+            "de": "Öffnungsmodus",
+            "gsw": "Öffnigs-Modus"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "page",
+          "allowed_values": ["page", "modal", "popup"]
+        }
+      ]
+    }
+  ],
+  "inquiry_statuses": [
+    {
+      "inquiry_type": "training_development",
+      "status_key": "submitted",
+      "label": {
+        "en": "Submitted",
+        "fr": "Soumis",
+        "de": "Eingereicht",
+        "gsw": "Iigräicht"
+      },
+      "description": {
+        "en": "Suggestion submitted and awaiting HR review",
+        "fr": "Suggestion soumise en attente d'examen RH",
+        "de": "Vorschlag eingereicht und wartet auf HR-Prüfung",
+        "gsw": "Vorschlag iigräicht und wartet uf HR-Prüefig"
+      },
+      "is_final": false,
+      "icon": "Send",
+      "sort_order": 1
+    },
+    {
+      "inquiry_type": "training_development",
+      "status_key": "under_review",
+      "label": {
+        "en": "Under Review",
+        "fr": "En cours d'examen",
+        "de": "In Prüfung",
+        "gsw": "In Prüefig"
+      },
+      "description": {
+        "en": "HR team is reviewing the suggestion",
+        "fr": "L'équipe RH examine la suggestion",
+        "de": "HR-Team prüft den Vorschlag",
+        "gsw": "HR-Team prüeft de Vorschlag"
+      },
+      "is_final": false,
+      "icon": "Eye",
+      "sort_order": 2
+    },
+    {
+      "inquiry_type": "training_development",
+      "status_key": "planned",
+      "label": {
+        "en": "Planned",
+        "fr": "Planifié",
+        "de": "Geplant",
+        "gsw": "Plaant"
+      },
+      "description": {
+        "en": "Initiative planned for implementation",
+        "fr": "Initiative planifiée pour mise en œuvre",
+        "de": "Initiative zur Umsetzung geplant",
+        "gsw": "Initiative zur Umsetzig plaant"
+      },
+      "is_final": false,
+      "icon": "Calendar",
+      "sort_order": 3
+    },
+    {
+      "inquiry_type": "training_development",
+      "status_key": "implemented",
+      "label": {
+        "en": "Implemented",
+        "fr": "Mis en œuvre",
+        "de": "Umgesetzt",
+        "gsw": "Umgsetzt"
+      },
+      "description": {
+        "en": "Initiative successfully implemented",
+        "fr": "Initiative mise en œuvre avec succès",
+        "de": "Initiative erfolgreich umgesetzt",
+        "gsw": "Initiative erfolgriich umgsetzt"
+      },
+      "is_final": true,
+      "icon": "CheckAll",
+      "sort_order": 4
+    },
+    {
+      "inquiry_type": "training_development",
+      "status_key": "not_feasible",
+      "label": {
+        "en": "Not Feasible",
+        "fr": "Non réalisable",
+        "de": "Nicht machbar",
+        "gsw": "Nöd machbar"
+      },
+      "description": {
+        "en": "Suggestion not feasible at this time",
+        "fr": "Suggestion non réalisable pour le moment",
+        "de": "Vorschlag derzeit nicht machbar",
+        "gsw": "Vorschlag momentan nöd machbar"
+      },
+      "is_final": true,
+      "icon": "CloseCircle",
+      "sort_order": 5
+    },
+    {
+      "inquiry_type": "workplace_improvement",
+      "status_key": "employee_vote",
+      "label": {
+        "en": "Employee-Wide Vote",
+        "fr": "Vote de tous les employés",
+        "de": "Unternehmensweite Abstimmung",
+        "gsw": "Unternehmenswyti Abstimmig"
+      },
+      "description": {
+        "en": "All employees voting on workplace improvement",
+        "fr": "Tous les employés votent sur l'amélioration du lieu de travail",
+        "de": "Alle Mitarbeiter stimmen über Arbeitsplatzverbesserung ab",
+        "gsw": "Alli Mitarbeiter stimme über Arbetsplatz-Verbesserig ab"
+      },
+      "is_final": false,
+      "icon": "VoteOutline",
+      "sort_order": 2.5
+    },
+    {
+      "inquiry_type": "workplace_improvement",
+      "status_key": "management_vote",
+      "label": {
+        "en": "Management Approval Vote",
+        "fr": "Vote d'approbation de la direction",
+        "de": "Management-Genehmigungsabstimmung",
+        "gsw": "Management-Genehmigigs-Abstimmig"
+      },
+      "description": {
+        "en": "Management voting on budget approval",
+        "fr": "La direction vote sur l'approbation budgétaire",
+        "de": "Management stimmt über Budgetgenehmigung ab",
+        "gsw": "Management stimmt über Budget-Genehmigung ab"
+      },
+      "is_final": false,
+      "icon": "AccountTie",
+      "sort_order": 3.5
+    },
+    {
+      "inquiry_type": "workplace_improvement",
+      "status_key": "pilot_program",
+      "label": {
+        "en": "Pilot Program",
+        "fr": "Programme pilote",
+        "de": "Pilotprogramm",
+        "gsw": "Pilot-Programm"
+      },
+      "description": {
+        "en": "Testing initiative as pilot program",
+        "fr": "Test de l'initiative en programme pilote",
+        "de": "Initiative als Pilotprogramm testen",
+        "gsw": "Initiative als Pilot-Programm teste"
+      },
+      "is_final": false,
+      "icon": "FlaskOutline",
+      "sort_order": 3.8
+    },
+    {
+      "inquiry_type": "training_development",
+      "status_key": "department_poll",
+      "label": {
+        "en": "Department Poll",
+        "fr": "Sondage départemental",
+        "de": "Abteilungsumfrage",
+        "gsw": "Abteiligs-Umfraag"
+      },
+      "description": {
+        "en": "Department-wide survey for training needs",
+        "fr": "Sondage départemental sur les besoins de formation",
+        "de": "Abteilungsweite Umfrage zu Schulungsbedarf",
+        "gsw": "Abteiliswyti Umfraag zu Schuligs-Bedarf"
+      },
+      "is_final": false,
+      "icon": "Poll",
+      "sort_order": 2.5
+    },
+    {
+      "inquiry_type": "policy_feedback",
+      "status_key": "hr_committee_vote",
+      "label": {
+        "en": "HR Committee Vote",
+        "fr": "Vote du comité RH",
+        "de": "HR-Komitee-Abstimmung",
+        "gsw": "HR-Komitee-Abstimmig"
+      },
+      "description": {
+        "en": "HR committee voting on policy changes",
+        "fr": "Le comité RH vote sur les changements de politique",
+        "de": "HR-Komitee stimmt über Richtlinienänderungen ab",
+        "gsw": "HR-Komitee stimmt über Richtlinie-Änderige ab"
+      },
+      "is_final": false,
+      "icon": "AccountGroup",
+      "sort_order": 2.5
+    },
+    {
+      "inquiry_type": "policy_feedback",
+      "status_key": "anonymous_survey",
+      "label": {
+        "en": "Anonymous Employee Survey",
+        "fr": "Sondage anonyme des employés",
+        "de": "Anonyme Mitarbeiterumfrage",
+        "gsw": "Anonymi Mitarbeiter-Umfraag"
+      },
+      "description": {
+        "en": "Gathering anonymous feedback on sensitive topics",
+        "fr": "Collecte de retours anonymes sur des sujets sensibles",
+        "de": "Sammeln anonymer Rückmeldungen zu sensiblen Themen",
+        "gsw": "Sammle vo anonyme Rückmeldige zu sensible Thema"
+      },
+      "is_final": false,
+      "icon": "EyeOff",
+      "sort_order": 2.8
+    },
+    {
+      "inquiry_type": "team_building",
+      "status_key": "team_vote",
+      "label": {
+        "en": "Team Vote",
+        "fr": "Vote d'équipe",
+        "de": "Team-Abstimmung",
+        "gsw": "Team-Abstimmig"
+      },
+      "description": {
+        "en": "Team members voting on activity preferences",
+        "fr": "Les membres de l'équipe votent sur les préférences d'activité",
+        "de": "Teammitglieder stimmen über Aktivitätspräferenzen ab",
+        "gsw": "Team-Mitglieder stimme über Aktivitäts-Präferenze ab"
+      },
+      "is_final": false,
+      "icon": "AccountGroupOutline",
+      "sort_order": 2.5
+    },
+
+    {
+      "inquiry_type": "team_building",
+      "status_key": "proposed",
+      "label": {
+        "en": "Proposed",
+        "fr": "Proposé",
+        "de": "Vorgeschlagen",
+        "gsw": "Vorgschlage"
+      },
+      "description": {
+        "en": "Team building activity has been proposed",
+        "fr": "Une activité de team building a été proposée",
+        "de": "Team-Building-Aktivität wurde vorgeschlagen",
+        "gsw": "Team-Building-Aktivitäät isch vorgschlage"
+      },
+      "is_final": false,
+      "icon": "Send",
+      "sort_order": 1
+    },
+    {
+      "inquiry_type": "team_building",
+      "status_key": "team_interest_poll",
+      "label": {
+        "en": "Team Interest Poll",
+        "fr": "Sondage d'intérêt de l'équipe",
+        "de": "Team-Interessensumfrage",
+        "gsw": "Team-Interesse-Umfraag"
+      },
+      "description": {
+        "en": "Polling team members for interest and availability",
+        "fr": "Sondage des membres de l'équipe pour l'intérêt et la disponibilité",
+        "de": "Befragung der Teammitglieder zu Interesse und Verfügbarkeit",
+        "gsw": "Befraagig vo Team-Mitglieder zu Interesse und Verfügbarkeit"
+      },
+      "is_final": false,
+      "icon": "Poll",
+      "sort_order": 2
+    },
+    {
+      "inquiry_type": "team_building",
+      "status_key": "budget_check",
+      "label": {
+        "en": "Budget Check",
+        "fr": "Vérification du budget",
+        "de": "Budgetprüfung",
+        "gsw": "Budget-Prüefig"
+      },
+      "description": {
+        "en": "Verifying budget availability",
+        "fr": "Vérification de la disponibilité du budget",
+        "de": "Überprüfung der Budgetverfügbarkeit",
+        "gsw": "Überprüefig vo dr Budget-Verfügbarkeit"
+      },
+      "is_final": false,
+      "icon": "CashCheck",
+      "sort_order": 3
+    },
+    {
+      "inquiry_type": "team_building",
+      "status_key": "approved",
+      "label": {
+        "en": "Approved",
+        "fr": "Approuvé",
+        "de": "Genehmigt",
+        "gsw": "Gnehmigt"
+      },
+      "description": {
+        "en": "Team building activity approved",
+        "fr": "Activité de team building approuvée",
+        "de": "Team-Building-Aktivität genehmigt",
+        "gsw": "Team-Building-Aktivitäät gnehmigt"
+      },
+      "is_final": false,
+      "icon": "CheckCircle",
+      "sort_order": 4
+    },
+    {
+      "inquiry_type": "team_building",
+      "status_key": "scheduled",
+      "label": {
+        "en": "Scheduled",
+        "fr": "Planifié",
+        "de": "Geplant",
+        "gsw": "Gplant"
+      },
+      "description": {
+        "en": "Activity has been scheduled",
+        "fr": "L'activité a été planifiée",
+        "de": "Aktivität wurde geplant",
+        "gsw": "Aktivitäät isch gplant"
+      },
+      "is_final": false,
+      "icon": "CalendarCheck",
+      "sort_order": 5
+    },
+    {
+      "inquiry_type": "team_building",
+      "status_key": "completed",
+      "label": {
+        "en": "Completed",
+        "fr": "Terminé",
+        "de": "Abgeschlossen",
+        "gsw": "Abgschlosse"
+      },
+      "description": {
+        "en": "Team building activity completed successfully",
+        "fr": "Activité de team building terminée avec succès",
+        "de": "Team-Building-Aktivität erfolgreich abgeschlossen",
+        "gsw": "Team-Building-Aktivitäät erfolgriich abgschlosse"
+      },
+      "is_final": true,
+      "icon": "CheckAll",
+      "sort_order": 6
+    },
+    {
+      "inquiry_type": "team_building",
+      "status_key": "cancelled",
+      "label": {
+        "en": "Cancelled",
+        "fr": "Annulé",
+        "de": "Abgesagt",
+        "gsw": "Abgsäit"
+      },
+      "description": {
+        "en": "Team building activity cancelled",
+        "fr": "Activité de team building annulée",
+        "de": "Team-Building-Aktivität abgesagt",
+        "gsw": "Team-Building-Aktivitäät abgsäit"
+      },
+      "is_final": true,
+      "icon": "CloseCircle",
+      "sort_order": 7
+    },
+
+    {
+      "inquiry_type": "policy_feedback",
+      "status_key": "submitted",
+      "label": {
+        "en": "Submitted",
+        "fr": "Soumis",
+        "de": "Eingereicht",
+        "gsw": "Iigräicht"
+      },
+      "description": {
+        "en": "Policy feedback has been submitted",
+        "fr": "Le retour sur la politique a été soumis",
+        "de": "Richtlinien-Feedback wurde eingereicht",
+        "gsw": "Richtlinie-Feedback isch iigräicht"
+      },
+      "is_final": false,
+      "icon": "Send",
+      "sort_order": 1
+    },
+    {
+      "inquiry_type": "policy_feedback",
+      "status_key": "hr_review",
+      "label": {
+        "en": "HR Review",
+        "fr": "Examen RH",
+        "de": "HR-Prüfung",
+        "gsw": "HR-Prüefig"
+      },
+      "description": {
+        "en": "HR team reviewing the feedback",
+        "fr": "L'équipe RH examine le retour",
+        "de": "HR-Team prüft das Feedback",
+        "gsw": "HR-Team prüeft s'Feedback"
+      },
+      "is_final": false,
+      "icon": "AccountSearch",
+      "sort_order": 2
+    },
+    {
+      "inquiry_type": "policy_feedback",
+      "status_key": "legal_review",
+      "label": {
+        "en": "Legal Review",
+        "fr": "Examen juridique",
+        "de": "Rechtsprüfung",
+        "gsw": "Rächt-Prüefig"
+      },
+      "description": {
+        "en": "Legal team reviewing policy implications",
+        "fr": "L'équipe juridique examine les implications de la politique",
+        "de": "Rechtsteam prüft Richtlinienauswirkungen",
+        "gsw": "Rächt-Team prüeft Richtlinie-Uswirkige"
+      },
+      "is_final": false,
+      "icon": "ScaleBalance",
+      "sort_order": 3
+    },
+    {
+      "inquiry_type": "policy_feedback",
+      "status_key": "management_discussion",
+      "label": {
+        "en": "Management Discussion",
+        "fr": "Discussion de la direction",
+        "de": "Managementdiskussion",
+        "gsw": "Management-Diskussion"
+      },
+      "description": {
+        "en": "Management discussing proposed policy changes",
+        "fr": "La direction discute des changements de politique proposés",
+        "de": "Management bespricht vorgeschlagene Richtlinienänderungen",
+        "gsw": "Management bespricht vorgschlagneni Richtlinie-Änderige"
+      },
+      "is_final": false,
+      "icon": "AccountTie",
+      "sort_order": 4
+    },
+    {
+      "inquiry_type": "policy_feedback",
+      "status_key": "policy_updated",
+      "label": {
+        "en": "Policy Updated",
+        "fr": "Politique mise à jour",
+        "de": "Richtlinie aktualisiert",
+        "gsw": "Richtlinie aktualisiert"
+      },
+      "description": {
+        "en": "Policy has been updated based on feedback",
+        "fr": "La politique a été mise à jour suite au retour",
+        "de": "Richtlinie wurde basierend auf Feedback aktualisiert",
+        "gsw": "Richtlinie isch basierend uf Feedback aktualisiert"
+      },
+      "is_final": false,
+      "icon": "FileDocumentEdit",
+      "sort_order": 5
+    },
+    {
+      "inquiry_type": "policy_feedback",
+      "status_key": "communicated",
+      "label": {
+        "en": "Communicated",
+        "fr": "Communiqué",
+        "de": "Kommuniziert",
+        "gsw": "Kommuniziert"
+      },
+      "description": {
+        "en": "Policy changes communicated to employees",
+        "fr": "Changements de politique communiqués aux employés",
+        "de": "Richtlinienänderungen an Mitarbeiter kommuniziert",
+        "gsw": "Richtlinie-Änderige an Mitarbeiter kommuniziert"
+      },
+      "is_final": true,
+      "icon": "CheckAll",
+      "sort_order": 6
+    },
+    {
+      "inquiry_type": "policy_feedback",
+      "status_key": "no_change",
+      "label": {
+        "en": "No Change Required",
+        "fr": "Aucun changement requis",
+        "de": "Keine Änderung erforderlich",
+        "gsw": "Kei Änderig erforderlich"
+      },
+      "description": {
+        "en": "Current policy remains unchanged after review",
+        "fr": "La politique actuelle reste inchangée après examen",
+        "de": "Aktuelle Richtlinie bleibt nach Prüfung unverändert",
+        "gsw": "Aktuelli Richtlinie bliibt nach Prüefig unveränderit"
+      },
+      "is_final": true,
+      "icon": "CheckCircle",
+      "sort_order": 7
+    },
+
+    {
+      "inquiry_type": "recognition_program",
+      "status_key": "nominated",
+      "label": {
+        "en": "Nominated",
+        "fr": "Nominé",
+        "de": "Nominiert",
+        "gsw": "Nominiert"
+      },
+      "description": {
+        "en": "Employee has been nominated for recognition",
+        "fr": "L'employé a été nominé pour une reconnaissance",
+        "de": "Mitarbeiter wurde für Anerkennung nominiert",
+        "gsw": "Mitarbeiter isch für Aanerkennig nominiert"
+      },
+      "is_final": false,
+      "icon": "StarOutline",
+      "sort_order": 1
+    },
+    {
+      "inquiry_type": "recognition_program",
+      "status_key": "validation",
+      "label": {
+        "en": "Validation",
+        "fr": "Validation",
+        "de": "Validierung",
+        "gsw": "Validierig"
+      },
+      "description": {
+        "en": "Nomination being validated by management",
+        "fr": "Nomination en cours de validation par la direction",
+        "de": "Nominierung wird vom Management validiert",
+        "gsw": "Nominierig wird vom Management validiert"
+      },
+      "is_final": false,
+      "icon": "CheckboxMarked",
+      "sort_order": 2
+    },
+    {
+      "inquiry_type": "recognition_program",
+      "status_key": "committee_vote",
+      "label": {
+        "en": "Committee Vote",
+        "fr": "Vote du comité",
+        "de": "Komitee-Abstimmung",
+        "gsw": "Komitee-Abstimmig"
+      },
+      "description": {
+        "en": "Recognition committee reviewing and voting",
+        "fr": "Le comité de reconnaissance examine et vote",
+        "de": "Anerkennungskomitee prüft und stimmt ab",
+        "gsw": "Aanerkennings-Komitee prüeft und stimmt ab"
+      },
+      "is_final": false,
+      "icon": "VoteOutline",
+      "sort_order": 3
+    },
+    {
+      "inquiry_type": "recognition_program",
+      "status_key": "approved",
+      "label": {
+        "en": "Approved",
+        "fr": "Approuvé",
+        "de": "Genehmigt",
+        "gsw": "Gnehmigt"
+      },
+      "description": {
+        "en": "Recognition has been approved",
+        "fr": "La reconnaissance a été approuvée",
+        "de": "Anerkennung wurde genehmigt",
+        "gsw": "Aanerkennig isch gnehmigt"
+      },
+      "is_final": false,
+      "icon": "CheckCircle",
+      "sort_order": 4
+    },
+    {
+      "inquiry_type": "recognition_program",
+      "status_key": "award_scheduled",
+      "label": {
+        "en": "Award Scheduled",
+        "fr": "Récompense planifiée",
+        "de": "Auszeichnung geplant",
+        "gsw": "Uszeichnig gplant"
+      },
+      "description": {
+        "en": "Award ceremony or presentation scheduled",
+        "fr": "Cérémonie ou présentation de récompense planifiée",
+        "de": "Preisverleihung oder Präsentation geplant",
+        "gsw": "Priisverleihig oder Präsentation gplant"
+      },
+      "is_final": false,
+      "icon": "CalendarStar",
+      "sort_order": 5
+    },
+    {
+      "inquiry_type": "recognition_program",
+      "status_key": "presented",
+      "label": {
+        "en": "Presented",
+        "fr": "Présenté",
+        "de": "Verliehen",
+        "gsw": "Verliehe"
+      },
+      "description": {
+        "en": "Recognition award has been presented",
+        "fr": "La récompense de reconnaissance a été présentée",
+        "de": "Anerkennungsauszeichnung wurde verliehen",
+        "gsw": "Aanerkennings-Uszeichnig isch verliehe"
+      },
+      "is_final": true,
+      "icon": "Trophy",
+      "sort_order": 6
+    },
+    {
+      "inquiry_type": "recognition_program",
+      "status_key": "not_selected",
+      "label": {
+        "en": "Not Selected",
+        "fr": "Non sélectionné",
+        "de": "Nicht ausgewählt",
+        "gsw": "Nöd usgwählt"
+      },
+      "description": {
+        "en": "Nominee not selected for this recognition cycle",
+        "fr": "Nominé non sélectionné pour ce cycle de reconnaissance",
+        "de": "Nominierter nicht für diesen Anerkennungszyklus ausgewählt",
+        "gsw": "Nominierti nöd für dä Aanerkennings-Zyklus usgwählt"
+      },
+      "is_final": true,
+      "icon": "CloseCircle",
+      "sort_order": 7
+    }
+  ],
+  "categories": [
+    {
+      "category_id": "learning_development",
+      "name": {
+        "en": "Learning & Development",
+        "fr": "Apprentissage et développement",
+        "de": "Lernen & Entwicklung",
+        "gsw": "Lerne & Entwicklig"
+      },
+      "parent": null
+    },
+    {
+      "category_id": "technical_skills",
+      "name": {
+        "en": "Technical Skills",
+        "fr": "Compétences techniques",
+        "de": "Technische Fähigkeiten",
+        "gsw": "Technischi Fähigkeite"
+      },
+      "parent": "learning_development"
+    },
+    {
+      "category_id": "leadership",
+      "name": {
+        "en": "Leadership",
+        "fr": "Leadership",
+        "de": "Führung",
+        "gsw": "Füehrig"
+      },
+      "parent": "learning_development"
+    },
+    {
+      "category_id": "compliance_training",
+      "name": {
+        "en": "Compliance Training",
+        "fr": "Formation à la conformité",
+        "de": "Compliance-Schulung",
+        "gsw": "Compliance-Schulig"
+      },
+      "parent": "learning_development"
+    },
+    {
+      "category_id": "wellbeing",
+      "name": {
+        "en": "Wellbeing",
+        "fr": "Bien-être",
+        "de": "Wohlbefinden",
+        "gsw": "Wohlfüehle"
+      },
+      "parent": null
+    },
+    {
+      "category_id": "physical_health",
+      "name": {
+        "en": "Physical Health",
+        "fr": "Santé physique",
+        "de": "Körperliche Gesundheit",
+        "gsw": "Körperlichi Gsundheit"
+      },
+      "parent": "wellbeing"
+    },
+    {
+      "category_id": "mental_health",
+      "name": {
+        "en": "Mental Health",
+        "fr": "Santé mentale",
+        "de": "Psychische Gesundheit",
+        "gsw": "Psychischi Gsundheit"
+      },
+      "parent": "wellbeing"
+    },
+    {
+      "category_id": "work_life_balance",
+      "name": {
+        "en": "Work-Life Balance",
+        "fr": "Équilibre travail-vie",
+        "de": "Work-Life-Balance",
+        "gsw": "Work-Life-Balance"
+      },
+      "parent": "wellbeing"
+    },
+    {
+      "category_id": "culture",
+      "name": {
+        "en": "Culture",
+        "fr": "Culture",
+        "de": "Kultur",
+        "gsw": "Kultur"
+      },
+      "parent": null
+    },
+    {
+      "category_id": "values",
+      "name": {
+        "en": "Values",
+        "fr": "Valeurs",
+        "de": "Werte",
+        "gsw": "Wärt"
+      },
+      "parent": "culture"
+    },
+    {
+      "category_id": "engagement",
+      "name": {
+        "en": "Engagement",
+        "fr": "Engagement",
+        "de": "Engagement",
+        "gsw": "Engagement"
+      },
+      "parent": "culture"
+    },
+    {
+      "category_id": "recognition",
+      "name": {
+        "en": "Recognition",
+        "fr": "Reconnaissance",
+        "de": "Anerkennung",
+        "gsw": "Aanerkennig"
+      },
+      "parent": "culture"
+    },
+    {
+      "category_id": "benefits",
+      "name": {
+        "en": "Benefits",
+        "fr": "Avantages",
+        "de": "Leistungen",
+        "gsw": "Leischtige"
+      },
+      "parent": null
+    },
+    {
+      "category_id": "health_insurance",
+      "name": {
+        "en": "Health Insurance",
+        "fr": "Assurance santé",
+        "de": "Krankenversicherung",
+        "gsw": "Krank heits-Versicherig"
+      },
+      "parent": "benefits"
+    },
+    {
+      "category_id": "retirement",
+      "name": {
+        "en": "Retirement",
+        "fr": "Retraite",
+        "de": "Ruhestand",
+        "gsw": "Ruehstand"
+      },
+      "parent": "benefits"
+    },
+    {
+      "category_id": "time_off",
+      "name": {
+        "en": "Time Off",
+        "fr": "Congés",
+        "de": "Freizeit",
+        "gsw": "Freizit"
+      },
+      "parent": "benefits"
+    },
+    {
+      "category_id": "perks",
+      "name": {
+        "en": "Perks",
+        "fr": "Avantages",
+        "de": "Vergünstigungen",
+        "gsw": "Vergünstigige"
+      },
+      "parent": "benefits"
+    },
+    {
+      "category_id": "diversity_inclusion",
+      "name": {
+        "en": "Diversity & Inclusion",
+        "fr": "Diversité et inclusion",
+        "de": "Vielfalt & Inklusion",
+        "gsw": "Vielfalt & Inklusion"
+      },
+      "parent": null
+    },
+    {
+      "category_id": "recruitment",
+      "name": {
+        "en": "Recruitment",
+        "fr": "Recrutement",
+        "de": "Rekrutierung",
+        "gsw": "Rekrutierig"
+      },
+      "parent": "diversity_inclusion"
+    },
+    {
+      "category_id": "retention",
+      "name": {
+        "en": "Retention",
+        "fr": "Rétention",
+        "de": "Bindung",
+        "gsw": "Bindig"
+      },
+      "parent": "diversity_inclusion"
+    },
+    {
+      "category_id": "community_building",
+      "name": {
+        "en": "Community Building",
+        "fr": "Construction communautaire",
+        "de": "Gemeinschaftsaufbau",
+        "gsw": "Gmeinschafts-Ufbau"
+      },
+      "parent": "diversity_inclusion"
+    }
+  ],
+  "option_types": [
+    {
+      "option_type": "policy_section",
+      "label": {
+        "en": "Policy Section",
+        "fr": "Section de politique",
+        "de": "Richtlinienabschnitt",
+        "gsw": "Richtlinie-Abschnitt"
+      },
+      "description": {
+        "en": "Sections or clauses for policy proposals",
+        "fr": "Sections ou clauses pour les propositions de politique",
+        "de": "Abschnitte oder Klauseln für Richtlinienvorschläge",
+        "gsw": "Abschnitt oder Klausle für Richtlinie-Vorschläg"
+      },
+      "fields": [
+        {
+          "key": "section_title",
+          "label": {
+            "en": "Section Title",
+            "fr": "Titre de section",
+            "de": "Abschnittstitel",
+            "gsw": "Abschnitt-Titel"
+          },
+          "type": "string",
+          "required": true
+        },
+        {
+          "key": "current_text",
+          "label": {
+            "en": "Current Text",
+            "fr": "Texte actuel",
+            "de": "Aktueller Text",
+            "gsw": "Aktuälle Täxt"
+          },
+          "type": "text",
+          "required": false
+        },
+        {
+          "key": "proposed_text",
+          "label": {
+            "en": "Proposed Text",
+            "fr": "Texte proposé",
+            "de": "Vorgeschlagener Text",
+            "gsw": "Vorgeschlagene Täxt"
+          },
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "rationale",
+          "label": {
+            "en": "Rationale",
+            "fr": "Justification",
+            "de": "Begründung",
+            "gsw": "Begründig"
+          },
+          "type": "text",
+          "required": false
+        }
+      ]
+    },
+    {
+      "option_type": "training_module",
+      "label": {
+        "en": "Training Module",
+        "fr": "Module de formation",
+        "de": "Schulungsmodul",
+        "gsw": "Schuligs-Modul"
+      },
+      "description": {
+        "en": "Training program breakdown",
+        "fr": "Décomposition du programme de formation",
+        "de": "Aufschlüsselung des Schulungsprogramms",
+        "gsw": "Ufschlüsselig vom Schuligs-Programm"
+      },
+      "fields": [
+        {
+          "key": "module_name",
+          "label": {
+            "en": "Module Name",
+            "fr": "Nom du module",
+            "de": "Modulname",
+            "gsw": "Modul-Name"
+          },
+          "type": "string",
+          "required": true
+        },
+        {
+          "key": "duration",
+          "label": {
+            "en": "Duration (hours)",
+            "fr": "Durée (heures)",
+            "de": "Dauer (Stunden)",
+            "gsw": "Duur (Stunde)"
+          },
+          "type": "integer",
+          "required": true
+        },
+        {
+          "key": "format",
+          "label": {
+            "en": "Format",
+            "fr": "Format",
+            "de": "Format",
+            "gsw": "Format"
+          },
+          "type": "enum",
+          "required": false,
+          "allowed_values": [
+            {"value": "online", "label": {"en": "Online", "fr": "En ligne", "de": "Online", "gsw": "Online"}},
+            {"value": "in_person", "label": {"en": "In Person", "fr": "En personne", "de": "Vor Ort", "gsw": "Vor Ort"}},
+            {"value": "hybrid", "label": {"en": "Hybrid", "fr": "Hybride", "de": "Hybrid", "gsw": "Hybrid"}}
+          ]
+        },
+        {
+          "key": "target_audience",
+          "label": {
+            "en": "Target Audience",
+            "fr": "Public cible",
+            "de": "Zielgruppe",
+            "gsw": "Ziil-Grupp"
+          },
+          "type": "string",
+          "required": false
+        }
+      ]
+    },
+    {
+      "option_type": "benefit_option",
+      "label": {
+        "en": "Benefit Option",
+        "fr": "Option d'avantage",
+        "de": "Leistungsoption",
+        "gsw": "Leischtigs-Option"
+      },
+      "description": {
+        "en": "Employee benefit choices",
+        "fr": "Choix d'avantages pour les employés",
+        "de": "Mitarbeiterleistungsoptionen",
+        "gsw": "Mitarbeiter-Leischtigs-Optione"
+      },
+      "fields": [
+        {
+          "key": "benefit_type",
+          "label": {
+            "en": "Benefit Type",
+            "fr": "Type d'avantage",
+            "de": "Leistungstyp",
+            "gsw": "Leischtigs-Typ"
+          },
+          "type": "string",
+          "required": true
+        },
+        {
+          "key": "cost",
+          "label": {
+            "en": "Cost",
+            "fr": "Coût",
+            "de": "Kosten",
+            "gsw": "Koste"
+          },
+          "type": "float",
+          "required": false
+        },
+        {
+          "key": "eligibility",
+          "label": {
+            "en": "Eligibility",
+            "fr": "Éligibilité",
+            "de": "Berechtigung",
+            "gsw": "Berechtiging"
+          },
+          "type": "string",
+          "required": false
+        },
+        {
+          "key": "enrollment_period",
+          "label": {
+            "en": "Enrollment Period",
+            "fr": "Période d'inscription",
+            "de": "Anmeldezeitraum",
+            "gsw": "Aameldezit-Ruum"
+          },
+          "type": "string",
+          "required": false
+        }
+      ]
+    }
+  ],
+  "inquiry_group_types": [
+    {
+      "group_type": "company_division",
+      "label": {
+        "en": "Company Division",
+        "fr": "Division de l'entreprise",
+        "de": "Unternehmensbereich",
+        "gsw": "Unternehmens-Bereich"
+      },
+      "description": {
+        "en": "Top-level organizational divisions",
+        "fr": "Divisions organisationnelles de haut niveau",
+        "de": "Organisationsbereiche auf oberster Ebene",
+        "gsw": "Organisations-Bereich uf oberster Ebeni"
+      },
+      "is_root": true
+    },
+    {
+      "group_type": "department",
+      "label": {
+        "en": "Department",
+        "fr": "Département",
+        "de": "Abteilung",
+        "gsw": "Abteilig"
+      },
+      "description": {
+        "en": "Department-level groupings",
+        "fr": "Regroupements au niveau départemental",
+        "de": "Abteilungsebene-Gruppierungen",
+        "gsw": "Abteiligs-Ebeni-Gruppierige"
+      },
+      "is_root": false
+    },
+    {
+      "group_type": "team",
+      "label": {
+        "en": "Team",
+        "fr": "Équipe",
+        "de": "Team",
+        "gsw": "Team"
+      },
+      "description": {
+        "en": "Team-level initiatives",
+        "fr": "Initiatives au niveau de l'équipe",
+        "de": "Initiativen auf Teamebene",
+        "gsw": "Initiative uf Team-Ebeni"
+      },
+      "is_root": false
+    },
+    {
+      "group_type": "employee_network",
+      "label": {
+        "en": "Employee Network",
+        "fr": "Réseau d'employés",
+        "de": "Mitarbeiternetzwerk",
+        "gsw": "Mitarbeiter-Netzwärch"
+      },
+      "description": {
+        "en": "Employee resource groups and affinity groups",
+        "fr": "Groupes de ressources pour employés et groupes d'affinité",
+        "de": "Mitarbeiterressourcengruppen und Interessengruppen",
+        "gsw": "Mitarbeiter-Ressource-Gruppe und Interesse-Gruppe"
+      },
+      "is_root": false
+    },
+    {
+      "group_type": "location_group",
+      "label": {
+        "en": "Location Group",
+        "fr": "Groupe de localisation",
+        "de": "Standortgruppe",
+        "gsw": "Standort-Grupp"
+      },
+      "description": {
+        "en": "Office or site-based groups",
+        "fr": "Groupes basés sur les bureaux ou les sites",
+        "de": "Büro- oder standortbasierte Gruppen",
+        "gsw": "Büro- oder standort-basierti Gruppe"
+      },
+      "is_root": false
+    }
+  ],
+  "locations": [
+    {
+      "location_id": "global_hq",
+      "name": {
+        "en": "Global HQ",
+        "fr": "Siège mondial",
+        "de": "Globale Zentrale",
+        "gsw": "Globali Zentral"
+      },
+      "parent_id": null
+    },
+    {
+      "location_id": "emea",
+      "name": {
+        "en": "EMEA Region",
+        "fr": "Région EMEA",
+        "de": "EMEA-Region",
+        "gsw": "EMEA-Region"
+      },
+      "parent_id": null
+    },
+    {
+      "location_id": "americas",
+      "name": {
+        "en": "Americas Region",
+        "fr": "Région Amériques",
+        "de": "Amerika-Region",
+        "gsw": "Amerika-Region"
+      },
+      "parent_id": null
+    },
+    {
+      "location_id": "apac",
+      "name": {
+        "en": "APAC Region",
+        "fr": "Région APAC",
+        "de": "APAC-Region",
+        "gsw": "APAC-Region"
+      },
+      "parent_id": null
+    },
+    {
+      "location_id": "uk",
+      "name": {
+        "en": "United Kingdom",
+        "fr": "Royaume-Uni",
+        "de": "Vereinigtes Königreich",
+        "gsw": "Vereinigts Königriich"
+      },
+      "parent_id": "emea"
+    },
+    {
+      "location_id": "germany",
+      "name": {
+        "en": "Germany",
+        "fr": "Allemagne",
+        "de": "Deutschland",
+        "gsw": "Dütschland"
+      },
+      "parent_id": "emea"
+    },
+    {
+      "location_id": "usa",
+      "name": {
+        "en": "United States",
+        "fr": "États-Unis",
+        "de": "Vereinigte Staaten",
+        "gsw": "Vereinigti Staate"
+      },
+      "parent_id": "americas"
+    },
+    {
+      "location_id": "london_office",
+      "name": {
+        "en": "London Office",
+        "fr": "Bureau de Londres",
+        "de": "Büro London",
+        "gsw": "Büro London"
+      },
+      "parent_id": "uk"
+    },
+    {
+      "location_id": "berlin_office",
+      "name": {
+        "en": "Berlin Office",
+        "fr": "Bureau de Berlin",
+        "de": "Büro Berlin",
+        "gsw": "Büro Berlin"
+      },
+      "parent_id": "germany"
+    },
+    {
+      "location_id": "ny_office",
+      "name": {
+        "en": "New York Office",
+        "fr": "Bureau de New York",
+        "de": "Büro New York",
+        "gsw": "Büro New York"
+      },
+      "parent_id": "usa"
+    }
+  ]
+}

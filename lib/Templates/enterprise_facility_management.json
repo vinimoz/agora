@@ -1,0 +1,2090 @@
+{
+  "template_info": {
+    "name": "enterprise_facility_management",
+    "version": "1.0.0",
+    "description": "Template for enterprise facility management supporting maintenance requests, infrastructure improvements, sustainability initiatives, workspace optimization, and safety concerns with advanced capabilities including voting, hierarchies, and collaborative workflows",
+    "author": "Agora Team",
+    "use_case": "enterprise_facilities",
+    "available_languages": [
+      "en",
+      "fr",
+      "de",
+      "gsw"
+    ]
+  },
+  "inquiry_families": [
+    {
+      "family_type": "facilities",
+      "label": {
+        "en": "Facilities",
+        "fr": "Installations",
+        "de": "Einrichtungen",
+        "gsw": "Iirichtige"
+      },
+      "description": {
+        "en": "Facility management requests for infrastructure, sustainability, and workspace improvements",
+        "fr": "Demandes de gestion des installations pour infrastructure, durabilité et améliorations d'espace",
+        "de": "Facility-Management-Anfragen für Infrastruktur, Nachhaltigkeit und Arbeitsplatzverbesserungen",
+        "gsw": "Facility-Management-Aafraage für Infrastruktur, Nochhaltigkäit und Arbetsplatz-Verbesserige"
+      },
+      "icon": "Domain",
+      "sort_order": 1
+    },
+    {
+      "family_type": "official_facility_management",
+      "label": {
+        "en": "Official Response",
+        "fr": "Réponse officielle",
+        "de": "Offizielle Antwort",
+        "gsw": "Offizielle Antwort"
+      },
+      "description": {
+        "en": "Official responses from facility management team",
+        "fr": "Réponses officielles de l'équipe de gestion des installations",
+        "de": "Offizielle Antworten vom Facility-Management-Team",
+        "gsw": "Offizelli Antworte vom Facility-Management-Team"
+      },
+      "icon": "Seal",
+      "sort_order": 2
+    }
+  ],
+  "inquiry_types": [
+    {
+      "inquiry_type": "infrastructure_improvement",
+      "family": "facilities",
+      "icon": "OfficeBuildingCog",
+      "label": {
+        "en": "Infrastructure Improvements",
+        "fr": "Améliorations d'infrastructure",
+        "de": "Infrastrukturverbesserungen",
+        "gsw": "Infrastruktur-Verbesserige"
+      },
+      "description": {
+        "en": "Proposals for building and infrastructure improvements",
+        "fr": "Propositions d'améliorations de bâtiments et d'infrastructure",
+        "de": "Vorschläge für Gebäude- und Infrastrukturverbesserungen",
+        "gsw": "Vorschläg für Gebäude- und Infrastruktur-Verbesserige"
+      },
+      "is_root": true,
+      "allowed_response": [
+        "official_response_facility_management"
+      ],
+      "allowed_option_type": [
+        "position_for",
+        "position_against",
+        "alternative",
+        "official_summary"
+      ],
+      "support_feature": "binary",
+      "fields": [
+        {
+          "key": "type_of_vote",
+          "label": {
+            "en": "Type of Vote",
+            "fr": "Type de vote",
+            "de": "Abstimmungstyp",
+            "gsw": "Abstimmigs-Typ"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "simple",
+          "allowed_values": [
+            "simple",
+            "approval"
+          ]
+        },
+        {
+          "key": "quorum",
+          "label": {
+            "en": "Required Votes",
+            "fr": "Votes requis",
+            "de": "Erforderliche Stimmen",
+            "gsw": "Erforderlich Stimme"
+          },
+          "type": "integer",
+          "required": false,
+          "default": 50
+        },
+        {
+          "key": "voting_deadline",
+          "label": {
+            "en": "Voting Deadline",
+            "fr": "Date limite",
+            "de": "Frist",
+            "gsw": "Frischt"
+          },
+          "type": "date",
+          "required": false
+        },
+        {
+          "key": "cost_threshold",
+          "label": {
+            "en": "Cost Threshold",
+            "fr": "Seuil de coût",
+            "de": "Kostenschwelle",
+            "gsw": "Koste-Schwelle"
+          },
+          "type": "float",
+          "required": false
+        },
+        {
+          "key": "layout_zone",
+          "label": {
+            "en": "Layout Zone",
+            "fr": "Zone de mise en page",
+            "de": "Layout-Zone",
+            "gsw": "Layout-Zone"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "main",
+          "allowed_values": ["sidebar", "main", "footer", "header"]
+        },
+        {
+          "key": "render_mode",
+          "label": {
+            "en": "Render Mode",
+            "fr": "Mode de rendu",
+            "de": "Darstellungsmodus",
+            "gsw": "Darstelligs-Modus"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "rich_html",
+          "allowed_values": ["cards", "list", "full", "summary", "rich_html"]
+        },
+        {
+          "key": "open_mode",
+          "label": {
+            "en": "Open Mode",
+            "fr": "Mode d'ouverture",
+            "de": "Öffnungsmodus",
+            "gsw": "Öffnigs-Modus"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "page",
+          "allowed_values": ["page", "modal", "popup"]
+        },
+        {
+          "key": "allow_anonymous",
+          "label": {
+            "en": "Allow Anonymous Feedback",
+            "fr": "Autoriser les retours anonymes",
+            "de": "Anonymes Feedback erlauben",
+            "gsw": "Anonyms Feedback erlaube"
+          },
+          "type": "boolean",
+          "required": false,
+          "default": false
+        }
+      ]
+    },
+    {
+      "inquiry_type": "sustainability_initiative",
+      "family": "facilities",
+      "icon": "Leaf",
+      "label": {
+        "en": "Sustainability Initiatives",
+        "fr": "Initiatives de durabilité",
+        "de": "Nachhaltigkeitsinitiativen",
+        "gsw": "Nochhaltigkeits-Initiative"
+      },
+      "description": {
+        "en": "Environmental sustainability and green initiatives",
+        "fr": "Durabilité environnementale et initiatives vertes",
+        "de": "Umweltnachhaltigkeit und grüne Initiativen",
+        "gsw": "Umwält-Nochhaltigkäit und grüeni Initiative"
+      },
+      "is_root": true,
+      "allowed_response": [
+        "official_response_facility_management"
+      ],
+      "allowed_option_type": [
+        "position_for",
+        "position_against",
+        "alternative",
+        "official_summary"
+      ],
+      "support_feature": "binary",
+      "fields": [
+        {
+          "key": "type_of_vote",
+          "label": {
+            "en": "Type of Vote",
+            "fr": "Type de vote",
+            "de": "Abstimmungstyp",
+            "gsw": "Abstimmigs-Typ"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "simple",
+          "allowed_values": [
+            "simple",
+            "approval"
+          ]
+        },
+        {
+          "key": "quorum",
+          "label": {
+            "en": "Required Votes",
+            "fr": "Votes requis",
+            "de": "Erforderliche Stimmen",
+            "gsw": "Erforderlich Stimme"
+          },
+          "type": "integer",
+          "required": false,
+          "default": 50
+        },
+        {
+          "key": "voting_deadline",
+          "label": {
+            "en": "Voting Deadline",
+            "fr": "Date limite",
+            "de": "Frist",
+            "gsw": "Frischt"
+          },
+          "type": "date",
+          "required": false
+        },
+        {
+          "key": "cost_threshold",
+          "label": {
+            "en": "Cost Threshold",
+            "fr": "Seuil de coût",
+            "de": "Kostenschwelle",
+            "gsw": "Koste-Schwelle"
+          },
+          "type": "float",
+          "required": false
+        },
+        {
+          "key": "layout_zone",
+          "label": {
+            "en": "Layout Zone",
+            "fr": "Zone de mise en page",
+            "de": "Layout-Zone",
+            "gsw": "Layout-Zone"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "main",
+          "allowed_values": ["sidebar", "main", "footer", "header"]
+        },
+        {
+          "key": "render_mode",
+          "label": {
+            "en": "Render Mode",
+            "fr": "Mode de rendu",
+            "de": "Darstellungsmodus",
+            "gsw": "Darstelligs-Modus"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "rich_html",
+          "allowed_values": ["cards", "list", "full", "summary", "rich_html"]
+        },
+        {
+          "key": "open_mode",
+          "label": {
+            "en": "Open Mode",
+            "fr": "Mode d'ouverture",
+            "de": "Öffnungsmodus",
+            "gsw": "Öffnigs-Modus"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "page",
+          "allowed_values": ["page", "modal", "popup"]
+        },
+        {
+          "key": "allow_anonymous",
+          "label": {
+            "en": "Allow Anonymous Feedback",
+            "fr": "Autoriser les retours anonymes",
+            "de": "Anonymes Feedback erlauben",
+            "gsw": "Anonyms Feedback erlaube"
+          },
+          "type": "boolean",
+          "required": false,
+          "default": false
+        }
+      ]
+    },
+    {
+      "inquiry_type": "workspace_optimization",
+      "family": "facilities",
+      "icon": "Desk",
+      "label": {
+        "en": "Workspace Optimization",
+        "fr": "Optimisation de l'espace de travail",
+        "de": "Arbeitsplatzoptimierung",
+        "gsw": "Arbetsplatz-Optimierig"
+      },
+      "description": {
+        "en": "Ideas to optimize office space and improve ergonomics",
+        "fr": "Idées pour optimiser l'espace de bureau et améliorer l'ergonomie",
+        "de": "Ideen zur Optimierung von Büroflächen und Verbesserung der Ergonomie",
+        "gsw": "Idee zum Optimiere vo Bürofläche und Verbesserig vo de Ergonomie"
+      },
+      "is_root": true,
+      "allowed_response": [
+        "official_response_facility_management"
+      ],
+      "allowed_option_type": [
+        "position_for",
+        "position_against",
+        "alternative",
+        "official_summary"
+      ],
+      "support_feature": "binary",
+      "fields": [
+        {
+          "key": "optimization_type",
+          "label": {
+            "en": "Optimization Type",
+            "fr": "Type d'optimisation",
+            "de": "Optimierungstyp",
+            "gsw": "Optimierigs-Typ"
+          },
+          "type": "enum",
+          "required": true,
+          "default": "layout",
+          "allowed_values": [
+            {"value": "layout", "label": {"en": "Layout", "fr": "Aménagement", "de": "Layout", "gsw": "Layout"}},
+            {"value": "furniture", "label": {"en": "Furniture", "fr": "Mobilier", "de": "Möblierung", "gsw": "Möblierig"}},
+            {"value": "lighting", "label": {"en": "Lighting", "fr": "Éclairage", "de": "Beleuchtung", "gsw": "Belüechtig"}},
+            {"value": "acoustics", "label": {"en": "Acoustics", "fr": "Acoustique", "de": "Akustik", "gsw": "Akustik"}},
+            {"value": "storage", "label": {"en": "Storage", "fr": "Rangement", "de": "Lagerung", "gsw": "Lagerig"}},
+            {"value": "accessibility", "label": {"en": "Accessibility", "fr": "Accessibilité", "de": "Barrierefreiheit", "gsw": "Barrierefräiheit"}}
+          ]
+        },
+        {
+          "key": "affected_area_sqm",
+          "label": {
+            "en": "Affected Area (sq m)",
+            "fr": "Zone affectée (m²)",
+            "de": "Betroffene Fläche (m²)",
+            "gsw": "Betroffeni Flächi (m²)"
+          },
+          "type": "integer",
+          "required": false,
+          "default": null
+        },
+        {
+          "key": "layout_zone",
+          "label": {
+            "en": "Layout Zone",
+            "fr": "Zone de mise en page",
+            "de": "Layout-Zone",
+            "gsw": "Layout-Zone"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "main",
+          "allowed_values": ["sidebar", "main", "footer", "header"]
+        },
+        {
+          "key": "render_mode",
+          "label": {
+            "en": "Render Mode",
+            "fr": "Mode de rendu",
+            "de": "Darstellungsmodus",
+            "gsw": "Darstelligs-Modus"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "rich_html",
+          "allowed_values": ["cards", "list", "full", "summary", "rich_html"]
+        },
+        {
+          "key": "open_mode",
+          "label": {
+            "en": "Open Mode",
+            "fr": "Mode d'ouverture",
+            "de": "Öffnungsmodus",
+            "gsw": "Öffnigs-Modus"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "page",
+          "allowed_values": ["page", "modal", "popup"]
+        },
+        {
+          "key": "allow_anonymous",
+          "label": {
+            "en": "Allow Anonymous Feedback",
+            "fr": "Autoriser les retours anonymes",
+            "de": "Anonymes Feedback erlauben",
+            "gsw": "Anonyms Feedback erlaube"
+          },
+          "type": "boolean",
+          "required": false,
+          "default": false
+        }
+      ]
+    },
+    {
+      "inquiry_type": "maintenance_request",
+      "family": "facilities",
+      "icon": "Tools",
+      "label": {
+        "en": "Maintenance Requests",
+        "fr": "Demandes de maintenance",
+        "de": "Wartungsanfragen",
+        "gsw": "Wartigsaafraage"
+      },
+      "description": {
+        "en": "Maintenance and repair requests for facilities",
+        "fr": "Demandes de maintenance et réparation des installations",
+        "de": "Wartungs- und Reparaturanfragen für Einrichtungen",
+        "gsw": "Wartigs- und Reparatur-Aafraage für Iirichtige"
+      },
+      "is_root": true,
+      "allowed_response": [
+        "official_response_facility_management"
+      ],
+      "allowed_option_type": [
+        "position_for",
+        "position_against",
+        "alternative",
+        "official_summary"
+      ],
+      "support_feature": "binary",
+      "allowed_transformation": [
+        "infrastructure_improvement"
+      ],
+      "fields": [
+        {
+          "key": "maintenance_type",
+          "label": {
+            "en": "Maintenance Type",
+            "fr": "Type de maintenance",
+            "de": "Wartungstyp",
+            "gsw": "Wartigs-Typ"
+          },
+          "type": "enum",
+          "required": true,
+          "default": "repair",
+          "allowed_values": [
+            {"value": "repair", "label": {"en": "Repair", "fr": "Réparation", "de": "Reparatur", "gsw": "Reparatur"}},
+            {"value": "replacement", "label": {"en": "Replacement", "fr": "Remplacement", "de": "Ersatz", "gsw": "Ersatz"}},
+            {"value": "inspection", "label": {"en": "Inspection", "fr": "Inspection", "de": "Inspektion", "gsw": "Inspäktion"}},
+            {"value": "cleaning", "label": {"en": "Cleaning", "fr": "Nettoyage", "de": "Reinigung", "gsw": "Reinigung"}},
+            {"value": "preventive", "label": {"en": "Preventive Maintenance", "fr": "Maintenance préventive", "de": "Vorbeugende Wartung", "gsw": "Vorbeugendi Wartig"}}
+          ]
+        },
+        {
+          "key": "priority",
+          "label": {
+            "en": "Priority",
+            "fr": "Priorité",
+            "de": "Priorität",
+            "gsw": "Prioritäät"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "normal",
+          "allowed_values": [
+            {"value": "low", "label": {"en": "Low", "fr": "Basse", "de": "Niedrig", "gsw": "Niidrig"}},
+            {"value": "normal", "label": {"en": "Normal", "fr": "Normale", "de": "Normal", "gsw": "Normal"}},
+            {"value": "high", "label": {"en": "High", "fr": "Haute", "de": "Hoch", "gsw": "Hoch"}},
+            {"value": "emergency", "label": {"en": "Emergency", "fr": "Urgence", "de": "Notfall", "gsw": "Notfall"}}
+          ]
+        },
+        {
+          "key": "layout_zone",
+          "label": {
+            "en": "Layout Zone",
+            "fr": "Zone de mise en page",
+            "de": "Layout-Zone",
+            "gsw": "Layout-Zone"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "main",
+          "allowed_values": ["sidebar", "main", "footer", "header"]
+        },
+        {
+          "key": "render_mode",
+          "label": {
+            "en": "Render Mode",
+            "fr": "Mode de rendu",
+            "de": "Darstellungsmodus",
+            "gsw": "Darstelligs-Modus"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "rich_html",
+          "allowed_values": ["cards", "list", "full", "summary", "rich_html"]
+        },
+        {
+          "key": "open_mode",
+          "label": {
+            "en": "Open Mode",
+            "fr": "Mode d'ouverture",
+            "de": "Öffnungsmodus",
+            "gsw": "Öffnigs-Modus"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "page",
+          "allowed_values": ["page", "modal", "popup"]
+        },
+        {
+          "key": "allow_anonymous",
+          "label": {
+            "en": "Allow Anonymous Feedback",
+            "fr": "Autoriser les retours anonymes",
+            "de": "Anonymes Feedback erlauben",
+            "gsw": "Anonyms Feedback erlaube"
+          },
+          "type": "boolean",
+          "required": false,
+          "default": false
+        }
+      ]
+    },
+    {
+      "inquiry_type": "parking_transportation",
+      "family": "facilities",
+      "icon": "CarParking",
+      "label": {
+        "en": "Parking & Transportation",
+        "fr": "Parking et transport",
+        "de": "Parken & Verkehr",
+        "gsw": "Parkiere & Transport"
+      },
+      "description": {
+        "en": "Parking and transportation improvement suggestions",
+        "fr": "Suggestions d'amélioration du parking et des transports",
+        "de": "Vorschläge zur Verbesserung von Parkplätzen und Verkehr",
+        "gsw": "Vorschläg zur Verbesserig vo Parkplätz und Transport"
+      },
+      "is_root": true,
+      "allowed_response": [
+        "official_response_facility_management"
+      ],
+      "allowed_option_type": [
+        "position_for",
+        "position_against",
+        "alternative",
+        "official_summary"
+      ],
+      "support_feature": "binary",
+      "fields": [
+        {
+          "key": "transport_type",
+          "label": {
+            "en": "Transport Type",
+            "fr": "Type de transport",
+            "de": "Transporttyp",
+            "gsw": "Transport-Typ"
+          },
+          "type": "enum",
+          "required": true,
+          "default": "parking",
+          "allowed_values": [
+            {"value": "parking", "label": {"en": "Parking", "fr": "Parking", "de": "Parkplatz", "gsw": "Parkplatz"}},
+            {"value": "shuttle", "label": {"en": "Shuttle Service", "fr": "Service de navette", "de": "Shuttle-Service", "gsw": "Shuttle-Service"}},
+            {"value": "bike_facilities", "label": {"en": "Bike Facilities", "fr": "Installations vélo", "de": "Fahrradeinrichtungen", "gsw": "Velo-Iirichtige"}},
+            {"value": "ev_charging", "label": {"en": "EV Charging", "fr": "Recharge électrique", "de": "E-Ladestation", "gsw": "E-Ladestation"}},
+            {"value": "public_transit", "label": {"en": "Public Transit", "fr": "Transports publics", "de": "Öffentlicher Nahverkehr", "gsw": "Öffentlichi Verkehrsmittel"}},
+            {"value": "carpool", "label": {"en": "Carpool", "fr": "Covoiturage", "de": "Fahrgemeinschaft", "gsw": "Fahrgmeinschaft"}}
+          ]
+        },
+        {
+          "key": "layout_zone",
+          "label": {
+            "en": "Layout Zone",
+            "fr": "Zone de mise en page",
+            "de": "Layout-Zone",
+            "gsw": "Layout-Zone"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "main",
+          "allowed_values": ["sidebar", "main", "footer", "header"]
+        },
+        {
+          "key": "render_mode",
+          "label": {
+            "en": "Render Mode",
+            "fr": "Mode de rendu",
+            "de": "Darstellungsmodus",
+            "gsw": "Darstelligs-Modus"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "rich_html",
+          "allowed_values": ["cards", "list", "full", "summary", "rich_html"]
+        },
+        {
+          "key": "open_mode",
+          "label": {
+            "en": "Open Mode",
+            "fr": "Mode d'ouverture",
+            "de": "Öffnungsmodus",
+            "gsw": "Öffnigs-Modus"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "page",
+          "allowed_values": ["page", "modal", "popup"]
+        },
+        {
+          "key": "allow_anonymous",
+          "label": {
+            "en": "Allow Anonymous Feedback",
+            "fr": "Autoriser les retours anonymes",
+            "de": "Anonymes Feedback erlauben",
+            "gsw": "Anonyms Feedback erlaube"
+          },
+          "type": "boolean",
+          "required": false,
+          "default": false
+        }
+      ]
+    },
+    {
+      "inquiry_type": "official_response_facility_management",
+      "family": "official_facility_management",
+      "icon": "MessageReply",
+      "label": {
+        "en": "Official Response",
+        "fr": "Réponse officielle",
+        "de": "Offizielle Antwort",
+        "gsw": "Offizielle Antwort"
+      },
+      "description": {
+        "en": "Official response from facility management",
+        "fr": "Réponse officielle de la gestion des installations",
+        "de": "Offizielle Antwort vom Facility Management",
+        "gsw": "Offizelli Antwort vom Facility Management"
+      },
+      "is_root": false,
+      "allowed_response": [],
+      "allowed_option_type": [
+        "position_for",
+        "position_against",
+        "alternative",
+        "official_summary"
+      ],
+      "support_feature": "none",
+      "fields": [
+        {
+          "key": "response_type",
+          "label": {
+            "en": "Response Type",
+            "fr": "Type de réponse",
+            "de": "Antworttyp",
+            "gsw": "Antwort-Typ"
+          },
+          "type": "enum",
+          "required": true,
+          "default": "acknowledgment",
+          "allowed_values": [
+            {"value": "acknowledgment", "label": {"en": "Acknowledgment", "fr": "Accusé de réception", "de": "Bestätigung", "gsw": "Bestätigung"}},
+            {"value": "clarification", "label": {"en": "Clarification", "fr": "Clarification", "de": "Klärung", "gsw": "Klärig"}},
+            {"value": "decision", "label": {"en": "Decision", "fr": "Décision", "de": "Entscheidung", "gsw": "Entscheidig"}},
+            {"value": "action_plan", "label": {"en": "Action Plan", "fr": "Plan d'action", "de": "Aktionsplan", "gsw": "Aktions-Plan"}},
+            {"value": "rejection", "label": {"en": "Rejection", "fr": "Rejet", "de": "Ablehnung", "gsw": "Ablehning"}}
+          ]
+        },
+        {
+          "key": "layout_zone",
+          "label": {
+            "en": "Layout Zone",
+            "fr": "Zone de mise en page",
+            "de": "Layout-Zone",
+            "gsw": "Layout-Zone"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "main",
+          "allowed_values": ["sidebar", "main", "footer", "header"]
+        },
+        {
+          "key": "render_mode",
+          "label": {
+            "en": "Render Mode",
+            "fr": "Mode de rendu",
+            "de": "Darstellungsmodus",
+            "gsw": "Darstelligs-Modus"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "rich_html",
+          "allowed_values": ["cards", "list", "full", "summary", "rich_html"]
+        },
+        {
+          "key": "open_mode",
+          "label": {
+            "en": "Open Mode",
+            "fr": "Mode d'ouverture",
+            "de": "Öffnungsmodus",
+            "gsw": "Öffnigs-Modus"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "page",
+          "allowed_values": ["page", "modal", "popup"]
+        }
+      ]
+    }
+  ],
+  "inquiry_statuses": [
+    {
+      "inquiry_type": "infrastructure_improvement",
+      "status_key": "submitted",
+      "label": {
+        "en": "Submitted",
+        "fr": "Soumis",
+        "de": "Eingereicht",
+        "gsw": "Iigräicht"
+      },
+      "description": {
+        "en": "Request submitted and logged",
+        "fr": "Demande soumise et enregistrée",
+        "de": "Anfrage eingereicht und protokolliert",
+        "gsw": "Aafraag iigräicht und protokolliert"
+      },
+      "is_final": false,
+      "icon": "Send",
+      "sort_order": 1
+    },
+    {
+      "inquiry_type": "infrastructure_improvement",
+      "status_key": "assessment",
+      "label": {
+        "en": "Under Assessment",
+        "fr": "En cours d'évaluation",
+        "de": "In Bewertung",
+        "gsw": "In Bewärtig"
+      },
+      "description": {
+        "en": "Facility team is assessing feasibility and cost",
+        "fr": "L'équipe installations évalue la faisabilité et le coût",
+        "de": "Facility-Team bewertet Machbarkeit und Kosten",
+        "gsw": "Facility-Team bewertet Machbarkäit und Koschte"
+      },
+      "is_final": false,
+      "icon": "ClipboardCheck",
+      "sort_order": 2
+    },
+    {
+      "inquiry_type": "infrastructure_improvement",
+      "status_key": "approved",
+      "label": {
+        "en": "Approved",
+        "fr": "Approuvé",
+        "de": "Genehmigt",
+        "gsw": "Gnehmigt"
+      },
+      "description": {
+        "en": "Request approved and scheduled",
+        "fr": "Demande approuvée et planifiée",
+        "de": "Anfrage genehmigt und geplant",
+        "gsw": "Aafraag gnehmigt und plaant"
+      },
+      "is_final": false,
+      "icon": "CheckCircle",
+      "sort_order": 3
+    },
+    {
+      "inquiry_type": "infrastructure_improvement",
+      "status_key": "in_progress",
+      "label": {
+        "en": "In Progress",
+        "fr": "En cours",
+        "de": "In Bearbeitung",
+        "gsw": "In Bearbeitig"
+      },
+      "description": {
+        "en": "Work is currently in progress",
+        "fr": "Travaux en cours",
+        "de": "Arbeiten laufen",
+        "gsw": "Arbeite laufed"
+      },
+      "is_final": false,
+      "icon": "Progress",
+      "sort_order": 4
+    },
+    {
+      "inquiry_type": "infrastructure_improvement",
+      "status_key": "completed",
+      "label": {
+        "en": "Completed",
+        "fr": "Terminé",
+        "de": "Abgeschlossen",
+        "gsw": "Abgschlosse"
+      },
+      "description": {
+        "en": "Work completed successfully",
+        "fr": "Travaux terminés avec succès",
+        "de": "Arbeiten erfolgreich abgeschlossen",
+        "gsw": "Arbeite erfolgriich abgschlosse"
+      },
+      "is_final": true,
+      "icon": "CheckAll",
+      "sort_order": 5
+    },
+    {
+      "inquiry_type": "infrastructure_improvement",
+      "status_key": "declined",
+      "label": {
+        "en": "Declined",
+        "fr": "Refusé",
+        "de": "Abgelehnt",
+        "gsw": "Abglehnt"
+      },
+      "description": {
+        "en": "Request declined - not feasible or budget constraints",
+        "fr": "Demande refusée - non réalisable ou contraintes budgétaires",
+        "de": "Anfrage abgelehnt - nicht machbar oder Budgetbeschränkungen",
+        "gsw": "Aafraag abglehnt - nöd machbar oder Budget-Iischränkige"
+      },
+      "is_final": true,
+      "icon": "CloseCircle",
+      "sort_order": 6
+    },
+    {
+      "inquiry_type": "infrastructure_improvement",
+      "status_key": "occupant_vote",
+      "label": {
+        "en": "Occupant Vote",
+        "fr": "Vote des occupants",
+        "de": "Bewohnerabstimmung",
+        "gsw": "Bewohner-Abstimmig"
+      },
+      "description": {
+        "en": "Building occupants voting on shared space improvements",
+        "fr": "Les occupants du bâtiment votent sur les améliorations d'espaces partagés",
+        "de": "Gebäudebewohner stimmen über Verbesserungen gemeinsamer Räume ab",
+        "gsw": "Gebäude-Bewohner stimme über Verbesserige vo gmeinschaftliche Rüüm ab"
+      },
+      "is_final": false,
+      "icon": "VoteOutline",
+      "sort_order": 2.5
+    },
+    {
+      "inquiry_type": "infrastructure_improvement",
+      "status_key": "cost_approval",
+      "label": {
+        "en": "Cost Approval Vote",
+        "fr": "Vote d'approbation des coûts",
+        "de": "Kostengenehmigungsabstimmung",
+        "gsw": "Koste-Genehmigigs-Abstimmig"
+      },
+      "description": {
+        "en": "Facility board approval for budget",
+        "fr": "Approbation du conseil des installations pour le budget",
+        "de": "Facility-Board-Genehmigung für Budget",
+        "gsw": "Facility-Board-Genehmigung für Budget"
+      },
+      "is_final": false,
+      "icon": "CashCheck",
+      "sort_order": 3.5
+    },
+    {
+      "inquiry_type": "infrastructure_improvement",
+      "status_key": "vendor_bidding",
+      "label": {
+        "en": "Vendor Bidding",
+        "fr": "Appel d'offres",
+        "de": "Anbieterausschreibung",
+        "gsw": "Aabieter-Usschribig"
+      },
+      "description": {
+        "en": "Collecting vendor bids",
+        "fr": "Collecte des offres des fournisseurs",
+        "de": "Sammeln von Anbieterangeboten",
+        "gsw": "Sammle vo Aabieter-Aagebote"
+      },
+      "is_final": false,
+      "icon": "Briefcase",
+      "sort_order": 3.8
+    },
+    {
+      "inquiry_type": "sustainability_initiative",
+      "status_key": "committee_vote",
+      "label": {
+        "en": "Sustainability Committee Vote",
+        "fr": "Vote du comité de durabilité",
+        "de": "Nachhaltigkeitskomitee-Abstimmung",
+        "gsw": "Nochhaltigkeits-Komitee-Abstimmig"
+      },
+      "description": {
+        "en": "Sustainability committee voting on green initiatives",
+        "fr": "Le comité de durabilité vote sur les initiatives vertes",
+        "de": "Nachhaltigkeitskomitee stimmt über grüne Initiativen ab",
+        "gsw": "Nochhaltigkeits-Komitee stimmt über grüeni Initiative ab"
+      },
+      "is_final": false,
+      "icon": "AccountGroup",
+      "sort_order": 2.5
+    },
+    {
+      "inquiry_type": "workspace_optimization",
+      "status_key": "team_poll",
+      "label": {
+        "en": "Team Poll",
+        "fr": "Sondage d'équipe",
+        "de": "Team-Umfrage",
+        "gsw": "Team-Umfraag"
+      },
+      "description": {
+        "en": "Team members voting on workspace preferences",
+        "fr": "Les membres de l'équipe votent sur les préférences d'espace de travail",
+        "de": "Teammitglieder stimmen über Arbeitsplatzpräferenzen ab",
+        "gsw": "Team-Mitglieder stimme über Arbetsplatz-Präferenze ab"
+      },
+      "is_final": false,
+      "icon": "Poll",
+      "sort_order": 2.5
+    },
+
+    {
+      "inquiry_type": "sustainability_initiative",
+      "status_key": "submitted",
+      "label": {
+        "en": "Submitted",
+        "fr": "Soumis",
+        "de": "Eingereicht",
+        "gsw": "Iigräicht"
+      },
+      "description": {
+        "en": "Sustainability initiative has been submitted",
+        "fr": "L'initiative de durabilité a été soumise",
+        "de": "Nachhaltigkeitsinitiative wurde eingereicht",
+        "gsw": "Nochhaltigkeits-Initiative isch iigräicht"
+      },
+      "is_final": false,
+      "icon": "Send",
+      "sort_order": 1
+    },
+    {
+      "inquiry_type": "sustainability_initiative",
+      "status_key": "environmental_assessment",
+      "label": {
+        "en": "Environmental Assessment",
+        "fr": "Évaluation environnementale",
+        "de": "Umweltbewertung",
+        "gsw": "Umwält-Bewertig"
+      },
+      "description": {
+        "en": "Assessing environmental impact and benefits",
+        "fr": "Évaluation de l'impact et des avantages environnementaux",
+        "de": "Bewertung von Umweltauswirkungen und -vorteilen",
+        "gsw": "Bewertig vo Umwält-Uswirkige und -Vorteil"
+      },
+      "is_final": false,
+      "icon": "LeafCircle",
+      "sort_order": 2
+    },
+    {
+      "inquiry_type": "sustainability_initiative",
+      "status_key": "budget_approval",
+      "label": {
+        "en": "Budget Approval",
+        "fr": "Approbation du budget",
+        "de": "Budgetgenehmigung",
+        "gsw": "Budget-Genehmigung"
+      },
+      "description": {
+        "en": "Budget approval for sustainability initiative",
+        "fr": "Approbation du budget pour l'initiative de durabilité",
+        "de": "Budgetgenehmigung für Nachhaltigkeitsinitiative",
+        "gsw": "Budget-Genehmigung für Nochhaltigkeits-Initiative"
+      },
+      "is_final": false,
+      "icon": "CashCheck",
+      "sort_order": 4
+    },
+    {
+      "inquiry_type": "sustainability_initiative",
+      "status_key": "vendor_selection",
+      "label": {
+        "en": "Vendor Selection",
+        "fr": "Sélection du fournisseur",
+        "de": "Anbieterauswahl",
+        "gsw": "Aabieter-Uswahl"
+      },
+      "description": {
+        "en": "Selecting vendors for implementation",
+        "fr": "Sélection des fournisseurs pour la mise en œuvre",
+        "de": "Auswahl von Anbietern für die Umsetzung",
+        "gsw": "Uswahl vo Aabieter für d'Umsetzig"
+      },
+      "is_final": false,
+      "icon": "AccountSearch",
+      "sort_order": 5
+    },
+    {
+      "inquiry_type": "sustainability_initiative",
+      "status_key": "implementation",
+      "label": {
+        "en": "Implementation",
+        "fr": "Mise en œuvre",
+        "de": "Implementierung",
+        "gsw": "Implementierig"
+      },
+      "description": {
+        "en": "Sustainability initiative being implemented",
+        "fr": "Initiative de durabilité en cours de mise en œuvre",
+        "de": "Nachhaltigkeitsinitiative wird implementiert",
+        "gsw": "Nochhaltigkeits-Initiative wird implementiert"
+      },
+      "is_final": false,
+      "icon": "Wrench",
+      "sort_order": 6
+    },
+    {
+      "inquiry_type": "sustainability_initiative",
+      "status_key": "monitoring",
+      "label": {
+        "en": "Monitoring",
+        "fr": "Surveillance",
+        "de": "Überwachung",
+        "gsw": "Überwachig"
+      },
+      "description": {
+        "en": "Monitoring initiative performance and impact",
+        "fr": "Surveillance des performances et de l'impact de l'initiative",
+        "de": "Überwachung der Initiativleistung und -auswirkungen",
+        "gsw": "Überwachig vo Initiative-Leistig und -Uswirkige"
+      },
+      "is_final": false,
+      "icon": "ChartLine",
+      "sort_order": 7
+    },
+    {
+      "inquiry_type": "sustainability_initiative",
+      "status_key": "completed",
+      "label": {
+        "en": "Completed",
+        "fr": "Terminé",
+        "de": "Abgeschlossen",
+        "gsw": "Abgschlosse"
+      },
+      "description": {
+        "en": "Sustainability initiative completed successfully",
+        "fr": "Initiative de durabilité terminée avec succès",
+        "de": "Nachhaltigkeitsinitiative erfolgreich abgeschlossen",
+        "gsw": "Nochhaltigkeits-Initiative erfolgriich abgschlosse"
+      },
+      "is_final": true,
+      "icon": "CheckAll",
+      "sort_order": 8
+    },
+    {
+      "inquiry_type": "sustainability_initiative",
+      "status_key": "rejected",
+      "label": {
+        "en": "Rejected",
+        "fr": "Rejeté",
+        "de": "Abgelehnt",
+        "gsw": "Abglehnt"
+      },
+      "description": {
+        "en": "Sustainability initiative not approved",
+        "fr": "Initiative de durabilité non approuvée",
+        "de": "Nachhaltigkeitsinitiative nicht genehmigt",
+        "gsw": "Nochhaltigkeits-Initiative nöd gnehmigt"
+      },
+      "is_final": true,
+      "icon": "CloseCircle",
+      "sort_order": 9
+    },
+
+    {
+      "inquiry_type": "workspace_optimization",
+      "status_key": "submitted",
+      "label": {
+        "en": "Submitted",
+        "fr": "Soumis",
+        "de": "Eingereicht",
+        "gsw": "Iigräicht"
+      },
+      "description": {
+        "en": "Workspace optimization request submitted",
+        "fr": "Demande d'optimisation de l'espace de travail soumise",
+        "de": "Arbeitsplatzoptimierungsanfrage eingereicht",
+        "gsw": "Arbetsplatz-Optimierigs-Aafraag iigräicht"
+      },
+      "is_final": false,
+      "icon": "Send",
+      "sort_order": 1
+    },
+    {
+      "inquiry_type": "workspace_optimization",
+      "status_key": "space_audit",
+      "label": {
+        "en": "Space Audit",
+        "fr": "Audit de l'espace",
+        "de": "Raumprüfung",
+        "gsw": "Ruum-Prüefig"
+      },
+      "description": {
+        "en": "Auditing current space utilization",
+        "fr": "Audit de l'utilisation actuelle de l'espace",
+        "de": "Prüfung der aktuellen Raumnutzung",
+        "gsw": "Prüefig vo dr aktuälle Ruum-Nutzig"
+      },
+      "is_final": false,
+      "icon": "FloorPlan",
+      "sort_order": 2
+    },
+    {
+      "inquiry_type": "workspace_optimization",
+      "status_key": "design_proposal",
+      "label": {
+        "en": "Design Proposal",
+        "fr": "Proposition de design",
+        "de": "Designvorschlag",
+        "gsw": "Design-Vorschlag"
+      },
+      "description": {
+        "en": "Workspace design proposal being developed",
+        "fr": "Proposition de design d'espace de travail en cours de développement",
+        "de": "Arbeitsplatzdesignvorschlag wird entwickelt",
+        "gsw": "Arbetsplatz-Design-Vorschlag wird entwicklet"
+      },
+      "is_final": false,
+      "icon": "Pencil",
+      "sort_order": 4
+    },
+    {
+      "inquiry_type": "workspace_optimization",
+      "status_key": "approved",
+      "label": {
+        "en": "Approved",
+        "fr": "Approuvé",
+        "de": "Genehmigt",
+        "gsw": "Gnehmigt"
+      },
+      "description": {
+        "en": "Workspace optimization plan approved",
+        "fr": "Plan d'optimisation de l'espace de travail approuvé",
+        "de": "Arbeitsplatzoptimierungsplan genehmigt",
+        "gsw": "Arbetsplatz-Optimierigs-Plan gnehmigt"
+      },
+      "is_final": false,
+      "icon": "CheckCircle",
+      "sort_order": 5
+    },
+    {
+      "inquiry_type": "workspace_optimization",
+      "status_key": "renovation",
+      "label": {
+        "en": "Renovation",
+        "fr": "Rénovation",
+        "de": "Renovierung",
+        "gsw": "Renovierig"
+      },
+      "description": {
+        "en": "Workspace renovation in progress",
+        "fr": "Rénovation de l'espace de travail en cours",
+        "de": "Arbeitsplatzrenovierung läuft",
+        "gsw": "Arbetsplatz-Renovierig lauft"
+      },
+      "is_final": false,
+      "icon": "HardHat",
+      "sort_order": 6
+    },
+    {
+      "inquiry_type": "workspace_optimization",
+      "status_key": "completed",
+      "label": {
+        "en": "Completed",
+        "fr": "Terminé",
+        "de": "Abgeschlossen",
+        "gsw": "Abgschlosse"
+      },
+      "description": {
+        "en": "Workspace optimization completed successfully",
+        "fr": "Optimisation de l'espace de travail terminée avec succès",
+        "de": "Arbeitsplatzoptimierung erfolgreich abgeschlossen",
+        "gsw": "Arbetsplatz-Optimierig erfolgriich abgschlosse"
+      },
+      "is_final": true,
+      "icon": "CheckAll",
+      "sort_order": 7
+    },
+    {
+      "inquiry_type": "workspace_optimization",
+      "status_key": "deferred",
+      "label": {
+        "en": "Deferred",
+        "fr": "Reporté",
+        "de": "Zurückgestellt",
+        "gsw": "Zruggstellt"
+      },
+      "description": {
+        "en": "Optimization deferred to future period",
+        "fr": "Optimisation reportée à une période future",
+        "de": "Optimierung auf zukünftigen Zeitraum verschoben",
+        "gsw": "Optimierig uf zukünftige Ziitruum verschobe"
+      },
+      "is_final": true,
+      "icon": "ClockOutline",
+      "sort_order": 8
+    },
+
+    {
+      "inquiry_type": "maintenance_request",
+      "status_key": "submitted",
+      "label": {
+        "en": "Submitted",
+        "fr": "Soumis",
+        "de": "Eingereicht",
+        "gsw": "Iigräicht"
+      },
+      "description": {
+        "en": "Maintenance request has been submitted",
+        "fr": "La demande de maintenance a été soumise",
+        "de": "Wartungsanfrage wurde eingereicht",
+        "gsw": "Wartigs-Aafraag isch iigräicht"
+      },
+      "is_final": false,
+      "icon": "Send",
+      "sort_order": 1
+    },
+    {
+      "inquiry_type": "maintenance_request",
+      "status_key": "priority_assessment",
+      "label": {
+        "en": "Priority Assessment",
+        "fr": "Évaluation de la priorité",
+        "de": "Prioritätsbewertung",
+        "gsw": "Prioritäts-Bewertig"
+      },
+      "description": {
+        "en": "Assessing maintenance request priority",
+        "fr": "Évaluation de la priorité de la demande de maintenance",
+        "de": "Bewertung der Wartungsanfragenpriorität",
+        "gsw": "Bewertig vo dr Wartigs-Aafraag-Prioritäät"
+      },
+      "is_final": false,
+      "icon": "ClipboardAlert",
+      "sort_order": 2
+    },
+    {
+      "inquiry_type": "maintenance_request",
+      "status_key": "assigned",
+      "label": {
+        "en": "Assigned",
+        "fr": "Assigné",
+        "de": "Zugewiesen",
+        "gsw": "Zuegwise"
+      },
+      "description": {
+        "en": "Request assigned to maintenance team",
+        "fr": "Demande assignée à l'équipe de maintenance",
+        "de": "Anfrage dem Wartungsteam zugewiesen",
+        "gsw": "Aafraag em Wartigs-Team zuegwise"
+      },
+      "is_final": false,
+      "icon": "AccountHardHat",
+      "sort_order": 3
+    },
+    {
+      "inquiry_type": "maintenance_request",
+      "status_key": "in_progress",
+      "label": {
+        "en": "In Progress",
+        "fr": "En cours",
+        "de": "In Bearbeitung",
+        "gsw": "In Bearbeitig"
+      },
+      "description": {
+        "en": "Maintenance work in progress",
+        "fr": "Travaux de maintenance en cours",
+        "de": "Wartungsarbeiten laufen",
+        "gsw": "Wartigs-Arbeite laufe"
+      },
+      "is_final": false,
+      "icon": "Progress",
+      "sort_order": 4
+    },
+    {
+      "inquiry_type": "maintenance_request",
+      "status_key": "quality_check",
+      "label": {
+        "en": "Quality Check",
+        "fr": "Contrôle qualité",
+        "de": "Qualitätsprüfung",
+        "gsw": "Qualitäts-Prüefig"
+      },
+      "description": {
+        "en": "Quality check of completed maintenance",
+        "fr": "Contrôle qualité de la maintenance effectuée",
+        "de": "Qualitätsprüfung der abgeschlossenen Wartung",
+        "gsw": "Qualitäts-Prüefig vo dr abgschlossnig Wartig"
+      },
+      "is_final": false,
+      "icon": "CheckDecagram",
+      "sort_order": 5
+    },
+    {
+      "inquiry_type": "maintenance_request",
+      "status_key": "completed",
+      "label": {
+        "en": "Completed",
+        "fr": "Terminé",
+        "de": "Abgeschlossen",
+        "gsw": "Abgschlosse"
+      },
+      "description": {
+        "en": "Maintenance completed successfully",
+        "fr": "Maintenance terminée avec succès",
+        "de": "Wartung erfolgreich abgeschlossen",
+        "gsw": "Wartig erfolgriich abgschlosse"
+      },
+      "is_final": true,
+      "icon": "CheckAll",
+      "sort_order": 6
+    },
+    {
+      "inquiry_type": "maintenance_request",
+      "status_key": "escalated",
+      "label": {
+        "en": "Escalated",
+        "fr": "Escaladé",
+        "de": "Eskaliert",
+        "gsw": "Eskaliert"
+      },
+      "description": {
+        "en": "Request escalated to specialized contractor",
+        "fr": "Demande escaladée à un entrepreneur spécialisé",
+        "de": "Anfrage an spezialisierten Auftragnehmer eskaliert",
+        "gsw": "Aafraag an spezialisierte Uftraggnähmer eskaliert"
+      },
+      "is_final": false,
+      "icon": "AlertCircle",
+      "sort_order": 7
+    },
+
+    {
+      "inquiry_type": "parking_transportation",
+      "status_key": "submitted",
+      "label": {
+        "en": "Submitted",
+        "fr": "Soumis",
+        "de": "Eingereicht",
+        "gsw": "Iigräicht"
+      },
+      "description": {
+        "en": "Parking/transportation request submitted",
+        "fr": "Demande de stationnement/transport soumise",
+        "de": "Parkplatz-/Transportanfrage eingereicht",
+        "gsw": "Parkplatz-/Transport-Aafraag iigräicht"
+      },
+      "is_final": false,
+      "icon": "Send",
+      "sort_order": 1
+    },
+    {
+      "inquiry_type": "parking_transportation",
+      "status_key": "feasibility_study",
+      "label": {
+        "en": "Feasibility Study",
+        "fr": "Étude de faisabilité",
+        "de": "Machbarkeitsstudie",
+        "gsw": "Machbarkeits-Studie"
+      },
+      "description": {
+        "en": "Studying feasibility of parking/transportation proposal",
+        "fr": "Étude de faisabilité de la proposition de stationnement/transport",
+        "de": "Machbarkeitsstudie des Parkplatz-/Transportvorschlags",
+        "gsw": "Machbarkeits-Studie vom Parkplatz-/Transport-Vorschlag"
+      },
+      "is_final": false,
+      "icon": "FileSearch",
+      "sort_order": 2
+    },
+    {
+      "inquiry_type": "parking_transportation",
+      "status_key": "occupant_survey",
+      "label": {
+        "en": "Occupant Survey",
+        "fr": "Sondage des occupants",
+        "de": "Bewohnerumfrage",
+        "gsw": "Bewohner-Umfraag"
+      },
+      "description": {
+        "en": "Surveying building occupants for input",
+        "fr": "Sondage des occupants du bâtiment pour avis",
+        "de": "Befragung der Gebäudebewohner",
+        "gsw": "Befraagig vo de Gebäude-Bewohner"
+      },
+      "is_final": false,
+      "icon": "Poll",
+      "sort_order": 3
+    },
+    {
+      "inquiry_type": "parking_transportation",
+      "status_key": "budget_review",
+      "label": {
+        "en": "Budget Review",
+        "fr": "Examen du budget",
+        "de": "Budgetprüfung",
+        "gsw": "Budget-Prüefig"
+      },
+      "description": {
+        "en": "Reviewing budget requirements",
+        "fr": "Examen des exigences budgétaires",
+        "de": "Prüfung der Budgetanforderungen",
+        "gsw": "Prüefig vo de Budget-Aforderige"
+      },
+      "is_final": false,
+      "icon": "CashCheck",
+      "sort_order": 4
+    },
+    {
+      "inquiry_type": "parking_transportation",
+      "status_key": "approved",
+      "label": {
+        "en": "Approved",
+        "fr": "Approuvé",
+        "de": "Genehmigt",
+        "gsw": "Gnehmigt"
+      },
+      "description": {
+        "en": "Parking/transportation proposal approved",
+        "fr": "Proposition de stationnement/transport approuvée",
+        "de": "Parkplatz-/Transportvorschlag genehmigt",
+        "gsw": "Parkplatz-/Transport-Vorschlag gnehmigt"
+      },
+      "is_final": false,
+      "icon": "CheckCircle",
+      "sort_order": 5
+    },
+    {
+      "inquiry_type": "parking_transportation",
+      "status_key": "implementation",
+      "label": {
+        "en": "Implementation",
+        "fr": "Mise en œuvre",
+        "de": "Implementierung",
+        "gsw": "Implementierig"
+      },
+      "description": {
+        "en": "Implementing parking/transportation changes",
+        "fr": "Mise en œuvre des changements de stationnement/transport",
+        "de": "Umsetzung der Parkplatz-/Transportänderungen",
+        "gsw": "Umsetzig vo de Parkplatz-/Transport-Änderige"
+      },
+      "is_final": false,
+      "icon": "Wrench",
+      "sort_order": 6
+    },
+    {
+      "inquiry_type": "parking_transportation",
+      "status_key": "operational",
+      "label": {
+        "en": "Operational",
+        "fr": "Opérationnel",
+        "de": "Betriebsbereit",
+        "gsw": "Betriebsbereit"
+      },
+      "description": {
+        "en": "Parking/transportation solution operational",
+        "fr": "Solution de stationnement/transport opérationnelle",
+        "de": "Parkplatz-/Transportlösung betriebsbereit",
+        "gsw": "Parkplatz-/Transport-Lösig betriebsbereit"
+      },
+      "is_final": true,
+      "icon": "CheckAll",
+      "sort_order": 7
+    },
+    {
+      "inquiry_type": "parking_transportation",
+      "status_key": "declined",
+      "label": {
+        "en": "Declined",
+        "fr": "Refusé",
+        "de": "Abgelehnt",
+        "gsw": "Abglehnt"
+      },
+      "description": {
+        "en": "Parking/transportation request declined",
+        "fr": "Demande de stationnement/transport refusée",
+        "de": "Parkplatz-/Transportanfrage abgelehnt",
+        "gsw": "Parkplatz-/Transport-Aafraag abglehnt"
+      },
+      "is_final": true,
+      "icon": "CloseCircle",
+      "sort_order": 8
+    }
+  ],
+  "categories": [
+    {
+      "category_id": "building_structure",
+      "name": {
+        "en": "Building & Structure",
+        "fr": "Bâtiment et structure",
+        "de": "Gebäude & Struktur",
+        "gsw": "Gebäude & Struktur"
+      },
+      "parent": null
+    },
+    {
+      "category_id": "hvac",
+      "name": {
+        "en": "HVAC",
+        "fr": "CVC",
+        "de": "HLK",
+        "gsw": "HLK"
+      },
+      "parent": "building_structure"
+    },
+    {
+      "category_id": "electrical",
+      "name": {
+        "en": "Electrical",
+        "fr": "Électrique",
+        "de": "Elektrik",
+        "gsw": "Elektrik"
+      },
+      "parent": "building_structure"
+    },
+    {
+      "category_id": "plumbing",
+      "name": {
+        "en": "Plumbing",
+        "fr": "Plomberie",
+        "de": "Sanitär",
+        "gsw": "Sanitär"
+      },
+      "parent": "building_structure"
+    },
+    {
+      "category_id": "structural",
+      "name": {
+        "en": "Structural",
+        "fr": "Structurel",
+        "de": "Strukturell",
+        "gsw": "Strukturell"
+      },
+      "parent": "building_structure"
+    },
+    {
+      "category_id": "energy_utilities",
+      "name": {
+        "en": "Energy & Utilities",
+        "fr": "Énergie et services publics",
+        "de": "Energie & Versorgung",
+        "gsw": "Energii & Versorgig"
+      },
+      "parent": null
+    },
+    {
+      "category_id": "electricity",
+      "name": {
+        "en": "Electricity",
+        "fr": "Électricité",
+        "de": "Strom",
+        "gsw": "Strom"
+      },
+      "parent": "energy_utilities"
+    },
+    {
+      "category_id": "gas",
+      "name": {
+        "en": "Gas",
+        "fr": "Gaz",
+        "de": "Gas",
+        "gsw": "Gas"
+      },
+      "parent": "energy_utilities"
+    },
+    {
+      "category_id": "water",
+      "name": {
+        "en": "Water",
+        "fr": "Eau",
+        "de": "Wasser",
+        "gsw": "Wasser"
+      },
+      "parent": "energy_utilities"
+    },
+    {
+      "category_id": "renewable_energy",
+      "name": {
+        "en": "Renewable Energy",
+        "fr": "Énergie renouvelable",
+        "de": "Erneuerbare Energie",
+        "gsw": "Ernöierbari Energii"
+      },
+      "parent": "energy_utilities"
+    },
+    {
+      "category_id": "safety_security",
+      "name": {
+        "en": "Safety & Security",
+        "fr": "Sécurité et sûreté",
+        "de": "Sicherheit & Schutz",
+        "gsw": "Sicherhäit & Schutz"
+      },
+      "parent": null
+    },
+    {
+      "category_id": "fire_safety",
+      "name": {
+        "en": "Fire Safety",
+        "fr": "Sécurité incendie",
+        "de": "Brandschutz",
+        "gsw": "Brand-Schutz"
+      },
+      "parent": "safety_security"
+    },
+    {
+      "category_id": "access_control_facility",
+      "name": {
+        "en": "Access Control",
+        "fr": "Contrôle d'accès",
+        "de": "Zutrittskontrolle",
+        "gsw": "Zutritts-Kontroll"
+      },
+      "parent": "safety_security"
+    },
+    {
+      "category_id": "emergency_systems",
+      "name": {
+        "en": "Emergency Systems",
+        "fr": "Systèmes d'urgence",
+        "de": "Notfallsysteme",
+        "gsw": "Notfall-System"
+      },
+      "parent": "safety_security"
+    },
+    {
+      "category_id": "environment",
+      "name": {
+        "en": "Environment",
+        "fr": "Environnement",
+        "de": "Umwelt",
+        "gsw": "Umwält"
+      },
+      "parent": null
+    },
+    {
+      "category_id": "waste_management",
+      "name": {
+        "en": "Waste Management",
+        "fr": "Gestion des déchets",
+        "de": "Abfallwirtschaft",
+        "gsw": "Abfall-Wirtschaft"
+      },
+      "parent": "environment"
+    },
+    {
+      "category_id": "energy_efficiency",
+      "name": {
+        "en": "Energy Efficiency",
+        "fr": "Efficacité énergétique",
+        "de": "Energieeffizienz",
+        "gsw": "Energii-Effiziänz"
+      },
+      "parent": "environment"
+    },
+    {
+      "category_id": "green_spaces",
+      "name": {
+        "en": "Green Spaces",
+        "fr": "Espaces verts",
+        "de": "Grünflächen",
+        "gsw": "Grünfläche"
+      },
+      "parent": "environment"
+    },
+    {
+      "category_id": "amenities",
+      "name": {
+        "en": "Amenities",
+        "fr": "Commodités",
+        "de": "Annehmlichkeiten",
+        "gsw": "Annehmlichkeite"
+      },
+      "parent": null
+    }
+  ],
+  "option_types": [
+    {
+      "option_type": "cost_breakdown",
+      "label": {
+        "en": "Cost Breakdown",
+        "fr": "Répartition des coûts",
+        "de": "Kostenaufschlüsselung",
+        "gsw": "Koste-Ufschlüsselig"
+      },
+      "description": {
+        "en": "Detailed cost estimates for improvements",
+        "fr": "Estimations détaillées des coûts pour les améliorations",
+        "de": "Detaillierte Kostenschätzungen für Verbesserungen",
+        "gsw": "Detaillierti Koste-Schätzige für Verbesserige"
+      },
+      "fields": [
+        {
+          "key": "item",
+          "label": {
+            "en": "Item",
+            "fr": "Article",
+            "de": "Artikel",
+            "gsw": "Artikel"
+          },
+          "type": "string",
+          "required": true
+        },
+        {
+          "key": "quantity",
+          "label": {
+            "en": "Quantity",
+            "fr": "Quantité",
+            "de": "Menge",
+            "gsw": "Mängi"
+          },
+          "type": "integer",
+          "required": true
+        },
+        {
+          "key": "unit_cost",
+          "label": {
+            "en": "Unit Cost",
+            "fr": "Coût unitaire",
+            "de": "Stückkosten",
+            "gsw": "Stück-Koste"
+          },
+          "type": "float",
+          "required": true
+        },
+        {
+          "key": "vendor",
+          "label": {
+            "en": "Vendor",
+            "fr": "Fournisseur",
+            "de": "Anbieter",
+            "gsw": "Aabieter"
+          },
+          "type": "string",
+          "required": false
+        },
+        {
+          "key": "timeline",
+          "label": {
+            "en": "Timeline",
+            "fr": "Calendrier",
+            "de": "Zeitplan",
+            "gsw": "Zitplan"
+          },
+          "type": "string",
+          "required": false
+        }
+      ]
+    },
+    {
+      "option_type": "sustainability_metric",
+      "label": {
+        "en": "Sustainability Metric",
+        "fr": "Métrique de durabilité",
+        "de": "Nachhaltigkeitsmetrik",
+        "gsw": "Nachhaltigkeits-Metrik"
+      },
+      "description": {
+        "en": "Environmental impact measurements",
+        "fr": "Mesures d'impact environnemental",
+        "de": "Umweltauswirkungsmessungen",
+        "gsw": "Umwält-Uuswirkigs-Messige"
+      },
+      "fields": [
+        {
+          "key": "metric_type",
+          "label": {
+            "en": "Metric Type",
+            "fr": "Type de métrique",
+            "de": "Metriktyp",
+            "gsw": "Metrik-Typ"
+          },
+          "type": "string",
+          "required": true
+        },
+        {
+          "key": "baseline",
+          "label": {
+            "en": "Baseline Value",
+            "fr": "Valeur de référence",
+            "de": "Basiswert",
+            "gsw": "Basis-Wärt"
+          },
+          "type": "float",
+          "required": true
+        },
+        {
+          "key": "target",
+          "label": {
+            "en": "Target Value",
+            "fr": "Valeur cible",
+            "de": "Zielwert",
+            "gsw": "Ziil-Wärt"
+          },
+          "type": "float",
+          "required": true
+        },
+        {
+          "key": "measurement_method",
+          "label": {
+            "en": "Measurement Method",
+            "fr": "Méthode de mesure",
+            "de": "Messmethode",
+            "gsw": "Mess-Method"
+          },
+          "type": "text",
+          "required": false
+        }
+      ]
+    },
+    {
+      "option_type": "maintenance_schedule",
+      "label": {
+        "en": "Maintenance Schedule",
+        "fr": "Programme de maintenance",
+        "de": "Wartungsplan",
+        "gsw": "Wartigs-Plan"
+      },
+      "description": {
+        "en": "Recurring maintenance plans",
+        "fr": "Plans de maintenance récurrents",
+        "de": "Wiederkehrende Wartungspläne",
+        "gsw": "Widerkehrendi Wartigs-Plän"
+      },
+      "fields": [
+        {
+          "key": "task",
+          "label": {
+            "en": "Task",
+            "fr": "Tâche",
+            "de": "Aufgabe",
+            "gsw": "Ufgab"
+          },
+          "type": "string",
+          "required": true
+        },
+        {
+          "key": "frequency",
+          "label": {
+            "en": "Frequency",
+            "fr": "Fréquence",
+            "de": "Häufigkeit",
+            "gsw": "Häufigkeit"
+          },
+          "type": "enum",
+          "required": true,
+          "allowed_values": [
+            {"value": "daily", "label": {"en": "Daily", "fr": "Quotidien", "de": "Täglich", "gsw": "Täglich"}},
+            {"value": "weekly", "label": {"en": "Weekly", "fr": "Hebdomadaire", "de": "Wöchentlich", "gsw": "Wöchentlich"}},
+            {"value": "monthly", "label": {"en": "Monthly", "fr": "Mensuel", "de": "Monatlich", "gsw": "Monatlich"}},
+            {"value": "quarterly", "label": {"en": "Quarterly", "fr": "Trimestriel", "de": "Vierteljährlich", "gsw": "Vierteljährlich"}},
+            {"value": "annually", "label": {"en": "Annually", "fr": "Annuel", "de": "Jährlich", "gsw": "Jährlich"}}
+          ]
+        },
+        {
+          "key": "responsible_party",
+          "label": {
+            "en": "Responsible Party",
+            "fr": "Partie responsable",
+            "de": "Verantwortliche Partei",
+            "gsw": "Verantwortlichi Partei"
+          },
+          "type": "string",
+          "required": false
+        },
+        {
+          "key": "estimated_downtime",
+          "label": {
+            "en": "Estimated Downtime (hours)",
+            "fr": "Temps d'arrêt estimé (heures)",
+            "de": "Geschätzte Ausfallzeit (Stunden)",
+            "gsw": "Gschätzti Usfall-Zit (Stunde)"
+          },
+          "type": "float",
+          "required": false
+        }
+      ]
+    }
+  ],
+  "inquiry_group_types": [
+    {
+      "group_type": "facility_region",
+      "label": {
+        "en": "Facility Region",
+        "fr": "Région des installations",
+        "de": "Anlagenregion",
+        "gsw": "Aalage-Region"
+      },
+      "description": {
+        "en": "Geographic regions for facilities",
+        "fr": "Régions géographiques pour les installations",
+        "de": "Geografische Regionen für Anlagen",
+        "gsw": "Geografischi Regione für Aalage"
+      },
+      "is_root": true
+    },
+    {
+      "group_type": "campus",
+      "label": {
+        "en": "Campus",
+        "fr": "Campus",
+        "de": "Campus",
+        "gsw": "Campus"
+      },
+      "description": {
+        "en": "Office campus or building complex",
+        "fr": "Campus de bureaux ou complexe de bâtiments",
+        "de": "Büro-Campus oder Gebäudekomplex",
+        "gsw": "Büro-Campus oder Gebäude-Komplex"
+      },
+      "is_root": false
+    },
+    {
+      "group_type": "building",
+      "label": {
+        "en": "Building",
+        "fr": "Bâtiment",
+        "de": "Gebäude",
+        "gsw": "Gebäude"
+      },
+      "description": {
+        "en": "Individual buildings",
+        "fr": "Bâtiments individuels",
+        "de": "Einzelne Gebäude",
+        "gsw": "Einzelni Gebäude"
+      },
+      "is_root": false
+    },
+    {
+      "group_type": "floor_zone",
+      "label": {
+        "en": "Floor/Zone",
+        "fr": "Étage/Zone",
+        "de": "Etage/Zone",
+        "gsw": "Stock/Zone"
+      },
+      "description": {
+        "en": "Building floors or zones",
+        "fr": "Étages ou zones de bâtiment",
+        "de": "Gebäudeetagen oder -zonen",
+        "gsw": "Gebäude-Stock oder -Zone"
+      },
+      "is_root": false
+    },
+    {
+      "group_type": "sustainability_program",
+      "label": {
+        "en": "Sustainability Program",
+        "fr": "Programme de durabilité",
+        "de": "Nachhaltigkeitsprogramm",
+        "gsw": "Nachhaltigkeits-Programm"
+      },
+      "description": {
+        "en": "Green initiative portfolios",
+        "fr": "Portefeuilles d'initiatives vertes",
+        "de": "Grüne Initiativenportfolios",
+        "gsw": "Grüeni Initiative-Portfolio"
+      },
+      "is_root": false
+    }
+  ],
+  "locations": [
+    {
+      "location_id": "corporate_hq",
+      "name": {
+        "en": "Corporate HQ",
+        "fr": "Siège social",
+        "de": "Unternehmenszentrale",
+        "gsw": "Unternehmens-Zentral"
+      },
+      "parent_id": null
+    },
+    {
+      "location_id": "emea_region",
+      "name": {
+        "en": "EMEA Region",
+        "fr": "Région EMEA",
+        "de": "EMEA-Region",
+        "gsw": "EMEA-Region"
+      },
+      "parent_id": null
+    },
+    {
+      "location_id": "americas_region",
+      "name": {
+        "en": "Americas Region",
+        "fr": "Région Amériques",
+        "de": "Amerika-Region",
+        "gsw": "Amerika-Region"
+      },
+      "parent_id": null
+    },
+    {
+      "location_id": "london_campus",
+      "name": {
+        "en": "London Campus",
+        "fr": "Campus de Londres",
+        "de": "Campus London",
+        "gsw": "Campus London"
+      },
+      "parent_id": "emea_region"
+    },
+    {
+      "location_id": "ny_campus",
+      "name": {
+        "en": "New York Campus",
+        "fr": "Campus de New York",
+        "de": "Campus New York",
+        "gsw": "Campus New York"
+      },
+      "parent_id": "americas_region"
+    },
+    {
+      "location_id": "hq_building_a",
+      "name": {
+        "en": "HQ Building A",
+        "fr": "Bâtiment A du siège",
+        "de": "Zentrale Gebäude A",
+        "gsw": "Zentral Gebäude A"
+      },
+      "parent_id": "corporate_hq"
+    },
+    {
+      "location_id": "hq_building_b",
+      "name": {
+        "en": "HQ Building B",
+        "fr": "Bâtiment B du siège",
+        "de": "Zentrale Gebäude B",
+        "gsw": "Zentral Gebäude B"
+      },
+      "parent_id": "corporate_hq"
+    },
+    {
+      "location_id": "building_a_floor_1",
+      "name": {
+        "en": "Building A - Floor 1",
+        "fr": "Bâtiment A - Étage 1",
+        "de": "Gebäude A - Etage 1",
+        "gsw": "Gebäude A - Stock 1"
+      },
+      "parent_id": "hq_building_a"
+    },
+    {
+      "location_id": "building_a_floor_2",
+      "name": {
+        "en": "Building A - Floor 2",
+        "fr": "Bâtiment A - Étage 2",
+        "de": "Gebäude A - Etage 2",
+        "gsw": "Gebäude A - Stock 2"
+      },
+      "parent_id": "hq_building_a"
+    }
+  ]
+}

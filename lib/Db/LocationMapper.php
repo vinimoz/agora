@@ -83,4 +83,27 @@ class LocationMapper extends QBMapper
             $this->deleteById($child->getId());
         }
     }
+
+    /**
+     * Find a location by its name
+     *
+     * @param string $name Location name
+     * @return Location|null Location entity or null if not found
+     */
+    public function findByName(string $name): ?Location
+    {
+        $qb = $this->db->getQueryBuilder();
+        $qb->select('*')
+            ->from($this->getTableName())
+            ->where($qb->expr()->eq('name', $qb->createNamedParameter($name, IQueryBuilder::PARAM_STR)));
+
+        try {
+            return $this->findEntity($qb);
+        } catch (\OCP\AppFramework\Db\DoesNotExistException $e) {
+            return null;
+        } catch (\OCP\AppFramework\Db\MultipleObjectsReturnedException $e) {
+            // Return the first one if multiple exist
+            return $this->findEntities($qb)[0] ?? null;
+        }
+    }
 }

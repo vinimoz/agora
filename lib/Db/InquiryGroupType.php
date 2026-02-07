@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\Agora\Db;
 
 use JsonSerializable;
+use OCP\AppFramework\Db\Entity;
 
 /**
  * @psalm-suppress UnusedProperty
@@ -38,7 +39,7 @@ use JsonSerializable;
  * @method         void setCreated(int $value)
  */
 
-class InquiryGroupType extends EntityWithUser implements JsonSerializable
+class InquiryGroupType extends Entity implements JsonSerializable
 {
     public const TABLE = 'agora_inq_group_type';
 
@@ -52,18 +53,19 @@ class InquiryGroupType extends EntityWithUser implements JsonSerializable
     protected ?array $fields = null;
     protected ?array $allowedInquiryTypes = null;
     protected ?array $allowedResponse = null;
-    protected bool $isRoot = false;
+    protected ?bool $isRoot = false;
     protected int $created = 0;
     protected int $sortOrder= 0;
 
     public function __construct()
     {
         $this->addType('id', 'integer');
-        $this->addType('description', 'string');
+        $this->addType('groupType', 'string');
         $this->addType('label', 'string');
-        $this->addType('group_type', 'string');
-        $this->addType('fields', 'json');
+        $this->addType('icon', 'string');
         $this->addType('family', 'string');
+        $this->addType('description', 'string');
+        $this->addType('fields', 'json');
         $this->addType('isRoot', 'boolean');
         $this->addType('allowedInquiryTypes', 'json');
         $this->addType('allowedResponse', 'json');
@@ -89,7 +91,7 @@ class InquiryGroupType extends EntityWithUser implements JsonSerializable
             'allowedInquiryTypes' => $this->getAllowedInquiryTypes(),
             'allowed_response' => $this->getAllowedResponse(),
             'sort_order' => $this->getSortOrder(),
-            'is_root' => $this->getIsRoot(),
+            'is_root' => $this->getIsRoot() ?? false,
             'created' => $this->getCreated(),
         ];
     }

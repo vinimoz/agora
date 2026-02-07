@@ -64,8 +64,8 @@ class Version01060020251115120000 extends SimpleMigrationStep {
 		$this->output = $output;
 		$this->logInfo('Finalizing migration');
 
-		$messages = $this->tableManager->initDefaultData($this->output);
-    		$this->logInfo($messages, 'postMigration: ');
+		// Note: Default data initialization removed - users should use the Template Wizard instead
+		// to have full control over which templates to import
 
 		$messages = $this->tableManager->removeOrphaned();
 		$this->logInfo($messages, 'postMigration:  ');

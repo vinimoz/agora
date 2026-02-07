@@ -49,7 +49,7 @@ class BaseController extends Controller
             }
 
             /**
-       * @var HttpStatusCode $status 
+       * @var HttpStatusCode $status
 */
             $status = $e->getStatus();
             return new JSONResponse(['message' => $e->getMessage()], $status);

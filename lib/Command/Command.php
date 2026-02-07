@@ -118,4 +118,15 @@ class Command extends \Symfony\Component\Console\Command\Command
         }
         $this->output->writeln('<comment>' . $prefix . $messages . '</comment>');
     }
+
+    protected function printError(string|array $messages, string $prefix = ''): void
+    {
+        if (is_array($messages)) {
+            foreach ($messages as $message) {
+                $this->output->writeln('<error>' . $prefix . $message . '</error>');
+            }
+            return;
+        }
+        $this->output->writeln('<error>' . $prefix . $messages . '</error>');
+    }
 }

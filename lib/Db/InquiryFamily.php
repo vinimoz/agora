@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\Agora\Db;
 
 use JsonSerializable;
+use OCP\AppFramework\Db\Entity;
 
 /**
  * @psalm-suppress UnusedProperty
@@ -27,7 +28,7 @@ use JsonSerializable;
  * @method         int getCreated()
  * @method         void setCreated(int $value)
  */
-class InquiryFamily extends EntityWithUser implements JsonSerializable
+class InquiryFamily extends Entity implements JsonSerializable
 {
     public const TABLE = 'agora_inq_families';
 
@@ -35,7 +36,7 @@ class InquiryFamily extends EntityWithUser implements JsonSerializable
     public $id = null;
     protected string $familyType = '';
     protected string $label = '';
-    protected ?string $description = '';
+    protected string $description = '';
     protected string $icon = '';
     protected int $sortOrder = 0;
     protected int $created = 0;
@@ -43,6 +44,10 @@ class InquiryFamily extends EntityWithUser implements JsonSerializable
     public function __construct()
     {
         $this->addType('id', 'integer');
+        $this->addType('familyType', 'string');
+        $this->addType('label', 'string');
+        $this->addType('description', 'string');
+        $this->addType('icon', 'string');
         $this->addType('sortOrder', 'integer');
         $this->addType('created', 'integer');
     }
