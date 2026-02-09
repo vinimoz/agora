@@ -75,7 +75,6 @@ class InquiryController extends BaseController
                 'inquiries' => $this->inquiryService->listInquiries(),
                 'permissions' => [
                 'inquiryCreationAllowed' => $appSettings->getInquiryCreationAllowed(),
-                'comboAllowed' => $appSettings->getComboAllowed(),
                 ],
                 'inquiryGroups' => $this->inquiryGroupService->listInquiryGroups(),
                 ];

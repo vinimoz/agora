@@ -320,6 +320,9 @@ abstract class TableSchema
     public const GONE_MIGRATIONS = [
         '20250715120000',
         '01050020251027120000',
+        '01060020251115120000',
+        '02070020260102120000',
+
     ];
 
     /**
@@ -342,9 +345,10 @@ abstract class TableSchema
             'admin_access',
             'hide_booked_up',
             'misc_settings',
+            'allow_support',
             'level',
             'slug',
-            'tags'
+            'tags',
         ],
         'oc_agora_options' => [
             'inquiry_option_hash',
@@ -352,9 +356,10 @@ abstract class TableSchema
             'duration',
             'order',
             'confirmed',
+            'allow_support',
             'released'
         ],
-        'oc_agora_groups' => [
+        'oc_agora_inq_group' => [
             'groupStatus',
         ],
         'oc_agora_inq_type' => [
@@ -365,7 +370,6 @@ abstract class TableSchema
     /**
      * define table structure
      *
-     * IMPORTANT: After adding or deletion check queries in ShareMapper
      */
     public const TABLES = [
         InquiryGroup::TABLE => [
@@ -374,7 +378,7 @@ abstract class TableSchema
             'created' => ['type' => Types::BIGINT, 'options' => ['notnull' => true, 'default' => 0, 'length' => 20]],
             'deleted' => ['type' => Types::BIGINT, 'options' => ['notnull' => true, 'default' => 0, 'length' => 20]],
             'title' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'default' => '', 'length' => 128]],
-            'type' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'default' => 'default', 'length' => 128]], // This is the actual column name
+            'type' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'default' => 'default', 'length' => 128]], 
             'owner' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'default' => '', 'length' => 256]],
             'description' => ['type' => Types::TEXT, 'options' => ['notnull' => false, 'default' => null, 'length' => 65535]],
             'title_ext' => ['type' => Types::STRING, 'options' => ['notnull' => false, 'default' => null, 'length' => 128]],
@@ -403,7 +407,7 @@ abstract class TableSchema
         InquiryGroupType::TABLE => [
             'id' => ['type' => Types::BIGINT, 'options' => ['autoincrement' => true, 'notnull' => true]],
             'family' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'default' => 'collective', 'length' => 64]],
-            'group_type' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'length' => 50]], // This is the actual column name
+            'group_type' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'length' => 50]], 
             'icon' => ['type' => Types::STRING, 'options' => ['notnull' => false, 'default' => '']],
             'label' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'length' => 100]],
             'description' => ['type' => Types::TEXT, 'options' => ['notnull' => false]],
@@ -418,19 +422,23 @@ abstract class TableSchema
         InquiryOptionType::TABLE => [
             'id' => ['type' => Types::BIGINT, 'options' => ['autoincrement' => true, 'notnull' => true]],
             'family' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'default' => 'collective', 'length' => 64]],
-            'option_type' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'length' => 50]], // This is the actual column name
+            'option_type' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'length' => 50]], 
             'icon' => ['type' => Types::STRING, 'options' => ['notnull' => false, 'default' => '']],
             'label' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'length' => 100]],
             'description' => ['type' => Types::TEXT, 'options' => ['notnull' => false]],
             'fields' => ['type' => Types::TEXT, 'options' => ['notnull' => false]],
             'allowed_response' => ['type' => Types::TEXT, 'options' => ['notnull' => false]],
+            'allow_comment' => ['type' => Types::SMALLINT, 'options' => ['notnull' => false, 'default' =>null]],
+            'support_feature' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'default' => 'none', 'length' => 20]],
+            'statuses' => ['type' => Types::TEXT, 'options' => ['notnull' => false]],
+            'use_title' => ['type' => Types::BIGINT, 'options' => ['notnull' => true, 'default' => 1, 'length' => 20]],
             'created' => ['type' => Types::BIGINT, 'options' => ['notnull' => true, 'default' => 0]],
         ],
 
         Inquiry::TABLE => [
             'id' => ['type' => Types::BIGINT, 'options' => ['autoincrement' => true, 'notnull' => true, 'length' => 20]],
             'cover_id' => ['type' => Types::BIGINT, 'options' => ['notnull' => false, 'default' => null,'length' => 20]],
-            'type' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'default' => 'petition', 'length' => 64]], // This is the actual column name
+            'type' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'default' => 'petition', 'length' => 64]],
             'title' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'default' => '', 'length' => 128]],
             'description' => ['type' => Types::TEXT, 'options' => ['notnull' => false, 'default' => null, 'length' => 65535]],
             'location_id' => ['type' => Types::BIGINT, 'options' => ['notnull' => false, 'default' => 0, 'length' => 20]],
@@ -447,10 +455,9 @@ abstract class TableSchema
             'parent_id' => ['type' => Types::BIGINT, 'options' => ['notnull' => false, 'default' => null, 'length' => 20]],
             'moderation_status' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'default' => 'draft', 'length' => 32]],
             'inquiry_status' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'default' => 'draft', 'length' => 32]],
-            'allow_comment' => ['type' => Types::BIGINT, 'options' => ['notnull' => true, 'default' => 1, 'length' => 20]],
-            'allow_support' => ['type' => Types::BIGINT, 'options' => ['notnull' => true, 'default' => 1, 'length' => 20]],
-            'support_feature' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'default' => 'binary', 'length' => 20]],
-            'family' => ['type' => Types::STRING, 'options' => ['notnull' => false, 'default' => 'deliberative', 'length' => 64]], // Added missing family column
+            'allow_comment' => ['type' => Types::SMALLINT, 'options' => ['notnull' => false, 'default' =>null]],
+            'support_feature' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'default' => 'none', 'length' => 20]],
+            'family' => ['type' => Types::STRING, 'options' => ['notnull' => false, 'default' => 'deliberative', 'length' => 64]], 
         ],
 
         InquiryMisc::TABLE => [
@@ -508,7 +515,7 @@ abstract class TableSchema
 
         InquiryType::TABLE => [
             'id' => ['type' => Types::BIGINT, 'options' => ['autoincrement' => true, 'notnull' => true, 'length' => 20]],
-            'inquiry_type' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'length' => 50]], // This is the actual column name
+            'inquiry_type' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'length' => 50]], 
             'family' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'default' => 'deliberative', 'length' => 64]],
             'icon' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'default' => '']],
             'label' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'length' => 100]],
@@ -517,7 +524,8 @@ abstract class TableSchema
             'allowed_response' => ['type' => Types::TEXT, 'options' => ['notnull' => false]],
             'allowed_transformation' => ['type' => Types::TEXT, 'options' => ['notnull' => false]],
             'allowed_option_type' => ['type' => Types::TEXT, 'options' => ['notnull' => false]],
-            'support_feature' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'default' => 'binary', 'length' => 20]],
+            'allow_comment' => ['type' => Types::SMALLINT, 'options' => ['notnull' => false, 'default' =>null]],
+            'support_feature' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'default' => 'none', 'length' => 20]],
             'is_root' => ['type' => Types::BOOLEAN, 'options' => ['notnull' => false, 'default' => true]],
             'created' => ['type' => Types::BIGINT, 'options' => ['notnull' => true, 'default' => 0, 'length' => 20]],
         ],
@@ -535,20 +543,23 @@ abstract class TableSchema
 
         Option::TABLE => [
             'id' => ['type' => Types::BIGINT, 'options' => ['autoincrement' => true, 'notnull' => true, 'length' => 20]],
-            'target_type' => ['type' => Types::STRING, 'options' => ['notnull' => false, 'default' => null, 'length' => 50]],
+            'title' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'default' => 'Untitled', 'length' => 128]],
+            'target_id' => ['type' => Types::BIGINT, 'options' => ['notnull' => true, 'default' => 0, 'length' => 20]],
             'parent_id' => ['type' => Types::BIGINT, 'options' => ['notnull' => true, 'default' => 0, 'length' => 20]],
             'type' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'default' => 'debate', 'length' => 64]], 
             'access' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'default' => 'private', 'length' => 32]],
-            'option_text' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'default' => 'enter ur text', 'length' => 1024]],
+            'text' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'default' => 'enter ur text', 'length' => 1024]],
             'owner' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'default' => '', 'length' => 256]],
+            'owned_group' => ['type' => Types::STRING, 'options' => ['notnull' => false, 'default' => '', 'length' => 255]],
             'created' => ['type' => Types::BIGINT, 'options' => ['notnull' => true, 'default' => 0, 'length' => 20]],
             'updated' => ['type' => Types::BIGINT, 'options' => ['notnull' => true, 'default' => 0, 'length' => 20]],
             'show_results' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'default' => 'always', 'length' => 32]],
             'deleted' => ['type' => Types::BIGINT, 'options' => ['notnull' => false, 'default' => 0, 'length' => 20]],
             'archived' => ['type' => Types::BIGINT, 'options' => ['notnull' => false, 'default' => 0, 'length' => 20]],
-            'option_status' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'default' => 'draft', 'length' => 32]],
-            'allow_comment' => ['type' => Types::BIGINT, 'options' => ['notnull' => true, 'default' => 1, 'length' => 20]],
-            'allow_support' => ['type' => Types::BIGINT, 'options' => ['notnull' => true, 'default' => 1, 'length' => 20]],
+            'status' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'default' => 'draft', 'length' => 32]],
+            'allow_comment' => ['type' => Types::SMALLINT, 'options' => ['notnull' => false, 'default' =>null]],
+            'support_feature' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'default' => 'none', 'length' => 20]],
+            'family' => ['type' => Types::STRING, 'options' => ['notnull' => false, 'default' => 'deliberative', 'length' => 64]], 
             'sort_order' => ['type' => Types::BIGINT, 'options' => ['notnull' => true, 'default' => 0, 'length' => 20]],
         ],
 

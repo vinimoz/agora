@@ -9,7 +9,6 @@ declare(strict_types=1);
 namespace OCA\Agora\Db;
 
 use JsonSerializable;
-use OCP\AppFramework\Db\Entity;
 
 /**
  * @psalm-suppress UnusedProperty
@@ -21,6 +20,8 @@ use OCP\AppFramework\Db\Entity;
  * @method         void setFamily(string $value)
  * @method         string getLabel()
  * @method         void setLabel(string $value)
+ * @method         string getIcon()
+ * @method         void setIcon(string $value)
  * @method         ?string getDescription()
  * @method         void setDescription(?string $value)
  * @method         ?array getFields()
@@ -31,6 +32,8 @@ use OCP\AppFramework\Db\Entity;
  * @method         void setAllowedTransformation(?array $value)
  * @method         ?array getAllowedOptionType()
  * @method         void setAllowedOptionType(?array $value)
+ * @method    int getAllowComment()
+ * @method    void setAllowComment(int $value)
  * @method         string getSupportFeature()
  * @method         void setSupportFeature(string $value)
  * @method         bool getIsRoot()
@@ -39,7 +42,7 @@ use OCP\AppFramework\Db\Entity;
  * @method         void setCreated(int $value)
  */
 
-class InquiryType extends Entity implements JsonSerializable
+class InquiryType extends EntityWithUser implements JsonSerializable
 {
     public const TABLE = 'agora_inq_type';
 
@@ -49,30 +52,31 @@ class InquiryType extends Entity implements JsonSerializable
     protected string $family = 'deliberative';
     protected string $label = '';
     protected string $icon = '';
-    protected string $description = '';
+    protected ?string $description = null;
     protected ?array $fields = null;
     protected ?array $allowedResponse = null;
     protected ?array $allowedTransformation = null;
     protected ?array $allowedOptionType = null;
-    protected string $supportFeature = 'binary';
-    protected ?bool $isRoot = false;
+    protected ?int $allowComment = null;
+    protected string $supportFeature = '';
+    protected bool $isRoot = false;
     protected int $created = 0;
 
     public function __construct()
     {
         $this->addType('id', 'integer');
         $this->addType('created', 'integer');
+        $this->addType('allowComment', 'integer');
         $this->addType('icon', 'string');
         $this->addType('family', 'string');
-        $this->addType('label', 'string');
         $this->addType('description', 'string');
         $this->addType('inquiryType', 'string');
+        $this->addType('supportFeature', 'string');
         $this->addType('fields', 'json');
         $this->addType('allowedResponse', 'json');
         $this->addType('isRoot', 'boolean');
         $this->addType('allowedTransformation', 'json');
         $this->addType('allowedOptionType', 'json');
-        $this->addType('supportFeature', 'string');
     }
 
     /**
@@ -93,8 +97,9 @@ class InquiryType extends Entity implements JsonSerializable
             'allowed_response' => $this->getAllowedResponse(),
             'allowed_transformation' => $this->getAllowedTransformation(),
             'allowed_option_type' => $this->getAllowedOptionType(),
+            'allow_comment' => $this->getAllowComment(),
             'support_feature' => $this->getSupportFeature(),
-            'is_root' => $this->getIsRoot() ?? false,
+            'is_root' => $this->getIsRoot(),
             'created' => $this->getCreated(),
         ];
     }

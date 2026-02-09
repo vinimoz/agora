@@ -584,6 +584,7 @@ export const useAppSettingsStore = defineStore('appSettings', {
 			fields?: string;
 			allowed_response?: string;
 			allowed_transformation?: string;
+		    allowed_option_type?: string;
 		}): Promise<void> {
 			const maxId = this.inquiryTypeTab.length > 0 ? Math.max(...this.inquiryTypeTab.map((t) => t.id)) : 0;
 			const newId = maxId + 1;
@@ -613,6 +614,7 @@ export const useAppSettingsStore = defineStore('appSettings', {
 			fields?: string;
 			allowed_response?: string;
 			allowed_transformation?: string;
+		    allowed_option_type?: string;
 		}): Promise<void> {
 			const type = this.inquiryTypeTab.find((t) => t.id === id);
 			try {

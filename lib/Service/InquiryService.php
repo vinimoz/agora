@@ -277,6 +277,14 @@ class InquiryService
     }
 
     /**
+     * Get allowed option type configuration for specific inquiry type
+     */
+    public function getAllowedOptionType(string $inquiryType): array
+    {
+        return $this->inquiryTypeMapper->getAllowedOptiontype($inquiryType);
+    }
+
+    /**
      * Get allowed transformation configuration for specific inquiry type
      */
     public function getAllowedTransformation(string $inquiryType): array

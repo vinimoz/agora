@@ -164,6 +164,7 @@ const appSettings = {
 		fields?: string;
 		allowed_response?: string;
 		allowed_transformation?: string;
+		allowed_option_type?: string;
 		created: number;
 	}): Promise<AxiosResponse<{ type: InquiryType }>> {
 		return httpInstance.request({
@@ -185,6 +186,7 @@ const appSettings = {
 			fields?: string;
 			allowed_response?: string;
 			allowed_transformation?: string;
+		    allowed_option_type?: string;
 		}
 	): Promise<AxiosResponse<{ type: InquiryType }>> {
 		return httpInstance.request({

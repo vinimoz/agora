@@ -91,6 +91,7 @@ export interface InquiryType {
   fields: string[]
   allowed_response: string[]
   allowed_transformation: string[]
+  allowed_option_type: string[]
   allow_comment: number
   support_feature: string
   created: number

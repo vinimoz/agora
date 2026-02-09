@@ -19,7 +19,7 @@ use OCP\Migration\SimpleMigrationStep;
  * Migration from Agora version 1.6 to 1.7
  * Uses TableManager and IndexManager to handle schema changes and data migration
  */
-class Version01070020260102120000 extends SimpleMigrationStep {
+class Version02070020260102120000 extends SimpleMigrationStep {
 	private ISchemaWrapper $schema;
 	private ?IOutput $output = null;
 
@@ -66,6 +66,10 @@ class Version01070020260102120000 extends SimpleMigrationStep {
 
 		$messages = $this->tableManager->initDefaultData($this->output);
     		$this->logInfo($messages, 'postMigration: ');
+
+        $messages = $this->tableManager->migrateToNewSchema();
+        $this->logInfo($messages, 'postMigration: ');
+
 
 		$messages = $this->tableManager->removeOrphaned();
 		$this->logInfo($messages, 'postMigration:  ');

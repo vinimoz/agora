@@ -161,6 +161,21 @@ class InquiryTypeMapper extends QBMapper
     }
 
     /**
+     * Get allowed_option_type JSON value for specific inquiry type
+     *
+     * @return array
+     */
+    public function getAllowedOptionType(string $inquiryType): array
+    {
+        $qb = $this->db->getQueryBuilder();
+        $qb->select('allowed_option_type')
+            ->from(InquiryType::TABLE)
+            ->where($qb->expr()->eq('inquiry_type', $qb->createNamedParameter($inquiryType)));
+
+        $result = $qb->execute()->fetch();
+        return $result ? json_decode($result['allowed_option_type'], true) ?? [] : [];
+    }
+    /**
      * Get allowed_transformation JSON value for specific inquiry type
      *
      * @return array

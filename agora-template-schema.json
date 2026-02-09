@@ -1,0 +1,577 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Agora Template Schema",
+  "description": "Comprehensive schema for creating custom Agora templates with full support for inquiry types, statuses, options, groups, hierarchical categories and locations",
+  "type": "object",
+  "required": ["template_info", "inquiry_families", "inquiry_types", "inquiry_statuses"],
+  "properties": {
+    "template_info": {
+      "type": "object",
+      "required": ["name", "version", "description", "author", "use_case", "available_languages"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Unique identifier for the template (e.g., 'enterprise_it_services', 'advanced_citizen_participation')",
+          "pattern": "^[a-z0-9_]+$"
+        },
+        "version": {
+          "type": "string",
+          "description": "Template version following semantic versioning (e.g., '1.0.0')",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief description of the template purpose and use case"
+        },
+        "author": {
+          "type": "string",
+          "description": "Template author name or organization"
+        },
+        "use_case": {
+          "type": "string",
+          "description": "Use case category for filtering (e.g., 'citizen_participation', 'enterprise_it', 'education_research')",
+          "pattern": "^[a-z0-9_]+$"
+        },
+        "available_languages": {
+          "type": "array",
+          "description": "List of supported ISO 639 language codes (en, fr, de, gsw, it, es, etc.)",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z]{2,3}$"
+          },
+          "minItems": 1
+        }
+      }
+    },
+    "inquiry_families": {
+      "type": "array",
+      "description": "High-level categories grouping related inquiry types",
+      "items": {
+        "type": "object",
+        "required": ["family_type", "label", "description", "icon"],
+        "properties": {
+          "family_type": {
+            "type": "string",
+            "description": "Unique identifier for the family",
+            "pattern": "^[a-z0-9_]+$"
+          },
+          "label": {
+            "type": "object",
+            "description": "Localized labels for the family",
+            "patternProperties": {
+              "^[a-z]{2,3}$": {
+                "type": "string"
+              }
+            }
+          },
+          "description": {
+            "type": "object",
+            "description": "Localized descriptions explaining the family purpose",
+            "patternProperties": {
+              "^[a-z]{2,3}$": {
+                "type": "string"
+              }
+            }
+          },
+          "icon": {
+            "type": "string",
+            "description": "Icon name from MDI icon set (e.g., 'AccountGroup', 'Gavel', 'Heart')"
+          },
+          "sort_order": {
+            "type": "integer",
+            "description": "Display order (lower numbers first)",
+            "minimum": 1
+          }
+        }
+      }
+    },
+    "inquiry_types": {
+      "type": "array",
+      "description": "Specific types of inquiries users can create or respond with",
+      "items": {
+        "type": "object",
+        "required": ["inquiry_type", "family", "label", "description", "is_root"],
+        "properties": {
+          "inquiry_type": {
+            "type": "string",
+            "description": "Unique identifier for the inquiry type (e.g., 'proposal', 'law_proposal', 'petition')",
+            "pattern": "^[a-z0-9_]+$"
+          },
+          "family": {
+            "type": "string",
+            "description": "Family this type belongs to (must match a family_type from inquiry_families)"
+          },
+          "icon": {
+            "type": "string",
+            "description": "Icon name from MDI icon set"
+          },
+          "label": {
+            "type": "object",
+            "description": "Localized labels for this inquiry type",
+            "patternProperties": {
+              "^[a-z]{2,3}$": {
+                "type": "string"
+              }
+            }
+          },
+          "description": {
+            "type": "object",
+            "description": "Localized descriptions explaining this inquiry type",
+            "patternProperties": {
+              "^[a-z]{2,3}$": {
+                "type": "string"
+              }
+            }
+          },
+          "is_root": {
+            "type": "boolean",
+            "description": "true = user-initiated type, false = response-only type"
+          },
+          "allowed_response": {
+            "type": ["array", "null"],
+            "description": "List of inquiry_type values that can be created as responses to this type",
+            "items": {
+              "type": "string"
+            }
+          },
+          "allowed_transformation": {
+            "type": ["array", "null"],
+            "description": "List of inquiry_type values this can be transformed into",
+            "items": {
+              "type": "string"
+            }
+          },
+          "allowed_option_type": {
+            "type": "array",
+            "description": "Types of options allowed for this inquiry type",
+            "items": {
+              "type": "string"
+            }
+          },
+          "support_feature": {
+            "type": "string",
+            "description": "Support/voting mechanism",
+            "enum": ["none", "binary", "ternary", "majority_judgment", "score"],
+            "default": "binary"
+          },
+          "fields": {
+            "type": "array",
+            "description": "Custom field schema for this inquiry type",
+            "items": {
+              "type": "object",
+              "required": ["key", "label", "type"],
+              "properties": {
+                "key": {
+                  "type": "string",
+                  "description": "Field key (e.g., 'quorum', 'facilitator_id', 'type_of_vote')"
+                },
+                "label": {
+                  "type": "string",
+                  "description": "Human-readable field label"
+                },
+                "type": {
+                  "type": "string",
+                  "enum": ["string", "text", "integer", "float", "boolean", "datetime", "date", "enum", "json", "users", "groups", "location", "list"],
+                  "description": "Field data type"
+                },
+                "required": {
+                  "type": "boolean",
+                  "description": "Whether field is required"
+                },
+                "default": {
+                  "description": "Default value for the field"
+                },
+                "allowed_values": {
+                  "type": "array",
+                  "description": "For enum type: list of allowed values",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "rules": {
+                  "type": "array",
+                  "description": "Validation rules",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "inquiry_statuses": {
+      "type": "array",
+      "description": "Status workflow definitions for each inquiry type",
+      "items": {
+        "type": "object",
+        "required": ["inquiry_type", "status_key", "label", "description", "is_final"],
+        "properties": {
+          "inquiry_type": {
+            "type": "string",
+            "description": "Inquiry type this status belongs to (must match an inquiry_type)"
+          },
+          "status_key": {
+            "type": "string",
+            "description": "Unique identifier for the status (e.g., 'draft', 'published', 'accepted')",
+            "pattern": "^[a-z0-9_]+$"
+          },
+          "label": {
+            "type": "object",
+            "description": "Localized status labels",
+            "patternProperties": {
+              "^[a-z]{2,3}$": {
+                "type": "string"
+              }
+            }
+          },
+          "description": {
+            "type": "object",
+            "description": "Localized status descriptions",
+            "patternProperties": {
+              "^[a-z]{2,3}$": {
+                "type": "string"
+              }
+            }
+          },
+          "is_final": {
+            "type": "boolean",
+            "description": "true = terminal status (no further transitions), false = intermediate status"
+          },
+          "icon": {
+            "type": "string",
+            "description": "Icon name from MDI icon set (e.g., 'CheckCircle', 'CloseCircle', 'ClockOutline')"
+          },
+          "sort_order": {
+            "type": "integer",
+            "description": "Order in status progression (1 = first status)",
+            "minimum": 1
+          }
+        }
+      }
+    },
+    "option_types": {
+      "type": "array",
+      "description": "Structured options within inquiries (e.g., debate arguments, law articles)",
+      "items": {
+        "type": "object",
+        "required": ["family", "option_type", "icon", "label", "description"],
+        "properties": {
+          "family": {
+            "type": "string",
+            "description": "Family this option type belongs to (e.g., 'debate', 'law_proposal')"
+          },
+          "option_type": {
+            "type": "string",
+            "description": "Unique identifier (e.g., 'debate_for', 'debate_against', 'chapter', 'article')",
+            "pattern": "^[a-z0-9_]+$"
+          },
+          "icon": {
+            "type": "string",
+            "description": "Icon name from MDI icon set"
+          },
+          "label": {
+            "type": "object",
+            "description": "Localized labels",
+            "patternProperties": {
+              "^[a-z]{2,3}$": {
+                "type": "string"
+              }
+            }
+          },
+          "description": {
+            "type": "object",
+            "description": "Localized descriptions",
+            "patternProperties": {
+              "^[a-z]{2,3}$": {
+                "type": "string"
+              }
+            }
+          },
+          "fields": {
+            "type": "array",
+            "description": "Custom fields for this option type",
+            "items": {
+              "type": "object"
+            }
+          },
+          "allowed_response": {
+            "type": "array",
+            "description": "Inquiry types that can respond to this option",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "inquiry_group_types": {
+      "type": "array",
+      "description": "Group types for organizing multiple inquiries (themes, projects, territorial units)",
+      "items": {
+        "type": "object",
+        "required": ["group_type", "label", "description", "icon"],
+        "properties": {
+          "group_type": {
+            "type": "string",
+            "description": "Unique identifier (e.g., 'theme', 'project', 'canton', 'initiative_group')",
+            "pattern": "^[a-z0-9_]+$"
+          },
+          "label": {
+            "type": "object",
+            "description": "Localized labels",
+            "patternProperties": {
+              "^[a-z]{2,3}$": {
+                "type": "string"
+              }
+            }
+          },
+          "description": {
+            "type": "object",
+            "description": "Localized descriptions",
+            "patternProperties": {
+              "^[a-z]{2,3}$": {
+                "type": "string"
+              }
+            }
+          },
+          "icon": {
+            "type": "string",
+            "description": "Icon name from MDI icon set"
+          },
+          "fields": {
+            "type": "array",
+            "description": "Custom fields for this group type",
+            "items": {
+              "type": "object"
+            }
+          },
+          "allowed_inquiry_types": {
+            "type": "array",
+            "description": "Inquiry types allowed in this group",
+            "items": {
+              "type": "string"
+            }
+          },
+          "allowed_response": {
+            "type": "array",
+            "description": "Group types that can respond to this group",
+            "items": {
+              "type": "string"
+            }
+          },
+          "is_root": {
+            "type": "boolean",
+            "description": "true = top-level group, false = subgroup"
+          },
+          "sort_order": {
+            "type": "integer",
+            "description": "Display order",
+            "minimum": 1
+          }
+        }
+      }
+    },
+    "categories": {
+      "type": "array",
+      "description": "Hierarchical categories for organizing inquiries",
+      "items": {
+        "type": "object",
+        "required": ["category_id", "name"],
+        "properties": {
+          "category_id": {
+            "type": "string",
+            "description": "Unique identifier for the category",
+            "pattern": "^[a-z0-9_]+$"
+          },
+          "name": {
+            "type": "object",
+            "description": "Localized category names",
+            "patternProperties": {
+              "^[a-z]{2,3}$": {
+                "type": "string"
+              }
+            }
+          },
+          "parent": {
+            "type": ["string", "null"],
+            "description": "Parent category_id for hierarchical structure (use null for root categories)",
+            "pattern": "^[a-z0-9_]+$"
+          }
+        }
+      }
+    },
+    "locations": {
+      "type": "array",
+      "description": "Hierarchical geographic locations",
+      "items": {
+        "type": "object",
+        "required": ["location_id", "name"],
+        "properties": {
+          "location_id": {
+            "type": "string",
+            "description": "Unique identifier for the location",
+            "pattern": "^[a-z0-9_]+$"
+          },
+          "name": {
+            "type": "object",
+            "description": "Localized location names",
+            "patternProperties": {
+              "^[a-z]{2,3}$": {
+                "type": "string"
+              }
+            }
+          },
+          "parent_id": {
+            "type": ["string", "null"],
+            "description": "Parent location_id for hierarchical structure (e.g., 'switzerland' → 'geneva_canton' → 'city_geneva'), use null for root locations",
+            "pattern": "^[a-z0-9_]+$"
+          },
+          "sort_order": {
+            "type": "integer",
+            "description": "Display order within parent level",
+            "minimum": 1
+          }
+        }
+      }
+    }
+  },
+  "examples": [
+    {
+      "template_info": {
+        "name": "example_basic_template",
+        "version": "1.0.0",
+        "description": "Basic example template",
+        "author": "Example Author",
+        "use_case": "example_category",
+        "available_languages": ["en", "de", "fr"]
+      },
+      "inquiry_families": [
+        {
+          "family_type": "feedback",
+          "label": {
+            "en": "Feedback",
+            "de": "Rückmeldung",
+            "fr": "Retour"
+          },
+          "description": {
+            "en": "User feedback and suggestions",
+            "de": "Benutzer-Feedback und Vorschläge",
+            "fr": "Commentaires et suggestions des utilisateurs"
+          },
+          "icon": "Comment",
+          "sort_order": 1
+        }
+      ],
+      "inquiry_types": [
+        {
+          "inquiry_type": "suggestion",
+          "family": "feedback",
+          "icon": "Lightbulb",
+          "label": {
+            "en": "Suggestion",
+            "de": "Vorschlag",
+            "fr": "Suggestion"
+          },
+          "description": {
+            "en": "Improvement suggestion",
+            "de": "Verbesserungsvorschlag",
+            "fr": "Suggestion d'amélioration"
+          },
+          "is_root": true,
+          "allowed_response": ["official"],
+          "allowed_transformation": null,
+          "support_feature": "binary",
+          "fields": [
+            {
+              "key": "priority",
+              "label": "Priority",
+              "type": "enum",
+              "required": false,
+              "default": "medium",
+              "allowed_values": ["low", "medium", "high", "critical"],
+              "rules": []
+            },
+            {
+              "key": "implementation_date",
+              "label": "Target Implementation Date",
+              "type": "date",
+              "required": false,
+              "default": null,
+              "rules": []
+            }
+          ]
+        }
+      ],
+      "inquiry_statuses": [
+        {
+          "inquiry_type": "suggestion",
+          "status_key": "submitted",
+          "label": {
+            "en": "Submitted",
+            "de": "Eingereicht",
+            "fr": "Soumis"
+          },
+          "description": {
+            "en": "Awaiting review",
+            "de": "Wartet auf Überprüfung",
+            "fr": "En attente d'examen"
+          },
+          "is_final": false,
+          "icon": "Send",
+          "sort_order": 1
+        },
+        {
+          "inquiry_type": "suggestion",
+          "status_key": "approved",
+          "label": {
+            "en": "Approved",
+            "de": "Genehmigt",
+            "fr": "Approuvé"
+          },
+          "description": {
+            "en": "Approved for implementation",
+            "de": "Zur Umsetzung genehmigt",
+            "fr": "Approuvé pour mise en œuvre"
+          },
+          "is_final": true,
+          "icon": "CheckCircle",
+          "sort_order": 2
+        }
+      ],
+      "categories": [
+        {
+          "category_key": "technical",
+          "label": {
+            "en": "Technical",
+            "de": "Technisch",
+            "fr": "Technique"
+          },
+          "description": {
+            "en": "Technical improvements",
+            "de": "Technische Verbesserungen",
+            "fr": "Améliorations techniques"
+          },
+          "parent_id": 0,
+          "sort_order": 1
+        },
+        {
+          "category_key": "ux",
+          "label": {
+            "en": "User Experience",
+            "de": "Benutzererfahrung",
+            "fr": "Expérience utilisateur"
+          },
+          "description": {
+            "en": "UX and design improvements",
+            "de": "UX- und Design-Verbesserungen",
+            "fr": "Améliorations UX et design"
+          },
+          "parent_id": 0,
+          "sort_order": 2
+        }
+      ]
+    }
+  ]
+}

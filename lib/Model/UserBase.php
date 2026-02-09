@@ -495,7 +495,7 @@ class UserBase implements JsonSerializable
             'isOfficial' => false,
             'isModerator' => false,
             'isLegislative' => false,
-            'isGroupeEditor' => false,
+            'isGroupEditor' => false,
             'isGuest' => $this->getIsGuest(),
             'isUnrestrictedOwner' => false,
             'languageCode' => '',

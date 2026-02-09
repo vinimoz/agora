@@ -87,12 +87,14 @@ export function getAllowedOptionTypes(
   optionTypes: OptionType[]
 ): OptionType[] {
   // First find the inquiry type configuration
+  console.log(" WE FOUND ALLOW OPTION ",inquiryTypes)
+  console.log(" WE FOUND ALLOW OPTION TYPE KEY ",inquiryTypeKey)
   const inquiryTypeConfig = inquiryTypes.find(t => t.inquiry_type === inquiryTypeKey)
 
   if (!inquiryTypeConfig?.allowed_option_type) {
     return []
   }
-
+  console.log(" WE FOUND ALLOW OPTION ",inquiryTypeConfig.allowed_option_type)
   // Parse allowed_option_type if it's a string (JSON)
   let allowedOptionTypeKeys: string[] = []
   if (typeof inquiryTypeConfig.allowed_option_type === 'string') {
@@ -104,6 +106,8 @@ export function getAllowedOptionTypes(
   } else if (Array.isArray(inquiryTypeConfig.allowed_option_type)) {
     allowedOptionTypeKeys = inquiryTypeConfig.allowed_option_type
   }
+
+  console.log(" WE FOUND ALLOW OPTION iTYPE KEYS ", allowedOptionTypeKeys)
 
   // Map keys to OptionType objects
   const result: OptionType[] = []
@@ -170,9 +174,11 @@ export function getFamiliesWithOptionTypes(
 }> {
   // Get allowed option types
   const allowedOptionTypes = getAllowedOptionTypes(inquiryTypeKey, inquiryTypes, optionTypes)
-  
+ console.log(" ALLLLL OPTION TYPES",allowedOptionTypes) 
   // Group by family
   const groupedByFamily = groupOptionTypesByFamily(allowedOptionTypes)
+ 
+  console.log(" ALLLLL OPTION TYPES GROUPED BY FAMILIES",groupedByFamily) 
   
   // Convert to array format
   return Object.entries(groupedByFamily).map(([familyKey, familyOptionTypes]) => {
@@ -206,12 +212,6 @@ export function getFamiliesWithOptionTypes(
  */
 export function getFamilyFallbackData(): Record<string, any> {
   return {
-    'deliberative': {
-      name: 'Deliberative',
-      label: 'Deliberative',
-      description: 'Suggestion to solve or refine an objection or debate argument.',
-      icon: 'Lightbulb'
-    },
     'debate': {
       name: 'Debate',
       label: 'Debate',
@@ -242,12 +242,6 @@ export function getFamilyFallbackData(): Record<string, any> {
       description: 'Initial proposals and suggestions',
       icon: 'Lightbulb'
     },
-    'reactive': {
-      name: 'Reactive',
-      label: 'Reactive',
-      description: 'Reactive suggestions and responses',
-      icon: 'Bolt'
-    },
     'default': {
       name: 'Options',
       label: 'Options',
@@ -263,13 +257,11 @@ export function getFamilyFallbackData(): Record<string, any> {
  */
 export function getFamilyIconComponent(familyKey: string): any {
   const familyIcons: Record<string, any> = {
-    'deliberative': InquiryGeneralIcons.Lightbulb,
     'debate': InquiryGeneralIcons.Discussion,
     'structure': InquiryGeneralIcons.Settings,
     'consensus': InquiryGeneralIcons.ThumbUp,
     'decision': InquiryGeneralIcons.Checkmark,
     'proposal': InquiryGeneralIcons.Lightbulb,
-    'reactive': InquiryGeneralIcons.Bolt,
     'default': InquiryGeneralIcons.File
   }
   
@@ -282,13 +274,11 @@ export function getFamilyIconComponent(familyKey: string): any {
  */
 export function getFamilyColor(familyKey: string): string {
   const familyColors: Record<string, string> = {
-    'deliberative': '#4a86e8',
     'debate': '#6aa84f',
     'structure': '#3c8dbc',
     'consensus': '#f1c232',
     'decision': '#cc0000',
     'proposal': '#e69138',
-    'reactive': '#674ea7',
     'default': '#999999'
   }
   

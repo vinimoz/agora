@@ -47,8 +47,6 @@ use OCP\IURLGenerator;
  * @method    void setInquiryStatus(string $value)
  * @method    int getAllowComment()
  * @method    void setAllowComment(int $value)
- * @method    int getAllowSupport()
- * @method    void setAllowSupport(int $value)
  * @method    string getSupportFeature()
  * @method    void setSupportFeature(string $value)
  * @method    int getQuorum()
@@ -67,8 +65,6 @@ use OCP\IURLGenerator;
  * @method    void setParentId(int $value)
  * @method    int getArchived()
  * @method    void setArchived(int $value)
- * @method    string getSupportMode()
- * @method    void setSupportMode(string $value)
  *
  * Magic functions for joined columns
  * @method    string getShareToken()
@@ -155,15 +151,14 @@ class Inquiry extends EntityWithUser implements JsonSerializable
     protected string $access = '';
     protected string $showResults = '';
     protected int $lastInteraction = 0;
+    protected int $forceConfidentialComments = 0;
     protected ?int $parentId = 0;
     protected string $moderationStatus = self::DEFAULT_STATUS_DRAFT;
     protected string $inquiryStatus = self::DEFAULT_STATUS_DRAFT;
-    protected int $allowComment = 0;
-    protected int $allowSupport = 0;
-    protected string $supportFeature = 'binary';
+    protected ?int $allowComment = null;
+    protected string $supportFeature = 'none';
     protected bool $hasSupported = false; 
     protected ?int $supportValue = null; 
-    protected string $supportMode = 'simple'; 
     protected string $family='';
 
     // joined columns
@@ -199,7 +194,6 @@ class Inquiry extends EntityWithUser implements JsonSerializable
         $this->addType('quorum', 'integer');
         $this->addType('lastInteraction', 'integer');
         $this->addType('parentId', 'integer');
-        $this->addType('supportFeature', 'string');
 
         // joined Attributes
         $this->addType('currentUserSupports', 'integer');
@@ -241,7 +235,6 @@ class Inquiry extends EntityWithUser implements JsonSerializable
         'access' => $this->getAccess(),
         'showResults' => $this->getShowResults(),
         'allowComment' => $this->getAllowComment(),
-        'allowSupport' => $this->getAllowSupport(),
         'supportFeature' => $this->getSupportFeature(),
         'archived' => $this->getArchived(),
         'deleted' => $this->getDeleted(),
@@ -307,8 +300,8 @@ class Inquiry extends EntityWithUser implements JsonSerializable
         'expire' => $this->getExpire(),
         'forceConfidentialComments' => $this->getForceConfidentialComments(),
         'allowComment' => boolval($this->getAllowComment()),
+        'supportFeature' => $this->getSupportFeature(),
         'showResults' => $this->getShowResults(),
-        'supportMode' => $this->getSupportMode(),
         ];
     }
 
@@ -343,12 +336,25 @@ class Inquiry extends EntityWithUser implements JsonSerializable
         $this->setAccess($inquiryConfiguration['access'] ?? $this->getAccess());
         $this->setAutoReminder($inquiryConfiguration['autoReminder'] ?? $this->getAutoReminder());
         $this->setAllowComment($inquiryConfiguration['allowComment'] ?? $this->getAllowComment()); 
+        $this->setSupportFeature($inquiryConfiguration['supportFeature'] ?? $this->getSupportFeature()); 
         $this->setExpire($inquiryConfiguration['expire'] ?? $this->getExpire());
         $this->setForceConfidentialComments($inquiryConfiguration['forceConfidentialComments'] ?? $this->getForceConfidentialComments());
         $this->setShowResults($inquiryConfiguration['showResults'] ?? $this->getShowResults());
         return $this;
     }
-
+/*
+    public function setAllowComment($allowComment): self {
+        // Convert various inputs to proper boolean
+        if ($allowComment === '' || $allowComment === '0' || $allowComment === 0 || $allowComment === false) {
+            $this->allowComment = false;
+        } elseif ($allowComment === '1' || $allowComment === 1 || $allowComment === true) {
+            $this->allowComment = true;
+        } else {
+            $this->allowComment = $allowComment; // null or other
+        }
+        return $this;
+    }    
+ */
 
     public function getExpired(): bool
     {
@@ -397,8 +403,8 @@ class Inquiry extends EntityWithUser implements JsonSerializable
     {
         foreach ($misc as $field) {
             $key = $field->getKey();
-	    $this->miscFields[$key] = $field->getValue() ?? null;
-	}
+            $this->miscFields[$key] = $field->getValue() ?? null;
+        }
     }
 
     public function initializeMiscFields(array $fieldsDefinition): void
@@ -413,10 +419,6 @@ class Inquiry extends EntityWithUser implements JsonSerializable
         return $this->miscFields[$key] ?? null;
     }
 
-    public function setSupportModestring(string $mode)
-    {
-        return $this->supportMode=$mode;
-    }
 
     public function setMiscField(string $key, mixed $value): void
     {
@@ -504,7 +506,7 @@ class Inquiry extends EntityWithUser implements JsonSerializable
         $this->setMiscField('autoReminder', (bool)$value);
     }
 
-    private function setForceConfidentialComments(bool|int $value): void
+    public function setForceConfidentialComments(bool|int $value): void
     {
         $this->setMiscField('forceConfidentialComments', (bool)$value);
     }
@@ -527,7 +529,7 @@ class Inquiry extends EntityWithUser implements JsonSerializable
     {
         return match ($permission) {
             self::PERMISSION_COMMENT_ADD => $this->getAllowCommenting(),
-            self::PERMISSION_SUPPORT_ADD => $this->getAllowSupporting(),
+            self::PERMISSION_SUPPORT_ADD => $this->getSupportFeaturing(),
             self::PERMISSION_COMMENT_DELETE => $this->getAllowDeleteComment(),
             self::PERMISSION_SUPPORT_DELETE => $this->getAllowDeleteSupport(),
             self::PERMISSION_INQUIRY_ADD => $this->getAllowAddInquiry(),
@@ -542,7 +544,7 @@ class Inquiry extends EntityWithUser implements JsonSerializable
             self::PERMISSION_INQUIRY_CHANGE_OWNER => $this->getAllowChangeOwner(),
             self::PERMISSION_INQUIRY_SUBSCRIBE => $this->getAllowSubscribeToInquiry(),
             self::PERMISSION_INQUIRY_RESULTS_VIEW => $this->getAllowShowResults(),
-            self::PERMISSION_SUPPORT_EDIT => $this->getAllowSupport(),
+            self::PERMISSION_SUPPORT_EDIT => $this->getSupportFeaturing(),
             self::PERMISSION_SUPPORT_FOREIGN_CHANGE => $this->getAllowChangeForeignSupports(),
             self::PERMISSION_SHARE_ADD => $this->systemSettings->getShareCreateAllowed(),
             self::PERMISSION_SHARE_ADD_EXTERNAL => $this->systemSettings->getExternalShareCreationAllowed(),
@@ -553,10 +555,10 @@ class Inquiry extends EntityWithUser implements JsonSerializable
     private function getIsInvolved(): bool
     {
         return (
-        $this->getIsInquiryOwner()
-        || $this->getIsParticipant()
-        || $this->getIsPersonallyInvited()
-        || $this->getIsInvitedViaGroupShare()
+            $this->getIsInquiryOwner()
+            || $this->getIsParticipant()
+            || $this->getIsPersonallyInvited()
+            || $this->getIsInvitedViaGroupShare()
         );
     }
 
@@ -609,11 +611,11 @@ class Inquiry extends EntityWithUser implements JsonSerializable
         return in_array(
             $this->getUserRole(),
             [
-            self::ROLE_ADMIN,
-            self::ROLE_USER,
-            self::ROLE_EXTERNAL,
-            self::ROLE_EMAIL,
-            self::ROLE_CONTACT,
+                self::ROLE_ADMIN,
+                self::ROLE_USER,
+                self::ROLE_EXTERNAL,
+                self::ROLE_EMAIL,
+                self::ROLE_CONTACT,
             ]
         );
     }
@@ -637,10 +639,10 @@ class Inquiry extends EntityWithUser implements JsonSerializable
             return true;
         }
 
-        if ($this->getAccess()) {
+        if ($this->getAccess()!='private') {
             return true;
         }
-        
+
         if ($this->getIsOpenInquiry()) {
             return true;
         }
@@ -654,7 +656,7 @@ class Inquiry extends EntityWithUser implements JsonSerializable
     private function getAllowChangeOwner(): bool
     {
         return $this->getAllowEditInquiry()
-        || $this->userSession->getCurrentUser()->getIsAdmin();
+            || $this->userSession->getCurrentUser()->getIsAdmin();
     }
 
     private function getAllowAccessInquiry(): bool
@@ -728,7 +730,7 @@ class Inquiry extends EntityWithUser implements JsonSerializable
     public function getIsHaveParticipated(): bool
     {
         $userId = $this->userSession->getCurrentUser()->getId();
-        foreach ($this->children as $child) {
+        foreach ($this->childs as $child) {
             if (method_exists($child, 'getUserId') && $child->getUserId() === $userId) {
                 return true;
             }
@@ -752,13 +754,14 @@ class Inquiry extends EntityWithUser implements JsonSerializable
         return (bool)$this->getAllowComment();
     }
 
-    private function getAllowSupporting(): bool
+    private function getSupportFeaturing(): bool
     {
         if (!$this->getAllowAccessInquiry()) {
-            return false;
+            return 'false';
         }
 
-        return (bool)$this->getAllowSupport();
+        if ($this->getSupportFeature()!=='none') return false; 
+        return true;
     }
 
     private function getAllowDeleteSupport(): bool
@@ -779,19 +782,6 @@ class Inquiry extends EntityWithUser implements JsonSerializable
     private function getAllowDeanonymize(): bool
     {
         return $this->getAllowEditInquiry() && $this->getUser()->getIsUnrestrictedInquiryOwner();
-    }
-
-    private function getAllowSupport(): bool
-    {
-        if (!$this->getAllowAccessInquiry()) {
-            return false;
-        }
-
-        if ($this->userSession->getShare()->getType() === 'public') {
-            return false;
-        }
-
-        return !$this->getExpired();
     }
 
     private function getAllowSubscribeToInquiry(): bool

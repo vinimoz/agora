@@ -118,6 +118,7 @@ class InquiryTypeController extends BaseController
         ?array $allowedResponse = null,
         ?string $icon = null,
         ?array $allowedTransformation = null,
+        ?array $allowedOptionType = null,
     ): TemplateResponse {
         try {
             $type = $this->inquiryTypeService->create(
@@ -130,6 +131,7 @@ class InquiryTypeController extends BaseController
                 $allowedResponse,
                 $icon,
                 $allowedTransformation,
+                $allowedOptionType,
             );
 
             return new TemplateResponse(
@@ -159,6 +161,7 @@ class InquiryTypeController extends BaseController
                         'allowedResponse' => $allowedResponse,
                         'icon' => $icon,
                         'allowedTransformation' => $allowedTransformation,
+                        'allowedOptionType' => $allowedOptionType,
                     ]
                 ]
             );
@@ -202,6 +205,7 @@ class InquiryTypeController extends BaseController
         ?array $allowedResponse = null,
         ?string $icon = null,
         ?array $allowedTransformation = null,
+        ?array $allowedOptionType = null,
     ): TemplateResponse {
         try {
             $type = $this->inquiryTypeService->update(
@@ -215,6 +219,7 @@ class InquiryTypeController extends BaseController
                 $allowedResponse,
                 $icon,
                 $allowedTransformation,
+                $allowedOptionType,
             );
 
             return new TemplateResponse(

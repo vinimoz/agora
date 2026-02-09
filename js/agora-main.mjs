@@ -11294,183 +11294,185 @@ to {
   text-overflow: ellipsis;
 }
 .optional-label[data-v-779e2020] {
-  color: var(--color-text-maxcontrast);
-  font-size: 0.75rem;
-  font-weight: normal;
-  font-style: italic;
-  margin-left: 4px;
+    color: var(--color-text-maxcontrast);
+    font-size: 0.75rem;
+    font-weight: normal;
+    font-style: italic;
+    margin-left: 4px;
 }
 .checkbox-main-label[data-v-779e2020] {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-weight: 600;
-  cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    cursor: pointer;
 }
 .checkbox-wrapper[data-v-779e2020] {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 .standard-field[data-v-779e2020] {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 .sidebar-tab-misc[data-v-779e2020] {
-  padding: 12px;
-  height: 100%;
+    padding: 12px;
+    height: 100%;
 }
 .tab-content[data-v-779e2020] {
-  height: 100%;
-  overflow-y: auto;
+    height: 100%;
+    overflow-y: auto;
 }
 .field-row[data-v-779e2020] {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  padding: 8px 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 8px 0;
 }
 .field-label[data-v-779e2020] {
-  font-weight: 600;
-  min-width: 120px;
-  color: var(--color-text-lighter);
+    font-weight: 600;
+    min-width: 120px;
+    color: var(--color-text-lighter);
 }
 .field-value[data-v-779e2020] {
-  flex: 1;
-  word-break: break-word;
+    flex: 1;
+    word-break: break-word;
 }
 .loading-state[data-v-779e2020],
 .error-state[data-v-779e2020],
 .no-data-state[data-v-779e2020] {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
-  text-align: center;
-  color: var(--color-text-maxcontrast);
-  height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    text-align: center;
+    color: var(--color-text-maxcontrast);
+    height: 100%;
 }
 .loading-state .icon-loading[data-v-779e2020],
 .error-state .icon-error[data-v-779e2020] {
-  width: 24px;
-  height: 24px;
-  margin-bottom: 1rem;
+    width: 24px;
+    height: 24px;
+    margin-bottom: 1rem;
 }
 .loading-state .icon-loading[data-v-779e2020] {
-  background-image: var(--icon-loading);
-  animation: rotate-779e2020 1s linear infinite;
+    background-image: var(--icon-loading);
+    animation: rotate-779e2020 1s linear infinite;
 }
 .error-icon[data-v-779e2020],
 .no-data-icon[data-v-779e2020] {
-  width: 48px;
-  height: 48px;
-  margin-bottom: 1rem;
-  opacity: 0.5;
+    width: 48px;
+    height: 48px;
+    margin-bottom: 1rem;
+    opacity: 0.5;
 }
 
 /* Readonly styles */
 .misc-fields-list[data-v-779e2020] {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
 }
 .misc-field-item[data-v-779e2020] {
-  border-bottom: 1px solid var(--color-border);
-  padding-bottom: 16px;
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 16px;
 }
 .misc-field-item[data-v-779e2020]:last-child {
-  border-bottom: none;
-  padding-bottom: 0;
+    border-bottom: none;
+    padding-bottom: 0;
 }
 .field-row[data-v-779e2020] {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
 }
 .field-label[data-v-779e2020] {
-  font-weight: 600;
-  font-size: 0.875rem;
-  color: var(--color-text-lighter);
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: var(--color-text-lighter);
 }
 .field-value[data-v-779e2020] {
-  font-size: 0.875rem;
-  word-break: break-word;
-  line-height: 1.4;
+    font-size: 0.875rem;
+    word-break: break-word;
+    line-height: 1.4;
 }
 .json-value[data-v-779e2020] {
-  background: var(--color-background-dark);
-  padding: 8px;
-  border-radius: 4px;
-  font-size: 0.75rem;
-  white-space: pre-wrap;
-  word-break: break-all;
-  max-height: 150px;
-  overflow-y: auto;
-  margin: 0;
-  font-family: monospace;
+    background: var(--color-background-dark);
+    padding: 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    white-space: pre-wrap;
+    word-break: break-all;
+    max-height: 150px;
+    overflow-y: auto;
+    margin: 0;
+    font-family: monospace;
 }
 
 /* Saving indicator */
 .saving-indicator[data-v-779e2020] {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  background: var(--color-background-dark);
-  border-radius: 4px;
-  margin-bottom: 1rem;
-  font-size: 0.875rem;
-  color: var(--color-text-maxcontrast);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: var(--color-background-dark);
+    border-radius: 4px;
+    margin-bottom: 1rem;
+    font-size: 0.875rem;
+    color: var(--color-text-maxcontrast);
 }
 .icon-loading-small[data-v-779e2020] {
-  width: 16px;
-  height: 16px;
-  background-image: var(--icon-loading);
-  animation: rotate-779e2020 1s linear infinite;
+    width: 16px;
+    height: 16px;
+    background-image: var(--icon-loading);
+    animation: rotate-779e2020 1s linear infinite;
 }
 
 /* Edit mode styles */
 .edit-fields[data-v-779e2020] {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
 }
 .edit-field-item[data-v-779e2020] {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 1rem;
-  background: var(--color-background-dark);
-  border-radius: 8px;
-  border: 1px solid var(--color-border);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 1rem;
+    background: var(--color-background-dark);
+    border-radius: 8px;
+    border: 1px solid var(--color-border);
 }
 .edit-field-label[data-v-779e2020] {
-  font-weight: 600;
-  font-size: 0.875rem;
-  color: var(--color-text-lighter);
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: var(--color-text-lighter);
 }
 .required-asterisk[data-v-779e2020] {
-  color: var(--color-error);
+    color: var(--color-error);
+}
+.optional-label[data-v-779e2020] {
+    color: var(--color-text-maxcontrast);
+    font-size: 0.75rem;
+    font-weight: normal;
 }
 .field-description[data-v-779e2020] {
-  font-size: 0.75rem;
-  color: var(--color-text-maxcontrast);
-  font-style: italic;
+    font-size: 0.75rem;
+    color: var(--color-text-maxcontrast);
+    font-style: italic;
 }
 .json-field[data-v-779e2020] {
-  width: 100%;
-}
-.simple-checkbox[data-v-779e2020] {
-  margin-right: 8px;
+    width: 100%;
 }
 @keyframes rotate-779e2020 {
 from {
-    transform: rotate(0deg);
+                                                                                                          transform: rotate(0deg);
 }
 to {
-    transform: rotate(360deg);
+                                                                                                          transform: rotate(360deg);
 }
 }
 
@@ -12499,15 +12501,15 @@ tr.file-picker__row td.row-name[data-v-1f96131b] {
   }
 })();
 const appName = "agora";
-const appVersion = "1.7.0-beta";
-import { ap as h$1, B as defineStore, s as translate, aD as emit, b6 as Settings, a as _export_sfc, d as defineComponent, b as computed, b7 as getCanonicalLocale, c as createElementBlock, o as openBlock, t as toDisplayString, J as normalizeClass, b3 as NcActionButton, _ as _export_sfc$1, f as createBlock, g as withCtx, l as createCommentVNode, h as resolveDynamicComponent, k as createBaseVNode, b8 as NC_ACTIONS_IS_SEMANTIC_MENU, Z as createElementId, b9 as ActionGlobalMixin, U as withDirectives, ba as vModelRadio, aE as withKeys, an as withModifiers, u as useModel, bb as useSlots, e as watch, as as logger, v as onMounted, aO as onBeforeUnmount, r as renderSlot, aa as useCssVars, bc as useIsDarkTheme, n as unref, bd as mdiCreation, j as createVNode, a1 as createSlots, C as createTextVNode, K as NcIconSvgWrapper, W as NcButton, b4 as NcActions, a7 as resolveComponent, i as mergeProps, V as vShow, x as normalizeProps, y as guardReactiveProps, be as userStatus, N as NcAvatar, p as normalizeStyle, m as mergeModels, aK as ref, bf as provide, w as warn, T as useTemplateRef, S as useAttrs, L as isLegacy, X as mdiCheck, Y as mdiAlertCircle, M as Fragment$1, O as renderList, a9 as NcLoadingIcon, bg as Teleport, bh as useRouter, aF as NcEmptyContent, aV as onUnmounted, P as DateTime, R as RouterLink, bi as useRoute, bj as translatePlural, bk as TransitionGroup, aP as nextTick$1, E as _$2, aC as NcModal, aU as shallowRef, bl as markRaw, bm as watchEffect, bn as getCurrentInstance, bo as customRef, bp as global, bq as getAugmentedNamespace, br as process$1, b1 as commonjsGlobal, bs as Buffer, Q as getDefaultExportFromCjs, bt as vModelSelect, D as purify, b2 as getCurrentUser, ao as Transition, bu as toRaw, bv as subscribe, bw as unsubscribe, bx as onBeforeRouteUpdate, aH as v, aI as cancelableClient, by as onBeforeRouteLeave, bz as createRouter, bA as createWebHistory, bB as axios, z as createApp, A as pinia } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_ef057a6f_lang-CvBTwrDO.chunk.mjs";
-import { a as useSessionStore, p as publicInquiry, i as supports, L as Logger, j as useInquiryStore, s as showError, o as options, E as Event$1, I as InquiryGeneralIcons, g as getInquiryTypeData, k as createInquiryContext$1, l as canTransfer, m as canDelete, n as canArchive, b as useInquiriesStore, q as useInquiryGroupsStore, r as NavigationIcons, t as getAvailableInquiryTypesForCreation, v as getInquiryTypeOptions, w as showSuccess, x as useInquiryGroupStore, y as getAllowedResponseGroupTypes, z as getAvailableInquiryGroupTypesForCreation, A as getInquiryGroupTypeData, B as canCreateInquiryGroupInGeneral, C as getInquiryTypesByFamily, D as accessFamilyMenu, F as getInquiryTypesForFamily, G as getInquiryItemData, H as canSupportOption, J as canSupport, S as StatusIcons, K as BadgeIcons, M as canComment, O as sortTitlesMapping, P as lodashExports, Q as appSettings, R as canRestore, T as getInquiryGroupTypesByFamily, U as getInquiryGroupTypesForFamily, V as getAvailableResponseTypesWithPermissions, W as getAvailableTransformTypesWithPermissions, X as canViewToggle, Y as validators, Z as inquiries, _ as commonjsRequire, $ as useAttachmentsStore, a0 as createOptionContext, a1 as canEditOption, a2 as canDeleteOption, a3 as canCommentOption, a4 as InquiryOptionIcons, a5 as createDefault, a6 as useSharesStore, a7 as useCommentsStore, a8 as useSubscriptionStore, d as useAppSettingsStore, a9 as moment, e as d, f as gfmHeadingId, aa as canChangeStatus, ab as canEdit, ac as createInquiryGroupContext, ad as inquiryLinks, ae as ShareIcons, af as getEditPermissions, ag as getAvailableFields, ah as getAvailableGroupFields, ai as canShare, aj as canUseResource } from "./NcDashboardWidget-Bu7bWoUK-BNfTM9dC.chunk.mjs";
-import { u as usePreferencesStore, S as StyleSettings, F as FeatureSettings } from "./StyleSettings-BEyyI56_.chunk.mjs";
-import { b as NcAppNavigationItem, u as useAppSettingsDialog, _ as _sfc_main$1P, c as NcAppNavigationList, d as NcAppNavigation, S as Spinner, Q as QRCode, I as InputDiv, e as NcAppContent, f as NcActionButtonGroup, g as NcDialog, h as find$1, r as registerCustomProtocol, t as tokenize, i as reset, j as NcRichContenteditable, O as Options, k as NcActionInput, P as PlusIcon, l as NcDateTimePickerNative, m as NcAppSidebar, a as NcAppSettingsDialog, n as NcContent } from "./index-D_M-5wsx.chunk.mjs";
-import { _ as _sfc_main$1Q, I as INSIDE_RADIO_GROUP_KEY, a as NcSelect, N as NcCheckboxRadioSwitch, c as _sfc_main$1R, b as NcInputField } from "./NcRichText-CETsOVBU-Dnxob6Wk.chunk.mjs";
-import { R as RadioGroupDiv, N as NcNoteCard, C as CardDiv } from "./markdown-DxT43Iu7.chunk.mjs";
-import { A as AgoraAppIcon } from "./AgoraAppIcon-CSH-ufz_.chunk.mjs";
-import { N as NcUserBubble } from "./NcUserBubble-CM66IyhS-DR6eAA-M.chunk.mjs";
+const appVersion = "1.7.0-rc1";
+import { aq as h$1, B as defineStore, s as translate, aD as emit, b6 as Settings, a as _export_sfc, d as defineComponent, b as computed, b7 as getCanonicalLocale, c as createElementBlock, o as openBlock, t as toDisplayString, J as normalizeClass, b3 as NcActionButton, _ as _export_sfc$1, f as createBlock, g as withCtx, l as createCommentVNode, h as resolveDynamicComponent, k as createBaseVNode, b8 as NC_ACTIONS_IS_SEMANTIC_MENU, T as createElementId, b9 as ActionGlobalMixin, Y as withDirectives, ba as vModelRadio, aE as withKeys, ao as withModifiers, u as useModel, bb as useSlots, e as watch, P as logger, v as onMounted, aO as onBeforeUnmount, r as renderSlot, ab as useCssVars, bc as useIsDarkTheme, n as unref, bd as mdiCreation, j as createVNode, a2 as createSlots, C as createTextVNode, K as NcIconSvgWrapper, $ as NcButton, b4 as NcActions, a8 as resolveComponent, i as mergeProps, Z as vShow, x as normalizeProps, y as guardReactiveProps, be as userStatus, N as NcAvatar, p as normalizeStyle, m as mergeModels, aK as ref, bf as provide, w as warn, U as Fragment$1, V as renderList, aa as NcLoadingIcon, bg as Teleport, bh as useRouter, aF as NcEmptyContent, aV as onUnmounted, W as DateTime, R as RouterLink, bi as useRoute, bj as translatePlural, bk as TransitionGroup, aP as nextTick$1, E as _$2, aC as NcModal, aU as shallowRef, bl as markRaw, bm as watchEffect, bn as getCurrentInstance, bo as customRef, bp as global, bq as getAugmentedNamespace, br as process$1, b1 as commonjsGlobal, bs as Buffer, X as getDefaultExportFromCjs, bt as vModelSelect, D as purify, b2 as getCurrentUser, ap as Transition, bu as toRaw, bv as subscribe, bw as unsubscribe, bx as onBeforeRouteUpdate, aH as v, aI as cancelableClient, by as onBeforeRouteLeave, bz as createRouter, bA as createWebHistory, bB as axios, z as createApp, A as pinia } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_ef057a6f_lang-Y0B-IqYX.chunk.mjs";
+import { a as useSessionStore, p as publicInquiry, i as supports, L as Logger, j as useInquiryStore, s as showError, o as options, E as Event$1, I as InquiryGeneralIcons, g as getInquiryTypeData, k as createInquiryContext$1, l as canTransfer, m as canDelete, n as canArchive, b as useInquiriesStore, q as useInquiryGroupsStore, r as NavigationIcons, t as getAvailableInquiryTypesForCreation, v as getInquiryTypeOptions, w as showSuccess, x as useInquiryGroupStore, y as getAllowedResponseGroupTypes, z as getAvailableInquiryGroupTypesForCreation, A as getInquiryGroupTypeData, B as canCreateInquiryGroupInGeneral, C as getInquiryTypesByFamily, D as accessFamilyMenu, F as getInquiryTypesForFamily, G as getInquiryItemData, H as canSupportOption, J as canSupport, S as StatusIcons, K as BadgeIcons, M as canComment, O as sortTitlesMapping, P as lodashExports, Q as appSettings, R as canRestore, T as getInquiryGroupTypesByFamily, U as getInquiryGroupTypesForFamily, V as getAvailableResponseTypesWithPermissions, W as getAvailableTransformTypesWithPermissions, X as canViewToggle, Y as validators, Z as inquiries, _ as commonjsRequire, $ as useAttachmentsStore, a0 as createOptionContext, a1 as canEditOption, a2 as canDeleteOption, a3 as canCommentOption, a4 as InquiryOptionIcons, a5 as createDefault, a6 as useSharesStore, a7 as useCommentsStore, a8 as useSubscriptionStore, d as useAppSettingsStore, a9 as moment, e as d, f as gfmHeadingId, aa as canChangeStatus, ab as canEdit, ac as createInquiryGroupContext, ad as inquiryLinks, ae as ShareIcons, af as getEditPermissions, ag as getAvailableFields, ah as getAvailableGroupFields, ai as canShare, aj as canUseResource } from "./NcDashboardWidget-Bu7bWoUK--Vv52AP2.chunk.mjs";
+import { u as usePreferencesStore, S as StyleSettings, F as FeatureSettings } from "./StyleSettings-DcVdF-Hr.chunk.mjs";
+import { b as NcAppNavigationItem, u as useAppSettingsDialog, _ as _sfc_main$1O, c as NcAppNavigationList, d as NcAppNavigation, S as Spinner, Q as QRCode, I as InputDiv, e as NcAppContent, f as NcActionButtonGroup, g as NcDialog, h as find$1, r as registerCustomProtocol, t as tokenize, i as reset, j as NcRichContenteditable, O as Options, k as NcActionInput, P as PlusIcon, l as NcDateTimePickerNative, m as NcAppSidebar, a as NcAppSettingsDialog, n as NcContent } from "./index-BCBSu8jy.chunk.mjs";
+import { c as _sfc_main$1P, I as INSIDE_RADIO_GROUP_KEY, a as NcSelect, N as NcCheckboxRadioSwitch, _ as _sfc_main$1Q, b as NcInputField } from "./NcRichText-CETsOVBU-BhUtc5m5.chunk.mjs";
+import { R as RadioGroupDiv, a as NcTextArea, N as NcNoteCard, C as CardDiv } from "./markdown-W9x9l2X6.chunk.mjs";
+import { A as AgoraAppIcon } from "./AgoraAppIcon-g3RWRbFn.chunk.mjs";
+import { N as NcUserBubble } from "./NcUserBubble-CM66IyhS-DsAWiAw_.chunk.mjs";
 const setCookie = (cookieName, cookieValue = "", cookieExpiration = 360) => {
   const expirationTime = /* @__PURE__ */ new Date();
   expirationTime.setTime(expirationTime.getTime() + cookieExpiration);
@@ -13451,10 +13453,13 @@ const getOptionTypeData = (optionType, allOptionTypes, defaultType = "default") 
   };
 };
 function getAllowedOptionTypes(inquiryTypeKey, inquiryTypes, optionTypes) {
+  console.log(" WE FOUND ALLOW OPTION ", inquiryTypes);
+  console.log(" WE FOUND ALLOW OPTION TYPE KEY ", inquiryTypeKey);
   const inquiryTypeConfig = inquiryTypes.find((t) => t.inquiry_type === inquiryTypeKey);
   if (!inquiryTypeConfig?.allowed_option_type) {
     return [];
   }
+  console.log(" WE FOUND ALLOW OPTION ", inquiryTypeConfig.allowed_option_type);
   let allowedOptionTypeKeys = [];
   if (typeof inquiryTypeConfig.allowed_option_type === "string") {
     try {
@@ -13465,6 +13470,7 @@ function getAllowedOptionTypes(inquiryTypeKey, inquiryTypes, optionTypes) {
   } else if (Array.isArray(inquiryTypeConfig.allowed_option_type)) {
     allowedOptionTypeKeys = inquiryTypeConfig.allowed_option_type;
   }
+  console.log(" WE FOUND ALLOW OPTION iTYPE KEYS ", allowedOptionTypeKeys);
   const result2 = [];
   for (const key of allowedOptionTypeKeys) {
     const optionType = optionTypes.find(
@@ -13497,7 +13503,9 @@ function groupOptionTypesByFamily(optionTypes) {
 }
 function getFamiliesWithOptionTypes(inquiryTypeKey, inquiryTypes, optionTypes) {
   const allowedOptionTypes = getAllowedOptionTypes(inquiryTypeKey, inquiryTypes, optionTypes);
+  console.log(" ALLLLL OPTION TYPES", allowedOptionTypes);
   const groupedByFamily = groupOptionTypesByFamily(allowedOptionTypes);
+  console.log(" ALLLLL OPTION TYPES GROUPED BY FAMILIES", groupedByFamily);
   return Object.entries(groupedByFamily).map(([familyKey, familyOptionTypes]) => {
     const fallbackData = getFamilyFallbackData();
     const fallback = fallbackData[familyKey] || {};
@@ -13516,12 +13524,6 @@ function getFamiliesWithOptionTypes(inquiryTypeKey, inquiryTypes, optionTypes) {
 }
 function getFamilyFallbackData() {
   return {
-    "deliberative": {
-      name: "Deliberative",
-      label: "Deliberative",
-      description: "Suggestion to solve or refine an objection or debate argument.",
-      icon: "Lightbulb"
-    },
     "debate": {
       name: "Debate",
       label: "Debate",
@@ -13552,12 +13554,6 @@ function getFamilyFallbackData() {
       description: "Initial proposals and suggestions",
       icon: "Lightbulb"
     },
-    "reactive": {
-      name: "Reactive",
-      label: "Reactive",
-      description: "Reactive suggestions and responses",
-      icon: "Bolt"
-    },
     "default": {
       name: "Options",
       label: "Options",
@@ -13568,26 +13564,22 @@ function getFamilyFallbackData() {
 }
 function getFamilyIconComponent(familyKey) {
   const familyIcons = {
-    "deliberative": InquiryGeneralIcons.Lightbulb,
     "debate": InquiryGeneralIcons.Discussion,
     "structure": InquiryGeneralIcons.Settings,
     "consensus": InquiryGeneralIcons.ThumbUp,
     "decision": InquiryGeneralIcons.Checkmark,
     "proposal": InquiryGeneralIcons.Lightbulb,
-    "reactive": InquiryGeneralIcons.Bolt,
     "default": InquiryGeneralIcons.File
   };
   return familyIcons[familyKey] || familyIcons.default;
 }
 function getFamilyColor(familyKey) {
   const familyColors = {
-    "deliberative": "#4a86e8",
     "debate": "#6aa84f",
     "structure": "#3c8dbc",
     "consensus": "#f1c232",
     "decision": "#cc0000",
     "proposal": "#e69138",
-    "reactive": "#674ea7",
     "default": "#999999"
   };
   return familyColors[familyKey] || familyColors.default;
@@ -13605,8 +13597,8 @@ async function loadContext(to, cheapLoading = false, forceReload = false) {
   }
   Logger.info("Context loaded");
 }
-const _hoisted_1$1r = ["title"];
-const _sfc_main$1O = /* @__PURE__ */ defineComponent({
+const _hoisted_1$1q = ["title"];
+const _sfc_main$1N = /* @__PURE__ */ defineComponent({
   __name: "NcCounterBubble",
   props: {
     count: {},
@@ -13644,12 +13636,12 @@ const _sfc_main$1O = /* @__PURE__ */ defineComponent({
           "counter-bubble__counter--outlined": _ctx.type === "outlined"
         }]),
         title: originalCountAsTitleIfNeeded.value
-      }, toDisplayString(humanizedCount.value), 11, _hoisted_1$1r);
+      }, toDisplayString(humanizedCount.value), 11, _hoisted_1$1q);
     };
   }
 });
-const NcCounterBubble = /* @__PURE__ */ _export_sfc(_sfc_main$1O, [["__scopeId", "data-v-36ffc13f"]]);
-const _sfc_main$1N = /* @__PURE__ */ defineComponent({
+const NcCounterBubble = /* @__PURE__ */ _export_sfc(_sfc_main$1N, [["__scopeId", "data-v-36ffc13f"]]);
+const _sfc_main$1M = /* @__PURE__ */ defineComponent({
   __name: "InquiryNavigationItems",
   props: {
     inquiry: { type: Object, required: true }
@@ -13683,7 +13675,7 @@ const _sfc_main$1N = /* @__PURE__ */ defineComponent({
     return __returned__;
   }
 });
-const _hoisted_1$1q = { class: "type-icon" };
+const _hoisted_1$1p = { class: "type-icon" };
 function _sfc_render$1F(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createBlock($setup["NcAppNavigationItem"], {
     name: $props.inquiry.title,
@@ -13691,7 +13683,7 @@ function _sfc_render$1F(_ctx, _cache, $props, $setup, $data, $options) {
     class: normalizeClass({ closed: $props.inquiry.status.isExpired, "inquiry-navigation-item": true })
   }, {
     icon: withCtx(() => [
-      createBaseVNode("div", _hoisted_1$1q, [
+      createBaseVNode("div", _hoisted_1$1p, [
         (openBlock(), createBlock(resolveDynamicComponent($setup.inquiryTypeData.icon)))
       ])
     ]),
@@ -13744,8 +13736,8 @@ function _sfc_render$1F(_ctx, _cache, $props, $setup, $data, $options) {
     /* STABLE */
   }, 8, ["name", "to", "class"]);
 }
-const InquiryNavigationItems = /* @__PURE__ */ _export_sfc$1(_sfc_main$1N, [["render", _sfc_render$1F], ["__scopeId", "data-v-65e9e2b8"], ["__file", "/var/www/nextcloud/apps/agora/src/components/Navigation/InquiryNavigationItems.vue"]]);
-const _sfc_main$1M = {
+const InquiryNavigationItems = /* @__PURE__ */ _export_sfc$1(_sfc_main$1M, [["render", _sfc_render$1F], ["__scopeId", "data-v-65e9e2b8"], ["__file", "/var/www/nextcloud/apps/agora/src/components/Navigation/InquiryNavigationItems.vue"]]);
+const _sfc_main$1L = {
   name: "NcActionCaption",
   inject: {
     isInSemanticMenu: {
@@ -13763,15 +13755,15 @@ const _sfc_main$1M = {
     }
   }
 };
-const _hoisted_1$1p = ["role"];
+const _hoisted_1$1o = ["role"];
 function _sfc_render$1E(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock("li", {
     class: "app-navigation-caption",
     role: $options.isInSemanticMenu && "presentation"
-  }, toDisplayString($props.name), 9, _hoisted_1$1p);
+  }, toDisplayString($props.name), 9, _hoisted_1$1o);
 }
-const NcActionCaption = /* @__PURE__ */ _export_sfc(_sfc_main$1M, [["render", _sfc_render$1E], ["__scopeId", "data-v-1009e96c"]]);
-const _sfc_main$1L = {
+const NcActionCaption = /* @__PURE__ */ _export_sfc(_sfc_main$1L, [["render", _sfc_render$1E], ["__scopeId", "data-v-1009e96c"]]);
+const _sfc_main$1K = {
   name: "NcActionRadio",
   mixins: [ActionGlobalMixin],
   inject: {
@@ -13859,10 +13851,10 @@ const _sfc_main$1L = {
     }
   }
 };
-const _hoisted_1$1o = ["role"];
-const _hoisted_2$14 = ["aria-checked"];
-const _hoisted_3$Z = ["id", "disabled", "name", "value"];
-const _hoisted_4$V = ["for"];
+const _hoisted_1$1n = ["role"];
+const _hoisted_2$13 = ["aria-checked"];
+const _hoisted_3$Y = ["id", "disabled", "name", "value"];
+const _hoisted_4$U = ["for"];
 function _sfc_render$1D(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock("li", {
     class: normalizeClass(["action", { "action--disabled": $props.disabled }]),
@@ -13884,43 +13876,43 @@ function _sfc_render$1D(_ctx, _cache, $props, $setup, $data, $options) {
         type: "radio",
         onKeydown: _cache[1] || (_cache[1] = withKeys(withModifiers((...args) => $options.toggleInput && $options.toggleInput(...args), ["exact", "prevent"]), ["enter"])),
         onChange: _cache[2] || (_cache[2] = (...args) => $options.onChange && $options.onChange(...args))
-      }, null, 42, _hoisted_3$Z), [
+      }, null, 42, _hoisted_3$Y), [
         [vModelRadio, $setup.model]
       ]),
       createBaseVNode("label", {
         ref: "label",
         for: $props.id,
         class: "action-radio__label"
-      }, toDisplayString(_ctx.text), 9, _hoisted_4$V),
+      }, toDisplayString(_ctx.text), 9, _hoisted_4$U),
       createCommentVNode("", true)
-    ], 8, _hoisted_2$14)
-  ], 10, _hoisted_1$1o);
+    ], 8, _hoisted_2$13)
+  ], 10, _hoisted_1$1n);
 }
-const NcActionRadio = /* @__PURE__ */ _export_sfc(_sfc_main$1L, [["render", _sfc_render$1D], ["__scopeId", "data-v-9e878692"]]);
-const _sfc_main$1K = {
+const NcActionRadio = /* @__PURE__ */ _export_sfc(_sfc_main$1K, [["render", _sfc_render$1D], ["__scopeId", "data-v-9e878692"]]);
+const _sfc_main$1J = {
   name: "NcActionSeparator"
 };
-const _hoisted_1$1n = {
+const _hoisted_1$1m = {
   class: "action action-separator action--disabled",
   role: "separator"
 };
 function _sfc_render$1C(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("li", _hoisted_1$1n);
+  return openBlock(), createElementBlock("li", _hoisted_1$1m);
 }
-const NcActionSeparator = /* @__PURE__ */ _export_sfc(_sfc_main$1K, [["render", _sfc_render$1C], ["__scopeId", "data-v-3e2324b7"]]);
-const _hoisted_1$1m = { class: "app-navigation-spacer" };
-const _sfc_main$1J = /* @__PURE__ */ defineComponent({
+const NcActionSeparator = /* @__PURE__ */ _export_sfc(_sfc_main$1J, [["render", _sfc_render$1C], ["__scopeId", "data-v-3e2324b7"]]);
+const _hoisted_1$1l = { class: "app-navigation-spacer" };
+const _sfc_main$1I = /* @__PURE__ */ defineComponent({
   __name: "NcAppNavigationSpacer",
   setup(__props) {
     return (_ctx, _cache) => {
-      return openBlock(), createElementBlock("li", _hoisted_1$1m);
+      return openBlock(), createElementBlock("li", _hoisted_1$1l);
     };
   }
 });
-const NcAppNavigationSpacer = /* @__PURE__ */ _export_sfc(_sfc_main$1J, [["__scopeId", "data-v-277fa710"]]);
-const _hoisted_1$1l = ["id", "aria-labelledby"];
-const _hoisted_2$13 = ["id"];
-const _sfc_main$1I = /* @__PURE__ */ defineComponent({
+const NcAppNavigationSpacer = /* @__PURE__ */ _export_sfc(_sfc_main$1I, [["__scopeId", "data-v-277fa710"]]);
+const _hoisted_1$1k = ["id", "aria-labelledby"];
+const _hoisted_2$12 = ["id"];
+const _sfc_main$1H = /* @__PURE__ */ defineComponent({
   __name: "NcAppSettingsSection",
   props: {
     name: {},
@@ -13956,14 +13948,14 @@ const _sfc_main$1I = /* @__PURE__ */ defineComponent({
         createBaseVNode("h3", {
           id: `${htmlId.value}--label`,
           class: "app-settings-section__name"
-        }, toDisplayString(_ctx.name), 9, _hoisted_2$13),
+        }, toDisplayString(_ctx.name), 9, _hoisted_2$12),
         renderSlot(_ctx.$slots, "default", {}, void 0, true)
-      ], 8, _hoisted_1$1l);
+      ], 8, _hoisted_1$1k);
     };
   }
 });
-const NcAppSettingsSection = /* @__PURE__ */ _export_sfc(_sfc_main$1I, [["__scopeId", "data-v-78ad5bf4"]]);
-const _sfc_main$1H = {
+const NcAppSettingsSection = /* @__PURE__ */ _export_sfc(_sfc_main$1H, [["__scopeId", "data-v-78ad5bf4"]]);
+const _sfc_main$1G = {
   name: "NcAppSidebarTab",
   inject: ["registerTab", "unregisterTab", "getActiveTab", "isTablistShown"],
   props: {
@@ -14034,8 +14026,8 @@ const _sfc_main$1H = {
     }
   }
 };
-const _hoisted_1$1k = ["id", "aria-hidden", "aria-label", "aria-labelledby", "role", "tabindex"];
-const _hoisted_2$12 = { class: "hidden-visually" };
+const _hoisted_1$1j = ["id", "aria-hidden", "aria-label", "aria-labelledby", "role", "tabindex"];
+const _hoisted_2$11 = { class: "hidden-visually" };
 function _sfc_render$1B(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock("section", {
     id: `tab-${$props.id}`,
@@ -14047,15 +14039,15 @@ function _sfc_render$1B(_ctx, _cache, $props, $setup, $data, $options) {
     tabindex: $options.isTablistShown() ? 0 : -1,
     onScroll: _cache[0] || (_cache[0] = (...args) => $options.onScroll && $options.onScroll(...args))
   }, [
-    createBaseVNode("h3", _hoisted_2$12, toDisplayString($props.name), 1),
+    createBaseVNode("h3", _hoisted_2$11, toDisplayString($props.name), 1),
     renderSlot(_ctx.$slots, "default", {}, void 0, true)
-  ], 42, _hoisted_1$1k);
+  ], 42, _hoisted_1$1j);
 }
-const NcAppSidebarTab = /* @__PURE__ */ _export_sfc(_sfc_main$1H, [["render", _sfc_render$1B], ["__scopeId", "data-v-dba10798"]]);
-const _hoisted_1$1j = ["id"];
-const _hoisted_2$11 = ["id"];
-const _hoisted_3$Y = ["d", "fill"];
-const _sfc_main$1G = /* @__PURE__ */ defineComponent({
+const NcAppSidebarTab = /* @__PURE__ */ _export_sfc(_sfc_main$1G, [["render", _sfc_render$1B], ["__scopeId", "data-v-dba10798"]]);
+const _hoisted_1$1i = ["id"];
+const _hoisted_2$10 = ["id"];
+const _hoisted_3$X = ["d", "fill"];
+const _sfc_main$1F = /* @__PURE__ */ defineComponent({
   __name: "NcAssistantIcon",
   props: {
     inline: { type: Boolean },
@@ -14098,7 +14090,7 @@ const _sfc_main$1G = /* @__PURE__ */ defineComponent({
                 offset: "82%",
                 "stop-color": "#A180E0"
               }, null, -1)
-            ])], 8, _hoisted_1$1j)) : (openBlock(), createElementBlock("linearGradient", {
+            ])], 8, _hoisted_1$1i)) : (openBlock(), createElementBlock("linearGradient", {
               key: 1,
               id: unref(gradientId),
               gradientTransform: "rotateX(285)"
@@ -14115,12 +14107,12 @@ const _sfc_main$1G = /* @__PURE__ */ defineComponent({
                 offset: "80%",
                 "stop-color": "#492083"
               }, null, -1)
-            ])], 8, _hoisted_2$11))
+            ])], 8, _hoisted_2$10))
           ]),
           createBaseVNode("path", {
             d: unref(mdiCreation),
             fill: `url('#${unref(gradientId)}')`
-          }, null, 8, _hoisted_3$Y)
+          }, null, 8, _hoisted_3$X)
         ], 2))
       ], 2);
     };
@@ -14138,8 +14130,8 @@ const style0$3 = {
 const cssModules$3 = {
   "$style": style0$3
 };
-const NcAssistantIcon = /* @__PURE__ */ _export_sfc(_sfc_main$1G, [["__cssModules", cssModules$3]]);
-const _sfc_main$1F = /* @__PURE__ */ defineComponent({
+const NcAssistantIcon = /* @__PURE__ */ _export_sfc(_sfc_main$1F, [["__cssModules", cssModules$3]]);
+const _sfc_main$1E = /* @__PURE__ */ defineComponent({
   __name: "NcAssistantButton",
   props: {
     disabled: { type: Boolean },
@@ -14206,8 +14198,8 @@ const style0$2 = {
 const cssModules$2 = {
   "$style": style0$2
 };
-const NcAssistantButton = /* @__PURE__ */ _export_sfc(_sfc_main$1F, [["__cssModules", cssModules$2]]);
-const _sfc_main$1E = /* @__PURE__ */ defineComponent({
+const NcAssistantButton = /* @__PURE__ */ _export_sfc(_sfc_main$1E, [["__cssModules", cssModules$2]]);
+const _sfc_main$1D = /* @__PURE__ */ defineComponent({
   __name: "NcAssistantContent",
   props: {
     contentClasses: { default: "" }
@@ -14236,13 +14228,13 @@ const style0$1 = {
 const cssModules$1 = {
   "$style": style0$1
 };
-const NcAssistantContent = /* @__PURE__ */ _export_sfc(_sfc_main$1E, [["__cssModules", cssModules$1]]);
-const _sfc_main$1D = {
+const NcAssistantContent = /* @__PURE__ */ _export_sfc(_sfc_main$1D, [["__cssModules", cssModules$1]]);
+const _sfc_main$1C = {
   name: "NcListItem",
   components: {
     NcActions,
     NcCounterBubble,
-    NcVNodes: _sfc_main$1P
+    NcVNodes: _sfc_main$1O
   },
   inheritAttrs: false,
   props: {
@@ -14472,10 +14464,10 @@ const _sfc_main$1D = {
     }
   }
 };
-const _hoisted_1$1i = ["id", "aria-label", "href", "target", "rel", "onClick"];
-const _hoisted_2$10 = { class: "list-item-content" };
-const _hoisted_3$X = { class: "list-item-content__main" };
-const _hoisted_4$U = { class: "list-item-content__name" };
+const _hoisted_1$1h = ["id", "aria-label", "href", "target", "rel", "onClick"];
+const _hoisted_2$$ = { class: "list-item-content" };
+const _hoisted_3$W = { class: "list-item-content__main" };
+const _hoisted_4$T = { class: "list-item-content__name" };
 const _hoisted_5$B = { class: "list-item-content__details" };
 const _hoisted_6$w = {
   key: 0,
@@ -14527,9 +14519,9 @@ function _sfc_render$1A(_ctx, _cache, $props, $setup, $data, $options) {
             onKeydown: _cache[2] || (_cache[2] = withKeys((...args) => $options.hideActions && $options.hideActions(...args), ["esc"]))
           }, [
             renderSlot(_ctx.$slots, "icon", {}, void 0, true),
-            createBaseVNode("div", _hoisted_2$10, [
-              createBaseVNode("div", _hoisted_3$X, [
-                createBaseVNode("div", _hoisted_4$U, [
+            createBaseVNode("div", _hoisted_2$$, [
+              createBaseVNode("div", _hoisted_3$W, [
+                createBaseVNode("div", _hoisted_4$T, [
                   renderSlot(_ctx.$slots, "name", {}, () => [
                     createTextVNode(toDisplayString($props.name), 1)
                   ], true)
@@ -14563,7 +14555,7 @@ function _sfc_render$1A(_ctx, _cache, $props, $setup, $data, $options) {
                 ]) : createCommentVNode("", true)
               ])
             ])
-          ], 40, _hoisted_1$1i),
+          ], 40, _hoisted_1$1h),
           _ctx.$slots["extra-actions"] ? (openBlock(), createElementBlock("div", _hoisted_9$s, [
             renderSlot(_ctx.$slots, "extra-actions", {}, void 0, true)
           ])) : createCommentVNode("", true),
@@ -14603,14 +14595,14 @@ function _sfc_render$1A(_ctx, _cache, $props, $setup, $data, $options) {
     _: 3
   }, 16);
 }
-const NcListItem = /* @__PURE__ */ _export_sfc(_sfc_main$1D, [["render", _sfc_render$1A], ["__scopeId", "data-v-56c9c89e"]]);
+const NcListItem = /* @__PURE__ */ _export_sfc(_sfc_main$1C, [["render", _sfc_render$1A], ["__scopeId", "data-v-56c9c89e"]]);
 const margin = 8;
 const defaultSize = 32;
-const _sfc_main$1C = {
+const _sfc_main$1B = {
   name: "NcListItemIcon",
   components: {
     NcAvatar,
-    NcHighlight: _sfc_main$1Q,
+    NcHighlight: _sfc_main$1P,
     NcIconSvgWrapper
   },
   mixins: [
@@ -14746,10 +14738,10 @@ const _sfc_main$1C = {
     }
   }
 };
-const _hoisted_1$1h = ["id"];
-const _hoisted_2$$ = { class: "option__details" };
-const _hoisted_3$W = { key: 1 };
-const _hoisted_4$T = ["aria-label"];
+const _hoisted_1$1g = ["id"];
+const _hoisted_2$_ = { class: "option__details" };
+const _hoisted_3$V = { key: 1 };
+const _hoisted_4$S = ["aria-label"];
 function _sfc_render$1z(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_NcAvatar = resolveComponent("NcAvatar");
   const _component_NcHighlight = resolveComponent("NcHighlight");
@@ -14767,7 +14759,7 @@ function _sfc_render$1z(_ctx, _cache, $props, $setup, $data, $options) {
       size: $props.avatarSize,
       class: "option__avatar"
     }), null, 16, ["display-name", "is-no-user", "size"]),
-    createBaseVNode("div", _hoisted_2$$, [
+    createBaseVNode("div", _hoisted_2$_, [
       createVNode(_component_NcHighlight, {
         class: "option__lineone",
         text: $props.name,
@@ -14778,7 +14770,7 @@ function _sfc_render$1z(_ctx, _cache, $props, $setup, $data, $options) {
         class: "option__linetwo",
         text: $props.subname,
         search: $options.searchParts[1]
-      }, null, 8, ["text", "search"])) : _ctx.hasStatus ? (openBlock(), createElementBlock("span", _hoisted_3$W, [
+      }, null, 8, ["text", "search"])) : _ctx.hasStatus ? (openBlock(), createElementBlock("span", _hoisted_3$V, [
         createBaseVNode("span", null, toDisplayString(_ctx.userStatus.icon), 1),
         createBaseVNode("span", null, toDisplayString(_ctx.userStatus.message), 1)
       ])) : createCommentVNode("", true)
@@ -14793,14 +14785,14 @@ function _sfc_render$1z(_ctx, _cache, $props, $setup, $data, $options) {
         key: 1,
         class: normalizeClass(["icon option__icon", $props.icon]),
         "aria-label": $props.iconName
-      }, null, 10, _hoisted_4$T)) : createCommentVNode("", true)
+      }, null, 10, _hoisted_4$S)) : createCommentVNode("", true)
     ], true)
-  ], 14, _hoisted_1$1h);
+  ], 14, _hoisted_1$1g);
 }
-const NcListItemIcon = /* @__PURE__ */ _export_sfc(_sfc_main$1C, [["render", _sfc_render$1z], ["__scopeId", "data-v-1355c4c1"]]);
-const _hoisted_1$1g = ["aria-describedby"];
-const _hoisted_2$_ = ["id"];
-const _sfc_main$1B = /* @__PURE__ */ defineComponent({
+const NcListItemIcon = /* @__PURE__ */ _export_sfc(_sfc_main$1B, [["render", _sfc_render$1z], ["__scopeId", "data-v-1355c4c1"]]);
+const _hoisted_1$1f = ["aria-describedby"];
+const _hoisted_2$Z = ["id"];
+const _sfc_main$1A = /* @__PURE__ */ defineComponent({
   __name: "NcRadioGroup",
   props: /* @__PURE__ */ mergeModels({
     label: {},
@@ -14843,13 +14835,13 @@ const _sfc_main$1B = /* @__PURE__ */ defineComponent({
           key: 0,
           id: unref(descriptionId),
           class: normalizeClass(_ctx.$style.radioGroup__description)
-        }, toDisplayString(_ctx.description), 11, _hoisted_2$_)) : createCommentVNode("", true),
+        }, toDisplayString(_ctx.description), 11, _hoisted_2$Z)) : createCommentVNode("", true),
         createBaseVNode("div", {
           class: normalizeClass(_ctx.$style.radioGroup__wrapper)
         }, [
           renderSlot(_ctx.$slots, "default")
         ], 2)
-      ], 10, _hoisted_1$1g);
+      ], 10, _hoisted_1$1f);
     };
   }
 });
@@ -14869,8 +14861,8 @@ const style0 = {
 const cssModules = {
   "$style": style0
 };
-const NcRadioGroup = /* @__PURE__ */ _export_sfc(_sfc_main$1B, [["__cssModules", cssModules]]);
-const _sfc_main$1A = /* @__PURE__ */ defineComponent({
+const NcRadioGroup = /* @__PURE__ */ _export_sfc(_sfc_main$1A, [["__cssModules", cssModules]]);
+const _sfc_main$1z = /* @__PURE__ */ defineComponent({
   __name: "NcSelectUsers",
   props: /* @__PURE__ */ mergeModels({
     ariaLabelClearSelected: {},
@@ -14936,126 +14928,7 @@ const _sfc_main$1A = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const NcSelectUsers = /* @__PURE__ */ _export_sfc(_sfc_main$1A, [["__scopeId", "data-v-4fbb6472"]]);
-const _hoisted_1$1f = { class: "textarea__main-wrapper" };
-const _hoisted_2$Z = ["id", "aria-describedby", "disabled", "placeholder", "value"];
-const _hoisted_3$V = ["for"];
-const _hoisted_4$S = ["id"];
-const _sfc_main$1z = /* @__PURE__ */ defineComponent({
-  ...{ inheritAttrs: false },
-  __name: "NcTextArea",
-  props: /* @__PURE__ */ mergeModels({
-    disabled: { type: Boolean },
-    error: { type: Boolean },
-    helperText: { default: void 0 },
-    id: { default: () => createElementId() },
-    inputClass: { default: "" },
-    label: { default: void 0 },
-    labelOutside: { type: Boolean },
-    placeholder: { default: void 0 },
-    resize: { default: "both" },
-    success: { type: Boolean }
-  }, {
-    "modelValue": { required: true },
-    "modelModifiers": {}
-  }),
-  emits: ["update:modelValue"],
-  setup(__props, { expose: __expose }) {
-    const modelValue = useModel(__props, "modelValue");
-    const props2 = __props;
-    __expose({
-      focus: focus2,
-      select
-    });
-    const textAreaElement = useTemplateRef("input");
-    const attrs = useAttrs();
-    const internalPlaceholder = computed(() => props2.placeholder || (isLegacy ? props2.label : void 0));
-    watch(() => props2.labelOutside, () => {
-      if (!props2.labelOutside && !props2.label) {
-        logger.warn("[NcTextArea] You need to add a label to the NcInputField component. Either use the prop label or use an external one, as per the example in the documentation.");
-      }
-    });
-    const ariaDescribedby = computed(() => {
-      const ariaDescribedby2 = [];
-      if (props2.helperText) {
-        ariaDescribedby2.push(`${props2.id}-helper-text`);
-      }
-      if (typeof attrs["aria-describedby"] === "string") {
-        ariaDescribedby2.push(attrs["aria-describedby"]);
-      }
-      return ariaDescribedby2.join(" ") || void 0;
-    });
-    function handleInput(event) {
-      const { value } = event.target;
-      modelValue.value = value;
-    }
-    function focus2(options2) {
-      textAreaElement.value.focus(options2);
-    }
-    function select() {
-      textAreaElement.value.select();
-    }
-    return (_ctx, _cache) => {
-      return openBlock(), createElementBlock("div", {
-        class: normalizeClass(["textarea", [
-          _ctx.$attrs.class,
-          {
-            "textarea--disabled": _ctx.disabled,
-            "textarea--legacy": unref(isLegacy)
-          }
-        ]])
-      }, [
-        createBaseVNode("div", _hoisted_1$1f, [
-          createBaseVNode("textarea", mergeProps({ ..._ctx.$attrs, class: void 0 }, {
-            id: _ctx.id,
-            ref: "input",
-            "aria-describedby": ariaDescribedby.value,
-            "aria-live": "polite",
-            class: ["textarea__input", [
-              _ctx.inputClass,
-              {
-                "textarea__input--label-outside": _ctx.labelOutside,
-                "textarea__input--legacy": unref(isLegacy),
-                "textarea__input--success": _ctx.success,
-                "textarea__input--error": _ctx.error
-              }
-            ]],
-            disabled: _ctx.disabled,
-            placeholder: internalPlaceholder.value,
-            style: { resize: _ctx.resize },
-            value: modelValue.value,
-            onInput: handleInput
-          }), null, 16, _hoisted_2$Z),
-          !_ctx.labelOutside ? (openBlock(), createElementBlock("label", {
-            key: 0,
-            class: "textarea__label",
-            for: _ctx.id
-          }, toDisplayString(_ctx.label), 9, _hoisted_3$V)) : createCommentVNode("", true)
-        ]),
-        _ctx.helperText ? (openBlock(), createElementBlock("p", {
-          key: 0,
-          id: `${_ctx.id}-helper-text`,
-          class: normalizeClass(["textarea__helper-text-message", {
-            "textarea__helper-text-message--error": _ctx.error,
-            "textarea__helper-text-message--success": _ctx.success
-          }])
-        }, [
-          _ctx.success ? (openBlock(), createBlock(NcIconSvgWrapper, {
-            key: 0,
-            class: "textarea__helper-text-message__icon",
-            path: unref(mdiCheck)
-          }, null, 8, ["path"])) : _ctx.error ? (openBlock(), createBlock(NcIconSvgWrapper, {
-            key: 1,
-            class: "textarea__helper-text-message__icon",
-            path: unref(mdiAlertCircle)
-          }, null, 8, ["path"])) : createCommentVNode("", true),
-          createTextVNode(" " + toDisplayString(_ctx.helperText), 1)
-        ], 10, _hoisted_4$S)) : createCommentVNode("", true)
-      ], 2);
-    };
-  }
-});
-const NcTextArea = /* @__PURE__ */ _export_sfc(_sfc_main$1z, [["__scopeId", "data-v-d7a7d046"]]);
+const NcSelectUsers = /* @__PURE__ */ _export_sfc(_sfc_main$1z, [["__scopeId", "data-v-4fbb6472"]]);
 const iconSize = 20;
 const _sfc_main$1y = /* @__PURE__ */ defineComponent({
   __name: "Navigation",
@@ -19126,7 +18999,7 @@ const _sfc_main$1g = /* @__PURE__ */ defineComponent({
     }, get NcSelect() {
       return NcSelect;
     }, get NcTextField() {
-      return _sfc_main$1R;
+      return _sfc_main$1Q;
     }, get NcCheckboxRadioSwitch() {
       return NcCheckboxRadioSwitch;
     } };
@@ -67353,7 +67226,7 @@ const _sfc_main$T = {
     }, get NcButton() {
       return NcButton;
     }, get NcTextField() {
-      return _sfc_main$1R;
+      return _sfc_main$1Q;
     }, get NcAssistantIcon() {
       return NcAssistantIcon;
     }, get NcAssistantContent() {
@@ -69566,7 +69439,7 @@ const _sfc_main$R = /* @__PURE__ */ defineComponent({
     }, get NcRichContenteditable() {
       return NcRichContenteditable;
     }, get NcTextField() {
-      return _sfc_main$1R;
+      return _sfc_main$1Q;
     }, get NcCheckboxRadioSwitch() {
       return NcCheckboxRadioSwitch;
     }, get NcSelect() {
@@ -71182,7 +71055,7 @@ const _sfc_main$L = /* @__PURE__ */ defineComponent({
     }, get NcActionButton() {
       return NcActionButton;
     }, get NcTextField() {
-      return _sfc_main$1R;
+      return _sfc_main$1Q;
     }, get NcCheckboxRadioSwitch() {
       return NcCheckboxRadioSwitch;
     }, get NcLoadingIcon() {
@@ -79790,7 +79663,7 @@ const _sfc_main$s = /* @__PURE__ */ defineComponent({
     }, get NcModal() {
       return NcModal;
     }, get NcTextField() {
-      return _sfc_main$1R;
+      return _sfc_main$1Q;
     }, get NcNoteCard() {
       return NcNoteCard;
     }, get InquiryGeneralIcons() {
@@ -85107,12 +84980,7 @@ const _sfc_main$6 = /* @__PURE__ */ defineComponent({
     const props2 = __props;
     const inquiryStore = useInquiryStore();
     const sessionStore = useSessionStore();
-    const isLoading = ref(true);
-    const error = ref(null);
-    const isSaving = ref(false);
-    const saveTimeouts = ref({});
-    const selectedUsers = ref({});
-    const localCheckboxes = ref({});
+    const currentLanguage = computed(() => sessionStore.language || "en");
     const permissionContext = computed(
       () => createInquiryContext$1(inquiryStore, sessionStore.appSettings)
     );
@@ -85130,23 +84998,26 @@ const _sfc_main$6 = /* @__PURE__ */ defineComponent({
         (type) => type.inquiry_type === inquiryStore.type
       );
     });
-    const getDefaultFromTemplate = (field) => {
-      if (!inquiryTypeConfig.value) {
-        return null;
-      }
-      switch (field) {
-        case "supportFeature":
-          return inquiryTypeConfig.value.support_feature || "none";
-        case "allowComment":
-          const value = inquiryTypeConfig.value.allow_comment;
-          if (typeof value === "number") {
-            return value === 1;
-          }
-          return value || false;
-        default:
-          return null;
-      }
+    const isMultiLangObject = (obj) => {
+      if (!obj || typeof obj !== "object" || Array.isArray(obj)) return false;
+      const keys2 = Object.keys(obj);
+      const langKeys = ["en", "fr", "de", "gsw", "it", "es", "pt"];
+      return keys2.some((k) => langKeys.includes(k)) && keys2.every((k) => typeof obj[k] === "string" || obj[k] === void 0);
     };
+    const extractLangString = (obj, lang = "en") => {
+      if (typeof obj === "string") return obj;
+      if (!obj || typeof obj !== "object") return String(obj);
+      if (obj[lang]) return obj[lang];
+      if (obj.en) return obj.en;
+      const firstKey = Object.keys(obj).find((k) => obj[k]);
+      return firstKey ? obj[firstKey] : "";
+    };
+    const isLoading = ref(true);
+    const error = ref(null);
+    const isSaving = ref(false);
+    const saveTimeouts = ref({});
+    const selectedUsers = ref({});
+    const localCheckboxes = ref({});
     const getSupportFeatureValue = computed(() => {
       console.log(" SUUUUUUUUUUUUUUUUUU P FEATURE IN STORE OR DEFAULT ", inquiryStore.configuration.supportFeature);
       if (inquiryStore.configuration.supportFeature !== null) {
@@ -85181,6 +85052,10 @@ const _sfc_main$6 = /* @__PURE__ */ defineComponent({
         return [];
       }
     });
+    const getSupportFeatureDisplay = (value) => {
+      const option2 = supportFeatureOptions.find((opt) => opt.value === value);
+      return option2 ? option2.label : value;
+    };
     const getMiscValue = (key) => {
       try {
         if (!inquiryStore.miscFields || typeof inquiryStore.miscFields !== "object" || !key) {
@@ -85233,8 +85108,29 @@ const _sfc_main$6 = /* @__PURE__ */ defineComponent({
           }
           case "integer":
             return String(value);
-          case "enum":
-            return String(value).charAt(0).toUpperCase() + String(value).slice(1);
+          case "enum": {
+            if (typeof value === "object" && value !== null && "label" in value) {
+              const label2 = value.label;
+              if (typeof label2 === "string") return label2;
+              return extractLangString(label2, currentLanguage.value);
+            }
+            const allowedValues = field.allowed_values || [];
+            const valueKey = typeof value === "object" && value !== null && "value" in value ? value.value : value;
+            const option2 = allowedValues.find((opt) => {
+              if (typeof opt === "string") return opt === valueKey;
+              return opt.value === valueKey;
+            });
+            if (!option2) {
+              const displayVal = String(valueKey);
+              return displayVal.charAt(0).toUpperCase() + displayVal.slice(1);
+            }
+            if (typeof option2 === "string") {
+              return option2.charAt(0).toUpperCase() + option2.slice(1);
+            }
+            const label = option2.label;
+            if (typeof label === "string") return label;
+            return extractLangString(label, currentLanguage.value);
+          }
           case "users":
           case "groups":
             return Array.isArray(value) ? value.join(", ") : String(value);
@@ -85245,9 +85141,24 @@ const _sfc_main$6 = /* @__PURE__ */ defineComponent({
         return String(value);
       }
     };
-    const getSupportFeatureDisplay = (value) => {
-      const option2 = supportFeatureOptions.find((opt) => opt.value === value);
-      return option2 ? option2.label : value;
+    const getEnumModelValue = (field) => {
+      const value = getMiscValue(field.key) || field.default;
+      const options2 = field.allowed_values || [];
+      const valueKey = typeof value === "object" && value !== null && "value" in value ? value.value : value;
+      return options2.find((opt) => {
+        if (typeof opt === "string") return opt === valueKey;
+        return opt.value === valueKey;
+      }) || value;
+    };
+    const getEnumLabel = (option2) => {
+      if (typeof option2 === "string") {
+        return option2.charAt(0).toUpperCase() + option2.slice(1);
+      }
+      if (option2?.label) {
+        if (typeof option2.label === "string") return option2.label;
+        return extractLangString(option2.label, currentLanguage.value);
+      }
+      return String(option2?.value || option2);
     };
     const shouldDisplayField = (field, value) => {
       if (field.default !== void 0 && field.default !== null) {
@@ -85317,7 +85228,7 @@ const _sfc_main$6 = /* @__PURE__ */ defineComponent({
           }
         });
       } catch (e) {
-        console.error("❌ Error loading misc data:", e);
+        console.error("Error loading misc data:", e);
         error.value = translate("Error loading settings data");
       } finally {
         isLoading.value = false;
@@ -85338,7 +85249,49 @@ const _sfc_main$6 = /* @__PURE__ */ defineComponent({
         }
         await inquiryStore.updateMiscField(fieldKey, stringValue);
       } catch (e) {
-        console.error(`❌ Error saving field ${fieldKey}:`, e);
+        console.error(`Error saving field ${fieldKey}:`, e);
+      } finally {
+        isSaving.value = false;
+      }
+    };
+    const getDefaultFromTemplate = (field) => {
+      if (!inquiryTypeConfig.value) {
+        return null;
+      }
+      switch (field) {
+        case "supportFeature":
+          return inquiryTypeConfig.value.support_feature || "none";
+        case "allowComment":
+          const value = inquiryTypeConfig.value.allow_comment;
+          if (typeof value === "number") {
+            return value === 1;
+          }
+          return value || false;
+        default:
+          return null;
+      }
+    };
+    const handleSupportFeatureChange = async (id) => {
+      try {
+        isSaving.value = true;
+        console.log(" TOOOOOOOOOOOOOOOOOOOOOOO ", id);
+        inquiryStore.configuration.supportFeature = id;
+        await inquiryStore.write();
+      } catch (e) {
+        console.error(`❌ Error saving configuration field `, e);
+        inquiryStore.configuration.supportFeature = getSupportFeatureValue.value;
+      } finally {
+        isSaving.value = false;
+      }
+    };
+    const handleAllowCommentChange = async (id) => {
+      try {
+        isSaving.value = true;
+        inquiryStore.configuration.allowComment = id;
+        await inquiryStore.write();
+      } catch (e) {
+        console.error(`❌ Error saving configuration field`, e);
+        inquiryStore.configuration.allowComment = getAllowCommentValue.value;
       } finally {
         isSaving.value = false;
       }
@@ -85405,35 +85358,10 @@ const _sfc_main$6 = /* @__PURE__ */ defineComponent({
       }
     };
     const getCheckboxValue = (key) => localCheckboxes.value[key] || false;
-    const handleSupportFeatureChange = async (id) => {
-      try {
-        isSaving.value = true;
-        console.log(" TOOOOOOOOOOOOOOOOOOOOOOO ", id);
-        inquiryStore.configuration.supportFeature = id;
-        await inquiryStore.write();
-      } catch (e) {
-        console.error(`❌ Error saving configuration field `, e);
-        inquiryStore.configuration.supportFeature = getSupportFeatureValue.value;
-      } finally {
-        isSaving.value = false;
-      }
-    };
-    const handleAllowCommentChange = async (id) => {
-      try {
-        isSaving.value = true;
-        inquiryStore.configuration.allowComment = id;
-        await inquiryStore.write();
-      } catch (e) {
-        console.error(`❌ Error saving configuration field`, e);
-        inquiryStore.configuration.allowComment = getAllowCommentValue.value;
-      } finally {
-        isSaving.value = false;
-      }
-    };
     onMounted(() => {
       loadMiscData();
     });
-    const __returned__ = { props: props2, inquiryStore, sessionStore, isLoading, error, isSaving, saveTimeouts, selectedUsers, localCheckboxes, permissionContext, userCanConfigureSupport, userCanConfigureComments, inquiryTypeConfig, getDefaultFromTemplate, getSupportFeatureValue, getAllowCommentValue, supportFeatureOptions, dynamicFields, getMiscValue, parseMiscValue, getDisplayValue, getSupportFeatureDisplay, shouldDisplayField, displayFields, loadMiscData, saveFieldToDatabase, initializeMiscFields, initializeLocalCheckboxes, updateFieldValue, handleUserSelected, getFormattedDate, getCheckboxValue, handleSupportFeatureChange, handleAllowCommentChange, get StatusIcons() {
+    const __returned__ = { props: props2, inquiryStore, sessionStore, currentLanguage, permissionContext, userCanConfigureSupport, userCanConfigureComments, inquiryTypeConfig, isMultiLangObject, extractLangString, isLoading, error, isSaving, saveTimeouts, selectedUsers, localCheckboxes, getSupportFeatureValue, getAllowCommentValue, supportFeatureOptions, dynamicFields, getSupportFeatureDisplay, getMiscValue, parseMiscValue, getDisplayValue, getEnumModelValue, getEnumLabel, shouldDisplayField, displayFields, loadMiscData, saveFieldToDatabase, getDefaultFromTemplate, handleSupportFeatureChange, handleAllowCommentChange, initializeMiscFields, initializeLocalCheckboxes, updateFieldValue, handleUserSelected, getFormattedDate, getCheckboxValue, get StatusIcons() {
       return StatusIcons;
     }, get t() {
       return translate;
@@ -85534,7 +85462,7 @@ function _sfc_render$6(_ctx, _cache, $props, $setup, $data, $options) {
         createBaseVNode(
           "p",
           null,
-          toDisplayString($setup.t("agora", "Loading settings...")),
+          toDisplayString($setup.t("Loading settings...")),
           1
           /* TEXT */
         )
@@ -85566,7 +85494,7 @@ function _sfc_render$6(_ctx, _cache, $props, $setup, $data, $options) {
             createBaseVNode(
               "p",
               null,
-              toDisplayString($setup.t("agora", "No additional settings configured.")),
+              toDisplayString($setup.t("No additional settings configured.")),
               1
               /* TEXT */
             )
@@ -85640,7 +85568,7 @@ function _sfc_render$6(_ctx, _cache, $props, $setup, $data, $options) {
               createBaseVNode(
                 "span",
                 null,
-                toDisplayString($setup.t("Saving...")),
+                toDisplayString($setup.t("agora", "Saving...")),
                 1
                 /* TEXT */
               )
@@ -85713,8 +85641,6 @@ function _sfc_render$6(_ctx, _cache, $props, $setup, $data, $options) {
                   /* TEXT */
                 )
               ])) : createCommentVNode("v-if", true),
-              createCommentVNode(" Dynamic fields "),
-              createCommentVNode(" Dynamic fields "),
               (openBlock(true), createElementBlock(
                 Fragment$1,
                 null,
@@ -85776,9 +85702,10 @@ function _sfc_render$6(_ctx, _cache, $props, $setup, $data, $options) {
                             createCommentVNode(" Enum field "),
                             field.type === "enum" ? (openBlock(), createBlock($setup["NcSelect"], {
                               key: 0,
-                              "model-value": $setup.getMiscValue(field.key) || field.default,
+                              "model-value": $setup.getEnumModelValue(field),
                               options: field.allowed_values || [],
-                              reduce: (option2) => option2,
+                              reduce: (option2) => typeof option2 === "string" ? option2 : option2.value,
+                              "get-option-label": $setup.getEnumLabel,
                               clearable: !field.required,
                               "label-outside": true,
                               "input-label": field.label,
@@ -85791,12 +85718,12 @@ function _sfc_render$6(_ctx, _cache, $props, $setup, $data, $options) {
                               [
                                 createCommentVNode(" Integer field "),
                                 createVNode($setup["NcInputField"], {
-                                  "model-value": $setup.inquiryStore.miscFields[field.key] || "",
+                                  modelValue: $setup.inquiryStore.miscFields[field.key],
+                                  "onUpdate:modelValue": [($event) => $setup.inquiryStore.miscFields[field.key] = $event, (val) => $setup.updateFieldValue(field.key, parseInt(val) || null, "integer")],
                                   type: "number",
                                   label: field.label,
-                                  disabled: $setup.isSaving,
-                                  "onUpdate:modelValue": (val) => $setup.updateFieldValue(field.key, val ? parseInt(val) : null, "integer")
-                                }, null, 8, ["model-value", "label", "disabled", "onUpdate:modelValue"])
+                                  disabled: $setup.isSaving
+                                }, null, 8, ["modelValue", "onUpdate:modelValue", "label", "disabled"])
                               ],
                               2112
                               /* STABLE_FRAGMENT, DEV_ROOT_FRAGMENT */
@@ -85839,20 +85766,20 @@ function _sfc_render$6(_ctx, _cache, $props, $setup, $data, $options) {
                                 createCommentVNode(" JSON field "),
                                 createBaseVNode("div", _hoisted_37, [
                                   createVNode($setup["NcInputField"], {
-                                    "model-value": $setup.inquiryStore.miscFields[field.key] || "",
-                                    type: "textarea",
-                                    rows: 5,
-                                    label: field.label,
-                                    disabled: $setup.isSaving,
-                                    "onUpdate:modelValue": (val) => {
+                                    modelValue: $setup.inquiryStore.miscFields[field.key],
+                                    "onUpdate:modelValue": [($event) => $setup.inquiryStore.miscFields[field.key] = $event, (val) => {
                                       try {
                                         const parsed = val ? JSON.parse(val) : null;
                                         $setup.updateFieldValue(field.key, parsed, "json");
                                       } catch {
                                         $setup.updateFieldValue(field.key, val, "json");
                                       }
-                                    }
-                                  }, null, 8, ["model-value", "label", "disabled", "onUpdate:modelValue"])
+                                    }],
+                                    type: "textarea",
+                                    rows: 5,
+                                    label: field.label,
+                                    disabled: $setup.isSaving
+                                  }, null, 8, ["modelValue", "onUpdate:modelValue", "label", "disabled"])
                                 ])
                               ],
                               2112
@@ -85863,15 +85790,12 @@ function _sfc_render$6(_ctx, _cache, $props, $setup, $data, $options) {
                               [
                                 createCommentVNode(" Default string field "),
                                 createVNode($setup["NcInputField"], {
-                                  "model-value": $setup.inquiryStore.miscFields[field.key] || "",
+                                  modelValue: $setup.inquiryStore.miscFields[field.key],
+                                  "onUpdate:modelValue": [($event) => $setup.inquiryStore.miscFields[field.key] = $event, (val) => $setup.updateFieldValue(field.key, val, "string")],
                                   type: "text",
                                   label: field.label,
-                                  disabled: $setup.isSaving,
-                                  "onUpdate:modelValue": (val) => {
-                                    $setup.inquiryStore.miscFields[field.key] = val;
-                                    $setup.updateFieldValue(field.key, val, "string");
-                                  }
-                                }, null, 8, ["model-value", "label", "disabled", "onUpdate:modelValue"])
+                                  disabled: $setup.isSaving
+                                }, null, 8, ["modelValue", "onUpdate:modelValue", "label", "disabled"])
                               ],
                               2112
                               /* STABLE_FRAGMENT, DEV_ROOT_FRAGMENT */

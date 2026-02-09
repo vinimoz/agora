@@ -44,6 +44,7 @@ import Megaphone from '@iconify-icons/mdi/megaphone'
 import ClipboardList from '@iconify-icons/mdi/clipboard-list'
 import HelpCircle from '@iconify-icons/mdi/help-circle'
 import Wrench from '@iconify-icons/mdi/wrench'
+import ThumbDownOutline from '@iconify-icons/mdi/thumb-down-outline'
 
 import Update from '@iconify-icons/mdi/update'
 import Calendar from '@iconify-icons/mdi/calendar'

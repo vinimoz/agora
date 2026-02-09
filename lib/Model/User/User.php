@@ -62,7 +62,7 @@ class User extends UserBase
     /**
      * Return the logical role of the user ('moderator', 'official'), or null
      */
-    public function getRole(): ?string
+    public function getRoles(): ?string
     {
         if ($this->getIsInGroup(self::GROUP_MODERATOR)) {
             return 'moderator';
@@ -78,34 +78,13 @@ class User extends UserBase
         }
         return null;
     }
-    /**
-     * Return list of all roles (logical) the user has
-     */
-    public function getRoles(): array
-    {
-        $roles = [];
-        if ($this->getIsInGroup(self::GROUP_MODERATOR)) {
-            $roles[] = 'moderator';
-        }
-        if ($this->getIsInGroup(self::GROUP_OFFICIAL)) {
-            $roles[] = 'official';
-	}
-	 if ($this->getIsInGroup(self::GROUP_GROUP_EDITOR)) {
-              $roles[] = 'groupEditor';
-          }
-          if ($this->getIsInGroup(self::GROUP_LEGISLATIVE)) {
-              $roles[] = 'legislative';
-          }
-
-        return $roles;
-    }
     
     /**
      * Check if user is a moderator
      */
     public function isModerator(): bool
     {
-        return $this->getRole() === 'moderator';
+        return $this->getRoles() === 'moderator';
     }
 
     /**
@@ -113,7 +92,7 @@ class User extends UserBase
      */
     public function isOfficial(): bool
     {
-        return $this->getRole() === 'official';
+        return $this->getRoles() === 'official';
     }
 
     /**
@@ -121,7 +100,7 @@ class User extends UserBase
      */
     public function isLegislative(): bool
     {
-        return $this->getRole() === 'legislative';
+        return $this->getRoles() === 'legislative';
     }
 
     /**
@@ -129,7 +108,7 @@ class User extends UserBase
      */
     public function isGroupEditor(): bool
     {
-        return $this->getRole() === 'groupEditor';
+        return $this->getRoles() === 'groupEditor';
     }
 
 

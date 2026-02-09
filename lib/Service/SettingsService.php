@@ -205,7 +205,8 @@ class SettingsService
             $typeData['description'] ?? null,
             $typeData['fields'] ?? null,
             $typeData['allowed_response'] ?? null,
-            $typeData['allowed_transformation'] ?? null
+            $typeData['allowed_transformation'] ?? null,
+            $typeData['allowed_option_type'] ?? null
         );
     }
 
@@ -224,7 +225,8 @@ class SettingsService
             $typeData['description'] ?? null,
             $typeData['fields'] ?? null,
             $typeData['allowed_response'] ?? null,
-            $typeData['allowed_transformation'] ?? null
+            $typeData['allowed_transformation'] ?? null,
+            $typeData['allowed_option_type'] ?? null
         );
     }
     /**
