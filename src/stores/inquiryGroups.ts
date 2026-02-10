@@ -18,7 +18,20 @@ import { t } from '@nextcloud/l10n'
 export const useInquiryGroupsStore = defineStore('inquiryGroups', () => {
   const inquiryGroups = ref<InquiryGroup[]>([])
   const updating = ref(false)
-  const currentGroupType = ref<string>('assembly')
+  const selectedGroupType = ref<string>('')
+
+   const defaultGroupType = computed(() => {
+    const sessionStore = useSessionStore()
+    if (sessionStore.appSettings?.inquiryGroupTypeTab?.length > 0) {
+      return sessionStore.appSettings.inquiryGroupTypeTab[0].group_type
+    }
+    return ''
+  })
+  
+  // Current group type to use (selected or default)
+  const currentGroupType = computed(() => {
+    return selectedGroupType.value || defaultGroupType.value
+  })
 
 
    function addInquiryGroup(group: InquiryGroup) {
@@ -98,7 +111,7 @@ export const useInquiryGroupsStore = defineStore('inquiryGroups', () => {
   const byId = (id: number): InquiryGroup | undefined => inquiryGroups.value.find(g => g.id === id)
 
   const setCurrentGroupType = (type: string) => {
-    currentGroupType.value = type
+    selectedGroupType.value = type
   }
 
   /**
@@ -332,7 +345,7 @@ async function fetchAllGroups(): Promise<InquiryGroup[]> {
     if (sessionStore.appSettings.inquiryGroupTypeTab && sessionStore.appSettings.inquiryGroupTypeTab.length > 0) {
     const index = typeof O !== 'undefined' ? O : 0
     if (index < sessionStore.appSettings.inquiryGroupTypeTab.length) {
-        this.currentGroupType = sessionStore.appSettings.inquiryGroupTypeTab[index].group_type
+        this.selectedGroupType = sessionStore.appSettings.inquiryGroupTypeTab[index].group_type
         }
     }
     inquiryGroups.value = groups
@@ -581,6 +594,7 @@ async function fetchAllGroups(): Promise<InquiryGroup[]> {
     generateSlug,
     ensureSlugs,
      currentGroupType,
-    setCurrentGroupType
+    setCurrentGroupType,
+    selectedGroupType
   }
 })
