@@ -129,6 +129,7 @@ const routes: RouteRecordRaw[] = [
     props: true,
     meta: {
 	    listPage: true,
+        noReload: true,
     },
   },
    {
@@ -259,6 +260,7 @@ router.beforeEach(async (to: RouteLocationNormalized, from: RouteLocationNormali
 			name: 'notfound',
 		}
 	}
+    return true
 })
 
 export { router }

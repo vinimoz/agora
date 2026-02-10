@@ -16305,7 +16305,8 @@ const _sfc_main$1n = /* @__PURE__ */ defineComponent({
       const result2 = getAvailableInquiryGroupTypesForCreation(rootTypes);
       return result2;
     });
-    const selectedInquiryGroupType = computed(
+    const selectedInquiryGroupType = ref("");
+    const actualSelectedType = computed(
       () => localInquiryGroupType.value || props2.inquiryGroupType || availableInquiryGroupTypes.value[0]?.group_type
     );
     watch(
@@ -16320,7 +16321,7 @@ const _sfc_main$1n = /* @__PURE__ */ defineComponent({
       { immediate: true }
     );
     const currentInquiryGroupTypeData = computed(() => {
-      const data = getInquiryGroupTypeData(selectedInquiryGroupType.value, allInquiryGroupTypes.value);
+      const data = getInquiryGroupTypeData(actualSelectedType.value, allInquiryGroupTypes.value);
       return data;
     });
     const showGroupTypeSelector = computed(() => {
@@ -16348,7 +16349,7 @@ const _sfc_main$1n = /* @__PURE__ */ defineComponent({
       return desc;
     });
     onMounted(() => {
-      if (availableInquiryGroupTypes.value.length > 0 && !selectedInquiryGroupType.value) {
+      if (availableInquiryGroupTypes.value.length > 0 && !actualSelectedType.value) {
         const parentType = initialInquiryGroupType.value?.group_type;
         if (parentType && availableInquiryGroupTypes.value.some((t2) => t2.group_type === parentType)) {
           selectedInquiryGroupType.value = parentType;
@@ -16369,7 +16370,7 @@ const _sfc_main$1n = /* @__PURE__ */ defineComponent({
     async function addGroupInquiry() {
       try {
         adding.value = true;
-        if (!selectedInquiryGroupType.value) {
+        if (!actualSelectedType.value) {
           showError(translate("agora", "Please select a group type"));
           return;
         }
@@ -16378,7 +16379,7 @@ const _sfc_main$1n = /* @__PURE__ */ defineComponent({
           return;
         }
         const inquiryData = {
-          type: selectedInquiryGroupType.value,
+          type: actualSelectedType.value,
           title: inquiryTitle.value.trim()
         };
         if (props2.parentGroupId) {
@@ -16420,7 +16421,7 @@ const _sfc_main$1n = /* @__PURE__ */ defineComponent({
       selectedNextcloudGroup.value = null;
       emit2("update:selected-groups", []);
     }
-    const __returned__ = { props: props2, emit: emit2, inquiryGroupStore, sessionStore, inquiryTitle, inquiryId, adding, accessType, selectedNextcloudGroup, localInquiryGroupType, allInquiryGroupTypes, findInquiryGroupTypeByType, initialInquiryGroupType, availableInquiryGroupTypes, selectedInquiryGroupType, currentInquiryGroupTypeData, showGroupTypeSelector, dialogTitle, contextDescription, titleIsEmpty, disableAddButton, addGroupInquiry, resetInquiry, get t() {
+    const __returned__ = { props: props2, emit: emit2, inquiryGroupStore, sessionStore, inquiryTitle, inquiryId, adding, accessType, selectedNextcloudGroup, localInquiryGroupType, allInquiryGroupTypes, findInquiryGroupTypeByType, initialInquiryGroupType, availableInquiryGroupTypes, selectedInquiryGroupType, actualSelectedType, currentInquiryGroupTypeData, showGroupTypeSelector, dialogTitle, contextDescription, titleIsEmpty, disableAddButton, addGroupInquiry, resetInquiry, get t() {
       return translate;
     }, get NcButton() {
       return NcButton;
@@ -82828,6 +82829,8 @@ const _sfc_main$m = /* @__PURE__ */ defineComponent({
     const selectedParentId = ref(null);
     const createGroupDlgToggle = ref(false);
     const selectedInquiryGroupTypeForCreation = ref(null);
+    const groupNotFound = ref(false);
+    const shouldGroupNotFound = computed(() => hasSlug.value && !currentInquiryGroup.value);
     const showDeleteDialog = ref(false);
     const deleteDialogGroup = ref(null);
     const hasSlug = computed(() => {
@@ -82852,7 +82855,6 @@ const _sfc_main$m = /* @__PURE__ */ defineComponent({
       }
       return group2;
     });
-    const groupNotFound = computed(() => hasSlug.value && !currentInquiryGroup.value);
     const context2 = computed(() => createInquiryContext(inquiry, sessionStore.appSettings));
     function canUserArchiveGroup(group2) {
       if (!group2) return false;
@@ -83086,9 +83088,12 @@ const _sfc_main$m = /* @__PURE__ */ defineComponent({
         isLoading.value = false;
       }
     });
+    watch(shouldGroupNotFound, (newValue) => {
+      groupNotFound.value = newValue;
+    }, { immediate: true });
     watch(() => route.params.slug, async () => {
       isLoading.value = true;
-      groupNotFound.value = false;
+      groupNotFound.value = shouldGroupNotFound.value;
       if (hasSlug.value) {
         const slug = route.params.slug;
         const group2 = inquiryGroupsStore.bySlug(slug);
@@ -83098,7 +83103,7 @@ const _sfc_main$m = /* @__PURE__ */ defineComponent({
       }
       isLoading.value = false;
     });
-    const __returned__ = { route, router: router2, sessionStore, inquiriesStore, inquiryGroupsStore, inquiryGroupStore, isLoading, hoveredGroupId, selectedParentId, createGroupDlgToggle, selectedInquiryGroupTypeForCreation, showDeleteDialog, deleteDialogGroup, hasSlug, createGroupPermissionContext, currentGroupType, currentInquiryGroup, groupNotFound, context: context2, canUserArchiveGroup, canUserEditGroup, canUserDeleteGroup, parentGroups, displayedGroups, totalInquiries, sectionTitle, getGroupTypeIconComponent, getGroupChildren, currentIconComponent, selectedTypeData, selectedTypeLabel, selectedTypeDescription, currentTitle, currentDescription, currentBreadcrumbTitle, deleteDialogTitle, deleteDialogMessage, deleteDialogButtons, navigateToHome, selectGroup, createInquiryGroup, BASE_URL, getNextcloudPreviewUrl, getCoverUrl, modifyGroup, deleteGroup, performDeleteGroup, archiveGroup, handleCloseGroupDialog, inquiryGroupAdded, availableGroups, get t() {
+    const __returned__ = { route, router: router2, sessionStore, inquiriesStore, inquiryGroupsStore, inquiryGroupStore, isLoading, hoveredGroupId, selectedParentId, createGroupDlgToggle, selectedInquiryGroupTypeForCreation, groupNotFound, shouldGroupNotFound, showDeleteDialog, deleteDialogGroup, hasSlug, createGroupPermissionContext, currentGroupType, currentInquiryGroup, context: context2, canUserArchiveGroup, canUserEditGroup, canUserDeleteGroup, parentGroups, displayedGroups, totalInquiries, sectionTitle, getGroupTypeIconComponent, getGroupChildren, currentIconComponent, selectedTypeData, selectedTypeLabel, selectedTypeDescription, currentTitle, currentDescription, currentBreadcrumbTitle, deleteDialogTitle, deleteDialogMessage, deleteDialogButtons, navigateToHome, selectGroup, createInquiryGroup, BASE_URL, getNextcloudPreviewUrl, getCoverUrl, modifyGroup, deleteGroup, performDeleteGroup, archiveGroup, handleCloseGroupDialog, inquiryGroupAdded, availableGroups, get t() {
       return translate;
     }, get NcAppContent() {
       return NcAppContent;
@@ -85854,6 +85859,7 @@ const _sfc_main$5 = /* @__PURE__ */ defineComponent({
           sessionStore.appSettings.inquiryGroupTypeTab || [],
           inquiryGroupStore.type
         );
+        console.log("FIIIIIIELDS OF GROUPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP", fields);
         return Array.isArray(fields) ? fields : [];
       } catch (e) {
         console.error("Error getting fields:", e);
@@ -87516,7 +87522,8 @@ const routes = [
     },
     props: true,
     meta: {
-      listPage: true
+      listPage: true,
+      noReload: true
     }
   },
   {
@@ -87631,6 +87638,7 @@ router$1.beforeEach(async (to, from2) => {
       name: "notfound"
     };
   }
+  return true;
 });
 const _sfc_main$1 = /* @__PURE__ */ defineComponent({
   __name: "UserSettingsDlg",

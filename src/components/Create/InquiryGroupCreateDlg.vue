@@ -103,7 +103,9 @@ const availableInquiryGroupTypes = computed(() => {
   return result
 })
 
-const selectedInquiryGroupType = computed(() => 
+const selectedInquiryGroupType = ref<string>('')
+
+const actualSelectedType = computed(() => 
   localInquiryGroupType.value
   || props.inquiryGroupType  
   || availableInquiryGroupTypes.value[0]?.group_type
@@ -123,7 +125,7 @@ watch(
 
 // Data for display
 const currentInquiryGroupTypeData = computed(() => {
-  const data = getInquiryGroupTypeData(selectedInquiryGroupType.value, allInquiryGroupTypes.value)
+  const data = getInquiryGroupTypeData(actualSelectedType.value, allInquiryGroupTypes.value)
   return data
 })
 
@@ -158,7 +160,7 @@ const contextDescription = computed(() => {
 
 // Initialize local type when component mounts
 onMounted(() => {
-  if (availableInquiryGroupTypes.value.length > 0 && !selectedInquiryGroupType.value) {
+  if (availableInquiryGroupTypes.value.length > 0 && !actualSelectedType.value) {
     // Default to parent type if available, otherwise first available
     const parentType = initialInquiryGroupType.value?.group_type
     
@@ -195,7 +197,7 @@ async function addGroupInquiry() {
     adding.value = true
     
     // Validate required fields
-    if (!selectedInquiryGroupType.value) {
+    if (!actualSelectedType.value) {
       showError(t('agora', 'Please select a group type'))
       return
     }
@@ -208,7 +210,7 @@ async function addGroupInquiry() {
     
     // Prepare inquiry data
     const inquiryData: InquiryGroupData = {
-      type: selectedInquiryGroupType.value,
+      type: actualSelectedType.value,
       title: inquiryTitle.value.trim(),
     }
 

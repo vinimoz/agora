@@ -296,6 +296,11 @@ const selectedParentId = ref(null)
 const createGroupDlgToggle = ref(false)
 const selectedInquiryGroupTypeForCreation = ref<InquiryGroupType | null>(null)
 
+const groupNotFound = ref(false)
+
+// Create a computed property to check if group should not be found
+const shouldGroupNotFound = computed(() => hasSlug.value && !currentInquiryGroup.value)
+
 // Delete dialog state
 const showDeleteDialog = ref(false)
 const deleteDialogGroup = ref<InquiryGroup | null>(null)
@@ -334,8 +339,6 @@ const currentInquiryGroup = computed(() => {
 })
 
 
-// Compute whether group was found
-const groupNotFound = computed(() => hasSlug.value && !currentInquiryGroup.value)
 
 // Context for permissions
 const context = computed(() => createInquiryContext(inquiry, sessionStore.appSettings))
@@ -658,9 +661,14 @@ onMounted(async () => {
   }
 })
 
+watch(shouldGroupNotFound, (newValue) => {
+  groupNotFound.value = newValue
+}, { immediate: true })
+
+
 watch(() => route.params.slug, async () => {
   isLoading.value = true
-  groupNotFound.value = false
+  groupNotFound.value =  shouldGroupNotFound.value
 
   if (hasSlug.value) {
     const slug = route.params.slug as string

@@ -64,6 +64,7 @@ const dynamicFields = computed(() => {
       sessionStore.appSettings.inquiryGroupTypeTab || [],
       inquiryGroupStore.type
     )
+    console.log("FIIIIIIELDS OF GROUPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP",fields)
     return Array.isArray(fields) ? fields : []
   } catch (e) {
     console.error('Error getting fields:', e)
