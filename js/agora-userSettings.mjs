@@ -1,11 +1,11 @@
 const appName = "agora";
 const appVersion = "1.7.0-rc1";
-import { d as defineComponent, s as translate, v as onMounted, _ as _export_sfc, f as createBlock, o as openBlock, g as withCtx, j as createVNode, x as normalizeProps, y as guardReactiveProps, z as createApp, A as pinia } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_ef057a6f_lang-Y0B-IqYX.chunk.mjs";
-import { N as NcSettingsSection } from "./index-BCBSu8jy.chunk.mjs";
-import "./NcDashboardWidget-Bu7bWoUK--Vv52AP2.chunk.mjs";
-import { F as FlexSettings } from "./FlexSettings-H3vCZzZ2.chunk.mjs";
-import { u as usePreferencesStore, S as StyleSettings, F as FeatureSettings } from "./StyleSettings-DcVdF-Hr.chunk.mjs";
-import "./NcRichText-CETsOVBU-BhUtc5m5.chunk.mjs";
+import { d as defineComponent, q as translate, s as onMounted, _ as _export_sfc, f as createBlock, o as openBlock, g as withCtx, j as createVNode, v as normalizeProps, x as guardReactiveProps, y as createApp, z as pinia } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_ef057a6f_lang-DbPJ0Tkw.chunk.mjs";
+import { N as NcSettingsSection } from "./index-Dy8fS8wP.chunk.mjs";
+import "./NcDashboardWidget-DCBQdRFz-Cc-rhTlD.chunk.mjs";
+import { F as FlexSettings } from "./FlexSettings-CPiT1rRd.chunk.mjs";
+import { u as usePreferencesStore, S as StyleSettings, F as FeatureSettings } from "./StyleSettings-Deh8W5dq.chunk.mjs";
+import "./NcRichText-DJlaHs_Q-CKqWNjFF.chunk.mjs";
 const _sfc_main = /* @__PURE__ */ defineComponent({
   __name: "UserSettingsPage",
   setup(__props, { expose: __expose }) {

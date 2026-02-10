@@ -328,7 +328,13 @@ async function fetchAllGroups(): Promise<InquiryGroup[]> {
     
     const response = await InquiryGroupsAPI.getAllGroups()
     const groups = response.data.groups || []
-    
+    const sessionStore = useSessionStore()
+    if (sessionStore.appSettings.inquiryGroupTypeTab && sessionStore.appSettings.inquiryGroupTypeTab.length > 0) {
+    const index = typeof O !== 'undefined' ? O : 0
+    if (index < sessionStore.appSettings.inquiryGroupTypeTab.length) {
+        this.currentGroupType = sessionStore.appSettings.inquiryGroupTypeTab[index].group_type
+        }
+    }
     inquiryGroups.value = groups
     ensureSlugs()
     

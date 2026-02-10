@@ -12,12 +12,12 @@
 })();
 const appName = "agora";
 const appVersion = "1.7.0-rc1";
-import { B as defineStore, aH as v, aI as cancelableClient, d as defineComponent, s as translate, _ as _export_sfc, c as createElementBlock, o as openBlock, k as createBaseVNode, t as toDisplayString, U as Fragment, V as renderList, J as normalizeClass, l as createCommentVNode, C as createTextVNode, b as computed, aK as ref, v as onMounted, $ as NcButton, aF as NcEmptyContent, aa as NcLoadingIcon, f as createBlock, j as createVNode, g as withCtx, e as watch, aC as NcModal, h as resolveDynamicComponent, i as mergeProps, D as purify, Y as withDirectives, Z as vShow, aQ as vModelText, ao as withModifiers, a8 as resolveComponent, p as normalizeStyle, x as normalizeProps, y as guardReactiveProps, z as createApp, A as pinia } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_ef057a6f_lang-Y0B-IqYX.chunk.mjs";
-import { I as InputDiv, a as NcAppSettingsDialog, N as NcSettingsSection } from "./index-BCBSu8jy.chunk.mjs";
-import { L as Logger, d as useAppSettingsStore, e as d, f as gfmHeadingId, h as adminJobs, I as InquiryGeneralIcons, s as showError, S as StatusIcons } from "./NcDashboardWidget-Bu7bWoUK--Vv52AP2.chunk.mjs";
-import { F as FlexSettings } from "./FlexSettings-H3vCZzZ2.chunk.mjs";
-import { _ as _sfc_main$A, N as NcCheckboxRadioSwitch, a as NcSelect, b as NcInputField } from "./NcRichText-CETsOVBU-BhUtc5m5.chunk.mjs";
-import { N as NcNoteCard, a as NcTextArea, R as RadioGroupDiv, C as CardDiv } from "./markdown-W9x9l2X6.chunk.mjs";
+import { A as defineStore, aR as generateOcsUrl, aS as cancelableClient, d as defineComponent, q as translate, _ as _export_sfc, c as createElementBlock, o as openBlock, k as createBaseVNode, t as toDisplayString, T as Fragment, U as renderList, E as normalizeClass, l as createCommentVNode, B as createTextVNode, b as computed, s as onMounted, aV as ref, a7 as NcButton, aP as NcEmptyContent, ak as NcLoadingIcon, f as createBlock, j as createVNode, g as withCtx, w as watch, aM as NcModal, h as resolveDynamicComponent, i as mergeProps, a5 as withDirectives, a6 as vShow, aZ as vModelText, C as purify, ax as withModifiers, ai as resolveComponent, n as normalizeStyle, v as normalizeProps, x as guardReactiveProps, y as createApp, z as pinia } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_ef057a6f_lang-DbPJ0Tkw.chunk.mjs";
+import { I as InputDiv, a as NcAppSettingsDialog, N as NcSettingsSection } from "./index-Dy8fS8wP.chunk.mjs";
+import { L as Logger, d as useAppSettingsStore, e as gfmHeadingId, f as d, h as adminJobs, I as InquiryGeneralIcons, s as showError, S as StatusIcons } from "./NcDashboardWidget-DCBQdRFz-Cc-rhTlD.chunk.mjs";
+import { F as FlexSettings } from "./FlexSettings-CPiT1rRd.chunk.mjs";
+import { _ as _sfc_main$A, N as NcCheckboxRadioSwitch, a as NcSelect, b as NcInputField } from "./NcRichText-DJlaHs_Q-CKqWNjFF.chunk.mjs";
+import { N as NcNoteCard, a as NcTextArea, R as RadioGroupDiv, C as CardDiv } from "./markdown-BlsLyWee.chunk.mjs";
 const useTemplateWizardStore = defineStore("templateWizard", {
   state: () => ({
     isOpen: false,
@@ -100,7 +100,7 @@ const useTemplateWizardStore = defineStore("templateWizard", {
     async loadTemplates() {
       this.loadingTemplates = true;
       try {
-        const url = v("/apps/agora/api/v1.0/templates");
+        const url = generateOcsUrl("/apps/agora/api/v1.0/templates");
         const response = await cancelableClient.get(url);
         this.templates = response.data.ocs.data;
         Logger.info("Loaded templates:", this.templates);
@@ -113,7 +113,7 @@ const useTemplateWizardStore = defineStore("templateWizard", {
     },
     async loadTemplateDetails(identifier) {
       try {
-        const url = v(`/apps/agora/api/v1.0/templates/${identifier}`);
+        const url = generateOcsUrl(`/apps/agora/api/v1.0/templates/${identifier}`);
         const response = await cancelableClient.get(url);
         this.selectedTemplate = response.data.ocs.data;
         Logger.info("Loaded template details:", this.selectedTemplate);
@@ -124,7 +124,7 @@ const useTemplateWizardStore = defineStore("templateWizard", {
     },
     async checkDatabaseEmpty() {
       try {
-        const url = v("/apps/agora/api/v1.0/templates/check-empty");
+        const url = generateOcsUrl("/apps/agora/api/v1.0/templates/check-empty");
         const response = await cancelableClient.get(url);
         this.isDatabaseEmpty = response.data.ocs.data.empty;
         Logger.info("Database empty check:", this.isDatabaseEmpty);
@@ -144,7 +144,7 @@ const useTemplateWizardStore = defineStore("templateWizard", {
       this.importError = null;
       this.currentStep = "importing";
       try {
-        const url = v("/apps/agora/api/v1.0/templates/import-data");
+        const url = generateOcsUrl("/apps/agora/api/v1.0/templates/import-data");
         const response = await cancelableClient.post(url, {
           templateData: this.editableData,
           language: this.selectedLanguage
@@ -162,7 +162,7 @@ const useTemplateWizardStore = defineStore("templateWizard", {
     },
     async validateTemplate(template) {
       try {
-        const url = v("/apps/agora/api/v1.0/templates/validate");
+        const url = generateOcsUrl("/apps/agora/api/v1.0/templates/validate");
         const response = await cancelableClient.post(url, { template });
         return response.data.ocs.data;
       } catch (error) {
@@ -546,7 +546,7 @@ const _sfc_main$y = /* @__PURE__ */ defineComponent({
     };
     const downloadSchema = async () => {
       try {
-        const url = v("/apps/agora/api/v1.0/templates/schema");
+        const url = generateOcsUrl("/apps/agora/api/v1.0/templates/schema");
         const response = await cancelableClient.get(url);
         if (response.data?.ocs?.data?.error) {
           throw new Error(response.data.ocs.data.error);
@@ -568,7 +568,7 @@ const _sfc_main$y = /* @__PURE__ */ defineComponent({
     };
     const downloadInstructions = async () => {
       try {
-        const url = v("/apps/agora/api/v1.0/templates/instructions");
+        const url = generateOcsUrl("/apps/agora/api/v1.0/templates/instructions");
         const response = await cancelableClient.get(url);
         if (response.data?.ocs?.data?.error) {
           throw new Error(response.data.ocs.data.error);
@@ -1405,7 +1405,7 @@ const _sfc_main$w = /* @__PURE__ */ defineComponent({
       }
       if (typeof labelValue === "object" && !Array.isArray(labelValue)) {
         const lang = wizardStore.selectedLanguage || "en";
-        const extracted = labelValue[lang] || labelValue.en || Object.values(labelValue).find((v2) => typeof v2 === "string" && v2 !== "") || "";
+        const extracted = labelValue[lang] || labelValue.en || Object.values(labelValue).find((v) => typeof v === "string" && v !== "") || "";
         console.log("[TemplateWizard] Extracted from multi-lang object:", extracted);
         return String(extracted);
       }
@@ -1440,7 +1440,7 @@ const _sfc_main$w = /* @__PURE__ */ defineComponent({
       isAnalyzing.value = true;
       analysisError.value = null;
       try {
-        const url = v("/apps/agora/api/v1.0/templates/analyze");
+        const url = generateOcsUrl("/apps/agora/api/v1.0/templates/analyze");
         const response = await cancelableClient.post(url, {
           templateData: editableData.value,
           language: wizardStore.selectedLanguage
@@ -1933,9 +1933,9 @@ function _sfc_render$w(_ctx, _cache, $props, $setup, $data, $options) {
                                 /* TEXT */
                               )
                             ]),
-                            _: 2
-                            /* DYNAMIC */
-                          }, 1032, ["onClick"]),
+                            _: 1
+                            /* STABLE */
+                          }, 8, ["onClick"]),
                           createVNode($setup["NcButton"], {
                             type: "error",
                             onClick: ($event) => $setup.removeItem(section.key, index)
@@ -1947,9 +1947,9 @@ function _sfc_render$w(_ctx, _cache, $props, $setup, $data, $options) {
                                 /* TEXT */
                               )
                             ]),
-                            _: 2
-                            /* DYNAMIC */
-                          }, 1032, ["onClick"])
+                            _: 1
+                            /* STABLE */
+                          }, 8, ["onClick"])
                         ])
                       ])) : (openBlock(), createElementBlock(
                         Fragment,
@@ -3677,9 +3677,9 @@ function _sfc_render$i(_ctx, _cache, $props, $setup, $data, $options) {
                     /* TEXT */
                   )
                 ]),
-                _: 2
-                /* DYNAMIC */
-              }, 1032, ["onClick"]),
+                _: 1
+                /* STABLE */
+              }, 8, ["onClick"]),
               createVNode($setup["NcButton"], {
                 onClick: withModifiers(($event) => $setup.deleteFamily(family.id), ["stop"])
               }, {
@@ -3690,9 +3690,9 @@ function _sfc_render$i(_ctx, _cache, $props, $setup, $data, $options) {
                     /* TEXT */
                   )
                 ]),
-                _: 2
-                /* DYNAMIC */
-              }, 1032, ["onClick"])
+                _: 1
+                /* STABLE */
+              }, 8, ["onClick"])
             ])
           ], 8, _hoisted_4$9);
         }),
@@ -4086,9 +4086,9 @@ function _sfc_render$h(_ctx, _cache, $props, $setup, $data, $options) {
                       /* TEXT */
                     )
                   ]),
-                  _: 2
-                  /* DYNAMIC */
-                }, 1032, ["onClick"]),
+                  _: 1
+                  /* STABLE */
+                }, 8, ["onClick"]),
                 createBaseVNode("div", _hoisted_13$3, [
                   createVNode($setup["NcButton"], {
                     class: "edit-btn",
@@ -4107,9 +4107,9 @@ function _sfc_render$h(_ctx, _cache, $props, $setup, $data, $options) {
                         /* TEXT */
                       )
                     ]),
-                    _: 2
-                    /* DYNAMIC */
-                  }, 1032, ["onClick"]),
+                    _: 1
+                    /* STABLE */
+                  }, 8, ["onClick"]),
                   createVNode($setup["NcButton"], {
                     class: "delete-btn",
                     onClick: withModifiers(($event) => $setup.deleteType(type.id), ["stop"])
@@ -4121,9 +4121,9 @@ function _sfc_render$h(_ctx, _cache, $props, $setup, $data, $options) {
                         /* TEXT */
                       )
                     ]),
-                    _: 2
-                    /* DYNAMIC */
-                  }, 1032, ["onClick"])
+                    _: 1
+                    /* STABLE */
+                  }, 8, ["onClick"])
                 ])
               ])
             ], 8, _hoisted_6$7);
@@ -4886,9 +4886,9 @@ function _sfc_render$f(_ctx, _cache, $props, $setup, $data, $options) {
                         /* TEXT */
                       )
                     ]),
-                    _: 2
-                    /* DYNAMIC */
-                  }, 1032, ["disabled", "onClick"]),
+                    _: 1
+                    /* STABLE */
+                  }, 8, ["disabled", "onClick"]),
                   createVNode($setup["NcButton"], {
                     disabled: index === $setup.statuses.length - 1,
                     onClick: ($event) => $setup.moveStatusDown(status.statusKey)
@@ -4900,9 +4900,9 @@ function _sfc_render$f(_ctx, _cache, $props, $setup, $data, $options) {
                         /* TEXT */
                       )
                     ]),
-                    _: 2
-                    /* DYNAMIC */
-                  }, 1032, ["disabled", "onClick"]),
+                    _: 1
+                    /* STABLE */
+                  }, 8, ["disabled", "onClick"]),
                   createVNode($setup["NcButton"], {
                     onClick: ($event) => $setup.editStatus(status)
                   }, {
@@ -4913,9 +4913,9 @@ function _sfc_render$f(_ctx, _cache, $props, $setup, $data, $options) {
                         /* TEXT */
                       )
                     ]),
-                    _: 2
-                    /* DYNAMIC */
-                  }, 1032, ["onClick"]),
+                    _: 1
+                    /* STABLE */
+                  }, 8, ["onClick"]),
                   createVNode($setup["NcButton"], {
                     onClick: ($event) => $setup.deleteStatus(status.id)
                   }, {
@@ -4926,9 +4926,9 @@ function _sfc_render$f(_ctx, _cache, $props, $setup, $data, $options) {
                         /* TEXT */
                       )
                     ]),
-                    _: 2
-                    /* DYNAMIC */
-                  }, 1032, ["onClick"])
+                    _: 1
+                    /* STABLE */
+                  }, 8, ["onClick"])
                 ])
               ]);
             }),
