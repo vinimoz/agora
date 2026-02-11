@@ -70,6 +70,17 @@ export enum Event {
   ShowSettings = 'agora:settings:show',
 }
 
+export interface OptionFamily {
+  id: number;
+  family_type: string;
+  label: string;
+  description?: string;
+  icon: string;
+  sort_order: number;
+  created: number;
+}
+
+
 export interface InquiryFamily {
   id: number;
   family_type: string;

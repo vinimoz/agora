@@ -201,6 +201,7 @@ export const useSessionStore = defineStore('session', {
       		inquiryOptionTypeTab: this.appSettings.inquiryOptionTypeTab,
       		inquiryGroupTypeTab: this.appSettings.inquiryGroupTypeTab,
       		inquiryFamilyTab: this.appSettings.inquiryFamilyTab,
+      		optionFamilyTab: this.appSettings.optionFamilyTab,
       		categoryTab: this.appSettings.categoryTab,
       		locationTab: this.appSettings.locationTab,
     	})

@@ -17,6 +17,7 @@ use OCA\Agora\Db\InquiryType;
 use OCA\Agora\Db\InquiryGroupType;
 use OCA\Agora\Db\InquiryOptionType;
 use OCA\Agora\Db\InquiryFamily;
+use OCA\Agora\Db\OptionFamily;
 use OCP\Migration\IOutput;
 
 class InitDbDefault extends Command
@@ -81,6 +82,51 @@ class InitDbDefault extends Command
             'description' => 'Responses and contributions from official entities such as city hall, experts, or commissions.',
             'icon' => 'Seal',
             'sort_order' => 7,
+            'created' => '',
+        ],
+    ];
+
+
+
+    private array $optionTypeFamilies = [
+        [
+            'family_type' => 'debate',
+            'label' => 'Debate',
+            'description' => 'Debate positions, arguments, and alternatives',
+            'icon' => 'Discussion',
+            'sort_order' => 1,
+            'created' => '',
+        ],
+        [
+            'family_type' => 'structure',
+            'label' => 'Structure',
+            'description' => 'Structured documents with chapters and articles',
+            'icon' => 'Settings',
+            'sort_order' => 2,
+            'created' => '',
+        ],
+        [
+            'family_type' => 'consensus',
+            'label' => 'Consensus',
+            'description' => 'Consultation questions and consensus building',
+            'icon' => 'ThumbUp',
+            'sort_order' => 3,
+            'created' => '',
+        ],
+        [
+            'family_type' => 'decision',
+            'label' => 'Decision',
+            'description' => 'Official decisions and results',
+            'icon' => 'Checkmark',
+            'sort_order' => 4,
+            'created' => '',
+        ],
+        [
+            'family_type' => 'proposal',
+            'label' => 'Proposal',
+            'description' => 'Initial proposals and suggestions',
+            'icon' => 'Lightbulb',
+            'sort_order' => 5,
             'created' => '',
         ],
     ];
@@ -1803,6 +1849,7 @@ class InitDbDefault extends Command
         $this->insertDefaultLocations($output);
         $this->insertDefaultInquiryStatuses($output);
         $this->insertDefaultInquiryFamilies($output);
+        $this->insertDefaultOptionFamilies($output);
         $this->insertDefaultInquiryTypes($output);
         $this->insertDefaultInquiryOptionTypes($output);
         $this->insertDefaultInquiryGroupTypes($output);
@@ -2199,6 +2246,61 @@ class InitDbDefault extends Command
             }
         }
     }
+
+     private function insertDefaultOptionFamilies(?IOutput $output = null): void
+      {
+          $this->log($output, 'Inserting default option families...');
+
+          $inserted = [];
+
+          foreach ($this->optionTypeFamilies as $family) {
+              if (isset($inserted[$family['family_type']])) {
+                $this->log($output, 'Option family already processed: ' . $family['family_type']);
+                  continue;
+              }
+
+              $query = $this->connection->prepare(
+                  'SELECT `id` FROM `*PREFIX*' . OptionFamily::TABLE . '`
+                  WHERE `family_type` = ?'
+              );
+              $cursor = $query->execute([$family['family_type']]);
+              $row = $cursor->fetch();
+
+              if ($row !== false) {
+                   $this->log($output, 'Option family already exists in DB: ' . $family['family_type']);
+                     $inserted[$family['family_type']] = (int) $row['id'];
+                     continue;
+              }
+
+              $insert = $this->connection->prepare(
+                  'INSERT INTO `*PREFIX*' . OptionFamily::TABLE . '`
+                (`family_type`, `label`, `description`, `icon`, `sort_order`, `created`)
+                  VALUES (?, ?, ?, ?, ?, ?)'
+              );
+
+              try {
+                     $created = !empty($family['created']) ? (int)$family['created'] : time();
+
+                          $insert->execute(
+                              [
+                              $family['family_type'],
+                              $family['label'],
+                              $family['description'] ?? '',
+                              $family['icon'] ?? '',
+                              $family['sort_order'] ?? 0,
+                              $created,
+                              ]
+                          );
+
+                        $id = (int) $this->connection->lastInsertId('*PREFIX*' . OptionFamily::TABLE);
+                          $inserted[$family['family_type']] = $id;
+
+                       $this->log($output, 'Inserted option family: ' . $family['family_type']);
+            } catch (\Exception $e) {
+                  $this->log($output, 'ERROR inserting option family ' . $family['family_type'] . ': ' . $e->getMessage());
+              }
+          }
+      }
 
 
 

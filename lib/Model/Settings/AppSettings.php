@@ -22,6 +22,7 @@ use OCA\Agora\Service\InquiryTypeService;
 use OCA\Agora\Service\InquiryGroupTypeService;
 use OCA\Agora\Service\InquiryOptionTypeService;
 use OCA\Agora\Service\InquiryFamilyService;
+use OCA\Agora\Service\OptionFamilyService;
 
 class AppSettings implements JsonSerializable
 {
@@ -30,9 +31,6 @@ class AppSettings implements JsonSerializable
     // Existing settings constants
     public const SETTING_ALLOW_PUBLIC_SHARES = 'allowPublicShares';
     public const SETTING_ALLOW_PUBLIC_SHARES_GROUPS = 'publicSharesGroups';
-
-    public const SETTING_ALLOW_COMBO = 'allowCombo';
-    public const SETTING_ALLOW_COMBO_GROUPS = 'comboGroups';
 
     public const SETTING_ALLOW_ALL_ACCESS = 'allowAllAccess';
     public const SETTING_ALLOW_ALL_ACCESS_GROUPS = 'allAccessGroups';
@@ -104,6 +102,7 @@ class AppSettings implements JsonSerializable
     public const SETTING_INQUIRY_GROUP_TYPE = 'inquiryGroupTypeTab';
     public const SETTING_INQUIRY_OPTION_TYPE = 'inquiryOptionTypeTab';
     public const SETTING_INQUIRY_FAMILY = 'inquiryFamilyTab';
+    public const SETTING_OPTION_FAMILY = 'optionFamilyTab';
     public const SETTING_INQUIRY_STATUS = 'inquiryStatusTab';
     public const SETTING_MODERATOR_RIGHTS = 'moderatorRights';
     public const SETTING_OFFICIAL_RIGHTS = 'officialRights';
@@ -122,6 +121,7 @@ class AppSettings implements JsonSerializable
         private ?InquiryGroupTypeService $inquiryGroupTypeService,
         private ?InquiryOptionTypeService $inquiryOptionTypeService,
         private ?InquiryFamilyService $inquiryFamilyService,
+        private ?OptionFamilyService $optionFamilyService,
     ) {
     }
 
@@ -135,7 +135,6 @@ class AppSettings implements JsonSerializable
         'addShares' => $this->systemSettings->getShareCreateAllowed(),
         'addSharesExternal' => $this->systemSettings->getShareCreateAllowed(),
         'changeForeignSupports' => $this->getIsUnrestrictedInquiryOwner(),
-        'comboView' => $this->getComboAllowed(),
         'deanonymizeInquiry' => $this->getIsUnrestrictedInquiryOwner(),
         'inquiryCreation' => $this->getInquiryCreationAllowed(),
         'inquiryDownload' => $this->getInquiryDownloadAllowed(),
@@ -303,6 +302,7 @@ class AppSettings implements JsonSerializable
         'inquiryGroupTypeTab' =>  $this->inquiryGroupTypeService?->findAll() ?? [],
         'inquiryOptionTypeTab' =>  $this->inquiryOptionTypeService?->findAll() ?? [],
         'inquiryFamilyTab' =>  $this->inquiryFamilyService?->findAll() ?? [],
+        'optionFamilyTab' =>  $this->optionFamilyService?->findAll() ?? [],
         'inquiryStatusTab' =>  $this->inquiryStatusService?->findAll() ?? [],
         'inquiryTypeRights' => $this->getInquiryTypeRights(),
         'moderatorRights' => $this->getModeratorRights(),
@@ -492,13 +492,6 @@ class AppSettings implements JsonSerializable
         return $this->getBooleanSetting(self::SETTING_ALLOW_PUBLIC_SHARES, self::SETTING_ALLOW_PUBLIC_SHARES_GROUPS);
     }
 
-    /**
-     * Permission to combine inquiries is controlled by app settings and only for internal users
-     */
-    public function getComboAllowed(): bool
-    {
-        return $this->getBooleanSetting(self::SETTING_ALLOW_COMBO, self::SETTING_ALLOW_COMBO_GROUPS);
-    }
 
     /**
      * Get moderation feature
@@ -704,9 +697,6 @@ class AppSettings implements JsonSerializable
             self::SETTING_ALLOW_PUBLIC_SHARES => $this->getBooleanSetting(self::SETTING_ALLOW_PUBLIC_SHARES),
             self::SETTING_ALLOW_PUBLIC_SHARES_GROUPS => $this->getGroupObjects(self::SETTING_ALLOW_PUBLIC_SHARES_GROUPS),
 
-            self::SETTING_ALLOW_COMBO => $this->getBooleanSetting(self::SETTING_ALLOW_COMBO),
-            self::SETTING_ALLOW_COMBO_GROUPS => $this->getGroupObjects(self::SETTING_ALLOW_COMBO_GROUPS),
-
             self::SETTING_ALLOW_ALL_ACCESS => $this->getBooleanSetting(self::SETTING_ALLOW_ALL_ACCESS),
             self::SETTING_ALLOW_ALL_ACCESS_GROUPS => $this->getGroupObjects(self::SETTING_ALLOW_ALL_ACCESS_GROUPS),
 
@@ -758,6 +748,7 @@ class AppSettings implements JsonSerializable
             self::SETTING_INQUIRY_GROUP_TYPE => $this->inquiryGroupTypeService?->findAll() ?? [],
             self::SETTING_INQUIRY_OPTION_TYPE => $this->inquiryOptionTypeService?->findAll() ?? [],
             self::SETTING_INQUIRY_FAMILY => $this->inquiryFamilyService?->findAll() ?? [],
+            self::SETTING_OPTION_FAMILY => $this->optionFamilyService?->findAll() ?? [],
             self::SETTING_INQUIRY_TYPE_RIGHTS => $this->getInquiryTypeRights(),
             self::SETTING_MODERATOR_RIGHTS => $this->getModeratorRights(),
             self::SETTING_OFFICIAL_RIGHTS => $this->getOfficialRights(),

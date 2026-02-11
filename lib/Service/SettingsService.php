@@ -16,6 +16,7 @@ use OCA\Agora\Service\InquiryGroupTypeService;
 use OCA\Agora\Service\InquiryOptionTypeService;
 use OCA\Agora\Service\InquiryStatusService;
 use OCA\Agora\Service\InquiryFamilyService;
+use OCA\Agora\Service\OptionFamilyService;
 use OCP\IConfig;
 use Psr\Log\LoggerInterface;
 
@@ -25,6 +26,7 @@ class SettingsService
     private CategoryService $categoryService;
     private InquiryStatusService $inquiryStatusService;
     private InquiryFamilyService $inquiryFamilyService;
+    private OptionFamilyService $optionFamilyService;
     private InquiryTypeService $inquiryTypeService;
     private InquiryGroupTypeService $inquiryGroupTypeService;
     private InquiryOptionTypeService $inquiryOptionTypeService;
@@ -39,6 +41,7 @@ class SettingsService
         CategoryService $categoryService,
         InquiryStatusService $inquiryStatusService,
         InquiryFamilyService $inquiryFamilyService,
+        OptionFamilyService $optionFamilyService,
         InquiryTypeService $inquiryTypeService,
         InquiryGroupTypeService $inquiryGroupTypeService,
         InquiryOptionTypeService $inquiryOptionTypeService,
@@ -49,6 +52,7 @@ class SettingsService
         $this->categoryService = $categoryService;
         $this->inquiryStatusService = $inquiryStatusService;
         $this->inquiryFamilyService = $inquiryFamilyService;
+        $this->optionFamilyService = $optionFamilyService;
         $this->inquiryTypeService = $inquiryTypeService;
         $this->inquiryGroupTypeService = $inquiryGroupTypeService;
         $this->inquiryOptionTypeService = $inquiryOptionTypeService;
@@ -71,7 +75,6 @@ class SettingsService
         // Boolean settings
         $this->appSettings->setBooleanSetting(AppSettings::SETTING_SHOW_MAIL_ADDRESSES, $settingsArray[AppSettings::SETTING_SHOW_MAIL_ADDRESSES]);
         $this->appSettings->setBooleanSetting(AppSettings::SETTING_ALLOW_PUBLIC_SHARES, $settingsArray[AppSettings::SETTING_ALLOW_PUBLIC_SHARES]);
-        $this->appSettings->setBooleanSetting(AppSettings::SETTING_ALLOW_COMBO, $settingsArray[AppSettings::SETTING_ALLOW_COMBO]);
         $this->appSettings->setBooleanSetting(AppSettings::SETTING_ALLOW_ALL_ACCESS, $settingsArray[AppSettings::SETTING_ALLOW_ALL_ACCESS]);
         $this->appSettings->setBooleanSetting(AppSettings::SETTING_ALLOW_INQUIRY_CREATION, $settingsArray[AppSettings::SETTING_ALLOW_INQUIRY_CREATION]);
         $this->appSettings->setBooleanSetting(AppSettings::SETTING_ALLOW_INQUIRY_DOWNLOAD, $settingsArray[AppSettings::SETTING_ALLOW_INQUIRY_DOWNLOAD]);
@@ -92,7 +95,6 @@ class SettingsService
         $this->appSettings->setGroupSetting(AppSettings::SETTING_SHOW_MAIL_ADDRESSES_GROUPS, array_column($settingsArray[AppSettings::SETTING_SHOW_MAIL_ADDRESSES_GROUPS], 'id'));
         $this->appSettings->setGroupSetting(AppSettings::SETTING_ALLOW_ALL_ACCESS_GROUPS, array_column($settingsArray[AppSettings::SETTING_ALLOW_ALL_ACCESS_GROUPS], 'id'));
         $this->appSettings->setGroupSetting(AppSettings::SETTING_ALLOW_PUBLIC_SHARES_GROUPS, array_column($settingsArray[AppSettings::SETTING_ALLOW_PUBLIC_SHARES_GROUPS], 'id'));
-        $this->appSettings->setGroupSetting(AppSettings::SETTING_ALLOW_COMBO_GROUPS, array_column($settingsArray[AppSettings::SETTING_ALLOW_COMBO_GROUPS], 'id'));
         $this->appSettings->setGroupSetting(AppSettings::SETTING_ALLOW_INQUIRY_CREATION_GROUPS, array_column($settingsArray[AppSettings::SETTING_ALLOW_INQUIRY_CREATION_GROUPS], 'id'));
         $this->appSettings->setGroupSetting(AppSettings::SETTING_ALLOW_INQUIRY_DOWNLOAD_GROUPS, array_column($settingsArray[AppSettings::SETTING_ALLOW_INQUIRY_DOWNLOAD_GROUPS], 'id'));
         $this->appSettings->setGroupSetting(AppSettings::SETTING_UNRESTRICTED_INQUIRY_OWNER_GROUPS, array_column($settingsArray[AppSettings::SETTING_UNRESTRICTED_INQUIRY_OWNER_GROUPS], 'id'));
@@ -274,6 +276,46 @@ class SettingsService
     {
         $this->inquiryFamilyService->delete((int)$familyId);
     }
+
+
+     /**
+     * Add an option family
+     */
+    public function addOptionFamily(array $familyData)
+    {
+        return $this->optionFamilyService->create(
+            $familyData['family_type'] ?? '',
+            $familyData['label'] ?? '',
+            $familyData['description'] ?? null,
+            $familyData['icon'] ?? '',
+            $familyData['sort_order'] ?? null
+        );
+    }
+
+    /**
+     * Update an option family
+     */
+    public function updateOptionFamily(string $familyId, array $familyData)
+    {
+        $familyData = $familyData['familyData'];
+        return $this->optionFamilyService->update(
+            (int)$familyId,
+            $familyData['family_type'] ?? '',
+            $familyData['label'] ?? '',
+            $familyData['description'] ?? '',
+            $familyData['icon'] ?? '',
+            $familyData['sort_order'] ?? 0
+        );
+    }
+    
+    /**
+     * Delete an option family
+     */
+    public function deleteOptionFamily(string $familyId): void
+    {
+        $this->optionFamilyService->delete((int)$familyId);
+    }
+    
 
     // MODERATION STATUS (keeping your existing methods)
     /**

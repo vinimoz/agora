@@ -6,7 +6,7 @@
 import { defineStore } from 'pinia'
 import { AppSettingsAPI } from '../Api/index.ts'
 import { Logger } from '../helpers/index.ts'
-import { BaseEntry, InquiryType, InquiryOptionType, InquiryFamily } from '../Types/index.ts'
+import { BaseEntry, InquiryType, InquiryOptionType, InquiryFamily, OptionFamily } from '../Types/index.ts'
 import { AxiosError } from '@nextcloud/axios'
 import type { InquiryGroupType } from './inquiryGroups.types'
 
@@ -89,6 +89,7 @@ export type AppSettings = {
 	inquiryOptionTypeTab: InquiryOptionType[]
 	inquiryGroupTypeTab: InquiryGroupType[]
 	inquiryFamilyTab: InquiryFamily[]
+	optonFamilyTab: OptionFamily[]
 	groups: Group[]
 	inquiryTypeRights: Record<string, InquiryTypeRights>
 	moderatorRights: ModeratorRights
@@ -139,6 +140,7 @@ export const useAppSettingsStore = defineStore('appSettings', {
 		inquiryOptionTypeTab: [],
 		inquiryGroupTypeTab: [],
 		inquiryFamilyTab: [],
+		optionFamilyTab: [],
 		locationTab: [],
 		inquiryStatusTab: [],
 		groups: [],
@@ -571,6 +573,61 @@ export const useAppSettingsStore = defineStore('appSettings', {
 				Logger.error('Error deleting inquiry family', { error });
 			}
 		},
+
+        // STORE FOR OPTION FAMILY MANAGEMENT
+        async addOptionFamily(familyData: {
+            family_type: string;
+            label: string;
+            description?: string;
+            icon?: string;
+            sort_order?: number;
+        }): Promise<void> {
+            const maxId = this.optionFamilyTab.length > 0 ? Math.max(...this.optionFamilyTab.map((f) => f.id)) : 0;
+            const newId = maxId + 1;
+
+            try {
+                await AppSettingsAPI.addOptionFamily({
+                    ...familyData,
+                    created: Date.now(),
+                });
+
+                this.optionFamilyTab.push({
+                    id: newId,
+                    ...familyData,
+                    created: Date.now(),
+                });
+            } catch (error) {
+                Logger.error('Error adding option family', { error });
+            }
+        },
+
+        async updateOptionFamily(id: number, familyData: {
+            family_type?: string;
+            label?: string;
+            description?: string;
+            icon?: string;
+            sort_order?: number;
+        }): Promise<void> {
+            const family = this.optionFamilyTab.find((f) => f.id === id);
+            try {
+                await AppSettingsAPI.updateOptionFamily(id, familyData);
+
+                if (family) {
+                    Object.assign(family, familyData);
+                }
+            } catch (error) {
+                Logger.error('Error updating option family', { error });
+            }
+        },
+
+        async deleteOptionFamily(id: number): Promise<void> {
+            try {
+                await AppSettingsAPI.deleteOptionFamily(id);
+                this.optionFamilyTab = this.optionFamilyTab.filter((f) => f.id !== id);
+            } catch (error) {
+                Logger.error('Error deleting option family', { error });
+            }
+        },
 
 
 		// METHOD FOR TYPE

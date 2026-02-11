@@ -5,7 +5,7 @@
 import { AxiosResponse } from '@nextcloud/axios'
 import { AppSettings, Group } from '../../stores/appSettings.js'
 import { httpInstance, createCancelTokenHandler } from './HttpApi.js'
-import { ISearchType, User , Category, Location, InquiryStatus } from '../../Types/index.js'
+import { ISearchType, User , Category, Location, InquiryStatus, InquiryFamily, OptionFamily } from '../../Types/index.js'
 
 const appSettings = {
 	getAppSettings(): Promise<AxiosResponse<{ appSettings: AppSettings }>> {
@@ -249,6 +249,51 @@ const appSettings = {
 			cancelToken: cancelTokenHandlerObject[this.deleteInquiryFamily.name].handleRequestCancellation().token,
 		});
 	},
+
+     // Option Family functions
+    addOptionFamily(family: {
+        family_type: string;
+        label: string;
+        description?: string;
+        icon?: string;
+        sort_order?: number;
+        created: number;
+    }): Promise<AxiosResponse<{ family: OptionFamily }>> {
+        return httpInstance.request({
+            method: 'POST',
+            url: 'option/families',
+            data: { family },
+            cancelToken: cancelTokenHandlerObject[this.addOptionFamily.name].handleRequestCancellation().token,
+        });
+    },
+
+    updateOptionFamily(
+        familyId: number,
+        familyData: {
+            family_type?: string;
+            label?: string;
+            description?: string;
+            icon?: string;
+            sort_order?: number;
+        }
+    ): Promise<AxiosResponse<{ family: OptionFamily }>> {
+        return httpInstance.request({
+            method: 'PUT',
+            url: `option/families/${familyId}`,
+            data: { familyData },
+            cancelToken: cancelTokenHandlerObject[this.updateOptionFamily.name].handleRequestCancellation().token,
+        });
+    },
+
+    deleteOptionFamily(familyId: number): Promise<AxiosResponse> {
+        return httpInstance.request({
+            method: 'DELETE',
+            url: `option/families/${familyId}`,
+            cancelToken: cancelTokenHandlerObject[this.deleteOptionFamily.name].handleRequestCancellation().token,
+        });
+    },
+
+
 
 }
 

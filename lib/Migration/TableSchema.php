@@ -27,6 +27,7 @@ use OCA\Agora\Db\InquiryMisc;
 use OCA\Agora\Db\InquiryGroupMisc;
 use OCA\Agora\Db\OptionMisc;
 use OCA\Agora\Db\InquiryFamily;
+use OCA\Agora\Db\OptionFamily;
 use OCA\Agora\Db\InquiryLink;
 use OCA\Agora\Db\Location;
 use OCA\Agora\Db\Category;
@@ -309,6 +310,9 @@ abstract class TableSchema
         InquiryFamily::TABLE => [
             'UNIQ_family_type' => ['columns' => ['family_type']],
         ],
+        OptionFamily::TABLE => [
+            'UNIQ_family_type' => ['columns' => ['family_type']],
+        ],
         InquiryStatus::TABLE => [
             'UNIQ_inquiry_status' => ['columns' => ['inquiry_type', 'status_key']],
         ],
@@ -490,6 +494,16 @@ abstract class TableSchema
             'created' => ['type' => Types::BIGINT, 'options' => ['notnull' => true, 'default' => 0, 'length' => 20]],
         ],
 
+        OptionFamily::TABLE => [
+            'id' => ['type' => Types::BIGINT, 'options' => ['autoincrement' => true, 'notnull' => true, 'length' => 20]],
+            'family_type' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'length' => 50]],
+            'label' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'length' => 100]],
+            'description' => ['type' => Types::TEXT, 'options' => ['notnull' => true, 'default' => '']],
+            'icon' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'default' => '']],
+            'sort_order' => ['type' => Types::BIGINT, 'options' => ['notnull' => true, 'default' => 0, 'length' => 20]],
+            'created' => ['type' => Types::BIGINT, 'options' => ['notnull' => true, 'default' => 0, 'length' => 20]],
+        ],
+        
         InquiryFamily::TABLE => [
             'id' => ['type' => Types::BIGINT, 'options' => ['autoincrement' => true, 'notnull' => true, 'length' => 20]],
             'family_type' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'length' => 50]],
