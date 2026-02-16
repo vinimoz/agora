@@ -7,6 +7,7 @@
     <!-- Family Tabs -->
     <div v-if="hasVisibleFamilies" class="family-tabs-container">
       <div class="family-tabs">
+        {{ familiesWithOptions.value }}
         <button
           v-for="family in familiesWithOptions"
           :key="family.key"
@@ -16,8 +17,8 @@
           ]"
           @click="setActiveFamily(family.key)"
         >
-          <div class="tab-icon" :style="{ color: getFamilyColor(family.key) }">
-            <component :is="getFamilyIcon(family.key)" :size="18" />
+          <div class="tab-icon" :style="{ color: getFamilyColorHelper(family.key) }">
+            <component :is="getFamilyIconHelper(family.key)" :size="18" />
           </div>
           <span class="tab-label">{{ family.label }}</span>
           <span v-if="familyCounts[family.key]" class="tab-count">
@@ -40,13 +41,13 @@
             :key="optionType.option_type"
             type="primary"
             :class="['create-option-btn', `type-${optionType.option_type}`]"
-            @click="openAddOptionModal(optionType.option_type)"
+                @click.stop="openAddOptionModal(optionType.optionType)"
           >
             <template #icon>
               <!-- Direct icon lookup from InquiryOptionIcons -->
               <component :is="InquiryOptionIcons[optionType.icon] || InquiryOptionIcons.File" :size="18" />
             </template>
-            + {{ optionType.label || optionType.option_type }}
+            + {{ optionType.label || optionType.optionType }}
           </NcButton>
         </div>
       </div>
@@ -173,11 +174,11 @@
 
         <!-- STRUCTURE Family Layout -->
         <div v-else-if="activeFamily === 'structure'" class="structure-layout">
-              <OptionTreeNode
-    :inquiry-id="inquiryStore.id"
-    :use-title="true"
-    :use-description="true"
-  />
+          <OptionTreeNode
+            :inquiry-id="inquiryStore.id"
+            :use-title="true"
+            :use-description="true"
+          />
         </div>
 
         <!-- CONSENSUS Family Layout -->
@@ -246,7 +247,7 @@
             <div class="options-list">
               <OptionCard
                 v-for="option in officialResults"
-                :key="option.id"
+                :key="option.id"deliberative
                 :option="option"
                 :inquiry-id="inquiryStore.id"
                 :official="true"
@@ -286,7 +287,7 @@
             />
           </div>
           <div v-if="activeFamilyOptions.length === 0" class="empty-state">
-            <component :is="getFamilyIcon(activeFamily)" :size="48" />
+            <component :is="getFamilyIconHelper(activeFamily)" :size="48" />
             <h4>{{ t('agora', 'No options yet') }}</h4>
             <p>{{ t('agora', 'Be the first to contribute') }}</p>
           </div>
@@ -311,16 +312,15 @@
       @created="handleOptionCreated"
     />
     <OptionDetailModal
-  v-if="showOptionDetail"
-  :option-id="selectedOptionId"
-  :inquiry-id="inquiryStore.id"
-  @close="closeOptionDetail"
-  @deleted="handleOptionDeleted"
-/>
+      v-if="showOptionDetail"
+      :option-id="selectedOptionId"
+      :inquiry-id="inquiryStore.id"
+      @close="closeOptionDetail"
+      @deleted="handleOptionDeleted"
+    />
 
   </div>
 </template>
-
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
@@ -330,25 +330,29 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import { useInquiryStore } from '../../stores/inquiry'
 import { useOptionsStore } from '../../stores/options'
 import { useSessionStore } from '../../stores/session'
-import { InquiryGeneralIcons , InquiryOptionIcons } from '../../utils/icons.ts'
-import {
-  getFamiliesWithOptionTypes,
-  getFamilyIconComponent,
-  getFamilyColor
-} from '../../helpers/modules/InquiryOptionHelper'
-import { getFamily } from '../../stores/option.type.ts'
+import { InquiryGeneralIcons, InquiryOptionIcons } from '../../utils/icons.ts'
+
+// Import types
+import type { InquiryType, OptionType, OptionFamily } from '../../Types/index.ts'
 
 import OptionCard from './OptionCard.vue'
 import AddOptionModal from './AddOptionModal.vue'
 import OptionDetailModal from './OptionDetailModal.vue'
 import OptionTreeNode from './OptionTreeNode.vue'
-
-// Import types
-import type { InquiryType, OptionType } from '../../Types/index.ts'
-
-// Helper methods
-const getFamilyIcon = (familyKey: string) => getFamilyIconComponent(familyKey)
-
+import {
+  getFamiliesWithOptionTypes,
+  getFamilyIconComponent,
+  getFamilyColor as importedGetFamilyColor,
+  findOptionType,
+  getOptionTypeLabel,
+  getOptionTypeIconComponent,
+  getOptionTypeColor,
+  getAllowedResponses,
+  getAvailableResponseTypes,
+  getOptionTypeFields,
+  hasSupportFeature,
+  allowsComments
+} from '../../helpers/modules/InquiryOptionHelper'
 
 // Props
 const props = defineProps<{
@@ -368,39 +372,28 @@ const selectedOptionTypeKey = ref<string | null>(null)
 const selectedParentId = ref<number | null>(null)
 const selectedOptionId = ref<number | null>(null)
 
+// Helper methods
+const getFamilyIconHelper = (familyKey: string) => getFamilyIconComponent(familyKey)
+const getFamilyColorHelper = (familyKey: string) => importedGetFamilyColor(familyKey)
+
 // Computed
 const allInquiryTypes = computed<InquiryType[]>(() =>
   sessionStore.appSettings?.inquiryTypeTab || []
 )
 
-const allOptionTypes = computed<OptionType[]>(() =>
-  sessionStore.appSettings?.inquiryOptionTypeTab || []
+const allOptionTypes = computed(() => sessionStore.appSettings?.inquiryOptionTypeTab || [])
+
+const allFamilies = computed<OptionFamily[]>(() =>
+  sessionStore.appSettings?.optionFamilyTab || []
 )
-
-// Debug logging
-const debugInfo = computed(() => {
-  console.log("=== DEBUG INFO ===")
-  console.log("Inquiry type:", inquiryStore.type)
-  console.log("All inquiry types:", allInquiryTypes.value?.length)
-  console.log("All option types:", allOptionTypes.value?.length)
-  console.log("=== END DEBUG ===")
-
-  return {
-    inquiryType: inquiryStore.type,
-    hasInquiryTypes: !!allInquiryTypes.value?.length,
-    hasOptionTypes: !!allOptionTypes.value?.length
-  }
-})
 
 // Get families with their option types
 const familiesWithOptions = computed(() => {
   const inquiryTypeKey = inquiryStore.type
+  console.log(" INNNNNNNNNNNNNNNN ",inquiryTypeKey)
+  console.log(" INNNNNNNNNNNNNNNN ",allInquiryTypes.value)
+  console.log(" INNNNNNNNNNNNNNNN ",allOptionTypes.value)
   if (!inquiryTypeKey || !allInquiryTypes.value?.length || !allOptionTypes.value?.length) {
-    console.log("Missing data for families:", {
-      inquiryTypeKey,
-      inquiryTypes: allInquiryTypes.value?.length,
-      optionTypes: allOptionTypes.value?.length
-    })
     return []
   }
 
@@ -409,21 +402,22 @@ const familiesWithOptions = computed(() => {
     allInquiryTypes.value,
     allOptionTypes.value
   )
+  console.log(" TOOOOOOOOOOOOOOOOOOOOOOOOOO ",families)
 
-  console.log("Families found:", families)
-
-  // Translate labels
-  return families.map(family => ({
+  let familiesFinal= families.map(family => ({
     ...family,
     name: t('agora', family.name),
     label: t('agora', family.label),
-    text: t('agora', family.text)
+    description: t('agora', family.description)
   }))
+  console.log(" TOOOOOOOOOOOOOOOOOOOOOOOOOO ",familiesFinal)
+  return familiesFinal
 })
 
 const hasVisibleFamilies = computed(() => familiesWithOptions.value.length > 0)
 
 const activeFamilyData = computed(() => {
+  console.log(" ACTIVE FAMILY ",activeFamily.value)
   if (!activeFamily.value) return null
   return familiesWithOptions.value.find(f => f.key === activeFamily.value)
 })
@@ -442,9 +436,11 @@ const familyCounts = computed(() => {
 
 // Get options for active family
 const activeFamilyOptions = computed(() => {
+  console.log(" HERE WE DEBUG ", activeFamilyData.value)
   if (!activeFamilyData.value) return []
 
-  const familyOptionTypeKeys = activeFamilyData.value.optionTypes.map(opt => opt.option_type)
+  const familyOptionTypeKeys = activeFamilyData.value.optionTypes.map(opt => opt.optionType)
+  console.log(" HERE WE DEBUG ", familyOptionTypeKeys)
 
   return optionsStore.options.filter(option =>
     familyOptionTypeKeys.includes(option.type)
@@ -474,34 +470,35 @@ const getChildOptions = (parentId: number, type?: string) => {
   return children
 }
 
-
 const getOptionTypeLabel = (optionTypeKey: string): string => {
-  const optionType = allOptionTypes.value.find(opt => 
+  const optionType = allOptionTypes.value.find(opt =>
     opt.option_type === optionTypeKey || opt.optionType === optionTypeKey
   )
   return optionType?.label || optionTypeKey
 }
 
+
 const getOptionTypeIcon = (optionTypeKey: string) => {
-  const optionType = allOptionTypes.value.find(opt => 
+  const optionType = allOptionTypes.value.find(opt =>
     opt.option_type === optionTypeKey || opt.optionType === optionTypeKey
   )
-  
+
   if (optionType?.icon) {
-    // Direct icon lookup from InquiryOptionIcons
     return InquiryOptionIcons[optionType.icon] || InquiryOptionIcons.File
   }
-  
+
   return InquiryOptionIcons.File
 }
-
-// const canAddOptions = computed(() => inquiryStore.permissions.addOptions)
 
 const setActiveFamily = (familyKey: string) => {
   activeFamily.value = familyKey
 }
 
 const openAddOptionModal = (optionTypeKey: string, parentId?: number) => {
+  if (!optionTypeKey) {
+    console.error('Cannot open add option modal: optionTypeKey is undefined')
+    return
+  }
   selectedOptionTypeKey.value = optionTypeKey
   selectedParentId.value = parentId || null
   showAddOptionModal.value = true
@@ -509,8 +506,7 @@ const openAddOptionModal = (optionTypeKey: string, parentId?: number) => {
 
 const closeAddOptionModal = () => {
   showAddOptionModal.value = false
-  selectedOptionTypeKey.value = null
-  selectedParentId.value = null
+
 }
 
 const openOptionDetail = (option: any) => {
@@ -538,8 +534,14 @@ const handleOptionDeleted = (deletedOptionId: number) => {
 
 // Initialize
 onMounted(() => {
-  console.log("OptionEditView mounted")
-  optionsStore.load(inquiryStore.id)
+  console.log("OptionEditView mounted", { 
+    inquiryId: inquiryStore.id,
+    inquiryType: inquiryStore.type 
+  })
+  
+  if (inquiryStore.id) {
+    optionsStore.load(inquiryStore.id)
+  }
 
   if (familiesWithOptions.value.length > 0) {
     activeFamily.value = familiesWithOptions.value[0].key
@@ -560,9 +562,6 @@ watch(() => inquiryStore.type, (newType) => {
     activeFamily.value = familiesWithOptions.value[0].key
   }
 })
-
-// Log debug info
-watch(debugInfo, () => {}, { immediate: true })
 </script>
 
 <style scoped lang="scss">

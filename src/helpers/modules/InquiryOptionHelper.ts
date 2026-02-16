@@ -4,48 +4,10 @@
  */
 
 import { InquiryGeneralIcons, InquiryOptionIcons , StatusIcons } from '../../utils/icons.ts'
-
+import { toRaw } from 'vue'
 import type { InquiryStatus, InquiryType, OptionType } from '../../Types/index.ts'
-
-// For option type
-export const getOptionTypeData = (optionType: string, allOptionTypes: any[], defaultType = 'default') => {
-  // Find the option type in the array
-  const found = allOptionTypes.find(opt => 
-    opt.option_type === optionType || opt.optionType === optionType
-  )
-  
-  if (found) {
-    return {
-      option_type: found.option_type || found.optionType || optionType,
-      label: found.label || optionType,
-      icon: found.icon || 'File',
-      family: found.family || 'default',
-      use_title: found.use_title !== undefined ? found.use_title : true,
-      support_feature: found.support_feature || 'none',
-      allow_comment: found.allow_comment || false,
-      allowed_response: found.allowed_response || [],
-      fields: found.fields || [],
-      description: found.description || '',
-      statuses: found.statuses || []
-    }
-  }
-  
-  // Return a default structure if not found
-  return {
-    option_type: optionType,
-    label: optionType,
-    icon: 'File',
-    family: 'default',
-    use_title: true,
-    support_feature: 'none',
-    allow_comment: false,
-    allowed_response: [],
-    fields: [],
-    description: '',
-    statuses: []
-  }
-}
-
+import { useAppSettingsStore } from '../../stores/appSettings.ts'
+import { t } from '@nextcloud/l10n'
 
 /**
  * Get option item data
@@ -65,71 +27,128 @@ export function getOptionItemData(item: OptionType | null, fallbackLabel: string
   const iconName = item?.icon || 'File'
   
   return {
-    icon: InquiryGeneralIcons[iconName] || StatusIcons[iconName] || InquiryOptionIcons[iconName] || InquiryGeneralIcons.Activity,
+    icon: InquiryOptionIcons[iconName] || InquiryGeneralIcons.Activity,
     label: item.label || fallbackLabel,
     description: item.description || ''
   }
 }
 
 /**
- * Get option type data from type string
+ * Generate a consistent random color for a family key
+ * Uses a hash of the string to always return the same color for the same family
  */
+export function getRandomColorForFamily(familyKey: string): string {
+    // Predefined nice colors that work well in UI
+    const niceColors = [
+        '#4A86E8', // Blue
+        '#6AA84F', // Green
+        '#F1C232', // Yellow
+        '#CC0000', // Red
+        '#E69138', // Orange
+        '#A64D79', // Purple
+        '#45818E', // Teal
+        '#674EA7', // Violet
+        '#3D85C6', // Sky Blue
+        '#5B9B46', // Forest Green
+        '#B45F06', // Brown
+        '#AA00FF', // Magenta
+    ]
+    
+    // Simple hash function to get consistent index
+    let hash = 0
+    for (let i = 0; i < familyKey.length; i++) {
+        hash = familyKey.charCodeAt(i) + ((hash << 5) - hash)
+    }
+    
+    // Get index from hash
+    const index = Math.abs(hash) % niceColors.length
+    return niceColors[index]
+}
+
+/**
+ * Get family color - tries to get from config, falls back to random
+ */
+export function getFamilyColor(familyKey: string): string {
+    // First check if we have a predefined color for common families
+    const predefinedColors: Record<string, string> = {
+        'debate': '#4A86E8',      // Blue
+        'structure': '#3D85C6',   // Sky Blue
+        'consensus': '#6AA84F',   // Green
+        'decision': '#CC0000',    // Red
+        'proposal': '#E69138',    // Orange
+        'question': '#5B9B46',    // Forest Green
+        'default': '#999999',     // Gray
+    }
+    
+    // Check predefined first
+    if (predefinedColors[familyKey]) {
+        return predefinedColors[familyKey]
+    }
+    
+    // Fallback to random but consistent color
+    return getRandomColorForFamily(familyKey)
+}
 
 /**
  * Get allowed option types for an inquiry type
- * @param inquiryTypeKey
- * @param inquiryTypes
- * @param optionTypes
+ * @param inquiryTypeConfig - The inquiry type configuration object
+ * @param optionTypes - All available option types
  */
 export function getAllowedOptionTypes(
-  inquiryTypeKey: string,
-  inquiryTypes: InquiryType[],
+  inquiryTypeConfig: InquiryType | undefined,
   optionTypes: OptionType[]
 ): OptionType[] {
-  // First find the inquiry type configuration
-  console.log(" WE FOUND ALLOW OPTION ",inquiryTypes)
-  console.log(" WE FOUND ALLOW OPTION TYPE KEY ",inquiryTypeKey)
-  const inquiryTypeConfig = inquiryTypes.find(t => t.inquiry_type === inquiryTypeKey)
-
-  if (!inquiryTypeConfig?.allowed_option_type) {
+  
+  // Return empty array if inquiryTypeConfig is undefined
+  if (!inquiryTypeConfig) {
     return []
   }
-  console.log(" WE FOUND ALLOW OPTION ",inquiryTypeConfig.allowed_option_type)
-  // Parse allowed_option_type if it's a string (JSON)
+
+  // Convert Proxy Vue en "raw" pour éviter les problèmes avec Array.isArray
+  const rawAllowed = toRaw(inquiryTypeConfig.allowed_option_type)
+
   let allowedOptionTypeKeys: string[] = []
-  if (typeof inquiryTypeConfig.allowed_option_type === 'string') {
+
+  if (typeof rawAllowed === 'string') {
     try {
-      allowedOptionTypeKeys = JSON.parse(inquiryTypeConfig.allowed_option_type)
-    } catch {
-      allowedOptionTypeKeys = []
-    }
-  } else if (Array.isArray(inquiryTypeConfig.allowed_option_type)) {
-    allowedOptionTypeKeys = inquiryTypeConfig.allowed_option_type
-  }
-
-  console.log(" WE FOUND ALLOW OPTION iTYPE KEYS ", allowedOptionTypeKeys)
-
-  // Map keys to OptionType objects
-  const result: OptionType[] = []
-
-  for (const key of allowedOptionTypeKeys) {
-    // Try to find the option type - check multiple possible fields
-    const optionType = optionTypes.find(opt =>
-      opt.option_type === key || // Try option_type
-      opt.optionType === key     // Try optionType (from your data)
-    )
-
-    if (optionType) {
-      // Ensure option_type field is set
-      const optionWithType = {
-        ...optionType,
-        option_type: optionType.option_type || optionType.optionType || key
+      const parsed = JSON.parse(rawAllowed)
+      if (Array.isArray(parsed)) {
+        allowedOptionTypeKeys = parsed.filter((v) => typeof v === 'string')
       }
-      result.push(optionWithType)
-    } else {
-      console.warn(`Option type "${key}" not found in inquiryOptionTypeTab`)
+    } catch (e) {
+      console.error('Failed to parse allowed_option_type JSON:', e)
     }
+  } else if (Array.isArray(rawAllowed)) {
+    allowedOptionTypeKeys = rawAllowed.filter((v) => typeof v === 'string')
   }
+
+  // Ensure we have a proper array of option types
+  const rawOptionTypes = toRaw(optionTypes)
+  
+  let allOptionTypes: OptionType[] = []
+  
+  if (Array.isArray(rawOptionTypes)) {
+    allOptionTypes = rawOptionTypes
+  } else if (rawOptionTypes && typeof rawOptionTypes === 'object') {
+    allOptionTypes = Object.values(rawOptionTypes)
+  }
+
+    // Debug to see what we're working with
+  console.log('Allowed keys:', allowedOptionTypeKeys)
+  console.log('Available option types full:', allOptionTypes)
+
+  // Filtrer selon allowedOptionTypeKeys - check BOTH property names!
+  const result = allOptionTypes.filter((opt) => {
+    if (!opt) return false
+    
+    // Get the option type value - could be in option_type or optionType
+    const optionTypeValue = opt.optionType
+    
+    return typeof optionTypeValue === 'string' && 
+           allowedOptionTypeKeys.includes(optionTypeValue)
+  })
+
+  console.log('RESULT WE GET :', result)
 
   return result
 }
@@ -154,6 +173,34 @@ export function groupOptionTypesByFamily(optionTypes: OptionType[]): Record<stri
   return grouped
 }
 
+
+/**
+ * Get the icon name for a family from appSettings
+ * @param familyKey - The family key (e.g., 'debate', 'structure', etc.)
+ * @returns Icon name as string
+ */
+export function getFamilyIconName(familyKey: string): string {
+  try {
+    // Try to get the store - this only works in setup context
+    const appSettingsStore = useAppSettingsStore()
+    return appSettingsStore?.settings?.optionFamilyTab?.[familyKey]?.icon || 'File'
+  } catch (e) {
+    // Store not available (called outside setup), return default
+    return 'File'
+  }
+}
+
+/**
+ * Get the icon name for a family from appSettings
+ * @param familyKey - The family key (e.g., 'debate', 'structure', etc.)
+ * @returns Icon name as string
+ */
+export function getFamilyIconComponent(familyKey: string): any {
+  const iconName = getFamilyIconName(familyKey)
+  return InquiryOptionIcons[iconName] || InquiryGeneralIcons[iconName] || InquiryGeneralIcons.File
+}
+
+
 /**
  * Get families with their option types
  * @param inquiryTypeKey
@@ -162,7 +209,7 @@ export function groupOptionTypesByFamily(optionTypes: OptionType[]): Record<stri
  */
 export function getFamiliesWithOptionTypes(
   inquiryTypeKey: string,
-  inquiryTypes: InquiryType[],
+  inquiryTypes: InquiryType[] | Record<string, InquiryType>,
   optionTypes: OptionType[]
 ): Array<{
   key: string;
@@ -172,30 +219,46 @@ export function getFamiliesWithOptionTypes(
   icon: string;
   optionTypes: OptionType[];
 }> {
+
+  // Get the inquiry type config - handle both array and object
+  let inquiryTypeConfig: InquiryType | undefined
+
+  if (Array.isArray(inquiryTypes)) {
+    inquiryTypeConfig = inquiryTypes.find(t => t?.inquiry_type === inquiryTypeKey)
+  } else {
+    inquiryTypeConfig = inquiryTypes[inquiryTypeKey]
+  }
+
+  if (!inquiryTypeConfig) {
+    console.warn(`No configuration found for inquiry type "${inquiryTypeKey}"`)
+    return []
+  }
+
   // Get allowed option types
-  const allowedOptionTypes = getAllowedOptionTypes(inquiryTypeKey, inquiryTypes, optionTypes)
- console.log(" ALLLLL OPTION TYPES",allowedOptionTypes) 
+console.log(" CHHHHHHHHHHHHHHHHHHHHH ",inquiryTypeConfig)
+console.log(" CHHHHHHHHHHHHHHHHHHHHH ",optionTypes)
+  const allowedOptionTypes = getAllowedOptionTypes(inquiryTypeConfig, optionTypes)
+
   // Group by family
   const groupedByFamily = groupOptionTypesByFamily(allowedOptionTypes)
- 
-  console.log(" ALLLLL OPTION TYPES GROUPED BY FAMILIES",groupedByFamily) 
-  
+
   // Convert to array format
   return Object.entries(groupedByFamily).map(([familyKey, familyOptionTypes]) => {
     // Get family data
     const fallbackData = getFamilyFallbackData()
-    const fallback = fallbackData[familyKey] || {}
-    
+    const fallback = fallbackData[familyKey] || fallbackData['default'] || {}
+
     // Try to get icon from first option type in this family
     const firstOptionType = familyOptionTypes[0]
+    // Check both possible property names for icon
     const iconName = firstOptionType?.icon || fallback.icon || 'File'
-    
+
     // Format label if not provided
     const formattedLabel = familyKey
       .split('_')
       .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
       .join(' ')
-    
+
     return {
       key: familyKey,
       name: fallback.name || formattedLabel,
@@ -206,6 +269,7 @@ export function getFamiliesWithOptionTypes(
     }
   })
 }
+
 
 /**
  * Get fallback data for families
@@ -252,40 +316,6 @@ export function getFamilyFallbackData(): Record<string, any> {
 }
 
 /**
- * Get family icon component
- * @param familyKey
- */
-export function getFamilyIconComponent(familyKey: string): any {
-  const familyIcons: Record<string, any> = {
-    'debate': InquiryGeneralIcons.Discussion,
-    'structure': InquiryGeneralIcons.Settings,
-    'consensus': InquiryGeneralIcons.ThumbUp,
-    'decision': InquiryGeneralIcons.Checkmark,
-    'proposal': InquiryGeneralIcons.Lightbulb,
-    'default': InquiryGeneralIcons.File
-  }
-  
-  return familyIcons[familyKey] || familyIcons.default
-}
-
-/**
- * Get family color
- * @param familyKey
- */
-export function getFamilyColor(familyKey: string): string {
-  const familyColors: Record<string, string> = {
-    'debate': '#6aa84f',
-    'structure': '#3c8dbc',
-    'consensus': '#f1c232',
-    'decision': '#cc0000',
-    'proposal': '#e69138',
-    'default': '#999999'
-  }
-  
-  return familyColors[familyKey] || familyColors.default
-}
-
-/**
  * Get option types for specific family
  * @param familyKey
  * @param allowedOptionTypes
@@ -310,5 +340,229 @@ export function getOptionTypeOptions(optionTypes: OptionType[]) {
     description: type.description,
     icon: type.icon
   }))
+}
+
+/**
+ * Get option type from list by type string
+ */
+export function findOptionType(
+  optionType: string | null | undefined,
+  optionTypes: any[]
+): any | null {
+  if (!optionType || !optionTypes?.length) return null
+
+  return optionTypes.find(opt =>
+    opt.option_type === optionType || opt.optionType === optionType
+  ) || null
+}
+
+/**
+ * Get option type label safely
+ */
+export function getOptionTypeLabel(
+  optionType: string | null | undefined,
+  optionTypes: any[],
+  fallback: string = 'Option'
+): string {
+  if (!optionType) return fallback
+  const found = findOptionType(optionType, optionTypes)
+  return found?.label || optionType || fallback
+}
+
+/**
+ * Get option type icon component safely
+ */
+export function getOptionTypeIconComponent(
+  optionType: string | null | undefined,
+  optionTypes: any[]
+): any {
+  if (!optionType) return InquiryOptionIcons.File
+
+  const found = findOptionType(optionType, optionTypes)
+  const iconName = found?.icon || 'File'
+
+  return InquiryOptionIcons[iconName] || InquiryOptionIcons.File
+}
+
+/**
+ * Get option type icon name as string
+ */
+export function getOptionTypeIconName(
+  optionType: string | null | undefined,
+  optionTypes: any[]
+): string {
+  if (!optionType) return 'File'
+  const found = findOptionType(optionType, optionTypes)
+  return found?.icon || 'File'
+}
+
+/**
+ * Get option type description safely
+ */
+export function getOptionTypeDescription(
+  optionType: string | null | undefined,
+  optionTypes: any[]
+): string {
+  if (!optionType) return ''
+  const found = findOptionType(optionType, optionTypes)
+  return found?.description || found?.text || ''
+}
+
+/**
+ * Get option type family safely
+ */
+export function getOptionTypeFamily(
+  optionType: string | null | undefined,
+  optionTypes: any[]
+): string {
+  if (!optionType) return 'default'
+  const found = findOptionType(optionType, optionTypes)
+  return found?.family || 'default'
+}
+
+/**
+ * Get option type color based on family
+ */
+export function getOptionTypeColor(
+  optionType: string | null | undefined,
+  optionTypes: any[]
+): string {
+  const family = getOptionTypeFamily(optionType, optionTypes)
+  return getFamilyColor(family)
+}
+
+/**
+ * Get allowed responses for an option type
+ */
+export function getAllowedResponses(
+  optionType: string | null | undefined,
+  optionTypes: any[]
+): string[] {
+  if (!optionType) return []
+
+  const found = findOptionType(optionType, optionTypes)
+  if (!found) return []
+  console.log(" FIND OPTOON TYPE ",found)
+  let responses: string[] = []
+
+  if (typeof found.allowed_response === 'string') {
+    try {
+      const parsed = JSON.parse(found.allowed_response)
+      if (Array.isArray(parsed)) {
+        responses = parsed.filter((v) => typeof v === 'string')
+      }
+    } catch (e) {
+      console.error('Failed to parse allowed_response JSON:', e)
+    }
+  } else if (Array.isArray(found.allowed_response)) {
+    responses = found.allowed_response.filter((v) => typeof v === 'string')
+  }
+
+  return responses
+}
+
+/**
+ * Get available response types with full data
+ */
+export function getAvailableResponseTypes(
+  optionType: string | null | undefined,
+  allOptionTypes: any[]
+): Array<{
+  option_type: string
+  label: string
+  icon: string
+  description?: string
+}> {
+  const allowedKeys = getAllowedResponses(optionType, allOptionTypes)
+  console.log(" RESPONSE KEY ",optionType)
+  console.log(" RESPONSE KEY ",allowedKeys)
+  return allowedKeys
+    .map(key => {
+      const found = findOptionType(key, allOptionTypes)
+      return {
+        option_type: key,
+        label: found?.label || key,
+        icon: found?.icon || 'File',
+        description: found?.description || found?.text || ''
+      }
+    })
+    .sort((a, b) => a.label.localeCompare(b.label))
+}
+
+/**
+ * Get additional fields for an option type
+ */
+export function getOptionTypeFields(
+  optionType: string | null | undefined,
+  optionTypes: any[]
+): any[] {
+  if (!optionType) return []
+
+  const found = findOptionType(optionType, optionTypes)
+  if (!found?.fields) return []
+
+  if (typeof found.fields === 'string') {
+    try {
+      return JSON.parse(found.fields)
+    } catch {
+      return []
+    }
+  }
+
+  return found.fields || []
+}
+
+/**
+ * Check if option type has support feature
+ */
+export function hasSupportFeature(
+  optionType: string | null | undefined,
+  optionTypes: any[]
+): boolean {
+  if (!optionType) return false
+  const found = findOptionType(optionType, optionTypes)
+  const feature = found?.support_feature
+  return feature && feature !== 'none'
+}
+
+/**
+ * Get support feature label
+ */
+export function getSupportFeatureLabel(
+  optionType: string | null | undefined,
+  optionTypes: any[]
+): string {
+  if (!optionType) return ''
+  const found = findOptionType(optionType, optionTypes)
+  const feature = found?.support_feature
+
+  if (feature === 'ternary') return t('agora', 'Ternary support (for/against/neutral)')
+  if (feature === 'binary') return t('agora', 'Binary support (like/dislike)')
+  if (feature && feature !== 'none') return t('agora', 'Support enabled')
+  return ''
+}
+
+/**
+ * Check if option type allows comments
+ */
+export function allowsComments(
+  optionType: string | null | undefined,
+  optionTypes: any[]
+): boolean {
+  if (!optionType) return false
+  const found = findOptionType(optionType, optionTypes)
+  return found?.allow_comment || false
+}
+
+/**
+ * Check if option type uses title
+ */
+export function usesTitle(
+  optionType: string | null | undefined,
+  optionTypes: any[]
+): boolean {
+  if (!optionType) return true
+  const found = findOptionType(optionType, optionTypes)
+  return found?.use_title !== false
 }
 

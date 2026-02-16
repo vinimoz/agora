@@ -250,6 +250,19 @@ function handleCloseGroupDialog() {
   selectedInquiryGroupTypeForCreation.value = null
 }
 
+function handleInquirySelected(inquiry) {
+      if (inquiry && inquiry.family) {
+        
+        inquiriesStore.setFamilyType(inquiry.family)
+        router.push({
+          name: 'inquiry',
+          params: {
+            id: inquiry.id
+          },
+      })
+    }
+}
+
 // Watch for familyType changes in store
 watch(
   () => inquiriesStore.familyType,
@@ -274,6 +287,7 @@ watch(
           :exact="true"
           :to="{ name: 'inquiry', params: { id: inquiry.id } }"
           class="navigation-item"
+          @click="handleInquirySelected(inquiry)"
         >
           <template #icon>
             <component :is="getInquiryIcon(inquiry)" class="nav-icon" />

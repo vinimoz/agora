@@ -400,19 +400,6 @@ const loadMiscData = () => {
   }
 }
 
-const getSafeStringValue = (value: any): string => {
-    if (value === null || value === undefined) {
-        return ''
-    }
-    if (typeof value === 'object') {
-        try {
-            return JSON.stringify(value)
-        } catch {
-            return ''
-        }
-    }
-    return String(value)
-}
 
 // Save individual field to database
 const saveFieldToDatabase = async (fieldKey: string, value: Field) => {
@@ -612,22 +599,20 @@ onMounted(() => {
                 <p>{{ error }}</p>
             </div>
 
-            <!-- Content when not loading and no error -->
-            <template v-else>
-                <!-- No data state -->
-                <div v-if="!displayFields.length && props.isReadonly" class="no-data-state">
-                    <component :is="StatusIcons.Info" class="no-data-icon" />
-                    <p>{{ t('No additional settings configured.') }}</p>
-                </div>
+            <!-- No data state -->
+            <div v-else-if="!displayFields.length && props.isReadonly" class="no-data-state">
+                <component :is="StatusIcons.Info" class="no-data-icon" />
+                <p>{{ t('No additional settings configured.') }}</p>
+            </div>
 
-                <!-- Readonly mode -->
-                <div v-else-if="props.isReadonly" class="misc-fields-readonly">
-                    <div class="misc-fields-list">
-                        <div
+            <!-- Readonly mode -->
+            <div v-else-if="props.isReadonly" class="misc-fields-readonly">
+                <div class="misc-fields-list">
+                    <div
                             v-for="field in displayFields"
                             :key="field.key"
                             class="misc-field-item"
-                        >
+                            >
                             <div class="field-row">
                                 <label class="field-label">{{ field.label }}:</label>
                                 <div class="field-value">
@@ -635,25 +620,25 @@ onMounted(() => {
                                     <span v-else>{{ field.displayValue }}</span>
                                 </div>
                             </div>
-                        </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- Editable fields -->
-                <div v-else class="misc-fields-edit">
-                    <div v-if="isSaving" class="saving-indicator">
-                        <div class="icon-loading-small"></div>
-                        <span>{{ t('agora','Saving...') }}</span>
-                    </div>
+            <!-- Editable fields -->
+            <div v-else class="misc-fields-edit">
+                <div v-if="isSaving" class="saving-indicator">
+                    <div class="icon-loading-small"></div>
+                    <span>{{ t('agora','Saving...') }}</span>
+                </div>
 
-                    <div class="edit-fields">
-                        <!-- Support feature field -->
-                        <div v-if="userCanConfigureSupport" class="edit-field-item">
-                            <label class="edit-field-label">
-                                {{ t('agora',"Support feature") }}
-                            </label>
-                            <div class="edit-field-input">
-                                <NcSelect
+                <div class="edit-fields">
+                    <!-- Support feature field -->
+                    <div v-if="userCanConfigureSupport" class="edit-field-item">
+                        <label class="edit-field-label">
+                            {{ t('agora',"Support feature") }}
+                        </label>
+                        <div class="edit-field-input">
+                            <NcSelect
                                     :model-value="getSupportFeatureValue"
                                     :options="supportFeatureOptions"
                                     :reduce="(option: any) => option.id"
@@ -662,18 +647,19 @@ onMounted(() => {
                                     :disabled="isSaving"
                                     :placeholder="t('Select support feature')"
                                     @update:model-value="handleSupportFeatureChange"
-                                />
-                            </div>
-                            <div class="field-description">
-                                {{ t('agora','Choose the type of support feature for this inquiry') }}
-                            </div>
+                                    />
                         </div>
+                        <div class="field-description">
+                            {{ t('agora','Choose the type of support feature for this inquiry') }}
+                        </div>
+                    </div>
 
-                        <!-- Allow comment field -->
-                        <div v-if="userCanConfigureComments" class="edit-field-item">
-                            <div class="checkbox-field">
-                                <div class="checkbox-wrapper">
-                                    <input
+                    <!-- Allow comment field - -->
+                    <div v-if="userCanConfigureComments" class="edit-field-item">
+                        <div class="checkbox-field">
+                            <div class="checkbox-wrapper">
+                                <!-- Using simple checkbox for now to avoid component issues -->
+                                <input
                                         :id="'checkbox-allowComment'"
                                         type="checkbox"
                                         :checked="getAllowCommentValue"
@@ -681,39 +667,38 @@ onMounted(() => {
                                         :disabled="isSaving"
                                         class="simple-checkbox"
                                         @change="(e) => handleAllowCommentChange((e.target as HTMLInputElement).checked)"
-                                    />
-                                    <label :for="'checkbox-allowComment'" class="checkbox-label">
-                                        {{ t('agora','Allow comments') }}
-                                        <span class="optional-label">({{ t('agora','optional') }})</span>
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="field-description">
-                                {{ t('agora','Allow users to add comments to their votes') }}
+                                        />
+                                        <label :for="'checkbox-allowComment'" class="checkbox-label">
+                                            {{ t('agora','Allow comments') }}
+                                            <span class="optional-label">({{ t('agora','optional') }})</span>
+                                        </label>
                             </div>
                         </div>
+                        <div class="field-description">
+                            {{ t('agora','Allow users to add comments to their votes') }}
+                        </div>
+                    </div>
 
-                        <!-- Dynamic fields -->
                         <div
-                            v-for="field in dynamicFields" 
-                            :key="field.key"
-                            class="edit-field-item"
-                        >
-                            <!-- Checkbox field -->
+                                v-for="field in dynamicFields.slice()" 
+                                :key="field.key"
+                                class="edit-field-item"
+                                >
+                                <!-- Checkbox field -->
                             <div v-if="field.type === 'boolean'" class="checkbox-field">
                                 <div class="checkbox-wrapper">
                                     <input
-                                        :id="`checkbox-${field.key}`"
-                                        type="checkbox"
-                                        :checked="getCheckboxValue(field.key)"
-                                        :name="field.key"
-                                        :disabled="isSaving"
-                                        @change="(e) => updateFieldValue(field.key, (e.target as HTMLInputElement).checked, 'boolean')"
-                                    />
-                                    <label :for="`checkbox-${field.key}`" class="checkbox-label">
-                                        {{ field.label }}
-                                        <span v-if="!field.required" class="optional-label">({{ t('agora','optional') }})</span>
-                                    </label>
+                                            :id="`checkbox-${field.key}`"
+                                            type="checkbox"
+                                            :checked="getCheckboxValue(field.key)"
+                                            :name="field.key"
+                                            :disabled="isSaving"
+                                            @change="(e) => updateFieldValue(field.key, (e.target as HTMLInputElement).checked, 'boolean')"
+                                            />
+                                            <label :for="`checkbox-${field.key}`" class="checkbox-label">
+                                                {{ field.label }}
+                                                <span v-if="!field.required" class="optional-label">({{ t('agora','optional') }})</span>
+                                            </label>
                                 </div>
                             </div>
 
@@ -728,78 +713,78 @@ onMounted(() => {
                                 <div class="edit-field-input">
                                     <!-- Enum field -->
                                     <NcSelect
-                                        v-if="field.type === 'enum'"
-                                        :model-value="getEnumModelValue(field) || ''"
-                                        :options="field.allowed_values || []"
-                                        :reduce="(option: any) => typeof option === 'string' ? option : option.value"
-                                        :get-option-label="getEnumLabel"
-                                        :clearable="!field.required"
-                                        :label-outside="true"
-                                        :input-label="field.label"
-                                        :disabled="isSaving"
-                                        :placeholder="t('Select an option')"
-                                        @update:model-value="(val: string) => updateFieldValue(field.key, val, 'enum')"
-                                    />
-
-                                    <!-- Integer field -->
-                                    <NcInputField
-                                        v-else-if="field.type === 'integer'"
-                                        :model-value="getSafeStringValue(getMiscValue(field.key))"
-                                        type="number"
-                                        :label="field.label"
-                                        :disabled="isSaving"
-                                        @update:model-value="(val: string) => updateFieldValue(field.key, val ? parseInt(val) : null, 'integer')"
-                                    />
-
-                                    <!-- Datetime field -->
-                                    <NcDateTimePickerNative
-                                        v-else-if="field.type === 'datetime'"
-                                        :model-value="getFormattedDate(field.key)"
-                                        type="date"
-                                        :label="field.label"
-                                        :disabled="isSaving"
-                                        @update:model-value="(val: string) => updateFieldValue(field.key, val, 'datetime')"
-                                    />
-
-                                    <!-- Users/Groups field -->
-                                    <UserSearch
-                                        v-else-if="field.type === 'users' || field.type === 'groups'"
-                                        :model-value="selectedUsers[field.key]"
-                                        :search-types="field.type === 'users' ? [99] : [1]"
-                                        :placeholder="t('Type to search for users')"
-                                        :aria-label="field.label"
-                                        :close-on-select="true"
-                                        @update:model-value="(user) => handleUserSelected(field.key, user)"
-                                    />
-
-                                    <!-- JSON field -->
-                                    <div v-else-if="field.type === 'json'" class="json-field">
-                                        <NcInputField
-                                            :model-value="getSafeStringValue(getMiscValue(field.key))"
-                                            type="textarea"
-                                            :rows="5"
-                                            :label="field.label"
+                                            v-if="field.type === 'enum'"
+                                            :model-value="getEnumModelValue(field)"
+                                            :options="field.allowed_values || []"
+                                            :reduce="(option: any) => typeof option === 'string' ? option : option.value"
+                                            :get-option-label="getEnumLabel"
+                                            :clearable="!field.required"
+                                            :label-outside="true"
+                                            :input-label="field.label"
                                             :disabled="isSaving"
-                                            @update:model-value="(val: string) => {
-                                                try {
-                                                    const parsed = val ? JSON.parse(val) : null
-                                                    updateFieldValue(field.key, parsed, 'json')
-                                                } catch {
-                                                    updateFieldValue(field.key, val, 'json')
-                                                }
-                                            }"
-                                        />
-                                    </div>
+                                            :placeholder="t('Select an option')"
+                                            @update:model-value="(val: string) => updateFieldValue(field.key, val, 'enum')"
+                                            />
 
-                                    <!-- Default string field -->
-                                    <NcInputField
-                                        v-else
-                                        :model-value="getSafeStringValue(getMiscValue(field.key))"
-                                        type="text"
-                                        :label="field.label"
-                                        :disabled="isSaving"
-                                        @update:model-value="(val: string) => updateFieldValue(field.key, val, 'string')"
-                                    />
+                                            <!-- Integer field -->
+                                            <NcInputField
+                                                    v-else-if="field.type === 'integer'"
+                                                    v-model="inquiryStore.miscFields[field.key]"
+                                                    type="number"
+                                                    :label="field.label"
+                                                    :disabled="isSaving"
+                                                    @update:model-value="(val: string) => updateFieldValue(field.key, parseInt(val) || null, 'integer')"
+                                                    />
+
+                                                    <!-- Datetime field -->
+                                                    <NcDateTimePickerNative
+                                                            v-else-if="field.type === 'datetime'"
+                                                            :model-value="getFormattedDate(field.key)"
+                                                            type="date"
+                                                            :label="field.label"
+                                                            :disabled="isSaving"
+                                                            @update:model-value="(val: string) => updateFieldValue(field.key, val, 'datetime')"
+                                                            />
+
+                                                            <!-- Users/Groups field -->
+                                                            <UserSearch
+                                                                    v-else-if="field.type === 'users' || field.type === 'groups'"
+                                                                    v-model="selectedUsers[field.key]"
+                                                                    :search-types="field.type === 'users' ? [99] : [1]"
+                                                                    :placeholder="t('Type to search for users')"
+                                                                    :aria-label="field.label"
+                                                                    :close-on-select="true"
+                                                                    @user-selected="(user) => handleUserSelected(field.key, user)"
+                                                                    />
+
+                                                                    <!-- JSON field -->
+                                                                    <div v-else-if="field.type === 'json'" class="json-field">
+                                                                        <NcInputField
+                                                                                v-model="inquiryStore.miscFields[field.key]"
+                                                                                type="textarea"
+                                                                                :rows="5"
+                                                                                :label="field.label"
+                                                                                :disabled="isSaving"
+                                                                                @update:model-value="(val: string) => {
+                                                                                                     try {
+                                                                                                     const parsed = val ? JSON.parse(val) : null
+                                                                                                     updateFieldValue(field.key, parsed, 'json')
+                                                                                                     } catch {
+                                                                                                     updateFieldValue(field.key, val, 'json')
+                                                                                                     }
+                                                                                                     }"
+                                                                                />
+                                                                    </div>
+
+                                                                    <!-- Default string field -->
+                                                                    <NcInputField
+                                                                            v-else
+                                                                            v-model="inquiryStore.miscFields[field.key]"
+                                                                            type="text"
+                                                                            :label="field.label"
+                                                                            :disabled="isSaving"
+                                                                            @update:model-value="(val: string) => updateFieldValue(field.key, val, 'string')"
+                                                                            />
                                 </div>
                             </div>
 
@@ -809,9 +794,8 @@ onMounted(() => {
                         </div>
                     </div>
                 </div>
-            </template>
+            </div>
         </div>
-    </div>
 </template>
 
 <style scoped>

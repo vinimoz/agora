@@ -24,14 +24,15 @@ const props = defineProps<{
 // Computed property to get filtered comments
 const filteredComments = computed(() => {
   console.log(" INTO COMMMENT ",props.optionId)
-  console.log(" INTO COMMMENT ",props.inquiryOnly)
-  console.log(" FILTER COMMMENT ",commentsStore.groupedComments.filter( comment => comment.optionId === 0))
-  console.log(" FILTER COMMMENT ",commentsStore.groupedComments.length)
-  if (props.optionId) {
-    // Show only comments for specific option
-    return commentsStore.groupedComments.filter(
-      comment => comment.optionId === props.optionId
-    )
+  console.log(" INTO COMMMENT iNQUIRY ONLY ",props.inquiryOnly)
+  console.log(" ALLLLLLLLLLLLLL COMMMENT ",commentsStore.comments)
+  console.log(" COMMMENT GROUPED PROPS ID ",commentsStore.groupedComments)
+  console.log(" FILTER COMMMENT GROUPED PROPS ID ",commentsStore.groupedComments.filter( comment => comment.optionId === 0 ))
+  if (props.optionId !== undefined) {
+    
+    return commentsStore.comments
+      .filter(comment => comment.optionId === props.optionId)
+      .sort((a, b) => b.timestamp - a.timestamp) 
   }
   
   if (props.inquiryOnly) {

@@ -182,6 +182,7 @@ class Application extends App implements IBootstrap
                 return new UserMapper(
                     $c->get(IDBConnection::class),
                     $c->get(IUserManager::class),
+                    $c->get(LoggerInterface::class),
                 );
             }
         );

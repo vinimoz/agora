@@ -48,15 +48,15 @@ export const useActivityStore = defineStore('activity', {
     },
   },
 
-  getters: {
-    getActivitiesForInquiry(state): Activity[] {
-      const sessionStore = useSessionStore()
-      // TODO: Learn: Why is activity.object_id === sessionStore.currentInquiryId always false?
-      return state.activities.filter(
-        (activity: Activity) =>
-          activity.object_type === 'inquiry' &&
-          activity.object_id - sessionStore.currentInquiryId === 0
-      )
-    },
+ getters: {
+  getActivitiesForInquiry(state): Activity[] {
+    const sessionStore = useSessionStore()
+    // Filter activities for the current inquiry using direct equality comparison
+    return state.activities.filter(
+      (activity: Activity) =>
+        activity.object_type === 'inquiry' &&
+        activity.object_id === sessionStore.currentInquiryId
+    )
+  },
   },
 })

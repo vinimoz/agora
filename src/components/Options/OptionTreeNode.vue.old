@@ -727,24 +727,15 @@ import { useSessionStore } from '../../stores/session'
 import { useSupportsStore } from '../../stores/supports'
 import { useOptionStore } from '../../stores/option'
 import { InquiryOptionIcons } from '../../utils/icons.ts'
+import { getOptionTypeData } from '../../helpers/modules/InquiryOptionHelper'
 import { showSuccess, showError } from '@nextcloud/dialogs'
 import { 
-  createOptionContext,
-  canEditOption,
-  canDeleteOption,
-  canCommentOption,
-  canSupportOption
+    createOptionContext,
+    canEditOption,
+    canDeleteOption,
+    canCommentOption,
+    canSupportOption
 } from '../../utils/permissions.ts'
-
-import {
-  findOptionType,
-  getOptionTypeLabel as getOptionTypeLabelHelper,
-  getOptionTypeIconComponent,
-  getAllowedResponses,
-  hasSupportFeature as hasSupportFeatureHelper,
-  allowsComments as allowsCommentsHelper,
-  usesTitle
-} from '../../helpers/modules/InquiryOptionHelper'
 
 // Types
 import type { Option, OptionType, OptionStoreLike } from '../../Types/index.ts'
@@ -771,7 +762,7 @@ const sessionStore = useSessionStore()
 const supportsStore = useSupportsStore()
 const optionStore = useOptionStore()
 
-// State
+// State - FIXED: Initialize with empty strings to prevent undefined
 const activeNodeId = ref<number | null>(null)
 const selectedNode = ref<Option | null>(null)
 const editingNodeId = ref<number | null>(null)
@@ -801,30 +792,23 @@ const activeNodeContext = computed(() => {
 })
 
 // Get structure family types (filter by family 'structure')
-const structureTypes = computed<OptionType[]>(() => 
-  allOptionTypes.value.filter(type => type.family === 'structure')
-)
+const structureTypes = computed<OptionType[]>(() => allOptionTypes.value.filter(type => type.family === 'structure'))
 
 // Get root structure types
-const rootStructureTypes = computed<OptionType[]>(() => structureTypes.value.filter(type => {
-  const typeKey = type.option_type || type.optionType
-  // Types that can be root (e.g., chapter, introduction)
-  return ['chapter', 'structure_intro'].includes(typeKey) ||
-    !allOptionTypes.value.some(parentType => {
-      const parentResponses = parentType.allowed_response
-      if (Array.isArray(parentResponses)) {
-        return parentResponses.includes(typeKey)
-      }
-      return false
-    })
-}))
+const rootStructureTypes = computed<OptionType[]>(() => structureTypes.value.filter(type => 
+    // Types that can be root (e.g., chapter, introduction)
+     ['chapter', 'structure_intro'].includes(type.option_type) ||
+           !allOptionTypes.value.some(parentType => 
+             parentType.allowed_response?.includes(type.option_type)
+           )
+  ))
 
 // Get only structure family root options
 const structureRootOptions = computed<Option[]>(() => optionsStore.options.filter(opt => {
-  // Check if it's a structure family type and has no parent
-  const typeData = findOptionType(opt.type, allOptionTypes.value)
-  return typeData?.family === 'structure' && (!opt.parentId || opt.parentId === 0)
-}))
+    // Check if it's a structure family type and has no parent
+    const typeData = getOptionTypeDataByType(opt.type)
+    return typeData?.family === 'structure' && (!opt.parentId || opt.parentId === 0)
+  }))
 
 const activeNode = computed<Option | null>(() => {
   if (!activeNodeId.value) return null
@@ -838,24 +822,49 @@ const formattedContent = computed(() => {
     .replace(/\n/g, '<br>')
 })
 
+// Helper methods
+const getOptionTypeDataForNode = (node: Option | null) => {
+  if (!node) return null
+  return getOptionTypeData(node.type, allOptionTypes.value, node.type)
+}
+
+const getOptionTypeDataByType = (type: string) => allOptionTypes.value.find(opt => 
+    opt.option_type === type || opt.optionType === type
+  )
 
 const getOptionTypeLabel = (type: string): string => {
-  return getOptionTypeLabelHelper(type, allOptionTypes.value, type)
+  const optionType = getOptionTypeDataByType(type)
+  return optionType?.label || type
 }
 
 const getOptionTypeIcon = (type: string) => {
-  return getOptionTypeIconComponent(type, allOptionTypes.value)
+  const optionType = getOptionTypeDataByType(type)
+
+  if (optionType?.icon) {
+    const iconComponent = InquiryOptionIcons[optionType.icon as keyof typeof InquiryOptionIcons]
+    return iconComponent || InquiryOptionIcons.File
+  }
+  return InquiryOptionIcons.File
 }
 
 const displayNodeTitle = (node: Option): string => {
   if (!node) return ''
-  const useTitle = usesTitle(node.type, allOptionTypes.value)
-  return useTitle ? (node.title || node.label) : node.label
+  const typeData = getOptionTypeDataForNode(node)
+  return typeData?.use_title ? (node.title || node.label) : node.label
 }
 
 const hasSupportFeature = (node: Option): boolean => {
   if (!node) return false
-  return hasSupportFeatureHelper(node.type, allOptionTypes.value)
+
+  const nodeOptionLike: OptionStoreLike = {
+    owner: { id: node.owner?.id || '' },
+    type: node.type,
+    isDeleted: node.isDeleted || false,
+    isArchived: node.isArchived || false,
+  }
+
+  const context = createOptionContext(nodeOptionLike)
+  return canSupportOption(context)
 }
 
 const getChildren = (parentId: number): Option[] => {
@@ -864,7 +873,15 @@ const getChildren = (parentId: number): Option[] => {
 }
 
 const getAllowedResponseTypes = (nodeType: string): string[] => {
-  return getAllowedResponses(nodeType, allOptionTypes.value)
+  const typeData = getOptionTypeDataByType(nodeType)
+  if (typeof typeData?.allowed_response === 'string') {
+    try {
+      return JSON.parse(typeData.allowed_response)
+    } catch {
+      return []
+    }
+  }
+  return typeData?.allowed_response || []
 }
 
 const canAddChild = (node: Option): boolean => {
@@ -873,10 +890,7 @@ const canAddChild = (node: Option): boolean => {
   return allowedResponses.length > 0
 }
 
-const getRootType = (): string => {
-  const firstRoot = rootStructureTypes.value[0]
-  return firstRoot?.option_type || firstRoot?.optionType || 'chapter'
-}
+const getRootType = (): string => rootStructureTypes.value[0]?.option_type || 'chapter'
 
 const getRootTypeLabel = (): string => getOptionTypeLabel(getRootType())
 
@@ -891,6 +905,7 @@ const getDepth = (node: Option, depth = 0): number => {
 const canEditNode = (node: Option): boolean => {
   if (!node) return false
 
+  // Create a proper OptionStoreLike object
   const optionLike: OptionStoreLike = {
     owner: { id: node.owner?.id || '' },
     type: node.type,
@@ -928,7 +943,11 @@ const canSupportNode = (node: Option): boolean => {
 
 const allowComments = (node: Option): boolean => {
   if (!node) return false
-  return allowsCommentsHelper(node.type, allOptionTypes.value) && canCommentOnNode(node)
+  const typeData = getOptionTypeDataForNode(node)
+  const hasCommentFeature = typeData?.allow_comment || false
+  if (!hasCommentFeature) return false
+
+  return canCommentOnNode(node)
 }
 
 const formatDate = (timestamp?: number): string => {
@@ -940,7 +959,7 @@ const formatDate = (timestamp?: number): string => {
 const truncateText = (text: string, maxLength: number): string => {
   if (!text) return ''
   if (text.length <= maxLength) return text
-  return `${text.substring(0, maxLength)}...`
+  return `${text.substring(0, maxLength)  }...`
 }
 
 // Check if node has allowed responses
@@ -952,7 +971,7 @@ const hasAllowedResponses = (node: Option): boolean => {
 
 // Methods
 const setActiveNode = (node: Option): void => {
-  if (editingNodeId.value) return
+  if (editingNodeId.value) return // Don't change active node while editing
   activeNodeId.value = node.id
   selectedNode.value = null
   editingNodeId.value = null
@@ -960,8 +979,12 @@ const setActiveNode = (node: Option): void => {
 
 const startInlineEdit = (node: Option): void => {
   editingNodeId.value = node.id
-  inlineEditTitle.value = displayNodeTitle(node) || ''
-  inlineEditText.value = node.text || ''
+
+  const title = displayNodeTitle(node)
+  inlineEditTitle.value = title ? String(title) : ''
+
+  const text = node.text
+  inlineEditText.value = text ? String(text) : ''
 }
 
 const cancelInlineEdit = (): void => {
@@ -970,8 +993,10 @@ const cancelInlineEdit = (): void => {
   inlineEditText.value = ''
 }
 
+
 const saveInlineEdit = async (node: Option): Promise<void> => {
   try {
+    // Use option store for backend update
     await optionStore.load(node.id)
     const updatedOption = await optionStore.update({
       id: node.id,
@@ -979,6 +1004,12 @@ const saveInlineEdit = async (node: Option): Promise<void> => {
       text: inlineEditText.value || '',
       type: node.type,
       parentId: node.parentId
+    })
+
+    console.log('BEFORE update:', {
+      nodeTitle: node.title,
+      nodeText: node.text,
+      storeNode: optionsStore.options.find(opt => opt.id === node.id)
     })
 
     const index = optionsStore.options.findIndex(opt => opt.id === node.id)
@@ -990,11 +1021,21 @@ const saveInlineEdit = async (node: Option): Promise<void> => {
         text: inlineEditText.value || '',
         label: inlineEditTitle.value || optionsStore.options[index].label || ''
       }
+      
+      // Replace in array using splice for reactivity
       optionsStore.options.splice(index, 1, newOption)
+      
+      // OR use Vue.set for Vue 2 compatibility
+      // import { set } from 'vue'
+      // set(optionsStore.options, index, newOption)
     }
     
+    // Force computed properties to re-evaluate
     if (activeNode.value && activeNode.value.id === node.id) {
+      // Trigger a small delay to ensure DOM updates
       await nextTick()
+      
+      // Force re-evaluation by toggling active node
       const tempId = activeNodeId.value
       activeNodeId.value = null
       setTimeout(() => {
@@ -1013,9 +1054,41 @@ const saveInlineEdit = async (node: Option): Promise<void> => {
   }
 }
 
+/*
+const saveInlineEdit = async (node: Option): Promise<void> => {
+  try {
+    // Use option store for backend update
+    await optionStore.load(node.id)
+    const updatedOption = await optionStore.update({
+      id: node.id,
+      title: inlineEditTitle.value || '',
+      text: inlineEditText.value || '',
+      type: node.type,
+      parentId: node.parentId
+    })
+    
+    // Update local store
+    const index = optionsStore.options.findIndex(opt => opt.id === node.id)
+    if (index >= 0) {
+      optionsStore.options[index] = { ...optionsStore.options[index], ...updatedOption }
+    }
+    
+    editingNodeId.value = null
+    inlineEditTitle.value = ''
+    inlineEditText.value = ''
+    
+    showSuccess(t('agora', 'Option updated'))
+  } catch (error) {
+    console.error('Error saving inline edit:', error)
+    showError(t('agora', 'Failed to update option'))
+  }
+}
+*/
+
 const toggleSupportForNode = async (node: Option): Promise<void> => {
   if (!node || !hasSupportFeature(node) || !sessionStore.currentUser?.id) return
 
+  // Check permission
   if (!canSupportNode(node)) {
     showError(t('agora', 'You do not have permission to support this option'))
     return
@@ -1029,8 +1102,10 @@ const toggleSupportForNode = async (node: Option): Promise<void> => {
       optionsStore
     )
     
+    // Update the node in options store
     const index = optionsStore.options.findIndex(opt => opt.id === node.id)
     if (index >= 0) {
+      // Refresh the support count
       optionsStore.options[index].status.countSupports = 
         await supportsStore.getSupportCount(node.id)
     }
@@ -1043,7 +1118,7 @@ const toggleSupportForNode = async (node: Option): Promise<void> => {
 }
 
 const openNodeDetail = (node: Option): void => {
-  if (editingNodeId.value) return
+  if (editingNodeId.value) return // Don't open detail modal while editing
   selectedNode.value = node
   showDetailModal.value = true
 }
@@ -1060,7 +1135,7 @@ const openAddOptionModal = (optionTypeKey: string, parentId?: number): void => {
 }
 
 const openAddOptionModalForNode = (node: Option): void => {
-  if (editingNodeId.value) return
+  if (editingNodeId.value) return // Don't open modal while editing
   const allowedResponses = getAllowedResponseTypes(node.type)
   if (allowedResponses.length > 0) {
     openAddOptionModal(allowedResponses[0], node.id)
@@ -1083,6 +1158,7 @@ const handleNodeUpdated = (updatedNode: Option): void => {
   if (index >= 0) {
     optionsStore.options[index] = updatedNode
   }
+
   closeDetailModal()
 }
 
@@ -1091,9 +1167,11 @@ const handleNodeDeleted = (deletedNodeId: number): void => {
   if (index >= 0) {
     optionsStore.options.splice(index, 1)
   }
+
   if (activeNodeId.value === deletedNodeId) {
     activeNodeId.value = null
   }
+
   closeDetailModal()
 }
 

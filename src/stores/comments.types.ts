@@ -8,7 +8,7 @@ import type { User } from '../Types'
 export type Comment = {
 	id: number
 	inquiryId: number
-	optionId: number  // 0 = inquiry comment, >0 = option comment
+	optionId: number  
 	userId: string
 	comment: string
 	timestamp: number

@@ -183,20 +183,7 @@ class Share extends EntityWithUser implements JsonSerializable
      */
     public function getPublicInquiryEmail(): string
     {
-        $miscSettings = $this->getMiscSettingsArray();
-        return $miscSettings['publicInquiryEmail'] ?? 'optional';
-    }
-
-    public function getTimeZoneName(): string
-    {
-        $miscSettings = $this->getMiscSettingsArray();
-        return $miscSettings['timeZone'] ?? '';
-    }
-
-    public function getLanguage(): string
-    {
-        $miscSettings = $this->getMiscSettingsArray();
-        return $miscSettings['language'] ?? '';
+        return $this->getMiscSettingsArray()['publicInquiryEmail'] ?? 'optional';
     }
 
     /**
@@ -250,6 +237,21 @@ class Share extends EntityWithUser implements JsonSerializable
         return (string)$this->displayName;
     }
 
+    public function getTimeZoneName(): string
+    {
+        return $this->getMiscSettingsArray()['timeZone'] ?? '';
+    }
+
+    public function setTimeZoneName(string $value): void
+    {
+        $this->setMiscSettingsByKey('timeZone', $value);
+    }
+
+    public function getLanguage(): string
+    {
+        return $this->getMiscSettingsArray()['language'] ?? '';
+    }
+
     public function setLanguage(string $value): void
     {
         $this->setMiscSettingsByKey('language', $value);
@@ -285,9 +287,9 @@ class Share extends EntityWithUser implements JsonSerializable
     public function getRichObjectString(): array
     {
         return [
-            'type' => 'highlight',
-            'id' => (string)$this->getId(),
-            'name' => $this->getType(),
+        'type' => 'highlight',
+        'id' => (string)$this->getId(),
+        'name' => $this->getType(),
         ];
     }
 

@@ -320,7 +320,7 @@ const currentGroupType = computed(() => {
   if (hasSlug.value && currentInquiryGroup.value) {
     return currentInquiryGroup.value.type
   }
-  return inquiryGroupsStore.currentGroupType || 'assembly'
+  return inquiryGroupsStore.currentGroupType || ''
 })
 
 // Get current group if slug exists (SIMPLIFIED)
@@ -634,7 +634,9 @@ const availableGroups = computed(() => {
 
 // Lifecycle
 onMounted(async () => {
+  isLoading.value = true
   try {
+
     // Load data if needed
     if (inquiryGroupsStore.inquiryGroups.length === 0) {
        await inquiryGroupsStore.fetchAllGroups()

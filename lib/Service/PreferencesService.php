@@ -68,7 +68,6 @@ class PreferencesService
         }
     }
 
-
     /**
      * Tidy preferences
      *
@@ -76,26 +75,25 @@ class PreferencesService
      */
     private function tidyPreferences(array $preferences): array
     {
-
-        // remove old properties (checkCalendarsBefore)
+        // Migrate legacy checkCalendarsBefore to checkCalendarsHoursBefore
         if (isset($preferences['checkCalendarsBefore'])) {
-            if (isset($preferences['checkCalendarsHoursBefore'])) {
-                unset($preferences['checkCalendarsBefore']);
-            } else {
+            // Only set if new key doesn't already exist (migration safety)
+            if (!isset($preferences['checkCalendarsHoursBefore'])) {
                 $preferences['checkCalendarsHoursBefore'] = $preferences['checkCalendarsBefore'];
-                unset($preferences['checkCalendarsBefore']);
             }
+            unset($preferences['checkCalendarsBefore']);
         }
-        // remove old properties (checkCalendarsAfter)
+
+        // Migrate legacy checkCalendarsAfter to checkCalendarsHoursAfter
         if (isset($preferences['checkCalendarsAfter'])) {
-            if (isset($preferences['checkCalendarsHoursAfter'])) {
-                unset($preferences['checkCalendarsAfter']);
-            } else {
+            // Only set if new key doesn't already exist (migration safety)
+            if (!isset($preferences['checkCalendarsHoursAfter'])) {
                 $preferences['checkCalendarsHoursAfter'] = $preferences['checkCalendarsAfter'];
-                unset($preferences['checkCalendarsAfter']);
             }
+            unset($preferences['checkCalendarsAfter']);
         }
 
         return $preferences;
     }
+
 }

@@ -24,7 +24,7 @@
             <!-- Option type indicator -->
             <div class="option-type-indicator">
               <div class="type-icon" :style="{ color: optionTypeColor }">
-                <component :is="optionTypeIcon" :size="24" />
+                   <component :is="optionTypeIcon" :size="24" /> 
               </div>
               <div class="type-info">
                 <h3>{{ optionTypeLabel }}</h3>
@@ -39,7 +39,7 @@
                 {{ t('agora', 'Parent') }}:
               </div>
               <div class="parent-details">
-                <component :is="getParentIcon(parentOption)" :size="16" />
+                 <component :is="getParentIcon(parentOption)" :size="16" /> 
                 <span>{{ parentOption.label || parentOption.title }}</span>
               </div>
             </div>
@@ -56,7 +56,7 @@
                   :key="response"
                   class="response-type"
                 >
-                  <component :is="getOptionTypeIcon(response)" :size="12" />
+                 <component :is="getOptionTypeIcon(response)" :size="12" /> 
                   {{ getOptionTypeLabel(response) }}
                 </span>
               </div>
@@ -88,7 +88,7 @@
             <!-- Form fields -->
             <div class="form-fields">
               <!-- Label -->
-              <div v-if="optionTypeData.use_title" class="form-field">
+              <div v-if="useTitle" class="form-field">
                 <label for="option-title">{{ t('agora', 'Title') }} *</label>
                 <NcRichContenteditable
                   id="option-title"
@@ -221,12 +221,12 @@
           <div class="preview-column">
             <h4>{{ t('agora', 'Preview') }}</h4>
             <div class="preview-card">
-              <OptionCard
+               <OptionCard
                 :option="previewOption"
                 :inquiry-id="inquiryId"
                 :compact="false"
                 prevent-click
-              />
+                /> 
             </div>
             
             <!-- Help text -->
@@ -245,7 +245,7 @@
                   class="status-badge"
                   :class="`status-${status.value}`"
                 >
-                  <component :is="getStatusIcon(status.value)" :size="12" />
+                 <component :is="getStatusIcon(status.value)" :size="12" /> 
                   {{ status.label }}
                 </span>
               </div>
@@ -277,12 +277,12 @@
             @click="createOption"
           >
             <template #icon>
-              <component :is="optionTypeIcon" :size="16" />
+                <component :is="optionTypeIcon" :size="16" /> 
             </template>
             {{ t('agora', 'Create') }}
           </NcButton>
         </div>
-      </div>
+      </div> 
     </div>
   </NcModal>
 </template>
@@ -302,18 +302,25 @@ import { useOptionsStore } from '../../stores/options'
 import { useOptionStore } from '../../stores/option'
 import { useSessionStore } from '../../stores/session'
 import { InquiryOptionIcons } from '../../utils/icons.ts'
-import { getFamilyColor } from '../../helpers/modules/InquiryOptionHelper'
+import {
+  findOptionType,
+  getOptionTypeLabel,
+  getOptionTypeIconComponent,
+  getOptionTypeColor,
+  getOptionTypeDescription,
+  getAllowedResponses,
+  getOptionTypeFields,
+  hasSupportFeature  as hasSupportFeatureHelper,
+  getSupportFeatureLabel,
+  allowsComments,
+  usesTitle
+} from '../../helpers/modules/InquiryOptionHelper'
 
 import OptionCard from './OptionCard.vue'
 
-// Types - Import from your existing types
+// Types
 import type { 
-  Option, 
-  OptionConfiguration,
-  OptionType,
-  User,
-  CurrentUserOptionStatus,
-  OptionCurrentStatus
+  Option
 } from '../../Types/index.ts'
 
 // Props
@@ -343,87 +350,63 @@ const formData = ref({
 const additionalFormData = ref<Record<string, any>>({})
 const formErrors = ref<string[]>([])
 
-// Computed
+// Computed - using helpers
+const allOptionTypes = computed(() => sessionStore.appSettings?.inquiryOptionTypeTab || [])
+
 const modalTitle = computed(() => {
   if (!props.optionType) return t('agora', 'Add Option')
   return t('agora', 'Add {type}', { type: optionTypeLabel.value })
 })
 
 const modalSubtitle = computed(() => optionTypeDescription.value || '')
+const optionTypeLabel = computed(() => 
+  getOptionTypeLabel(props.optionType, allOptionTypes.value, t('agora', 'Option'))
+)
 
-const optionTypeData = computed(() => {
-  if (!props.optionType) return null
-  
-  const optionTypes = sessionStore.appSettings?.inquiryOptionTypeTab || []
-  return optionTypes.find(opt => 
-    opt.option_type === props.optionType || opt.optionType === props.optionType
-  )
-})
+const optionTypeDescription = computed(() => 
+  getOptionTypeDescription(props.optionType, allOptionTypes.value)
+)
 
-const optionTypeLabel = computed(() => {
-  if (!optionTypeData.value) return t('agora', 'Option')
-  return optionTypeData.value.label || props.optionType || ''
-})
+const optionTypeIcon = computed(() => 
+  getOptionTypeIconComponent(props.optionType, allOptionTypes.value)
+)
 
-const optionTypeDescription = computed(() => {
-  if (!optionTypeData.value) return ''
-  return optionTypeData.value.text || ''
-})
-
-const optionTypeIcon = computed(() => {
-  if (!optionTypeData.value?.icon) return InquiryOptionIcons.File
-  return InquiryOptionIcons[optionTypeData.value.icon as keyof typeof InquiryOptionIcons] || InquiryOptionIcons.File
-})
-
-const optionTypeColor = computed(() => {
-  if (!optionTypeData.value?.family) return '#999999'
-  return getFamilyColor(optionTypeData.value.family)
-})
+const optionTypeColor = computed(() => 
+  getOptionTypeColor(props.optionType, allOptionTypes.value)
+)
 
 const parentOption = computed(() => {
   if (!props.parentId) return null
   return optionsStore.options.find(opt => opt.id === props.parentId)
 })
 
-const allowedResponses = computed(() => {
-  if (!optionTypeData.value?.allowed_response) return []
-  
-  if (typeof optionTypeData.value.allowed_response === 'string') {
-    try {
-      return JSON.parse(optionTypeData.value.allowed_response)
-    } catch {
-      return []
-    }
-  }
-  
-  return optionTypeData.value.allowed_response || []
-})
+const allowedResponses = computed(() => 
+  getAllowedResponses(props.optionType, allOptionTypes.value)
+)
 
-const hasSupportFeature = computed(() => {
-  const feature = optionTypeData.value?.support_feature
-  return feature && feature !== 'none'
-})
+const hasSupportFeature = computed(() => 
+  hasSupportFeatureHelper(props.optionType, allOptionTypes.value)
+)
 
-const supportFeatureLabel = computed(() => {
-  const feature = optionTypeData.value?.support_feature
-  if (!feature || feature === 'none') return ''
-  
-  if (feature === 'ternary') return t('agora', 'Ternary support (for/against/neutral)')
-  if (feature === 'binary') return t('agora', 'Binary support (like/dislike)')
-  return t('agora', 'Support enabled')
-})
+const supportFeatureLabel = computed(() => 
+  getSupportFeatureLabel(props.optionType, allOptionTypes.value)
+)
 
-const allowComment = computed(() => optionTypeData.value?.allow_comment || false)
+const allowComment = computed(() => 
+  allowsComments(props.optionType, allOptionTypes.value)
+)
 
 const hasStatuses = computed(() => {
-  const statuses = optionTypeData.value?.statuses || []
+  const optionType = findOptionType(props.optionType, allOptionTypes.value)
+  const statuses = optionType?.statuses || []
   return statuses.length > 0
 })
 
 const statusesList = computed(() => {
-  if (!optionTypeData.value?.statuses) return []
+  const optionType = findOptionType(props.optionType, allOptionTypes.value)
+  if (!optionType?.statuses) return []
   
-  const statuses = optionTypeData.value.statuses
+  const statuses = optionType.statuses
   if (Array.isArray(statuses)) {
     return statuses.map((status: string) => {
       const [value, label] = status.split(':')
@@ -436,19 +419,13 @@ const statusesList = computed(() => {
 
 const hasAdditionalFields = computed(() => additionalFields.value.length > 0)
 
-const additionalFields = computed(() => {
-  if (!optionTypeData.value?.fields) return []
-  
-  if (typeof optionTypeData.value.fields === 'string') {
-    try {
-      return JSON.parse(optionTypeData.value.fields)
-    } catch {
-      return []
-    }
-  }
-  
-  return optionTypeData.value.fields || []
-})
+const additionalFields = computed(() => 
+  getOptionTypeFields(props.optionType, allOptionTypes.value)
+)
+
+const useTitle = computed(() => 
+  usesTitle(props.optionType, allOptionTypes.value)
+)
 
 const optionTypeHelp = computed(() => {
   if (!props.optionType) return ''
@@ -475,40 +452,17 @@ const optionTypeHelp = computed(() => {
 const formValid = computed(() => {
   formErrors.value = []
   
-  // Basic validation - check if text is provided
   if (!formData.value.text.trim()) {
     formErrors.value.push(t('agora', 'At least a text is required'))
     return false
   }
-  
-  /* Check required additional fields
-  for (const field of additionalFields.value) {
-    console.log(" FORM VALID CHECKING FIELD ",field)
-    if (field.required) {
-      const value = additionalFormData.value[field.key]
-      if (value === undefined || value === null || value === '') {
-        formErrors.value.push(t('agora', '{field} is required', { field: getFieldLabel(field) }))
-        return false
-      }
-      
-      // Validate JSON fields
-      if (field.type === 'json' && value) {
-        try {
-          JSON.parse(value)
-        } catch {
-          formErrors.value.push(t('agora', '{field} must be valid JSON', { field: getFieldLabel(field) }))
-          return false
-        }
-      }
-    }
-  } */
-  console.log(" FORM VALID I RETURN TRUE ")
   
   return true
 })
 
 const previewOption = computed((): Option => {
   const currentUser = sessionStore.currentUser
+  const optionType = findOptionType(props.optionType, allOptionTypes.value) || {}
   
   return {
     id: 0,
@@ -522,14 +476,14 @@ const previewOption = computed((): Option => {
     configuration: {
       access: 'private',
       showResults: 'always',
-      allowComment: optionTypeData.value?.allow_comment ? 1 : 0,
-      supportFeature: optionTypeData.value?.support_feature || 'none',
-      family: optionTypeData.value?.family || ''
+      allowComment: allowComment.value ? 1 : 0,
+      supportFeature: optionType.support_feature || 'none',
+      family: optionType.family || ''
     },
     miscFields: additionalFormData.value,
     ownedGroup: '',
     owner: {
-      id: currentUser?.id || '',
+      id: currentUser?.id || 'preview-user',
       displayName: currentUser?.displayName || t('agora', 'Current User'),
       userRole: currentUser?.userRole || ''
     },
@@ -594,42 +548,16 @@ const previewOption = computed((): Option => {
 
 // Methods
 const getParentIcon = (parent: Option) => {
-  const parentType = sessionStore.appSettings?.inquiryOptionTypeTab || []
-  const typeInfo = parentType.find(opt => 
-    opt.option_type === parent.type || opt.optionType === parent.type
-  )
-  
-  if (typeInfo?.icon) {
-    return InquiryOptionIcons[typeInfo.icon as keyof typeof InquiryOptionIcons] || InquiryOptionIcons.File
-  }
-  return InquiryOptionIcons.File
+  return getOptionTypeIconComponent(parent.type, allOptionTypes.value)
 }
 
+// Use helper for getOptionTypeIcon
 const getOptionTypeIcon = (type: string) => {
-  const optionTypes = sessionStore.appSettings?.inquiryOptionTypeTab || []
-  const optionType = optionTypes.find(opt => 
-    opt.option_type === type || opt.optionType === type
-  )
-  
-  if (optionType?.icon) {
-    return InquiryOptionIcons[optionType.icon as keyof typeof InquiryOptionIcons] || InquiryOptionIcons.File
-  }
-  return InquiryOptionIcons.File
-}
-
-const getOptionTypeLabel = (type: string) => {
-  const optionTypes = sessionStore.appSettings?.inquiryOptionTypeTab || []
-  const optionType = optionTypes.find(opt => 
-    opt.option_type === type || opt.optionType === type
-  )
-  
-  return optionType?.label || type
+  return getOptionTypeIconComponent(type, allOptionTypes.value)
 }
 
 const getFieldLabel = (field: any) => {
   if (field.label) return field.label
-  
-  // Generate label from key
   return field.key
     .replace(/_/g, ' ')
     .replace(/\b\w/g, l => l.toUpperCase())
@@ -642,7 +570,6 @@ const getSelectOptions = (field: any) => {
       label: typeof opt === 'string' ? opt : opt.label || opt.value
     }))
   }
-  
   return []
 }
 
@@ -657,7 +584,6 @@ const getStatusIcon = (status: string) => {
     'active': InquiryOptionIcons.Check,
     'resolved': InquiryOptionIcons.ThumbUp
   }
-  
   return statusIconMap[status] || InquiryOptionIcons.Circle
 }
 
@@ -665,7 +591,6 @@ const initializeAdditionalFields = () => {
   additionalFormData.value = {}
   
   for (const field of additionalFields.value) {
-    // Set default values based on field type
     if (field.type === 'boolean') {
       additionalFormData.value[field.key] = field.default !== undefined ? field.default : false
     } else if (field.type === 'number') {
@@ -680,19 +605,18 @@ const createOption = async () => {
   if (!formValid.value || !props.optionType) return
   
   try {
-    // Get default values from option type data
-    const defaultAccess = 'private' // Default access level
-    const defaultStatus = 'draft' // Default status
-    const defaultSupportFeature = optionTypeData.value?.support_feature || 'none'
-    const defaultAllowComment = optionTypeData.value?.allow_comment ? 1 : 0
-    const defaultFamily = optionTypeData.value?.family || ''
+    const optionType = findOptionType(props.optionType, allOptionTypes.value) || {}
+    
+    const defaultAccess = 'private'
+    const defaultStatus = 'draft'
+    const defaultSupportFeature = optionType.support_feature || 'none'
+    const defaultAllowComment = allowComment.value ? 1 : 0
+    const defaultFamily = optionType.family || ''
 
-    // Prepare misc fields with defaults
     const miscFields: Record<string, any> = {}
     for (const field of additionalFields.value) {
       const value = additionalFormData.value[field.key]
       if (value !== undefined && value !== '') {
-        // Handle JSON fields
         if (field.type === 'json' && value) {
           try {
             miscFields[field.key] = typeof value === 'string' ? JSON.parse(value) : value
@@ -707,7 +631,6 @@ const createOption = async () => {
       }
     }
 
-    // Prepare option data matching the store's create method
     const optionData = {
       title: formData.value.title.trim() || '',
       text: formData.value.text.trim() || '',
@@ -723,15 +646,10 @@ const createOption = async () => {
       miscFields
     }
 
-    console.log('Creating option with data:', optionData)
-    
-    // Call the store's create method
     const newOption = await optionStore.create(optionData)
     
     if (newOption) {
       emit('created', newOption)
-      
-      // Reset form
       formData.value = { title: '', text: '' }
       additionalFormData.value = {}
       initializeAdditionalFields()
@@ -754,7 +672,6 @@ watch(() => props.optionType, (newType) => {
 
 // Lifecycle
 onMounted(() => {
-  // Set initial focus
   setTimeout(() => {
     const input = document.getElementById('option-text')
     if (input) input.focus()

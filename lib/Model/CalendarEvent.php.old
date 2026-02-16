@@ -268,4 +268,3 @@ class CalendarEvent implements \JsonSerializable
         ];
     }
 }
-
