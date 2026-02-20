@@ -660,7 +660,8 @@ class OptionMapper extends QBMapper
             $fromAlias,
             Comment::TABLE,
             $joinAlias,
-            $qb->expr()->eq($joinAlias . '.option_id', $fromAlias . '.id')
+            $qb->expr()->eq($joinAlias . '.option_id', $fromAlias . '.id'),
+			$qb->expr()->eq($joinAlias . '.deleted', $qb->createNamedParameter(0))
         )->addSelect($qb->createFunction('COUNT(DISTINCT(' . $joinAlias . '.id)) AS count_comments'));
         $qb->groupBy($fromAlias . '.id');
     }

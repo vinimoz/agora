@@ -110,8 +110,7 @@ export interface InquiryType {
 
 export interface InquiryOptionType {
   id: number
-  inquiry_type: string
-  access: string
+  option_type: string
   family: string
   icon: string
   label: string

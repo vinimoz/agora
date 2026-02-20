@@ -33,8 +33,8 @@
         </div>
       </div>
       
-      <!-- Right side: Actions menu -->
-      <div class="header-right" @click.stop>
+      <!-- Right side: Actions menu - only in normal mode -->
+      <div v-if="!inline" class="header-right" @click.stop>
         <NcActions
           v-if="canEditOrDelete"
           :force-menu="true"
@@ -63,7 +63,7 @@
         <h3 class="card-title">{{ option.label || option.title }}</h3>
       </div>
       
-      <!-- Description -->
+      <!-- Description - show if there's text AND (not compact OR not using title) -->
       <div v-if="option.text && (!compact || !useTitle)" class="content-section description-section">
         <div class="card-text">
           {{ truncateText(option.text, textMaxLength) }}
@@ -71,112 +71,225 @@
       </div>
     </div>
 
-    <!-- Separator -->
-    <div class="section-separator"></div>
+    <!-- Separator - hide in inline mode -->
+    <div v-if="!inline" class="section-separator"></div>
 
-<!-- Third Box: Support and Comments in single line -->
-<div v-if="hasSupportFeature || allowComment" class="card-features">
-  <!-- Support feature -->
-  <div v-if="hasSupportFeature" class="feature-item support-feature">
-    <SupportFeature
-      :item="option"
-      item-type="option"
-      :context="optionContext"
-      :show-quorum="true"
-      :show-details-on-hover="true"
-      :icon-size="14"
-      @click.stop
-    />
-  </div>
-  
-  <!-- Comments feature -->
-    <div v-if="allowComment" class="feature-item comments-feature" @click.stop="$emit('comment', option)">
-    <div class="feature-content">
-      <component :is="InquiryOptionIcons.Comment" :size="16" class="feature-icon" />
-      <span class="feature-count">{{ option.status.countComments || 0 }}</span>
+    <!-- Third Box: Support and Comments in single line (normal mode) -->
+    <div v-if="!inline && (hasSupportFeature || allowComment)" class="card-features">
+      <!-- Support feature -->
+      <div v-if="hasSupportFeature" class="feature-item support-feature">
+        <SupportFeature
+          :item="option"
+          item-type="option"
+          :context="optionContext"
+          :show-quorum="true"
+          :show-details-on-hover="true"
+          :icon-size="compact ? 12 : 14"
+          @click.stop
+        />
+      </div>
+      
+      <!-- Comments feature -->
+      <div v-if="allowComment" class="feature-item comments-feature" @click.stop="$emit('comment', option)">
+        <div class="feature-content">
+          <component :is="InquiryOptionIcons.Comment" :size="compact ? 14 : 16" class="feature-icon" />
+          <span class="feature-count">{{ option.status.countComments || 0 }}</span>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
 
-  <!-- Fourth Box: Responses -->
-  <div v-if="hasAllowedResponses && !compact" class="card-responses">
+    <!-- Fourth Box: Responses - normal mode -->
+    <div v-if="!inline && hasAllowedResponses && !compact" class="card-responses">
       <div class="responses-header">
-          <component :is="InquiryOptionIcons.MessageReplyText" :size="14" />
-          <span class="responses-title">{{ t('agora', 'Responses') }}</span>
+        <component :is="InquiryOptionIcons.MessageReplyText" :size="14" />
+        <span class="responses-title">{{ t('agora', 'Responses') }}</span>
       </div>
 
       <div class="responses-list">
+        <div v-if="childCountsTotal === 0" class="no-responses">
+          <span class="no-responses-text">{{ t('agora', 'None') }}</span>
+        </div>
+
+        <div v-else class="responses-summary">
+          <div 
+            v-for="responseType in allowedResponses" 
+            :key="responseType"
+            class="response-type-summary"
+            @mouseenter="showChildTooltip(responseType)"
+            @mouseleave="hideChildTooltip"
+            @click.stop="$emit('viewResponses', option, responseType)"
+          >
+            <div class="response-type-info">
+              <component :is="getOptionTypeIcon(responseType)" :size="inline ? 10 : 12" />
+              <span class="response-count">{{ childCounts[responseType] || 0 }}</span>
+            </div>
+            
+            <!-- Tooltip showing child options of this type -->
+            <div v-if="activeTooltip === responseType && childCounts[responseType] > 0" class="child-tooltip">
+              <div class="tooltip-header">
+                <strong>{{ getOptionTypeLabelLocal(responseType) }}</strong>
+                <span class="tooltip-count">{{ childCounts[responseType] }} {{ t('agora', 'items') }}</span>
+              </div>
+              <div class="tooltip-children">
+                <div 
+                  v-for="child in getChildrenByType(responseType)" 
+                  :key="child.id"
+                  class="tooltip-child-item"
+                  @click.stop="$emit('click', child)"
+                >
+                  <component :is="getOptionTypeIcon(child.type)" :size="10" />
+                  <span class="child-title">{{ child.title || child.text?.substring(0, 30) }}</span>
+                </div>
+                <div v-if="childCounts[responseType] > 3" class="tooltip-more">
+                  {{ t('agora', 'and {count} more...', { count: childCounts[responseType] - 3 }) }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- INLINE MODE: All features in one row with actions at the end -->
+    <div v-if="inline" class="inline-features-row">
+      <!-- Child responses -->
+      <div v-if="hasAllowedResponses && !compact" class="inline-feature-item child-responses">
+        <div class="responses-list">
           <div v-if="childCountsTotal === 0" class="no-responses">
-              <span class="no-responses-text">{{ t('agora', 'None') }}</span>
+            <span class="no-responses-text">{{ t('agora', 'None') }}</span>
           </div>
 
           <div v-else class="responses-summary">
-              <div 
-                      v-for="responseType in allowedResponses" 
-                      :key="responseType"
-                      class="response-type-summary"
-                      @click.stop="$emit('viewResponses', option, responseType)"
-                      >
-                      <div class="response-type-info">
-                          <component :is="getOptionTypeIcon(responseType)" :size="12" />
-                          <span class="response-count">{{ childCounts[responseType] || 0 }}</span>
-                      </div>
+            <div 
+              v-for="responseType in allowedResponses" 
+              :key="responseType"
+              class="response-type-summary"
+              @mouseenter="showChildTooltip(responseType)"
+              @mouseleave="hideChildTooltip"
+              @click.stop="$emit('viewResponses', option, responseType)"
+            >
+              <div class="response-type-info">
+                <component :is="getOptionTypeIcon(responseType)" :size="10" />
+                <span class="response-count">{{ childCounts[responseType] || 0 }}</span>
               </div>
+              
+              <!-- Tooltip showing child options of this type -->
+              <div v-if="activeTooltip === responseType && childCounts[responseType] > 0" class="child-tooltip">
+                <div class="tooltip-header">
+                  <strong>{{ getOptionTypeLabelLocal(responseType) }}</strong>
+                  <span class="tooltip-count">{{ childCounts[responseType] }} {{ t('agora', 'items') }}</span>
+                </div>
+                <div class="tooltip-children">
+                  <div 
+                    v-for="child in getChildrenByType(responseType)" 
+                    :key="child.id"
+                    class="tooltip-child-item"
+                    @click.stop="$emit('click', child)"
+                  >
+                    <component :is="getOptionTypeIcon(child.type)" :size="10" />
+                    <span class="child-title">{{ child.title || child.text?.substring(0, 30) }}</span>
+                  </div>
+                  <div v-if="childCounts[responseType] > 3" class="tooltip-more">
+                    {{ t('agora', 'and {count} more...', { count: childCounts[responseType] - 3 }) }}
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
+        </div>
       </div>
-  </div>
 
-  <div class="card-footer">
-      <div class="owner-info">
-          <NcAvatar
-           v-if="option.owner?.id"
-           :user="option.owner.id"
-           :display-name="option.owner.displayName"
-           :size="18"
-           />
-          <span class="owner-name">{{ option.owner?.displayName || t('agora', 'Unknown owner') }}</span>
+      <!-- Support feature -->
+      <div v-if="hasSupportFeature" class="inline-feature-item support-feature">
+        <SupportFeature
+          :item="option"
+          item-type="option"
+          :context="optionContext"
+          :show-quorum="true"
+          :show-details-on-hover="true"
+          :icon-size="12"
+          @click.stop
+        />
       </div>
-  </div>
+      
+      <!-- Comments feature -->
+      <div v-if="allowComment" class="inline-feature-item comments-feature" @click.stop="$emit('comment', option)">
+        <div class="feature-content">
+          <component :is="InquiryOptionIcons.Comment" :size="14" class="feature-icon" />
+          <span class="feature-count">{{ option.status.countComments || 0 }}</span>
+        </div>
+      </div>
+
+      <!-- Spacer to push actions to the right -->
+      <div class="inline-spacer"></div>
+
+      <!-- Actions menu for inline mode -->
+      <div v-if="canEditOrDelete" class="inline-actions" @click.stop>
+        <NcActions
+          :force-menu="true"
+          :aria-label="t('agora', 'Option actions')"
+          class="card-actions"
+        >
+          <!-- Delete action -->
+          <NcActionButton
+            v-if="canDelete"
+            :close-after-click="true"
+            @click="confirmDelete"
+          >
+            <template #icon>
+              <component :is="InquiryOptionIcons.Delete" :size="20" />
+            </template>
+            {{ t('agora', 'Delete') }}
+          </NcActionButton>
+        </NcActions>
+      </div>
+    </div>
+
+    <!-- Footer: Owner info - hide in inline mode -->
+    <div v-if="!inline" class="card-footer">
+      <div class="owner-info">
+        <NcAvatar
+          v-if="option.owner?.id"
+          :user="option.owner.id"
+          :display-name="option.owner.displayName"
+          :size="18"
+        />
+        <span class="owner-name">{{ option.owner?.displayName || t('agora', 'Unknown owner') }}</span>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-    import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { t } from '@nextcloud/l10n'
 import NcAvatar from '@nextcloud/vue/components/NcAvatar'
-import NcButton from '@nextcloud/vue/components/NcButton'
 import NcActions from '@nextcloud/vue/components/NcActions'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import SupportFeature from '../../helpers/modules/SupportFeature.vue'
 
 import { useOptionsStore } from '../../stores/options'
 import { useSessionStore } from '../../stores/session'
-import { useSupportsStore } from '../../stores/supports'
-import { showSuccess, showError } from '@nextcloud/dialogs'
+import { showError } from '@nextcloud/dialogs'
 import { InquiryOptionIcons } from '../../utils/icons.ts'
 import { 
   createOptionContext,
   canEditOption,
   canDeleteOption,
-  canCommentOption,
-  canSupportOption
+  canCommentOption
 } from '../../utils/permissions.ts'
 
 // Types
 import type { Option } from '../../Types/index.ts'
 import {
-  findOptionType,
   getOptionTypeLabel,
   getOptionTypeIconComponent,
   getOptionTypeColor,
   getOptionTypeDescription,
   getAllowedResponses,
-  getOptionTypeFields,
-  hasSupportFeature  as hasSupportFeatureHelper,
-  getSupportFeatureLabel,
+  hasSupportFeature as hasSupportFeatureHelper,
   allowsComments,
-  usesTitle,
-  getFamilyColor 
+  usesTitle
 } from '../../helpers/modules/InquiryOptionHelper'
 
 // Props
@@ -197,10 +310,6 @@ const props = defineProps<{
   textMaxLength?: number
 }>()
 
-const handleCommentClick = () => {
-  emit('comment', props.option)
-}
-
 // Emits
 const emit = defineEmits<{
   click: [option: Option]
@@ -217,7 +326,6 @@ const textMaxLength = props.textMaxLength || 200
 // Stores
 const optionsStore = useOptionsStore()
 const sessionStore = useSessionStore()
-const supportsStore = useSupportsStore()
 
 // Create context once as computed
 const optionContext = computed(() => {
@@ -236,21 +344,10 @@ const canDelete = computed(() => {
   return canDeleteOption(optionContext.value)
 })
 
-const canComment = computed(() => {
-  if (!props.option || optionContext.value === null) return false
-  return canCommentOption(optionContext.value)
-})
-
-const canSupport = computed(() => {
-  if (!props.option || optionContext.value === null) return false
-  return canSupportOption(optionContext.value)
-})
-
 const canEditOrDelete = computed(() => canEdit.value || canDelete.value)
 
 // Get option types from session store
 const allOptionTypes = computed(() => sessionStore.appSettings?.inquiryOptionTypeTab || [])
-
 
 const optionTypeLabel = computed(() => 
   getOptionTypeLabel(props.option.type, allOptionTypes.value, t('agora', 'Option'))
@@ -264,18 +361,9 @@ const optionTypeColor = computed(() =>
   getOptionTypeColor(props.option.type, allOptionTypes.value)
 )
 
-const optionTypeDescription = computed(() => 
-  getOptionTypeDescription(props.option.type, allOptionTypes.value)
-)
-
 const showTitle = computed(() => 
   usesTitle(props.option.type, allOptionTypes.value)
 )
-
-const supportFeature = computed(() => {
-  const found = findOptionType(props.option.type, allOptionTypes.value)
-  return found?.support_feature || 'none'
-})
 
 const allowComment = computed(() => 
   allowsComments(props.option.type, allOptionTypes.value)
@@ -290,13 +378,17 @@ const allowedResponses = computed(() =>
   getAllowedResponses(props.option.type, allOptionTypes.value)
 )
 
-// Also update getOptionTypeIcon method:
 const getOptionTypeIcon = (type: string) => {
   return getOptionTypeIconComponent(type, allOptionTypes.value)
 }
 
+// Renamed to avoid conflict with imported getOptionTypeLabel
+const getOptionTypeLabelLocal = (type: string) => {
+  return getOptionTypeLabel(type, allOptionTypes.value, type)
+}
+
 const useTitle = computed(() => 
-    usesTitle(props.option.type, allOptionTypes.value)
+  usesTitle(props.option.type, allOptionTypes.value)
 )
 
 const hasAllowedResponses = computed(() => allowedResponses.value.length > 0)
@@ -329,37 +421,31 @@ const childCounts = computed(() => {
   return counts
 })
 
+const childCountsTotal = computed(() => 
+  Object.values(childCounts.value).reduce((sum, count) => sum + count, 0)
+)
+
+// Tooltip state
 const activeTooltip = ref<string | null>(null)
 
 const showChildTooltip = (type: string) => {
-    activeTooltip.value = type
+  activeTooltip.value = type
 }
 
 const hideChildTooltip = () => {
-    activeTooltip.value = null
+  activeTooltip.value = null
 }
 
 const getChildrenByType = (type: string) => {
-    return childOptions.value
-        .filter(child => child.type === type)
-        .slice(0, 3) // Show only first 3
+  return childOptions.value
+    .filter(child => child.type === type)
+    .slice(0, 3) // Show only first 3
 }
-
-const childCountsTotal = computed(() => Object.values(childCounts.value).reduce((sum, count) => sum + count, 0))
-
-// Support value computation - FIXED: Return numeric values
-const numericSupportValue = computed(() => {
-  // For ternary support: 1 = for, -1 = against, 0 = neutral, null = no support
-  if (supportFeature.value === 'ternary' || supportFeature.value === 'binary') {
-    return props.option.currentUserStatus?.supportValue ?? null
-  }
-  return null
-})
 
 // Helper methods
 const formatDate = (timestamp: number) => {
-  let date=new Date()
-  if (timestamp)  date = new Date(timestamp * 1000)
+  let date = new Date()
+  if (timestamp) date = new Date(timestamp * 1000)
   return new Intl.DateTimeFormat(undefined, {
     month: 'short',
     day: 'numeric',
@@ -371,7 +457,7 @@ const formatDate = (timestamp: number) => {
 const truncateText = (text: string, maxLength: number) => {
   if (!text) return ''
   if (text.length <= maxLength) return text
-  return `${text.substring(0, maxLength)  }...`
+  return `${text.substring(0, maxLength)}...`
 }
 
 const handleCardClick = () => {
@@ -379,7 +465,6 @@ const handleCardClick = () => {
     emit('click', props.option)
   }
 }
-
 
 const confirmDelete = () => {
   if (confirm(t('agora', 'Are you sure you want to delete this option?'))) {
@@ -394,559 +479,782 @@ const deleteOption = async () => {
     if (index >= 0) {
       optionsStore.options.splice(index, 1)
     }
-
     emit('delete', props.option.id)
   } catch (err) {
     console.error('Error deleting option:', err)
     showError(t('agora', 'Failed to delete option'))
   }
 }
-
-// Watch for option updates
-watch(() => props.option, (newOption) => {
-  // React to option changes if needed
-}, { deep: true })
 </script>
 
-
 <style scoped lang="scss">
-/* Inline variant for horizontal display */
-.option-card.inline {
+.option-card {
+  background: var(--color-main-background);
+  border: 2px solid var(--color-border);
+  border-radius: 12px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  margin-bottom: 8px;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-color: var(--color-primary-element);
+  }
+
+  // Compact mode - minimal info
+  &.compact {
+    padding: 12px;
+
+    .card-features,
+    .card-responses,
+    .card-footer {
+      display: none;
+    }
+
+    .card-content {
+      .description-section {
+        display: block;
+        -webkit-line-clamp: 1;
+      }
+    }
+  }
+
+  // Card Header
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    min-height: 32px;
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+      min-width: 0;
+
+      .type-icon {
+        flex-shrink: 0;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--color-background-darker);
+        border-radius: 8px;
+      }
+
+      .header-meta {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        min-width: 0;
+
+        .option-type-label {
+          font-size: 13px;
+          font-weight: 600;
+          color: var(--color-text-light);
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        .timestamp {
+          font-size: 11px;
+          color: var(--color-text-lighter);
+        }
+      }
+    }
+
+    .header-right {
+      flex-shrink: 0;
+      margin-left: 8px;
+
+      .card-actions {
+        :deep(button) {
+          background: transparent;
+          border: none;
+          padding: 4px;
+          color: var(--color-text-lighter);
+          cursor: pointer;
+
+          &:hover {
+            color: var(--color-primary-element);
+          }
+        }
+      }
+    }
+  }
+
+  // Card Content
+  .card-content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 12px;
+
+    .content-section {
+      &.title-section {
+        .card-title {
+          margin: 0;
+          font-size: 16px;
+          font-weight: 600;
+          color: var(--color-main-text);
+          line-height: 1.4;
+          word-break: break-word;
+        }
+      }
+
+      &.description-section {
+        .card-text {
+          margin: 0;
+          font-size: 13px;
+          line-height: 1.5;
+          color: var(--color-text-light);
+          overflow: hidden;
+          text-overflow: ellipsis;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+        }
+      }
+    }
+  }
+
+  // Separator
+  .section-separator {
+    height: 1px;
+    background: var(--color-border);
+    margin: 0 0 12px 0;
+  }
+
+  // Features section (NORMAL MODE)
+  .card-features {
     display: flex;
     align-items: center;
-    padding: 8px 12px;
+    gap: 24px;
+    margin-bottom: 12px;
+    min-height: 32px;
+
+    .feature-item {
+      display: flex;
+      align-items: center;
+      height: 32px;
+
+      &.support-feature {
+        :deep(.support-feature-container) {
+          display: flex;
+          align-items: center;
+          height: 100%;
+          gap: 6px;
+
+          .support-button {
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            svg {
+              width: 16px;
+              height: 16px;
+            }
+          }
+
+          .support-stats {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+
+            .stat-value {
+              font-weight: 600;
+            }
+          }
+        }
+      }
+
+      &.comments-feature {
+        .feature-content {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          padding: 4px 10px;
+          border-radius: 6px;
+          transition: background-color 0.2s ease;
+          cursor: pointer;
+          height: 28px;
+
+          &:hover {
+            background: var(--color-background-hover);
+          }
+
+          .feature-icon {
+            color: var(--color-text-lighter);
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+          }
+
+          .feature-count {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--color-text-light);
+          }
+        }
+      }
+    }
+  }
+
+  // Responses section (NORMAL MODE)
+  .card-responses {
+    margin-bottom: 12px;
+
+    .responses-header {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 8px;
+
+      .responses-title {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--color-text-light);
+      }
+    }
+
+    .responses-list {
+      .no-responses {
+        padding: 6px 10px;
+        background: var(--color-background-dark);
+        border: 1px solid var(--color-border);
+        border-radius: 8px;
+        font-size: 11px;
+        color: var(--color-text-lighter);
+        font-style: italic;
+        text-align: center;
+      }
+
+      .responses-summary {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+
+        .response-type-summary {
+          position: relative;
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          padding: 4px 8px;
+          background: var(--color-background-dark);
+          border: 1px solid var(--color-border);
+          border-radius: 8px;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          font-size: 11px;
+
+          &:hover {
+            background: var(--color-background-darker);
+            border-color: var(--color-primary-element);
+          }
+
+          .response-type-info {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+
+            svg {
+              width: 12px;
+              height: 12px;
+            }
+
+            .response-count {
+              font-weight: 600;
+              color: var(--color-primary-element);
+              font-size: 11px;
+            }
+          }
+
+          // Tooltip for child options
+          .child-tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-bottom: 8px;
+            background: var(--color-main-background);
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            padding: 8px;
+            min-width: 200px;
+            max-width: 300px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            animation: fadeIn 0.2s ease-out;
+
+            &::after {
+              content: '';
+              position: absolute;
+              top: 100%;
+              left: 50%;
+              transform: translateX(-50%);
+              border-width: 6px;
+              border-style: solid;
+              border-color: var(--color-main-background) transparent transparent transparent;
+            }
+
+            .tooltip-header {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              padding-bottom: 6px;
+              margin-bottom: 6px;
+              border-bottom: 1px solid var(--color-border);
+
+              strong {
+                font-size: 12px;
+                color: var(--color-main-text);
+              }
+
+              .tooltip-count {
+                font-size: 11px;
+                color: var(--color-text-lighter);
+              }
+            }
+
+            .tooltip-children {
+              .tooltip-child-item {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                padding: 4px 6px;
+                border-radius: 4px;
+                cursor: pointer;
+                font-size: 11px;
+
+                &:hover {
+                  background: var(--color-background-hover);
+                }
+
+                .child-title {
+                  color: var(--color-text-light);
+                  white-space: nowrap;
+                  overflow: hidden;
+                  text-overflow: ellipsis;
+                  max-width: 180px;
+                }
+              }
+
+              .tooltip-more {
+                padding: 4px 6px;
+                font-size: 10px;
+                color: var(--color-text-lighter);
+                font-style: italic;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // Footer
+  .card-footer {
+    padding-top: 12px;
+    border-top: 1px solid var(--color-border);
+
+    .owner-info {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+
+      .owner-name {
+        color: var(--color-text-lighter);
+        font-size: 11px;
+      }
+    }
+  }
+
+  // ===========================================
+  // INLINE MODE STYLES ONLY - Separated completely
+  // ===========================================
+  &.inline {
+    display: flex;
+    align-items: center;
+    padding: 6px 10px;
     margin-bottom: 4px;
     
-    .card-header {
-        margin-bottom: 0;
-        min-height: unset;
-        flex: 0 0 auto;
-        width: auto;
-        
-        .header-left {
-            gap: 8px;
-            
-            .type-icon {
-                width: 24px;
-                height: 24px;
-                
-                svg {
-                    width: 14px;
-                    height: 14px;
-                }
-            }
-            
-            .header-meta {
-                flex-direction: row;
-                align-items: center;
-                gap: 8px;
-                
-                .option-type-label {
-                    font-size: 11px;
-                }
-                
-                .timestamp {
-                    font-size: 10px;
-                }
-            }
-        }
-    }
-    
-    .card-content {
-        margin-bottom: 0;
-        flex: 1;
-        min-width: 0;
-        padding: 0 12px;
-        
-        .content-section {
-            &.title-section {
-                .card-title {
-                    font-size: 13px;
-                    margin: 0;
-                    white-space: nowrap;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                }
-            }
-            
-            &.description-section {
-                display: none; /* Hide description in inline mode */
-            }
-        }
-    }
-    
-    .section-separator {
-        display: none; /* Hide separator in inline mode */
-    }
-    
-    .card-features {
-        margin-bottom: 0;
-        min-height: unset;
-        flex: 0 0 auto;
-        gap: 12px;
-        
-        .feature-item {
-            height: 24px;
-            
-            &.support-feature {
-                :deep(.support-feature-container) {
-                    gap: 4px;
-                    
-                    .support-button {
-                        height: 20px;
-                        
-                        svg {
-                            width: 14px;
-                            height: 14px;
-                        }
-                    }
-                    
-                    .support-stats {
-                        font-size: 11px;
-                    }
-                }
-            }
-            
-            &.comments-feature {
-                .feature-content {
-                    padding: 2px 6px;
-                    height: 20px;
-                    
-                    .feature-icon {
-                        width: 14px;
-                        height: 14px;
-                    }
-                    
-                    .feature-count {
-                        font-size: 11px;
-                    }
-                }
-            }
-        }
-    }
-    
-    .card-responses {
-        display: none; /* Hide responses in inline mode */
-    }
-    
+    // Hide all normal mode sections
+    .card-features,
+    .card-responses,
     .card-footer {
-        display: none; /* Hide footer in inline mode */
+      display: none;
     }
     
-    // Hover effect
-    &:hover {
-        transform: translateY(-1px);
-        background: var(--color-background-hover);
-    }
-}
-
-// Even more compact for dense lists
-.option-card.inline.compact {
-    padding: 4px 8px;
-    
+    // Header adjustments
     .card-header {
+      margin-bottom: 0;
+      min-height: unset;
+      flex: 0 0 auto;
+      width: auto;
+      
+      .header-left {
+        gap: 6px;
+        
         .type-icon {
-            width: 20px;
-            height: 20px;
-            
-            svg {
-                width: 12px;
-                height: 12px;
-            }
+          width: 20px;
+          height: 20px;
+          
+          svg {
+            width: 12px;
+            height: 12px;
+          }
         }
         
         .header-meta {
-            .option-type-label {
-                font-size: 10px;
-            }
-            
-            .timestamp {
-                font-size: 9px;
-            }
+          flex-direction: row;
+          align-items: center;
+          gap: 4px;
+          
+          .option-type-label {
+            font-size: 11px;
+          }
+          
+          .timestamp {
+            font-size: 10px;
+          }
         }
+      }
+      
+      .header-right {
+        display: none; // Hide normal mode actions
+      }
     }
     
+    // Content adjustments
     .card-content {
-        .title-section {
-            .card-title {
-                font-size: 12px;
-            }
+      margin-bottom: 0;
+      flex: 1;
+      min-width: 0;
+      padding: 0 8px;
+      
+      .content-section {
+        &.title-section {
+          .card-title {
+            font-size: 13px;
+            margin: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
         }
+        
+        &.description-section {
+          display: none;
+        }
+      }
     }
     
-    .card-features {
-        gap: 8px;
+    .section-separator {
+      display: none;
+    }
+    
+    // Inline features row
+    .inline-features-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 0 0 auto;
+      
+      .inline-spacer {
+        flex: 1;
+        min-width: 4px;
+      }
+      
+      .inline-feature-item {
+        display: flex;
+        align-items: center;
+        height: 20px;
         
-        .feature-item {
-            height: 20px;
-            
-            &.support-feature {
-                :deep(.support-feature-container) {
-                    .support-button {
-                        height: 18px;
-                        
-                        svg {
-                            width: 12px;
-                            height: 12px;
-                        }
-                    }
-                    
-                    .support-stats {
-                        font-size: 10px;
-                    }
+        // Child responses
+        &.child-responses {
+          .responses-list {
+            .responses-summary {
+              display: flex;
+              gap: 2px;
+              
+              .response-type-summary {
+                position: relative;
+                display: flex;
+                align-items: center;
+                padding: 2px 4px;
+                background: var(--color-background-dark);
+                border: 1px solid var(--color-border);
+                border-radius: 4px;
+                cursor: pointer;
+                font-size: 9px;
+                line-height: 1;
+                
+                .response-type-info {
+                  display: flex;
+                  align-items: center;
+                  gap: 2px;
+                  
+                  svg {
+                    width: 8px;
+                    height: 8px;
+                  }
+                  
+                  .response-count {
+                    font-size: 9px;
+                    font-weight: 600;
+                  }
                 }
+              }
             }
             
-            &.comments-feature {
-                .feature-content {
-                    padding: 1px 4px;
-                    height: 18px;
-                    
-                    .feature-icon {
-                        width: 12px;
-                        height: 12px;
-                    }
-                    
-                    .feature-count {
-                        font-size: 10px;
-                    }
-                }
+            .no-responses {
+              padding: 2px 4px;
+              background: var(--color-background-dark);
+              border: 1px solid var(--color-border);
+              border-radius: 4px;
+              font-size: 9px;
+              color: var(--color-text-lighter);
+              font-style: italic;
+              line-height: 1;
             }
+          }
         }
-    }
-}
-
-.option-card {
-    background: var(--color-main-background);
-    border: 2px solid var(--color-border);
-    border-radius: 12px;
-    padding: 16px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    position: relative;
-    margin-bottom: 8px;
-
-    &:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        border-color: var(--color-primary-element);
-    }
-
-    &.compact {
-        padding: 12px;
-
-        .card-features,
-        .card-responses,
-        .card-footer {
-            display: none;
+        
+        // Support feature
+        &.support-feature {
+          :deep(.support-feature-container) {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            
+            .support-button {
+              height: 18px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              
+              svg {
+                width: 12px;
+                height: 12px;
+              }
+            }
+            
+            .support-stats {
+              display: flex;
+              align-items: center;
+              gap: 2px;
+              font-size: 10px;
+              line-height: 1;
+              
+              .stat-value {
+                font-weight: 600;
+              }
+            }
+          }
         }
-    }
+        
+        // Comments feature
+        &.comments-feature {
+          .feature-content {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            padding: 2px 4px;
+            border-radius: 4px;
+            cursor: pointer;
+            height: 18px;
+            line-height: 1;
+            
+            &:hover {
+              background: var(--color-background-hover);
+            }
+            
+            .feature-icon {
+              width: 12px;
+              height: 12px;
+            }
+            
+            .feature-count {
+              font-size: 10px;
+              font-weight: 600;
+            }
+          }
+        }
+      }
+      
+      // Actions menu
+      .inline-actions {
+        flex-shrink: 0;
+        
+        .card-actions {
+          :deep(button) {
+            min-height: 20px;
+            padding: 2px;
+            background: transparent;
+            border: none;
+            color: var(--color-text-lighter);
+            cursor: pointer;
+            opacity: 0.6;
 
-    // First Box: Header
-    .card-header {
+            &:hover {
+              opacity: 1;
+              color: var(--color-primary-element);
+            }
+            
+            svg {
+              width: 14px;
+              height: 14px;
+            }
+          }
+        }
+      }
+    }
+    
+    // Tooltip positioning for inline mode
+    .child-tooltip {
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      margin-bottom: 4px;
+      background: var(--color-main-background);
+      border: 1px solid var(--color-border);
+      border-radius: 6px;
+      padding: 6px;
+      min-width: 150px;
+      max-width: 220px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      z-index: 1000;
+      animation: fadeIn 0.2s ease-out;
+      font-size: 10px;
+
+      &::after {
+        content: '';
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        border-width: 4px;
+        border-style: solid;
+        border-color: var(--color-main-background) transparent transparent transparent;
+      }
+
+      .tooltip-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 12px;
-        min-height: 32px;
+        padding-bottom: 4px;
+        margin-bottom: 4px;
+        border-bottom: 1px solid var(--color-border);
 
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex: 1;
-            min-width: 0;
-
-            .type-icon {
-                flex-shrink: 0;
-                width: 32px;
-                height: 32px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                background: var(--color-background-darker);
-                border-radius: 8px;
-            }
-
-            .header-meta {
-                display: flex;
-                flex-direction: column;
-                gap: 2px;
-                min-width: 0;
-
-                .option-type-label {
-                    font-size: 13px;
-                    font-weight: 600;
-                    color: var(--color-text-light);
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    white-space: nowrap;
-                }
-
-                .timestamp {
-                    font-size: 11px;
-                    color: var(--color-text-lighter);
-                }
-            }
+        strong {
+          font-size: 10px;
+          color: var(--color-main-text);
         }
 
-        .header-right {
-            .card-actions {
-                :deep(button) {
-                    background: transparent;
-                    border: none;
-                    padding: 4px;
-                    color: var(--color-text-lighter);
-                    cursor: pointer;
-
-                    &:hover {
-                        color: var(--color-primary-element);
-                    }
-                }
-            }
+        .tooltip-count {
+          font-size: 9px;
+          color: var(--color-text-lighter);
         }
+      }
+
+      .tooltip-children {
+        .tooltip-child-item {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          padding: 3px 4px;
+          border-radius: 3px;
+          cursor: pointer;
+          font-size: 9px;
+          line-height: 1;
+
+          &:hover {
+            background: var(--color-background-hover);
+          }
+
+          svg {
+            width: 8px;
+            height: 8px;
+            flex-shrink: 0;
+          }
+
+          .child-title {
+            color: var(--color-text-light);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 120px;
+          }
+        }
+
+        .tooltip-more {
+          padding: 3px 4px;
+          font-size: 8px;
+          color: var(--color-text-lighter);
+          font-style: italic;
+        }
+      }
     }
-
-    // Second Box: Content
-    .card-content {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        margin-bottom: 12px;
-
-        .content-section {
-            &.title-section {
-                .card-title {
-                    margin: 0;
-                    font-size: 16px;
-                    font-weight: 600;
-                    color: var(--color-main-text);
-                    line-height: 1.4;
-                    word-break: break-word;
-                }
-            }
-
-            &.description-section {
-                .card-text {
-                    margin: 0;
-                    font-size: 13px;
-                    line-height: 1.5;
-                    color: var(--color-text-light);
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    display: -webkit-box;
-                    -webkit-line-clamp: 2;
-                    -webkit-box-orient: vertical;
-                }
-            }
-        }
+    
+    &:hover {
+      transform: translateY(-1px);
+      background: var(--color-background-hover);
     }
+  }
+}
 
-    // Separator
-    .section-separator {
-        height: 1px;
-        background: var(--color-border);
-        margin: 0 0 12px 0;
-    }
-
-    // Third Box: Support and Comments in single line - FIXED ALIGNMENT
-    .card-features {
-        display: flex;
-        align-items: center;
-        gap: 24px;
-        margin-bottom: 12px;
-        min-height: 32px;
-
-        .feature-item {
-            display: flex;
-            align-items: center;
-            height: 32px;
-
-            &.support-feature {
-                display: flex;
-                align-items: center;
-
-                :deep(.support-feature-container) {
-                    display: flex;
-                    align-items: center;
-                    height: 100%;
-                    gap: 6px;
-
-                    .support-button {
-                        height: 24px;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-
-                        svg {
-                            width: 16px;
-                            height: 16px;
-                        }
-                    }
-
-                    .support-stats {
-                        display: flex;
-                        align-items: center;
-                        gap: 4px;
-                        font-size: 12px;
-                        height: 100%;
-
-                        .stat-value {
-                            font-weight: 600;
-                            line-height: 1;
-                        }
-                    }
-                }
-            }
-
-            &.comments-feature {
-                .feature-content {
-                    display: flex;
-                    align-items: center;
-                    gap: 6px;
-                    padding: 4px 10px;
-                    border-radius: 6px;
-                    transition: background-color 0.2s ease;
-                    cursor: pointer;
-                    height: 28px;
-
-                    &:hover {
-                        background: var(--color-background-hover);
-                    }
-
-                    .feature-icon {
-                        color: var(--color-text-lighter);
-                        width: 16px;
-                        height: 16px;
-                        flex-shrink: 0;
-                    }
-
-                    .feature-count {
-                        font-size: 12px;
-                        font-weight: 600;
-                        color: var(--color-text-light);
-                        line-height: 1;
-                    }
-                }
-            }
-        }
-    }
-
-    // Fourth Box: Responses (smaller)
-    .card-responses {
-        margin-bottom: 12px;
-
-        .responses-header {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            margin-bottom: 8px;
-
-            .responses-title {
-                font-size: 12px;
-                font-weight: 600;
-                color: var(--color-text-light);
-            }
-        }
-
-        .responses-list {
-            .no-responses {
-                padding: 6px 10px;
-                background: var(--color-background-dark);
-                border: 1px solid var(--color-border);
-                border-radius: 8px;
-                font-size: 11px;
-                color: var(--color-text-lighter);
-                font-style: italic;
-                text-align: center;
-            }
-
-            .responses-summary {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 6px;
-
-                .response-type-summary {
-                    display: flex;
-                    align-items: center;
-                    gap: 4px;
-                    padding: 4px 8px;
-                    background: var(--color-background-dark);
-                    border: 1px solid var(--color-border);
-                    border-radius: 8px;
-                    cursor: pointer;
-                    transition: all 0.2s ease;
-                    font-size: 11px;
-
-                    &:hover {
-                        background: var(--color-background-darker);
-                        border-color: var(--color-primary-element);
-                    }
-
-                    .response-type-info {
-                        display: flex;
-                        align-items: center;
-                        gap: 4px;
-
-                        svg {
-                            width: 12px;
-                            height: 12px;
-                        }
-
-                        .response-count {
-                            font-weight: 600;
-                            color: var(--color-primary-element);
-                            font-size: 11px;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    // Footer: Owner info
-    .card-footer {
-        padding-top: 12px;
-        border-top: 1px solid var(--color-border);
-
-        .owner-info {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 11px;
-
-            .owner-name {
-                color: var(--color-text-lighter);
-                font-size: 11px;
-            }
-        }
-    }
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
 }
 
 // Responsive design
 @media (max-width: 768px) {
-    .option-card {
-        padding: 12px;
+  .option-card {
+    padding: 12px;
 
-        .card-features {
-            gap: 16px;
-            flex-wrap: wrap;
-
-            .feature-item {
-                &.support-feature {
-                    :deep(.support-feature-container) {
-                        flex-wrap: wrap;
-                        gap: 4px;
-                    }
-                }
-
-                &.comments-feature {
-                    .feature-content {
-                        padding: 4px 8px;
-                    }
-                }
-            }
+    &.inline {
+      flex-wrap: wrap;
+      
+      .card-header {
+        width: 100%;
+      }
+      
+      .card-content {
+        width: 100%;
+        padding: 4px 0;
+      }
+      
+      .inline-features-row {
+        width: 100%;
+        flex-wrap: wrap;
+        
+        .inline-spacer {
+          display: none;
         }
+        
+        .inline-actions {
+          margin-left: auto;
+        }
+      }
     }
+  }
 }
 </style>

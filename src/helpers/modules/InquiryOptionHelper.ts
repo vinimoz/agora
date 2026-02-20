@@ -142,7 +142,7 @@ export function getAllowedOptionTypes(
     if (!opt) return false
     
     // Get the option type value - could be in option_type or optionType
-    const optionTypeValue = opt.optionType
+    const optionTypeValue = opt.option_type
     
     return typeof optionTypeValue === 'string' && 
            allowedOptionTypeKeys.includes(optionTypeValue)
@@ -566,3 +566,16 @@ export function usesTitle(
   return found?.use_title !== false
 }
 
+export const getLayoutForFamily = (familyKey: string): string => {
+  const layoutMap: Record<string, string> = {
+    structure: 'tree',
+    debate: 'paired',
+    consensus: 'consensus_flow',
+    decision: 'voting_list',
+    proposal: 'cards',
+    project: 'kanban',
+    timeline: 'timeline'
+  }
+
+  return layoutMap[familyKey] || 'cards'
+}

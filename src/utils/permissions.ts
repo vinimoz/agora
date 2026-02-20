@@ -441,7 +441,7 @@ function getTypeConfigPermissions(context: PermissionContext): {
   else if (context.contentType === ContentType.Option) {
     const optionTypes = appSettings.inquiryOptionTypeTab || []
     const optionConfig = optionTypes.find((type: any) => 
-      type.optionType === typeKey || type.option_type === typeKey
+       type.option_type === typeKey
     )
     
     if (optionConfig) {

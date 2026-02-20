@@ -694,6 +694,7 @@ watch(() => route.params.slug, async () => {
 
 .inquiry-group-page {
     width: 100%;
+    height: 100%;
     background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
     min-height: 100vh;
 }

@@ -33,8 +33,8 @@
         </div>
       </div>
       
-      <!-- Right side: Actions menu - always on far right -->
-      <div class="header-right" @click.stop>
+      <!-- Right side: Actions menu - only in normal mode -->
+      <div v-if="!inline" class="header-right" @click.stop>
         <NcActions
           v-if="canEditOrDelete"
           :force-menu="true"
@@ -74,8 +74,8 @@
     <!-- Separator - hide in inline mode -->
     <div v-if="!inline" class="section-separator"></div>
 
-    <!-- Third Box: Support and Comments in single line -->
-    <div v-if="hasSupportFeature || allowComment" class="card-features">
+    <!-- Third Box: Support and Comments in single line (normal mode) -->
+    <div v-if="!inline && (hasSupportFeature || allowComment)" class="card-features">
       <!-- Support feature -->
       <div v-if="hasSupportFeature" class="feature-item support-feature">
         <SupportFeature
@@ -98,9 +98,9 @@
       </div>
     </div>
 
-    <!-- Fourth Box: Responses - hide in compact mode, show with tooltips in normal and inline -->
-    <div v-if="hasAllowedResponses && !compact" class="card-responses">
-      <div v-if="!inline" class="responses-header">
+    <!-- Fourth Box: Responses - normal mode -->
+    <div v-if="!inline && hasAllowedResponses && !compact" class="card-responses">
+      <div class="responses-header">
         <component :is="InquiryOptionIcons.MessageReplyText" :size="14" />
         <span class="responses-title">{{ t('agora', 'Responses') }}</span>
       </div>
@@ -147,6 +147,101 @@
             </div>
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- INLINE MODE: All features in one row with actions at the end -->
+    <div v-if="inline" class="inline-features-row">
+      <!-- Child responses -->
+      <div v-if="hasAllowedResponses && !compact" class="inline-feature-item child-responses">
+        <div class="responses-list">
+          <div v-if="childCountsTotal === 0" class="no-responses">
+            <span class="no-responses-text">{{ t('agora', 'None') }}</span>
+          </div>
+
+          <div v-else class="responses-summary">
+            <div 
+              v-for="responseType in allowedResponses" 
+              :key="responseType"
+              class="response-type-summary"
+              @mouseenter="showChildTooltip(responseType)"
+              @mouseleave="hideChildTooltip"
+              @click.stop="$emit('viewResponses', option, responseType)"
+            >
+              <div class="response-type-info">
+                <component :is="getOptionTypeIcon(responseType)" :size="10" />
+                <span class="response-count">{{ childCounts[responseType] || 0 }}</span>
+              </div>
+              
+              <!-- Tooltip showing child options of this type -->
+              <div v-if="activeTooltip === responseType && childCounts[responseType] > 0" class="child-tooltip">
+                <div class="tooltip-header">
+                  <strong>{{ getOptionTypeLabelLocal(responseType) }}</strong>
+                  <span class="tooltip-count">{{ childCounts[responseType] }} {{ t('agora', 'items') }}</span>
+                </div>
+                <div class="tooltip-children">
+                  <div 
+                    v-for="child in getChildrenByType(responseType)" 
+                    :key="child.id"
+                    class="tooltip-child-item"
+                    @click.stop="$emit('click', child)"
+                  >
+                    <component :is="getOptionTypeIcon(child.type)" :size="10" />
+                    <span class="child-title">{{ child.title || child.text?.substring(0, 30) }}</span>
+                  </div>
+                  <div v-if="childCounts[responseType] > 3" class="tooltip-more">
+                    {{ t('agora', 'and {count} more...', { count: childCounts[responseType] - 3 }) }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Support feature -->
+      <div v-if="hasSupportFeature" class="inline-feature-item support-feature">
+        <SupportFeature
+          :item="option"
+          item-type="option"
+          :context="optionContext"
+          :show-quorum="true"
+          :show-details-on-hover="true"
+          :icon-size="12"
+          @click.stop
+        />
+      </div>
+      
+      <!-- Comments feature -->
+      <div v-if="allowComment" class="inline-feature-item comments-feature" @click.stop="$emit('comment', option)">
+        <div class="feature-content">
+          <component :is="InquiryOptionIcons.Comment" :size="14" class="feature-icon" />
+          <span class="feature-count">{{ option.status.countComments || 0 }}</span>
+        </div>
+      </div>
+
+      <!-- Spacer to push actions to the right -->
+      <div class="inline-spacer"></div>
+
+      <!-- Actions menu for inline mode -->
+      <div v-if="canEditOrDelete" class="inline-actions" @click.stop>
+        <NcActions
+          :force-menu="true"
+          :aria-label="t('agora', 'Option actions')"
+          class="card-actions"
+        >
+          <!-- Delete action -->
+          <NcActionButton
+            v-if="canDelete"
+            :close-after-click="true"
+            @click="confirmDelete"
+          >
+            <template #icon>
+              <component :is="InquiryOptionIcons.Delete" :size="20" />
+            </template>
+            {{ t('agora', 'Delete') }}
+          </NcActionButton>
+        </NcActions>
       </div>
     </div>
 
@@ -391,7 +486,6 @@ const deleteOption = async () => {
   }
 }
 </script>
-
 <style scoped lang="scss">
 .option-card {
   background: var(--color-main-background);
@@ -424,169 +518,6 @@ const deleteOption = async () => {
         display: block;
         -webkit-line-clamp: 1;
       }
-    }
-  }
-
-  // Inline mode - horizontal layout
-  &.inline {
-    display: flex;
-    align-items: center;
-    padding: 8px 12px;
-    margin-bottom: 4px;
-    
-    .card-header {
-      margin-bottom: 0;
-      min-height: unset;
-      flex: 0 0 auto;
-      width: auto;
-      
-      .header-left {
-        gap: 8px;
-        
-        .type-icon {
-          width: 24px;
-          height: 24px;
-          
-          svg {
-            width: 14px;
-            height: 14px;
-          }
-        }
-        
-        .header-meta {
-          flex-direction: row;
-          align-items: center;
-          gap: 8px;
-          
-          .option-type-label {
-            font-size: 11px;
-          }
-          
-          .timestamp {
-            font-size: 10px;
-          }
-        }
-      }
-
-      .header-right {
-        margin-left: 8px;
-        
-        .card-actions {
-          :deep(button) {
-            min-height: 24px;
-            padding: 2px 4px;
-          }
-        }
-      }
-    }
-    
-    .card-content {
-      margin-bottom: 0;
-      flex: 1;
-      min-width: 0;
-      padding: 0 12px;
-      
-      .content-section {
-        &.title-section {
-          .card-title {
-            font-size: 13px;
-            margin: 0;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-          }
-        }
-        
-        &.description-section {
-          display: none;
-        }
-      }
-    }
-    
-    .section-separator {
-      display: none;
-    }
-    
-    .card-features {
-      margin-bottom: 0;
-      min-height: unset;
-      flex: 0 0 auto;
-      gap: 8px;
-      
-      .feature-item {
-        height: 24px;
-        
-        &.support-feature {
-          :deep(.support-feature-container) {
-            gap: 4px;
-            
-            .support-button {
-              height: 20px;
-              
-              svg {
-                width: 14px;
-                height: 14px;
-              }
-            }
-            
-            .support-stats {
-              font-size: 11px;
-            }
-          }
-        }
-        
-        &.comments-feature {
-          .feature-content {
-            padding: 2px 6px;
-            height: 20px;
-            
-            .feature-icon {
-              width: 14px;
-              height: 14px;
-            }
-            
-            .feature-count {
-              font-size: 11px;
-            }
-          }
-        }
-      }
-    }
-    
-    .card-responses {
-      display: flex;
-      margin-bottom: 0;
-      flex: 0 0 auto;
-      
-      .responses-list {
-        .responses-summary {
-          gap: 4px;
-          
-          .response-type-summary {
-            padding: 2px 6px;
-            
-            .response-type-info {
-              svg {
-                width: 10px;
-                height: 10px;
-              }
-              
-              .response-count {
-                font-size: 10px;
-              }
-            }
-          }
-        }
-      }
-    }
-    
-    .card-footer {
-      display: none;
-    }
-    
-    &:hover {
-      transform: translateY(-1px);
-      background: var(--color-background-hover);
     }
   }
 
@@ -700,7 +631,7 @@ const deleteOption = async () => {
     margin: 0 0 12px 0;
   }
 
-  // Features section
+  // Features section (NORMAL MODE)
   .card-features {
     display: flex;
     align-items: center;
@@ -711,7 +642,7 @@ const deleteOption = async () => {
     .feature-item {
       display: flex;
       align-items: center;
-      height: 32px;
+      height: 52px;
 
       &.support-feature {
         :deep(.support-feature-container) {
@@ -762,8 +693,8 @@ const deleteOption = async () => {
 
           .feature-icon {
             color: var(--color-text-lighter);
-            width: 16px;
-            height: 16px;
+            width: 26px;
+            height: 26px;
             flex-shrink: 0;
           }
 
@@ -777,7 +708,7 @@ const deleteOption = async () => {
     }
   }
 
-  // Responses section
+  // Responses section (NORMAL MODE)
   .card-responses {
     margin-bottom: 12px;
 
@@ -835,8 +766,8 @@ const deleteOption = async () => {
             gap: 4px;
 
             svg {
-              width: 12px;
-              height: 12px;
+              width: 14px;
+              height: 14px;
             }
 
             .response-count {
@@ -946,6 +877,338 @@ const deleteOption = async () => {
       }
     }
   }
+
+  // INLINE MODE STYLES
+  &.inline {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    margin-bottom: 4px;
+    
+    // Hide all normal mode sections
+    .card-features,
+    .card-responses,
+    .card-footer {
+      display: none;
+    }
+    
+    // Header adjustments
+    .card-header {
+      margin-bottom: 0;
+      min-height: unset;
+      flex: 0 0 auto;
+      width: auto;
+      
+      .header-left {
+        gap: 8px;
+        
+        .type-icon {
+          width: 24px;
+          height: 24px;
+          
+          svg {
+            width: 16px;
+            height: 16px;
+          }
+        }
+        
+        .header-meta {
+          flex-direction: row;
+          align-items: center;
+          gap: 6px;
+          
+          .option-type-label {
+            font-size: 12px;
+          }
+          
+          .timestamp {
+            font-size: 11px;
+          }
+        }
+      }
+      
+      .header-right {
+        display: none; // Hide normal mode actions
+      }
+    }
+    
+    // Content adjustments
+    .card-content {
+      margin-bottom: 0;
+      flex: 1;
+      min-width: 0;
+      padding: 0 10px;
+      
+      .content-section {
+        &.title-section {
+          .card-title {
+            font-size: 14px;
+            margin: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+        }
+        
+        &.description-section {
+          display: none;
+        }
+      }
+    }
+    
+    .section-separator {
+      display: none;
+    }
+    
+    // Inline features row
+    .inline-features-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 0 0 auto;
+      
+      .inline-spacer {
+        flex: 1;
+        min-width: 6px;
+      }
+      
+      .inline-feature-item {
+        display: flex;
+        align-items: center;
+        height: 24px;
+        
+        // Child responses
+        &.child-responses {
+          .responses-list {
+            .responses-summary {
+              display: flex;
+              gap: 4px;
+              
+              .response-type-summary {
+                position: relative;
+                display: flex;
+                align-items: center;
+                padding: 4px 8px;
+                background: var(--color-background-dark);
+                border: 1px solid var(--color-border);
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 11px;
+                line-height: 1;
+                
+                .response-type-info {
+                  display: flex;
+                  align-items: center;
+                  gap: 3px;
+                  
+                  svg {
+                    width: 14px;
+                    height: 14px;
+                  }
+                  
+                  .response-count {
+                    font-size: 10px;
+                    font-weight: 600;
+                  }
+                }
+              }
+            }
+            
+            .no-responses {
+              padding: 3px 8px;
+              background: var(--color-background-dark);
+              border: 1px solid var(--color-border);
+              border-radius: 6px;
+              font-size: 10px;
+              color: var(--color-text-lighter);
+              font-style: italic;
+              line-height: 1;
+            }
+          }
+        }
+        
+        // Support feature
+        &.support-feature {
+          :deep(.support-feature-container) {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            
+            .support-button {
+              height: 22px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              
+              svg {
+                width: 14px;
+                height: 14px;
+              }
+            }
+            
+            .support-stats {
+              display: flex;
+              align-items: center;
+              gap: 3px;
+              font-size: 11px;
+              line-height: 1;
+              
+              .stat-value {
+                font-weight: 600;
+              }
+            }
+          }
+        }
+        
+        // Comments feature
+        &.comments-feature {
+          .feature-content {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            padding: 3px 6px;
+            border-radius: 6px;
+            cursor: pointer;
+            height: 22px;
+            line-height: 1;
+            
+            &:hover {
+              background: var(--color-background-hover);
+            }
+            
+            .feature-icon {
+              width: 14px;
+              height: 14px;
+            }
+            
+            .feature-count {
+              font-size: 11px;
+              font-weight: 600;
+            }
+          }
+        }
+      }
+      
+      // Actions menu
+      .inline-actions {
+        flex-shrink: 0;
+        
+        .card-actions {
+          :deep(button) {
+            min-height: 24px;
+            padding: 4px;
+            background: transparent;
+            border: none;
+            color: var(--color-text-lighter);
+            cursor: pointer;
+            opacity: 0.7;
+
+            &:hover {
+              opacity: 1;
+              color: var(--color-primary-element);
+            }
+            
+            svg {
+              width: 16px;
+              height: 16px;
+            }
+          }
+        }
+      }
+    }
+    
+    // Tooltip positioning for inline mode
+    .child-tooltip {
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      margin-bottom: 6px;
+      background: var(--color-main-background);
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      padding: 8px;
+      min-width: 170px;
+      max-width: 250px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      z-index: 1000;
+      animation: fadeIn 0.2s ease-out;
+      font-size: 11px;
+
+      &::after {
+        content: '';
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        border-width: 5px;
+        border-style: solid;
+        border-color: var(--color-main-background) transparent transparent transparent;
+      }
+
+      .tooltip-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-bottom: 5px;
+        margin-bottom: 5px;
+        border-bottom: 1px solid var(--color-border);
+
+        strong {
+          font-size: 11px;
+          color: var(--color-main-text);
+        }
+
+        .tooltip-count {
+          font-size: 10px;
+          color: var(--color-text-lighter);
+        }
+      }
+
+      .tooltip-children {
+        .tooltip-child-item {
+          display: flex;
+          align-items: center;
+          gap: 5px;
+          padding: 4px 5px;
+          border-radius: 4px;
+          cursor: pointer;
+          font-size: 10px;
+          line-height: 1;
+
+          &:hover {
+            background: var(--color-background-hover);
+          }
+
+          svg {
+            width: 10px;
+            height: 10px;
+            flex-shrink: 0;
+          }
+
+          .child-title {
+            color: var(--color-text-light);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 140px;
+          }
+        }
+
+        .tooltip-more {
+          padding: 4px 5px;
+          font-size: 9px;
+          color: var(--color-text-lighter);
+          font-style: italic;
+        }
+      }
+    }
+    
+    &:hover {
+      transform: translateY(-1px);
+      background: var(--color-background-hover);
+    }
+  }
 }
 
 @keyframes fadeIn {
@@ -964,11 +1227,6 @@ const deleteOption = async () => {
   .option-card {
     padding: 12px;
 
-    .card-features {
-      gap: 16px;
-      flex-wrap: wrap;
-    }
-
     &.inline {
       flex-wrap: wrap;
       
@@ -978,15 +1236,20 @@ const deleteOption = async () => {
       
       .card-content {
         width: 100%;
-        padding: 8px 0;
+        padding: 4px 0;
       }
       
-      .card-features {
-        width: auto;
-      }
-      
-      .card-responses {
-        width: auto;
+      .inline-features-row {
+        width: 100%;
+        flex-wrap: wrap;
+        
+        .inline-spacer {
+          display: none;
+        }
+        
+        .inline-actions {
+          margin-left: auto;
+        }
       }
     }
   }

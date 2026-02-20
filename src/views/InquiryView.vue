@@ -71,7 +71,9 @@ async function loadInquiry(id: string) {
     } else {
       inquiryStore.status.forceEditMode = false
       editMode.value = false
-    }
+   } 
+    inquiriesStore.setFamilyType(inquiryStore.family)
+
     await nextTick()
     forceRenderKey.value += 1
   } catch  {
@@ -86,6 +88,7 @@ watch(
   async (newId) => {
     isAppLoaded.value = false
     await loadInquiry(newId as string)
+    handleSave
   },
   { immediate: true }
 )

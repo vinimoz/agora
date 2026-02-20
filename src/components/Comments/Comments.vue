@@ -1,64 +1,200 @@
 <!--
-  - SPDX-FileCopyrightText: 2018 Nextcloud contributors
+  - SPDX-FileCopyrightText: 2021 Nextcloud contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
-
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import CommentItem from './CommentItem.vue'
 import { t } from '@nextcloud/l10n'
 import { usePreferencesStore } from '../../stores/preferences.ts'
 import { useCommentsStore } from '../../stores/comments.ts'
-import { useSessionStore } from '../../stores/session.ts' // Add this
+import NcRichContenteditable from '@nextcloud/vue/components/NcRichContenteditable'
 
+
+const newCommentText = ref('')
+const isSubmitting = ref(false)
 const commentsStore = useCommentsStore()
 const preferencesStore = usePreferencesStore()
-const sessionStore = useSessionStore() // Add this
 
-// Define props for filtering
 const props = defineProps<{
-  optionId?: number // Optional: if provided, show only this option's comments
-  inquiryOnly?: boolean // Optional: if true, show only inquiry-level comments
+  optionId?: number
+  inquiryOnly?: boolean
 }>()
 
-// Computed property to get filtered comments
+// Store user positions outside computed to prevent recreation
+const userPositions = new Map<string | number, 'left' | 'right'>()
+
+// Group comments by user + time proximity (within 60 seconds)
+function groupCommentsByUserAndTime(comments: any[]) {
+  if (!comments || comments.length === 0) return []
+
+  const groups: any[] = []
+  let currentGroup: any = null
+
+  for (let i = 0; i < comments.length; i++) {
+    const comment = comments[i]
+
+    // Skip if comment is invalid
+    if (!comment || !comment.user) continue
+
+    if (!currentGroup) {
+      // Start first group
+      currentGroup = {
+        userId: comment.user.id,
+        user: comment.user,
+        timestamp: comment.timestamp,
+        comments: [comment]
+      }
+      continue
+    }
+
+    const timeDiff = Math.abs(comment.timestamp - currentGroup.timestamp)
+
+    // Same user and within 60 seconds = same group
+    if (comment.user.id === currentGroup.userId && timeDiff <= 60) {
+      currentGroup.comments.push(comment)
+    } else {
+      // Push current group and start new one
+      groups.push(currentGroup)
+      currentGroup = {
+        userId: comment.user.id,
+        user: comment.user,
+        timestamp: comment.timestamp,
+        comments: [comment]
+      }
+    }
+  }
+
+  // Don't forget the last group
+  if (currentGroup) {
+    groups.push(currentGroup)
+  }
+
+  return groups
+}
+
+function getAvatarPosition(userId: string | number): 'left' | 'right' {
+  // Get last position for this user
+  const lastPosition = userPositions.get(userId)
+
+  // Determine new position
+  let position: 'left' | 'right'
+  if (!lastPosition) {
+    // First time for this user - start with left
+    position = 'left'
+  } else {
+    // Alternate
+    position = lastPosition === 'left' ? 'right' : 'left'
+  }
+
+  // Store for next time
+  userPositions.set(userId, position)
+  return position
+}
+
 const filteredComments = computed(() => {
-  console.log(" INTO COMMMENT ",props.optionId)
-  console.log(" INTO COMMMENT iNQUIRY ONLY ",props.inquiryOnly)
-  console.log(" ALLLLLLLLLLLLLL COMMMENT ",commentsStore.comments)
-  console.log(" COMMMENT GROUPED PROPS ID ",commentsStore.groupedComments)
-  console.log(" FILTER COMMMENT GROUPED PROPS ID ",commentsStore.groupedComments.filter( comment => comment.optionId === 0 ))
+  console.log("INTO COMMENT optionId:", props.optionId)
+  console.log("INTO COMMENT inquiryOnly:", props.inquiryOnly)
+
+  // Reset positions for new filter
+  userPositions.clear()
+
+  // Default: use groupedComments
+  if (props.optionId === undefined && !props.inquiryOnly) {
+    return commentsStore.groupedComments || []
+  }
+
+  // Get base comments
+  let baseComments = []
   if (props.optionId !== undefined) {
-    
-    return commentsStore.comments
-      .filter(comment => comment.optionId === props.optionId)
-      .sort((a, b) => b.timestamp - a.timestamp) 
+    baseComments = (commentsStore.comments || [])
+      .filter(comment => comment && comment.optionId === props.optionId)
+      .sort((a, b) => b.timestamp - a.timestamp)
+  } else if (props.inquiryOnly) {
+    baseComments = (commentsStore.comments || [])
+      .filter(comment => comment && comment.optionId === 0)
+      .sort((a, b) => b.timestamp - a.timestamp)
   }
-  
-  if (props.inquiryOnly) {
-    // Show only inquiry-level comments (optionId = 0)
-    return commentsStore.groupedComments.filter(
-      comment => comment.optionId === 0
-    )
-  }
-  
-  // Default: show all comments (original behavior)
-  return commentsStore.groupedComments
+
+  // Group by user + time
+  const groups = groupCommentsByUserAndTime(baseComments)
+
+  // Assign avatar positions
+  return groups.map(group => ({
+    ...group,
+    avatarPosition: getAvatarPosition(group.userId)
+  }))
 })
 
 const cssVar = {
   '--content-deleted': `"(${t('agora', 'deleted')})"`,
 }
-const alternativestyle = preferencesStore.user.useCommentsAlternativeStyling
+const alternativestyle = preferencesStore.user?.useCommentsAlternativeStyling || false
 </script>
 
 <template>
   <TransitionGroup tag="ul" name="list" :class="['comments', { alternativestyle }]" :style="cssVar">
-    <CommentItem
-      v-for="comment in filteredComments"
-      :key="comment.id"
-      :comment="comment"
-      tag="li"
-    />
+    <!-- Grouped view for option/inquiry comments -->
+    <template v-if="filteredComments.length > 0 && filteredComments[0]?.comments">
+      <li
+        v-for="(group, index) in filteredComments"
+        :key="`group-${group.userId}-${group.timestamp}-${index}`"
+        class="comment-group"
+      >
+        <CommentItem
+          :group="group"
+          :avatar-position="group.avatarPosition"
+          :is-grouped="true"
+        />
+      </li>
+    </template>
+
+    <!-- Default threaded view -->
+    <template v-else-if="filteredComments.length > 0">
+      <CommentItem
+        v-for="comment in filteredComments"
+        :key="comment.id"
+        :comment="comment"
+        :is-grouped="false"
+      />
+    </template>
+
+    <!-- Empty state -->
+    <li v-else class="no-comments">
+      {{ t('agora', 'No comments yet') }}
+    </li>
   </TransitionGroup>
 </template>
+
+<style lang="scss" scoped>
+.comments {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.comment-group {
+  list-style: none;
+  margin-bottom: 16px;
+}
+
+.no-comments {
+  padding: 20px;
+  text-align: center;
+  color: var(--color-text-lighter);
+  font-style: italic;
+  list-style: none;
+}
+
+// Transition animations
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.3s ease;
+}
+
+.list-enter-from,
+.list-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+</style>

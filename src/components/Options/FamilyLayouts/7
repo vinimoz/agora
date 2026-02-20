@@ -129,226 +129,9 @@ class InitDbDefault extends Command
             'sort_order' => 5,
             'created' => '',
         ],
-        [
-            'family_type' => 'workflow',
-            'label' => 'Workflow',
-            'description' => 'Project and decision workflow management',
-            'icon' => 'ViewKanban',
-            'sort_order' => 6,
-            'created' => '',
-        ],
-        [
-            'family_type' => 'process',
-            'label' => 'Process',
-            'description' => 'Timeline and procedural events',
-            'icon' => 'Timeline',
-            'sort_order' => 7,
-            'created' => '',
-        ],
-
-
     ];
 
     private array $optionTypes = [
-        [
-            // ====================================================
-            // Workflow 
-            // ====================================================
-            'family' => 'workflow',
-            'option_type' => 'workflow_item',
-            'icon' => 'Task',
-            'label' => 'Workflow Item',
-            'description' => 'Task or decision moving through workflow stages.',
-            'fields' => [
-                'priority',
-                'assigned_to',
-                'due_date',
-            ],
-            'allowed_response' => [
-                'workflow_comment',
-                'workflow_blocker',
-                'workflow_transition',
-                'message',
-            ],
-            'allow_comment' => true,
-            'support_feature' => 'binary',
-            'statuses' => [
-                'draft',
-                'in_progress',
-                'review',
-                'validated',
-                'rejected',
-            ],
-            'use_title' => true,
-        ],
-        [
-            'family' => 'workflow',
-            'option_type' => 'workflow_transition',
-            'icon' => 'ArrowRight',
-            'label' => 'Workflow Transition',
-            'description' => 'State change within workflow.',
-            'fields' => [
-                'from_status',
-                'to_status',
-                'justification',
-            ],
-            'allowed_response' => [
-                'message',
-            ],
-            'allow_comment' => false,
-            'support_feature' => 'none',
-            'statuses' => [],
-            'use_title' => false,
-        ],
-
-        [
-            'family' => 'workflow',
-            'option_type' => 'workflow_blocker',
-            'icon' => 'Warning',
-            'label' => 'Workflow Blocker',
-            'description' => 'Blocking issue preventing progress.',
-            'fields' => [
-                'severity',
-                'reason',
-            ],
-            'allowed_response' => [
-                'message',
-                'workflow_transition',
-            ],
-            'allow_comment' => true,
-            'support_feature' => 'binary',
-            'statuses' => [
-                'active',
-                'resolved',
-            ],
-            'use_title' => false,
-        ],
-        [
-            'family' => 'workflow',
-            'option_type' => 'workflow_comment',
-            'icon' => 'Comment',
-            'label' => 'Workflow Comment',
-            'description' => 'Comment related to workflow item.',
-            'fields' => [],
-            'allowed_response' => [
-                'message',
-            ],
-            'allow_comment' => true,
-            'support_feature' => 'none',
-            'statuses' => [],
-            'use_title' => false,
-        ],
-
-        // ====================================================
-        // Kabana
-        // ====================================================
-
-        [
-            'family' => 'process',
-            'option_type' => 'process_event',
-            'icon' => 'Calendar',
-            'label' => 'Process Event',
-            'description' => 'Significant event in process timeline.',
-            'fields' => [
-                'event_date',
-                'event_type',
-            ],
-            'allowed_response' => [
-                'message',
-                'official_summary',
-            ],
-            'allow_comment' => true,
-            'support_feature' => 'none',
-            'statuses' => [],
-            'use_title' => true,
-        ],
-
-        [
-            'family' => 'process',
-            'option_type' => 'process_phase',
-            'icon' => 'Layers',
-            'label' => 'Process Phase',
-            'description' => 'Time period structuring the process.',
-            'fields' => [
-                'start_date',
-                'end_date',
-            ],
-            'allowed_response' => [
-                'process_event',
-                'message',
-            ],
-            'allow_comment' => false,
-            'support_feature' => 'none',
-            'statuses' => [
-                'open',
-                'closed',
-            ],
-            'use_title' => true,
-        ],
-
-        [
-            'family' => 'process',
-            'option_type' => 'milestone',
-            'icon' => 'Flag',
-            'label' => 'Milestone',
-            'description' => 'Key milestone in the process.',
-            'fields' => [
-                'milestone_date',
-            ],
-            'allowed_response' => [
-                'message',
-                'official_summary',
-            ],
-            'allow_comment' => false,
-            'support_feature' => 'none',
-            'statuses' => [],
-            'use_title' => true,
-        ],
-
-        [
-            'family' => 'process',
-            'option_type' => 'deadline',
-            'icon' => 'Clock',
-            'label' => 'Deadline',
-            'description' => 'Formal deadline for action.',
-            'fields' => [
-                'due_date',
-                'scope',
-            ],
-            'allowed_response' => [
-                'message',
-            ],
-            'allow_comment' => false,
-            'support_feature' => 'none',
-            'statuses' => [
-                'active',
-                'expired',
-            ],
-            'use_title' => false,
-        ],
-
-        [
-            'family' => 'process',
-            'option_type' => 'status_change',
-            'icon' => 'History',
-            'label' => 'Status Change',
-            'description' => 'Historical change of status.',
-            'fields' => [
-                'old_status',
-                'new_status',
-                'change_date',
-            ],
-            'allowed_response' => [
-                'message',
-            ],
-            'allow_comment' => false,
-            'support_feature' => 'none',
-            'statuses' => [],
-            'use_title' => false,
-        ],
-
-
-
 
         // ====================================================
         // Debate – Positions
@@ -748,16 +531,7 @@ class InitDbDefault extends Command
             ],
             'allowed_response' => ['amendment','objection','official'],
             'allowed_transformation' => [],
-            'allowed_option_type' => [
-    'article',
-    'chapter',
-    'amendment',
-    'official_summary',
-    'process_phase',
-    'process_event',
-    'milestone',
-],
-
+            'allowed_option_type' => ['structure_intro','position_for','position_against','alternative','official_summary'],
             'allow_comment' => true,
             'support_feature' => 'binary',
             'is_root' => true,
@@ -780,14 +554,7 @@ class InitDbDefault extends Command
             ],
             'allowed_response' => null,
             'allowed_transformation' => null,
-        'allowed_option_type' => [
-    'amendment',
-    'argument_for',
-    'argument_against',
-    'official_summary',
-    'process_phase',
-    'milestone',
-    ],
+            'allowed_option_type' => ['amendment','argument_for','argument_against','official_summary'],
             'allow_comment' => true,
             'support_feature' => 'binary',
             'is_root' => false,
@@ -798,6 +565,8 @@ class InitDbDefault extends Command
             'family' => 'legislative',
             'icon' => 'Library',
             'label' => 'Constitutional Workshop',
+            'description' => 'Workshop for drafting or revising constitutional texts.',
+            'fields' => [
                 ["key"=>"draft_text","label"=>"Draft Text","type"=>"text","required"=>true,"default"=>null,"rules"=>[]],
                 ["key"=>"article_map","label"=>"Article Map","type"=>"json","required"=>false,"default"=>null,"rules"=>[]],
                 ["key"=>"facilitator_id","label"=>"Facilitator","type"=>"users","required"=>false,"default"=>null,"rules"=>[]],
@@ -808,16 +577,7 @@ class InitDbDefault extends Command
             ],
             'allowed_response' => ['law_proposal'],
             'allowed_transformation' => null,
-        'allowed_option_type' => [
-    'chapter',
-    'position_for',
-    'position_against',
-    'alternative',
-    'process_phase',
-    'milestone',
-    'process_event',
-],
-
+            'allowed_option_type' => ['chapter','position_for','position_against','alternative'],
             'allow_comment' => true,
             'support_feature' => 'binary',
             'is_root' => true,

@@ -211,6 +211,16 @@ function createInquiry(inquiryType: InquiryType) {
 }
 
 
+function handleInquirySelected(inquiry) {
+  if (inquiry && inquiry.family) {
+    inquiriesStore.setFamilyType(inquiry.family)
+    router.push({
+      name: 'inquiry',
+      params: { id: inquiry.id },
+    })
+  }
+}
+
 // Function to handle inquiry added
 function inquiryAdded(payload: { id: number; title: string }) {
   createDlgToggle.value = false
@@ -250,19 +260,6 @@ function handleCloseGroupDialog() {
   selectedInquiryGroupTypeForCreation.value = null
 }
 
-function handleInquirySelected(inquiry) {
-      if (inquiry && inquiry.family) {
-        
-        inquiriesStore.setFamilyType(inquiry.family)
-        router.push({
-          name: 'inquiry',
-          params: {
-            id: inquiry.id
-          },
-      })
-    }
-}
-
 // Watch for familyType changes in store
 watch(
   () => inquiriesStore.familyType,
@@ -285,9 +282,8 @@ watch(
           :key="inquiry.id"
           :name="inquiry.title"
           :exact="true"
-          :to="{ name: 'inquiry', params: { id: inquiry.id } }"
           class="navigation-item"
-          @click="handleInquirySelected(inquiry)"
+            @click="handleInquirySelected(inquiry)"
         >
           <template #icon>
             <component :is="getInquiryIcon(inquiry)" class="nav-icon" />

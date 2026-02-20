@@ -85,7 +85,7 @@ class InquiryOptionType extends EntityWithUser implements JsonSerializable
     {
         return [
             'id' => $this->getId(),
-            'optionType' => $this->getOptionType(),
+            'option_type' => $this->getOptionType(),
             'label' => $this->getLabel(),
             'family' => $this->getFamily(),
             'icon' => $this->getIcon(),

@@ -537,7 +537,7 @@ const formatDate = (timestamp: number) => new Date(timestamp * 1000).toLocaleDat
 							<component :is="InquiryGeneralIcons.Comment" :size="20" />
 						</div>
 						<div class="counter-content">
-							<span class="counter-value">{{ commentsStore.comments.length || 0 }}</span>
+							<span class="counter-value">{{ inquiryStore.status.countComments || 0 }}</span>
                             <span class="counter-label">{{ t('agora', 'Comments') }}</span>
                         </div>
                     </div>

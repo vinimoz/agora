@@ -47,19 +47,10 @@ const availableGroups = computed(() => {
 async function loadInquiry(id: string) {
   try {
     await inquiryGroupStore.load(id)
-    // console.log(" WE LOAD ID ", id)
     const result = inquiryGroupsStore.inquiryGroups.filter(i => 
       i.parentId === Number(id)
     )
-    // console.log(" WE LOAD RESULT ", result)
     inquiryGroupStore.childs = result
-/*
-    if (inquiryGroupStore.childs.length === 0) {
-      editMode.value = true
-    } else {
-      editMode.value = false
-    }
-    */
     await nextTick()
     forceRenderKey.value += 1
   } catch  {
@@ -132,13 +123,12 @@ const handleGroupUpdate = (groups) => {
     <!-- Action toolbar component -->
     <div class="area__main">
       <div class="view-content">
-        <InquiryGroupEditViewForm 
-        />
+         <InquiryGroupEditViewForm 
+            /> 
       </div>
 
       <InquiryInfoCards class="sticky-left" />
     </div>
-
     <InquiryGroupCreateDlg
             v-if="createGroupDlgToggle"
             :inquiry-group-type="selectedInquiryGroupTypeForCreation"
@@ -147,7 +137,6 @@ const handleGroupUpdate = (groups) => {
             @close="handleCloseDialog"
             @added="inquiryAdded"
             />
-
   </NcAppContent>
 </template>
 
