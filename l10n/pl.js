@@ -252,6 +252,7 @@ OC.L10N.register(
     "File" : "Plik",
     "Deck" : "Tablica",
     "Delete file" : "Usuń plik",
+    "Delete link" : "Usuń link",
     "Receive notification email on activity to {emailAddress}" : "Otrzymuj e-maile z powiadomieniami o aktywności na {emailAddress}",
     "Receive notification email on activity" : "Otrzymuj powiadomienia e-mail o aktywności",
     "Change name" : "Zmień nazwę",

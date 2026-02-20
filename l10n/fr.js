@@ -242,6 +242,7 @@ OC.L10N.register(
     "List" : "Liste",
     "Not defined" : "Non défini",
     "Just now" : "À l'instant",
+    "Expiring soon" : "Expire bientôt",
     "Today" : "Aujourd’hui",
     "Yesterday" : "Hier",
     "Yes" : "Oui",
