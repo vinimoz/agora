@@ -98,6 +98,7 @@ OC.L10N.register(
     "Week" : "Aquesta setmana",
     "Month" : "Mes",
     "Year" : "Annada",
+    "Not found" : "Non trobat",
     "Administration" : "Administracion"
 },
 "nplurals=2; plural=(n > 1);");

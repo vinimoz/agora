@@ -96,6 +96,7 @@
     "Week" : "Aquesta setmana",
     "Month" : "Mes",
     "Year" : "Annada",
+    "Not found" : "Non trobat",
     "Administration" : "Administracion"
 },"pluralForm" :"nplurals=2; plural=(n > 1);"
 }
