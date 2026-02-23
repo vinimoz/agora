@@ -695,7 +695,8 @@ watch(() => route.params.slug, async () => {
 .inquiry-group-page {
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    /* background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); */
+ background: transparent !important;
     min-height: 100vh;
 }
 
@@ -821,7 +822,8 @@ watch(() => route.params.slug, async () => {
                             .group-icon-badge {
                                 width: 60px;
                                 height: 60px;
-                                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                                /* background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); */
+                                background: linear-gradient(135deg, #6C8EB2 0%, #4A6F8F 100%);
                                 border-radius: 15px;
                                 display: flex;
                                 align-items: center;
@@ -859,7 +861,9 @@ watch(() => route.params.slug, async () => {
 
                                     .inquiry-count-badge,
                                     .groups-count-badge {
-                                        background: linear-gradient(135deg, #00b09b, #96c93d);
+                                        /* background: linear-gradient(135deg, #00b09b, #96c93d); */
+                                    background: linear-gradient(135deg, #6C8EB2 0%, #4A6F8F 100%);
+
                                         color: white;
                                         padding: 6px 12px;
                                         border-radius: 15px;
@@ -869,7 +873,8 @@ watch(() => route.params.slug, async () => {
                                     }
 
                                     .groups-count-badge {
-                                        background: linear-gradient(135deg, #667eea, #764ba2);
+                                        /* background: linear-gradient(135deg, #667eea, #764ba2); */
+                                background: linear-gradient(135deg, #6C8EB2 0%, #4A6F8F 100%);
                                     }
                                 }
                             }
@@ -923,7 +928,7 @@ watch(() => route.params.slug, async () => {
 
                             .section-actions {
                                 .create-button {
-                                    background: linear-gradient(135deg, #00b09b, #96c93d);
+                                        background: linear-gradient(135deg, #6C8EB2 0%, #4A6F8F 100%);
                                     color: white;
                                     font-weight: 600;
                                     padding: 10px 20px;
@@ -1024,7 +1029,9 @@ watch(() => route.params.slug, async () => {
                                 .vignette-icon {
                                     width: 36px;
                                     height: 36px;
-                                    background: linear-gradient(135deg, #667eea, #764ba2);
+                                    /*   background: linear-gradient(135deg, #667eea, #764ba2); */
+                                    background: linear-gradient(135deg, #6C8EB2 0%, #4A6F8F 100%);
+
                                     border-radius: 10px;
                                     display: flex;
                                     align-items: center;
@@ -1083,7 +1090,7 @@ watch(() => route.params.slug, async () => {
                                     .view-group-button {
                                         width: 100%;
                                         justify-content: center;
-                                        background: linear-gradient(135deg, #667eea, #764ba2);
+                                        background: linear-gradient(135deg, #6C8EB2 0%, #4A6F8F 100%);
                                         color: white;
                                         border: none;
                                         padding: 8px;

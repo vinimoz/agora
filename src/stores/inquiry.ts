@@ -99,6 +99,7 @@ export type CurrentUserStatus = {
 export type Inquiry = {
   id: number
   type: string
+  family: string
   coverId: number
   descriptionSafe: string
   configuration: InquiryConfiguration
@@ -125,6 +126,7 @@ export const useInquiryStore = defineStore('inquiry', {
     id: 0,
     title: '',
     type: 'proposal',
+    family: '',
     coverId: 0,
     description: '',
     descriptionSafe: '',

@@ -3805,52 +3805,19 @@ to {
 .comment-add .comment-add__editor[data-v-92e5193f] {
   display: flex;
   gap: 8px;
-  align-items: flex-end;
+  align-items: flex-start;
   width: 100%;
 }
-.comment-add .comment-add__editor[data-v-92e5193f] .nc-rich-contenteditable {
-  flex: 1;
-  min-width: 200px;
-  width: auto;
-  min-height: 42px;
-  max-height: 200px;
-  overflow-y: auto;
-  background: var(--color-main-background);
-  border: 2px solid var(--color-border);
-  border-radius: var(--border-radius-large);
-  padding: 8px 12px;
-  font-size: 14px;
-  line-height: 1.5;
-  transition: border-color 0.2s ease;
-}
-.comment-add .comment-add__editor[data-v-92e5193f] .nc-rich-contenteditable [contenteditable] {
-  min-height: 24px;
-  outline: none;
-}
-.comment-add .comment-add__editor[data-v-92e5193f] .nc-rich-contenteditable:focus-within {
-  border-color: var(--color-primary-element);
-  box-shadow: 0 0 0 2px var(--color-primary-light);
-}
-.comment-add .comment-add__editor[data-v-92e5193f] .nc-rich-contenteditable:disabled {
-  opacity: 0.5;
-  background: var(--color-background-dark);
-}
-.comment-add .comment-add__editor[data-v-92e5193f] .nc-rich-contenteditable:empty:before {
-  content: attr(placeholder);
-  color: var(--color-text-lighter);
-  font-style: italic;
-  pointer-events: none;
+.comment-add .rich-contenteditable[data-v-92e5193f] {
+  width: 100%;
 }
 .comment-add .comment-add__submit[data-v-92e5193f] {
   flex-shrink: 0;
-  align-self: flex-end;
+  align-self: flex-start;
   min-width: 70px;
   height: 42px;
-  margin-bottom: 0;
   padding: 0 16px;
   white-space: nowrap;
-}
-.comment-add .comment-add__submit.nc-button--primary[data-v-92e5193f] {
   border-radius: var(--border-radius-pill);
 }
 .comment-add .comment-add__options[data-v-92e5193f] {
@@ -3858,7 +3825,7 @@ to {
   display: flex;
   align-items: center;
 }
-.comment-add .comment-add__options[data-v-92e5193f] .nc-checkbox-radio-switch__label {
+.comment-add .comment-add__options .nc-checkbox-radio-switch__label[data-v-92e5193f] {
   font-size: 13px;
 }
 .comment-add .comment-add__options .confidential-forced[data-v-92e5193f] {
@@ -3887,18 +3854,9 @@ to {
     gap: 8px;
     align-items: stretch;
 }
-.comment-add .comment-add__editor[data-v-92e5193f] .nc-rich-contenteditable {
-    min-width: 100%;
-    width: 100%;
-}
-.comment-add .comment-add__editor .comment-add__submit[data-v-92e5193f] {
+.comment-add .comment-add__submit[data-v-92e5193f] {
     align-self: flex-end;
     width: 100%;
-}
-}
-@media (min-width: 1200px) {
-.comment-add__editor[data-v-92e5193f] .nc-rich-contenteditable {
-    min-width: 400px;
 }
 }.option-actions-menu[data-v-d24a853a] {
   position: relative;
@@ -8257,12 +8215,273 @@ to {
     justify-content: flex-start;
     padding: 10px 12px;
 }
-}.consultation-layout[data-v-d9c54b78] {
-  background: transparent;
+}/* inquiry-theme.css - Unified theme variables and base styles */
+[data-v-d9c54b78]:root {
+  /* ===== CORE COLORS ===== */
+  --inquiry-bg-primary: var(--color-main-background);
+  --inquiry-bg-secondary: var(--color-background-dark);
+  --inquiry-bg-tertiary: var(--color-background-hover);
+  --inquiry-bg-raised: #ffffff;
+  
+  /* ===== SURFACE COLORS ===== */
+  --inquiry-surface-primary: var(--color-main-background);
+  --inquiry-surface-secondary: var(--color-background-dark);
+  --inquiry-surface-tertiary: var(--color-background-hover);
+  
+  /* ===== BORDER COLORS ===== */
+  --inquiry-border-light: var(--color-border);
+  --inquiry-border-strong: var(--color-border-dark);
+  --inquiry-border-focus: var(--color-primary-element);
+  
+  /* ===== TEXT COLORS ===== */
+  --inquiry-text-primary: var(--color-main-text);
+  --inquiry-text-secondary: var(--color-text-lighter);
+  --inquiry-text-tertiary: var(--color-text-maxcontrast);
+  --inquiry-text-on-dark: #ffffff;
+  --inquiry-text-on-light: var(--color-main-text);
+  
+  /* ===== ACCENT COLORS ===== */
+  --inquiry-primary: var(--color-primary-element);
+  --inquiry-primary-light: rgba(var(--color-primary-rgb), 0.1);
+  --inquiry-primary-dark: var(--color-primary-element-dark);
+  
+  /* ===== ZONE COLORS ===== */
+  --inquiry-zone-header: #3b82f6;
+  --inquiry-zone-main: #2563eb;
+  --inquiry-zone-footer: #10b981;
+  --inquiry-zone-sidebar: #8b5cf6;
+  
+  /* ===== STATUS COLORS ===== */
+  --inquiry-status-open: #10b981;
+  --inquiry-status-closed: #ef4444;
+  --inquiry-status-draft: #6b7280;
+  --inquiry-status-waiting: #f59e0b;
+  
+  /* ===== TYPE COLORS ===== */
+  --inquiry-type-proposal: #10b981;
+  --inquiry-type-survey: #3b82f6;
+  --inquiry-type-poll: #8b5cf6;
+  --inquiry-type-question: #f59e0b;
+  --inquiry-type-discussion: #06b6d4;
+  --inquiry-type-news: #ec4899;
+  --inquiry-type-announcement: #a855f7;
+  --inquiry-type-meeting: #0ea5e9;
+  --inquiry-type-document: #6366f1;
+  --inquiry-type-default: #6b7280;
+  
+  /* ===== SHADOWS ===== */
+  --inquiry-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.03);
+  --inquiry-shadow-md: 0 2px 4px rgba(0, 0, 0, 0.05);
+  --inquiry-shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.08);
+  --inquiry-shadow-xl: 0 8px 16px rgba(0, 0, 0, 0.1);
+  --inquiry-shadow-hover: 0 12px 24px rgba(0, 0, 0, 0.12);
+  
+  /* ===== BORDERS & RADII ===== */
+  --inquiry-radius-sm: 6px;
+  --inquiry-radius-md: 8px;
+  --inquiry-radius-lg: 12px;
+  --inquiry-radius-xl: 16px;
+  --inquiry-radius-full: 9999px;
+  
+  /* ===== TRANSITIONS ===== */
+  --inquiry-transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --inquiry-transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  --inquiry-transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* ===== SPACING ===== */
+  --inquiry-spacing-xs: 4px;
+  --inquiry-spacing-sm: 8px;
+  --inquiry-spacing-md: 12px;
+  --inquiry-spacing-lg: 16px;
+  --inquiry-spacing-xl: 20px;
+  --inquiry-spacing-2xl: 24px;
+  --inquiry-spacing-3xl: 32px;
+  
+  /* ===== TYPOGRAPHY ===== */
+  --inquiry-font-size-xs: 11px;
+  --inquiry-font-size-sm: 12px;
+  --inquiry-font-size-md: 14px;
+  --inquiry-font-size-lg: 16px;
+  --inquiry-font-size-xl: 18px;
+  --inquiry-font-size-2xl: 20px;
+  --inquiry-font-size-3xl: 24px;
+  --inquiry-font-size-4xl: 32px;
+  --inquiry-font-size-5xl: 40px;
+}
+
+/* ===== BASE CARD STYLES ===== */
+.inquiry-card-base {
+&[data-v-d9c54b78] {
+  background: var(--inquiry-surface-primary);
+  border: 2px solid var(--inquiry-border-light);
+  border-radius: var(--inquiry-radius-lg);
+  box-shadow: var(--inquiry-shadow-sm);
+  transition: all var(--inquiry-transition-slow);
+  overflow: hidden;
+  position: relative;
+  }
+&[data-v-d9c54b78]::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      135deg,
+      rgba(var(--color-primary-rgb), 0.03) 0%,
+      transparent 50%
+    );
+    opacity: 0;
+    transition: opacity var(--inquiry-transition-base);
+    pointer-events: none;
+    z-index: 1;
+}
+&:hover {
+&[data-v-d9c54b78] {
+    transform: translateY(-2px);
+    border-color: var(--inquiry-border-focus);
+    box-shadow: var(--inquiry-shadow-xl);
+    }
+&[data-v-d9c54b78]::before {
+      opacity: 1;
+}
+}
+}
+
+/* ===== BASE SURFACE STYLES ===== */
+.inquiry-surface-base {
+&[data-v-d9c54b78] {
+  background: var(--inquiry-surface-primary);
+  border: 1px solid var(--inquiry-border-light);
+  border-radius: var(--inquiry-radius-md);
+  box-shadow: var(--inquiry-shadow-sm);
+  transition: all var(--inquiry-transition-base);
+  }
+&[data-v-d9c54b78]:hover {
+    border-color: var(--inquiry-border-focus);
+    box-shadow: var(--inquiry-shadow-lg);
+}
+}
+
+/* ===== TEXT ON SURFACES ===== */
+.inquiry-text-on-light[data-v-d9c54b78] {
+  color: var(--inquiry-text-primary);
+}
+.inquiry-text-on-dark[data-v-d9c54b78] {
+  color: var(--inquiry-text-on-dark);
+}
+.inquiry-text-secondary[data-v-d9c54b78] {
+  color: var(--inquiry-text-secondary);
+}
+
+/* ===== BADGE STYLES ===== */
+.inquiry-badge {
+&[data-v-d9c54b78] {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--inquiry-spacing-xs);
+  padding: var(--inquiry-spacing-xs) var(--inquiry-spacing-md);
+  border-radius: var(--inquiry-radius-full);
+  font-size: var(--inquiry-font-size-sm);
+  font-weight: 600;
+  line-height: 1;
+  transition: all var(--inquiry-transition-fast);
+  }
+&.type-badge {
+&[data-v-d9c54b78] {
+    background: var(--inquiry-primary-light);
+    color: var(--inquiry-primary);
+    border: 1px solid rgba(var(--color-primary-rgb), 0.2);
+    }
+.type-icon[data-v-d9c54b78] {
+      color: var(--inquiry-primary);
+}
+}
+&.status-badge {
+&.status-open[data-v-d9c54b78] {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--inquiry-status-open);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+}
+&.status-closed[data-v-d9c54b78] {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--inquiry-status-closed);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+}
+&.status-draft[data-v-d9c54b78] {
+      background: rgba(107, 114, 128, 0.1);
+      color: var(--inquiry-status-draft);
+      border: 1px solid rgba(107, 114, 128, 0.2);
+}
+&.status-waiting[data-v-d9c54b78] {
+      background: rgba(245, 158, 11, 0.1);
+      color: var(--inquiry-status-waiting);
+      border: 1px solid rgba(245, 158, 11, 0.2);
+}
+}
+}
+
+/* ===== ACTION BUTTON STYLES ===== */
+.inquiry-action-button {
+&[data-v-d9c54b78] {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--inquiry-spacing-sm);
+  padding: var(--inquiry-spacing-sm) var(--inquiry-spacing-lg);
+  background: var(--inquiry-surface-primary);
+  border: 1px solid var(--inquiry-border-light);
+  border-radius: var(--inquiry-radius-md);
+  font-size: var(--inquiry-font-size-md);
+  font-weight: 500;
+  color: var(--inquiry-text-secondary);
+  cursor: pointer;
+  transition: all var(--inquiry-transition-base);
+  }
+&[data-v-d9c54b78]:hover {
+    background: var(--inquiry-surface-tertiary);
+    border-color: var(--inquiry-border-focus);
+    color: var(--inquiry-primary);
+    transform: translateY(-1px);
+    box-shadow: var(--inquiry-shadow-md);
+}
+&.active[data-v-d9c54b78] {
+    background: var(--inquiry-primary);
+    border-color: var(--inquiry-primary);
+    color: var(--inquiry-text-on-dark);
+}
+}
+
+/* ===== EXPIRY BADGE STYLES ===== */
+.inquiry-expiry-badge {
+&[data-v-d9c54b78] {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--inquiry-spacing-xs);
+  padding: var(--inquiry-spacing-xs) var(--inquiry-spacing-md);
+  border-radius: var(--inquiry-radius-full);
+  font-size: var(--inquiry-font-size-xs);
+  font-weight: 600;
+  line-height: 1;
+  }
+&.expiry-soon[data-v-d9c54b78] {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--inquiry-status-closed);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
+&.expiry-warning[data-v-d9c54b78] {
+    background: rgba(245, 158, 11, 0.1);
+    color: var(--inquiry-status-waiting);
+    border: 1px solid rgba(245, 158, 11, 0.2);
+}
+&.expiry-normal[data-v-d9c54b78] {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--inquiry-status-open);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+}
+.consultation-layout[data-v-d9c54b78] {
   display: flex;
   gap: 24px;
   width: 100%;
-  max-width: none; /* Remove max-width constraint */
+  max-width: none;
   margin: 0;
   padding: 16px;
   align-items: flex-start;
@@ -8271,7 +8490,7 @@ to {
 
 /* Left Column: Description */
 .left-column[data-v-d9c54b78] {
-  flex: 0 0 70%; /* Fixed 70% width */
+  flex: 0 0 70%;
   width: 70%;
   min-width: 70%;
   height: 100%;
@@ -8287,7 +8506,7 @@ to {
 .left-column .description-section .section-title[data-v-d9c54b78] {
   font-size: 36px;
   font-weight: 800;
-  color: var(--color-main-text);
+  color: white;
   margin: 0 0 16px 0;
   line-height: 1.2;
   padding-bottom: 16px;
@@ -8297,6 +8516,7 @@ to {
 .description-container[data-v-d9c54b78] {
   border-radius: 12px;
   border: 1px solid var(--color-border);
+  background: var(--color-main-background);
   overflow: hidden;
   width: 100%;
   flex: 1;
@@ -8306,6 +8526,7 @@ to {
 .description-content[data-v-d9c54b78] {
   padding: 32px;
   position: relative;
+  background: var(--color-main-background);
   width: 100%;
   flex: 1;
   display: flex;
@@ -8314,14 +8535,12 @@ to {
 .description-content.expanded .description-text[data-v-d9c54b78] {
   max-height: none;
 }
-.description-content.expanded .expand-button svg[data-v-d9c54b78] {
-  transform: rotate(180deg);
-}
 .description-text[data-v-d9c54b78] {
   font-size: 16px;
   line-height: 1.8;
+  background: var(--color-main-background);
   color: var(--color-text-lighter);
-  max-height: 10.8em; /* 6 lines * 1.8 line-height */
+  max-height: 10.8em;
   overflow: hidden;
   transition: max-height 0.3s ease;
   width: 100%;
@@ -8343,7 +8562,7 @@ to {
   gap: 8px;
   margin-top: 24px;
   padding: 8px 16px;
-  background: transparent;
+  background: var(--color-main-background);
   border: 1px solid var(--color-border);
   border-radius: 8px;
   color: var(--color-primary-element);
@@ -8367,7 +8586,7 @@ to {
 
 /* Right Sidebar: Inquiries */
 .right-sidebar[data-v-d9c54b78] {
-  flex: 0 0 30%; /* Fixed 30% width */
+  flex: 0 0 30%;
   width: 30%;
   min-width: 30%;
   position: sticky;
@@ -8388,7 +8607,7 @@ to {
 .right-sidebar .sidebar-title[data-v-d9c54b78] {
   font-size: 20px;
   font-weight: 700;
-  color: var(--color-main-text);
+  color: white;
   margin: 0;
 }
 .right-sidebar .inquiry-count[data-v-d9c54b78] {
@@ -8402,28 +8621,6 @@ to {
   text-align: center;
 }
 
-/* Responsive Design */
-@media (max-width: 1200px) {
-.consultation-layout[data-v-d9c54b78] {
-    flex-direction: column;
-    gap: 32px;
-    padding: 24px;
-    width: 100%;
-}
-.left-column[data-v-d9c54b78] {
-    flex: 1;
-    width: 100%;
-    min-width: 100%;
-    max-width: 100%;
-}
-.right-sidebar[data-v-d9c54b78] {
-    flex: 1;
-    width: 100%;
-    min-width: 100%;
-    max-width: 100%;
-    position: static;
-}
-}
 /* Inquiry Type Groups */
 .inquiry-type-group[data-v-d9c54b78] {
   margin-bottom: 16px;
@@ -8497,16 +8694,14 @@ to {
 .type-toggle.rotated[data-v-d9c54b78] {
   transform: rotate(180deg);
 }
-
-/* Inquiries List */
 .type-inquiries[data-v-d9c54b78] {
   margin-top: 8px;
-  margin-left: 32px; /* Indent for nested items */
+  margin-left: 32px;
   width: 100%;
 }
 .inquiries-list[data-v-d9c54b78] {
-  background: transparent;
-  border: none;
+  background: var(--color-main-background);
+  border-radius: 6px;
   margin: 0;
   padding: 0;
   width: 100%;
@@ -8519,16 +8714,17 @@ to {
   margin-bottom: 0;
 }
 .inquiries-list[data-v-d9c54b78] .app-navigation-entry .app-navigation-entry__content {
-  background: white;
-  border-radius: 6px;
-  border: 1px solid var(--color-border);
+  background: var(--color-main-background) !important;
+  border: 1px solid var(--color-border) !important;
+  border-radius: 6px !important;
+  padding: 8px 12px !important;
   transition: all 0.2s ease;
   width: 100%;
   box-sizing: border-box;
 }
 .inquiries-list[data-v-d9c54b78] .app-navigation-entry .app-navigation-entry__content:hover {
-  background: var(--color-background-hover);
-  border-color: var(--color-primary-element);
+  background: var(--color-background-hover) !important;
+  border-color: var(--color-primary-element) !important;
   transform: translateX(4px);
 }
 .inquiries-list[data-v-d9c54b78] .app-navigation-entry .app-navigation-entry__counter {
@@ -8536,25 +8732,19 @@ to {
   color: white;
   font-size: 12px;
   font-weight: 600;
+  border-radius: 12px;
+  padding: 2px 8px !important;
 }
-.inquiry-icon[data-v-d9c54b78] {
-  width: 18px;
-  height: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--color-primary-element);
-}
-.inquiry-icon[data-v-d9c54b78] svg {
-  width: 100%;
-  height: 100%;
+.inquiries-list[data-v-d9c54b78] .app-navigation-entry .app-navigation-entry__title {
+  color: var(--color-main-text);
+  font-weight: 500;
 }
 
-/* Empty State */
+/* Empty State - ADDED background */
 .empty-state[data-v-d9c54b78] {
   text-align: center;
   padding: 40px 24px;
-  background: var(--color-background-dark);
+  background: var(--color-main-background);
   border-radius: 12px;
   border: 1px dashed var(--color-border);
   width: 100%;
@@ -8646,8 +8836,8 @@ to {
 }
 }.inquiry-card[data-v-bf3d9415] {
   position: relative;
-  background: transparent;
   border-radius: 16px;
+  background: var(--color-main-background);
   border: 2px solid var(--color-border);
   overflow: hidden;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -8704,7 +8894,7 @@ to {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(to bottom, transparent 50%, rgba(0, 0, 0, 0.4));
+  /* background: linear-gradient(to bottom, transparent 50%, rgba(0, 0, 0, 0.4)); */
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -8713,6 +8903,8 @@ to {
 }
 .card-content[data-v-bf3d9415] {
   padding: 20px;
+  background: var(--color-main-background);
+  border-radius: 8px;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -8943,6 +9135,7 @@ to {
     height: 140px;
 }
 .card-content[data-v-bf3d9415] {
+    border-radius: 8px;
     padding: 16px;
     gap: 10px;
 }
@@ -9486,18 +9679,21 @@ to {
 .inquiry-full-view[data-v-1b7f8e47] {
   width: 100%;
   height: 100%;
+  border-radius: 8px;
   background: var(--color-surface);
 }
 .full-view-wrapper[data-v-1b7f8e47] {
   width: 100%;
   height: 100%;
   overflow-y: auto;
+  border-radius: 8px;
 }
 .full-view-content[data-v-1b7f8e47] {
   max-width: 900px;
   margin: 0 auto;
   padding: 0 32px 32px;
   box-sizing: border-box;
+  border-radius: 8px;
 }
 .full-view-content[data-v-1b7f8e47] > * + * {
   margin-top: 32px;
@@ -9611,7 +9807,7 @@ to {
   border-radius: 8px;
   font-size: 14px;
   font-weight: 500;
-  color: white;
+  color: var(--color-main-text);
   cursor: pointer;
   transition: all 0.2s ease;
 }
@@ -10054,7 +10250,9 @@ to {
 }
 }
 .rich-content-wrapper[data-v-22854a53] {
+  border-radius: 8px;
   padding: 32px;
+  background: var(--color-main-background);
 }
 @media (max-width: 768px) {
 .rich-content-wrapper[data-v-22854a53] {
@@ -10376,7 +10574,7 @@ to {
 }
 }
 .rich-content[data-v-22854a53] pre code {
-  background: transparent;
+  background: var(--color-main-background);
   padding: 0;
   font-size: 13px;
   line-height: 1.5;
@@ -10545,10 +10743,9 @@ to {
     border: 1px solid #ef4444;
     background: #fef2f2;
 }
-}/* === PROFESSIONAL SUMMARY COMPONENT === */
-.inquiry-summary[data-v-57edd5a0] {
+}.inquiry-summary[data-v-57edd5a0] {
   font-family: var(--font-family);
-  background: transparent;
+  background: var(--color-main-background);
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .inquiry-summary.is-interactive[data-v-57edd5a0] {
@@ -11167,31 +11364,22 @@ to {
   box-shadow: 0 0 0 2px rgba(var(--color-primary-rgb), 0.1);
 }.inquiry-group-view-main[data-v-71f2b206] {
   min-height: 100vh;
-  background: transparent;
-  overflow: visible;
 }
 
-/* === ENVELOPE STYLES - Applied to ALL inquiry items === */
+/* Envelope Styles - Applied to ALL inquiry items */
 .header-item[data-v-71f2b206],
 .sidebar-item[data-v-71f2b206],
 .footer-item[data-v-71f2b206],
 .main-item[data-v-71f2b206] {
-  /* Outer container styling */
-  border: 2px solid var(--color-border);
-  border-radius: 16px;
-  background: transparent;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 2px solid var(--inquiry-gray-200);
+  border-radius: var(--inquiry-border-radius-lg);
+  background: var(--inquiry-card-bg);
+  box-shadow: var(--inquiry-shadow-sm);
+  transition: var(--inquiry-transition-slow);
   cursor: pointer;
   overflow: hidden;
   position: relative;
-  /* Subtle gradient overlay on hover */
-  /* Hover effects - ENVELOPE ONLY */
-  /* Active/Selected state */
-  /* Different section accents */
-  /* === INSIDE THE ENVELOPE - Child components have full control === */
-  /* Remove any deep styling that affects child components */
-  /* Only set the wrapper for child components */
+  /* Zone-specific hover effects */
 }
 .header-item[data-v-71f2b206]::before,
 .sidebar-item[data-v-71f2b206]::before,
@@ -11199,11 +11387,8 @@ to {
 .main-item[data-v-71f2b206]::before {
   content: "";
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(135deg, rgba(var(--color-primary-rgb), 0.02) 0%, rgba(var(--color-primary-rgb), 0) 100%);
+  inset: 0;
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.05) 0%);
   opacity: 0;
   transition: opacity 0.3s ease;
   pointer-events: none;
@@ -11213,9 +11398,9 @@ to {
 .sidebar-item[data-v-71f2b206]:hover,
 .footer-item[data-v-71f2b206]:hover,
 .main-item[data-v-71f2b206]:hover {
-  border-color: var(--color-primary-element);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1), 0 4px 12px rgba(var(--color-primary-rgb), 0.05);
-  transform: translateY(-3px);
+  border-color: var(--inquiry-primary);
+  box-shadow: var(--inquiry-shadow-xl);
+  transform: translateY(-4px);
 }
 .header-item[data-v-71f2b206]:hover::before,
 .sidebar-item[data-v-71f2b206]:hover::before,
@@ -11227,124 +11412,171 @@ to {
 .sidebar-item.active[data-v-71f2b206],
 .footer-item.active[data-v-71f2b206],
 .main-item.active[data-v-71f2b206] {
-  border-color: var(--color-primary-element);
-  background: rgba(var(--color-primary-rgb), 0.03);
-  box-shadow: 0 4px 16px rgba(var(--color-primary-rgb), 0.1), inset 0 0 0 1px rgba(var(--color-primary-rgb), 0.1);
+  border-color: var(--inquiry-primary);
+  background: rgba(37, 99, 235, 0.03);
+  box-shadow: 0 4px 16px rgba(37, 99, 235, 0.1);
 }
 .header-item.header-item[data-v-71f2b206]:hover,
 .sidebar-item.header-item[data-v-71f2b206]:hover,
 .footer-item.header-item[data-v-71f2b206]:hover,
 .main-item.header-item[data-v-71f2b206]:hover {
-  border-color: #3b82f6; /* Blue accent */
+  border-color: var(--inquiry-zone-header);
+  box-shadow: 0 12px 24px rgba(59, 130, 246, 0.15);
 }
 .header-item.main-item[data-v-71f2b206]:hover,
 .sidebar-item.main-item[data-v-71f2b206]:hover,
 .footer-item.main-item[data-v-71f2b206]:hover,
 .main-item.main-item[data-v-71f2b206]:hover {
-  border-color: var(--color-primary-element); /* Primary color */
+  border-color: var(--inquiry-zone-main);
+  box-shadow: 0 12px 24px rgba(37, 99, 235, 0.15);
 }
 .header-item.footer-item[data-v-71f2b206]:hover,
 .sidebar-item.footer-item[data-v-71f2b206]:hover,
 .footer-item.footer-item[data-v-71f2b206]:hover,
 .main-item.footer-item[data-v-71f2b206]:hover {
-  border-color: #10b981; /* Green accent */
+  border-color: var(--inquiry-zone-footer);
+  box-shadow: 0 12px 24px rgba(16, 185, 129, 0.15);
 }
 .header-item.sidebar-item[data-v-71f2b206]:hover,
 .sidebar-item.sidebar-item[data-v-71f2b206]:hover,
 .footer-item.sidebar-item[data-v-71f2b206]:hover,
 .main-item.sidebar-item[data-v-71f2b206]:hover {
-  border-color: #8b5cf6; /* Purple accent */
-}
-.header-item[data-v-71f2b206] *,
-.sidebar-item[data-v-71f2b206] *,
-.footer-item[data-v-71f2b206] *,
-.main-item[data-v-71f2b206] * {
-  /* Child components control their own:
-     - Padding/Margins
-     - Internal borders
-     - Background colors
-     - Typography
-     - Button styles
-     - Component-specific layouts
-  */
-}
-.header-item[data-v-71f2b206] .inquiry-full-view,
-.header-item[data-v-71f2b206] .inquiry-card,
-.header-item[data-v-71f2b206] .inquiry-list-item,
-.header-item[data-v-71f2b206] .inquiry-summary,
-.header-item[data-v-71f2b206] .inquiry-rich-html,
-.sidebar-item[data-v-71f2b206] .inquiry-full-view,
-.sidebar-item[data-v-71f2b206] .inquiry-card,
-.sidebar-item[data-v-71f2b206] .inquiry-list-item,
-.sidebar-item[data-v-71f2b206] .inquiry-summary,
-.sidebar-item[data-v-71f2b206] .inquiry-rich-html,
-.footer-item[data-v-71f2b206] .inquiry-full-view,
-.footer-item[data-v-71f2b206] .inquiry-card,
-.footer-item[data-v-71f2b206] .inquiry-list-item,
-.footer-item[data-v-71f2b206] .inquiry-summary,
-.footer-item[data-v-71f2b206] .inquiry-rich-html,
-.main-item[data-v-71f2b206] .inquiry-full-view,
-.main-item[data-v-71f2b206] .inquiry-card,
-.main-item[data-v-71f2b206] .inquiry-list-item,
-.main-item[data-v-71f2b206] .inquiry-summary,
-.main-item[data-v-71f2b206] .inquiry-rich-html {
-  width: 100%;
-  height: 100%;
-  background: transparent !important; /* Let parent control background */
-  border: 2px !important; /* No borders inside */
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
-  position: relative;
-  z-index: 2; /* Above the envelope's ::before overlay */
+  border-color: var(--inquiry-zone-sidebar);
+  box-shadow: 0 12px 24px rgba(139, 92, 246, 0.15);
 }
 
 /* Layout Container */
 .layout-container[data-v-71f2b206] {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 320px;
-  gap: 24px;
+  gap: 1.5rem;
   max-width: 1600px;
   margin: 0 auto;
-  padding: 24px;
+  padding: 1.5rem;
   min-height: calc(100vh - 120px);
   align-items: start;
 }
 @media (max-width: 1200px) {
 .layout-container[data-v-71f2b206] {
     grid-template-columns: 1fr;
-    gap: 20px;
-    padding: 20px;
+    gap: 1.25rem;
+    padding: 1.25rem;
 }
 }
 
-/* Inquiry Grids - ENVELOPE positioning only */
+/* Main Content Area */
+.layout-main[data-v-71f2b206] {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* Inquiry Sections */
+.inquiry-section.header-section[data-v-71f2b206] {
+  margin-bottom: 1rem;
+}
+.inquiry-section.main-section[data-v-71f2b206] {
+  margin-bottom: 1.5rem;
+}
+.inquiry-section.footer-section[data-v-71f2b206] {
+  margin-top: 1rem;
+}
+
+/* Type Groups */
+.type-groups[data-v-71f2b206] {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+.type-group[data-v-71f2b206] {
+  background: var(--color-main-background);
+}
+.type-header[data-v-71f2b206] {
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid var(--inquiry-gray-200);
+}
+.type-header h3[data-v-71f2b206] {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--inquiry-gray-700);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Inquiry Grids */
 .inquiry-grid.main-grid[data-v-71f2b206] {
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  gap: 24px;
+  gap: 1.5rem;
 }
 .inquiry-grid.main-grid .full-width[data-v-71f2b206] {
   grid-column: 1/-1;
 }
+.inquiry-grid.main-grid.single-full-item[data-v-71f2b206] {
+  grid-template-columns: 1fr;
+}
 .inquiry-grid.header-grid[data-v-71f2b206] {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
+  gap: 1.25rem;
 }
 .inquiry-grid.footer-grid[data-v-71f2b206] {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 20px;
+  gap: 1.25rem;
 }
 
-/* Sidebar items - special envelope sizing */
+/* Sidebar */
+.layout-sidebar[data-v-71f2b206] {
+  position: sticky;
+  top: 2rem;
+  height: fit-content;
+}
+.layout-sidebar .sidebar-type-groups[data-v-71f2b206] {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+.layout-sidebar .sidebar-type-group[data-v-71f2b206] {
+  background: var(--color-main-background);
+}
+.layout-sidebar .sidebar-type-group .sidebar-type-header[data-v-71f2b206] {
+  margin-bottom: 0.75rem;
+}
+.layout-sidebar .sidebar-type-group .sidebar-type-header h4[data-v-71f2b206] {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--inquiry-gray-600);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.layout-sidebar .sidebar-inquiries[data-v-71f2b206] {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* Sidebar items */
 .sidebar-item[data-v-71f2b206] {
-  /* Slightly smaller for sidebar */
-  border-width: 1.5px;
-  border-radius: 12px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  border-width: 5px;
+  border-radius: var(--inquiry-border-radius);
+  box-shadow: var(--inquiry-shadow-sm);
 }
 .sidebar-item[data-v-71f2b206]:hover {
   transform: translateY(-2px);
+}
+
+/* Modal Styles */
+[data-v-71f2b206] .modal-inquiry-content {
+  padding: 2rem;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+[data-v-71f2b206] .popup-inquiry-content {
+  padding: 1.5rem;
 }
 
 /* Responsive */
@@ -11354,7 +11586,7 @@ to {
   .footer-item[data-v-71f2b206],
   .main-item[data-v-71f2b206] {
     border-width: 1.5px;
-    border-radius: 12px;
+    border-radius: var(--inquiry-border-radius);
 }
 .header-item[data-v-71f2b206]:hover,
   .sidebar-item[data-v-71f2b206]:hover,
@@ -11364,7 +11596,10 @@ to {
 }
 .inquiry-grid.main-grid[data-v-71f2b206] {
     grid-template-columns: 1fr;
-    gap: 20px;
+    gap: 1.25rem;
+}
+.layout-container[data-v-71f2b206] {
+    padding: 1rem;
 }
 }.inquiry-group-content[data-v-4f232cad] {
   margin-top: 2rem;
@@ -11375,7 +11610,8 @@ to {
 .inquiry-group-page[data-v-4f232cad] {
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  /* background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); */
+  background: transparent !important;
   min-height: 100vh;
 }
 
@@ -11488,7 +11724,8 @@ to {
 .group-header .group-icon-badge[data-v-4f232cad] {
   width: 60px;
   height: 60px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  /* background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); */
+  background: linear-gradient(135deg, #6C8EB2 0%, #4A6F8F 100%);
   border-radius: 15px;
   display: flex;
   align-items: center;
@@ -11522,7 +11759,8 @@ to {
 }
 .group-header .group-title-section .group-subtitle .inquiry-count-badge[data-v-4f232cad],
 .group-header .group-title-section .group-subtitle .groups-count-badge[data-v-4f232cad] {
-  background: linear-gradient(135deg, #00b09b, #96c93d);
+  /* background: linear-gradient(135deg, #00b09b, #96c93d); */
+  background: linear-gradient(135deg, #6C8EB2 0%, #4A6F8F 100%);
   color: white;
   padding: 6px 12px;
   border-radius: 15px;
@@ -11531,7 +11769,8 @@ to {
   box-shadow: 0 2px 8px rgba(0, 176, 155, 0.3);
 }
 .group-header .group-title-section .group-subtitle .groups-count-badge[data-v-4f232cad] {
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  /* background: linear-gradient(135deg, #667eea, #764ba2); */
+  background: linear-gradient(135deg, #6C8EB2 0%, #4A6F8F 100%);
 }
 
 /* Loading State */
@@ -11578,7 +11817,7 @@ to {
   margin: 0;
 }
 .section-header .section-actions .create-button[data-v-4f232cad] {
-  background: linear-gradient(135deg, #00b09b, #96c93d);
+  background: linear-gradient(135deg, #6C8EB2 0%, #4A6F8F 100%);
   color: white;
   font-weight: 600;
   padding: 10px 20px;
@@ -11666,7 +11905,8 @@ to {
 .group-vignette .vignette-content .vignette-icon[data-v-4f232cad] {
   width: 36px;
   height: 36px;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  /*   background: linear-gradient(135deg, #667eea, #764ba2); */
+  background: linear-gradient(135deg, #6C8EB2 0%, #4A6F8F 100%);
   border-radius: 10px;
   display: flex;
   align-items: center;
@@ -11718,7 +11958,7 @@ to {
 .group-vignette .vignette-content .vignette-footer .view-group-button[data-v-4f232cad] {
   width: 100%;
   justify-content: center;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, #6C8EB2 0%, #4A6F8F 100%);
   color: white;
   border: none;
   padding: 8px;
@@ -13264,6 +13504,7 @@ tr.file-picker__row td.row-name[data-v-1f96131b] {
  * SPDX-FileCopyrightText: 2020 René Gieling <github@dartcafe.de>
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+/* src/css/global.css */
 .sticky-left {
   position: sticky;
   left: 0;
@@ -13358,11 +13599,11 @@ tr.file-picker__row td.row-name[data-v-1f96131b] {
 const appName = "agora";
 const appVersion = "1.7.0-rc1";
 import { a2 as getCurrentInstance, Y as inject, b3 as onUnmounted, bh as onDeactivated, bi as onActivated, w as watch, b4 as shallowRef, d as defineComponent, F as unref, bj as shallowReactive, X as reactive, b as computed, $ as h$1, bk as provide, aV as ref, a3 as watchEffect, aX as nextTick$1, A as defineStore, bl as toRaw, q as translate, aN as emit, bm as Settings, a as _export_sfc, c as createElementBlock, o as openBlock, t as toDisplayString, E as normalizeClass, bn as getCanonicalLocale, be as NcActionButton, _ as _export_sfc$1, f as createBlock, g as withCtx, l as createCommentVNode, h as resolveDynamicComponent, k as createBaseVNode, bo as NC_ACTIONS_IS_SEMANTIC_MENU, S as createElementId, bp as ActionGlobalMixin, G as NcIconSvgWrapper, ai as resolveComponent, a5 as withDirectives, j as createVNode, bq as vModelRadio, br as mdiRadioboxMarked, bs as mdiRadioboxBlank, u as useModel, bt as useSlots, P as logger, s as onMounted, aW as onBeforeUnmount, r as renderSlot, ag as useCssVars, bu as useIsDarkTheme, bv as mdiCreation, ac as createSlots, B as createTextVNode, a7 as NcButton, bw as useCssModule, bx as NC_FORM_BOX_CONTEXT_KEY, bf as NcActions, i as mergeProps, aO as withKeys, a6 as vShow, v as normalizeProps, x as guardReactiveProps, by as userStatus, N as NcAvatar, n as normalizeStyle, m as mergeModels, e as warn, T as Fragment$1, U as renderList, ak as NcLoadingIcon, bz as Teleport, ax as withModifiers, aP as NcEmptyContent, V as DateTime, bA as translatePlural, bB as TransitionGroup, D as generateUrl, aM as NcModal, bC as markRaw, bD as customRef, bE as global, bF as getAugmentedNamespace, bG as process$1, bc as commonjsGlobal, bH as Buffer, a$ as getDefaultExportFromCjs, bI as vModelSelect, C as purify, bd as getCurrentUser, ay as Transition, bJ as subscribe, bK as unsubscribe, aR as generateOcsUrl, aS as cancelableClient, bL as axios, y as createApp, z as pinia } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_ef057a6f_lang-BusB2sS0.chunk.mjs";
-import { a as useSessionStore, p as publicInquiry, i as supports, L as Logger, j as InquiryOptionIcons, I as InquiryGeneralIcons, d as useAppSettingsStore, k as useInquiryStore, s as showError, o as options, E as Event$1, l as createInquiryContext$1, m as canTransfer, n as canDelete, q as canArchive, g as getInquiryTypeData, b as useInquiriesStore, r as useInquiryGroupsStore, t as NavigationIcons, v as showSuccess, w as getAvailableInquiryTypesForCreation, x as getInquiryTypeOptions, y as useInquiryGroupStore, z as getAllowedResponseGroupTypes, A as getAvailableInquiryGroupTypesForCreation, B as getInquiryGroupTypeData, C as accessFamilyMenu, D as getInquiryTypesForFamily, F as getInquiryItemData, G as canCreateInquiryGroupInGeneral, H as getInquiryTypesByFamily, J as canSupportOption, K as canSupport, S as StatusIcons, M as BadgeIcons, O as canComment, P as sortTitlesMapping, Q as lodashExports, R as appSettings, T as canRestore, U as getInquiryGroupTypesByFamily, V as getInquiryGroupTypesForFamily, W as canViewToggle, X as getAvailableResponseTypesWithPermissions, Y as getAvailableTransformTypesWithPermissions, Z as validators, _ as inquiries, $ as commonjsRequire, a0 as useAttachmentsStore, a1 as createDefault, a2 as useSharesStore, a3 as useCommentsStore, a4 as useSubscriptionStore, a5 as moment, f as d, e as gfmHeadingId, a6 as createOptionContext, a7 as canEditOption, a8 as canDeleteOption, a9 as canChangeStatus, aa as canCommentOption, ab as canEdit, ac as createInquiryGroupContext, ad as inquiryLinks, ae as ShareIcons, af as getEditPermissions, ag as getAvailableFields, ah as getAvailableGroupFields, ai as canShare, aj as canUseResource } from "./NcDashboardWidget-DCBQdRFz-Cfe0MvSe.chunk.mjs";
-import { u as usePreferencesStore, S as StyleSettings, F as FeatureSettings } from "./StyleSettings-Cc03OGZ0.chunk.mjs";
-import { b as NcAppNavigationItem, u as useAppSettingsDialog, A as APP_SETTINGS_LEGACY_DESIGN_KEY, _ as _sfc_main$1V, c as NcAppNavigationList, d as NcAppNavigation, S as Spinner, Q as QRCode, I as InputDiv, e as NcAppContent, f as NcActionButtonGroup, g as NcDialog, h as find$1, r as registerCustomProtocol, t as tokenize, i as reset, j as NcRichContenteditable, O as Options, k as NcActionInput, P as PlusIcon, l as NcDateTimePickerNative, m as NcAppSidebar, a as NcAppSettingsDialog, n as NcContent } from "./index-VLEVr2d8.chunk.mjs";
+import { a as useSessionStore, p as publicInquiry, i as supports, L as Logger, j as InquiryOptionIcons, I as InquiryGeneralIcons, d as useAppSettingsStore, k as useInquiryStore, s as showError, o as options, E as Event$1, l as createInquiryContext$1, m as canTransfer, n as canDelete, q as canArchive, g as getInquiryTypeData, b as useInquiriesStore, r as useInquiryGroupsStore, t as NavigationIcons, v as showSuccess, w as getAvailableInquiryTypesForCreation, x as getInquiryTypeOptions, y as useInquiryGroupStore, z as getAllowedResponseGroupTypes, A as getAvailableInquiryGroupTypesForCreation, B as getInquiryGroupTypeData, C as accessFamilyMenu, D as getInquiryTypesForFamily, F as getInquiryItemData, G as canCreateInquiryGroupInGeneral, H as getInquiryTypesByFamily, J as canSupportOption, K as canSupport, S as StatusIcons, M as BadgeIcons, O as canComment, P as sortTitlesMapping, Q as lodashExports, R as appSettings, T as canRestore, U as getInquiryGroupTypesByFamily, V as getInquiryGroupTypesForFamily, W as canViewToggle, X as getAvailableResponseTypesWithPermissions, Y as getAvailableTransformTypesWithPermissions, Z as validators, _ as inquiries, $ as commonjsRequire, a0 as useAttachmentsStore, a1 as createDefault, a2 as useSharesStore, a3 as useCommentsStore, a4 as useSubscriptionStore, a5 as moment, f as d, e as gfmHeadingId, a6 as createOptionContext, a7 as canEditOption, a8 as canDeleteOption, a9 as canChangeStatus, aa as canCommentOption, ab as canEdit, ac as createInquiryGroupContext, ad as inquiryLinks, ae as ShareIcons, af as getEditPermissions, ag as getAvailableFields, ah as getAvailableGroupFields, ai as canShare, aj as canUseResource } from "./NcDashboardWidget-DCBQdRFz-CNohL2Xh.chunk.mjs";
+import { u as usePreferencesStore, S as StyleSettings, F as FeatureSettings } from "./StyleSettings-BXLrmvTs.chunk.mjs";
+import { b as NcAppNavigationItem, u as useAppSettingsDialog, A as APP_SETTINGS_LEGACY_DESIGN_KEY, _ as _sfc_main$1V, c as NcAppNavigationList, d as NcAppNavigation, S as Spinner, Q as QRCode, I as InputDiv, e as NcAppContent, f as NcActionButtonGroup, g as NcDialog, h as find$1, r as registerCustomProtocol, t as tokenize, i as reset, j as NcRichContenteditable, O as Options, k as NcActionInput, P as PlusIcon, l as NcDateTimePickerNative, m as NcAppSidebar, a as NcAppSettingsDialog, n as NcContent } from "./index-DpcIUILq.chunk.mjs";
 import { c as _sfc_main$1W, I as INSIDE_RADIO_GROUP_KEY, a as NcSelect, N as NcCheckboxRadioSwitch, _ as _sfc_main$1X, b as NcInputField } from "./NcRichText-DJlaHs_Q-DQakw6Rl.chunk.mjs";
-import { R as RadioGroupDiv, a as NcTextArea, N as NcNoteCard, C as CardDiv } from "./markdown-D5yJUwdm.chunk.mjs";
+import { R as RadioGroupDiv, a as NcTextArea, N as NcNoteCard, C as CardDiv } from "./markdown-VgoFDMrx.chunk.mjs";
 import { A as AgoraAppIcon } from "./AgoraAppIcon-QLz01flr.chunk.mjs";
 import { N as NcUserBubble } from "./NcUserBubble-vOAXLHB5-CENCqWpU.chunk.mjs";
 function getDevtoolsGlobalHook() {
@@ -16404,12 +16645,43 @@ const useOptionsStore = defineStore("options", {
         types: family.types.sort((a, b) => a.sortOrder - b.sortOrder)
       }));
     },
-    // Get families with types
+    /* Get families with types
+            getFamiliesWithTypes(): Array<OptionFamily & {
+                types: InquiryOptionType[]
+                color: string
+            }> {
+                const families = this.getFamilies
+                const inquiryStore = useInquiryStore()
+                const sessionStore = useSessionStore()
+                console.log(" INTO GET FAMILY WITH TYPE ",this.getOptionTypes)
+                // Use helper to get organized families
+                const familiesFromHelper = getFamiliesWithOptionTypes(
+                    inquiryStore.type,
+                    sessionStore.appSettings?.inquiryTypeTab || {},
+                    this.getOptionTypes
+                )
+    
+                // Map to include colors
+                return familiesFromHelper.map(familyHelper => {
+                    const sessionFamily = families.find(f => f.key === familyHelper.key)
+    
+                    return {
+                        ...(sessionFamily || familyHelper),
+                        color: getFamilyColor(familyHelper.key),
+                        types: familyHelper.optionType || []
+                    }
+                })
+            },*/
     getFamiliesWithTypes() {
       const families = this.getFamilies;
       const inquiryStore = useInquiryStore();
       const sessionStore = useSessionStore();
-      console.log(" INTO GET FAMILY WITH TYPE ", this.getOptionTypes);
+      console.log("=== DEBUG getFamiliesWithTypes ===");
+      console.log("Inquiry type:", inquiryStore.type);
+      console.log("App settings inquiryTypeTab:", sessionStore.appSettings?.inquiryTypeTab);
+      console.log("App settings inquiryTypes:", sessionStore.appSettings?.inquiryTypes);
+      console.log("Option types:", this.getOptionTypes);
+      console.log("=== END DEBUG ===");
       const familiesFromHelper = getFamiliesWithOptionTypes(
         inquiryStore.type,
         sessionStore.appSettings?.inquiryTypeTab || {},
@@ -16762,31 +17034,6 @@ const useOptionsStore = defineStore("options", {
       const parentTypeInfo = sessionStore.appSettings?.inquiryOptionTypeTab?.[parentOption.type];
       if (!parentTypeInfo?.allowed_child_types) return [];
       return parentTypeInfo.allowed_child_types.map((typeKey) => sessionStore.appSettings?.inquiryOptionTypeTab?.[typeKey]).filter(Boolean).sort((a, b) => (a?.sortOrder || 0) - (b?.sortOrder || 0));
-    },
-    // In the getFamiliesWithTypes getter
-    getFamiliesWithTypes() {
-      const families = this.getFamilies;
-      const inquiryStore = useInquiryStore();
-      const sessionStore = useSessionStore();
-      console.log("=== DEBUG getFamiliesWithTypes ===");
-      console.log("Inquiry type:", inquiryStore.type);
-      console.log("App settings inquiryTypeTab:", sessionStore.appSettings?.inquiryTypeTab);
-      console.log("App settings inquiryTypes:", sessionStore.appSettings?.inquiryTypes);
-      console.log("Option types:", this.getOptionTypes);
-      console.log("=== END DEBUG ===");
-      const familiesFromHelper = getFamiliesWithOptionTypes(
-        inquiryStore.type,
-        sessionStore.appSettings?.inquiryTypeTab || {},
-        this.getOptionTypes
-      );
-      return familiesFromHelper.map((familyHelper) => {
-        const sessionFamily = families.find((f) => f.key === familyHelper.key);
-        return {
-          ...sessionFamily || familyHelper,
-          color: getFamilyColor(familyHelper.key),
-          types: familyHelper.optionType || []
-        };
-      });
     },
     // Get option type display info
     getTypeDisplayInfo(typeKey) {
@@ -20138,6 +20385,7 @@ const _sfc_main$1r = /* @__PURE__ */ defineComponent({
     const sessionStore = useSessionStore();
     const inquiriesStore = useInquiriesStore();
     const createDlgToggle = ref(false);
+    const inquiryGroupsStore = useInquiryGroupsStore();
     const createGroupDlgToggle = ref(false);
     const selectedInquiryTypeForCreation = ref(null);
     const selectedInquiryGroupTypeForCreation = ref(null);
@@ -20297,7 +20545,7 @@ const _sfc_main$1r = /* @__PURE__ */ defineComponent({
         selectedFamily.value = newFamilyId;
       }
     );
-    const __returned__ = { preferencesStore, router: router2, sessionStore, inquiriesStore, createDlgToggle, createGroupDlgToggle, selectedInquiryTypeForCreation, selectedInquiryGroupTypeForCreation, canUserCreateInquiryGroup, canCreateInquiryGroupForFamily, createInquiryGroup, availableGroups, selectedFamily, expandedFamilies, inquiryFamilies, sortedInquiries, recentInquiries, shouldRedirectToGroupView, allInquiryTypes, allInquiryGroupTypes, inquiryTypesByFamily, inquiryGroupTypesByFamily, defaultViewMode, toggleFamily, isFamilyExpanded, getInquiryTypesForCurrentFamily, getInquiryGroupTypesForCurrentFamily, getFamilyData, getInquiryTypeDisplayData, getInquiryGroupTypeDisplayData, showSettings, navigateToFamilyInquiries, createInquiry, handleInquirySelected, inquiryAdded, inquiryGroupAdded, getInquiryIcon, handleCloseDialog, handleCloseGroupDialog, get t() {
+    const __returned__ = { preferencesStore, router: router2, sessionStore, inquiriesStore, createDlgToggle, inquiryGroupsStore, createGroupDlgToggle, selectedInquiryTypeForCreation, selectedInquiryGroupTypeForCreation, canUserCreateInquiryGroup, canCreateInquiryGroupForFamily, createInquiryGroup, availableGroups, selectedFamily, expandedFamilies, inquiryFamilies, sortedInquiries, recentInquiries, shouldRedirectToGroupView, allInquiryTypes, allInquiryGroupTypes, inquiryTypesByFamily, inquiryGroupTypesByFamily, defaultViewMode, toggleFamily, isFamilyExpanded, getInquiryTypesForCurrentFamily, getInquiryGroupTypesForCurrentFamily, getFamilyData, getInquiryTypeDisplayData, getInquiryGroupTypeDisplayData, showSettings, navigateToFamilyInquiries, createInquiry, handleInquirySelected, inquiryAdded, inquiryGroupAdded, getInquiryIcon, handleCloseDialog, handleCloseGroupDialog, get t() {
       return translate;
     }, get NcAppNavigationItem() {
       return NcAppNavigationItem;
@@ -20352,14 +20600,14 @@ function _sfc_render$1r(_ctx, _cache, $props, $setup, $data, $options) {
                     name: inquiry2.title,
                     exact: true,
                     class: "navigation-item",
-                    onClick: ($event) => $setup.handleInquirySelected(inquiry2)
+                    to: { name: "inquiry", params: { id: inquiry2.id } }
                   }, {
                     icon: withCtx(() => [
                       (openBlock(), createBlock(resolveDynamicComponent($setup.getInquiryIcon(inquiry2)), { class: "nav-icon" }))
                     ]),
                     _: 2
                     /* DYNAMIC */
-                  }, 1032, ["name", "onClick"]);
+                  }, 1032, ["name", "to"]);
                 }),
                 128
                 /* KEYED_FRAGMENT */
@@ -74156,6 +74404,7 @@ const _sfc_main$S = /* @__PURE__ */ defineComponent({
     const commentsStore = useCommentsStore();
     const preferencesStore = usePreferencesStore();
     const props2 = __props;
+    const updateTrigger = ref(0);
     const userPositions = /* @__PURE__ */ new Map();
     function groupCommentsByUserAndTime(comments) {
       if (!comments || comments.length === 0) return [];
@@ -74205,6 +74454,8 @@ const _sfc_main$S = /* @__PURE__ */ defineComponent({
     const filteredComments = computed(() => {
       console.log("INTO COMMENT optionId:", props2.optionId);
       console.log("INTO COMMENT inquiryOnly:", props2.inquiryOnly);
+      console.log("Comments from store:", commentsStore.comments?.length);
+      updateTrigger.value;
       userPositions.clear();
       if (props2.optionId === void 0 && !props2.inquiryOnly) {
         return commentsStore.groupedComments || [];
@@ -74221,11 +74472,14 @@ const _sfc_main$S = /* @__PURE__ */ defineComponent({
         avatarPosition: getAvatarPosition(group2.userId)
       }));
     });
+    watch(() => commentsStore.comments, () => {
+      updateTrigger.value++;
+    }, { deep: true });
     const cssVar = {
       "--content-deleted": `"(${translate("agora", "deleted")})"`
     };
     const alternativestyle = preferencesStore.user?.useCommentsAlternativeStyling || false;
-    const __returned__ = { newCommentText, isSubmitting, commentsStore, preferencesStore, props: props2, userPositions, groupCommentsByUserAndTime, getAvatarPosition, filteredComments, cssVar, alternativestyle, CommentItem, get t() {
+    const __returned__ = { newCommentText, isSubmitting, commentsStore, preferencesStore, props: props2, updateTrigger, userPositions, groupCommentsByUserAndTime, getAvatarPosition, filteredComments, cssVar, alternativestyle, CommentItem, get t() {
       return translate;
     } };
     Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
@@ -74412,10 +74666,11 @@ function _sfc_render$R(_ctx, _cache, $props, $setup, $data, $options) {
           modelValue: $setup.comment,
           "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => $setup.comment = $event),
           placeholder: $setup.t("agora", "Write a comment..."),
-          "auto-complete": true,
-          "link-auto-complete": true,
+          autolink: true,
           "use-markdown": true,
-          maxlength: 100,
+          "emoji-autocomplete": true,
+          "link-autocomplete": true,
+          maxlength: 150,
           disabled: !$setup.currentInquiry || $setup.isSubmitting,
           onSubmit: $setup.writeComment,
           onKeydown: $setup.handleKeydown
@@ -75434,7 +75689,7 @@ function _sfc_render$Q(_ctx, _cache, $props, $setup, $data, $options) {
                             $setup.showCommentForm ? (openBlock(), createElementBlock("div", _hoisted_41$6, [
                               createVNode($setup["CommentAdd"], {
                                 "inquiry-id": $props.inquiryId,
-                                "option-id": $setup.optionStore.id,
+                                "option-id": $props.optionId,
                                 onCommentAdded: $setup.handleCommentAdded
                               }, null, 8, ["inquiry-id", "option-id"])
                             ])) : createCommentVNode("v-if", true)
@@ -75445,10 +75700,10 @@ function _sfc_render$Q(_ctx, _cache, $props, $setup, $data, $options) {
                         createCommentVNode(" Comments list "),
                         $setup.optionStore.status.countComments > 0 ? (openBlock(), createElementBlock("div", _hoisted_42$5, [
                           createVNode($setup["Comments"], {
-                            "inquiry-id": $props.inquiryId,
-                            "option-id": $setup.optionStore.id,
+                            "inquiry-only": false,
+                            "option-id": $props.optionId,
                             onCommentCountUpdated: $setup.handleCommentCountUpdated
-                          }, null, 8, ["inquiry-id", "option-id"])
+                          }, null, 8, ["option-id"])
                         ])) : !$setup.showCommentForm ? (openBlock(), createElementBlock("div", _hoisted_43$5, [
                           (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons.Comment), { size: 48 })),
                           createBaseVNode(
@@ -79710,6 +79965,7 @@ const _sfc_main$I = /* @__PURE__ */ defineComponent({
       if (inquiryStore.coverId) {
         currentCoverUrl.value = getNextcloudPreviewUrl(inquiryStore.coverId);
       }
+      inquiriesStore.setFamilyType(inquiryStore.family);
       subscribe(Event$1.UpdateComments, () => commentsStore.load());
       isLoaded.value = true;
     });
@@ -87834,9 +88090,7 @@ const _sfc_main$n = /* @__PURE__ */ defineComponent({
           modalInquiry.value = inquiry2;
           showModal.value = true;
           break;
-        case "popup":
-          popupInquiry.value = inquiry2;
-          showPopup.value = true;
+        case "none":
           break;
         case "page":
         default:

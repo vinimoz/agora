@@ -394,10 +394,9 @@ function handleClick() {
 }
 </script>
 <style lang="scss" scoped>
-/* === PROFESSIONAL SUMMARY COMPONENT === */
 .inquiry-summary {
   font-family: var(--font-family);
-  background: transparent;
+  background: var(--color-main-background);
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   
   &.is-interactive {

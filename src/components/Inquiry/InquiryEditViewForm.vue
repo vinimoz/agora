@@ -340,7 +340,9 @@ onMounted(() => {
   if (inquiryStore.coverId) { 
         currentCoverUrl.value = getNextcloudPreviewUrl(inquiryStore.coverId)
    }
+  inquiriesStore.setFamilyType(inquiryStore.family)
   subscribe(Event.UpdateComments, () => commentsStore.load())
+  
   isLoaded.value = true
 })
 

@@ -693,6 +693,7 @@ watch(() => storeInquiry.value.currentUserStatus?.supportValue, (newValue) => {
 .inquiry-full-view {
   width: 100%;
   height: 100%;
+  border-radius: 8px;
   background: var(--color-surface);
 }
 
@@ -700,6 +701,7 @@ watch(() => storeInquiry.value.currentUserStatus?.supportValue, (newValue) => {
   width: 100%;
   height: 100%;
   overflow-y: auto;
+  border-radius: 8px;
 }
 
 .full-view-content {
@@ -707,6 +709,7 @@ watch(() => storeInquiry.value.currentUserStatus?.supportValue, (newValue) => {
   margin: 0 auto;
   padding: 0 32px 32px;
   box-sizing: border-box;
+  border-radius: 8px;
 
   > * + * {
     margin-top: 32px;
@@ -834,7 +837,7 @@ watch(() => storeInquiry.value.currentUserStatus?.supportValue, (newValue) => {
   border-radius: 8px;
   font-size: 14px;
   font-weight: 500;
-  color: white;
+  color: var(--color-main-text);
   cursor: pointer;
   transition: all 0.2s ease;
 

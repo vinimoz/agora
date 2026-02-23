@@ -373,7 +373,9 @@ const sanitizedContent = computed(() => {
 
 // === CONTENT WRAPPER ===
 .rich-content-wrapper {
+  border-radius: 8px;
   padding: 32px;
+  background: var(--color-main-background);
   
   @media (max-width: 768px) {
     padding: 24px;
@@ -706,7 +708,7 @@ const sanitizedContent = computed(() => {
     }
     
     code {
-      background: transparent;
+      background: var(--color-main-background);
       padding: 0;
       font-size: 13px;
       line-height: 1.5;

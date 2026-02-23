@@ -139,10 +139,11 @@ function handleKeydown(event: KeyboardEvent) {
         <NcRichContenteditable
           v-model="comment"
           :placeholder="t('agora', 'Write a comment...')"
-          :auto-complete="true"
-          :link-auto-complete="true"
-          :use-markdown="true"
-          :maxlength="100"
+                  :autolink="true"
+                  :use-markdown="true"
+                  :emoji-autocomplete="true"
+                  :link-autocomplete="true"
+          :maxlength="150"
           :disabled="!currentInquiry || isSubmitting"
           @submit="writeComment"
           @keydown="handleKeydown"
@@ -202,60 +203,22 @@ function handleKeydown(event: KeyboardEvent) {
   .comment-add__editor {
     display: flex;
     gap: 8px;
-    align-items: flex-end;
+    align-items: flex-start;
     width: 100%;
+  }
 
-    :deep(.nc-rich-contenteditable) {
-      flex: 1;
-      min-width: 200px;
-      width: auto;
-      min-height: 42px;
-      max-height: 200px;
-      overflow-y: auto;
-      background: var(--color-main-background);
-      border: 2px solid var(--color-border);
-      border-radius: var(--border-radius-large);
-      padding: 8px 12px;
-      font-size: 14px;
-      line-height: 1.5;
-      transition: border-color 0.2s ease;
-
-      [contenteditable] {
-        min-height: 24px;
-        outline: none;
-      }
-
-      &:focus-within {
-        border-color: var(--color-primary-element);
-        box-shadow: 0 0 0 2px var(--color-primary-light);
-      }
-
-      &:disabled {
-        opacity: 0.5;
-        background: var(--color-background-dark);
-      }
-
-      &:empty:before {
-        content: attr(placeholder);
-        color: var(--color-text-lighter);
-        font-style: italic;
-        pointer-events: none;
-      }
-    }
+  .rich-contenteditable {
+  width: 100%;
   }
 
   .comment-add__submit {
     flex-shrink: 0;
-    align-self: flex-end;
+    align-self: flex-start;
     min-width: 70px;
     height: 42px;
-    margin-bottom: 0;
     padding: 0 16px;
     white-space: nowrap;
-
-    &.nc-button--primary {
-      border-radius: var(--border-radius-pill);
-    }
+    border-radius: var(--border-radius-pill);
   }
 
   .comment-add__options {
@@ -263,7 +226,7 @@ function handleKeydown(event: KeyboardEvent) {
     display: flex;
     align-items: center;
 
-    :deep(.nc-checkbox-radio-switch__label) {
+    .nc-checkbox-radio-switch__label {
       font-size: 13px;
     }
 
@@ -298,9 +261,6 @@ function handleKeydown(event: KeyboardEvent) {
       gap: 8px;
       align-items: stretch;
 
-      :deep(.nc-rich-contenteditable) {
-        min-width: 100%;
-        width: 100%;
       }
 
       .comment-add__submit {
@@ -309,13 +269,5 @@ function handleKeydown(event: KeyboardEvent) {
       }
     }
   }
-}
 
-@media (min-width: 1200px) {
-  .comment-add__editor {
-    :deep(.nc-rich-contenteditable) {
-      min-width: 400px;
-    }
-  }
-}
 </style>

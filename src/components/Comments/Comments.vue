@@ -3,7 +3,7 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import CommentItem from './CommentItem.vue'
 import { t } from '@nextcloud/l10n'
 import { usePreferencesStore } from '../../stores/preferences.ts'
@@ -20,6 +20,11 @@ const props = defineProps<{
   optionId?: number
   inquiryOnly?: boolean
 }>()
+
+
+// Add a ref to force re-renders
+const updateTrigger = ref(0)
+
 
 // Store user positions outside computed to prevent recreation
 const userPositions = new Map<string | number, 'left' | 'right'>()
@@ -95,7 +100,11 @@ function getAvatarPosition(userId: string | number): 'left' | 'right' {
 const filteredComments = computed(() => {
   console.log("INTO COMMENT optionId:", props.optionId)
   console.log("INTO COMMENT inquiryOnly:", props.inquiryOnly)
-
+  console.log("Comments from store:", commentsStore.comments?.length)
+  
+  // Force recomputation when updateTrigger changes
+  updateTrigger.value // This line ensures reactivity
+  
   // Reset positions for new filter
   userPositions.clear()
 
@@ -125,6 +134,11 @@ const filteredComments = computed(() => {
     avatarPosition: getAvatarPosition(group.userId)
   }))
 })
+
+// Watch for changes in commentsStore.comments
+watch(() => commentsStore.comments, () => {
+  updateTrigger.value++
+}, { deep: true })
 
 const cssVar = {
   '--content-deleted': `"(${t('agora', 'deleted')})"`,

@@ -288,7 +288,7 @@
                             <div v-if="showCommentForm" class="comment-form">
                                 <CommentAdd
                                     :inquiry-id="inquiryId"
-                                    :option-id="optionStore.id"
+                                    :option-id="optionId"
                                     @comment-added="handleCommentAdded"
                                 />
                             </div>
@@ -297,8 +297,8 @@
                         <!-- Comments list -->
                         <div v-if="optionStore.status.countComments > 0" class="comments-list">
                             <Comments
-                                :inquiry-id="inquiryId"
-                                :option-id="optionStore.id"
+                                :inquiry-only="false"
+                                :option-id="optionId"
                                 @comment-count-updated="handleCommentCountUpdated"
                             />
                         </div>

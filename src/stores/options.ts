@@ -96,7 +96,7 @@ export const useOptionsStore = defineStore('options', {
                 }))
         },
 
-        // Get families with types
+        /* Get families with types
         getFamiliesWithTypes(): Array<OptionFamily & {
             types: InquiryOptionType[]
             color: string
@@ -122,7 +122,40 @@ export const useOptionsStore = defineStore('options', {
                     types: familyHelper.optionType || []
                 }
             })
-        },
+        },*/
+    getFamiliesWithTypes(): Array<OptionFamily & {
+        types: InquiryOptionType[]
+        color: string
+    }> {
+        const families = this.getFamilies
+        const inquiryStore = useInquiryStore()
+        const sessionStore = useSessionStore()
+
+        console.log("=== DEBUG getFamiliesWithTypes ===")
+        console.log("Inquiry type:", inquiryStore.type)
+        console.log("App settings inquiryTypeTab:", sessionStore.appSettings?.inquiryTypeTab)
+        console.log("App settings inquiryTypes:", sessionStore.appSettings?.inquiryTypes)
+        console.log("Option types:", this.getOptionTypes)
+        console.log("=== END DEBUG ===")
+
+        // Use helper to get organized families
+        const familiesFromHelper = getFamiliesWithOptionTypes(
+            inquiryStore.type,
+            sessionStore.appSettings?.inquiryTypeTab || {},
+            this.getOptionTypes
+        )
+
+        // Map to include colors
+        return familiesFromHelper.map(familyHelper => {
+            const sessionFamily = families.find(f => f.key === familyHelper.key)
+
+            return {
+                ...(sessionFamily || familyHelper),
+                color: getFamilyColor(familyHelper.key),
+                types: familyHelper.optionType || []
+            }
+        })
+    },
 
         // Get options by specific type
         getOptionsByType: (state) => (typeKey: string): Option[] =>
@@ -544,41 +577,6 @@ export const useOptionsStore = defineStore('options', {
                 .map(typeKey => sessionStore.appSettings?.inquiryOptionTypeTab?.[typeKey])
                 .filter(Boolean)
                 .sort((a, b) => (a?.sortOrder || 0) - (b?.sortOrder || 0))
-        },
-
-        // In the getFamiliesWithTypes getter
-        getFamiliesWithTypes(): Array<OptionFamily & {
-            types: InquiryOptionType[]
-            color: string
-        }> {
-            const families = this.getFamilies
-            const inquiryStore = useInquiryStore()
-            const sessionStore = useSessionStore()
-
-            console.log("=== DEBUG getFamiliesWithTypes ===")
-            console.log("Inquiry type:", inquiryStore.type)
-            console.log("App settings inquiryTypeTab:", sessionStore.appSettings?.inquiryTypeTab)
-            console.log("App settings inquiryTypes:", sessionStore.appSettings?.inquiryTypes)
-            console.log("Option types:", this.getOptionTypes)
-            console.log("=== END DEBUG ===")
-
-            // Use helper to get organized families
-            const familiesFromHelper = getFamiliesWithOptionTypes(
-                inquiryStore.type,
-                sessionStore.appSettings?.inquiryTypeTab || {},
-                this.getOptionTypes
-            )
-
-            // Map to include colors
-            return familiesFromHelper.map(familyHelper => {
-                const sessionFamily = families.find(f => f.key === familyHelper.key)
-
-                return {
-                    ...(sessionFamily || familyHelper),
-                    color: getFamilyColor(familyHelper.key),
-                    types: familyHelper.optionType || []
-                }
-            })
         },
 
         // Get option type display info

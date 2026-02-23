@@ -383,8 +383,8 @@ function handleCommentsClick() {
 <style lang="scss" scoped>
 .inquiry-card {
   position: relative;
-  background: transparent;
   border-radius: 16px;
+  background: var(--color-main-background);
   border: 2px solid var(--color-border);
   overflow: hidden;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -454,7 +454,7 @@ function handleCommentsClick() {
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(to bottom, transparent 50%, rgba(0, 0, 0, 0.4));
+    /* background: linear-gradient(to bottom, transparent 50%, rgba(0, 0, 0, 0.4)); */
     opacity: 0;
     transition: opacity 0.3s ease;
   }
@@ -468,6 +468,8 @@ function handleCommentsClick() {
 
 .card-content {
   padding: 20px;
+  background: var(--color-main-background);
+  border-radius: 8px;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -749,6 +751,7 @@ function handleCommentsClick() {
   }
   
   .card-content {
+    border-radius: 8px;
     padding: 16px;
     gap: 10px;
   }
