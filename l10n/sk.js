@@ -149,6 +149,7 @@ OC.L10N.register(
     "Heading 2" : "Nadpis 2",
     "Heading 3" : "Nadpis 3",
     "Bullet list" : "Zoznam odrážok",
+    "Numbered list" : "Číslovaný zoznam",
     "Task list" : "Zoznam úloh",
     "Blockquote" : "Citácia",
     "Link" : "Prepojenie",
