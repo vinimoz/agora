@@ -389,6 +389,9 @@ const canEditResource = (): boolean => {
 
   // Use your permission system if available, otherwise simple owner check
   try {
+    if (context.value === 'undefined' ) {
+        return false;
+    }
     return canEdit?.(context.value) ?? currentInquiry.value.currentUserStatus?.isOwner
   } catch (error) {
     console.error('Error checking edit permissions:', error)

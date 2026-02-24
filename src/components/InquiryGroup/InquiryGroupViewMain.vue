@@ -339,7 +339,7 @@ function closePopup() {
 .main-item {
   border: 2px solid var(--inquiry-gray-200);
   border-radius: var(--inquiry-border-radius-lg);
-  background: var(--inquiry-card-bg);
+  /* background: var(--inquiry-card-bg); */
   box-shadow: var(--inquiry-shadow-sm);
   transition: var(--inquiry-transition-slow);
   cursor: pointer;

@@ -44,20 +44,17 @@ class OptionMapper extends QBMapper
             $optionGroupsAlias = 'option_groups';
             $currentUserId = $this->userSession->getCurrentUserId();
         
-            $this->joinUserRole($qb, self::TABLE, $currentUserId);
-            $this->joinGroupShares($qb, self::TABLE);
-            $this->joinHasSupported($qb, self::TABLE, $currentUserId);
-            $this->joinOptionGroups($qb, self::TABLE, $optionGroupsAlias);
-            $this->joinOptionGroupShares($qb, $optionGroupsAlias, $currentUserId, $optionGroupsAlias);
-            $this->joinSupportValue($qb, self::TABLE, $currentUserId);
-            $this->joinParticipantsCount($qb, self::TABLE);
-            $this->joinSupportsCount($qb, self::TABLE);
-            $this->joinNegativeSupportsCount($qb, self::TABLE);
-            $this->joinPositiveSupportsCount($qb, self::TABLE);
-            $this->joinNeutralSupportsCount($qb, self::TABLE);
+            //$this->joinUserRole($qb, self::TABLE, $currentUserId);
+//            $this->joinHasSupported($qb, self::TABLE, $currentUserId);
+  //          $this->joinSupportValue($qb, self::TABLE, $currentUserId);
+    //        $this->joinParticipantsCount($qb, self::TABLE);
+      //      $this->joinSupportsCount($qb, self::TABLE);
+        //    $this->joinNegativeSupportsCount($qb, self::TABLE);
+         //   $this->joinPositiveSupportsCount($qb, self::TABLE);
+        //  $this->joinNeutralSupportsCount($qb, self::TABLE);
             $this->joinCommentsCount($qb, self::TABLE);
-            $this->joinMiscs($qb, self::TABLE);
-            $this->joinInquiryInfo($qb, self::TABLE);
+          //  $this->joinMiscs($qb, self::TABLE);
+            // $this->joinInquiryInfo($qb, self::TABLE);
         }
         return $this->findEntity($qb);
     }
@@ -299,20 +296,18 @@ class OptionMapper extends QBMapper
 
         $currentUserId = $this->userSession->getCurrentUserId();
         $optionGroupsAlias = 'option_groups';
-        $this->joinUserRole($qb, self::TABLE, $currentUserId);
-        $this->joinGroupShares($qb, self::TABLE);
-        $this->joinHasSupported($qb, self::TABLE, $currentUserId);
-        $this->joinSupportValue($qb, self::TABLE, $currentUserId);
-        $this->joinOptionGroups($qb, self::TABLE, $optionGroupsAlias);
-        $this->joinOptionGroupShares($qb, $optionGroupsAlias, $currentUserId, $optionGroupsAlias);
-        $this->joinParticipantsCount($qb, self::TABLE);
-        $this->joinSupportsCount($qb, self::TABLE);
-        $this->joinNegativeSupportsCount($qb, self::TABLE);
-        $this->joinPositiveSupportsCount($qb, self::TABLE);
-        $this->joinNeutralSupportsCount($qb, self::TABLE);
+        //$this->joinUserRole($qb, self::TABLE, $currentUserId);
+        // $this->joinHasSupported($qb, self::TABLE, $currentUserId);
+       // $this->joinSupportValue($qb, self::TABLE, $currentUserId);
+  
+        // $this->joinParticipantsCount($qb, self::TABLE);
+       // $this->joinSupportsCount($qb, self::TABLE);
+       //  $this->joinNegativeSupportsCount($qb, self::TABLE);
+       // $this->joinPositiveSupportsCount($qb, self::TABLE);
+     //   $this->joinNeutralSupportsCount($qb, self::TABLE);
         $this->joinCommentsCount($qb, self::TABLE);
-        $this->joinMiscs($qb, self::TABLE);
-        $this->joinInquiryInfo($qb, self::TABLE);
+    //   $this->joinMiscs($qb, self::TABLE);
+   //     $this->joinInquiryInfo($qb, self::TABLE);
 
         return $qb;
     }
@@ -515,7 +510,7 @@ class OptionMapper extends QBMapper
             )
         );
     }
-
+/**
     protected function joinUserRole(
         IQueryBuilder &$qb,
         string $fromAlias,
@@ -541,7 +536,7 @@ class OptionMapper extends QBMapper
             )
         );
     }
-
+    **/
     protected function joinHasSupported(
         IQueryBuilder &$qb,
         string $fromAlias,
@@ -591,63 +586,6 @@ class OptionMapper extends QBMapper
 
         $qb->addSelect(
             $qb->createFunction($joinAlias . '.value AS support_value')
-        );
-    }
-
-    protected function joinGroupShares(
-        IQueryBuilder &$qb,
-        string $fromAlias,
-        string $joinAlias = 'group_shares',
-    ): void {
-        $qb->addSelect($qb->createFunction('GROUP_CONCAT(DISTINCT ' . $joinAlias . '.user_id) AS group_shares'));
-
-        $qb->leftJoin(
-            $fromAlias,
-            Share::TABLE,
-            $joinAlias,
-            $qb->expr()->andX(
-                $qb->expr()->eq($joinAlias . '.option_id', $fromAlias . '.id'),
-                $qb->expr()->eq($joinAlias . '.type', $qb->expr()->literal('group')),
-                $qb->expr()->eq($joinAlias . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)),
-            )
-        );
-    }
-
-    protected function joinOptionGroups(
-        IQueryBuilder $qb,
-        string $fromAlias,
-        string $joinAlias = 'option_groups',
-    ): void {
-        $qb->addSelect($qb->createFunction('GROUP_CONCAT(DISTINCT ' . $joinAlias . '.group_id) AS option_groups'));
-
-        $qb->leftJoin(
-            $fromAlias,
-            OptionGroup::RELATION_TABLE,
-            $joinAlias,
-            $qb->expr()->andX(
-                $qb->expr()->eq(self::TABLE . '.id', $joinAlias . '.option_id'),
-            )
-        );
-    }
-
-    protected function joinOptionGroupShares(
-        IQueryBuilder $qb,
-        string $fromAlias,
-        string $currentUserId,
-        string $optionGroupsAlias,
-        string $joinAlias = 'option_group_shares',
-    ): void {
-        $qb->addSelect($qb->createFunction('GROUP_CONCAT(DISTINCT ' . $joinAlias . '.type) AS option_group_user_shares'));
-
-        $qb->leftJoin(
-            $fromAlias,
-            Share::TABLE,
-            $joinAlias,
-            $qb->expr()->andX(
-                $qb->expr()->eq($joinAlias . '.group_id', $optionGroupsAlias . '.group_id'),
-                $qb->expr()->eq($joinAlias . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)),
-                $qb->expr()->eq($joinAlias . '.user_id', $qb->createNamedParameter($currentUserId, IQueryBuilder::PARAM_STR)),
-            )
         );
     }
 
@@ -714,18 +652,24 @@ class OptionMapper extends QBMapper
     }
 
     protected function joinCommentsCount(
-        IQueryBuilder &$qb,
-        string $fromAlias,
-        string $joinAlias = 'comments',
-    ): void {
-        $qb->leftJoin(
-            $fromAlias,
-            Comment::TABLE,
-            $joinAlias,
-            $qb->expr()->eq($joinAlias . '.option_id', $fromAlias . '.id')
-        )->addSelect($qb->createFunction('COUNT(DISTINCT(' . $joinAlias . '.id)) AS count_comments'));
-        $qb->groupBy($fromAlias . '.id');
-    }
+    IQueryBuilder &$qb,
+    string $fromAlias,
+    string $joinAlias = 'comments',
+): void {
+    $qb->leftJoin(
+        $fromAlias,
+        Comment::TABLE,
+        $joinAlias,
+        $qb->expr()->andX(
+            $qb->expr()->eq($joinAlias . '.option_id', $fromAlias . '.id'),
+            $qb->expr()->eq($joinAlias . '.deleted', $qb->createNamedParameter(0))
+        )
+    )->addSelect(
+        $qb->createFunction('COUNT(' . $joinAlias . '.id) AS count_comments')
+    );
+
+    $qb->groupBy($fromAlias . '.id');
+}
 
     protected function joinParticipantsCount(
         IQueryBuilder &$qb,

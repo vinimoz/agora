@@ -11373,7 +11373,7 @@ to {
 .main-item[data-v-71f2b206] {
   border: 2px solid var(--inquiry-gray-200);
   border-radius: var(--inquiry-border-radius-lg);
-  background: var(--inquiry-card-bg);
+  /* background: var(--inquiry-card-bg); */
   box-shadow: var(--inquiry-shadow-sm);
   transition: var(--inquiry-transition-slow);
   cursor: pointer;
@@ -13598,14 +13598,14 @@ tr.file-picker__row td.row-name[data-v-1f96131b] {
 })();
 const appName = "agora";
 const appVersion = "1.7.0-rc1";
-import { a2 as getCurrentInstance, Y as inject, b3 as onUnmounted, bh as onDeactivated, bi as onActivated, w as watch, b4 as shallowRef, d as defineComponent, F as unref, bj as shallowReactive, X as reactive, b as computed, $ as h$1, bk as provide, aV as ref, a3 as watchEffect, aX as nextTick$1, A as defineStore, bl as toRaw, q as translate, aN as emit, bm as Settings, a as _export_sfc, c as createElementBlock, o as openBlock, t as toDisplayString, E as normalizeClass, bn as getCanonicalLocale, be as NcActionButton, _ as _export_sfc$1, f as createBlock, g as withCtx, l as createCommentVNode, h as resolveDynamicComponent, k as createBaseVNode, bo as NC_ACTIONS_IS_SEMANTIC_MENU, S as createElementId, bp as ActionGlobalMixin, G as NcIconSvgWrapper, ai as resolveComponent, a5 as withDirectives, j as createVNode, bq as vModelRadio, br as mdiRadioboxMarked, bs as mdiRadioboxBlank, u as useModel, bt as useSlots, P as logger, s as onMounted, aW as onBeforeUnmount, r as renderSlot, ag as useCssVars, bu as useIsDarkTheme, bv as mdiCreation, ac as createSlots, B as createTextVNode, a7 as NcButton, bw as useCssModule, bx as NC_FORM_BOX_CONTEXT_KEY, bf as NcActions, i as mergeProps, aO as withKeys, a6 as vShow, v as normalizeProps, x as guardReactiveProps, by as userStatus, N as NcAvatar, n as normalizeStyle, m as mergeModels, e as warn, T as Fragment$1, U as renderList, ak as NcLoadingIcon, bz as Teleport, ax as withModifiers, aP as NcEmptyContent, V as DateTime, bA as translatePlural, bB as TransitionGroup, D as generateUrl, aM as NcModal, bC as markRaw, bD as customRef, bE as global, bF as getAugmentedNamespace, bG as process$1, bc as commonjsGlobal, bH as Buffer, a$ as getDefaultExportFromCjs, bI as vModelSelect, C as purify, bd as getCurrentUser, ay as Transition, bJ as subscribe, bK as unsubscribe, aR as generateOcsUrl, aS as cancelableClient, bL as axios, y as createApp, z as pinia } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_ef057a6f_lang-BusB2sS0.chunk.mjs";
-import { a as useSessionStore, p as publicInquiry, i as supports, L as Logger, j as InquiryOptionIcons, I as InquiryGeneralIcons, d as useAppSettingsStore, k as useInquiryStore, s as showError, o as options, E as Event$1, l as createInquiryContext$1, m as canTransfer, n as canDelete, q as canArchive, g as getInquiryTypeData, b as useInquiriesStore, r as useInquiryGroupsStore, t as NavigationIcons, v as showSuccess, w as getAvailableInquiryTypesForCreation, x as getInquiryTypeOptions, y as useInquiryGroupStore, z as getAllowedResponseGroupTypes, A as getAvailableInquiryGroupTypesForCreation, B as getInquiryGroupTypeData, C as accessFamilyMenu, D as getInquiryTypesForFamily, F as getInquiryItemData, G as canCreateInquiryGroupInGeneral, H as getInquiryTypesByFamily, J as canSupportOption, K as canSupport, S as StatusIcons, M as BadgeIcons, O as canComment, P as sortTitlesMapping, Q as lodashExports, R as appSettings, T as canRestore, U as getInquiryGroupTypesByFamily, V as getInquiryGroupTypesForFamily, W as canViewToggle, X as getAvailableResponseTypesWithPermissions, Y as getAvailableTransformTypesWithPermissions, Z as validators, _ as inquiries, $ as commonjsRequire, a0 as useAttachmentsStore, a1 as createDefault, a2 as useSharesStore, a3 as useCommentsStore, a4 as useSubscriptionStore, a5 as moment, f as d, e as gfmHeadingId, a6 as createOptionContext, a7 as canEditOption, a8 as canDeleteOption, a9 as canChangeStatus, aa as canCommentOption, ab as canEdit, ac as createInquiryGroupContext, ad as inquiryLinks, ae as ShareIcons, af as getEditPermissions, ag as getAvailableFields, ah as getAvailableGroupFields, ai as canShare, aj as canUseResource } from "./NcDashboardWidget-DCBQdRFz-CNohL2Xh.chunk.mjs";
-import { u as usePreferencesStore, S as StyleSettings, F as FeatureSettings } from "./StyleSettings-BXLrmvTs.chunk.mjs";
-import { b as NcAppNavigationItem, u as useAppSettingsDialog, A as APP_SETTINGS_LEGACY_DESIGN_KEY, _ as _sfc_main$1V, c as NcAppNavigationList, d as NcAppNavigation, S as Spinner, Q as QRCode, I as InputDiv, e as NcAppContent, f as NcActionButtonGroup, g as NcDialog, h as find$1, r as registerCustomProtocol, t as tokenize, i as reset, j as NcRichContenteditable, O as Options, k as NcActionInput, P as PlusIcon, l as NcDateTimePickerNative, m as NcAppSidebar, a as NcAppSettingsDialog, n as NcContent } from "./index-DpcIUILq.chunk.mjs";
-import { c as _sfc_main$1W, I as INSIDE_RADIO_GROUP_KEY, a as NcSelect, N as NcCheckboxRadioSwitch, _ as _sfc_main$1X, b as NcInputField } from "./NcRichText-DJlaHs_Q-DQakw6Rl.chunk.mjs";
-import { R as RadioGroupDiv, a as NcTextArea, N as NcNoteCard, C as CardDiv } from "./markdown-VgoFDMrx.chunk.mjs";
-import { A as AgoraAppIcon } from "./AgoraAppIcon-QLz01flr.chunk.mjs";
-import { N as NcUserBubble } from "./NcUserBubble-vOAXLHB5-CENCqWpU.chunk.mjs";
+import { a2 as getCurrentInstance, Y as inject, b3 as onUnmounted, bi as onDeactivated, bj as onActivated, w as watch, b4 as shallowRef, d as defineComponent, F as unref, bk as shallowReactive, X as reactive, b as computed, $ as h$1, bl as provide, aV as ref, a3 as watchEffect, aX as nextTick$1, A as defineStore, q as translate, aN as emit, bm as Settings, a as _export_sfc, c as createElementBlock, o as openBlock, t as toDisplayString, E as normalizeClass, bn as getCanonicalLocale, bf as NcActionButton, _ as _export_sfc$1, f as createBlock, g as withCtx, l as createCommentVNode, h as resolveDynamicComponent, k as createBaseVNode, bo as NC_ACTIONS_IS_SEMANTIC_MENU, S as createElementId, bp as ActionGlobalMixin, G as NcIconSvgWrapper, ai as resolveComponent, a5 as withDirectives, j as createVNode, bq as vModelRadio, br as mdiRadioboxMarked, bs as mdiRadioboxBlank, u as useModel, bt as useSlots, P as logger, s as onMounted, aW as onBeforeUnmount, r as renderSlot, ag as useCssVars, bu as useIsDarkTheme, bv as mdiCreation, ac as createSlots, B as createTextVNode, a7 as NcButton, bw as useCssModule, bx as NC_FORM_BOX_CONTEXT_KEY, bg as NcActions, i as mergeProps, aO as withKeys, a6 as vShow, v as normalizeProps, x as guardReactiveProps, by as userStatus, N as NcAvatar, n as normalizeStyle, m as mergeModels, e as warn, T as Fragment$1, U as renderList, ak as NcLoadingIcon, bz as Teleport, ax as withModifiers, aP as NcEmptyContent, V as DateTime, bA as translatePlural, bB as TransitionGroup, D as generateUrl, aM as NcModal, bC as markRaw, bD as customRef, bE as global, bF as getAugmentedNamespace, bG as process$1, bc as commonjsGlobal, bH as Buffer, a$ as getDefaultExportFromCjs, bI as vModelSelect, be as getCurrentUser, ay as Transition, bd as toRaw, bJ as subscribe, bK as unsubscribe, aR as generateOcsUrl, aS as cancelableClient, C as purify, bL as axios, y as createApp, z as pinia } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_ef057a6f_lang-CTOMjiel.chunk.mjs";
+import { a as useSessionStore, i as useInquiryStore, s as showError, o as options, E as Event$1, L as Logger, j as getFamiliesWithOptionTypes, k as getFamilyColor, l as createInquiryContext$1, m as canTransfer, n as canDelete, p as canArchive, I as InquiryGeneralIcons, g as getInquiryTypeData, b as useInquiriesStore, q as useInquiryGroupsStore, r as NavigationIcons, t as showSuccess, v as getAvailableInquiryTypesForCreation, w as getInquiryTypeOptions, x as useInquiryGroupStore, y as getAllowedResponseGroupTypes, z as getAvailableInquiryGroupTypesForCreation, A as getInquiryGroupTypeData, B as accessFamilyMenu, C as getInquiryTypesForFamily, D as getInquiryItemData, F as canCreateInquiryGroupInGeneral, G as getInquiryTypesByFamily, H as useSupportsStore, J as canSupportOption, K as canSupport, S as StatusIcons, M as BadgeIcons, O as canComment, P as sortTitlesMapping, Q as lodashExports, R as appSettings, T as canRestore, U as getInquiryGroupTypesByFamily, V as getInquiryGroupTypesForFamily, W as canViewToggle, X as getAvailableResponseTypesWithPermissions, Y as getAvailableTransformTypesWithPermissions, Z as validators, _ as publicInquiry, $ as inquiries, a0 as commonjsRequire, a1 as useAttachmentsStore, a2 as getOptionTypeIconComponent, a3 as getOptionTypeLabel, a4 as InquiryOptionIcons, a5 as createOptionContext, a6 as canEditOption, a7 as canDeleteOption, a8 as getOptionTypeColor, a9 as usesTitle, aa as allowsComments, ab as hasSupportFeature, ac as getAllowedResponses, ad as useOptionStore, ae as findOptionType, af as getOptionTypeDescription, ag as getSupportFeatureLabel, ah as getOptionTypeFields, ai as createDefault, aj as useCommentsStore, ak as getAvailableResponseTypes, al as canChangeStatus, am as canCommentOption, an as getFamilyIconComponent, ao as getLayoutForFamily, ap as useSharesStore, aq as canEdit, ar as createInquiryGroupContext, d as useAppSettingsStore, as as inquiryLinks, at as ShareIcons, au as getEditPermissions, av as getAvailableFields, aw as getAvailableGroupFields, ax as canShare, ay as canUseResource } from "./NcDashboardWidget-DCBQdRFz-BHvijW5a.chunk.mjs";
+import { u as usePreferencesStore, S as StyleSettings, F as FeatureSettings } from "./StyleSettings-BFumrtIq.chunk.mjs";
+import { b as NcAppNavigationItem, u as useAppSettingsDialog, A as APP_SETTINGS_LEGACY_DESIGN_KEY, _ as _sfc_main$1V, c as NcAppNavigationList, d as NcAppNavigation, S as Spinner, Q as QRCode, I as InputDiv, e as NcAppContent, f as NcActionButtonGroup, g as NcDialog, h as find$1, r as registerCustomProtocol, t as tokenize, i as reset, j as NcRichContenteditable, O as Options, k as NcActionInput, P as PlusIcon, l as NcDateTimePickerNative, m as NcAppSidebar, a as NcAppSettingsDialog, n as NcContent } from "./index-CvLpad9l.chunk.mjs";
+import { c as _sfc_main$1W, I as INSIDE_RADIO_GROUP_KEY, a as NcSelect, N as NcCheckboxRadioSwitch, _ as _sfc_main$1X, b as NcInputField } from "./NcRichText-DJlaHs_Q-D0kSgDEf.chunk.mjs";
+import { R as RadioGroupDiv, a as NcTextArea, N as NcNoteCard, C as CardDiv } from "./markdown-BZ4Z9nhg.chunk.mjs";
+import { A as AgoraAppIcon } from "./AgoraAppIcon-9cLKAEly.chunk.mjs";
+import { N as NcUserBubble } from "./NcUserBubble-vOAXLHB5-DyUmpZkR.chunk.mjs";
 function getDevtoolsGlobalHook() {
   return getTarget().__VUE_DEVTOOLS_GLOBAL_HOOK__;
 }
@@ -15864,50 +15864,6 @@ const getCookieValue = (cookieName) => {
   }
   return "";
 };
-function groupSupports(inputArray) {
-  const idToElement = inputArray.reduce(
-    (idToSupportMap, item) => {
-      idToSupportMap[item.id] = item;
-      return idToSupportMap;
-    },
-    {}
-  );
-  const resultArray = inputArray.filter((support) => support.parent === 0).sort((a, b) => b.timestamp - a.timestamp).map((parentItem) => {
-    const supports2 = getSupports(parentItem.id);
-    const sortedSupports = supports2.sort((a, b) => {
-      const supportA = idToElement[a.id];
-      const supportB = idToElement[b.id];
-      if (supportA && supportB) {
-        if (supportA.timestamp !== supportB.timestamp) {
-          return supportB.timestamp - supportA.timestamp;
-        }
-        return supportB.id - supportA.id;
-      }
-      return b.id - a.id;
-    });
-    return {
-      ...parentItem,
-      supports: sortedSupports
-    };
-  });
-  function getSupports(parentId) {
-    const supports2 = [];
-    const stack = [parentId];
-    while (stack.length > 0) {
-      const currentId = stack.pop();
-      if (currentId !== void 0) {
-        const currentElement = idToElement[currentId];
-        if (currentElement) {
-          supports2.push({ ...currentElement });
-          const childIds = inputArray.filter((item) => item.parent === currentId).map((item) => item.id);
-          stack.push(...childIds);
-        }
-      }
-    }
-    return supports2;
-  }
-  return resultArray;
-}
 const SimpleLink = {
   props: {
     href: {
@@ -15933,674 +15889,6 @@ const SimpleLink = {
       props2.name
     );
   }
-};
-const useSupportsStore = defineStore("supports", {
-  state: () => ({
-    supports: []
-  }),
-  getters: {
-    count: (state) => state.supports.length,
-    groupedSupports: (state) => groupSupports(state.supports),
-    // Get support by inquiryId/optionId and userId
-    getSupport: (state) => (inquiryId, userId, optionId) => state.supports.find((support) => {
-      const inquiryMatch = support.inquiryId === inquiryId && support.userId === userId;
-      if (optionId !== void 0 && optionId > 0) {
-        return inquiryMatch && support.optionId === optionId;
-      }
-      return inquiryMatch && (!support.optionId || support.optionId === 0);
-    }),
-    // Get all supports for an inquiry (including option supports)
-    getSupportsByInquiryId: (state) => (inquiryId) => state.supports.filter((support) => support.inquiryId === inquiryId),
-    // Get option supports only
-    getOptionSupports: (state) => (inquiryId, optionId) => state.supports.filter(
-      (support) => support.inquiryId === inquiryId && support.optionId === optionId
-    )
-  },
-  actions: {
-    // Set or update a support in the store
-    setItem(payload) {
-      const index = this.supports.findIndex((s) => {
-        const inquiryMatch = s.inquiryId === payload.support.inquiryId && s.userId === payload.support.userId;
-        if (payload.support.optionId !== void 0 && payload.support.optionId > 0) {
-          return inquiryMatch && s.optionId === payload.support.optionId;
-        }
-        return inquiryMatch && (!s.optionId || s.optionId === 0);
-      });
-      if (index === -1) {
-        this.supports.push(payload.support);
-      } else {
-        this.supports[index] = payload.support;
-      }
-    },
-    // Remove a support from the store
-    removeItem(inquiryId, userId, optionId) {
-      const index = this.supports.findIndex((s) => {
-        const inquiryMatch = s.inquiryId === inquiryId && s.userId === userId;
-        if (optionId !== void 0 && optionId > 0) {
-          return inquiryMatch && s.optionId === optionId;
-        }
-        return inquiryMatch && (!s.optionId || s.optionId === 0);
-      });
-      if (index !== -1) {
-        this.supports.splice(index, 1);
-      }
-    },
-    // Helper method to get support feature
-    getSupportFeature(item) {
-      return item.configuration?.supportFeature || "none";
-    },
-    // Main toggle method that handles both modes and both item types
-    async toggleSupport(itemId, userId, item, itemType) {
-      const supportFeature = this.getSupportFeature(item);
-      console.log(" INTO TOGGLE SUPPORT", item);
-      console.log(" INTO TOGGLE SUPPORT", itemId);
-      console.log(" INTO TOGGLE SUPPORT", itemType);
-      if (supportFeature === "binary") {
-        return this.toggleStandardSupport(itemId, userId, item, itemType);
-      }
-      if (supportFeature === "ternary") {
-        return this.toggleTernarySupport(itemId, userId, item, itemType);
-      }
-      return null;
-    },
-    // Standard mode: 0/1 toggle
-    async toggleStandardSupport(itemId, userId, item, itemType) {
-      if (!item) {
-        return;
-      }
-      const oldState = item.currentUserStatus?.hasSupported ?? false;
-      const oldCount = item.status?.countSupports ?? 0;
-      if (!item.currentUserStatus) {
-        item.currentUserStatus = {};
-      }
-      if (!item.status) {
-        item.status = {};
-      }
-      item.currentUserStatus.hasSupported = !oldState;
-      item.status.countSupports = (item.status.countSupports || 0) + (oldState ? -1 : 1);
-      const hasSupported = !oldState;
-      try {
-        let inquiryId = itemId;
-        let optionId;
-        if (itemType === "option") {
-          inquiryId = item.targetId;
-          optionId = itemId;
-        }
-        if (hasSupported) {
-          await supports.addSupport(inquiryId, userId, 1, optionId);
-        } else {
-          await supports.removeSupport(inquiryId, userId, optionId);
-        }
-        return hasSupported;
-      } catch (error) {
-        item.currentUserStatus.hasSupported = oldState;
-        item.status.countSupports = oldCount;
-        throw error;
-      }
-    },
-    async toggleTernarySupport(itemId, userId, item, itemType) {
-      if (!item) {
-        return;
-      }
-      const currentValue = item.currentUserStatus?.supportValue ?? null;
-      let nextValue;
-      let shouldRemove = false;
-      if (currentValue === 1) {
-        nextValue = 0;
-      } else if (currentValue === 0) {
-        nextValue = -1;
-      } else if (currentValue === -1) {
-        shouldRemove = true;
-        nextValue = null;
-      } else {
-        nextValue = 1;
-      }
-      const oldState = {
-        value: currentValue,
-        hasSupported: currentValue !== null && currentValue !== void 0,
-        counts: {
-          positive: item.status?.countPositiveSupports ?? 0,
-          neutral: item.status?.countNeutralSupports ?? 0,
-          negative: item.status?.countNegativeSupports ?? 0
-        },
-        total: item.status?.countSupports ?? 0
-      };
-      try {
-        this.updateTernaryUIState(item, currentValue, nextValue, shouldRemove);
-        let inquiryId = itemId;
-        let optionId;
-        if (itemType === "option") {
-          inquiryId = item.targetId;
-          optionId = itemId;
-        }
-        if (shouldRemove) {
-          await supports.removeSupport(inquiryId, userId, optionId);
-          this.removeItem(inquiryId, userId, optionId);
-        } else if (currentValue === null) {
-          const result2 = await supports.addSupport(inquiryId, userId, nextValue, optionId);
-          this.setItem({ support: result2.data.support });
-        } else {
-          const result2 = await supports.updateSupport(inquiryId, userId, nextValue, optionId);
-          this.setItem({ support: result2.data.support });
-        }
-        return nextValue;
-      } catch (error) {
-        this.rollbackTernaryUIState(item, oldState);
-        throw error;
-      }
-    },
-    // Helper to update UI state for ternary mode
-    updateTernaryUIState(item, currentValue, nextValue, shouldRemove) {
-      if (!item.currentUserStatus) {
-        item.currentUserStatus = {};
-      }
-      if (!item.status) {
-        item.status = {};
-      }
-      if (item.status.countPositiveSupports === void 0) item.status.countPositiveSupports = 0;
-      if (item.status.countNeutralSupports === void 0) item.status.countNeutralSupports = 0;
-      if (item.status.countNegativeSupports === void 0) item.status.countNegativeSupports = 0;
-      if (item.status.countSupports === void 0) item.status.countSupports = 0;
-      if (shouldRemove) {
-        item.currentUserStatus.supportValue = null;
-        item.currentUserStatus.hasSupported = false;
-      } else {
-        item.currentUserStatus.supportValue = nextValue;
-        item.currentUserStatus.hasSupported = true;
-      }
-      if (currentValue === 1) {
-        item.status.countPositiveSupports = Math.max(0, item.status.countPositiveSupports - 1);
-        item.status.countSupports = Math.max(0, item.status.countSupports - 1);
-      } else if (currentValue === 0) {
-        item.status.countNeutralSupports = Math.max(0, item.status.countNeutralSupports - 1);
-        item.status.countSupports = Math.max(0, item.status.countSupports - 1);
-      } else if (currentValue === -1) {
-        item.status.countNegativeSupports = Math.max(0, item.status.countNegativeSupports - 1);
-        item.status.countSupports = Math.max(0, item.status.countSupports - 1);
-      }
-      if (nextValue === 1) {
-        item.status.countPositiveSupports += 1;
-        item.status.countSupports += 1;
-      } else if (nextValue === 0) {
-        item.status.countNeutralSupports += 1;
-        item.status.countSupports += 1;
-      } else if (nextValue === -1) {
-        item.status.countNegativeSupports += 1;
-        item.status.countSupports += 1;
-      }
-    },
-    rollbackTernaryUIState(item, oldState) {
-      if (!item.currentUserStatus) {
-        item.currentUserStatus = {};
-      }
-      if (!item.status) {
-        item.status = {};
-      }
-      item.currentUserStatus.supportValue = oldState.value;
-      item.currentUserStatus.hasSupported = oldState.hasSupported;
-      item.status.countPositiveSupports = oldState.counts.positive;
-      item.status.countNeutralSupports = oldState.counts.neutral;
-      item.status.countNegativeSupports = oldState.counts.negative;
-      item.status.countSupports = oldState.total;
-    },
-    async load() {
-      const sessionStore = useSessionStore();
-      try {
-        const response = await (() => {
-          if (sessionStore.route.name === "publicInquiry") {
-            return publicInquiry.getSupports(sessionStore.route.params.token);
-          }
-          if (sessionStore.route.name === "inquiry") {
-            return supports.getSupportsByInquiryId(sessionStore.currentInquiryId);
-          }
-          return null;
-        })();
-        if (!response) {
-          this.$reset();
-          return;
-        }
-        this.supports = response.data.supports;
-      } catch (error) {
-        if (error?.code === "ERR_CANCELED") {
-          return;
-        }
-        this.$reset();
-      }
-    },
-    async add(inquiryId, userId, value, optionId) {
-      const sessionStore = useSessionStore();
-      try {
-        const response = await (() => {
-          if (sessionStore.route.name === "publicInquiry") {
-            return publicInquiry.addSupport(
-              sessionStore.publicToken,
-              inquiryId,
-              userId,
-              value,
-              optionId
-            );
-          }
-          if (sessionStore.route.name === "inquiry") {
-            return supports.addSupport(
-              inquiryId,
-              userId,
-              value,
-              optionId
-            );
-          }
-          return null;
-        })();
-        if (!response) {
-          this.$reset();
-          return;
-        }
-        this.setItem({ support: response.data.support });
-        return response.data.support;
-      } catch (error) {
-        if (error?.code === "ERR_CANCELED") {
-          return;
-        }
-        Logger.error("Error writing support", {
-          error
-        });
-        throw error;
-      }
-    },
-    async update(inquiryId, userId, value, optionId) {
-      const sessionStore = useSessionStore();
-      try {
-        const response = await (() => {
-          if (sessionStore.route.name === "publicInquiry") {
-            return publicInquiry.updateSupport(
-              sessionStore.publicToken,
-              inquiryId,
-              userId,
-              value,
-              optionId
-            );
-          }
-          if (sessionStore.route.name === "inquiry") {
-            return supports.updateSupport(
-              inquiryId,
-              userId,
-              value,
-              optionId
-            );
-          }
-          return null;
-        })();
-        if (!response) {
-          return;
-        }
-        this.setItem({ support: response.data.support });
-        return response.data.support;
-      } catch (error) {
-        if (error?.code === "ERR_CANCELED") {
-          return;
-        }
-        Logger.error("Error updating support", {
-          error
-        });
-        throw error;
-      }
-    },
-    async remove(inquiryId, userId, optionId) {
-      const sessionStore = useSessionStore();
-      try {
-        await (() => {
-          if (sessionStore.route.name === "publicInquiry") {
-            return publicInquiry.removeSupport(
-              sessionStore.publicToken,
-              inquiryId,
-              userId,
-              optionId
-            );
-          }
-          return supports.removeSupport(
-            inquiryId,
-            userId,
-            optionId
-          );
-        })();
-        this.removeItem(inquiryId, userId, optionId);
-      } catch (error) {
-        if (error?.code === "ERR_CANCELED") {
-          return;
-        }
-        Logger.error("Error deleting support", {
-          error
-        });
-        throw error;
-      }
-    },
-    /**
-     * Restore support for an inquiry
-     * @param payload
-     * @param payload.support
-     */
-    async restore(payload) {
-      const sessionStore = useSessionStore();
-      try {
-        const response = await (() => {
-          if (sessionStore.route.name === "publicInquiry") {
-            return publicInquiry.restoreSupport(sessionStore.publicToken, payload.support.id);
-          }
-          return supports.restoreSupport(payload.support.id);
-        })();
-        this.setItem({ support: response.data.support });
-        return response.data.support;
-      } catch (error) {
-        if (error?.code === "ERR_CANCELED") {
-          return;
-        }
-        Logger.error("Error restoring support", {
-          error,
-          payload
-        });
-        throw error;
-      }
-    }
-  }
-});
-function getRandomColorForFamily(familyKey) {
-  const niceColors = [
-    "#4A86E8",
-    // Blue
-    "#6AA84F",
-    // Green
-    "#F1C232",
-    // Yellow
-    "#CC0000",
-    // Red
-    "#E69138",
-    // Orange
-    "#A64D79",
-    // Purple
-    "#45818E",
-    // Teal
-    "#674EA7",
-    // Violet
-    "#3D85C6",
-    // Sky Blue
-    "#5B9B46",
-    // Forest Green
-    "#B45F06",
-    // Brown
-    "#AA00FF"
-    // Magenta
-  ];
-  let hash = 0;
-  for (let i = 0; i < familyKey.length; i++) {
-    hash = familyKey.charCodeAt(i) + ((hash << 5) - hash);
-  }
-  const index = Math.abs(hash) % niceColors.length;
-  return niceColors[index];
-}
-function getFamilyColor(familyKey) {
-  const predefinedColors = {
-    "debate": "#4A86E8",
-    // Blue
-    "structure": "#3D85C6",
-    // Sky Blue
-    "consensus": "#6AA84F",
-    // Green
-    "decision": "#CC0000",
-    // Red
-    "proposal": "#E69138",
-    // Orange
-    "question": "#5B9B46",
-    // Forest Green
-    "default": "#999999"
-    // Gray
-  };
-  if (predefinedColors[familyKey]) {
-    return predefinedColors[familyKey];
-  }
-  return getRandomColorForFamily(familyKey);
-}
-function getAllowedOptionTypes(inquiryTypeConfig, optionTypes) {
-  if (!inquiryTypeConfig) {
-    return [];
-  }
-  const rawAllowed = toRaw(inquiryTypeConfig.allowed_option_type);
-  let allowedOptionTypeKeys = [];
-  if (typeof rawAllowed === "string") {
-    try {
-      const parsed = JSON.parse(rawAllowed);
-      if (Array.isArray(parsed)) {
-        allowedOptionTypeKeys = parsed.filter((v) => typeof v === "string");
-      }
-    } catch (e) {
-      console.error("Failed to parse allowed_option_type JSON:", e);
-    }
-  } else if (Array.isArray(rawAllowed)) {
-    allowedOptionTypeKeys = rawAllowed.filter((v) => typeof v === "string");
-  }
-  const rawOptionTypes = toRaw(optionTypes);
-  let allOptionTypes = [];
-  if (Array.isArray(rawOptionTypes)) {
-    allOptionTypes = rawOptionTypes;
-  } else if (rawOptionTypes && typeof rawOptionTypes === "object") {
-    allOptionTypes = Object.values(rawOptionTypes);
-  }
-  console.log("Allowed keys:", allowedOptionTypeKeys);
-  console.log("Available option types full:", allOptionTypes);
-  const result2 = allOptionTypes.filter((opt) => {
-    if (!opt) return false;
-    const optionTypeValue = opt.option_type;
-    return typeof optionTypeValue === "string" && allowedOptionTypeKeys.includes(optionTypeValue);
-  });
-  console.log("RESULT WE GET :", result2);
-  return result2;
-}
-function groupOptionTypesByFamily(optionTypes) {
-  const grouped = {};
-  optionTypes.forEach((optionType) => {
-    const family = optionType.family || "default";
-    if (!grouped[family]) {
-      grouped[family] = [];
-    }
-    grouped[family].push(optionType);
-  });
-  return grouped;
-}
-function getFamilyIconName(familyKey) {
-  try {
-    const appSettingsStore = useAppSettingsStore();
-    return appSettingsStore?.settings?.optionFamilyTab?.[familyKey]?.icon || "File";
-  } catch (e) {
-    return "File";
-  }
-}
-function getFamilyIconComponent(familyKey) {
-  const iconName = getFamilyIconName(familyKey);
-  return InquiryOptionIcons[iconName] || InquiryGeneralIcons[iconName] || InquiryGeneralIcons.File;
-}
-function getFamiliesWithOptionTypes(inquiryTypeKey, inquiryTypes, optionTypes) {
-  let inquiryTypeConfig;
-  if (Array.isArray(inquiryTypes)) {
-    inquiryTypeConfig = inquiryTypes.find((t2) => t2?.inquiry_type === inquiryTypeKey);
-  } else {
-    inquiryTypeConfig = inquiryTypes[inquiryTypeKey];
-  }
-  if (!inquiryTypeConfig) {
-    console.warn(`No configuration found for inquiry type "${inquiryTypeKey}"`);
-    return [];
-  }
-  console.log(" CHHHHHHHHHHHHHHHHHHHHH ", inquiryTypeConfig);
-  console.log(" CHHHHHHHHHHHHHHHHHHHHH ", optionTypes);
-  const allowedOptionTypes = getAllowedOptionTypes(inquiryTypeConfig, optionTypes);
-  const groupedByFamily = groupOptionTypesByFamily(allowedOptionTypes);
-  return Object.entries(groupedByFamily).map(([familyKey, familyOptionTypes]) => {
-    const fallbackData = getFamilyFallbackData();
-    const fallback = fallbackData[familyKey] || fallbackData["default"] || {};
-    const firstOptionType = familyOptionTypes[0];
-    const iconName = firstOptionType?.icon || fallback.icon || "File";
-    const formattedLabel = familyKey.split("_").map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(" ");
-    return {
-      key: familyKey,
-      name: fallback.name || formattedLabel,
-      label: fallback.label || formattedLabel,
-      description: fallback.description || "",
-      icon: iconName,
-      optionTypes: familyOptionTypes
-    };
-  });
-}
-function getFamilyFallbackData() {
-  return {
-    "debate": {
-      name: "Debate",
-      label: "Debate",
-      description: "Debate positions, arguments, and alternatives",
-      icon: "Discussion"
-    },
-    "structure": {
-      name: "Structure",
-      label: "Structure",
-      description: "Structured documents with chapters and articles",
-      icon: "Settings"
-    },
-    "consensus": {
-      name: "Consensus",
-      label: "Consensus",
-      description: "Consultation questions and consensus building",
-      icon: "ThumbUp"
-    },
-    "decision": {
-      name: "Decision",
-      label: "Decision",
-      description: "Official decisions and results",
-      icon: "Checkmark"
-    },
-    "proposal": {
-      name: "Proposal",
-      label: "Proposal",
-      description: "Initial proposals and suggestions",
-      icon: "Lightbulb"
-    },
-    "default": {
-      name: "Options",
-      label: "Options",
-      description: "Various option types",
-      icon: "File"
-    }
-  };
-}
-function findOptionType(optionType, optionTypes) {
-  if (!optionType || !optionTypes?.length) return null;
-  return optionTypes.find(
-    (opt) => opt.option_type === optionType || opt.optionType === optionType
-  ) || null;
-}
-function getOptionTypeLabel(optionType, optionTypes, fallback = "Option") {
-  if (!optionType) return fallback;
-  const found2 = findOptionType(optionType, optionTypes);
-  return found2?.label || optionType || fallback;
-}
-function getOptionTypeIconComponent(optionType, optionTypes) {
-  if (!optionType) return InquiryOptionIcons.File;
-  const found2 = findOptionType(optionType, optionTypes);
-  const iconName = found2?.icon || "File";
-  return InquiryOptionIcons[iconName] || InquiryOptionIcons.File;
-}
-function getOptionTypeDescription(optionType, optionTypes) {
-  if (!optionType) return "";
-  const found2 = findOptionType(optionType, optionTypes);
-  return found2?.description || found2?.text || "";
-}
-function getOptionTypeFamily(optionType, optionTypes) {
-  if (!optionType) return "default";
-  const found2 = findOptionType(optionType, optionTypes);
-  return found2?.family || "default";
-}
-function getOptionTypeColor(optionType, optionTypes) {
-  const family = getOptionTypeFamily(optionType, optionTypes);
-  return getFamilyColor(family);
-}
-function getAllowedResponses(optionType, optionTypes) {
-  if (!optionType) return [];
-  const found2 = findOptionType(optionType, optionTypes);
-  if (!found2) return [];
-  console.log(" FIND OPTOON TYPE ", found2);
-  let responses = [];
-  if (typeof found2.allowed_response === "string") {
-    try {
-      const parsed = JSON.parse(found2.allowed_response);
-      if (Array.isArray(parsed)) {
-        responses = parsed.filter((v) => typeof v === "string");
-      }
-    } catch (e) {
-      console.error("Failed to parse allowed_response JSON:", e);
-    }
-  } else if (Array.isArray(found2.allowed_response)) {
-    responses = found2.allowed_response.filter((v) => typeof v === "string");
-  }
-  return responses;
-}
-function getAvailableResponseTypes(optionType, allOptionTypes) {
-  const allowedKeys = getAllowedResponses(optionType, allOptionTypes);
-  console.log(" RESPONSE KEY ", optionType);
-  console.log(" RESPONSE KEY ", allowedKeys);
-  return allowedKeys.map((key) => {
-    const found2 = findOptionType(key, allOptionTypes);
-    return {
-      option_type: key,
-      label: found2?.label || key,
-      icon: found2?.icon || "File",
-      description: found2?.description || found2?.text || ""
-    };
-  }).sort((a, b) => a.label.localeCompare(b.label));
-}
-function getOptionTypeFields(optionType, optionTypes) {
-  if (!optionType) return [];
-  const found2 = findOptionType(optionType, optionTypes);
-  if (!found2?.fields) return [];
-  if (typeof found2.fields === "string") {
-    try {
-      return JSON.parse(found2.fields);
-    } catch {
-      return [];
-    }
-  }
-  return found2.fields || [];
-}
-function hasSupportFeature(optionType, optionTypes) {
-  if (!optionType) return false;
-  const found2 = findOptionType(optionType, optionTypes);
-  const feature = found2?.support_feature;
-  return feature && feature !== "none";
-}
-function getSupportFeatureLabel(optionType, optionTypes) {
-  if (!optionType) return "";
-  const found2 = findOptionType(optionType, optionTypes);
-  const feature = found2?.support_feature;
-  if (feature === "ternary") return translate("agora", "Ternary support (for/against/neutral)");
-  if (feature === "binary") return translate("agora", "Binary support (like/dislike)");
-  if (feature && feature !== "none") return translate("agora", "Support enabled");
-  return "";
-}
-function allowsComments(optionType, optionTypes) {
-  if (!optionType) return false;
-  const found2 = findOptionType(optionType, optionTypes);
-  return found2?.allow_comment || false;
-}
-function usesTitle(optionType, optionTypes) {
-  if (!optionType) return true;
-  const found2 = findOptionType(optionType, optionTypes);
-  return found2?.use_title !== false;
-}
-const getLayoutForFamily = (familyKey) => {
-  const layoutMap = {
-    structure: "tree",
-    debate: "paired",
-    consensus: "consensus_flow",
-    decision: "voting_list",
-    proposal: "cards",
-    project: "kanban",
-    timeline: "timeline"
-  };
-  return layoutMap[familyKey] || "cards";
 };
 const useOptionsStore = defineStore("options", {
   state: () => ({
@@ -27091,9 +26379,9 @@ class ResolvedPos {
   blockRange(other = this, pred) {
     if (other.pos < this.pos)
       return other.blockRange(this);
-    for (let d2 = this.depth - (this.parent.inlineContent || this.pos == other.pos ? 1 : 0); d2 >= 0; d2--)
-      if (other.pos <= this.end(d2) && (!pred || pred(this.node(d2))))
-        return new NodeRange(this, other, d2);
+    for (let d = this.depth - (this.parent.inlineContent || this.pos == other.pos ? 1 : 0); d >= 0; d--)
+      if (other.pos <= this.end(d) && (!pred || pred(this.node(d))))
+        return new NodeRange(this, other, d);
     return null;
   }
   /**
@@ -29102,8 +28390,8 @@ class ParseContext {
   textblockFromContext() {
     let $context = this.options.context;
     if ($context)
-      for (let d2 = $context.depth; d2 >= 0; d2--) {
-        let deflt = $context.node(d2).contentMatchAt($context.indexAfter(d2)).defaultType;
+      for (let d = $context.depth; d >= 0; d--) {
+        let deflt = $context.node(d).contentMatchAt($context.indexAfter(d)).defaultType;
         if (deflt && deflt.isTextblock && deflt.defaultAttrs)
           return deflt;
       }
@@ -30197,19 +29485,19 @@ function lift$2(tr, range2, target) {
   let gapStart = $from.before(depth + 1), gapEnd = $to.after(depth + 1);
   let start = gapStart, end = gapEnd;
   let before2 = Fragment.empty, openStart = 0;
-  for (let d2 = depth, splitting = false; d2 > target; d2--)
-    if (splitting || $from.index(d2) > 0) {
+  for (let d = depth, splitting = false; d > target; d--)
+    if (splitting || $from.index(d) > 0) {
       splitting = true;
-      before2 = Fragment.from($from.node(d2).copy(before2));
+      before2 = Fragment.from($from.node(d).copy(before2));
       openStart++;
     } else {
       start--;
     }
   let after2 = Fragment.empty, openEnd = 0;
-  for (let d2 = depth, splitting = false; d2 > target; d2--)
-    if (splitting || $to.after(d2 + 1) < $to.end(d2)) {
+  for (let d = depth, splitting = false; d > target; d--)
+    if (splitting || $to.after(d + 1) < $to.end(d)) {
       splitting = true;
-      after2 = Fragment.from($to.node(d2).copy(after2));
+      after2 = Fragment.from($to.node(d).copy(after2));
       openEnd++;
     } else {
       end++;
@@ -30329,8 +29617,8 @@ function canSplit(doc2, pos, depth = 1, typesAfter) {
   let innerType = typesAfter && typesAfter[typesAfter.length - 1] || $pos.parent;
   if (base2 < 0 || $pos.parent.type.spec.isolating || !$pos.parent.canReplace($pos.index(), $pos.parent.childCount) || !innerType.type.validContent($pos.parent.content.cutByIndex($pos.index(), $pos.parent.childCount)))
     return false;
-  for (let d2 = $pos.depth - 1, i = depth - 2; d2 > base2; d2--, i--) {
-    let node = $pos.node(d2), index2 = $pos.index(d2);
+  for (let d = $pos.depth - 1, i = depth - 2; d > base2; d--, i--) {
+    let node = $pos.node(d), index2 = $pos.index(d);
     if (node.type.spec.isolating)
       return false;
     let rest2 = node.content.cutByIndex(index2, node.childCount);
@@ -30347,10 +29635,10 @@ function canSplit(doc2, pos, depth = 1, typesAfter) {
 }
 function split(tr, pos, depth = 1, typesAfter) {
   let $pos = tr.doc.resolve(pos), before2 = Fragment.empty, after2 = Fragment.empty;
-  for (let d2 = $pos.depth, e = $pos.depth - depth, i = depth - 1; d2 > e; d2--, i--) {
-    before2 = Fragment.from($pos.node(d2).copy(before2));
+  for (let d = $pos.depth, e = $pos.depth - depth, i = depth - 1; d > e; d--, i--) {
+    before2 = Fragment.from($pos.node(d).copy(before2));
     let typeAfter = typesAfter && typesAfter[i];
-    after2 = Fragment.from(typeAfter ? typeAfter.type.create(typeAfter.attrs, after2) : $pos.node(d2).copy(after2));
+    after2 = Fragment.from(typeAfter ? typeAfter.type.create(typeAfter.attrs, after2) : $pos.node(d).copy(after2));
   }
   tr.step(new ReplaceStep(pos, pos, new Slice(before2.append(after2), depth, depth), true));
 }
@@ -30379,24 +29667,24 @@ function joinable(a, b) {
 }
 function joinPoint(doc2, pos, dir = -1) {
   let $pos = doc2.resolve(pos);
-  for (let d2 = $pos.depth; ; d2--) {
-    let before2, after2, index = $pos.index(d2);
-    if (d2 == $pos.depth) {
+  for (let d = $pos.depth; ; d--) {
+    let before2, after2, index = $pos.index(d);
+    if (d == $pos.depth) {
       before2 = $pos.nodeBefore;
       after2 = $pos.nodeAfter;
     } else if (dir > 0) {
-      before2 = $pos.node(d2 + 1);
+      before2 = $pos.node(d + 1);
       index++;
-      after2 = $pos.node(d2).maybeChild(index);
+      after2 = $pos.node(d).maybeChild(index);
     } else {
-      before2 = $pos.node(d2).maybeChild(index - 1);
-      after2 = $pos.node(d2 + 1);
+      before2 = $pos.node(d).maybeChild(index - 1);
+      after2 = $pos.node(d + 1);
     }
-    if (before2 && !before2.isTextblock && joinable(before2, after2) && $pos.node(d2).canReplace(index, index + 1))
+    if (before2 && !before2.isTextblock && joinable(before2, after2) && $pos.node(d).canReplace(index, index + 1))
       return pos;
-    if (d2 == 0)
+    if (d == 0)
       break;
-    pos = dir < 0 ? $pos.before(d2) : $pos.after(d2);
+    pos = dir < 0 ? $pos.before(d) : $pos.after(d);
   }
 }
 function join$1(tr, pos, depth) {
@@ -30431,19 +29719,19 @@ function insertPoint(doc2, pos, nodeType) {
   if ($pos.parent.canReplaceWith($pos.index(), $pos.index(), nodeType))
     return pos;
   if ($pos.parentOffset == 0)
-    for (let d2 = $pos.depth - 1; d2 >= 0; d2--) {
-      let index = $pos.index(d2);
-      if ($pos.node(d2).canReplaceWith(index, index, nodeType))
-        return $pos.before(d2 + 1);
+    for (let d = $pos.depth - 1; d >= 0; d--) {
+      let index = $pos.index(d);
+      if ($pos.node(d).canReplaceWith(index, index, nodeType))
+        return $pos.before(d + 1);
       if (index > 0)
         return null;
     }
   if ($pos.parentOffset == $pos.parent.content.size)
-    for (let d2 = $pos.depth - 1; d2 >= 0; d2--) {
-      let index = $pos.indexAfter(d2);
-      if ($pos.node(d2).canReplaceWith(index, index, nodeType))
-        return $pos.after(d2 + 1);
-      if (index < $pos.node(d2).childCount)
+    for (let d = $pos.depth - 1; d >= 0; d--) {
+      let index = $pos.indexAfter(d);
+      if ($pos.node(d).canReplaceWith(index, index, nodeType))
+        return $pos.after(d + 1);
+      if (index < $pos.node(d).childCount)
         return null;
     }
   return null;
@@ -30456,10 +29744,10 @@ function dropPoint(doc2, pos, slice3) {
   for (let i = 0; i < slice3.openStart; i++)
     content = content.firstChild.content;
   for (let pass = 1; pass <= (slice3.openStart == 0 && slice3.size ? 2 : 1); pass++) {
-    for (let d2 = $pos.depth; d2 >= 0; d2--) {
-      let bias = d2 == $pos.depth ? 0 : $pos.pos <= ($pos.start(d2 + 1) + $pos.end(d2 + 1)) / 2 ? -1 : 1;
-      let insertPos = $pos.index(d2) + (bias > 0 ? 1 : 0);
-      let parent = $pos.node(d2), fits = false;
+    for (let d = $pos.depth; d >= 0; d--) {
+      let bias = d == $pos.depth ? 0 : $pos.pos <= ($pos.start(d + 1) + $pos.end(d + 1)) / 2 ? -1 : 1;
+      let insertPos = $pos.index(d) + (bias > 0 ? 1 : 0);
+      let parent = $pos.node(d), fits = false;
       if (pass == 1) {
         fits = parent.canReplace(insertPos, insertPos, content);
       } else {
@@ -30467,7 +29755,7 @@ function dropPoint(doc2, pos, slice3) {
         fits = wrapping && parent.canReplaceWith(insertPos, insertPos, wrapping[0]);
       }
       if (fits)
-        return bias == 0 ? $pos.pos : bias < 0 ? $pos.before(d2 + 1) : $pos.after(d2 + 1);
+        return bias == 0 ? $pos.pos : bias < 0 ? $pos.before(d + 1) : $pos.after(d + 1);
     }
   }
   return null;
@@ -30533,12 +29821,12 @@ class Fitter {
   // depths, one for the slice and one for the frontier.
   findFittable() {
     let startDepth = this.unplaced.openStart;
-    for (let cur = this.unplaced.content, d2 = 0, openEnd = this.unplaced.openEnd; d2 < startDepth; d2++) {
+    for (let cur = this.unplaced.content, d = 0, openEnd = this.unplaced.openEnd; d < startDepth; d++) {
       let node = cur.firstChild;
       if (cur.childCount > 1)
         openEnd = 0;
-      if (node.type.spec.isolating && openEnd <= d2) {
-        startDepth = d2;
+      if (node.type.spec.isolating && openEnd <= d) {
+        startDepth = d;
         break;
       }
       cur = node.content;
@@ -30644,9 +29932,9 @@ class Fitter {
       let fit = contentAfterFits($to, i, type, match, dropInner);
       if (!fit)
         continue;
-      for (let d2 = i - 1; d2 >= 0; d2--) {
-        let { match: match2, type: type2 } = this.frontier[d2];
-        let matches2 = contentAfterFits($to, d2, type2, match2, true);
+      for (let d = i - 1; d >= 0; d--) {
+        let { match: match2, type: type2 } = this.frontier[d];
+        let matches2 = contentAfterFits($to, d, type2, match2, true);
         if (!matches2 || matches2.childCount)
           continue scan;
       }
@@ -30662,8 +29950,8 @@ class Fitter {
     if (close2.fit.childCount)
       this.placed = addToFragment(this.placed, close2.depth, close2.fit);
     $to = close2.move;
-    for (let d2 = close2.depth + 1; d2 <= $to.depth; d2++) {
-      let node = $to.node(d2), add = node.type.contentMatch.fillBefore(node.content, true, $to.index(d2));
+    for (let d = close2.depth + 1; d <= $to.depth; d++) {
+      let node = $to.node(d), add = node.type.contentMatch.fillBefore(node.content, true, $to.index(d));
       this.openFrontierNode(node.type, node.attrs, add);
     }
     return $to;
@@ -30736,14 +30024,14 @@ function replaceRange(tr, from2, to, slice3) {
     targetDepths.pop();
   let preferredTarget = -($from.depth + 1);
   targetDepths.unshift(preferredTarget);
-  for (let d2 = $from.depth, pos = $from.pos - 1; d2 > 0; d2--, pos--) {
-    let spec = $from.node(d2).type.spec;
+  for (let d = $from.depth, pos = $from.pos - 1; d > 0; d--, pos--) {
+    let spec = $from.node(d).type.spec;
     if (spec.defining || spec.definingAsContext || spec.isolating)
       break;
-    if (targetDepths.indexOf(d2) > -1)
-      preferredTarget = d2;
-    else if ($from.before(d2) == pos)
-      targetDepths.splice(1, 0, -d2);
+    if (targetDepths.indexOf(d) > -1)
+      preferredTarget = d;
+    else if ($from.before(d) == pos)
+      targetDepths.splice(1, 0, -d);
   }
   let preferredTargetIndex = targetDepths.indexOf(preferredTarget);
   let leftNodes = [], preferredDepth = slice3.openStart;
@@ -30754,10 +30042,10 @@ function replaceRange(tr, from2, to, slice3) {
       break;
     content = node.content;
   }
-  for (let d2 = preferredDepth - 1; d2 >= 0; d2--) {
-    let leftNode = leftNodes[d2], def = definesContent(leftNode.type);
+  for (let d = preferredDepth - 1; d >= 0; d--) {
+    let leftNode = leftNodes[d], def = definesContent(leftNode.type);
     if (def && !leftNode.sameMarkup($from.node(Math.abs(preferredTarget) - 1)))
-      preferredDepth = d2;
+      preferredDepth = d;
     else if (def || !leftNode.type.isTextblock)
       break;
   }
@@ -30819,20 +30107,20 @@ function deleteRange$1(tr, from2, to) {
     if (depth > 0 && (last2 || $from.node(depth - 1).canReplace($from.index(depth - 1), $to.indexAfter(depth - 1))))
       return tr.delete($from.before(depth), $to.after(depth));
   }
-  for (let d2 = 1; d2 <= $from.depth && d2 <= $to.depth; d2++) {
-    if (from2 - $from.start(d2) == $from.depth - d2 && to > $from.end(d2) && $to.end(d2) - to != $to.depth - d2 && $from.start(d2 - 1) == $to.start(d2 - 1) && $from.node(d2 - 1).canReplace($from.index(d2 - 1), $to.index(d2 - 1)))
-      return tr.delete($from.before(d2), to);
+  for (let d = 1; d <= $from.depth && d <= $to.depth; d++) {
+    if (from2 - $from.start(d) == $from.depth - d && to > $from.end(d) && $to.end(d) - to != $to.depth - d && $from.start(d - 1) == $to.start(d - 1) && $from.node(d - 1).canReplace($from.index(d - 1), $to.index(d - 1)))
+      return tr.delete($from.before(d), to);
   }
   tr.delete(from2, to);
 }
 function coveredDepths($from, $to) {
   let result2 = [], minDepth = Math.min($from.depth, $to.depth);
-  for (let d2 = minDepth; d2 >= 0; d2--) {
-    let start = $from.start(d2);
-    if (start < $from.pos - ($from.depth - d2) || $to.end(d2) > $to.pos + ($to.depth - d2) || $from.node(d2).type.spec.isolating || $to.node(d2).type.spec.isolating)
+  for (let d = minDepth; d >= 0; d--) {
+    let start = $from.start(d);
+    if (start < $from.pos - ($from.depth - d) || $to.end(d) > $to.pos + ($to.depth - d) || $from.node(d).type.spec.isolating || $to.node(d).type.spec.isolating)
       break;
-    if (start == $to.start(d2) || d2 == $from.depth && d2 == $to.depth && $from.parent.inlineContent && $to.parent.inlineContent && d2 && $to.start(d2 - 1) == start - 1)
-      result2.push(d2);
+    if (start == $to.start(d) || d == $from.depth && d == $to.depth && $from.parent.inlineContent && $to.parent.inlineContent && d && $to.start(d - 1) == start - 1)
+      result2.push(d);
   }
   return result2;
 }
@@ -34003,7 +33291,7 @@ function iterDeco(parent, deco, onWidget, onNode) {
       while (decoIndex < locals.length && locals[decoIndex].to < end)
         decoIndex++;
     }
-    let outerDeco = child.isInline && !child.isLeaf ? active.filter((d2) => !d2.inline) : active.slice();
+    let outerDeco = child.isInline && !child.isLeaf ? active.filter((d) => !d.inline) : active.slice();
     onNode(child, outerDeco, deco.forChild(offset, child), index);
     offset = end;
   }
@@ -34687,9 +33975,9 @@ const inlineParents = /^(a|abbr|acronym|b|cite|code|del|em|i|ins|kbd|label|outpu
 function normalizeSiblings(fragment, $context) {
   if (fragment.childCount < 2)
     return fragment;
-  for (let d2 = $context.depth; d2 >= 0; d2--) {
-    let parent = $context.node(d2);
-    let match = parent.contentMatchAt($context.index(d2));
+  for (let d = $context.depth; d >= 0; d--) {
+    let parent = $context.node(d);
+    let match = parent.contentMatchAt($context.index(d));
     let lastWrap, result2 = [];
     fragment.forEach((node) => {
       if (!result2)
@@ -37739,17 +37027,17 @@ function splitBlockAs(splitNode) {
       return false;
     let types = [];
     let splitDepth, deflt, atEnd = false, atStart = false;
-    for (let d2 = $from.depth; ; d2--) {
-      let node = $from.node(d2);
+    for (let d = $from.depth; ; d--) {
+      let node = $from.node(d);
       if (node.isBlock) {
-        atEnd = $from.end(d2) == $from.pos + ($from.depth - d2);
-        atStart = $from.start(d2) == $from.pos - ($from.depth - d2);
-        deflt = defaultBlockAt$1($from.node(d2 - 1).contentMatchAt($from.indexAfter(d2 - 1)));
+        atEnd = $from.end(d) == $from.pos + ($from.depth - d);
+        atStart = $from.start(d) == $from.pos - ($from.depth - d);
+        deflt = defaultBlockAt$1($from.node(d - 1).contentMatchAt($from.indexAfter(d - 1)));
         types.unshift(atEnd && deflt ? { type: deflt } : null);
-        splitDepth = d2;
+        splitDepth = d;
         break;
       } else {
-        if (d2 == 1)
+        if (d == 1)
           return false;
         types.unshift(null);
       }
@@ -40910,8 +40198,8 @@ var splitListItem = (typeOrName, overrideAttrs = {}) => ({ tr, state, dispatch, 
     if (dispatch) {
       let wrap2 = Fragment.empty;
       const depthBefore = $from.index(-1) ? 1 : $from.index(-2) ? 2 : 3;
-      for (let d2 = $from.depth - depthBefore; d2 >= $from.depth - 3; d2 -= 1) {
-        wrap2 = Fragment.from($from.node(d2).copy(wrap2));
+      for (let d = $from.depth - depthBefore; d >= $from.depth - 3; d -= 1) {
+        wrap2 = Fragment.from($from.node(d).copy(wrap2));
       }
       const depthAfter = (
         // eslint-disable-next-line no-nested-ternary
@@ -44742,12 +44030,12 @@ class GapCursor extends Selection {
       if (!mustMove && GapCursor.valid($pos))
         return $pos;
       let pos = $pos.pos, next = null;
-      for (let d2 = $pos.depth; ; d2--) {
-        let parent = $pos.node(d2);
-        if (dir > 0 ? $pos.indexAfter(d2) < parent.childCount : $pos.index(d2) > 0) {
-          next = parent.child(dir > 0 ? $pos.indexAfter(d2) : $pos.index(d2) - 1);
+      for (let d = $pos.depth; ; d--) {
+        let parent = $pos.node(d);
+        if (dir > 0 ? $pos.indexAfter(d) < parent.childCount : $pos.index(d) > 0) {
+          next = parent.child(dir > 0 ? $pos.indexAfter(d) : $pos.index(d) - 1);
           break;
-        } else if (d2 == 0) {
+        } else if (d == 0) {
           return null;
         }
         pos += dir;
@@ -44791,8 +44079,8 @@ class GapBookmark {
   }
 }
 function closedBefore($pos) {
-  for (let d2 = $pos.depth; d2 >= 0; d2--) {
-    let index = $pos.index(d2), parent = $pos.node(d2);
+  for (let d = $pos.depth; d >= 0; d--) {
+    let index = $pos.index(d), parent = $pos.node(d);
     if (index == 0) {
       if (parent.type.spec.isolating)
         return true;
@@ -44808,8 +44096,8 @@ function closedBefore($pos) {
   return true;
 }
 function closedAfter($pos) {
-  for (let d2 = $pos.depth; d2 >= 0; d2--) {
-    let index = $pos.indexAfter(d2), parent = $pos.node(d2);
+  for (let d = $pos.depth; d >= 0; d--) {
+    let index = $pos.indexAfter(d), parent = $pos.node(d);
     if (index == parent.childCount) {
       if (parent.type.spec.isolating)
         return true;
@@ -46319,22 +45607,22 @@ function tableNodeTypes(schema) {
 }
 var tableEditingKey = new PluginKey("selectingCells");
 function cellAround($pos) {
-  for (let d2 = $pos.depth - 1; d2 > 0; d2--)
-    if ($pos.node(d2).type.spec.tableRole == "row")
-      return $pos.node(0).resolve($pos.before(d2 + 1));
+  for (let d = $pos.depth - 1; d > 0; d--)
+    if ($pos.node(d).type.spec.tableRole == "row")
+      return $pos.node(0).resolve($pos.before(d + 1));
   return null;
 }
 function cellWrapping($pos) {
-  for (let d2 = $pos.depth; d2 > 0; d2--) {
-    const role = $pos.node(d2).type.spec.tableRole;
-    if (role === "cell" || role === "header_cell") return $pos.node(d2);
+  for (let d = $pos.depth; d > 0; d--) {
+    const role = $pos.node(d).type.spec.tableRole;
+    if (role === "cell" || role === "header_cell") return $pos.node(d);
   }
   return null;
 }
 function isInTable(state) {
   const $head = state.selection.$head;
-  for (let d2 = $head.depth; d2 > 0; d2--)
-    if ($head.node(d2).type.spec.tableRole == "row") return true;
+  for (let d = $head.depth; d > 0; d--)
+    if ($head.node(d).type.spec.tableRole == "row") return true;
   return false;
 }
 function selectionCell(state) {
@@ -46675,8 +45963,8 @@ function isCellBoundarySelection({ $from, $to }) {
   let depth = $from.depth;
   for (; depth >= 0; depth--, afterFrom++)
     if ($from.after(depth + 1) < $from.end(depth)) break;
-  for (let d2 = $to.depth; d2 >= 0; d2--, beforeTo--)
-    if ($to.before(d2 + 1) > $to.start(d2)) break;
+  for (let d = $to.depth; d >= 0; d--, beforeTo--)
+    if ($to.before(d + 1) > $to.start(d)) break;
   return afterFrom == beforeTo && /row|table/.test($from.node(depth).type.spec.tableRole);
 }
 function isTextSelectionAcrossCells({ $from, $to }) {
@@ -47322,12 +46610,12 @@ function goToNextCell(direction) {
 }
 function deleteTable(state, dispatch) {
   const $pos = state.selection.$anchor;
-  for (let d2 = $pos.depth; d2 > 0; d2--) {
-    const node = $pos.node(d2);
+  for (let d = $pos.depth; d > 0; d--) {
+    const node = $pos.node(d);
     if (node.type.spec.tableRole == "table") {
       if (dispatch)
         dispatch(
-          state.tr.delete($pos.before(d2), $pos.after(d2)).scrollIntoView()
+          state.tr.delete($pos.before(d), $pos.after(d)).scrollIntoView()
         );
       return true;
     }
@@ -47769,11 +47057,11 @@ function handleMouseDown(view, startEvent) {
 function atEndOfCell(view, axis, dir) {
   if (!(view.state.selection instanceof TextSelection)) return null;
   const { $head } = view.state.selection;
-  for (let d2 = $head.depth - 1; d2 >= 0; d2--) {
-    const parent = $head.node(d2), index = dir < 0 ? $head.index(d2) : $head.indexAfter(d2);
+  for (let d = $head.depth - 1; d >= 0; d--) {
+    const parent = $head.node(d), index = dir < 0 ? $head.index(d) : $head.indexAfter(d);
     if (index != (dir < 0 ? 0 : parent.childCount)) return null;
     if (parent.type.spec.tableRole == "cell" || parent.type.spec.tableRole == "header_cell") {
-      const cellPos = $head.before(d2);
+      const cellPos = $head.before(d);
       const dirStr = axis == "vert" ? dir > 0 ? "down" : "up" : dir > 0 ? "right" : "left";
       return view.endOfTextblock(dirStr) ? cellPos : null;
     }
@@ -53227,8 +52515,8 @@ function requireUsing() {
       this._data = null;
       return ret;
     };
-    Disposer.isDisposer = function(d2) {
-      return d2 != null && typeof d2.resource === "function" && typeof d2.tryDispose === "function";
+    Disposer.isDisposer = function(d) {
+      return d != null && typeof d.resource === "function" && typeof d.tryDispose === "function";
     };
     function FunctionDisposer(fn, promise2, context2) {
       this.constructor$(fn, promise2, context2);
@@ -55707,9 +54995,9 @@ function requireJszip_min() {
         for (var l = "function" == typeof commonjsRequire && commonjsRequire, e = 0; e < h2.length; e++) u(h2[e]);
         return u;
       })({ 1: [function(e, t, r) {
-        var d2 = e("./utils"), c = e("./support"), p = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+        var d = e("./utils"), c = e("./support"), p = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
         r.encode = function(e2) {
-          for (var t2, r2, n, i, s, a, o, h2 = [], u = 0, l = e2.length, f = l, c2 = "string" !== d2.getTypeOf(e2); u < e2.length; ) f = l - u, n = c2 ? (t2 = e2[u++], r2 = u < l ? e2[u++] : 0, u < l ? e2[u++] : 0) : (t2 = e2.charCodeAt(u++), r2 = u < l ? e2.charCodeAt(u++) : 0, u < l ? e2.charCodeAt(u++) : 0), i = t2 >> 2, s = (3 & t2) << 4 | r2 >> 4, a = 1 < f ? (15 & r2) << 2 | n >> 6 : 64, o = 2 < f ? 63 & n : 64, h2.push(p.charAt(i) + p.charAt(s) + p.charAt(a) + p.charAt(o));
+          for (var t2, r2, n, i, s, a, o, h2 = [], u = 0, l = e2.length, f = l, c2 = "string" !== d.getTypeOf(e2); u < e2.length; ) f = l - u, n = c2 ? (t2 = e2[u++], r2 = u < l ? e2[u++] : 0, u < l ? e2[u++] : 0) : (t2 = e2.charCodeAt(u++), r2 = u < l ? e2.charCodeAt(u++) : 0, u < l ? e2.charCodeAt(u++) : 0), i = t2 >> 2, s = (3 & t2) << 4 | r2 >> 4, a = 1 < f ? (15 & r2) << 2 | n >> 6 : 64, o = 2 < f ? 63 & n : 64, h2.push(p.charAt(i) + p.charAt(s) + p.charAt(a) + p.charAt(o));
           return h2.join("");
         }, r.decode = function(e2) {
           var t2, r2, n, i, s, a, o = 0, h2 = 0, u = "data:";
@@ -55798,7 +55086,7 @@ function requireJszip_min() {
           return n2;
         }
         function n(e2, t2, r2, n2, i2, s2) {
-          var a, o, h2 = e2.file, u = e2.compression, l = s2 !== O.utf8encode, f = I.transformTo("string", s2(h2.name)), c = I.transformTo("string", O.utf8encode(h2.name)), d2 = h2.comment, p = I.transformTo("string", s2(d2)), m = I.transformTo("string", O.utf8encode(d2)), _2 = c.length !== h2.name.length, g = m.length !== d2.length, b = "", v = "", y = "", w = h2.dir, k = h2.date, x = { crc32: 0, compressedSize: 0, uncompressedSize: 0 };
+          var a, o, h2 = e2.file, u = e2.compression, l = s2 !== O.utf8encode, f = I.transformTo("string", s2(h2.name)), c = I.transformTo("string", O.utf8encode(h2.name)), d = h2.comment, p = I.transformTo("string", s2(d)), m = I.transformTo("string", O.utf8encode(d)), _2 = c.length !== h2.name.length, g = m.length !== d.length, b = "", v = "", y = "", w = h2.dir, k = h2.date, x = { crc32: 0, compressedSize: 0, uncompressedSize: 0 };
           t2 && !r2 || (x.crc32 = e2.crc32, x.compressedSize = e2.compressedSize, x.uncompressedSize = e2.uncompressedSize);
           var S = 0;
           t2 && (S |= 8), l || !_2 && !g || (S |= 2048);
@@ -55985,10 +55273,10 @@ function requireJszip_min() {
           r2 && void 0 !== r2.binary || (s2.binary = !a2), (t2 instanceof c && 0 === t2.uncompressedSize || s2.dir || !t2 || 0 === t2.length) && (s2.base64 = false, s2.binary = true, t2 = "", s2.compression = "STORE", i2 = "string");
           var o2 = null;
           o2 = t2 instanceof c || t2 instanceof l ? t2 : p.isNode && p.isStream(t2) ? new m(e2, t2) : u.prepareContent(e2, t2, s2.binary, s2.optimizedBinaryString, s2.base64);
-          var h3 = new d2(e2, o2, s2);
+          var h3 = new d(e2, o2, s2);
           this.files[e2] = h3;
         }
-        var i = e("./utf8"), u = e("./utils"), l = e("./stream/GenericWorker"), a = e("./stream/StreamHelper"), f = e("./defaults"), c = e("./compressedObject"), d2 = e("./zipObject"), o = e("./generate"), p = e("./nodejsUtils"), m = e("./nodejs/NodejsStreamInputAdapter"), _2 = function(e2) {
+        var i = e("./utf8"), u = e("./utils"), l = e("./stream/GenericWorker"), a = e("./stream/StreamHelper"), f = e("./defaults"), c = e("./compressedObject"), d = e("./zipObject"), o = e("./generate"), p = e("./nodejsUtils"), m = e("./nodejs/NodejsStreamInputAdapter"), _2 = function(e2) {
           "/" === e2.slice(-1) && (e2 = e2.substring(0, e2.length - 1));
           var t2 = e2.lastIndexOf("/");
           return 0 < t2 ? e2.substring(0, t2) : "";
@@ -56747,7 +56035,7 @@ function requireJszip_min() {
         var l = {}, s = ["REJECTED"], a = ["FULFILLED"], n = ["PENDING"];
         function o(e2) {
           if ("function" != typeof e2) throw new TypeError("resolver must be a function");
-          this.state = n, this.queue = [], this.outcome = void 0, e2 !== u && d2(this, e2);
+          this.state = n, this.queue = [], this.outcome = void 0, e2 !== u && d(this, e2);
         }
         function h2(e2, t2, r2) {
           this.promise = e2, "function" == typeof t2 && (this.onFulfilled = t2, this.callFulfilled = this.otherCallFulfilled), "function" == typeof r2 && (this.onRejected = r2, this.callRejected = this.otherCallRejected);
@@ -56769,7 +56057,7 @@ function requireJszip_min() {
             t2.apply(e2, arguments);
           };
         }
-        function d2(t2, e2) {
+        function d(t2, e2) {
           var r2 = false;
           function n2(e3) {
             r2 || (r2 = true, l.reject(t2, e3));
@@ -56822,7 +56110,7 @@ function requireJszip_min() {
           var r2 = p(c, t2);
           if ("error" === r2.status) return l.reject(e2, r2.value);
           var n2 = r2.value;
-          if (n2) d2(e2, n2);
+          if (n2) d(e2, n2);
           else {
             e2.state = a, e2.outcome = t2;
             for (var i2 = -1, s2 = e2.queue.length; ++i2 < s2; ) e2.queue[i2].callFulfilled(t2);
@@ -56871,10 +56159,10 @@ function requireJszip_min() {
         var n = {};
         (0, e("./lib/utils/common").assign)(n, e("./lib/deflate"), e("./lib/inflate"), e("./lib/zlib/constants")), t.exports = n;
       }, { "./lib/deflate": 39, "./lib/inflate": 40, "./lib/utils/common": 41, "./lib/zlib/constants": 44 }], 39: [function(e, t, r) {
-        var a = e("./zlib/deflate"), o = e("./utils/common"), h2 = e("./utils/strings"), i = e("./zlib/messages"), s = e("./zlib/zstream"), u = Object.prototype.toString, l = 0, f = -1, c = 0, d2 = 8;
+        var a = e("./zlib/deflate"), o = e("./utils/common"), h2 = e("./utils/strings"), i = e("./zlib/messages"), s = e("./zlib/zstream"), u = Object.prototype.toString, l = 0, f = -1, c = 0, d = 8;
         function p(e2) {
           if (!(this instanceof p)) return new p(e2);
-          this.options = o.assign({ level: f, method: d2, chunkSize: 16384, windowBits: 15, memLevel: 8, strategy: c, to: "" }, e2 || {});
+          this.options = o.assign({ level: f, method: d, chunkSize: 16384, windowBits: 15, memLevel: 8, strategy: c, to: "" }, e2 || {});
           var t2 = this.options;
           t2.raw && 0 < t2.windowBits ? t2.windowBits = -t2.windowBits : t2.gzip && 0 < t2.windowBits && t2.windowBits < 16 && (t2.windowBits += 16), this.err = 0, this.msg = "", this.ended = false, this.chunks = [], this.strm = new s(), this.strm.avail_out = 0;
           var r2 = a.deflateInit2(this.strm, t2.level, t2.method, t2.windowBits, t2.memLevel, t2.strategy);
@@ -56909,10 +56197,10 @@ function requireJszip_min() {
           return (t2 = t2 || {}).gzip = true, n(e2, t2);
         };
       }, { "./utils/common": 41, "./utils/strings": 42, "./zlib/deflate": 46, "./zlib/messages": 51, "./zlib/zstream": 53 }], 40: [function(e, t, r) {
-        var c = e("./zlib/inflate"), d2 = e("./utils/common"), p = e("./utils/strings"), m = e("./zlib/constants"), n = e("./zlib/messages"), i = e("./zlib/zstream"), s = e("./zlib/gzheader"), _2 = Object.prototype.toString;
+        var c = e("./zlib/inflate"), d = e("./utils/common"), p = e("./utils/strings"), m = e("./zlib/constants"), n = e("./zlib/messages"), i = e("./zlib/zstream"), s = e("./zlib/gzheader"), _2 = Object.prototype.toString;
         function a(e2) {
           if (!(this instanceof a)) return new a(e2);
-          this.options = d2.assign({ chunkSize: 16384, windowBits: 0, to: "" }, e2 || {});
+          this.options = d.assign({ chunkSize: 16384, windowBits: 0, to: "" }, e2 || {});
           var t2 = this.options;
           t2.raw && 0 <= t2.windowBits && t2.windowBits < 16 && (t2.windowBits = -t2.windowBits, 0 === t2.windowBits && (t2.windowBits = -15)), !(0 <= t2.windowBits && t2.windowBits < 16) || e2 && e2.windowBits || (t2.windowBits += 32), 15 < t2.windowBits && t2.windowBits < 48 && 0 == (15 & t2.windowBits) && (t2.windowBits |= 15), this.err = 0, this.msg = "", this.ended = false, this.chunks = [], this.strm = new i(), this.strm.avail_out = 0;
           var r2 = c.inflateInit2(this.strm, t2.windowBits);
@@ -56929,14 +56217,14 @@ function requireJszip_min() {
           if (this.ended) return false;
           n2 = t2 === ~~t2 ? t2 : true === t2 ? m.Z_FINISH : m.Z_NO_FLUSH, "string" == typeof e2 ? h2.input = p.binstring2buf(e2) : "[object ArrayBuffer]" === _2.call(e2) ? h2.input = new Uint8Array(e2) : h2.input = e2, h2.next_in = 0, h2.avail_in = h2.input.length;
           do {
-            if (0 === h2.avail_out && (h2.output = new d2.Buf8(u), h2.next_out = 0, h2.avail_out = u), (r2 = c.inflate(h2, m.Z_NO_FLUSH)) === m.Z_NEED_DICT && l && (o2 = "string" == typeof l ? p.string2buf(l) : "[object ArrayBuffer]" === _2.call(l) ? new Uint8Array(l) : l, r2 = c.inflateSetDictionary(this.strm, o2)), r2 === m.Z_BUF_ERROR && true === f && (r2 = m.Z_OK, f = false), r2 !== m.Z_STREAM_END && r2 !== m.Z_OK) return this.onEnd(r2), !(this.ended = true);
-            h2.next_out && (0 !== h2.avail_out && r2 !== m.Z_STREAM_END && (0 !== h2.avail_in || n2 !== m.Z_FINISH && n2 !== m.Z_SYNC_FLUSH) || ("string" === this.options.to ? (i2 = p.utf8border(h2.output, h2.next_out), s2 = h2.next_out - i2, a2 = p.buf2string(h2.output, i2), h2.next_out = s2, h2.avail_out = u - s2, s2 && d2.arraySet(h2.output, h2.output, i2, s2, 0), this.onData(a2)) : this.onData(d2.shrinkBuf(h2.output, h2.next_out)))), 0 === h2.avail_in && 0 === h2.avail_out && (f = true);
+            if (0 === h2.avail_out && (h2.output = new d.Buf8(u), h2.next_out = 0, h2.avail_out = u), (r2 = c.inflate(h2, m.Z_NO_FLUSH)) === m.Z_NEED_DICT && l && (o2 = "string" == typeof l ? p.string2buf(l) : "[object ArrayBuffer]" === _2.call(l) ? new Uint8Array(l) : l, r2 = c.inflateSetDictionary(this.strm, o2)), r2 === m.Z_BUF_ERROR && true === f && (r2 = m.Z_OK, f = false), r2 !== m.Z_STREAM_END && r2 !== m.Z_OK) return this.onEnd(r2), !(this.ended = true);
+            h2.next_out && (0 !== h2.avail_out && r2 !== m.Z_STREAM_END && (0 !== h2.avail_in || n2 !== m.Z_FINISH && n2 !== m.Z_SYNC_FLUSH) || ("string" === this.options.to ? (i2 = p.utf8border(h2.output, h2.next_out), s2 = h2.next_out - i2, a2 = p.buf2string(h2.output, i2), h2.next_out = s2, h2.avail_out = u - s2, s2 && d.arraySet(h2.output, h2.output, i2, s2, 0), this.onData(a2)) : this.onData(d.shrinkBuf(h2.output, h2.next_out)))), 0 === h2.avail_in && 0 === h2.avail_out && (f = true);
           } while ((0 < h2.avail_in || 0 === h2.avail_out) && r2 !== m.Z_STREAM_END);
           return r2 === m.Z_STREAM_END && (n2 = m.Z_FINISH), n2 === m.Z_FINISH ? (r2 = c.inflateEnd(this.strm), this.onEnd(r2), this.ended = true, r2 === m.Z_OK) : n2 !== m.Z_SYNC_FLUSH || (this.onEnd(m.Z_OK), !(h2.avail_out = 0));
         }, a.prototype.onData = function(e2) {
           this.chunks.push(e2);
         }, a.prototype.onEnd = function(e2) {
-          e2 === m.Z_OK && ("string" === this.options.to ? this.result = this.chunks.join("") : this.result = d2.flattenChunks(this.chunks)), this.chunks = [], this.err = e2, this.msg = this.strm.msg;
+          e2 === m.Z_OK && ("string" === this.options.to ? this.result = this.chunks.join("") : this.result = d.flattenChunks(this.chunks)), this.chunks = [], this.err = e2, this.msg = this.strm.msg;
         }, r.Inflate = a, r.inflate = o, r.inflateRaw = function(e2, t2) {
           return (t2 = t2 || {}).raw = true, o(e2, t2);
         }, r.ungzip = o;
@@ -57038,7 +56326,7 @@ function requireJszip_min() {
           return -1 ^ e2;
         };
       }, {}], 46: [function(e, t, r) {
-        var h2, c = e("../utils/common"), u = e("./trees"), d2 = e("./adler32"), p = e("./crc32"), n = e("./messages"), l = 0, f = 4, m = 0, _2 = -2, g = -1, b = 4, i = 2, v = 8, y = 9, s = 286, a = 30, o = 19, w = 2 * s + 1, k = 15, x = 3, S = 258, z = S + x + 1, C = 42, E = 113, A = 1, I = 2, O = 3, B = 4;
+        var h2, c = e("../utils/common"), u = e("./trees"), d = e("./adler32"), p = e("./crc32"), n = e("./messages"), l = 0, f = 4, m = 0, _2 = -2, g = -1, b = 4, i = 2, v = 8, y = 9, s = 286, a = 30, o = 19, w = 2 * s + 1, k = 15, x = 3, S = 258, z = S + x + 1, C = 42, E = 113, A = 1, I = 2, O = 3, B = 4;
         function R(e2, t2) {
           return e2.msg = n[t2], t2;
         }
@@ -57062,16 +56350,16 @@ function requireJszip_min() {
           e2.pending_buf[e2.pending++] = t2 >>> 8 & 255, e2.pending_buf[e2.pending++] = 255 & t2;
         }
         function L(e2, t2) {
-          var r2, n2, i2 = e2.max_chain_length, s2 = e2.strstart, a2 = e2.prev_length, o2 = e2.nice_match, h3 = e2.strstart > e2.w_size - z ? e2.strstart - (e2.w_size - z) : 0, u2 = e2.window, l2 = e2.w_mask, f2 = e2.prev, c2 = e2.strstart + S, d3 = u2[s2 + a2 - 1], p2 = u2[s2 + a2];
+          var r2, n2, i2 = e2.max_chain_length, s2 = e2.strstart, a2 = e2.prev_length, o2 = e2.nice_match, h3 = e2.strstart > e2.w_size - z ? e2.strstart - (e2.w_size - z) : 0, u2 = e2.window, l2 = e2.w_mask, f2 = e2.prev, c2 = e2.strstart + S, d2 = u2[s2 + a2 - 1], p2 = u2[s2 + a2];
           e2.prev_length >= e2.good_match && (i2 >>= 2), o2 > e2.lookahead && (o2 = e2.lookahead);
           do {
-            if (u2[(r2 = t2) + a2] === p2 && u2[r2 + a2 - 1] === d3 && u2[r2] === u2[s2] && u2[++r2] === u2[s2 + 1]) {
+            if (u2[(r2 = t2) + a2] === p2 && u2[r2 + a2 - 1] === d2 && u2[r2] === u2[s2] && u2[++r2] === u2[s2 + 1]) {
               s2 += 2, r2++;
               do {
               } while (u2[++s2] === u2[++r2] && u2[++s2] === u2[++r2] && u2[++s2] === u2[++r2] && u2[++s2] === u2[++r2] && u2[++s2] === u2[++r2] && u2[++s2] === u2[++r2] && u2[++s2] === u2[++r2] && u2[++s2] === u2[++r2] && s2 < c2);
               if (n2 = S - (c2 - s2), s2 = c2 - S, a2 < n2) {
                 if (e2.match_start = t2, o2 <= (a2 = n2)) break;
-                d3 = u2[s2 + a2 - 1], p2 = u2[s2 + a2];
+                d2 = u2[s2 + a2 - 1], p2 = u2[s2 + a2];
               }
             }
           } while ((t2 = f2[t2 & l2]) > h3 && 0 != --i2);
@@ -57086,7 +56374,7 @@ function requireJszip_min() {
               i2 += f2;
             }
             if (0 === e2.strm.avail_in) break;
-            if (a2 = e2.strm, o2 = e2.window, h3 = e2.strstart + e2.lookahead, u2 = i2, l2 = void 0, l2 = a2.avail_in, u2 < l2 && (l2 = u2), r2 = 0 === l2 ? 0 : (a2.avail_in -= l2, c.arraySet(o2, a2.input, a2.next_in, l2, h3), 1 === a2.state.wrap ? a2.adler = d2(a2.adler, o2, l2, h3) : 2 === a2.state.wrap && (a2.adler = p(a2.adler, o2, l2, h3)), a2.next_in += l2, a2.total_in += l2, l2), e2.lookahead += r2, e2.lookahead + e2.insert >= x) for (s2 = e2.strstart - e2.insert, e2.ins_h = e2.window[s2], e2.ins_h = (e2.ins_h << e2.hash_shift ^ e2.window[s2 + 1]) & e2.hash_mask; e2.insert && (e2.ins_h = (e2.ins_h << e2.hash_shift ^ e2.window[s2 + x - 1]) & e2.hash_mask, e2.prev[s2 & e2.w_mask] = e2.head[e2.ins_h], e2.head[e2.ins_h] = s2, s2++, e2.insert--, !(e2.lookahead + e2.insert < x)); ) ;
+            if (a2 = e2.strm, o2 = e2.window, h3 = e2.strstart + e2.lookahead, u2 = i2, l2 = void 0, l2 = a2.avail_in, u2 < l2 && (l2 = u2), r2 = 0 === l2 ? 0 : (a2.avail_in -= l2, c.arraySet(o2, a2.input, a2.next_in, l2, h3), 1 === a2.state.wrap ? a2.adler = d(a2.adler, o2, l2, h3) : 2 === a2.state.wrap && (a2.adler = p(a2.adler, o2, l2, h3)), a2.next_in += l2, a2.total_in += l2, l2), e2.lookahead += r2, e2.lookahead + e2.insert >= x) for (s2 = e2.strstart - e2.insert, e2.ins_h = e2.window[s2], e2.ins_h = (e2.ins_h << e2.hash_shift ^ e2.window[s2 + 1]) & e2.hash_mask; e2.insert && (e2.ins_h = (e2.ins_h << e2.hash_shift ^ e2.window[s2 + x - 1]) & e2.hash_mask, e2.prev[s2 & e2.w_mask] = e2.head[e2.ins_h], e2.head[e2.ins_h] = s2, s2++, e2.insert--, !(e2.lookahead + e2.insert < x)); ) ;
           } while (e2.lookahead < z && 0 !== e2.strm.avail_in);
         }
         function Z(e2, t2) {
@@ -57236,7 +56524,7 @@ function requireJszip_min() {
           var r2, n2, i2, s2, a2, o2, h3, u2, l2 = t2.length;
           if (!e2 || !e2.state) return _2;
           if (2 === (s2 = (r2 = e2.state).wrap) || 1 === s2 && r2.status !== C || r2.lookahead) return _2;
-          for (1 === s2 && (e2.adler = d2(e2.adler, t2, l2, 0)), r2.wrap = 0, l2 >= r2.w_size && (0 === s2 && (D(r2.head), r2.strstart = 0, r2.block_start = 0, r2.insert = 0), u2 = new c.Buf8(r2.w_size), c.arraySet(u2, t2, l2 - r2.w_size, r2.w_size, 0), t2 = u2, l2 = r2.w_size), a2 = e2.avail_in, o2 = e2.next_in, h3 = e2.input, e2.avail_in = l2, e2.next_in = 0, e2.input = t2, j(r2); r2.lookahead >= x; ) {
+          for (1 === s2 && (e2.adler = d(e2.adler, t2, l2, 0)), r2.wrap = 0, l2 >= r2.w_size && (0 === s2 && (D(r2.head), r2.strstart = 0, r2.block_start = 0, r2.insert = 0), u2 = new c.Buf8(r2.w_size), c.arraySet(u2, t2, l2 - r2.w_size, r2.w_size, 0), t2 = u2, l2 = r2.w_size), a2 = e2.avail_in, o2 = e2.next_in, h3 = e2.input, e2.avail_in = l2, e2.next_in = 0, e2.input = t2, j(r2); r2.lookahead >= x; ) {
             for (n2 = r2.strstart, i2 = r2.lookahead - (x - 1); r2.ins_h = (r2.ins_h << r2.hash_shift ^ r2.window[n2 + x - 1]) & r2.hash_mask, r2.prev[n2 & r2.w_mask] = r2.head[r2.ins_h], r2.head[r2.ins_h] = n2, n2++, --i2; ) ;
             r2.strstart = n2, r2.lookahead = x - 1, j(r2);
           }
@@ -57248,16 +56536,16 @@ function requireJszip_min() {
         };
       }, {}], 48: [function(e, t, r) {
         t.exports = function(e2, t2) {
-          var r2, n, i, s, a, o, h2, u, l, f, c, d2, p, m, _2, g, b, v, y, w, k, x, S, z, C;
-          r2 = e2.state, n = e2.next_in, z = e2.input, i = n + (e2.avail_in - 5), s = e2.next_out, C = e2.output, a = s - (t2 - e2.avail_out), o = s + (e2.avail_out - 257), h2 = r2.dmax, u = r2.wsize, l = r2.whave, f = r2.wnext, c = r2.window, d2 = r2.hold, p = r2.bits, m = r2.lencode, _2 = r2.distcode, g = (1 << r2.lenbits) - 1, b = (1 << r2.distbits) - 1;
+          var r2, n, i, s, a, o, h2, u, l, f, c, d, p, m, _2, g, b, v, y, w, k, x, S, z, C;
+          r2 = e2.state, n = e2.next_in, z = e2.input, i = n + (e2.avail_in - 5), s = e2.next_out, C = e2.output, a = s - (t2 - e2.avail_out), o = s + (e2.avail_out - 257), h2 = r2.dmax, u = r2.wsize, l = r2.whave, f = r2.wnext, c = r2.window, d = r2.hold, p = r2.bits, m = r2.lencode, _2 = r2.distcode, g = (1 << r2.lenbits) - 1, b = (1 << r2.distbits) - 1;
           e: do {
-            p < 15 && (d2 += z[n++] << p, p += 8, d2 += z[n++] << p, p += 8), v = m[d2 & g];
+            p < 15 && (d += z[n++] << p, p += 8, d += z[n++] << p, p += 8), v = m[d & g];
             t: for (; ; ) {
-              if (d2 >>>= y = v >>> 24, p -= y, 0 === (y = v >>> 16 & 255)) C[s++] = 65535 & v;
+              if (d >>>= y = v >>> 24, p -= y, 0 === (y = v >>> 16 & 255)) C[s++] = 65535 & v;
               else {
                 if (!(16 & y)) {
                   if (0 == (64 & y)) {
-                    v = m[(65535 & v) + (d2 & (1 << y) - 1)];
+                    v = m[(65535 & v) + (d & (1 << y) - 1)];
                     continue t;
                   }
                   if (32 & y) {
@@ -57267,21 +56555,21 @@ function requireJszip_min() {
                   e2.msg = "invalid literal/length code", r2.mode = 30;
                   break e;
                 }
-                w = 65535 & v, (y &= 15) && (p < y && (d2 += z[n++] << p, p += 8), w += d2 & (1 << y) - 1, d2 >>>= y, p -= y), p < 15 && (d2 += z[n++] << p, p += 8, d2 += z[n++] << p, p += 8), v = _2[d2 & b];
+                w = 65535 & v, (y &= 15) && (p < y && (d += z[n++] << p, p += 8), w += d & (1 << y) - 1, d >>>= y, p -= y), p < 15 && (d += z[n++] << p, p += 8, d += z[n++] << p, p += 8), v = _2[d & b];
                 r: for (; ; ) {
-                  if (d2 >>>= y = v >>> 24, p -= y, !(16 & (y = v >>> 16 & 255))) {
+                  if (d >>>= y = v >>> 24, p -= y, !(16 & (y = v >>> 16 & 255))) {
                     if (0 == (64 & y)) {
-                      v = _2[(65535 & v) + (d2 & (1 << y) - 1)];
+                      v = _2[(65535 & v) + (d & (1 << y) - 1)];
                       continue r;
                     }
                     e2.msg = "invalid distance code", r2.mode = 30;
                     break e;
                   }
-                  if (k = 65535 & v, p < (y &= 15) && (d2 += z[n++] << p, (p += 8) < y && (d2 += z[n++] << p, p += 8)), h2 < (k += d2 & (1 << y) - 1)) {
+                  if (k = 65535 & v, p < (y &= 15) && (d += z[n++] << p, (p += 8) < y && (d += z[n++] << p, p += 8)), h2 < (k += d & (1 << y) - 1)) {
                     e2.msg = "invalid distance too far back", r2.mode = 30;
                     break e;
                   }
-                  if (d2 >>>= y, p -= y, (y = s - a) < k) {
+                  if (d >>>= y, p -= y, (y = s - a) < k) {
                     if (l < (y = k - y) && r2.sane) {
                       e2.msg = "invalid distance too far back", r2.mode = 30;
                       break e;
@@ -57315,7 +56603,7 @@ function requireJszip_min() {
               break;
             }
           } while (n < i && s < o);
-          n -= w = p >> 3, d2 &= (1 << (p -= w << 3)) - 1, e2.next_in = n, e2.next_out = s, e2.avail_in = n < i ? i - n + 5 : 5 - (n - i), e2.avail_out = s < o ? o - s + 257 : 257 - (s - o), r2.hold = d2, r2.bits = p;
+          n -= w = p >> 3, d &= (1 << (p -= w << 3)) - 1, e2.next_in = n, e2.next_out = s, e2.avail_in = n < i ? i - n + 5 : 5 - (n - i), e2.avail_out = s < o ? o - s + 257 : 257 - (s - o), r2.hold = d, r2.bits = p;
         };
       }, {}], 49: [function(e, t, r) {
         var I = e("../utils/common"), O = e("./adler32"), B = e("./crc32"), R = e("./inffast"), T = e("./inftrees"), D = 1, F = 2, N = 0, U = -2, P = 1, n = 852, i = 592;
@@ -57361,7 +56649,7 @@ function requireJszip_min() {
         r.inflateReset = o, r.inflateReset2 = h2, r.inflateResetKeep = a, r.inflateInit = function(e2) {
           return u(e2, 15);
         }, r.inflateInit2 = u, r.inflate = function(e2, t2) {
-          var r2, n2, i2, s2, a2, o2, h3, u2, l2, f2, c2, d2, p, m, _2, g, b, v, y, w, k, x, S, z, C = 0, E = new I.Buf8(4), A = [16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15];
+          var r2, n2, i2, s2, a2, o2, h3, u2, l2, f2, c2, d, p, m, _2, g, b, v, y, w, k, x, S, z, C = 0, E = new I.Buf8(4), A = [16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15];
           if (!e2 || !e2.state || !e2.output || !e2.input && 0 !== e2.avail_in) return U;
           12 === (r2 = e2.state).mode && (r2.mode = 13), a2 = e2.next_out, i2 = e2.output, h3 = e2.avail_out, s2 = e2.next_in, n2 = e2.input, o2 = e2.avail_in, u2 = r2.hold, l2 = r2.bits, f2 = o2, c2 = h3, x = N;
           e: for (; ; ) switch (r2.mode) {
@@ -57429,20 +56717,20 @@ function requireJszip_min() {
               } else r2.head && (r2.head.extra = null);
               r2.mode = 6;
             case 6:
-              if (1024 & r2.flags && (o2 < (d2 = r2.length) && (d2 = o2), d2 && (r2.head && (k = r2.head.extra_len - r2.length, r2.head.extra || (r2.head.extra = new Array(r2.head.extra_len)), I.arraySet(r2.head.extra, n2, s2, d2, k)), 512 & r2.flags && (r2.check = B(r2.check, n2, d2, s2)), o2 -= d2, s2 += d2, r2.length -= d2), r2.length)) break e;
+              if (1024 & r2.flags && (o2 < (d = r2.length) && (d = o2), d && (r2.head && (k = r2.head.extra_len - r2.length, r2.head.extra || (r2.head.extra = new Array(r2.head.extra_len)), I.arraySet(r2.head.extra, n2, s2, d, k)), 512 & r2.flags && (r2.check = B(r2.check, n2, d, s2)), o2 -= d, s2 += d, r2.length -= d), r2.length)) break e;
               r2.length = 0, r2.mode = 7;
             case 7:
               if (2048 & r2.flags) {
                 if (0 === o2) break e;
-                for (d2 = 0; k = n2[s2 + d2++], r2.head && k && r2.length < 65536 && (r2.head.name += String.fromCharCode(k)), k && d2 < o2; ) ;
-                if (512 & r2.flags && (r2.check = B(r2.check, n2, d2, s2)), o2 -= d2, s2 += d2, k) break e;
+                for (d = 0; k = n2[s2 + d++], r2.head && k && r2.length < 65536 && (r2.head.name += String.fromCharCode(k)), k && d < o2; ) ;
+                if (512 & r2.flags && (r2.check = B(r2.check, n2, d, s2)), o2 -= d, s2 += d, k) break e;
               } else r2.head && (r2.head.name = null);
               r2.length = 0, r2.mode = 8;
             case 8:
               if (4096 & r2.flags) {
                 if (0 === o2) break e;
-                for (d2 = 0; k = n2[s2 + d2++], r2.head && k && r2.length < 65536 && (r2.head.comment += String.fromCharCode(k)), k && d2 < o2; ) ;
-                if (512 & r2.flags && (r2.check = B(r2.check, n2, d2, s2)), o2 -= d2, s2 += d2, k) break e;
+                for (d = 0; k = n2[s2 + d++], r2.head && k && r2.length < 65536 && (r2.head.comment += String.fromCharCode(k)), k && d < o2; ) ;
+                if (512 & r2.flags && (r2.check = B(r2.check, n2, d, s2)), o2 -= d, s2 += d, k) break e;
               } else r2.head && (r2.head.comment = null);
               r2.mode = 9;
             case 9:
@@ -57508,9 +56796,9 @@ function requireJszip_min() {
             case 15:
               r2.mode = 16;
             case 16:
-              if (d2 = r2.length) {
-                if (o2 < d2 && (d2 = o2), h3 < d2 && (d2 = h3), 0 === d2) break e;
-                I.arraySet(i2, n2, s2, d2, a2), o2 -= d2, s2 += d2, h3 -= d2, a2 += d2, r2.length -= d2;
+              if (d = r2.length) {
+                if (o2 < d && (d = o2), h3 < d && (d = h3), 0 === d) break e;
+                I.arraySet(i2, n2, s2, d, a2), o2 -= d, s2 += d, h3 -= d, a2 += d, r2.length -= d;
                 break;
               }
               r2.mode = 12;
@@ -57556,25 +56844,25 @@ function requireJszip_min() {
                       e2.msg = "invalid bit length repeat", r2.mode = 30;
                       break;
                     }
-                    k = r2.lens[r2.have - 1], d2 = 3 + (3 & u2), u2 >>>= 2, l2 -= 2;
+                    k = r2.lens[r2.have - 1], d = 3 + (3 & u2), u2 >>>= 2, l2 -= 2;
                   } else if (17 === b) {
                     for (z = _2 + 3; l2 < z; ) {
                       if (0 === o2) break e;
                       o2--, u2 += n2[s2++] << l2, l2 += 8;
                     }
-                    l2 -= _2, k = 0, d2 = 3 + (7 & (u2 >>>= _2)), u2 >>>= 3, l2 -= 3;
+                    l2 -= _2, k = 0, d = 3 + (7 & (u2 >>>= _2)), u2 >>>= 3, l2 -= 3;
                   } else {
                     for (z = _2 + 7; l2 < z; ) {
                       if (0 === o2) break e;
                       o2--, u2 += n2[s2++] << l2, l2 += 8;
                     }
-                    l2 -= _2, k = 0, d2 = 11 + (127 & (u2 >>>= _2)), u2 >>>= 7, l2 -= 7;
+                    l2 -= _2, k = 0, d = 11 + (127 & (u2 >>>= _2)), u2 >>>= 7, l2 -= 7;
                   }
-                  if (r2.have + d2 > r2.nlen + r2.ndist) {
+                  if (r2.have + d > r2.nlen + r2.ndist) {
                     e2.msg = "invalid bit length repeat", r2.mode = 30;
                     break;
                   }
-                  for (; d2--; ) r2.lens[r2.have++] = k;
+                  for (; d--; ) r2.lens[r2.have++] = k;
                 }
               }
               if (30 === r2.mode) break;
@@ -57663,14 +56951,14 @@ function requireJszip_min() {
               r2.mode = 25;
             case 25:
               if (0 === h3) break e;
-              if (d2 = c2 - h3, r2.offset > d2) {
-                if ((d2 = r2.offset - d2) > r2.whave && r2.sane) {
+              if (d = c2 - h3, r2.offset > d) {
+                if ((d = r2.offset - d) > r2.whave && r2.sane) {
                   e2.msg = "invalid distance too far back", r2.mode = 30;
                   break;
                 }
-                p = d2 > r2.wnext ? (d2 -= r2.wnext, r2.wsize - d2) : r2.wnext - d2, d2 > r2.length && (d2 = r2.length), m = r2.window;
-              } else m = i2, p = a2 - r2.offset, d2 = r2.length;
-              for (h3 < d2 && (d2 = h3), h3 -= d2, r2.length -= d2; i2[a2++] = m[p++], --d2; ) ;
+                p = d > r2.wnext ? (d -= r2.wnext, r2.wsize - d) : r2.wnext - d, d > r2.length && (d = r2.length), m = r2.window;
+              } else m = i2, p = a2 - r2.offset, d = r2.length;
+              for (h3 < d && (d = h3), h3 -= d, r2.length -= d; i2[a2++] = m[p++], --d; ) ;
               0 === r2.length && (r2.mode = 21);
               break;
             case 26:
@@ -57730,7 +57018,7 @@ function requireJszip_min() {
       }, { "../utils/common": 41, "./adler32": 43, "./crc32": 45, "./inffast": 48, "./inftrees": 50 }], 50: [function(e, t, r) {
         var D = e("../utils/common"), F = [3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 15, 17, 19, 23, 27, 31, 35, 43, 51, 59, 67, 83, 99, 115, 131, 163, 195, 227, 258, 0, 0], N = [16, 16, 16, 16, 16, 16, 16, 16, 17, 17, 17, 17, 18, 18, 18, 18, 19, 19, 19, 19, 20, 20, 20, 20, 21, 21, 21, 21, 16, 72, 78], U = [1, 2, 3, 4, 5, 7, 9, 13, 17, 25, 33, 49, 65, 97, 129, 193, 257, 385, 513, 769, 1025, 1537, 2049, 3073, 4097, 6145, 8193, 12289, 16385, 24577, 0, 0], P = [16, 16, 16, 16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29, 64, 64];
         t.exports = function(e2, t2, r2, n, i, s, a, o) {
-          var h2, u, l, f, c, d2, p, m, _2, g = o.bits, b = 0, v = 0, y = 0, w = 0, k = 0, x = 0, S = 0, z = 0, C = 0, E = 0, A = null, I = 0, O = new D.Buf16(16), B = new D.Buf16(16), R = null, T = 0;
+          var h2, u, l, f, c, d, p, m, _2, g = o.bits, b = 0, v = 0, y = 0, w = 0, k = 0, x = 0, S = 0, z = 0, C = 0, E = 0, A = null, I = 0, O = new D.Buf16(16), B = new D.Buf16(16), R = null, T = 0;
           for (b = 0; b <= 15; b++) O[b] = 0;
           for (v = 0; v < n; v++) O[t2[r2 + v]]++;
           for (k = g, w = 15; 1 <= w && 0 === O[w]; w--) ;
@@ -57740,9 +57028,9 @@ function requireJszip_min() {
           if (0 < z && (0 === e2 || 1 !== w)) return -1;
           for (B[1] = 0, b = 1; b < 15; b++) B[b + 1] = B[b] + O[b];
           for (v = 0; v < n; v++) 0 !== t2[r2 + v] && (a[B[t2[r2 + v]]++] = v);
-          if (d2 = 0 === e2 ? (A = R = a, 19) : 1 === e2 ? (A = F, I -= 257, R = N, T -= 257, 256) : (A = U, R = P, -1), b = y, c = s, S = v = E = 0, l = -1, f = (C = 1 << (x = k)) - 1, 1 === e2 && 852 < C || 2 === e2 && 592 < C) return 1;
+          if (d = 0 === e2 ? (A = R = a, 19) : 1 === e2 ? (A = F, I -= 257, R = N, T -= 257, 256) : (A = U, R = P, -1), b = y, c = s, S = v = E = 0, l = -1, f = (C = 1 << (x = k)) - 1, 1 === e2 && 852 < C || 2 === e2 && 592 < C) return 1;
           for (; ; ) {
-            for (p = b - S, _2 = a[v] < d2 ? (m = 0, a[v]) : a[v] > d2 ? (m = R[T + a[v]], A[I + a[v]]) : (m = 96, 0), h2 = 1 << b - S, y = u = 1 << x; i[c + (E >> S) + (u -= h2)] = p << 24 | m << 16 | _2 | 0, 0 !== u; ) ;
+            for (p = b - S, _2 = a[v] < d ? (m = 0, a[v]) : a[v] > d ? (m = R[T + a[v]], A[I + a[v]]) : (m = 96, 0), h2 = 1 << b - S, y = u = 1 << x; i[c + (E >> S) + (u -= h2)] = p << 24 | m << 16 | _2 | 0, 0 !== u; ) ;
             for (h2 = 1 << b - 1; E & h2; ) h2 >>= 1;
             if (0 !== h2 ? (E &= h2 - 1, E += h2) : E = 0, v++, 0 == --O[b]) {
               if (b === w) break;
@@ -57763,7 +57051,7 @@ function requireJszip_min() {
         function n(e2) {
           for (var t2 = e2.length; 0 <= --t2; ) e2[t2] = 0;
         }
-        var s = 0, a = 29, u = 256, l = u + 1 + a, f = 30, c = 19, _2 = 2 * l + 1, g = 15, d2 = 16, p = 7, m = 256, b = 16, v = 17, y = 18, w = [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 0], k = [0, 0, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13], x = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 7], S = [16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15], z = new Array(2 * (l + 2));
+        var s = 0, a = 29, u = 256, l = u + 1 + a, f = 30, c = 19, _2 = 2 * l + 1, g = 15, d = 16, p = 7, m = 256, b = 16, v = 17, y = 18, w = [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 0], k = [0, 0, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13], x = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 7], S = [16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15], z = new Array(2 * (l + 2));
         n(z);
         var C = new Array(2 * f);
         n(C);
@@ -57787,7 +57075,7 @@ function requireJszip_min() {
           e2.pending_buf[e2.pending++] = 255 & t2, e2.pending_buf[e2.pending++] = t2 >>> 8 & 255;
         }
         function P(e2, t2, r2) {
-          e2.bi_valid > d2 - r2 ? (e2.bi_buf |= t2 << e2.bi_valid & 65535, U(e2, e2.bi_buf), e2.bi_buf = t2 >> d2 - e2.bi_valid, e2.bi_valid += r2 - d2) : (e2.bi_buf |= t2 << e2.bi_valid & 65535, e2.bi_valid += r2);
+          e2.bi_valid > d - r2 ? (e2.bi_buf |= t2 << e2.bi_valid & 65535, U(e2, e2.bi_buf), e2.bi_buf = t2 >> d - e2.bi_valid, e2.bi_valid += r2 - d) : (e2.bi_buf |= t2 << e2.bi_valid & 65535, e2.bi_valid += r2);
         }
         function L(e2, t2, r2) {
           P(e2, r2[2 * t2], r2[2 * t2 + 1]);
@@ -57834,9 +57122,9 @@ function requireJszip_min() {
           for (t2.max_code = u2, r2 = e2.heap_len >> 1; 1 <= r2; r2--) G(e2, s2, r2);
           for (i2 = h3; r2 = e2.heap[1], e2.heap[1] = e2.heap[e2.heap_len--], G(e2, s2, 1), n2 = e2.heap[1], e2.heap[--e2.heap_max] = r2, e2.heap[--e2.heap_max] = n2, s2[2 * i2] = s2[2 * r2] + s2[2 * n2], e2.depth[i2] = (e2.depth[r2] >= e2.depth[n2] ? e2.depth[r2] : e2.depth[n2]) + 1, s2[2 * r2 + 1] = s2[2 * n2 + 1] = i2, e2.heap[1] = i2++, G(e2, s2, 1), 2 <= e2.heap_len; ) ;
           e2.heap[--e2.heap_max] = e2.heap[1], (function(e3, t3) {
-            var r3, n3, i3, s3, a3, o3, h4 = t3.dyn_tree, u3 = t3.max_code, l2 = t3.stat_desc.static_tree, f2 = t3.stat_desc.has_stree, c2 = t3.stat_desc.extra_bits, d3 = t3.stat_desc.extra_base, p2 = t3.stat_desc.max_length, m2 = 0;
+            var r3, n3, i3, s3, a3, o3, h4 = t3.dyn_tree, u3 = t3.max_code, l2 = t3.stat_desc.static_tree, f2 = t3.stat_desc.has_stree, c2 = t3.stat_desc.extra_bits, d2 = t3.stat_desc.extra_base, p2 = t3.stat_desc.max_length, m2 = 0;
             for (s3 = 0; s3 <= g; s3++) e3.bl_count[s3] = 0;
-            for (h4[2 * e3.heap[e3.heap_max] + 1] = 0, r3 = e3.heap_max + 1; r3 < _2; r3++) p2 < (s3 = h4[2 * h4[2 * (n3 = e3.heap[r3]) + 1] + 1] + 1) && (s3 = p2, m2++), h4[2 * n3 + 1] = s3, u3 < n3 || (e3.bl_count[s3]++, a3 = 0, d3 <= n3 && (a3 = c2[n3 - d3]), o3 = h4[2 * n3], e3.opt_len += o3 * (s3 + a3), f2 && (e3.static_len += o3 * (l2[2 * n3 + 1] + a3)));
+            for (h4[2 * e3.heap[e3.heap_max] + 1] = 0, r3 = e3.heap_max + 1; r3 < _2; r3++) p2 < (s3 = h4[2 * h4[2 * (n3 = e3.heap[r3]) + 1] + 1] + 1) && (s3 = p2, m2++), h4[2 * n3 + 1] = s3, u3 < n3 || (e3.bl_count[s3]++, a3 = 0, d2 <= n3 && (a3 = c2[n3 - d2]), o3 = h4[2 * n3], e3.opt_len += o3 * (s3 + a3), f2 && (e3.static_len += o3 * (l2[2 * n3 + 1] + a3)));
             if (0 !== m2) {
               do {
                 for (s3 = p2 - 1; 0 === e3.bl_count[s3]; ) s3--;
@@ -57923,7 +57211,7 @@ function requireJszip_min() {
                     e4 = false;
                   }, r2.postMessage("", "*"), r2.onmessage = t3, e4;
                 }
-              })() ? (a = "setImmediate$" + Math.random() + "$", r2.addEventListener ? r2.addEventListener("message", d2, false) : r2.attachEvent("onmessage", d2), function(e4) {
+              })() ? (a = "setImmediate$" + Math.random() + "$", r2.addEventListener ? r2.addEventListener("message", d, false) : r2.attachEvent("onmessage", d), function(e4) {
                 r2.postMessage(a + e4, "*");
               }) : r2.MessageChannel ? ((t2 = new MessageChannel()).port1.onmessage = function(e4) {
                 c(e4.data);
@@ -57978,7 +57266,7 @@ function requireJszip_min() {
                 }
               }
             }
-            function d2(e4) {
+            function d(e4) {
               e4.source === r2 && "string" == typeof e4.data && 0 === e4.data.indexOf(a) && c(+e4.data.slice(a.length));
             }
           })("undefined" == typeof self ? void 0 === e2 ? this : e2 : self);
@@ -71508,705 +70796,6 @@ function _sfc_render$Y(_ctx, _cache, $props, $setup, $data, $options) {
   );
 }
 const InquiryEditor = /* @__PURE__ */ _export_sfc$1(_sfc_main$Y, [["render", _sfc_render$Y], ["__scopeId", "data-v-0d9f3682"], ["__file", "/var/www/nextcloud/apps/agora/src/components/Editor/InquiryEditor.vue"]]);
-const markedPrefix = {
-  prefix: "opt-"
-};
-const useOptionStore = defineStore("option", {
-  state: () => ({
-    id: 0,
-    targetId: 0,
-    parentId: 0,
-    type: "",
-    family: "debate",
-    text: "",
-    title: "",
-    textSafe: "",
-    sortOrder: 0,
-    configuration: {
-      access: "private",
-      showResults: "always",
-      allowComment: null,
-      supportFeature: "none",
-      family: "deliberative"
-    },
-    miscFields: {},
-    ownedGroup: "",
-    owner: createDefault(),
-    currentUserStatus: {
-      isInvolved: false,
-      hasSupported: false,
-      supportValue: null,
-      isLoggedIn: false,
-      isOwner: false,
-      shareToken: "",
-      userId: "",
-      userRole: ""
-    },
-    status: {
-      created: 0,
-      isArchived: false,
-      isExpired: false,
-      isDeleted: false,
-      countParticipants: 0,
-      countComments: 0,
-      countSupports: 0,
-      countNegativeSupports: 0,
-      countNeutralSupports: 0,
-      countPostiveSupports: 0,
-      optionStatus: "draft"
-    },
-    permissions: {
-      view: false,
-      edit: false,
-      delete: false,
-      archive: false,
-      support: false,
-      comment: false,
-      addShares: false,
-      addSharesExternal: false,
-      changeForeignSupports: false,
-      changeOwner: false,
-      reorderOptions: false,
-      seeResults: false,
-      seeUsernames: false,
-      subscribe: false,
-      takeOver: false,
-      addOption: false,
-      confirmOption: false
-    },
-    childs: [],
-    meta: {
-      chunking: {
-        size: 0,
-        loaded: 0
-      },
-      status: "loaded"
-    },
-    inquiryInfo: {
-      targetId: 0,
-      inquiryTitle: "",
-      inquiryType: "",
-      inquiryAccess: ""
-    },
-    _typeInfo: void 0,
-    _familyInfo: void 0
-  }),
-  getters: {
-    formattedExpireDate() {
-      if (this.configuration.expire > 0) {
-        return moment.unix(this.configuration.expire).format("LLL");
-      }
-      return "";
-    },
-    isExpired() {
-      return this.configuration.expire > 0 && moment.unix(this.configuration.expire).diff() < 1e3;
-    },
-    isClosed() {
-      return this.status.optionStatus === "archived" || this.status.optionStatus === "deleted" || this.status.isExpired;
-    },
-    isDraft() {
-      return this.status.optionStatus === "draft";
-    },
-    isPublished() {
-      return this.status.optionStatus === "published";
-    },
-    hasChildren() {
-      return this.childs && this.childs.length > 0 || this.childs && this.childs.length > 0;
-    },
-    childCount() {
-      return (this.childs?.length || 0) + (this.childs?.length || 0);
-    },
-    // Get option type definition from session store
-    typeInfo() {
-      const sessionStore = useSessionStore();
-      const optionTypes = sessionStore.appSettings?.inquiryOptionTypeTab || [];
-      return optionTypes.find(
-        (opt) => opt.option_type === this.type || opt.optionType === this.type
-      );
-    },
-    familyInfo() {
-      if (!this.typeInfo?.family) return void 0;
-      const sessionStore = useSessionStore();
-      const family = sessionStore.appSettings?.optionFamilyTab?.find((f) => f.family_type === this.typeInfo.family);
-      return {
-        name: family?.label || this.typeInfo.family,
-        color: getFamilyColor(this.typeInfo.family),
-        // Use the helper
-        icon: family?.icon || "File",
-        description: family?.description || this.typeInfo.description || ""
-      };
-    },
-    // Check if option has required misc fields
-    hasRequiredMiscFields() {
-      return this.miscFields.some((field) => field.required);
-    },
-    // Check if all required misc fields are filled
-    allRequiredMiscFieldsFilled() {
-      return this.miscFields.filter((field) => field.required).every((field) => {
-        const value = this.miscFields[field.key];
-        return value !== void 0 && value !== null && value !== "";
-      });
-    },
-    // Type-specific checks
-    isArgumentFor() {
-      return this.type === "argument_for";
-    },
-    isArgumentAgainst() {
-      return this.type === "argument_against";
-    },
-    isDebateArgument() {
-      return this.isArgumentFor || this.isArgumentAgainst;
-    },
-    isProposal() {
-      return this.type === "proposal";
-    },
-    isQuestion() {
-      return this.type === "question";
-    },
-    isIdea() {
-      return this.type === "idea";
-    },
-    // Text rendering
-    textMarkDown() {
-      d.use(gfmHeadingId(markedPrefix));
-      return purify.sanitize(d.parse(this.text).toString());
-    },
-    formattedCreatedDate() {
-      return moment.unix(this.meta.chunking.loaded).format("LLL");
-    },
-    formattedUpdatedDate() {
-      return moment.unix(this.meta.chunking.size).format("LLL");
-    },
-    // Parent inquiry information
-    parentInquiry() {
-      const inquiryStore = useInquiryStore();
-      return inquiryStore.id === this.targetId ? inquiryStore : null;
-    },
-    belongsToCurrentInquiry() {
-      const inquiryStore = useInquiryStore();
-      return this.targetId === inquiryStore.id;
-    },
-    // Validation
-    isValid() {
-      if (this.text.trim() === "") return false;
-      if (this.hasRequiredMiscFields && !this.allRequiredMiscFieldsFilled) return false;
-      return true;
-    },
-    // Get default status from type definition
-    defaultStatus() {
-      return this.typeInfo?.defaultStatus || "draft";
-    },
-    // Get available status transitions for this type
-    availableStatuses() {
-      const baseStatuses = ["draft", "published"];
-      if (this.typeInfo?.features?.includes("archivable")) {
-        baseStatuses.push("archived");
-      }
-      return baseStatuses;
-    },
-    // Check if status can be changed to target status
-    canChangeStatusTo: (state) => (targetStatus) => state.availableStatuses.includes(targetStatus)
-  },
-  actions: {
-    reset() {
-      this.$reset();
-    },
-    async setOptionStatus(optionStatus) {
-      try {
-        await options.updateOptionStatus(this.id, optionStatus);
-        this.status.optionStatus = optionStatus;
-      } catch (error) {
-        if (error?.code === "ERR_CANCELED") {
-          return;
-        }
-        Logger.error("Error setting option status:", {
-          error,
-          state: this.$state
-        });
-        throw error;
-      }
-    },
-    async toggleArchive(payload) {
-      const inquiryStore = useInquiryStore();
-      try {
-        const response = await options.toggleArchive(payload.optionId);
-        if (this.id === payload.optionId) {
-          this.$patch(response.data.option);
-        }
-      } catch (error) {
-        if (error?.code === "ERR_CANCELED") {
-          return;
-        }
-        Logger.error("Error archiving/restoring option", {
-          error,
-          payload
-        });
-        throw error;
-      } finally {
-        if (inquiryStore.id) {
-          inquiryStore.load();
-        }
-      }
-    },
-    async getEnhancedText(payload) {
-      try {
-        const response = await options.getEnhancedText(payload.text);
-        this.text = response.data.enhancedText || this.text;
-      } catch (error) {
-        if (error?.code === "ERR_CANCELED") {
-          return;
-        }
-        Logger.error("Error getting AI response for option text", {
-          error
-        });
-        throw error;
-      }
-    },
-    async submitOption(action) {
-      useAppSettingsStore();
-      try {
-        if (action === "submit_for_accepted") {
-          this.status.optionStatus = "published";
-          this.configuration.access = "open";
-        } else if (action === "submit_for_rejected") {
-          this.status.optionStatus = "rejected";
-          this.configuration.access = "private";
-        } else if (action === "submit_for_moderate") {
-          this.status.optionStatus = "pending";
-          this.configuration.access = "moderate";
-        }
-        const response = await options.submitOption(this.id, action);
-        if (!response || !response.data) {
-          this.$reset();
-        }
-      } catch (error) {
-        if (error?.code === "ERR_CANCELED") {
-          return;
-        }
-        Logger.error("Error submitting option", { error });
-        throw error;
-      }
-    },
-    async close() {
-      const inquiryStore = useInquiryStore();
-      try {
-        const response = await options.closeOption(this.id);
-        this.$patch(response.data.option);
-        this.status.optionStatus = "archived";
-      } catch (error) {
-        if (error?.code === "ERR_CANCELED") {
-          return;
-        }
-        Logger.error("Error closing option", {
-          error,
-          optionId: this.id
-        });
-        this.load();
-        throw error;
-      } finally {
-        if (inquiryStore.id) {
-          inquiryStore.load();
-        }
-      }
-    },
-    async reopen() {
-      const inquiryStore = useInquiryStore();
-      try {
-        const response = await options.reopenOption(this.id);
-        this.$patch(response.data.option);
-        this.status.optionStatus = "published";
-      } catch (error) {
-        if (error?.code === "ERR_CANCELED") {
-          return;
-        }
-        Logger.error("Error reopening option", {
-          error,
-          optionId: this.id
-        });
-        this.load();
-        throw error;
-      } finally {
-        if (inquiryStore.id) {
-          inquiryStore.load();
-        }
-      }
-    },
-    // Initialize type info after loading option
-    initializeTypeInfo() {
-      const sessionStore = useSessionStore();
-      const optionTypes = sessionStore.appSettings?.inquiryOptionTypeTab || [];
-      this._typeInfo = optionTypes.find((opt) => opt.option_type === this.type);
-      if (this._typeInfo?.family) {
-        const family = sessionStore.appSettings?.optionFamilyTab?.find((f) => f.family_type === this._typeInfo.family);
-        this._familyInfo = {
-          name: family?.label || this._typeInfo.family,
-          color: getFamilyColor(this._typeInfo.family),
-          // Use helper
-          icon: family?.icon || "File",
-          description: family?.description || this._typeInfo.description || ""
-        };
-      }
-    },
-    async load(optionId = null) {
-      const sessionStore = useSessionStore();
-      useSharesStore();
-      useCommentsStore();
-      useSupportsStore();
-      useSubscriptionStore();
-      this.meta.status = "loading";
-      try {
-        const response = await (() => options.getFullOption(optionId ?? sessionStore.currentOptionId))();
-        if (!response) {
-          this.$reset();
-          return;
-        }
-        this.$patch(response.data.option);
-        if (response.data.option.owner.id === sessionStore.currentUser.id)
-          sessionStore.currentUser.isOwner = true;
-        else sessionStore.currentUser.isOwner = false;
-        this.initializeTypeInfo();
-        this.meta.status = "loaded";
-        return response;
-      } catch (error) {
-        if (error?.code === "ERR_CANCELED") {
-          return;
-        }
-        this.meta.status = "error";
-        Logger.error("Error loading option", { error });
-        throw error;
-      }
-    },
-    async create(payload) {
-      const inquiryStore = useInquiryStore();
-      useSessionStore();
-      if (payload.parentId) {
-        const parentOption = await this.getOptionById(payload.parentId);
-        if (parentOption && parentOption.typeInfo) {
-          if (parentOption.typeInfo.allowed_response && !parentOption.typeInfo.allowed_response.includes(payload.type)) {
-            showError(translate("agora", "This option type cannot be added as a child to the selected parent"));
-            return;
-          }
-        }
-      }
-      try {
-        console.log(" OD LETS CREATE IT ", payload);
-        const sessionStore2 = useSessionStore();
-        const typeInfo = sessionStore2.appSettings?.inquiryOptionTypeTab?.find(
-          (opt) => opt.option_type === payload.type
-        );
-        const defaultMiscFields = {};
-        if (typeInfo?.fields) {
-          const fields = Array.isArray(typeInfo.fields) ? typeInfo.fields : [];
-          fields.forEach((field) => {
-            if (field.default !== void 0) {
-              defaultMiscFields[field.key] = field.default;
-            }
-          });
-        }
-        const mergedMiscFields = { ...defaultMiscFields, ...payload.miscFields || {} };
-        const response = await options.createOption({
-          title: payload.title,
-          text: payload.text,
-          type: payload.type,
-          targetId: payload.targetId || inquiryStore.id,
-          parentId: payload.parentId || 0,
-          ownedGroup: payload.ownedGroup || "",
-          owner: payload.owner || "",
-          family: payload.family || "",
-          access: payload.access || "private",
-          status: payload.status || "draft",
-          supportFeature: payload.supportFeature || "none",
-          allowComment: payload.allowComment || 0,
-          miscFields: mergedMiscFields
-        });
-        const newOption = response.data.option;
-        return newOption;
-      } catch (error) {
-        if (error?.code === "ERR_CANCELED") {
-          return;
-        }
-        Logger.error("Error creating option:", {
-          error,
-          payload,
-          state: this.$state
-        });
-        throw error;
-      } finally {
-        if (inquiryStore.id) {
-          inquiryStore.load();
-        }
-      }
-    },
-    // Validate misc fields against type configuration
-    validateMiscFields() {
-      const errors2 = [];
-      if (!this.typeInfo) {
-        return { valid: true, errors: errors2 };
-      }
-      this.miscFields.forEach((field) => {
-        if (field.required) {
-          const value = this.miscFields[field.key];
-          if (value === void 0 || value === null || value === "") {
-            errors2.push(translate("agora", "{field} is required", { field: field.label }));
-          }
-        }
-        if (field.type === "number" && this.miscFields[field.key]) {
-          const numValue = Number(this.miscFields[field.key]);
-          if (isNaN(numValue)) {
-            errors2.push(translate("agora", "{field} must be a number", { field: field.label }));
-          }
-        }
-      });
-      return {
-        valid: errors2.length === 0,
-        errors: errors2
-      };
-    },
-    async update(payload) {
-      useInquiryStore();
-      useSessionStore();
-      if (!payload || typeof payload !== "object") {
-        Logger.error("updateOption called with invalid payload", { payload });
-        return;
-      }
-      const debouncedLoad = this.$debounce(async () => {
-        let updatedOption;
-        try {
-          const response = await options.updateOption(
-            payload.id ?? this.id,
-            {
-              title: payload.title ?? "",
-              text: payload.text ?? "",
-              type: payload.type,
-              targetId: payload.targetId,
-              parentId: payload.parentId,
-              ownedGroup: payload.ownedGroup,
-              access: payload.access,
-              showResults: payload.showResults,
-              allowComment: payload.allowComment,
-              supportFeature: payload.supportFeature,
-              family: payload.family,
-              status: payload.status,
-              miscFields: payload.miscFields ?? {}
-            }
-          );
-          updatedOption = response?.data?.option;
-          if (!updatedOption?.id) {
-            throw new Error("No option returned from API");
-          }
-          return updatedOption;
-        } catch (error) {
-          if (error?.code === "ERR_CANCELED") {
-            return;
-          }
-          Logger.error("Error updating option", {
-            error,
-            state: this.$state
-          });
-          throw error;
-        } finally {
-          if (updatedOption?.id) {
-            this.load(updatedOption.id);
-          }
-        }
-      }, 500);
-      debouncedLoad();
-    },
-    async loadChildren() {
-      try {
-        const response = await options.getChildOptions(this.id);
-        this.childs = response.data.options;
-        const sessionStore = useSessionStore();
-        const optionTypes = sessionStore.appSettings?.inquiryOptionTypeTab || [];
-        this.childs.forEach((child) => {
-          child._typeInfo = optionTypes.find((opt) => opt.option_type === child.type);
-        });
-      } catch (error) {
-        if (error?.code === "ERR_CANCELED") {
-          return;
-        }
-        Logger.error("Error loading option children", { error });
-        throw error;
-      }
-    },
-    async addChild(payload) {
-      try {
-        const response = await options.addChildOption(this.id, {
-          text: payload.text || "",
-          type: payload.type || "debate",
-          ownedGroup: payload.ownedGroup || "",
-          access: payload.access || "private",
-          status: payload.status || "draft",
-          miscFields: payload.miscFields || {}
-        });
-        const newChild = response.data.option;
-        this.childs.push(newChild);
-        return newChild;
-      } catch (error) {
-        if (error?.code === "ERR_CANCELED") {
-          return;
-        }
-        Logger.error("Error adding child option:", {
-          error,
-          payload
-        });
-        throw error;
-      }
-    },
-    async delete() {
-      useInquiryStore();
-      const sessionStore = useSessionStore();
-      try {
-        if (!this.permissions.delete) {
-          showError(translate("agora", "You do not have permission to delete this option"));
-          return;
-        }
-        if (this.isPublished || this.isClosed) {
-          const confirmed = confirm(translate("agora", "Are you sure you want to delete this option?"));
-          if (!confirmed) return;
-        }
-        const response = await options.deleteOption(this.id);
-        emit(Event$1.DeleteOption, {
-          optionId: this.id,
-          message: translate("agora", "Option deleted")
-        });
-        if (sessionStore.currentOptionId === this.id) {
-          this.reset();
-        }
-      } catch (error) {
-        if (error?.code === "ERR_CANCELED") {
-          return;
-        }
-        Logger.error("Error deleting option:", {
-          error,
-          optionId: this.id
-        });
-        if (error.response?.status === 403) {
-          showError(translate("agora", "You do not have permission to delete this option"));
-        } else if (error.response?.status === 409) {
-          showError(translate("agora", "Cannot delete option with children. Please delete children first."));
-        } else {
-          showError(translate("agora", "Error deleting option"));
-        }
-        throw error;
-      }
-    },
-    async deleteRecursive() {
-      const inquiryStore = useInquiryStore();
-      try {
-        if (!this.hasChildren) {
-          return this.delete();
-        }
-        const confirmed = confirm(
-          translate(
-            "agora",
-            "This option has {count} children. Delete them too?",
-            { count: this.children.length }
-          )
-        );
-        if (!confirmed) return;
-        const deleteChildrenRecursively = async (option2) => {
-          if (!option2.children || option2.children.length === 0) {
-            await this.loadChildren();
-          }
-          for (const child of option2.children) {
-            await deleteChildrenRecursively(child);
-          }
-          await options.deleteOption(option2.id);
-        };
-        await deleteChildrenRecursively(this);
-        emit(Event$1.DeleteOption, {
-          optionId: this.id,
-          recursive: true,
-          message: translate("agora", "Option and children deleted")
-        });
-        this.reset();
-        if (inquiryStore.id) {
-          inquiryStore.load();
-        }
-      } catch (error) {
-        Logger.error("Error recursively deleting option:", {
-          error,
-          optionId: this.id
-        });
-        throw error;
-      }
-    },
-    // Helper method to get option by ID (would need to be implemented)
-    async getOptionById(optionId) {
-      return void 0;
-    },
-    // Enhanced write action with type validation
-    write() {
-      const inquiryStore = useInquiryStore();
-      const debouncedLoad = this.$debounce(async () => {
-        if (this.text === "") {
-          showError(translate("agora", "Text must not be empty!"));
-          return;
-        }
-        const validation = this.validateMiscFields();
-        if (!validation.valid) {
-          showError(translate("agora", "Validation errors: {errors}", {
-            errors: validation.errors.join(", ")
-          }));
-          return;
-        }
-        try {
-          const response = await options.updateOptionConfig(this.id, this.configuration);
-          this.$patch(response.data.option);
-          this.initializeTypeInfo();
-          emit(Event$1.UpdateOption, {
-            store: "option",
-            message: translate("agora", "Option updated")
-          });
-        } catch (error) {
-          if (error?.code === "ERR_CANCELED") {
-            return;
-          }
-          Logger.error("Error updating option:", {
-            error,
-            option: this.$state
-          });
-          showError(translate("agora", "Error writing option"));
-          throw error;
-        } finally {
-          this.load();
-          if (inquiryStore.id) {
-            inquiryStore.load();
-          }
-        }
-      }, 500);
-      debouncedLoad();
-    },
-    // Enhanced updateMiscField with type validation
-    async updateMiscField(key, value) {
-      const fieldConfig = this.miscFields.find((f) => f.key === key);
-      if (fieldConfig) {
-        if (fieldConfig.type === "number" && value && isNaN(Number(value))) {
-          showError(translate("agora", "{field} must be a number", { field: fieldConfig.label }));
-          return;
-        }
-        if (fieldConfig.options && !fieldConfig.options.some((opt) => opt.value === value)) {
-          showError(translate("agora", "Invalid value for {field}", { field: fieldConfig.label }));
-          return;
-        }
-      }
-      try {
-        await options.updateOptionMiscField(this.id, { key, value });
-        this.miscFields[key] = value;
-      } catch (error) {
-        if (error?.code === "ERR_CANCELED") {
-          return;
-        }
-        Logger.error("Error updating option misc field:", {
-          error,
-          state: this.$state
-        });
-        throw error;
-      }
-    }
-  }
-});
 const _sfc_main$X = /* @__PURE__ */ defineComponent({
   __name: "OptionCard",
   props: {
@@ -74452,19 +73041,21 @@ const _sfc_main$S = /* @__PURE__ */ defineComponent({
       return position;
     }
     const filteredComments = computed(() => {
-      console.log("INTO COMMENT optionId:", props2.optionId);
-      console.log("INTO COMMENT inquiryOnly:", props2.inquiryOnly);
-      console.log("Comments from store:", commentsStore.comments?.length);
-      updateTrigger.value;
+      console.log("Comments updated - total comments:", commentsStore.comments?.length);
+      console.log("Filtering for optionId:", props2.optionId);
+      console.log("Filtering for inquiryOnly:", props2.inquiryOnly);
+      const allComments = commentsStore.comments || [];
       userPositions.clear();
       if (props2.optionId === void 0 && !props2.inquiryOnly) {
         return commentsStore.groupedComments || [];
       }
       let baseComments = [];
       if (props2.optionId !== void 0) {
-        baseComments = (commentsStore.comments || []).filter((comment) => comment && comment.optionId === props2.optionId).sort((a, b) => b.timestamp - a.timestamp);
+        baseComments = allComments.filter((comment) => comment && comment.optionId === props2.optionId).sort((a, b) => b.timestamp - a.timestamp);
+        console.log(`Found ${baseComments.length} comments for option ${props2.optionId}`);
       } else if (props2.inquiryOnly) {
-        baseComments = (commentsStore.comments || []).filter((comment) => comment && comment.optionId === 0).sort((a, b) => b.timestamp - a.timestamp);
+        baseComments = allComments.filter((comment) => comment && comment.optionId === 0).sort((a, b) => b.timestamp - a.timestamp);
+        console.log(`Found ${baseComments.length} inquiry comments`);
       }
       const groups = groupCommentsByUserAndTime(baseComments);
       return groups.map((group2) => ({
@@ -74472,6 +73063,14 @@ const _sfc_main$S = /* @__PURE__ */ defineComponent({
         avatarPosition: getAvatarPosition(group2.userId)
       }));
     });
+    watch(() => commentsStore.comments, (newComments, oldComments) => {
+      console.log("Comments changed:", {
+        oldCount: oldComments?.length,
+        newCount: newComments?.length,
+        optionId: props2.optionId
+      });
+      updateTrigger.value++;
+    }, { deep: true, immediate: true });
     watch(() => commentsStore.comments, () => {
       updateTrigger.value++;
     }, { deep: true });
@@ -85915,6 +84514,9 @@ const _sfc_main$r = /* @__PURE__ */ defineComponent({
         return false;
       }
       try {
+        if (context2.value === "undefined") {
+          return false;
+        }
         return canEdit?.(context2.value) ?? currentInquiry.value.currentUserStatus?.isOwner;
       } catch (error) {
         console.error("Error checking edit permissions:", error);

@@ -273,16 +273,18 @@ export function createInquiryContext(inquiry: InquiryStoreLike, appSettings: any
   
   const supportFeature = inquiry.configuration.supportFeature
   const allowComment = inquiry.configuration.allowComment
-  
+ 
+  const currentUserStatus = inquiry.currentUserStatus || {}
+
   return {
     userType: getCurrentUserType(),
     contentType: ContentType.Inquiry,
     isOwner: isContentOwner(inquiry.owner.id),
     isPublic: inquiry.configuration.access === 'public',
-    isLocked: inquiry.currentUserStatus.isLocked,
-    isExpired: inquiry.status.isExpired,
+    isLocked: inquiry.currentUserStatus.isLocked || false,
+    isExpired: inquiry.status.isExpired || false,
     isDeleted: inquiry.status.deletionDate > 0,
-    isArchived: inquiry.status.isArchived,
+    isArchived: inquiry.status.isArchived || false,
     hasGroupRestrictions: inquiry.inquiryGroups.length > 0,
     userGroups: getCurrentUserGroups(),
     allowedGroups: inquiry.inquiryGroups,

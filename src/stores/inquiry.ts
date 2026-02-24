@@ -272,6 +272,11 @@ export const useInquiryStore = defineStore('inquiry', {
       this.$reset()
     },
 
+    updateCommentCount(count: number) {
+      if (this.status) {
+        this.status.countComments = count
+      }
+    },
 
     setSuggestionExpiration(payload: { expire: number }): void {
       this.configuration.suggestionsExpire = moment(payload.expire).unix()

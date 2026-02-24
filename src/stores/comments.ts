@@ -8,7 +8,8 @@ import { defineStore } from 'pinia'
 import { CommentsAPI, PublicAPI } from '../Api'
 import { groupComments } from '../helpers/modules/comments'
 import { Logger } from '../helpers/modules/logger'
-
+import { useInquiryStore } from './inquiry' 
+import { useOptionStore } from './option' 
 import { useSessionStore } from './session'
 
 import type { AxiosError } from '@nextcloud/axios'
@@ -70,164 +71,276 @@ export const useCommentsStore = defineStore('comments', {
 	},
 
 	actions: {
-		/**
-		 * @param inquiryId
-		 */
-		async load(inquiryId: number | null = null): Promise<void> {
-			const sessionStore = useSessionStore()
-			try {
-				const response = await (() => {
-					if (sessionStore.route.name === 'publicInquiry') {
-						return PublicAPI.getComments(
-							sessionStore.route.params.token as string,
-						)
-					}
-					if (sessionStore.route.name === 'inquiry') {
-						return CommentsAPI.getComments(sessionStore.currentInquiryId)
-					}
-					if (inquiryId) {
-						return CommentsAPI.getComments(inquiryId)
-					}
-					return null
-				})()
 
-				if (!response) {
-					this.$reset()
-					return
-				}
+          /**
+     * @param inquiryId
+     */
+    async load(inquiryId: number | null = null): Promise<void> {
+      const sessionStore = useSessionStore()
+      try {
+        const response = await (() => {
+          if (sessionStore.route.name === 'publicInquiry') {
+            return PublicAPI.getComments(
+              sessionStore.route.params.token as string,
+            )
+          }
+          if (sessionStore.route.name === 'inquiry') {
+            return CommentsAPI.getComments(sessionStore.currentInquiryId)
+          }
+          if (inquiryId) {
+            return CommentsAPI.getComments(inquiryId)
+          }
+          return null
+        })()
 
-				// This stores ALL comments for the inquiry
-				this.comments = response.data.comments
-			} catch (error) {
-				if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-					return
-				}
-				this.$reset()
-			}
-		},
+        if (!response) {
+          this.$reset()
+          return
+        }
 
-		/**
-		 * @param inquiryId
-		 */
-		async loadInquiryComments(inquiryId: number): Promise<void> {
-			try {
-				const response = await CommentsAPI.getInquiryComments(inquiryId)
-				
-				// Remove existing inquiry comments for this inquiry
-				const otherComments = this.comments.filter(
-					comment => !(comment.inquiryId === inquiryId && comment.optionId === 0)
-				)
-				
-				// Add the new inquiry comments
-				this.comments = [...otherComments, ...response.data.comments]
-			} catch (error) {
-				if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-					return
-				}
-				Logger.error('Error loading inquiry comments', {
-					error,
-					inquiryId,
-				})
-				throw error
-			}
-		},
+        // This stores ALL comments for the inquiry
+        this.comments = response.data.comments
+        
+        // Update status counts after loading comments
+        if (inquiryId) {
+          this.updateStatusCounts(inquiryId)
+        }
+      } catch (error) {
+        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+          return
+        }
+        this.$reset()
+      }
+    },
 
-		/**
-		 * @param optionId
-		 * @param inquiryId
-		 */
-		async loadOptionComments(optionId: number, inquiryId?: number): Promise<void> {
-			const sessionStore = useSessionStore()
-			try {
-				const targetInquiryId = inquiryId || sessionStore.currentInquiryId
-				
-				if (!targetInquiryId) {
-					console.warn('No inquiryId available for loading option comments')
-					return
-				}
+    /**
+     * @param inquiryId
+     */
+    async loadInquiryComments(inquiryId: number): Promise<void> {
+      try {
+        const response = await CommentsAPI.getInquiryComments(inquiryId)
+        
+        // Remove existing inquiry comments for this inquiry
+        const otherComments = this.comments.filter(
+          comment => !(comment.inquiryId === inquiryId && comment.optionId === 0)
+        )
+        
+        // Add the new inquiry comments
+        this.comments = [...otherComments, ...response.data.comments]
+        
+        // Update status counts
+        this.updateStatusCounts(inquiryId)
+      } catch (error) {
+        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+          return
+        }
+        Logger.error('Error loading inquiry comments', {
+          error,
+          inquiryId,
+        })
+        throw error
+      }
+    },
 
-				const response = await CommentsAPI.getOptionComments(targetInquiryId, optionId)
-				
-				// Remove existing comments for this specific option
-				const otherComments = this.comments.filter(
-					comment => !(comment.inquiryId === targetInquiryId && comment.optionId === optionId)
-				)
-				
-				// Add the new option comments
-				this.comments = [...otherComments, ...response.data.comments]
-			} catch (error) {
-				if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-					return
-				}
-				Logger.error('Error loading option comments', {
-					error,
-					optionId,
-					inquiryId,
-				})
-				throw error
-			}
-		},
+    /**
+     * @param optionId
+     * @param inquiryId
+     */
+    async loadOptionComments(optionId: number, inquiryId?: number): Promise<void> {
+      const sessionStore = useSessionStore()
+      try {
+        const targetInquiryId = inquiryId || sessionStore.currentInquiryId
+        
+        if (!targetInquiryId) {
+          console.warn('No inquiryId available for loading option comments')
+          return
+        }
 
-		/**
-		 * Add a comment - 
-		 * @param payload
-		 * @param payload.message
-		 * @param payload.confidential
-		 * @param payload.optionId
-		 */
-		async add(payload: { 
-			message: string; 
-			confidential: boolean;
-			optionId?: number; // Optional: if not provided, defaults to 0 (inquiry comment)
-		}) {
-			const sessionStore = useSessionStore()
-			try {
-				const response = await (() => {
-					if (sessionStore.route.name === 'publicInquiry') {
-						return PublicAPI.addComment(
-							sessionStore.publicToken,
-							payload.message,
-							payload.confidential,
-							payload.optionId || 0 // Default to 0 for inquiry comments
-						)
-					}
+        const response = await CommentsAPI.getOptionComments(targetInquiryId, optionId)
+        
+        // Remove existing comments for this specific option
+        const otherComments = this.comments.filter(
+          comment => !(comment.inquiryId === targetInquiryId && comment.optionId === optionId)
+        )
+        
+        // Add the new option comments
+        this.comments = [...otherComments, ...response.data.comments]
+        
+        // Update status counts
+        this.updateStatusCounts(targetInquiryId)
+      } catch (error) {
+        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+          return
+        }
+        Logger.error('Error loading option comments', {
+          error,
+          optionId,
+          inquiryId,
+        })
+        throw error
+      }
+    },
 
-					if (sessionStore.route.name === 'inquiry' || sessionStore.route.name === 'group-list') {
-						const targetInquiryId = sessionStore.currentInquiryId
+    /**
+     * Add a comment
+     */
+    async add(payload: { 
+      message: string; 
+      confidential: boolean;
+      optionId?: number;
+    }) {
+      const sessionStore = useSessionStore()
+      try {
+        const response = await (() => {
+          if (sessionStore.route.name === 'publicInquiry') {
+            return PublicAPI.addComment(
+              sessionStore.publicToken,
+              payload.message,
+              payload.confidential,
+              payload.optionId || 0
+            )
+          }
 
-						if (!targetInquiryId) {
-							console.warn('No inquiryId available for adding comment')
-							return null
-						}
+          if (sessionStore.route.name === 'inquiry' || sessionStore.route.name === 'group-list') {
+            const targetInquiryId = sessionStore.currentInquiryId
 
-						return CommentsAPI.addComment(
-							targetInquiryId,
-							payload.message,
-							payload.confidential,
-							payload.optionId || 0 // Default to 0 for inquiry comments
-						)
-					}
-					return null
-				})()
+            if (!targetInquiryId) {
+              console.warn('No inquiryId available for adding comment')
+              return null
+            }
 
-				if (!response) {
-					this.$reset()
-					return
-				}
+            return CommentsAPI.addComment(
+              targetInquiryId,
+              payload.message,
+              payload.confidential,
+              payload.optionId || 0
+            )
+          }
+          return null
+        })()
 
-				const newComment = response.data.comment
-				this.setItem({ comment: newComment })
-			} catch (error) {
-				if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-					return
-				}
-				Logger.error('Error writing comment', {
-					error,
-					payload,
-				})
-				throw error
-			}
-		},
+        if (!response) {
+          this.$reset()
+          return
+        }
+
+        const newComment = response.data.comment
+        this.setItem({ comment: newComment })
+        
+        // Update status counts after adding comment
+        this.updateStatusCounts(newComment.inquiryId)
+        
+      } catch (error) {
+        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+          return
+        }
+        Logger.error('Error writing comment', {
+          error,
+          payload,
+        })
+        throw error
+      }
+    },
+
+    /**
+     * Delete
+     */
+    async delete(payload: { comment: Comment }) {
+      const sessionStore = useSessionStore()
+
+      try {
+        const response = await (() => {
+          if (sessionStore.route.name === 'publicInquiry') {
+            return PublicAPI.deleteComment(
+              sessionStore.publicToken,
+              payload.comment.id,
+            )
+          }
+          return CommentsAPI.deleteComment(payload.comment.id)
+        })()
+
+        this.setItem({ comment: response.data.comment })
+        
+        // Update status counts after deletion
+        this.updateStatusCounts(payload.comment.inquiryId)
+        
+      } catch (error) {
+        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+          return
+        }
+        Logger.error('Error deleting comment', {
+          error,
+          payload,
+        })
+        throw error
+      }
+    },
+
+    /**
+     * Restore
+     */
+    async restore(payload: { comment: Comment }) {
+      const sessionStore = useSessionStore()
+      try {
+        const response = await (() => {
+          if (sessionStore.route.name === 'publicInquiry') {
+            return PublicAPI.restoreComment(
+              sessionStore.publicToken,
+              payload.comment.id,
+            )
+          }
+          return CommentsAPI.restoreComment(payload.comment.id)
+        })()
+
+        this.setItem({ comment: response.data.comment })
+        
+        // Update status counts after restoration
+        this.updateStatusCounts(payload.comment.inquiryId)
+        
+      } catch (error) {
+        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+          return
+        }
+        Logger.error('Error restoring comment', {
+          error,
+          payload,
+        })
+        throw error
+      }
+    },
+
+    /**
+     * Update status.countComments in both inquiry and option stores
+     */
+    updateStatusCounts(inquiryId: number) {
+      const inquiryStore = useInquiryStore()
+      const optionStore = useOptionStore()
+      
+      // Update inquiry comment count (optionId = 0)
+      if (inquiryStore.id === inquiryId) {
+        const inquiryCommentCount = this.comments.filter(
+          comment => comment.inquiryId === inquiryId && comment.optionId === 0 && comment.deleted === 0
+        ).length
+        
+        if (inquiryStore.status) {
+          inquiryStore.status.countComments = inquiryCommentCount
+        }
+      }
+      
+      // Update option comment counts for this inquiry
+      if (optionStore.options && optionStore.options.length > 0) {
+        optionStore.options.forEach(option => {
+          const optionCommentCount = this.comments.filter(
+            comment => comment.inquiryId === inquiryId && comment.optionId === option.id && comment.deleted === 0
+          ).length
+          
+          if (option.status) {
+            option.status.countComments = optionCommentCount
+          }
+        })
+      }
+    },
+
 
 		/**
 		 * Set item -
@@ -249,68 +362,6 @@ export const useCommentsStore = defineStore('comments', {
 			}
 		},
 
-		/**
-		 * Delete -
-		 * @param payload
-		 * @param payload.comment
-		 */
-		async delete(payload: { comment: Comment }) {
-			const sessionStore = useSessionStore()
-
-			try {
-				const response = await (() => {
-					if (sessionStore.route.name === 'publicInquiry') {
-						return PublicAPI.deleteComment(
-							sessionStore.publicToken,
-							payload.comment.id,
-						)
-					}
-					return CommentsAPI.deleteComment(payload.comment.id)
-				})()
-
-				this.setItem({ comment: response.data.comment })
-			} catch (error) {
-				if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-					return
-				}
-				Logger.error('Error deleting comment', {
-					error,
-					payload,
-				})
-				throw error
-			}
-		},
-
-		/**
-		 * Restore - 
-		 * @param payload
-		 * @param payload.comment
-		 */
-		async restore(payload: { comment: Comment }) {
-			const sessionStore = useSessionStore()
-			try {
-				const response = await (() => {
-					if (sessionStore.route.name === 'publicInquiry') {
-						return PublicAPI.restoreComment(
-							sessionStore.publicToken,
-							payload.comment.id,
-						)
-					}
-					return CommentsAPI.restoreComment(payload.comment.id)
-				})()
-
-				this.setItem({ comment: response.data.comment })
-			} catch (error) {
-				if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-					return
-				}
-				Logger.error('Error restoring comment', {
-					error,
-					payload,
-				})
-				throw error
-			}
-		},
 
 		/**
 		 * Clear ONLY inquiry-level comments

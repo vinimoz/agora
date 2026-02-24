@@ -31,47 +31,27 @@ class OptionMapper extends QBMapper
 
     public function get(int $id, bool $getDeleted = false, bool $withRoles = false): Option
     {
-        $qb = $this->db->getQueryBuilder();
-        $qb->select(self::TABLE . '.*')
-            ->from($this->getTableName(), self::TABLE)
-            ->where($qb->expr()->eq(self::TABLE . '.id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT)));
+        $qb = $this->buildBaseQuery($withRoles);
+        $qb->where($qb->expr()->eq(self::TABLE . '.id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT)));
 
         if (!$getDeleted) {
             $qb->andWhere($qb->expr()->eq(self::TABLE . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)));
         }
 
-        if ($withRoles) {
-            $optionGroupsAlias = 'option_groups';
-            $currentUserId = $this->userSession->getCurrentUserId();
-        
-            //$this->joinUserRole($qb, self::TABLE, $currentUserId);
-            $this->joinHasSupported($qb, self::TABLE, $currentUserId);
-            $this->joinSupportValue($qb, self::TABLE, $currentUserId);
-            $this->joinParticipantsCount($qb, self::TABLE);
-            $this->joinSupportsCount($qb, self::TABLE);
-            $this->joinNegativeSupportsCount($qb, self::TABLE);
-            $this->joinPositiveSupportsCount($qb, self::TABLE);
-            $this->joinNeutralSupportsCount($qb, self::TABLE);
-            $this->joinCommentsCount($qb, self::TABLE);
-            $this->joinMiscs($qb, self::TABLE);
-            // $this->joinInquiryInfo($qb, self::TABLE);
-        }
         return $this->findEntity($qb);
     }
 
     public function find(int $id): Option
     {
-        $qb = $this->buildQuery();
+        $qb = $this->buildBaseQuery();
         $qb->where($qb->expr()->eq(self::TABLE . '.id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT)));
 
-        $option = $this->findEntity($qb);
-
-        return $option;
+        return $this->findEntity($qb);
     }
 
     public function findByTargetId(int $targetId): array
     {
-        $qb = $this->buildQuery();
+        $qb = $this->buildBaseQuery();
         $qb->where($qb->expr()->eq(self::TABLE . '.target_id', $qb->createNamedParameter($targetId, IQueryBuilder::PARAM_INT)))
            ->andWhere($qb->expr()->eq(self::TABLE . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)))
            ->orderBy(self::TABLE . '.sort_order', 'ASC')
@@ -89,7 +69,7 @@ class OptionMapper extends QBMapper
 
     public function findByParentId(int $parentId): array
     {
-        $qb = $this->buildQuery();
+        $qb = $this->buildBaseQuery();
         $qb->where($qb->expr()->eq(self::TABLE . '.parent_id', $qb->createNamedParameter($parentId, IQueryBuilder::PARAM_INT)))
            ->andWhere($qb->expr()->eq(self::TABLE . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)))
            ->orderBy(self::TABLE . '.sort_order', 'ASC')
@@ -107,7 +87,7 @@ class OptionMapper extends QBMapper
 
     public function findByType(string $type, int $targetId = 0): array
     {
-        $qb = $this->buildQuery();
+        $qb = $this->buildBaseQuery();
         $qb->where($qb->expr()->eq(self::TABLE . '.type', $qb->createNamedParameter($type, IQueryBuilder::PARAM_STR)))
            ->andWhere($qb->expr()->eq(self::TABLE . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)));
 
@@ -130,7 +110,7 @@ class OptionMapper extends QBMapper
 
     public function findForMe(string $userId): array
     {
-        $qb = $this->buildQuery();
+        $qb = $this->buildBaseQuery();
         $qb->where($qb->expr()->eq(self::TABLE . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)))
            ->andWhere(
                $qb->expr()->orX(
@@ -151,7 +131,7 @@ class OptionMapper extends QBMapper
 
     public function listByOwner(string $userId): array
     {
-        $qb = $this->buildQuery();
+        $qb = $this->buildBaseQuery();
         $qb->where($qb->expr()->eq(self::TABLE . '.owner', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR)))
            ->andWhere($qb->expr()->eq(self::TABLE . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)));
 
@@ -167,18 +147,16 @@ class OptionMapper extends QBMapper
 
     public function search(ISearchQuery $query): array
     {
-        $qb = $this->buildQuery();
+        $qb = $this->buildBaseQuery();
         $qb->where($qb->expr()->eq(self::TABLE . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)))
            ->andWhere(
                $qb->expr()->orX(
                    ...array_map(
                        function (string $token) use ($qb) {
-                           return $qb->expr()->orX(
-                               $qb->expr()->iLike(
-                                   self::TABLE . '.text',
-                                   $qb->createNamedParameter('%' . $this->db->escapeLikeParameter($token) . '%', IQueryBuilder::PARAM_STR),
-                                   IQueryBuilder::PARAM_STR
-                               )
+                           return $qb->expr()->iLike(
+                               self::TABLE . '.text',
+                               $qb->createNamedParameter('%' . $this->db->escapeLikeParameter($token) . '%', IQueryBuilder::PARAM_STR),
+                               IQueryBuilder::PARAM_STR
                            );
                        }, explode(' ', $query->getTerm())
                    )
@@ -197,7 +175,7 @@ class OptionMapper extends QBMapper
 
     public function findForAdmin(string $userId): array
     {
-        $qb = $this->buildQuery();
+        $qb = $this->buildBaseQuery();
         $qb->where($qb->expr()->neq(self::TABLE . '.owner', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR)))
            ->andWhere($qb->expr()->eq(self::TABLE . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)));
 
@@ -286,31 +264,147 @@ class OptionMapper extends QBMapper
         $qb->executeStatement();
     }
 
-    protected function buildQuery(): IQueryBuilder
-    {
-        $qb = $this->db->getQueryBuilder();
+    /**
+     * Build base query with all necessary subqueries for counts
+     */
+    /**
+ * Build base query with all necessary subqueries for counts
+ */
+protected function buildBaseQuery(bool $withRoles = false): IQueryBuilder
+{
+    $qb = $this->db->getQueryBuilder();
 
-        $qb->select(self::TABLE . '.*')
-           ->from($this->getTableName(), self::TABLE)
-           ->where($qb->expr()->eq(self::TABLE . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)));
+    // Start with the main table selection
+    $qb->select(self::TABLE . '.*')
+       ->from($this->getTableName(), self::TABLE)
+       ->where($qb->expr()->eq(self::TABLE . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)));
 
-        $currentUserId = $this->userSession->getCurrentUserId();
-        $optionGroupsAlias = 'option_groups';
-        //$this->joinUserRole($qb, self::TABLE, $currentUserId);
-        $this->joinHasSupported($qb, self::TABLE, $currentUserId);
-        $this->joinSupportValue($qb, self::TABLE, $currentUserId);
-  
-        $this->joinParticipantsCount($qb, self::TABLE);
-        $this->joinSupportsCount($qb, self::TABLE);
-        $this->joinNegativeSupportsCount($qb, self::TABLE);
-        $this->joinPositiveSupportsCount($qb, self::TABLE);
-        $this->joinNeutralSupportsCount($qb, self::TABLE);
-        $this->joinCommentsCount($qb, self::TABLE);
-        $this->joinMiscs($qb, self::TABLE);
+    // Add subqueries using createFunction to avoid backtick wrapping
+    $qb->selectAlias(
+        $qb->createFunction('(' . $this->getSupportCountSubquery($qb) . ')'),
+        'count_supports'
+    )->selectAlias(
+        $qb->createFunction('(' . $this->getPositiveSupportCountSubquery($qb) . ')'),
+        'count_positive_supports'
+    )->selectAlias(
+        $qb->createFunction('(' . $this->getNegativeSupportCountSubquery($qb) . ')'),
+        'count_negative_supports'
+    )->selectAlias(
+        $qb->createFunction('(' . $this->getNeutralSupportCountSubquery($qb) . ')'),
+        'count_neutral_supports'
+    )->selectAlias(
+        $qb->createFunction('(' . $this->getCommentCountSubquery($qb) . ')'),
+        'count_comments'
+    )->selectAlias(
+        $qb->createFunction('(' . $this->getParticipantCountSubquery($qb) . ')'),
+        'count_participants'
+    );
+
+    $currentUserId = $this->userSession->getCurrentUserId();
+    
+    // These joins don't cause multiplication issues
+    $this->joinHasSupported($qb, self::TABLE, $currentUserId);
+    $this->joinSupportValue($qb, self::TABLE, $currentUserId);
+    $this->joinMiscs($qb, self::TABLE);
+    
+    if ($withRoles) {
         $this->joinInquiryInfo($qb, self::TABLE);
-
-        return $qb;
     }
+
+    // Add GROUP BY to handle the LEFT JOINs properly
+    $qb->groupBy(self::TABLE . '.id');
+
+    return $qb;
+}
+
+/**
+ * Get subquery for total supports count
+ */
+protected function getSupportCountSubquery(IQueryBuilder $mainQb): string
+{
+    $subQb = $this->db->getQueryBuilder();
+    $subQb->select($subQb->createFunction('COUNT(DISTINCT ' . $subQb->getColumnName('user_id') . ')'))
+          ->from(Support::TABLE, 's')
+          ->where($subQb->expr()->eq('s.option_id', self::TABLE . '.id'));
+    
+    return $subQb->getSQL();
+}
+
+/**
+ * Get subquery for positive supports count
+ */
+protected function getPositiveSupportCountSubquery(IQueryBuilder $mainQb): string
+{
+    $subQb = $this->db->getQueryBuilder();
+    $subQb->select($subQb->createFunction('COUNT(DISTINCT ' . $subQb->getColumnName('user_id') . ')'))
+          ->from(Support::TABLE, 's')
+          ->where($subQb->expr()->eq('s.option_id', self::TABLE . '.id'))
+          ->andWhere($subQb->expr()->eq('s.value', $subQb->createNamedParameter(1, IQueryBuilder::PARAM_INT)));
+    
+    return $subQb->getSQL();
+}
+
+/**
+ * Get subquery for negative supports count
+ */
+protected function getNegativeSupportCountSubquery(IQueryBuilder $mainQb): string
+{
+    $subQb = $this->db->getQueryBuilder();
+    $subQb->select($subQb->createFunction('COUNT(DISTINCT ' . $subQb->getColumnName('user_id') . ')'))
+          ->from(Support::TABLE, 's')
+          ->where($subQb->expr()->eq('s.option_id', self::TABLE . '.id'))
+          ->andWhere($subQb->expr()->eq('s.value', $subQb->createNamedParameter(-1, IQueryBuilder::PARAM_INT)));
+    
+    return $subQb->getSQL();
+}
+
+/**
+ * Get subquery for neutral supports count
+ */
+protected function getNeutralSupportCountSubquery(IQueryBuilder $mainQb): string
+{
+    $subQb = $this->db->getQueryBuilder();
+    $subQb->select($subQb->createFunction('COUNT(DISTINCT ' . $subQb->getColumnName('user_id') . ')'))
+          ->from(Support::TABLE, 's')
+          ->where($subQb->expr()->eq('s.option_id', self::TABLE . '.id'))
+          ->andWhere($subQb->expr()->eq('s.value', $subQb->createNamedParameter(0, IQueryBuilder::PARAM_INT)));
+    
+    return $subQb->getSQL();
+}
+
+/**
+ * Get subquery for comments count
+ */
+protected function getCommentCountSubquery(IQueryBuilder $mainQb): string
+{
+    $subQb = $this->db->getQueryBuilder();
+    $subQb->select($subQb->createFunction('COUNT(' . $subQb->getColumnName('id') . ')'))
+          ->from(Comment::TABLE, 'c')
+          ->where($subQb->expr()->eq('c.option_id', self::TABLE . '.id'))
+          ->andWhere($subQb->expr()->eq('c.deleted', $subQb->createNamedParameter(0, IQueryBuilder::PARAM_INT)));
+    
+    return $subQb->getSQL();
+}
+
+/**
+ * Get subquery for participants count
+ */
+protected function getParticipantCountSubquery(IQueryBuilder $mainQb): string
+{
+    $subQb = $this->db->getQueryBuilder();
+    $subQb->select($subQb->createFunction('COUNT(DISTINCT ' . $subQb->getColumnName('id') . ')'))
+          ->from(Option::TABLE, 'p')
+          ->where($subQb->expr()->eq('p.parent_id', self::TABLE . '.id'))
+          ->andWhere(
+              $subQb->expr()->orX(
+                  $subQb->expr()->eq('p.access', $subQb->createNamedParameter(Option::ACCESS_OPEN, IQueryBuilder::PARAM_STR)),
+                  $subQb->expr()->eq('p.access', $subQb->createNamedParameter(Option::ACCESS_PUBLIC, IQueryBuilder::PARAM_STR))
+              )
+          )
+          ->andWhere($subQb->expr()->eq('p.deleted', $subQb->createNamedParameter(0, IQueryBuilder::PARAM_INT)));
+    
+    return $subQb->getSQL();
+}
 
     /**
      * Join misc settings from OptionMisc table
@@ -510,33 +604,7 @@ class OptionMapper extends QBMapper
             )
         );
     }
-/**
-    protected function joinUserRole(
-        IQueryBuilder &$qb,
-        string $fromAlias,
-        string $currentUserId,
-        string $joinAlias = 'user_shares',
-    ): void {
-        $emptyString = $qb->expr()->literal('');
 
-        $qb->addSelect($qb->createFunction('coalesce(' . $joinAlias . '.type, ' . $emptyString . ') AS user_role'))
-           ->addGroupBy($joinAlias . '.type');
-
-        $qb->addSelect($qb->createFunction('coalesce(' . $joinAlias . '.token, ' . $emptyString . ') AS share_token'))
-           ->addGroupBy($joinAlias . '.token');
-
-        $qb->leftJoin(
-            $fromAlias,
-            Share::TABLE,
-            $joinAlias,
-            $qb->expr()->andX(
-                $qb->expr()->eq($joinAlias . '.option_id', $fromAlias . '.id'),
-                $qb->expr()->eq($joinAlias . '.user_id', $qb->createNamedParameter($currentUserId, IQueryBuilder::PARAM_STR)),
-                $qb->expr()->eq($joinAlias . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)),
-            )
-        );
-    }
-    **/
     protected function joinHasSupported(
         IQueryBuilder &$qb,
         string $fromAlias,
@@ -589,103 +657,6 @@ class OptionMapper extends QBMapper
         );
     }
 
-    protected function joinNegativeSupportsCount(
-        IQueryBuilder &$qb,
-        string $fromAlias,
-        string $joinAlias = 'supports_negative',
-    ): void {
-        $qb->leftJoin(
-            $fromAlias,
-            Support::TABLE,
-            $joinAlias,
-            $qb->expr()->andX(
-                $qb->expr()->eq($joinAlias . '.option_id', $fromAlias . '.id'),
-                $qb->expr()->eq($joinAlias . '.value', $qb->createNamedParameter(-1))
-            )
-        )->addSelect($qb->createFunction('COUNT(DISTINCT(' . $joinAlias . '.user_id)) AS count_negative_supports'));
-    }
-
-    protected function joinNeutralSupportsCount(
-        IQueryBuilder &$qb,
-        string $fromAlias,
-        string $joinAlias = 'supports_neutral',
-    ): void {
-        $qb->leftJoin(
-            $fromAlias,
-            Support::TABLE,
-            $joinAlias,
-            $qb->expr()->andX(
-                $qb->expr()->eq($joinAlias . '.option_id', $fromAlias . '.id'),
-                $qb->expr()->eq($joinAlias . '.value', $qb->createNamedParameter(0))
-            )
-        )->addSelect($qb->createFunction('COUNT(DISTINCT(' . $joinAlias . '.user_id)) AS count_neutral_supports'));
-    }
-
-    protected function joinPositiveSupportsCount(
-        IQueryBuilder &$qb,
-        string $fromAlias,
-        string $joinAlias = 'supports_positive',
-    ): void {
-        $qb->leftJoin(
-            $fromAlias,
-            Support::TABLE,
-            $joinAlias,
-            $qb->expr()->andX(
-                $qb->expr()->eq($joinAlias . '.option_id', $fromAlias . '.id'),
-                $qb->expr()->eq($joinAlias . '.value', $qb->createNamedParameter(1))
-            )
-        )->addSelect($qb->createFunction('COUNT(DISTINCT(' . $joinAlias . '.user_id)) AS count_positive_supports'));
-    }
-
-    protected function joinSupportsCount(
-        IQueryBuilder &$qb,
-        string $fromAlias,
-        string $joinAlias = 'supports',
-    ): void {
-        $qb->leftJoin(
-            $fromAlias,
-            Support::TABLE,
-            $joinAlias,
-            $qb->expr()->eq($joinAlias . '.option_id', $fromAlias . '.id')
-        )->addSelect($qb->createFunction('COUNT(DISTINCT(' . $joinAlias . '.user_id)) AS count_supports'));
-        $qb->groupBy($fromAlias . '.id');
-    }
-
-    protected function joinCommentsCount(
-        IQueryBuilder &$qb,
-        string $fromAlias,
-        string $joinAlias = 'comments',
-    ): void {
-        $qb->leftJoin(
-            $fromAlias,
-            Comment::TABLE,
-            $joinAlias,
-            $qb->expr()->eq($joinAlias . '.option_id', $fromAlias . '.id'),
-			$qb->expr()->eq($joinAlias . '.deleted', $qb->createNamedParameter(0))
-        )->addSelect($qb->createFunction('COUNT(DISTINCT(' . $joinAlias . '.id)) AS count_comments'));
-        $qb->groupBy($fromAlias . '.id');
-    }
-
-    protected function joinParticipantsCount(
-        IQueryBuilder &$qb,
-        string $fromAlias,
-        string $joinAlias = 'participants',
-    ): void {
-        $qb->leftJoin(
-            $fromAlias,
-            Option::TABLE,
-            $joinAlias,
-            $qb->expr()->andX(
-                $qb->expr()->eq($joinAlias . '.parent_id', $fromAlias . '.id'),
-                $qb->expr()->orX(
-                    $qb->expr()->eq($joinAlias . '.access', $qb->createNamedParameter(Option::ACCESS_OPEN, IQueryBuilder::PARAM_STR)),
-                    $qb->expr()->eq($joinAlias . '.access', $qb->createNamedParameter(Option::ACCESS_PUBLIC, IQueryBuilder::PARAM_STR))
-                )
-            )
-        );
-        $qb->addSelect($qb->createFunction('COUNT(DISTINCT(' . $joinAlias . '.id)) AS count_participants'));
-    }
-
     /**
      * Get the maximum sort order for options in a specific target (inquiry)
      */
@@ -707,13 +678,18 @@ class OptionMapper extends QBMapper
     public function findWithChildren(int $targetId): array
     {
         // First get all parent options
-        $qb = $this->buildQuery();
+        $qb = $this->buildBaseQuery();
         $qb->where($qb->expr()->eq(self::TABLE . '.target_id', $qb->createNamedParameter($targetId, IQueryBuilder::PARAM_INT)))
            ->andWhere($qb->expr()->eq(self::TABLE . '.parent_id', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)))
            ->orderBy(self::TABLE . '.sort_order', 'ASC')
            ->addOrderBy(self::TABLE . '.created', 'ASC');
 
         $parentOptions = $this->findEntities($qb);
+
+        // Load dynamic fields for parent options
+        foreach ($parentOptions as $parentOption) {
+            $this->loadDynamicFields($parentOption);
+        }
 
         // For each parent option, get its children
         foreach ($parentOptions as $parentOption) {

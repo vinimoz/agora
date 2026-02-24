@@ -97,13 +97,14 @@ function getAvatarPosition(userId: string | number): 'left' | 'right' {
   return position
 }
 
+// In Comments.vue, update the filteredComments computed property
 const filteredComments = computed(() => {
-  console.log("INTO COMMENT optionId:", props.optionId)
-  console.log("INTO COMMENT inquiryOnly:", props.inquiryOnly)
-  console.log("Comments from store:", commentsStore.comments?.length)
+  console.log("Comments updated - total comments:", commentsStore.comments?.length)
+  console.log("Filtering for optionId:", props.optionId)
+  console.log("Filtering for inquiryOnly:", props.inquiryOnly)
   
-  // Force recomputation when updateTrigger changes
-  updateTrigger.value // This line ensures reactivity
+  // Force recomputation by accessing the store directly
+  const allComments = commentsStore.comments || []
   
   // Reset positions for new filter
   userPositions.clear()
@@ -116,13 +117,17 @@ const filteredComments = computed(() => {
   // Get base comments
   let baseComments = []
   if (props.optionId !== undefined) {
-    baseComments = (commentsStore.comments || [])
+    baseComments = allComments
       .filter(comment => comment && comment.optionId === props.optionId)
       .sort((a, b) => b.timestamp - a.timestamp)
+    
+    console.log(`Found ${baseComments.length} comments for option ${props.optionId}`)
   } else if (props.inquiryOnly) {
-    baseComments = (commentsStore.comments || [])
+    baseComments = allComments
       .filter(comment => comment && comment.optionId === 0)
       .sort((a, b) => b.timestamp - a.timestamp)
+    
+    console.log(`Found ${baseComments.length} inquiry comments`)
   }
 
   // Group by user + time
@@ -134,6 +139,17 @@ const filteredComments = computed(() => {
     avatarPosition: getAvatarPosition(group.userId)
   }))
 })
+
+// Improve the watch to detect all changes
+watch(() => commentsStore.comments, (newComments, oldComments) => {
+  console.log('Comments changed:', {
+    oldCount: oldComments?.length,
+    newCount: newComments?.length,
+    optionId: props.optionId
+  })
+  updateTrigger.value++
+}, { deep: true, immediate: true })
+
 
 // Watch for changes in commentsStore.comments
 watch(() => commentsStore.comments, () => {

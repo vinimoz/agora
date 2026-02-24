@@ -368,6 +368,43 @@ actions: {
         this.$reset()
     },
 
+     setOptions(options: any[]) {
+      this.options = options.map(option => ({
+        ...option,
+        // Ensure status exists with comment count
+        status: option.status || { countComments: 0 }
+      }))
+    },
+
+    addOption(option: any) {
+      this.options.push({
+        ...option,
+        status: option.status || { countComments: 0 }
+      })
+    },
+
+    updateOptionCommentCount(optionId: number, count: number) {
+      const option = this.options.find(opt => opt.id === optionId)
+      if (option && option.status) {
+        option.status.countComments = count
+      }
+    },
+
+    // Bulk update all option comment counts
+    updateAllCommentCounts(inquiryId: number, comments: Comment[]) {
+      this.options.forEach(option => {
+        const count = comments.filter(
+          comment => comment.inquiryId === inquiryId &&
+                     comment.optionId === option.id &&
+                     comment.deleted === 0
+        ).length
+
+        if (option.status) {
+          option.status.countComments = count
+        }
+      })
+    },
+
     async setOptionStatus(optionStatus: string): Promise<void> {
         try {
             await OptionsAPI.updateOptionStatus(this.id, optionStatus)
