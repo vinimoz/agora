@@ -164,6 +164,7 @@ OC.L10N.register(
     "Not defined" : "Indefinit",
     "Just now" : "Ara mateix",
     "Today" : "Avui",
+    "Yesterday" : "Ahir",
     "Yes" : "Sí",
     "No" : "No",
     "Supported" : "Compatible",
