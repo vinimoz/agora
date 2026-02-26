@@ -136,6 +136,7 @@ OC.L10N.register(
     "Not defined" : "Не задана",
     "Just now" : "Только что",
     "Today" : "Сегодня",
+    "Yesterday" : "Вчера",
     "No description available" : "Описание отсутствует",
     "Yes" : "Да",
     "No" : "Нет",
