@@ -248,6 +248,49 @@ class Option extends EntityWithUser implements JsonSerializable
         return $prefixedMiscFields;
     }
 
+    public function getIsAllowed(string $permission): bool
+    {
+        return match ($permission) {
+            // View permission - all logged-in users
+            self::PERMISSION_OPTION_VIEW => $this->getAllowAccessOption(),
+
+            // Results view - all logged-in users
+            self::PERMISSION_OPTION_RESULTS_VIEW => $this->getAllowShowResults(),
+
+            // Edit-related permissions - only owner and admin
+            self::PERMISSION_OPTION_EDIT => $this->getAllowEditOption(),
+            self::PERMISSION_OPTION_DELETE => $this->getAllowEditOption(),
+            self::PERMISSION_OPTION_ARCHIVE => $this->getAllowEditOption(),
+            self::PERMISSION_OPTION_CHANGE_OWNER => $this->getAllowEditOption(),
+            self::PERMISSION_OPTIONS_REORDER => $this->getAllowEditOption(),
+            self::PERMISSION_OPTION_CONFIRM => $this->getAllowEditOption() && $this->getExpired(),
+
+            // Comment and support - all logged-in users
+            self::PERMISSION_COMMENT_ADD => $this->getAllowAccessOption() && $this->getAllowComment(),
+            self::PERMISSION_SUPPORT_ADD => $this->getAllowAccessOption() && $this->getSupportFeature() !== 'none',
+
+            // Delete comments/supports - only owner and admin
+            self::PERMISSION_COMMENT_DELETE => $this->getAllowEditOption(),
+            self::PERMISSION_SUPPORT_DELETE => $this->getAllowEditOption(),
+            self::PERMISSION_SUPPORT_FOREIGN_CHANGE => $this->getAllowEditOption(),
+
+            // Deanonymize - only owner and admin
+            self::PERMISSION_DEANONYMIZE => $this->getAllowEditOption(),
+
+            // Takeover - only admin
+            self::PERMISSION_OPTION_TAKEOVER => $this->userSession->getCurrentUser()->getIsAdmin(),
+
+            // Share permissions - based on system settings
+            self::PERMISSION_SHARE_ADD => $this->systemSettings->getShareCreateAllowed(),
+            self::PERMISSION_SHARE_ADD_EXTERNAL => $this->systemSettings->getExternalShareCreationAllowed(),
+
+            // Override - always true
+            self::PERMISSION_OVERRIDE => true,
+
+            default => false,
+        };
+    }
+    
     public function getStatusArray(): array
     {
         return [
@@ -263,7 +306,80 @@ class Option extends EntityWithUser implements JsonSerializable
             'countNegativeSupports' => $this->getIsAllowed(self::PERMISSION_OPTION_RESULTS_VIEW) ? $this->getCountNegativeSupports() : 0,
             'countNeutralSupports' => $this->getIsAllowed(self::PERMISSION_OPTION_RESULTS_VIEW) ? $this->getCountNeutralSupports() : 0,
         ];
+} 
+
+    /**
+     * Check if user can view the option
+     * All logged-in Nextcloud users can view by default
+     */
+    private function getAllowAccessOption(): bool
+    {
+        // If user is logged in to Nextcloud, they can view
+        if ($this->userSession->getIsLoggedIn()) {
+            return true;
+        }
+
+        // Check for public share access
+        $share = $this->userSession->getShare();
+        if ($share->getId() && $share->getOptionId() === $this->getId()) {
+            return true;
+        }
+
+        return false;
     }
+
+    /**
+     * Check if user can see results (counts)
+     * All logged-in Nextcloud users can see results by default
+     */
+    private function getAllowShowResults(): bool
+    {
+        // Logged-in Nextcloud users can always see results
+        if ($this->userSession->getIsLoggedIn()) {
+            return true;
+        }
+
+        // Check for public share access
+        $share = $this->userSession->getShare();
+        if ($share->getId() && $share->getOptionId() === $this->getId()) {
+            // For public shares, respect the showResults setting
+            if ($this->getShowResults() === self::SHOW_RESULTS_ALWAYS) {
+                return true;
+            }
+
+            if ($this->getShowResults() === self::SHOW_RESULTS_CLOSED && $this->getExpired()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if user can edit the option
+     * Only owner and admins can edit
+     */
+    private function getAllowEditOption(): bool
+    {
+        // Console access (CLI) always allowed
+        if (defined('OC_CONSOLE')) {
+            return true;
+        }
+
+        // Check if user is the owner
+        if ($this->getIsOptionOwner()) {
+            return true;
+        }
+
+        // Check if user is a Nextcloud admin
+        if ($this->userSession->getCurrentUser()->getIsAdmin()) {
+            return true;
+        }
+
+        return false;
+    }
+
+
 
     public function getCurrentUserStatus(): array
     {
@@ -439,14 +555,14 @@ class Option extends EntityWithUser implements JsonSerializable
         $this->setAllowComment($optionConfiguration['allowComment'] ?? $this->getAllowComment());
         $this->setSupportFeature($optionConfiguration['supportFeature'] ?? $this->getSupportFeature());
         $this->setShowResults($optionConfiguration['showResults'] ?? $this->getShowResults());
-        
+
         // Set misc fields from configuration
         if (isset($optionConfiguration['miscFields']) && is_array($optionConfiguration['miscFields'])) {
             foreach ($optionConfiguration['miscFields'] as $key => $value) {
                 $this->setMiscField($key, $value);
             }
         }
-        
+
         return $this;
     }
 
@@ -456,34 +572,6 @@ class Option extends EntityWithUser implements JsonSerializable
             throw new ForbiddenException('denied permission ' . $permission);
         }
         return true;
-    }
-
-    public function getIsAllowed(string $permission): bool
-    {
-        return match ($permission) {
-            self::PERMISSION_COMMENT_ADD => $this->getAllowCommenting(),
-            self::PERMISSION_SUPPORT_ADD => $this->getSupportFeaturing(),
-            self::PERMISSION_COMMENT_DELETE => $this->getAllowDeleteComment(),
-            self::PERMISSION_SUPPORT_DELETE => $this->getAllowDeleteSupport(),
-            self::PERMISSION_OPTION_ADD => $this->getAllowAddOption(),
-            self::PERMISSION_OPTION_CONFIRM => $this->getAllowConfirmOption(),
-            self::PERMISSION_OPTION_DELETE => $this->getAllowDeleteOption(),
-            self::PERMISSION_OPTIONS_REORDER => $this->getAllowReorderOptions(),
-            self::PERMISSION_OVERRIDE => true,
-            self::PERMISSION_OPTION_VIEW => $this->getAllowAccessOption(),
-            self::PERMISSION_OPTION_EDIT => $this->getAllowEditOption(),
-            self::PERMISSION_OPTION_ARCHIVE => $this->getAllowEditOption(),
-            self::PERMISSION_OPTION_TAKEOVER => $this->getAllowTakeOver(),
-            self::PERMISSION_OPTION_CHANGE_OWNER => $this->getAllowChangeOwner(),
-            self::PERMISSION_OPTION_SUBSCRIBE => $this->getAllowSubscribeToOption(),
-            self::PERMISSION_OPTION_RESULTS_VIEW => $this->getAllowShowResults(),
-            self::PERMISSION_SUPPORT_EDIT => $this->getSupportFeaturing(),
-            self::PERMISSION_SUPPORT_FOREIGN_CHANGE => $this->getAllowChangeForeignSupports(),
-            self::PERMISSION_SHARE_ADD => $this->systemSettings->getShareCreateAllowed(),
-            self::PERMISSION_SHARE_ADD_EXTERNAL => $this->systemSettings->getExternalShareCreationAllowed(),
-            self::PERMISSION_DEANONYMIZE => $this->getAllowDeanonymize(),
-            default => false,
-        };
     }
 
     private function getIsInvolved(): bool
@@ -553,28 +641,6 @@ class Option extends EntityWithUser implements JsonSerializable
         return $this->getUserRole() === self::ROLE_ADMIN;
     }
 
-    private function getAllowEditOption(): bool
-    {
-        if (defined('OC_CONSOLE')) {
-            return true;
-        }
-
-        if ($this->getIsOptionOwner()) {
-            return true;
-        }
-
-        if ($this->getIsDelegatedAdmin()) {
-            return true;
-        }
-
-        // For debate options, check if user can edit the parent inquiry
-        if ($this->getTargetId() > 0) {
-            // We would need to check inquiry permissions here
-            // This would require loading the inquiry or having joined data
-        }
-
-        return false;
-    }
 
     private function getAllowTakeOver(): bool
     {
@@ -587,34 +653,6 @@ class Option extends EntityWithUser implements JsonSerializable
             || $this->userSession->getCurrentUser()->getIsAdmin();
     }
 
-    private function getAllowAccessOption(): bool
-    {
-        if ($this->getAllowEditOption()) {
-            return true;
-        }
-
-        if ($this->getDeleted()) {
-            return false;
-        }
-
-        if ($this->getArchived()) {
-            return false;
-        }
-
-        if ($this->getIsOpenOption()) {
-            return true;
-        }
-
-        // Check if parent inquiry allows access
-        if ($this->getTargetId() > 0 && $this->inquiryAccess) {
-            if ($this->inquiryAccess === Inquiry::ACCESS_OPEN || $this->inquiryAccess === Inquiry::ACCESS_MODERATE) {
-                return $this->userSession->getIsLoggedIn();
-            }
-        }
-
-        $share = $this->userSession->getShare();
-        return (bool)($share->getId() && $share->getOptionId() === $this->getId());
-    }
 
     private function getAllowDeleteOption(): bool
     {
@@ -734,23 +772,6 @@ class Option extends EntityWithUser implements JsonSerializable
         }
 
         return $this->userSession->getCurrentUser()->getHasEmail();
-    }
-
-    private function getAllowShowResults(): bool
-    {
-        if ($this->getAllowEditOption()) {
-            return true;
-        }
-
-        if (!$this->getAllowAccessOption()) {
-            return false;
-        }
-
-        if ($this->getShowResults() === self::SHOW_RESULTS_CLOSED && $this->getExpired()) {
-            return true;
-        }
-
-        return $this->getShowResults() === self::SHOW_RESULTS_ALWAYS;
     }
 
 

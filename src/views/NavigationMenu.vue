@@ -273,7 +273,7 @@ watch(
 
 <template>
   <NcAppNavigation class="agora-navigation" aria-label="Inquiry Navigation">
-    <template #list>
+    <template #list>/
       <!-- Recent Inquiries Section -->
       <NcAppNavigationList>
         <h3 class="navigation-caption">

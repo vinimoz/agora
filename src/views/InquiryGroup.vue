@@ -922,7 +922,8 @@ watch(() => route.params.slug, async () => {
                             h3 {
                                 font-size: 24px;
                                 font-weight: 600;
-                                color: #2c3e50;
+                                /* color: #2c3e50; */
+                                color: white;
                                 margin: 0;
                             }
 
@@ -1213,7 +1214,8 @@ watch(() => route.params.slug, async () => {
 
                             h3 {
                                 font-size: 20px;
-                                color: #2c3e50;
+                                /*color: #2c3e50;*/
+                                color: white;
                                 margin: 0 0 10px 0;
                             }
 

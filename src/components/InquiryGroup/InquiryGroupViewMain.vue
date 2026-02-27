@@ -339,7 +339,6 @@ function closePopup() {
 .main-item {
   border: 2px solid var(--inquiry-gray-200);
   border-radius: var(--inquiry-border-radius-lg);
-  /* background: var(--inquiry-card-bg); */
   box-shadow: var(--inquiry-shadow-sm);
   transition: var(--inquiry-transition-slow);
   cursor: pointer;
@@ -448,7 +447,7 @@ function closePopup() {
 }
 
 .type-group {
-  background: var(--color-main-background);
+ /* background: var(--color-main-background); */
 }
 
 .type-header {
@@ -468,8 +467,7 @@ function closePopup() {
 /* Inquiry Grids */
 .inquiry-grid {
   &.main-grid {
-  border-radius: 8px;
-  border: 1px solid var(--color-border);
+      background: transparent;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
     gap: 1.5rem;
@@ -509,7 +507,7 @@ function closePopup() {
   }
   
   .sidebar-type-group {
-  background: var(--color-main-background);
+  /*background: var(--color-main-background); */
     
     .sidebar-type-header {
       margin-bottom: 0.75rem;
@@ -552,6 +550,19 @@ function closePopup() {
 :deep(.popup-inquiry-content) {
   padding: 1.5rem;
 }
+
+.inquiry-grid.main-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, max-content));
+  gap: 1.5rem;
+  justify-content: start; /* Align items to start instead of stretching */
+  
+  .full-width {
+    grid-column: 1 / -1;
+    width: 100%; /* Full width items still stretch */
+  }
+}
+
 
 /* Responsive */
 @media (max-width: 768px) {

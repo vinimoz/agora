@@ -257,6 +257,7 @@ class Application extends App implements IBootstrap
                 return new OptionMapper(
                     $c->get(IDBConnection::class),
                     $c->get(UserSession::class),
+                    $c->get(LoggerInterface::class),
                 );
             }
         );

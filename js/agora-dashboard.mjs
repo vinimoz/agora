@@ -13,7 +13,7 @@
 const appName = "agora";
 const appVersion = "1.7.0-rc1";
 import { d as defineComponent, q as translate, b as computed, s as onMounted, C as purify, D as generateUrl, _ as _export_sfc, c as createElementBlock, o as openBlock, j as createVNode, g as withCtx, k as createBaseVNode, f as createBlock, h as resolveDynamicComponent, t as toDisplayString, y as createApp, z as pinia } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_ef057a6f_lang-CTOMjiel.chunk.mjs";
-import { a as useSessionStore, b as useInquiriesStore, L as Logger, s as showError, g as getInquiryTypeData, I as InquiryGeneralIcons, N as NcDashboardWidget } from "./NcDashboardWidget-DCBQdRFz-BHvijW5a.chunk.mjs";
+import { a as useSessionStore, b as useInquiriesStore, N as NavigationIcons, S as StatusIcons, I as InquiryGeneralIcons, L as Logger, s as showError, g as getInquiryTypeData, d as NcDashboardWidget } from "./NcDashboardWidget-DCBQdRFz-SPsINZtL.chunk.mjs";
 import { A as AgoraAppIcon } from "./AgoraAppIcon-9cLKAEly.chunk.mjs";
 
 const _sfc_main = /* @__PURE__ */ defineComponent({
@@ -27,6 +27,11 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
     };
     const allInquiryTypes = computed(() => sessionStore.appSettings.inquiryTypeTab || []);
     const inquiriesStore = useInquiriesStore();
+    const iconResolver = {
+      ...InquiryGeneralIcons,
+      ...StatusIcons,
+      ...NavigationIcons
+    };
     function loadInquiries() {
       Logger.debug("Loading inquiries in dashboard widget");
       try {
@@ -45,7 +50,7 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
     onMounted(() => {
       loadInquiries();
     });
-    const __returned__ = { sessionStore, dashboardWidgetProperties, allInquiryTypes, inquiriesStore, loadInquiries, getInquiryIcon, get generateUrl() {
+    const __returned__ = { sessionStore, dashboardWidgetProperties, allInquiryTypes, inquiriesStore, iconResolver, loadInquiries, getInquiryIcon, get generateUrl() {
       return generateUrl;
     }, get t() {
       return translate;
@@ -83,7 +88,7 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
         }, [
           createBaseVNode("div", _hoisted_2, [
             createBaseVNode("div", _hoisted_3, [
-              (openBlock(), createBlock(resolveDynamicComponent($setup.getInquiryIcon(_ctx.inquiry)), { class: "nav-icon" }))
+              (openBlock(), createBlock(resolveDynamicComponent($setup.getInquiryIcon(item)), { class: "nav-icon" }))
             ]),
             createBaseVNode("div", _hoisted_4, [
               createBaseVNode(

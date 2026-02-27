@@ -9,7 +9,7 @@ import { generateUrl } from '@nextcloud/router'
 import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import DOMPurify from 'dompurify'
-import { InquiryGeneralIcons } from '../utils/icons.ts'
+import { InquiryGeneralIcons, StatusIcons, NavigationIcons } from '../utils/icons.ts'
 import NcDashboardWidget from '@nextcloud/vue/components/NcDashboardWidget'
 import { useSessionStore } from '../stores/session.ts'
 import { AgoraAppIcon } from '../components/AppIcons/index.ts'
@@ -32,12 +32,18 @@ const allInquiryTypes = computed((): InquiryType[] => sessionStore.appSettings.i
 
 const inquiriesStore = useInquiriesStore()
 
+// Create a combined icon resolver
+const iconResolver = {
+  ...InquiryGeneralIcons,
+  ...StatusIcons,
+  ...NavigationIcons
+}
+
 /**
  * Load the inquiries
  */
 function loadInquiries(): void {
   Logger.debug('Loading inquiries in dashboard widget')
-
   try {
     inquiriesStore.load()
   } catch {
@@ -51,9 +57,9 @@ function getInquiryIcon(inquiry) {
     const typeData = getInquiryTypeData(inquiry.type, allInquiryTypes.value)
     return typeData?.icon || InquiryGeneralIcons.Flash
   }
-
   return InquiryGeneralIcons.Flash
 }
+
 
 onMounted(() => {
   loadInquiries()
@@ -72,29 +78,33 @@ onMounted(() => {
         <AgoraAppIcon />
       </template>
 
-      <template #default="{ item }">
-        <a :href="generateUrl(`/apps/agora/inquiry/${item.id}`)">
-          <div class="inquiry-item__item">
-            <div class="type-icon">
-              <component :is="getInquiryIcon(inquiry)" class="nav-icon" />
-            </div>
+    <template #default="{ item }">
+  <a :href="generateUrl(`/apps/agora/inquiry/${item.id}`)">
+    <div class="inquiry-item__item">
+      <div class="type-icon">
+        <component 
+          :is="getInquiryIcon(item)" 
+          class="nav-icon" 
+        />
+      </div>
 
-            <div class="item__title">
-              <div class="item__title__title">
-                {{ item.title }}
-              </div>
+      <div class="item__title">
+        <div class="item__title__title">
+          {{ item.title }}
+        </div>
 
-              <div class="item__title__description">
-                {{
-                  DOMPurify.sanitize(
-                    item.description ? item.description : t('agora', 'No description provided')
-                  )
-                }}
-              </div>
-            </div>
-          </div>
-        </a>
-      </template>
+        <div class="item__title__description">
+          {{
+            DOMPurify.sanitize(
+              item.description ? item.description : t('agora', 'No description provided')
+            )
+          }}
+        </div>
+      </div>
+    </div>
+  </a>
+</template>
+
     </NcDashboardWidget>
   </div>
 </template>

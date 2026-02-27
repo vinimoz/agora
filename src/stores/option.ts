@@ -99,7 +99,7 @@ export type Option = {
     textSafe: string
     sortOrder: number
     configuration: OptionConfiguration
-    miscFields: Record<string, any>
+    miscFields: array
     ownedGroup: string
     owner: User
     currentUserStatus: CurrentUserOptionStatus
@@ -147,7 +147,7 @@ export const useOptionStore = defineStore('option', {
             supportFeature: 'none',
             family: 'deliberative',
         },
-        miscFields: {},
+        miscFields:[],
         ownedGroup: '',
         owner: createDefault<User>(),
         currentUserStatus: {

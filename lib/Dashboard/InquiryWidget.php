@@ -41,7 +41,7 @@ class InquiryWidget implements IWidget
 
     public function getIconClass(): string
     {
-        return 'icon-agora-dark';
+        return $this->urlGenerator->imagePath(AppConstants::APP_ID, 'agora-dark.svg');
     }
 
     public function getUrl(): ?string

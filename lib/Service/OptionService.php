@@ -97,13 +97,14 @@ class OptionService
             $option->setFamily($family);
         }
 
-        return array_values(
+        /*return array_values(
             array_filter(
                 $options, function (Option $option): bool {
                     return $option->getIsAllowed(Option::PERMISSION_OPTION_VIEW);
                 }
             )
-        );
+        ); */
+        return $options;
     }
 
     /**

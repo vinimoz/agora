@@ -46,6 +46,19 @@ import HelpCircle from '@iconify-icons/mdi/help-circle'
 import Wrench from '@iconify-icons/mdi/wrench'
 import ThumbDownOutline from '@iconify-icons/mdi/thumb-down-outline'
 
+
+import Reply from '@iconify-icons/mdi/reply'          
+import Grid from '@iconify-icons/mdi/grid'               
+import List from '@iconify-icons/mdi/format-list-bulleted' 
+import Collapse from '@iconify-icons/mdi/chevron-up'    
+import Columns from '@iconify-icons/mdi/view-columns' 
+import Rows from '@iconify-icons/mdi/view-list'
+import Timeline from '@iconify-icons/mdi/timeline'
+import ArrowUp from '@iconify-icons/mdi/arrow-up'
+import ArrowDown from '@iconify-icons/mdi/arrow-down' 
+import Circle from '@iconify-icons/mdi/circle'    
+import Information from '@iconify-icons/mdi/information'
+import CloseCircle from '@iconify-icons/mdi/close-circle'
 import Update from '@iconify-icons/mdi/update'
 import Calendar from '@iconify-icons/mdi/calendar'
 import PublishOff from '@iconify-icons/mdi/publish-off'
@@ -543,6 +556,21 @@ export const InquiryOptionIcons = {
   // Navigation
   ChevronDown: makeIconComponent(ChevronDown, '#9E9E9E'),
   ChevronRight: makeIconComponent(ChevronRight, '#9E9E9E'),
+
+   MessageReplyText: makeIconComponent(Reply, '#2196F3'),
+  Grid: makeIconComponent(ViewListOutline, '#607D8B'), 
+  List: makeIconComponent(FormatListBulleted, '#607D8B'),
+  Collapse: makeIconComponent(ChevronUp, '#607D8B'), 
+  Scale: makeIconComponent(Scale, '#607D8B'),
+  Columns: makeIconComponent(ViewListOutline, '#607D8B'), 
+  Rows: makeIconComponent(FormatListBulleted, '#607D8B'), 
+  Timeline: makeIconComponent(CalendarMultiselect, '#607D8B'), 
+  ArrowUp: makeIconComponent(ArrowUp, '#607D8B'),
+  ArrowDown: makeIconComponent(ArrowDown, '#607D8B'),
+  Circle: makeIconComponent(CircleIcon, '#607D8B'),
+  Information: makeIconComponent(InformationVariant, '#607D8B'),
+  CloseCircle: makeIconComponent(Close, '#F44336'), 
+  ClockOutline: makeIconComponent(ClockOutline, '#FFA000'),
 }
 
 export const getStatusIcon = (iconName: string) => StatusIcons[iconName] || StatusIcons.Default

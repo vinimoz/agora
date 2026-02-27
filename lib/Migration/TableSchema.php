@@ -160,12 +160,43 @@ abstract class TableSchema
             'columns' => ['user_id', 'deleted']
         ],
 
+        'support_option_value' => [
+            'table' => Support::TABLE,
+            'name' => 'agora_support_option_value',
+            'unique' => false,
+            'columns' => ['option_id', 'value']
+        ],
+        'comment_option_deleted' => [
+            'table' => Comment::TABLE,
+            'name' => 'agora_comment_option_deleted',
+            'unique' => false,
+            'columns' => ['option_id', 'deleted']
+        ],
+        'support_option_value' => [
+            'table' => Support::TABLE,
+            'name' => 'agora_support_option_value',
+            'unique' => false,
+            'columns' => ['option_id', 'value']
+        ],
+        'support_option_value' => [
+            'table' => Support::TABLE,
+            'name' => 'agora_support_option_value',
+            'unique' => false,
+            'columns' => ['option_id', 'value']
+        ],
+        'support_option_user' => [
+            'table' => Support::TABLE,
+            'name' => 'agora_support_option_user',
+            'unique' => false,
+            'columns' => ['option_id', 'user_id']
+        ],
+
         // INQUIRY GROUP
         'inq_group_type_parent' => [
             'table' => InquiryGroup::TABLE,
             'name' => 'inq_group_type_parent',
             'unique' => false,
-            'columns' => ['type', 'parent_id'] // Changed from 'group_type' to 'type'
+            'columns' => ['type', 'parent_id'] 
         ],
         'inq_group_owner_deleted' => [
             'table' => InquiryGroup::TABLE,
@@ -299,7 +330,14 @@ abstract class TableSchema
             'UNIQ_watch' => ['columns' => ['inquiry_id', 'table', 'session_id']],
         ],
         InquiryGroup::RELATION_TABLE => [
-            'UNIQ_inquiry_group_relation' => ['columns' => ['inquiry_id', 'group_id']],
+            'UNIQ_inquiry_group_relation' => ['columns' => ['inquiry_id', 'CREATE INDEX idx_comment_option_deleted
+            ON oc_agora_comments (option_id, deleted);
+
+    CREATE INDEX idx_support_option_value
+        ON oc_agora_supports (option_id, value);
+
+    CREATE INDEX idx_support_option_user
+        ON oc_agora_supports (option_id, user_id);group_id']],
         ],
         InquiryMisc::TABLE => [
             'UNIQ_inquiry_misc' => ['columns' => ['inquiry_id', 'key']],
@@ -503,7 +541,7 @@ abstract class TableSchema
             'sort_order' => ['type' => Types::BIGINT, 'options' => ['notnull' => true, 'default' => 0, 'length' => 20]],
             'created' => ['type' => Types::BIGINT, 'options' => ['notnull' => true, 'default' => 0, 'length' => 20]],
         ],
-        
+
         InquiryFamily::TABLE => [
             'id' => ['type' => Types::BIGINT, 'options' => ['autoincrement' => true, 'notnull' => true, 'length' => 20]],
             'family_type' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'length' => 50]],

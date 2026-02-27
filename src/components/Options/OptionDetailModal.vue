@@ -427,6 +427,8 @@ const subMenu = ref<string | null>(null)
 const commentsSection = ref<HTMLElement | null>(null)
 const activeTooltip = ref<string | null>(null)
 const activeFilter = ref<string | null>(null)
+const commentUpdateTrigger = ref(0)
+
 
 // Toggle submenu
 const toggleSubMenu = (menu: string | null = null) => {
@@ -752,54 +754,6 @@ const closeChildModal = () => {
     selectedChildId.value = null
 }
 
-const handleCommentAdded = () => {
-    if (optionStore) {
-        const currentCount = optionStore.status.countComments || 0
-        optionStore.status = {
-            ...optionStore.status,
-            countComments: currentCount + 1
-        }
-
-        // Update in optionsStore
-        const index = optionsStore.options.findIndex(opt => opt.id === optionStore?.id)
-        if (index >= 0) {
-            optionsStore.options = [
-                ...optionsStore.options.slice(0, index),
-                { ...optionStore },
-                ...optionsStore.options.slice(index + 1)
-            ]
-        }
-
-        emit('updated', { ...optionStore })
-        showCommentForm.value = false
-
-        if (commentsSection.value) {
-            commentsSection.value.scrollIntoView({ behavior: 'smooth' })
-        }
-    }
-}
-
-const handleCommentCountUpdated = (newCount: number) => {
-    if (optionStore) {
-        // Force reactivity
-        optionStore.status = {
-            ...optionStore.status,
-            countComments: newCount
-        }
-
-        const index = optionsStore.options.findIndex(opt => opt.id === optionStore?.id)
-        if (index >= 0) {
-            // Force reactivity
-            optionsStore.options = [
-                ...optionsStore.options.slice(0, index),
-                { ...optionStore },
-                ...optionsStore.options.slice(index + 1)
-            ]
-        }
-
-        emit('updated', { ...optionStore })
-    }
-}
 
 const handleChildUpdated = (updatedChild: Option) => {
     const index = optionsStore.options.findIndex(opt => opt.id === updatedChild.id)
@@ -820,16 +774,90 @@ const handleChildDeleted = (deletedChildId: number) => {
 onMounted(() => {
     loadOption()
 })
+watch(() => props.optionId, (newId, oldId) => {
+  console.log('Option ID changed:', { oldId, newId })
+  if (newId) {
+    loadOption()
+    // Reset trigger when option changes
+    commentUpdateTrigger.value = 0
+  }
+}, { immediate: true })
 
-// Watch for optionStore changes to update comments
-watch(() => optionStore.status?.countComments, (newCount, oldCount) => {
-    console.log('Comment count changed:', { newCount, oldCount });
+// Watch for comments changes - THIS IS CRITICAL for real-time updates
+watch(() => commentsStore.comments, (newComments) => {
+  console.log('Comments changed in modal, updating counts...')
+  
+  if (optionStore.id) {
+    // Update the option's comment count
+    const count = newComments.filter(
+      comment => comment.inquiryId === props.inquiryId && 
+                 comment.optionId === optionStore.id && 
+                 comment.deleted === 0
+    ).length
+    
+    if (optionStore.status) {
+      optionStore.status.countComments = count
+    }
+    
+    // Force re-render of comments section
+    commentUpdateTrigger.value++
+  }
 }, { deep: true })
 
-// Watch for optionId changes
-watch(() => props.optionId, () => {
-    loadOption()
+const optionComments = computed(() => {
+  // This ensures recomputation when trigger changes
+  commentUpdateTrigger.value
+  
+  if (!optionStore.id) return []
+  
+  return commentsStore.comments.filter(
+    comment => comment.inquiryId === props.inquiryId && 
+               comment.optionId === optionStore.id &&
+               comment.deleted === 0
+  )
 })
+
+
+// Update handleCommentAdded - simpler and cleaner
+const handleCommentAdded = () => {
+  console.log('Comment added, triggering update...')
+
+  // Force re-render by incrementing trigger
+  commentUpdateTrigger.value++
+
+  // Option count is already updated by the commentsStore.updateStatusCounts
+  // But we can force it here too for immediate feedback
+  if (optionStore.id) {
+    const count = commentsStore.comments.filter(
+      comment => comment.inquiryId === props.inquiryId &&
+                 comment.optionId === optionStore.id &&
+                 comment.deleted === 0
+    ).length
+
+    if (optionStore.status) {
+      optionStore.status.countComments = count
+    }
+  }
+
+  showCommentForm.value = false
+
+  if (commentsSection.value) {
+    commentsSection.value.scrollIntoView({ behavior: 'smooth' })
+  }
+}
+
+// Update handleCommentCountUpdated
+const handleCommentCountUpdated = (newCount: number) => {
+  console.log('Comment count updated:', newCount)
+
+  if (optionStore) {
+    optionStore.status.countComments = newCount
+    commentUpdateTrigger.value++
+
+    emit('updated', { ...optionStore })
+  }
+}
+
 </script>
 <style scoped lang="scss">
 .option-actions-menu {

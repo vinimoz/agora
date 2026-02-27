@@ -348,6 +348,24 @@ export const useOptionsStore = defineStore('options', {
         reset(): void {
             this.$reset()
         },
+        
+        forceUpdateCommentCount() {
+    const commentsStore = useCommentsStore()
+    
+    if (this.id && this.targetId) {
+      const count = commentsStore.comments.filter(
+        comment => comment.inquiryId === this.targetId && 
+                   comment.optionId === this.id && 
+                   comment.deleted === 0
+      ).length
+      
+      console.log(`Force updating option ${this.id} comment count to ${count}`)
+      
+      if (this.status) {
+        this.status.countComments = count
+      }
+    }
+  },
 
         // Initialize option types from session store
         initializeOptionTypes(): void {
