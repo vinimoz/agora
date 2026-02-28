@@ -49,6 +49,8 @@ use OCP\IURLGenerator;
  * @method    void setArchived(int $value)
  * @method    string getStatus()
  * @method    void setStatus(string $value)
+ * @method    string getOptionStatus()
+ * @method    void setOptionStatus(string $value)
  * @method    int getAllowComment()
  * @method    void setAllowComment(int $value)
  * @method    string getSupportFeature()
@@ -140,7 +142,7 @@ class Option extends EntityWithUser implements JsonSerializable
     protected string $showResults = 'always';
     protected int $deleted = 0;
     protected int $archived = 0;
-    protected string $status = self::DEFAULT_STATUS_DRAFT;
+    protected string $optionStatus = self::DEFAULT_STATUS_DRAFT;
     protected ?int $allowComment = null;
     protected string $supportFeature = '';
     protected string $family = 'debate';

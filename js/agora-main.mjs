@@ -13753,11 +13753,11 @@ tr.file-picker__row td.row-name[data-v-1f96131b] {
 const appName = "agora";
 const appVersion = "1.7.0-rc1";
 import { a2 as getCurrentInstance, Y as inject, b3 as onUnmounted, bi as onDeactivated, bj as onActivated, w as watch, b4 as shallowRef, d as defineComponent, F as unref, bk as shallowReactive, X as reactive, b as computed, $ as h$1, bl as provide, aV as ref, a3 as watchEffect, aX as nextTick$1, A as defineStore, q as translate, aN as emit, bm as Settings, a as _export_sfc, c as createElementBlock, o as openBlock, t as toDisplayString, E as normalizeClass, bn as getCanonicalLocale, bf as NcActionButton, _ as _export_sfc$1, f as createBlock, g as withCtx, l as createCommentVNode, h as resolveDynamicComponent, k as createBaseVNode, bo as NC_ACTIONS_IS_SEMANTIC_MENU, S as createElementId, bp as ActionGlobalMixin, G as NcIconSvgWrapper, ai as resolveComponent, a5 as withDirectives, j as createVNode, bq as vModelRadio, br as mdiRadioboxMarked, bs as mdiRadioboxBlank, u as useModel, bt as useSlots, P as logger, s as onMounted, aW as onBeforeUnmount, r as renderSlot, ag as useCssVars, bu as useIsDarkTheme, bv as mdiCreation, ac as createSlots, B as createTextVNode, a7 as NcButton, bw as useCssModule, bx as NC_FORM_BOX_CONTEXT_KEY, bg as NcActions, i as mergeProps, aO as withKeys, a6 as vShow, v as normalizeProps, x as guardReactiveProps, by as userStatus, N as NcAvatar, n as normalizeStyle, m as mergeModels, e as warn, T as Fragment$1, U as renderList, ak as NcLoadingIcon, bz as Teleport, ax as withModifiers, aP as NcEmptyContent, V as DateTime, bA as translatePlural, bB as TransitionGroup, D as generateUrl, aM as NcModal, bC as markRaw, bD as customRef, bE as global, bF as getAugmentedNamespace, bG as process$1, bc as commonjsGlobal, bH as Buffer, a$ as getDefaultExportFromCjs, bI as vModelSelect, be as getCurrentUser, ay as Transition, bd as toRaw, bJ as subscribe, bK as unsubscribe, aR as generateOcsUrl, aS as cancelableClient, C as purify, bL as axios, y as createApp, z as pinia } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_ef057a6f_lang-CTOMjiel.chunk.mjs";
-import { a as useSessionStore, j as useInquiryStore, s as showError, o as options, E as Event$1, L as Logger, k as getFamiliesWithOptionTypes, l as getFamilyColor, m as createInquiryContext$1, n as canTransfer, p as canDelete, q as canArchive, I as InquiryGeneralIcons, g as getInquiryTypeData, b as useInquiriesStore, r as useInquiryGroupsStore, N as NavigationIcons, t as showSuccess, v as getAvailableInquiryTypesForCreation, w as getInquiryTypeOptions, x as useInquiryGroupStore, y as getAllowedResponseGroupTypes, z as getAvailableInquiryGroupTypesForCreation, A as getInquiryGroupTypeData, B as accessFamilyMenu, C as getInquiryTypesForFamily, D as getInquiryItemData, F as canCreateInquiryGroupInGeneral, G as getInquiryTypesByFamily, H as useSupportsStore, J as canSupportOption, K as canSupport, S as StatusIcons, M as BadgeIcons, O as canComment, P as sortTitlesMapping, Q as lodashExports, R as appSettings, T as canRestore, U as getInquiryGroupTypesByFamily, V as getInquiryGroupTypesForFamily, W as canViewToggle, X as getAvailableResponseTypesWithPermissions, Y as getAvailableTransformTypesWithPermissions, Z as validators, _ as publicInquiry, $ as inquiries, a0 as commonjsRequire, a1 as useAttachmentsStore, a2 as getOptionTypeIconComponent, a3 as getOptionTypeLabel, a4 as InquiryOptionIcons, a5 as createOptionContext, a6 as canEditOption, a7 as canDeleteOption, a8 as getOptionTypeColor, a9 as usesTitle, aa as allowsComments, ab as hasSupportFeature, ac as getAllowedResponses, ad as useOptionStore, ae as findOptionType, af as getOptionTypeDescription, ag as getSupportFeatureLabel, ah as getOptionTypeFields, ai as createDefault, aj as useCommentsStore$1, ak as getAvailableResponseTypes, al as canChangeStatus, am as canCommentOption, an as getFamilyIconComponent, ao as getLayoutForFamily, ap as useSharesStore, aq as canEdit, ar as createInquiryGroupContext, e as useAppSettingsStore, as as inquiryLinks, at as ShareIcons, au as getEditPermissions, av as getAvailableFields, aw as getAvailableGroupFields, ax as canShare, ay as canUseResource } from "./NcDashboardWidget-DCBQdRFz-SPsINZtL.chunk.mjs";
-import { u as usePreferencesStore, S as StyleSettings, F as FeatureSettings } from "./StyleSettings-CCJksLi8.chunk.mjs";
-import { b as NcAppNavigationItem, u as useAppSettingsDialog, A as APP_SETTINGS_LEGACY_DESIGN_KEY, _ as _sfc_main$1V, c as NcAppNavigationList, d as NcAppNavigation, S as Spinner, Q as QRCode, I as InputDiv, e as NcAppContent, f as NcActionButtonGroup, g as NcDialog, h as find$1, r as registerCustomProtocol, t as tokenize, i as reset, j as NcRichContenteditable, O as Options, k as NcActionInput, P as PlusIcon, l as NcDateTimePickerNative, m as NcAppSidebar, a as NcAppSettingsDialog, n as NcContent } from "./index-DPs2F6gi.chunk.mjs";
+import { a as useSessionStore, i as useInquiryStore, s as showError, o as options, E as Event$1, L as Logger, j as getFamiliesWithOptionTypes, k as getFamilyColor, l as createInquiryContext$1, m as canTransfer, n as canDelete, p as canArchive, I as InquiryGeneralIcons, g as getInquiryTypeData, b as useInquiriesStore, q as useInquiryGroupsStore, r as NavigationIcons, t as showSuccess, v as getAvailableInquiryTypesForCreation, w as getInquiryTypeOptions, x as useInquiryGroupStore, y as getAllowedResponseGroupTypes, z as getAvailableInquiryGroupTypesForCreation, A as getInquiryGroupTypeData, B as accessFamilyMenu, C as getInquiryTypesForFamily, D as getInquiryItemData, F as canCreateInquiryGroupInGeneral, G as getInquiryTypesByFamily, H as useSupportsStore, J as canSupportOption, K as canSupport, S as StatusIcons, M as BadgeIcons, O as canComment, P as sortTitlesMapping, Q as lodashExports, R as appSettings, T as canRestore, U as getInquiryGroupTypesByFamily, V as getInquiryGroupTypesForFamily, W as canViewToggle, X as getAvailableResponseTypesWithPermissions, Y as getAvailableTransformTypesWithPermissions, Z as validators, _ as publicInquiry, $ as inquiries, a0 as commonjsRequire, a1 as useAttachmentsStore, a2 as getOptionTypeIconComponent, a3 as getOptionTypeLabel, a4 as InquiryOptionIcons, a5 as createOptionContext, a6 as canEditOption, a7 as canDeleteOption, a8 as getOptionTypeColor, a9 as usesTitle, aa as allowsComments, ab as hasSupportFeature, ac as getAllowedResponses, ad as useOptionStore, ae as findOptionType, af as getOptionTypeDescription, ag as getSupportFeatureLabel, ah as getOptionTypeFields, ai as createDefault, aj as useCommentsStore$1, ak as getAvailableResponseTypes, al as canChangeStatus, am as canCommentOption, an as getFamilyIconComponent, ao as getLayoutForFamily, ap as useSharesStore, aq as canEdit, ar as createInquiryGroupContext, d as useAppSettingsStore, as as inquiryLinks, at as ShareIcons, au as getEditPermissions, av as getAvailableFields, aw as getAvailableGroupFields, ax as canShare, ay as canUseResource } from "./NcDashboardWidget-DCBQdRFz-B5YyWRyJ.chunk.mjs";
+import { u as usePreferencesStore, S as StyleSettings, F as FeatureSettings } from "./StyleSettings-DzrTbB_3.chunk.mjs";
+import { b as NcAppNavigationItem, u as useAppSettingsDialog, A as APP_SETTINGS_LEGACY_DESIGN_KEY, _ as _sfc_main$1V, c as NcAppNavigationList, d as NcAppNavigation, S as Spinner, Q as QRCode, I as InputDiv, e as NcAppContent, f as NcActionButtonGroup, g as NcDialog, h as find$1, r as registerCustomProtocol, t as tokenize, i as reset, j as NcRichContenteditable, O as Options, k as NcActionInput, P as PlusIcon, l as NcDateTimePickerNative, m as NcAppSidebar, a as NcAppSettingsDialog, n as NcContent } from "./index-jt9udqCF.chunk.mjs";
 import { c as _sfc_main$1W, I as INSIDE_RADIO_GROUP_KEY, a as NcSelect, N as NcCheckboxRadioSwitch, _ as _sfc_main$1X, b as NcInputField } from "./NcRichText-DJlaHs_Q-D0kSgDEf.chunk.mjs";
-import { R as RadioGroupDiv, a as NcTextArea, N as NcNoteCard, C as CardDiv } from "./markdown-D2MhEvpu.chunk.mjs";
+import { R as RadioGroupDiv, a as NcTextArea, N as NcNoteCard, C as CardDiv } from "./markdown-DM70WVMi.chunk.mjs";
 import { A as AgoraAppIcon } from "./AgoraAppIcon-9cLKAEly.chunk.mjs";
 import { N as NcUserBubble } from "./NcUserBubble-vOAXLHB5-DyUmpZkR.chunk.mjs";
 function getDevtoolsGlobalHook() {
@@ -16087,43 +16087,10 @@ const useOptionsStore = defineStore("options", {
         types: family.types.sort((a, b) => a.sortOrder - b.sortOrder)
       }));
     },
-    /* Get families with types
-            getFamiliesWithTypes(): Array<OptionFamily & {
-                types: InquiryOptionType[]
-                color: string
-            }> {
-                const families = this.getFamilies
-                const inquiryStore = useInquiryStore()
-                const sessionStore = useSessionStore()
-                console.log(" INTO GET FAMILY WITH TYPE ",this.getOptionTypes)
-                // Use helper to get organized families
-                const familiesFromHelper = getFamiliesWithOptionTypes(
-                    inquiryStore.type,
-                    sessionStore.appSettings?.inquiryTypeTab || {},
-                    this.getOptionTypes
-                )
-    
-                // Map to include colors
-                return familiesFromHelper.map(familyHelper => {
-                    const sessionFamily = families.find(f => f.key === familyHelper.key)
-    
-                    return {
-                        ...(sessionFamily || familyHelper),
-                        color: getFamilyColor(familyHelper.key),
-                        types: familyHelper.optionType || []
-                    }
-                })
-            },*/
     getFamiliesWithTypes() {
       const families = this.getFamilies;
       const inquiryStore = useInquiryStore();
       const sessionStore = useSessionStore();
-      console.log("=== DEBUG getFamiliesWithTypes ===");
-      console.log("Inquiry type:", inquiryStore.type);
-      console.log("App settings inquiryTypeTab:", sessionStore.appSettings?.inquiryTypeTab);
-      console.log("App settings inquiryTypes:", sessionStore.appSettings?.inquiryTypes);
-      console.log("Option types:", this.getOptionTypes);
-      console.log("=== END DEBUG ===");
       const familiesFromHelper = getFamiliesWithOptionTypes(
         inquiryStore.type,
         sessionStore.appSettings?.inquiryTypeTab || {},
@@ -16309,7 +16276,6 @@ const useOptionsStore = defineStore("options", {
         const count = commentsStore.comments.filter(
           (comment) => comment.inquiryId === this.targetId && comment.optionId === this.id && comment.deleted === 0
         ).length;
-        console.log(`Force updating option ${this.id} comment count to ${count}`);
         if (this.status) {
           this.status.countComments = count;
         }
@@ -73212,9 +73178,6 @@ const _sfc_main$S = /* @__PURE__ */ defineComponent({
       return position;
     }
     const filteredComments = computed(() => {
-      console.log("Comments updated - total comments:", commentsStore.comments?.length);
-      console.log("Filtering for optionId:", props2.optionId);
-      console.log("Filtering for inquiryOnly:", props2.inquiryOnly);
       const allComments = commentsStore.comments || [];
       userPositions.clear();
       if (props2.optionId === void 0 && !props2.inquiryOnly) {
@@ -73223,10 +73186,8 @@ const _sfc_main$S = /* @__PURE__ */ defineComponent({
       let baseComments = [];
       if (props2.optionId !== void 0) {
         baseComments = allComments.filter((comment) => comment && comment.optionId === props2.optionId).sort((a, b) => b.timestamp - a.timestamp);
-        console.log(`Found ${baseComments.length} comments for option ${props2.optionId}`);
       } else if (props2.inquiryOnly) {
         baseComments = allComments.filter((comment) => comment && comment.optionId === 0).sort((a, b) => b.timestamp - a.timestamp);
-        console.log(`Found ${baseComments.length} inquiry comments`);
       }
       const groups = groupCommentsByUserAndTime(baseComments);
       return groups.map((group2) => ({
@@ -73235,7 +73196,7 @@ const _sfc_main$S = /* @__PURE__ */ defineComponent({
       }));
     });
     watch(() => commentsStore.comments, (newComments, oldComments) => {
-      console.log("Comments changed:", {
+      console.log({
         oldCount: oldComments?.length,
         newCount: newComments?.length,
         optionId: props2.optionId
@@ -73577,15 +73538,6 @@ const _sfc_main$Q = /* @__PURE__ */ defineComponent({
     const availableResponseTypes = computed(
       () => getAvailableResponseTypes(optionStore.type, allOptionTypes.value)
     );
-    const debugOptionType = computed(() => {
-      console.log("UB DEBUG  option type full data:", optionStore.type);
-      const optionType = allOptionTypes.value.find(
-        (opt) => opt.option_type === optionStore.type || opt.optionType === optionStore.type
-      );
-      console.log("Current option type full data:", optionType);
-      console.log("Allowed responses for this type:", optionType?.allowed_response);
-      return optionType;
-    });
     const additionalFields = computed(
       () => getOptionTypeFields(optionStore.type, allOptionTypes.value)
     );
@@ -73662,13 +73614,10 @@ const _sfc_main$Q = /* @__PURE__ */ defineComponent({
     };
     const loadOption = async () => {
       if (!props2.optionId) return;
-      console.log(" INTO LOG OPTION LOADING OPTON TO STORE ", props2.optionId);
       isLoading.value = true;
       error.value = null;
       try {
         await optionStore.load(props2.optionId);
-        console.log("DEBUUUUUUUUUUUUUU ", debugOptionType.value);
-        console.log(" OPTION INTO LOAD OPTION ", optionStore);
         if (optionStore) {
           editForm.value = {
             label: optionStore.title || "",
@@ -73685,17 +73634,6 @@ const _sfc_main$Q = /* @__PURE__ */ defineComponent({
         isLoading.value = false;
       }
     };
-    const debugMenuState = computed(() => {
-      console.log("Menu state:", {
-        canEditOrDelete: canEditOrDelete.value,
-        allowedResponses: allowedResponses.value,
-        allowedResponsesLength: allowedResponses.value.length,
-        hasAllowedResponses: hasAllowedResponses.value,
-        optionType: optionStore.type,
-        isLoading: isLoading.value
-      });
-      return null;
-    });
     const closeModal = () => {
       show.value = false;
       setTimeout(() => {
@@ -73752,7 +73690,6 @@ const _sfc_main$Q = /* @__PURE__ */ defineComponent({
       }
     };
     const handleChildComment = (option2) => {
-      console.log("Comment on child:", option2);
       openChildModal(option2.id);
     };
     const openAddResponseModal = (responseType) => {
@@ -73807,14 +73744,12 @@ const _sfc_main$Q = /* @__PURE__ */ defineComponent({
       loadOption();
     });
     watch(() => props2.optionId, (newId, oldId) => {
-      console.log("Option ID changed:", { oldId, newId });
       if (newId) {
         loadOption();
         commentUpdateTrigger.value = 0;
       }
     }, { immediate: true });
     watch(() => commentsStore.comments, (newComments) => {
-      console.log("Comments changed in modal, updating counts...");
       if (optionStore.id) {
         const count = newComments.filter(
           (comment) => comment.inquiryId === props2.inquiryId && comment.optionId === optionStore.id && comment.deleted === 0
@@ -73833,7 +73768,6 @@ const _sfc_main$Q = /* @__PURE__ */ defineComponent({
       );
     });
     const handleCommentAdded = () => {
-      console.log("Comment added, triggering update...");
       commentUpdateTrigger.value++;
       if (optionStore.id) {
         const count = commentsStore.comments.filter(
@@ -73849,14 +73783,13 @@ const _sfc_main$Q = /* @__PURE__ */ defineComponent({
       }
     };
     const handleCommentCountUpdated = (newCount) => {
-      console.log("Comment count updated:", newCount);
       if (optionStore) {
         optionStore.status.countComments = newCount;
         commentUpdateTrigger.value++;
         emit2("updated", { ...optionStore });
       }
     };
-    const __returned__ = { props: props2, emit: emit2, optionsStore, optionStore, sessionStore, commentsStore, show, isLoading, error, showCommentForm, isEditing, editForm, showChildModal, selectedChildId, showAddChildModal, selectedChildType, subMenu, commentsSection, activeTooltip, activeFilter, commentUpdateTrigger, toggleSubMenu, allOptionTypes, optionTypeLabel, optionIcon, optionTypeColor, optionTypeDescription, allowComment, hasSupportFeature: hasSupportFeature$1, useTitle, allowedResponses, hasAllowedResponses, availableResponseTypes, debugOptionType, additionalFields, optionContext, canEdit: canEdit2, canDelete: canDelete2, canChangeOptionStatus, canComment: canComment2, canSupport: canSupport2, modalTitle, canEditOrDelete, canSaveEdit, canAddChild, childOptions, hasChildOptions, getChildCountByType, hasAdditionalFields, hasAdditionalFieldsData, filteredChildOptions, formatDate, getFieldLabel, formatFieldValue, getOptionTypeDescription: getOptionTypeDescription$1, getOptionTypeIcon, getOptionTypeLabel: getOptionTypeLabel2, showChildTypeTooltip, hideChildTypeTooltip, filterChildrenByType, clearFilter, truncateText, loadOption, debugMenuState, closeModal, editOption, cancelEdit, saveEdit, confirmDelete, deleteOption, handleChildComment, openAddResponseModal, openAddChildModal, closeAddChildModal, handleChildCreated, openChildModal, closeChildModal, handleChildUpdated, handleChildDeleted, optionComments, handleCommentAdded, handleCommentCountUpdated, get t() {
+    const __returned__ = { props: props2, emit: emit2, optionsStore, optionStore, sessionStore, commentsStore, show, isLoading, error, showCommentForm, isEditing, editForm, showChildModal, selectedChildId, showAddChildModal, selectedChildType, subMenu, commentsSection, activeTooltip, activeFilter, commentUpdateTrigger, toggleSubMenu, allOptionTypes, optionTypeLabel, optionIcon, optionTypeColor, optionTypeDescription, allowComment, hasSupportFeature: hasSupportFeature$1, useTitle, allowedResponses, hasAllowedResponses, availableResponseTypes, additionalFields, optionContext, canEdit: canEdit2, canDelete: canDelete2, canChangeOptionStatus, canComment: canComment2, canSupport: canSupport2, modalTitle, canEditOrDelete, canSaveEdit, canAddChild, childOptions, hasChildOptions, getChildCountByType, hasAdditionalFields, hasAdditionalFieldsData, filteredChildOptions, formatDate, getFieldLabel, formatFieldValue, getOptionTypeDescription: getOptionTypeDescription$1, getOptionTypeIcon, getOptionTypeLabel: getOptionTypeLabel2, showChildTypeTooltip, hideChildTypeTooltip, filterChildrenByType, clearFilter, truncateText, loadOption, closeModal, editOption, cancelEdit, saveEdit, confirmDelete, deleteOption, handleChildComment, openAddResponseModal, openAddChildModal, closeAddChildModal, handleChildCreated, openChildModal, closeChildModal, handleChildUpdated, handleChildDeleted, optionComments, handleCommentAdded, handleCommentCountUpdated, get t() {
       return translate;
     }, get NcModal() {
       return NcModal;
@@ -89354,7 +89287,6 @@ const _sfc_main$6 = /* @__PURE__ */ defineComponent({
     const selectedUsers = ref({});
     const localCheckboxes = ref({});
     const getSupportFeatureValue = computed(() => {
-      console.log(" SUUUUUUUUUUUUUUUUUU P FEATURE IN STORE OR DEFAULT ", inquiryStore.configuration.supportFeature);
       if (inquiryStore.configuration.supportFeature !== null) {
         return inquiryStore.configuration.supportFeature;
       }
@@ -89622,7 +89554,6 @@ const _sfc_main$6 = /* @__PURE__ */ defineComponent({
     const handleSupportFeatureChange = async (id) => {
       try {
         isSaving.value = true;
-        console.log(" TOOOOOOOOOOOOOOOOOOOOOOO ", id);
         inquiryStore.configuration.supportFeature = id;
         await inquiryStore.write();
       } catch (e) {
@@ -90205,7 +90136,6 @@ const _sfc_main$5 = /* @__PURE__ */ defineComponent({
           sessionStore.appSettings.inquiryGroupTypeTab || [],
           inquiryGroupStore.type
         );
-        console.log("FIIIIIIELDS OF GROUPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP", fields);
         return Array.isArray(fields) ? fields : [];
       } catch (e) {
         console.error("Error getting fields:", e);

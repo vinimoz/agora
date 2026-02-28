@@ -96,33 +96,6 @@ export const useOptionsStore = defineStore('options', {
                 }))
         },
 
-        /* Get families with types
-        getFamiliesWithTypes(): Array<OptionFamily & {
-            types: InquiryOptionType[]
-            color: string
-        }> {
-            const families = this.getFamilies
-            const inquiryStore = useInquiryStore()
-            const sessionStore = useSessionStore()
-            console.log(" INTO GET FAMILY WITH TYPE ",this.getOptionTypes)
-            // Use helper to get organized families
-            const familiesFromHelper = getFamiliesWithOptionTypes(
-                inquiryStore.type,
-                sessionStore.appSettings?.inquiryTypeTab || {},
-                this.getOptionTypes
-            )
-
-            // Map to include colors
-            return familiesFromHelper.map(familyHelper => {
-                const sessionFamily = families.find(f => f.key === familyHelper.key)
-
-                return {
-                    ...(sessionFamily || familyHelper),
-                    color: getFamilyColor(familyHelper.key),
-                    types: familyHelper.optionType || []
-                }
-            })
-        },*/
     getFamiliesWithTypes(): Array<OptionFamily & {
         types: InquiryOptionType[]
         color: string
@@ -130,13 +103,6 @@ export const useOptionsStore = defineStore('options', {
         const families = this.getFamilies
         const inquiryStore = useInquiryStore()
         const sessionStore = useSessionStore()
-
-        console.log("=== DEBUG getFamiliesWithTypes ===")
-        console.log("Inquiry type:", inquiryStore.type)
-        console.log("App settings inquiryTypeTab:", sessionStore.appSettings?.inquiryTypeTab)
-        console.log("App settings inquiryTypes:", sessionStore.appSettings?.inquiryTypes)
-        console.log("Option types:", this.getOptionTypes)
-        console.log("=== END DEBUG ===")
 
         // Use helper to get organized families
         const familiesFromHelper = getFamiliesWithOptionTypes(
@@ -359,7 +325,6 @@ export const useOptionsStore = defineStore('options', {
                    comment.deleted === 0
       ).length
       
-      console.log(`Force updating option ${this.id} comment count to ${count}`)
       
       if (this.status) {
         this.status.countComments = count

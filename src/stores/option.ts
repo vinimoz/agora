@@ -625,7 +625,6 @@ actions: {
         }
 
         try{
-            console.log(" OD LETS CREATE IT ",payload)
             // Set defaults from type definition
             const sessionStore = useSessionStore()
             const typeInfo = sessionStore.appSettings?.inquiryOptionTypeTab?.find((opt: OptionType) => 

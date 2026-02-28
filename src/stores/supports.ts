@@ -107,9 +107,6 @@ export const useSupportsStore = defineStore('supports', {
         // Main toggle method that handles both modes and both item types
         async toggleSupport(itemId: number, userId: string, item: SupportableItem, itemType: 'inquiry' | 'option') {
             const supportFeature = this.getSupportFeature(item)
-            console.log(" INTO TOGGLE SUPPORT",item)
-            console.log(" INTO TOGGLE SUPPORT",itemId)
-            console.log(" INTO TOGGLE SUPPORT",itemType)
             if (supportFeature === 'binary') {
                 return this.toggleStandardSupport(itemId, userId, item, itemType)
             }

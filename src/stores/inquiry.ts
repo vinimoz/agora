@@ -549,8 +549,6 @@ export const useInquiryStore = defineStore('inquiry', {
 		    }
 
 		    try {
-                console.log(' INTO WRITE ID ',this.id)
-                console.log(' INTO WRITE ID ',this.configuration)
 			    const response = await InquiriesAPI.updateInquiryConfig(this.id, this.configuration)
 			    this.$patch(response.data.inquiry)
 			    emit(Event.UpdateInquiry, {

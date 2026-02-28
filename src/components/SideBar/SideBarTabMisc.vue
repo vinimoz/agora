@@ -101,7 +101,6 @@ interface Field {
 
 // Get current support feature value
 const getSupportFeatureValue = computed(() => {
-  console.log(' SUUUUUUUUUUUUUUUUUU P FEATURE IN STORE OR DEFAULT ',inquiryStore.configuration.supportFeature)
   if (inquiryStore.configuration.supportFeature !== null) {
     return inquiryStore.configuration.supportFeature
   }
@@ -467,7 +466,6 @@ const handleSupportFeatureChange = async (id: string) => {
    try {
        isSaving.value = true
 
-       console.log(" TOOOOOOOOOOOOOOOOOOOOOOO ",id)
        inquiryStore.configuration.supportFeature = id
 
     // Save to backend (you need to implement this method in your store)

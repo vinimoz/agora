@@ -608,7 +608,7 @@ abstract class TableSchema
             'show_results' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'default' => 'always', 'length' => 32]],
             'deleted' => ['type' => Types::BIGINT, 'options' => ['notnull' => false, 'default' => 0, 'length' => 20]],
             'archived' => ['type' => Types::BIGINT, 'options' => ['notnull' => false, 'default' => 0, 'length' => 20]],
-            'status' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'default' => 'draft', 'length' => 32]],
+            'option_status' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'default' => 'draft', 'length' => 32]],
             'allow_comment' => ['type' => Types::SMALLINT, 'options' => ['notnull' => false, 'default' =>null]],
             'support_feature' => ['type' => Types::STRING, 'options' => ['notnull' => true, 'default' => 'none', 'length' => 20]],
             'family' => ['type' => Types::STRING, 'options' => ['notnull' => false, 'default' => 'deliberative', 'length' => 64]], 

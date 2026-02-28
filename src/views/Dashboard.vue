@@ -29,15 +29,8 @@ const dashboardWidgetProperties = {
 
 // Computed for all inquiry types
 const allInquiryTypes = computed((): InquiryType[] => sessionStore.appSettings.inquiryTypeTab || [])
-
+console.log(" INNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN ",allInquiryTypes)
 const inquiriesStore = useInquiriesStore()
-
-// Create a combined icon resolver
-const iconResolver = {
-  ...InquiryGeneralIcons,
-  ...StatusIcons,
-  ...NavigationIcons
-}
 
 /**
  * Load the inquiries
@@ -51,15 +44,30 @@ function loadInquiries(): void {
   }
 }
 
-// Function to get icon for an inquiry based on its type
-function getInquiryIcon(inquiry) {
-  if (inquiry.type) {
-    const typeData = getInquiryTypeData(inquiry.type, allInquiryTypes.value)
-    return typeData?.icon || InquiryGeneralIcons.Flash
-  }
-  return InquiryGeneralIcons.Flash
-}
+// Function to get icon component for an inquiry based on its type
+function getInquiryIconComponent(inquiry) {
+  console.log('=== DEBUGGING INQUIRY ICON ===');
+  console.log('1. Inquiry object:', inquiry);
+  console.log('2. Inquiry type:', inquiry.type);
+  console.log('3. All inquiry types:', allInquiryTypes.value);
 
+  if (inquiry.type) {
+    const typeData = getInquiryTypeData(inquiry.type, allInquiryTypes.value);
+    console.log('4. typeData from getInquiryTypeData:', typeData);
+    console.log('5. typeData.icon:', typeData?.icon);
+    console.log('6. typeData.icon constructor:', typeData?.icon?.constructor?.name);
+    console.log('7. InquiryGeneralIcons.Flash:', InquiryGeneralIcons.Flash);
+
+    // Try to determine what we're dealing with
+    if (typeData?.icon) {
+      console.log('8. Returning typeData.icon');
+      return typeData.icon;
+    }
+  }
+
+  console.log('9. Falling back to Flash icon');
+  return InquiryGeneralIcons.Flash;
+}
 
 onMounted(() => {
   loadInquiries()
@@ -78,33 +86,33 @@ onMounted(() => {
         <AgoraAppIcon />
       </template>
 
-    <template #default="{ item }">
-  <a :href="generateUrl(`/apps/agora/inquiry/${item.id}`)">
-    <div class="inquiry-item__item">
-      <div class="type-icon">
-        <component 
-          :is="getInquiryIcon(item)" 
-          class="nav-icon" 
-        />
-      </div>
+      <template #default="{ item }">
+        <a :href="generateUrl(`/apps/agora/inquiry/${item.id}`)">
+          <div class="inquiry-item__item">
+            <div class="type-icon">
+              <!-- Use the icon component directly -->
+              <component 
+                :is="getInquiryIconComponent(item)" 
+                class="nav-icon" 
+              />
+            </div>
 
-      <div class="item__title">
-        <div class="item__title__title">
-          {{ item.title }}
-        </div>
+            <div class="item__title">
+              <div class="item__title__title">
+                {{ item.title }}
+              </div>
 
-        <div class="item__title__description">
-          {{
-            DOMPurify.sanitize(
-              item.description ? item.description : t('agora', 'No description provided')
-            )
-          }}
-        </div>
-      </div>
-    </div>
-  </a>
-</template>
-
+              <div class="item__title__description">
+                {{
+                  DOMPurify.sanitize(
+                    item.description ? item.description : t('agora', 'No description provided')
+                  )
+                }}
+              </div>
+            </div>
+          </div>
+        </a>
+      </template>
     </NcDashboardWidget>
   </div>
 </template>
@@ -123,6 +131,19 @@ onMounted(() => {
   }
 }
 
+.type-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  min-width: 44px;
+  
+  .nav-icon {
+    width: 20px;
+    height: 20px;
+  }
+}
+
 .item__title {
   display: flex;
   flex-direction: column;
@@ -138,10 +159,5 @@ onMounted(() => {
   .item__title__description {
     opacity: 0.5;
   }
-}
-
-.item__icon-spacer {
-  width: 44px;
-  min-width: 44px;
 }
 </style>

@@ -479,16 +479,6 @@ const availableResponseTypes = computed(() =>
     getAvailableResponseTypes(optionStore.type, allOptionTypes.value)
 )
 
-const debugOptionType = computed(() => {
-    console.log("UB DEBUG  option type full data:", optionStore.type)
-    const optionType = allOptionTypes.value.find(
-        opt => opt.option_type === optionStore.type || opt.optionType === optionStore.type
-    )
-    console.log("Current option type full data:", optionType)
-    console.log("Allowed responses for this type:", optionType?.allowed_response)
-    return optionType
-})
-
 const additionalFields = computed(() =>
     getOptionTypeFields(optionStore.type, allOptionTypes.value)
 )
@@ -601,14 +591,11 @@ const truncateText = (text: string, maxLength: number) => {
 
 const loadOption = async () => {
     if (!props.optionId) return
-    console.log(" INTO LOG OPTION LOADING OPTON TO STORE ", props.optionId)
     isLoading.value = true
 
     error.value = null
     try {
         await optionStore.load(props.optionId)
-        console.log("DEBUUUUUUUUUUUUUU ", debugOptionType.value)
-        console.log(" OPTION INTO LOAD OPTION ", optionStore)
         if (optionStore) {
             editForm.value = {
                 label: optionStore.title || '',
@@ -625,18 +612,6 @@ const loadOption = async () => {
         isLoading.value = false
     }
 }
-
-const debugMenuState = computed(() => {
-    console.log("Menu state:", {
-        canEditOrDelete: canEditOrDelete.value,
-        allowedResponses: allowedResponses.value,
-        allowedResponsesLength: allowedResponses.value.length,
-        hasAllowedResponses: hasAllowedResponses.value,
-        optionType: optionStore.type,
-        isLoading: isLoading.value
-    })
-    return null
-})
 
 const closeModal = () => {
     show.value = false
@@ -705,9 +680,6 @@ const deleteOption = async () => {
 }
 
 const handleChildComment = (option: Option) => {
-    // Handle comment on child option
-    console.log('Comment on child:', option)
-    // You might want to open the child modal or focus on comments
     openChildModal(option.id)
 }
 
@@ -775,7 +747,6 @@ onMounted(() => {
     loadOption()
 })
 watch(() => props.optionId, (newId, oldId) => {
-  console.log('Option ID changed:', { oldId, newId })
   if (newId) {
     loadOption()
     // Reset trigger when option changes
@@ -785,7 +756,6 @@ watch(() => props.optionId, (newId, oldId) => {
 
 // Watch for comments changes - THIS IS CRITICAL for real-time updates
 watch(() => commentsStore.comments, (newComments) => {
-  console.log('Comments changed in modal, updating counts...')
   
   if (optionStore.id) {
     // Update the option's comment count
@@ -820,7 +790,6 @@ const optionComments = computed(() => {
 
 // Update handleCommentAdded - simpler and cleaner
 const handleCommentAdded = () => {
-  console.log('Comment added, triggering update...')
 
   // Force re-render by incrementing trigger
   commentUpdateTrigger.value++
@@ -848,7 +817,6 @@ const handleCommentAdded = () => {
 
 // Update handleCommentCountUpdated
 const handleCommentCountUpdated = (newCount: number) => {
-  console.log('Comment count updated:', newCount)
 
   if (optionStore) {
     optionStore.status.countComments = newCount

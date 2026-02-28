@@ -133,10 +133,6 @@ export function getAllowedOptionTypes(
     allOptionTypes = Object.values(rawOptionTypes)
   }
 
-    // Debug to see what we're working with
-  console.log('Allowed keys:', allowedOptionTypeKeys)
-  console.log('Available option types full:', allOptionTypes)
-
   // Filtrer selon allowedOptionTypeKeys - check BOTH property names!
   const result = allOptionTypes.filter((opt) => {
     if (!opt) return false
@@ -148,7 +144,6 @@ export function getAllowedOptionTypes(
            allowedOptionTypeKeys.includes(optionTypeValue)
   })
 
-  console.log('RESULT WE GET :', result)
 
   return result
 }
@@ -235,8 +230,6 @@ export function getFamiliesWithOptionTypes(
   }
 
   // Get allowed option types
-console.log(" CHHHHHHHHHHHHHHHHHHHHH ",inquiryTypeConfig)
-console.log(" CHHHHHHHHHHHHHHHHHHHHH ",optionTypes)
   const allowedOptionTypes = getAllowedOptionTypes(inquiryTypeConfig, optionTypes)
 
   // Group by family
@@ -442,7 +435,6 @@ export function getAllowedResponses(
 
   const found = findOptionType(optionType, optionTypes)
   if (!found) return []
-  console.log(" FIND OPTOON TYPE ",found)
   let responses: string[] = []
 
   if (typeof found.allowed_response === 'string') {
@@ -474,8 +466,6 @@ export function getAvailableResponseTypes(
   description?: string
 }> {
   const allowedKeys = getAllowedResponses(optionType, allOptionTypes)
-  console.log(" RESPONSE KEY ",optionType)
-  console.log(" RESPONSE KEY ",allowedKeys)
   return allowedKeys
     .map(key => {
       const found = findOptionType(key, allOptionTypes)

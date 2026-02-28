@@ -99,9 +99,6 @@ function getAvatarPosition(userId: string | number): 'left' | 'right' {
 
 // In Comments.vue, update the filteredComments computed property
 const filteredComments = computed(() => {
-  console.log("Comments updated - total comments:", commentsStore.comments?.length)
-  console.log("Filtering for optionId:", props.optionId)
-  console.log("Filtering for inquiryOnly:", props.inquiryOnly)
   
   // Force recomputation by accessing the store directly
   const allComments = commentsStore.comments || []
@@ -121,13 +118,11 @@ const filteredComments = computed(() => {
       .filter(comment => comment && comment.optionId === props.optionId)
       .sort((a, b) => b.timestamp - a.timestamp)
     
-    console.log(`Found ${baseComments.length} comments for option ${props.optionId}`)
   } else if (props.inquiryOnly) {
     baseComments = allComments
       .filter(comment => comment && comment.optionId === 0)
       .sort((a, b) => b.timestamp - a.timestamp)
     
-    console.log(`Found ${baseComments.length} inquiry comments`)
   }
 
   // Group by user + time
@@ -142,13 +137,15 @@ const filteredComments = computed(() => {
 
 // Improve the watch to detect all changes
 watch(() => commentsStore.comments, (newComments, oldComments) => {
-  console.log('Comments changed:', {
+  console.log({
     oldCount: oldComments?.length,
     newCount: newComments?.length,
-    optionId: props.optionId
-  })
-  updateTrigger.value++
-}, { deep: true, immediate: true })
+    optionId: props.optionId,
+  });
+  updateTrigger.value++;
+}, { deep: true, immediate: true });
+
+
 
 
 // Watch for changes in commentsStore.comments

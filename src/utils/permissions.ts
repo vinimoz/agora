@@ -362,8 +362,6 @@ function getDisplayPermissions(context: PermissionContext): {
   const hasSupportValue = context.supportFeature !== undefined
   const hasCommentValue = context.allowComment !== undefined
   
-  console.log(" HAS SUPPORT ", hasSupportValue )
-  console.log(" HAS COMMENT ", hasCommentValue )
 
   // If context has explicit values, use them
   if (hasSupportValue || hasCommentValue) {
@@ -409,7 +407,6 @@ function getTypeConfigPermissions(context: PermissionContext): {
     ? context.inquiryType 
     : context.optionType
   
-  console.log(" GET TYPE CONGIG IN PERMISSION ",typeKey) 
   if (!typeKey) {
     return { canSupport: false, canComment: false }
   }
@@ -1005,6 +1002,7 @@ export function canModerate(context: PermissionContext): boolean {
  * @param context
  */
 export function canEdit(context: PermissionContext): boolean {
+    if (context==='undefined') return false
     // Handle inquiry groups separately
     if (context.contentType === ContentType.InquiryGroup) {
         if (context.isOwner || context.userType === UserType.Admin) {
@@ -1065,10 +1063,14 @@ export function canShare(context: PermissionContext): boolean {
     if (isAccessRestrictedForSharing(context)) {
         return false
     }
+   
+    if (context.accessLevel == AccessLevel.Open &&
+        context.userType !== UserType.Moderator &&
+        context.userType !== UserType.Admin &&
+        !context.isOwner) {
+            return false;
+        }
 
-    if (context.accessLevel !== AccessLevel.Open && context.userType !== UserType.Moderator && context.userType !== UserType.Admin) {
-        return false
-    }
 
     if (sessionStore.appPermissions.allAccess) {
         return true
