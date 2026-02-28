@@ -191,6 +191,7 @@ OC.L10N.register(
     "Not defined" : "Niet bepaald",
     "Just now" : "Zojuist",
     "Today" : "Vandaag",
+    "Yesterday" : "Gisteren",
     "Yes" : "Ja",
     "No" : "Nee",
     "Supported" : "Ondersteund",
