@@ -122,21 +122,19 @@ const defaultStatuses = [
 
 const statusColumns = computed(() => props.statuses || defaultStatuses)
 
-const getOptionsByStatus = (status: string) => {
-  return props.options.filter(opt => opt.status === status)
-}
+const getOptionsByStatus = (status: string) => props.options.filter(opt => opt.status === status)
 
 const canChangeStatus = computed(() => true) // Check permissions
 
-const canAddToColumn = (status: any) => {
+const canAddToColumn = (status: any) => 
   // Determine which option types can be added to this column
-  return props.optionTypes.length > 0
-}
+   props.optionTypes.length > 0
 
-const getDefaultTypeForStatus = (status: string) => {
+
+const getDefaultTypeForStatus = (status: string) => 
   // Return the first allowed option type for this status
-  return props.optionTypes[0]?.option_type
-}
+   props.optionTypes[0]?.option_type
+
 
 const getStatusColor = (status: string) => {
   const found = statusColumns.value.find(s => s.value === status)

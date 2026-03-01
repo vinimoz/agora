@@ -36,6 +36,7 @@ export function getOptionItemData(item: OptionType | null, fallbackLabel: string
 /**
  * Generate a consistent random color for a family key
  * Uses a hash of the string to always return the same color for the same family
+ * @param familyKey
  */
 export function getRandomColorForFamily(familyKey: string): string {
     // Predefined nice colors that work well in UI
@@ -67,6 +68,7 @@ export function getRandomColorForFamily(familyKey: string): string {
 
 /**
  * Get family color - tries to get from config, falls back to random
+ * @param familyKey
  */
 export function getFamilyColor(familyKey: string): string {
     // First check if we have a predefined color for common families
@@ -172,7 +174,7 @@ export function groupOptionTypesByFamily(optionTypes: OptionType[]): Record<stri
 /**
  * Get the icon name for a family from appSettings
  * @param familyKey - The family key (e.g., 'debate', 'structure', etc.)
- * @returns Icon name as string
+ * @return Icon name as string
  */
 export function getFamilyIconName(familyKey: string): string {
   try {
@@ -188,7 +190,7 @@ export function getFamilyIconName(familyKey: string): string {
 /**
  * Get the icon name for a family from appSettings
  * @param familyKey - The family key (e.g., 'debate', 'structure', etc.)
- * @returns Icon name as string
+ * @return Icon name as string
  */
 export function getFamilyIconComponent(familyKey: string): any {
   const iconName = getFamilyIconName(familyKey)
@@ -239,7 +241,7 @@ export function getFamiliesWithOptionTypes(
   return Object.entries(groupedByFamily).map(([familyKey, familyOptionTypes]) => {
     // Get family data
     const fallbackData = getFamilyFallbackData()
-    const fallback = fallbackData[familyKey] || fallbackData['default'] || {}
+    const fallback = fallbackData[familyKey] || fallbackData.default || {}
 
     // Try to get icon from first option type in this family
     const firstOptionType = familyOptionTypes[0]
@@ -337,6 +339,8 @@ export function getOptionTypeOptions(optionTypes: OptionType[]) {
 
 /**
  * Get option type from list by type string
+ * @param optionType
+ * @param optionTypes
  */
 export function findOptionType(
   optionType: string | null | undefined,
@@ -351,6 +355,9 @@ export function findOptionType(
 
 /**
  * Get option type label safely
+ * @param optionType
+ * @param optionTypes
+ * @param fallback
  */
 export function getOptionTypeLabel(
   optionType: string | null | undefined,
@@ -364,6 +371,8 @@ export function getOptionTypeLabel(
 
 /**
  * Get option type icon component safely
+ * @param optionType
+ * @param optionTypes
  */
 export function getOptionTypeIconComponent(
   optionType: string | null | undefined,
@@ -379,6 +388,8 @@ export function getOptionTypeIconComponent(
 
 /**
  * Get option type icon name as string
+ * @param optionType
+ * @param optionTypes
  */
 export function getOptionTypeIconName(
   optionType: string | null | undefined,
@@ -391,6 +402,8 @@ export function getOptionTypeIconName(
 
 /**
  * Get option type description safely
+ * @param optionType
+ * @param optionTypes
  */
 export function getOptionTypeDescription(
   optionType: string | null | undefined,
@@ -403,6 +416,8 @@ export function getOptionTypeDescription(
 
 /**
  * Get option type family safely
+ * @param optionType
+ * @param optionTypes
  */
 export function getOptionTypeFamily(
   optionType: string | null | undefined,
@@ -415,6 +430,8 @@ export function getOptionTypeFamily(
 
 /**
  * Get option type color based on family
+ * @param optionType
+ * @param optionTypes
  */
 export function getOptionTypeColor(
   optionType: string | null | undefined,
@@ -426,6 +443,8 @@ export function getOptionTypeColor(
 
 /**
  * Get allowed responses for an option type
+ * @param optionType
+ * @param optionTypes
  */
 export function getAllowedResponses(
   optionType: string | null | undefined,
@@ -455,6 +474,8 @@ export function getAllowedResponses(
 
 /**
  * Get available response types with full data
+ * @param optionType
+ * @param allOptionTypes
  */
 export function getAvailableResponseTypes(
   optionType: string | null | undefined,
@@ -481,6 +502,8 @@ export function getAvailableResponseTypes(
 
 /**
  * Get additional fields for an option type
+ * @param optionType
+ * @param optionTypes
  */
 export function getOptionTypeFields(
   optionType: string | null | undefined,
@@ -504,6 +527,8 @@ export function getOptionTypeFields(
 
 /**
  * Check if option type has support feature
+ * @param optionType
+ * @param optionTypes
  */
 export function hasSupportFeature(
   optionType: string | null | undefined,
@@ -517,6 +542,8 @@ export function hasSupportFeature(
 
 /**
  * Get support feature label
+ * @param optionType
+ * @param optionTypes
  */
 export function getSupportFeatureLabel(
   optionType: string | null | undefined,
@@ -534,6 +561,8 @@ export function getSupportFeatureLabel(
 
 /**
  * Check if option type allows comments
+ * @param optionType
+ * @param optionTypes
  */
 export function allowsComments(
   optionType: string | null | undefined,
@@ -546,6 +575,8 @@ export function allowsComments(
 
 /**
  * Check if option type uses title
+ * @param optionType
+ * @param optionTypes
  */
 export function usesTitle(
   optionType: string | null | undefined,

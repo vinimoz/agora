@@ -144,9 +144,7 @@ export const useTemplateWizardStore = defineStore('templateWizard', {
 			}
 		},
 
-		canGoPrevious: (state): boolean => {
-			return state.currentStepIndex > 0 && !state.importing
-		},
+		canGoPrevious: (state): boolean => state.currentStepIndex > 0 && !state.importing,
 
 		availableTemplates: (state): Template[] => {
 			if (!state.selectedUseCase) {

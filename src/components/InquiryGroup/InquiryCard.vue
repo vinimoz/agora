@@ -31,7 +31,8 @@
     </div>
 
     <!-- Content -->
-    <div class="card-content" :class="{ 
+    <div
+class="card-content" :class="{ 
       'has-cover': coverUrl,
       'horizontal-content': horizontal 
     }">

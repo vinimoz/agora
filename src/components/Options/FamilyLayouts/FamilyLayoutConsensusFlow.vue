@@ -145,21 +145,17 @@ const consultationQuestions = computed(() =>
 const allOptions = computed(() => props.options)
 
 // Calculate quorum for objections
-const objectionsQuorum = computed(() => {
+const objectionsQuorum = computed(() => 
   // This would come from a real calculation based on support/votes
-  return objections.value.reduce((sum, opt) => sum + (opt.supportCount || 0), 0)
-})
+   objections.value.reduce((sum, opt) => sum + (opt.supportCount || 0), 0)
+)
 
 // Available types from the family config
-const availableTypes = computed(() => {
-  return props.optionTypes.filter(type => 
+const availableTypes = computed(() => props.optionTypes.filter(type => 
     ['objection', 'exception', 'consultation_question'].includes(type.option_type)
-  )
-})
+  ))
 
-const getOptionTypeIcon = (type: string) => {
-  return getOptionTypeIconComponent(type, [])
-}
+const getOptionTypeIcon = (type: string) => getOptionTypeIconComponent(type, [])
 </script>
 
 <style scoped lang="scss">

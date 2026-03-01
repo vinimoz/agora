@@ -153,7 +153,7 @@ export const useSessionStore = defineStore('session', {
 
       return `${windowTitle.prefix} – ${windowTitle.name}`
     },
-  },*/
+  }, */
       windowTitle(state): string {
     // Don't import at top level, import dynamically
     let title = `${t('agora', 'Agora')} – Nextcloud`

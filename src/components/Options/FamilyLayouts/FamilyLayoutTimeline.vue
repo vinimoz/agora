@@ -318,15 +318,11 @@ const getItemPosition = (option: any) => {
 }
 
 // Calendar helpers
-const weekDays = computed(() => {
-  return ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(day => 
+const weekDays = computed(() => ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(day => 
     t('agora', day)
-  )
-})
+  ))
 
-const currentMonthLabel = computed(() => {
-  return DateTime.fromJSDate(currentMonth.value).toFormat('MMMM yyyy')
-})
+const currentMonthLabel = computed(() => DateTime.fromJSDate(currentMonth.value).toFormat('MMMM yyyy'))
 
 const calendarDays = computed(() => {
   const firstDay = DateTime.fromJSDate(currentMonth.value).startOf('month')
@@ -371,13 +367,9 @@ const nextMonth = () => {
 }
 
 // Helper functions
-const formatDate = (timestamp: number) => {
-  return DateTime.fromMillis(timestamp * 1000).toLocaleString(DateTime.DATE_SHORT)
-}
+const formatDate = (timestamp: number) => DateTime.fromMillis(timestamp * 1000).toLocaleString(DateTime.DATE_SHORT)
 
-const getOptionTypeIcon = (type: string) => {
-  return getOptionTypeIconComponent(type, [])
-}
+const getOptionTypeIcon = (type: string) => getOptionTypeIconComponent(type, [])
 
 const getStatusColor = (status: string) => {
   const colors: Record<string, string> = {

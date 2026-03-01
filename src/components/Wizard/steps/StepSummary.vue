@@ -26,15 +26,13 @@ const counts = computed(() => ({
 	locations: editableData.value?.locations?.length || 0,
 }))
 
-const totalItems = computed(() => {
-	return counts.value.inquiry_families +
+const totalItems = computed(() => counts.value.inquiry_families +
 		counts.value.inquiry_types +
 		counts.value.inquiry_statuses +
 		counts.value.option_types +
 		counts.value.inquiry_group_types +
 		counts.value.categories +
-		counts.value.locations
-})
+		counts.value.locations)
 </script>
 
 <template>

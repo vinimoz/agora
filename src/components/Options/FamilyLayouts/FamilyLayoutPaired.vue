@@ -359,21 +359,15 @@ const canAddAlternative = computed(() => true)
 const canAddMessage = computed(() => true)
 
 // Available types from the family config
-const availableTypes = computed(() => {
-  return props.optionTypes.filter(type => 
+const availableTypes = computed(() => props.optionTypes.filter(type => 
     ['position_for', 'position_against', 'argument_for', 'argument_against', 'alternative', 'message'].includes(type.option_type)
-  )
-})
+  ))
 
 // Check if multiple layout styles are available
-const hasMultipleLayoutStyles = computed(() => {
-  return props.family?.config?.layoutStyles?.length > 1 || false
-})
+const hasMultipleLayoutStyles = computed(() => props.family?.config?.layoutStyles?.length > 1 || false)
 
 // Get option type icon
-const getOptionTypeIcon = (type: string) => {
-  return getOptionTypeIconComponent(type, [])
-}
+const getOptionTypeIcon = (type: string) => getOptionTypeIconComponent(type, [])
 </script>
 
 <style scoped lang="scss">

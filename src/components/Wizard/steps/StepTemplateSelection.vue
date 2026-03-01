@@ -30,9 +30,7 @@ const selectTemplate = (template: Template) => {
 	wizardStore.selectTemplate(template)
 }
 
-const formatCount = (count: number, label: string) => {
-	return `${count} ${label}${count !== 1 ? 's' : ''}`
-}
+const formatCount = (count: number, label: string) => `${count} ${label}${count !== 1 ? 's' : ''}`
 
 const triggerFileUpload = () => {
 	fileInput.value?.click()

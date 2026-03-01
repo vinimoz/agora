@@ -24,9 +24,7 @@ const languageNames: Record<string, string> = {
 	nl: t('agora', 'Dutch'),
 }
 
-const getLanguageName = (code: string): string => {
-	return languageNames[code] || code.toUpperCase()
-}
+const getLanguageName = (code: string): string => languageNames[code] || code.toUpperCase()
 
 const selectLanguage = (language: string) => {
 	wizardStore.selectLanguage(language)

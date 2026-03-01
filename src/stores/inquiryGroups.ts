@@ -29,9 +29,7 @@ export const useInquiryGroupsStore = defineStore('inquiryGroups', () => {
   })
   
   // Current group type to use (selected or default)
-  const currentGroupType = computed(() => {
-    return selectedGroupType.value || defaultGroupType.value
-  })
+  const currentGroupType = computed(() => selectedGroupType.value || defaultGroupType.value)
 
 
    function addInquiryGroup(group: InquiryGroup) {

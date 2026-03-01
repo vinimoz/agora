@@ -14,7 +14,12 @@ import { emit } from '@nextcloud/event-bus'
 import { Logger } from '../helpers/index.ts'
 import { PublicAPI, OptionsAPI } from '../Api/index.ts'
 import { Chunking, createDefault, Event, StatusResults, User, UserType , InquiryOptionType } from '../Types/index.ts'
-import { getFamilyColor } from '../helpers/modules/InquiryOptionHelper.ts'
+import { getFamilyColor , 
+    getAllowedOptionTypes,
+    groupOptionTypesByFamily,
+    getOptionTypesForFamily,
+    getOptionTypeOptions
+} from '../helpers/modules/InquiryOptionHelper.ts'
 
 import { useInquiryStore } from './inquiry.ts'
 import { useSessionStore } from './session.ts'
@@ -24,13 +29,6 @@ import { useCommentsStore } from './comments.ts'
 import { useSupportsStore } from './supports.ts'
 import { useAppSettingsStore } from '../stores/appSettings.ts'
 import { AxiosError } from '@nextcloud/axios'
-import { 
-    getAllowedOptionTypes,
-    groupOptionTypesByFamily,
-    getFamilyColor,
-    getOptionTypesForFamily,
-    getOptionTypeOptions
-} from '../helpers/modules/InquiryOptionHelper.ts'
 
 export type OptionAccessType = 'private' | 'public' | 'open' | 'hidden'
 export type OptionStatus = 'draft' | 'published' | 'archived' | 'deleted'

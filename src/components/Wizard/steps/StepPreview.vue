@@ -139,9 +139,7 @@ const removeItem = (section: string, index: number) => {
 	}
 }
 
-const isEditing = (section: string, index: number) => {
-	return editingItem.value?.section === section && editingItem.value?.index === index
-}
+const isEditing = (section: string, index: number) => editingItem.value?.section === section && editingItem.value?.index === index
 
 // Helper to get editable label value (handles multi-language objects)
 const getEditableLabelValue = (section: Section): string => {
@@ -202,9 +200,7 @@ const getItemLabel = (item: any, section: Section) => {
 	return labelValue || item[section.itemTypeKey] || t('agora', 'Unnamed')
 }
 
-const getItemType = (item: any, section: Section) => {
-	return item[section.itemTypeKey] || ''
-}
+const getItemType = (item: any, section: Section) => item[section.itemTypeKey] || ''
 
 const totalItems = computed(() => {
 	if (!editableData.value) return 0
@@ -268,12 +264,10 @@ const getItemStatus = (sectionKey: string, itemType: string): 'new' | 'existing'
 	// Check if item exists in new or existing lists
 	// The backend returns items with a 'type' property that matches the item's type key value
 	// Also check 'identifier' as fallback for different section types
-	const matchItem = (item: any) => {
-		return item.type === itemType ||
+	const matchItem = (item: any) => item.type === itemType ||
 			item.identifier === itemType ||
 			item.key === itemType ||
 			item.id === itemType
-	}
 
 	const isNew = data.new?.some(matchItem)
 	const isExisting = data.existing?.some(matchItem)
@@ -407,7 +401,8 @@ watch(() => editableData.value, () => {
 								<div class="item-info">
 									<div class="item-header-row">
 										<div class="item-label">{{ getItemLabel(item, section) }}</div>
-										<span v-if="duplicateAnalysis && getItemStatus(section.key, getItemType(item, section)) !== 'unknown'"
+										<span
+v-if="duplicateAnalysis && getItemStatus(section.key, getItemType(item, section)) !== 'unknown'"
 										class="item-status-badge"
 										:class="{
 											'badge-new': getItemStatus(section.key, getItemType(item, section)) === 'new',
@@ -446,9 +441,9 @@ watch(() => editableData.value, () => {
 
 									<NcTextField
 										:model-value="getEditableLabelValue(section)"
-										@update:model-value="setEditableLabelValue(section, $event)"
 										:label="t('agora', 'Label')"
-										class="edit-field" />
+										class="edit-field"
+										@update:model-value="setEditableLabelValue(section, $event)" />
 
 									<NcTextArea
 										v-if="editingItemData.description !== undefined"

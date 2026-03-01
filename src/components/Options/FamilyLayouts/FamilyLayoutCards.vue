@@ -125,20 +125,16 @@ const emit = defineEmits<{
 const viewMode = ref<'grid' | 'list' | 'compact'>('grid')
 
 // Check if family supports multiple view modes
-const hasMultipleViewModes = computed(() => {
+const hasMultipleViewModes = computed(() => 
   // You can check family.config?.viewModes or default to true for cards layout
-  return props.family?.config?.viewModes?.length > 1 || true
-})
+   props.family?.config?.viewModes?.length > 1 || true
+)
 
 // Get family icon
-const getFamilyIcon = () => {
-  return getFamilyIconComponent(props.family?.key || 'default')
-}
+const getFamilyIcon = () => getFamilyIconComponent(props.family?.key || 'default')
 
 // Get option type icon
-const getOptionTypeIcon = (type: string) => {
-  return getOptionTypeIconComponent(type, [])
-}
+const getOptionTypeIcon = (type: string) => getOptionTypeIconComponent(type, [])
 </script>
 
 <style scoped lang="scss">

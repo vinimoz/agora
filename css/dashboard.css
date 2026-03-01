@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: 2022 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-.app-icon-agora {
+.icon-agora-dark {
 	background-image: url('../img/agora-dark.svg');
   filter: var(--background-invert-if-dark);
 }

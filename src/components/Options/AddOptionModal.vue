@@ -547,14 +547,10 @@ const previewOption = computed((): Option => {
 })
 
 // Methods
-const getParentIcon = (parent: Option) => {
-  return getOptionTypeIconComponent(parent.type, allOptionTypes.value)
-}
+const getParentIcon = (parent: Option) => getOptionTypeIconComponent(parent.type, allOptionTypes.value)
 
 // Use helper for getOptionTypeIcon
-const getOptionTypeIcon = (type: string) => {
-  return getOptionTypeIconComponent(type, allOptionTypes.value)
-}
+const getOptionTypeIcon = (type: string) => getOptionTypeIconComponent(type, allOptionTypes.value)
 
 const getFieldLabel = (field: any) => {
   if (field.label) return field.label

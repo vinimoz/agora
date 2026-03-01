@@ -378,14 +378,10 @@ const allowedResponses = computed(() =>
   getAllowedResponses(props.option.type, allOptionTypes.value)
 )
 
-const getOptionTypeIcon = (type: string) => {
-  return getOptionTypeIconComponent(type, allOptionTypes.value)
-}
+const getOptionTypeIcon = (type: string) => getOptionTypeIconComponent(type, allOptionTypes.value)
 
 // Renamed to avoid conflict with imported getOptionTypeLabel
-const getOptionTypeLabelLocal = (type: string) => {
-  return getOptionTypeLabel(type, allOptionTypes.value, type)
-}
+const getOptionTypeLabelLocal = (type: string) => getOptionTypeLabel(type, allOptionTypes.value, type)
 
 const useTitle = computed(() => 
   usesTitle(props.option.type, allOptionTypes.value)
@@ -436,11 +432,11 @@ const hideChildTooltip = () => {
   activeTooltip.value = null
 }
 
-const getChildrenByType = (type: string) => {
-  return childOptions.value
+const getChildrenByType = (type: string) => 
+   childOptions.value
     .filter(child => child.type === type)
     .slice(0, 3) // Show only first 3
-}
+
 
 // Helper methods
 const formatDate = (timestamp: number) => {

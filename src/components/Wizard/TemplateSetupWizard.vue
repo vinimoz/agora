@@ -69,9 +69,7 @@ const getStepTitle = (step: string): string => {
 	return titles[step] || ''
 }
 
-const canShowNavigation = computed(() => {
-	return !['importing', 'results'].includes(wizardStore.currentStep)
-})
+const canShowNavigation = computed(() => !['importing', 'results'].includes(wizardStore.currentStep))
 
 const nextButtonLabel = computed(() => {
 	if (wizardStore.currentStep === 'summary') {

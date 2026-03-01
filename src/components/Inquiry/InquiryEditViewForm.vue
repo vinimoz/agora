@@ -54,13 +54,11 @@ const imageFileInput = ref(null)
 const currentCoverUrl = ref('')
 
 // Ajoutez cette vérification de chargement
-const isStoreReady = computed(() => {
-  return inquiryStore && 
+const isStoreReady = computed(() => inquiryStore && 
          inquiryStore.id && 
          sessionStore && 
          sessionStore.appSettings && 
-         Object.keys(sessionStore.appSettings).length > 0
-})
+         Object.keys(sessionStore.appSettings).length > 0)
 
 const triggerImageUpload = () => {
   imageFileInput.value?.click()
@@ -383,6 +381,7 @@ function getNextcloudPreviewUrl(fileId, x = 1920, y = 1080, autoScale = true) {
 
 /**
  * Upload a single file and add to attachments list
+ * @param event
  */
 const handleImageUpload = async (event) => {
   const file = event.target.files[0]
@@ -436,13 +435,9 @@ const formatDate = (timestamp: number) => {
 }
 
 // Computed permissions avec vérification
-const canCommentOnInquiry = computed(() => {
-  return context.value ? canComment(context.value) : false
-})
+const canCommentOnInquiry = computed(() => context.value ? canComment(context.value) : false)
 
-const canSupportInquiry = computed(() => {
-  return context.value ? canSupport(context.value) : false
-})
+const canSupportInquiry = computed(() => context.value ? canSupport(context.value) : false)
 </script>
 
 <template>

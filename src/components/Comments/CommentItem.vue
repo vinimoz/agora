@@ -71,19 +71,13 @@ const commentedDateTime = computed(() => {
   }
 })
 
-const isCurrentUser = computed(() => {
-  return sessionStore.currentUser?.id === user.value.id
-})
+const isCurrentUser = computed(() => sessionStore.currentUser?.id === user.value.id)
 
 // Check if any comment in group is confidential
-const isConfidential = computed(() => {
-  return comments.value.some(c => c && c.confidential > 0)
-})
+const isConfidential = computed(() => comments.value.some(c => c && c.confidential > 0))
 
-const deletable = computed(() => {
-  return user.value.id === sessionStore.currentUser?.id
-    || inquiryStore.currentUserStatus?.isOwner
-})
+const deletable = computed(() => user.value.id === sessionStore.currentUser?.id
+    || inquiryStore.currentUserStatus?.isOwner)
 
 // Format time for multiple comments
 const timeRange = computed(() => {

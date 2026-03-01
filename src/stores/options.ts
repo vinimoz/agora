@@ -171,11 +171,11 @@ export const useOptionsStore = defineStore('options', {
             const types = sessionStore.appSettings?.inquiryOptionTypeTab || {}
 
             return Object.values(types)
-                .filter(type => {
+                .filter(type => 
                     // Check if type is allowed for current inquiry type
                     // Add logic here to filter types based on inquiry type if needed
-                    return true
-                })
+                     true
+                )
                 .sort((a, b) => a.sortOrder - b.sortOrder)
         },
 

@@ -555,17 +555,11 @@ const formatFieldValue = (field: any, value: any) => {
     return value.toString()
 }
 
-const getOptionTypeDescription = (type: string) => {
-    return getOptionTypeDescriptionHelper(type, allOptionTypes.value)
-}
+const getOptionTypeDescription = (type: string) => getOptionTypeDescriptionHelper(type, allOptionTypes.value)
 
-const getOptionTypeIcon = (type: string) => {
-    return getOptionTypeIconComponent(type, allOptionTypes.value)
-}
+const getOptionTypeIcon = (type: string) => getOptionTypeIconComponent(type, allOptionTypes.value)
 
-const getOptionTypeLabel = (type: string) => {
-    return getOptionTypeLabelHelper(type, allOptionTypes.value, type)
-}
+const getOptionTypeLabel = (type: string) => getOptionTypeLabelHelper(type, allOptionTypes.value, type)
 
 const showChildTypeTooltip = (type: string) => {
     activeTooltip.value = type

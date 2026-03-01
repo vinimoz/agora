@@ -839,13 +839,9 @@ const formattedContent = computed(() => {
 })
 
 
-const getOptionTypeLabel = (type: string): string => {
-  return getOptionTypeLabelHelper(type, allOptionTypes.value, type)
-}
+const getOptionTypeLabel = (type: string): string => getOptionTypeLabelHelper(type, allOptionTypes.value, type)
 
-const getOptionTypeIcon = (type: string) => {
-  return getOptionTypeIconComponent(type, allOptionTypes.value)
-}
+const getOptionTypeIcon = (type: string) => getOptionTypeIconComponent(type, allOptionTypes.value)
 
 const displayNodeTitle = (node: Option): string => {
   if (!node) return ''
@@ -863,9 +859,7 @@ const getChildren = (parentId: number): Option[] => {
   return optionsStore.options.filter(opt => opt.parentId === parentId)
 }
 
-const getAllowedResponseTypes = (nodeType: string): string[] => {
-  return getAllowedResponses(nodeType, allOptionTypes.value)
-}
+const getAllowedResponseTypes = (nodeType: string): string[] => getAllowedResponses(nodeType, allOptionTypes.value)
 
 const canAddChild = (node: Option): boolean => {
   if (!node) return false

@@ -73,8 +73,8 @@ export const useCommentsStore = defineStore('comments', {
 	actions: {
 
           /**
-     * @param inquiryId
-     */
+           * @param inquiryId
+           */
     async load(inquiryId: number | null = null): Promise<void> {
       const sessionStore = useSessionStore()
       try {
@@ -183,6 +183,10 @@ export const useCommentsStore = defineStore('comments', {
 
     /**
      * Add a comment
+     * @param payload
+     * @param payload.message
+     * @param payload.confidential
+     * @param payload.optionId
      */
     async add(payload: { 
       message: string; 
@@ -244,6 +248,8 @@ export const useCommentsStore = defineStore('comments', {
 
     /**
      * Delete
+     * @param payload
+     * @param payload.comment
      */
     async delete(payload: { comment: Comment }) {
       const sessionStore = useSessionStore()
@@ -278,6 +284,8 @@ export const useCommentsStore = defineStore('comments', {
 
     /**
      * Restore
+     * @param payload
+     * @param payload.comment
      */
     async restore(payload: { comment: Comment }) {
       const sessionStore = useSessionStore()
@@ -311,6 +319,7 @@ export const useCommentsStore = defineStore('comments', {
 
     /**
      * Update status.countComments in both inquiry and option stores
+     * @param inquiryId
      */
     updateStatusCounts(inquiryId: number) {
       const inquiryStore = useInquiryStore()

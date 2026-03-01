@@ -40,7 +40,7 @@ class AgoraWidget  implements IWidget, IIconWidget
     #[\Override] 
     public function getTitle(): string
     {
-        return $this->l10n->t('Agora recent inquiries');
+        return $this->l10n->t('Recent inquiries');
     }
     /**
      * @inheritDoc
