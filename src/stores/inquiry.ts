@@ -350,19 +350,20 @@ export const useInquiryStore = defineStore('inquiry', {
 
     async load(inquiryId: number | null = null): Promise<void> {
 	    const sessionStore = useSessionStore()
-	    // const optionsStore = useOptionsStore()
+	    const inquiriesStore = useInquiriesStore()
+	    //const optionsStore = useOptionsStore()
 	    const sharesStore = useSharesStore()
 	    const commentsStore = useCommentsStore()
 	    const attachmentsStore = useAttachmentsStore()
 	    const subscriptionStore = useSubscriptionStore()
-
+        console.log(" INTOOOOOOOOOOOOOOOOOOOOO LOAD ",inquiryId)
 	    this.meta.status = 'loading'
 	    try {
 		    const response = await (() => {
 			    if (sessionStore.route.name === 'publicInquiry') {
 				    return PublicAPI.getInquiry(sessionStore.route.params.token)
 			    }
-			    if (sessionStore.route.name === 'inquiry') {
+			    if (sessionStore.route.name === 'inquiry' || sessionStore.route.name ==='page' ) {
 				    return InquiriesAPI.getFullInquiry(inquiryId ?? sessionStore.currentInquiryId)
 			    }
 		    })()
@@ -371,12 +372,23 @@ export const useInquiryStore = defineStore('inquiry', {
 			    this.$reset()
 			    return
 		    }
-		    this.$patch(response.data.inquiry)
-		    // optionsStore.options = response.data.options
+            console.log('API response received:', response.data)
+
+    // Log what we're about to patch
+    console.log('Patching inquiry store with:', response.data.inquiry)
+    this.$patch(response.data.inquiry)
+
+    // Check if all required properties exist
+    console.log('After patch - configuration:', this.configuration)
+    console.log('After patch - permissions:', this.permissions)
+    console.log('After patch - status:', this.status)
+
+		    //optionsStore.options = response.data.options
 		    sharesStore.shares = response.data.shares
 		    commentsStore.comments = response.data.comments
 		    subscriptionStore.subscribed = response.data.subscribed
 		    attachmentsStore.attachments = response.data.attachments
+            inquiriesStore.setFamilyType(this.family)
 
 		    if (response.data.inquiry.owner.id === sessionStore.currentUser.id)
 			    sessionStore.currentUser.isOwner = true

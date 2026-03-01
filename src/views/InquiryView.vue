@@ -25,6 +25,10 @@ import InquiryInfoCards from '../components/Cards/InquiryInfoCards.vue'
 import { createInquiryContext, ContentType, canEdit } from '../utils/permissions.ts'
 
 
+const props = defineProps<{
+  id?: string | number
+}>()
+
 
 const forceRenderKey = ref(0)
 const selectedMode = ref('response')
@@ -41,6 +45,9 @@ const selectedInquiryTypeForCreation = ref('')
 const selectedGroups = ref([])
 const isSaving = ref(false)
 
+// Add error tracking
+const error = ref<Error | null>(null)
+
 // Context for permissions
 const context = computed(() => createInquiryContext(inquiryStore, sessionStore.appSettings))
 
@@ -55,7 +62,7 @@ const availableGroups = computed(() => {
 async function routeChild(childId: string) {
   router.push({ name: 'inquiry', params: { id: childId } })
 }
-
+/*
 async function loadInquiry(id: string) {
   try {
     await inquiryStore.load(id)
@@ -82,7 +89,37 @@ async function loadInquiry(id: string) {
     isAppLoaded.value = true
   }
 }
+*/
+async function loadInquiry(id: string) {
+  error.value = null
+  try {
+    await inquiryStore.load(id)
 
+    const result = inquiriesStore.inquiries.filter(i =>
+      i.parentId === Number(id) &&
+      i.configuration.access !== 'private'
+    )
+    inquiryStore.childs = result
+
+    if (inquiryStore.childs.length === 0) {
+      inquiryStore.status.forceEditMode = true
+      editMode.value = true
+    } else {
+      inquiryStore.status.forceEditMode = false
+      editMode.value = false
+   }
+    inquiriesStore.setFamilyType(inquiryStore.family)
+
+    await nextTick()
+    forceRenderKey.value += 1
+  } catch (e) {
+    console.error('Error in loadInquiry:', e)
+    error.value = e as Error
+    showError(t('agora', 'Failed to load inquiry'))
+  } finally {
+    isAppLoaded.value = true
+  }
+}
 watch(
   () => route.params.id,
   async (newId) => {
@@ -103,14 +140,6 @@ const isReadonly = computed(() => {
   const canEditResult = canEdit(context.value)
 
   return !canEditResult
-})
-
-const isReadonlyDescription = computed(() => {
-
-  if (inquiryStore.type === 'debate') {
-    return false
-  }
-   return isReadonly.value
 })
 
 const enableEditMode = () => {
@@ -207,6 +236,12 @@ const handleGroupUpdate = (groups) => {
 </script>
 
 <template>
+     <div v-if="error" class="error-container">
+    <h3>{{ t('agora', 'Error loading inquiry') }}</h3>
+    <p>{{ error.message }}</p>
+    <pre>{{ error.stack }}</pre>
+  </div>
+
   <NcAppContent v-if="isAppLoaded" :key="forceRenderKey" class="inquiry-list">
     <Collapsible v-if="inquiryStore.description" class="sticky-left" v-bind="collapsibleProps" />
     <InquiryHeaderButtons />
@@ -216,7 +251,7 @@ const handleGroupUpdate = (groups) => {
       :inquiry-store="inquiryStore"
       :session-store="sessionStore"
       :is-saving="isSaving"
-      :is-readonly-description="isReadonlyDescription"
+      :is-readonly="isReadonly"
       @save="handleSave"
       @allowed-response="handleAllowedResponse"
       @allowed-transformation="handleAllowedTransformation"
@@ -227,7 +262,6 @@ const handleGroupUpdate = (groups) => {
       <div class="view-content">
         <InquiryEditViewForm 
 	  v-if="editMode" 
-	  :is-readonly-description="isReadonlyDescription"
 	  :is-readonly="isReadonly"
 	  />
         <InquiryTransition
@@ -238,7 +272,7 @@ const handleGroupUpdate = (groups) => {
         />
       </div>
 
-      <InquiryInfoCards class="sticky-left" />
+      <!-- <InquiryInfoCards class="sticky-left" /> -->
     </div>
 
     <InquiryCreateDlg

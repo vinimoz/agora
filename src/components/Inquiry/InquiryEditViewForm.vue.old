@@ -38,10 +38,13 @@ import {
   AccessLevel,
 } from '../../utils/permissions.ts'
 
+
 // Props
 const props = defineProps<{
   isReadonly: boolean
+  isReadonlyDescription?: boolean
 }>()
+
 
 // Store declarations
 const sessionStore = useSessionStore()
@@ -53,24 +56,13 @@ const attachmentsStore = useAttachmentsStore()
 const imageFileInput = ref(null)
 const currentCoverUrl = ref('')
 
-// Ajoutez cette vérification de chargement
-const isStoreReady = computed(() => {
-  return inquiryStore && 
-         inquiryStore.id && 
-         sessionStore && 
-         sessionStore.appSettings && 
-         Object.keys(sessionStore.appSettings).length > 0
-})
-
 const triggerImageUpload = () => {
   imageFileInput.value?.click()
 }
 
-// Context for permissions - avec vérification
-const context = computed(() => {
-  if (!isStoreReady.value) return null
-  return createInquiryContext(inquiryStore, sessionStore.appSettings)
-})
+// Context for permissions
+const context = computed(() => createInquiryContext(inquiryStore, sessionStore.appSettings))
+
 
 // Form fields
 const selectedCategory = ref(inquiryStore.categoryId || 0)
@@ -80,21 +72,18 @@ const quorumValue = computed(() => inquiryStore.miscFields?.quorum || 0)
 
 const isLoaded = ref(false)
 
-// Get current inquiry type data - avec vérification
+// Get current inquiry type data
 const inquiryTypeData = computed(() => {
-  if (!isStoreReady.value) return { icon: null, label: '' }
   const data = getInquiryTypeData(inquiryStore.type, sessionStore.appSettings.inquiryTypeTab || [])
   return data
 })
 
 const availableInquiryStatuses = computed(() => {
-  if (!isStoreReady.value) return []
-  
   const statusesFromSettings = sessionStore.appSettings.inquiryStatusTab
     ?.filter((status) => status.inquiryType === inquiryStore.type)
     ?.sort((a, b) => a.order - b.order) || [];
 
-  if (inquiryStore.status?.inquiryStatus === 'draft') {
+  if (inquiryStore.status.inquiryStatus === 'draft') {
     statusesFromSettings.unshift({
       statusKey: 'draft',
       label: 'Draft',
@@ -104,7 +93,7 @@ const availableInquiryStatuses = computed(() => {
     });
   }
 
-  if (inquiryStore.status?.inquiryStatus === 'waiting_approval') {
+  if (inquiryStore.status.inquiryStatus === 'waiting_approval') {
     statusesFromSettings.unshift({
       statusKey: 'waiting_approval',
       label: 'Waiting Approval',
@@ -117,50 +106,42 @@ const availableInquiryStatuses = computed(() => {
   return statusesFromSettings;
 });
 
-const currentInquiryStatus = computed(() => {
-  if (!isStoreReady.value || !inquiryStore.status) {
-    return {
-      statusKey: 'draft',
-      label: 'Draft',
-      icon: 'draft',
-      inquiryType: inquiryStore?.type,
-      order: 0,
+const currentInquiryStatus = computed(
+  () => {
+    const specialStatuses = {
+      'draft': {
+	statusKey: 'draft',
+	label: 'Draft',
+	icon: 'draft',
+	inquiryType: inquiryStore.type,
+	order: 0,
+      },
+      'waiting_approval': {
+	statusKey: 'waiting_approval',
+	label: 'Waiting Approval',
+	icon: 'waitingapproval',
+	inquiryType: inquiryStore.type,
+	order: 1,
+      }
+    };
+
+    const currentStatus = inquiryStore.status.inquiryStatus;
+
+    if (specialStatuses[currentStatus]) {
+      return specialStatuses[currentStatus];
     }
+
+    return availableInquiryStatuses.value.find(
+      (status) => status.statusKey === currentStatus
+    ) || specialStatuses.draft; 
   }
-
-  const specialStatuses = {
-    'draft': {
-      statusKey: 'draft',
-      label: 'Draft',
-      icon: 'draft',
-      inquiryType: inquiryStore.type,
-      order: 0,
-    },
-    'waiting_approval': {
-      statusKey: 'waiting_approval',
-      label: 'Waiting Approval',
-      icon: 'waitingapproval',
-      inquiryType: inquiryStore.type,
-      order: 1,
-    }
-  };
-
-  const currentStatus = inquiryStore.status.inquiryStatus;
-
-  if (specialStatuses[currentStatus]) {
-    return specialStatuses[currentStatus];
-  }
-
-  return availableInquiryStatuses.value.find(
-    (status) => status.statusKey === currentStatus
-  ) || specialStatuses.draft; 
-})
+)
 
 const selectedInquiryStatusKey = ref(currentInquiryStatus.value?.statusKey)
 const currentInquiryStatusLabel = computed(() => currentInquiryStatus.value?.label || 'Draft')
 const currentInquiryStatusIcon = computed(() => {
-  const iconName = currentInquiryStatus.value?.icon || 'draft'
-  return StatusIcons[iconName] || StatusIcons.Draft
+	const iconName = currentInquiryStatus.value?.icon || 'draft'
+	return StatusIcons[iconName] || StatusIcons.Draft
 })
 
 const selectedInquiryStatus = computed({
@@ -191,15 +172,13 @@ const statusInquiryOptions = computed(() =>
 
 // Get hierarchy path for location and category display
 function getHierarchyPath(items, targetId) {
-  if (!items || !targetId) return t('agora', 'Not set')
-  
   const itemMap = {}
   items.forEach((item) => {
     itemMap[item.id] = item
   })
 
   if (!itemMap[targetId]) {
-    return t('agora', 'Not set')
+    return 'ID not found'
   }
 
   function buildPath(item) {
@@ -215,7 +194,6 @@ function getHierarchyPath(items, targetId) {
 
   return buildPath(itemMap[targetId])
 }
-
 // Watchers for the image
 watch(() => inquiryStore.coverId, (newCoverId) => {
   if (newCoverId) {
@@ -225,11 +203,12 @@ watch(() => inquiryStore.coverId, (newCoverId) => {
   }
 }, { immediate: true })
 
+
+
 // Watchers for location and category
 watch(
   selectedLocation,
   (newVal) => {
-    if (!isStoreReady.value) return
     const rawValue = toRaw(newVal)
     if (rawValue) {
       inquiryStore.locationId = rawValue.value
@@ -241,7 +220,6 @@ watch(
 watch(
   selectedCategory,
   (newVal) => {
-    if (!isStoreReady.value) return
     const rawValue = toRaw(newVal)
     if (rawValue) {
       inquiryStore.categoryId = rawValue.value
@@ -258,16 +236,16 @@ function buildHierarchy(list: BaseEntry[], parentId = 0, depth = 0): BaseEntry[]
     .map((item) => {
       const children = buildHierarchy(list, item.id, depth + 1)
       return {
-        ...item,
-        depth,
-        children,
+	...item,
+	depth,
+	children,
       }
     })
     .flatMap((item) => [item, ...item.children])
 }
 
 const hierarchicalLocation = computed(() => {
-  if (!isStoreReady.value || !Array.isArray(sessionStore.appSettings.locationTab)) return []
+  if (!Array.isArray(sessionStore.appSettings.locationTab)) return []
   return buildHierarchy(sessionStore.appSettings.locationTab).map((item) => ({
     value: item.id,
     label: `${'— '.repeat(item.depth ?? 0)}${item.name ?? '[no name]'}`,
@@ -276,7 +254,7 @@ const hierarchicalLocation = computed(() => {
 })
 
 const hierarchicalCategory = computed(() => {
-  if (!isStoreReady.value || !Array.isArray(sessionStore.appSettings.categoryTab)) return []
+  if (!Array.isArray(sessionStore.appSettings.categoryTab)) return []
   return buildHierarchy(sessionStore.appSettings.categoryTab).map((item) => ({
     value: item.id,
     label: `${'— '.repeat(item.depth ?? 0)}${item.name ?? '[no name]'}`,
@@ -288,7 +266,7 @@ const hierarchicalCategory = computed(() => {
 watch(
   hierarchicalLocation,
   (locations) => {
-    if (!isStoreReady.value || !locations.length) return
+    if (!locations.length) return
     if (inquiryStore.locationId === 0) {
       selectedLocation.value = locations[0]
       inquiryStore.locationId = locations[0].value
@@ -304,7 +282,7 @@ watch(
 watch(
   hierarchicalCategory,
   (categories) => {
-    if (!isStoreReady.value || !categories.length) return
+    if (!categories.length) return
     if (inquiryStore.categoryId === 0) {
       selectedCategory.value = categories[0]
       inquiryStore.categoryId = categories[0].value
@@ -318,27 +296,26 @@ watch(
 )
 
 // Toggle Support
+
 const onToggleSupport = async () => {
-  if (!isStoreReady.value) return
-  
   // Store the current state before toggling
-  const hadSupportedBefore = inquiryStore.currentUserStatus?.hasSupported
+  const hadSupportedBefore = inquiryStore.currentUserStatus.hasSupported
 
   try {
     await supportsStore.toggleSupport(inquiryStore.id, sessionStore.currentUser.id, inquiryStore, inquiriesStore)
 
     // Get the updated state after toggling
-    const hasSupportedAfter = inquiryStore.currentUserStatus?.hasSupported
-    const supportValueAfter = inquiryStore.currentUserStatus?.supportValue
+    const hasSupportedAfter = inquiryStore.currentUserStatus.hasSupported
+    const supportValueAfter = inquiryStore.currentUserStatus.supportValue
 
-    if (inquiryStore.configuration?.supportFeature === 'binary') {
+    if (inquiryStore.configuration.supportFeature === 'binary') {
       if (hasSupportedAfter && !hadSupportedBefore) {
         showSuccess(t('agora', 'Inquiry supported, thanks for your support!'), { timeout: 2000 })
       } else if (!hasSupportedAfter && hadSupportedBefore) {
         showSuccess(t('agora', 'Inquiry support removed!'), { timeout: 2000 })
       }
     }
-    else if (inquiryStore.configuration?.supportFeature === 'ternary') {
+    else if (inquiryStore.configuration.supportFeature === 'ternary') {
       if (supportValueAfter === 1) {
         showSuccess(t('agora', 'Inquiry supported, thanks for your support!'), { timeout: 2000 })
       } else if (supportValueAfter === 0) {
@@ -356,11 +333,14 @@ const onToggleSupport = async () => {
   }
 }
 
+
 // Event subscriptions
 onMounted(() => {
+
   if (inquiryStore.coverId) { 
-    currentCoverUrl.value = getNextcloudPreviewUrl(inquiryStore.coverId)
-  }
+        currentCoverUrl.value = getNextcloudPreviewUrl(inquiryStore.coverId)
+   }
+  inquiriesStore.setFamilyType(inquiryStore.family)
   subscribe(Event.UpdateComments, () => commentsStore.load())
   
   isLoaded.value = true
@@ -372,8 +352,15 @@ onUnmounted(() => {
 })
 
 // Determine if category/location should be shown as select or label
-const showCategoryAsLabel = computed(() => props.isReadonly)
-const showLocationAsLabel = computed(() => props.isReadonly)
+const showCategoryAsLabel = computed(() => {
+  const result =  props.isReadonly
+  return result
+})
+
+const showLocationAsLabel = computed(() => {
+  const result = props.isReadonly
+  return result
+})
 
 // Image URL function
 function getNextcloudPreviewUrl(fileId, x = 1920, y = 1080, autoScale = true) {
@@ -383,6 +370,7 @@ function getNextcloudPreviewUrl(fileId, x = 1920, y = 1080, autoScale = true) {
 
 /**
  * Upload a single file and add to attachments list
+ * @param event
  */
 const handleImageUpload = async (event) => {
   const file = event.target.files[0]
@@ -401,7 +389,8 @@ const handleImageUpload = async (event) => {
   }
 
   try {
-    const response = await attachmentsStore.upload(inquiryStore.id, file, true)
+
+    const response = await attachmentsStore.upload(inquiryStore.id, file,true)
 
     const attachment = {
       id: response.id ?? `temp-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
@@ -414,226 +403,316 @@ const handleImageUpload = async (event) => {
     // Use immutable update for better reactivity
     attachmentsStore.attachments = [...attachmentsStore.attachments, attachment]
     currentCoverUrl.value = getNextcloudPreviewUrl(attachment.fileId)
-    inquiryStore.coverId = attachment.fileId
+    inquiryStore.coverId=attachment.fileId
     showSuccess(t('agora', '{file} uploaded', { file: response.name ?? file.name }))
   } catch (error) {
     showError(t('agora', 'Failed to upload {file}', { file: file.name }))
-    throw error
-  }
+    throw error // Re-throw to handle in parent function
+    }
+
 }
 
 const timeExpirationRelative = computed(() => {
-  if (!isStoreReady.value || !inquiryStore.configuration?.expire) {
-    return t('agora', 'never')
+  if (inquiryStore.configuration.expire) {
+    return DateTime.fromMillis(inquiryStore.configuration.expire * 1000).toRelative()
   }
-  return DateTime.fromMillis(inquiryStore.configuration.expire * 1000).toRelative()
+  return t('agora', 'never')
 })
+
 
 // Format date
-const formatDate = (timestamp: number) => {
-  if (!timestamp) return ''
-  return new Date(timestamp * 1000).toLocaleDateString()
-}
-
-// Computed permissions avec vérification
-const canCommentOnInquiry = computed(() => {
-  return context.value ? canComment(context.value) : false
-})
-
-const canSupportInquiry = computed(() => {
-  return context.value ? canSupport(context.value) : false
-})
+const formatDate = (timestamp: number) => new Date(timestamp * 1000).toLocaleDateString()
 </script>
 
 <template>
-  <div v-if="!isStoreReady" class="loading-container">
-    {{ t('agora', 'Loading inquiry...') }}
-  </div>
+	<div v-if="isLoaded" class="inquiry-edit-view">
+		<!-- Cover Image Section -->
+		<div v-if="inquiryStore.currentUserStatus?.isOwner" class="cover-image-section">
+			<input
+				id="cover-upload-input"
+				ref="imageFileInput"
+				type="file"
+				class="hidden"
+				accept="image/*"
+				:aria-label="t('agora', 'Select cover image')"
+				@change="handleImageUpload"
+			/>
 
-  <div v-else-if="isLoaded" class="inquiry-edit-view">
-    <!-- Cover Image Section -->
-    <div v-if="inquiryStore.currentUserStatus?.isOwner" class="cover-image-section">
-      <input
-        id="cover-upload-input"
-        ref="imageFileInput"
-        type="file"
-        class="hidden"
-        accept="image/*"
-        :aria-label="t('agora', 'Select cover image')"
-        @change="handleImageUpload"
-      />
+			<div 
+				v-if="currentCoverUrl" 
+				class="cover-image-container"
+				@click="triggerImageUpload"
+			>
+				<img
+					:src="currentCoverUrl"
+					:alt="t('agora', 'Inquiry cover image')"
+					class="cover-image"
+				/>
+				<div class="cover-image-overlay">
+					<NcButton type="primary" class="change-cover-btn">
+						<template #icon>
+							<component :is="InquiryGeneralIcons.Edit" :size="20" />
+						</template>
+						{{ t('agora', 'Change cover image') }}
+					</NcButton>
+				</div>
+			</div>
 
-      <div 
-        v-if="currentCoverUrl" 
-        class="cover-image-container"
-        @click="triggerImageUpload"
-      >
-        <img
-          :src="currentCoverUrl"
-          :alt="t('agora', 'Inquiry cover image')"
-          class="cover-image"
-        />
-        <div class="cover-image-overlay">
-          <NcButton type="primary" class="change-cover-btn">
-            <template #icon>
-              <component :is="InquiryGeneralIcons.Edit" :size="20" />
-            </template>
-            {{ t('agora', 'Change cover image') }}
-          </NcButton>
-        </div>
-      </div>
+			<div 
+				v-else 
+				class="cover-image-placeholder"
+				@click="triggerImageUpload"
+			>
+				<div class="placeholder-content">
+					<component :is="InquiryGeneralIcons.Image" :size="48" class="placeholder-icon" />
+					<NcButton type="primary" class="add-cover-btn">
+						{{ t('agora', 'Add cover image') }}
+					</NcButton>
+					<p class="placeholder-text">{{ t('agora', 'Click to add a cover image') }}</p>
+				</div>
+			</div>
+		</div>
 
-      <div 
-        v-else 
-        class="cover-image-placeholder"
-        @click="triggerImageUpload"
-      >
-        <div class="placeholder-content">
-          <component :is="InquiryGeneralIcons.Image" :size="48" class="placeholder-icon" />
-          <NcButton type="primary" class="add-cover-btn">
-            {{ t('agora', 'Add cover image') }}
-          </NcButton>
-          <p class="placeholder-text">{{ t('agora', 'Click to add a cover image') }}</p>
-        </div>
-      </div>
-    </div>
+		<!-- Cover Image for non-owners (but editable if not readonly) -->
+		<div
+			v-else-if="currentCoverUrl"
+			class="cover-image-section"
+			:class="{ 'clickable': !props.isReadonly }"
+			@click="!props.isReadonly && triggerImageUpload()"
+		>
+			<img
+				:src="currentCoverUrl"
+				:alt="t('agora', 'Inquiry cover image')"
+				class="cover-image"
+			/>
+			<div v-if="!props.isReadonly" class="cover-image-overlay">
+				<NcButton type="primary" class="change-cover-btn">
+					<template #icon>
+						<component :is="InquiryGeneralIcons.Edit" :size="20" />
+					</template>
+					{{ t('agora', 'Change cover image') }}
+				</NcButton>
+			</div>
+		</div>
 
-    <!-- Cover Image for non-owners (but editable if not readonly) -->
-    <div
-      v-else-if="currentCoverUrl"
-      class="cover-image-section"
-      :class="{ 'clickable': !props.isReadonly }"
-      @click="!props.isReadonly && triggerImageUpload()"
-    >
-      <img
-        :src="currentCoverUrl"
-        :alt="t('agora', 'Inquiry cover image')"
-        class="cover-image"
-      />
-      <div v-if="!props.isReadonly" class="cover-image-overlay">
-        <NcButton type="primary" class="change-cover-btn">
-          <template #icon>
-            <component :is="InquiryGeneralIcons.Edit" :size="20" />
-          </template>
-          {{ t('agora', 'Change cover image') }}
-        </NcButton>
-      </div>
-    </div>
+		<!-- Main content section -->
+		<div class="main-content-section">
+			<!-- User info section -->
+			<div class="user-info-section">
+				<div class="user-avatar">
+					<component
+						:is="NcAvatar"
+						v-if="inquiryStore.ownedGroup !== ''"
+						:display-name="inquiryStore.ownedGroup"
+						:show-user-status="false"
+						:size="56"
+					/>
+					<component
+						:is="NcAvatar"
+						v-else
+						:user="inquiryStore.owner.id"
+						:display-name="inquiryStore.owner.displayName"
+						:size="56"
+					/>
+				</div>
+				<div class="user-details">
+					<h3 class="user-name">
+						{{ inquiryStore.ownedGroup !== '' ? inquiryStore.ownedGroup : inquiryStore.owner.displayName }}
+					</h3>
+					<div class="inquiry-type-badge">
+						<component :is="inquiryTypeData.icon" :size="16" />
+						<span>{{ t('agora', inquiryTypeData.label) }}</span>
+					</div>
+				</div>
+			</div>
 
-    <!-- Main content section -->
-    <div class="main-content-section">
-      <!-- User info section -->
-      <div class="user-info-section">
-        <div class="user-avatar">
-          <component
-            :is="NcAvatar"
-            v-if="inquiryStore.ownedGroup !== ''"
-            :display-name="inquiryStore.ownedGroup"
-            :show-user-status="false"
-            :size="56"
-          />
-          <component
-            :is="NcAvatar"
-            v-else
-            :user="inquiryStore.owner?.id"
-            :display-name="inquiryStore.owner?.displayName"
-            :size="56"
-          />
-        </div>
-        <div class="user-details">
-          <h3 class="user-name">
-            {{ inquiryStore.ownedGroup !== '' ? inquiryStore.ownedGroup : inquiryStore.owner?.displayName }}
-          </h3>
-          <div v-if="inquiryTypeData.icon" class="inquiry-type-badge">
-            <component :is="inquiryTypeData.icon" :size="16" />
-            <span>{{ t('agora', inquiryTypeData.label) }}</span>
-          </div>
-        </div>
-      </div>
+			<!-- Title row with counters -->
+			<div class="title-section">
+				<div class="title-header">
+					<h1 class="inquiry-title">{{ inquiryStore.title }}</h1>
+					<div class="inquiry-id">[#{{ inquiryStore.id }}]</div>
+				</div>
+				
+				<div class="counters-section">
+					<div v-if="canComment(context)" class="counter-item">
+						<div class="counter-icon">
+							<component :is="InquiryGeneralIcons.Comment" :size="20" />
+						</div>
+						<div class="counter-content">
+							<span class="counter-value">{{ inquiryStore.status.countComments || 0 }}</span>
+                            <span class="counter-label">{{ t('agora', 'Comments') }}</span>
+                        </div>
+                    </div>
 
-      <!-- Title row with counters -->
-      <div class="title-section">
-        <div class="title-header">
-          <h1 class="inquiry-title">{{ inquiryStore.title }}</h1>
-          <div class="inquiry-id">[#{{ inquiryStore.id }}]</div>
-        </div>
-        
-        <div class="counters-section">
-          <div v-if="canCommentOnInquiry" class="counter-item">
-            <div class="counter-icon">
-              <component :is="InquiryGeneralIcons.Comment" :size="20" />
+                    <div
+                            v-if="canSupport(context)"
+                            class="counter-item supports"
+                            >
+                            <SupportFeature
+                                    :item="inquiryStore"
+                                    item-type="inquiry"
+                                    :context="context"
+                                    :show-quorum="true"
+                                    :show-details-on-hover="true"
+                                    :icon-size="20"
+                                    />
+                    </div>
+                </div>
             </div>
-            <div class="counter-content">
-              <span class="counter-value">{{ inquiryStore.status?.countComments || 0 }}</span>
-              <span class="counter-label">{{ t('agora', 'Comments') }}</span>
+
+            <!-- Metadata section -->
+            <div class="metadata-section">
+                <h3 class="section-subtitle">{{ t('agora', 'INQUIRY DETAILS') }}</h3>
+                <div class="metadata-grid">
+                    <div class="metadata-item">
+                        <div class="metadata-icon">
+                            <component :is="InquiryGeneralIcons.Location" :size="18" />
+                        </div>
+                        <div class="metadata-content">
+                            <span class="metadata-label">{{ t('agora', 'Location') }}</span>
+                            <div v-if="!showLocationAsLabel" class="select-container">
+                                <NcSelect
+                                        v-model="selectedLocation"
+                                        :options="hierarchicalLocation"
+                                        :clearable="false"
+                                        class="metadata-select"
+                                        required
+                                        aria-label="Select Location" 
+                                        />
+                            </div>
+                            <span v-else class="metadata-value">
+                                {{ getHierarchyPath(sessionStore.appSettings.locationTab, inquiryStore.locationId) || t('agora', 'Inherited from parent') }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="metadata-item">
+                        <div class="metadata-icon">
+                            <component :is="InquiryGeneralIcons.Category" :size="18" />
+                        </div>
+                        <div class="metadata-content">
+                            <span class="metadata-label">{{ t('agora', 'Category') }}</span>
+                            <div v-if="!showCategoryAsLabel" class="select-container">
+                                <NcSelect
+                                        v-model="selectedCategory"
+                                        :options="hierarchicalCategory"
+                                        :clearable="false"
+                                        class="metadata-select"
+                                        aria-label="Select Category" 
+                                        required
+                                        />
+                            </div>
+                            <span v-else class="metadata-value">
+                                {{ getHierarchyPath(sessionStore.appSettings.categoryTab, inquiryStore.categoryId) || t('agora', 'Inherited from parent') }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="metadata-item">
+                        <div class="metadata-icon">
+                            <component :is="StatusIcons.Calendar" :size="18" />
+                        </div>
+                        <div class="metadata-content">
+                            <span class="metadata-label">{{ t('agora', 'Created') }}</span>
+                            <span class="metadata-value">{{ formatDate(inquiryStore.status.created) }}</span>
+                        </div>
+                    </div>
+
+                    <div class="metadata-item">
+                        <div class="metadata-icon">
+                            <component :is="StatusIcons.Updated" :size="18" />
+                        </div>
+                        <div class="metadata-content">
+                            <span class="metadata-label">{{ t('agora', 'Last interaction') }}</span>
+                            <span class="metadata-value">{{ formatDate(inquiryStore.status.lastInteraction) }}</span>
+                        </div>
+                    </div>
+
+                    <div class="metadata-item highlight">
+                        <div class="metadata-icon">
+                            <component :is="currentInquiryStatusIcon" :size="18" />
+                        </div>
+                        <div class="metadata-content">
+                            <span class="metadata-label">{{ t('agora', 'Status') }}</span>
+                            <template v-if="sessionStore.currentUser.isModerator">
+                                <div class="select-container">
+                                    <NcSelect
+                                            v-model="selectedInquiryStatus"
+                                            :options="statusInquiryOptions"
+                                            :clearable="false"
+                                            class="status-select"
+                                            @update:model-value="onStatusChange"
+                                            aria-label="Select Status" 
+                                            />
+                                </div>
+                            </template>
+                            <template v-else>
+                                <span class="metadata-value">{{ t('agora', currentInquiryStatusLabel) }}</span>
+                            </template>
+                        </div>
+                    </div>
+
+                    <div v-if="inquiryStore.configuration.expire" class="metadata-item">
+                        <div class="metadata-icon">
+                            <component :is="InquiryGeneralIcons.Expiration" :size="18" />
+                        </div>
+                        <div class="metadata-content">
+                            <span class="metadata-label">{{ t('agora', 'Expires') }}</span>
+                            <span class="metadata-value">{{ timeExpirationRelative }}</span>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
 
-          <div v-if="canSupportInquiry" class="counter-item supports">
-            <SupportFeature
-              :item="inquiryStore"
-              item-type="inquiry"
-              :context="context"
-              :show-quorum="true"
-              :show-details-on-hover="true"
-              :icon-size="20"
-            />
-          </div>
+            <!-- Description section -->
+            <div class="description-section">
+                <div class="section-header-with-icon">
+                    <div class="section-icon">
+                        <component :is="InquiryGeneralIcons.Description" :size="24" />
+                    </div>
+                    <div>
+                        <h3 class="section-subtitle">{{ t('agora', 'DESCRIPTION') }}</h3>
+                        <p class="section-description">{{ t('agora', 'Detailed information about this inquiry') }}</p>
+                    </div>
+                </div>
+
+                <div class="description-content">
+                    <div
+                            v-if="sessionStore.appSettings.inquiryTypeRights[inquiryStore.type]?.editorType === 'wysiwyg'"
+                            class="editor-container"
+                            >
+                            <!--  <InquiryEditor v-model="inquiryStore.description" :readonly="props.isReadonlyDescription" /> -->
+                    </div>
+
+                        <div
+                                v-else-if="sessionStore.appSettings.inquiryTypeRights[inquiryStore.type]?.editorType === 'texteditor'"
+                                class="editor-container"
+                                >
+                                <NcRichContenteditable
+                                        v-model="inquiryStore.description"
+                                        :autolink="true"
+                                        :use-markdown="true"
+                                        :emoji-autocomplete="true"
+                                        :link-autocomplete="true"
+                                        :multiline="true"
+                                        :disabled="props.isReadonlyDescription"
+                                        class="rich-text-editor"
+                                        />
+                        </div>
+
+                            <div v-else class="editor-container">
+                                <NcTextArea
+                                        v-model="inquiryStore.description"
+                                        :disabled="props.isReadonlyDescription"
+                                        class="text-area-editor"
+                                        :rows="8"
+                                        />
+                            </div>
+                </div>
+            </div>
         </div>
-      </div>
-
-      <!-- Rest of the template remains the same -->
-      <!-- ... -->
-      
-      <!-- Description section -->
-      <div class="description-section">
-        <div class="section-header-with-icon">
-          <div class="section-icon">
-            <component :is="InquiryGeneralIcons.Description" :size="24" />
-          </div>
-          <div>
-            <h3 class="section-subtitle">{{ t('agora', 'DESCRIPTION') }}</h3>
-            <p class="section-description">{{ t('agora', 'Detailed information about this inquiry') }}</p>
-          </div>
-        </div>
-
-        <div class="description-content">
-          <div
-            v-if="sessionStore.appSettings.inquiryTypeRights?.[inquiryStore.type]?.editorType === 'wysiwyg'"
-            class="editor-container"
-          >
-         <InquiryEditor v-model="inquiryStore.description" :readonly="props.isReadonly" /> 
-          </div>
-
-          <div
-            v-else-if="sessionStore.appSettings.inquiryTypeRights?.[inquiryStore.type]?.editorType === 'texteditor'"
-            class="editor-container"
-          >
-            <NcRichContenteditable
-              v-model="inquiryStore.description"
-              :autolink="true"
-              :use-markdown="true"
-              :emoji-autocomplete="true"
-              :link-autocomplete="true"
-              :multiline="true"
-              :disabled="props.isReadonly"
-              class="rich-text-editor"
-            />
-          </div>
-
-          <div v-else class="editor-container">
-            <NcTextArea
-              v-model="inquiryStore.description"
-              :disabled="props.isReadonly"
-              class="text-area-editor"
-              :rows="8"
-            />
-          </div>
-        </div>
-      </div>
+        <OptionEditView :inquiry-id="inquiryStore.id"/>
     </div>
-    <OptionEditView :inquiry-id="inquiryStore.id" />
-  </div>
 </template>
 
 <style scoped lang="scss">
@@ -646,17 +725,6 @@ const canSupportInquiry = computed(() => {
   --squareux-border: #edebe9;
   --squareux-card-shadow: 0 2.4px 7.2px rgba(0, 0, 0, .08), 0 0.2px 0.6px rgba(0, 0, 0, .04);
   --squareux-elevation-shadow: 0 6.4px 28.8px rgba(0, 0, 0, .12), 0 1.2px 3.6px rgba(0, 0, 0, .08);
-}
-
-.loading-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 300px;
-  background: var(--color-background-hover);
-  border-radius: var(--border-radius);
-  color: var(--color-text-lighter);
-  font-size: 1.1rem;
 }
 
 .inquiry-edit-view {

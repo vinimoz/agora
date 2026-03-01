@@ -9,7 +9,7 @@ declare(strict_types=1);
 namespace OCA\Agora\AppInfo;
 
 use OCA\Agora\AppConstants;
-use OCA\Agora\Dashboard\InquiryWidget;
+use OCA\Agora\Dashboard\AgoraWidget;
 use OCA\Agora\Db\CommentMapper;
 use OCA\Agora\Db\SupportMapper;
 use OCA\Agora\Db\AttachmentMapper;
@@ -167,7 +167,7 @@ class Application extends App implements IBootstrap
         $context->registerEventListener(ShareTypeChangedEvent::class, ShareListener::class);
 
         $context->registerSearchProvider(SearchProvider::class);
-        $context->registerDashboardWidget(InquiryWidget::class);
+        $context->registerDashboardWidget(AgoraWidget::class);
         $context->registerReferenceProvider(ReferenceProvider::class);
 
     }

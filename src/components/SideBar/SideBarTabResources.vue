@@ -86,7 +86,18 @@ interface GroupedResources {
 }
 
 // Context for permissions
-const context = computed(() => createInquiryContext(inquiry, sessionStore.appSettings))
+const context = computed(() => {
+    if (!props.inquiry || !props.inquiry.id) {
+    console.log('SideBarTabResources - inquiry not ready yet')
+    return null
+  }
+  try  {
+createInquiryContext(props.inquiry, sessionStore.appSettings)
+ } catch (error) {
+    console.error('Error creating permission context:', error)
+    return null
+  }
+})
 
 // Helper function to parse metadata
 const parseMetadata = (metadata: string) => {
@@ -113,9 +124,9 @@ const groupedResources = computed((): GroupedResources => {
     if (!groups[link.target_app]) {
       groups[link.target_app] = []
     }
-    
+
     const metadata = parseMetadata(link.metadata)
-    
+
     groups[link.target_app].push({
       ...link,
       type: 'link',
@@ -325,7 +336,7 @@ const handleSpecificResourceDeletion = async (resource: ResourceItem, deleteExte
 
 const handleAttachmentDeletion = async (resource: ResourceItem) => {
   const attachment = attachmentsStore.attachments.find(att => att.id === resource.id);
-  
+
   if (!attachment) {
     console.warn('No attachment found with id:', resource.id);
     return;
@@ -382,15 +393,22 @@ const getResourceTarget = (): string => '_blank'
 
 // Add this function to check if resource can be edited
 const canEditResource = (): boolean => {
+
+ if (!currentInquiry.value) {
+    console.log('canEditResource - currentInquiry not ready')
+    return false
+  }
+
   // Only owners can delete resources
   if (!currentInquiry.value.currentUserStatus?.isOwner) {
     return false
   }
 
+
   // Use your permission system if available, otherwise simple owner check
   try {
-    if (context.value === 'undefined' ) {
-        return false;
+      if (context.value === undefined || context.value === null) {
+         return currentInquiry.value.currentUserStatus?.isOwner
     }
     return canEdit?.(context.value) ?? currentInquiry.value.currentUserStatus?.isOwner
   } catch (error) {
@@ -407,7 +425,7 @@ const getResourceHref = (resource: ResourceItem): string => {
 
   if (resource.type === 'link') {
     const metadata = parseMetadata(resource.metadata)
-    
+
     // Use URL from metadata if available
     if (metadata?.url) {
       return metadata.url

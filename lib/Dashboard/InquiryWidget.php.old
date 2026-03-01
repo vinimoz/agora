@@ -38,10 +38,18 @@ class InquiryWidget implements IWidget
     {
         return 50;
     }
+      /**
+     * @inheritDoc
+     */
+    public function getIconUrl(): string {
+        return $this->urlGenerator->getAbsoluteURL(
+            $this->urlGenerator->imagePath('apps/agora/img/', 'agora-dark.svg')
+        );
+    }
 
     public function getIconClass(): string
     {
-        return 'icon-agora'; 
+        return 'icon-agora-dark'; 
     }
 
     public function getUrl(): ?string
@@ -52,5 +60,6 @@ class InquiryWidget implements IWidget
     public function load(): void
     {
         \OCP\Util::addScript(AppConstants::APP_ID, 'agora-dashboard');
+         \OCP\Util::addStyle(AppConstants::APP_ID, 'dashboard');
     }
 }

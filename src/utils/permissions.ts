@@ -269,6 +269,10 @@ export function canInquiryTypePerformAction(
 
 
 export function createInquiryContext(inquiry: InquiryStoreLike, appSettings: any): PermissionContext {
+    if (!inquiry || !inquiry.owner || !inquiry.configuration || !inquiry.status) {
+    console.warn('createInquiryContext called with invalid inquiry:', inquiry)
+    return null
+  }
   const isFinalStatus = isInquiryFinalStatus(inquiry, appSettings)
   
   const supportFeature = inquiry.configuration.supportFeature
@@ -1002,7 +1006,11 @@ export function canModerate(context: PermissionContext): boolean {
  * @param context
  */
 export function canEdit(context: PermissionContext): boolean {
-    if (context==='undefined') return false
+        if (!context || context === undefined || context === null) {
+        console.warn('canEdit called with undefined context')
+        return false
+    
+        }
     // Handle inquiry groups separately
     if (context.contentType === ContentType.InquiryGroup) {
         if (context.isOwner || context.userType === UserType.Admin) {

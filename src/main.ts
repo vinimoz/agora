@@ -8,6 +8,7 @@ import { router } from './router.ts'
 import App from './App.vue'
 import axios from 'axios'
 
+// Global error handler
 if (window.OC && OC.requestToken) {
   axios.defaults.headers.common.requesttoken = OC.requestToken
 }
@@ -19,3 +20,4 @@ const Agora = createApp(App)
     mounted: (el) => el.focus(),
   })
 Agora.mount('#content')
+

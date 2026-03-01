@@ -33,7 +33,7 @@ const props = defineProps<{
   inquiryStore: useInquiryStore
   sessionStore: useSessionStore
   isSaving?: boolean
-  isReadonlyDescription?: boolean
+  isReadonly?: boolean
 }>()
 
 const inquiriesStore = useInquiriesStore()
@@ -168,7 +168,7 @@ const getStatusColor = (status: string) => {
   }
 }
 
-const canEditInquiry = computed(() => !props.isReadonlyDescription)
+const canEditInquiry = computed(() => !props.isReadonly)
 
 // Check if save button should be shown
 const showSaveButton = computed(() => canEditInquiry.value)

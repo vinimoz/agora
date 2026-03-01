@@ -1,6 +1,8 @@
-.icon-agora {
-    background-image: url('../img/agora.svg');
-    background-size: 16px 16px;
-    background-repeat: no-repeat;
-    background-position: center;
+/*!
+ * SPDX-FileCopyrightText: 2022 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+.app-icon-agora {
+	background-image: url('../img/agora-dark.svg');
+  filter: var(--background-invert-if-dark);
 }

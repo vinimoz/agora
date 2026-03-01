@@ -9,6 +9,8 @@ import { usePreferencesStore } from '../stores/preferences.ts'
 import { Logger } from '../helpers/index.ts'
 import { Settings } from 'luxon'
 
+
+
 /**
  * Load the application context based on the current route.
  *
@@ -24,9 +26,13 @@ async function loadContext(
   cheapLoading: boolean = false,
   forceReload: boolean = false
 ) {
+try {
   const sessionStore = useSessionStore()
   const preferencesStore = usePreferencesStore()
   const firstLoad = !sessionStore.isLoaded
+  console.log('loadContext started for:', to.path)
+  console.log('Calling sessionStore.load...')
+
   await sessionStore.load(to, cheapLoading, forceReload)
   if (firstLoad || (!cheapLoading && forceReload)) {
     Settings.defaultLocale =
@@ -37,6 +43,15 @@ async function loadContext(
     }
   }
   Logger.info('Context loaded')
+  } catch (error) {
+    console.error('❌ loadContext error:', error)
+    console.error('Error name:', error.name)
+    console.error('Error message:', error.message)
+    console.error('Error stack:', error.stack)
+
+    Logger.error('Could not load context', { error })
+    throw error // Re-throw to let router handle it
+  }
 }
 
 export { loadContext }

@@ -186,6 +186,7 @@ class Option extends EntityWithUser implements JsonSerializable
         $this->addType('sortOrder', 'integer');
         $this->addType('type', 'string');
         $this->addType('title', 'string');
+        $this->addType('optionStatus', 'string');
 
         // joined Attributes
         $this->addType('currentUserSupports', 'integer');
@@ -298,7 +299,7 @@ class Option extends EntityWithUser implements JsonSerializable
         return [
             'created' => $this->getCreated(),
             'updated' => $this->getUpdated(),
-            'optionStatus' => $this->getStatus(),
+            'optionStatus' => $this->getOptionStatus(),
             'isArchived' => (bool)$this->getArchived(),
             'isDeleted' => (bool)$this->getDeleted(),
             'countParticipants' => $this->getIsAllowed(self::PERMISSION_OPTION_RESULTS_VIEW) ? $this->getCountParticipants() : 0,

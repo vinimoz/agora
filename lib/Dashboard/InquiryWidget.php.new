@@ -1,0 +1,112 @@
+<?php
+
+declare(strict_types=1);
+/**
+ * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+namespace OCA\Agora\Dashboard;
+
+use OCA\Agora\AppInfo\Application;
+use OCA\Agora\AppConstants;
+use OCP\Dashboard\IAPIWidget;
+use OCP\Dashboard\IOptionWidget;
+use OCP\Dashboard\IReloadableWidget;
+use OCP\Dashboard\Model\WidgetButton;
+use OCP\Dashboard\Model\WidgetItem;
+use OCP\Dashboard\Model\WidgetItems;
+use OCP\Dashboard\Model\WidgetOptions;
+use OCP\IDateTimeFormatter;
+use OCP\IL10N;
+use OCP\IURLGenerator;
+use OCP\Util;
+
+class AgoraWidget implements IAPIWidget, IReloadableWidget, IOptionWidget {
+	private IL10N $l10n;
+	private IDateTimeFormatter $dateTimeFormatter;
+	private IURLGenerator $urlGenerator;
+
+	public function __construct(IL10N $l10n,
+        IURLGenerator $urlGenerator,
+    ) {
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	#[\Override]
+	public function getId(): string {
+		return Application::APP_ID;
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	#[\Override]
+	public function getTitle(): string {
+		return $this->l10n->t('Recent activity');
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	#[\Override]
+	public function getOrder(): int {
+		return 20;
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	#[\Override]
+	public function getIconClass(): string {
+		return 'icon-agora-dark';
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	#[\Override]
+	public function getIconUrl(): string {
+		return $this->urlGenerator->getAbsoluteURL(
+			$this->urlGenerator->imagePath(Application::APP_ID, 'agora-dark.svg')
+		);
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	#[\Override]
+	public function getUrl(): ?string {
+		return $this->urlGenerator->getAbsoluteURL(
+			$this->urlGenerator->linkToRoute(Application::APP_ID . '.agora.index')
+		);
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	#[\Override]
+	public function load(): void {
+		Util::addStyle('activity', 'style');
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	#[\Override]
+	public function getReloadInterval(): int {
+		return 30;
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	#[\Override]
+	public function getWidgetOptions(): WidgetOptions {
+		return new WidgetOptions(true);
+	}
+}
+

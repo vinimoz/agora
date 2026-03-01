@@ -11,10 +11,10 @@ import { t } from '@nextcloud/l10n'
 import DOMPurify from 'dompurify'
 import { InquiryGeneralIcons, StatusIcons, NavigationIcons } from '../utils/icons.ts'
 import NcDashboardWidget from '@nextcloud/vue/components/NcDashboardWidget'
-import { useSessionStore } from '../stores/session.ts'
 import { AgoraAppIcon } from '../components/AppIcons/index.ts'
 import { Logger } from '../helpers/index.ts'
 import { useInquiriesStore } from '../stores/inquiries.ts'
+import { useSessionStore } from '../stores/session.ts'
 import { 
   getInquiryTypeData,
   type InquiryType
@@ -29,8 +29,19 @@ const dashboardWidgetProperties = {
 
 // Computed for all inquiry types
 const allInquiryTypes = computed((): InquiryType[] => sessionStore.appSettings.inquiryTypeTab || [])
-console.log(" INNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN ",allInquiryTypes)
 const inquiriesStore = useInquiriesStore()
+
+/**
+ * Load the store
+ */
+ function loadSessionStore(): void {
+  try {
+    sessionStore.load(null, false, false) // Ou sessionStore.load() si pas besoin de paramètres
+  } catch {
+    showError(t('agora', 'Error setting dashboard list'))
+  }
+}
+
 
 /**
  * Load the inquiries
@@ -46,32 +57,24 @@ function loadInquiries(): void {
 
 // Function to get icon component for an inquiry based on its type
 function getInquiryIconComponent(inquiry) {
-  console.log('=== DEBUGGING INQUIRY ICON ===');
-  console.log('1. Inquiry object:', inquiry);
-  console.log('2. Inquiry type:', inquiry.type);
-  console.log('3. All inquiry types:', allInquiryTypes.value);
 
   if (inquiry.type) {
     const typeData = getInquiryTypeData(inquiry.type, allInquiryTypes.value);
-    console.log('4. typeData from getInquiryTypeData:', typeData);
-    console.log('5. typeData.icon:', typeData?.icon);
-    console.log('6. typeData.icon constructor:', typeData?.icon?.constructor?.name);
-    console.log('7. InquiryGeneralIcons.Flash:', InquiryGeneralIcons.Flash);
 
     // Try to determine what we're dealing with
     if (typeData?.icon) {
-      console.log('8. Returning typeData.icon');
       return typeData.icon;
     }
   }
 
-  console.log('9. Falling back to Flash icon');
   return InquiryGeneralIcons.Flash;
 }
 
 onMounted(() => {
+  loadSessionStore()
   loadInquiries()
 })
+
 </script>
 
 <template>
@@ -87,7 +90,7 @@ onMounted(() => {
       </template>
 
       <template #default="{ item }">
-        <a :href="generateUrl(`/apps/agora/inquiry/${item.id}`)">
+        <a :href="generateUrl(`/apps/agora/page/inquiry/${item.id}`)">
           <div class="inquiry-item__item">
             <div class="type-icon">
               <!-- Use the icon component directly -->
