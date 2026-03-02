@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2022 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -14,22 +15,22 @@ use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\Dashboard\IIconWidget;
 
-class AgoraWidget  implements IWidget, IIconWidget
+class AgoraWidget implements IWidget, IIconWidget
 {
     /**
-     * @psalm-suppress PossiblyUnusedMethod 
+     * @psalm-suppress PossiblyUnusedMethod
      */
     public function __construct(
         private IL10N $l10n,
         private IURLGenerator $urlGenerator,
     ) {
-		$this->l10n = $l10n;
-		$this->urlGenerator = $urlGenerator;
+        $this->l10n = $l10n;
+        $this->urlGenerator = $urlGenerator;
     }
     /**
      * @inheritDoc
      */
-    #[\Override] 
+    #[\Override]
     public function getId(): string
     {
         return AppConstants::APP_ID;
@@ -37,7 +38,7 @@ class AgoraWidget  implements IWidget, IIconWidget
     /**
      * @inheritDoc
      */
-    #[\Override] 
+    #[\Override]
     public function getTitle(): string
     {
         return $this->l10n->t('Recent inquiries');
@@ -45,17 +46,18 @@ class AgoraWidget  implements IWidget, IIconWidget
     /**
      * @inheritDoc
      */
-    #[\Override] 
+    #[\Override]
     public function getOrder(): int
     {
         return 50;
     }
 
 /**
-	 * @inheritDoc
-	 */
-	#[\Override]
-    public function getIconUrl(): string {
+     * @inheritDoc
+     */
+    #[\Override]
+    public function getIconUrl(): string
+    {
         return $this->urlGenerator->getAbsoluteURL(
             $this->urlGenerator->imagePath(AppConstants::APP_ID, 'agora-dark.svg')
         );
@@ -64,16 +66,16 @@ class AgoraWidget  implements IWidget, IIconWidget
     /**
      * @inheritDoc
      */
-    #[\Override] 
+    #[\Override]
     public function getIconClass(): string
     {
-        return 'icon-agora-dark'; 
+        return 'icon-agora-dark';
     }
 
     /**
      * @inheritDoc
      */
-    #[\Override] 
+    #[\Override]
     public function getUrl(): ?string
     {
         return $this->urlGenerator->linkToRouteAbsolute(AppConstants::APP_ID . '.page.indexindex');

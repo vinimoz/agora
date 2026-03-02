@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -71,12 +72,12 @@ class AttachmentApiController extends BaseController
                     'attachment' => $this->attachmentService->add($uploadedFile, $inquiryId)
                 ]
             );
-
         } catch (\Exception $e) {
             return new JSONResponse(
                 [
                 'error' => $e->getMessage()
-                ], 400
+                ],
+                400
             );
         }
     }

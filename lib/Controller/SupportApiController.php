@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2023 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -127,5 +128,4 @@ class SupportApiController extends BaseApiV2Controller
             fn () => $this->supportService->getStatsGroupedByType()
         );
     }
-
 }

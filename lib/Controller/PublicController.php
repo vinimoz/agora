@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2020 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -264,7 +265,8 @@ class PublicController extends BaseController
                 ),
                 ['options' => $this->optionService->list($inquiryId)],
                 ['supports' => $this->supportService->list($inquiryId)],
-            ), Http::STATUS_CREATED
+            ),
+            Http::STATUS_CREATED
         );
     }
 
@@ -577,7 +579,8 @@ class PublicController extends BaseController
         return $this->response(
             fn () => [
                 'share' => $this->shareService->register($token, $displayName, $emailAddress, $timeZone),
-            ], Http::STATUS_CREATED
+            ],
+            Http::STATUS_CREATED
         );
     }
 

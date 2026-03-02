@@ -138,7 +138,7 @@ import type { Inquiry } from '../../Types/index.ts'
 import { useSessionStore } from '../../stores/session.ts'
 import { InquiryGeneralIcons, StatusIcons } from '../../utils/icons.ts'
 import SupportFeature from '../../helpers/modules/SupportFeature.vue'
-import { createInquiryContext, canSupport, canComment } from '../../utils/permissions.ts'
+import { createInquiryContext } from '../../utils/permissions.ts'
 
 interface Props {
   inquiry: Inquiry
@@ -394,10 +394,6 @@ function handleClick() {
   if (props.interactive) {
     emit('click', props.inquiry)
   }
-}
-
-function handleSupportClick() {
-  emit('support', props.inquiry.id)
 }
 
 function handleCommentsClick() {

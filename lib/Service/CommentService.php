@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -21,7 +22,7 @@ use OCP\EventDispatcher\IEventDispatcher;
 class CommentService
 {
     /**
-     * @psalm-suppress PossiblyUnusedMethod 
+     * @psalm-suppress PossiblyUnusedMethod
      */
     public function __construct(
         private CommentMapper $commentMapper,
@@ -54,7 +55,8 @@ class CommentService
         $predecessor = new Comment();
 
         foreach ($comments as &$comment) {
-            if ($comment->getUserId() === $predecessor->getUserId()
+            if (
+                $comment->getUserId() === $predecessor->getUserId()
                 && $comment->getTimestamp() - $predecessor->getTimestamp() < $timeTolerance
                 && $comment->getConfidential() === $predecessor->getConfidential()
             ) {
@@ -70,7 +72,7 @@ class CommentService
     /**
      * Add comment
      */
-    public function add(string $message, int $inquiryId,int $optionId, ?bool $confidential = false): Comment
+    public function add(string $message, int $inquiryId, int $optionId, ?bool $confidential = false): Comment
     {
         $inquiry = $this->inquiryMapper->get($inquiryId, withRoles: true);
         $inquiry->request(Inquiry::PERMISSION_COMMENT_ADD);
@@ -93,12 +95,12 @@ class CommentService
 
         return $this->comment;
     }
-    
+
     public function countByInquiryId(int $inquiryId): int
     {
          return $this->commentMapper->countByInquiryId($inquiryId);
     }
-        
+
 
     /**
      * Restore comment

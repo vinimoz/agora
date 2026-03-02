@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -33,7 +34,7 @@ class SettingsService
     private AppSettings $appSettings;
 
     /**
-     * @psalm-suppress PossiblyUnusedMethod 
+     * @psalm-suppress PossiblyUnusedMethod
      */
     public function __construct(
         AppSettings $appSettings,
@@ -102,7 +103,7 @@ class SettingsService
         // Integer settings
         $this->appSettings->setIntegerSetting(AppSettings::SETTING_AUTO_ARCHIVE_OFFSET_DAYS, intval($settingsArray[AppSettings::SETTING_AUTO_ARCHIVE_OFFSET_DAYS]));
         $this->appSettings->setIntegerSetting(AppSettings::SETTING_AUTO_DELETE_OFFSET_DAYS, intval($settingsArray[AppSettings::SETTING_AUTO_DELETE_OFFSET_DAYS]));
-    
+
         $this->appSettings->setIntegerSetting(AppSettings::SETTING_AUTO_EXPIRE_OFFSET_DAYS, intval($settingsArray[AppSettings::SETTING_AUTO_EXPIRE_OFFSET_DAYS]));
 
         // String settings
@@ -307,7 +308,7 @@ class SettingsService
             $familyData['sort_order'] ?? 0
         );
     }
-    
+
     /**
      * Delete an option family
      */
@@ -315,7 +316,7 @@ class SettingsService
     {
         $this->optionFamilyService->delete((int)$familyId);
     }
-    
+
 
     // MODERATION STATUS (keeping your existing methods)
     /**
@@ -389,7 +390,8 @@ class SettingsService
 
     // GET support mode for inquiry
     //
-    public function getInquirySettings(): array {
+    public function getInquirySettings(): array
+    {
         $json = $this->iConfig->getAppValue('agora', 'inquiryTypeRights', '{}');
         $data = json_decode($json, true);
 
@@ -399,17 +401,19 @@ class SettingsService
         return $data;
     }
 
-    public function getSupportFeatureForType(string $type): string {
+    public function getSupportFeatureForType(string $type): string
+    {
         $settings = $this->getInquirySettings();
 
         if (isset($settings[$type]['support_feature'])) {
             return $settings[$type]['support_feature'];
         }
 
-        return 'none'; 
+        return 'none';
     }
 
-    public function isSupportEnabled(string $type): bool {
+    public function isSupportEnabled(string $type): bool
+    {
         $settings = $this->getInquirySettings();
 
         return $settings[$type]['supportInquiry'] ?? false;

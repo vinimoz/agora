@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2021 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -22,7 +24,7 @@ use OCP\Migration\IOutput;
 
 class InitDbDefault extends Command
 {
-    protected string $name=parent::NAME_PREFIX . 'db:init-default';
+    protected string $name = parent::NAME_PREFIX . 'db:init-default';
     protected string $description = 'Initialize default Agora categories and locations';
     private IGroupManager $groupManager;
     private IDBConnection $connection;
@@ -152,7 +154,7 @@ class InitDbDefault extends Command
     private array $optionTypes = [
         [
             // ====================================================
-            // Workflow 
+            // Workflow
             // ====================================================
             'family' => 'workflow',
             'option_type' => 'workflow_item',
@@ -731,19 +733,19 @@ class InitDbDefault extends Command
             'label' => 'Law Proposal',
             'description' => 'Draft or amendment of a law, with mapped articles and status.',
             'fields' => [
-                ["key"=>"parent_law_id","label"=>"Loi parente","type"=>"integer","required"=>false,"default"=>null,"rules"=>[]],
-                ["key"=>"article_map","label"=>"Article associé","type"=>"string","required"=>false,"default"=>null,"rules"=>["maxLength"=>255]],
-                ["key"=>"legal_status","label"=>"Statut juridique","type"=>"enum","required"=>true,"allowed_values"=>["pending","validated","rejected"],"default"=>"pending","rules"=>[]],
-                ["key"=>"topic","label"=>"Topic","type"=>"string","required"=>true,"default"=>null,"rules"=>["maxLength"=>255]],
-                ["key"=>"form_schema","label"=>"Form Schema","type"=>"json","required"=>false,"default"=>null,"rules"=>[]],
-                ["key"=>"type_of_vote","label"=>"Type of Vote","type"=>"enum","required"=>false,"default"=>"simple","allowed_values"=>["simple","majority_judgement_beneficial","majority_judgement_number"],"rules"=>[]],
-                ["key"=>"support_start","label"=>"Supporting Start","type"=>"datetime","required"=>false,"default"=>null,"rules"=>[]],
-                ["key"=>"support_end","label"=>"Supporting End","type"=>"datetime","required"=>false,"default"=>null,"rules"=>[]],
-                ["key"=>"facilitator_id","label"=>"Facilitateur","type"=>"users","required"=>false,"default"=>null,"rules"=>[]],
-                ["key"=>"auto_reminder","label"=>"Auto Reminder","type"=>"boolean","required"=>true,"default"=>true,"rules"=>[]],
-                ["key"=>"layout_zone","label"=>"Position display into the layout","type"=>"enum","required"=>false,"default"=>"footer","allowed_values"=>["sidebar","main","footer","header"],"rules"=>[]],
-                ["key"=>"render_mode","label"=>"Render mode of inquiries","type"=>"enum","required"=>false,"default"=>"cards","allowed_values"=>["cards","list","full","summary","rich_html"],"rules"=>[]],
-                ["key"=>"open_mode","label"=>"Open Mode","type"=>"enum","required"=>false,"default"=>"page","allowed_values"=>["page","modal","develop","none"],"rules"=>[]],
+                ["key" => "parent_law_id","label" => "Loi parente","type" => "integer","required" => false,"default" => null,"rules" => []],
+                ["key" => "article_map","label" => "Article associé","type" => "string","required" => false,"default" => null,"rules" => ["maxLength" => 255]],
+                ["key" => "legal_status","label" => "Statut juridique","type" => "enum","required" => true,"allowed_values" => ["pending","validated","rejected"],"default" => "pending","rules" => []],
+                ["key" => "topic","label" => "Topic","type" => "string","required" => true,"default" => null,"rules" => ["maxLength" => 255]],
+                ["key" => "form_schema","label" => "Form Schema","type" => "json","required" => false,"default" => null,"rules" => []],
+                ["key" => "type_of_vote","label" => "Type of Vote","type" => "enum","required" => false,"default" => "simple","allowed_values" => ["simple","majority_judgement_beneficial","majority_judgement_number"],"rules" => []],
+                ["key" => "support_start","label" => "Supporting Start","type" => "datetime","required" => false,"default" => null,"rules" => []],
+                ["key" => "support_end","label" => "Supporting End","type" => "datetime","required" => false,"default" => null,"rules" => []],
+                ["key" => "facilitator_id","label" => "Facilitateur","type" => "users","required" => false,"default" => null,"rules" => []],
+                ["key" => "auto_reminder","label" => "Auto Reminder","type" => "boolean","required" => true,"default" => true,"rules" => []],
+                ["key" => "layout_zone","label" => "Position display into the layout","type" => "enum","required" => false,"default" => "footer","allowed_values" => ["sidebar","main","footer","header"],"rules" => []],
+                ["key" => "render_mode","label" => "Render mode of inquiries","type" => "enum","required" => false,"default" => "cards","allowed_values" => ["cards","list","full","summary","rich_html"],"rules" => []],
+                ["key" => "open_mode","label" => "Open Mode","type" => "enum","required" => false,"default" => "page","allowed_values" => ["page","modal","develop","none"],"rules" => []],
 
             ],
             'allowed_response' => ['amendment','objection','official'],
@@ -770,13 +772,13 @@ class InitDbDefault extends Command
             'label' => 'Amendment',
             'description' => 'Amendment targeting a specific article of a law or proposal.',
             'fields' => [
-                ["key"=>"parent_law_id","label"=>"Parent Law","type"=>"integer","required"=>true,"default"=>null,"rules"=>[]],
-                ["key"=>"article_ref","label"=>"Article Reference","type"=>"integer","required"=>true,"default"=>null,"rules"=>[]],
-                ["key"=>"facilitator_id","label"=>"Facilitator","type"=>"users","required"=>false,"default"=>null,"rules"=>[]],
-                ["key"=>"topic","label"=>"Topic","type"=>"string","required"=>true,"default"=>null,"rules"=>["maxLength"=>255]],
-                ["key"=>"layout_zone","label"=>"Position display into the layout","type"=>"enum","required"=>false,"default"=>"footer","allowed_values"=>["sidebar","main","footer","header"],"rules"=>[]],
-                ["key"=>"render_mode","label"=>"Render mode of inquiries","type"=>"enum","required"=>false,"default"=>"cards","allowed_values"=>["cards","list","full","summary","rich_html"],"rules"=>[]],
-                ["key"=>"open_mode","label"=>"Open Mode","type"=>"enum","required"=>false,"default"=>"page","allowed_values"=>["page","modal","none"],"rules"=>[]],
+                ["key" => "parent_law_id","label" => "Parent Law","type" => "integer","required" => true,"default" => null,"rules" => []],
+                ["key" => "article_ref","label" => "Article Reference","type" => "integer","required" => true,"default" => null,"rules" => []],
+                ["key" => "facilitator_id","label" => "Facilitator","type" => "users","required" => false,"default" => null,"rules" => []],
+                ["key" => "topic","label" => "Topic","type" => "string","required" => true,"default" => null,"rules" => ["maxLength" => 255]],
+                ["key" => "layout_zone","label" => "Position display into the layout","type" => "enum","required" => false,"default" => "footer","allowed_values" => ["sidebar","main","footer","header"],"rules" => []],
+                ["key" => "render_mode","label" => "Render mode of inquiries","type" => "enum","required" => false,"default" => "cards","allowed_values" => ["cards","list","full","summary","rich_html"],"rules" => []],
+                ["key" => "open_mode","label" => "Open Mode","type" => "enum","required" => false,"default" => "page","allowed_values" => ["page","modal","none"],"rules" => []],
             ],
             'allowed_response' => null,
             'allowed_transformation' => null,
@@ -794,22 +796,22 @@ class InitDbDefault extends Command
             'created' => '',
         ],
         [
-    'inquiry_type' => 'constitutional_workshop',
-    'family' => 'legislative',
-    'icon' => 'Library',
-    'label' => 'Constitutional Workshop',
-    'fields' => [  
-        ["key"=>"draft_text","label"=>"Draft Text","type"=>"text","required"=>true,"default"=>null,"rules"=>[]],
-        ["key"=>"article_map","label"=>"Article Map","type"=>"json","required"=>false,"default"=>null,"rules"=>[]],
-        ["key"=>"facilitator_id","label"=>"Facilitator","type"=>"users","required"=>false,"default"=>null,"rules"=>[]],
-        ["key"=>"topic","label"=>"Topic","type"=>"string","required"=>true,"default"=>null,"rules"=>["maxLength"=>255]],
-        ["key"=>"layout_zone","label"=>"Position display into the layout","type"=>"enum","required"=>false,"default"=>"footer","allowed_values"=>["sidebar","main","footer","header"],"rules"=>[]],
-        ["key"=>"render_mode","label"=>"Render mode of inquiries","type"=>"enum","required"=>false,"default"=>"cards","allowed_values"=>["cards","list","full","summary","rich_html"],"rules"=>[]],
-        ["key"=>"open_mode","label"=>"Open Mode","type"=>"enum","required"=>false,"default"=>"page","allowed_values"=>["page","modal","none"],"rules"=>[]],
-    ],
-    'allowed_response' => ['law_proposal'],
-    'allowed_transformation' => null,
-    'allowed_option_type' => [
+        'inquiry_type' => 'constitutional_workshop',
+        'family' => 'legislative',
+        'icon' => 'Library',
+        'label' => 'Constitutional Workshop',
+        'fields' => [
+        ["key" => "draft_text","label" => "Draft Text","type" => "text","required" => true,"default" => null,"rules" => []],
+        ["key" => "article_map","label" => "Article Map","type" => "json","required" => false,"default" => null,"rules" => []],
+        ["key" => "facilitator_id","label" => "Facilitator","type" => "users","required" => false,"default" => null,"rules" => []],
+        ["key" => "topic","label" => "Topic","type" => "string","required" => true,"default" => null,"rules" => ["maxLength" => 255]],
+        ["key" => "layout_zone","label" => "Position display into the layout","type" => "enum","required" => false,"default" => "footer","allowed_values" => ["sidebar","main","footer","header"],"rules" => []],
+        ["key" => "render_mode","label" => "Render mode of inquiries","type" => "enum","required" => false,"default" => "cards","allowed_values" => ["cards","list","full","summary","rich_html"],"rules" => []],
+        ["key" => "open_mode","label" => "Open Mode","type" => "enum","required" => false,"default" => "page","allowed_values" => ["page","modal","none"],"rules" => []],
+        ],
+        'allowed_response' => ['law_proposal'],
+        'allowed_transformation' => null,
+        'allowed_option_type' => [
         'chapter',
         'position_for',
         'position_against',
@@ -817,25 +819,25 @@ class InitDbDefault extends Command
         'process_phase',
         'milestone',
         'process_event',
-    ],
-    'allow_comment' => true,
-    'support_feature' => 'binary',
-    'is_root' => true,
-    'created' => '',
-],
-    [
+        ],
+        'allow_comment' => true,
+        'support_feature' => 'binary',
+        'is_root' => true,
+        'created' => '',
+        ],
+        [
         'inquiry_type' => 'policy_consultation',
         'family' => 'legislative',
         'icon' => 'AccountVoice',
         'label' => 'Policy Consultation',
         'description' => 'Consultation on public policies with impact evaluation.',
         'fields' => [
-            ["key"=>"policy_area","label"=>"Policy Area","type"=>"string","required"=>true,"default"=>null,"rules"=>["maxLength"=>255]],
-            ["key"=>"impact_assessment","label"=>"Impact Assessment","type"=>"text","required"=>false,"default"=>null,"rules"=>[]],
-            ["key"=>"topic","label"=>"Topic","type"=>"string","required"=>true,"default"=>null,"rules"=>["maxLength"=>255]],
-            ["key"=>"layout_zone","label"=>"Position display into the layout","type"=>"enum","required"=>false,"default"=>"footer","allowed_values"=>["sidebar","main","footer","header"],"rules"=>[]],
-            ["key"=>"render_mode","label"=>"Render mode of inquiries","type"=>"enum","required"=>false,"default"=>"cards","allowed_values"=>["cards","list","full","summary","rich_html"],"rules"=>[]],
-            ["key"=>"open_mode","label"=>"Open Mode","type"=>"enum","required"=>false,"default"=>"page","allowed_values"=>["page","modal","none"],"rules"=>[]],
+            ["key" => "policy_area","label" => "Policy Area","type" => "string","required" => true,"default" => null,"rules" => ["maxLength" => 255]],
+            ["key" => "impact_assessment","label" => "Impact Assessment","type" => "text","required" => false,"default" => null,"rules" => []],
+            ["key" => "topic","label" => "Topic","type" => "string","required" => true,"default" => null,"rules" => ["maxLength" => 255]],
+            ["key" => "layout_zone","label" => "Position display into the layout","type" => "enum","required" => false,"default" => "footer","allowed_values" => ["sidebar","main","footer","header"],"rules" => []],
+            ["key" => "render_mode","label" => "Render mode of inquiries","type" => "enum","required" => false,"default" => "cards","allowed_values" => ["cards","list","full","summary","rich_html"],"rules" => []],
+            ["key" => "open_mode","label" => "Open Mode","type" => "enum","required" => false,"default" => "page","allowed_values" => ["page","modal","none"],"rules" => []],
         ],
         'allowed_response' => ['law_proposal','response'],
         'allowed_transformation' => null,
@@ -844,19 +846,19 @@ class InitDbDefault extends Command
         'support_feature' => 'binary',
         'is_root' => true,
         'created' => '',
-    ],
+        ],
 
     // --- Deliberative ---
-    [
+        [
         'inquiry_type' => 'objection',
         'family' => 'deliberative',
         'icon' => 'AlertCircle',
         'label' => 'Objection',
         'description' => 'Objection linked to another inquiry, can be resolved via suggestions.',
         'fields' => [
-            ["key"=>"layout_zone","label"=>"Position display into the layout","type"=>"enum","required"=>false,"default"=>"footer","allowed_values"=>["sidebar","main","footer","header"],"rules"=>[]],
-            ["key"=>"render_mode","label"=>"Render mode of inquiries","type"=>"enum","required"=>false,"default"=>"cards","allowed_values"=>["cards","list","full","summary","rich_html"],"rules"=>[]],
-            ["key"=>"open_mode","label"=>"Open Mode","type"=>"enum","required"=>false,"default"=>"page","allowed_values"=>["page","modal","none"],"rules"=>[]],
+            ["key" => "layout_zone","label" => "Position display into the layout","type" => "enum","required" => false,"default" => "footer","allowed_values" => ["sidebar","main","footer","header"],"rules" => []],
+            ["key" => "render_mode","label" => "Render mode of inquiries","type" => "enum","required" => false,"default" => "cards","allowed_values" => ["cards","list","full","summary","rich_html"],"rules" => []],
+            ["key" => "open_mode","label" => "Open Mode","type" => "enum","required" => false,"default" => "page","allowed_values" => ["page","modal","none"],"rules" => []],
         ],
         'allowed_response' => ['suggestion'],
         'allowed_transformation' => null,
@@ -865,18 +867,18 @@ class InitDbDefault extends Command
         'support_feature' => 'binary',
         'is_root' => false,
         'created' => '',
-    ],
+        ],
 
-    [
+        [
         'inquiry_type' => 'suggestion',
         'family' => 'deliberative',
         'icon' => 'Lightbulb',
         'label' => 'Suggestion',
         'description' => 'Suggestion to solve or refine an objection or debate argument.',
         'fields' => [
-            ["key"=>"layout_zone","label"=>"Position display into the layout","type"=>"enum","required"=>false,"default"=>"footer","allowed_values"=>["sidebar","main","footer","header"],"rules"=>[]],
-            ["key"=>"render_mode","label"=>"Render mode of inquiries","type"=>"enum","required"=>false,"default"=>"cards","allowed_values"=>["cards","list","full","summary","rich_html"],"rules"=>[]],
-            ["key"=>"open_mode","label"=>"Open Mode","type"=>"enum","required"=>false,"default"=>"page","allowed_values"=>["page","modal","none"],"rules"=>[]],
+            ["key" => "layout_zone","label" => "Position display into the layout","type" => "enum","required" => false,"default" => "footer","allowed_values" => ["sidebar","main","footer","header"],"rules" => []],
+            ["key" => "render_mode","label" => "Render mode of inquiries","type" => "enum","required" => false,"default" => "cards","allowed_values" => ["cards","list","full","summary","rich_html"],"rules" => []],
+            ["key" => "open_mode","label" => "Open Mode","type" => "enum","required" => false,"default" => "page","allowed_values" => ["page","modal","none"],"rules" => []],
         ],
         'allowed_response' => null,
         'allowed_transformation' => ['proposal','law_proposal'],
@@ -885,25 +887,25 @@ class InitDbDefault extends Command
         'support_feature' => 'binary',
         'is_root' => false,
         'created' => '',
-    ],
-    [
+        ],
+        [
         'inquiry_type' => 'proposal',
         'family' => 'deliberative',
         'icon' => 'LightbulbOn',
         'label' => 'Proposal',
         'description' => 'Citizen proposal requiring support or linked to a future law.',
         'fields' => [
-            ["key"=>"quorum","label"=>"Quorum","type"=>"integer","required"=>false,"default"=>null,"rules"=>[]],
-            ["key"=>"parent_law_id","label"=>"Parent Law","type"=>"integer","required"=>false,"default"=>null,"rules"=>[]],
-            ["key"=>"topic","label"=>"Topic","type"=>"string","required"=>true,"default"=>null,"rules"=>["maxLength"=>255]],
-            ["key"=>"form_schema","label"=>"Form Schema","type"=>"json","required"=>false,"default"=>null,"rules"=>[]],
-            ["key"=>"type_of_vote","label"=>"Type of Vote","type"=>"enum","required"=>false,"default"=>"simple","allowed_values"=>["simple","majority_judgement_beneficial","majority_judgement_number"],"rules"=>[]],
-            ["key"=>"support_start","label"=>"Supporting Start","type"=>"datetime","required"=>false,"default"=>null,"rules"=>[]],
-            ["key"=>"support_end","label"=>"Supporting End","type"=>"datetime","required"=>false,"default"=>null,"rules"=>[]],
-            ["key"=>"auto_reminder","label"=>"Auto Reminder","type"=>"boolean","required"=>true,"default"=>true,"rules"=>[]],
-            ["key"=>"layout_zone","label"=>"Position display into the layout","type"=>"enum","required"=>false,"default"=>"footer","allowed_values"=>["sidebar","main","footer","header"],"rules"=>[]],
-            ["key"=>"render_mode","label"=>"Render mode of inquiries","type"=>"enum","required"=>false,"default"=>"cards","allowed_values"=>["cards","list","full","summary","rich_html"],"rules"=>[]],
-            ["key"=>"open_mode","label"=>"Open Mode","type"=>"enum","required"=>false,"default"=>"page","allowed_values"=>["page","modal","none"],"rules"=>[]],
+            ["key" => "quorum","label" => "Quorum","type" => "integer","required" => false,"default" => null,"rules" => []],
+            ["key" => "parent_law_id","label" => "Parent Law","type" => "integer","required" => false,"default" => null,"rules" => []],
+            ["key" => "topic","label" => "Topic","type" => "string","required" => true,"default" => null,"rules" => ["maxLength" => 255]],
+            ["key" => "form_schema","label" => "Form Schema","type" => "json","required" => false,"default" => null,"rules" => []],
+            ["key" => "type_of_vote","label" => "Type of Vote","type" => "enum","required" => false,"default" => "simple","allowed_values" => ["simple","majority_judgement_beneficial","majority_judgement_number"],"rules" => []],
+            ["key" => "support_start","label" => "Supporting Start","type" => "datetime","required" => false,"default" => null,"rules" => []],
+            ["key" => "support_end","label" => "Supporting End","type" => "datetime","required" => false,"default" => null,"rules" => []],
+            ["key" => "auto_reminder","label" => "Auto Reminder","type" => "boolean","required" => true,"default" => true,"rules" => []],
+            ["key" => "layout_zone","label" => "Position display into the layout","type" => "enum","required" => false,"default" => "footer","allowed_values" => ["sidebar","main","footer","header"],"rules" => []],
+            ["key" => "render_mode","label" => "Render mode of inquiries","type" => "enum","required" => false,"default" => "cards","allowed_values" => ["cards","list","full","summary","rich_html"],"rules" => []],
+            ["key" => "open_mode","label" => "Open Mode","type" => "enum","required" => false,"default" => "page","allowed_values" => ["page","modal","none"],"rules" => []],
         ],
         'allowed_response' => ['objection','suggestion','official'],
         'allowed_transformation' => ['law_proposal'],
@@ -912,23 +914,23 @@ class InitDbDefault extends Command
         'support_feature' => 'binary',
         'is_root' => true,
         'created' => '',
-    ],
-    [
+        ],
+        [
         'inquiry_type' => 'petition',
         'family' => 'deliberative',
         'icon' => 'ClipboardText',
         'label' => 'Petition',
         'description' => 'Petition requiring citizen signatures.',
         'fields' => [
-            ["key"=>"topic","label"=>"Topic","type"=>"string","required"=>true,"default"=>null,"rules"=>["maxLength"=>255]],
-            ["key"=>"form_schema","label"=>"Form Schema","type"=>"json","required"=>false,"default"=>null,"rules"=>[]],
-            ["key"=>"type_of_vote","label"=>"Type of Vote","type"=>"enum","required"=>false,"default"=>"simple","allowed_values"=>["simple","majority_judgement_beneficial","majority_judgement_number"],"rules"=>[]],
-            ["key"=>"support_start","label"=>"Supporting Start","type"=>"datetime","required"=>false,"default"=>null,"rules"=>[]],
-            ["key"=>"support_end","label"=>"Supporting End","type"=>"datetime","required"=>false,"default"=>null,"rules"=>[]],
-            ["key"=>"auto_reminder","label"=>"Auto Reminder","type"=>"boolean","required"=>true,"default"=>true,"rules"=>[]],
-            ["key"=>"layout_zone","label"=>"Position display into the layout","type"=>"enum","required"=>false,"default"=>"footer","allowed_values"=>["sidebar","main","footer","header"],"rules"=>[]],
-            ["key"=>"render_mode","label"=>"Render mode of inquiries","type"=>"enum","required"=>false,"default"=>"cards","allowed_values"=>["cards","list","full","summary","rich_html"],"rules"=>[]],
-            ["key"=>"open_mode","label"=>"Open Mode","type"=>"enum","required"=>false,"default"=>"page","allowed_values"=>["page","modal","none"],"rules"=>[]],
+            ["key" => "topic","label" => "Topic","type" => "string","required" => true,"default" => null,"rules" => ["maxLength" => 255]],
+            ["key" => "form_schema","label" => "Form Schema","type" => "json","required" => false,"default" => null,"rules" => []],
+            ["key" => "type_of_vote","label" => "Type of Vote","type" => "enum","required" => false,"default" => "simple","allowed_values" => ["simple","majority_judgement_beneficial","majority_judgement_number"],"rules" => []],
+            ["key" => "support_start","label" => "Supporting Start","type" => "datetime","required" => false,"default" => null,"rules" => []],
+            ["key" => "support_end","label" => "Supporting End","type" => "datetime","required" => false,"default" => null,"rules" => []],
+            ["key" => "auto_reminder","label" => "Auto Reminder","type" => "boolean","required" => true,"default" => true,"rules" => []],
+            ["key" => "layout_zone","label" => "Position display into the layout","type" => "enum","required" => false,"default" => "footer","allowed_values" => ["sidebar","main","footer","header"],"rules" => []],
+            ["key" => "render_mode","label" => "Render mode of inquiries","type" => "enum","required" => false,"default" => "cards","allowed_values" => ["cards","list","full","summary","rich_html"],"rules" => []],
+            ["key" => "open_mode","label" => "Open Mode","type" => "enum","required" => false,"default" => "page","allowed_values" => ["page","modal","none"],"rules" => []],
         ],
         'allowed_response' => ['official'],
         'allowed_transformation' => ['initiative'],
@@ -937,43 +939,43 @@ class InitDbDefault extends Command
         'support_feature' => 'binary',
         'is_root' => true,
         'created' => '',
-    ],
-    [
+        ],
+        [
         'inquiry_type' => 'vision',
         'family' => 'deliberative',
         'icon' => 'Map',
         'label' => 'Vision / Roadmap',
         'description' => 'Long-term citizen roadmap or strategic vision.',
         'fields' => [
-            ["key"=>"horizon_year","label"=>"Horizon Year","type"=>"integer","required"=>false,"default"=>null,"rules"=>[]],
-            ["key"=>"layout_zone","label"=>"Position display into the layout","type"=>"enum","required"=>false,"default"=>"footer","allowed_values"=>["sidebar","main","footer","header"],"rules"=>[]],
-            ["key"=>"render_mode","label"=>"Render mode of inquiries","type"=>"enum","required"=>false,"default"=>"cards","allowed_values"=>["cards","list","full","summary","rich_html"],"rules"=>[]],
-            ["key"=>"open_mode","label"=>"Open Mode","type"=>"enum","required"=>false,"default"=>"page","allowed_values"=>["page","modal","none"],"rules"=>[]],
+            ["key" => "horizon_year","label" => "Horizon Year","type" => "integer","required" => false,"default" => null,"rules" => []],
+            ["key" => "layout_zone","label" => "Position display into the layout","type" => "enum","required" => false,"default" => "footer","allowed_values" => ["sidebar","main","footer","header"],"rules" => []],
+            ["key" => "render_mode","label" => "Render mode of inquiries","type" => "enum","required" => false,"default" => "cards","allowed_values" => ["cards","list","full","summary","rich_html"],"rules" => []],
+            ["key" => "open_mode","label" => "Open Mode","type" => "enum","required" => false,"default" => "page","allowed_values" => ["page","modal","none"],"rules" => []],
         ],
         'allowed_response' => ['suggestion'],
         'allowed_transformation' => ['roadmap'],
         'allowed_option_type' => ['proposal','chapter','position_for','alternative'],
         'is_root' => true,
         'created' => '',
-    ],
-    [
+        ],
+        [
         'inquiry_type' => 'initiative',
         'family' => 'deliberative',
         'icon' => 'RocketLaunch',
         'label' => 'Initiative',
         'description' => 'Collective citizen initiative requiring a threshold of support.',
         'fields' => [
-            ["key"=>"co_owners","label"=>"Co-owners","type"=>"string","required"=>true,"default"=>null,"rules"=>[]],
-            ["key"=>"quorum","label"=>"Quorum","type"=>"integer","required"=>false,"default"=>null,"rules"=>[]],
-            ["key"=>"topic","label"=>"Topic","type"=>"string","required"=>true,"default"=>null,"rules"=>["maxLength"=>255]],
-            ["key"=>"form_schema","label"=>"Form Schema","type"=>"json","required"=>false,"default"=>null,"rules"=>[]],
-            ["key"=>"type_of_vote","label"=>"Type of Vote","type"=>"enum","required"=>false,"default"=>"simple","allowed_values"=>["simple","majority_judgement_beneficial","majority_judgement_number"],"rules"=>[]],
-            ["key"=>"support_start","label"=>"Supporting Start","type"=>"datetime","required"=>false,"default"=>null,"rules"=>[]],
-            ["key"=>"support_end","label"=>"Supporting End","type"=>"datetime","required"=>false,"default"=>null,"rules"=>[]],
-            ["key"=>"auto_reminder","label"=>"Auto Reminder","type"=>"boolean","required"=>true,"default"=>true,"rules"=>[]],
-            ["key"=>"layout_zone","label"=>"Position display into the layout","type"=>"enum","required"=>false,"default"=>"footer","allowed_values"=>["sidebar","main","footer","header"],"rules"=>[]],
-            ["key"=>"render_mode","label"=>"Render mode of inquiries","type"=>"enum","required"=>false,"default"=>"cards","allowed_values"=>["cards","list","full","summary","rich_html"],"rules"=>[]],
-            ["key"=>"open_mode","label"=>"Open Mode","type"=>"enum","required"=>false,"default"=>"page","allowed_values"=>["page","modal","none"],"rules"=>[]],
+            ["key" => "co_owners","label" => "Co-owners","type" => "string","required" => true,"default" => null,"rules" => []],
+            ["key" => "quorum","label" => "Quorum","type" => "integer","required" => false,"default" => null,"rules" => []],
+            ["key" => "topic","label" => "Topic","type" => "string","required" => true,"default" => null,"rules" => ["maxLength" => 255]],
+            ["key" => "form_schema","label" => "Form Schema","type" => "json","required" => false,"default" => null,"rules" => []],
+            ["key" => "type_of_vote","label" => "Type of Vote","type" => "enum","required" => false,"default" => "simple","allowed_values" => ["simple","majority_judgement_beneficial","majority_judgement_number"],"rules" => []],
+            ["key" => "support_start","label" => "Supporting Start","type" => "datetime","required" => false,"default" => null,"rules" => []],
+            ["key" => "support_end","label" => "Supporting End","type" => "datetime","required" => false,"default" => null,"rules" => []],
+            ["key" => "auto_reminder","label" => "Auto Reminder","type" => "boolean","required" => true,"default" => true,"rules" => []],
+            ["key" => "layout_zone","label" => "Position display into the layout","type" => "enum","required" => false,"default" => "footer","allowed_values" => ["sidebar","main","footer","header"],"rules" => []],
+            ["key" => "render_mode","label" => "Render mode of inquiries","type" => "enum","required" => false,"default" => "cards","allowed_values" => ["cards","list","full","summary","rich_html"],"rules" => []],
+            ["key" => "open_mode","label" => "Open Mode","type" => "enum","required" => false,"default" => "page","allowed_values" => ["page","modal","none"],"rules" => []],
         ],
         'allowed_response' => ['proposal','objection','suggestion','official'],
         'allowed_transformation' => ['law_proposal'],
@@ -982,19 +984,19 @@ class InitDbDefault extends Command
         'support_feature' => 'binary',
         'is_root' => true,
         'created' => '',
-    ],
-    [
+        ],
+        [
         'inquiry_type' => 'deliberation',
         'family' => 'deliberative',
         'icon' => 'AccountMultipleCheck',
         'label' => 'Deliberation',
         'description' => 'Citizen jury or deliberation assembly with defined participants.',
         'fields' => [
-            ["key"=>"facilitator_id","label"=>"Facilitator","type"=>"users","required"=>false,"default"=>null,"rules"=>[]],
-            ["key"=>"participants_list","label"=>"Participants List","type"=>"groups","required"=>true,"default"=>null,"rules"=>[]],
-            ["key"=>"layout_zone","label"=>"Position display into the layout","type"=>"enum","required"=>false,"default"=>"footer","allowed_values"=>["sidebar","main","footer","header"],"rules"=>[]],
-            ["key"=>"render_mode","label"=>"Render mode of inquiries","type"=>"enum","required"=>false,"default"=>"cards","allowed_values"=>["cards","list","full","summary","rich_html"],"rules"=>[]],
-            ["key"=>"open_mode","label"=>"Open Mode","type"=>"enum","required"=>false,"default"=>"page","allowed_values"=>["page","modal","none"],"rules"=>[]],
+            ["key" => "facilitator_id","label" => "Facilitator","type" => "users","required" => false,"default" => null,"rules" => []],
+            ["key" => "participants_list","label" => "Participants List","type" => "groups","required" => true,"default" => null,"rules" => []],
+            ["key" => "layout_zone","label" => "Position display into the layout","type" => "enum","required" => false,"default" => "footer","allowed_values" => ["sidebar","main","footer","header"],"rules" => []],
+            ["key" => "render_mode","label" => "Render mode of inquiries","type" => "enum","required" => false,"default" => "cards","allowed_values" => ["cards","list","full","summary","rich_html"],"rules" => []],
+            ["key" => "open_mode","label" => "Open Mode","type" => "enum","required" => false,"default" => "page","allowed_values" => ["page","modal","none"],"rules" => []],
         ],
         'allowed_response' => ['proposal','suggestion','official'],
         'allowed_transformation' => null,
@@ -1003,28 +1005,28 @@ class InitDbDefault extends Command
         'support_feature' => 'binary',
         'is_root' => true,
         'created' => '',
-    ],
+        ],
 
     // --- Project / Review ---
-    [
+        [
         'inquiry_type' => 'project',
         'family' => 'deliberative',
         'icon' => 'BriefcaseCheck',
         'label' => 'Project',
         'description' => 'Concrete project with cost, responsible unit, and deadline.',
         'fields' => [
-            ["key"=>"budget","label"=>"Budget","type"=>"integer","required"=>true,"default"=>null,"rules"=>[]],
-            ["key"=>"deadline","label"=>"Deadline","type"=>"datetime","required"=>false,"default"=>null,"rules"=>[]],
-            ["key"=>"assigned_unit","label"=>"Assigned Unit","type"=>"string","required"=>false,"default"=>null,"rules"=>[]],
-            ["key"=>"topic","label"=>"Topic","type"=>"string","required"=>true,"default"=>null,"rules"=>["maxLength"=>255]],
-            ["key"=>"form_schema","label"=>"Form Schema","type"=>"json","required"=>false,"default"=>null,"rules"=>[]],
-            ["key"=>"type_of_vote","label"=>"Type of Vote","type"=>"enum","required"=>false,"default"=>"simple","allowed_values"=>["simple","majority_judgement_beneficial","majority_judgement_number"],"rules"=>[]],
-            ["key"=>"support_start","label"=>"Supporting Start","type"=>"datetime","required"=>false,"default"=>null,"rules"=>[]],
-            ["key"=>"support_end","label"=>"Supporting End","type"=>"datetime","required"=>false,"default"=>null,"rules"=>[]],
-            ["key"=>"auto_reminder","label"=>"Auto Reminder","type"=>"boolean","required"=>true,"default"=>true,"rules"=>[]],
-            ["key"=>"layout_zone","label"=>"Position display into the layout","type"=>"enum","required"=>false,"default"=>"footer","allowed_values"=>["sidebar","main","footer","header"],"rules"=>[]],
-            ["key"=>"render_mode","label"=>"Render mode of inquiries","type"=>"enum","required"=>false,"default"=>"cards","allowed_values"=>["cards","list","full","summary","rich_html"],"rules"=>[]],
-            ["key"=>"open_mode","label"=>"Open Mode","type"=>"enum","required"=>false,"default"=>"page","allowed_values"=>["page","modal","none"],"rules"=>[]],
+            ["key" => "budget","label" => "Budget","type" => "integer","required" => true,"default" => null,"rules" => []],
+            ["key" => "deadline","label" => "Deadline","type" => "datetime","required" => false,"default" => null,"rules" => []],
+            ["key" => "assigned_unit","label" => "Assigned Unit","type" => "string","required" => false,"default" => null,"rules" => []],
+            ["key" => "topic","label" => "Topic","type" => "string","required" => true,"default" => null,"rules" => ["maxLength" => 255]],
+            ["key" => "form_schema","label" => "Form Schema","type" => "json","required" => false,"default" => null,"rules" => []],
+            ["key" => "type_of_vote","label" => "Type of Vote","type" => "enum","required" => false,"default" => "simple","allowed_values" => ["simple","majority_judgement_beneficial","majority_judgement_number"],"rules" => []],
+            ["key" => "support_start","label" => "Supporting Start","type" => "datetime","required" => false,"default" => null,"rules" => []],
+            ["key" => "support_end","label" => "Supporting End","type" => "datetime","required" => false,"default" => null,"rules" => []],
+            ["key" => "auto_reminder","label" => "Auto Reminder","type" => "boolean","required" => true,"default" => true,"rules" => []],
+            ["key" => "layout_zone","label" => "Position display into the layout","type" => "enum","required" => false,"default" => "footer","allowed_values" => ["sidebar","main","footer","header"],"rules" => []],
+            ["key" => "render_mode","label" => "Render mode of inquiries","type" => "enum","required" => false,"default" => "cards","allowed_values" => ["cards","list","full","summary","rich_html"],"rules" => []],
+            ["key" => "open_mode","label" => "Open Mode","type" => "enum","required" => false,"default" => "page","allowed_values" => ["page","modal","none"],"rules" => []],
         ],
         'allowed_response' => ['project_review','suggestion','objection','official'],
         'allowed_transformation' => [],
@@ -1033,21 +1035,21 @@ class InitDbDefault extends Command
         'support_feature' => 'binary',
         'is_root' => true,
         'created' => '',
-    ],
+        ],
 
     // PROJECT REVIEW
-    [
+        [
         'inquiry_type' => 'project_review',
         'family' => 'deliberative',
         'icon' => 'ClipboardCheck',
         'label' => 'Project Review',
         'description' => 'Evaluation of an ongoing or completed project.',
         'fields' => [
-            ["key"=>"project_id","label"=>"Project ID","type"=>"integer","required"=>true,"default"=>null,"rules"=>[]],
-            ["key"=>"evaluation","label"=>"Evaluation","type"=>"text","required"=>false,"default"=>null,"rules"=>[]],
-            ["key"=>"layout_zone","label"=>"Position display into the layout","type"=>"enum","required"=>false,"default"=>"footer","allowed_values"=>["sidebar","main","footer","header"],"rules"=>[]],
-            ["key"=>"render_mode","label"=>"Render mode of inquiries","type"=>"enum","required"=>false,"default"=>"cards","allowed_values"=>["cards","list","full","summary","rich_html"],"rules"=>[]],
-            ["key"=>"open_mode","label"=>"Open Mode","type"=>"enum","required"=>false,"default"=>"page","allowed_values"=>["page","modal","none"],"rules"=>[]],
+            ["key" => "project_id","label" => "Project ID","type" => "integer","required" => true,"default" => null,"rules" => []],
+            ["key" => "evaluation","label" => "Evaluation","type" => "text","required" => false,"default" => null,"rules" => []],
+            ["key" => "layout_zone","label" => "Position display into the layout","type" => "enum","required" => false,"default" => "footer","allowed_values" => ["sidebar","main","footer","header"],"rules" => []],
+            ["key" => "render_mode","label" => "Render mode of inquiries","type" => "enum","required" => false,"default" => "cards","allowed_values" => ["cards","list","full","summary","rich_html"],"rules" => []],
+            ["key" => "open_mode","label" => "Open Mode","type" => "enum","required" => false,"default" => "page","allowed_values" => ["page","modal","none"],"rules" => []],
         ],
         'allowed_response' => ['suggestion'],
         'allowed_transformation' => null,
@@ -1056,21 +1058,21 @@ class InitDbDefault extends Command
         'support_feature' => 'binary',
         'is_root' => false,
         'created' => '',
-    ],
+        ],
 
     // DELIBERATION
-    [
+        [
         'inquiry_type' => 'deliberation',
         'family' => 'deliberative',
         'icon' => 'Users',
         'label' => 'Deliberation',
         'description' => 'Collective citizen deliberation or assembly.',
         'fields' => [
-            ["key"=>"title","label"=>"Title","type"=>"string","required"=>true,"default"=>null,"rules"=>[]],
-            ["key"=>"form_schema","label"=>"Form Schema","type"=>"json","required"=>false,"default"=>null,"rules"=>[]],
-            ["key"=>"layout_zone","label"=>"Position display into the layout","type"=>"enum","required"=>false,"default"=>"footer","allowed_values"=>["sidebar","main","footer","header"],"rules"=>[]],
-            ["key"=>"render_mode","label"=>"Render mode of inquiries","type"=>"enum","required"=>false,"default"=>"cards","allowed_values"=>["cards","list","full","summary","rich_html"],"rules"=>[]],
-            ["key"=>"open_mode","label"=>"Open Mode","type"=>"enum","required"=>false,"default"=>"page","allowed_values"=>["page","modal","none"],"rules"=>[]],
+            ["key" => "title","label" => "Title","type" => "string","required" => true,"default" => null,"rules" => []],
+            ["key" => "form_schema","label" => "Form Schema","type" => "json","required" => false,"default" => null,"rules" => []],
+            ["key" => "layout_zone","label" => "Position display into the layout","type" => "enum","required" => false,"default" => "footer","allowed_values" => ["sidebar","main","footer","header"],"rules" => []],
+            ["key" => "render_mode","label" => "Render mode of inquiries","type" => "enum","required" => false,"default" => "cards","allowed_values" => ["cards","list","full","summary","rich_html"],"rules" => []],
+            ["key" => "open_mode","label" => "Open Mode","type" => "enum","required" => false,"default" => "page","allowed_values" => ["page","modal","none"],"rules" => []],
         ],
         'allowed_response' => ['proposal','recommendation'],
         'allowed_transformation' => ['policy_consultation'],
@@ -1079,20 +1081,20 @@ class InitDbDefault extends Command
         'support_feature' => 'binary',
         'is_root' => true,
         'created' => '',
-    ],
+        ],
 
     // --- COLLECTIVE ---
     // NEWS
-    [
+        [
         'inquiry_type' => 'news',
         'family' => 'collective',
         'icon' => 'Newspaper',
         'label' => 'News',
         'description' => 'Public informational notice.',
         'fields' => [
-            ["key"=>"layout_zone","label"=>"Position display into the layout","type"=>"enum","required"=>false,"default"=>"footer","allowed_values"=>["sidebar","main","footer","header"],"rules"=>[]],
-            ["key"=>"render_mode","label"=>"Render mode of inquiries","type"=>"enum","required"=>false,"default"=>"cards","allowed_values"=>["cards","list","full","summary","rich_html"],"rules"=>[]],
-            ["key"=>"open_mode","label"=>"Open Mode","type"=>"enum","required"=>false,"default"=>"page","allowed_values"=>["page","modal","none"],"rules"=>[]],
+            ["key" => "layout_zone","label" => "Position display into the layout","type" => "enum","required" => false,"default" => "footer","allowed_values" => ["sidebar","main","footer","header"],"rules" => []],
+            ["key" => "render_mode","label" => "Render mode of inquiries","type" => "enum","required" => false,"default" => "cards","allowed_values" => ["cards","list","full","summary","rich_html"],"rules" => []],
+            ["key" => "open_mode","label" => "Open Mode","type" => "enum","required" => false,"default" => "page","allowed_values" => ["page","modal","none"],"rules" => []],
         ],
         'allowed_response' => [],
         'allowed_transformation' => null,
@@ -1101,10 +1103,10 @@ class InitDbDefault extends Command
         'support_feature' => 'none',
         'is_root' => true,
         'created' => '',
-    ],
+        ],
 
     // ANNOUNCEMENT
-    [
+        [
         'inquiry_type' => 'announcement',
         'family' => 'collective',
         'icon' => 'Megaphone',
@@ -1112,9 +1114,9 @@ class InitDbDefault extends Command
         'description' => 'Administrative or public announcement.',
 
         'fields' => [
-            ["key"=>"layout_zone","label"=>"Position display into the layout","type"=>"enum","required"=>false,"default"=>"footer","allowed_values"=>["sidebar","main","footer","header"],"rules"=>[]],
-            ["key"=>"render_mode","label"=>"Render mode of inquiries","type"=>"enum","required"=>false,"default"=>"cards","allowed_values"=>["cards","list","full","summary","rich_html"],"rules"=>[]],
-            ["key"=>"open_mode","label"=>"Open Mode","type"=>"enum","required"=>false,"default"=>"page","allowed_values"=>["page","modal","none"],"rules"=>[]],
+            ["key" => "layout_zone","label" => "Position display into the layout","type" => "enum","required" => false,"default" => "footer","allowed_values" => ["sidebar","main","footer","header"],"rules" => []],
+            ["key" => "render_mode","label" => "Render mode of inquiries","type" => "enum","required" => false,"default" => "cards","allowed_values" => ["cards","list","full","summary","rich_html"],"rules" => []],
+            ["key" => "open_mode","label" => "Open Mode","type" => "enum","required" => false,"default" => "page","allowed_values" => ["page","modal","none"],"rules" => []],
 
         ],
         'allowed_response' => [],
@@ -1124,19 +1126,19 @@ class InitDbDefault extends Command
         'support_feature' => 'none',
         'is_root' => true,
         'created' => '',
-    ],
+        ],
 
     //BULLETIN
-    [
+        [
         'inquiry_type' => 'bulletin',
         'family' => 'collective',
         'icon' => 'ClipboardList',
         'label' => 'Bulletin',
         'description' => 'Periodic update or report.',
         'fields' => [
-            ["key"=>"layout_zone","label"=>"Position display into the layout","type"=>"enum","required"=>false,"default"=>"footer","allowed_values"=>["sidebar","main","footer","header"],"rules"=>[]],
-            ["key"=>"render_mode","label"=>"Render mode of inquiries","type"=>"enum","required"=>false,"default"=>"cards","allowed_values"=>["cards","list","full","summary","rich_html"],"rules"=>[]],
-            ["key"=>"open_mode","label"=>"Open Mode","type"=>"enum","required"=>false,"default"=>"page","allowed_values"=>["page","modal","none"],"rules"=>[]],
+            ["key" => "layout_zone","label" => "Position display into the layout","type" => "enum","required" => false,"default" => "footer","allowed_values" => ["sidebar","main","footer","header"],"rules" => []],
+            ["key" => "render_mode","label" => "Render mode of inquiries","type" => "enum","required" => false,"default" => "cards","allowed_values" => ["cards","list","full","summary","rich_html"],"rules" => []],
+            ["key" => "open_mode","label" => "Open Mode","type" => "enum","required" => false,"default" => "page","allowed_values" => ["page","modal","none"],"rules" => []],
         ],
         'allowed_response' => [],
         'allowed_transformation' => null,
@@ -1145,21 +1147,21 @@ class InitDbDefault extends Command
         'support_feature' => 'none',
         'is_root' => true,
         'created' => '',
-    ],
+        ],
 
     //MEETING
-    [
+        [
         'inquiry_type' => 'meeting',
         'family' => 'collective',
         'icon' => 'Calendar',
         'label' => 'Meeting',
         'description' => 'Scheduled in-person or online meeting.',
         'fields' => [
-            ["key"=>"location","label"=>"Location","type"=>"string","required"=>false,"default"=>null,"rules"=>[]],
-            ["key"=>"meeting_date","label"=>"Meeting Date","type"=>"datetime","required"=>true,"default"=>null,"rules"=>[]],
-            ["key"=>"layout_zone","label"=>"Position display into the layout","type"=>"enum","required"=>false,"default"=>"footer","allowed_values"=>["sidebar","main","footer","header"],"rules"=>[]],
-            ["key"=>"render_mode","label"=>"Render mode of inquiries","type"=>"enum","required"=>false,"default"=>"cards","allowed_values"=>["cards","list","full","summary","rich_html"],"rules"=>[]],
-            ["key"=>"open_mode","label"=>"Open Mode","type"=>"enum","required"=>false,"default"=>"page","allowed_values"=>["page","modal","none"],"rules"=>[]],
+            ["key" => "location","label" => "Location","type" => "string","required" => false,"default" => null,"rules" => []],
+            ["key" => "meeting_date","label" => "Meeting Date","type" => "datetime","required" => true,"default" => null,"rules" => []],
+            ["key" => "layout_zone","label" => "Position display into the layout","type" => "enum","required" => false,"default" => "footer","allowed_values" => ["sidebar","main","footer","header"],"rules" => []],
+            ["key" => "render_mode","label" => "Render mode of inquiries","type" => "enum","required" => false,"default" => "cards","allowed_values" => ["cards","list","full","summary","rich_html"],"rules" => []],
+            ["key" => "open_mode","label" => "Open Mode","type" => "enum","required" => false,"default" => "page","allowed_values" => ["page","modal","none"],"rules" => []],
         ],
         'allowed_response' => ['suggestion'],
         'allowed_transformation' => null,
@@ -1168,21 +1170,21 @@ class InitDbDefault extends Command
         'support_feature' => 'none',
         'is_root' => true,
         'created' => '',
-    ],
+        ],
 
     //GATHERING
-    [
+        [
         'inquiry_type' => 'gathering',
         'family' => 'collective',
         'icon' => 'Users',
         'label' => 'Gathering',
         'description' => 'Public citizen gathering or workshop.',
         'fields' => [
-            ["key"=>"location","label"=>"Location","type"=>"string","required"=>false,"default"=>null,"rules"=>[]],
-            ["key"=>"start","label"=>"Start Date","type"=>"datetime","required"=>true,"default"=>null,"rules"=>[]],
-            ["key"=>"layout_zone","label"=>"Position display into the layout","type"=>"enum","required"=>false,"default"=>"footer","allowed_values"=>["sidebar","main","footer","header"],"rules"=>[]],
-            ["key"=>"render_mode","label"=>"Render mode of inquiries","type"=>"enum","required"=>false,"default"=>"cards","allowed_values"=>["cards","list","full","summary","rich_html"],"rules"=>[]],
-            ["key"=>"open_mode","label"=>"Open Mode","type"=>"enum","required"=>false,"default"=>"page","allowed_values"=>["page","modal","none"],"rules"=>[]],
+            ["key" => "location","label" => "Location","type" => "string","required" => false,"default" => null,"rules" => []],
+            ["key" => "start","label" => "Start Date","type" => "datetime","required" => true,"default" => null,"rules" => []],
+            ["key" => "layout_zone","label" => "Position display into the layout","type" => "enum","required" => false,"default" => "footer","allowed_values" => ["sidebar","main","footer","header"],"rules" => []],
+            ["key" => "render_mode","label" => "Render mode of inquiries","type" => "enum","required" => false,"default" => "cards","allowed_values" => ["cards","list","full","summary","rich_html"],"rules" => []],
+            ["key" => "open_mode","label" => "Open Mode","type" => "enum","required" => false,"default" => "page","allowed_values" => ["page","modal","none"],"rules" => []],
         ],
         'allowed_response' => ['suggestion'],
         'allowed_transformation' => null,
@@ -1191,22 +1193,22 @@ class InitDbDefault extends Command
         'support_feature' => 'none',
         'is_root' => true,
         'created' => '',
-    ],
+        ],
 
 
     //CONFERENCE
-    [
+        [
         'inquiry_type' => 'conference',
         'family' => 'collective',
         'icon' => 'Presentation',
         'label' => 'Conference',
         'description' => 'Public event presenting information or expert insights.',
         'fields' => [
-            ["key"=>"topic","label"=>"Topic","type"=>"string","required"=>true,"default"=>null,"rules"=>[]],
-            ["key"=>"speakers","label"=>"Speakers","type"=>"json","required"=>false,"default"=>null,"rules"=>[]],
-            ["key"=>"layout_zone","label"=>"Position display into the layout","type"=>"enum","required"=>false,"default"=>"footer","allowed_values"=>["sidebar","main","footer","header"],"rules"=>[]],
-            ["key"=>"render_mode","label"=>"Render mode of inquiries","type"=>"enum","required"=>false,"default"=>"cards","allowed_values"=>["cards","list","full","summary","rich_html"],"rules"=>[]],
-            ["key"=>"open_mode","label"=>"Open Mode","type"=>"enum","required"=>false,"default"=>"page","allowed_values"=>["page","modal","none"],"rules"=>[]],
+            ["key" => "topic","label" => "Topic","type" => "string","required" => true,"default" => null,"rules" => []],
+            ["key" => "speakers","label" => "Speakers","type" => "json","required" => false,"default" => null,"rules" => []],
+            ["key" => "layout_zone","label" => "Position display into the layout","type" => "enum","required" => false,"default" => "footer","allowed_values" => ["sidebar","main","footer","header"],"rules" => []],
+            ["key" => "render_mode","label" => "Render mode of inquiries","type" => "enum","required" => false,"default" => "cards","allowed_values" => ["cards","list","full","summary","rich_html"],"rules" => []],
+            ["key" => "open_mode","label" => "Open Mode","type" => "enum","required" => false,"default" => "page","allowed_values" => ["page","modal","none"],"rules" => []],
         ],
         'allowed_response' => ['suggestion'],
         'allowed_transformation' => null,
@@ -1215,30 +1217,30 @@ class InitDbDefault extends Command
         'support_feature' => 'none',
         'is_root' => true,
         'created' => '',
-    ],
+        ],
 
 
 
     // --- Debate ---
     //
-    [
+        [
         'inquiry_type' => 'debate',
         'family' => 'collective',
         'icon' => 'Forum',
         'label' => 'Debate',
         'description' => 'Public debate with a neutral facilitator and optional quorum.',
         'fields' => [
-            ["key"=>"facilitator_id","label"=>"Facilitator","type"=>"users","required"=>false,"default"=>null,"rules"=>[]],
-            ["key"=>"quorum","label"=>"Quorum","type"=>"integer","required"=>false,"default"=>null,"rules"=>[]],
-            ["key"=>"topic","label"=>"Topic","type"=>"string","required"=>true,"default"=>null,"rules"=>["maxLength"=>255]],
-            ["key"=>"form_schema","label"=>"Form Schema","type"=>"json","required"=>false,"default"=>null,"rules"=>[]],
-            ["key"=>"type_of_vote","label"=>"Type of Vote","type"=>"enum","required"=>false,"default"=>"simple","allowed_values"=>["simple","majority_judgement_beneficial","majority_judgement_number"],"rules"=>[]],
-            ["key"=>"support_start","label"=>"Supporting Start","type"=>"datetime","required"=>false,"default"=>null,"rules"=>[]],
-            ["key"=>"support_end","label"=>"Supporting End","type"=>"datetime","required"=>false,"default"=>null,"rules"=>[]],
-            ["key"=>"auto_reminder","label"=>"Auto Reminder","type"=>"boolean","required"=>true,"default"=>true,"rules"=>[]],
-            ["key"=>"layout_zone","label"=>"Position display into the layout","type"=>"enum","required"=>false,"default"=>"footer","allowed_values"=>["sidebar","main","footer","header"],"rules"=>[]],
-            ["key"=>"render_mode","label"=>"Render mode of inquiries","type"=>"enum","required"=>false,"default"=>"cards","allowed_values"=>["cards","list","full","summary","rich_html"],"rules"=>[]],
-            ["key"=>"open_mode","label"=>"Open Mode","type"=>"enum","required"=>false,"default"=>"page","allowed_values"=>["page","modal","none"],"rules"=>[]],
+            ["key" => "facilitator_id","label" => "Facilitator","type" => "users","required" => false,"default" => null,"rules" => []],
+            ["key" => "quorum","label" => "Quorum","type" => "integer","required" => false,"default" => null,"rules" => []],
+            ["key" => "topic","label" => "Topic","type" => "string","required" => true,"default" => null,"rules" => ["maxLength" => 255]],
+            ["key" => "form_schema","label" => "Form Schema","type" => "json","required" => false,"default" => null,"rules" => []],
+            ["key" => "type_of_vote","label" => "Type of Vote","type" => "enum","required" => false,"default" => "simple","allowed_values" => ["simple","majority_judgement_beneficial","majority_judgement_number"],"rules" => []],
+            ["key" => "support_start","label" => "Supporting Start","type" => "datetime","required" => false,"default" => null,"rules" => []],
+            ["key" => "support_end","label" => "Supporting End","type" => "datetime","required" => false,"default" => null,"rules" => []],
+            ["key" => "auto_reminder","label" => "Auto Reminder","type" => "boolean","required" => true,"default" => true,"rules" => []],
+            ["key" => "layout_zone","label" => "Position display into the layout","type" => "enum","required" => false,"default" => "footer","allowed_values" => ["sidebar","main","footer","header"],"rules" => []],
+            ["key" => "render_mode","label" => "Render mode of inquiries","type" => "enum","required" => false,"default" => "cards","allowed_values" => ["cards","list","full","summary","rich_html"],"rules" => []],
+            ["key" => "open_mode","label" => "Open Mode","type" => "enum","required" => false,"default" => "page","allowed_values" => ["page","modal","none"],"rules" => []],
         ],
         'allowed_response' => ['suggestion','proposal','petition','official'],
         'allowed_transformation' => ['law_proposal','policy_consultation'],
@@ -1247,33 +1249,33 @@ class InitDbDefault extends Command
         'support_feature' => 'none',
         'is_root' => true,
         'created' => '',
-    ],
+        ],
     // --- Poll ---
-    [
+        [
         'inquiry_type' => 'poll',
         'family' => 'collective',
         'icon' => 'BarChart',
         'label' => 'Poll',
         'description' => 'A specific voting process with multiple methods.',
         'fields' => [
-            ["key"=>"topic","label"=>"Topic","type"=>"string","required"=>true,"default"=>null,"rules"=>["maxLength"=>255]],
-            ["key"=>"voting_start","label"=>"Voting Start","type"=>"datetime","required"=>true,"default"=>null,"rules"=>[]],
-            ["key"=>"voting_end","label"=>"Voting End","type"=>"datetime","required"=>true,"default"=>null,"rules"=>[]],
-            ["key"=>"poll_method","label"=>"Poll Method","type"=>"enum","required"=>true,"default"=>"simple","allowed_values"=>[
+            ["key" => "topic","label" => "Topic","type" => "string","required" => true,"default" => null,"rules" => ["maxLength" => 255]],
+            ["key" => "voting_start","label" => "Voting Start","type" => "datetime","required" => true,"default" => null,"rules" => []],
+            ["key" => "voting_end","label" => "Voting End","type" => "datetime","required" => true,"default" => null,"rules" => []],
+            ["key" => "poll_method","label" => "Poll Method","type" => "enum","required" => true,"default" => "simple","allowed_values" => [
                 "simple",
                 "majority_judgement_beneficial",
                 "majority_judgement_number",
                 "condorcet",
                 "approval",
                 "nauru"
-            ],"rules"=>[]],
-            ["key"=>"allow_multiple_choices","label"=>"Allow Multiple Choices","type"=>"boolean","required"=>true,"default"=>false,"rules"=>[]],
-            ["key"=>"tie_break_rule","label"=>"Tie Break Rule","type"=>"enum","required"=>true,"default"=>"random","allowed_values"=>["random","condorcet_priority","highest_median"],"rules"=>[]],
-            ["key"=>"result_visibility","label"=>"Result Visibility","type"=>"enum","required"=>true,"default"=>"after_close","allowed_values"=>["always","after_close","partial"],"rules"=>[]],
-            ["key"=>"vote_secret","label"=>"Secret Vote","type"=>"boolean","required"=>true,"default"=>true,"rules"=>[]],
-            ["key"=>"layout_zone","label"=>"Position display into the layout","type"=>"enum","required"=>false,"default"=>"footer","allowed_values"=>["sidebar","main","footer","header"],"rules"=>[]],
-            ["key"=>"render_mode","label"=>"Render mode of inquiries","type"=>"enum","required"=>false,"default"=>"cards","allowed_values"=>["cards","list","full","summary","rich_html"],"rules"=>[]],
-            ["key"=>"open_mode","label"=>"Open Mode","type"=>"enum","required"=>false,"default"=>"page","allowed_values"=>["page","modal","none"],"rules"=>[]],
+            ],"rules" => []],
+            ["key" => "allow_multiple_choices","label" => "Allow Multiple Choices","type" => "boolean","required" => true,"default" => false,"rules" => []],
+            ["key" => "tie_break_rule","label" => "Tie Break Rule","type" => "enum","required" => true,"default" => "random","allowed_values" => ["random","condorcet_priority","highest_median"],"rules" => []],
+            ["key" => "result_visibility","label" => "Result Visibility","type" => "enum","required" => true,"default" => "after_close","allowed_values" => ["always","after_close","partial"],"rules" => []],
+            ["key" => "vote_secret","label" => "Secret Vote","type" => "boolean","required" => true,"default" => true,"rules" => []],
+            ["key" => "layout_zone","label" => "Position display into the layout","type" => "enum","required" => false,"default" => "footer","allowed_values" => ["sidebar","main","footer","header"],"rules" => []],
+            ["key" => "render_mode","label" => "Render mode of inquiries","type" => "enum","required" => false,"default" => "cards","allowed_values" => ["cards","list","full","summary","rich_html"],"rules" => []],
+            ["key" => "open_mode","label" => "Open Mode","type" => "enum","required" => false,"default" => "page","allowed_values" => ["page","modal","none"],"rules" => []],
         ],
         'allowed_response' => ['official'],
         'allowed_transformation' => null,
@@ -1282,22 +1284,22 @@ class InitDbDefault extends Command
         'support_feature' => 'none',
         'is_root' => true,
         'created' => '',
-    ],
+        ],
 
     // --- Citizen Jury Recommendation ---
-    [
+        [
         'inquiry_type' => 'citizen_jury_recommendation',
         'family' => 'collective',
         'icon' => 'Gavel',
         'label' => 'Citizen Jury Recommendation',
         'description' => 'Recommendation issued by a randomly selected citizen jury.',
         'fields' => [
-            ["key"=>"title","label"=>"Title","type"=>"string","required"=>true,"default"=>null,"rules"=>[]],
-            ["key"=>"mandate","label"=>"Mandate","type"=>"text","required"=>false,"default"=>null,"rules"=>[]],
-            ["key"=>"jury_id","label"=>"Jury ID","type"=>"users","required"=>true,"default"=>null,"rules"=>[]],
-            ["key"=>"layout_zone","label"=>"Position display into the layout","type"=>"enum","required"=>false,"default"=>"footer","allowed_values"=>["sidebar","main","footer","header"],"rules"=>[]],
-            ["key"=>"render_mode","label"=>"Render mode of inquiries","type"=>"enum","required"=>false,"default"=>"cards","allowed_values"=>["cards","list","full","summary","rich_html"],"rules"=>[]],
-            ["key"=>"open_mode","label"=>"Open Mode","type"=>"enum","required"=>false,"default"=>"page","allowed_values"=>["page","modal","none"],"rules"=>[]],
+            ["key" => "title","label" => "Title","type" => "string","required" => true,"default" => null,"rules" => []],
+            ["key" => "mandate","label" => "Mandate","type" => "text","required" => false,"default" => null,"rules" => []],
+            ["key" => "jury_id","label" => "Jury ID","type" => "users","required" => true,"default" => null,"rules" => []],
+            ["key" => "layout_zone","label" => "Position display into the layout","type" => "enum","required" => false,"default" => "footer","allowed_values" => ["sidebar","main","footer","header"],"rules" => []],
+            ["key" => "render_mode","label" => "Render mode of inquiries","type" => "enum","required" => false,"default" => "cards","allowed_values" => ["cards","list","full","summary","rich_html"],"rules" => []],
+            ["key" => "open_mode","label" => "Open Mode","type" => "enum","required" => false,"default" => "page","allowed_values" => ["page","modal","none"],"rules" => []],
         ],
         'allowed_response' => ['proposal','law_proposal','official'],
         'allowed_transformation' => null,
@@ -1306,10 +1308,10 @@ class InitDbDefault extends Command
         'support_feature' => 'none',
         'is_root' => true,
         'created' => '',
-    ],
+        ],
 
     // --- Consultation ---
-    [
+        [
         'inquiry_type' => 'consultation',
         'family' => 'collective',
         'icon' => 'Gavel',
@@ -1332,9 +1334,9 @@ class InitDbDefault extends Command
                 "default" => null,
                 "rules" => []
             ],
-            ["key"=>"layout_zone","label"=>"Position display into the layout","type"=>"enum","required"=>false,"default"=>"footer","allowed_values"=>["sidebar","main","footer","header"],"rules"=>[]],
-            ["key"=>"render_mode","label"=>"Render mode of inquiries","type"=>"enum","required"=>false,"default"=>"cards","allowed_values"=>["cards","list","full","summary","rich_html"],"rules"=>[]],
-            ["key"=>"open_mode","label"=>"Open Mode","type"=>"enum","required"=>false,"default"=>"page","allowed_values"=>["page","modal","none"],"rules"=>[]],
+            ["key" => "layout_zone","label" => "Position display into the layout","type" => "enum","required" => false,"default" => "footer","allowed_values" => ["sidebar","main","footer","header"],"rules" => []],
+            ["key" => "render_mode","label" => "Render mode of inquiries","type" => "enum","required" => false,"default" => "cards","allowed_values" => ["cards","list","full","summary","rich_html"],"rules" => []],
+            ["key" => "open_mode","label" => "Open Mode","type" => "enum","required" => false,"default" => "page","allowed_values" => ["page","modal","none"],"rules" => []],
         ],
         'allowed_response' => ['proposal', 'law_proposal', 'official'],
         'allowed_transformation' => null,
@@ -1343,23 +1345,23 @@ class InitDbDefault extends Command
         'support_feature' => 'none',
         'is_root' => true,
         'created' => '',
-    ],
+        ],
 
 
 
     // --- Official (single type) ---
-    [
+        [
         'inquiry_type' => 'official',
         'family' => 'official',
         'icon' => 'ClipboardCheck',
         'label' => 'Official Response',
         'description' => 'Official answer to an inquiry (accepted, rejected, under review).',
         'fields' => [
-            ["key"=>"responder_id","label"=>"Responder","type"=>"users","required"=>true,"default"=>null,"rules"=>[]],
-            ["key"=>"resolution_status","label"=>"Resolution Status","type"=>"enum","required"=>true,"default"=>"pending","allowed_values"=>["pending","accepted","rejected"],"rules"=>[]],
-            ["key"=>"layout_zone","label"=>"Position display into the layout","type"=>"enum","required"=>false,"default"=>"footer","allowed_values"=>["sidebar","main","footer","header"],"rules"=>[]],
-            ["key"=>"render_mode","label"=>"Render mode of inquiries","type"=>"enum","required"=>false,"default"=>"cards","allowed_values"=>["cards","list","full","summary","rich_html"],"rules"=>[]],
-            ["key"=>"open_mode","label"=>"Open Mode","type"=>"enum","required"=>false,"default"=>"page","allowed_values"=>["page","modal","none"],"rules"=>[]],
+            ["key" => "responder_id","label" => "Responder","type" => "users","required" => true,"default" => null,"rules" => []],
+            ["key" => "resolution_status","label" => "Resolution Status","type" => "enum","required" => true,"default" => "pending","allowed_values" => ["pending","accepted","rejected"],"rules" => []],
+            ["key" => "layout_zone","label" => "Position display into the layout","type" => "enum","required" => false,"default" => "footer","allowed_values" => ["sidebar","main","footer","header"],"rules" => []],
+            ["key" => "render_mode","label" => "Render mode of inquiries","type" => "enum","required" => false,"default" => "cards","allowed_values" => ["cards","list","full","summary","rich_html"],"rules" => []],
+            ["key" => "open_mode","label" => "Open Mode","type" => "enum","required" => false,"default" => "page","allowed_values" => ["page","modal","none"],"rules" => []],
         ],
         'allowed_response' => null,
         'allowed_transformation' => null,
@@ -1368,25 +1370,25 @@ class InitDbDefault extends Command
         'support_feature' => 'none',
         'is_root' => true,
         'created' => '',
-    ],
+        ],
 
     // --- Administrative / Service / Social ---
-    [
+        [
         'inquiry_type' => 'admin_request',
         'family' => 'administrative',
         'icon' => 'FileDocument',
         'label' => 'Administrative Request',
         'description' => 'General citizen administrative requests.',
         'fields' => [
-            ["key"=>"request_type","label"=>"Request Type","type"=>"string","required"=>true,"default"=>null,"rules"=>[]],
-            ["key"=>"assigned_unit","label"=>"Assigned Unit","type"=>"string","required"=>false,"default"=>null,"rules"=>[]],
-            ["key"=>"processing_deadline","label"=>"Processing Deadline","type"=>"datetime","required"=>false,"default"=>null,"rules"=>[]],
-            ["key"=>"resolution_date","label"=>"Resolution Date","type"=>"datetime","required"=>false,"default"=>null,"rules"=>[]],
-            ["key"=>"auto_load","label"=>"Auto load forms","type"=>"boolean","required"=>true,"default"=>true,"rules"=>[]],
-            ["key"=>"auto_reminder","label"=>"Auto Reminder","type"=>"boolean","required"=>true,"default"=>true,"rules"=>[]],
-            ["key"=>"layout_zone","label"=>"Position display into the layout","type"=>"enum","required"=>false,"default"=>"footer","allowed_values"=>["sidebar","main","footer","header"],"rules"=>[]],
-            ["key"=>"render_mode","label"=>"Render mode of inquiries","type"=>"enum","required"=>false,"default"=>"cards","allowed_values"=>["cards","list","full","summary","rich_html"],"rules"=>[]],
-            ["key"=>"open_mode","label"=>"Open Mode","type"=>"enum","required"=>false,"default"=>"page","allowed_values"=>["page","modal","none"],"rules"=>[]],
+            ["key" => "request_type","label" => "Request Type","type" => "string","required" => true,"default" => null,"rules" => []],
+            ["key" => "assigned_unit","label" => "Assigned Unit","type" => "string","required" => false,"default" => null,"rules" => []],
+            ["key" => "processing_deadline","label" => "Processing Deadline","type" => "datetime","required" => false,"default" => null,"rules" => []],
+            ["key" => "resolution_date","label" => "Resolution Date","type" => "datetime","required" => false,"default" => null,"rules" => []],
+            ["key" => "auto_load","label" => "Auto load forms","type" => "boolean","required" => true,"default" => true,"rules" => []],
+            ["key" => "auto_reminder","label" => "Auto Reminder","type" => "boolean","required" => true,"default" => true,"rules" => []],
+            ["key" => "layout_zone","label" => "Position display into the layout","type" => "enum","required" => false,"default" => "footer","allowed_values" => ["sidebar","main","footer","header"],"rules" => []],
+            ["key" => "render_mode","label" => "Render mode of inquiries","type" => "enum","required" => false,"default" => "cards","allowed_values" => ["cards","list","full","summary","rich_html"],"rules" => []],
+            ["key" => "open_mode","label" => "Open Mode","type" => "enum","required" => false,"default" => "page","allowed_values" => ["page","modal","none"],"rules" => []],
         ],
         'allowed_response' => ['official'],
         'allowed_transformation' => null,
@@ -1394,22 +1396,22 @@ class InitDbDefault extends Command
         'support_feature' => 'none',
         'is_root' => true,
         'created' => '',
-    ],
-    [
+        ],
+        [
         'inquiry_type' => 'grievance',
         'family' => 'administrative',
         'icon' => 'AlertOctagon',
         'label' => 'Grievance',
         'description' => 'Complaint or report regarding an administrative issue.',
         'fields' => [
-            ["key"=>"severity","label"=>"Severity","type"=>"string","required"=>false,"default"=>null,"rules"=>[]],
-            ["key"=>"assigned_unit","label"=>"Assigned Unit","type"=>"string","required"=>false,"default"=>null,"rules"=>[]],
-            ["key"=>"resolution_date","label"=>"Resolution Date","type"=>"datetime","required"=>false,"default"=>null,"rules"=>[]],
-            ["key"=>"auto_load","label"=>"Auto load forms","type"=>"boolean","required"=>true,"default"=>true,"rules"=>[]],
-            ["key"=>"auto_reminder","label"=>"Auto Reminder","type"=>"boolean","required"=>true,"default"=>true,"rules"=>[]],
-            ["key"=>"layout_zone","label"=>"Position display into the layout","type"=>"enum","required"=>false,"default"=>"footer","allowed_values"=>["sidebar","main","footer","header"],"rules"=>[]],
-            ["key"=>"render_mode","label"=>"Render mode of inquiries","type"=>"enum","required"=>false,"default"=>"cards","allowed_values"=>["cards","list","full","summary","rich_html"],"rules"=>[]],
-            ["key"=>"open_mode","label"=>"Open Mode","type"=>"enum","required"=>false,"default"=>"page","allowed_values"=>["page","modal","none"],"rules"=>[]],
+            ["key" => "severity","label" => "Severity","type" => "string","required" => false,"default" => null,"rules" => []],
+            ["key" => "assigned_unit","label" => "Assigned Unit","type" => "string","required" => false,"default" => null,"rules" => []],
+            ["key" => "resolution_date","label" => "Resolution Date","type" => "datetime","required" => false,"default" => null,"rules" => []],
+            ["key" => "auto_load","label" => "Auto load forms","type" => "boolean","required" => true,"default" => true,"rules" => []],
+            ["key" => "auto_reminder","label" => "Auto Reminder","type" => "boolean","required" => true,"default" => true,"rules" => []],
+            ["key" => "layout_zone","label" => "Position display into the layout","type" => "enum","required" => false,"default" => "footer","allowed_values" => ["sidebar","main","footer","header"],"rules" => []],
+            ["key" => "render_mode","label" => "Render mode of inquiries","type" => "enum","required" => false,"default" => "cards","allowed_values" => ["cards","list","full","summary","rich_html"],"rules" => []],
+            ["key" => "open_mode","label" => "Open Mode","type" => "enum","required" => false,"default" => "page","allowed_values" => ["page","modal","none"],"rules" => []],
         ],
         'allowed_response' => ['official'],
         'allowed_transformation' => null,
@@ -1418,21 +1420,21 @@ class InitDbDefault extends Command
         'support_feature' => 'none',
         'is_root' => true,
         'created' => '',
-    ],
-    [
+        ],
+        [
         'inquiry_type' => 'service_request',
         'family' => 'service',
         'icon' => 'Offer',
         'label' => 'Service / Social Request',
         'description' => 'General service request or social support demand.',
         'fields' => [
-            ["key"=>"support_type","label"=>"Support Type","type"=>"string","required"=>true,"default"=>null,"rules"=>[]],
-            ["key"=>"eligibility","label"=>"Eligibility","type"=>"string","required"=>false,"default"=>null,"rules"=>[]],
-            ["key"=>"assigned_unit","label"=>"Assigned Unit","type"=>"string","required"=>false,"default"=>null,"rules"=>[]],
-            ["key"=>"processing_deadline","label"=>"Processing Deadline","type"=>"datetime","required"=>false,"default"=>null,"rules"=>[]],
-            ["key"=>"resolution_date","label"=>"Resolution Date","type"=>"datetime","required"=>false,"default"=>null,"rules"=>[]],
-            ["key"=>"auto_load","label"=>"Auto load forms","type"=>"boolean","required"=>true,"default"=>true,"rules"=>[]],
-            ["key"=>"auto_reminder","label"=>"Auto Reminder","type"=>"boolean","required"=>true,"default"=>true,"rules"=>[]]
+            ["key" => "support_type","label" => "Support Type","type" => "string","required" => true,"default" => null,"rules" => []],
+            ["key" => "eligibility","label" => "Eligibility","type" => "string","required" => false,"default" => null,"rules" => []],
+            ["key" => "assigned_unit","label" => "Assigned Unit","type" => "string","required" => false,"default" => null,"rules" => []],
+            ["key" => "processing_deadline","label" => "Processing Deadline","type" => "datetime","required" => false,"default" => null,"rules" => []],
+            ["key" => "resolution_date","label" => "Resolution Date","type" => "datetime","required" => false,"default" => null,"rules" => []],
+            ["key" => "auto_load","label" => "Auto load forms","type" => "boolean","required" => true,"default" => true,"rules" => []],
+            ["key" => "auto_reminder","label" => "Auto Reminder","type" => "boolean","required" => true,"default" => true,"rules" => []]
         ],
         'allowed_response' => ['official'],
         'allowed_transformation' => null,
@@ -1441,21 +1443,21 @@ class InitDbDefault extends Command
         'support_feature' => 'none',
         'is_root' => true,
         'created' => '',
-    ],
+        ],
 
     // --- Social / Childcare / Housing / Scholarship (examples) ---
-    [
+        [
         'inquiry_type' => 'scholarship_request',
         'family' => 'social',
         'icon' => 'School',
         'label' => 'Scholarship Request',
         'description' => 'Request for scholarship or educational aid.',
         'fields' => [
-            ["key"=>"student_id","label"=>"Student ID","type"=>"users","required"=>true,"default"=>null,"rules"=>[]],
-            ["key"=>"requested_amount","label"=>"Requested Amount","type"=>"integer","required"=>true,"default"=>null,"rules"=>[]],
-            ["key"=>"assigned_unit","label"=>"Assigned Unit","type"=>"string","required"=>false,"default"=>null,"rules"=>[]],
-            ["key"=>"auto_load","label"=>"Auto load forms","type"=>"boolean","required"=>true,"default"=>true,"rules"=>[]],
-            ["key"=>"auto_reminder","label"=>"Auto Reminder","type"=>"boolean","required"=>true,"default"=>true,"rules"=>[]]
+            ["key" => "student_id","label" => "Student ID","type" => "users","required" => true,"default" => null,"rules" => []],
+            ["key" => "requested_amount","label" => "Requested Amount","type" => "integer","required" => true,"default" => null,"rules" => []],
+            ["key" => "assigned_unit","label" => "Assigned Unit","type" => "string","required" => false,"default" => null,"rules" => []],
+            ["key" => "auto_load","label" => "Auto load forms","type" => "boolean","required" => true,"default" => true,"rules" => []],
+            ["key" => "auto_reminder","label" => "Auto Reminder","type" => "boolean","required" => true,"default" => true,"rules" => []]
         ],
         'allowed_response' => ['official'],
         'allowed_transformation' => null,
@@ -1464,18 +1466,18 @@ class InitDbDefault extends Command
         'support_feature' => 'none',
         'is_root' => true,
         'created' => '',
-    ],
-    [
+        ],
+        [
         'inquiry_type' => 'childcare_request',
         'family' => 'social',
         'icon' => 'BabyCarriage',
         'label' => 'Childcare Request',
         'description' => 'Request for childcare support or enrollment.',
         'fields' => [
-            ["key"=>"child_id","label"=>"Child ID","type"=>"users","required"=>true,"default"=>null,"rules"=>[]],
-            ["key"=>"assigned_unit","label"=>"Assigned Unit","type"=>"string","required"=>false,"default"=>null,"rules"=>[]],
-            ["key"=>"auto_load","label"=>"Auto load forms","type"=>"boolean","required"=>true,"default"=>true,"rules"=>[]],
-            ["key"=>"auto_reminder","label"=>"Auto Reminder","type"=>"boolean","required"=>true,"default"=>true,"rules"=>[]]
+            ["key" => "child_id","label" => "Child ID","type" => "users","required" => true,"default" => null,"rules" => []],
+            ["key" => "assigned_unit","label" => "Assigned Unit","type" => "string","required" => false,"default" => null,"rules" => []],
+            ["key" => "auto_load","label" => "Auto load forms","type" => "boolean","required" => true,"default" => true,"rules" => []],
+            ["key" => "auto_reminder","label" => "Auto Reminder","type" => "boolean","required" => true,"default" => true,"rules" => []]
         ],
         'allowed_response' => ['official'],
         'allowed_transformation' => null,
@@ -1484,19 +1486,19 @@ class InitDbDefault extends Command
         'support_feature' => 'none',
         'is_root' => true,
         'created' => '',
-    ],
-    [
+        ],
+        [
         'inquiry_type' => 'housing_request',
         'family' => 'social',
         'icon' => 'Home',
         'label' => 'Housing Request',
         'description' => 'Request for housing support or allocation.',
         'fields' => [
-            ["key"=>"applicant_id","label"=>"Applicant ID","type"=>"users","required"=>true,"default"=>null,"rules"=>[]],
-            ["key"=>"priority_status","label"=>"Priority Status","type"=>"string","required"=>false,"default"=>null,"rules"=>[]],
-            ["key"=>"assigned_unit","label"=>"Assigned Unit","type"=>"string","required"=>false,"default"=>null,"rules"=>[]],
-            ["key"=>"auto_load","label"=>"Auto load forms","type"=>"boolean","required"=>true,"default"=>true,"rules"=>[]],
-            ["key"=>"auto_reminder","label"=>"Auto Reminder","type"=>"boolean","required"=>true,"default"=>true,"rules"=>[]]
+            ["key" => "applicant_id","label" => "Applicant ID","type" => "users","required" => true,"default" => null,"rules" => []],
+            ["key" => "priority_status","label" => "Priority Status","type" => "string","required" => false,"default" => null,"rules" => []],
+            ["key" => "assigned_unit","label" => "Assigned Unit","type" => "string","required" => false,"default" => null,"rules" => []],
+            ["key" => "auto_load","label" => "Auto load forms","type" => "boolean","required" => true,"default" => true,"rules" => []],
+            ["key" => "auto_reminder","label" => "Auto Reminder","type" => "boolean","required" => true,"default" => true,"rules" => []]
         ],
         'allowed_response' => ['official'],
         'allowed_transformation' => null,
@@ -1505,7 +1507,7 @@ class InitDbDefault extends Command
         'support_feature' => 'none',
         'is_root' => true,
         'created' => '',
-    ]
+        ]
     ];
 
     private array $inquiryGroupTypes = [
@@ -1522,10 +1524,10 @@ class InitDbDefault extends Command
             'label' => 'Citizens Initiative',
             'description' => 'A citizen-driven initiative handling signatures, validation and deliberation.',
             'fields' => [
-                ["key"=>"required_signatures","label"=>"Required Signatures","type"=>"integer","required"=>true,"default"=>null,"rules"=>[]],
-                ["key"=>"collection_deadline","label"=>"Collection Deadline","type"=>"datetime","required"=>false,"default"=>null,"rules"=>[]],
-                ["key"=>"initiative_scope","label"=>"Initiative Scope","type"=>"string","required"=>false,"default"=>null,"rules"=>[]],
-                ["key"=>"sponsor_ids","label"=>"Sponsor IDs","type"=>"users","required"=>false,"default"=>null,"rules"=>[]],
+                ["key" => "required_signatures","label" => "Required Signatures","type" => "integer","required" => true,"default" => null,"rules" => []],
+                ["key" => "collection_deadline","label" => "Collection Deadline","type" => "datetime","required" => false,"default" => null,"rules" => []],
+                ["key" => "initiative_scope","label" => "Initiative Scope","type" => "string","required" => false,"default" => null,"rules" => []],
+                ["key" => "sponsor_ids","label" => "Sponsor IDs","type" => "users","required" => false,"default" => null,"rules" => []],
             ],
 
             'allowed_inquiry_types' => ['consultation','deliberation','proposal','law_proposal'],
@@ -1543,16 +1545,16 @@ class InitDbDefault extends Command
             'label' => 'Referendum',
             'description' => 'Organizes all processes related to referendums.',
             'fields' => [
-                ["key"=>"binding","label"=>"Binding","type"=>"boolean","required"=>false,"default"=>true,"rules"=>[]],
-                ["key"=>"required_turnout","label"=>"Required Turnout","type"=>"integer","required"=>false,"default"=>null,"rules"=>[]],
-                ["key"=>"referendum_type","label"=>"Referendum Type","type"=>"enum","allowed_values"=>["mandatory","optional","consultative"],"required"=>true,"default"=>null,"rules"=>[]],
-                ["key"=>"topic","label"=>"Topic","type"=>"string","required"=>true,"default"=>null,"rules"=>[]],
-                ["key"=>"form_schema","label"=>"Form Schema","type"=>"json","required"=>false,"default"=>null,"rules"=>[]],
-                ["key"=>"type_of_vote","label"=>"Type of Vote","type"=>"enum","allowed_values"=>["simple","majority_judgement_beneficial","majority_judgement_number"],"required"=>true,"default"=>"simple","rules"=>[]],
-                ["key"=>"support_start","label"=>"Support Start","type"=>"datetime","required"=>false,"default"=>null,"rules"=>[]],
-                ["key"=>"support_end","label"=>"Support End","type"=>"datetime","required"=>false,"default"=>null,"rules"=>[]],
-                ["key"=>"auto_load","label"=>"Auto Load","type"=>"boolean","required"=>false,"default"=>true,"rules"=>[]],
-                ["key"=>"auto_reminder","label"=>"Auto Reminder","type"=>"boolean","required"=>false,"default"=>true,"rules"=>[]],
+                ["key" => "binding","label" => "Binding","type" => "boolean","required" => false,"default" => true,"rules" => []],
+                ["key" => "required_turnout","label" => "Required Turnout","type" => "integer","required" => false,"default" => null,"rules" => []],
+                ["key" => "referendum_type","label" => "Referendum Type","type" => "enum","allowed_values" => ["mandatory","optional","consultative"],"required" => true,"default" => null,"rules" => []],
+                ["key" => "topic","label" => "Topic","type" => "string","required" => true,"default" => null,"rules" => []],
+                ["key" => "form_schema","label" => "Form Schema","type" => "json","required" => false,"default" => null,"rules" => []],
+                ["key" => "type_of_vote","label" => "Type of Vote","type" => "enum","allowed_values" => ["simple","majority_judgement_beneficial","majority_judgement_number"],"required" => true,"default" => "simple","rules" => []],
+                ["key" => "support_start","label" => "Support Start","type" => "datetime","required" => false,"default" => null,"rules" => []],
+                ["key" => "support_end","label" => "Support End","type" => "datetime","required" => false,"default" => null,"rules" => []],
+                ["key" => "auto_load","label" => "Auto Load","type" => "boolean","required" => false,"default" => true,"rules" => []],
+                ["key" => "auto_reminder","label" => "Auto Reminder","type" => "boolean","required" => false,"default" => true,"rules" => []],
             ],
 
             'allowed_inquiry_types' => ['consultation','deliberation','proposal','law_proposal'],
@@ -1570,10 +1572,10 @@ class InitDbDefault extends Command
             'label' => 'Program',
             'description' => 'A multi-phase governance or thematic program.',
             'fields' => [
-                ["key"=> "start_date", "label"=>"Start Date","type"=> "datetime","required"=>false,"default"=>null,"rules"=>[]],
-                ["key"=> "end_date", "label"=>"End Date","type"=> "datetime","required"=>false,"default"=>null,"rules"=>[]],
-                ["key"=> "color_calendar", "label"=>"Calendar Color","type"=> "string","required"=>false,"default"=>null,"rules"=>[]],
-                ["key"=> "visibility", "label"=>"Visibility","type"=> "enum","allowed_values"=>["public","restricted","private"],"required"=>true,"default"=>null,"rules"=>[]],
+                ["key" => "start_date", "label" => "Start Date","type" => "datetime","required" => false,"default" => null,"rules" => []],
+                ["key" => "end_date", "label" => "End Date","type" => "datetime","required" => false,"default" => null,"rules" => []],
+                ["key" => "color_calendar", "label" => "Calendar Color","type" => "string","required" => false,"default" => null,"rules" => []],
+                ["key" => "visibility", "label" => "Visibility","type" => "enum","allowed_values" => ["public","restricted","private"],"required" => true,"default" => null,"rules" => []],
             ],
 
             'allowed_inquiry_types' => ['assembly','consultation','deliberation','proposal','law_proposal','amendment'],
@@ -1591,12 +1593,12 @@ class InitDbDefault extends Command
             'label' => 'Assembly',
             'description' => 'A general citizen assembly.',
             'fields' => [
-                ["key"=> "quorum", "label"=>"Quorum","type"=> "integer","required"=>false,"default"=>null,"rules"=>[]],
-                ["key"=> "meeting_frequency", "label"=>"Meeting Frequency","type"=> "string","required"=>false,"default"=>null,"rules"=>[]],
-                ["key"=> "voting_rules", "label"=>"Voting Rules","type"=> "text","required"=>false,"default"=>null,"rules"=>[]],
-                ["key"=> "agenda", "label"=>"Agenda","type"=> "text","required"=>true,"default"=>null,"rules"=>[]],
-                ["key"=> "facilitator_id","label"=>"Facilitator","type"=> "users","required"=>false,"default"=>null,"rules"=>[]],
-                ["key"=> "location","label"=>"Location","type"=> "location","required"=>false,"default"=>null,"rules"=>[]],
+                ["key" => "quorum", "label" => "Quorum","type" => "integer","required" => false,"default" => null,"rules" => []],
+                ["key" => "meeting_frequency", "label" => "Meeting Frequency","type" => "string","required" => false,"default" => null,"rules" => []],
+                ["key" => "voting_rules", "label" => "Voting Rules","type" => "text","required" => false,"default" => null,"rules" => []],
+                ["key" => "agenda", "label" => "Agenda","type" => "text","required" => true,"default" => null,"rules" => []],
+                ["key" => "facilitator_id","label" => "Facilitator","type" => "users","required" => false,"default" => null,"rules" => []],
+                ["key" => "location","label" => "Location","type" => "location","required" => false,"default" => null,"rules" => []],
             ],
 
             'allowed_inquiry_types' => ['deliberation','consultation','proposal','law_proposal'],
@@ -1614,8 +1616,8 @@ class InitDbDefault extends Command
             'label' => 'Bundle',
             'description' => 'A generic container for multiple grouped inquiries.',
             'fields' => [
-                ["key"=> "version", "label"=>"Version","type"=> "string","required"=>false,"default"=>null,"rules"=>[]],
-                ["key"=> "tags", "label"=>"Tags","type"=> "list","required"=>false,"default"=>null,"rules"=>[]],
+                ["key" => "version", "label" => "Version","type" => "string","required" => false,"default" => null,"rules" => []],
+                ["key" => "tags", "label" => "Tags","type" => "list","required" => false,"default" => null,"rules" => []],
             ],
 
             'allowed_inquiry_types' => ['assembly','consultation','deliberation','proposal','law_proposal','amendment'],
@@ -1633,11 +1635,11 @@ class InitDbDefault extends Command
             'label' => 'Poll Group',
             'description' => 'A group that organizes official or public polls.',
             'fields' => [
-                ["key"=>"type_of_vote","label"=>"Type of Vote","type"=>"enum","allowed_values"=>["simple","majority_judgement_beneficial","majority_judgement_number"],"required"=>true,"default"=>"simple","rules"=>[]],
-                ["key"=> "mandate", "label"=>"Mandate","type"=> "text","required"=>false,"default"=>null,"rules"=>[]],
-                ["key"=> "jury_size", "label"=>"Jury Size","type"=> "integer","required"=>false,"default"=>null,"rules"=>[]],
-                ["key"=> "selection_method", "label"=>"Selection Method","type"=> "string","required"=>false,"default"=>null,"rules"=>[]],
-                ["key"=> "scope", "label"=>"Scope","type"=>"string","required"=>false,"default"=>null,"rules"=>[]],
+                ["key" => "type_of_vote","label" => "Type of Vote","type" => "enum","allowed_values" => ["simple","majority_judgement_beneficial","majority_judgement_number"],"required" => true,"default" => "simple","rules" => []],
+                ["key" => "mandate", "label" => "Mandate","type" => "text","required" => false,"default" => null,"rules" => []],
+                ["key" => "jury_size", "label" => "Jury Size","type" => "integer","required" => false,"default" => null,"rules" => []],
+                ["key" => "selection_method", "label" => "Selection Method","type" => "string","required" => false,"default" => null,"rules" => []],
+                ["key" => "scope", "label" => "Scope","type" => "string","required" => false,"default" => null,"rules" => []],
             ],
 
             'allowed_inquiry_types' => ['poll','official'],
@@ -1660,10 +1662,10 @@ class InitDbDefault extends Command
             'label' => 'Canton',
             'description' => 'A Swiss canton level of governance.',
             'fields' => [
-                ["key"=>"name","label"=>"Name","type"=>"string","required"=>true,"default"=>null,"rules"=>[]],
-                ["key"=>"code","label"=>"Code","type"=>"string","required"=>false,"default"=>null,"rules"=>[]],
-                ["key"=>"population","label"=>"Population","type"=>"integer","required"=>false,"default"=>null,"rules"=>[]],
-                ["key"=> "location","label"=>"Location","type"=> "location","required"=>false,"default"=>null,"rules"=>[]],
+                ["key" => "name","label" => "Name","type" => "string","required" => true,"default" => null,"rules" => []],
+                ["key" => "code","label" => "Code","type" => "string","required" => false,"default" => null,"rules" => []],
+                ["key" => "population","label" => "Population","type" => "integer","required" => false,"default" => null,"rules" => []],
+                ["key" => "location","label" => "Location","type" => "location","required" => false,"default" => null,"rules" => []],
             ],
 
             'allowed_inquiry_types' => ['consultation','deliberation','proposal'],
@@ -1681,9 +1683,9 @@ class InitDbDefault extends Command
             'label' => 'District',
             'description' => 'A district or regional administrative level.',
             'fields' => [
-                ["key"=>"name","label"=>"Name","type"=>"string","required"=>true,"default"=>null,"rules"=>[]],
-                ["key"=>"population","label"=>"Population","type"=>"integer","required"=>false,"default"=>null,"rules"=>[]],
-                ["key"=> "location","label"=>"Location","type"=> "location","required"=>false,"default"=>null,"rules"=>[]],
+                ["key" => "name","label" => "Name","type" => "string","required" => true,"default" => null,"rules" => []],
+                ["key" => "population","label" => "Population","type" => "integer","required" => false,"default" => null,"rules" => []],
+                ["key" => "location","label" => "Location","type" => "location","required" => false,"default" => null,"rules" => []],
             ],
 
             'allowed_inquiry_types' => ['consultation','deliberation','proposal','news','announcement'],
@@ -1701,9 +1703,9 @@ class InitDbDefault extends Command
             'label' => 'Commune',
             'description' => 'The lowest administrative level.',
             'fields' => [
-                ["key"=>"name","label"=>"Name","type"=>"string","required"=>true,"default"=>null,"rules"=>[]],
-                ["key"=>"population","label"=>"Population","type"=>"integer","required"=>false,"default"=>null,"rules"=>[]],
-                ["key"=> "location","label"=>"Location","type"=> "location","required"=>false,"default"=>null,"rules"=>[]],
+                ["key" => "name","label" => "Name","type" => "string","required" => true,"default" => null,"rules" => []],
+                ["key" => "population","label" => "Population","type" => "integer","required" => false,"default" => null,"rules" => []],
+                ["key" => "location","label" => "Location","type" => "location","required" => false,"default" => null,"rules" => []],
             ],
 
             'allowed_inquiry_types' => ['consultation','proposal','news','meeting','announcement','gathering'],
@@ -1726,9 +1728,9 @@ class InitDbDefault extends Command
             'label' => 'Working Group',
             'description' => 'A collaborative subgroup inside any collective.',
             'fields' => [
-                ["key"=> "parent_id", "label"=>"Parent ID","type"=> "integer","required"=>false,"default"=>null,"rules"=>[]],
-                ["key"=> "scope", "label"=>"Scope","type"=> "text","required"=>false,"default"=>null,"rules"=>[]],
-                ["key"=> "public", "label"=>"Public","type"=> "boolean","required"=>false,"default"=>true,"rules"=>[]],
+                ["key" => "parent_id", "label" => "Parent ID","type" => "integer","required" => false,"default" => null,"rules" => []],
+                ["key" => "scope", "label" => "Scope","type" => "text","required" => false,"default" => null,"rules" => []],
+                ["key" => "public", "label" => "Public","type" => "boolean","required" => false,"default" => true,"rules" => []],
             ],
 
             'allowed_inquiry_types' => ['deliberation','proposal','consultation'],
@@ -1745,10 +1747,10 @@ class InitDbDefault extends Command
             'icon' => 'GitBranch',
             'label' => 'Commission',
             'fields' => [
-                ["key"=> "mandate", "label"=>"Mandate","type"=> "text","required"=>false,"default"=>null,"rules"=>[]],
-                ["key"=> "jury_size", "label"=>"Jury Size","type"=> "integer","required"=>false,"default"=>null,"rules"=>[]],
-                ["key"=> "selection_method", "label"=>"Selection Method","type"=> "string","required"=>false,"default"=>null,"rules"=>[]],
-                ["key"=>"scope","label"=>"Scope","type"=>"string","required"=>false,"default"=>null,"rules"=>[]],
+                ["key" => "mandate", "label" => "Mandate","type" => "text","required" => false,"default" => null,"rules" => []],
+                ["key" => "jury_size", "label" => "Jury Size","type" => "integer","required" => false,"default" => null,"rules" => []],
+                ["key" => "selection_method", "label" => "Selection Method","type" => "string","required" => false,"default" => null,"rules" => []],
+                ["key" => "scope","label" => "Scope","type" => "string","required" => false,"default" => null,"rules" => []],
             ],
 
             'allowed_inquiry_types' => ['deliberation','proposal','official'],
@@ -1766,8 +1768,8 @@ class InitDbDefault extends Command
             'label' => 'Citizen Jury',
             'description' => 'A randomly selected citizen jury.',
             'fields' => [
-                ["key"=>"title","label"=>"Title","type"=>"string","required"=>true,"default"=>null,"rules"=>[]],
-                ["key"=>"mandate","label"=>"Mandate","type"=>"text","required"=>false,"default"=>null,"rules"=>[]],
+                ["key" => "title","label" => "Title","type" => "string","required" => true,"default" => null,"rules" => []],
+                ["key" => "mandate","label" => "Mandate","type" => "text","required" => false,"default" => null,"rules" => []],
             ],
 
             'allowed_inquiry_types' => ['deliberation','proposal'],
@@ -1785,8 +1787,8 @@ class InitDbDefault extends Command
             'label' => 'Chapter',
             'description' => 'A structural content container.',
             'fields' => [
-                ["key"=> "order", "label"=>"Order","type"=> "integer","required"=>false,"default"=>null,"rules"=>[]],
-                ["key"=> "subtitle", "label"=>"Subtitle","type"=> "string","required"=>false,"default"=>null,"rules"=>[]],
+                ["key" => "order", "label" => "Order","type" => "integer","required" => false,"default" => null,"rules" => []],
+                ["key" => "subtitle", "label" => "Subtitle","type" => "string","required" => false,"default" => null,"rules" => []],
             ],
 
             'allowed_inquiry_types' => ['assembly','consultation','deliberation','proposal','law_proposal','amendment'],
@@ -1804,9 +1806,9 @@ class InitDbDefault extends Command
             'label' => 'Deliberation Block',
             'description' => 'A block grouping multiple deliberations.',
             'fields' => [
-                ["key"=> "deadline", "label"=>"Deadline","type"=> "datetime","required"=>false,"default"=>null,"rules"=>[]],
-                ["key"=> "quorum", "label"=>"Quorum","type"=> "integer","required"=>false,"default"=>null,"rules"=>[]],
-                ["key"=> "max_items", "label"=>"Max Items","type"=> "integer","required"=>false,"default"=>null,"rules"=>[]],
+                ["key" => "deadline", "label" => "Deadline","type" => "datetime","required" => false,"default" => null,"rules" => []],
+                ["key" => "quorum", "label" => "Quorum","type" => "integer","required" => false,"default" => null,"rules" => []],
+                ["key" => "max_items", "label" => "Max Items","type" => "integer","required" => false,"default" => null,"rules" => []],
             ],
 
             'allowed_inquiry_types' => ['deliberation'],
@@ -1824,8 +1826,8 @@ class InitDbDefault extends Command
             'label' => 'Consultation Set',
             'description' => 'A set of thematic consultations.',
             'fields' => [
-                ["key"=> "theme", "label"=>"Theme","type"=> "string","required"=>false,"default"=>null,"rules"=>[]],
-                ["key"=> "target_audience", "label"=>"Target Audience","type"=> "string","required"=>false,"default"=>null,"rules"=>[]],
+                ["key" => "theme", "label" => "Theme","type" => "string","required" => false,"default" => null,"rules" => []],
+                ["key" => "target_audience", "label" => "Target Audience","type" => "string","required" => false,"default" => null,"rules" => []],
             ],
 
             'allowed_inquiry_types' => ['consultation'],
@@ -2104,7 +2106,7 @@ class InitDbDefault extends Command
         $inserted = [];
 
         foreach ($this->categories as $category) {
-            $query = $this->connection->prepare('SELECT `id` FROM `*PREFIX*'.Category::TABLE.'` WHERE `name` = ?');
+            $query = $this->connection->prepare('SELECT `id` FROM `*PREFIX*' . Category::TABLE . '` WHERE `name` = ?');
             $cursor = $query->execute([$category['name']]);
             $row = $cursor->fetch();
 
@@ -2116,10 +2118,10 @@ class InitDbDefault extends Command
 
             $parentId = $category['parent'] !== 0 && isset($inserted[$category['parent']]) ? $inserted[$category['parent']] : 0;
 
-            $insert = $this->connection->prepare('INSERT INTO `*PREFIX*'.Category::TABLE.'` (`name`, `parent_id`) VALUES (?, ?)');
+            $insert = $this->connection->prepare('INSERT INTO `*PREFIX*' . Category::TABLE . '` (`name`, `parent_id`) VALUES (?, ?)');
             $insert->execute([$category['name'], $parentId]);
 
-            $id = (int) $this->connection->lastInsertId('*PREFIX*'.Category::TABLE);
+            $id = (int) $this->connection->lastInsertId('*PREFIX*' . Category::TABLE);
 
             $inserted[$category['name']] = $id;
 
@@ -2135,7 +2137,7 @@ class InitDbDefault extends Command
         $inserted = [];
 
         foreach ($this->locations as $location) {
-            $query = $this->connection->prepare('SELECT `id` FROM `*PREFIX*'.Location::TABLE.'` WHERE `name` = ?');
+            $query = $this->connection->prepare('SELECT `id` FROM `*PREFIX*' . Location::TABLE . '` WHERE `name` = ?');
             $cursor = $query->execute([$location['name']]);
             $row = $cursor->fetch();
 
@@ -2147,10 +2149,10 @@ class InitDbDefault extends Command
 
             $parentId = $location['parent'] !== 0 && isset($inserted[$location['parent']]) ? $inserted[$location['parent']] : 0;
 
-            $insert = $this->connection->prepare('INSERT INTO `*PREFIX*'.Location::TABLE.'` (`name`, `parent_id`) VALUES (?, ?)');
+            $insert = $this->connection->prepare('INSERT INTO `*PREFIX*' . Location::TABLE . '` (`name`, `parent_id`) VALUES (?, ?)');
             $insert->execute([$location['name'], $parentId]);
 
-            $id = (int) $this->connection->lastInsertId('*PREFIX*'.Location::TABLE);
+            $id = (int) $this->connection->lastInsertId('*PREFIX*' . Location::TABLE);
             $inserted[$location['name']] = $id;
 
             $this->log($output, 'Inserted location: ' . $location['name']);
@@ -2164,7 +2166,7 @@ class InitDbDefault extends Command
         foreach ($this->inquiryStatuses as $inquiryType => $statuses) {
             foreach ($statuses as $status) {
                 $query = $this->connection->prepare(
-                    'SELECT `id` FROM `*PREFIX*'.InquiryStatus::TABLE.'`
+                    'SELECT `id` FROM `*PREFIX*' . InquiryStatus::TABLE . '`
                     WHERE `inquiry_type` = ? AND `status_key` = ?'
                 );
                 $cursor = $query->execute([$inquiryType, $status['status_key']]);
@@ -2175,7 +2177,7 @@ class InitDbDefault extends Command
                     continue;
                 }
                 $insert = $this->connection->prepare(
-                    'INSERT INTO `*PREFIX*'.InquiryStatus::TABLE.'` 
+                    'INSERT INTO `*PREFIX*' . InquiryStatus::TABLE . '` 
                     (`inquiry_type`, `status_key`, `label`, `description`, `icon`, `is_final`, `sort_order`) 
                     VALUES (?, ?, ?, ?, ?, ?, ?)'
                 );
@@ -2244,7 +2246,7 @@ class InitDbDefault extends Command
             $allowedResponse = !empty($inquiryType['allowed_response']) ? json_encode($inquiryType['allowed_response']) : '';
             $allowedTransformation = !empty($inquiryType['allowed_transformation']) ? json_encode($inquiryType['allowed_transformation']) : '';
             $supportFeature = !empty($inquiryType['support_feature']) ? json_encode($inquiryType['support_feature']) : 'none';
-            $allowComment = array_key_exists('allow_comment', $inquiryType) ? (int) (bool) $inquiryType['allow_comment']: null;
+            $allowComment = array_key_exists('allow_comment', $inquiryType) ? (int) (bool) $inquiryType['allow_comment'] : null;
             $allowedOptionType = !empty($inquiryType['allowed_option_type']) ? json_encode($inquiryType['allowed_option_type']) : '';
 
 
@@ -2326,7 +2328,7 @@ class InitDbDefault extends Command
             $allowedResponse = !empty($optionType['allowed_response']) ? json_encode($optionType['allowed_response']) : '';
             $statuses = !empty($optionType['statuses']) ? json_encode($optionType['statuses']) : '';
             $supportFeature = !empty($optionType['support_feature']) ? $optionType['support_feature'] : 'none';
-            $allowComment = array_key_exists('allow_comment', $optionType) ? (int) (bool) $optionType['allow_comment']: null;
+            $allowComment = array_key_exists('allow_comment', $optionType) ? (int) (bool) $optionType['allow_comment'] : null;
 
             $useTitle = !empty($optionType['use_title']) ? 1 : 0;
 
@@ -2360,76 +2362,76 @@ class InitDbDefault extends Command
 
     //Inquiry Group Types
     private function insertDefaultInquiryGroupTypes(?IOutput $output = null): void
-{
-    $this->log($output, 'Inserting default inquiry group types...');
+    {
+        $this->log($output, 'Inserting default inquiry group types...');
 
-    $inserted = [];
+        $inserted = [];
 
-    foreach ($this->inquiryGroupTypes as $inquiryGroupType) {
-        $uniqueKey = $inquiryGroupType['group_type'];
+        foreach ($this->inquiryGroupTypes as $inquiryGroupType) {
+            $uniqueKey = $inquiryGroupType['group_type'];
 
-        if (isset($inserted[$uniqueKey])) {
-            $this->log($output, 'Inquiry group type already processed: ' . $inquiryGroupType['group_type']);
-            continue;
-        }
+            if (isset($inserted[$uniqueKey])) {
+                $this->log($output, 'Inquiry group type already processed: ' . $inquiryGroupType['group_type']);
+                continue;
+            }
 
-        $tableName = '*PREFIX*' . InquiryGroupType::TABLE;
+            $tableName = '*PREFIX*' . InquiryGroupType::TABLE;
 
-        $query = $this->connection->prepare(
-            'SELECT `id` FROM `' . $tableName . '`
+            $query = $this->connection->prepare(
+                'SELECT `id` FROM `' . $tableName . '`
             WHERE `group_type` = ?'
-        );
+            );
 
-        $cursor = $query->execute([$inquiryGroupType['group_type']]);
-        $row = $cursor->fetch();
+            $cursor = $query->execute([$inquiryGroupType['group_type']]);
+            $row = $cursor->fetch();
 
-        if ($row !== false) {
-            $this->log($output, 'Inquiry group type already exists in DB: ' . $inquiryGroupType['group_type']);
-            $inserted[$uniqueKey] = (int) $row['id'];
-            continue;
-        }
+            if ($row !== false) {
+                $this->log($output, 'Inquiry group type already exists in DB: ' . $inquiryGroupType['group_type']);
+                $inserted[$uniqueKey] = (int) $row['id'];
+                continue;
+            }
 
-        $insert = $this->connection->prepare(
-            'INSERT INTO `' . $tableName . '`
+            $insert = $this->connection->prepare(
+                'INSERT INTO `' . $tableName . '`
             (`group_type`, `family`, `icon`, `label`, `description`, `fields`, `allowed_inquiry_types`, `allowed_response`, `is_root`, `sort_order`, `created`)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)' 
-        );
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+            );
 
-        $icon = !empty($inquiryGroupType['icon']) ? $inquiryGroupType['icon'] : '';
-        $family = !empty($inquiryGroupType['family']) ? $inquiryGroupType['family'] : '';
-        $description = !empty($inquiryGroupType['description']) ? $inquiryGroupType['description'] : '';
-        $fields = !empty($inquiryGroupType['fields']) ? json_encode($inquiryGroupType['fields']) : '';
-        $allowedInquiryTypes = !empty($inquiryGroupType['allowed_inquiry_types']) ? json_encode($inquiryGroupType['allowed_inquiry_types']) : '';
-        $allowedResponse = !empty($inquiryGroupType['allowed_response']) ? json_encode($inquiryGroupType['allowed_response']) : '';
-        $isRoot = !empty($inquiryGroupType['is_root']) ? 1 : 0;
-        $sortOrder = isset($inquiryGroupType['sort_order']) ? $inquiryGroupType['sort_order'] : 0;
+            $icon = !empty($inquiryGroupType['icon']) ? $inquiryGroupType['icon'] : '';
+            $family = !empty($inquiryGroupType['family']) ? $inquiryGroupType['family'] : '';
+            $description = !empty($inquiryGroupType['description']) ? $inquiryGroupType['description'] : '';
+            $fields = !empty($inquiryGroupType['fields']) ? json_encode($inquiryGroupType['fields']) : '';
+            $allowedInquiryTypes = !empty($inquiryGroupType['allowed_inquiry_types']) ? json_encode($inquiryGroupType['allowed_inquiry_types']) : '';
+            $allowedResponse = !empty($inquiryGroupType['allowed_response']) ? json_encode($inquiryGroupType['allowed_response']) : '';
+            $isRoot = !empty($inquiryGroupType['is_root']) ? 1 : 0;
+            $sortOrder = isset($inquiryGroupType['sort_order']) ? $inquiryGroupType['sort_order'] : 0;
 
-        $created = !empty($inquiryGroupType['created']) ? (int)$inquiryGroupType['created'] : time();
+            $created = !empty($inquiryGroupType['created']) ? (int)$inquiryGroupType['created'] : time();
 
-        try {
-            $insert->execute([
-                $inquiryGroupType['group_type'],
-                $family, 
-                $icon,
-                $inquiryGroupType['label'],
-                $description,
-                $fields,
-                $allowedInquiryTypes,
-                $allowedResponse,
-                $isRoot,
-                $sortOrder,
-                $created,
-            ]);
+            try {
+                $insert->execute([
+                    $inquiryGroupType['group_type'],
+                    $family,
+                    $icon,
+                    $inquiryGroupType['label'],
+                    $description,
+                    $fields,
+                    $allowedInquiryTypes,
+                    $allowedResponse,
+                    $isRoot,
+                    $sortOrder,
+                    $created,
+                ]);
 
-            $id = (int) $this->connection->lastInsertId($tableName);
-            $inserted[$uniqueKey] = $id;
+                $id = (int) $this->connection->lastInsertId($tableName);
+                $inserted[$uniqueKey] = $id;
 
-            $this->log($output, 'Inserted inquiry group type: ' . $inquiryGroupType['group_type']);
-        } catch (\Exception $e) {
-            $this->log($output, 'ERROR inserting inquiry group type ' . $inquiryGroupType['group_type'] . ': ' . $e->getMessage());
+                $this->log($output, 'Inserted inquiry group type: ' . $inquiryGroupType['group_type']);
+            } catch (\Exception $e) {
+                $this->log($output, 'ERROR inserting inquiry group type ' . $inquiryGroupType['group_type'] . ': ' . $e->getMessage());
+            }
         }
     }
-}
 
     //Families
     private function insertDefaultInquiryFamilies(?IOutput $output = null): void
@@ -2448,7 +2450,7 @@ class InitDbDefault extends Command
                 'SELECT `id` FROM `*PREFIX*' . InquiryFamily::TABLE . '`
                 WHERE `family_type` = ?'
             );
-            $cursor = $query->execute([$family['family_type']]); 
+            $cursor = $query->execute([$family['family_type']]);
             $row = $cursor->fetch();
 
             if ($row !== false) {
@@ -2467,7 +2469,7 @@ class InitDbDefault extends Command
                      $created = !empty($family['created']) ? (int)$family['created'] : time();
 
                         $insert->execute(
-                            [ 
+                            [
                             $family['family_type'],
                             $family['label'],
                             $family['description'] ?? '',
@@ -2477,7 +2479,7 @@ class InitDbDefault extends Command
                             ]
                         );
 
-                        $id = (int) $this->connection->lastInsertId('*PREFIX*' . InquiryFamily::TABLE); 
+                        $id = (int) $this->connection->lastInsertId('*PREFIX*' . InquiryFamily::TABLE);
                         $inserted[$family['family_type']] = $id;
 
                         $this->log($output, 'Inserted inquiry family: ' . $family['family_type']);
@@ -2487,60 +2489,60 @@ class InitDbDefault extends Command
         }
     }
 
-     private function insertDefaultOptionFamilies(?IOutput $output = null): void
-      {
-          $this->log($output, 'Inserting default option families...');
+    private function insertDefaultOptionFamilies(?IOutput $output = null): void
+    {
+         $this->log($output, 'Inserting default option families...');
 
-          $inserted = [];
+         $inserted = [];
 
-          foreach ($this->optionTypeFamilies as $family) {
-              if (isset($inserted[$family['family_type']])) {
+        foreach ($this->optionTypeFamilies as $family) {
+            if (isset($inserted[$family['family_type']])) {
                 $this->log($output, 'Option family already processed: ' . $family['family_type']);
-                  continue;
-              }
+                continue;
+            }
 
-              $query = $this->connection->prepare(
-                  'SELECT `id` FROM `*PREFIX*' . OptionFamily::TABLE . '`
+            $query = $this->connection->prepare(
+                'SELECT `id` FROM `*PREFIX*' . OptionFamily::TABLE . '`
                   WHERE `family_type` = ?'
-              );
-              $cursor = $query->execute([$family['family_type']]);
-              $row = $cursor->fetch();
+            );
+            $cursor = $query->execute([$family['family_type']]);
+            $row = $cursor->fetch();
 
-              if ($row !== false) {
-                   $this->log($output, 'Option family already exists in DB: ' . $family['family_type']);
-                     $inserted[$family['family_type']] = (int) $row['id'];
-                     continue;
-              }
+            if ($row !== false) {
+                $this->log($output, 'Option family already exists in DB: ' . $family['family_type']);
+                  $inserted[$family['family_type']] = (int) $row['id'];
+                  continue;
+            }
 
-              $insert = $this->connection->prepare(
-                  'INSERT INTO `*PREFIX*' . OptionFamily::TABLE . '`
+            $insert = $this->connection->prepare(
+                'INSERT INTO `*PREFIX*' . OptionFamily::TABLE . '`
                 (`family_type`, `label`, `description`, `icon`, `sort_order`, `created`)
                   VALUES (?, ?, ?, ?, ?, ?)'
-              );
+            );
 
-              try {
-                     $created = !empty($family['created']) ? (int)$family['created'] : time();
+            try {
+                  $created = !empty($family['created']) ? (int)$family['created'] : time();
 
-                          $insert->execute(
-                              [
-                              $family['family_type'],
-                              $family['label'],
-                              $family['description'] ?? '',
-                              $family['icon'] ?? '',
-                              $family['sort_order'] ?? 0,
-                              $created,
-                              ]
-                          );
+                       $insert->execute(
+                           [
+                           $family['family_type'],
+                           $family['label'],
+                           $family['description'] ?? '',
+                           $family['icon'] ?? '',
+                           $family['sort_order'] ?? 0,
+                           $created,
+                           ]
+                       );
 
-                        $id = (int) $this->connection->lastInsertId('*PREFIX*' . OptionFamily::TABLE);
-                          $inserted[$family['family_type']] = $id;
+                     $id = (int) $this->connection->lastInsertId('*PREFIX*' . OptionFamily::TABLE);
+                       $inserted[$family['family_type']] = $id;
 
-                       $this->log($output, 'Inserted option family: ' . $family['family_type']);
+                    $this->log($output, 'Inserted option family: ' . $family['family_type']);
             } catch (\Exception $e) {
-                  $this->log($output, 'ERROR inserting option family ' . $family['family_type'] . ': ' . $e->getMessage());
-              }
-          }
-      }
+                $this->log($output, 'ERROR inserting option family ' . $family['family_type'] . ': ' . $e->getMessage());
+            }
+        }
+    }
 
 
 
@@ -2561,4 +2563,3 @@ class InitDbDefault extends Command
         }
     }
 }
-

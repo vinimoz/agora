@@ -33,8 +33,6 @@ import {
 } from '../helpers/modules/InquiryHelper.ts'
 import { accessFamilyMenu,
   canCreateInquiryGroupInGeneral,
-  createPermissionContextForContent,
-  ContentType,
 } from '../utils/permissions.ts'
 
 const route = useRoute()
@@ -48,9 +46,7 @@ const selectedInquiryGroupTypeForCreation = ref(null)
 const selectedGroups = ref<string[]>([])
 const preferencesStore = usePreferencesStore()
 
-const canUserCreateInquiryGroup = computed(() => {
-    canCreateInquiryGroupInGeneral()
-})
+const canUserCreateInquiryGroup = computed(() => canCreateInquiryGroupInGeneral())
 
 
 

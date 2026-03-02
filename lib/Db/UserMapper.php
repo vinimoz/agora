@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2023 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -30,7 +31,6 @@ use OCP\IUserManager;
 use OCP\IGroupManager;
 use Psr\Log\LoggerInterface;
 
-
 /**
  * @template-extends QBMapper<Share>
  *
@@ -38,18 +38,17 @@ use Psr\Log\LoggerInterface;
  */
 class UserMapper extends QBMapper
 {
-    
     public const TABLE = Share::TABLE;
 
     /**
-     * @psalm-suppress PossiblyUnusedMethod 
+     * @psalm-suppress PossiblyUnusedMethod
      */
     public function __construct(
         IDBConnection $db,
         protected IUserManager $userManager,
-        protected LoggerInterface $logger, 
+        protected LoggerInterface $logger,
     ) {
-        $this->logger=$logger;
+        $this->logger = $logger;
         parent::__construct($db, Share::TABLE, Share::class);
     }
 

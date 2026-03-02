@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -37,6 +38,14 @@ use OCP\AppFramework\Db\Entity;
  * @method         void setSortOrder(int $value)
  * @method         int getCreated()
  * @method         void setCreated(int $value)
+ * @method         ?array getUi()
+ * @method         void setUi(?array $value)
+ * @method         ?array getRules()
+ * @method         void setRules(?array $value)
+ * @method         ?array getFeatures()
+ * @method         void setFeatures(?array $value)
+ * @method         ?array getActions()
+ * @method         void setActions(?array $value)
  */
 
 class InquiryGroupType extends Entity implements JsonSerializable
@@ -55,7 +64,11 @@ class InquiryGroupType extends Entity implements JsonSerializable
     protected ?array $allowedResponse = null;
     protected ?bool $isRoot = false;
     protected int $created = 0;
-    protected int $sortOrder= 0;
+    protected int $sortOrder = 0;
+    protected ?array $ui = null;
+    protected ?array $rules = null;
+    protected ?array $features = null;
+    protected ?array $actions = null;
 
     public function __construct()
     {
@@ -71,6 +84,10 @@ class InquiryGroupType extends Entity implements JsonSerializable
         $this->addType('allowedResponse', 'json');
         $this->addType('sortOrder', 'integer');
         $this->addType('created', 'integer');
+        $this->addType('ui', 'json');
+        $this->addType('rules', 'json');
+        $this->addType('features', 'json');
+        $this->addType('actions', 'json');
     }
 
     /**
@@ -93,6 +110,10 @@ class InquiryGroupType extends Entity implements JsonSerializable
             'sort_order' => $this->getSortOrder(),
             'is_root' => $this->getIsRoot() ?? false,
             'created' => $this->getCreated(),
+            'ui' => $this->getUi() ?? [],
+            'rules' => $this->getRules() ?? [],
+            'features' => $this->getFeatures() ?? [],
+            'actions' => $this->getActions() ?? [],
         ];
     }
 }

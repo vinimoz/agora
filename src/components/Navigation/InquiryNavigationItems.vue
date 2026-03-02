@@ -23,7 +23,6 @@ import {
   canDelete,
   canTransfer,
   // canEdit,
-  creatorContent,
   createInquiryContext,
 } from '../../utils/permissions.ts'
 

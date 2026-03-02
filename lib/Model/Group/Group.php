@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2021 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -18,7 +19,7 @@ use OCP\IGroupManager;
 class Group extends UserBase
 {
     /**
-     * @var string 
+     * @var string
      */
     public const TYPE = 'group';
     public const GROUP_MODERATOR = 'Agora Moderator';

@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -57,7 +58,6 @@ class JanitorCron extends TimedJob
         $this->session->set(AppConstants::SESSION_KEY_CRON_JOB, true);
 
         try {
-
             // delete processed log entries
             $this->logMapper->deleteProcessedEntries();
 
@@ -134,5 +134,4 @@ class JanitorCron extends TimedJob
         $this->run(null);
         return 'JanitorCron manually run.';
     }
-
 }

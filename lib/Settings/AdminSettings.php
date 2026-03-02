@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -29,7 +30,7 @@ class AdminSettings implements ISettings
         return AppConstants::APP_ID;
     }
 
-    public function getPriority():int
+    public function getPriority(): int
     {
         return 50;
     }

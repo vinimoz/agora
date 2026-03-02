@@ -9,7 +9,6 @@ import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 import { useSessionStore } from '../stores/session.ts'
 import { useInquiryStore } from '../stores/inquiry.ts'
-import type { AccessLevel } from '../utils/permissions.ts'
 
 import NcAppSidebar from '@nextcloud/vue/components/NcAppSidebar'
 import NcAppSidebarTab from '@nextcloud/vue/components/NcAppSidebarTab'
@@ -22,7 +21,6 @@ import {
   canShare,
   canEdit,
   createInquiryContext,
-  ContentType,
 } from '../utils/permissions.ts'
 import {
   SideBarTabComments,

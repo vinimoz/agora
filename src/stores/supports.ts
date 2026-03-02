@@ -291,7 +291,7 @@ export const useSupportsStore = defineStore('supports', {
             }
         },
 
-        rollbackTernaryUIState(item: SupportableItem, oldState: any) {
+        rollbackTernaryUIState(item: SupportableItem, oldState: OldState) {
             // Initialize objects if they don't exist
             if (!item.currentUserStatus) {
                 item.currentUserStatus = {}

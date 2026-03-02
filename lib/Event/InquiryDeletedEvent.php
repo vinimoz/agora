@@ -8,7 +8,6 @@
 namespace OCA\Agora\Event;
 
 use OCA\Agora\Db\Inquiry;
-
 use OCA\Agora\Notification\Notifier;
 
 class InquiryDeletedEvent extends InquiryEvent

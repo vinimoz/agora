@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -74,7 +75,7 @@ class InquiryTypeController extends BaseController
     public function show(string $inquiryType): TemplateResponse
     {
         $typeData = $this->inquiryTypeService->findByInquiryType($inquiryType);
-        
+
         return new TemplateResponse(
             $this->appName,
             'inquiry-type-detail',
@@ -177,7 +178,7 @@ class InquiryTypeController extends BaseController
     public function editForm(int $id): TemplateResponse
     {
         $type = $this->inquiryTypeService->find($id);
-        
+
         return new TemplateResponse(
             $this->appName,
             'inquiry-type-edit',
@@ -233,7 +234,7 @@ class InquiryTypeController extends BaseController
             );
         } catch (\Exception $e) {
             $type = $this->inquiryTypeService->find($id);
-            
+
             return new TemplateResponse(
                 $this->appName,
                 'inquiry-type-edit',
@@ -256,7 +257,7 @@ class InquiryTypeController extends BaseController
     public function deleteConfirm(int $id): TemplateResponse
     {
         $type = $this->inquiryTypeService->find($id);
-        
+
         return new TemplateResponse(
             $this->appName,
             'inquiry-type-delete-confirm',
@@ -276,7 +277,7 @@ class InquiryTypeController extends BaseController
     {
         try {
             $result = $this->inquiryTypeService->delete($id);
-            
+
             return new TemplateResponse(
                 $this->appName,
                 'inquiry-type-deleted',
@@ -287,7 +288,7 @@ class InquiryTypeController extends BaseController
             );
         } catch (\Exception $e) {
             $type = $this->inquiryTypeService->find($id);
-            
+
             return new TemplateResponse(
                 $this->appName,
                 'inquiry-type-detail',
@@ -307,13 +308,13 @@ class InquiryTypeController extends BaseController
     {
         $inquiryTypes = $this->inquiryTypeService->findAll();
         $families = [];
-        
+
         foreach ($inquiryTypes as $type) {
             if (isset($type['family']) && !in_array($type['family'], $families)) {
                 $families[] = $type['family'];
             }
         }
-        
+
         return array_unique($families);
     }
 
@@ -346,7 +347,7 @@ class InquiryTypeController extends BaseController
     {
         $typeData = $this->inquiryTypeService->findByInquiryType($inquiryType);
         $fields = $typeData['fields'] ?? [];
-        
+
         return new TemplateResponse(
             $this->appName,
             'inquiry-type-fields',

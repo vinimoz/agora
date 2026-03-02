@@ -4,7 +4,8 @@
 import { useSessionStore } from '../stores/session.ts'
 import { useAppSettingsStore } from '../stores/appSettings.ts'
 import { isInquiryFinalStatus } from '../helpers/modules/InquiryHelper' 
-import type { InquiryGroup } from '../stores/inquiryGroups.types.ts'
+import type { InquiryType, InquiryOptionType } from '../Types/index.ts'
+
 
 export interface InquiryTypeSettings {
   supportInquiry: boolean
@@ -60,6 +61,25 @@ export interface InquiryGroupRights {
   viewGroup?: boolean
 }
 
+/**
+ * Access levels
+ */
+export enum AccessLevel {
+  Private = 'private',
+  Moderate = 'moderate',
+  Open = 'open',
+}
+
+/**
+ * Inquiry Family types
+ */
+export enum InquiryFamily {
+  Legislatif = 'legislative',
+  Administratif = 'administrative',
+  Collective = 'collective',
+  Official = 'official'
+}
+
 
 export interface InquiryStoreLike {
   owner: { id: string }
@@ -72,7 +92,7 @@ export interface InquiryStoreLike {
     moderationStatus?: string
     inquiryStatus?: string
   }
-  inquiryGroups: any[]
+  inquiryGroups: InquiryGroup[]
   type: string
   family: InquiryFamily
 }
@@ -158,25 +178,6 @@ export enum ContentType {
   Share = 'share',
   InquiryGroup = 'inquiry_group',
   Option = 'option',
-}
-
-/**
- * Access levels
- */
-export enum AccessLevel {
-  Private = 'private',
-  Moderate = 'moderate',
-  Open = 'open',
-}
-
-/**
- * Inquiry Family types
- */
-export enum InquiryFamily {
-  Legislatif = 'legislative',
-  Administratif = 'administrative', 
-  Collective = 'collective',
-  Official = 'official'
 }
 
 
@@ -278,15 +279,15 @@ export function createInquiryContext(inquiry: InquiryStoreLike, appSettings: any
   const supportFeature = inquiry.configuration.supportFeature
   const allowComment = inquiry.configuration.allowComment
  
-  const currentUserStatus = inquiry.currentUserStatus || {}
+  // const currentUserStatus = inquiry.currentUserStatus || {}
 
   return {
     userType: getCurrentUserType(),
     contentType: ContentType.Inquiry,
     isOwner: isContentOwner(inquiry.owner.id),
     isPublic: inquiry.configuration.access === 'public',
-    isLocked: inquiry.currentUserStatus.isLocked || false,
-    isExpired: inquiry.status.isExpired || false,
+    isLocked: inquiry.currentUserStatus.isLocked || false,
+    isExpired: inquiry.status.isExpired || false,
     isDeleted: inquiry.status.deletionDate > 0,
     isArchived: inquiry.status.isArchived || false,
     hasGroupRestrictions: inquiry.inquiryGroups.length > 0,
@@ -325,19 +326,17 @@ export function createOptionContext(option: OptionStoreLike): PermissionContext 
   }
 }
 
-export function createInquiryGroupContext(group: any): PermissionContext {
+export function createInquiryGroupContext(group: InquiryGroup): PermissionContext {
   const sessionStore = useSessionStore()
   const isOwner = isContentOwner(group.owner.id)
   const isGroupEditor = sessionStore.currentUser.isGroupEditor
   
   // Handle different field name variations
-  const deleted = group.deleted !== undefined ? group.deleted : 0
-  const groupStatus = group.group_status || group.groupStatus || ''
-  const ownedGroup = group.owned_group || group.ownedGroup || null
-  const isPublic = group.isPublic !== undefined 
-    ? group.isPublic 
-    : (group.protected === false || group.protected === 0)
-  
+  const deleted = group.deleted ?? 0
+const groupStatus = group.group_status || group.groupStatus || ''
+const ownedGroup = group.owned_group || group.ownedGroup || null
+const isPublic = group.isPublic ?? (group.protected === false || group.protected === 0)
+
   return {
     userType: getCurrentUserType(),
     contentType: ContentType.InquiryGroup,
@@ -427,7 +426,7 @@ function getTypeConfigPermissions(context: PermissionContext): {
   
   if (context.contentType === ContentType.Inquiry) {
     const inquiryTypes = appSettings.inquiryTypeTab || []
-    const inquiryConfig = inquiryTypes.find((type: any) => 
+    const inquiryConfig = inquiryTypes.find((type: InquiryType) => 
       type.inquiry_type === typeKey || type.inquiryType === typeKey
     )
     
@@ -443,7 +442,7 @@ function getTypeConfigPermissions(context: PermissionContext): {
   } 
   else if (context.contentType === ContentType.Option) {
     const optionTypes = appSettings.inquiryOptionTypeTab || []
-    const optionConfig = optionTypes.find((type: any) => 
+    const optionConfig = optionTypes.find((type: InquiryOptionType) => 
        type.option_type === typeKey
     )
     
@@ -1072,7 +1071,7 @@ export function canShare(context: PermissionContext): boolean {
         return false
     }
    
-    if (context.accessLevel == AccessLevel.Open &&
+    if (context.accessLevel === AccessLevel.Open &&
         context.userType !== UserType.Moderator &&
         context.userType !== UserType.Admin &&
         !context.isOwner) {

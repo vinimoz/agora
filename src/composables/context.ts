@@ -30,8 +30,6 @@ try {
   const sessionStore = useSessionStore()
   const preferencesStore = usePreferencesStore()
   const firstLoad = !sessionStore.isLoaded
-  console.log('loadContext started for:', to.path)
-  console.log('Calling sessionStore.load...')
 
   await sessionStore.load(to, cheapLoading, forceReload)
   if (firstLoad || (!cheapLoading && forceReload)) {

@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2021 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -30,8 +31,8 @@ class Command extends \Symfony\Component\Console\Command\Command
     protected OutputInterface $output;
     protected ConfirmationQuestion $question;
 
-    public function __construct(
-    ) {
+    public function __construct()
+    {
         parent::__construct();
         $this->question = new ConfirmationQuestion('Continue (y/n)? [' . ($this->defaultContinueAnswer ? 'y' : 'n') . '] ', $this->defaultContinueAnswer);
     }
@@ -62,7 +63,7 @@ class Command extends \Symfony\Component\Console\Command\Command
     {
         if ($input->isInteractive()) {
             /**
-       * @var QuestionHelper 
+       * @var QuestionHelper
 */
             $this->helper = $this->getHelper('question');
             foreach ($this->operationHints as $hint) {

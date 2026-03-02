@@ -6,8 +6,6 @@
 <script setup lang="ts">
     import { ref, computed, watch } from 'vue'
 import { t } from '@nextcloud/l10n'
-import { showSuccess, showError } from '@nextcloud/dialogs'
-import NcButton from '@nextcloud/vue/components/NcButton'
 import NcAvatar from '@nextcloud/vue/components/NcAvatar'
 import NcModal from '@nextcloud/vue/components/NcModal'
 import DOMPurify from 'dompurify'
@@ -25,7 +23,6 @@ import SideBarTabResources from '../SideBar/SideBarTabResources.vue'
 import { getInquiryTypeData } from '../../helpers/modules/InquiryHelper.ts'
 import type { Inquiry, InquiryType } from '../../Types/index.ts'
 import { useSessionStore } from '../../stores/session.ts'
-import { useSupportsStore } from '../../stores/supports.ts'
 import { useInquiriesStore } from '../../stores/inquiries.ts'
 import { createInquiryContext, canSupport, canComment } from '../../utils/permissions.ts'
 import SupportFeature from '../../helpers/modules/SupportFeature.vue'
@@ -38,7 +35,6 @@ const props = defineProps<Props>()
 
 
 const sessionStore = useSessionStore()
-const supportsStore = useSupportsStore()
 const inquiriesStore = useInquiriesStore()
 
 // State
@@ -392,21 +388,7 @@ const displayFields = computed(() => dynamicFields.value
     })
     .filter(field => field.hasValue))
 
-// Handlers
 
-function getSupportButtonText(value: number) {
-  if (value === 1) {
-    return currentSupportValue.value === 1 ? t('agora', 'Supported') : t('agora', 'Support')
-  } if (value === 0) {
-    return currentSupportValue.value === 0 ? t('agora', 'Neutral') : t('agora', 'Neutral')
-  } if (value === -1) {
-    return currentSupportValue.value === -1 ? t('agora', 'Opposed') : t('agora', 'Oppose')
-  }
-  return ''
-}
-
-
-// Watch for changes in support value
 // Watch for changes in support value - now watching storeInquiry
 watch(() => storeInquiry.value.currentUserStatus?.supportValue, (newValue) => {
   currentSupportValue.value = newValue || null

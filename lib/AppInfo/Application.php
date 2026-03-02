@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -92,14 +93,13 @@ use OCP\User\Events\UserDeletedEvent;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 
-
 /**
  * @psalm-api
  */
 class Application extends App implements IBootstrap
 {
     /**
-     * @var string 
+     * @var string
      */
     public const APP_ID = AppConstants::APP_ID;
 
@@ -140,7 +140,7 @@ class Application extends App implements IBootstrap
         $context->registerEventListener(InquiryLinkEvent::class, InquiryLinkListener::class);
         $context->registerEventListener(InquiryLinkAddEvent::class, InquiryLinkListener::class);
         $context->registerEventListener(InquiryLinkDeleteEvent::class, InquiryLinkListener::class);
-        
+
         $context->registerEventListener(OptionEvent::class, OptionListener::class);
         $context->registerEventListener(OptionConfirmedEvent::class, OptionListener::class);
         $context->registerEventListener(OptionCreatedEvent::class, OptionListener::class);
@@ -169,7 +169,6 @@ class Application extends App implements IBootstrap
         $context->registerSearchProvider(SearchProvider::class);
         $context->registerDashboardWidget(AgoraWidget::class);
         $context->registerReferenceProvider(ReferenceProvider::class);
-
     }
 
     /**
@@ -178,7 +177,8 @@ class Application extends App implements IBootstrap
     private function registerServices(IRegistrationContext $context): void
     {
         $context->registerService(
-            UserMapper::class, function (ContainerInterface $c): UserMapper {
+            UserMapper::class,
+            function (ContainerInterface $c): UserMapper {
                 return new UserMapper(
                     $c->get(IDBConnection::class),
                     $c->get(IUserManager::class),
@@ -188,7 +188,8 @@ class Application extends App implements IBootstrap
         );
 
         $context->registerService(
-            AppSettings::class, function (ContainerInterface $c): AppSettings {
+            AppSettings::class,
+            function (ContainerInterface $c): AppSettings {
                 return new AppSettings(
                     $c->get(IAppConfig::class),
                     $c->get(UserSession::class),
@@ -207,7 +208,8 @@ class Application extends App implements IBootstrap
         );
 
         $context->registerService(
-            InquiryMapper::class, function (ContainerInterface $c): InquiryMapper {
+            InquiryMapper::class,
+            function (ContainerInterface $c): InquiryMapper {
                 return new InquiryMapper(
                     $c->get(IDBConnection::class),
                     $c->get(UserSession::class),
@@ -216,7 +218,8 @@ class Application extends App implements IBootstrap
         );
 
         $context->registerService(
-            CommentMapper::class, function (ContainerInterface $c): CommentMapper {
+            CommentMapper::class,
+            function (ContainerInterface $c): CommentMapper {
                 return new CommentMapper(
                     $c->get(IDBConnection::class),
                     $c->get(UserSession::class),
@@ -225,7 +228,8 @@ class Application extends App implements IBootstrap
         );
 
         $context->registerService(
-            AttachmentMapper::class, function (ContainerInterface $c): AttachmentMapper {
+            AttachmentMapper::class,
+            function (ContainerInterface $c): AttachmentMapper {
                 return new AttachmentMapper(
                     $c->get(IDBConnection::class),
                     $c->get(UserSession::class),
@@ -234,7 +238,8 @@ class Application extends App implements IBootstrap
         );
 
         $context->registerService(
-            InquiryLinkMapper::class, function (ContainerInterface $c): InquiryLinkMapper {
+            InquiryLinkMapper::class,
+            function (ContainerInterface $c): InquiryLinkMapper {
                 return new InquiryLinkMapper(
                     $c->get(IDBConnection::class),
                     $c->get(UserSession::class),
@@ -244,7 +249,8 @@ class Application extends App implements IBootstrap
 
 
         $context->registerService(
-            SupportMapper::class, function (ContainerInterface $c): SupportMapper {
+            SupportMapper::class,
+            function (ContainerInterface $c): SupportMapper {
                 return new SupportMapper(
                     $c->get(IDBConnection::class),
                     $c->get(UserSession::class),
@@ -253,7 +259,8 @@ class Application extends App implements IBootstrap
         );
 
         $context->registerService(
-            OptionMapper::class, function (ContainerInterface $c): OptionMapper {
+            OptionMapper::class,
+            function (ContainerInterface $c): OptionMapper {
                 return new OptionMapper(
                     $c->get(IDBConnection::class),
                     $c->get(UserSession::class),
@@ -263,7 +270,8 @@ class Application extends App implements IBootstrap
         );
 
         $context->registerService(
-            SubscriptionMapper::class, function (ContainerInterface $c): SubscriptionMapper {
+            SubscriptionMapper::class,
+            function (ContainerInterface $c): SubscriptionMapper {
                 return new SubscriptionMapper(
                     $c->get(IDBConnection::class),
                 );
@@ -271,7 +279,8 @@ class Application extends App implements IBootstrap
         );
 
         $context->registerService(
-            LogMapper::class, function (ContainerInterface $c): LogMapper {
+            LogMapper::class,
+            function (ContainerInterface $c): LogMapper {
                 return new LogMapper(
                     $c->get(IDBConnection::class),
                 );

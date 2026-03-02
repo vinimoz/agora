@@ -371,7 +371,6 @@ export const useInquiryStore = defineStore('inquiry', {
                 this.$reset()
                 return
             }
-            console.log('API response received:', response.data)
 
             // Log what we're about to patch
             this.$patch(response.data.inquiry)

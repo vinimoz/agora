@@ -8,7 +8,6 @@ import { httpInstance, createCancelTokenHandler } from './HttpApi.js'
 import { Support } from '../../stores/supports.ts'
 import { Share } from '../../stores/shares.ts'
 import { ApiEmailAdressList, Comment } from '../../Types/index.ts'
-import { OptionGroup } from '../../stores/optionGroups.types.ts'
 
 
 export type OptionAction = 'save_draft' | 'submit' | 'archive' | 'restore'
@@ -292,23 +291,6 @@ createOption(
         })
     },
 
-    // Get option fields configuration
-    getOptionFields(type: string): Promise<AxiosResponse<{ fields: any[] }>> {
-        return httpInstance.request({
-            method: 'GET',
-            url: `options/fields/${type}`,
-            cancelToken: cancelTokenHandlerObject[this.getOptionFields.name].handleRequestCancellation().token,
-        })
-    },
-
-    // Get allowed responses for option type
-    getAllowedResponses(type: string): Promise<AxiosResponse<{ responses: any[] }>> {
-        return httpInstance.request({
-            method: 'GET',
-            url: `options/responses/${type}`,
-            cancelToken: cancelTokenHandlerObject[this.getAllowedResponses.name].handleRequestCancellation().token,
-        })
-    },
 
     // Get participant email addresses
     getOptionParticipantEmails(optionId: number): Promise<AxiosResponse<ApiEmailAdressList[]>> {
@@ -316,15 +298,6 @@ createOption(
             method: 'GET',
             url: `option/${optionId}/participants/emails`,
             cancelToken: cancelTokenHandlerObject[this.getOptionParticipantEmails.name].handleRequestCancellation().token,
-        })
-    },
-
-    // Get calendar events for option
-    getOptionCalendarEvents(optionId: number): Promise<AxiosResponse<{ events: any[] }>> {
-        return httpInstance.request({
-            method: 'GET',
-            url: `option/${optionId}/events`,
-            cancelToken: cancelTokenHandlerObject[this.getOptionCalendarEvents.name].handleRequestCancellation().token,
         })
     },
 
@@ -347,7 +320,7 @@ createOption(
     },
 
     // Update misc field
-    updateOptionMiscField(optionId: number, updateData: { key: string, value: any }): Promise<AxiosResponse<{ miscField: string }>> {
+    updateOptionMiscField(optionId: number, updateData: { key: string, updateData: { key: string, value: string }}): Promise<AxiosResponse<{ miscField: string }>> {
         if (!updateData.key || updateData.key.trim() === '') {
             throw new Error('Key cannot be null or empty for misc field update');
         }

@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2021 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -36,7 +37,7 @@ class ActivityService
     private const THIRD_PERSON_FILTERED = 'thirdFiltered';
 
     /**
-     * @psalm-suppress PossiblyUnusedMethod 
+     * @psalm-suppress PossiblyUnusedMethod
      */
     public function __construct(
         private ActivityManager $activityManager,
@@ -113,7 +114,7 @@ class ActivityService
             self::THIRD_PERSON_FULL => $this->l10n->t('{actor} has deleted a support from inquiry {inquiryTitle}'),
             self::FIRST_PERSON_FILTERED => $this->l10n->t('You have deleted a support'),
             self::THIRD_PERSON_FILTERED => $this->l10n->t('{actor} has deleted a support'),
-            ],    
+            ],
             CommentEvent::ADD => [
             self::FIRST_PERSON_FULL => $this->l10n->t('You have commented on inquiry {inquiryTitle}'),
             self::THIRD_PERSON_FULL => $this->l10n->t('{actor} has commented on inquiry {inquiryTitle}'),

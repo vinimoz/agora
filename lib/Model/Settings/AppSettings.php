@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -14,7 +15,6 @@ use OCA\Agora\Model\Group\Group;
 use OCA\Agora\UserSession;
 use OCP\IAppConfig;
 use Psr\Log\LoggerInterface;
-
 use OCA\Agora\Service\CategoryService;
 use OCA\Agora\Service\LocationService;
 use OCA\Agora\Service\InquiryStatusService;
@@ -83,7 +83,7 @@ class AppSettings implements JsonSerializable
     public const SETTING_USE_COLLABORATION = 'useCollaboration';
     public const SETTING_USE_COLLABORATION_DEFAULT = true;
 
-    //Moderation 
+    //Moderation
     public const SETTING_USE_MODERATION = 'useModeration';
     public const SETTING_USE_MODERATION_DEFAULT = true;
 
@@ -170,7 +170,8 @@ class AppSettings implements JsonSerializable
     public function getModeratorRights(): array
     {
         return $this->getArraySetting(
-            self::SETTING_MODERATOR_RIGHTS, [
+            self::SETTING_MODERATOR_RIGHTS,
+            [
             'modifyInquiry' => true,
             'deleteInquiry' => true,
             'transferInquiry' => true,
@@ -182,7 +183,8 @@ class AppSettings implements JsonSerializable
     public function getOfficialRights(): array
     {
         return $this->getArraySetting(
-            self::SETTING_OFFICIAL_RIGHTS, [
+            self::SETTING_OFFICIAL_RIGHTS,
+            [
             'modifyInquiry' => true,
             'deleteInquiry' => false,
             'archiveInquiry' => true,
@@ -197,7 +199,8 @@ class AppSettings implements JsonSerializable
     public function getInquiryTypeRights(): array
     {
         return $this->getArraySetting(
-            self::SETTING_INQUIRY_TYPE_RIGHTS, [
+            self::SETTING_INQUIRY_TYPE_RIGHTS,
+            [
             'proposal' => [
             'supportInquiry' => true,
             'supportFeature' => 'binary',
@@ -268,7 +271,7 @@ class AppSettings implements JsonSerializable
     public function setOfficialRights(array $rights): void
     {
         $this->setArraySetting(self::SETTING_OFFICIAL_RIGHTS, $rights);
-    }    
+    }
 
 
     /**
@@ -318,7 +321,8 @@ class AppSettings implements JsonSerializable
             }
         } catch (\Exception $e) {
             $this->logger->debug(
-                'Could not get setting type', [
+                'Could not get setting type',
+                [
                 'app' => $app,
                 'key' => $key,
                 'expectedType' => $expectedType,
@@ -502,7 +506,7 @@ class AppSettings implements JsonSerializable
     }
 
     /**
-     * Official bypass moderaton 
+     * Official bypass moderaton
      */
     public function getOfficialBypassModeration(): bool
     {

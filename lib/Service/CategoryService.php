@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2024 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -15,7 +17,6 @@ use Psr\Log\LoggerInterface;
 
 class CategoryService
 {
-
     public function __construct(
         private CategoryMapper $categoryMapper,
         private LoggerInterface $logger
@@ -44,7 +45,7 @@ class CategoryService
         $category = new Category();
         $category->setName($name);
         $category->setParentId($parentId);
-        
+
         return $this->categoryMapper->insert($category);
     }
 
@@ -53,7 +54,7 @@ class CategoryService
         $category = $this->categoryMapper->find($id);
         $category->setName($name);
         $category->setParentId($parentId);
-        
+
         return $this->categoryMapper->update($category);
     }
 
@@ -61,7 +62,7 @@ class CategoryService
     {
         $category = $this->categoryMapper->find($id);
         $this->categoryMapper->delete($category);
-        
+
         $this->deleteChildren($id);
     }
 

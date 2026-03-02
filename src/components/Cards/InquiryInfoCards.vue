@@ -16,18 +16,12 @@ import {
 import { useInquiryStore } from '../../stores/inquiry.ts'
 import { useOptionsStore } from '../../stores/options.ts'
 import { useSharesStore } from '../../stores/shares.ts'
-import { useCommentsStore } from '../../stores/comments.ts'
 import { useSessionStore } from '../../stores/session.ts'
-import { useSupportsStore } from '../../stores/supports.ts'
-import { useAttachmentsStore } from '../../stores/attachments.ts'
 
 const inquiryStore = useInquiryStore()
 const optionsStore = useOptionsStore()
 const sharesStore = useSharesStore()
 const sessionStore = useSessionStore()
-const commentsStore = useCommentsStore()
-const supportsStore = useSupportsStore() 
-const attachmentsStore = useAttachmentsStore() 
 
 
 const showUnpublishedInquiryCard = computed(
@@ -37,10 +31,10 @@ const showUnpublishedInquiryCard = computed(
     inquiryStore.permissions.edit &&
     optionsStore.options.length
 )
-const showAddSuggestionsCard = computed(
+/* const showAddSuggestionsCard = computed(
   () =>
     inquiryStore.permissions.addOptions && inquiryStore.isSuggestionOpen && !inquiryStore.isClosed
-)
+) */
 const showClosedCard = computed(() => inquiryStore.isClosed && !showSendConfirmationsCard.value)
 const showSendConfirmationsCard = computed(
   () => inquiryStore.permissions.edit && inquiryStore.isClosed

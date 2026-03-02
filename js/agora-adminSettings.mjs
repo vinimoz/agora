@@ -12,12 +12,12 @@
 })();
 const appName = "agora";
 const appVersion = "1.7.0-rc1";
-import { A as defineStore, aR as generateOcsUrl, aS as cancelableClient, d as defineComponent, q as translate, _ as _export_sfc, c as createElementBlock, o as openBlock, k as createBaseVNode, t as toDisplayString, T as Fragment, U as renderList, E as normalizeClass, l as createCommentVNode, B as createTextVNode, b as computed, s as onMounted, aV as ref, a7 as NcButton, aP as NcEmptyContent, ak as NcLoadingIcon, f as createBlock, j as createVNode, g as withCtx, w as watch, aM as NcModal, h as resolveDynamicComponent, i as mergeProps, a5 as withDirectives, a6 as vShow, aZ as vModelText, C as purify, ax as withModifiers, ai as resolveComponent, n as normalizeStyle, v as normalizeProps, x as guardReactiveProps, y as createApp, z as pinia } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_ef057a6f_lang-CTOMjiel.chunk.mjs";
-import { I as InputDiv, a as NcAppSettingsDialog, N as NcSettingsSection } from "./index-BHz8jw06.chunk.mjs";
-import { L as Logger, d as useAppSettingsStore, e as gfmHeadingId, f as d, h as adminJobs, I as InquiryGeneralIcons, s as showError, S as StatusIcons } from "./NcDashboardWidget-DCBQdRFz-Cle0g8KG.chunk.mjs";
-import { F as FlexSettings } from "./FlexSettings-DpE7-ptL.chunk.mjs";
-import { _ as _sfc_main$A, N as NcCheckboxRadioSwitch, a as NcSelect, b as NcInputField } from "./NcRichText-DJlaHs_Q-D0kSgDEf.chunk.mjs";
-import { N as NcNoteCard, a as NcTextArea, R as RadioGroupDiv, C as CardDiv } from "./markdown-74ulTqf7.chunk.mjs";
+import { A as defineStore, aR as generateOcsUrl, aS as cancelableClient, d as defineComponent, q as translate, _ as _export_sfc, c as createElementBlock, o as openBlock, k as createBaseVNode, t as toDisplayString, T as Fragment, U as renderList, E as normalizeClass, l as createCommentVNode, B as createTextVNode, b as computed, s as onMounted, aV as ref, a7 as NcButton, aP as NcEmptyContent, ak as NcLoadingIcon, f as createBlock, j as createVNode, g as withCtx, w as watch, aM as NcModal, h as resolveDynamicComponent, i as mergeProps, a5 as withDirectives, a6 as vShow, aZ as vModelText, C as purify, ax as withModifiers, ai as resolveComponent, n as normalizeStyle, v as normalizeProps, x as guardReactiveProps, y as createApp, z as pinia } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_ef057a6f_lang-ByxkwFJZ.chunk.mjs";
+import { I as InputDiv, a as NcAppSettingsDialog, N as NcSettingsSection } from "./index-v9DwCWxb.chunk.mjs";
+import { L as Logger, d as useAppSettingsStore, e as gfmHeadingId, f as d, h as adminJobs, I as InquiryGeneralIcons, s as showError, S as StatusIcons } from "./NcDashboardWidget-DCBQdRFz-B8dvjK4R.chunk.mjs";
+import { F as FlexSettings } from "./FlexSettings-ty-Sc_eg.chunk.mjs";
+import { _ as _sfc_main$A, N as NcCheckboxRadioSwitch, a as NcSelect, b as NcInputField } from "./NcRichText-DJlaHs_Q-CkFlFrBZ.chunk.mjs";
+import { N as NcNoteCard, a as NcTextArea, R as RadioGroupDiv, C as CardDiv } from "./markdown-OYysCxfu.chunk.mjs";
 const useTemplateWizardStore = defineStore("templateWizard", {
   state: () => ({
     isOpen: false,
@@ -53,9 +53,7 @@ const useTemplateWizardStore = defineStore("templateWizard", {
           return false;
       }
     },
-    canGoPrevious: (state) => {
-      return state.currentStepIndex > 0 && !state.importing;
-    },
+    canGoPrevious: (state) => state.currentStepIndex > 0 && !state.importing,
     availableTemplates: (state) => {
       if (!state.selectedUseCase) {
         return state.templates;
@@ -520,9 +518,7 @@ const _sfc_main$y = /* @__PURE__ */ defineComponent({
     const selectTemplate = (template) => {
       wizardStore.selectTemplate(template);
     };
-    const formatCount = (count, label) => {
-      return `${count} ${label}${count !== 1 ? "s" : ""}`;
-    };
+    const formatCount = (count, label) => `${count} ${label}${count !== 1 ? "s" : ""}`;
     const triggerFileUpload = () => {
       fileInput.value?.click();
     };
@@ -1160,9 +1156,7 @@ const _sfc_main$x = /* @__PURE__ */ defineComponent({
       pt: translate("agora", "Portuguese"),
       nl: translate("agora", "Dutch")
     };
-    const getLanguageName = (code) => {
-      return languageNames[code] || code.toUpperCase();
-    };
+    const getLanguageName = (code) => languageNames[code] || code.toUpperCase();
     const selectLanguage = (language) => {
       wizardStore.selectLanguage(language);
     };
@@ -1383,9 +1377,7 @@ const _sfc_main$w = /* @__PURE__ */ defineComponent({
         wizardStore.removeEditableItem(section, index);
       }
     };
-    const isEditing = (section, index) => {
-      return editingItem.value?.section === section && editingItem.value?.index === index;
-    };
+    const isEditing = (section, index) => editingItem.value?.section === section && editingItem.value?.index === index;
     const getEditableLabelValue = (section) => {
       if (!editingItemData.value) {
         console.warn("[TemplateWizard] getEditableLabelValue: editingItemData is null");
@@ -1425,9 +1417,7 @@ const _sfc_main$w = /* @__PURE__ */ defineComponent({
       }
       return labelValue || item[section.itemTypeKey] || translate("agora", "Unnamed");
     };
-    const getItemType = (item, section) => {
-      return item[section.itemTypeKey] || "";
-    };
+    const getItemType = (item, section) => item[section.itemTypeKey] || "";
     const totalItems = computed(() => {
       if (!editableData.value) return 0;
       return sections.value.reduce((sum, section) => sum + section.count, 0);
@@ -1472,9 +1462,7 @@ const _sfc_main$w = /* @__PURE__ */ defineComponent({
       if (!duplicateAnalysis.value?.analysis?.[sectionKey]) return "unknown";
       if (!itemType) return "unknown";
       const data = duplicateAnalysis.value.analysis[sectionKey];
-      const matchItem = (item) => {
-        return item.type === itemType || item.identifier === itemType || item.key === itemType || item.id === itemType;
-      };
+      const matchItem = (item) => item.type === itemType || item.identifier === itemType || item.key === itemType || item.id === itemType;
       const isNew = data.new?.some(matchItem);
       const isExisting = data.existing?.some(matchItem);
       console.log(`[getItemStatus] ${sectionKey}/${itemType}: new=${isNew}, existing=${isExisting}`, {
@@ -1967,10 +1955,10 @@ function _sfc_render$w(_ctx, _cache, $props, $setup, $data, $options) {
                               }, null, 8, ["modelValue", "onUpdate:modelValue", "label", "placeholder"]),
                               createVNode($setup["NcTextField"], {
                                 "model-value": $setup.getEditableLabelValue(section),
-                                "onUpdate:modelValue": ($event) => $setup.setEditableLabelValue(section, $event),
                                 label: $setup.t("agora", "Label"),
-                                class: "edit-field"
-                              }, null, 8, ["model-value", "onUpdate:modelValue", "label"]),
+                                class: "edit-field",
+                                "onUpdate:modelValue": ($event) => $setup.setEditableLabelValue(section, $event)
+                              }, null, 8, ["model-value", "label", "onUpdate:modelValue"]),
                               $setup.editingItemData.description !== void 0 ? (openBlock(), createBlock($setup["NcTextArea"], {
                                 key: 0,
                                 modelValue: $setup.editingItemData.description,
@@ -2047,9 +2035,7 @@ const _sfc_main$v = /* @__PURE__ */ defineComponent({
       categories: editableData.value?.categories?.length || 0,
       locations: editableData.value?.locations?.length || 0
     }));
-    const totalItems = computed(() => {
-      return counts.value.inquiry_families + counts.value.inquiry_types + counts.value.inquiry_statuses + counts.value.option_types + counts.value.inquiry_group_types + counts.value.categories + counts.value.locations;
-    });
+    const totalItems = computed(() => counts.value.inquiry_families + counts.value.inquiry_types + counts.value.inquiry_statuses + counts.value.option_types + counts.value.inquiry_group_types + counts.value.categories + counts.value.locations);
     const __returned__ = { wizardStore, template, language, editableData, counts, totalItems, get t() {
       return translate;
     }, get NcNoteCard() {
@@ -2631,9 +2617,7 @@ const _sfc_main$s = /* @__PURE__ */ defineComponent({
       };
       return titles[step] || "";
     };
-    const canShowNavigation = computed(() => {
-      return !["importing", "results"].includes(wizardStore.currentStep);
-    });
+    const canShowNavigation = computed(() => !["importing", "results"].includes(wizardStore.currentStep));
     const nextButtonLabel = computed(() => {
       if (wizardStore.currentStep === "summary") {
         return translate("agora", "Import Template");

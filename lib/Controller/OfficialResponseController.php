@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2024 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -43,7 +44,7 @@ class OfficialResponseController extends Controller
         try {
             $response = $this->responseService->find($id);
             return new DataResponse($response);
-        } catch (DoesNotExistException|MultipleObjectsReturnedException $e) {
+        } catch (DoesNotExistException | MultipleObjectsReturnedException $e) {
             return new DataResponse([], Http::STATUS_NOT_FOUND);
         }
     }
@@ -65,7 +66,7 @@ class OfficialResponseController extends Controller
         try {
             $updatedResponse = $this->responseService->update($id, $title, $type, $response);
             return new DataResponse($updatedResponse);
-        } catch (DoesNotExistException|MultipleObjectsReturnedException $e) {
+        } catch (DoesNotExistException | MultipleObjectsReturnedException $e) {
             return new DataResponse([], Http::STATUS_NOT_FOUND);
         }
     }
@@ -78,7 +79,7 @@ class OfficialResponseController extends Controller
         try {
             $deletedResponse = $this->responseService->delete($id);
             return new DataResponse($deletedResponse);
-        } catch (DoesNotExistException|MultipleObjectsReturnedException $e) {
+        } catch (DoesNotExistException | MultipleObjectsReturnedException $e) {
             return new DataResponse([], Http::STATUS_NOT_FOUND);
         }
     }

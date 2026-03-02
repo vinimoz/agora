@@ -12,22 +12,13 @@ import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 
 import { Logger } from '../helpers/index.ts'
-import { PublicAPI, OptionsAPI } from '../Api/index.ts'
+import { OptionsAPI } from '../Api/index.ts'
 import { Chunking, createDefault, Event, StatusResults, User, UserType , InquiryOptionType } from '../Types/index.ts'
-import { getFamilyColor , 
-    getAllowedOptionTypes,
-    groupOptionTypesByFamily,
-    getOptionTypesForFamily,
-    getOptionTypeOptions
+import { getFamilyColor 
 } from '../helpers/modules/InquiryOptionHelper.ts'
 
 import { useInquiryStore } from './inquiry.ts'
 import { useSessionStore } from './session.ts'
-import { useSubscriptionStore } from './subscription.ts'
-import { useSharesStore } from './shares.ts'
-import { useCommentsStore } from './comments.ts'
-import { useSupportsStore } from './supports.ts'
-import { useAppSettingsStore } from '../stores/appSettings.ts'
 import { AxiosError } from '@nextcloud/axios'
 
 export type OptionAccessType = 'private' | 'public' | 'open' | 'hidden'
@@ -457,7 +448,6 @@ actions: {
     },
 
     async submitOption(action: string): Promise<void> {
-        const appSettingsStore = useAppSettingsStore()
         try {
             if (action === 'submit_for_accepted') {
                 this.status.optionStatus = 'published'
@@ -548,10 +538,6 @@ actions: {
 
     async load(optionId: number | null = null): Promise<void> {
         const sessionStore = useSessionStore()
-        const sharesStore = useSharesStore()
-        const commentsStore = useCommentsStore()
-        const supportsStore = useSupportsStore()
-        const subscriptionStore = useSubscriptionStore()
 
         this.meta.status = 'loading'
         try {
@@ -607,9 +593,7 @@ actions: {
         miscFields?: Record<string, any>
     }): Promise<Option | void> {
         const inquiryStore = useInquiryStore()
-        const sessionStore = useSessionStore()
-
-
+        
         // Validate parent if provided
         if (payload.parentId) {
             const parentOption = await this.getOptionById(payload.parentId)
@@ -726,8 +710,6 @@ actions: {
         status: string
         miscFields: Record<string, any>
     }>): Promise<Option | void> {
-        const inquiryStore = useInquiryStore()
-        const sessionStore = useSessionStore()
 
         if (!payload || typeof payload !== 'object') {
             Logger.error('updateOption called with invalid payload', { payload })
@@ -841,7 +823,6 @@ actions: {
     },
 
     async delete(): Promise<void> {
-        const inquiryStore = useInquiryStore()
         const sessionStore = useSessionStore()
 
         try {
@@ -857,9 +838,6 @@ actions: {
                 const confirmed = confirm(t('agora', 'Are you sure you want to delete this option?'))
                 if (!confirmed) return
             }
-
-        // Call API
-        const response = await OptionsAPI.deleteOption(this.id)
 
         // Emit event
         emit(Event.DeleteOption, {
@@ -944,13 +922,6 @@ actions: {
             })
             throw error
         }
-    },
-
-    // Helper method to get option by ID (would need to be implemented)
-    async getOptionById(optionId: number): Promise<Option | undefined> {
-        // This would typically call an API or check a store
-        // For now, return undefined
-        return undefined
     },
 
 

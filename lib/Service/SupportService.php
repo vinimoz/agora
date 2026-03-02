@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2024 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -15,7 +16,6 @@ use OCA\Agora\Db\InquiryMapper;
 
 class SupportService
 {
-
     public function __construct(
         private InquiryMapper $inquiryMapper,
         private SupportMapper $supportMapper
@@ -60,7 +60,7 @@ class SupportService
         return $this->supportMapper->findSupport($inquiryId, $userId);
     }
 
-    public function addSupport(int $inquiryId, string $userId, int $value,int $optionId): Support
+    public function addSupport(int $inquiryId, string $userId, int $value, int $optionId): Support
     {
         // Check if support already exists
         $existing = $this->supportMapper->findSupport($inquiryId, $userId, $optionId);
@@ -69,19 +69,18 @@ class SupportService
         }
         return $this->supportMapper->addSupport($inquiryId, $userId, $value, $optionId);
     }
-    
-    public function updateSupport(int $inquiryId, string $userId, int $value,int $optionId): Support
+
+    public function updateSupport(int $inquiryId, string $userId, int $value, int $optionId): Support
     {
         // Check if support already exists
-        $existing = $this->supportMapper->findSupport($inquiryId, $userId,$optionId);
+        $existing = $this->supportMapper->findSupport($inquiryId, $userId, $optionId);
         $existing->setValue($value);
         return $this->supportMapper->update($existing);
-
     }
 
-    public function removeSupport(int $inquiryId, string $userId,int $optionId): bool
+    public function removeSupport(int $inquiryId, string $userId, int $optionId): bool
     {
-        return $this->supportMapper->removeSupport($inquiryId, $userId,$optionId);
+        return $this->supportMapper->removeSupport($inquiryId, $userId, $optionId);
     }
 
     public function removeAllSupportForInquiry(int $inquiryId): int
@@ -91,7 +90,7 @@ class SupportService
 
     public function generateHash(Support $support): string
     {
-        return hash('sha256', $support->getInquiryId() . '|' . $support->getUserId() . '|' . $support->getOptionId() );
+        return hash('sha256', $support->getInquiryId() . '|' . $support->getUserId() . '|' . $support->getOptionId());
     }
 
 
@@ -104,5 +103,4 @@ class SupportService
     {
         return $this->supportMapper->countByUser($userId);
     }
-    
 }

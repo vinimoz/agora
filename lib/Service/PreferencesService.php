@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -17,9 +18,8 @@ use OCA\Agora\UserSession;
 
 class PreferencesService
 {
-
     /**
-     * @psalm-suppress PossiblyUnusedMethod 
+     * @psalm-suppress PossiblyUnusedMethod
      */
     public function __construct(
         private PreferencesMapper $preferencesMapper,
@@ -37,7 +37,7 @@ class PreferencesService
                 throw new NotFoundException('No preferences found');
             }
         } catch (Exception $e) {
-            $this->preferences = new Preferences;
+            $this->preferences = new Preferences();
         }
     }
 
@@ -64,7 +64,6 @@ class PreferencesService
             return $this->preferencesMapper->update($this->preferences);
         } else {
             return $this->preferencesMapper->insert($this->preferences);
-
         }
     }
 
@@ -95,5 +94,4 @@ class PreferencesService
 
         return $preferences;
     }
-
 }

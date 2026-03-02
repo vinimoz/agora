@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -69,14 +70,13 @@ class InquiryService
         $inquiryList = $this->inquiryMapper->findForMe($this->userSession->getCurrentUserId());
 
         foreach ($inquiryList as $inquiry) {
-            $type=$inquiry->getType();
+            $type = $inquiry->getType();
             $family = $this->inquiryTypeMapper->getFamilyFromType($type);
             $inquiry->setFamily($family);
-      
+
             //$supportFeature = $this->settings->getSupportFeatureForType($type);
            // $inquiry->setSupportFeature($supportFeature);
             $inquiry->setFamily($family);
-            
         }
 
         if ($this->userSession->getCurrentUser()->getIsAdmin()) {
@@ -85,7 +85,8 @@ class InquiryService
 
         return array_values(
             array_filter(
-                $inquiryList, function (Inquiry $inquiry): bool {
+                $inquiryList,
+                function (Inquiry $inquiry): bool {
                     return $inquiry->getIsAllowed(Inquiry::PERMISSION_INQUIRY_VIEW);
                 }
             )
@@ -208,23 +209,22 @@ class InquiryService
     public function get(int $inquiryId, $lightweight = false)
     {
         try {
-
             if ($lightweight) {
                 $this->inquiry = $this->inquiryMapper->get($inquiryId, withRoles: true);
             } else {
                 $this->inquiry = $this->inquiryMapper->find($inquiryId);
             }
 
-            $type=$this->inquiry->getType();
+            $type = $this->inquiry->getType();
             $this->inquiry->request(Inquiry::PERMISSION_INQUIRY_VIEW);
             //$owner = $this->inquiry->getOwner();
             //$support = $this->supportMapper->findSupport($inquiryId , $owner);
 
             $family = $this->inquiryTypeMapper->getFamilyFromType($this->inquiry->getType());
-            $this->inquiry->setFamily($family); 
+            $this->inquiry->setFamily($family);
             //$supportFeature = $this->settings->getSupportFeatureForType($type);
             //$this->inquiry->setSupportFeature($supportFeature);
-            
+
             return $this->inquiry;
         } catch (DoesNotExistException $e) {
             throw new NotFoundException('Inquiry not found');
@@ -327,10 +327,9 @@ class InquiryService
         $this->inquiry->setDescription($dto->description ?? '');
         $this->inquiry->setAccess(Inquiry::ACCESS_PRIVATE);
         if ($this->appSettings->getAutoExpireEnabled()) {
-            $expireDays=$this->appSettings->getAutoExpireOffsetDays();
-                $expireTimestamp = $timestamp + ($expireDays * 24 * 60 * 60); 
-        }
-        else { 
+            $expireDays = $this->appSettings->getAutoExpireOffsetDays();
+                $expireTimestamp = $timestamp + ($expireDays * 24 * 60 * 60);
+        } else {
                 $expireTimestamp = 0;
         }
         $this->inquiry->setExpire($expireTimestamp);
@@ -350,7 +349,7 @@ class InquiryService
                     $fieldDef['default'] = $dto->miscFields[$key];
                 }
             }
-            unset($fieldDef); 
+            unset($fieldDef);
         }
 
 
@@ -441,359 +440,357 @@ class InquiryService
  *
  * @return Inquiry
  */
-public function updateConfig(int $inquiryId, array $inquiryConfiguration): Inquiry
-{
-    $this->inquiry = $this->inquiryMapper->find($inquiryId);
-    $this->inquiry->request(Inquiry::PERMISSION_INQUIRY_EDIT);
+    public function updateConfig(int $inquiryId, array $inquiryConfiguration): Inquiry
+    {
+        $this->inquiry = $this->inquiryMapper->find($inquiryId);
+        $this->inquiry->request(Inquiry::PERMISSION_INQUIRY_EDIT);
 
-    // Validate values
-    if (isset($inquiryConfiguration['showResults']) && !in_array($inquiryConfiguration['showResults'], $this->getValidShowResults())) {
-        throw new InvalidShowResultsException('Invalid value for prop showResults');
-    }
-
-    if (isset($inquiryConfiguration['access'])) {
-        if (!in_array($inquiryConfiguration['access'], $this->getValidAccess())) {
-            throw new InvalidAccessException('Invalid value for prop access ' . $inquiryConfiguration['access']);
+        // Validate values
+        if (isset($inquiryConfiguration['showResults']) && !in_array($inquiryConfiguration['showResults'], $this->getValidShowResults())) {
+            throw new InvalidShowResultsException('Invalid value for prop showResults');
         }
 
-        if ($inquiryConfiguration['access'] === (Inquiry::ACCESS_OPEN)) {
-            $this->appSettings->getAllAccessAllowed();
+        if (isset($inquiryConfiguration['access'])) {
+            if (!in_array($inquiryConfiguration['access'], $this->getValidAccess())) {
+                throw new InvalidAccessException('Invalid value for prop access ' . $inquiryConfiguration['access']);
+            }
+
+            if ($inquiryConfiguration['access'] === (Inquiry::ACCESS_OPEN)) {
+                $this->appSettings->getAllAccessAllowed();
+            }
+            $this->inquiry->setAccess($inquiryConfiguration['access']);
         }
-        $this->inquiry->setAccess($inquiryConfiguration['access']);
-    }
-    $this->logger->debug(
-    'DEBUG allowComment = ' . var_export($inquiryConfiguration['allowComment'] ?? 'KEY_MISSING', true),
-    ['app' => 'agora']
-    );
-     
-    if (array_key_exists('allowComment', $inquiryConfiguration)) {
-        $value = $inquiryConfiguration['allowComment'];
+        $this->logger->debug(
+            'DEBUG allowComment = ' . var_export($inquiryConfiguration['allowComment'] ?? 'KEY_MISSING', true),
+            ['app' => 'agora']
+        );
 
-        if ($value === null) {
-            $this->inquiry->setAllowComment(null);
-        } elseif (!$value) {
-            $this->inquiry->setAllowComment(0); 
-        } else {
-            $this->inquiry->setAllowComment(1); 
+        if (array_key_exists('allowComment', $inquiryConfiguration)) {
+            $value = $inquiryConfiguration['allowComment'];
+
+            if ($value === null) {
+                $this->inquiry->setAllowComment(null);
+            } elseif (!$value) {
+                $this->inquiry->setAllowComment(0);
+            } else {
+                $this->inquiry->setAllowComment(1);
+            }
         }
+
+
+        if (isset($inquiryConfiguration['expire'])) {
+            $this->inquiry->setExpire($inquiryConfiguration['expire']);
+        }
+
+
+        if (isset($inquiryConfiguration['forceConfidentialComments'])) {
+            $this->inquiry->setForceConfidentialComments($inquiryConfiguration['forceConfidentialComments'] ? 1 : 0);
+        }
+
+
+        if (isset($inquiryConfiguration['supportFeature'])) {
+            $this->inquiry->setSupportFeature($inquiryConfiguration['supportFeature']);
+        }
+
+        if (isset($inquiryConfiguration['showResults'])) {
+            $this->inquiry->setShowResults($inquiryConfiguration['showResults']);
+        }
+
+
+        $this->inquiry = $this->inquiryMapper->update($this->inquiry);
+
+        $this->eventDispatcher->dispatchTyped(new InquiryUpdatedEvent($this->inquiry));
+
+        return $this->inquiry;
     }
-     
-
-    if (isset($inquiryConfiguration['expire'])) {
-        $this->inquiry->setExpire($inquiryConfiguration['expire']);
-    }
-
-
-    if (isset($inquiryConfiguration['forceConfidentialComments'])) {
-        $this->inquiry->setForceConfidentialComments($inquiryConfiguration['forceConfidentialComments'] ? 1 : 0);
-    }
-
-
-    if (isset($inquiryConfiguration['supportFeature'])) {
-        $this->inquiry->setSupportFeature($inquiryConfiguration['supportFeature']);
-    }
-
-    if (isset($inquiryConfiguration['showResults'])) {
-        $this->inquiry->setShowResults($inquiryConfiguration['showResults']);
-    }
-
-
-    $this->inquiry = $this->inquiryMapper->update($this->inquiry);
-
-    $this->eventDispatcher->dispatchTyped(new InquiryUpdatedEvent($this->inquiry));
-
-    return $this->inquiry;
-}
 
 /**
  * Manually lock anonymization
  *
  * @return Inquiry
  */
-public function lockAnonymous(int $inquiryId): Inquiry
-{
-    $this->inquiry = $this->inquiryMapper->find($inquiryId);
+    public function lockAnonymous(int $inquiryId): Inquiry
+    {
+        $this->inquiry = $this->inquiryMapper->find($inquiryId);
 
-    // Only possible, if inquiry is already anonymized
-    if ($this->inquiry->getAnonymous() < 1) {
-        throw new ForbiddenException('Anonymization is not allowed');
+        // Only possible, if inquiry is already anonymized
+        if ($this->inquiry->getAnonymous() < 1) {
+            throw new ForbiddenException('Anonymization is not allowed');
+        }
+
+        // Only possible, if user is allowed to deanonymize
+        $this->inquiry->request(Inquiry::PERMISSION_DEANONYMIZE);
+
+        $this->inquiry->setAnonymous(-1);
+        $this->inquiry = $this->inquiryMapper->update($this->inquiry);
+
+        $this->eventDispatcher->dispatchTyped(new InquiryUpdatedEvent($this->inquiry));
+
+        return $this->inquiry;
     }
-
-    // Only possible, if user is allowed to deanonymize
-    $this->inquiry->request(Inquiry::PERMISSION_DEANONYMIZE);
-
-    $this->inquiry->setAnonymous(-1);
-    $this->inquiry = $this->inquiryMapper->update($this->inquiry);
-
-    $this->eventDispatcher->dispatchTyped(new InquiryUpdatedEvent($this->inquiry));
-
-    return $this->inquiry;
-}
 
 /**
  * Update timestamp for last interaction with inquiries
  */
-public function setLastInteraction(int $inquiryId): void
-{
-    if ($inquiryId) {
-        $this->inquiryMapper->setLastInteraction($inquiryId);
+    public function setLastInteraction(int $inquiryId): void
+    {
+        if ($inquiryId) {
+            $this->inquiryMapper->setLastInteraction($inquiryId);
+        }
     }
-}
 
 /**
  * Move to archive or restore with optional recursive functionality
  *
  * @return array [inquiry: Inquiry, archivedCount: int]
  */
-public function toggleArchiveRecursive(int $inquiryId, bool $recursive = true): array
-{
-    $this->inquiry = $this->inquiryMapper->find($inquiryId);
-    $this->inquiry->request(Inquiry::PERMISSION_INQUIRY_DELETE);
+    public function toggleArchiveRecursive(int $inquiryId, bool $recursive = true): array
+    {
+        $this->inquiry = $this->inquiryMapper->find($inquiryId);
+        $this->inquiry->request(Inquiry::PERMISSION_INQUIRY_DELETE);
 
-    $archiveState = !$this->inquiry->getDeleted();
-    $deletedTime = $archiveState ? time() : 0;
+        $archiveState = !$this->inquiry->getDeleted();
+        $deletedTime = $archiveState ? time() : 0;
 
-    try {
-        $this->inquiry->setArchived($deletedTime);
-        $this->inquiry->setDeleted($deletedTime);
-        $this->inquiry = $this->inquiryMapper->update($this->inquiry);
-
-        $archivedCount = 1;
-
-        if ($recursive) {
-            $childCount = $this->archiveChildrenRecursive($this->inquiry, $archiveState);
-            $archivedCount += $childCount;
-        }
-
-        if ($archiveState) {
-            $this->eventDispatcher->dispatchTyped(new InquiryArchivedEvent($this->inquiry));
-        } else {
-            $this->eventDispatcher->dispatchTyped(new InquiryRestoredEvent($this->inquiry));
-        }
-
-        return [
-            'inquiry' => $this->inquiry,
-            'archivedCount' => $archivedCount
-        ];
-
-    } catch (\Exception $e) {
-        throw $e;
-    }
-}
-
-/**
- * Archived recursivly all children 
- */
-private function archiveChildrenRecursive(Inquiry $parent, bool $archiveState): int
-{
-    $count = 0;
-    $children = $this->inquiryMapper->getChildInquiryIds($parent->getId());
-
-    foreach ($children as $childId) {
         try {
-            $child = $this->inquiryMapper->find($childId);
-            $child->request(Inquiry::PERMISSION_INQUIRY_DELETE);
-            $child->setArchived($archiveState ? time() : 0);
-            $child->setDeleted($archiveState ? time() : 0);
-            $this->inquiryMapper->update($child);
-            $count++;
-            if ($archiveState) {
-                $this->eventDispatcher->dispatchTyped(new InquiryArchivedEvent($child));
-            } else {
-                $this->eventDispatcher->dispatchTyped(new InquiryRestoredEvent($child));
+            $this->inquiry->setArchived($deletedTime);
+            $this->inquiry->setDeleted($deletedTime);
+            $this->inquiry = $this->inquiryMapper->update($this->inquiry);
+
+            $archivedCount = 1;
+
+            if ($recursive) {
+                $childCount = $this->archiveChildrenRecursive($this->inquiry, $archiveState);
+                $archivedCount += $childCount;
             }
 
-            $count += $this->archiveChildrenRecursive($child, $archiveState);
+            if ($archiveState) {
+                $this->eventDispatcher->dispatchTyped(new InquiryArchivedEvent($this->inquiry));
+            } else {
+                $this->eventDispatcher->dispatchTyped(new InquiryRestoredEvent($this->inquiry));
+            }
 
-        } catch (ForbiddenException $e) {
-            error_log("Permission denied for child inquiry {$childId}");
-            continue;
+            return [
+            'inquiry' => $this->inquiry,
+            'archivedCount' => $archivedCount
+            ];
+        } catch (\Exception $e) {
+            throw $e;
         }
     }
 
-    return $count;
-}
+/**
+ * Archived recursivly all children
+ */
+    private function archiveChildrenRecursive(Inquiry $parent, bool $archiveState): int
+    {
+        $count = 0;
+        $children = $this->inquiryMapper->getChildInquiryIds($parent->getId());
+
+        foreach ($children as $childId) {
+            try {
+                $child = $this->inquiryMapper->find($childId);
+                $child->request(Inquiry::PERMISSION_INQUIRY_DELETE);
+                $child->setArchived($archiveState ? time() : 0);
+                $child->setDeleted($archiveState ? time() : 0);
+                $this->inquiryMapper->update($child);
+                $count++;
+                if ($archiveState) {
+                    $this->eventDispatcher->dispatchTyped(new InquiryArchivedEvent($child));
+                } else {
+                    $this->eventDispatcher->dispatchTyped(new InquiryRestoredEvent($child));
+                }
+
+                $count += $this->archiveChildrenRecursive($child, $archiveState);
+            } catch (ForbiddenException $e) {
+                error_log("Permission denied for child inquiry {$childId}");
+                continue;
+            }
+        }
+
+        return $count;
+    }
 
 /**
  * Move to archive or restore
  *
  * @return Inquiry
  */
-public function toggleArchive(int $inquiryId): Inquiry
-{
-    $this->inquiry = $this->inquiryMapper->find($inquiryId);
-    $this->inquiry->request(Inquiry::PERMISSION_INQUIRY_DELETE);
+    public function toggleArchive(int $inquiryId): Inquiry
+    {
+        $this->inquiry = $this->inquiryMapper->find($inquiryId);
+        $this->inquiry->request(Inquiry::PERMISSION_INQUIRY_DELETE);
 
-    $this->inquiry->setArchived($this->inquiry->getArchived() ? 0 : time());
-    $this->inquiry = $this->inquiryMapper->update($this->inquiry);
+        $this->inquiry->setArchived($this->inquiry->getArchived() ? 0 : time());
+        $this->inquiry = $this->inquiryMapper->update($this->inquiry);
 
-    if ($this->inquiry->getArchived()) {
-        $this->eventDispatcher->dispatchTyped(new InquiryArchivedEvent($this->inquiry));
-    } else {
-        $this->eventDispatcher->dispatchTyped(new InquiryRestoredEvent($this->inquiry));
+        if ($this->inquiry->getArchived()) {
+            $this->eventDispatcher->dispatchTyped(new InquiryArchivedEvent($this->inquiry));
+        } else {
+            $this->eventDispatcher->dispatchTyped(new InquiryRestoredEvent($this->inquiry));
+        }
+
+        return $this->inquiry;
     }
-
-    return $this->inquiry;
-}
 
 /**
  * Delete inquiry
  *
  * @return Inquiry
  */
-public function delete(int $inquiryId): Inquiry
-{
-    try {
-        $this->inquiry = $this->inquiryMapper->get($inquiryId, withRoles: true);
-    } catch (DoesNotExistException $e) {
-        throw new AlreadyDeletedException('Inquiry not found, assume already deleted');
+    public function delete(int $inquiryId): Inquiry
+    {
+        try {
+            $this->inquiry = $this->inquiryMapper->get($inquiryId, withRoles: true);
+        } catch (DoesNotExistException $e) {
+            throw new AlreadyDeletedException('Inquiry not found, assume already deleted');
+        }
+
+        $this->inquiry->request(Inquiry::PERMISSION_INQUIRY_DELETE);
+        $this->eventDispatcher->dispatchTyped(new InquiryDeletedEvent($this->inquiry));
+
+        $this->inquiryMapper->delete($this->inquiry);
+        return $this->inquiry;
     }
-
-    $this->inquiry->request(Inquiry::PERMISSION_INQUIRY_DELETE);
-    $this->eventDispatcher->dispatchTyped(new InquiryDeletedEvent($this->inquiry));
-
-    $this->inquiryMapper->delete($this->inquiry);
-    return $this->inquiry;
-}
 
 /**
  * Close inquiry
  *
  * @return Inquiry
  */
-public function close(int $inquiryId): Inquiry
-{
-    $this->inquiryMapper->get($inquiryId, withRoles: true)->request(Inquiry::PERMISSION_INQUIRY_EDIT);
-    return $this->toggleClose($inquiryId, time() - 5);
-}
+    public function close(int $inquiryId): Inquiry
+    {
+        $this->inquiryMapper->get($inquiryId, withRoles: true)->request(Inquiry::PERMISSION_INQUIRY_EDIT);
+        return $this->toggleClose($inquiryId, time() - 5);
+    }
 
 /**
  * Reopen inquiry
  *
  * @return Inquiry
  */
-public function reopen(int $inquiryId): Inquiry
-{
-    $this->inquiryMapper->get($inquiryId, withRoles: true)->request(Inquiry::PERMISSION_INQUIRY_EDIT);
-    return $this->toggleClose($inquiryId, 0);
-}
+    public function reopen(int $inquiryId): Inquiry
+    {
+        $this->inquiryMapper->get($inquiryId, withRoles: true)->request(Inquiry::PERMISSION_INQUIRY_EDIT);
+        return $this->toggleClose($inquiryId, 0);
+    }
 
 /**
  * Find  inquiry by id
  *
  * @return Inquiry
  */
-public function findById(int $inquiryId): Inquiry
-{
-    return    $this->inquiryMapper->get($inquiryId, withRoles: true)->request(Inquiry::PERMISSION_INQUIRY_EDIT);
-}
+    public function findById(int $inquiryId): Inquiry
+    {
+        return    $this->inquiryMapper->get($inquiryId, withRoles: true)->request(Inquiry::PERMISSION_INQUIRY_EDIT);
+    }
 
 /**
  * Update  Form id in inquiry
  *
  * @return Inquiry
  */
-public function updateFormId(int $inquiryId,int $formId): bool
-{
-    return    $this->inquiryMapper->updateFormById($inquiryId, $formId);
-}
+    public function updateFormId(int $inquiryId, int $formId): bool
+    {
+        return    $this->inquiryMapper->updateFormById($inquiryId, $formId);
+    }
 
 /**
  * Close inquiry
  *
  * @return Inquiry
  */
-private function toggleClose(int $inquiryId, int $expiry): Inquiry
-{
-    $this->inquiry = $this->inquiryMapper->find($inquiryId);
-    $this->inquiry->request(Inquiry::PERMISSION_INQUIRY_EDIT);
+    private function toggleClose(int $inquiryId, int $expiry): Inquiry
+    {
+        $this->inquiry = $this->inquiryMapper->find($inquiryId);
+        $this->inquiry->request(Inquiry::PERMISSION_INQUIRY_EDIT);
 
-    $this->inquiry->setExpire($expiry);
-    if ($expiry > 0) {
-        $this->eventDispatcher->dispatchTyped(new InquiryCloseEvent($this->inquiry));
-    } else {
-        $this->eventDispatcher->dispatchTyped(new InquiryReopenEvent($this->inquiry));
+        $this->inquiry->setExpire($expiry);
+        if ($expiry > 0) {
+            $this->eventDispatcher->dispatchTyped(new InquiryCloseEvent($this->inquiry));
+        } else {
+            $this->eventDispatcher->dispatchTyped(new InquiryReopenEvent($this->inquiry));
+        }
+
+        $this->inquiry = $this->inquiryMapper->update($this->inquiry);
+
+        return $this->inquiry;
     }
-
-    $this->inquiry = $this->inquiryMapper->update($this->inquiry);
-
-    return $this->inquiry;
-}
 
 /**
  * Set status of inquiry
  *
  * @return Inquiry
  */
-public function setInquiryStatus(int $inquiryId,string $mstatus): void
-{
-    $this->inquiryMapper->setInquiryStatus($inquiryId, $mstatus);
-}
+    public function setInquiryStatus(int $inquiryId, string $mstatus): void
+    {
+        $this->inquiryMapper->setInquiryStatus($inquiryId, $mstatus);
+    }
 
 /**
  * Set Moderation status of inquiry
  *
  * @return Inquiry
  */
-public function setModerationStatus(int $inquiryId,string $mstatus): void
-{
-    $this->inquiryMapper->setModerationStatus($inquiryId, $mstatus);
-}
+    public function setModerationStatus(int $inquiryId, string $mstatus): void
+    {
+        $this->inquiryMapper->setModerationStatus($inquiryId, $mstatus);
+    }
 
 /**
  * Clone inquiry
  *
  * @return Inquiry
  */
-public function clone(int $inquiryId,string $inquiryType): Inquiry
-{
-    $origin = $this->inquiryMapper->get($inquiryId, withRoles: true);
-    $origin->request(Inquiry::PERMISSION_INQUIRY_VIEW);
-    $this->appSettings->getInquiryCreationAllowed();
+    public function clone(int $inquiryId, string $inquiryType): Inquiry
+    {
+        $origin = $this->inquiryMapper->get($inquiryId, withRoles: true);
+        $origin->request(Inquiry::PERMISSION_INQUIRY_VIEW);
+        $this->appSettings->getInquiryCreationAllowed();
 
-    $this->inquiry = new Inquiry();
-    $this->inquiry->setCreated(time());
-    $this->inquiry->setOwner($this->userSession->getCurrentUserId());
-    $this->inquiry->setTitle('Clone of ' . $origin->getTitle());
-    $this->inquiry->setDeleted(0);
-    $this->inquiry->setAccess(Inquiry::ACCESS_PRIVATE);
+        $this->inquiry = new Inquiry();
+        $this->inquiry->setCreated(time());
+        $this->inquiry->setOwner($this->userSession->getCurrentUserId());
+        $this->inquiry->setTitle('Clone of ' . $origin->getTitle());
+        $this->inquiry->setDeleted(0);
+        $this->inquiry->setAccess(Inquiry::ACCESS_PRIVATE);
 
-    if ($inquiryType) { 
-        $this->inquiry->setType($inquiryType);
-    } else {
-        $this->inquiry->setType($origin->getType());
+        if ($inquiryType) {
+            $this->inquiry->setType($inquiryType);
+        } else {
+            $this->inquiry->setType($origin->getType());
+        }
+
+        $this->inquiry->setDescription($origin->getDescription());
+        $this->inquiry->setExpire($origin->getExpire());
+        // deanonymize cloned inquiries by default, to avoid locked anonymous inquiries
+        $this->inquiry->setShowResults($origin->getShowResults());
+
+        $this->inquiry = $this->inquiryMapper->insert($this->inquiry);
+        $this->eventDispatcher->dispatchTyped(new InquiryUpdatedEvent($this->inquiry));
+        return $this->inquiry;
     }
-
-    $this->inquiry->setDescription($origin->getDescription());
-    $this->inquiry->setExpire($origin->getExpire());
-    // deanonymize cloned inquiries by default, to avoid locked anonymous inquiries
-    $this->inquiry->setShowResults($origin->getShowResults());
-
-    $this->inquiry = $this->inquiryMapper->insert($this->inquiry);
-    $this->eventDispatcher->dispatchTyped(new InquiryUpdatedEvent($this->inquiry));
-    return $this->inquiry;
-}
 
 /**
  * Collect email addresses from particitipants
  */
-public function getParticipantsEmailAddresses(int $inquiryId): array
-{
-    $this->inquiry = $this->inquiryMapper->get($inquiryId, withRoles: true);
-    $this->inquiry->request(Inquiry::PERMISSION_INQUIRY_EDIT);
+    public function getParticipantsEmailAddresses(int $inquiryId): array
+    {
+        $this->inquiry = $this->inquiryMapper->get($inquiryId, withRoles: true);
+        $this->inquiry->request(Inquiry::PERMISSION_INQUIRY_EDIT);
 
-    $supports = $this->inquiryMapper->findParticipantsByInquiry($this->inquiry->getId());
-    $list = [];
-    foreach ($supports as $support) {
-        $user = $support->getUser();
-        $list[] = [
+        $supports = $this->inquiryMapper->findParticipantsByInquiry($this->inquiry->getId());
+        $list = [];
+        foreach ($supports as $support) {
+            $user = $support->getUser();
+            $list[] = [
             'displayName' => $user->getDisplayName(),
             'emailAddress' => $user->getEmailAddress(),
             'combined' => $user->getEmailAndDisplayName(),
-        ];
+            ];
+        }
+        return $list;
     }
-    return $list;
-}
 
 /**
  * Get valid values for configuration options
@@ -802,65 +799,65 @@ public function getParticipantsEmailAddresses(int $inquiryId): array
  *
  * @psalm-return array{inquiryType: mixed, access: mixed, showResults: mixed}
  */
-public function getValidEnum(): array
-{
-    return [
+    public function getValidEnum(): array
+    {
+        return [
         'access' => $this->getValidAccess(),
         'showResults' => $this->getValidShowResults()
-    ];
-}
-
-public function applyAction(int $inquiryId, string $action): Inquiry
-{
-    $inquiry = $this->inquiryMapper->find($inquiryId);
-
-    if (!$inquiry) {
-        throw new \Exception('Inquiry not found');
+        ];
     }
 
-    switch ($action) {
-    case 'save_draft':
-        $inquiry->setAccess('private');
-        $inquiry->setInquiryStatus('draft');
-        $inquiry->setModerationStatus('draft');
-        $inquiry = $this->inquiryMapper->update($inquiry);
-        break;
+    public function applyAction(int $inquiryId, string $action): Inquiry
+    {
+        $inquiry = $this->inquiryMapper->find($inquiryId);
 
-    case 'submit_for_moderate':
-        $inquiry->setAccess('moderate');
-        $inquiry->setInquiryStatus('waiting_approval');
-        $inquiry->setModerationStatus('pending');
-        $inquiry = $this->inquiryMapper->update($inquiry);
-        break;
-
-    case 'submit_for_accepted':
-        $inquiry->setAccess('open');
-        $inquiry->setModerationStatus('accepted');
-        //We find the first status available in inquiry type status definition
-        $statuses = $this->inquiryStatusMapper->findByInquiryType($inquiry->getType());
-        if (!empty($statuses)) {
-            usort($statuses, fn($a, $b) => $a->getSortOrder() <=> $b->getSortOrder());
-            $firstStatus = $statuses[0] ?? null;
+        if (!$inquiry) {
+            throw new \Exception('Inquiry not found');
         }
-        if ($firstStatus) {
-            $inquiry->setInquiryStatus($firstStatus->getStatusKey());
+
+        switch ($action) {
+            case 'save_draft':
+                $inquiry->setAccess('private');
+                $inquiry->setInquiryStatus('draft');
+                $inquiry->setModerationStatus('draft');
+                $inquiry = $this->inquiryMapper->update($inquiry);
+                break;
+
+            case 'submit_for_moderate':
+                $inquiry->setAccess('moderate');
+                $inquiry->setInquiryStatus('waiting_approval');
+                $inquiry->setModerationStatus('pending');
+                $inquiry = $this->inquiryMapper->update($inquiry);
+                break;
+
+            case 'submit_for_accepted':
+                $inquiry->setAccess('open');
+                $inquiry->setModerationStatus('accepted');
+                //We find the first status available in inquiry type status definition
+                $statuses = $this->inquiryStatusMapper->findByInquiryType($inquiry->getType());
+                if (!empty($statuses)) {
+                    usort($statuses, fn($a, $b) => $a->getSortOrder() <=> $b->getSortOrder());
+                    $firstStatus = $statuses[0] ?? null;
+                }
+                if ($firstStatus) {
+                    $inquiry->setInquiryStatus($firstStatus->getStatusKey());
+                }
+                $inquiry = $this->inquiryMapper->update($inquiry);
+                break;
+
+            case 'submit_for_rejected':
+                $inquiry->setAccess('private');
+                $inquiry->setModerationStatus('rejected');
+                $inquiry->setInquiryStatus('rejected');
+                $inquiry = $this->inquiryMapper->update($inquiry);
+                break;
+
+            default:
+                throw new \InvalidArgumentException("Unknown action '$action'");
         }
-        $inquiry = $this->inquiryMapper->update($inquiry);
-        break;
 
-    case 'submit_for_rejected':
-        $inquiry->setAccess('private');
-        $inquiry->setModerationStatus('rejected');
-        $inquiry->setInquiryStatus('rejected');
-        $inquiry = $this->inquiryMapper->update($inquiry);
-        break;
-
-    default:
-        throw new \InvalidArgumentException("Unknown action '$action'");
+        return $inquiry;
     }
-
-    return $inquiry;
-}
 
 /**
  * Get valid values for access
@@ -869,10 +866,10 @@ public function applyAction(int $inquiryId, string $action): Inquiry
  *
  * @psalm-return array{0: string, 1: string}
  */
-private function getValidAccess(): array
-{
-    return [Inquiry::ACCESS_PRIVATE, Inquiry::ACCESS_OPEN,Inquiry::ACCESS_MODERATE];
-}
+    private function getValidAccess(): array
+    {
+        return [Inquiry::ACCESS_PRIVATE, Inquiry::ACCESS_OPEN,Inquiry::ACCESS_MODERATE];
+    }
 
 /**
  * Get valid values for showResult
@@ -881,19 +878,19 @@ private function getValidAccess(): array
  *
  * @psalm-return array{0: string, 1: string, 2: string}
  */
-private function getValidShowResults(): array
-{
-    return [Inquiry::SHOW_RESULTS_ALWAYS, Inquiry::SHOW_RESULTS_CLOSED, Inquiry::SHOW_RESULTS_NEVER];
-}
+    private function getValidShowResults(): array
+    {
+        return [Inquiry::SHOW_RESULTS_ALWAYS, Inquiry::SHOW_RESULTS_CLOSED, Inquiry::SHOW_RESULTS_NEVER];
+    }
 
 /**
  * Set access
  *
  * @return access
  */
-public function setInquiryAccess(int $inquiryId,$access): string
-{
-    $this->inquiryMapper->setInquiryAccess($inquiryId, $access);
-    return $access;
-}
+    public function setInquiryAccess(int $inquiryId, $access): string
+    {
+        $this->inquiryMapper->setInquiryAccess($inquiryId, $access);
+        return $access;
+    }
 }

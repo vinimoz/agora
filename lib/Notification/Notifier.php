@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -32,7 +33,7 @@ class Notifier implements INotifier
     private const SUBJECT_RICH = 'richSubject';
 
     /**
-     * @psalm-suppress PossiblyUnusedMethod 
+     * @psalm-suppress PossiblyUnusedMethod
      */
     public function __construct(
         protected IFactory $l10nFactory,
@@ -135,7 +136,8 @@ class Notifier implements INotifier
             $inquiry = $this->extractInquiry($notification);
         } catch (DoesNotExistException $e) {
             $this->logger->info(
-                'Notification silently removed, inquiry not found', [
+                'Notification silently removed, inquiry not found',
+                [
                 'notification' => $notification->getObjectId(),
                 'error' => $e->getMessage(),
                 ]
@@ -182,31 +184,31 @@ class Notifier implements INotifier
         };
 
         switch ($notification->getSubject()) {
-        case self::NOTIFY_INQUIRY_CHANGED_OWNER:
-            $newOwner = $this->userMapper->getUserFromUserBase($parameters['newOwner']);
-            // overwrite the subject with the new owner
-            $notification->setParsedSubject(
-                $l->t('%s is the new owner of your inquiry.', $newOwner->getDisplayName())
-            );
+            case self::NOTIFY_INQUIRY_CHANGED_OWNER:
+                $newOwner = $this->userMapper->getUserFromUserBase($parameters['newOwner']);
+                // overwrite the subject with the new owner
+                $notification->setParsedSubject(
+                    $l->t('%s is the new owner of your inquiry.', $newOwner->getDisplayName())
+                );
 
-            $notification->setRichSubject(
-                $subjects[self::SUBJECT_RICH],
-                [
-                'actor' => $actor->getRichObjectString(),
-                'newOwner' => $newOwner->getRichObjectString(),
-                ]
-            );
-            break;
+                $notification->setRichSubject(
+                    $subjects[self::SUBJECT_RICH],
+                    [
+                    'actor' => $actor->getRichObjectString(),
+                    'newOwner' => $newOwner->getRichObjectString(),
+                    ]
+                );
+                break;
 
-        default:
-            $notification->setParsedSubject($subjects[self::SUBJECT_PARSED]);
-            $notification->setRichSubject(
-                $subjects[self::SUBJECT_RICH],
-                [
-                'actor' => $actor->getRichObjectString(),
-                ]
-            );
-            break;
+            default:
+                $notification->setParsedSubject($subjects[self::SUBJECT_PARSED]);
+                $notification->setRichSubject(
+                    $subjects[self::SUBJECT_RICH],
+                    [
+                    'actor' => $actor->getRichObjectString(),
+                    ]
+                );
+                break;
         }
 
         return $notification;

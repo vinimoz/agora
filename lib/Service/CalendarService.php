@@ -1,11 +1,11 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-
 
 namespace OCA\Agora\Service;
 
@@ -24,12 +24,12 @@ use Psr\Log\LoggerInterface;
 class CalendarService
 {
     /**
-     * @var ICalendar[] 
+     * @var ICalendar[]
      */
     private array $calendars;
 
     /**
-     * @psalm-suppress PossiblyUnusedMethod 
+     * @psalm-suppress PossiblyUnusedMethod
      */
     public function __construct(
         private CalendarManager $calendarManager,

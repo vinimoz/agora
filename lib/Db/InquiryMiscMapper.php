@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -20,7 +21,7 @@ class InquiryMiscMapper extends QBMapper
     public const TABLE = InquiryMisc::TABLE;
 
     /**
-     * @psalm-suppress PossiblyUnusedMethod 
+     * @psalm-suppress PossiblyUnusedMethod
      */
     public function __construct(IDBConnection $db)
     {
@@ -93,61 +94,60 @@ class InquiryMiscMapper extends QBMapper
     public function setValues(int $inquiryId, array $dynamicFields): void
     {
         if (empty($dynamicFields)) {
-		return;
-	}
+            return;
+        }
 
-	// Delete existing records for this inquiry
-	$qb = $this->db->getQueryBuilder();
-	$qb->delete(InquiryMisc::TABLE)
-    ->where($qb->expr()->eq('inquiry_id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT)));
-	$qb->executeStatement();
+    // Delete existing records for this inquiry
+        $qb = $this->db->getQueryBuilder();
+        $qb->delete(InquiryMisc::TABLE)
+        ->where($qb->expr()->eq('inquiry_id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT)));
+        $qb->executeStatement();
 
-	// Then insert new settings
-	foreach ($dynamicFields as $key => $value) {
-		$qb = $this->db->getQueryBuilder();
-		$qb->insert(InquiryMisc::TABLE)
-     ->values(
-	     [
-		     'inquiry_id' => $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT),
-		     'key' => $qb->createNamedParameter($key, IQueryBuilder::PARAM_STR),
-		     'value' => $qb->createNamedParameter($value, IQueryBuilder::PARAM_STR),
-	     ]
-     )
-     ->executeStatement();
-	}
+    // Then insert new settings
+        foreach ($dynamicFields as $key => $value) {
+            $qb = $this->db->getQueryBuilder();
+            $qb->insert(InquiryMisc::TABLE)
+            ->values(
+                [
+                'inquiry_id' => $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT),
+                'key' => $qb->createNamedParameter($key, IQueryBuilder::PARAM_STR),
+                'value' => $qb->createNamedParameter($value, IQueryBuilder::PARAM_STR),
+                ]
+            )
+            ->executeStatement();
+        }
     }
 
     public function setValue(int $inquiryId, string $key, $value): InquiryMisc
     {
-	    // Create the entity object first
-	    $miscField = new InquiryMisc();
-	    $miscField->setInquiryId($inquiryId);
-	    $miscField->setKey($key);
-	    $miscField->setValue($value);
+        // Create the entity object first
+        $miscField = new InquiryMisc();
+        $miscField->setInquiryId($inquiryId);
+        $miscField->setKey($key);
+        $miscField->setValue($value);
 
-	    // First delete existing value
-	    $qb = $this->db->getQueryBuilder();
-	    $qb->delete(InquiryMisc::TABLE)
-	->where($qb->expr()->eq('inquiry_id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT)))
-	->andWhere($qb->expr()->eq('key', $qb->createNamedParameter($key, IQueryBuilder::PARAM_STR)));
-	    $qb->executeStatement();
+        // First delete existing value
+        $qb = $this->db->getQueryBuilder();
+        $qb->delete(InquiryMisc::TABLE)
+        ->where($qb->expr()->eq('inquiry_id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT)))
+        ->andWhere($qb->expr()->eq('key', $qb->createNamedParameter($key, IQueryBuilder::PARAM_STR)));
+        $qb->executeStatement();
 
-	    // Then insert new value if not null
-	    if ($value !== null) {
-		    $qb = $this->db->getQueryBuilder();
-		    $qb->insert(InquiryMisc::TABLE)
-	 ->values(
-		 [
-			 'inquiry_id' => $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT),
-			 'key' => $qb->createNamedParameter($key, IQueryBuilder::PARAM_STR),
-			 'value' => $qb->createNamedParameter($value, IQueryBuilder::PARAM_STR),
-		 ]
-	 )
-	 ->executeStatement();
+        // Then insert new value if not null
+        if ($value !== null) {
+            $qb = $this->db->getQueryBuilder();
+            $qb->insert(InquiryMisc::TABLE)
+            ->values(
+                [
+                'inquiry_id' => $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT),
+                'key' => $qb->createNamedParameter($key, IQueryBuilder::PARAM_STR),
+                'value' => $qb->createNamedParameter($value, IQueryBuilder::PARAM_STR),
+                ]
+            )
+            ->executeStatement();
+        }
 
-	    }
-
-	    return $miscField;
+        return $miscField;
     }
 
     /**
@@ -155,11 +155,11 @@ class InquiryMiscMapper extends QBMapper
      */
     public function deleteByInquiryId(int $inquiryId): int
     {
-	    $qb = $this->db->getQueryBuilder();
-	    $qb->delete($this->getTableName())
-	->where($qb->expr()->eq('inquiry_id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT)));
+        $qb = $this->db->getQueryBuilder();
+        $qb->delete($this->getTableName())
+        ->where($qb->expr()->eq('inquiry_id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT)));
 
-	    return $qb->executeStatement();
+        return $qb->executeStatement();
     }
 
     /**
@@ -167,12 +167,12 @@ class InquiryMiscMapper extends QBMapper
      */
     public function deleteByInquiryIdAndKey(int $inquiryId, string $key): int
     {
-	    $qb = $this->db->getQueryBuilder();
-	    $qb->delete($this->getTableName())
-	->where($qb->expr()->eq('inquiry_id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT)))
-	->andWhere($qb->expr()->eq('key', $qb->createNamedParameter($key, IQueryBuilder::PARAM_STR)));
+        $qb = $this->db->getQueryBuilder();
+        $qb->delete($this->getTableName())
+        ->where($qb->expr()->eq('inquiry_id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT)))
+        ->andWhere($qb->expr()->eq('key', $qb->createNamedParameter($key, IQueryBuilder::PARAM_STR)));
 
-	    return $qb->executeStatement();
+        return $qb->executeStatement();
     }
 
     /**
@@ -182,10 +182,10 @@ class InquiryMiscMapper extends QBMapper
      */
     private function findByInquiryIdAndKeyMultiple(int $inquiryId, string $key): array
     {
-	    $qb = $this->buildQuery();
-	    $qb->where($qb->expr()->eq(self::TABLE . '.inquiry_id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT)));
-	    $qb->andWhere($qb->expr()->eq(self::TABLE . '.key', $qb->createNamedParameter($key, IQueryBuilder::PARAM_STR)));
-	    return $this->findEntities($qb);
+        $qb = $this->buildQuery();
+        $qb->where($qb->expr()->eq(self::TABLE . '.inquiry_id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT)));
+        $qb->andWhere($qb->expr()->eq(self::TABLE . '.key', $qb->createNamedParameter($key, IQueryBuilder::PARAM_STR)));
+        return $this->findEntities($qb);
     }
 
 
@@ -194,11 +194,11 @@ class InquiryMiscMapper extends QBMapper
      */
     protected function buildQuery(): IQueryBuilder
     {
-	    $qb = $this->db->getQueryBuilder();
+        $qb = $this->db->getQueryBuilder();
 
-	    $qb->select(self::TABLE . '.*')
-	->from($this->getTableName(), self::TABLE);
+        $qb->select(self::TABLE . '.*')
+        ->from($this->getTableName(), self::TABLE);
 
-	    return $qb;
+        return $qb;
     }
 }

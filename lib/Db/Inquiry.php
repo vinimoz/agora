@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -157,9 +158,9 @@ class Inquiry extends EntityWithUser implements JsonSerializable
     protected string $inquiryStatus = self::DEFAULT_STATUS_DRAFT;
     protected ?int $allowComment = null;
     protected string $supportFeature = 'none';
-    protected bool $hasSupported = false; 
-    protected ?int $supportValue = null; 
-    protected string $family='';
+    protected bool $hasSupported = false;
+    protected ?int $supportValue = null;
+    protected string $family = '';
 
     // joined columns
     protected string $userRole = '';
@@ -210,7 +211,6 @@ class Inquiry extends EntityWithUser implements JsonSerializable
         $this->systemSettings = Container::queryClass(SystemSettings::class);
         $this->appSettings = Container::queryClass(AppSettings::class);
         $this->userSession = Container::queryClass(UserSession::class);
-
     }
 
     public function jsonSerialize(): array
@@ -245,7 +245,7 @@ class Inquiry extends EntityWithUser implements JsonSerializable
         ];
         return $baseData;
     }
-    
+
     public function getMiscArray(): array
     {
         $prefixedMiscFields = [];
@@ -265,7 +265,7 @@ class Inquiry extends EntityWithUser implements JsonSerializable
         'created' => $this->getCreated(),
         'isArchived' => (bool)$this->getArchived(),
         'isExpired' => $this->getExpired(),
-	'archivedDate' => $this->getDeleted(),
+        'archivedDate' => $this->getDeleted(),
         'relevantThreshold' => $this->getRelevantThreshold(),
         'countParticipants' => $this->getIsAllowed(self::PERMISSION_INQUIRY_RESULTS_VIEW) ? $this->getCountParticipants() : 0,
         'countComments' => $this->getIsAllowed(self::PERMISSION_INQUIRY_RESULTS_VIEW) ? $this->getCountComments() : 0,
@@ -335,8 +335,8 @@ class Inquiry extends EntityWithUser implements JsonSerializable
     {
         $this->setAccess($inquiryConfiguration['access'] ?? $this->getAccess());
         $this->setAutoReminder($inquiryConfiguration['autoReminder'] ?? $this->getAutoReminder());
-        $this->setAllowComment($inquiryConfiguration['allowComment'] ?? $this->getAllowComment()); 
-        $this->setSupportFeature($inquiryConfiguration['supportFeature'] ?? $this->getSupportFeature()); 
+        $this->setAllowComment($inquiryConfiguration['allowComment'] ?? $this->getAllowComment());
+        $this->setSupportFeature($inquiryConfiguration['supportFeature'] ?? $this->getSupportFeature());
         $this->setExpire($inquiryConfiguration['expire'] ?? $this->getExpire());
         $this->setForceConfidentialComments($inquiryConfiguration['forceConfidentialComments'] ?? $this->getForceConfidentialComments());
         $this->setShowResults($inquiryConfiguration['showResults'] ?? $this->getShowResults());
@@ -353,7 +353,7 @@ class Inquiry extends EntityWithUser implements JsonSerializable
             $this->allowComment = $allowComment; // null or other
         }
         return $this;
-    }    
+    }
  */
 
     public function getExpired(): bool
@@ -374,13 +374,13 @@ class Inquiry extends EntityWithUser implements JsonSerializable
             foreach ($this->getInquiryGroupUserShares() as $shareType) {
                 if ($shareType === self::ROLE_ADMIN) {
                     $evaluatedRole = self::ROLE_ADMIN;
-                    break; 
+                    break;
                 }
             }
         }
 
         if ($evaluatedRole === self::ROLE_ADMIN) {
-            return self::ROLE_ADMIN; 
+            return self::ROLE_ADMIN;
         }
 
         if ($evaluatedRole) {
@@ -466,7 +466,6 @@ class Inquiry extends EntityWithUser implements JsonSerializable
     {
         if ($this->groupShares !== null && $this->groupShares !== '') {
             return array_filter(explode(InquiryMapper::CONCAT_SEPARATOR, InquiryMapper::CONCAT_SEPARATOR . $this->groupShares));
-
         }
         return [];
     }
@@ -498,7 +497,7 @@ class Inquiry extends EntityWithUser implements JsonSerializable
     }
     private function getAutoReminder(): bool
     {
-        return $this->getMiscField('autoReminder') ?? false; 
+        return $this->getMiscField('autoReminder') ?? false;
     }
 
     private function setAutoReminder(bool|int $value): void
@@ -513,7 +512,7 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 
     public function getForceConfidentialComments(): bool
     {
-        return $this->getMiscField('forceConfidentialComments') ?? false; 
+        return $this->getMiscField('forceConfidentialComments') ?? false;
     }
 
 
@@ -564,7 +563,7 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 
     private function getIsOpenInquiry(): bool
     {
-        $access=$this->getAccess();
+        $access = $this->getAccess();
         return ($access === self::ACCESS_OPEN || $access === self::ACCESS_MODERATE) && $this->userSession->getIsLoggedIn();
     }
 
@@ -639,7 +638,7 @@ class Inquiry extends EntityWithUser implements JsonSerializable
             return true;
         }
 
-        if ($this->getAccess()!='private') {
+        if ($this->getAccess() != 'private') {
             return true;
         }
 
@@ -760,7 +759,9 @@ class Inquiry extends EntityWithUser implements JsonSerializable
             return 'false';
         }
 
-        if ($this->getSupportFeature()!=='none') return false; 
+        if ($this->getSupportFeature() !== 'none') {
+            return false;
+        }
         return true;
     }
 
@@ -819,6 +820,4 @@ class Inquiry extends EntityWithUser implements JsonSerializable
     {
         return $this->family;
     }
-
-
 }

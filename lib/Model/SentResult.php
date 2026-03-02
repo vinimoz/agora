@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2021 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -19,7 +20,8 @@ class SentResult implements \JsonSerializable
     public function AddSentMail(UserBase $recipient): void
     {
         array_push(
-            $this->sentMails, [
+            $this->sentMails,
+            [
             'emailAddress' => $recipient->getEmailAddress(),
             'displayName' => $recipient->getDisplayName(),
             ]
@@ -29,7 +31,8 @@ class SentResult implements \JsonSerializable
     public function AddAbortedMail(UserBase $recipient, string $reason = self::UNHANDELED_REASON): void
     {
         array_push(
-            $this->abortedMails, [
+            $this->abortedMails,
+            [
             'emailAddress' => $recipient->getEmailAddress(),
             'displayName' => $recipient->getDisplayName(),
             'reason' => $reason,
@@ -38,7 +41,7 @@ class SentResult implements \JsonSerializable
     }
 
     /**
-     * @psalm-suppress PossiblyUnusedMethod 
+     * @psalm-suppress PossiblyUnusedMethod
      */
     public function jsonSerialize(): array
     {

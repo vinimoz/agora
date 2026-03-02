@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2025 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -22,11 +23,10 @@ use Psr\Log\LoggerInterface;
 class AgoraReferenceListener implements IEventListener
 {
     private LoggerInterface $logger;
-    
+
     public function __construct(LoggerInterface $logger)
     {
         $this->logger = $logger;
-    
     }
 
     public function handle(Event $event): void

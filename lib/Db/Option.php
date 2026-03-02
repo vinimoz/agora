@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -202,7 +203,6 @@ class Option extends EntityWithUser implements JsonSerializable
         $this->systemSettings = Container::queryClass(SystemSettings::class);
         $this->appSettings = Container::queryClass(AppSettings::class);
         $this->userSession = Container::queryClass(UserSession::class);
-
     }
 
     public function jsonSerialize(): array
@@ -293,7 +293,7 @@ class Option extends EntityWithUser implements JsonSerializable
             default => false,
         };
     }
-    
+
     public function getStatusArray(): array
     {
         return [
@@ -309,7 +309,7 @@ class Option extends EntityWithUser implements JsonSerializable
             'countNegativeSupports' => $this->getIsAllowed(self::PERMISSION_OPTION_RESULTS_VIEW) ? $this->getCountNegativeSupports() : 0,
             'countNeutralSupports' => $this->getIsAllowed(self::PERMISSION_OPTION_RESULTS_VIEW) ? $this->getCountNeutralSupports() : 0,
         ];
-} 
+    }
 
     /**
      * Check if user can view the option

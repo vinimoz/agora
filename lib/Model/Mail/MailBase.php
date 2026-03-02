@@ -1,11 +1,11 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2021 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-
 
 namespace OCA\Agora\Model\Mail;
 
@@ -30,7 +30,7 @@ use Psr\Log\LoggerInterface;
 abstract class MailBase
 {
     /**
-     * @var string 
+     * @var string
      */
     protected const TEMPLATE_CLASS = AppConstants::APP_ID . '.Mail';
 
@@ -101,10 +101,11 @@ abstract class MailBase
         }
     }
 
-    private function getEmailTemplate() : IEMailTemplate
+    private function getEmailTemplate(): IEMailTemplate
     {
         $this->emailTemplate = $this->mailer->createEMailTemplate(
-            self::TEMPLATE_CLASS, [
+            self::TEMPLATE_CLASS,
+            [
             'owner' => $this->owner->getDisplayName(),
             'title' => $this->inquiry->getTitle(),
             'link' => $this->url
@@ -182,17 +183,17 @@ abstract class MailBase
         return $legal;
     }
 
-    protected function getUser(string $userId) : UserBase
+    protected function getUser(string $userId): UserBase
     {
         return $this->userMapper->getParticipant($userId, $this->inquiry->getId());
     }
 
-    protected function getRichDescription() : string
+    protected function getRichDescription(): string
     {
         return $this->getParsedMarkDown($this->inquiry->getDescription());
     }
 
-    protected function getParsedMarkDown(string $source) : string
+    protected function getParsedMarkDown(string $source): string
     {
         $config = [
         'renderer' => [
@@ -209,19 +210,20 @@ abstract class MailBase
         return $converter->convert($source)->getContent();
     }
 
-    private function getShareURL() : string
+    private function getShareURL(): string
     {
         return Container::findShare($this->inquiry->getId(), $this->recipient->getId())->getURL();
     }
 
-    private function getInquiry(int $inquiryId) : Inquiry
+    private function getInquiry(int $inquiryId): Inquiry
     {
         return Container::getInquiry($inquiryId);
     }
 
     private function validateEmailAddress(): void
     {
-        if (!$this->recipient->getEmailAddress()
+        if (
+            !$this->recipient->getEmailAddress()
             || !filter_var($this->recipient->getEmailAddress(), FILTER_VALIDATE_EMAIL)
         ) {
             throw new InvalidEmailAddress('Invalid email address (' . $this->recipient->getEmailAddress() . ')');

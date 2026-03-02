@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2022 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -83,11 +84,11 @@ abstract class EntityWithUser extends Entity
         }
 
         // the inquiry is not anonymized
-        if ($this->getInquiryShowResults() === Inquiry::SHOW_RESULTS_NEVER
+        if (
+            $this->getInquiryShowResults() === Inquiry::SHOW_RESULTS_NEVER
             || ($this->getInquiryShowResults() === Inquiry::SHOW_RESULTS_CLOSED
             && !$this->getInquiryExpire() > time())
         ) {
-
             // Do not anonymize the inquiry owner
             return !($this instanceof Inquiry);
         }

@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2021 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -33,64 +34,64 @@ use OCP\Accounts\IAccountManager;
 class UserBase implements JsonSerializable
 {
     /**
-     * @var string 
+     * @var string
      */
     public const TYPE = 'generic';
     /**
-     * @var string 
+     * @var string
      */
     public const TYPE_PUBLIC = 'public';
     /**
-     * @var string 
+     * @var string
      */
     public const TYPE_EXTERNAL = 'external';
     /**
-     * @var string 
+     * @var string
      */
     public const TYPE_EMPTY = 'empty';
     /**
-     * @var string 
+     * @var string
      */
     public const TYPE_GUEST = 'guest';
     /**
-     * @var string 
+     * @var string
      */
     public const TYPE_CIRCLE = Circle::TYPE;
     /**
-     * @var string 
+     * @var string
      */
     public const TYPE_CONTACT = Contact::TYPE;
     /**
-     * @var string 
+     * @var string
      */
     public const TYPE_CONTACTGROUP = ContactGroup::TYPE;
     /**
-     * @var string 
+     * @var string
      */
     public const TYPE_EMAIL = Email::TYPE;
     /**
-     * @var string 
+     * @var string
      */
     public const TYPE_GHOST = Ghost::TYPE;
     /**
-     * @var string 
+     * @var string
      */
     public const TYPE_GROUP = Group::TYPE;
     /**
-     * @var string 
+     * @var string
      */
     public const TYPE_USER = User::TYPE;
     /**
-     * @var string 
+     * @var string
      */
     public const TYPE_ADMIN = Admin::TYPE;
     /**
-     * @var string 
+     * @var string
      */
     public const TYPE_CRON = Cron::TYPE;
 
     /**
-     * @var string[] 
+     * @var string[]
      */
     protected array $categories = [];
     protected string $description = '';
@@ -328,7 +329,8 @@ class UserBase implements JsonSerializable
     public function hasName(string $checkName): bool
     {
         return in_array(
-            strtolower($checkName), [
+            strtolower($checkName),
+            [
                 strtolower($this->getDisplayName()),
                 strtolower($this->getId()),
             ]
@@ -362,7 +364,7 @@ class UserBase implements JsonSerializable
 
     /**
      * search all possible sharees - use ISearch to respect autocomplete restrictions
-     * 
+     *
      * @return UserBase[]
      */
     public static function search(string $query = ''): array
@@ -421,7 +423,7 @@ class UserBase implements JsonSerializable
     }
 
     /**
-     * @psalm-suppress PossiblyUnusedMethod 
+     * @psalm-suppress PossiblyUnusedMethod
      * @return         array
      */
     public function jsonSerialize(): array
@@ -431,7 +433,8 @@ class UserBase implements JsonSerializable
         }
         return $this->getSimpleUserArray();
     }
-    public function isAdmin() {
+    public function isAdmin()
+    {
          return $this->getIsAdmin();
     }
     /**
@@ -626,7 +629,7 @@ class UserBase implements JsonSerializable
 
     // TODO: reactivate this function later
     /**
-     * @psalm-suppress PossiblyUnusedMethod 
+     * @psalm-suppress PossiblyUnusedMethod
      */
     public function getIsSystemUser(): bool
     {

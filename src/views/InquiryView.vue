@@ -22,7 +22,7 @@ import { useSessionStore } from '../stores/session.ts'
 import Collapsible from '../components/Base/modules/Collapsible.vue'
 import type { CollapsibleProps } from '../components/Base/modules/Collapsible.vue'
 import InquiryInfoCards from '../components/Cards/InquiryInfoCards.vue'
-import { createInquiryContext, ContentType, canEdit } from '../utils/permissions.ts'
+import { createInquiryContext, canEdit } from '../utils/permissions.ts'
 
 
 const props = defineProps<{
@@ -125,7 +125,6 @@ watch(
   async (newId) => {
     isAppLoaded.value = false
     await loadInquiry(newId as string)
-    handleSave
   },
   { immediate: true }
 )
@@ -272,7 +271,7 @@ const handleGroupUpdate = (groups) => {
         />
       </div>
 
-      <!-- <InquiryInfoCards class="sticky-left" /> -->
+       <InquiryInfoCards class="sticky-left" /> 
     </div>
 
     <InquiryCreateDlg

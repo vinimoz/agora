@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * @copyright 2025 Agora contributors
  * @license   AGPL-3.0-or-later
@@ -13,5 +14,4 @@ use OCP\IUser;
 
 class GroupService
 {
-
 }

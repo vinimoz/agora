@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { InquiryGeneralIcons, InquiryOptionIcons , StatusIcons } from '../../utils/icons.ts'
+import { InquiryGeneralIcons, InquiryOptionIcons } from '../../utils/icons.ts'
 import { toRaw } from 'vue'
-import type { InquiryStatus, InquiryType, OptionType } from '../../Types/index.ts'
+import type { InquiryType, InquiryOptionType,OptionFamily } from '../../Types/index.ts'
 import { useAppSettingsStore } from '../../stores/appSettings.ts'
 import { t } from '@nextcloud/l10n'
 
@@ -14,7 +14,7 @@ import { t } from '@nextcloud/l10n'
  * @param item
  * @param fallbackLabel
  */
-export function getOptionItemData(item: OptionType | null, fallbackLabel: string = '') {
+export function getOptionItemData(item: InquiryOptionType | null, fallbackLabel: string = '') {
   if (!item) {
     return {
       icon: InquiryGeneralIcons.File,
@@ -98,8 +98,8 @@ export function getFamilyColor(familyKey: string): string {
  */
 export function getAllowedOptionTypes(
   inquiryTypeConfig: InquiryType | undefined,
-  optionTypes: OptionType[]
-): OptionType[] {
+  optionTypes: InquiryOptionType[]
+): InquiryOptionType[] {
   
   // Return empty array if inquiryTypeConfig is undefined
   if (!inquiryTypeConfig) {
@@ -127,7 +127,7 @@ export function getAllowedOptionTypes(
   // Ensure we have a proper array of option types
   const rawOptionTypes = toRaw(optionTypes)
   
-  let allOptionTypes: OptionType[] = []
+  let allOptionTypes: InquiryOptionType[] = []
   
   if (Array.isArray(rawOptionTypes)) {
     allOptionTypes = rawOptionTypes
@@ -154,8 +154,8 @@ export function getAllowedOptionTypes(
  * Group option types by their family
  * @param optionTypes
  */
-export function groupOptionTypesByFamily(optionTypes: OptionType[]): Record<string, OptionType[]> {
-  const grouped: Record<string, OptionType[]> = {}
+export function groupOptionTypesByFamily(optionTypes: InquiryOptionType[]): Record<string, InquiryOptionType[]> {
+  const grouped: Record<string, InquiryOptionType[]> = {}
   
   optionTypes.forEach(optionType => {
     const family = optionType.family || 'default'
@@ -181,8 +181,9 @@ export function getFamilyIconName(familyKey: string): string {
     // Try to get the store - this only works in setup context
     const appSettingsStore = useAppSettingsStore()
     return appSettingsStore?.settings?.optionFamilyTab?.[familyKey]?.icon || 'File'
-  } catch (e) {
+  } catch (error) {
     // Store not available (called outside setup), return default
+    console.error('Not found default family icon',error)
     return 'File'
   }
 }
@@ -192,7 +193,7 @@ export function getFamilyIconName(familyKey: string): string {
  * @param familyKey - The family key (e.g., 'debate', 'structure', etc.)
  * @return Icon name as string
  */
-export function getFamilyIconComponent(familyKey: string): any {
+export function getFamilyIconComponent(familyKey: string): OptionFamily {
   const iconName = getFamilyIconName(familyKey)
   return InquiryOptionIcons[iconName] || InquiryGeneralIcons[iconName] || InquiryGeneralIcons.File
 }
@@ -207,14 +208,14 @@ export function getFamilyIconComponent(familyKey: string): any {
 export function getFamiliesWithOptionTypes(
   inquiryTypeKey: string,
   inquiryTypes: InquiryType[] | Record<string, InquiryType>,
-  optionTypes: OptionType[]
+  optionTypes: InquiryOptionType[]
 ): Array<{
   key: string;
   name: string;
   label: string;
   description: string;
   icon: string;
-  optionTypes: OptionType[];
+  optionTypes: InquiryOptionType[];
 }> {
 
   // Get the inquiry type config - handle both array and object
@@ -269,7 +270,7 @@ export function getFamiliesWithOptionTypes(
 /**
  * Get fallback data for families
  */
-export function getFamilyFallbackData(): Record<string, any> {
+export function getFamilyFallbackData(): Record<string, OptionFamily> {
   return {
     'debate': {
       name: 'Debate',
@@ -317,8 +318,8 @@ export function getFamilyFallbackData(): Record<string, any> {
  */
 export function getOptionTypesForFamily(
   familyKey: string,
-  allowedOptionTypes: OptionType[]
-): OptionType[] {
+  allowedOptionTypes: InquiryOptionType[]
+): InquiryOptionType[] {
   return allowedOptionTypes.filter(optionType => 
     optionType.family === familyKey
   )
@@ -328,7 +329,7 @@ export function getOptionTypesForFamily(
  * Get option type options for radio/select components
  * @param optionTypes
  */
-export function getOptionTypeOptions(optionTypes: OptionType[]) {
+export function getOptionTypeOptions(optionTypes: InquiryOptionType[]) {
   return optionTypes.map(type => ({
     value: type.option_type,
     label: type.label,
@@ -344,8 +345,8 @@ export function getOptionTypeOptions(optionTypes: OptionType[]) {
  */
 export function findOptionType(
   optionType: string | null | undefined,
-  optionTypes: any[]
-): any | null {
+  optionTypes: InquiryOptionType[]
+): InquiryOptionType | null {
   if (!optionType || !optionTypes?.length) return null
 
   return optionTypes.find(opt =>
@@ -361,7 +362,7 @@ export function findOptionType(
  */
 export function getOptionTypeLabel(
   optionType: string | null | undefined,
-  optionTypes: any[],
+  optionTypes: InquiryOptionType[],
   fallback: string = 'Option'
 ): string {
   if (!optionType) return fallback
@@ -376,8 +377,8 @@ export function getOptionTypeLabel(
  */
 export function getOptionTypeIconComponent(
   optionType: string | null | undefined,
-  optionTypes: any[]
-): any {
+  optionTypes: InquiryOptionType[]
+): InquiryOptionType {
   if (!optionType) return InquiryOptionIcons.File
 
   const found = findOptionType(optionType, optionTypes)
@@ -393,7 +394,7 @@ export function getOptionTypeIconComponent(
  */
 export function getOptionTypeIconName(
   optionType: string | null | undefined,
-  optionTypes: any[]
+  optionTypes: InquiryOptionType[]
 ): string {
   if (!optionType) return 'File'
   const found = findOptionType(optionType, optionTypes)
@@ -407,7 +408,7 @@ export function getOptionTypeIconName(
  */
 export function getOptionTypeDescription(
   optionType: string | null | undefined,
-  optionTypes: any[]
+  optionTypes: InquiryOptionType[]
 ): string {
   if (!optionType) return ''
   const found = findOptionType(optionType, optionTypes)
@@ -421,7 +422,7 @@ export function getOptionTypeDescription(
  */
 export function getOptionTypeFamily(
   optionType: string | null | undefined,
-  optionTypes: any[]
+  optionTypes: InquiryOptionType[]
 ): string {
   if (!optionType) return 'default'
   const found = findOptionType(optionType, optionTypes)
@@ -435,7 +436,7 @@ export function getOptionTypeFamily(
  */
 export function getOptionTypeColor(
   optionType: string | null | undefined,
-  optionTypes: any[]
+  optionTypes: InquiryOptionType[]
 ): string {
   const family = getOptionTypeFamily(optionType, optionTypes)
   return getFamilyColor(family)
@@ -448,7 +449,7 @@ export function getOptionTypeColor(
  */
 export function getAllowedResponses(
   optionType: string | null | undefined,
-  optionTypes: any[]
+  optionTypes: InquiryOptionType[]
 ): string[] {
   if (!optionType) return []
 
@@ -479,7 +480,7 @@ export function getAllowedResponses(
  */
 export function getAvailableResponseTypes(
   optionType: string | null | undefined,
-  allOptionTypes: any[]
+  allOptionTypes: InquiryOptionType[]
 ): Array<{
   option_type: string
   label: string
@@ -507,8 +508,8 @@ export function getAvailableResponseTypes(
  */
 export function getOptionTypeFields(
   optionType: string | null | undefined,
-  optionTypes: any[]
-): any[] {
+  optionTypes: InquiryOptionType[]
+): InquiryOptionType[] {
   if (!optionType) return []
 
   const found = findOptionType(optionType, optionTypes)
@@ -532,7 +533,7 @@ export function getOptionTypeFields(
  */
 export function hasSupportFeature(
   optionType: string | null | undefined,
-  optionTypes: any[]
+  optionTypes: InquiryOptionType[]
 ): boolean {
   if (!optionType) return false
   const found = findOptionType(optionType, optionTypes)
@@ -547,7 +548,7 @@ export function hasSupportFeature(
  */
 export function getSupportFeatureLabel(
   optionType: string | null | undefined,
-  optionTypes: any[]
+  optionTypes: InquiryOptionType[]
 ): string {
   if (!optionType) return ''
   const found = findOptionType(optionType, optionTypes)
@@ -566,7 +567,7 @@ export function getSupportFeatureLabel(
  */
 export function allowsComments(
   optionType: string | null | undefined,
-  optionTypes: any[]
+  optionTypes: InquiryOptionType[]
 ): boolean {
   if (!optionType) return false
   const found = findOptionType(optionType, optionTypes)
@@ -580,7 +581,7 @@ export function allowsComments(
  */
 export function usesTitle(
   optionType: string | null | undefined,
-  optionTypes: any[]
+  optionTypes: InquiryOptionType[]
 ): boolean {
   if (!optionType) return true
   const found = findOptionType(optionType, optionTypes)

@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2021 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -13,7 +14,7 @@ use OCA\Agora\Model\UserBase;
 class Ghost extends UserBase
 {
     /**
-     * @var string 
+     * @var string
      */
     public const TYPE = 'deleted';
 
@@ -30,5 +31,4 @@ class Ghost extends UserBase
     {
         return 'Deleted User';
     }
-
 }

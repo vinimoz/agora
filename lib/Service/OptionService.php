@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -77,7 +78,8 @@ class OptionService
 
         return array_values(
             array_filter(
-                $optionList, function (Option $option): bool {
+                $optionList,
+                function (Option $option): bool {
                     return $option->getIsAllowed(Option::PERMISSION_OPTION_VIEW);
                 }
             )
@@ -122,7 +124,8 @@ class OptionService
 
         return array_values(
             array_filter(
-                $options, function (Option $option): bool {
+                $options,
+                function (Option $option): bool {
                     return $option->getIsAllowed(Option::PERMISSION_OPTION_VIEW);
                 }
             )
@@ -143,7 +146,8 @@ class OptionService
 
         return array_values(
             array_filter(
-                $options, function (Option $option): bool {
+                $options,
+                function (Option $option): bool {
                     return $option->getIsAllowed(Option::PERMISSION_OPTION_VIEW);
                 }
             )
@@ -356,7 +360,7 @@ class OptionService
                 throw new ForbiddenException('No access to target inquiry');
             }
         }
-        
+
         $title = $data['title'] ?? '';
 
         $timestamp = time();
@@ -576,7 +580,6 @@ class OptionService
                 'option' => $this->option,
                 'archivedCount' => $archivedCount
             ];
-
         } catch (\Exception $e) {
             throw $e;
         }
@@ -598,7 +601,7 @@ class OptionService
                 $child->setUpdated(time());
                 $this->optionMapper->update($child);
                 $count++;
-                
+
                 if ($archiveState) {
                     $this->eventDispatcher->dispatchTyped(new OptionArchivedEvent($child));
                 } else {
@@ -606,7 +609,6 @@ class OptionService
                 }
 
                 $count += $this->archiveChildrenRecursive($child, $archiveState);
-
             } catch (ForbiddenException $e) {
                 $this->logger->error("Permission denied for child option {$child->getId()}");
                 continue;
@@ -713,7 +715,7 @@ class OptionService
     {
         $origin = $this->optionMapper->get($optionId, withRoles: true);
         $origin->request(Option::PERMISSION_OPTION_VIEW);
-        
+
         if (!$this->appSettings->getOptionCreationAllowed()) {
             throw new ForbiddenException('Option creation is disabled');
         }
@@ -878,15 +880,15 @@ class OptionService
     {
         $option = $this->optionMapper->find($optionId);
         $option->request(Option::PERMISSION_OPTION_EDIT);
-        
+
         if (!in_array($access, $this->getValidAccess())) {
             throw new InvalidAccessException('Invalid access value');
         }
-        
+
         $option->setAccess($access);
         $option->setUpdated(time());
         $this->optionMapper->update($option);
-        
+
         return $access;
     }
 

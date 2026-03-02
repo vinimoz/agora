@@ -177,8 +177,9 @@ export const useSessionStore = defineStore('session', {
           } else {
             title = `${t('agora', 'Agora')} – ${t('agora', 'Enter title')}`
           }
-        } catch (e) {
+        } catch (error) {
           title = `${t('agora', 'Agora')} – Inquiry`
+          console.warn('Error computing window title:', error)
         }
       }
     } catch (error) {

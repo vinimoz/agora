@@ -98,7 +98,7 @@ import { getInquiryTypeData } from '../../helpers/modules/InquiryHelper.ts'
 import type { Inquiry } from '../../Types/index.ts'
 import { useSessionStore } from '../../stores/session.ts'
 import { InquiryGeneralIcons } from '../../utils/icons.ts'
-import { createInquiryContext, canSupport, canComment } from '../../utils/permissions.ts'
+import { createInquiryContext  } from '../../utils/permissions.ts'
 
 interface Props {
   inquiry: Inquiry
@@ -116,7 +116,7 @@ const InquiryGeneralIconsComponents = InquiryGeneralIcons
 const inquiryTypes = computed(() => sessionStore.appSettings?.inquiryTypeTab || [])
 
 // Context for permissions
-const context = computed(() => createInquiryContext(props.inquiry, sessionStore.appSettings))
+// const context = computed(() => createInquiryContext(props.inquiry, sessionStore.appSettings))
 
 const typeData = computed(() => getInquiryTypeData(props.inquiry.type, inquiryTypes.value))
 

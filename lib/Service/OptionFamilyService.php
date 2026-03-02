@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -75,19 +76,19 @@ class OptionFamilyService
         if ($this->familyTypeExists($familyType)) {
             throw new \InvalidArgumentException('Family type already exists');
         }
-    
+
 
         $optionFamily = new OptionFamily();
         $optionFamily->setFamilyType($familyType);
         $optionFamily->setLabel($label);
         $optionFamily->setDescription($description);
         $optionFamily->setIcon($icon);
-        
+
         if ($sortOrder === 0) {
             $sortOrder = $this->getMaxSortOrder() + 1;
         }
         $optionFamily->setSortOrder($sortOrder);
-        
+
         $optionFamily->setCreated(time());
 
         return $this->optionFamilyMapper->insert($inquiryFamily);
@@ -101,7 +102,7 @@ class OptionFamilyService
         string $icon = '',
         ?int $sortOrder = 0
     ): OptionFamily {
-        $this->logger->warning(' DEBUG : ', ['familyType' =>$familyType]);
+        $this->logger->warning(' DEBUG : ', ['familyType' => $familyType]);
         $optionFamily = $this->find($id);
         $optionFamily->setFamilyType($familyType);
         $optionFamily->setLabel($label);

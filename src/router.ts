@@ -267,8 +267,6 @@ router.beforeEach(async (to: RouteLocationNormalized, from: RouteLocationNormali
     try {
         await loadContext(to, cheapLoading, forceReload)
 
-        console.log('Context loaded successfully')
-
     } catch (error) {
         Logger.error('Could not load context', { error })
         

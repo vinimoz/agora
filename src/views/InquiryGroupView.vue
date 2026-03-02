@@ -22,18 +22,15 @@ import type { CollapsibleProps } from '../components/Base/modules/Collapsible.vu
 import InquiryInfoCards from '../components/Cards/InquiryInfoCards.vue'
 
 const forceRenderKey = ref(0)
-const selectedMode = ref('response')
 const route = useRoute()
 const router = useRouter()
 const inquiryGroupStore = useInquiryGroupStore()
 const inquiryGroupsStore = useInquiryGroupsStore()
 const sessionStore = useSessionStore()
-const editMode = ref(false)
 const isAppLoaded = ref(false)
 
 const createGroupDlgToggle = ref(false)
 const selectedInquiryGroupTypeForCreation = ref('')
-const selectedGroups = ref([])
 
 
 const availableGroups = computed(() => {
@@ -105,9 +102,6 @@ const inquiryAdded = (inquiry) => {
   })
 }
 
-const handleGroupUpdate = (groups) => {
-  selectedGroups.value = groups
-}
 </script>
 
 <template>

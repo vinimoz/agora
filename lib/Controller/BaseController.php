@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2020 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -43,7 +44,6 @@ class BaseController extends Controller
         try {
             return new JSONResponse($callback(), $successStatus);
         } catch (Exception $e) {
-
             if ($e->getStatus() === Http::STATUS_NOT_MODIFIED) {
                 return new JSONResponse(statusCode: Http::STATUS_NOT_MODIFIED);
             }
@@ -55,5 +55,4 @@ class BaseController extends Controller
             return new JSONResponse(['message' => $e->getMessage()], $status);
         }
     }
-
 }

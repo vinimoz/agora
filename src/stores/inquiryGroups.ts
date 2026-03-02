@@ -55,13 +55,6 @@ export const useInquiryGroupsStore = defineStore('inquiryGroups', () => {
         }
     }
 
-    function removeInquiryGroup(groupId: number) {
-        inquiryGroups.value = inquiryGroups.value.filter(
-            g => g.id !== groupId
-        )
-    }
-
-
   /**
    * Get inquiry group by slug
    * @param {string} slug - The slug to search for
@@ -331,11 +324,6 @@ async function fetchAllGroups(): Promise<InquiryGroup[]> {
   try {
     updating.value = true
     
-    // Check if API method exists
-    if (typeof InquiryGroupsAPI.getAllGroups !== 'function') {
-      Logger.warn('getAllGroups API method not available')
-      return inquiryGroups.value
-    }
     
     const response = await InquiryGroupsAPI.getAllGroups()
     const groups = response.data.groups || []

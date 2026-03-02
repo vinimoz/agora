@@ -101,12 +101,6 @@ function deleteInquiry(inquiryId: number) {
   }
 }
 
-// Methods
-function navigateToHome() {
-  router.push({ name: 'menu', 
-  query: {} })
-}
-
 onMounted(() => {
   inquiriesStore.load(false)
 })

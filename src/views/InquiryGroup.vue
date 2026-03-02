@@ -338,11 +338,6 @@ const currentInquiryGroup = computed(() => {
   return group
 })
 
-
-
-// Context for permissions
-const context = computed(() => createInquiryContext(inquiry, sessionStore.appSettings))
-
 // Helper functions 
 function canUserArchiveGroup(group: InquiryGroup | null): boolean {
   if (!group) return false  

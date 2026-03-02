@@ -76,6 +76,10 @@ export interface OptionFamily {
   label: string;
   description?: string;
   icon: string;
+  ui: string[];
+  features: string[];
+  rules: string[];
+  actions: string[];
   sort_order: number;
   created: number;
 }
@@ -88,6 +92,10 @@ export interface InquiryFamily {
   description?: string;
   icon: string;
   sort_order: number;
+  ui: string[];
+  features: string[];
+  rules: string[];
+  actions: string[];
   created: number;
 }
 

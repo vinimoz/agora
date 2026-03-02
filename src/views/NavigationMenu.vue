@@ -14,7 +14,6 @@ import NcAppNavigationList from '@nextcloud/vue/components/NcAppNavigationList'
 import InquiryCreateDlg from '../components/Create/InquiryCreateDlg.vue'
 import InquiryGroupCreateDlg from '../components/Create/InquiryGroupCreateDlg.vue'
 import { InquiryGeneralIcons,NavigationIcons } from '../utils/icons.ts'
-import { useInquiryGroupsStore } from '../stores/inquiryGroups.ts'
 import { useSessionStore } from '../stores/session.ts'
 import { useInquiriesStore } from '../stores/inquiries.ts'
 import { usePreferencesStore } from '../stores/preferences.ts'
@@ -40,7 +39,6 @@ const router = useRouter()
 const sessionStore = useSessionStore()
 const inquiriesStore = useInquiriesStore()
 const createDlgToggle = ref(false)
-const inquiryGroupsStore = useInquiryGroupsStore()
 const createGroupDlgToggle = ref(false)
 const selectedInquiryTypeForCreation = ref<InquiryType | null>(null)
 const selectedInquiryGroupTypeForCreation = ref(null)
@@ -210,17 +208,6 @@ function navigateToFamilyInquiries(familyType: string) {
 function createInquiry(inquiryType: InquiryType) {
   selectedInquiryTypeForCreation.value = inquiryType
   createDlgToggle.value = true
-}
-
-
-function handleInquirySelected(inquiry) {
-  if (inquiry && inquiry.family) {
-    inquiriesStore.setFamilyType(inquiry.family)
-    router.push({
-      name: 'inquiry',
-      params: { id: inquiry.id },
-    })
-  }
 }
 
 // Function to handle inquiry added

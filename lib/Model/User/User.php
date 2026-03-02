@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2021 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -14,16 +15,16 @@ use OCA\Agora\Model\UserBase;
 use OCP\IConfig;
 use OCP\IUser;
 use OCP\IUserManager;
-use OCA\Agora\Model\Group\Group; 
+use OCA\Agora\Model\Group\Group;
 
 class User extends UserBase
 {
     /**
-     * @var string 
+     * @var string
      */
     public const TYPE = 'user';
     /**
-     * @var string 
+     * @var string
      */
     public const PRINCIPAL_PREFIX = 'principals/users/';
     public const GROUP_MODERATOR = 'agora_moderator';
@@ -78,7 +79,7 @@ class User extends UserBase
         }
         return null;
     }
-    
+
     /**
      * Check if user is a moderator
      */
@@ -202,7 +203,7 @@ class User extends UserBase
      */
     public function getIsGroupEditor(): bool
     {
-        return $this->groupManager->isInGroup($this->getId(), Group::GROUP_GROUP_EDITOR); 
+        return $this->groupManager->isInGroup($this->getId(), Group::GROUP_GROUP_EDITOR);
     }
 
 
@@ -212,7 +213,7 @@ class User extends UserBase
      */
     public function getIsLegislative(): bool
     {
-        return $this->groupManager->isInGroup($this->getId(), Group::GROUP_LEGISLATIVE); 
+        return $this->groupManager->isInGroup($this->getId(), Group::GROUP_LEGISLATIVE);
     }
 
 
@@ -221,7 +222,7 @@ class User extends UserBase
      */
     public function getIsModerator(): bool
     {
-        return $this->groupManager->isInGroup($this->getId(), Group::GROUP_MODERATOR); 
+        return $this->groupManager->isInGroup($this->getId(), Group::GROUP_MODERATOR);
     }
 
     /**
@@ -229,7 +230,7 @@ class User extends UserBase
      */
     public function getIsOfficial(): bool
     {
-        return $this->groupManager->isInGroup($this->getId(), Group::GROUP_OFFICIAL); 
+        return $this->groupManager->isInGroup($this->getId(), Group::GROUP_OFFICIAL);
     }
 
     public function getIsAdmin(): bool

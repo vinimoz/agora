@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -14,7 +15,7 @@ use OCP\IAppConfig;
 class SystemSettings
 {
     /**
-     * @psalm-suppress PossiblyUnusedMethod 
+     * @psalm-suppress PossiblyUnusedMethod
      */
     public function __construct(
         private IAppConfig $appConfig,
@@ -24,7 +25,7 @@ class SystemSettings
 
     /**
      * Simple check if specific apps are available
-     * 
+     *
      * @return array
      */
     public function checkAppsAvailability(): array
@@ -33,7 +34,7 @@ class SystemSettings
 
         $apps = [
             'poll' => 'polls',
-            'form' => 'forms', 
+            'form' => 'forms',
             'card' => 'deck',
             'expense' => 'expenses',
             'page' => 'collective',
@@ -42,7 +43,7 @@ class SystemSettings
         $availability = [];
 
         foreach ($apps as $key => $appId) {
-            $availability[$key] = $appManager->isInstalled($appId) && 
+            $availability[$key] = $appManager->isInstalled($appId) &&
                 $appManager->isEnabledForUser($appId);
         }
 
@@ -52,7 +53,7 @@ class SystemSettings
 
 
     /**
-     * Getters for core settings regarding share creation 
+     * Getters for core settings regarding share creation
      */
     /**
      * Permission to create shares is controlled by core settings
@@ -100,7 +101,7 @@ class SystemSettings
     {
         $excludedMode = $this->appConfig->getValueString('core', 'shareapi_exclude_groups', '');
         return match ($excludedMode) {
-        'yes' => 'denyGroup',
+            'yes' => 'denyGroup',
             'allow' => 'allowGroup',
             default => 'off',
         };
@@ -118,7 +119,7 @@ class SystemSettings
     }
 
     /**
-     * Getters for core settings regarding external link creation 
+     * Getters for core settings regarding external link creation
      */
     /**
      * Is creation of external links via email allowed for the current user?
@@ -155,7 +156,7 @@ class SystemSettings
     {
         $excludedMode = $this->appConfig->getValueString('core', 'shareapi_allow_links', '');
         return match ($excludedMode) {
-        'no' => 'off',
+            'no' => 'off',
             'yes' => 'denyGroup',
             default => 'denyGroup',
         };

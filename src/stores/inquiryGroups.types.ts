@@ -13,6 +13,10 @@ export type InquiryGroupType = {
   description?: string
   allowed_inquiry_types?: string | string[]
   allowed_response?: string | string[]
+  ui: string[]
+  features: string[]
+  rules: string[]
+  actions: string[]
   is_root: boolean
   sort_order: number
   fields?: string | string[]

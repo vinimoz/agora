@@ -1,4 +1,5 @@
 <?php
+
 /**
  * SPDX-FileCopyrightText: 2023 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -30,7 +31,6 @@ class InquiryDto implements JsonSerializable
         if (empty($this->title)) {
             throw new \InvalidArgumentException("Title cannot be empty");
         }
-
     }
 
     public static function fromRequestData(array $data): self
@@ -66,7 +66,7 @@ class InquiryDto implements JsonSerializable
         $miscFields = [];
         foreach ($this->miscFields as $key => $value) {
             if (str_starts_with($key, 'misc.')) {
-                $newKey = substr($key, 5); 
+                $newKey = substr($key, 5);
                 $miscFields[$newKey] = $value;
             } else {
                 $miscFields[$key] = $value;

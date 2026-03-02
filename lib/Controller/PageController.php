@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -64,21 +65,20 @@ class PageController extends Controller
  *
  * @param $id inquiry id
  */
-#[NoAdminRequired]
-#[NoCSRFRequired]
-#[OpenAPI(OpenAPI::SCOPE_IGNORE)]
-#[FrontpageRoute(verb: 'GET', url: '/page/inquiry/{id}')]
-public function inquiry(int $id): TemplateResponse
-{
-    $this->notificationService->removeNotificationsForInquiry($id);
-    
-    Util::addScript(AppConstants::APP_ID, 'agora-main');
-    $response = new TemplateResponse(AppConstants::APP_ID, 'main');
-    $csp = new ContentSecurityPolicy();
-    $csp->addAllowedWorkerSrcDomain('blob:');
-    $csp->addAllowedWorkerSrcDomain("'self'");
-    $response->setContentSecurityPolicy($csp);
-    return $response;
-}
+    #[NoAdminRequired]
+    #[NoCSRFRequired]
+    #[OpenAPI(OpenAPI::SCOPE_IGNORE)]
+    #[FrontpageRoute(verb: 'GET', url: '/page/inquiry/{id}')]
+    public function inquiry(int $id): TemplateResponse
+    {
+        $this->notificationService->removeNotificationsForInquiry($id);
 
+        Util::addScript(AppConstants::APP_ID, 'agora-main');
+        $response = new TemplateResponse(AppConstants::APP_ID, 'main');
+        $csp = new ContentSecurityPolicy();
+        $csp->addAllowedWorkerSrcDomain('blob:');
+        $csp->addAllowedWorkerSrcDomain("'self'");
+        $response->setContentSecurityPolicy($csp);
+        return $response;
+    }
 }

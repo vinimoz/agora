@@ -165,20 +165,19 @@ export const useOptionsStore = defineStore('options', {
             return typeInfo?.allowed_child_types?.includes(childType) || false
         },
 
-        // Get all allowed types for creating new options
-        getAllowedTypes(): InquiryOptionType[] {
-            const sessionStore = useSessionStore()
-            const types = sessionStore.appSettings?.inquiryOptionTypeTab || {}
-
-            return Object.values(types)
-                .filter(type => 
-                    // Check if type is allowed for current inquiry type
-                    // Add logic here to filter types based on inquiry type if needed
-                     true
-                )
-                .sort((a, b) => a.sortOrder - b.sortOrder)
-        },
-
+// Get all allowed types for creating new options
+getAllowedTypes(): InquiryOptionType[] {
+    const sessionStore = useSessionStore()
+    const types = sessionStore.appSettings?.inquiryOptionTypeTab || {}
+    
+    return Object.values(types)
+        .filter(() => 
+            // Check if type is allowed for current inquiry type
+            // Add logic here to filter types based on inquiry type if needed
+            true
+        )
+        .sort((a, b) => a.sortOrder - b.sortOrder)
+},
         // Get types by family
         getTypesByFamily(): Record<string, InquiryOptionType[]> {
             const families: Record<string, InquiryOptionType[]> = {}
@@ -468,7 +467,7 @@ export const useOptionsStore = defineStore('options', {
             text: string
             type: string
             parentId?: number
-            miscFields?: Record<string, any>
+            miscFields?: Record<string, { key: string; value: string }>
         }): Promise<Option | void> {
             const inquiryStore = useInquiryStore()
             const sessionStore = useSessionStore()
@@ -530,10 +529,10 @@ export const useOptionsStore = defineStore('options', {
         },
 
         // Get default misc fields for a type
-        getDefaultMiscFields(typeKey: string): Record<string, any> {
+        getDefaultMiscFields(typeKey: string): Record<string, { key: string; value: string }> {
             const sessionStore = useSessionStore()
             const typeInfo = sessionStore.appSettings?.inquiryOptionTypeTab?.[typeKey]
-            const defaults: Record<string, any> = {}
+            const defaults: Record<string, { key: string; value: string }> = {}
 
             if (typeInfo?.miscFields) {
                 typeInfo.miscFields.forEach(field => {

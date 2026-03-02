@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -30,7 +31,7 @@ use Psr\Log\LoggerInterface;
 class MailService
 {
     /**
-     * @var Log[] * 
+     * @var Log[] *
      */
     private array $logs;
 
@@ -44,7 +45,7 @@ class MailService
     //  private const REGEX_PARSE_MAIL = '/^([^<>@\s]+@[^\s<>]+\.[a-zA-Z]{2,})$/';
 
     /**
-     * @psalm-suppress PossiblyUnusedMethod 
+     * @psalm-suppress PossiblyUnusedMethod
      */
     public function __construct(
         private LoggerInterface $logger,
@@ -83,7 +84,7 @@ class MailService
             return true;
         }
 
-        throw new InvalidEmailAddress;
+        throw new InvalidEmailAddress();
     }
 
     /**
@@ -121,7 +122,6 @@ class MailService
         }
 
         throw new NoEmailAddress($eMailString);
-
     }
 
     public static function parseEmailStrings(array $emailArray): array
@@ -169,14 +169,16 @@ class MailService
                 $notification->send();
             } catch (InvalidEmailAddress $e) {
                 $this->logger->warning(
-                    'Invalid or no email address for notification', [
+                    'Invalid or no email address for notification',
+                    [
                     'recipient' => json_encode($subscription),
                     'exception' => $e,
                     ]
                 );
             } catch (\Exception $e) {
                 $this->logger->error(
-                    'Error sending notification', [
+                    'Error sending notification',
+                    [
                     'recipient' => json_encode($subscription),
                     'exception' => $e,
                     ]
@@ -202,20 +204,19 @@ class MailService
                 if ($sentResult) {
                     $sentResult->AddSentMail($recipient);
                 }
-
             } catch (InvalidEmailAddress $e) {
                 if ($sentResult) {
                     $sentResult->AddAbortedMail($recipient, SentResult::INVALID_EMAIL_ADDRESS);
                 }
                 $this->logger->warning('Invalid or no email address for invitation', ['recipient' => json_encode($recipient)]);
-
             } catch (\Exception $e) {
                 if ($sentResult) {
                     $sentResult->AddAbortedMail($recipient);
                 }
 
                 $this->logger->error(
-                    'Error sending invitation', [
+                    'Error sending invitation',
+                    [
                     'recipient' => json_encode($recipient),
                     'exception' => $e,
                     ]
@@ -258,7 +259,8 @@ class MailService
                 $sentResult->AddSentMail($participant);
             } catch (InvalidEmailAddress $e) {
                 $this->logger->warning(
-                    'Invalid or no email address for confirmation', [
+                    'Invalid or no email address for confirmation',
+                    [
                     'recipient' => json_encode($participant),
                     'exception' => $e,
                     ]
@@ -266,7 +268,8 @@ class MailService
                 $sentResult->AddAbortedMail($participant, SentResult::INVALID_EMAIL_ADDRESS);
             } catch (\Exception $e) {
                 $this->logger->error(
-                    'Error sending confirmation', [
+                    'Error sending confirmation',
+                    [
                     'recipient' => json_encode($participant),
                     'exception' => $e,
                     ]
@@ -309,21 +312,24 @@ class MailService
             try {
                    $reminder->send();
                 $this->logger->info(
-                    'Reminder sent', [
+                    'Reminder sent',
+                    [
                     'recipient' => json_encode($recipient),
                     'inquiryId' => $inquiry->getId(),
                     ]
                 );
             } catch (InvalidEmailAddress $e) {
                 $this->logger->warning(
-                    'Invalid or missing email address for sending out reminder', [
+                    'Invalid or missing email address for sending out reminder',
+                    [
                     'inquiryId' => $inquiry->getid(),
                     'shareId' => $share->getId()
                     ]
                 );
             } catch (\Exception $e) {
                 $this->logger->error(
-                    'Error sending reminder', [
+                    'Error sending reminder',
+                    [
                     'share' => json_encode($share),
                     'exception' => $e
                     ]

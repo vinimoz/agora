@@ -1,10 +1,12 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2024 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
 namespace OCA\Agora\Controller;
 
 use Closure;
@@ -45,12 +47,9 @@ class BaseApiV2Controller extends OCSController
     {
         try {
             return new DataResponse($callback(), $successStatus);
-
         } catch (DoesNotExistException $e) {
             throw new OCSNotFoundException($e->getMessage());
-
         } catch (Exception $e) {
-
             if ($e->getStatus() === Http::STATUS_NOT_MODIFIED) {
                 return new DataResponse(statusCode: Http::STATUS_NOT_MODIFIED);
             }

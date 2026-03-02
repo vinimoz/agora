@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2024 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -15,7 +16,6 @@ use OCP\AppFramework\Db\MultipleObjectsReturnedException;
 
 class OfficialResponseService
 {
-
     public function __construct(
         private OfficialResponseMapper $responseMapper
     ) {

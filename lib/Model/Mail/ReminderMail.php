@@ -1,11 +1,11 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2021 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-
 
 namespace OCA\Agora\Model\Mail;
 
@@ -60,14 +60,16 @@ class ReminderMail extends MailBase
 
         $deadline = $this->getDeadline();
 
-        if ($deadline - $this->inquiry->getCreated() > self::FIVE_DAYS
+        if (
+            $deadline - $this->inquiry->getCreated() > self::FIVE_DAYS
             && $deadline - $time < self::TWO_DAYS
             && $deadline > $time
         ) {
             return self::TWO_DAYS;
         }
 
-        if ($deadline - $this->inquiry->getCreated() > self::TWO_DAYS
+        if (
+            $deadline - $this->inquiry->getCreated() > self::TWO_DAYS
             && $deadline - $time < self::ONE_AND_HALF_DAY
             && $deadline > $time
         ) {
@@ -137,7 +139,7 @@ class ReminderMail extends MailBase
         );
     }
 
-    private function getReminderReason() : ?string
+    private function getReminderReason(): ?string
     {
         if ($this->inquiry->getExpire()) {
             return self::REASON_EXPIRATION;

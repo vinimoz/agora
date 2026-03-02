@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2020 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -47,7 +48,7 @@ class SystemService
     private const MAX_SEARCH_RESULTS = 200;
 
     /**
-     * @psalm-suppress PossiblyUnusedMethod 
+     * @psalm-suppress PossiblyUnusedMethod
      */
     public function __construct(
         private IFactory $transFactory,
@@ -110,7 +111,8 @@ class SystemService
     {
         // if no query or no types are given, return empty array
         // if sharing is not allowed, return empty array
-        if (!$query
+        if (
+            !$query
             || !$types
             || !$this->systemSettings->getShareCreateAllowed()
         ) {
@@ -127,25 +129,25 @@ class SystemService
                 continue;
             }
             switch (intval($type)) {
-            case IShare::TYPE_USER:
-                $IShareTypes[] = IShare::TYPE_USER;
-                break;
-            case IShare::TYPE_GROUP:
-                $IShareTypes[] = IShare::TYPE_GROUP;
-                break;
-            case IShare::TYPE_EMAIL:
-                $IShareTypes[] = IShare::TYPE_EMAIL;
-                break;
-            case IShare::TYPE_CIRCLE:
-                $this->logger->error('Search for circles found');
-                $IShareTypes[] = IShare::TYPE_CIRCLE;
-                break;
-            case self::TYPE_CONTACT:
-                $searchContacts = true;
-                break;
-            case self::TYPE_ALL:
-                $searchAll = true;
-                break;
+                case IShare::TYPE_USER:
+                    $IShareTypes[] = IShare::TYPE_USER;
+                    break;
+                case IShare::TYPE_GROUP:
+                    $IShareTypes[] = IShare::TYPE_GROUP;
+                    break;
+                case IShare::TYPE_EMAIL:
+                    $IShareTypes[] = IShare::TYPE_EMAIL;
+                    break;
+                case IShare::TYPE_CIRCLE:
+                    $this->logger->error('Search for circles found');
+                    $IShareTypes[] = IShare::TYPE_CIRCLE;
+                    break;
+                case self::TYPE_CONTACT:
+                    $searchContacts = true;
+                    break;
+                case self::TYPE_ALL:
+                    $searchAll = true;
+                    break;
             }
         }
 
@@ -169,7 +171,6 @@ class SystemService
         $items = [];
 
         if (count($IShareTypes) > 0) {
-
             $startCollaborationSearchTimer = microtime(true);
             [$result, $more] = $this->userSearch->search($query, $IShareTypes, false, self::MAX_SEARCH_RESULTS, 0);
 
@@ -220,11 +221,11 @@ class SystemService
             }
         }
 
-        if (Contact::isEnabled()
+        if (
+            Contact::isEnabled()
             && $searchContacts
             && $this->systemSettings->getExternalShareCreationAllowed()
         ) {
-
             foreach (Contact::search($query) as $contact) {
                 $items[] = $contact->getRichUserArray();
             }
@@ -243,7 +244,8 @@ class SystemService
     private function handleFailedSearchResult(string $query, mixed $item, string $type = 'unspecified'): void
     {
         $this->logger->debug(
-            'Unrecognized search result', [
+            'Unrecognized search result',
+            [
             'query' => $query,
             'result' => json_encode($item),
             'type' => $type,
@@ -301,34 +303,34 @@ class SystemService
 
         // reserved usernames
         if (str_contains($compareUserName, 'deleted user') || str_contains($compareUserName, 'anonymous')) {
-            throw new InvalidUsernameException;
+            throw new InvalidUsernameException();
         }
 
         // get all groups, that include the requested username in their gid
         // or displayname and check if any match completely
         foreach (Group::search($compareUserName) as $group) {
             if ($group->hasName($compareUserName)) {
-                throw new InvalidUsernameException;
+                throw new InvalidUsernameException();
             }
         }
 
         // get all users
         foreach (User::search($compareUserName) as $user) {
             if ($user->hasName($compareUserName)) {
-                throw new InvalidUsernameException;
+                throw new InvalidUsernameException();
             }
         }
         // get all participants
         foreach ($this->supportMapper->findParticipantsByInquiry($share->getInquiryId()) as $support) {
             if ($support->getUser()->hasName($compareUserName)) {
-                throw new InvalidUsernameException;
+                throw new InvalidUsernameException();
             }
         }
 
         // get all shares for this inquiry
         foreach ($this->shareMapper->findByInquiry($share->getInquiryId()) as $share) {
             if ($share->getType() !== Circle::TYPE && $share->getUser()->hasName($compareUserName)) {
-                throw new InvalidUsernameException;
+                throw new InvalidUsernameException();
             }
         }
         // return $userName, if username is allowed

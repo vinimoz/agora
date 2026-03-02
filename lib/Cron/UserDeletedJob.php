@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2021 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -13,7 +14,6 @@ use OCA\Agora\Db\CommentMapper;
 use OCA\Agora\Db\LogMapper;
 use OCA\Agora\Db\OptionMapper;
 use OCA\Agora\Db\InquiryMapper;
-
 use OCA\Agora\Db\PreferencesMapper;
 use OCA\Agora\Db\Share;
 use OCA\Agora\Db\ShareMapper;
@@ -56,7 +56,8 @@ class UserDeletedJob extends QueuedJob
         $this->session->set(AppConstants::SESSION_KEY_CRON_JOB, true);
         $userId = $argument['userId'];
         $this->logger->info(
-            'Deleting inquiries for deleted user', [
+            'Deleting inquiries for deleted user',
+            [
             'userId' => $userId
             ]
         );

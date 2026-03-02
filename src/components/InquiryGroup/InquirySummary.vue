@@ -235,8 +235,6 @@ const typeBadgeClass = computed(() => {
   return `type-${type}`
 })
 
-// Support icon
-const isSupported = computed(() => props.inquiry.currentUserStatus?.hasSupported || false)
 
 // Owner display
 const ownerDisplayName = computed(() => 

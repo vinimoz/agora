@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -33,7 +34,6 @@ use Psr\Log\LoggerInterface;
  */
 class InquiryController extends BaseController
 {
-
     public function __construct(
         string $appName,
         IRequest $request,
@@ -47,7 +47,7 @@ class InquiryController extends BaseController
         private SubscriptionService $subscriptionService,
         private ShareService $shareService,
         private AttachmentService $attachmentService,
-            private AppSettings $appSettings,
+        private AppSettings $appSettings,
         private LoggerInterface $logger,
     ) {
         parent::__construct($appName, $request);
@@ -136,9 +136,9 @@ class InquiryController extends BaseController
 
      #[NoAdminRequired]
      #[FrontpageRoute(verb: 'GET', url: '/inquiry/{inquiryId}')]
-     public function getFull(int $inquiryId): JSONResponse
-     {
-         return $this->response(fn () => $this->getFullInquiry($inquiryId, true), Http::STATUS_OK);
+    public function getFull(int $inquiryId): JSONResponse
+    {
+        return $this->response(fn () => $this->getFullInquiry($inquiryId, true), Http::STATUS_OK);
     }
 
     private function getFullInquiry(int $inquiryId, bool $withTimings = false): array
@@ -163,7 +163,7 @@ class InquiryController extends BaseController
         $subscribed = $this->subscriptionService->get($inquiryId);
         $timerMicro['subscribed'] = microtime(true);
 
-        $attachments = $this->attachmentService->getAll($inquiryId,0);
+        $attachments = $this->attachmentService->getAll($inquiryId, 0);
         $timerMicro['attachments'] = microtime(true);
 
         $inquiryLink = $this->inquiryLinkService->findByInquiryId($inquiryId);
@@ -206,7 +206,7 @@ class InquiryController extends BaseController
     {
         try {
             $rawData = $this->request->getParams('data');
-            $data =$rawData;
+            $data = $rawData;
 
             if (empty($data['title'])) {
                 throw new \InvalidArgumentException('Title is required');
@@ -233,7 +233,6 @@ class InquiryController extends BaseController
                 ['inquiry' => $inquiry->jsonSerialize()],
                 Http::STATUS_CREATED
             );
-
         } catch (\InvalidArgumentException $e) {
             return new JSONResponse(
                 ['error' => 'VALIDATION_ERROR', 'message' => $e->getMessage()],
@@ -241,12 +240,12 @@ class InquiryController extends BaseController
             );
         } catch (\Exception $e) {
             $this->logger->critical(
-                'Server error', [
+                'Server error',
+                [
                     'exception' => $e->getMessage(),
                     'trace' => $e->getTraceAsString()
                 ]
             );
-
         }
         return new JSONResponse(
             ['error' => 'SERVER_ERROR', 'message' => 'An unexpected error occurred'],
@@ -274,7 +273,6 @@ class InquiryController extends BaseController
                 'success' => true,
                 'misc' => $result
             ]);
-
         } catch (\Exception $e) {
             $this->logger->error('Error updating misc field: ' . $e->getMessage(), [
                 'inquiryId' => $inquiryId,
@@ -300,7 +298,7 @@ class InquiryController extends BaseController
     {
         try {
             $rawData = $this->request->getParams('updateData');
-            $data =$rawData;
+            $data = $rawData;
 
             if (empty($data['title'])) {
                 throw new \InvalidArgumentException('Title is required');
@@ -328,7 +326,6 @@ class InquiryController extends BaseController
                 ['inquiry' => $updatedInquiry->jsonSerialize()],
                 Http::STATUS_OK
             );
-
         } catch (\InvalidArgumentException $e) {
             return new JSONResponse(
                 ['error' => $e->getMessage()],
@@ -359,7 +356,7 @@ class InquiryController extends BaseController
     }
 
     /*
-     * Update inquiry status 
+     * Update inquiry status
      *
      * @param int $inquiryId Inquiry id
      * @param status $inquirg
@@ -378,7 +375,7 @@ class InquiryController extends BaseController
     }
 
     /*
-     * Submit Inquiry for workflow moderation 
+     * Submit Inquiry for workflow moderation
      *
      * @param int $inquiryId Inquiry id
      * @param status $action

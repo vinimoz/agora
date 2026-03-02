@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -24,7 +25,7 @@ class InquiryGroupMapper extends QBMapper
     public const CONCAT_SEPARATOR = ',';
 
     /**
-     * @psalm-suppress PossiblyUnusedMethod 
+     * @psalm-suppress PossiblyUnusedMethod
      */
     public function __construct(
         IDBConnection $db,
@@ -43,10 +44,10 @@ class InquiryGroupMapper extends QBMapper
         $qb = $this->buildQuery();
         $qb->orderBy('title', 'ASC');
         $inquiryGroups = $this->findEntities($qb);
-        
+
         // Load dynamic fields for all inquiry groups in one query
         $this->loadDynamicFieldsForMultiple($inquiryGroups);
-        
+
         return $inquiryGroups;
     }
 
@@ -64,7 +65,7 @@ class InquiryGroupMapper extends QBMapper
 
         $inquiryGroup = $this->findEntity($qb);
         $this->loadDynamicFields($inquiryGroup);
-        
+
         return $inquiryGroup;
     }
 
@@ -96,13 +97,13 @@ class InquiryGroupMapper extends QBMapper
         if (!$getDeleted) {
             $qb->andWhere($qb->expr()->eq(self::TABLE . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)));
         }
-        
+
         $inquiryGroup = $this->findEntity($qb);
-        
+
         if ($withMiscFields) {
             $this->loadDynamicFields($inquiryGroup);
         }
-        
+
         return $inquiryGroup;
     }
 
@@ -117,12 +118,12 @@ class InquiryGroupMapper extends QBMapper
         $qb->where($qb->expr()->eq(self::TABLE . '.deleted', $qb->expr()->literal(0)))
            ->orderBy('created', 'ASC')
            ->addOrderBy('title', 'ASC');
-           
+
         $inquiryGroups = $this->findEntities($qb);
-        
+
         // Load dynamic fields for all inquiry groups in one query
         $this->loadDynamicFieldsForMultiple($inquiryGroups);
-        
+
         return $inquiryGroups;
     }
 
@@ -138,12 +139,12 @@ class InquiryGroupMapper extends QBMapper
            ->andWhere($qb->expr()->isNotNull(self::TABLE . '.expire'))
            ->orderBy('created', 'ASC')
            ->addOrderBy('title', 'ASC');
-           
+
         $inquiryGroups = $this->findEntities($qb);
-        
+
         // Load dynamic fields for all inquiry groups in one query
         $this->loadDynamicFieldsForMultiple($inquiryGroups);
-        
+
         return $inquiryGroups;
     }
 
@@ -250,12 +251,12 @@ class InquiryGroupMapper extends QBMapper
         $qb->where($qb->expr()->eq(self::TABLE . '.parent_id', $qb->createNamedParameter($parentId)))
            ->orderBy('created', 'ASC')
            ->addOrderBy('title', 'ASC');
-           
+
         $inquiryGroups = $this->findEntities($qb);
-        
+
         // Load dynamic fields for all inquiry groups in one query
         $this->loadDynamicFieldsForMultiple($inquiryGroups);
-        
+
         return $inquiryGroups;
     }
 
@@ -271,12 +272,12 @@ class InquiryGroupMapper extends QBMapper
         $qb->where($qb->expr()->eq(self::TABLE . '.type', $qb->createNamedParameter($type)))
            ->orderBy('created', 'ASC')
            ->addOrderBy('title', 'ASC');
-           
+
         $inquiryGroups = $this->findEntities($qb);
-        
+
         // Load dynamic fields for all inquiry groups in one query
         $this->loadDynamicFieldsForMultiple($inquiryGroups);
-        
+
         return $inquiryGroups;
     }
 
@@ -292,12 +293,12 @@ class InquiryGroupMapper extends QBMapper
         $qb->where($qb->expr()->eq(self::TABLE . '.group_status', $qb->createNamedParameter($status)))
            ->orderBy('created', 'ASC')
            ->addOrderBy('title', 'ASC');
-           
+
         $inquiryGroups = $this->findEntities($qb);
-        
+
         // Load dynamic fields for all inquiry groups in one query
         $this->loadDynamicFieldsForMultiple($inquiryGroups);
-        
+
         return $inquiryGroups;
     }
 
@@ -351,7 +352,7 @@ class InquiryGroupMapper extends QBMapper
             $key = (string)$key;
 
             $fieldDef = array_filter($fieldsDefinition, fn($f) => $f['key'] === $key);
-            $fieldDef = array_shift($fieldDef) ?: ['type'=>'string', 'default'=>null];
+            $fieldDef = array_shift($fieldDef) ?: ['type' => 'string', 'default' => null];
 
             $value = $this->castValueByType($value ?? $fieldDef['default'], $fieldDef);
 
@@ -466,18 +467,18 @@ class InquiryGroupMapper extends QBMapper
         if (empty($inquiryGroups)) {
             return;
         }
-        
+
         $ids = array_map(fn($group) => $group->getId(), $inquiryGroups);
-        
+
         $qb = $this->db->getQueryBuilder();
         $qb->select('*')
            ->from(InquiryGroupMisc::TABLE)
            ->where($qb->expr()->in('inquiry_group_id', $qb->createNamedParameter($ids, IQueryBuilder::PARAM_INT_ARRAY)));
-        
+
         $stmt = $qb->executeQuery();
         $allData = $stmt->fetchAll();
         $stmt->closeCursor();
-        
+
         // Organize data by inquiry_group_id
         $groupedData = [];
         foreach ($allData as $data) {
@@ -487,7 +488,7 @@ class InquiryGroupMapper extends QBMapper
             }
             $groupedData[$groupId][] = $data;
         }
-        
+
         // Assign data to each inquiry group
         foreach ($inquiryGroups as $inquiryGroup) {
             $groupId = $inquiryGroup->getId();
@@ -509,7 +510,7 @@ class InquiryGroupMapper extends QBMapper
         $qb = $this->db->getQueryBuilder();
         $qb->select(self::TABLE . '.*')
            ->from($this->getTableName(), self::TABLE);
-        
+
         // Remove problematic joins that cause PostgreSQL GROUP BY issues
         // $this->joinInquiryIds($qb);
         // $this->joinMiscs($qb, self::TABLE);
@@ -523,19 +524,19 @@ class InquiryGroupMapper extends QBMapper
     public function loadInquiryIds(InquiryGroup $inquiryGroup): void
     {
         $inquiryGroupId = $inquiryGroup->getId();
-        
+
         $qb = $this->db->getQueryBuilder();
         $qb->select('inquiry_id')
            ->from(InquiryGroup::RELATION_TABLE)
            ->where($qb->expr()->eq('group_id', $qb->createNamedParameter($inquiryGroupId, IQueryBuilder::PARAM_INT)));
-        
+
         $result = $qb->executeQuery();
         $inquiryIds = [];
         while ($row = $result->fetch()) {
             $inquiryIds[] = (int) $row['inquiry_id'];
         }
         $result->closeCursor();
-        
+
         // Assuming InquiryGroup has a method to set inquiry IDs
         if (method_exists($inquiryGroup, 'setInquiryIds')) {
             $inquiryGroup->setInquiryIds($inquiryIds);
@@ -550,18 +551,18 @@ class InquiryGroupMapper extends QBMapper
         if (empty($inquiryGroups)) {
             return;
         }
-        
+
         $ids = array_map(fn($group) => $group->getId(), $inquiryGroups);
-        
+
         $qb = $this->db->getQueryBuilder();
         $qb->select('*')
            ->from(InquiryGroup::RELATION_TABLE)
            ->where($qb->expr()->in('group_id', $qb->createNamedParameter($ids, IQueryBuilder::PARAM_INT_ARRAY)));
-        
+
         $stmt = $qb->executeQuery();
         $allData = $stmt->fetchAll();
         $stmt->closeCursor();
-        
+
         // Organize data by group_id
         $groupedData = [];
         foreach ($allData as $data) {
@@ -571,7 +572,7 @@ class InquiryGroupMapper extends QBMapper
             }
             $groupedData[$groupId][] = (int) $data['inquiry_id'];
         }
-        
+
         // Assign data to each inquiry group
         foreach ($inquiryGroups as $inquiryGroup) {
             $groupId = $inquiryGroup->getId();
@@ -586,5 +587,4 @@ class InquiryGroupMapper extends QBMapper
             }
         }
     }
-
 }

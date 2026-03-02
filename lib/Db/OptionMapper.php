@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -26,9 +27,9 @@ class OptionMapper extends QBMapper
     public function __construct(
         IDBConnection $db,
         private UserSession $userSession,
-        protected LoggerInterface $logger, 
+        protected LoggerInterface $logger,
     ) {
-        $this->logger=$logger;
+        $this->logger = $logger;
         parent::__construct($db, Option::TABLE, Option::class);
     }
 
@@ -45,7 +46,7 @@ class OptionMapper extends QBMapper
 
         if ($withRoles) {
             $currentUserId = $this->userSession->getCurrentUserId();
-            
+
             $this->addHasSupportedSubquery($qb, self::TABLE, $currentUserId);
             $this->addSupportValueSubquery($qb, self::TABLE, $currentUserId);
             $this->addParticipantsCountSubquery($qb, self::TABLE);
@@ -56,7 +57,7 @@ class OptionMapper extends QBMapper
             $this->addCommentsCountSubquery($qb, self::TABLE);
             $this->addMiscsSubquery($qb, self::TABLE);
         }
-        
+
         return $this->findEntity($qb);
     }
 
@@ -71,7 +72,7 @@ class OptionMapper extends QBMapper
     public function findByTargetId(int $targetId): array
     {
         $qb = $this->buildQuery();
-    
+
         $qb->where($qb->expr()->eq(self::TABLE . '.target_id', $qb->createNamedParameter($targetId, IQueryBuilder::PARAM_INT)))
            ->andWhere($qb->expr()->eq(self::TABLE . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)))
            ->orderBy(self::TABLE . '.sort_order', 'ASC')
@@ -173,10 +174,11 @@ class OptionMapper extends QBMapper
                    ...array_map(
                        function (string $token) use ($qb) {
                            return $qb->expr()->iLike(
-                               self::TABLE . '.text',
-                               $qb->createNamedParameter('%' . $this->db->escapeLikeParameter($token) . '%', IQueryBuilder::PARAM_STR)
+                              self::TABLE . '.text',
+                              $qb->createNamedParameter('%' . $this->db->escapeLikeParameter($token) . '%', IQueryBuilder::PARAM_STR)
                            );
-                       }, explode(' ', $query->getTerm())
+                       },
+                       explode(' ', $query->getTerm())
                    )
                )
            );
@@ -252,7 +254,7 @@ class OptionMapper extends QBMapper
     {
         $qb = $this->db->getQueryBuilder();
         $timestamp = time();
-        
+
         foreach ($optionIds as $index => $optionId) {
             $qb->update($this->getTableName())
                ->set('sort_order', $qb->createNamedParameter($index, IQueryBuilder::PARAM_INT))
@@ -282,7 +284,7 @@ class OptionMapper extends QBMapper
         $qb->executeStatement();
     }
 
-    
+
     protected function buildQuery(): IQueryBuilder
     {
         $qb = $this->db->getQueryBuilder();
@@ -292,7 +294,7 @@ class OptionMapper extends QBMapper
            ->where($qb->expr()->eq(self::TABLE . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)));
 
         $currentUserId = $this->userSession->getCurrentUserId();
-    
+
 
         $this->addHasSupportedSubquery($qb, self::TABLE, $currentUserId);
         $this->addSupportValueSubquery($qb, self::TABLE, $currentUserId);
@@ -303,7 +305,7 @@ class OptionMapper extends QBMapper
         $this->addNeutralSupportsCountSubquery($qb, self::TABLE);
         $this->addCommentsCountSubquery($qb, self::TABLE);
         $this->addMiscsSubquery($qb, self::TABLE);
-      
+
 
 
         return $qb;
@@ -331,7 +333,7 @@ class OptionMapper extends QBMapper
         }
 
         $userIdParam = $qb->createNamedParameter($currentUserId, IQueryBuilder::PARAM_STR);
-        
+
         $qb->addSelect(
             $qb->createFunction(
                 'COALESCE(' .
@@ -357,7 +359,7 @@ class OptionMapper extends QBMapper
         }
 
         $userIdParam = $qb->createNamedParameter($currentUserId, IQueryBuilder::PARAM_STR);
-        
+
         $qb->addSelect(
             $qb->createFunction(
                 '(SELECT s.value FROM ' . $this->getFullTableName(Support::TABLE) . ' s ' .

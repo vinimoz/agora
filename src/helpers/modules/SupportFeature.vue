@@ -157,13 +157,11 @@ import { ref, computed, onUnmounted } from 'vue'
 import { showSuccess, showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { useSupportsStore } from '../../stores/supports'
-import { useInquiriesStore } from '../../stores/inquiries'
 import { useSessionStore } from '../../stores/session'
 import TernarySupportIcon from '../../components/AppIcons/modules/TernarySupportIcon.vue'
 import ThumbIcon from '../../components/AppIcons/modules/ThumbIcon.vue'
-import { Inquiry, Option } from '../../Type/index.ts'
+import { Inquiry, Option } from '../../Types/index.ts'
 import {
-    createOptionContext,
     canSupportOption,
     canSupport as canSupportInquiry
 } from '../../utils/permissions.ts'
@@ -171,7 +169,7 @@ import {
 
 
 interface Props {
-  item: Inquiry | Option
+  item: Inquiry | Option
   itemType: 'inquiry' | 'option'
   context?: any
   showQuorum?: boolean
@@ -216,8 +214,6 @@ const tooltipStyles = computed(() => ({
 const isTernary = computed(() => props.item?.configuration?.supportFeature === 'ternary')
 
 const isBinary = computed(() => props.item?.configuration?.supportFeature === 'binary')
-
-const isSupportEnabled = computed(() => isTernary.value || isBinary.value)
 
 const supportValue = computed(() => props.item?.currentUserStatus?.supportValue ?? null)
 
@@ -312,11 +308,9 @@ const toggleSupport = async () => {
   
   // Store the current state before toggling
   const hadSupportedBefore = props.item.currentUserStatus.hasSupported
-  const supportValueBefore = props.item.currentUserStatus.supportValue
 
   try {
     const supportsStore = useSupportsStore()
-    const inquiriesStore = useInquiriesStore()
     const sessionStore = useSessionStore()
     
     await supportsStore.toggleSupport(

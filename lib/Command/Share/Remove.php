@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2021 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -134,7 +135,8 @@ class Remove extends Base
         $shares = $this->shareMapper->findByInquiry($inquiry->getId());
         return array_values(
             array_filter(
-                $shares, static function (Share $share): bool {
+                $shares,
+                static function (Share $share): bool {
                     return ($share->getType() === User::TYPE);
                 }
             )
@@ -151,7 +153,8 @@ class Remove extends Base
         $shares = $this->shareMapper->findByInquiry($inquiry->getId());
         return array_values(
             array_filter(
-                $shares, static function (Share $share): bool {
+                $shares,
+                static function (Share $share): bool {
                     return ($share->getType() === Group::TYPE);
                 }
             )
@@ -168,7 +171,8 @@ class Remove extends Base
         $shares = $this->shareMapper->findByInquiry($inquiry->getId());
         return array_values(
             array_filter(
-                $shares, static function (Share $share): bool {
+                $shares,
+                static function (Share $share): bool {
                     if (($share->getType() === GenericUser::TYPE) && $share->getEmailAddress()) {
                         return true;
                     }
