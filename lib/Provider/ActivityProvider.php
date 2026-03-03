@@ -47,7 +47,7 @@ class ActivityProvider implements IProvider
         }
 
         $this->l10n = $this->transFactory->get($event->getApp(), $language);
-        $event->setIcon($this->urlGenerator->getAbsoluteURL($this->urlGenerator->imagePath($imagePath(AppConstants::APP_ID, 'agora-dark.svg')));
+        $event->setIcon($this->urlGenerator->getAbsoluteURL($this->urlGenerator->imagePath($imagePath(AppConstants::APP_ID, 'agora-dark.svg'))));
         $subject = $this->activityService->getActivityMessage($event, $language, $this->activityManager->isFormattingFilteredObject());
         if (!$subject) {
             throw new UnknownActivityException();

@@ -67,7 +67,7 @@ abstract class MailBase
         $this->userMapper = Container::queryClass(UserMapper::class);
         $this->inquiry = $this->getInquiry($this->inquiryId);
         $this->recipient = $this->getUser($this->recipientId);
-        $this->url = $this->url === '' ? $this->inquiry->getSupportUrl() : '';
+        $this->url = $this->url === '' ? $this->inquiry->getInquiryUrl() : '';
         $this->owner = $this->getUser($this->inquiry->getOwner());
 
         $this->owner = $this->getUser($this->inquiry->getOwner());

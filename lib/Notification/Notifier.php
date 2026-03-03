@@ -150,7 +150,7 @@ class Notifier implements INotifier
         $actor = $this->userMapper->getUserFromUserBase($actorId);
 
         $inquiryTitle = $inquiry->getTitle();
-        $notification->setLink($inquiry->getSupportUrl());
+        $notification->setLink($inquiry->getInquiryUrl());
 
         // TODO: tidy subjects and parameters
         $subjects = match ($notification->getSubject()) {

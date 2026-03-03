@@ -3,11 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 import { AxiosResponse } from '@nextcloud/axios'
-import { Option, Sequence, SimpleOption } from '../../stores/options.js'
+import { Option, Sequence } from '../../stores/options.js'
 import { Session } from '../../stores/session.js'
 import { Answer, Inquiry } from '../../stores/inquiries.js'
 import { httpInstance, createCancelTokenHandler } from './HttpApi.js'
 import { Comment } from '../../stores/comments.js'
+import { Supports } from '../../stores/supports.js'
 import { Inquiry } from '../../stores/inquiry.js'
 import { Share } from '../../stores/shares.js'
 import { SentResults } from './shares.js'
@@ -19,6 +20,7 @@ const publicInquiry = {
       options: Option[]
       inquiries: Inquiry[]
       comments: Comment[]
+      supports: Supports[]
       shares: Share[]
       subscribed: boolean
     }>
@@ -51,15 +53,11 @@ const publicInquiry = {
 
   addOption(
     shareToken: string,
-    option: SimpleOption,
+    option: Option,
     sequence: Sequence | null,
-    inquiryYes: boolean = false
   ): Promise<
     AxiosResponse<{
       option: Option
-      repetitions: Option[]
-      options: Option[]
-      inquiries: Inquiry[]
     }>
   > {
     return httpInstance.request({
@@ -101,13 +99,13 @@ const publicInquiry = {
     })
   },
 
-  setInquiry(
+  supportInquiry(
     shareToken: string,
+    inquiryId: number,
     optionId: number,
-    setTo: Answer
+    value: int,
   ): Promise<
     AxiosResponse<{
-      inquiry: Inquiry
       inquiry: Inquiry
       options: Option[]
       inquiries: Inquiry[]
@@ -118,7 +116,8 @@ const publicInquiry = {
       url: `s/${shareToken}/inquiry`,
       data: {
         optionId,
-        setTo,
+        inquiryId,
+        value,
       },
       cancelToken: cancelTokenHandlerObject[this.setInquiry.name].handleRequestCancellation().token,
     })

@@ -48,7 +48,7 @@ abstract class BaseEvent extends Event
         'type' => 'highlight',
         'id' => (string)$this->eventObject->getInquiryId(),
         'name' => $this->inquiry->getTitle(),
-        'link' => $this->inquiry->getSupportUrl(),
+        'link' => $this->inquiry->getInquiryUrl(),
         ];
     }
 

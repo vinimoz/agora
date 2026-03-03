@@ -270,7 +270,7 @@ class Share extends EntityWithUser implements JsonSerializable
 
         if (in_array($this->type, [self::TYPE_USER, self::TYPE_ADMIN, self::TYPE_GROUP], true)) {
             return $this->urlGenerator->linkToRouteAbsolute(
-                AppConstants::APP_ID . '.page.support',
+                AppConstants::APP_ID . '.page.inquiry',
                 ['id' => $this->inquiryId]
             );
         } elseif ($this->token) {

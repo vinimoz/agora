@@ -19,6 +19,8 @@ use OCA\Agora\Service\CommentService;
 use OCA\Agora\Service\MailService;
 use OCA\Agora\Service\OptionService;
 use OCA\Agora\Service\InquiryService;
+use OCA\Agora\Service\AttachmentService;
+use OCA\Agora\Service\InquiryLinkService;
 use OCA\Agora\Service\ShareService;
 use OCA\Agora\Service\SubscriptionService;
 use OCA\Agora\Service\SystemService;
@@ -57,6 +59,8 @@ class PublicController extends BaseController
         private OptionService $optionService,
         private InquiryService $inquiryService,
         private ShareService $shareService,
+        private InquiryLinkService $inquiryLinkService,
+        private AttachmentService $attachmentService,
         private SubscriptionService $subscriptionService,
         private SystemService $systemService,
         private SupportService $supportService,
@@ -98,11 +102,13 @@ class PublicController extends BaseController
             function () {
                 return [
                 'inquiry' => $this->inquiryService->get($this->userSession->getShare()->getInquiryId()),
-                'options' => $this->optionService->list($this->userSession->getShare()->getInquiryId()),
+                'options' => $this->optionService->listByTargetId($this->userSession->getShare()->getInquiryId()),
                 'supports' => $this->supportService->list($this->userSession->getShare()->getInquiryId()),
                 'comments' => $this->commentService->list($this->userSession->getShare()->getInquiryId()),
                 'shares' => $this->shareService->list($this->userSession->getShare()->getInquiryId()),
                 'subscribed' => $this->subscriptionService->get($this->userSession->getShare()->getInquiryId()),
+                'attachments' => $this->attachmentService->getAll($this->userSession->getShare()->getInquiryId(), 0),
+                'inquiryLink' => $this->inquiryLinkService->findByInquiryId($this->userSession->getShare()->getInquiryId()),
                 ];
             }
         );
@@ -196,7 +202,7 @@ class PublicController extends BaseController
         return $this->response(
             fn () => [
                 'inquiry' => $this->inquiryService->get($inquiryId),
-                'options' => $this->optionService->list($inquiryId),
+                'options' => $this->optionService->listByTargetId($inquiryId),
                 'supports' => $this->supportService->list($inquiryId)
             ]
         );
@@ -251,7 +257,6 @@ class PublicController extends BaseController
     #[FrontpageRoute(verb: 'POST', url: '/s/{token}/option')]
     public function addOption(
         array $option,
-        bool $supportYes = false,
         ?array $sequence = null,
     ): JSONResponse {
         $inquiryId = $this->userSession->getShare()->getInquiryId();
@@ -263,7 +268,7 @@ class PublicController extends BaseController
                     $supportYes,
                     Sequence::fromArray($sequence),
                 ),
-                ['options' => $this->optionService->list($inquiryId)],
+                ['options' => $this->optionService->listByTargetId($inquiryId)],
                 ['supports' => $this->supportService->list($inquiryId)],
             ),
             Http::STATUS_CREATED
@@ -324,7 +329,7 @@ class PublicController extends BaseController
             fn () => [
                 'support' => $support,
                 'inquiry' => $this->inquiryService->get($option->getInquiryId()),
-                'options' => $this->optionService->list($option->getInquiryId()),
+                'options' => $this->optionService->listByTargetId($option->getInquiryId()),
                 'supports' => $this->supportService->list($option->getInquiryId())
             ]
         );

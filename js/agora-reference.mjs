@@ -15,7 +15,7 @@ const appVersion = "1.7.0-rc1";
 import { _ as _export_sfc, c as createElementBlock, o as openBlock, k as createBaseVNode, l as createCommentVNode, t as toDisplayString, i as mergeProps, d as defineComponent, f as createBlock, g as withCtx, r as renderSlot, h as resolveDynamicComponent, V as DateTime, q as translate, j as createVNode, B as createTextVNode, E as normalizeClass, y as createApp, z as pinia } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_ef057a6f_lang-ByxkwFJZ.chunk.mjs";
 import { r as registerWidget } from "./NcRichText-DJlaHs_Q-CkFlFrBZ.chunk.mjs";
 import { N as NcUserBubble } from "./NcUserBubble-vOAXLHB5-CibyIY8k.chunk.mjs";
-import { A as AgoraAppIcon } from "./agora-icon-Dd15S6z5.chunk.mjs";
+import { A as AgoraAppIcon } from "./agora-icon-BY3E-toX.chunk.mjs";
 const _sfc_main$2 = {
   name: "CalendarEndIcon",
   emits: ["click"],

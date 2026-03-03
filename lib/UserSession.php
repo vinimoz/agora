@@ -207,6 +207,10 @@ class UserSession
         return (string)$this->session->get(self::SESSION_KEY_SHARE_TYPE);
     }
 
+    /**
+ * @return IUser|null
+ */
+
     public function getUser(): IUser
     {
         return $this->userSession->getUser(self::CLIENT_ID);

@@ -72,7 +72,7 @@ class SearchProvider implements IProvider
 
     public function getOrder(string $route, array $routeParameters): int
     {
-        if (in_array(strtolower($route), [AppConstants::APP_ID . '.page.indexindex', AppConstants::APP_ID . '.page.support'])) {
+        if (in_array(strtolower($route), [AppConstants::APP_ID . '.page.indexindex', AppConstants::APP_ID . '.page.inquiry'])) {
             return -5;
         }
         return 51;

@@ -103,6 +103,7 @@ class UserBase implements JsonSerializable
     protected IL10N $l10n;
     protected UserSession $userSession;
     protected AppSettings $appSettings;
+    protected IUserManager $userManager;
 
     public function __construct(
         protected string $id,
@@ -119,6 +120,7 @@ class UserBase implements JsonSerializable
         $this->timeZone = Container::queryClass(IDateTimeZone::class);
         $this->userSession = Container::queryClass(UserSession::class);
         $this->appSettings = Container::queryClass(AppSettings::class);
+        $this->userManager = Container::queryClass(IUserManager::class);
         $this->loadAccountData();
     }
 
@@ -255,24 +257,36 @@ class UserBase implements JsonSerializable
     }
 
     /**
-     * @return string[]
+     * returns true, if the user is a group editor
+     * Only valid for User, false for other user types
      */
-    public function getGroups(): array
+    public function getIsGroupEditor(): bool
     {
-        $user = $this->userSession->getUser();
-        if (!$user) {
-            return [];
-        }
-        if ($this->groups) {
-            return $this->groups;
-        }
+        return false;
+    }
 
-        $this->groups = array_map(
-            fn(\OCP\IGroup $g) => $g->getGID(),
-            $this->groupManager->getUserGroups($user)
-        );
-
+    public function getGroups(): array
+{
+    if ($this->groups !== []) {
         return $this->groups;
+    }
+
+    // Only real Nextcloud users have groups
+    if (!in_array($this->type, [User::TYPE, Admin::TYPE])) {
+        return [];
+    }
+
+    $user = $this->userManager->get($this->id);
+    if (!$user) {
+        return [];
+    }
+
+    $this->groups = array_map(
+        fn(\OCP\IGroup $g) => $g->getGID(),
+        $this->groupManager->getUserGroups($user)
+    );
+
+    return $this->groups;
     }
 
     public function getLocaleCodeIntl(): string
@@ -435,7 +449,7 @@ class UserBase implements JsonSerializable
     }
     public function isAdmin()
     {
-         return $this->getIsAdmin();
+        return $this->getIsAdmin();
     }
     /**
      * Full user array for inquiry owners, delegated inquiry admins and the current user himself

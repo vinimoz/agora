@@ -4488,7 +4488,7 @@ to {
   color: var(--color-text-lighter);
   font-style: italic;
 }
-.fade-enter-active[data-v-d24a853a],
+.fade-enter-ctive[data-v-d24a853a],
 .fade-leave-active[data-v-d24a853a] {
   transition: opacity 0.3s ease;
 }
@@ -13763,12 +13763,12 @@ tr.file-picker__row td.row-name[data-v-1f96131b] {
 const appName = "agora";
 const appVersion = "1.7.0-rc1";
 import { a2 as getCurrentInstance, Y as inject, b3 as onUnmounted, bi as onDeactivated, bj as onActivated, w as watch, b4 as shallowRef, d as defineComponent, F as unref, bk as shallowReactive, X as reactive, b as computed, $ as h$1, bl as provide, aV as ref, a3 as watchEffect, aX as nextTick$1, A as defineStore, q as translate, aN as emit, bm as Settings, a as _export_sfc, c as createElementBlock, o as openBlock, t as toDisplayString, E as normalizeClass, bn as getCanonicalLocale, bf as NcActionButton, _ as _export_sfc$1, f as createBlock, g as withCtx, l as createCommentVNode, h as resolveDynamicComponent, k as createBaseVNode, bo as NC_ACTIONS_IS_SEMANTIC_MENU, S as createElementId, bp as ActionGlobalMixin, G as NcIconSvgWrapper, ai as resolveComponent, a5 as withDirectives, j as createVNode, bq as vModelRadio, br as mdiRadioboxMarked, bs as mdiRadioboxBlank, u as useModel, bt as useSlots, P as logger, s as onMounted, aW as onBeforeUnmount, r as renderSlot, ag as useCssVars, bu as useIsDarkTheme, bv as mdiCreation, ac as createSlots, B as createTextVNode, a7 as NcButton, bw as useCssModule, bx as NC_FORM_BOX_CONTEXT_KEY, bg as NcActions, i as mergeProps, aO as withKeys, a6 as vShow, v as normalizeProps, x as guardReactiveProps, by as userStatus, N as NcAvatar, n as normalizeStyle, m as mergeModels, e as warn, T as Fragment$1, U as renderList, ak as NcLoadingIcon, bz as Teleport, ax as withModifiers, aP as NcEmptyContent, V as DateTime, bA as translatePlural, bB as TransitionGroup, D as generateUrl, aM as NcModal, bC as markRaw, bD as customRef, bE as global, bF as getAugmentedNamespace, bG as process$1, bd as commonjsGlobal, bH as Buffer, a$ as getDefaultExportFromCjs, bI as vModelSelect, be as getCurrentUser, ay as Transition, b5 as toRaw, bJ as subscribe, bK as unsubscribe, aR as generateOcsUrl, aS as cancelableClient, C as purify, bL as axios, y as createApp, z as pinia } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_ef057a6f_lang-ByxkwFJZ.chunk.mjs";
-import { a as useSessionStore, p as publicInquiry, i as supports, L as Logger, j as useInquiryStore, s as showError, o as options, E as Event$1, k as getFamiliesWithOptionTypes, l as getFamilyColor, m as createInquiryContext, n as canTransfer, q as canDelete, r as canArchive, I as InquiryGeneralIcons, g as getInquiryTypeData, b as useInquiriesStore, t as useInquiryGroupsStore, v as NavigationIcons, w as showSuccess, x as getAvailableInquiryTypesForCreation, y as getInquiryTypeOptions, z as useInquiryGroupStore, A as getAllowedResponseGroupTypes, B as getAvailableInquiryGroupTypesForCreation, C as getInquiryGroupTypeData, D as accessFamilyMenu, F as getInquiryTypesForFamily, G as getInquiryItemData, H as canCreateInquiryGroupInGeneral, J as getInquiryTypesByFamily, K as canSupportOption, M as canSupport, S as StatusIcons, O as BadgeIcons, P as canComment, Q as sortTitlesMapping, R as lodashExports, T as appSettings, U as canRestore, V as getInquiryGroupTypesByFamily, W as getInquiryGroupTypesForFamily, X as canViewToggle, Y as getAvailableResponseTypesWithPermissions, Z as getAvailableTransformTypesWithPermissions, _ as validators, $ as inquiries, a0 as commonjsRequire, a1 as useAttachmentsStore, a2 as getOptionTypeLabel, a3 as getOptionTypeIconComponent, a4 as InquiryOptionIcons, a5 as createOptionContext, a6 as canEditOption, a7 as canDeleteOption, a8 as getOptionTypeColor, a9 as usesTitle, aa as allowsComments, ab as hasSupportFeature, ac as getAllowedResponses, ad as useOptionStore, ae as findOptionType, af as getOptionTypeDescription, ag as getSupportFeatureLabel, ah as getOptionTypeFields, ai as createDefault, aj as useCommentsStore$1, ak as getAvailableResponseTypes, al as canChangeStatus, am as canCommentOption, an as getFamilyIconComponent, ao as getLayoutForFamily, ap as useSharesStore, aq as canEdit, ar as createInquiryGroupContext, d as useAppSettingsStore, as as inquiryLinks, at as ShareIcons, au as getEditPermissions, av as getAvailableFields, aw as getAvailableGroupFields, ax as canShare, ay as canUseResource } from "./NcDashboardWidget-DCBQdRFz-B8dvjK4R.chunk.mjs";
-import { u as usePreferencesStore, S as StyleSettings, F as FeatureSettings } from "./StyleSettings-C-2XCCez.chunk.mjs";
-import { b as NcAppNavigationItem, u as useAppSettingsDialog, A as APP_SETTINGS_LEGACY_DESIGN_KEY, _ as _sfc_main$1V, c as NcAppNavigationList, d as NcAppNavigation, S as Spinner, Q as QRCode, I as InputDiv, e as NcAppContent, f as NcActionButtonGroup, g as NcDialog, h as find$1, r as registerCustomProtocol, t as tokenize, i as reset, j as NcRichContenteditable, O as Options, k as NcActionInput, P as PlusIcon, l as NcDateTimePickerNative, m as NcAppSidebar, a as NcAppSettingsDialog, n as NcContent } from "./index-v9DwCWxb.chunk.mjs";
+import { a as useSessionStore, p as publicInquiry, i as supports, L as Logger, j as useInquiryStore, s as showError, o as options, E as Event$1, k as getFamiliesWithOptionTypes, l as getFamilyColor, m as createInquiryContext, n as canTransfer, q as canDelete, r as canArchive, I as InquiryGeneralIcons, g as getInquiryTypeData, b as useInquiriesStore, t as useInquiryGroupsStore, v as NavigationIcons, w as showSuccess, x as getAvailableInquiryTypesForCreation, y as getInquiryTypeOptions, z as useInquiryGroupStore, A as getAllowedResponseGroupTypes, B as getAvailableInquiryGroupTypesForCreation, C as getInquiryGroupTypeData, D as accessFamilyMenu, F as getInquiryTypesForFamily, G as getInquiryItemData, H as canCreateInquiryGroupInGeneral, J as getInquiryTypesByFamily, K as canSupportOption, M as canSupport, S as StatusIcons, O as BadgeIcons, P as canComment, Q as sortTitlesMapping, R as lodashExports, T as appSettings, U as canRestore, V as getInquiryGroupTypesByFamily, W as getInquiryGroupTypesForFamily, X as canViewToggle, Y as getAvailableResponseTypesWithPermissions, Z as getAvailableTransformTypesWithPermissions, _ as validators, $ as inquiries, a0 as commonjsRequire, a1 as useAttachmentsStore, a2 as getOptionTypeLabel, a3 as getOptionTypeIconComponent, a4 as InquiryOptionIcons, a5 as createOptionContext, a6 as canEditOption, a7 as canDeleteOption, a8 as getOptionTypeColor, a9 as usesTitle, aa as allowsComments, ab as hasSupportFeature, ac as getAllowedResponses, ad as useOptionStore, ae as findOptionType, af as getOptionTypeDescription, ag as getSupportFeatureLabel, ah as getOptionTypeFields, ai as createDefault, aj as useCommentsStore$1, ak as getAvailableResponseTypes, al as canCommentOption, am as getFamilyIconComponent, an as getLayoutForFamily, ao as useSharesStore, ap as canEdit, aq as createInquiryGroupContext, d as useAppSettingsStore, ar as inquiryLinks, as as ShareIcons, at as getEditPermissions, au as getAvailableFields, av as getAvailableGroupFields, aw as canShare, ax as canUseResource } from "./NcDashboardWidget-DCBQdRFz-Bz9A6zr-.chunk.mjs";
+import { u as usePreferencesStore, S as StyleSettings, F as FeatureSettings } from "./StyleSettings-CFtQFHqD.chunk.mjs";
+import { b as NcAppNavigationItem, u as useAppSettingsDialog, A as APP_SETTINGS_LEGACY_DESIGN_KEY, _ as _sfc_main$1V, c as NcAppNavigationList, d as NcAppNavigation, S as Spinner, Q as QRCode, I as InputDiv, e as NcAppContent, f as NcActionButtonGroup, g as NcDialog, h as find$1, r as registerCustomProtocol, t as tokenize, i as reset, j as NcRichContenteditable, O as Options, k as NcActionInput, P as PlusIcon, l as NcDateTimePickerNative, m as NcAppSidebar, a as NcAppSettingsDialog, n as NcContent } from "./index-CTElYIMW.chunk.mjs";
 import { c as _sfc_main$1W, I as INSIDE_RADIO_GROUP_KEY, a as NcSelect, N as NcCheckboxRadioSwitch, _ as _sfc_main$1X, b as NcInputField } from "./NcRichText-DJlaHs_Q-CkFlFrBZ.chunk.mjs";
-import { R as RadioGroupDiv, a as NcTextArea, N as NcNoteCard, C as CardDiv } from "./markdown-OYysCxfu.chunk.mjs";
-import { A as AgoraAppIcon } from "./agora-icon-Dd15S6z5.chunk.mjs";
+import { R as RadioGroupDiv, a as NcTextArea, N as NcNoteCard, C as CardDiv } from "./markdown-CJ6mF5BI.chunk.mjs";
+import { A as AgoraAppIcon } from "./agora-icon-BY3E-toX.chunk.mjs";
 import { N as NcUserBubble } from "./NcUserBubble-vOAXLHB5-CibyIY8k.chunk.mjs";
 function getDevtoolsGlobalHook() {
   return getTarget().__VUE_DEVTOOLS_GLOBAL_HOOK__;
@@ -19494,6 +19494,7 @@ function _sfc_render$1t(_ctx, _cache, $props, $setup, $data, $options) {
               createBaseVNode("div", _hoisted_1$1a, [
                 createVNode($setup["NcRadioGroup"], {
                   "model-value": $setup.accessType,
+                  label: $setup.t("agora", "Choose who opening this inquiry"),
                   class: "access-radio-group",
                   description: $setup.t("agora", "Choose who is opening this inquiry"),
                   "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => $setup.accessType = $event)
@@ -19524,7 +19525,7 @@ function _sfc_render$1t(_ctx, _cache, $props, $setup, $data, $options) {
                   ]),
                   _: 1
                   /* STABLE */
-                }, 8, ["model-value", "description"]),
+                }, 8, ["model-value", "label", "description"]),
                 createCommentVNode(" Group Selection "),
                 $setup.accessType === "groups" ? (openBlock(), createElementBlock("div", _hoisted_2$W, [
                   createBaseVNode(
@@ -19537,6 +19538,7 @@ function _sfc_render$1t(_ctx, _cache, $props, $setup, $data, $options) {
                   createBaseVNode("div", _hoisted_4$R, [
                     createVNode($setup["NcRadioGroup"], {
                       "model-value": $setup.selectedGroup,
+                      label: $setup.t("agora", "Choose ths group assigned to your inquiry"),
                       description: $setup.t("agora", "Choose which of your groups can access this inquiry"),
                       "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => $setup.selectGroup($event))
                     }, {
@@ -19572,7 +19574,7 @@ function _sfc_render$1t(_ctx, _cache, $props, $setup, $data, $options) {
                       ]),
                       _: 1
                       /* STABLE */
-                    }, 8, ["model-value", "description"])
+                    }, 8, ["model-value", "label", "description"])
                   ])
                 ])) : createCommentVNode("v-if", true)
               ])
@@ -19976,6 +19978,7 @@ function _sfc_render$1s(_ctx, _cache, $props, $setup, $data, $options) {
             createVNode($setup["NcRadioGroup"], {
               "model-value": $setup.accessType,
               class: "access-radio-group",
+              label: $setup.t("agora", "Who can access ?"),
               description: $setup.t("agora", "Choose who can access this group"),
               "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => $setup.accessType = $event)
             }, {
@@ -20005,7 +20008,7 @@ function _sfc_render$1s(_ctx, _cache, $props, $setup, $data, $options) {
               ]),
               _: 1
               /* STABLE */
-            }, 8, ["model-value", "description"]),
+            }, 8, ["model-value", "label", "description"]),
             createCommentVNode(" Nextcloud Group Selection "),
             $setup.accessType === "groups" ? (openBlock(), createElementBlock("div", _hoisted_6$z, [
               createBaseVNode(
@@ -20016,7 +20019,9 @@ function _sfc_render$1s(_ctx, _cache, $props, $setup, $data, $options) {
                 /* TEXT */
               ),
               createBaseVNode("div", _hoisted_8$y, [
-                createVNode($setup["NcRadioGroup"], null, {
+                createVNode($setup["NcRadioGroup"], {
+                  label: $setup.t("agora", "Groups Selections")
+                }, {
                   default: withCtx(() => [
                     (openBlock(true), createElementBlock(
                       Fragment$1,
@@ -20051,7 +20056,7 @@ function _sfc_render$1s(_ctx, _cache, $props, $setup, $data, $options) {
                   ]),
                   _: 1
                   /* STABLE */
-                })
+                }, 8, ["label"])
               ])
             ])) : createCommentVNode("v-if", true)
           ])
@@ -20093,6 +20098,7 @@ function _sfc_render$1s(_ctx, _cache, $props, $setup, $data, $options) {
         default: withCtx(() => [
           $setup.showGroupTypeSelector ? (openBlock(), createBlock($setup["NcRadioGroup"], {
             key: 0,
+            label: $setup.t("agora", "Groups Selections"),
             "model-value": $setup.localInquiryGroupType,
             "onUpdate:modelValue": _cache[3] || (_cache[3] = ($event) => $setup.localInquiryGroupType = $event)
           }, {
@@ -20139,7 +20145,7 @@ function _sfc_render$1s(_ctx, _cache, $props, $setup, $data, $options) {
             ]),
             _: 1
             /* STABLE */
-          }, 8, ["model-value"])) : (openBlock(), createElementBlock("div", _hoisted_11$v, [
+          }, 8, ["label", "model-value"])) : (openBlock(), createElementBlock("div", _hoisted_11$v, [
             createBaseVNode(
               "strong",
               null,
@@ -20728,9 +20734,15 @@ const _sfc_main$1q = /* @__PURE__ */ defineComponent({
     }
     function selectGroupType(inquiryGroupType) {
       inquiryGroupsStore.setCurrentGroupType(inquiryGroupType.group_type);
+      let navslug;
+      if (__props.slug) {
+        navslug = __props.slug;
+      } else {
+        navslug = "";
+      }
       router2.push({
-        name: "group-list"
-        // params: { slug: '' },
+        name: "group-list",
+        params: { slug: navslug }
       });
     }
     function navigateToCreateOrView() {
@@ -73892,7 +73904,6 @@ const _sfc_main$Q = /* @__PURE__ */ defineComponent({
     const selectedChildType = ref(null);
     const subMenu = ref(null);
     const commentsSection = ref(null);
-    const activeTooltip = ref(null);
     const activeFilter = ref(null);
     const commentUpdateTrigger = ref(0);
     const toggleSubMenu = (menu = null) => {
@@ -73900,16 +73911,13 @@ const _sfc_main$Q = /* @__PURE__ */ defineComponent({
     };
     const allOptionTypes = computed(() => sessionStore.appSettings?.inquiryOptionTypeTab || []);
     const optionTypeLabel = computed(
-      () => getOptionTypeLabel2(optionStore.type, allOptionTypes.value, translate("agora", "Option"))
+      () => getOptionTypeLabel$1(optionStore.type, allOptionTypes.value, translate("agora", "Option"))
     );
     const optionIcon = computed(
       () => getOptionTypeIconComponent(optionStore.type, allOptionTypes.value)
     );
     const optionTypeColor = computed(
       () => getOptionTypeColor(optionStore.type, allOptionTypes.value)
-    );
-    const optionTypeDescription = computed(
-      () => getOptionTypeDescription(optionStore.type, allOptionTypes.value)
     );
     const allowComment = computed(
       () => allowsComments(optionStore.type, allOptionTypes.value)
@@ -73939,19 +73947,14 @@ const _sfc_main$Q = /* @__PURE__ */ defineComponent({
     });
     const canEdit2 = computed(() => canEditOption(optionContext.value));
     const canDelete2 = computed(() => canDeleteOption(optionContext.value));
-    const canChangeOptionStatus = computed(() => canChangeStatus(optionContext.value));
-    const canComment2 = computed(() => canCommentOption(optionContext.value));
-    const canSupport2 = computed(() => canSupportOption(optionContext.value));
     const modalTitle = computed(() => optionStore.title || translate("agora", "Option Details"));
     const canEditOrDelete = computed(() => canEdit2.value || canDelete2.value);
     const canSaveEdit = computed(() => editForm.value.text.trim().length > 0);
-    const canAddChild = computed(() => hasAllowedResponses.value && sessionStore.currentUser);
     const childOptions = computed(() => {
       if (!optionStore?.id) return [];
       return optionsStore.options.filter((opt) => opt.parentId === optionStore.id);
     });
     const hasChildOptions = computed(() => childOptions.value.length > 0);
-    const getChildCountByType = (type) => childOptions.value.filter((child) => child.type === type).length;
     const hasAdditionalFields = computed(() => additionalFields.value.length > 0);
     const hasAdditionalFieldsData = computed(() => {
       if (!optionStore.miscFields) return false;
@@ -73980,24 +73983,7 @@ const _sfc_main$Q = /* @__PURE__ */ defineComponent({
     };
     const getOptionTypeDescription$1 = (type) => getOptionTypeDescription(type, allOptionTypes.value);
     const getOptionTypeIcon = (type) => getOptionTypeIconComponent(type, allOptionTypes.value);
-    const getOptionTypeLabel2 = (type) => getOptionTypeLabel(type, allOptionTypes.value, type);
-    const showChildTypeTooltip = (type) => {
-      activeTooltip.value = type;
-    };
-    const hideChildTypeTooltip = () => {
-      activeTooltip.value = null;
-    };
-    const filterChildrenByType = (type) => {
-      activeFilter.value = activeFilter.value === type ? null : type;
-    };
-    const clearFilter = () => {
-      activeFilter.value = null;
-    };
-    const truncateText = (text, maxLength) => {
-      if (!text) return "";
-      if (text.length <= maxLength) return text;
-      return `${text.substring(0, maxLength)}...`;
-    };
+    const getOptionTypeLabel$1 = (type) => getOptionTypeLabel(type, allOptionTypes.value, type);
     const loadOption = async () => {
       if (!props2.optionId) return;
       isLoading.value = true;
@@ -74086,16 +74072,6 @@ const _sfc_main$Q = /* @__PURE__ */ defineComponent({
       selectedChildType.value = responseType;
       showAddChildModal.value = true;
     };
-    const openAddChildModal = () => {
-      if (!canAddChild.value) return;
-      if (allowedResponses.value.length === 1) {
-        selectedChildType.value = allowedResponses.value[0];
-        showAddChildModal.value = true;
-      } else if (allowedResponses.value.length > 1) {
-        selectedChildType.value = allowedResponses.value[0];
-        showAddChildModal.value = true;
-      }
-    };
     const closeAddChildModal = () => {
       showAddChildModal.value = false;
       selectedChildType.value = null;
@@ -74129,7 +74105,7 @@ const _sfc_main$Q = /* @__PURE__ */ defineComponent({
     onMounted(() => {
       loadOption();
     });
-    watch(() => props2.optionId, (newId, oldId) => {
+    watch(() => props2.optionId, (newId) => {
       if (newId) {
         loadOption();
         commentUpdateTrigger.value = 0;
@@ -74143,18 +74119,11 @@ const _sfc_main$Q = /* @__PURE__ */ defineComponent({
         if (optionStore.status) {
           optionStore.status.countComments = count;
         }
-        commentUpdateTrigger.value++;
+        commentUpdateTrigger.value = commentUpdateTrigger.value + 1;
       }
     }, { deep: true });
-    const optionComments = computed(() => {
-      commentUpdateTrigger.value;
-      if (!optionStore.id) return [];
-      return commentsStore.comments.filter(
-        (comment) => comment.inquiryId === props2.inquiryId && comment.optionId === optionStore.id && comment.deleted === 0
-      );
-    });
     const handleCommentAdded = () => {
-      commentUpdateTrigger.value++;
+      commentUpdateTrigger.value = commentUpdateTrigger.value + 1;
       if (optionStore.id) {
         const count = commentsStore.comments.filter(
           (comment) => comment.inquiryId === props2.inquiryId && comment.optionId === optionStore.id && comment.deleted === 0
@@ -74171,11 +74140,11 @@ const _sfc_main$Q = /* @__PURE__ */ defineComponent({
     const handleCommentCountUpdated = (newCount) => {
       if (optionStore) {
         optionStore.status.countComments = newCount;
-        commentUpdateTrigger.value++;
+        commentUpdateTrigger.value = commentUpdateTrigger.value + 1;
         emit2("updated", { ...optionStore });
       }
     };
-    const __returned__ = { props: props2, emit: emit2, optionsStore, optionStore, sessionStore, commentsStore, show, isLoading, error, showCommentForm, isEditing, editForm, showChildModal, selectedChildId, showAddChildModal, selectedChildType, subMenu, commentsSection, activeTooltip, activeFilter, commentUpdateTrigger, toggleSubMenu, allOptionTypes, optionTypeLabel, optionIcon, optionTypeColor, optionTypeDescription, allowComment, hasSupportFeature: hasSupportFeature$1, useTitle, allowedResponses, hasAllowedResponses, availableResponseTypes, additionalFields, optionContext, canEdit: canEdit2, canDelete: canDelete2, canChangeOptionStatus, canComment: canComment2, canSupport: canSupport2, modalTitle, canEditOrDelete, canSaveEdit, canAddChild, childOptions, hasChildOptions, getChildCountByType, hasAdditionalFields, hasAdditionalFieldsData, filteredChildOptions, formatDate, getFieldLabel, formatFieldValue, getOptionTypeDescription: getOptionTypeDescription$1, getOptionTypeIcon, getOptionTypeLabel: getOptionTypeLabel2, showChildTypeTooltip, hideChildTypeTooltip, filterChildrenByType, clearFilter, truncateText, loadOption, closeModal, editOption, cancelEdit, saveEdit, confirmDelete, deleteOption, handleChildComment, openAddResponseModal, openAddChildModal, closeAddChildModal, handleChildCreated, openChildModal, closeChildModal, handleChildUpdated, handleChildDeleted, optionComments, handleCommentAdded, handleCommentCountUpdated, get t() {
+    const __returned__ = { props: props2, emit: emit2, optionsStore, optionStore, sessionStore, commentsStore, show, isLoading, error, showCommentForm, isEditing, editForm, showChildModal, selectedChildId, showAddChildModal, selectedChildType, subMenu, commentsSection, activeFilter, commentUpdateTrigger, toggleSubMenu, allOptionTypes, optionTypeLabel, optionIcon, optionTypeColor, allowComment, hasSupportFeature: hasSupportFeature$1, useTitle, allowedResponses, hasAllowedResponses, availableResponseTypes, additionalFields, optionContext, canEdit: canEdit2, canDelete: canDelete2, modalTitle, canEditOrDelete, canSaveEdit, childOptions, hasChildOptions, hasAdditionalFields, hasAdditionalFieldsData, filteredChildOptions, formatDate, getFieldLabel, formatFieldValue, getOptionTypeDescription: getOptionTypeDescription$1, getOptionTypeIcon, getOptionTypeLabel: getOptionTypeLabel$1, loadOption, closeModal, editOption, cancelEdit, saveEdit, confirmDelete, deleteOption, handleChildComment, openAddResponseModal, closeAddChildModal, handleChildCreated, openChildModal, closeChildModal, handleChildUpdated, handleChildDeleted, handleCommentAdded, handleCommentCountUpdated, get t() {
       return translate;
     }, get NcModal() {
       return NcModal;
@@ -77659,7 +77628,7 @@ const _sfc_main$L = /* @__PURE__ */ defineComponent({
     ];
     const statusColumns = computed(() => props2.statuses || defaultStatuses);
     const getOptionsByStatus = (status) => props2.options.filter((opt) => opt.status === status);
-    const canChangeStatus2 = computed(() => true);
+    const canChangeStatus = computed(() => true);
     const canAddToColumn = (status) => (
       // Determine which option types can be added to this column
       props2.optionTypes.length > 0
@@ -77679,7 +77648,7 @@ const _sfc_main$L = /* @__PURE__ */ defineComponent({
     const changeStatus = (optionId, newStatus) => {
       emit2("status-changed", optionId, newStatus);
     };
-    const __returned__ = { props: props2, emit: emit2, defaultStatuses, statusColumns, getOptionsByStatus, canChangeStatus: canChangeStatus2, canAddToColumn, getDefaultTypeForStatus, getStatusColor, getStatusLabel, changeStatus, get t() {
+    const __returned__ = { props: props2, emit: emit2, defaultStatuses, statusColumns, getOptionsByStatus, canChangeStatus, canAddToColumn, getDefaultTypeForStatus, getStatusColor, getStatusLabel, changeStatus, get t() {
       return translate;
     }, get NcButton() {
       return NcButton;
@@ -78447,12 +78416,8 @@ function _sfc_render$K(_ctx, _cache, $props, $setup, $data, $options) {
 const FamilyLayoutTimeline = /* @__PURE__ */ _export_sfc$1(_sfc_main$K, [["render", _sfc_render$K], ["__scopeId", "data-v-f2d57b7a"], ["__file", "/var/www/nextcloud/apps/agora/src/components/Options/FamilyLayouts/FamilyLayoutTimeline.vue"]]);
 const _sfc_main$J = /* @__PURE__ */ defineComponent({
   __name: "OptionEditView",
-  props: {
-    inquiryId: { type: Number, required: false }
-  },
   setup(__props, { expose: __expose }) {
     __expose();
-    const props2 = __props;
     const inquiryStore = useInquiryStore();
     const optionsStore = useOptionsStore();
     const sessionStore = useSessionStore();
@@ -78478,9 +78443,6 @@ const _sfc_main$J = /* @__PURE__ */ defineComponent({
     );
     const allOptionTypes = computed(
       () => sessionStore.appSettings?.inquiryOptionTypeTab || []
-    );
-    const allFamilies = computed(
-      () => sessionStore.appSettings?.optionFamilyTab || []
     );
     const familiesWithOptions = computed(() => {
       const inquiryTypeKey = inquiryStore.type;
@@ -78528,12 +78490,6 @@ const _sfc_main$J = /* @__PURE__ */ defineComponent({
         (option2) => familyOptionTypeKeys.includes(option2.type)
       );
     });
-    const getOptionTypeLabel2 = (optionTypeKey) => {
-      const optionType = allOptionTypes.value.find(
-        (opt) => opt.option_type === optionTypeKey || opt.optionType === optionTypeKey
-      );
-      return optionType?.label || optionTypeKey;
-    };
     const getOptionTypeIcon = (optionTypeKey) => {
       const optionType = allOptionTypes.value.find(
         (opt) => opt.option_type === optionTypeKey || opt.optionType === optionTypeKey
@@ -78604,7 +78560,7 @@ const _sfc_main$J = /* @__PURE__ */ defineComponent({
         activeFamily.value = familiesWithOptions.value[0].key;
       }
     });
-    const __returned__ = { props: props2, inquiryStore, optionsStore, sessionStore, activeFamily, showAddOptionModal, showOptionDetail, selectedOptionTypeKey, selectedParentId, selectedOptionId, layoutComponents, getFamilyIconHelper, getFamilyColorHelper, allInquiryTypes, allOptionTypes, allFamilies, familiesWithOptions, hasVisibleFamilies, activeFamilyData, currentFamilyLayout, familyCounts, activeFamilyOptions, getOptionTypeLabel: getOptionTypeLabel2, getOptionTypeIcon, setActiveFamily, openAddOptionModal, closeAddOptionModal, openOptionDetail, closeOptionDetail, handleOptionCreated, handleOptionUpdated, handleOptionDeleted, get t() {
+    const __returned__ = { inquiryStore, optionsStore, sessionStore, activeFamily, showAddOptionModal, showOptionDetail, selectedOptionTypeKey, selectedParentId, selectedOptionId, layoutComponents, getFamilyIconHelper, getFamilyColorHelper, allInquiryTypes, allOptionTypes, familiesWithOptions, hasVisibleFamilies, activeFamilyData, currentFamilyLayout, familyCounts, activeFamilyOptions, getOptionTypeIcon, setActiveFamily, openAddOptionModal, closeAddOptionModal, openOptionDetail, closeOptionDetail, handleOptionCreated, handleOptionUpdated, handleOptionDeleted, get t() {
       return translate;
     }, get NcButton() {
       return NcButton;
@@ -84624,11 +84580,10 @@ const _sfc_main$r = /* @__PURE__ */ defineComponent({
     });
     const context2 = computed(() => {
       if (!props2.inquiry || !props2.inquiry.id) {
-        console.log("SideBarTabResources - inquiry not ready yet");
         return null;
       }
       try {
-        createInquiryContext(props2.inquiry, sessionStore.appSettings);
+        return createInquiryContext(props2.inquiry, sessionStore.appSettings);
       } catch (error) {
         console.error("Error creating permission context:", error);
         return null;
@@ -84868,7 +84823,6 @@ const _sfc_main$r = /* @__PURE__ */ defineComponent({
     const getResourceTarget = () => "_blank";
     const canEditResource = () => {
       if (!currentInquiry.value) {
-        console.log("canEditResource - currentInquiry not ready");
         return false;
       }
       if (!currentInquiry.value.currentUserStatus?.isOwner) {
@@ -89449,12 +89403,6 @@ const _sfc_main$6 = /* @__PURE__ */ defineComponent({
         (type) => type.inquiry_type === inquiryStore.type
       );
     });
-    const isMultiLangObject = (obj) => {
-      if (!obj || typeof obj !== "object" || Array.isArray(obj)) return false;
-      const keys2 = Object.keys(obj);
-      const langKeys = ["en", "fr", "de", "gsw", "it", "es", "pt"];
-      return keys2.some((k) => langKeys.includes(k)) && keys2.every((k) => typeof obj[k] === "string" || obj[k] === void 0);
-    };
     const extractLangString = (obj, lang = "en") => {
       if (typeof obj === "string") return obj;
       if (!obj || typeof obj !== "object") return String(obj);
@@ -89823,7 +89771,7 @@ const _sfc_main$6 = /* @__PURE__ */ defineComponent({
     onMounted(() => {
       loadMiscData();
     });
-    const __returned__ = { props: props2, inquiryStore, sessionStore, currentLanguage, permissionContext, userCanConfigureSupport, userCanConfigureComments, inquiryTypeConfig, isMultiLangObject, extractLangString, isLoading, error, isSaving, saveTimeouts, selectedUsers, localCheckboxes, getSupportFeatureValue, getAllowCommentValue, supportFeatureOptions, dynamicFields, getSupportFeatureDisplay, getMiscValue, parseMiscValue, getDisplayValue, getEnumModelValue, getEnumLabel, shouldDisplayField, displayFields, loadMiscData, getSafeStringValue, saveFieldToDatabase, getDefaultFromTemplate, handleSupportFeatureChange, handleAllowCommentChange, initializeMiscFields, initializeLocalCheckboxes, updateFieldValue, handleUserSelected, getFormattedDate, getCheckboxValue, get StatusIcons() {
+    const __returned__ = { props: props2, inquiryStore, sessionStore, currentLanguage, permissionContext, userCanConfigureSupport, userCanConfigureComments, inquiryTypeConfig, extractLangString, isLoading, error, isSaving, saveTimeouts, selectedUsers, localCheckboxes, getSupportFeatureValue, getAllowCommentValue, supportFeatureOptions, dynamicFields, getSupportFeatureDisplay, getMiscValue, parseMiscValue, getDisplayValue, getEnumModelValue, getEnumLabel, shouldDisplayField, displayFields, loadMiscData, getSafeStringValue, saveFieldToDatabase, getDefaultFromTemplate, handleSupportFeatureChange, handleAllowCommentChange, initializeMiscFields, initializeLocalCheckboxes, updateFieldValue, handleUserSelected, getFormattedDate, getCheckboxValue, get StatusIcons() {
       return StatusIcons;
     }, get t() {
       return translate;

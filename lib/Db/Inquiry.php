@@ -428,18 +428,11 @@ class Inquiry extends EntityWithUser implements JsonSerializable
     public function getInquiryUrl(): string
     {
         return $this->urlGenerator->linkToRouteAbsolute(
-            AppConstants::APP_ID . '.page.vote',
+            AppConstants::APP_ID . '.page.inquiry',
             ['id' => $this->getId()]
         );
     }
 
-    public function getSupportUrl(): string
-    {
-        return $this->urlGenerator->linkToRouteAbsolute(
-            AppConstants::APP_ID . '.page.support',
-            ['id' => $this->getId()]
-        );
-    }
     // Setting childs for setting rights
 
     public function setChilds(array $childs): void

@@ -331,14 +331,7 @@ abstract class TableSchema
             'UNIQ_watch' => ['columns' => ['inquiry_id', 'table', 'session_id']],
         ],
         InquiryGroup::RELATION_TABLE => [
-            'UNIQ_inquiry_group_relation' => ['columns' => ['inquiry_id', 'CREATE INDEX idx_comment_option_deleted
-            ON oc_agora_comments (option_id, deleted);
-
-    CREATE INDEX idx_support_option_value
-        ON oc_agora_supports (option_id, value);
-
-    CREATE INDEX idx_support_option_user
-        ON oc_agora_supports (option_id, user_id);group_id']],
+            'UNIQ_inquiry_group_relation' => ['columns' => ['inquiry_id', 'group_id']],
         ],
         InquiryMisc::TABLE => [
             'UNIQ_inquiry_misc' => ['columns' => ['inquiry_id', 'key']],

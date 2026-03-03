@@ -203,7 +203,7 @@ class UserMapper extends QBMapper
             User::TYPE => new User($id),
             Admin::TYPE => new Admin($id),
             Email::TYPE => new Email($id, $displayName, $emailAddress, $language),
-            UserBase::TYPE_EXTERNAL => new GenericUser($id, UserBase::TYPE_EXTERNAL, $displayName, $emailAddress, $language, $locale, $timeZoneName),
+            UserBase::TYPE_EXTERNAL => new GenericUser($id, UserBase::TYPE_EXTERNAL, $displayName, $emailAddress, $language, $locale,$timeZoneName,'',[]),
             UserBase::TYPE_PUBLIC => new GenericUser($id, UserBase::TYPE_PUBLIC, $displayName),
             default => throw new InvalidShareTypeException('Invalid user type (' . $type . ')'),
         };

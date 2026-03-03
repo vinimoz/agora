@@ -16,6 +16,6 @@ class InquiriesSearchResultEntry extends SearchResultEntry
 {
     public function __construct(Inquiry $inquiry)
     {
-        parent::__construct('', $inquiry->getTitle(), $inquiry->getDescription(), $inquiry->getSupportUrl(), 'icon-agora-dark');
+        parent::__construct('', $inquiry->getTitle(), $inquiry->getDescription(), $inquiry->getInquiryUrl(), 'icon-agora-dark');
     }
 }

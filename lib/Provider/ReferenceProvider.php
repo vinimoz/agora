@@ -80,7 +80,7 @@ class ReferenceProvider extends ADiscoverableReferenceProvider implements ISearc
                     $description = $inquiry->getDescription();
                     $ownerId = $inquiry->getUser()->getId();
                     $ownerDisplayName = $inquiry->getUser()->getDisplayName();
-                    $url = $inquiry->getSupportUrl();
+                    $url = $inquiry->getInquiryUrl();
                     $expired = $inquiry->getExpired();
                     $expiry = $inquiry->getExpire();
                 } catch (NotFoundException $e) {
