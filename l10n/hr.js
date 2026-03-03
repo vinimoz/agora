@@ -109,6 +109,7 @@ OC.L10N.register(
     "OK" : "OK",
     "Clone to option sequence" : "Redoslijed kloniranja",
     "Create a sequence of date options starting with {dateOption}." : "Stvorite redoslijed mogućnosti datuma počevši od {dateOption}.",
+    "Amount" : "Iznos",
     "Delete option" : "Izbriši mogućnost",
     "{displayName}'s proposal" : "Prijedlog dao {displayName}",
     "Clone option" : "Mogućnost kloniranja",
