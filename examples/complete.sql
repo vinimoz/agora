@@ -1,6 +1,8 @@
 -- =======================================================
 -- AGORA DEMO DATASET (Switzerland-style hierarchical groups)
 -- Corrected with proper owner, family, and access values
+-- Fixed: support_feature now uses strings ('none','binary','ternary')
+-- Added: options and adjusted supports to reference them
 -- =======================================================
 
 -- ============================
@@ -79,7 +81,7 @@ INSERT INTO oc_agora_inq_group (id, parent_id, created, deleted, title, type, ow
 (54, 6, UNIX_TIMESTAMP() - 86400*80, 0, 'Zürich 30km/h Speed Limit Referendum', 'referendum_group', 'admin', 'Referendum on city-wide speed reduction', 'Tempo-30 Referendum ZH', 'zurich-voters', UNIX_TIMESTAMP() + 86400*75, '{"referendum_date": "2025-07-20", "signatures_required": 15000, "campaign_budget": "200000 CHF"}', NULL, 0, 'active', 1);
 
 -- ============================
--- Table: oc_agora_inquiry_group_misc
+-- Table: oc_agora_inq_group_misc
 -- ============================
 
 INSERT INTO oc_agora_inq_group_misc (inquiry_group_id, `key`, value) VALUES
@@ -102,30 +104,30 @@ INSERT INTO oc_agora_inq_group_misc (inquiry_group_id, `key`, value) VALUES
 (16, 'location', 'Bern/Berne'),
 (17, 'location', 'Switzerland'),
 (18, 'location', 'Switzerland'),
-(19, 'location', 'Switzerland'),
-(20, 'location', 'Nyon'),
-(21, 'location', 'Geneva'),
-(22, 'location', 'Vaud'),
-(23, 'location', 'Zürich'),
-(24, 'location', 'Geneva'),
-(25, 'location', 'Vaud'),
-(26, 'location', 'Geneva'),
-(27, 'location', 'Switzerland'),
-(28, 'location', 'Geneva'),
-(29, 'location', 'Switzerland'),
-(30, 'location', 'Geneva'),
+(19, 'location', 'Nyon'),
+(20, 'location', 'Geneva'),
+(21, 'location', 'Vaud'),
+(22, 'location', 'Zürich'),
+(23, 'location', 'Geneva'),
+(24, 'location', 'Vaud'),
+(25, 'location', 'Geneva'),
+(26, 'location', 'Switzerland'),
+(27, 'location', 'Geneva'),
+(28, 'location', 'Switzerland'),
+(29, 'location', 'Geneva'),
+(30, 'location', 'Switzerland'),
 (31, 'location', 'Switzerland'),
-(32, 'location', 'Switzerland'),
-(33, 'location', 'Zürich'),
+(32, 'location', 'Bern'),
+(33, 'location', 'Bern-Mittelland'),
 (35, 'location', 'Bern'),
-(37, 'location', 'Bern-Mittelland'),
+(37, 'location', 'Switzerland'),
 (39, 'location', 'Bern'),
-(42, 'location', 'Switzerland'),
+(42, 'location', 'Zürich'),
 (45, 'location', 'Bern'),
 (47, 'location', 'Zürich'),
-(49, 'location', 'Zürich'),
-(50, 'location', 'Bern'),
-(52, 'location', 'Switzerland'),
+(49, 'location', 'Bern'),
+(50, 'location', 'Switzerland'),
+(52, 'location', 'Zürich'),
 (54, 'location', 'Zürich'),
 
 -- Additional metadata
@@ -138,66 +140,198 @@ INSERT INTO oc_agora_inq_group_misc (inquiry_group_id, `key`, value) VALUES
 (30, 'referendum_number', 'GE-2025-045'),
 (54, 'referendum_number', 'ZH-2025-128');
 
-
-
-
-
 -- ============================
--- Table: oc_agora_inquiries
+-- Table: oc_agora_inquiries (corrected support_feature)
 -- ============================
 
 INSERT INTO oc_agora_inquiries (id, cover_id, type, title, description, location_id, category_id, owner, created, archived, expire, deleted, owned_group, access, show_results, last_interaction, parent_id, moderation_status, inquiry_status, allow_comment, support_feature, family) VALUES
 -- Climate Program Inquiries
-(1, NULL, 'news', 'Federal Council Adopts New Climate Measures', 'Switzerland updates its climate targets for 2030 with stricter CO2 reduction goals for buildings and transport sectors.', 0, 0, 'admin', UNIX_TIMESTAMP() - 86400*20, 0, 0, 0, 'federal-government', 'open', 'always', UNIX_TIMESTAMP() - 86400*5, NULL, 'accepted', 'published', 1, 1, 'collective'),
-(11, NULL, 'consultation', 'Public Consultation: Renewable Energy Expansion 2025-2030', 'Seeking public input on solar and wind energy development targets and support programs for the next 5 years.', 0, 0, 'admin', UNIX_TIMESTAMP() - 86400*15, 0, UNIX_TIMESTAMP() + 86400*45, 0, 'federal-energy', 'open', 'after_vote', UNIX_TIMESTAMP() - 86400*2, NULL, 'accepted', 'active', 1, 0, 'deliberative'),
-(12, NULL, 'meeting', 'Energy Working Group Q1 Meeting: Implementation Review', 'Quarterly meeting to discuss implementation progress of energy transition measures and budget allocation.', 0, 0, 'admin', UNIX_TIMESTAMP() - 86400*10, 0, UNIX_TIMESTAMP() + 86400*5, 0, 'federal-experts', 'open', 'always', UNIX_TIMESTAMP() - 86400*1, NULL, 'accepted', 'active', 1, 0, 'deliberative'),
-(13, NULL, 'proposal', 'Proposal: Carbon Tax Revenues Allocation Framework', 'Detailed proposal on how to allocate revenues from CO2 levy between climate fund, population redistribution, and innovation programs.', 0, 0, 'admin', UNIX_TIMESTAMP() - 86400*5, 0, UNIX_TIMESTAMP() + 86400*60, 0, 'federal-government', 'open', 'always', UNIX_TIMESTAMP() - 86400*1, NULL, 'accepted', 'active', 1, 1, 'deliberative'),
+(1, NULL, 'news', 'Federal Council Adopts New Climate Measures', 'Switzerland updates its climate targets for 2030 with stricter CO2 reduction goals for buildings and transport sectors.', 0, 0, 'admin', UNIX_TIMESTAMP() - 86400*20, 0, 0, 0, 'federal-government', 'open', 'always', UNIX_TIMESTAMP() - 86400*5, NULL, 'accepted', 'published', 1, 'none', 'collective'),
+(11, NULL, 'consultation', 'Public Consultation: Renewable Energy Expansion 2025-2030', 'Seeking public input on solar and wind energy development targets and support programs for the next 5 years.', 0, 0, 'admin', UNIX_TIMESTAMP() - 86400*15, 0, UNIX_TIMESTAMP() + 86400*45, 0, 'federal-energy', 'open', 'after_vote', UNIX_TIMESTAMP() - 86400*2, NULL, 'accepted', 'active', 1, 'none', 'deliberative'),
+(12, NULL, 'meeting', 'Energy Working Group Q1 Meeting: Implementation Review', 'Quarterly meeting to discuss implementation progress of energy transition measures and budget allocation.', 0, 0, 'admin', UNIX_TIMESTAMP() - 86400*10, 0, UNIX_TIMESTAMP() + 86400*5, 0, 'federal-experts', 'open', 'always', UNIX_TIMESTAMP() - 86400*1, NULL, 'accepted', 'active', 1, 'none', 'deliberative'),
+(13, NULL, 'proposal', 'Proposal: Carbon Tax Revenues Allocation Framework', 'Detailed proposal on how to allocate revenues from CO2 levy between climate fund, population redistribution, and innovation programs.', 0, 0, 'admin', UNIX_TIMESTAMP() - 86400*5, 0, UNIX_TIMESTAMP() + 86400*60, 0, 'federal-government', 'open', 'always', UNIX_TIMESTAMP() - 86400*1, NULL, 'accepted', 'active', 1, 'binary', 'deliberative'),
 
 -- Digital Program Inquiries
-(14, NULL, 'consultation', 'Swiss Digital ID Public Consultation', 'Public feedback on the proposed Swiss Digital Identity system: features, privacy safeguards, and implementation timeline.', 0, 0, 'admin', UNIX_TIMESTAMP() - 86400*25, 0, UNIX_TIMESTAMP() + 86400*30, 0, 'federal-digital', 'open', 'after_vote', UNIX_TIMESTAMP() - 86400*3, NULL, 'accepted', 'active', 1, 0, 'deliberative'),
-(15, NULL, 'deliberation', 'AI Regulation Framework Expert Debate', 'Structured expert debate on AI governance, risk classification, and regulatory approaches for Switzerland.', 0, 0, 'admin', UNIX_TIMESTAMP() - 86400*18, 0, UNIX_TIMESTAMP() + 86400*15, 0, 'federal-experts', 'open', 'always', UNIX_TIMESTAMP() - 86400*2, NULL, 'accepted', 'active', 1, 0, 'deliberative'),
-(16, NULL, 'announcement', 'New Public API Platform Launch: api.admin.ch', 'Federal administration opens new API platform for developers to access public data and services.', 0, 0, 'admin', UNIX_TIMESTAMP() - 86400*12, 0, 0, 0, 'federal-digital', 'open', 'always', UNIX_TIMESTAMP() - 86400*1, NULL, 'accepted', 'published', 1, 0, 'collective'),
+(14, NULL, 'consultation', 'Swiss Digital ID Public Consultation', 'Public feedback on the proposed Swiss Digital Identity system: features, privacy safeguards, and implementation timeline.', 0, 0, 'admin', UNIX_TIMESTAMP() - 86400*25, 0, UNIX_TIMESTAMP() + 86400*30, 0, 'federal-digital', 'open', 'after_vote', UNIX_TIMESTAMP() - 86400*3, NULL, 'accepted', 'active', 1, 'none', 'deliberative'),
+(15, NULL, 'deliberation', 'AI Regulation Framework Expert Debate', 'Structured expert debate on AI governance, risk classification, and regulatory approaches for Switzerland.', 0, 0, 'admin', UNIX_TIMESTAMP() - 86400*18, 0, UNIX_TIMESTAMP() + 86400*15, 0, 'federal-experts', 'open', 'always', UNIX_TIMESTAMP() - 86400*2, NULL, 'accepted', 'active', 1, 'binary', 'deliberative'),
+(16, NULL, 'announcement', 'New Public API Platform Launch: api.admin.ch', 'Federal administration opens new API platform for developers to access public data and services.', 0, 0, 'admin', UNIX_TIMESTAMP() - 86400*12, 0, 0, 0, 'federal-digital', 'open', 'always', UNIX_TIMESTAMP() - 86400*1, NULL, 'accepted', 'published', 1, 'none', 'collective'),
 
 -- Health Program Inquiries
-(17, NULL, 'consultation', 'Mental Health Strategy 2025-2030: Public Input', 'Public consultation on new mental health services framework, prevention programs, and support systems.', 0, 0, 'admin', UNIX_TIMESTAMP() - 86400*22, 0, UNIX_TIMESTAMP() + 86400*40, 0, 'federal-health', 'open', 'after_vote', UNIX_TIMESTAMP() - 86400*4, NULL, 'accepted', 'active', 1, 0, 'deliberative'),
-(18, NULL, 'meeting', 'Prevention Working Group: Monthly Strategy Session', 'Monthly working group session to develop prevention programs for non-communicable diseases.', 0, 0, 'admin', UNIX_TIMESTAMP() - 86400*8, 0, UNIX_TIMESTAMP() + 86400*2, 0, 'health-experts', 'open', 'never', UNIX_TIMESTAMP() - 86400*1, NULL, 'accepted', 'active', 0, 0, 'deliberative'),
+(17, NULL, 'consultation', 'Mental Health Strategy 2025-2030: Public Input', 'Public consultation on new mental health services framework, prevention programs, and support systems.', 0, 0, 'admin', UNIX_TIMESTAMP() - 86400*22, 0, UNIX_TIMESTAMP() + 86400*40, 0, 'federal-health', 'open', 'after_vote', UNIX_TIMESTAMP() - 86400*4, NULL, 'accepted', 'active', 1, 'none', 'deliberative'),
+(18, NULL, 'meeting', 'Prevention Working Group: Monthly Strategy Session', 'Monthly working group session to develop prevention programs for non-communicable diseases.', 0, 0, 'admin', UNIX_TIMESTAMP() - 86400*8, 0, UNIX_TIMESTAMP() + 86400*2, 0, 'health-experts', 'open', 'never', UNIX_TIMESTAMP() - 86400*1, NULL, 'accepted', 'active', 0, 'none', 'deliberative'),
 
 -- Geneva Citizen Assembly
-(2, NULL, 'meeting', 'Geneva Citizens Assembly: Annual Budget Deliberation 2026', 'Geneva residents invited to discuss and provide input on the 2026 municipal budget priorities.', 0, 0, 'admin', UNIX_TIMESTAMP() - 86400*35, 0, UNIX_TIMESTAMP() + 86400*10, 0, 'geneva-residents', 'open', 'always', UNIX_TIMESTAMP() - 86400*6, NULL, 'accepted', 'active', 1, 0, 'deliberative'),
-(19, NULL, 'deliberation', 'Urban Development Projects: Public Debate', 'Citizens debate major construction projects including new housing, parks, and infrastructure.', 0, 0, 'admin', UNIX_TIMESTAMP() - 86400*12, 0, UNIX_TIMESTAMP() + 86400*20, 0, 'geneva-residents', 'open', 'always', UNIX_TIMESTAMP() - 86400*3, NULL, 'accepted', 'active', 1, 1, 'deliberative'),
+(2, NULL, 'meeting', 'Geneva Citizens Assembly: Annual Budget Deliberation 2026', 'Geneva residents invited to discuss and provide input on the 2026 municipal budget priorities.', 0, 0, 'admin', UNIX_TIMESTAMP() - 86400*35, 0, UNIX_TIMESTAMP() + 86400*10, 0, 'geneva-residents', 'open', 'always', UNIX_TIMESTAMP() - 86400*6, NULL, 'accepted', 'active', 1, 'none', 'deliberative'),
+(19, NULL, 'deliberation', 'Urban Development Projects: Public Debate', 'Citizens debate major construction projects including new housing, parks, and infrastructure.', 0, 0, 'admin', UNIX_TIMESTAMP() - 86400*12, 0, UNIX_TIMESTAMP() + 86400*20, 0, 'geneva-residents', 'open', 'always', UNIX_TIMESTAMP() - 86400*3, NULL, 'accepted', 'active', 1, 'binary', 'deliberative'),
 
 -- Local Commune Inquiries
-(3, NULL, 'consultation', 'Winterthur Bike Lane Expansion: Route Planning', 'Public consultation on new bike infrastructure including protected lanes and parking facilities.', 0, 0, 'admin', UNIX_TIMESTAMP() - 86400*28, 0, UNIX_TIMESTAMP() + 86400*15, 0, 'winterthur-residents', 'open', 'after_vote', UNIX_TIMESTAMP() - 86400*2, NULL, 'accepted', 'active', 1, 0, 'deliberative'),
-(20, NULL, 'proposal', 'Nyon Pedestrian Zone Extension Proposal', 'Proposal to expand car-free zone in city center to include Rue de Rive and improve public spaces.', 0, 0, 'admin', UNIX_TIMESTAMP() - 86400*18, 0, UNIX_TIMESTAMP() + 86400*25, 0, 'nyon-residents', 'open', 'always', UNIX_TIMESTAMP() - 86400*4, NULL, 'accepted', 'active', 1, 1, 'deliberative'),
-(21, NULL, 'meeting', 'Prangins Town Hall: Monthly Commune Meeting', 'Monthly commune meeting open to all residents for local matters and announcements.', 0, 0, 'admin', UNIX_TIMESTAMP() - 86400*5, 0, UNIX_TIMESTAMP() + 86400*1, 0, 'prangins-residents', 'open', 'always', UNIX_TIMESTAMP() - 86400*1, NULL, 'accepted', 'active', 1, 0, 'deliberative'),
+(3, NULL, 'consultation', 'Winterthur Bike Lane Expansion: Route Planning', 'Public consultation on new bike infrastructure including protected lanes and parking facilities.', 0, 0, 'admin', UNIX_TIMESTAMP() - 86400*28, 0, UNIX_TIMESTAMP() + 86400*15, 0, 'winterthur-residents', 'open', 'after_vote', UNIX_TIMESTAMP() - 86400*2, NULL, 'accepted', 'active', 1, 'none', 'deliberative'),
+(20, NULL, 'proposal', 'Nyon Pedestrian Zone Extension Proposal', 'Proposal to expand car-free zone in city center to include Rue de Rive and improve public spaces.', 0, 0, 'admin', UNIX_TIMESTAMP() - 86400*18, 0, UNIX_TIMESTAMP() + 86400*25, 0, 'nyon-residents', 'open', 'always', UNIX_TIMESTAMP() - 86400*4, NULL, 'accepted', 'active', 1, 'binary', 'deliberative'),
+(21, NULL, 'meeting', 'Prangins Town Hall: Monthly Commune Meeting', 'Monthly commune meeting open to all residents for local matters and announcements.', 0, 0, 'admin', UNIX_TIMESTAMP() - 86400*5, 0, UNIX_TIMESTAMP() + 86400*1, 0, 'prangins-residents', 'open', 'always', UNIX_TIMESTAMP() - 86400*1, NULL, 'accepted', 'active', 1, 'none', 'deliberative'),
 
 -- Working Group Inquiries
-(4, NULL, 'proposal', 'Solar Panel Subsidy Program Revision', 'Proposal for updated residential solar incentives including battery storage support.', 0, 0, 'admin', UNIX_TIMESTAMP() - 86400*25, 0, UNIX_TIMESTAMP() + 86400*35, 0, 'federal-experts', 'open', 'always', UNIX_TIMESTAMP() - 86400*3, NULL, 'accepted', 'active', 1, 1, 'deliberative'),
-(5, NULL, 'announcement', 'New Mobility Rules for E-Scooters and Bikes', 'Updated regulations for micromobility devices including parking zones and speed limits.', 0, 0, 'admin', UNIX_TIMESTAMP() - 86400*22, 0, 0, 0, 'federal-experts', 'open', 'always', UNIX_TIMESTAMP() - 86400*1, NULL, 'accepted', 'published', 0, 0, 'collective'),
-(6, NULL, 'consultation', 'Geneva Affordable Housing Strategy 2025-2030', 'Public input on new housing policies including rent control, social housing quotas, and construction targets.', 0, 0, 'admin', UNIX_TIMESTAMP() - 86400*15, 0, UNIX_TIMESTAMP() + 86400*30, 0, 'geneva-residents', 'open', 'after_vote', UNIX_TIMESTAMP() - 86400*2, NULL, 'accepted', 'active', 1, 0, 'deliberative'),
-(7, NULL, 'deliberation', 'Digital Privacy Standards: Technical Debate', 'Technical debate on data protection standards for public digital services.', 0, 0, 'admin', UNIX_TIMESTAMP() - 86400*14, 0, UNIX_TIMESTAMP() + 86400*10, 0, 'federal-experts', 'open', 'always', UNIX_TIMESTAMP() - 86400*2, NULL, 'accepted', 'active', 1, 0, 'deliberative'),
-(8, NULL, 'meeting', 'Nyon Transport Committee: Monthly Mobility Meeting', 'Monthly mobility committee meeting to discuss local transport issues and projects.', 0, 0, 'admin', UNIX_TIMESTAMP() - 86400*5, 0, UNIX_TIMESTAMP() + 86400*2, 0, 'nyon-council', 'open', 'never', UNIX_TIMESTAMP() - 86400*1, NULL, 'accepted', 'active', 0, 0, 'deliberative'),
+(4, NULL, 'proposal', 'Solar Panel Subsidy Program Revision', 'Proposal for updated residential solar incentives including battery storage support.', 0, 0, 'admin', UNIX_TIMESTAMP() - 86400*25, 0, UNIX_TIMESTAMP() + 86400*35, 0, 'federal-experts', 'open', 'always', UNIX_TIMESTAMP() - 86400*3, NULL, 'accepted', 'active', 1, 'binary', 'deliberative'),
+(5, NULL, 'announcement', 'New Mobility Rules for E-Scooters and Bikes', 'Updated regulations for micromobility devices including parking zones and speed limits.', 0, 0, 'admin', UNIX_TIMESTAMP() - 86400*22, 0, 0, 0, 'federal-experts', 'open', 'always', UNIX_TIMESTAMP() - 86400*1, NULL, 'accepted', 'published', 0, 'none', 'collective'),
+(6, NULL, 'consultation', 'Geneva Affordable Housing Strategy 2025-2030', 'Public input on new housing policies including rent control, social housing quotas, and construction targets.', 0, 0, 'admin', UNIX_TIMESTAMP() - 86400*15, 0, UNIX_TIMESTAMP() + 86400*30, 0, 'geneva-residents', 'open', 'after_vote', UNIX_TIMESTAMP() - 86400*2, NULL, 'accepted', 'active', 1, 'none', 'deliberative'),
+(7, NULL, 'deliberation', 'Digital Privacy Standards: Technical Debate', 'Technical debate on data protection standards for public digital services.', 0, 0, 'admin', UNIX_TIMESTAMP() - 86400*14, 0, UNIX_TIMESTAMP() + 86400*10, 0, 'federal-experts', 'open', 'always', UNIX_TIMESTAMP() - 86400*2, NULL, 'accepted', 'active', 1, 'binary', 'deliberative'),
+(8, NULL, 'meeting', 'Nyon Transport Committee: Monthly Mobility Meeting', 'Monthly mobility committee meeting to discuss local transport issues and projects.', 0, 0, 'admin', UNIX_TIMESTAMP() - 86400*5, 0, UNIX_TIMESTAMP() + 86400*2, 0, 'nyon-council', 'open', 'never', UNIX_TIMESTAMP() - 86400*1, NULL, 'accepted', 'active', 0, 'none', 'deliberative'),
 
 -- Citizen Jury Inquiries
-(9, NULL, 'news', 'Urban Noise Pollution: Citizen Jury Findings Published', 'Findings and recommendations from the citizen jury deliberation on urban noise regulations.', 0, 0, 'admin', UNIX_TIMESTAMP() - 86400*8, 0, 0, 0, 'geneva-residents', 'open', 'always', UNIX_TIMESTAMP() - 86400*1, NULL, 'accepted', 'published', 1, 1, 'collective'),
-(22, NULL, 'deliberation', 'Assisted Living Options: Citizen Jury Deliberation', 'Citizen jury evaluates different elderly care models and makes recommendations.', 0, 0, 'admin', UNIX_TIMESTAMP() - 86400*12, 0, UNIX_TIMESTAMP() + 86400*20, 0, 'bern-residents', 'open', 'always', UNIX_TIMESTAMP() - 86400*3, NULL, 'accepted', 'active', 1, 0, 'deliberative'),
+(9, NULL, 'news', 'Urban Noise Pollution: Citizen Jury Findings Published', 'Findings and recommendations from the citizen jury deliberation on urban noise regulations.', 0, 0, 'admin', UNIX_TIMESTAMP() - 86400*8, 0, 0, 0, 'geneva-residents', 'open', 'always', UNIX_TIMESTAMP() - 86400*1, NULL, 'accepted', 'published', 1, 'none', 'collective'),
+(22, NULL, 'deliberation', 'Assisted Living Options: Citizen Jury Deliberation', 'Citizen jury evaluates different elderly care models and makes recommendations.', 0, 0, 'admin', UNIX_TIMESTAMP() - 86400*12, 0, UNIX_TIMESTAMP() + 86400*20, 0, 'bern-residents', 'open', 'always', UNIX_TIMESTAMP() - 86400*3, NULL, 'accepted', 'active', 1, 'binary', 'deliberative'),
 
 -- Bundle Inquiries
-(10, NULL, 'proposal', 'Green Urban Planning 2025: Comprehensive Development', 'Comprehensive urban development proposal including green spaces, mixed-use zoning, and sustainable construction.', 0, 0, 'admin', UNIX_TIMESTAMP() - 86400*7, 0, UNIX_TIMESTAMP() + 86400*40, 0, 'geneva-planning-dept', 'open', 'always', UNIX_TIMESTAMP() - 86400*2, NULL, 'accepted', 'active', 1, 1, 'deliberative'),
-(24, NULL, 'meeting', 'Zürich Digital Projects Review Meeting', 'Quarterly review of ongoing digital transformation projects and budget allocation.', 0, 0, 'admin', UNIX_TIMESTAMP() - 86400*10, 0, UNIX_TIMESTAMP() + 86400*3, 0, 'zurich-digital-dept', 'open', 'never', UNIX_TIMESTAMP() - 86400*1, NULL, 'accepted', 'active', 0, 0, 'deliberative'),
+(10, NULL, 'proposal', 'Green Urban Planning 2025: Comprehensive Development', 'Comprehensive urban development proposal including green spaces, mixed-use zoning, and sustainable construction.', 0, 0, 'admin', UNIX_TIMESTAMP() - 86400*7, 0, UNIX_TIMESTAMP() + 86400*40, 0, 'geneva-planning-dept', 'open', 'always', UNIX_TIMESTAMP() - 86400*2, NULL, 'accepted', 'active', 1, 'binary', 'deliberative'),
+(24, NULL, 'meeting', 'Zürich Digital Projects Review Meeting', 'Quarterly review of ongoing digital transformation projects and budget allocation.', 0, 0, 'admin', UNIX_TIMESTAMP() - 86400*10, 0, UNIX_TIMESTAMP() + 86400*3, 0, 'zurich-digital-dept', 'open', 'never', UNIX_TIMESTAMP() - 86400*1, NULL, 'accepted', 'active', 0, 'none', 'deliberative'),
 
 -- Referendum Inquiries
-(25, NULL, 'consultation', 'Pre-Referendum: Geneva Parking Regulations Review', 'Information session and public feedback collection before the parking referendum vote.', 0, 0, 'admin', UNIX_TIMESTAMP() - 86400*22, 0, UNIX_TIMESTAMP() + 86400*10, 0, 'geneva-voters', 'open', 'always', UNIX_TIMESTAMP() - 86400*4, NULL, 'accepted', 'active', 1, 0, 'deliberative'),
-(26, NULL, 'news', 'Federal CO2 Levy Referendum Date Set for September 2025', 'Official announcement: Federal referendum on carbon pricing increase scheduled for September 28, 2025.', 0, 0, 'admin', UNIX_TIMESTAMP() - 86400*18, 0, 0, 0, 'swiss-voters', 'open', 'always', UNIX_TIMESTAMP() - 86400*2, NULL, 'accepted', 'published', 1, 1, 'collective'),
+(25, NULL, 'consultation', 'Pre-Referendum: Geneva Parking Regulations Review', 'Information session and public feedback collection before the parking referendum vote.', 0, 0, 'admin', UNIX_TIMESTAMP() - 86400*22, 0, UNIX_TIMESTAMP() + 86400*10, 0, 'geneva-voters', 'open', 'always', UNIX_TIMESTAMP() - 86400*4, NULL, 'accepted', 'active', 1, 'none', 'deliberative'),
+(26, NULL, 'news', 'Federal CO2 Levy Referendum Date Set for September 2025', 'Official announcement: Federal referendum on carbon pricing increase scheduled for September 28, 2025.', 0, 0, 'admin', UNIX_TIMESTAMP() - 86400*18, 0, 0, 0, 'swiss-voters', 'open', 'always', UNIX_TIMESTAMP() - 86400*2, NULL, 'accepted', 'published', 1, 'none', 'collective'),
 
 -- Agricultural Program
-(29, NULL, 'consultation', 'Organic Farming Support Programs 2026-2030', 'Public input on organic agriculture subsidy programs and transition support.', 0, 0, 'admin', UNIX_TIMESTAMP() - 86400*12, 0, UNIX_TIMESTAMP() + 86400*25, 0, 'farmers-association', 'open', 'after_vote', UNIX_TIMESTAMP() - 86400*3, NULL, 'accepted', 'active', 1, 0, 'deliberative');
+(29, NULL, 'consultation', 'Organic Farming Support Programs 2026-2030', 'Public input on organic agriculture subsidy programs and transition support.', 0, 0, 'admin', UNIX_TIMESTAMP() - 86400*12, 0, UNIX_TIMESTAMP() + 86400*25, 0, 'farmers-association', 'open', 'after_vote', UNIX_TIMESTAMP() - 86400*3, NULL, 'accepted', 'active', 1, 'none', 'deliberative'),
+
+-- 5001 — Genève / Mobilité douce
+(5001, NULL, 'proposal', 'Créer plus de pistes cyclables à Genève', 'Extension du réseau cyclable entre Plainpalais et Cornavin.', 101, 6, 'admin', UNIX_TIMESTAMP()-86400*200, 0, UNIX_TIMESTAMP()+86400*160, 0, '', 'open', 'always', UNIX_TIMESTAMP()-86400*190, NULL, 'accepted', 'active', 1, 'binary', 'deliberative'),
+-- 5002 — Zürich / Débat
+(5002, NULL, 'debate', 'Limiter le trafic automobile au centre de Zürich', 'Faut-il interdire les voitures dans la vieille ville ?', 102, 11, 'moderator', UNIX_TIMESTAMP()-86400*150, 0, UNIX_TIMESTAMP()+86400*120, 0, '', 'open', 'always', UNIX_TIMESTAMP()-86400*145, NULL, 'accepted', 'active', 1, 'none', 'collective'),
+-- 5003 — Lausanne / Projet solaire
+(5003, NULL, 'project', 'Installation de panneaux solaires sur les écoles de Lausanne', 'Projet de transition énergétique soutenu par la commune.', 103, 5, 'test', UNIX_TIMESTAMP()-86400*100, 0, UNIX_TIMESTAMP()+86400*200, 0, '', 'open', 'always', UNIX_TIMESTAMP()-86400*95, NULL, 'accepted', 'active', 1, 'binary', 'deliberative'),
+-- 5004 — Nyon / Pétition
+(5004, NULL, 'petition', 'Protéger la rive du lac à Nyon', 'Interdire les constructions privées sur la zone littorale.', 104, 2, 'test2', UNIX_TIMESTAMP()-86400*80, 0, UNIX_TIMESTAMP()+86400*60, 0, '', 'open', 'always', UNIX_TIMESTAMP()-86400*75, NULL, 'accepted', 'active', 1, 'binary', 'deliberative'),
+-- 5005 — Berne / Grief
+(5005, NULL, 'grievance', 'Bruit excessif aux abords de la gare de Berne', 'Plainte concernant le trafic de nuit.', 105, 23, 'test3', UNIX_TIMESTAMP()-86400*60, 0, UNIX_TIMESTAMP()+86400*120, 0, '', 'open', 'always', UNIX_TIMESTAMP()-86400*55, NULL, 'accepted', 'active', 1, 'none', 'administrative'),
+-- 5006 — Lausanne / Suggestion liée
+(5006, NULL, 'suggestion', 'Installer des parois anti-bruit', 'Suggestion liée à la plainte 5005.', 103, 6, 'admin', UNIX_TIMESTAMP()-86400*55, 0, UNIX_TIMESTAMP()+86400*100, 0, '', 'open', 'always', UNIX_TIMESTAMP()-86400*50, 5005, 'accepted', 'active', 1, 'binary', 'deliberative'),
+-- 5007 — Genève / Communauté
+(5007, NULL, 'proposal', 'Planter 2''000 arbres à Genève', 'Plan de reforestation urbaine.', 101, 9, 'moderator', UNIX_TIMESTAMP()-86400*40, 0, UNIX_TIMESTAMP()+86400*200, 0, '', 'open', 'always', UNIX_TIMESTAMP()-86400*35, NULL, 'accepted', 'active', 1, 'binary', 'deliberative'),
+-- 5008 — Réponse officielle (Genève)
+(5008, NULL, 'official', 'Réponse officielle : Arbres à Genève', 'Le service des espaces verts soutient le projet.', 101, 9, 'official', UNIX_TIMESTAMP()-86400*38, 0, UNIX_TIMESTAMP()+86400*120, 0, '', 'open', 'always', UNIX_TIMESTAMP()-86400*37, 5007, 'accepted', 'active', 1, 'none', 'official'),
+-- 5009 — Winterthur / Jardin communautaire
+(5009, NULL, 'project', 'Créer un jardin partagé à Winterthur', 'Espace vert ouvert géré par les habitants.', 106, 17, 'test', UNIX_TIMESTAMP()-86400*30, 0, UNIX_TIMESTAMP()+86400*200, 0, '', 'open', 'always', UNIX_TIMESTAMP()-86400*25, NULL, 'accepted', 'active', 1, 'binary', 'deliberative'),
+-- 5010 — Suggestion liée
+(5010, NULL, 'proposal', 'Installer une serre permaculture', 'Extension du projet 5009.', 106, 4, 'test2', UNIX_TIMESTAMP()-86400*28, 0, UNIX_TIMESTAMP()+86400*150, 0, '', 'open', 'always', UNIX_TIMESTAMP()-86400*25, 5009, 'accepted', 'active', 1, 'binary', 'deliberative'),
+-- 5011 — Berne / Transport
+(5011, NULL, 'grievance', 'Retards récurrents des bus bernois', 'Nombreuses plaintes depuis l''automne.', 105, 9, 'test3', UNIX_TIMESTAMP()-86400*27, 0, UNIX_TIMESTAMP()+86400*90, 0, '', 'open', 'always', UNIX_TIMESTAMP()-86400*26, NULL, 'accepted', 'active', 1, 'none', 'administrative'),
+-- 5012 — Suggestion bus GPS
+(5012, NULL, 'suggestion', 'Ajouter un système GPS aux bus', 'Suggestion liée à la plainte 5011.', 105, 9, 'admin', UNIX_TIMESTAMP()-86400*26, 0, UNIX_TIMESTAMP()+86400*100, 0, '', 'open', 'always', UNIX_TIMESTAMP()-86400*25, 5011, 'accepted', 'active', 1, 'binary', 'deliberative'),
+-- 5013 — Zürich / Jet-skis
+(5013, NULL, 'petition', 'Interdire les jet-skis sur le lac de Zürich', 'Réduction du bruit et protection du lac.', 102, 3, 'moderator', UNIX_TIMESTAMP()-86400*24, 0, UNIX_TIMESTAMP()+86400*60, 0, '', 'open', 'always', UNIX_TIMESTAMP()-86400*22, NULL, 'accepted', 'active', 1, 'binary', 'deliberative'),
+-- 5014 — Vaud / École
+(5014, NULL, 'debate', 'Faut-il prolonger les heures d''école dans le canton de Vaud ?', 'Débat public sur la conciliation travail-famille.', 103, 26, 'test', UNIX_TIMESTAMP()-86400*20, 0, UNIX_TIMESTAMP()+86400*90, 0, '', 'open', 'always', UNIX_TIMESTAMP()-86400*18, NULL, 'accepted', 'active', 1, 'none', 'collective'),
+-- 5015 — Genève / Écologie
+(5015, NULL, 'proposal', 'Toitures végétalisées pour les bâtiments publics', 'Projet de verdissement urbain.', 101, 2, 'test2', UNIX_TIMESTAMP()-86400*15, 0, UNIX_TIMESTAMP()+86400*200, 0, '', 'open', 'always', UNIX_TIMESTAMP()-86400*14, NULL, 'accepted', 'active', 1, 'binary', 'deliberative'),
+-- 5016 — Réponse officielle toits verts
+(5016, NULL, 'official', 'Réponse officielle : Toitures végétalisées', 'Projet accepté en phase d''étude.', 101, 2, 'official', UNIX_TIMESTAMP()-86400*14, 0, UNIX_TIMESTAMP()+86400*120, 0, '', 'open', 'always', UNIX_TIMESTAMP()-86400*13, 5015, 'accepted', 'active', 1, 'none', 'official');
 
 -- ============================
--- Table: oc_agora_inquiry_misc
+-- Table: oc_agora_options (new)
 -- ============================
+
+INSERT INTO oc_agora_options (id, title, target_id, parent_id, type, access, text, owner, owned_group, created, updated, show_results, deleted, archived, option_status, allow_comment, support_feature, family, sort_order) VALUES
+-- Options for inquiry 5001 (proposal)
+(10001, 'Soutenir la piste cyclable', 5001, 0, 'proposal', 'open', 'Je soutiens ce projet de pistes cyclables.', 'admin', '', UNIX_TIMESTAMP()-86400*195, UNIX_TIMESTAMP()-86400*195, 'always', 0, 0, 'active', 1, 'binary', 'deliberative', 1),
+(10002, 'S''opposer à la piste cyclable', 5001, 0, 'proposal', 'open', 'Je suis contre ce projet pour des raisons de coût.', 'moderator', '', UNIX_TIMESTAMP()-86400*190, UNIX_TIMESTAMP()-86400*190, 'always', 0, 0, 'active', 1, 'binary', 'deliberative', 2),
+
+-- Options for inquiry 5002 (debate) - positions
+(10003, 'Pour l''interdiction des voitures', 5002, 0, 'position_for', 'open', 'Il faut interdire les voitures en vieille ville pour réduire la pollution.', 'test', '', UNIX_TIMESTAMP()-86400*145, UNIX_TIMESTAMP()-86400*145, 'always', 0, 0, 'active', 1, 'ternary', 'debate', 1),
+(10004, 'Contre l''interdiction', 5002, 0, 'position_against', 'open', 'Cela pénaliserait les commerces et les riverains.', 'admin', '', UNIX_TIMESTAMP()-86400*144, UNIX_TIMESTAMP()-86400*144, 'always', 0, 0, 'active', 1, 'ternary', 'debate', 2),
+
+-- Options for inquiry 5003 (project)
+(10005, 'Soutenir le projet solaire', 5003, 0, 'proposal', 'open', 'Je soutiens ce projet.', 'test2', '', UNIX_TIMESTAMP()-86400*95, UNIX_TIMESTAMP()-86400*95, 'always', 0, 0, 'active', 1, 'binary', 'deliberative', 1),
+
+-- Options for inquiry 5004 (petition)
+(10006, 'Signer la pétition', 5004, 0, 'proposal', 'open', 'Je soutiens la protection de la rive.', 'moderator', '', UNIX_TIMESTAMP()-86400*75, UNIX_TIMESTAMP()-86400*75, 'always', 0, 0, 'active', 1, 'binary', 'deliberative', 1),
+
+-- Options for inquiry 5006 (suggestion)
+(10007, 'Suggestion acceptée', 5006, 0, 'suggestion', 'open', 'Installer des parois anti-bruit', 'admin', '', UNIX_TIMESTAMP()-86400*50, UNIX_TIMESTAMP()-86400*50, 'always', 0, 0, 'active', 1, 'binary', 'deliberative', 1),
+
+-- Options for inquiry 5007 (proposal)
+(10008, 'Planter des arbres', 5007, 0, 'proposal', 'open', 'Je soutiens le projet de reforestation.', 'test', '', UNIX_TIMESTAMP()-86400*35, UNIX_TIMESTAMP()-86400*35, 'always', 0, 0, 'active', 1, 'binary', 'deliberative', 1),
+
+-- Options for inquiry 5009 (project)
+(10009, 'Créer le jardin', 5009, 0, 'proposal', 'open', 'Je soutiens le jardin partagé.', 'test3', '', UNIX_TIMESTAMP()-86400*25, UNIX_TIMESTAMP()-86400*25, 'always', 0, 0, 'active', 1, 'binary', 'deliberative', 1),
+
+-- Options for inquiry 5010 (proposal)
+(10010, 'Installer une serre', 5010, 0, 'proposal', 'open', 'Je soutiens cette extension.', 'test2', '', UNIX_TIMESTAMP()-86400*25, UNIX_TIMESTAMP()-86400*25, 'always', 0, 0, 'active', 1, 'binary', 'deliberative', 1),
+
+-- Options for inquiry 5012 (suggestion)
+(10011, 'Suggestion GPS', 5012, 0, 'suggestion', 'open', 'Ajouter un système GPS', 'admin', '', UNIX_TIMESTAMP()-86400*25, UNIX_TIMESTAMP()-86400*25, 'always', 0, 0, 'active', 1, 'binary', 'deliberative', 1),
+
+-- Options for inquiry 5013 (petition)
+(10012, 'Signer la pétition', 5013, 0, 'proposal', 'open', 'Je soutiens l''interdiction des jet-skis.', 'test', '', UNIX_TIMESTAMP()-86400*22, UNIX_TIMESTAMP()-86400*22, 'always', 0, 0, 'active', 1, 'binary', 'deliberative', 1),
+
+-- Options for inquiry 5014 (debate) - positions
+(10013, 'Pour la prolongation', 5014, 0, 'position_for', 'open', 'Cela aide les parents.', 'test3', '', UNIX_TIMESTAMP()-86400*18, UNIX_TIMESTAMP()-86400*18, 'always', 0, 0, 'active', 1, 'ternary', 'debate', 1),
+(10014, 'Contre la prolongation', 5014, 0, 'position_against', 'open', 'Cela surcharge les enfants.', 'admin', '', UNIX_TIMESTAMP()-86400*17, UNIX_TIMESTAMP()-86400*17, 'always', 0, 0, 'active', 1, 'ternary', 'debate', 2),
+
+-- Options for inquiry 5015 (proposal)
+(10015, 'Toitures végétalisées', 5015, 0, 'proposal', 'open', 'Je soutiens les toits verts.', 'test2', '', UNIX_TIMESTAMP()-86400*14, UNIX_TIMESTAMP()-86400*14, 'always', 0, 0, 'active', 1, 'binary', 'deliberative', 1);
+
 -- ============================
--- Table: oc_agora_inq_misc (extended with layout_zone & render_mode)
+-- Table: oc_agora_supports (corrected with new option_ids)
+-- ============================
+
+INSERT INTO oc_agora_supports (inquiry_id, option_id, user_id, value, created, support_hash) VALUES
+-- Support for inquiry 5001 (proposal) - binary: +1 for, -1 against
+(5001, 10001, 'test',      1, UNIX_TIMESTAMP()-86400*190, MD5(CONCAT('5001','test','10001'))),
+(5001, 10001, 'test2',     1, UNIX_TIMESTAMP()-86400*189, MD5(CONCAT('5001','test2','10001'))),
+(5001, 10001, 'moderator', 1, UNIX_TIMESTAMP()-86400*188, MD5(CONCAT('5001','moderator','10001'))),
+(5001, 10002, 'test3',    -1, UNIX_TIMESTAMP()-86400*187, MD5(CONCAT('5001','test3','10002'))),
+
+-- Support for inquiry 5002 (debate) - ternary: +1, 0, -1
+(5002, 10003, 'test3',  +1, UNIX_TIMESTAMP()-86400*145, MD5(CONCAT('5002','test3','10003'))),
+(5002, 10003, 'admin',   0, UNIX_TIMESTAMP()-86400*144, MD5(CONCAT('5002','admin','10003'))),
+(5002, 10004, 'admin',  -1, UNIX_TIMESTAMP()-86400*143, MD5(CONCAT('5002','admin','10004'))),
+
+-- Support for inquiry 5003 (project) - binary
+(5003, 10005, 'admin', 1, UNIX_TIMESTAMP()-86400*95, MD5(CONCAT('5003','admin','10005'))),
+(5003, 10005, 'test2', 1, UNIX_TIMESTAMP()-86400*94, MD5(CONCAT('5003','test2','10005'))),
+
+-- Support for inquiry 5004 (petition) - binary
+(5004, 10006, 'moderator', 1, UNIX_TIMESTAMP()-86400*75, MD5(CONCAT('5004','moderator','10006'))),
+(5004, 10006, 'test',      1, UNIX_TIMESTAMP()-86400*74, MD5(CONCAT('5004','test','10006'))),
+(5004, 10006, 'test3',    -1, UNIX_TIMESTAMP()-86400*73, MD5(CONCAT('5004','test3','10006'))),
+
+-- Support for inquiry 5007 (proposal) - binary
+(5007, 10008, 'admin', 1, UNIX_TIMESTAMP()-86400*35, MD5(CONCAT('5007','admin','10008'))),
+
+-- Support for inquiry 5009 (project) - binary
+(5009, 10009, 'test2', 1, UNIX_TIMESTAMP()-86400*25, MD5(CONCAT('5009','test2','10009'))),
+
+-- Support for inquiry 5013 (petition) - binary
+(5013, 10012, 'test3', 1, UNIX_TIMESTAMP()-86400*22, MD5(CONCAT('5013','test3','10012'))),
+(5013, 10012, 'test', -1, UNIX_TIMESTAMP()-86400*21, MD5(CONCAT('5013','test','10012'))),
+
+-- Support for inquiry 5015 (proposal) - binary
+(5015, 10015, 'admin', 1, UNIX_TIMESTAMP()-86400*14, MD5(CONCAT('5015','admin','10015'))),
+
+-- Inquiry-level support (option_id = 0) for inquiries with support_feature 'binary'
+(13, 0, 'admin', 1, UNIX_TIMESTAMP()-86400*4, MD5(CONCAT('13','admin','0'))),
+(15, 0, 'test', 1, UNIX_TIMESTAMP()-86400*2, MD5(CONCAT('15','test','0'))),
+(19, 0, 'moderator', 1, UNIX_TIMESTAMP()-86400*2, MD5(CONCAT('19','moderator','0'))),
+(20, 0, 'test2', 1, UNIX_TIMESTAMP()-86400*3, MD5(CONCAT('20','test2','0'))),
+(4, 0, 'admin', 1, UNIX_TIMESTAMP()-86400*2, MD5(CONCAT('4','admin','0'))),
+(7, 0, 'test3', 1, UNIX_TIMESTAMP()-86400*1, MD5(CONCAT('7','test3','0'))),
+(10, 0, 'test', 1, UNIX_TIMESTAMP()-86400*1, MD5(CONCAT('10','test','0'))),
+(22, 0, 'admin', 1, UNIX_TIMESTAMP()-86400*2, MD5(CONCAT('22','admin','0')));
+
+-- ============================
+-- Table: oc_agora_comments (added option_id references)
+-- ============================
+
+INSERT INTO oc_agora_comments (inquiry_id, option_id, user_id, comment, timestamp, deleted, confidential, recipient) VALUES
+(5001, 10001, 'test2', 'Très bonne idée pour la mobilité !', UNIX_TIMESTAMP()-86400*190, 0, 0, NULL),
+(5002, 10003, 'admin', 'Cela réduira la congestion mais affectera les commerces.', UNIX_TIMESTAMP()-86400*145, 0, 0, NULL),
+(5003, 10005, 'moderator', 'Excellente initiative énergétique.', UNIX_TIMESTAMP()-86400*95, 0, 0, NULL),
+(5005, 0, 'test', 'Le bruit devient insupportable la nuit.', UNIX_TIMESTAMP()-86400*55, 0, 0, NULL),
+(5007, 10008, 'test2', 'Plus d''arbres = meilleure qualité de vie.', UNIX_TIMESTAMP()-86400*35, 0, 0, NULL),
+(5009, 10009, 'test3', 'Parfait pour renforcer le lien social.', UNIX_TIMESTAMP()-86400*25, 0, 0, NULL),
+(5013, 10012, 'test', 'Le lac est déjà trop bruyant l''été.', UNIX_TIMESTAMP()-86400*22, 0, 0, NULL),
+(5015, 10015, 'admin', 'Cela réduira les îlots de chaleur.', UNIX_TIMESTAMP()-86400*14, 0, 0, NULL);
+
+-- ============================
+-- Table: oc_agora_inq_misc (unchanged)
 -- ============================
 
 INSERT INTO oc_agora_inq_misc (inquiry_id, `key`, value) VALUES
@@ -205,74 +339,54 @@ INSERT INTO oc_agora_inq_misc (inquiry_id, `key`, value) VALUES
 (11, 'consultation_start', '2025-01-25'),
 (11, 'consultation_end', '2025-03-25'),
 (11, 'target_participants', '10000'),
-
 (14, 'consultation_start', '2025-01-30'),
 (14, 'consultation_end', '2025-03-15'),
 (14, 'digital_id_version', '2.0'),
-
 (25, 'referendum_date', '2025-06-15'),
 (25, 'referendum_number', 'GE-2025-045'),
 (25, 'campaign_website', 'https://ge.ch/parking-referendum'),
-
 (26, 'referendum_date', '2025-09-28'),
 (26, 'referendum_number', 'CH-2025-128'),
 (26, 'required_signatures', '50000'),
-
 (2, 'meeting_date', '2025-03-15'),
 (2, 'meeting_time', '14:00'),
 (2, 'meeting_location', 'Palais Eynard, Geneva'),
 (2, 'registration_required', 'yes'),
-
 (12, 'meeting_date', '2025-03-20'),
 (12, 'meeting_time', '10:00'),
 (12, 'meeting_location', 'BFE Building, Bern'),
 (12, 'agenda_url', 'https://bfe.admin.ch/agenda-q1-2025'),
-
 (1, 'contact_email', 'climate@admin.ch'),
 (1, 'contact_phone', '+41 58 462 56 11'),
 (1, 'official_gazette', 'https://www.fedlex.admin.ch/eli/fga/2025/123'),
-
 (3, 'contact_email', 'mobilitaet@win.ch'),
 (3, 'contact_phone', '+41 52 267 51 11'),
 (3, 'project_manager', 'Anna Müller'),
-
 (3, 'participant_count', '1247'),
 (14, 'participant_count', '3568'),
 (17, 'participant_count', '892'),
 (11, 'participant_count', '2156'),
-
 (1, 'geo_scope', 'national'),
 (3, 'geo_scope', 'commune'),
 (20, 'geo_scope', 'commune'),
 (25, 'geo_scope', 'canton'),
-
 (13, 'legal_basis', 'CO2 Law Art. 34'),
 (25, 'legal_basis', 'Geneva Parking Ordinance Art. 12'),
 (29, 'legal_basis', 'Federal Agriculture Law Art. 104'),
-
 (9, 'report_url', 'https://ge.ch/urban-noise-report-2025.pdf'),
 (9, 'executive_summary', 'https://ge.ch/urban-noise-summary.pdf'),
 (15, 'background_paper', 'https://bakom.admin.ch/ai-regulation-whitepaper'),
 (10, 'full_proposal', 'https://ge.ch/urban-planning-2025-full.pdf'),
-
--- ===========================================
--- NEW automatic layout + render_mode entries
--- ===========================================
-
--- NEWS (footer + cards)
+-- layout_zone and render_mode
 (1,  'layout_zone', 'footer'), (1,  'render_mode', 'cards'),
 (9,  'layout_zone', 'footer'), (9,  'render_mode', 'cards'),
 (26, 'layout_zone', 'footer'), (26, 'render_mode', 'cards'),
-
--- MEETING (main + cards)
 (12, 'layout_zone', 'main'), (12, 'render_mode', 'cards'),
 (2,  'layout_zone', 'main'), (2,  'render_mode', 'cards'),
 (18, 'layout_zone', 'main'), (18, 'render_mode', 'cards'),
 (21, 'layout_zone', 'main'), (21, 'render_mode', 'cards'),
 (8,  'layout_zone', 'main'), (8,  'render_mode', 'cards'),
 (24, 'layout_zone', 'main'), (24, 'render_mode', 'cards'),
-
--- ALL OTHER TYPES (sidebar + summary)
 (11, 'layout_zone', 'sidebar'), (11, 'render_mode', 'summary'),
 (13, 'layout_zone', 'sidebar'), (13, 'render_mode', 'summary'),
 (14, 'layout_zone', 'sidebar'), (14, 'render_mode', 'summary'),
@@ -291,11 +405,8 @@ INSERT INTO oc_agora_inq_misc (inquiry_id, `key`, value) VALUES
 (25, 'layout_zone', 'sidebar'), (25, 'render_mode', 'summary'),
 (29, 'layout_zone', 'sidebar'), (29, 'render_mode', 'summary');
 
-
-
-
 -- ============================
--- Table: oc_agora_groups_inquiries
+-- Table: oc_agora_groups_inquiries (unchanged)
 -- ============================
 
 INSERT INTO oc_agora_groups_inquiries (inquiry_id, group_id) VALUES
@@ -310,270 +421,38 @@ INSERT INTO oc_agora_groups_inquiries (inquiry_id, group_id) VALUES
 (8,19),
 (9,28),
 (10,24),
-
 -- Climate program inquiries
 (11,1),
 (11,16),
 (12,16),
 (13,1),
 (13,16),
-
 -- Digital program inquiries
 (14,2),
 (14,18),
 (15,2),
 (15,18),
 (16,2),
-
 -- Health program inquiries
 (17,31),
 (17,42),
 (18,42),
-
 -- Geneva assembly
 (19,3),
 (19,5),
-
 -- Local inquiries
 (20,11),
 (20,19),
 (21,12),
-
 -- Citizen juries
 (22,50),
-
 -- Bundle inquiries
 (24,47),
 (24,6),
-
 -- Referendum inquiries
 (25,30),
 (25,5),
 (26,1),
-
 -- Agricultural program
 (29,32),
 (29,43);
-
-
--- ============================
--- Agora Sample Data (Switzerland Edition)
--- ============================
-
--- ============================
--- Agora Sample Data (Switzerland Edition)
--- ============================
-
--- Inquiries
-INSERT INTO oc_agora_inquiries
-(id, cover_id, type, title, description, location_id, category_id, owner,
- created, archived, expire, deleted, owned_group, access, show_results,
- last_interaction, parent_id, moderation_status, inquiry_status,
- allow_comment, support_feature)
-VALUES
--- 5001 — Genève / Mobilité douce
-(5001, NULL, 'proposal',
- 'Créer plus de pistes cyclables à Genève',
- 'Extension du réseau cyclable entre Plainpalais et Cornavin.',
- 101, 6, 'admin',
- UNIX_TIMESTAMP()-86400*200, 0, UNIX_TIMESTAMP()+86400*160, 0, '',
- 'open', 'always',
- UNIX_TIMESTAMP()-86400*190, NULL,
- 'accepted', 'active', 1, 1),
-
--- 5002 — Zürich / Débat
-(5002, NULL, 'debate',
- 'Limiter le trafic automobile au centre de Zürich',
- 'Faut-il interdire les voitures dans la vieille ville ?',
- 102, 11, 'moderator',
- UNIX_TIMESTAMP()-86400*150, 0, UNIX_TIMESTAMP()+86400*120, 0, '',
- 'open', 'always',
- UNIX_TIMESTAMP()-86400*145, NULL,
- 'accepted', 'active', 1, 1),
-
--- 5003 — Lausanne / Projet solaire
-(5003, NULL, 'project',
- 'Installation de panneaux solaires sur les écoles de Lausanne',
- 'Projet de transition énergétique soutenu par la commune.',
- 103, 5, 'test',
- UNIX_TIMESTAMP()-86400*100, 0, UNIX_TIMESTAMP()+86400*200, 0, '',
- 'open', 'always',
- UNIX_TIMESTAMP()-86400*95, NULL,
- 'accepted', 'active', 1, 1),
-
--- 5004 — Nyon / Pétition
-(5004, NULL, 'petition',
- 'Protéger la rive du lac à Nyon',
- 'Interdire les constructions privées sur la zone littorale.',
- 104, 2, 'test2',
- UNIX_TIMESTAMP()-86400*80, 0, UNIX_TIMESTAMP()+86400*60, 0, '',
- 'open', 'always',
- UNIX_TIMESTAMP()-86400*75, NULL,
- 'accepted', 'active', 1, 1),
-
--- 5005 — Berne / Grief
-(5005, NULL, 'grievance',
- 'Bruit excessif aux abords de la gare de Berne',
- 'Plainte concernant le trafic de nuit.',
- 105, 23, 'test3',
- UNIX_TIMESTAMP()-86400*60, 0, UNIX_TIMESTAMP()+86400*120, 0, '',
- 'open', 'always',
- UNIX_TIMESTAMP()-86400*55, NULL,
- 'accepted', 'active', 1, 1),
-
--- 5006 — Lausanne / Suggestion liée
-(5006, NULL, 'suggestion',
- 'Installer des parois anti-bruit',
- 'Suggestion liée à la plainte 5005.',
- 103, 6, 'admin',
- UNIX_TIMESTAMP()-86400*55, 0, UNIX_TIMESTAMP()+86400*100, 0, '',
- 'open', 'always',
- UNIX_TIMESTAMP()-86400*50, 5005,
- 'accepted', 'active', 1, 1),
-
--- 5007 — Genève / Communauté
-(5007, NULL, 'proposal',
- 'Planter 2’000 arbres à Genève',
- 'Plan de reforestation urbaine.',
- 101, 9, 'moderator',
- UNIX_TIMESTAMP()-86400*40, 0, UNIX_TIMESTAMP()+86400*200, 0, '',
- 'open', 'always',
- UNIX_TIMESTAMP()-86400*35, NULL,
- 'accepted', 'active', 1, 1),
-
--- 5008 — Réponse officielle (Genève)
-(5008, NULL, 'official',
- 'Réponse officielle : Arbres à Genève',
- 'Le service des espaces verts soutient le projet.',
- 101, 9, 'official',
- UNIX_TIMESTAMP()-86400*38, 0, UNIX_TIMESTAMP()+86400*120, 0, '',
- 'open', 'always',
- UNIX_TIMESTAMP()-86400*37, 5007,
- 'accepted', 'active', 1, 1),
-
--- 5009 — Winterthur / Jardin communautaire
-(5009, NULL, 'project',
- 'Créer un jardin partagé à Winterthur',
- 'Espace vert ouvert géré par les habitants.',
- 106, 17, 'test',
- UNIX_TIMESTAMP()-86400*30, 0, UNIX_TIMESTAMP()+86400*200, 0, '',
- 'open', 'always',
- UNIX_TIMESTAMP()-86400*25, NULL,
- 'accepted', 'active', 1, 1),
-
--- 5010 — Suggestion liée
-(5010, NULL, 'proposal',
- 'Installer une serre permaculture',
- 'Extension du projet 5009.',
- 106, 4, 'test2',
- UNIX_TIMESTAMP()-86400*28, 0, UNIX_TIMESTAMP()+86400*150, 0, '',
- 'open', 'always',
- UNIX_TIMESTAMP()-86400*25, 5009,
- 'accepted', 'active', 1, 1),
-
--- 5011 — Berne / Transport
-(5011, NULL, 'grievance',
- 'Retards récurrents des bus bernois',
- 'Nombreuses plaintes depuis l’automne.',
- 105, 9, 'test3',
- UNIX_TIMESTAMP()-86400*27, 0, UNIX_TIMESTAMP()+86400*90, 0, '',
- 'open', 'always',
- UNIX_TIMESTAMP()-86400*26, NULL,
- 'accepted', 'active', 1, 1),
-
--- 5012 — Suggestion bus GPS
-(5012, NULL, 'suggestion',
- 'Ajouter un système GPS aux bus',
- 'Suggestion liée à la plainte 5011.',
- 105, 9, 'admin',
- UNIX_TIMESTAMP()-86400*26, 0, UNIX_TIMESTAMP()+86400*100, 0, '',
- 'open', 'always',
- UNIX_TIMESTAMP()-86400*25, 5011,
- 'accepted', 'active', 1, 1),
-
--- 5013 — Zürich / Jet-skis
-(5013, NULL, 'petition',
- 'Interdire les jet-skis sur le lac de Zürich',
- 'Réduction du bruit et protection du lac.',
- 102, 3, 'moderator',
- UNIX_TIMESTAMP()-86400*24, 0, UNIX_TIMESTAMP()+86400*60, 0, '',
- 'open', 'always',
- UNIX_TIMESTAMP()-86400*22, NULL,
- 'accepted', 'active', 1, 1),
-
--- 5014 — Vaud / École
-(5014, NULL, 'debate',
- 'Faut-il prolonger les heures d’école dans le canton de Vaud ?',
- 'Débat public sur la conciliation travail-famille.',
- 103, 26, 'test',
- UNIX_TIMESTAMP()-86400*20, 0, UNIX_TIMESTAMP()+86400*90, 0, '',
- 'open', 'always',
- UNIX_TIMESTAMP()-86400*18, NULL,
- 'accepted', 'active', 1, 1),
-
--- 5015 — Genève / Écologie
-(5015, NULL, 'proposal',
- 'Toitures végétalisées pour les bâtiments publics',
- 'Projet de verdissement urbain.',
- 101, 2, 'test2',
- UNIX_TIMESTAMP()-86400*15, 0, UNIX_TIMESTAMP()+86400*200, 0, '',
- 'open', 'always',
- UNIX_TIMESTAMP()-86400*14, NULL,
- 'accepted', 'active', 1, 1),
-
--- 5016 — Réponse officielle toits verts
-(5016, NULL, 'official',
- 'Réponse officielle : Toitures végétalisées',
- 'Projet accepté en phase d’étude.',
- 101, 2, 'official',
- UNIX_TIMESTAMP()-86400*14, 0, UNIX_TIMESTAMP()+86400*120, 0, '',
- 'open', 'always',
- UNIX_TIMESTAMP()-86400*13, 5015,
- 'accepted', 'active', 1, 1);
-
-
-INSERT INTO oc_agora_comments (inquiry_id, user_id, comment, timestamp, deleted, confidential, recipient)
-VALUES
-(5001, 'test2', 'Très bonne idée pour la mobilité !', UNIX_TIMESTAMP()-86400*190, 0, 0, NULL),
-(5002, 'admin', 'Cela réduira la congestion mais affectera les commerces.', UNIX_TIMESTAMP()-86400*145, 0, 0, NULL),
-(5003, 'moderator', 'Excellente initiative énergétique.', UNIX_TIMESTAMP()-86400*95, 0, 0, NULL),
-(5005, 'test', 'Le bruit devient insupportable la nuit.', UNIX_TIMESTAMP()-86400*55, 0, 0, NULL),
-(5007, 'test2', 'Plus d’arbres = meilleure qualité de vie.', UNIX_TIMESTAMP()-86400*35, 0, 0, NULL),
-(5009, 'test3', 'Parfait pour renforcer le lien social.', UNIX_TIMESTAMP()-86400*25, 0, 0, NULL),
-(5013, 'test', 'Le lac est déjà trop bruyant l’été.', UNIX_TIMESTAMP()-86400*22, 0, 0, NULL),
-(5015, 'admin', 'Cela réduira les îlots de chaleur.', UNIX_TIMESTAMP()-86400*14, 0, 0, NULL);
-
--- Supports (nouvelle table avec "value")
-INSERT INTO oc_agora_supports (inquiry_id, option_id, user_id, value, created, support_hash)
-VALUES
--- Vote simple (value = 1)
-(5001, 0, 'test',      1, UNIX_TIMESTAMP()-86400*190, MD5(CONCAT('5001','test'))),
-(5001, 0, 'test2',     1, UNIX_TIMESTAMP()-86400*189, MD5(CONCAT('5001','test2'))),
-(5001, 0, 'moderator', 1, UNIX_TIMESTAMP()-86400*188, MD5(CONCAT('5001','moderator'))),
-
--- Vote à deux choix (+1 / -1)
-(5002, 1, 'test3',  +1, UNIX_TIMESTAMP()-86400*145, MD5(CONCAT('5002','test3'))),
-(5002, 2, 'admin',  -1, UNIX_TIMESTAMP()-86400*144, MD5(CONCAT('5002','admin'))),
-
--- Vote simple
-(5003, 0, 'admin', 1, UNIX_TIMESTAMP()-86400*95, MD5(CONCAT('5003','admin'))),
-(5003, 0, 'test2', 1, UNIX_TIMESTAMP()-86400*94, MD5(CONCAT('5003','test2'))),
-
--- Vote à 3 choix : -1 / 0 / +1
-(5004, 1, 'moderator', +1, UNIX_TIMESTAMP()-86400*75, MD5(CONCAT('5004','moderator'))),
-(5004, 2, 'test',       0, UNIX_TIMESTAMP()-86400*74, MD5(CONCAT('5004','test'))),
-(5004, 3, 'test3',     -1, UNIX_TIMESTAMP()-86400*73, MD5(CONCAT('5004','test3'))),
-
--- Simple
-(5007, 0, 'admin', 1, UNIX_TIMESTAMP()-86400*35, MD5(CONCAT('5007','admin'))),
-
--- Simple
-(5009, 0, 'test2', 1, UNIX_TIMESTAMP()-86400*25, MD5(CONCAT('5009','test2'))),
-
--- 2 choix
-(5013, 1, 'test3', +1, UNIX_TIMESTAMP()-86400*22, MD5(CONCAT('5013','test3'))),
-(5013, 2, 'test',  -1, UNIX_TIMESTAMP()-86400*21, MD5(CONCAT('5013','test'))),
-
--- Simple
-(5015, 0, 'admin', 1, UNIX_TIMESTAMP()-86400*14, MD5(CONCAT('5015','admin')));
-
