@@ -239,7 +239,7 @@ getters: {
     typeInfo(): InquiryOptionType | undefined {
         const sessionStore = useSessionStore()
         const optionTypes = sessionStore.appSettings?.inquiryOptionTypeTab || []
-        return optionTypes.find((opt: any) => 
+        return optionTypes.find((opt: InquiryOptionType) => 
                                 opt.option_type === this.type || opt.optionType === this.type
                                )
     },
@@ -313,7 +313,7 @@ getters: {
     },
 
     // Parent inquiry information
-    parentInquiry(): any {
+    parentInquiry(): int {
         const inquiryStore = useInquiryStore()
         return inquiryStore.id === this.targetId ? inquiryStore : null
     },
@@ -357,7 +357,7 @@ actions: {
         this.$reset()
     },
 
-     setOptions(options: any[]) {
+     setOptions(options: Option[]) {
       this.options = options.map(option => ({
         ...option,
         // Ensure status exists with comment count
@@ -365,7 +365,7 @@ actions: {
       }))
     },
 
-    addOption(option: any) {
+    addOption(option: Option) {
       this.options.push({
         ...option,
         status: option.status || { countComments: 0 }
@@ -590,7 +590,7 @@ actions: {
         allowComment?: number
         family: string
         status?: string
-        miscFields?: Record<string, any>
+        miscFields?: Record<string, {key: string , value: string}>
     }): Promise<Option | void> {
         const inquiryStore = useInquiryStore()
         
@@ -613,10 +613,10 @@ actions: {
                                                                                   opt.option_type === payload.type
                                                                                  )
 
-                                                                                 const defaultMiscFields: Record<string, any> = {}
+                                                                                 const defaultMiscFields: Record<string, { key: string , value: string }> = {}
                                                                                  if (typeInfo?.fields) {
                                                                                      const fields = Array.isArray(typeInfo.fields) ? typeInfo.fields : []
-                                                                                     fields.forEach((field: any) => {
+                                                                                     fields.forEach((field: { key:string, value: string }) => {
                                                                                          if (field.default !== undefined) {
                                                                                              defaultMiscFields[field.key] = field.default
                                                                                          }
@@ -708,7 +708,7 @@ actions: {
         supportFeature: string
         family: string
         status: string
-        miscFields: Record<string, any>
+        miscFields: Record<string, {key: string, value: string}>
     }>): Promise<Option | void> {
 
         if (!payload || typeof payload !== 'object') {
@@ -794,7 +794,7 @@ actions: {
         ownedGroup?: string
         access?: string
         status?: string
-        miscFields?: Record<string, any>
+        miscFields?: Record<string, {key: string, value: string}>
     }): Promise<Option | void> {
         try {
             const response = await OptionsAPI.addChildOption(this.id, {
@@ -973,7 +973,7 @@ actions: {
     },
 
     // Enhanced updateMiscField with type validation
-    async updateMiscField(key: string, value: any): Promise<void> {
+    async updateMiscField(key: string, value: {key: string, value:string}): Promise<void> {
         // Validate against field configuration if exists
         const fieldConfig = this.miscFields.find(f => f.key === key)
         if (fieldConfig) {

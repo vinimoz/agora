@@ -359,8 +359,6 @@ import SupportFeature from '../../helpers/modules/SupportFeature.vue'
 import OptionCard from './OptionCard.vue'
 
 import {
-    findOptionType,
-    getOptionTypeLabel,
     getOptionTypeLabel as getOptionTypeLabelHelper,
     getOptionTypeIconComponent,
     getOptionTypeColor,
@@ -384,9 +382,6 @@ import {
     createOptionContext,
     canEditOption,
     canDeleteOption,
-    canChangeStatus,
-    canCommentOption,
-    canSupportOption
 } from '../../utils/permissions.ts'
 
 // Props
@@ -417,7 +412,7 @@ const isEditing = ref(false)
 const editForm = ref({
     label: '',
     text: '',
-    fields: {} as Record<string, any>
+    fields: {} as Record<string, { key: string, value: string }>
 })
 const showChildModal = ref(false)
 const selectedChildId = ref<number | null>(null)
@@ -425,7 +420,6 @@ const showAddChildModal = ref(false)
 const selectedChildType = ref<string | null>(null)
 const subMenu = ref<string | null>(null)
 const commentsSection = ref<HTMLElement | null>(null)
-const activeTooltip = ref<string | null>(null)
 const activeFilter = ref<string | null>(null)
 const commentUpdateTrigger = ref(0)
 
@@ -448,10 +442,6 @@ const optionIcon = computed(() =>
 
 const optionTypeColor = computed(() =>
     getOptionTypeColor(optionStore.type, allOptionTypes.value)
-)
-
-const optionTypeDescription = computed(() =>
-    getOptionTypeDescriptionHelper(optionStore.type, allOptionTypes.value)
 )
 
 const allowComment = computed(() =>
@@ -492,9 +482,6 @@ const optionContext = computed(() => {
 // Permission checks as computed properties
 const canEdit = computed(() => canEditOption(optionContext.value))
 const canDelete = computed(() => canDeleteOption(optionContext.value))
-const canChangeOptionStatus = computed(() => canChangeStatus(optionContext.value))
-const canComment = computed(() => canCommentOption(optionContext.value))
-const canSupport = computed(() => canSupportOption(optionContext.value))
 
 // Computed properties
 const modalTitle = computed(() => optionStore.title || t('agora', 'Option Details'))
@@ -503,7 +490,6 @@ const canEditOrDelete = computed(() => canEdit.value || canDelete.value)
 
 const canSaveEdit = computed(() => editForm.value.text.trim().length > 0)
 
-const canAddChild = computed(() => hasAllowedResponses.value && sessionStore.currentUser)
 
 // Get actual child options
 const childOptions = computed(() => {
@@ -513,7 +499,6 @@ const childOptions = computed(() => {
 
 const hasChildOptions = computed(() => childOptions.value.length > 0)
 
-const getChildCountByType = (type: string) => childOptions.value.filter(child => child.type === type).length
 
 const hasAdditionalFields = computed(() => additionalFields.value.length > 0)
 
@@ -532,14 +517,14 @@ const filteredChildOptions = computed(() => {
 const formatDate = (timestamp: number) =>
     DateTime.fromMillis(timestamp * 1000).toLocaleString(DateTime.DATE_SHORT)
 
-const getFieldLabel = (field: any) => {
+const getFieldLabel = (field: { key: string, value: string }) => {
     if (field.label) return field.label
     return field.key
         .replace(/_/g, ' ')
         .replace(/\b\w/g, l => l.toUpperCase())
 }
 
-const formatFieldValue = (field: any, value: any) => {
+const formatFieldValue = (field: string, value: string) => {
     if (value === null || value === undefined || value === '') {
         return t('agora', 'Not specified')
     }
@@ -560,28 +545,6 @@ const getOptionTypeDescription = (type: string) => getOptionTypeDescriptionHelpe
 const getOptionTypeIcon = (type: string) => getOptionTypeIconComponent(type, allOptionTypes.value)
 
 const getOptionTypeLabel = (type: string) => getOptionTypeLabelHelper(type, allOptionTypes.value, type)
-
-const showChildTypeTooltip = (type: string) => {
-    activeTooltip.value = type
-}
-
-const hideChildTypeTooltip = () => {
-    activeTooltip.value = null
-}
-
-const filterChildrenByType = (type: string) => {
-    activeFilter.value = activeFilter.value === type ? null : type
-}
-
-const clearFilter = () => {
-    activeFilter.value = null
-}
-
-const truncateText = (text: string, maxLength: number) => {
-    if (!text) return ''
-    if (text.length <= maxLength) return text
-    return `${text.substring(0, maxLength)}...`
-}
 
 const loadOption = async () => {
     if (!props.optionId) return
@@ -686,19 +649,6 @@ const openAddResponseModal = (responseType: string) => {
     showAddChildModal.value = true
 }
 
-const openAddChildModal = () => {
-    if (!canAddChild.value) return
-
-    if (allowedResponses.value.length === 1) {
-        selectedChildType.value = allowedResponses.value[0]
-        showAddChildModal.value = true
-    } else if (allowedResponses.value.length > 1) {
-        // Default to first response type
-        selectedChildType.value = allowedResponses.value[0]
-        showAddChildModal.value = true
-    }
-}
-
 const closeAddChildModal = () => {
     showAddChildModal.value = false
     selectedChildType.value = null
@@ -740,7 +690,7 @@ const handleChildDeleted = (deletedChildId: number) => {
 onMounted(() => {
     loadOption()
 })
-watch(() => props.optionId, (newId, oldId) => {
+watch(() => props.optionId, (newId) => {
   if (newId) {
     loadOption()
     // Reset trigger when option changes
@@ -764,29 +714,15 @@ watch(() => commentsStore.comments, (newComments) => {
     }
     
     // Force re-render of comments section
-    commentUpdateTrigger.value++
+    commentUpdateTrigger.value=commentUpdateTrigger.value + 1
   }
 }, { deep: true })
-
-const optionComments = computed(() => {
-  // This ensures recomputation when trigger changes
-  commentUpdateTrigger.value
-  
-  if (!optionStore.id) return []
-  
-  return commentsStore.comments.filter(
-    comment => comment.inquiryId === props.inquiryId && 
-               comment.optionId === optionStore.id &&
-               comment.deleted === 0
-  )
-})
-
 
 // Update handleCommentAdded - simpler and cleaner
 const handleCommentAdded = () => {
 
   // Force re-render by incrementing trigger
-  commentUpdateTrigger.value++
+  commentUpdateTrigger.value=commentUpdateTrigger.value + 1
 
   // Option count is already updated by the commentsStore.updateStatusCounts
   // But we can force it here too for immediate feedback
@@ -814,7 +750,8 @@ const handleCommentCountUpdated = (newCount: number) => {
 
   if (optionStore) {
     optionStore.status.countComments = newCount
-    commentUpdateTrigger.value++
+  commentUpdateTrigger.value=commentUpdateTrigger.value + 1
+
 
     emit('updated', { ...optionStore })
   }
@@ -1551,7 +1488,7 @@ const handleCommentCountUpdated = (newCount: number) => {
 }
 
 // Fade transition for comment form
-.fade-enter-active,
+.fade-enter-ctive,
 .fade-leave-active {
     transition: opacity 0.3s ease;
 }

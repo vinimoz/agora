@@ -15,7 +15,7 @@ import { createInquiryContext, getEditPermissions } from '../../utils/permission
 import NcSelect from '@nextcloud/vue/components/NcSelect'
 import NcInputField from '@nextcloud/vue/components/NcInputField'
 import NcDateTimePickerNative from '@nextcloud/vue/components/NcDateTimePickerNative'
-import NcCheckboxRadioSwitchSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
+// import NcCheckboxRadioSwitchSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
 import UserSearch from '../User/UserSearch.vue'
 
 const props = withDefaults(defineProps<{
@@ -55,13 +55,13 @@ const inquiryTypeConfig = computed(() => {
 
 
 // Helper to check if object is multi-language
-const isMultiLangObject = (obj: any): boolean => {
+/* const isMultiLangObject = (obj: any): boolean => {
   if (!obj || typeof obj !== 'object' || Array.isArray(obj)) return false
   const keys = Object.keys(obj)
   const langKeys = ['en', 'fr', 'de', 'gsw', 'it', 'es', 'pt']
   return keys.some(k => langKeys.includes(k)) &&
          keys.every(k => typeof obj[k] === 'string' || obj[k] === undefined)
-}
+} */
 
 // Extract language string from multi-language object
 const extractLangString = (obj: any, lang: string = 'en'): string => {

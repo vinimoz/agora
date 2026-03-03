@@ -24,10 +24,9 @@ import {
   getInquiryGroupTypeData,
 } from '../helpers/modules/InquiryHelper.ts'
 
-defineProps<{
+const { slug } = defineProps<{
   slug?: string
 }>()
-
 
 
 const preferencesStore = usePreferencesStore()
@@ -85,9 +84,13 @@ function selectGroupType(inquiryGroupType) {
   // update store
   inquiryGroupsStore.setCurrentGroupType(inquiryGroupType.group_type)
   // navigate with hidden state
+  let navslug
+  if (slug) { navslug=slug }
+  else {  navslug='' }
+
   router.push({
     name: 'group-list',
-    // params: { slug: '' },
+     params: { slug: navslug },
   })
 }
 

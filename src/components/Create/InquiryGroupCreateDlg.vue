@@ -301,6 +301,8 @@ function resetInquiry() {
           <NcRadioGroup
             :model-value="accessType"
             class="access-radio-group"
+            :label="t('agora','Who can access ?')"
+            
             :description="t('agora', 'Choose who can access this group')"
             @update:model-value="accessType = $event"
           >
@@ -319,7 +321,7 @@ function resetInquiry() {
                   {{ t('agora', 'Select Nextcloud group') }}
               </h4>
               <div class="groups-list">
-                  <NcRadioGroup>
+                  <NcRadioGroup :label="t('agora','Groups Selections')">
                   <div v-for="group in props.availableGroups" :key="group" class="group-item">
                       <NcCheckboxRadioSwitch
                               v-model="selectedNextcloudGroup"
@@ -366,6 +368,7 @@ function resetInquiry() {
 
       <NcRadioGroup
               v-if="showGroupTypeSelector"
+              :label="t('agora','Groups Selections')"
               :model-value="localInquiryGroupType"
               @update:model-value="localInquiryGroupType = $event"
               >

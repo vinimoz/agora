@@ -92,7 +92,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch, markRaw } from 'vue'
+import { ref, computed, onMounted, watch, markRaw, DefineComponent } from 'vue'
 import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
 
@@ -102,7 +102,7 @@ import { useSessionStore } from '../../stores/session'
 import { InquiryOptionIcons } from '../../utils/icons.ts'
 
 // Import types
-import type { InquiryType, OptionType, OptionFamily, Option } from '../../Types/index.ts'
+import type { InquiryType, OptionType, Option } from '../../Types/index.ts'
 
 // Import layout components
 import FamilyLayoutTree from './FamilyLayouts/FamilyLayoutTree.vue'
@@ -114,7 +114,6 @@ import FamilyLayoutTimeline from './FamilyLayouts/FamilyLayoutTimeline.vue'
 
   
 // Import option cards and modals
-import OptionCard from './OptionCard.vue'
 import AddOptionModal from './AddOptionModal.vue'
 import OptionDetailModal from './OptionDetailModal.vue'
 
@@ -123,22 +122,8 @@ import {
   getFamiliesWithOptionTypes,
   getFamilyIconComponent,
   getFamilyColor as importedGetFamilyColor,
-  findOptionType,
-  getOptionTypeLabel,
-  getOptionTypeIconComponent,
-  getOptionTypeColor,
   getLayoutForFamily,
-  getAllowedResponses,
-  getAvailableResponseTypes,
-  getOptionTypeFields,
-  hasSupportFeature,
-  allowsComments
 } from '../../helpers/modules/InquiryOptionHelper'
-
-// Props
-const props = defineProps<{
-  inquiryId?: number
-}>()
 
 // Stores
 const inquiryStore = useInquiryStore()
@@ -154,7 +139,7 @@ const selectedParentId = ref<number | null>(null)
 const selectedOptionId = ref<number | null>(null)
 
 // Layout component registry
-const layoutComponents: Record<string, any> = {
+const layoutComponents: Record<string, DefineComponent> = {
   tree: markRaw(FamilyLayoutTree),
   cards: markRaw(FamilyLayoutCards),
   paired: markRaw(FamilyLayoutPaired),
@@ -175,10 +160,6 @@ const allInquiryTypes = computed<InquiryType[]>(() =>
 
 const allOptionTypes = computed<OptionType[]>(() => 
   sessionStore.appSettings?.inquiryOptionTypeTab || []
-)
-
-const allFamilies = computed<OptionFamily[]>(() =>
-  sessionStore.appSettings?.optionFamilyTab || []
 )
 
 // Get families with their option types
@@ -242,14 +223,6 @@ const activeFamilyOptions = computed(() => {
     familyOptionTypeKeys.includes(option.type)
   )
 })
-
-// Helper methods
-const getOptionTypeLabel = (optionTypeKey: string): string => {
-  const optionType = allOptionTypes.value.find(opt =>
-    opt.option_type === optionTypeKey || opt.optionType === optionTypeKey
-  )
-  return optionType?.label || optionTypeKey
-}
 
 const getOptionTypeIcon = (optionTypeKey: string) => {
   const optionType = allOptionTypes.value.find(opt =>

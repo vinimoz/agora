@@ -21,12 +21,7 @@ import { Inquiry } from '../../Types/index.ts'
 import {
   canEdit,
   createInquiryContext,
-  ContentType,
-  AccessLevel,
 } from '../../utils/permissions.ts'
-import {
-  isInquiryFinalStatus
-} from '../../helpers/modules/InquiryHelper.ts'
 
 // Components
 import AddResourceModal from '../Modals/AddResourceModal.vue'
@@ -88,15 +83,15 @@ interface GroupedResources {
 // Context for permissions
 const context = computed(() => {
     if (!props.inquiry || !props.inquiry.id) {
-    console.log('SideBarTabResources - inquiry not ready yet')
     return null
   }
   try  {
-createInquiryContext(props.inquiry, sessionStore.appSettings)
+return createInquiryContext(props.inquiry, sessionStore.appSettings)
  } catch (error) {
     console.error('Error creating permission context:', error)
     return null
   }
+
 })
 
 // Helper function to parse metadata
@@ -395,7 +390,6 @@ const getResourceTarget = (): string => '_blank'
 const canEditResource = (): boolean => {
 
  if (!currentInquiry.value) {
-    console.log('canEditResource - currentInquiry not ready')
     return false
   }
 
