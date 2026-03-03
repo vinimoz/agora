@@ -382,7 +382,7 @@ class OptionService
         $this->option->setAccess($data['access'] ?? Option::ACCESS_PRIVATE);
         $this->option->setShowResults($data['showResults'] ?? Option::SHOW_RESULTS_ALWAYS);
         $this->option->setFamily($data['family'] ?? 'deliberative');
-        $this->option->setStatus($data['status'] ?? Option::DEFAULT_STATUS_DRAFT);
+        $this->option->setOptionStatus($data['status'] ?? Option::DEFAULT_STATUS_DRAFT);
 
         // Set sort order
         $maxSortOrder = $this->optionMapper->getMaxSortOrder($data['targetId'] ?? 0);
@@ -487,7 +487,7 @@ class OptionService
         }
 
         if (isset($data['status'])) {
-            $this->option->setStatus($data['status']);
+            $this->option->setOptionStatus($data['status']);
         }
 
         $this->option->setUpdated($timestamp);
@@ -743,7 +743,7 @@ class OptionService
         $this->option->setAllowComment($origin->getAllowComment());
         $this->option->setSupportFeature($origin->getSupportFeature());
         $this->option->setFamily($origin->getFamily());
-        $this->option->setStatus($origin->getStatus());
+        $this->option->setOptionStatus($origin->getOptionStatus());
 
         // Set sort order
         $maxSortOrder = $this->optionMapper->getMaxSortOrder($origin->getTargetId());
@@ -810,14 +810,14 @@ class OptionService
         switch ($action) {
             case 'save_draft':
                 $option->setAccess(Option::ACCESS_PRIVATE);
-                $option->setStatus('draft');
+                $option->setOptionStatus('draft');
                 $option->setUpdated($timestamp);
                 $option = $this->optionMapper->update($option);
                 break;
 
             case 'submit':
                 $option->setAccess(Option::ACCESS_PUBLIC);
-                $option->setStatus('published');
+                $option->setOptionStatus('published');
                 $option->setUpdated($timestamp);
                 $option = $this->optionMapper->update($option);
                 break;
