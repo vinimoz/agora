@@ -173,6 +173,7 @@ interface Props {
   itemType: 'inquiry' | 'option'
   context?: any
   showQuorum?: boolean
+  viewOnly?: boolean
   showDetailsOnHover?: boolean
   iconSize?: number
   tooltipTitle?: string
@@ -183,7 +184,8 @@ const props = withDefaults(defineProps<Props>(), {
   showDetailsOnHover: true,
   iconSize: 22,
   tooltipTitle: t('agora', 'Support Breakdown'),
-   context: () => ({})
+  context: () => ({}),
+  viewOnly: false  
 })
 
 // Refs
@@ -300,9 +302,8 @@ const clearTimeouts = () => {
   }
 }
 
-// Toggle support method - SIMPLIFIED
 const toggleSupport = async () => {
-  if (!canSupport.value) {
+  if (!canSupport.valuei || props.viewOnly) {
     return
   }
   
@@ -312,7 +313,7 @@ const toggleSupport = async () => {
   try {
     const supportsStore = useSupportsStore()
     const sessionStore = useSessionStore()
-    
+     
     await supportsStore.toggleSupport(
       props.item.id, 
       sessionStore.currentUser.id, 

@@ -33,11 +33,13 @@
       <div class="family-header">
         <h2 class="family-title">{{ activeFamilyData.label }}</h2>
         <p class="family-text">{{ activeFamilyData.description }}</p>
-        <!-- Action Bar for creating options -->
+
+
         <div
-          v-if="activeFamilyData.optionTypes.length > 0 && (!isReadOnly || (activeFamilyData.isOfficial && inquiryStore.user?.isOfficial))"
+          v-if="'(activeFamilyData.optionTypes.length > 0 && (!isReadOnly || (activeFamilyData.isOfficial && inquiryStore.user?.isOfficial)))"
           class="family-actions-bar"
         >
+        <!-- Action Bar for creating options -->
           <NcButton
             v-for="optionType in activeFamilyData.optionTypes"
             :key="optionType.option_type"
@@ -50,9 +52,6 @@
             </template>
             + {{ optionType.label || optionType.option_type }}
           </NcButton>
-        </div>
-
-        <!-- Read-only indicator for official families -->
         <div
           v-else-if="isReadOnly && activeFamilyData.isOfficial"
           class="read-only-indicator"
@@ -94,8 +93,8 @@
       @close="closeAddOptionModal"
       @created="handleOptionCreated"
     />
-    <OptionDetailModal
-      v-if="showOptionDetail && !isReadOnly"
+    <OptionDetailModal 
+      v-if="showOptionDetail && !isReadonly"
       :option-id="selectedOptionId"
       :inquiry-id="inquiryStore.id"
       @close="closeOptionDetail"
@@ -105,8 +104,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch, markRaw } from 'vue'
-import type { DefineComponent } from 'vue'
+import { ref, computed, onMounted, watch, markRaw, DefineComponent } from 'vue'
 import { useRoute } from 'vue-router'
 import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
@@ -127,7 +125,7 @@ import FamilyLayoutConsensusFlow from './FamilyLayouts/FamilyLayoutConsensusFlow
 import FamilyLayoutKanban from './FamilyLayouts/FamilyLayoutKanban.vue'
 import FamilyLayoutTimeline from './FamilyLayouts/FamilyLayoutTimeline.vue'
 
-
+  
 // Import option cards and modals
 import AddOptionModal from './AddOptionModal.vue'
 import OptionDetailModal from './OptionDetailModal.vue'
@@ -154,8 +152,10 @@ const selectedOptionTypeKey = ref<string | null>(null)
 const selectedParentId = ref<number | null>(null)
 const selectedOptionId = ref<number | null>(null)
 
+
 // Computed
-const isReadOnly = computed(() => route.name === 'publicInquiry')
+const isReadOnly = computed(() => route.name === 'inquiryPublic')
+
 
 // Layout component registry
 const layoutComponents: Record<string, DefineComponent> = {
@@ -177,14 +177,14 @@ const allInquiryTypes = computed<InquiryType[]>(() =>
   sessionStore.appSettings?.inquiryTypeTab || []
 )
 
-const allOptionTypes = computed<OptionType[]>(() =>
+const allOptionTypes = computed<OptionType[]>(() => 
   sessionStore.appSettings?.inquiryOptionTypeTab || []
 )
 
 // Get families with their option types
 const familiesWithOptions = computed(() => {
   const inquiryTypeKey = inquiryStore.type
-
+  
   if (!inquiryTypeKey || !allInquiryTypes.value?.length || !allOptionTypes.value?.length) {
     return []
   }
@@ -201,8 +201,7 @@ const familiesWithOptions = computed(() => {
     label: t('agora', family.label),
     description: t('agora', family.description),
     // Get layout_ux for this family (from first option type or family config)
-    layout_ux: family.layout_ux || getLayoutForFamily(family.key),
-    isOfficial: family.isOfficial || false
+    layout_ux: family.layout_ux || getLayoutForFamily(family.key)
   }))
 })
 
@@ -216,7 +215,7 @@ const activeFamilyData = computed(() => {
 // Get current layout component based on active family's layout_ux
 const currentFamilyLayout = computed(() => {
   if (!activeFamilyData.value) return layoutComponents.default
-
+  
   const layoutKey = activeFamilyData.value.layout_ux || 'default'
   return layoutComponents[layoutKey] || layoutComponents.default
 })
@@ -236,9 +235,9 @@ const familyCounts = computed(() => {
 // Get options for active family
 const activeFamilyOptions = computed(() => {
   if (!activeFamilyData.value) return []
-
+  
   const familyOptionTypeKeys = activeFamilyData.value.optionTypes.map(opt => opt.option_type)
-
+  
   return optionsStore.options.filter(option =>
     familyOptionTypeKeys.includes(option.type)
   )
@@ -261,11 +260,6 @@ const setActiveFamily = (familyKey: string) => {
 }
 
 const openAddOptionModal = (optionTypeKey: string, parentId?: number) => {
-  // Prevent opening modal in read-only mode
-  if (isReadOnly.value) {
-    return
-  }
-
   if (!optionTypeKey) {
     console.error('Cannot open add option modal: optionTypeKey is undefined')
     return
@@ -282,11 +276,6 @@ const closeAddOptionModal = () => {
 }
 
 const openOptionDetail = (option: Option) => {
-  // Prevent opening detail modal in read-only mode
-  if (isReadOnly.value) {
-    return
-  }
-
   selectedOptionId.value = option.id
   showOptionDetail.value = true
 }
@@ -387,7 +376,7 @@ watch(() => inquiryStore.type, () => {
         background: var(--color-primary-light);
         border-color: var(--color-primary-element);
         color: var(--color-primary-element);
-
+        
         .tab-icon {
           background: var(--color-primary-element);
           color: white !important;
@@ -461,22 +450,6 @@ watch(() => inquiryStore.type, () => {
         }
       }
     }
-
-    .read-only-indicator {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 16px;
-      background: var(--color-background-dark);
-      border-radius: 12px;
-      color: var(--color-text-lighter);
-      font-size: 14px;
-      margin-top: 8px;
-
-      svg {
-        color: var(--color-primary-element);
-      }
-    }
   }
 }
 
@@ -519,7 +492,7 @@ watch(() => inquiryStore.type, () => {
 
   .family-actions-bar {
     flex-direction: column;
-
+    
     .create-option-btn {
       width: 100%;
       justify-content: center;

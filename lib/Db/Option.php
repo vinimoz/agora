@@ -324,7 +324,7 @@ class Option extends EntityWithUser implements JsonSerializable
 
         // Check for public share access
         $share = $this->userSession->getShare();
-        if ($share->getId() && $share->getOptionId() === $this->getId()) {
+        if ($share->getId()) {
             return true;
         }
 
@@ -344,7 +344,7 @@ class Option extends EntityWithUser implements JsonSerializable
 
         // Check for public share access
         $share = $this->userSession->getShare();
-        if ($share->getId() && $share->getOptionId() === $this->getId()) {
+        if ($share->getId()) {
             // For public shares, respect the showResults setting
             if ($this->getShowResults() === self::SHOW_RESULTS_ALWAYS) {
                 return true;
@@ -483,11 +483,12 @@ class Option extends EntityWithUser implements JsonSerializable
     {
         return $this->childs;
     }
-
+/*
     public function getOptionId(): int
     {
         return $this->getId();
     }
+ */
 
     public function getUserId(): string
     {

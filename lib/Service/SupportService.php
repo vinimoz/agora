@@ -34,12 +34,17 @@ class SupportService
     /**
      * @return Support[]
      */
-    public function list(int $inquiryId): array
+    public function list(int $inquiryId, bool $wRoles = true): array
     {
         try {
+            if ($wroles) {
             $this->inquiryMapper
-                ->get($inquiryId, withRoles: true)
+                ->get($inquiryId, withRoles: $wRoles)
                 ->request(Inquiry::PERMISSION_SUPPORT_ADD);
+            }
+            else {
+              $this->inquiryMapper->get($inquiryId, withRoles: $wRoles);
+            }
         } catch (Exception $e) {
             return [];
         }

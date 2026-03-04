@@ -14,6 +14,7 @@ use OCA\Agora\AppConstants;
 use OCA\Agora\Db\Share;
 use OCA\Agora\Db\ShareMapper;
 use OCA\Agora\Db\UserMapper;
+use OCA\Agora\Db\InquiryMapper;
 use OCA\Agora\Db\SupportMapper;
 use OCA\Agora\Exceptions\ForbiddenException;
 use OCA\Agora\Exceptions\InvalidUsernameException;
@@ -56,6 +57,7 @@ class SystemService
         private LoggerInterface $logger,
         private ShareMapper $shareMapper,
         private SupportMapper $supportMapper,
+        private InquiryMapper $inquiryMapper,
         private UserMapper $userMapper,
         private SystemSettings $systemSettings,
     ) {
@@ -321,8 +323,8 @@ class SystemService
             }
         }
         // get all participants
-        foreach ($this->supportMapper->findParticipantsByInquiry($share->getInquiryId()) as $support) {
-            if ($support->getUser()->hasName($compareUserName)) {
+        foreach ($this->inquiryMapper->findParticipantsByInquiry($share->getInquiryId()) as $inquiry) {
+            if ($inquiry->getUser()->hasName($compareUserName)) {
                 throw new InvalidUsernameException();
             }
         }

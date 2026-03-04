@@ -8,20 +8,15 @@ import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 
 import { Logger } from '../helpers/index.ts'
-import { OptionsAPI, PublicAPI } from '../Api/index.ts'
+import { OptionsAPI } from '../Api/index.ts'
 import { Option } from './option.ts'
 import { OptionFamily, Event, InquiryOptionType } from '../Types/index.ts'
 import { useInquiryStore } from './inquiry.ts'
 import { useSessionStore } from './session.ts'
-import { useCommentsStore } from './comments.ts'
-import { useAppSettingsStore } from './appSettings.ts'
 import { AxiosError } from '@nextcloud/axios'
 import {
     getFamilyColor,
-    getFamiliesWithOptionTypes,
-    getFamilyFallbackData,
-    getFamilyIconComponent,
-    getFamilyIconName
+    getFamiliesWithOptionTypes
 } from '../helpers/modules/InquiryOptionHelper.ts'
 
 export type OptionGroup = {
@@ -71,103 +66,62 @@ export const useOptionsStore = defineStore('options', {
             return sessionStore.appSettings?.inquiryOptionTypeTab || {}
         },
 
-        // Get option types as array
-        getOptionTypesArray(): InquiryOptionType[] {
-            const sessionStore = useSessionStore()
-            const types = sessionStore.appSettings?.inquiryOptionTypeTab || {}
-            return Object.values(types)
-        },
-
-        // Get families from option types using helper
+        // Get families from option types
         getFamilies(): OptionFamily[] {
-            const appSettingsStore = useAppSettingsStore()
-            const optionTypesArray = this.getOptionTypesArray
-            
-            // Get families from appSettings first
-            const familiesFromSettings = appSettingsStore.settings?.optionFamilyTab || []
-            
-            // Create a map of families with their data
+            const types = this.getOptionTypes
             const familiesMap: Record<string, OptionFamily> = {}
-            
-            // Add families from settings
-            familiesFromSettings.forEach((family: any) => {
-                familiesMap[family.family_type] = {
-                    key: family.family_type,
-                    name: family.label || family.family_type,
-                    label: family.label,
-                    description: family.description || '',
-                    color: getFamilyColor(family.family_type),
-                    icon: family.icon || 'File',
-                    sortOrder: family.sort_order || 999,
-                    types: []
-                }
-            })
-            
+
             // Group types by family
-            optionTypesArray.forEach((type: InquiryOptionType) => {
-                const familyKey = type.family || 'default'
-                
-                if (!familiesMap[familyKey]) {
-                    // Use fallback data if family not in settings
-                    const fallbackData = getFamilyFallbackData()
-                    const fallback = fallbackData[familyKey] || fallbackData.default
-                    
-                    familiesMap[familyKey] = {
-                        key: familyKey,
-                        name: fallback.name || familyKey,
-                        label: fallback.label,
-                        description: fallback.description || '',
-                        color: getFamilyColor(familyKey),
-                        icon: fallback.icon || 'File',
-                        sortOrder: 999,
+            Object.values(types).forEach((type: InquiryOptionType) => {
+                if (!familiesMap[type.family]) {
+                    familiesMap[type.family] = {
+                        key: type.family,
+                        name: this.getFamilyName(type.family),
+                        description: this.getFamilyDescription(type.family),
+                        color: this.getFamilyColor(type.family),
+                        icon: this.getFamilyIcon(type.family),
+                        sortOrder: this.getFamilySortOrder(type.family),
                         types: []
                     }
                 }
-                
-                if (!familiesMap[familyKey].types) {
-                    familiesMap[familyKey].types = []
-                }
-                familiesMap[familyKey].types.push(type)
+                familiesMap[type.family].types.push(type)
             })
 
             // Sort families and types within each family
             return Object.values(familiesMap)
-                .sort((a, b) => (a.sortOrder || 999) - (b.sortOrder || 999))
+                .sort((a, b) => a.sortOrder - b.sortOrder)
                 .map(family => ({
                     ...family,
-                    types: (family.types || []).sort((a, b) => 
-                        (a.sortOrder || 999) - (b.sortOrder || 999)
-                    )
+                    types: family.types.sort((a, b) => a.sortOrder - b.sortOrder)
                 }))
         },
 
-        getFamiliesWithTypes(): Array<OptionFamily & {
-            types: InquiryOptionType[]
-            color: string
-        }> {
-            const inquiryStore = useInquiryStore()
-            const sessionStore = useSessionStore()
-            const optionTypesArray = this.getOptionTypesArray
+    getFamiliesWithTypes(): Array<OptionFamily & {
+        types: InquiryOptionType[]
+        color: string
+    }> {
+        const families = this.getFamilies
+        const inquiryStore = useInquiryStore()
+        const sessionStore = useSessionStore()
 
-            // Use helper to get organized families
-            const familiesFromHelper = getFamiliesWithOptionTypes(
-                inquiryStore.type,
-                sessionStore.appSettings?.inquiryTypeTab || {},
-                optionTypesArray
-            )
+        // Use helper to get organized families
+        const familiesFromHelper = getFamiliesWithOptionTypes(
+            inquiryStore.type,
+            sessionStore.appSettings?.inquiryTypeTab || {},
+            this.getOptionTypes
+        )
 
-            // Map to include colors and ensure proper structure
-            return familiesFromHelper.map(familyHelper => ({
-                key: familyHelper.key,
-                name: familyHelper.name,
-                label: familyHelper.label,
-                description: familyHelper.description,
+        // Map to include colors
+        return familiesFromHelper.map(familyHelper => {
+            const sessionFamily = families.find(f => f.key === familyHelper.key)
+
+            return {
+                ...(sessionFamily || familyHelper),
                 color: getFamilyColor(familyHelper.key),
-                icon: familyHelper.icon,
-                sortOrder: familyHelper.sortOrder || 999,
-                types: familyHelper.optionTypes || []
-            }))
-        },
+                types: familyHelper.optionType || []
+            }
+        })
+    },
 
         // Get options by specific type
         getOptionsByType: (state) => (typeKey: string): Option[] =>
@@ -211,16 +165,19 @@ export const useOptionsStore = defineStore('options', {
             return typeInfo?.allowed_child_types?.includes(childType) || false
         },
 
-        // Get all allowed types for creating new options
-        getAllowedTypes(): InquiryOptionType[] {
-            const sessionStore = useSessionStore()
-            const types = sessionStore.appSettings?.inquiryOptionTypeTab || {}
-            
-            return Object.values(types)
-                .filter(() => true)
-                .sort((a, b) => a.sortOrder - b.sortOrder)
-        },
-
+// Get all allowed types for creating new options
+getAllowedTypes(): InquiryOptionType[] {
+    const sessionStore = useSessionStore()
+    const types = sessionStore.appSettings?.inquiryOptionTypeTab || {}
+    
+    return Object.values(types)
+        .filter(() => 
+            // Check if type is allowed for current inquiry type
+            // Add logic here to filter types based on inquiry type if needed
+            true
+        )
+        .sort((a, b) => a.sortOrder - b.sortOrder)
+},
         // Get types by family
         getTypesByFamily(): Record<string, InquiryOptionType[]> {
             const families: Record<string, InquiryOptionType[]> = {}
@@ -270,14 +227,14 @@ export const useOptionsStore = defineStore('options', {
         // Check if can add options
         canAddOptions(): boolean {
             const inquiryStore = useInquiryStore()
-            return inquiryStore.permissions?.addOptions || false
+            return inquiryStore.permissions.addOptions || false
         },
 
         // Get options created by current user
         userCreatedOptions(): Option[] {
             const sessionStore = useSessionStore()
             return this.options.filter(option =>
-                option.owner?.id === sessionStore.currentUser?.id
+                option.owner.id === sessionStore.currentUser.id
             )
         },
 
@@ -286,39 +243,69 @@ export const useOptionsStore = defineStore('options', {
             const sessionStore = useSessionStore()
             return this.options.filter(option =>
                 option.currentUserStatus?.hasSupported &&
-                option.currentUserStatus.userId === sessionStore.currentUser?.id
+                option.currentUserStatus.userId === sessionStore.currentUser.id
             )
         },
 
-        // Ces getters sont maintenant simplifiés car ils utilisent le helper
-        // mais on les garde pour la compatibilité
+        // Helper getters for family display properties
         getFamilyName: () => (familyKey: string): string => {
-            const fallbackData = getFamilyFallbackData()
-            return fallbackData[familyKey]?.name || fallbackData.default?.name || familyKey
+            const familyNames: Record<string, string> = {
+                'deliberative': t('agora', 'Deliberative'),
+                'consultative': t('agora', 'Consultative'),
+                'creative': t('agora', 'Creative'),
+                'administrative': t('agora', 'Administrative'),
+                'technical': t('agora', 'Technical'),
+                'other': t('agora', 'Other')
+            }
+            return familyNames[familyKey] || familyKey
         },
 
         getFamilyDescription: () => (familyKey: string): string => {
-            const fallbackData = getFamilyFallbackData()
-            return fallbackData[familyKey]?.description || fallbackData.default?.description || ''
+            const familyDescriptions: Record<string, string> = {
+                'deliberative': t('agora', 'Discussion, arguments, and proposals'),
+                'consultative': t('agora', 'Questions and feedback gathering'),
+                'creative': t('agora', 'Ideas and innovative suggestions'),
+                'administrative': t('agora', 'Procedural and organizational matters'),
+                'technical': t('agora', 'Technical details and implementation'),
+                'other': t('agora', 'Other types of contributions')
+            }
+            return familyDescriptions[familyKey] || ''
         },
 
         getFamilyColor: () => (familyKey: string): string => {
-            return getFamilyColor(familyKey)
+            const familyColors: Record<string, string> = {
+                'deliberative': '#4a86e8', // Blue
+                'consultative': '#6aa84f', // Green
+                'creative': '#f1c232',    // Yellow
+                'administrative': '#a64d79', // Purple
+                'technical': '#e69138',    // Orange
+                'other': '#999999'         // Gray
+            }
+            return familyColors[familyKey] || '#cccccc'
         },
 
         getFamilyIcon: () => (familyKey: string): string => {
-            return getFamilyIconName(familyKey)
-        },
-
-        getFamilyIconComponent: () => (familyKey: string): any => {
-            return getFamilyIconComponent(familyKey)
+            const familyIcons: Record<string, string> = {
+                'deliberative': 'icon-discussion',
+                'consultative': 'icon-question',
+                'creative': 'icon-lightbulb',
+                'administrative': 'icon-settings',
+                'technical': 'icon-code',
+                'other': 'icon-category-other'
+            }
+            return familyIcons[familyKey] || 'icon-file'
         },
 
         getFamilySortOrder: () => (familyKey: string): number => {
-            const appSettingsStore = useAppSettingsStore()
-            const families = appSettingsStore.settings?.optionFamilyTab || []
-            const family = families.find((f: any) => f.family_type === familyKey)
-            return family?.sort_order || 999
+            const familyOrder: Record<string, number> = {
+                'deliberative': 1,
+                'consultative': 2,
+                'creative': 3,
+                'administrative': 4,
+                'technical': 5,
+                'other': 99
+            }
+            return familyOrder[familyKey] || 100
         },
     },
 
@@ -328,20 +315,21 @@ export const useOptionsStore = defineStore('options', {
         },
         
         forceUpdateCommentCount() {
-            const commentsStore = useCommentsStore()
-            
-            if (this.id && this.targetId) {
-                const count = commentsStore.comments.filter(
-                    comment => comment.inquiryId === this.targetId && 
-                               comment.optionId === this.id && 
-                               comment.deleted === 0
-                ).length
-                
-                if (this.status) {
-                    this.status.countComments = count
-                }
-            }
-        },
+    const commentsStore = useCommentsStore()
+    
+    if (this.id && this.targetId) {
+      const count = commentsStore.comments.filter(
+        comment => comment.inquiryId === this.targetId && 
+                   comment.optionId === this.id && 
+                   comment.deleted === 0
+      ).length
+      
+      
+      if (this.status) {
+        this.status.countComments = count
+      }
+    }
+  },
 
         // Initialize option types from session store
         initializeOptionTypes(): void {
@@ -356,12 +344,11 @@ export const useOptionsStore = defineStore('options', {
         },
 
         // Load all options for current inquiry
-        async load(inquiryId?: number, token?: string): Promise<void> {
+        async load(inquiryId?: number): Promise<void> {
             const inquiryStore = useInquiryStore()
-            const sessionStore = useSessionStore()
             const targetId = inquiryId || inquiryStore.id
 
-            if (!targetId && !token) {
+            if (!targetId) {
                 this.error = t('agora', 'No inquiry selected')
                 return
             }
@@ -373,16 +360,9 @@ export const useOptionsStore = defineStore('options', {
                 // Initialize option types first
                 this.initializeOptionTypes()
 
-                // Load options - handle both authenticated and public routes
-                const response = await (() => {
-                    if (token || sessionStore.route?.name === 'publicInquiry') {
-                        const publicToken = token || sessionStore.route?.params?.token as string
-                        return PublicAPI.getOptions(publicToken)
-                    }
-                    return OptionsAPI.getOptionsByInquiry(targetId)
-                })()
-
-                this.options = response.data.options || []
+                // Load options
+                const response = await OptionsAPI.getOptionsByInquiry(targetId)
+                this.options = response.data.options
                 this.lastUpdated = Date.now()
 
                 // Organize options by family
@@ -398,7 +378,7 @@ export const useOptionsStore = defineStore('options', {
                     return
                 }
                 this.error = t('agora', 'Failed to load options')
-                Logger.error('Error loading options:', { error, inquiryId: targetId, token })
+                Logger.error('Error loading options:', { error, inquiryId: targetId })
                 throw error
             } finally {
                 this.loading = false
@@ -426,6 +406,7 @@ export const useOptionsStore = defineStore('options', {
                     }
                     this.optionsByFamily[familyKey].push(option)
                 } else {
+                    // If type not found, put in 'other' family
                     if (!this.optionsByFamily.other) {
                         this.optionsByFamily.other = []
                     }
@@ -448,8 +429,8 @@ export const useOptionsStore = defineStore('options', {
                     if (typeOptions.length > 0) {
                         groups.push({
                             id: type.sortOrder || 0,
-                            name: type.name || type.label || type.key,
-                            description: type.description || '',
+                            name: type.name,
+                            description: type.description,
                             family: family.key,
                             color: type.color || family.color,
                             icon: type.icon || family.icon,
@@ -477,24 +458,7 @@ export const useOptionsStore = defineStore('options', {
                 })
             }
 
-            // Sort groups by sort order
-            this.groups = groups.sort((a, b) => a.id - b.id)
-        },
-
-        // Update a single option in the store
-        updateOption(payload: { option: Option }): void {
-            const index = this.options.findIndex(
-                (option) => option.id === payload.option.id
-            )
-
-            if (index < 0) {
-                this.options.push(payload.option)
-            } else {
-                this.options.splice(index, 1, payload.option)
-            }
-            
-            // Reorganize after update
-            this.organizeByFamily()
+            this.groups = groups
         },
 
         // Add a new option with type validation
@@ -508,17 +472,20 @@ export const useOptionsStore = defineStore('options', {
             const inquiryStore = useInquiryStore()
             const sessionStore = useSessionStore()
 
+            // Check permissions
             if (!this.canAddOptions) {
                 showError(t('agora', 'You do not have permission to add options'))
                 return
             }
 
+            // Validate option type exists
             const typeInfo = sessionStore.appSettings?.inquiryOptionTypeTab?.[payload.type]
             if (!typeInfo) {
                 showError(t('agora', 'Invalid option type'))
                 return
             }
 
+            // Validate parent type if parentId is provided
             if (payload.parentId) {
                 const parentOption = this.options.find(opt => opt.id === payload.parentId)
                 if (parentOption) {
@@ -532,26 +499,14 @@ export const useOptionsStore = defineStore('options', {
             }
 
             try {
-                const response = await (() => {
-                    if (sessionStore.route?.name === 'publicInquiry') {
-                        const token = sessionStore.route.params.token as string
-                        return PublicAPI.createOption(token, {
-                            title: payload.title,
-                            text: payload.text,
-                            type: payload.type,
-                            parentId: payload.parentId || 0,
-                            miscFields: payload.miscFields || {}
-                        })
-                    }
-                    return OptionsAPI.createOption({
-                        title: payload.title,
-                        text: payload.text,
-                        type: payload.type,
-                        targetId: inquiryStore.id,
-                        parentId: payload.parentId || 0,
-                        miscFields: payload.miscFields || {}
-                    })
-                })()
+                const response = await OptionsAPI.createOption({
+                    title: payload.title,
+                    text: payload.text,
+                    type: payload.type,
+                    targetId: inquiryStore.id,
+                    parentId: payload.parentId || 0,
+                    miscFields: payload.miscFields || {}
+                })
 
                 const newOption = response.data.option
                 this.options.push(newOption)
@@ -569,119 +524,6 @@ export const useOptionsStore = defineStore('options', {
                     return
                 }
                 Logger.error('Error adding option:', { error, payload })
-                throw error
-            }
-        },
-
-        // Update an existing option
-        async update(payload: { option: Option }): Promise<void> {
-            const sessionStore = useSessionStore()
-            
-            try {
-                const response = await (() => {
-                    if (sessionStore.route?.name === 'publicInquiry') {
-                        const token = sessionStore.route.params.token as string
-                        return PublicAPI.updateOption(token, payload.option)
-                    }
-                    return OptionsAPI.updateOption(payload.option)
-                })()
-
-                this.updateOption({ option: response.data.option })
-            } catch (error) {
-                Logger.error('Error updating option', { error, payload })
-                this.load()
-                throw error
-            }
-        },
-
-        // Delete an option
-        async delete(payload: { option: Option }): Promise<void> {
-            const sessionStore = useSessionStore()
-            
-            try {
-                const response = await (() => {
-                    if (sessionStore.route?.name === 'publicInquiry') {
-                        const token = sessionStore.route.params.token as string
-                        return PublicAPI.deleteOption(token, payload.option.id)
-                    }
-                    return OptionsAPI.deleteOption(payload.option.id)
-                })()
-
-                this.updateOption({ option: response.data.option })
-            } catch (error) {
-                if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-                    return
-                }
-                Logger.error('Error deleting option', { error, payload })
-                throw error
-            }
-        },
-
-        // Restore a deleted option
-        async restore(payload: { option: Option }): Promise<void> {
-            const sessionStore = useSessionStore()
-            
-            try {
-                const response = await (() => {
-                    if (sessionStore.route?.name === 'publicInquiry') {
-                        const token = sessionStore.route.params.token as string
-                        return PublicAPI.restoreOption(token, payload.option.id)
-                    }
-                    return OptionsAPI.restoreOption(payload.option.id)
-                })()
-
-                this.updateOption({ option: response.data.option })
-            } catch (error) {
-                if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-                    return
-                }
-                Logger.error('Error restoring option', { error, payload })
-                throw error
-            }
-        },
-
-        // Add support to an option
-        async support(optionId: number): Promise<void> {
-            const sessionStore = useSessionStore()
-            
-            try {
-                const response = await (() => {
-                    if (sessionStore.route?.name === 'publicInquiry') {
-                        const token = sessionStore.route.params.token as string
-                        return PublicAPI.supportOption(token, optionId)
-                    }
-                    return OptionsAPI.supportOption(optionId)
-                })()
-
-                this.updateOption({ option: response.data.option })
-            } catch (error) {
-                if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-                    return
-                }
-                Logger.error('Error supporting option', { error, optionId })
-                throw error
-            }
-        },
-
-        // Remove support from an option
-        async unsupport(optionId: number): Promise<void> {
-            const sessionStore = useSessionStore()
-            
-            try {
-                const response = await (() => {
-                    if (sessionStore.route?.name === 'publicInquiry') {
-                        const token = sessionStore.route.params.token as string
-                        return PublicAPI.unsupportOption(token, optionId)
-                    }
-                    return OptionsAPI.unsupportOption(optionId)
-                })()
-
-                this.updateOption({ option: response.data.option })
-            } catch (error) {
-                if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-                    return
-                }
-                Logger.error('Error unsupporting option', { error, optionId })
                 throw error
             }
         },
@@ -713,7 +555,7 @@ export const useOptionsStore = defineStore('options', {
 
             if (!parentTypeInfo?.allowed_child_types) return []
 
-            return parentTypeInfo.allowed_child_types
+                return parentTypeInfo.allowed_child_types
                 .map(typeKey => sessionStore.appSettings?.inquiryOptionTypeTab?.[typeKey])
                 .filter(Boolean)
                 .sort((a, b) => (a?.sortOrder || 0) - (b?.sortOrder || 0))
@@ -731,9 +573,9 @@ export const useOptionsStore = defineStore('options', {
 
             if (typeInfo) {
                 return {
-                    name: typeInfo.name || typeInfo.label || typeKey,
-                    color: typeInfo.color || getFamilyColor(typeInfo.family),
-                    icon: typeInfo.icon || 'File',
+                    name: typeInfo.name,
+                    color: typeInfo.color || this.getFamilyColor(typeInfo.family),
+                    icon: typeInfo.icon,
                     family: typeInfo.family
                 }
             }
@@ -741,7 +583,7 @@ export const useOptionsStore = defineStore('options', {
             return {
                 name: typeKey,
                 color: '#999999',
-                icon: 'File',
+                icon: 'icon-file',
                 family: 'other'
             }
         },
@@ -771,21 +613,19 @@ export const useOptionsStore = defineStore('options', {
 
                 return {
                     family: family.key,
-                    name: family.name || family.key,
-                    color: family.color || getFamilyColor(family.key),
-                    icon: family.icon || getFamilyIconName(family.key),
+                    name: family.name,
+                    color: family.color,
+                    icon: family.icon,
                     count: familyOptions.length,
                     totalSupports: familyOptions.reduce((total, option) =>
-                        total + (option.currentUserStatus?.countSupports || 0), 0),
-                    totalComments: familyOptions.reduce((total, option) =>
-                        total + (option.currentUserStatus?.countComments || 0), 0),
-                    types: Object.entries(typeCounts).map(([type, count]) => ({
-                        type,
-                        name: this.getOptionTypeInfo(type)?.name || 
-                               this.getOptionTypeInfo(type)?.label || 
-                               type,
-                        count
-                    }))
+                                                        total + (option.currentUserStatus?.countSupports || 0), 0),
+                                                        totalComments: familyOptions.reduce((total, option) =>
+                                                                                            total + (option.currentUserStatus?.countComments || 0), 0),
+                                                                                            types: Object.entries(typeCounts).map(([type, count]) => ({
+                                                                                                type,
+                                                                                                name: this.getOptionTypeInfo(type)?.name || type,
+                                                                                                count
+                                                                                            }))
                 }
             }).filter(family => family.count > 0)
         },

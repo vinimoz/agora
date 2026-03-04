@@ -159,6 +159,15 @@ class AppSettings implements JsonSerializable
         'officialBypassModeration' => true,
         'navigationInquiriesInList' => false,
         'updateType' => $this->getUpdateType(),
+        'categoryTab' =>  $this->categoryService?->findAll() ?? [],
+        'locationTab' =>  $this->locationService?->findAll() ?? [],
+        'inquiryTypeTab' =>  $this->inquiryTypeService?->findAll() ?? [],
+        'inquiryGroupTypeTab' =>  $this->inquiryGroupTypeService?->findAll() ?? [],
+        'inquiryOptionTypeTab' =>  $this->inquiryOptionTypeService?->findAll() ?? [],
+        'inquiryFamilyTab' =>  $this->inquiryFamilyService?->findAll() ?? [],
+        'optionFamilyTab' =>  $this->optionFamilyService?->findAll() ?? [],
+        'inquiryStatusTab' =>  $this->inquiryStatusService?->findAll() ?? [],
+
         ];
 
         if ($this->userSession->getIsLoggedIn()) {

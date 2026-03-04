@@ -15,6 +15,7 @@ import { useAttachmentsStore } from '../../stores/attachments'
 import { BaseEntry, Event } from '../../Types/index.ts'
 import { DateTime } from 'luxon'
 import { t } from '@nextcloud/l10n'
+import { useRoute } from 'vue-router'
 import {
   getInquiryTypeData,
   isInquiryFinalStatus
@@ -50,6 +51,9 @@ const supportsStore = useSupportsStore()
 const inquiryStore = useInquiryStore()
 const inquiriesStore = useInquiriesStore()
 const attachmentsStore = useAttachmentsStore()
+const route = useRoute()
+
+
 const imageFileInput = ref(null)
 const currentCoverUrl = ref('')
 
@@ -437,7 +441,23 @@ const formatDate = (timestamp: number) => {
 // Computed permissions avec vérification
 const canCommentOnInquiry = computed(() => context.value ? canComment(context.value) : false)
 
-const canSupportInquiry = computed(() => context.value ? canSupport(context.value) : false)
+
+// Add this with your other computed properties
+const canSupportInquiry = computed(() => {
+  // You might have a context or permission check here
+  return context.value ? canSupport(context.value) : false
+})
+
+const viewOnlySupportInquiry = computed(() => {
+    // Check if user can support based on route
+  const isPublicRoute = ['publicInquiry', 'inquiryPublic', 'public-view'].includes(route.name as string)
+
+  // If it's a public route, users cannot support
+  if (isPublicRoute) {
+    return false
+  }
+})
+
 </script>
 
 <template>
@@ -569,6 +589,7 @@ const canSupportInquiry = computed(() => context.value ? canSupport(context.valu
               :item="inquiryStore"
               item-type="inquiry"
               :context="context"
+              :view-only="viewOnlySupportInquiry"
               :show-quorum="true"
               :show-details-on-hover="true"
               :icon-size="20"

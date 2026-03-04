@@ -314,4 +314,11 @@ class Share extends EntityWithUser implements JsonSerializable
         $miscSettings[$key] = $value;
         $this->setMiscSettingsArray($miscSettings);
     }
+    
+
+    public function setTimeZoneName(string $value): void {
+        $this->setMiscSettingsByKey('timeZone', $value);
+    }
+
+
 }

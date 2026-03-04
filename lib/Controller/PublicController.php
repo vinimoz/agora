@@ -102,13 +102,12 @@ class PublicController extends BaseController
             function () {
                 return [
                 'inquiry' => $this->inquiryService->get($this->userSession->getShare()->getInquiryId()),
-                'options' => $this->optionService->listByTargetId($this->userSession->getShare()->getInquiryId()),
-                'supports' => $this->supportService->list($this->userSession->getShare()->getInquiryId()),
+                //'options' => $this->optionService->listByTargetId($this->userSession->getShare()->getInquiryId()),
+                'supports' => $this->supportService->list($this->userSession->getShare()->getInquiryId(),false),
                 'comments' => $this->commentService->list($this->userSession->getShare()->getInquiryId()),
                 'shares' => $this->shareService->list($this->userSession->getShare()->getInquiryId()),
                 'subscribed' => $this->subscriptionService->get($this->userSession->getShare()->getInquiryId()),
                 'attachments' => $this->attachmentService->getAll($this->userSession->getShare()->getInquiryId(), 0),
-                'inquiryLink' => $this->inquiryLinkService->findByInquiryId($this->userSession->getShare()->getInquiryId()),
                 ];
             }
         );
@@ -239,7 +238,7 @@ class PublicController extends BaseController
     {
         return $this->response(
             fn () => [
-                'options' => $this->optionService->list($this->userSession->getShare()->getInquiryId())
+                'options' => $this->optionService->listByTargetId($this->userSession->getShare()->getInquiryId())
             ]
         );
     }

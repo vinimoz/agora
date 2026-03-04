@@ -348,6 +348,40 @@ export const useInquiryStore = defineStore('inquiry', {
         }
     },
 
+
+    async loadByToken(token: string): Promise<void> {
+        this.loading = true;
+        this.error = null;
+        const sessionStore = useSessionStore()
+        // const optionsStore = useOptionsStore()
+        const sharesStore = useSharesStore()
+        const commentsStore = useCommentsStore()
+        const attachmentsStore = useAttachmentsStore()
+        const subscriptionStore = useSubscriptionStore()
+
+        try {
+            console.log(" GET INQUIRY RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR",token)
+            const response = await PublicAPI.getInquiry(token);
+            console.log(" GET INQUIRY RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR",response.data)
+            
+            this.$patch(response.data.inquiry)
+
+
+            // optionsStore.options = response.data.options
+            sharesStore.shares = response.data.shares
+            commentsStore.comments = response.data.comments
+            subscriptionStore.subscribed = response.data.subscribed
+            attachmentsStore.attachments = response.data.attachments
+
+        } catch (error) {
+            this.error = error;
+            Logger.error('Error loading public inquiry', { error, token });
+            throw error;
+        } finally {
+            this.loading = false;
+        }
+    },
+
     async load(inquiryId: number | null = null): Promise<void> {
         const sessionStore = useSessionStore()
         const inquiriesStore = useInquiriesStore()
