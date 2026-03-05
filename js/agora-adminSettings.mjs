@@ -13,11 +13,11 @@
 const appName = "agora";
 const appVersion = "1.7.0-rc1";
 import { A as defineStore, aR as generateOcsUrl, aS as cancelableClient, d as defineComponent, q as translate, _ as _export_sfc, c as createElementBlock, o as openBlock, k as createBaseVNode, t as toDisplayString, T as Fragment, U as renderList, E as normalizeClass, l as createCommentVNode, B as createTextVNode, b as computed, s as onMounted, aV as ref, a7 as NcButton, aP as NcEmptyContent, ak as NcLoadingIcon, f as createBlock, j as createVNode, g as withCtx, w as watch, aM as NcModal, h as resolveDynamicComponent, i as mergeProps, a5 as withDirectives, a6 as vShow, aZ as vModelText, C as purify, ax as withModifiers, ai as resolveComponent, n as normalizeStyle, v as normalizeProps, x as guardReactiveProps, y as createApp, z as pinia } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_ef057a6f_lang-ByxkwFJZ.chunk.mjs";
-import { I as InputDiv, a as NcAppSettingsDialog, N as NcSettingsSection } from "./index-C9GwaKZE.chunk.mjs";
-import { L as Logger, d as useAppSettingsStore, e as gfmHeadingId, f as d, h as adminJobs, I as InquiryGeneralIcons, s as showError, S as StatusIcons } from "./NcDashboardWidget-DCBQdRFz-hRvlMd0o.chunk.mjs";
-import { F as FlexSettings } from "./FlexSettings-D8l90FDs.chunk.mjs";
+import { I as InputDiv, a as NcAppSettingsDialog, N as NcSettingsSection } from "./index-BVQeBrOi.chunk.mjs";
+import { L as Logger, d as useAppSettingsStore, e as gfmHeadingId, f as d, h as adminJobs, I as InquiryGeneralIcons, s as showError, S as StatusIcons } from "./NcDashboardWidget-DCBQdRFz-CnQ1rPoN.chunk.mjs";
+import { F as FlexSettings } from "./FlexSettings-D1dXnaAX.chunk.mjs";
 import { _ as _sfc_main$A, N as NcCheckboxRadioSwitch, a as NcSelect, b as NcInputField } from "./NcRichText-DJlaHs_Q-CkFlFrBZ.chunk.mjs";
-import { N as NcNoteCard, a as NcTextArea, R as RadioGroupDiv, C as CardDiv } from "./markdown-D2Gq6AGQ.chunk.mjs";
+import { N as NcNoteCard, a as NcTextArea, R as RadioGroupDiv, C as CardDiv } from "./markdown-ClBZBFUZ.chunk.mjs";
 const useTemplateWizardStore = defineStore("templateWizard", {
   state: () => ({
     isOpen: false,
@@ -518,7 +518,6 @@ const _sfc_main$y = /* @__PURE__ */ defineComponent({
     const selectTemplate = (template) => {
       wizardStore.selectTemplate(template);
     };
-    const formatCount = (count, label) => `${count} ${label}${count !== 1 ? "s" : ""}`;
     const triggerFileUpload = () => {
       fileInput.value?.click();
     };
@@ -587,7 +586,7 @@ const _sfc_main$y = /* @__PURE__ */ defineComponent({
     const toggleHelp = () => {
       showHelp.value = !showHelp.value;
     };
-    const __returned__ = { wizardStore, templates, isLoading, fileInput, uploadError, showHelp, selectTemplate, formatCount, triggerFileUpload, handleFileUpload, downloadSchema, downloadInstructions, toggleHelp, get t() {
+    const __returned__ = { wizardStore, templates, isLoading, fileInput, uploadError, showHelp, selectTemplate, triggerFileUpload, handleFileUpload, downloadSchema, downloadInstructions, toggleHelp, get t() {
       return translate;
     }, get NcLoadingIcon() {
       return NcLoadingIcon;
@@ -1385,12 +1384,6 @@ const _sfc_main$w = /* @__PURE__ */ defineComponent({
       }
       const labelKey = section.itemLabelKey;
       const labelValue = editingItemData.value[labelKey];
-      console.log("[TemplateWizard] getEditableLabelValue:", {
-        labelKey,
-        labelValue,
-        typeofLabel: typeof labelValue,
-        editingItemData: editingItemData.value
-      });
       if (labelValue === null || labelValue === void 0) {
         console.warn("[TemplateWizard] Label value is null/undefined for key:", labelKey);
         return "";
@@ -1398,7 +1391,6 @@ const _sfc_main$w = /* @__PURE__ */ defineComponent({
       if (typeof labelValue === "object" && !Array.isArray(labelValue)) {
         const lang = wizardStore.selectedLanguage || "en";
         const extracted = labelValue[lang] || labelValue.en || Object.values(labelValue).find((v) => typeof v === "string" && v !== "") || "";
-        console.log("[TemplateWizard] Extracted from multi-lang object:", extracted);
         return String(extracted);
       }
       return String(labelValue);
@@ -1406,7 +1398,6 @@ const _sfc_main$w = /* @__PURE__ */ defineComponent({
     const setEditableLabelValue = (section, newValue) => {
       if (!editingItemData.value) return;
       const labelKey = section.itemLabelKey;
-      console.log("[TemplateWizard] setEditableLabelValue:", { labelKey, newValue });
       editingItemData.value[labelKey] = newValue;
     };
     const getItemLabel = (item, section) => {
@@ -1465,10 +1456,6 @@ const _sfc_main$w = /* @__PURE__ */ defineComponent({
       const matchItem = (item) => item.type === itemType || item.identifier === itemType || item.key === itemType || item.id === itemType;
       const isNew = data.new?.some(matchItem);
       const isExisting = data.existing?.some(matchItem);
-      console.log(`[getItemStatus] ${sectionKey}/${itemType}: new=${isNew}, existing=${isExisting}`, {
-        newItems: data.new?.map((i) => i.type || i.identifier || i.key),
-        existingItems: data.existing?.map((i) => i.type || i.identifier || i.key)
-      });
       if (isNew) return "new";
       if (isExisting) return "existing";
       return "unknown";

@@ -159,7 +159,7 @@ export const useOptionStore = defineStore('option', {
       countSupports: 0,
       countNegativeSupports: 0,
       countNeutralSupports: 0,
-      countPostiveSupports: 0,
+      countPositiveSupports: 0,
       optionStatus: 'draft',
     },
         permissions: {
@@ -227,8 +227,7 @@ getters: {
     },
 
     hasChildren(): boolean {
-        return (this.childs && this.childs.length > 0) ||
-               (this.childs && this.childs.length > 0)
+        return (this.childs && this.childs.length > 0) 
     },
 
     childCount(): number {
@@ -392,6 +391,29 @@ actions: {
           option.status.countComments = count
         }
       })
+    },
+
+     // Helper method to get option by ID (would need to be implemented)
+    async getOptionById(optionId: number): Promise<Option | undefined> {
+        try {
+            if (optionId) {
+                const response = await OptionsAPI.getFullOption(optionId)
+        if (response) {
+            return response.data
+        }
+            }
+        } catch (error) {
+            if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+                return
+            }
+            Logger.error('Error getting option by the id :', {
+                error,
+                state: this.$state,
+            })
+            throw error
+        }
+
+    return undefined
     },
 
     async setOptionStatus(optionStatus: string): Promise<void> {

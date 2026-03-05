@@ -374,7 +374,7 @@ export const useTemplateWizardStore = defineStore('templateWizard', {
 			]
 
 			// Helper function to check if object is a multi-language object
-			const isMultiLangObject = (obj: any): boolean => {
+			const isMultiLangObject = (obj: unknown): boolean => {
 				if (!obj || typeof obj !== 'object' || Array.isArray(obj)) {
 					return false
 				}
@@ -389,7 +389,7 @@ export const useTemplateWizardStore = defineStore('templateWizard', {
 			}
 
 			// Helper function to extract language string from multi-language object
-			const extractLangString = (obj: any): string => {
+			const extractLangString = (obj: unknown): string => {
 				// Try selected language first (non-empty)
 				if (obj[language] !== undefined && obj[language] !== '') {
 					return obj[language]
@@ -408,8 +408,8 @@ export const useTemplateWizardStore = defineStore('templateWizard', {
 				return ''
 			}
 
-			// Recursive function to process any value
-			const processValue = (value: any, path: string = ''): any => {
+			// Recursive function to process unknown value
+			const processValue = (value: unknown, path: string = ''): unknown => {
 				if (value === null || value === undefined) {
 					return value
 				}
@@ -428,7 +428,7 @@ export const useTemplateWizardStore = defineStore('templateWizard', {
 
 				// Process objects recursively
 				if (typeof value === 'object') {
-					const processedObj: any = {}
+					const processedObj: unknown = {}
 					Object.keys(value).forEach(key => {
 						processedObj[key] = processValue(value[key], `${path}.${key}`)
 					})
@@ -442,7 +442,7 @@ export const useTemplateWizardStore = defineStore('templateWizard', {
 			sections.forEach(section => {
 				if (extracted[section] && Array.isArray(extracted[section])) {
 					Logger.info(`[extractLanguageText] Processing section: ${section} (${extracted[section].length} items)`)
-					extracted[section] = extracted[section].map((item: any, idx: number) => {
+					extracted[section] = extracted[section].map((item: unknown, idx: number) => {
 						const processed = processValue(item, `${section}[${idx}]`)
 						// Log first item's label for debugging
 						if (idx === 0 && processed.label !== undefined) {
@@ -457,7 +457,7 @@ export const useTemplateWizardStore = defineStore('templateWizard', {
 			return extracted
 		},
 
-		updateEditableItem(section: string, index: number, updatedItem: any) {
+		updateEditableItem(section: string, index: number, updatedItem: unknown) {
 			if (!this.editableData || !this.editableData[section]) {
 				return
 			}
@@ -471,7 +471,7 @@ export const useTemplateWizardStore = defineStore('templateWizard', {
 			this.editableData[section].splice(index, 1)
 		},
 
-		addEditableItem(section: string, item: any) {
+		addEditableItem(section: string, item: unknown) {
 			if (!this.editableData) {
 				return
 			}

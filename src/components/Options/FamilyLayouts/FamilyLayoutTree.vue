@@ -108,7 +108,8 @@
                         <!-- Content display -->
                         <div class="content-display">
                             <div class="text-content">
-                                <div v-if="activeNode.text && activeNode.text.trim()" class="text-text" v-html="formattedContent"></div>
+                                  <!-- eslint-disable-next-line vue/no-v-html -->
+                                <div v-if="activeNode.text && activeNode.text.trim()" class="text-text"  v-html="formattedContent"></div>
                                 <div v-else class="empty-content">
                                     <p>{{ t('agora', 'No content yet') }}</p>
                                 </div>
@@ -720,18 +721,17 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import NcRichContenteditable from '@nextcloud/vue/components/NcRichContenteditable'
 import SupportFeature from '../../../helpers/modules/SupportFeature.vue'
 import { DateTime } from 'luxon'
+import DOMPurify from 'dompurify'
 
 import { useInquiryStore } from '../../../stores/inquiry'
 import { useOptionsStore } from '../../../stores/options'
 import { useSessionStore } from '../../../stores/session'
-import { useSupportsStore } from '../../../stores/supports'
 import { useOptionStore } from '../../../stores/option'
 import { InquiryOptionIcons } from '../../../utils/icons.ts'
 import { showSuccess, showError } from '@nextcloud/dialogs'
 import { 
   createOptionContext,
   canEditOption,
-  canDeleteOption,
   canCommentOption,
   canSupportOption
 } from '../../../utils/permissions.ts'
@@ -752,23 +752,10 @@ import type { Option, OptionType, OptionStoreLike } from '../../../Types/index.t
 import AddOptionModal from '../AddOptionModal.vue'
 import OptionDetailModal from '../OptionDetailModal.vue'
 
-// Props
-interface Props {
-  inquiryId: number
-  useTitle?: boolean
-  useDescription?: boolean
-}
-
-const props = withDefaults(defineProps<Props>(), {
-  useTitle: true,
-  useDescription: true
-})
-
 // Stores
 const inquiryStore = useInquiryStore()
 const optionsStore = useOptionsStore()
 const sessionStore = useSessionStore()
-const supportsStore = useSupportsStore()
 const optionStore = useOptionStore()
 
 // State
@@ -785,20 +772,6 @@ const selectedParentId = ref<number | null>(null)
 
 // Get all option types
 const allOptionTypes = computed<OptionType[]>(() => sessionStore.appSettings?.inquiryOptionTypeTab || [])
-
-// Create context for active node
-const activeNodeContext = computed(() => {
-  if (!activeNode.value) return null
-
-  const optionLike: OptionStoreLike = {
-    owner: { id: activeNode.value.owner?.id || '' },
-    type: activeNode.value.type,
-    isDeleted: activeNode.value.isDeleted || false,
-    isArchived: activeNode.value.isArchived || false,
-  }
-
-  return createOptionContext(optionLike)
-})
 
 // Get structure family types (filter by family 'structure')
 const structureTypes = computed<OptionType[]>(() => 
@@ -831,14 +804,6 @@ const activeNode = computed<Option | null>(() => {
   return optionsStore.options.find(opt => opt.id === activeNodeId.value) || null
 })
 
-const formattedContent = computed(() => {
-  if (!activeNode.value?.text || !activeNode.value.text.trim()) return ''
-  return activeNode.value.text
-    .trim()
-    .replace(/\n/g, '<br>')
-})
-
-
 const getOptionTypeLabel = (type: string): string => getOptionTypeLabelHelper(type, allOptionTypes.value, type)
 
 const getOptionTypeIcon = (type: string) => getOptionTypeIconComponent(type, allOptionTypes.value)
@@ -860,12 +825,12 @@ const getChildren = (parentId: number): Option[] => {
 }
 
 const getAllowedResponseTypes = (nodeType: string): string[] => getAllowedResponses(nodeType, allOptionTypes.value)
-
+/*
 const canAddChild = (node: Option): boolean => {
   if (!node) return false
   const allowedResponses = getAllowedResponseTypes(node.type)
   return allowedResponses.length > 0
-}
+} */
 
 const getRootType = (): string => {
   const firstRoot = rootStructureTypes.value[0]
@@ -1007,34 +972,12 @@ const saveInlineEdit = async (node: Option): Promise<void> => {
   }
 }
 
-const toggleSupportForNode = async (node: Option): Promise<void> => {
-  if (!node || !hasSupportFeature(node) || !sessionStore.currentUser?.id) return
-
-  if (!canSupportNode(node)) {
-    showError(t('agora', 'You do not have permission to support this option'))
-    return
-  }
-
-  try {
-    await supportsStore.toggleSupport(
-      node.id, 
-      sessionStore.currentUser.id, 
-      node, 
-      optionsStore
-    )
-    
-    const index = optionsStore.options.findIndex(opt => opt.id === node.id)
-    if (index >= 0) {
-      optionsStore.options[index].status.countSupports = 
-        await supportsStore.getSupportCount(node.id)
-    }
-    
-    showSuccess(t('agora', 'Support updated'))
-  } catch (err) {
-    console.error('Failed to toggle support:', err)
-    showError(t('agora', 'Failed to update support'))
-  }
-}
+const formattedContent = computed(() => {
+  if (!activeNode.value?.text || !activeNode.value.text.trim()) return ''
+  return DOMPurify.sanitize(activeNode.value.text || '')
+    .trim()
+    .replace(/\n/g, '<br>')
+})
 
 const openNodeDetail = (node: Option): void => {
   if (editingNodeId.value) return
@@ -1051,14 +994,6 @@ const openAddOptionModal = (optionTypeKey: string, parentId?: number): void => {
   selectedOptionTypeKey.value = optionTypeKey
   selectedParentId.value = parentId || null
   showAddOptionModal.value = true
-}
-
-const openAddOptionModalForNode = (node: Option): void => {
-  if (editingNodeId.value) return
-  const allowedResponses = getAllowedResponseTypes(node.type)
-  if (allowedResponses.length > 0) {
-    openAddOptionModal(allowedResponses[0], node.id)
-  }
 }
 
 const openAddOptionModalForRoot = (): void => {

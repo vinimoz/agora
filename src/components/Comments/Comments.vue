@@ -8,11 +8,9 @@ import CommentItem from './CommentItem.vue'
 import { t } from '@nextcloud/l10n'
 import { usePreferencesStore } from '../../stores/preferences.ts'
 import { useCommentsStore } from '../../stores/comments.ts'
-import NcRichContenteditable from '@nextcloud/vue/components/NcRichContenteditable'
+import { Comment } from '../../Types/index.ts'
 
 
-const newCommentText = ref('')
-const isSubmitting = ref(false)
 const commentsStore = useCommentsStore()
 const preferencesStore = usePreferencesStore()
 
@@ -30,17 +28,17 @@ const updateTrigger = ref(0)
 const userPositions = new Map<string | number, 'left' | 'right'>()
 
 // Group comments by user + time proximity (within 60 seconds)
-function groupCommentsByUserAndTime(comments: any[]) {
+function groupCommentsByUserAndTime(comments: Comment[]) {
   if (!comments || comments.length === 0) return []
 
-  const groups: any[] = []
-  let currentGroup: any = null
+  const groups: Comment[] = []
+  let currentGroup: Comment = null
 
   for (let i = 0; i < comments.length; i++) {
     const comment = comments[i]
 
     // Skip if comment is invalid
-    if (!comment || !comment.user) continue
+    if (!comment || !comment.user) return []
 
     if (!currentGroup) {
       // Start first group
@@ -50,7 +48,7 @@ function groupCommentsByUserAndTime(comments: any[]) {
         timestamp: comment.timestamp,
         comments: [comment]
       }
-      continue
+      return []
     }
 
     const timeDiff = Math.abs(comment.timestamp - currentGroup.timestamp)
@@ -84,12 +82,11 @@ function getAvatarPosition(userId: string | number): 'left' | 'right' {
 
   // Determine new position
   let position: 'left' | 'right'
-  if (!lastPosition) {
-    // First time for this user - start with left
-    position = 'left'
+  if (lastPosition) {
+    position = lastPosition === 'left' ? 'right' : 'left'
   } else {
     // Alternate
-    position = lastPosition === 'left' ? 'right' : 'left'
+    position = 'left'
   }
 
   // Store for next time
@@ -136,21 +133,15 @@ const filteredComments = computed(() => {
 })
 
 // Improve the watch to detect all changes
-watch(() => commentsStore.comments, (newComments, oldComments) => {
-  console.log({
-    oldCount: oldComments?.length,
-    newCount: newComments?.length,
-    optionId: props.optionId,
-  });
-  updateTrigger.value++;
+watch(() => commentsStore.comments, () => {
+  updateTrigger.value = updateTrigger.value + 1;
 }, { deep: true, immediate: true });
-
 
 
 
 // Watch for changes in commentsStore.comments
 watch(() => commentsStore.comments, () => {
-  updateTrigger.value++
+  updateTrigger.value = updateTrigger.value + 1
 }, { deep: true })
 
 const cssVar = {

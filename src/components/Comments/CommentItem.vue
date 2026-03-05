@@ -29,13 +29,10 @@ const props = defineProps<{
   comment?: Comment
   group?: {
     userId: string | number
-    user: any
+    user: string
     timestamp: number
     comments: Comment[]
-    avatarPosition: 'left' | 'right'
   }
-  avatarPosition?: 'left' | 'right'
-  isGrouped?: boolean
 }>()
 
 // Safe computed properties with null checks
@@ -139,10 +136,10 @@ const position = computed(() => {
   const lastPosition = userPositionsGrouped.get(userId)
 
   let newPosition: 'left' | 'right'
-  if (!lastPosition) {
-    newPosition = 'left' // First time for this user
-  } else {
+  if (lastPosition) {
     newPosition = lastPosition === 'left' ? 'right' : 'left'
+  } else {
+    newPosition = 'left' // First time for this user
   }
 
   userPositionsGrouped.set(userId, newPosition)

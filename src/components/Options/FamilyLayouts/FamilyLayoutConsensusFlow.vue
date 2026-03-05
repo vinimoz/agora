@@ -21,7 +21,7 @@
           :inquiry-id="inquiryId"
           :highlight="true"
           :show-quorum="true"
-          @click="$emit('open-detail', option)"
+          @click="$emit('openDetail', option)"
         />
       </div>
     </div>
@@ -38,7 +38,7 @@
           :key="option.id"
           :option="option"
           :inquiry-id="inquiryId"
-          @click="$emit('open-detail', option)"
+          @click="$emit('openDetail', option)"
         />
       </div>
     </div>
@@ -56,7 +56,7 @@
           :option="option"
           :inquiry-id="inquiryId"
           :show-support="true"
-          @click="$emit('open-detail', option)"
+          @click="$emit('openDetail', option)"
         />
       </div>
     </div>
@@ -73,7 +73,7 @@
           :key="option.id"
           :option="option"
           :inquiry-id="inquiryId"
-          @click="$emit('open-detail', option)"
+          @click="$emit('openDetail', option)"
         />
       </div>
     </div>
@@ -90,7 +90,7 @@
           v-for="type in availableTypes"
           :key="type.option_type"
           type="secondary"
-          @click="$emit('add-option', type.option_type)"
+          @click="$emit('addOption', type.option_type)"
         >
           <template #icon>
             <component :is="getOptionTypeIcon(type.option_type)" :size="16" />
@@ -109,19 +109,21 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import { InquiryOptionIcons } from '../../../utils/icons.ts'
 import OptionCard from '../OptionCard.vue'
 import { getOptionTypeIconComponent } from '../../../helpers/modules/InquiryOptionHelper'
+import type { InquiryOptionType, Option } from '../../Types/index.ts'
 
 const props = defineProps<{
-  options: any[]
-  family: any
+  options: Option[]
+  // family: OptionFamily
   inquiryId: number
-  optionTypes: any[]
+  optionTypes: InquiryOptionType[]
   quorumNeeded?: number
 }>()
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const emit = defineEmits<{
-  'add-option': [optionType: string]
-  'open-detail': [option: any]
-  'option-updated': [option: any]
+  'addOption': [optionType: string]
+  'openDetail': [option: Option]
+  'option-updated': [option: Option]
   'option-deleted': [optionId: number]
 }>()
 

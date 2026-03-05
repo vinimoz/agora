@@ -212,7 +212,7 @@ export type User = {
   localeCode: string | null
   localeCodeIntl: string | null
   timeZone: string | null
-  groups: string[] | null
+  groups: string[] | null
   categories: string[] | null
 }
 

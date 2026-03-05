@@ -101,7 +101,7 @@
             <div 
               class="timeline-item"
               :class="`type-${option.type}`"
-              @click="$emit('open-detail', option)"
+              @click="$emit('openDetail', option)"
             >
               <div class="item-content">
                 <div class="item-icon">
@@ -140,7 +140,7 @@
           :option="option"
           :inquiry-id="inquiryId"
           :compact="true"
-          @click="$emit('open-detail', option)"
+          @click="$emit('openDetail', option)"
         />
       </div>
     </div>
@@ -191,7 +191,7 @@
               :key="event.id"
               class="calendar-event"
               :class="`type-${event.type}`"
-              @click="$emit('open-detail', event)"
+              @click="$emit('openDetail', event)"
             >
               <span class="event-title">{{ event.title || event.label }}</span>
             </div>
@@ -210,7 +210,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, computed } from 'vue'
 import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
@@ -218,18 +218,20 @@ import { DateTime } from 'luxon'
 import { InquiryOptionIcons } from '../../../utils/icons.ts'
 import OptionCard from '../OptionCard.vue'
 import { getOptionTypeIconComponent } from '../../../helpers/modules/InquiryOptionHelper'
+import type { Option } from '../../Types/index.ts'
 
 const props = defineProps<{
-  options: any[]
-  family: any
+  options: Option[]
+  // family: OptionFamily
   inquiryId: number
-  optionTypes: any[]
+  // optionTypes: InquiryOptionType[]
 }>()
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const emit = defineEmits<{
-  'add-option': [optionType: string]
-  'open-detail': [option: any]
-  'option-updated': [option: any]
+  'addOption': [optionType: string]
+  'openDetail': [option: Option]
+  'option-updated': [option: Option]
   'option-deleted': [optionId: number]
 }>()
 
@@ -292,7 +294,7 @@ const timeMarkers = computed(() => {
 })
 
 // Calculate item position for timeline
-const getItemPosition = (option: any) => {
+const getItemPosition = (option: Option) => {
   if (!option.startDate && !option.date) return { display: 'none' }
   
   const firstDate = sortedOptions.value[0]?.startDate || sortedOptions.value[0]?.date

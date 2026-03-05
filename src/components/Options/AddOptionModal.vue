@@ -289,6 +289,8 @@
 
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue'
+import type { Component } from 'vue'
+
 import { t } from '@nextcloud/l10n'
 import NcModal from '@nextcloud/vue/components/NcModal'
 import NcButton from '@nextcloud/vue/components/NcButton'
@@ -297,6 +299,7 @@ import NcTextField from '@nextcloud/vue/components/NcTextField'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
 import NcTextArea from '@nextcloud/vue/components/NcTextArea'
+import type {Option } from '../../Types/index.ts'
 
 import { useOptionsStore } from '../../stores/options'
 import { useOptionStore } from '../../stores/option'
@@ -317,11 +320,6 @@ import {
 } from '../../helpers/modules/InquiryOptionHelper'
 
 import OptionCard from './OptionCard.vue'
-
-// Types
-import type { 
-  Option
-} from '../../Types/index.ts'
 
 // Props
 const props = defineProps<{
@@ -347,8 +345,17 @@ const formData = ref({
   title: '',
   text: ''
 })
-const additionalFormData = ref<Record<string, any>>({})
+
 const formErrors = ref<string[]>([])
+
+type Field = {
+  key: string
+  value: string
+  label: string
+  options?: Option[]
+}
+
+const additionalFormData = ref<Record<string, Field>>({})
 
 // Computed - using helpers
 const allOptionTypes = computed(() => sessionStore.appSettings?.inquiryOptionTypeTab || [])
@@ -449,16 +456,14 @@ const optionTypeHelp = computed(() => {
   return helpTexts[props.optionType] || t('agora', 'Create a new option to contribute to the discussion.')
 })
 
-const formValid = computed(() => {
+const formValid = computed(() => !!formData.value.text.trim())
+
+watch(formData, (newVal) => {
   formErrors.value = []
-  
-  if (!formData.value.text.trim()) {
+  if (!newVal.text.trim()) {
     formErrors.value.push(t('agora', 'At least a text is required'))
-    return false
   }
-  
-  return true
-})
+}, { immediate: true, deep: true })
 
 const previewOption = computed((): Option => {
   const currentUser = sessionStore.currentUser
@@ -552,16 +557,14 @@ const getParentIcon = (parent: Option) => getOptionTypeIconComponent(parent.type
 // Use helper for getOptionTypeIcon
 const getOptionTypeIcon = (type: string) => getOptionTypeIconComponent(type, allOptionTypes.value)
 
-const getFieldLabel = (field: any) => {
-  if (field.label) return field.label
-  return field.key
+const getFieldLabel = (field: Field) => field.key
     .replace(/_/g, ' ')
     .replace(/\b\w/g, l => l.toUpperCase())
-}
 
-const getSelectOptions = (field: any) => {
+
+const getSelectOptions = (field: Field) => {
   if (field.options && Array.isArray(field.options)) {
-    return field.options.map((opt: any) => ({
+    return field.options.map((opt: Field) => ({
       value: typeof opt === 'string' ? opt : opt.value,
       label: typeof opt === 'string' ? opt : opt.label || opt.value
     }))
@@ -570,7 +573,7 @@ const getSelectOptions = (field: any) => {
 }
 
 const getStatusIcon = (status: string) => {
-  const statusIconMap: Record<string, any> = {
+  const statusIconMap: Record<string, Component> = {
     'draft': InquiryOptionIcons.Pencil,
     'published': InquiryOptionIcons.Check,
     'accepted': InquiryOptionIcons.CheckCircle,
@@ -585,20 +588,24 @@ const getStatusIcon = (status: string) => {
 
 const initializeAdditionalFields = () => {
   additionalFormData.value = {}
-  
-  for (const field of additionalFields.value) {
-    if (field.type === 'boolean') {
-      additionalFormData.value[field.key] = field.default !== undefined ? field.default : false
-    } else if (field.type === 'number') {
-      additionalFormData.value[field.key] = field.default !== undefined ? Number(field.default) : 0
-    } else {
-      additionalFormData.value[field.key] = field.default !== undefined ? field.default : ''
-    }
+ 
+ for (const field of additionalFields.value) {
+  switch (field.type) {
+    case 'boolean':
+      additionalFormData.value[field.key] = field.default ?? false
+      break
+    case 'number':
+        additionalFormData.value[field.key] = Number(field.default ?? 0)
+      break
+    default:
+      additionalFormData.value[field.key] = field.default ?? ''
   }
 }
 
+}
+
 const createOption = async () => {
-  if (!formValid.value || !props.optionType) return
+  if (formValid.value && props.optionType) {
   
   try {
     const optionType = findOptionType(props.optionType, allOptionTypes.value) || {}
@@ -609,7 +616,7 @@ const createOption = async () => {
     const defaultAllowComment = allowComment.value ? 1 : 0
     const defaultFamily = optionType.family || ''
 
-    const miscFields: Record<string, any> = {}
+    const miscFields: Record<string, { key:string, value:string }> = {}
     for (const field of additionalFields.value) {
       const value = additionalFormData.value[field.key]
       if (value !== undefined && value !== '') {
@@ -650,13 +657,14 @@ const createOption = async () => {
       additionalFormData.value = {}
       initializeAdditionalFields()
     }
-    
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error creating option:', error)
     formErrors.value.push(t('agora', 'Error creating option: {error}', { 
       error: error.message || t('agora', 'Unknown error') 
     }))
   }
+ } 
+     
 }
 
 // Watch for option type changes

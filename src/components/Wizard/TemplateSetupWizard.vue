@@ -6,7 +6,7 @@
 <script setup lang="ts">
 import { computed, watch } from 'vue'
 import { t } from '@nextcloud/l10n'
-import { NcModal, NcButton, NcEmptyContent } from '@nextcloud/vue'
+import { NcModal, NcButton } from '@nextcloud/vue'
 import { useTemplateWizardStore } from '../../stores/templateWizard'
 
 // Step components

@@ -14,7 +14,7 @@ import { useTemplateWizardStore } from '../../../stores/templateWizard'
 const wizardStore = useTemplateWizardStore()
 
 const editableData = computed(() => wizardStore.editableData)
-const duplicateAnalysis = ref<any>(null)
+const duplicateAnalysis = ref<unknown>(null)
 const isAnalyzing = ref(false)
 const analysisError = ref<string | null>(null)
 
@@ -30,7 +30,7 @@ const expandedSections = ref<Record<string, boolean>>({
 })
 
 const editingItem = ref<{ section: string; index: number } | null>(null)
-const editingItemData = ref<any>(null)
+const editingItemData = ref<unknown>(null)
 
 interface Section {
 	key: string
@@ -151,12 +151,6 @@ const getEditableLabelValue = (section: Section): string => {
 	const labelKey = section.itemLabelKey
 	const labelValue = editingItemData.value[labelKey]
 
-	console.log('[TemplateWizard] getEditableLabelValue:', {
-		labelKey,
-		labelValue,
-		typeofLabel: typeof labelValue,
-		editingItemData: editingItemData.value
-	})
 
 	// Handle null/undefined
 	if (labelValue === null || labelValue === undefined) {
@@ -168,7 +162,6 @@ const getEditableLabelValue = (section: Section): string => {
 	if (typeof labelValue === 'object' && !Array.isArray(labelValue)) {
 		const lang = wizardStore.selectedLanguage || 'en'
 		const extracted = labelValue[lang] || labelValue.en || Object.values(labelValue).find(v => typeof v === 'string' && v !== '') || ''
-		console.log('[TemplateWizard] Extracted from multi-lang object:', extracted)
 		return String(extracted)
 	}
 
@@ -181,13 +174,12 @@ const setEditableLabelValue = (section: Section, newValue: string) => {
 	if (!editingItemData.value) return
 
 	const labelKey = section.itemLabelKey
-	console.log('[TemplateWizard] setEditableLabelValue:', { labelKey, newValue })
 
 	// After extraction, values should be plain strings, so just set directly
 	editingItemData.value[labelKey] = newValue
 }
 
-const getItemLabel = (item: any, section: Section) => {
+const getItemLabel = (item: unknown, section: Section) => {
 	const labelValue = item[section.itemLabelKey]
 
 	// Handle multi-language objects (e.g., {en: "...", fr: "...", de: "...", gsw: "..."})
@@ -200,7 +192,7 @@ const getItemLabel = (item: any, section: Section) => {
 	return labelValue || item[section.itemTypeKey] || t('agora', 'Unnamed')
 }
 
-const getItemType = (item: any, section: Section) => item[section.itemTypeKey] || ''
+const getItemType = (item: unknown, section: Section) => item[section.itemTypeKey] || ''
 
 const totalItems = computed(() => {
 	if (!editableData.value) return 0
@@ -264,18 +256,13 @@ const getItemStatus = (sectionKey: string, itemType: string): 'new' | 'existing'
 	// Check if item exists in new or existing lists
 	// The backend returns items with a 'type' property that matches the item's type key value
 	// Also check 'identifier' as fallback for different section types
-	const matchItem = (item: any) => item.type === itemType ||
+	const matchItem = (item: unknown) => item.type === itemType ||
 			item.identifier === itemType ||
 			item.key === itemType ||
 			item.id === itemType
 
 	const isNew = data.new?.some(matchItem)
 	const isExisting = data.existing?.some(matchItem)
-
-	console.log(`[getItemStatus] ${sectionKey}/${itemType}: new=${isNew}, existing=${isExisting}`, {
-		newItems: data.new?.map((i: any) => i.type || i.identifier || i.key),
-		existingItems: data.existing?.map((i: any) => i.type || i.identifier || i.key)
-	})
 
 	if (isNew) return 'new'
 	if (isExisting) return 'existing'

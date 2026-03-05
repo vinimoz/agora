@@ -329,9 +329,9 @@ async function fetchAllGroups(): Promise<InquiryGroup[]> {
     const groups = response.data.groups || []
     const sessionStore = useSessionStore()
     if (sessionStore.appSettings.inquiryGroupTypeTab && sessionStore.appSettings.inquiryGroupTypeTab.length > 0) {
-    const index = typeof O !== 'undefined' ? O : 0
-    if (index < sessionStore.appSettings.inquiryGroupTypeTab.length) {
-        this.selectedGroupType = sessionStore.appSettings.inquiryGroupTypeTab[index].group_type
+    // const index = typeof O !== 'undefined' ? O : 0
+    if (sessionStore.appSettings.inquiryGroupTypeTab.length > 0) {
+        this.selectedGroupType = sessionStore.appSettings.inquiryGroupTypeTab[0].group_type
         }
     }
     inquiryGroups.value = groups

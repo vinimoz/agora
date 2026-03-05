@@ -6,30 +6,23 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
 import { computed } from 'vue'
-import { showSuccess } from '@nextcloud/dialogs'
 import { DateTime } from 'luxon'
 import { t } from '@nextcloud/l10n'
 import NcAvatar from '@nextcloud/vue/components/NcAvatar'
 import SupportFeature from '../../helpers/modules/SupportFeature.vue'
-import { useSupportsStore } from '../../stores/supports'
 import {
   canComment,
   canSupport,
   createInquiryContext,
-  ContentType,
 } from '../../utils/permissions.ts'
 
 import { InquiryGeneralIcons, BadgeIcons, StatusIcons } from '../../utils/icons.ts'
 
-import { useInquiryStore, type Inquiry } from '../../stores/inquiry'
-import { useInquiriesStore } from '../../stores/inquiries'
+import {  type Inquiry } from '../../stores/inquiry'
 import { useSessionStore } from '../../stores/session.ts'
 import { getInquiryTypeData } from '../../helpers/modules/InquiryHelper.ts'
 
-const inquiryStore = useInquiryStore()
-const inquiriesStore = useInquiriesStore()
 const sessionStore = useSessionStore()
-const supportsStore = useSupportsStore()
 
 interface Props {
   inquiry: Inquiry
@@ -158,8 +151,6 @@ const gridDescription = computed(() => {
 })
 
 // Citizen inquiry features
-const hasQuorum = computed(() => inquiry.miscFields?.quorum)
-const quorumValue = computed(() => inquiry.miscFields?.quorum || 0)
 const hasVotePeriod = computed(() => inquiry.miscFields?.support_start && inquiry.miscFields?.support_end)
 </script>
 

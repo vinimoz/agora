@@ -98,7 +98,6 @@ import { getInquiryTypeData } from '../../helpers/modules/InquiryHelper.ts'
 import type { Inquiry } from '../../Types/index.ts'
 import { useSessionStore } from '../../stores/session.ts'
 import { InquiryGeneralIcons } from '../../utils/icons.ts'
-import { createInquiryContext  } from '../../utils/permissions.ts'
 
 interface Props {
   inquiry: Inquiry

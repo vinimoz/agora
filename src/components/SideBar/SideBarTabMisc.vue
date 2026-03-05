@@ -64,7 +64,7 @@ const inquiryTypeConfig = computed(() => {
 } */
 
 // Extract language string from multi-language object
-const extractLangString = (obj: any, lang: string = 'en'): string => {
+const extractLangString = (obj: unknown, lang: string = 'en'): string => {
   if (typeof obj === 'string') return obj
   if (!obj || typeof obj !== 'object') return String(obj)
 
@@ -95,7 +95,7 @@ interface Field {
   required?: boolean
   default?: MiscValue
   description?: string
-  allowed_values?: any[]
+  allowed_values?: string[]
 }
 
 
@@ -232,11 +232,11 @@ const getDisplayValue = (value: MiscValue, field: Field) => {
 
         // Extract value key if value is an object with 'value' property
         const valueKey = typeof value === 'object' && value !== null && 'value' in value
-          ? (value as any).value
+          ? (value as string).value
           : value
 
         // Find matching option
-        const option = allowedValues.find((opt: any) => {
+        const option = allowedValues.find((opt: {key: string, value: string}) => {
           if (typeof opt === 'string') return opt === valueKey
           return opt.value === valueKey
         })
@@ -277,18 +277,18 @@ const getEnumModelValue = (field: Field) => {
 
   // Extract value key if stored value is an object with 'value' property
   const valueKey = typeof value === 'object' && value !== null && 'value' in value
-    ? (value as any).value
+    ? (value as string).value
     : value
 
   // Find matching option object for NcSelect
-  return options.find((opt: any) => {
+  return options.find((opt: {key: string, value: string}) => {
     if (typeof opt === 'string') return opt === valueKey
     return opt.value === valueKey
   }) || value
 }
 
 // Get display label for an enum option
-const getEnumLabel = (option: any): string => {
+const getEnumLabel = (option: string): string => {
   if (typeof option === 'string') {
     return option.charAt(0).toUpperCase() + option.slice(1)
   }
@@ -334,7 +334,7 @@ const displayFields = computed(() => {
       value: getSupportFeatureValue.value,
       displayValue: getSupportFeatureDisplay(getSupportFeatureValue.value),
       hasValue: true
-    } as any)
+    } as unknown)
   }
 
   // Add allow comment field if user can configure it
@@ -346,7 +346,7 @@ const displayFields = computed(() => {
       value: getAllowCommentValue.value,
       displayValue: getAllowCommentValue.value ? t('Yes') : t('No'),
       hasValue: true
-    } as any)
+    } as unknown)
   }
 
   return fields
@@ -399,7 +399,7 @@ const loadMiscData = () => {
   }
 }
 
-const getSafeStringValue = (value: any): string => {
+const getSafeStringValue = (value: unknown): string => {
     if (value === null || value === undefined) {
         return ''
     }
@@ -449,12 +449,13 @@ const getDefaultFromTemplate = (field: string) => {
   switch (field) {
     case 'supportFeature':
       return inquiryTypeConfig.value.support_feature || 'none'
-    case 'allowComment':
-      const value = inquiryTypeConfig.value.allow_comment
-      if (typeof value === 'number') {
-        return value === 1
-      }
-      return value || false
+      case 'allowComment': {
+  const value = inquiryTypeConfig.value.allow_comment
+  if (typeof value === 'number') {
+    return value === 1
+  }
+  return value || false
+}
     default:
       return null
   }
@@ -654,7 +655,7 @@ onMounted(() => {
                                 <NcSelect
                                     :model-value="getSupportFeatureValue"
                                     :options="supportFeatureOptions"
-                                    :reduce="(option: any) => option.id"
+                                    :reduce="(option: unknown) => option.id"
                                     :label-outside="true"
                                     :input-label="t('Support feature')"
                                     :disabled="isSaving"
@@ -729,7 +730,7 @@ onMounted(() => {
                                         v-if="field.type === 'enum'"
                                         :model-value="getEnumModelValue(field) || ''"
                                         :options="field.allowed_values || []"
-                                        :reduce="(option: any) => typeof option === 'string' ? option : option.value"
+                                        :reduce="(option: unknown) => typeof option === 'string' ? option : option.value"
                                         :get-option-label="getEnumLabel"
                                         :clearable="!field.required"
                                         :label-outside="true"

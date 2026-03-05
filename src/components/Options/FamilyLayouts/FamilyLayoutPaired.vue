@@ -27,7 +27,7 @@
               :option="option"
               :inquiry-id="inquiryId"
               :compact="layoutStyle === 'compact'"
-              @click="$emit('open-detail', option)"
+              @click="$emit('openDetail', option)"
             />
             
             <!-- Quick add button -->
@@ -35,7 +35,7 @@
               v-if="canAddPositionFor"
               type="tertiary"
               class="quick-add-btn"
-              @click="$emit('add-option', 'position_for')"
+              @click="$emit('addOption', 'position_for')"
             >
               <template #icon>
                 <Plus :size="16" />
@@ -64,7 +64,7 @@
               :option="option"
               :inquiry-id="inquiryId"
               :compact="layoutStyle === 'compact'"
-              @click="$emit('open-detail', option)"
+              @click="$emit('openDetail', option)"
             />
             
             <!-- Quick add button -->
@@ -72,7 +72,7 @@
               v-if="canAddPositionAgainst"
               type="tertiary"
               class="quick-add-btn"
-              @click="$emit('add-option', 'position_against')"
+              @click="$emit('addOption', 'position_against')"
             >
               <template #icon>
                 <Plus :size="16" />
@@ -111,14 +111,14 @@
               :option="option"
               :inquiry-id="inquiryId"
               :compact="true"
-              @click="$emit('open-detail', option)"
+              @click="$emit('openDetail', option)"
             />
             
             <NcButton
               v-if="canAddArgumentFor"
               type="tertiary"
               class="quick-add-btn"
-              @click="$emit('add-option', 'argument_for')"
+              @click="$emit('addOption', 'argument_for')"
             >
               <template #icon>
                 <Plus :size="16" />
@@ -143,14 +143,14 @@
               :option="option"
               :inquiry-id="inquiryId"
               :compact="true"
-              @click="$emit('open-detail', option)"
+              @click="$emit('openDetail', option)"
             />
             
             <NcButton
               v-if="canAddArgumentAgainst"
               type="tertiary"
               class="quick-add-btn"
-              @click="$emit('add-option', 'argument_against')"
+              @click="$emit('addOption', 'argument_against')"
             >
               <template #icon>
                 <Plus :size="16" />
@@ -180,14 +180,14 @@
               :option="option"
               :inquiry-id="inquiryId"
               :compact="true"
-              @click="$emit('open-detail', option)"
+              @click="$emit('openDetail', option)"
             />
             
             <NcButton
               v-if="canAddAlternative"
               type="tertiary"
               class="quick-add-btn"
-              @click="$emit('add-option', 'alternative')"
+              @click="$emit('addOption', 'alternative')"
             >
               <template #icon>
                 <Plus :size="16" />
@@ -212,14 +212,14 @@
               :option="option"
               :inquiry-id="inquiryId"
               :compact="true"
-              @click="$emit('open-detail', option)"
+              @click="$emit('openDetail', option)"
             />
             
             <NcButton
               v-if="canAddMessage"
               type="tertiary"
               class="quick-add-btn"
-              @click="$emit('add-option', 'message')"
+              @click="$emit('addOption', 'message')"
             >
               <template #icon>
                 <Plus :size="16" />
@@ -243,7 +243,7 @@
           v-for="type in availableTypes"
           :key="type.option_type"
           type="secondary"
-          @click="$emit('add-option', type.option_type)"
+          @click="$emit('addOption', type.option_type)"
         >
           <template #icon>
             <component :is="getOptionTypeIcon(type.option_type)" :size="16" />
@@ -294,18 +294,20 @@ import { Plus } from 'lucide-vue-next'
 import { InquiryOptionIcons } from '../../../utils/icons.ts'
 import OptionCard from '../OptionCard.vue'
 import { getOptionTypeIconComponent } from '../../../helpers/modules/InquiryOptionHelper'
+import type { InquiryOptionType, Option , OptionFamily } from '../../Types/index.ts'
 
 const props = defineProps<{
-  options: any[]
-  family: any
+  options: Option[]
+  family: OptionFamily
   inquiryId: number
-  optionTypes: any[]
+  optionTypes: InquiryOptionType[]
 }>()
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const emit = defineEmits<{
-  'add-option': [optionType: string]
-  'open-detail': [option: any]
-  'option-updated': [option: any]
+  'addOption': [optionType: string]
+  'openDetail': [option: Option]
+  'option-updated': [option: Option]
   'option-deleted': [optionId: number]
 }>()
 

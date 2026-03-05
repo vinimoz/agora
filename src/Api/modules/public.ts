@@ -5,7 +5,7 @@
 import { AxiosResponse } from '@nextcloud/axios'
 import { Option, Sequence } from '../../stores/options.js'
 import { Session } from '../../stores/session.js'
-import { Answer, Inquiry } from '../../stores/inquiries.js'
+import { Inquiry } from '../../stores/inquiries.js'
 import { httpInstance, createCancelTokenHandler } from './HttpApi.js'
 import { Comment } from '../../stores/comments.js'
 import { Supports } from '../../stores/supports.js'

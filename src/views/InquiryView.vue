@@ -50,9 +50,7 @@ const isSaving = ref(false)
 // Add error tracking
 const error = ref<Error | null>(null)
 
-const isPublicRoute = computed(() => {
-  return route.name === 'publicInquiry' || !!props.token
-})
+const isPublicRoute = computed(() => route.name === 'publicInquiry' || !!props.token)
 
 const identifier = computed(() => {
   if (isPublicRoute.value) {
@@ -87,25 +85,22 @@ async function loadInquiry() {
   isAppLoaded.value = false
 
   try {
-    // Charger l'inquiry selon le mode
     if (isPublicRoute.value) {
       await inquiryStore.loadByToken(identifier.value as string)
     } else {
       await inquiryStore.load(identifier.value as string)
     }
 
-    // Charger les enfants seulement en mode authentifié
-    if (!isPublicRoute.value) {
+    if (isPublicRoute.value) {
+      inquiryStore.childs = [] 
+    } else {
       const result = inquiriesStore.inquiries.filter(i =>
         i.parentId === Number(identifier.value) &&
         i.configuration.access !== 'private'
       )
       inquiryStore.childs = result
-    } else {
-      inquiryStore.childs = [] // Pas d'enfants en mode public
     }
 
-    // Gérer le mode édition
     if (inquiryStore.childs?.length === 0 && !isPublicRoute.value) {
       inquiryStore.status.forceEditMode = true
       editMode.value = true
@@ -122,7 +117,6 @@ async function loadInquiry() {
     console.error('Error in loadInquiry:', e)
     error.value = e as Error
     
-    // Message adapté au mode
     if (isPublicRoute.value) {
       showError(t('agora', 'Failed to load public inquiry. The link may be invalid or expired.'))
     } else {
@@ -133,7 +127,6 @@ async function loadInquiry() {
   }
 }
 
-// Watch sur l'identifiant (token ou id)
 watch(
   identifier,
   async () => {
@@ -145,7 +138,6 @@ watch(
 
 // Compute isReadonly
 const isReadonly = computed(() => {
-  // En mode public, toujours lecture seule
   if (isPublicRoute.value) {
     return true
   }
@@ -164,7 +156,6 @@ const isReadonly = computed(() => {
 })
 
 const enableEditMode = () => {
-  // Ne pas permettre l'édition en mode public
   if (isPublicRoute.value) return
   
   editMode.value = true
@@ -201,7 +192,6 @@ const collapsibleProps = computed<CollapsibleProps>(() => ({
 }))
 
 const handleSave = async () => {
-  // Ne pas permettre la sauvegarde en mode public
   if (isPublicRoute.value) return
   
   if (isSaving.value) return
@@ -232,7 +222,6 @@ const handleSave = async () => {
 }
 
 const handleAllowedResponse = (responseType: string) => {
-  // Ne pas permettre en mode public
   if (isPublicRoute.value) return
   
   selectedMode.value = 'response' 
@@ -241,7 +230,6 @@ const handleAllowedResponse = (responseType: string) => {
 }
 
 const handleAllowedTransformation = (transformType: string) => {
-  // Ne pas permettre en mode public
   if (isPublicRoute.value) return
   
   selectedMode.value = 'transform' 
@@ -259,7 +247,6 @@ const inquiryAdded = (inquiry) => {
   createDlgToggle.value = false
   selectedInquiryTypeForCreation.value = ''
 
-  // Navigate to the new inquiry
   router.push({
     name: 'inquiry',
     params: { id: inquiry.id },

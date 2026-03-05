@@ -171,7 +171,7 @@ import {
 interface Props {
   item: Inquiry | Option
   itemType: 'inquiry' | 'option'
-  context?: any
+  context?: unknown
   showQuorum?: boolean
   viewOnly?: boolean
   showDetailsOnHover?: boolean
@@ -303,7 +303,7 @@ const clearTimeouts = () => {
 }
 
 const toggleSupport = async () => {
-  if (!canSupport.valuei || props.viewOnly) {
+  if (!canSupport.value.valuei || props.viewOnly) {
     return
   }
   

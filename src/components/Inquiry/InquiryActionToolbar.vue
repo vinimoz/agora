@@ -4,14 +4,13 @@
 -->
 <script setup lang="ts">
 import { watch, ref, computed, nextTick } from 'vue' 
-import { AccessType , useInquiryStore } from '../../stores/inquiry'
+import { useInquiryStore } from '../../stores/inquiry'
 import { useInquiriesStore } from '../../stores/inquiries.ts'
 import { useSessionStore } from '../../stores/session.ts'
 import { t } from '@nextcloud/l10n'
 import { showSuccess, showError } from '@nextcloud/dialogs'
 import {
   getInquiryTypeData,
-  isInquiryFinalStatus
 } from '../../helpers/modules/InquiryHelper.ts'
 
 import NcButton from '@nextcloud/vue/components/NcButton'

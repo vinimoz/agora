@@ -269,7 +269,7 @@ export function canInquiryTypePerformAction(
 }
 
 
-export function createInquiryContext(inquiry: InquiryStoreLike, appSettings: any): PermissionContext {
+export function createInquiryContext(inquiry: InquiryStoreLike, appSettings: unknown): PermissionContext {
     if (!inquiry || !inquiry.owner || !inquiry.configuration || !inquiry.status) {
     console.warn('createInquiryContext called with invalid inquiry:', inquiry)
     return null

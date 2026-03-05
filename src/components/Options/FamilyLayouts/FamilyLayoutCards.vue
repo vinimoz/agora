@@ -11,7 +11,7 @@
         :key="option.id"
         :option="option"
         :inquiry-id="inquiryId"
-        @click="$emit('open-detail', option)"
+        @click="$emit('openDetail', option)"
       />
     </div>
 
@@ -27,7 +27,7 @@
           v-for="type in optionTypes"
           :key="type.option_type"
           type="secondary"
-          @click="$emit('add-option', type.option_type)"
+          @click="$emit('addOption', type.option_type)"
         >
           <template #icon>
             <component :is="getOptionTypeIcon(type.option_type)" :size="16" />
@@ -75,7 +75,7 @@
           :inquiry-id="inquiryId"
           :compact="false"
           :detailed="true"
-          @click="$emit('open-detail', option)"
+          @click="$emit('openDetail', option)"
         />
       </div>
     </div>
@@ -89,7 +89,7 @@
           :option="option"
           :inquiry-id="inquiryId"
           :compact="true"
-          @click="$emit('open-detail', option)"
+          @click="$emit('openDetail', option)"
         />
       </div>
     </div>
@@ -107,17 +107,19 @@ import {
   getOptionTypeIconComponent 
 } from '../../../helpers/modules/InquiryOptionHelper'
 
-const props = defineProps<{
-  options: any[]
-  family: any
-  inquiryId: number
-  optionTypes: any[]
-}>()
+import type { InquiryOptionType, Option , OptionFamily } from '../../Types/index.ts'
 
+const props = defineProps<{
+  options: Option[]
+  family:OptionFamily
+  inquiryId: number
+  optionTypes: InquiryOptionType[]
+}>()
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const emit = defineEmits<{
-  'add-option': [optionType: string]
-  'open-detail': [option: any]
-  'option-updated': [option: any]
+  'addOption': [optionType: string]
+  'openDetail': [option: Option]
+  'option-updated': [option: Option]
   'option-deleted': [optionId: number]
 }>()
 

@@ -6,6 +6,7 @@ import { defineStore } from 'pinia'
 import { t } from '@nextcloud/l10n'
 import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
+import { Component } from '@nextcloud/vue'
 
 import { Logger } from '../helpers/index.ts'
 import { OptionsAPI, PublicAPI } from '../Api/index.ts'
@@ -90,7 +91,7 @@ export const useOptionsStore = defineStore('options', {
             const familiesMap: Record<string, OptionFamily> = {}
             
             // Add families from settings
-            familiesFromSettings.forEach((family: any) => {
+            familiesFromSettings.forEach((family: OptionFamily) => {
                 familiesMap[family.family_type] = {
                     key: family.family_type,
                     name: family.label || family.family_type,
@@ -302,22 +303,16 @@ export const useOptionsStore = defineStore('options', {
             return fallbackData[familyKey]?.description || fallbackData.default?.description || ''
         },
 
-        getFamilyColor: () => (familyKey: string): string => {
-            return getFamilyColor(familyKey)
-        },
+        getFamilyColor: () => (familyKey: string): string => getFamilyColor(familyKey),
 
-        getFamilyIcon: () => (familyKey: string): string => {
-            return getFamilyIconName(familyKey)
-        },
+        getFamilyIcon: () => (familyKey: string): string => getFamilyIconName(familyKey),
 
-        getFamilyIconComponent: () => (familyKey: string): any => {
-            return getFamilyIconComponent(familyKey)
-        },
+        getFamilyIconComponent: () => (familyKey: string): Component => getFamilyIconComponent(familyKey),
 
         getFamilySortOrder: () => (familyKey: string): number => {
             const appSettingsStore = useAppSettingsStore()
             const families = appSettingsStore.settings?.optionFamilyTab || []
-            const family = families.find((f: any) => f.family_type === familyKey)
+            const family = families.find((f: OptionFamily) => f.family_type === familyKey)
             return family?.sort_order || 999
         },
     },

@@ -23,7 +23,7 @@
           type="tertiary"
           size="small"
           :aria-label="t('agora', 'Add to {column}', { column: status.label })"
-          @click="$emit('add-option', getDefaultTypeForStatus(status.value))"
+          @click="$emit('addOption', getDefaultTypeForStatus(status.value))"
         >
           <template #icon>
             <component :is="InquiryOptionIcons.Plus" :size="16" />
@@ -51,7 +51,7 @@
               :option="option"
               :inquiry-id="inquiryId"
               :compact="true"
-              @click="$emit('open-detail', option)"
+              @click="$emit('openDetail', option)"
             />
             <!-- Status indicator dot -->
             <div 
@@ -86,28 +86,30 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { computed } from 'vue'
 import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcActions from '@nextcloud/vue/components/NcActions'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import { InquiryOptionIcons } from '../../../utils/icons.ts'
 import OptionCard from '../OptionCard.vue'
+import type { InquiryOptionType, Option } from '../../Types/index.ts'
 
 const props = defineProps<{
-  options: any[]
-  family: any
+  options: Option[]
+ // family: OptionFamily
   inquiryId: number
-  optionTypes: any[]
-  statuses?: any[] // Available statuses from inquiry config
+  optionTypes: InquiryOptionType
+  statuses?: string[] // Available statuses from inquiry config
 }>()
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const emit = defineEmits<{
-  'add-option': [optionType: string]
-  'open-detail': [option: any]
-  'option-updated': [option: any]
+  'addOption': [optionType: string]
+  'openDetail': [option: Option]
+  'option-updated': [option: Option]
   'option-deleted': [optionId: number]
-  'status-changed': [optionId: number, newStatus: string]
+  'statusChanged': [optionId: number, newStatus: string]
 }>()
 
 // Default status columns if none provided
@@ -126,13 +128,11 @@ const getOptionsByStatus = (status: string) => props.options.filter(opt => opt.s
 
 const canChangeStatus = computed(() => true) // Check permissions
 
-const canAddToColumn = (status: any) => 
-  // Determine which option types can be added to this column
+const canAddToColumn = () => 
    props.optionTypes.length > 0
 
 
-const getDefaultTypeForStatus = (status: string) => 
-  // Return the first allowed option type for this status
+const getDefaultTypeForStatus = () => 
    props.optionTypes[0]?.option_type
 
 
@@ -148,7 +148,7 @@ const getStatusLabel = (status: string) => {
 
 // Change status via action menu instead of drag & drop
 const changeStatus = (optionId: number, newStatus: string) => {
-  emit('status-changed', optionId, newStatus)
+  emit('statusChanged', optionId, newStatus)
 }
 </script>
 

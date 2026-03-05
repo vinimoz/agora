@@ -261,7 +261,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, computed } from 'vue'
 import { t } from '@nextcloud/l10n'
 import NcAvatar from '@nextcloud/vue/components/NcAvatar'
 import NcActions from '@nextcloud/vue/components/NcActions'
@@ -276,7 +276,6 @@ import {
   createOptionContext,
   canEditOption,
   canDeleteOption,
-  canCommentOption
 } from '../../utils/permissions.ts'
 
 // Types
@@ -285,7 +284,6 @@ import {
   getOptionTypeLabel,
   getOptionTypeIconComponent,
   getOptionTypeColor,
-  getOptionTypeDescription,
   getAllowedResponses,
   hasSupportFeature as hasSupportFeatureHelper,
   allowsComments,
@@ -300,7 +298,6 @@ const props = defineProps<{
       supportValue: number | null
     }
   }
-  inquiryId: number
   compact?: boolean
   inline?: boolean
   official?: boolean
@@ -410,7 +407,7 @@ const childCounts = computed(() => {
   // Count children by type
   children.forEach(child => {
     if (counts[child.type] !== undefined) {
-      counts[child.type]++
+      counts[child.type]=counts[child.type] + 1
     }
   })
 
