@@ -2287,7 +2287,7 @@ class InitDbDefault extends Command
         $inserted = [];
 
         foreach ($this->optionTypes as $optionType) {
-            $uniqueKey = $optionType['option_type'] . '_' . $optionType['family'];
+            $uniqueKey = $optionType['option_type'];
 
             if (isset($inserted[$uniqueKey])) {
                 $this->log($output, 'Inquiry option type already processed: ' . $optionType['option_type']);
@@ -2298,13 +2298,12 @@ class InitDbDefault extends Command
 
             $query = $this->connection->prepare(
                 'SELECT `id` FROM `' . $tableName . '`
-                WHERE `option_type` = ? AND `family` = ?'
+                WHERE `option_type` = ?'
             );
 
             $cursor = $query->execute(
                 [
                 $optionType['option_type'],
-                $optionType['family'],
                 ]
             );
             $row = $cursor->fetch();
