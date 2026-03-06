@@ -381,6 +381,8 @@ abstract class TableSchema
             'order',
             'confirmed',
             'allow_support',
+            'target_type',
+            'option_text',
             'released'
         ],
         'oc_agora_inq_group' => [
