@@ -480,20 +480,42 @@ class OptionMapper extends QBMapper
     /**
      * Add subquery for misc settings using GROUP_CONCAT - can be NULL if no misc settings
      */
-    protected function addMiscsSubquery(
-        IQueryBuilder &$qb,
-        string $tableAlias,
-        string $alias = 'misc_settings_concat'
-    ): void {
-        $qb->addSelect(
-            $qb->createFunction(
-                '(SELECT GROUP_CONCAT(CONCAT(m.key, \':\', m.value) SEPARATOR \',\') ' .
-                'FROM ' . $this->getFullTableName(OptionMisc::TABLE) . ' m ' .
-                'WHERE m.option_id = ' . $tableAlias . '.id) AS ' . $alias
-            )
-        );
-    }
 
+    protected function addMiscsSubquery(
+    IQueryBuilder &$qb,
+    string $tableAlias,
+    string $alias = 'misc_settings_concat'
+): void {
+    // Get the database platform
+    $platform = $this->db->getDatabasePlatform()->getName();
+    $dbProvider = match($platform) {
+        'postgresql' => IDBConnection::PLATFORM_POSTGRES,
+        'oracle' => IDBConnection::PLATFORM_ORACLE,
+        'sqlite' => IDBConnection::PLATFORM_SQLITE,
+        default => IDBConnection::PLATFORM_MYSQL,
+    };
+
+    // Create the base concatenated value (key:value)
+    $concatExpr = $qb->func()->concat('m.key', $qb->createNamedParameter(':'), 'm.value');
+
+    // Create a subquery builder for the misc settings
+    $subQb = $this->db->getQueryBuilder();
+    $subQb->select($concatExpr)
+          ->from(OptionMisc::TABLE, 'm')
+          ->where($subQb->expr()->eq('m.option_id', $tableAlias . '.id'));
+
+    // Get the SQL for the subquery
+    $subSql = $subQb->getSQL();
+
+    // Use SqlHelper to add the concatenated result
+    SqlHelper::getConcatenatedArray(
+        $qb,
+        '(' . $subSql . ')',
+        $alias,
+        $dbProvider,
+        ','
+    );
+}
     /**
      * Join misc settings from OptionMisc table (kept for backward compatibility)
      */

@@ -40,4 +40,19 @@ abstract class SqlHelper
             default => $qb->createFunction('group_concat(distinct ' . $concatColumn . ' SEPARATOR "' . $separator . '") AS ' . $asColumn),
         });
     }
+
+    public static function getSubqueryConcatenation(
+        IQueryBuilder &$qb,
+        string $subquery,
+        string $asColumn,
+        string $dbProvider,
+        string $separator = ',',
+    ): void {
+        $qb->addSelect(match ($dbProvider) {
+            IDBConnection::PLATFORM_POSTGRES => $qb->createFunction('(' . $subquery . ') AS ' . $asColumn),
+            IDBConnection::PLATFORM_ORACLE => $qb->createFunction('(' . $subquery . ') AS ' . $asColumn),
+            IDBConnection::PLATFORM_SQLITE => $qb->createFunction('(' . $subquery . ') AS ' . $asColumn),
+            default => $qb->createFunction('(' . $subquery . ') AS ' . $asColumn),
+        });
+    }
 }
