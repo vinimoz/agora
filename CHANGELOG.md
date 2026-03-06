@@ -5,6 +5,16 @@
 
 # Changelog
 All notable changes to this project will be documented in this file.
+# [1.7.0] - 2026-03-05
+New Features:
+- Templates loading.
+- Options of inquiry and template for ( tree, paired, Cards .. )
+
+Fix:
+- Public share
+- Dashboard display
+- Count supports
+
 # [1.6.1] - 2025-12-22
 - Fix: Table for POSTGRES; Editing inquiry group ( refresh )
 

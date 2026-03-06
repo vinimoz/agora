@@ -395,13 +395,9 @@ const formatDate = (timestamp: number) => new Date(timestamp * 1000).toLocaleDat
 
 const viewOnlySupportInquiry = computed(() => {
     // Check if user can support based on route
-  const isPublicRoute = ['publicInquiry', 'inquiryPublic', 'public-view'].includes(route.name as string)
-
+  const isPublicRoute = ['publicInquiry', 'public-view'].includes(route.name as string)
   // If it's a public route, users cannot support
-  if (isPublicRoute) {
-    return false
-  }
-  return true
+return isPublicRoute
 })
 
 
@@ -660,14 +656,14 @@ const viewOnlySupportInquiry = computed(() => {
 
                 <div class="description-content">
                     <div
-                            v-if="sessionStore.appSettings.inquiryTypeRights[inquiryStore.type]?.editorType === 'wysiwyg'"
+                            v-if="sessionStore.appSettings?.inquiryTypeRights[inquiryStore.type]?.editorType === 'wysiwyg'"
                             class="editor-container"
                             >
                             <InquiryEditor v-model="inquiryStore.description" :readonly="props.isReadonly" />
                     </div>
 
                         <div
-                                v-else-if="sessionStore.appSettings.inquiryTypeRights[inquiryStore.type]?.editorType === 'texteditor'"
+                                v-else-if="sessionStore.appSettings?.inquiryTypeRights[inquiryStore.type]?.editorType === 'texteditor'"
                                 class="editor-container"
                                 >
                                 <NcRichContenteditable

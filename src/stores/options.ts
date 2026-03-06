@@ -400,6 +400,56 @@ export const useOptionsStore = defineStore('options', {
             }
         },
 
+        updateOptionCommentCount(optionId: number, count: number): void {
+            const option = this.options.find(opt => opt.id === optionId)
+            if (option && option.status) {
+                option.status.countComments = count
+            }
+        },
+
+        updateOptionSupportCount(optionId: number, count: number): void {
+            const option = this.options.find(opt => opt.id === optionId)
+            if (option && option.status) {
+                option.status.countSupports = count
+            }
+        },
+
+        // Optional: Update all support-related counts at once
+        updateOptionSupportDetails(optionId: number, supportData: {
+            countSupports: number
+            countPositiveSupports?: number
+            countNegativeSupports?: number
+            countNeutralSupports?: number
+            hasSupported?: boolean
+            supportValue?: number | null
+        }): void {
+            const option = this.options.find(opt => opt.id === optionId)
+            if (option) {
+                if (option.status) {
+                    option.status.countSupports = supportData.countSupports
+                    if (supportData.countPositiveSupports !== undefined) {
+                        option.status.countPositiveSupports = supportData.countPositiveSupports
+                    }
+                    if (supportData.countNegativeSupports !== undefined) {
+                        option.status.countNegativeSupports = supportData.countNegativeSupports
+                    }
+                    if (supportData.countNeutralSupports !== undefined) {
+                        option.status.countNeutralSupports = supportData.countNeutralSupports
+                    }
+                }
+
+                // Update current user's support status if provided
+                if (option.currentUserStatus) {
+                    if (supportData.hasSupported !== undefined) {
+                        option.currentUserStatus.hasSupported = supportData.hasSupported
+                    }
+                    if (supportData.supportValue !== undefined) {
+                        option.currentUserStatus.supportValue = supportData.supportValue
+                    }
+                }
+            }
+        },
+
         // Organize options by family based on type definitions
         organizeByFamily(): void {
             // Clear existing groups
@@ -487,7 +537,7 @@ export const useOptionsStore = defineStore('options', {
             } else {
                 this.options.splice(index, 1, payload.option)
             }
-            
+
             // Reorganize after update
             this.organizeByFamily()
         },
@@ -521,7 +571,7 @@ export const useOptionsStore = defineStore('options', {
                     if (parentTypeInfo?.allowed_child_types &&
                         !parentTypeInfo.allowed_child_types.includes(payload.type)) {
                         showError(t('agora', 'This option type cannot be added as a child to the selected parent'))
-                        return
+                    return
                     }
                 }
             }
@@ -571,7 +621,7 @@ export const useOptionsStore = defineStore('options', {
         // Update an existing option
         async update(payload: { option: Option }): Promise<void> {
             const sessionStore = useSessionStore()
-            
+
             try {
                 const response = await (() => {
                     if (sessionStore.route?.name === 'publicInquiry') {
@@ -592,7 +642,7 @@ export const useOptionsStore = defineStore('options', {
         // Delete an option
         async delete(payload: { option: Option }): Promise<void> {
             const sessionStore = useSessionStore()
-            
+
             try {
                 const response = await (() => {
                     if (sessionStore.route?.name === 'publicInquiry') {
@@ -615,7 +665,7 @@ export const useOptionsStore = defineStore('options', {
         // Restore a deleted option
         async restore(payload: { option: Option }): Promise<void> {
             const sessionStore = useSessionStore()
-            
+
             try {
                 const response = await (() => {
                     if (sessionStore.route?.name === 'publicInquiry') {
@@ -638,7 +688,7 @@ export const useOptionsStore = defineStore('options', {
         // Add support to an option
         async support(optionId: number): Promise<void> {
             const sessionStore = useSessionStore()
-            
+
             try {
                 const response = await (() => {
                     if (sessionStore.route?.name === 'publicInquiry') {
@@ -661,7 +711,7 @@ export const useOptionsStore = defineStore('options', {
         // Remove support from an option
         async unsupport(optionId: number): Promise<void> {
             const sessionStore = useSessionStore()
-            
+
             try {
                 const response = await (() => {
                     if (sessionStore.route?.name === 'publicInquiry') {
@@ -703,15 +753,15 @@ export const useOptionsStore = defineStore('options', {
             const parentOption = this.options.find(opt => opt.id === parentOptionId)
             if (!parentOption) return []
 
-            const sessionStore = useSessionStore()
-            const parentTypeInfo = sessionStore.appSettings?.inquiryOptionTypeTab?.[parentOption.type]
+                const sessionStore = useSessionStore()
+                const parentTypeInfo = sessionStore.appSettings?.inquiryOptionTypeTab?.[parentOption.type]
 
-            if (!parentTypeInfo?.allowed_child_types) return []
+                if (!parentTypeInfo?.allowed_child_types) return []
 
-            return parentTypeInfo.allowed_child_types
-                .map(typeKey => sessionStore.appSettings?.inquiryOptionTypeTab?.[typeKey])
-                .filter(Boolean)
-                .sort((a, b) => (a?.sortOrder || 0) - (b?.sortOrder || 0))
+                    return parentTypeInfo.allowed_child_types
+                    .map(typeKey => sessionStore.appSettings?.inquiryOptionTypeTab?.[typeKey])
+                    .filter(Boolean)
+                    .sort((a, b) => (a?.sortOrder || 0) - (b?.sortOrder || 0))
         },
 
         // Get option type display info
@@ -771,16 +821,16 @@ export const useOptionsStore = defineStore('options', {
                     icon: family.icon || getFamilyIconName(family.key),
                     count: familyOptions.length,
                     totalSupports: familyOptions.reduce((total, option) =>
-                        total + (option.currentUserStatus?.countSupports || 0), 0),
-                    totalComments: familyOptions.reduce((total, option) =>
-                        total + (option.currentUserStatus?.countComments || 0), 0),
-                    types: Object.entries(typeCounts).map(([type, count]) => ({
-                        type,
-                        name: this.getOptionTypeInfo(type)?.name || 
-                               this.getOptionTypeInfo(type)?.label || 
-                               type,
-                        count
-                    }))
+                                                        total + (option.currentUserStatus?.countSupports || 0), 0),
+                                                        totalComments: familyOptions.reduce((total, option) =>
+                                                                                            total + (option.currentUserStatus?.countComments || 0), 0),
+                                                                                            types: Object.entries(typeCounts).map(([type, count]) => ({
+                                                                                                type,
+                                                                                                name: this.getOptionTypeInfo(type)?.name || 
+                                                                                                    this.getOptionTypeInfo(type)?.label || 
+                                                                                                    type,
+                                                                                                count
+                                                                                            }))
                 }
             }).filter(family => family.count > 0)
         },

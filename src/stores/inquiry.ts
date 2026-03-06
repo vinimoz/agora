@@ -361,7 +361,6 @@ export const useInquiryStore = defineStore('inquiry', {
 
         try {
             const response = await PublicAPI.getInquiry(token);
-            
             this.$patch(response.data.inquiry)
 
 

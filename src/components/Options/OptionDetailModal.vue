@@ -698,7 +698,6 @@ watch(() => props.optionId, (newId) => {
   }
 }, { immediate: true })
 
-// Watch for comments changes - THIS IS CRITICAL for real-time updates
 watch(() => commentsStore.comments, (newComments) => {
   
   if (optionStore.id) {
@@ -708,6 +707,8 @@ watch(() => commentsStore.comments, (newComments) => {
                  comment.optionId === optionStore.id && 
                  comment.deleted === 0
     ).length
+    
+    optionsStore.updateOptionCommentCount(optionStore.id, count)
     
     if (optionStore.status) {
       optionStore.status.countComments = count
@@ -724,15 +725,17 @@ const handleCommentAdded = () => {
   // Force re-render by incrementing trigger
   commentUpdateTrigger.value=commentUpdateTrigger.value + 1
 
-  // Option count is already updated by the commentsStore.updateStatusCounts
-  // But we can force it here too for immediate feedback
   if (optionStore.id) {
     const count = commentsStore.comments.filter(
       comment => comment.inquiryId === props.inquiryId &&
                  comment.optionId === optionStore.id &&
                  comment.deleted === 0
     ).length
+ 
+    // Update optionsStore
+    optionsStore.updateOptionCommentCount(optionStore.id, count)
 
+    // Update optionStore
     if (optionStore.status) {
       optionStore.status.countComments = count
     }

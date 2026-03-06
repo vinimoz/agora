@@ -146,6 +146,7 @@ class AppSettings implements JsonSerializable
         ];
     }
 
+    // Public App settings ( need to be fixed adpated ?) 
     public function getAppSettings(): array
     {
         $appSettingsArray = [
@@ -167,6 +168,8 @@ class AppSettings implements JsonSerializable
         'inquiryFamilyTab' =>  $this->inquiryFamilyService?->findAll() ?? [],
         'optionFamilyTab' =>  $this->optionFamilyService?->findAll() ?? [],
         'inquiryStatusTab' =>  $this->inquiryStatusService?->findAll() ?? [],
+        'inquiryStatusTab' =>  $this->inquiryStatusService?->findAll() ?? [],
+        'inquiryTypeRights' => $this->getInquiryTypeRights(),
 
         ];
 

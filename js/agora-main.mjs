@@ -16561,11 +16561,11 @@ const useOptionsStore = defineStore("options", {
       }));
     },
     getFamiliesWithTypes() {
-      const inquiryStore2 = useInquiryStore();
+      const inquiryStore = useInquiryStore();
       const sessionStore = useSessionStore();
       const optionTypesArray = this.getOptionTypesArray;
       const familiesFromHelper = getFamiliesWithOptionTypes(
-        inquiryStore2.type,
+        inquiryStore.type,
         sessionStore.appSettings?.inquiryTypeTab || {},
         optionTypesArray
       );
@@ -16659,8 +16659,8 @@ const useOptionsStore = defineStore("options", {
     },
     // Check if can add options
     canAddOptions() {
-      const inquiryStore2 = useInquiryStore();
-      return inquiryStore2.permissions?.addOptions || false;
+      const inquiryStore = useInquiryStore();
+      return inquiryStore.permissions?.addOptions || false;
     },
     // Get options created by current user
     userCreatedOptions() {
@@ -16722,9 +16722,9 @@ const useOptionsStore = defineStore("options", {
     },
     // Load all options for current inquiry
     async load(inquiryId, token) {
-      const inquiryStore2 = useInquiryStore();
+      const inquiryStore = useInquiryStore();
       const sessionStore = useSessionStore();
-      const targetId = inquiryId || inquiryStore2.id;
+      const targetId = inquiryId || inquiryStore.id;
       if (!targetId && !token) {
         this.error = translate("agora", "No inquiry selected");
         return;
@@ -16757,6 +16757,44 @@ const useOptionsStore = defineStore("options", {
         throw error;
       } finally {
         this.loading = false;
+      }
+    },
+    updateOptionCommentCount(optionId, count) {
+      const option2 = this.options.find((opt) => opt.id === optionId);
+      if (option2 && option2.status) {
+        option2.status.countComments = count;
+      }
+    },
+    updateOptionSupportCount(optionId, count) {
+      const option2 = this.options.find((opt) => opt.id === optionId);
+      if (option2 && option2.status) {
+        option2.status.countSupports = count;
+      }
+    },
+    // Optional: Update all support-related counts at once
+    updateOptionSupportDetails(optionId, supportData) {
+      const option2 = this.options.find((opt) => opt.id === optionId);
+      if (option2) {
+        if (option2.status) {
+          option2.status.countSupports = supportData.countSupports;
+          if (supportData.countPositiveSupports !== void 0) {
+            option2.status.countPositiveSupports = supportData.countPositiveSupports;
+          }
+          if (supportData.countNegativeSupports !== void 0) {
+            option2.status.countNegativeSupports = supportData.countNegativeSupports;
+          }
+          if (supportData.countNeutralSupports !== void 0) {
+            option2.status.countNeutralSupports = supportData.countNeutralSupports;
+          }
+        }
+        if (option2.currentUserStatus) {
+          if (supportData.hasSupported !== void 0) {
+            option2.currentUserStatus.hasSupported = supportData.hasSupported;
+          }
+          if (supportData.supportValue !== void 0) {
+            option2.currentUserStatus.supportValue = supportData.supportValue;
+          }
+        }
       }
     },
     // Organize options by family based on type definitions
@@ -16834,7 +16872,7 @@ const useOptionsStore = defineStore("options", {
     },
     // Add a new option with type validation
     async add(payload) {
-      const inquiryStore2 = useInquiryStore();
+      const inquiryStore = useInquiryStore();
       const sessionStore = useSessionStore();
       if (!this.canAddOptions) {
         showError(translate("agora", "You do not have permission to add options"));
@@ -16871,7 +16909,7 @@ const useOptionsStore = defineStore("options", {
             title: payload.title,
             text: payload.text,
             type: payload.type,
-            targetId: inquiryStore2.id,
+            targetId: inquiryStore.id,
             parentId: payload.parentId || 0,
             miscFields: payload.miscFields || {}
           });
@@ -19474,7 +19512,7 @@ const _sfc_main$1t = /* @__PURE__ */ defineComponent({
     __expose();
     const props2 = __props;
     const emit2 = __emit;
-    const inquiryStore2 = useInquiryStore();
+    const inquiryStore = useInquiryStore();
     const sessionStore = useSessionStore();
     const inquiryTitle = ref("");
     const inquiryId = ref(null);
@@ -19525,19 +19563,19 @@ const _sfc_main$1t = /* @__PURE__ */ defineComponent({
         if (props2.parentInquiryId) {
           inquiryData.parentId = props2.parentInquiryId;
         }
-        if (inquiryStore2.locationId) {
-          inquiryData.locationId = inquiryStore2.locationId;
+        if (inquiryStore.locationId) {
+          inquiryData.locationId = inquiryStore.locationId;
         }
-        if (inquiryStore2.categoryId) {
-          inquiryData.categoryId = inquiryStore2.categoryId;
+        if (inquiryStore.categoryId) {
+          inquiryData.categoryId = inquiryStore.categoryId;
         }
         if (accessType.value === "groups" && selectedGroup.value) {
           inquiryData.ownedGroup = selectedGroup.value;
         }
         if (props2.selectedMode === "transform") {
-          inquiryData.description = inquiryStore2.description;
+          inquiryData.description = inquiryStore.description;
         }
-        const inquiry = await inquiryStore2.add(inquiryData);
+        const inquiry = await inquiryStore.add(inquiryData);
         if (inquiry) {
           inquiryId.value = inquiry.id;
           showSuccess(
@@ -19568,7 +19606,7 @@ const _sfc_main$1t = /* @__PURE__ */ defineComponent({
       selectedGroup.value = null;
       emit2("update:selected-groups", []);
     }
-    const __returned__ = { props: props2, emit: emit2, inquiryStore: inquiryStore2, sessionStore, inquiryTitle, inquiryId, adding, accessType, selectedGroup, inquiryTypes, availableInquiryTypes, inquiryTypeOptions, localInquiryType, selectedType, currentInquiryTypeData, hasPredefinedType, selectGroup, updateLocalInquiryType, titleIsEmpty, disableAddButton, addInquiry, resetInquiry, get t() {
+    const __returned__ = { props: props2, emit: emit2, inquiryStore, sessionStore, inquiryTitle, inquiryId, adding, accessType, selectedGroup, inquiryTypes, availableInquiryTypes, inquiryTypeOptions, localInquiryType, selectedType, currentInquiryTypeData, hasPredefinedType, selectGroup, updateLocalInquiryType, titleIsEmpty, disableAddButton, addInquiry, resetInquiry, get t() {
       return translate;
     }, get NcButton() {
       return NcButton;
@@ -21325,13 +21363,14 @@ const _sfc_main$1n = /* @__PURE__ */ defineComponent({
       }
     };
     const toggleSupport = async () => {
-      if (!canSupport$1.value.valuei || props2.viewOnly) {
+      if (!canSupport$1.value || props2.viewOnly) {
         return;
       }
       const hadSupportedBefore = props2.item.currentUserStatus.hasSupported;
       try {
         const supportsStore = useSupportsStore();
         const sessionStore = useSessionStore();
+        const optionsStore = useOptionsStore();
         await supportsStore.toggleSupport(
           props2.item.id,
           sessionStore.currentUser.id,
@@ -21340,6 +21379,13 @@ const _sfc_main$1n = /* @__PURE__ */ defineComponent({
         );
         const hasSupportedAfter = props2.item.currentUserStatus.hasSupported;
         const supportValueAfter = props2.item.currentUserStatus.supportValue;
+        if (props2.itemType === "option" && props2.item.id) {
+          optionsStore.updateOptionSupportDetails(props2.item.id, {
+            countSupports: props2.item.status.countSupports,
+            hasSupported: props2.item.currentUserStatus.hasSupported,
+            supportValue: props2.item.currentUserStatus.supportValue
+          });
+        }
         if (props2.item.configuration.supportFeature === "binary") {
           if (hasSupportedAfter && !hadSupportedBefore) {
             showSuccess(translate("agora", "Inquiry supported, thanks for your support!"), { timeout: 2e3 });
@@ -21780,7 +21826,7 @@ const _sfc_main$1m = /* @__PURE__ */ defineComponent({
       return date.toLocaleDateString(locale);
     };
     const inquiryStatus = computed(
-      () => __props.inquiry.status.inquiryStatus || inquiryStore.getInquiryStatus?.(__props.inquiry.id)
+      () => __props.inquiry.status.inquiryStatus || __props.inquiry.getInquiryStatus?.(__props.inquiry.id)
     );
     const inquiryStatusIcon = computed(() => {
       const statusItem = sessionStore.appSettings.inquiryStatusTab.find(
@@ -21987,7 +22033,7 @@ function _sfc_render$1m(_ctx, _cache, $props, $setup, $data, $options) {
             key: 1,
             class: normalizeClass(["item__title", {
               closed: $props.inquiry.status.isExpired,
-              active: $props.inquiry.id === _ctx.inquiryStore.id
+              active: $props.inquiry.id
             }]),
             title: $props.inquiry.description,
             to: {
@@ -23295,7 +23341,7 @@ const _sfc_main$1h = /* @__PURE__ */ defineComponent({
     const emit2 = __emit;
     const model = useModel(__props, "modelValue");
     const inquiriesStore = useInquiriesStore();
-    const inquiryStore2 = useInquiryStore();
+    const inquiryStore = useInquiryStore();
     const newUser = ref(void 0);
     async function dialogOK() {
       try {
@@ -23312,7 +23358,7 @@ const _sfc_main$1h = /* @__PURE__ */ defineComponent({
         showError(translate("agora", "Error transferring inquiry"));
       } finally {
         try {
-          await inquiryStore2.load();
+          await inquiryStore.load();
         } catch {
           emit2("accessDenied");
         }
@@ -23368,7 +23414,7 @@ const _sfc_main$1h = /* @__PURE__ */ defineComponent({
         }
       ]
     }));
-    const __returned__ = { emit: emit2, model, inquiriesStore, inquiryStore: inquiryStore2, newUser, dialogOK, dialogText, dialogProps, get t() {
+    const __returned__ = { emit: emit2, model, inquiriesStore, inquiryStore, newUser, dialogOK, dialogText, dialogProps, get t() {
       return translate;
     }, get NcDialog() {
       return NcDialog;
@@ -25424,7 +25470,7 @@ const _sfc_main$11 = /* @__PURE__ */ defineComponent({
     const router2 = useRouter();
     const emit2 = __emit;
     const sessionStore = useSessionStore();
-    const inquiryStore2 = useInquiryStore();
+    const inquiryStore = useInquiryStore();
     const checkStatus = ref({
       email: "empty",
       userName: "empty"
@@ -25496,7 +25542,7 @@ const _sfc_main$11 = /* @__PURE__ */ defineComponent({
     });
     function routeToPersonalShare(token) {
       if (route.params.token === token) {
-        inquiryStore2.load();
+        inquiryStore.load();
         closeModal();
       } else {
         router2.push({
@@ -25589,7 +25635,7 @@ const _sfc_main$11 = /* @__PURE__ */ defineComponent({
         sendRegistration.value = false;
       }
     }
-    const __returned__ = { route, router: router2, emit: emit2, sessionStore, inquiryStore: inquiryStore2, COOKIE_LIFETIME, checkStatus, sendRegistration, userName, emailAddress, saveCookie, registrationIsValid, disableSubmit, emailGeneratedStatus, offerCookies, loginLink, userNameHint, emailAddressHint, routeToPersonalShare, updateCookie, closeModal, login, validatePublicUsername, validateEmailAddress, submitRegistration, get t() {
+    const __returned__ = { route, router: router2, emit: emit2, sessionStore, inquiryStore, COOKIE_LIFETIME, checkStatus, sendRegistration, userName, emailAddress, saveCookie, registrationIsValid, disableSubmit, emailGeneratedStatus, offerCookies, loginLink, userNameHint, emailAddressHint, routeToPersonalShare, updateCookie, closeModal, login, validatePublicUsername, validateEmailAddress, submitRegistration, get t() {
       return translate;
     }, get NcCheckboxRadioSwitch() {
       return NcCheckboxRadioSwitch;
@@ -26026,12 +26072,12 @@ const _sfc_main$Z = /* @__PURE__ */ defineComponent({
   __name: "InquiryHeaderButtons",
   setup(__props, { expose: __expose }) {
     __expose();
-    const inquiryStore2 = useInquiryStore();
+    const inquiryStore = useInquiryStore();
     const sessionStore = useSessionStore();
     onBeforeUnmount(() => {
-      inquiryStore2.$reset();
+      inquiryStore.$reset();
     });
-    const __returned__ = { inquiryStore: inquiryStore2, sessionStore, get ActionToggleSidebar() {
+    const __returned__ = { inquiryStore, sessionStore, get ActionToggleSidebar() {
       return ActionToggleSidebar;
     } };
     Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
@@ -70468,7 +70514,7 @@ const _sfc_main$Y = {
   setup(__props, { expose: __expose }) {
     __expose();
     const attachmentsStore = useAttachmentsStore();
-    const inquiryStore2 = useInquiryStore();
+    const inquiryStore = useInquiryStore();
     const props2 = __props;
     const imageFileInput = ref(null);
     const wordFileInput = ref(null);
@@ -70494,7 +70540,7 @@ const _sfc_main$Y = {
       const file = event.target.files[0];
       if (!file) return;
       try {
-        const response = await attachmentsStore.upload(inquiryStore2.id, file);
+        const response = await attachmentsStore.upload(inquiryStore.id, file);
         const imageUrl = getNextcloudPreviewUrl(response.fileId, 1920, 1080, true);
         if (editor.value) {
           editor.value.chain().focus().insertContent(`<img src="${imageUrl}" alt="${response.name}" class="editor-image image-align-center" data-file-id="${response.fileId}" />`).run();
@@ -70524,7 +70570,7 @@ const _sfc_main$Y = {
     });
     const editor = useEditor({
       editable: !props2.readonly,
-      content: inquiryStore2.description || "<p></p>",
+      content: inquiryStore.description || "<p></p>",
       extensions: [
         index_default$6.configure({
           heading: {
@@ -70604,14 +70650,14 @@ const _sfc_main$Y = {
       },
       onUpdate: ({ editor: editor2 }) => {
         const currentHtml = editor2.getHTML();
-        if (currentHtml !== inquiryStore2.description) {
-          inquiryStore2.description = currentHtml;
+        if (currentHtml !== inquiryStore.description) {
+          inquiryStore.description = currentHtml;
         }
       }
     });
     const handlePastedImage = async (file) => {
       try {
-        const response = await attachmentsStore.upload(inquiryStore2.id, file, false);
+        const response = await attachmentsStore.upload(inquiryStore.id, file, false);
         const imageUrl = getNextcloudPreviewUrl(response.fileId, 1920, 1080, true);
         const attachment = {
           id: response.id,
@@ -70648,7 +70694,7 @@ const _sfc_main$Y = {
       editor.value.chain().focus().updateAttributes("image", { align: alignment }).run();
     };
     watch(
-      () => inquiryStore2.description,
+      () => inquiryStore.description,
       (newVal) => {
         if (editor.value && newVal !== editor.value.getHTML()) {
           nextTick$1(() => {
@@ -70698,7 +70744,7 @@ const _sfc_main$Y = {
         const arrayBuffer = await file.arrayBuffer();
         const { value: html2 } = await mammoth.convertToHtml({ arrayBuffer });
         editor.value.commands.setContent(html2);
-        inquiryStore2.description = html2;
+        inquiryStore.description = html2;
         showSuccess(translate("agora", "Word document imported"));
       } catch (error) {
         console.error("Error importing Word document:", error);
@@ -70732,7 +70778,7 @@ const _sfc_main$Y = {
       aiLoading.value = true;
       aiGeneratedContent.value = "";
       try {
-        const generatedContent = await inquiryStore2.getEchanceText(aiPrompt.value);
+        const generatedContent = await inquiryStore.getEchanceText(aiPrompt.value);
         aiGeneratedContent.value = generatedContent;
         showSuccess(translate("agora", "Content generated"));
       } catch (error) {
@@ -70745,15 +70791,15 @@ const _sfc_main$Y = {
     const insertAIContent = () => {
       if (aiGeneratedContent.value && editor.value) {
         editor.value.commands.setContent(aiGeneratedContent.value);
-        inquiryStore2.description = aiGeneratedContent.value;
+        inquiryStore.description = aiGeneratedContent.value;
         showSuccess(translate("agora", "Content inserted"));
         closeAIModal();
       }
     };
     onMounted(() => {
       nextTick$1(() => {
-        if (editor.value && inquiryStore2.description) {
-          editor.value.commands.setContent(inquiryStore2.description);
+        if (editor.value && inquiryStore.description) {
+          editor.value.commands.setContent(inquiryStore.description);
         }
       });
     });
@@ -70762,7 +70808,7 @@ const _sfc_main$Y = {
         editor.value.destroy();
       }
     });
-    const __returned__ = { attachmentsStore, inquiryStore: inquiryStore2, props: props2, imageFileInput, wordFileInput, editorContainer, showAIModal, aiLoading, aiPrompt, aiGeneratedContent, getNextcloudPreviewUrl, triggerImageUpload, getContentSummary, handleImageUpload, CustomImage, editor, handlePastedImage, isImageSelected, getSelectedImageAlign, alignImage, selectedHeading, setHeading, setLink, importWord, handleWordImport, openAIModal, closeAIModal, onPromptUpdate, generateWithAI, insertAIContent, ref, onMounted, onUnmounted, watch, nextTick: nextTick$1, computed, get useEditor() {
+    const __returned__ = { attachmentsStore, inquiryStore, props: props2, imageFileInput, wordFileInput, editorContainer, showAIModal, aiLoading, aiPrompt, aiGeneratedContent, getNextcloudPreviewUrl, triggerImageUpload, getContentSummary, handleImageUpload, CustomImage, editor, handlePastedImage, isImageSelected, getSelectedImageAlign, alignImage, selectedHeading, setHeading, setLink, importWord, handleWordImport, openAIModal, closeAIModal, onPromptUpdate, generateWithAI, insertAIContent, ref, onMounted, onUnmounted, watch, nextTick: nextTick$1, computed, get useEditor() {
       return useEditor;
     }, get EditorContent() {
       return EditorContent;
@@ -73413,7 +73459,7 @@ const _sfc_main$T = /* @__PURE__ */ defineComponent({
   setup(__props, { expose: __expose }) {
     __expose();
     const sessionStore = useSessionStore();
-    const inquiryStore2 = useInquiryStore();
+    const inquiryStore = useInquiryStore();
     const commentsStore = useCommentsStore();
     const preferencesStore = usePreferencesStore();
     const props2 = __props;
@@ -73445,7 +73491,7 @@ const _sfc_main$T = /* @__PURE__ */ defineComponent({
     });
     const isCurrentUser = computed(() => sessionStore.currentUser?.id === user.value.id);
     const isConfidential = computed(() => comments.value.some((c) => c && c.confidential > 0));
-    const deletable = computed(() => user.value.id === sessionStore.currentUser?.id || inquiryStore2.currentUserStatus?.isOwner);
+    const deletable = computed(() => user.value.id === sessionStore.currentUser?.id || inquiryStore.currentUserStatus?.isOwner);
     const timeRange = computed(() => {
       if (comments.value.length <= 1) return "";
       try {
@@ -73499,7 +73545,7 @@ const _sfc_main$T = /* @__PURE__ */ defineComponent({
       userPositionsGrouped.set(userId, newPosition);
       return newPosition;
     });
-    const __returned__ = { sessionStore, inquiryStore: inquiryStore2, commentsStore, preferencesStore, props: props2, isGroupMode, comments, user, timestamp, commentedDateTime, isCurrentUser, isConfidential, deletable, timeRange, linkify, deleteComment, restoreComment, userPositionsGrouped, position, get DateTime() {
+    const __returned__ = { sessionStore, inquiryStore, commentsStore, preferencesStore, props: props2, isGroupMode, comments, user, timestamp, commentedDateTime, isCurrentUser, isConfidential, deletable, timeRange, linkify, deleteComment, restoreComment, userPositionsGrouped, position, get DateTime() {
       return DateTime;
     }, get t() {
       return translate;
@@ -73671,21 +73717,21 @@ const _sfc_main$S = /* @__PURE__ */ defineComponent({
       let currentGroup = null;
       for (let i = 0; i < comments.length; i++) {
         const comment = comments[i];
-        if (!comment || !comment.user) return [];
-        if (!currentGroup) {
-          currentGroup = {
-            userId: comment.user.id,
-            user: comment.user,
-            timestamp: comment.timestamp,
-            comments: [comment]
-          };
-          return [];
-        }
-        const timeDiff = Math.abs(comment.timestamp - currentGroup.timestamp);
-        if (comment.user.id === currentGroup.userId && timeDiff <= 60) {
-          currentGroup.comments.push(comment);
+        if (!comment || !comment.user) continue;
+        if (currentGroup) {
+          const timeDiff = Math.abs(comment.timestamp - currentGroup.timestamp);
+          if (comment.user.id === currentGroup.userId && timeDiff <= 60) {
+            currentGroup.comments.push(comment);
+          } else {
+            groups.push(currentGroup);
+            currentGroup = {
+              userId: comment.user.id,
+              user: comment.user,
+              timestamp: comment.timestamp,
+              comments: [comment]
+            };
+          }
         } else {
-          groups.push(currentGroup);
           currentGroup = {
             userId: comment.user.id,
             user: comment.user,
@@ -73694,9 +73740,7 @@ const _sfc_main$S = /* @__PURE__ */ defineComponent({
           };
         }
       }
-      if (currentGroup) {
-        groups.push(currentGroup);
-      }
+      if (currentGroup) groups.push(currentGroup);
       return groups;
     }
     function getAvatarPosition(userId) {
@@ -73826,13 +73870,13 @@ const _sfc_main$R = /* @__PURE__ */ defineComponent({
     const props2 = __props;
     const commentsStore = useCommentsStore();
     const sessionStore = useSessionStore();
-    const inquiryStore2 = useInquiryStore();
+    const inquiryStore = useInquiryStore();
     const comment = ref("");
     const confidential = ref(false);
     const isSubmitting = ref(false);
     const currentInquiry = computed(() => {
-      if (inquiryStore2.id) {
-        return inquiryStore2;
+      if (inquiryStore.id) {
+        return inquiryStore;
       }
       if (props2.inquiryId) {
         return {
@@ -73841,7 +73885,7 @@ const _sfc_main$R = /* @__PURE__ */ defineComponent({
             forceConfidentialComments: false
           },
           // Default owner is the current user if not available
-          owner: inquiryStore2.inquiry?.owner || {
+          owner: inquiryStore.inquiry?.owner || {
             id: sessionStore.currentUser.id,
             displayName: sessionStore.currentUser.displayName
           }
@@ -73849,7 +73893,7 @@ const _sfc_main$R = /* @__PURE__ */ defineComponent({
       }
       return null;
     });
-    if (props2.inquiryId && (!inquiryStore2.inquiry?.id || inquiryStore2.inquiry.id !== props2.inquiryId)) {
+    if (props2.inquiryId && (!inquiryStore.inquiry?.id || inquiryStore.inquiry.id !== props2.inquiryId)) {
       commentsStore.load(props2.inquiryId);
     }
     const confidentialText = computed(() => {
@@ -73896,7 +73940,7 @@ const _sfc_main$R = /* @__PURE__ */ defineComponent({
         writeComment();
       }
     }
-    const __returned__ = { props: props2, commentsStore, sessionStore, inquiryStore: inquiryStore2, comment, confidential, isSubmitting, currentInquiry, confidentialText, isConfidentialForced, writeComment, handleKeydown, get t() {
+    const __returned__ = { props: props2, commentsStore, sessionStore, inquiryStore, comment, confidential, isSubmitting, currentInquiry, confidentialText, isConfidentialForced, writeComment, handleKeydown, get t() {
       return translate;
     }, get NcRichContenteditable() {
       return NcRichContenteditable;
@@ -74240,6 +74284,7 @@ const _sfc_main$Q = /* @__PURE__ */ defineComponent({
         const count = newComments.filter(
           (comment) => comment.inquiryId === props2.inquiryId && comment.optionId === optionStore.id && comment.deleted === 0
         ).length;
+        optionsStore.updateOptionCommentCount(optionStore.id, count);
         if (optionStore.status) {
           optionStore.status.countComments = count;
         }
@@ -74252,6 +74297,7 @@ const _sfc_main$Q = /* @__PURE__ */ defineComponent({
         const count = commentsStore.comments.filter(
           (comment) => comment.inquiryId === props2.inquiryId && comment.optionId === optionStore.id && comment.deleted === 0
         ).length;
+        optionsStore.updateOptionCommentCount(optionStore.id, count);
         if (optionStore.status) {
           optionStore.status.countComments = count;
         }
@@ -74952,7 +74998,7 @@ const _sfc_main$P = /* @__PURE__ */ defineComponent({
   __name: "FamilyLayoutTree",
   setup(__props, { expose: __expose }) {
     __expose();
-    const inquiryStore2 = useInquiryStore();
+    const inquiryStore = useInquiryStore();
     const optionsStore = useOptionsStore();
     const sessionStore = useSessionStore();
     const optionStore = useOptionStore();
@@ -75171,15 +75217,15 @@ const _sfc_main$P = /* @__PURE__ */ defineComponent({
       }
     };
     onMounted(() => {
-      if (inquiryStore2.id) {
-        optionsStore.load(inquiryStore2.id).then(() => {
+      if (inquiryStore.id) {
+        optionsStore.load(inquiryStore.id).then(() => {
           if (structureRootOptions.value.length > 0 && !activeNodeId.value) {
             setActiveNode(structureRootOptions.value[0]);
           }
         });
       }
     });
-    const __returned__ = { inquiryStore: inquiryStore2, optionsStore, sessionStore, optionStore, activeNodeId, selectedNode, editingNodeId, inlineEditTitle, inlineEditText, showAddOptionModal, showDetailModal, selectedOptionTypeKey, selectedParentId, allOptionTypes, structureTypes, rootStructureTypes, structureRootOptions, activeNode, getOptionTypeLabel: getOptionTypeLabel$1, getOptionTypeIcon, displayNodeTitle, hasSupportFeature: hasSupportFeature$1, getChildren, getAllowedResponseTypes, getRootType, getRootTypeLabel, getDepth, canEditNode, canCommentOnNode, canSupportNode, allowComments, formatDate, truncateText, hasAllowedResponses, setActiveNode, startInlineEdit, cancelInlineEdit, saveInlineEdit, formattedContent, openNodeDetail, closeDetailModal, openAddOptionModal, openAddOptionModalForRoot, closeAddOptionModal, handleNodeUpdated, handleNodeDeleted, handleOptionCreated, get t() {
+    const __returned__ = { inquiryStore, optionsStore, sessionStore, optionStore, activeNodeId, selectedNode, editingNodeId, inlineEditTitle, inlineEditText, showAddOptionModal, showDetailModal, selectedOptionTypeKey, selectedParentId, allOptionTypes, structureTypes, rootStructureTypes, structureRootOptions, activeNode, getOptionTypeLabel: getOptionTypeLabel$1, getOptionTypeIcon, displayNodeTitle, hasSupportFeature: hasSupportFeature$1, getChildren, getAllowedResponseTypes, getRootType, getRootTypeLabel, getDepth, canEditNode, canCommentOnNode, canSupportNode, allowComments, formatDate, truncateText, hasAllowedResponses, setActiveNode, startInlineEdit, cancelInlineEdit, saveInlineEdit, formattedContent, openNodeDetail, closeDetailModal, openAddOptionModal, openAddOptionModalForRoot, closeAddOptionModal, handleNodeUpdated, handleNodeDeleted, handleOptionCreated, get t() {
       return translate;
     }, get NcButton() {
       return NcButton;
@@ -78481,7 +78527,7 @@ const _sfc_main$J = /* @__PURE__ */ defineComponent({
   __name: "OptionEditView",
   setup(__props, { expose: __expose }) {
     __expose();
-    const inquiryStore2 = useInquiryStore();
+    const inquiryStore = useInquiryStore();
     const optionsStore = useOptionsStore();
     const sessionStore = useSessionStore();
     const route = useRoute();
@@ -78510,7 +78556,7 @@ const _sfc_main$J = /* @__PURE__ */ defineComponent({
       () => sessionStore.appSettings?.inquiryOptionTypeTab || []
     );
     const familiesWithOptions = computed(() => {
-      const inquiryTypeKey = inquiryStore2.type;
+      const inquiryTypeKey = inquiryStore.type;
       if (!inquiryTypeKey || !allInquiryTypes.value?.length || !allOptionTypes.value?.length) {
         return [];
       }
@@ -78614,25 +78660,25 @@ const _sfc_main$J = /* @__PURE__ */ defineComponent({
       closeOptionDetail();
     };
     onMounted(() => {
-      if (inquiryStore2.id) {
-        optionsStore.load(inquiryStore2.id);
+      if (inquiryStore.id) {
+        optionsStore.load(inquiryStore.id);
       }
       if (familiesWithOptions.value.length > 0) {
         activeFamily.value = familiesWithOptions.value[0].key;
       }
     });
-    watch(() => inquiryStore2.id, (newId) => {
+    watch(() => inquiryStore.id, (newId) => {
       if (newId) {
         optionsStore.load(newId);
       }
     });
-    watch(() => inquiryStore2.type, () => {
+    watch(() => inquiryStore.type, () => {
       activeFamily.value = "";
       if (familiesWithOptions.value.length > 0) {
         activeFamily.value = familiesWithOptions.value[0].key;
       }
     });
-    const __returned__ = { inquiryStore: inquiryStore2, optionsStore, sessionStore, route, activeFamily, showAddOptionModal, showOptionDetail, selectedOptionTypeKey, selectedParentId, selectedOptionId, isReadOnly, layoutComponents, getFamilyIconHelper, getFamilyColorHelper, allInquiryTypes, allOptionTypes, familiesWithOptions, hasVisibleFamilies, activeFamilyData, currentFamilyLayout, familyCounts, activeFamilyOptions, getOptionTypeIcon, setActiveFamily, openAddOptionModal, closeAddOptionModal, openOptionDetail, closeOptionDetail, handleOptionCreated, handleOptionUpdated, handleOptionDeleted, get t() {
+    const __returned__ = { inquiryStore, optionsStore, sessionStore, route, activeFamily, showAddOptionModal, showOptionDetail, selectedOptionTypeKey, selectedParentId, selectedOptionId, isReadOnly, layoutComponents, getFamilyIconHelper, getFamilyColorHelper, allInquiryTypes, allOptionTypes, familiesWithOptions, hasVisibleFamilies, activeFamilyData, currentFamilyLayout, familyCounts, activeFamilyOptions, getOptionTypeIcon, setActiveFamily, openAddOptionModal, closeAddOptionModal, openOptionDetail, closeOptionDetail, handleOptionCreated, handleOptionUpdated, handleOptionDeleted, get t() {
       return translate;
     }, get NcButton() {
       return NcButton;
@@ -78853,7 +78899,7 @@ const _sfc_main$I = /* @__PURE__ */ defineComponent({
     const props2 = __props;
     const sessionStore = useSessionStore();
     const commentsStore = useCommentsStore();
-    const inquiryStore2 = useInquiryStore();
+    const inquiryStore = useInquiryStore();
     const route = useRoute();
     const attachmentsStore = useAttachmentsStore();
     const imageFileInput = ref(null);
@@ -78861,35 +78907,35 @@ const _sfc_main$I = /* @__PURE__ */ defineComponent({
     const triggerImageUpload = () => {
       imageFileInput.value?.click();
     };
-    const isStoreReady = computed(() => inquiryStore2 && inquiryStore2.id && sessionStore && sessionStore.appSettings && Object.keys(sessionStore.appSettings).length > 0);
+    const isStoreReady = computed(() => inquiryStore && inquiryStore.id && sessionStore && sessionStore.appSettings && Object.keys(sessionStore.appSettings).length > 0);
     const context2 = computed(() => {
       if (!isStoreReady.value) return null;
-      return createInquiryContext(inquiryStore2, sessionStore.appSettings);
+      return createInquiryContext(inquiryStore, sessionStore.appSettings);
     });
-    const selectedCategory = ref(inquiryStore2.categoryId || 0);
-    const selectedLocation = ref(inquiryStore2.locationId || 0);
+    const selectedCategory = ref(inquiryStore.categoryId || 0);
+    const selectedLocation = ref(inquiryStore.locationId || 0);
     const isLoaded = ref(false);
     const inquiryTypeData = computed(() => {
-      const data = getInquiryTypeData(inquiryStore2.type, sessionStore.appSettings.inquiryTypeTab || []);
+      const data = getInquiryTypeData(inquiryStore.type, sessionStore.appSettings.inquiryTypeTab || []);
       return data;
     });
     const availableInquiryStatuses = computed(() => {
-      const statusesFromSettings = sessionStore.appSettings.inquiryStatusTab?.filter((status) => status.inquiryType === inquiryStore2.type)?.sort((a, b) => a.order - b.order) || [];
-      if (inquiryStore2.status.inquiryStatus === "draft") {
+      const statusesFromSettings = sessionStore.appSettings.inquiryStatusTab?.filter((status) => status.inquiryType === inquiryStore.type)?.sort((a, b) => a.order - b.order) || [];
+      if (inquiryStore.status.inquiryStatus === "draft") {
         statusesFromSettings.unshift({
           statusKey: "draft",
           label: "Draft",
           icon: "draft",
-          inquiryType: inquiryStore2.type,
+          inquiryType: inquiryStore.type,
           order: 0
         });
       }
-      if (inquiryStore2.status.inquiryStatus === "waiting_approval") {
+      if (inquiryStore.status.inquiryStatus === "waiting_approval") {
         statusesFromSettings.unshift({
           statusKey: "waiting_approval",
           label: "Waiting Approval",
           icon: "waitingapproval",
-          inquiryType: inquiryStore2.type,
+          inquiryType: inquiryStore.type,
           order: 1
         });
       }
@@ -78902,18 +78948,18 @@ const _sfc_main$I = /* @__PURE__ */ defineComponent({
             statusKey: "draft",
             label: "Draft",
             icon: "draft",
-            inquiryType: inquiryStore2.type,
+            inquiryType: inquiryStore.type,
             order: 0
           },
           "waiting_approval": {
             statusKey: "waiting_approval",
             label: "Waiting Approval",
             icon: "waitingapproval",
-            inquiryType: inquiryStore2.type,
+            inquiryType: inquiryStore.type,
             order: 1
           }
         };
-        const currentStatus = inquiryStore2.status.inquiryStatus;
+        const currentStatus = inquiryStore.status.inquiryStatus;
         if (specialStatuses[currentStatus]) {
           return specialStatuses[currentStatus];
         }
@@ -78939,7 +78985,7 @@ const _sfc_main$I = /* @__PURE__ */ defineComponent({
     const onStatusChange = async (newStatus) => {
       try {
         const statusId = newStatus?.id || newStatus;
-        await inquiryStore2.setInquiryStatus(statusId);
+        await inquiryStore.setInquiryStatus(statusId);
         showSuccess(translate("agora", "Inquiry status of this inquiry has been updated"));
       } catch {
         selectedInquiryStatusKey.value = currentInquiryStatus.value.statusKey;
@@ -78971,7 +79017,7 @@ const _sfc_main$I = /* @__PURE__ */ defineComponent({
       }
       return buildPath(itemMap[targetId]);
     }
-    watch(() => inquiryStore2.coverId, (newCoverId) => {
+    watch(() => inquiryStore.coverId, (newCoverId) => {
       if (newCoverId) {
         currentCoverUrl.value = getNextcloudPreviewUrl(newCoverId);
       } else {
@@ -78983,7 +79029,7 @@ const _sfc_main$I = /* @__PURE__ */ defineComponent({
       (newVal) => {
         const rawValue = toRaw(newVal);
         if (rawValue) {
-          inquiryStore2.locationId = rawValue.value;
+          inquiryStore.locationId = rawValue.value;
         }
       },
       { deep: true }
@@ -78993,7 +79039,7 @@ const _sfc_main$I = /* @__PURE__ */ defineComponent({
       (newVal) => {
         const rawValue = toRaw(newVal);
         if (rawValue) {
-          inquiryStore2.categoryId = rawValue.value;
+          inquiryStore.categoryId = rawValue.value;
         }
       },
       { deep: true }
@@ -79029,13 +79075,13 @@ const _sfc_main$I = /* @__PURE__ */ defineComponent({
       hierarchicalLocation,
       (locations) => {
         if (!locations.length) return;
-        if (inquiryStore2.locationId === 0) {
+        if (inquiryStore.locationId === 0) {
           selectedLocation.value = locations[0];
-          inquiryStore2.locationId = locations[0].value;
+          inquiryStore.locationId = locations[0].value;
         } else {
-          const selected = locations.find((loc) => loc.value === inquiryStore2.locationId);
+          const selected = locations.find((loc) => loc.value === inquiryStore.locationId);
           selectedLocation.value = selected || locations[0];
-          inquiryStore2.locationId = selected?.value || locations[0].value;
+          inquiryStore.locationId = selected?.value || locations[0].value;
         }
       },
       { immediate: true }
@@ -79044,20 +79090,20 @@ const _sfc_main$I = /* @__PURE__ */ defineComponent({
       hierarchicalCategory,
       (categories) => {
         if (!categories.length) return;
-        if (inquiryStore2.categoryId === 0) {
+        if (inquiryStore.categoryId === 0) {
           selectedCategory.value = categories[0];
-          inquiryStore2.categoryId = categories[0].value;
+          inquiryStore.categoryId = categories[0].value;
         } else {
-          const selected = categories.find((loc) => loc.value === inquiryStore2.categoryId);
+          const selected = categories.find((loc) => loc.value === inquiryStore.categoryId);
           selectedCategory.value = selected || categories[0];
-          inquiryStore2.categoryId = selected?.value || categories[0].value;
+          inquiryStore.categoryId = selected?.value || categories[0].value;
         }
       },
       { immediate: true }
     );
     onMounted(() => {
-      if (inquiryStore2.coverId) {
-        currentCoverUrl.value = getNextcloudPreviewUrl(inquiryStore2.coverId);
+      if (inquiryStore.coverId) {
+        currentCoverUrl.value = getNextcloudPreviewUrl(inquiryStore.coverId);
       }
       subscribe(Event$1.UpdateComments, () => commentsStore.load());
       isLoaded.value = true;
@@ -79091,7 +79137,7 @@ const _sfc_main$I = /* @__PURE__ */ defineComponent({
         return;
       }
       try {
-        const response = await attachmentsStore.upload(inquiryStore2.id, file, true);
+        const response = await attachmentsStore.upload(inquiryStore.id, file, true);
         const attachment = {
           id: response.id ?? `temp-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
           name: response.name ?? file.name,
@@ -79101,7 +79147,7 @@ const _sfc_main$I = /* @__PURE__ */ defineComponent({
         };
         attachmentsStore.attachments = [...attachmentsStore.attachments, attachment];
         currentCoverUrl.value = getNextcloudPreviewUrl(attachment.fileId);
-        inquiryStore2.coverId = attachment.fileId;
+        inquiryStore.coverId = attachment.fileId;
         showSuccess(translate("agora", "{file} uploaded", { file: response.name ?? file.name }));
       } catch (error) {
         showError(translate("agora", "Failed to upload {file}", { file: file.name }));
@@ -79109,8 +79155,8 @@ const _sfc_main$I = /* @__PURE__ */ defineComponent({
       }
     };
     const timeExpirationRelative = computed(() => {
-      if (inquiryStore2.configuration.expire) {
-        return DateTime.fromMillis(inquiryStore2.configuration.expire * 1e3).toRelative();
+      if (inquiryStore.configuration.expire) {
+        return DateTime.fromMillis(inquiryStore.configuration.expire * 1e3).toRelative();
       }
       return translate("agora", "never");
     });
@@ -79123,13 +79169,10 @@ const _sfc_main$I = /* @__PURE__ */ defineComponent({
     );
     const formatDate = (timestamp) => new Date(timestamp * 1e3).toLocaleDateString();
     const viewOnlySupportInquiry = computed(() => {
-      const isPublicRoute = ["publicInquiry", "inquiryPublic", "public-view"].includes(route.name);
-      if (isPublicRoute) {
-        return false;
-      }
-      return true;
+      const isPublicRoute = ["publicInquiry", "public-view"].includes(route.name);
+      return isPublicRoute;
     });
-    const __returned__ = { props: props2, sessionStore, commentsStore, inquiryStore: inquiryStore2, route, attachmentsStore, imageFileInput, currentCoverUrl, triggerImageUpload, isStoreReady, context: context2, selectedCategory, selectedLocation, isLoaded, inquiryTypeData, availableInquiryStatuses, currentInquiryStatus, selectedInquiryStatusKey, currentInquiryStatusLabel, currentInquiryStatusIcon, selectedInquiryStatus, onStatusChange, statusInquiryOptions, getHierarchyPath, buildHierarchy, hierarchicalLocation, hierarchicalCategory, showCategoryAsLabel, showLocationAsLabel, getNextcloudPreviewUrl, handleImageUpload, timeExpirationRelative, canCommentOnInquiry, canSupportInquiry, formatDate, viewOnlySupportInquiry, get t() {
+    const __returned__ = { props: props2, sessionStore, commentsStore, inquiryStore, route, attachmentsStore, imageFileInput, currentCoverUrl, triggerImageUpload, isStoreReady, context: context2, selectedCategory, selectedLocation, isLoaded, inquiryTypeData, availableInquiryStatuses, currentInquiryStatus, selectedInquiryStatusKey, currentInquiryStatusLabel, currentInquiryStatusIcon, selectedInquiryStatus, onStatusChange, statusInquiryOptions, getHierarchyPath, buildHierarchy, hierarchicalLocation, hierarchicalCategory, showCategoryAsLabel, showLocationAsLabel, getNextcloudPreviewUrl, handleImageUpload, timeExpirationRelative, canCommentOnInquiry, canSupportInquiry, formatDate, viewOnlySupportInquiry, get t() {
       return translate;
     }, SupportFeature, get NcSelect() {
       return NcSelect;
@@ -79669,13 +79712,13 @@ function _sfc_render$I(_ctx, _cache, $props, $setup, $data, $options) {
           ])
         ]),
         createBaseVNode("div", _hoisted_68$2, [
-          $setup.sessionStore.appSettings.inquiryTypeRights[$setup.inquiryStore.type]?.editorType === "wysiwyg" ? (openBlock(), createElementBlock("div", _hoisted_69$2, [
+          $setup.sessionStore.appSettings?.inquiryTypeRights[$setup.inquiryStore.type]?.editorType === "wysiwyg" ? (openBlock(), createElementBlock("div", _hoisted_69$2, [
             createVNode($setup["InquiryEditor"], {
               modelValue: $setup.inquiryStore.description,
               "onUpdate:modelValue": _cache[4] || (_cache[4] = ($event) => $setup.inquiryStore.description = $event),
               readonly: $setup.props.isReadonly
             }, null, 8, ["modelValue", "readonly"])
-          ])) : $setup.sessionStore.appSettings.inquiryTypeRights[$setup.inquiryStore.type]?.editorType === "texteditor" ? (openBlock(), createElementBlock("div", _hoisted_70$2, [
+          ])) : $setup.sessionStore.appSettings?.inquiryTypeRights[$setup.inquiryStore.type]?.editorType === "texteditor" ? (openBlock(), createElementBlock("div", _hoisted_70$2, [
             createVNode($setup["NcRichContenteditable"], {
               modelValue: $setup.inquiryStore.description,
               "onUpdate:modelValue": _cache[5] || (_cache[5] = ($event) => $setup.inquiryStore.description = $event),
@@ -79732,7 +79775,7 @@ const _sfc_main$H = /* @__PURE__ */ defineComponent({
       coverId: null,
       inquiryStatus: "active"
     });
-    const inquiryStore2 = useInquiryStore();
+    const inquiryStore = useInquiryStore();
     const commentsStore = useCommentsStore();
     const preferencesStore = usePreferencesStore();
     const sessionStore = useSessionStore();
@@ -79755,7 +79798,7 @@ const _sfc_main$H = /* @__PURE__ */ defineComponent({
       orderedTypes.forEach((typeLabel) => {
         grouped[typeLabel] = [];
       });
-      inquiryStore2.childs.forEach((child) => {
+      inquiryStore.childs.forEach((child) => {
         const typeLabel = getInquiryTypeData(
           child.type,
           sessionStore.appSettings.inquiryTypeTab || [],
@@ -79795,20 +79838,20 @@ const _sfc_main$H = /* @__PURE__ */ defineComponent({
         } catch (error) {
           showError("Failed to load inquiry:", error);
         } finally {
-          inquiryParent.value.id = inquiryStore2.id;
-          inquiryParent.value.parentId = inquiryStore2.parentId;
-          inquiryParent.value.title = inquiryStore2.title;
-          inquiryParent.value.type = inquiryStore2.type;
-          inquiryParent.value.owner = inquiryStore2.owner;
-          inquiryParent.value.moderationStatus = inquiryStore2.moderationStatus;
-          inquiryParent.value.status = inquiryStore2.status;
-          inquiryParent.value.configuration = inquiryStore2.configuration;
-          inquiryParent.value.currentUserStatus = inquiryStore2.currentUserStatus;
+          inquiryParent.value.id = inquiryStore.id;
+          inquiryParent.value.parentId = inquiryStore.parentId;
+          inquiryParent.value.title = inquiryStore.title;
+          inquiryParent.value.type = inquiryStore.type;
+          inquiryParent.value.owner = inquiryStore.owner;
+          inquiryParent.value.moderationStatus = inquiryStore.moderationStatus;
+          inquiryParent.value.status = inquiryStore.status;
+          inquiryParent.value.configuration = inquiryStore.configuration;
+          inquiryParent.value.currentUserStatus = inquiryStore.currentUserStatus;
           inquiryParent.value.commentCount = commentsStore.comments.length;
-          inquiryParent.value.supportCount = inquiryStore2.status.countSupports;
-          inquiryParent.value.inquiryGroups = inquiryStore2.inquiryGroups;
-          inquiryParent.value.coverId = inquiryStore2.coverId;
-          inquiryParent.value.inquiryStatus = inquiryStore2.inquiryStatus;
+          inquiryParent.value.supportCount = inquiryStore.status.countSupports;
+          inquiryParent.value.inquiryGroups = inquiryStore.inquiryGroups;
+          inquiryParent.value.coverId = inquiryStore.coverId;
+          inquiryParent.value.inquiryStatus = inquiryStore.inquiryStatus;
           isLoadedLocal.value = true;
         }
       }
@@ -79841,10 +79884,10 @@ const _sfc_main$H = /* @__PURE__ */ defineComponent({
       return obj;
     }
     const loadInquiryData = async () => {
-      inquiryStore2.childs = inquiryStore2.childs.map(transformOwner);
+      inquiryStore.childs = inquiryStore.childs.map(transformOwner);
       return true;
     };
-    const __returned__ = { props: props2, inquiryParent, inquiryStore: inquiryStore2, commentsStore, preferencesStore, sessionStore, isLoadedLocal, isMobile, subMode, handleSubModeChange, isGridView, inquiryTypes, childrenByType, childTypes, emit: emit2, editParent, routeChild, handleResize, transformOwner, loadInquiryData, get t() {
+    const __returned__ = { props: props2, inquiryParent, inquiryStore, commentsStore, preferencesStore, sessionStore, isLoadedLocal, isMobile, subMode, handleSubModeChange, isGridView, inquiryTypes, childrenByType, childTypes, emit: emit2, editParent, routeChild, handleResize, transformOwner, loadInquiryData, get t() {
       return translate;
     }, InquiryItem, get NcCheckboxRadioSwitch() {
       return NcCheckboxRadioSwitch;
@@ -80061,8 +80104,8 @@ const _sfc_main$G = /* @__PURE__ */ defineComponent({
   __name: "CardClosedInquiry",
   setup(__props, { expose: __expose }) {
     __expose();
-    const inquiryStore2 = useInquiryStore();
-    const __returned__ = { inquiryStore: inquiryStore2, cardType: cardType$3, get CardDiv() {
+    const inquiryStore = useInquiryStore();
+    const __returned__ = { inquiryStore, cardType: cardType$3, get CardDiv() {
       return CardDiv;
     }, get t() {
       return translate;
@@ -80097,18 +80140,18 @@ const _sfc_main$F = /* @__PURE__ */ defineComponent({
   __name: "CardLimitedInquiries",
   setup(__props, { expose: __expose }) {
     __expose();
-    const inquiryStore2 = useInquiryStore();
+    const inquiryStore = useInquiryStore();
     const optionsStore = useOptionsStore();
     const orphanedInquiriesText = computed(
       () => translatePlural(
         "inquiries",
         "%n orphaned inquiry reduces your inquiry quota.",
         "%n orphaned inquiries reduce your inquiry quota.",
-        inquiryStore2.currentUserStatus.orphanedInquiries
+        inquiryStore.currentUserStatus.orphanedInquiries
       )
     );
     const inquiriesLeft = computed(
-      () => inquiryStore2.configuration.maxInquiriesPerUser - inquiryStore2.currentUserStatus.yesInquiries > 0 ? inquiryStore2.configuration.maxInquiriesPerUser - inquiryStore2.currentUserStatus.yesInquiries : 0
+      () => inquiryStore.configuration.maxInquiriesPerUser - inquiryStore.currentUserStatus.yesInquiries > 0 ? inquiryStore.configuration.maxInquiriesPerUser - inquiryStore.currentUserStatus.yesInquiries : 0
     );
     const optionsAvailableText = computed(() => {
       if (optionsStore.countOptionsLeft === 0) {
@@ -80131,14 +80174,14 @@ const _sfc_main$F = /* @__PURE__ */ defineComponent({
         "You have %n inquiries left out of {maxInquiries}.",
         inquiriesLeft.value,
         {
-          maxInquiries: inquiryStore2.configuration.maxInquiriesPerUser
+          maxInquiries: inquiryStore.configuration.maxInquiriesPerUser
         }
       );
     });
     const cardType2 = computed(
-      () => inquiryStore2.configuration.maxInquiriesPerUser && inquiriesLeft.value < 1 ? "error" : "info"
+      () => inquiryStore.configuration.maxInquiriesPerUser && inquiriesLeft.value < 1 ? "error" : "info"
     );
-    const __returned__ = { inquiryStore: inquiryStore2, optionsStore, orphanedInquiriesText, inquiriesLeft, optionsAvailableText, inquiriesLeftText, cardType: cardType2, get CardDiv() {
+    const __returned__ = { inquiryStore, optionsStore, orphanedInquiriesText, inquiriesLeft, optionsAvailableText, inquiriesLeftText, cardType: cardType2, get CardDiv() {
       return CardDiv;
     }, ActionDeleteOrphanedInquiries, get t() {
       return translate;
@@ -80361,24 +80404,24 @@ const _sfc_main$A = /* @__PURE__ */ defineComponent({
   __name: "InquiryInfoCards",
   setup(__props, { expose: __expose }) {
     __expose();
-    const inquiryStore2 = useInquiryStore();
+    const inquiryStore = useInquiryStore();
     const optionsStore = useOptionsStore();
     const sharesStore = useSharesStore();
     const sessionStore = useSessionStore();
     const showUnpublishedInquiryCard = computed(
-      () => inquiryStore2.configuration.access === "private" && !sharesStore.hasShares && inquiryStore2.permissions.edit && optionsStore.options.length
+      () => inquiryStore.configuration.access === "private" && !sharesStore.hasShares && inquiryStore.permissions.edit && optionsStore.options.length
     );
-    const showClosedCard = computed(() => inquiryStore2.isClosed && !showSendConfirmationsCard.value);
+    const showClosedCard = computed(() => inquiryStore.isClosed && !showSendConfirmationsCard.value);
     const showSendConfirmationsCard = computed(
-      () => inquiryStore2.permissions.edit && inquiryStore2.isClosed
+      () => inquiryStore.permissions.edit && inquiryStore.isClosed
     );
     const showLimitCard = computed(
-      () => inquiryStore2.permissions.inquiry && !inquiryStore2.isClosed && (inquiryStore2.configuration.maxInquiriesPerOption || inquiryStore2.configuration.maxInquiriesPerUser)
+      () => inquiryStore.permissions.inquiry && !inquiryStore.isClosed && (inquiryStore.configuration.maxInquiriesPerOption || inquiryStore.configuration.maxInquiriesPerUser)
     );
     const showRegisterCard = computed(
-      () => sessionStore.route.name === "publicInquiry" && ["public", "email", "contact"].includes(inquiryStore2.currentUserStatus.userRole) && !inquiryStore2.isClosed && !inquiryStore2.currentUserStatus.isLocked && !!inquiryStore2.id
+      () => sessionStore.route.name === "publicInquiry" && ["public", "email", "contact"].includes(inquiryStore.currentUserStatus.userRole) && !inquiryStore.isClosed && !inquiryStore.currentUserStatus.isLocked && !!inquiryStore.id
     );
-    const __returned__ = { inquiryStore: inquiryStore2, optionsStore, sharesStore, sessionStore, showUnpublishedInquiryCard, showClosedCard, showSendConfirmationsCard, showLimitCard, showRegisterCard, get CardClosedInquiry() {
+    const __returned__ = { inquiryStore, optionsStore, sharesStore, sessionStore, showUnpublishedInquiryCard, showClosedCard, showSendConfirmationsCard, showLimitCard, showRegisterCard, get CardClosedInquiry() {
       return CardClosedInquiry;
     }, get CardLimitedInquiries() {
       return CardLimitedInquiries;
@@ -80426,7 +80469,7 @@ const _sfc_main$z = /* @__PURE__ */ defineComponent({
     const selectedMode = ref("response");
     const route = useRoute();
     const router2 = useRouter();
-    const inquiryStore2 = useInquiryStore();
+    const inquiryStore = useInquiryStore();
     const inquiriesStore = useInquiriesStore();
     const sessionStore = useSessionStore();
     const editMode = ref(false);
@@ -80443,7 +80486,7 @@ const _sfc_main$z = /* @__PURE__ */ defineComponent({
       }
       return props2.id || route.params.id;
     });
-    const context2 = computed(() => createInquiryContext(inquiryStore2, sessionStore.appSettings));
+    const context2 = computed(() => createInquiryContext(inquiryStore, sessionStore.appSettings));
     const availableGroups = computed(() => {
       const groups = sessionStore.currentUser?.groups || {};
       if (typeof groups === "object" && !Array.isArray(groups)) {
@@ -80463,26 +80506,26 @@ const _sfc_main$z = /* @__PURE__ */ defineComponent({
       isAppLoaded.value = false;
       try {
         if (isPublicRoute.value) {
-          await inquiryStore2.loadByToken(identifier.value);
+          await inquiryStore.loadByToken(identifier.value);
         } else {
-          await inquiryStore2.load(identifier.value);
+          await inquiryStore.load(identifier.value);
         }
         if (isPublicRoute.value) {
-          inquiryStore2.childs = [];
+          inquiryStore.childs = [];
         } else {
           const result2 = inquiriesStore.inquiries.filter(
             (i) => i.parentId === Number(identifier.value) && i.configuration.access !== "private"
           );
-          inquiryStore2.childs = result2;
+          inquiryStore.childs = result2;
         }
-        if (inquiryStore2.childs?.length === 0 && !isPublicRoute.value) {
-          inquiryStore2.status.forceEditMode = true;
+        if (inquiryStore.childs?.length === 0 && !isPublicRoute.value) {
+          inquiryStore.status.forceEditMode = true;
           editMode.value = true;
         } else {
-          inquiryStore2.status.forceEditMode = false;
+          inquiryStore.status.forceEditMode = false;
           editMode.value = false;
         }
-        inquiriesStore.setFamilyType(inquiryStore2.family);
+        inquiriesStore.setFamilyType(inquiryStore.family);
         await nextTick$1();
         forceRenderKey.value += 1;
       } catch (e) {
@@ -80510,7 +80553,7 @@ const _sfc_main$z = /* @__PURE__ */ defineComponent({
         return true;
       }
       const user = sessionStore.currentUser;
-      if (inquiryStore2.status?.moderationStatus === "rejected" || inquiryStore2.status?.moderationStatus === "pending") {
+      if (inquiryStore.status?.moderationStatus === "rejected" || inquiryStore.status?.moderationStatus === "pending") {
         return true;
       }
       if (!user) {
@@ -80522,48 +80565,48 @@ const _sfc_main$z = /* @__PURE__ */ defineComponent({
     const enableEditMode = () => {
       if (isPublicRoute.value) return;
       editMode.value = true;
-      inquiryStore2.status.forceEditMode = true;
+      inquiryStore.status.forceEditMode = true;
     };
     onBeforeRouteUpdate(async (to, from2, next) => {
       if (to.name === "publicInquiry" && to.params.token !== from2.params.token) {
         loadContext(to);
       }
       if (to.params.id || to.params.token) {
-        inquiryStore2.reset();
+        inquiryStore.reset();
       }
       next();
       emit("transitions-off", 500);
     });
     onUnmounted(() => {
-      inquiryStore2.reset();
+      inquiryStore.reset();
       unsubscribe("load-inquiry", () => {
       });
     });
     const isShortDescription2 = computed(() => {
-      if (!inquiryStore2.description) return true;
-      return inquiryStore2.description.split(" ").length < 20 && inquiryStore2.description.split(/\r\n|\r|\n/).length < 5;
+      if (!inquiryStore.description) return true;
+      return inquiryStore.description.split(" ").length < 20 && inquiryStore.description.split(/\r\n|\r|\n/).length < 5;
     });
     const collapsibleProps = computed(() => ({
-      noCollapse: !inquiryStore2.configuration?.collapseDescription || isShortDescription2.value,
-      initialState: inquiryStore2.currentUserStatus?.countInquiries === 0 ? "max" : "min"
+      noCollapse: !inquiryStore.configuration?.collapseDescription || isShortDescription2.value,
+      initialState: inquiryStore.currentUserStatus?.countInquiries === 0 ? "max" : "min"
     }));
     const handleSave = async () => {
       if (isPublicRoute.value) return;
       if (isSaving.value) return;
-      if (!inquiryStore2.title || inquiryStore2.title.trim() === "") {
+      if (!inquiryStore.title || inquiryStore.title.trim() === "") {
         showError(translate("agora", "Title is mandatory"), { timeout: 2e3 });
         return;
       }
       isSaving.value = true;
       try {
-        await inquiryStore2.update({
-          id: inquiryStore2.id,
-          type: inquiryStore2.type,
-          title: inquiryStore2.title,
-          description: inquiryStore2.description,
-          categoryId: inquiryStore2.categoryId,
-          locationId: inquiryStore2.locationId,
-          parentId: inquiryStore2.parentId
+        await inquiryStore.update({
+          id: inquiryStore.id,
+          type: inquiryStore.type,
+          title: inquiryStore.title,
+          description: inquiryStore.description,
+          categoryId: inquiryStore.categoryId,
+          locationId: inquiryStore.locationId,
+          parentId: inquiryStore.parentId
         });
         showSuccess(translate("agora", "The inquiry has been saved"), { timeout: 2e3 });
       } catch {
@@ -80600,7 +80643,7 @@ const _sfc_main$z = /* @__PURE__ */ defineComponent({
     const handleGroupUpdate = (groups) => {
       selectedGroups.value = groups;
     };
-    const __returned__ = { props: props2, forceRenderKey, selectedMode, route, router: router2, inquiryStore: inquiryStore2, inquiriesStore, sessionStore, editMode, isAppLoaded, createDlgToggle, selectedInquiryTypeForCreation, selectedGroups, isSaving, error, isPublicRoute, identifier, context: context2, availableGroups, routeChild, loadInquiry, isReadonly, enableEditMode, isShortDescription: isShortDescription2, collapsibleProps, handleSave, handleAllowedResponse, handleAllowedTransformation, handleCloseDialog, inquiryAdded, handleGroupUpdate, get t() {
+    const __returned__ = { props: props2, forceRenderKey, selectedMode, route, router: router2, inquiryStore, inquiriesStore, sessionStore, editMode, isAppLoaded, createDlgToggle, selectedInquiryTypeForCreation, selectedGroups, isSaving, error, isPublicRoute, identifier, context: context2, availableGroups, routeChild, loadInquiry, isReadonly, enableEditMode, isShortDescription: isShortDescription2, collapsibleProps, handleSave, handleAllowedResponse, handleAllowedTransformation, handleCloseDialog, inquiryAdded, handleGroupUpdate, get t() {
       return translate;
     }, get NcAppContent() {
       return NcAppContent;
@@ -83396,16 +83439,16 @@ const useInquiryLinksStore = defineStore("inquiryLinks", {
     },
     // Forms operations
     async createForm(inquiryId, formData) {
-      const inquiryStore2 = useInquiryStore();
+      const inquiryStore = useInquiryStore();
       try {
         const formResponse = await this.createFormViaAPI(formData);
         const formId = formResponse.ocs?.data?.id;
         if (formId) {
           const url = `/index.php/apps/forms/${formResponse.ocs.data.hash}`;
           await this.updateFormViaAPI(formId, {
-            title: inquiryStore2.title,
-            description: inquiryStore2.description,
-            expires: inquiryStore2.configuration.expire,
+            title: inquiryStore.title,
+            description: inquiryStore.description,
+            expires: inquiryStore.configuration.expire,
             showExpiration: true
           });
           const linkData = {
@@ -83415,7 +83458,7 @@ const useInquiryLinksStore = defineStore("inquiryLinks", {
             targetId: formId.toString(),
             metadata: JSON.stringify({
               url,
-              title: inquiryStore2.title,
+              title: inquiryStore.title,
               hash: formResponse.ocs.data.hash
             }),
             sortOrder: 0
@@ -83499,7 +83542,7 @@ const useInquiryLinksStore = defineStore("inquiryLinks", {
     },
     // Cospend operations
     async createCospendProject(inquiryId, projectData) {
-      const inquiryStore2 = useInquiryStore();
+      const inquiryStore = useInquiryStore();
       try {
         const projectResponse = await this.createCospendProjectViaAPI(projectData);
         const projectId = projectResponse.ocs?.data?.id || projectResponse.ocs?.data?.name;
@@ -83514,7 +83557,7 @@ const useInquiryLinksStore = defineStore("inquiryLinks", {
           targetId: projectId.toString(),
           metadata: JSON.stringify({
             url,
-            title: inquiryStore2.title
+            title: inquiryStore.title
           }),
           sortOrder: 0
         };
@@ -83589,7 +83632,7 @@ const useInquiryLinksStore = defineStore("inquiryLinks", {
     },
     // Collectives operations
     async createCollective(inquiryId, collectiveData) {
-      const inquiryStore2 = useInquiryStore();
+      const inquiryStore = useInquiryStore();
       try {
         const collectiveResponse = await this.createCollectiveViaAPI(collectiveData);
         const collectiveId = collectiveResponse.ocs?.data?.collective.id || collectiveResponse.ocs?.data?.name;
@@ -83605,7 +83648,7 @@ const useInquiryLinksStore = defineStore("inquiryLinks", {
           targetId: collectiveId.toString(),
           metadata: JSON.stringify({
             url,
-            title: inquiryStore2.title
+            title: inquiryStore.title
           }),
           sortOrder: 0
         };
@@ -83670,7 +83713,7 @@ const useInquiryLinksStore = defineStore("inquiryLinks", {
     },
     // Polls operations
     async createPoll(inquiryId, pollData) {
-      const inquiryStore2 = useInquiryStore();
+      const inquiryStore = useInquiryStore();
       try {
         const pollResponse = await this.createPollViaAPI(pollData);
         const pollId = pollResponse.ocs.data.poll.id || pollResponse.ocs.data?.id;
@@ -83685,7 +83728,7 @@ const useInquiryLinksStore = defineStore("inquiryLinks", {
           targetId: pollId.toString(),
           metadata: JSON.stringify({
             url,
-            title: inquiryStore2.title
+            title: inquiryStore.title
           }),
           sortOrder: 0
         };
@@ -83749,7 +83792,7 @@ const useInquiryLinksStore = defineStore("inquiryLinks", {
     },
     // Deck operations
     async createDeckBoard(inquiryId, boardData) {
-      const inquiryStore2 = useInquiryStore();
+      const inquiryStore = useInquiryStore();
       try {
         const boardResponse = await this.createDeckBoardViaAPI(boardData);
         const boardId = boardResponse.id || boardResponse.data?.id;
@@ -83764,7 +83807,7 @@ const useInquiryLinksStore = defineStore("inquiryLinks", {
           targetId: boardId.toString(),
           metadata: JSON.stringify({
             url,
-            title: inquiryStore2.title
+            title: inquiryStore.title
           }),
           sortOrder: 0
         };
@@ -83984,7 +84027,7 @@ const _sfc_main$s = /* @__PURE__ */ defineComponent({
     const emit2 = __emit;
     const inquiryLinksStore = useInquiryLinksStore();
     const attachmentsStore = useAttachmentsStore();
-    const inquiryStore2 = useInquiryStore();
+    const inquiryStore = useInquiryStore();
     const isCreating = ref(false);
     const selectedResource = ref(null);
     const selectedResourceType = ref("files");
@@ -83993,8 +84036,8 @@ const _sfc_main$s = /* @__PURE__ */ defineComponent({
     const fileInput = ref(null);
     const selectedFiles = ref([]);
     const currentInquiry = computed(() => {
-      if (inquiryStore2.id) {
-        return inquiryStore2;
+      if (inquiryStore.id) {
+        return inquiryStore;
       }
       if (props2.inquiry) {
         return props2.inquiry;
@@ -84394,7 +84437,7 @@ const _sfc_main$s = /* @__PURE__ */ defineComponent({
         selectedResource.value = null;
       }
     };
-    const __returned__ = { props: props2, emit: emit2, inquiryLinksStore, attachmentsStore, inquiryStore: inquiryStore2, isCreating, selectedResource, selectedResourceType, resources, isLoading, fileInput, selectedFiles, currentInquiry, resourceTitle, resourceDescription, resourceTypes, availableResourceTypes, resourceOptions, currentResourceType, hasResources, canCreateResource, canLinkResource, canSubmit, isFileType, getResourceName, getResourceNameLower, loadResources, triggerFileInput, handleFileSelect, removeSelectedFile, formatFileSize, createNewResource, linkExistingResource, closeModal, handleSubmit, handleSelectChange, handleTitleInput, get t() {
+    const __returned__ = { props: props2, emit: emit2, inquiryLinksStore, attachmentsStore, inquiryStore, isCreating, selectedResource, selectedResourceType, resources, isLoading, fileInput, selectedFiles, currentInquiry, resourceTitle, resourceDescription, resourceTypes, availableResourceTypes, resourceOptions, currentResourceType, hasResources, canCreateResource, canLinkResource, canSubmit, isFileType, getResourceName, getResourceNameLower, loadResources, triggerFileInput, handleFileSelect, removeSelectedFile, formatFileSize, createNewResource, linkExistingResource, closeModal, handleSubmit, handleSelectChange, handleTitleInput, get t() {
       return translate;
     }, get NcButton() {
       return NcButton;
@@ -84902,14 +84945,14 @@ const _sfc_main$r = /* @__PURE__ */ defineComponent({
     __expose();
     const props2 = __props;
     const inquiryLinksStore = useInquiryLinksStore();
-    const inquiryStore2 = useInquiryStore();
+    const inquiryStore = useInquiryStore();
     const sessionStore = useSessionStore();
     const attachmentsStore = useAttachmentsStore();
     const isLoading = ref(false);
     const showAddModal = ref(false);
     const currentInquiry = computed(() => {
-      if (inquiryStore2.id) {
-        return inquiryStore2;
+      if (inquiryStore.id) {
+        return inquiryStore;
       }
       if (props2.inquiry) {
         return props2.inquiry;
@@ -85233,7 +85276,7 @@ const _sfc_main$r = /* @__PURE__ */ defineComponent({
     onMounted(async () => {
       await refreshResources();
     });
-    const __returned__ = { props: props2, inquiryLinksStore, inquiryStore: inquiryStore2, sessionStore, attachmentsStore, isLoading, showAddModal, currentInquiry, context: context2, parseMetadata, groupedResources, hasResources, openAddModal, getResourceDisplayName, getAppName, getAppIcon, deleteResource, confirmDeletion, handleSpecificResourceDeletion, handleAttachmentDeletion, getErrorMessage, getResourceSubtitle, formatFileSize, getResourceTarget, canEditResource, getResourceHref, handleResourceClick, loadLinks, refreshResources, get t() {
+    const __returned__ = { props: props2, inquiryLinksStore, inquiryStore, sessionStore, attachmentsStore, isLoading, showAddModal, currentInquiry, context: context2, parseMetadata, groupedResources, hasResources, openAddModal, getResourceDisplayName, getAppName, getAppIcon, deleteResource, confirmDeletion, handleSpecificResourceDeletion, handleAttachmentDeletion, getErrorMessage, getResourceSubtitle, formatFileSize, getResourceTarget, canEditResource, getResourceHref, handleResourceClick, loadLinks, refreshResources, get t() {
       return translate;
     }, get NcButton() {
       return NcButton;
@@ -88509,7 +88552,7 @@ const _sfc_main$k = /* @__PURE__ */ defineComponent({
   __name: "SideBarTabComments",
   setup(__props, { expose: __expose }) {
     __expose();
-    const inquiryStore2 = useInquiryStore();
+    const inquiryStore = useInquiryStore();
     const commentsStore = useCommentsStore();
     const emptyContentProps = {
       name: translate("agora", "No comments"),
@@ -88517,21 +88560,21 @@ const _sfc_main$k = /* @__PURE__ */ defineComponent({
     };
     const showEmptyContent = computed(() => commentsStore.comments.length === 0);
     onMounted(() => {
-      commentsStore.load(inquiryStore2.id);
+      commentsStore.load(inquiryStore.id);
     });
     onBeforeRouteUpdate(async () => {
-      commentsStore.load(inquiryStore2.id);
+      commentsStore.load(inquiryStore.id);
     });
     onBeforeRouteLeave(() => {
       commentsStore.$reset();
     });
     watch(
-      [() => inquiryStore2.permissions.comment, () => inquiryStore2.permissions.seeUsernames],
+      [() => inquiryStore.permissions.comment, () => inquiryStore.permissions.seeUsernames],
       () => {
-        commentsStore.load(inquiryStore2.id);
+        commentsStore.load(inquiryStore.id);
       }
     );
-    const __returned__ = { inquiryStore: inquiryStore2, commentsStore, emptyContentProps, showEmptyContent, get t() {
+    const __returned__ = { inquiryStore, commentsStore, emptyContentProps, showEmptyContent, get t() {
       return translate;
     }, get NcEmptyContent() {
       return NcEmptyContent;
@@ -88655,9 +88698,9 @@ const _sfc_main$i = /* @__PURE__ */ defineComponent({
     const emit2 = __emit;
     const sharesStore = useSharesStore();
     const inquiryGroupsStore = useInquiryGroupsStore();
-    const inquiryStore2 = useInquiryStore();
+    const inquiryStore = useInquiryStore();
     const isDirectShare = computed(
-      () => __props.share.groupId === inquiryGroupsStore.currentInquiryGroup?.id || __props.share.inquiryId === inquiryStore2.id
+      () => __props.share.groupId === inquiryGroupsStore.currentInquiryGroup?.id || __props.share.inquiryId === inquiryStore.id
     );
     const resolving = ref(false);
     const label = ref({
@@ -88815,7 +88858,7 @@ const _sfc_main$i = /* @__PURE__ */ defineComponent({
         label: label.value.inputValue
       });
     }
-    const __returned__ = { emit: emit2, sharesStore, inquiryGroupsStore, inquiryStore: inquiryStore2, isDirectShare, resolving, label, isActivePublicShare, resendInvitation, handleInvitationResults, resolveGroups, resolveGroupResolveError, switchAdmin, copyLinkButton, showQrCodeButton, lockShareButton, deleteShareButton, submitLabel, get t() {
+    const __returned__ = { emit: emit2, sharesStore, inquiryGroupsStore, inquiryStore, isDirectShare, resolving, label, isActivePublicShare, resendInvitation, handleInvitationResults, resolveGroups, resolveGroupResolveError, switchAdmin, copyLinkButton, showQrCodeButton, lockShareButton, deleteShareButton, submitLabel, get t() {
       return translate;
     }, get NcActionCaption() {
       return NcActionCaption;
@@ -89300,8 +89343,8 @@ const _sfc_main$d = /* @__PURE__ */ defineComponent({
   __name: "MarkDownDescription",
   setup(__props, { expose: __expose }) {
     __expose();
-    const inquiryStore2 = useInquiryStore();
-    const __returned__ = { inquiryStore: inquiryStore2 };
+    const inquiryStore = useInquiryStore();
+    const __returned__ = { inquiryStore };
     Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
     return __returned__;
   }
@@ -89329,7 +89372,7 @@ const _sfc_main$c = /* @__PURE__ */ defineComponent({
   __name: "SharesList",
   setup(__props, { expose: __expose }) {
     __expose();
-    const inquiryStore2 = useInquiryStore();
+    const inquiryStore = useInquiryStore();
     const sharesStore = useSharesStore();
     const sessionStore = useSessionStore();
     const qrModal = ref(false);
@@ -89350,7 +89393,7 @@ const _sfc_main$c = /* @__PURE__ */ defineComponent({
         showError(translate("agora", "Error while adding share"));
       }
     }
-    const __returned__ = { inquiryStore: inquiryStore2, sharesStore, sessionStore, qrModal, qrText, configBoxProps, openQrModal, addShare, get t() {
+    const __returned__ = { inquiryStore, sharesStore, sessionStore, qrModal, qrText, configBoxProps, openQrModal, addShare, get t() {
       return translate;
     }, get NcModal() {
       return NcModal;
@@ -89541,10 +89584,10 @@ const _sfc_main$9 = /* @__PURE__ */ defineComponent({
   __name: "SharesListUnsent",
   setup(__props, { expose: __expose }) {
     __expose();
-    const inquiryStore2 = useInquiryStore();
+    const inquiryStore = useInquiryStore();
     const sharesStore = useSharesStore();
     async function sendAllInvitations() {
-      const response = await sharesStore.inviteAll({ inquiryId: inquiryStore2.id });
+      const response = await sharesStore.inviteAll({ inquiryId: inquiryStore.id });
       if (response.data.sentResult?.sentMails) {
         response.data.sentResult.sentMails.forEach((item) => {
           showSuccess(
@@ -89567,7 +89610,7 @@ const _sfc_main$9 = /* @__PURE__ */ defineComponent({
         });
       }
     }
-    const __returned__ = { inquiryStore: inquiryStore2, sharesStore, sendAllInvitations, get t() {
+    const __returned__ = { inquiryStore, sharesStore, sendAllInvitations, get t() {
       return translate;
     }, get NcButton() {
       return NcButton;
@@ -89721,11 +89764,11 @@ const _sfc_main$6 = /* @__PURE__ */ defineComponent({
   setup(__props, { expose: __expose }) {
     __expose();
     const props2 = __props;
-    const inquiryStore2 = useInquiryStore();
+    const inquiryStore = useInquiryStore();
     const sessionStore = useSessionStore();
     const currentLanguage = computed(() => sessionStore.language || "en");
     const permissionContext = computed(
-      () => createInquiryContext(inquiryStore2, sessionStore.appSettings)
+      () => createInquiryContext(inquiryStore, sessionStore.appSettings)
     );
     const userCanConfigureSupport = computed(
       () => getEditPermissions(permissionContext.value).canSupport
@@ -89734,11 +89777,11 @@ const _sfc_main$6 = /* @__PURE__ */ defineComponent({
       () => getEditPermissions(permissionContext.value).canComment
     );
     const inquiryTypeConfig = computed(() => {
-      if (!inquiryStore2.type || !sessionStore.appSettings.inquiryTypeTab) {
+      if (!inquiryStore.type || !sessionStore.appSettings.inquiryTypeTab) {
         return null;
       }
       return sessionStore.appSettings.inquiryTypeTab.find(
-        (type) => type.inquiry_type === inquiryStore2.type
+        (type) => type.inquiry_type === inquiryStore.type
       );
     });
     const extractLangString = (obj, lang = "en") => {
@@ -89756,14 +89799,14 @@ const _sfc_main$6 = /* @__PURE__ */ defineComponent({
     const selectedUsers = ref({});
     const localCheckboxes = ref({});
     const getSupportFeatureValue = computed(() => {
-      if (inquiryStore2.configuration.supportFeature !== null) {
-        return inquiryStore2.configuration.supportFeature;
+      if (inquiryStore.configuration.supportFeature !== null) {
+        return inquiryStore.configuration.supportFeature;
       }
       return getDefaultFromTemplate("supportFeature") || "none";
     });
     const getAllowCommentValue = computed(() => {
-      if (inquiryStore2.configuration.allowComment !== null) {
-        return inquiryStore2.configuration.allowComment;
+      if (inquiryStore.configuration.allowComment !== null) {
+        return inquiryStore.configuration.allowComment;
       }
       return getDefaultFromTemplate("allowComment") || false;
     });
@@ -89774,13 +89817,13 @@ const _sfc_main$6 = /* @__PURE__ */ defineComponent({
     ];
     const dynamicFields = computed(() => {
       try {
-        if (!inquiryStore2.type) {
+        if (!inquiryStore.type) {
           return [];
         }
         const fields = getAvailableFields(
-          inquiryStore2.type,
+          inquiryStore.type,
           sessionStore.appSettings.inquiryTypeTab || [],
-          inquiryStore2.type
+          inquiryStore.type
         );
         return Array.isArray(fields) ? fields : [];
       } catch (e) {
@@ -89794,13 +89837,13 @@ const _sfc_main$6 = /* @__PURE__ */ defineComponent({
     };
     const getMiscValue = (key) => {
       try {
-        if (!inquiryStore2.miscFields || typeof inquiryStore2.miscFields !== "object" || !key) {
+        if (!inquiryStore.miscFields || typeof inquiryStore.miscFields !== "object" || !key) {
           return null;
         }
-        if (!inquiryStore2.miscFields[key]) {
+        if (!inquiryStore.miscFields[key]) {
           return null;
         }
-        const value = inquiryStore2.miscFields[key];
+        const value = inquiryStore.miscFields[key];
         if (typeof value === "string") {
           let cleanedValue = value;
           if (value.startsWith('"') && value.endsWith('"')) {
@@ -89996,7 +90039,7 @@ const _sfc_main$6 = /* @__PURE__ */ defineComponent({
         } else {
           stringValue = String(value);
         }
-        await inquiryStore2.updateMiscField(fieldKey, stringValue);
+        await inquiryStore.updateMiscField(fieldKey, stringValue);
       } catch (e) {
         console.error(`Error saving field ${fieldKey}:`, e);
       } finally {
@@ -90024,11 +90067,11 @@ const _sfc_main$6 = /* @__PURE__ */ defineComponent({
     const handleSupportFeatureChange = async (id) => {
       try {
         isSaving.value = true;
-        inquiryStore2.configuration.supportFeature = id;
-        await inquiryStore2.write();
+        inquiryStore.configuration.supportFeature = id;
+        await inquiryStore.write();
       } catch (e) {
         console.error(`❌ Error saving configuration field `, e);
-        inquiryStore2.configuration.supportFeature = getSupportFeatureValue.value;
+        inquiryStore.configuration.supportFeature = getSupportFeatureValue.value;
       } finally {
         isSaving.value = false;
       }
@@ -90036,18 +90079,18 @@ const _sfc_main$6 = /* @__PURE__ */ defineComponent({
     const handleAllowCommentChange = async (id) => {
       try {
         isSaving.value = true;
-        inquiryStore2.configuration.allowComment = id;
-        await inquiryStore2.write();
+        inquiryStore.configuration.allowComment = id;
+        await inquiryStore.write();
       } catch (e) {
         console.error(`❌ Error saving configuration field`, e);
-        inquiryStore2.configuration.allowComment = getAllowCommentValue.value;
+        inquiryStore.configuration.allowComment = getAllowCommentValue.value;
       } finally {
         isSaving.value = false;
       }
     };
     const initializeMiscFields = () => {
       dynamicFields.value.forEach((field) => {
-        if (inquiryStore2.miscFields[field.key] === void 0) {
+        if (inquiryStore.miscFields[field.key] === void 0) {
           let defaultValue = field.default;
           if (defaultValue === null || defaultValue === void 0) {
             defaultValue = "";
@@ -90058,7 +90101,7 @@ const _sfc_main$6 = /* @__PURE__ */ defineComponent({
           } else {
             defaultValue = String(defaultValue);
           }
-          inquiryStore2.miscFields[field.key] = defaultValue;
+          inquiryStore.miscFields[field.key] = defaultValue;
         }
       });
     };
@@ -90110,7 +90153,7 @@ const _sfc_main$6 = /* @__PURE__ */ defineComponent({
     onMounted(() => {
       loadMiscData();
     });
-    const __returned__ = { props: props2, inquiryStore: inquiryStore2, sessionStore, currentLanguage, permissionContext, userCanConfigureSupport, userCanConfigureComments, inquiryTypeConfig, extractLangString, isLoading, error, isSaving, saveTimeouts, selectedUsers, localCheckboxes, getSupportFeatureValue, getAllowCommentValue, supportFeatureOptions, dynamicFields, getSupportFeatureDisplay, getMiscValue, parseMiscValue, getDisplayValue, getEnumModelValue, getEnumLabel, shouldDisplayField, displayFields, loadMiscData, getSafeStringValue, saveFieldToDatabase, getDefaultFromTemplate, handleSupportFeatureChange, handleAllowCommentChange, initializeMiscFields, initializeLocalCheckboxes, updateFieldValue, handleUserSelected, getFormattedDate, getCheckboxValue, get StatusIcons() {
+    const __returned__ = { props: props2, inquiryStore, sessionStore, currentLanguage, permissionContext, userCanConfigureSupport, userCanConfigureComments, inquiryTypeConfig, extractLangString, isLoading, error, isSaving, saveTimeouts, selectedUsers, localCheckboxes, getSupportFeatureValue, getAllowCommentValue, supportFeatureOptions, dynamicFields, getSupportFeatureDisplay, getMiscValue, parseMiscValue, getDisplayValue, getEnumModelValue, getEnumLabel, shouldDisplayField, displayFields, loadMiscData, getSafeStringValue, saveFieldToDatabase, getDefaultFromTemplate, handleSupportFeatureChange, handleAllowCommentChange, initializeMiscFields, initializeLocalCheckboxes, updateFieldValue, handleUserSelected, getFormattedDate, getCheckboxValue, get StatusIcons() {
       return StatusIcons;
     }, get t() {
       return translate;
@@ -91945,12 +91988,12 @@ const _sfc_main$3 = /* @__PURE__ */ defineComponent({
   __name: "SideBar",
   setup(__props, { expose: __expose }) {
     __expose();
-    const inquiryStore2 = useInquiryStore();
+    const inquiryStore = useInquiryStore();
     const sessionStore = useSessionStore();
-    const context2 = computed(() => createInquiryContext(inquiryStore2, sessionStore.appSettings));
+    const context2 = computed(() => createInquiryContext(inquiryStore, sessionStore.appSettings));
     const isReadonly = computed(() => {
       const user = sessionStore.currentUser;
-      if (inquiryStore2.status.moderationStatus === "rejected" || inquiryStore2.status.moderationStatus === "pending") return true;
+      if (inquiryStore.status.moderationStatus === "rejected" || inquiryStore.status.moderationStatus === "pending") return true;
       if (!user) {
         return true;
       }
@@ -91960,10 +92003,10 @@ const _sfc_main$3 = /* @__PURE__ */ defineComponent({
     const showSidebar = ref(window.innerWidth > 920);
     const activeTab = ref("comments");
     const shouldDisplay = computed(() => {
-      if (!inquiryStore2 || typeof inquiryStore2.status !== "object") {
+      if (!inquiryStore || typeof inquiryStore.status !== "object") {
         return false;
       }
-      return inquiryStore2.status.forceEditMode === true;
+      return inquiryStore.status.forceEditMode === true;
     });
     onMounted(() => {
       subscribe(Event$1.SidebarToggle, (payload) => {
@@ -91981,7 +92024,7 @@ const _sfc_main$3 = /* @__PURE__ */ defineComponent({
     function closeSideBar() {
       emit(Event$1.SidebarToggle, { open: false });
     }
-    const __returned__ = { inquiryStore: inquiryStore2, sessionStore, context: context2, isReadonly, showSidebar, activeTab, shouldDisplay, closeSideBar, get t() {
+    const __returned__ = { inquiryStore, sessionStore, context: context2, isReadonly, showSidebar, activeTab, shouldDisplay, closeSideBar, get t() {
       return translate;
     }, get NcAppSidebar() {
       return NcAppSidebar;
@@ -92228,8 +92271,8 @@ async function validateToken(to, from2) {
       };
     }
   }
-  const inquiryStore2 = useInquiryStore();
-  inquiryStore2.load();
+  const inquiryStore = useInquiryStore();
+  inquiryStore.load();
 }
 const routes = [
   {
@@ -92481,7 +92524,7 @@ function WorkerWrapper(options2) {
 }
 const useInquiryWatcher = (interval = 3e4) => {
   const sessionStore = useSessionStore();
-  const inquiryStore2 = useInquiryStore();
+  const inquiryStore = useInquiryStore();
   const inquiriesStore = useInquiriesStore();
   const supportsStore = useSupportsStore();
   const optionsStore = useOptionsStore();
@@ -92582,7 +92625,7 @@ const useInquiryWatcher = (interval = 3e4) => {
           sharesStore.load();
           break;
         case "inquiries":
-          inquiryStore2.load();
+          inquiryStore.load();
           inquiriesStore.load();
           break;
         case "supports":
@@ -92598,14 +92641,14 @@ const useInquiryWatcher = (interval = 3e4) => {
     });
   };
   const handleWatcherUpdates = (updates) => {
-    const tasks = getTasksFromUpdates(updates, inquiryStore2.id);
+    const tasks = getTasksFromUpdates(updates, inquiryStore.id);
     Logger.info("[InquiryWatcher] Updates received:", { updates });
     handleWatcherTasks(tasks);
   };
   const handleVisibilityChange = () => {
     if (document.visibilityState === "visible") {
       Logger.info("[InquiryWatcher] Window visible → restarting worker");
-      startWorker(inquiryStore2.id, sessionStore.appSettings.updateType);
+      startWorker(inquiryStore.id, sessionStore.appSettings.updateType);
     } else {
       Logger.info("[InquiryWatcher] Window hidden → stopping worker");
       stopWorker();
@@ -92619,7 +92662,7 @@ const useInquiryWatcher = (interval = 3e4) => {
     stopWorker();
   });
   watch(
-    [() => inquiryStore2.id, () => sessionStore.appSettings.updateType],
+    [() => inquiryStore.id, () => sessionStore.appSettings.updateType],
     ([inquiryIdNew, modeNew], [inquiryIdOld, modeOld]) => {
       Logger.debug("[InquiryWatcher] InquiryWatcher worker restarted:", {
         inquiryId: `${inquiryIdOld} → ${inquiryIdNew}`,
@@ -92638,18 +92681,18 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
     __expose();
     useInquiryWatcher();
     const sessionStore = useSessionStore();
-    const inquiryStore2 = useInquiryStore();
+    const inquiryStore = useInquiryStore();
     const inquiryGroupStore = useInquiryGroupStore();
     const transitionClass = ref("transitions-active");
     const appClass = computed(() => [
       transitionClass.value,
       {
-        edit: inquiryStore2.permissions.edit
+        edit: inquiryStore.permissions.edit
       }
     ]);
     const useNavigation = computed(() => sessionStore.userStatus.isLoggedin);
     const useSidebar = computed(
-      () => inquiryStore2.permissions.edit || sessionStore.route.name === "group" && inquiryGroupStore.owner === sessionStore.currentUser.id
+      () => inquiryStore.permissions.edit || sessionStore.route.name === "group" && inquiryGroupStore.owner === sessionStore.currentUser.id
     );
     function transitionsOn() {
       transitionClass.value = "transitions-active";
@@ -92692,7 +92735,7 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
       unsubscribe(Event$1.UpdateInquiry, () => {
       });
     });
-    const __returned__ = { sessionStore, inquiryStore: inquiryStore2, inquiryGroupStore, transitionClass, appClass, useNavigation, useSidebar, transitionsOn, transitionsOff, notify, get NcContent() {
+    const __returned__ = { sessionStore, inquiryStore, inquiryGroupStore, transitionClass, appClass, useNavigation, useSidebar, transitionsOn, transitionsOff, notify, get NcContent() {
       return NcContent;
     }, UserSettingsDlg };
     Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });

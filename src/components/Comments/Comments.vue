@@ -28,17 +28,18 @@ const updateTrigger = ref(0)
 const userPositions = new Map<string | number, 'left' | 'right'>()
 
 // Group comments by user + time proximity (within 60 seconds)
+
+/*
+
 function groupCommentsByUserAndTime(comments: Comment[]) {
   if (!comments || comments.length === 0) return []
 
-  const groups: Comment[] = []
-  let currentGroup: Comment = null
+  const groups = []
+  let currentGroup = null
 
   for (let i = 0; i < comments.length; i++) {
     const comment = comments[i]
-
-    // Skip if comment is invalid
-    if (!comment || !comment.user) return []
+    if (!comment || !comment.user) continue // skip invalid entries
 
     if (!currentGroup) {
       // Start first group
@@ -48,16 +49,13 @@ function groupCommentsByUserAndTime(comments: Comment[]) {
         timestamp: comment.timestamp,
         comments: [comment]
       }
-      return []
+      continue // ✅ continue with next comment
     }
 
     const timeDiff = Math.abs(comment.timestamp - currentGroup.timestamp)
-
-    // Same user and within 60 seconds = same group
     if (comment.user.id === currentGroup.userId && timeDiff <= 60) {
       currentGroup.comments.push(comment)
     } else {
-      // Push current group and start new one
       groups.push(currentGroup)
       currentGroup = {
         userId: comment.user.id,
@@ -68,12 +66,50 @@ function groupCommentsByUserAndTime(comments: Comment[]) {
     }
   }
 
-  // Don't forget the last group
-  if (currentGroup) {
-    groups.push(currentGroup)
+  if (currentGroup) groups.push(currentGroup)
+  return groups
+} */
+
+function groupCommentsByUserAndTime(comments: Comment[]) {
+  if (!comments || comments.length === 0) return [];
+
+  const groups = [];
+  let currentGroup = null;
+
+  for (let i = 0; i < comments.length; i++) {
+    const comment = comments[i];
+    // eslint-disable-next-line no-continue
+    if (!comment || !comment.user) continue; // still needed to skip invalid entries
+
+    if (currentGroup) {
+          // We already have a group; check if this comment belongs to it
+      const timeDiff = Math.abs(comment.timestamp - currentGroup.timestamp);
+      if (comment.user.id === currentGroup.userId && timeDiff <= 60) {
+        currentGroup.comments.push(comment);
+      } else {
+        // Finish the current group and start a new one
+        groups.push(currentGroup);
+        currentGroup = {
+          userId: comment.user.id,
+          user: comment.user,
+          timestamp: comment.timestamp,
+          comments: [comment]
+        };
+      }
+
+    } else {
+       // First comment – start a new group
+      currentGroup = {
+        userId: comment.user.id,
+        user: comment.user,
+        timestamp: comment.timestamp,
+        comments: [comment]
+      };
+    }
   }
 
-  return groups
+  if (currentGroup) groups.push(currentGroup);
+  return groups;
 }
 
 function getAvatarPosition(userId: string | number): 'left' | 'right' {

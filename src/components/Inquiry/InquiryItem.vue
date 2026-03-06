@@ -89,7 +89,7 @@ const formatVoteDate = (dateString: string, locale: string = navigator.language)
 }
 
 const inquiryStatus = computed(
-  () => inquiry.status.inquiryStatus || inquiryStore.getInquiryStatus?.(inquiry.id)
+  () => inquiry.status.inquiryStatus || inquiry.getInquiryStatus?.(inquiry.id)
 )
 
 const inquiryStatusIcon = computed(() => {
@@ -193,7 +193,7 @@ const hasVotePeriod = computed(() => inquiry.miscFields?.support_start && inquir
         }"
         :class="{
           closed: inquiry.status.isExpired,
-          active: inquiry.id === inquiryStore.id,
+      active: inquiry.id,
         }"
       >
         <div class="title_line">
