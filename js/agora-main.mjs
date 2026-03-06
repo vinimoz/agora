@@ -5420,6 +5420,7 @@ to {
 .paired-layout .paired-column .column-header .column-count[data-v-5fac5ce8] {
   background: var(--color-main-background);
   padding: 2px 8px;
+  color: black;
   border-radius: 12px;
   font-size: 12px;
   font-weight: 600;

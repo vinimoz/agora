@@ -448,6 +448,7 @@ const getOptionTypeIcon = (type: string) => getOptionTypeIconComponent(type, [])
       .column-count {
         background: var(--color-main-background);
         padding: 2px 8px;
+        color: black; 
         border-radius: 12px;
         font-size: 12px;
         font-weight: 600;
