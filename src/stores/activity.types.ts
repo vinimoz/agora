@@ -19,6 +19,6 @@ export type Activity = {
 	datetime: string
 }
 
-export type ActivitiyStore = {
+export type ActivityStore = {
 	activities: Activity[]
 }

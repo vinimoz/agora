@@ -4,60 +4,44 @@
  */
 
 import { defineStore } from 'pinia'
-import { ActivityAPI } from '../Api/index.ts'
-import { useSessionStore } from './session.ts'
-import { AxiosError } from '@nextcloud/axios'
-import type { Activity } from './activity.types'
 
-export type Activity = {
-  activity_id: number
-  app: string
-  type: string
-  user: string
-  subject: string
-  subject_rich: []
-  message: string
-  message_rich: []
-  object_type: string
-  object_id: number
-  link: string
-  icon: string
-  datetime: string
-}
+import { ActivityAPI } from '../Api'
 
-export type Activities = {
-  activities: Activity[]
-}
+import { useSessionStore } from './session'
+
+import type { AxiosError } from '@nextcloud/axios'
+import type { Activity, ActivityStore } from './activity.types'
 
 export const useActivityStore = defineStore('activity', {
-  state: (): Activities => ({
-    activities: [],
-  }),
+	state: (): ActivityStore => ({
+		activities: [],
+	}),
 
-  actions: {
-    async load(): Promise<void> {
-      const sessionStore = useSessionStore()
-      try {
-        const response = await ActivityAPI.getActivities(sessionStore.currentInquiryId)
-        this.activities = response.data.ocs.data
-      } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return
-        }
-        this.$reset()
-      }
-    },
-  },
+	actions: {
+		async load(): Promise<void> {
+			const sessionStore = useSessionStore()
+			try {
+				const response = await ActivityAPI.getActivities(
+					sessionStore.currentPollId,
+				)
+				this.activities = response.data.ocs.data
+			} catch (error) {
+				if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+					return
+				}
+				this.$reset()
+			}
+		},
+	},
 
- getters: {
-  getActivitiesForInquiry(state): Activity[] {
-    const sessionStore = useSessionStore()
-    // Filter activities for the current inquiry using direct equality comparison
-    return state.activities.filter(
-      (activity: Activity) =>
-        activity.object_type === 'inquiry' &&
-        activity.object_id === sessionStore.currentInquiryId
-    )
-  },
-  },
+	getters: {
+		getActivitiesForInquiry(state): Activity[] {
+			const sessionStore = useSessionStore()
+			return state.activities.filter(
+				(activity: Activity) =>
+					activity.object_type === 'inquiry'
+					&& activity.object_id === Number(sessionStore.currentInquiryId),
+			)
+		},
+	},
 })

@@ -11,12 +11,12 @@
   }
 })();
 const pr = "agora", mr = "1.7.0-rc1";
-import { B as ke, aO as ee, aP as te, d as J, q as t, c, o as r, j as a, t as l, v as e, T as K, U as G, F as Q, k as C, C as b, _ as P, s as pe, b as R, i as n, e as v, a4 as x, aT as D, g as L, ah as ge, aM as Ve, w as me, f as le, aJ as Ce, h as Te, a2 as fe, a3 as he, aW as qe, E as Ie, au as re, af as xe, n as Ue, x as Z, y as Y, z as Le, A as Ae } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_f6cfe8f3_lang-3bxt3tiA.chunk.mjs";
-import { I as de, a as Ee, N as B } from "./index-N4cY_ldF.chunk.mjs";
-import { L as M, d as O, e as be, f as Fe, h as ye, I as ae, s as _e, S as ve } from "./NcDashboardWidget-DCBQdRFz-C9vmbTmX.chunk.mjs";
-import { F as Ne } from "./FlexSettings-DbwNFG4-.chunk.mjs";
-import { _ as $e, N as F, a as N, b as W } from "./NcRichText-DJlaHs_Q-C4NH_pEE.chunk.mjs";
-import { N as oe, a as De, _ as Oe, b as Re } from "./markdown-ORJZ1UQm.chunk.mjs";
+import { B as ke, aO as ee, aP as te, d as J, q as t, o as r, c, h as a, t as l, v as e, T as K, U as G, F as Q, C as b, i as C, _ as P, s as pe, g as n, e as v, a4 as x, b as R, ah as ge, aM as Ve, l as L, aT as D, w as me, f as le, aJ as Ce, m as Te, a2 as fe, a3 as he, aW as qe, E as Ie, au as re, af as xe, n as Ue, x as Z, y as Y, z as Le, A as Ae } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_f6cfe8f3_lang-CeXva8eL.chunk.mjs";
+import { I as de, a as Ee, N as B } from "./index-iSAnPGw7.chunk.mjs";
+import { L as M, d as O, k as be, e as Fe, f as ye, I as ae, s as _e, S as ve } from "./NcDashboardWidget-DCBQdRFz-uDi_eNEz.chunk.mjs";
+import { F as Ne } from "./FlexSettings-DG8ZNkDQ.chunk.mjs";
+import { _ as $e, N as F, a as N, b as W } from "./NcRichText-DJlaHs_Q-B0pEoEJA.chunk.mjs";
+import { N as oe, a as De, _ as Oe, b as Re } from "./markdown-BG4GIqSM.chunk.mjs";
 const se = ke("templateWizard", { state: () => ({ isOpen: false, currentStep: "use-case", steps: ["use-case", "template-selection", "language", "preview", "summary", "importing", "results"], templates: [], loadingTemplates: false, selectedUseCase: null, selectedTemplate: null, selectedLanguage: null, customTemplate: null, editableData: null, importing: false, importResult: null, importError: null, isDatabaseEmpty: null }), getters: { currentStepIndex: (u) => u.steps.indexOf(u.currentStep), canGoNext: (u) => {
   switch (u.currentStep) {
     case "use-case":

@@ -3,10 +3,8 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-export { Activity, Activities } from '../stores/activity.ts'
-export { UpdateType, Group, AppSettings } from '../stores/appSettings.ts'
-export { Comment, Comments, CommentsGrouped } from '../stores/comments.ts'
-export { Support, Supports, SupportsGrouped } from '../stores/supports.ts'
+// export { Comment, Comments, CommentsGrouped } from '../stores/comments.ts'
+// export { Support, Supports, SupportsGrouped } from '../stores/supports.ts'
 
 export interface BaseEntry {
   id: number
@@ -14,6 +12,7 @@ export interface BaseEntry {
   parentId?: number
 }
 
+/*
 export {
   Inquiry,
   AccessType,
@@ -53,6 +52,7 @@ export {
   TimeUnitsType,
   DurationType,
 } from '../constants/dateUnits.ts'
+*/
 
 export enum Event {
   TransitionsOff = 'agora:transitions:off',
