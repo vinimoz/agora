@@ -7,6 +7,7 @@ import { defineStore } from 'pinia'
 import { ActivityAPI } from '../Api/index.ts'
 import { useSessionStore } from './session.ts'
 import { AxiosError } from '@nextcloud/axios'
+import type { Activity } from './activity.types'
 
 export type Activity = {
   activity_id: number
