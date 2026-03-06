@@ -173,18 +173,6 @@ abstract class TableSchema
             'unique' => false,
             'columns' => ['option_id', 'deleted']
         ],
-        'support_option_value' => [
-            'table' => Support::TABLE,
-            'name' => 'agora_support_option_value',
-            'unique' => false,
-            'columns' => ['option_id', 'value']
-        ],
-        'support_option_value' => [
-            'table' => Support::TABLE,
-            'name' => 'agora_support_option_value',
-            'unique' => false,
-            'columns' => ['option_id', 'value']
-        ],
         'support_option_user' => [
             'table' => Support::TABLE,
             'name' => 'agora_support_option_user',
@@ -340,10 +328,10 @@ abstract class TableSchema
             'UNIQ_option_misc' => ['columns' => ['option_id', 'key']],
         ],
         InquiryFamily::TABLE => [
-            'UNIQ_family_type' => ['columns' => ['family_type']],
+            'UNIQ_family_inquiry_type' => ['columns' => ['family_type']],
         ],
         OptionFamily::TABLE => [
-            'UNIQ_family_type' => ['columns' => ['family_type']],
+            'UNIQ_family_option_type' => ['columns' => ['family_type']],
         ],
         InquiryStatus::TABLE => [
             'UNIQ_inquiry_status' => ['columns' => ['inquiry_type', 'status_key']],
