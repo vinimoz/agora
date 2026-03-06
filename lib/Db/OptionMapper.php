@@ -15,6 +15,7 @@ use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 use OCP\Search\ISearchQuery;
 use Psr\Log\LoggerInterface;
+use OCA\Agora\Helper\SqlHelper;
 
 /**
  * @template-extends QBMapper<Option>
@@ -37,8 +38,8 @@ class OptionMapper extends QBMapper
     {
         $qb = $this->db->getQueryBuilder();
         $qb->select(self::TABLE . '.*')
-            ->from($this->getTableName(), self::TABLE)
-            ->where($qb->expr()->eq(self::TABLE . '.id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT)));
+           ->from($this->getTableName(), self::TABLE)
+           ->where($qb->expr()->eq(self::TABLE . '.id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT)));
 
         if (!$getDeleted) {
             $qb->andWhere($qb->expr()->eq(self::TABLE . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)));
@@ -174,8 +175,8 @@ class OptionMapper extends QBMapper
                    ...array_map(
                        function (string $token) use ($qb) {
                            return $qb->expr()->iLike(
-                              self::TABLE . '.text',
-                              $qb->createNamedParameter('%' . $this->db->escapeLikeParameter($token) . '%', IQueryBuilder::PARAM_STR)
+                               self::TABLE . '.text',
+                               $qb->createNamedParameter('%' . $this->db->escapeLikeParameter($token) . '%', IQueryBuilder::PARAM_STR)
                            );
                        },
                        explode(' ', $query->getTerm())
@@ -480,42 +481,40 @@ class OptionMapper extends QBMapper
     /**
      * Add subquery for misc settings using GROUP_CONCAT - can be NULL if no misc settings
      */
-
+    /**
+     * Add subquery for misc settings using platform-specific concatenation
+     */
     protected function addMiscsSubquery(
-    IQueryBuilder &$qb,
-    string $tableAlias,
-    string $alias = 'misc_settings_concat'
-): void {
-    // Get the database platform
-    $platform = $this->db->getDatabasePlatform()->getName();
-    $dbProvider = match($platform) {
-        'postgresql' => IDBConnection::PLATFORM_POSTGRES,
-        'oracle' => IDBConnection::PLATFORM_ORACLE,
-        'sqlite' => IDBConnection::PLATFORM_SQLITE,
-        default => IDBConnection::PLATFORM_MYSQL,
-    };
+        IQueryBuilder &$qb,
+        string $tableAlias,
+        string $alias = 'misc_settings_concat'
+    ): void {
+        $platform = $this->db->getDatabasePlatform()->getName();
 
-    // Create the base concatenated value (key:value)
-    $concatExpr = $qb->func()->concat('m.key', $qb->createNamedParameter(':'), 'm.value');
+        if ($platform === 'postgresql') {
+            // For PostgreSQL, we need to use a subquery approach without string_agg
+            // This avoids the GROUP BY issue
+            $qb->addSelect(
+                $qb->createFunction(
+                    '(SELECT COALESCE(' .
+                    'string_agg(CONCAT(m.key, \':\', m.value), \',\'), ' .
+                    '\'\') FROM ' . $this->getFullTableName(OptionMisc::TABLE) . ' m ' .
+                    'WHERE m.option_id = ' . $tableAlias . '.id' .
+                    ') AS ' . $alias
+                )
+            );
+        } else {
+            // MySQL and others use GROUP_CONCAT
+            $qb->addSelect(
+                $qb->createFunction(
+                    '(SELECT GROUP_CONCAT(CONCAT(m.key, \':\', m.value) SEPARATOR \',\') ' .
+                    'FROM ' . $this->getFullTableName(OptionMisc::TABLE) . ' m ' .
+                    'WHERE m.option_id = ' . $tableAlias . '.id) AS ' . $alias
+                )
+            );
+        }
+    }
 
-    // Create a subquery builder for the misc settings
-    $subQb = $this->db->getQueryBuilder();
-    $subQb->select($concatExpr)
-          ->from(OptionMisc::TABLE, 'm')
-          ->where($subQb->expr()->eq('m.option_id', $tableAlias . '.id'));
-
-    // Get the SQL for the subquery
-    $subSql = $subQb->getSQL();
-
-    // Use SqlHelper to add the concatenated result
-    SqlHelper::getConcatenatedArray(
-        $qb,
-        '(' . $subSql . ')',
-        $alias,
-        $dbProvider,
-        ','
-    );
-}
     /**
      * Join misc settings from OptionMisc table (kept for backward compatibility)
      */
@@ -557,31 +556,31 @@ class OptionMapper extends QBMapper
         }
 
         switch ($type) {
-            case 'integer':
-            case 'int':
-                return (int)$value;
-            case 'boolean':
-            case 'bool':
-                return (bool)$value;
-            case 'float':
-            case 'double':
-                return (float)$value;
-            case 'datetime':
-                return is_numeric($value) ? (int)$value : $value;
-            case 'json':
-                if (is_array($value) || is_object($value)) {
-                    return json_encode($value);
-                }
+        case 'integer':
+        case 'int':
+            return (int)$value;
+        case 'boolean':
+        case 'bool':
+            return (bool)$value;
+        case 'float':
+        case 'double':
+            return (float)$value;
+        case 'datetime':
+            return is_numeric($value) ? (int)$value : $value;
+        case 'json':
+            if (is_array($value) || is_object($value)) {
+                return json_encode($value);
+            }
+            return $value;
+        case 'enum':
+            $allowed = $fieldDef['allowed_values'] ?? [];
+            if (in_array($value, $allowed, true)) {
                 return $value;
-            case 'enum':
-                $allowed = $fieldDef['allowed_values'] ?? [];
-                if (in_array($value, $allowed, true)) {
-                    return $value;
-                }
-                return $fieldDef['default'] ?? null;
-            case 'string':
-            default:
-                return (string)$value;
+            }
+            return $fieldDef['default'] ?? null;
+        case 'string':
+        default:
+        return (string)$value;
         }
     }
 
@@ -598,8 +597,8 @@ class OptionMapper extends QBMapper
         // Delete existing misc fields
         $deleteQb = $this->db->getQueryBuilder();
         $deleteQb->delete(OptionMisc::TABLE)
-           ->where($deleteQb->expr()->eq('option_id', $deleteQb->createNamedParameter($optionId, IQueryBuilder::PARAM_INT)))
-           ->executeStatement();
+                 ->where($deleteQb->expr()->eq('option_id', $deleteQb->createNamedParameter($optionId, IQueryBuilder::PARAM_INT)))
+                 ->executeStatement();
 
         // Insert new misc fields
         foreach ($fieldsDefinition as $fieldDef) {
@@ -608,14 +607,14 @@ class OptionMapper extends QBMapper
 
             $insertQb = $this->db->getQueryBuilder();
             $insertQb->insert(OptionMisc::TABLE)
-               ->values(
-                   [
-                       'option_id' => $insertQb->createNamedParameter($optionId, IQueryBuilder::PARAM_INT),
-                       'key'       => $insertQb->createNamedParameter($key, IQueryBuilder::PARAM_STR),
-                       'value'     => $insertQb->createNamedParameter((string)$value, IQueryBuilder::PARAM_STR),
-                   ]
-               )
-               ->executeStatement();
+                     ->values(
+                         [
+                             'option_id' => $insertQb->createNamedParameter($optionId, IQueryBuilder::PARAM_INT),
+                             'key'       => $insertQb->createNamedParameter($key, IQueryBuilder::PARAM_STR),
+                             'value'     => $insertQb->createNamedParameter((string)$value, IQueryBuilder::PARAM_STR),
+                         ]
+                     )
+                     ->executeStatement();
 
             $option->setMiscField($key, $value);
         }
@@ -642,29 +641,29 @@ class OptionMapper extends QBMapper
             // Check if field exists
             $checkQb = $this->db->getQueryBuilder();
             $existing = $checkQb->select('id')
-                           ->from(OptionMisc::TABLE)
-                           ->where($checkQb->expr()->eq('option_id', $checkQb->createNamedParameter($optionId, IQueryBuilder::PARAM_INT)))
-                           ->andWhere($checkQb->expr()->eq('key', $checkQb->createNamedParameter($key, IQueryBuilder::PARAM_STR)))
-                           ->executeQuery()
-                           ->fetchOne();
+                                ->from(OptionMisc::TABLE)
+                                ->where($checkQb->expr()->eq('option_id', $checkQb->createNamedParameter($optionId, IQueryBuilder::PARAM_INT)))
+                                ->andWhere($checkQb->expr()->eq('key', $checkQb->createNamedParameter($key, IQueryBuilder::PARAM_STR)))
+                                ->executeQuery()
+                                ->fetchOne();
 
             if ($existing) {
                 $updateQb = $this->db->getQueryBuilder();
                 $updateQb->update(OptionMisc::TABLE)
-                   ->set('value', $updateQb->createNamedParameter((string)$value, IQueryBuilder::PARAM_STR))
-                   ->where($updateQb->expr()->eq('id', $updateQb->createNamedParameter($existing, IQueryBuilder::PARAM_INT)))
-                   ->executeStatement();
+                         ->set('value', $updateQb->createNamedParameter((string)$value, IQueryBuilder::PARAM_STR))
+                         ->where($updateQb->expr()->eq('id', $updateQb->createNamedParameter($existing, IQueryBuilder::PARAM_INT)))
+                         ->executeStatement();
             } else {
                 $insertQb = $this->db->getQueryBuilder();
                 $insertQb->insert(OptionMisc::TABLE)
-                   ->values(
-                       [
-                           'option_id' => $insertQb->createNamedParameter($optionId, IQueryBuilder::PARAM_INT),
-                           'key'       => $insertQb->createNamedParameter($key, IQueryBuilder::PARAM_STR),
-                           'value'     => $insertQb->createNamedParameter((string)$value, IQueryBuilder::PARAM_STR),
-                       ]
-                   )
-                   ->executeStatement();
+                         ->values(
+                             [
+                                 'option_id' => $insertQb->createNamedParameter($optionId, IQueryBuilder::PARAM_INT),
+                                 'key'       => $insertQb->createNamedParameter($key, IQueryBuilder::PARAM_STR),
+                                 'value'     => $insertQb->createNamedParameter((string)$value, IQueryBuilder::PARAM_STR),
+                             ]
+                         )
+                         ->executeStatement();
             }
 
             $option->setMiscField($key, $value);
