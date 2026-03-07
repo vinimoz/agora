@@ -638,6 +638,8 @@ class Inquiry extends EntityWithUser implements JsonSerializable
         if ($this->getIsOpenInquiry()) {
             return true;
         }
+        
+        return false;
     }
 
     private function getAllowTakeOver(): bool
