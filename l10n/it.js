@@ -217,6 +217,7 @@ OC.L10N.register(
     "Direction" : "Direzione",
     "Descending" : "Discendente",
     "Ascending" : "Ascendente",
+    "Grid" : "Griglia",
     "List" : "Elenco",
     "Not defined" : "Non definito",
     "{days}d ago" : "{days}g fa",
