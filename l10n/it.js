@@ -384,6 +384,7 @@ OC.L10N.register(
     "File" : "File",
     "Deck" : "Deck",
     "Delete file" : "Elimina file",
+    "Delete link" : "Elimina link",
     "Receive notification email on activity to {emailAddress}" : "Ricevi un'email di notifica sull'attività su {emailAddress}",
     "Receive notification email on activity" : "Ricevi un'email di notifica sull'attività",
     "Change name" : "Cambia il nome",
