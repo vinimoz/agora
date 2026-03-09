@@ -522,7 +522,6 @@ return isPublicRoute
                     :label="t('agora', 'Inquiry title')"
                     :success="inquiryStore.title.length > 0"
                     :helper-text="t('agora', 'Enter a descriptive title for your inquiry')"
-                    @update:model-value="handleTitleChange"
                 >
                     <template #icon>
                         <component :is="InquiryGeneralIcons.Edit" :size="20" />

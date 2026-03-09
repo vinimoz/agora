@@ -322,19 +322,32 @@ export const useOptionsStore = defineStore('options', {
             this.$reset()
         },
         
-        forceUpdateCommentCount() {
+        forceUpdateCommentCount(optionId?: number) {
             const commentsStore = useCommentsStore()
-            
-            if (this.id && this.targetId) {
-                const count = commentsStore.comments.filter(
-                    comment => comment.inquiryId === this.targetId && 
-                               comment.optionId === this.id && 
-                               comment.deleted === 0
-                ).length
-                
-                if (this.status) {
-                    this.status.countComments = count
+
+            // If optionId is provided, update just that option
+            if (optionId) {
+                const option = this.options.find(opt => opt.id === optionId)
+                if (option && option.status) {
+                    const count = commentsStore.comments.filter(
+                        comment => comment.inquiryId === option.targetId && 
+                            comment.optionId === option.id && 
+                            comment.deleted === 0
+                    ).length
+                    option.status.countComments = count
                 }
+            } else {
+                // Otherwise update all options
+                this.options.forEach(option => {
+                    if (option.status) {
+                        const count = commentsStore.comments.filter(
+                            comment => comment.inquiryId === option.targetId && 
+                                comment.optionId === option.id && 
+                                comment.deleted === 0
+                        ).length
+                        option.status.countComments = count
+                    }
+                })
             }
         },
 
@@ -348,6 +361,23 @@ export const useOptionsStore = defineStore('options', {
                     this.optionsByFamily[family.key] = []
                 }
             })
+        },
+        async setOptionStatus(optionId?: number, optionStatus: string): Promise<void> {
+            try {
+                if (optionId) {
+                    await OptionsAPI.setOptionStatus(optionId, optionStatus)
+                    this.updateOptionStatus(optionId,optionStatus)
+                }
+            } catch (error) {
+                if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+                    return
+                }
+                Logger.error('Error setting option status:', {
+                    error,
+                    state: this.$state,
+                })
+                throw error
+            }
         },
 
         // Load all options for current inquiry
@@ -406,6 +436,14 @@ export const useOptionsStore = defineStore('options', {
                 option.status.countComments = count
             }
         },
+
+        updateOptionStatus(optionId: number, status: string): void {
+            const option = this.options.find(opt => opt.id === optionId)
+            if (option && option.status) {
+                option.status.optionStatus = status
+            }
+        },
+
 
         updateOptionSupportCount(optionId: number, count: number): void {
             const option = this.options.find(opt => opt.id === optionId)

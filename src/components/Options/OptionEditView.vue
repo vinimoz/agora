@@ -194,7 +194,6 @@ const familiesWithOptions = computed(() => {
     allInquiryTypes.value,
     allOptionTypes.value
   )
-
   return families.map(family => ({
     ...family,
     name: t('agora', family.name),
@@ -209,12 +208,17 @@ const familiesWithOptions = computed(() => {
 const hasVisibleFamilies = computed(() => familiesWithOptions.value.length > 0)
 
 const activeFamilyData = computed(() => {
+  console.log(" CURRENT ACTIVE FAMILY DATA ", activeFamily.value)
+  console.log(" CURRENT ACTIVE FAMILY DATA FAMILY WITH OPTION ", familiesWithOptions.value)
+
   if (!activeFamily.value) return null
   return familiesWithOptions.value.find(f => f.key === activeFamily.value)
 })
 
 // Get current layout component based on active family's layout_ux
 const currentFamilyLayout = computed(() => {
+  console.log(" CURRENT FAMILY LAYOUT ", activeFamilyData)
+  console.log(" CURRENT FAMILY LAYOUT COMPONENT ", layoutComponents.default)
   if (!activeFamilyData.value) return layoutComponents.default
 
   const layoutKey = activeFamilyData.value.layout_ux || 'default'

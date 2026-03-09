@@ -27,15 +27,14 @@ Agora 1.7.0 introduces a native Options system that allows inquiries to move bey
 
 With Options, you can:
 
-Define multiple choices for an inquiry
+Define multiple choices for an inquiry.
 
-Allow users to vote / select options
+Four different layout for options: Tree, Cards, Paired, Consensus ( not fully dynamic yet )
 
-Combine options + comments + supports
+Allow users to support/comments / select options
 
 Build real consultation and decision-making workflows
 
-This feature is the foundation for future quorums, workflows, and referendums.
 
 ### 🧰 Templates 
 
@@ -92,8 +91,6 @@ Agora introduces **ready-to-use templates** to quickly bootstrap participatory s
 Install directly from the [Nextcloud App Store](https://apps.nextcloud.com/apps/agora).
 
 ### From Git
-
-```bash
 git clone https://github.com/vinimoz/agora.git
 cd agora
 make setup-dev   # Dev environment
@@ -103,7 +100,25 @@ make appstore    # Full build
 occ app:enable agora
 ```
 
+## 🖼 Screenshots
+
+| Creation | Edit Inquiry | Edit Group | Group view | Group view 2 | Inquiry Type | Family | Grid View | Grid 2 | List View |  Settings | Settings Inquiry |
+| :-------: | :----------: | :-----------: | :-----: | :-------: | :-----: | :-------: | :------: | :---------------: |
+| ![Creation](screenshots/Creation.png) | ![Edit Inquiry](screenshots/EditInquiry.png) | ![Edit Group](screenshots/EditGroup.png) | ![Group view](screenshots/GroupView.png) |![Group view](screenshots/GroupView2.png) | ![Inquiry Type](screenshots/SettingInquiryType.png) | ![Family](screenshots/Family.png) | ![Grid](screenshots/Grid.png) | ![Grid2](screenshots/Grid2.png) | ![List](screenshots/ListView.png)  | ![Settings](screenshots/Settings.png) | ![Settings Inquiry](screenshots/SettingsInquiry.png) |
+
+## 📚 Documentation
+
+| User Guide | API Guide |
+| :--------: | :-------: |
+| [USER_GUIDE.md](docs/USER_GUIDE.md) | [API_v1.0.md](docs/API_v1.0.md) |
+
 ---
+
+## 🛠 Support
+
+- Report bugs or request features: [GitHub Issues](https://github.com/vinimoz/agora/issues)  
+- Community support: [Nextcloud Help](https://help.vinimoz.com/c/apps/agora/)
+
 
 ## 🤝 Contribution
 

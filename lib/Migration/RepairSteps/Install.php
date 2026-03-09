@@ -11,6 +11,7 @@ namespace OCA\Agora\Migration\RepairSteps;
 
 use Doctrine\DBAL\Schema\Schema;
 use OCA\Agora\Db\IndexManager;
+use OCA\Agora\Command\Db\InitDbDefault;
 use OCP\IDBConnection;
 use OCP\Migration\IOutput;
 use OCP\Migration\IRepairStep;
@@ -21,6 +22,7 @@ class Install implements IRepairStep
         private IndexManager $indexManager,
         private IDBConnection $connection,
         private Schema $schema,
+        private InitDbDefault $initDbDefault
     ) {
     }
 
@@ -46,9 +48,8 @@ class Install implements IRepairStep
 
         $output->info('Agora - Foreign key contraints created.');
         $output->info('Agora - Indices created.');
-
-        // Note: Default data initialization removed - users should use the Template Wizard instead
-        // to have full control over which templates to import
-        $output->info('Agora - Installation complete. Use the Template Wizard to import data.');
+        $output->info('Agora - Initialization begin.');
+        $this->initDbDefault->runCommands($output);
+        $output->info('Agora - Installation complete. You can use the Template Wizard to import data.');
     }
 }

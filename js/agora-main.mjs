@@ -5562,7 +5562,7 @@ to {
 }
 .kanban-layout .kanban-header[data-v-6975770e] {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   gap: 16px;
   padding: 0 4px;
 }
@@ -5575,23 +5575,17 @@ to {
   border-radius: 12px 12px 0 0;
   border-bottom: 3px solid;
 }
-.kanban-layout .kanban-header .kanban-column-header.status-idea[data-v-6975770e] {
+.kanban-layout .kanban-header .kanban-column-header.status-draft[data-v-6975770e] {
   border-bottom-color: #949494;
 }
-.kanban-layout .kanban-header .kanban-column-header.status-in_progress[data-v-6975770e] {
+.kanban-layout .kanban-header .kanban-column-header.status-active[data-v-6975770e] {
   border-bottom-color: #3498db;
 }
-.kanban-layout .kanban-header .kanban-column-header.status-review[data-v-6975770e] {
-  border-bottom-color: #f39c12;
-}
-.kanban-layout .kanban-header .kanban-column-header.status-approved[data-v-6975770e] {
+.kanban-layout .kanban-header .kanban-column-header.status-completed[data-v-6975770e] {
   border-bottom-color: #27ae60;
 }
-.kanban-layout .kanban-header .kanban-column-header.status-rejected[data-v-6975770e] {
+.kanban-layout .kanban-header .kanban-column-header.status-cancelled[data-v-6975770e] {
   border-bottom-color: #e74c3c;
-}
-.kanban-layout .kanban-header .kanban-column-header.status-implemented[data-v-6975770e] {
-  border-bottom-color: #2ecc71;
 }
 .kanban-layout .kanban-header .kanban-column-header .header-content[data-v-6975770e] {
   display: flex;
@@ -5616,7 +5610,7 @@ to {
 }
 .kanban-layout .kanban-board[data-v-6975770e] {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   gap: 16px;
   min-height: 500px;
 }
@@ -5624,15 +5618,52 @@ to {
   background: var(--color-background-dark);
   border-radius: 12px;
   padding: 16px;
+  transition: background-color 0.2s ease;
+}
+.kanban-layout .kanban-board .kanban-column[data-v-6975770e]:has(.drag-over) {
+  background: var(--color-background-hover);
 }
 .kanban-layout .kanban-board .kanban-column .column-items[data-v-6975770e] {
   min-height: 200px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
 }
 .kanban-layout .kanban-board .kanban-column .column-items .kanban-item[data-v-6975770e] {
   position: relative;
+  cursor: grab;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+.kanban-layout .kanban-board .kanban-column .column-items .kanban-item[data-v-6975770e]:active {
+  cursor: grabbing;
+}
+.kanban-layout .kanban-board .kanban-column .column-items .kanban-item.dragging[data-v-6975770e] {
+  opacity: 0.5;
+  transform: scale(0.98);
+}
+.kanban-layout .kanban-board .kanban-column .column-items .kanban-item .drag-handle[data-v-6975770e] {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-lighter);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  cursor: grab;
+  background: var(--color-main-background);
+  border-radius: 4px;
+  border: 1px solid var(--color-border);
+}
+.kanban-layout .kanban-board .kanban-column .column-items .kanban-item .drag-handle[data-v-6975770e]:hover {
+  color: var(--color-text-light);
+  background: var(--color-background-hover);
+}
+.kanban-layout .kanban-board .kanban-column .column-items .kanban-item:hover .drag-handle[data-v-6975770e] {
+  opacity: 1;
 }
 .kanban-layout .kanban-board .kanban-column .column-items .kanban-item .status-dot[data-v-6975770e] {
   position: absolute;
@@ -5660,6 +5691,14 @@ to {
   font-style: italic;
   border: 2px dashed var(--color-border);
   border-radius: 8px;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+.kanban-layout .kanban-board .kanban-column .column-items .empty-column.drag-over[data-v-6975770e] {
+  background: var(--color-background-hover);
+  border-color: var(--color-primary-element);
+}
+.kanban-layout .kanban-board .kanban-column .column-items .empty-column .button-vue[data-v-6975770e] {
+  margin-top: 12px;
 }
 .status-dot-small[data-v-6975770e] {
   width: 10px;
@@ -5687,6 +5726,9 @@ to {
   padding: 20px 0;
 }
 .timeline-layout .timeline-view .timeline-header[data-v-f2d57b7a] {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 20px;
 }
 .timeline-layout .timeline-view .timeline-header .timeline-scale[data-v-f2d57b7a] {
@@ -5709,93 +5751,167 @@ to {
   background: var(--color-primary-element);
   color: white;
 }
+.timeline-layout .timeline-view .timeline-header .timeline-info[data-v-f2d57b7a] {
+  color: var(--color-text-lighter);
+  font-size: 14px;
+  font-weight: 500;
+}
 .timeline-layout .timeline-view .timeline-container[data-v-f2d57b7a] {
-  position: relative;
-  height: 300px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-main-background);
   overflow-x: auto;
 }
-.timeline-layout .timeline-view .timeline-container .time-markers[data-v-f2d57b7a] {
-  position: relative;
-  height: 30px;
-  border-bottom: 2px solid var(--color-border);
+.timeline-layout .timeline-view .timeline-container.scale-month .timeline-markers-header[data-v-f2d57b7a] {
+  width: fit-content;
+  min-width: 100%;
 }
-.timeline-layout .timeline-view .timeline-container .time-markers .time-marker[data-v-f2d57b7a] {
-  position: absolute;
-  transform: translateX(-50%);
+.timeline-layout .timeline-view .timeline-container.scale-month .timeline-markers-header .marker-cell.month-marker[data-v-f2d57b7a] {
+  flex-shrink: 0;
+  width: 120px;
+  border-right: 1px solid var(--color-border);
 }
-.timeline-layout .timeline-view .timeline-container .time-markers .time-marker .marker-label[data-v-f2d57b7a] {
-  font-size: 12px;
-  color: var(--color-text-lighter);
+.timeline-layout .timeline-view .timeline-container.scale-month .timeline-markers-header .marker-cell.month-marker .marker-label[data-v-f2d57b7a] {
   white-space: nowrap;
 }
-.timeline-layout .timeline-view .timeline-container .time-markers .time-marker[data-v-f2d57b7a]::after {
-  content: "";
-  position: absolute;
-  top: 20px;
-  left: 50%;
+.timeline-layout .timeline-view .timeline-container.scale-month .timeline-grid[data-v-f2d57b7a] {
+  width: fit-content;
+  min-width: 100%;
+}
+.timeline-layout .timeline-view .timeline-container.scale-month .timeline-grid .grid-vertical-lines .grid-line.month-line[data-v-f2d57b7a] {
   width: 1px;
-  height: 200px;
   background: var(--color-border);
-  opacity: 0.3;
+  opacity: 0.2;
 }
-.timeline-layout .timeline-view .timeline-container .timeline-items[data-v-f2d57b7a] {
+.timeline-layout .timeline-view .timeline-container.scale-month .timeline-grid .grid-vertical-lines .grid-line.month-line[data-v-f2d57b7a]:first-child, .timeline-layout .timeline-view .timeline-container.scale-month .timeline-grid .grid-vertical-lines .grid-line.month-line[data-v-f2d57b7a]:last-child {
+  opacity: 0.5;
+}
+.timeline-layout .timeline-view .timeline-container.scale-month .timeline-grid .timeline-row[data-v-f2d57b7a] {
+  width: fit-content;
+  min-width: 100%;
+}
+.timeline-layout .timeline-view .timeline-container.scale-day .timeline-markers-header[data-v-f2d57b7a], .timeline-layout .timeline-view .timeline-container.scale-week .timeline-markers-header[data-v-f2d57b7a] {
+  display: flex;
+  width: 100%;
+}
+.timeline-layout .timeline-view .timeline-container .timeline-markers-header[data-v-f2d57b7a] {
+  display: flex;
+  height: 40px;
+  background: var(--color-background-dark);
+  border-bottom: 2px solid var(--color-border);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+.timeline-layout .timeline-view .timeline-container .timeline-markers-header .marker-cell[data-v-f2d57b7a] {
+  flex-shrink: 0;
   position: relative;
-  height: 250px;
-  margin-top: 20px;
+  border-right: 1px solid var(--color-border);
 }
-.timeline-layout .timeline-view .timeline-container .timeline-items .timeline-item-wrapper[data-v-f2d57b7a] {
+.timeline-layout .timeline-view .timeline-container .timeline-markers-header .marker-cell[data-v-f2d57b7a]:last-child {
+  border-right: none;
+}
+.timeline-layout .timeline-view .timeline-container .timeline-markers-header .marker-cell .marker-label[data-v-f2d57b7a] {
   position: absolute;
-  height: 60px;
-  padding: 0 4px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 11px;
+  color: var(--color-text-lighter);
+  white-space: nowrap;
+  background: var(--color-background-dark);
+  padding: 2px 4px;
+  border-radius: 4px;
+  z-index: 5;
 }
-.timeline-layout .timeline-view .timeline-container .timeline-items .timeline-item-wrapper .timeline-item[data-v-f2d57b7a] {
-  height: 100%;
+.timeline-layout .timeline-view .timeline-container .timeline-grid[data-v-f2d57b7a] {
+  position: relative;
+  min-height: 300px;
+}
+.timeline-layout .timeline-view .timeline-container .timeline-grid .grid-vertical-lines[data-v-f2d57b7a] {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+}
+.timeline-layout .timeline-view .timeline-container .timeline-grid .grid-vertical-lines .grid-line[data-v-f2d57b7a] {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--color-border);
+  opacity: 0.2;
+}
+.timeline-layout .timeline-view .timeline-container .timeline-grid .grid-vertical-lines .grid-line[data-v-f2d57b7a]:first-child, .timeline-layout .timeline-view .timeline-container .timeline-grid .grid-vertical-lines .grid-line[data-v-f2d57b7a]:last-child {
+  opacity: 0.5;
+}
+.timeline-layout .timeline-view .timeline-container .timeline-grid .timeline-row[data-v-f2d57b7a] {
+  position: relative;
+  height: 80px;
+  border-bottom: 1px solid var(--color-border);
+}
+.timeline-layout .timeline-view .timeline-container .timeline-grid .timeline-row[data-v-f2d57b7a]:last-child {
+  border-bottom: none;
+}
+.timeline-layout .timeline-view .timeline-container .timeline-grid .timeline-row.alternate[data-v-f2d57b7a] {
+  background: var(--color-background-dark);
+}
+.timeline-layout .timeline-view .timeline-container .timeline-grid .timeline-row .timeline-item[data-v-f2d57b7a] {
+  position: absolute;
+  top: 10px;
+  width: 220px;
+  height: 60px;
   background: var(--color-main-background);
-  border: 1px solid var(--color-border);
+  border: 2px solid var(--color-primary-element);
   border-radius: 8px;
-  padding: 8px;
+  padding: 8px 12px;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 10;
 }
-.timeline-layout .timeline-view .timeline-container .timeline-items .timeline-item-wrapper .timeline-item[data-v-f2d57b7a]:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-  border-color: var(--color-primary-element);
+.timeline-layout .timeline-view .timeline-container .timeline-grid .timeline-row .timeline-item[data-v-f2d57b7a]:hover {
+  transform: translateY(-2px) translateX(-50%);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  border-color: var(--color-primary-element-light);
+  background: var(--color-background-hover);
+  z-index: 30;
 }
-.timeline-layout .timeline-view .timeline-container .timeline-items .timeline-item-wrapper .timeline-item .item-content[data-v-f2d57b7a] {
+.timeline-layout .timeline-view .timeline-container .timeline-grid .timeline-row .timeline-item .item-content[data-v-f2d57b7a] {
   display: flex;
   align-items: center;
   gap: 8px;
   height: 100%;
 }
-.timeline-layout .timeline-view .timeline-container .timeline-items .timeline-item-wrapper .timeline-item .item-content .item-icon[data-v-f2d57b7a] {
+.timeline-layout .timeline-view .timeline-container .timeline-grid .timeline-row .timeline-item .item-content .item-icon[data-v-f2d57b7a] {
   flex-shrink: 0;
-  color: var(--color-text-light);
+  color: var(--color-primary-element);
 }
-.timeline-layout .timeline-view .timeline-container .timeline-items .timeline-item-wrapper .timeline-item .item-content .item-details[data-v-f2d57b7a] {
+.timeline-layout .timeline-view .timeline-container .timeline-grid .timeline-row .timeline-item .item-content .item-details[data-v-f2d57b7a] {
   flex: 1;
   min-width: 0;
 }
-.timeline-layout .timeline-view .timeline-container .timeline-items .timeline-item-wrapper .timeline-item .item-content .item-details .item-title[data-v-f2d57b7a] {
+.timeline-layout .timeline-view .timeline-container .timeline-grid .timeline-row .timeline-item .item-content .item-details .item-title[data-v-f2d57b7a] {
   font-weight: 600;
   font-size: 13px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  color: var(--color-main-text);
 }
-.timeline-layout .timeline-view .timeline-container .timeline-items .timeline-item-wrapper .timeline-item .item-content .item-details .item-dates[data-v-f2d57b7a] {
+.timeline-layout .timeline-view .timeline-container .timeline-grid .timeline-row .timeline-item .item-content .item-details .item-dates[data-v-f2d57b7a] {
   font-size: 11px;
-  color: var(--color-text-lighter);
+  color: var(--color-primary-element);
+  font-weight: 500;
 }
-.timeline-layout .timeline-view .timeline-container .timeline-items .timeline-item-wrapper .timeline-item .item-content .item-details .item-dates .date[data-v-f2d57b7a] {
-  margin-right: 4px;
-}
-.timeline-layout .timeline-view .timeline-container .timeline-items .timeline-item-wrapper .timeline-item .item-content .status-indicator[data-v-f2d57b7a] {
+.timeline-layout .timeline-view .timeline-container .timeline-grid .timeline-row .timeline-item .item-content .status-indicator[data-v-f2d57b7a] {
   width: 8px;
   height: 8px;
   border-radius: 50%;
   flex-shrink: 0;
+  box-shadow: 0 0 0 2px var(--color-main-background);
 }
 .timeline-layout .list-view .options-list[data-v-f2d57b7a] {
   display: flex;
@@ -5815,6 +5931,7 @@ to {
   margin: 0;
   font-size: 18px;
   font-weight: 600;
+  color: var(--color-main-text);
 }
 .timeline-layout .calendar-view .calendar-grid[data-v-f2d57b7a] {
   display: grid;
@@ -5828,6 +5945,7 @@ to {
   background: var(--color-background-dark);
   border-radius: 8px;
   font-size: 14px;
+  color: var(--color-main-text);
 }
 .timeline-layout .calendar-view .calendar-grid .calendar-day[data-v-f2d57b7a] {
   min-height: 100px;
@@ -5835,6 +5953,7 @@ to {
   border: 1px solid var(--color-border);
   border-radius: 8px;
   padding: 8px;
+  transition: all 0.2s ease;
 }
 .timeline-layout .calendar-view .calendar-grid .calendar-day.other-month[data-v-f2d57b7a] {
   opacity: 0.5;
@@ -5842,6 +5961,11 @@ to {
 }
 .timeline-layout .calendar-view .calendar-grid .calendar-day.today[data-v-f2d57b7a] {
   border: 2px solid var(--color-primary-element);
+  box-shadow: 0 0 0 1px var(--color-primary-element-light);
+}
+.timeline-layout .calendar-view .calendar-grid .calendar-day[data-v-f2d57b7a]:hover {
+  border-color: var(--color-primary-element);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 .timeline-layout .calendar-view .calendar-grid .calendar-day .day-header[data-v-f2d57b7a] {
   display: flex;
@@ -5852,6 +5976,7 @@ to {
 .timeline-layout .calendar-view .calendar-grid .calendar-day .day-header .day-number[data-v-f2d57b7a] {
   font-weight: 600;
   font-size: 14px;
+  color: var(--color-main-text);
 }
 .timeline-layout .calendar-view .calendar-grid .calendar-day .day-header .event-count[data-v-f2d57b7a] {
   background: var(--color-primary-element);
@@ -5865,23 +5990,29 @@ to {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  max-height: 80px;
+  overflow-y: auto;
 }
 .timeline-layout .calendar-view .calendar-grid .calendar-day .day-events .calendar-event[data-v-f2d57b7a] {
   padding: 4px 6px;
   background: var(--color-background-dark);
   border-left: 3px solid var(--color-primary-element);
   border-radius: 4px;
-  font-size: 12px;
+  font-size: 11px;
   cursor: pointer;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  transition: all 0.2s ease;
 }
 .timeline-layout .calendar-view .calendar-grid .calendar-day .day-events .calendar-event[data-v-f2d57b7a]:hover {
   background: var(--color-background-hover);
+  transform: translateX(2px);
+  border-left-width: 4px;
 }
 .timeline-layout .calendar-view .calendar-grid .calendar-day .day-events .calendar-event .event-title[data-v-f2d57b7a] {
   font-weight: 500;
+  color: var(--color-main-text);
 }
 .timeline-layout .empty-state[data-v-f2d57b7a] {
   text-align: center;
@@ -13937,11 +14068,11 @@ tr.file-picker__row td.row-name[data-v-1f96131b] {
 const appName = "agora";
 const appVersion = "1.7.0-rc1";
 import { a3 as getCurrentInstance, Y as inject, b3 as onUnmounted, bi as onDeactivated, bj as onActivated, w as watch, F as unref, bk as shallowReactive, b4 as shallowRef, d as defineComponent, X as reactive, b as computed, $ as h$1, bl as provide, aX as ref, a2 as watchEffect, aW as nextTick$1, A as defineStore, q as translate, aN as emit, bm as Settings, a as _export_sfc, o as openBlock, c as createElementBlock, t as toDisplayString, E as normalizeClass, bn as getCanonicalLocale, bf as NcActionButton, _ as _export_sfc$1, f as createBlock, g as withCtx, k as createCommentVNode, h as resolveDynamicComponent, j as createBaseVNode, bo as NC_ACTIONS_IS_SEMANTIC_MENU, bp as ActionGlobalMixin, G as NcIconSvgWrapper, ai as resolveComponent, a5 as withDirectives, bq as vModelRadio, i as createVNode, br as mdiRadioboxMarked, bs as mdiRadioboxBlank, u as useModel, S as createElementId, bt as useSlots, P as logger, s as onMounted, aV as onBeforeUnmount, r as renderSlot, ag as useCssVars, bu as useIsDarkTheme, bv as mdiCreation, ac as createSlots, B as createTextVNode, a7 as NcButton, bw as useCssModule, bx as NC_FORM_BOX_CONTEXT_KEY, bg as NcActions, m as mergeProps, aO as withKeys, a6 as vShow, v as normalizeProps, x as guardReactiveProps, by as userStatus, N as NcAvatar, n as normalizeStyle, p as mergeModels, e as warn, T as Fragment$1, U as renderList, ak as NcLoadingIcon, bz as Teleport, ax as withModifiers, aP as NcEmptyContent, V as DateTime, bA as translatePlural, bB as TransitionGroup, D as generateUrl, aM as NcModal, bC as markRaw, bD as customRef, bE as global, bF as getAugmentedNamespace, bG as process$1, bc as commonjsGlobal, bH as Buffer, a$ as getDefaultExportFromCjs, bI as vModelSelect, bd as getCurrentUser, ay as Transition, C as purify, be as toRaw, bJ as subscribe, bK as unsubscribe, aR as generateOcsUrl, aS as cancelableClient, bL as axios, y as createApp, z as pinia } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_ef057a6f_lang-7C7LTiDb.chunk.mjs";
-import { h as getFamilyIconName, i as getFamilyColor, a as useSessionStore, p as publicInquiry, o as options, L as Logger, j as useInquiryStore, s as showError, E as Event$1, l as useCommentsStore, d as useAppSettingsStore, m as getFamilyIconComponent, n as getFamiliesWithOptionTypes, q as getFamilyFallbackData, r as createInquiryContext, t as canTransfer, v as canDelete, w as canArchive, I as InquiryGeneralIcons, g as getInquiryTypeData, b as useInquiriesStore, x as useInquiryGroupsStore, y as NavigationIcons, z as showSuccess, A as getAvailableInquiryTypesForCreation, B as getInquiryTypeOptions, C as useInquiryGroupStore, D as getAllowedResponseGroupTypes, F as getAvailableInquiryGroupTypesForCreation, G as getInquiryGroupTypeData, H as accessFamilyMenu, J as getInquiryTypesForFamily, K as getInquiryItemData, M as canCreateInquiryGroupInGeneral, O as getInquiryTypesByFamily, P as supports, Q as canSupportOption, R as canSupport, S as StatusIcons, T as BadgeIcons, U as canComment, V as sortTitlesMapping, W as lodashExports, X as appSettings, Y as canRestore, Z as getInquiryGroupTypesByFamily, _ as getInquiryGroupTypesForFamily, $ as canViewToggle, a0 as getAvailableResponseTypesWithPermissions, a1 as getAvailableTransformTypesWithPermissions, a2 as validators, a3 as inquiries, a4 as commonjsRequire, a5 as useAttachmentsStore, a6 as getOptionTypeIconComponent, a7 as getOptionTypeLabel, a8 as InquiryOptionIcons, a9 as createOptionContext, aa as canEditOption, ab as canDeleteOption, ac as getOptionTypeColor, ad as usesTitle, ae as allowsComments, af as hasSupportFeature, ag as getAllowedResponses, ah as useOptionStore, ai as findOptionType, aj as getOptionTypeDescription, ak as getSupportFeatureLabel, al as getOptionTypeFields, am as createDefault, an as getAvailableResponseTypes, ao as canCommentOption, ap as getLayoutForFamily, aq as useSharesStore, ar as canEdit, as as createInquiryGroupContext, at as inquiryLinks, au as ShareIcons, av as getEditPermissions, aw as getAvailableFields, ax as getAvailableGroupFields, ay as canShare, az as canUseResource } from "./NcDashboardWidget-DCBQdRFz-C8M-4kh7.chunk.mjs";
-import { u as usePreferencesStore, S as StyleSettings, F as FeatureSettings } from "./StyleSettings-BrDVCp8m.chunk.mjs";
-import { b as NcAppNavigationItem, u as useAppSettingsDialog, A as APP_SETTINGS_LEGACY_DESIGN_KEY, _ as _sfc_main$1V, c as NcAppNavigationList, d as NcAppNavigation, S as Spinner, Q as QRCode, I as InputDiv, e as NcAppContent, f as NcActionButtonGroup, g as NcDialog, h as find$1, r as registerCustomProtocol, t as tokenize, i as reset, j as NcRichContenteditable, O as Options, k as NcActionInput, P as PlusIcon, l as NcDateTimePickerNative, m as NcAppSidebar, a as NcAppSettingsDialog, n as NcContent } from "./index-_EmCUyQz.chunk.mjs";
+import { h as getFamilyIconName, i as getFamilyColor, a as useSessionStore, p as publicInquiry, o as options, L as Logger, j as useInquiryStore, s as showError, E as Event$1, l as useCommentsStore, d as useAppSettingsStore, m as getFamilyIconComponent, n as getFamiliesWithOptionTypes, q as getFamilyFallbackData, r as createInquiryContext, t as canTransfer, v as canDelete, w as canArchive, I as InquiryGeneralIcons, g as getInquiryTypeData, b as useInquiriesStore, x as useInquiryGroupsStore, y as NavigationIcons, z as showSuccess, A as getAvailableInquiryTypesForCreation, B as getInquiryTypeOptions, C as useInquiryGroupStore, D as getAllowedResponseGroupTypes, F as getAvailableInquiryGroupTypesForCreation, G as getInquiryGroupTypeData, H as accessFamilyMenu, J as getInquiryTypesForFamily, K as getInquiryItemData, M as canCreateInquiryGroupInGeneral, O as getInquiryTypesByFamily, P as supports, Q as canSupportOption, R as canSupport, S as StatusIcons, T as BadgeIcons, U as canComment, V as sortTitlesMapping, W as lodashExports, X as appSettings, Y as canRestore, Z as getInquiryGroupTypesByFamily, _ as getInquiryGroupTypesForFamily, $ as canViewToggle, a0 as getAvailableResponseTypesWithPermissions, a1 as getAvailableTransformTypesWithPermissions, a2 as validators, a3 as inquiries, a4 as commonjsRequire, a5 as useAttachmentsStore, a6 as getOptionTypeIconComponent, a7 as getOptionTypeLabel, a8 as InquiryOptionIcons, a9 as createOptionContext, aa as canEditOption, ab as canDeleteOption, ac as getOptionTypeColor, ad as usesTitle, ae as allowsComments, af as hasSupportFeature, ag as getAllowedResponses, ah as useOptionStore, ai as findOptionType, aj as getOptionTypeDescription, ak as getSupportFeatureLabel, al as getOptionTypeFields, am as createDefault, an as getAvailableResponseTypes, ao as canCommentOption, ap as getOptionTypeFamily, aq as getLayoutForFamily, ar as useSharesStore, as as canEdit, at as createInquiryGroupContext, au as inquiryLinks, av as ShareIcons, aw as getEditPermissions, ax as getAvailableFields, ay as getAvailableGroupFields, az as canShare, aA as canUseResource } from "./NcDashboardWidget-DCBQdRFz-DBjjkpUK.chunk.mjs";
+import { u as usePreferencesStore, S as StyleSettings, F as FeatureSettings } from "./StyleSettings-uAKZeqSd.chunk.mjs";
+import { b as NcAppNavigationItem, u as useAppSettingsDialog, A as APP_SETTINGS_LEGACY_DESIGN_KEY, _ as _sfc_main$1V, c as NcAppNavigationList, d as NcAppNavigation, S as Spinner, Q as QRCode, I as InputDiv, e as NcAppContent, f as NcActionButtonGroup, g as NcDialog, h as find$1, r as registerCustomProtocol, t as tokenize, i as reset, j as NcRichContenteditable, O as Options, k as NcActionInput, P as PlusIcon, l as NcDateTimePickerNative, m as NcAppSidebar, a as NcAppSettingsDialog, n as NcContent } from "./index-DgmzlsBY.chunk.mjs";
 import { c as _sfc_main$1W, I as INSIDE_RADIO_GROUP_KEY, a as NcSelect, N as NcCheckboxRadioSwitch, _ as _sfc_main$1X, b as NcInputField } from "./NcRichText-DJlaHs_Q-BarOYPXN.chunk.mjs";
-import { R as RadioGroupDiv, a as NcTextArea, N as NcNoteCard, C as CardDiv } from "./markdown-BF30L2eP.chunk.mjs";
+import { R as RadioGroupDiv, a as NcTextArea, N as NcNoteCard, C as CardDiv } from "./markdown-DfnEdSd5.chunk.mjs";
 import { A as AgoraAppIcon } from "./agora-icon-Bv0FNUVc.chunk.mjs";
 import { N as NcUserBubble } from "./NcUserBubble-vOAXLHB5-DvQBCAMs.chunk.mjs";
 function getDevtoolsGlobalHook() {
@@ -16484,15 +16615,25 @@ const useOptionsStore = defineStore("options", {
     reset() {
       this.$reset();
     },
-    forceUpdateCommentCount() {
+    forceUpdateCommentCount(optionId) {
       const commentsStore = useCommentsStore();
-      if (this.id && this.targetId) {
-        const count = commentsStore.comments.filter(
-          (comment) => comment.inquiryId === this.targetId && comment.optionId === this.id && comment.deleted === 0
-        ).length;
-        if (this.status) {
-          this.status.countComments = count;
+      if (optionId) {
+        const option2 = this.options.find((opt) => opt.id === optionId);
+        if (option2 && option2.status) {
+          const count = commentsStore.comments.filter(
+            (comment) => comment.inquiryId === option2.targetId && comment.optionId === option2.id && comment.deleted === 0
+          ).length;
+          option2.status.countComments = count;
         }
+      } else {
+        this.options.forEach((option2) => {
+          if (option2.status) {
+            const count = commentsStore.comments.filter(
+              (comment) => comment.inquiryId === option2.targetId && comment.optionId === option2.id && comment.deleted === 0
+            ).length;
+            option2.status.countComments = count;
+          }
+        });
       }
     },
     // Initialize option types from session store
@@ -16503,6 +16644,23 @@ const useOptionsStore = defineStore("options", {
           this.optionsByFamily[family.key] = [];
         }
       });
+    },
+    async setOptionStatus(optionId, optionStatus) {
+      try {
+        if (optionId) {
+          await options.setOptionStatus(optionId, optionStatus);
+          this.updateOptionStatus(optionId, optionStatus);
+        }
+      } catch (error) {
+        if (error?.code === "ERR_CANCELED") {
+          return;
+        }
+        Logger.error("Error setting option status:", {
+          error,
+          state: this.$state
+        });
+        throw error;
+      }
     },
     // Load all options for current inquiry
     async load(inquiryId, token) {
@@ -16547,6 +16705,12 @@ const useOptionsStore = defineStore("options", {
       const option2 = this.options.find((opt) => opt.id === optionId);
       if (option2 && option2.status) {
         option2.status.countComments = count;
+      }
+    },
+    updateOptionStatus(optionId, status) {
+      const option2 = this.options.find((opt) => opt.id === optionId);
+      if (option2 && option2.status) {
+        option2.status.optionStatus = status;
       }
     },
     updateOptionSupportCount(optionId, count) {
@@ -17895,7 +18059,7 @@ const _hoisted_9$y = {
   key: 0,
   class: "list-item-content__extra-actions"
 };
-const _hoisted_10$w = {
+const _hoisted_10$x = {
   key: 2,
   class: "list-item__extra"
 };
@@ -17996,7 +18160,7 @@ function _sfc_render$1F(_ctx, _cache, $props, $setup, $data, $options) {
               } : void 0
             ]), 1032, ["primary", "forceMenu", "aria-label", "onUpdate:open"])
           ], 32)) : createCommentVNode("", true),
-          _ctx.$slots.extra ? (openBlock(), createElementBlock("div", _hoisted_10$w, [
+          _ctx.$slots.extra ? (openBlock(), createElementBlock("div", _hoisted_10$x, [
             renderSlot(_ctx.$slots, "extra", {}, void 0, true)
           ])) : createCommentVNode("", true)
         ], 34)
@@ -19857,19 +20021,19 @@ const _hoisted_6$z = {
 const _hoisted_7$y = { class: "groups-title" };
 const _hoisted_8$y = { class: "groups-list" };
 const _hoisted_9$x = { class: "type-option" };
-const _hoisted_10$v = {
+const _hoisted_10$w = {
   key: 0,
   class: "type-description-small"
 };
-const _hoisted_11$v = {
+const _hoisted_11$w = {
   key: 1,
   class: "selected-type"
 };
-const _hoisted_12$u = {
+const _hoisted_12$v = {
   key: 0,
   class: "type-description"
 };
-const _hoisted_13$t = { class: "type-info" };
+const _hoisted_13$u = { class: "type-info" };
 const _hoisted_14$q = {
   key: 2,
   class: "type-help"
@@ -20085,7 +20249,7 @@ function _sfc_render$1s(_ctx, _cache, $props, $setup, $data, $options) {
                           ),
                           type.description ? (openBlock(), createElementBlock(
                             "p",
-                            _hoisted_10$v,
+                            _hoisted_10$w,
                             toDisplayString(type.description),
                             1
                             /* TEXT */
@@ -20103,7 +20267,7 @@ function _sfc_render$1s(_ctx, _cache, $props, $setup, $data, $options) {
             ]),
             _: 1
             /* STABLE */
-          }, 8, ["label", "model-value"])) : (openBlock(), createElementBlock("div", _hoisted_11$v, [
+          }, 8, ["label", "model-value"])) : (openBlock(), createElementBlock("div", _hoisted_11$w, [
             createBaseVNode(
               "strong",
               null,
@@ -20113,12 +20277,12 @@ function _sfc_render$1s(_ctx, _cache, $props, $setup, $data, $options) {
             ),
             $setup.currentInquiryGroupTypeData?.description ? (openBlock(), createElementBlock(
               "p",
-              _hoisted_12$u,
+              _hoisted_12$v,
               toDisplayString($setup.currentInquiryGroupTypeData.description),
               1
               /* TEXT */
             )) : createCommentVNode("v-if", true),
-            createBaseVNode("div", _hoisted_13$t, [
+            createBaseVNode("div", _hoisted_13$u, [
               createBaseVNode(
                 "small",
                 null,
@@ -21576,10 +21740,10 @@ const _hoisted_6$x = { class: "support-breakdown" };
 const _hoisted_7$x = { class: "breakdown-item positive" };
 const _hoisted_8$x = { class: "breakdown-header" };
 const _hoisted_9$w = { class: "breakdown-counts" };
-const _hoisted_10$u = { class: "breakdown-bar" };
-const _hoisted_11$u = { class: "breakdown-item neutral" };
-const _hoisted_12$t = { class: "breakdown-header" };
-const _hoisted_13$s = { class: "breakdown-counts" };
+const _hoisted_10$v = { class: "breakdown-bar" };
+const _hoisted_11$v = { class: "breakdown-item neutral" };
+const _hoisted_12$u = { class: "breakdown-header" };
+const _hoisted_13$t = { class: "breakdown-counts" };
 const _hoisted_14$p = { class: "breakdown-bar" };
 const _hoisted_15$p = { class: "breakdown-item negative" };
 const _hoisted_16$o = { class: "breakdown-header" };
@@ -21752,7 +21916,7 @@ function _sfc_render$1n(_ctx, _cache, $props, $setup, $data, $options) {
                       /* TEXT, STYLE */
                     )
                   ]),
-                  createBaseVNode("div", _hoisted_10$u, [
+                  createBaseVNode("div", _hoisted_10$v, [
                     createBaseVNode(
                       "div",
                       {
@@ -21765,8 +21929,8 @@ function _sfc_render$1n(_ctx, _cache, $props, $setup, $data, $options) {
                     )
                   ])
                 ]),
-                createBaseVNode("div", _hoisted_11$u, [
-                  createBaseVNode("div", _hoisted_12$t, [
+                createBaseVNode("div", _hoisted_11$v, [
+                  createBaseVNode("div", _hoisted_12$u, [
                     createVNode($setup["TernarySupportIcon"], {
                       "support-value": 0,
                       size: $props.iconSize * 0.8
@@ -21782,7 +21946,7 @@ function _sfc_render$1n(_ctx, _cache, $props, $setup, $data, $options) {
                       /* TEXT, STYLE */
                     )
                   ]),
-                  createBaseVNode("div", _hoisted_13$s, [
+                  createBaseVNode("div", _hoisted_13$t, [
                     createBaseVNode(
                       "span",
                       {
@@ -22051,10 +22215,10 @@ const _hoisted_6$w = { class: "title" };
 const _hoisted_7$w = { class: "description_line" };
 const _hoisted_8$w = { class: "description" };
 const _hoisted_9$v = { class: "title_line" };
-const _hoisted_10$t = { class: "title" };
-const _hoisted_11$t = { class: "description_line" };
-const _hoisted_12$s = { class: "description" };
-const _hoisted_13$r = { class: "badges" };
+const _hoisted_10$u = { class: "title" };
+const _hoisted_11$u = { class: "description_line" };
+const _hoisted_12$t = { class: "description" };
+const _hoisted_13$s = { class: "badges" };
 const _hoisted_14$o = {
   key: 0,
   class: "item__type"
@@ -22086,9 +22250,9 @@ const _hoisted_29$h = ["src", "alt"];
 const _hoisted_30$h = { class: "user-avatar-top" };
 const _hoisted_31$f = { class: "user-avatar" };
 const _hoisted_32$e = { class: "first-line" };
-const _hoisted_33$d = { class: "type-title" };
-const _hoisted_34$d = { class: "inquiry-type" };
-const _hoisted_35$d = { class: "type-label" };
+const _hoisted_33$e = { class: "type-title" };
+const _hoisted_34$e = { class: "inquiry-type" };
+const _hoisted_35$e = { class: "type-label" };
 const _hoisted_36$c = { class: "grid-title" };
 const _hoisted_37$c = {
   key: 1,
@@ -22222,16 +22386,16 @@ function _sfc_render$1m(_ctx, _cache, $props, $setup, $data, $options) {
               createBaseVNode("div", _hoisted_9$v, [
                 createBaseVNode(
                   "span",
-                  _hoisted_10$t,
+                  _hoisted_10$u,
                   toDisplayString($props.inquiry.title),
                   1
                   /* TEXT */
                 )
               ]),
-              createBaseVNode("div", _hoisted_11$t, [
+              createBaseVNode("div", _hoisted_11$u, [
                 createBaseVNode(
                   "span",
-                  _hoisted_12$s,
+                  _hoisted_12$t,
                   toDisplayString($setup.safeDescription),
                   1
                   /* TEXT */
@@ -22241,7 +22405,7 @@ function _sfc_render$1m(_ctx, _cache, $props, $setup, $data, $options) {
             2
             /* CLASS */
           )),
-          createBaseVNode("div", _hoisted_13$r, [
+          createBaseVNode("div", _hoisted_13$s, [
             $props.inquiry.parentId !== null ? (openBlock(), createElementBlock("div", _hoisted_14$o, [
               createVNode($setup["RouterLink"], {
                 class: "underline",
@@ -22421,8 +22585,8 @@ function _sfc_render$1m(_ctx, _cache, $props, $setup, $data, $options) {
               [
                 createCommentVNode(" First Line: Type + Title + Toggle "),
                 createBaseVNode("div", _hoisted_32$e, [
-                  createBaseVNode("div", _hoisted_33$d, [
-                    createBaseVNode("div", _hoisted_34$d, [
+                  createBaseVNode("div", _hoisted_33$e, [
+                    createBaseVNode("div", _hoisted_34$e, [
                       (openBlock(), createBlock(resolveDynamicComponent($setup.inquiryTypeData.icon), {
                         title: $setup.inquiryTypeData.label,
                         size: 18,
@@ -22430,7 +22594,7 @@ function _sfc_render$1m(_ctx, _cache, $props, $setup, $data, $options) {
                       }, null, 8, ["title"])),
                       createBaseVNode(
                         "span",
-                        _hoisted_35$d,
+                        _hoisted_35$e,
                         toDisplayString($setup.inquiryTypeData.label),
                         1
                         /* TEXT */
@@ -22801,13 +22965,13 @@ const _hoisted_8$v = {
   class: "filter-group compact"
 };
 const _hoisted_9$u = { class: "filter-group compact checkbox-group" };
-const _hoisted_10$s = {
+const _hoisted_10$t = {
   key: 0,
   class: "filters-expanded"
 };
-const _hoisted_11$s = { class: "filters-grid" };
-const _hoisted_12$r = { class: "filter-group" };
-const _hoisted_13$q = { class: "filter-group" };
+const _hoisted_11$t = { class: "filters-grid" };
+const _hoisted_12$s = { class: "filter-group" };
+const _hoisted_13$r = { class: "filter-group" };
 const _hoisted_14$n = { class: "filter-group" };
 const _hoisted_15$n = {
   key: 1,
@@ -22991,10 +23155,10 @@ function _sfc_render$1l(_ctx, _cache, $props, $setup, $data, $options) {
       })) : createCommentVNode("v-if", true)
     ]),
     createCommentVNode(" Expanded filters section "),
-    $setup.isFiltersOpen ? (openBlock(), createElementBlock("div", _hoisted_10$s, [
-      createBaseVNode("div", _hoisted_11$s, [
+    $setup.isFiltersOpen ? (openBlock(), createElementBlock("div", _hoisted_10$t, [
+      createBaseVNode("div", _hoisted_11$t, [
         createCommentVNode(" Type filter "),
-        createBaseVNode("div", _hoisted_12$r, [
+        createBaseVNode("div", _hoisted_12$s, [
           createBaseVNode(
             "label",
             null,
@@ -23018,7 +23182,7 @@ function _sfc_render$1l(_ctx, _cache, $props, $setup, $data, $options) {
           }, null, 8, ["modelValue", "options", "input-label"])
         ]),
         createCommentVNode(" Comments filter "),
-        createBaseVNode("div", _hoisted_13$q, [
+        createBaseVNode("div", _hoisted_13$r, [
           createBaseVNode(
             "label",
             null,
@@ -24438,10 +24602,10 @@ const _hoisted_9$t = {
   key: 0,
   class: "family-card-large__description"
 };
-const _hoisted_10$r = { class: "inquiry-types-container" };
-const _hoisted_11$r = { class: "inquiry-types-header" };
-const _hoisted_12$q = { class: "selected-family-info" };
-const _hoisted_13$p = { key: 0 };
+const _hoisted_10$s = { class: "inquiry-types-container" };
+const _hoisted_11$s = { class: "inquiry-types-header" };
+const _hoisted_12$r = { class: "selected-family-info" };
+const _hoisted_13$q = { key: 0 };
 const _hoisted_14$m = {
   key: 0,
   class: "inquiry-section"
@@ -24604,9 +24768,9 @@ function _sfc_render$1c(_ctx, _cache, $props, $setup, $data, $options) {
         { key: 1 },
         [
           createCommentVNode(" Inquiry Types and Groups for Selected Family "),
-          createBaseVNode("div", _hoisted_10$r, [
-            createBaseVNode("div", _hoisted_11$r, [
-              createBaseVNode("div", _hoisted_12$q, [
+          createBaseVNode("div", _hoisted_10$s, [
+            createBaseVNode("div", _hoisted_11$s, [
+              createBaseVNode("div", _hoisted_12$r, [
                 createBaseVNode(
                   "h2",
                   null,
@@ -24616,7 +24780,7 @@ function _sfc_render$1c(_ctx, _cache, $props, $setup, $data, $options) {
                 ),
                 $setup.currentFamilyData.description ? (openBlock(), createElementBlock(
                   "p",
-                  _hoisted_13$p,
+                  _hoisted_13$q,
                   toDisplayString($setup.t("agora", $setup.currentFamilyData.description)),
                   1
                   /* TEXT */
@@ -25054,13 +25218,13 @@ const _hoisted_9$s = {
   key: 0,
   class: "access-control"
 };
-const _hoisted_10$q = { class: "control-label" };
-const _hoisted_11$q = { key: 1 };
-const _hoisted_12$p = {
+const _hoisted_10$r = { class: "control-label" };
+const _hoisted_11$r = { key: 1 };
+const _hoisted_12$q = {
   key: 0,
   class: "access-control"
 };
-const _hoisted_13$o = { class: "control-label" };
+const _hoisted_13$p = { class: "control-label" };
 const _hoisted_14$l = { class: "status-section" };
 const _hoisted_15$l = {
   key: 0,
@@ -25184,7 +25348,7 @@ function _sfc_render$19(_ctx, _cache, $props, $setup, $data, $options) {
         $props.inquiryStore.configuration.access === "private" && $props.inquiryStore.status.moderationStatus !== "rejected" ? (openBlock(), createElementBlock("div", _hoisted_9$s, [
           createBaseVNode(
             "label",
-            _hoisted_10$q,
+            _hoisted_10$r,
             toDisplayString($setup.t("agora", "Submit to moderation")),
             1
             /* TEXT */
@@ -25196,11 +25360,11 @@ function _sfc_render$19(_ctx, _cache, $props, $setup, $data, $options) {
             class: "moderation-switch"
           }, null, 8, ["modelValue"])
         ])) : createCommentVNode("v-if", true),
-        $props.sessionStore.currentUser.isModerator ? (openBlock(), createElementBlock("div", _hoisted_11$q, [
-          $props.inquiryStore.configuration.access === "moderate" && $props.inquiryStore.status.moderationStatus === "pending" ? (openBlock(), createElementBlock("div", _hoisted_12$p, [
+        $props.sessionStore.currentUser.isModerator ? (openBlock(), createElementBlock("div", _hoisted_11$r, [
+          $props.inquiryStore.configuration.access === "moderate" && $props.inquiryStore.status.moderationStatus === "pending" ? (openBlock(), createElementBlock("div", _hoisted_12$q, [
             createBaseVNode(
               "label",
-              _hoisted_13$o,
+              _hoisted_13$p,
               toDisplayString($setup.t("agora", "Moderate")),
               1
               /* TEXT */
@@ -72834,10 +72998,10 @@ const _hoisted_6$r = { value: "h1" };
 const _hoisted_7$r = { value: "h2" };
 const _hoisted_8$r = { value: "h3" };
 const _hoisted_9$r = { class: "editor-content-wrapper" };
-const _hoisted_10$p = { class: "container" };
-const _hoisted_11$p = { class: "content" };
-const _hoisted_12$o = { class: "heading" };
-const _hoisted_13$n = { class: "form-group" };
+const _hoisted_10$q = { class: "container" };
+const _hoisted_11$q = { class: "content" };
+const _hoisted_12$p = { class: "heading" };
+const _hoisted_13$o = { class: "form-group" };
 const _hoisted_14$k = { for: "ai-prompt" };
 const _hoisted_15$k = {
   key: 0,
@@ -73349,17 +73513,17 @@ function _sfc_render$Y(_ctx, _cache, $props, $setup, $data, $options) {
             default: withCtx(() => [
               createVNode($setup["NcAssistantContent"], null, {
                 default: withCtx(() => [
-                  createBaseVNode("div", _hoisted_10$p, [
+                  createBaseVNode("div", _hoisted_10$q, [
                     createVNode($setup["NcAssistantIcon"]),
-                    createBaseVNode("div", _hoisted_11$p, [
+                    createBaseVNode("div", _hoisted_11$q, [
                       createBaseVNode(
                         "h3",
-                        _hoisted_12$o,
+                        _hoisted_12$p,
                         toDisplayString($setup.t("agora", "Generate content with AI")),
                         1
                         /* TEXT */
                       ),
-                      createBaseVNode("div", _hoisted_13$n, [
+                      createBaseVNode("div", _hoisted_13$o, [
                         createBaseVNode(
                           "label",
                           _hoisted_14$k,
@@ -73642,16 +73806,16 @@ const _hoisted_9$q = {
   key: 1,
   class: "content-section description-section"
 };
-const _hoisted_10$o = { class: "card-text" };
-const _hoisted_11$o = {
+const _hoisted_10$p = { class: "card-text" };
+const _hoisted_11$p = {
   key: 0,
   class: "section-separator"
 };
-const _hoisted_12$n = {
+const _hoisted_12$o = {
   key: 1,
   class: "card-features"
 };
-const _hoisted_13$m = {
+const _hoisted_13$n = {
   key: 0,
   class: "feature-item support-feature"
 };
@@ -73689,15 +73853,15 @@ const _hoisted_32$d = {
   key: 0,
   class: "tooltip-more"
 };
-const _hoisted_33$c = {
+const _hoisted_33$d = {
   key: 3,
   class: "inline-features-row"
 };
-const _hoisted_34$c = {
+const _hoisted_34$d = {
   key: 0,
   class: "inline-feature-item child-responses"
 };
-const _hoisted_35$c = { class: "responses-list" };
+const _hoisted_35$d = { class: "responses-list" };
 const _hoisted_36$b = {
   key: 0,
   class: "no-responses"
@@ -73845,7 +74009,7 @@ function _sfc_render$X(_ctx, _cache, $props, $setup, $data, $options) {
         $props.option.text && (!$props.compact || !$setup.useTitle) ? (openBlock(), createElementBlock("div", _hoisted_9$q, [
           createBaseVNode(
             "div",
-            _hoisted_10$o,
+            _hoisted_10$p,
             toDisplayString($setup.truncateText($props.option.text, $setup.textMaxLength)),
             1
             /* TEXT */
@@ -73853,11 +74017,11 @@ function _sfc_render$X(_ctx, _cache, $props, $setup, $data, $options) {
         ])) : createCommentVNode("v-if", true)
       ]),
       createCommentVNode(" Separator - hide in inline mode "),
-      !$props.inline ? (openBlock(), createElementBlock("div", _hoisted_11$o)) : createCommentVNode("v-if", true),
+      !$props.inline ? (openBlock(), createElementBlock("div", _hoisted_11$p)) : createCommentVNode("v-if", true),
       createCommentVNode(" Third Box: Support and Comments in single line (normal mode) "),
-      !$props.inline && ($setup.hasSupportFeature || $setup.allowComment) ? (openBlock(), createElementBlock("div", _hoisted_12$n, [
+      !$props.inline && ($setup.hasSupportFeature || $setup.allowComment) ? (openBlock(), createElementBlock("div", _hoisted_12$o, [
         createCommentVNode(" Support feature "),
-        $setup.hasSupportFeature ? (openBlock(), createElementBlock("div", _hoisted_13$m, [
+        $setup.hasSupportFeature ? (openBlock(), createElementBlock("div", _hoisted_13$n, [
           createVNode($setup["SupportFeature"], {
             item: $props.option,
             "item-type": "option",
@@ -73994,10 +74158,10 @@ function _sfc_render$X(_ctx, _cache, $props, $setup, $data, $options) {
         ])
       ])) : createCommentVNode("v-if", true),
       createCommentVNode(" INLINE MODE: All features in one row with actions at the end "),
-      $props.inline ? (openBlock(), createElementBlock("div", _hoisted_33$c, [
+      $props.inline ? (openBlock(), createElementBlock("div", _hoisted_33$d, [
         createCommentVNode(" Child responses "),
-        $setup.hasAllowedResponses && !$props.compact ? (openBlock(), createElementBlock("div", _hoisted_34$c, [
-          createBaseVNode("div", _hoisted_35$c, [
+        $setup.hasAllowedResponses && !$props.compact ? (openBlock(), createElementBlock("div", _hoisted_34$d, [
+          createBaseVNode("div", _hoisted_35$d, [
             $setup.childCountsTotal === 0 ? (openBlock(), createElementBlock("div", _hoisted_36$b, [
               createBaseVNode(
                 "span",
@@ -74522,13 +74686,13 @@ const _hoisted_9$p = {
   key: 0,
   class: "parent-info"
 };
-const _hoisted_10$n = { class: "parent-label" };
-const _hoisted_11$n = { class: "parent-details" };
-const _hoisted_12$m = {
+const _hoisted_10$o = { class: "parent-label" };
+const _hoisted_11$o = { class: "parent-details" };
+const _hoisted_12$n = {
   key: 1,
   class: "responses-info"
 };
-const _hoisted_13$l = { class: "responses-label" };
+const _hoisted_13$m = { class: "responses-label" };
 const _hoisted_14$i = { class: "responses-list" };
 const _hoisted_15$i = { class: "features-info" };
 const _hoisted_16$i = { class: "features-grid" };
@@ -74563,9 +74727,9 @@ const _hoisted_29$e = {
 const _hoisted_30$e = { class: "checkbox-field" };
 const _hoisted_31$d = ["for"];
 const _hoisted_32$c = { class: "field-hint" };
-const _hoisted_33$b = { class: "preview-column" };
-const _hoisted_34$b = { class: "preview-card" };
-const _hoisted_35$b = {
+const _hoisted_33$c = { class: "preview-column" };
+const _hoisted_34$c = { class: "preview-card" };
+const _hoisted_35$c = {
   key: 0,
   class: "help-text"
 };
@@ -74644,7 +74808,7 @@ function _sfc_render$W(_ctx, _cache, $props, $setup, $data, $options) {
               ]),
               createCommentVNode(" Parent info (if applicable) "),
               $setup.parentOption ? (openBlock(), createElementBlock("div", _hoisted_9$p, [
-                createBaseVNode("div", _hoisted_10$n, [
+                createBaseVNode("div", _hoisted_10$o, [
                   (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons.ArrowUp), { size: 14 })),
                   createTextVNode(
                     " " + toDisplayString($setup.t("agora", "Parent")) + ": ",
@@ -74652,7 +74816,7 @@ function _sfc_render$W(_ctx, _cache, $props, $setup, $data, $options) {
                     /* TEXT */
                   )
                 ]),
-                createBaseVNode("div", _hoisted_11$n, [
+                createBaseVNode("div", _hoisted_11$o, [
                   (openBlock(), createBlock(resolveDynamicComponent($setup.getParentIcon($setup.parentOption)), { size: 16 })),
                   createBaseVNode(
                     "span",
@@ -74664,8 +74828,8 @@ function _sfc_render$W(_ctx, _cache, $props, $setup, $data, $options) {
                 ])
               ])) : createCommentVNode("v-if", true),
               createCommentVNode(" Allowed responses info "),
-              $setup.allowedResponses.length > 0 ? (openBlock(), createElementBlock("div", _hoisted_12$m, [
-                createBaseVNode("div", _hoisted_13$l, [
+              $setup.allowedResponses.length > 0 ? (openBlock(), createElementBlock("div", _hoisted_12$n, [
+                createBaseVNode("div", _hoisted_13$m, [
                   (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons.ArrowDown), { size: 14 })),
                   createTextVNode(
                     " " + toDisplayString($setup.t("agora", "Can have responses")) + ": ",
@@ -74918,7 +75082,7 @@ function _sfc_render$W(_ctx, _cache, $props, $setup, $data, $options) {
               ])
             ]),
             createCommentVNode(" Right column: Preview "),
-            createBaseVNode("div", _hoisted_33$b, [
+            createBaseVNode("div", _hoisted_33$c, [
               createBaseVNode(
                 "h4",
                 null,
@@ -74926,7 +75090,7 @@ function _sfc_render$W(_ctx, _cache, $props, $setup, $data, $options) {
                 1
                 /* TEXT */
               ),
-              createBaseVNode("div", _hoisted_34$b, [
+              createBaseVNode("div", _hoisted_34$c, [
                 createVNode($setup["OptionCard"], {
                   option: $setup.previewOption,
                   "inquiry-id": $props.inquiryId,
@@ -74935,7 +75099,7 @@ function _sfc_render$W(_ctx, _cache, $props, $setup, $data, $options) {
                 }, null, 8, ["option", "inquiry-id"])
               ]),
               createCommentVNode(" Help text "),
-              $setup.optionTypeHelp ? (openBlock(), createElementBlock("div", _hoisted_35$b, [
+              $setup.optionTypeHelp ? (openBlock(), createElementBlock("div", _hoisted_35$c, [
                 (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons.Information), { size: 16 })),
                 createBaseVNode(
                   "p",
@@ -75527,8 +75691,8 @@ const _hoisted_7$o = {
 };
 const _hoisted_8$o = { class: "comment-item__comments" };
 const _hoisted_9$o = { class: "comment-item__text" };
-const _hoisted_10$m = ["innerHTML"];
-const _hoisted_11$m = { class: "comment-item__actions" };
+const _hoisted_10$n = ["innerHTML"];
+const _hoisted_11$n = { class: "comment-item__actions" };
 function _sfc_render$T(_ctx, _cache, $props, $setup, $data, $options) {
   return $setup.comments.length > 0 ? (openBlock(), createElementBlock(
     "div",
@@ -75618,10 +75782,10 @@ function _sfc_render$T(_ctx, _cache, $props, $setup, $data, $options) {
                       createCommentVNode(" eslint-disable-next-line vue/no-v-html "),
                       createBaseVNode("span", {
                         innerHTML: $setup.linkify(singleComment?.comment || "")
-                      }, null, 8, _hoisted_10$m)
+                      }, null, 8, _hoisted_10$n)
                     ]),
                     createCommentVNode(" Actions "),
-                    createBaseVNode("div", _hoisted_11$m, [
+                    createBaseVNode("div", _hoisted_11$n, [
                       $setup.deletable && singleComment ? (openBlock(), createBlock($setup["ActionDelete"], {
                         key: 0,
                         name: singleComment.deleted ? $setup.t("inquiries", "Restore comment") : $setup.t("inquiries", "Delete comment"),
@@ -76307,10 +76471,10 @@ const _hoisted_6$n = { class: "header-left" };
 const _hoisted_7$n = { class: "header-text" };
 const _hoisted_8$n = { class: "option-title" };
 const _hoisted_9$n = { class: "option-meta" };
-const _hoisted_10$l = { class: "option-type" };
-const _hoisted_11$l = { class: "option-date" };
-const _hoisted_12$l = { class: "header-right" };
-const _hoisted_13$k = { class: "main-content" };
+const _hoisted_10$m = { class: "option-type" };
+const _hoisted_11$m = { class: "option-date" };
+const _hoisted_12$m = { class: "header-right" };
+const _hoisted_13$l = { class: "main-content" };
 const _hoisted_14$h = { class: "content-section" };
 const _hoisted_15$h = {
   key: 0,
@@ -76351,9 +76515,9 @@ const _hoisted_29$d = { class: "comment-container" };
 const _hoisted_30$d = { class: "comment-count-badge" };
 const _hoisted_31$c = { class: "owner-section-right" };
 const _hoisted_32$b = { class: "owner-details-right" };
-const _hoisted_33$a = { class: "owner-text" };
-const _hoisted_34$a = { class: "owner-name" };
-const _hoisted_35$a = {
+const _hoisted_33$b = { class: "owner-text" };
+const _hoisted_34$b = { class: "owner-name" };
+const _hoisted_35$b = {
   key: 0,
   class: "children-section"
 };
@@ -76471,14 +76635,14 @@ function _sfc_render$Q(_ctx, _cache, $props, $setup, $data, $options) {
                         createBaseVNode("div", _hoisted_9$n, [
                           createBaseVNode(
                             "span",
-                            _hoisted_10$l,
+                            _hoisted_10$m,
                             toDisplayString($setup.optionTypeLabel),
                             1
                             /* TEXT */
                           ),
                           createBaseVNode(
                             "span",
-                            _hoisted_11$l,
+                            _hoisted_11$m,
                             toDisplayString($setup.formatDate($setup.optionStore.status.created)),
                             1
                             /* TEXT */
@@ -76486,7 +76650,7 @@ function _sfc_render$Q(_ctx, _cache, $props, $setup, $data, $options) {
                         ])
                       ])
                     ]),
-                    createBaseVNode("div", _hoisted_12$l, [
+                    createBaseVNode("div", _hoisted_12$m, [
                       createCommentVNode(" Main actions menu "),
                       $setup.canEditOrDelete || $setup.hasAllowedResponses ? (openBlock(), createBlock($setup["NcActions"], {
                         key: 0,
@@ -76577,7 +76741,7 @@ function _sfc_render$Q(_ctx, _cache, $props, $setup, $data, $options) {
                     ])
                   ]),
                   createCommentVNode(" Main content area "),
-                  createBaseVNode("div", _hoisted_13$k, [
+                  createBaseVNode("div", _hoisted_13$l, [
                     createCommentVNode(" Option text/content "),
                     createBaseVNode("div", _hoisted_14$h, [
                       $setup.isEditing ? (openBlock(), createElementBlock("div", _hoisted_15$h, [
@@ -76798,10 +76962,10 @@ function _sfc_render$Q(_ctx, _cache, $props, $setup, $data, $options) {
                                 "display-name": $setup.optionStore.owner.displayName,
                                 size: 22
                               }, null, 8, ["user", "display-name"])) : createCommentVNode("v-if", true),
-                              createBaseVNode("div", _hoisted_33$a, [
+                              createBaseVNode("div", _hoisted_33$b, [
                                 createBaseVNode(
                                   "span",
-                                  _hoisted_34$a,
+                                  _hoisted_34$b,
                                   toDisplayString($setup.optionStore.owner?.displayName || $setup.t("agora", "Unknown owner")),
                                   1
                                   /* TEXT */
@@ -76813,7 +76977,7 @@ function _sfc_render$Q(_ctx, _cache, $props, $setup, $data, $options) {
                       ]))
                     ]),
                     createCommentVNode(" Child options display with hover icons "),
-                    $setup.hasChildOptions ? (openBlock(), createElementBlock("div", _hoisted_35$a, [
+                    $setup.hasChildOptions ? (openBlock(), createElementBlock("div", _hoisted_35$b, [
                       createBaseVNode("div", _hoisted_36$9, [
                         createBaseVNode(
                           "h3",
@@ -77199,10 +77363,10 @@ const _hoisted_6$m = ["onClick"];
 const _hoisted_7$m = { class: "toc-item-content" };
 const _hoisted_8$m = { class: "toc-icon" };
 const _hoisted_9$m = { class: "toc-text" };
-const _hoisted_10$k = { class: "toc-title-display" };
-const _hoisted_11$k = { class: "toc-title" };
-const _hoisted_12$k = { class: "toc-subtitle" };
-const _hoisted_13$j = {
+const _hoisted_10$l = { class: "toc-title-display" };
+const _hoisted_11$l = { class: "toc-title" };
+const _hoisted_12$l = { class: "toc-subtitle" };
+const _hoisted_13$k = {
   key: 0,
   class: "toc-children"
 };
@@ -77231,9 +77395,9 @@ const _hoisted_29$c = { class: "type-label" };
 const _hoisted_30$c = { class: "created-date" };
 const _hoisted_31$b = { class: "content-body" };
 const _hoisted_32$a = { class: "content-display" };
-const _hoisted_33$9 = { class: "text-content" };
-const _hoisted_34$9 = ["innerHTML"];
-const _hoisted_35$9 = {
+const _hoisted_33$a = { class: "text-content" };
+const _hoisted_34$a = ["innerHTML"];
+const _hoisted_35$a = {
   key: 1,
   class: "empty-content"
 };
@@ -77420,17 +77584,17 @@ function _sfc_render$P(_ctx, _cache, $props, $setup, $data, $options) {
                     (openBlock(), createBlock(resolveDynamicComponent($setup.getOptionTypeIcon(node.type)), { size: 16 }))
                   ]),
                   createBaseVNode("div", _hoisted_9$m, [
-                    createBaseVNode("div", _hoisted_10$k, [
+                    createBaseVNode("div", _hoisted_10$l, [
                       createBaseVNode(
                         "div",
-                        _hoisted_11$k,
+                        _hoisted_11$l,
                         toDisplayString($setup.displayNodeTitle(node)),
                         1
                         /* TEXT */
                       ),
                       createBaseVNode(
                         "div",
-                        _hoisted_12$k,
+                        _hoisted_12$l,
                         toDisplayString($setup.getOptionTypeLabel(node.type)),
                         1
                         /* TEXT */
@@ -77439,7 +77603,7 @@ function _sfc_render$P(_ctx, _cache, $props, $setup, $data, $options) {
                   ])
                 ]),
                 createCommentVNode(" Level 2: Direct children (limit to 2 levels in TOC) "),
-                $setup.getChildren(node.id).length > 0 ? (openBlock(), createElementBlock("div", _hoisted_13$j, [
+                $setup.getChildren(node.id).length > 0 ? (openBlock(), createElementBlock("div", _hoisted_13$k, [
                   (openBlock(true), createElementBlock(
                     Fragment$1,
                     null,
@@ -77556,13 +77720,13 @@ function _sfc_render$P(_ctx, _cache, $props, $setup, $data, $options) {
           createBaseVNode("div", _hoisted_31$b, [
             createCommentVNode(" Content display "),
             createBaseVNode("div", _hoisted_32$a, [
-              createBaseVNode("div", _hoisted_33$9, [
+              createBaseVNode("div", _hoisted_33$a, [
                 createCommentVNode(" eslint-disable-next-line vue/no-v-html "),
                 $setup.activeNode.text && $setup.activeNode.text.trim() ? (openBlock(), createElementBlock("div", {
                   key: 0,
                   class: "text-text",
                   innerHTML: $setup.formattedContent
-                }, null, 8, _hoisted_34$9)) : (openBlock(), createElementBlock("div", _hoisted_35$9, [
+                }, null, 8, _hoisted_34$a)) : (openBlock(), createElementBlock("div", _hoisted_35$a, [
                   createBaseVNode(
                     "p",
                     null,
@@ -78873,10 +79037,10 @@ const _hoisted_8$k = {
   class: "empty-column"
 };
 const _hoisted_9$k = { class: "paired-column against-column" };
-const _hoisted_10$j = { class: "column-header" };
-const _hoisted_11$j = { class: "column-count" };
-const _hoisted_12$j = { class: "column-content" };
-const _hoisted_13$i = {
+const _hoisted_10$k = { class: "column-header" };
+const _hoisted_11$k = { class: "column-count" };
+const _hoisted_12$k = { class: "column-content" };
+const _hoisted_13$j = {
   key: 1,
   class: "empty-column"
 };
@@ -78911,9 +79075,9 @@ const _hoisted_31$a = {
   class: "paired-column"
 };
 const _hoisted_32$9 = { class: "column-header" };
-const _hoisted_33$8 = { class: "column-count" };
-const _hoisted_34$8 = { class: "column-content" };
-const _hoisted_35$8 = {
+const _hoisted_33$9 = { class: "column-count" };
+const _hoisted_34$9 = { class: "column-content" };
+const _hoisted_35$9 = {
   key: 3,
   class: "empty-state"
 };
@@ -79008,7 +79172,7 @@ function _sfc_render$N(_ctx, _cache, $props, $setup, $data, $options) {
           ]),
           createCommentVNode(" Against Positions "),
           createBaseVNode("div", _hoisted_9$k, [
-            createBaseVNode("div", _hoisted_10$j, [
+            createBaseVNode("div", _hoisted_10$k, [
               (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons.ThumbDown), { size: 20 })),
               createBaseVNode(
                 "h5",
@@ -79019,13 +79183,13 @@ function _sfc_render$N(_ctx, _cache, $props, $setup, $data, $options) {
               ),
               createBaseVNode(
                 "span",
-                _hoisted_11$j,
+                _hoisted_11$k,
                 toDisplayString($setup.positionsAgainst.length),
                 1
                 /* TEXT */
               )
             ]),
-            createBaseVNode("div", _hoisted_12$j, [
+            createBaseVNode("div", _hoisted_12$k, [
               (openBlock(true), createElementBlock(
                 Fragment$1,
                 null,
@@ -79061,7 +79225,7 @@ function _sfc_render$N(_ctx, _cache, $props, $setup, $data, $options) {
                 _: 1
                 /* STABLE */
               })) : createCommentVNode("v-if", true),
-              $setup.positionsAgainst.length === 0 && !$setup.canAddPositionAgainst ? (openBlock(), createElementBlock("div", _hoisted_13$i, [
+              $setup.positionsAgainst.length === 0 && !$setup.canAddPositionAgainst ? (openBlock(), createElementBlock("div", _hoisted_13$j, [
                 createBaseVNode(
                   "p",
                   null,
@@ -79271,13 +79435,13 @@ function _sfc_render$N(_ctx, _cache, $props, $setup, $data, $options) {
               ),
               createBaseVNode(
                 "span",
-                _hoisted_33$8,
+                _hoisted_33$9,
                 toDisplayString($setup.messages.length),
                 1
                 /* TEXT */
               )
             ]),
-            createBaseVNode("div", _hoisted_34$8, [
+            createBaseVNode("div", _hoisted_34$9, [
               (openBlock(true), createElementBlock(
                 Fragment$1,
                 null,
@@ -79317,7 +79481,7 @@ function _sfc_render$N(_ctx, _cache, $props, $setup, $data, $options) {
         ])
       ])) : createCommentVNode("v-if", true),
       createCommentVNode(" Empty state "),
-      !$setup.hasPositions && !$setup.hasArguments && !$setup.hasOther ? (openBlock(), createElementBlock("div", _hoisted_35$8, [
+      !$setup.hasPositions && !$setup.hasArguments && !$setup.hasOther ? (openBlock(), createElementBlock("div", _hoisted_35$9, [
         (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons.Scale), { size: 48 })),
         createBaseVNode(
           "h4",
@@ -79491,13 +79655,13 @@ const _hoisted_9$j = {
   key: 2,
   class: "consensus-section"
 };
-const _hoisted_10$i = { class: "section-title consent" };
-const _hoisted_11$i = { class: "options-list" };
-const _hoisted_12$i = {
+const _hoisted_10$j = { class: "section-title consent" };
+const _hoisted_11$j = { class: "options-list" };
+const _hoisted_12$j = {
   key: 3,
   class: "consensus-section"
 };
-const _hoisted_13$h = { class: "section-title" };
+const _hoisted_13$i = { class: "section-title" };
 const _hoisted_14$e = { class: "options-list" };
 const _hoisted_15$e = {
   key: 4,
@@ -79571,7 +79735,7 @@ function _sfc_render$M(_ctx, _cache, $props, $setup, $data, $options) {
     ])) : createCommentVNode("v-if", true),
     createCommentVNode(" Consent Given "),
     $setup.consents.length > 0 ? (openBlock(), createElementBlock("div", _hoisted_9$j, [
-      createBaseVNode("h4", _hoisted_10$i, [
+      createBaseVNode("h4", _hoisted_10$j, [
         (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons.CheckCircle), { size: 16 })),
         createTextVNode(
           " " + toDisplayString($setup.t("agora", "Consent Given")) + " (" + toDisplayString($setup.consents.length) + ") ",
@@ -79579,7 +79743,7 @@ function _sfc_render$M(_ctx, _cache, $props, $setup, $data, $options) {
           /* TEXT */
         )
       ]),
-      createBaseVNode("div", _hoisted_11$i, [
+      createBaseVNode("div", _hoisted_11$j, [
         (openBlock(true), createElementBlock(
           Fragment$1,
           null,
@@ -79598,8 +79762,8 @@ function _sfc_render$M(_ctx, _cache, $props, $setup, $data, $options) {
       ])
     ])) : createCommentVNode("v-if", true),
     createCommentVNode(" Consultation Questions "),
-    $setup.consultationQuestions.length > 0 ? (openBlock(), createElementBlock("div", _hoisted_12$i, [
-      createBaseVNode("h4", _hoisted_13$h, [
+    $setup.consultationQuestions.length > 0 ? (openBlock(), createElementBlock("div", _hoisted_12$j, [
+      createBaseVNode("h4", _hoisted_13$i, [
         (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons.HelpCircle), { size: 16 })),
         createTextVNode(
           " " + toDisplayString($setup.t("agora", "Consultation Questions")) + " (" + toDisplayString($setup.consultationQuestions.length) + ") ",
@@ -79679,39 +79843,92 @@ const _sfc_main$L = /* @__PURE__ */ defineComponent({
   props: {
     options: { type: Array, required: true },
     inquiryId: { type: Number, required: true },
-    optionTypes: { type: null, required: true },
-    statuses: { type: Array, required: false }
+    optionTypes: { type: Array, required: true }
   },
-  emits: ["addOption", "openDetail", "option-updated", "option-deleted", "statusChanged"],
+  emits: ["addOption", "openDetail", "update:options"],
   setup(__props, { expose: __expose, emit: __emit }) {
     __expose();
     const props2 = __props;
+    const optionsStore = useOptionsStore();
+    const draggingOptionId = ref(null);
+    const dragOverColumn = ref(null);
     const emit2 = __emit;
-    const defaultStatuses = [
-      { value: "idea", label: translate("agora", "Idea"), color: "#949494" },
-      { value: "in_progress", label: translate("agora", "In Progress"), color: "#3498db" },
-      { value: "review", label: translate("agora", "Under Review"), color: "#f39c12" },
-      { value: "approved", label: translate("agora", "Approved"), color: "#27ae60" },
-      { value: "rejected", label: translate("agora", "Rejected"), color: "#e74c3c" },
-      { value: "implemented", label: translate("agora", "Implemented"), color: "#2ecc71" }
+    const statusColumns = [
+      { value: "draft", label: translate("agora", "Draft"), color: "#949494" },
+      { value: "active", label: translate("agora", "Active"), color: "#3498db" },
+      { value: "completed", label: translate("agora", "Completed"), color: "#27ae60" },
+      { value: "cancelled", label: translate("agora", "Cancelled"), color: "#e74c3c" }
     ];
-    const statusColumns = computed(() => props2.statuses || defaultStatuses);
-    const getOptionsByStatus = (status) => props2.options.filter((opt) => opt.status === status);
-    const canChangeStatus = computed(() => true);
-    const canAddToColumn = () => props2.optionTypes.length > 0;
-    const getDefaultTypeForStatus = () => props2.optionTypes[0]?.option_type;
+    const getOptionsByStatus = (status) => props2.options.filter((opt) => opt.status.optionStatus === status);
+    const canChangeStatus = computed(() => {
+      return true;
+    });
+    const canAddToColumn = (status) => ["draft", "active"].includes(status.value) && props2.optionTypes.length > 0;
+    const openAddOption = (status) => {
+      emit2("addOption", props2.optionTypes[0]?.option_type || "workflow_item", status);
+    };
     const getStatusColor = (status) => {
-      const found2 = statusColumns.value.find((s) => s.value === status);
+      const found2 = statusColumns.find((s) => s.value === status);
       return found2?.color || "#949494";
     };
     const getStatusLabel = (status) => {
-      const found2 = statusColumns.value.find((s) => s.value === status);
+      const found2 = statusColumns.find((s) => s.value === status);
       return found2?.label || status;
     };
-    const changeStatus = (optionId, newStatus) => {
-      emit2("statusChanged", optionId, newStatus);
+    const handleDragStart = (event, option2) => {
+      if (!canChangeStatus.value) {
+        event.preventDefault();
+        return;
+      }
+      draggingOptionId.value = option2.id;
+      event.dataTransfer?.setData("text/plain", option2.id.toString());
+      event.dataTransfer?.setData("application/json", JSON.stringify({
+        id: option2.id,
+        currentStatus: option2.status.optionStatus
+      }));
+      event.dataTransfer.effectAllowed = "move";
+      if (event.target instanceof HTMLElement) {
+        const item = event.target.closest(".kanban-item");
+        if (item) {
+          item.classList.add("dragging");
+        }
+      }
     };
-    const __returned__ = { props: props2, emit: emit2, defaultStatuses, statusColumns, getOptionsByStatus, canChangeStatus, canAddToColumn, getDefaultTypeForStatus, getStatusColor, getStatusLabel, changeStatus, get t() {
+    const handleDragEnd = () => {
+      draggingOptionId.value = null;
+      dragOverColumn.value = null;
+    };
+    const handleDrop2 = async (event, targetStatus) => {
+      event.preventDefault();
+      dragOverColumn.value = null;
+      const optionId = event.dataTransfer?.getData("text/plain");
+      if (!optionId) return;
+      try {
+        const option2 = props2.options.find((o) => o.id === parseInt(optionId));
+        if (!option2) return;
+        if (option2.status.optionStatus === targetStatus) return;
+        await optionsStore.setOptionStatus(parseInt(optionId), targetStatus);
+        showSuccess(translate("agora", "Option moved to {column}", {
+          column: getStatusLabel(targetStatus)
+        }));
+        emit2("update:options");
+      } catch (error) {
+        console.error("Failed to move option:", error);
+        showError(translate("agora", "Could not move option"));
+      }
+    };
+    const changeStatus = async (optionId, newStatus) => {
+      try {
+        await optionsStore.setOptionStatus(optionId, newStatus);
+        showSuccess(translate("agora", "Option status updated"));
+        emit2("update:options");
+      } catch (error) {
+        console.warn("Unable to change option status", error);
+        showError(translate("agora", "Option status could not be updated"));
+        return false;
+      }
+    };
+    const __returned__ = { props: props2, optionsStore, draggingOptionId, dragOverColumn, emit: emit2, statusColumns, getOptionsByStatus, canChangeStatus, canAddToColumn, openAddOption, getStatusColor, getStatusLabel, handleDragStart, handleDragEnd, handleDrop: handleDrop2, changeStatus, get t() {
       return translate;
     }, get NcButton() {
       return NcButton;
@@ -79728,188 +79945,222 @@ const _sfc_main$L = /* @__PURE__ */ defineComponent({
 });
 const _hoisted_1$z = { class: "kanban-layout" };
 const _hoisted_2$r = { class: "kanban-header" };
-const _hoisted_3$q = { class: "header-content" };
-const _hoisted_4$o = { class: "status-label" };
-const _hoisted_5$k = { class: "item-count" };
-const _hoisted_6$i = { class: "kanban-board" };
-const _hoisted_7$i = { class: "column-items" };
-const _hoisted_8$i = ["title"];
-const _hoisted_9$i = {
-  key: 0,
-  class: "empty-column"
+const _hoisted_3$q = ["onDrop"];
+const _hoisted_4$o = { class: "header-content" };
+const _hoisted_5$k = { class: "status-label" };
+const _hoisted_6$i = { class: "item-count" };
+const _hoisted_7$i = { class: "kanban-board" };
+const _hoisted_8$i = ["onDrop"];
+const _hoisted_9$i = { class: "column-items" };
+const _hoisted_10$i = ["onDragstart"];
+const _hoisted_11$i = {
+  class: "drag-handle",
+  title: "Drag to move"
 };
+const _hoisted_12$i = ["title"];
+const _hoisted_13$h = ["onDragenter", "onDrop"];
 function _sfc_render$L(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock("div", _hoisted_1$z, [
     createCommentVNode(" Column headers "),
     createBaseVNode("div", _hoisted_2$r, [
-      (openBlock(true), createElementBlock(
+      (openBlock(), createElementBlock(
         Fragment$1,
         null,
         renderList($setup.statusColumns, (status) => {
-          return openBlock(), createElementBlock(
-            "div",
-            {
-              key: status.value,
-              class: normalizeClass(["kanban-column-header", `status-${status.value}`])
-            },
-            [
-              createBaseVNode("div", _hoisted_3$q, [
-                createBaseVNode(
-                  "span",
-                  {
-                    class: "status-badge",
-                    style: normalizeStyle({ backgroundColor: status.color })
-                  },
-                  null,
-                  4
-                  /* STYLE */
-                ),
-                createBaseVNode(
-                  "span",
-                  _hoisted_4$o,
-                  toDisplayString(status.label),
-                  1
-                  /* TEXT */
-                ),
-                createBaseVNode(
-                  "span",
-                  _hoisted_5$k,
-                  toDisplayString($setup.getOptionsByStatus(status.value).length),
-                  1
-                  /* TEXT */
-                )
+          return createBaseVNode("div", {
+            key: status.value,
+            class: normalizeClass(["kanban-column-header", `status-${status.value}`]),
+            onDragover: _cache[0] || (_cache[0] = withModifiers(() => {
+            }, ["prevent"])),
+            onDrop: ($event) => $setup.handleDrop($event, status.value)
+          }, [
+            createBaseVNode("div", _hoisted_4$o, [
+              createBaseVNode(
+                "span",
+                {
+                  class: "status-badge",
+                  style: normalizeStyle({ backgroundColor: status.color })
+                },
+                null,
+                4
+                /* STYLE */
+              ),
+              createBaseVNode(
+                "span",
+                _hoisted_5$k,
+                toDisplayString(status.label),
+                1
+                /* TEXT */
+              ),
+              createBaseVNode(
+                "span",
+                _hoisted_6$i,
+                toDisplayString($setup.getOptionsByStatus(status.value).length),
+                1
+                /* TEXT */
+              )
+            ]),
+            createCommentVNode(" Quick add button for this column "),
+            $setup.canAddToColumn(status) ? (openBlock(), createBlock($setup["NcButton"], {
+              key: 0,
+              type: "tertiary",
+              size: "small",
+              "aria-label": $setup.t("agora", "Add to {column}", { column: status.label }),
+              onClick: ($event) => $setup.openAddOption(status.value)
+            }, {
+              icon: withCtx(() => [
+                (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons.Plus), { size: 16 }))
               ]),
-              createCommentVNode(" Quick add button for this column "),
-              $setup.canAddToColumn(status) ? (openBlock(), createBlock($setup["NcButton"], {
-                key: 0,
-                type: "tertiary",
-                size: "small",
-                "aria-label": $setup.t("agora", "Add to {column}", { column: status.label }),
-                onClick: ($event) => _ctx.$emit("addOption", $setup.getDefaultTypeForStatus(status.value))
-              }, {
-                icon: withCtx(() => [
-                  (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons.Plus), { size: 16 }))
-                ]),
-                _: 1
-                /* STABLE */
-              }, 8, ["aria-label", "onClick"])) : createCommentVNode("v-if", true)
-            ],
-            2
-            /* CLASS */
-          );
+              _: 1
+              /* STABLE */
+            }, 8, ["aria-label", "onClick"])) : createCommentVNode("v-if", true)
+          ], 42, _hoisted_3$q);
         }),
-        128
-        /* KEYED_FRAGMENT */
+        64
+        /* STABLE_FRAGMENT */
       ))
     ]),
     createCommentVNode(" Kanban columns "),
-    createBaseVNode("div", _hoisted_6$i, [
-      (openBlock(true), createElementBlock(
+    createBaseVNode("div", _hoisted_7$i, [
+      (openBlock(), createElementBlock(
         Fragment$1,
         null,
         renderList($setup.statusColumns, (status) => {
-          return openBlock(), createElementBlock(
-            "div",
-            {
-              key: status.value,
-              class: normalizeClass(["kanban-column", `column-${status.value}`])
-            },
-            [
-              createBaseVNode("div", _hoisted_7$i, [
-                createCommentVNode(" Static items (no drag & drop) "),
-                (openBlock(true), createElementBlock(
-                  Fragment$1,
+          return createBaseVNode("div", {
+            key: status.value,
+            class: normalizeClass(["kanban-column", `column-${status.value}`]),
+            onDragover: _cache[4] || (_cache[4] = withModifiers(() => {
+            }, ["prevent"])),
+            onDrop: ($event) => $setup.handleDrop($event, status.value)
+          }, [
+            createBaseVNode("div", _hoisted_9$i, [
+              createCommentVNode(" Items "),
+              (openBlock(true), createElementBlock(
+                Fragment$1,
+                null,
+                renderList($setup.getOptionsByStatus(status.value), (option2) => {
+                  return openBlock(), createElementBlock("div", {
+                    key: option2.id,
+                    class: normalizeClass(["kanban-item", { "dragging": $setup.draggingOptionId === option2.id }]),
+                    draggable: "true",
+                    onDragstart: ($event) => $setup.handleDragStart($event, option2),
+                    onDragend: $setup.handleDragEnd,
+                    onDragover: _cache[1] || (_cache[1] = withModifiers(() => {
+                    }, ["prevent"]))
+                  }, [
+                    createVNode($setup["OptionCard"], {
+                      option: option2,
+                      "inquiry-id": $props.inquiryId,
+                      compact: true,
+                      onClick: ($event) => _ctx.$emit("openDetail", option2)
+                    }, null, 8, ["option", "inquiry-id", "onClick"]),
+                    createCommentVNode(" Drag handle icon "),
+                    createBaseVNode("div", _hoisted_11$i, [
+                      (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons.Drag), { size: 16 }))
+                    ]),
+                    createCommentVNode(" Status indicator dot "),
+                    createBaseVNode("div", {
+                      class: "status-dot",
+                      style: normalizeStyle({ backgroundColor: $setup.getStatusColor(option2.status.optionStatus) }),
+                      title: $setup.getStatusLabel(option2.status.optionStatus)
+                    }, null, 12, _hoisted_12$i),
+                    createCommentVNode(" Status change menu "),
+                    $setup.canChangeStatus ? (openBlock(), createBlock(
+                      $setup["NcActions"],
+                      {
+                        key: 0,
+                        class: "status-change-menu"
+                      },
+                      {
+                        default: withCtx(() => [
+                          (openBlock(true), createElementBlock(
+                            Fragment$1,
+                            null,
+                            renderList($setup.statusColumns.filter((s) => s.value !== option2.status.optionStatus), (targetStatus) => {
+                              return openBlock(), createBlock($setup["NcActionButton"], {
+                                key: targetStatus.value,
+                                onClick: ($event) => $setup.changeStatus(option2.id, targetStatus.value)
+                              }, {
+                                icon: withCtx(() => [
+                                  createBaseVNode(
+                                    "div",
+                                    {
+                                      class: "status-dot-small",
+                                      style: normalizeStyle({ backgroundColor: targetStatus.color })
+                                    },
+                                    null,
+                                    4
+                                    /* STYLE */
+                                  )
+                                ]),
+                                default: withCtx(() => [
+                                  createTextVNode(
+                                    " " + toDisplayString($setup.t("agora", "Move to {column}", { column: targetStatus.label })),
+                                    1
+                                    /* TEXT */
+                                  )
+                                ]),
+                                _: 2
+                                /* DYNAMIC */
+                              }, 1032, ["onClick"]);
+                            }),
+                            128
+                            /* KEYED_FRAGMENT */
+                          ))
+                        ]),
+                        _: 2
+                        /* DYNAMIC */
+                      },
+                      1024
+                      /* DYNAMIC_SLOTS */
+                    )) : createCommentVNode("v-if", true)
+                  ], 42, _hoisted_10$i);
+                }),
+                128
+                /* KEYED_FRAGMENT */
+              )),
+              createCommentVNode(" Empty column placeholder with drop zone "),
+              $setup.getOptionsByStatus(status.value).length === 0 ? (openBlock(), createElementBlock("div", {
+                key: 0,
+                class: normalizeClass(["empty-column", { "drag-over": $setup.dragOverColumn === status.value }]),
+                onDragover: _cache[2] || (_cache[2] = withModifiers(() => {
+                }, ["prevent"])),
+                onDragenter: ($event) => $setup.dragOverColumn = status.value,
+                onDragleave: _cache[3] || (_cache[3] = ($event) => $setup.dragOverColumn = null),
+                onDrop: ($event) => $setup.handleDrop($event, status.value)
+              }, [
+                createBaseVNode(
+                  "p",
                   null,
-                  renderList($setup.getOptionsByStatus(status.value), (option2) => {
-                    return openBlock(), createElementBlock("div", {
-                      key: option2.id,
-                      class: "kanban-item"
-                    }, [
-                      createVNode($setup["OptionCard"], {
-                        option: option2,
-                        "inquiry-id": $props.inquiryId,
-                        compact: true,
-                        onClick: ($event) => _ctx.$emit("openDetail", option2)
-                      }, null, 8, ["option", "inquiry-id", "onClick"]),
-                      createCommentVNode(" Status indicator dot "),
-                      createBaseVNode("div", {
-                        class: "status-dot",
-                        style: normalizeStyle({ backgroundColor: $setup.getStatusColor(option2.status) }),
-                        title: $setup.getStatusLabel(option2.status)
-                      }, null, 12, _hoisted_8$i),
-                      createCommentVNode(" Quick status change menu (alternative to drag & drop) "),
-                      $setup.canChangeStatus ? (openBlock(), createBlock(
-                        $setup["NcActions"],
-                        {
-                          key: 0,
-                          class: "status-change-menu"
-                        },
-                        {
-                          default: withCtx(() => [
-                            (openBlock(true), createElementBlock(
-                              Fragment$1,
-                              null,
-                              renderList($setup.statusColumns.filter((s) => s.value !== option2.status), (targetStatus) => {
-                                return openBlock(), createBlock($setup["NcActionButton"], {
-                                  key: targetStatus.value,
-                                  onClick: ($event) => $setup.changeStatus(option2.id, targetStatus.value)
-                                }, {
-                                  icon: withCtx(() => [
-                                    createBaseVNode(
-                                      "div",
-                                      {
-                                        class: "status-dot-small",
-                                        style: normalizeStyle({ backgroundColor: targetStatus.color })
-                                      },
-                                      null,
-                                      4
-                                      /* STYLE */
-                                    )
-                                  ]),
-                                  default: withCtx(() => [
-                                    createTextVNode(
-                                      " " + toDisplayString($setup.t("agora", "Move to {column}", { column: targetStatus.label })),
-                                      1
-                                      /* TEXT */
-                                    )
-                                  ]),
-                                  _: 2
-                                  /* DYNAMIC */
-                                }, 1032, ["onClick"]);
-                              }),
-                              128
-                              /* KEYED_FRAGMENT */
-                            ))
-                          ]),
-                          _: 2
-                          /* DYNAMIC */
-                        },
-                        1024
-                        /* DYNAMIC_SLOTS */
-                      )) : createCommentVNode("v-if", true)
-                    ]);
-                  }),
-                  128
-                  /* KEYED_FRAGMENT */
-                )),
-                createCommentVNode(" Empty column placeholder "),
-                $setup.getOptionsByStatus(status.value).length === 0 ? (openBlock(), createElementBlock("div", _hoisted_9$i, [
-                  createBaseVNode(
-                    "p",
-                    null,
-                    toDisplayString($setup.t("agora", "No items")),
-                    1
-                    /* TEXT */
-                  )
-                ])) : createCommentVNode("v-if", true)
-              ])
-            ],
-            2
-            /* CLASS */
-          );
+                  toDisplayString($setup.t("agora", "No items")),
+                  1
+                  /* TEXT */
+                ),
+                $setup.canAddToColumn(status) ? (openBlock(), createBlock($setup["NcButton"], {
+                  key: 0,
+                  type: "tertiary",
+                  size: "small",
+                  onClick: ($event) => $setup.openAddOption(status.value)
+                }, {
+                  icon: withCtx(() => [
+                    (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons.Plus), { size: 16 }))
+                  ]),
+                  default: withCtx(() => [
+                    createTextVNode(
+                      " " + toDisplayString($setup.t("agora", "Add")),
+                      1
+                      /* TEXT */
+                    )
+                  ]),
+                  _: 1
+                  /* STABLE */
+                }, 8, ["onClick"])) : createCommentVNode("v-if", true)
+              ], 42, _hoisted_13$h)) : createCommentVNode("v-if", true)
+            ])
+          ], 42, _hoisted_8$i);
         }),
-        128
-        /* KEYED_FRAGMENT */
+        64
+        /* STABLE_FRAGMENT */
       ))
     ])
   ]);
@@ -79921,73 +80172,190 @@ const _sfc_main$K = /* @__PURE__ */ defineComponent({
     options: { type: Array, required: true },
     inquiryId: { type: Number, required: true }
   },
-  emits: ["addOption", "openDetail", "option-updated", "option-deleted"],
+  emits: ["openDetail"],
   setup(__props, { expose: __expose, emit: __emit }) {
     __expose();
     const props2 = __props;
+    const optionsStore = useOptionsStore();
     const emit2 = __emit;
     const viewMode = ref("timeline");
     const scale = ref("week");
     const dateFilter = ref("");
     const currentMonth = ref(/* @__PURE__ */ new Date());
+    const processOptions = computed(() => {
+      return props2.options.filter((opt) => {
+        const family = getOptionTypeFamily(opt.type, optionsStore.getOptionTypesArray);
+        return family === "process";
+      });
+    });
     const sortedOptions = computed(() => {
       let filtered = [...props2.options];
       if (dateFilter.value) {
         const filterDate = DateTime.fromISO(dateFilter.value);
         filtered = filtered.filter((opt) => {
-          const optDate = opt.date ? DateTime.fromISO(opt.date) : null;
+          const optDate = opt.status?.created ? DateTime.fromMillis(opt.status.created * 1e3) : null;
           return optDate && optDate.hasSame(filterDate, "day");
         });
       }
       return filtered.sort((a, b) => {
-        const dateA = a.startDate || a.date || 0;
-        const dateB = b.startDate || b.date || 0;
+        const dateA = a.status?.created || 0;
+        const dateB = b.status?.created || 0;
         return dateA - dateB;
       });
     });
+    const processOptionsForTimeline = computed(() => {
+      return processOptions.value.filter((opt) => opt.status?.created && opt.status.created > 0).sort((a, b) => (a.status?.created || 0) - (b.status?.created || 0));
+    });
+    const processOptionsForCalendar = computed(() => {
+      return processOptions.value.filter((opt) => opt.status?.created && opt.status.created > 0);
+    });
+    const visibleTimeRange = computed(() => {
+      const items = processOptionsForTimeline.value;
+      if (items.length === 0) {
+        const now2 = DateTime.now();
+        return {
+          start: now2.startOf(scale.value),
+          end: now2.endOf(scale.value)
+        };
+      }
+      const dates = items.map((opt) => opt.status.created * 1e3);
+      const minDate = Math.min(...dates);
+      const maxDate = Math.max(...dates);
+      let start = DateTime.fromMillis(minDate);
+      let end = DateTime.fromMillis(maxDate);
+      switch (scale.value) {
+        case "day":
+          start = start.startOf("day");
+          end = start.endOf("day");
+          break;
+        case "week":
+          start = start.startOf("week");
+          end = start.endOf("week");
+          start = start.minus({ days: 1 });
+          end = end.plus({ days: 1 });
+          break;
+        case "month":
+          start = start.startOf("month");
+          end = start.endOf("month");
+          break;
+      }
+      return { start, end };
+    });
+    const visibleProcessOptions = computed(() => {
+      const { start, end } = visibleTimeRange.value;
+      return processOptionsForTimeline.value.filter((opt) => {
+        const itemTime = DateTime.fromMillis(opt.status.created * 1e3);
+        return itemTime >= start && itemTime <= end;
+      });
+    });
     const timeMarkers = computed(() => {
-      if (sortedOptions.value.length === 0) return [];
-      const firstDate = sortedOptions.value[0].startDate || sortedOptions.value[0].date;
-      const lastDate = sortedOptions.value[sortedOptions.value.length - 1].endDate || sortedOptions.value[sortedOptions.value.length - 1].date;
-      if (!firstDate || !lastDate) return [];
-      const start = DateTime.fromMillis(firstDate * 1e3);
-      const end = DateTime.fromMillis(lastDate * 1e3);
-      const totalDuration = end.diff(start).as("milliseconds");
+      const { start, end } = visibleTimeRange.value;
       const markers = [];
-      let current = start;
-      while (current <= end) {
-        const position = current.diff(start).as("milliseconds") / totalDuration * 100;
-        markers.push({
-          timestamp: current.toMillis(),
-          label: current.toFormat("MMM d"),
-          position
-        });
-        current = current.plus({ [scale.value]: 1 });
+      let current = start.startOf(scale.value);
+      let interval;
+      let totalDuration;
+      if (scale.value === "month") {
+        interval = { days: 1 };
+        let position = 0;
+        const markerWidth = 120;
+        while (current <= end) {
+          markers.push({
+            timestamp: current.toMillis(),
+            label: current.toFormat("d MMM"),
+            position,
+            width: markerWidth
+          });
+          position += markerWidth;
+          current = current.plus(interval);
+        }
+      } else {
+        totalDuration = end.diff(start).as("milliseconds");
+        switch (scale.value) {
+          case "day":
+            interval = { hours: 1 };
+            break;
+          case "week":
+            interval = { days: 1 };
+            break;
+        }
+        while (current <= end) {
+          const position = current.diff(start).as("milliseconds") / totalDuration * 100;
+          let nextCurrent = current.plus(interval);
+          const nextPosition = nextCurrent.diff(start).as("milliseconds") / totalDuration * 100;
+          const width = nextPosition - position;
+          let label = "";
+          switch (scale.value) {
+            case "day":
+              label = current.toFormat("HH:mm");
+              break;
+            case "week":
+              label = current.toFormat("EEE d");
+              break;
+          }
+          markers.push({
+            timestamp: current.toMillis(),
+            label,
+            position: Math.min(100, Math.max(0, position)),
+            width: Math.min(100 - position, width)
+          });
+          current = current.plus(interval);
+        }
       }
       return markers;
     });
     const getItemPosition = (option2) => {
-      if (!option2.startDate && !option2.date) return { display: "none" };
-      const firstDate = sortedOptions.value[0]?.startDate || sortedOptions.value[0]?.date;
-      const lastDate = sortedOptions.value[sortedOptions.value.length - 1]?.endDate || sortedOptions.value[sortedOptions.value.length - 1]?.date;
-      if (!firstDate || !lastDate) return {};
-      const start = DateTime.fromMillis(firstDate * 1e3);
-      const end = DateTime.fromMillis(lastDate * 1e3);
-      const totalDuration = end.diff(start).as("milliseconds");
-      const itemStart = DateTime.fromMillis((option2.startDate || option2.date) * 1e3);
-      const itemEnd = option2.endDate ? DateTime.fromMillis(option2.endDate * 1e3) : itemStart;
-      const left = itemStart.diff(start).as("milliseconds") / totalDuration * 100;
-      const width = itemEnd.diff(itemStart).as("milliseconds") / totalDuration * 100;
-      return {
-        left: `${left}%`,
-        width: `${Math.max(width, 2)}%`
-        // Minimum width for visibility
-      };
+      if (!option2.status?.created || option2.status.created === 0) return { display: "none" };
+      const { start, end } = visibleTimeRange.value;
+      const itemTime = DateTime.fromMillis(option2.status.created * 1e3);
+      if (scale.value === "month") {
+        if (itemTime < start || itemTime > end) {
+          return { display: "none" };
+        }
+        const daysDiff = Math.floor(itemTime.diff(start, "days").days);
+        const left = daysDiff * 120 + 60;
+        return {
+          left: `${left}px`,
+          transform: "translateX(-50%)"
+        };
+      } else {
+        if (itemTime < start || itemTime > end) {
+          return { display: "none" };
+        }
+        const totalDuration = end.diff(start).as("milliseconds");
+        const itemOffset = itemTime.diff(start).as("milliseconds");
+        const left = itemOffset / totalDuration * 100;
+        return {
+          left: `${left}%`,
+          transform: "translateX(-50%)"
+        };
+      }
     };
-    const weekDays = computed(() => ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map(
-      (day) => translate("agora", day)
-    ));
-    const currentMonthLabel = computed(() => DateTime.fromJSDate(currentMonth.value).toFormat("MMMM yyyy"));
+    const formatDateRange = (start, end, scale2) => {
+      switch (scale2) {
+        case "day":
+          return start.toFormat("DDD");
+        case "week":
+          return `${start.toFormat("MMM d")} - ${end.toFormat("MMM d, yyyy")}`;
+        case "month":
+          return start.toFormat("MMMM yyyy");
+        default:
+          return "";
+      }
+    };
+    const formatDateTime = (timestamp, scale2) => {
+      if (!timestamp || timestamp === 0) return "";
+      const dt = DateTime.fromMillis(timestamp * 1e3);
+      switch (scale2) {
+        case "day":
+          return dt.toFormat("HH:mm");
+        case "week":
+          return dt.toFormat("EEE HH:mm");
+        case "month":
+          return dt.toFormat("MMM d, HH:mm");
+        default:
+          return dt.toFormat("HH:mm");
+      }
+    };
     const calendarDays = computed(() => {
       const firstDay = DateTime.fromJSDate(currentMonth.value).startOf("month");
       const lastDay = firstDay.endOf("month");
@@ -79995,10 +80363,12 @@ const _sfc_main$K = /* @__PURE__ */ defineComponent({
       const end = lastDay.endOf("week");
       const days = [];
       let current = start;
+      const processOpts = processOptionsForCalendar.value;
       while (current <= end) {
-        const events = sortedOptions.value.filter((opt) => {
-          const optDate = opt.date ? DateTime.fromMillis(opt.date * 1e3) : null;
-          return optDate && optDate.hasSame(current, "day");
+        const events = processOpts.filter((opt) => {
+          if (!opt.status?.created) return false;
+          const optDate = DateTime.fromMillis(opt.status.created * 1e3);
+          return optDate.hasSame(current, "day");
         });
         days.push({
           date: current.toISO(),
@@ -80011,14 +80381,24 @@ const _sfc_main$K = /* @__PURE__ */ defineComponent({
       }
       return days;
     });
+    const weekDays = computed(() => {
+      const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+      return days.map((day) => translate("agora", day));
+    });
+    const currentMonthLabel = computed(
+      () => DateTime.fromJSDate(currentMonth.value).toFormat("MMMM yyyy")
+    );
     const previousMonth = () => {
       currentMonth.value = DateTime.fromJSDate(currentMonth.value).minus({ months: 1 }).toJSDate();
     };
     const nextMonth = () => {
       currentMonth.value = DateTime.fromJSDate(currentMonth.value).plus({ months: 1 }).toJSDate();
     };
-    const formatDate = (timestamp) => DateTime.fromMillis(timestamp * 1e3).toLocaleString(DateTime.DATE_SHORT);
-    const getOptionTypeIcon = (type) => getOptionTypeIconComponent(type, []);
+    const formatDate = (timestamp) => {
+      if (!timestamp || timestamp === 0) return "";
+      return DateTime.fromMillis(timestamp * 1e3).toLocaleString(DateTime.DATE_SHORT);
+    };
+    const getOptionTypeIcon = (type) => getOptionTypeIconComponent(type, optionsStore.getOptionTypesArray);
     const getStatusColor = (status) => {
       const colors = {
         draft: "#949494",
@@ -80028,7 +80408,17 @@ const _sfc_main$K = /* @__PURE__ */ defineComponent({
       };
       return colors[status] || "#949494";
     };
-    const __returned__ = { props: props2, emit: emit2, viewMode, scale, dateFilter, currentMonth, sortedOptions, timeMarkers, getItemPosition, weekDays, currentMonthLabel, calendarDays, previousMonth, nextMonth, formatDate, getOptionTypeIcon, getStatusColor, get t() {
+    onMounted(() => {
+      console.log("=== TIMELINE DEBUG ===");
+      console.log("All options:", props2.options.length);
+      console.log("Process options:", processOptions.value.length);
+    });
+    watch([scale, processOptionsForTimeline], () => {
+      console.log("Scale changed to:", scale.value);
+      console.log("Visible range:", visibleTimeRange.value.start.toISO(), "to", visibleTimeRange.value.end.toISO());
+      console.log("Visible options:", visibleProcessOptions.value.length);
+    });
+    const __returned__ = { props: props2, optionsStore, emit: emit2, viewMode, scale, dateFilter, currentMonth, processOptions, sortedOptions, processOptionsForTimeline, processOptionsForCalendar, visibleTimeRange, visibleProcessOptions, timeMarkers, getItemPosition, formatDateRange, formatDateTime, calendarDays, weekDays, currentMonthLabel, previousMonth, nextMonth, formatDate, getOptionTypeIcon, getStatusColor, get t() {
       return translate;
     }, get NcButton() {
       return NcButton;
@@ -80051,41 +80441,44 @@ const _hoisted_5$j = {
 };
 const _hoisted_6$h = { class: "timeline-header" };
 const _hoisted_7$h = { class: "timeline-scale" };
-const _hoisted_8$h = { class: "timeline-container" };
-const _hoisted_9$h = { class: "time-markers" };
-const _hoisted_10$h = { class: "marker-label" };
-const _hoisted_11$h = { class: "timeline-items" };
-const _hoisted_12$h = ["onClick"];
-const _hoisted_13$g = { class: "item-content" };
-const _hoisted_14$d = { class: "item-icon" };
-const _hoisted_15$d = { class: "item-details" };
-const _hoisted_16$d = { class: "item-title" };
-const _hoisted_17$d = { class: "item-dates" };
-const _hoisted_18$d = {
-  key: 0,
-  class: "date"
-};
-const _hoisted_19$d = {
-  key: 1,
-  class: "date"
-};
-const _hoisted_20$d = ["title"];
-const _hoisted_21$d = { class: "list-view" };
-const _hoisted_22$d = { class: "options-list" };
-const _hoisted_23$c = { class: "calendar-view" };
-const _hoisted_24$a = { class: "calendar-header" };
-const _hoisted_25$a = { class: "calendar-grid" };
-const _hoisted_26$a = { class: "day-header" };
-const _hoisted_27$a = { class: "day-number" };
-const _hoisted_28$a = {
+const _hoisted_8$h = { class: "timeline-info" };
+const _hoisted_9$h = { key: 0 };
+const _hoisted_10$h = { class: "timeline-markers-header" };
+const _hoisted_11$h = { class: "marker-label" };
+const _hoisted_12$h = { class: "timeline-grid" };
+const _hoisted_13$g = { class: "grid-vertical-lines" };
+const _hoisted_14$d = ["onClick"];
+const _hoisted_15$d = { class: "item-content" };
+const _hoisted_16$d = { class: "item-icon" };
+const _hoisted_17$d = { class: "item-details" };
+const _hoisted_18$d = { class: "item-title" };
+const _hoisted_19$d = { class: "item-dates" };
+const _hoisted_20$d = { class: "date" };
+const _hoisted_21$d = ["title"];
+const _hoisted_22$d = { class: "list-view" };
+const _hoisted_23$c = { class: "options-list" };
+const _hoisted_24$a = { class: "calendar-view" };
+const _hoisted_25$a = { class: "calendar-header" };
+const _hoisted_26$a = { class: "calendar-grid" };
+const _hoisted_27$a = { class: "day-header" };
+const _hoisted_28$a = { class: "day-number" };
+const _hoisted_29$a = {
   key: 0,
   class: "event-count"
 };
-const _hoisted_29$a = { class: "day-events" };
-const _hoisted_30$a = ["onClick"];
-const _hoisted_31$9 = { class: "event-title" };
-const _hoisted_32$8 = {
+const _hoisted_30$a = { class: "day-events" };
+const _hoisted_31$9 = ["onClick"];
+const _hoisted_32$8 = { class: "event-title" };
+const _hoisted_33$8 = {
   key: 3,
+  class: "empty-state"
+};
+const _hoisted_34$8 = {
+  key: 4,
+  class: "empty-state"
+};
+const _hoisted_35$8 = {
+  key: 5,
   class: "empty-state"
 };
 function _sfc_render$K(_ctx, _cache, $props, $setup, $data, $options) {
@@ -80191,111 +80584,145 @@ function _sfc_render$K(_ctx, _cache, $props, $setup, $data, $options) {
             3
             /* TEXT, CLASS */
           )
+        ]),
+        createBaseVNode("div", _hoisted_8$h, [
+          $setup.visibleTimeRange.start ? (openBlock(), createElementBlock(
+            "span",
+            _hoisted_9$h,
+            toDisplayString($setup.formatDateRange($setup.visibleTimeRange.start, $setup.visibleTimeRange.end, $setup.scale)),
+            1
+            /* TEXT */
+          )) : createCommentVNode("v-if", true)
         ])
       ]),
-      createBaseVNode("div", _hoisted_8$h, [
-        createCommentVNode(" Time markers "),
-        createBaseVNode("div", _hoisted_9$h, [
-          (openBlock(true), createElementBlock(
-            Fragment$1,
-            null,
-            renderList($setup.timeMarkers, (marker) => {
-              return openBlock(), createElementBlock(
-                "div",
-                {
-                  key: marker.timestamp,
-                  class: "time-marker",
-                  style: normalizeStyle({ left: `${marker.position}%` })
-                },
-                [
-                  createBaseVNode(
-                    "span",
-                    _hoisted_10$h,
-                    toDisplayString(marker.label),
-                    1
-                    /* TEXT */
-                  )
-                ],
-                4
-                /* STYLE */
-              );
-            }),
-            128
-            /* KEYED_FRAGMENT */
-          ))
-        ]),
-        createCommentVNode(" Timeline items "),
-        createBaseVNode("div", _hoisted_11$h, [
-          (openBlock(true), createElementBlock(
-            Fragment$1,
-            null,
-            renderList($setup.sortedOptions, (option2) => {
-              return openBlock(), createElementBlock(
-                "div",
-                {
-                  key: option2.id,
-                  class: "timeline-item-wrapper",
-                  style: normalizeStyle($setup.getItemPosition(option2))
-                },
-                [
-                  createBaseVNode("div", {
-                    class: normalizeClass(["timeline-item", `type-${option2.type}`]),
-                    onClick: ($event) => _ctx.$emit("openDetail", option2)
-                  }, [
-                    createBaseVNode("div", _hoisted_13$g, [
-                      createBaseVNode("div", _hoisted_14$d, [
-                        (openBlock(), createBlock(resolveDynamicComponent($setup.getOptionTypeIcon(option2.type)), { size: 16 }))
-                      ]),
+      createBaseVNode(
+        "div",
+        {
+          class: normalizeClass(["timeline-container", `scale-${$setup.scale}`])
+        },
+        [
+          createCommentVNode(" Time markers header "),
+          createBaseVNode("div", _hoisted_10$h, [
+            (openBlock(true), createElementBlock(
+              Fragment$1,
+              null,
+              renderList($setup.timeMarkers, (marker) => {
+                return openBlock(), createElementBlock(
+                  "div",
+                  {
+                    key: marker.timestamp,
+                    class: normalizeClass(["marker-cell", { "month-marker": $setup.scale === "month" }]),
+                    style: normalizeStyle({ width: $setup.scale === "month" ? "120px" : `${marker.width}%` })
+                  },
+                  [
+                    createBaseVNode(
+                      "span",
+                      _hoisted_11$h,
+                      toDisplayString(marker.label),
+                      1
+                      /* TEXT */
+                    )
+                  ],
+                  6
+                  /* CLASS, STYLE */
+                );
+              }),
+              128
+              /* KEYED_FRAGMENT */
+            ))
+          ]),
+          createCommentVNode(" Timeline grid for options "),
+          createBaseVNode("div", _hoisted_12$h, [
+            createCommentVNode(" Vertical lines (background) "),
+            createBaseVNode("div", _hoisted_13$g, [
+              (openBlock(true), createElementBlock(
+                Fragment$1,
+                null,
+                renderList($setup.timeMarkers, (marker) => {
+                  return openBlock(), createElementBlock(
+                    "div",
+                    {
+                      key: marker.timestamp,
+                      class: normalizeClass(["grid-line", { "month-line": $setup.scale === "month" }]),
+                      style: normalizeStyle({ left: $setup.scale === "month" ? `${marker.position}px` : `${marker.position}%` })
+                    },
+                    null,
+                    6
+                    /* CLASS, STYLE */
+                  );
+                }),
+                128
+                /* KEYED_FRAGMENT */
+              ))
+            ]),
+            createCommentVNode(" Option rows "),
+            (openBlock(true), createElementBlock(
+              Fragment$1,
+              null,
+              renderList($setup.visibleProcessOptions, (option2, rowIndex) => {
+                return openBlock(), createElementBlock(
+                  "div",
+                  {
+                    key: option2.id,
+                    class: normalizeClass(["timeline-row", { "alternate": rowIndex % 2 === 1 }])
+                  },
+                  [
+                    createCommentVNode(" Option card positioned in the grid "),
+                    createBaseVNode("div", {
+                      class: normalizeClass(["timeline-item", `type-${option2.type}`]),
+                      style: normalizeStyle($setup.getItemPosition(option2)),
+                      onClick: ($event) => _ctx.$emit("openDetail", option2)
+                    }, [
                       createBaseVNode("div", _hoisted_15$d, [
-                        createBaseVNode(
-                          "div",
-                          _hoisted_16$d,
-                          toDisplayString(option2.title || option2.label),
-                          1
-                          /* TEXT */
-                        ),
+                        createBaseVNode("div", _hoisted_16$d, [
+                          (openBlock(), createBlock(resolveDynamicComponent($setup.getOptionTypeIcon(option2.type)), { size: 16 }))
+                        ]),
                         createBaseVNode("div", _hoisted_17$d, [
-                          option2.startDate ? (openBlock(), createElementBlock(
-                            "span",
+                          createBaseVNode(
+                            "div",
                             _hoisted_18$d,
-                            toDisplayString($setup.formatDate(option2.startDate)),
+                            toDisplayString(option2.title),
                             1
                             /* TEXT */
-                          )) : createCommentVNode("v-if", true),
-                          option2.endDate ? (openBlock(), createElementBlock(
-                            "span",
-                            _hoisted_19$d,
-                            " → " + toDisplayString($setup.formatDate(option2.endDate)),
-                            1
-                            /* TEXT */
-                          )) : createCommentVNode("v-if", true)
-                        ])
-                      ]),
-                      option2.status ? (openBlock(), createElementBlock("div", {
-                        key: 0,
-                        class: "status-indicator",
-                        style: normalizeStyle({ backgroundColor: $setup.getStatusColor(option2.status) }),
-                        title: option2.status
-                      }, null, 12, _hoisted_20$d)) : createCommentVNode("v-if", true)
-                    ])
-                  ], 10, _hoisted_12$h)
-                ],
-                4
-                /* STYLE */
-              );
-            }),
-            128
-            /* KEYED_FRAGMENT */
-          ))
-        ])
-      ])
+                          ),
+                          createBaseVNode("div", _hoisted_19$d, [
+                            createBaseVNode(
+                              "span",
+                              _hoisted_20$d,
+                              toDisplayString($setup.formatDateTime(option2.status.created, $setup.scale)),
+                              1
+                              /* TEXT */
+                            )
+                          ])
+                        ]),
+                        option2.status?.optionStatus ? (openBlock(), createElementBlock("div", {
+                          key: 0,
+                          class: "status-indicator",
+                          style: normalizeStyle({ backgroundColor: $setup.getStatusColor(option2.status.optionStatus) }),
+                          title: option2.status.optionStatus
+                        }, null, 12, _hoisted_21$d)) : createCommentVNode("v-if", true)
+                      ])
+                    ], 14, _hoisted_14$d)
+                  ],
+                  2
+                  /* CLASS */
+                );
+              }),
+              128
+              /* KEYED_FRAGMENT */
+            ))
+          ])
+        ],
+        2
+        /* CLASS */
+      )
     ])) : $setup.viewMode === "list" ? (openBlock(), createElementBlock(
       Fragment$1,
       { key: 1 },
       [
-        createCommentVNode(" List view (fallback to cards) "),
-        createBaseVNode("div", _hoisted_21$d, [
-          createBaseVNode("div", _hoisted_22$d, [
+        createCommentVNode(" List view "),
+        createBaseVNode("div", _hoisted_22$d, [
+          createBaseVNode("div", _hoisted_23$c, [
             (openBlock(true), createElementBlock(
               Fragment$1,
               null,
@@ -80321,8 +80748,8 @@ function _sfc_render$K(_ctx, _cache, $props, $setup, $data, $options) {
       { key: 2 },
       [
         createCommentVNode(" Calendar view "),
-        createBaseVNode("div", _hoisted_23$c, [
-          createBaseVNode("div", _hoisted_24$a, [
+        createBaseVNode("div", _hoisted_24$a, [
+          createBaseVNode("div", _hoisted_25$a, [
             createVNode($setup["NcButton"], {
               type: "tertiary",
               size: "small",
@@ -80368,7 +80795,7 @@ function _sfc_render$K(_ctx, _cache, $props, $setup, $data, $options) {
               /* STABLE */
             })
           ]),
-          createBaseVNode("div", _hoisted_25$a, [
+          createBaseVNode("div", _hoisted_26$a, [
             (openBlock(true), createElementBlock(
               Fragment$1,
               null,
@@ -80401,23 +80828,23 @@ function _sfc_render$K(_ctx, _cache, $props, $setup, $data, $options) {
                     }])
                   },
                   [
-                    createBaseVNode("div", _hoisted_26$a, [
+                    createBaseVNode("div", _hoisted_27$a, [
                       createBaseVNode(
                         "span",
-                        _hoisted_27$a,
+                        _hoisted_28$a,
                         toDisplayString(day.day),
                         1
                         /* TEXT */
                       ),
                       day.events.length ? (openBlock(), createElementBlock(
                         "span",
-                        _hoisted_28$a,
+                        _hoisted_29$a,
                         toDisplayString(day.events.length),
                         1
                         /* TEXT */
                       )) : createCommentVNode("v-if", true)
                     ]),
-                    createBaseVNode("div", _hoisted_29$a, [
+                    createBaseVNode("div", _hoisted_30$a, [
                       (openBlock(true), createElementBlock(
                         Fragment$1,
                         null,
@@ -80429,12 +80856,12 @@ function _sfc_render$K(_ctx, _cache, $props, $setup, $data, $options) {
                           }, [
                             createBaseVNode(
                               "span",
-                              _hoisted_31$9,
-                              toDisplayString(event.title || event.label),
+                              _hoisted_32$8,
+                              toDisplayString(event.title),
                               1
                               /* TEXT */
                             )
-                          ], 10, _hoisted_30$a);
+                          ], 10, _hoisted_31$9);
                         }),
                         128
                         /* KEYED_FRAGMENT */
@@ -80454,13 +80881,45 @@ function _sfc_render$K(_ctx, _cache, $props, $setup, $data, $options) {
       2112
       /* STABLE_FRAGMENT, DEV_ROOT_FRAGMENT */
     )) : createCommentVNode("v-if", true),
-    createCommentVNode(" Empty state "),
-    $setup.sortedOptions.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_32$8, [
+    createCommentVNode(" Empty states "),
+    $setup.viewMode === "list" && $setup.sortedOptions.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_33$8, [
+      (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons.Timeline), { size: 48 })),
+      createBaseVNode(
+        "h4",
+        null,
+        toDisplayString($setup.t("agora", "No items yet")),
+        1
+        /* TEXT */
+      ),
+      createBaseVNode(
+        "p",
+        null,
+        toDisplayString($setup.t("agora", "Add milestones, events or deadlines")),
+        1
+        /* TEXT */
+      )
+    ])) : $setup.viewMode === "timeline" && $setup.processOptionsForTimeline.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_34$8, [
       (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons.Timeline), { size: 48 })),
       createBaseVNode(
         "h4",
         null,
         toDisplayString($setup.t("agora", "No timeline items yet")),
+        1
+        /* TEXT */
+      ),
+      createBaseVNode(
+        "p",
+        null,
+        toDisplayString($setup.t("agora", "Add milestones, events or deadlines")),
+        1
+        /* TEXT */
+      )
+    ])) : $setup.viewMode === "calendar" && $setup.processOptionsForCalendar.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_35$8, [
+      (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons.Calendar), { size: 48 })),
+      createBaseVNode(
+        "h4",
+        null,
+        toDisplayString($setup.t("agora", "No calendar items yet")),
         1
         /* TEXT */
       ),
@@ -80529,10 +80988,14 @@ const _sfc_main$J = /* @__PURE__ */ defineComponent({
     });
     const hasVisibleFamilies = computed(() => familiesWithOptions.value.length > 0);
     const activeFamilyData = computed(() => {
+      console.log(" CURRENT ACTIVE FAMILY DATA ", activeFamily.value);
+      console.log(" CURRENT ACTIVE FAMILY DATA FAMILY WITH OPTION ", familiesWithOptions.value);
       if (!activeFamily.value) return null;
       return familiesWithOptions.value.find((f) => f.key === activeFamily.value);
     });
     const currentFamilyLayout = computed(() => {
+      console.log(" CURRENT FAMILY LAYOUT ", activeFamilyData);
+      console.log(" CURRENT FAMILY LAYOUT COMPONENT ", layoutComponents.default);
       if (!activeFamilyData.value) return layoutComponents.default;
       const layoutKey = activeFamilyData.value.layout_ux || "default";
       return layoutComponents[layoutKey] || layoutComponents.default;
@@ -81446,10 +81909,7 @@ function _sfc_render$I(_ctx, _cache, $props, $setup, $data, $options) {
           )) : (openBlock(), createElementBlock("div", _hoisted_20$c, [
             createVNode($setup["NcTextField"], {
               modelValue: $setup.inquiryStore.title,
-              "onUpdate:modelValue": [
-                _cache[1] || (_cache[1] = ($event) => $setup.inquiryStore.title = $event),
-                _ctx.handleTitleChange
-              ],
+              "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => $setup.inquiryStore.title = $event),
               label: $setup.t("agora", "Inquiry title"),
               success: $setup.inquiryStore.title.length > 0,
               "helper-text": $setup.t("agora", "Enter a descriptive title for your inquiry")
@@ -81459,7 +81919,7 @@ function _sfc_render$I(_ctx, _cache, $props, $setup, $data, $options) {
               ]),
               _: 1
               /* STABLE */
-            }, 8, ["modelValue", "label", "success", "helper-text", "onUpdate:modelValue"])
+            }, 8, ["modelValue", "label", "success", "helper-text"])
           ]))
         ]),
         createCommentVNode(" Counters section - ensure it's always displayed "),

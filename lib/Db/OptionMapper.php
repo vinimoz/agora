@@ -226,7 +226,7 @@ class OptionMapper extends QBMapper
     {
         $qb = $this->db->getQueryBuilder();
         $qb->update($this->getTableName())
-           ->set('status', $qb->createNamedParameter($status, IQueryBuilder::PARAM_STR))
+           ->set('option_status', $qb->createNamedParameter($status, IQueryBuilder::PARAM_STR))
            ->set('updated', $qb->createNamedParameter(time(), IQueryBuilder::PARAM_INT))
            ->where($qb->expr()->eq('id', $qb->createNamedParameter($optionId, IQueryBuilder::PARAM_INT)));
         $qb->executeStatement();

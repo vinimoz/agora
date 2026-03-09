@@ -1,0 +1,703 @@
+<template>
+    <div class="timeline-layout">
+        <!-- Timeline controls -->
+        <div class="timeline-controls">
+            <div class="view-mode">
+                <NcButton
+                    :type="viewMode === 'list' ? 'primary' : 'tertiary'"
+                    size="small"
+                    @click="viewMode = 'list'"
+                >
+                    <template #icon>
+                        <component :is="InquiryOptionIcons.List" :size="18" />
+                    </template>
+                    {{ t('agora', 'List') }}
+                </NcButton>
+                <NcButton
+                    :type="viewMode === 'timeline' ? 'primary' : 'tertiary'"
+                    size="small"
+                    @click="viewMode = 'timeline'"
+                >
+                    <template #icon>
+                        <component :is="InquiryOptionIcons.Timeline" :size="18" />
+                    </template>
+                    {{ t('agora', 'Timeline') }}
+                </NcButton>
+                <NcButton
+                    :type="viewMode === 'calendar' ? 'primary' : 'tertiary'"
+                    size="small"
+                    @click="viewMode = 'calendar'"
+                >
+                    <template #icon>
+                        <component :is="InquiryOptionIcons.Calendar" :size="18" />
+                    </template>
+                    {{ t('agora', 'Calendar') }}
+                </NcButton>
+            </div>
+
+            <div class="filter-controls">
+                <NcTextField
+                    :value="dateFilter"
+                    :label="t('agora', 'Filter by date')"
+                    type="date"
+                    @update:value="dateFilter = $event"
+                />
+            </div>
+        </div>
+
+        <!-- Timeline view -->
+        <div v-if="viewMode === 'timeline'" class="timeline-view">
+            <div class="timeline-header">
+                <div class="timeline-scale">
+                    <button 
+                        class="scale-btn" 
+                        :class="{ active: scale === 'day' }"
+                        @click="scale = 'day'"
+                    >
+                        {{ t('agora', 'Day') }}
+                    </button>
+                    <button 
+                        class="scale-btn" 
+                        :class="{ active: scale === 'week' }"
+                        @click="scale = 'week'"
+                    >
+                        {{ t('agora', 'Week') }}
+                    </button>
+                    <button 
+                        class="scale-btn" 
+                        :class="{ active: scale === 'month' }"
+                        @click="scale = 'month'"
+                    >
+                        {{ t('agora', 'Month') }}
+                    </button>
+                </div>
+                <div class="timeline-info">
+                    <span v-if="visibleTimeRange.start">
+                        {{ formatDateRange(visibleTimeRange.start, visibleTimeRange.end, scale) }}
+                    </span>
+                </div>
+            </div>
+
+            <div class="timeline-container">
+                <!-- Time markers with vertical lines -->
+                <div class="time-markers">
+                    <div 
+                        v-for="marker in timeMarkers" 
+                        :key="marker.timestamp"
+                        class="time-marker"
+                        :style="{ left: `${marker.position}%` }"
+                    >
+                        <span class="marker-label">{{ marker.label }}</span>
+                        <div class="vertical-line"></div>
+                    </div>
+                </div>
+
+                <!-- Timeline items with vertical spacing -->
+                <div class="timeline-items">
+                    <div 
+                        v-for="(option, index) in visibleProcessOptions" 
+                        :key="option.id"
+                        class="timeline-item-wrapper"
+                        :style="getItemPosition(option, index)"
+                    >
+                        <div 
+                            class="timeline-item"
+                            :class="`type-${option.type}`"
+                            @click="$emit('openDetail', option)"
+                        >
+                            <div class="item-content">
+                                <div class="item-icon">
+                                    <component :is="getOptionTypeIcon(option.type)" :size="16" />
+                                </div>
+                                <div class="item-details">
+                                    <div class="item-title">{{ option.title }}</div>
+                                    <div class="item-dates">
+                                        <span class="date">
+                                            {{ formatDateTime(option.status.created, scale) }}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div 
+                                    v-if="option.status?.optionStatus"
+                                    class="status-indicator"
+                                    :style="{ backgroundColor: getStatusColor(option.status.optionStatus) }"
+                                    :title="option.status.optionStatus"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- List view -->
+        <div v-else-if="viewMode === 'list'" class="list-view">
+            <div class="options-list">
+                <OptionCard
+                    v-for="option in sortedOptions"
+                    :key="option.id"
+                    :option="option"
+                    :inquiry-id="inquiryId"
+                    :compact="true"
+                    @click="$emit('openDetail', option)"
+                />
+            </div>
+        </div>
+
+        <!-- Calendar view -->
+        <div v-else-if="viewMode === 'calendar'" class="calendar-view">
+            <!-- ... keep existing calendar view ... -->
+        </div>
+
+        <!-- Empty states -->
+        <div v-if="viewMode === 'list' && sortedOptions.length === 0" class="empty-state">
+            <component :is="InquiryOptionIcons.Timeline" :size="48" />
+            <h4>{{ t('agora', 'No items yet') }}</h4>
+            <p>{{ t('agora', 'Add milestones, events or deadlines') }}</p>
+        </div>
+        <div v-else-if="viewMode === 'timeline' && processOptionsForTimeline.length === 0" class="empty-state">
+            <component :is="InquiryOptionIcons.Timeline" :size="48" />
+            <h4>{{ t('agora', 'No timeline items yet') }}</h4>
+            <p>{{ t('agora', 'Add milestones, events or deadlines') }}</p>
+        </div>
+        <div v-else-if="viewMode === 'calendar' && processOptionsForCalendar.length === 0" class="empty-state">
+            <component :is="InquiryOptionIcons.Calendar" :size="48" />
+            <h4>{{ t('agora', 'No calendar items yet') }}</h4>
+            <p>{{ t('agora', 'Add milestones, events or deadlines') }}</p>
+        </div>
+    </div>
+</template>
+
+<script setup lang="ts">
+import { ref, computed, watch, onMounted } from 'vue'
+import { t } from '@nextcloud/l10n'
+import NcButton from '@nextcloud/vue/components/NcButton'
+import NcTextField from '@nextcloud/vue/components/NcTextField'
+import { DateTime } from 'luxon'
+import { InquiryOptionIcons } from '../../../utils/icons.ts'
+import OptionCard from '../OptionCard.vue'
+import { getOptionTypeIconComponent, getOptionTypeFamily } from '../../../helpers/modules/InquiryOptionHelper'
+import type { Option } from '../../../Types/index.ts'
+import { useOptionsStore } from '../../../stores/options'
+
+const props = defineProps<{
+    options: Option[]
+    inquiryId: number
+}>()
+
+const optionsStore = useOptionsStore()
+
+const emit = defineEmits<{
+    'openDetail': [option: Option]
+}>()
+
+// View state
+const viewMode = ref<'list' | 'timeline' | 'calendar'>('timeline')
+const scale = ref<'day' | 'week' | 'month'>('week')
+const dateFilter = ref('')
+const currentMonth = ref(new Date())
+
+// Get process family options only
+const processOptions = computed(() => {
+    return props.options.filter(opt => {
+        const family = getOptionTypeFamily(opt.type, optionsStore.getOptionTypesArray)
+        return family === 'process'
+    })
+})
+
+// FOR LIST VIEW: All options sorted by created date
+const sortedOptions = computed(() => {
+    let filtered = [...props.options]
+
+    // Apply date filter
+    if (dateFilter.value) {
+        const filterDate = DateTime.fromISO(dateFilter.value)
+        filtered = filtered.filter(opt => {
+            const optDate = opt.status?.created ? DateTime.fromMillis(opt.status.created * 1000) : null
+            return optDate && optDate.hasSame(filterDate, 'day')
+        })
+    }
+
+    // Sort by created date
+    return filtered.sort((a, b) => {
+        const dateA = a.status?.created || 0
+        const dateB = b.status?.created || 0
+        return dateA - dateB
+    })
+})
+
+// FOR TIMELINE VIEW: Process options with valid dates
+const processOptionsForTimeline = computed(() => {
+    return processOptions.value
+        .filter(opt => opt.status?.created && opt.status.created > 0)
+        .sort((a, b) => (a.status?.created || 0) - (b.status?.created || 0))
+})
+
+// FOR CALENDAR VIEW: Process options (keep all, calendar will filter by date)
+const processOptionsForCalendar = computed(() => {
+    return processOptions.value.filter(opt => opt.status?.created && opt.status.created > 0)
+})
+
+// Get the visible time range based on scale and all items
+const visibleTimeRange = computed(() => {
+    const items = processOptionsForTimeline.value
+    if (items.length === 0) {
+        const now = DateTime.now()
+        return {
+            start: now.startOf(scale.value),
+            end: now.endOf(scale.value)
+        }
+    }
+
+    const dates = items.map(opt => opt.status.created * 1000)
+    const minDate = Math.min(...dates)
+    const maxDate = Math.max(...dates)
+    
+    let start = DateTime.fromMillis(minDate)
+    let end = DateTime.fromMillis(maxDate)
+    
+    // Adjust range based on scale
+    switch (scale.value) {
+        case 'day':
+            start = start.startOf('day')
+            end = start.endOf('day')
+            break
+        case 'week':
+            start = start.startOf('week')
+            end = end.endOf('week')
+            break
+        case 'month':
+            start = start.startOf('month')
+            end = end.endOf('month')
+            break
+    }
+    
+    return { start, end }
+})
+
+// Get visible options (those within the current range)
+const visibleProcessOptions = computed(() => {
+    const { start, end } = visibleTimeRange.value
+    return processOptionsForTimeline.value.filter(opt => {
+        const itemTime = DateTime.fromMillis(opt.status.created * 1000)
+        return itemTime >= start && itemTime <= end
+    })
+})
+
+// Calculate item position for timeline based on visible range
+const getItemPosition = (option: Option, index: number) => {
+    if (!option.status?.created || option.status.created === 0) return { display: 'none' }
+    
+    const { start, end } = visibleTimeRange.value
+    const itemTime = DateTime.fromMillis(option.status.created * 1000)
+    
+    const totalDuration = end.diff(start).as('milliseconds')
+    const itemOffset = itemTime.diff(start).as('milliseconds')
+    const left = (itemOffset / totalDuration) * 100
+    
+    // Stack multiple items at the same time vertically
+    const itemsAtSameTime = visibleProcessOptions.value.filter(
+        opt => Math.abs((opt.status.created * 1000) - (option.status.created * 1000)) < 60000 // within 1 minute
+    )
+    const sameTimeIndex = itemsAtSameTime.findIndex(opt => opt.id === option.id)
+    const verticalOffset = sameTimeIndex * 70 // 70px spacing between stacked items
+    
+    return {
+        left: `${left}%`,
+        top: `${20 + verticalOffset}px`,
+        transform: 'translateX(-50%)',
+        position: 'absolute',
+        zIndex: 10
+    }
+}
+
+// Generate time markers based on visible range and scale
+const timeMarkers = computed(() => {
+    const { start, end } = visibleTimeRange.value
+    const totalDuration = end.diff(start).as('milliseconds')
+    
+    const markers = []
+    let current = start.startOf(scale.value)
+    let interval
+    
+    switch (scale.value) {
+        case 'day':
+            interval = { hours: 1 }
+            break
+        case 'week':
+            interval = { days: 1 }
+            break
+        case 'month':
+            interval = { days: 1 }
+            break
+    }
+    
+    while (current <= end) {
+        const position = (current.diff(start).as('milliseconds') / totalDuration) * 100
+        
+        let label = ''
+        switch (scale.value) {
+            case 'day':
+                label = current.toFormat('HH:mm')
+                break
+            case 'week':
+                label = current.toFormat('EEE d')
+                break
+            case 'month':
+                label = current.toFormat('d MMM')
+                break
+        }
+        
+        markers.push({
+            timestamp: current.toMillis(),
+            label,
+            position: Math.min(100, Math.max(0, position)) // Ensure within bounds
+        })
+        
+        current = current.plus(interval)
+    }
+    
+    return markers
+})
+
+// Format date range for display
+const formatDateRange = (start: DateTime, end: DateTime, scale: string) => {
+    switch (scale) {
+        case 'day':
+            return start.toFormat('DDD')
+        case 'week':
+            return `${start.toFormat('MMM d')} - ${end.toFormat('MMM d, yyyy')}`
+        case 'month':
+            return start.toFormat('MMMM yyyy')
+        default:
+            return ''
+    }
+}
+
+// Format date/time based on scale
+const formatDateTime = (timestamp: number, scale: string) => {
+    if (!timestamp || timestamp === 0) return ''
+    const dt = DateTime.fromMillis(timestamp * 1000)
+    switch (scale) {
+        case 'day':
+            return dt.toFormat('HH:mm')
+        case 'week':
+            return dt.toFormat('EEE HH:mm')
+        case 'month':
+            return dt.toFormat('MMM d, HH:mm')
+        default:
+            return dt.toFormat('HH:mm')
+    }
+}
+
+// Calendar days
+const calendarDays = computed(() => {
+    const firstDay = DateTime.fromJSDate(currentMonth.value).startOf('month')
+    const lastDay = firstDay.endOf('month')
+
+    const start = firstDay.startOf('week')
+    const end = lastDay.endOf('week')
+
+    const days = []
+    let current = start
+    const processOpts = processOptionsForCalendar.value
+
+    while (current <= end) {
+        const events = processOpts.filter(opt => {
+            if (!opt.status?.created) return false
+            const optDate = DateTime.fromMillis(opt.status.created * 1000)
+            return optDate.hasSame(current, 'day')
+        })
+
+        days.push({
+            date: current.toISO(),
+            day: current.day,
+            currentMonth: current.hasSame(firstDay, 'month'),
+            isToday: current.hasSame(DateTime.now(), 'day'),
+            events
+        })
+
+        current = current.plus({ days: 1 })
+    }
+
+    return days
+})
+
+// Calendar helpers
+const weekDays = computed(() => {
+    const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+    return days.map(day => t('agora', day))
+})
+
+const currentMonthLabel = computed(() => 
+    DateTime.fromJSDate(currentMonth.value).toFormat('MMMM yyyy')
+)
+
+const previousMonth = () => {
+    currentMonth.value = DateTime.fromJSDate(currentMonth.value)
+        .minus({ months: 1 })
+        .toJSDate()
+}
+
+const nextMonth = () => {
+    currentMonth.value = DateTime.fromJSDate(currentMonth.value)
+        .plus({ months: 1 })
+        .toJSDate()
+}
+
+// Helper functions
+const formatDate = (timestamp: number) => {
+    if (!timestamp || timestamp === 0) return ''
+    return DateTime.fromMillis(timestamp * 1000).toLocaleString(DateTime.DATE_SHORT)
+}
+
+const getOptionTypeIcon = (type: string) => 
+    getOptionTypeIconComponent(type, optionsStore.getOptionTypesArray)
+
+const getStatusColor = (status: string) => {
+    const colors: Record<string, string> = {
+        draft: '#949494',
+        active: '#3498db',
+        completed: '#27ae60',
+        cancelled: '#e74c3c'
+    }
+    return colors[status] || '#949494'
+}
+
+// Debug
+onMounted(() => {
+    console.log('=== TIMELINE DEBUG ===')
+    console.log('All options:', props.options.length)
+    console.log('Process options:', processOptions.value.length)
+    console.log('Process options for timeline:', processOptionsForTimeline.value.map(opt => ({
+        id: opt.id,
+        title: opt.title,
+        date: DateTime.fromMillis(opt.status.created * 1000).toISO()
+    })))
+})
+
+watch([scale, processOptionsForTimeline], () => {
+    console.log('Scale changed to:', scale.value)
+    console.log('Visible range:', visibleTimeRange.value.start.toISO(), 'to', visibleTimeRange.value.end.toISO())
+    console.log('Visible options:', visibleProcessOptions.value.length)
+    console.log('Time markers:', timeMarkers.value.length)
+})
+</script>
+
+<style scoped lang="scss">
+.timeline-layout {
+    .timeline-controls {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        padding: 16px;
+        background: var(--color-background-dark);
+        border-radius: 12px;
+
+        .view-mode {
+            display: flex;
+            gap: 8px;
+        }
+
+        .filter-controls {
+            width: 200px;
+        }
+    }
+
+    .timeline-view {
+        position: relative;
+        min-height: 400px;
+        padding: 20px 0;
+
+        .timeline-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+
+            .timeline-scale {
+                display: flex;
+                gap: 4px;
+                background: var(--color-background-dark);
+                padding: 4px;
+                border-radius: 8px;
+                width: fit-content;
+
+                .scale-btn {
+                    padding: 6px 12px;
+                    border: none;
+                    background: transparent;
+                    border-radius: 6px;
+                    cursor: pointer;
+                    font-weight: 500;
+
+                    &.active {
+                        background: var(--color-primary-element);
+                        color: white;
+                    }
+                }
+            }
+
+            .timeline-info {
+                color: var(--color-text-lighter);
+                font-size: 14px;
+                font-weight: 500;
+            }
+        }
+
+        .timeline-container {
+            position: relative;
+            height: 400px;
+            overflow-x: auto;
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            background: var(--color-main-background);
+
+            .time-markers {
+                position: relative;
+                height: 40px;
+                border-bottom: 2px solid var(--color-border);
+                background: var(--color-background-dark);
+
+                .time-marker {
+                    position: absolute;
+                    transform: translateX(-50%);
+                    height: 100%;
+
+                    .marker-label {
+                        position: absolute;
+                        top: 4px;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        font-size: 11px;
+                        color: var(--color-text-lighter);
+                        white-space: nowrap;
+                        background: var(--color-background-dark);
+                        padding: 2px 4px;
+                        border-radius: 4px;
+                        z-index: 5;
+                    }
+
+                    .vertical-line {
+                        position: absolute;
+                        top: 24px;
+                        left: 50%;
+                        width: 1px;
+                        height: 360px;
+                        background: var(--color-border);
+                        opacity: 0.3;
+                    }
+                }
+            }
+
+            .timeline-items {
+                position: relative;
+                height: 360px;
+                margin-top: 0;
+
+                .timeline-item-wrapper {
+                    position: absolute;
+                    height: 60px;
+                    min-width: 200px;
+
+                    .timeline-item {
+                        height: 100%;
+                        background: var(--color-main-background);
+                        border: 1px solid var(--color-primary-element);
+                        border-radius: 8px;
+                        padding: 8px 12px;
+                        cursor: pointer;
+                        transition: all 0.2s ease;
+                        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+                        &:hover {
+                            transform: translateY(-2px);
+                            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                            border-color: var(--color-primary-element);
+                            background: var(--color-background-hover);
+                        }
+
+                        .item-content {
+                            display: flex;
+                            align-items: center;
+                            gap: 8px;
+                            height: 100%;
+
+                            .item-icon {
+                                flex-shrink: 0;
+                                color: var(--color-primary-element);
+                            }
+
+                            .item-details {
+                                flex: 1;
+                                min-width: 0;
+
+                                .item-title {
+                                    font-weight: 600;
+                                    font-size: 13px;
+                                    white-space: nowrap;
+                                    overflow: hidden;
+                                    text-overflow: ellipsis;
+                                    color: var(--color-main-text);
+                                }
+
+                                .item-dates {
+                                    font-size: 11px;
+                                    color: var(--color-primary-element);
+                                    font-weight: 500;
+                                }
+                            }
+
+                            .status-indicator {
+                                width: 8px;
+                                height: 8px;
+                                border-radius: 50%;
+                                flex-shrink: 0;
+                                box-shadow: 0 0 0 2px var(--color-main-background);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .list-view {
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+    }
+
+    .calendar-view {
+        // ... keep existing calendar styles ...
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        background: var(--color-background-dark);
+        border: 2px dashed var(--color-border);
+        border-radius: 16px;
+
+        svg {
+            color: var(--color-text-lighter);
+            margin-bottom: 20px;
+        }
+
+        h4 {
+            margin: 0 0 8px 0;
+            color: var(--color-main-text);
+            font-size: 18px;
+        }
+
+        p {
+            margin: 0;
+            color: var(--color-text-lighter);
+            font-style: italic;
+        }
+    }
+}
+</style>

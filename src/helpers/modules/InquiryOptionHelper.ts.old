@@ -5,12 +5,9 @@
 
 import { InquiryGeneralIcons, InquiryOptionIcons } from '../../utils/icons.ts'
 import { toRaw } from 'vue'
-import type { InquiryType, InquiryOptionType, OptionFamily } from '../../Types/index.ts'
+import type { InquiryType, InquiryOptionType,OptionFamily } from '../../Types/index.ts'
 import { useAppSettingsStore } from '../../stores/appSettings.ts'
 import { t } from '@nextcloud/l10n'
-import type { Component } from 'vue'
-
-
 
 /**
  * Get option item data
@@ -81,8 +78,7 @@ export function getFamilyColor(familyKey: string): string {
         'consensus': '#6AA84F',   // Green
         'decision': '#CC0000',    // Red
         'proposal': '#E69138',    // Orange
-        'workflow': '#A64D79',    // Purple
-        'process': '#45818E',     // Teal
+        'question': '#5B9B46',    // Forest Green
         'default': '#999999',     // Gray
     }
     
@@ -150,6 +146,7 @@ export function getAllowedOptionTypes(
            allowedOptionTypeKeys.includes(optionTypeValue)
   })
 
+
   return result
 }
 
@@ -173,6 +170,7 @@ export function groupOptionTypesByFamily(optionTypes: InquiryOptionType[]): Reco
   return grouped
 }
 
+
 /**
  * Get the icon name for a family from appSettings
  * @param familyKey - The family key (e.g., 'debate', 'structure', etc.)
@@ -182,154 +180,24 @@ export function getFamilyIconName(familyKey: string): string {
   try {
     // Try to get the store - this only works in setup context
     const appSettingsStore = useAppSettingsStore()
-    
-    // Check if optionFamilyTab exists and is an array
-    if (appSettingsStore?.settings?.optionFamilyTab && Array.isArray(appSettingsStore.settings.optionFamilyTab)) {
-      // Find the family config by family_type
-      const familyConfig = appSettingsStore.settings.optionFamilyTab.find(
-    (item: FamilyConfig) => item?.family_type === familyKey  // Removed any and {}
-    )
-      if (familyConfig?.icon) {
-        return familyConfig.icon
-      }
-    }
-    
-    // If not found in appSettings, try fallback data
-    const fallbackData = getFamilyFallbackData()
-    const fallback = fallbackData[familyKey] || fallbackData.default
-    if (fallback?.icon) {
-      return fallback.icon
-    }
-    
-    return 'File'
+    return appSettingsStore?.settings?.optionFamilyTab?.[familyKey]?.icon || 'File'
   } catch (error) {
     // Store not available (called outside setup), return default
-    console.error('Error getting family icon:', error)
+    console.error('Not found default family icon',error)
     return 'File'
   }
 }
 
-
 /**
- * Get the icon component for a family
- * @param familyKey - The family key
+ * Get the icon name for a family from appSettings
+ * @param familyKey - The family key (e.g., 'debate', 'structure', etc.)
+ * @return Icon name as string
  */
-export function getFamilyIconComponent(familyKey: string): Component {
+export function getFamilyIconComponent(familyKey: string): OptionFamily {
   const iconName = getFamilyIconName(familyKey)
-  
   return InquiryOptionIcons[iconName] || InquiryGeneralIcons[iconName] || InquiryGeneralIcons.File
 }
 
-
-/**
- * Get family UI configuration
- * @param familyKey
- * @param familyData
- */
-export function getFamilyUIConfig(
-  familyKey: string,
-  familyData?: OptionFamily
-): Record<string, unknown> {
-  const defaultUIConfig: Record<string, unknown> = {
-    layout: getLayoutForFamily(familyKey)
-  }
-
-  // Try to get from familyData first
-  if (familyData?.ui) {
-    return { ...defaultUIConfig, ...familyData.ui }
-  }
-
-  // Try to get from appSettings
-  try {
-    const appSettingsStore = useAppSettingsStore()
-    const storedUI = appSettingsStore?.settings?.optionFamilyTab?.[familyKey]?.ui
-    if (storedUI) {
-      return { ...defaultUIConfig, ...storedUI }
-    }
-  } catch {
-    // Store not available
-  }
-
-  return defaultUIConfig
-}
-
-/**
- * Get family rules
- * @param familyKey
- * @param familyData
- */
-export function getFamilyRules(
-  familyKey: string,
-  familyData?: OptionFamily
-): Record<string, unknown> {
-  if (familyData?.rules) {
-    return familyData.rules
-  }
-
-  try {
-    const appSettingsStore = useAppSettingsStore()
-    const storedRules = appSettingsStore?.settings?.optionFamilyTab?.[familyKey]?.rules
-    if (storedRules) {
-      return storedRules
-    }
-  } catch {
-    // Store not available
-  }
-
-  return {}
-}
-
-/**
- * Get family features (global capabilities)
- * @param familyKey
- * @param familyData
- */
-export function getFamilyFeatures(
-  familyKey: string,
-  familyData?: OptionFamily
-): string[] {
-  if (familyData?.features) {
-    return familyData.features
-  }
-
-  try {
-    const appSettingsStore = useAppSettingsStore()
-    const storedFeatures = appSettingsStore?.settings?.optionFamilyTab?.[familyKey]?.features
-    if (storedFeatures) {
-      return storedFeatures
-    }
-  } catch {
-    // Store not available
-  }
-
-  return []
-}
-
-/**
- * Get family actions (UI buttons/operations available at family level)
- * @param familyKey
- * @param familyData
- */
-export function getFamilyActions(
-  familyKey: string,
-  familyData?: OptionFamily
-): Array<{ key: string; label: string; icon?: string }> {
-  if (familyData?.actions) {
-    return familyData.actions
-  }
-
-  try {
-    const appSettingsStore = useAppSettingsStore()
-    const storedActions = appSettingsStore?.settings?.optionFamilyTab?.[familyKey]?.actions
-    if (storedActions) {
-      return storedActions
-    }
-  } catch {
-    // Store not available
-  }
-
-  return []
-}
 
 /**
  * Get families with their option types
@@ -347,10 +215,6 @@ export function getFamiliesWithOptionTypes(
   label: string;
   description: string;
   icon: string;
-  ui: Record<string, unknown>;
-  rules: Record<string, unknown>;
-  features: string[];
-  actions: Array<{ key: string; label: string; icon?: string }>;
   optionTypes: InquiryOptionType[];
 }> {
 
@@ -374,41 +238,16 @@ export function getFamiliesWithOptionTypes(
   // Group by family
   const groupedByFamily = groupOptionTypesByFamily(allowedOptionTypes)
 
-  // Get app settings store (try-catch in case called outside setup)
-  let appSettingsStore: unknown = null
-  try {
-    appSettingsStore = useAppSettingsStore()
-  } catch {
-    // Store not available
-  }
-
-  // Get fallback data as backup
-  const fallbackData = getFamilyFallbackData()
-
   // Convert to array format
   return Object.entries(groupedByFamily).map(([familyKey, familyOptionTypes]) => {
-    
-    // PRIORITY 1: Get from appSettings.optionFamilyTab if available
-    let familyConfig = null
-    if (appSettingsStore?.settings?.optionFamilyTab) {
-      // Find the family config by family_type
-      familyConfig = appSettingsStore.settings.optionFamilyTab.find(
-        (item: unknown) => item.family_type === familyKey
-      )
-    }
-    
-    // PRIORITY 2: Get from fallback data
+    // Get family data
+    const fallbackData = getFamilyFallbackData()
     const fallback = fallbackData[familyKey] || fallbackData.default || {}
 
-    // Try to get icon from first option type in this family (lowest priority)
+    // Try to get icon from first option type in this family
     const firstOptionType = familyOptionTypes[0]
-    
-    // Determine icon in priority order:
-    // 1. From app settings config
-    // 2. From fallback data
-    // 3. From first option type
-    // 4. Default 'File'
-    const iconName = familyConfig?.icon || fallback.icon || firstOptionType?.icon || 'File'
+    // Check both possible property names for icon
+    const iconName = firstOptionType?.icon || fallback.icon || 'File'
 
     // Format label if not provided
     const formattedLabel = familyKey
@@ -416,36 +255,16 @@ export function getFamiliesWithOptionTypes(
       .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
       .join(' ')
 
-    // Build family data with priority: appSettings > fallback > defaults
-    const familyData: OptionFamily = {
-      key: familyKey,
-      name: familyConfig?.label || fallback.name || formattedLabel,
-      label: familyConfig?.label || fallback.label || formattedLabel,
-      description: familyConfig?.description || fallback.description || '',
-      icon: iconName,
-      // Use app settings data if available, otherwise fallback
-      ui: familyConfig?.ui || fallback.ui,
-      rules: familyConfig?.rules || fallback.rules,
-      features: familyConfig?.features || fallback.features,
-      actions: familyConfig?.actions || fallback.actions
-    }
-
     return {
       key: familyKey,
-      name: familyData.name,
-      label: familyData.label,
-      description: familyData.description,
+      name: fallback.name || formattedLabel,
+      label: fallback.label || formattedLabel,
+      description: fallback.description || '',
       icon: iconName,
-      // Use the dedicated getter functions (they already check appSettings)
-      ui: getFamilyUIConfig(familyKey, familyData),
-      rules: getFamilyRules(familyKey, familyData),
-      features: getFamilyFeatures(familyKey, familyData),
-      actions: getFamilyActions(familyKey, familyData),
       optionTypes: familyOptionTypes
     }
   })
 }
-
 
 
 /**
@@ -457,174 +276,37 @@ export function getFamilyFallbackData(): Record<string, OptionFamily> {
       name: 'Debate',
       label: 'Debate',
       description: 'Debate positions, arguments, and alternatives',
-      icon: 'Discussion',
-      ui: {
-        layout: 'paired',
-        show_metrics: true,
-        thread_visualization: 'tree'
-      },
-      rules: {
-        require_initial_position: true,
-        max_thread_depth: 10
-      },
-      features: ['argument_rating', 'thread_collapsing', 'consensus_indicators'],
-      actions: [
-        { key: 'export_thread', label: 'Export Debate Thread', icon: 'Download' },
-        { key: 'generate_summary', label: 'Generate Summary', icon: 'Summarize' },
-        { key: 'visualize_network', label: 'View Argument Network', icon: 'Graph' }
-      ]
+      icon: 'Discussion'
     },
     'structure': {
       name: 'Structure',
       label: 'Structure',
       description: 'Structured documents with chapters and articles',
-      icon: 'Settings',
-      ui: {
-        layout: 'tree',
-        show_toc: true,
-        collapsible_sections: true,
-        breadcrumb_navigation: true
-      },
-      rules: {
-        max_depth: 5,
-        require_numeric_notation: true,
-        allow_cross_references: true
-      },
-      features: ['version_control', 'change_tracking', 'commentary'],
-      actions: [
-        { key: 'import_document', label: 'Import Document', icon: 'Upload' },
-        { key: 'export_pdf', label: 'Export as PDF', icon: 'FilePdf' },
-        { key: 'export_markdown', label: 'Export as Markdown', icon: 'Markdown' },
-        { key: 'print_view', label: 'Print View', icon: 'Printer' },
-        { key: 'compare_versions', label: 'Compare Versions', icon: 'Diff' }
-      ]
+      icon: 'Settings'
     },
     'consensus': {
       name: 'Consensus',
       label: 'Consensus',
       description: 'Consultation questions and consensus building',
-      icon: 'ThumbUp',
-      ui: {
-        layout: 'consensus_flow',
-        show_consensus_meter: true,
-        highlight_objections: true,
-        visualize_progress: true
-      },
-      rules: {
-        consensus_threshold: 0.8,
-        require_objection_response: true
-      },
-      features: ['consensus_tracking', 'objection_management', 'poll_integration'],
-      actions: [
-        { key: 'export_consensus_report', label: 'Export Consensus Report', icon: 'Report' },
-        { key: 'generate_minutes', label: 'Generate Minutes', icon: 'Minutes' },
-        { key: 'visualize_consensus', label: 'View Consensus Map', icon: 'Map' },
-        { key: 'schedule_facilitation', label: 'Schedule Facilitation', icon: 'Calendar' }
-      ]
+      icon: 'ThumbUp'
     },
     'decision': {
       name: 'Decision',
       label: 'Decision',
       description: 'Official decisions and results',
-      icon: 'Checkmark',
-      ui: {
-        layout: 'cards',
-        show_metadata: true,
-        highlight_authority: true,
-        timeline_view: true
-      },
-      rules: {
-        require_official_endorsement: true,
-        min_approval_count: 1
-      },
-      features: ['legal_binding', 'appeal_mechanism', 'implementation_tracking'],
-      actions: [
-        { key: 'generate_legal_document', label: 'Generate Legal Document', icon: 'Gavel' },
-        { key: 'export_decision', label: 'Export Decision', icon: 'FileExport' },
-        { key: 'notify_stakeholders', label: 'Notify Stakeholders', icon: 'Bell' },
-        { key: 'track_implementation', label: 'Track Implementation', icon: 'ProgressCheck' }
-      ]
+      icon: 'Checkmark'
     },
     'proposal': {
       name: 'Proposal',
       label: 'Proposal',
       description: 'Initial proposals and suggestions',
-      icon: 'Lightbulb',
-      ui: {
-        layout: 'cards',
-        show_support_meter: true,
-        highlight_impact: true,
-        proposal_template: 'standard'
-      },
-      rules: {
-        requires_impact_assessment: true,
-        min_support_threshold: 5
-      },
-      features: ['budget_estimation', 'impact_analysis', 'community_feedback'],
-      actions: [
-        { key: 'duplicate_proposal', label: 'Duplicate Proposal', icon: 'ContentCopy' },
-        { key: 'merge_proposals', label: 'Merge with Similar', icon: 'CallMerge' },
-        { key: 'export_proposal', label: 'Export Proposal', icon: 'FileExport' },
-        { key: 'request_review', label: 'Request Expert Review', icon: 'AccountReview' }
-      ]
-    },
-    'workflow': {
-      name: 'Workflow',
-      label: 'Workflow',
-      description: 'Project and decision workflow management',
-      icon: 'BarChart2',
-      ui: {
-        layout: 'kanban',
-        show_swimlanes: true,
-        wip_limits: true,
-        cycle_time_visualization: true
-      },
-      rules: {
-        require_status_transitions: true,
-        enforce_wip_limits: true
-      },
-      features: ['automated_transitions', 'blocker_detection', 'sla_tracking'],
-      actions: [
-        { key: 'export_board', label: 'Export Board', icon: 'FileExport' },
-        { key: 'generate_flow_report', label: 'Flow Report', icon: 'ChartLine' },
-        { key: 'configure_workflow', label: 'Configure Workflow', icon: 'Cog' },
-        { key: 'bulk_transition', label: 'Bulk Transition', icon: 'ArrowRightBold' }
-      ]
-    },
-    'process': {
-      name: 'Process',
-      label: 'Process',
-      description: 'Timeline and procedural events',
-      icon: 'Timeline',
-      ui: {
-        layout: 'timeline',
-        show_gantt: true,
-        milestone_highlight: true,
-        dependency_lines: true
-      },
-      rules: {
-        chronological_order: true,
-        require_dates: true
-      },
-      features: ['gantt_chart', 'critical_path', 'resource_allocation'],
-      actions: [
-        { key: 'export_gantt', label: 'Export Gantt', icon: 'FileExport' },
-        { key: 'print_timeline', label: 'Print Timeline', icon: 'Printer' },
-        { key: 'adjust_schedule', label: 'Adjust Schedule', icon: 'CalendarClock' },
-        { key: 'identify_bottlenecks', label: 'Identify Bottlenecks', icon: 'AlertCircle' }
-      ]
+      icon: 'Lightbulb'
     },
     'default': {
       name: 'Options',
       label: 'Options',
       description: 'Various option types',
-      icon: 'File',
-      ui: {
-        layout: 'cards'
-      },
-      rules: {},
-      features: [],
-      actions: []
+      icon: 'File'
     }
   }
 }
@@ -696,7 +378,7 @@ export function getOptionTypeLabel(
 export function getOptionTypeIconComponent(
   optionType: string | null | undefined,
   optionTypes: InquiryOptionType[]
-): Component  {
+): InquiryOptionType {
   if (!optionType) return InquiryOptionIcons.File
 
   const found = findOptionType(optionType, optionTypes)
@@ -827,7 +509,7 @@ export function getAvailableResponseTypes(
 export function getOptionTypeFields(
   optionType: string | null | undefined,
   optionTypes: InquiryOptionType[]
-): unknown[] {
+): InquiryOptionType[] {
   if (!optionType) return []
 
   const found = findOptionType(optionType, optionTypes)
@@ -906,19 +588,15 @@ export function usesTitle(
   return found?.use_title !== false
 }
 
-/**
- * Get layout for family
- * @param familyKey
- */
 export const getLayoutForFamily = (familyKey: string): string => {
   const layoutMap: Record<string, string> = {
-    debate: 'paired',
     structure: 'tree',
+    debate: 'paired',
     consensus: 'consensus_flow',
     decision: 'cards',
     proposal: 'cards',
-    workflow: 'kanban',
-    process: 'timeline'
+    process: 'kanban',
+    workflow: 'timeline'
   }
 
   return layoutMap[familyKey] || 'cards'

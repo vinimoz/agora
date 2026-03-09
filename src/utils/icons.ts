@@ -47,6 +47,36 @@ import Wrench from '@iconify-icons/mdi/wrench'
 import ThumbDownOutline from '@iconify-icons/mdi/thumb-down-outline'
 
 
+// Options
+import FilePdfBox from '@iconify-icons/mdi/file-pdf-box'  // For 'FilePdf' ✓
+import LanguageMarkdown from '@iconify-icons/mdi/language-markdown'  // For 'Markdown' ✓
+import Printer from '@iconify-icons/mdi/printer'  // For 'Printer' ✓
+import FileCompare from '@iconify-icons/mdi/file-compare'  // For 'Diff' ✓
+import FileExport from '@iconify-icons/mdi/file-export'  // For 'FileExport' ✓
+import ContentDuplicate from '@iconify-icons/mdi/content-duplicate'  // For 'ContentCopy' ✓
+import CallMerge from '@iconify-icons/mdi/call-merge'  // For 'CallMerge' ✓
+import ChartLine from '@iconify-icons/mdi/chart-line'  // For 'ChartLine' ✓
+import ArrowRightBold from '@iconify-icons/mdi/arrow-right-bold'  // For 'ArrowRightBold' ✓
+import CalendarClock from '@iconify-icons/mdi/calendar-clock'  // For 'CalendarClock' ✓
+import Clock from '@iconify-icons/mdi/clock'  // For 'Clock' ✓
+import CheckboxMarkedCircleOutline from '@iconify-icons/mdi/checkbox-marked-circle-outline'  // For 'Task' ✓
+import Alert from '@iconify-icons/mdi/alert'  // For 'Warning' ✓
+import History from '@iconify-icons/mdi/history'  // For 'History' ✓
+import ClockAlertOutline from '@iconify-icons/mdi/clock-alert-outline'  // For 'ClockAlert' ✓
+import TextBox from '@iconify-icons/mdi/text-box'  // For 'TextBox' ✓
+import ProgressClock from '@iconify-icons/mdi/progress-clock'  // For 'ProgressCheck' ✓
+import AccountTie from '@iconify-icons/mdi/account-tie'  // For 'AccountReview' ✓
+import TextBoxMultiple from '@iconify-icons/mdi/text-box-multiple'  // For 'Summarize' ✓
+import ChartArc from '@iconify-icons/mdi/chart-arc'  // For 'Graph' ✓
+import FileReport from '@iconify-icons/mdi/file-report'  // For 'Report' ✓
+import NoteMultiple from '@iconify-icons/mdi/note-multiple'  // For 'Minutes' ✓
+
+// For 'ViewKanban' - use one of these alternatives:
+import ViewDashboard from '@iconify-icons/mdi/view-dashboard'  // Alternative for Kanban ✓
+// import ViewDashboardOutline from '@iconify-icons/mdi/view-dashboard-outline'  // Alternative ✓
+// import ViewGrid from '@iconify-icons/mdi/view-grid'  // Alternative ✓
+// import ViewGridPlus from '@iconify-icons/mdi/view-grid-plus'  // Alternative ✓
+
 import Reply from '@iconify-icons/mdi/reply'          
 // import Grid from '@iconify-icons/mdi/grid'               
 // import List from '@iconify-icons/mdi/format-list-bulleted' 
@@ -509,10 +539,36 @@ export const InquiryOptionIcons = {
   Code: makeIconComponent(CodeTags, '#9C27B0'),
   CategoryOther: makeIconComponent(TagOutline, '#795548'),
 
+  Summarize: makeIconComponent(TextBoxMultiple, '#607D8B'),  // Using text-box-multiple
+  Graph: makeIconComponent(ChartArc, '#607D8B'),  // Using chart-arc for Graph
+  FilePdf: makeIconComponent(FilePdfBox, '#607D8B'),  // Using file-pdf-box
+  Markdown: makeIconComponent(LanguageMarkdown, '#607D8B'),
+  Printer: makeIconComponent(Printer, '#607D8B'),
+  Diff: makeIconComponent(FileCompare, '#607D8B'),  // Using file-compare for Diff
+  Report: makeIconComponent(FileReport, '#607D8B'),
+  Minutes: makeIconComponent(NoteMultiple, '#607D8B'),
+  FileExport: makeIconComponent(FileExport, '#607D8B'),
+  ProgressCheck: makeIconComponent(ProgressClock, '#607D8B'),  // Using progress-clock
+  ContentCopy: makeIconComponent(ContentDuplicate, '#607D8B'),  // Using content-duplicate
+  CallMerge: makeIconComponent(CallMerge, '#607D8B'),
+  AccountReview: makeIconComponent(AccountTie, '#607D8B'),  // Using account-tie
+  ViewKanban: makeIconComponent(ViewDashboard, '#607D8B'),  // Using view-dashboard as alternative
+  ChartLine: makeIconComponent(ChartLine, '#607D8B'),
+  ArrowRightBold: makeIconComponent(ArrowRightBold, '#607D8B'),
+  CalendarClock: makeIconComponent(CalendarClock, '#607D8B'),
+  Clock: makeIconComponent(Clock, '#607D8B'),
+  Task: makeIconComponent(CheckboxMarkedCircleOutline, '#607D8B'),  // Using checkbox-marked-circle-outline
+  Warning: makeIconComponent(Alert, '#607D8B'),  // Using Alert for Warning
+  History: makeIconComponent(History, '#607D8B'),
+  ClockAlert: makeIconComponent(ClockAlertOutline, '#607D8B'),  // Using clock-alert-outline
+  TextBox: makeIconComponent(TextBox, '#607D8B'),
+
+
   ThumbUp: makeIconComponent(ThumbUpOutline, '#4CAF50'),
   ThumbDown: makeIconComponent(ThumbDownOutline, '#F44336'),
   Checkmark: makeIconComponent(CheckCircleOutline, '#4CAF50'),
   File: makeIconComponent(NoteText, '#3F51B5'),
+  Flag: makeIconComponent(Flag, '#283593'),
 
   // Actions
   More: makeIconComponent(DotsVertical, '#9E9E9E'),
@@ -552,6 +608,7 @@ export const InquiryOptionIcons = {
   // Navigation
   ChevronDown: makeIconComponent(ChevronDown, '#9E9E9E'),
   ChevronRight: makeIconComponent(ChevronRight, '#9E9E9E'),
+  Calendar: makeIconComponent(Calendar, '#3949AB'),
 
    MessageReplyText: makeIconComponent(Reply, '#2196F3'),
   Grid: makeIconComponent(ViewListOutline, '#607D8B'), 
