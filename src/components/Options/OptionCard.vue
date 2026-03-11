@@ -34,7 +34,7 @@
       </div>
       
       <!-- Right side: Actions menu - only in normal mode -->
-      <div v-if="!inline" class="header-right" @click.stop>
+      <div v-if="!inline && canEditOrDelete && showAction" class="header-right" @click.stop>
         <NcActions
           v-if="canEditOrDelete"
           :force-menu="true"
@@ -224,7 +224,7 @@
       <div class="inline-spacer"></div>
 
       <!-- Actions menu for inline mode -->
-      <div v-if="canEditOrDelete" class="inline-actions" @click.stop>
+      <div v-if="canEditOrDelete && showAction" class="inline-actions" @click.stop>
         <NcActions
           :force-menu="true"
           :aria-label="t('agora', 'Option actions')"
@@ -303,6 +303,7 @@ const props = defineProps<{
   official?: boolean
   highlight?: boolean
   showPoll?: boolean
+  showAction?: boolean
   preventClick?: boolean
   textMaxLength?: number
 }>()
@@ -316,6 +317,8 @@ const emit = defineEmits<{
   comment: [option: Option]
   viewResponses: [option: Option, responseType: string]
 }>()
+
+console.log("PROPPPPPPPPPPPPPPPPPPPPP ",props.showAction)
 
 // Defaults
 const textMaxLength = props.textMaxLength || 200

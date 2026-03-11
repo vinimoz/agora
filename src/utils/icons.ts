@@ -613,6 +613,7 @@ export const InquiryOptionIcons = {
    MessageReplyText: makeIconComponent(Reply, '#2196F3'),
   Grid: makeIconComponent(ViewListOutline, '#607D8B'), 
   List: makeIconComponent(FormatListBulleted, '#607D8B'),
+  FormatListBulleted: makeIconComponent(FormatListBulleted, '#607D8B'),
   Collapse: makeIconComponent(ChevronUp, '#607D8B'), 
   Scale: makeIconComponent(Scale, '#607D8B'),
   Columns: makeIconComponent(ViewListOutline, '#607D8B'), 

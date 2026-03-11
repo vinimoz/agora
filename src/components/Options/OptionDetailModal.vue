@@ -44,24 +44,30 @@
                     </div>
 
                     <div class="header-right">
+                        <!-- Edit/Save/Cancel buttons -->
+                        <template v-if="!isEditing">
+                            <NcButton v-if="canEdit" @click="editOption">
+                                <template #icon>
+                                    <Pencil :size="20" />
+                                </template>
+                                {{ t('agora', 'Edit') }}
+                            </NcButton>
+                        </template>
+                        <template v-else>
+                            <NcButton @click="cancelEdit">
+                                {{ t('agora', 'Cancel') }}
+                            </NcButton>
+                            <NcButton type="primary" :disabled="!canSaveEdit" @click="saveEdit">
+                                {{ t('agora', 'Save') }}
+                            </NcButton>
+                        </template>
+
                         <!-- Main actions menu -->
                         <NcActions
                             v-if="canEditOrDelete || hasAllowedResponses"
                             :force-menu="true"
                             :aria-label="t('agora', 'Option actions')"
                         >
-                            <!-- Edit action -->
-                            <NcActionButton
-                                v-if="canEdit"
-                                :close-after-click="true"
-                                @click="editOption"
-                            >
-                                <template #icon>
-                                    <component :is="InquiryOptionIcons.Edit" :size="20" />
-                                </template>
-                                {{ t('agora', 'Edit') }}
-                            </NcActionButton>
-
                             <!-- Add Response toggle button -->
                             <NcActionButton
                                 v-if="hasAllowedResponses"
@@ -112,7 +118,7 @@
                         <div v-if="isEditing" class="editor-container">
                             <NcRichContenteditable
                                 v-if="useTitle"
-                                v-model="editForm.label"
+                                v-model="editForm.title"
                                 :emoji-autocomplete="true"
                                 :link-autocomplete="true"
                                 :autolink="true"
@@ -135,7 +141,7 @@
                                 full-width
                             />
 
-                            <!-- Additional fields -->
+                            <!-- Additional fields in edit mode -->
                             <div v-if="hasAdditionalFields" class="additional-fields">
                                 <h4>{{ t('agora', 'Additional Information') }}</h4>
                                 <div class="fields-grid">
@@ -145,34 +151,165 @@
                                         class="field-item"
                                     >
                                         <label :for="`field-${field.key}`">{{ getFieldLabel(field) }}</label>
+                                        
+                                        <!-- Text field -->
                                         <NcTextField
-                                            v-if="field.type === 'text' || field.type === 'number'"
+                                            v-if="field.type === 'text' || field.type === 'string'"
                                             :id="`field-${field.key}`"
-                                            v-model="editForm.fields[field.key]"
-                                            :type="field.type === 'number' ? 'number' : 'text'"
+                                            :model-value="miscFields.getValue(field.key) ?? ''"
+                                            type="text"
                                             :placeholder="field.placeholder || ''"
+                                            :label="getFieldLabel(field)"
                                             full-width
+                                            @update:model-value="(val) => miscFields.updateValue(field.key, val, field.type)"
                                         />
-                                        <NcCheckboxRadioSwitch
-                                            v-else-if="field.type === 'boolean'"
+
+                                        <!-- Number / Integer -->
+                                        <NcTextField
+                                            v-else-if="field.type === 'number' || field.type === 'integer'"
                                             :id="`field-${field.key}`"
-                                            type="switch"
-                                            :checked="editForm.fields[field.key] || false"
-                                            @update:checked="editForm.fields[field.key] = $event"
-                                        >
-                                            {{ field.label || field.key }}
-                                        </NcCheckboxRadioSwitch>
+                                            :model-value="miscFields.getValue(field.key) ?? ''"
+                                            type="number"
+                                            :placeholder="field.placeholder || ''"
+                                            :label="getFieldLabel(field)"
+                                            full-width
+                                            @update:model-value="(val) => miscFields.updateValue(field.key, val, field.type)"
+                                        />
+
+                                        <!-- Boolean (switch) -->
+                                        <div v-else-if="field.type === 'boolean'" class="checkbox-field">
+                                            <NcCheckboxRadioSwitch
+                                                :id="`field-${field.key}`"
+                                                type="switch"
+                                                :checked="miscFields.getCheckboxValue(field.key)"
+                                                @update:checked="(val) => miscFields.updateValue(field.key, val, field.type)"
+                                            >
+                                                {{ field.label || field.key }}
+                                            </NcCheckboxRadioSwitch>
+                                        </div>
+
+                                        <!-- Textarea -->
+                                        <NcTextArea
+                                            v-else-if="field.type === 'textarea'"
+                                            :id="`field-${field.key}`"
+                                            :model-value="miscFields.getValue(field.key) ?? ''"
+                                            :placeholder="field.placeholder || ''"
+                                            :rows="3"
+                                            full-width
+                                            @update:model-value="(val) => miscFields.updateValue(field.key, val, field.type)"
+                                        />
+
+                                        <!-- JSON -->
+                                        <NcTextArea
+                                            v-else-if="field.type === 'json'"
+                                            :id="`field-${field.key}`"
+                                            :model-value="miscFields.getValue(field.key) ?? ''"
+                                            :placeholder="field.placeholder || t('agora', 'Enter JSON data')"
+                                            :rows="3"
+                                            full-width
+                                            @update:model-value="(val) => {
+                                                try {
+                                                    const parsed = val ? JSON.parse(val) : null;
+                                                    miscFields.updateValue(field.key, parsed, field.type);
+                                                } catch {
+                                                    miscFields.updateValue(field.key, val, field.type);
+                                                }
+                                            }"
+                                        />
+
+                                        <!-- Enum / Select -->
+                                        <NcSelect
+                                            v-else-if="field.type === 'enum' || field.type === 'select'"
+                                            :id="`field-${field.key}`"
+                                            :model-value="miscFields.getValue(field.key) ?? ''"
+                                            :options="field.allowed_values || []"
+                                            :reduce="(option: any) => option"
+                                            :clearable="true"
+                                            :placeholder="t('Select an option')"
+                                            :label-outside="true"
+                                            :input-label="getFieldLabel(field)"
+                                            full-width
+                                            @update:model-value="(val) => miscFields.updateValue(field.key, val, field.type)"
+                                        />
+
+                                        <!-- Datetime -->
+                                        <NcDateTimePickerNative
+                                            v-else-if="field.type === 'datetime'"
+                                            :id="`field-${field.key}`"
+                                            :model-value="getFormattedDateSimple(field.key) ?? ''"
+                                            type="date"
+                                            :placeholder="field.placeholder || t('Select date')"
+                                            :label="getFieldLabel(field)"
+                                            :clearable="true"
+                                            full-width
+                                            @update:model-value="(val) => handleDateTimeUpdateSimple(field.key, val)"
+                                        />
+
+                                        <!-- Users -->
+                                        <UserSearch
+                                            v-else-if="field.type === 'users'"
+                                            :id="`field-${field.key}`"
+                                            :model-value="getUserObjectForField(field.key)"
+                                            :search-types="[99]"
+                                            :placeholder="t('Type to search for users')"
+                                            :aria-label="getFieldLabel(field)"
+                                            :close-on-select="true"
+                                            @user-selected="(user) => handleUserSelected(field.key, user)"
+                                        />
+
+                                        <!-- Groups -->
+                                        <UserSearch
+                                            v-else-if="field.type === 'groups'"
+                                            :id="`field-${field.key}`"
+                                            :model-value="getGroupObjectForField(field.key)"
+                                            :search-types="[1]"
+                                            :placeholder="t('Type to search for groups')"
+                                            :aria-label="getFieldLabel(field)"
+                                            :close-on-select="true"
+                                            @user-selected="(group) => handleGroupSelected(field.key, group)"
+                                        />
+
+                                        <!-- Location -->
+                                        <NcSelect
+                                            v-else-if="field.type === 'location'"
+                                            :id="`field-${field.key}`"
+                                            :model-value="getSelectedLocationOption(field.key)"
+                                            :options="locationOptions"
+                                            :clearable="true"
+                                            :label-outside="true"
+                                            :input-label="getFieldLabel(field)"
+                                            :placeholder="t('Select location')"
+                                            full-width
+                                            @update:model-value="(val) => handleHierarchicalUpdate(val, 'location', miscFields.updateValue, field.key)"
+                                        />
+
+                                        <!-- Category -->
+                                        <NcSelect
+                                            v-else-if="field.type === 'category'"
+                                            :id="`field-${field.key}`"
+                                            :model-value="getSelectedCategoryOption(field.key)"
+                                            :options="categoryOptions"
+                                            :clearable="true"
+                                            :label-outside="true"
+                                            :input-label="getFieldLabel(field)"
+                                            :placeholder="t('Select category')"
+                                            full-width
+                                            @update:model-value="(val) => handleHierarchicalUpdate(val, 'category', miscFields.updateValue, field.key)"
+                                        />
+
+                                        <!-- Default fallback -->
+                                        <NcTextField
+                                            v-else
+                                            :id="`field-${field.key}`"
+                                            :model-value="miscFields.getValue(field.key)"
+                                            type="text"
+                                            :placeholder="field.placeholder || ''"
+                                            :label="getFieldLabel(field)"
+                                            full-width
+                                            @update:model-value="(val) => miscFields.updateValue(field.key, val, 'string')"
+                                        />
                                     </div>
                                 </div>
-                            </div>
-
-                            <div class="edit-actions">
-                                <NcButton type="tertiary" @click="cancelEdit">
-                                    {{ t('agora', 'Cancel') }}
-                                </NcButton>
-                                <NcButton type="primary" :disabled="!canSaveEdit" @click="saveEdit">
-                                    {{ t('agora', 'Save') }}
-                                </NcButton>
                             </div>
                         </div>
 
@@ -181,7 +318,7 @@
                                 <div class="text-text">{{ optionStore.text }}</div>
                             </div>
 
-                            <!-- Additional fields display -->
+                            <!-- Additional fields display in view mode -->
                             <div v-if="hasAdditionalFieldsData" class="additional-fields-display">
                                 <h4>{{ t('agora', 'Additional Information') }}</h4>
                                 <div class="fields-grid">
@@ -191,12 +328,12 @@
                                         class="field-item-display"
                                     >
                                         <strong>{{ getFieldLabel(field) }}:</strong>
-                                        <span>{{ formatFieldValue(field, optionStore.miscFields?.[field.key]) }}</span>
+                                        <span>{{ miscFields.formatForDisplay(field.key) }}</span>
                                     </div>
                                 </div>
                             </div>
                             
-                            <!-- Feature buttons moved under description -->
+                            <!-- Feature buttons -->
                             <div class="feature-buttons-container">
                                 <!-- Left side: Support and comment features -->
                                 <div class="features-left">
@@ -251,12 +388,11 @@
                         </div>
                     </div>
 
-                    <!-- Child options display with hover icons -->
+                    <!-- Child options display -->
                     <div v-if="hasChildOptions" class="children-section">
                         <div class="section-header">
                             <h3>{{ t('agora', 'Child Options') }}</h3>
                         </div>
-                        <!-- Children list using OptionCard -->
                         <div class="children-list">
                             <div v-if="filteredChildOptions.length === 0" class="empty-children">
                                 <component :is="InquiryOptionIcons.MessageText" :size="48" />
@@ -336,7 +472,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, watch, onUnmounted } from 'vue'
 import { t } from '@nextcloud/l10n'
 import NcModal from '@nextcloud/vue/components/NcModal'
 import NcButton from '@nextcloud/vue/components/NcButton'
@@ -348,7 +484,12 @@ import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwit
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcRichContenteditable from '@nextcloud/vue/components/NcRichContenteditable'
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
+import NcSelect from '@nextcloud/vue/components/NcSelect'
+import NcDateTimePickerNative from '@nextcloud/vue/components/NcDateTimePickerNative'
+import NcTextArea from '@nextcloud/vue/components/NcTextArea'
+import UserSearch from '../User/UserSearch.vue'
 import { DateTime } from 'luxon'
+import Pencil from 'vue-material-design-icons/Pencil.vue'
 
 import { useCommentsStore } from '../../stores/comments'
 import { useOptionsStore } from '../../stores/options'
@@ -371,13 +512,23 @@ import {
     usesTitle
 } from '../../helpers/modules/InquiryOptionHelper'
 
+// Import MiscFields helper
+import { 
+    useMiscFields, 
+    getFieldLabel as getMiscFieldLabel,
+    formatValueForStorage,
+    getHierarchicalOptions,
+    handleHierarchicalUpdate,
+    type MiscField 
+} from '../../helpers/modules/MiscFieldsHelper'
+
 // Import components
 import Comments from '../Comments/Comments.vue'
 import CommentAdd from '../Comments/CommentAdd.vue'
 import AddOptionModal from './AddOptionModal.vue'
 
 // Types
-import type { Option } from '../../Types/index.ts'
+import type { Option, User } from '../../Types/index.ts'
 import {
     createOptionContext,
     canEditOption,
@@ -410,9 +561,8 @@ const error = ref<string | null>(null)
 const showCommentForm = ref(false)
 const isEditing = ref(false)
 const editForm = ref({
-    label: '',
-    text: '',
-    fields: {} as Record<string, { key: string, value: string }>
+    title: '',
+    text: ''
 })
 const showChildModal = ref(false)
 const selectedChildId = ref<number | null>(null)
@@ -423,6 +573,9 @@ const commentsSection = ref<HTMLElement | null>(null)
 const activeFilter = ref<string | null>(null)
 const commentUpdateTrigger = ref(0)
 
+// State for user/group selections
+const selectedUsers = ref<Record<string, User | null>>({})
+const selectedGroups = ref<Record<string, User | null>>({})
 
 // Toggle submenu
 const toggleSubMenu = (menu: string | null = null) => {
@@ -432,6 +585,47 @@ const toggleSubMenu = (menu: string | null = null) => {
 // Get all option types from session store
 const allOptionTypes = computed(() => sessionStore.appSettings?.inquiryOptionTypeTab || [])
 
+// Get additional fields as MiscField type
+const additionalFields = computed<MiscField[]>(() => 
+    getOptionTypeFields(optionStore.type, allOptionTypes.value) as MiscField[]
+)
+
+// Initialize misc fields handler
+const miscFields = useMiscFields(
+    additionalFields,
+    optionStore,
+    computed(() => optionStore.miscFields || {}),
+    {
+        locationItems: computed(() => sessionStore.appSettings.locationTab || []),
+        categoryItems: computed(() => sessionStore.appSettings.categoryTab || [])
+    }
+)
+
+// Computed for location/category options
+const locationOptions = computed(() => getHierarchicalOptions(
+        sessionStore.appSettings.locationTab || [], 
+        t('Select location')
+    ))
+
+const categoryOptions = computed(() => getHierarchicalOptions(
+        sessionStore.appSettings.categoryTab || [], 
+        t('Select category')
+    ))
+
+// Get selected option for location/category
+const getSelectedLocationOption = (fieldKey: string) => {
+    const value = miscFields.getValue(fieldKey)
+    if (!value) return null
+    return locationOptions.value.find(opt => String(opt.value) === String(value)) || null
+}
+
+const getSelectedCategoryOption = (fieldKey: string) => {
+    const value = miscFields.getValue(fieldKey)
+    if (!value) return null
+    return categoryOptions.value.find(opt => String(opt.value) === String(value)) || null
+}
+
+// Computed properties from helpers
 const optionTypeLabel = computed(() =>
     getOptionTypeLabel(optionStore.type, allOptionTypes.value, t('agora', 'Option'))
 )
@@ -469,10 +663,6 @@ const availableResponseTypes = computed(() =>
     getAvailableResponseTypes(optionStore.type, allOptionTypes.value)
 )
 
-const additionalFields = computed(() =>
-    getOptionTypeFields(optionStore.type, allOptionTypes.value)
-)
-
 // Create context once as computed
 const optionContext = computed(() => {
     if (!optionStore) return null
@@ -490,7 +680,6 @@ const canEditOrDelete = computed(() => canEdit.value || canDelete.value)
 
 const canSaveEdit = computed(() => editForm.value.text.trim().length > 0)
 
-
 // Get actual child options
 const childOptions = computed(() => {
     if (!optionStore?.id) return []
@@ -499,13 +688,9 @@ const childOptions = computed(() => {
 
 const hasChildOptions = computed(() => childOptions.value.length > 0)
 
-
 const hasAdditionalFields = computed(() => additionalFields.value.length > 0)
 
-const hasAdditionalFieldsData = computed(() => {
-    if (!optionStore.miscFields) return false
-    return Object.keys(optionStore.miscFields).length > 0
-})
+const hasAdditionalFieldsData = computed(() => Object.keys(miscFields.values.value).length > 0)
 
 // Filtered child options
 const filteredChildOptions = computed(() => {
@@ -517,28 +702,7 @@ const filteredChildOptions = computed(() => {
 const formatDate = (timestamp: number) =>
     DateTime.fromMillis(timestamp * 1000).toLocaleString(DateTime.DATE_SHORT)
 
-const getFieldLabel = (field: { key: string, value: string }) => {
-    if (field.label) return field.label
-    return field.key
-        .replace(/_/g, ' ')
-        .replace(/\b\w/g, l => l.toUpperCase())
-}
-
-const formatFieldValue = (field: string, value: string) => {
-    if (value === null || value === undefined || value === '') {
-        return t('agora', 'Not specified')
-    }
-
-    if (field.type === 'boolean') {
-        return value ? t('agora', 'Yes') : t('agora', 'No')
-    }
-
-    if (field.type === 'json' && Array.isArray(value)) {
-        return value.join(', ')
-    }
-
-    return value.toString()
-}
+const getFieldLabel = (field: MiscField) => getMiscFieldLabel(field)
 
 const getOptionTypeDescription = (type: string) => getOptionTypeDescriptionHelper(type, allOptionTypes.value)
 
@@ -549,16 +713,17 @@ const getOptionTypeLabel = (type: string) => getOptionTypeLabelHelper(type, allO
 const loadOption = async () => {
     if (!props.optionId) return
     isLoading.value = true
-
     error.value = null
+    
     try {
         await optionStore.load(props.optionId)
         if (optionStore) {
             editForm.value = {
-                label: optionStore.title || '',
-                text: optionStore.text || '',
-                fields: { ...optionStore.miscFields }
+                title: optionStore.title || '',
+                text: optionStore.text || ''
             }
+            // Reinitialize misc fields with loaded data
+            miscFields.reinitialize()
         } else {
             error.value = t('agora', 'Error loading option store')
         }
@@ -572,6 +737,7 @@ const loadOption = async () => {
 
 const closeModal = () => {
     show.value = false
+    miscFields.clearTimeouts()
     setTimeout(() => {
         emit('close')
     }, 300)
@@ -585,10 +751,10 @@ const cancelEdit = () => {
     isEditing.value = false
     if (optionStore) {
         editForm.value = {
-            label: optionStore.title || '',
-            text: optionStore.text || '',
-            fields: { ...optionStore.miscFields }
+            title: optionStore.title || '',
+            text: optionStore.text || ''
         }
+        miscFields.reinitialize()
     }
 }
 
@@ -596,11 +762,20 @@ const saveEdit = async () => {
     if (!optionStore || !canSaveEdit.value) return
 
     try {
+        // Format misc fields for saving
+        const miscFieldsForStorage: Record<string, string> = {}
+        additionalFields.value.forEach(field => {
+            const value = miscFields.values.value[field.key]
+            if (value !== undefined && value !== null && value !== '') {
+                miscFieldsForStorage[field.key] = formatValueForStorage(value, field.type)
+            }
+        })
+
         const updatedOption = await optionStore.update({
             id: props.optionId,
-            title: editForm.value.label,
+            title: editForm.value.title,
             text: editForm.value.text,
-            miscFields: editForm.value.fields
+            miscFields: miscFieldsForStorage
         })
 
         isEditing.value = false
@@ -670,7 +845,6 @@ const closeChildModal = () => {
     selectedChildId.value = null
 }
 
-
 const handleChildUpdated = (updatedChild: Option) => {
     const index = optionsStore.options.findIndex(opt => opt.id === updatedChild.id)
     if (index >= 0) {
@@ -686,81 +860,149 @@ const handleChildDeleted = (deletedChildId: number) => {
     loadOption() // Refresh current option to update child counts
 }
 
+// UserSearch methods
+const getUserObjectForField = (fieldKey: string): User | null => {
+    const value = miscFields.getValue(fieldKey)
+    if (!value) return null
+    
+    if (selectedUsers.value[fieldKey]?.id === value) {
+        return selectedUsers.value[fieldKey]
+    }
+    
+    return {
+        id: String(value),
+        displayName: String(value),
+        userRole: 'member'
+    } as User
+}
+
+const handleUserSelected = (fieldKey: string, user: User | null) => {
+    const valueToStore = user?.id || ''
+    selectedUsers.value[fieldKey] = user
+    miscFields.updateValue(fieldKey, valueToStore, 'users')
+}
+
+const getGroupObjectForField = (fieldKey: string): User | null => {
+    const value = miscFields.getValue(fieldKey)
+    if (!value) return null
+    
+    if (selectedGroups.value[fieldKey]?.id === value) {
+        return selectedGroups.value[fieldKey]
+    }
+    
+    return {
+        id: String(value),
+        displayName: String(value),
+        userRole: 'group'
+    } as User
+}
+
+const handleGroupSelected = (fieldKey: string, group: User | null) => {
+    const valueToStore = group?.id || ''
+    selectedGroups.value[fieldKey] = group
+    miscFields.updateValue(fieldKey, valueToStore, 'groups')
+}
+
+// DateTime methods
+const getFormattedDateSimple = (key: string): Date | null => {
+    const value = miscFields.getValue(key)
+    if (!value || typeof value !== 'string') return null
+
+    try {
+        const year = parseInt(value.substring(0,4))
+        const month = parseInt(value.substring(5,7)) - 1
+        const day = parseInt(value.substring(8,10))
+        const hours = parseInt(value.substring(11,13)) || 0
+        const minutes = parseInt(value.substring(14,16)) || 0
+        
+        return new Date(year, month, day, hours, minutes)
+    } catch {
+        return null
+    }
+}
+
+const handleDateTimeUpdateSimple = (fieldKey: string, value: Date | null) => {
+    let storageValue = ''
+    if (value instanceof Date && !isNaN(value.getTime())) {
+        const year = value.getFullYear()
+        const month = String(value.getMonth() + 1).padStart(2, '0')
+        const day = String(value.getDate()).padStart(2, '0')
+        const hours = String(value.getHours()).padStart(2, '0')
+        const minutes = String(value.getMinutes()).padStart(2, '0')
+        
+        storageValue = `${year}-${month}-${day} ${hours}:${minutes}`
+    }
+    
+    miscFields.updateValue(fieldKey, storageValue, 'datetime')
+}
+
 // Lifecycle
 onMounted(() => {
     loadOption()
 })
+
+onUnmounted(() => {
+    miscFields.clearTimeouts()
+})
+
 watch(() => props.optionId, (newId) => {
-  if (newId) {
-    loadOption()
-    // Reset trigger when option changes
-    commentUpdateTrigger.value = 0
-  }
+    if (newId) {
+        loadOption()
+        commentUpdateTrigger.value = 0
+    }
 }, { immediate: true })
 
 watch(() => commentsStore.comments, (newComments) => {
-  
-  if (optionStore.id) {
-    // Update the option's comment count
-    const count = newComments.filter(
-      comment => comment.inquiryId === props.inquiryId && 
-                 comment.optionId === optionStore.id && 
-                 comment.deleted === 0
-    ).length
-    
-    optionsStore.updateOptionCommentCount(optionStore.id, count)
-    
-    if (optionStore.status) {
-      optionStore.status.countComments = count
+    if (optionStore.id) {
+        const count = newComments.filter(
+            comment => comment.inquiryId === props.inquiryId && 
+                      comment.optionId === optionStore.id && 
+                      comment.deleted === 0
+        ).length
+        
+        optionsStore.updateOptionCommentCount(optionStore.id, count)
+        
+        if (optionStore.status) {
+            optionStore.status.countComments = count
+        }
+        
+        commentUpdateTrigger.value = commentUpdateTrigger.value + 1
     }
-    
-    // Force re-render of comments section
-    commentUpdateTrigger.value=commentUpdateTrigger.value + 1
-  }
 }, { deep: true })
 
-// Update handleCommentAdded - simpler and cleaner
 const handleCommentAdded = () => {
+    commentUpdateTrigger.value = commentUpdateTrigger.value + 1
 
-  // Force re-render by incrementing trigger
-  commentUpdateTrigger.value=commentUpdateTrigger.value + 1
-
-  if (optionStore.id) {
-    const count = commentsStore.comments.filter(
-      comment => comment.inquiryId === props.inquiryId &&
-                 comment.optionId === optionStore.id &&
-                 comment.deleted === 0
-    ).length
+    if (optionStore.id) {
+        const count = commentsStore.comments.filter(
+            comment => comment.inquiryId === props.inquiryId &&
+                      comment.optionId === optionStore.id &&
+                      comment.deleted === 0
+        ).length
  
-    // Update optionsStore
-    optionsStore.updateOptionCommentCount(optionStore.id, count)
+        optionsStore.updateOptionCommentCount(optionStore.id, count)
 
-    // Update optionStore
-    if (optionStore.status) {
-      optionStore.status.countComments = count
+        if (optionStore.status) {
+            optionStore.status.countComments = count
+        }
     }
-  }
 
-  showCommentForm.value = false
+    showCommentForm.value = false
 
-  if (commentsSection.value) {
-    commentsSection.value.scrollIntoView({ behavior: 'smooth' })
-  }
+    if (commentsSection.value) {
+        commentsSection.value.scrollIntoView({ behavior: 'smooth' })
+    }
 }
 
-// Update handleCommentCountUpdated
 const handleCommentCountUpdated = (newCount: number) => {
-
-  if (optionStore) {
-    optionStore.status.countComments = newCount
-  commentUpdateTrigger.value=commentUpdateTrigger.value + 1
-
-
-    emit('updated', { ...optionStore })
-  }
+    if (optionStore) {
+        optionStore.status.countComments = newCount
+        commentUpdateTrigger.value = commentUpdateTrigger.value + 1
+        emit('updated', { ...optionStore })
+    }
 }
-
 </script>
+
 <style scoped lang="scss">
 .option-actions-menu {
     position: relative;

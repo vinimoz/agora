@@ -3382,6 +3382,15 @@ to {
   color: var(--color-error);
   margin-left: 2px;
 }
+.add-option-modal .modal-content .form-grid .form-column .form-fields .form-field label .field-type-badge[data-v-465c45d4] {
+  margin-left: 8px;
+  font-size: 10px;
+  font-weight: normal;
+  color: var(--color-text-lighter);
+  background: var(--color-background-darker);
+  padding: 2px 4px;
+  border-radius: 4px;
+}
 .add-option-modal .modal-content .form-grid .form-column .form-fields .form-field .checkbox-field[data-v-465c45d4] {
   display: flex;
   align-items: center;
@@ -3393,6 +3402,23 @@ to {
   cursor: pointer;
 }
 .add-option-modal .modal-content .form-grid .form-column .form-fields .form-field .field-hint[data-v-465c45d4] {
+  font-size: 12px;
+  color: var(--color-text-lighter);
+  margin-top: 4px;
+  font-style: italic;
+}
+.add-option-modal .modal-content .form-grid .form-column .form-fields .form-field .field-debug[data-v-465c45d4] {
+  font-size: 11px;
+  color: #f57c00;
+  background: #fff3e0;
+  padding: 4px;
+  margin-top: 4px;
+  border-radius: 4px;
+  border-left: 3px solid #f57c00;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+.add-option-modal .modal-content .form-grid .form-column .form-fields .form-field .field-description[data-v-465c45d4] {
   font-size: 12px;
   color: var(--color-text-lighter);
   margin-top: 4px;
@@ -6552,7 +6578,7 @@ to {
   font-weight: 600;
 }
 .title-section .counters-section .counter-item .counter-content .counter-label[data-v-9e316df6] {
-  font-size: 7px;
+  font-size: 11px;
 }
 @media (max-width: 768px) {
 .title-section .title-header[data-v-9e316df6] {
@@ -14068,11 +14094,11 @@ tr.file-picker__row td.row-name[data-v-1f96131b] {
 const appName = "agora";
 const appVersion = "1.7.0-rc1";
 import { a3 as getCurrentInstance, Y as inject, b3 as onUnmounted, bi as onDeactivated, bj as onActivated, w as watch, F as unref, bk as shallowReactive, b4 as shallowRef, d as defineComponent, X as reactive, b as computed, $ as h$1, bl as provide, aX as ref, a2 as watchEffect, aW as nextTick$1, A as defineStore, q as translate, aN as emit, bm as Settings, a as _export_sfc, o as openBlock, c as createElementBlock, t as toDisplayString, E as normalizeClass, bn as getCanonicalLocale, bf as NcActionButton, _ as _export_sfc$1, f as createBlock, g as withCtx, k as createCommentVNode, h as resolveDynamicComponent, j as createBaseVNode, bo as NC_ACTIONS_IS_SEMANTIC_MENU, bp as ActionGlobalMixin, G as NcIconSvgWrapper, ai as resolveComponent, a5 as withDirectives, bq as vModelRadio, i as createVNode, br as mdiRadioboxMarked, bs as mdiRadioboxBlank, u as useModel, S as createElementId, bt as useSlots, P as logger, s as onMounted, aV as onBeforeUnmount, r as renderSlot, ag as useCssVars, bu as useIsDarkTheme, bv as mdiCreation, ac as createSlots, B as createTextVNode, a7 as NcButton, bw as useCssModule, bx as NC_FORM_BOX_CONTEXT_KEY, bg as NcActions, m as mergeProps, aO as withKeys, a6 as vShow, v as normalizeProps, x as guardReactiveProps, by as userStatus, N as NcAvatar, n as normalizeStyle, p as mergeModels, e as warn, T as Fragment$1, U as renderList, ak as NcLoadingIcon, bz as Teleport, ax as withModifiers, aP as NcEmptyContent, V as DateTime, bA as translatePlural, bB as TransitionGroup, D as generateUrl, aM as NcModal, bC as markRaw, bD as customRef, bE as global, bF as getAugmentedNamespace, bG as process$1, bc as commonjsGlobal, bH as Buffer, a$ as getDefaultExportFromCjs, bI as vModelSelect, bd as getCurrentUser, ay as Transition, C as purify, be as toRaw, bJ as subscribe, bK as unsubscribe, aR as generateOcsUrl, aS as cancelableClient, bL as axios, y as createApp, z as pinia } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_ef057a6f_lang-7C7LTiDb.chunk.mjs";
-import { h as getFamilyIconName, i as getFamilyColor, a as useSessionStore, p as publicInquiry, o as options, L as Logger, j as useInquiryStore, s as showError, E as Event$1, l as useCommentsStore, d as useAppSettingsStore, m as getFamilyIconComponent, n as getFamiliesWithOptionTypes, q as getFamilyFallbackData, r as createInquiryContext, t as canTransfer, v as canDelete, w as canArchive, I as InquiryGeneralIcons, g as getInquiryTypeData, b as useInquiriesStore, x as useInquiryGroupsStore, y as NavigationIcons, z as showSuccess, A as getAvailableInquiryTypesForCreation, B as getInquiryTypeOptions, C as useInquiryGroupStore, D as getAllowedResponseGroupTypes, F as getAvailableInquiryGroupTypesForCreation, G as getInquiryGroupTypeData, H as accessFamilyMenu, J as getInquiryTypesForFamily, K as getInquiryItemData, M as canCreateInquiryGroupInGeneral, O as getInquiryTypesByFamily, P as supports, Q as canSupportOption, R as canSupport, S as StatusIcons, T as BadgeIcons, U as canComment, V as sortTitlesMapping, W as lodashExports, X as appSettings, Y as canRestore, Z as getInquiryGroupTypesByFamily, _ as getInquiryGroupTypesForFamily, $ as canViewToggle, a0 as getAvailableResponseTypesWithPermissions, a1 as getAvailableTransformTypesWithPermissions, a2 as validators, a3 as inquiries, a4 as commonjsRequire, a5 as useAttachmentsStore, a6 as getOptionTypeIconComponent, a7 as getOptionTypeLabel, a8 as InquiryOptionIcons, a9 as createOptionContext, aa as canEditOption, ab as canDeleteOption, ac as getOptionTypeColor, ad as usesTitle, ae as allowsComments, af as hasSupportFeature, ag as getAllowedResponses, ah as useOptionStore, ai as findOptionType, aj as getOptionTypeDescription, ak as getSupportFeatureLabel, al as getOptionTypeFields, am as createDefault, an as getAvailableResponseTypes, ao as canCommentOption, ap as getOptionTypeFamily, aq as getLayoutForFamily, ar as useSharesStore, as as canEdit, at as createInquiryGroupContext, au as inquiryLinks, av as ShareIcons, aw as getEditPermissions, ax as getAvailableFields, ay as getAvailableGroupFields, az as canShare, aA as canUseResource } from "./NcDashboardWidget-DCBQdRFz-DBjjkpUK.chunk.mjs";
-import { u as usePreferencesStore, S as StyleSettings, F as FeatureSettings } from "./StyleSettings-uAKZeqSd.chunk.mjs";
-import { b as NcAppNavigationItem, u as useAppSettingsDialog, A as APP_SETTINGS_LEGACY_DESIGN_KEY, _ as _sfc_main$1V, c as NcAppNavigationList, d as NcAppNavigation, S as Spinner, Q as QRCode, I as InputDiv, e as NcAppContent, f as NcActionButtonGroup, g as NcDialog, h as find$1, r as registerCustomProtocol, t as tokenize, i as reset, j as NcRichContenteditable, O as Options, k as NcActionInput, P as PlusIcon, l as NcDateTimePickerNative, m as NcAppSidebar, a as NcAppSettingsDialog, n as NcContent } from "./index-DgmzlsBY.chunk.mjs";
-import { c as _sfc_main$1W, I as INSIDE_RADIO_GROUP_KEY, a as NcSelect, N as NcCheckboxRadioSwitch, _ as _sfc_main$1X, b as NcInputField } from "./NcRichText-DJlaHs_Q-BarOYPXN.chunk.mjs";
-import { R as RadioGroupDiv, a as NcTextArea, N as NcNoteCard, C as CardDiv } from "./markdown-DfnEdSd5.chunk.mjs";
+import { h as getFamilyIconName, i as getFamilyColor, a as useSessionStore, p as publicInquiry, o as options, L as Logger, j as useInquiryStore, s as showError, E as Event$1, l as useCommentsStore, d as useAppSettingsStore, m as getFamilyIconComponent, n as getFamiliesWithOptionTypes, q as getFamilyFallbackData, r as createInquiryContext, t as canTransfer, v as canDelete, w as canArchive, I as InquiryGeneralIcons, g as getInquiryTypeData, b as useInquiriesStore, x as useInquiryGroupsStore, y as NavigationIcons, z as showSuccess, A as getAvailableInquiryTypesForCreation, B as getInquiryTypeOptions, C as useInquiryGroupStore, D as getAllowedResponseGroupTypes, F as getAvailableInquiryGroupTypesForCreation, G as getInquiryGroupTypeData, H as accessFamilyMenu, J as getInquiryTypesForFamily, K as getInquiryItemData, M as canCreateInquiryGroupInGeneral, O as getInquiryTypesByFamily, P as supports, Q as canSupportOption, R as canSupport, S as StatusIcons, T as BadgeIcons, U as canComment, V as sortTitlesMapping, W as lodashExports, X as appSettings, Y as canRestore, Z as getInquiryGroupTypesByFamily, _ as getInquiryGroupTypesForFamily, $ as canViewToggle, a0 as getAvailableResponseTypesWithPermissions, a1 as getAvailableTransformTypesWithPermissions, a2 as validators, a3 as inquiries, a4 as commonjsRequire, a5 as useAttachmentsStore, a6 as getOptionTypeIconComponent, a7 as getOptionTypeLabel, a8 as InquiryOptionIcons, a9 as createOptionContext, aa as canEditOption, ab as canDeleteOption, ac as getOptionTypeColor, ad as usesTitle, ae as allowsComments, af as hasSupportFeature, ag as getAllowedResponses, ah as useOptionStore, ai as findOptionType, aj as getOptionTypeFields, ak as getOptionTypeDescription, al as getSupportFeatureLabel, am as createDefault, an as getAvailableResponseTypes, ao as canCommentOption, ap as getOptionTypeFamily, aq as getLayoutForFamily, ar as useSharesStore, as as canEdit, at as createInquiryGroupContext, au as inquiryLinks, av as ShareIcons, aw as getEditPermissions, ax as getAvailableFields, ay as getAvailableGroupFields, az as canShare, aA as canUseResource } from "./NcDashboardWidget-DCBQdRFz-B4Rx8fDu.chunk.mjs";
+import { u as usePreferencesStore, S as StyleSettings, F as FeatureSettings } from "./StyleSettings-D7tkDVY4.chunk.mjs";
+import { b as NcAppNavigationItem, u as useAppSettingsDialog, A as APP_SETTINGS_LEGACY_DESIGN_KEY, _ as _sfc_main$1W, c as NcAppNavigationList, d as NcAppNavigation, S as Spinner, Q as QRCode, I as InputDiv, e as NcAppContent, f as NcActionButtonGroup, g as NcDialog, h as find$1, r as registerCustomProtocol, t as tokenize, i as reset, j as NcDateTimePickerNative, k as NcRichContenteditable, O as Options, l as NcActionInput, P as PlusIcon, m as NcAppSidebar, a as NcAppSettingsDialog, n as NcContent } from "./index-C5ZEZryB.chunk.mjs";
+import { c as _sfc_main$1X, I as INSIDE_RADIO_GROUP_KEY, a as NcSelect, N as NcCheckboxRadioSwitch, _ as _sfc_main$1Y, b as NcInputField } from "./NcRichText-DJlaHs_Q-BarOYPXN.chunk.mjs";
+import { R as RadioGroupDiv, a as NcTextArea, N as NcNoteCard, C as CardDiv } from "./markdown-FJcu3Lwb.chunk.mjs";
 import { A as AgoraAppIcon } from "./agora-icon-Bv0FNUVc.chunk.mjs";
 import { N as NcUserBubble } from "./NcUserBubble-vOAXLHB5-DvQBCAMs.chunk.mjs";
 function getDevtoolsGlobalHook() {
@@ -17078,8 +17104,8 @@ async function loadContext(to, cheapLoading = false, forceReload = false) {
     throw error;
   }
 }
-const _hoisted_1$1w = ["title"];
-const _sfc_main$1U = /* @__PURE__ */ defineComponent({
+const _hoisted_1$1x = ["title"];
+const _sfc_main$1V = /* @__PURE__ */ defineComponent({
   __name: "NcCounterBubble",
   props: {
     count: {},
@@ -17117,12 +17143,12 @@ const _sfc_main$1U = /* @__PURE__ */ defineComponent({
           "counter-bubble__counter--outlined": _ctx.type === "outlined"
         }]),
         title: originalCountAsTitleIfNeeded.value
-      }, toDisplayString(humanizedCount.value), 11, _hoisted_1$1w);
+      }, toDisplayString(humanizedCount.value), 11, _hoisted_1$1x);
     };
   }
 });
-const NcCounterBubble = /* @__PURE__ */ _export_sfc(_sfc_main$1U, [["__scopeId", "data-v-36ffc13f"]]);
-const _sfc_main$1T = /* @__PURE__ */ defineComponent({
+const NcCounterBubble = /* @__PURE__ */ _export_sfc(_sfc_main$1V, [["__scopeId", "data-v-36ffc13f"]]);
+const _sfc_main$1U = /* @__PURE__ */ defineComponent({
   __name: "InquiryNavigationItems",
   props: {
     inquiry: { type: null, required: true }
@@ -17156,15 +17182,15 @@ const _sfc_main$1T = /* @__PURE__ */ defineComponent({
     return __returned__;
   }
 });
-const _hoisted_1$1v = { class: "type-icon" };
-function _sfc_render$1K(_ctx, _cache, $props, $setup, $data, $options) {
+const _hoisted_1$1w = { class: "type-icon" };
+function _sfc_render$1L(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createBlock($setup["NcAppNavigationItem"], {
     name: $props.inquiry.title,
     to: $props.inquiry.permissions.view ? { name: "inquiry", params: { id: $props.inquiry.id } } : null,
     class: normalizeClass({ closed: $props.inquiry.status.isExpired, "inquiry-navigation-item": true })
   }, {
     icon: withCtx(() => [
-      createBaseVNode("div", _hoisted_1$1v, [
+      createBaseVNode("div", _hoisted_1$1w, [
         (openBlock(), createBlock(resolveDynamicComponent($setup.inquiryTypeData.icon)))
       ])
     ]),
@@ -17217,8 +17243,8 @@ function _sfc_render$1K(_ctx, _cache, $props, $setup, $data, $options) {
     /* STABLE */
   }, 8, ["name", "to", "class"]);
 }
-const InquiryNavigationItems = /* @__PURE__ */ _export_sfc$1(_sfc_main$1T, [["render", _sfc_render$1K], ["__scopeId", "data-v-65e9e2b8"], ["__file", "/var/www/nextcloud/apps/agora/src/components/Navigation/InquiryNavigationItems.vue"]]);
-const _sfc_main$1S = {
+const InquiryNavigationItems = /* @__PURE__ */ _export_sfc$1(_sfc_main$1U, [["render", _sfc_render$1L], ["__scopeId", "data-v-65e9e2b8"], ["__file", "/var/www/nextcloud/apps/agora/src/components/Navigation/InquiryNavigationItems.vue"]]);
+const _sfc_main$1T = {
   name: "NcActionCaption",
   inject: {
     isInSemanticMenu: {
@@ -17236,15 +17262,15 @@ const _sfc_main$1S = {
     }
   }
 };
-const _hoisted_1$1u = ["role"];
-function _sfc_render$1J(_ctx, _cache, $props, $setup, $data, $options) {
+const _hoisted_1$1v = ["role"];
+function _sfc_render$1K(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock("li", {
     class: "app-navigation-caption",
     role: $options.isInSemanticMenu && "presentation"
-  }, toDisplayString($props.name), 9, _hoisted_1$1u);
+  }, toDisplayString($props.name), 9, _hoisted_1$1v);
 }
-const NcActionCaption = /* @__PURE__ */ _export_sfc(_sfc_main$1S, [["render", _sfc_render$1J], ["__scopeId", "data-v-1009e96c"]]);
-const _sfc_main$1R = {
+const NcActionCaption = /* @__PURE__ */ _export_sfc(_sfc_main$1T, [["render", _sfc_render$1K], ["__scopeId", "data-v-1009e96c"]]);
+const _sfc_main$1S = {
   name: "NcActionRadio",
   components: {
     NcIconSvgWrapper
@@ -17313,12 +17339,12 @@ const _sfc_main$1R = {
     }
   }
 };
-const _hoisted_1$1t = ["role"];
-const _hoisted_2$17 = ["role", "aria-checked"];
-const _hoisted_3$14 = { class: "action-radio__icon" };
-const _hoisted_4$10 = ["id", "value", "name", "disabled"];
+const _hoisted_1$1u = ["role"];
+const _hoisted_2$18 = ["role", "aria-checked"];
+const _hoisted_3$15 = { class: "action-radio__icon" };
+const _hoisted_4$11 = ["id", "value", "name", "disabled"];
 const _hoisted_5$I = { class: "action-radio__text" };
-function _sfc_render$1I(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$1J(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_NcIconSvgWrapper = resolveComponent("NcIconSvgWrapper");
   return openBlock(), createElementBlock("li", {
     class: normalizeClass(["action", { "action--disabled": $props.disabled }]),
@@ -17329,7 +17355,7 @@ function _sfc_render$1I(_ctx, _cache, $props, $setup, $data, $options) {
       role: $options.isInSemanticMenu && "menuitemradio",
       "aria-checked": $options.isInSemanticMenu && $options.checked.toString()
     }, [
-      createBaseVNode("span", _hoisted_3$14, [
+      createBaseVNode("span", _hoisted_3$15, [
         withDirectives(createBaseVNode("input", {
           id: $props.id,
           "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => $setup.model = $event),
@@ -17339,7 +17365,7 @@ function _sfc_render$1I(_ctx, _cache, $props, $setup, $data, $options) {
           name: $props.name,
           disabled: $props.disabled,
           onChange: _cache[1] || (_cache[1] = ($event) => _ctx.$emit("change", $event))
-        }, null, 42, _hoisted_4$10), [
+        }, null, 42, _hoisted_4$11), [
           [vModelRadio, $setup.model]
         ]),
         createVNode(_component_NcIconSvgWrapper, {
@@ -17348,36 +17374,36 @@ function _sfc_render$1I(_ctx, _cache, $props, $setup, $data, $options) {
         }, null, 8, ["path"])
       ]),
       createBaseVNode("span", _hoisted_5$I, toDisplayString(_ctx.text), 1)
-    ], 8, _hoisted_2$17)
-  ], 10, _hoisted_1$1t);
+    ], 8, _hoisted_2$18)
+  ], 10, _hoisted_1$1u);
 }
-const NcActionRadio = /* @__PURE__ */ _export_sfc(_sfc_main$1R, [["render", _sfc_render$1I], ["__scopeId", "data-v-6c208ddd"]]);
-const _sfc_main$1Q = {
+const NcActionRadio = /* @__PURE__ */ _export_sfc(_sfc_main$1S, [["render", _sfc_render$1J], ["__scopeId", "data-v-6c208ddd"]]);
+const _sfc_main$1R = {
   name: "NcActionSeparator"
 };
-const _hoisted_1$1s = {
+const _hoisted_1$1t = {
   class: "action action-separator action--disabled",
   role: "separator"
 };
-function _sfc_render$1H(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("li", _hoisted_1$1s);
+function _sfc_render$1I(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("li", _hoisted_1$1t);
 }
-const NcActionSeparator = /* @__PURE__ */ _export_sfc(_sfc_main$1Q, [["render", _sfc_render$1H], ["__scopeId", "data-v-3e2324b7"]]);
-const _hoisted_1$1r = { class: "app-navigation-spacer" };
-const _sfc_main$1P = /* @__PURE__ */ defineComponent({
+const NcActionSeparator = /* @__PURE__ */ _export_sfc(_sfc_main$1R, [["render", _sfc_render$1I], ["__scopeId", "data-v-3e2324b7"]]);
+const _hoisted_1$1s = { class: "app-navigation-spacer" };
+const _sfc_main$1Q = /* @__PURE__ */ defineComponent({
   __name: "NcAppNavigationSpacer",
   setup(__props) {
     return (_ctx, _cache) => {
-      return openBlock(), createElementBlock("li", _hoisted_1$1r);
+      return openBlock(), createElementBlock("li", _hoisted_1$1s);
     };
   }
 });
-const NcAppNavigationSpacer = /* @__PURE__ */ _export_sfc(_sfc_main$1P, [["__scopeId", "data-v-277fa710"]]);
-const _hoisted_1$1q = ["id", "aria-labelledby"];
-const _hoisted_2$16 = ["id"];
-const _hoisted_3$13 = { class: "app-settings-section__description" };
-const _hoisted_4$$ = { class: "app-settings-section__content" };
-const _sfc_main$1O = /* @__PURE__ */ defineComponent({
+const NcAppNavigationSpacer = /* @__PURE__ */ _export_sfc(_sfc_main$1Q, [["__scopeId", "data-v-277fa710"]]);
+const _hoisted_1$1r = ["id", "aria-labelledby"];
+const _hoisted_2$17 = ["id"];
+const _hoisted_3$14 = { class: "app-settings-section__description" };
+const _hoisted_4$10 = { class: "app-settings-section__content" };
+const _sfc_main$1P = /* @__PURE__ */ defineComponent({
   __name: "NcAppSettingsSection",
   props: {
     name: {},
@@ -17415,17 +17441,17 @@ const _sfc_main$1O = /* @__PURE__ */ defineComponent({
         createBaseVNode("h3", {
           id: `${htmlId.value}--label`,
           class: "app-settings-section__name"
-        }, toDisplayString(_ctx.name), 9, _hoisted_2$16),
-        createBaseVNode("div", _hoisted_3$13, toDisplayString(_ctx.description), 1),
-        createBaseVNode("div", _hoisted_4$$, [
+        }, toDisplayString(_ctx.name), 9, _hoisted_2$17),
+        createBaseVNode("div", _hoisted_3$14, toDisplayString(_ctx.description), 1),
+        createBaseVNode("div", _hoisted_4$10, [
           renderSlot(_ctx.$slots, "default", {}, void 0, true)
         ])
-      ], 10, _hoisted_1$1q);
+      ], 10, _hoisted_1$1r);
     };
   }
 });
-const NcAppSettingsSection = /* @__PURE__ */ _export_sfc(_sfc_main$1O, [["__scopeId", "data-v-4095bb7f"]]);
-const _sfc_main$1N = {
+const NcAppSettingsSection = /* @__PURE__ */ _export_sfc(_sfc_main$1P, [["__scopeId", "data-v-4095bb7f"]]);
+const _sfc_main$1O = {
   name: "NcAppSidebarTab",
   inject: ["registerTab", "unregisterTab", "getActiveTab", "isTablistShown"],
   props: {
@@ -17496,9 +17522,9 @@ const _sfc_main$1N = {
     }
   }
 };
-const _hoisted_1$1p = ["id", "aria-hidden", "aria-label", "aria-labelledby", "role", "tabindex"];
-const _hoisted_2$15 = { class: "hidden-visually" };
-function _sfc_render$1G(_ctx, _cache, $props, $setup, $data, $options) {
+const _hoisted_1$1q = ["id", "aria-hidden", "aria-label", "aria-labelledby", "role", "tabindex"];
+const _hoisted_2$16 = { class: "hidden-visually" };
+function _sfc_render$1H(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock("section", {
     id: `tab-${$props.id}`,
     "aria-hidden": !$options.isActive,
@@ -17509,15 +17535,15 @@ function _sfc_render$1G(_ctx, _cache, $props, $setup, $data, $options) {
     tabindex: $options.isTablistShown() ? 0 : -1,
     onScroll: _cache[0] || (_cache[0] = (...args) => $options.onScroll && $options.onScroll(...args))
   }, [
-    createBaseVNode("h3", _hoisted_2$15, toDisplayString($props.name), 1),
+    createBaseVNode("h3", _hoisted_2$16, toDisplayString($props.name), 1),
     renderSlot(_ctx.$slots, "default", {}, void 0, true)
-  ], 42, _hoisted_1$1p);
+  ], 42, _hoisted_1$1q);
 }
-const NcAppSidebarTab = /* @__PURE__ */ _export_sfc(_sfc_main$1N, [["render", _sfc_render$1G], ["__scopeId", "data-v-dba10798"]]);
-const _hoisted_1$1o = ["id"];
-const _hoisted_2$14 = ["id"];
-const _hoisted_3$12 = ["d", "fill"];
-const _sfc_main$1M = /* @__PURE__ */ defineComponent({
+const NcAppSidebarTab = /* @__PURE__ */ _export_sfc(_sfc_main$1O, [["render", _sfc_render$1H], ["__scopeId", "data-v-dba10798"]]);
+const _hoisted_1$1p = ["id"];
+const _hoisted_2$15 = ["id"];
+const _hoisted_3$13 = ["d", "fill"];
+const _sfc_main$1N = /* @__PURE__ */ defineComponent({
   __name: "NcAssistantIcon",
   props: {
     inline: { type: Boolean },
@@ -17560,7 +17586,7 @@ const _sfc_main$1M = /* @__PURE__ */ defineComponent({
                 offset: "82%",
                 "stop-color": "#A180E0"
               }, null, -1)
-            ])], 8, _hoisted_1$1o)) : (openBlock(), createElementBlock("linearGradient", {
+            ])], 8, _hoisted_1$1p)) : (openBlock(), createElementBlock("linearGradient", {
               key: 1,
               id: unref(gradientId),
               gradientTransform: "rotateX(285)"
@@ -17577,12 +17603,12 @@ const _sfc_main$1M = /* @__PURE__ */ defineComponent({
                 offset: "80%",
                 "stop-color": "#492083"
               }, null, -1)
-            ])], 8, _hoisted_2$14))
+            ])], 8, _hoisted_2$15))
           ]),
           createBaseVNode("path", {
             d: unref(mdiCreation),
             fill: `url('#${unref(gradientId)}')`
-          }, null, 8, _hoisted_3$12)
+          }, null, 8, _hoisted_3$13)
         ], 2))
       ], 2);
     };
@@ -17600,8 +17626,8 @@ const style0$5 = {
 const cssModules$5 = {
   "$style": style0$5
 };
-const NcAssistantIcon = /* @__PURE__ */ _export_sfc(_sfc_main$1M, [["__cssModules", cssModules$5]]);
-const _sfc_main$1L = /* @__PURE__ */ defineComponent({
+const NcAssistantIcon = /* @__PURE__ */ _export_sfc(_sfc_main$1N, [["__cssModules", cssModules$5]]);
+const _sfc_main$1M = /* @__PURE__ */ defineComponent({
   __name: "NcAssistantButton",
   props: {
     disabled: { type: Boolean },
@@ -17668,8 +17694,8 @@ const style0$4 = {
 const cssModules$4 = {
   "$style": style0$4
 };
-const NcAssistantButton = /* @__PURE__ */ _export_sfc(_sfc_main$1L, [["__cssModules", cssModules$4]]);
-const _sfc_main$1K = /* @__PURE__ */ defineComponent({
+const NcAssistantButton = /* @__PURE__ */ _export_sfc(_sfc_main$1M, [["__cssModules", cssModules$4]]);
+const _sfc_main$1L = /* @__PURE__ */ defineComponent({
   __name: "NcAssistantContent",
   props: {
     contentClasses: { default: "" }
@@ -17698,8 +17724,8 @@ const style0$3 = {
 const cssModules$3 = {
   "$style": style0$3
 };
-const NcAssistantContent = /* @__PURE__ */ _export_sfc(_sfc_main$1K, [["__cssModules", cssModules$3]]);
-const _sfc_main$1J = /* @__PURE__ */ defineComponent({
+const NcAssistantContent = /* @__PURE__ */ _export_sfc(_sfc_main$1L, [["__cssModules", cssModules$3]]);
+const _sfc_main$1K = /* @__PURE__ */ defineComponent({
   __name: "NcFormBox",
   props: {
     row: { type: Boolean }
@@ -17735,9 +17761,9 @@ const style0$2 = {
 const cssModules$2 = {
   "$style": style0$2
 };
-const NcFormBox = /* @__PURE__ */ _export_sfc(_sfc_main$1J, [["__cssModules", cssModules$2]]);
-const _hoisted_1$1n = ["aria-describedby"];
-const _sfc_main$1I = /* @__PURE__ */ defineComponent({
+const NcFormBox = /* @__PURE__ */ _export_sfc(_sfc_main$1K, [["__cssModules", cssModules$2]]);
+const _hoisted_1$1o = ["aria-describedby"];
+const _sfc_main$1J = /* @__PURE__ */ defineComponent({
   __name: "NcFormGroup",
   props: {
     label: { default: () => void 0 },
@@ -17779,7 +17805,7 @@ const _sfc_main$1I = /* @__PURE__ */ defineComponent({
         }, [
           renderSlot(_ctx.$slots, "default")
         ], 2)
-      ], 10, _hoisted_1$1n);
+      ], 10, _hoisted_1$1o);
     };
   }
 });
@@ -17801,13 +17827,13 @@ const style0$1 = {
 const cssModules$1 = {
   "$style": style0$1
 };
-const NcFormGroup = /* @__PURE__ */ _export_sfc(_sfc_main$1I, [["__cssModules", cssModules$1]]);
-const _sfc_main$1H = {
+const NcFormGroup = /* @__PURE__ */ _export_sfc(_sfc_main$1J, [["__cssModules", cssModules$1]]);
+const _sfc_main$1I = {
   name: "NcListItem",
   components: {
     NcActions,
     NcCounterBubble,
-    NcVNodes: _sfc_main$1V
+    NcVNodes: _sfc_main$1W
   },
   inheritAttrs: false,
   props: {
@@ -18038,10 +18064,10 @@ const _sfc_main$1H = {
     }
   }
 };
-const _hoisted_1$1m = ["id", "aria-label", "href", "target", "rel", "onClick"];
-const _hoisted_2$13 = { class: "list-item-content" };
-const _hoisted_3$11 = { class: "list-item-content__main" };
-const _hoisted_4$_ = { class: "list-item-content__name" };
+const _hoisted_1$1n = ["id", "aria-label", "href", "target", "rel", "onClick"];
+const _hoisted_2$14 = { class: "list-item-content" };
+const _hoisted_3$12 = { class: "list-item-content__main" };
+const _hoisted_4$$ = { class: "list-item-content__name" };
 const _hoisted_5$H = { class: "list-item-content__details" };
 const _hoisted_6$C = {
   key: 0,
@@ -18063,7 +18089,7 @@ const _hoisted_10$x = {
   key: 2,
   class: "list-item__extra"
 };
-function _sfc_render$1F(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$1G(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_NcCounterBubble = resolveComponent("NcCounterBubble");
   const _component_NcActions = resolveComponent("NcActions");
   return openBlock(), createBlock(resolveDynamicComponent($props.to ? "router-link" : "NcVNodes"), normalizeProps(guardReactiveProps({ ...$props.to && { custom: true, to: $props.to } })), {
@@ -18094,9 +18120,9 @@ function _sfc_render$1F(_ctx, _cache, $props, $setup, $data, $options) {
             onKeydown: _cache[3] || (_cache[3] = withKeys((...args) => $options.hideActions && $options.hideActions(...args), ["esc"]))
           }, [
             renderSlot(_ctx.$slots, "icon", {}, void 0, true),
-            createBaseVNode("div", _hoisted_2$13, [
-              createBaseVNode("div", _hoisted_3$11, [
-                createBaseVNode("div", _hoisted_4$_, [
+            createBaseVNode("div", _hoisted_2$14, [
+              createBaseVNode("div", _hoisted_3$12, [
+                createBaseVNode("div", _hoisted_4$$, [
                   renderSlot(_ctx.$slots, "name", {}, () => [
                     createTextVNode(toDisplayString($props.name), 1)
                   ], true)
@@ -18130,7 +18156,7 @@ function _sfc_render$1F(_ctx, _cache, $props, $setup, $data, $options) {
                 ]) : createCommentVNode("", true)
               ])
             ])
-          ], 40, _hoisted_1$1m),
+          ], 40, _hoisted_1$1n),
           _ctx.$slots["extra-actions"] ? (openBlock(), createElementBlock("div", _hoisted_9$y, [
             renderSlot(_ctx.$slots, "extra-actions", {}, void 0, true)
           ])) : createCommentVNode("", true),
@@ -18169,14 +18195,14 @@ function _sfc_render$1F(_ctx, _cache, $props, $setup, $data, $options) {
     _: 3
   }, 16);
 }
-const NcListItem = /* @__PURE__ */ _export_sfc(_sfc_main$1H, [["render", _sfc_render$1F], ["__scopeId", "data-v-bc710154"]]);
+const NcListItem = /* @__PURE__ */ _export_sfc(_sfc_main$1I, [["render", _sfc_render$1G], ["__scopeId", "data-v-bc710154"]]);
 const margin = 8;
 const defaultSize = 32;
-const _sfc_main$1G = {
+const _sfc_main$1H = {
   name: "NcListItemIcon",
   components: {
     NcAvatar,
-    NcHighlight: _sfc_main$1W,
+    NcHighlight: _sfc_main$1X,
     NcIconSvgWrapper
   },
   mixins: [
@@ -18312,11 +18338,11 @@ const _sfc_main$1G = {
     }
   }
 };
-const _hoisted_1$1l = ["id"];
-const _hoisted_2$12 = { class: "option__details" };
-const _hoisted_3$10 = { key: 1 };
-const _hoisted_4$Z = ["aria-label"];
-function _sfc_render$1E(_ctx, _cache, $props, $setup, $data, $options) {
+const _hoisted_1$1m = ["id"];
+const _hoisted_2$13 = { class: "option__details" };
+const _hoisted_3$11 = { key: 1 };
+const _hoisted_4$_ = ["aria-label"];
+function _sfc_render$1F(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_NcAvatar = resolveComponent("NcAvatar");
   const _component_NcHighlight = resolveComponent("NcHighlight");
   const _component_NcIconSvgWrapper = resolveComponent("NcIconSvgWrapper");
@@ -18333,7 +18359,7 @@ function _sfc_render$1E(_ctx, _cache, $props, $setup, $data, $options) {
       size: $props.avatarSize,
       class: "option__avatar"
     }), null, 16, ["displayName", "isNoUser", "size"]),
-    createBaseVNode("div", _hoisted_2$12, [
+    createBaseVNode("div", _hoisted_2$13, [
       createVNode(_component_NcHighlight, {
         class: "option__lineone",
         text: $props.name,
@@ -18344,7 +18370,7 @@ function _sfc_render$1E(_ctx, _cache, $props, $setup, $data, $options) {
         class: "option__linetwo",
         text: $props.subname,
         search: $options.searchParts[1]
-      }, null, 8, ["text", "search"])) : _ctx.hasStatus ? (openBlock(), createElementBlock("span", _hoisted_3$10, [
+      }, null, 8, ["text", "search"])) : _ctx.hasStatus ? (openBlock(), createElementBlock("span", _hoisted_3$11, [
         createBaseVNode("span", null, toDisplayString(_ctx.userStatus.icon), 1),
         createBaseVNode("span", null, toDisplayString(_ctx.userStatus.message), 1)
       ])) : createCommentVNode("", true)
@@ -18359,12 +18385,12 @@ function _sfc_render$1E(_ctx, _cache, $props, $setup, $data, $options) {
         key: 1,
         class: normalizeClass(["icon option__icon", $props.icon]),
         "aria-label": $props.iconName
-      }, null, 10, _hoisted_4$Z)) : createCommentVNode("", true)
+      }, null, 10, _hoisted_4$_)) : createCommentVNode("", true)
     ], true)
-  ], 14, _hoisted_1$1l);
+  ], 14, _hoisted_1$1m);
 }
-const NcListItemIcon = /* @__PURE__ */ _export_sfc(_sfc_main$1G, [["render", _sfc_render$1E], ["__scopeId", "data-v-0ee94269"]]);
-const _sfc_main$1F = /* @__PURE__ */ defineComponent({
+const NcListItemIcon = /* @__PURE__ */ _export_sfc(_sfc_main$1H, [["render", _sfc_render$1F], ["__scopeId", "data-v-0ee94269"]]);
+const _sfc_main$1G = /* @__PURE__ */ defineComponent({
   __name: "NcRadioGroup",
   props: /* @__PURE__ */ mergeModels({
     label: {},
@@ -18428,8 +18454,8 @@ const style0 = {
 const cssModules = {
   "$style": style0
 };
-const NcRadioGroup = /* @__PURE__ */ _export_sfc(_sfc_main$1F, [["__cssModules", cssModules]]);
-const _sfc_main$1E = /* @__PURE__ */ defineComponent({
+const NcRadioGroup = /* @__PURE__ */ _export_sfc(_sfc_main$1G, [["__cssModules", cssModules]]);
+const _sfc_main$1F = /* @__PURE__ */ defineComponent({
   __name: "NcSelectUsers",
   props: /* @__PURE__ */ mergeModels({
     ariaLabelClearSelected: {},
@@ -18495,9 +18521,9 @@ const _sfc_main$1E = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const NcSelectUsers = /* @__PURE__ */ _export_sfc(_sfc_main$1E, [["__scopeId", "data-v-e8e18fd3"]]);
+const NcSelectUsers = /* @__PURE__ */ _export_sfc(_sfc_main$1F, [["__scopeId", "data-v-e8e18fd3"]]);
 const iconSize = 20;
-const _sfc_main$1D = /* @__PURE__ */ defineComponent({
+const _sfc_main$1E = /* @__PURE__ */ defineComponent({
   __name: "Navigation",
   setup(__props, { expose: __expose }) {
     __expose();
@@ -18585,18 +18611,18 @@ const _sfc_main$1D = /* @__PURE__ */ defineComponent({
     return __returned__;
   }
 });
-const _hoisted_1$1k = { class: "navigation-caption" };
-const _hoisted_2$11 = {
+const _hoisted_1$1l = { class: "navigation-caption" };
+const _hoisted_2$12 = {
   key: 0,
   class: "navigation-sublist"
 };
-const _hoisted_3$$ = { class: "navigation-caption" };
-const _hoisted_4$Y = {
+const _hoisted_3$10 = { class: "navigation-caption" };
+const _hoisted_4$Z = {
   key: 0,
   class: "navigation-sublist"
 };
 const _hoisted_5$G = { class: "navigation-caption" };
-function _sfc_render$1D(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$1E(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createBlock($setup["NcAppNavigation"], {
     class: "agora-navigation",
     "aria-label": "Agora Navigation"
@@ -18607,7 +18633,7 @@ function _sfc_render$1D(_ctx, _cache, $props, $setup, $data, $options) {
         default: withCtx(() => [
           createBaseVNode(
             "h3",
-            _hoisted_1$1k,
+            _hoisted_1$1l,
             toDisplayString($setup.t("agora", "Categories")),
             1
             /* TEXT */
@@ -18638,7 +18664,7 @@ function _sfc_render$1D(_ctx, _cache, $props, $setup, $data, $options) {
                   }, null, 8, ["count"])
                 ]),
                 default: withCtx(() => [
-                  $setup.sessionStore.appSettings.navigationInquiriesInList ? (openBlock(), createElementBlock("ul", _hoisted_2$11, [
+                  $setup.sessionStore.appSettings.navigationInquiriesInList ? (openBlock(), createElementBlock("ul", _hoisted_2$12, [
                     createCommentVNode(' <InquiryNavigationItems\n              v-for="inquiry in inquiriesStore.groupList(inquiryGroup.inquiryIds)"\n              :key="inquiry.id"\n              :inquiry="inquiry"\n              @toggle-archive="toggleArchive(inquiry.id)"\n              @delete-inquiry="deleteInquiry(inquiry.id)"\n	      /> '),
                     $setup.inquiriesStore.groupList(inquiryGroup.inquiryIds).length === 0 ? (openBlock(), createBlock($setup["NcAppNavigationItem"], {
                       key: 0,
@@ -18679,7 +18705,7 @@ function _sfc_render$1D(_ctx, _cache, $props, $setup, $data, $options) {
         default: withCtx(() => [
           createBaseVNode(
             "h3",
-            _hoisted_3$$,
+            _hoisted_3$10,
             toDisplayString($setup.t("agora", "Filters")),
             1
             /* TEXT */
@@ -18711,7 +18737,7 @@ function _sfc_render$1D(_ctx, _cache, $props, $setup, $data, $options) {
                   }, null, 8, ["count"])
                 ]),
                 default: withCtx(() => [
-                  $setup.sessionStore.appSettings.navigationInquiriesInList ? (openBlock(), createElementBlock("ul", _hoisted_4$Y, [
+                  $setup.sessionStore.appSettings.navigationInquiriesInList ? (openBlock(), createElementBlock("ul", _hoisted_4$Z, [
                     (openBlock(true), createElementBlock(
                       Fragment$1,
                       null,
@@ -18793,8 +18819,8 @@ function _sfc_render$1D(_ctx, _cache, $props, $setup, $data, $options) {
     /* STABLE */
   });
 }
-const Navigation = /* @__PURE__ */ _export_sfc$1(_sfc_main$1D, [["render", _sfc_render$1D], ["__file", "/var/www/nextcloud/apps/agora/src/views/Navigation.vue"]]);
-const _sfc_main$1C = {
+const Navigation = /* @__PURE__ */ _export_sfc$1(_sfc_main$1E, [["render", _sfc_render$1E], ["__file", "/var/www/nextcloud/apps/agora/src/views/Navigation.vue"]]);
+const _sfc_main$1D = {
   name: "InformationVariantIcon",
   emits: ["click"],
   props: {
@@ -18811,11 +18837,11 @@ const _sfc_main$1C = {
     }
   }
 };
-const _hoisted_1$1j = ["aria-hidden", "aria-label"];
-const _hoisted_2$10 = ["fill", "width", "height"];
-const _hoisted_3$_ = { d: "M13.5,4A1.5,1.5 0 0,0 12,5.5A1.5,1.5 0 0,0 13.5,7A1.5,1.5 0 0,0 15,5.5A1.5,1.5 0 0,0 13.5,4M13.14,8.77C11.95,8.87 8.7,11.46 8.7,11.46C8.5,11.61 8.56,11.6 8.72,11.88C8.88,12.15 8.86,12.17 9.05,12.04C9.25,11.91 9.58,11.7 10.13,11.36C12.25,10 10.47,13.14 9.56,18.43C9.2,21.05 11.56,19.7 12.17,19.3C12.77,18.91 14.38,17.8 14.54,17.69C14.76,17.54 14.6,17.42 14.43,17.17C14.31,17 14.19,17.12 14.19,17.12C13.54,17.55 12.35,18.45 12.19,17.88C12,17.31 13.22,13.4 13.89,10.71C14,10.07 14.3,8.67 13.14,8.77Z" };
-const _hoisted_4$X = { key: 0 };
-function _sfc_render$1C(_ctx, _cache, $props, $setup, $data, $options) {
+const _hoisted_1$1k = ["aria-hidden", "aria-label"];
+const _hoisted_2$11 = ["fill", "width", "height"];
+const _hoisted_3$$ = { d: "M13.5,4A1.5,1.5 0 0,0 12,5.5A1.5,1.5 0 0,0 13.5,7A1.5,1.5 0 0,0 15,5.5A1.5,1.5 0 0,0 13.5,4M13.14,8.77C11.95,8.87 8.7,11.46 8.7,11.46C8.5,11.61 8.56,11.6 8.72,11.88C8.88,12.15 8.86,12.17 9.05,12.04C9.25,11.91 9.58,11.7 10.13,11.36C12.25,10 10.47,13.14 9.56,18.43C9.2,21.05 11.56,19.7 12.17,19.3C12.77,18.91 14.38,17.8 14.54,17.69C14.76,17.54 14.6,17.42 14.43,17.17C14.31,17 14.19,17.12 14.19,17.12C13.54,17.55 12.35,18.45 12.19,17.88C12,17.31 13.22,13.4 13.89,10.71C14,10.07 14.3,8.67 13.14,8.77Z" };
+const _hoisted_4$Y = { key: 0 };
+function _sfc_render$1D(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock("span", mergeProps(_ctx.$attrs, {
     "aria-hidden": $props.title ? null : "true",
     "aria-label": $props.title,
@@ -18830,20 +18856,20 @@ function _sfc_render$1C(_ctx, _cache, $props, $setup, $data, $options) {
       height: $props.size,
       viewBox: "0 0 24 24"
     }, [
-      createBaseVNode("path", _hoisted_3$_, [
+      createBaseVNode("path", _hoisted_3$$, [
         $props.title ? (openBlock(), createElementBlock(
           "title",
-          _hoisted_4$X,
+          _hoisted_4$Y,
           toDisplayString($props.title),
           1
           /* TEXT */
         )) : createCommentVNode("v-if", true)
       ])
-    ], 8, _hoisted_2$10))
-  ], 16, _hoisted_1$1j);
+    ], 8, _hoisted_2$11))
+  ], 16, _hoisted_1$1k);
 }
-const InformationIcon = /* @__PURE__ */ _export_sfc$1(_sfc_main$1C, [["render", _sfc_render$1C], ["__file", "/var/www/nextcloud/apps/agora/node_modules/vue-material-design-icons/InformationVariant.vue"]]);
-const _sfc_main$1B = /* @__PURE__ */ defineComponent({
+const InformationIcon = /* @__PURE__ */ _export_sfc$1(_sfc_main$1D, [["render", _sfc_render$1D], ["__file", "/var/www/nextcloud/apps/agora/node_modules/vue-material-design-icons/InformationVariant.vue"]]);
+const _sfc_main$1C = /* @__PURE__ */ defineComponent({
   __name: "ConfigBox",
   props: {
     name: { type: String, required: true },
@@ -18857,13 +18883,13 @@ const _sfc_main$1B = /* @__PURE__ */ defineComponent({
     return __returned__;
   }
 });
-const _hoisted_1$1i = { class: "config-box" };
-const _hoisted_2$$ = { class: "config-box__header" };
-const _hoisted_3$Z = ["title"];
-const _hoisted_4$W = { class: "config-box__container" };
-function _sfc_render$1B(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$1i, [
-    createBaseVNode("div", _hoisted_2$$, [
+const _hoisted_1$1j = { class: "config-box" };
+const _hoisted_2$10 = { class: "config-box__header" };
+const _hoisted_3$_ = ["title"];
+const _hoisted_4$X = { class: "config-box__container" };
+function _sfc_render$1C(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$1j, [
+    createBaseVNode("div", _hoisted_2$10, [
       renderSlot(_ctx.$slots, "icon"),
       createBaseVNode("div", {
         title: $props.info,
@@ -18875,16 +18901,16 @@ function _sfc_render$1B(_ctx, _cache, $props, $setup, $data, $options) {
           /* TEXT */
         ),
         $props.info ? (openBlock(), createBlock($setup["InformationIcon"], { key: 0 })) : createCommentVNode("v-if", true)
-      ], 10, _hoisted_3$Z),
+      ], 10, _hoisted_3$_),
       renderSlot(_ctx.$slots, "actions")
     ]),
-    createBaseVNode("div", _hoisted_4$W, [
+    createBaseVNode("div", _hoisted_4$X, [
       renderSlot(_ctx.$slots, "default")
     ])
   ]);
 }
-const ConfigBox = /* @__PURE__ */ _export_sfc$1(_sfc_main$1B, [["render", _sfc_render$1B], ["__file", "/var/www/nextcloud/apps/agora/src/components/Base/modules/ConfigBox.vue"]]);
-const _sfc_main$1A = /* @__PURE__ */ defineComponent({
+const ConfigBox = /* @__PURE__ */ _export_sfc$1(_sfc_main$1C, [["render", _sfc_render$1C], ["__file", "/var/www/nextcloud/apps/agora/src/components/Base/modules/ConfigBox.vue"]]);
+const _sfc_main$1B = /* @__PURE__ */ defineComponent({
   __name: "HeaderBar",
   setup(__props, { expose: __expose }) {
     __expose();
@@ -18897,16 +18923,16 @@ const _sfc_main$1A = /* @__PURE__ */ defineComponent({
     return __returned__;
   }
 });
-const _hoisted_1$1h = { class: "header_bar" };
-const _hoisted_2$_ = { class: "header_bar_top" };
-const _hoisted_3$Y = { class: "bar_top_left" };
-const _hoisted_4$V = { class: "bar_top_left_sub" };
+const _hoisted_1$1i = { class: "header_bar" };
+const _hoisted_2$$ = { class: "header_bar_top" };
+const _hoisted_3$Z = { class: "bar_top_left" };
+const _hoisted_4$W = { class: "bar_top_left_sub" };
 const _hoisted_5$F = { class: "bar_top_right" };
 const _hoisted_6$B = { class: "header_bar_bottom" };
-function _sfc_render$1A(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$1h, [
-    createBaseVNode("div", _hoisted_2$_, [
-      createBaseVNode("div", _hoisted_3$Y, [
+function _sfc_render$1B(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$1i, [
+    createBaseVNode("div", _hoisted_2$$, [
+      createBaseVNode("div", _hoisted_3$Z, [
         createBaseVNode(
           "div",
           {
@@ -18919,7 +18945,7 @@ function _sfc_render$1A(_ctx, _cache, $props, $setup, $data, $options) {
           2
           /* CLASS */
         ),
-        createBaseVNode("div", _hoisted_4$V, [
+        createBaseVNode("div", _hoisted_4$W, [
           renderSlot(_ctx.$slots, "sub")
         ])
       ]),
@@ -18932,8 +18958,8 @@ function _sfc_render$1A(_ctx, _cache, $props, $setup, $data, $options) {
     ])
   ]);
 }
-const HeaderBar = /* @__PURE__ */ _export_sfc$1(_sfc_main$1A, [["render", _sfc_render$1A], ["__file", "/var/www/nextcloud/apps/agora/src/components/Base/modules/HeaderBar.vue"]]);
-const _sfc_main$1z = /* @__PURE__ */ defineComponent({
+const HeaderBar = /* @__PURE__ */ _export_sfc$1(_sfc_main$1B, [["render", _sfc_render$1B], ["__file", "/var/www/nextcloud/apps/agora/src/components/Base/modules/HeaderBar.vue"]]);
+const _sfc_main$1A = /* @__PURE__ */ defineComponent({
   __name: "ThumbIcon",
   props: {
     title: { type: String, required: false },
@@ -18955,8 +18981,8 @@ const _sfc_main$1z = /* @__PURE__ */ defineComponent({
     return __returned__;
   }
 });
-const _hoisted_1$1g = ["aria-label", "title"];
-function _sfc_render$1z(_ctx, _cache, $props, $setup, $data, $options) {
+const _hoisted_1$1h = ["aria-label", "title"];
+function _sfc_render$1A(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock("span", {
     "aria-label": $setup.dynamicTitle,
     class: normalizeClass(["emoji-thumb-icon", {
@@ -18970,10 +18996,10 @@ function _sfc_render$1z(_ctx, _cache, $props, $setup, $data, $options) {
       fontSize: `${$props.size}px`,
       lineHeight: `${$props.size}px`
     })
-  }, toDisplayString($setup.emojiSymbol), 15, _hoisted_1$1g);
+  }, toDisplayString($setup.emojiSymbol), 15, _hoisted_1$1h);
 }
-const ThumbIcon = /* @__PURE__ */ _export_sfc$1(_sfc_main$1z, [["render", _sfc_render$1z], ["__scopeId", "data-v-24ed4f43"], ["__file", "/var/www/nextcloud/apps/agora/src/components/AppIcons/modules/ThumbIcon.vue"]]);
-const _sfc_main$1y = /* @__PURE__ */ defineComponent({
+const ThumbIcon = /* @__PURE__ */ _export_sfc$1(_sfc_main$1A, [["render", _sfc_render$1A], ["__scopeId", "data-v-24ed4f43"], ["__file", "/var/www/nextcloud/apps/agora/src/components/AppIcons/modules/ThumbIcon.vue"]]);
+const _sfc_main$1z = /* @__PURE__ */ defineComponent({
   __name: "TernarySupportIcon",
   props: {
     title: { type: String, required: false },
@@ -19006,8 +19032,8 @@ const _sfc_main$1y = /* @__PURE__ */ defineComponent({
     return __returned__;
   }
 });
-const _hoisted_1$1f = ["aria-label", "title"];
-function _sfc_render$1y(_ctx, _cache, $props, $setup, $data, $options) {
+const _hoisted_1$1g = ["aria-label", "title"];
+function _sfc_render$1z(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock("span", {
     "aria-label": $setup.dynamicTitle,
     class: normalizeClass(["emoji-support-icon", {
@@ -19023,10 +19049,10 @@ function _sfc_render$1y(_ctx, _cache, $props, $setup, $data, $options) {
       fontSize: `${$props.size}px`,
       lineHeight: `${$props.size}px`
     })
-  }, toDisplayString($setup.emojiSymbol), 15, _hoisted_1$1f);
+  }, toDisplayString($setup.emojiSymbol), 15, _hoisted_1$1g);
 }
-const TernarySupportIcon = /* @__PURE__ */ _export_sfc$1(_sfc_main$1y, [["render", _sfc_render$1y], ["__scopeId", "data-v-ef057a6f"], ["__file", "/var/www/nextcloud/apps/agora/src/components/AppIcons/modules/TernarySupportIcon.vue"]]);
-const _sfc_main$1x = /* @__PURE__ */ defineComponent({
+const TernarySupportIcon = /* @__PURE__ */ _export_sfc$1(_sfc_main$1z, [["render", _sfc_render$1z], ["__scopeId", "data-v-ef057a6f"], ["__file", "/var/www/nextcloud/apps/agora/src/components/AppIcons/modules/TernarySupportIcon.vue"]]);
+const _sfc_main$1y = /* @__PURE__ */ defineComponent({
   __name: "IntersectionObserver",
   props: /* @__PURE__ */ mergeModels({
     loading: { type: Boolean, required: false, default: false }
@@ -19067,11 +19093,11 @@ const _sfc_main$1x = /* @__PURE__ */ defineComponent({
     return __returned__;
   }
 });
-const _hoisted_1$1e = { ref: "observerTarget" };
-function _sfc_render$1x(_ctx, _cache, $props, $setup, $data, $options) {
+const _hoisted_1$1f = { ref: "observerTarget" };
+function _sfc_render$1y(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock(
     "div",
-    _hoisted_1$1e,
+    _hoisted_1$1f,
     [
       $props.loading ? (openBlock(), createBlock($setup["NcLoadingIcon"], {
         key: 0,
@@ -19085,8 +19111,8 @@ function _sfc_render$1x(_ctx, _cache, $props, $setup, $data, $options) {
     /* NEED_PATCH */
   );
 }
-const IntersectionObserver$1 = /* @__PURE__ */ _export_sfc$1(_sfc_main$1x, [["render", _sfc_render$1x], ["__file", "/var/www/nextcloud/apps/agora/src/components/Base/modules/IntersectionObserver.vue"]]);
-const _sfc_main$1w = /* @__PURE__ */ defineComponent({
+const IntersectionObserver$1 = /* @__PURE__ */ _export_sfc$1(_sfc_main$1y, [["render", _sfc_render$1y], ["__file", "/var/www/nextcloud/apps/agora/src/components/Base/modules/IntersectionObserver.vue"]]);
+const _sfc_main$1x = /* @__PURE__ */ defineComponent({
   __name: "LoadingOverlay",
   props: {
     show: { type: Boolean, required: true, default: false },
@@ -19146,31 +19172,31 @@ const _sfc_main$1w = /* @__PURE__ */ defineComponent({
     return __returned__;
   }
 });
-const _hoisted_1$1d = { class: "loading-overlay" };
-const _hoisted_2$Z = { class: "loading-overlay__inner" };
-const _hoisted_3$X = { class: "loading-overlay__name" };
-const _hoisted_4$U = { class: "loading-overlay__description" };
-function _sfc_render$1w(_ctx, _cache, $props, $setup, $data, $options) {
+const _hoisted_1$1e = { class: "loading-overlay" };
+const _hoisted_2$_ = { class: "loading-overlay__inner" };
+const _hoisted_3$Y = { class: "loading-overlay__name" };
+const _hoisted_4$V = { class: "loading-overlay__description" };
+function _sfc_render$1x(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createBlock(Teleport, { to: $props.teleportTo }, [
     withDirectives(createBaseVNode(
       "div",
-      _hoisted_1$1d,
+      _hoisted_1$1e,
       [
-        createBaseVNode("div", _hoisted_2$Z, [
+        createBaseVNode("div", _hoisted_2$_, [
           createVNode($setup["Spinner"], {
             class: "loading-overlay__spinner",
             size: 70
           }),
           createBaseVNode(
             "span",
-            _hoisted_3$X,
+            _hoisted_3$Y,
             toDisplayString($props.name),
             1
             /* TEXT */
           ),
           createBaseVNode(
             "p",
-            _hoisted_4$U,
+            _hoisted_4$V,
             toDisplayString($setup.description),
             1
             /* TEXT */
@@ -19184,8 +19210,8 @@ function _sfc_render$1w(_ctx, _cache, $props, $setup, $data, $options) {
     ])
   ], 8, ["to"]);
 }
-const LoadingOverlay = /* @__PURE__ */ _export_sfc$1(_sfc_main$1w, [["render", _sfc_render$1w], ["__file", "/var/www/nextcloud/apps/agora/src/components/Base/modules/LoadingOverlay.vue"]]);
-const _sfc_main$1v = /* @__PURE__ */ defineComponent({
+const LoadingOverlay = /* @__PURE__ */ _export_sfc$1(_sfc_main$1x, [["render", _sfc_render$1x], ["__file", "/var/www/nextcloud/apps/agora/src/components/Base/modules/LoadingOverlay.vue"]]);
+const _sfc_main$1w = /* @__PURE__ */ defineComponent({
   __name: "QrModal",
   props: {
     name: { type: String, required: false, default: "" },
@@ -19212,12 +19238,12 @@ const _sfc_main$1v = /* @__PURE__ */ defineComponent({
     return __returned__;
   }
 });
-const _hoisted_1$1c = { class: "qr-code" };
-const _hoisted_2$Y = { class: "canvas" };
-const _hoisted_3$W = ["src", "alt"];
-const _hoisted_4$T = { class: "qr-url" };
-function _sfc_render$1v(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$1c, [
+const _hoisted_1$1d = { class: "qr-code" };
+const _hoisted_2$Z = { class: "canvas" };
+const _hoisted_3$X = ["src", "alt"];
+const _hoisted_4$U = { class: "qr-url" };
+function _sfc_render$1w(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$1d, [
     createBaseVNode(
       "h2",
       null,
@@ -19232,11 +19258,11 @@ function _sfc_render$1v(_ctx, _cache, $props, $setup, $data, $options) {
         /* TEXT */
       )
     ]),
-    createBaseVNode("div", _hoisted_2$Y, [
+    createBaseVNode("div", _hoisted_2$Z, [
       createBaseVNode("img", {
         src: $setup.qrUri,
         alt: $props.encodeText
-      }, null, 8, _hoisted_3$W)
+      }, null, 8, _hoisted_3$X)
     ]),
     createBaseVNode(
       "h3",
@@ -19254,15 +19280,15 @@ function _sfc_render$1v(_ctx, _cache, $props, $setup, $data, $options) {
     )),
     createBaseVNode(
       "p",
-      _hoisted_4$T,
+      _hoisted_4$U,
       toDisplayString($props.encodeText),
       1
       /* TEXT */
     )
   ]);
 }
-const QrModal = /* @__PURE__ */ _export_sfc$1(_sfc_main$1v, [["render", _sfc_render$1v], ["__file", "/var/www/nextcloud/apps/agora/src/components/Base/modules/QrModal.vue"]]);
-const _sfc_main$1u = /* @__PURE__ */ defineComponent({
+const QrModal = /* @__PURE__ */ _export_sfc$1(_sfc_main$1w, [["render", _sfc_render$1w], ["__file", "/var/www/nextcloud/apps/agora/src/components/Base/modules/QrModal.vue"]]);
+const _sfc_main$1v = /* @__PURE__ */ defineComponent({
   __name: "Collapsible",
   props: {
     initialState: { type: String, required: false, default: "max" },
@@ -19384,13 +19410,13 @@ const _sfc_main$1u = /* @__PURE__ */ defineComponent({
     return __returned__;
   }
 });
-const _hoisted_1$1b = { class: "collapsible" };
-const _hoisted_2$X = {
+const _hoisted_1$1c = { class: "collapsible" };
+const _hoisted_2$Y = {
   ref: "slotWrapper",
   class: "collapsible_content"
 };
-function _sfc_render$1u(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$1b, [
+function _sfc_render$1v(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$1c, [
     createBaseVNode(
       "div",
       {
@@ -19413,7 +19439,7 @@ function _sfc_render$1u(_ctx, _cache, $props, $setup, $data, $options) {
           [
             createBaseVNode(
               "div",
-              _hoisted_2$X,
+              _hoisted_2$Y,
               [
                 renderSlot(_ctx.$slots, "default")
               ],
@@ -19444,8 +19470,8 @@ function _sfc_render$1u(_ctx, _cache, $props, $setup, $data, $options) {
     ])
   ]);
 }
-const Collapsible = /* @__PURE__ */ _export_sfc$1(_sfc_main$1u, [["render", _sfc_render$1u], ["__file", "/var/www/nextcloud/apps/agora/src/components/Base/modules/Collapsible.vue"]]);
-const _sfc_main$1t = /* @__PURE__ */ defineComponent({
+const Collapsible = /* @__PURE__ */ _export_sfc$1(_sfc_main$1v, [["render", _sfc_render$1v], ["__file", "/var/www/nextcloud/apps/agora/src/components/Base/modules/Collapsible.vue"]]);
+const _sfc_main$1u = /* @__PURE__ */ defineComponent({
   __name: "InquiryCreateDlg",
   props: {
     inquiryType: { type: [Object, null], required: false, default: null },
@@ -19575,20 +19601,20 @@ const _sfc_main$1t = /* @__PURE__ */ defineComponent({
     return __returned__;
   }
 });
-const _hoisted_1$1a = { class: "access-settings" };
-const _hoisted_2$W = {
+const _hoisted_1$1b = { class: "access-settings" };
+const _hoisted_2$X = {
   key: 0,
   class: "groups-selection"
 };
-const _hoisted_3$V = { class: "groups-title" };
-const _hoisted_4$S = { class: "groups-list" };
+const _hoisted_3$W = { class: "groups-title" };
+const _hoisted_4$T = { class: "groups-list" };
 const _hoisted_5$E = { class: "selected-type" };
 const _hoisted_6$A = {
   key: 0,
   class: "type-description"
 };
 const _hoisted_7$z = { class: "create-buttons" };
-function _sfc_render$1t(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$1u(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock(
     Fragment$1,
     null,
@@ -19613,7 +19639,7 @@ function _sfc_render$1t(_ctx, _cache, $props, $setup, $data, $options) {
               (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryGeneralIcons.AccountGroup)))
             ]),
             default: withCtx(() => [
-              createBaseVNode("div", _hoisted_1$1a, [
+              createBaseVNode("div", _hoisted_1$1b, [
                 createVNode($setup["NcRadioGroup"], {
                   "model-value": $setup.accessType,
                   label: $setup.t("agora", "Choose who opening this inquiry"),
@@ -19649,15 +19675,15 @@ function _sfc_render$1t(_ctx, _cache, $props, $setup, $data, $options) {
                   /* STABLE */
                 }, 8, ["model-value", "label", "description"]),
                 createCommentVNode(" Group Selection "),
-                $setup.accessType === "groups" ? (openBlock(), createElementBlock("div", _hoisted_2$W, [
+                $setup.accessType === "groups" ? (openBlock(), createElementBlock("div", _hoisted_2$X, [
                   createBaseVNode(
                     "h4",
-                    _hoisted_3$V,
+                    _hoisted_3$W,
                     toDisplayString($setup.t("agora", "Select groups")),
                     1
                     /* TEXT */
                   ),
-                  createBaseVNode("div", _hoisted_4$S, [
+                  createBaseVNode("div", _hoisted_4$T, [
                     createVNode($setup["NcRadioGroup"], {
                       "model-value": $setup.selectedGroup,
                       label: $setup.t("agora", "Choose ths group assigned to your inquiry"),
@@ -19819,8 +19845,8 @@ function _sfc_render$1t(_ctx, _cache, $props, $setup, $data, $options) {
     /* STABLE_FRAGMENT, DEV_ROOT_FRAGMENT */
   );
 }
-const InquiryCreateDlg = /* @__PURE__ */ _export_sfc$1(_sfc_main$1t, [["render", _sfc_render$1t], ["__scopeId", "data-v-f3636c71"], ["__file", "/var/www/nextcloud/apps/agora/src/components/Create/InquiryCreateDlg.vue"]]);
-const _sfc_main$1s = /* @__PURE__ */ defineComponent({
+const InquiryCreateDlg = /* @__PURE__ */ _export_sfc$1(_sfc_main$1u, [["render", _sfc_render$1u], ["__scopeId", "data-v-f3636c71"], ["__file", "/var/www/nextcloud/apps/agora/src/components/Create/InquiryCreateDlg.vue"]]);
+const _sfc_main$1t = /* @__PURE__ */ defineComponent({
   __name: "InquiryGroupCreateDlg",
   props: {
     inquiryGroupType: { type: [String, null], required: false, default: null },
@@ -20003,16 +20029,16 @@ const _sfc_main$1s = /* @__PURE__ */ defineComponent({
     return __returned__;
   }
 });
-const _hoisted_1$19 = { class: "dialog-header" };
-const _hoisted_2$V = {
+const _hoisted_1$1a = { class: "dialog-header" };
+const _hoisted_2$W = {
   key: 0,
   class: "mode-badge child"
 };
-const _hoisted_3$U = {
+const _hoisted_3$V = {
   key: 1,
   class: "mode-badge creation"
 };
-const _hoisted_4$R = { class: "context-description" };
+const _hoisted_4$S = { class: "context-description" };
 const _hoisted_5$D = { class: "access-settings" };
 const _hoisted_6$z = {
   key: 0,
@@ -20043,7 +20069,7 @@ const _hoisted_15$q = {
   class: "type-help"
 };
 const _hoisted_16$p = { class: "create-buttons" };
-function _sfc_render$1s(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$1t(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock("div", {
     class: "dialog-overlay",
     onClick: _cache[6] || (_cache[6] = ($event) => $setup.emit("close"))
@@ -20055,7 +20081,7 @@ function _sfc_render$1s(_ctx, _cache, $props, $setup, $data, $options) {
       }, ["stop"]))
     }, [
       createCommentVNode(" Dialog Header "),
-      createBaseVNode("div", _hoisted_1$19, [
+      createBaseVNode("div", _hoisted_1$1a, [
         createBaseVNode(
           "h3",
           null,
@@ -20065,20 +20091,20 @@ function _sfc_render$1s(_ctx, _cache, $props, $setup, $data, $options) {
         ),
         $setup.props.parentGroupId ? (openBlock(), createElementBlock(
           "div",
-          _hoisted_2$V,
+          _hoisted_2$W,
           toDisplayString($setup.t("agora", "Child Group")),
           1
           /* TEXT */
         )) : (openBlock(), createElementBlock(
           "div",
-          _hoisted_3$U,
+          _hoisted_3$V,
           toDisplayString($setup.t("agora", "New Group")),
           1
           /* TEXT */
         ))
       ]),
       createCommentVNode(" Context description "),
-      createBaseVNode("div", _hoisted_4$R, [
+      createBaseVNode("div", _hoisted_4$S, [
         createBaseVNode(
           "p",
           null,
@@ -20349,8 +20375,8 @@ function _sfc_render$1s(_ctx, _cache, $props, $setup, $data, $options) {
     ])
   ]);
 }
-const InquiryGroupCreateDlg = /* @__PURE__ */ _export_sfc$1(_sfc_main$1s, [["render", _sfc_render$1s], ["__scopeId", "data-v-ab6eef9a"], ["__file", "/var/www/nextcloud/apps/agora/src/components/Create/InquiryGroupCreateDlg.vue"]]);
-const _sfc_main$1r = /* @__PURE__ */ defineComponent({
+const InquiryGroupCreateDlg = /* @__PURE__ */ _export_sfc$1(_sfc_main$1t, [["render", _sfc_render$1t], ["__scopeId", "data-v-ab6eef9a"], ["__file", "/var/www/nextcloud/apps/agora/src/components/Create/InquiryGroupCreateDlg.vue"]]);
+const _sfc_main$1s = /* @__PURE__ */ defineComponent({
   __name: "NavigationMenu",
   setup(__props, { expose: __expose }) {
     __expose();
@@ -20526,16 +20552,16 @@ const _sfc_main$1r = /* @__PURE__ */ defineComponent({
     return __returned__;
   }
 });
-const _hoisted_1$18 = { class: "navigation-caption" };
-const _hoisted_2$U = { class: "navigation-caption" };
-const _hoisted_3$T = { class: "family-counter" };
-const _hoisted_4$Q = {
+const _hoisted_1$19 = { class: "navigation-caption" };
+const _hoisted_2$V = { class: "navigation-caption" };
+const _hoisted_3$U = { class: "family-counter" };
+const _hoisted_4$R = {
   key: 0,
   class: "navigation-subcaption"
 };
 const _hoisted_5$C = { class: "navigation-subcaption" };
 const _hoisted_6$y = ["title"];
-function _sfc_render$1r(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$1s(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock(
     Fragment$1,
     null,
@@ -20550,7 +20576,7 @@ function _sfc_render$1r(_ctx, _cache, $props, $setup, $data, $options) {
             default: withCtx(() => [
               createBaseVNode(
                 "h3",
-                _hoisted_1$18,
+                _hoisted_1$19,
                 toDisplayString($setup.t("agora", "Recent Inquiries")),
                 1
                 /* TEXT */
@@ -20591,7 +20617,7 @@ function _sfc_render$1r(_ctx, _cache, $props, $setup, $data, $options) {
             default: withCtx(() => [
               createBaseVNode(
                 "h3",
-                _hoisted_2$U,
+                _hoisted_2$V,
                 toDisplayString($setup.t("agora", "Inquiry Families")),
                 1
                 /* TEXT */
@@ -20615,7 +20641,7 @@ function _sfc_render$1r(_ctx, _cache, $props, $setup, $data, $options) {
                     counter: withCtx(() => [
                       createBaseVNode(
                         "span",
-                        _hoisted_3$T,
+                        _hoisted_3$U,
                         toDisplayString($setup.getInquiryTypesForCurrentFamily(family.family_type).length + $setup.getInquiryGroupTypesForCurrentFamily(family.family_type).length),
                         1
                         /* TEXT */
@@ -20629,7 +20655,7 @@ function _sfc_render$1r(_ctx, _cache, $props, $setup, $data, $options) {
                           default: withCtx(() => [
                             $setup.getInquiryGroupTypesForCurrentFamily(family.family_type).length > 0 ? (openBlock(), createElementBlock(
                               "h4",
-                              _hoisted_4$Q,
+                              _hoisted_4$R,
                               toDisplayString($setup.t("agora", "Inquiries")),
                               1
                               /* TEXT */
@@ -20812,8 +20838,8 @@ function _sfc_render$1r(_ctx, _cache, $props, $setup, $data, $options) {
     /* STABLE_FRAGMENT */
   );
 }
-const NavigationMenu = /* @__PURE__ */ _export_sfc$1(_sfc_main$1r, [["render", _sfc_render$1r], ["__file", "/var/www/nextcloud/apps/agora/src/views/NavigationMenu.vue"]]);
-const _sfc_main$1q = /* @__PURE__ */ defineComponent({
+const NavigationMenu = /* @__PURE__ */ _export_sfc$1(_sfc_main$1s, [["render", _sfc_render$1s], ["__file", "/var/www/nextcloud/apps/agora/src/views/NavigationMenu.vue"]]);
+const _sfc_main$1r = /* @__PURE__ */ defineComponent({
   __name: "NavigationGroup",
   props: {
     slug: { type: String, required: false }
@@ -20948,10 +20974,10 @@ const _sfc_main$1q = /* @__PURE__ */ defineComponent({
     return __returned__;
   }
 });
-const _hoisted_1$17 = { class: "navigation-caption" };
-const _hoisted_2$T = { class: "navigation-sublist" };
-const _hoisted_3$S = { class: "navigation-caption" };
-function _sfc_render$1q(_ctx, _cache, $props, $setup, $data, $options) {
+const _hoisted_1$18 = { class: "navigation-caption" };
+const _hoisted_2$U = { class: "navigation-sublist" };
+const _hoisted_3$T = { class: "navigation-caption" };
+function _sfc_render$1r(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock(
     Fragment$1,
     null,
@@ -20966,7 +20992,7 @@ function _sfc_render$1q(_ctx, _cache, $props, $setup, $data, $options) {
             default: withCtx(() => [
               createBaseVNode(
                 "h3",
-                _hoisted_1$17,
+                _hoisted_1$18,
                 toDisplayString($setup.t("agora", "Group Types")),
                 1
                 /* TEXT */
@@ -20994,7 +21020,7 @@ function _sfc_render$1q(_ctx, _cache, $props, $setup, $data, $options) {
                       }, null, 8, ["count"])
                     ]),
                     default: withCtx(() => [
-                      createBaseVNode("ul", _hoisted_2$T, [
+                      createBaseVNode("ul", _hoisted_2$U, [
                         (openBlock(true), createElementBlock(
                           Fragment$1,
                           null,
@@ -21072,7 +21098,7 @@ function _sfc_render$1q(_ctx, _cache, $props, $setup, $data, $options) {
             default: withCtx(() => [
               createBaseVNode(
                 "h3",
-                _hoisted_3$S,
+                _hoisted_3$T,
                 toDisplayString($setup.t("agora", "Quick Actions")),
                 1
                 /* TEXT */
@@ -21126,8 +21152,8 @@ function _sfc_render$1q(_ctx, _cache, $props, $setup, $data, $options) {
     /* STABLE_FRAGMENT */
   );
 }
-const NavigationGroup = /* @__PURE__ */ _export_sfc$1(_sfc_main$1q, [["render", _sfc_render$1q], ["__file", "/var/www/nextcloud/apps/agora/src/views/NavigationGroup.vue"]]);
-const _sfc_main$1p = {
+const NavigationGroup = /* @__PURE__ */ _export_sfc$1(_sfc_main$1r, [["render", _sfc_render$1r], ["__file", "/var/www/nextcloud/apps/agora/src/views/NavigationGroup.vue"]]);
+const _sfc_main$1q = {
   name: "CancelIcon",
   emits: ["click"],
   props: {
@@ -21144,11 +21170,11 @@ const _sfc_main$1p = {
     }
   }
 };
-const _hoisted_1$16 = ["aria-hidden", "aria-label"];
-const _hoisted_2$S = ["fill", "width", "height"];
-const _hoisted_3$R = { d: "M12 2C17.5 2 22 6.5 22 12S17.5 22 12 22 2 17.5 2 12 6.5 2 12 2M12 4C10.1 4 8.4 4.6 7.1 5.7L18.3 16.9C19.3 15.5 20 13.8 20 12C20 7.6 16.4 4 12 4M16.9 18.3L5.7 7.1C4.6 8.4 4 10.1 4 12C4 16.4 7.6 20 12 20C13.9 20 15.6 19.4 16.9 18.3Z" };
-const _hoisted_4$P = { key: 0 };
-function _sfc_render$1p(_ctx, _cache, $props, $setup, $data, $options) {
+const _hoisted_1$17 = ["aria-hidden", "aria-label"];
+const _hoisted_2$T = ["fill", "width", "height"];
+const _hoisted_3$S = { d: "M12 2C17.5 2 22 6.5 22 12S17.5 22 12 22 2 17.5 2 12 6.5 2 12 2M12 4C10.1 4 8.4 4.6 7.1 5.7L18.3 16.9C19.3 15.5 20 13.8 20 12C20 7.6 16.4 4 12 4M16.9 18.3L5.7 7.1C4.6 8.4 4 10.1 4 12C4 16.4 7.6 20 12 20C13.9 20 15.6 19.4 16.9 18.3Z" };
+const _hoisted_4$Q = { key: 0 };
+function _sfc_render$1q(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock("span", mergeProps(_ctx.$attrs, {
     "aria-hidden": $props.title ? null : "true",
     "aria-label": $props.title,
@@ -21163,20 +21189,20 @@ function _sfc_render$1p(_ctx, _cache, $props, $setup, $data, $options) {
       height: $props.size,
       viewBox: "0 0 24 24"
     }, [
-      createBaseVNode("path", _hoisted_3$R, [
+      createBaseVNode("path", _hoisted_3$S, [
         $props.title ? (openBlock(), createElementBlock(
           "title",
-          _hoisted_4$P,
+          _hoisted_4$Q,
           toDisplayString($props.title),
           1
           /* TEXT */
         )) : createCommentVNode("v-if", true)
       ])
-    ], 8, _hoisted_2$S))
-  ], 16, _hoisted_1$16);
+    ], 8, _hoisted_2$T))
+  ], 16, _hoisted_1$17);
 }
-const CancelIcon = /* @__PURE__ */ _export_sfc$1(_sfc_main$1p, [["render", _sfc_render$1p], ["__file", "/var/www/nextcloud/apps/agora/node_modules/vue-material-design-icons/Cancel.vue"]]);
-const _sfc_main$1o = /* @__PURE__ */ defineComponent({
+const CancelIcon = /* @__PURE__ */ _export_sfc$1(_sfc_main$1q, [["render", _sfc_render$1q], ["__file", "/var/www/nextcloud/apps/agora/node_modules/vue-material-design-icons/Cancel.vue"]]);
+const _sfc_main$1p = /* @__PURE__ */ defineComponent({
   __name: "Forbidden",
   setup(__props, { expose: __expose }) {
     __expose();
@@ -21193,7 +21219,7 @@ const _sfc_main$1o = /* @__PURE__ */ defineComponent({
     return __returned__;
   }
 });
-function _sfc_render$1o(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$1p(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createBlock($setup["NcAppContent"], null, {
     default: withCtx(() => [
       createVNode(
@@ -21214,7 +21240,7 @@ function _sfc_render$1o(_ctx, _cache, $props, $setup, $data, $options) {
     /* STABLE */
   });
 }
-const Forbidden = /* @__PURE__ */ _export_sfc$1(_sfc_main$1o, [["render", _sfc_render$1o], ["__file", "/var/www/nextcloud/apps/agora/src/views/Forbidden.vue"]]);
+const Forbidden = /* @__PURE__ */ _export_sfc$1(_sfc_main$1p, [["render", _sfc_render$1p], ["__file", "/var/www/nextcloud/apps/agora/src/views/Forbidden.vue"]]);
 const useSupportsStore = defineStore("supports", {
   state: () => ({
     supports: []
@@ -21580,7 +21606,7 @@ const useSupportsStore = defineStore("supports", {
     }
   }
 });
-const _sfc_main$1n = /* @__PURE__ */ defineComponent({
+const _sfc_main$1o = /* @__PURE__ */ defineComponent({
   __name: "SupportFeature",
   props: {
     item: { type: null, required: true },
@@ -21731,10 +21757,10 @@ const _sfc_main$1n = /* @__PURE__ */ defineComponent({
     return __returned__;
   }
 });
-const _hoisted_1$15 = { class: "support-count" };
-const _hoisted_2$R = { class: "quorum-target" };
-const _hoisted_3$Q = { class: "ternary-support-tooltip" };
-const _hoisted_4$O = { class: "tooltip-content" };
+const _hoisted_1$16 = { class: "support-count" };
+const _hoisted_2$S = { class: "quorum-target" };
+const _hoisted_3$R = { class: "ternary-support-tooltip" };
+const _hoisted_4$P = { class: "tooltip-content" };
 const _hoisted_5$B = { class: "tooltip-header" };
 const _hoisted_6$x = { class: "support-breakdown" };
 const _hoisted_7$x = { class: "breakdown-item positive" };
@@ -21755,7 +21781,7 @@ const _hoisted_21$m = {
   key: 0,
   class: "summary-item"
 };
-function _sfc_render$1n(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$1o(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock(
     "div",
     {
@@ -21798,7 +21824,7 @@ function _sfc_render$1n(_ctx, _cache, $props, $setup, $data, $options) {
           onMouseleave: $setup.handleMouseLeave
         },
         [
-          createBaseVNode("div", _hoisted_1$15, [
+          createBaseVNode("div", _hoisted_1$16, [
             createBaseVNode(
               "span",
               {
@@ -21826,7 +21852,7 @@ function _sfc_render$1n(_ctx, _cache, $props, $setup, $data, $options) {
                 )),
                 createBaseVNode(
                   "span",
-                  _hoisted_2$R,
+                  _hoisted_2$S,
                   toDisplayString($setup.quorumValue),
                   1
                   /* TEXT */
@@ -21863,8 +21889,8 @@ function _sfc_render$1n(_ctx, _cache, $props, $setup, $data, $options) {
           }, ["stop"]))
         },
         [
-          createBaseVNode("div", _hoisted_3$Q, [
-            createBaseVNode("div", _hoisted_4$O, [
+          createBaseVNode("div", _hoisted_3$R, [
+            createBaseVNode("div", _hoisted_4$P, [
               createBaseVNode("div", _hoisted_5$B, [
                 createBaseVNode(
                   "h4",
@@ -22091,8 +22117,8 @@ function _sfc_render$1n(_ctx, _cache, $props, $setup, $data, $options) {
     /* CLASS, STYLE */
   );
 }
-const SupportFeature = /* @__PURE__ */ _export_sfc$1(_sfc_main$1n, [["render", _sfc_render$1n], ["__scopeId", "data-v-77d983c7"], ["__file", "/var/www/nextcloud/apps/agora/src/helpers/modules/SupportFeature.vue"]]);
-const _sfc_main$1m = /* @__PURE__ */ defineComponent({
+const SupportFeature = /* @__PURE__ */ _export_sfc$1(_sfc_main$1o, [["render", _sfc_render$1o], ["__scopeId", "data-v-77d983c7"], ["__file", "/var/www/nextcloud/apps/agora/src/helpers/modules/SupportFeature.vue"]]);
+const _sfc_main$1n = /* @__PURE__ */ defineComponent({
   __name: "InquiryItem",
   props: {
     inquiry: { type: Object, required: true },
@@ -22206,10 +22232,10 @@ const _sfc_main$1m = /* @__PURE__ */ defineComponent({
     return __returned__;
   }
 });
-const _hoisted_1$14 = ["title"];
-const _hoisted_2$Q = ["title"];
-const _hoisted_3$P = { class: "description_line" };
-const _hoisted_4$N = { class: "description" };
+const _hoisted_1$15 = ["title"];
+const _hoisted_2$R = ["title"];
+const _hoisted_3$Q = { class: "description_line" };
+const _hoisted_4$O = { class: "description" };
 const _hoisted_5$A = { class: "title_line" };
 const _hoisted_6$w = { class: "title" };
 const _hoisted_7$w = { class: "description_line" };
@@ -22261,10 +22287,10 @@ const _hoisted_37$c = {
 const _hoisted_38$b = { class: "toggle-view" };
 const _hoisted_39$9 = { class: "description-line" };
 const _hoisted_40$9 = { class: "grid-description" };
-const _hoisted_41$8 = { class: "bottom-section" };
-const _hoisted_42$7 = { class: "second-line" };
-const _hoisted_43$7 = { class: "left-items" };
-const _hoisted_44$6 = {
+const _hoisted_41$9 = { class: "bottom-section" };
+const _hoisted_42$8 = { class: "second-line" };
+const _hoisted_43$8 = { class: "left-items" };
+const _hoisted_44$7 = {
   key: 0,
   class: "metadata-item parent-link"
 };
@@ -22291,7 +22317,7 @@ const _hoisted_58$4 = { class: "started-info" };
 const _hoisted_59$4 = { class: "dates" };
 const _hoisted_60$4 = ["title"];
 const _hoisted_61$4 = ["title"];
-function _sfc_render$1m(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$1n(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock(
     "div",
     {
@@ -22315,7 +22341,7 @@ function _sfc_render$1m(_ctx, _cache, $props, $setup, $data, $options) {
               1
               /* TEXT */
             )
-          ], 8, _hoisted_1$14),
+          ], 8, _hoisted_1$15),
           $props.noLink ? (openBlock(), createElementBlock(
             "div",
             {
@@ -22326,12 +22352,12 @@ function _sfc_render$1m(_ctx, _cache, $props, $setup, $data, $options) {
               createBaseVNode("div", {
                 class: "title",
                 title: $props.inquiry.title
-              }, toDisplayString($props.inquiry.title), 9, _hoisted_2$Q),
-              createBaseVNode("div", _hoisted_3$P, [
+              }, toDisplayString($props.inquiry.title), 9, _hoisted_2$R),
+              createBaseVNode("div", _hoisted_3$Q, [
                 (openBlock(), createBlock(resolveDynamicComponent($setup.StatusIcons.Lock), { size: 16 })),
                 createBaseVNode(
                   "div",
-                  _hoisted_4$N,
+                  _hoisted_4$O,
                   toDisplayString($setup.t("agora", "No access to this inquiry of {ownerName}", {
                     ownerName: $props.inquiry.owner.displayName
                   })),
@@ -22643,11 +22669,11 @@ function _sfc_render$1m(_ctx, _cache, $props, $setup, $data, $options) {
                   )
                 ]),
                 createCommentVNode(" Bottom Section: Metadata and Dates "),
-                createBaseVNode("div", _hoisted_41$8, [
+                createBaseVNode("div", _hoisted_41$9, [
                   createCommentVNode(" Second Line: Parent Link + Participated + Comments + Supports "),
-                  createBaseVNode("div", _hoisted_42$7, [
-                    createBaseVNode("div", _hoisted_43$7, [
-                      $props.inquiry.parentId !== null ? (openBlock(), createElementBlock("div", _hoisted_44$6, [
+                  createBaseVNode("div", _hoisted_42$8, [
+                    createBaseVNode("div", _hoisted_43$8, [
+                      $props.inquiry.parentId !== null ? (openBlock(), createElementBlock("div", _hoisted_44$7, [
                         createVNode($setup["RouterLink"], {
                           to: `/inquiry/${$props.inquiry.parentId}`
                         }, {
@@ -22821,8 +22847,8 @@ function _sfc_render$1m(_ctx, _cache, $props, $setup, $data, $options) {
     /* CLASS */
   );
 }
-const InquiryItem = /* @__PURE__ */ _export_sfc$1(_sfc_main$1m, [["render", _sfc_render$1m], ["__scopeId", "data-v-c09f7c44"], ["__file", "/var/www/nextcloud/apps/agora/src/components/Inquiry/InquiryItem.vue"]]);
-const _sfc_main$1l = /* @__PURE__ */ defineComponent({
+const InquiryItem = /* @__PURE__ */ _export_sfc$1(_sfc_main$1n, [["render", _sfc_render$1n], ["__scopeId", "data-v-c09f7c44"], ["__file", "/var/www/nextcloud/apps/agora/src/components/Inquiry/InquiryItem.vue"]]);
+const _sfc_main$1m = /* @__PURE__ */ defineComponent({
   __name: "InquiryFilter",
   props: {
     familyType: { type: String, required: false }
@@ -22939,7 +22965,7 @@ const _sfc_main$1l = /* @__PURE__ */ defineComponent({
     }, get NcSelect() {
       return NcSelect;
     }, get NcTextField() {
-      return _sfc_main$1X;
+      return _sfc_main$1Y;
     }, get NcCheckboxRadioSwitch() {
       return NcCheckboxRadioSwitch;
     } };
@@ -22947,10 +22973,10 @@ const _sfc_main$1l = /* @__PURE__ */ defineComponent({
     return __returned__;
   }
 });
-const _hoisted_1$13 = { class: "inquiry-filters" };
-const _hoisted_2$P = { class: "filters-header" };
-const _hoisted_3$O = { class: "search-box compact" };
-const _hoisted_4$M = {
+const _hoisted_1$14 = { class: "inquiry-filters" };
+const _hoisted_2$Q = { class: "filters-header" };
+const _hoisted_3$P = { class: "search-box compact" };
+const _hoisted_4$N = {
   key: 0,
   class: "filter-count"
 };
@@ -23006,11 +23032,11 @@ const _hoisted_23$j = {
   key: 6,
   class: "filter-tag"
 };
-function _sfc_render$1l(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$13, [
-    createBaseVNode("div", _hoisted_2$P, [
+function _sfc_render$1m(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$14, [
+    createBaseVNode("div", _hoisted_2$Q, [
       createCommentVNode(" Search box "),
-      createBaseVNode("div", _hoisted_3$O, [
+      createBaseVNode("div", _hoisted_3$P, [
         createVNode($setup["NcTextField"], {
           modelValue: $setup.searchQuery,
           "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => $setup.searchQuery = $event),
@@ -23049,7 +23075,7 @@ function _sfc_render$1l(_ctx, _cache, $props, $setup, $data, $options) {
           ),
           $setup.activeFiltersCount > 0 ? (openBlock(), createElementBlock(
             "span",
-            _hoisted_4$M,
+            _hoisted_4$N,
             toDisplayString($setup.activeFiltersCount),
             1
             /* TEXT */
@@ -23294,8 +23320,8 @@ function _sfc_render$1l(_ctx, _cache, $props, $setup, $data, $options) {
     ])) : createCommentVNode("v-if", true)
   ]);
 }
-const InquiryFilter = /* @__PURE__ */ _export_sfc$1(_sfc_main$1l, [["render", _sfc_render$1l], ["__scopeId", "data-v-070225bb"], ["__file", "/var/www/nextcloud/apps/agora/src/components/Inquiry/InquiryFilter.vue"]]);
-const _sfc_main$1k = /* @__PURE__ */ defineComponent({
+const InquiryFilter = /* @__PURE__ */ _export_sfc$1(_sfc_main$1m, [["render", _sfc_render$1m], ["__scopeId", "data-v-070225bb"], ["__file", "/var/www/nextcloud/apps/agora/src/components/Inquiry/InquiryFilter.vue"]]);
+const _sfc_main$1l = /* @__PURE__ */ defineComponent({
   __name: "InquiryListSort",
   setup(__props, { expose: __expose }) {
     __expose();
@@ -23339,7 +23365,7 @@ const _sfc_main$1k = /* @__PURE__ */ defineComponent({
     return __returned__;
   }
 });
-function _sfc_render$1k(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$1l(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createBlock($setup["NcActions"], {
     primary: "",
     "menu-name": $setup.sortTitlesMapping[$setup.inquiriesStore.sort.by]
@@ -23484,8 +23510,8 @@ function _sfc_render$1k(_ctx, _cache, $props, $setup, $data, $options) {
     /* STABLE */
   }, 8, ["menu-name"]);
 }
-const InquiryListSort = /* @__PURE__ */ _export_sfc$1(_sfc_main$1k, [["render", _sfc_render$1k], ["__file", "/var/www/nextcloud/apps/agora/src/components/Inquiry/InquiryListSort.vue"]]);
-const _sfc_main$1j = /* @__PURE__ */ defineComponent({
+const InquiryListSort = /* @__PURE__ */ _export_sfc$1(_sfc_main$1l, [["render", _sfc_render$1l], ["__file", "/var/www/nextcloud/apps/agora/src/components/Inquiry/InquiryListSort.vue"]]);
+const _sfc_main$1k = /* @__PURE__ */ defineComponent({
   __name: "DeleteInquiryDialog",
   props: /* @__PURE__ */ mergeModels({
     inquiry: { type: Object, required: true }
@@ -23534,7 +23560,7 @@ const _sfc_main$1j = /* @__PURE__ */ defineComponent({
     return __returned__;
   }
 });
-function _sfc_render$1j(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$1k(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createBlock($setup["NcDialog"], mergeProps({
     open: $setup.model,
     "onUpdate:open": _cache[0] || (_cache[0] = ($event) => $setup.model = $event)
@@ -23552,8 +23578,8 @@ function _sfc_render$1j(_ctx, _cache, $props, $setup, $data, $options) {
     /* STABLE */
   }, 16, ["open"]);
 }
-const DeleteInquiryDialog = /* @__PURE__ */ _export_sfc$1(_sfc_main$1j, [["render", _sfc_render$1j], ["__file", "/var/www/nextcloud/apps/agora/src/components/Modals/DeleteInquiryDialog.vue"]]);
-const _sfc_main$1i = /* @__PURE__ */ defineComponent({
+const DeleteInquiryDialog = /* @__PURE__ */ _export_sfc$1(_sfc_main$1k, [["render", _sfc_render$1k], ["__file", "/var/www/nextcloud/apps/agora/src/components/Modals/DeleteInquiryDialog.vue"]]);
+const _sfc_main$1j = /* @__PURE__ */ defineComponent({
   __name: "UserSearch",
   props: /* @__PURE__ */ mergeModels({
     placeholder: { type: String, required: false, default: () => translate("agora", "Type to start searching ") },
@@ -23612,11 +23638,11 @@ const _sfc_main$1i = /* @__PURE__ */ defineComponent({
     return __returned__;
   }
 });
-const _hoisted_1$12 = {
+const _hoisted_1$13 = {
   key: 0,
   class: "multiselect__single"
 };
-function _sfc_render$1i(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$1j(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createBlock($setup["NcSelectUsers"], mergeProps({
     id: "ajax",
     modelValue: $setup.model,
@@ -23629,7 +23655,7 @@ function _sfc_render$1i(_ctx, _cache, $props, $setup, $data, $options) {
     selection: withCtx(({ values: values2, isOpen }) => [
       values2.length && !isOpen ? (openBlock(), createElementBlock(
         "span",
-        _hoisted_1$12,
+        _hoisted_1$13,
         toDisplayString(values2.length) + " users selected ",
         1
         /* TEXT */
@@ -23639,8 +23665,8 @@ function _sfc_render$1i(_ctx, _cache, $props, $setup, $data, $options) {
     /* STABLE */
   }, 16, ["modelValue", "options", "onSearch"]);
 }
-const UserSearch = /* @__PURE__ */ _export_sfc$1(_sfc_main$1i, [["render", _sfc_render$1i], ["__file", "/var/www/nextcloud/apps/agora/src/components/User/UserSearch.vue"]]);
-const _sfc_main$1h = /* @__PURE__ */ defineComponent({
+const UserSearch = /* @__PURE__ */ _export_sfc$1(_sfc_main$1j, [["render", _sfc_render$1j], ["__file", "/var/www/nextcloud/apps/agora/src/components/User/UserSearch.vue"]]);
+const _sfc_main$1i = /* @__PURE__ */ defineComponent({
   __name: "TransferInquiryDialog",
   props: /* @__PURE__ */ mergeModels({
     inquiry: { type: Object, required: true }
@@ -23736,7 +23762,7 @@ const _sfc_main$1h = /* @__PURE__ */ defineComponent({
     return __returned__;
   }
 });
-function _sfc_render$1h(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$1i(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createBlock($setup["NcDialog"], mergeProps({
     open: $setup.model,
     "onUpdate:open": _cache[2] || (_cache[2] = ($event) => $setup.model = $event)
@@ -23763,8 +23789,8 @@ function _sfc_render$1h(_ctx, _cache, $props, $setup, $data, $options) {
     /* STABLE */
   }, 16, ["open"]);
 }
-const TransferInquiryDialog = /* @__PURE__ */ _export_sfc$1(_sfc_main$1h, [["render", _sfc_render$1h], ["__file", "/var/www/nextcloud/apps/agora/src/components/Modals/TransferInquiryDialog.vue"]]);
-const _sfc_main$1g = /* @__PURE__ */ defineComponent({
+const TransferInquiryDialog = /* @__PURE__ */ _export_sfc$1(_sfc_main$1i, [["render", _sfc_render$1i], ["__file", "/var/www/nextcloud/apps/agora/src/components/Modals/TransferInquiryDialog.vue"]]);
+const _sfc_main$1h = /* @__PURE__ */ defineComponent({
   __name: "InquiryItemActions",
   props: {
     inquiry: { type: Object, required: true }
@@ -23805,7 +23831,7 @@ const _sfc_main$1g = /* @__PURE__ */ defineComponent({
     return __returned__;
   }
 });
-function _sfc_render$1g(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$1h(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock(
     Fragment$1,
     null,
@@ -23910,8 +23936,8 @@ function _sfc_render$1g(_ctx, _cache, $props, $setup, $data, $options) {
     /* STABLE_FRAGMENT */
   );
 }
-const InquiryItemActions = /* @__PURE__ */ _export_sfc$1(_sfc_main$1g, [["render", _sfc_render$1g], ["__file", "/var/www/nextcloud/apps/agora/src/components/Inquiry/InquiryItemActions.vue"]]);
-const _sfc_main$1f = {
+const InquiryItemActions = /* @__PURE__ */ _export_sfc$1(_sfc_main$1h, [["render", _sfc_render$1h], ["__file", "/var/www/nextcloud/apps/agora/src/components/Inquiry/InquiryItemActions.vue"]]);
+const _sfc_main$1g = {
   name: "TextAccountIcon",
   emits: ["click"],
   props: {
@@ -23928,11 +23954,11 @@ const _sfc_main$1f = {
     }
   }
 };
-const _hoisted_1$11 = ["aria-hidden", "aria-label"];
-const _hoisted_2$O = ["fill", "width", "height"];
-const _hoisted_3$N = { d: "M21 5V7H3V5H21M3 17H12V15H3V17M3 12H21V10H3V12M18 14C19.11 14 20 14.9 20 16S19.11 18 18 18 16 17.11 16 16 16.9 14 18 14M14 22V21C14 19.9 15.79 19 18 19S22 19.9 22 21V22H14Z" };
-const _hoisted_4$L = { key: 0 };
-function _sfc_render$1f(_ctx, _cache, $props, $setup, $data, $options) {
+const _hoisted_1$12 = ["aria-hidden", "aria-label"];
+const _hoisted_2$P = ["fill", "width", "height"];
+const _hoisted_3$O = { d: "M21 5V7H3V5H21M3 17H12V15H3V17M3 12H21V10H3V12M18 14C19.11 14 20 14.9 20 16S19.11 18 18 18 16 17.11 16 16 16.9 14 18 14M14 22V21C14 19.9 15.79 19 18 19S22 19.9 22 21V22H14Z" };
+const _hoisted_4$M = { key: 0 };
+function _sfc_render$1g(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock("span", mergeProps(_ctx.$attrs, {
     "aria-hidden": $props.title ? null : "true",
     "aria-label": $props.title,
@@ -23947,20 +23973,20 @@ function _sfc_render$1f(_ctx, _cache, $props, $setup, $data, $options) {
       height: $props.size,
       viewBox: "0 0 24 24"
     }, [
-      createBaseVNode("path", _hoisted_3$N, [
+      createBaseVNode("path", _hoisted_3$O, [
         $props.title ? (openBlock(), createElementBlock(
           "title",
-          _hoisted_4$L,
+          _hoisted_4$M,
           toDisplayString($props.title),
           1
           /* TEXT */
         )) : createCommentVNode("v-if", true)
       ])
-    ], 8, _hoisted_2$O))
-  ], 16, _hoisted_1$11);
+    ], 8, _hoisted_2$P))
+  ], 16, _hoisted_1$12);
 }
-const SidebarIcon = /* @__PURE__ */ _export_sfc$1(_sfc_main$1f, [["render", _sfc_render$1f], ["__file", "/var/www/nextcloud/apps/agora/node_modules/vue-material-design-icons/TextAccount.vue"]]);
-const _sfc_main$1e = /* @__PURE__ */ defineComponent({
+const SidebarIcon = /* @__PURE__ */ _export_sfc$1(_sfc_main$1g, [["render", _sfc_render$1g], ["__file", "/var/www/nextcloud/apps/agora/node_modules/vue-material-design-icons/TextAccount.vue"]]);
+const _sfc_main$1f = /* @__PURE__ */ defineComponent({
   __name: "ActionToggleSidebar",
   setup(__props, { expose: __expose }) {
     __expose();
@@ -23975,9 +24001,9 @@ const _sfc_main$1e = /* @__PURE__ */ defineComponent({
     return __returned__;
   }
 });
-const _hoisted_1$10 = { class: "action toggle-sidebar" };
-function _sfc_render$1e(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$10, [
+const _hoisted_1$11 = { class: "action toggle-sidebar" };
+function _sfc_render$1f(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$11, [
     createVNode($setup["NcButton"], {
       variant: "tertiary",
       title: $setup.caption,
@@ -23992,8 +24018,8 @@ function _sfc_render$1e(_ctx, _cache, $props, $setup, $data, $options) {
     }, 8, ["title", "aria-label"])
   ]);
 }
-const ActionToggleSidebar = /* @__PURE__ */ _export_sfc$1(_sfc_main$1e, [["render", _sfc_render$1e], ["__file", "/var/www/nextcloud/apps/agora/src/components/Actions/modules/ActionToggleSidebar.vue"]]);
-const _sfc_main$1d = /* @__PURE__ */ defineComponent({
+const ActionToggleSidebar = /* @__PURE__ */ _export_sfc$1(_sfc_main$1f, [["render", _sfc_render$1f], ["__file", "/var/www/nextcloud/apps/agora/src/components/Actions/modules/ActionToggleSidebar.vue"]]);
+const _sfc_main$1e = /* @__PURE__ */ defineComponent({
   __name: "InquiryList",
   setup(__props, { expose: __expose }) {
     __expose();
@@ -24134,12 +24160,12 @@ const _sfc_main$1d = /* @__PURE__ */ defineComponent({
     return __returned__;
   }
 });
-const _hoisted_1$$ = { class: "header-controls" };
-const _hoisted_2$N = { class: "mode-switchers" };
-const _hoisted_3$M = { class: "main-mode-switcher" };
-const _hoisted_4$K = { class: "right-controls" };
+const _hoisted_1$10 = { class: "header-controls" };
+const _hoisted_2$O = { class: "mode-switchers" };
+const _hoisted_3$N = { class: "main-mode-switcher" };
+const _hoisted_4$L = { class: "right-controls" };
 const _hoisted_5$y = { class: "area__main" };
-function _sfc_render$1d(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$1e(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createBlock($setup["NcAppContent"], { class: "inquiry-list" }, {
     default: withCtx(() => [
       createVNode($setup["HeaderBar"], null, {
@@ -24152,11 +24178,11 @@ function _sfc_render$1d(_ctx, _cache, $props, $setup, $data, $options) {
         ]),
         right: withCtx(() => [
           createCommentVNode(" All controls in one line "),
-          createBaseVNode("div", _hoisted_1$$, [
+          createBaseVNode("div", _hoisted_1$10, [
             createCommentVNode(" Mode Switchers "),
-            createBaseVNode("div", _hoisted_2$N, [
+            createBaseVNode("div", _hoisted_2$O, [
               createCommentVNode(" Main Mode (Create/View) "),
-              createBaseVNode("div", _hoisted_3$M, [
+              createBaseVNode("div", _hoisted_3$N, [
                 createVNode($setup["NcCheckboxRadioSwitch"], {
                   "button-variant": true,
                   "model-value": $setup.mainMode,
@@ -24224,7 +24250,7 @@ function _sfc_render$1d(_ctx, _cache, $props, $setup, $data, $options) {
               ])
             ]),
             createCommentVNode(" Sort and other controls "),
-            createBaseVNode("div", _hoisted_4$K, [
+            createBaseVNode("div", _hoisted_4$L, [
               createVNode($setup["InquiryListSort"]),
               $setup.inquiryGroupsStore.currentInquiryGroup?.owner.id === $setup.sessionStore.currentUser.id ? (openBlock(), createBlock($setup["ActionToggleSidebar"], { key: 0 })) : createCommentVNode("v-if", true)
             ])
@@ -24320,8 +24346,8 @@ function _sfc_render$1d(_ctx, _cache, $props, $setup, $data, $options) {
     /* STABLE */
   });
 }
-const List = /* @__PURE__ */ _export_sfc$1(_sfc_main$1d, [["render", _sfc_render$1d], ["__scopeId", "data-v-7cc77668"], ["__file", "/var/www/nextcloud/apps/agora/src/views/InquiryList.vue"]]);
-const _sfc_main$1c = /* @__PURE__ */ defineComponent({
+const List = /* @__PURE__ */ _export_sfc$1(_sfc_main$1e, [["render", _sfc_render$1e], ["__scopeId", "data-v-7cc77668"], ["__file", "/var/www/nextcloud/apps/agora/src/views/InquiryList.vue"]]);
+const _sfc_main$1d = /* @__PURE__ */ defineComponent({
   __name: "InquiryMenu",
   setup(__props, { expose: __expose }) {
     __expose();
@@ -24584,16 +24610,16 @@ const _sfc_main$1c = /* @__PURE__ */ defineComponent({
     return __returned__;
   }
 });
-const _hoisted_1$_ = { class: "header-actions" };
-const _hoisted_2$M = {
+const _hoisted_1$$ = { class: "header-actions" };
+const _hoisted_2$N = {
   key: 1,
   class: "view-mode-switcher"
 };
-const _hoisted_3$L = {
+const _hoisted_3$M = {
   key: 0,
   class: "families-grid-container"
 };
-const _hoisted_4$J = { class: "families-grid" };
+const _hoisted_4$K = { class: "families-grid" };
 const _hoisted_5$x = ["onClick"];
 const _hoisted_6$u = { class: "family-card-large__icon" };
 const _hoisted_7$u = { class: "family-card-large__content" };
@@ -24638,7 +24664,7 @@ const _hoisted_30$g = {
   key: 1,
   class: "permission-warning"
 };
-function _sfc_render$1c(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$1d(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createBlock($setup["NcAppContent"], { class: "inquiry-menu" }, {
     title: withCtx(() => [
       createTextVNode(
@@ -24648,7 +24674,7 @@ function _sfc_render$1c(_ctx, _cache, $props, $setup, $data, $options) {
       )
     ]),
     default: withCtx(() => [
-      createBaseVNode("div", _hoisted_1$_, [
+      createBaseVNode("div", _hoisted_1$$, [
         createCommentVNode(" Back Button (conditionally shown) "),
         $setup.selectedFamily ? (openBlock(), createBlock($setup["NcButton"], {
           key: 0,
@@ -24673,7 +24699,7 @@ function _sfc_render$1c(_ctx, _cache, $props, $setup, $data, $options) {
           /* STABLE */
         })) : createCommentVNode("v-if", true),
         createCommentVNode(" View Mode Switcher (always shown, aligned to right) "),
-        $setup.selectedFamily ? (openBlock(), createElementBlock("div", _hoisted_2$M, [
+        $setup.selectedFamily ? (openBlock(), createElementBlock("div", _hoisted_2$N, [
           createVNode($setup["NcCheckboxRadioSwitch"], {
             "button-variant": true,
             "model-value": $setup.viewMode,
@@ -24714,8 +24740,8 @@ function _sfc_render$1c(_ctx, _cache, $props, $setup, $data, $options) {
           }, 8, ["model-value"])
         ])) : createCommentVNode("v-if", true)
       ]),
-      !$setup.selectedFamily ? (openBlock(), createElementBlock("div", _hoisted_3$L, [
-        createBaseVNode("div", _hoisted_4$J, [
+      !$setup.selectedFamily ? (openBlock(), createElementBlock("div", _hoisted_3$M, [
+        createBaseVNode("div", _hoisted_4$K, [
           (openBlock(true), createElementBlock(
             Fragment$1,
             null,
@@ -24972,8 +24998,8 @@ function _sfc_render$1c(_ctx, _cache, $props, $setup, $data, $options) {
     /* STABLE */
   });
 }
-const Menu = /* @__PURE__ */ _export_sfc$1(_sfc_main$1c, [["render", _sfc_render$1c], ["__scopeId", "data-v-d27ca2bb"], ["__file", "/var/www/nextcloud/apps/agora/src/views/InquiryMenu.vue"]]);
-const _sfc_main$1b = {
+const Menu = /* @__PURE__ */ _export_sfc$1(_sfc_main$1d, [["render", _sfc_render$1d], ["__scopeId", "data-v-d27ca2bb"], ["__file", "/var/www/nextcloud/apps/agora/src/views/InquiryMenu.vue"]]);
+const _sfc_main$1c = {
   name: "MagnifyIcon",
   emits: ["click"],
   props: {
@@ -24990,11 +25016,11 @@ const _sfc_main$1b = {
     }
   }
 };
-const _hoisted_1$Z = ["aria-hidden", "aria-label"];
-const _hoisted_2$L = ["fill", "width", "height"];
-const _hoisted_3$K = { d: "M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z" };
-const _hoisted_4$I = { key: 0 };
-function _sfc_render$1b(_ctx, _cache, $props, $setup, $data, $options) {
+const _hoisted_1$_ = ["aria-hidden", "aria-label"];
+const _hoisted_2$M = ["fill", "width", "height"];
+const _hoisted_3$L = { d: "M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z" };
+const _hoisted_4$J = { key: 0 };
+function _sfc_render$1c(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock("span", mergeProps(_ctx.$attrs, {
     "aria-hidden": $props.title ? null : "true",
     "aria-label": $props.title,
@@ -25009,20 +25035,20 @@ function _sfc_render$1b(_ctx, _cache, $props, $setup, $data, $options) {
       height: $props.size,
       viewBox: "0 0 24 24"
     }, [
-      createBaseVNode("path", _hoisted_3$K, [
+      createBaseVNode("path", _hoisted_3$L, [
         $props.title ? (openBlock(), createElementBlock(
           "title",
-          _hoisted_4$I,
+          _hoisted_4$J,
           toDisplayString($props.title),
           1
           /* TEXT */
         )) : createCommentVNode("v-if", true)
       ])
-    ], 8, _hoisted_2$L))
-  ], 16, _hoisted_1$Z);
+    ], 8, _hoisted_2$M))
+  ], 16, _hoisted_1$_);
 }
-const SearchIcon = /* @__PURE__ */ _export_sfc$1(_sfc_main$1b, [["render", _sfc_render$1b], ["__file", "/var/www/nextcloud/apps/agora/node_modules/vue-material-design-icons/Magnify.vue"]]);
-const _sfc_main$1a = /* @__PURE__ */ defineComponent({
+const SearchIcon = /* @__PURE__ */ _export_sfc$1(_sfc_main$1c, [["render", _sfc_render$1c], ["__file", "/var/www/nextcloud/apps/agora/node_modules/vue-material-design-icons/Magnify.vue"]]);
+const _sfc_main$1b = /* @__PURE__ */ defineComponent({
   __name: "NotFound",
   setup(__props, { expose: __expose }) {
     __expose();
@@ -25039,7 +25065,7 @@ const _sfc_main$1a = /* @__PURE__ */ defineComponent({
     return __returned__;
   }
 });
-function _sfc_render$1a(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$1b(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createBlock($setup["NcAppContent"], null, {
     default: withCtx(() => [
       createVNode(
@@ -25060,8 +25086,8 @@ function _sfc_render$1a(_ctx, _cache, $props, $setup, $data, $options) {
     /* STABLE */
   });
 }
-const NotFound = /* @__PURE__ */ _export_sfc$1(_sfc_main$1a, [["render", _sfc_render$1a], ["__file", "/var/www/nextcloud/apps/agora/src/views/NotFound.vue"]]);
-const _sfc_main$19 = /* @__PURE__ */ defineComponent({
+const NotFound = /* @__PURE__ */ _export_sfc$1(_sfc_main$1b, [["render", _sfc_render$1b], ["__file", "/var/www/nextcloud/apps/agora/src/views/NotFound.vue"]]);
+const _sfc_main$1a = /* @__PURE__ */ defineComponent({
   __name: "InquiryActionToolbar",
   props: {
     inquiryStore: { type: null, required: true },
@@ -25203,10 +25229,10 @@ const _sfc_main$19 = /* @__PURE__ */ defineComponent({
     return __returned__;
   }
 });
-const _hoisted_1$Y = { class: "inquiry-action-toolbar" };
-const _hoisted_2$K = { class: "left-actions" };
-const _hoisted_3$J = { class: "primary-actions" };
-const _hoisted_4$H = {
+const _hoisted_1$Z = { class: "inquiry-action-toolbar" };
+const _hoisted_2$L = { class: "left-actions" };
+const _hoisted_3$K = { class: "primary-actions" };
+const _hoisted_4$I = {
   key: 0,
   class: "loading-icon"
 };
@@ -25230,11 +25256,11 @@ const _hoisted_15$l = {
   key: 0,
   class: "item-actions"
 };
-function _sfc_render$19(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$Y, [
-    createBaseVNode("div", _hoisted_2$K, [
+function _sfc_render$1a(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$Z, [
+    createBaseVNode("div", _hoisted_2$L, [
       createCommentVNode(" Save and Response buttons "),
-      createBaseVNode("div", _hoisted_3$J, [
+      createBaseVNode("div", _hoisted_3$K, [
         $setup.showSaveButton ? (openBlock(), createBlock($setup["NcButton"], {
           key: 0,
           disabled: $props.isSaving,
@@ -25251,7 +25277,7 @@ function _sfc_render$19(_ctx, _cache, $props, $setup, $data, $options) {
               1
               /* TEXT */
             ),
-            $props.isSaving ? (openBlock(), createElementBlock("span", _hoisted_4$H)) : createCommentVNode("v-if", true)
+            $props.isSaving ? (openBlock(), createElementBlock("span", _hoisted_4$I)) : createCommentVNode("v-if", true)
           ]),
           _: 1
           /* STABLE */
@@ -25404,9 +25430,58 @@ function _sfc_render$19(_ctx, _cache, $props, $setup, $data, $options) {
     ])
   ]);
 }
-const InquiryActionToolbar = /* @__PURE__ */ _export_sfc$1(_sfc_main$19, [["render", _sfc_render$19], ["__scopeId", "data-v-2199fc3a"], ["__file", "/var/www/nextcloud/apps/agora/src/components/Inquiry/InquiryActionToolbar.vue"]]);
-const _sfc_main$18 = {
+const InquiryActionToolbar = /* @__PURE__ */ _export_sfc$1(_sfc_main$1a, [["render", _sfc_render$1a], ["__scopeId", "data-v-2199fc3a"], ["__file", "/var/www/nextcloud/apps/agora/src/components/Inquiry/InquiryActionToolbar.vue"]]);
+const _sfc_main$19 = {
   name: "DeleteIcon",
+  emits: ["click"],
+  props: {
+    title: {
+      type: String
+    },
+    fillColor: {
+      type: String,
+      default: "currentColor"
+    },
+    size: {
+      type: Number,
+      default: 24
+    }
+  }
+};
+const _hoisted_1$Y = ["aria-hidden", "aria-label"];
+const _hoisted_2$K = ["fill", "width", "height"];
+const _hoisted_3$J = { d: "M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z" };
+const _hoisted_4$H = { key: 0 };
+function _sfc_render$19(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("span", mergeProps(_ctx.$attrs, {
+    "aria-hidden": $props.title ? null : "true",
+    "aria-label": $props.title,
+    class: "material-design-icon delete-icon",
+    role: "img",
+    onClick: _cache[0] || (_cache[0] = ($event) => _ctx.$emit("click", $event))
+  }), [
+    (openBlock(), createElementBlock("svg", {
+      fill: $props.fillColor,
+      class: "material-design-icon__svg",
+      width: $props.size,
+      height: $props.size,
+      viewBox: "0 0 24 24"
+    }, [
+      createBaseVNode("path", _hoisted_3$J, [
+        $props.title ? (openBlock(), createElementBlock(
+          "title",
+          _hoisted_4$H,
+          toDisplayString($props.title),
+          1
+          /* TEXT */
+        )) : createCommentVNode("v-if", true)
+      ])
+    ], 8, _hoisted_2$K))
+  ], 16, _hoisted_1$Y);
+}
+const DeleteIcon = /* @__PURE__ */ _export_sfc$1(_sfc_main$19, [["render", _sfc_render$19], ["__file", "/var/www/nextcloud/apps/agora/node_modules/vue-material-design-icons/Delete.vue"]]);
+const _sfc_main$18 = {
+  name: "RecycleIcon",
   emits: ["click"],
   props: {
     title: {
@@ -25424,13 +25499,13 @@ const _sfc_main$18 = {
 };
 const _hoisted_1$X = ["aria-hidden", "aria-label"];
 const _hoisted_2$J = ["fill", "width", "height"];
-const _hoisted_3$I = { d: "M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z" };
+const _hoisted_3$I = { d: "M21.82,15.42L19.32,19.75C18.83,20.61 17.92,21.06 17,21H15V23L12.5,18.5L15,14V16H17.82L15.6,12.15L19.93,9.65L21.73,12.77C22.25,13.54 22.32,14.57 21.82,15.42M9.21,3.06H14.21C15.19,3.06 16.04,3.63 16.45,4.45L17.45,6.19L19.18,5.19L16.54,9.6L11.39,9.69L13.12,8.69L11.71,6.24L9.5,10.09L5.16,7.59L6.96,4.47C7.37,3.64 8.22,3.06 9.21,3.06M5.05,19.76L2.55,15.43C2.06,14.58 2.13,13.56 2.64,12.79L3.64,11.06L1.91,10.06L7.05,10.14L9.7,14.56L7.97,13.56L6.56,16H11V21H7.4C6.47,21.07 5.55,20.61 5.05,19.76Z" };
 const _hoisted_4$G = { key: 0 };
 function _sfc_render$18(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock("span", mergeProps(_ctx.$attrs, {
     "aria-hidden": $props.title ? null : "true",
     "aria-label": $props.title,
-    class: "material-design-icon delete-icon",
+    class: "material-design-icon recycle-icon",
     role: "img",
     onClick: _cache[0] || (_cache[0] = ($event) => _ctx.$emit("click", $event))
   }), [
@@ -25453,9 +25528,9 @@ function _sfc_render$18(_ctx, _cache, $props, $setup, $data, $options) {
     ], 8, _hoisted_2$J))
   ], 16, _hoisted_1$X);
 }
-const DeleteIcon = /* @__PURE__ */ _export_sfc$1(_sfc_main$18, [["render", _sfc_render$18], ["__file", "/var/www/nextcloud/apps/agora/node_modules/vue-material-design-icons/Delete.vue"]]);
+const RestoreIcon = /* @__PURE__ */ _export_sfc$1(_sfc_main$18, [["render", _sfc_render$18], ["__file", "/var/www/nextcloud/apps/agora/node_modules/vue-material-design-icons/Recycle.vue"]]);
 const _sfc_main$17 = {
-  name: "RecycleIcon",
+  name: "LockIcon",
   emits: ["click"],
   props: {
     title: {
@@ -25473,13 +25548,13 @@ const _sfc_main$17 = {
 };
 const _hoisted_1$W = ["aria-hidden", "aria-label"];
 const _hoisted_2$I = ["fill", "width", "height"];
-const _hoisted_3$H = { d: "M21.82,15.42L19.32,19.75C18.83,20.61 17.92,21.06 17,21H15V23L12.5,18.5L15,14V16H17.82L15.6,12.15L19.93,9.65L21.73,12.77C22.25,13.54 22.32,14.57 21.82,15.42M9.21,3.06H14.21C15.19,3.06 16.04,3.63 16.45,4.45L17.45,6.19L19.18,5.19L16.54,9.6L11.39,9.69L13.12,8.69L11.71,6.24L9.5,10.09L5.16,7.59L6.96,4.47C7.37,3.64 8.22,3.06 9.21,3.06M5.05,19.76L2.55,15.43C2.06,14.58 2.13,13.56 2.64,12.79L3.64,11.06L1.91,10.06L7.05,10.14L9.7,14.56L7.97,13.56L6.56,16H11V21H7.4C6.47,21.07 5.55,20.61 5.05,19.76Z" };
+const _hoisted_3$H = { d: "M12,17A2,2 0 0,0 14,15C14,13.89 13.1,13 12,13A2,2 0 0,0 10,15A2,2 0 0,0 12,17M18,8A2,2 0 0,1 20,10V20A2,2 0 0,1 18,22H6A2,2 0 0,1 4,20V10C4,8.89 4.9,8 6,8H7V6A5,5 0 0,1 12,1A5,5 0 0,1 17,6V8H18M12,3A3,3 0 0,0 9,6V8H15V6A3,3 0 0,0 12,3Z" };
 const _hoisted_4$F = { key: 0 };
 function _sfc_render$17(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock("span", mergeProps(_ctx.$attrs, {
     "aria-hidden": $props.title ? null : "true",
     "aria-label": $props.title,
-    class: "material-design-icon recycle-icon",
+    class: "material-design-icon lock-icon",
     role: "img",
     onClick: _cache[0] || (_cache[0] = ($event) => _ctx.$emit("click", $event))
   }), [
@@ -25502,9 +25577,9 @@ function _sfc_render$17(_ctx, _cache, $props, $setup, $data, $options) {
     ], 8, _hoisted_2$I))
   ], 16, _hoisted_1$W);
 }
-const RestoreIcon = /* @__PURE__ */ _export_sfc$1(_sfc_main$17, [["render", _sfc_render$17], ["__file", "/var/www/nextcloud/apps/agora/node_modules/vue-material-design-icons/Recycle.vue"]]);
+const LockedIcon = /* @__PURE__ */ _export_sfc$1(_sfc_main$17, [["render", _sfc_render$17], ["__file", "/var/www/nextcloud/apps/agora/node_modules/vue-material-design-icons/Lock.vue"]]);
 const _sfc_main$16 = {
-  name: "LockIcon",
+  name: "ArrowULeftTopIcon",
   emits: ["click"],
   props: {
     title: {
@@ -25522,13 +25597,13 @@ const _sfc_main$16 = {
 };
 const _hoisted_1$V = ["aria-hidden", "aria-label"];
 const _hoisted_2$H = ["fill", "width", "height"];
-const _hoisted_3$G = { d: "M12,17A2,2 0 0,0 14,15C14,13.89 13.1,13 12,13A2,2 0 0,0 10,15A2,2 0 0,0 12,17M18,8A2,2 0 0,1 20,10V20A2,2 0 0,1 18,22H6A2,2 0 0,1 4,20V10C4,8.89 4.9,8 6,8H7V6A5,5 0 0,1 12,1A5,5 0 0,1 17,6V8H18M12,3A3,3 0 0,0 9,6V8H15V6A3,3 0 0,0 12,3Z" };
+const _hoisted_3$G = { d: "M20 13.5C20 17.09 17.09 20 13.5 20H6V18H13.5C16 18 18 16 18 13.5S16 9 13.5 9H7.83L10.91 12.09L9.5 13.5L4 8L9.5 2.5L10.92 3.91L7.83 7H13.5C17.09 7 20 9.91 20 13.5Z" };
 const _hoisted_4$E = { key: 0 };
 function _sfc_render$16(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock("span", mergeProps(_ctx.$attrs, {
     "aria-hidden": $props.title ? null : "true",
     "aria-label": $props.title,
-    class: "material-design-icon lock-icon",
+    class: "material-design-icon arrow-u-left-top-icon",
     role: "img",
     onClick: _cache[0] || (_cache[0] = ($event) => _ctx.$emit("click", $event))
   }), [
@@ -25551,57 +25626,8 @@ function _sfc_render$16(_ctx, _cache, $props, $setup, $data, $options) {
     ], 8, _hoisted_2$H))
   ], 16, _hoisted_1$V);
 }
-const LockedIcon = /* @__PURE__ */ _export_sfc$1(_sfc_main$16, [["render", _sfc_render$16], ["__file", "/var/www/nextcloud/apps/agora/node_modules/vue-material-design-icons/Lock.vue"]]);
-const _sfc_main$15 = {
-  name: "ArrowULeftTopIcon",
-  emits: ["click"],
-  props: {
-    title: {
-      type: String
-    },
-    fillColor: {
-      type: String,
-      default: "currentColor"
-    },
-    size: {
-      type: Number,
-      default: 24
-    }
-  }
-};
-const _hoisted_1$U = ["aria-hidden", "aria-label"];
-const _hoisted_2$G = ["fill", "width", "height"];
-const _hoisted_3$F = { d: "M20 13.5C20 17.09 17.09 20 13.5 20H6V18H13.5C16 18 18 16 18 13.5S16 9 13.5 9H7.83L10.91 12.09L9.5 13.5L4 8L9.5 2.5L10.92 3.91L7.83 7H13.5C17.09 7 20 9.91 20 13.5Z" };
-const _hoisted_4$D = { key: 0 };
-function _sfc_render$15(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("span", mergeProps(_ctx.$attrs, {
-    "aria-hidden": $props.title ? null : "true",
-    "aria-label": $props.title,
-    class: "material-design-icon arrow-u-left-top-icon",
-    role: "img",
-    onClick: _cache[0] || (_cache[0] = ($event) => _ctx.$emit("click", $event))
-  }), [
-    (openBlock(), createElementBlock("svg", {
-      fill: $props.fillColor,
-      class: "material-design-icon__svg",
-      width: $props.size,
-      height: $props.size,
-      viewBox: "0 0 24 24"
-    }, [
-      createBaseVNode("path", _hoisted_3$F, [
-        $props.title ? (openBlock(), createElementBlock(
-          "title",
-          _hoisted_4$D,
-          toDisplayString($props.title),
-          1
-          /* TEXT */
-        )) : createCommentVNode("v-if", true)
-      ])
-    ], 8, _hoisted_2$G))
-  ], 16, _hoisted_1$U);
-}
-const UndoIcon = /* @__PURE__ */ _export_sfc$1(_sfc_main$15, [["render", _sfc_render$15], ["__file", "/var/www/nextcloud/apps/agora/node_modules/vue-material-design-icons/ArrowULeftTop.vue"]]);
-const _sfc_main$14 = /* @__PURE__ */ defineComponent({
+const UndoIcon = /* @__PURE__ */ _export_sfc$1(_sfc_main$16, [["render", _sfc_render$16], ["__file", "/var/www/nextcloud/apps/agora/node_modules/vue-material-design-icons/ArrowULeftTop.vue"]]);
+const _sfc_main$15 = /* @__PURE__ */ defineComponent({
   __name: "ActionDelete",
   props: {
     timeout: { type: Number, required: false, default: 4 },
@@ -25667,9 +25693,9 @@ const _sfc_main$14 = /* @__PURE__ */ defineComponent({
     return __returned__;
   }
 });
-const _hoisted_1$T = { class: "" };
-function _sfc_render$14(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$T, [
+const _hoisted_1$U = { class: "" };
+function _sfc_render$15(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$U, [
     createVNode($setup["NcButton"], {
       name: $setup.computedTitle,
       variant: "tertiary",
@@ -25699,8 +25725,8 @@ function _sfc_render$14(_ctx, _cache, $props, $setup, $data, $options) {
     }, 8, ["name", "aria-label"])
   ]);
 }
-const ActionDelete = /* @__PURE__ */ _export_sfc$1(_sfc_main$14, [["render", _sfc_render$14], ["__file", "/var/www/nextcloud/apps/agora/src/components/Actions/modules/ActionDelete.vue"]]);
-const _sfc_main$13 = /* @__PURE__ */ defineComponent({
+const ActionDelete = /* @__PURE__ */ _export_sfc$1(_sfc_main$15, [["render", _sfc_render$15], ["__file", "/var/www/nextcloud/apps/agora/src/components/Actions/modules/ActionDelete.vue"]]);
+const _sfc_main$14 = /* @__PURE__ */ defineComponent({
   __name: "ActionDeleteOrphanedInquiries",
   setup(__props, { expose: __expose }) {
     __expose();
@@ -25713,9 +25739,9 @@ const _sfc_main$13 = /* @__PURE__ */ defineComponent({
     return __returned__;
   }
 });
-const _hoisted_1$S = { class: "action toggle-sidebar" };
-function _sfc_render$13(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$S, [
+const _hoisted_1$T = { class: "action toggle-sidebar" };
+function _sfc_render$14(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$T, [
     createVNode($setup["NcButton"], {
       variant: "primary",
       "aria-label": $setup.caption,
@@ -25733,8 +25759,8 @@ function _sfc_render$13(_ctx, _cache, $props, $setup, $data, $options) {
     }, 8, ["aria-label"])
   ]);
 }
-const ActionDeleteOrphanedInquiries = /* @__PURE__ */ _export_sfc$1(_sfc_main$13, [["render", _sfc_render$13], ["__file", "/var/www/nextcloud/apps/agora/src/components/Actions/modules/ActionDeleteOrphanedInquiries.vue"]]);
-const _sfc_main$12 = /* @__PURE__ */ defineComponent({
+const ActionDeleteOrphanedInquiries = /* @__PURE__ */ _export_sfc$1(_sfc_main$14, [["render", _sfc_render$14], ["__file", "/var/www/nextcloud/apps/agora/src/components/Actions/modules/ActionDeleteOrphanedInquiries.vue"]]);
+const _sfc_main$13 = /* @__PURE__ */ defineComponent({
   __name: "ActionOpenSharesSidebar",
   setup(__props, { expose: __expose }) {
     __expose();
@@ -25752,9 +25778,9 @@ const _sfc_main$12 = /* @__PURE__ */ defineComponent({
     return __returned__;
   }
 });
-const _hoisted_1$R = { class: "action toggle-sidebar" };
-function _sfc_render$12(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$R, [
+const _hoisted_1$S = { class: "action toggle-sidebar" };
+function _sfc_render$13(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$S, [
     createVNode($setup["NcButton"], {
       variant: "primary",
       "aria-label": $setup.caption,
@@ -25772,9 +25798,9 @@ function _sfc_render$12(_ctx, _cache, $props, $setup, $data, $options) {
     }, 8, ["aria-label"])
   ]);
 }
-const ActionOpenSharesSidebar = /* @__PURE__ */ _export_sfc$1(_sfc_main$12, [["render", _sfc_render$12], ["__file", "/var/www/nextcloud/apps/agora/src/components/Actions/modules/ActionOpenSharesSidebar.vue"]]);
+const ActionOpenSharesSidebar = /* @__PURE__ */ _export_sfc$1(_sfc_main$13, [["render", _sfc_render$13], ["__file", "/var/www/nextcloud/apps/agora/src/components/Actions/modules/ActionOpenSharesSidebar.vue"]]);
 const COOKIE_LIFETIME = 30;
-const _sfc_main$11 = /* @__PURE__ */ defineComponent({
+const _sfc_main$12 = /* @__PURE__ */ defineComponent({
   __name: "PublicRegisterModal",
   emits: ["close"],
   setup(__props, { expose: __expose, emit: __emit }) {
@@ -25963,10 +25989,10 @@ const _sfc_main$11 = /* @__PURE__ */ defineComponent({
     return __returned__;
   }
 });
-const _hoisted_1$Q = { class: "modal__content" };
-const _hoisted_2$F = { class: "modal__registration" };
-const _hoisted_3$E = { class: "registration__registration" };
-const _hoisted_4$C = { class: "modal__buttons" };
+const _hoisted_1$R = { class: "modal__content" };
+const _hoisted_2$G = { class: "modal__registration" };
+const _hoisted_3$F = { class: "registration__registration" };
+const _hoisted_4$D = { class: "modal__buttons" };
 const _hoisted_5$v = { class: "left" };
 const _hoisted_6$s = { class: "legal_links" };
 const _hoisted_7$s = { class: "right" };
@@ -25974,10 +26000,10 @@ const _hoisted_8$s = {
   key: 0,
   class: "registration__login"
 };
-function _sfc_render$11(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$Q, [
-    createBaseVNode("div", _hoisted_2$F, [
-      createBaseVNode("div", _hoisted_3$E, [
+function _sfc_render$12(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$R, [
+    createBaseVNode("div", _hoisted_2$G, [
+      createBaseVNode("div", _hoisted_3$F, [
         createBaseVNode(
           "h2",
           null,
@@ -26026,7 +26052,7 @@ function _sfc_render$11(_ctx, _cache, $props, $setup, $data, $options) {
           _: 1
           /* STABLE */
         }, 8, ["modelValue"])) : createCommentVNode("v-if", true),
-        createBaseVNode("div", _hoisted_4$C, [
+        createBaseVNode("div", _hoisted_4$D, [
           createBaseVNode("div", _hoisted_5$v, [
             createBaseVNode("div", _hoisted_6$s, [
               $setup.sessionStore.appSettings.finalImprintUrl ? (openBlock(), createBlock($setup["SimpleLink"], {
@@ -26113,9 +26139,9 @@ function _sfc_render$11(_ctx, _cache, $props, $setup, $data, $options) {
     ])
   ]);
 }
-const PublicRegisterModal = /* @__PURE__ */ _export_sfc$1(_sfc_main$11, [["render", _sfc_render$11], ["__file", "/var/www/nextcloud/apps/agora/src/components/Public/PublicRegisterModal.vue"]]);
+const PublicRegisterModal = /* @__PURE__ */ _export_sfc$1(_sfc_main$12, [["render", _sfc_render$12], ["__file", "/var/www/nextcloud/apps/agora/src/components/Public/PublicRegisterModal.vue"]]);
 const registerModalSize = "large";
-const _sfc_main$10 = /* @__PURE__ */ defineComponent({
+const _sfc_main$11 = /* @__PURE__ */ defineComponent({
   __name: "ActionRegister",
   setup(__props, { expose: __expose }) {
     __expose();
@@ -26130,9 +26156,9 @@ const _sfc_main$10 = /* @__PURE__ */ defineComponent({
     return __returned__;
   }
 });
-const _hoisted_1$P = { class: "action toggle-sidebar" };
-function _sfc_render$10(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$P, [
+const _hoisted_1$Q = { class: "action toggle-sidebar" };
+function _sfc_render$11(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$Q, [
     createVNode($setup["NcButton"], {
       variant: "primary",
       "aria-label": $setup.caption,
@@ -26166,8 +26192,8 @@ function _sfc_render$10(_ctx, _cache, $props, $setup, $data, $options) {
     }, 8, ["show", "name"])
   ]);
 }
-const ActionRegister = /* @__PURE__ */ _export_sfc$1(_sfc_main$10, [["render", _sfc_render$10], ["__file", "/var/www/nextcloud/apps/agora/src/components/Actions/modules/ActionRegister.vue"]]);
-const _sfc_main$$ = {
+const ActionRegister = /* @__PURE__ */ _export_sfc$1(_sfc_main$11, [["render", _sfc_render$11], ["__file", "/var/www/nextcloud/apps/agora/src/components/Actions/modules/ActionRegister.vue"]]);
+const _sfc_main$10 = {
   name: "EmailCheckIcon",
   emits: ["click"],
   props: {
@@ -26184,11 +26210,11 @@ const _sfc_main$$ = {
     }
   }
 };
-const _hoisted_1$O = ["aria-hidden", "aria-label"];
-const _hoisted_2$E = ["fill", "width", "height"];
-const _hoisted_3$D = { d: "M13 19C13 15.69 15.69 13 19 13C20.1 13 21.12 13.3 22 13.81V6C22 4.89 21.1 4 20 4H4C2.89 4 2 4.89 2 6V18C2 19.11 2.9 20 4 20H13.09C13.04 19.67 13 19.34 13 19M4 8V6L12 11L20 6V8L12 13L4 8M17.75 22.16L15 19.16L16.16 18L17.75 19.59L21.34 16L22.5 17.41L17.75 22.16" };
-const _hoisted_4$B = { key: 0 };
-function _sfc_render$$(_ctx, _cache, $props, $setup, $data, $options) {
+const _hoisted_1$P = ["aria-hidden", "aria-label"];
+const _hoisted_2$F = ["fill", "width", "height"];
+const _hoisted_3$E = { d: "M13 19C13 15.69 15.69 13 19 13C20.1 13 21.12 13.3 22 13.81V6C22 4.89 21.1 4 20 4H4C2.89 4 2 4.89 2 6V18C2 19.11 2.9 20 4 20H13.09C13.04 19.67 13 19.34 13 19M4 8V6L12 11L20 6V8L12 13L4 8M17.75 22.16L15 19.16L16.16 18L17.75 19.59L21.34 16L22.5 17.41L17.75 22.16" };
+const _hoisted_4$C = { key: 0 };
+function _sfc_render$10(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock("span", mergeProps(_ctx.$attrs, {
     "aria-hidden": $props.title ? null : "true",
     "aria-label": $props.title,
@@ -26203,20 +26229,20 @@ function _sfc_render$$(_ctx, _cache, $props, $setup, $data, $options) {
       height: $props.size,
       viewBox: "0 0 24 24"
     }, [
-      createBaseVNode("path", _hoisted_3$D, [
+      createBaseVNode("path", _hoisted_3$E, [
         $props.title ? (openBlock(), createElementBlock(
           "title",
-          _hoisted_4$B,
+          _hoisted_4$C,
           toDisplayString($props.title),
           1
           /* TEXT */
         )) : createCommentVNode("v-if", true)
       ])
-    ], 8, _hoisted_2$E))
-  ], 16, _hoisted_1$O);
+    ], 8, _hoisted_2$F))
+  ], 16, _hoisted_1$P);
 }
-const EmailCheckIcon = /* @__PURE__ */ _export_sfc$1(_sfc_main$$, [["render", _sfc_render$$], ["__file", "/var/www/nextcloud/apps/agora/node_modules/vue-material-design-icons/EmailCheck.vue"]]);
-const _sfc_main$_ = /* @__PURE__ */ defineComponent({
+const EmailCheckIcon = /* @__PURE__ */ _export_sfc$1(_sfc_main$10, [["render", _sfc_render$10], ["__file", "/var/www/nextcloud/apps/agora/node_modules/vue-material-design-icons/EmailCheck.vue"]]);
+const _sfc_main$$ = /* @__PURE__ */ defineComponent({
   __name: "ActionSendConfirmed",
   emits: ["success", "error"],
   setup(__props, { expose: __expose, emit: __emit }) {
@@ -26267,18 +26293,18 @@ const _sfc_main$_ = /* @__PURE__ */ defineComponent({
     return __returned__;
   }
 });
-const _hoisted_1$N = { class: "action send-confirmations" };
-const _hoisted_2$D = { class: "modal-confirmation-result" };
-const _hoisted_3$C = {
+const _hoisted_1$O = { class: "action send-confirmations" };
+const _hoisted_2$E = { class: "modal-confirmation-result" };
+const _hoisted_3$D = {
   key: 0,
   class: "sent-confirmations"
 };
-const _hoisted_4$A = {
+const _hoisted_4$B = {
   key: 1,
   class: "error-confirmations"
 };
-function _sfc_render$_(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$N, [
+function _sfc_render$$(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$O, [
     createVNode($setup["NcButton"], {
       variant: "primary",
       "aria-label": $setup.sendButtonCaption,
@@ -26306,8 +26332,8 @@ function _sfc_render$_(_ctx, _cache, $props, $setup, $data, $options) {
       size: "small"
     }, {
       default: withCtx(() => [
-        createBaseVNode("div", _hoisted_2$D, [
-          $setup.confirmations?.countSentMails > 0 ? (openBlock(), createElementBlock("div", _hoisted_3$C, [
+        createBaseVNode("div", _hoisted_2$E, [
+          $setup.confirmations?.countSentMails > 0 ? (openBlock(), createElementBlock("div", _hoisted_3$D, [
             createBaseVNode(
               "h2",
               null,
@@ -26340,7 +26366,7 @@ function _sfc_render$_(_ctx, _cache, $props, $setup, $data, $options) {
               ))
             ])
           ])) : createCommentVNode("v-if", true),
-          $setup.confirmations?.countAbortedMails > 0 ? (openBlock(), createElementBlock("div", _hoisted_4$A, [
+          $setup.confirmations?.countAbortedMails > 0 ? (openBlock(), createElementBlock("div", _hoisted_4$B, [
             createBaseVNode(
               "h2",
               null,
@@ -26380,8 +26406,8 @@ function _sfc_render$_(_ctx, _cache, $props, $setup, $data, $options) {
     }, 8, ["show", "name"])
   ]);
 }
-const ActionSendConfirmed = /* @__PURE__ */ _export_sfc$1(_sfc_main$_, [["render", _sfc_render$_], ["__file", "/var/www/nextcloud/apps/agora/src/components/Actions/modules/ActionSendConfirmed.vue"]]);
-const _sfc_main$Z = /* @__PURE__ */ defineComponent({
+const ActionSendConfirmed = /* @__PURE__ */ _export_sfc$1(_sfc_main$$, [["render", _sfc_render$$], ["__file", "/var/www/nextcloud/apps/agora/src/components/Actions/modules/ActionSendConfirmed.vue"]]);
+const _sfc_main$_ = /* @__PURE__ */ defineComponent({
   __name: "InquiryHeaderButtons",
   setup(__props, { expose: __expose }) {
     __expose();
@@ -26397,13 +26423,13 @@ const _sfc_main$Z = /* @__PURE__ */ defineComponent({
     return __returned__;
   }
 });
-const _hoisted_1$M = { class: "inquiry-header-buttons" };
-function _sfc_render$Z(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$M, [
+const _hoisted_1$N = { class: "inquiry-header-buttons" };
+function _sfc_render$_(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$N, [
     $setup.inquiryStore.permissions.edit || $setup.sessionStore.appSettings.inquiryTypeRights[$setup.inquiryStore.type]?.inquiryComment ? (openBlock(), createBlock($setup["ActionToggleSidebar"], { key: 0 })) : createCommentVNode("v-if", true)
   ]);
 }
-const InquiryHeaderButtons = /* @__PURE__ */ _export_sfc$1(_sfc_main$Z, [["render", _sfc_render$Z], ["__file", "/var/www/nextcloud/apps/agora/src/components/Inquiry/InquiryHeaderButtons.vue"]]);
+const InquiryHeaderButtons = /* @__PURE__ */ _export_sfc$1(_sfc_main$_, [["render", _sfc_render$_], ["__file", "/var/www/nextcloud/apps/agora/src/components/Inquiry/InquiryHeaderButtons.vue"]]);
 function OrderedMap(content) {
   this.content = content;
 }
@@ -26592,12 +26618,12 @@ class Fragment {
   */
   nodesBetween(from2, to, f, nodeStart = 0, parent) {
     for (let i = 0, pos = 0; pos < to; i++) {
-      let child = this.content[i], end = pos + child.nodeSize;
-      if (end > from2 && f(child, nodeStart + pos, parent || null, i) !== false && child.content.size) {
-        let start = pos + 1;
-        child.nodesBetween(Math.max(0, from2 - start), Math.min(child.content.size, to - start), f, nodeStart + start);
+      let child = this.content[i], end2 = pos + child.nodeSize;
+      if (end2 > from2 && f(child, nodeStart + pos, parent || null, i) !== false && child.content.size) {
+        let start2 = pos + 1;
+        child.nodesBetween(Math.max(0, from2 - start2), Math.min(child.content.size, to - start2), f, nodeStart + start2);
       }
-      pos = end;
+      pos = end2;
     }
   }
   /**
@@ -26653,9 +26679,9 @@ class Fragment {
     let result2 = [], size2 = 0;
     if (to > from2)
       for (let i = 0, pos = 0; pos < to; i++) {
-        let child = this.content[i], end = pos + child.nodeSize;
-        if (end > from2) {
-          if (pos < from2 || end > to) {
+        let child = this.content[i], end2 = pos + child.nodeSize;
+        if (end2 > from2) {
+          if (pos < from2 || end2 > to) {
             if (child.isText)
               child = child.cut(Math.max(0, from2 - pos), Math.min(child.text.length, to - pos));
             else
@@ -26664,7 +26690,7 @@ class Fragment {
           result2.push(child);
           size2 += child.nodeSize;
         }
-        pos = end;
+        pos = end2;
       }
     return new Fragment(result2, size2);
   }
@@ -26790,13 +26816,13 @@ class Fragment {
     if (pos > this.size || pos < 0)
       throw new RangeError(`Position ${pos} outside of fragment (${this})`);
     for (let i = 0, curPos = 0; ; i++) {
-      let cur = this.child(i), end = curPos + cur.nodeSize;
-      if (end >= pos) {
-        if (end == pos)
-          return retIndex(i + 1, end);
+      let cur = this.child(i), end2 = curPos + cur.nodeSize;
+      if (end2 >= pos) {
+        if (end2 == pos)
+          return retIndex(i + 1, end2);
         return retIndex(i, curPos);
       }
-      curPos = end;
+      curPos = end2;
     }
   }
   /**
@@ -27147,8 +27173,8 @@ function replaceOuter($from, $to, slice3, depth) {
     let parent = $from.parent, content = parent.content;
     return close(parent, content.cut(0, $from.parentOffset).append(slice3.content).append(content.cut($to.parentOffset)));
   } else {
-    let { start, end } = prepareSliceForReplace(slice3, $from);
-    return close(node, replaceThreeWay($from, start, end, $to, depth));
+    let { start: start2, end: end2 } = prepareSliceForReplace(slice3, $from);
+    return close(node, replaceThreeWay($from, start2, end2, $to, depth));
   }
 }
 function checkJoin(main, sub) {
@@ -27466,18 +27492,18 @@ class ResolvedPos {
     if (!(pos >= 0 && pos <= doc2.content.size))
       throw new RangeError("Position " + pos + " out of range");
     let path = [];
-    let start = 0, parentOffset = pos;
+    let start2 = 0, parentOffset = pos;
     for (let node = doc2; ; ) {
       let { index, offset } = node.content.findIndex(parentOffset);
       let rem = parentOffset - offset;
-      path.push(node, index, start + offset);
+      path.push(node, index, start2 + offset);
       if (!rem)
         break;
       node = node.child(index);
       if (node.isText)
         break;
       parentOffset = rem - 1;
-      start += offset + 1;
+      start2 += offset + 1;
     }
     return new ResolvedPos(pos, path, parentOffset);
   }
@@ -27708,8 +27734,8 @@ class Node {
       return Slice.empty;
     let $from = this.resolve(from2), $to = this.resolve(to);
     let depth = includeParents ? 0 : $from.sharedDepth(to);
-    let start = $from.start(depth), node = $from.node(depth);
-    let content = node.content.cut($from.pos - start, $to.pos - start);
+    let start2 = $from.start(depth), node = $from.node(depth);
+    let content = node.content.cut($from.pos - start2, $to.pos - start2);
     return new Slice(content, $from.depth - depth, $to.depth - depth);
   }
   /**
@@ -27863,12 +27889,12 @@ class Node {
   can optionally pass `start` and `end` indices into the
   replacement fragment.
   */
-  canReplace(from2, to, replacement = Fragment.empty, start = 0, end = replacement.childCount) {
-    let one = this.contentMatchAt(from2).matchFragment(replacement, start, end);
+  canReplace(from2, to, replacement = Fragment.empty, start2 = 0, end2 = replacement.childCount) {
+    let one = this.contentMatchAt(from2).matchFragment(replacement, start2, end2);
     let two = one && one.matchFragment(this.content, to);
     if (!two || !two.validEnd)
       return false;
-    for (let i = start; i < end; i++)
+    for (let i = start2; i < end2; i++)
       if (!this.type.allowsMarks(replacement.child(i).marks))
         return false;
     return true;
@@ -27880,9 +27906,9 @@ class Node {
   canReplaceWith(from2, to, type, marks) {
     if (marks && !this.type.allowsMarks(marks))
       return false;
-    let start = this.contentMatchAt(from2).matchType(type);
-    let end = start && start.matchFragment(this.content, to);
-    return end ? end.validEnd : false;
+    let start2 = this.contentMatchAt(from2).matchType(type);
+    let end2 = start2 && start2.matchFragment(this.content, to);
+    return end2 ? end2.validEnd : false;
   }
   /**
   Test whether the given node's content could be appended to this
@@ -28040,9 +28066,9 @@ class ContentMatch {
   Try to match a fragment. Returns the resulting match when
   successful.
   */
-  matchFragment(frag, start = 0, end = frag.childCount) {
+  matchFragment(frag, start2 = 0, end2 = frag.childCount) {
     let cur = this;
-    for (let i = start; cur && i < end; i++)
+    for (let i = start2; cur && i < end2; i++)
       cur = cur.matchType(frag.child(i).type);
     return cur;
   }
@@ -29035,9 +29061,9 @@ class NodeContext {
       if (fill) {
         this.match = this.type.contentMatch.matchFragment(fill);
       } else {
-        let start = this.type.contentMatch, wrap2;
-        if (wrap2 = start.findWrapping(node.type)) {
-          this.match = start;
+        let start2 = this.type.contentMatch, wrap2;
+        if (wrap2 = start2.findWrapping(node.type)) {
+          this.match = start2;
           return wrap2;
         } else {
           return null;
@@ -29264,7 +29290,7 @@ class ParseContext {
   // synchronize after every block element.
   addAll(parent, marks, startIndex, endIndex) {
     let index = startIndex || 0;
-    for (let dom2 = startIndex ? parent.childNodes[startIndex] : parent.firstChild, end = endIndex == null ? null : parent.childNodes[endIndex]; dom2 != end; dom2 = dom2.nextSibling, ++index) {
+    for (let dom2 = startIndex ? parent.childNodes[startIndex] : parent.firstChild, end2 = endIndex == null ? null : parent.childNodes[endIndex]; dom2 != end2; dom2 = dom2.nextSibling, ++index) {
       this.findAtPoint(parent, index);
       this.addDOM(dom2, marks);
     }
@@ -29680,9 +29706,9 @@ function renderSpec(doc2, structure, xmlNS, blockArraysIn) {
   }
   let contentDOM;
   let dom2 = xmlNS ? doc2.createElementNS(xmlNS, tagName) : doc2.createElement(tagName);
-  let attrs = structure[1], start = 1;
+  let attrs = structure[1], start2 = 1;
   if (attrs && typeof attrs == "object" && attrs.nodeType == null && !Array.isArray(attrs)) {
-    start = 2;
+    start2 = 2;
     for (let name in attrs)
       if (attrs[name] != null) {
         let space2 = name.indexOf(" ");
@@ -29694,10 +29720,10 @@ function renderSpec(doc2, structure, xmlNS, blockArraysIn) {
           dom2.setAttribute(name, attrs[name]);
       }
   }
-  for (let i = start; i < structure.length; i++) {
+  for (let i = start2; i < structure.length; i++) {
     let child = structure[i];
     if (child === 0) {
-      if (i < structure.length - 1 || i > start)
+      if (i < structure.length - 1 || i > start2)
         throw new RangeError("Content hole must be the only child of its parent node");
       return { dom: dom2, contentDOM: dom2 };
     } else {
@@ -29796,18 +29822,18 @@ class StepMap {
   _map(pos, assoc, simple) {
     let diff = 0, oldIndex = this.inverted ? 2 : 1, newIndex = this.inverted ? 1 : 2;
     for (let i = 0; i < this.ranges.length; i += 3) {
-      let start = this.ranges[i] - (this.inverted ? diff : 0);
-      if (start > pos)
+      let start2 = this.ranges[i] - (this.inverted ? diff : 0);
+      if (start2 > pos)
         break;
-      let oldSize = this.ranges[i + oldIndex], newSize = this.ranges[i + newIndex], end = start + oldSize;
-      if (pos <= end) {
-        let side = !oldSize ? assoc : pos == start ? -1 : pos == end ? 1 : assoc;
-        let result2 = start + diff + (side < 0 ? 0 : newSize);
+      let oldSize = this.ranges[i + oldIndex], newSize = this.ranges[i + newIndex], end2 = start2 + oldSize;
+      if (pos <= end2) {
+        let side = !oldSize ? assoc : pos == start2 ? -1 : pos == end2 ? 1 : assoc;
+        let result2 = start2 + diff + (side < 0 ? 0 : newSize);
         if (simple)
           return result2;
-        let recover = pos == (assoc < 0 ? start : end) ? null : makeRecover(i / 3, pos - start);
-        let del = pos == start ? DEL_AFTER : pos == end ? DEL_BEFORE : DEL_ACROSS;
-        if (assoc < 0 ? pos != start : pos != end)
+        let recover = pos == (assoc < 0 ? start2 : end2) ? null : makeRecover(i / 3, pos - start2);
+        let del = pos == start2 ? DEL_AFTER : pos == end2 ? DEL_BEFORE : DEL_ACROSS;
+        if (assoc < 0 ? pos != start2 : pos != end2)
           del |= DEL_SIDE;
         return new MapResult(result2, del, recover);
       }
@@ -29822,11 +29848,11 @@ class StepMap {
     let diff = 0, index = recoverIndex(recover);
     let oldIndex = this.inverted ? 2 : 1, newIndex = this.inverted ? 1 : 2;
     for (let i = 0; i < this.ranges.length; i += 3) {
-      let start = this.ranges[i] - (this.inverted ? diff : 0);
-      if (start > pos)
+      let start2 = this.ranges[i] - (this.inverted ? diff : 0);
+      if (start2 > pos)
         break;
-      let oldSize = this.ranges[i + oldIndex], end = start + oldSize;
-      if (pos <= end && i == index * 3)
+      let oldSize = this.ranges[i + oldIndex], end2 = start2 + oldSize;
+      if (pos <= end2 && i == index * 3)
         return true;
       diff += this.ranges[i + newIndex] - oldSize;
     }
@@ -29839,7 +29865,7 @@ class StepMap {
   forEach(f) {
     let oldIndex = this.inverted ? 2 : 1, newIndex = this.inverted ? 1 : 2;
     for (let i = 0, diff = 0; i < this.ranges.length; i += 3) {
-      let start = this.ranges[i], oldStart = start - (this.inverted ? diff : 0), newStart = start + (this.inverted ? 0 : diff);
+      let start2 = this.ranges[i], oldStart = start2 - (this.inverted ? diff : 0), newStart = start2 + (this.inverted ? 0 : diff);
       let oldSize = this.ranges[i + oldIndex], newSize = this.ranges[i + newIndex];
       f(oldStart, oldStart + oldSize, newStart, newStart + newSize);
       diff += newSize - oldSize;
@@ -30433,20 +30459,20 @@ function addMark(tr, from2, to, mark) {
       return;
     let marks = node.marks;
     if (!mark.isInSet(marks) && parent.type.allowsMarkType(mark.type)) {
-      let start = Math.max(pos, from2), end = Math.min(pos + node.nodeSize, to);
+      let start2 = Math.max(pos, from2), end2 = Math.min(pos + node.nodeSize, to);
       let newSet = mark.addToSet(marks);
       for (let i = 0; i < marks.length; i++) {
         if (!marks[i].isInSet(newSet)) {
-          if (removing && removing.to == start && removing.mark.eq(marks[i]))
-            removing.to = end;
+          if (removing && removing.to == start2 && removing.mark.eq(marks[i]))
+            removing.to = end2;
           else
-            removed.push(removing = new RemoveMarkStep(start, end, marks[i]));
+            removed.push(removing = new RemoveMarkStep(start2, end2, marks[i]));
         }
       }
-      if (adding && adding.to == start)
-        adding.to = end;
+      if (adding && adding.to == start2)
+        adding.to = end2;
       else
-        added.push(adding = new AddMarkStep(start, end, mark));
+        added.push(adding = new AddMarkStep(start2, end2, mark));
     }
   });
   removed.forEach((s) => tr.step(s));
@@ -30472,7 +30498,7 @@ function removeMark(tr, from2, to, mark) {
       toRemove = node.marks;
     }
     if (toRemove && toRemove.length) {
-      let end = Math.min(pos + node.nodeSize, to);
+      let end2 = Math.min(pos + node.nodeSize, to);
       for (let i = 0; i < toRemove.length; i++) {
         let style2 = toRemove[i], found2;
         for (let j = 0; j < matched.length; j++) {
@@ -30481,10 +30507,10 @@ function removeMark(tr, from2, to, mark) {
             found2 = m;
         }
         if (found2) {
-          found2.to = end;
+          found2.to = end2;
           found2.step = step;
         } else {
-          matched.push({ style: style2, from: Math.max(pos, from2), to: end, step });
+          matched.push({ style: style2, from: Math.max(pos, from2), to: end2, step });
         }
       }
     }
@@ -30495,15 +30521,15 @@ function clearIncompatible(tr, pos, parentType, match = parentType.contentMatch,
   let node = tr.doc.nodeAt(pos);
   let replSteps = [], cur = pos + 1;
   for (let i = 0; i < node.childCount; i++) {
-    let child = node.child(i), end = cur + child.nodeSize;
+    let child = node.child(i), end2 = cur + child.nodeSize;
     let allowed = match.matchType(child.type);
     if (!allowed) {
-      replSteps.push(new ReplaceStep(cur, end, Slice.empty));
+      replSteps.push(new ReplaceStep(cur, end2, Slice.empty));
     } else {
       match = allowed;
       for (let j = 0; j < child.marks.length; j++)
         if (!parentType.allowsMarkType(child.marks[j].type))
-          tr.step(new RemoveMarkStep(cur, end, child.marks[j]));
+          tr.step(new RemoveMarkStep(cur, end2, child.marks[j]));
       if (clearNewlines && child.isText && parentType.whitespace != "pre") {
         let m, newline = /\r?\n|\r/g, slice3;
         while (m = newline.exec(child.text)) {
@@ -30513,7 +30539,7 @@ function clearIncompatible(tr, pos, parentType, match = parentType.contentMatch,
         }
       }
     }
-    cur = end;
+    cur = end2;
   }
   if (!match.validEnd) {
     let fill = match.fillBefore(Fragment.empty, true);
@@ -30522,8 +30548,8 @@ function clearIncompatible(tr, pos, parentType, match = parentType.contentMatch,
   for (let i = replSteps.length - 1; i >= 0; i--)
     tr.step(replSteps[i]);
 }
-function canCut(node, start, end) {
-  return (start == 0 || node.canReplace(start, node.childCount)) && (end == node.childCount || node.canReplace(0, end));
+function canCut(node, start2, end2) {
+  return (start2 == 0 || node.canReplace(start2, node.childCount)) && (end2 == node.childCount || node.canReplace(0, end2));
 }
 function liftTarget(range2) {
   let parent = range2.parent;
@@ -30545,7 +30571,7 @@ function liftTarget(range2) {
 function lift$2(tr, range2, target) {
   let { $from, $to, depth } = range2;
   let gapStart = $from.before(depth + 1), gapEnd = $to.after(depth + 1);
-  let start = gapStart, end = gapEnd;
+  let start2 = gapStart, end2 = gapEnd;
   let before2 = Fragment.empty, openStart = 0;
   for (let d = depth, splitting = false; d > target; d--)
     if (splitting || $from.index(d) > 0) {
@@ -30553,7 +30579,7 @@ function lift$2(tr, range2, target) {
       before2 = Fragment.from($from.node(d).copy(before2));
       openStart++;
     } else {
-      start--;
+      start2--;
     }
   let after2 = Fragment.empty, openEnd = 0;
   for (let d = depth, splitting = false; d > target; d--)
@@ -30562,9 +30588,9 @@ function lift$2(tr, range2, target) {
       after2 = Fragment.from($to.node(d).copy(after2));
       openEnd++;
     } else {
-      end++;
+      end2++;
     }
-  tr.step(new ReplaceAroundStep(start, end, gapStart, gapEnd, new Slice(before2.append(after2), openStart, openEnd), before2.size - openStart, true));
+  tr.step(new ReplaceAroundStep(start2, end2, gapStart, gapEnd, new Slice(before2.append(after2), openStart, openEnd), before2.size - openStart, true));
 }
 function findWrapping(range2, nodeType, attrs = null, innerRange = range2) {
   let around = findWrappingOutside(range2, nodeType);
@@ -30608,8 +30634,8 @@ function wrap$1(tr, range2, wrappers) {
     }
     content = Fragment.from(wrappers[i].type.create(wrappers[i].attrs, content));
   }
-  let start = range2.start, end = range2.end;
-  tr.step(new ReplaceAroundStep(start, end, start, end, new Slice(content, 0, 0), wrappers.length, true));
+  let start2 = range2.start, end2 = range2.end;
+  tr.step(new ReplaceAroundStep(start2, end2, start2, end2, new Slice(content, 0, 0), wrappers.length, true));
 }
 function setBlockType$1(tr, from2, to, type, attrs) {
   if (!type.isTextblock)
@@ -30643,8 +30669,8 @@ function replaceNewlines(tr, node, pos, mapFrom) {
     if (child.isText) {
       let m, newline = /\r?\n|\r/g;
       while (m = newline.exec(child.text)) {
-        let start = tr.mapping.slice(mapFrom).map(pos + 1 + offset + m.index);
-        tr.replaceWith(start, start + 1, node.type.schema.linebreakReplacement.create());
+        let start2 = tr.mapping.slice(mapFrom).map(pos + 1 + offset + m.index);
+        tr.replaceWith(start2, start2 + 1, node.type.schema.linebreakReplacement.create());
       }
     }
   });
@@ -30652,8 +30678,8 @@ function replaceNewlines(tr, node, pos, mapFrom) {
 function replaceLinebreaks(tr, node, pos, mapFrom) {
   node.forEach((child, offset) => {
     if (child.type == child.type.schema.linebreakReplacement) {
-      let start = tr.mapping.slice(mapFrom).map(pos + 1 + offset);
-      tr.replaceWith(start, start + 1, node.type.schema.text("\n"));
+      let start2 = tr.mapping.slice(mapFrom).map(pos + 1 + offset);
+      tr.replaceWith(start2, start2 + 1, node.type.schema.text("\n"));
     }
   });
 }
@@ -30768,10 +30794,10 @@ function join$1(tr, pos, depth) {
   }
   if (beforeType.inlineContent)
     clearIncompatible(tr, pos + depth - 1, beforeType, $before.node().contentMatchAt($before.index()), convertNewlines == null);
-  let mapping = tr.mapping.slice(mapFrom), start = mapping.map(pos - depth);
-  tr.step(new ReplaceStep(start, mapping.map(pos + depth, -1), Slice.empty, true));
+  let mapping = tr.mapping.slice(mapFrom), start2 = mapping.map(pos - depth);
+  tr.step(new ReplaceStep(start2, mapping.map(pos + depth, -1), Slice.empty, true));
   if (convertNewlines === true) {
-    let $full = tr.doc.resolve(start);
+    let $full = tr.doc.resolve(start2);
     replaceNewlines(tr, $full.node(), $full.before(), tr.steps.length);
   }
   return tr;
@@ -31066,8 +31092,8 @@ function contentAfterFits($to, depth, type, match, open) {
   let fit = match.fillBefore(node.content, true, index);
   return fit && !invalidMarks(type, node.content, index) ? fit : null;
 }
-function invalidMarks(type, fragment, start) {
-  for (let i = start; i < fragment.childCount; i++)
+function invalidMarks(type, fragment, start2) {
+  for (let i = start2; i < fragment.childCount; i++)
     if (!type.allowsMarks(fragment.child(i).marks))
       return true;
   return false;
@@ -31146,8 +31172,8 @@ function closeFragment(fragment, depth, oldOpen, newOpen, parent) {
   }
   if (depth > newOpen) {
     let match = parent.contentMatchAt(0);
-    let start = match.fillBefore(fragment).append(fragment);
-    fragment = start.append(match.matchFragment(start).fillBefore(Fragment.empty, true));
+    let start2 = match.fillBefore(fragment).append(fragment);
+    fragment = start2.append(match.matchFragment(start2).fillBefore(Fragment.empty, true));
   }
   return fragment;
 }
@@ -31178,10 +31204,10 @@ function deleteRange$1(tr, from2, to) {
 function coveredDepths($from, $to) {
   let result2 = [], minDepth = Math.min($from.depth, $to.depth);
   for (let d = minDepth; d >= 0; d--) {
-    let start = $from.start(d);
-    if (start < $from.pos - ($from.depth - d) || $to.end(d) > $to.pos + ($to.depth - d) || $from.node(d).type.spec.isolating || $to.node(d).type.spec.isolating)
+    let start2 = $from.start(d);
+    if (start2 < $from.pos - ($from.depth - d) || $to.end(d) > $to.pos + ($to.depth - d) || $from.node(d).type.spec.isolating || $to.node(d).type.spec.isolating)
       break;
-    if (start == $to.start(d) || d == $from.depth && d == $to.depth && $from.parent.inlineContent && $to.parent.inlineContent && d && $to.start(d - 1) == start - 1)
+    if (start2 == $to.start(d) || d == $from.depth && d == $to.depth && $from.parent.inlineContent && $to.parent.inlineContent && d && $to.start(d - 1) == start2 - 1)
       result2.push(d);
   }
   return result2;
@@ -31979,12 +32005,12 @@ function selectionToInsertionEnd$1(tr, startLen, bias) {
   let step = tr.steps[last2];
   if (!(step instanceof ReplaceStep || step instanceof ReplaceAroundStep))
     return;
-  let map3 = tr.mapping.maps[last2], end;
+  let map3 = tr.mapping.maps[last2], end2;
   map3.forEach((_from, _to, _newFrom, newTo) => {
-    if (end == null)
-      end = newTo;
+    if (end2 == null)
+      end2 = newTo;
   });
-  tr.setSelection(Selection.near(tr.doc.resolve(end), bias));
+  tr.setSelection(Selection.near(tr.doc.resolve(end2), bias));
 }
 const UPDATED_SEL = 1, UPDATED_MARKS = 2, UPDATED_SCROLL = 4;
 class Transaction extends Transform {
@@ -32851,12 +32877,12 @@ function deleteBarrier(state, $cut, dispatch, dir) {
   let canDelAfter = !isolated && $cut.parent.canReplace($cut.index(), $cut.index() + 1);
   if (canDelAfter && (conn = (match = before2.contentMatchAt(before2.childCount)).findWrapping(after2.type)) && match.matchType(conn[0] || after2.type).validEnd) {
     if (dispatch) {
-      let end = $cut.pos + after2.nodeSize, wrap2 = Fragment.empty;
+      let end2 = $cut.pos + after2.nodeSize, wrap2 = Fragment.empty;
       for (let i = conn.length - 1; i >= 0; i--)
         wrap2 = Fragment.from(conn[i].create(null, wrap2));
       wrap2 = Fragment.from(before2.copy(wrap2));
-      let tr = state.tr.step(new ReplaceAroundStep($cut.pos - 1, end, $cut.pos, end, new Slice(wrap2, 1, 0), conn.length, true));
-      let $joinAt = tr.doc.resolve(end + 2 * conn.length);
+      let tr = state.tr.step(new ReplaceAroundStep($cut.pos - 1, end2, $cut.pos, end2, new Slice(wrap2, 1, 0), conn.length, true));
+      let $joinAt = tr.doc.resolve(end2 + 2 * conn.length);
       if ($joinAt.nodeAfter && $joinAt.nodeAfter.type == before2.type && canJoin(tr.doc, $joinAt.pos))
         tr.join($joinAt.pos);
       dispatch(tr.scrollIntoView());
@@ -32883,10 +32909,10 @@ function deleteBarrier(state, $cut, dispatch, dir) {
       afterDepth++;
     if (at.canReplace(at.childCount, at.childCount, afterText.content)) {
       if (dispatch) {
-        let end = Fragment.empty;
+        let end2 = Fragment.empty;
         for (let i = wrap2.length - 1; i >= 0; i--)
-          end = Fragment.from(wrap2[i].copy(end));
-        let tr = state.tr.step(new ReplaceAroundStep($cut.pos - wrap2.length, $cut.pos + after2.nodeSize, $cut.pos + afterDepth, $cut.pos + after2.nodeSize - afterDepth, new Slice(end, wrap2.length, 0), 0, true));
+          end2 = Fragment.from(wrap2[i].copy(end2));
+        let tr = state.tr.step(new ReplaceAroundStep($cut.pos - wrap2.length, $cut.pos + after2.nodeSize, $cut.pos + afterDepth, $cut.pos + after2.nodeSize - afterDepth, new Slice(end2, wrap2.length, 0), 0, true));
         dispatch(tr.scrollIntoView());
       }
       return true;
@@ -33035,16 +33061,16 @@ function liftListItem$1(itemType) {
   };
 }
 function liftToOuterList(state, dispatch, itemType, range2) {
-  let tr = state.tr, end = range2.end, endOfList = range2.$to.end(range2.depth);
-  if (end < endOfList) {
-    tr.step(new ReplaceAroundStep(end - 1, endOfList, end, endOfList, new Slice(Fragment.from(itemType.create(null, range2.parent.copy())), 1, 0), 1, true));
+  let tr = state.tr, end2 = range2.end, endOfList = range2.$to.end(range2.depth);
+  if (end2 < endOfList) {
+    tr.step(new ReplaceAroundStep(end2 - 1, endOfList, end2, endOfList, new Slice(Fragment.from(itemType.create(null, range2.parent.copy())), 1, 0), 1, true));
     range2 = new NodeRange(tr.doc.resolve(range2.$from.pos), tr.doc.resolve(endOfList), range2.depth);
   }
   const target = liftTarget(range2);
   if (target == null)
     return false;
   tr.lift(range2, target);
-  let $after = tr.doc.resolve(tr.mapping.map(end, -1) - 1);
+  let $after = tr.doc.resolve(tr.mapping.map(end2, -1) - 1);
   if (canJoin(tr.doc, $after.pos) && $after.nodeBefore.type == $after.nodeAfter.type)
     tr.join($after.pos);
   dispatch(tr.scrollIntoView());
@@ -33063,8 +33089,8 @@ function liftOutOfList(state, dispatch, range2) {
   let parent = $start.node(-1), indexBefore = $start.index(-1);
   if (!parent.canReplace(indexBefore + (atStart ? 0 : 1), indexBefore + 1, item.content.append(atEnd ? Fragment.empty : Fragment.from(list))))
     return false;
-  let start = $start.pos, end = start + item.nodeSize;
-  tr.step(new ReplaceAroundStep(start - (atStart ? 1 : 0), end + (atEnd ? 1 : 0), start + 1, end - 1, new Slice((atStart ? Fragment.empty : Fragment.from(list.copy(Fragment.empty))).append(atEnd ? Fragment.empty : Fragment.from(list.copy(Fragment.empty))), atStart ? 0 : 1, atEnd ? 0 : 1), atStart ? 0 : 1));
+  let start2 = $start.pos, end2 = start2 + item.nodeSize;
+  tr.step(new ReplaceAroundStep(start2 - (atStart ? 1 : 0), end2 + (atEnd ? 1 : 0), start2 + 1, end2 - 1, new Slice((atStart ? Fragment.empty : Fragment.from(list.copy(Fragment.empty))).append(atEnd ? Fragment.empty : Fragment.from(list.copy(Fragment.empty))), atStart ? 0 : 1, atEnd ? 0 : 1), atStart ? 0 : 1));
   dispatch(tr.scrollIntoView());
   return true;
 }
@@ -33877,8 +33903,8 @@ class ViewDesc {
   // parent node overrode rendering, there might not be one.)
   descAt(pos) {
     for (let i = 0, offset = 0; i < this.children.length; i++) {
-      let child = this.children[i], end = offset + child.size;
-      if (offset == pos && end != offset) {
+      let child = this.children[i], end2 = offset + child.size;
+      if (offset == pos && end2 != offset) {
         while (!child.border && child.children.length) {
           for (let i2 = 0; i2 < child.children.length; i2++) {
             let inner = child.children[i2];
@@ -33890,9 +33916,9 @@ class ViewDesc {
         }
         return child;
       }
-      if (pos < end)
+      if (pos < end2)
         return child.descAt(pos - offset - child.border);
-      offset = end;
+      offset = end2;
     }
   }
   domFromPos(pos, side) {
@@ -33900,12 +33926,12 @@ class ViewDesc {
       return { node: this.dom, offset: 0, atom: pos + 1 };
     let i = 0, offset = 0;
     for (let curPos = 0; i < this.children.length; i++) {
-      let child = this.children[i], end = curPos + child.size;
-      if (end > pos || child instanceof TrailingHackViewDesc) {
+      let child = this.children[i], end2 = curPos + child.size;
+      if (end2 > pos || child instanceof TrailingHackViewDesc) {
         offset = pos - curPos;
         break;
       }
-      curPos = end;
+      curPos = end2;
     }
     if (offset)
       return this.children[i].domFromPos(offset - this.children[i].border, side);
@@ -33940,10 +33966,10 @@ class ViewDesc {
       return { node: this.contentDOM, from: from2, to, fromOffset: 0, toOffset: this.contentDOM.childNodes.length };
     let fromOffset = -1, toOffset = -1;
     for (let offset = base2, i = 0; ; i++) {
-      let child = this.children[i], end = offset + child.size;
-      if (fromOffset == -1 && from2 <= end) {
+      let child = this.children[i], end2 = offset + child.size;
+      if (fromOffset == -1 && from2 <= end2) {
         let childBase = offset + child.border;
-        if (from2 >= childBase && to <= end - child.border && child.node && child.contentDOM && this.contentDOM.contains(child.contentDOM))
+        if (from2 >= childBase && to <= end2 - child.border && child.node && child.contentDOM && this.contentDOM.contains(child.contentDOM))
           return child.parseRange(from2, to, childBase);
         from2 = offset;
         for (let j = i; j > 0; j--) {
@@ -33957,8 +33983,8 @@ class ViewDesc {
         if (fromOffset == -1)
           fromOffset = 0;
       }
-      if (fromOffset > -1 && (end > to || i == this.children.length - 1)) {
-        to = end;
+      if (fromOffset > -1 && (end2 > to || i == this.children.length - 1)) {
+        to = end2;
         for (let j = i + 1; j < this.children.length; j++) {
           let next = this.children[j];
           if (next.size && next.dom.parentNode == this.contentDOM && !next.emptyChildAt(-1)) {
@@ -33971,7 +33997,7 @@ class ViewDesc {
           toOffset = this.contentDOM.childNodes.length;
         break;
       }
-      offset = end;
+      offset = end2;
     }
     return { node: this.contentDOM, from: from2, to, fromOffset, toOffset };
   }
@@ -33995,10 +34021,10 @@ class ViewDesc {
   setSelection(anchor, head, view, force = false) {
     let from2 = Math.min(anchor, head), to = Math.max(anchor, head);
     for (let i = 0, offset = 0; i < this.children.length; i++) {
-      let child = this.children[i], end = offset + child.size;
-      if (from2 > offset && to < end)
+      let child = this.children[i], end2 = offset + child.size;
+      if (from2 > offset && to < end2)
         return child.setSelection(anchor - offset - child.border, head - offset - child.border, view, force);
-      offset = end;
+      offset = end2;
     }
     let anchorDOM = this.domFromPos(anchor, anchor ? -1 : 1);
     let headDOM = head == anchor ? anchorDOM : this.domFromPos(head, head ? -1 : 1);
@@ -34066,11 +34092,11 @@ class ViewDesc {
   // by a DOM change, so that the next update will redraw it.
   markDirty(from2, to) {
     for (let offset = 0, i = 0; i < this.children.length; i++) {
-      let child = this.children[i], end = offset + child.size;
-      if (offset == end ? from2 <= end && to >= offset : from2 < end && to > offset) {
-        let startInside = offset + child.border, endInside = end - child.border;
+      let child = this.children[i], end2 = offset + child.size;
+      if (offset == end2 ? from2 <= end2 && to >= offset : from2 < end2 && to > offset) {
+        let startInside = offset + child.border, endInside = end2 - child.border;
         if (from2 >= startInside && to <= endInside) {
-          this.dirty = from2 == offset || to == end ? CONTENT_DIRTY : CHILD_DIRTY;
+          this.dirty = from2 == offset || to == end2 ? CONTENT_DIRTY : CHILD_DIRTY;
           if (from2 == startInside && to == endInside && (child.contentLost || child.dom.parentNode != this.contentDOM))
             child.dirty = NODE_DIRTY;
           else
@@ -34080,7 +34106,7 @@ class ViewDesc {
           child.dirty = child.dom == child.contentDOM && child.dom.parentNode == this.contentDOM && !child.children.length ? CONTENT_DIRTY : NODE_DIRTY;
         }
       }
-      offset = end;
+      offset = end2;
     }
     this.dirty = CONTENT_DIRTY;
   }
@@ -34691,12 +34717,12 @@ class ViewTreeUpdater {
   }
   // Destroy and remove the children between the given indices in
   // `this.top`.
-  destroyBetween(start, end) {
-    if (start == end)
+  destroyBetween(start2, end2) {
+    if (start2 == end2)
       return;
-    for (let i = start; i < end; i++)
+    for (let i = start2; i < end2; i++)
       this.top.children[i].destroy();
-    this.top.children.splice(start, end - start);
+    this.top.children.splice(start2, end2 - start2);
     this.changed = true;
   }
   // Destroy all remaining children in `this.top`.
@@ -34982,27 +35008,27 @@ function iterDeco(parent, deco, onWidget, onNode) {
         active.splice(i--, 1);
     while (decoIndex < locals.length && locals[decoIndex].from <= offset && locals[decoIndex].to > offset)
       active.push(locals[decoIndex++]);
-    let end = offset + child.nodeSize;
+    let end2 = offset + child.nodeSize;
     if (child.isText) {
-      let cutAt = end;
+      let cutAt = end2;
       if (decoIndex < locals.length && locals[decoIndex].from < cutAt)
         cutAt = locals[decoIndex].from;
       for (let i = 0; i < active.length; i++)
         if (active[i].to < cutAt)
           cutAt = active[i].to;
-      if (cutAt < end) {
+      if (cutAt < end2) {
         restNode = child.cut(cutAt - offset);
         child = child.cut(0, cutAt - offset);
-        end = cutAt;
+        end2 = cutAt;
         index = -1;
       }
     } else {
-      while (decoIndex < locals.length && locals[decoIndex].to < end)
+      while (decoIndex < locals.length && locals[decoIndex].to < end2)
         decoIndex++;
     }
     let outerDeco = child.isInline && !child.isLeaf ? active.filter((d) => !d.inline) : active.slice();
     onNode(child, outerDeco, deco.forChild(offset, child), index);
-    offset = end;
+    offset = end2;
   }
 }
 function iosHacks(dom2) {
@@ -35042,18 +35068,18 @@ function findTextInFragment(frag, text, from2, to) {
 function replaceNodes(nodes2, from2, to, view, replacement) {
   let result2 = [];
   for (let i = 0, off = 0; i < nodes2.length; i++) {
-    let child = nodes2[i], start = off, end = off += child.size;
-    if (start >= to || end <= from2) {
+    let child = nodes2[i], start2 = off, end2 = off += child.size;
+    if (start2 >= to || end2 <= from2) {
       result2.push(child);
     } else {
-      if (start < from2)
-        result2.push(child.slice(0, from2 - start, view));
+      if (start2 < from2)
+        result2.push(child.slice(0, from2 - start2, view));
       if (replacement) {
         result2.push(replacement);
         replacement = void 0;
       }
-      if (end > to)
-        result2.push(child.slice(to - start, child.size, view));
+      if (end2 > to)
+        result2.push(child.slice(to - start2, child.size, view));
     }
   }
   return result2;
@@ -36483,9 +36509,9 @@ function handleDrop(view, event, dragging) {
   if (isNode && NodeSelection.isSelectable(slice3.content.firstChild) && $pos.nodeAfter && $pos.nodeAfter.sameMarkup(slice3.content.firstChild)) {
     tr.setSelection(new NodeSelection($pos));
   } else {
-    let end = tr.mapping.map(insertPos);
-    tr.mapping.maps[tr.mapping.maps.length - 1].forEach((_from, _to, _newFrom, newTo) => end = newTo);
-    tr.setSelection(selectionBetween(view, $pos, tr.doc.resolve(end)));
+    let end2 = tr.mapping.map(insertPos);
+    tr.mapping.maps[tr.mapping.maps.length - 1].forEach((_from, _to, _newFrom, newTo) => end2 = newTo);
+    tr.setSelection(selectionBetween(view, $pos, tr.doc.resolve(end2)));
   }
   view.focus();
   view.dispatch(tr.setMeta("uiEvent", "drop"));
@@ -36710,21 +36736,21 @@ class DecorationSet {
   considered. When `predicate` isn't given, all decorations are
   assumed to match.
   */
-  find(start, end, predicate) {
+  find(start2, end2, predicate) {
     let result2 = [];
-    this.findInner(start == null ? 0 : start, end == null ? 1e9 : end, result2, 0, predicate);
+    this.findInner(start2 == null ? 0 : start2, end2 == null ? 1e9 : end2, result2, 0, predicate);
     return result2;
   }
-  findInner(start, end, result2, offset, predicate) {
+  findInner(start2, end2, result2, offset, predicate) {
     for (let i = 0; i < this.local.length; i++) {
       let span = this.local[i];
-      if (span.from <= end && span.to >= start && (!predicate || predicate(span.spec)))
+      if (span.from <= end2 && span.to >= start2 && (!predicate || predicate(span.spec)))
         result2.push(span.copy(span.from + offset, span.to + offset));
     }
     for (let i = 0; i < this.children.length; i += 3) {
-      if (this.children[i] < end && this.children[i + 1] > start) {
+      if (this.children[i] < end2 && this.children[i + 1] > start2) {
         let childOff = this.children[i] + 1;
-        this.children[i + 2].findInner(start - childOff, end - childOff, result2, offset + childOff, predicate);
+        this.children[i + 2].findInner(start2 - childOff, end2 - childOff, result2, offset + childOff, predicate);
       }
     }
   }
@@ -36849,11 +36875,11 @@ class DecorationSet {
           child = this.children[i + 2];
         break;
       }
-    let start = offset + 1, end = start + node.content.size;
+    let start2 = offset + 1, end2 = start2 + node.content.size;
     for (let i = 0; i < this.local.length; i++) {
       let dec = this.local[i];
-      if (dec.from < end && dec.to > start && dec.type instanceof InlineType) {
-        let from2 = Math.max(start, dec.from) - start, to = Math.min(end, dec.to) - start;
+      if (dec.from < end2 && dec.to > start2 && dec.type instanceof InlineType) {
+        let from2 = Math.max(start2, dec.from) - start2, to = Math.min(end2, dec.to) - start2;
         if (from2 < to)
           (local || (local = [])).push(dec.copy(from2, to));
       }
@@ -36982,12 +37008,12 @@ function mapChildren(oldChildren, newLocal, mapping, node, offset, oldOffset, op
     mapping.maps[i].forEach((oldStart, oldEnd, newStart, newEnd) => {
       let dSize = newEnd - newStart - (oldEnd - oldStart);
       for (let i2 = 0; i2 < children.length; i2 += 3) {
-        let end = children[i2 + 1];
-        if (end < 0 || oldStart > end + baseOffset - moved)
+        let end2 = children[i2 + 1];
+        if (end2 < 0 || oldStart > end2 + baseOffset - moved)
           continue;
-        let start = children[i2] + baseOffset - moved;
-        if (oldEnd >= start) {
-          children[i2 + 1] = oldStart <= start ? -2 : -1;
+        let start2 = children[i2] + baseOffset - moved;
+        if (oldEnd >= start2) {
+          children[i2 + 1] = oldStart <= start2 ? -2 : -1;
         } else if (oldStart >= baseOffset && dSize) {
           children[i2] += dSize;
           children[i2 + 1] += dSize;
@@ -37075,9 +37101,9 @@ function mapAndGatherRemainingDecorations(children, oldChildren, decorations, ma
 function takeSpansForNode(spans, node, offset) {
   if (node.isLeaf)
     return null;
-  let end = offset + node.nodeSize, found2 = null;
+  let end2 = offset + node.nodeSize, found2 = null;
   for (let i = 0, span; i < spans.length; i++) {
-    if ((span = spans[i]) && span.from > offset && span.to < end) {
+    if ((span = spans[i]) && span.from > offset && span.to < end2) {
       (found2 || (found2 = [])).push(span);
       spans[i] = null;
     }
@@ -37727,66 +37753,66 @@ function isMarkChange(cur, prev) {
   if (Fragment.from(updated).eq(cur))
     return { mark, type };
 }
-function looksLikeBackspace(old, start, end, $newStart, $newEnd) {
+function looksLikeBackspace(old, start2, end2, $newStart, $newEnd) {
   if (
     // The content must have shrunk
-    end - start <= $newEnd.pos - $newStart.pos || // newEnd must point directly at or after the end of the block that newStart points into
+    end2 - start2 <= $newEnd.pos - $newStart.pos || // newEnd must point directly at or after the end of the block that newStart points into
     skipClosingAndOpening($newStart, true, false) < $newEnd.pos
   )
     return false;
-  let $start = old.resolve(start);
+  let $start = old.resolve(start2);
   if (!$newStart.parent.isTextblock) {
     let after2 = $start.nodeAfter;
-    return after2 != null && end == start + after2.nodeSize;
+    return after2 != null && end2 == start2 + after2.nodeSize;
   }
   if ($start.parentOffset < $start.parent.content.size || !$start.parent.isTextblock)
     return false;
   let $next = old.resolve(skipClosingAndOpening($start, true, true));
-  if (!$next.parent.isTextblock || $next.pos > end || skipClosingAndOpening($next, true, false) < end)
+  if (!$next.parent.isTextblock || $next.pos > end2 || skipClosingAndOpening($next, true, false) < end2)
     return false;
   return $newStart.parent.content.cut($newStart.parentOffset).eq($next.parent.content);
 }
 function skipClosingAndOpening($pos, fromEnd, mayOpen) {
-  let depth = $pos.depth, end = fromEnd ? $pos.end() : $pos.pos;
+  let depth = $pos.depth, end2 = fromEnd ? $pos.end() : $pos.pos;
   while (depth > 0 && (fromEnd || $pos.indexAfter(depth) == $pos.node(depth).childCount)) {
     depth--;
-    end++;
+    end2++;
     fromEnd = false;
   }
   if (mayOpen) {
     let next = $pos.node(depth).maybeChild($pos.indexAfter(depth));
     while (next && !next.isLeaf) {
       next = next.firstChild;
-      end++;
+      end2++;
     }
   }
-  return end;
+  return end2;
 }
 function findDiff(a, b, pos, preferredPos, preferredSide) {
-  let start = a.findDiffStart(b, pos);
-  if (start == null)
+  let start2 = a.findDiffStart(b, pos);
+  if (start2 == null)
     return null;
   let { a: endA, b: endB } = a.findDiffEnd(b, pos + a.size, pos + b.size);
   if (preferredSide == "end") {
-    let adjust = Math.max(0, start - Math.min(endA, endB));
-    preferredPos -= endA + adjust - start;
+    let adjust = Math.max(0, start2 - Math.min(endA, endB));
+    preferredPos -= endA + adjust - start2;
   }
-  if (endA < start && a.size < b.size) {
-    let move = preferredPos <= start && preferredPos >= endA ? start - preferredPos : 0;
-    start -= move;
-    if (start && start < b.size && isSurrogatePair(b.textBetween(start - 1, start + 1)))
-      start += move ? 1 : -1;
-    endB = start + (endB - endA);
-    endA = start;
-  } else if (endB < start) {
-    let move = preferredPos <= start && preferredPos >= endB ? start - preferredPos : 0;
-    start -= move;
-    if (start && start < a.size && isSurrogatePair(a.textBetween(start - 1, start + 1)))
-      start += move ? 1 : -1;
-    endA = start + (endA - endB);
-    endB = start;
+  if (endA < start2 && a.size < b.size) {
+    let move = preferredPos <= start2 && preferredPos >= endA ? start2 - preferredPos : 0;
+    start2 -= move;
+    if (start2 && start2 < b.size && isSurrogatePair(b.textBetween(start2 - 1, start2 + 1)))
+      start2 += move ? 1 : -1;
+    endB = start2 + (endB - endA);
+    endA = start2;
+  } else if (endB < start2) {
+    let move = preferredPos <= start2 && preferredPos >= endB ? start2 - preferredPos : 0;
+    start2 -= move;
+    if (start2 && start2 < a.size && isSurrogatePair(a.textBetween(start2 - 1, start2 + 1)))
+      start2 += move ? 1 : -1;
+    endA = start2 + (endA - endB);
+    endB = start2;
   }
-  return { start, endA, endB };
+  return { start: start2, endA, endB };
 }
 function isSurrogatePair(str) {
   if (str.length != 2)
@@ -38838,22 +38864,22 @@ function getMarkRange($pos, type, attributes) {
   if (!$pos || !type) {
     return;
   }
-  let start = $pos.parent.childAfter($pos.parentOffset);
-  if (!start.node || !start.node.marks.some((mark2) => mark2.type === type)) {
-    start = $pos.parent.childBefore($pos.parentOffset);
+  let start2 = $pos.parent.childAfter($pos.parentOffset);
+  if (!start2.node || !start2.node.marks.some((mark2) => mark2.type === type)) {
+    start2 = $pos.parent.childBefore($pos.parentOffset);
   }
-  if (!start.node || !start.node.marks.some((mark2) => mark2.type === type)) {
+  if (!start2.node || !start2.node.marks.some((mark2) => mark2.type === type)) {
     return;
   }
-  attributes = attributes || ((_a = start.node.marks[0]) == null ? void 0 : _a.attrs);
-  const mark = findMarkInSet([...start.node.marks], type, attributes);
+  attributes = attributes || ((_a = start2.node.marks[0]) == null ? void 0 : _a.attrs);
+  const mark = findMarkInSet([...start2.node.marks], type, attributes);
   if (!mark) {
     return;
   }
-  let startIndex = start.index;
-  let startPos = $pos.start() + start.offset;
+  let startIndex = start2.index;
+  let startPos = $pos.start() + start2.offset;
   let endIndex = startIndex + 1;
-  let endPos = startPos + start.node.nodeSize;
+  let endPos = startPos + start2.node.nodeSize;
   while (startIndex > 0 && isMarkInSet([...$pos.parent.child(startIndex - 1).marks], type, attributes)) {
     startIndex -= 1;
     startPos -= $pos.parent.child(startIndex).nodeSize;
@@ -39089,13 +39115,13 @@ function selectionToInsertionEnd(tr, startLen, bias) {
     return;
   }
   const map3 = tr.mapping.maps[last2];
-  let end = 0;
+  let end2 = 0;
   map3.forEach((_from, _to, _newFrom, newTo) => {
-    if (end === 0) {
-      end = newTo;
+    if (end2 === 0) {
+      end2 = newTo;
     }
   });
-  tr.setSelection(Selection.near(tr.doc.resolve(end), bias));
+  tr.setSelection(Selection.near(tr.doc.resolve(end2), bias));
 }
 var isFragment = (nodeOrFragment) => {
   return !("type" in nodeOrFragment);
@@ -40565,10 +40591,10 @@ var splitListItem = (typeOrName, overrideAttrs = {}) => ({ tr, state, dispatch, 
       };
       const nextType2 = ((_a = type.contentMatch.defaultType) == null ? void 0 : _a.createAndFill(newNextTypeAttributes2)) || void 0;
       wrap2 = wrap2.append(Fragment.from(type.createAndFill(null, nextType2) || void 0));
-      const start = $from.before($from.depth - (depthBefore - 1));
-      tr.replace(start, $from.after(-depthAfter), new Slice(wrap2, 4 - depthBefore, 0));
+      const start2 = $from.before($from.depth - (depthBefore - 1));
+      tr.replace(start2, $from.after(-depthAfter), new Slice(wrap2, 4 - depthBefore, 0));
       let sel = -1;
-      tr.doc.nodesBetween(start, tr.doc.content.size, (n, pos) => {
+      tr.doc.nodesBetween(start2, tr.doc.content.size, (n, pos) => {
         if (sel > -1) {
           return false;
         }
@@ -41308,11 +41334,11 @@ function run2(config) {
       if (match.index === void 0) {
         return;
       }
-      const start = resolvedFrom + match.index + 1;
-      const end = start + match[0].length;
+      const start2 = resolvedFrom + match.index + 1;
+      const end2 = start2 + match[0].length;
       const range2 = {
-        from: state.tr.mapping.map(start),
-        to: state.tr.mapping.map(end)
+        from: state.tr.mapping.map(start2),
+        to: state.tr.mapping.map(end2)
       };
       const handler = rule.handler({
         state,
@@ -43067,23 +43093,23 @@ function nodeInputRule(config) {
     handler: ({ state, range: range2, match }) => {
       const attributes = callOrReturn(config.getAttributes, void 0, match) || {};
       const { tr } = state;
-      const start = range2.from;
-      let end = range2.to;
+      const start2 = range2.from;
+      let end2 = range2.to;
       const newNode = config.type.create(attributes);
       if (match[1]) {
         const offset = match[0].lastIndexOf(match[1]);
-        let matchStart = start + offset;
-        if (matchStart > end) {
-          matchStart = end;
+        let matchStart = start2 + offset;
+        if (matchStart > end2) {
+          matchStart = end2;
         } else {
-          end = matchStart + match[1].length;
+          end2 = matchStart + match[1].length;
         }
         const lastChar = match[0][match[0].length - 1];
-        tr.insertText(lastChar, start + match[0].length - 1);
-        tr.replaceWith(matchStart, end, newNode);
+        tr.insertText(lastChar, start2 + match[0].length - 1);
+        tr.replaceWith(matchStart, end2, newNode);
       } else if (match[0]) {
-        const insertionStart = config.type.isInline ? start : start - 1;
-        tr.insert(insertionStart, config.type.create(attributes)).delete(tr.mapping.map(start), tr.mapping.map(end));
+        const insertionStart = config.type.isInline ? start2 : start2 - 1;
+        tr.insert(insertionStart, config.type.create(attributes)).delete(tr.mapping.map(start2), tr.mapping.map(end2));
       }
       tr.scrollIntoView();
     },
@@ -45800,8 +45826,8 @@ var ListItem = Node3.create({
           return "- ";
         }
         if (context2.parentType === "orderedList") {
-          const start = ((_b = (_a = context2.meta) == null ? void 0 : _a.parentAttrs) == null ? void 0 : _b.start) || 1;
-          return `${start + context2.index}. `;
+          const start2 = ((_b = (_a = context2.meta) == null ? void 0 : _a.parentAttrs) == null ? void 0 : _b.start) || 1;
+          return `${start2 + context2.index}. `;
         }
         return "- ";
       },
@@ -46223,8 +46249,8 @@ var OrderedList = Node3.create({
     ];
   },
   renderHTML({ HTMLAttributes }) {
-    const { start, ...attributesWithoutStart } = HTMLAttributes;
-    return start === 1 ? ["ol", mergeAttributes(this.options.HTMLAttributes, attributesWithoutStart), 0] : ["ol", mergeAttributes(this.options.HTMLAttributes, HTMLAttributes), 0];
+    const { start: start2, ...attributesWithoutStart } = HTMLAttributes;
+    return start2 === 1 ? ["ol", mergeAttributes(this.options.HTMLAttributes, attributesWithoutStart), 0] : ["ol", mergeAttributes(this.options.HTMLAttributes, HTMLAttributes), 0];
   },
   markdownTokenName: "list",
   parseMarkdown: (token, helpers) => {
@@ -47293,16 +47319,16 @@ var Leaf = /* @__PURE__ */ (function(RopeSequence3) {
   Leaf2.prototype.getInner = function getInner(i) {
     return this.values[i];
   };
-  Leaf2.prototype.forEachInner = function forEachInner(f, from2, to, start) {
+  Leaf2.prototype.forEachInner = function forEachInner(f, from2, to, start2) {
     for (var i = from2; i < to; i++) {
-      if (f(this.values[i], start + i) === false) {
+      if (f(this.values[i], start2 + i) === false) {
         return false;
       }
     }
   };
-  Leaf2.prototype.forEachInvertedInner = function forEachInvertedInner(f, from2, to, start) {
+  Leaf2.prototype.forEachInvertedInner = function forEachInvertedInner(f, from2, to, start2) {
     for (var i = from2 - 1; i >= to; i--) {
-      if (f(this.values[i], start + i) === false) {
+      if (f(this.values[i], start2 + i) === false) {
         return false;
       }
     }
@@ -47344,21 +47370,21 @@ var Append = /* @__PURE__ */ (function(RopeSequence3) {
   Append2.prototype.getInner = function getInner(i) {
     return i < this.left.length ? this.left.get(i) : this.right.get(i - this.left.length);
   };
-  Append2.prototype.forEachInner = function forEachInner(f, from2, to, start) {
+  Append2.prototype.forEachInner = function forEachInner(f, from2, to, start2) {
     var leftLen = this.left.length;
-    if (from2 < leftLen && this.left.forEachInner(f, from2, Math.min(to, leftLen), start) === false) {
+    if (from2 < leftLen && this.left.forEachInner(f, from2, Math.min(to, leftLen), start2) === false) {
       return false;
     }
-    if (to > leftLen && this.right.forEachInner(f, Math.max(from2 - leftLen, 0), Math.min(this.length, to) - leftLen, start + leftLen) === false) {
+    if (to > leftLen && this.right.forEachInner(f, Math.max(from2 - leftLen, 0), Math.min(this.length, to) - leftLen, start2 + leftLen) === false) {
       return false;
     }
   };
-  Append2.prototype.forEachInvertedInner = function forEachInvertedInner(f, from2, to, start) {
+  Append2.prototype.forEachInvertedInner = function forEachInvertedInner(f, from2, to, start2) {
     var leftLen = this.left.length;
-    if (from2 > leftLen && this.right.forEachInvertedInner(f, from2 - leftLen, Math.max(to, leftLen) - leftLen, start + leftLen) === false) {
+    if (from2 > leftLen && this.right.forEachInvertedInner(f, from2 - leftLen, Math.max(to, leftLen) - leftLen, start2 + leftLen) === false) {
       return false;
     }
-    if (to < leftLen && this.left.forEachInvertedInner(f, Math.min(from2, leftLen), to, start) === false) {
+    if (to < leftLen && this.left.forEachInvertedInner(f, Math.min(from2, leftLen), to, start2) === false) {
       return false;
     }
   };
@@ -47406,17 +47432,17 @@ class Branch {
   popEvent(state, preserveItems) {
     if (this.eventCount == 0)
       return null;
-    let end = this.items.length;
-    for (; ; end--) {
-      let next = this.items.get(end - 1);
+    let end2 = this.items.length;
+    for (; ; end2--) {
+      let next = this.items.get(end2 - 1);
       if (next.selection) {
-        --end;
+        --end2;
         break;
       }
     }
     let remap, mapFrom;
     if (preserveItems) {
-      remap = this.remapping(end, this.items.length);
+      remap = this.remapping(end2, this.items.length);
       mapFrom = remap.maps.length;
     }
     let transform = state.tr;
@@ -47425,7 +47451,7 @@ class Branch {
     this.items.forEach((item, i) => {
       if (!item.step) {
         if (!remap) {
-          remap = this.remapping(end, i + 1);
+          remap = this.remapping(end2, i + 1);
           mapFrom = remap.maps.length;
         }
         mapFrom--;
@@ -47447,7 +47473,7 @@ class Branch {
       }
       if (item.selection) {
         selection = remap ? item.selection.map(remap.slice(mapFrom)) : item.selection;
-        remaining = new Branch(this.items.slice(0, end).append(addBefore.reverse().concat(addAfter)), this.eventCount - 1);
+        remaining = new Branch(this.items.slice(0, end2).append(addBefore.reverse().concat(addAfter)), this.eventCount - 1);
         return false;
       }
     }, this.items.length, 0);
@@ -47502,14 +47528,14 @@ class Branch {
   rebased(rebasedTransform, rebasedCount) {
     if (!this.eventCount)
       return this;
-    let rebasedItems = [], start = Math.max(0, this.items.length - rebasedCount);
+    let rebasedItems = [], start2 = Math.max(0, this.items.length - rebasedCount);
     let mapping = rebasedTransform.mapping;
     let newUntil = rebasedTransform.steps.length;
     let eventCount = this.eventCount;
     this.items.forEach((item) => {
       if (item.selection)
         eventCount--;
-    }, start);
+    }, start2);
     let iRebased = rebasedCount;
     this.items.forEach((item) => {
       let pos = mapping.getMirror(--iRebased);
@@ -47526,11 +47552,11 @@ class Branch {
       } else {
         rebasedItems.push(new Item(map3));
       }
-    }, start);
+    }, start2);
     let newMaps = [];
     for (let i = rebasedCount; i < newUntil; i++)
       newMaps.push(new Item(mapping.maps[i]));
-    let items = this.items.slice(0, start).append(newMaps).append(rebasedItems);
+    let items = this.items.slice(0, start2).append(newMaps).append(rebasedItems);
     let branch = new Branch(items, eventCount);
     if (branch.emptyItemCount() > max_empty_items)
       branch = branch.compress(this.items.length - rebasedItems.length);
@@ -47647,9 +47673,9 @@ function isAdjacentTo(transform, prevRanges) {
   if (!transform.docChanged)
     return true;
   let adjacent = false;
-  transform.mapping.maps[0].forEach((start, end) => {
+  transform.mapping.maps[0].forEach((start2, end2) => {
     for (let i = 0; i < prevRanges.length; i += 2)
-      if (start <= prevRanges[i + 1] && end >= prevRanges[i])
+      if (start2 <= prevRanges[i + 1] && end2 >= prevRanges[i])
         adjacent = true;
   });
   return adjacent;
@@ -48613,9 +48639,9 @@ function computeMap(table) {
           });
           break;
         }
-        const start = mapPos + h2 * width;
+        const start2 = mapPos + h2 * width;
         for (let w = 0; w < colspan; w++) {
-          if (map3[start + w] == 0) map3[start + w] = pos;
+          if (map3[start2 + w] == 0) map3[start2 + w] = pos;
           else (problems || (problems = [])).push({
             type: "collision",
             row,
@@ -48624,7 +48650,7 @@ function computeMap(table) {
           });
           const colW = colwidth && colwidth[w];
           if (colW) {
-            const widthIndex = (start + w) % width * 2, prev = colWidths[widthIndex];
+            const widthIndex = (start2 + w) % width * 2, prev = colWidths[widthIndex];
             if (prev == null || prev != colW && colWidths[widthIndex + 1] == 1) {
               colWidths[widthIndex] = colW;
               colWidths[widthIndex + 1] = 1;
@@ -49019,9 +49045,9 @@ function normalizeSelection(state, tr, allowTableNodeSelection) {
       normalize2 = CellSelection.rowSelection($cell, $cell);
     } else if (!allowTableNodeSelection) {
       const map3 = TableMap.get(sel.node);
-      const start = sel.from + 1;
-      const lastCell = start + map3.map[map3.width * map3.height - 1];
-      normalize2 = CellSelection.create(doc2, start + 1, lastCell);
+      const start2 = sel.from + 1;
+      const lastCell = start2 + map3.map[map3.width * map3.height - 1];
+      normalize2 = CellSelection.create(doc2, start2 + 1, lastCell);
     }
   } else if (sel instanceof TextSelection && isCellBoundarySelection(sel)) normalize2 = TextSelection.create(doc2, sel.from);
   else if (sel instanceof TextSelection && isTextSelectionAcrossCells(sel)) normalize2 = TextSelection.create(doc2, sel.$from.start(), sel.$from.end());
@@ -49094,7 +49120,7 @@ function fixTable(state, table, tablePos, tr) {
   }
   for (let i = 0, pos = tablePos + 1; i < map3.height; i++) {
     const row = table.child(i);
-    const end = pos + row.nodeSize;
+    const end2 = pos + row.nodeSize;
     const add = mustAdd[i];
     if (add > 0) {
       let role = "cell";
@@ -49104,10 +49130,10 @@ function fixTable(state, table, tablePos, tr) {
         const node = tableNodeTypes(state.schema)[role].createAndFill();
         if (node) nodes2.push(node);
       }
-      const side = (i == 0 || first2 == i - 1) && last2 == i ? pos + 1 : end - 1;
+      const side = (i == 0 || first2 == i - 1) && last2 == i ? pos + 1 : end2 - 1;
       tr.insert(tr.mapping.map(side), nodes2);
     }
-    pos = end;
+    pos = end2;
   }
   return tr.setMeta(fixTablesKey, { fixTables: true });
 }
@@ -49167,8 +49193,8 @@ function removeColumn(tr, { map: map3, table, tableStart }, col) {
     const attrs = cell.attrs;
     if (col > 0 && map3.map[index - 1] == pos || col < map3.width - 1 && map3.map[index + 1] == pos) tr.setNodeMarkup(tr.mapping.slice(mapStart).map(tableStart + pos), null, removeColSpan(attrs, col - map3.colCount(pos)));
     else {
-      const start = tr.mapping.slice(mapStart).map(tableStart + pos);
-      tr.delete(start, start + cell.nodeSize);
+      const start2 = tr.mapping.slice(mapStart).map(tableStart + pos);
+      tr.delete(start2, start2 + cell.nodeSize);
     }
     row += attrs.rowspan;
   }
@@ -49334,9 +49360,9 @@ function mergeCells(state, dispatch) {
       rowspan: rect.bottom - rect.top
     });
     if (content.size > 0) {
-      const end = mergedPos + 1 + mergedCell.content.size;
-      const start = isEmpty$1(mergedCell) ? mergedPos + 1 : end;
-      tr.replaceWith(start + rect.tableStart, end + rect.tableStart, content);
+      const end2 = mergedPos + 1 + mergedCell.content.size;
+      const start2 = isEmpty$1(mergedCell) ? mergedPos + 1 : end2;
+      tr.replaceWith(start2 + rect.tableStart, end2 + rect.tableStart, content);
     }
     tr.setSelection(new CellSelection(tr.doc.resolve(mergedPos + rect.tableStart)));
     dispatch(tr);
@@ -49650,7 +49676,7 @@ function clipCells({ width, height, rows }, newWidth, newHeight) {
     rows
   };
 }
-function growTable(tr, map3, table, start, width, height, mapFrom) {
+function growTable(tr, map3, table, start2, width, height, mapFrom) {
   const schema = tr.doc.type.schema;
   const types = tableNodeTypes(schema);
   let empty2;
@@ -49663,7 +49689,7 @@ function growTable(tr, map3, table, start, width, height, mapFrom) {
     if (rowNode.lastChild == null || rowNode.lastChild.type == types.cell) add = empty2 || (empty2 = types.cell.createAndFill());
     else add = emptyHead || (emptyHead = types.header_cell.createAndFill());
     for (let i = map3.width; i < width; i++) cells.push(add);
-    tr.insert(tr.mapping.slice(mapFrom).map(rowEnd - 1 + start), cells);
+    tr.insert(tr.mapping.slice(mapFrom).map(rowEnd - 1 + start2), cells);
   }
   if (height > map3.height) {
     const cells = [];
@@ -49673,11 +49699,11 @@ function growTable(tr, map3, table, start, width, height, mapFrom) {
     }
     const emptyRow = types.row.create(null, Fragment.from(cells)), rows = [];
     for (let i = map3.height; i < height; i++) rows.push(emptyRow);
-    tr.insert(tr.mapping.slice(mapFrom).map(start + table.nodeSize - 2), rows);
+    tr.insert(tr.mapping.slice(mapFrom).map(start2 + table.nodeSize - 2), rows);
   }
   return !!(empty2 || emptyHead);
 }
-function isolateHorizontal(tr, map3, table, start, left, right, top, mapFrom) {
+function isolateHorizontal(tr, map3, table, start2, left, right, top, mapFrom) {
   if (top == 0 || top == map3.height) return false;
   let found2 = false;
   for (let col = left; col < right; col++) {
@@ -49686,7 +49712,7 @@ function isolateHorizontal(tr, map3, table, start, left, right, top, mapFrom) {
       found2 = true;
       const cell = table.nodeAt(pos);
       const { top: cellTop, left: cellLeft } = map3.findCell(pos);
-      tr.setNodeMarkup(tr.mapping.slice(mapFrom).map(pos + start), null, {
+      tr.setNodeMarkup(tr.mapping.slice(mapFrom).map(pos + start2), null, {
         ...cell.attrs,
         rowspan: top - cellTop
       });
@@ -49699,7 +49725,7 @@ function isolateHorizontal(tr, map3, table, start, left, right, top, mapFrom) {
   }
   return found2;
 }
-function isolateVertical(tr, map3, table, start, top, bottom, left, mapFrom) {
+function isolateVertical(tr, map3, table, start2, top, bottom, left, mapFrom) {
   if (left == 0 || left == map3.width) return false;
   let found2 = false;
   for (let row = top; row < bottom; row++) {
@@ -49708,7 +49734,7 @@ function isolateVertical(tr, map3, table, start, top, bottom, left, mapFrom) {
       found2 = true;
       const cell = table.nodeAt(pos);
       const cellLeft = map3.colCount(pos);
-      const updatePos = tr.mapping.slice(mapFrom).map(pos + start);
+      const updatePos = tr.mapping.slice(mapFrom).map(pos + start2);
       tr.setNodeMarkup(updatePos, null, removeColSpan(cell.attrs, left - cellLeft, cell.attrs.colspan - (left - cellLeft)));
       tr.insert(updatePos + cell.nodeSize, cell.type.createAndFill(removeColSpan(cell.attrs, 0, left - cellLeft)));
       row += cell.attrs.rowspan - 1;
@@ -49768,11 +49794,11 @@ function arrow(axis, dir) {
     const sel = state.selection;
     if (sel instanceof CellSelection) return maybeSetSelection(state, dispatch, Selection.near(sel.$headCell, dir));
     if (axis != "horiz" && !sel.empty) return false;
-    const end = atEndOfCell(view, axis, dir);
-    if (end == null) return false;
+    const end2 = atEndOfCell(view, axis, dir);
+    if (end2 == null) return false;
     if (axis == "horiz") return maybeSetSelection(state, dispatch, Selection.near(state.doc.resolve(sel.head + dir), dir));
     else {
-      const $cell = state.doc.resolve(end);
+      const $cell = state.doc.resolve(end2);
       const $next = nextCell($cell, axis, dir);
       let newSel;
       if ($next) newSel = Selection.near($next, 1);
@@ -49789,9 +49815,9 @@ function shiftArrow(axis, dir) {
     let cellSel;
     if (sel instanceof CellSelection) cellSel = sel;
     else {
-      const end = atEndOfCell(view, axis, dir);
-      if (end == null) return false;
-      cellSel = new CellSelection(state.doc.resolve(end));
+      const end2 = atEndOfCell(view, axis, dir);
+      if (end2 == null) return false;
+      cellSel = new CellSelection(state.doc.resolve(end2));
     }
     const $head = nextCell(cellSel.$headCell, axis, dir);
     if (!$head) return false;
@@ -49815,15 +49841,15 @@ function handlePaste(view, _2, slice3) {
       rows: [Fragment.from(fitSlice(tableNodeTypes(view.state.schema).cell, slice3))]
     };
     const table = sel.$anchorCell.node(-1);
-    const start = sel.$anchorCell.start(-1);
-    const rect = TableMap.get(table).rectBetween(sel.$anchorCell.pos - start, sel.$headCell.pos - start);
+    const start2 = sel.$anchorCell.start(-1);
+    const rect = TableMap.get(table).rectBetween(sel.$anchorCell.pos - start2, sel.$headCell.pos - start2);
     cells = clipCells(cells, rect.right - rect.left, rect.bottom - rect.top);
-    insertCells(view.state, view.dispatch, start, rect, cells);
+    insertCells(view.state, view.dispatch, start2, rect, cells);
     return true;
   } else if (cells) {
     const $cell = selectionCell(view.state);
-    const start = $cell.start(-1);
-    insertCells(view.state, view.dispatch, start, TableMap.get($cell.node(-1)).findCell($cell.pos - start), cells);
+    const start2 = $cell.start(-1);
+    insertCells(view.state, view.dispatch, start2, TableMap.get($cell.node(-1)).findCell($cell.pos - start2), cells);
     return true;
   } else return false;
 }
@@ -50113,9 +50139,9 @@ function edgeCell(view, event, side, handleWidth) {
   const $cell = cellAround(view.state.doc.resolve(pos));
   if (!$cell) return -1;
   if (side == "right") return $cell.pos;
-  const map3 = TableMap.get($cell.node(-1)), start = $cell.start(-1);
-  const index = map3.map.indexOf($cell.pos - start);
-  return index % map3.width == 0 ? -1 : start + map3.map[index - 1];
+  const map3 = TableMap.get($cell.node(-1)), start2 = $cell.start(-1);
+  const index = map3.map.indexOf($cell.pos - start2);
+  return index % map3.width == 0 ? -1 : start2 + map3.map[index - 1];
 }
 function draggedWidth(dragging, event, resizeMinWidth) {
   const offset = event.clientX - dragging.startX;
@@ -50126,8 +50152,8 @@ function updateHandle(view, value) {
 }
 function updateColumnWidth(view, cell, width) {
   const $cell = view.state.doc.resolve(cell);
-  const table = $cell.node(-1), map3 = TableMap.get(table), start = $cell.start(-1);
-  const col = map3.colCount($cell.pos - start) + $cell.nodeAfter.attrs.colspan - 1;
+  const table = $cell.node(-1), map3 = TableMap.get(table), start2 = $cell.start(-1);
+  const col = map3.colCount($cell.pos - start2) + $cell.nodeAfter.attrs.colspan - 1;
   const tr = view.state.tr;
   for (let row = 0; row < map3.height; row++) {
     const mapIndex = row * map3.width + col;
@@ -50138,7 +50164,7 @@ function updateColumnWidth(view, cell, width) {
     if (attrs.colwidth && attrs.colwidth[index] == width) continue;
     const colwidth = attrs.colwidth ? attrs.colwidth.slice() : zeroes(attrs.colspan);
     colwidth[index] = width;
-    tr.setNodeMarkup(start + pos, null, {
+    tr.setNodeMarkup(start2 + pos, null, {
       ...attrs,
       colwidth
     });
@@ -50147,8 +50173,8 @@ function updateColumnWidth(view, cell, width) {
 }
 function displayColumnWidth(view, cell, width, defaultCellMinWidth) {
   const $cell = view.state.doc.resolve(cell);
-  const table = $cell.node(-1), start = $cell.start(-1);
-  const col = TableMap.get(table).colCount($cell.pos - start) + $cell.nodeAfter.attrs.colspan - 1;
+  const table = $cell.node(-1), start2 = $cell.start(-1);
+  const col = TableMap.get(table).colCount($cell.pos - start2) + $cell.nodeAfter.attrs.colspan - 1;
   let dom2 = view.domAtPos($cell.start(-1)).node;
   while (dom2 && dom2.nodeName != "TABLE") dom2 = dom2.parentNode;
   if (!dom2) return;
@@ -50163,17 +50189,17 @@ function handleDecorations(state, cell) {
   const table = $cell.node(-1);
   if (!table) return DecorationSet.empty;
   const map3 = TableMap.get(table);
-  const start = $cell.start(-1);
-  const col = map3.colCount($cell.pos - start) + $cell.nodeAfter.attrs.colspan - 1;
+  const start2 = $cell.start(-1);
+  const col = map3.colCount($cell.pos - start2) + $cell.nodeAfter.attrs.colspan - 1;
   for (let row = 0; row < map3.height; row++) {
     const index = col + row * map3.width;
     if ((col == map3.width - 1 || map3.map[index] != map3.map[index + 1]) && (row == 0 || map3.map[index] != map3.map[index - map3.width])) {
       var _columnResizingPlugin;
       const cellPos = map3.map[index];
-      const pos = start + cellPos + table.nodeAt(cellPos).nodeSize - 1;
+      const pos = start2 + cellPos + table.nodeAt(cellPos).nodeSize - 1;
       const dom2 = document.createElement("div");
       dom2.className = "column-resize-handle";
-      if ((_columnResizingPlugin = columnResizingPluginKey.getState(state)) === null || _columnResizingPlugin === void 0 ? void 0 : _columnResizingPlugin.dragging) decorations.push(Decoration.node(start + cellPos, start + cellPos + table.nodeAt(cellPos).nodeSize, { class: "column-resize-dragging" }));
+      if ((_columnResizingPlugin = columnResizingPluginKey.getState(state)) === null || _columnResizingPlugin === void 0 ? void 0 : _columnResizingPlugin.dragging) decorations.push(Decoration.node(start2 + cellPos, start2 + cellPos + table.nodeAt(cellPos).nodeSize, { class: "column-resize-dragging" }));
       decorations.push(Decoration.widget(pos, dom2));
     }
   }
@@ -51531,10 +51557,10 @@ function negate(predicate) {
 }
 function compose() {
   var args = arguments;
-  var start = args.length - 1;
+  var start2 = args.length - 1;
   return function() {
-    var i = start;
-    var result2 = args[start].apply(this, arguments);
+    var i = start2;
+    var result2 = args[start2].apply(this, arguments);
     while (i--) result2 = args[i].call(this, result2);
     return result2;
   };
@@ -51976,18 +52002,18 @@ function object(list, values2) {
   }
   return result2;
 }
-function range(start, stop, step) {
+function range(start2, stop, step) {
   if (stop == null) {
-    stop = start || 0;
-    start = 0;
+    stop = start2 || 0;
+    start2 = 0;
   }
   if (!step) {
-    step = stop < start ? -1 : 1;
+    step = stop < start2 ? -1 : 1;
   }
-  var length = Math.max(Math.ceil((stop - start) / step), 0);
+  var length = Math.max(Math.ceil((stop - start2) / step), 0);
   var range2 = Array(length);
-  for (var idx = 0; idx < length; idx++, start += step) {
-    range2[idx] = start;
+  for (var idx = 0; idx < length; idx++, start2 += step) {
+    range2[idx] = start2;
   }
   return range2;
 }
@@ -57783,10 +57809,10 @@ function requireBase64Js() {
   function tripletToBase64(num) {
     return lookup[num >> 18 & 63] + lookup[num >> 12 & 63] + lookup[num >> 6 & 63] + lookup[num & 63];
   }
-  function encodeChunk(uint8, start, end) {
+  function encodeChunk(uint8, start2, end2) {
     var tmp;
     var output = [];
-    for (var i2 = start; i2 < end; i2 += 3) {
+    for (var i2 = start2; i2 < end2; i2 += 3) {
       tmp = (uint8[i2] << 16 & 16711680) + (uint8[i2 + 1] << 8 & 65280) + (uint8[i2 + 2] & 255);
       output.push(tripletToBase64(tmp));
     }
@@ -61443,9 +61469,9 @@ function requireDom() {
       this.replaceData(offset, count, "");
     },
     replaceData: function(offset, count, text) {
-      var start = this.data.substring(0, offset);
-      var end = this.data.substring(offset + count);
-      text = start + text + end;
+      var start2 = this.data.substring(0, offset);
+      var end2 = this.data.substring(offset + count);
+      text = start2 + text + end2;
       this.nodeValue = this.data = text;
       this.length = text.length;
     }
@@ -64042,12 +64068,12 @@ function requireSax() {
         return a2;
       }
     }
-    function appendText(end2) {
-      if (end2 > start) {
-        var xt = source.substring(start, end2).replace(/&#?\w+;/g, entityReplacer);
-        locator && position(start);
-        domBuilder.characters(xt, 0, end2 - start);
-        start = end2;
+    function appendText(end3) {
+      if (end3 > start2) {
+        var xt = source.substring(start2, end3).replace(/&#?\w+;/g, entityReplacer);
+        locator && position(start2);
+        domBuilder.characters(xt, 0, end3 - start2);
+        start2 = end3;
       }
     }
     function position(p, m) {
@@ -64064,35 +64090,35 @@ function requireSax() {
     var locator = domBuilder.locator;
     var parseStack = [{ currentNSMap: defaultNSMapCopy }];
     var closeMap = {};
-    var start = 0;
+    var start2 = 0;
     while (true) {
       try {
-        var tagStart = source.indexOf("<", start);
+        var tagStart = source.indexOf("<", start2);
         if (tagStart < 0) {
-          if (!source.substr(start).match(/^\s*$/)) {
+          if (!source.substr(start2).match(/^\s*$/)) {
             var doc2 = domBuilder.doc;
-            var text = doc2.createTextNode(source.substr(start));
+            var text = doc2.createTextNode(source.substr(start2));
             doc2.appendChild(text);
             domBuilder.currentElement = text;
           }
           return;
         }
-        if (tagStart > start) {
+        if (tagStart > start2) {
           appendText(tagStart);
         }
         switch (source.charAt(tagStart + 1)) {
           case "/":
-            var end = source.indexOf(">", tagStart + 3);
-            var tagName = source.substring(tagStart + 2, end).replace(/[ \t\n\r]+$/g, "");
+            var end2 = source.indexOf(">", tagStart + 3);
+            var tagName = source.substring(tagStart + 2, end2).replace(/[ \t\n\r]+$/g, "");
             var config = parseStack.pop();
-            if (end < 0) {
+            if (end2 < 0) {
               tagName = source.substring(tagStart + 2).replace(/[\s<].*/, "");
               errorHandler.error("end tag name: " + tagName + " is not complete:" + config.tagName);
-              end = tagStart + 1 + tagName.length;
+              end2 = tagStart + 1 + tagName.length;
             } else if (tagName.match(/\s</)) {
               tagName = tagName.replace(/[\s<].*/, "");
               errorHandler.error("end tag name: " + tagName + " maybe not complete");
-              end = tagStart + 1 + tagName.length;
+              end2 = tagStart + 1 + tagName.length;
             }
             var localNSMap = config.localNSMap;
             var endMatch = config.tagName == tagName;
@@ -64112,24 +64138,24 @@ function requireSax() {
             } else {
               parseStack.push(config);
             }
-            end++;
+            end2++;
             break;
           // end elment
           case "?":
             locator && position(tagStart);
-            end = parseInstruction(source, tagStart, domBuilder);
+            end2 = parseInstruction(source, tagStart, domBuilder);
             break;
           case "!":
             locator && position(tagStart);
-            end = parseDCC(source, tagStart, domBuilder, errorHandler);
+            end2 = parseDCC(source, tagStart, domBuilder, errorHandler);
             break;
           default:
             locator && position(tagStart);
             var el = new ElementAttributes();
             var currentNSMap = parseStack[parseStack.length - 1].currentNSMap;
-            var end = parseElementStartPart(source, tagStart, el, currentNSMap, entityReplacer, errorHandler);
+            var end2 = parseElementStartPart(source, tagStart, el, currentNSMap, entityReplacer, errorHandler);
             var len = el.length;
-            if (!el.closed && fixSelfClosed(source, end, el.tagName, closeMap)) {
+            if (!el.closed && fixSelfClosed(source, end2, el.tagName, closeMap)) {
               el.closed = true;
               if (!entityMap.nbsp) {
                 errorHandler.warning("unclosed xml attribute");
@@ -64153,9 +64179,9 @@ function requireSax() {
               }
             }
             if (NAMESPACE.isHTML(el.uri) && !el.closed) {
-              end = parseHtmlSpecialContent(source, end, el.tagName, entityReplacer, domBuilder);
+              end2 = parseHtmlSpecialContent(source, end2, el.tagName, entityReplacer, domBuilder);
             } else {
-              end++;
+              end2++;
             }
         }
       } catch (e) {
@@ -64163,12 +64189,12 @@ function requireSax() {
           throw e;
         }
         errorHandler.error("element parse error: " + e);
-        end = -1;
+        end2 = -1;
       }
-      if (end > start) {
-        start = end;
+      if (end2 > start2) {
+        start2 = end2;
       } else {
-        appendText(Math.max(tagStart, start) + 1);
+        appendText(Math.max(tagStart, start2) + 1);
       }
     }
   }
@@ -64177,7 +64203,7 @@ function requireSax() {
     t.columnNumber = f.columnNumber;
     return t;
   }
-  function parseElementStartPart(source, start, el, currentNSMap, entityReplacer, errorHandler) {
+  function parseElementStartPart(source, start2, el, currentNSMap, entityReplacer, errorHandler) {
     function addAttribute(qname, value2, startIndex) {
       if (el.attributeNames.hasOwnProperty(qname)) {
         errorHandler.fatalError("Attribute " + qname + " redefined");
@@ -64194,14 +64220,14 @@ function requireSax() {
     }
     var attrName;
     var value;
-    var p = ++start;
+    var p = ++start2;
     var s = S_TAG;
     while (true) {
       var c = source.charAt(p);
       switch (c) {
         case "=":
           if (s === S_ATTR) {
-            attrName = source.slice(start, p);
+            attrName = source.slice(start2, p);
             s = S_EQ;
           } else if (s === S_ATTR_SPACE) {
             s = S_EQ;
@@ -64214,22 +64240,22 @@ function requireSax() {
           if (s === S_EQ || s === S_ATTR) {
             if (s === S_ATTR) {
               errorHandler.warning('attribute value must after "="');
-              attrName = source.slice(start, p);
+              attrName = source.slice(start2, p);
             }
-            start = p + 1;
-            p = source.indexOf(c, start);
+            start2 = p + 1;
+            p = source.indexOf(c, start2);
             if (p > 0) {
-              value = source.slice(start, p);
-              addAttribute(attrName, value, start - 1);
+              value = source.slice(start2, p);
+              addAttribute(attrName, value, start2 - 1);
               s = S_ATTR_END;
             } else {
               throw new Error("attribute value no end '" + c + "' match");
             }
           } else if (s == S_ATTR_NOQUOT_VALUE) {
-            value = source.slice(start, p);
-            addAttribute(attrName, value, start);
+            value = source.slice(start2, p);
+            addAttribute(attrName, value, start2);
             errorHandler.warning('attribute "' + attrName + '" missed start quot(' + c + ")!!");
-            start = p + 1;
+            start2 = p + 1;
             s = S_ATTR_END;
           } else {
             throw new Error('attribute value must after "="');
@@ -64238,7 +64264,7 @@ function requireSax() {
         case "/":
           switch (s) {
             case S_TAG:
-              el.setTagName(source.slice(start, p));
+              el.setTagName(source.slice(start2, p));
             case S_ATTR_END:
             case S_TAG_SPACE:
             case S_TAG_CLOSE:
@@ -64258,13 +64284,13 @@ function requireSax() {
         case "":
           errorHandler.error("unexpected end of input");
           if (s == S_TAG) {
-            el.setTagName(source.slice(start, p));
+            el.setTagName(source.slice(start2, p));
           }
           return p;
         case ">":
           switch (s) {
             case S_TAG:
-              el.setTagName(source.slice(start, p));
+              el.setTagName(source.slice(start2, p));
             case S_ATTR_END:
             case S_TAG_SPACE:
             case S_TAG_CLOSE:
@@ -64273,7 +64299,7 @@ function requireSax() {
             case S_ATTR_NOQUOT_VALUE:
             //Compatible state
             case S_ATTR:
-              value = source.slice(start, p);
+              value = source.slice(start2, p);
               if (value.slice(-1) === "/") {
                 el.closed = true;
                 value = value.slice(0, -1);
@@ -64284,12 +64310,12 @@ function requireSax() {
               }
               if (s == S_ATTR_NOQUOT_VALUE) {
                 errorHandler.warning('attribute "' + value + '" missed quot(")!');
-                addAttribute(attrName, value, start);
+                addAttribute(attrName, value, start2);
               } else {
                 if (!NAMESPACE.isHTML(currentNSMap[""]) || !value.match(/^(?:disabled|checked|selected)$/i)) {
                   errorHandler.warning('attribute "' + value + '" missed value!! "' + value + '" instead!!');
                 }
-                addAttribute(value, value, start);
+                addAttribute(value, value, start2);
               }
               break;
             case S_EQ:
@@ -64303,17 +64329,17 @@ function requireSax() {
           if (c <= " ") {
             switch (s) {
               case S_TAG:
-                el.setTagName(source.slice(start, p));
+                el.setTagName(source.slice(start2, p));
                 s = S_TAG_SPACE;
                 break;
               case S_ATTR:
-                attrName = source.slice(start, p);
+                attrName = source.slice(start2, p);
                 s = S_ATTR_SPACE;
                 break;
               case S_ATTR_NOQUOT_VALUE:
-                var value = source.slice(start, p);
+                var value = source.slice(start2, p);
                 errorHandler.warning('attribute "' + value + '" missed quot(")!!');
-                addAttribute(attrName, value, start);
+                addAttribute(attrName, value, start2);
               case S_ATTR_END:
                 s = S_TAG_SPACE;
                 break;
@@ -64328,19 +64354,19 @@ function requireSax() {
                 if (!NAMESPACE.isHTML(currentNSMap[""]) || !attrName.match(/^(?:disabled|checked|selected)$/i)) {
                   errorHandler.warning('attribute "' + attrName + '" missed value!! "' + attrName + '" instead2!!');
                 }
-                addAttribute(attrName, attrName, start);
-                start = p;
+                addAttribute(attrName, attrName, start2);
+                start2 = p;
                 s = S_ATTR;
                 break;
               case S_ATTR_END:
                 errorHandler.warning('attribute space is required"' + attrName + '"!!');
               case S_TAG_SPACE:
                 s = S_ATTR;
-                start = p;
+                start2 = p;
                 break;
               case S_EQ:
                 s = S_ATTR_NOQUOT_VALUE;
-                start = p;
+                start2 = p;
                 break;
               case S_TAG_CLOSE:
                 throw new Error("elements closed character '/' and '>' must be connected to");
@@ -64451,15 +64477,15 @@ function requireSax() {
       }
     }
   }
-  function parseDCC(source, start, domBuilder, errorHandler) {
-    var next = source.charAt(start + 2);
+  function parseDCC(source, start2, domBuilder, errorHandler) {
+    var next = source.charAt(start2 + 2);
     switch (next) {
       case "-":
-        if (source.charAt(start + 3) === "-") {
-          var end = source.indexOf("-->", start + 4);
-          if (end > start) {
-            domBuilder.comment(source, start + 4, end - start - 4);
-            return end + 3;
+        if (source.charAt(start2 + 3) === "-") {
+          var end2 = source.indexOf("-->", start2 + 4);
+          if (end2 > start2) {
+            domBuilder.comment(source, start2 + 4, end2 - start2 - 4);
+            return end2 + 3;
           } else {
             errorHandler.error("Unclosed comment");
             return -1;
@@ -64468,14 +64494,14 @@ function requireSax() {
           return -1;
         }
       default:
-        if (source.substr(start + 3, 6) == "CDATA[") {
-          var end = source.indexOf("]]>", start + 9);
+        if (source.substr(start2 + 3, 6) == "CDATA[") {
+          var end2 = source.indexOf("]]>", start2 + 9);
           domBuilder.startCDATA();
-          domBuilder.characters(source, start + 9, end - start - 9);
+          domBuilder.characters(source, start2 + 9, end2 - start2 - 9);
           domBuilder.endCDATA();
-          return end + 3;
+          return end2 + 3;
         }
-        var matchs = split2(source, start);
+        var matchs = split2(source, start2);
         var len = matchs.length;
         if (len > 1 && /!doctype/i.test(matchs[0][0])) {
           var name = matchs[1][0];
@@ -64497,14 +64523,14 @@ function requireSax() {
     }
     return -1;
   }
-  function parseInstruction(source, start, domBuilder) {
-    var end = source.indexOf("?>", start);
-    if (end) {
-      var match = source.substring(start, end).match(/^<\?(\S*)\s*([\s\S]*?)\s*$/);
+  function parseInstruction(source, start2, domBuilder) {
+    var end2 = source.indexOf("?>", start2);
+    if (end2) {
+      var match = source.substring(start2, end2).match(/^<\?(\S*)\s*([\s\S]*?)\s*$/);
       if (match) {
         match[0].length;
         domBuilder.processingInstruction(match[1], match[2]);
-        return end + 2;
+        return end2 + 2;
       } else {
         return -1;
       }
@@ -64555,11 +64581,11 @@ function requireSax() {
     //	getType:function(uri,localName){}
     //	getType:function(i){},
   };
-  function split2(source, start) {
+  function split2(source, start2) {
     var match;
     var buf = [];
     var reg = /'[^']+'|"[^"]+"|[^\s<>\/=]+=?|(\/?\s*>|<)/g;
-    reg.lastIndex = start;
+    reg.lastIndex = start2;
     reg.exec(source);
     while (match = reg.exec(source)) {
       buf.push(match);
@@ -64690,9 +64716,9 @@ function requireDomParser() {
       this.locator && position(this.locator, ins);
       appendElement(this, ins);
     },
-    ignorableWhitespace: function(ch, start, length) {
+    ignorableWhitespace: function(ch, start2, length) {
     },
-    characters: function(chars, start, length) {
+    characters: function(chars, start2, length) {
       chars = _toString.apply(this, arguments);
       if (chars) {
         if (this.cdata) {
@@ -64719,7 +64745,7 @@ function requireDomParser() {
       }
     },
     //LexicalHandler
-    comment: function(chars, start, length) {
+    comment: function(chars, start2, length) {
       chars = _toString.apply(this, arguments);
       var comm = this.doc.createComment(chars);
       this.locator && position(this.locator, comm);
@@ -64759,12 +64785,12 @@ function requireDomParser() {
       return "\n@" + (l.systemId || "") + "#[line:" + l.lineNumber + ",col:" + l.columnNumber + "]";
     }
   }
-  function _toString(chars, start, length) {
+  function _toString(chars, start2, length) {
     if (typeof chars == "string") {
-      return chars.substr(start, length);
+      return chars.substr(start2, length);
     } else {
-      if (chars.length >= start + length || start) {
-        return new java.lang.String(chars, start, length) + "";
+      if (chars.length >= start2 + length || start2) {
+        return new java.lang.String(chars, start2, length) + "";
       }
       return chars;
     }
@@ -70348,7 +70374,7 @@ function requireHtmlWriter() {
     var indentationLevel = 0;
     var indentation = "  ";
     var stack = [];
-    var start = true;
+    var start2 = true;
     var inText = false;
     var writer3 = simpleWriter();
     function open(tagName, attributes) {
@@ -70360,7 +70386,7 @@ function requireHtmlWriter() {
       if (indentedElements[tagName]) {
         indentationLevel++;
       }
-      start = false;
+      start2 = false;
     }
     function close2(tagName) {
       if (indentedElements[tagName]) {
@@ -70390,7 +70416,7 @@ function requireHtmlWriter() {
     }
     function indent() {
       inText = false;
-      if (!start && insideIndentedElement() && !isInPre()) {
+      if (!start2 && insideIndentedElement() && !isInPre()) {
         writer3._append("\n");
         for (var i = 0; i < indentationLevel; i++) {
           writer3._append(indentation);
@@ -70460,12 +70486,12 @@ function requireMarkdownWriter() {
   if (hasRequiredMarkdownWriter) return markdownWriter;
   hasRequiredMarkdownWriter = 1;
   var _2 = require$$0;
-  function symmetricMarkdownElement(end) {
-    return markdownElement(end, end);
+  function symmetricMarkdownElement(end2) {
+    return markdownElement(end2, end2);
   }
-  function markdownElement(start, end) {
+  function markdownElement(start2, end2) {
     return function() {
-      return { start, end };
+      return { start: start2, end: end2 };
     };
   }
   function markdownLink(attributes) {
@@ -70507,9 +70533,9 @@ function requireMarkdownWriter() {
     list.count++;
     listItem.hasClosed = false;
     var bullet = list.isOrdered ? list.count + "." : "-";
-    var start = repeatString("	", list.indent) + bullet + " ";
+    var start2 = repeatString("	", list.indent) + bullet + " ";
     return {
-      start,
+      start: start2,
       end: function() {
         if (!listItem.hasClosed) {
           listItem.hasClosed = true;
@@ -70569,8 +70595,8 @@ function requireMarkdownWriter() {
     function close2(tagName) {
       var element = elementStack.pop();
       list = element.list;
-      var end = _2.isFunction(element.end) ? element.end() : element.end;
-      fragments.push(end || "");
+      var end2 = _2.isFunction(element.end) ? element.end() : element.end;
+      fragments.push(end2 || "");
     }
     function selfClosing(tagName, attributes) {
       open(tagName, attributes);
@@ -71076,10 +71102,10 @@ function requireTokenIterator() {
   TokenIterator$1.prototype.end = function() {
     return this._tokens[this._tokens.length - 1];
   };
-  TokenIterator$1.prototype.to = function(end) {
-    var start = this.head().source;
-    var endToken = end.head() || end.end();
-    return start.to(endToken.source);
+  TokenIterator$1.prototype.to = function(end2) {
+    var start2 = this.head().source;
+    var endToken = end2.head() || end2.end();
+    return start2.to(endToken.source);
   };
   return TokenIterator.exports;
 }
@@ -71616,7 +71642,7 @@ function requireRules() {
       });
       var repeatedRule = exports$1.firstOf.apply(null, ["rules"].concat(rights));
       return function(input) {
-        var start = input;
+        var start2 = input;
         var leftResult = leftRule(input);
         if (!leftResult.isSuccess()) {
           return leftResult;
@@ -71624,7 +71650,7 @@ function requireRules() {
         var repeatedResult = repeatedRule(leftResult.remaining());
         while (repeatedResult.isSuccess()) {
           var remaining = repeatedResult.remaining();
-          var source = start.to(repeatedResult.remaining());
+          var source = start2.to(repeatedResult.remaining());
           var right = repeatedResult.value();
           leftResult = results2.success(
             right(leftResult.value(), source),
@@ -72619,7 +72645,7 @@ function requireLib() {
 }
 var libExports = requireLib();
 const mammoth = /* @__PURE__ */ getDefaultExportFromCjs(libExports);
-const _sfc_main$Y = {
+const _sfc_main$Z = {
   __name: "InquiryEditor",
   props: {
     readonly: {
@@ -72971,7 +72997,7 @@ const _sfc_main$Y = {
     }, get NcButton() {
       return NcButton;
     }, get NcTextField() {
-      return _sfc_main$1X;
+      return _sfc_main$1Y;
     }, get NcAssistantIcon() {
       return NcAssistantIcon;
     }, get NcAssistantContent() {
@@ -72983,16 +73009,16 @@ const _sfc_main$Y = {
     return __returned__;
   }
 };
-const _hoisted_1$L = {
+const _hoisted_1$M = {
   ref: "editorContainer",
   class: "editor-container"
 };
-const _hoisted_2$C = { key: 0 };
-const _hoisted_3$B = {
+const _hoisted_2$D = { key: 0 };
+const _hoisted_3$C = {
   key: 0,
   class: "editor-toolbar"
 };
-const _hoisted_4$z = ["title", "aria-label"];
+const _hoisted_4$A = ["title", "aria-label"];
 const _hoisted_5$u = { value: "paragraph" };
 const _hoisted_6$r = { value: "h1" };
 const _hoisted_7$r = { value: "h2" };
@@ -73011,7 +73037,7 @@ const _hoisted_16$k = { class: "preview-content" };
 const _hoisted_17$j = { class: "content-length" };
 const _hoisted_18$j = { class: "content-summary" };
 const _hoisted_19$j = { class: "modal-actions" };
-function _sfc_render$Y(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$Z(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock(
     Fragment$1,
     null,
@@ -73019,10 +73045,10 @@ function _sfc_render$Y(_ctx, _cache, $props, $setup, $data, $options) {
       createCommentVNode(" Main editor container that fills its parent "),
       createBaseVNode(
         "div",
-        _hoisted_1$L,
+        _hoisted_1$M,
         [
           createCommentVNode(" Toolbar with all major formatting options "),
-          !$setup.props.readonly ? (openBlock(), createElementBlock("div", _hoisted_2$C, [
+          !$setup.props.readonly ? (openBlock(), createElementBlock("div", _hoisted_2$D, [
             createBaseVNode(
               "input",
               {
@@ -73036,7 +73062,7 @@ function _sfc_render$Y(_ctx, _cache, $props, $setup, $data, $options) {
               544
               /* NEED_HYDRATION, NEED_PATCH */
             ),
-            $setup.editor ? (openBlock(), createElementBlock("div", _hoisted_3$B, [
+            $setup.editor ? (openBlock(), createElementBlock("div", _hoisted_3$C, [
               createCommentVNode(" Text formatting "),
               createVNode($setup["NcButton"], {
                 type: "button",
@@ -73142,7 +73168,7 @@ function _sfc_render$Y(_ctx, _cache, $props, $setup, $data, $options) {
                   1
                   /* TEXT */
                 )
-              ], 40, _hoisted_4$z), [
+              ], 40, _hoisted_4$A), [
                 [vModelSelect, $setup.selectedHeading]
               ]),
               createCommentVNode(" Lists "),
@@ -73648,8 +73674,499 @@ function _sfc_render$Y(_ctx, _cache, $props, $setup, $data, $options) {
     /* STABLE_FRAGMENT, DEV_ROOT_FRAGMENT */
   );
 }
-const InquiryEditor = /* @__PURE__ */ _export_sfc$1(_sfc_main$Y, [["render", _sfc_render$Y], ["__scopeId", "data-v-0d9f3682"], ["__file", "/var/www/nextcloud/apps/agora/src/components/Editor/InquiryEditor.vue"]]);
-const _sfc_main$X = /* @__PURE__ */ defineComponent({
+const InquiryEditor = /* @__PURE__ */ _export_sfc$1(_sfc_main$Z, [["render", _sfc_render$Z], ["__scopeId", "data-v-0d9f3682"], ["__file", "/var/www/nextcloud/apps/agora/src/components/Editor/InquiryEditor.vue"]]);
+const buildHierarchy = (list, parentId = 0, depth = 0) => {
+  if (!Array.isArray(list)) return [];
+  return list.filter((item) => item?.parentId === parentId).map((item) => {
+    const children = buildHierarchy(list, item.id, depth + 1);
+    return {
+      ...item,
+      depth,
+      children
+    };
+  }).flatMap((item) => [item, ...item.children]);
+};
+const parseMiscValue = (value, fieldType) => {
+  if (value === null || value === void 0 || value === "") return null;
+  try {
+    if (typeof value === "string") {
+      let cleanedValue = value;
+      if (value.startsWith('"') && value.endsWith('"')) {
+        cleanedValue = value.slice(1, -1);
+      }
+      if (fieldType === "integer" || fieldType === "number") {
+        const num = Number(cleanedValue);
+        return isNaN(num) ? null : num;
+      }
+      if (fieldType === "boolean") {
+        return cleanedValue === "true";
+      }
+      if (fieldType === "json" || cleanedValue.startsWith("{") || cleanedValue.startsWith("[")) {
+        try {
+          return JSON.parse(cleanedValue);
+        } catch {
+        }
+      }
+      if (cleanedValue === "true") return true;
+      if (cleanedValue === "false") return false;
+      if (fieldType === "location" || fieldType === "category") {
+        const num = Number(cleanedValue);
+        return isNaN(num) ? cleanedValue : num;
+      }
+      return cleanedValue;
+    }
+    return value;
+  } catch {
+    return value;
+  }
+};
+const formatValueForStorage = (value, fieldType) => {
+  if (value === null || value === void 0) {
+    return "";
+  }
+  switch (fieldType) {
+    case "boolean":
+      return value ? "true" : "false";
+    case "json":
+      return typeof value === "object" ? JSON.stringify(value) : String(value);
+    case "datetime":
+      if (value instanceof Date) {
+        return value.toISOString();
+      }
+      if (typeof value === "string") {
+        try {
+          return new Date(value).toISOString();
+        } catch {
+          return value;
+        }
+      }
+      return String(value);
+    case "integer":
+    case "number":
+      return String(value);
+    case "users":
+    case "groups":
+      return Array.isArray(value) ? JSON.stringify(value) : String(value);
+    case "location":
+    case "category":
+      return String(value);
+    default:
+      return String(value);
+  }
+};
+const parseFormValue = (value, fieldType) => {
+  if (value === null || value === void 0) {
+    return null;
+  }
+  switch (fieldType) {
+    case "boolean":
+      return value === true || value === "true" || value === 1;
+    case "integer":
+    case "number": {
+      if (value === "") return null;
+      const num = Number(value);
+      return isNaN(num) ? null : num;
+    }
+    case "datetime":
+      if (value instanceof Date) {
+        return value;
+      }
+      if (typeof value === "string") {
+        const date = new Date(value);
+        return isNaN(date.getTime()) ? null : date;
+      }
+      return value;
+    case "json":
+      if (typeof value === "string") {
+        try {
+          return JSON.parse(value);
+        } catch {
+          return value;
+        }
+      }
+      return value;
+    case "enum":
+      return String(value);
+    case "users":
+    case "groups":
+      if (Array.isArray(value)) {
+        return value;
+      }
+      if (typeof value === "string") {
+        try {
+          return JSON.parse(value);
+        } catch {
+          return [value];
+        }
+      }
+      return value;
+    case "location":
+    case "category":
+      if (value && typeof value === "object" && "value" in value) {
+        return value.value;
+      }
+      return value;
+    default:
+      return String(value);
+  }
+};
+const getFormattedDate = (value) => {
+  if (!value) return null;
+  try {
+    if (value instanceof Date) {
+      return value;
+    }
+    if (typeof value === "string") {
+      const match = value.match(/^(\d{4})-(\d{2})-(\d{2})(?:\s+(\d{2}):(\d{2}))?/);
+      if (match) {
+        const [, year, month, day, hours = "00", minutes = "00"] = match;
+        return new Date(
+          parseInt(year),
+          parseInt(month) - 1,
+          parseInt(day),
+          parseInt(hours),
+          parseInt(minutes)
+        );
+      }
+      const date = new Date(value);
+      return isNaN(date.getTime()) ? null : date;
+    }
+    return null;
+  } catch (e) {
+    console.error("Date parsing failed:", e);
+    return null;
+  }
+};
+const createMiscFieldState = () => ({
+  values: ref({}),
+  checkboxes: ref({}),
+  isSaving: ref(false),
+  saveTimeouts: ref({}),
+  errors: ref({})
+});
+const initializeMiscFields = (fields, existingValues = {}) => {
+  const initialized = { ...existingValues };
+  fields.forEach((field) => {
+    if (initialized[field.key] === void 0) {
+      let defaultValue = field.default;
+      if (defaultValue === null || defaultValue === void 0) {
+        defaultValue = "";
+      } else {
+        defaultValue = parseFormValue(defaultValue, field.type);
+      }
+      initialized[field.key] = defaultValue;
+    } else {
+      initialized[field.key] = parseMiscValue(initialized[field.key], field.type);
+    }
+  });
+  return initialized;
+};
+const initializeCheckboxes = (fields, values2) => {
+  const checkboxes = {};
+  fields.forEach((field) => {
+    if (field.type === "boolean") {
+      const value = values2[field.key];
+      checkboxes[field.key] = value === true || value === "true" || value === 1;
+    }
+  });
+  return checkboxes;
+};
+const sanitizeValue = (value) => {
+  if (value === null || value === void 0) {
+    return "";
+  }
+  if (Array.isArray(value) && value.length > 0) {
+    if (value[0]?.__v_isVNode) {
+      return String(value[0].children || "");
+    }
+    return String(value[0] || "");
+  }
+  if (value && typeof value === "object") {
+    if ("id" in value) {
+      return String(value.id);
+    }
+    if ("userId" in value) {
+      return String(value.userId);
+    }
+    try {
+      return JSON.stringify(value);
+    } catch {
+      return String(value);
+    }
+  }
+  return String(value);
+};
+function useMiscFields(fields, store, existingValues, options2) {
+  const state = createMiscFieldState();
+  const saveImmediateTypes = options2?.saveImmediateTypes || ["boolean", "enum", "datetime", "users", "groups", "location", "category"];
+  const init = () => {
+    state.values.value = initializeMiscFields(fields.value, existingValues.value);
+    state.checkboxes.value = initializeCheckboxes(fields.value, state.values.value);
+  };
+  const reinitialize = () => {
+    init();
+  };
+  const getValue = (key) => state.values.value[key] ?? null;
+  const getCheckboxValue = (key) => state.checkboxes.value[key] || false;
+  const getHierarchicalOptionsForField = (fieldKey) => {
+    const field = fields.value.find((f) => f.key === fieldKey);
+    if (!field) return [];
+    if (field.type === "location" && options2?.locationItems?.value) {
+      return getHierarchicalOptions(options2.locationItems.value, translate("Select location"));
+    }
+    if (field.type === "category" && options2?.categoryItems?.value) {
+      return getHierarchicalOptions(options2.categoryItems.value, translate("Select category"));
+    }
+    return [];
+  };
+  const updateValue = async (fieldKey, value, fieldType, saveCallback) => {
+    if (state.saveTimeouts.value[fieldKey]) {
+      clearTimeout(state.saveTimeouts.value[fieldKey]);
+    }
+    const processedValue = parseFormValue(value, fieldType);
+    if (fieldType === "boolean") {
+      state.checkboxes.value[fieldKey] = processedValue === true;
+    }
+    state.values.value[fieldKey] = processedValue;
+    const saveFn = saveCallback || saveToStore;
+    if (saveImmediateTypes.includes(fieldType)) {
+      await saveFn(fieldKey, processedValue);
+    } else {
+      state.saveTimeouts.value[fieldKey] = setTimeout(() => {
+        saveFn(fieldKey, processedValue);
+      }, 1e3);
+    }
+  };
+  const saveToStore = async (fieldKey, value) => {
+    if (!store) return;
+    state.isSaving.value = true;
+    state.errors.value[fieldKey] = "";
+    try {
+      const field = fields.value.find((f) => f.key === fieldKey);
+      const stringValue = formatValueForStorage(value, field?.type || "string");
+      if (typeof store.updateMiscField === "function") {
+        await store.updateMiscField(fieldKey, stringValue);
+      }
+    } catch (e) {
+      console.error(`Error saving misc field ${fieldKey}:`, e);
+      state.errors.value[fieldKey] = String(e);
+    } finally {
+      state.isSaving.value = false;
+    }
+  };
+  const saveAll = async () => {
+    state.isSaving.value = true;
+    state.errors.value = {};
+    try {
+      const promises2 = Object.entries(state.values.value).map(([key, value]) => {
+        const field = fields.value.find((f) => f.key === key);
+        const stringValue = formatValueForStorage(value, field?.type || "string");
+        return store.updateMiscField(key, stringValue);
+      });
+      await Promise.all(promises2);
+    } catch (e) {
+      console.error("Error saving all misc fields:", e);
+    } finally {
+      state.isSaving.value = false;
+    }
+  };
+  const resetToDefaults = () => {
+    state.values.value = initializeMiscFields(fields.value, {});
+    state.checkboxes.value = initializeCheckboxes(fields.value, state.values.value);
+  };
+  const clearTimeouts = () => {
+    Object.values(state.saveTimeouts.value).forEach((timeout) => {
+      clearTimeout(timeout);
+    });
+    state.saveTimeouts.value = {};
+  };
+  const getEnumLabel = (fieldKey, value) => {
+    const field = fields.value.find((f) => f.key === fieldKey);
+    if (!field || field.type !== "enum" || !field.allowed_values) {
+      return value;
+    }
+    const found2 = field.allowed_values.find((v) => v === value);
+    if (found2) {
+      return found2.charAt(0).toUpperCase() + found2.slice(1).replace(/_/g, " ");
+    }
+    return value;
+  };
+  const getDisplayPath = (fieldKey) => {
+    const field = fields.value.find((f) => f.key === fieldKey);
+    if (!field) return "";
+    const value = getValue(fieldKey);
+    if (!value) return translate("Not set");
+    if (field.type === "location" && options2?.locationItems?.value) {
+      const path = getHierarchyPath(options2.locationItems.value, value);
+      return path || String(value);
+    }
+    if (field.type === "category" && options2?.categoryItems?.value) {
+      const path = getHierarchyPath(options2.categoryItems.value, value);
+      return path || String(value);
+    }
+    return String(value);
+  };
+  return {
+    // State
+    values: state.values,
+    checkboxes: state.checkboxes,
+    isSaving: state.isSaving,
+    errors: state.errors,
+    // Methods
+    init,
+    reinitialize,
+    getValue,
+    getCheckboxValue,
+    getHierarchicalOptionsForField,
+    // NOW INCLUDED
+    updateValue,
+    saveAll,
+    resetToDefaults,
+    clearTimeouts,
+    getEnumLabel,
+    getDisplayPath,
+    parseValue: parseMiscValue,
+    formatForDisplay: (fieldKey) => {
+      const field = fields.value.find((f) => f.key === fieldKey);
+      if (!field) return String(getValue(fieldKey));
+      const context2 = {
+        locationItems: options2?.locationItems?.value,
+        categoryItems: options2?.categoryItems?.value,
+        users: options2?.users?.value
+      };
+      return formatMiscValueForDisplay(getValue(fieldKey), field, context2);
+    },
+    getFormattedDate: (key) => getFormattedDate(getValue(key)),
+    // Utility function
+    sanitizeValue
+  };
+}
+const formatMiscValueForDisplay = (value, field, context2) => {
+  if (value === null || value === void 0 || value === "") {
+    return translate("Not set");
+  }
+  try {
+    const parsed = parseMiscValue(value, field.type);
+    switch (field.type) {
+      case "boolean":
+        return parsed ? translate("Yes") : translate("No");
+      case "datetime":
+        if (parsed instanceof Date) {
+          return parsed.toLocaleString();
+        }
+        if (typeof parsed === "string") {
+          return new Date(parsed).toLocaleString();
+        }
+        return String(parsed);
+      case "json": {
+        if (typeof parsed === "object") {
+          return JSON.stringify(parsed, null, 2);
+        }
+        return String(parsed);
+      }
+      case "integer":
+      case "number":
+        return String(parsed);
+      case "enum":
+        if (field.allowed_values) {
+          const found2 = field.allowed_values.find((v) => v === parsed);
+          if (found2) {
+            return found2.charAt(0).toUpperCase() + found2.slice(1).replace(/_/g, " ");
+          }
+        }
+        return String(parsed).charAt(0).toUpperCase() + String(parsed).slice(1).replace(/_/g, " ");
+      case "users":
+      case "groups":
+        if (Array.isArray(parsed)) {
+          if (context2?.users) {
+            return parsed.map((id) => context2.users[id]?.displayName || id).join(", ");
+          }
+          return parsed.join(", ");
+        }
+        if (typeof parsed === "string") {
+          try {
+            const arr = JSON.parse(parsed);
+            if (Array.isArray(arr)) {
+              if (context2?.users) {
+                return arr.map((id) => context2.users[id]?.displayName || id).join(", ");
+              }
+              return arr.join(", ");
+            }
+          } catch {
+          }
+        }
+        return String(parsed);
+      case "location":
+        if (context2?.locationItems) {
+          const path = getHierarchyPath(context2.locationItems, parsed);
+          return path || String(parsed);
+        }
+        return String(parsed);
+      case "category":
+        if (context2?.categoryItems) {
+          const path = getHierarchyPath(context2.categoryItems, parsed);
+          return path || String(parsed);
+        }
+        return String(parsed);
+      default:
+        return String(parsed);
+    }
+  } catch {
+    return String(value);
+  }
+};
+const getFieldLabel = (field) => {
+  if (field.label) return field.label;
+  return field.key.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
+};
+const getHierarchyPath = (items, targetId) => {
+  if (!items || !Array.isArray(items) || !targetId) return "";
+  const itemMap = {};
+  items.forEach((item) => {
+    itemMap[item.id] = item;
+  });
+  if (!itemMap[targetId]) {
+    return String(targetId);
+  }
+  function buildPath(item) {
+    if (item.parentId === 0 || !item.parentId) {
+      return item.name || String(item.id);
+    }
+    const parent = itemMap[item.parentId];
+    if (parent) {
+      return `${buildPath(parent)} -> ${item.name || String(item.id)}`;
+    }
+    return item.name || String(item.id);
+  }
+  return buildPath(itemMap[targetId]);
+};
+const getHierarchicalOptions = (items, emptyLabel) => {
+  if (!Array.isArray(items)) return [];
+  const hierarchical = buildHierarchy(items);
+  const options2 = hierarchical.map((item) => ({
+    value: item.id,
+    label: `${"— ".repeat(item.depth ?? 0)}${item.name ?? "[no name]"}`,
+    original: item
+  }));
+  if (emptyLabel) {
+    options2.unshift({
+      value: "",
+      label: emptyLabel,
+      original: { id: "", name: emptyLabel, parentId: 0 }
+    });
+  }
+  return options2;
+};
+const handleHierarchicalUpdate = (value, fieldType, updateCallback, fieldKey) => {
+  let idToStore = "";
+  if (value && typeof value === "object" && "value" in value) {
+    idToStore = String(value.value);
+  } else if (value) {
+    idToStore = String(value);
+  }
+  updateCallback(fieldKey, idToStore, fieldType);
+};
+const _sfc_main$Y = /* @__PURE__ */ defineComponent({
   __name: "OptionCard",
   props: {
     option: { type: Object, required: true },
@@ -73658,6 +74175,7 @@ const _sfc_main$X = /* @__PURE__ */ defineComponent({
     official: { type: Boolean, required: false },
     highlight: { type: Boolean, required: false },
     showPoll: { type: Boolean, required: false },
+    showAction: { type: Boolean, required: false },
     preventClick: { type: Boolean, required: false },
     textMaxLength: { type: Number, required: false }
   },
@@ -73666,6 +74184,7 @@ const _sfc_main$X = /* @__PURE__ */ defineComponent({
     __expose();
     const props2 = __props;
     const emit2 = __emit;
+    console.log("PROPPPPPPPPPPPPPPPPPPPPP ", props2.showAction);
     const textMaxLength = props2.textMaxLength || 200;
     const optionsStore = useOptionsStore();
     const sessionStore = useSessionStore();
@@ -73791,10 +74310,10 @@ const _sfc_main$X = /* @__PURE__ */ defineComponent({
     return __returned__;
   }
 });
-const _hoisted_1$K = { class: "card-header" };
-const _hoisted_2$B = { class: "header-left" };
-const _hoisted_3$A = { class: "header-meta" };
-const _hoisted_4$y = { class: "option-type-label" };
+const _hoisted_1$L = { class: "card-header" };
+const _hoisted_2$C = { class: "header-left" };
+const _hoisted_3$B = { class: "header-meta" };
+const _hoisted_4$z = { class: "option-type-label" };
 const _hoisted_5$t = { class: "timestamp" };
 const _hoisted_6$q = { class: "card-content" };
 const _hoisted_7$q = {
@@ -73873,13 +74392,13 @@ const _hoisted_38$a = {
 };
 const _hoisted_39$8 = ["onMouseenter", "onClick"];
 const _hoisted_40$8 = { class: "response-type-info" };
-const _hoisted_41$7 = { class: "response-count" };
-const _hoisted_42$6 = {
+const _hoisted_41$8 = { class: "response-count" };
+const _hoisted_42$7 = {
   key: 0,
   class: "child-tooltip"
 };
-const _hoisted_43$6 = { class: "tooltip-header" };
-const _hoisted_44$5 = { class: "tooltip-count" };
+const _hoisted_43$7 = { class: "tooltip-header" };
+const _hoisted_44$6 = { class: "tooltip-count" };
 const _hoisted_45$4 = { class: "tooltip-children" };
 const _hoisted_46$4 = ["onClick"];
 const _hoisted_47$4 = { class: "child-title" };
@@ -73899,7 +74418,7 @@ const _hoisted_52$4 = {
 };
 const _hoisted_53$4 = { class: "owner-info" };
 const _hoisted_54$4 = { class: "owner-name" };
-function _sfc_render$X(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$Y(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock(
     "div",
     {
@@ -73920,9 +74439,9 @@ function _sfc_render$X(_ctx, _cache, $props, $setup, $data, $options) {
     },
     [
       createCommentVNode(" First Box: Header with icon, date, and actions "),
-      createBaseVNode("div", _hoisted_1$K, [
+      createBaseVNode("div", _hoisted_1$L, [
         createCommentVNode(" Left side: Type icon and date "),
-        createBaseVNode("div", _hoisted_2$B, [
+        createBaseVNode("div", _hoisted_2$C, [
           createBaseVNode(
             "div",
             {
@@ -73937,10 +74456,10 @@ function _sfc_render$X(_ctx, _cache, $props, $setup, $data, $options) {
             4
             /* STYLE */
           ),
-          createBaseVNode("div", _hoisted_3$A, [
+          createBaseVNode("div", _hoisted_3$B, [
             createBaseVNode(
               "span",
-              _hoisted_4$y,
+              _hoisted_4$z,
               toDisplayString($setup.optionTypeLabel),
               1
               /* TEXT */
@@ -73955,7 +74474,7 @@ function _sfc_render$X(_ctx, _cache, $props, $setup, $data, $options) {
           ])
         ]),
         createCommentVNode(" Right side: Actions menu - only in normal mode "),
-        !$props.inline ? (openBlock(), createElementBlock("div", {
+        !$props.inline && $setup.canEditOrDelete && $props.showAction ? (openBlock(), createElementBlock("div", {
           key: 0,
           class: "header-right",
           onClick: _cache[0] || (_cache[0] = withModifiers(() => {
@@ -74186,15 +74705,15 @@ function _sfc_render$X(_ctx, _cache, $props, $setup, $data, $options) {
                       (openBlock(), createBlock(resolveDynamicComponent($setup.getOptionTypeIcon(responseType)), { size: 10 })),
                       createBaseVNode(
                         "span",
-                        _hoisted_41$7,
+                        _hoisted_41$8,
                         toDisplayString($setup.childCounts[responseType] || 0),
                         1
                         /* TEXT */
                       )
                     ]),
                     createCommentVNode(" Tooltip showing child options of this type "),
-                    $setup.activeTooltip === responseType && $setup.childCounts[responseType] > 0 ? (openBlock(), createElementBlock("div", _hoisted_42$6, [
-                      createBaseVNode("div", _hoisted_43$6, [
+                    $setup.activeTooltip === responseType && $setup.childCounts[responseType] > 0 ? (openBlock(), createElementBlock("div", _hoisted_42$7, [
+                      createBaseVNode("div", _hoisted_43$7, [
                         createBaseVNode(
                           "strong",
                           null,
@@ -74204,7 +74723,7 @@ function _sfc_render$X(_ctx, _cache, $props, $setup, $data, $options) {
                         ),
                         createBaseVNode(
                           "span",
-                          _hoisted_44$5,
+                          _hoisted_44$6,
                           toDisplayString($setup.childCounts[responseType]) + " " + toDisplayString($setup.t("agora", "items")),
                           1
                           /* TEXT */
@@ -74292,7 +74811,7 @@ function _sfc_render$X(_ctx, _cache, $props, $setup, $data, $options) {
           /* CACHED */
         )),
         createCommentVNode(" Actions menu for inline mode "),
-        $setup.canEditOrDelete ? (openBlock(), createElementBlock("div", {
+        $setup.canEditOrDelete && $props.showAction ? (openBlock(), createElementBlock("div", {
           key: 3,
           class: "inline-actions",
           onClick: _cache[5] || (_cache[5] = withModifiers(() => {
@@ -74352,8 +74871,8 @@ function _sfc_render$X(_ctx, _cache, $props, $setup, $data, $options) {
     /* CLASS */
   );
 }
-const OptionCard = /* @__PURE__ */ _export_sfc$1(_sfc_main$X, [["render", _sfc_render$X], ["__scopeId", "data-v-7f2059a4"], ["__file", "/var/www/nextcloud/apps/agora/src/components/Options/OptionCard.vue"]]);
-const _sfc_main$W = /* @__PURE__ */ defineComponent({
+const OptionCard = /* @__PURE__ */ _export_sfc$1(_sfc_main$Y, [["render", _sfc_render$Y], ["__scopeId", "data-v-7f2059a4"], ["__file", "/var/www/nextcloud/apps/agora/src/components/Options/OptionCard.vue"]]);
+const _sfc_main$X = /* @__PURE__ */ defineComponent({
   __name: "AddOptionModal",
   props: {
     inquiryId: { type: Number, required: true },
@@ -74368,14 +74887,68 @@ const _sfc_main$W = /* @__PURE__ */ defineComponent({
     const optionsStore = useOptionsStore();
     const optionStore = useOptionStore();
     const sessionStore = useSessionStore();
+    const selectedUsers = ref({});
+    const selectedGroups = ref({});
     const visible = ref(true);
     const formData = ref({
       title: "",
       text: ""
     });
     const formErrors = ref([]);
-    const additionalFormData = ref({});
     const allOptionTypes = computed(() => sessionStore.appSettings?.inquiryOptionTypeTab || []);
+    const additionalFields = computed(() => {
+      const fields = getOptionTypeFields(props2.optionType, allOptionTypes.value);
+      return fields;
+    });
+    const miscFields = useMiscFields(
+      additionalFields,
+      null,
+      ref({})
+    );
+    const sanitizeValue2 = (value) => {
+      if (value === null || value === void 0) {
+        return "";
+      }
+      if (Array.isArray(value) && value.length > 0) {
+        if (value[0]?.__v_isVNode) {
+          return String(value[0].children || "");
+        }
+        return String(value[0] || "");
+      }
+      if (value && typeof value === "object") {
+        if ("id" in value) return String(value.id);
+        if ("userId" in value) return String(value.userId);
+        try {
+          return JSON.stringify(value);
+        } catch {
+          return String(value);
+        }
+      }
+      return String(value);
+    };
+    watch(() => miscFields.values.value, (newVal) => {
+      Object.entries(newVal).forEach(([key, value]) => {
+        const field = additionalFields.value.find((f) => f.key === key);
+        if (field && (field.type === "users" || field.type === "groups")) {
+          if (Array.isArray(value) && value[0]?.__v_isVNode) {
+            const sanitized = sanitizeValue2(value);
+            if (sanitized !== value) {
+              setTimeout(() => {
+                miscFields.updateValue(key, sanitized, field.type);
+              }, 0);
+            }
+          }
+        }
+      });
+    }, { deep: true });
+    const locationOptions = computed(() => getHierarchicalOptions(
+      sessionStore.appSettings.locationTab || [],
+      translate("Select location")
+    ));
+    const categoryOptions = computed(() => getHierarchicalOptions(
+      sessionStore.appSettings.categoryTab || [],
+      translate("Select category")
+    ));
     const modalTitle = computed(() => {
       if (!props2.optionType) return translate("agora", "Add Option");
       return translate("agora", "Add {type}", { type: optionTypeLabel.value });
@@ -74427,9 +75000,6 @@ const _sfc_main$W = /* @__PURE__ */ defineComponent({
       return [];
     });
     const hasAdditionalFields = computed(() => additionalFields.value.length > 0);
-    const additionalFields = computed(
-      () => getOptionTypeFields(props2.optionType, allOptionTypes.value)
-    );
     const useTitle = computed(
       () => usesTitle(props2.optionType, allOptionTypes.value)
     );
@@ -74462,6 +75032,17 @@ const _sfc_main$W = /* @__PURE__ */ defineComponent({
     const previewOption = computed(() => {
       const currentUser = sessionStore.currentUser;
       const optionType = findOptionType(props2.optionType, allOptionTypes.value) || {};
+      const previewMiscFields = {};
+      additionalFields.value.forEach((field) => {
+        const rawValue = miscFields.values.value[field.key];
+        let value = rawValue;
+        if (field.type === "users" || field.type === "groups") {
+          value = sanitizeValue2(rawValue);
+        }
+        if (value !== void 0 && value !== null && value !== "") {
+          previewMiscFields[field.key] = formatValueForStorage(value, field.type);
+        }
+      });
       return {
         id: 0,
         targetId: props2.inquiryId,
@@ -74478,7 +75059,7 @@ const _sfc_main$W = /* @__PURE__ */ defineComponent({
           supportFeature: optionType.support_feature || "none",
           family: optionType.family || ""
         },
-        miscFields: additionalFormData.value,
+        miscFields: previewMiscFields,
         ownedGroup: "",
         owner: {
           id: currentUser?.id || "preview-user",
@@ -74543,9 +75124,103 @@ const _sfc_main$W = /* @__PURE__ */ defineComponent({
         }
       };
     });
+    const getUserObjectForField = (fieldKey) => {
+      const value = miscFields.getValue(fieldKey);
+      let userId = null;
+      if (!value) return null;
+      if (Array.isArray(value) && value.length > 0 && value[0]?.__v_isVNode) {
+        const vnode = value[0];
+        if (vnode.children) {
+          userId = String(vnode.children);
+        }
+      } else if (typeof value === "string") {
+        userId = value;
+      } else if (value && typeof value === "object" && "id" in value) {
+        userId = String(value.id);
+      } else if (Array.isArray(value) && value.length > 0) {
+        userId = String(value[0]);
+      } else {
+        userId = String(value);
+      }
+      if (userId && selectedUsers.value[fieldKey]?.id === userId) {
+        return selectedUsers.value[fieldKey];
+      }
+      return userId ? {
+        id: userId,
+        displayName: userId,
+        userRole: "member"
+      } : null;
+    };
+    const handleUserSelected = (fieldKey, user) => {
+      let valueToStore = "";
+      if (user) {
+        if (typeof user === "string") {
+          valueToStore = user;
+        } else if (user && typeof user === "object") {
+          valueToStore = user.id || user.userId || user.uid || String(user);
+        }
+      }
+      valueToStore = String(valueToStore || "");
+      if (user && typeof user === "object" && !("__v_isVNode" in user)) {
+        selectedUsers.value[fieldKey] = {
+          id: valueToStore,
+          displayName: user.displayName || valueToStore,
+          userRole: user.userRole || "member"
+        };
+      } else {
+        selectedUsers.value[fieldKey] = user;
+      }
+      miscFields.updateValue(fieldKey, valueToStore, "users");
+    };
+    const getGroupObjectForField = (fieldKey) => {
+      const value = miscFields.getValue(fieldKey);
+      let groupId = null;
+      if (!value) return null;
+      if (Array.isArray(value) && value.length > 0 && value[0]?.__v_isVNode) {
+        const vnode = value[0];
+        if (vnode.children) {
+          groupId = String(vnode.children);
+        }
+      } else if (typeof value === "string") {
+        groupId = value;
+      } else if (value && typeof value === "object" && "id" in value) {
+        groupId = String(value.id);
+      } else {
+        groupId = String(value);
+      }
+      if (selectedGroups.value[fieldKey]?.id === groupId) {
+        return selectedGroups.value[fieldKey];
+      }
+      return groupId ? {
+        id: groupId,
+        displayName: groupId,
+        userRole: "group"
+      } : null;
+    };
+    const handleGroupSelected = (fieldKey, group2) => {
+      let valueToStore = "";
+      if (group2) {
+        if (typeof group2 === "string") {
+          valueToStore = group2;
+        } else if (group2 && typeof group2 === "object") {
+          valueToStore = group2.id || group2.userId || group2.uid || String(group2);
+        }
+      }
+      valueToStore = String(valueToStore || "");
+      if (group2 && typeof group2 === "object" && !("__v_isVNode" in group2)) {
+        selectedGroups.value[fieldKey] = {
+          id: valueToStore,
+          displayName: group2.displayName || valueToStore,
+          userRole: "group"
+        };
+      } else {
+        selectedGroups.value[fieldKey] = group2;
+      }
+      miscFields.updateValue(fieldKey, valueToStore, "groups");
+    };
     const getParentIcon = (parent) => getOptionTypeIconComponent(parent.type, allOptionTypes.value);
     const getOptionTypeIcon = (type) => getOptionTypeIconComponent(type, allOptionTypes.value);
-    const getFieldLabel = (field) => field.key.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
+    const getFieldLabel$1 = (field) => getFieldLabel(field);
     const getSelectOptions = (field) => {
       if (field.options && Array.isArray(field.options)) {
         return field.options.map((opt) => ({
@@ -74568,21 +75243,6 @@ const _sfc_main$W = /* @__PURE__ */ defineComponent({
       };
       return statusIconMap[status] || InquiryOptionIcons.Circle;
     };
-    const initializeAdditionalFields = () => {
-      additionalFormData.value = {};
-      for (const field of additionalFields.value) {
-        switch (field.type) {
-          case "boolean":
-            additionalFormData.value[field.key] = field.default ?? false;
-            break;
-          case "number":
-            additionalFormData.value[field.key] = Number(field.default ?? 0);
-            break;
-          default:
-            additionalFormData.value[field.key] = field.default ?? "";
-        }
-      }
-    };
     const createOption = async () => {
       if (formValid.value && props2.optionType) {
         try {
@@ -74592,23 +75252,30 @@ const _sfc_main$W = /* @__PURE__ */ defineComponent({
           const defaultSupportFeature = optionType.support_feature || "none";
           const defaultAllowComment = allowComment.value ? 1 : 0;
           const defaultFamily = optionType.family || "";
-          const miscFields = {};
-          for (const field of additionalFields.value) {
-            const value = additionalFormData.value[field.key];
-            if (value !== void 0 && value !== "") {
-              if (field.type === "json" && value) {
-                try {
-                  miscFields[field.key] = typeof value === "string" ? JSON.parse(value) : value;
-                } catch {
-                  miscFields[field.key] = value;
-                }
-              } else {
-                miscFields[field.key] = value;
+          const miscFieldsForStorage = {};
+          additionalFields.value.forEach((field) => {
+            const rawValue = miscFields.values.value[field.key];
+            let value = rawValue;
+            if (field.type === "users" || field.type === "groups") {
+              value = sanitizeValue2(rawValue);
+            } else if (field.type === "datetime") {
+              if (rawValue && typeof rawValue === "string") {
+                value = rawValue;
+              } else if (rawValue instanceof Date) {
+                const year = rawValue.getFullYear();
+                const month = String(rawValue.getMonth() + 1).padStart(2, "0");
+                const day = String(rawValue.getDate()).padStart(2, "0");
+                const hours = String(rawValue.getHours()).padStart(2, "0");
+                const minutes = String(rawValue.getMinutes()).padStart(2, "0");
+                value = `${year}-${month}-${day} ${hours}:${minutes}`;
               }
-            } else if (field.default !== void 0) {
-              miscFields[field.key] = field.default;
             }
-          }
+            if (value !== void 0 && value !== null && value !== "") {
+              miscFieldsForStorage[field.key] = formatValueForStorage(value, field.type);
+            } else if (field.default !== void 0 && field.default !== null) {
+              miscFieldsForStorage[field.key] = formatValueForStorage(field.default, field.type);
+            }
+          });
           const optionData = {
             title: formData.value.title.trim() || "",
             text: formData.value.text.trim() || "",
@@ -74621,35 +75288,82 @@ const _sfc_main$W = /* @__PURE__ */ defineComponent({
             allowComment: defaultAllowComment,
             family: defaultFamily,
             status: defaultStatus,
-            miscFields
+            miscFields: miscFieldsForStorage
           };
           const newOption = await optionStore.create(optionData);
           if (newOption) {
             emit2("created", newOption);
             formData.value = { title: "", text: "" };
-            additionalFormData.value = {};
-            initializeAdditionalFields();
+            miscFields.resetToDefaults();
+            selectedUsers.value = {};
+            selectedGroups.value = {};
           }
         } catch (error) {
-          console.error("Error creating option:", error);
           formErrors.value.push(translate("agora", "Error creating option: {error}", {
             error: error.message || translate("agora", "Unknown error")
           }));
         }
       }
     };
+    const handleDateTimeUpdateSimple = (fieldKey, value) => {
+      let storageValue = "";
+      if (value instanceof Date && !isNaN(value.getTime())) {
+        const year = value.getFullYear();
+        const month = String(value.getMonth() + 1).padStart(2, "0");
+        const day = String(value.getDate()).padStart(2, "0");
+        const hours = String(value.getHours()).padStart(2, "0");
+        const minutes = String(value.getMinutes()).padStart(2, "0");
+        storageValue = `${year}-${month}-${day} ${hours}:${minutes}`;
+      }
+      miscFields.updateValue(fieldKey, storageValue, "datetime");
+    };
+    const getFormattedDateSimple = (key) => {
+      const value = miscFields.getValue(key);
+      if (!value || typeof value !== "string") return null;
+      try {
+        const year = parseInt(value.substring(0, 4));
+        const month = parseInt(value.substring(5, 7)) - 1;
+        const day = parseInt(value.substring(8, 10));
+        const hours = parseInt(value.substring(11, 13)) || 0;
+        const minutes = parseInt(value.substring(14, 16)) || 0;
+        const manualDate = new Date(year, month, day, hours, minutes);
+        return manualDate;
+      } catch (e) {
+        console.error("Date parsing failed:", e);
+        return null;
+      }
+    };
     watch(() => props2.optionType, (newType) => {
       if (newType) {
-        initializeAdditionalFields();
+        miscFields.init();
+        selectedUsers.value = {};
+        selectedGroups.value = {};
       }
     }, { immediate: true });
     onMounted(() => {
+      selectedUsers.value = {};
+      selectedGroups.value = {};
       setTimeout(() => {
         const input = document.getElementById("option-text");
         if (input) input.focus();
       }, 100);
     });
-    const __returned__ = { props: props2, emit: emit2, optionsStore, optionStore, sessionStore, visible, formData, formErrors, additionalFormData, allOptionTypes, modalTitle, modalSubtitle, optionTypeLabel, optionTypeDescription, optionTypeIcon, optionTypeColor, parentOption, allowedResponses, hasSupportFeature: hasSupportFeature$1, supportFeatureLabel, allowComment, hasStatuses, statusesList, hasAdditionalFields, additionalFields, useTitle, optionTypeHelp, formValid, previewOption, getParentIcon, getOptionTypeIcon, getFieldLabel, getSelectOptions, getStatusIcon, initializeAdditionalFields, createOption, get t() {
+    onUnmounted(() => {
+      miscFields.clearTimeouts();
+    });
+    const getSelectedLocationOption = (fieldKey) => {
+      const value = miscFields.getValue(fieldKey);
+      if (!value) return null;
+      const selected = locationOptions.value.find((opt) => String(opt.value) === String(value));
+      return selected || null;
+    };
+    const getSelectedCategoryOption = (fieldKey) => {
+      const value = miscFields.getValue(fieldKey);
+      if (!value) return null;
+      const selected = categoryOptions.value.find((opt) => String(opt.value) === String(value));
+      return selected || null;
+    };
+    const __returned__ = { props: props2, emit: emit2, optionsStore, optionStore, sessionStore, selectedUsers, selectedGroups, visible, formData, formErrors, allOptionTypes, additionalFields, miscFields, sanitizeValue: sanitizeValue2, locationOptions, categoryOptions, modalTitle, modalSubtitle, optionTypeLabel, optionTypeDescription, optionTypeIcon, optionTypeColor, parentOption, allowedResponses, hasSupportFeature: hasSupportFeature$1, supportFeatureLabel, allowComment, hasStatuses, statusesList, hasAdditionalFields, useTitle, optionTypeHelp, formValid, previewOption, getUserObjectForField, handleUserSelected, getGroupObjectForField, handleGroupSelected, getParentIcon, getOptionTypeIcon, getFieldLabel: getFieldLabel$1, getSelectOptions, getStatusIcon, createOption, handleDateTimeUpdateSimple, getFormattedDateSimple, getSelectedLocationOption, getSelectedCategoryOption, get t() {
       return translate;
     }, get NcModal() {
       return NcModal;
@@ -74658,26 +75372,30 @@ const _sfc_main$W = /* @__PURE__ */ defineComponent({
     }, get NcRichContenteditable() {
       return NcRichContenteditable;
     }, get NcTextField() {
-      return _sfc_main$1X;
+      return _sfc_main$1Y;
     }, get NcCheckboxRadioSwitch() {
       return NcCheckboxRadioSwitch;
     }, get NcSelect() {
       return NcSelect;
     }, get NcTextArea() {
       return NcTextArea;
-    }, get InquiryOptionIcons() {
+    }, get NcDateTimePickerNative() {
+      return NcDateTimePickerNative;
+    }, UserSearch, get InquiryOptionIcons() {
       return InquiryOptionIcons;
     }, get getOptionTypeLabel() {
       return getOptionTypeLabel;
+    }, get handleHierarchicalUpdate() {
+      return handleHierarchicalUpdate;
     }, OptionCard };
     Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
     return __returned__;
   }
 });
-const _hoisted_1$J = { class: "add-option-modal" };
-const _hoisted_2$A = { class: "modal-header" };
-const _hoisted_3$z = { class: "modal-subtitle" };
-const _hoisted_4$x = { class: "modal-content" };
+const _hoisted_1$K = { class: "add-option-modal" };
+const _hoisted_2$B = { class: "modal-header" };
+const _hoisted_3$A = { class: "modal-subtitle" };
+const _hoisted_4$y = { class: "modal-content" };
 const _hoisted_5$s = { class: "form-grid" };
 const _hoisted_6$p = { class: "form-column" };
 const _hoisted_7$p = { class: "option-type-indicator" };
@@ -74724,27 +75442,34 @@ const _hoisted_29$e = {
   key: 0,
   class: "required"
 };
-const _hoisted_30$e = { class: "checkbox-field" };
-const _hoisted_31$d = ["for"];
-const _hoisted_32$c = { class: "field-hint" };
-const _hoisted_33$c = { class: "preview-column" };
-const _hoisted_34$c = { class: "preview-card" };
-const _hoisted_35$c = {
+const _hoisted_30$e = { class: "field-type-badge" };
+const _hoisted_31$d = { class: "checkbox-field" };
+const _hoisted_32$c = ["for"];
+const _hoisted_33$c = { class: "field-hint" };
+const _hoisted_34$c = { class: "user-field-container" };
+const _hoisted_35$c = { class: "user-field-container" };
+const _hoisted_36$a = {
+  key: 12,
+  class: "field-description"
+};
+const _hoisted_37$a = { class: "preview-column" };
+const _hoisted_38$9 = { class: "preview-card" };
+const _hoisted_39$7 = {
   key: 0,
   class: "help-text"
 };
-const _hoisted_36$a = {
+const _hoisted_40$7 = {
   key: 1,
   class: "statuses-preview"
 };
-const _hoisted_37$a = { class: "statuses-list" };
-const _hoisted_38$9 = { class: "modal-footer" };
-const _hoisted_39$7 = {
+const _hoisted_41$7 = { class: "statuses-list" };
+const _hoisted_42$6 = { class: "modal-footer" };
+const _hoisted_43$6 = {
   key: 0,
   class: "form-errors"
 };
-const _hoisted_40$7 = { class: "footer-actions" };
-function _sfc_render$W(_ctx, _cache, $props, $setup, $data, $options) {
+const _hoisted_44$5 = { class: "footer-actions" };
+function _sfc_render$X(_ctx, _cache, $props, $setup, $data, $options) {
   return $setup.visible ? (openBlock(), createBlock($setup["NcModal"], {
     key: 0,
     name: $setup.modalTitle,
@@ -74752,9 +75477,9 @@ function _sfc_render$W(_ctx, _cache, $props, $setup, $data, $options) {
     onClose: _cache[4] || (_cache[4] = ($event) => _ctx.$emit("close"))
   }, {
     default: withCtx(() => [
-      createBaseVNode("div", _hoisted_1$J, [
+      createBaseVNode("div", _hoisted_1$K, [
         createCommentVNode(" Header "),
-        createBaseVNode("div", _hoisted_2$A, [
+        createBaseVNode("div", _hoisted_2$B, [
           createBaseVNode(
             "h2",
             null,
@@ -74764,14 +75489,14 @@ function _sfc_render$W(_ctx, _cache, $props, $setup, $data, $options) {
           ),
           createBaseVNode(
             "p",
-            _hoisted_3$z,
+            _hoisted_3$A,
             toDisplayString($setup.modalSubtitle),
             1
             /* TEXT */
           )
         ]),
         createCommentVNode(" Form "),
-        createBaseVNode("div", _hoisted_4$x, [
+        createBaseVNode("div", _hoisted_4$y, [
           createBaseVNode("div", _hoisted_5$s, [
             createCommentVNode(" Left column: Form fields "),
             createBaseVNode("div", _hoisted_6$p, [
@@ -74962,117 +75687,274 @@ function _sfc_render$W(_ctx, _cache, $props, $setup, $data, $options) {
                           1
                           /* TEXT */
                         ),
-                        field.required ? (openBlock(), createElementBlock("span", _hoisted_29$e, "*")) : createCommentVNode("v-if", true)
+                        field.required ? (openBlock(), createElementBlock("span", _hoisted_29$e, "*")) : createCommentVNode("v-if", true),
+                        createBaseVNode(
+                          "span",
+                          _hoisted_30$e,
+                          "(" + toDisplayString(field.type) + ")",
+                          1
+                          /* TEXT */
+                        )
                       ], 8, _hoisted_28$e),
                       createCommentVNode(" Text field "),
-                      field.type === "text" ? (openBlock(), createBlock($setup["NcRichContenteditable"], {
+                      field.type === "text" || field.type === "string" ? (openBlock(), createBlock($setup["NcRichContenteditable"], {
                         key: 0,
                         id: `field-${field.key}`,
-                        modelValue: $setup.additionalFormData[field.key],
-                        "onUpdate:modelValue": ($event) => $setup.additionalFormData[field.key] = $event,
+                        "model-value": $setup.miscFields.getValue(field.key) ?? "",
                         autolink: true,
                         "use-markdown": true,
                         "emoji-autocomplete": true,
                         "link-autocomplete": true,
                         placeholder: field.placeholder || "",
                         required: field.required,
-                        "full-width": ""
-                      }, null, 8, ["id", "modelValue", "onUpdate:modelValue", "placeholder", "required"])) : field.type === "textarea" ? (openBlock(), createElementBlock(
+                        "full-width": "",
+                        "onUpdate:modelValue": (val) => $setup.miscFields.updateValue(field.key, val, field.type)
+                      }, null, 8, ["id", "model-value", "placeholder", "required", "onUpdate:modelValue"])) : field.type === "textarea" ? (openBlock(), createElementBlock(
                         Fragment$1,
                         { key: 1 },
                         [
                           createCommentVNode(" Textarea "),
                           createVNode($setup["NcTextArea"], {
                             id: `field-${field.key}`,
-                            modelValue: $setup.additionalFormData[field.key],
-                            "onUpdate:modelValue": ($event) => $setup.additionalFormData[field.key] = $event,
+                            "model-value": $setup.miscFields.getValue(field.key) ?? "",
                             placeholder: field.placeholder || "",
-                            type: "textarea",
                             rows: 3,
                             required: field.required,
-                            "full-width": ""
-                          }, null, 8, ["id", "modelValue", "onUpdate:modelValue", "placeholder", "required"])
+                            "full-width": "",
+                            "onUpdate:modelValue": (val) => $setup.miscFields.updateValue(field.key, val, field.type)
+                          }, null, 8, ["id", "model-value", "placeholder", "required", "onUpdate:modelValue"])
                         ],
-                        64
-                        /* STABLE_FRAGMENT */
+                        2112
+                        /* STABLE_FRAGMENT, DEV_ROOT_FRAGMENT */
                       )) : field.type === "boolean" ? (openBlock(), createElementBlock(
                         Fragment$1,
                         { key: 2 },
                         [
                           createCommentVNode(" Boolean (switch) "),
-                          createBaseVNode("div", _hoisted_30$e, [
+                          createBaseVNode("div", _hoisted_31$d, [
                             createVNode($setup["NcCheckboxRadioSwitch"], {
                               id: `field-${field.key}`,
                               type: "switch",
-                              checked: $setup.additionalFormData[field.key] || false,
-                              "onUpdate:checked": ($event) => $setup.additionalFormData[field.key] = $event
+                              checked: $setup.miscFields.getCheckboxValue(field.key),
+                              "onUpdate:checked": (val) => $setup.miscFields.updateValue(field.key, val, field.type)
                             }, null, 8, ["id", "checked", "onUpdate:checked"]),
                             createBaseVNode("label", {
                               for: `field-${field.key}`
-                            }, toDisplayString(field.label || field.key), 9, _hoisted_31$d)
+                            }, toDisplayString(field.label || field.key), 9, _hoisted_32$c)
                           ])
                         ],
-                        64
-                        /* STABLE_FRAGMENT */
-                      )) : field.type === "number" ? (openBlock(), createElementBlock(
+                        2112
+                        /* STABLE_FRAGMENT, DEV_ROOT_FRAGMENT */
+                      )) : field.type === "number" || field.type === "integer" ? (openBlock(), createElementBlock(
                         Fragment$1,
                         { key: 3 },
                         [
-                          createCommentVNode(" Number "),
+                          createCommentVNode(" Number / Integer "),
                           createVNode($setup["NcTextField"], {
                             id: `field-${field.key}`,
-                            modelValue: $setup.additionalFormData[field.key],
-                            "onUpdate:modelValue": ($event) => $setup.additionalFormData[field.key] = $event,
-                            modelModifiers: { number: true },
+                            "model-value": $setup.miscFields.getValue(field.key) ?? "",
                             type: "number",
+                            label: $setup.getFieldLabel(field),
                             placeholder: field.placeholder || "",
                             required: field.required,
-                            "full-width": ""
-                          }, null, 8, ["id", "modelValue", "onUpdate:modelValue", "placeholder", "required"])
+                            "full-width": "",
+                            "onUpdate:modelValue": (val) => $setup.miscFields.updateValue(field.key, val, field.type)
+                          }, null, 8, ["id", "model-value", "label", "placeholder", "required", "onUpdate:modelValue"])
                         ],
-                        64
-                        /* STABLE_FRAGMENT */
+                        2112
+                        /* STABLE_FRAGMENT, DEV_ROOT_FRAGMENT */
                       )) : field.type === "json" ? (openBlock(), createElementBlock(
                         Fragment$1,
                         { key: 4 },
                         [
-                          createCommentVNode(" JSON (textarea for now) "),
-                          createVNode($setup["NcTextArea"], {
-                            id: `field-${field.key}`,
-                            modelValue: $setup.additionalFormData[field.key],
-                            "onUpdate:modelValue": ($event) => $setup.additionalFormData[field.key] = $event,
-                            placeholder: field.placeholder || $setup.t("agora", "Enter JSON data"),
-                            rows: 3,
-                            required: field.required,
-                            "full-width": ""
-                          }, null, 8, ["id", "modelValue", "onUpdate:modelValue", "placeholder", "required"]),
-                          createBaseVNode(
-                            "div",
-                            _hoisted_32$c,
-                            toDisplayString($setup.t("agora", 'Enter valid JSON data (e.g., ["item1", "item2"])')),
-                            1
-                            /* TEXT */
-                          )
+                          createCommentVNode(" JSON "),
+                          createBaseVNode("div", null, [
+                            createVNode($setup["NcTextArea"], {
+                              id: `field-${field.key}`,
+                              "model-value": $setup.miscFields.getValue(field.key) ?? "",
+                              placeholder: field.placeholder || $setup.t("agora", "Enter JSON data"),
+                              rows: 3,
+                              required: field.required,
+                              "full-width": "",
+                              "onUpdate:modelValue": (val) => {
+                                try {
+                                  const parsed = val ? JSON.parse(val) : null;
+                                  $setup.miscFields.updateValue(field.key, parsed, field.type);
+                                } catch {
+                                  $setup.miscFields.updateValue(field.key, val, field.type);
+                                }
+                              }
+                            }, null, 8, ["id", "model-value", "placeholder", "required", "onUpdate:modelValue"]),
+                            createBaseVNode(
+                              "div",
+                              _hoisted_33$c,
+                              toDisplayString($setup.t("agora", 'Enter valid JSON data (e.g., {"key": "value"})')),
+                              1
+                              /* TEXT */
+                            )
+                          ])
                         ],
-                        64
-                        /* STABLE_FRAGMENT */
-                      )) : field.type === "select" ? (openBlock(), createElementBlock(
+                        2112
+                        /* STABLE_FRAGMENT, DEV_ROOT_FRAGMENT */
+                      )) : field.type === "enum" || field.type === "select" ? (openBlock(), createElementBlock(
                         Fragment$1,
                         { key: 5 },
                         [
-                          createCommentVNode(" Select/dropdown "),
+                          createCommentVNode(" Enum / Select "),
                           createVNode($setup["NcSelect"], {
                             id: `field-${field.key}`,
-                            modelValue: $setup.additionalFormData[field.key],
-                            "onUpdate:modelValue": ($event) => $setup.additionalFormData[field.key] = $event,
-                            options: $setup.getSelectOptions(field),
+                            "model-value": $setup.miscFields.getValue(field.key) ?? "",
+                            options: field.allowed_values || $setup.getSelectOptions(field),
+                            reduce: (option2) => typeof option2 === "object" ? option2.value : option2,
+                            clearable: !field.required,
+                            placeholder: field.placeholder || $setup.t("Select an option"),
+                            required: field.required,
+                            "label-outside": true,
+                            "input-label": $setup.getFieldLabel(field),
+                            "full-width": "",
+                            "onUpdate:modelValue": (val) => $setup.miscFields.updateValue(field.key, val, field.type)
+                          }, null, 8, ["id", "model-value", "options", "reduce", "clearable", "placeholder", "required", "input-label", "onUpdate:modelValue"])
+                        ],
+                        2112
+                        /* STABLE_FRAGMENT, DEV_ROOT_FRAGMENT */
+                      )) : field.type === "datetime" ? (openBlock(), createElementBlock(
+                        Fragment$1,
+                        { key: 6 },
+                        [
+                          createCommentVNode(" Datetime "),
+                          createBaseVNode("div", null, [
+                            createVNode($setup["NcDateTimePickerNative"], {
+                              id: `field-${field.key}`,
+                              "model-value": $setup.getFormattedDateSimple(field.key),
+                              type: "date",
+                              placeholder: field.placeholder || $setup.t("Select date"),
+                              required: field.required,
+                              label: $setup.getFieldLabel(field),
+                              clearable: !field.required,
+                              "full-width": "",
+                              "onUpdate:modelValue": (val) => $setup.handleDateTimeUpdateSimple(field.key, val)
+                            }, null, 8, ["id", "model-value", "placeholder", "required", "label", "clearable", "onUpdate:modelValue"])
+                          ])
+                        ],
+                        2112
+                        /* STABLE_FRAGMENT, DEV_ROOT_FRAGMENT */
+                      )) : field.type === "users" ? (openBlock(), createElementBlock(
+                        Fragment$1,
+                        { key: 7 },
+                        [
+                          createCommentVNode(" Users "),
+                          createBaseVNode("div", _hoisted_34$c, [
+                            createVNode($setup["UserSearch"], {
+                              id: `field-${field.key}`,
+                              "model-value": $setup.getUserObjectForField(field.key),
+                              "search-types": [99],
+                              placeholder: field.placeholder || $setup.t("Type to search for users"),
+                              "aria-label": $setup.getFieldLabel(field),
+                              "close-on-select": true,
+                              onUserSelected: (user) => $setup.handleUserSelected(field.key, user)
+                            }, null, 8, ["id", "model-value", "placeholder", "aria-label", "onUserSelected"])
+                          ])
+                        ],
+                        2112
+                        /* STABLE_FRAGMENT, DEV_ROOT_FRAGMENT */
+                      )) : field.type === "groups" ? (openBlock(), createElementBlock(
+                        Fragment$1,
+                        { key: 8 },
+                        [
+                          createCommentVNode(" Groups "),
+                          createBaseVNode("div", _hoisted_35$c, [
+                            createVNode($setup["UserSearch"], {
+                              id: `field-${field.key}`,
+                              "model-value": $setup.getGroupObjectForField(field.key),
+                              "search-types": [1],
+                              placeholder: field.placeholder || $setup.t("Type to search for groups"),
+                              "aria-label": $setup.getFieldLabel(field),
+                              "close-on-select": true,
+                              onUserSelected: (group2) => $setup.handleGroupSelected(field.key, group2)
+                            }, null, 8, ["id", "model-value", "placeholder", "aria-label", "onUserSelected"])
+                          ])
+                        ],
+                        2112
+                        /* STABLE_FRAGMENT, DEV_ROOT_FRAGMENT */
+                      )) : field.type === "location" ? (openBlock(), createElementBlock(
+                        Fragment$1,
+                        { key: 9 },
+                        [
+                          createCommentVNode(" Location field "),
+                          createBaseVNode("div", null, [
+                            createVNode($setup["NcSelect"], {
+                              id: `field-${field.key}`,
+                              "model-value": $setup.getSelectedLocationOption(field.key),
+                              options: $setup.locationOptions,
+                              clearable: !field.required,
+                              "label-outside": true,
+                              "input-label": $setup.getFieldLabel(field),
+                              placeholder: field.placeholder || $setup.t("Select location"),
+                              required: field.required,
+                              "full-width": "",
+                              "onUpdate:modelValue": (val) => $setup.handleHierarchicalUpdate(
+                                val,
+                                "location",
+                                $setup.miscFields.updateValue,
+                                field.key
+                              )
+                            }, null, 8, ["id", "model-value", "options", "clearable", "input-label", "placeholder", "required", "onUpdate:modelValue"])
+                          ])
+                        ],
+                        2112
+                        /* STABLE_FRAGMENT, DEV_ROOT_FRAGMENT */
+                      )) : field.type === "category" ? (openBlock(), createElementBlock(
+                        Fragment$1,
+                        { key: 10 },
+                        [
+                          createCommentVNode(" Category field - FIXED "),
+                          createBaseVNode("div", null, [
+                            createVNode($setup["NcSelect"], {
+                              id: `field-${field.key}`,
+                              "model-value": $setup.getSelectedCategoryOption(field.key),
+                              options: $setup.categoryOptions,
+                              clearable: !field.required,
+                              "label-outside": true,
+                              "input-label": $setup.getFieldLabel(field),
+                              placeholder: field.placeholder || $setup.t("Select category"),
+                              required: field.required,
+                              "full-width": "",
+                              "onUpdate:modelValue": (val) => $setup.handleHierarchicalUpdate(
+                                val,
+                                "category",
+                                $setup.miscFields.updateValue,
+                                field.key
+                              )
+                            }, null, 8, ["id", "model-value", "options", "clearable", "input-label", "placeholder", "required", "onUpdate:modelValue"])
+                          ])
+                        ],
+                        2112
+                        /* STABLE_FRAGMENT, DEV_ROOT_FRAGMENT */
+                      )) : (openBlock(), createElementBlock(
+                        Fragment$1,
+                        { key: 11 },
+                        [
+                          createCommentVNode(" Default fallback for unknown types "),
+                          createVNode($setup["NcTextField"], {
+                            id: `field-${field.key}`,
+                            "model-value": $setup.miscFields.getValue(field.key),
+                            type: "text",
                             placeholder: field.placeholder || "",
                             required: field.required,
-                            "full-width": ""
-                          }, null, 8, ["id", "modelValue", "onUpdate:modelValue", "options", "placeholder", "required"])
+                            "full-width": "",
+                            "onUpdate:modelValue": (val) => $setup.miscFields.updateValue(field.key, val, "string")
+                          }, null, 8, ["id", "model-value", "placeholder", "required", "onUpdate:modelValue"])
                         ],
-                        64
-                        /* STABLE_FRAGMENT */
+                        2112
+                        /* STABLE_FRAGMENT, DEV_ROOT_FRAGMENT */
+                      )),
+                      createCommentVNode(" Field description "),
+                      field.description ? (openBlock(), createElementBlock(
+                        "div",
+                        _hoisted_36$a,
+                        toDisplayString(field.description),
+                        1
+                        /* TEXT */
                       )) : createCommentVNode("v-if", true)
                     ]);
                   }),
@@ -75082,7 +75964,7 @@ function _sfc_render$W(_ctx, _cache, $props, $setup, $data, $options) {
               ])
             ]),
             createCommentVNode(" Right column: Preview "),
-            createBaseVNode("div", _hoisted_33$c, [
+            createBaseVNode("div", _hoisted_37$a, [
               createBaseVNode(
                 "h4",
                 null,
@@ -75090,16 +75972,17 @@ function _sfc_render$W(_ctx, _cache, $props, $setup, $data, $options) {
                 1
                 /* TEXT */
               ),
-              createBaseVNode("div", _hoisted_34$c, [
+              createBaseVNode("div", _hoisted_38$9, [
                 createVNode($setup["OptionCard"], {
                   option: $setup.previewOption,
                   "inquiry-id": $props.inquiryId,
+                  "show-action": false,
                   compact: false,
                   "prevent-click": ""
                 }, null, 8, ["option", "inquiry-id"])
               ]),
               createCommentVNode(" Help text "),
-              $setup.optionTypeHelp ? (openBlock(), createElementBlock("div", _hoisted_35$c, [
+              $setup.optionTypeHelp ? (openBlock(), createElementBlock("div", _hoisted_39$7, [
                 (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons.Information), { size: 16 })),
                 createBaseVNode(
                   "p",
@@ -75110,7 +75993,7 @@ function _sfc_render$W(_ctx, _cache, $props, $setup, $data, $options) {
                 )
               ])) : createCommentVNode("v-if", true),
               createCommentVNode(" Statuses preview (if available) "),
-              $setup.hasStatuses ? (openBlock(), createElementBlock("div", _hoisted_36$a, [
+              $setup.hasStatuses ? (openBlock(), createElementBlock("div", _hoisted_40$7, [
                 createBaseVNode(
                   "h5",
                   null,
@@ -75118,7 +76001,7 @@ function _sfc_render$W(_ctx, _cache, $props, $setup, $data, $options) {
                   1
                   /* TEXT */
                 ),
-                createBaseVNode("div", _hoisted_37$a, [
+                createBaseVNode("div", _hoisted_41$7, [
                   (openBlock(true), createElementBlock(
                     Fragment$1,
                     null,
@@ -75150,8 +76033,8 @@ function _sfc_render$W(_ctx, _cache, $props, $setup, $data, $options) {
           ])
         ]),
         createCommentVNode(" Footer "),
-        createBaseVNode("div", _hoisted_38$9, [
-          $setup.formErrors.length > 0 ? (openBlock(), createElementBlock("div", _hoisted_39$7, [
+        createBaseVNode("div", _hoisted_42$6, [
+          $setup.formErrors.length > 0 ? (openBlock(), createElementBlock("div", _hoisted_43$6, [
             (openBlock(true), createElementBlock(
               Fragment$1,
               null,
@@ -75172,7 +76055,7 @@ function _sfc_render$W(_ctx, _cache, $props, $setup, $data, $options) {
               /* KEYED_FRAGMENT */
             ))
           ])) : createCommentVNode("v-if", true),
-          createBaseVNode("div", _hoisted_40$7, [
+          createBaseVNode("div", _hoisted_44$5, [
             createVNode($setup["NcButton"], {
               type: "tertiary",
               onClick: _cache[3] || (_cache[3] = ($event) => _ctx.$emit("close"))
@@ -75213,7 +76096,56 @@ function _sfc_render$W(_ctx, _cache, $props, $setup, $data, $options) {
     /* STABLE */
   }, 8, ["name"])) : createCommentVNode("v-if", true);
 }
-const AddOptionModal = /* @__PURE__ */ _export_sfc$1(_sfc_main$W, [["render", _sfc_render$W], ["__scopeId", "data-v-465c45d4"], ["__file", "/var/www/nextcloud/apps/agora/src/components/Options/AddOptionModal.vue"]]);
+const AddOptionModal = /* @__PURE__ */ _export_sfc$1(_sfc_main$X, [["render", _sfc_render$X], ["__scopeId", "data-v-465c45d4"], ["__file", "/var/www/nextcloud/apps/agora/src/components/Options/AddOptionModal.vue"]]);
+const _sfc_main$W = {
+  name: "PencilIcon",
+  emits: ["click"],
+  props: {
+    title: {
+      type: String
+    },
+    fillColor: {
+      type: String,
+      default: "currentColor"
+    },
+    size: {
+      type: Number,
+      default: 24
+    }
+  }
+};
+const _hoisted_1$J = ["aria-hidden", "aria-label"];
+const _hoisted_2$A = ["fill", "width", "height"];
+const _hoisted_3$z = { d: "M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z" };
+const _hoisted_4$x = { key: 0 };
+function _sfc_render$W(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("span", mergeProps(_ctx.$attrs, {
+    "aria-hidden": $props.title ? null : "true",
+    "aria-label": $props.title,
+    class: "material-design-icon pencil-icon",
+    role: "img",
+    onClick: _cache[0] || (_cache[0] = ($event) => _ctx.$emit("click", $event))
+  }), [
+    (openBlock(), createElementBlock("svg", {
+      fill: $props.fillColor,
+      class: "material-design-icon__svg",
+      width: $props.size,
+      height: $props.size,
+      viewBox: "0 0 24 24"
+    }, [
+      createBaseVNode("path", _hoisted_3$z, [
+        $props.title ? (openBlock(), createElementBlock(
+          "title",
+          _hoisted_4$x,
+          toDisplayString($props.title),
+          1
+          /* TEXT */
+        )) : createCommentVNode("v-if", true)
+      ])
+    ], 8, _hoisted_2$A))
+  ], 16, _hoisted_1$J);
+}
+const Pencil = /* @__PURE__ */ _export_sfc$1(_sfc_main$W, [["render", _sfc_render$W], ["__file", "/var/www/nextcloud/apps/agora/node_modules/vue-material-design-icons/Pencil.vue"]]);
 function escapeText(text) {
   return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
@@ -76178,9 +77110,8 @@ const _sfc_main$Q = /* @__PURE__ */ defineComponent({
     const showCommentForm = ref(false);
     const isEditing = ref(false);
     const editForm = ref({
-      label: "",
-      text: "",
-      fields: {}
+      title: "",
+      text: ""
     });
     const showChildModal = ref(false);
     const selectedChildId = ref(null);
@@ -76190,10 +77121,42 @@ const _sfc_main$Q = /* @__PURE__ */ defineComponent({
     const commentsSection = ref(null);
     const activeFilter = ref(null);
     const commentUpdateTrigger = ref(0);
+    const selectedUsers = ref({});
+    const selectedGroups = ref({});
     const toggleSubMenu = (menu = null) => {
       subMenu.value = subMenu.value === menu ? null : menu;
     };
     const allOptionTypes = computed(() => sessionStore.appSettings?.inquiryOptionTypeTab || []);
+    const additionalFields = computed(
+      () => getOptionTypeFields(optionStore.type, allOptionTypes.value)
+    );
+    const miscFields = useMiscFields(
+      additionalFields,
+      optionStore,
+      computed(() => optionStore.miscFields || {}),
+      {
+        locationItems: computed(() => sessionStore.appSettings.locationTab || []),
+        categoryItems: computed(() => sessionStore.appSettings.categoryTab || [])
+      }
+    );
+    const locationOptions = computed(() => getHierarchicalOptions(
+      sessionStore.appSettings.locationTab || [],
+      translate("Select location")
+    ));
+    const categoryOptions = computed(() => getHierarchicalOptions(
+      sessionStore.appSettings.categoryTab || [],
+      translate("Select category")
+    ));
+    const getSelectedLocationOption = (fieldKey) => {
+      const value = miscFields.getValue(fieldKey);
+      if (!value) return null;
+      return locationOptions.value.find((opt) => String(opt.value) === String(value)) || null;
+    };
+    const getSelectedCategoryOption = (fieldKey) => {
+      const value = miscFields.getValue(fieldKey);
+      if (!value) return null;
+      return categoryOptions.value.find((opt) => String(opt.value) === String(value)) || null;
+    };
     const optionTypeLabel = computed(
       () => getOptionTypeLabel$1(optionStore.type, allOptionTypes.value, translate("agora", "Option"))
     );
@@ -76222,9 +77185,6 @@ const _sfc_main$Q = /* @__PURE__ */ defineComponent({
     const availableResponseTypes = computed(
       () => getAvailableResponseTypes(optionStore.type, allOptionTypes.value)
     );
-    const additionalFields = computed(
-      () => getOptionTypeFields(optionStore.type, allOptionTypes.value)
-    );
     const optionContext = computed(() => {
       if (!optionStore) return null;
       return createOptionContext(optionStore);
@@ -76240,31 +77200,13 @@ const _sfc_main$Q = /* @__PURE__ */ defineComponent({
     });
     const hasChildOptions = computed(() => childOptions.value.length > 0);
     const hasAdditionalFields = computed(() => additionalFields.value.length > 0);
-    const hasAdditionalFieldsData = computed(() => {
-      if (!optionStore.miscFields) return false;
-      return Object.keys(optionStore.miscFields).length > 0;
-    });
+    const hasAdditionalFieldsData = computed(() => Object.keys(miscFields.values.value).length > 0);
     const filteredChildOptions = computed(() => {
       if (!activeFilter.value) return childOptions.value;
       return childOptions.value.filter((child) => child.type === activeFilter.value);
     });
     const formatDate = (timestamp) => DateTime.fromMillis(timestamp * 1e3).toLocaleString(DateTime.DATE_SHORT);
-    const getFieldLabel = (field) => {
-      if (field.label) return field.label;
-      return field.key.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
-    };
-    const formatFieldValue = (field, value) => {
-      if (value === null || value === void 0 || value === "") {
-        return translate("agora", "Not specified");
-      }
-      if (field.type === "boolean") {
-        return value ? translate("agora", "Yes") : translate("agora", "No");
-      }
-      if (field.type === "json" && Array.isArray(value)) {
-        return value.join(", ");
-      }
-      return value.toString();
-    };
+    const getFieldLabel$1 = (field) => getFieldLabel(field);
     const getOptionTypeDescription$1 = (type) => getOptionTypeDescription(type, allOptionTypes.value);
     const getOptionTypeIcon = (type) => getOptionTypeIconComponent(type, allOptionTypes.value);
     const getOptionTypeLabel$1 = (type) => getOptionTypeLabel(type, allOptionTypes.value, type);
@@ -76276,10 +77218,10 @@ const _sfc_main$Q = /* @__PURE__ */ defineComponent({
         await optionStore.load(props2.optionId);
         if (optionStore) {
           editForm.value = {
-            label: optionStore.title || "",
-            text: optionStore.text || "",
-            fields: { ...optionStore.miscFields }
+            title: optionStore.title || "",
+            text: optionStore.text || ""
           };
+          miscFields.reinitialize();
         } else {
           error.value = translate("agora", "Error loading option store");
         }
@@ -76292,6 +77234,7 @@ const _sfc_main$Q = /* @__PURE__ */ defineComponent({
     };
     const closeModal = () => {
       show.value = false;
+      miscFields.clearTimeouts();
       setTimeout(() => {
         emit2("close");
       }, 300);
@@ -76303,20 +77246,27 @@ const _sfc_main$Q = /* @__PURE__ */ defineComponent({
       isEditing.value = false;
       if (optionStore) {
         editForm.value = {
-          label: optionStore.title || "",
-          text: optionStore.text || "",
-          fields: { ...optionStore.miscFields }
+          title: optionStore.title || "",
+          text: optionStore.text || ""
         };
+        miscFields.reinitialize();
       }
     };
     const saveEdit = async () => {
       if (!optionStore || !canSaveEdit.value) return;
       try {
+        const miscFieldsForStorage = {};
+        additionalFields.value.forEach((field) => {
+          const value = miscFields.values.value[field.key];
+          if (value !== void 0 && value !== null && value !== "") {
+            miscFieldsForStorage[field.key] = formatValueForStorage(value, field.type);
+          }
+        });
         const updatedOption = await optionStore.update({
           id: props2.optionId,
-          title: editForm.value.label,
+          title: editForm.value.title,
           text: editForm.value.text,
-          miscFields: editForm.value.fields
+          miscFields: miscFieldsForStorage
         });
         isEditing.value = false;
         emit2("updated", updatedOption);
@@ -76386,8 +77336,71 @@ const _sfc_main$Q = /* @__PURE__ */ defineComponent({
       }
       loadOption();
     };
+    const getUserObjectForField = (fieldKey) => {
+      const value = miscFields.getValue(fieldKey);
+      if (!value) return null;
+      if (selectedUsers.value[fieldKey]?.id === value) {
+        return selectedUsers.value[fieldKey];
+      }
+      return {
+        id: String(value),
+        displayName: String(value),
+        userRole: "member"
+      };
+    };
+    const handleUserSelected = (fieldKey, user) => {
+      const valueToStore = user?.id || "";
+      selectedUsers.value[fieldKey] = user;
+      miscFields.updateValue(fieldKey, valueToStore, "users");
+    };
+    const getGroupObjectForField = (fieldKey) => {
+      const value = miscFields.getValue(fieldKey);
+      if (!value) return null;
+      if (selectedGroups.value[fieldKey]?.id === value) {
+        return selectedGroups.value[fieldKey];
+      }
+      return {
+        id: String(value),
+        displayName: String(value),
+        userRole: "group"
+      };
+    };
+    const handleGroupSelected = (fieldKey, group2) => {
+      const valueToStore = group2?.id || "";
+      selectedGroups.value[fieldKey] = group2;
+      miscFields.updateValue(fieldKey, valueToStore, "groups");
+    };
+    const getFormattedDateSimple = (key) => {
+      const value = miscFields.getValue(key);
+      if (!value || typeof value !== "string") return null;
+      try {
+        const year = parseInt(value.substring(0, 4));
+        const month = parseInt(value.substring(5, 7)) - 1;
+        const day = parseInt(value.substring(8, 10));
+        const hours = parseInt(value.substring(11, 13)) || 0;
+        const minutes = parseInt(value.substring(14, 16)) || 0;
+        return new Date(year, month, day, hours, minutes);
+      } catch {
+        return null;
+      }
+    };
+    const handleDateTimeUpdateSimple = (fieldKey, value) => {
+      let storageValue = "";
+      if (value instanceof Date && !isNaN(value.getTime())) {
+        const year = value.getFullYear();
+        const month = String(value.getMonth() + 1).padStart(2, "0");
+        const day = String(value.getDate()).padStart(2, "0");
+        const hours = String(value.getHours()).padStart(2, "0");
+        const minutes = String(value.getMinutes()).padStart(2, "0");
+        storageValue = `${year}-${month}-${day} ${hours}:${minutes}`;
+      }
+      miscFields.updateValue(fieldKey, storageValue, "datetime");
+    };
     onMounted(() => {
       loadOption();
+    });
+    onUnmounted(() => {
+      miscFields.clearTimeouts();
     });
     watch(() => props2.optionId, (newId) => {
       if (newId) {
@@ -76430,7 +77443,7 @@ const _sfc_main$Q = /* @__PURE__ */ defineComponent({
         emit2("updated", { ...optionStore });
       }
     };
-    const __returned__ = { props: props2, emit: emit2, optionsStore, optionStore, sessionStore, commentsStore, show, isLoading, error, showCommentForm, isEditing, editForm, showChildModal, selectedChildId, showAddChildModal, selectedChildType, subMenu, commentsSection, activeFilter, commentUpdateTrigger, toggleSubMenu, allOptionTypes, optionTypeLabel, optionIcon, optionTypeColor, allowComment, hasSupportFeature: hasSupportFeature$1, useTitle, allowedResponses, hasAllowedResponses, availableResponseTypes, additionalFields, optionContext, canEdit: canEdit2, canDelete: canDelete2, modalTitle, canEditOrDelete, canSaveEdit, childOptions, hasChildOptions, hasAdditionalFields, hasAdditionalFieldsData, filteredChildOptions, formatDate, getFieldLabel, formatFieldValue, getOptionTypeDescription: getOptionTypeDescription$1, getOptionTypeIcon, getOptionTypeLabel: getOptionTypeLabel$1, loadOption, closeModal, editOption, cancelEdit, saveEdit, confirmDelete, deleteOption, handleChildComment, openAddResponseModal, closeAddChildModal, handleChildCreated, openChildModal, closeChildModal, handleChildUpdated, handleChildDeleted, handleCommentAdded, handleCommentCountUpdated, get t() {
+    const __returned__ = { props: props2, emit: emit2, optionsStore, optionStore, sessionStore, commentsStore, show, isLoading, error, showCommentForm, isEditing, editForm, showChildModal, selectedChildId, showAddChildModal, selectedChildType, subMenu, commentsSection, activeFilter, commentUpdateTrigger, selectedUsers, selectedGroups, toggleSubMenu, allOptionTypes, additionalFields, miscFields, locationOptions, categoryOptions, getSelectedLocationOption, getSelectedCategoryOption, optionTypeLabel, optionIcon, optionTypeColor, allowComment, hasSupportFeature: hasSupportFeature$1, useTitle, allowedResponses, hasAllowedResponses, availableResponseTypes, optionContext, canEdit: canEdit2, canDelete: canDelete2, modalTitle, canEditOrDelete, canSaveEdit, childOptions, hasChildOptions, hasAdditionalFields, hasAdditionalFieldsData, filteredChildOptions, formatDate, getFieldLabel: getFieldLabel$1, getOptionTypeDescription: getOptionTypeDescription$1, getOptionTypeIcon, getOptionTypeLabel: getOptionTypeLabel$1, loadOption, closeModal, editOption, cancelEdit, saveEdit, confirmDelete, deleteOption, handleChildComment, openAddResponseModal, closeAddChildModal, handleChildCreated, openChildModal, closeChildModal, handleChildUpdated, handleChildDeleted, getUserObjectForField, handleUserSelected, getGroupObjectForField, handleGroupSelected, getFormattedDateSimple, handleDateTimeUpdateSimple, handleCommentAdded, handleCommentCountUpdated, get t() {
       return translate;
     }, get NcModal() {
       return NcModal;
@@ -76443,7 +77456,7 @@ const _sfc_main$Q = /* @__PURE__ */ defineComponent({
     }, get NcActionButton() {
       return NcActionButton;
     }, get NcTextField() {
-      return _sfc_main$1X;
+      return _sfc_main$1Y;
     }, get NcCheckboxRadioSwitch() {
       return NcCheckboxRadioSwitch;
     }, get NcLoadingIcon() {
@@ -76452,9 +77465,17 @@ const _sfc_main$Q = /* @__PURE__ */ defineComponent({
       return NcRichContenteditable;
     }, get NcNoteCard() {
       return NcNoteCard;
-    }, get InquiryOptionIcons() {
+    }, get NcSelect() {
+      return NcSelect;
+    }, get NcDateTimePickerNative() {
+      return NcDateTimePickerNative;
+    }, get NcTextArea() {
+      return NcTextArea;
+    }, UserSearch, Pencil, get InquiryOptionIcons() {
       return InquiryOptionIcons;
-    }, SupportFeature, OptionCard, Comments, CommentAdd, AddOptionModal };
+    }, SupportFeature, OptionCard, get handleHierarchicalUpdate() {
+      return handleHierarchicalUpdate;
+    }, Comments, CommentAdd, AddOptionModal };
     Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
     return __returned__;
   }
@@ -76486,7 +77507,7 @@ const _hoisted_16$h = {
 };
 const _hoisted_17$g = { class: "fields-grid" };
 const _hoisted_18$g = ["for"];
-const _hoisted_19$g = { class: "edit-actions" };
+const _hoisted_19$g = { class: "checkbox-field" };
 const _hoisted_20$g = {
   key: 1,
   class: "content-display"
@@ -76651,21 +77672,17 @@ function _sfc_render$Q(_ctx, _cache, $props, $setup, $data, $options) {
                       ])
                     ]),
                     createBaseVNode("div", _hoisted_12$m, [
-                      createCommentVNode(" Main actions menu "),
-                      $setup.canEditOrDelete || $setup.hasAllowedResponses ? (openBlock(), createBlock($setup["NcActions"], {
-                        key: 0,
-                        "force-menu": true,
-                        "aria-label": $setup.t("agora", "Option actions")
-                      }, {
-                        default: withCtx(() => [
-                          createCommentVNode(" Edit action "),
-                          $setup.canEdit ? (openBlock(), createBlock($setup["NcActionButton"], {
+                      createCommentVNode(" Edit/Save/Cancel buttons "),
+                      !$setup.isEditing ? (openBlock(), createElementBlock(
+                        Fragment$1,
+                        { key: 0 },
+                        [
+                          $setup.canEdit ? (openBlock(), createBlock($setup["NcButton"], {
                             key: 0,
-                            "close-after-click": true,
                             onClick: $setup.editOption
                           }, {
                             icon: withCtx(() => [
-                              (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons.Edit), { size: 20 }))
+                              createVNode($setup["Pencil"], { size: 20 })
                             ]),
                             default: withCtx(() => [
                               createTextVNode(
@@ -76676,10 +77693,54 @@ function _sfc_render$Q(_ctx, _cache, $props, $setup, $data, $options) {
                             ]),
                             _: 1
                             /* STABLE */
-                          })) : createCommentVNode("v-if", true),
+                          })) : createCommentVNode("v-if", true)
+                        ],
+                        64
+                        /* STABLE_FRAGMENT */
+                      )) : (openBlock(), createElementBlock(
+                        Fragment$1,
+                        { key: 1 },
+                        [
+                          createVNode($setup["NcButton"], { onClick: $setup.cancelEdit }, {
+                            default: withCtx(() => [
+                              createTextVNode(
+                                toDisplayString($setup.t("agora", "Cancel")),
+                                1
+                                /* TEXT */
+                              )
+                            ]),
+                            _: 1
+                            /* STABLE */
+                          }),
+                          createVNode($setup["NcButton"], {
+                            type: "primary",
+                            disabled: !$setup.canSaveEdit,
+                            onClick: $setup.saveEdit
+                          }, {
+                            default: withCtx(() => [
+                              createTextVNode(
+                                toDisplayString($setup.t("agora", "Save")),
+                                1
+                                /* TEXT */
+                              )
+                            ]),
+                            _: 1
+                            /* STABLE */
+                          }, 8, ["disabled"])
+                        ],
+                        64
+                        /* STABLE_FRAGMENT */
+                      )),
+                      createCommentVNode(" Main actions menu "),
+                      $setup.canEditOrDelete || $setup.hasAllowedResponses ? (openBlock(), createBlock($setup["NcActions"], {
+                        key: 2,
+                        "force-menu": true,
+                        "aria-label": $setup.t("agora", "Option actions")
+                      }, {
+                        default: withCtx(() => [
                           createCommentVNode(" Add Response toggle button "),
                           $setup.hasAllowedResponses ? (openBlock(), createBlock($setup["NcActionButton"], {
-                            key: 1,
+                            key: 0,
                             "is-menu": "",
                             name: $setup.t("agora", "Add Response"),
                             onClick: _cache[0] || (_cache[0] = ($event) => $setup.toggleSubMenu("addResponse"))
@@ -76693,7 +77754,7 @@ function _sfc_render$Q(_ctx, _cache, $props, $setup, $data, $options) {
                           createCommentVNode(" Response types submenu "),
                           $setup.subMenu === "addResponse" ? (openBlock(true), createElementBlock(
                             Fragment$1,
-                            { key: 2 },
+                            { key: 1 },
                             renderList($setup.availableResponseTypes, (responseType) => {
                               return openBlock(), createBlock($setup["NcActionButton"], {
                                 key: responseType.option_type,
@@ -76717,7 +77778,7 @@ function _sfc_render$Q(_ctx, _cache, $props, $setup, $data, $options) {
                           )) : createCommentVNode("v-if", true),
                           createCommentVNode(" Delete action "),
                           $setup.canDelete ? (openBlock(), createBlock($setup["NcActionButton"], {
-                            key: 3,
+                            key: 2,
                             "close-after-click": true,
                             onClick: $setup.confirmDelete
                           }, {
@@ -76747,8 +77808,8 @@ function _sfc_render$Q(_ctx, _cache, $props, $setup, $data, $options) {
                       $setup.isEditing ? (openBlock(), createElementBlock("div", _hoisted_15$h, [
                         $setup.useTitle ? (openBlock(), createBlock($setup["NcRichContenteditable"], {
                           key: 0,
-                          modelValue: $setup.editForm.label,
-                          "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => $setup.editForm.label = $event),
+                          modelValue: $setup.editForm.title,
+                          "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => $setup.editForm.title = $event),
                           "emoji-autocomplete": true,
                           "link-autocomplete": true,
                           autolink: true,
@@ -76771,7 +77832,7 @@ function _sfc_render$Q(_ctx, _cache, $props, $setup, $data, $options) {
                           multiline: true,
                           "full-width": ""
                         }, null, 8, ["modelValue", "label", "placeholder"]),
-                        createCommentVNode(" Additional fields "),
+                        createCommentVNode(" Additional fields in edit mode "),
                         $setup.hasAdditionalFields ? (openBlock(), createElementBlock("div", _hoisted_16$h, [
                           createBaseVNode(
                             "h4",
@@ -76792,69 +77853,233 @@ function _sfc_render$Q(_ctx, _cache, $props, $setup, $data, $options) {
                                   createBaseVNode("label", {
                                     for: `field-${field.key}`
                                   }, toDisplayString($setup.getFieldLabel(field)), 9, _hoisted_18$g),
-                                  field.type === "text" || field.type === "number" ? (openBlock(), createBlock($setup["NcTextField"], {
+                                  createCommentVNode(" Text field "),
+                                  field.type === "text" || field.type === "string" ? (openBlock(), createBlock($setup["NcTextField"], {
                                     key: 0,
                                     id: `field-${field.key}`,
-                                    modelValue: $setup.editForm.fields[field.key],
-                                    "onUpdate:modelValue": ($event) => $setup.editForm.fields[field.key] = $event,
-                                    type: field.type === "number" ? "number" : "text",
+                                    "model-value": $setup.miscFields.getValue(field.key) ?? "",
+                                    type: "text",
                                     placeholder: field.placeholder || "",
-                                    "full-width": ""
-                                  }, null, 8, ["id", "modelValue", "onUpdate:modelValue", "type", "placeholder"])) : field.type === "boolean" ? (openBlock(), createBlock($setup["NcCheckboxRadioSwitch"], {
-                                    key: 1,
-                                    id: `field-${field.key}`,
-                                    type: "switch",
-                                    checked: $setup.editForm.fields[field.key] || false,
-                                    "onUpdate:checked": ($event) => $setup.editForm.fields[field.key] = $event
-                                  }, {
-                                    default: withCtx(() => [
-                                      createTextVNode(
-                                        toDisplayString(field.label || field.key),
-                                        1
-                                        /* TEXT */
-                                      )
-                                    ]),
-                                    _: 2
-                                    /* DYNAMIC */
-                                  }, 1032, ["id", "checked", "onUpdate:checked"])) : createCommentVNode("v-if", true)
+                                    label: $setup.getFieldLabel(field),
+                                    "full-width": "",
+                                    "onUpdate:modelValue": (val) => $setup.miscFields.updateValue(field.key, val, field.type)
+                                  }, null, 8, ["id", "model-value", "placeholder", "label", "onUpdate:modelValue"])) : field.type === "number" || field.type === "integer" ? (openBlock(), createElementBlock(
+                                    Fragment$1,
+                                    { key: 1 },
+                                    [
+                                      createCommentVNode(" Number / Integer "),
+                                      createVNode($setup["NcTextField"], {
+                                        id: `field-${field.key}`,
+                                        "model-value": $setup.miscFields.getValue(field.key) ?? "",
+                                        type: "number",
+                                        placeholder: field.placeholder || "",
+                                        label: $setup.getFieldLabel(field),
+                                        "full-width": "",
+                                        "onUpdate:modelValue": (val) => $setup.miscFields.updateValue(field.key, val, field.type)
+                                      }, null, 8, ["id", "model-value", "placeholder", "label", "onUpdate:modelValue"])
+                                    ],
+                                    2112
+                                    /* STABLE_FRAGMENT, DEV_ROOT_FRAGMENT */
+                                  )) : field.type === "boolean" ? (openBlock(), createElementBlock(
+                                    Fragment$1,
+                                    { key: 2 },
+                                    [
+                                      createCommentVNode(" Boolean (switch) "),
+                                      createBaseVNode("div", _hoisted_19$g, [
+                                        createVNode($setup["NcCheckboxRadioSwitch"], {
+                                          id: `field-${field.key}`,
+                                          type: "switch",
+                                          checked: $setup.miscFields.getCheckboxValue(field.key),
+                                          "onUpdate:checked": (val) => $setup.miscFields.updateValue(field.key, val, field.type)
+                                        }, {
+                                          default: withCtx(() => [
+                                            createTextVNode(
+                                              toDisplayString(field.label || field.key),
+                                              1
+                                              /* TEXT */
+                                            )
+                                          ]),
+                                          _: 2
+                                          /* DYNAMIC */
+                                        }, 1032, ["id", "checked", "onUpdate:checked"])
+                                      ])
+                                    ],
+                                    2112
+                                    /* STABLE_FRAGMENT, DEV_ROOT_FRAGMENT */
+                                  )) : field.type === "textarea" ? (openBlock(), createElementBlock(
+                                    Fragment$1,
+                                    { key: 3 },
+                                    [
+                                      createCommentVNode(" Textarea "),
+                                      createVNode($setup["NcTextArea"], {
+                                        id: `field-${field.key}`,
+                                        "model-value": $setup.miscFields.getValue(field.key) ?? "",
+                                        placeholder: field.placeholder || "",
+                                        rows: 3,
+                                        "full-width": "",
+                                        "onUpdate:modelValue": (val) => $setup.miscFields.updateValue(field.key, val, field.type)
+                                      }, null, 8, ["id", "model-value", "placeholder", "onUpdate:modelValue"])
+                                    ],
+                                    2112
+                                    /* STABLE_FRAGMENT, DEV_ROOT_FRAGMENT */
+                                  )) : field.type === "json" ? (openBlock(), createElementBlock(
+                                    Fragment$1,
+                                    { key: 4 },
+                                    [
+                                      createCommentVNode(" JSON "),
+                                      createVNode($setup["NcTextArea"], {
+                                        id: `field-${field.key}`,
+                                        "model-value": $setup.miscFields.getValue(field.key) ?? "",
+                                        placeholder: field.placeholder || $setup.t("agora", "Enter JSON data"),
+                                        rows: 3,
+                                        "full-width": "",
+                                        "onUpdate:modelValue": (val) => {
+                                          try {
+                                            const parsed = val ? JSON.parse(val) : null;
+                                            $setup.miscFields.updateValue(field.key, parsed, field.type);
+                                          } catch {
+                                            $setup.miscFields.updateValue(field.key, val, field.type);
+                                          }
+                                        }
+                                      }, null, 8, ["id", "model-value", "placeholder", "onUpdate:modelValue"])
+                                    ],
+                                    2112
+                                    /* STABLE_FRAGMENT, DEV_ROOT_FRAGMENT */
+                                  )) : field.type === "enum" || field.type === "select" ? (openBlock(), createElementBlock(
+                                    Fragment$1,
+                                    { key: 5 },
+                                    [
+                                      createCommentVNode(" Enum / Select "),
+                                      createVNode($setup["NcSelect"], {
+                                        id: `field-${field.key}`,
+                                        "model-value": $setup.miscFields.getValue(field.key) ?? "",
+                                        options: field.allowed_values || [],
+                                        reduce: (option2) => option2,
+                                        clearable: true,
+                                        placeholder: $setup.t("Select an option"),
+                                        "label-outside": true,
+                                        "input-label": $setup.getFieldLabel(field),
+                                        "full-width": "",
+                                        "onUpdate:modelValue": (val) => $setup.miscFields.updateValue(field.key, val, field.type)
+                                      }, null, 8, ["id", "model-value", "options", "reduce", "placeholder", "input-label", "onUpdate:modelValue"])
+                                    ],
+                                    2112
+                                    /* STABLE_FRAGMENT, DEV_ROOT_FRAGMENT */
+                                  )) : field.type === "datetime" ? (openBlock(), createElementBlock(
+                                    Fragment$1,
+                                    { key: 6 },
+                                    [
+                                      createCommentVNode(" Datetime "),
+                                      createVNode($setup["NcDateTimePickerNative"], {
+                                        id: `field-${field.key}`,
+                                        "model-value": $setup.getFormattedDateSimple(field.key) ?? "",
+                                        type: "date",
+                                        placeholder: field.placeholder || $setup.t("Select date"),
+                                        label: $setup.getFieldLabel(field),
+                                        clearable: true,
+                                        "full-width": "",
+                                        "onUpdate:modelValue": (val) => $setup.handleDateTimeUpdateSimple(field.key, val)
+                                      }, null, 8, ["id", "model-value", "placeholder", "label", "onUpdate:modelValue"])
+                                    ],
+                                    2112
+                                    /* STABLE_FRAGMENT, DEV_ROOT_FRAGMENT */
+                                  )) : field.type === "users" ? (openBlock(), createElementBlock(
+                                    Fragment$1,
+                                    { key: 7 },
+                                    [
+                                      createCommentVNode(" Users "),
+                                      createVNode($setup["UserSearch"], {
+                                        id: `field-${field.key}`,
+                                        "model-value": $setup.getUserObjectForField(field.key),
+                                        "search-types": [99],
+                                        placeholder: $setup.t("Type to search for users"),
+                                        "aria-label": $setup.getFieldLabel(field),
+                                        "close-on-select": true,
+                                        onUserSelected: (user) => $setup.handleUserSelected(field.key, user)
+                                      }, null, 8, ["id", "model-value", "placeholder", "aria-label", "onUserSelected"])
+                                    ],
+                                    2112
+                                    /* STABLE_FRAGMENT, DEV_ROOT_FRAGMENT */
+                                  )) : field.type === "groups" ? (openBlock(), createElementBlock(
+                                    Fragment$1,
+                                    { key: 8 },
+                                    [
+                                      createCommentVNode(" Groups "),
+                                      createVNode($setup["UserSearch"], {
+                                        id: `field-${field.key}`,
+                                        "model-value": $setup.getGroupObjectForField(field.key),
+                                        "search-types": [1],
+                                        placeholder: $setup.t("Type to search for groups"),
+                                        "aria-label": $setup.getFieldLabel(field),
+                                        "close-on-select": true,
+                                        onUserSelected: (group2) => $setup.handleGroupSelected(field.key, group2)
+                                      }, null, 8, ["id", "model-value", "placeholder", "aria-label", "onUserSelected"])
+                                    ],
+                                    2112
+                                    /* STABLE_FRAGMENT, DEV_ROOT_FRAGMENT */
+                                  )) : field.type === "location" ? (openBlock(), createElementBlock(
+                                    Fragment$1,
+                                    { key: 9 },
+                                    [
+                                      createCommentVNode(" Location "),
+                                      createVNode($setup["NcSelect"], {
+                                        id: `field-${field.key}`,
+                                        "model-value": $setup.getSelectedLocationOption(field.key),
+                                        options: $setup.locationOptions,
+                                        clearable: true,
+                                        "label-outside": true,
+                                        "input-label": $setup.getFieldLabel(field),
+                                        placeholder: $setup.t("Select location"),
+                                        "full-width": "",
+                                        "onUpdate:modelValue": (val) => $setup.handleHierarchicalUpdate(val, "location", $setup.miscFields.updateValue, field.key)
+                                      }, null, 8, ["id", "model-value", "options", "input-label", "placeholder", "onUpdate:modelValue"])
+                                    ],
+                                    2112
+                                    /* STABLE_FRAGMENT, DEV_ROOT_FRAGMENT */
+                                  )) : field.type === "category" ? (openBlock(), createElementBlock(
+                                    Fragment$1,
+                                    { key: 10 },
+                                    [
+                                      createCommentVNode(" Category "),
+                                      createVNode($setup["NcSelect"], {
+                                        id: `field-${field.key}`,
+                                        "model-value": $setup.getSelectedCategoryOption(field.key),
+                                        options: $setup.categoryOptions,
+                                        clearable: true,
+                                        "label-outside": true,
+                                        "input-label": $setup.getFieldLabel(field),
+                                        placeholder: $setup.t("Select category"),
+                                        "full-width": "",
+                                        "onUpdate:modelValue": (val) => $setup.handleHierarchicalUpdate(val, "category", $setup.miscFields.updateValue, field.key)
+                                      }, null, 8, ["id", "model-value", "options", "input-label", "placeholder", "onUpdate:modelValue"])
+                                    ],
+                                    2112
+                                    /* STABLE_FRAGMENT, DEV_ROOT_FRAGMENT */
+                                  )) : (openBlock(), createElementBlock(
+                                    Fragment$1,
+                                    { key: 11 },
+                                    [
+                                      createCommentVNode(" Default fallback "),
+                                      createVNode($setup["NcTextField"], {
+                                        id: `field-${field.key}`,
+                                        "model-value": $setup.miscFields.getValue(field.key),
+                                        type: "text",
+                                        placeholder: field.placeholder || "",
+                                        label: $setup.getFieldLabel(field),
+                                        "full-width": "",
+                                        "onUpdate:modelValue": (val) => $setup.miscFields.updateValue(field.key, val, "string")
+                                      }, null, 8, ["id", "model-value", "placeholder", "label", "onUpdate:modelValue"])
+                                    ],
+                                    2112
+                                    /* STABLE_FRAGMENT, DEV_ROOT_FRAGMENT */
+                                  ))
                                 ]);
                               }),
                               128
                               /* KEYED_FRAGMENT */
                             ))
                           ])
-                        ])) : createCommentVNode("v-if", true),
-                        createBaseVNode("div", _hoisted_19$g, [
-                          createVNode($setup["NcButton"], {
-                            type: "tertiary",
-                            onClick: $setup.cancelEdit
-                          }, {
-                            default: withCtx(() => [
-                              createTextVNode(
-                                toDisplayString($setup.t("agora", "Cancel")),
-                                1
-                                /* TEXT */
-                              )
-                            ]),
-                            _: 1
-                            /* STABLE */
-                          }),
-                          createVNode($setup["NcButton"], {
-                            type: "primary",
-                            disabled: !$setup.canSaveEdit,
-                            onClick: $setup.saveEdit
-                          }, {
-                            default: withCtx(() => [
-                              createTextVNode(
-                                toDisplayString($setup.t("agora", "Save")),
-                                1
-                                /* TEXT */
-                              )
-                            ]),
-                            _: 1
-                            /* STABLE */
-                          }, 8, ["disabled"])
-                        ])
+                        ])) : createCommentVNode("v-if", true)
                       ])) : (openBlock(), createElementBlock("div", _hoisted_20$g, [
                         $setup.optionStore.text ? (openBlock(), createElementBlock("div", _hoisted_21$g, [
                           createBaseVNode(
@@ -76865,7 +78090,7 @@ function _sfc_render$Q(_ctx, _cache, $props, $setup, $data, $options) {
                             /* TEXT */
                           )
                         ])) : createCommentVNode("v-if", true),
-                        createCommentVNode(" Additional fields display "),
+                        createCommentVNode(" Additional fields display in view mode "),
                         $setup.hasAdditionalFieldsData ? (openBlock(), createElementBlock("div", _hoisted_23$f, [
                           createBaseVNode(
                             "h4",
@@ -76893,7 +78118,7 @@ function _sfc_render$Q(_ctx, _cache, $props, $setup, $data, $options) {
                                   createBaseVNode(
                                     "span",
                                     null,
-                                    toDisplayString($setup.formatFieldValue(field, $setup.optionStore.miscFields?.[field.key])),
+                                    toDisplayString($setup.miscFields.formatForDisplay(field.key)),
                                     1
                                     /* TEXT */
                                   )
@@ -76904,7 +78129,7 @@ function _sfc_render$Q(_ctx, _cache, $props, $setup, $data, $options) {
                             ))
                           ])
                         ])) : createCommentVNode("v-if", true),
-                        createCommentVNode(" Feature buttons moved under description "),
+                        createCommentVNode(" Feature buttons "),
                         createBaseVNode("div", _hoisted_25$d, [
                           createCommentVNode(" Left side: Support and comment features "),
                           createBaseVNode("div", _hoisted_26$d, [
@@ -76976,7 +78201,7 @@ function _sfc_render$Q(_ctx, _cache, $props, $setup, $data, $options) {
                         ])
                       ]))
                     ]),
-                    createCommentVNode(" Child options display with hover icons "),
+                    createCommentVNode(" Child options display "),
                     $setup.hasChildOptions ? (openBlock(), createElementBlock("div", _hoisted_35$b, [
                       createBaseVNode("div", _hoisted_36$9, [
                         createBaseVNode(
@@ -76987,7 +78212,6 @@ function _sfc_render$Q(_ctx, _cache, $props, $setup, $data, $options) {
                           /* TEXT */
                         )
                       ]),
-                      createCommentVNode(" Children list using OptionCard "),
                       createBaseVNode("div", _hoisted_37$9, [
                         $setup.filteredChildOptions.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_38$8, [
                           (openBlock(), createBlock(resolveDynamicComponent($setup.InquiryOptionIcons.MessageText), { size: 48 })),
@@ -79860,9 +81084,7 @@ const _sfc_main$L = /* @__PURE__ */ defineComponent({
       { value: "cancelled", label: translate("agora", "Cancelled"), color: "#e74c3c" }
     ];
     const getOptionsByStatus = (status) => props2.options.filter((opt) => opt.status.optionStatus === status);
-    const canChangeStatus = computed(() => {
-      return true;
-    });
+    const canChangeStatus = computed(() => true);
     const canAddToColumn = (status) => ["draft", "active"].includes(status.value) && props2.optionTypes.length > 0;
     const openAddOption = (status) => {
       emit2("addOption", props2.optionTypes[0]?.option_type || "workflow_item", status);
@@ -80052,6 +81274,7 @@ function _sfc_render$L(_ctx, _cache, $props, $setup, $data, $options) {
                       option: option2,
                       "inquiry-id": $props.inquiryId,
                       compact: true,
+                      "show-action": false,
                       onClick: ($event) => _ctx.$emit("openDetail", option2)
                     }, null, 8, ["option", "inquiry-id", "onClick"]),
                     createCommentVNode(" Drag handle icon "),
@@ -80182,12 +81405,10 @@ const _sfc_main$K = /* @__PURE__ */ defineComponent({
     const scale = ref("week");
     const dateFilter = ref("");
     const currentMonth = ref(/* @__PURE__ */ new Date());
-    const processOptions = computed(() => {
-      return props2.options.filter((opt) => {
-        const family = getOptionTypeFamily(opt.type, optionsStore.getOptionTypesArray);
-        return family === "process";
-      });
-    });
+    const processOptions = computed(() => props2.options.filter((opt) => {
+      const family = getOptionTypeFamily(opt.type, optionsStore.getOptionTypesArray);
+      return family === "process";
+    }));
     const sortedOptions = computed(() => {
       let filtered = [...props2.options];
       if (dateFilter.value) {
@@ -80203,12 +81424,8 @@ const _sfc_main$K = /* @__PURE__ */ defineComponent({
         return dateA - dateB;
       });
     });
-    const processOptionsForTimeline = computed(() => {
-      return processOptions.value.filter((opt) => opt.status?.created && opt.status.created > 0).sort((a, b) => (a.status?.created || 0) - (b.status?.created || 0));
-    });
-    const processOptionsForCalendar = computed(() => {
-      return processOptions.value.filter((opt) => opt.status?.created && opt.status.created > 0);
-    });
+    const processOptionsForTimeline = computed(() => processOptions.value.filter((opt) => opt.status?.created && opt.status.created > 0).sort((a, b) => (a.status?.created || 0) - (b.status?.created || 0)));
+    const processOptionsForCalendar = computed(() => processOptions.value.filter((opt) => opt.status?.created && opt.status.created > 0));
     const visibleTimeRange = computed(() => {
       const items = processOptionsForTimeline.value;
       if (items.length === 0) {
@@ -80218,47 +81435,52 @@ const _sfc_main$K = /* @__PURE__ */ defineComponent({
           end: now2.endOf(scale.value)
         };
       }
-      const dates = items.map((opt) => opt.status.created * 1e3);
-      const minDate = Math.min(...dates);
-      const maxDate = Math.max(...dates);
-      let start = DateTime.fromMillis(minDate);
-      let end = DateTime.fromMillis(maxDate);
+      const sortedItems = [...items].sort(
+        (a, b) => (b.status.created || 0) - (a.status.created || 0)
+      );
+      const targetDate = DateTime.fromMillis(sortedItems[0].status.created * 1e3);
       switch (scale.value) {
         case "day":
-          start = start.startOf("day");
-          end = start.endOf("day");
-          break;
+          return {
+            start: targetDate.startOf("day"),
+            end: targetDate.endOf("day")
+          };
         case "week":
-          start = start.startOf("week");
-          end = start.endOf("week");
-          start = start.minus({ days: 1 });
-          end = end.plus({ days: 1 });
-          break;
+          return {
+            start: targetDate.startOf("week"),
+            // Monday of that week
+            end: targetDate.endOf("week")
+            // Sunday of that week
+          };
         case "month":
-          start = start.startOf("month");
-          end = start.endOf("month");
-          break;
+          return {
+            start: targetDate.startOf("month"),
+            end: targetDate.endOf("month")
+          };
       }
-      return { start, end };
+      return {
+        start,
+        end
+      };
     });
     const visibleProcessOptions = computed(() => {
-      const { start, end } = visibleTimeRange.value;
+      const { start: start2, end: end2 } = visibleTimeRange.value;
       return processOptionsForTimeline.value.filter((opt) => {
         const itemTime = DateTime.fromMillis(opt.status.created * 1e3);
-        return itemTime >= start && itemTime <= end;
+        return itemTime >= start2 && itemTime <= end2;
       });
     });
     const timeMarkers = computed(() => {
-      const { start, end } = visibleTimeRange.value;
+      const { start: start2, end: end2 } = visibleTimeRange.value;
       const markers = [];
-      let current = start.startOf(scale.value);
+      let current = start2.startOf(scale.value);
       let interval;
       let totalDuration;
       if (scale.value === "month") {
         interval = { days: 1 };
         let position = 0;
-        const markerWidth = 120;
-        while (current <= end) {
+        const markerWidth = 100;
+        while (current <= end2) {
           markers.push({
             timestamp: current.toMillis(),
             label: current.toFormat("d MMM"),
@@ -80269,7 +81491,7 @@ const _sfc_main$K = /* @__PURE__ */ defineComponent({
           current = current.plus(interval);
         }
       } else {
-        totalDuration = end.diff(start).as("milliseconds");
+        totalDuration = end2.diff(start2).as("milliseconds");
         switch (scale.value) {
           case "day":
             interval = { hours: 1 };
@@ -80278,10 +81500,10 @@ const _sfc_main$K = /* @__PURE__ */ defineComponent({
             interval = { days: 1 };
             break;
         }
-        while (current <= end) {
-          const position = current.diff(start).as("milliseconds") / totalDuration * 100;
-          let nextCurrent = current.plus(interval);
-          const nextPosition = nextCurrent.diff(start).as("milliseconds") / totalDuration * 100;
+        while (current <= end2) {
+          const position = current.diff(start2).as("milliseconds") / totalDuration * 100;
+          const nextCurrent = current.plus(interval);
+          const nextPosition = nextCurrent.diff(start2).as("milliseconds") / totalDuration * 100;
           const width = nextPosition - position;
           let label = "";
           switch (scale.value) {
@@ -80305,39 +81527,39 @@ const _sfc_main$K = /* @__PURE__ */ defineComponent({
     });
     const getItemPosition = (option2) => {
       if (!option2.status?.created || option2.status.created === 0) return { display: "none" };
-      const { start, end } = visibleTimeRange.value;
+      const { start: start2, end: end2 } = visibleTimeRange.value;
       const itemTime = DateTime.fromMillis(option2.status.created * 1e3);
+      if (itemTime < start2 || itemTime > end2) {
+        return { display: "none" };
+      }
       if (scale.value === "month") {
-        if (itemTime < start || itemTime > end) {
-          return { display: "none" };
-        }
-        const daysDiff = Math.floor(itemTime.diff(start, "days").days);
-        const left = daysDiff * 120 + 60;
+        const daysDiff = Math.floor(itemTime.diff(start2, "days").days);
+        const left2 = daysDiff * 100 + 50;
         return {
-          left: `${left}px`,
-          transform: "translateX(-50%)"
-        };
-      } else {
-        if (itemTime < start || itemTime > end) {
-          return { display: "none" };
-        }
-        const totalDuration = end.diff(start).as("milliseconds");
-        const itemOffset = itemTime.diff(start).as("milliseconds");
-        const left = itemOffset / totalDuration * 100;
-        return {
-          left: `${left}%`,
-          transform: "translateX(-50%)"
+          left: `${left2}px`,
+          transform: "translateX(-50%)",
+          width: "90px"
+          // Smaller width to fit in one day column
         };
       }
+      const totalDuration = end2.diff(start2).as("milliseconds");
+      const itemOffset = itemTime.diff(start2).as("milliseconds");
+      const left = itemOffset / totalDuration * 100;
+      return {
+        left: `${left}%`,
+        transform: "translateX(-50%)",
+        width: "140px"
+        // Reasonable width for day/week views
+      };
     };
-    const formatDateRange = (start, end, scale2) => {
+    const formatDateRange = (start2, end2, scale2) => {
       switch (scale2) {
         case "day":
-          return start.toFormat("DDD");
+          return start2.toFormat("DDD");
         case "week":
-          return `${start.toFormat("MMM d")} - ${end.toFormat("MMM d, yyyy")}`;
+          return `${start2.toFormat("MMM d")} - ${end2.toFormat("MMM d, yyyy")}`;
         case "month":
-          return start.toFormat("MMMM yyyy");
+          return start2.toFormat("MMMM yyyy");
         default:
           return "";
       }
@@ -80359,12 +81581,12 @@ const _sfc_main$K = /* @__PURE__ */ defineComponent({
     const calendarDays = computed(() => {
       const firstDay = DateTime.fromJSDate(currentMonth.value).startOf("month");
       const lastDay = firstDay.endOf("month");
-      const start = firstDay.startOf("week");
-      const end = lastDay.endOf("week");
+      const start2 = firstDay.startOf("week");
+      const end2 = lastDay.endOf("week");
       const days = [];
-      let current = start;
+      let current = start2;
       const processOpts = processOptionsForCalendar.value;
-      while (current <= end) {
+      while (current <= end2) {
         const events = processOpts.filter((opt) => {
           if (!opt.status?.created) return false;
           const optDate = DateTime.fromMillis(opt.status.created * 1e3);
@@ -80394,10 +81616,6 @@ const _sfc_main$K = /* @__PURE__ */ defineComponent({
     const nextMonth = () => {
       currentMonth.value = DateTime.fromJSDate(currentMonth.value).plus({ months: 1 }).toJSDate();
     };
-    const formatDate = (timestamp) => {
-      if (!timestamp || timestamp === 0) return "";
-      return DateTime.fromMillis(timestamp * 1e3).toLocaleString(DateTime.DATE_SHORT);
-    };
     const getOptionTypeIcon = (type) => getOptionTypeIconComponent(type, optionsStore.getOptionTypesArray);
     const getStatusColor = (status) => {
       const colors = {
@@ -80408,22 +81626,12 @@ const _sfc_main$K = /* @__PURE__ */ defineComponent({
       };
       return colors[status] || "#949494";
     };
-    onMounted(() => {
-      console.log("=== TIMELINE DEBUG ===");
-      console.log("All options:", props2.options.length);
-      console.log("Process options:", processOptions.value.length);
-    });
-    watch([scale, processOptionsForTimeline], () => {
-      console.log("Scale changed to:", scale.value);
-      console.log("Visible range:", visibleTimeRange.value.start.toISO(), "to", visibleTimeRange.value.end.toISO());
-      console.log("Visible options:", visibleProcessOptions.value.length);
-    });
-    const __returned__ = { props: props2, optionsStore, emit: emit2, viewMode, scale, dateFilter, currentMonth, processOptions, sortedOptions, processOptionsForTimeline, processOptionsForCalendar, visibleTimeRange, visibleProcessOptions, timeMarkers, getItemPosition, formatDateRange, formatDateTime, calendarDays, weekDays, currentMonthLabel, previousMonth, nextMonth, formatDate, getOptionTypeIcon, getStatusColor, get t() {
+    const __returned__ = { props: props2, optionsStore, emit: emit2, viewMode, scale, dateFilter, currentMonth, processOptions, sortedOptions, processOptionsForTimeline, processOptionsForCalendar, visibleTimeRange, visibleProcessOptions, timeMarkers, getItemPosition, formatDateRange, formatDateTime, calendarDays, weekDays, currentMonthLabel, previousMonth, nextMonth, getOptionTypeIcon, getStatusColor, get t() {
       return translate;
     }, get NcButton() {
       return NcButton;
     }, get NcTextField() {
-      return _sfc_main$1X;
+      return _sfc_main$1Y;
     }, get InquiryOptionIcons() {
       return InquiryOptionIcons;
     }, OptionCard };
@@ -80612,7 +81820,7 @@ function _sfc_render$K(_ctx, _cache, $props, $setup, $data, $options) {
                   {
                     key: marker.timestamp,
                     class: normalizeClass(["marker-cell", { "month-marker": $setup.scale === "month" }]),
-                    style: normalizeStyle({ width: $setup.scale === "month" ? "120px" : `${marker.width}%` })
+                    style: normalizeStyle({ width: $setup.scale === "month" ? "100px" : `${marker.width}%` })
                   },
                   [
                     createBaseVNode(
@@ -80655,7 +81863,7 @@ function _sfc_render$K(_ctx, _cache, $props, $setup, $data, $options) {
                 /* KEYED_FRAGMENT */
               ))
             ]),
-            createCommentVNode(" Option rows "),
+            createCommentVNode(" Option rows - like Kanban cards "),
             (openBlock(true), createElementBlock(
               Fragment$1,
               null,
@@ -80667,7 +81875,7 @@ function _sfc_render$K(_ctx, _cache, $props, $setup, $data, $options) {
                     class: normalizeClass(["timeline-row", { "alternate": rowIndex % 2 === 1 }])
                   },
                   [
-                    createCommentVNode(" Option card positioned in the grid "),
+                    createCommentVNode(" Option card positioned in the grid - now smaller like Kanban "),
                     createBaseVNode("div", {
                       class: normalizeClass(["timeline-item", `type-${option2.type}`]),
                       style: normalizeStyle($setup.getItemPosition(option2)),
@@ -80675,7 +81883,7 @@ function _sfc_render$K(_ctx, _cache, $props, $setup, $data, $options) {
                     }, [
                       createBaseVNode("div", _hoisted_15$d, [
                         createBaseVNode("div", _hoisted_16$d, [
-                          (openBlock(), createBlock(resolveDynamicComponent($setup.getOptionTypeIcon(option2.type)), { size: 16 }))
+                          (openBlock(), createBlock(resolveDynamicComponent($setup.getOptionTypeIcon(option2.type)), { size: 14 }))
                         ]),
                         createBaseVNode("div", _hoisted_17$d, [
                           createBaseVNode(
@@ -80988,14 +82196,10 @@ const _sfc_main$J = /* @__PURE__ */ defineComponent({
     });
     const hasVisibleFamilies = computed(() => familiesWithOptions.value.length > 0);
     const activeFamilyData = computed(() => {
-      console.log(" CURRENT ACTIVE FAMILY DATA ", activeFamily.value);
-      console.log(" CURRENT ACTIVE FAMILY DATA FAMILY WITH OPTION ", familiesWithOptions.value);
       if (!activeFamily.value) return null;
       return familiesWithOptions.value.find((f) => f.key === activeFamily.value);
     });
     const currentFamilyLayout = computed(() => {
-      console.log(" CURRENT FAMILY LAYOUT ", activeFamilyData);
-      console.log(" CURRENT FAMILY LAYOUT COMPONENT ", layoutComponents.default);
       if (!activeFamilyData.value) return layoutComponents.default;
       const layoutKey = activeFamilyData.value.layout_ux || "default";
       return layoutComponents[layoutKey] || layoutComponents.default;
@@ -81412,7 +82616,7 @@ const _sfc_main$I = /* @__PURE__ */ defineComponent({
         label: translate("agora", status.label)
       }))
     );
-    function getHierarchyPath(items, targetId) {
+    function getHierarchyPath2(items, targetId) {
       const itemMap = {};
       items.forEach((item) => {
         itemMap[item.id] = item;
@@ -81459,10 +82663,10 @@ const _sfc_main$I = /* @__PURE__ */ defineComponent({
       },
       { deep: true }
     );
-    function buildHierarchy(list, parentId = 0, depth = 0) {
+    function buildHierarchy2(list, parentId = 0, depth = 0) {
       if (!Array.isArray(list)) return [];
       return list.filter((item) => item?.parentId === parentId).map((item) => {
-        const children = buildHierarchy(list, item.id, depth + 1);
+        const children = buildHierarchy2(list, item.id, depth + 1);
         return {
           ...item,
           depth,
@@ -81472,7 +82676,7 @@ const _sfc_main$I = /* @__PURE__ */ defineComponent({
     }
     const hierarchicalLocation = computed(() => {
       if (!Array.isArray(sessionStore.appSettings.locationTab)) return [];
-      return buildHierarchy(sessionStore.appSettings.locationTab).map((item) => ({
+      return buildHierarchy2(sessionStore.appSettings.locationTab).map((item) => ({
         value: item.id,
         label: `${"— ".repeat(item.depth ?? 0)}${item.name ?? "[no name]"}`,
         original: item
@@ -81480,7 +82684,7 @@ const _sfc_main$I = /* @__PURE__ */ defineComponent({
     });
     const hierarchicalCategory = computed(() => {
       if (!Array.isArray(sessionStore.appSettings.categoryTab)) return [];
-      return buildHierarchy(sessionStore.appSettings.categoryTab).map((item) => ({
+      return buildHierarchy2(sessionStore.appSettings.categoryTab).map((item) => ({
         value: item.id,
         label: `${"— ".repeat(item.depth ?? 0)}${item.name ?? "[no name]"}`,
         original: item
@@ -81587,14 +82791,14 @@ const _sfc_main$I = /* @__PURE__ */ defineComponent({
       const isPublicRoute = ["publicInquiry", "public-view"].includes(route.name);
       return isPublicRoute;
     });
-    const __returned__ = { props: props2, sessionStore, commentsStore, inquiryStore, route, attachmentsStore, imageFileInput, currentCoverUrl, triggerImageUpload, isStoreReady, context: context2, selectedCategory, selectedLocation, isLoaded, inquiryTypeData, availableInquiryStatuses, currentInquiryStatus, selectedInquiryStatusKey, currentInquiryStatusLabel, currentInquiryStatusIcon, selectedInquiryStatus, onStatusChange, statusInquiryOptions, getHierarchyPath, buildHierarchy, hierarchicalLocation, hierarchicalCategory, showCategoryAsLabel, showLocationAsLabel, getNextcloudPreviewUrl, handleImageUpload, timeExpirationRelative, canCommentOnInquiry, canSupportInquiry, formatDate, viewOnlySupportInquiry, get t() {
+    const __returned__ = { props: props2, sessionStore, commentsStore, inquiryStore, route, attachmentsStore, imageFileInput, currentCoverUrl, triggerImageUpload, isStoreReady, context: context2, selectedCategory, selectedLocation, isLoaded, inquiryTypeData, availableInquiryStatuses, currentInquiryStatus, selectedInquiryStatusKey, currentInquiryStatusLabel, currentInquiryStatusIcon, selectedInquiryStatus, onStatusChange, statusInquiryOptions, getHierarchyPath: getHierarchyPath2, buildHierarchy: buildHierarchy2, hierarchicalLocation, hierarchicalCategory, showCategoryAsLabel, showLocationAsLabel, getNextcloudPreviewUrl, handleImageUpload, timeExpirationRelative, canCommentOnInquiry, canSupportInquiry, formatDate, viewOnlySupportInquiry, get t() {
       return translate;
     }, SupportFeature, get NcSelect() {
       return NcSelect;
     }, get NcButton() {
       return NcButton;
     }, get NcTextField() {
-      return _sfc_main$1X;
+      return _sfc_main$1Y;
     }, get NcAvatar() {
       return NcAvatar;
     }, get NcTextArea() {
@@ -85097,7 +86301,7 @@ const _sfc_main$u = /* @__PURE__ */ defineComponent({
       }
       return plainText;
     });
-    function getHierarchyPath(items, targetId) {
+    function getHierarchyPath2(items, targetId) {
       if (!items || !Array.isArray(items)) return "";
       const itemMap = {};
       items.forEach((item) => {
@@ -85118,8 +86322,8 @@ const _sfc_main$u = /* @__PURE__ */ defineComponent({
       }
       return buildPath(itemMap[targetId]);
     }
-    const locationPath = computed(() => getHierarchyPath(sessionStore.appSettings?.locationTab, props2.inquiry.locationId));
-    const categoryPath = computed(() => getHierarchyPath(sessionStore.appSettings?.categoryTab, props2.inquiry.categoryId));
+    const locationPath = computed(() => getHierarchyPath2(sessionStore.appSettings?.locationTab, props2.inquiry.locationId));
+    const categoryPath = computed(() => getHierarchyPath2(sessionStore.appSettings?.categoryTab, props2.inquiry.categoryId));
     const truncatedLocation = computed(() => {
       if (!locationPath.value) return "";
       return locationPath.value.length > 15 ? `${locationPath.value.substring(0, 15)}…` : locationPath.value;
@@ -85188,7 +86392,7 @@ const _sfc_main$u = /* @__PURE__ */ defineComponent({
     function handleCommentsClick() {
       emit2("comments", props2.inquiry.id);
     }
-    const __returned__ = { props: props2, emit: emit2, sessionStore, cardClasses, inquiryTypes, context: context2, typeData, typeLabel, typeIconComponent, currentInquiryStatus, statusText, statusIconComponent, coverUrl, getNextcloudPreviewUrl, shortDescription, getHierarchyPath, locationPath, categoryPath, truncatedLocation, truncatedCategory, truncatedAuthorName, formattedTime, showExpiryBadge, expiryText, expiryBadgeClass, handleClick: handleClick2, handleCommentsClick, get NcAvatar() {
+    const __returned__ = { props: props2, emit: emit2, sessionStore, cardClasses, inquiryTypes, context: context2, typeData, typeLabel, typeIconComponent, currentInquiryStatus, statusText, statusIconComponent, coverUrl, getNextcloudPreviewUrl, shortDescription, getHierarchyPath: getHierarchyPath2, locationPath, categoryPath, truncatedLocation, truncatedCategory, truncatedAuthorName, formattedTime, showExpiryBadge, expiryText, expiryBadgeClass, handleClick: handleClick2, handleCommentsClick, get NcAvatar() {
       return NcAvatar;
     }, get InquiryGeneralIcons() {
       return InquiryGeneralIcons;
@@ -86886,7 +88090,7 @@ const _sfc_main$s = /* @__PURE__ */ defineComponent({
     }, get NcModal() {
       return NcModal;
     }, get NcTextField() {
-      return _sfc_main$1X;
+      return _sfc_main$1Y;
     }, get NcNoteCard() {
       return NcNoteCard;
     }, get InquiryGeneralIcons() {
@@ -88000,7 +89204,7 @@ const _sfc_main$q = /* @__PURE__ */ defineComponent({
       const baseUrl = window.location.origin;
       return `${baseUrl}/index.php/core/preview?fileId=${fileId}&x=${x}&y=${y}&a=${autoScale}`;
     }
-    function getHierarchyPath(items, targetId) {
+    function getHierarchyPath2(items, targetId) {
       if (!items || !Array.isArray(items)) return "";
       const itemMap = {};
       items.forEach((item) => {
@@ -88196,7 +89400,7 @@ const _sfc_main$q = /* @__PURE__ */ defineComponent({
     watch(() => storeInquiry.value.currentUserStatus?.supportValue, (newValue) => {
       currentSupportValue.value = newValue || null;
     }, { immediate: true });
-    const __returned__ = { props: props2, sessionStore, inquiriesStore, showSidebar, currentSupportValue, openSidebar, closeSidebar, context: context2, canSupportValue, canCommentValue, inquiryTypeData, typeIconComponent, currentInquiryStatus, statusText, statusIconComponent, isSupported, storeInquiry, hasQuorum, quorumValue, coverUrl, getNextcloudPreviewUrl, getHierarchyPath, formattedCreationDate, formattedLastInteraction, timeExpirationRelative, participantsCount, sanitizedContent, hasResources, getAvailableFields: getAvailableFields2, getMiscValue, getDisplayValue, shouldDisplayField, dynamicFields, displayFields, get t() {
+    const __returned__ = { props: props2, sessionStore, inquiriesStore, showSidebar, currentSupportValue, openSidebar, closeSidebar, context: context2, canSupportValue, canCommentValue, inquiryTypeData, typeIconComponent, currentInquiryStatus, statusText, statusIconComponent, isSupported, storeInquiry, hasQuorum, quorumValue, coverUrl, getNextcloudPreviewUrl, getHierarchyPath: getHierarchyPath2, formattedCreationDate, formattedLastInteraction, timeExpirationRelative, participantsCount, sanitizedContent, hasResources, getAvailableFields: getAvailableFields2, getMiscValue, getDisplayValue, shouldDisplayField, dynamicFields, displayFields, get t() {
       return translate;
     }, get NcAvatar() {
       return NcAvatar;
@@ -88892,7 +90096,7 @@ const _sfc_main$p = /* @__PURE__ */ defineComponent({
       const now2 = Date.now() / 1e3;
       return props2.inquiry.configuration.expire < now2;
     });
-    function getHierarchyPath(items, targetId) {
+    function getHierarchyPath2(items, targetId) {
       if (!items || !Array.isArray(items)) return "";
       const itemMap = {};
       items.forEach((item) => {
@@ -88913,8 +90117,8 @@ const _sfc_main$p = /* @__PURE__ */ defineComponent({
       }
       return buildPath(itemMap[targetId]);
     }
-    const locationPath = computed(() => getHierarchyPath(sessionStore.appSettings?.locationTab, props2.inquiry.locationId));
-    const categoryPath = computed(() => getHierarchyPath(sessionStore.appSettings?.categoryTab, props2.inquiry.categoryId));
+    const locationPath = computed(() => getHierarchyPath2(sessionStore.appSettings?.locationTab, props2.inquiry.locationId));
+    const categoryPath = computed(() => getHierarchyPath2(sessionStore.appSettings?.categoryTab, props2.inquiry.categoryId));
     const truncatedLocation = computed(() => {
       if (!locationPath.value) return "";
       return locationPath.value.length > 30 ? `${locationPath.value.substring(0, 30)}…` : locationPath.value;
@@ -88993,7 +90197,7 @@ const _sfc_main$p = /* @__PURE__ */ defineComponent({
         ]
       });
     });
-    const __returned__ = { props: props2, sessionStore, InquiryGeneralIconsComponents, inquiryTypes, typeData, typeLabel, typeIconComponent, coverUrl, getNextcloudPreviewUrl, isExpired, getHierarchyPath, locationPath, categoryPath, truncatedLocation, truncatedCategory, formattedDate, sanitizedContent, get t() {
+    const __returned__ = { props: props2, sessionStore, InquiryGeneralIconsComponents, inquiryTypes, typeData, typeLabel, typeIconComponent, coverUrl, getNextcloudPreviewUrl, isExpired, getHierarchyPath: getHierarchyPath2, locationPath, categoryPath, truncatedLocation, truncatedCategory, formattedDate, sanitizedContent, get t() {
       return translate;
     }, get NcAvatar() {
       return NcAvatar;
@@ -89339,7 +90543,7 @@ const _sfc_main$o = /* @__PURE__ */ defineComponent({
       }
       return translate("agora", "Just now");
     });
-    function getHierarchyPath(items, targetId) {
+    function getHierarchyPath2(items, targetId) {
       if (!items || !Array.isArray(items)) return "";
       const itemMap = {};
       items.forEach((item) => {
@@ -89360,8 +90564,8 @@ const _sfc_main$o = /* @__PURE__ */ defineComponent({
       }
       return buildPath(itemMap[targetId]);
     }
-    const locationPath = computed(() => getHierarchyPath(sessionStore.appSettings?.locationTab, props2.inquiry.locationId));
-    const categoryPath = computed(() => getHierarchyPath(sessionStore.appSettings?.categoryTab, props2.inquiry.categoryId));
+    const locationPath = computed(() => getHierarchyPath2(sessionStore.appSettings?.locationTab, props2.inquiry.locationId));
+    const categoryPath = computed(() => getHierarchyPath2(sessionStore.appSettings?.categoryTab, props2.inquiry.categoryId));
     const truncatedLocation = computed(() => {
       if (!locationPath.value) return "";
       return locationPath.value.length > 20 ? `${locationPath.value.substring(0, 20)}…` : locationPath.value;
@@ -89373,7 +90577,7 @@ const _sfc_main$o = /* @__PURE__ */ defineComponent({
     function handleClick2() {
       emit2("view", props2.inquiry.id);
     }
-    const __returned__ = { props: props2, emit: emit2, sessionStore, InquiryGeneralIconsComponents, inquiryTypes, summaryClasses, context: context2, typeData, typeLabel, typeIconComponent, typeBadgeClass, ownerDisplayName, truncatedTitle, truncatedAuthorName, safeDescription, coverUrl, getNextcloudPreviewUrl, imageLoaded, handleImageLoad, showExpiryBadge, expiryText, expiryBadgeClass, formattedTime, getHierarchyPath, locationPath, categoryPath, truncatedLocation, truncatedCategory, handleClick: handleClick2, get NcAvatar() {
+    const __returned__ = { props: props2, emit: emit2, sessionStore, InquiryGeneralIconsComponents, inquiryTypes, summaryClasses, context: context2, typeData, typeLabel, typeIconComponent, typeBadgeClass, ownerDisplayName, truncatedTitle, truncatedAuthorName, safeDescription, coverUrl, getNextcloudPreviewUrl, imageLoaded, handleImageLoad, showExpiryBadge, expiryText, expiryBadgeClass, formattedTime, getHierarchyPath: getHierarchyPath2, locationPath, categoryPath, truncatedLocation, truncatedCategory, handleClick: handleClick2, get NcAvatar() {
       return NcAvatar;
     }, get InquiryGeneralIcons() {
       return InquiryGeneralIcons;
@@ -92289,15 +93493,15 @@ const _sfc_main$6 = /* @__PURE__ */ defineComponent({
           if (value.startsWith('"') && value.endsWith('"')) {
             cleanedValue = value.slice(1, -1);
           }
-          return parseMiscValue(cleanedValue, key);
+          return parseMiscValue2(cleanedValue, key);
         }
-        return parseMiscValue(value);
+        return parseMiscValue2(value);
       } catch (e) {
         console.warn(`Error getting misc value for ${key}:`, e);
         return null;
       }
     };
-    const parseMiscValue = (value) => {
+    const parseMiscValue2 = (value) => {
       if (value === null || value === void 0 || value === "") return null;
       try {
         if (typeof value === "string" && (value.startsWith("{") || value.startsWith("["))) {
@@ -92433,7 +93637,7 @@ const _sfc_main$6 = /* @__PURE__ */ defineComponent({
       try {
         isLoading.value = true;
         error.value = null;
-        initializeMiscFields();
+        initializeMiscFields2();
         initializeLocalCheckboxes();
         dynamicFields.value.forEach((field) => {
           if (field.type === "users" || field.type === "groups") {
@@ -92528,7 +93732,7 @@ const _sfc_main$6 = /* @__PURE__ */ defineComponent({
         isSaving.value = false;
       }
     };
-    const initializeMiscFields = () => {
+    const initializeMiscFields2 = () => {
       dynamicFields.value.forEach((field) => {
         if (inquiryStore.miscFields[field.key] === void 0) {
           let defaultValue = field.default;
@@ -92573,7 +93777,7 @@ const _sfc_main$6 = /* @__PURE__ */ defineComponent({
       selectedUsers.value[fieldKey] = user;
       updateFieldValue(fieldKey, user?.id || "", "users");
     };
-    const getFormattedDate = (key) => {
+    const getFormattedDate2 = (key) => {
       const value = getMiscValue(key);
       if (!value) return null;
       try {
@@ -92593,7 +93797,7 @@ const _sfc_main$6 = /* @__PURE__ */ defineComponent({
     onMounted(() => {
       loadMiscData();
     });
-    const __returned__ = { props: props2, inquiryStore, sessionStore, currentLanguage, permissionContext, userCanConfigureSupport, userCanConfigureComments, inquiryTypeConfig, extractLangString, isLoading, error, isSaving, saveTimeouts, selectedUsers, localCheckboxes, getSupportFeatureValue, getAllowCommentValue, supportFeatureOptions, dynamicFields, getSupportFeatureDisplay, getMiscValue, parseMiscValue, getDisplayValue, getEnumModelValue, getEnumLabel, shouldDisplayField, displayFields, loadMiscData, getSafeStringValue, saveFieldToDatabase, getDefaultFromTemplate, handleSupportFeatureChange, handleAllowCommentChange, initializeMiscFields, initializeLocalCheckboxes, updateFieldValue, handleUserSelected, getFormattedDate, getCheckboxValue, get StatusIcons() {
+    const __returned__ = { props: props2, inquiryStore, sessionStore, currentLanguage, permissionContext, userCanConfigureSupport, userCanConfigureComments, inquiryTypeConfig, extractLangString, isLoading, error, isSaving, saveTimeouts, selectedUsers, localCheckboxes, getSupportFeatureValue, getAllowCommentValue, supportFeatureOptions, dynamicFields, getSupportFeatureDisplay, getMiscValue, parseMiscValue: parseMiscValue2, getDisplayValue, getEnumModelValue, getEnumLabel, shouldDisplayField, displayFields, loadMiscData, getSafeStringValue, saveFieldToDatabase, getDefaultFromTemplate, handleSupportFeatureChange, handleAllowCommentChange, initializeMiscFields: initializeMiscFields2, initializeLocalCheckboxes, updateFieldValue, handleUserSelected, getFormattedDate: getFormattedDate2, getCheckboxValue, get StatusIcons() {
       return StatusIcons;
     }, get t() {
       return translate;
@@ -93109,15 +94313,15 @@ const _sfc_main$5 = /* @__PURE__ */ defineComponent({
           if (value.startsWith('"') && value.endsWith('"')) {
             cleanedValue = value.slice(1, -1);
           }
-          return parseMiscValue(cleanedValue, key);
+          return parseMiscValue2(cleanedValue, key);
         }
-        return parseMiscValue(value);
+        return parseMiscValue2(value);
       } catch (e) {
         console.warn(`Error getting misc value for ${key}:`, e);
         return null;
       }
     };
-    const parseMiscValue = (value) => {
+    const parseMiscValue2 = (value) => {
       if (value === null || value === void 0 || value === "") return null;
       try {
         if (typeof value === "string" && (value.startsWith("{") || value.startsWith("["))) {
@@ -93132,7 +94336,7 @@ const _sfc_main$5 = /* @__PURE__ */ defineComponent({
     };
     const hierarchicalLocation = computed(() => {
       if (!Array.isArray(sessionStore.appSettings.locationTab)) return [];
-      return buildHierarchy(sessionStore.appSettings.locationTab).map((item) => ({
+      return buildHierarchy2(sessionStore.appSettings.locationTab).map((item) => ({
         value: item.id,
         label: `${"— ".repeat(item.depth ?? 0)}${item.name ?? "[no name]"}`,
         original: item
@@ -93140,7 +94344,7 @@ const _sfc_main$5 = /* @__PURE__ */ defineComponent({
     });
     const hierarchicalCategory = computed(() => {
       if (!Array.isArray(sessionStore.appSettings.categoryTab)) return [];
-      return buildHierarchy(sessionStore.appSettings.categoryTab).map((item) => ({
+      return buildHierarchy2(sessionStore.appSettings.categoryTab).map((item) => ({
         value: item.id,
         label: `${"— ".repeat(item.depth ?? 0)}${item.name ?? "[no name]"}`,
         original: item
@@ -93148,10 +94352,10 @@ const _sfc_main$5 = /* @__PURE__ */ defineComponent({
     });
     const showLocationAsLabel = ref(false);
     const showCategoryAsLabel = ref(false);
-    function buildHierarchy(list, parentId = 0, depth = 0) {
+    function buildHierarchy2(list, parentId = 0, depth = 0) {
       if (!Array.isArray(list)) return [];
       return list.filter((item) => item?.parentId === parentId).map((item) => {
-        const children = buildHierarchy(list, item.id, depth + 1);
+        const children = buildHierarchy2(list, item.id, depth + 1);
         return {
           ...item,
           depth,
@@ -93159,7 +94363,7 @@ const _sfc_main$5 = /* @__PURE__ */ defineComponent({
         };
       }).flatMap((item) => [item, ...item.children]);
     }
-    function getHierarchyPath(items, targetId) {
+    function getHierarchyPath2(items, targetId) {
       if (!items || !Array.isArray(items)) return "";
       const itemMap = {};
       items.forEach((item) => {
@@ -93203,9 +94407,9 @@ const _sfc_main$5 = /* @__PURE__ */ defineComponent({
           case "groups":
             return Array.isArray(value) ? value.join(", ") : String(value);
           case "location":
-            return getHierarchyPath(sessionStore.appSettings.locationTab || [], value) || String(value);
+            return getHierarchyPath2(sessionStore.appSettings.locationTab || [], value) || String(value);
           case "category":
-            return getHierarchyPath(sessionStore.appSettings.categoryTab || [], value) || String(value);
+            return getHierarchyPath2(sessionStore.appSettings.categoryTab || [], value) || String(value);
           default:
             return String(value);
         }
@@ -93243,7 +94447,7 @@ const _sfc_main$5 = /* @__PURE__ */ defineComponent({
       try {
         isLoading.value = true;
         error.value = null;
-        initializeMiscFields();
+        initializeMiscFields2();
         initializeLocalCheckboxes();
         dynamicFields.value.forEach((field) => {
           if (field.type === "users" || field.type === "groups") {
@@ -93283,7 +94487,7 @@ const _sfc_main$5 = /* @__PURE__ */ defineComponent({
         isSaving.value = false;
       }
     };
-    const initializeMiscFields = () => {
+    const initializeMiscFields2 = () => {
       dynamicFields.value.forEach((field) => {
         if (inquiryGroupStore.miscFields[field.key] === void 0) {
           let defaultValue = field.default;
@@ -93328,7 +94532,7 @@ const _sfc_main$5 = /* @__PURE__ */ defineComponent({
       selectedUsers.value[fieldKey] = user;
       updateFieldValue(fieldKey, user?.id || "", "users");
     };
-    const getFormattedDate = (key) => {
+    const getFormattedDate2 = (key) => {
       const value = getMiscValue(key);
       if (!value) return null;
       try {
@@ -93348,7 +94552,7 @@ const _sfc_main$5 = /* @__PURE__ */ defineComponent({
     onMounted(() => {
       loadMiscData();
     });
-    const __returned__ = { props: props2, inquiryGroupStore, sessionStore, isLoading, error, isSaving, saveTimeouts, selectedUsers, localCheckboxes, dynamicFields, getMiscValue, parseMiscValue, hierarchicalLocation, hierarchicalCategory, showLocationAsLabel, showCategoryAsLabel, buildHierarchy, getHierarchyPath, getDisplayValue, shouldDisplayField, displayFields, loadMiscData, saveFieldToDatabase, initializeMiscFields, initializeLocalCheckboxes, updateFieldValue, handleUserSelected, getFormattedDate, getCheckboxValue, get StatusIcons() {
+    const __returned__ = { props: props2, inquiryGroupStore, sessionStore, isLoading, error, isSaving, saveTimeouts, selectedUsers, localCheckboxes, dynamicFields, getMiscValue, parseMiscValue: parseMiscValue2, hierarchicalLocation, hierarchicalCategory, showLocationAsLabel, showCategoryAsLabel, buildHierarchy: buildHierarchy2, getHierarchyPath: getHierarchyPath2, getDisplayValue, shouldDisplayField, displayFields, loadMiscData, saveFieldToDatabase, initializeMiscFields: initializeMiscFields2, initializeLocalCheckboxes, updateFieldValue, handleUserSelected, getFormattedDate: getFormattedDate2, getCheckboxValue, get StatusIcons() {
       return StatusIcons;
     }, get t() {
       return translate;

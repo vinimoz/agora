@@ -315,7 +315,7 @@ class InitDbDefault extends Command
             'description' => 'Task or decision moving through workflow stages.',
             'fields' => [
                 ['key' => 'priority', 'type' => 'enum', 'required' => true, 'allowed_values' => ['low', 'medium', 'high', 'critical']],
-                ['key' => 'assigned_to', 'type' => 'string', 'required' => false],
+                ['key' => 'assigned_to', 'type' => 'users', 'required' => false],
                 ['key' => 'due_date', 'type' => 'datetime', 'required' => false],
             ],
             'allowed_response' => [

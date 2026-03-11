@@ -13,11 +13,11 @@
 const appName = "agora";
 const appVersion = "1.7.0-rc1";
 import { A as defineStore, aR as generateOcsUrl, aS as cancelableClient, d as defineComponent, q as translate, _ as _export_sfc, o as openBlock, c as createElementBlock, j as createBaseVNode, t as toDisplayString, T as Fragment, U as renderList, E as normalizeClass, B as createTextVNode, k as createCommentVNode, b as computed, s as onMounted, aX as ref, a7 as NcButton, aP as NcEmptyContent, ak as NcLoadingIcon, i as createVNode, g as withCtx, f as createBlock, w as watch, aM as NcModal, h as resolveDynamicComponent, m as mergeProps, a5 as withDirectives, a6 as vShow, aZ as vModelText, C as purify, ax as withModifiers, ai as resolveComponent, n as normalizeStyle, v as normalizeProps, x as guardReactiveProps, y as createApp, z as pinia } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_ef057a6f_lang-7C7LTiDb.chunk.mjs";
-import { I as InputDiv, a as NcAppSettingsDialog, N as NcSettingsSection } from "./index-DgmzlsBY.chunk.mjs";
-import { L as Logger, d as useAppSettingsStore, e as gfmHeadingId, k, f as adminJobs, I as InquiryGeneralIcons, s as showError, S as StatusIcons } from "./NcDashboardWidget-DCBQdRFz-DBjjkpUK.chunk.mjs";
-import { F as FlexSettings } from "./FlexSettings-DIfTXAHP.chunk.mjs";
+import { I as InputDiv, a as NcAppSettingsDialog, N as NcSettingsSection } from "./index-C5ZEZryB.chunk.mjs";
+import { L as Logger, d as useAppSettingsStore, e as gfmHeadingId, k, f as adminJobs, I as InquiryGeneralIcons, s as showError, S as StatusIcons } from "./NcDashboardWidget-DCBQdRFz-B4Rx8fDu.chunk.mjs";
+import { F as FlexSettings } from "./FlexSettings-C2mdbWce.chunk.mjs";
 import { _ as _sfc_main$A, N as NcCheckboxRadioSwitch, a as NcSelect, b as NcInputField } from "./NcRichText-DJlaHs_Q-BarOYPXN.chunk.mjs";
-import { N as NcNoteCard, a as NcTextArea, R as RadioGroupDiv, C as CardDiv } from "./markdown-DfnEdSd5.chunk.mjs";
+import { N as NcNoteCard, a as NcTextArea, R as RadioGroupDiv, C as CardDiv } from "./markdown-FJcu3Lwb.chunk.mjs";
 const useTemplateWizardStore = defineStore("templateWizard", {
   state: () => ({
     isOpen: false,

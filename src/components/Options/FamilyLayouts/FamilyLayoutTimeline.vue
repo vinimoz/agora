@@ -50,7 +50,7 @@
         </div>
 
         <!-- Timeline view -->
-        <div v-if="viewMode === 'timeline'" class="timeline-view">
+ <div v-if="viewMode === 'timeline'" class="timeline-view">
             <div class="timeline-header">
                 <div class="timeline-scale">
                     <button
@@ -81,17 +81,18 @@
                     </span>
                 </div>
             </div>
+
             <div class="timeline-container" :class="`scale-${scale}`">
                 <!-- Time markers header -->
                 <div class="timeline-markers-header">
                     <div 
-                     v-for="marker in timeMarkers" 
-                     :key="marker.timestamp"
-                     class="marker-cell"
-                     :class="{ 'month-marker': scale === 'month' }"
-                     :style="{ width: scale === 'month' ? '120px' : `${marker.width}%` }"
-                     >
-                     <span class="marker-label">{{ marker.label }}</span>
+                        v-for="marker in timeMarkers" 
+                        :key="marker.timestamp"
+                        class="marker-cell"
+                        :class="{ 'month-marker': scale === 'month' }"
+                        :style="{ width: scale === 'month' ? '100px' : `${marker.width}%` }"
+                    >
+                        <span class="marker-label">{{ marker.label }}</span>
                     </div>
                 </div>
 
@@ -100,52 +101,52 @@
                     <!-- Vertical lines (background) -->
                     <div class="grid-vertical-lines">
                         <div 
-                         v-for="marker in timeMarkers" 
-                         :key="marker.timestamp"
-                         class="grid-line"
-                         :class="{ 'month-line': scale === 'month' }"
-                         :style="{ left: scale === 'month' ? `${marker.position}px` : `${marker.position}%` }"
-                         ></div>
+                            v-for="marker in timeMarkers" 
+                            :key="marker.timestamp"
+                            class="grid-line"
+                            :class="{ 'month-line': scale === 'month' }"
+                            :style="{ left: scale === 'month' ? `${marker.position}px` : `${marker.position}%` }"
+                        ></div>
                     </div>
 
-                    <!-- Option rows -->
+                    <!-- Option rows - like Kanban cards -->
                     <div 
-                         v-for="(option, rowIndex) in visibleProcessOptions" 
-                         :key="option.id"
-                         class="timeline-row"
-                         :class="{ 'alternate': rowIndex % 2 === 1 }"
-                         >
-                         <!-- Option card positioned in the grid -->
+                        v-for="(option, rowIndex) in visibleProcessOptions" 
+                        :key="option.id"
+                        class="timeline-row"
+                        :class="{ 'alternate': rowIndex % 2 === 1 }"
+                    >
+                        <!-- Option card positioned in the grid - now smaller like Kanban -->
                         <div 
-                         class="timeline-item"
-                         :class="`type-${option.type}`"
-                         :style="getItemPosition(option)"
-                         @click="$emit('openDetail', option)"
-                         >
-                         <div class="item-content">
-                             <div class="item-icon">
-                                 <component :is="getOptionTypeIcon(option.type)" :size="16" />
-                             </div>
-                            <div class="item-details">
-                                <div class="item-title">{{ option.title }}</div>
-                                <div class="item-dates">
-                                    <span class="date">
-                                        {{ formatDateTime(option.status.created, scale) }}
-                                    </span>
+                            class="timeline-item"
+                            :class="`type-${option.type}`"
+                            :style="getItemPosition(option)"
+                            @click="$emit('openDetail', option)"
+                        >
+                            <div class="item-content">
+                                <div class="item-icon">
+                                    <component :is="getOptionTypeIcon(option.type)" :size="14" />
                                 </div>
+                                <div class="item-details">
+                                    <div class="item-title">{{ option.title }}</div>
+                                    <div class="item-dates">
+                                        <span class="date">
+                                            {{ formatDateTime(option.status.created, scale) }}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div 
+                                    v-if="option.status?.optionStatus"
+                                    class="status-indicator"
+                                    :style="{ backgroundColor: getStatusColor(option.status.optionStatus) }"
+                                    :title="option.status.optionStatus"
+                                />
                             </div>
-                            <div 
-                                          v-if="option.status?.optionStatus"
-                                          class="status-indicator"
-                                          :style="{ backgroundColor: getStatusColor(option.status.optionStatus) }"
-                                          :title="option.status.optionStatus"
-                                          />
-                            </div>
-                         </div>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
 
             <!-- List view -->
             <div v-else-if="viewMode === 'list'" class="list-view">
@@ -236,7 +237,7 @@
 </template>
 
 <script setup lang="ts">
-    import { ref, computed, watch, onMounted } from 'vue'
+    import { ref, computed } from 'vue'
 import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
@@ -254,6 +255,7 @@ const props = defineProps<{
 
 const optionsStore = useOptionsStore()
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const emit = defineEmits<{
     'openDetail': [option: Option]
 }>()
@@ -265,14 +267,11 @@ const dateFilter = ref('')
 const currentMonth = ref(new Date())
 
 // Get process family options only
-const processOptions = computed(() => {
-    return props.options.filter(opt => {
+const processOptions = computed(() => props.options.filter(opt => {
         const family = getOptionTypeFamily(opt.type, optionsStore.getOptionTypesArray)
         return family === 'process'
-    })
-})
+    }))
 
-// FOR LIST VIEW: All options sorted by created date
 const sortedOptions = computed(() => {
     let filtered = [...props.options]
 
@@ -294,18 +293,13 @@ const sortedOptions = computed(() => {
 })
 
 // FOR TIMELINE VIEW: Process options with valid dates
-const processOptionsForTimeline = computed(() => {
-    return processOptions.value
+const processOptionsForTimeline = computed(() => processOptions.value
         .filter(opt => opt.status?.created && opt.status.created > 0)
-        .sort((a, b) => (a.status?.created || 0) - (b.status?.created || 0))
-})
+        .sort((a, b) => (a.status?.created || 0) - (b.status?.created || 0)))
 
 // FOR CALENDAR VIEW: Process options (keep all, calendar will filter by date)
-const processOptionsForCalendar = computed(() => {
-    return processOptions.value.filter(opt => opt.status?.created && opt.status.created > 0)
-})
+const processOptionsForCalendar = computed(() => processOptions.value.filter(opt => opt.status?.created && opt.status.created > 0))
 
-// Get the visible time range based on scale and all items
 // Get the visible time range based on scale and all items
 const visibleTimeRange = computed(() => {
     const items = processOptionsForTimeline.value
@@ -317,36 +311,36 @@ const visibleTimeRange = computed(() => {
         }
     }
 
-    const dates = items.map(opt => opt.status.created * 1000)
-    const minDate = Math.min(...dates)
-    const maxDate = Math.max(...dates)
+    // Use the most recent item as the target date
+    const sortedItems = [...items].sort((a, b) => 
+        (b.status.created || 0) - (a.status.created || 0)
+    )
+    const targetDate = DateTime.fromMillis(sortedItems[0].status.created * 1000)
 
-    let start = DateTime.fromMillis(minDate)
-    let end = DateTime.fromMillis(maxDate)
-
-    // Adjust range based on scale
     switch (scale.value) {
         case 'day':
-            // Show the day of the first item
-            start = start.startOf('day')
-            end = start.endOf('day')
-            break
+            return {
+                start: targetDate.startOf('day'),
+                end: targetDate.endOf('day')
+            }
+            
         case 'week':
-            // Show the week containing the first item
-            start = start.startOf('week')
-            end = start.endOf('week')
-            // Add a little padding for context
-            start = start.minus({ days: 1 })
-            end = end.plus({ days: 1 })
-            break
+            // Show the week containing the most recent item
+            return {
+                start: targetDate.startOf('week'), // Monday of that week
+                end: targetDate.endOf('week')      // Sunday of that week
+            }
+            
         case 'month':
-            // Show the month of the first item (NOT padded with extra weeks)
-            start = start.startOf('month')
-            end = start.endOf('month')
-            break
+            return {
+                start: targetDate.startOf('month'),
+                end: targetDate.endOf('month')
+            }
     }
-
-    return { start, end }
+    return {
+        start,
+        end
+    } 
 })
 
 // Get visible options (those within the current range)
@@ -362,22 +356,22 @@ const visibleProcessOptions = computed(() => {
 // Generate time markers based on visible range and scale
 const timeMarkers = computed(() => {
     const { start, end } = visibleTimeRange.value
-
+    
     const markers = []
     let current = start.startOf(scale.value)
     let interval
     let totalDuration
-
+    
     if (scale.value === 'month') {
         interval = { days: 1 }
         let position = 0
-        const markerWidth = 120
-
+        const markerWidth = 100 // Slightly smaller: 100px per day
+        
         while (current <= end) {
             markers.push({
                 timestamp: current.toMillis(),
                 label: current.toFormat('d MMM'),
-                position: position,
+                position,
                 width: markerWidth
             })
             position += markerWidth
@@ -386,7 +380,7 @@ const timeMarkers = computed(() => {
     } else {
         // For DAY and WEEK - use percentage-based positioning
         totalDuration = end.diff(start).as('milliseconds')
-
+        
         switch (scale.value) {
             case 'day':
                 interval = { hours: 1 }
@@ -395,14 +389,14 @@ const timeMarkers = computed(() => {
                 interval = { days: 1 }
                 break
         }
-
+        
         while (current <= end) {
             const position = (current.diff(start).as('milliseconds') / totalDuration) * 100
-
-            let nextCurrent = current.plus(interval)
+            
+            const nextCurrent = current.plus(interval)
             const nextPosition = (nextCurrent.diff(start).as('milliseconds') / totalDuration) * 100
             const width = nextPosition - position
-
+            
             let label = ''
             switch (scale.value) {
                 case 'day':
@@ -412,58 +406,56 @@ const timeMarkers = computed(() => {
                     label = current.toFormat('EEE d')
                     break
             }
-
+            
             markers.push({
                 timestamp: current.toMillis(),
                 label,
                 position: Math.min(100, Math.max(0, position)),
                 width: Math.min(100 - position, width)
             })
-
+            
             current = current.plus(interval)
         }
     }
-
+    
     return markers
 })
 
 // Calculate item position for timeline based on visible range
 const getItemPosition = (option: Option) => {
     if (!option.status?.created || option.status.created === 0) return { display: 'none' }
-
+    
     const { start, end } = visibleTimeRange.value
     const itemTime = DateTime.fromMillis(option.status.created * 1000)
-
+    
+    // Check if item is in visible range
+    if (itemTime < start || itemTime > end) {
+        return { display: 'none' }
+    }
+    
     if (scale.value === 'month') {
-        // Check if item is in visible range
-        if (itemTime < start || itemTime > end) {
-            return { display: 'none' }
-        }
-
-        // Calculate days from start of month
+        // Pixel-based positioning for month view - exact day column
         const daysDiff = Math.floor(itemTime.diff(start, 'days').days)
-        const left = daysDiff * 120 + 60 // 120px per day, + half width to center
-
+        // Center the card in the day column (100px per day)
+        const left = daysDiff * 100 + 50
+        
         return {
             left: `${left}px`,
             transform: 'translateX(-50%)',
+            width: '90px', // Smaller width to fit in one day column
         }
-    } else {
+    } 
         // Percentage-based positioning for day/week views
-        // Check if item is in visible range
-        if (itemTime < start || itemTime > end) {
-            return { display: 'none' }
-        }
-
         const totalDuration = end.diff(start).as('milliseconds')
         const itemOffset = itemTime.diff(start).as('milliseconds')
         const left = (itemOffset / totalDuration) * 100
-
+        
         return {
             left: `${left}%`,
             transform: 'translateX(-50%)',
+            width: '140px', // Reasonable width for day/week views
         }
-    }
+    
 }
 
 // Format date range for display
@@ -551,11 +543,6 @@ const nextMonth = () => {
         .toJSDate()
 }
 
-// Helper functions
-const formatDate = (timestamp: number) => {
-    if (!timestamp || timestamp === 0) return ''
-    return DateTime.fromMillis(timestamp * 1000).toLocaleString(DateTime.DATE_SHORT)
-}
 
 const getOptionTypeIcon = (type: string) =>
     getOptionTypeIconComponent(type, optionsStore.getOptionTypesArray)
@@ -570,18 +557,6 @@ const getStatusColor = (status: string) => {
     return colors[status] || '#949494'
 }
 
-// Debug
-onMounted(() => {
-    console.log('=== TIMELINE DEBUG ===')
-    console.log('All options:', props.options.length)
-    console.log('Process options:', processOptions.value.length)
-})
-
-watch([scale, processOptionsForTimeline], () => {
-    console.log('Scale changed to:', scale.value)
-    console.log('Visible range:', visibleTimeRange.value.start.toISO(), 'to', visibleTimeRange.value.end.toISO())
-    console.log('Visible options:', visibleProcessOptions.value.length)
-})
 </script>
 <style scoped lang="scss">
 .timeline-layout {

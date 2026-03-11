@@ -1098,16 +1098,16 @@ return isPublicRoute
                                                                   align-items: center;
                                                                   gap: 10px;
                                                                   border-radius: 10px;
-                                                                  padding: 12px 20px; // Réduit le padding
+                                                                  padding: 12px 20px;
                                                                       transition: all 0.3s ease;
                                                                   cursor: pointer;
                                                                   background: white;
                                                                   border: 2px solid var(--color-border);
-                                                                  min-width: 140px; // Réduit la largeur minimale
+                                                                  min-width: 140px;
                                                                       box-shadow: var(--squareux-card-shadow);
 
                                                                   &:hover {
-                                                                      transform: translateY(-2px); // Moins de mouvement
+                                                                      transform: translateY(-2px);
                                                                           box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
                                                                   }
 
@@ -1116,29 +1116,29 @@ return isPublicRoute
                                                                   }
 
                                                                   .counter-icon {
-                                                                      width: 32px; // Réduit la taille
+                                                                      width: 32px; 
                                                                           height: 32px;
                                                                       background: linear-gradient(135deg, var(--color-background-darker), var(--color-background-dark));
-                                                                      border-radius: 8px; // Moins arrondi
+                                                                      border-radius: 8px;
                                                                           display: flex;
                                                                       align-items: center;
                                                                       justify-content: center;
                                                                       flex-shrink: 0;
 
                                                                       :deep(svg) {
-                                                                          width: 18px; // Icône plus petite
+                                                                          width: 18px; 
                                                                               height: 18px;
                                                                       }
                                                                   }
 
                                                                   .counter-content {
                                                                       .counter-value {
-                                                                          font-size: 11px; // Plus petit
+                                                                          font-size: 11px;
                                                                               font-weight: 600;
                                                                       }
 
                                                                       .counter-label {
-                                                                          font-size: 7px; // Plus petit
+                                                                          font-size: 11px; 
                                                                       }
                                                                   }
                                                               }

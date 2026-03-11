@@ -56,6 +56,7 @@
               :option="option"
               :inquiry-id="inquiryId"
               :compact="true"
+              :show-action="false"
               @click="$emit('openDetail', option)"
             />
             
@@ -155,9 +156,7 @@ const statusColumns = [
 const getOptionsByStatus = (status: string) => props.options.filter(opt => opt.status.optionStatus === status)
 
 // Check if user can change status
-const canChangeStatus = computed(() => {
-  return true
-})
+const canChangeStatus = computed(() => true)
 
 // Check if user can add to column
 const canAddToColumn = (status: { value: string }) => 
