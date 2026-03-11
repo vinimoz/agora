@@ -243,6 +243,7 @@ OC.L10N.register(
     "Sort Order" : "Sorteervolgorde",
     "Enabled" : "Ingeschakeld",
     "Privacy policy link" : "Privacybeleid link",
+    "Moderator Rights" : "Moderator Rechten",
     "Allow comments" : "Reageren toestaan",
     "Label" : "Label",
     "Configure" : "Configureren",
