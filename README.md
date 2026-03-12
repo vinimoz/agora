@@ -100,17 +100,30 @@ make appstore    # Full build
 occ app:enable agora
 ```
 
-## 🖼 Screenshots
+## 🖼️ Screenshots
 
-| Creation | Edit Inquiry | Edit Group | Group view | Group view 2 | Inquiry Type | Family | Grid View | Grid 2 | List View |  Settings | Settings Inquiry |
-| :-------: | :----------: | :-----------: | :-----: | :-------: | :-----: | :-------: | :------: | :---------------: |
-| ![Creation](screenshots/Creation.png) | ![Edit Inquiry](screenshots/EditInquiry.png) | ![Edit Group](screenshots/EditGroup.png) | ![Group view](screenshots/GroupView.png) |![Group view](screenshots/GroupView2.png) | ![Inquiry Type](screenshots/SettingInquiryType.png) | ![Family](screenshots/Family.png) | ![Grid](screenshots/Grid.png) | ![Grid2](screenshots/Grid2.png) | ![List](screenshots/ListView.png)  | ![Settings](screenshots/Settings.png) | ![Settings Inquiry](screenshots/SettingsInquiry.png) |
+| | | |
+|:---:|:---:|:---:|
+| **Creation** | **Edit Inquiry** | **Edit Group** |
+| ![Creation](screenshots/Creation.png) | ![Edit Inquiry](screenshots/EditInquiry.png) | ![Edit Group](screenshots/EditGroup.png) |
+| **Group View** | **Group View 2** | **Inquiry Type** |
+| ![Group view](screenshots/GroupView.png) | ![Group view 2](screenshots/GroupView2.png) | ![Inquiry Type](screenshots/SettingInquiryType.png) |
+| **Family** | **Grid View** | **Grid View 2** |
+| ![Family](screenshots/Family.png) | ![Grid](screenshots/Grid.png) | ![Grid2](screenshots/Grid2.png) |
+| **List View** | **Settings** | **Settings Inquiry** |
+| ![List](screenshots/ListView.png) | ![Settings](screenshots/Settings.png) | ![Settings Inquiry](screenshots/SettingsInquiry.png) |
+
+---
 
 ## 📚 Documentation
 
-| User Guide | API Guide |
-| :--------: | :-------: |
-| [USER_GUIDE.md](docs/USER_GUIDE.md) | [API_v1.0.md](docs/API_v1.0.md) |
+| Document | Description | For |
+|----------|-------------|-----|
+| [📖 USER_GUIDE.md](docs/USER_GUIDE.md) | Complete user manual with step-by-step instructions | End Users |
+| [🔧 Agora-template-instructions.md](docs/Agora-template-instructions.md) | Template configuration guide for administrators | Admins |
+| [📋 Agora-template-schema.json](docs/Agora-template-schema.json) | JSON schema reference for template validation | Developers |
+| [🔌 API_v1.0.md](docs/API_v1.0.md) | REST API documentation for integration | Developers |
+
 
 ---
 
