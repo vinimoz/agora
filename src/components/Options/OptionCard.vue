@@ -318,7 +318,6 @@ const emit = defineEmits<{
   viewResponses: [option: Option, responseType: string]
 }>()
 
-console.log("PROPPPPPPPPPPPPPPPPPPPPP ",props.showAction)
 
 // Defaults
 const textMaxLength = props.textMaxLength || 200

@@ -1,126 +1,228 @@
-# 📖 Agora – User Guide (v1.5.0)
+Agora – Complete System Documentation
+📋 Overview
+This comprehensive guide combines user documentation, template configuration, and database initialization for the Agora participatory democracy platform. It is designed for both end users and system administrators.
 
-## 🔹 Overview
+📖 Part 1: User Guide
+🌟 Welcome to Agora
+Agora is a participatory democracy application for Nextcloud that enables communities and organizations to create, debate, and decide together through structured democratic processes.
 
-Agora is a **participatory democracy app for Nextcloud**.  
-It allows communities and organizations to **create, support, and debate** contributions called _inquiries_.  
+Core Philosophy: Transparency, inclusion, and democratic participation for all.
 
-Agora ensures **transparency, inclusion, and democratic participation**.
+🏛️ Understanding the Building Blocks
+🔍 What is an Inquiry?
+An Inquiry is the central element in Agora—any topic, request, proposal, or process opened by users.
 
----
+Inquiry Type	Purpose	Example
+Petition	Gather citizen support	"Plant 1000 trees in the city"
+Proposal	Introduce new ideas	"Create a community garden"
+Debate	Structured discussion	"Should we ban single-use plastics?"
+Consultation	Public feedback collection	"New park design preferences"
+Law Proposal	Legislative drafting	"Amendment to housing law"
+Service Request	Administrative assistance	"Request for childcare support"
+📦 What are Options?
+Options are structured contributions inside an inquiry—they build the content and arguments.
 
-## 🔹 Families & Inquiry Types
+Option Type	Description	Visual Icon
+argument_for	Supporting arguments	👍
+argument_against	Opposing viewpoints	👎
+amendment	Proposed modifications	✏️
+chapter	Document sections	📑
+poll_option	Selectable choices	📊
+official_summary	Final conclusions	✅
+🗂️ What are Inquiry Groups?
+Inquiry Groups organize multiple inquiries into hierarchical structures—perfect for complex democratic processes.
 
-- Each inquiry belongs to a **family**, representing a theme or organizational area.  
-- **Inquiry types and fields are fully configurable** in **Admin Settings**: creation, editing, response rules, and transformation rules.  
-- **Only authorized group members** can modify families and types:  
-  - **Legislative menu** → `Agora Legislative` group.  
-  - **Administrative menu** → `Agora Administrative` group.  
-  - **Collective menu** → `Agora Collective` group.  
-  - Other groups can only access menus/families assigned to them.
+Group Type	Use Case	Example
+Assembly	Citizen gatherings	Town hall meetings
+Referendum	Binding votes	Constitutional referendum
+Program	Multi-phase projects	5-year urban plan
+Working Group	Focused committees	Environmental task force
+👥 User Roles & Permissions
+Agora uses six specialized groups to manage access and responsibilities:
 
----
+Group	Capabilities	Badge
+Agora Users	Create inquiries, support, comment	👤
+Agora Moderator	Approve/reject content, archive	🛡️
+Agora Official	Post official responses, bypass moderation	👔
+Agora Legislative	Manage law-related content	⚖️
+Agora Administrative	Handle service requests	📋
+Agora Collective	Facilitate group processes	👥
+Note: You must belong to Agora Users to see attached files and inquiry covers.
 
-## 🔹 Moderation System
+🚀 Getting Started
+Step 1: Access Agora
+Open Nextcloud and click the Agora app icon from the menu
 
-Agora includes a **configurable moderation system**, which can be enabled or disabled in **Admin Settings**.
+Step 2: Create Your First Inquiry
+Click "New Inquiry" button
 
-- **Use Moderation** → toggles moderation on/off.  
-  - If disabled: all inquiries are automatically accepted.  
-  - If enabled: a **“To Moderate”** menu appears for review.  
-- **Moderators** (`Agora Moderator`) can:  
-  - Approve, reject, or archive an inquiry.  
-  - Change moderation status.  
-- **Officials** (`Agora Official`) can:  
-  - Post official responses.  
-  - Bypass moderation if configured.
+Choose your role/group (User, Official, etc.)
 
----
+Fill in the required fields:
 
-## 🔹 Permissions and Groups
+Title – Clear, concise headline
 
-Agora has **six main groups**:
+Description – Detailed explanation
 
-| Group | Role |
-|-------|------|
-| `Agora Users` | Create, support, and comment on inquiries within their families. Mandatory to see attached files and inquries covers|
-| `Agora Moderator` | Moderate inquiries (if moderation is enabled). |
-| `Agora Official` | Publish official responses and may bypass moderation. |
-| `Agora Legislative` | Access to legislative menu/families. Can modify families and types in legislative scope. |
-| `Agora Administrative` | Access to administrative menu/families. Can modify families and types in administrative scope. |
-| `Agora Collective` | Access to collective families. Can manage collective inquiries. |
+Category – Thematic classification
 
-📂 **Attachments and private inquiries**: visible only to groups with access to the corresponding families.
+Location – Geographic scope
 
----
+Optional: Add attachments and cover image
 
-## 🔹 Administration
+Click "Publish"
 
-Administrators can configure all app features via **Admin Settings**:
+💡 Tip: If moderation is enabled, your inquiry will appear in the "To Moderate" menu until approved.
 
-- **Locations** → cities, districts, zones.  
-- **Categories** → thematic classification (e.g., environment, education).  
-- **Families** → create/edit families, assign allowed groups.  
-- **Inquiry Types** → define types, fields, response rules, and transformations.  
-- **Moderation Settings** → enable/disable moderation and assign groups.  
-- **Permissions** → control access by family or menu for each group.
+Step 3: Engage with the Community
+💬 Comment on inquiries
 
----
+👍 Support proposals you agree with
 
-## 🔹 Usage
+🔄 Create child inquiries (if permitted)
 
-1. **Open Agora** from the Nextcloud app menu.  
-2. **Create an inquiry**:  
-   - Click _New Inquiry_.  
-   - Choose the user or group user to oepn.  
-   - Fill in title, description, category, location.  
-   - Add files and cover if needed.  
-   - Publish (moderation applies if enabled).  
-3. **Interact with inquiries**:  
-   - Comment.  
-   - Support.  
-   - Create a **child inquiry** if allowed by the family/type.  
-4. **Moderate** (if member of `Agora Moderator` or `Agora Official`):  
-   - Approve or reject an inquiry.  
-   - Archive or delete inquiries.  
-5. **Legislative/Administrative/Collective administrators**:  
-   - Access menus and features specific to their group.  
-   - Edit families and inquiry types assigned to their menu.
+📎 Share files to strengthen arguments
 
----
+🎯 Practical Examples
+Example 1: Citizen Petition
+Role: Regular User
 
-## 🔹 Features
+Create a Petition inquiry: "Install bike lanes on Main Street"
 
-- 🧱 **New database architecture**  
-- 🎨 **Improved UX landing page**  
-- 🆔 **Cover ID for each inquiry**  
-- 🧩 **Configurable families and inquiry types**  
-- 💬 **Comments and discussions**  
-- 👍 **Supports/votes for inquiries**  
-- 🔄 **Configurable transformations and responses**  
-- 📎 **File attachments**  
-- 🗃️ **Archiving & Soft Delete**  
-- 🔒 **Data remains private on your Nextcloud server**  
+Add location: "Downtown district"
 
----
+Category: "Transport & Mobility"
 
-## 🔹 Practical Examples
+Collect supports from neighbors
 
-| Role | Example |
-|------|---------|
-| **User** | Creates a petition “Tree Planting” and receives supports. |
-| **Moderator** | Reviews a debate or archives an old inquiry. |
-| **Official** | Posts an official response to a legislative inquiry. |
-| **Legislative / Administrative / Collective** | Manage families and inquiry types assigned to their menu. |
+After reaching threshold, an Official responds
 
----
+Example 2: Legislative Amendment
+Role: Legislative Group Member
 
-## 🔹 Roadmap
+Create Law Proposal inquiry
 
-- Integration with **Forms**, **Deck**, **Polls**, **Cospend**.  
-- Structured debates.  
-- Law project modules: article comments and supports.  
-- Collectives → Polls for consultation/referendum.  
-- Advanced quorums & workflows.  
-- Improved permissions and visibility control.
+Structure with chapters and articles
+
+Receive amendments from citizens
+
+Facilitate debate on controversial articles
+
+Publish official_summary with final text
+
+Example 3: Community Consultation
+Role: Collective Group Member
+
+Create Consultation inquiry
+
+Add consultation_questions as options
+
+Collect public feedback
+
+Analyze responses in official_result
+
+🔧 Moderation System
+When moderation is enabled, all content requires review:
+
+Moderator Dashboard
+📥 To Moderate – Pending approvals
+
+✅ Approved – Publicly visible
+
+❌ Rejected – Not published
+
+📦 Archived – Closed processes
+
+Moderation Actions
+Action	Effect
+Approve	Makes content public
+Reject	Returns to creator with feedback
+Archive	Closes but preserves history
+Delete	Removes permanently
+🔧 Part 2: Administrator's Configuration Guide
+🎛️ Template Architecture
+Agora's flexibility comes from its template system—configurable blueprints that define how inquiries behave.
+
+Template Components
+text
+INQUIRY TEMPLATE
+├── Basic Properties
+│   ├── inquiry_type (unique identifier)
+│   ├── family (deliberative, legislative, etc.)
+│   ├── icon (visual representation)
+│   └── label (display name)
+├── Fields (custom data)
+├── Allowed Responses (child types)
+├── Allowed Transformations (workflow stages)
+├── Allowed Option Types (structural elements)
+└── Workflow Statuses
+📊 Database Structure Reference
+Core Tables
+Table	Purpose	Key Fields
+agora_inquiry_types	Defines inquiry templates	inquiry_type, family, fields
+agora_option_types	Defines option templates	option_type, family, statuses
+agora_group_types	Defines group templates	group_type, allowed_inquiry_types
+agora_inquiry_families	Inquiry categories	family_type, icon, sort_order
+agora_option_families	Option categories	family_type, ui, rules
+agora_statuses	Workflow states	inquiry_type, status_key, is_final
+⚙️ Field Configuration
+Field Properties
+Property	Required	Description	Example
+key	✅	Unique identifier	"support_deadline"
+type	✅	Data type	"datetime"
+label	❌	Display name	"Support Deadline"
+required	❌	Must be filled	true
+default	❌	Default value	null
+allowed_values	❌	Enum options	["low","medium","high"]
+Allowed Field Types
+Type	Description	Use Case
+string	Short text	Titles, names
+text	Long text	Descriptions, content
+enum	Predefined list	Priority levels
+number	Numeric value	Budget, count
+boolean	Yes/No	Toggle options
+date	Date only	Deadlines
+datetime	Date and time	Meeting times
+location	Geographic	Places
+category	Agora categories	Classification
+users	User references	Assignees
+groups	Group references	Teams
+json	Complex data	Form schemas
+🎨 UI Layout Configuration
+Agora supports multiple visual layouts for different process types:
+
+Layout	Best For	Visual
+tree	Structured documents	🌳
+kanban	Workflow tracking	📋
+paired	Pro/Con debates	⚖️
+timeline	Sequential processes	📅
+process	Multi-stage workflows	🔄
+consensus	Agreement building	🤝
+Layout Configuration Example
+json
+{
+  "ui": {
+    "layout": "tree",
+    "show_toc": true,
+    "collapsible_sections": true,
+    "breadcrumb_navigation": true
+  },
+  "rules": {
+    "max_depth": 5,
+    "require_numeric_notation": true,
+    "allow_cross_references": true
+  },
+  "features": [
+    "version_control",
+    "change_tracking",
+    "commentary"
+  ],
+  "actions": [
+    {"key": "export_pdf", "label": "Export as PDF", "icon": "FilePdf"},
+    {"key": "compare_versions", "label": "Compare Versions", "icon": "Diff"}
+  ]
+}
+🗃️ Default Data Initialization
+The InitDbDefault.php command populates Agora with sensible defaults. Below is the complete structure.
+
 
