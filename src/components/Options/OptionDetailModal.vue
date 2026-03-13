@@ -150,7 +150,6 @@
                                         :key="field.key"
                                         class="field-item"
                                     >
-                                        <label :for="`field-${field.key}`">{{ getFieldLabel(field) }}</label>
                                         
                                         <!-- Text field -->
                                         <NcTextField
@@ -182,6 +181,7 @@
                                                 :id="`field-${field.key}`"
                                                 type="switch"
                                                 :checked="miscFields.getCheckboxValue(field.key)"
+                                                :label="getFieldLabel(field)"
                                                 @update:checked="(val) => miscFields.updateValue(field.key, val, field.type)"
                                             >
                                                 {{ field.label || field.key }}
@@ -195,6 +195,7 @@
                                             :model-value="miscFields.getValue(field.key) ?? ''"
                                             :placeholder="field.placeholder || ''"
                                             :rows="3"
+                                            :label="getFieldLabel(field)"
                                             full-width
                                             @update:model-value="(val) => miscFields.updateValue(field.key, val, field.type)"
                                         />
@@ -206,6 +207,7 @@
                                             :model-value="miscFields.getValue(field.key) ?? ''"
                                             :placeholder="field.placeholder || t('agora', 'Enter JSON data')"
                                             :rows="3"
+                                            :label="getFieldLabel(field)"
                                             full-width
                                             @update:model-value="(val) => {
                                                 try {
@@ -226,7 +228,7 @@
                                             :reduce="(option: any) => option"
                                             :clearable="true"
                                             :placeholder="t('Select an option')"
-                                            :label-outside="true"
+                                            :label="getFieldLabel(field)"
                                             :input-label="getFieldLabel(field)"
                                             full-width
                                             @update:model-value="(val) => miscFields.updateValue(field.key, val, field.type)"
@@ -276,7 +278,7 @@
                                             :model-value="getSelectedLocationOption(field.key)"
                                             :options="locationOptions"
                                             :clearable="true"
-                                            :label-outside="true"
+                                            :label="getFieldLabel(field)"
                                             :input-label="getFieldLabel(field)"
                                             :placeholder="t('Select location')"
                                             full-width
@@ -290,7 +292,7 @@
                                             :model-value="getSelectedCategoryOption(field.key)"
                                             :options="categoryOptions"
                                             :clearable="true"
-                                            :label-outside="true"
+                                            :label="getFieldLabel(field)"
                                             :input-label="getFieldLabel(field)"
                                             :placeholder="t('Select category')"
                                             full-width

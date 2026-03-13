@@ -31,6 +31,14 @@
     "extends @nextcloud/browserslist-config"
   ],
   "dependencies": {
+    "@fullcalendar/core": "^6.1.20",
+    "@fullcalendar/daygrid": "^6.1.20",
+    "@fullcalendar/interaction": "^6.1.20",
+    "@fullcalendar/list": "^6.1.20",
+    "@fullcalendar/resource": "^6.1.20",
+    "@fullcalendar/resource-timeline": "^6.1.20",
+    "@fullcalendar/timegrid": "^6.1.20",
+    "@fullcalendar/vue3": "^6.1.20",
     "@iconify-icons/mdi": "^1.2.48",
     "@iconify/vue": "^5.0.0",
     "@nextcloud/auth": "^2.5.1",

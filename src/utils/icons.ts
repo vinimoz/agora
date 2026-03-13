@@ -562,6 +562,7 @@ export const InquiryOptionIcons = {
   History: makeIconComponent(History, '#607D8B'),
   ClockAlert: makeIconComponent(ClockAlertOutline, '#607D8B'),  // Using clock-alert-outline
   TextBox: makeIconComponent(TextBox, '#607D8B'),
+  Layers: makeIconComponent(Layers, '#5D4037'),
 
 
   ThumbUp: makeIconComponent(ThumbUpOutline, '#4CAF50'),

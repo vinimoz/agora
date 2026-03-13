@@ -997,31 +997,33 @@ actions: {
     // Enhanced updateMiscField with type validation
     async updateMiscField(key: string, value: {key: string, value:string}): Promise<void> {
         // Validate against field configuration if exists
-        const fieldConfig = this.miscFields.find(f => f.key === key)
-        if (fieldConfig) {
-            if (fieldConfig.type === 'number' && value && isNaN(Number(value))) {
-                showError(t('agora', '{field} must be a number', { field: fieldConfig.label }))
-                return
+        if (this.miscFields && Array.isArray(this.miscFields)) {
+            const fieldConfig = this.miscFields.find(f => f.key === key)
+            if (fieldConfig) {
+                if (fieldConfig.type === 'number' && value && isNaN(Number(value))) {
+                    showError(t('agora', '{field} must be a number', { field: fieldConfig.label }))
+                    return
+                }
+
+                if (fieldConfig.options && !fieldConfig.options.some(opt => opt.value === value)) {
+                    showError(t('agora', 'Invalid value for {field}', { field: fieldConfig.label }))
+                    return
+                }
             }
 
-            if (fieldConfig.options && !fieldConfig.options.some(opt => opt.value === value)) {
-                showError(t('agora', 'Invalid value for {field}', { field: fieldConfig.label }))
-                return
+            try {
+                await OptionsAPI.updateOptionMiscField(this.id, { key, value })
+                this.miscFields[key] = value
+            } catch (error) {
+                if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+                    return
+                }
+                Logger.error('Error updating option misc field:', {
+                    error,
+                    state: this.$state,
+                })
+                throw error
             }
-        }
-
-        try {
-            await OptionsAPI.updateOptionMiscField(this.id, { key, value })
-            this.miscFields[key] = value
-        } catch (error) {
-            if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-                return
-            }
-            Logger.error('Error updating option misc field:', {
-                error,
-                state: this.$state,
-            })
-            throw error
         }
     }
 }
