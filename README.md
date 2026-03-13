@@ -94,10 +94,10 @@ make setup-build # Runtime environment
 npm run build    # Compile JS
 make appstore    # Full build
 occ app:enable agora
-```
+
+---
 
 ## 🖼️ Screenshots
-
 
 | Creation | Edit Inquiry | Edit Group | Group view | Group view 2 | Inquiry Type | Family | Grid View | Grid 2 | List View |  Settings | Settings Inquiry | Template 
 | :-------: | :----------: | :-----------: | :-----: | :-------: | :-----: | :-------: | :------: | :---------------: |  :------: |
@@ -108,7 +108,7 @@ occ app:enable agora
 ## 📚 Documentation
 
 | Document | Description | Link |
-|:-:|:-:|:-:|
+|:--------:|:-----------:|:----:|
 | **👤 User Guide** | Complete user manual with step-by-step instructions | [📖 USER_GUIDE.md](docs/USER_GUIDE.md) |
 | **🔧 Template Guide** | Template configuration for administrators | [📘 template_guide.md](docs/template_guide.md) |
 | **🔌 API Guide** | REST API documentation for developers | [🔌 API_v1.0.md](docs/API_v1.0.md) |
