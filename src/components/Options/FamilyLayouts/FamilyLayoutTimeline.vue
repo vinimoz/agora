@@ -59,16 +59,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, nextTick } from 'vue'
+import { ref, computed, watch, nextTick } from 'vue'
 import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
 import { DateTime } from 'luxon'
 import { InquiryOptionIcons } from '../../../utils/icons.ts'
-import { getOptionTypeIconComponent, getOptionTypeFamily } from '../../../helpers/modules/InquiryOptionHelper'
+import { getOptionTypeFamily } from '../../../helpers/modules/InquiryOptionHelper'
 import type { Option } from '../../../Types/index.ts'
 import { useOptionsStore } from '../../../stores/options'
-import { useInquiryStore } from '../../../stores/inquiry'
 
 // FullCalendar imports
 import FullCalendar from '@fullcalendar/vue3'
@@ -80,7 +79,6 @@ import resourceTimelinePlugin from '@fullcalendar/resource-timeline' // 👈 key
 
 const props = defineProps<{
 	options: Option[]
-	inquiryId?: number
 }>()
 
 const emit = defineEmits<{
@@ -89,12 +87,6 @@ const emit = defineEmits<{
 
 // Stores
 const optionsStore = useOptionsStore()
-let inquiryStore
-try {
-	inquiryStore = useInquiryStore()
-} catch (e) {
-	inquiryStore = { inquiry: null }
-}
 
 // Calendar ref
 const calendarRef = ref<InstanceType<typeof FullCalendar> | null>(null)

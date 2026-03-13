@@ -496,9 +496,6 @@ export function useMiscFields(
 
             // Call store method
             if (typeof store.updateMiscField === 'function') {
-                console.log(" SAVE TO STORE FIELD KEY ",fieldKey)
-                console.log(" SAVE TO STORE STRING VALUE ",stringValue)
-
                 await store.updateMiscField(fieldKey, stringValue)
             }
         } catch (e) {
@@ -518,8 +515,6 @@ export function useMiscFields(
             const promises = Object.entries(state.values.value).map(([key, value]) => {
                 const field = fields.value.find(f => f.key === key)
                 const stringValue = formatValueForStorage(value, field?.type || 'string')
-                console.log(" SAVE ALL FIELD KEY ",key)
-                console.log(" SAVE ALL STRING VALUE ",stringValue)
                 return store.updateMiscField(key, stringValue)
             })
 
