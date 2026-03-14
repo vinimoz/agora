@@ -55,6 +55,9 @@ class Version02070020260102120000 extends SimpleMigrationStep
         $messages = $this->tableManager->createTables();
         $this->logInfo($messages, 'runMigration:  ');
 
+        $renameMessages = $this->tableManager->renameUniqueIndices($this->schema);
+        $this->logInfo($renameMessages, 'renameUniqueIndices: ');
+
         if (!($this->schema instanceof ISchemaWrapper)) {
             return null;
         }

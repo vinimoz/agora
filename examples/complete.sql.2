@@ -228,97 +228,49 @@ INSERT INTO oc_agora_inquiries (id, cover_id, type, title, description, location
 -- Table: oc_agora_options (new)
 -- ============================
 
--- ============================
--- Table: oc_agora_options (corrected)
--- ============================
-
 INSERT INTO oc_agora_options (id, title, target_id, parent_id, type, access, text, owner, owned_group, created, updated, show_results, deleted, archived, option_status, allow_comment, support_feature, family, sort_order) VALUES
--- Options for inquiry 5001 (proposal) – now with correct family and support_feature
-(10001, 'Soutenir la piste cyclable', 5001, 0, 'proposal', 'open', 'Je soutiens ce projet de pistes cyclables.', 'admin', '', UNIX_TIMESTAMP()-86400*195, UNIX_TIMESTAMP()-86400*195, 'always', 0, 0, 'active', 1, 'ternary', 'proposal', 1),
-(10002, 'S''opposer à la piste cyclable', 5001, 0, 'proposal', 'open', 'Je suis contre ce projet pour des raisons de coût.', 'moderator', '', UNIX_TIMESTAMP()-86400*190, UNIX_TIMESTAMP()-86400*190, 'always', 0, 0, 'active', 1, 'ternary', 'proposal', 2),
+-- Options for inquiry 5001 (proposal)
+(10001, 'Soutenir la piste cyclable', 5001, 0, 'proposal', 'open', 'Je soutiens ce projet de pistes cyclables.', 'admin', '', UNIX_TIMESTAMP()-86400*195, UNIX_TIMESTAMP()-86400*195, 'always', 0, 0, 'active', 1, 'binary', 'deliberative', 1),
+(10002, 'S''opposer à la piste cyclable', 5001, 0, 'proposal', 'open', 'Je suis contre ce projet pour des raisons de coût.', 'moderator', '', UNIX_TIMESTAMP()-86400*190, UNIX_TIMESTAMP()-86400*190, 'always', 0, 0, 'active', 1, 'binary', 'deliberative', 2),
 
--- Options for inquiry 5002 (debate)
+-- Options for inquiry 5002 (debate) - positions
 (10003, 'Pour l''interdiction des voitures', 5002, 0, 'position_for', 'open', 'Il faut interdire les voitures en vieille ville pour réduire la pollution.', 'test', '', UNIX_TIMESTAMP()-86400*145, UNIX_TIMESTAMP()-86400*145, 'always', 0, 0, 'active', 1, 'ternary', 'debate', 1),
 (10004, 'Contre l''interdiction', 5002, 0, 'position_against', 'open', 'Cela pénaliserait les commerces et les riverains.', 'admin', '', UNIX_TIMESTAMP()-86400*144, UNIX_TIMESTAMP()-86400*144, 'always', 0, 0, 'active', 1, 'ternary', 'debate', 2),
 
 -- Options for inquiry 5003 (project)
-(10005, 'Soutenir le projet solaire', 5003, 0, 'proposal', 'open', 'Je soutiens ce projet.', 'test2', '', UNIX_TIMESTAMP()-86400*95, UNIX_TIMESTAMP()-86400*95, 'always', 0, 0, 'active', 1, 'ternary', 'proposal', 1),
+(10005, 'Soutenir le projet solaire', 5003, 0, 'proposal', 'open', 'Je soutiens ce projet.', 'test2', '', UNIX_TIMESTAMP()-86400*95, UNIX_TIMESTAMP()-86400*95, 'always', 0, 0, 'active', 1, 'binary', 'deliberative', 1),
 
 -- Options for inquiry 5004 (petition)
-(10006, 'Signer la pétition', 5004, 0, 'proposal', 'open', 'Je soutiens la protection de la rive.', 'moderator', '', UNIX_TIMESTAMP()-86400*75, UNIX_TIMESTAMP()-86400*75, 'always', 0, 0, 'active', 1, 'ternary', 'proposal', 1),
+(10006, 'Signer la pétition', 5004, 0, 'proposal', 'open', 'Je soutiens la protection de la rive.', 'moderator', '', UNIX_TIMESTAMP()-86400*75, UNIX_TIMESTAMP()-86400*75, 'always', 0, 0, 'active', 1, 'binary', 'deliberative', 1),
 
--- Option for inquiry 5006 (suggestion) – replaced with valid type 'message'
-(10007, 'Suggestion acceptée', 5006, 0, 'message', 'open', 'Installer des parois anti-bruit', 'admin', '', UNIX_TIMESTAMP()-86400*50, UNIX_TIMESTAMP()-86400*50, 'always', 0, 0, 'active', 1, 'none', 'debate', 1),
+-- Options for inquiry 5006 (suggestion)
+(10007, 'Suggestion acceptée', 5006, 0, 'suggestion', 'open', 'Installer des parois anti-bruit', 'admin', '', UNIX_TIMESTAMP()-86400*50, UNIX_TIMESTAMP()-86400*50, 'always', 0, 0, 'active', 1, 'binary', 'deliberative', 1),
 
 -- Options for inquiry 5007 (proposal)
-(10008, 'Planter des arbres', 5007, 0, 'proposal', 'open', 'Je soutiens le projet de reforestation.', 'test', '', UNIX_TIMESTAMP()-86400*35, UNIX_TIMESTAMP()-86400*35, 'always', 0, 0, 'active', 1, 'ternary', 'proposal', 1),
+(10008, 'Planter des arbres', 5007, 0, 'proposal', 'open', 'Je soutiens le projet de reforestation.', 'test', '', UNIX_TIMESTAMP()-86400*35, UNIX_TIMESTAMP()-86400*35, 'always', 0, 0, 'active', 1, 'binary', 'deliberative', 1),
 
 -- Options for inquiry 5009 (project)
-(10009, 'Créer le jardin', 5009, 0, 'proposal', 'open', 'Je soutiens le jardin partagé.', 'test3', '', UNIX_TIMESTAMP()-86400*25, UNIX_TIMESTAMP()-86400*25, 'always', 0, 0, 'active', 1, 'ternary', 'proposal', 1),
+(10009, 'Créer le jardin', 5009, 0, 'proposal', 'open', 'Je soutiens le jardin partagé.', 'test3', '', UNIX_TIMESTAMP()-86400*25, UNIX_TIMESTAMP()-86400*25, 'always', 0, 0, 'active', 1, 'binary', 'deliberative', 1),
 
--- Option for inquiry 5010 (proposal)
-(10010, 'Installer une serre', 5010, 0, 'proposal', 'open', 'Je soutiens cette extension.', 'test2', '', UNIX_TIMESTAMP()-86400*25, UNIX_TIMESTAMP()-86400*25, 'always', 0, 0, 'active', 1, 'ternary', 'proposal', 1),
+-- Options for inquiry 5010 (proposal)
+(10010, 'Installer une serre', 5010, 0, 'proposal', 'open', 'Je soutiens cette extension.', 'test2', '', UNIX_TIMESTAMP()-86400*25, UNIX_TIMESTAMP()-86400*25, 'always', 0, 0, 'active', 1, 'binary', 'deliberative', 1),
 
--- Option for inquiry 5012 (suggestion) – replaced with valid type 'message'
-(10011, 'Suggestion GPS', 5012, 0, 'message', 'open', 'Ajouter un système GPS', 'admin', '', UNIX_TIMESTAMP()-86400*25, UNIX_TIMESTAMP()-86400*25, 'always', 0, 0, 'active', 1, 'none', 'debate', 1),
+-- Options for inquiry 5012 (suggestion)
+(10011, 'Suggestion GPS', 5012, 0, 'suggestion', 'open', 'Ajouter un système GPS', 'admin', '', UNIX_TIMESTAMP()-86400*25, UNIX_TIMESTAMP()-86400*25, 'always', 0, 0, 'active', 1, 'binary', 'deliberative', 1),
 
 -- Options for inquiry 5013 (petition)
-(10012, 'Signer la pétition', 5013, 0, 'proposal', 'open', 'Je soutiens l''interdiction des jet-skis.', 'test', '', UNIX_TIMESTAMP()-86400*22, UNIX_TIMESTAMP()-86400*22, 'always', 0, 0, 'active', 1, 'ternary', 'proposal', 1),
+(10012, 'Signer la pétition', 5013, 0, 'proposal', 'open', 'Je soutiens l''interdiction des jet-skis.', 'test', '', UNIX_TIMESTAMP()-86400*22, UNIX_TIMESTAMP()-86400*22, 'always', 0, 0, 'active', 1, 'binary', 'deliberative', 1),
 
--- Options for inquiry 5014 (debate)
+-- Options for inquiry 5014 (debate) - positions
 (10013, 'Pour la prolongation', 5014, 0, 'position_for', 'open', 'Cela aide les parents.', 'test3', '', UNIX_TIMESTAMP()-86400*18, UNIX_TIMESTAMP()-86400*18, 'always', 0, 0, 'active', 1, 'ternary', 'debate', 1),
 (10014, 'Contre la prolongation', 5014, 0, 'position_against', 'open', 'Cela surcharge les enfants.', 'admin', '', UNIX_TIMESTAMP()-86400*17, UNIX_TIMESTAMP()-86400*17, 'always', 0, 0, 'active', 1, 'ternary', 'debate', 2),
 
 -- Options for inquiry 5015 (proposal)
-(10015, 'Toitures végétalisées', 5015, 0, 'proposal', 'open', 'Je soutiens les toits verts.', 'test2', '', UNIX_TIMESTAMP()-86400*14, UNIX_TIMESTAMP()-86400*14, 'always', 0, 0, 'active', 1, 'ternary', 'proposal', 1),
-
--- ============================================
--- Structure family (for inquiry 5001)
--- ============================================
-(10021, 'Chapter 1: General Provisions', 5001, 0, 'chapter', 'open', 'Definitions and scope of the cycling network expansion.', 'admin', '', UNIX_TIMESTAMP()-86400*190, UNIX_TIMESTAMP()-86400*190, 'always', 0, 0, 'active', 0, 'none', 'structure', 1),
-(10022, 'Section 1.1: Definitions', 5001, 10021, 'section', 'open', 'Terms used in this proposal.', 'admin', '', UNIX_TIMESTAMP()-86400*189, UNIX_TIMESTAMP()-86400*189, 'always', 0, 0, 'active', 0, 'none', 'structure', 1),
-(10023, 'Article 1.1.1 – Cycle lane width', 5001, 10022, 'article', 'open', 'Cycle lanes must be at least 2.0 meters wide.', 'test', '', UNIX_TIMESTAMP()-86400*188, UNIX_TIMESTAMP()-86400*188, 'always', 0, 0, 'active', 1, 'none', 'structure', 1),
-(10024, 'Amendment: Increase width to 2.5m', 5001, 10023, 'amendment', 'open', '{"article_ref":10023,"proposed_text":"… at least 2.5 meters wide."}', 'test2', '', UNIX_TIMESTAMP()-86400*187, UNIX_TIMESTAMP()-86400*187, 'always', 0, 0, 'active', 1, 'ternary', 'structure', 1),
-
--- ============================================
--- Consensus family (for inquiry 5014)
--- ============================================
-(10025, 'Do you support longer school hours?', 5014, 0, 'consultation_question', 'open', 'Please indicate your level of support.', 'moderator', '', UNIX_TIMESTAMP()-86400*17, UNIX_TIMESTAMP()-86400*17, 'always', 0, 0, 'active', 1, 'none', 'consensus', 1),
-(10026, 'Yes, strongly support', 5014, 10025, 'poll_option', 'open', 'Fully in favour', 'test', '', UNIX_TIMESTAMP()-86400*16, UNIX_TIMESTAMP()-86400*16, 'always', 0, 0, 'active', 1, 'binary', 'consensus', 1),
-(10027, 'Yes, with conditions', 5014, 10025, 'poll_option', 'open', 'Support only if childcare is provided', 'test3', '', UNIX_TIMESTAMP()-86400*15, UNIX_TIMESTAMP()-86400*15, 'always', 0, 0, 'active', 1, 'binary', 'consensus', 2),
-(10028, 'No, against', 5014, 10025, 'poll_option', 'open', 'Oppose any extension', 'admin', '', UNIX_TIMESTAMP()-86400*14, UNIX_TIMESTAMP()-86400*14, 'always', 0, 0, 'active', 1, 'binary', 'consensus', 3),
-
--- ============================================
--- Workflow family (for inquiry 5009)
--- ============================================
-(10016, 'Workflow: Shared Garden Creation', 5009, 0, 'workflow_item', 'open', '{"priority":"high","assigned_to":"test3","due_date":"2025-08-01"}', 'admin', '', UNIX_TIMESTAMP()-86400*20, UNIX_TIMESTAMP()-86400*20, 'always', 0, 0, 'active', 1, 'binary', 'workflow', 1),
-(10017, 'Transition: Draft → In Progress', 5009, 10016, 'workflow_transition', 'open', '{"from_status":"draft","to_status":"in_progress","justification":"Work started"}', 'admin', '', UNIX_TIMESTAMP()-86400*19, UNIX_TIMESTAMP()-86400*19, 'always', 0, 0, 'active', 0, 'none', 'workflow', 2),
-(10018, 'Blocker: Permit delay', 5009, 10016, 'workflow_blocker', 'open', '{"severity":"major","reason":"City permit not yet issued"}', 'test2', '', UNIX_TIMESTAMP()-86400*18, UNIX_TIMESTAMP()-86400*18, 'always', 0, 0, 'active', 1, 'binary', 'workflow', 3),
-
--- ============================================
--- Decision family (for inquiry 5008)
--- ============================================
-(10029, 'Official Decision: Tree Planting Approved', 5008, 0, 'official_result', 'open', '{"resolution":"approved","effective_date":"2025-04-01","budget":"450000 CHF"}', 'official', '', UNIX_TIMESTAMP()-86400*37, UNIX_TIMESTAMP()-86400*37, 'always', 0, 0, 'active', 1, 'none', 'decision', 1);
-
-
--- Support for the workflow blocker
-INSERT INTO oc_agora_supports (inquiry_id, option_id, user_id, value, created, support_hash) VALUES
-(5009, 10018, 'admin', 1, UNIX_TIMESTAMP()-86400*18, MD5(CONCAT('5009','admin','10018'))),
-(5009, 10018, 'test', 1, UNIX_TIMESTAMP()-86400*17, MD5(CONCAT('5009','test','10018')));
-
--- Support for poll options (binary)
-INSERT INTO oc_agora_supports (inquiry_id, option_id, user_id, value, created, support_hash) VALUES
-(5014, 10026, 'test', 1, UNIX_TIMESTAMP()-86400*15, MD5(CONCAT('5014','test','10026'))),
-(5014, 10026, 'test2', 1, UNIX_TIMESTAMP()-86400*14, MD5(CONCAT('5014','test2','10026'))),
-(5014, 10027, 'test3', 1, UNIX_TIMESTAMP()-86400*13, MD5(CONCAT('5014','test3','10027'))),
-(5014, 10028, 'admin', 1, UNIX_TIMESTAMP()-86400*12, MD5(CONCAT('5014','admin','10028')));
-
-
+(10015, 'Toitures végétalisées', 5015, 0, 'proposal', 'open', 'Je soutiens les toits verts.', 'test2', '', UNIX_TIMESTAMP()-86400*14, UNIX_TIMESTAMP()-86400*14, 'always', 0, 0, 'active', 1, 'binary', 'deliberative', 1);
 
 -- ============================
 -- Table: oc_agora_supports (corrected with new option_ids)
 -- ============================
-
 
 INSERT INTO oc_agora_supports (inquiry_id, option_id, user_id, value, created, support_hash) VALUES
 -- Support for inquiry 5001 (proposal) - binary: +1 for, -1 against
@@ -350,8 +302,8 @@ INSERT INTO oc_agora_supports (inquiry_id, option_id, user_id, value, created, s
 -- Support for inquiry 5013 (petition) - binary
 (5013, 10012, 'test3', 1, UNIX_TIMESTAMP()-86400*22, MD5(CONCAT('5013','test3','10012'))),
 (5013, 10012, 'test', -1, UNIX_TIMESTAMP()-86400*21, MD5(CONCAT('5013','test','10012'))),
--- Support for inquiry 5015 (proposal) - binary
 
+-- Support for inquiry 5015 (proposal) - binary
 (5015, 10015, 'admin', 1, UNIX_TIMESTAMP()-86400*14, MD5(CONCAT('5015','admin','10015'))),
 
 -- Inquiry-level support (option_id = 0) for inquiries with support_feature 'binary'

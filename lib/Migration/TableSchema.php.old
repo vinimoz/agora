@@ -288,53 +288,53 @@ abstract class TableSchema
      */
     public const UNIQUE_INDICES = [
         InquiryGroupMisc::TABLE => [
-            'agora_uniq_group_misc' => ['columns' => ['inquiry_group_id', 'key']],
+            'UNIQ_group_misc' => ['columns' => ['inquiry_group_id', 'key']],
         ],
         InquiryType::TABLE => [
-            'agora_uniq_inquiry_type' => ['columns' => ['inquiry_type']],
+            'UNIQ_inquiry_type' => ['columns' => ['inquiry_type']], // Changed from 'name' to 'inquiry_type'
         ],
         InquiryOptionType::TABLE => [
-            'agora_uniq_option_type' => ['columns' => ['option_type']],
+            'UNIQ_option_type' => ['columns' => ['option_type']], // Changed from 'name' to 'option_type'
         ],
         InquiryGroupType::TABLE => [
-            'agora_uniq_group_type' => ['columns' => ['group_type']],
+            'UNIQ_group_type' => ['columns' => ['group_type']], // Changed from 'name' to 'group_type'
         ],
         Log::TABLE => [
-            'agora_uniq_log_unprocessed' => ['columns' => ['processed', 'inquiry_id', 'user_id', 'message_id']],
+            'UNIQ_unprocessed' => ['columns' => ['processed', 'inquiry_id', 'user_id', 'message_id']],
         ],
         Subscription::TABLE => [
-            'agora_uniq_subscription' => ['columns' => ['inquiry_id', 'user_id']],
+            'UNIQ_subscription' => ['columns' => ['inquiry_id', 'user_id']],
         ],
         Share::TABLE => [
-            'agora_uniq_shares' => ['columns' => ['inquiry_id', 'group_id', 'user_id']],
-            'agora_uniq_token' => ['columns' => ['token']],
+            'UNIQ_shares' => ['columns' => ['inquiry_id', 'group_id', 'user_id']],
+            'UNIQ_token' => ['columns' => ['token']],
         ],
         Support::TABLE => [
-            'agora_uniq_supports' => ['columns' => ['inquiry_id', 'option_id', 'user_id']],
+            'UNIQ_supports' => ['columns' => ['inquiry_id', 'option_id', 'user_id']],
         ],
         Preferences::TABLE => [
-            'agora_uniq_preferences' => ['columns' => ['user_id']],
+            'UNIQ_preferences' => ['columns' => ['user_id']],
         ],
         Watch::TABLE => [
-            'agora_uniq_watch' => ['columns' => ['inquiry_id', 'table', 'session_id']],
+            'UNIQ_watch' => ['columns' => ['inquiry_id', 'table', 'session_id']],
         ],
         InquiryGroup::RELATION_TABLE => [
-            'agora_uniq_inquiry_group_relation' => ['columns' => ['inquiry_id', 'group_id']],
+            'UNIQ_inquiry_group_relation' => ['columns' => ['inquiry_id', 'group_id']],
         ],
         InquiryMisc::TABLE => [
-            'agora_uniq_inquiry_misc' => ['columns' => ['inquiry_id', 'key']],
+            'UNIQ_inquiry_misc' => ['columns' => ['inquiry_id', 'key']],
         ],
         OptionMisc::TABLE => [
-            'agora_uniq_option_misc' => ['columns' => ['option_id', 'key']],
+            'UNIQ_option_misc' => ['columns' => ['option_id', 'key']],
         ],
         InquiryFamily::TABLE => [
-            'agora_uniq_family_inquiry_type' => ['columns' => ['family_type']],
+            'UNIQ_family_inquiry_type' => ['columns' => ['family_type']],
         ],
         OptionFamily::TABLE => [
-            'agora_uniq_family_option_type' => ['columns' => ['family_type']],
+            'UNIQ_family_option_type' => ['columns' => ['family_type']],
         ],
         InquiryStatus::TABLE => [
-            'agora_uniq_inquiry_status' => ['columns' => ['inquiry_type', 'status_key']],
+            'UNIQ_inquiry_status' => ['columns' => ['inquiry_type', 'status_key']],
         ],
     ];
 

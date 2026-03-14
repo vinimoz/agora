@@ -15,7 +15,7 @@ It enables communities and organizations to collaborate on **proposals, debates,
 ---
 
 ## 🚀 What’s New in 1.7.0
-Update: Introduction of a full Options system enabling real decision-making workflows (vote, choice, consultation) directly inside inquiries and template creation with IA assistant.
+Update: Introduction of a full Options system enabling real decision-making (supports, comments, and much more) directly inside inquiries and template creation with IA assistant.
 
 ## 🚀🗳 Options
 
@@ -87,13 +87,13 @@ Agora introduces **ready-to-use templates** to quickly bootstrap participatory s
 Install directly from the [Nextcloud App Store](https://apps.nextcloud.com/apps/agora).
 
 ### From Git
-git clone https://github.com/vinimoz/agora.git
-cd agora
-make setup-dev   # Dev environment
-make setup-build # Runtime environment
-npm run build    # Compile JS
-make appstore    # Full build
-occ app:enable agora
+* git clone https://github.com/vinimoz/agora.git
+* cd agora
+* make setup-dev   # Dev environment
+* make setup-build # Runtime environment
+* npm run build    # Compile JS
+* make appstore    # Full build
+* occ app:enable agora
 
 ---
 

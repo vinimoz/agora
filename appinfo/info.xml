@@ -27,7 +27,7 @@
         - 🧮 Quorums and workflow automation  
         - 🧰 Better permission control and moderation tools  
         ]]></description>
-    <version>1.7.0-rc1</version>
+    <version>1.7.0</version>
     <licence>AGPL-3.0-or-later</licence>
     <author>Vincent TRAPPE</author>
     <documentation>

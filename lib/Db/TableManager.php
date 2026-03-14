@@ -27,6 +27,7 @@ use OCA\Agora\Helper\Hash;
 use OCA\Agora\Migration\TableSchema;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IConfig;
+use OCP\DB\ISchemaWrapper;
 use OCP\IDBConnection;
 use OCP\Migration\IOutput;
 use OCP\DB\Types;
@@ -1357,4 +1358,146 @@ return $messages;
 
         return $messages;
     }
+
+    /**
+     * Rename unique indices to use app-specific prefix to avoid collisions with other apps.
+     * Drops old indices (with generic names) and adds new ones with 'agora_' prefix.
+     *
+     * @param ISchemaWrapper $schema The schema to modify
+     * @return string[] Messages
+     */
+    /**
+ * Rename unique indices to use app-specific prefix to avoid collisions with other apps.
+ * Drops old indices (with generic names) and adds new ones with 'agora_' prefix.
+ *
+ * @param ISchemaWrapper $schema The schema to modify
+ * @return string[] Messages
+ */
+public function renameUniqueIndices(ISchemaWrapper $schema): array
+{
+    $messages = [];
+
+    // Mapping from old index name to new index name and columns per table
+    $indexMapping = [
+        'oc_agora_log' => [
+            'old' => 'UNIQ_unprocessed',
+            'new' => 'agora_uniq_log_unprocessed',
+            'columns' => ['processed', 'inquiry_id', 'user_id', 'message_id'],
+        ],
+        'oc_agora_share' => [
+            [
+                'old' => 'UNIQ_shares',
+                'new' => 'agora_uniq_shares',
+                'columns' => ['inquiry_id', 'group_id', 'user_id'],
+            ],
+            [
+                'old' => 'UNIQ_token',
+                'new' => 'agora_uniq_token',
+                'columns' => ['token'],
+            ],
+        ],
+        'oc_agora_support' => [
+            'old' => 'UNIQ_supports',
+            'new' => 'agora_uniq_supports',
+            'columns' => ['inquiry_id', 'option_id', 'user_id'],
+        ],
+        'oc_agora_subscription' => [
+            'old' => 'UNIQ_subscription',
+            'new' => 'agora_uniq_subscription',
+            'columns' => ['inquiry_id', 'user_id'],
+        ],
+        'oc_agora_watch' => [
+            'old' => 'UNIQ_watch',
+            'new' => 'agora_uniq_watch',
+            'columns' => ['inquiry_id', 'table', 'session_id'],
+        ],
+        'oc_agora_preferences' => [
+            'old' => 'UNIQ_preferences',
+            'new' => 'agora_uniq_preferences',
+            'columns' => ['user_id'],
+        ],
+        'oc_agora_inq_group_misc' => [
+            'old' => 'UNIQ_group_misc',
+            'new' => 'agora_uniq_group_misc',
+            'columns' => ['inquiry_group_id', 'key'],
+        ],
+        'oc_agora_inq_type' => [
+            'old' => 'UNIQ_inquiry_type',
+            'new' => 'agora_uniq_inquiry_type',
+            'columns' => ['inquiry_type'],
+        ],
+        'oc_agora_inq_option_type' => [
+            'old' => 'UNIQ_option_type',
+            'new' => 'agora_uniq_option_type',
+            'columns' => ['option_type'],
+        ],
+        'oc_agora_inq_group_type' => [
+            'old' => 'UNIQ_group_type',
+            'new' => 'agora_uniq_group_type',
+            'columns' => ['group_type'],
+        ],
+        'oc_agora_inq_group_relation' => [
+            'old' => 'UNIQ_inquiry_group_relation',
+            'new' => 'agora_uniq_inquiry_group_relation',
+            'columns' => ['inquiry_id', 'group_id'],
+        ],
+        'oc_agora_inq_misc' => [
+            'old' => 'UNIQ_inquiry_misc',
+            'new' => 'agora_uniq_inquiry_misc',
+            'columns' => ['inquiry_id', 'key'],
+        ],
+        'oc_agora_opt_misc' => [
+            'old' => 'UNIQ_option_misc',
+            'new' => 'agora_uniq_option_misc',
+            'columns' => ['option_id', 'key'],
+        ],
+        'oc_agora_inq_families' => [
+            'old' => 'UNIQ_family_inquiry_type',
+            'new' => 'agora_uniq_family_inquiry_type',
+            'columns' => ['family_type'],
+        ],
+        'oc_agora_opt_families' => [
+            'old' => 'UNIQ_family_option_type',
+            'new' => 'agora_uniq_family_option_type',
+            'columns' => ['family_type'],
+        ],
+        'oc_agora_inq_status' => [
+            'old' => 'UNIQ_inquiry_status',
+            'new' => 'agora_uniq_inquiry_status',
+            'columns' => ['inquiry_type', 'status_key'],
+        ],
+    ];
+
+    foreach ($indexMapping as $tableName => $mapping) {
+        if (!$schema->hasTable($tableName)) {
+            continue;
+        }
+        $table = $schema->getTable($tableName);
+
+        // Normalize to array of mappings (handles tables with multiple indices)
+        if (isset($mapping['old'])) {
+            $mapping = [$mapping];
+        }
+
+        foreach ($mapping as $idx) {
+            $oldName = $idx['old'];
+            $newName = $idx['new'];
+            $columns = $idx['columns'];
+
+            // Drop old index if it exists
+            if ($table->hasIndex($oldName)) {
+                $table->dropIndex($oldName);
+                $messages[] = "Dropped old unique index $oldName from $tableName";
+            }
+
+            // Add new unique index if not already present
+            if (!$table->hasIndex($newName)) {
+                $table->addUniqueIndex($columns, $newName);
+                $messages[] = "Added new unique index $newName to $tableName";
+            }
+        }
+    }
+
+    return $messages;
+}
 }
