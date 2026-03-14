@@ -147,7 +147,7 @@ class InquiryGroupTypeMapper extends QBMapper
             ->from(InquiryGroupType::TABLE)
             ->where($qb->expr()->eq('group_type', $qb->createNamedParameter($groupType)));
 
-        $result = $qb->execute()->fetch();
+        $result = $qb->executeQuery()->fetch();
         return $result ? json_decode($result['allowed_inquiry_types'], true) ?? [] : [];
     }
 }

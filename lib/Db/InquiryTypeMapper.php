@@ -140,7 +140,7 @@ class InquiryTypeMapper extends QBMapper
             ->from($this->getTableName())
             ->where($qb->expr()->eq('inquiry_type', $qb->createNamedParameter($type)));
 
-        $result = $qb->execute()->fetch();
+        $result = $qb->executeQuery()->fetch();
 
         return $result['family'];
     }
@@ -157,7 +157,7 @@ class InquiryTypeMapper extends QBMapper
             ->from(InquiryType::TABLE)
             ->where($qb->expr()->eq('inquiry_type', $qb->createNamedParameter($inquiryType)));
 
-        $result = $qb->execute()->fetch();
+        $result = $qb->executeQuery()->fetch();
         return $result ? json_decode($result['allowed_response'], true) ?? [] : [];
     }
 
@@ -173,7 +173,7 @@ class InquiryTypeMapper extends QBMapper
             ->from(InquiryType::TABLE)
             ->where($qb->expr()->eq('inquiry_type', $qb->createNamedParameter($inquiryType)));
 
-        $result = $qb->execute()->fetch();
+        $result = $qb->executeQuery()->fetch();
         return $result ? json_decode($result['allowed_option_type'], true) ?? [] : [];
     }
     /**
@@ -188,7 +188,7 @@ class InquiryTypeMapper extends QBMapper
             ->from(InquiryType::TABLE)
             ->where($qb->expr()->eq('inquiry_type', $qb->createNamedParameter($inquiryType)));
 
-        $result = $qb->execute()->fetch();
+        $result = $qb->executeQuery()->fetch();
         return $result ? json_decode($result['allowed_transformation'], true) ?? [] : [];
     }
 }

@@ -143,7 +143,7 @@ class InquiryOptionTypeMapper extends QBMapper
             ->from(InquiryOptionType::TABLE)
             ->where($qb->expr()->eq('option_type', $qb->createNamedParameter($optionType)));
 
-        $result = $qb->execute()->fetch();
+        $result = $qb->executeQuery()->fetch();
         return $result ? json_decode($result['allowed_response'], true) ?? [] : [];
     }
 
@@ -154,7 +154,7 @@ class InquiryOptionTypeMapper extends QBMapper
             ->from($this->getTableName())
             ->where($qb->expr()->eq('option_type', $qb->createNamedParameter($type)));
 
-        $result = $qb->execute()->fetch();
+        $result = $qb->executeQuery()->fetch();
 
         return $result['family'];
     }
