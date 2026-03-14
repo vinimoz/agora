@@ -396,6 +396,7 @@ OC.L10N.register(
     "Archive" : "Архив",
     "Restore" : "Възстановяне",
     "Add one or change category!" : "Добавете или променете категория!",
+    "View all" : "Виж всички",
     "Create" : "Създаване",
     "View" : "Изглед",
     "Settings" : "Настройки",
