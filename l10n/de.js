@@ -584,6 +584,7 @@ OC.L10N.register(
     "No inquiries in this group yet" : "Bislang keine Anfragen in dieser Gruppe",
     "Add Inquiry to this Group" : "Anfrage dieser Gruppe hinzufügen",
     "Presentation" : "Präsentation",
+    "Show less" : "Weniger anzeigen",
     "Read more" : "Weiterlesen",
     "No inquiries yet" : "Bislang keine Anfragen",
     "Start by creating the first inquiry" : "Zum Beginnen, die erste Anfrage erstellen",
