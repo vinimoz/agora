@@ -76,7 +76,11 @@ const availableGroups = computed(() => {
 })
 
 // State for selected family
-const selectedFamily = ref<string | null>(inquiriesStore.familyType || null)
+// const selectedFamily = ref<string | null>(inquiriesStore.familyType || null)
+const selectedFamily = computed({
+  get: () => inquiriesStore.advancedFilters.familyType || null,
+  set: (value) => inquiriesStore.setFamilyType(value || '')
+})
 
 // Computed for available families
 const inquiryFamilies = computed((): InquiryFamily[] => sessionStore.appSettings.inquiryFamilyTab || [])
@@ -363,6 +367,7 @@ function handleCloseGroupDialog() {
         <NcButton 
          v-if="selectedFamily" 
          class="back-button" 
+         aria-label="t('agora', 'Back to families')"
          @click="clearFamilySelection"
          >
          <span class="back-button__icon">←</span>

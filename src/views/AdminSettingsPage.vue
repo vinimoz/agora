@@ -20,6 +20,7 @@ import {
   AdminEmail,
   AdminModeration,
   AdminJobs,
+  AdminCleanInstance,
   AdminLegal,
   AdminSettings,
   AdminModeratorRights,
@@ -47,6 +48,10 @@ const launchWizard = () => {
 }
 
 const sections = {
+  cleanInstance: {
+    name: t('agora', 'Agora Clean Instance'),
+    description: t('agora', 'Destroy ALL your Agora data'),
+  },
   templateSetup: {
     name: t('agora', 'Template Setup Wizard'),
     description: t('agora', 'Configure your Agora instance using pre-built templates'),
@@ -183,6 +188,11 @@ onMounted(async () => {
 		<AdminPerformance />
 		<AdminInquiriesInNavigation />
 		</NcSettingsSection>
+           <NcSettingsSection v-bind="sections.cleanInstance">
+        <AdminCleanInstance />
+
+        </NcSettingsSection>
+
 		<NcSettingsSection v-bind="sections.jobSettings">
 		<AdminJobs />
 		</NcSettingsSection>

@@ -20,14 +20,7 @@ export const useInquiryGroupsStore = defineStore('inquiryGroups', () => {
   const updating = ref(false)
   const selectedGroupType = ref<string>('')
 
-   const defaultGroupType = computed(() => {
-    const sessionStore = useSessionStore()
-    if (sessionStore.appSettings?.inquiryGroupTypeTab?.length > 0) {
-      return sessionStore.appSettings.inquiryGroupTypeTab[0].group_type
-    }
-    return ''
-  })
-  
+ const defaultGroupType = computed(() => getDefaultGroupTypeFromFamily()) 
   // Current group type to use (selected or default)
   const currentGroupType = computed(() => selectedGroupType.value || defaultGroupType.value)
 
@@ -317,6 +310,26 @@ async function loadGroupFromServer(slug: string): Promise<InquiryGroup | null> {
   }
 }
 
+function getDefaultGroupTypeFromFamily(): string {
+  const sessionStore = useSessionStore()
+  const inquiriesStore = useInquiriesStore()
+
+  const selectedFamily = inquiriesStore.advancedFilters?.familyType
+  const typeTabs = sessionStore.appSettings?.inquiryGroupTypeTab || []
+
+  if (typeTabs.length === 0) return ''
+
+  if (selectedFamily) {
+    const matchingType = typeTabs.find(type => type.family === selectedFamily)
+    if (matchingType) {
+      return matchingType.group_type
+    }
+  }
+
+  // Fallback to first type
+  return typeTabs[0].group_type
+}
+
 /**
  * Load all groups from server (if needed)
  */
@@ -331,7 +344,7 @@ async function fetchAllGroups(): Promise<InquiryGroup[]> {
     if (sessionStore.appSettings.inquiryGroupTypeTab && sessionStore.appSettings.inquiryGroupTypeTab.length > 0) {
     // const index = typeof O !== 'undefined' ? O : 0
     if (sessionStore.appSettings.inquiryGroupTypeTab.length > 0) {
-        this.selectedGroupType = sessionStore.appSettings.inquiryGroupTypeTab[0].group_type
+        this.selectedGroupType =  getDefaultGroupTypeFromFamily()
         }
     }
     inquiryGroups.value = groups

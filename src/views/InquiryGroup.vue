@@ -12,6 +12,7 @@
           <!-- Home Button -->
           <NcButton 
             type="tertiary"
+            aria-label="t('agora', 'Home')"
             class="breadcrumb-home"
             @click="navigateToHome"
           >
@@ -27,6 +28,7 @@
             <NcButton 
               type="tertiary"
               class="breadcrumb-item"
+              aria-label="t('agora', 'Parent')"
               @click="selectGroup(parent)"
             >
               <div class="breadcrumb-item-content">
@@ -100,7 +102,7 @@
           <div class="section-header">
             <h3>{{ sectionTitle }}</h3>
             <div v-if="currentInquiryGroup && canUserEditGroup(currentInquiryGroup)" class="section-actions">
-              <NcButton class="create-button" @click="createInquiryGroup(currentGroupType)">
+              <NcButton class="create-button" arial-label='' @click="createInquiryGroup(currentGroupType)">
                 ➕ {{ t('agora', 'Create Group') }}
               </NcButton>
             </div>

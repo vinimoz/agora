@@ -509,53 +509,53 @@ return isPublicRoute
 			</div>
 
             <!-- Title row with counters -->
-<div class="title-section">
-    <div class="title-header">
-        <!-- Conditional rendering based on readonly -->
-        <template v-if="props.isReadonly">
-            <h1 class="inquiry-title">{{ inquiryStore.title }}</h1>
-        </template>
-        <template v-else>
-            <div class="title-field-container">
-                <NcTextField
-                    v-model="inquiryStore.title"
-                    :label="t('agora', 'Inquiry title')"
-                    :success="inquiryStore.title.length > 0"
-                    :helper-text="t('agora', 'Enter a descriptive title for your inquiry')"
-                >
-                    <template #icon>
-                        <component :is="InquiryGeneralIcons.Edit" :size="20" />
+            <div class="title-section">
+                <div class="title-header">
+                    <!-- Conditional rendering based on readonly -->
+                    <template v-if="props.isReadonly">
+                        <h1 class="inquiry-title">{{ inquiryStore.title }}</h1>
                     </template>
-                </NcTextField>
-            </div>
-        </template>
-    </div>
-    
-    <!-- Counters section - ensure it's always displayed -->
-    <div class="counters-section">
-        <div v-if="canCommentOnInquiry" class="counter-item">
-            <div class="counter-icon">
-                <component :is="InquiryGeneralIcons.Comment" :size="20" />
-            </div>
-            <div class="counter-content">
-                <span class="counter-value">{{ inquiryStore.status.countComments || 0 }}</span>
-                <span class="counter-label">{{ t('agora', 'Comments') }}</span>
-            </div>
-        </div>
+                    <template v-else>
+                        <div class="title-field-container">
+                            <NcTextField
+                                    v-model="inquiryStore.title"
+                                    :label="t('agora', 'Inquiry title')"
+                                    :success="inquiryStore.title.length > 0"
+                                    :helper-text="t('agora', 'Enter a descriptive title for your inquiry')"
+                                    >
+                                    <template #icon>
+                                        <component :is="InquiryGeneralIcons.Edit" :size="20" />
+                                    </template>
+                            </NcTextField>
+                        </div>
+                    </template>
+                </div>
 
-        <div v-if="canSupportInquiry" class="counter-item supports">
-            <SupportFeature
-                :item="inquiryStore"
-                item-type="inquiry"
-                :context="context"
-                :view-only="viewOnlySupportInquiry"
-                :show-quorum="true"
-                :show-details-on-hover="true"
-                :icon-size="20"
-            />
-        </div>
-    </div>
-</div>
+                <!-- Counters section - ensure it's always displayed -->
+                <div class="counters-section">
+                    <div v-if="canCommentOnInquiry" class="counter-item">
+                        <div class="counter-icon">
+                            <component :is="InquiryGeneralIcons.Comment" :size="20" />
+                        </div>
+                        <div class="counter-content">
+                            <span class="counter-value">{{ inquiryStore.status.countComments || 0 }}</span>
+                            <span class="counter-label">{{ t('agora', 'Comments') }}</span>
+                        </div>
+                    </div>
+
+                    <div v-if="canSupportInquiry" class="counter-item supports">
+                        <SupportFeature
+                                :item="inquiryStore"
+                                item-type="inquiry"
+                                :context="context"
+                                :view-only="viewOnlySupportInquiry"
+                                :show-quorum="true"
+                                :show-details-on-hover="true"
+                                :icon-size="20"
+                                />
+                    </div>
+                </div>
+            </div>
             <!-- Metadata section -->
             <div class="metadata-section">
                 <h3 class="section-subtitle">{{ t('agora', 'INQUIRY DETAILS') }}</h3>
@@ -761,960 +761,1102 @@ return isPublicRoute
     background-color: rgba(var(--color-background-darker-rgb), 0.9);
 }
 
-@media (max-width: 768px) {
-    .inquiry-edit-view {
-        padding: 16px;
+    @media (max-width: 768px) {
+        .inquiry-edit-view {
+            padding: 16px;
+        }
+
+        .main-content-section {
+            padding: 24px;
+        }
+
+        .section-id-badge {
+            top: 12px;
+            right: 16px;  // ← Aussi corrigé ici
+                padding: 4px 12px;
+            font-size: 12px;
+        }
     }
-    
+
+
+    .cover-image-section {
+        position: relative;
+        z-index: 1;
+    }
+
+    @media (max-width: 768px) {
+        .inquiry-edit-view {
+            padding: 16px;
+        }
+
+        .global-id-badge {
+            top: 12px;
+            right: 16px;
+            padding: 4px 12px;
+            font-size: 12px;
+        }
+    }
+
+    .cover-image-section {
+        position: relative;
+        z-index: 1;
+    }
+
+    .cover-image-section {
+        width: 100%;
+        margin-bottom: 32px;
+        border-radius: 24px;
+        overflow: hidden;
+        position: relative;
+        transition: all 0.3s ease;
+
+        &:not(.readonly) {
+            cursor: pointer;
+            border: 3px dashed var(--color-border);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+
+            &:hover {
+                border-color: var(--color-primary);
+                transform: translateY(-4px);
+                box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+
+                .cover-image-overlay {
+                    opacity: 1;
+                }
+            }
+        }
+    }
+
+    .cover-image-container {
+        position: relative;
+        width: 100%;
+        height: 400px;
+
+        .cover-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .cover-image-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.4));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+
+            .change-cover-btn {
+                padding: 12px 24px;
+                border-radius: 12px;
+                font-weight: 600;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                background: var(--color-primary-element);
+                border: 2px solid var(--color-primary-element);
+
+                &:hover {
+                    background: var(--color-primary-element-hover);
+                    transform: translateY(-2px);
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+                }
+            }
+        }
+    }
+
+    .cover-image-placeholder {
+        width: 100%;
+        height: 200px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, var(--color-background-dark), var(--color-background-darker));
+        border-radius: 24px;
+        transition: background-color 0.3s ease;
+
+        &:hover {
+            background: linear-gradient(135deg, var(--color-primary-light), var(--color-background-dark));
+        }
+
+        .placeholder-content {
+            text-align: center;
+
+            .placeholder-icon {
+                color: var(--color-primary-element);
+                margin-bottom: 16px;
+            }
+
+            .add-cover-btn {
+                padding: 12px 24px;
+                border-radius: 12px;
+                font-weight: 600;
+                background: var(--color-primary-element);
+                border: 2px solid var(--color-primary-element);
+                margin-bottom: 12px;
+
+                &:hover {
+                    background: var(--color-primary-element-hover);
+                    transform: translateY(-2px);
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                }
+            }
+
+            .placeholder-text {
+                margin-top: 8px;
+                color: var(--color-text-lighter);
+                font-size: 14px;
+                font-style: italic;
+            }
+        }
+    }
+
+    .hidden {
+        display: none;
+    }
+
     .main-content-section {
-        padding: 24px;
+        background: linear-gradient(135deg, var(--color-main-background) 0%, var(--color-background-dark) 100%);
+        border: 2px solid var(--color-border);
+        border-radius: 24px;
+        padding: 32px;
+        margin-bottom: 32px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     }
-    
-    .section-id-badge {
-        top: 12px;
-        right: 16px;  // ← Aussi corrigé ici
-        padding: 4px 12px;
-        font-size: 12px;
+
+    .user-info-section {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        margin-bottom: 32px;
+        padding-bottom: 24px;
+        border-bottom: 2px solid var(--color-border);
+
+        .user-avatar {
+            :deep(.avatardiv) {
+                width: 56px;
+                height: 56px;
+                border: 3px solid var(--color-primary-light);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            }
+        }
+
+        .user-details {
+            flex: 1;
+
+            .user-name {
+                font-size: 20px;
+                font-weight: 700;
+                margin-bottom: 8px;
+                color: var(--color-main-text);
+            }
+
+            .inquiry-type-badge {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                padding: 8px 16px;
+                background: linear-gradient(135deg, var(--color-primary-light), var(--color-background-dark));
+                border: 2px solid var(--color-primary-element);
+                border-radius: 16px;
+                font-size: 14px;
+                font-weight: 600;
+                color: var(--color-primary-element);
+            }
+        }
+    }
+
+    // Title section with counters
+.title-section {
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 2px solid var(--color-border);
+
+    .title-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 24px;
+        width: 100%;
+
+        .title-field-container {
+            flex: 1;
+            min-width: 0;
+
+            :deep(.nc-input) {
+                width: 100%;
+
+                .input-field {
+                    margin-bottom: 0;
+
+                    input {
+                        font-size: 28px;
+                        font-weight: 700;
+                        padding: 12px 16px;
+                        height: auto;
+                        min-height: 56px;
+                        width: 100%;
+                        border: 2px solid transparent;
+                        background: transparent;
+                        transition: all 0.3s ease;
+                        line-height: 1.3;
+
+                        &:not(:disabled) {
+                            border-color: var(--color-border);
+                            background: var(--color-main-background);
+
+                            &:hover {
+                                border-color: var(--color-primary-element);
+                            }
+
+                            &:focus {
+                                border-color: var(--color-primary-element);
+                                box-shadow: 0 0 0 2px var(--color-primary-light);
+                            }
+                        }
+
+                        &:disabled {
+                            color: var(--color-main-text);
+                            -webkit-text-fill-color: var(--color-main-text);
+                            opacity: 1;
+                            background: transparent;
+
+                            &::placeholder {
+                                color: transparent;
+                            }
+                        }
+                    }
+
+                    .input-field__icon {
+                        color: var(--color-primary-element);
+                        margin-left: 12px;
+
+                        svg {
+                            width: 20px;
+                            height: 20px;
+                        }
+                    }
+
+                    .input-field__label {
+                        font-size: 12px;
+                        font-weight: 600;
+                        color: var(--color-text-lighter);
+                        margin-left: 12px;
+                        margin-bottom: 2px;
+                    }
+
+                    .input-field__helper-text {
+                        margin-left: 12px;
+                        margin-top: 2px;
+                        font-size: 11px;
+                        color: var(--color-text-lighter);
+                    }
+                }
+            }
+        }
+
+        .inquiry-title {
+            flex: 1;
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--color-main-text);
+            margin: 0;
+            line-height: 1.3;
+            padding: 8px 0;
+            word-break: break-word;
+        }
+
+        .inquiry-id {
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 13px;
+            color: var(--color-text-lighter);
+            background: var(--color-background-darker);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: 500;
+            white-space: nowrap;
+            letter-spacing: 0.3px;
+            height: fit-content;
+            line-height: 1.4;
+            border: 1px solid var(--color-border);
+        }
+    }
+
+    // Counters section - FIXED ALIGNMENT
+    .counters-section {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 16px;
+        margin-top: 16px;
+
+        .counter-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 16px;
+            background: var(--color-main-background);
+            border: 2px solid var(--color-border);
+            border-radius: 40px; // More pill-like shape
+            transition: all 0.2s ease;
+            min-width: 120px;
+            flex: 0 1 auto;
+
+            &:hover {
+                border-color: var(--color-primary-element);
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            }
+
+            &.supports {
+                border-left: 3px solid var(--squareux-success);
+                
+                &:deep(.support-feature) {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    width: 100%;
+                }
+            }
+
+            .counter-icon {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 28px;
+                height: 28px;
+                background: var(--color-background-dark);
+                border-radius: 50%;
+                flex-shrink: 0;
+
+                :deep(svg) {
+                    width: 16px;
+                    height: 16px;
+                    color: var(--color-primary-element);
+                }
+            }
+
+            .counter-content {
+                display: flex;
+                align-items: baseline;
+                gap: 4px;
+                flex-wrap: wrap;
+
+                .counter-value {
+                    font-size: 11px;
+                    font-weight: 600;
+                    color: var(--color-main-text);
+                    line-height: 1.2;
+                }
+
+                .counter-label {
+                    font-size: 10px;
+                    color: var(--color-text-lighter);
+                    font-weight: 400;
+                    text-transform: uppercase;
+                    letter-spacing: 0.3px;
+                }
+            }
+
+            // Special styling for SupportFeature integration
+            :deep(.support-feature) {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                width: 100%;
+
+                .support-count {
+                    font-size: 16px;
+                    font-weight: 700;
+                    color: var(--color-main-text);
+                }
+
+                .support-label {
+                    font-size: 13px;
+                    color: var(--color-text-lighter);
+                    font-weight: 500;
+                    text-transform: uppercase;
+                    letter-spacing: 0.3px;
+                }
+
+                .support-icon {
+                    width: 28px;
+                    height: 28px;
+                    background: var(--color-background-dark);
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+
+                    svg {
+                        width: 16px;
+                        height: 16px;
+                        color: var(--color-primary-element);
+                    }
+                }
+            }
+        }
     }
 }
 
-
-.cover-image-section {
-    position: relative;
-    z-index: 1;
-}
-
+// Mobile responsiveness
 @media (max-width: 768px) {
-    .inquiry-edit-view {
-        padding: 16px;
-    }
-    
-    .global-id-badge {
-        top: 12px;
-        right: 16px;
-        padding: 4px 12px;
-        font-size: 12px;
+    .title-section {
+        .title-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+
+            .title-field-container {
+                width: 100%;
+
+                :deep(.nc-input) {
+                    .input-field {
+                        input {
+                            font-size: 24px;
+                            padding: 10px 12px;
+                            min-height: 48px;
+                        }
+
+                        .input-field__icon svg {
+                            width: 18px;
+                            height: 18px;
+                        }
+                    }
+                }
+            }
+
+            .inquiry-title {
+                font-size: 26px;
+                width: 100%;
+            }
+
+            .inquiry-id {
+                align-self: flex-start;
+                font-size: 12px;
+                padding: 3px 8px;
+            }
+        }
+
+        .counters-section {
+            flex-direction: column;
+            width: 100%;
+            gap: 12px;
+
+            .counter-item {
+                width: 100%;
+                min-width: auto;
+                justify-content: flex-start;
+            }
+        }
     }
 }
 
-.cover-image-section {
-    position: relative;
-    z-index: 1;
+// Small mobile devices
+@media (max-width: 480px) {
+    .title-section {
+        .counters-section {
+            .counter-item {
+                padding: 8px 12px;
+                
+                .counter-content {
+                    .counter-value {
+                        font-size: 14px;
+                    }
+                    
+                    .counter-label {
+                        font-size: 12px;
+                    }
+                }
+                
+                :deep(.support-feature) {
+                    .support-count {
+                        font-size: 14px;
+                    }
+                    
+                    .support-label {
+                        font-size: 12px;
+                    }
+                }
+            }
+        }
+    }
 }
-
-          .cover-image-section {
-                                                          width: 100%;
-                                                          margin-bottom: 32px;
-                                                          border-radius: 24px;
-                                                          overflow: hidden;
-                                                          position: relative;
-                                                          transition: all 0.3s ease;
-
-                                                          &:not(.readonly) {
-                                                              cursor: pointer;
-                                                              border: 3px dashed var(--color-border);
-                                                              box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-
-                                                              &:hover {
-                                                                  border-color: var(--color-primary);
-                                                                  transform: translateY(-4px);
-                                                                  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-
-                                                                  .cover-image-overlay {
-                                                                      opacity: 1;
-                                                                  }
-                                                              }
-                                                          }
-                                                      }
-
-                                                      .cover-image-container {
-                                                          position: relative;
-                                                          width: 100%;
-                                                          height: 400px;
-
-                                                          .cover-image {
-                                                              width: 100%;
-                                                              height: 100%;
-                                                              object-fit: cover;
-                                                          }
-
-                                                          .cover-image-overlay {
-                                                              position: absolute;
-                                                              top: 0;
-                                                              left: 0;
-                                                              right: 0;
-                                                              bottom: 0;
-                                                              background: linear-gradient(135deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.4));
-                                                              display: flex;
-                                                              align-items: center;
-                                                              justify-content: center;
-                                                              opacity: 0;
-                                                              transition: opacity 0.3s ease;
-
-                                                              .change-cover-btn {
-                                                                  padding: 12px 24px;
-                                                                  border-radius: 12px;
-                                                                  font-weight: 600;
-                                                                  display: flex;
-                                                                  align-items: center;
-                                                                  gap: 8px;
-                                                                  background: var(--color-primary-element);
-                                                                  border: 2px solid var(--color-primary-element);
-
-                                                                  &:hover {
-                                                                      background: var(--color-primary-element-hover);
-                                                                      transform: translateY(-2px);
-                                                                      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-                                                                  }
-                                                              }
-                                                          }
-                                                      }
-
-                                                      .cover-image-placeholder {
-                                                          width: 100%;
-                                                          height: 200px;
-                                                          display: flex;
-                                                          align-items: center;
-                                                          justify-content: center;
-                                                          background: linear-gradient(135deg, var(--color-background-dark), var(--color-background-darker));
-                                                          border-radius: 24px;
-                                                          transition: background-color 0.3s ease;
-
-                                                          &:hover {
-                                                              background: linear-gradient(135deg, var(--color-primary-light), var(--color-background-dark));
-                                                          }
-
-                                                          .placeholder-content {
-                                                              text-align: center;
-
-                                                              .placeholder-icon {
-                                                                  color: var(--color-primary-element);
-                                                                  margin-bottom: 16px;
-                                                              }
-
-                                                              .add-cover-btn {
-                                                                  padding: 12px 24px;
-                                                                  border-radius: 12px;
-                                                                  font-weight: 600;
-                                                                  background: var(--color-primary-element);
-                                                                  border: 2px solid var(--color-primary-element);
-                                                                  margin-bottom: 12px;
-
-                                                                  &:hover {
-                                                                      background: var(--color-primary-element-hover);
-                                                                      transform: translateY(-2px);
-                                                                      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-                                                                  }
-                                                              }
-
-                                                              .placeholder-text {
-                                                                  margin-top: 8px;
-                                                                  color: var(--color-text-lighter);
-                                                                  font-size: 14px;
-                                                                  font-style: italic;
-                                                              }
-                                                          }
-                                                      }
-
-                                                      .hidden {
-                                                          display: none;
-                                                      }
-
-                                                      .main-content-section {
-                                                          background: linear-gradient(135deg, var(--color-main-background) 0%, var(--color-background-dark) 100%);
-                                                          border: 2px solid var(--color-border);
-                                                          border-radius: 24px;
-                                                          padding: 32px;
-                                                          margin-bottom: 32px;
-                                                          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-                                                      }
-
-                                                      .user-info-section {
-                                                          display: flex;
-                                                          align-items: center;
-                                                          gap: 20px;
-                                                          margin-bottom: 32px;
-                                                          padding-bottom: 24px;
-                                                          border-bottom: 2px solid var(--color-border);
-
-                                                          .user-avatar {
-                                                              :deep(.avatardiv) {
-                                                                  width: 56px;
-                                                                  height: 56px;
-                                                                  border: 3px solid var(--color-primary-light);
-                                                                  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-                                                              }
-                                                          }
-
-                                                          .user-details {
-                                                              flex: 1;
-
-                                                              .user-name {
-                                                                  font-size: 20px;
-                                                                  font-weight: 700;
-                                                                  margin-bottom: 8px;
-                                                                  color: var(--color-main-text);
-                                                              }
-
-                                                              .inquiry-type-badge {
-                                                                  display: inline-flex;
-                                                                  align-items: center;
-                                                                  gap: 8px;
-                                                                  padding: 8px 16px;
-                                                                  background: linear-gradient(135deg, var(--color-primary-light), var(--color-background-dark));
-                                                                  border: 2px solid var(--color-primary-element);
-                                                                  border-radius: 16px;
-                                                                  font-size: 14px;
-                                                                  font-weight: 600;
-                                                                  color: var(--color-primary-element);
-                                                              }
-                                                          }
-                                                      }
-
-                                                      .title-section {
-                                                          margin-bottom: 32px;
-                                                          padding-bottom: 24px;
-                                                          border-bottom: 2px solid var(--color-border);
-
-                                                          .title-header {
-                                                              display: flex;
-                                                              align-items: center; // Aligne verticalement au centre
-                                                                  gap: 12px; // Réduit l'espace entre le titre et l'ID
-                                                              margin-bottom: 24px;
-                                                              width: 100%;
-
-                                                              .title-field-container {
-                                                                  flex: 1;
-                                                                  min-width: 0; // Prevents flex overflow
-
-                                                                      :deep(.nc-input) {
-                                                                          width: 100%;
-
-                                                                          .input-field {
-                                                                              margin-bottom: 0;
-
-                                                                              input {
-                                                                                  font-size: 28px; // Réduit légèrement la taille
-                                                                                      font-weight: 700;
-                                                                                  padding: 12px 16px; // Réduit le padding
-                                                                                      height: auto;
-                                                                                  min-height: 56px; // Réduit la hauteur minimale
-                                                                                      width: 100%;
-                                                                                  border: 2px solid transparent;
-                                                                                  background: transparent;
-                                                                                  transition: all 0.3s ease;
-                                                                                  line-height: 1.3;
-
-                                                                                  &:not(:disabled) {
-                                                                                      border-color: var(--color-border);
-                                                                                      background: var(--color-main-background);
-
-                                                                                      &:hover {
-                                                                                          border-color: var(--color-primary-element);
-                                                                                      }
-
-                                                                                      &:focus {
-                                                                                          border-color: var(--color-primary-element);
-                                                                                          box-shadow: 0 0 0 2px var(--color-primary-light);
-                                                                                      }
-                                                                                  }
-
-                                                                                  &:disabled {
-                                                                                      color: var(--color-main-text);
-                                                                                      -webkit-text-fill-color: var(--color-main-text);
-                                                                                      opacity: 1;
-                                                                                      background: transparent;
-
-                                                                                      &::placeholder {
-                                                                                          color: transparent;
-                                                                                      }
-                                                                                  }
-                                                                              }
-
-                                                                              .input-field__icon {
-                                                                                  color: var(--color-primary-element);
-                                                                                  margin-left: 12px;
-
-                                                                                  svg {
-                                                                                      width: 20px; // Réduit la taille de l'icône
-                                                                                          height: 20px;
-                                                                                  }
-                                                                              }
-
-                                                                              .input-field__label {
-                                                                                  font-size: 12px;
-                                                                                  font-weight: 600;
-                                                                                  color: var(--color-text-lighter);
-                                                                                  margin-left: 12px;
-                                                                                  margin-bottom: 2px;
-                                                                              }
-
-                                                                              .input-field__helper-text {
-                                                                                  margin-left: 12px;
-                                                                                  margin-top: 2px;
-                                                                                  font-size: 11px;
-                                                                                  color: var(--color-text-lighter);
-                                                                              }
-                                                                          }
-                                                                      }
-                                                              }
-
-                                                              .inquiry-title {
-                                                                  flex: 1;
-                                                                  font-size: 32px;
-                                                                  font-weight: 700;
-                                                                  color: var(--color-main-text);
-                                                                  margin: 0;
-                                                                  line-height: 1.3;
-                                                                  padding: 8px 0;
-                                                                  word-break: break-word;
-                                                              }
-
-                                                              .inquiry-id {
-                                                                  font-family: 'Monaco', 'Consolas', monospace;
-                                                                  font-size: 13px; // Plus petit
-                                                                      color: var(--color-text-lighter);
-                                                                  background: var(--color-background-darker);
-                                                                  padding: 4px 10px; // Padding réduit
-                                                                      border-radius: 20px; // Plus arrondi
-                                                                  font-weight: 500; // Moins gras
-                                                                  white-space: nowrap;
-                                                                  letter-spacing: 0.3px;
-                                                                  height: fit-content; // S'adapte à son contenu
-                                                                      line-height: 1.4; // Meilleure hauteur de ligne
-                                                                  border: 1px solid var(--color-border); // Ajoute une bordure subtile
-                                                              }
-                                                          }
-
-                                                          // Counters section
-                                                              .counters-section {
-                                                              display: flex;
-                                                              gap: 16px; // Réduit l'espace entre les compteurs
-                                                                  margin-top: 16px;
-                                                              flex-wrap: wrap;
-
-                                                              .counter-item {
-                                                                  display: flex;
-                                                                  align-items: center;
-                                                                  gap: 10px;
-                                                                  border-radius: 10px;
-                                                                  padding: 12px 20px;
-                                                                      transition: all 0.3s ease;
-                                                                  cursor: pointer;
-                                                                  background: white;
-                                                                  border: 2px solid var(--color-border);
-                                                                  min-width: 140px;
-                                                                      box-shadow: var(--squareux-card-shadow);
-
-                                                                  &:hover {
-                                                                      transform: translateY(-2px);
-                                                                          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-                                                                  }
-
-                                                                  &.supports {
-                                                                      border-left: 3px solid var(--squareux-success);
-                                                                  }
-
-                                                                  .counter-icon {
-                                                                      width: 32px; 
-                                                                          height: 32px;
-                                                                      background: linear-gradient(135deg, var(--color-background-darker), var(--color-background-dark));
-                                                                      border-radius: 8px;
-                                                                          display: flex;
-                                                                      align-items: center;
-                                                                      justify-content: center;
-                                                                      flex-shrink: 0;
-
-                                                                      :deep(svg) {
-                                                                          width: 18px; 
-                                                                              height: 18px;
-                                                                      }
-                                                                  }
-
-                                                                  .counter-content {
-                                                                      .counter-value {
-                                                                          font-size: 11px;
-                                                                              font-weight: 600;
-                                                                      }
-
-                                                                      .counter-label {
-                                                                          font-size: 11px; 
-                                                                      }
-                                                                  }
-                                                              }
-                                                          }
-                                                      }
-
-                                                      // Mobile responsiveness
-                                                  @media (max-width: 768px) {
-                                                          .title-section {
-                                                              .title-header {
-                                                                  flex-direction: column;
-                                                                  align-items: flex-start;
-                                                                  gap: 8px;
-
-                                                                  .title-field-container {
-                                                                      width: 100%;
-
-                                                                      :deep(.nc-input) {
-                                                                          .input-field {
-                                                                              input {
-                                                                                  font-size: 24px;
-                                                                                  padding: 10px 12px;
-                                                                                  min-height: 48px;
-                                                                              }
-
-                                                                              .input-field__icon svg {
-                                                                                  width: 18px;
-                                                                                  height: 18px;
-                                                                              }
-                                                                          }
-                                                                      }
-                                                                  }
-
-                                                                  .inquiry-title {
-                                                                      font-size: 26px;
-                                                                      width: 100%;
-                                                                  }
-
-                                                                  .inquiry-id {
-                                                                      align-self: flex-start;
-                                                                      font-size: 12px;
-                                                                      padding: 3px 8px;
-                                                                  }
-                                                              }
-
-                                                              .counters-section {
-                                                                  flex-direction: column;
-                                                                  width: 100%;
-                                                                  gap: 12px;
-
-                                                                  .counter-item {
-                                                                      width: 100%;
-                                                                      min-width: auto;
-                                                                  }
-                                                              }
-                                                          }
-                                                      }
-
-                                                      .metadata-section {
-                                                          margin-bottom: 32px;
-                                                          background: white;
-                                                          border: 1px solid var(--squareux-border);
-                                                          border-radius: 4px;
-                                                          padding: 24px;
-                                                          box-shadow: var(--squareux-card-shadow);
-
-                                                          .section-subtitle {
-                                                              font-size: 12px;
-                                                              color: #605e5c;
-                                                              text-transform: uppercase;
-                                                              letter-spacing: 0.5px;
-                                                              margin-bottom: 20px;
-                                                              font-weight: 600;
-                                                              padding-bottom: 12px;
-                                                              border-bottom: 1px solid var(--squareux-border);
-                                                          }
-
-                                                          .metadata-grid {
-                                                              display: grid;
-                                                              grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-                                                              gap: 16px;
-
-                                                              .metadata-item {
-                                                                  display: flex;
-                                                                  align-items: flex-start;
-                                                                  gap: 12px;
-                                                                  padding: 16px;
-                                                                  background: white;
-                                                                  border: 1px solid var(--squareux-border);
-                                                                  border-radius: 2px;
-                                                                  transition: all 0.2s ease;
-
-                                                                  &:hover {
-                                                                      background: #faf9f8;
-                                                                      border-color: var(--squareux-primary);
-                                                                      box-shadow: var(--squareux-card-shadow);
-                                                                  }
-
-                                                                  &.highlight {
-                                                                      background: #e1f5fe;
-                                                                      border-left: 3px solid var(--squareux-primary);
-                                                                  }
-
-                                                                  .metadata-icon {
-                                                                      width: 32px;
-                                                                      height: 32px;
-                                                                      background: #f3f2f1;
-                                                                      border-radius: 2px;
-                                                                      display: flex;
-                                                                      align-items: center;
-                                                                      justify-content: center;
-                                                                      flex-shrink: 0;
-                                                                      margin-top: 2px;
-
-                                                                      &:deep(svg) {
-                                                                          color: var(--squareux-primary);
-                                                                      }
-                                                                  }
-
-                                                                  .metadata-content {
-                                                                      flex: 1;
-                                                                      min-width: 0;
-
-                                                                      .metadata-label {
-                                                                          display: block;
-                                                                          font-size: 11px;
-                                                                          color: #605e5c;
-                                                                          text-transform: uppercase;
-                                                                          letter-spacing: 0.5px;
-                                                                          margin-bottom: 6px;
-                                                                          font-weight: 600;
-                                                                          white-space: nowrap;
-                                                                      }
-
-                                                                      .metadata-value {
-                                                                          display: block;
-                                                                          font-size: 14px;
-                                                                          color: #323130;
-                                                                          font-weight: 400;
-                                                                          line-height: 1.4;
-                                                                          word-break: break-word;
-                                                                      }
-
-                                                                      .select-container {
-                                                                          width: 100%;
-
-                                                                          .metadata-select,
-                                                                          .status-select {
-                                                                              width: 100%;
-
-                                                                              :deep(.v-select) {
-                                                                                  .vs__dropdown-toggle {
-                                                                                      border: 1px solid var(--squareux-border);
-                                                                                      border-radius: 2px;
-                                                                                      padding: 6px 8px;
-                                                                                      background: white;
-                                                                                      min-height: 32px;
-                                                                                      font-size: 14px;
-
-                                                                                      &:hover {
-                                                                                          border-color: var(--squareux-primary);
-                                                                                      }
-                                                                                  }
-
-                                                                                  .vs__selected {
-                                                                                      font-weight: 400;
-                                                                                      color: #323130;
-                                                                                      font-size: 14px;
-                                                                                      line-height: 1.4;
-                                                                                      padding: 0;
-                                                                                  }
-
-                                                                                  .vs__search,
-                                                                                  .vs__search:focus {
-                                                                                      font-size: 14px;
-                                                                                      padding: 0;
-                                                                                      margin: 0;
-                                                                                      min-height: auto;
-                                                                                  }
-
-                                                                                  .vs__dropdown-menu {
-                                                                                      border: 1px solid var(--squareux-border);
-                                                                                      border-radius: 2px;
-                                                                                      margin-top: 4px;
-                                                                                      box-shadow: var(--squareux-card-shadow);
-                                                                                      max-height: 280px;
-                                                                                  }
-
-                                                                                  .vs__dropdown-option {
-                                                                                      padding: 8px 12px;
-                                                                                      font-size: 14px;
-
-                                                                                      &--highlight {
-                                                                                          background: #e1f5fe;
-                                                                                          color: #323130;
-                                                                                      }
-                                                                                  }
-                                                                              }
-                                                                          }
-
-                                                                          .status-select {
-                                                                              :deep(.v-select) {
-                                                                                  .vs__dropdown-toggle {
-                                                                                      background: #e1f5fe;
-                                                                                  }
-                                                                              }
-                                                                          }
-                                                                      }
-                                                                  }
-                                                              }
-                                                          }
-                                                      }
-
-                                                      .description-section {
-                                                          background: white;
-                                                          border: 1px solid var(--squareux-border);
-                                                          border-radius: 4px;
-                                                          padding: 24px;
-                                                          box-shadow: var(--squareux-card-shadow);
-
-                                                          .section-header-with-icon {
-                                                              display: flex;
-                                                              align-items: center;
-                                                              gap: 12px;
-                                                              margin-bottom: 20px;
-                                                              padding-bottom: 16px;
-                                                              border-bottom: 1px solid var(--squareux-border);
-
-                                                              .section-icon {
-                                                                  width: 40px;
-                                                                  height: 40px;
-                                                                  background: var(--squareux-primary);
-                                                                  border-radius: 2px;
-                                                                  display: flex;
-                                                                  align-items: center;
-                                                                  justify-content: center;
-
-                                                                  &:deep(svg) {
-                                                                      color: white;
-                                                                  }
-                                                              }
-
-                                                              h3.section-subtitle {
-                                                                  font-size: 16px;
-                                                                  font-weight: 600;
-                                                                  margin-bottom: 4px;
-                                                                  color: #323130;
-                                                              }
-
-                                                              .section-description {
-                                                                  font-size: 12px;
-                                                                  color: #605e5c;
-                                                                  margin: 0;
-                                                                  font-weight: 400;
-                                                              }
-                                                          }
-
-                                                          .description-content {
-                                                              border: 1px solid var(--squareux-border);
-                                                              border-radius: 2px;
-                                                              background: white;
-                                                              min-height: 200px;
-                                                              overflow: hidden;
-                                                              transition: border-color 0.2s ease;
-
-                                                              &:hover {
-                                                                  border-color: var(--squareux-primary);
-                                                              }
-
-                                                              .editor-container {
-                                                                  width: 100%;
-                                                                  border: none;
-                                                                  border-radius: 0;
-
-                                                                  &:deep(.ProseMirror) {
-                                                                      min-height: 200px;
-                                                                      padding: 16px;
-                                                                      font-size: 14px;
-                                                                      line-height: 1.5;
-                                                                      color: #323130;
-
-                                                                      &:focus {
-                                                                          outline: none;
-                                                                      }
-                                                                  }
-                                                              }
-
-                                                              .rich-text-editor,
-                                                              .text-area-editor {
-                                                                  width: 100%;
-                                                                  border: none;
-                                                                  border-radius: 0;
-                                                                  min-height: 200px;
-                                                                  padding: 16px;
-                                                                  font-size: 14px;
-                                                                  line-height: 1.5;
-                                                                  color: #323130;
-                                                                  background: white;
-                                                                  font-family: inherit;
-                                                                  resize: vertical;
-                                                                  transition: border-color 0.2s ease;
-
-                                                                  &:focus {
-                                                                      outline: none;
-                                                                  }
-
-                                                                  &:disabled {
-                                                                      background: #faf9f8;
-                                                                      color: #a19f9d;
-                                                                  }
-                                                              }
-
-                                                              .rich-text-editor {
-                                                                  &:deep(.ProseMirror) {
-                                                                      padding: 0;
-                                                                  }
-                                                              }
-                                                          }
-                                                      }
-
-                                                      /* Keep original dropdown styling for other sections */
-                                                      .metadata-section .metadata-grid .metadata-item {
-                                                          .metadata-content {
-                                                              .select-container {
-                                                                  .metadata-select,
-                                                                  .status-select {
-                                                                      :deep(.v-select) {
-                                                                          .vs__dropdown-toggle {
-                                                                              border: 2px solid var(--color-border);
-                                                                              border-radius: 12px;
-                                                                              padding: 8px 12px;
-                                                                              background: var(--color-main-background);
-                                                                              min-height: 40px;
-
-                                                                              &:hover {
-                                                                                  border-color: var(--color-primary-element);
-                                                                              }
-                                                                          }
-
-                                                                          .vs__selected {
-                                                                              font-weight: 600;
-                                                                              color: var(--color-main-text);
-                                                                              font-size: 14px;
-                                                                              line-height: 1.4;
-                                                                              white-space: normal;
-                                                                              word-break: break-word;
-                                                                          }
-
-                                                                          .vs__search,
-                                                                          .vs__search:focus {
-                                                                              font-size: 14px;
-                                                                              padding: 0;
-                                                                              margin: 0;
-                                                                              line-height: 1.4;
-                                                                              min-height: auto;
-                                                                          }
-
-                                                                          .vs__dropdown-menu {
-                                                                              border: 2px solid var(--color-border);
-                                                                              border-radius: 12px;
-                                                                              margin-top: 4px;
-                                                                              max-height: 300px;
-                                                                              overflow-y: auto;
-                                                                              width: auto;
-                                                                              min-width: 100%;
-                                                                          }
-
-                                                                          .vs__dropdown-option {
-                                                                              padding: 8px 12px;
-                                                                              font-size: 14px;
-                                                                              line-height: 1.4;
-
-                                                                              &--highlight {
-                                                                                  background: var(--color-primary-light);
-                                                                                  color: var(--color-primary-element);
-                                                                              }
-                                                                          }
-
-                                                                          .vs__actions {
-                                                                              align-self: center;
-                                                                          }
-                                                                      }
-                                                                  }
-                                                              }
-                                                          }
-                                                      }
-
-                                                      /* Keep original media queries for dropdowns */
-                                                      @media (min-width: 768px) {
-                                                          .metadata-section .metadata-grid {
-                                                              .metadata-item {
-                                                                  &:has(.select-container) {
-                                                                      grid-column: span 2;
-                                                                      min-height: 100px;
-
-                                                                      .metadata-content {
-                                                                          .select-container {
-                                                                              .metadata-select,
-                                                                              .status-select {
-                                                                                  :deep(.v-select) {
-                                                                                      .vs__dropdown-toggle {
-                                                                                          min-width: 100%;
-                                                                                      }
-
-                                                                                      .vs__dropdown-menu {
-                                                                                          min-width: 100%;
-                                                                                          width: 100%;
-                                                                                      }
-                                                                                  }
-                                                                              }
-                                                                          }
-                                                                      }
-                                                                  }
-                                                              }
-                                                          }
-                                                      }
-
-                                                      /* Keep original media queries for other elements */
-                                                      @media (max-width: 1024px) {
-                                                          .inquiry-edit-view {
-                                                              padding: 16px;
-                                                          }
-
-                                                          .main-content-section {
-                                                              padding: 24px;
-                                                          }
-
-                                                          .title-section .counters-section {
-                                                              flex-wrap: wrap;
-                                                          }
-
-                                                          .metadata-section .metadata-grid {
-                                                              grid-template-columns: 1fr;
-                                                          }
-                                                      }
-
-                                                      @media (max-width: 768px) {
-                                                          .title-section {
-                                                              .title-header {
-                                                                  flex-direction: column;
-                                                                  align-items: flex-start;
-                                                                  gap: 12px;
-
-                                                                  .inquiry-title {
-                                                                      font-size: 24px;
-                                                                  }
-                                                              }
-                                                          }
-
-                                                          .user-info-section {
-                                                              flex-direction: column;
-                                                              text-align: center;
-                                                              gap: 16px;
-
-                                                              .user-details .user-name {
-                                                                  text-align: center;
-                                                              }
-                                                          }
-
-                                                          .cover-image-container {
-                                                              height: 300px;
-                                                          }
-
-                                                          .cover-image-placeholder {
-                                                              height: 150px;
-                                                          }
-
-                                                          .counter-item {
-                                                              width: 100%;
-                                                              justify-content: space-between;
-                                                          }
-
-                                                          .description-content {
-                                                              .rich-text-editor,
-                                                              .text-area-editor,
-                                                              .editor-container:deep(.ProseMirror) {
-                                                                  padding: 16px;
-                                                                  min-height: 200px;
-                                                              }
-                                                          }
-                                                      }
-
-                                                      @media (max-width: 767px) {
-                                                          .metadata-section .metadata-grid {
-                                                              .metadata-item {
-                                                                  &:has(.select-container) {
-                                                                      min-height: 100px;
-
-                                                                      .metadata-content {
-                                                                          .select-container {
-                                                                              .metadata-select,
-                                                                              .status-select {
-                                                                                  :deep(.v-select) {
-                                                                                      .vs__dropdown-toggle {
-                                                                                          min-width: 100%;
-                                                                                      }
-
-                                                                                      .vs__dropdown-menu {
-                                                                                          min-width: calc(100vw - 80px);
-                                                                                          max-width: calc(100vw - 80px);
-                                                                                      }
-                                                                                  }
-                                                                              }
-                                                                          }
-                                                                      }
-                                                                  }
-                                                              }
-                                                          }
-                                                      }
-
-                                                      @media (min-width: 1024px) {
-                                                          .metadata-section .metadata-grid {
-                                                              grid-template-columns: repeat(2, 1fr);
-
-                                                              .metadata-item {
-                                                                  &:has(.select-container) {
-                                                                      grid-column: span 1;
-                                                                      min-height: 100px;
-
-                                                                      .metadata-content {
-                                                                          .select-container {
-                                                                              .metadata-select,
-                                                                              .status-select {
-                                                                                  :deep(.v-select) {
-                                                                                      .vs__dropdown-toggle {
-                                                                                          min-width: 100%;
-                                                                                      }
-
-                                                                                      .vs__dropdown-menu {
-                                                                                          min-width: 100%;
-                                                                                      }
-                                                                                  }
-                                                                              }
-                                                                          }
-                                                                      }
-                                                                  }
-                                                              }
-                                                          }
-                                                      }
-
-                                                      @media (min-width: 1400px) {
-                                                          .metadata-section .metadata-grid {
-                                                              grid-template-columns: repeat(3, 1fr);
-
-                                                              .metadata-item {
-                                                                  &:has(.select-container) {
-                                                                      grid-column: span 1;
-
-                                                                      .metadata-content {
-                                                                          .select-container {
-                                                                              .metadata-select,
-                                                                              .status-select {
-                                                                                  :deep(.v-select) {
-                                                                                      .vs__dropdown-toggle {
-                                                                                          min-width: 100%;
-                                                                                      }
-
-                                                                                      .vs__dropdown-menu {
-                                                                                          min-width: 100%;
-                                                                                      }
-                                                                                  }
-                                                                              }
-                                                                          }
-                                                                      }
-                                                                  }
-                                                              }
-                                                          }
-                                                      }
-
-                                                      @media (max-width: 480px) {
-                                                          .main-content-section {
-                                                              padding: 20px;
-                                                          }
-
-                                                          .title-section .counters-section {
-                                                              flex-direction: column;
-                                                          }
-                                                      }
+    // Mobile responsiveness
+@media (max-width: 768px) {
+        .title-section {
+            .title-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+
+                .title-field-container {
+                    width: 100%;
+
+                    :deep(.nc-input) {
+                        .input-field {
+                            input {
+                                font-size: 24px;
+                                padding: 10px 12px;
+                                min-height: 48px;
+                            }
+
+                            .input-field__icon svg {
+                                width: 18px;
+                                height: 18px;
+                            }
+                        }
+                    }
+                }
+
+                .inquiry-title {
+                    font-size: 26px;
+                    width: 100%;
+                }
+
+                .inquiry-id {
+                    align-self: flex-start;
+                    font-size: 12px;
+                    padding: 3px 8px;
+                }
+            }
+
+            .counters-section {
+                flex-direction: column;
+                width: 100%;
+                gap: 12px;
+
+                .counter-item {
+                    width: 100%;
+                    min-width: auto;
+                }
+            }
+        }
+    }
+
+    .metadata-section {
+        margin-bottom: 32px;
+        background: white;
+        border: 1px solid var(--squareux-border);
+        border-radius: 4px;
+        padding: 24px;
+        box-shadow: var(--squareux-card-shadow);
+
+        .section-subtitle {
+            font-size: 12px;
+            color: #605e5c;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--squareux-border);
+        }
+
+        .metadata-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 16px;
+
+            .metadata-item {
+                display: flex;
+                align-items: flex-start;
+                gap: 12px;
+                padding: 16px;
+                background: white;
+                border: 1px solid var(--squareux-border);
+                border-radius: 2px;
+                transition: all 0.2s ease;
+
+                &:hover {
+                    background: #faf9f8;
+                    border-color: var(--squareux-primary);
+                    box-shadow: var(--squareux-card-shadow);
+                }
+
+                &.highlight {
+                    background: #e1f5fe;
+                    border-left: 3px solid var(--squareux-primary);
+                }
+
+                .metadata-icon {
+                    width: 32px;
+                    height: 32px;
+                    background: #f3f2f1;
+                    border-radius: 2px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    flex-shrink: 0;
+                    margin-top: 2px;
+
+                    &:deep(svg) {
+                        color: var(--squareux-primary);
+                    }
+                }
+
+                .metadata-content {
+                    flex: 1;
+                    min-width: 0;
+
+                    .metadata-label {
+                        display: block;
+                        font-size: 11px;
+                        color: #605e5c;
+                        text-transform: uppercase;
+                        letter-spacing: 0.5px;
+                        margin-bottom: 6px;
+                        font-weight: 600;
+                        white-space: nowrap;
+                    }
+
+                    .metadata-value {
+                        display: block;
+                        font-size: 14px;
+                        color: #323130;
+                        font-weight: 400;
+                        line-height: 1.4;
+                        word-break: break-word;
+                    }
+
+                    .select-container {
+                        width: 100%;
+
+                        .metadata-select,
+                        .status-select {
+                            width: 100%;
+
+                            :deep(.v-select) {
+                                .vs__dropdown-toggle {
+                                    border: 1px solid var(--squareux-border);
+                                    border-radius: 2px;
+                                    padding: 6px 8px;
+                                    background: white;
+                                    min-height: 32px;
+                                    font-size: 14px;
+
+                                    &:hover {
+                                        border-color: var(--squareux-primary);
+                                    }
+                                }
+
+                                .vs__selected {
+                                    font-weight: 400;
+                                    color: #323130;
+                                    font-size: 14px;
+                                    line-height: 1.4;
+                                    padding: 0;
+                                }
+
+                                .vs__search,
+                                .vs__search:focus {
+                                    font-size: 14px;
+                                    padding: 0;
+                                    margin: 0;
+                                    min-height: auto;
+                                }
+
+                                .vs__dropdown-menu {
+                                    border: 1px solid var(--squareux-border);
+                                    border-radius: 2px;
+                                    margin-top: 4px;
+                                    box-shadow: var(--squareux-card-shadow);
+                                    max-height: 280px;
+                                }
+
+                                .vs__dropdown-option {
+                                    padding: 8px 12px;
+                                    font-size: 14px;
+
+                                    &--highlight {
+                                        background: #e1f5fe;
+                                        color: #323130;
+                                    }
+                                }
+                            }
+                        }
+
+                        .status-select {
+                            :deep(.v-select) {
+                                .vs__dropdown-toggle {
+                                    background: #e1f5fe;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .description-section {
+        background: white;
+        border: 1px solid var(--squareux-border);
+        border-radius: 4px;
+        padding: 24px;
+        box-shadow: var(--squareux-card-shadow);
+
+        .section-header-with-icon {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--squareux-border);
+
+            .section-icon {
+                width: 40px;
+                height: 40px;
+                background: var(--squareux-primary);
+                border-radius: 2px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                &:deep(svg) {
+                    color: white;
+                }
+            }
+
+            h3.section-subtitle {
+                font-size: 16px;
+                font-weight: 600;
+                margin-bottom: 4px;
+                color: #323130;
+            }
+
+            .section-description {
+                font-size: 12px;
+                color: #605e5c;
+                margin: 0;
+                font-weight: 400;
+            }
+        }
+
+        .description-content {
+            border: 1px solid var(--squareux-border);
+            border-radius: 2px;
+            background: white;
+            min-height: 200px;
+            overflow: hidden;
+            transition: border-color 0.2s ease;
+
+            &:hover {
+                border-color: var(--squareux-primary);
+            }
+
+            .editor-container {
+                width: 100%;
+                border: none;
+                border-radius: 0;
+
+                &:deep(.ProseMirror) {
+                    min-height: 200px;
+                    padding: 16px;
+                    font-size: 14px;
+                    line-height: 1.5;
+                    color: #323130;
+
+                    &:focus {
+                        outline: none;
+                    }
+                }
+            }
+
+            .rich-text-editor,
+            .text-area-editor {
+                width: 100%;
+                border: none;
+                border-radius: 0;
+                min-height: 200px;
+                padding: 16px;
+                font-size: 14px;
+                line-height: 1.5;
+                color: #323130;
+                background: white;
+                font-family: inherit;
+                resize: vertical;
+                transition: border-color 0.2s ease;
+
+                &:focus {
+                    outline: none;
+                }
+
+                &:disabled {
+                    background: #faf9f8;
+                    color: #a19f9d;
+                }
+            }
+
+            .rich-text-editor {
+                &:deep(.ProseMirror) {
+                    padding: 0;
+                }
+            }
+        }
+    }
+
+    /* Keep original dropdown styling for other sections */
+    .metadata-section .metadata-grid .metadata-item {
+        .metadata-content {
+            .select-container {
+                .metadata-select,
+                .status-select {
+                    :deep(.v-select) {
+                        .vs__dropdown-toggle {
+                            border: 2px solid var(--color-border);
+                            border-radius: 12px;
+                            padding: 8px 12px;
+                            background: var(--color-main-background);
+                            min-height: 40px;
+
+                            &:hover {
+                                border-color: var(--color-primary-element);
+                            }
+                        }
+
+                        .vs__selected {
+                            font-weight: 600;
+                            color: var(--color-main-text);
+                            font-size: 14px;
+                            line-height: 1.4;
+                            white-space: normal;
+                            word-break: break-word;
+                        }
+
+                        .vs__search,
+                        .vs__search:focus {
+                            font-size: 14px;
+                            padding: 0;
+                            margin: 0;
+                            line-height: 1.4;
+                            min-height: auto;
+                        }
+
+                        .vs__dropdown-menu {
+                            border: 2px solid var(--color-border);
+                            border-radius: 12px;
+                            margin-top: 4px;
+                            max-height: 300px;
+                            overflow-y: auto;
+                            width: auto;
+                            min-width: 100%;
+                        }
+
+                        .vs__dropdown-option {
+                            padding: 8px 12px;
+                            font-size: 14px;
+                            line-height: 1.4;
+
+                            &--highlight {
+                                background: var(--color-primary-light);
+                                color: var(--color-primary-element);
+                            }
+                        }
+
+                        .vs__actions {
+                            align-self: center;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /* Keep original media queries for dropdowns */
+    @media (min-width: 768px) {
+        .metadata-section .metadata-grid {
+            .metadata-item {
+                &:has(.select-container) {
+                    grid-column: span 2;
+                    min-height: 100px;
+
+                    .metadata-content {
+                        .select-container {
+                            .metadata-select,
+                            .status-select {
+                                :deep(.v-select) {
+                                    .vs__dropdown-toggle {
+                                        min-width: 100%;
+                                    }
+
+                                    .vs__dropdown-menu {
+                                        min-width: 100%;
+                                        width: 100%;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /* Keep original media queries for other elements */
+    @media (max-width: 1024px) {
+        .inquiry-edit-view {
+            padding: 16px;
+        }
+
+        .main-content-section {
+            padding: 24px;
+        }
+
+        .title-section .counters-section {
+            flex-wrap: wrap;
+        }
+
+        .metadata-section .metadata-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .title-section {
+            .title-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+
+                .inquiry-title {
+                    font-size: 24px;
+                }
+            }
+        }
+
+        .user-info-section {
+            flex-direction: column;
+            text-align: center;
+            gap: 16px;
+
+            .user-details .user-name {
+                text-align: center;
+            }
+        }
+
+        .cover-image-container {
+            height: 300px;
+        }
+
+        .cover-image-placeholder {
+            height: 150px;
+        }
+
+        .counter-item {
+            width: 100%;
+            justify-content: space-between;
+        }
+
+        .description-content {
+            .rich-text-editor,
+            .text-area-editor,
+            .editor-container:deep(.ProseMirror) {
+                padding: 16px;
+                min-height: 200px;
+            }
+        }
+    }
+
+    @media (max-width: 767px) {
+        .metadata-section .metadata-grid {
+            .metadata-item {
+                &:has(.select-container) {
+                    min-height: 100px;
+
+                    .metadata-content {
+                        .select-container {
+                            .metadata-select,
+                            .status-select {
+                                :deep(.v-select) {
+                                    .vs__dropdown-toggle {
+                                        min-width: 100%;
+                                    }
+
+                                    .vs__dropdown-menu {
+                                        min-width: calc(100vw - 80px);
+                                        max-width: calc(100vw - 80px);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @media (min-width: 1024px) {
+        .metadata-section .metadata-grid {
+            grid-template-columns: repeat(2, 1fr);
+
+            .metadata-item {
+                &:has(.select-container) {
+                    grid-column: span 1;
+                    min-height: 100px;
+
+                    .metadata-content {
+                        .select-container {
+                            .metadata-select,
+                            .status-select {
+                                :deep(.v-select) {
+                                    .vs__dropdown-toggle {
+                                        min-width: 100%;
+                                    }
+
+                                    .vs__dropdown-menu {
+                                        min-width: 100%;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @media (min-width: 1400px) {
+        .metadata-section .metadata-grid {
+            grid-template-columns: repeat(3, 1fr);
+
+            .metadata-item {
+                &:has(.select-container) {
+                    grid-column: span 1;
+
+                    .metadata-content {
+                        .select-container {
+                            .metadata-select,
+                            .status-select {
+                                :deep(.v-select) {
+                                    .vs__dropdown-toggle {
+                                        min-width: 100%;
+                                    }
+
+                                    .vs__dropdown-menu {
+                                        min-width: 100%;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @media (max-width: 480px) {
+        .main-content-section {
+            padding: 20px;
+        }
+
+        .title-section .counters-section {
+            flex-direction: column;
+        }
+    }
 </style>

@@ -46,6 +46,12 @@ import HelpCircle from '@iconify-icons/mdi/help-circle'
 import Wrench from '@iconify-icons/mdi/wrench'
 import ThumbDownOutline from '@iconify-icons/mdi/thumb-down-outline'
 
+import FileCheck from '@iconify-icons/mdi/file-check'
+import EyeCheckOutline from '@iconify-icons/mdi/eye-check-outline'
+import FileSearch from '@iconify-icons/mdi/file-search'
+import AlertOctagon from '@iconify-icons/mdi/alert-octagon-outline'
+import ShieldAlert from '@iconify-icons/mdi/shield-alert-outline'
+
 
 // Options
 import FilePdfBox from '@iconify-icons/mdi/file-pdf-box'  // For 'FilePdf' ✓
@@ -199,6 +205,10 @@ import ChevronLeft from '@iconify-icons/mdi/chevron-left'
 import Filter from '@iconify-icons/mdi/filter'
 import Export from '@iconify-icons/mdi/export'
 import Import from '@iconify-icons/mdi/import'
+import Tools from '@iconify-icons/mdi/tools'
+import FileChart from '@iconify-icons/mdi/file-chart'
+import ShieldOutline from '@iconify-icons/mdi/shield-outline'
+
 
 // -------------------------------
 // User related icons
@@ -346,7 +356,6 @@ export const InquiryGeneralIcons: Record<string, Component> = {
   AccountVoice: makeIconComponent(AccountVoice, '#5E35B1'),
   ClipboardCheck: makeIconComponent(ClipboardCheck, '#2E7D32'),
   AlertCircle: makeIconComponent(AlertCircle, '#C62828'),
-  AlertOctagon: makeIconComponent(AlertCircleOutline, '#B71C1C'),
   Forum: makeIconComponent(Forum, '#1565C0'),
   FileDocumentEdit: makeIconComponent(FileDocumentEdit, '#283593'),
   Flag: makeIconComponent(Flag, '#283593'),
@@ -400,6 +409,23 @@ export const InquiryGeneralIcons: Record<string, Component> = {
   Paste: makeIconComponent(ClipboardTextMultiple, '#5D4037'),
   Calendar: makeIconComponent(Calendar, '#3949AB'),
   Updated: makeIconComponent(Update, '#FF8F00'),
+  EyeCheck: makeIconComponent(EyeCheckOutline, '#1976D2'),
+  Magnify: makeIconComponent(Magnify, '#1565C0'),
+  CurrencyUsd: makeIconComponent(Cash, '#2E7D32'),
+  FileSearch: makeIconComponent(FileSearch, '#455A64'),
+  AlertOctagon: makeIconComponent(AlertOctagon, '#F44336'),
+  ShieldAlert: makeIconComponent(ShieldAlert, '#FF9800'),
+  FileBarChart: makeIconComponent(FileChart, '#1E88E5'),
+  Search: makeIconComponent(Magnify, '#455A64'),
+  AlertTriangle: makeIconComponent(Alert, '#FB8C00'),
+  Shield: makeIconComponent(ShieldOutline, '#2E7D32'),
+  Info: makeIconComponent(InformationVariant, '#1976D2'),
+  // Services
+  Tool: makeIconComponent(Tools, '#546E7A'),
+  Tools: makeIconComponent(Tools, '#546E7A'),
+  FileCheck: makeIconComponent(FileCheck, '#43A047'),
+  FileText: makeIconComponent(FileDocument, '#546E7A'),
+  Info: makeIconComponent(InformationVariant, '#1976D2'),
 }
 
 export const ShareIcons: Record<string, Component> = {
@@ -471,6 +497,16 @@ export const NavigationIcons: Record<string, Component> = {
   ChevronUp: makeIconComponent(ChevronUp, '#1565C0'),
   View: makeIconComponent(ViewListOutline, '#0D47A1'),
   Plus: makeIconComponent(Plus, '#0097A7'),
+  Megaphone: makeIconComponent(Bullhorn, '#E53935'),
+  FileBarChart: makeIconComponent(FileChart, '#1E88E5'),
+  // Oversight
+  Search: makeIconComponent(Magnify, '#455A64'),
+  AlertTriangle: makeIconComponent(Alert, '#FB8C00'),
+  Shield: makeIconComponent(ShieldOutline, '#2E7D32'),
+  // Services
+  Tool: makeIconComponent(Tools, '#546E7A'),
+  Calendar: makeIconComponent(Calendar, '#1976D2'),
+
 }
 
 export const BadgeIcons: Record<string, Component> = {

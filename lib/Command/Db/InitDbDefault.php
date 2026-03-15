@@ -71,10 +71,10 @@ class InitDbDefault extends Command
             'created' => '',
         ],
         [
-            'family_type' => 'social',
-            'label' => 'Social',
-            'description' => 'Social request by citizan to help them in their daily life',
-            'icon' => 'Heart',
+            'family_type' => 'oversight',
+            'label' => 'Oversight',
+            'description' => 'Citizen oversight, transparency mechanisms and investigation processes to prevent corruption and ensure accountability.',
+            'icon' => 'EyeCheck',
             'sort_order' => 6,
             'created' => '',
         ],
@@ -1472,9 +1472,48 @@ class InitDbDefault extends Command
             'created' => '',
         ],
 
-
-
-        // --- Official (single type) ---
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // OFFICIAL
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        [
+            'inquiry_type' => 'official_announcement',
+            'family' => 'official',
+            'icon' => 'Megaphone',
+            'label' => 'Official Announcement',
+            'description' => 'Official announcement from the municipality.',
+            'fields' => [
+                ["key" => "title","label" => "Title","type" => "string","required" => true],
+                ["key" => "content","label" => "Content","type" => "rich_text","required" => true],
+                ["key" => "published_by","label" => "Published by","type" => "users","required" => false],
+                ["key" => "expiration_date","label" => "Expiration Date","type" => "date","required" => false],
+            ],
+            'allowed_response' => ['official'],
+            'allowed_transformation' => null,
+            'allowed_option_type' => ['official_summary'],
+            'allow_comment' => false,
+            'support_feature' => 'none',
+            'is_root' => true,
+            'created' => '',
+        ],
+        [
+            'inquiry_type' => 'municipal_report',
+            'family' => 'official',
+            'icon' => 'FileBarChart',
+            'label' => 'Municipal Report',
+            'description' => 'Official municipal report publication.',
+            'fields' => [
+                ["key" => "title","label" => "Title","type" => "string","required" => true],
+                ["key" => "year","label" => "Year","type" => "integer","required" => true],
+                ["key" => "document","label" => "Document","type" => "files","required" => false],
+            ],
+            'allowed_response' => ['official'],
+            'allowed_transformation' => null,
+            'allowed_option_type' => ['official_summary'],
+            'allow_comment' => true,
+            'support_feature' => 'none',
+            'is_root' => true,
+            'created' => '',
+        ],
         [
             'inquiry_type' => 'official',
             'family' => 'official',
@@ -1497,6 +1536,9 @@ class InitDbDefault extends Command
             'created' => '',
         ],
 
+        //////////////////////////////////////////////////////////////////////////////////
+        // ADMINISTRATIVE
+        ///////////////////////////////////////////////////////////////////////////////////
         // --- Administrative / Service / Social ---
         [
             'inquiry_type' => 'admin_request',
@@ -1547,6 +1589,49 @@ class InitDbDefault extends Command
             'created' => '',
         ],
         [
+            'inquiry_type' => 'information_request',
+            'family' => 'administrative',
+            'icon' => 'Info',
+            'label' => 'Information Request',
+            'description' => 'Citizen request for public information or documents.',
+            'fields' => [
+                ["key" => "subject","label" => "Subject","type" => "string","required" => true],
+                ["key" => "requested_document","label" => "Requested Document","type" => "string","required" => false],
+                ["key" => "deadline","label" => "Desired Deadline","type" => "date","required" => false],
+            ],
+            'allowed_response' => ['official','message'],
+            'allowed_transformation' => null,
+            'allowed_option_type' => ['message','official_summary'],
+            'allow_comment' => true,
+            'support_feature' => 'none',
+            'is_root' => true,
+            'created' => '',
+        ],
+        [
+            'inquiry_type' => 'permit_request',
+            'family' => 'administrative',
+            'icon' => 'FileCheck',
+            'label' => 'Permit Request',
+            'description' => 'Request for an official permit or authorization.',
+            'fields' => [
+                ["key" => "permit_type","label" => "Permit Type","type" => "string","required" => true],
+                ["key" => "description","label" => "Description","type" => "text","required" => false],
+                ["key" => "location","label" => "Location","type" => "location","required" => false],
+                ["key" => "attachments","label" => "Attachments","type" => "files","required" => false],
+            ],
+            'allowed_response' => ['official','proposal'],
+            'allowed_transformation' => null,
+            'allowed_option_type' => ['message','official_summary'],
+            'allow_comment' => true,
+            'support_feature' => 'none',
+            'is_root' => true,
+            'created' => '',
+        ],
+
+        //////////////////////////////////////////////////////////////////////////////////
+        //SERVICE
+        ///////////////////////////////////////////////////////////////////////////////////
+        [
             'inquiry_type' => 'service_request',
             'family' => 'service',
             'icon' => 'Offer',
@@ -1569,11 +1654,172 @@ class InitDbDefault extends Command
             'is_root' => true,
             'created' => '',
         ],
+        [
+            'inquiry_type' => 'maintenance_request',
+            'family' => 'services',
+            'icon' => 'Wrench',
+            'label' => 'Maintenance Request',
+            'description' => 'Citizen report of infrastructure problems or needed repairs.',
+            'fields' => [
+                ["key" => "location","label" => "Location","type" => "location","required" => true],
+                ["key" => "issue","label" => "Issue Description","type" => "text","required" => true],
+                ["key" => "priority","label" => "Priority","type" => "enum","required" => false,"allowed_values" => ["low","medium","high"]],
+                ["key" => "attachments","label" => "Photos","type" => "files","required" => false],
+            ],
+            'allowed_response' => ['official','proposal'],
+            'allowed_transformation' => null,
+            'allowed_option_type' => ['message','task'],
+            'allow_comment' => true,
+            'support_feature' => 'support_vote',
+            'is_root' => true,
+            'created' => '',
+        ],
+        [
+            'inquiry_type' => 'booking_request',
+            'family' => 'services',
+            'icon' => 'Calendar',
+            'label' => 'Booking Request',
+            'description' => 'Request to book a municipal room or public space.',
+            'fields' => [
+                ["key" => "location","label" => "Location","type" => "location","required" => true],
+                ["key" => "start_date","label" => "Start Date","type" => "datetime","required" => true],
+                ["key" => "end_date","label" => "End Date","type" => "datetime","required" => true],
+                ["key" => "purpose","label" => "Purpose","type" => "text","required" => false],
+            ],
+            'allowed_response' => ['official'],
+            'allowed_transformation' => null,
+            'allowed_option_type' => ['booking_slot','message'],
+            'allow_comment' => false,
+            'support_feature' => 'none',
+            'is_root' => true,
+            'created' => '',
+        ],
+        [
+            'inquiry_type' => 'classified_ad',
+            'family' => 'services',
+            'icon' => 'Megaphone',
+            'label' => 'Classified Ad',
+            'description' => 'Citizen classified advertisement.',
+            'fields' => [
+                ["key" => "title","label" => "Title","type" => "string","required" => true],
+                ["key" => "description","label" => "Description","type" => "text","required" => true],
+                ["key" => "price","label" => "Price","type" => "integer","required" => false],
+                ["key" => "contact","label" => "Contact","type" => "string","required" => false],
+            ],
+            'allowed_response' => ['message'],
+            'allowed_transformation' => null,
+            'allowed_option_type' => ['message'],
+            'allow_comment' => true,
+            'support_feature' => 'none',
+            'is_root' => true,
+            'created' => '',
+        ],
+        ////////////////////////////////////////////////////////////////////////////
+        // OVERSIGHT /////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////
+        [
+            'inquiry_type' => 'investigation_request',
+            'family' => 'oversight',
+            'icon' => 'Magnify',
+            'label' => 'Investigation Request',
+            'description' => 'Citizen request to investigate a public issue, corruption suspicion, or administrative failure.',
+            'fields' => [
+                ["key" => "subject","label" => "Subject","type" => "string","required" => true],
+                ["key" => "reason","label" => "Reason / Evidence","type" => "text","required" => true],
+                ["key" => "requested_by","label" => "Requested by","type" => "users","required" => false],
+                ["key" => "deadline","label" => "Requested deadline","type" => "date","required" => false],
+                ["key" => "layout_zone","label" => "Position display into the layout","type" => "enum","required" => false,"default" => "main","allowed_values" => ["sidebar","main","footer","header"]],
+                ["key" => "render_mode","label" => "Render mode","type" => "enum","required" => false,"default" => "cards","allowed_values" => ["cards","list","full","summary","rich_html"]],
+                ["key" => "open_mode","label" => "Open Mode","type" => "enum","required" => false,"default" => "page","allowed_values" => ["page","modal","none"]],
+            ],
+            'allowed_response' => ['official','proposal'],
+            'allowed_transformation' => null,
+            'allowed_option_type' => ['message','official_summary'],
+            'allow_comment' => true,
+            'support_feature' => 'binary',
+            'is_root' => true,
+            'created' => '',
+        ],
+        [
+            'inquiry_type' => 'public_spending_review',
+            'family' => 'oversight',
+            'icon' => 'CurrencyUsd',
+            'label' => 'Public Spending Review',
+            'description' => 'Citizen review of public spending and municipal budget allocations.',
+            'fields' => [
+                ["key" => "project_name","label" => "Project Name","type" => "string","required" => true],
+                ["key" => "amount","label" => "Budget Amount","type" => "integer","required" => true],
+                ["key" => "description","label" => "Description","type" => "text","required" => false],
+                ["key" => "documents","label" => "Documents","type" => "files","required" => false],
+                ["key" => "layout_zone","label" => "Position display","type" => "enum","required" => false,"default" => "main","allowed_values" => ["sidebar","main","footer","header"]],
+            ],
+            'allowed_response' => ['analysis','official'],
+            'allowed_transformation' => null,
+            'allowed_option_type' => ['message','official_summary'],
+            'allow_comment' => true,
+            'support_feature' => 'binary',
+            'is_root' => true,
+        ],
+        [
+            'inquiry_type' => 'contract_review',
+            'family' => 'oversight',
+            'icon' => 'FileSearch',
+            'label' => 'Public Contract Review',
+            'description' => 'Review of a public contract or procurement process.',
+            'fields' => [
+                ["key" => "contract_name","label" => "Contract Name","type" => "string","required" => true],
+                ["key" => "contractor","label" => "Contractor","type" => "string","required" => false],
+                ["key" => "contract_value","label" => "Contract Value","type" => "integer","required" => false],
+                ["key" => "documents","label" => "Documents","type" => "files","required" => false],
+            ],
+            'allowed_response' => ['proposal','official'],
+            'allowed_option_type' => ['message','official_summary'],
+            'allow_comment' => true,
+            'support_feature' => 'binary',
+            'is_root' => true,
+        ],
+        [
+            'inquiry_type' => 'conflict_of_interest',
+            'family' => 'oversight',
+            'icon' => 'AlertOctagon',
+            'label' => 'Conflict of Interest Inquiry',
+            'description' => 'Investigation of potential conflicts of interest involving public officials.',
+            'fields' => [
+                ["key" => "official","label" => "Official Concerned","type" => "users","required" => true],
+                ["key" => "decision","label" => "Decision Concerned","type" => "string","required" => true],
+                ["key" => "evidence","label" => "Evidence","type" => "text","required" => false],
+            ],
+            'allowed_response' => ['analysis','official'],
+            'allowed_option_type' => ['message','official_summary'],
+            'allow_comment' => true,
+            'support_feature' => 'binary',
+            'is_root' => true,
+        ],
+        [
+            'inquiry_type' => 'whistleblower_case',
+            'family' => 'oversight',
+            'icon' => 'ShieldAlert',
+            'label' => 'Whistleblower Case',
+            'description' => 'Protected report from a whistleblower about corruption or illegal actions.',
+            'fields' => [
+                ["key" => "subject","label" => "Subject","type" => "string","required" => true],
+                ["key" => "description","label" => "Description","type" => "text","required" => true],
+                ["key" => "anonymous","label" => "Anonymous","type" => "boolean","required" => false],
+            ],
+            'allowed_response' => ['investigation','official'],
+            'allowed_option_type' => ['official_summary'],
+            'allow_comment' => false,
+            'support_feature' => 'none',
+            'is_root' => true,
+        ],
 
+
+        ///////////////////////////////////////////////////////////////////////////
         // --- Social / Childcare / Housing / Scholarship (examples) ---
+        ///////////////////////////////////////////////////////////////////////////
         [
             'inquiry_type' => 'scholarship_request',
-            'family' => 'social',
+            'family' => 'service',
             'icon' => 'School',
             'label' => 'Scholarship Request',
             'description' => 'Request for scholarship or educational aid.',
@@ -1594,7 +1840,7 @@ class InitDbDefault extends Command
         ],
         [
             'inquiry_type' => 'childcare_request',
-            'family' => 'social',
+            'family' => 'service',
             'icon' => 'BabyCarriage',
             'label' => 'Childcare Request',
             'description' => 'Request for childcare support or enrollment.',
@@ -1614,7 +1860,7 @@ class InitDbDefault extends Command
         ],
         [
             'inquiry_type' => 'housing_request',
-            'family' => 'social',
+            'family' => 'service',
             'icon' => 'Home',
             'label' => 'Housing Request',
             'description' => 'Request for housing support or allocation.',
@@ -1636,7 +1882,147 @@ class InitDbDefault extends Command
     ];
 
     private array $inquiryGroupTypes = [
+        // Maintenance Board
+        [
+            'family' => 'service',
+            'group_type' => 'maintenance_board',
+            'icon' => 'Tool',
+            'label' => 'Maintenance Board',
+            'description' => 'Public infrastructure maintenance and repair tracking.',
+            'fields' => [
+                ["key" => "location","label" => "Location","type" => "location","required" => false,"default" => null,"rules" => []],
+                ["key" => "priority","label" => "Priority","type" => "string","required" => false,"default" => null,"rules" => []],
+            ],
+            'allowed_inquiry_types' => ['maintenance_request','incident_report'],
+            'allowed_response' => ['official','message'],
+            'is_root' => true,
+            'sort_order' => 1,
+            'created' => '',
+        ],
 
+        // Public Space Booking
+        [
+            'family' => 'service',
+            'group_type' => 'public_space_booking',
+            'icon' => 'Calendar',
+            'label' => 'Public Space Booking',
+            'description' => 'Booking of municipal rooms or public spaces.',
+            'fields' => [
+                ["key" => "location","label" => "Location","type" => "location","required" => false,"default" => null,"rules" => []],
+                ["key" => "capacity","label" => "Capacity","type" => "integer","required" => false,"default" => null,"rules" => []],
+            ],
+            'allowed_inquiry_types' => ['booking_request'],
+            'allowed_response' => ['booking_slot'],
+            'is_root' => true,
+            'sort_order' => 2,
+            'created' => '',
+        ],
+
+        // Classified Ads
+        [
+            'family' => 'service',
+            'group_type' => 'classified_ads',
+            'icon' => 'Megaphone',
+            'label' => 'Classified Ads',
+            'description' => 'Local classified ads for services, jobs, and goods.',
+            'fields' => [
+                ["key" => "category","label" => "Category","type" => "string","required" => false,"default" => null,"rules" => []],
+                ["key" => "price","label" => "Price","type" => "integer","required" => false,"default" => null,"rules" => []],
+            ],
+            'allowed_inquiry_types' => ['classified_ad','service_offer','job_offer'],
+            'allowed_response' => ['message'],
+            'is_root' => true,
+            'sort_order' => 3,
+            'created' => '',
+        ],
+        // Audit Case
+        [
+            'family' => 'oversight',
+            'group_type' => 'audit_case',
+            'icon' => 'Search',
+            'label' => 'Audit Case',
+            'description' => 'A public audit case reviewing municipal spending or actions.',
+            'fields' => [
+                ["key" => "target_entity","label" => "Target Entity","type" => "string","required" => false,"default" => null,"rules" => []],
+                ["key" => "status","label" => "Status","type" => "string","required" => false,"default" => "open","rules" => []],
+            ],
+            'allowed_inquiry_types' => ['investigation_request','public_spending_review','proposal'],
+            'allowed_response' => ['official','report'],
+            'is_root' => true,
+            'sort_order' => 1,
+            'created' => '',
+        ],
+
+        // Investigation Case
+        [
+            'family' => 'oversight',
+            'group_type' => 'investigation_case',
+            'icon' => 'AlertTriangle',
+            'label' => 'Investigation Case',
+            'description' => 'A citizen or official investigation into a public concern.',
+            'fields' => [
+                ["key" => "subject","label" => "Subject","type" => "string","required" => false,"default" => null,"rules" => []],
+                ["key" => "priority","label" => "Priority","type" => "string","required" => false,"default" => null,"rules" => []],
+            ],
+            'allowed_inquiry_types' => ['investigation_request'],
+            'allowed_response' => ['official','report'],
+            'is_root' => true,
+            'sort_order' => 2,
+            'created' => '',
+        ],
+
+        // Ethics Review
+        [
+            'family' => 'oversight',
+            'group_type' => 'ethics_review',
+            'icon' => 'Shield',
+            'label' => 'Ethics Review',
+            'description' => 'Review of ethics or conflict of interest involving public officials.',
+            'fields' => [
+                ["key" => "official_id","label" => "Official ID","type" => "integer","required" => false,"default" => null,"rules" => []],
+                ["key" => "decision_reference","label" => "Decision Reference","type" => "string","required" => false,"default" => null,"rules" => []],
+            ],
+            'allowed_inquiry_types' => ['conflict_of_interest','investigation_request'],
+            'allowed_response' => ['official','report'],
+            'is_root' => true,
+            'sort_order' => 3,
+            'created' => '',
+        ],
+        // Official Announcements
+        [
+            'family' => 'official',
+            'group_type' => 'official_announcements',
+            'icon' => 'Megaphone',
+            'label' => 'Official Announcements',
+            'description' => 'Official announcements from the municipality.',
+            'fields' => [
+                ["key" => "priority","label" => "Priority","type" => "string","required" => false,"default" => null,"rules" => []],
+                ["key" => "expiration_date","label" => "Expiration Date","type" => "date","required" => false,"default" => null,"rules" => []],
+            ],
+            'allowed_inquiry_types' => ['official'],
+            'allowed_response' => ['official_summary'],
+            'is_root' => true,
+            'sort_order' => 1,
+            'created' => '',
+        ],
+
+        // Municipal Reports
+        [
+            'family' => 'official',
+            'group_type' => 'municipal_reports',
+            'icon' => 'FileBarChart',
+            'label' => 'Municipal Reports',
+            'description' => 'Publication of official municipal reports.',
+            'fields' => [
+                ["key" => "year","label" => "Year","type" => "integer","required" => false,"default" => null,"rules" => []],
+                ["key" => "department","label" => "Department","type" => "string","required" => false,"default" => null,"rules" => []],
+            ],
+            'allowed_inquiry_types' => ['official'],
+            'allowed_response' => ['official_summary'],
+            'is_root' => true,
+            'sort_order' => 2,
+            'created' => '',
+        ],
         // ==========================================================
         // ROOT COLLECTIVE TYPES (TOP LEVEL)
         // ==========================================================
@@ -2646,7 +3032,7 @@ private function insertDefaultOptionFamilies(?IOutput $output = null): void
 
         try {
             $created = !empty($family['created']) ? (int)$family['created'] : time();
-            
+
             // Encode JSON fields
             $ui = !empty($family['ui']) ? json_encode($family['ui']) : '{}';
             $rules = !empty($family['rules']) ? json_encode($family['rules']) : '{}';
@@ -2672,13 +3058,13 @@ private function insertDefaultOptionFamilies(?IOutput $output = null): void
             $inserted[$family['family_type']] = $id;
 
             $this->log($output, 'Inserted option family: ' . $family['family_type']);
-            
-            
+
+
         } catch (\Exception $e) {
             $this->log($output, 'ERROR inserting option family ' . $family['family_type'] . ': ' . $e->getMessage());
         }
     }
-    
+
     $this->log($output, 'Finished inserting option families. Total: ' . count($inserted));
 }
 

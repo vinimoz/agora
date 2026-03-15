@@ -21,4 +21,7 @@ const Agora = createApp(App)
   .directive('focus', {
     mounted: (el) => el.focus(),
   })
-Agora.mount('#content')
+router.isReady().then(() => {
+  Agora.mount('#content')
+})
+

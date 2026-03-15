@@ -675,8 +675,9 @@ watch(() => storeInquiry.value.currentUserStatus?.supportValue, (newValue) => {
 .inquiry-full-view {
   width: 100%;
   height: 100%;
-  border-radius: 8px;
+  border-radius: 12px;
   background: var(--color-surface);
+  overflow: hidden;     
 }
 
 .full-view-wrapper {
@@ -702,14 +703,17 @@ watch(() => storeInquiry.value.currentUserStatus?.supportValue, (newValue) => {
 .cover-hero {
   position: relative;
   margin: -32px -32px 32px;
-  border-radius: 0 0 8px 8px;
+  border-radius: 0 0 12px 12px;
   overflow: hidden;
+  isolation: isolate;
 
   .cover-image {
     width: 100%;
     height: 320px;
     object-fit: cover;
     display: block;
+    position: relative;
+    z-index: 1;
   }
 
   .cover-overlay {

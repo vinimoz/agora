@@ -81,7 +81,12 @@ const availableGroups = computed(() => {
 
 // State for selected family
 
-const selectedFamily = ref<string | null>(inquiriesStore.familyType || null)
+// const selectedFamily = ref<string | null>(inquiriesStore.familyType || null)
+const selectedFamily = computed({
+  get: () => inquiriesStore.advancedFilters.familyType || null,
+  set: (value) => inquiriesStore.setFamilyType(value || '')
+})
+
 // State for expanded/collapsed families
 const expandedFamilies = ref<Set<string>>(new Set())
 

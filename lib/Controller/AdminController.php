@@ -12,6 +12,7 @@ namespace OCA\Agora\Controller;
 use OCA\Agora\AppConstants;
 use OCA\Agora\Cron\AutoReminderCron;
 use OCA\Agora\Cron\JanitorCron;
+use OCA\Agora\Db\TableManager;
 use OCA\Agora\Cron\NotificationCron;
 use OCA\Agora\Service\InquiryService;
 use OCP\AppFramework\Http\Attribute\FrontpageRoute;
@@ -24,12 +25,15 @@ use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IRequest;
 use OCP\IURLGenerator;
 use OCP\Util;
+use OCP\IDBConnection;
 
 /**
  * @psalm-api
  */
 class AdminController extends BaseController
 {
+    private IDBConnection $connection;
+
     public function __construct(
         string $appName,
         IRequest $request,
@@ -37,10 +41,13 @@ class AdminController extends BaseController
         private InquiryService $inquiryService,
         private IEventDispatcher $eventDispatcher,
         private AutoReminderCron $autoReminderCron,
+        private TableManager $tableManager,
         private JanitorCron $janitorCron,
         private NotificationCron $notificationCron,
+        IDBConnection $connection, 
     ) {
         parent::__construct($appName, $request);
+         $this->connection = $connection;
     }
 
     /**
@@ -79,6 +86,27 @@ class AdminController extends BaseController
             ]
         );
     }
+
+    /**
+     * Run reset refresh data
+     */
+    #[FrontpageRoute(verb: 'GET', url: '/administration/cleaninstance/run')]
+    public function runCleanInstance(): JSONResponse
+    {
+         $this->tableManager->setConnection($this->connection);
+
+        $messages = [];
+
+        $messages[] = $this->tableManager->cleanInstanceData('user_content');
+        $messages[] = $this->tableManager->cleanInstanceData('configuration');
+        $messages[] = $this->tableManager->cleanInstanceData('support');
+
+        return new JSONResponse([
+            'status' => 'success',
+            'messages' => $messages
+        ]);
+    }
+
 
     /**
      * Run auto reminder job

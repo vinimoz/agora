@@ -99,9 +99,9 @@ Install directly from the [Nextcloud App Store](https://apps.nextcloud.com/apps/
 
 ## 🖼️ Screenshots
 
-| Creation | Edit Inquiry | Edit Group | Group view | Group view 2 | Inquiry Type | Family | Grid View | Grid 2 | List View |  Settings | Settings Inquiry | Template 
-| :-------: | :----------: | :-----------: | :-----: | :-------: | :-----: | :-------: | :------: | :---------------: |  :------: |
-| ![Creation](screenshots/Creation.png) | ![Edit Inquiry](screenshots/EditInquiry.png) | ![Edit Group](screenshots/EditGroup.png) | ![Group view](screenshots/GroupView.png) |![Group view](screenshots/GroupView2.png) | ![Inquiry Type](screenshots/SettingInquiryType.png) | ![Family](screenshots/Family.png) | ![Grid](screenshots/Grid.png) | ![Grid2](screenshots/Grid2.png) | ![List](screenshots/ListView.png)  | ![Settings](screenshots/Settings.png) | ![Settings Inquiry](screenshots/SettingsInquiry.png) | ![Template](screenshots/Template.png)
+| Family | Creation | Edit Inquiry | Edit Group | Group view | Group view 2 | Inquiry Type | Grid View | List View | Option Debate | Option Tree | Template 
+|:------:|:--------:|:------------:|:----------:|:----------:|:------------:|:------------:|:---------:|:---------:|:-------------:|:-----------:|:--------:|
+| ![Family](screenshots/Family.png) | ![Creation](screenshots/Creation.png) | ![Edit Inquiry](screenshots/EditInquiry.png) | ![Edit Group](screenshots/EditGroup.png) | ![Group view](screenshots/GroupView.png) |![Group view](screenshots/GroupView2.png) | ![Inquiry Type](screenshots/SettingInquiryType.png) | ![Grid](screenshots/Grid.png) | ![List](screenshots/ListView.png)  | ![Settings](screenshots/OptionTemplate.png) | ![Settings Inquiry](screenshots/OptionTree.png) | ![Template](screenshots/Template.png)
 
 ---
 

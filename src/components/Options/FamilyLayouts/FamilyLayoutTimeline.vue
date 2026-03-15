@@ -76,6 +76,7 @@ import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import listPlugin from '@fullcalendar/list'
 import resourceTimelinePlugin from '@fullcalendar/resource-timeline' // 👈 key plugin
+import type { EventClickArg } from '@fullcalendar/core/index.js'
 
 const props = defineProps<{
 	options: Option[]
@@ -97,11 +98,10 @@ const parseDate = (value: number | string | undefined): DateTime | null => {
 	if (typeof value === 'string') {
 		const dt = DateTime.fromISO(value)
 		return dt.isValid ? dt.toLocal() : null
-	} else {
-		const isSeconds = value < 10000000000
-		const dt = isSeconds ? DateTime.fromSeconds(value) : DateTime.fromMillis(value)
-		return dt.toLocal()
-	}
+	} 
+	const isSeconds = value < 10000000000
+	const dt = isSeconds ? DateTime.fromSeconds(value) : DateTime.fromMillis(value)
+	return dt.toLocal()
 }
 
 const getStartDate = (option: Option): DateTime | null => {
@@ -111,61 +111,53 @@ const getStartDate = (option: Option): DateTime | null => {
 	return parseDate(value)
 }
 
-const getEndDate = (option: Option): DateTime | null => {
-	return parseDate(option.miscFields?.end_date)
-}
+const getEndDate = (option: Option): DateTime | null => parseDate(option.miscFields?.end_date)
 
 // ---------- Process options ----------
-const processOptions = computed(() => {
-	return props.options.filter(opt => {
-		const family = getOptionTypeFamily(opt.type, optionsStore.getOptionTypesArray)
-		return family === 'process'
-	})
-})
+const processOptions = computed(() => props.options.filter(opt => {
+	const family = getOptionTypeFamily(opt.type, optionsStore.getOptionTypesArray)
+	return family === 'process'
+}))
 
 // Transform options into FullCalendar resources (each option becomes a row)
-const resources = computed(() => {
-	return processOptions.value.map(opt => ({
-		id: opt.id.toString(),
-		title: opt.title,
-		// You can add more fields here for resourceAreaColumns if needed
-	}))
-})
+const resources = computed(() => processOptions.value.map(opt => ({
+	id: opt.id.toString(),
+	title: opt.title,
+	// You can add more fields here for resourceAreaColumns if needed
+})))
 
 // Transform options into FullCalendar events (each option's time span)
-const events = computed(() => {
-	return processOptions.value
-		.map(opt => {
-			const start = getStartDate(opt)
-			if (!start) return null
+const events = computed(() => processOptions.value
+	.map(opt => {
+		const start = getStartDate(opt)
+		if (!start) return null
 
-			// Apply date filter if set
-			if (dateFilter.value) {
-				const filterDate = DateTime.fromISO(dateFilter.value).toLocal()
-				if (!start.hasSame(filterDate, 'day')) return null
-			}
+		// Apply date filter if set
+		if (dateFilter.value) {
+			const filterDate = DateTime.fromISO(dateFilter.value).toLocal()
+			if (!start.hasSame(filterDate, 'day')) return null
+		}
 
-			const end = getEndDate(opt)
-			let endDate = undefined
-			if (end) {
-				// For all-day events, end is exclusive – add one day to include the end day
-				endDate = end.plus({ days: 1 }).toJSDate()
-			}
+		const end = getEndDate(opt)
+		let endDate: Date | undefined
+		if (end) {
+			// For all-day events, end is exclusive – add one day to include the end day
+			endDate = end.plus({ days: 1 }).toJSDate()
+		}
 
-			return {
-				resourceId: opt.id.toString(), // link to the resource
-				title: opt.title,
-				start: start.toJSDate(),
-				end: endDate,
-				allDay: true,
-				extendedProps: { option: opt },
-				backgroundColor: getStatusColor(opt.status?.optionStatus),
-				borderColor: getStatusColor(opt.status?.optionStatus),
-				textColor: '#ffffff',
-			}
-		})
-		.filter(Boolean)
-})
+		return {
+			resourceId: opt.id.toString(), // link to the resource
+			title: opt.title,
+			start: start.toJSDate(),
+			end: endDate,
+			allDay: true,
+			extendedProps: { option: opt },
+			backgroundColor: getStatusColor(opt.status?.optionStatus),
+			borderColor: getStatusColor(opt.status?.optionStatus),
+			textColor: '#ffffff',
+		}
+	})
+	.filter(Boolean))
 
 // Helper for status color
 const getStatusColor = (status: string) => {
@@ -213,7 +205,7 @@ const calendarOptions = computed(() => {
 			listPlugin,
 			resourceTimelinePlugin, // 👈 important
 		],
-        schedulerLicenseKey: 'CC-Attribution-NonCommercial-NoDerivatives',
+		schedulerLicenseKey: 'CC-Attribution-NonCommercial-NoDerivatives',
 		headerToolbar: false, // we use our own controls
 		initialView: getCurrentView(),
 		views: {
@@ -224,7 +216,7 @@ const calendarOptions = computed(() => {
 		},
 		resources: resources.value,
 		events: events.value,
-		eventClick: (info: any) => {
+		eventClick: (info: EventClickArg) => {
 			emit('openDetail', info.event.extendedProps.option)
 		},
 		height: 'auto',
@@ -239,12 +231,9 @@ const calendarOptions = computed(() => {
 		},
 		// Resource timeline specific options
 		resourceAreaWidth: '200px', // width of the left column
-		resourceLabelText: t('agora', 'Options'), // header for resource column
-		// If you want extra columns (like owner, status) uncomment and add fields to resources
-		// resourceAreaColumns: [
-		//   { field: 'title', headerContent: 'Option' },
-		//   { field: 'status', headerContent: 'Status' }
-		// ]
+		resourceGroupField: 'title', // Use title as the resource group field
+		// If you want to customize the resource area header text, you can use:
+		// resourceAreaHeaderContent: t('agora', 'Options'),
 	}
 
 	// Add view-specific options
