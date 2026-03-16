@@ -16,12 +16,14 @@ import { useInquiriesStore } from './inquiries.ts'
 import { useInquiryGroupsStore } from './inquiryGroups.ts'
 import type { InquiryGroup, InquiryGroupType } from './inquiryGroups.types.ts'
 
+
+
 export type InquiryGroupConfiguration = {
   description: string
   protected: boolean
-  group_status: string
+  groupStatus: string  
   expire: number | null
-  title_ext: string | null
+  titleExt: string | null  
 }
 
 export type InquiryGroupStatus = {
@@ -590,11 +592,11 @@ return response.data
                 title: this.inquiryGroup.title || this.inquiryGroup.title,
                 titleExt: this.inquiryGroup.titleExt,
                 description: this.inquiryGroup.description,
-                type: this.inquiryGroup.group_type,
-                parentId: this.inquiryGroup.parent_id,
+                type: this.inquiryGroup.type,
+                parentId: this.inquiryGroup.parentId,
                 protected: this.inquiryGroup.protected,
-                ownedGroup: this.inquiryGroup.owned_group,
-                groupStatus: this.inquiryGroup.group_status,
+                ownedGroup: this.inquiryGroup.ownedGroup,
+                groupStatus: this.inquiryGroup.groupStatus,
             })
 
             this.inquiryGroup = response.data.inquiryGroup

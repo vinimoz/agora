@@ -72,19 +72,7 @@ const filteredInquiryGroupTypes = computed(() => {
 })
 
 // Get inquiry groups from store
-const inquiryGroups = computed(() => {
-  const allGroups = inquiryGroupsStore.inquiryGroups || []
-
-  // If no family selected, return all groups
-  if (!selectedFamily.value) return allGroups
-  // Filter groups by the selected family
-  // This assumes groups have a 'family' or 'familyType' property
-  return allGroups.filter(group =>
-    group.family === selectedFamily.value ||
-    group.familyType === selectedFamily.value ||
-    group.family_type === selectedFamily.value // adjust based on your actual property name
-  )
-})
+const inquiryGroups = computed(() => inquiryGroupsStore.inquiryGroups || [])
 
 
 // Get inquiry group type data (icon, label, description)
@@ -95,6 +83,7 @@ function getInquiryGroupTypeDisplayData(inquiryGroupType: InquiryGroupType) {
 // Get groups count for specific type
 function getGroupTypeCount(groupType: string) {
   return inquiryGroupsByType.value[groupType]?.length || 0
+
 }
 
 function selectGroupType(inquiryGroupType) {
@@ -169,12 +158,12 @@ function showSettings() {
 
 // Group inquiry groups by their type (non-archived only)
 const inquiryGroupsByType = computed(() => {
-  const groupsByType: Record<string, InquiryGroupType[]> = {}
+  const groupsByType: Record<string, InquiryGroup[]> = {}
 
   filteredInquiryGroupTypes.value.forEach(groupType => {
     const groupsOfType = inquiryGroups.value.filter(group =>
-      (group.type === groupType.group_type || group.group_type === groupType.group_type) &&
-      group.groupStatus !== "archived"
+      (group.type === groupType.group_type) &&
+      group.groupStatus !== "archived"      
     )
     groupsByType[groupType.group_type] = groupsOfType
   })
@@ -196,12 +185,12 @@ function clearFamilySelection() {
 
 // Group archived inquiry groups by their type
 const archivedInquiryGroupsByType = computed(() => {
-  const groupsByType: Record<string, InquiryGroupType[]> = {}
+  const groupsByType: Record<string, InquiryGroup[]> = {}
 
   filteredInquiryGroupTypes.value.forEach(groupType => {
     const groupsOfType = inquiryGroups.value.filter(group =>
-      (group.type === groupType.group_type || group.group_type === groupType.group_type) &&
-      group.groupStatus === "archived"
+      (group.type === groupType.group_type) &&
+      group.groupStatus === "archived" 
     )
     if (groupsOfType.length > 0) {
       groupsByType[groupType.group_type] = groupsOfType

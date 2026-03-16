@@ -22,22 +22,28 @@ export type InquiryGroupType = {
   fields?: string | string[]
 }
 
+
+
 export type InquiryGroup = {
   id: number
-  cover_id: number | null
-  type: string // 
-  parent_id: number | null
-  created: number
-  deleted: number
-  description: string | null
-  owned_group: string | null
-  metadata: string | null
-  group_status: string
-  protected: number | boolean
-  owner: User
-  title: string 
-  titleExt: string | null 
-  inquiryIds: number[]
-  allowEdit: boolean
-  expire: number | null 
+  parentId: number | null       
+  created: number               
+  deleted: number                
+  description: string | null   
+  owner: User                
+  type: string              
+  groupStatus: string     
+  title: string          
+  titleExt: string | null  
+  ownedGroup: string | null    
+  order: number             
+  expire: number | null   
+  metadata: string | null    
+  coverId: number | null     
+  protected: boolean    
+  allowEdit: boolean    
+  inquiryIds: number[]         
+  childs: number[]           
+  slug: string          
+  miscFields: Record<string, {key:string , value:string}> 
 }

@@ -425,7 +425,6 @@ export const InquiryGeneralIcons: Record<string, Component> = {
   Tools: makeIconComponent(Tools, '#546E7A'),
   FileCheck: makeIconComponent(FileCheck, '#43A047'),
   FileText: makeIconComponent(FileDocument, '#546E7A'),
-  Info: makeIconComponent(InformationVariant, '#1976D2'),
 }
 
 export const ShareIcons: Record<string, Component> = {

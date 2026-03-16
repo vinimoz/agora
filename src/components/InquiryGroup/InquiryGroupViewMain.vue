@@ -337,7 +337,7 @@ function closePopup() {
 .sidebar-item,
 .footer-item,
 .main-item {
-  border: 2px solid var(--inquiry-gray-200);
+  border: 8px solid var(--inquiry-gray-200);
   border-radius: var(--inquiry-border-radius-lg);
   box-shadow: var(--inquiry-shadow-sm);
   transition: var(--inquiry-transition-slow);
