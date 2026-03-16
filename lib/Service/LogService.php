@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -15,7 +16,7 @@ use OCA\Agora\UserSession;
 class LogService
 {
     /**
-     * @psalm-suppress PossiblyUnusedMethod 
+     * @psalm-suppress PossiblyUnusedMethod
      */
     public function __construct(
         private LogMapper $logMapper,

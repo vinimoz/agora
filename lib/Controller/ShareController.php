@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -167,7 +168,7 @@ class ShareController extends BaseController
     {
         return $this->response(
             fn () => ['share' => $this->shareService->setType($token, Share::TYPE_USER)],
-            Http::STATUS_CREATED, 
+            Http::STATUS_CREATED,
         );
     }
 

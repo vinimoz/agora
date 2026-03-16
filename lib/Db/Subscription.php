@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -30,7 +31,7 @@ class Subscription extends Entity implements JsonSerializable
     protected string $userId = '';
 
     /**
-     * @var Log[] $logEntries 
+     * @var Log[] $logEntries
      */
     protected array $logEntries = [];
 
@@ -58,11 +59,12 @@ class Subscription extends Entity implements JsonSerializable
     /**
      * @param Log[] $logs Array of logs for notifications
      */
-    public function setNotifyLogs(array $logs) : void
+    public function setNotifyLogs(array $logs): void
     {
         $inquiryId = $this->getInquiryId();
         $this->logEntries = array_filter(
-            $logs, function ($log) use ($inquiryId) {
+            $logs,
+            function ($log) use ($inquiryId) {
                 return $log->getInquiryId() === $inquiryId;
             }
         );
@@ -71,7 +73,7 @@ class Subscription extends Entity implements JsonSerializable
     /**
      * @return Log[]
      */
-    public function getNotifyLogs() : array
+    public function getNotifyLogs(): array
     {
         return $this->logEntries;
     }

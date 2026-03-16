@@ -19,12 +19,13 @@ const comments = {
   addComment(
     inquiryId: number,
     message: string,
-    confidential: boolean = false
+    confidential: boolean = false,
+    optionId: number
   ): Promise<AxiosResponse<{ comment: Comment }>> {
     return httpInstance.request({
       method: 'POST',
       url: `inquiry/${inquiryId}/comment`,
-      data: { message, confidential },
+      data: { message,optionId, confidential },
       params: { time: +new Date() },
       cancelToken: cancelTokenHandlerObject[this.addComment.name].handleRequestCancellation().token,
     })

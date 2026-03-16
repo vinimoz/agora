@@ -2,10 +2,8 @@
   - SPDX-FileCopyrightText: 2021 Nextcloud contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
-
 <script setup lang="ts">
 import { computed } from 'vue'
-
 import linkifyStr from 'linkify-string'
 import { DateTime } from 'luxon'
 import { t } from '@nextcloud/l10n'
@@ -20,242 +18,464 @@ import { useInquiryStore } from '../../stores/inquiry'
 import { useCommentsStore } from '../../stores/comments'
 import { usePreferencesStore } from '../../stores/preferences'
 
-import type { Comment, CommentsGrouped } from '../../stores/comments.types'
+import type { Comment } from '../../stores/comments.types'
 
 const sessionStore = useSessionStore()
 const inquiryStore = useInquiryStore()
 const commentsStore = useCommentsStore()
 const preferencesStore = usePreferencesStore()
 
-const { comment } = defineProps<{ comment: CommentsGrouped }>()
+const props = defineProps<{
+  comment?: Comment
+  group?: {
+    userId: string | number
+    user: string
+    timestamp: number
+    comments: Comment[]
+  }
+}>()
 
-const commentedDateTime = computed(() => DateTime.fromSeconds(comment.timestamp))
+// Safe computed properties with null checks
+const isGroupMode = computed(() => props.group !== undefined && props.group !== null)
 
-const isCurrentUser = computed(
-	() => sessionStore.currentUser?.id === comment.user.id,
-)
-
-const isConfidential = computed(() => comment.confidential > 0)
-const confidentialRecipient = computed(() => {
-	if (!isConfidential.value) {
-		return ''
-	}
-	if (comment.recipient && comment.recipient.id !== sessionStore.currentUser.id) {
-		return t('inquiries', 'Confidential with {displayName}', {
-			displayName: comment.recipient.displayName,
-		})
-	}
-	return t('inquiries', 'Confidential')
+const comments = computed(() => {
+  if (isGroupMode.value && props.group?.comments) {
+    return props.group.comments
+  }
+  return props.comment ? [props.comment] : []
 })
-/**
- *
- * @param subComment
- */
-function linkify(subComment: string) {
-	return linkifyStr(subComment)
+
+const user = computed(() => {
+  if (isGroupMode.value && props.group?.user) {
+    return props.group.user
+  }
+  return props.comment?.user || { id: 0, displayName: 'Unknown' }
+})
+
+const timestamp = computed(() => {
+  if (isGroupMode.value && props.group?.timestamp) {
+    return props.group.timestamp
+  }
+  return props.comment?.timestamp || 0
+})
+
+
+const commentedDateTime = computed(() => {
+  try {
+    return DateTime.fromSeconds(timestamp.value)
+  } catch {
+    return DateTime.now()
+  }
+})
+
+const isCurrentUser = computed(() => sessionStore.currentUser?.id === user.value.id)
+
+// Check if any comment in group is confidential
+const isConfidential = computed(() => comments.value.some(c => c && c.confidential > 0))
+
+const deletable = computed(() => user.value.id === sessionStore.currentUser?.id
+    || inquiryStore.currentUserStatus?.isOwner)
+
+// Format time for multiple comments
+const timeRange = computed(() => {
+  if (comments.value.length <= 1) return ''
+
+  try {
+    const first = DateTime.fromSeconds(comments.value[0]?.timestamp || 0)
+    const last = DateTime.fromSeconds(comments.value[comments.value.length - 1]?.timestamp || 0)
+
+    if (first.hasSame(last, 'minute')) {
+      return first.toFormat('HH:mm')
+    }
+    return `${first.toFormat('HH:mm')} - ${last.toFormat('HH:mm')}`
+  } catch {
+    return ''
+  }
+})
+
+// Helper functions
+function linkify(text: string) {
+  if (!text) return ''
+  try {
+    return linkifyStr(text)
+  } catch {
+    return text
+  }
 }
 
-/**
- *
- * @param comment
- */
 async function deleteComment(comment: Comment) {
-	try {
-		await commentsStore.delete({ comment })
-	} catch {
-		showError(t('inquiries', 'Error while deleting the comment'))
-	}
+  if (!comment) return
+  try {
+    await commentsStore.delete({ comment })
+  } catch {
+    showError(t('inquiries', 'Error while deleting the comment'))
+  }
 }
 
-/**
- *
- * @param comment
- */
 async function restoreComment(comment: Comment) {
-	try {
-		await commentsStore.restore({ comment })
-	} catch {
-		showError(t('inquiries', 'Error while restoring the comment'))
-	}
+  if (!comment) return
+  try {
+    await commentsStore.restore({ comment })
+  } catch {
+    showError(t('inquiries', 'Error while restoring the comment'))
+  }
 }
-const deletable = computed(
-	() =>
-		comment.user.id === sessionStore.currentUser?.id
-		|| inquiryStore.currentUserStatus.isOwner,
-)
+
+// Track user positions for alternating ONLY in grouped mode
+const userPositionsGrouped = new Map<string | number, 'left' | 'right'>()
+
+// Simplified position logic - only alternate in grouped mode
+const position = computed(() => {
+  if (!isGroupMode.value) {
+    // For single comments (option comments), always left
+    return 'left'
+  }
+
+  // For grouped mode, alternate based on user
+  const userId = user.value.id
+  const lastPosition = userPositionsGrouped.get(userId)
+
+  let newPosition: 'left' | 'right'
+  if (lastPosition) {
+    newPosition = lastPosition === 'left' ? 'right' : 'left'
+  } else {
+    newPosition = 'left' // First time for this user
+  }
+
+  userPositionsGrouped.set(userId, newPosition)
+  return newPosition
+})
+
 </script>
-
 <template>
-	<div :class="['comment-item', { 'current-user': isCurrentUser }, deletable]">
-		<UserItem
-			v-if="!preferencesStore.user.useCommentsAlternativeStyling"
-			:user="comment.user"
-			hide-names />
+  <div 
+    v-if="comments.length > 0"
+    :class="[
+      'comment-item',
+      { 
+        'current-user': isCurrentUser,
+        'grouped': isGroupMode,
+        'single': !isGroupMode,
+        'avatar-left': position === 'left',
+        'avatar-right': position === 'right',
+        'has-multiple': comments.length > 1
+      }
+    ]"
+  >
+    <!-- Avatar - only show in grouped mode, hidden in single mode -->
+    <div v-if="isGroupMode" class="comment-item__avatar">
+      <UserItem
+        v-if="!preferencesStore.user?.useCommentsAlternativeStyling"
+        :user="user"
+        hide-names />
+      <UserBubble v-else :user="user" />
+    </div>
 
-		<div class="comment-item__content">
-			<span
-				v-if="!preferencesStore.user.useCommentsAlternativeStyling"
-				class="comment-item__user">
-				{{ comment.user.displayName }}
-			</span>
+    <!-- Content - full width in single mode -->
+    <div 
+      class="comment-item__content"
+      :class="{ 'full-width': !isGroupMode }"
+    >
+      <!-- Header - always left aligned -->
+      <div class="comment-item__header">
+        <span class="comment-item__user">
+          {{ user.displayName || t('inquiries', 'Unknown user') }}
+        </span>
+        <span
+          class="comment-item__date"
+          :title="commentedDateTime.toLocaleString(DateTime.DATETIME_SHORT)">
+          {{ commentedDateTime.toRelative() }}
+        </span>
+        <span v-if="timeRange" class="comment-item__timerange">
+          {{ timeRange }}
+        </span>
+        <span v-if="isConfidential" class="comment-item__confidential">
+          {{ t('inquiries', 'Confidential') }}
+        </span>
+        <span v-if="comments.length > 1" class="comment-item__count">
+          {{ comments.length }}
+        </span>
+      </div>
 
-			<UserBubble v-else-if="!isCurrentUser" :user="comment.user" />
+      <!-- Comments - with smaller spacing -->
+      <div class="comment-item__comments">
+        <div
+          v-for="(singleComment, index) in comments"
+          :key="singleComment?.id || index"
+          class="comment-item__single"
+          :class="{ 'deleted': singleComment?.deleted }"
+        >
+          <!-- Comment text - smaller font for single mode -->
+          <div class="comment-item__text">
+            <!-- eslint-disable-next-line vue/no-v-html -->
+            <span v-html="linkify(singleComment?.comment || '')" />
+          </div>
 
-			<span
-				class="comment-item__date"
-				:title="commentedDateTime.toLocaleString(DateTime.DATETIME_SHORT)">
-				{{ commentedDateTime.toRelative() }}
-			</span>
-
-			<span v-if="isConfidential" class="comment-item__confidential">
-				{{ confidentialRecipient }}
-			</span>
-
-			<div
-				v-for="subComment in comment.comments"
-				:key="subComment.id"
-				:class="[
-					'comment-item__sub-comment',
-					{ deletable },
-					{ deleted: subComment.deleted },
-				]">
-				<!-- eslint-disable vue/no-v-html -->
-				<span v-html="linkify(subComment.comment)" />
-				<!-- eslint-enable vue/no-v-html -->
-
-				<ActionDelete
-					v-if="deletable"
-					:name="
-						subComment.deleted
-							? t('inquiries', 'Restore comment')
-							: t('inquiries', 'Delete comment')
-					"
-					:restore="!!subComment.deleted"
-					:timeout="0"
-					@restore="restoreComment(subComment)"
-					@delete="deleteComment(subComment)" />
-			</div>
-		</div>
-	</div>
+          <!-- Actions -->
+          <div class="comment-item__actions">
+            <ActionDelete
+              v-if="deletable && singleComment"
+              :name="singleComment.deleted ? t('inquiries', 'Restore comment') : t('inquiries', 'Delete comment')"
+              :restore="!!singleComment.deleted"
+              :timeout="0"
+              @restore="restoreComment(singleComment)"
+              @delete="deleteComment(singleComment)" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .comment-item {
-	display: flex;
-	align-items: start;
-	margin-bottom: 24px;
+  display: flex;
+  margin-bottom: 8px; // Reduced from 12px
+  gap: 8px; // Reduced from 12px
+  
+  // For single mode (option comments) - no avatar, smaller box
+  &.single {
+    .comment-item__content {
+      background: var(--color-main-background);
+      border: 1px solid var(--color-border);
+      border-radius: 8px; // Smaller radius
+      padding: 6px 10px; // Reduced padding
+      margin-left: 0; // No margin since no avatar
+      
+      .comment-item__user {
+        font-size: 0.8em; // Smaller
+      }
+      
+      .comment-item__date {
+        font-size: 0.7em; // Smaller
+      }
+      
+      .comment-item__text {
+        font-size: 0.85em; // Smaller
+        line-height: 1.4;
+      }
+    }
+    
+    // Header always left in single mode
+    .comment-item__header {
+      justify-content: flex-start;
+    }
+  }
+  
+  // For grouped mode
+  &.grouped {
+    .comment-item__content {
+      background: var(--color-background-dark);
+      border-radius: 10px; // Slightly smaller
+      padding: 8px 12px; // Reduced padding
+      
+      .comment-item__single {
+        margin-bottom: 6px;
+        padding-bottom: 6px;
+        
+        &:last-child {
+          margin-bottom: 0;
+          padding-bottom: 0;
+        }
+      }
+    }
+    
+    // Avatar positioning only affects grouped mode
+    &.avatar-left {
+      flex-direction: row;
+    }
+    
+    &.avatar-right {
+      flex-direction: row-reverse;
+    }
+  }
+  
+  // Current user styling
+  &.current-user {
+    .comment-item__content {
+      background: var(--color-primary-light);
+      border-color: var(--color-primary-element-light);
+    }
+  }
 }
 
-.comment-item__user {
-	font-weight: 600;
-	font-size: 0.9em;
-}
-
-.comment-item__date {
-	opacity: 0.5;
-	font-size: 0.8em;
-	text-align: end;
-	&::before {
-		content: ' ~ ';
-	}
-}
-
-.comment-item__confidential {
-	opacity: 0.5;
-	font-size: 0.8em;
-	text-align: end;
-	&::before {
-		content: ' (';
-	}
-	&::after {
-		content: ') ';
-	}
+.comment-item__avatar {
+  flex-shrink: 0;
+  margin-top: 2px; // Align better with first line
 }
 
 .comment-item__content {
-	margin-inline-start: 8px;
-	flex: 1 1;
-	padding-top: 2px;
-
-	.material-design-icon {
-		visibility: hidden;
-	}
-
-	.comment-item__sub-comment {
-		display: flex;
-		align-items: center;
-
-		&.deletable:hover {
-			background: var(--color-background-hover);
-			.material-design-icon {
-				visibility: visible;
-			}
-		}
-
-		> span {
-			hyphens: auto;
-			flex: 1;
-			a {
-				text-decoration-line: underline;
-			}
-		}
-
-		&.deleted {
-			opacity: 0.6;
-
-			> span::after {
-				content: var(--content-deleted);
-				font-weight: bold;
-				color: var(--color-error-text);
-			}
-		}
-	}
+  flex: 1;
+  min-width: 0;
+  transition: all 0.2s ease;
+  
+  &.full-width {
+    width: 100%;
+  }
+  
+  &:hover {
+    background: var(--color-background-hover);
+    border-color: var(--color-primary-element);
+  }
 }
 
-// experimental
-.alternativestyle {
-	.comment-item {
-		flex-direction: row;
-		// margin-right: 44px;
-		&.current-user {
-			flex-direction: row-reverse;
-			margin-inline: 88px 0;
-		}
-		&:not(.current-user) .comment-item__sub-comment {
-			margin-inline-start: 1.5rem;
-		}
-	}
+.comment-item__header {
+  display: flex;
+  align-items: center;
+  gap: 6px; // Reduced gap
+  margin-bottom: 4px; // Reduced margin
+  flex-wrap: wrap;
+  
+  // Always left aligned
+  justify-content: flex-start !important;
+}
 
-	.current-user {
-		.user-item {
-			display: none;
-		}
-		.comment-item__date {
-			grid-row: 999;
-		}
-		.comment-item__content {
-			display: grid;
-			border: solid 1px var(--color-primary-element-light);
-			border-radius: var(--border-radius-element);
-			background-color: var(--color-primary-element-light);
-			box-shadow: 2px 2px 6px var(--color-box-shadow);
-			padding-inline-start: 8px;
-			padding-bottom: 10px;
-		}
+.comment-item__user {
+  font-weight: 600;
+  font-size: 0.85em; // Smaller
+  color: var(--color-main-text);
+}
 
-		.comment-item__user {
-			display: none;
-		}
+.comment-item__date {
+  opacity: 0.5;
+  font-size: 0.75em; // Smaller
+  
+  &::before {
+    content: '•';
+    margin-right: 4px;
+    opacity: 0.5;
+  }
+}
 
-		.comment-item__sub-comment {
-			margin-inline-end: 4px;
+.comment-item__timerange {
+  font-size: 0.7em;
+  background: var(--color-background-darker);
+  padding: 2px 6px;
+  border-radius: 8px;
+  color: var(--color-text-light);
+}
 
-			&.deletable:hover {
-				margin-inline-start: -4px;
-				padding-inline-start: 4px;
-				border-radius: var(--border-radius-element);
-			}
-		}
-	}
+.comment-item__confidential {
+  opacity: 0.5;
+  font-size: 0.7em;
+  background: var(--color-background-darker);
+  padding: 2px 6px;
+  border-radius: 8px;
+  
+  &::before {
+    content: '🔒';
+    margin-right: 4px;
+    font-size: 0.85em;
+  }
+}
+
+.comment-item__count {
+  font-size: 0.65em; // Smaller
+  font-weight: 600;
+  background: var(--color-primary-element);
+  color: var(--color-primary-text);
+  padding: 2px 6px;
+  border-radius: 8px;
+  margin-left: auto;
+}
+
+.comment-item__comments {
+  display: flex;
+  flex-direction: column;
+  gap: 4px; // Reduced gap
+}
+
+.comment-item__single {
+  position: relative;
+  
+  &.deleted {
+    opacity: 0.6;
+  }
+}
+
+.comment-item__text {
+  font-size: 0.9em; // Slightly smaller
+  line-height: 1.5;
+  word-break: break-word;
+  padding-right: 36px; // Slightly less space
+  
+  :deep(a) {
+    color: var(--color-primary-element);
+    text-decoration: none;
+    
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.comment-item__actions {
+  position: absolute;
+  right: 0;
+  top: 0;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  
+  :deep(.action-delete) {
+    button {
+      height: 24px !important;
+      width: 24px !important;
+    }
+  }
+}
+
+.comment-item__single:hover .comment-item__actions {
+  opacity: 1;
+}
+
+// Comment input styling
+.comments-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.comment-input {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  padding: 12px;
+  background: var(--color-background-dark);
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+  
+  :deep(.nc-rich-contenteditable) {
+    flex: 1;
+    min-height: 36px;
+    max-height: 120px;
+    overflow-y: auto;
+    background: var(--color-main-background);
+    border-radius: 8px;
+    padding: 8px 12px;
+    
+    &:focus {
+      border-color: var(--color-primary-element);
+    }
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .comment-item {
+    margin-bottom: 6px;
+  }
+  
+  .comment-item__text {
+    padding-right: 30px;
+    font-size: 0.85em;
+  }
+  
+  .comment-input {
+    flex-direction: column;
+    
+    button {
+      align-self: flex-end;
+    }
+  }
 }
 </style>

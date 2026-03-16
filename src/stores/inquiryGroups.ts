@@ -18,7 +18,11 @@ import { t } from '@nextcloud/l10n'
 export const useInquiryGroupsStore = defineStore('inquiryGroups', () => {
   const inquiryGroups = ref<InquiryGroup[]>([])
   const updating = ref(false)
-  const currentGroupType = ref<string>('assembly')
+  const selectedGroupType = ref<string>('')
+
+ const defaultGroupType = computed(() => getDefaultGroupTypeFromFamily()) 
+  // Current group type to use (selected or default)
+  const currentGroupType = computed(() => selectedGroupType.value || defaultGroupType.value)
 
 
    function addInquiryGroup(group: InquiryGroup) {
@@ -43,13 +47,6 @@ export const useInquiryGroupsStore = defineStore('inquiryGroups', () => {
             ...updatedGroup,
         }
     }
-
-    function removeInquiryGroup(groupId: number) {
-        inquiryGroups.value = inquiryGroups.value.filter(
-            g => g.id !== groupId
-        )
-    }
-
 
   /**
    * Get inquiry group by slug
@@ -98,7 +95,7 @@ export const useInquiryGroupsStore = defineStore('inquiryGroups', () => {
   const byId = (id: number): InquiryGroup | undefined => inquiryGroups.value.find(g => g.id === id)
 
   const setCurrentGroupType = (type: string) => {
-    currentGroupType.value = type
+    selectedGroupType.value = type
   }
 
   /**
@@ -313,6 +310,26 @@ async function loadGroupFromServer(slug: string): Promise<InquiryGroup | null> {
   }
 }
 
+function getDefaultGroupTypeFromFamily(): string {
+  const sessionStore = useSessionStore()
+  const inquiriesStore = useInquiriesStore()
+
+  const selectedFamily = inquiriesStore.advancedFilters?.familyType
+  const typeTabs = sessionStore.appSettings?.inquiryGroupTypeTab || []
+
+  if (typeTabs.length === 0) return ''
+
+  if (selectedFamily) {
+    const matchingType = typeTabs.find(type => type.family === selectedFamily)
+    if (matchingType) {
+      return matchingType.group_type
+    }
+  }
+
+  // Fallback to first type
+  return typeTabs[0].group_type
+}
+
 /**
  * Load all groups from server (if needed)
  */
@@ -320,15 +337,16 @@ async function fetchAllGroups(): Promise<InquiryGroup[]> {
   try {
     updating.value = true
     
-    // Check if API method exists
-    if (typeof InquiryGroupsAPI.getAllGroups !== 'function') {
-      Logger.warn('getAllGroups API method not available')
-      return inquiryGroups.value
-    }
     
     const response = await InquiryGroupsAPI.getAllGroups()
     const groups = response.data.groups || []
-    
+    const sessionStore = useSessionStore()
+    if (sessionStore.appSettings.inquiryGroupTypeTab && sessionStore.appSettings.inquiryGroupTypeTab.length > 0) {
+    // const index = typeof O !== 'undefined' ? O : 0
+    if (sessionStore.appSettings.inquiryGroupTypeTab.length > 0) {
+        this.selectedGroupType =  getDefaultGroupTypeFromFamily()
+        }
+    }
     inquiryGroups.value = groups
     ensureSlugs()
     
@@ -575,6 +593,7 @@ async function fetchAllGroups(): Promise<InquiryGroup[]> {
     generateSlug,
     ensureSlugs,
      currentGroupType,
-    setCurrentGroupType
+    setCurrentGroupType,
+    selectedGroupType
   }
 })

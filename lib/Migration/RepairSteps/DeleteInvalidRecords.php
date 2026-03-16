@@ -1,11 +1,11 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2021 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-
 
 namespace OCA\Agora\Migration\RepairSteps;
 
@@ -34,12 +34,12 @@ class DeleteInvalidRecords implements IRepairStep
     ) {
     }
 
-    public function getName():string
+    public function getName(): string
     {
         return 'Agora - Delete duplicates and orphaned records';
     }
 
-    public function run(IOutput $output):void
+    public function run(IOutput $output): void
     {
         if ($this->connection->tableExists(Inquiry::TABLE)) {
             try {

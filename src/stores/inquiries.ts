@@ -502,7 +502,7 @@ export const useInquiriesStore = defineStore('inquiries', {
                                                                              )
                                                }
 
-                                               return orderBy(filtered, ['created'], ['desc']).slice(0, 7)
+                                               return orderBy(filtered, ['lastInteraction'], ['desc']).slice(0, 7)
       },
 
       loaded(state: InquiryList): number {

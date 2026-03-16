@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2021 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -23,7 +24,7 @@ use OCA\Agora\Model\UserBase;
 class Circle extends UserBase
 {
     /**
-     * @var string 
+     * @var string
      */
     public const TYPE = 'circle';
 
@@ -44,12 +45,12 @@ class Circle extends UserBase
         }
     }
 
-    public static function isEnabled() : bool
+    public static function isEnabled(): bool
     {
         return Container::isAppEnabled('circles');
     }
 
-    public function getRichObjectString() : array
+    public function getRichObjectString(): array
     {
         return [
         'type' => $this->richObjectType,
@@ -62,7 +63,7 @@ class Circle extends UserBase
     /**
      * @return Circle[]
      */
-    public static function search(string $query = '', array $skip = []) : array
+    public static function search(string $query = '', array $skip = []): array
     {
         $circles = [];
         if (self::isEnabled()) {

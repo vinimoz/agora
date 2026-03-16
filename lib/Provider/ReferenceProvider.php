@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2025 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -23,9 +24,8 @@ use OCP\IURLGenerator;
 
 class ReferenceProvider extends ADiscoverableReferenceProvider implements ISearchableReferenceProvider
 {
-
     /**
-     * @psalm-suppress PossiblyUnusedMethod 
+     * @psalm-suppress PossiblyUnusedMethod
      */
     public function __construct(
         private InquiryService $inquiryService,
@@ -80,10 +80,9 @@ class ReferenceProvider extends ADiscoverableReferenceProvider implements ISearc
                     $description = $inquiry->getDescription();
                     $ownerId = $inquiry->getUser()->getId();
                     $ownerDisplayName = $inquiry->getUser()->getDisplayName();
-                    $url = $inquiry->getSupportUrl();
+                    $url = $inquiry->getInquiryUrl();
                     $expired = $inquiry->getExpired();
                     $expiry = $inquiry->getExpire();
-
                 } catch (NotFoundException $e) {
                     $inquiryId = 0;
                     $title = $this->l10n->t('404 - Inquiry not found');
@@ -91,7 +90,6 @@ class ReferenceProvider extends ADiscoverableReferenceProvider implements ISearc
                     $ownerId = null;
                     $ownerDisplayName = $this->l10n->t('No one.');
                     $url = null;
-
                 } catch (ForbiddenException $e) {
                     $owner = $this->inquiryService->getInquiryOwnerFromDB($inquiryId);
                     $title = $this->l10n->t('Access denied');
@@ -99,7 +97,6 @@ class ReferenceProvider extends ADiscoverableReferenceProvider implements ISearc
                     $description = $this->l10n->t('You have no access to this inquiry. Contact %s if you think this is a mistake.', $ownerDisplayName);
                     $ownerId = $owner->getId();
                     $url = $referenceText;
-
                 } catch (Exception $e) {
                     // skip the reference silently
                     return null;
@@ -110,7 +107,8 @@ class ReferenceProvider extends ADiscoverableReferenceProvider implements ISearc
                 $reference->setDescription($description ? $description : $this->l10n->t('No description available.'));
                 $reference->setImageUrl($this->getIconUrl());
                 $reference->setRichObject(
-                    Application::APP_ID . '_reference_widget', [
+                    Application::APP_ID . '_reference_widget',
+                    [
                     'id' => $inquiryId,
                     'inquiry' => [
                     'id' => $inquiryId,

@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -11,11 +12,12 @@ namespace OCA\Agora\Service;
 use OCP\IGroupManager;
 use OCP\IUser;
 
-class LotteryService {
-
+class LotteryService
+{
     private IGroupManager $groupManager;
 
-    public function __construct(IGroupManager $groupManager) {
+    public function __construct(IGroupManager $groupManager)
+    {
         $this->groupManager = $groupManager;
     }
 
@@ -25,7 +27,8 @@ class LotteryService {
      * @param string $groupId
      * @return IUser|null
      */
-    public function drawRandomUserFromGroup(string $groupId): ?IUser {
+    public function drawRandomUserFromGroup(string $groupId): ?IUser
+    {
         $group = $this->groupManager->get($groupId);
         if ($group === null) {
             return null;
@@ -42,4 +45,3 @@ class LotteryService {
         return $users[$randomIndex];
     }
 }
-

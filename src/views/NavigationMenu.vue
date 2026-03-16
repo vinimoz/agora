@@ -31,9 +31,7 @@ import {
 
 import {
   accessFamilyMenu,
-  canCreateInquiryGroup,
-  createPermissionContextForContent,
-  ContentType,
+  canCreateInquiryGroupInGeneral,
 } from '../utils/permissions.ts'
 
 const preferencesStore = usePreferencesStore()
@@ -46,22 +44,9 @@ const selectedInquiryTypeForCreation = ref<InquiryType | null>(null)
 const selectedInquiryGroupTypeForCreation = ref(null)
 
 // Add this computed property to check if user can create groups
-const canUserCreateInquiryGroup = computed(() => {
-  // Create a basic permission context for checking creation rights
-  const context = createPermissionContextForContent(
-    ContentType.InquiryGroup,
-    '', // ownerId not needed for creation check
-    true, // isPublic
-    false, // isLocked
-    false, // isExpired
-    false, // isDeleted
-    false, // isArchived
-    false, // hasGroupRestrictions
-    [] // allowedGroups
-  )
-  // Check if user can create inquiry groups in general
-  return canCreateInquiryGroup(context)
-})
+const canUserCreateInquiryGroup = computed(() => 
+  canCreateInquiryGroupInGeneral()
+)
 
 // Function to check if user can create inquiry group for current family
 function canCreateInquiryGroupForFamily(familyType: string): boolean {
@@ -96,7 +81,12 @@ const availableGroups = computed(() => {
 
 // State for selected family
 
-const selectedFamily = ref<string | null>(inquiriesStore.familyType || null)
+// const selectedFamily = ref<string | null>(inquiriesStore.familyType || null)
+const selectedFamily = computed({
+  get: () => inquiriesStore.advancedFilters.familyType || null,
+  set: (value) => inquiriesStore.setFamilyType(value || '')
+})
+
 // State for expanded/collapsed families
 const expandedFamilies = ref<Set<string>>(new Set())
 
@@ -104,7 +94,9 @@ const expandedFamilies = ref<Set<string>>(new Set())
 const inquiryFamilies = computed((): InquiryFamily[] => sessionStore.appSettings.inquiryFamilyTab || [])
 
 // Computed for recent inquiries
-const recentInquiries = computed(() => inquiriesStore.inquiries.slice(0, 5))
+const sortedInquiries = computed(() => [...inquiriesStore.inquiries].sort((a, b) => new Date(b.status.lastInteraction) - new Date(a.status.lastInteraction)));
+const recentInquiries = computed(() => sortedInquiries.value.slice(0, 5));
+
 
 // Check if a family has inquiry groups OR inquiry group types defined
 const shouldRedirectToGroupView = (familyType: string) => {
@@ -223,7 +215,6 @@ function createInquiry(inquiryType: InquiryType) {
   createDlgToggle.value = true
 }
 
-
 // Function to handle inquiry added
 function inquiryAdded(payload: { id: number; title: string }) {
   createDlgToggle.value = false
@@ -285,8 +276,8 @@ watch(
           :key="inquiry.id"
           :name="inquiry.title"
           :exact="true"
-          :to="{ name: 'inquiry', params: { id: inquiry.id } }"
           class="navigation-item"
+          :to="{ name: 'inquiry', params: { id: inquiry.id } }"
         >
           <template #icon>
             <component :is="getInquiryIcon(inquiry)" class="nav-icon" />

@@ -116,6 +116,14 @@ const inquiryGroups = {
                 cancelTokenHandlerObject[this.updateInquiryGroup.name].handleRequestCancellation().token,
         })
     },
+    
+    getAllGroups(): Promise<AxiosResponse<{ inquiryGroups: InquiryGroup[] }>> {
+    return httpInstance.request({
+        method: 'GET',
+        url: 'inquirygroups',
+        cancelToken: cancelTokenHandlerObject[this.getAllGroups.name].handleRequestCancellation().token,
+        })
+    },
 
     getInquiryGroup(inquiryGroupId: number): Promise<AxiosResponse<{ inquiryGroup: InquiryGroup }>> {
         return httpInstance.request({

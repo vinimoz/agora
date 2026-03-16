@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -75,19 +76,19 @@ class InquiryFamilyService
         if ($this->familyTypeExists($familyType)) {
             throw new \InvalidArgumentException('Family type already exists');
         }
-    
+
 
         $inquiryFamily = new InquiryFamily();
         $inquiryFamily->setFamilyType($familyType);
         $inquiryFamily->setLabel($label);
         $inquiryFamily->setDescription($description);
         $inquiryFamily->setIcon($icon);
-        
+
         if ($sortOrder === 0) {
             $sortOrder = $this->getMaxSortOrder() + 1;
         }
         $inquiryFamily->setSortOrder($sortOrder);
-        
+
         $inquiryFamily->setCreated(time());
 
         return $this->inquiryFamilyMapper->insert($inquiryFamily);
@@ -101,7 +102,7 @@ class InquiryFamilyService
         string $icon = '',
         ?int $sortOrder = 0
     ): InquiryFamily {
-        $this->logger->warning(' DEBUG : ', ['familyType' =>$familyType]);
+        $this->logger->warning(' DEBUG : ', ['familyType' => $familyType]);
         $inquiryFamily = $this->find($id);
         $inquiryFamily->setFamilyType($familyType);
         $inquiryFamily->setLabel($label);

@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -17,9 +18,8 @@ use OCA\Agora\UserSession;
 
 class PreferencesService
 {
-
     /**
-     * @psalm-suppress PossiblyUnusedMethod 
+     * @psalm-suppress PossiblyUnusedMethod
      */
     public function __construct(
         private PreferencesMapper $preferencesMapper,
@@ -37,7 +37,7 @@ class PreferencesService
                 throw new NotFoundException('No preferences found');
             }
         } catch (Exception $e) {
-            $this->preferences = new Preferences;
+            $this->preferences = new Preferences();
         }
     }
 
@@ -64,10 +64,8 @@ class PreferencesService
             return $this->preferencesMapper->update($this->preferences);
         } else {
             return $this->preferencesMapper->insert($this->preferences);
-
         }
     }
-
 
     /**
      * Tidy preferences
@@ -76,24 +74,22 @@ class PreferencesService
      */
     private function tidyPreferences(array $preferences): array
     {
-
-        // remove old properties (checkCalendarsBefore)
+        // Migrate legacy checkCalendarsBefore to checkCalendarsHoursBefore
         if (isset($preferences['checkCalendarsBefore'])) {
-            if (isset($preferences['checkCalendarsHoursBefore'])) {
-                unset($preferences['checkCalendarsBefore']);
-            } else {
+            // Only set if new key doesn't already exist (migration safety)
+            if (!isset($preferences['checkCalendarsHoursBefore'])) {
                 $preferences['checkCalendarsHoursBefore'] = $preferences['checkCalendarsBefore'];
-                unset($preferences['checkCalendarsBefore']);
             }
+            unset($preferences['checkCalendarsBefore']);
         }
-        // remove old properties (checkCalendarsAfter)
+
+        // Migrate legacy checkCalendarsAfter to checkCalendarsHoursAfter
         if (isset($preferences['checkCalendarsAfter'])) {
-            if (isset($preferences['checkCalendarsHoursAfter'])) {
-                unset($preferences['checkCalendarsAfter']);
-            } else {
+            // Only set if new key doesn't already exist (migration safety)
+            if (!isset($preferences['checkCalendarsHoursAfter'])) {
                 $preferences['checkCalendarsHoursAfter'] = $preferences['checkCalendarsAfter'];
-                unset($preferences['checkCalendarsAfter']);
             }
+            unset($preferences['checkCalendarsAfter']);
         }
 
         return $preferences;

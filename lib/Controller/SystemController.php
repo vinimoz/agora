@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -45,7 +46,8 @@ class SystemController extends BaseController
             [
             'siteusers' => $this->systemService->getSiteUsersAndGroups($query, $types),
             'types' => $types
-            ], Http::STATUS_OK
+            ],
+            Http::STATUS_OK
         );
     }
     /**
@@ -70,7 +72,8 @@ class SystemController extends BaseController
         return new JSONResponse(
             ['groups' => $this->systemService->getGroups(
                 $query
-            )], Http::STATUS_OK
+            )],
+            Http::STATUS_OK
         );
     }
 }

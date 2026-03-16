@@ -1,0 +1,2262 @@
+{
+  "template_info": {
+    "name": "education_student_engagement",
+    "version": "1.0.0",
+    "description": "Template for student engagement in higher education supporting course feedback, campus improvements, student activities, and wellbeing initiatives with extensive voting workflows including student body votes, council decisions, and anonymous surveys",
+    "author": "Agora Team",
+    "use_case": "education_students",
+    "available_languages": [
+      "en",
+      "fr",
+      "de",
+      "gsw"
+    ]
+  },
+  "inquiry_families": [
+    {
+      "family_type": "student_voice",
+      "label": {
+        "en": "Student Voice",
+        "fr": "Voix étudiante",
+        "de": "Studentische Stimme",
+        "gsw": "Studente-Stimm"
+      },
+      "description": {
+        "en": "Student feedback, suggestions, and initiatives for campus improvement",
+        "fr": "Retours, suggestions et initiatives étudiantes pour l'amélioration du campus",
+        "de": "Studentisches Feedback, Vorschläge und Initiativen zur Campus-Verbesserung",
+        "gsw": "Studente-Feedback, Vorschläg und Initiative zur Campus-Verbesserig"
+      },
+      "icon": "School",
+      "sort_order": 1
+    },
+    {
+      "family_type": "official_student_engagement",
+      "label": {
+        "en": "Official Response",
+        "fr": "Réponse officielle",
+        "de": "Offizielle Antwort",
+        "gsw": "Offizielle Antwort"
+      },
+      "description": {
+        "en": "Official responses from administration and faculty",
+        "fr": "Réponses officielles de l'administration et du corps professoral",
+        "de": "Offizielle Antworten von Verwaltung und Fakultät",
+        "gsw": "Offizelli Antworte vo Verwaltung und Fakultät"
+      },
+      "icon": "Seal",
+      "sort_order": 2
+    }
+  ],
+  "inquiry_types": [
+    {
+      "inquiry_type": "course_improvement",
+      "family": "student_voice",
+      "icon": "BookEducation",
+      "label": {
+        "en": "Course Improvements",
+        "fr": "Améliorations de cours",
+        "de": "Kursverbesserungen",
+        "gsw": "Kurs-Verbesserige"
+      },
+      "description": {
+        "en": "Suggestions to improve courses, teaching methods, and learning materials",
+        "fr": "Suggestions pour améliorer les cours, méthodes d'enseignement et supports pédagogiques",
+        "de": "Vorschläge zur Verbesserung von Kursen, Lehrmethoden und Lernmaterialien",
+        "gsw": "Vorschläg zur Verbesserig vo Kurs, Lehrmethode und Lernmaterial"
+      },
+      "is_root": true,
+      "allowed_response": [
+        "official_response_student_engagement"
+      ],
+      "allowed_option_type": [
+        "position_for",
+        "position_against",
+        "alternative",
+        "official_summary"
+      ],
+      "support_feature": "binary",
+      "allowed_transformation": [
+        "student_activities"
+      ],
+      "fields": [
+        {
+          "key": "type_of_vote",
+          "label": {
+            "en": "Type of Vote",
+            "fr": "Type de vote",
+            "de": "Abstimmungstyp",
+            "gsw": "Abstimmigs-Typ"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "simple",
+          "allowed_values": [
+            "simple",
+            "approval",
+            "ranking"
+          ]
+        },
+        {
+          "key": "eligible_voters",
+          "label": {
+            "en": "Eligible Voters",
+            "fr": "Électeurs éligibles",
+            "de": "Wahlberechtigte",
+            "gsw": "Wahlberechtigti"
+          },
+          "type": "enum",
+          "required": false,
+          "allowed_values": [
+            {"value": "all_students", "label": {"en": "All Students", "fr": "Tous les étudiants", "de": "Alle Studierenden", "gsw": "Alli Studierendi"}},
+            {"value": "class_cohort", "label": {"en": "Class Cohort", "fr": "Cohorte de classe", "de": "Klassenjahrgang", "gsw": "Klasse-Jahrgang"}},
+            {"value": "program_students", "label": {"en": "Program Students", "fr": "Étudiants du programme", "de": "Programmstudierende", "gsw": "Programm-Studierendi"}}
+          ]
+        },
+        {
+          "key": "quorum",
+          "label": {
+            "en": "Required Votes",
+            "fr": "Votes requis",
+            "de": "Erforderliche Stimmen",
+            "gsw": "Erforderlich Stimme"
+          },
+          "type": "integer",
+          "required": false,
+          "default": 100
+        },
+        {
+          "key": "voting_deadline",
+          "label": {
+            "en": "Voting Deadline",
+            "fr": "Date limite de vote",
+            "de": "Abstimmungsfrist",
+            "gsw": "Abstimmigs-Frischt"
+          },
+          "type": "date",
+          "required": false
+        }
+      ]
+    },
+    {
+      "inquiry_type": "campus_facilities",
+      "family": "student_voice",
+      "icon": "Domain",
+      "label": {
+        "en": "Campus Facilities",
+        "fr": "Installations du campus",
+        "de": "Campus-Einrichtungen",
+        "gsw": "Campus-Iirichtige"
+      },
+      "description": {
+        "en": "Feedback on campus facilities, libraries, study spaces, and amenities",
+        "fr": "Retours sur les installations du campus, bibliothèques, espaces d'étude et commodités",
+        "de": "Feedback zu Campus-Einrichtungen, Bibliotheken, Lernräumen und Annehmlichkeiten",
+        "gsw": "Feedback zu Campus-Iirichtige, Bibliotheke, Lernrüüm und Annehmlichkeite"
+      },
+      "is_root": true,
+      "allowed_response": [
+        "official_response_student_engagement"
+      ],
+      "allowed_option_type": [
+        "position_for",
+        "position_against",
+        "alternative",
+        "official_summary"
+      ],
+      "support_feature": "binary",
+      "fields": [
+        {
+          "key": "facility_type",
+          "label": {
+            "en": "Facility Type",
+            "fr": "Type d'installation",
+            "de": "Einrichtungstyp",
+            "gsw": "Iirichtig-Typ"
+          },
+          "type": "enum",
+          "required": true,
+          "default": "study_space",
+          "allowed_values": [
+            {"value": "classroom", "label": {"en": "Classroom", "fr": "Salle de classe", "de": "Klassenzimmer", "gsw": "Klassezimmer"}},
+            {"value": "library", "label": {"en": "Library", "fr": "Bibliothèque", "de": "Bibliothek", "gsw": "Bibliothek"}},
+            {"value": "study_space", "label": {"en": "Study Space", "fr": "Espace d'étude", "de": "Lernraum", "gsw": "Lernruum"}},
+            {"value": "lab", "label": {"en": "Laboratory", "fr": "Laboratoire", "de": "Labor", "gsw": "Labor"}},
+            {"value": "recreation", "label": {"en": "Recreation", "fr": "Loisirs", "de": "Freizeit", "gsw": "Freizit"}},
+            {"value": "dining", "label": {"en": "Dining", "fr": "Restauration", "de": "Gastronomie", "gsw": "Gastronomie"}},
+            {"value": "housing", "label": {"en": "Housing", "fr": "Logement", "de": "Wohnen", "gsw": "Wohne"}}
+          ]
+        },
+        {
+          "key": "building_name",
+          "label": {
+            "en": "Building Name",
+            "fr": "Nom du bâtiment",
+            "de": "Gebäudename",
+            "gsw": "Gebäud-Name"
+          },
+          "type": "string",
+          "required": false,
+          "default": null
+        },
+        {
+          "key": "urgency",
+          "label": {
+            "en": "Urgency",
+            "fr": "Urgence",
+            "de": "Dringlichkeit",
+            "gsw": "Dringlichkeit"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "normal",
+          "allowed_values": [
+            {"value": "low", "label": {"en": "Low", "fr": "Basse", "de": "Niedrig", "gsw": "Niidrig"}},
+            {"value": "normal", "label": {"en": "Normal", "fr": "Normale", "de": "Normal", "gsw": "Normal"}},
+            {"value": "high", "label": {"en": "High", "fr": "Haute", "de": "Hoch", "gsw": "Hoch"}},
+            {"value": "critical", "label": {"en": "Critical", "fr": "Critique", "de": "Kritisch", "gsw": "Kritisch"}}
+          ]
+        },
+        {
+          "key": "layout_zone",
+          "label": {
+            "en": "Layout Zone",
+            "fr": "Zone de mise en page",
+            "de": "Layout-Zone",
+            "gsw": "Layout-Zone"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "main",
+          "allowed_values": ["sidebar", "main", "footer", "header"]
+        },
+        {
+          "key": "render_mode",
+          "label": {
+            "en": "Render Mode",
+            "fr": "Mode de rendu",
+            "de": "Darstellungsmodus",
+            "gsw": "Darstelligs-Modus"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "rich_html",
+          "allowed_values": ["cards", "list", "full", "summary", "rich_html"]
+        },
+        {
+          "key": "open_mode",
+          "label": {
+            "en": "Open Mode",
+            "fr": "Mode d'ouverture",
+            "de": "Öffnungsmodus",
+            "gsw": "Öffnigs-Modus"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "page",
+          "allowed_values": ["page", "modal", "popup"]
+        }
+      ]
+    },
+    {
+      "inquiry_type": "student_activities",
+      "family": "student_voice",
+      "icon": "AccountGroup",
+      "label": {
+        "en": "Student Activities",
+        "fr": "Activités étudiantes",
+        "de": "Studentische Aktivitäten",
+        "gsw": "Studente-Aktivitäte"
+      },
+      "description": {
+        "en": "Proposals for new clubs, events, and extracurricular activities",
+        "fr": "Propositions de nouveaux clubs, événements et activités parascolaires",
+        "de": "Vorschläge für neue Vereine, Veranstaltungen und außerschulische Aktivitäten",
+        "gsw": "Vorschläg für nöii Verein, Veraastaltige und usserschuelischi Aktivitäte"
+      },
+      "is_root": true,
+      "allowed_response": [
+        "official_response_student_engagement"
+      ],
+      "allowed_option_type": [
+        "position_for",
+        "position_against",
+        "alternative",
+        "official_summary"
+      ],
+      "support_feature": "binary",
+      "allowed_transformation": [
+        "wellness_mental_health"
+      ],
+      "fields": [
+        {
+          "key": "type_of_vote",
+          "label": {
+            "en": "Type of Vote",
+            "fr": "Type de vote",
+            "de": "Abstimmungstyp",
+            "gsw": "Abstimmigs-Typ"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "approval",
+          "allowed_values": [
+            "simple",
+            "approval"
+          ]
+        },
+        {
+          "key": "quorum",
+          "label": {
+            "en": "Council Quorum",
+            "fr": "Quorum du conseil",
+            "de": "Ratsquorum",
+            "gsw": "Rats-Quorum"
+          },
+          "type": "integer",
+          "required": false,
+          "default": 10
+        },
+        {
+          "key": "approval_threshold",
+          "label": {
+            "en": "Approval Threshold (%)",
+            "fr": "Seuil d'approbation (%)",
+            "de": "Genehmigungsschwelle (%)",
+            "gsw": "Genehmigigs-Schwelle (%)"
+          },
+          "type": "integer",
+          "required": false,
+          "default": 50
+        }
+      ]
+    },
+    {
+      "inquiry_type": "student_services",
+      "family": "student_voice",
+      "icon": "HandHeart",
+      "label": {
+        "en": "Student Services",
+        "fr": "Services aux étudiants",
+        "de": "Studentische Dienste",
+        "gsw": "Studente-Dienscht"
+      },
+      "description": {
+        "en": "Feedback on counseling, career services, health services, and support programs",
+        "fr": "Retours sur le conseil, services de carrière, services de santé et programmes de soutien",
+        "de": "Feedback zu Beratung, Karrierediensten, Gesundheitsdiensten und Unterstützungsprogrammen",
+        "gsw": "Feedback zu Beratig, Karriere-Dienscht, Gsundhäits-Dienscht und Unterstützig-Programm"
+      },
+      "is_root": true,
+      "allowed_response": [
+        "official_response_student_engagement"
+      ],
+      "allowed_option_type": [
+        "position_for",
+        "position_against",
+        "alternative",
+        "official_summary"
+      ],
+      "support_feature": "binary",
+      "fields": [
+        {
+          "key": "service_type",
+          "label": {
+            "en": "Service Type",
+            "fr": "Type de service",
+            "de": "Diensttyp",
+            "gsw": "Dienscht-Typ"
+          },
+          "type": "enum",
+          "required": true,
+          "default": "general",
+          "allowed_values": [
+            {"value": "counseling", "label": {"en": "Counseling", "fr": "Conseil", "de": "Beratung", "gsw": "Beratig"}},
+            {"value": "career", "label": {"en": "Career Services", "fr": "Services de carrière", "de": "Karrieredienste", "gsw": "Karriere-Dienscht"}},
+            {"value": "health", "label": {"en": "Health Services", "fr": "Services de santé", "de": "Gesundheitsdienste", "gsw": "Gsundheits-Dienscht"}},
+            {"value": "financial_aid", "label": {"en": "Financial Aid", "fr": "Aide financière", "de": "Finanzhilfe", "gsw": "Finanzhilf"}},
+            {"value": "academic_support", "label": {"en": "Academic Support", "fr": "Soutien académique", "de": "Akademische Unterstützung", "gsw": "Akademischi Unterstützig"}},
+            {"value": "housing", "label": {"en": "Housing", "fr": "Logement", "de": "Wohnen", "gsw": "Wohne"}},
+            {"value": "general", "label": {"en": "General", "fr": "Général", "de": "Allgemein", "gsw": "Allgemein"}}
+          ]
+        },
+        {
+          "key": "anonymity_preferred",
+          "label": {
+            "en": "Prefer Anonymous Feedback",
+            "fr": "Préférer un retour anonyme",
+            "de": "Anonymes Feedback bevorzugen",
+            "gsw": "Anonyms Feedback bevorzuge"
+          },
+          "type": "boolean",
+          "required": false,
+          "default": false
+        },
+        {
+          "key": "layout_zone",
+          "label": {
+            "en": "Layout Zone",
+            "fr": "Zone de mise en page",
+            "de": "Layout-Zone",
+            "gsw": "Layout-Zone"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "main",
+          "allowed_values": ["sidebar", "main", "footer", "header"]
+        },
+        {
+          "key": "render_mode",
+          "label": {
+            "en": "Render Mode",
+            "fr": "Mode de rendu",
+            "de": "Darstellungsmodus",
+            "gsw": "Darstelligs-Modus"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "rich_html",
+          "allowed_values": ["cards", "list", "full", "summary", "rich_html"]
+        },
+        {
+          "key": "open_mode",
+          "label": {
+            "en": "Open Mode",
+            "fr": "Mode d'ouverture",
+            "de": "Öffnungsmodus",
+            "gsw": "Öffnigs-Modus"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "page",
+          "allowed_values": ["page", "modal", "popup"]
+        }
+      ]
+    },
+    {
+      "inquiry_type": "sustainability_initiatives",
+      "family": "student_voice",
+      "icon": "LeafCircle",
+      "label": {
+        "en": "Sustainability Initiatives",
+        "fr": "Initiatives de durabilité",
+        "de": "Nachhaltigkeitsinitiativen",
+        "gsw": "Nochhaltigkeits-Initiative"
+      },
+      "description": {
+        "en": "Environmental and sustainability proposals for campus operations",
+        "fr": "Propositions environnementales et de durabilité pour les opérations du campus",
+        "de": "Umwelt- und Nachhaltigkeitsvorschläge für Campus-Betrieb",
+        "gsw": "Umwält- und Nochhaltigkeits-Vorschläg für Campus-Betrieb"
+      },
+      "is_root": true,
+      "allowed_response": [
+        "official_response_student_engagement"
+      ],
+      "allowed_option_type": [
+        "position_for",
+        "position_against",
+        "alternative",
+        "official_summary"
+      ],
+      "support_feature": "binary",
+      "fields": [
+        {
+          "key": "initiative_area",
+          "label": {
+            "en": "Initiative Area",
+            "fr": "Domaine d'initiative",
+            "de": "Initiativbereich",
+            "gsw": "Initiativ-Bereich"
+          },
+          "type": "enum",
+          "required": true,
+          "default": "recycling",
+          "allowed_values": [
+            {"value": "recycling", "label": {"en": "Recycling", "fr": "Recyclage", "de": "Recycling", "gsw": "Recycling"}},
+            {"value": "energy", "label": {"en": "Energy", "fr": "Énergie", "de": "Energie", "gsw": "Energie"}},
+            {"value": "water", "label": {"en": "Water Conservation", "fr": "Conservation de l'eau", "de": "Wassereinsparung", "gsw": "Wasser-Iisparig"}},
+            {"value": "transportation", "label": {"en": "Transportation", "fr": "Transport", "de": "Transport", "gsw": "Transport"}},
+            {"value": "food", "label": {"en": "Sustainable Food", "fr": "Alimentation durable", "de": "Nachhaltige Ernährung", "gsw": "Nachhaltige Ernährig"}},
+            {"value": "buildings", "label": {"en": "Green Buildings", "fr": "Bâtiments verts", "de": "Grüne Gebäude", "gsw": "Grüeni Gebäud"}},
+            {"value": "awareness", "label": {"en": "Awareness", "fr": "Sensibilisation", "de": "Bewusstseinsbildung", "gsw": "Bewusstseins-Bildig"}}
+          ]
+        },
+        {
+          "key": "estimated_impact",
+          "label": {
+            "en": "Estimated Environmental Impact",
+            "fr": "Impact environnemental estimé",
+            "de": "Geschätzte Umweltauswirkung",
+            "gsw": "Gschätzt Umwält-Uuswirkig"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "medium",
+          "allowed_values": [
+            {"value": "low", "label": {"en": "Low Impact", "fr": "Faible impact", "de": "Geringe Auswirkung", "gsw": "Geringe Uuswirkig"}},
+            {"value": "medium", "label": {"en": "Medium Impact", "fr": "Impact moyen", "de": "Mittlere Auswirkung", "gsw": "Mittleri Uuswirkig"}},
+            {"value": "high", "label": {"en": "High Impact", "fr": "Fort impact", "de": "Hohe Auswirkung", "gsw": "Hohi Uuswirkig"}},
+            {"value": "transformative", "label": {"en": "Transformative", "fr": "Transformatif", "de": "Transformativ", "gsw": "Transformativ"}}
+          ]
+        },
+        {
+          "key": "layout_zone",
+          "label": {
+            "en": "Layout Zone",
+            "fr": "Zone de mise en page",
+            "de": "Layout-Zone",
+            "gsw": "Layout-Zone"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "main",
+          "allowed_values": ["sidebar", "main", "footer", "header"]
+        },
+        {
+          "key": "render_mode",
+          "label": {
+            "en": "Render Mode",
+            "fr": "Mode de rendu",
+            "de": "Darstellungsmodus",
+            "gsw": "Darstelligs-Modus"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "rich_html",
+          "allowed_values": ["cards", "list", "full", "summary", "rich_html"]
+        },
+        {
+          "key": "open_mode",
+          "label": {
+            "en": "Open Mode",
+            "fr": "Mode d'ouverture",
+            "de": "Öffnungsmodus",
+            "gsw": "Öffnigs-Modus"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "page",
+          "allowed_values": ["page", "modal", "popup"]
+        }
+      ]
+    },
+    {
+      "inquiry_type": "diversity_inclusion",
+      "family": "student_voice",
+      "icon": "AccountMultiplePlus",
+      "label": {
+        "en": "Diversity & Inclusion",
+        "fr": "Diversité et inclusion",
+        "de": "Vielfalt & Inklusion",
+        "gsw": "Vielfalt & Inklusio"
+      },
+      "description": {
+        "en": "Suggestions to improve diversity, equity, and inclusion on campus",
+        "fr": "Suggestions pour améliorer la diversité, l'équité et l'inclusion sur le campus",
+        "de": "Vorschläge zur Verbesserung von Vielfalt, Gerechtigkeit und Inklusion auf dem Campus",
+        "gsw": "Vorschläg zur Verbesserig vo Vielfalt, Grächtigkeit und Inklusio uf em Campus"
+      },
+      "is_root": true,
+      "allowed_response": [
+        "official_response_student_engagement"
+      ],
+      "allowed_option_type": [
+        "position_for",
+        "position_against",
+        "alternative",
+        "official_summary"
+      ],
+      "support_feature": "binary",
+      "fields": [
+        {
+          "key": "dei_focus",
+          "label": {
+            "en": "DEI Focus Area",
+            "fr": "Domaine DEI",
+            "de": "DEI-Schwerpunkt",
+            "gsw": "DEI-Schwerpunkt"
+          },
+          "type": "enum",
+          "required": true,
+          "default": "general",
+          "allowed_values": [
+            {"value": "racial_equity", "label": {"en": "Racial Equity", "fr": "Équité raciale", "de": "Rassengerechtigkeit", "gsw": "Rasse-Grächtigkeit"}},
+            {"value": "gender_equity", "label": {"en": "Gender Equity", "fr": "Équité de genre", "de": "Geschlechtergerechtigkeit", "gsw": "Gschlechter-Grächtigkeit"}},
+            {"value": "lgbtq_inclusion", "label": {"en": "LGBTQ+ Inclusion", "fr": "Inclusion LGBTQ+", "de": "LGBTQ+ Inklusion", "gsw": "LGBTQ+ Inklusio"}},
+            {"value": "disability_access", "label": {"en": "Disability Access", "fr": "Accessibilité handicap", "de": "Barrierefreiheit", "gsw": "Barrierefräiheit"}},
+            {"value": "socioeconomic", "label": {"en": "Socioeconomic", "fr": "Socio-économique", "de": "Sozioökonomisch", "gsw": "Sozioökonoomisch"}},
+            {"value": "international", "label": {"en": "International Students", "fr": "Étudiants internationaux", "de": "Internationale Studierende", "gsw": "Internationali Studierendi"}},
+            {"value": "general", "label": {"en": "General", "fr": "Général", "de": "Allgemein", "gsw": "Allgemein"}}
+          ]
+        },
+        {
+          "key": "scope",
+          "label": {
+            "en": "Scope",
+            "fr": "Portée",
+            "de": "Umfang",
+            "gsw": "Umfang"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "campus_wide",
+          "allowed_values": [
+            {"value": "department", "label": {"en": "Department", "fr": "Département", "de": "Abteilung", "gsw": "Abteilig"}},
+            {"value": "program", "label": {"en": "Program", "fr": "Programme", "de": "Programm", "gsw": "Programm"}},
+            {"value": "campus_wide", "label": {"en": "Campus-Wide", "fr": "À l'échelle du campus", "de": "Campusweit", "gsw": "Campuswit"}},
+            {"value": "system_wide", "label": {"en": "System-Wide", "fr": "À l'échelle du système", "de": "Systemweit", "gsw": "Systemwit"}}
+          ]
+        },
+        {
+          "key": "layout_zone",
+          "label": {
+            "en": "Layout Zone",
+            "fr": "Zone de mise en page",
+            "de": "Layout-Zone",
+            "gsw": "Layout-Zone"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "main",
+          "allowed_values": ["sidebar", "main", "footer", "header"]
+        },
+        {
+          "key": "render_mode",
+          "label": {
+            "en": "Render Mode",
+            "fr": "Mode de rendu",
+            "de": "Darstellungsmodus",
+            "gsw": "Darstelligs-Modus"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "rich_html",
+          "allowed_values": ["cards", "list", "full", "summary", "rich_html"]
+        },
+        {
+          "key": "open_mode",
+          "label": {
+            "en": "Open Mode",
+            "fr": "Mode d'ouverture",
+            "de": "Öffnungsmodus",
+            "gsw": "Öffnigs-Modus"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "page",
+          "allowed_values": ["page", "modal", "popup"]
+        }
+      ]
+    },
+    {
+      "inquiry_type": "official_response_student_engagement",
+      "family": "official_student_engagement",
+      "icon": "MessageReply",
+      "label": {
+        "en": "Official Response",
+        "fr": "Réponse officielle",
+        "de": "Offizielle Antwort",
+        "gsw": "Offizielle Antwort"
+      },
+      "description": {
+        "en": "Official response from administration",
+        "fr": "Réponse officielle de l'administration",
+        "de": "Offizielle Antwort von der Verwaltung",
+        "gsw": "Offizelli Antwort vo de Verwaltung"
+      },
+      "is_root": false,
+      "allowed_response": [],
+      "allowed_option_type": [
+        "position_for",
+        "position_against",
+        "alternative",
+        "official_summary"
+      ],
+      "support_feature": "none",
+      "fields": [
+        {
+          "key": "response_type",
+          "label": {
+            "en": "Response Type",
+            "fr": "Type de réponse",
+            "de": "Antworttyp",
+            "gsw": "Antwort-Typ"
+          },
+          "type": "enum",
+          "required": true,
+          "default": "acknowledgment",
+          "allowed_values": [
+            {"value": "acknowledgment", "label": {"en": "Acknowledgment", "fr": "Accusé de réception", "de": "Bestätigung", "gsw": "Bestätigung"}},
+            {"value": "clarification", "label": {"en": "Clarification", "fr": "Clarification", "de": "Klärung", "gsw": "Klärig"}},
+            {"value": "decision", "label": {"en": "Decision", "fr": "Décision", "de": "Entscheidung", "gsw": "Entscheidig"}},
+            {"value": "action_plan", "label": {"en": "Action Plan", "fr": "Plan d'action", "de": "Aktionsplan", "gsw": "Aktions-Plan"}},
+            {"value": "rejection", "label": {"en": "Rejection", "fr": "Rejet", "de": "Ablehnung", "gsw": "Ablehning"}}
+          ]
+        },
+        {
+          "key": "responding_office",
+          "label": {
+            "en": "Responding Office",
+            "fr": "Bureau répondant",
+            "de": "Antwortende Stelle",
+            "gsw": "Antwortendi Stell"
+          },
+          "type": "string",
+          "required": false,
+          "default": null
+        },
+        {
+          "key": "layout_zone",
+          "label": {
+            "en": "Layout Zone",
+            "fr": "Zone de mise en page",
+            "de": "Layout-Zone",
+            "gsw": "Layout-Zone"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "main",
+          "allowed_values": ["sidebar", "main", "footer", "header"]
+        },
+        {
+          "key": "render_mode",
+          "label": {
+            "en": "Render Mode",
+            "fr": "Mode de rendu",
+            "de": "Darstellungsmodus",
+            "gsw": "Darstelligs-Modus"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "rich_html",
+          "allowed_values": ["cards", "list", "full", "summary", "rich_html"]
+        },
+        {
+          "key": "open_mode",
+          "label": {
+            "en": "Open Mode",
+            "fr": "Mode d'ouverture",
+            "de": "Öffnungsmodus",
+            "gsw": "Öffnigs-Modus"
+          },
+          "type": "enum",
+          "required": false,
+          "default": "page",
+          "allowed_values": ["page", "modal", "popup"]
+        }
+      ]
+    }
+  ],
+  "inquiry_statuses": [
+    {
+      "inquiry_type": "course_improvement",
+      "status_key": "submitted",
+      "label": {
+        "en": "Submitted",
+        "fr": "Soumis",
+        "de": "Eingereicht",
+        "gsw": "Iigräicht"
+      },
+      "description": {
+        "en": "Feedback submitted and awaiting review",
+        "fr": "Retour soumis en attente d'examen",
+        "de": "Feedback eingereicht und wartet auf Prüfung",
+        "gsw": "Feedback iigräicht und wartet uf Prüefig"
+      },
+      "is_final": false,
+      "icon": "Send",
+      "sort_order": 1
+    },
+    {
+      "inquiry_type": "course_improvement",
+      "status_key": "under_review",
+      "label": {
+        "en": "Under Review",
+        "fr": "En cours d'examen",
+        "de": "In Prüfung",
+        "gsw": "In Prüefig"
+      },
+      "description": {
+        "en": "Faculty is reviewing the suggestion",
+        "fr": "Le corps professoral examine la suggestion",
+        "de": "Fakultät prüft den Vorschlag",
+        "gsw": "Fakultät prüeft de Vorschlag"
+      },
+      "is_final": false,
+      "icon": "Eye",
+      "sort_order": 2
+    },
+    {
+      "inquiry_type": "course_improvement",
+      "status_key": "accepted",
+      "label": {
+        "en": "Accepted",
+        "fr": "Accepté",
+        "de": "Angenommen",
+        "gsw": "Aagnoh"
+      },
+      "description": {
+        "en": "Suggestion accepted for implementation",
+        "fr": "Suggestion acceptée pour mise en œuvre",
+        "de": "Vorschlag zur Umsetzung angenommen",
+        "gsw": "Vorschlag zur Umsetzig aagnoh"
+      },
+      "is_final": false,
+      "icon": "CheckCircle",
+      "sort_order": 3
+    },
+    {
+      "inquiry_type": "course_improvement",
+      "status_key": "implemented",
+      "label": {
+        "en": "Implemented",
+        "fr": "Mis en œuvre",
+        "de": "Umgesetzt",
+        "gsw": "Umgsetzt"
+      },
+      "description": {
+        "en": "Changes implemented successfully",
+        "fr": "Changements mis en œuvre avec succès",
+        "de": "Änderungen erfolgreich umgesetzt",
+        "gsw": "Änderige erfolgriich umgsetzt"
+      },
+      "is_final": true,
+      "icon": "CheckAll",
+      "sort_order": 4
+    },
+    {
+      "inquiry_type": "course_improvement",
+      "status_key": "declined",
+      "label": {
+        "en": "Declined",
+        "fr": "Refusé",
+        "de": "Abgelehnt",
+        "gsw": "Abglehnt"
+      },
+      "description": {
+        "en": "Suggestion not feasible at this time",
+        "fr": "Suggestion non réalisable pour le moment",
+        "de": "Vorschlag derzeit nicht machbar",
+        "gsw": "Vorschlag im Momänt nöd machbar"
+      },
+      "is_final": true,
+      "icon": "CloseCircle",
+      "sort_order": 5
+    },
+    {
+      "inquiry_type": "course_improvement",
+      "status_key": "class_cohort_poll",
+      "label": {
+        "en": "Class Cohort Poll",
+        "fr": "Sondage de cohorte",
+        "de": "Klassenjahrgangs-Umfrage",
+        "gsw": "Klasse-Jahrgangs-Umfraag"
+      },
+      "description": {
+        "en": "Polling students in the class cohort",
+        "fr": "Sondage des étudiants de la cohorte",
+        "de": "Befragung von Studenten im Klassenjahrgang",
+        "gsw": "Befraagig vo Student im Klasse-Jahrgang"
+      },
+      "is_final": false,
+      "icon": "Poll",
+      "sort_order": 2.5
+    },
+    {
+      "inquiry_type": "course_improvement",
+      "status_key": "faculty_senate_vote",
+      "label": {
+        "en": "Faculty Senate Vote",
+        "fr": "Vote du sénat de la faculté",
+        "de": "Fakultätssenats-Abstimmung",
+        "gsw": "Fakultäts-Senats-Abstimmig"
+      },
+      "description": {
+        "en": "Faculty senate voting on curriculum change",
+        "fr": "Vote du sénat de la faculté sur le changement de programme",
+        "de": "Fakultätssenat stimmt über Lehrplanänderung ab",
+        "gsw": "Fakultäts-Senat stimmt über Lehrplan-Änderig ab"
+      },
+      "is_final": false,
+      "icon": "AccountTie",
+      "sort_order": 3.5
+    },
+    {
+      "inquiry_type": "student_activities",
+      "status_key": "student_council_vote",
+      "label": {
+        "en": "Student Council Vote",
+        "fr": "Vote du conseil étudiant",
+        "de": "Studentenrats-Abstimmung",
+        "gsw": "Student-Rats-Abstimmig"
+      },
+      "description": {
+        "en": "Student council voting on activity proposal",
+        "fr": "Le conseil étudiant vote sur la proposition d'activité",
+        "de": "Studentenrat stimmt über Aktivitätsvorschlag ab",
+        "gsw": "Student-Rat stimmt über Aktivitäts-Vorschlag ab"
+      },
+      "is_final": false,
+      "icon": "VoteOutline",
+      "sort_order": 2.5
+    },
+    {
+      "inquiry_type": "student_activities",
+      "status_key": "club_member_vote",
+      "label": {
+        "en": "Club Member Vote",
+        "fr": "Vote des membres du club",
+        "de": "Clubmitglieder-Abstimmung",
+        "gsw": "Club-Mitglieder-Abstimmig"
+      },
+      "description": {
+        "en": "Club members voting on event proposal",
+        "fr": "Les membres du club votent sur la proposition d'événement",
+        "de": "Clubmitglieder stimmen über Veranstaltungsvorschlag ab",
+        "gsw": "Club-Mitglieder stimme über Veraastaltig-Vorschlag ab"
+      },
+      "is_final": false,
+      "icon": "AccountGroup",
+      "sort_order": 3.5
+    },
+    {
+      "inquiry_type": "student_activities",
+      "status_key": "administration_approval",
+      "label": {
+        "en": "Administration Approval Vote",
+        "fr": "Vote d'approbation de l'administration",
+        "de": "Verwaltungs-Genehmigungsabstimmung",
+        "gsw": "Verwaltig-Genehmigiigs-Abstimmig"
+      },
+      "description": {
+        "en": "Administration voting on budget allocation",
+        "fr": "L'administration vote sur l'allocation budgétaire",
+        "de": "Verwaltung stimmt über Budgetzuweisung ab",
+        "gsw": "Verwaltig stimmt über Budget-Zuewisig ab"
+      },
+      "is_final": false,
+      "icon": "ShieldAccount",
+      "sort_order": 4.5
+    },
+    {
+      "inquiry_type": "wellness_mental_health",
+      "status_key": "anonymous_student_survey",
+      "label": {
+        "en": "Anonymous Student Survey",
+        "fr": "Sondage étudiant anonyme",
+        "de": "Anonyme Studentenumfrage",
+        "gsw": "Anonymi Student-Umfraag"
+      },
+      "description": {
+        "en": "Conducting anonymous student survey",
+        "fr": "Réalisation d'un sondage étudiant anonyme",
+        "de": "Durchführung einer anonymen Studentenumfrage",
+        "gsw": "Durchfüehrig vo-nere anonyme Student-Umfraag"
+      },
+      "is_final": false,
+      "icon": "CommentQuestionOutline",
+      "sort_order": 2.5
+    },
+    {
+      "inquiry_type": "wellness_mental_health",
+      "status_key": "student_body_vote",
+      "label": {
+        "en": "Student Body-Wide Vote",
+        "fr": "Vote de l'ensemble du corps étudiant",
+        "de": "Studentenschafts-weite Abstimmung",
+        "gsw": "Studenteschaft-witi Abstimmig"
+      },
+      "description": {
+        "en": "All students voting on wellbeing initiative",
+        "fr": "Tous les étudiants votent sur l'initiative de bien-être",
+        "de": "Alle Studenten stimmen über Wohlfühlinitiative ab",
+        "gsw": "Alli Student stimme über Wohlfühl-Initiative ab"
+      },
+      "is_final": false,
+      "icon": "AccountMultiple",
+      "sort_order": 3.5
+    },
+    {
+      "inquiry_type": "campus_infrastructure",
+      "status_key": "campus_referendum",
+      "label": {
+        "en": "Campus-Wide Referendum",
+        "fr": "Référendum à l'échelle du campus",
+        "de": "Campus-weites Referendum",
+        "gsw": "Campus-wits Referendum"
+      },
+      "description": {
+        "en": "Campus-wide referendum on major infrastructure",
+        "fr": "Référendum à l'échelle du campus sur une infrastructure majeure",
+        "de": "Campus-weites Referendum über große Infrastruktur",
+        "gsw": "Campus-wits Referendum über grossi Infrastruktur"
+      },
+      "is_final": false,
+      "icon": "VoteOutline",
+      "sort_order": 2.5
+    },
+    {
+      "inquiry_type": "campus_infrastructure",
+      "status_key": "residence_hall_poll",
+      "label": {
+        "en": "Residence Hall Poll",
+        "fr": "Sondage de résidence",
+        "de": "Wohnheim-Umfrage",
+        "gsw": "Wohnheim-Umfraag"
+      },
+      "description": {
+        "en": "Polling residence hall students",
+        "fr": "Sondage des étudiants en résidence",
+        "de": "Befragung von Wohnheimstudenten",
+        "gsw": "Befraagig vo Wohnheim-Student"
+      },
+      "is_final": false,
+      "icon": "HomeGroup",
+      "sort_order": 3.5
+    },
+    {
+      "inquiry_type": "diversity_inclusion",
+      "status_key": "dei_committee_vote",
+      "label": {
+        "en": "DEI Committee Vote",
+        "fr": "Vote du comité DEI",
+        "de": "DEI-Komitee-Abstimmung",
+        "gsw": "DEI-Komitee-Abstimmig"
+      },
+      "description": {
+        "en": "Diversity, Equity & Inclusion committee voting",
+        "fr": "Vote du comité Diversité, Équité et Inclusion",
+        "de": "Abstimmung des Diversitäts-, Gerechtigkeits- und Inklusionskomitees",
+        "gsw": "Abstimmig vom Diversitäts-, Gerechtigkeit- und Inklusions-Komitee"
+      },
+      "is_final": false,
+      "icon": "AccountGroupOutline",
+      "sort_order": 2.5
+    },
+
+    {
+      "inquiry_type": "campus_facilities",
+      "status_key": "submitted",
+      "label": {
+        "en": "Submitted",
+        "fr": "Soumis",
+        "de": "Eingereicht",
+        "gsw": "Iigräicht"
+      },
+      "description": {
+        "en": "Facility request has been submitted",
+        "fr": "La demande d'installation a été soumise",
+        "de": "Einrichtungsanfrage wurde eingereicht",
+        "gsw": "Iichrichtig-Aafraag isch iigräicht"
+      },
+      "is_final": false,
+      "icon": "Send",
+      "sort_order": 1
+    },
+    {
+      "inquiry_type": "campus_facilities",
+      "status_key": "facility_assessment",
+      "label": {
+        "en": "Facility Assessment",
+        "fr": "Évaluation de l'installation",
+        "de": "Einrichtungsbewertung",
+        "gsw": "Iichrichtig-Bewertig"
+      },
+      "description": {
+        "en": "Technical and feasibility assessment in progress",
+        "fr": "Évaluation technique et de faisabilité en cours",
+        "de": "Technische und Machbarkeitsbewertung läuft",
+        "gsw": "Technischi und Machbarkeits-Bewertig lauft"
+      },
+      "is_final": false,
+      "icon": "ClipboardCheck",
+      "sort_order": 2
+    },
+    {
+      "inquiry_type": "campus_facilities",
+      "status_key": "student_survey",
+      "label": {
+        "en": "Student Survey",
+        "fr": "Sondage étudiant",
+        "de": "Studentenumfrage",
+        "gsw": "Student-Umfraag"
+      },
+      "description": {
+        "en": "Gathering student feedback on facility needs",
+        "fr": "Collecte des retours étudiants sur les besoins en installations",
+        "de": "Sammlung von Studentenfeedback zu Einrichtungsbedarf",
+        "gsw": "Sammlig vo Student-Feedback zu Iichrichtig-Bedarf"
+      },
+      "is_final": false,
+      "icon": "Poll",
+      "sort_order": 3
+    },
+    {
+      "inquiry_type": "campus_facilities",
+      "status_key": "budget_allocation",
+      "label": {
+        "en": "Budget Allocation",
+        "fr": "Allocation budgétaire",
+        "de": "Budgetzuweisung",
+        "gsw": "Budget-Zuewisig"
+      },
+      "description": {
+        "en": "Determining budget allocation for facility",
+        "fr": "Détermination de l'allocation budgétaire pour l'installation",
+        "de": "Festlegung der Budgetzuweisung für Einrichtung",
+        "gsw": "Festlegig vo dr Budget-Zuewisig für Iichrichtig"
+      },
+      "is_final": false,
+      "icon": "CashCheck",
+      "sort_order": 4
+    },
+    {
+      "inquiry_type": "campus_facilities",
+      "status_key": "approved",
+      "label": {
+        "en": "Approved",
+        "fr": "Approuvé",
+        "de": "Genehmigt",
+        "gsw": "Gnehmigt"
+      },
+      "description": {
+        "en": "Facility project has been approved",
+        "fr": "Le projet d'installation a été approuvé",
+        "de": "Einrichtungsprojekt wurde genehmigt",
+        "gsw": "Iichrichtig-Projäkt isch gnehmigt"
+      },
+      "is_final": false,
+      "icon": "CheckCircle",
+      "sort_order": 5
+    },
+    {
+      "inquiry_type": "campus_facilities",
+      "status_key": "construction",
+      "label": {
+        "en": "Construction/Renovation",
+        "fr": "Construction/Rénovation",
+        "de": "Bau/Renovierung",
+        "gsw": "Bau/Renovierig"
+      },
+      "description": {
+        "en": "Construction or renovation work in progress",
+        "fr": "Travaux de construction ou de rénovation en cours",
+        "de": "Bau- oder Renovierungsarbeiten laufen",
+        "gsw": "Bau- oder Renovierigs-Arbeite laufe"
+      },
+      "is_final": false,
+      "icon": "HardHat",
+      "sort_order": 6
+    },
+    {
+      "inquiry_type": "campus_facilities",
+      "status_key": "completed",
+      "label": {
+        "en": "Completed",
+        "fr": "Terminé",
+        "de": "Abgeschlossen",
+        "gsw": "Abgschlosse"
+      },
+      "description": {
+        "en": "Facility project successfully completed",
+        "fr": "Projet d'installation terminé avec succès",
+        "de": "Einrichtungsprojekt erfolgreich abgeschlossen",
+        "gsw": "Iichrichtig-Projäkt erfolgriich abgschlosse"
+      },
+      "is_final": true,
+      "icon": "CheckAll",
+      "sort_order": 7
+    },
+    {
+      "inquiry_type": "campus_facilities",
+      "status_key": "deferred",
+      "label": {
+        "en": "Deferred",
+        "fr": "Reporté",
+        "de": "Zurückgestellt",
+        "gsw": "Zruggstellt"
+      },
+      "description": {
+        "en": "Project deferred due to budget or priority constraints",
+        "fr": "Projet reporté en raison de contraintes budgétaires ou de priorité",
+        "de": "Projekt aufgrund von Budget- oder Prioritätsbeschränkungen zurückgestellt",
+        "gsw": "Projäkt wäge Budget- oder Prioritäts-Beschränkige zruggstellt"
+      },
+      "is_final": true,
+      "icon": "ClockOutline",
+      "sort_order": 8
+    },
+
+    {
+      "inquiry_type": "student_services",
+      "status_key": "submitted",
+      "label": {
+        "en": "Submitted",
+        "fr": "Soumis",
+        "de": "Eingereicht",
+        "gsw": "Iigräicht"
+      },
+      "description": {
+        "en": "Student service request has been submitted",
+        "fr": "La demande de service étudiant a été soumise",
+        "de": "Studentenservice-Anfrage wurde eingereicht",
+        "gsw": "Student-Service-Aafraag isch iigräicht"
+      },
+      "is_final": false,
+      "icon": "Send",
+      "sort_order": 1
+    },
+    {
+      "inquiry_type": "student_services",
+      "status_key": "needs_analysis",
+      "label": {
+        "en": "Needs Analysis",
+        "fr": "Analyse des besoins",
+        "de": "Bedarfsanalyse",
+        "gsw": "Bedarfs-Analys"
+      },
+      "description": {
+        "en": "Analyzing student needs and service requirements",
+        "fr": "Analyse des besoins étudiants et des exigences de service",
+        "de": "Analyse von Studentenbedürfnissen und Serviceanforderungen",
+        "gsw": "Analys vo Student-Bedürfnis und Service-Aforderige"
+      },
+      "is_final": false,
+      "icon": "ChartBubble",
+      "sort_order": 2
+    },
+    {
+      "inquiry_type": "student_services",
+      "status_key": "student_council_vote",
+      "label": {
+        "en": "Student Council Vote",
+        "fr": "Vote du conseil étudiant",
+        "de": "Studentenrats-Abstimmung",
+        "gsw": "Student-Rats-Abstimmig"
+      },
+      "description": {
+        "en": "Student council reviewing and voting",
+        "fr": "Le conseil étudiant examine et vote",
+        "de": "Studentenrat prüft und stimmt ab",
+        "gsw": "Student-Rat prüeft und stimmt ab"
+      },
+      "is_final": false,
+      "icon": "VoteOutline",
+      "sort_order": 3
+    },
+    {
+      "inquiry_type": "student_services",
+      "status_key": "administration_review",
+      "label": {
+        "en": "Administration Review",
+        "fr": "Examen de l'administration",
+        "de": "Verwaltungsprüfung",
+        "gsw": "Verwaltig-Prüefig"
+      },
+      "description": {
+        "en": "University administration reviewing the request",
+        "fr": "L'administration universitaire examine la demande",
+        "de": "Universitätsverwaltung prüft die Anfrage",
+        "gsw": "Uni-Verwaltig prüeft d'Aafraag"
+      },
+      "is_final": false,
+      "icon": "AccountTie",
+      "sort_order": 4
+    },
+    {
+      "inquiry_type": "student_services",
+      "status_key": "pilot_program",
+      "label": {
+        "en": "Pilot Program",
+        "fr": "Programme pilote",
+        "de": "Pilotprogramm",
+        "gsw": "Pilot-Programm"
+      },
+      "description": {
+        "en": "Service being piloted with select student groups",
+        "fr": "Service en pilote avec des groupes d'étudiants sélectionnés",
+        "de": "Service wird mit ausgewählten Studentengruppen pilotiert",
+        "gsw": "Service wird mit usgwählte Student-Gruppe pilotiert"
+      },
+      "is_final": false,
+      "icon": "TestTube",
+      "sort_order": 5
+    },
+    {
+      "inquiry_type": "student_services",
+      "status_key": "full_implementation",
+      "label": {
+        "en": "Full Implementation",
+        "fr": "Mise en œuvre complète",
+        "de": "Vollständige Umsetzung",
+        "gsw": "Vollständigi Umsetzig"
+      },
+      "description": {
+        "en": "Service fully implemented and available to all students",
+        "fr": "Service entièrement mis en œuvre et disponible pour tous les étudiants",
+        "de": "Service vollständig umgesetzt und für alle Studenten verfügbar",
+        "gsw": "Service vollständig umgsetzt und für alli Student verfüegbar"
+      },
+      "is_final": true,
+      "icon": "CheckAll",
+      "sort_order": 6
+    },
+    {
+      "inquiry_type": "student_services",
+      "status_key": "declined",
+      "label": {
+        "en": "Declined",
+        "fr": "Refusé",
+        "de": "Abgelehnt",
+        "gsw": "Abglehnt"
+      },
+      "description": {
+        "en": "Service request declined - not feasible or low priority",
+        "fr": "Demande de service refusée - non réalisable ou faible priorité",
+        "de": "Serviceanfrage abgelehnt - nicht machbar oder niedrige Priorität",
+        "gsw": "Service-Aafraag abglehnt - nöd machbar oder niidrig Prioritäät"
+      },
+      "is_final": true,
+      "icon": "CloseCircle",
+      "sort_order": 7
+    },
+
+    {
+      "inquiry_type": "sustainability_initiatives",
+      "status_key": "submitted",
+      "label": {
+        "en": "Submitted",
+        "fr": "Soumis",
+        "de": "Eingereicht",
+        "gsw": "Iigräicht"
+      },
+      "description": {
+        "en": "Sustainability initiative has been submitted",
+        "fr": "L'initiative de durabilité a été soumise",
+        "de": "Nachhaltigkeitsinitiative wurde eingereicht",
+        "gsw": "Nachhaltigkeits-Initiative isch iigräicht"
+      },
+      "is_final": false,
+      "icon": "Send",
+      "sort_order": 1
+    },
+    {
+      "inquiry_type": "sustainability_initiatives",
+      "status_key": "environmental_impact_study",
+      "label": {
+        "en": "Environmental Impact Study",
+        "fr": "Étude d'impact environnemental",
+        "de": "Umweltauswirkungsstudie",
+        "gsw": "Umwelt-Uswirkigs-Studie"
+      },
+      "description": {
+        "en": "Assessing environmental impact and benefits",
+        "fr": "Évaluation de l'impact et des avantages environnementaux",
+        "de": "Bewertung von Umweltauswirkungen und Vorteilen",
+        "gsw": "Bewertig vo Umwelt-Uswirkige und Vorteil"
+      },
+      "is_final": false,
+      "icon": "LeafCircle",
+      "sort_order": 2
+    },
+    {
+      "inquiry_type": "sustainability_initiatives",
+      "status_key": "student_vote",
+      "label": {
+        "en": "Student Vote",
+        "fr": "Vote étudiant",
+        "de": "Studentenabstimmung",
+        "gsw": "Student-Abstimmig"
+      },
+      "description": {
+        "en": "Students voting on the sustainability initiative",
+        "fr": "Les étudiants votent sur l'initiative de durabilité",
+        "de": "Studenten stimmen über Nachhaltigkeitsinitiative ab",
+        "gsw": "Student stimme über Nachhaltigkeits-Initiative ab"
+      },
+      "is_final": false,
+      "icon": "VoteOutline",
+      "sort_order": 3
+    },
+    {
+      "inquiry_type": "sustainability_initiatives",
+      "status_key": "administration_approval",
+      "label": {
+        "en": "Administration Approval",
+        "fr": "Approbation de l'administration",
+        "de": "Verwaltungsgenehmigung",
+        "gsw": "Verwaltig-Genehmiging"
+      },
+      "description": {
+        "en": "Administration reviewing and approving initiative",
+        "fr": "L'administration examine et approuve l'initiative",
+        "de": "Verwaltung prüft und genehmigt Initiative",
+        "gsw": "Verwaltig prüeft und gnehmigt Initiative"
+      },
+      "is_final": false,
+      "icon": "CheckCircle",
+      "sort_order": 4
+    },
+    {
+      "inquiry_type": "sustainability_initiatives",
+      "status_key": "funding_secured",
+      "label": {
+        "en": "Funding Secured",
+        "fr": "Financement sécurisé",
+        "de": "Finanzierung gesichert",
+        "gsw": "Finanzierig gsicheret"
+      },
+      "description": {
+        "en": "Funding has been secured for the initiative",
+        "fr": "Le financement a été sécurisé pour l'initiative",
+        "de": "Finanzierung für Initiative wurde gesichert",
+        "gsw": "Finanzierig für Initiative isch gsicheret"
+      },
+      "is_final": false,
+      "icon": "CashCheck",
+      "sort_order": 5
+    },
+    {
+      "inquiry_type": "sustainability_initiatives",
+      "status_key": "in_progress",
+      "label": {
+        "en": "In Progress",
+        "fr": "En cours",
+        "de": "In Bearbeitung",
+        "gsw": "In Bearbeitig"
+      },
+      "description": {
+        "en": "Sustainability initiative is being implemented",
+        "fr": "L'initiative de durabilité est en cours de mise en œuvre",
+        "de": "Nachhaltigkeitsinitiative wird umgesetzt",
+        "gsw": "Nachhaltigkeits-Initiative wird umgsetzt"
+      },
+      "is_final": false,
+      "icon": "Progress",
+      "sort_order": 6
+    },
+    {
+      "inquiry_type": "sustainability_initiatives",
+      "status_key": "achieved",
+      "label": {
+        "en": "Achieved",
+        "fr": "Réalisé",
+        "de": "Erreicht",
+        "gsw": "Erreicht"
+      },
+      "description": {
+        "en": "Sustainability goals achieved",
+        "fr": "Objectifs de durabilité atteints",
+        "de": "Nachhaltigkeitsziele erreicht",
+        "gsw": "Nachhaltigkeits-Ziel erreicht"
+      },
+      "is_final": true,
+      "icon": "CheckAll",
+      "sort_order": 7
+    },
+    {
+      "inquiry_type": "sustainability_initiatives",
+      "status_key": "rejected",
+      "label": {
+        "en": "Rejected",
+        "fr": "Rejeté",
+        "de": "Abgelehnt",
+        "gsw": "Abglehnt"
+      },
+      "description": {
+        "en": "Sustainability initiative not approved",
+        "fr": "Initiative de durabilité non approuvée",
+        "de": "Nachhaltigkeitsinitiative nicht genehmigt",
+        "gsw": "Nachhaltigkeits-Initiative nöd gnehmigt"
+      },
+      "is_final": true,
+      "icon": "CloseCircle",
+      "sort_order": 8
+    },
+
+    {
+      "inquiry_type": "diversity_inclusion",
+      "status_key": "submitted",
+      "label": {
+        "en": "Submitted",
+        "fr": "Soumis",
+        "de": "Eingereicht",
+        "gsw": "Iigräicht"
+      },
+      "description": {
+        "en": "Diversity & inclusion initiative submitted",
+        "fr": "Initiative de diversité et d'inclusion soumise",
+        "de": "Diversitäts- und Inklusionsinitiative eingereicht",
+        "gsw": "Diversitäts- und Inklusions-Initiative iigräicht"
+      },
+      "is_final": false,
+      "icon": "Send",
+      "sort_order": 1
+    },
+    {
+      "inquiry_type": "diversity_inclusion",
+      "status_key": "community_input",
+      "label": {
+        "en": "Community Input",
+        "fr": "Contribution de la communauté",
+        "de": "Gemeinschaftsbeitrag",
+        "gsw": "Gmeinschafts-Bitrag"
+      },
+      "description": {
+        "en": "Gathering input from diverse community groups",
+        "fr": "Collecte des contributions de groupes communautaires divers",
+        "de": "Sammeln von Beiträgen aus diversen Gemeinschaftsgruppen",
+        "gsw": "Sammle vo Biträg us diverse Gmeinschafts-Gruppe"
+      },
+      "is_final": false,
+      "icon": "AccountMultiple",
+      "sort_order": 2
+    },
+    {
+      "inquiry_type": "diversity_inclusion",
+      "status_key": "diversity_committee_review",
+      "label": {
+        "en": "Diversity Committee Review",
+        "fr": "Examen du comité de diversité",
+        "de": "Diversitätsausschuss-Prüfung",
+        "gsw": "Diversitäts-Usschuss-Prüefig"
+      },
+      "description": {
+        "en": "DEI committee reviewing the initiative",
+        "fr": "Le comité DEI examine l'initiative",
+        "de": "DEI-Ausschuss prüft die Initiative",
+        "gsw": "DEI-Usschuss prüeft d'Initiative"
+      },
+      "is_final": false,
+      "icon": "AccountGroup",
+      "sort_order": 3
+    },
+    {
+      "inquiry_type": "diversity_inclusion",
+      "status_key": "approved",
+      "label": {
+        "en": "Approved",
+        "fr": "Approuvé",
+        "de": "Genehmigt",
+        "gsw": "Gnehmigt"
+      },
+      "description": {
+        "en": "Initiative approved for implementation",
+        "fr": "Initiative approuvée pour mise en œuvre",
+        "de": "Initiative zur Umsetzung genehmigt",
+        "gsw": "Initiative zur Umsetzig gnehmigt"
+      },
+      "is_final": false,
+      "icon": "CheckCircle",
+      "sort_order": 4
+    },
+    {
+      "inquiry_type": "diversity_inclusion",
+      "status_key": "implementation_plan",
+      "label": {
+        "en": "Implementation Plan",
+        "fr": "Plan de mise en œuvre",
+        "de": "Umsetzungsplan",
+        "gsw": "Umsetzig-Plan"
+      },
+      "description": {
+        "en": "Developing implementation plan and timeline",
+        "fr": "Développement du plan de mise en œuvre et du calendrier",
+        "de": "Entwicklung von Umsetzungsplan und Zeitplan",
+        "gsw": "Entwicklig vo Umsetzig-Plan und Zitplan"
+      },
+      "is_final": false,
+      "icon": "CalendarCheck",
+      "sort_order": 5
+    },
+    {
+      "inquiry_type": "diversity_inclusion",
+      "status_key": "in_progress",
+      "label": {
+        "en": "In Progress",
+        "fr": "En cours",
+        "de": "In Bearbeitung",
+        "gsw": "In Bearbeitig"
+      },
+      "description": {
+        "en": "Initiative implementation in progress",
+        "fr": "Mise en œuvre de l'initiative en cours",
+        "de": "Initiativumsetzung läuft",
+        "gsw": "Initiative-Umsetzig lauft"
+      },
+      "is_final": false,
+      "icon": "Progress",
+      "sort_order": 6
+    },
+    {
+      "inquiry_type": "diversity_inclusion",
+      "status_key": "ongoing_program",
+      "label": {
+        "en": "Ongoing Program",
+        "fr": "Programme en cours",
+        "de": "Laufendes Programm",
+        "gsw": "Laufends Programm"
+      },
+      "description": {
+        "en": "Initiative established as ongoing program",
+        "fr": "Initiative établie comme programme en cours",
+        "de": "Initiative als laufendes Programm etabliert",
+        "gsw": "Initiative als laufends Programm etabliert"
+      },
+      "is_final": true,
+      "icon": "CheckAll",
+      "sort_order": 7
+    },
+    {
+      "inquiry_type": "diversity_inclusion",
+      "status_key": "rejected",
+      "label": {
+        "en": "Rejected",
+        "fr": "Rejeté",
+        "de": "Abgelehnt",
+        "gsw": "Abglehnt"
+      },
+      "description": {
+        "en": "Initiative not approved at this time",
+        "fr": "Initiative non approuvée pour le moment",
+        "de": "Initiative derzeit nicht genehmigt",
+        "gsw": "Initiative im Momänt nöd gnehmigt"
+      },
+      "is_final": true,
+      "icon": "CloseCircle",
+      "sort_order": 8
+    }
+  ],
+  "categories": [
+    {
+      "category_id": "academics",
+      "name": {
+        "en": "Academics",
+        "fr": "Académique",
+        "de": "Akademisches",
+        "gsw": "Akademischs"
+      },
+      "parent": null
+    },
+    {
+      "category_id": "curriculum",
+      "name": {
+        "en": "Curriculum",
+        "fr": "Programme d'études",
+        "de": "Lehrplan",
+        "gsw": "Lehrplan"
+      },
+      "parent": "academics"
+    },
+    {
+      "category_id": "teaching",
+      "name": {
+        "en": "Teaching Quality",
+        "fr": "Qualité de l'enseignement",
+        "de": "Lehrqualität",
+        "gsw": "Lehr-Qualitäät"
+      },
+      "parent": "academics"
+    },
+    {
+      "category_id": "grading",
+      "name": {
+        "en": "Grading & Assessment",
+        "fr": "Notation et évaluation",
+        "de": "Bewertung & Prüfung",
+        "gsw": "Bewertig & Prüefig"
+      },
+      "parent": "academics"
+    },
+    {
+      "category_id": "advising",
+      "name": {
+        "en": "Academic Advising",
+        "fr": "Conseil académique",
+        "de": "Akademische Beratung",
+        "gsw": "Akademischi Beratig"
+      },
+      "parent": "academics"
+    },
+    {
+      "category_id": "campus_life",
+      "name": {
+        "en": "Campus Life",
+        "fr": "Vie du campus",
+        "de": "Campusleben",
+        "gsw": "Campus-Läbe"
+      },
+      "parent": null
+    },
+    {
+      "category_id": "events",
+      "name": {
+        "en": "Events",
+        "fr": "Événements",
+        "de": "Veranstaltungen",
+        "gsw": "Veraastaltige"
+      },
+      "parent": "campus_life"
+    },
+    {
+      "category_id": "clubs",
+      "name": {
+        "en": "Clubs & Organizations",
+        "fr": "Clubs et organisations",
+        "de": "Clubs & Organisationen",
+        "gsw": "Club & Organisatione"
+      },
+      "parent": "campus_life"
+    },
+    {
+      "category_id": "social",
+      "name": {
+        "en": "Social Activities",
+        "fr": "Activités sociales",
+        "de": "Soziale Aktivitäten",
+        "gsw": "Soziali Aktivitäte"
+      },
+      "parent": "campus_life"
+    },
+    {
+      "category_id": "infrastructure",
+      "name": {
+        "en": "Infrastructure",
+        "fr": "Infrastructure",
+        "de": "Infrastruktur",
+        "gsw": "Infrastruktur"
+      },
+      "parent": null
+    },
+    {
+      "category_id": "classrooms",
+      "name": {
+        "en": "Classrooms",
+        "fr": "Salles de classe",
+        "de": "Klassenzimmer",
+        "gsw": "Klassezimmer"
+      },
+      "parent": "infrastructure"
+    },
+    {
+      "category_id": "library_facilities",
+      "name": {
+        "en": "Library Facilities",
+        "fr": "Installations de bibliothèque",
+        "de": "Bibliothekseinrichtungen",
+        "gsw": "Bibliotheks-Iirichtige"
+      },
+      "parent": "infrastructure"
+    },
+    {
+      "category_id": "study_spaces",
+      "name": {
+        "en": "Study Spaces",
+        "fr": "Espaces d'étude",
+        "de": "Lernräume",
+        "gsw": "Lernrüüm"
+      },
+      "parent": "infrastructure"
+    },
+    {
+      "category_id": "health_wellbeing",
+      "name": {
+        "en": "Health & Wellbeing",
+        "fr": "Santé et bien-être",
+        "de": "Gesundheit & Wohlbefinden",
+        "gsw": "Gsundheit & Wohlbefinde"
+      },
+      "parent": null
+    },
+    {
+      "category_id": "mental_health",
+      "name": {
+        "en": "Mental Health",
+        "fr": "Santé mentale",
+        "de": "Psychische Gesundheit",
+        "gsw": "Psychischi Gsundheit"
+      },
+      "parent": "health_wellbeing"
+    },
+    {
+      "category_id": "counseling",
+      "name": {
+        "en": "Counseling Services",
+        "fr": "Services de conseil",
+        "de": "Beratungsdienste",
+        "gsw": "Beratigs-Dienscht"
+      },
+      "parent": "health_wellbeing"
+    },
+    {
+      "category_id": "fitness",
+      "name": {
+        "en": "Fitness & Recreation",
+        "fr": "Fitness et loisirs",
+        "de": "Fitness & Erholung",
+        "gsw": "Fitness & Erholig"
+      },
+      "parent": "health_wellbeing"
+    },
+    {
+      "category_id": "technology",
+      "name": {
+        "en": "Technology & Digital",
+        "fr": "Technologie et numérique",
+        "de": "Technologie & Digital",
+        "gsw": "Technologii & Digital"
+      },
+      "parent": null
+    },
+    {
+      "category_id": "lms",
+      "name": {
+        "en": "Learning Management System",
+        "fr": "Système de gestion de l'apprentissage",
+        "de": "Lernmanagementsystem",
+        "gsw": "Lern-Management-System"
+      },
+      "parent": "technology"
+    },
+    {
+      "category_id": "it_support",
+      "name": {
+        "en": "IT Support",
+        "fr": "Support informatique",
+        "de": "IT-Support",
+        "gsw": "IT-Support"
+      },
+      "parent": "technology"
+    },
+    {
+      "category_id": "wifi",
+      "name": {
+        "en": "Wi-Fi & Connectivity",
+        "fr": "Wi-Fi et connectivité",
+        "de": "WLAN & Konnektivität",
+        "gsw": "WLAN & Konnektivitäät"
+      },
+      "parent": "technology"
+    }
+  ],
+  "option_types": [
+    {
+      "option_type": "course_module_feedback",
+      "label": {
+        "en": "Course Module Feedback",
+        "fr": "Retour sur le module de cours",
+        "de": "Kursmodul-Feedback",
+        "gsw": "Kurs-Modul-Feedback"
+      },
+      "description": {
+        "en": "Feedback on specific course modules",
+        "fr": "Retour sur des modules de cours spécifiques",
+        "de": "Feedback zu bestimmten Kursmodulen",
+        "gsw": "Feedback zu bestimmte Kurs-Module"
+      },
+      "fields": [
+        {
+          "key": "module_name",
+          "label": {
+            "en": "Module Name",
+            "fr": "Nom du module",
+            "de": "Modulname",
+            "gsw": "Modul-Name"
+          },
+          "type": "string",
+          "required": true
+        },
+        {
+          "key": "rating",
+          "label": {
+            "en": "Rating (1-5)",
+            "fr": "Note (1-5)",
+            "de": "Bewertung (1-5)",
+            "gsw": "Bewertig (1-5)"
+          },
+          "type": "integer",
+          "required": true
+        },
+        {
+          "key": "strengths",
+          "label": {
+            "en": "Strengths",
+            "fr": "Points forts",
+            "de": "Stärken",
+            "gsw": "Stärke"
+          },
+          "type": "text",
+          "required": false
+        },
+        {
+          "key": "improvements",
+          "label": {
+            "en": "Suggested Improvements",
+            "fr": "Améliorations suggérées",
+            "de": "Verbesserungsvorschläge",
+            "gsw": "Verbesserigs-Vorschläg"
+          },
+          "type": "text",
+          "required": false
+        },
+        {
+          "key": "workload",
+          "label": {
+            "en": "Workload",
+            "fr": "Charge de travail",
+            "de": "Arbeitsaufwand",
+            "gsw": "Arbeits-Ufwand"
+          },
+          "type": "enum",
+          "required": false,
+          "allowed_values": [
+            {"value": "light", "label": {"en": "Light", "fr": "Léger", "de": "Leicht", "gsw": "Liicht"}},
+            {"value": "moderate", "label": {"en": "Moderate", "fr": "Modéré", "de": "Moderat", "gsw": "Moderat"}},
+            {"value": "heavy", "label": {"en": "Heavy", "fr": "Lourd", "de": "Schwer", "gsw": "Schwär"}}
+          ]
+        }
+      ]
+    },
+    {
+      "option_type": "facility_improvement_option",
+      "label": {
+        "en": "Facility Improvement Option",
+        "fr": "Option d'amélioration des installations",
+        "de": "Einrichtungsverbesserungsoption",
+        "gsw": "Iirichtig-Verbesserigs-Option"
+      },
+      "description": {
+        "en": "Specific facility improvement proposals",
+        "fr": "Propositions spécifiques d'amélioration des installations",
+        "de": "Spezifische Vorschläge zur Verbesserung der Einrichtungen",
+        "gsw": "Spezifischi Vorschläg zur Verbesserig vo dr Iirichtige"
+      },
+      "fields": [
+        {
+          "key": "area",
+          "label": {
+            "en": "Area",
+            "fr": "Zone",
+            "de": "Bereich",
+            "gsw": "Bereich"
+          },
+          "type": "string",
+          "required": true
+        },
+        {
+          "key": "improvement_type",
+          "label": {
+            "en": "Improvement Type",
+            "fr": "Type d'amélioration",
+            "de": "Verbesserungstyp",
+            "gsw": "Verbesserigs-Typ"
+          },
+          "type": "string",
+          "required": true
+        },
+        {
+          "key": "estimated_cost",
+          "label": {
+            "en": "Estimated Cost",
+            "fr": "Coût estimé",
+            "de": "Geschätzte Kosten",
+            "gsw": "Gschätzt Koste"
+          },
+          "type": "float",
+          "required": false
+        },
+        {
+          "key": "priority",
+          "label": {
+            "en": "Priority",
+            "fr": "Priorité",
+            "de": "Priorität",
+            "gsw": "Prioritäät"
+          },
+          "type": "enum",
+          "required": false,
+          "allowed_values": [
+            {"value": "low", "label": {"en": "Low", "fr": "Basse", "de": "Niedrig", "gsw": "Niidrig"}},
+            {"value": "medium", "label": {"en": "Medium", "fr": "Moyenne", "de": "Mittel", "gsw": "Mittel"}},
+            {"value": "high", "label": {"en": "High", "fr": "Haute", "de": "Hoch", "gsw": "Hoch"}},
+            {"value": "critical", "label": {"en": "Critical", "fr": "Critique", "de": "Kritisch", "gsw": "Kritisch"}}
+          ]
+        },
+        {
+          "key": "accessibility_impact",
+          "label": {
+            "en": "Accessibility Impact",
+            "fr": "Impact sur l'accessibilité",
+            "de": "Auswirkungen auf die Zugänglichkeit",
+            "gsw": "Uuswirkige uf d Zuegängligkeit"
+          },
+          "type": "text",
+          "required": false
+        }
+      ]
+    },
+    {
+      "option_type": "event_proposal",
+      "label": {
+        "en": "Event Proposal",
+        "fr": "Proposition d'événement",
+        "de": "Veranstaltungsvorschlag",
+        "gsw": "Veraastaltig-Vorschlag"
+      },
+      "description": {
+        "en": "Event details for student activities",
+        "fr": "Détails de l'événement pour les activités étudiantes",
+        "de": "Veranstaltungsdetails für studentische Aktivitäten",
+        "gsw": "Veraastaltig-Details für studentischi Aktivitäte"
+      },
+      "fields": [
+        {
+          "key": "event_name",
+          "label": {
+            "en": "Event Name",
+            "fr": "Nom de l'événement",
+            "de": "Veranstaltungsname",
+            "gsw": "Veraastaltig-Name"
+          },
+          "type": "string",
+          "required": true
+        },
+        {
+          "key": "event_date",
+          "label": {
+            "en": "Event Date",
+            "fr": "Date de l'événement",
+            "de": "Veranstaltungsdatum",
+            "gsw": "Veraastaltig-Datum"
+          },
+          "type": "date",
+          "required": true
+        },
+        {
+          "key": "budget",
+          "label": {
+            "en": "Budget",
+            "fr": "Budget",
+            "de": "Budget",
+            "gsw": "Budget"
+          },
+          "type": "float",
+          "required": false
+        },
+        {
+          "key": "expected_attendance",
+          "label": {
+            "en": "Expected Attendance",
+            "fr": "Participation attendue",
+            "de": "Erwartete Teilnehmerzahl",
+            "gsw": "Erwartet Teilnehmer-Zahl"
+          },
+          "type": "integer",
+          "required": false
+        },
+        {
+          "key": "venue",
+          "label": {
+            "en": "Venue",
+            "fr": "Lieu",
+            "de": "Veranstaltungsort",
+            "gsw": "Veraastaltig-Ort"
+          },
+          "type": "string",
+          "required": false
+        }
+      ]
+    }
+  ],
+  "inquiry_group_types": [
+    {
+      "group_type": "university_council",
+      "label": {
+        "en": "University Council",
+        "fr": "Conseil universitaire",
+        "de": "Universitätsrat",
+        "gsw": "Universitäts-Rat"
+      },
+      "description": {
+        "en": "University-wide student governance",
+        "fr": "Gouvernance étudiante à l'échelle de l'université",
+        "de": "Universitätsweite Studentenvertretung",
+        "gsw": "Universitätswiti Student-Vertretig"
+      },
+      "is_root": true
+    },
+    {
+      "group_type": "student_government",
+      "label": {
+        "en": "Student Government",
+        "fr": "Gouvernement étudiant",
+        "de": "Studentenregierung",
+        "gsw": "Student-Regierig"
+      },
+      "description": {
+        "en": "Student government bodies",
+        "fr": "Organes du gouvernement étudiant",
+        "de": "Studentenregierungsgremien",
+        "gsw": "Student-Regierigs-Gremie"
+      },
+      "is_root": false
+    },
+    {
+      "group_type": "academic_program",
+      "label": {
+        "en": "Academic Program",
+        "fr": "Programme académique",
+        "de": "Akademisches Programm",
+        "gsw": "Akademischs Programm"
+      },
+      "description": {
+        "en": "Program-specific student groups",
+        "fr": "Groupes d'étudiants spécifiques au programme",
+        "de": "Programmspezifische Studentengruppen",
+        "gsw": "Programm-spezifischi Student-Gruppe"
+      },
+      "is_root": false
+    },
+    {
+      "group_type": "student_club",
+      "label": {
+        "en": "Student Club",
+        "fr": "Club étudiant",
+        "de": "Studentenclub",
+        "gsw": "Student-Club"
+      },
+      "description": {
+        "en": "Student clubs and organizations",
+        "fr": "Clubs et organisations d'étudiants",
+        "de": "Studentenclubs und -organisationen",
+        "gsw": "Student-Club und -Organisatione"
+      },
+      "is_root": false
+    },
+    {
+      "group_type": "residence_hall",
+      "label": {
+        "en": "Residence Hall",
+        "fr": "Résidence universitaire",
+        "de": "Wohnheim",
+        "gsw": "Wohnheim"
+      },
+      "description": {
+        "en": "Dormitory and residence communities",
+        "fr": "Communautés de dortoirs et de résidences",
+        "de": "Wohnheim- und Residenzgemeinschaften",
+        "gsw": "Wohnheim- und Residänz-Gmeinschafte"
+      },
+      "is_root": false
+    },
+    {
+      "group_type": "class_cohort",
+      "label": {
+        "en": "Class Cohort",
+        "fr": "Cohorte de classe",
+        "de": "Klassenjahrgang",
+        "gsw": "Klasse-Jahrgang"
+      },
+      "description": {
+        "en": "Year or class-based groups",
+        "fr": "Groupes basés sur l'année ou la classe",
+        "de": "Jahr- oder klassenbasierte Gruppen",
+        "gsw": "Jahr- oder klasse-basierti Gruppe"
+      },
+      "is_root": false
+    }
+  ],
+  "locations": [
+    {
+      "location_id": "main_campus",
+      "name": {
+        "en": "Main Campus",
+        "fr": "Campus principal",
+        "de": "Hauptcampus",
+        "gsw": "Hauptcampus"
+      },
+      "parent_id": null
+    },
+    {
+      "location_id": "east_campus",
+      "name": {
+        "en": "East Campus",
+        "fr": "Campus est",
+        "de": "Ostcampus",
+        "gsw": "Ost-Campus"
+      },
+      "parent_id": null
+    },
+    {
+      "location_id": "student_center",
+      "name": {
+        "en": "Student Center",
+        "fr": "Centre étudiant",
+        "de": "Studentenzentrum",
+        "gsw": "Student-Zentrum"
+      },
+      "parent_id": "main_campus"
+    },
+    {
+      "location_id": "library",
+      "name": {
+        "en": "Main Library",
+        "fr": "Bibliothèque principale",
+        "de": "Hauptbibliothek",
+        "gsw": "Haupt-Bibliothek"
+      },
+      "parent_id": "main_campus"
+    },
+    {
+      "location_id": "gym_complex",
+      "name": {
+        "en": "Gym & Sports Complex",
+        "fr": "Complexe sportif et gymnase",
+        "de": "Sport- und Fitnesskomplex",
+        "gsw": "Sport- und Fitness-Komplex"
+      },
+      "parent_id": "main_campus"
+    },
+    {
+      "location_id": "residence_north",
+      "name": {
+        "en": "North Residence Hall",
+        "fr": "Résidence nord",
+        "de": "Nordwohnheim",
+        "gsw": "Nord-Wohnheim"
+      },
+      "parent_id": "east_campus"
+    },
+    {
+      "location_id": "residence_south",
+      "name": {
+        "en": "South Residence Hall",
+        "fr": "Résidence sud",
+        "de": "Südwohnheim",
+        "gsw": "Süd-Wohnheim"
+      },
+      "parent_id": "east_campus"
+    },
+    {
+      "location_id": "study_room_a",
+      "name": {
+        "en": "Study Room A (Library Floor 2)",
+        "fr": "Salle d'étude A (Bibliothèque étage 2)",
+        "de": "Lernraum A (Bibliothek Etage 2)",
+        "gsw": "Lernruum A (Bibliothek Stock 2)"
+      },
+      "parent_id": "library"
+    },
+    {
+      "location_id": "cafeteria",
+      "name": {
+        "en": "Main Cafeteria",
+        "fr": "Cafétéria principale",
+        "de": "Hauptcafeteria",
+        "gsw": "Haupt-Cafeteria"
+      },
+      "parent_id": "student_center"
+    }
+  ]
+}

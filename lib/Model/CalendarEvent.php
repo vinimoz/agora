@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2020 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -182,7 +183,7 @@ class CalendarEvent implements \JsonSerializable
         return $this->hasRRule;
     }
 
-    public function getOccurrences() : array
+    public function getOccurrences(): array
     {
         return $this->occurrences;
     }
@@ -225,7 +226,8 @@ class CalendarEvent implements \JsonSerializable
         $this->occurrences = [];
 
         foreach ($rRule as $occurrence) {
-            if ($this->filterFrom
+            if (
+                $this->filterFrom
                 && (($occurrence->getTimestamp() + $this->getDuration()) < $this->filterFrom->getTimestamp())
             ) {
                 // skip occurrences before filter span
@@ -246,7 +248,7 @@ class CalendarEvent implements \JsonSerializable
     }
 
     /**
-     * @psalm-suppress PossiblyUnusedMethod 
+     * @psalm-suppress PossiblyUnusedMethod
      */
     public function jsonSerialize(): array
     {

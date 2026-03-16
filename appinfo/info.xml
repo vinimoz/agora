@@ -18,15 +18,16 @@
         - 🔒 Secure and private — all data stays on your Nextcloud server
         - 🔗 Integration with Forms, Polls, Deck, Collectives,...
         - 🏛 Collectives desgin UX
-
-        ### 🧭 Coming Next
         - 🗣 Real debate features (structured replies, multi-thread discussions)  
         - 📜 Project law reading with article-level comments and supports  
+        - 🧰 Template for different goal, democraty, university, company, custom 
+
+        ### 🧭 Coming Next
         - 🏛 Collectives → Submit group of inquiries to Polls application for consultation or referendum  
         - 🧮 Quorums and workflow automation  
         - 🧰 Better permission control and moderation tools  
         ]]></description>
-    <version>1.6.1</version>
+    <version>1.7.0</version>
     <licence>AGPL-3.0-or-later</licence>
     <author>Vincent TRAPPE</author>
     <documentation>
@@ -48,7 +49,7 @@
     <screenshot>https://raw.githubusercontent.com/vinimoz/agora/main/screenshots/ListView.png</screenshot>
     <dependencies>
         <php min-version="8.1"/>
-        <nextcloud min-version="31" max-version="32"/>
+        <nextcloud min-version="31" max-version="33"/>
     </dependencies>
     <background-jobs>
         <job>OCA\Agora\Cron\NotificationCron</job>
@@ -73,6 +74,7 @@
         <command>OCA\Agora\Command\Share\Add</command>
         <command>OCA\Agora\Command\Share\Remove</command>
         <command>OCA\Agora\Command\Db\Purge</command>
+		<command>OCA\Agora\Command\Db\CleanInstance</command>
         <command>OCA\Agora\Command\Db\RemoveIndices</command>
         <command>OCA\Agora\Command\Db\Rebuild</command>
         <command>OCA\Agora\Command\Db\CreateIndices</command>

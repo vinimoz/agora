@@ -3,10 +3,8 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-export { Activity, Activities } from '../stores/activity.ts'
-export { UpdateType, Group, AppSettings } from '../stores/appSettings.ts'
-export { Comment, Comments, CommentsGrouped } from '../stores/comments.ts'
-export { Support, Supports, SupportsGrouped } from '../stores/supports.ts'
+// export { Comment, Comments, CommentsGrouped } from '../stores/comments.ts'
+// export { Support, Supports, SupportsGrouped } from '../stores/supports.ts'
 
 export interface BaseEntry {
   id: number
@@ -14,6 +12,7 @@ export interface BaseEntry {
   parentId?: number
 }
 
+/*
 export {
   Inquiry,
   AccessType,
@@ -53,6 +52,7 @@ export {
   TimeUnitsType,
   DurationType,
 } from '../constants/dateUnits.ts'
+*/
 
 export enum Event {
   TransitionsOff = 'agora:transitions:off',
@@ -70,6 +70,21 @@ export enum Event {
   ShowSettings = 'agora:settings:show',
 }
 
+export interface OptionFamily {
+  id: number;
+  family_type: string;
+  label: string;
+  description?: string;
+  icon: string;
+  ui: string[];
+  features: string[];
+  rules: string[];
+  actions: string[];
+  sort_order: number;
+  created: number;
+}
+
+
 export interface InquiryFamily {
   id: number;
   family_type: string;
@@ -77,6 +92,10 @@ export interface InquiryFamily {
   description?: string;
   icon: string;
   sort_order: number;
+  ui: string[];
+  features: string[];
+  rules: string[];
+  actions: string[];
   created: number;
 }
 
@@ -91,8 +110,28 @@ export interface InquiryType {
   fields: string[]
   allowed_response: string[]
   allowed_transformation: string[]
+  allowed_option_type: string[]
+  allow_comment: number
+  support_feature: string
   created: number
 }
+
+export interface InquiryOptionType {
+  id: number
+  option_type: string
+  family: string
+  icon: string
+  label: string
+  description?: string
+  fields: string[]
+  allowed_response: string[]
+  allow_comment: number
+  support_feature: string
+  statuses: string[]
+  use_title: bool
+}
+
+
 
 
 export type ButtonMode = 'navigation' | 'actionMenu' | 'native'
@@ -173,6 +212,7 @@ export type User = {
   localeCode: string | null
   localeCodeIntl: string | null
   timeZone: string | null
+  groups: string[] | null
   categories: string[] | null
 }
 

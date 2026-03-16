@@ -14,7 +14,14 @@ const adminJobs = {
         cancelTokenHandlerObject[this.runAutoReminder.name].handleRequestCancellation().token,
     })
   },
-  runJanitor() {
+  cleanInstance() {
+    return httpInstance.request({
+      method: 'GET',
+      url: 'administration/cleaninstance/run',
+      cancelToken: cancelTokenHandlerObject[this.runJanitor.name].handleRequestCancellation().token,
+    })
+  },
+   runJanitor() {
     return httpInstance.request({
       method: 'GET',
       url: 'administration/janitor/run',

@@ -5,14 +5,37 @@
 
 <template>
   <div class="inquiry-card" :class="cardClasses" @click="handleClick">
-    <!-- Cover Image -->
-    <div v-if="coverUrl" class="card-cover">
+    <!-- Cover Image - Position changes based on layout -->
+    <div v-if="coverUrl" class="card-cover" :class="{ 'horizontal-cover': horizontal }">
       <img :src="coverUrl" :alt="inquiry.title" class="cover-image" />
       <div class="cover-overlay"></div>
+      
+      <!-- Support & Comments on cover for horizontal layout -->
+      <div v-if="horizontal" class="cover-actions">
+        <div class="cover-support">
+          <SupportFeature
+            :item="inquiry"
+            item-type="inquiry"
+            :context="context"
+            :show-quorum="true"
+            :show-details-on-hover="true"
+            :icon-size="22"
+            @click.stop
+          />
+        </div>
+        <div v-if="inquiry.status?.countComments" class="cover-comments" @click.stop="handleCommentsClick">
+          <component :is="InquiryGeneralIcons.Comment" class="counter-icon" :size="16" />
+          <span class="counter-value">{{ inquiry.status.countComments }}</span>
+        </div>
+      </div>
     </div>
 
     <!-- Content -->
-    <div class="card-content" :class="{ 'has-cover': coverUrl }">
+    <div
+class="card-content" :class="{ 
+      'has-cover': coverUrl,
+      'horizontal-content': horizontal 
+    }">
       <!-- Header -->
       <div class="card-header">
         <div class="type-badge">
@@ -37,7 +60,7 @@
       </div>
 
       <!-- Metadata - Location & Category -->
-      <div  class="card-meta-info">
+      <div class="card-meta-info">
         <div class="meta-item location">
           <component :is="InquiryGeneralIcons.Location" class="meta-icon" :size="12" />
           <span class="location-text">{{ truncatedLocation }}</span>
@@ -76,17 +99,17 @@
           </div>
         </div>
 
-        <!-- Counters -->
-        <div class="stat-counters">
-          <div
-v-if="inquiry.status?.countSupports" 
-               class="counter-item supports" 
-               :class="{ 'is-supported': isSupported }"
-               @click.stop="handleSupportClick">
-            <component :is="supportIconComponent" class="counter-icon" :size="14" />
-            <span class="counter-value">{{ inquiry.status.countSupports }}</span>
-          </div>
-          
+        <!-- Counters - Only show in vertical layout -->
+        <div v-if="!horizontal" class="stat-counters">
+          <SupportFeature
+            :item="inquiry"
+            item-type="inquiry"
+            :context="context"
+            :show-quorum="true"
+            :show-details-on-hover="true"
+            :icon-size="22"
+            @click.stop
+          />
           <div v-if="inquiry.status?.countComments" class="counter-item comments" @click.stop="handleCommentsClick">
             <component :is="InquiryGeneralIcons.Comment" class="counter-icon" :size="14" />
             <span class="counter-value">{{ inquiry.status.countComments }}</span>
@@ -114,19 +137,22 @@ import { getInquiryTypeData } from '../../helpers/modules/InquiryHelper.ts'
 import type { Inquiry } from '../../Types/index.ts'
 import { useSessionStore } from '../../stores/session.ts'
 import { InquiryGeneralIcons, StatusIcons } from '../../utils/icons.ts'
-import { ThumbIcon, TernarySupportIcon } from '../AppIcons'
+import SupportFeature from '../../helpers/modules/SupportFeature.vue'
+import { createInquiryContext } from '../../utils/permissions.ts'
 
 interface Props {
   inquiry: Inquiry
   isActive?: boolean
   dense?: boolean
   interactive?: boolean
+  horizontal?: boolean 
 }
 
 const props = withDefaults(defineProps<Props>(), {
   isActive: false,
   dense: false,
-  interactive: true
+  interactive: true,
+  horizontal: true
 })
 
 const emit = defineEmits<{
@@ -142,11 +168,15 @@ const cardClasses = computed(() => ({
   'is-active': props.isActive,
   'is-dense': props.dense,
   'is-interactive': props.interactive,
-  'has-cover': !!coverUrl.value
+  'has-cover': !!coverUrl.value,
+  'is-horizontal': props.horizontal // Add horizontal class
 }))
 
 // Get inquiry types
 const inquiryTypes = computed(() => sessionStore.appSettings?.inquiryTypeTab || [])
+
+// Context for permissions
+const context = computed(() => createInquiryContext(props.inquiry, sessionStore.appSettings))
 
 // Get type data
 const typeData = computed(() => getInquiryTypeData(props.inquiry.type, inquiryTypes.value))
@@ -247,16 +277,6 @@ const shortDescription = computed(() => {
   }
   
   return plainText
-})
-
-// Support
-const isSupported = computed(() => props.inquiry.currentUserStatus?.hasSupported || false)
-
-const supportIconComponent = computed(() => {
-  if (props.inquiry.configuration?.supportMode === 'ternary') {
-    return TernarySupportIcon
-  }
-  return ThumbIcon
 })
 
 // Get hierarchy path for location and category display
@@ -376,10 +396,6 @@ function handleClick() {
   }
 }
 
-function handleSupportClick() {
-  emit('support', props.inquiry.id)
-}
-
 function handleCommentsClick() {
   emit('comments', props.inquiry.id)
 }
@@ -388,8 +404,8 @@ function handleCommentsClick() {
 <style lang="scss" scoped>
 .inquiry-card {
   position: relative;
-  background: transparent;
   border-radius: 16px;
+  background: var(--color-main-background);
   border: 2px solid var(--color-border);
   overflow: hidden;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -398,6 +414,161 @@ function handleCommentsClick() {
   flex-direction: column;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   
+  // Horizontal layout - Tall and elongated
+&.is-horizontal {
+  flex-direction: row;
+  min-height: 320px; // Taller minimum height
+  max-height: 380px; // Control maximum height
+  
+  .card-cover {
+    width: 200px; // Slightly narrower cover
+    height: 100%;
+    min-height: 100%;
+    position: relative;
+    
+    &.horizontal-cover {
+      position: relative;
+      
+      .cover-actions {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 12px;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
+        backdrop-filter: blur(4px);
+        
+        .cover-support,
+        .cover-comments {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          color: white;
+          padding: 6px 12px;
+          border-radius: 24px;
+          background: rgba(255, 255, 255, 0.15);
+          cursor: pointer;
+          transition: all 0.2s ease;
+          font-weight: 500;
+          
+          &:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: scale(1.05);
+          }
+        }
+        
+        .cover-comments {
+          .counter-icon {
+            color: white;
+          }
+          .counter-value {
+            font-weight: 600;
+            font-size: 14px;
+          }
+        }
+      }
+    }
+  }
+  
+  .card-content.horizontal-content {
+    flex: 1;
+    width: calc(100% - 200px);
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  // Adjust title for elongated look
+  .card-title {
+    font-size: 20px; // Larger title
+    line-height: 1.3;
+    margin-bottom: 4px;
+    -webkit-line-clamp: 2;
+  }
+  
+  // Make description take more space
+  .card-description {
+    font-size: 14px;
+    line-height: 1.6;
+    -webkit-line-clamp: 3; // Show more lines
+    margin-bottom: 8px;
+    flex: 1; // Take available space
+  }
+  
+  // Compact meta info
+  .card-meta-info {
+    margin-top: 4px;
+    gap: 8px;
+    
+    .meta-item {
+      padding: 4px 10px;
+      font-size: 12px;
+      
+      .meta-text {
+        max-width: 140px; // Longer text allowed
+      }
+    }
+  }
+  
+  // Adjust stats positioning
+  .card-stats {
+    padding-top: 12px;
+    margin-top: 4px;
+    border-top: 1px solid var(--color-border);
+  }
+  
+  // Compact author section
+  .stat-author {
+    .author-info {
+      .author-name {
+        font-size: 13px;
+        max-width: 140px;
+      }
+      
+      .post-time {
+        font-size: 11px;
+      }
+    }
+  }
+}
+
+// Dense horizontal - Even more elongated
+&.is-horizontal.is-dense {
+  min-height: 280px;
+  max-height: 320px;
+  
+  .card-cover {
+    width: 160px;
+  }
+  
+  .card-content.horizontal-content {
+    width: calc(100% - 160px);
+    padding: 16px 20px;
+  }
+  
+  .card-title {
+    font-size: 18px;
+    -webkit-line-clamp: 2;
+  }
+  
+  .card-description {
+    -webkit-line-clamp: 2;
+    font-size: 13px;
+  }
+  
+  .card-meta-info .meta-item .meta-text {
+    max-width: 120px;
+  }
+  
+  .stat-author .author-info .author-name {
+    max-width: 120px;
+  }
+}
+
   &.is-interactive {
     cursor: pointer;
     
@@ -411,6 +582,11 @@ function handleCommentsClick() {
         opacity: 0.2;
       }
     }
+  }
+  
+  // Specific hover for horizontal to prevent double transform
+  &.is-horizontal.is-interactive:hover {
+    transform: translateX(-4px) translateY(-4px);
   }
   
   &.is-active {
@@ -431,6 +607,17 @@ function handleCommentsClick() {
     
     .card-description {
       -webkit-line-clamp: 1;
+    }
+    
+    // Dense horizontal adjustments
+    &.is-horizontal {
+      .card-cover {
+        width: 200px;
+      }
+      
+      .card-content.horizontal-content {
+        width: calc(100% - 200px);
+      }
     }
   }
   
@@ -459,7 +646,6 @@ function handleCommentsClick() {
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(to bottom, transparent 50%, rgba(0, 0, 0, 0.4));
     opacity: 0;
     transition: opacity 0.3s ease;
   }
@@ -473,6 +659,8 @@ function handleCommentsClick() {
 
 .card-content {
   padding: 20px;
+  background: var(--color-main-background);
+  border-radius: 8px;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -678,10 +866,6 @@ function handleCommentsClick() {
         }
       }
       
-      &.is-supported {
-        color: var(--color-primary-element);
-      }
-      
       .counter-icon {
         transition: transform 0.2s ease;
       }
@@ -751,6 +935,30 @@ function handleCommentsClick() {
 @media (max-width: 768px) {
   .inquiry-card {
     border-radius: 12px;
+    
+    // Stack horizontal on mobile
+    &.is-horizontal {
+      flex-direction: column;
+      
+      .card-cover {
+        width: 100%;
+        height: 160px;
+        
+        &.horizontal-cover .cover-actions {
+          padding: 8px;
+        }
+      }
+      
+      .card-content.horizontal-content {
+        width: 100%;
+      }
+      
+      &.is-dense {
+        .card-cover {
+          height: 140px;
+        }
+      }
+    }
   }
   
   .card-cover {
@@ -758,6 +966,7 @@ function handleCommentsClick() {
   }
   
   .card-content {
+    border-radius: 8px;
     padding: 16px;
     gap: 10px;
   }

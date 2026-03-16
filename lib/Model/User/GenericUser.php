@@ -1,11 +1,11 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2021 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-
 
 namespace OCA\Agora\Model\User;
 
@@ -23,9 +23,10 @@ class GenericUser extends UserBase
         string $languageCode = '',
         string $localeCode = '',
         string $timeZoneName = '',
+        string $location = '',
         array $groups = [],
     ) {
-        parent::__construct($id, $type, $displayName, $emailAddress, $languageCode, $localeCode, $timeZoneName, $groups);
+        parent::__construct($id, $type, $displayName, $emailAddress, $languageCode, $localeCode, $location, $timeZoneName, $groups);
 
         $this->description = $this->l10n->t('External participant');
         $this->richObjectType = UserBase::TYPE_GUEST;

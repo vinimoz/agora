@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -14,7 +15,6 @@ use OCA\Agora\Model\Group\Group;
 use OCA\Agora\UserSession;
 use OCP\IAppConfig;
 use Psr\Log\LoggerInterface;
-
 use OCA\Agora\Service\CategoryService;
 use OCA\Agora\Service\LocationService;
 use OCA\Agora\Service\InquiryStatusService;
@@ -22,6 +22,7 @@ use OCA\Agora\Service\InquiryTypeService;
 use OCA\Agora\Service\InquiryGroupTypeService;
 use OCA\Agora\Service\InquiryOptionTypeService;
 use OCA\Agora\Service\InquiryFamilyService;
+use OCA\Agora\Service\OptionFamilyService;
 
 class AppSettings implements JsonSerializable
 {
@@ -30,9 +31,6 @@ class AppSettings implements JsonSerializable
     // Existing settings constants
     public const SETTING_ALLOW_PUBLIC_SHARES = 'allowPublicShares';
     public const SETTING_ALLOW_PUBLIC_SHARES_GROUPS = 'publicSharesGroups';
-
-    public const SETTING_ALLOW_COMBO = 'allowCombo';
-    public const SETTING_ALLOW_COMBO_GROUPS = 'comboGroups';
 
     public const SETTING_ALLOW_ALL_ACCESS = 'allowAllAccess';
     public const SETTING_ALLOW_ALL_ACCESS_GROUPS = 'allAccessGroups';
@@ -85,7 +83,7 @@ class AppSettings implements JsonSerializable
     public const SETTING_USE_COLLABORATION = 'useCollaboration';
     public const SETTING_USE_COLLABORATION_DEFAULT = true;
 
-    //Moderation 
+    //Moderation
     public const SETTING_USE_MODERATION = 'useModeration';
     public const SETTING_USE_MODERATION_DEFAULT = true;
 
@@ -104,6 +102,7 @@ class AppSettings implements JsonSerializable
     public const SETTING_INQUIRY_GROUP_TYPE = 'inquiryGroupTypeTab';
     public const SETTING_INQUIRY_OPTION_TYPE = 'inquiryOptionTypeTab';
     public const SETTING_INQUIRY_FAMILY = 'inquiryFamilyTab';
+    public const SETTING_OPTION_FAMILY = 'optionFamilyTab';
     public const SETTING_INQUIRY_STATUS = 'inquiryStatusTab';
     public const SETTING_MODERATOR_RIGHTS = 'moderatorRights';
     public const SETTING_OFFICIAL_RIGHTS = 'officialRights';
@@ -122,6 +121,7 @@ class AppSettings implements JsonSerializable
         private ?InquiryGroupTypeService $inquiryGroupTypeService,
         private ?InquiryOptionTypeService $inquiryOptionTypeService,
         private ?InquiryFamilyService $inquiryFamilyService,
+        private ?OptionFamilyService $optionFamilyService,
     ) {
     }
 
@@ -135,7 +135,6 @@ class AppSettings implements JsonSerializable
         'addShares' => $this->systemSettings->getShareCreateAllowed(),
         'addSharesExternal' => $this->systemSettings->getShareCreateAllowed(),
         'changeForeignSupports' => $this->getIsUnrestrictedInquiryOwner(),
-        'comboView' => $this->getComboAllowed(),
         'deanonymizeInquiry' => $this->getIsUnrestrictedInquiryOwner(),
         'inquiryCreation' => $this->getInquiryCreationAllowed(),
         'inquiryDownload' => $this->getInquiryDownloadAllowed(),
@@ -147,6 +146,7 @@ class AppSettings implements JsonSerializable
         ];
     }
 
+    // Public App settings ( need to be fixed adpated ?) 
     public function getAppSettings(): array
     {
         $appSettingsArray = [
@@ -160,6 +160,17 @@ class AppSettings implements JsonSerializable
         'officialBypassModeration' => true,
         'navigationInquiriesInList' => false,
         'updateType' => $this->getUpdateType(),
+        'categoryTab' =>  $this->categoryService?->findAll() ?? [],
+        'locationTab' =>  $this->locationService?->findAll() ?? [],
+        'inquiryTypeTab' =>  $this->inquiryTypeService?->findAll() ?? [],
+        'inquiryGroupTypeTab' =>  $this->inquiryGroupTypeService?->findAll() ?? [],
+        'inquiryOptionTypeTab' =>  $this->inquiryOptionTypeService?->findAll() ?? [],
+        'inquiryFamilyTab' =>  $this->inquiryFamilyService?->findAll() ?? [],
+        'optionFamilyTab' =>  $this->optionFamilyService?->findAll() ?? [],
+        'inquiryStatusTab' =>  $this->inquiryStatusService?->findAll() ?? [],
+        'inquiryStatusTab' =>  $this->inquiryStatusService?->findAll() ?? [],
+        'inquiryTypeRights' => $this->getInquiryTypeRights(),
+
         ];
 
         if ($this->userSession->getIsLoggedIn()) {
@@ -171,7 +182,8 @@ class AppSettings implements JsonSerializable
     public function getModeratorRights(): array
     {
         return $this->getArraySetting(
-            self::SETTING_MODERATOR_RIGHTS, [
+            self::SETTING_MODERATOR_RIGHTS,
+            [
             'modifyInquiry' => true,
             'deleteInquiry' => true,
             'transferInquiry' => true,
@@ -183,7 +195,8 @@ class AppSettings implements JsonSerializable
     public function getOfficialRights(): array
     {
         return $this->getArraySetting(
-            self::SETTING_OFFICIAL_RIGHTS, [
+            self::SETTING_OFFICIAL_RIGHTS,
+            [
             'modifyInquiry' => true,
             'deleteInquiry' => false,
             'archiveInquiry' => true,
@@ -198,52 +211,53 @@ class AppSettings implements JsonSerializable
     public function getInquiryTypeRights(): array
     {
         return $this->getArraySetting(
-            self::SETTING_INQUIRY_TYPE_RIGHTS, [
+            self::SETTING_INQUIRY_TYPE_RIGHTS,
+            [
             'proposal' => [
             'supportInquiry' => true,
-            'supportMode' => 'simple',
+            'supportFeature' => 'binary',
             'commentInquiry' => true,
             'useResourceInquiry' => true,
             'editorType' => 'wysiwyg',
             ],
             'debate' => [
             'supportInquiry' => true,
-            'supportMode' => 'simple',
+            'supportFeature' => 'binary',
             'commentInquiry' => true,
             'useResourceInquiry' => true,
             'editorType' => 'textarea',
             ],
             'petition' => [
             'supportInquiry' => true,
-            'supportMode' => 'simple',
+            'supportFeature' => 'binary',
             'commentInquiry' => true,
             'useResourceInquiry' => true,
             'editorType' => 'wysiwyg',
             ],
             'project' => [
             'supportInquiry' => true,
-            'supportMode' => 'simple',
+            'supportFeature' => 'binary',
             'commentInquiry' => true,
             'useResourceInquiry' => true,
             'editorType' => 'wysiwyg',
             ],
             'grievance' => [
             'supportInquiry' => true,
-            'supportMode' => 'simple',
+            'supportFeature' => 'binary',
             'commentInquiry' => true,
             'useResourceInquiry' => true,
             'editorType' => 'wysiwyg',
             ],
             'suggestion' => [
             'supportInquiry' => true,
-            'supportMode' => 'simple',
+            'supportFeature' => 'binary',
             'commentInquiry' => false,
             'useResourceInquiry' => false,
             'editorType' => 'textarea',
             ],
             'official' => [
             'supportInquiry' => false,
-            'supportMode' => 'simple',
+            'supportFeature' => 'binary',
             'commentInquiry' => false,
             'useResourceInquiry' => false,
             'editorType' => 'textarea',
@@ -269,7 +283,7 @@ class AppSettings implements JsonSerializable
     public function setOfficialRights(array $rights): void
     {
         $this->setArraySetting(self::SETTING_OFFICIAL_RIGHTS, $rights);
-    }    
+    }
 
 
     /**
@@ -297,19 +311,19 @@ class AppSettings implements JsonSerializable
         'officialBypassModeration' => $this->getOfficialBypassModeration(),
         'navigationInquiriesInList' => $this->getLoadInquiriesInNavigation(),
         // Array settings for internal use only
-        'categoryTab' =>  $this->categoryService->findAll(),
-        'locationTab' =>  $this->locationService->findAll(),
-        'inquiryTypeTab' =>  $this->inquiryTypeService->findAll(),
-        'inquiryGroupTypeTab' =>  $this->inquiryGroupTypeService->findAll(),
-        'inquiryOptionTypeTab' =>  $this->inquiryOptionTypeService->findAll(),
-        'inquiryFamilyTab' =>  $this->inquiryFamilyService->findAll(),
-        'inquiryStatusTab' =>  $this->inquiryStatusService->findAll(),
-        'inquiryTypeRights' => $this->getInquiryTypeRights(), 
+        'categoryTab' =>  $this->categoryService?->findAll() ?? [],
+        'locationTab' =>  $this->locationService?->findAll() ?? [],
+        'inquiryTypeTab' =>  $this->inquiryTypeService?->findAll() ?? [],
+        'inquiryGroupTypeTab' =>  $this->inquiryGroupTypeService?->findAll() ?? [],
+        'inquiryOptionTypeTab' =>  $this->inquiryOptionTypeService?->findAll() ?? [],
+        'inquiryFamilyTab' =>  $this->inquiryFamilyService?->findAll() ?? [],
+        'optionFamilyTab' =>  $this->optionFamilyService?->findAll() ?? [],
+        'inquiryStatusTab' =>  $this->inquiryStatusService?->findAll() ?? [],
+        'inquiryTypeRights' => $this->getInquiryTypeRights(),
         'moderatorRights' => $this->getModeratorRights(),
         'officialRights' => $this->getOfficialRights(),
         ];
     }
-/*
     private function checkSettingType(string $key, int $expectedType, string $app = AppConstants::APP_ID): bool
     {
         try {
@@ -317,11 +331,10 @@ class AppSettings implements JsonSerializable
             if ($actualType === $expectedType || $actualType === IAppConfig::VALUE_MIXED) {
                 return true;
             }
-
-
         } catch (\Exception $e) {
             $this->logger->debug(
-                'Could not get setting type', [
+                'Could not get setting type',
+                [
                 'app' => $app,
                 'key' => $key,
                 'expectedType' => $expectedType,
@@ -331,38 +344,6 @@ class AppSettings implements JsonSerializable
             );
         }
         return false;
-    } */
-
-    private function checkSettingType(string $key, $value) {
-        $expectedType = $this->settingsSchema[$key]['type'] ?? null;
-        if ($expectedType === null) {
-            return; // or throw your own exception
-        }
-
-        switch ($expectedType) {
-        case 'boolean':
-            if (!is_bool($value)) {
-                throw new \InvalidArgumentException("Invalid boolean value for $key");
-            }
-            break;
-
-        case 'integer':
-            if (!is_int($value)) {
-                throw new \InvalidArgumentException("Invalid integer value for $key");
-            }
-            break;
-
-        case 'string':
-            if (!is_string($value)) {
-                throw new \InvalidArgumentException("Invalid string value for $key");
-            }
-            break;
-
-            // ... etc
-
-        default:
-            throw new \Exception("Unknown type for setting $key");
-        }
     }
 
 
@@ -527,13 +508,6 @@ class AppSettings implements JsonSerializable
         return $this->getBooleanSetting(self::SETTING_ALLOW_PUBLIC_SHARES, self::SETTING_ALLOW_PUBLIC_SHARES_GROUPS);
     }
 
-    /**
-     * Permission to combine inquiries is controlled by app settings and only for internal users
-     */
-    public function getComboAllowed(): bool
-    {
-        return $this->getBooleanSetting(self::SETTING_ALLOW_COMBO, self::SETTING_ALLOW_COMBO_GROUPS);
-    }
 
     /**
      * Get moderation feature
@@ -544,7 +518,7 @@ class AppSettings implements JsonSerializable
     }
 
     /**
-     * Official bypass moderaton 
+     * Official bypass moderaton
      */
     public function getOfficialBypassModeration(): bool
     {
@@ -739,9 +713,6 @@ class AppSettings implements JsonSerializable
             self::SETTING_ALLOW_PUBLIC_SHARES => $this->getBooleanSetting(self::SETTING_ALLOW_PUBLIC_SHARES),
             self::SETTING_ALLOW_PUBLIC_SHARES_GROUPS => $this->getGroupObjects(self::SETTING_ALLOW_PUBLIC_SHARES_GROUPS),
 
-            self::SETTING_ALLOW_COMBO => $this->getBooleanSetting(self::SETTING_ALLOW_COMBO),
-            self::SETTING_ALLOW_COMBO_GROUPS => $this->getGroupObjects(self::SETTING_ALLOW_COMBO_GROUPS),
-
             self::SETTING_ALLOW_ALL_ACCESS => $this->getBooleanSetting(self::SETTING_ALLOW_ALL_ACCESS),
             self::SETTING_ALLOW_ALL_ACCESS_GROUPS => $this->getGroupObjects(self::SETTING_ALLOW_ALL_ACCESS_GROUPS),
 
@@ -786,13 +757,14 @@ class AppSettings implements JsonSerializable
             'defaultImprintUrl' => $this->getDefaultImprintUrl(),
 
             // Array settings (only for internal users)
-            self::SETTING_CATEGORY_TAB => $this->categoryService->findAll(),
-            self::SETTING_LOCATION_TAB => $this->locationService->findAll(),
-            self::SETTING_INQUIRY_STATUS => $this->inquiryStatusService->findAll(),
-            self::SETTING_INQUIRY_TYPE => $this->inquiryTypeService->findAll(),
-            self::SETTING_INQUIRY_GROUP_TYPE => $this->inquiryGroupTypeService->findAll(),
-            self::SETTING_INQUIRY_OPTION_TYPE => $this->inquiryOptionTypeService->findAll(),
-            self::SETTING_INQUIRY_FAMILY => $this->inquiryFamilyService->findAll(),
+            self::SETTING_CATEGORY_TAB => $this->categoryService?->findAll() ?? [],
+            self::SETTING_LOCATION_TAB => $this->locationService?->findAll() ?? [],
+            self::SETTING_INQUIRY_STATUS => $this->inquiryStatusService?->findAll() ?? [],
+            self::SETTING_INQUIRY_TYPE => $this->inquiryTypeService?->findAll() ?? [],
+            self::SETTING_INQUIRY_GROUP_TYPE => $this->inquiryGroupTypeService?->findAll() ?? [],
+            self::SETTING_INQUIRY_OPTION_TYPE => $this->inquiryOptionTypeService?->findAll() ?? [],
+            self::SETTING_INQUIRY_FAMILY => $this->inquiryFamilyService?->findAll() ?? [],
+            self::SETTING_OPTION_FAMILY => $this->optionFamilyService?->findAll() ?? [],
             self::SETTING_INQUIRY_TYPE_RIGHTS => $this->getInquiryTypeRights(),
             self::SETTING_MODERATOR_RIGHTS => $this->getModeratorRights(),
             self::SETTING_OFFICIAL_RIGHTS => $this->getOfficialRights(),
@@ -801,8 +773,12 @@ class AppSettings implements JsonSerializable
 
     private function isMember(array $groups): bool
     {
+        $user = $this->userSession?->getCurrentUser();
+        if ($user === null) {
+            return false;
+        }
         foreach ($groups as $GID) {
-            if ($this->userSession->getCurrentUser()->getIsInGroup($GID)) {
+            if ($user->getIsInGroup($GID)) {
                 return true;
             }
         }

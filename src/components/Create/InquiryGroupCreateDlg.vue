@@ -103,14 +103,29 @@ const availableInquiryGroupTypes = computed(() => {
   return result
 })
 
-const selectedInquiryGroupType = computed(() => localInquiryGroupType.value
-    || initialInquiryGroupType.value?.group_type
-    || availableInquiryGroupTypes.value[0]?.group_type)
+const selectedInquiryGroupType = ref<string>('')
 
+const actualSelectedType = computed(() => 
+  localInquiryGroupType.value
+  || props.inquiryGroupType  
+  || availableInquiryGroupTypes.value[0]?.group_type
+)
+
+watch(
+  [
+    () => localInquiryGroupType.value,
+    () => initialInquiryGroupType.value?.group_type,
+    () => availableInquiryGroupTypes.value[0]?.group_type
+  ],
+  ([localType, initialType, firstAvailableType]) => {
+    selectedInquiryGroupType.value = localType || initialType || firstAvailableType || ''
+  },
+  { immediate: true }
+)
 
 // Data for display
 const currentInquiryGroupTypeData = computed(() => {
-  const data = getInquiryGroupTypeData(selectedInquiryGroupType.value, allInquiryGroupTypes.value)
+  const data = getInquiryGroupTypeData(actualSelectedType.value, allInquiryGroupTypes.value)
   return data
 })
 
@@ -145,14 +160,15 @@ const contextDescription = computed(() => {
 
 // Initialize local type when component mounts
 onMounted(() => {
-  
-  if (availableInquiryGroupTypes.value.length > 0 && !localInquiryGroupType.value) {
+  if (availableInquiryGroupTypes.value.length > 0 && !actualSelectedType.value) {
     // Default to parent type if available, otherwise first available
     const parentType = initialInquiryGroupType.value?.group_type
     
     if (parentType && availableInquiryGroupTypes.value.some(t => t.group_type === parentType)) {
-      localInquiryGroupType.value = parentType
+      selectedInquiryGroupType.value = parentType
+      localInquiryGroupType.value = parentType // Also set local type for consistency
     } else if (availableInquiryGroupTypes.value[0]) {
+      selectedInquiryGroupType.value = availableInquiryGroupTypes.value[0].group_type
       localInquiryGroupType.value = availableInquiryGroupTypes.value[0].group_type
     }
   }
@@ -181,7 +197,7 @@ async function addGroupInquiry() {
     adding.value = true
     
     // Validate required fields
-    if (!selectedInquiryGroupType.value) {
+    if (!actualSelectedType.value) {
       showError(t('agora', 'Please select a group type'))
       return
     }
@@ -194,7 +210,7 @@ async function addGroupInquiry() {
     
     // Prepare inquiry data
     const inquiryData: InquiryGroupData = {
-      type: selectedInquiryGroupType.value,
+      type: actualSelectedType.value,
       title: inquiryTitle.value.trim(),
     }
 
@@ -285,6 +301,8 @@ function resetInquiry() {
           <NcRadioGroup
             :model-value="accessType"
             class="access-radio-group"
+            :label="t('agora','Who can access ?')"
+            
             :description="t('agora', 'Choose who can access this group')"
             @update:model-value="accessType = $event"
           >
@@ -303,7 +321,7 @@ function resetInquiry() {
                   {{ t('agora', 'Select Nextcloud group') }}
               </h4>
               <div class="groups-list">
-                  <NcRadioGroup>
+                  <NcRadioGroup :label="t('agora','Groups Selections')">
                   <div v-for="group in props.availableGroups" :key="group" class="group-item">
                       <NcCheckboxRadioSwitch
                               v-model="selectedNextcloudGroup"
@@ -350,6 +368,7 @@ function resetInquiry() {
 
       <NcRadioGroup
               v-if="showGroupTypeSelector"
+              :label="t('agora','Groups Selections')"
               :model-value="localInquiryGroupType"
               @update:model-value="localInquiryGroupType = $event"
               >

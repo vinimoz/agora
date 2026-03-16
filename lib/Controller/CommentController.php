@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -51,11 +52,11 @@ class CommentController extends BaseController
      */
     #[NoAdminRequired]
     #[FrontpageRoute(verb: 'POST', url: '/inquiry/{inquiryId}/comment')]
-    public function add(int $inquiryId, string $message, bool $confidential): JSONResponse
+    public function add(int $inquiryId, string $message, int $optionId, bool $confidential): JSONResponse
     {
         return $this->response(
             fn () => [
-                'comment' => $this->commentService->add($message, $inquiryId, $confidential)
+                'comment' => $this->commentService->add($message, $inquiryId, $optionId, $confidential)
             ]
         );
     }

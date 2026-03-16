@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -99,7 +100,7 @@ class SettingsController extends BaseController
         }
 
         $updatedCategory = $this->settingsService->updateCategory($categoryId, (array)$category);
-        return $this->response(fn () => ['category' => (array) $updatedCategory]);    
+        return $this->response(fn () => ['category' => (array) $updatedCategory]);
     }
 
     //LOCATION
@@ -366,5 +367,4 @@ class SettingsController extends BaseController
         $updatedFamily = $this->settingsService->updateInquiryFamily($familyId, (array)$family);
         return $this->response(fn () => ['family' => (array) $updatedFamily]);
     }
-
 }

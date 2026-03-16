@@ -1,9 +1,12 @@
 <?php
+
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2024 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
 namespace OCA\Agora\Service;
 
 use OCA\Agora\Db\LocationMapper;
@@ -13,7 +16,6 @@ use OCP\AppFramework\Db\MultipleObjectsReturnedException;
 
 class LocationService
 {
-
     public function __construct(
         private LocationMapper $locationMapper
     ) {
@@ -41,7 +43,7 @@ class LocationService
         $location = new Location();
         $location->setName($name);
         $location->setParentId($parentId);
-        
+
         return $this->locationMapper->insert($location);
     }
 
@@ -50,7 +52,7 @@ class LocationService
         $location = $this->locationMapper->find($id);
         $location->setName($name);
         $location->setParentId($parentId);
-        
+
         return $this->locationMapper->update($location);
     }
 
@@ -58,7 +60,7 @@ class LocationService
     {
         $location = $this->locationMapper->find($id);
         $this->locationMapper->delete($location);
-        
+
         $this->deleteChildren($id);
     }
 

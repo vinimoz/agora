@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2024 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -15,7 +17,6 @@ use Psr\Log\LoggerInterface;
 
 class ModerationStatusService
 {
-
     public function __construct(
         private ModerationStatusMapper $moderationStatusMapper,
         private LoggerInterface $logger
@@ -44,8 +45,13 @@ class ModerationStatusService
         return $this->moderationStatusMapper->findByInquiryType($inquiryType);
     }
 
-    public function create(string $inquiryType, string $statusKey, string $label, 
-        ?string $description, bool $isFinal, string $icon
+    public function create(
+        string $inquiryType,
+        string $statusKey,
+        string $label,
+        ?string $description,
+        bool $isFinal,
+        string $icon
     ): ModerationStatus {
         $status = new ModerationStatus();
         $status->setInquiryType($inquiryType);
@@ -56,12 +62,17 @@ class ModerationStatusService
         $status->setIcon($icon);
         $status->setCreated(time());
         $status->setUpdated(time());
-        
+
         return $this->moderationStatusMapper->insert($status);
     }
 
-    public function update(int $id, string $statusKey, string $label, 
-        ?string $description, bool $isFinal, string $icon
+    public function update(
+        int $id,
+        string $statusKey,
+        string $label,
+        ?string $description,
+        bool $isFinal,
+        string $icon
     ): ModerationStatus {
         $status = $this->moderationStatusMapper->find($id);
         $status->setStatusKey($statusKey);
@@ -70,7 +81,7 @@ class ModerationStatusService
         $status->setIsFinal($isFinal);
         $status->setIcon($icon);
         $status->setUpdated(time());
-        
+
         return $this->moderationStatusMapper->update($status);
     }
 

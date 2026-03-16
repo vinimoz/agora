@@ -261,6 +261,7 @@ async function submitRegistration(): Promise<void> {
           :signaling-class="checkStatus.userName"
           :placeholder="t('agora', 'Enter your name or a nickname')"
           :helper-text="userNameHint"
+          :label="t('agora','User Name')"
           focus
           @input="validatePublicUsername()"
           @submit="submitRegistration()"
@@ -278,6 +279,7 @@ async function submitRegistration(): Promise<void> {
           "
           :helper-text="emailAddressHint"
           type="email"
+          :label="t('agora','Email')"
           inputmode="email"
           @input="validateEmailAddress()"
           @submit="submitRegistration()"

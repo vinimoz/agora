@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2023 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -28,6 +29,7 @@ use OCP\IDBConnection;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\IGroupManager;
+use Psr\Log\LoggerInterface;
 
 /**
  * @template-extends QBMapper<Share>
@@ -37,13 +39,16 @@ use OCP\IGroupManager;
 class UserMapper extends QBMapper
 {
     public const TABLE = Share::TABLE;
+
     /**
-     * @psalm-suppress PossiblyUnusedMethod 
+     * @psalm-suppress PossiblyUnusedMethod
      */
     public function __construct(
         IDBConnection $db,
         protected IUserManager $userManager,
+        protected LoggerInterface $logger,
     ) {
+        $this->logger = $logger;
         parent::__construct($db, Share::TABLE, Share::class);
     }
 
@@ -57,23 +62,21 @@ class UserMapper extends QBMapper
      * @param  int    $inquiryId Can only be used together with $userId and will return the internal user or the share user
      * @return UserBase
      **/
-    public function getParticipant(string $userId, ?int $inquiryId): UserBase
+    public function getParticipant(?string $userId, ?int $inquiryId): UserBase
     {
-        if ($userId === '') {
-            return new UserBase($userId, UserBase::TYPE_EMPTY);
-        }
-
         try {
             return $this->getUserFromUserBase($userId, $inquiryId);
         } catch (UserNotFoundException $e) {
-            // just catch and continue if not found and try to find user by share;
+            // User not found in main database, attempting to find via share record
+            $this->logger->info('User not found in user base, trying share: ' . $userId, ['app' => 'agora']);
         }
 
         try {
             $share = $this->getShareByInquiryAndUser($userId, $inquiryId);
             return $this->getUserFromShare($share);
         } catch (ShareNotFoundException $e) {
-            // User seems to be probaly deleted, use fake share
+            // User appears to be deleted, returning ghost user
+            $this->logger->info('Share not found for user: ' . $userId . ' for inquiry ' . $inquiryId, ['app' => 'agora']);
         }
 
         return new Ghost($userId);
@@ -158,8 +161,8 @@ class UserMapper extends QBMapper
         $qb = $this->db->getQueryBuilder();
 
         $qb->select('*')
-            ->from($this->getTableName())
-            ->where($qb->expr()->eq('token', $qb->createNamedParameter($token, IQueryBuilder::PARAM_STR)));
+           ->from($this->getTableName())
+           ->where($qb->expr()->eq('token', $qb->createNamedParameter($token, IQueryBuilder::PARAM_STR)));
 
         return $this->findEntity($qb);
     }
@@ -175,9 +178,9 @@ class UserMapper extends QBMapper
         $qb = $this->db->getQueryBuilder();
 
         $qb->select('*')
-            ->from($this->getTableName())
-            ->where($qb->expr()->eq('inquiry_id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT)))
-            ->andWhere($qb->expr()->eq('user_id', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR)));
+           ->from($this->getTableName())
+           ->where($qb->expr()->eq('inquiry_id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT)))
+           ->andWhere($qb->expr()->eq('user_id', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR)));
 
         try {
             return $this->findEntity($qb);
@@ -200,7 +203,7 @@ class UserMapper extends QBMapper
             User::TYPE => new User($id),
             Admin::TYPE => new Admin($id),
             Email::TYPE => new Email($id, $displayName, $emailAddress, $language),
-            UserBase::TYPE_EXTERNAL => new GenericUser($id, UserBase::TYPE_EXTERNAL, $displayName, $emailAddress, $language, $locale, $timeZoneName),
+            UserBase::TYPE_EXTERNAL => new GenericUser($id, UserBase::TYPE_EXTERNAL, $displayName, $emailAddress, $language, $locale,$timeZoneName,'',[]),
             UserBase::TYPE_PUBLIC => new GenericUser($id, UserBase::TYPE_PUBLIC, $displayName),
             default => throw new InvalidShareTypeException('Invalid user type (' . $type . ')'),
         };
@@ -218,10 +221,10 @@ class UserMapper extends QBMapper
         $qb = $this->db->getQueryBuilder();
 
         $qb->selectDistinct(['user_id', 'inquiry_id'])
-            ->from(Inquiry::TABLE)
-            ->where(
-                $qb->expr()->eq('inquiry_id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT))
-            );
+           ->from(Inquiry::TABLE)
+           ->where(
+               $qb->expr()->eq('inquiry_id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT))
+           );
 
         return $this->findEntities($qb);
     }

@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2021 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -11,7 +12,7 @@ namespace OCA\Agora\Model\User;
 class Admin extends User
 {
     /**
-     * @var string 
+     * @var string
      */
     public const TYPE = 'admin';
 
@@ -24,5 +25,4 @@ class Admin extends User
     {
         return 'principals/users/' . $this->getId();
     }
-
 }

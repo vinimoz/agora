@@ -4,6 +4,7 @@
  * SPDX-FileCopyrightText: 2022 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
 namespace OCA\Agora\Middleware;
 
 use OCA\Agora\Attributes\ShareTokenRequired;
@@ -21,7 +22,7 @@ class RequestAttributesMiddleware extends Middleware
     private const SHARE_TOKEN = 'Nc-Agora-Share-Token';
 
     /**
-     * @psalm-suppress PossiblyUnusedMethod 
+     * @psalm-suppress PossiblyUnusedMethod
      */
     public function __construct(
         protected IRequest $request,
@@ -93,5 +94,4 @@ class RequestAttributesMiddleware extends Middleware
 
         return true;
     }
-
 }

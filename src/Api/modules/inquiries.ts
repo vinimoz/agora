@@ -24,7 +24,6 @@ const inquiries = {
       inquiries: Inquiry[]
       permissions: {
         inquiryCreationAllowed: boolean
-        comboAllowed: true
       }
       inquiryGroups: InquiryGroup[]
     }>
@@ -132,19 +131,23 @@ const inquiries = {
     })
   },
 
-  updateInquiryConfig(dataInquiry: {
-    inquiryId: number
-    inquiryConfiguration: InquiryConfiguration
-    inquiryStatus: InquiryStatus
-  }): Promise<AxiosResponse<{ inquiry: Inquiry }>> {
-    return httpInstance.request({
-      method: 'PUT',
-      url: `inquiry/updateconfig/${dataInquiry.inquiryId}`,
-      data: { dataInquiry },
-      cancelToken:
-        cancelTokenHandlerObject[this.updateInquiryConfig.name].handleRequestCancellation().token,
-    })
-  },
+  updateInquiryConfig(
+  inquiryId: number,
+  inquiryConfiguration: InquiryConfiguration
+): Promise<AxiosResponse<{ inquiry: Inquiry }>> {
+
+  // Convert Proxy to plain object before sending
+  const plainConfig = JSON.parse(JSON.stringify(inquiryConfiguration));
+
+  return httpInstance.request({
+    method: 'PUT',
+    url: `inquiry/updateconfig/${inquiryId}`,
+    data: { inquiryConfiguration: plainConfig }, 
+    cancelToken:
+      cancelTokenHandlerObject[this.updateInquiryConfig.name].handleRequestCancellation().token,
+  })
+},
+
 
   addInquiry(dataInquiry: {
     type: string

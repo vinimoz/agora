@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -20,7 +21,7 @@ class InquiryTypeMapper extends QBMapper
     public const TABLE = InquiryType::TABLE;
 
     /**
-     * @psalm-suppress PossiblyUnusedMethod 
+     * @psalm-suppress PossiblyUnusedMethod
      */
     public function __construct(IDBConnection $db)
     {
@@ -139,7 +140,7 @@ class InquiryTypeMapper extends QBMapper
             ->from($this->getTableName())
             ->where($qb->expr()->eq('inquiry_type', $qb->createNamedParameter($type)));
 
-        $result = $qb->execute()->fetch();
+        $result = $qb->executeQuery()->fetch();
 
         return $result['family'];
     }
@@ -156,10 +157,25 @@ class InquiryTypeMapper extends QBMapper
             ->from(InquiryType::TABLE)
             ->where($qb->expr()->eq('inquiry_type', $qb->createNamedParameter($inquiryType)));
 
-        $result = $qb->execute()->fetch();
+        $result = $qb->executeQuery()->fetch();
         return $result ? json_decode($result['allowed_response'], true) ?? [] : [];
     }
 
+    /**
+     * Get allowed_option_type JSON value for specific inquiry type
+     *
+     * @return array
+     */
+    public function getAllowedOptionType(string $inquiryType): array
+    {
+        $qb = $this->db->getQueryBuilder();
+        $qb->select('allowed_option_type')
+            ->from(InquiryType::TABLE)
+            ->where($qb->expr()->eq('inquiry_type', $qb->createNamedParameter($inquiryType)));
+
+        $result = $qb->executeQuery()->fetch();
+        return $result ? json_decode($result['allowed_option_type'], true) ?? [] : [];
+    }
     /**
      * Get allowed_transformation JSON value for specific inquiry type
      *
@@ -172,7 +188,7 @@ class InquiryTypeMapper extends QBMapper
             ->from(InquiryType::TABLE)
             ->where($qb->expr()->eq('inquiry_type', $qb->createNamedParameter($inquiryType)));
 
-        $result = $qb->execute()->fetch();
+        $result = $qb->executeQuery()->fetch();
         return $result ? json_decode($result['allowed_transformation'], true) ?? [] : [];
     }
 }

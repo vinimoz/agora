@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2024 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -20,6 +21,7 @@ use JsonSerializable;
  * @method         void setValue(int $value)
  * @method         string getSupportHash()
  * @method         void setSupportHash(string $value)
+ * @method         string getSupportHash()
  * @method         int getInquiryId()
  * @method         void setInquiryId(int $value)
  * @method         int getOptionId()

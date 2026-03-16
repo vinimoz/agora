@@ -6,7 +6,7 @@
 import { defineStore } from 'pinia'
 import { AppSettingsAPI } from '../Api/index.ts'
 import { Logger } from '../helpers/index.ts'
-import { BaseEntry, InquiryType, InquiryFamily } from '../Types/index.ts'
+import { BaseEntry, InquiryType, InquiryOptionType, InquiryFamily, OptionFamily } from '../Types/index.ts'
 import { AxiosError } from '@nextcloud/axios'
 import type { InquiryGroupType } from './inquiryGroups.types'
 
@@ -49,7 +49,6 @@ export interface InquiryStatus {
 
 export type AppSettings = {
 	allAccessGroups: string[]
-	allowCombo: boolean
 	allowPublicShares: boolean
 	allowAllAccess: boolean
 	allowInquiryCreation: boolean
@@ -78,7 +77,6 @@ export type AppSettings = {
 	navigationInquiriesInList: boolean
 	finalPrivacyUrl: string
 	finalImprintUrl: string
-	comboGroups: string[]
 	publicSharesGroups: string[]
 	inquiryCreationGroups: string[]
 	inquiryDownloadGroups: string[]
@@ -88,8 +86,10 @@ export type AppSettings = {
 	locationTab: Location[]
 	inquiryStatusTab: InquiryStatus[]
 	inquiryTypeTab: InquiryType[]
+	inquiryOptionTypeTab: InquiryOptionType[]
 	inquiryGroupTypeTab: InquiryGroupType[]
 	inquiryFamilyTab: InquiryFamily[]
+	optonFamilyTab: OptionFamily[]
 	groups: Group[]
 	inquiryTypeRights: Record<string, InquiryTypeRights>
 	moderatorRights: ModeratorRights
@@ -102,7 +102,6 @@ export type AppSettings = {
 export const useAppSettingsStore = defineStore('appSettings', {
 	state: (): AppSettings => ({
 		allAccessGroups: [],
-		allowCombo: true,
 		allowPublicShares: true,
 		allowAllAccess: true,
 		allowInquiryCreation: true,
@@ -131,7 +130,6 @@ export const useAppSettingsStore = defineStore('appSettings', {
 		navigationInquiriesInList: true,
 		finalPrivacyUrl: '',
 		finalImprintUrl: '',
-		comboGroups: [],
 		publicSharesGroups: [],
 		inquiryCreationGroups: [],
 		inquiryDownloadGroups: [],
@@ -139,8 +137,10 @@ export const useAppSettingsStore = defineStore('appSettings', {
 		unrestrictedOwnerGroups: [],
 		categoryTab: [],
 		inquiryTypeTab: [],
+		inquiryOptionTypeTab: [],
 		inquiryGroupTypeTab: [],
 		inquiryFamilyTab: [],
+		optionFamilyTab: [],
 		locationTab: [],
 		inquiryStatusTab: [],
 		groups: [],
@@ -156,6 +156,8 @@ export const useAppSettingsStore = defineStore('appSettings', {
 		 getInquiryTypeRights: (state) => (inquiryType: string) => state.inquiryTypeRights[inquiryType],
 
 		 getMainInquiryTypes: (state) => state.inquiryTypeTab,
+		 
+         getMainInquiryOptionTypes: (state) => state.inquiryOptionTypeTab,
 		 
          getMainInquiryGroupTypes: (state) => state.inquiryGroupTypeTab,
 
@@ -572,6 +574,61 @@ export const useAppSettingsStore = defineStore('appSettings', {
 			}
 		},
 
+        // STORE FOR OPTION FAMILY MANAGEMENT
+        async addOptionFamily(familyData: {
+            family_type: string;
+            label: string;
+            description?: string;
+            icon?: string;
+            sort_order?: number;
+        }): Promise<void> {
+            const maxId = this.optionFamilyTab.length > 0 ? Math.max(...this.optionFamilyTab.map((f) => f.id)) : 0;
+            const newId = maxId + 1;
+
+            try {
+                await AppSettingsAPI.addOptionFamily({
+                    ...familyData,
+                    created: Date.now(),
+                });
+
+                this.optionFamilyTab.push({
+                    id: newId,
+                    ...familyData,
+                    created: Date.now(),
+                });
+            } catch (error) {
+                Logger.error('Error adding option family', { error });
+            }
+        },
+
+        async updateOptionFamily(id: number, familyData: {
+            family_type?: string;
+            label?: string;
+            description?: string;
+            icon?: string;
+            sort_order?: number;
+        }): Promise<void> {
+            const family = this.optionFamilyTab.find((f) => f.id === id);
+            try {
+                await AppSettingsAPI.updateOptionFamily(id, familyData);
+
+                if (family) {
+                    Object.assign(family, familyData);
+                }
+            } catch (error) {
+                Logger.error('Error updating option family', { error });
+            }
+        },
+
+        async deleteOptionFamily(id: number): Promise<void> {
+            try {
+                await AppSettingsAPI.deleteOptionFamily(id);
+                this.optionFamilyTab = this.optionFamilyTab.filter((f) => f.id !== id);
+            } catch (error) {
+                Logger.error('Error deleting option family', { error });
+            }
+        },
+
 
 		// METHOD FOR TYPE
 		// STORE FOR INQUIRY TYPE MANAGEMENT
@@ -584,6 +641,7 @@ export const useAppSettingsStore = defineStore('appSettings', {
 			fields?: string;
 			allowed_response?: string;
 			allowed_transformation?: string;
+		    allowed_option_type?: string;
 		}): Promise<void> {
 			const maxId = this.inquiryTypeTab.length > 0 ? Math.max(...this.inquiryTypeTab.map((t) => t.id)) : 0;
 			const newId = maxId + 1;
@@ -613,6 +671,7 @@ export const useAppSettingsStore = defineStore('appSettings', {
 			fields?: string;
 			allowed_response?: string;
 			allowed_transformation?: string;
+		    allowed_option_type?: string;
 		}): Promise<void> {
 			const type = this.inquiryTypeTab.find((t) => t.id === id);
 			try {

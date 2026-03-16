@@ -296,9 +296,7 @@ function handleInquiryClick(inquiry: Inquiry) {
       showModal.value = true
       break
       
-    case 'popup':
-      popupInquiry.value = inquiry
-      showPopup.value = true
+    case 'none':
       break
       
     case 'page':
@@ -329,43 +327,31 @@ function closePopup() {
 </script>
 
 <style lang="scss" scoped>
+
 .inquiry-group-view-main {
   min-height: 100vh;
-  background: transparent;
-  overflow: visible;
 }
 
-/* === ENVELOPE STYLES - Applied to ALL inquiry items === */
+/* Envelope Styles - Applied to ALL inquiry items */
 .header-item,
 .sidebar-item,
 .footer-item,
 .main-item {
-  /* Outer container styling */
-  border: 2px solid var(--color-border);
-  border-radius: 16px;
-  // background: var(--color-main-background);
-  background: transparent;
-
-  box-shadow: 
-    0 2px 8px rgba(0, 0, 0, 0.05),
-    0 1px 2px rgba(0, 0, 0, 0.03);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 2px solid var(--inquiry-gray-200);
+  border-radius: var(--inquiry-border-radius-lg);
+  box-shadow: var(--inquiry-shadow-sm);
+  transition: var(--inquiry-transition-slow);
   cursor: pointer;
   overflow: hidden;
   position: relative;
   
-  /* Subtle gradient overlay on hover */
   &::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    inset: 0;
     background: linear-gradient(
       135deg,
-      rgba(var(--color-primary-rgb), 0.02) 0%,
-      rgba(var(--color-primary-rgb), 0) 100%
+      rgba(37, 99, 235, 0.05) 0%,
     );
     opacity: 0;
     transition: opacity 0.3s ease;
@@ -373,128 +359,210 @@ function closePopup() {
     z-index: 1;
   }
   
-  /* Hover effects - ENVELOPE ONLY */
   &:hover {
-    border-color: var(--color-primary-element);
-    box-shadow: 
-      0 8px 24px rgba(0, 0, 0, 0.1),
-      0 4px 12px rgba(var(--color-primary-rgb), 0.05);
-    transform: translateY(-3px);
+    border-color: var(--inquiry-primary);
+    box-shadow: var(--inquiry-shadow-xl);
+    transform: translateY(-4px);
     
     &::before {
       opacity: 1;
     }
   }
   
-  /* Active/Selected state */
   &.active {
-    border-color: var(--color-primary-element);
-    background: rgba(var(--color-primary-rgb), 0.03);
-    box-shadow: 
-      0 4px 16px rgba(var(--color-primary-rgb), 0.1),
-      inset 0 0 0 1px rgba(var(--color-primary-rgb), 0.1);
+    border-color: var(--inquiry-primary);
+    background: rgba(37, 99, 235, 0.03);
+    box-shadow: 0 4px 16px rgba(37, 99, 235, 0.1);
   }
   
-  /* Different section accents */
+  /* Zone-specific hover effects */
   &.header-item:hover {
-    border-color: #3b82f6; /* Blue accent */
+    border-color: var(--inquiry-zone-header);
+    box-shadow: 0 12px 24px rgba(59, 130, 246, 0.15);
   }
   
   &.main-item:hover {
-    border-color: var(--color-primary-element); /* Primary color */
+    border-color: var(--inquiry-zone-main);
+    box-shadow: 0 12px 24px rgba(37, 99, 235, 0.15);
   }
   
   &.footer-item:hover {
-    border-color: #10b981; /* Green accent */
+    border-color: var(--inquiry-zone-footer);
+    box-shadow: 0 12px 24px rgba(16, 185, 129, 0.15);
   }
   
   &.sidebar-item:hover {
-    border-color: #8b5cf6; /* Purple accent */
+    border-color: var(--inquiry-zone-sidebar);
+    box-shadow: 0 12px 24px rgba(139, 92, 246, 0.15);
   }
   
-  /* === INSIDE THE ENVELOPE - Child components have full control === */
-  /* Remove any deep styling that affects child components */
-  :deep(*) {
-    /* Child components control their own:
-       - Padding/Margins
-       - Internal borders
-       - Background colors
-       - Typography
-       - Button styles
-       - Component-specific layouts
-    */
-  }
-  
-  /* Only set the wrapper for child components */
-  :deep(.inquiry-full-view),
-  :deep(.inquiry-card),
-  :deep(.inquiry-list-item),
-  :deep(.inquiry-summary),
-  :deep(.inquiry-rich-html) {
-    width: 100%;
-    height: 100%;
-    background: transparent !important; /* Let parent control background */
-    border: 2px !important; /* No borders inside */
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
-    position: relative;
-    z-index: 2; /* Above the envelope's ::before overlay */
-  }
 }
 
 /* Layout Container */
 .layout-container {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 320px;
-  gap: 24px;
+  gap: 1.5rem;
   max-width: 1600px;
   margin: 0 auto;
-  padding: 24px;
+  padding: 1.5rem;
   min-height: calc(100vh - 120px);
   align-items: start;
 
   @media (max-width: 1200px) {
     grid-template-columns: 1fr;
-    gap: 20px;
-    padding: 20px;
+    gap: 1.25rem;
+    padding: 1.25rem;
   }
 }
 
-/* Inquiry Grids - ENVELOPE positioning only */
+/* Main Content Area */
+.layout-main {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* Inquiry Sections */
+.inquiry-section {
+  
+  &.header-section {
+    margin-bottom: 1rem;
+  }
+  
+  &.main-section {
+    margin-bottom: 1.5rem;
+  }
+  
+  &.footer-section {
+    margin-top: 1rem;
+  }
+}
+
+/* Type Groups */
+.type-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.type-group {
+ /* background: var(--color-main-background); */
+}
+
+.type-header {
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid var(--inquiry-gray-200);
+  
+  h3 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--inquiry-gray-700);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+}
+
+/* Inquiry Grids */
 .inquiry-grid {
   &.main-grid {
+      background: transparent;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-    gap: 24px;
+    gap: 1.5rem;
     
     .full-width {
       grid-column: 1 / -1;
+    }
+    
+    &.single-full-item {
+      grid-template-columns: 1fr;
     }
   }
   
   &.header-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
+    gap: 1.25rem;
   }
   
   &.footer-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 20px;
+    gap: 1.25rem;
   }
 }
 
-/* Sidebar items - special envelope sizing */
+/* Sidebar */
+.layout-sidebar {
+  position: sticky;
+  top: 2rem;
+  height: fit-content;
+  
+  .sidebar-type-groups {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .sidebar-type-group {
+  /*background: var(--color-main-background); */
+    
+    .sidebar-type-header {
+      margin-bottom: 0.75rem;
+      
+      h4 {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--inquiry-gray-600);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+    }
+  }
+  
+  .sidebar-inquiries {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+}
+
+/* Sidebar items */
 .sidebar-item {
-  /* Slightly smaller for sidebar */
-  border-width: 1.5px;
-  border-radius: 12px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  border-width: 5px;
+  border-radius: var(--inquiry-border-radius);
+  box-shadow: var(--inquiry-shadow-sm);
   
   &:hover {
     transform: translateY(-2px);
   }
 }
+
+/* Modal Styles */
+:deep(.modal-inquiry-content) {
+  padding: 2rem;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+:deep(.popup-inquiry-content) {
+  padding: 1.5rem;
+}
+
+.inquiry-grid.main-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, max-content));
+  gap: 1.5rem;
+  justify-content: start; /* Align items to start instead of stretching */
+  
+  .full-width {
+    grid-column: 1 / -1;
+    width: 100%; /* Full width items still stretch */
+  }
+}
+
 
 /* Responsive */
 @media (max-width: 768px) {
@@ -503,7 +571,7 @@ function closePopup() {
   .footer-item,
   .main-item {
     border-width: 1.5px;
-    border-radius: 12px;
+    border-radius: var(--inquiry-border-radius);
     
     &:hover {
       transform: translateY(-2px);
@@ -512,7 +580,11 @@ function closePopup() {
   
   .inquiry-grid.main-grid {
     grid-template-columns: 1fr;
-    gap: 20px;
+    gap: 1.25rem;
+  }
+  
+  .layout-container {
+    padding: 1rem;
   }
 }
 </style>

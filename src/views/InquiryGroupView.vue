@@ -22,18 +22,15 @@ import type { CollapsibleProps } from '../components/Base/modules/Collapsible.vu
 import InquiryInfoCards from '../components/Cards/InquiryInfoCards.vue'
 
 const forceRenderKey = ref(0)
-const selectedMode = ref('response')
 const route = useRoute()
 const router = useRouter()
 const inquiryGroupStore = useInquiryGroupStore()
 const inquiryGroupsStore = useInquiryGroupsStore()
 const sessionStore = useSessionStore()
-const editMode = ref(false)
 const isAppLoaded = ref(false)
 
 const createGroupDlgToggle = ref(false)
 const selectedInquiryGroupTypeForCreation = ref('')
-const selectedGroups = ref([])
 
 
 const availableGroups = computed(() => {
@@ -47,19 +44,10 @@ const availableGroups = computed(() => {
 async function loadInquiry(id: string) {
   try {
     await inquiryGroupStore.load(id)
-    // console.log(" WE LOAD ID ", id)
     const result = inquiryGroupsStore.inquiryGroups.filter(i => 
       i.parentId === Number(id)
     )
-    // console.log(" WE LOAD RESULT ", result)
     inquiryGroupStore.childs = result
-/*
-    if (inquiryGroupStore.childs.length === 0) {
-      editMode.value = true
-    } else {
-      editMode.value = false
-    }
-    */
     await nextTick()
     forceRenderKey.value += 1
   } catch  {
@@ -114,9 +102,6 @@ const inquiryAdded = (inquiry) => {
   })
 }
 
-const handleGroupUpdate = (groups) => {
-  selectedGroups.value = groups
-}
 </script>
 
 <template>
@@ -132,13 +117,12 @@ const handleGroupUpdate = (groups) => {
     <!-- Action toolbar component -->
     <div class="area__main">
       <div class="view-content">
-        <InquiryGroupEditViewForm 
-        />
+         <InquiryGroupEditViewForm 
+            /> 
       </div>
 
       <InquiryInfoCards class="sticky-left" />
     </div>
-
     <InquiryGroupCreateDlg
             v-if="createGroupDlgToggle"
             :inquiry-group-type="selectedInquiryGroupTypeForCreation"
@@ -147,7 +131,6 @@ const handleGroupUpdate = (groups) => {
             @close="handleCloseDialog"
             @added="inquiryAdded"
             />
-
   </NcAppContent>
 </template>
 

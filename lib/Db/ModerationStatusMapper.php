@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2024 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -30,7 +31,7 @@ class ModerationStatusMapper extends QBMapper
         $qb->select('*')
             ->from($this->getTableName())
             ->where($qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT)));
-        
+
         return $this->findEntity($qb);
     }
 
@@ -42,8 +43,8 @@ class ModerationStatusMapper extends QBMapper
         $qb = $this->db->getQueryBuilder();
         $qb->select('*')
             ->from($this->getTableName())
-            ->orderBy('sort_order', 'ASC'); 
-        
+            ->orderBy('sort_order', 'ASC');
+
         return $this->findEntities($qb);
     }
 
@@ -56,8 +57,8 @@ class ModerationStatusMapper extends QBMapper
         $qb->select('*')
             ->from($this->getTableName())
             ->where($qb->expr()->eq('inquiry_type', $qb->createNamedParameter($inquiryType, IQueryBuilder::PARAM_STR)))
-            ->orderBy('sort_order', 'ASC'); 
-        
+            ->orderBy('sort_order', 'ASC');
+
         return $this->findEntities($qb);
     }
 
@@ -68,7 +69,7 @@ class ModerationStatusMapper extends QBMapper
             ->from($this->getTableName())
             ->where($qb->expr()->eq('inquiry_type', $qb->createNamedParameter($inquiryType, IQueryBuilder::PARAM_STR)))
             ->andWhere($qb->expr()->eq('status_key', $qb->createNamedParameter($statusKey, IQueryBuilder::PARAM_STR)));
-        
+
         try {
             return $this->findEntity($qb);
         } catch (\Exception $e) {
@@ -76,8 +77,13 @@ class ModerationStatusMapper extends QBMapper
         }
     }
 
-    public function create(string $inquiryType, string $statusKey, string $label, 
-        ?string $description, bool $isFinal, string $icon
+    public function create(
+        string $inquiryType,
+        string $statusKey,
+        string $label,
+        ?string $description,
+        bool $isFinal,
+        string $icon
     ): ModerationStatus {
         $status = new ModerationStatus();
         $status->setInquiryType($inquiryType);
@@ -86,11 +92,11 @@ class ModerationStatusMapper extends QBMapper
         $status->setDescription($description);
         $status->setIsFinal($isFinal);
         $status->setIcon($icon);
-        
+
         // Set order to last position
         $maxOrder = $this->getMaxOrderForInquiryType($inquiryType);
         $status->setOrder($maxOrder + 1);
-        
+
         return $this->insert($status);
     }
 
@@ -103,7 +109,7 @@ class ModerationStatusMapper extends QBMapper
     {
         $status = $this->find($id);
         $this->delete($status);
-        
+
         // Reorder remaining statuses
         $this->reorderAfterDeletion($status->getInquiryType());
     }
@@ -114,37 +120,37 @@ class ModerationStatusMapper extends QBMapper
         $qb->select($qb->func()->max('sort_order'))
             ->from($this->getTableName())
             ->where($qb->expr()->eq('inquiry_type', $qb->createNamedParameter($inquiryType, IQueryBuilder::PARAM_STR)));
-        
+
         $result = $qb->executeQuery();
         $maxOrder = (int)$result->fetchOne();
         $result->closeCursor();
-        
+
         return $maxOrder;
     }
 
     public function reorderStatuses(string $inquiryType, array $newOrder): void
     {
         $qb = $this->db->getQueryBuilder();
-        
+
         foreach ($newOrder as $index => $statusId) {
             $qb->update($this->getTableName())
-                ->set('sort_order', $qb->createNamedParameter($index, IQueryBuilder::PARAM_INT)) 
+                ->set('sort_order', $qb->createNamedParameter($index, IQueryBuilder::PARAM_INT))
                 ->where($qb->expr()->eq('id', $qb->createNamedParameter($statusId, IQueryBuilder::PARAM_INT)))
                 ->andWhere($qb->expr()->eq('inquiry_type', $qb->createNamedParameter($inquiryType, IQueryBuilder::PARAM_STR)))
                 ->executeStatement();
         }
     }
 
-        
+
 
     private function reorderAfterDeletion(string $inquiryType): void
     {
         $statuses = $this->findByInquiryType($inquiryType);
-        
+
         $qb = $this->db->getQueryBuilder();
         foreach ($statuses as $index => $status) {
             $qb->update($this->getTableName())
-                ->set('sort_order', $qb->createNamedParameter($index, IQueryBuilder::PARAM_INT)) 
+                ->set('sort_order', $qb->createNamedParameter($index, IQueryBuilder::PARAM_INT))
                 ->where($qb->expr()->eq('id', $qb->createNamedParameter($status->getId(), IQueryBuilder::PARAM_INT)))
                 ->executeStatement();
         }

@@ -24,6 +24,7 @@ abstract class BaseEvent extends Event
     protected array $activitySubjectParams = [];
     protected bool $log = true;
     protected Inquiry $inquiry;
+    protected Option $option;
     protected UserMapper $userMapper;
     protected UserSession $userSession;
 
@@ -34,7 +35,7 @@ abstract class BaseEvent extends Event
     ) {
         parent::__construct();
         try {
-            $this->inquiry = Container::getInquiry($this->getInquiryId(), true); 
+            $this->inquiry = Container::getInquiry($this->getInquiryId(), true);
         } catch (DoesNotExistException $e) {
             throw new \Exception("Inquiry not found: " . $this->getInquiryId());
         }
@@ -47,7 +48,7 @@ abstract class BaseEvent extends Event
         'type' => 'highlight',
         'id' => (string)$this->eventObject->getInquiryId(),
         'name' => $this->inquiry->getTitle(),
-        'link' => $this->inquiry->getSupportUrl(),
+        'link' => $this->inquiry->getInquiryUrl(),
         ];
     }
 

@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -20,7 +21,7 @@ class InquiryOptionTypeMapper extends QBMapper
     public const TABLE = InquiryOptionType::TABLE;
 
     /**
-     * @psalm-suppress PossiblyUnusedMethod 
+     * @psalm-suppress PossiblyUnusedMethod
      */
     public function __construct(IDBConnection $db)
     {
@@ -142,8 +143,19 @@ class InquiryOptionTypeMapper extends QBMapper
             ->from(InquiryOptionType::TABLE)
             ->where($qb->expr()->eq('option_type', $qb->createNamedParameter($optionType)));
 
-        $result = $qb->execute()->fetch();
+        $result = $qb->executeQuery()->fetch();
         return $result ? json_decode($result['allowed_response'], true) ?? [] : [];
     }
 
+    public function getFamilyFromType(string $type): string
+    {
+        $qb = $this->db->getQueryBuilder();
+        $qb->select('family')
+            ->from($this->getTableName())
+            ->where($qb->expr()->eq('option_type', $qb->createNamedParameter($type)));
+
+        $result = $qb->executeQuery()->fetch();
+
+        return $result['family'];
+    }
 }

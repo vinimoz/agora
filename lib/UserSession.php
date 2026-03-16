@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2024 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -25,31 +26,31 @@ use OCP\IUser;
 class UserSession
 {
     /**
-     * @var string 
+     * @var string
      */
     public const SESSION_KEY_CRON_JOB = AppConstants::SESSION_KEY_CRON_JOB;
     /**
-     * @var string 
+     * @var string
      */
     public const SESSION_KEY_USER_ID = 'ncAgoraUserId';
     /**
-     * @var string 
+     * @var string
      */
     public const SESSION_KEY_SHARE_TOKEN = 'ncAgoraPublicToken';
     /**
-     * @var string 
+     * @var string
      */
     public const SESSION_KEY_SHARE_TYPE = 'ncAgoraShareType';
     /**
-     * @var string 
+     * @var string
      */
     public const CLIENT_ID = 'ncAgoraClientId';
     /**
-     * @var string 
+     * @var string
      */
     public const CLIENT_TZ = 'ncAgoraClientTimeZone';
     /**
-     * @var string 
+     * @var string
      */
     public const TABLE = Share::TABLE;
 
@@ -59,7 +60,7 @@ class UserSession
     // protected Share|null $share = null;
 
     /**
-     * @psalm-suppress PossiblyUnusedMethod 
+     * @psalm-suppress PossiblyUnusedMethod
      */
     public function __construct(
         protected ISession $session,
@@ -83,7 +84,6 @@ class UserSession
     public function getCurrentUser(): UserBase
     {
         if (!$this->currentUser) {
-
             try {
                 if ($this->getIsLoggedIn()) {
                     $this->currentUser = $this->userMapper->getUserFromUserBase((string)$this->userSession->getUser()?->getUID());
@@ -207,6 +207,10 @@ class UserSession
         return (string)$this->session->get(self::SESSION_KEY_SHARE_TYPE);
     }
 
+    /**
+ * @return IUser|null
+ */
+
     public function getUser(): IUser
     {
         return $this->userSession->getUser(self::CLIENT_ID);
@@ -236,15 +240,15 @@ class UserSession
         $result = [];
 
         foreach ($this->inquiryTypes as $type) {
-                if ($specificType !== null && $type->getInquiryType() !== $specificType) {
-                    continue;
-                }
+            if ($specificType !== null && $type->getInquiryType() !== $specificType) {
+                continue;
+            }
 
                 $fields = $type->getFields() ?? [];
 
-                if ($specificType !== null) {
-                    return is_array($fields) ? $fields : [];
-                }
+            if ($specificType !== null) {
+                return is_array($fields) ? $fields : [];
+            }
 
                 $result[$type->getInquiryType()] = is_array($fields) ? $fields : [];
         }

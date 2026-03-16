@@ -44,14 +44,15 @@
           </div>
 
           <div class="compact-stats">
-            <div
-v-if="inquiry.status?.countSupports"
-                 class="stat-item supports"
-                 :class="{ 'is-supported': isSupported }">
-              <component :is="supportIconComponent" class="support-icon" :size="10" />
-              <span>{{ inquiry.status.countSupports }}</span>
-            </div>
-
+                            <SupportFeature
+                                    :item="inquiry"
+                                    item-type="inquiry"
+                                    :context="context"
+                                    :show-quorum="true"
+                                    :show-details-on-hover="true"
+                                    :icon-size="22"
+                                    @click.stop
+                                    />
             <div v-if="inquiry.status?.countComments" class="stat-item comments">
               <component :is="InquiryGeneralIconsComponents.Comment" class="comments-icon" :size="10" />
               <span>{{ inquiry.status.countComments }}</span>
@@ -140,14 +141,6 @@ v-if="inquiry.status?.countSupports"
 
         <!-- Stats Icons -->
         <div class="footer-stats">
-          <div
-v-if="inquiry.status?.countSupports"
-               class="stat-item supports"
-               :class="{ 'is-supported': isSupported }">
-            <component :is="supportIconComponent" class="support-icon" :size="16" />
-            <span>{{ inquiry.status.countSupports }}</span>
-          </div>
-
           <div v-if="inquiry.status?.countComments" class="stat-item comments">
             <component :is="InquiryGeneralIconsComponents.Comment" class="comments-icon" :size="16" />
             <span>{{ inquiry.status.countComments }}</span>
@@ -166,8 +159,9 @@ import { getInquiryTypeData } from '../../helpers/modules/InquiryHelper.ts'
 import type { Inquiry } from '../../Types/index.ts'
 import { useSessionStore } from '../../stores/session.ts'
 import { InquiryGeneralIcons } from '../../utils/icons.ts'
-import { ThumbIcon, TernarySupportIcon } from '../AppIcons'
+import { createInquiryContext } from '../../utils/permissions.ts'
 
+import SupportFeature from '../../helpers/modules/SupportFeature.vue'
 interface Props {
   inquiry: Inquiry
   compact?: boolean
@@ -197,6 +191,9 @@ const summaryClasses = computed(() => ({
   'has-expiry': showExpiryBadge.value,
   'has-cover': !!coverUrl.value
 }))
+
+// Context for permissions
+const context = computed(() => createInquiryContext(props.inquiry, sessionStore.appSettings))
 
 // Get type data
 const typeData = computed(() => getInquiryTypeData(props.inquiry.type, inquiryTypes.value))
@@ -238,15 +235,6 @@ const typeBadgeClass = computed(() => {
   return `type-${type}`
 })
 
-// Support icon
-const isSupported = computed(() => props.inquiry.currentUserStatus?.hasSupported || false)
-
-const supportIconComponent = computed(() => {
-  if (props.inquiry.configuration?.supportMode === 'ternary') {
-    return TernarySupportIcon
-  }
-  return ThumbIcon
-})
 
 // Owner display
 const ownerDisplayName = computed(() => 
@@ -403,73 +391,67 @@ function handleClick() {
   emit('view', props.inquiry.id)
 }
 </script>
-
 <style lang="scss" scoped>
 .inquiry-summary {
   font-family: var(--font-family);
-  background: transparent;
+  background: var(--color-main-background);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   
   &.is-interactive {
     cursor: pointer;
     
     &:hover {
       .summary-regular {
-        transform: translateY(-4px);
-        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
-        border-color: var(--color-primary-element);
+        transform: translateY(-2px);
+        box-shadow: 
+          0 4px 12px rgba(0, 0, 0, 0.1),
+          0 2px 6px rgba(0, 0, 0, 0.05);
       }
       
       .summary-compact {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
-        border-color: var(--color-primary-element);
+        transform: translateY(-1px);
+        box-shadow: 
+          0 2px 8px rgba(0, 0, 0, 0.08),
+          0 1px 4px rgba(0, 0, 0, 0.04);
       }
     }
   }
   
-  &.has-expiry {
-    .summary-regular,
-    .summary-compact {
-      border-left: 4px solid var(--color-warning);
-    }
-  }
-  
-  &.has-cover {
-    .summary-regular {
-      padding-top: 0;
-    }
+  &:focus-visible {
+    outline: 2px solid var(--color-primary-element);
+    outline-offset: 2px;
+    border-radius: 8px;
   }
 }
 
-// Compact Mode
+/* === COMPACT MODE === */
 .summary-compact {
   display: flex;
   align-items: center;
   gap: 12px;
   padding: 12px 16px;
-  border: 2px solid var(--color-border);
-  border-radius: 12px;
-    
-  background: transparent;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  min-height: 72px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  background: var(--color-main-background);
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  transition: all 0.2s ease;
+  min-height: 64px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
   
   .compact-type-badge {
     flex-shrink: 0;
     width: 32px;
     height: 32px;
-    border-radius: 8px;
+    border-radius: 6px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #3b82f6, #60a5fa);
-    box-shadow: 0 2px 6px rgba(59, 130, 246, 0.3);
+    background: var(--color-background-dark);
+    border: 1px solid var(--color-border);
     
     .compact-type-icon {
       width: 16px;
       height: 16px;
-      color: white;
+      color: var(--color-primary-element);
     }
   }
   
@@ -483,7 +465,7 @@ function handleClick() {
     justify-content: space-between;
     align-items: flex-start;
     gap: 8px;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
   }
   
   .compact-title {
@@ -494,7 +476,7 @@ function handleClick() {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    line-height: 1.3;
+    line-height: 1.4;
   }
   
   .compact-expiry-badge {
@@ -502,29 +484,29 @@ function handleClick() {
     display: flex;
     align-items: center;
     gap: 4px;
-    padding: 4px 8px;
+    padding: 3px 8px;
     border-radius: 10px;
     font-size: 11px;
     font-weight: 600;
-    background: var(--color-background-darker);
+    background: var(--color-background-dark);
     border: 1px solid var(--color-border);
     
     &.expiry-soon {
-      background: linear-gradient(135deg, rgba(239, 68, 68, 0.12), rgba(239, 68, 68, 0.06));
+      background: rgba(239, 68, 68, 0.08);
       color: #ef4444;
-      border: 1px solid rgba(239, 68, 68, 0.2);
+      border-color: rgba(239, 68, 68, 0.2);
     }
     
     &.expiry-warning {
-      background: linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(245, 158, 11, 0.06));
+      background: rgba(245, 158, 11, 0.08);
       color: #f59e0b;
-      border: 1px solid rgba(245, 158, 11, 0.2);
+      border-color: rgba(245, 158, 11, 0.2);
     }
     
     &.expiry-normal {
-      background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(16, 185, 129, 0.06));
+      background: rgba(16, 185, 129, 0.08);
       color: #10b981;
-      border: 1px solid rgba(16, 185, 129, 0.2);
+      border-color: rgba(16, 185, 129, 0.2);
     }
     
     .expiry-icon {
@@ -547,8 +529,8 @@ function handleClick() {
     
     .author-avatar {
       flex-shrink: 0;
-      border: 2px solid white;
-      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+      border: 1px solid var(--color-main-background);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
     }
     
     .author-name {
@@ -564,77 +546,86 @@ function handleClick() {
   .compact-stats {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 12px;
     
     .stat-item {
       display: flex;
       align-items: center;
       gap: 4px;
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 600;
-      color: var(--color-text-maxcontrast);
-      transition: all 0.2s ease;
-      padding: 4px 8px;
-      border-radius: 8px;
+      color: var(--color-text-lighter);
+      padding: 3px 8px;
+      border-radius: 6px;
       background: var(--color-background-dark);
       border: 1px solid var(--color-border);
       
       .support-icon,
       .comments-icon {
         color: inherit;
+        opacity: 0.8;
       }
       
       &.supports {
-        cursor: pointer;
-        
-        &:hover {
-          color: var(--color-primary-element);
-          background: rgba(var(--color-primary-rgb), 0.1);
-          border-color: rgba(var(--color-primary-rgb), 0.2);
-        }
+        transition: all 0.2s ease;
         
         &.is-supported {
+          background: rgba(var(--color-primary-rgb), 0.1);
           color: var(--color-primary-element);
-          background: rgba(var(--color-primary-rgb), 0.15);
-          border-color: rgba(var(--color-primary-rgb), 0.3);
+          border-color: rgba(var(--color-primary-rgb), 0.2);
+          
+          .support-icon {
+            opacity: 1;
+          }
         }
-      }
-      
-      &.comments:hover {
-        color: #3b82f6;
-        background: rgba(59, 130, 246, 0.1);
-        border-color: rgba(59, 130, 246, 0.2);
       }
     }
   }
 }
 
-// Regular Mode
+/* === REGULAR MODE === */
 .summary-regular {
-  border: 2px solid var(--color-border);
-  border-radius: 14px;
-  padding: 24px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 20px;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
   overflow: hidden;
   position: relative;
   height: 100%;
   display: flex;
   flex-direction: column;
+  background: var(--color-main-background);
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--color-primary-element);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+  
+  &:hover::before {
+    opacity: 0.8;
+  }
 }
 
 .summary-cover {
   position: relative;
-  height: 180px;
-  margin: -24px -24px 20px -24px;
+  height: 160px;
+  margin: -20px -20px 16px -20px;
   overflow: hidden;
-  border-radius: 14px 14px 0 0;
+  border-radius: 8px 8px 0 0;
   
   .cover-image {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.5s ease;
+    transition: transform 0.3s ease;
   }
   
   .cover-overlay {
@@ -643,11 +634,15 @@ function handleClick() {
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(to bottom, transparent 50%, rgba(0, 0, 0, 0.3));
+    background: linear-gradient(
+      to bottom, 
+      rgba(0, 0, 0, 0.1) 0%, 
+      rgba(0, 0, 0, 0.3) 100%
+    );
   }
   
   &:hover .cover-image {
-    transform: scale(1.05);
+    transform: scale(1.02);
   }
 }
 
@@ -656,24 +651,30 @@ function handleClick() {
   justify-content: space-between;
   align-items: flex-start;
   gap: 12px;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
   flex-wrap: wrap;
 }
 
 .header-type-badge {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 6px 14px;
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.12), rgba(59, 130, 246, 0.06));
+  gap: 6px;
+  padding: 5px 12px;
+  background: var(--color-background-dark);
   border-radius: 20px;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
-  color: #3b82f6;
-  border: 1px solid rgba(59, 130, 246, 0.2);
+  color: var(--color-text-lighter);
+  border: 1px solid var(--color-border);
+  transition: all 0.2s ease;
+  
+  &:hover {
+    border-color: var(--color-primary-element);
+    color: var(--color-primary-element);
+  }
   
   .type-icon {
-    color: #3b82f6;
+    color: var(--color-primary-element);
   }
 }
 
@@ -686,30 +687,30 @@ function handleClick() {
 .expiry-badge {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 5px 12px;
-  border-radius: 12px;
-  font-size: 12px;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 10px;
+  font-size: 11px;
   font-weight: 600;
-  background: var(--color-background-darker);
+  background: var(--color-background-dark);
   border: 1px solid var(--color-border);
   
   &.expiry-soon {
-    background: linear-gradient(135deg, rgba(239, 68, 68, 0.12), rgba(239, 68, 68, 0.06));
+    background: rgba(239, 68, 68, 0.08);
     color: #ef4444;
-    border: 1px solid rgba(239, 68, 68, 0.2);
+    border-color: rgba(239, 68, 68, 0.2);
   }
   
   &.expiry-warning {
-    background: linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(245, 158, 11, 0.06));
+    background: rgba(245, 158, 11, 0.08);
     color: #f59e0b;
-    border: 1px solid rgba(245, 158, 11, 0.2);
+    border-color: rgba(245, 158, 11, 0.2);
   }
   
   &.expiry-normal {
-    background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(16, 185, 129, 0.06));
+    background: rgba(16, 185, 129, 0.08);
     color: #10b981;
-    border: 1px solid rgba(16, 185, 129, 0.2);
+    border-color: rgba(16, 185, 129, 0.2);
   }
   
   .expiry-icon {
@@ -718,16 +719,16 @@ function handleClick() {
 }
 
 .summary-content {
-  margin-bottom: 24px;
+  margin-bottom: 20px;
   flex: 1;
 }
 
 .summary-title {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 600;
   line-height: 1.4;
   color: var(--color-main-text);
-  margin-bottom: 16px;
+  margin-bottom: 12px;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -735,10 +736,10 @@ function handleClick() {
 }
 
 .summary-description {
-  font-size: 15px;
+  font-size: 14px;
   line-height: 1.6;
   color: var(--color-text-lighter);
-  margin: 20px 0;
+  margin: 16px 0;
   flex: 1;
   
   :deep(*) {
@@ -752,33 +753,34 @@ function handleClick() {
   :deep(a) {
     color: var(--color-primary-element);
     text-decoration: none;
-    font-weight: 500;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s ease;
     
     &:hover {
-      text-decoration: underline;
+      border-bottom-color: var(--color-primary-element);
     }
   }
   
   :deep(ul),
   :deep(ol) {
-    padding-left: 20px;
-    margin: 12px 0;
+    padding-left: 18px;
+    margin: 10px 0;
   }
   
   :deep(li) {
-    margin-bottom: 6px;
+    margin-bottom: 4px;
   }
   
   :deep(p) {
-    margin: 12px 0;
+    margin: 10px 0;
   }
 }
 
 .summary-meta {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 16px;
+  gap: 8px;
+  margin-top: 12px;
   
   .meta-item {
     display: inline-flex;
@@ -786,7 +788,7 @@ function handleClick() {
     gap: 6px;
     font-size: 12px;
     color: var(--color-text-lighter);
-    padding: 4px 8px;
+    padding: 4px 10px;
     background: var(--color-background-dark);
     border-radius: 12px;
     border: 1px solid var(--color-border);
@@ -804,7 +806,7 @@ function handleClick() {
     }
     
     .meta-text {
-      max-width: 120px;
+      max-width: 100px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -816,8 +818,8 @@ function handleClick() {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 20px;
-  padding-top: 20px;
+  gap: 16px;
+  padding-top: 16px;
   border-top: 1px solid var(--color-border);
   margin-top: auto;
 }
@@ -825,14 +827,14 @@ function handleClick() {
 .footer-author {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   flex: 1;
   min-width: 0;
   
   .author-avatar {
     flex-shrink: 0;
-    border: 2px solid white;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--color-main-background);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   }
   
   .author-info {
@@ -840,20 +842,20 @@ function handleClick() {
   }
   
   .author-name {
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 600;
     color: var(--color-main-text);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    margin-bottom: 4px;
+    margin-bottom: 2px;
   }
   
   .post-time {
     display: flex;
     align-items: center;
-    gap: 6px;
-    font-size: 12px;
+    gap: 4px;
+    font-size: 11px;
     font-weight: 500;
     color: var(--color-text-maxcontrast);
     
@@ -867,100 +869,134 @@ function handleClick() {
 .footer-stats {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 12px;
   
   .stat-item {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 8px 16px;
+    gap: 6px;
+    padding: 6px 12px;
     background: var(--color-background-dark);
-    border-radius: 12px;
-    font-size: 14px;
+    border-radius: 8px;
+    font-size: 13px;
     font-weight: 600;
     color: var(--color-text-lighter);
-    transition: all 0.2s ease;
-    cursor: pointer;
     border: 1px solid var(--color-border);
+    transition: all 0.2s ease;
     
     .support-icon,
     .comments-icon {
       color: inherit;
+      opacity: 0.8;
     }
     
     &.supports {
-      &:hover {
+      &.is-supported {
         background: rgba(var(--color-primary-rgb), 0.1);
         color: var(--color-primary-element);
         border-color: rgba(var(--color-primary-rgb), 0.2);
+        
+        .support-icon {
+          opacity: 1;
+        }
       }
-      
-      &.is-supported {
-        background: rgba(var(--color-primary-rgb), 0.15);
-        color: var(--color-primary-element);
-        border-color: rgba(var(--color-primary-rgb), 0.3);
-      }
-    }
-    
-    &.comments:hover {
-      background: rgba(59, 130, 246, 0.1);
-      color: #3b82f6;
-      border-color: rgba(59, 130, 246, 0.2);
     }
   }
 }
 
-// Responsive Design
-@media (max-width: 768px) {
+/* === TYPE BADGE COLORS === */
+.type-badge {
+  &.type-proposal {
+    background: rgba(16, 185, 129, 0.08) !important;
+    border-color: rgba(16, 185, 129, 0.2) !important;
+    .type-icon { color: #10b981 !important; }
+  }
+  
+  &.type-survey {
+    background: rgba(59, 130, 246, 0.08) !important;
+    border-color: rgba(59, 130, 246, 0.2) !important;
+    .type-icon { color: #3b82f6 !important; }
+  }
+  
+  &.type-poll {
+    background: rgba(139, 92, 246, 0.08) !important;
+    border-color: rgba(139, 92, 246, 0.2) !important;
+    .type-icon { color: #8b5cf6 !important; }
+  }
+  
+  &.type-question {
+    background: rgba(245, 158, 11, 0.08) !important;
+    border-color: rgba(245, 158, 11, 0.2) !important;
+    .type-icon { color: #f59e0b !important; }
+  }
+  
+  &.type-discussion {
+    background: rgba(6, 182, 212, 0.08) !important;
+    border-color: rgba(6, 182, 212, 0.2) !important;
+    .type-icon { color: #06b6d4 !important; }
+  }
+  
+  &.type-news {
+    background: rgba(236, 72, 153, 0.08) !important;
+    border-color: rgba(236, 72, 153, 0.2) !important;
+    .type-icon { color: #ec4899 !important; }
+  }
+  
+  &.type-announcement {
+    background: rgba(168, 85, 247, 0.08) !important;
+    border-color: rgba(168, 85, 247, 0.2) !important;
+    .type-icon { color: #a855f7 !important; }
+  }
+  
+  &.type-meeting {
+    background: rgba(14, 165, 233, 0.08) !important;
+    border-color: rgba(14, 165, 233, 0.2) !important;
+    .type-icon { color: #0ea5e9 !important; }
+  }
+  
+  &.type-document {
+    background: rgba(99, 102, 241, 0.08) !important;
+    border-color: rgba(99, 102, 241, 0.2) !important;
+    .type-icon { color: #6366f1 !important; }
+  }
+  
+  &.type-default {
+    background: rgba(107, 114, 128, 0.08) !important;
+    border-color: rgba(107, 114, 128, 0.2) !important;
+    .type-icon { color: #6b7280 !important; }
+  }
+}
+
+/* === RESPONSIVE DESIGN === */
+@media (max-width: 1024px) {
   .summary-regular {
-    padding: 20px;
-    border-radius: 12px;
+    padding: 16px;
   }
   
   .summary-cover {
     height: 140px;
-    margin: -20px -20px 16px -20px;
-    border-radius: 12px 12px 0 0;
+    margin: -16px -16px 12px -16px;
   }
   
   .summary-title {
-    font-size: 18px;
+    font-size: 16px;
   }
   
   .summary-description {
-    font-size: 14px;
-  }
-  
-  .footer-stats {
-    gap: 12px;
-    
-    .stat-item {
-      padding: 6px 12px;
-      font-size: 13px;
-    }
-  }
-  
-  .summary-footer {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 16px;
-  }
-  
-  .footer-stats {
-    justify-content: center;
-  }
-  
-  .compact-stats {
-    gap: 12px;
-    
-    .stat-item {
-      padding: 3px 8px;
-      font-size: 11px;
-    }
+    font-size: 13px;
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 768px) {
+  .summary-regular {
+    border-radius: 6px;
+  }
+  
+  .summary-cover {
+    height: 120px;
+    border-radius: 6px 6px 0 0;
+  }
+  
   .summary-header {
     flex-direction: column;
     align-items: flex-start;
@@ -972,15 +1008,102 @@ function handleClick() {
     justify-content: space-between;
   }
   
-  .compact-meta {
-    flex-direction: column;
-    align-items: flex-start;
+  .footer-stats {
     gap: 8px;
+    
+    .stat-item {
+      padding: 4px 10px;
+      font-size: 12px;
+    }
+  }
+  
+  .summary-footer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  
+  .footer-stats {
+    justify-content: flex-start;
   }
   
   .compact-stats {
-    width: 100%;
-    justify-content: flex-start;
+    gap: 8px;
+    
+    .stat-item {
+      padding: 2px 6px;
+      font-size: 10px;
+    }
   }
+  
+  .compact-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .summary-compact {
+    padding: 10px 12px;
+    gap: 10px;
+    min-height: 56px;
+    
+    .compact-type-badge {
+      width: 28px;
+      height: 28px;
+      
+      .compact-type-icon {
+        width: 14px;
+        height: 14px;
+      }
+    }
+  }
+  
+  .summary-regular {
+    padding: 12px;
+  }
+  
+  .summary-cover {
+    height: 100px;
+    margin: -12px -12px 10px -12px;
+  }
+  
+  .summary-title {
+    font-size: 15px;
+    margin-bottom: 8px;
+  }
+  
+  .summary-description {
+    margin: 12px 0;
+  }
+  
+  .footer-author {
+    gap: 8px;
+    
+    .author-avatar {
+      width: 20px;
+      height: 20px;
+    }
+  }
+}
+
+/* === ANIMATIONS === */
+.summary-regular,
+.summary-compact,
+.summary-cover,
+.summary-header,
+.header-type-badge,
+.expiry-badge,
+.footer-stats .stat-item,
+.compact-stats .stat-item {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* === FOCUS STATES === */
+.summary-regular:focus-within,
+.summary-compact:focus-within {
+  border-color: var(--color-primary-element);
+  box-shadow: 0 0 0 2px rgba(var(--color-primary-rgb), 0.1);
 }
 </style>

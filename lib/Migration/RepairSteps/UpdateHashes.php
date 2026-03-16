@@ -1,11 +1,11 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2021 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-
 
 namespace OCA\Agora\Migration\RepairSteps;
 
@@ -14,24 +14,26 @@ use OCP\IDBConnection;
 use OCP\Migration\IOutput;
 use OCP\Migration\IRepairStep;
 
-class UpdateHashes implements IRepairStep {
-	public function __construct(
-		private TableManager $tableManager,
-		private IDBConnection $connection,
-	) {
-	}
+class UpdateHashes implements IRepairStep
+{
+    public function __construct(
+        private TableManager $tableManager,
+        private IDBConnection $connection,
+    ) {
+    }
 
-	public function getName() {
-		return 'Agora - Update or create hashes for supports and options';
-	}
+    public function getName()
+    {
+        return 'Agora - Update or create hashes for supports and options';
+    }
 
-	public function run(IOutput $output): void {
-		$this->tableManager->setConnection($this->connection);
+    public function run(IOutput $output): void
+    {
+        $this->tableManager->setConnection($this->connection);
 
-		$messages = $this->tableManager->updateHashes();
-		foreach ($messages as $message) {
-			$output->info($message);
-		}
-
-	}
+        $messages = $this->tableManager->updateHashes();
+        foreach ($messages as $message) {
+            $output->info($message);
+        }
+    }
 }

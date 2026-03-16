@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -89,12 +90,12 @@ class QuorumService
         $quorum->setValue($value);
         $quorum->setBase($base);
         $quorum->setDescription($description);
-        
+
         if ($sortOrder === null) {
             $sortOrder = $this->getMaxSortOrderForInquiry($inquiryId) + 1;
         }
         $quorum->setSortOrder($sortOrder);
-        
+
         $timestamp = time();
         $quorum->setCreated($timestamp);
         $quorum->setUpdated($timestamp);
@@ -120,11 +121,11 @@ class QuorumService
         $quorum->setValue($value);
         $quorum->setBase($base);
         $quorum->setDescription($description);
-        
+
         if ($sortOrder !== null) {
             $quorum->setSortOrder($sortOrder);
         }
-        
+
         $quorum->setUpdated(time());
 
         return $this->quorumMapper->update($quorum);
@@ -192,18 +193,18 @@ class QuorumService
         }
 
         switch ($quorum->getType()) {
-        case Quorum::TYPE_PERCENTAGE:
-            $required = ($totalCount * $quorum->getValue()) / 100;
-            return $actualCount >= $required;
+            case Quorum::TYPE_PERCENTAGE:
+                $required = ($totalCount * $quorum->getValue()) / 100;
+                return $actualCount >= $required;
 
-        case Quorum::TYPE_ABSOLUTE:
-            return $actualCount >= $quorum->getValue();
+            case Quorum::TYPE_ABSOLUTE:
+                return $actualCount >= $quorum->getValue();
 
-        case Quorum::TYPE_MAJORITY:
-            return $actualCount > ($totalCount / 2);
+            case Quorum::TYPE_MAJORITY:
+                return $actualCount > ($totalCount / 2);
 
-        default:
-            return false;
+            default:
+                return false;
         }
     }
 }

@@ -12,7 +12,7 @@ import { useInquiryGroupStore } from '../stores/inquiryGroup.ts'
 import { DateTime } from 'luxon'
 import NcDialog from '@nextcloud/vue/components/NcDialog'
 import { 
-  createPermissionContextForInquiryGroup, 
+  createInquiryGroupContext, 
   canRestore,
   canDelete,
 } from '../utils/permissions.ts'
@@ -42,26 +42,7 @@ const archivedGroups = computed(() => inquiryGroupsStore.inquiryGroups.filter(
 
 // Create permission context for a specific group
 function createGroupPermissionContext(group: InquiryGroup) {
-  const currentUser = sessionStore.currentUser
-  const currentUserId = currentUser?.id || ''
-  
-  const isOwner = currentUserId === group.owner.id
-  const isGroupEditor = sessionStore.userStatus.isGroupEditore || group.allowEdit || false
-  const isPublic = group.protected === false || group.protected === 0
-  
-  return createPermissionContextForInquiryGroup(
-    group.owner,           // owner ID
-    isPublic,                 // isPublic (from protected field)
-    group.deleted > 0,        // isDeleted
-    group.groupStatus === 'archived', // isArchived
-    group.ownedGroup !== null, // hasGroupRestrictions
-    group.ownedGroup ? [group.owned_group] : [], // allowedGroups
-    isGroupEditor || isOwner, // isGroupMember (simplified)
-    false,                    // isGroupModerator (not used)
-    isGroupEditor,            // isGroupEditor
-    group.type,               // groupType
-    group.ownedGroup         // ownedGroup
-  )
+  return createInquiryGroupContext(group)
 }
 
 // Helper functions

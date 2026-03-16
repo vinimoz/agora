@@ -32,9 +32,7 @@ import {
   type InquiryGroupType
 } from '../helpers/modules/InquiryHelper.ts'
 import { accessFamilyMenu,
-  canCreateInquiryGroup,
-  createPermissionContextForContent,
-  ContentType,
+  canCreateInquiryGroupInGeneral,
 } from '../utils/permissions.ts'
 
 const route = useRoute()
@@ -48,24 +46,7 @@ const selectedInquiryGroupTypeForCreation = ref(null)
 const selectedGroups = ref<string[]>([])
 const preferencesStore = usePreferencesStore()
 
-const canUserCreateInquiryGroup = computed(() => {
-  // Create a basic permission context for checking creation rights
-  const context = createPermissionContextForContent(
-    ContentType.InquiryGroup,
-    '', 
-    true, // isPublic
-    false, // isLocked
-    false, // isExpired
-    false, // isDeleted
-    false, // isArchived
-    false, // hasGroupRestrictions
-    [] // allowedGroups
-  )
-  
-  // Check if user can create inquiry groups in general
-  return canCreateInquiryGroup(context)
-})
-
+const canUserCreateInquiryGroup = computed(() => canCreateInquiryGroupInGeneral())
 
 
 
@@ -95,7 +76,11 @@ const availableGroups = computed(() => {
 })
 
 // State for selected family
-const selectedFamily = ref<string | null>(inquiriesStore.familyType || null)
+// const selectedFamily = ref<string | null>(inquiriesStore.familyType || null)
+const selectedFamily = computed({
+  get: () => inquiriesStore.advancedFilters.familyType || null,
+  set: (value) => inquiriesStore.setFamilyType(value || '')
+})
 
 // Computed for available families
 const inquiryFamilies = computed((): InquiryFamily[] => sessionStore.appSettings.inquiryFamilyTab || [])
@@ -382,6 +367,7 @@ function handleCloseGroupDialog() {
         <NcButton 
          v-if="selectedFamily" 
          class="back-button" 
+         aria-label="t('agora', 'Back to families')"
          @click="clearFamilySelection"
          >
          <span class="back-button__icon">←</span>

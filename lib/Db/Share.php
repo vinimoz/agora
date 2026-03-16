@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -48,7 +49,7 @@ use OCP\IURLGenerator;
 class Share extends EntityWithUser implements JsonSerializable
 {
     /**
-     * @var string 
+     * @var string
      */
     public const TABLE = 'agora_share';
 
@@ -183,7 +184,20 @@ class Share extends EntityWithUser implements JsonSerializable
      */
     public function getPublicInquiryEmail(): string
     {
-        return $this->getMiscSettingsArray()['publicInquiryEmail'] ?? 'optional';
+        $miscSettings = $this->getMiscSettingsArray();
+        return $miscSettings['publicInquiryEmail'] ?? 'optional';
+    }
+
+    public function getTimeZoneName(): string
+    {
+        $miscSettings = $this->getMiscSettingsArray();
+        return $miscSettings['timeZone'] ?? '';
+    }
+
+    public function getLanguage(): string
+    {
+        $miscSettings = $this->getMiscSettingsArray();
+        return $miscSettings['language'] ?? '';
     }
 
     /**
@@ -237,21 +251,6 @@ class Share extends EntityWithUser implements JsonSerializable
         return (string)$this->displayName;
     }
 
-    public function getTimeZoneName(): string
-    {
-        return $this->getMiscSettingsArray()['timeZone'] ?? '';
-    }
-
-    public function setTimeZoneName(string $value): void
-    {
-        $this->setMiscSettingsByKey('timeZone', $value);
-    }
-
-    public function getLanguage(): string
-    {
-        return $this->getMiscSettingsArray()['language'] ?? '';
-    }
-
     public function setLanguage(string $value): void
     {
         $this->setMiscSettingsByKey('language', $value);
@@ -271,7 +270,7 @@ class Share extends EntityWithUser implements JsonSerializable
 
         if (in_array($this->type, [self::TYPE_USER, self::TYPE_ADMIN, self::TYPE_GROUP], true)) {
             return $this->urlGenerator->linkToRouteAbsolute(
-                AppConstants::APP_ID . '.page.support',
+                AppConstants::APP_ID . '.page.inquiry',
                 ['id' => $this->inquiryId]
             );
         } elseif ($this->token) {
@@ -287,9 +286,9 @@ class Share extends EntityWithUser implements JsonSerializable
     public function getRichObjectString(): array
     {
         return [
-        'type' => 'highlight',
-        'id' => (string)$this->getId(),
-        'name' => $this->getType(),
+            'type' => 'highlight',
+            'id' => (string)$this->getId(),
+            'name' => $this->getType(),
         ];
     }
 
@@ -315,4 +314,11 @@ class Share extends EntityWithUser implements JsonSerializable
         $miscSettings[$key] = $value;
         $this->setMiscSettingsArray($miscSettings);
     }
+    
+
+    public function setTimeZoneName(string $value): void {
+        $this->setMiscSettingsByKey('timeZone', $value);
+    }
+
+
 }

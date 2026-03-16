@@ -9,7 +9,6 @@ import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 import { useSessionStore } from '../stores/session.ts'
 import { useInquiryStore } from '../stores/inquiry.ts'
-import type { AccessLevel } from '../utils/permissions.ts'
 
 import NcAppSidebar from '@nextcloud/vue/components/NcAppSidebar'
 import NcAppSidebarTab from '@nextcloud/vue/components/NcAppSidebarTab'
@@ -21,8 +20,7 @@ import {
   canUseResource,
   canShare,
   canEdit,
-  createPermissionContextForContent,
-  ContentType,
+  createInquiryContext,
 } from '../utils/permissions.ts'
 import {
   SideBarTabComments,
@@ -36,25 +34,8 @@ const inquiryStore = useInquiryStore()
 const sessionStore = useSessionStore()
 
 // Context for permissions
-const context = computed(() => {
-  const ctx = createPermissionContextForContent(
-    ContentType.Inquiry,
-    inquiryStore.owner.id,
-    inquiryStore.configuration.access === 'public',
-    inquiryStore.status.isLocked,
-    inquiryStore.status.isExpired,
-    inquiryStore.status.deletionDate > 0,
-    inquiryStore.status.isArchived,
-    inquiryStore.inquiryGroups.length > 0,
-    inquiryStore.inquiryGroups,
-    inquiryStore.type,
-    inquiryStore.family, 
-    inquiryStore.configuration.access as AccessLevel,
-    inquiryStore.status.isFinalStatus,
-    inquiryStore.status.moderationStatus 
-  )
-  return ctx
-}) 
+const context = computed(() => createInquiryContext(inquiryStore, sessionStore.appSettings))
+
 
 // Compute isReadonly
 const isReadonly = computed(() => {

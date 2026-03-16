@@ -12,7 +12,7 @@ use OCA\Agora\Db\Inquiry;
 class InquiryExpiredEvent extends InquiryEvent
 {
     /**
-     * @psalm-suppress PossiblyUnusedMethod 
+     * @psalm-suppress PossiblyUnusedMethod
      */
     public function __construct(
         protected Inquiry $inquiry,

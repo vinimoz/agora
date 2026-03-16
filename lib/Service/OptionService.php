@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -8,473 +9,894 @@ declare(strict_types=1);
 
 namespace OCA\Agora\Service;
 
-use DateTimeZone;
 use OCA\Agora\Db\Option;
 use OCA\Agora\Db\OptionMapper;
-use OCA\Agora\Db\Inquiry;
+use OCA\Agora\Db\InquiryOptionTypeMapper;
 use OCA\Agora\Db\InquiryMapper;
-use OCA\Agora\Db\Support;
-use OCA\Agora\Event\OptionConfirmedEvent;
+use OCA\Agora\Db\UserMapper;
+use OCA\Agora\Db\SupportMapper;
+use OCA\Agora\Event\OptionArchivedEvent;
 use OCA\Agora\Event\OptionCreatedEvent;
 use OCA\Agora\Event\OptionDeletedEvent;
-use OCA\Agora\Event\OptionUnconfirmedEvent;
+use OCA\Agora\Event\OptionOwnerChangeEvent;
+use OCA\Agora\Event\OptionRestoredEvent;
 use OCA\Agora\Event\OptionUpdatedEvent;
-use OCA\Agora\Event\InquiryOptionReorderedEvent;
+use OCA\Agora\Exceptions\AlreadyDeletedException;
+use OCA\Agora\Exceptions\EmptyTextException;
 use OCA\Agora\Exceptions\ForbiddenException;
-use OCA\Agora\Exceptions\InvalidInquiryTypeException;
-use OCA\Agora\Model\Sequence;
-use OCA\Agora\Model\SimpleOption;
+use OCA\Agora\Exceptions\InvalidAccessException;
+use OCA\Agora\Exceptions\InvalidOptionTypeException;
+use OCA\Agora\Exceptions\InvalidShowResultsException;
+use OCA\Agora\Exceptions\InvalidUsernameException;
+use OCA\Agora\Exceptions\NotFoundException;
+use OCA\Agora\Exceptions\UserNotFoundException;
+use OCA\Agora\Model\Settings\AppSettings;
+use OCA\Agora\Model\UserBase;
+use OCA\Agora\Service\SettingsService;
 use OCA\Agora\UserSession;
 use OCP\AppFramework\Db\DoesNotExistException;
-use OCP\DB\Exception;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Search\ISearchQuery;
 use Psr\Log\LoggerInterface;
 
 class OptionService
 {
     /**
-     * @var Option[] 
-     */
-    private array $options;
-
-    /**
-     * @psalm-suppress PossiblyUnusedMethod 
+     * @psalm-suppress PossiblyUnusedMethod
      */
     public function __construct(
+        private AppSettings $appSettings,
         private IEventDispatcher $eventDispatcher,
-        private LoggerInterface $logger,
+        private Option $option,
         private OptionMapper $optionMapper,
+        private InquiryOptionTypeMapper $optionTypeMapper,
         private InquiryMapper $inquiryMapper,
+        private UserMapper $userMapper,
         private UserSession $userSession,
-        private SupportService $supportService,
+        private SupportMapper $supportMapper,
+        private SettingsService $settings,
+        private LoggerInterface $logger,
     ) {
-        $this->options = [];
-    }
-
-    public function get(int $optionId): Option
-    {
-        return $this->optionMapper->find($optionId);
     }
 
     /**
-     * Get all options of given inquiry
-     *
-     * @return Option[]
-     *
-     * @psalm-return array<array-key, Option>
+     * Get list of options including hierarchical structure
      */
-    public function list(int $inquiryId): array
+    public function listOptions(): array
     {
+        $optionList = $this->optionMapper->findForMe($this->userSession->getCurrentUserId());
 
+        foreach ($optionList as $option) {
+            $type = $option->getType();
+            $family = $this->optionTypeMapper->getFamilyFromType($type);
+            $option->setFamily($family);
+        }
+
+        if ($this->userSession->getCurrentUser()->getIsAdmin()) {
+            return $optionList;
+        }
+
+        return array_values(
+            array_filter(
+                $optionList,
+                function (Option $option): bool {
+                    return $option->getIsAllowed(Option::PERMISSION_OPTION_VIEW);
+                }
+            )
+        );
+    }
+
+    /**
+     * Get options by target inquiry ID
+     */
+    public function listByTargetId(int $targetId): array
+    {
+        $options = $this->optionMapper->findByTargetId($targetId);
+
+        foreach ($options as $option) {
+            $type = $option->getType();
+            $family = $this->optionTypeMapper->getFamilyFromType($type);
+            $option->setFamily($family);
+        }
+
+        return array_values(
+            array_filter(
+                $options, function (Option $option): bool {
+                    return $option->getIsAllowed(Option::PERMISSION_OPTION_VIEW);
+                }
+            )
+        );
+        return $options;
+    }
+
+    /**
+     * Get options with hierarchical structure (parent with children)
+     */
+    public function listWithChildren(int $targetId): array
+    {
+        $options = $this->optionMapper->findWithChildren($targetId);
+
+        foreach ($options as $option) {
+            $type = $option->getType();
+            $family = $this->optionTypeMapper->getFamilyFromType($type);
+            $option->setFamily($family);
+        }
+
+        return array_values(
+            array_filter(
+                $options,
+                function (Option $option): bool {
+                    return $option->getIsAllowed(Option::PERMISSION_OPTION_VIEW);
+                }
+            )
+        );
+    }
+
+    /**
+     * Get options by type
+     */
+    public function listByType(string $type, int $targetId = 0): array
+    {
+        $options = $this->optionMapper->findByType($type, $targetId);
+
+        foreach ($options as $option) {
+            $family = $this->optionTypeMapper->getFamilyFromType($type);
+            $option->setFamily($family);
+        }
+
+        return array_values(
+            array_filter(
+                $options,
+                function (Option $option): bool {
+                    return $option->getIsAllowed(Option::PERMISSION_OPTION_VIEW);
+                }
+            )
+        );
+    }
+
+    /**
+     * Search options
+     */
+    public function search(ISearchQuery $query): array
+    {
+        $optionList = [];
         try {
-            $this->options = $this->optionMapper->findByInquiry($inquiryId);
+            $options = $this->optionMapper->search($query);
 
+            foreach ($options as $option) {
+                try {
+                    $option->request(Option::PERMISSION_OPTION_VIEW);
+                    $optionList[] = $option;
+                } catch (ForbiddenException $e) {
+                    continue;
+                }
+            }
         } catch (DoesNotExistException $e) {
-            $this->options = [];
+            // silent catch
         }
-
-        return array_values($this->options);
+        return $optionList;
     }
 
     /**
-     * Intermediate step to avoid code duplication
-     */
-    public function addWithSequenceAndAutoSupport(
-        int $inquiryId,
-        SimpleOption $option,
-        bool $supportYes = false,
-        ?Sequence $sequence = null,
-    ): array {
-
-        $newOption = $this->add($inquiryId, $option, $supportYes);
-
-
-        if ($sequence) {
-            $repetitions = $this->sequence($newOption, $sequence, $supportYes);
-        } else {
-            $repetitions = [];
-        }
-
-        return [
-        'option' => $newOption,
-        'repetitions' => $repetitions,
-        ];
-    }
-
-    /**
-     * Add a new option to a inquiry
+     * Get list of options for admin
      *
-     * @param  int          $inquiryId    inquiry id of inquiry to add option to
-     * @param  SimpleOption $simpleOption SimpleOption object
-     * @param  bool         $supportYes   Directly support 'yes' for the new option
-     * @return Option
-     */
-    public function add(int $inquiryId, SimpleOption $simpleOption, bool $supportYes = false): Option
-    {
-        $this->getInquiry($inquiryId, Inquiry::PERMISSION_OPTION_ADD);
-
-        $simpleOption->setOrder($this->getHighestOrder($inquiryId) + 1);
-
-        // Build the new option
-        $newOption = new Option();
-        $newOption->setInquiryId($inquiryId);
-        $newOption->setFromSimpleOption($simpleOption);
-
-        if (!$this->inquiry->getIsInquiryOwner()) {
-            $newOption->setOwner($this->userSession->getCurrentUserId());
-        }
-
-        try {
-            // Insert the new option
-            $newOption = $this->optionMapper->insert($newOption);
-        } catch (Exception $e) {
-            // TODO: Change exception catch to actual exception
-            // Currently OC\DB\Exceptions\DbalException is thrown instead of
-            // UniqueConstraintViolationException
-            // since the exception is from private namespace, we check the type string
-            if (get_class($e) === 'OC\DB\Exceptions\DbalException' || $e->getReason() === Exception::REASON_UNIQUE_CONSTRAINT_VIOLATION) {
-
-                // Option already exists, so we need to update the existing one
-                // and remove deleted setting
-                $option = $this->optionMapper->findByInquiryAndText($inquiryId, $newOption->getInquiryOptionText(), true);
-                $option->setDeleted(0);
-
-                $newOption = $this->optionMapper->update($option);
-
-            } else {
-                throw $e;
-            }
-        }
-
-
-        if ($supportYes) {
-            // Set the support for the new option on request
-            $this->supportService->set($newOption, Support::VOTE_YES);
-        }
-
-        $this->eventDispatcher->dispatchTyped(new OptionCreatedEvent($newOption));
-
-        return $newOption;
-    }
-    /**
-     * Add a new option
-     *
-     * @param  int    $inquiryId inquiry id of inquiry to add option to
-     * @param  string $bulkText  Text for new options separated by new lines
      * @return Option[]
      */
-    public function addBulk(int $inquiryId, string $bulkText = ''): array
+    public function listForAdmin(): array
     {
-        $this->getInquiry($inquiryId, Inquiry::PERMISSION_OPTION_ADD);
-
-        $newOptionsTexts = array_unique(explode(PHP_EOL, $bulkText));
-
-        foreach ($newOptionsTexts as $inquiryOptionText) {
-            if ($inquiryOptionText) {
-                $this->add($inquiryId, new SimpleOption($inquiryOptionText, 0));
+        $optionList = [];
+        if ($this->userSession->getCurrentUser()->getIsAdmin()) {
+            try {
+                $optionList = $this->optionMapper->findForAdmin($this->userSession->getCurrentUserId());
+            } catch (DoesNotExistException $e) {
+                // silent catch
             }
         }
-
-        return $this->list($inquiryId);
+        return $optionList;
     }
 
     /**
-     * Update option
+     * Transfer options
+     *
+     * @return Option[]
+     */
+    public function transferOptions(string $sourceUserId, string $targetUserId): array
+    {
+        try {
+            $targetUser = $this->userMapper->getUserFromUserBase($targetUserId);
+        } catch (UserNotFoundException $e) {
+            throw new InvalidUsernameException('The user id "' . $targetUserId . '" for the target user is not valid.');
+        }
+
+        $optionsToTransfer = $this->optionMapper->listByOwner($sourceUserId);
+
+        foreach ($optionsToTransfer as &$option) {
+            $option = $this->transferOption($option, $targetUser);
+        }
+        return $optionsToTransfer;
+    }
+
+    /**
+     * Takeover option
      *
      * @return Option
      */
-    public function update(int $optionId, int $timestamp = 0, string $inquiryOptionText = '', int $duration = 0): Option
+    public function takeover(int $optionId, ?UserBase $targetUser = null): Option
     {
-        $option = $this->optionMapper->find($optionId);
-        $this->getInquiry($option->getInquiryId(), Inquiry::PERMISSION_INQUIRY_EDIT);
+        if ($targetUser === null) {
+            $targetUser = $this->userSession->getCurrentUser();
+        }
+        return $this->transferOption($optionId, $targetUser);
+    }
 
-        $option->setOption($timestamp, $duration, $inquiryOptionText);
+    /**
+     * Transfer ownership of an option
+     */
+    public function transferOption(int|Option $option, string|UserBase $targetUser): Option
+    {
+        if (!($option instanceof Option)) {
+            $option = $this->optionMapper->get($option, withRoles: true);
+        }
 
+        $option->request(Option::PERMISSION_OPTION_CHANGE_OWNER);
+
+        if (!($targetUser instanceof UserBase)) {
+            $userId = $targetUser;
+            try {
+                $targetUser = $this->userMapper->getUserFromUserBase($userId);
+            } catch (UserNotFoundException $e) {
+                throw new InvalidUsernameException('The user id "' . $userId . '" for the target user is not valid.');
+            }
+        }
+
+        $oldOwner = $option->getOwner();
+
+        $option->setOwner($targetUser->getId());
         $option = $this->optionMapper->update($option);
-        $this->eventDispatcher->dispatchTyped(new OptionUpdatedEvent($option));
+
+        $this->eventDispatcher->dispatchTyped(new OptionOwnerChangeEvent($option, $oldOwner, $option->getOwner()));
 
         return $option;
+    }
+
+    /**
+     * Get option
+     *
+     * @return Option
+     */
+    public function get(int $optionId, bool $lightweight = false): Option
+    {
+        try {
+            if ($lightweight) {
+                $this->option = $this->optionMapper->get($optionId, withRoles: true);
+            } else {
+                $this->option = $this->optionMapper->find($optionId);
+            }
+
+            $this->option->request(Option::PERMISSION_OPTION_VIEW);
+
+            $family = $this->optionTypeMapper->getFamilyFromType($this->option->getType());
+            $this->option->setFamily($family);
+
+            return $this->option;
+        } catch (DoesNotExistException $e) {
+            throw new NotFoundException('Option not found');
+        }
+    }
+
+    /**
+     * Get options by parent ID
+     */
+    public function getByParentId(int $parentId): array
+    {
+        try {
+            $options = $this->optionMapper->findByParentId($parentId);
+
+            foreach ($options as $option) {
+                $family = $this->optionTypeMapper->getFamilyFromType($option->getType());
+                $option->setFamily($family);
+            }
+
+            return $options;
+        } catch (DoesNotExistException $e) {
+            throw new NotFoundException('Options not found for parent');
+        }
+    }
+
+    /**
+     * Get option owner from DB
+     */
+    public function getOptionOwnerFromDB(int $optionId): UserBase
+    {
+        try {
+            $option = $this->optionMapper->get($optionId, withRoles: true);
+            return $option->getUser();
+        } catch (DoesNotExistException $e) {
+            throw new NotFoundException('Option not found');
+        }
+    }
+
+    /**
+     * Get fields configuration for specific option type
+     */
+    public function getFields(string $optionType): array
+    {
+        return $this->optionTypeMapper->getFields($optionType);
+    }
+
+    /**
+     * Get allowed response configuration for specific option type
+     */
+    public function getAllowedResponse(string $optionType): array
+    {
+        return $this->optionTypeMapper->getAllowedResponse($optionType);
+    }
+
+    /**
+     * Create a new option
+     *
+     * @param array $data Option data
+     * @return Option
+     */
+    public function create(array $data): Option
+    {
+
+        if (empty($data['text'])) {
+            throw new EmptyTextException('Text must not be empty');
+        }
+
+        if (empty($data['type'])) {
+            throw new InvalidOptionTypeException('Option type must be specified');
+        }
+
+        // Validate target inquiry exists and user has access
+        if (!empty($data['targetId'])) {
+            try {
+                $inquiry = $this->inquiryMapper->get($data['targetId'], withRoles: true);
+                $inquiry->request(\OCA\Agora\Db\Inquiry::PERMISSION_INQUIRY_VIEW);
+            } catch (DoesNotExistException $e) {
+                throw new NotFoundException('Target inquiry not found');
+            } catch (ForbiddenException $e) {
+                throw new ForbiddenException('No access to target inquiry');
+            }
+        }
+
+        $title = $data['title'] ?? '';
+
+        $timestamp = time();
+        $this->option = new Option();
+        $this->option->setText($data['text']);
+        $this->option->setType($data['type']);
+        $this->option->setTitle($data['title']);
+        $this->option->setTargetId($data['targetId'] ?? 0);
+        $this->option->setParentId($data['parentId'] ?? 0);
+        $this->option->setOwnedGroup($data['ownedGroup'] ?? '');
+        $this->option->setCreated($timestamp);
+        $this->option->setUpdated($timestamp);
+        $this->option->setAllowComment($data['allowComment']);
+        $this->option->setSupportFeature($data['supportFeature']);
+
+        $this->option->setOwner($this->userSession->getCurrentUserId());
+
+        // Set defaults
+        $this->option->setAccess($data['access'] ?? Option::ACCESS_PRIVATE);
+        $this->option->setShowResults($data['showResults'] ?? Option::SHOW_RESULTS_ALWAYS);
+        $this->option->setFamily($data['family'] ?? 'deliberative');
+        $this->option->setOptionStatus($data['status'] ?? Option::DEFAULT_STATUS_DRAFT);
+
+        // Set sort order
+        $maxSortOrder = $this->optionMapper->getMaxSortOrder($data['targetId'] ?? 0);
+        $this->option->setSortOrder($maxSortOrder + 1);
+
+        $this->option = $this->optionMapper->insert($this->option);
+
+        // Get fields configuration for this option type
+        $fieldsDefinition = $this->getFields($data['type']);
+        $optionId = $this->option->getId();
+
+        if (!empty($fieldsDefinition) && is_array($fieldsDefinition) && !empty($data['miscFields'])) {
+            foreach ($fieldsDefinition as &$fieldDef) {
+                $key = $fieldDef['key'];
+                if (array_key_exists($key, $data['miscFields'])) {
+                    $fieldDef['default'] = $data['miscFields'][$key];
+                }
+            }
+            unset($fieldDef);
+        }
+
+        $this->optionMapper->saveDynamicFields($this->option, $fieldsDefinition);
+
+        //$this->eventDispatcher->dispatchTyped(new OptionCreatedEvent($this->option));
+
+        return $this->option;
+    }
+
+    /**
+     * Partially update an option
+     *
+     * @param int $optionId
+     * @param array $data
+     * @return Option
+     */
+    public function updatePartial(int $optionId, array $data): Option
+    {
+        $this->option = $this->optionMapper->find($optionId);
+        //$this->option->request(Option::PERMISSION_OPTION_EDIT);
+
+        // Validate values
+        if (isset($data['showResults']) && !in_array($data['showResults'], $this->getValidShowResults())) {
+            throw new InvalidShowResultsException('Invalid value for prop showResults');
+        }
+
+        if (isset($data['text']) && empty($data['text'])) {
+            throw new EmptyTextException('Text must not be empty');
+        }
+
+        if (isset($data['access'])) {
+            if (!in_array($data['access'], $this->getValidAccess())) {
+                throw new InvalidAccessException('Invalid value for prop access ' . $data['access']);
+            }
+        }
+
+        $timestamp = time();
+
+        // Update only provided fields
+        if (isset($data['title'])) {
+            $this->option->setTitle($data['title']);
+        }
+
+        // Update only provided fields
+        if (isset($data['text'])) {
+            $this->option->setText($data['text']);
+        }
+
+        if (isset($data['type'])) {
+            $this->option->setType($data['type']);
+        }
+
+        if (isset($data['targetId'])) {
+            $this->option->setTargetId($data['targetId']);
+        }
+
+        if (isset($data['parentId'])) {
+            $this->option->setParentId($data['parentId']);
+        }
+
+        if (isset($data['ownedGroup'])) {
+            $this->option->setOwnedGroup($data['ownedGroup']);
+        }
+
+        if (isset($data['access'])) {
+            $this->option->setAccess($data['access']);
+        }
+
+        if (isset($data['showResults'])) {
+            $this->option->setShowResults($data['showResults']);
+        }
+
+        if (isset($data['allowComment'])) {
+            $this->option->setAllowComment($data['allowComment']);
+        }
+
+        if (isset($data['supportFeature'])) {
+            $this->option->setSupportFeature($data['supportFeature']);
+        }
+
+        if (isset($data['family'])) {
+            $this->option->setFamily($data['family']);
+        }
+
+        if (isset($data['status'])) {
+            $this->option->setOptionStatus($data['status']);
+        }
+
+        $this->option->setUpdated($timestamp);
+        $this->option = $this->optionMapper->update($this->option);
+
+        // Update misc fields if provided
+        $fields = $this->getFields($this->option->getType());
+        if (isset($data['miscFields']) && is_array($data['miscFields'])) {
+            $this->optionMapper->updateDynamicFields($this->option, $data['miscFields'], $fields);
+        }
+
+        //$this->eventDispatcher->dispatchTyped(new OptionUpdatedEvent($this->option));
+
+        return $this->option;
+    }
+
+    /**
+     * Update option configuration
+     *
+     * @return Option
+     */
+    public function updateConfig(int $optionId, array $optionConfiguration): Option
+    {
+        $this->option = $this->optionMapper->find($optionId);
+        $this->option->request(Option::PERMISSION_OPTION_EDIT);
+
+        // Validate values
+        if (isset($optionConfiguration['showResults']) && !in_array($optionConfiguration['showResults'], $this->getValidShowResults())) {
+            throw new InvalidShowResultsException('Invalid value for prop showResults');
+        }
+
+        if (isset($optionConfiguration['access'])) {
+            if (!in_array($optionConfiguration['access'], $this->getValidAccess())) {
+                throw new InvalidAccessException('Invalid value for prop access ' . $optionConfiguration['access']);
+            }
+        }
+
+        $this->option->deserializeArray($optionConfiguration);
+        $this->option->setUpdated(time());
+        $this->option = $this->optionMapper->update($this->option);
+
+        $this->eventDispatcher->dispatchTyped(new OptionUpdatedEvent($this->option));
+
+        return $this->option;
+    }
+
+    /**
+     * Update timestamp for last interaction with option
+     */
+    public function setLastInteraction(int $optionId): void
+    {
+        if ($optionId) {
+            $this->optionMapper->update($this->option);
+        }
+    }
+
+    /**
+     * Move to archive or restore with optional recursive functionality
+     *
+     * @return array [option: Option, archivedCount: int]
+     */
+    public function toggleArchiveRecursive(int $optionId, bool $recursive = true): array
+    {
+        $this->option = $this->optionMapper->find($optionId);
+        $this->option->request(Option::PERMISSION_OPTION_DELETE);
+
+        $archiveState = !$this->option->getDeleted();
+        $deletedTime = $archiveState ? time() : 0;
+
+        try {
+            $this->option->setArchived($deletedTime);
+            $this->option->setDeleted($deletedTime);
+            $this->option->setUpdated(time());
+            $this->option = $this->optionMapper->update($this->option);
+
+            $archivedCount = 1;
+
+            if ($recursive) {
+                $childCount = $this->archiveChildrenRecursive($this->option, $archiveState);
+                $archivedCount += $childCount;
+            }
+
+            if ($archiveState) {
+                $this->eventDispatcher->dispatchTyped(new OptionArchivedEvent($this->option));
+            } else {
+                $this->eventDispatcher->dispatchTyped(new OptionRestoredEvent($this->option));
+            }
+
+            return [
+                'option' => $this->option,
+                'archivedCount' => $archivedCount
+            ];
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Archive recursively all children
+     */
+    private function archiveChildrenRecursive(Option $parent, bool $archiveState): int
+    {
+        $count = 0;
+        $children = $this->optionMapper->findByParentId($parent->getId());
+
+        foreach ($children as $child) {
+            try {
+                $child->request(Option::PERMISSION_OPTION_DELETE);
+                $child->setArchived($archiveState ? time() : 0);
+                $child->setDeleted($archiveState ? time() : 0);
+                $child->setUpdated(time());
+                $this->optionMapper->update($child);
+                $count++;
+
+                if ($archiveState) {
+                    $this->eventDispatcher->dispatchTyped(new OptionArchivedEvent($child));
+                } else {
+                    $this->eventDispatcher->dispatchTyped(new OptionRestoredEvent($child));
+                }
+
+                $count += $this->archiveChildrenRecursive($child, $archiveState);
+            } catch (ForbiddenException $e) {
+                $this->logger->error("Permission denied for child option {$child->getId()}");
+                continue;
+            }
+        }
+
+        return $count;
+    }
+
+    /**
+     * Move to archive or restore
+     *
+     * @return Option
+     */
+    public function toggleArchive(int $optionId): Option
+    {
+        $this->option = $this->optionMapper->find($optionId);
+        $this->option->request(Option::PERMISSION_OPTION_DELETE);
+
+        $this->option->setArchived($this->option->getArchived() ? 0 : time());
+        $this->option->setUpdated(time());
+        $this->option = $this->optionMapper->update($this->option);
+
+        if ($this->option->getArchived()) {
+            $this->eventDispatcher->dispatchTyped(new OptionArchivedEvent($this->option));
+        } else {
+            $this->eventDispatcher->dispatchTyped(new OptionRestoredEvent($this->option));
+        }
+
+        return $this->option;
     }
 
     /**
      * Delete option
      *
-     * @param int  $optionId Id of option to delete or restore
-     * @param bool $restore  Set true, if option is to be restored
+     * @return Option
      */
-    public function delete(int $optionId, bool $restore = false): Option
+    public function delete(int $optionId): Option
     {
-        $option = $this->optionMapper->find($optionId);
-
-        if (!$option->getCurrentUserIsEntityUser()) {
-            $this->inquiryMapper->get($option->getInquiryId(), withRoles: true)->request(Inquiry::PERMISSION_OPTION_DELETE);
+        try {
+            $this->option = $this->optionMapper->get($optionId, withRoles: true);
+        } catch (DoesNotExistException $e) {
+            throw new AlreadyDeletedException('Option not found, assume already deleted');
         }
 
-        $option->setDeleted($restore ? 0 : time());
-        $this->optionMapper->update($option);
-        $this->eventDispatcher->dispatchTyped(new OptionDeletedEvent($option));
+        $this->option->request(Option::PERMISSION_OPTION_DELETE);
+        $this->eventDispatcher->dispatchTyped(new OptionDeletedEvent($this->option));
 
-        return $option;
+        $this->optionMapper->delete($this->option);
+        return $this->option;
     }
 
     /**
-     * Switch option confirmation
+     * Update option status
+     */
+    public function setOptionStatus(int $optionId, string $status): void
+    {
+        $this->optionMapper->setOptionStatus($optionId, $status);
+    }
+
+    /**
+     * Find option by id
      *
      * @return Option
      */
-    public function confirm(int $optionId): Option
+    public function findById(int $optionId): Option
+    {
+        return $this->optionMapper->get($optionId, withRoles: true);
+    }
+
+    /**
+     * Reorder options
+     */
+    public function reorderOptions(array $optionIds): void
+    {
+        if (empty($optionIds)) {
+            return;
+        }
+
+        // Check permissions for first option to ensure user can reorder
+        $firstOption = $this->optionMapper->get($optionIds[0], withRoles: true);
+        $firstOption->request(Option::PERMISSION_OPTIONS_REORDER);
+
+        $this->optionMapper->reorderOptions($optionIds);
+    }
+
+    /**
+     * Update sort order for a single option
+     */
+    public function updateSortOrder(int $optionId, int $sortOrder): void
+    {
+        $option = $this->optionMapper->get($optionId, withRoles: true);
+        $option->request(Option::PERMISSION_OPTIONS_REORDER);
+
+        $this->optionMapper->updateSortOrder($optionId, $sortOrder);
+    }
+
+    /**
+     * Clone option
+     *
+     * @return Option
+     */
+    public function clone(int $optionId, string $optionType = ''): Option
+    {
+        $origin = $this->optionMapper->get($optionId, withRoles: true);
+        $origin->request(Option::PERMISSION_OPTION_VIEW);
+
+        if (!$this->appSettings->getOptionCreationAllowed()) {
+            throw new ForbiddenException('Option creation is disabled');
+        }
+
+        $this->option = new Option();
+        $timestamp = time();
+        $this->option->setCreated($timestamp);
+        $this->option->setUpdated($timestamp);
+        $this->option->setOwner($this->userSession->getCurrentUserId());
+        $this->option->setText('Clone of ' . $origin->getText());
+        $this->option->setDeleted(0);
+        $this->option->setArchived(0);
+        $this->option->setAccess(Option::ACCESS_PRIVATE);
+
+        if ($optionType) {
+            $this->option->setType($optionType);
+        } else {
+            $this->option->setType($origin->getType());
+        }
+
+        $this->option->setTargetId($origin->getTargetId());
+        $this->option->setParentId($origin->getParentId());
+        $this->option->setOwnedGroup($origin->getOwnedGroup());
+        $this->option->setShowResults($origin->getShowResults());
+        $this->option->setAllowComment($origin->getAllowComment());
+        $this->option->setSupportFeature($origin->getSupportFeature());
+        $this->option->setFamily($origin->getFamily());
+        $this->option->setOptionStatus($origin->getOptionStatus());
+
+        // Set sort order
+        $maxSortOrder = $this->optionMapper->getMaxSortOrder($origin->getTargetId());
+        $this->option->setSortOrder($maxSortOrder + 1);
+
+        $this->option = $this->optionMapper->insert($this->option);
+
+        // Clone misc fields
+        $fieldsDefinition = $this->getFields($this->option->getType());
+        if (!empty($fieldsDefinition)) {
+            $miscFields = [];
+            foreach ($fieldsDefinition as $fieldDef) {
+                $key = $fieldDef['key'];
+                $value = $origin->getMiscField($key) ?? $fieldDef['default'] ?? null;
+                if ($value !== null) {
+                    $miscFields[$key] = $value;
+                }
+            }
+            $this->optionMapper->saveDynamicFields($this->option, $fieldsDefinition);
+        }
+
+        $this->eventDispatcher->dispatchTyped(new OptionCreatedEvent($this->option));
+        return $this->option;
+    }
+
+    /**
+     * Collect email addresses from participants
+     */
+    public function getParticipantsEmailAddresses(int $optionId): array
+    {
+        $this->option = $this->optionMapper->get($optionId, withRoles: true);
+        $this->option->request(Option::PERMISSION_OPTION_EDIT);
+
+        // This would need a method to find participants by option
+        // For now, return empty array
+        return [];
+    }
+
+    /**
+     * Get valid values for configuration options
+     */
+    public function getValidEnum(): array
+    {
+        return [
+            'access' => $this->getValidAccess(),
+            'showResults' => $this->getValidShowResults(),
+            'types' => $this->getValidOptionTypes()
+        ];
+    }
+
+    /**
+     * Apply action to option (draft, submit, etc.)
+     */
+    public function applyAction(int $optionId, string $action): Option
     {
         $option = $this->optionMapper->find($optionId);
-        $this->getInquiry($option->getInquiryId(), Inquiry::PERMISSION_OPTION_CONFIRM);
 
-        $option->setConfirmed($option->getConfirmed() ? 0 : time());
-        $option = $this->optionMapper->update($option);
+        if (!$option) {
+            throw new \Exception('Option not found');
+        }
 
-        if ($option->getConfirmed()) {
-            $this->eventDispatcher->dispatchTyped(new OptionConfirmedEvent($option));
-        } else {
-            $this->eventDispatcher->dispatchTyped(new OptionUnconfirmedEvent($option));
+        $timestamp = time();
+
+        switch ($action) {
+            case 'save_draft':
+                $option->setAccess(Option::ACCESS_PRIVATE);
+                $option->setOptionStatus('draft');
+                $option->setUpdated($timestamp);
+                $option = $this->optionMapper->update($option);
+                break;
+
+            case 'submit':
+                $option->setAccess(Option::ACCESS_PUBLIC);
+                $option->setOptionStatus('published');
+                $option->setUpdated($timestamp);
+                $option = $this->optionMapper->update($option);
+                break;
+
+            case 'archive':
+                $option->setArchived($timestamp);
+                $option->setUpdated($timestamp);
+                $option = $this->optionMapper->update($option);
+                $this->eventDispatcher->dispatchTyped(new OptionArchivedEvent($option));
+                break;
+
+            case 'restore':
+                $option->setArchived(0);
+                $option->setUpdated($timestamp);
+                $option = $this->optionMapper->update($option);
+                $this->eventDispatcher->dispatchTyped(new OptionRestoredEvent($option));
+                break;
+
+            default:
+                throw new \InvalidArgumentException("Unknown action '$action'");
         }
 
         return $option;
     }
 
     /**
-     * Make a sequence of date inquiry options
-     *
-     * @param  int | Option $optionOrOptionId Option od optionId of the option to clone
-     * @param  Sequence     $sequence         Sequence object
-     * @param  bool         $supportYes       Directly support 'yes' for the new options
-     * @return Option[]
-     *
-     * @psalm-return array<array-key, Option>
+     * Get valid values for access
      */
-    public function sequence(int|Option $optionOrOptionId, Sequence $sequence, bool $supportYes = false): array
+    private function getValidAccess(): array
     {
-        if ($sequence->getRepetitions() < 1) {
-            return [];
-        }
-
-        if ($optionOrOptionId instanceof Option) {
-            $baseOption = $optionOrOptionId;
-        } else {
-            $baseOption = $this->optionMapper->find($optionOrOptionId);
-        }
-
-        $this->getInquiry($baseOption->getInquiryId(), Inquiry::PERMISSION_OPTION_ADD);
-
-        if ($this->inquiry->getType() !== Inquiry::TYPE_DATE) {
-            throw new InvalidInquiryTypeException('Sequences are only available in date inquiries');
-        }
-
-        $sequence->setTimeZone(new DateTimeZone($this->userSession->getClientTimeZone()));
-        $sequence->setBaseTimeStamp($baseOption->getTimestamp());
-
-        // iterate over the amount of options to create
-        for ($i = 1; $i <= ($sequence->getRepetitions()); $i++) {
-            // build a new option
-            $this->add(
-                $baseOption->getInquiryId(),
-                new SimpleOption(
-                    '',
-                    $sequence->getOccurence($i),
-                    $baseOption->getDuration(),
-                ),
-                $supportYes
-            );
-        }
-
-        $this->eventDispatcher->dispatchTyped(new OptionCreatedEvent($baseOption));
-
-        // return list of all options of the inquiry
-        return $this->optionMapper->findByInquiry($this->inquiry->getId());
-    }
-
-    private function countSuggestions(array $options): int
-    {
-        $count = 0;
-        foreach ($options as $option) {
-            if ($option->getOwner()) {
-                $count++;
-            }
-        }
-        return $count;
+        return [Option::ACCESS_PRIVATE, Option::ACCESS_PUBLIC, Option::ACCESS_OPEN, Option::ACCESS_HIDDEN];
     }
 
     /**
-     * Shift all date options
-     *
-     * @return Option[]
-     *
-     * @psalm-return array<array-key, Option>
+     * Get valid values for showResult
      */
-    public function shift(int $inquiryId, int $step, string $unit): array
+    private function getValidShowResults(): array
     {
-        $this->getInquiry($inquiryId);
-
-        if ($this->inquiry->getType() !== Inquiry::TYPE_DATE) {
-            throw new InvalidInquiryTypeException('Shifting is only available in date inquiries');
-        }
-
-        $options = $this->optionMapper->findByInquiry($inquiryId);
-
-        if ($this->countSuggestions($options) > 0) {
-            throw new ForbiddenException('dates is not allowed');
-        }
-
-        $timezone = new DateTimeZone($this->userSession->getClientTimeZone());
-
-        if ($step > 0) {
-            // start from last item if moving option into the future
-            // avoid UniqueConstraintViolationException
-            $options = array_reverse($options);
-        }
-
-        foreach ($options as $option) {
-            $option->shiftOption($timezone, $step, $unit);
-            $this->optionMapper->update($option);
-        }
-
-        return $this->optionMapper->findByInquiry($inquiryId);
+        return [Option::SHOW_RESULTS_ALWAYS, Option::SHOW_RESULTS_CLOSED, Option::SHOW_RESULTS_NEVER];
     }
 
     /**
-     * Copy options from $fromInquiry to $toInquiry
+     * Get valid option types
      */
-    public function clone(int $fromInquiryId, int $toInquiryId): void
+    private function getValidOptionTypes(): array
     {
-        $this->inquiryMapper->get($fromInquiryId, withRoles: true)->request(Inquiry::PERMISSION_INQUIRY_VIEW);
-        $this->inquiryMapper->get($toInquiryId, withRoles: true)->request(Inquiry::PERMISSION_OPTION_ADD);
-
-        foreach ($this->optionMapper->findByInquiry($fromInquiryId) as $origin) {
-            $option = new Option();
-            $option->setInquiryId($toInquiryId);
-            $option->setConfirmed(0);
-            $option->setOption(
-                $origin->getTimestamp(),
-                $origin->getDuration(),
-                $origin->getInquiryOptionText(),
-            );
-            $option->setOrder($origin->getOrder());
-            $option = $this->optionMapper->insert($option);
-            $this->eventDispatcher->dispatchTyped(new OptionCreatedEvent($option));
-        }
+        return [
+            Option::TYPE_ARGUMENT_FOR,
+            Option::TYPE_ARGUMENT_AGAINST,
+            Option::TYPE_PROPOSAL,
+            Option::TYPE_QUESTION,
+            Option::TYPE_IDEA
+        ];
     }
 
     /**
-     * Reorder options with the order specified by $options
-     *
-     * @return Option[]
-     *
-     * @psalm-return array<array-key, Option>
+     * Set access
      */
-    public function reorder(int $inquiryId, array $options): array
-    {
-        $this->getInquiry($inquiryId, Inquiry::PERMISSION_INQUIRY_EDIT);
-
-        if ($this->inquiry->getType() === Inquiry::TYPE_DATE) {
-            throw new InvalidInquiryTypeException('Not allowed in date inquiries');
-        }
-
-        $i = 0;
-        foreach ($options as $option) {
-            // we do not trust the delivered array, so we try to load the option from the db
-            $loadedOption = $this->optionMapper->find($option['id']);
-
-            // check, if the loaded option matches the inquiryId
-            if ($inquiryId === intval($loadedOption->getInquiryId())) {
-                $loadedOption->setOrder(++$i);
-                $this->optionMapper->update($loadedOption);
-                $this->eventDispatcher->dispatchTyped(new OptionUpdatedEvent($loadedOption));
-            } else {
-                $this->logger->error(
-                    'Option {optionId} does not belong to inquiry {inquiryId}', [
-                    'optionId' => $loadedOption->getId(),
-                    'inquiryId' => $inquiryId,
-                    ]
-                );
-                throw new DoesNotExistException('Option does not belong to inquiry');
-            }
-        }
-
-        return $this->optionMapper->findByInquiry($inquiryId);
-    }
-
-    /**
-     * Change order for $optionId and reorder the options
-     *
-     * @return Option[]
-     *
-     * @psalm-return array<array-key, Option>
-     */
-    public function setOrder(int $optionId, int $newOrder): array
+    public function setOptionAccess(int $optionId, string $access): string
     {
         $option = $this->optionMapper->find($optionId);
-        $this->getInquiry($option->getInquiryId(), Inquiry::PERMISSION_INQUIRY_EDIT);
+        $option->request(Option::PERMISSION_OPTION_EDIT);
 
-        if ($this->inquiry->getType() === Inquiry::TYPE_DATE) {
-            throw new InvalidInquiryTypeException('Not allowed in date inquiries');
+        if (!in_array($access, $this->getValidAccess())) {
+            throw new InvalidAccessException('Invalid access value');
         }
 
-        if ($newOrder < 1) {
-            $newOrder = 1;
-        } elseif ($newOrder > $this->getHighestOrder($this->inquiry->getId())) {
-            $newOrder = $this->getHighestOrder($this->inquiry->getId());
-        }
+        $option->setAccess($access);
+        $option->setUpdated(time());
+        $this->optionMapper->update($option);
 
-        foreach ($this->optionMapper->findByInquiry($this->inquiry->getId()) as $option) {
-            $option->setOrder($this->moveModifier($option->getOrder(), $newOrder, $option->getOrder()));
-            $this->optionMapper->update($option);
-        }
-
-        $this->eventDispatcher->dispatchTyped(new InquiryOptionReorderedEvent($this->inquiry));
-
-        return $this->optionMapper->findByInquiry($this->inquiry->getId());
+        return $access;
     }
 
     /**
-     * moveModifier - evaluate new order depending on the old and
-     * the new position of a moved array item
-     *
-     * @return int - The modified new position of the current item
+     * Delete options by target ID (when inquiry is deleted)
      */
-    private function moveModifier(int $moveFrom, int $moveTo, int $currentPosition): int
+    public function deleteByTargetId(int $targetId): void
     {
-        $moveModifier = 0;
-        if ($moveFrom < $currentPosition && $currentPosition <= $moveTo) {
-            // moving forward
-            $moveModifier = -1;
-        } elseif ($moveTo <= $currentPosition && $currentPosition < $moveFrom) {
-            //moving backwards
-            $moveModifier = 1;
-        } elseif ($moveFrom === $currentPosition) {
-            return $moveTo;
-        }
-        return $currentPosition + $moveModifier;
-    }
-
-    /**
-     * Load the inquiry and check permissions
-     *
-     * @return void
-    private function getInquiry(int $inquiryId, string $permission = Inquiry::PERMISSION_INQUIRY_VIEW): void
-    {
-        if ($this->getInquiryId() !== $inquiryId) {
-            $inquiry= $this->inquiryMapper->get($inquiryId, withRoles: true);
-            $inquiry->request($permission);
-        }
-    }
-     */
-
-    /**
-     * Get the highest order number in $inquiryId
-     * Return Highest order number
-     *
-     * @return int
-     */
-    public function getHighestOrder(int $inquiryId): int
-    {
-        $result = intval($this->optionMapper->getOrderBoundaries($inquiryId)['max']);
-        return $result;
+        $this->optionMapper->deleteByTargetId($targetId);
     }
 }

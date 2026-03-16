@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -9,6 +10,7 @@ declare(strict_types=1);
 namespace OCA\Agora\Db;
 
 use JsonSerializable;
+use OCP\AppFramework\Db\Entity;
 
 /**
  * @psalm-suppress UnusedProperty
@@ -26,8 +28,16 @@ use JsonSerializable;
  * @method         void setSortOrder(int $value)
  * @method         int getCreated()
  * @method         void setCreated(int $value)
+ * @method         ?array getUi()
+ * @method         void setUi(?array $value)
+ * @method         ?array getRules()
+ * @method         void setRules(?array $value)
+ * @method         ?array getFeatures()
+ * @method         void setFeatures(?array $value)
+ * @method         ?array getActions()
+ * @method         void setActions(?array $value)
  */
-class InquiryFamily extends EntityWithUser implements JsonSerializable
+class InquiryFamily extends Entity implements JsonSerializable
 {
     public const TABLE = 'agora_inq_families';
 
@@ -35,16 +45,28 @@ class InquiryFamily extends EntityWithUser implements JsonSerializable
     public $id = null;
     protected string $familyType = '';
     protected string $label = '';
-    protected ?string $description = '';
+    protected string $description = '';
     protected string $icon = '';
     protected int $sortOrder = 0;
     protected int $created = 0;
+    protected ?array $ui = null;
+    protected ?array $rules = null;
+    protected ?array $features = null;
+    protected ?array $actions = null;
 
     public function __construct()
     {
         $this->addType('id', 'integer');
+        $this->addType('familyType', 'string');
+        $this->addType('label', 'string');
+        $this->addType('description', 'string');
+        $this->addType('icon', 'string');
         $this->addType('sortOrder', 'integer');
         $this->addType('created', 'integer');
+        $this->addType('ui', 'json');
+        $this->addType('rules', 'json');
+        $this->addType('features', 'json');
+        $this->addType('actions', 'json');
     }
 
     /**
@@ -62,6 +84,10 @@ class InquiryFamily extends EntityWithUser implements JsonSerializable
             'icon' => $this->getIcon(),
             'sort_order' => $this->getSortOrder(),
             'created' => $this->getCreated(),
+            'ui' => $this->getUi() ?? [],
+            'rules' => $this->getRules() ?? [],
+            'features' => $this->getFeatures() ?? [],
+            'actions' => $this->getActions() ?? [],
         ];
     }
 }

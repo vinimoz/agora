@@ -34,7 +34,8 @@ const newType = ref({
   description: '',
   fields: '[]',
   allowed_response: '[]',
-  allowed_transformation: '[]'
+  allowed_transformation: '[]',
+  allowed_option_type: '[]'
 })
 
 const getIconComponent = (iconName) => InquiryGeneralIcons[iconName] || InquiryGeneralIcons.default
@@ -83,7 +84,8 @@ const addType = async () => {
     description: newType.value.description || '',
     fields: convertToJsonString(newType.value.fields),
     allowed_response: convertToJsonString(newType.value.allowed_response),
-    allowed_transformation: convertToJsonString(newType.value.allowed_transformation)
+    allowed_transformation: convertToJsonString(newType.value.allowed_transformation),
+    allowed_option_type: convertToJsonString(newType.value.allowed_option_type)
   })
   
   // Reset form
@@ -95,7 +97,8 @@ const addType = async () => {
     description: '',
     fields: '[]',
     allowed_response: '[]',
-    allowed_transformation: '[]'
+    allowed_transformation: '[]',
+    allowed_option_type: '[]'
   }
 }
 
@@ -110,7 +113,8 @@ const updateType = async (type) => {
     icon: extractIconId(type.icon),
     fields: convertToJsonString(type.fields),
     allowed_response: convertToJsonString(type.allowed_response),
-    allowed_transformation: convertToJsonString(type.allowed_transformation)
+    allowed_transformation: convertToJsonString(type.allowed_transformation),
+    allowed_option_type: convertToJsonString(type.allowed_option_type)
   })
   editingType.value = null
 }
@@ -178,7 +182,8 @@ const openTypeSettings = (type) => {
                   ...type, 
                   fields: JSON.stringify(type.fields || []), 
                   allowed_response: JSON.stringify(type.allowed_response || []), 
-                  allowed_transformation: JSON.stringify(type.allowed_transformation || []) 
+                  allowed_transformation: JSON.stringify(type.allowed_transformation || []),
+                  allowed_option_type: JSON.stringify(type.allowed_option_type || []) 
                 }"
               >
                 {{ t('agora', 'Edit') }}
@@ -258,8 +263,15 @@ const openTypeSettings = (type) => {
             :placeholder='`e.g., ["official_proposal"]`'
             class="form-field"
           />
+          <NcInputField
+            v-model="newType.allowed_option_type"
+            :label="t('agora', 'Allowed Option types (JSON)')"
+            type="textarea"
+            :placeholder='`e.g., ["official_proposal"]`'
+            class="form-field"
+          />
         </div>
-        
+
         <div class="form-actions">
           <NcButton 
             type="primary" 
@@ -320,6 +332,12 @@ const openTypeSettings = (type) => {
             <NcInputField
               v-model="editingType.allowed_transformation"
               :label="t('agora', 'Allowed Transformations (JSON)')"
+              type="textarea"
+              class="form-field"
+            />
+            <NcInputField
+              v-model="editingType.allowed_option_type"
+              :label="t('agora', 'Allowed Option types (JSON)')"
               type="textarea"
               class="form-field"
             />

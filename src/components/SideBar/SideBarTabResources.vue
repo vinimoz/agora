@@ -20,13 +20,8 @@ import { InquiryGeneralIcons } from '../../utils/icons.ts'
 import { Inquiry } from '../../Types/index.ts'
 import {
   canEdit,
-  createPermissionContextForContent,
-  ContentType,
-  AccessLevel,
+  createInquiryContext,
 } from '../../utils/permissions.ts'
-import {
-  isInquiryFinalStatus
-} from '../../helpers/modules/InquiryHelper.ts'
 
 // Components
 import AddResourceModal from '../Modals/AddResourceModal.vue'
@@ -87,23 +82,16 @@ interface GroupedResources {
 
 // Context for permissions
 const context = computed(() => {
-  const ctx = createPermissionContextForContent(
-    ContentType.Inquiry,
-    currentInquiry.value.owner.id,
-    currentInquiry.value.configuration.access === 'public',
-    currentInquiry.value.status.isLocked,
-    currentInquiry.value.status.isExpired,
-    currentInquiry.value.status.deletionDate > 0,
-    currentInquiry.value.status.isArchived,
-    currentInquiry.value.inquiryGroups.length > 0,
-    currentInquiry.value.inquiryGroups,
-    currentInquiry.value.type,
-    currentInquiry.value.family, 
-    currentInquiry.value.configuration.access as AccessLevel,
-    isInquiryFinalStatus(currentInquiry.value,sessionStore.appSettings),
-    currentInquiry.value.status.moderationStatus 
-  )
-  return ctx
+    if (!props.inquiry || !props.inquiry.id) {
+    return null
+  }
+  try  {
+return createInquiryContext(props.inquiry, sessionStore.appSettings)
+ } catch (error) {
+    console.error('Error creating permission context:', error)
+    return null
+  }
+
 })
 
 // Helper function to parse metadata
@@ -131,9 +119,9 @@ const groupedResources = computed((): GroupedResources => {
     if (!groups[link.target_app]) {
       groups[link.target_app] = []
     }
-    
+
     const metadata = parseMetadata(link.metadata)
-    
+
     groups[link.target_app].push({
       ...link,
       type: 'link',
@@ -343,7 +331,7 @@ const handleSpecificResourceDeletion = async (resource: ResourceItem, deleteExte
 
 const handleAttachmentDeletion = async (resource: ResourceItem) => {
   const attachment = attachmentsStore.attachments.find(att => att.id === resource.id);
-  
+
   if (!attachment) {
     console.warn('No attachment found with id:', resource.id);
     return;
@@ -400,13 +388,22 @@ const getResourceTarget = (): string => '_blank'
 
 // Add this function to check if resource can be edited
 const canEditResource = (): boolean => {
+
+ if (!currentInquiry.value) {
+    return false
+  }
+
   // Only owners can delete resources
   if (!currentInquiry.value.currentUserStatus?.isOwner) {
     return false
   }
 
+
   // Use your permission system if available, otherwise simple owner check
   try {
+      if (context.value === undefined || context.value === null) {
+         return currentInquiry.value.currentUserStatus?.isOwner
+    }
     return canEdit?.(context.value) ?? currentInquiry.value.currentUserStatus?.isOwner
   } catch (error) {
     console.error('Error checking edit permissions:', error)
@@ -422,7 +419,7 @@ const getResourceHref = (resource: ResourceItem): string => {
 
   if (resource.type === 'link') {
     const metadata = parseMetadata(resource.metadata)
-    
+
     // Use URL from metadata if available
     if (metadata?.url) {
       return metadata.url

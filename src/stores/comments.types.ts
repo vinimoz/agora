@@ -6,15 +6,16 @@
 import type { User } from '../Types'
 
 export type Comment = {
-	comment: string
-	deleted: number
 	id: number
-	parent: number
-	pollId: number
+	inquiryId: number
+	optionId: number  
+	userId: string
+	comment: string
 	timestamp: number
-	user: User
+	deleted: number
 	confidential: number
-	recipient: User | null
+	recipient: string | null
+	user: User
 }
 
 export type ShortComment = {

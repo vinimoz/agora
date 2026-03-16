@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -76,7 +77,8 @@ class OptionApiController extends BaseApiV2Controller
                 ),
                 ['options' => $this->optionService->list($inquiryId)],
                 ['supports' => $this->supportService->list($inquiryId)],
-            ), Http::STATUS_CREATED
+            ),
+            Http::STATUS_CREATED
         );
     }
 

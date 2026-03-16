@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2021 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -46,7 +47,7 @@ class ActivityProvider implements IProvider
         }
 
         $this->l10n = $this->transFactory->get($event->getApp(), $language);
-        $event->setIcon($this->urlGenerator->getAbsoluteURL($this->urlGenerator->imagePath($event->getApp(), 'agora-dark.svg')));
+        $event->setIcon($this->urlGenerator->getAbsoluteURL($this->urlGenerator->imagePath($imagePath(AppConstants::APP_ID, 'agora-dark.svg'))));
         $subject = $this->activityService->getActivityMessage($event, $language, $this->activityManager->isFormattingFilteredObject());
         if (!$subject) {
             throw new UnknownActivityException();
@@ -55,7 +56,7 @@ class ActivityProvider implements IProvider
         return $event;
     }
 
-    private function patchParameters(array $parameters) : array
+    private function patchParameters(array $parameters): array
     {
         // add an ugly fix, because there are some activities that have misconfigured inquiry references
         // the inquiry can exist as $parameters['inquiry'] or as $parameters['inquiryTitle']

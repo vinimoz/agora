@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2025 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -85,7 +86,7 @@ class InquiryGroup extends EntityWithUser implements JsonSerializable
     protected array $miscFields = [];
     protected array $childs = [];
     protected ?string $miscGroupSettingsConcat = '';
-    
+
     public function __construct()
     {
         $this->addType('title', 'string');
@@ -181,7 +182,7 @@ class InquiryGroup extends EntityWithUser implements JsonSerializable
         $this->miscFields[$key] = $value;
     }
 
-    
+
 
 
     public function setMiscFields(array $misc): void
@@ -199,7 +200,7 @@ class InquiryGroup extends EntityWithUser implements JsonSerializable
             $this->miscFields[$key] = $field['default'] ?? null;
         }
     }
-    
+
     public function getMiscField(string $key): mixed
     {
         return $this->miscFields[$key] ?? null;
@@ -255,9 +256,9 @@ class InquiryGroup extends EntityWithUser implements JsonSerializable
     public function getIsAllowed(string $permission): bool
     {
         return match ($permission) {
-        self::PERMISSION_INQUIRY_GROUP_EDIT => $this->getAllowEdit(),
+            self::PERMISSION_INQUIRY_GROUP_EDIT => $this->getAllowEdit(),
             default => false,
-    };
+        };
     }
 
     /**

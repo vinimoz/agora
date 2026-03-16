@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -46,12 +47,12 @@ class InquiryGroupController extends BaseController
         return $this->response(
             function () {
                 return [
-                    'inquiryGroups' => $this->inquiryGroupService->listInquiryGroups(true,true),
+                    'inquiryGroups' => $this->inquiryGroupService->listInquiryGroups(true, true),
                 ];
             }
         );
     }
-   
+
     #[NoAdminRequired]
     #[FrontpageRoute(verb: 'PUT', url: '/inquirygroup/{inquiryId}/updatemiscfield')]
     public function updateMiscField(int $inquiryId): JSONResponse
@@ -72,7 +73,6 @@ class InquiryGroupController extends BaseController
                 'success' => true,
                 'misc' => $result
             ]);
-
         } catch (\Exception $e) {
             $this->logger->error('Error updating misc field: ' . $e->getMessage(), [
                 'inquiryId' => $inquiryId,
@@ -98,7 +98,7 @@ class InquiryGroupController extends BaseController
     #[FrontpageRoute(verb: 'GET', url: '/inquirygroup/{inquiryGroupId}')]
     public function get(int $inquiryGroupId): JSONResponse
     {
-        $inquiryGroup = $this->inquiryGroupService->get($inquiryGroupId,true,true);
+        $inquiryGroup = $this->inquiryGroupService->get($inquiryGroupId, true, true);
         $this->logger->debug('Creating new inquiry group', ['inquiryGroup' => $inquiryGroup->getMiscFields()]);
         return $this->response(
             fn () => [
@@ -147,7 +147,8 @@ class InquiryGroupController extends BaseController
             );
         } catch (\Exception $e) {
             $this->logger->critical(
-                'Server error', [
+                'Server error',
+                [
                     'exception' => $e->getMessage(),
                     'trace' => $e->getTraceAsString()
                 ]
@@ -199,7 +200,8 @@ class InquiryGroupController extends BaseController
             );
         } catch (\Exception $e) {
             $this->logger->critical(
-                'Server error updating inquiry group', [
+                'Server error updating inquiry group',
+                [
                     'exception' => $e->getMessage(),
                     'trace' => $e->getTraceAsString()
                 ]

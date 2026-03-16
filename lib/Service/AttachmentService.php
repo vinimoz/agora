@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2024 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -16,7 +17,6 @@ use OCP\Files\File;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
 use OCP\Share\Share;
-
 use OCP\IUserSession;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Db\MultipleObjectsReturnedException;
@@ -34,7 +34,7 @@ class AttachmentService
     private InquiryMapper $inquiryMapper;
     private InquiryGroupMapper $inquiryGroupMapper;
     private IURLGenerator $urlGenerator;
-    private LoggerInterface $logger;        
+    private LoggerInterface $logger;
     private IShareManager $shareManager;
 
     public function __construct(
@@ -72,7 +72,7 @@ class AttachmentService
         }
 
         return $agoraFolder;
-    }    
+    }
 
     /**
      * Add a new attachment (both file and database record)
@@ -85,16 +85,16 @@ class AttachmentService
      * @return Attachment
      * @throws \Exception
      */
-    public function add(int $id,  array $uploadedFile, bool $coverId, bool $state ): Attachment
+    public function add(int $id, array $uploadedFile, bool $coverId, bool $state): Attachment
     {
         // Validate that either inquiryId or groupId is provided
-        if ($id === 0 ) {
+        if ($id === 0) {
             throw new \InvalidArgumentException('Either inquiryId or groupId must be provided');
         }
 
         // Determine if this is a group or inquiry attachment
         $isGroupAttachment = $state;
-        
+
         if ($isGroupAttachment) {
             $entityFolder = $this->getGroupFolder($id);
             $entity = $this->inquiryGroupMapper->find($id);
@@ -118,12 +118,11 @@ class AttachmentService
                     } else {
                         $oldAttachment = $this->attachmentMapper->findByFileId($id, $entity->getCoverId());
                     }
-                
+
                     // If we get here, attachment exists and can be removed
                     $this->remove($oldAttachment->getId());
-                
+
                     $this->logger->info('Removed old cover file: ' . $entity->getCoverId());
-                
                 } catch (DoesNotExistException $e) {
                     // Attachment doesn't exist in database, just clean up the coverId
                     $this->logger->warning('Old cover attachment not found, cleaning coverId: ' . $entity->getCoverId());
@@ -162,11 +161,10 @@ class AttachmentService
         // Create database record
         $attachment = new Attachment();
         if ($isGroupAttachment) {
-            $attachment->setGroupId($id); 
+            $attachment->setGroupId($id);
             $attachment->setInquiryId(0);
-        }
-        else {
-            $attachment->setGroupId(0); 
+        } else {
+            $attachment->setGroupId(0);
             $attachment->setInquiryId($id);
         }
         $attachment->setName($uploadedFile['name']);
@@ -205,7 +203,7 @@ class AttachmentService
             $groupFolder = $agoraRoot->get($groupFolderName);
         }
 
-        return $groupFolder; 
+        return $groupFolder;
     }
 
     /**
@@ -222,7 +220,7 @@ class AttachmentService
             $inquiryFolder = $agoraRoot->get($inquiryFolderName);
         }
 
-        return $inquiryFolder; 
+        return $inquiryFolder;
     }
 
     /**
@@ -271,7 +269,6 @@ class AttachmentService
                     $share->setPermissions($permissions);
 
                     $this->shareManager->createShare($share);
-
                 } catch (\Exception $e) {
                     $this->logger->error('Error sharing file with group ' . $groupName . ': ' . $e->getMessage());
                 }
@@ -338,21 +335,21 @@ class AttachmentService
             throw new \InvalidArgumentException('Either inquiryId or groupId must be provided');
         }
 
-        $attachments = $inquiryId > 0 
+        $attachments = $inquiryId > 0
             ? $this->attachmentMapper->findByInquiryId($inquiryId)
             : $this->attachmentMapper->findByGroupId($groupId);
-            
+
         $result = [];
 
         foreach ($attachments as $attachment) {
             try {
                 $fileId = (int)$attachment->getFileId();
                 $nodes = $this->rootFolder->getById($fileId);
-                
+
                 if (empty($nodes)) {
-                    continue; 
+                    continue;
                 }
-                
+
                 $file = $nodes[0];
                 $result[] = [
                     'id' => $attachment->getId(),
@@ -372,7 +369,8 @@ class AttachmentService
         }
 
         $this->logger->debug(
-            'Attachment processing', [
+            'Attachment processing',
+            [
                 'inquiryId' => $inquiryId,
                 'groupId' => $groupId,
                 'totalAttachmentsInDb' => count($attachments),
@@ -380,7 +378,7 @@ class AttachmentService
                 'invalidAttachments' => count($attachments) - count($result)
             ]
         );
-        
+
         return $result;
     }
 
@@ -446,12 +444,12 @@ class AttachmentService
             throw new \InvalidArgumentException('Either inquiryId or groupId must be provided');
         }
 
-        $attachments = $inquiryId > 0 
+        $attachments = $inquiryId > 0
             ? $this->attachmentMapper->findByInquiryId($inquiryId)
             : $this->attachmentMapper->findByGroupId($groupId);
-            
+
         $removedCount = 0;
-        
+
         foreach ($attachments as $attachment) {
             try {
                 $this->remove($attachment->getId());
@@ -460,7 +458,7 @@ class AttachmentService
                 $this->logger->error('Failed to remove attachment ' . $attachment->getId() . ': ' . $e->getMessage());
             }
         }
-        
+
         return $removedCount;
     }
 
@@ -470,15 +468,15 @@ class AttachmentService
     public function belongsTo(int $attachmentId, ?int $inquiryId = null, ?int $groupId = null): bool
     {
         $attachment = $this->attachmentMapper->findById($attachmentId);
-        
+
         if ($inquiryId !== null) {
             return $attachment->getInquiryId() === $inquiryId;
         }
-        
+
         if ($groupId !== null) {
             return $attachment->getGroupId() === $groupId;
         }
-        
+
         return false;
     }
 }

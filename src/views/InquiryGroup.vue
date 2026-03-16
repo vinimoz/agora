@@ -12,6 +12,7 @@
           <!-- Home Button -->
           <NcButton 
             type="tertiary"
+            aria-label="t('agora', 'Home')"
             class="breadcrumb-home"
             @click="navigateToHome"
           >
@@ -27,6 +28,7 @@
             <NcButton 
               type="tertiary"
               class="breadcrumb-item"
+              aria-label="t('agora', 'Parent')"
               @click="selectGroup(parent)"
             >
               <div class="breadcrumb-item-content">
@@ -100,7 +102,7 @@
           <div class="section-header">
             <h3>{{ sectionTitle }}</h3>
             <div v-if="currentInquiryGroup && canUserEditGroup(currentInquiryGroup)" class="section-actions">
-              <NcButton class="create-button" @click="createInquiryGroup(currentGroupType)">
+              <NcButton class="create-button" arial-label='' @click="createInquiryGroup(currentGroupType)">
                 ➕ {{ t('agora', 'Create Group') }}
               </NcButton>
             </div>
@@ -258,7 +260,7 @@
   </NcAppContent>
 </template>
 <script setup lang="ts">
-    import { computed, ref, watch, onMounted} from 'vue'
+import { computed, ref, watch, onMounted} from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { t } from '@nextcloud/l10n'
 import { showError, showSuccess } from '@nextcloud/dialogs'
@@ -276,7 +278,7 @@ import type { InquiryGroupType, InquiryGroup } from '../stores/inquiryGroups.typ
 import InquiryGroupViewMiddle from '../components/InquiryGroup/InquiryGroupViewMiddle.vue'
 import InquiryGroupViewMain from '../components/InquiryGroup/InquiryGroupViewMain.vue'
 import { 
-  createPermissionContextForInquiryGroup, 
+  createInquiryGroupContext, 
   canArchive,
   canEdit,
   canDelete,
@@ -296,6 +298,11 @@ const selectedParentId = ref(null)
 const createGroupDlgToggle = ref(false)
 const selectedInquiryGroupTypeForCreation = ref<InquiryGroupType | null>(null)
 
+const groupNotFound = ref(false)
+
+// Create a computed property to check if group should not be found
+const shouldGroupNotFound = computed(() => hasSlug.value && !currentInquiryGroup.value)
+
 // Delete dialog state
 const showDeleteDialog = ref(false)
 const deleteDialogGroup = ref<InquiryGroup | null>(null)
@@ -306,12 +313,16 @@ const hasSlug = computed(() => {
   return slug && slug !== 'none' && slug !== 'undefined' && slug !== ''
 })
 
+function createGroupPermissionContext(group: InquiryGroup) {
+  return createInquiryGroupContext(group)
+}
+
 // Get current group type
 const currentGroupType = computed(() => {
   if (hasSlug.value && currentInquiryGroup.value) {
     return currentInquiryGroup.value.type
   }
-  return inquiryGroupsStore.currentGroupType || 'assembly'
+  return inquiryGroupsStore.currentGroupType || ''
 })
 
 // Get current group if slug exists (SIMPLIFIED)
@@ -328,39 +339,6 @@ const currentInquiryGroup = computed(() => {
 
   return group
 })
-
-
-// Compute whether group was found
-const groupNotFound = computed(() => hasSlug.value && !currentInquiryGroup.value)
-
-
-// Create permission context for a specific group (WITH NULL CHECK)
-function createGroupPermissionContext(group: InquiryGroup | null) {
-  if (!group || !group.owner) {
-    return null
-  }
-
-  const currentUser = sessionStore.currentUser
-  const currentUserId = currentUser?.id || ''
-
-  const isOwner = currentUserId === group.owner.id
-  const isGroupEditor = sessionStore.userStatus.isGroupEditore || group.allowEdit || false
-  const isPublic = group.protected === false || group.protected === 0
-
-  return createPermissionContextForInquiryGroup(
-    group.owner.id,
-    isPublic, 
-    group.deleted > 0,
-    group.group_status === 'archived', 
-    group.owned_group !== null, 
-    group.owned_group ? [group.owned_group] : [], 
-    isGroupEditor || isOwner, 
-    false,                    
-    isGroupEditor,        
-    group.type,          
-    group.owned_group   
-  )
-}
 
 // Helper functions 
 function canUserArchiveGroup(group: InquiryGroup | null): boolean {
@@ -653,7 +631,9 @@ const availableGroups = computed(() => {
 
 // Lifecycle
 onMounted(async () => {
+  isLoading.value = true
   try {
+
     // Load data if needed
     if (inquiryGroupsStore.inquiryGroups.length === 0) {
        await inquiryGroupsStore.fetchAllGroups()
@@ -667,7 +647,7 @@ onMounted(async () => {
     if (hasSlug.value) {
       const slug = route.params.slug as string
       const group = inquiryGroupsStore.bySlug(slug)
-      //currentInquiryGroup.value=group
+      // currentInquiryGroup.value=group
       if (!group) {
         groupNotFound.value = true
       }
@@ -680,9 +660,14 @@ onMounted(async () => {
   }
 })
 
+watch(shouldGroupNotFound, (newValue) => {
+  groupNotFound.value = newValue
+}, { immediate: true })
+
+
 watch(() => route.params.slug, async () => {
   isLoading.value = true
-  groupNotFound.value = false
+  groupNotFound.value =  shouldGroupNotFound.value
 
   if (hasSlug.value) {
     const slug = route.params.slug as string
@@ -706,7 +691,9 @@ watch(() => route.params.slug, async () => {
 
 .inquiry-group-page {
     width: 100%;
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    height: 100%;
+    /* background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); */
+ background: transparent !important;
     min-height: 100vh;
 }
 
@@ -832,7 +819,8 @@ watch(() => route.params.slug, async () => {
                             .group-icon-badge {
                                 width: 60px;
                                 height: 60px;
-                                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                                /* background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); */
+                                background: linear-gradient(135deg, #6C8EB2 0%, #4A6F8F 100%);
                                 border-radius: 15px;
                                 display: flex;
                                 align-items: center;
@@ -870,7 +858,9 @@ watch(() => route.params.slug, async () => {
 
                                     .inquiry-count-badge,
                                     .groups-count-badge {
-                                        background: linear-gradient(135deg, #00b09b, #96c93d);
+                                        /* background: linear-gradient(135deg, #00b09b, #96c93d); */
+                                    background: linear-gradient(135deg, #6C8EB2 0%, #4A6F8F 100%);
+
                                         color: white;
                                         padding: 6px 12px;
                                         border-radius: 15px;
@@ -880,7 +870,8 @@ watch(() => route.params.slug, async () => {
                                     }
 
                                     .groups-count-badge {
-                                        background: linear-gradient(135deg, #667eea, #764ba2);
+                                        /* background: linear-gradient(135deg, #667eea, #764ba2); */
+                                background: linear-gradient(135deg, #6C8EB2 0%, #4A6F8F 100%);
                                     }
                                 }
                             }
@@ -928,13 +919,14 @@ watch(() => route.params.slug, async () => {
                             h3 {
                                 font-size: 24px;
                                 font-weight: 600;
-                                color: #2c3e50;
+                                /* color: #2c3e50; */
+                                color: white;
                                 margin: 0;
                             }
 
                             .section-actions {
                                 .create-button {
-                                    background: linear-gradient(135deg, #00b09b, #96c93d);
+                                        background: linear-gradient(135deg, #6C8EB2 0%, #4A6F8F 100%);
                                     color: white;
                                     font-weight: 600;
                                     padding: 10px 20px;
@@ -1035,7 +1027,9 @@ watch(() => route.params.slug, async () => {
                                 .vignette-icon {
                                     width: 36px;
                                     height: 36px;
-                                    background: linear-gradient(135deg, #667eea, #764ba2);
+                                    /*   background: linear-gradient(135deg, #667eea, #764ba2); */
+                                    background: linear-gradient(135deg, #6C8EB2 0%, #4A6F8F 100%);
+
                                     border-radius: 10px;
                                     display: flex;
                                     align-items: center;
@@ -1094,7 +1088,7 @@ watch(() => route.params.slug, async () => {
                                     .view-group-button {
                                         width: 100%;
                                         justify-content: center;
-                                        background: linear-gradient(135deg, #667eea, #764ba2);
+                                        background: linear-gradient(135deg, #6C8EB2 0%, #4A6F8F 100%);
                                         color: white;
                                         border: none;
                                         padding: 8px;
@@ -1217,7 +1211,8 @@ watch(() => route.params.slug, async () => {
 
                             h3 {
                                 font-size: 20px;
-                                color: #2c3e50;
+                                /*color: #2c3e50;*/
+                                color: white;
                                 margin: 0 0 10px 0;
                             }
 

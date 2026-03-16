@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2024 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -30,7 +31,7 @@ class LocationMapper extends QBMapper
         $qb->select('*')
             ->from($this->getTableName())
             ->where($qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT)));
-        
+
         return $this->findEntity($qb);
     }
 
@@ -43,7 +44,7 @@ class LocationMapper extends QBMapper
         $qb->select('*')
             ->from($this->getTableName())
             ->orderBy('name', 'ASC');
-        
+
         return $this->findEntities($qb);
     }
 
@@ -55,15 +56,15 @@ class LocationMapper extends QBMapper
         $qb = $this->db->getQueryBuilder();
         $qb->select('*')
             ->from($this->getTableName());
-        
+
         if ($parentId === null) {
             $qb->where($qb->expr()->isNull('parent_id'));
         } else {
             $qb->where($qb->expr()->eq('parent_id', $qb->createNamedParameter($parentId, IQueryBuilder::PARAM_INT)));
         }
-        
+
         $qb->orderBy('name', 'ASC');
-        
+
         return $this->findEntities($qb);
     }
 
@@ -71,7 +72,7 @@ class LocationMapper extends QBMapper
     {
         $location = $this->find($id);
         $this->delete($location);
-        
+
         // Delete children recursively
         $this->deleteChildren($id);
     }
@@ -81,6 +82,29 @@ class LocationMapper extends QBMapper
         $children = $this->findByParentId($parentId);
         foreach ($children as $child) {
             $this->deleteById($child->getId());
+        }
+    }
+
+    /**
+     * Find a location by its name
+     *
+     * @param string $name Location name
+     * @return Location|null Location entity or null if not found
+     */
+    public function findByName(string $name): ?Location
+    {
+        $qb = $this->db->getQueryBuilder();
+        $qb->select('*')
+            ->from($this->getTableName())
+            ->where($qb->expr()->eq('name', $qb->createNamedParameter($name, IQueryBuilder::PARAM_STR)));
+
+        try {
+            return $this->findEntity($qb);
+        } catch (\OCP\AppFramework\Db\DoesNotExistException $e) {
+            return null;
+        } catch (\OCP\AppFramework\Db\MultipleObjectsReturnedException $e) {
+            // Return the first one if multiple exist
+            return $this->findEntities($qb)[0] ?? null;
         }
     }
 }

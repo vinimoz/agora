@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -65,7 +66,7 @@ class Comment extends EntityWithUser implements JsonSerializable
         $this->addType('confidential', 'integer');
     }
 
-    public function getRecipientUser() : ?UserBase
+    public function getRecipientUser(): ?UserBase
     {
         if ($this->getRecipient() === '' || $this->getRecipient() === null) {
             return null;
@@ -102,5 +103,4 @@ class Comment extends EntityWithUser implements JsonSerializable
         'recipient' => $this->getRecipientUser(),
         ];
     }
-
 }

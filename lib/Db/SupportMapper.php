@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2024 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -33,8 +34,8 @@ class SupportMapper extends QBMapperWithUser
 
         $qb->select('*')->from($this->getTableName());
 
-	if (!$includeNull) {
-	     $qb->where($qb->expr()->isNotNull('inquiry_id'));
+        if (!$includeNull) {
+             $qb->where($qb->expr()->isNotNull('inquiry_id'));
             //$qb->where($qb->expr()->isNotNull(self::TABLE . '.inquiry_id'));
         }
 
@@ -69,12 +70,13 @@ class SupportMapper extends QBMapperWithUser
         return $this->findEntities($qb);
     }
 
-    public function findSupport(int $inquiryId, string $userId): ?Support
+    public function findSupport(int $inquiryId, string $userId, $optionId): ?Support
     {
         $qb = $this->db->getQueryBuilder();
         $qb->select('*')
             ->from($this->getTableName())
             ->where($qb->expr()->eq('inquiry_id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT)))
+            ->andwhere($qb->expr()->eq('option_id', $qb->createNamedParameter($optionId, IQueryBuilder::PARAM_INT)))
             ->andWhere($qb->expr()->eq('user_id', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR)));
 
         try {
@@ -84,25 +86,27 @@ class SupportMapper extends QBMapperWithUser
         }
     }
 
-    public function addSupport(int $inquiryId, string $userId,int $value): Support
+    public function addSupport(int $inquiryId, string $userId, int $value, int $optionId): Support
     {
         $support = new Support();
         $support->setInquiryId($inquiryId);
         $support->setUserId($userId);
         $support->setValue($value);
+        $support->setOptionId($optionId);
         $support->setCreated(time());
-    
-        $supportHash = hash('sha256', $inquiryId . '_' . $userId);
+
+        $supportHash = hash('sha256', $inquiryId . '_' . $optionId . '_' . $userId);
         $support->setSupportHash($supportHash);
 
         return $this->insert($support);
     }
 
-    public function removeSupport(int $inquiryId, string $userId): bool
+    public function removeSupport(int $inquiryId, string $userId, int $optionId): bool
     {
         $qb = $this->db->getQueryBuilder();
         $qb->delete($this->getTableName())
             ->where($qb->expr()->eq('inquiry_id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT)))
+            ->andwhere($qb->expr()->eq('option_id', $qb->createNamedParameter($optionId, IQueryBuilder::PARAM_INT)))
             ->andWhere($qb->expr()->eq('user_id', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR)));
 
         return $qb->executeStatement() > 0;
@@ -122,7 +126,8 @@ class SupportMapper extends QBMapperWithUser
         $qb = $this->db->getQueryBuilder();
         $qb->select($qb->func()->count('*', 'count'))
             ->from($this->getTableName())
-            ->where($qb->expr()->eq('inquiry_id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT)));
+            ->where($qb->expr()->eq('inquiry_id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT)))
+            ->andwhere($qb->expr()->eq('option_id', $qb->createNamedParameter(0, IQueryBuilder::PARAM_INT)));
 
         $result = $qb->executeQuery()->fetch();
         return (int) ($result['count'] ?? 0);

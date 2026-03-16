@@ -24,10 +24,9 @@ import {
   getInquiryGroupTypeData,
 } from '../helpers/modules/InquiryHelper.ts'
 
-defineProps<{
+const { slug } = defineProps<{
   slug?: string
 }>()
-
 
 
 const preferencesStore = usePreferencesStore()
@@ -50,7 +49,11 @@ const availableGroups = computed(() => {
 })
 
 // State for selected family
-const selectedFamily = ref<string | null>(inquiriesStore.familyType || null)
+const selectedFamily = computed({
+  get: () => inquiriesStore.advancedFilters.familyType || null,
+  set: (value) => inquiriesStore.setFamilyType(value || '')
+})
+
 
 // Computed for all inquiry group types (root types only)
 const allInquiryGroupTypes = computed((): InquiryGroupType[] => {
@@ -69,7 +72,20 @@ const filteredInquiryGroupTypes = computed(() => {
 })
 
 // Get inquiry groups from store
-const inquiryGroups = computed(() => inquiryGroupsStore.inquiryGroups)
+const inquiryGroups = computed(() => {
+  const allGroups = inquiryGroupsStore.inquiryGroups || []
+
+  // If no family selected, return all groups
+  if (!selectedFamily.value) return allGroups
+  // Filter groups by the selected family
+  // This assumes groups have a 'family' or 'familyType' property
+  return allGroups.filter(group =>
+    group.family === selectedFamily.value ||
+    group.familyType === selectedFamily.value ||
+    group.family_type === selectedFamily.value // adjust based on your actual property name
+  )
+})
+
 
 // Get inquiry group type data (icon, label, description)
 function getInquiryGroupTypeDisplayData(inquiryGroupType: InquiryGroupType) {
@@ -85,9 +101,13 @@ function selectGroupType(inquiryGroupType) {
   // update store
   inquiryGroupsStore.setCurrentGroupType(inquiryGroupType.group_type)
   // navigate with hidden state
+  let navslug
+  if (slug) { navslug=slug }
+  else {  navslug='' }
+
   router.push({
     name: 'group-list',
-    // params: { slug: '' },
+     params: { slug: navslug },
   })
 }
 
@@ -130,38 +150,6 @@ function handleGroupUpdate(groups: string[]) {
   selectedGroups.value = groups
 }
 
-// Group inquiry groups by their type (non-archived only)
-const inquiryGroupsByType = computed(() => {
-  const groupsByType: Record<string, InquiryGroupType[]> = {}
-  
-  filteredInquiryGroupTypes.value.forEach(groupType => {
-    const groupsOfType = inquiryGroups.value.filter(group => 
-      (group.type === groupType.group_type || group.group_type === groupType.group_type) &&
-      group.groupStatus !== "archived"
-    )
-    groupsByType[groupType.group_type] = groupsOfType
-  })
-  
-  return groupsByType
-})
-
-// Group archived inquiry groups by their type
-const archivedInquiryGroupsByType = computed(() => {
-  const groupsByType: Record<string, InquiryGroupType[]> = {}
-  
-  filteredInquiryGroupTypes.value.forEach(groupType => {
-    const groupsOfType = inquiryGroups.value.filter(group => 
-      (group.type === groupType.group_type || group.group_type === groupType.group_type) &&
-      group.groupStatus === "archived"
-    )
-    if (groupsOfType.length > 0) {
-      groupsByType[groupType.group_type] = groupsOfType
-    }
-  })
-  
-  return groupsByType
-})
-
 // Check if there are any archived groups
 const hasArchivedGroups = computed(() => Object.values(archivedInquiryGroupsByType.value).some(groups => groups.length > 0))
 
@@ -178,6 +166,51 @@ watch(
 function showSettings() {
   showError(t('agora', 'Settings functionality not implemented yet'))
 }
+
+// Group inquiry groups by their type (non-archived only)
+const inquiryGroupsByType = computed(() => {
+  const groupsByType: Record<string, InquiryGroupType[]> = {}
+
+  filteredInquiryGroupTypes.value.forEach(groupType => {
+    const groupsOfType = inquiryGroups.value.filter(group =>
+      (group.type === groupType.group_type || group.group_type === groupType.group_type) &&
+      group.groupStatus !== "archived"
+    )
+    groupsByType[groupType.group_type] = groupsOfType
+  })
+
+  return groupsByType
+})
+
+   
+// Function to clear family selection
+function clearFamilySelection() {
+  inquiriesStore.setFamilyType('')
+  selectedFamily.value = null
+  router.push({ 
+    name: 'menu',
+    query: { viewMode: viewMode.value }
+  })     
+}       
+
+
+// Group archived inquiry groups by their type
+const archivedInquiryGroupsByType = computed(() => {
+  const groupsByType: Record<string, InquiryGroupType[]> = {}
+
+  filteredInquiryGroupTypes.value.forEach(groupType => {
+    const groupsOfType = inquiryGroups.value.filter(group =>
+      (group.type === groupType.group_type || group.group_type === groupType.group_type) &&
+      group.groupStatus === "archived"
+    )
+    if (groupsOfType.length > 0) {
+      groupsByType[groupType.group_type] = groupsOfType
+    }
+  })
+
+  return groupsByType
+})
+
 </script>
 
 <template>
@@ -272,6 +305,25 @@ function showSettings() {
           {{ t('agora', 'Quick Actions') }}
       </h3>
 
+        <NcAppNavigationItem
+          :name="t('agora', 'Home')"
+          :to="{
+               name: 'menu',
+               params: { },
+               query: { }
+               }"
+          :exact="true"
+          class="navigation-item"
+          @click="clearFamilySelection"
+        >
+              <template #icon>
+         <component
+            :is="NavigationIcons.Home"
+        />
+        </template>
+      </NcAppNavigationItem>
+
+
       <NcAppNavigationItem
               :name="viewMode === 'create'
                      ? t('agora', 'Create')
@@ -287,12 +339,12 @@ function showSettings() {
               >
               <template #icon>
     <component
-        v-if="viewMode === 'create'"
         :is="NavigationIcons.Plus"
+        v-if="viewMode === 'create'"
     />
     <component
-        v-else
         :is="NavigationIcons.View"
+        v-else
     />
 </template>
       </NcAppNavigationItem>

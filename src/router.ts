@@ -129,6 +129,7 @@ const routes: RouteRecordRaw[] = [
     props: true,
     meta: {
 	    listPage: true,
+        noReload: true,
     },
   },
    {
@@ -186,6 +187,19 @@ const routes: RouteRecordRaw[] = [
 	  },
   },
   {
+      name: 'page',
+      path: '/page/inquiry/:id',
+      components: {
+          default: InquiryView,
+          navigation: Navigation,
+          sidebar: SideBar,
+      },
+      props: true,
+      meta: {
+          inquiryPage: true,
+      },
+  },
+  {
 	  name: 'inquiry',
 	  path: '/inquiry/:id',
 	  components: {
@@ -231,6 +245,13 @@ router.beforeEach(async (to: RouteLocationNormalized, from: RouteLocationNormali
 	let forceReload = false
 
 
+/*        console.group('Router Navigation to:', to.path)
+        console.log('Route name:', to.name)
+        console.log('Route params:', to.params)
+        console.log('Session store exists:', !!sessionStore)
+*/
+
+
 	// if the previous and the requested routes have the same name and
 	// the watcher is active, we can do a cheap loading
 	const cheapLoading =
@@ -242,23 +263,31 @@ router.beforeEach(async (to: RouteLocationNormalized, from: RouteLocationNormali
 		forceReload = true
 	}
      
-	// first load app context -> session and preferences
-	try {
-		await loadContext(to, cheapLoading, forceReload)
-	} catch (error) {
-		Logger.error('Could not load context', { error })
+    // first load app context -> session and preferences
+    try {
+        await loadContext(to, cheapLoading, forceReload)
 
-		if (!sessionStore.userStatus.isLoggedin) {
-			// if the user is not logged in, redirect to the login page
-			window.location.replace(generateUrl('login'))
-			return false
-		}
+    } catch (error) {
+        Logger.error('Could not load context', { error })
+        
+        if (to.name === 'inquiry') {
+            Logger.warn('Allowing navigation to inquiry despite context error')
+            return true
+        }
+        
 
-		// if context can't be loaded, redirect to not found page
-		return {
-			name: 'notfound',
-		}
-	}
+        if (!sessionStore.userStatus.isLoggedin) {
+            // if the user is not logged in, redirect to the login page
+            window.location.replace(generateUrl('login'))
+            return false
+        }
+
+        // if context can't be loaded, redirect to not found page
+        return {
+            name: 'notfound',
+        }
+    }
+    return true
 })
 
 export { router }

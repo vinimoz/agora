@@ -6,7 +6,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import {
-  CardAddSuggestions,
   CardClosedInquiry,
   CardLimitedInquiries,
   CardLocked,
@@ -24,6 +23,7 @@ const optionsStore = useOptionsStore()
 const sharesStore = useSharesStore()
 const sessionStore = useSessionStore()
 
+
 const showUnpublishedInquiryCard = computed(
   () =>
     inquiryStore.configuration.access === 'private' &&
@@ -31,13 +31,13 @@ const showUnpublishedInquiryCard = computed(
     inquiryStore.permissions.edit &&
     optionsStore.options.length
 )
-const showAddSuggestionsCard = computed(
+/* const showAddSuggestionsCard = computed(
   () =>
     inquiryStore.permissions.addOptions && inquiryStore.isSuggestionOpen && !inquiryStore.isClosed
-)
+) */
 const showClosedCard = computed(() => inquiryStore.isClosed && !showSendConfirmationsCard.value)
 const showSendConfirmationsCard = computed(
-  () => inquiryStore.permissions.edit && inquiryStore.isClosed && optionsStore.confirmed.length > 0
+  () => inquiryStore.permissions.edit && inquiryStore.isClosed
 )
 const showLimitCard = computed(
   () =>
@@ -62,7 +62,6 @@ const showRegisterCard = computed(
     <CardUnpublishedInquiry v-if="showUnpublishedInquiryCard" :key="0" />
     <CardClosedInquiry v-if="showClosedCard" :key="3" />
     <CardLocked v-if="inquiryStore.currentUserStatus.isLocked" :key="5" />
-    <CardAddSuggestions v-if="showAddSuggestionsCard" :key="1" />
     <CardSendConfirmations v-if="showSendConfirmationsCard" :key="4" />
     <CardRegister v-if="showRegisterCard" :key="6" />
   </TransitionGroup>

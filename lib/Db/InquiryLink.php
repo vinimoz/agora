@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -53,7 +54,6 @@ class InquiryLink extends EntityWithUser implements JsonSerializable
         $this->addType('metadata', 'string');
         $this->addType('sortOrder', 'integer');
         $this->addType('createdBy', 'integer');
-
     }
 
     /**

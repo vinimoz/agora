@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2024 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -15,7 +16,6 @@ use OCA\Agora\Db\InquiryMapper;
 
 class SupportService
 {
-
     public function __construct(
         private InquiryMapper $inquiryMapper,
         private SupportMapper $supportMapper
@@ -34,12 +34,17 @@ class SupportService
     /**
      * @return Support[]
      */
-    public function list(int $inquiryId): array
+    public function list(int $inquiryId, bool $wRoles = true): array
     {
         try {
+            if ($wroles) {
             $this->inquiryMapper
-                ->get($inquiryId, withRoles: true)
+                ->get($inquiryId, withRoles: $wRoles)
                 ->request(Inquiry::PERMISSION_SUPPORT_ADD);
+            }
+            else {
+              $this->inquiryMapper->get($inquiryId, withRoles: $wRoles);
+            }
         } catch (Exception $e) {
             return [];
         }
@@ -60,28 +65,27 @@ class SupportService
         return $this->supportMapper->findSupport($inquiryId, $userId);
     }
 
-    public function addSupport(int $inquiryId, string $userId, int $value): Support
+    public function addSupport(int $inquiryId, string $userId, int $value, int $optionId): Support
     {
         // Check if support already exists
-        $existing = $this->supportMapper->findSupport($inquiryId, $userId);
+        $existing = $this->supportMapper->findSupport($inquiryId, $userId, $optionId);
         if ($existing !== null) {
             return $existing;
         }
-        return $this->supportMapper->addSupport($inquiryId, $userId, $value);
+        return $this->supportMapper->addSupport($inquiryId, $userId, $value, $optionId);
     }
-    
-    public function updateSupport(int $inquiryId, string $userId, int $value): Support
+
+    public function updateSupport(int $inquiryId, string $userId, int $value, int $optionId): Support
     {
         // Check if support already exists
-        $existing = $this->supportMapper->findSupport($inquiryId, $userId);
+        $existing = $this->supportMapper->findSupport($inquiryId, $userId, $optionId);
         $existing->setValue($value);
         return $this->supportMapper->update($existing);
-
     }
 
-    public function removeSupport(int $inquiryId, string $userId): bool
+    public function removeSupport(int $inquiryId, string $userId, int $optionId): bool
     {
-        return $this->supportMapper->removeSupport($inquiryId, $userId);
+        return $this->supportMapper->removeSupport($inquiryId, $userId, $optionId);
     }
 
     public function removeAllSupportForInquiry(int $inquiryId): int
@@ -91,7 +95,7 @@ class SupportService
 
     public function generateHash(Support $support): string
     {
-        return hash('sha256', $support->getInquiryId() . '|' . $support->getUserId());
+        return hash('sha256', $support->getInquiryId() . '|' . $support->getUserId() . '|' . $support->getOptionId());
     }
 
 
@@ -104,5 +108,4 @@ class SupportService
     {
         return $this->supportMapper->countByUser($userId);
     }
-    
 }

@@ -1,13 +1,13 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2020 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
 declare(strict_types=1);
-
 
 namespace OCA\Agora\Provider;
 
@@ -24,7 +24,7 @@ use OCP\Search\SearchResult;
 class SearchProvider implements IProvider
 {
     /**
-     * @psalm-suppress PossiblyUnusedMethod 
+     * @psalm-suppress PossiblyUnusedMethod
      */
     public function __construct(
         private IL10N $l10n,
@@ -53,13 +53,15 @@ class SearchProvider implements IProvider
                 'object' => $inquiry,
                 'entry' => new InquiriesSearchResultEntry($inquiry)
                 ];
-            }, $inquiries
+            },
+            $inquiries
         );
 
         $resultEntries = array_map(
             function (array $result) {
                 return $result['entry'];
-            }, $results
+            },
+            $results
         );
 
         return SearchResult::complete(
@@ -70,7 +72,7 @@ class SearchProvider implements IProvider
 
     public function getOrder(string $route, array $routeParameters): int
     {
-        if (in_array(strtolower($route), [AppConstants::APP_ID . '.page.indexindex', AppConstants::APP_ID . '.page.support'])) {
+        if (in_array(strtolower($route), [AppConstants::APP_ID . '.page.indexindex', AppConstants::APP_ID . '.page.inquiry'])) {
             return -5;
         }
         return 51;

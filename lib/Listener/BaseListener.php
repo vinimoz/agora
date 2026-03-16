@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2021 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -20,6 +21,7 @@ use OCA\Agora\Service\ActivityService;
 use OCA\Agora\Service\LogService;
 use OCA\Agora\Service\NotificationService;
 use OCA\Agora\Service\InquiryService;
+use OCA\Agora\Service\OptionService;
 use OCA\Agora\Service\WatchService;
 use OCP\BackgroundJob\IJobList;
 use OCP\DB\Exception;
@@ -37,7 +39,7 @@ abstract class BaseListener implements IEventListener
     protected const WATCH_TABLES = [];
 
     /**
-     * @psalm-suppress PossiblyUnusedMethod 
+     * @psalm-suppress PossiblyUnusedMethod
      */
     public function __construct(
         protected ActivityService $activityService,
@@ -47,10 +49,11 @@ abstract class BaseListener implements IEventListener
         protected NotificationService $notificationService,
         protected WatchService $watchService,
         protected InquiryService $inquiryService,
+        protected OptionService $optionService,
     ) {
     }
 
-    public function handle(Event $event) : void
+    public function handle(Event $event): void
     {
         $this->event = $event;
         try {
@@ -59,7 +62,6 @@ abstract class BaseListener implements IEventListener
             $this->updateLastInteraction();
             $this->addLog();
             $this->addActivity();
-
         } catch (InvalidClassException $e) {
             return;
         } catch (OCPEventException $e) {
@@ -92,7 +94,7 @@ abstract class BaseListener implements IEventListener
      *
      * @throws InvalidClassException
      */
-    protected function checkClass() : void
+    protected function checkClass(): void
     {
         throw new InvalidClassException('child class must be checked in child class');
     }
@@ -100,7 +102,8 @@ abstract class BaseListener implements IEventListener
     protected function updateLastInteraction(): void
     {
         // Update last interaction, exept event is one of the of excluded events
-        if ($this->event instanceof InquiryOwnerChangeEvent
+        if (
+            $this->event instanceof InquiryOwnerChangeEvent
             || $this->event instanceof InquiryExpiredEvent
             || $this->event instanceof InquiryDeletedEvent
             || $this->event instanceof InquiryArchivedEvent
@@ -114,7 +117,7 @@ abstract class BaseListener implements IEventListener
      *
      * @throws Exception
      */
-    protected function addLog() : void
+    protected function addLog(): void
     {
         if (!($this->event instanceof BaseEvent)) {
             return;
@@ -131,7 +134,7 @@ abstract class BaseListener implements IEventListener
     /**
      * No default, define in child class
      */
-    protected function createNotification() : void
+    protected function createNotification(): void
     {
         return;
     }
@@ -139,7 +142,7 @@ abstract class BaseListener implements IEventListener
     /**
      * No default, define in child class
      */
-    protected function addCronJob() : void
+    protected function addCronJob(): void
     {
         return;
     }
@@ -147,7 +150,7 @@ abstract class BaseListener implements IEventListener
     /**
      * Return the inquiry id
      */
-    protected function getInquiryId() : int
+    protected function getInquiryId(): int
     {
         if (($this->event instanceof BaseEvent)) {
             return $this->event->getInquiryId();
@@ -158,9 +161,10 @@ abstract class BaseListener implements IEventListener
     /**
      * Default for activity notification.
      */
-    protected function addActivity() : void
+    protected function addActivity(): void
     {
-        if (($this->event instanceof BaseEvent)
+        if (
+            ($this->event instanceof BaseEvent)
             && $this->appSettings->getUseActivity()
             && boolval($this->event->getActivityType())
             && boolval($this->event->getActivityObjectType())
@@ -173,7 +177,7 @@ abstract class BaseListener implements IEventListener
      * Default for watch
      * Tables to watch are defined in WATCH_TABLES
      */
-    protected function writeWatch() : void
+    protected function writeWatch(): void
     {
         if (!($this->event instanceof BaseEvent)) {
             return;

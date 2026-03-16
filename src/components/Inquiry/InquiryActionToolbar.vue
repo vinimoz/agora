@@ -4,14 +4,13 @@
 -->
 <script setup lang="ts">
 import { watch, ref, computed, nextTick } from 'vue' 
-import { AccessType , useInquiryStore } from '../../stores/inquiry'
+import { useInquiryStore } from '../../stores/inquiry'
 import { useInquiriesStore } from '../../stores/inquiries.ts'
 import { useSessionStore } from '../../stores/session.ts'
 import { t } from '@nextcloud/l10n'
 import { showSuccess, showError } from '@nextcloud/dialogs'
 import {
   getInquiryTypeData,
-  isInquiryFinalStatus
 } from '../../helpers/modules/InquiryHelper.ts'
 
 import NcButton from '@nextcloud/vue/components/NcButton'
@@ -25,8 +24,7 @@ import {
   canViewToggle,
   getAvailableResponseTypesWithPermissions,
   getAvailableTransformTypesWithPermissions,
-  createPermissionContextForContent,
-  ContentType,
+  createInquiryContext,
 } from '../../utils/permissions.ts'
 
 // Props
@@ -34,7 +32,7 @@ const props = defineProps<{
   inquiryStore: useInquiryStore
   sessionStore: useSessionStore
   isSaving?: boolean
-  isReadonlyDescription?: boolean
+  isReadonly?: boolean
 }>()
 
 const inquiriesStore = useInquiriesStore()
@@ -47,26 +45,9 @@ const emit = defineEmits<{
   allowedTransformation: [transformType: string]
 }>()
 
+
 // Context for permissions
-const context = computed(() => {
-  const ctx = createPermissionContextForContent(
-    ContentType.Inquiry,
-    props.inquiryStore.owner.id,
-    props.inquiryStore.configuration.access === 'public',
-    props.inquiryStore.status.isLocked,
-    props.inquiryStore.status.isExpired,
-    props.inquiryStore.status.deletionDate > 0,
-    props.inquiryStore.status.isArchived,
-    props.inquiryStore.inquiryGroups.length > 0,
-    props.inquiryStore.inquiryGroups,
-    props.inquiryStore.type,
-    props.inquiryStore.family, 
-    props.inquiryStore.configuration.access as AccessType,
-    isInquiryFinalStatus(props.inquiryStore,props.sessionStore.appSettings),
-    props.inquiryStore.status.moderationStatus 
-  )
-  return ctx
-})
+const context = computed(() => createInquiryContext(props.inquiryStore, props.sessionStore.appSettings))
 
 const selectedStatus = ref(props.inquiryStore.status.moderationStatus || 'pending')
 
@@ -186,7 +167,7 @@ const getStatusColor = (status: string) => {
   }
 }
 
-const canEditInquiry = computed(() => !props.isReadonlyDescription)
+const canEditInquiry = computed(() => !props.isReadonly)
 
 // Check if save button should be shown
 const showSaveButton = computed(() => canEditInquiry.value)

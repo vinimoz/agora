@@ -12,11 +12,12 @@ const supports = {
    * @param inquiryId The inquiry ID to support
    * @param userId
    * @param value
+   * @param optionId
    */
-  addSupport(inquiryId: number, userId: string,value: number): Promise<AxiosResponse<{ support: boolean }>> {
+  addSupport(inquiryId: number, userId: string,value: number,optionId: number): Promise<AxiosResponse<{ support: boolean }>> {
     return httpInstance.request({
       method: 'POST',
-      url: `inquiry/support/${inquiryId}/${userId}/${value}`,
+      url: `inquiry/support/${inquiryId}/${userId}/${value}/${optionId}`,
       cancelToken: cancelTokenHandlerObject[this.addSupport.name].handleRequestCancellation().token,
     })
   },
@@ -26,11 +27,12 @@ const supports = {
    * @param inquiryId The inquiry ID to support
    * @param userId
    * @param value
+   * @param optionId
    */
-  updateSupport(inquiryId: number, userId: string,value: number): Promise<AxiosResponse<{ support: boolean }>> {
+  updateSupport(inquiryId: number, userId: string,value: number,optionId: number): Promise<AxiosResponse<{ support: boolean }>> {
     return httpInstance.request({
       method: 'PUT',
-      url: `inquiry/support/${inquiryId}/${userId}/${value}`,
+      url: `inquiry/support/${inquiryId}/${userId}/${value}/${optionId}`,
       cancelToken: cancelTokenHandlerObject[this.addSupport.name].handleRequestCancellation().token,
     })
   },
@@ -42,11 +44,12 @@ const supports = {
    * Remove support for an inquiry
    * @param inquiryId The inquiry ID to remove support from
    * @param userId
+   * @param optionId
    */
-  removeSupport(inquiryId: number, userId: string): Promise<AxiosResponse<{ support: boolean }>> {
+  removeSupport(inquiryId: number, userId: string,optionId: number): Promise<AxiosResponse<{ support: boolean }>> {
     return httpInstance.request({
       method: 'DELETE',
-      url: `inquiry/support/${inquiryId}/${userId}`,
+      url: `inquiry/support/${inquiryId}/${userId}/${optionId}`,
       cancelToken:
         cancelTokenHandlerObject[this.removeSupport.name].handleRequestCancellation().token,
     })

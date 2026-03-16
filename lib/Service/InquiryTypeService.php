@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -68,7 +69,8 @@ class InquiryTypeService
         ?string $description = null,
         ?string $fields = null,
         ?string $allowedResponse = null,
-        ?string $allowedTransformation = null
+        ?string $allowedTransformation = null,
+        ?string $allowedOptionType = null
     ): InquiryType {
         if ($this->inquiryTypeExists($inquiryType)) {
             throw new \InvalidArgumentException('Inquiry type already exists');
@@ -82,6 +84,7 @@ class InquiryTypeService
         $type->setFields($fields);
         $type->setAllowedResponse($allowedResponse);
         $type->setAllowedTransformation($allowedTransformation);
+        $type->setAllowedOptionType($allowedOptionType);
         $type->setCreated(time());
 
         return $this->inquiryTypeMapper->insert($type);
@@ -96,7 +99,8 @@ class InquiryTypeService
         ?string $description = null,
         ?string $fields = null,
         ?string $allowedResponse = null,
-        ?string $allowedTransformation = null
+        ?string $allowedTransformation = null,
+        ?string $allowedOptionType = null
     ): InquiryType {
         $type = $this->find($id);
         $type->setInquiryType($inquiryType);
@@ -107,6 +111,7 @@ class InquiryTypeService
         $type->setFields($fields);
         $type->setAllowedResponse($allowedResponse);
         $type->setAllowedTransformation($allowedTransformation);
+        $type->setAllowedOptionType($allowedOptionType);
 
         return $this->inquiryTypeMapper->update($type);
     }
