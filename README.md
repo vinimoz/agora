@@ -101,7 +101,7 @@ Install directly from the [Nextcloud App Store](https://apps.nextcloud.com/apps/
 
 | Family | Creation | Edit Inquiry | Edit Group | Group view | Group view 2 | Inquiry Type | Grid View | List View | Option Debate | Option Tree | Template 
 |:------:|:--------:|:------------:|:----------:|:----------:|:------------:|:------------:|:---------:|:---------:|:-------------:|:-----------:|:--------:|
-| ![Family](screenshots/Family.png) | ![Creation](screenshots/Creation.png) | ![Edit Inquiry](screenshots/EditInquiry.png) | ![Edit Group](screenshots/EditGroup.png) | ![Group view](screenshots/GroupView.png) |![Group view](screenshots/GroupView2.png) | ![Inquiry Type](screenshots/SettingInquiryType.png) | ![Grid](screenshots/Grid.png) | ![List](screenshots/ListView.png)  | ![Settings](screenshots/OptionTemplate.png) | ![Settings Inquiry](screenshots/OptionTree.png) | ![Template](screenshots/Template.png)
+| ![Family](screenshots/Family.png) | ![Creation](screenshots/Creation.png) | ![Edit Inquiry](screenshots/EditInquiry.png) | ![Edit Group](screenshots/EditGroup.png) | ![Group view](screenshots/GroupView.png) |![Group view](screenshots/GroupView2.png) | ![Inquiry Type](screenshots/SettingInquiryType.png) | ![Grid](screenshots/Grid.png) | ![List](screenshots/ListView.png)  | ![Settings](screenshots/OptionDebate.png) | ![Settings Inquiry](screenshots/OptionTree.png) | ![Template](screenshots/Template.png)
 
 ---
 
