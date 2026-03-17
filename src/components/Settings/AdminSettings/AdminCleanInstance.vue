@@ -47,7 +47,7 @@ async function runCleanInstanceJob() {
     }
 
     cleanInstance.value.disabled = true
-    cleanInstance.value.text = t('agora', 'Cleaning instance...')
+    cleanInstance.value.text = t('agora', 'Cleaning instance …')
     
     await AdminAPI.cleanInstance()
     

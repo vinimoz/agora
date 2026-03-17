@@ -93,7 +93,7 @@
         <!-- Loading State -->
         <div v-if="isLoading" class="loading-state">
             <div class="spinner"></div>
-            <p>{{ t('agora', 'Loading...') }}</p>
+            <p>{{ t('agora', 'Loading …') }}</p>
         </div>
 
         <!-- Content when loaded -->

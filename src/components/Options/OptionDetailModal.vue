@@ -13,7 +13,7 @@
             <!-- Loading state -->
             <div v-if="isLoading" class="loading-state">
                 <NcLoadingIcon :size="48" />
-                <p>{{ t('agora', 'Loading option details...') }}</p>
+                <p>{{ t('agora', 'Loading option details …') }}</p>
             </div>
 
             <!-- Error state -->

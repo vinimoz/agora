@@ -675,7 +675,7 @@ const previewOption = computed((): Option => {
     parentId: props.parentId || 0,
     type: props.optionType || '',
     title: formData.value.title || t('agora', 'Preview Title'),
-    text: formData.value.text || t('agora', 'Preview text...'),
+    text: formData.value.text || t('agora', 'Preview text …'),
     textSafe: '',
     sortOrder: 0,
     configuration: {

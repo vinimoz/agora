@@ -292,14 +292,14 @@ watch(() => editableData.value, () => {
 		</div>
 
 		<div v-if="!editableData" class="loading-state">
-			<p>{{ t('agora', 'Preparing template data...') }}</p>
+			<p>{{ t('agora', 'Preparing template data …') }}</p>
 		</div>
 
 		<div v-else class="preview-content">
 			<!-- Duplicate Analysis Loading -->
 			<div v-if="isAnalyzing" class="analysis-loading">
 				<NcLoadingIcon :size="32" />
-				<p>{{ t('agora', 'Analyzing template for duplicates...') }}</p>
+				<p>{{ t('agora', 'Analyzing template for duplicates …') }}</p>
 			</div>
 
 			<!-- Analysis Error -->
