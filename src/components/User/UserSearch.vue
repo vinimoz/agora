@@ -27,7 +27,7 @@ const emit = defineEmits(['userSelected'])
 const model = defineModel<User | undefined>()
 
 const {
-  placeholder = t('agora', 'Type to start searching '),
+  placeholder = t('agora', 'Type to start searching'),
   ariaLabel = t('agora', 'Select users'),
   searchTypes = [99],
   closeOnSelect = false,

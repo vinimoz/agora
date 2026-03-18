@@ -118,7 +118,7 @@ watch(() => typeRights.value.supportInquiry, (enabled) => {
                             {{ t('agora', 'Simple mode') }}
                     </NcCheckboxRadioSwitch>
                     <p class="mode-description">
-                    {{ t('agora', 'Users can support or not support') }}
+                    {{ t('agora', 'People can support or not support') }}
                     </p>
                 </div>
 
@@ -133,7 +133,7 @@ watch(() => typeRights.value.supportInquiry, (enabled) => {
                             {{ t('agora', 'Ternary mode') }}
                     </NcCheckboxRadioSwitch>
                     <p class="mode-description">
-                    {{ t('agora', 'Users can support, be neutral, or oppose') }}
+                    {{ t('agora', 'People can support, be neutral, or oppose') }}
                     </p>
                 </div>
             </div>

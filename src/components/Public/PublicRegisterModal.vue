@@ -74,7 +74,7 @@ const loginLink = computed(() => {
 
 const userNameHint = computed(() => {
   if (checkStatus.value.userName === 'checking') {
-    return t('agora', 'Checking name ')
+    return t('agora', 'Checking name')
   }
   if (checkStatus.value.userName === 'empty') {
     return t('agora', 'A name is required')
@@ -89,7 +89,7 @@ const userNameHint = computed(() => {
 
 const emailAddressHint = computed(() => {
   if (emailGeneratedStatus.value === 'checking') {
-    return t('agora', 'Checking email address ')
+    return t('agora', 'Checking email address')
   }
   if (emailGeneratedStatus.value === 'mandatory') {
     return t('agora', 'An email address is required')
@@ -330,7 +330,7 @@ async function submitRegistration(): Promise<void> {
           </template>
         </NcButton>
         <div>
-          {{ t('inquiries', 'You can also log in and participate with your regular account.') }}
+          {{ t('agora', 'You can also log in and participate with your regular account.') }}
         </div>
         <div>
           {{ t('agora', 'Otherwise participate as a guest participant') }}

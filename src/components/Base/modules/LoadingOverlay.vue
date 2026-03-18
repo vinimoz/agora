@@ -12,7 +12,7 @@ const description = ref(t('agora', 'Please wait'))
 
 const {
   show = false,
-  name = t('agora', 'Loading '),
+  name = t('agora', 'Loading'),
   loadingTexts = '',
   teleportTo = '#content-vue',
 } = defineProps<{

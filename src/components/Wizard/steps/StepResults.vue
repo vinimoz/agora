@@ -90,7 +90,7 @@ const closeWizard = () => {
 				{{ t('agora', 'Go to Agora') }}
 			</NcButton>
 			<NcButton type="secondary" @click="goToSettings">
-				{{ t('agora', 'Admin Settings') }}
+				{{ t('agora', 'Administration Settings') }}
 			</NcButton>
 			<NcButton type="tertiary" @click="closeWizard">
 				{{ t('agora', 'Close') }}
