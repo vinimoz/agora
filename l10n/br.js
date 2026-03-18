@@ -59,7 +59,6 @@ OC.L10N.register(
     "Never" : "James",
     "Change" : "Cheñch",
     "Expiration" : "Termen",
-    "Saving..." : "Oc'h enroliñ ...",
     "File" : "Restr",
     "Delete file" : "Dilemel ar restr",
     "Change name" : "Cheñch env",

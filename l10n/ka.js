@@ -144,6 +144,7 @@ OC.L10N.register(
     "Failed to save settings" : "Failed to save settings",
     "Never" : "Never",
     "Change" : "Change",
+    "Saving …" : "Saving …",
     "Poll" : "Poll",
     "File" : "ფაილი",
     "Deck" : "Deck",
