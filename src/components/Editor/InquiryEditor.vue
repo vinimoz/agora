@@ -324,7 +324,7 @@
               <NcAssistantButton 
                 :disabled="!aiPrompt.trim() || aiLoading"
                 @click="generateWithAI">
-                {{ aiLoading ? t('agora', 'Generating…') : t('agora', 'Generate') }}
+                {{ aiLoading ? t('agora', 'Generating …') : t('agora', 'Generate') }}
               </NcAssistantButton>
               <NcButton 
                 v-if="aiGeneratedContent"

@@ -611,7 +611,7 @@ const handleTitleInput = () => {
 
                         <div v-if="isLoading" class="loading-state">
                             <div class="loading-spinner"></div>
-                            <span>{{ t('agora', 'Loading your {resource}...', { resource: getResourceNameLower(currentResourceType) }) }}</span>
+                            <span>{{ t('agora', 'Loading your {resource} …', { resource: getResourceNameLower(currentResourceType) }) }}</span>
                         </div>
 
                         <div v-else-if="hasResources" class="select-wrapper">
@@ -620,7 +620,7 @@ const handleTitleInput = () => {
                                     v-model="selectedResource"
                                     :options="resourceOptions"
                                     :clearable="true"
-                                    :placeholder="t('agora', 'Select a {resource}...', { resource: getResourceNameLower(currentResourceType) })"
+                                    :placeholder="t('agora', 'Select a {resource} …', { resource: getResourceNameLower(currentResourceType) })"
                                     :disabled="isCreating"
                                     label="label"
                                     @update:model-value="handleSelectChange"

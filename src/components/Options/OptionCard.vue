@@ -141,7 +141,7 @@
                   <span class="child-title">{{ child.title || child.text?.substring(0, 30) }}</span>
                 </div>
                 <div v-if="childCounts[responseType] > 3" class="tooltip-more">
-                  {{ t('agora', 'and {count} more...', { count: childCounts[responseType] - 3 }) }}
+                  {{ t('agora', 'and {count} more …', { count: childCounts[responseType] - 3 }) }}
                 </div>
               </div>
             </div>
@@ -190,7 +190,7 @@
                     <span class="child-title">{{ child.title || child.text?.substring(0, 30) }}</span>
                   </div>
                   <div v-if="childCounts[responseType] > 3" class="tooltip-more">
-                    {{ t('agora', 'and {count} more...', { count: childCounts[responseType] - 3 }) }}
+                    {{ t('agora', 'and {count} more …', { count: childCounts[responseType] - 3 }) }}
                   </div>
                 </div>
               </div>
