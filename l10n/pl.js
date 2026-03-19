@@ -108,7 +108,6 @@ OC.L10N.register(
     "Redo" : "Powtórzenie",
     "Preview" : "Podgląd",
     "Summary" : "Podsumowanie",
-    "Generating…" : "Generowanie…",
     "Generate" : "Wygeneruj",
     "Pending" : "Oczekujące",
     "Rejected" : "Odrzucone",

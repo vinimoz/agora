@@ -36,7 +36,6 @@ OC.L10N.register(
     "Undo" : "Назад",
     "Redo" : "Напред",
     "Summary" : "Резиме",
-    "Generating…" : "Се генерира…",
     "Pending" : "Чекање",
     "Save" : "Сними",
     "Failed to upload {file}" : "Неуспешно прикачување {file}",

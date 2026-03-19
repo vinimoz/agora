@@ -117,7 +117,6 @@ OC.L10N.register(
     "Redo" : "Gör om",
     "Preview" : "Förhandsgranskning",
     "Summary" : "Sammanfattning",
-    "Generating…" : "Genererar...",
     "Pending" : "Väntande",
     "Rejected" : "Avvisad",
     "Save" : "Spara",

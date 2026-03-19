@@ -102,7 +102,6 @@ OC.L10N.register(
     "Redo" : "Redo",
     "Preview" : "پیش‌نمایش",
     "Summary" : "چکیده",
-    "Generating…" : "در حال ساخت",
     "Pending" : "در انتظار",
     "Accepted" : "Accepted",
     "Rejected" : "Rejected",

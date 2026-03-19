@@ -75,7 +75,6 @@ OC.L10N.register(
     "Redo" : "Grąžinti",
     "Preview" : "Peržiūra",
     "Summary" : "Santrauka",
-    "Generating…" : "Generuojama…",
     "Pending" : "Laukiantis",
     "Save" : "Įrašyti",
     "{file} uploaded" : "{file} įkelta",

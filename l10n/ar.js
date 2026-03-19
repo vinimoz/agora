@@ -141,7 +141,6 @@ OC.L10N.register(
     "Redo" : "إعادة",
     "Preview" : "معاينة",
     "Summary" : "مُلخَّص",
-    "Generating…" : "توليد ...",
     "Generate" : "توليد",
     "Pending" : "مُعلّق",
     "Accepted" : "مقبولٌ",

@@ -75,7 +75,6 @@ OC.L10N.register(
     "Redo" : "Tee uudelleen",
     "Preview" : "Esikatselu",
     "Summary" : "Yhteenveto",
-    "Generating…" : "Luodaan…",
     "Generate" : "Luo",
     "Pending" : "Odottaa",
     "Accepted" : "Hyväksytty",

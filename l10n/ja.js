@@ -94,7 +94,6 @@ OC.L10N.register(
     "Redo" : "やり直し",
     "Preview" : "プレビュー",
     "Summary" : "要約",
-    "Generating…" : "生成中…",
     "Generate" : "生成",
     "Rejected" : "拒否された",
     "Save" : "保存する",

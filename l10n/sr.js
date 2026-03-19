@@ -322,7 +322,6 @@ OC.L10N.register(
     "Redo" : "Понови",
     "Preview" : "Преглед",
     "Summary" : "Сумарно",
-    "Generating…" : "Генерише се…",
     "Generate" : "Генериши",
     "Pending" : "На чекању",
     "Accepted" : "Прихваћено",

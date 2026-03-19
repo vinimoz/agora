@@ -48,7 +48,6 @@ OC.L10N.register(
     "Redo" : "Endurtaka",
     "Preview" : "Forskoðun",
     "Summary" : "Samantekt",
-    "Generating…" : "Útbý…",
     "Pending" : "Í bið",
     "Save" : "Vista",
     "Failed to upload {file}" : "Mistókst að senda inn {file}",

@@ -237,7 +237,6 @@ OC.L10N.register(
     "Generate with AI" : "Generar con IA",
     "Preview" : "Vista previa",
     "Summary" : "Resumen",
-    "Generating…" : "Generando…",
     "Generate" : "Generar",
     "Pending" : "Pendiente",
     "Accepted" : "Aceptado",

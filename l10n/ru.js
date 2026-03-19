@@ -104,7 +104,6 @@ OC.L10N.register(
     "Redo" : "Повторить",
     "Preview" : "Предварительный просмотр",
     "Summary" : "Всего",
-    "Generating…" : "Создание…",
     "Generate" : "Генерировать",
     "Pending" : "В очереди",
     "Accepted" : "Принято",

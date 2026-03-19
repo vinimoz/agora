@@ -363,7 +363,6 @@ OC.L10N.register(
     "Preview" : "Попередній перегляд",
     "Content length: {length} characters" : "Довжина контенту: {length} символів",
     "Summary" : "Загалом",
-    "Generating…" : "Створення...",
     "Generate" : "Зґенерувати",
     "Pending" : "Очікування",
     "Accepted" : "Прийнято",

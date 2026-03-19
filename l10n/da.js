@@ -47,7 +47,6 @@ OC.L10N.register(
     "Redo" : "Fortryd",
     "Preview" : "Forhåndsvisning",
     "Summary" : "Sammendrag",
-    "Generating…" : "Genererer...",
     "Pending" : "Afventer",
     "Accepted" : "Accepteret",
     "Rejected" : "Afvist",

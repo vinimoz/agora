@@ -161,7 +161,6 @@ OC.L10N.register(
     "Redo" : "Vrátiť",
     "Preview" : "Náhľad",
     "Summary" : "Súhrn",
-    "Generating…" : "Generuje sa...",
     "Generate" : "Vygenerovať",
     "Pending" : "Čakajúce",
     "Accepted" : "Schválené",

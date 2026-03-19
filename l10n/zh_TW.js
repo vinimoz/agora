@@ -165,7 +165,6 @@ OC.L10N.register(
     "Redo" : "重作",
     "Preview" : "預覽",
     "Summary" : "摘要",
-    "Generating…" : "正在產生……",
     "Generate" : "產生",
     "Pending" : "待處理",
     "Accepted" : "Accepted",

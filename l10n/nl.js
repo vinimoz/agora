@@ -159,7 +159,6 @@ OC.L10N.register(
     "Code block" : "Code blok",
     "Preview" : "Voorbeeld",
     "Summary" : "Samenvatting",
-    "Generating…" : "Genereren…",
     "Generate" : "Genereer",
     "Pending" : "In behandeling",
     "Accepted" : "Geaccepteerd",

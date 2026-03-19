@@ -78,7 +78,6 @@ OC.L10N.register(
     "Redo" : "다시 실행",
     "Preview" : "미리 보기",
     "Summary" : "요약",
-    "Generating…" : "생성 중…",
     "Pending" : "보류 중",
     "Accepted" : "수락됨",
     "Rejected" : "거부됨",

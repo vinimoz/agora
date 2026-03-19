@@ -365,7 +365,6 @@ OC.L10N.register(
     "Preview" : "Προεπισκόπηση",
     "Content length: {length} characters" : "Μήκος περιεχομένου: {length} χαρακτήρες",
     "Summary" : "Σύνοψη",
-    "Generating…" : "Δημιουργείται…",
     "Generate" : "Δημιουργία",
     "Pending" : "Εκκρεμεί",
     "Accepted" : "Αποδεκτός",

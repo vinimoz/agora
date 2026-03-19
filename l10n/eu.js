@@ -111,7 +111,6 @@ OC.L10N.register(
     "Redo" : "Berregin",
     "Preview" : "Aurrebista",
     "Summary" : "Laburpena",
-    "Generating…" : "Sortzen...",
     "Generate" : "Sortu",
     "Pending" : "Zain",
     "Accepted" : "Onartuta",
