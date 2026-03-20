@@ -81,7 +81,7 @@ OC.L10N.register(
     "Loading" : "加载中",
     "Previous day" : "前一天",
     "Next day" : "后一天",
-    "Please wait" : "请等待",
+    "Please wait" : "请稍候",
     "Error while saving comment" : "保存注释时错误",
     "Write a comment …" : "写评论 …",
     "Send" : "发送",

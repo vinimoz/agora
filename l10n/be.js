@@ -83,6 +83,8 @@ OC.L10N.register(
     "Files" : "Файлы",
     "Polls" : "Апытанні",
     "Files uploaded successfully" : "Файлы паспяхова запампаваныя",
+    "Loading your {resource} …" : "Загрузка {resource} …",
+    "Select a {resource} …" : "Выберыце {resource} …",
     "OR" : "АБО",
     "Remove file" : "Выдаліць файл",
     "Uploading …" : "Запампоўванне …",
