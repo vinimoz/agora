@@ -484,6 +484,7 @@ OC.L10N.register(
     "Dutch" : "neerlandés",
     "Unnamed" : "Sin nombre",
     "Language:" : "Idioma:",
+    "No templates available" : "No hay plantillas disponibles",
     "Types" : "Tipos",
     "Selected" : "Selecionado",
     "Neutral" : "Neutro",

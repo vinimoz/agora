@@ -619,7 +619,7 @@ OC.L10N.register(
     "No {resource} found. You can create a new one instead." : "Keine {resource} gefunden. Du kannst stattdessen eine neue erstellen.",
     "Loading your {resource} …" : "Lade deine {resource} …",
     "Choose a {resource} to link" : "Eine {resource} zum Verlinken auswählen",
-    "Select a {resource} …" : "Eine {resource} auswählen  …",
+    "Select a {resource} …" : "Eine {resource} auswählen …",
     "Select a {resource} you own or have access to" : "Eine {resource} auf die du Zugriff hast, auswählen",
     "OR" : "ODER",
     "Upload Files" : "Dateien hochladen",
