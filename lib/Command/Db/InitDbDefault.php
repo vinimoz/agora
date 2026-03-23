@@ -98,6 +98,7 @@ class InitDbDefault extends Command
             'icon' => 'Discussion',
             'ui' => [
                 'layout' => 'paired', 
+                'allowed_layout' => '',
                 'show_metrics' => true, 
                 'thread_visualization' => 'tree', 
             ],
@@ -126,6 +127,7 @@ class InitDbDefault extends Command
             'icon' => 'Settings',
             'ui' => [
                 'layout' => 'tree',
+                'allowed_layout' => '',
                 'show_toc' => true,
                 'collapsible_sections' => true,
                 'breadcrumb_navigation' => true,
@@ -208,6 +210,49 @@ class InitDbDefault extends Command
                 ['key' => 'track_implementation', 'label' => 'Track Implementation', 'icon' => 'ProgressCheck'],
             ],
             'sort_order' => 4,
+            'created' => '',
+        ],
+        [
+            'family_type' => 'vote',
+            'label' => 'Vote',
+            'description' => 'Voting system with candidates and collective decision making',
+            'icon' => 'Vote',
+
+            'ui' => [
+                'layout' => 'cards',
+                'allowed_layouts' => ['cards', 'list', 'results'],
+                'render_targets' => ['cards'],
+                'show_results' => true,
+                'show_progress' => true,
+                'show_ranking' => true,
+                'allow_comparison' => true,
+            ],
+
+            'rules' => [
+                'require_candidates' => true,
+                'allow_multiple_votes' => false,
+                'anonymous_voting' => true,
+                'vote_limit_per_user' => 1,
+                'require_quorum' => false,
+                'auto_close_on_expire' => true,
+            ],
+
+            'features' => [
+                'real_time_results',
+                'ranking',
+                'tie_breaking',
+                'quorum_tracking',
+            ],
+
+            'actions' => [
+                ['key' => 'view_results', 'label' => 'View Results', 'icon' => 'ChartBar'],
+                ['key' => 'export_results', 'label' => 'Export Results', 'icon' => 'FileExport'],
+                ['key' => 'close_vote', 'label' => 'Close Vote', 'icon' => 'Lock'],
+                ['key' => 'reopen_vote', 'label' => 'Reopen Vote', 'icon' => 'LockOpen'],
+                ['key' => 'manage_candidates', 'label' => 'Manage Candidates', 'icon' => 'AccountGroup'],
+            ],
+
+            'sort_order' => 8,
             'created' => '',
         ],
         [
@@ -304,6 +349,113 @@ class InitDbDefault extends Command
 
     private array $optionTypes = [
         // ====================================================
+        // Vote Family
+        // Root: candidate
+        // ====================================================
+        [
+            'family' => 'vote',
+            'option_type' => 'candidate',
+            'icon' => 'Account',
+            'label' => 'Candidate',
+            'description' => 'A candidate or option to vote for.',
+
+            'fields' => [
+                ['key' => 'description', 'label' => 'Description', 'type' => 'textarea', 'required' => false],
+                ['key' => 'image', 'label' => 'Image', 'type' => 'file', 'required' => false],
+                ['key' => 'start_date', 'label' => 'Start date', 'type' => 'datetime', 'required' => false], 
+                ['key' => 'status', 'label' => 'Status', 'type' => 'string', 'required' => false], 
+            ],
+
+            'allowed_response' => [
+                'vote_cast',
+                'message',
+            ],
+
+            'allow_comment' => true,
+            'support_feature' => 'voting',
+
+            'statuses' => [
+                'draft:Draft',
+                'active:Active',
+                'leading:Leading',
+                'selected:Selected',
+                'rejected:Rejected',
+            ],
+
+            'use_title' => true,
+        ],
+        [
+            'family' => 'vote',
+            'option_type' => 'vote_cast',
+            'icon' => 'CheckCircle',
+            'label' => 'Vote',
+            'description' => 'A vote cast by a user for a candidate.',
+
+            'fields' => [
+                ['key' => 'value', 'label' => 'Vote value', 'type' => 'number', 'required' => true], 
+                ['key' => 'user_id', 'label' => 'User', 'type' => 'user', 'required' => false],
+            ],
+
+            'allowed_response' => [],
+            'allow_comment' => false,
+            'support_feature' => 'none',
+            'statuses' => [],
+
+            'use_title' => false,
+        ],
+        [
+            'family' => 'vote',
+            'option_type' => 'vote_session',
+            'icon' => 'Vote',
+            'label' => 'Vote Session',
+            'description' => 'Configuration and lifecycle of a voting session.',
+
+            'fields' => [
+                ['key' => 'start_date', 'label' => 'Start date', 'type' => 'datetime', 'required' => true],
+                ['key' => 'end_date', 'label' => 'End date', 'type' => 'datetime', 'required' => false],
+                ['key' => 'quorum', 'label' => 'Quorum', 'type' => 'number', 'required' => false],
+                ['key' => 'max_votes_per_user', 'label' => 'Max votes per user', 'type' => 'number', 'required' => false],
+            ],
+
+            'allowed_response' => [
+                'candidate'
+            ],
+
+            'allow_comment' => false,
+            'support_feature' => 'config',
+
+            'statuses' => [
+                'draft:Draft',
+                'open:Open',
+                'closed:Closed',
+                'archived:Archived',
+            ],
+
+            'use_title' => true,
+        ],
+        [
+            'family' => 'vote',
+            'option_type' => 'vote_result',
+            'icon' => 'ChartBar',
+            'label' => 'Vote Result',
+            'description' => 'Aggregated results of the voting session.',
+
+            'fields' => [
+                ['key' => 'total_votes', 'label' => 'Total votes', 'type' => 'number', 'required' => true],
+                ['key' => 'winner_id', 'label' => 'Winner', 'type' => 'option', 'required' => false],
+            ],
+
+            'allowed_response' => [],
+            'allow_comment' => false,
+            'support_feature' => 'computed',
+
+            'statuses' => [],
+
+            'use_title' => false,
+        ],
+
+
+        // ====================================================
         // Workflow Family
         // Root: workflow_item
         // ====================================================
@@ -314,9 +466,9 @@ class InitDbDefault extends Command
             'label' => 'Workflow Item',
             'description' => 'Task or decision moving through workflow stages.',
             'fields' => [
-                ['key' => 'priority', 'type' => 'enum', 'required' => true, 'allowed_values' => ['low', 'medium', 'high', 'critical']],
-                ['key' => 'assigned_to', 'type' => 'users', 'required' => false],
-                ['key' => 'due_date', 'type' => 'datetime', 'required' => false],
+                ['key' => 'priority', 'label' => 'Priority', 'type' => 'enum', 'required' => true, 'allowed_values' => ['low', 'medium', 'high', 'critical']],
+                ['key' => 'assigned_to', 'label' => 'Assisgned to', 'type' => 'users', 'required' => false],
+                ['key' => 'due_date', 'label' => ' Due date', 'type' => 'datetime', 'required' => false],
             ],
             'allowed_response' => [
                 'workflow_comment',

@@ -1,5 +1,84 @@
+<!--
+  SPDX-FileCopyrightText: 2024 Nextcloud contributors
+  SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+
 <template>
   <div class="kanban-layout">
+    <!-- Add option button -->
+    <div class="kanban-actions">
+      <NcButton
+        type="primary"
+        class="add-kanban-btn"
+        @click="showAddModal = true"
+      >
+        <template #icon>
+          <component :is="InquiryOptionIcons.Plus" :size="18" />
+        </template>
+        {{ t('agora', 'Add to board') }}
+      </NcButton>
+    </div>
+
+    <!-- Add option modal -->
+    <NcModal 
+      v-if="showAddModal" 
+      size="normal"
+      :name="t('agora', 'Add option to kanban board')"
+      @close="showAddModal = false"
+    >
+      <div class="add-option-modal">
+        <div class="search-section">
+          <h4>{{ t('agora', 'Add existing option') }}</h4>
+          <p class="section-desc">{{ t('agora', 'Search and add an option already created') }}</p>
+          
+          <div class="search-controls">
+            <SearchSelect
+              v-model="selectedOption"
+              type="options"
+              :inquiry-id="inquiryId"
+              :placeholder="t('agora', 'Search for an option by title or #id…')"
+              class="search-select"
+            />
+
+            <div v-if="selectedOption" class="column-selector">
+              <label>{{ t('agora', 'Move to column') }}</label>
+              <div class="column-options">
+                <button
+                  v-for="column in statusColumns"
+                  :key="column.value"
+                  class="column-option"
+                  :class="{ selected: targetStatus === column.value }"
+                  @click="targetStatus = column.value"
+                >
+                  <span class="column-color" :style="{ backgroundColor: column.color }" />
+                  <span class="column-label">{{ column.label }}</span>
+                  <span v-if="targetStatus === column.value" class="check-icon">
+                    <component :is="InquiryOptionIcons.Check" :size="14" />
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <NcButton @click="showAddModal = false">
+            {{ t('agora', 'Cancel') }}
+          </NcButton>
+          <NcButton
+            type="primary"
+            :disabled="!canAddExisting"
+            @click="addExistingToKanban"
+          >
+            <template #icon>
+              <component :is="InquiryOptionIcons.Plus" :size="18" />
+            </template>
+            {{ t('agora', 'Add to board') }}
+          </NcButton>
+        </div>
+      </div>
+    </NcModal>
+
     <!-- Column headers -->
     <div class="kanban-header">
       <div 
@@ -15,18 +94,6 @@
           <span class="status-label">{{ status.label }}</span>
           <span class="item-count">{{ getOptionsByStatus(status.value).length }}</span>
         </div>
-        <!-- Quick add button for this column -->
-        <NcButton
-          v-if="canAddToColumn(status)"
-          type="tertiary"
-          size="small"
-          :aria-label="t('agora', 'Add to {column}', { column: status.label })"
-          @click="openAddOption(status.value)"
-        >
-          <template #icon>
-            <component :is="InquiryOptionIcons.Plus" :size="16" />
-          </template>
-        </NcButton>
       </div>
     </div>
 
@@ -41,7 +108,6 @@
         @drop="handleDrop($event, status.value)"
       >
         <div class="column-items">
-          <!-- Items -->
           <div 
             v-for="option in getOptionsByStatus(status.value)" 
             :key="option.id"
@@ -50,7 +116,6 @@
             draggable="true"
             @dragstart="handleDragStart($event, option)"
             @dragend="handleDragEnd"
-            @dragover.prevent
           >
             <OptionCard
               :option="option"
@@ -60,55 +125,35 @@
               @click="$emit('openDetail', option)"
             />
             
-            <!-- Drag handle icon -->
-            <div class="drag-handle" title="Drag to move">
-              <component :is="InquiryOptionIcons.Drag" :size="16" />
+            <div class="item-footer">
+              <span class="item-id">#{{ option.id }}</span>
+              <div class="item-actions">
+                <NcActions>
+                  <NcActionButton
+                    v-for="target in statusColumns.filter(s => s.value !== option.status.optionStatus)"
+                    :key="target.value"
+                    @click="changeStatus(option.id, target.value)"
+                  >
+                    <template #icon>
+                      <div class="status-dot-small" :style="{ backgroundColor: target.color }" />
+                    </template>
+                    {{ t('agora', 'Move to {column}', { column: target.label }) }}
+                  </NcActionButton>
+                </NcActions>
+              </div>
             </div>
-            
-            <!-- Status indicator dot -->
-            <div 
-              class="status-dot" 
-              :style="{ backgroundColor: getStatusColor(option.status.optionStatus) }"
-              :title="getStatusLabel(option.status.optionStatus)"
-            />
-            
-            <!-- Status change menu -->
-            <NcActions v-if="canChangeStatus" class="status-change-menu">
-              <NcActionButton
-                v-for="targetStatus in statusColumns.filter(s => s.value !== option.status.optionStatus)"
-                :key="targetStatus.value"
-                @click="changeStatus(option.id, targetStatus.value)"
-              >
-                <template #icon>
-                  <div class="status-dot-small" :style="{ backgroundColor: targetStatus.color }" />
-                </template>
-                {{ t('agora', 'Move to {column}', { column: targetStatus.label }) }}
-              </NcActionButton>
-            </NcActions>
           </div>
           
-          <!-- Empty column placeholder with drop zone -->
           <div 
             v-if="getOptionsByStatus(status.value).length === 0" 
             class="empty-column"
-            :class="{ 'drag-over': dragOverColumn === status.value }"
             @dragover.prevent
-            @dragenter="dragOverColumn = status.value"
-            @dragleave="dragOverColumn = null"
             @drop="handleDrop($event, status.value)"
           >
-            <p>{{ t('agora', 'No items') }}</p>
-            <NcButton
-              v-if="canAddToColumn(status)"
-              type="tertiary"
-              size="small"
-              @click="openAddOption(status.value)"
-            >
-              <template #icon>
-                <component :is="InquiryOptionIcons.Plus" :size="16" />
-              </template>
-              {{ t('agora', 'Add') }}
-            </NcButton>
+            <div class="empty-icon">
+              <component :is="InquiryOptionIcons.Board" :size="32" />
+            </div>
+            <p>{{ t('agora', 'No items in this column') }}</p>
           </div>
         </div>
       </div>
@@ -120,31 +165,42 @@
 import { computed, ref } from 'vue'
 import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
+import NcModal from '@nextcloud/vue/components/NcModal'
 import NcActions from '@nextcloud/vue/components/NcActions'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import { InquiryOptionIcons } from '../../../utils/icons.ts'
 import OptionCard from '../OptionCard.vue'
-import type { Option, InquiryOptionType } from '../../../Types/index.ts'
+import type { Option, InquiryOptionType, OptionFamily } from '../../../Types/index.ts'
 import { useOptionsStore } from '../../../stores/options'
 import { showSuccess, showError } from '@nextcloud/dialogs'
+import SearchSelect from '../../Base/modules/SearchSelect.vue'
+import { filterOptionsByLayout, addLayoutToOption, getAvailableForeignOptionsForLayout } from '../../../helpers/modules/InquiryOptionHelper'
 
+// Props
 const props = defineProps<{
-  options: Option[]
+  options: InquiryOptionType[]
   inquiryId: number
   optionTypes: InquiryOptionType[]
+  family?: OptionFamily
+  optionsByInquiry: Option[]
 }>()
 
+// Stores
 const optionsStore = useOptionsStore()
+// State
+const showAddModal = ref(false)
+const selectedOption = ref<Option | null>(null)
+const targetStatus = ref<string | null>(null)
 const draggingOptionId = ref<number | null>(null)
-const dragOverColumn = ref<string | null>(null)
 
+// Emits
 const emit = defineEmits<{
   'addOption': [optionType: string, status: string]
   'openDetail': [option: Option]
   'update:options': []
 }>()
 
-// Status columns definition based on option_status values from DB
+// Status columns
 const statusColumns = [
   { value: 'draft', label: t('agora', 'Draft'), color: '#949494' },
   { value: 'active', label: t('agora', 'Active'), color: '#3498db' },
@@ -152,125 +208,151 @@ const statusColumns = [
   { value: 'cancelled', label: t('agora', 'Cancelled'), color: '#e74c3c' }
 ]
 
-// Filter options by status
-const getOptionsByStatus = (status: string) => props.options.filter(opt => opt.status.optionStatus === status)
+// Filter options for kanban
+const kanbanOptions = computed(() => filterOptionsByLayout(
+    props.optionsByInquiry,
+    'kanban',
+    props.optionTypes,
+    props.family.key
+  ))
 
-// Check if user can change status
-const canChangeStatus = computed(() => true)
+// Available foreign options
+const availableForeignOptions = computed(() => getAvailableForeignOptionsForLayout(
+    props.options,
+    'kanban',
+    props.family.key,
+    props.optionTypes
+  ))
 
-// Check if user can add to column
-const canAddToColumn = (status: { value: string }) => 
-  ['draft', 'active'].includes(status.value) && props.optionTypes.length > 0
+// Computed
+const canAddExisting = computed(() => selectedOption.value && targetStatus.value)
 
-// Open add option modal with pre-selected status
-const openAddOption = (status: string) => {
-  emit('addOption', props.optionTypes[0]?.option_type || 'workflow_item', status)
+// Helper functions
+const getOptionsByStatus = (status: string) => {
+  return kanbanOptions.value.filter(opt => {
+    const optStatus = opt.status?.optionStatus || 'draft'
+    return optStatus === status
+  })
 }
 
-// Get status color
-const getStatusColor = (status: string) => {
-  const found = statusColumns.find(s => s.value === status)
-  return found?.color || '#949494'
+// Drag and drop handlers
+const handleDragStart = (event: DragEvent, option: Option) => {
+  draggingOptionId.value = option.id
+  event.dataTransfer?.setData('text/plain', option.id.toString())
+  event.dataTransfer!.effectAllowed = 'move'
 }
 
-// Get status label
+const handleDragEnd = () => {
+  draggingOptionId.value = null
+}
+
+const handleDrop = async (event: DragEvent, newStatus: string) => {
+  event.preventDefault()
+  
+  const optionId = event.dataTransfer?.getData('text/plain')
+  if (!optionId) return
+  
+  await changeStatus(parseInt(optionId), newStatus)
+}
+
 const getStatusLabel = (status: string) => {
   const found = statusColumns.find(s => s.value === status)
   return found?.label || status
 }
 
-// Drag and drop handlers
-const handleDragStart = (event: DragEvent, option: Option) => {
-  if (!canChangeStatus.value) {
-    event.preventDefault()
-    return
-  }
-  
-  draggingOptionId.value = option.id
-  event.dataTransfer?.setData('text/plain', option.id.toString())
-  event.dataTransfer?.setData('application/json', JSON.stringify({
-    id: option.id,
-    currentStatus: option.status.optionStatus
-  }))
-  event.dataTransfer!.effectAllowed = 'move'
-  
-  // Add a class to the dragged element
-  if (event.target instanceof HTMLElement) {
-    const item = event.target.closest('.kanban-item')
-    if (item) {
-      item.classList.add('dragging')
-    }
-  }
-}
-
-const handleDragEnd = () => {
-  draggingOptionId.value = null
-  dragOverColumn.value = null
-}
-
-const handleDrop = async (event: DragEvent, targetStatus: string) => {
-  event.preventDefault()
-  dragOverColumn.value = null
-  
-  const optionId = event.dataTransfer?.getData('text/plain')
-  if (!optionId) return
-  
-  try {
-    const option = props.options.find(o => o.id === parseInt(optionId))
-    if (!option) return
-    
-    // Don't do anything if dropped in the same column
-    if (option.status.optionStatus === targetStatus) return
-    
-    // Update status via store
-    await optionsStore.setOptionStatus(parseInt(optionId), targetStatus)
-    showSuccess(t('agora', 'Option moved to {column}', { 
-      column: getStatusLabel(targetStatus) 
-    }))
-    
-    // Emit update event to refresh options
-    emit('update:options')
-    
-  } catch (error) {
-    console.error('Failed to move option:', error)
-    showError(t('agora', 'Could not move option'))
-  }
-}
-
-// Change status
 const changeStatus = async (optionId: number, newStatus: string) => {
   try { 
     await optionsStore.setOptionStatus(optionId, newStatus)
-    showSuccess(t('agora', 'Option status updated'))
+    showSuccess(t('agora', 'Option moved to {column}', { 
+      column: getStatusLabel(newStatus) 
+    }))
     emit('update:options')
   } catch (error) { 
-    console.warn("Unable to change option status", error) 
+    console.error("Unable to change option status", error) 
     showError(t('agora', 'Option status could not be updated'))
-    return false 
   }
 }
+
+const addExistingToKanban = async () => {
+  if (!selectedOption.value || !targetStatus.value) return
+
+  try {
+    // Get current miscFields
+    const currentMiscFields = selectedOption.value.miscFields || {}
+
+    // Update the option status
+    await optionsStore.setOptionStatus(selectedOption.value.id, targetStatus.value)
+
+    // Add kanban to force_layouts in miscFields
+    const forceLayouts = currentMiscFields.force_layouts || []
+    const updatedLayouts = [...forceLayouts, 'kanban']
+
+    const miscFieldsUpdate: Record<string, string> = {
+      ...currentMiscFields,
+      force_layouts: JSON.stringify(updatedLayouts)
+    }
+
+    // Update the option
+    await optionsStore.updateOptionFromModal(
+      selectedOption.value.id,
+      targetStatus.value,
+      miscFieldsUpdate
+    )
+
+    showAddModal.value = false
+    selectedOption.value = null
+    targetStatus.value = null
+    showSuccess(t('agora', 'Option added to board'))
+    emit('update:options')
+  } catch (error) {
+    console.error('Failed to add option:', error)
+    showError(t('agora', 'Could not add option'))
+  }
+}
+
 </script>
 
 <style scoped lang="scss">
 .kanban-layout {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
+  padding: 4px;
+
+  .kanban-actions {
+    display: flex;
+    justify-content: flex-end;
+    
+    .add-kanban-btn {
+      background: linear-gradient(135deg, var(--color-primary-element-light) 0%, var(--color-primary-element) 100%);
+      border: none;
+      color: white;
+      font-weight: 600;
+      padding: 8px 16px;
+      border-radius: 20px;
+      transition: all 0.2s ease;
+      
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(var(--color-primary-element-rgb), 0.3);
+      }
+    }
+  }
 
   .kanban-header {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 16px;
-    padding: 0 4px;
 
     .kanban-column-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 12px 16px;
-      background: var(--color-background-dark);
-      border-radius: 12px 12px 0 0;
-      border-bottom: 3px solid;
+      padding: 16px 20px;
+      background: var(--color-main-background);
+      border-radius: 16px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+      border-bottom: 4px solid;
 
       &.status-draft { border-bottom-color: #949494; }
       &.status-active { border-bottom-color: #3498db; }
@@ -280,25 +362,27 @@ const changeStatus = async (optionId: number, newStatus: string) => {
       .header-content {
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 10px;
 
         .status-badge {
           width: 12px;
           height: 12px;
           border-radius: 50%;
+          box-shadow: 0 0 0 2px var(--color-main-background);
         }
 
         .status-label {
-          font-weight: 600;
-          font-size: 14px;
+          font-weight: 700;
+          font-size: 15px;
         }
 
         .item-count {
-          background: var(--color-background-darker);
-          padding: 2px 8px;
-          border-radius: 12px;
+          background: var(--color-background-dark);
+          padding: 4px 10px;
+          border-radius: 20px;
           font-size: 12px;
           font-weight: 600;
+          color: var(--color-text-light);
         }
       }
     }
@@ -308,20 +392,15 @@ const changeStatus = async (optionId: number, newStatus: string) => {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 16px;
-    min-height: 500px;
+    min-height: 600px;
 
     .kanban-column {
       background: var(--color-background-dark);
-      border-radius: 12px;
-      padding: 16px;
-      transition: background-color 0.2s ease;
-
-      &:has(.drag-over) {
-        background: var(--color-background-hover);
-      }
+      border-radius: 16px;
+      padding: 20px 16px;
 
       .column-items {
-        min-height: 200px;
+        min-height: 400px;
         display: flex;
         flex-direction: column;
         gap: 12px;
@@ -329,7 +408,10 @@ const changeStatus = async (optionId: number, newStatus: string) => {
         .kanban-item {
           position: relative;
           cursor: grab;
-          transition: transform 0.2s ease, opacity 0.2s ease;
+          transition: all 0.2s ease;
+          border-radius: 12px;
+          background: var(--color-main-background);
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
           
           &:active {
             cursor: grabbing;
@@ -339,81 +421,143 @@ const changeStatus = async (optionId: number, newStatus: string) => {
             opacity: 0.5;
             transform: scale(0.98);
           }
-          
-          .drag-handle {
-            position: absolute;
-            top: 8px;
-            left: 8px;
-            width: 24px;
-            height: 24px;
+
+          .item-footer {
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            border-top: 1px solid var(--color-border);
+            font-size: 11px;
             color: var(--color-text-lighter);
-            opacity: 0;
-            transition: opacity 0.2s ease;
-            cursor: grab;
-            background: var(--color-main-background);
-            border-radius: 4px;
-            border: 1px solid var(--color-border);
-            
-            &:hover {
-              color: var(--color-text-light);
-              background: var(--color-background-hover);
+
+            .item-id {
+              font-family: monospace;
+              background: var(--color-background-dark);
+              padding: 2px 6px;
+              border-radius: 4px;
+            }
+
+            .item-actions {
+              opacity: 0;
+              transition: opacity 0.2s ease;
             }
           }
 
-          &:hover {
-            .drag-handle {
-              opacity: 1;
-            }
-          }
-          
-          .status-dot {
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            border: 2px solid var(--color-main-background);
-          }
-
-          .status-change-menu {
-            position: absolute;
-            top: 8px;
-            right: 24px;
-            opacity: 0;
-            transition: opacity 0.2s ease;
-          }
-
-          &:hover {
-            .status-change-menu {
-              opacity: 1;
-            }
+          &:hover .item-footer .item-actions {
+            opacity: 1;
           }
         }
 
         .empty-column {
           text-align: center;
           padding: 40px 20px;
-          color: var(--color-text-lighter);
-          font-style: italic;
+          background: var(--color-background);
           border: 2px dashed var(--color-border);
-          border-radius: 8px;
-          transition: background-color 0.2s ease, border-color 0.2s ease;
+          border-radius: 16px;
 
-          &.drag-over {
-            background: var(--color-background-hover);
-            border-color: var(--color-primary-element);
+          .empty-icon {
+            color: var(--color-text-lighter);
+            margin-bottom: 12px;
+            opacity: 0.5;
           }
 
-          .button-vue {
-            margin-top: 12px;
+          p {
+            margin: 0;
+            color: var(--color-text-lighter);
+            font-style: italic;
+            font-size: 13px;
           }
         }
       }
     }
+  }
+}
+
+// Modal styles
+.add-option-modal {
+  padding: 24px;
+  max-width: 600px;
+
+  h4 {
+    margin: 0 0 4px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--color-main-text);
+  }
+
+  .section-desc {
+    margin: 0 0 16px 0;
+    font-size: 13px;
+    color: var(--color-text-lighter);
+  }
+
+  .search-section {
+    margin-bottom: 24px;
+
+    .search-select {
+      margin-bottom: 20px;
+    }
+
+    .column-selector {
+      label {
+        display: block;
+        margin-bottom: 12px;
+        font-weight: 600;
+        font-size: 14px;
+      }
+
+      .column-options {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+
+        .column-option {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 10px 12px;
+          background: var(--color-background-dark);
+          border: 2px solid transparent;
+          border-radius: 12px;
+          cursor: pointer;
+
+          .column-color {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+          }
+
+          .column-label {
+            flex: 1;
+            font-size: 13px;
+            font-weight: 500;
+          }
+
+          .check-icon {
+            color: var(--color-success);
+          }
+
+          &:hover {
+            background: var(--color-background-hover);
+          }
+
+          &.selected {
+            border-color: var(--color-primary-element);
+            background: var(--color-primary-light);
+          }
+        }
+      }
+    }
+  }
+
+  .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 32px;
+    padding-top: 20px;
+    border-top: 1px solid var(--color-border);
   }
 }
 

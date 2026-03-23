@@ -48,12 +48,12 @@ const preferencesStore = usePreferencesStore()
 
 const canUserCreateInquiryGroup = computed(() => canCreateInquiryGroupInGeneral())
 
-
+const isNavigating = ref(false)
 
 // ViewMode state
 // const viewMode = ref<string>((route.query.viewMode as string) || (preferencesStore.user?.defaultDisplayMode || 'view'))
 const viewMode = ref<string>(
-  (route.query.viewMode as string) || (preferencesStore.user?.defaultDisplayMode || 'view')
+  (route.query.viewMode as string) || (preferencesStore.user?.defaultDisplayMode || 'viewMode')
 )
 
 watch(viewMode, (value) => {
@@ -213,32 +213,31 @@ function clearFamilySelection() {
 watch(
   () => selectedFamily.value,
   (newFamilyId) => {
+    if (isNavigating.value) return
     if (!newFamilyId) return
-   
-   inquiriesStore.setFamilyType(newFamilyId)
-    // Navigate based on current viewMode
-    if (viewMode.value === 'create' ) {
+
+    inquiriesStore.setFamilyType(newFamilyId)
+    if (viewMode.value === 'create') {
+      isNavigating.value = true
       router.push({
         name: 'menu',
         query: { viewMode: 'create' }
-      })
+      }).finally(() => { isNavigating.value = false })
     } else if (shouldRedirectToGroupView(inquiriesStore.advancedFilters.familyType)) {
-        router.push({
-          name: 'group-list',
-          params: {
-            slug: 'none'
-          },
-          query: {
-            viewMode: 'group',
-          }
-        })
-        }else {
+      isNavigating.value = true
+      router.push({
+        name: 'group-list',
+        params: { slug: 'none' },
+        query: { viewMode: 'group' }
+      }).finally(() => { isNavigating.value = false })
+    } else {
+      isNavigating.value = true
       router.push({
         name: 'list',
         params: { type: 'relevant' },
         query: { viewMode: 'view' }
-      })
-      }
+      }).finally(() => { isNavigating.value = false })
+    }
   }
 )
 
@@ -254,15 +253,17 @@ const shouldRedirectToGroupView = (familyType: string) => {
 function handleViewModeChange(mode: string) {
   viewMode.value = mode
   inquiriesStore.setFamilyType(selectedFamily.value)
-  
+ console.log(" CHANGE MODE ", mode) 
   // If family is selected, navigate with new mode
   if (selectedFamily.value) {
     if (mode === 'create') {
+      isNavigating.value = true
       router.push({
         name: 'menu',
         query: { viewMode: 'create' }
       })
       } else {
+      isNavigating.value = true
         router.push({
           name: 'list',
           params: { type: 'relevant' },
@@ -367,7 +368,7 @@ function handleCloseGroupDialog() {
         <NcButton 
          v-if="selectedFamily" 
          class="back-button" 
-         aria-label="t('agora', 'Back to families')"
+         :aria-label="t('agora', 'Back to families')"
          @click="clearFamilySelection"
          >
          <span class="back-button__icon">←</span>
@@ -466,30 +467,6 @@ function handleCloseGroupDialog() {
             </div>
         </div>
 
-        <!-- Inquiry Group Types Section 
-        <div v-if="filteredInquiryGroupTypes.length > 0" class="inquiry-section">
-            <h3 class="section-title">{{ t('agora', 'Inquiry Groups') }}</h3>
-            <div class="inquiry-types-grid">
-                <div
-                        v-for="inquiryGroupType in filteredInquiryGroupTypes"
-                        :key="inquiryGroupType.id"
-                        class="inquiry-type-card"
-                        @click="createInquiryGroup(inquiryGroupType)"
-                        >
-                        <div class="inquiry-type-card__icon">
-                            <component :is="getInquiryGroupTypeData(inquiryGroupType.group_type, allInquiryGroupTypes).icon" />
-                        </div>
-                    <div class="inquiry-type-card__content">
-                        <h4 class="inquiry-type-card__title">
-                            {{ t('agora', getInquiryGroupTypeData(inquiryGroupType.group_type, allInquiryGroupTypes).label) }}
-                        </h4>
-                        <p v-if="getInquiryGroupTypeData(inquiryGroupType.group_type, allInquiryGroupTypes).description" class="inquiry-type-card__description">
-                        {{ t('agora', getInquiryGroupTypeData(inquiryGroupType.group_type, allInquiryGroupTypes).description) }}
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div> -->
         <!-- Inquiry Group Types Section -->
   <div v-if="filteredInquiryGroupTypes.length > 0" class="inquiry-section">
     <h3 class="section-title">{{ t('agora', 'Inquiry Groups') }}</h3>

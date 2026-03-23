@@ -348,7 +348,7 @@ watch(() => editableData.value, () => {
 
 			<!-- Important Note -->
 			<NcNoteCard v-if="duplicateAnalysis && duplicateAnalysis.totals.existing > 0" type="info" class="duplicate-notice">
-				{{ t('agora', '{count} item(s) already exist in the database and will be skipped during import.', {count: duplicateAnalysis.totals.existing}) }}
+				{{ t('agora', '{count} items already exist in the database and will be skipped during import.', {count: duplicateAnalysis.totals.existing}) }}
 			</NcNoteCard>
 
 			<!-- Sections -->

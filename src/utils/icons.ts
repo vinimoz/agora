@@ -45,6 +45,9 @@ import ClipboardList from '@iconify-icons/mdi/clipboard-list'
 import HelpCircle from '@iconify-icons/mdi/help-circle'
 import Wrench from '@iconify-icons/mdi/wrench'
 import ThumbDownOutline from '@iconify-icons/mdi/thumb-down-outline'
+import Account from '@iconify-icons/mdi/account'
+
+import Vote from '@iconify-icons/mdi/vote'
 
 import FileCheck from '@iconify-icons/mdi/file-check'
 import EyeCheckOutline from '@iconify-icons/mdi/eye-check-outline'
@@ -566,6 +569,7 @@ export const StatusIcons: Record<string, Component> = {
 
 export const InquiryOptionIcons = {
   // Families / types
+  Drag: makeIconComponent(DragHorizontal, '#999'),
   Plus: makeIconComponent(Plus, '#4CAF50'),
   Discussion: makeIconComponent(ChatOutline, '#2196F3'),
   Question: makeIconComponent(HelpCircleOutline, '#03A9F4'),
@@ -573,6 +577,19 @@ export const InquiryOptionIcons = {
   Settings: makeIconComponent(Presentation, '#607D8B'),
   Code: makeIconComponent(CodeTags, '#9C27B0'),
   CategoryOther: makeIconComponent(TagOutline, '#795548'),
+  
+  // Families
+  Vote: makeIconComponent(Vote, '#1565C0'),
+
+  // Actions
+  ChartBar: makeIconComponent(ChartBar),
+  Lock: makeIconComponent(Lock),
+  LockOpen: makeIconComponent(LockOpen),
+  AccountGroup: makeIconComponent(AccountGroup),
+  Cog: makeIconComponent(Cog),
+
+  // Vote option types
+  Account: makeIconComponent(Account),
 
   Summarize: makeIconComponent(TextBoxMultiple, '#607D8B'),  // Using text-box-multiple
   Graph: makeIconComponent(ChartArc, '#607D8B'),  // Using chart-arc for Graph

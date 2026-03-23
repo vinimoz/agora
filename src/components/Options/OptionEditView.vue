@@ -69,6 +69,7 @@
         :family="activeFamilyData"
         :inquiry-id="inquiryStore.id"
         :option-types="activeFamilyData.optionTypes"
+        :options-by-inquiry="optionsByInquiry"
         :read-only="isReadOnly"
         :is-official-user="inquiryStore.user?.isOfficial || false"
         @add-option="openAddOptionModal"
@@ -126,6 +127,7 @@ import FamilyLayoutPaired from './FamilyLayouts/FamilyLayoutPaired.vue'
 import FamilyLayoutConsensusFlow from './FamilyLayouts/FamilyLayoutConsensusFlow.vue'
 import FamilyLayoutKanban from './FamilyLayouts/FamilyLayoutKanban.vue'
 import FamilyLayoutTimeline from './FamilyLayouts/FamilyLayoutTimeline.vue'
+import FamilyLayoutVote from './FamilyLayouts/FamilyLayoutVote.vue'
 
 
 // Import option cards and modals
@@ -165,6 +167,7 @@ const layoutComponents: Record<string, DefineComponent> = {
   consensus_flow: markRaw(FamilyLayoutConsensusFlow),
   kanban: markRaw(FamilyLayoutKanban),
   timeline: markRaw(FamilyLayoutTimeline),
+  vote: markRaw(FamilyLayoutVote),
   default: markRaw(FamilyLayoutCards)
 }
 
@@ -209,6 +212,9 @@ const hasVisibleFamilies = computed(() => familiesWithOptions.value.length > 0)
 
 const activeFamilyData = computed(() => {
   if (!activeFamily.value) return null
+  console.log(" ACTIVE FAMILY DATE ",activeFamily.value)
+  console.log(" familiesWithOPTIONS ",familiesWithOptions)
+
   return familiesWithOptions.value.find(f => f.key === activeFamily.value)
 })
 
@@ -233,11 +239,19 @@ const familyCounts = computed(() => {
 })
 
 // Get options for active family
+const optionsByInquiry = computed(() => {
+  if (!optionsStore.options) return []
+
+  return optionsStore.getOptionsByTargetId(inquiryStore.id)
+})
+
+
+// Get options for active family
 const activeFamilyOptions = computed(() => {
   if (!activeFamilyData.value) return []
 
   const familyOptionTypeKeys = activeFamilyData.value.optionTypes.map(opt => opt.option_type)
-
+  console.log(" ACTIVE FAMILY OPTION TYPE ",familyOptionTypeKeys)
   return optionsStore.options.filter(option =>
     familyOptionTypeKeys.includes(option.type)
   )

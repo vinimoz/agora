@@ -298,7 +298,7 @@ import type { InquiryOptionType, Option , OptionFamily } from '../../Types/index
 
 const props = defineProps<{
   options: Option[]
-  family: OptionFamily
+  family?: OptionFamily
   inquiryId: number
   optionTypes: InquiryOptionType[]
 }>()
