@@ -715,7 +715,7 @@ OC.L10N.register(
     "Messages" : "Nachrichten",
     "Add message" : "Nachricht hinzufügen",
     "No debate items yet" : "Bislang keine Diskussionspunkte",
-    "Start the discussion by adding positions or arguments" : "Beginne die Diskussion, indem du Standpunkte oder Argumente einbringst",
+    "Start the discussion by adding positions or arguments" : "Beginne die Diskussion, indem du Positionen oder Argumente einbringst",
     "Side by side" : "Seite an Seite",
     "Vertical" : "Vertikal",
     "Compact" : "Kompakt",
