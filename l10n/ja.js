@@ -108,6 +108,7 @@ OC.L10N.register(
     "Status" : "ステータス",
     "Expires" : "有効期限",
     "Filters" : "フィルター",
+    "Clear all" : "すべてクリア",
     "Type" : "タイプ",
     "Active filters" : "有効なフィルター",
     "Search" : "検索",
