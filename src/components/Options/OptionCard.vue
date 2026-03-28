@@ -14,7 +14,8 @@
         'highlight': highlight,
         'show-poll': showPoll,
         'has-support': hasSupportFeature,
-        'has-comments': allowComment
+        'has-comments': allowComment,
+        'has-progress-bar': progressBar 
       }
     ]"
     @click="handleCardClick"
@@ -71,11 +72,26 @@
       </div>
     </div>
 
+    <!-- Progress Bar Section - Only shown when progressBar is true -->
+    <div v-if="progressBar" class="progress-bar-section">
+      <div class="progress-bar-container">
+        <div 
+          class="progress-bar-fill" 
+          :style="{ width: `${progressPercentage}%` }"
+        ></div>
+      </div>
+      <div class="progress-stats">
+        <span class="progress-label">{{ t('agora', 'Progress') }}</span>
+        <span class="progress-percentage">{{ Math.round(progressPercentage) }}%</span>
+      </div>
+    </div>
+
     <!-- Separator - hide in inline mode -->
     <div v-if="!inline" class="section-separator"></div>
 
     <!-- Third Box: Support and Comments in single line (normal mode) -->
-    <div v-if="!inline && (hasSupportFeature || allowComment)" class="card-features">
+    <!-- Conditionally hide responses when progressBar is true -->
+    <div v-if="!inline && (hasSupportFeature || allowComment) && !progressBar" class="card-features">
       <!-- Support feature -->
       <div v-if="hasSupportFeature" class="feature-item support-feature">
         <SupportFeature
@@ -99,7 +115,8 @@
     </div>
 
     <!-- Fourth Box: Responses - normal mode -->
-    <div v-if="!inline && hasAllowedResponses && !compact" class="card-responses">
+    <!-- Conditionally hide responses when progressBar is true -->
+    <div v-if="!inline && hasAllowedResponses && !compact && !progressBar" class="card-responses">
       <div class="responses-header">
         <component :is="InquiryOptionIcons.MessageReplyText" :size="14" />
         <span class="responses-title">{{ t('agora', 'Responses') }}</span>
@@ -151,9 +168,10 @@
     </div>
 
     <!-- INLINE MODE: All features in one row with actions at the end -->
+    <!-- Conditionally hide responses in inline mode when progressBar is true -->
     <div v-if="inline" class="inline-features-row">
-      <!-- Child responses -->
-      <div v-if="hasAllowedResponses && !compact" class="inline-feature-item child-responses">
+      <!-- Child responses - hide when progressBar is true -->
+      <div v-if="hasAllowedResponses && !compact && !progressBar" class="inline-feature-item child-responses">
         <div class="responses-list">
           <div v-if="childCountsTotal === 0" class="no-responses">
             <span class="no-responses-text">{{ t('agora', 'None') }}</span>
@@ -212,8 +230,8 @@
         />
       </div>
       
-      <!-- Comments feature -->
-      <div v-if="allowComment" class="inline-feature-item comments-feature" @click.stop="$emit('comment', option)">
+      <!-- Comments feature - hide when progressBar is true -->
+      <div v-if="allowComment && !progressBar" class="inline-feature-item comments-feature" @click.stop="$emit('comment', option)">
         <div class="feature-content">
           <component :is="InquiryOptionIcons.Comment" :size="14" class="feature-icon" />
           <span class="feature-count">{{ option.status.countComments || 0 }}</span>
@@ -306,6 +324,7 @@ const props = defineProps<{
   showAction?: boolean
   preventClick?: boolean
   textMaxLength?: number
+  progressBar?: boolean
 }>()
 
 // Emits
@@ -386,6 +405,20 @@ const useTitle = computed(() =>
   usesTitle(props.option.type, allOptionTypes.value)
 )
 
+const progressPercentage = computed(() => {
+  if (!props.progressBar) return 0
+
+  if (props.option.status?.supportCount !== undefined) {
+    // Assuming there's a total target or max value
+    const maxSupport = props.option.maxSupport || 100 // Define your max value
+    return Math.min(100, (props.option.status.supportCount / maxSupport) * 100)
+  }
+
+  // Default fallback
+  return 50
+})
+
+
 const hasAllowedResponses = computed(() => allowedResponses.value.length > 0)
 
 // Get child options
@@ -462,7 +495,7 @@ const handleCardClick = () => {
 }
 
 const confirmDelete = () => {
-  if (confirm(t('agora', 'Are you sure you want to delete this option?'))) {
+  if (confirm(t('agora', 'Are you sure you want to delete this option ?'))) {
     deleteOption()
   }
 }
@@ -480,7 +513,8 @@ const deleteOption = async () => {
     showError(t('agora', 'Failed to delete option'))
   }
 }
-</script>
+</script
+>
 <style scoped lang="scss">
 .option-card {
   background: var(--color-main-background);
@@ -855,6 +889,83 @@ const deleteOption = async () => {
     }
   }
 
+  .progress-bar-section {
+  margin: 8px 0 12px 0;
+  
+  .progress-bar-container {
+    background: var(--color-background-dark);
+    border-radius: 10px;
+    height: 8px;
+    overflow: hidden;
+    margin-bottom: 6px;
+    
+    .progress-bar-fill {
+      background: linear-gradient(90deg, var(--color-primary-element-light), var(--color-primary-element));
+      height: 100%;
+      border-radius: 10px;
+      transition: width 0.3s ease;
+      position: relative;
+      
+      &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(90deg, 
+          rgba(255, 255, 255, 0.2) 0%, 
+          rgba(255, 255, 255, 0) 50%,
+          rgba(255, 255, 255, 0.2) 100%);
+        animation: shimmer 2s infinite;
+      }
+    }
+  }
+  
+  .progress-stats {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    
+    .progress-label {
+      color: var(--color-text-lighter);
+    }
+    
+    .progress-percentage {
+      font-weight: 600;
+      color: var(--color-primary-element);
+    }
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.option-card.has-progress-bar {
+  .card-features,
+  .card-responses {
+    display: none;
+  }
+  
+  &.inline {
+    .inline-features-row {
+      .inline-feature-item {
+        &.child-responses,
+        &.support-feature,
+        &.comments-feature {
+          display: none;
+        }
+      }
+    }
+  }
+}
   // Footer
   .card-footer {
     padding-top: 12px;

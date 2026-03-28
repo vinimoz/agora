@@ -366,7 +366,7 @@ const availableTypes = computed(() => props.optionTypes.filter(type =>
   ))
 
 // Check if multiple layout styles are available
-const hasMultipleLayoutStyles = computed(() => props.family?.config?.layoutStyles?.length > 1 || false)
+const hasMultipleLayoutStyles = computed(() => props.family?.ui?.layout_styles?.length > 1 || false)
 
 // Get option type icon
 const getOptionTypeIcon = (type: string) => getOptionTypeIconComponent(type, [])

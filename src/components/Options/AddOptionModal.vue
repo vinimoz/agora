@@ -548,6 +548,8 @@ const createOption = async () => {
 
     const miscFieldsForStorage: Record<string, string> = {}
 
+    console.log(" MISC FIELDS ",additionalFields.value)
+
     // Process all misc fields from the editor
     additionalFields.value.forEach(field => {
       let value = miscFieldsValues.value[field.key]
@@ -565,6 +567,8 @@ const createOption = async () => {
       }
     })
 
+    console.log(" MISC FIELDS ",miscFieldsForStorage)
+    
     const optionData = {
       title: formData.value.title.trim() || '',
       text: formData.value.text.trim() || '',
@@ -580,7 +584,7 @@ const createOption = async () => {
       miscFields: miscFieldsForStorage
     }
 
-    console.log('[AddOptionModal] Creating option:', optionData)
+    console.log('[AddOptionModal] Creating option into CREATE OPTION:', optionData)
 
     const newOption = await optionStore.create(optionData)
 
@@ -597,7 +601,7 @@ const createOption = async () => {
     }))
   }
 }
-
+/*
 // Watch for option type changes
 watch(() => props.optionType, (newType) => {
   if (newType) {
@@ -611,6 +615,8 @@ watch(() => props.optionType, (newType) => {
     })
   }
 }, { immediate: true })
+*/
+
 
 // Lifecycle
 onMounted(() => {

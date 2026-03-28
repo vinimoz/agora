@@ -121,7 +121,7 @@
               :option="option"
               :inquiry-id="inquiryId"
               :compact="true"
-              :show-action="false"
+              :show-action="true"
               @click="$emit('openDetail', option)"
             />
             
@@ -228,12 +228,10 @@ const availableForeignOptions = computed(() => getAvailableForeignOptionsForLayo
 const canAddExisting = computed(() => selectedOption.value && targetStatus.value)
 
 // Helper functions
-const getOptionsByStatus = (status: string) => {
-  return kanbanOptions.value.filter(opt => {
+const getOptionsByStatus = (status: string) => kanbanOptions.value.filter(opt => {
     const optStatus = opt.status?.optionStatus || 'draft'
     return optStatus === status
   })
-}
 
 // Drag and drop handlers
 const handleDragStart = (event: DragEvent, option: Option) => {

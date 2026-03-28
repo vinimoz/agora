@@ -181,6 +181,15 @@ else if (route.query.viewMode === 'group') {
     subMode.value = 'table-view'
     }
 })
+
+const formattedFamilyType = computed(() => {
+  const value = inquiriesStore.advancedFilters.familyType
+  if (!value) return t('agora', 'All families')
+  
+  // If it's a specific value, format it nicely
+  return t('agora', `${value}`)
+})
+
 </script>
 
 <template>
@@ -270,7 +279,7 @@ else if (route.query.viewMode === 'group') {
         </div>
     </template>
     </HeaderBar>
-
+    
     <InquiryFilter :family-type="selectedFamily" />
 
     <div class="area__main">
@@ -326,6 +335,19 @@ else if (route.query.viewMode === 'group') {
     .area__main {
         width: 100%;
     }
+}
+
+.family-type-badge {
+  display: inline-block;
+  background: var(--color-primary-element-light);
+  color: var(--color-primary-text);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 28px;
+  font-weight: 500;
+  margin: 0 0 16px 0;
+  letter-spacing: 2px;
+  animation: slideIn 0.3s ease-out;
 }
 
 // Header controls container - all elements aligned to the right

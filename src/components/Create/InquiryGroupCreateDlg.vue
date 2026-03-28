@@ -421,7 +421,7 @@ function resetInquiry() {
                   :variant="'primary'"
                   @click="addGroupInquiry"
                   >
-                  {{ adding ? t('agora', 'Creating …') : 
+                  {{ adding ? t('agora', 'Creating …') :
                   props.parentGroupId ? 
                   t('agora', 'Add to Parent') : 
                   t('agora', 'Create Group') }}

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { computed, ref, watch } from 'vue'
+import { computed, ref } from 'vue'
 import { useOptionsStore } from '../stores/options'
 import { useInquiriesStore } from '../stores/inquiries'
 import type { Option, Inquiry } from '../Types'

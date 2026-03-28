@@ -5,7 +5,7 @@
 -->
 
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { onMounted , computed } from 'vue'
 import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import NcAppNavigation from '@nextcloud/vue/components/NcAppNavigation'
@@ -101,6 +101,22 @@ function deleteInquiry(inquiryId: number) {
   }
 }
 
+ 
+const selectedFamily = computed({
+  get: () => inquiriesStore.advancedFilters.familyType || null,
+  set: (value) => inquiriesStore.setFamilyType(value || '')
+})
+ 
+const formattedFamilyType = computed(() => { 
+  const value = inquiriesStore.advancedFilters.familyType 
+  if (!value) return t('agora', 'All families') 
+   
+  // If it's a specific value, format it nicely 
+  return t('agora', `${value}`) 
+})
+
+
+
 onMounted(() => {
   inquiriesStore.load(false)
 })
@@ -108,7 +124,18 @@ onMounted(() => {
 
 <template>
   <NcAppNavigation class="agora-navigation" aria-label="Agora Navigation"  >
+   
+    <!-- Header Section with Family Badge -->
+    <div v-if="selectedFamily" class="navigation-header">
+      <div class="family-badge">
+        <component :is="NavigationIcons.Family" :size="16" class="family-icon" />
+        <span class="family-label">{{ t('agora', 'Family') }}:</span>
+        <span class="family-name">{{ formattedFamilyType }}</span>
+      </div>
+    </div>
+
     <!-- Navigation List -->
+    
     <template #list>
       <!-- Groups Section -->
       <NcAppNavigationList v-if="inquiryGroupsStore.inquiryGroupsSorted.length > 0">
@@ -266,15 +293,66 @@ onMounted(() => {
     padding: 12px 0;
 }
 
-.navigation-header {
-    padding: 12px;
-    border-bottom: 1px solid var(--color-border);
-}
-
 .navigation-new-btn {
     width: 100%;
     justify-content: center;
 }
+
+.navigation-header {
+  padding: 12px 16px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-main-background);
+}
+
+.family-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: var(--color-background-dark);
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+  width: fit-content;
+  max-width: 100%;
+  
+  .family-icon {
+    flex-shrink: 0;
+    opacity: 0.7;
+  }
+  
+  .family-label {
+    color: var(--color-text-lighter);
+    font-weight: normal;
+  }
+  
+  .family-name {
+    color: var(--color-primary-element);
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+// Optional: Add animation for the badge
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.family-badge {
+  animation: slideIn 0.3s ease-out;
+}
+
+
 
 .navigation-caption {
     font-size: 12px;

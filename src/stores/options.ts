@@ -7,11 +7,10 @@ import { t } from '@nextcloud/l10n'
 import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import { Component } from '@nextcloud/vue'
-import { useOptionStore } from './option' 
+import { useOptionStore , Option } from './option' 
 
 import { Logger } from '../helpers/index.ts'
 import { OptionsAPI, PublicAPI } from '../Api/index.ts'
-import { Option } from './option.ts'
 import { OptionFamily, Event, InquiryOptionType } from '../Types/index.ts'
 import { useInquiryStore } from './inquiry.ts'
 import { useSessionStore } from './session.ts'
@@ -269,9 +268,7 @@ export const useOptionsStore = defineStore('options', {
             return counts
         },
         // Add this getter to get options by targetId from current store state
-        getOptionsByTargetId: (state) => (targetId: number): Option[] => {
-            return state.options.filter(option => option.targetId === targetId)
-        },
+        getOptionsByTargetId: (state) => (targetId: number): Option[] => state.options.filter(option => option.targetId === targetId),
 
         // Check if can add options
         canAddOptions(): boolean {

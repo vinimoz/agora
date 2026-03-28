@@ -292,12 +292,10 @@ const timelineOptions = computed(() => {
 })
 
 // Process options for timeline (only those with dates)
-const processOptions = computed(() => {
-  return timelineOptions.value.filter(opt => {
+const processOptions = computed(() => timelineOptions.value.filter(opt => 
     // Need to have start date to show on timeline
-    return getTimelineStartDate(opt) !== null
-  })
-})
+     getTimelineStartDate(opt) !== null
+  ))
 
 const addSelectedToTimeline = async () => {
   if (!selectedOption.value || !startDate.value) return
@@ -393,7 +391,7 @@ const events = computed(() => processOptions.value
     return {
       resourceId: opt.id.toString(),
       title: opt.title,
-      start: start,
+      start,
       end: endDateObj,
       allDay: true,
       extendedProps: { option: opt },
@@ -554,8 +552,7 @@ const calendarOptions = computed(() => {
           titleFormat: { year: 'numeric', month: 'long' },
         },
       },
-      eventContent: (arg: any) => {
-        return {
+      eventContent: (arg: any) => ({
           html: `
             <div class="custom-list-event">
               <div class="event-title">${arg.event.title}</div>
@@ -566,8 +563,7 @@ const calendarOptions = computed(() => {
               </div>
             </div>
           `
-        }
-      }
+        })
     }
   }
 

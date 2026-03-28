@@ -1146,7 +1146,7 @@ export function filterOptionsForTimeline(
   return options.filter(option => shouldShowInTimeline(option, optionTypes, targetFamily))
 }
 
-/////////////////////////////////////////
+/// //////////////////////////////////////
 /**
  * Get force_layouts from option's miscFields
  * @param option - The option
@@ -1164,11 +1164,11 @@ export function getForceLayouts(option: Option): string[] {
       const parsed = JSON.parse(miscFields.force_layouts)
       if (Array.isArray(parsed)) {
         return parsed
-      } else if (typeof parsed === 'string') {
+      } if (typeof parsed === 'string') {
         return [parsed]
-      } else {
+      } 
         return []
-      }
+      
     } catch {
       // If parsing fails, treat as a single layout string
       if (miscFields.force_layouts) {

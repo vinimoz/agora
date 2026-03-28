@@ -46,6 +46,20 @@ import HelpCircle from '@iconify-icons/mdi/help-circle'
 import Wrench from '@iconify-icons/mdi/wrench'
 import ThumbDownOutline from '@iconify-icons/mdi/thumb-down-outline'
 import Account from '@iconify-icons/mdi/account'
+import Upload from '@iconify-icons/mdi/upload'
+import Link from '@iconify-icons/mdi/link'
+import File from '@iconify-icons/mdi/file'
+import FilePdf from '@iconify-icons/mdi/file-pdf-box'
+import FileWord from '@iconify-icons/mdi/file-word-box'
+import FileText from '@iconify-icons/mdi/file-document-outline'
+import FileCode from '@iconify-icons/mdi/file-code-outline'
+import Markdown from '@iconify-icons/mdi/language-markdown'
+import DatabaseImport from '@iconify-icons/mdi/database-import'
+
+import Close from '@iconify-icons/mdi/close'
+import Eye from '@iconify-icons/mdi/eye-outline'
+import EyeOff from '@iconify-icons/mdi/eye-off-outline'
+import FileUpload from '@iconify-icons/mdi/file-upload-outline'
 
 import Vote from '@iconify-icons/mdi/vote'
 
@@ -159,7 +173,6 @@ import TagOutline from '@iconify-icons/mdi/tag-outline'
 
 import DotsVertical from '@iconify-icons/mdi/dots-vertical'
 import DeleteOutline from '@iconify-icons/mdi/delete-outline'
-import Close from '@iconify-icons/mdi/close'
 
 import CommentOutline from '@iconify-icons/mdi/comment-outline'
 import AutoFix from '@iconify-icons/mdi/auto-fix'
@@ -200,7 +213,6 @@ import BookOpen from '@iconify-icons/mdi/book-open-page-variant'
 import CalendarMultiselect from '@iconify-icons/mdi/calendar-multiselect'
 import UsersCog from '@iconify-icons/mdi/account-cog'
 import Download from '@iconify-icons/mdi/download'
-import Upload from '@iconify-icons/mdi/upload'
 import Refresh from '@iconify-icons/mdi/refresh'
 import Bell from '@iconify-icons/mdi/bell'
 import BellOutline from '@iconify-icons/mdi/bell-outline'
@@ -251,7 +263,6 @@ import BabyFace from '@iconify-icons/mdi/baby-face'
 import TagMultiple from '@iconify-icons/mdi/tag-multiple'
 import MapMarkerRadius from '@iconify-icons/mdi/map-marker-radius'
 
-import Link from '@iconify-icons/mdi/link'
 import LinkVariant from '@iconify-icons/mdi/link-variant'
 import Poll from '@iconify-icons/mdi/poll'
 import CardsPlaying from '@iconify-icons/mdi/cards-playing'
@@ -678,6 +689,29 @@ export const InquiryOptionIcons = {
   Information: makeIconComponent(InformationVariant, '#607D8B'),
   CloseCircle: makeIconComponent(Close, '#F44336'), 
   ClockOutline: makeIconComponent(ClockOutline, '#FFA000'),
+}
+
+export const ImportIcons = {
+  Upload: makeIconComponent(Upload, '#2E7D32'),
+
+  Link: makeIconComponent(Link, '#1976D2'),
+
+  File: makeIconComponent(File, '#546E7A'),
+  FilePdf: makeIconComponent(FilePdf, '#D32F2F'),
+  FileWord: makeIconComponent(FileWord, '#1976D2'),
+  FileText: makeIconComponent(FileText, '#546E7A'),
+  FileCode: makeIconComponent(FileCode, '#5E35B1'),
+
+  Markdown: makeIconComponent(Markdown, '#000000'),
+
+  Import: makeIconComponent(DatabaseImport, '#00897B'),
+
+  Close: makeIconComponent(Close, '#F44336'),
+
+  Eye: makeIconComponent(Eye, '#546E7A'),
+  EyeOff: makeIconComponent(EyeOff, '#9E9E9E'),
+
+  FileUpload: makeIconComponent(FileUpload, '#2E7D32'),
 }
 
 export const getStatusIcon = (iconName: string) => StatusIcons[iconName] || StatusIcons.Default

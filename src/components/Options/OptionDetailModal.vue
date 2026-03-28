@@ -169,6 +169,7 @@
                             <div v-if="hasAdditionalFieldsData" class="additional-fields-display">
                                 <h4>{{ t('agora', 'Additional Information') }}</h4>
                                 <MiscFieldsEditor
+                                    :key="optionStore.id + '-' + JSON.stringify(optionStore.miscFields)"  
                                     :fields="additionalFields"
                                     :initial-values="optionStore.miscFields || {}"
                                     :editable="false"
@@ -409,7 +410,7 @@ const miscFieldsValues = ref<Record<string, any>>({})
 const allOptionTypes = computed(() => sessionStore.appSettings?.inquiryOptionTypeTab || [])
 
 // Get additional fields as MiscField type - filter out special fields
-const SPECIAL_FIELDS = ['start_date', 'end_date', 'force_layouts']
+const SPECIAL_FIELDS = ['force_layouts']
 
 const additionalFields = computed<MiscField[]>(() => {
     const fields = getOptionTypeFields(optionStore.type, allOptionTypes.value) as MiscField[]
@@ -515,8 +516,10 @@ const loadOption = async () => {
     error.value = null
 
     try {
+        console.log("lets reload option BEFORE the optionsStore load ")
         await optionStore.load(props.optionId)
         if (optionStore) {
+            console.log("lets reload option BEFORE the optionsStore load ",optionStore)
             // Initialize edit form with current values
             editForm.value = {
                 title: optionStore.title || '',
@@ -622,8 +625,9 @@ const saveEdit = async () => {
                     stringValue = value ? 'true' : 'false'
                 } else if (field.type === 'json') {
                     stringValue = typeof value === 'object' ? JSON.stringify(value) : String(value)
-                } else if (field.type === 'datetime') {
+                } else if (field.type === 'datetime' || field.type === 'date' ) {
                     stringValue = value instanceof Date ? value.toISOString() : String(value)
+                    console.log(" SAVE EDIT DATETIME",stringValue)
                 } else {
                     stringValue = String(value)
                 }

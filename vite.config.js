@@ -21,6 +21,9 @@ const customConfig = {
   build: {
     sourcemap: true,
     minify: false,
+    rollupOptions: {
+         treeshake: true
+      },
   },
 }
 export default createAppConfig(

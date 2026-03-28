@@ -154,7 +154,7 @@
                         <NcDateTimePickerNative
                             :id="`field-${field.key}`"
                             :model-value="getDateTimeValue(field.key)"
-                            type="datetime-local"
+                            type="date"
                             :placeholder="field.placeholder || t('Select date and time')"
                             :required="field.required"
                             :label="getFieldLabel(field)"
@@ -333,9 +333,7 @@ const categoryOptions = computed(() => getHierarchicalOptions(
 ))
 
 // Helper methods
-const getFieldLabel = (field: MiscField): string => {
-    return getFieldLabelHelper(field)
-}
+const getFieldLabel = (field: MiscField): string => getFieldLabelHelper(field)
 
 // FIXED: Safe method to get string value (never returns null)
 const getSafeStringValue = (key: string): string => {
@@ -452,19 +450,31 @@ const getSelectedCategoryOption = (key: string) => {
     return categoryOptions.value.find(opt => String(opt.value) === String(value)) || null
 }
 
+// If you need the string format too
+const getFormattedDateTime = (key: string): string | null => {
+    const date = getDateTimeValue(key)
+    if (!date) return null
+    
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, '0')
+    const day = String(date.getDate()).padStart(2, '0')
+    const hours = String(date.getHours()).padStart(2, '0')
+    const minutes = String(date.getMinutes()).padStart(2, '0')
+    return `${year}-${month}-${day}T${hours}:${minutes}`
+}
 // DateTime methods - Fixed to handle both string and Date
-const getDateTimeValue = (key: string): string | null => {
+const getDateTimeValue = (key: string): Date | null => {
     const value = miscFields.getValue(key)
     if (!value) return null
+    
+    console.log('Value type:', typeof value)
+    console.log('Value:', value)
+    console.log('Is Date?', value instanceof Date)
+    console.log('Constructor?', value?.constructor?.name)
 
     // If it's already a Date object
     if (value instanceof Date && !isNaN(value.getTime())) {
-        const year = value.getFullYear()
-        const month = String(value.getMonth() + 1).padStart(2, '0')
-        const day = String(value.getDate()).padStart(2, '0')
-        const hours = String(value.getHours()).padStart(2, '0')
-        const minutes = String(value.getMinutes()).padStart(2, '0')
-        return `${year}-${month}-${day}T${hours}:${minutes}`
+        return value  // Return the Date object directly
     }
 
     // If it's a string
@@ -473,28 +483,44 @@ const getDateTimeValue = (key: string): string | null => {
             // Try to parse as ISO string
             const date = new Date(value)
             if (!isNaN(date.getTime())) {
-                const year = date.getFullYear()
-                const month = String(date.getMonth() + 1).padStart(2, '0')
-                const day = String(date.getDate()).padStart(2, '0')
-                const hours = String(date.getHours()).padStart(2, '0')
-                const minutes = String(date.getMinutes()).padStart(2, '0')
-                return `${year}-${month}-${day}T${hours}:${minutes}`
+                return date  // Return Date object
             }
         } catch {
-            // If parsing fails, try to extract from format "YYYY-MM-DD HH:MM"
+            // If parsing fails, try to extract from format "YYYY-MM-DD HH:MM" or "YYYY-MM-DD"
             const match = value.match(/^(\d{4})-(\d{2})-(\d{2})(?:\s+(\d{2}):(\d{2}))?/)
             if (match) {
                 const [, year, month, day, hours = '00', minutes = '00'] = match
-                return `${year}-${month}-${day}T${hours}:${minutes}`
+                // Create Date object (month is 0-indexed in Date constructor)
+                const date = new Date(
+                    parseInt(year), 
+                    parseInt(month) - 1, 
+                    parseInt(day), 
+                    parseInt(hours), 
+                    parseInt(minutes)
+                )
+                if (!isNaN(date.getTime())) {
+                    return date
+                }
             }
+        }
+    }
+    
+    // Handle numbers (timestamps)
+    if (typeof value === 'number' && !isNaN(value)) {
+        const date = new Date(value)
+        if (!isNaN(date.getTime())) {
+            return date
         }
     }
 
     return null
 }
 
+
 const handleDateTimeUpdate = (fieldKey: string, value: string | null) => {
     let storageValue: string | null = null
+    console.log(" DATE TIPME UPDATE VALUE ",value)
+    console.log(" DATE TIPME UPDATE KEY ",fieldKey)
     if (value) {
         // Convert from datetime-local format to storage format
         const date = new Date(value)
@@ -507,6 +533,7 @@ const handleDateTimeUpdate = (fieldKey: string, value: string | null) => {
             storageValue = `${year}-${month}-${day} ${hours}:${minutes}`
         }
     }
+    console.log(" FINISH UPDATE MISC ",storageValue)
     miscFields.updateValue(fieldKey, storageValue, 'datetime')
     emit('update', miscFields.values.value)
 }
@@ -635,7 +662,7 @@ const getFieldColor = (field: MiscField): string => {
     return colors[field.type as keyof typeof colors] || 'var(--color-text-lighter)'
 }
 
-// Watch for initialValues changes
+/* Watch for initialValues changes
 watch(() => props.initialValues, (newValues) => {
     console.log('[MiscFieldsEditor] initialValues changed:', newValues)
     initialValuesRef.value = newValues || {}
@@ -651,10 +678,17 @@ watch(() => props.fields, (newFields) => {
     miscFields.reinitialize()
     emit('update', miscFields.values.value)
 }, { deep: true })
+*/
 
 // Initialize on mount
 onMounted(() => {
     console.log('[MiscFieldsEditor] mounted with fields:', props.fields.length, 'initialValues:', props.initialValues)
+     console.log('[MiscFieldsEditor] mounted with:', {
+    fieldsCount: props.fields.length,
+    fields: props.fields.map(f => ({ key: f.key, type: f.type })),
+    initialValues: props.initialValues,
+    editable: props.editable
+  })
     miscFields.reinitialize()
     // Emit initial values
     setTimeout(() => {
