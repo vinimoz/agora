@@ -54,6 +54,7 @@ OC.L10N.register(
     "Insert image" : "Umetni sliku",
     "Code" : "Kod",
     "Code block" : "Odjeljak s kodom",
+    "Preview" : "Pretpregled",
     "Summary" : "Sažetak",
     "Generate" : "Generiraj",
     "Pending" : "Na čekanju",
