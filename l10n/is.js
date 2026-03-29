@@ -73,6 +73,8 @@ OC.L10N.register(
     "Just now" : "Í þessum töluðu orðum",
     "Today" : "Í dag",
     "Yesterday" : "Í gær",
+    "Yes" : "Já",
+    "No" : "Nei",
     "Supported" : "Stutt",
     "Support" : "Aðstoð",
     "Participants" : "Þátttakendur",

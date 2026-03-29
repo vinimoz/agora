@@ -186,6 +186,7 @@ OC.L10N.register(
     "Polls" : "Apklausos",
     "Collectives" : "Kolektyvai",
     "Files uploaded successfully" : "Failai sėkmingai įkelti",
+    "Failed to create {resource}" : "Nepavyko sukurti {resource}",
     "Remove file" : "Šalinti failą",
     "OK" : "OK",
     "Add {type}" : "Pridėti {type}",
