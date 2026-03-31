@@ -190,6 +190,7 @@ OC.L10N.register(
     "Remove file" : "Šalinti failą",
     "OK" : "OK",
     "Add {type}" : "Pridėti {type}",
+    "Option" : "Parinktis",
     "Create" : "Sukurti",
     "Draft" : "Juodraštis",
     "Active" : "Aktyvi",
