@@ -305,6 +305,8 @@
     "Show email addresses of internal accounts" : "顯示內部帳號的電子郵件地址",
     "Show only to members of the following groups" : "僅向以下群組的成員顯示",
     "Allow comments" : "允許留言",
+    "Up" : "向上",
+    "Down" : "向下",
     "Label" : "標籤",
     "Configure" : "設定",
     "Enable unrestricted owners globally" : "全域啟用不受限制的擁有者",
