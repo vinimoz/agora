@@ -19,12 +19,12 @@
 
       <div class="engine-grid">
         <div
-          v-for="engine in engines"
+          v-for="engine in availableEngines"
           :key="engine.id"
           class="engine-card"
-          :class="{ 
+          :class="{
             selected: selectedEngine === engine.id,
-            [engine.behavior]: true 
+            [engine.behavior]: true
           }"
           @click="selectEngine(engine.id)"
         >
@@ -36,10 +36,18 @@
               {{ getBehaviorLabel(engine.behavior) }}
             </div>
           </div>
-          
+
           <div class="engine-card-content">
             <h4>{{ engine.label }}</h4>
-            <p>{{ engine.description }}</p>
+            <p>{{ engine.description || getEngineDescription(engine.id) }}</p>
+            <div v-if="engine.constraints" class="engine-constraints">
+              <span v-if="engine.constraints.min_candidates" class="constraint-badge">
+                {{ t('agora', 'Min {n} candidates', { n: engine.constraints.min_candidates }) }}
+              </span>
+              <span v-if="engine.constraints.max_candidates" class="constraint-badge">
+                {{ t('agora', 'Max {n} candidates', { n: engine.constraints.max_candidates }) }}
+              </span>
+            </div>
           </div>
 
           <div v-if="selectedEngine === engine.id" class="engine-check">
@@ -48,32 +56,35 @@
         </div>
       </div>
 
-      <div v-if="selectedEngine && currentConfigSchema" class="engine-config-section">
+      <div v-if="selectedEngine && currentConfigSchema && Object.keys(currentConfigSchema).length > 0" class="engine-config-section">
         <div class="config-header">
           <Settings :size="18" />
           <h5>{{ t('agora', 'Configure settings') }}</h5>
         </div>
-        
+
         <div class="config-fields">
           <div v-for="(schema, key) in currentConfigSchema" :key="key" class="config-field">
             <label :for="`config-${key}`">
               {{ schema.label || key }}
-              <span v-if="schema.type === 'number'" class="field-hint">
-                {{ t('agora', '({min}-{max})', { min: schema.min || 0, max: schema.max || 100 }) }}
+              <span v-if="schema.type === 'number' && schema.min !== undefined && schema.max !== undefined" class="field-hint">
+                {{ t('agora', '({min}-{max})', { min: schema.min, max: schema.max }) }}
               </span>
             </label>
-            
+
             <div class="field-input">
+              <!-- Number input (range) -->
               <input
                 v-if="schema.type === 'number'"
                 :id="`config-${key}`"
                 v-model="tempConfig[key]"
                 type="range"
-                :min="schema.min || 0"
-                :max="schema.max || 100"
-                :step="schema.step || 1"
+                :min="schema.min ?? 0"
+                :max="schema.max ?? 100"
+                :step="schema.step ?? 1"
                 class="range-input"
               />
+
+              <!-- Text input -->
               <input
                 v-else-if="schema.type === 'string'"
                 :id="`config-${key}`"
@@ -82,7 +93,8 @@
                 :placeholder="schema.placeholder || ''"
                 class="text-input"
               />
-              
+
+              <!-- Boolean toggle -->
               <div v-else-if="schema.type === 'boolean'" class="boolean-field">
                 <label class="toggle-switch">
                   <input v-model="tempConfig[key]" type="checkbox" />
@@ -90,7 +102,8 @@
                 </label>
                 <span class="boolean-label">{{ tempConfig[key] ? t('agora', 'Enabled') : t('agora', 'Disabled') }}</span>
               </div>
-              
+
+              <!-- Select dropdown -->
               <select
                 v-else-if="schema.type === 'array' && schema.options"
                 :id="`config-${key}`"
@@ -101,12 +114,13 @@
                   {{ opt }}
                 </option>
               </select>
-              
+
+              <!-- Number display for range -->
               <div v-if="schema.type === 'number'" class="range-value">
-                {{ tempConfig[key] || schema.default || 0 }}
+                {{ tempConfig[key] ?? schema.default ?? 0 }}
               </div>
             </div>
-            
+
             <p v-if="schema.description" class="field-description">
               {{ schema.description }}
             </p>
@@ -114,12 +128,19 @@
         </div>
       </div>
 
+      <div v-else-if="selectedEngine && (!currentConfigSchema || Object.keys(currentConfigSchema).length === 0)" class="engine-info-section">
+        <div class="info-message">
+          <Info :size="18" />
+          <span>{{ t('agora', 'This voting method requires no additional configuration.') }}</span>
+        </div>
+      </div>
+
       <div class="modal-footer">
         <button class="btn-secondary" @click="$emit('close')">
           {{ t('agora', 'Cancel') }}
         </button>
-        <button 
-          class="btn-primary" 
+        <button
+          class="btn-primary"
           :disabled="!selectedEngine"
           @click="apply"
         >
@@ -132,13 +153,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, computed } from 'vue'
 import { t } from '@nextcloud/l10n'
 import NcModal from '@nextcloud/vue/components/NcModal'
 import {
   Vote,
   CheckCircle,
   Settings,
+  Info,
   ThumbsUp,
   Scale,
   Heart,
@@ -147,28 +169,66 @@ import {
   Award,
   Brain,
   Gauge,
-  Users
+  Users,
+  BarChart3,
+  ListChecks,
+  Hash,
 } from 'lucide-vue-next'
+
+// Define types for engine definitions
+interface ConfigSchemaField {
+  type: string
+  default?: unknown
+  label?: string
+  min?: number
+  max?: number
+  step?: number
+  placeholder?: string
+  options?: string[]
+  description?: string
+}
+
+interface EngineDefinition {
+  label: string
+  behavior: 'single' | 'multi' | 'flex'
+  description: string
+  constraints: {
+    min_candidates?: number
+    max_candidates?: number
+    requires_weight_source?: boolean
+  }
+  config_schema?: Record<string, ConfigSchemaField>
+}
+
+interface Engine {
+  id: string
+  label: string
+  behavior: string
+  description: string
+  constraints?: {
+    min_candidates?: number
+    max_candidates?: number
+  }
+}
 
 const props = defineProps<{
   currentEngineId: string
-  currentConfig: Record<string, any>
-  engines: Array<{
-    id: string
-    label: string
-    behavior: string
-    description: string
-  }>
-  engineDefinitions: Record<string, any>
+  currentConfig: Record<string, unknown>
+  engines: Engine[]
+  engineDefinitions: Record<string, EngineDefinition>
 }>()
 
 const emit = defineEmits<{
   close: []
-  apply: [engineId: string, config: Record<string, any>]
+  apply: [engineId: string, config: Record<string, unknown>]
 }>()
 
 const selectedEngine = ref(props.currentEngineId)
-const tempConfig = ref<Record<string, any>>({ ...props.currentConfig })
+const tempConfig = ref<Record<string, unknown>>({ ...props.currentConfig })
+
+// Filter engines to show only those that are valid with current candidate count
+// This will be passed from parent, but we'll compute available ones here as well
+const availableEngines = computed(() => props.engines)
 
 const currentConfigSchema = computed(() => {
   if (!selectedEngine.value) return null
@@ -176,11 +236,13 @@ const currentConfigSchema = computed(() => {
   return engine?.config_schema || null
 })
 
+// Map engine IDs to icon components
 const getEngineIcon = (engineId: string) => {
-  const icons: Record<string, any> = {
+  const icons: Record<string, unknown> = {
     binary: ThumbsUp,
     ternary: Scale,
     reaction: Heart,
+    star: Star,
     score: Star,
     approval: CheckCircle,
     ranked: TrendingUp,
@@ -188,37 +250,51 @@ const getEngineIcon = (engineId: string) => {
     condorcet: Brain,
     majority_judgment: Gauge,
     token_weighted: Users,
-    quadratic: TrendingUp
+    quadratic: TrendingUp,
+    schulze: Brain,
+    copeland: BarChart3,
+    nauru: Hash,
+    phased_voting: ListChecks,
+    ranked_choice: TrendingUp,
+    binary_voting: ThumbsUp,
+    ternary_voting: Scale,
+    star_voting: Star,
+    approval_voting: CheckCircle,
+    score_voting: Star
   }
   return icons[engineId] || Vote
 }
 
-const getEngineLabel = (engineId: string) => {
-  return props.engineDefinitions[engineId]?.label || engineId
-}
+const getEngineLabel = (engineId: string): string => props.engineDefinitions[engineId]?.label || engineId
 
-const getBehaviorLabel = (behavior: string) => {
-  const labels = {
+const getEngineDescription = (engineId: string): string => props.engineDefinitions[engineId]?.description || t('agora', 'Vote using this method')
+
+const getBehaviorLabel = (behavior: string): string => {
+  const labels: Record<string, string> = {
     single: t('agora', 'Single choice'),
     multi: t('agora', 'Multiple choices'),
     flex: t('agora', 'Flexible')
   }
-  return labels[behavior as keyof typeof labels] || behavior
+  return labels[behavior] || behavior
 }
 
-const selectEngine = (engineId: string) => {
+const selectEngine = (engineId: string): void => {
   selectedEngine.value = engineId
-  const schema = props.engineDefinitions[engineId]?.config_schema
-  if (schema) {
-    const newConfig: Record<string, any> = {}
-    for (const [key, value] of Object.entries(schema)) {
+
+  // Reset config for the new engine
+  const engine = props.engineDefinitions[engineId]
+  if (engine?.config_schema) {
+    const newConfig: Record<string, unknown> = {}
+    for (const [key, value] of Object.entries(engine.config_schema)) {
       newConfig[key] = value.default
     }
     tempConfig.value = newConfig
+  } else {
+    tempConfig.value = {}
   }
 }
 
-const apply = () => {
+const apply = (): void => {
   if (selectedEngine.value) {
     emit('apply', selectedEngine.value, tempConfig.value)
     emit('close')
@@ -270,6 +346,8 @@ const apply = () => {
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 16px;
     padding: 24px;
+    max-height: 400px;
+    overflow-y: auto;
 
     .engine-card {
       position: relative;
@@ -328,10 +406,24 @@ const apply = () => {
         }
 
         p {
-          margin: 0;
+          margin: 0 0 8px 0;
           font-size: 12px;
           color: var(--color-text-lighter);
           line-height: 1.4;
+        }
+
+        .engine-constraints {
+          display: flex;
+          gap: 8px;
+          margin-top: 8px;
+
+          .constraint-badge {
+            font-size: 10px;
+            padding: 2px 6px;
+            background: var(--color-background-hover);
+            border-radius: 12px;
+            color: var(--color-text-lighter);
+          }
         }
       }
 
@@ -502,6 +594,27 @@ const apply = () => {
           font-size: 11px;
           color: var(--color-text-lighter);
         }
+      }
+    }
+  }
+
+  .engine-info-section {
+    margin: 0 24px 24px 24px;
+    padding: 16px;
+    background: var(--color-background-dark);
+    border-radius: 12px;
+    border: 1px solid var(--color-border);
+
+    .info-message {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--color-text-lighter);
+      font-size: 13px;
+
+      svg {
+        flex-shrink: 0;
+        color: var(--color-primary-element);
       }
     }
   }

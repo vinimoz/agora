@@ -152,7 +152,7 @@
 </template>
 
 <script setup lang="ts">
-    import { ref, computed, onMounted, watch, markRaw, defineAsyncComponent } from 'vue'
+import { ref, computed, onMounted, watch, markRaw } from 'vue'
 import type { DefineComponent, Component } from 'vue'
 import { useRoute } from 'vue-router'
 import { t } from '@nextcloud/l10n'
@@ -207,7 +207,7 @@ const selectedOptionId = ref<number | null>(null)
 // Modal state for dynamic actions
 const showModal = ref(false)
 const currentActionKey = ref<string | null>(null)
-const currentActionData = ref<any>(null)
+const currentActionData = ref<unknown>(null)
 const currentModalComponent = ref<Component | null>(null)
 
 // Cache for dynamically imported components
@@ -297,6 +297,7 @@ const handleFamilyAction = async (action: Action) => {
       // Fallback to direct execution if no modal found
       if (action.handler) {
         await action.handler(action.data)
+        console.warn(`Handler or modal found for action: ${action.key}`)
       } else {
         console.warn(`No handler or modal found for action: ${action.key}`)
       }
@@ -323,7 +324,7 @@ const closeModal = () => {
  * Handle action completion (import, export, etc.)
  * @param result
  */
-const handleActionCompleted = (result: any) => {
+const handleActionCompleted = (result: unknown) => {
   // Refresh options if needed
   if (result?.refreshOptions) {
     optionsStore.load(inquiryStore.id)
@@ -331,8 +332,7 @@ const handleActionCompleted = (result: any) => {
 
   // Show success message if provided
   if (result?.message) {
-    // You might want to use NcToast or NcSnackbar here
-    console.log('Action completed:', result.message)
+    console.error('Action completed:', result.message)
   }
 
   closeModal()
@@ -375,8 +375,6 @@ const hasVisibleFamilies = computed(() => familiesWithOptions.value.length > 0)
 
 const activeFamilyData = computed(() => {
   if (!activeFamily.value) return null
-  console.log(" ACTIVE FAMILY DATE ",activeFamily.value)
-  console.log(" familiesWithOPTIONS ",familiesWithOptions)
 
   return familiesWithOptions.value.find(f => f.key === activeFamily.value)
 })
@@ -414,7 +412,6 @@ const activeFamilyOptions = computed(() => {
   if (!activeFamilyData.value) return []
 
   const familyOptionTypeKeys = activeFamilyData.value.optionTypes.map(opt => opt.option_type)
-  console.log(" ACTIVE FAMILY OPTION TYPE ",familyOptionTypeKeys)
   return optionsStore.options.filter(option =>
     familyOptionTypeKeys.includes(option.type)
   )

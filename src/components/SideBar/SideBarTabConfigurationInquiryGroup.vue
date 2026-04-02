@@ -420,7 +420,7 @@ onMounted(() => {
       <div class="form-group">
         <NcTextArea
           v-model="inquiryGroupStore.description"
-          :placeholder="t('agora', 'Enter group description …')"
+          :placeholder="t('agora', 'Enter group description …')"
           :rows="10"
           :disabled="!canEditGroup || autoSaving"
           class="form-textarea large"
@@ -481,7 +481,7 @@ onMounted(() => {
     <div v-if="canEditGroup" class="auto-save-status">
       <div v-if="autoSaving" class="saving-indicator">
         <div class="saving-spinner"></div>
-        <span>{{ t('agora', 'Saving changes …') }}</span>
+        <span>{{ t('agora', 'Saving changes …') }}</span>
       </div>
       <div v-else class="saved-indicator">
         <component :is="InquiryGeneralIcons.CheckCircle" />
@@ -493,7 +493,7 @@ onMounted(() => {
     <div v-if="loading" class="loading-overlay">
       <div class="loading-content">
         <div class="loading-spinner"></div>
-        <p>{{ t('agora', 'Loading group settings …') }}</p>
+        <p>{{ t('agora', 'Loading group settings …') }}</p>
       </div>
     </div>
   </div>

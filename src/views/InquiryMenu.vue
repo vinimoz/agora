@@ -253,8 +253,6 @@ const shouldRedirectToGroupView = (familyType: string) => {
 function handleViewModeChange(mode: string) {
   viewMode.value = mode
   inquiriesStore.setFamilyType(selectedFamily.value)
- console.log(" CHANGE MODE ", mode) 
-  // If family is selected, navigate with new mode
   if (selectedFamily.value) {
     if (mode === 'create') {
       isNavigating.value = true

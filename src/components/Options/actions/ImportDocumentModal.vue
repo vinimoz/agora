@@ -1,3 +1,4 @@
+<!-- ImportDocumentModal.vue - Fixed version -->
 <!--
   - SPDX-FileCopyrightText: 2024 Nextcloud contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
@@ -6,7 +7,7 @@
 <template>
   <NcModal
     :show="show"
-    :title="modalTitle"
+    :name="modalTitle"
     size="large"
     class="import-document-modal"
     @close="handleClose"
@@ -46,9 +47,12 @@
       <!-- URL Import Form -->
       <div v-if="sourceType === 'url'" class="import-form">
         <div class="form-group">
-          <label>{{ t('agora', 'Document URL') }}</label>
+          <label for="document-url">{{ t('agora', 'Document URL') }}</label>
           <NcInputField
+            id="document-url"
             v-model="url"
+            :label="t('agora', 'Document URL')"
+            :label-outside="true"
             :placeholder="t('agora', 'https://example.com/document.html')"
             :error="urlError"
             @update:model-value="validateUrl"
@@ -74,7 +78,13 @@
 
       <!-- File Upload Form -->
       <div v-if="sourceType === 'file'" class="import-form">
-        <div class="file-drop-zone" @dragover.prevent @drop.prevent="handleFileDrop">
+        <div 
+          class="file-drop-zone" 
+          :class="{ 'drag-over': isDragOver }"
+          @dragover.prevent="handleDragOver"
+          @dragleave.prevent="handleDragLeave"
+          @drop.prevent="handleFileDrop"
+        >
           <input
             ref="fileInput"
             type="file"
@@ -97,6 +107,10 @@
               <span v-for="format in supportedFormats" :key="format" class="format-badge">
                 {{ format.toUpperCase() }}
               </span>
+            </div>
+            <div class="warning-note">
+              <component :is="ImportIcons.Alert" :size="16" />
+              <span>{{ t('agora', 'Image files are not supported') }}</span>
             </div>
           </div>
 
@@ -138,9 +152,12 @@
         <h3>{{ t('agora', 'Import Options') }}</h3>
         
         <div class="form-group">
-          <label>{{ t('agora', 'Document Title') }}</label>
+          <label for="document-title">{{ t('agora', 'Document Title') }}</label>
           <NcInputField
+            id="document-title"
             v-model="title"
+            :label="t('agora', 'Document Title')"
+            :label-outside="true"
             :placeholder="t('agora', 'Enter document title')"
           />
         </div>
@@ -151,6 +168,8 @@
             v-model="importType"
             :options="importTypes"
             :placeholder="t('agora', 'Select option type')"
+            :input-label="t('agora', 'Import as')"
+            :aria-label-combobox="t('agora', 'Import as')"
           />
         </div>
 
@@ -160,6 +179,8 @@
             v-model="parentOption"
             :options="parentOptions"
             :placeholder="t('agora', 'Select parent section (optional)')"
+            :input-label="t('agora', 'Target Section')"
+            :aria-label-combobox="t('agora', 'Target Section')"
           />
         </div>
       </div>
@@ -176,7 +197,7 @@
           </NcButton>
         </div>
         <div v-if="showFullPreview" class="preview-content">
-          <div class="markdown-preview" v-html="previewContent"></div>
+          <div class="markdown-preview" v-html="sanitizedPreviewContent"></div>
           <div v-if="documentMetadata" class="metadata-preview">
             <h4>{{ t('agora', 'Document Metadata') }}</h4>
             <ul>
@@ -191,6 +212,23 @@
               </li>
               <li v-if="documentMetadata.pageCount">
                 <strong>{{ t('agora', 'Pages') }}:</strong> {{ documentMetadata.pageCount }}
+              </li>
+              <li v-if="documentMetadata.detectedStructure">
+                <strong>{{ t('agora', 'Detected Structure') }}:</strong>
+                <ul class="structure-list">
+                  <li v-if="documentMetadata.detectedStructure.hasIntroduction">
+                    ✓ {{ t('agora', 'Introduction') }}
+                  </li>
+                  <li v-if="documentMetadata.detectedStructure.hasChapters">
+                    ✓ {{ t('agora', 'Chapters') }}
+                  </li>
+                  <li v-if="documentMetadata.detectedStructure.hasArticles">
+                    ✓ {{ t('agora', 'Articles') }}
+                  </li>
+                  <li v-if="documentMetadata.detectedStructure.hasConclusion">
+                    ✓ {{ t('agora', 'Conclusion') }}
+                  </li>
+                </ul>
               </li>
             </ul>
           </div>
@@ -221,15 +259,16 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import { t } from '@nextcloud/l10n'
-import { showError, showSuccess, showInfo } from '@nextcloud/dialogs'
+import { showError, showSuccess } from '@nextcloud/dialogs'
 import NcModal from '@nextcloud/vue/components/NcModal'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcInputField from '@nextcloud/vue/components/NcInputField'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
 import { marked } from 'marked'
+import domPurify from 'dompurify'
 
-import { ImportService, type ImportOptions, type ImportResult } from '../../../helpers/modules/ImportService'
+import { ImportService, type ImportResult } from '../../../helpers/modules/ImportService'
 import { ImportIcons } from '../../../utils/icons'
 import { useOptionsStore } from '../../../stores/options'
 
@@ -254,6 +293,7 @@ const url = ref('')
 const urlError = ref('')
 const urlFormat = ref('auto')
 const selectedFile = ref<File | null>(null)
+const isDragOver = ref(false)
 const convertToMarkdown = ref(true)
 const extractStructure = ref(true)
 const title = ref('')
@@ -263,6 +303,9 @@ const importing = ref(false)
 const previewContent = ref('')
 const showFullPreview = ref(false)
 const documentMetadata = ref<ImportResult['metadata'] | null>(null)
+
+// Sanitized preview content to prevent XSS
+const sanitizedPreviewContent = computed(() => domPurify.sanitize(previewContent.value))
 
 // Options
 const formatOptions = [
@@ -296,8 +339,7 @@ const importTypes = computed(() => {
 })
 
 const parentOptions = computed(() => 
-  // Get options that can have children
-   optionsStore.options
+  optionsStore.options
     .filter(opt => opt.typeInfo?.features?.includes('hierarchical'))
     .map(opt => ({
       value: opt.id,
@@ -328,17 +370,46 @@ const triggerFileInput = () => {
 const handleFileSelect = (event: Event) => {
   const input = event.target as HTMLInputElement
   if (input.files && input.files[0]) {
-    selectedFile.value = input.files[0]
+    const file = input.files[0]
+    
+    // Reject image files
+    if (file.type.startsWith('image/')) {
+      showError(t('agora', 'Image files are not supported. Please upload document files (PDF, DOC, DOCX, ODT, HTML, TXT, MD)'))
+      return
+    }
+    
+    selectedFile.value = file
     if (!title.value) {
       title.value = selectedFile.value.name.replace(/\.[^/.]+$/, '')
     }
   }
 }
 
+const handleDragOver = (event: DragEvent) => {
+  event.preventDefault()
+  isDragOver.value = true
+}
+
+const handleDragLeave = (event: DragEvent) => {
+  event.preventDefault()
+  isDragOver.value = false
+}
+
 const handleFileDrop = (event: DragEvent) => {
+  event.preventDefault()
+  isDragOver.value = false
+  
   const files = event.dataTransfer?.files
   if (files && files[0]) {
-    selectedFile.value = files[0]
+    const file = files[0]
+    
+    // Reject image files
+    if (file.type.startsWith('image/')) {
+      showError(t('agora', 'Image files are not supported. Please upload document files (PDF, DOC, DOCX, ODT, HTML, TXT, MD)'))
+      return
+    }
+    
+    selectedFile.value = file
     if (!title.value) {
       title.value = selectedFile.value.name.replace(/\.[^/.]+$/, '')
     }
@@ -347,6 +418,7 @@ const handleFileDrop = (event: DragEvent) => {
 
 const clearSelectedFile = () => {
   selectedFile.value = null
+  isDragOver.value = false
   const input = document.querySelector('input[type="file"]') as HTMLInputElement
   if (input) input.value = ''
 }
@@ -376,16 +448,16 @@ const formatFileSize = (bytes: number): string => {
   const k = 1024
   const sizes = ['Bytes', 'KB', 'MB', 'GB']
   const i = Math.floor(Math.log(bytes) / Math.log(k))
-  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))  } ${  sizes[i]}`
+  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))} ${sizes[i]}`
 }
 
 const generatePreview = async () => {
-  if (sourceType.value === 'url' && url.value) {
+  if (sourceType.value === 'url' && url.value && !urlError.value) {
     try {
       const result = await importService.importDocument({
         sourceType: 'url',
         url: url.value,
-        format: urlFormat.value === 'auto' ? undefined : urlFormat.value as any
+        format: urlFormat.value === 'auto' ? undefined : urlFormat.value as 'html' | 'markdown' | 'text'
       })
       
       if (result.success) {
@@ -432,7 +504,7 @@ const handleImport = async () => {
       importResult = await importService.importDocument({
         sourceType: 'url',
         url: url.value,
-        format: urlFormat.value === 'auto' ? undefined : urlFormat.value as any,
+        format: urlFormat.value === 'auto' ? undefined : urlFormat.value as 'html' | 'markdown' | 'text',
         options: {
           convertToMarkdown: convertToMarkdown.value,
           detectChapters: extractStructure.value
@@ -456,7 +528,7 @@ const handleImport = async () => {
     }
     
     // Create the option with imported content
-    const newOption = await optionsStore.add({
+    await optionsStore.add({
       title: title.value || importResult.title || 'Imported Document',
       text: importResult.content,
       type: importType.value || 'document',
@@ -586,6 +658,11 @@ watch(url, () => {
   transition: all 0.3s ease;
   background: var(--color-background-dark);
   
+  &.drag-over {
+    border-color: var(--color-primary-element);
+    background: var(--color-background-darker);
+  }
+  
   &:hover {
     border-color: var(--color-primary-element);
     background: var(--color-background-darker);
@@ -606,6 +683,20 @@ watch(url, () => {
     .drop-subtext {
       margin: 0 0 16px 0;
       color: var(--color-text-lighter);
+    }
+    
+    .warning-note {
+      margin-top: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--color-warning);
+      
+      svg {
+        opacity: 0.7;
+      }
     }
   }
   
@@ -715,6 +806,10 @@ watch(url, () => {
       :deep(h3) {
         font-size: 18px;
       }
+      
+      :deep(p) {
+        line-height: 1.6;
+      }
     }
     
     .metadata-preview {
@@ -724,6 +819,17 @@ watch(url, () => {
         
         li {
           margin: 4px 0;
+        }
+        
+        .structure-list {
+          margin-top: 4px;
+          padding-left: 20px;
+          
+          li {
+            list-style: none;
+            font-size: 12px;
+            color: var(--color-text-lighter);
+          }
         }
       }
     }

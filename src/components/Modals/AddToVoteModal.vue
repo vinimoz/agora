@@ -57,14 +57,14 @@
             </div>
           </div>
 
-          <div v-if="selectedEngine && currentConfigSchema" class="engine-config-details">
+          <div v-if="selectedEngine && currentConfigSchema && Object.keys(currentConfigSchema).length > 0" class="engine-config-details">
             <div class="config-fields">
               <div v-for="(schema, key) in currentConfigSchema" :key="key" class="config-field">
                 <label>{{ schema.label || key }}</label>
                 
                 <input
                   v-if="schema.type === 'number'"
-                  v-model="engineConfig[key]"
+                  v-model.number="engineConfig[key]"
                   type="number"
                   :min="schema.min"
                   :max="schema.max"
@@ -125,7 +125,7 @@ import SearchSelect from '../Base/modules/SearchSelect.vue'
 import { useInquiryStore } from '../../stores/inquiry'
 import { useOptionsStore } from '../../stores/options'
 import { OptionsAPI, InquiriesAPI } from '../../Api/index'
-import type { Option } from '../../Types/index'
+import type { Option, EngineConfig } from '../../Types/index'
 import {
   Plus,
   Vote,
@@ -142,14 +142,41 @@ import {
   Users
 } from 'lucide-vue-next'
 
+// Types
+interface ConfigSchemaField {
+  type: string
+  default?: unknown
+  label?: string
+  min?: number
+  max?: number
+  step?: number
+  placeholder?: string
+  options?: string[]
+  description?: string
+}
+
+interface EngineDefinition {
+  label: string
+  behavior: 'single' | 'multi' | 'flex'
+  description: string
+  constraints: {
+    min_candidates?: number
+    max_candidates?: number
+    requires_weight_source?: boolean
+  }
+  config_schema?: Record<string, ConfigSchemaField>
+}
+
+interface Engine {
+  id: string
+  label: string
+  behavior: string
+  description: string
+}
+
 const props = defineProps<{
-  engines: Array<{
-    id: string
-    label: string
-    behavior: string
-    description: string
-  }>
-  engineDefinitions: Record<string, any>
+  engines: Engine[]
+  engineDefinitions: Record<string, EngineDefinition>
   currentEngineId?: string
 }>()
 
@@ -164,19 +191,19 @@ const inquiryId = computed(() => inquiryStore.id)
 
 const selectedOption = ref<Option | null>(null)
 const selectedEngine = ref<string>(props.currentEngineId || '')
-const engineConfig = ref<Record<string, any>>({})
+const engineConfig = ref<Record<string, unknown>>({})
 const loading = ref(false)
 
 const currentConfigSchema = computed(() => {
   if (!selectedEngine.value) return null
   const engine = props.engineDefinitions[selectedEngine.value]
-  return engine?.config_schema || null
+  return engine?.config_schema ?? null
 })
 
 const canAdd = computed(() => selectedOption.value !== null && selectedEngine.value !== '')
 
 const getEngineIcon = (engineId: string) => {
-  const icons: Record<string, any> = {
+  const icons: Record<string, unknown> = {
     binary: ThumbsUp,
     ternary: Scale,
     reaction: Heart,
@@ -192,28 +219,30 @@ const getEngineIcon = (engineId: string) => {
   return icons[engineId] || Vote
 }
 
-const getBehaviorLabel = (behavior: string) => {
-  const labels = {
+const getBehaviorLabel = (behavior: string): string => {
+  const labels: Record<string, string> = {
     single: t('agora', 'Single choice'),
     multi: t('agora', 'Multiple choices'),
     flex: t('agora', 'Flexible')
   }
-  return labels[behavior as keyof typeof labels] || behavior
+  return labels[behavior] || behavior
 }
 
-const selectEngine = (engineId: string) => {
+const selectEngine = (engineId: string): void => {
   selectedEngine.value = engineId
   const schema = props.engineDefinitions[engineId]?.config_schema
   if (schema) {
-    const newConfig: Record<string, any> = {}
+    const newConfig: Record<string, unknown> = {}
     for (const [key, value] of Object.entries(schema)) {
       newConfig[key] = value.default
     }
     engineConfig.value = newConfig
+  } else {
+    engineConfig.value = {}
   }
 }
 
-async function archiveOption(option: Option) {
+async function archiveOption(option: Option): Promise<void> {
   const miscFields = option.miscFields || {}
   const updatedMiscFields = {
     ...miscFields,
@@ -264,7 +293,7 @@ async function cloneOptionForVote(original: Option): Promise<Option> {
   return response.data.option
 }
 
-async function add() {
+async function add(): Promise<void> {
   if (!selectedOption.value || !selectedEngine.value) return
 
   loading.value = true
@@ -273,7 +302,7 @@ async function add() {
     const clonedOption = await cloneOptionForVote(selectedOption.value)
 
     const currentMiscFields = clonedOption.miscFields || {}
-    const forceLayouts = currentMiscFields.force_layouts || []
+    const forceLayouts = (currentMiscFields.force_layouts as string[]) || []
     const updatedLayouts = [...forceLayouts, 'vote']
     
     const miscFieldsArray = Object.entries({
@@ -288,9 +317,15 @@ async function add() {
       miscFields: miscFieldsArray
     })
 
+    // Create support engine config
+    const supportEngineConfig: EngineConfig = {
+      ...engineConfig.value,
+      engine_type: selectedEngine.value
+    }
+
     const decision = {
       engine: selectedEngine.value,
-      config: engineConfig.value,
+      config: supportEngineConfig,
       status: 'open',
       phase: 'voting'
     }

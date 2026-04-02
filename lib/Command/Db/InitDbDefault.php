@@ -214,295 +214,307 @@ class InitDbDefault extends Command
             'sort_order' => 4,
             'created' => '',
         ],
-[
-    'family_type' => 'vote',
-    'label' => 'Vote',
-    'description' => 'Voting and decision-making system',
-    'icon' => 'Vote',
+        [
+            'family_type' => 'vote',
+            'label' => 'Vote',
+            'description' => 'Voting and decision-making system',
+            'icon' => 'Vote',
 
-    'ui' => [
-        'layout' => ['type' => 'string', 'default' => 'vote'],
+            'ui' => [
+                'layout' => ['type' => 'string', 'default' => 'vote'],
 
-        'show_results' => ['type' => 'boolean', 'default' => true],
-        'show_progress' => ['type' => 'boolean', 'default' => true],
-        'show_ranking' => ['type' => 'boolean', 'default' => true],
-        'allow_comparison' => ['type' => 'boolean', 'default' => true],
+                'show_results' => ['type' => 'boolean', 'default' => true],
+                'show_progress' => ['type' => 'boolean', 'default' => true],
+                'show_ranking' => ['type' => 'boolean', 'default' => true],
+                'allow_comparison' => ['type' => 'boolean', 'default' => true],
 
-        'engine_selector' => ['type' => 'boolean', 'default' => true],
-        'config_panel' => ['type' => 'boolean', 'default' => true],
-        'phase_indicator' => ['type' => 'boolean', 'default' => false],
-        'mode_selector' => ['type' => 'boolean', 'default' => false],
-    ],
-
-    'rules' => [
-        'require_candidates' => ['type' => 'boolean', 'default' => true],
-        'allow_multiple_votes' => ['type' => 'boolean', 'default' => false],
-        'vote_limit_per_user' => ['type' => 'number', 'default' => 1],
-
-        'require_quorum' => ['type' => 'boolean', 'default' => false],
-        'auto_close_on_expire' => ['type' => 'boolean', 'default' => true],
-
-        'one_engine_per_phase' => ['type' => 'boolean', 'default' => true],
-        'immutable_after_close' => ['type' => 'boolean', 'default' => true],
-    ],
-
-    'features' => [
-
-        'engines' => [
-
-            'binary' => [
-                'label' => 'Yes / No',
-                'input' => 'binary',
-                'behavior' => 'single',
-                'constraints' => [
-                    'min_candidates' => ['type' => 'number', 'default' => 1],
-                    'max_candidates' => ['type' => 'number', 'default' => 1],
-                ],
-                'config_schema' => [],
+                'engine_selector' => ['type' => 'boolean', 'default' => true],
+                'config_panel' => ['type' => 'boolean', 'default' => true],
+                'phase_indicator' => ['type' => 'boolean', 'default' => false],
+                'mode_selector' => ['type' => 'boolean', 'default' => false],
             ],
 
-            'ternary' => [
-                'label' => 'For / Abstain / Against',
-                'input' => 'ternary',
-                'behavior' => 'single',
-                'constraints' => [
-                    'min_candidates' => ['type' => 'number', 'default' => 1],
-                    'max_candidates' => ['type' => 'number', 'default' => 1],
-                ],
-                'config_schema' => [],
+            'rules' => [
+                'require_candidates' => ['type' => 'boolean', 'default' => true],
+                'allow_multiple_votes' => ['type' => 'boolean', 'default' => false],
+                'vote_limit_per_user' => ['type' => 'number', 'default' => 1],
+
+                'require_quorum' => ['type' => 'boolean', 'default' => false],
+                'auto_close_on_expire' => ['type' => 'boolean', 'default' => true],
+
+                'one_engine_per_phase' => ['type' => 'boolean', 'default' => true],
+                'immutable_after_close' => ['type' => 'boolean', 'default' => true],
             ],
 
-            'reaction' => [
-                'label' => 'Reactions',
-                'input' => 'reaction',
-                'behavior' => 'single',
-                'constraints' => [
-                    'min_candidates' => ['type' => 'number', 'default' => 1],
-                    'max_candidates' => ['type' => 'number', 'default' => 1],
-                ],
-                'config_schema' => [
-                    'allowed_reactions' => [
-                        'type' => 'array',
-                        'default' => ['👍','👎','❤️','😂','😢']
-                    ]
-                ],
-            ],
+            'features' => [
 
-            'score' => [
-                'label' => 'Score',
-                'input' => 'score',
-                'behavior' => 'single',
-                'constraints' => [
-                    'min_candidates' => ['type' => 'number', 'default' => 1],
-                    'max_candidates' => ['type' => 'number', 'default' => 1],
-                ],
-                'config_schema' => [
-                    'min' => ['type' => 'number', 'default' => 0],
-                    'max' => ['type' => 'number', 'default' => 10],
-                ],
-            ],
+                'engines' => [
 
-            'approval' => [
-                'label' => 'Approval',
-                'input' => 'approval',
-                'behavior' => 'multi',
-                'constraints' => [
-                    'min_candidates' => ['type' => 'number', 'default' => 2],
-                ],
-                'config_schema' => [
-                    'min_choices' => ['type' => 'number', 'default' => 1],
-                    'max_choices' => ['type' => 'number|null', 'default' => null],
-                ],
-            ],
-
-            'ranked' => [
-                'label' => 'Ranked Choice',
-                'input' => 'ranking',
-                'behavior' => 'multi',
-                'constraints' => [
-                    'min_candidates' => ['type' => 'number', 'default' => 2],
-                ],
-                'config_schema' => [
-                    'max_rank' => ['type' => 'number|null', 'default' => null],
-                ],
-            ],
-
-            'borda' => [
-                'label' => 'Borda',
-                'input' => 'ranking',
-                'behavior' => 'multi',
-                'constraints' => [
-                    'min_candidates' => ['type' => 'number', 'default' => 2],
-                ],
-                'config_schema' => [],
-            ],
-
-            'condorcet' => [
-                'label' => 'Condorcet',
-                'input' => 'ranking',
-                'behavior' => 'multi',
-                'constraints' => [
-                    'min_candidates' => ['type' => 'number', 'default' => 2],
-                ],
-                'config_schema' => [
-                    'method' => [
-                        'type' => 'string',
-                        'default' => 'schulze'
-                    ]
-                ],
-            ],
-
-            'majority_judgment' => [
-                'label' => 'Majority Judgment',
-                'input' => 'grade',
-                'behavior' => 'multi',
-                'constraints' => [
-                    'min_candidates' => ['type' => 'number', 'default' => 2],
-                ],
-                'config_schema' => [
-                    'grades' => [
-                        'type' => 'array',
-                        'default' => ['Reject','Poor','Fair','Good','Excellent']
-                    ]
-                ],
-            ],
-
-            'token_weighted' => [
-                'label' => 'Token / Weight',
-                'input' => 'weighted',
-                'behavior' => 'flex',
-                'constraints' => [
-                    'min_candidates' => ['type' => 'number', 'default' => 1],
-                    'requires_weight_source' => ['type' => 'boolean', 'default' => true],
-                ],
-                'config_schema' => [
-                    'weight_source' => [
-                        'type' => 'object',
-                        'default' => null
+                    'binary' => [
+                        'label' => 'Yes / No',
+                        'input' => 'binary',
+                        'behavior' => 'single',
+                        'constraints' => [
+                            'min_candidates' => ['type' => 'number', 'default' => 1],
+                            'max_candidates' => ['type' => 'number', 'default' => 1],
+                        ],
+                        'config_schema' => [],
                     ],
-                    'normalization' => [
-                        'type' => 'string',
-                        'default' => 'none'
+
+                    'ternary' => [
+                        'label' => 'For / Abstain / Against',
+                        'input' => 'ternary',
+                        'behavior' => 'single',
+                        'constraints' => [
+                            'min_candidates' => ['type' => 'number', 'default' => 1],
+                            'max_candidates' => ['type' => 'number', 'default' => 1],
+                        ],
+                        'config_schema' => [],
+                    ],
+
+                    'reaction' => [
+                        'label' => 'Reactions',
+                        'input' => 'reaction',
+                        'behavior' => 'single',
+                        'constraints' => [
+                            'min_candidates' => ['type' => 'number', 'default' => 1],
+                            'max_candidates' => ['type' => 'number', 'default' => 1],
+                        ],
+                        'config_schema' => [
+                            'allowed_reactions' => [
+                                'type' => 'array',
+                                'default' => ['👍','👎','❤️','😂','😢']
+                            ]
+                        ],
+                    ],
+
+                    'score' => [
+                        'label' => 'Score',
+                        'input' => 'score',
+                        'behavior' => 'single',
+                        'constraints' => [
+                            'min_candidates' => ['type' => 'number', 'default' => 1],
+                            'max_candidates' => ['type' => 'number', 'default' => 1],
+                        ],
+                        'config_schema' => [
+                            'min' => ['type' => 'number', 'default' => 0],
+                            'max' => ['type' => 'number', 'default' => 10],
+                        ],
+                    ],
+
+                    'approval' => [
+                        'label' => 'Approval',
+                        'input' => 'approval',
+                        'behavior' => 'multi',
+                        'constraints' => [
+                            'min_candidates' => ['type' => 'number', 'default' => 2],
+                        ],
+                        'config_schema' => [
+                            'min_choices' => ['type' => 'number', 'default' => 1],
+                            'max_choices' => ['type' => 'number|null', 'default' => null],
+                        ],
+                    ],
+
+                    'ranked' => [
+                        'label' => 'Ranked Choice',
+                        'input' => 'ranking',
+                        'behavior' => 'multi',
+                        'constraints' => [
+                            'min_candidates' => ['type' => 'number', 'default' => 2],
+                        ],
+                        'config_schema' => [
+                            'max_rank' => ['type' => 'number|null', 'default' => null],
+                        ],
+                    ],
+
+                    'borda' => [
+                        'label' => 'Borda',
+                        'input' => 'ranking',
+                        'behavior' => 'multi',
+                        'constraints' => [
+                            'min_candidates' => ['type' => 'number', 'default' => 2],
+                        ],
+                        'config_schema' => [],
+                    ],
+
+                    'condorcet' => [
+                        'label' => 'Condorcet',
+                        'input' => 'ranking',
+                        'behavior' => 'multi',
+                        'constraints' => [
+                            'min_candidates' => ['type' => 'number', 'default' => 2],
+                        ],
+                        'config_schema' => [
+                            'method' => [
+                                'type' => 'string',
+                                'default' => 'schulze'
+                            ]
+                        ],
+                    ],
+
+                    'majority_judgment' => [
+                        'label' => 'Majority Judgment',
+                        'input' => 'grade',
+                        'behavior' => 'multi',
+                        'constraints' => [
+                            'min_candidates' => ['type' => 'number', 'default' => 2],
+                        ],
+                        'config_schema' => [
+                            'grades' => [
+                                'type' => 'array',
+                                'default' => ['Reject','Poor','Fair','Good','Excellent']
+                            ]
+                        ],
+                    ],
+
+                    'token_weighted' => [
+                        'label' => 'Token / Weight',
+                        'input' => 'weighted',
+                        'behavior' => 'flex',
+                        'constraints' => [
+                            'min_candidates' => ['type' => 'number', 'default' => 1],
+                            'requires_weight_source' => ['type' => 'boolean', 'default' => true],
+                        ],
+                        'config_schema' => [
+                            'weight_source' => [
+                                'type' => 'object',
+                                'default' => null
+                            ],
+                            'normalization' => [
+                                'type' => 'string',
+                                'default' => 'none'
+                            ],
+                        ],
+                    ],
+
+                    'quadratic' => [
+                        'label' => 'Quadratic',
+                        'input' => 'score',
+                        'behavior' => 'flex',
+                        'constraints' => [
+                            'min_candidates' => ['type' => 'number', 'default' => 1],
+                        ],
+                        'config_schema' => [
+                            'credits_per_user' => ['type' => 'number', 'default' => 100],
+                        ],
                     ],
                 ],
-            ],
 
-            'quadratic' => [
-                'label' => 'Quadratic',
-                'input' => 'score',
-                'behavior' => 'flex',
-                'constraints' => [
-                    'min_candidates' => ['type' => 'number', 'default' => 1],
-                ],
-                'config_schema' => [
-                    'credits_per_user' => ['type' => 'number', 'default' => 100],
-                ],
+                'real_time_results' => ['type' => 'boolean', 'default' => true],
+                'ranking' => ['type' => 'boolean', 'default' => true],
+                'tie_breaking' => ['type' => 'boolean', 'default' => true],
+                'quorum_tracking' => ['type' => 'boolean', 'default' => false],
             ],
-        ],
-
-        'real_time_results' => ['type' => 'boolean', 'default' => true],
-        'ranking' => ['type' => 'boolean', 'default' => true],
-        'tie_breaking' => ['type' => 'boolean', 'default' => true],
-        'quorum_tracking' => ['type' => 'boolean', 'default' => false],
-    ],
+            'actions' => [
+    ['key' => 'start_vote', 'label' => 'Start Vote', 'icon' => 'Play'],
+    ['key' => 'close_vote', 'label' => 'Close Vote', 'icon' => 'Lock'],
+    ['key' => 'next_phase', 'label' => 'Next Phase', 'icon' => 'ArrowRight'],
+    ['key' => 'view_results', 'label' => 'View Results', 'icon' => 'ChartBar'],
+    ['key' => 'export_results', 'label' => 'Export Results', 'icon' => 'FileExport'],
+    ['key' => 'manage_candidates', 'label' => 'Manage Candidates', 'icon' => 'AccountGroup'],
+    ['key' => 'configure_vote', 'label' => 'Configure Vote', 'icon' => 'Tune'],
 ],
-            [
-                'family_type' => 'proposal',
-                'label' => 'Proposal',
-                'description' => 'Initial proposals and suggestions',
-                'icon' => 'Lightbulb',
-                'ui' => [
-                    'layout' => 'cards',
-                    'show_support_meter' => true,
-                    'highlight_impact' => true,
-                    'proposal_template' => 'standard',
-                ],
-                'rules' => [
-                    'requires_cost_estimate' => false,
-                    'requires_impact_assessment' => true,
-                    'min_support_threshold' => 5,
-                ],
-                'features' => [
-                    'budget_estimation',
-                    'impact_analysis',
-                    'community_feedback',
-                ],
-                'actions' => [
-                    ['key' => 'duplicate_proposal', 'label' => 'Duplicate Proposal', 'icon' => 'ContentCopy'],
-                    ['key' => 'merge_proposals', 'label' => 'Merge with Similar', 'icon' => 'CallMerge'],
-                    ['key' => 'export_proposal', 'label' => 'Export Proposal', 'icon' => 'FileExport'],
-                    ['key' => 'request_review', 'label' => 'Request Expert Review', 'icon' => 'AccountReview'],
-                ],
-                'sort_order' => 5,
-                'created' => '',
+              'sort_order' => 5,
+            'created' => '',
+
+        ],
+        [
+            'family_type' => 'proposal',
+            'label' => 'Proposal',
+            'description' => 'Initial proposals and suggestions',
+            'icon' => 'Lightbulb',
+            'ui' => [
+                'layout' => 'cards',
+                'show_support_meter' => true,
+                'highlight_impact' => true,
+                'proposal_template' => 'standard',
             ],
-            [
-                'family_type' => 'workflow',
-                'label' => 'Workflow',
-                'description' => 'Project and decision workflow management',
-                'icon' => 'ViewKanban',
-                'ui' => [
-                    'layout' => 'kanban',
-                    'kanban_column' => [
-                        ['value' => 'draft', 'label' => 'Draft', 'color' => '#949494'],
-                        ['value' => 'active', 'label' => 'Active', 'color' => '#3498db'],
-                        ['value' => 'completed', 'label' => 'Completed', 'color' => '#27ae60'],
-                        ['value' => 'cancelled', 'label' => 'Cancelled', 'color' => '#e74c3c'],
-                    ],
-                    'show_swimlanes' => true,
-                    'wip_limits' => true,
-                    'cycle_time_visualization' => true,
-                ],
-                'rules' => [
-                    'require_status_transitions' => true,
-                    'enforce_wip_limits' => true,
-                    'auto_assign_on_move' => false,
-                ],
-                'features' => [
-                    'automated_transitions',
-                    'blocker_detection',
-                    'sla_tracking',
-                ],
-                'actions' => [
-                    ['key' => 'export_board', 'label' => 'Export Board', 'icon' => 'FileExport'],
-                    ['key' => 'generate_flow_report', 'label' => 'Flow Report', 'icon' => 'ChartLine'],
-                    ['key' => 'configure_workflow', 'label' => 'Configure Workflow', 'icon' => 'Cog'],
-                    ['key' => 'bulk_transition', 'label' => 'Bulk Transition', 'icon' => 'ArrowRightBold'],
-                ],
-                'sort_order' => 6,
-                'created' => '',
+            'rules' => [
+                'requires_cost_estimate' => false,
+                'requires_impact_assessment' => true,
+                'min_support_threshold' => 5,
             ],
-            [
-                'family_type' => 'process',
-                'label' => 'Process',
-                'description' => 'Timeline and procedural events',
-                'icon' => 'Timeline',
-                'ui' => [
-                    'layout' => 'timeline',
-                    'show_gantt' => true,
-                    'milestone_highlight' => true,
-                    'dependency_lines' => true,
-                ],
-                'rules' => [
-                    'chronological_order' => true,
-                    'require_dates' => true,
-                    'allow_overlap' => false,
-                ],
-                'features' => [
-                    'gantt_chart',
-                    'critical_path',
-                    'resource_allocation',
-                ],
-                'actions' => [
-                    ['key' => 'export_gantt', 'label' => 'Export Gantt', 'icon' => 'FileExport'],
-                    ['key' => 'print_timeline', 'label' => 'Print Timeline', 'icon' => 'Printer'],
-                    ['key' => 'adjust_schedule', 'label' => 'Adjust Schedule', 'icon' => 'CalendarClock'],
-                    ['key' => 'identify_bottlenecks', 'label' => 'Identify Bottlenecks', 'icon' => 'AlertCircle'],
-                ],
-                'sort_order' => 7,
-                'created' => '',
+            'features' => [
+                'budget_estimation',
+                'impact_analysis',
+                'community_feedback',
             ],
-        ];
+            'actions' => [
+                ['key' => 'duplicate_proposal', 'label' => 'Duplicate Proposal', 'icon' => 'ContentCopy'],
+                ['key' => 'merge_proposals', 'label' => 'Merge with Similar', 'icon' => 'CallMerge'],
+                ['key' => 'export_proposal', 'label' => 'Export Proposal', 'icon' => 'FileExport'],
+                ['key' => 'request_review', 'label' => 'Request Expert Review', 'icon' => 'AccountReview'],
+            ],
+            'sort_order' => 6,
+            'created' => '',
+        ],
+        [
+            'family_type' => 'workflow',
+            'label' => 'Workflow',
+            'description' => 'Project and decision workflow management',
+            'icon' => 'ViewKanban',
+            'ui' => [
+                'layout' => 'kanban',
+                'kanban_column' => [
+                    ['value' => 'draft', 'label' => 'Draft', 'color' => '#949494'],
+                    ['value' => 'active', 'label' => 'Active', 'color' => '#3498db'],
+                    ['value' => 'completed', 'label' => 'Completed', 'color' => '#27ae60'],
+                    ['value' => 'cancelled', 'label' => 'Cancelled', 'color' => '#e74c3c'],
+                ],
+                'show_swimlanes' => true,
+                'wip_limits' => true,
+                'cycle_time_visualization' => true,
+            ],
+            'rules' => [
+                'require_status_transitions' => true,
+                'enforce_wip_limits' => true,
+                'auto_assign_on_move' => false,
+            ],
+            'features' => [
+                'automated_transitions',
+                'blocker_detection',
+                'sla_tracking',
+            ],
+            'actions' => [
+                ['key' => 'export_board', 'label' => 'Export Board', 'icon' => 'FileExport'],
+                ['key' => 'generate_flow_report', 'label' => 'Flow Report', 'icon' => 'ChartLine'],
+                ['key' => 'configure_workflow', 'label' => 'Configure Workflow', 'icon' => 'Cog'],
+                ['key' => 'bulk_transition', 'label' => 'Bulk Transition', 'icon' => 'ArrowRightBold'],
+            ],
+            'sort_order' => 7,
+            'created' => '',
+        ],
+        [
+            'family_type' => 'process',
+            'label' => 'Process',
+            'description' => 'Timeline and procedural events',
+            'icon' => 'Timeline',
+            'ui' => [
+                'layout' => 'timeline',
+                'show_gantt' => true,
+                'milestone_highlight' => true,
+                'dependency_lines' => true,
+            ],
+            'rules' => [
+                'chronological_order' => true,
+                'require_dates' => true,
+                'allow_overlap' => false,
+            ],
+            'features' => [
+                'gantt_chart',
+                'critical_path',
+                'resource_allocation',
+            ],
+            'actions' => [
+                ['key' => 'export_gantt', 'label' => 'Export Gantt', 'icon' => 'FileExport'],
+                ['key' => 'print_timeline', 'label' => 'Print Timeline', 'icon' => 'Printer'],
+                ['key' => 'adjust_schedule', 'label' => 'Adjust Schedule', 'icon' => 'CalendarClock'],
+                ['key' => 'identify_bottlenecks', 'label' => 'Identify Bottlenecks', 'icon' => 'AlertCircle'],
+            ],
+            'sort_order' => 8,
+            'created' => '',
+        ],
+    ];
 
     private array $optionTypes = [
         // ====================================================
@@ -539,7 +551,7 @@ class InitDbDefault extends Command
 
             'use_title' => true,
         ],
-        
+
         // ====================================================
         // Workflow Family
         // Root: workflow_item

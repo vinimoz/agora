@@ -182,14 +182,6 @@ else if (route.query.viewMode === 'group') {
     }
 })
 
-const formattedFamilyType = computed(() => {
-  const value = inquiriesStore.advancedFilters.familyType
-  if (!value) return t('agora', 'All families')
-  
-  // If it's a specific value, format it nicely
-  return t('agora', `${value}`)
-})
-
 </script>
 
 <template>

@@ -57,9 +57,11 @@ import Markdown from '@iconify-icons/mdi/language-markdown'
 import DatabaseImport from '@iconify-icons/mdi/database-import'
 
 import Close from '@iconify-icons/mdi/close'
-import Eye from '@iconify-icons/mdi/eye-outline'
+// import Eye from '@iconify-icons/mdi/eye-outline'
 import EyeOff from '@iconify-icons/mdi/eye-off-outline'
 import FileUpload from '@iconify-icons/mdi/file-upload-outline'
+import Play from '@iconify-icons/mdi/play'
+import Tune from '@iconify-icons/mdi/tune'
 
 import Vote from '@iconify-icons/mdi/vote'
 
@@ -71,8 +73,7 @@ import ShieldAlert from '@iconify-icons/mdi/shield-alert-outline'
 
 
 // Options
-import FilePdfBox from '@iconify-icons/mdi/file-pdf-box'  // For 'FilePdf' ✓
-import LanguageMarkdown from '@iconify-icons/mdi/language-markdown'  // For 'Markdown' ✓
+// import LanguageMarkdown from '@iconify-icons/mdi/language-markdown'  // For 'Markdown' ✓
 import Printer from '@iconify-icons/mdi/printer'  // For 'Printer' ✓
 import FileCompare from '@iconify-icons/mdi/file-compare'  // For 'Diff' ✓
 import FileExport from '@iconify-icons/mdi/file-export'  // For 'FileExport' ✓
@@ -108,6 +109,20 @@ import Reply from '@iconify-icons/mdi/reply'
 // import Timeline from '@iconify-icons/mdi/timeline'
 import ArrowUp from '@iconify-icons/mdi/arrow-up'
 import ArrowDown from '@iconify-icons/mdi/arrow-down' 
+// Families
+import ChatProcessing from '@iconify-icons/mdi/chat-processing' // Discussion
+
+// Decision / legal
+import ProgressCheck from '@iconify-icons/mdi/progress-check'
+
+// Debate actions
+import TextBoxCheck from '@iconify-icons/mdi/text-box-check-outline' // Summarize
+import GraphOutline from '@iconify-icons/mdi/graph-outline'
+
+// Consensus actions
+import ClipboardText from '@iconify-icons/mdi/clipboard-text-outline' // Minutes
+import MapOutline from '@iconify-icons/mdi/map-outline'
+
 // import Circle from '@iconify-icons/mdi/circle'    
 // import Information from '@iconify-icons/mdi/information'
 // import CloseCircle from '@iconify-icons/mdi/close-circle'
@@ -604,8 +619,8 @@ export const InquiryOptionIcons = {
 
   Summarize: makeIconComponent(TextBoxMultiple, '#607D8B'),  // Using text-box-multiple
   Graph: makeIconComponent(ChartArc, '#607D8B'),  // Using chart-arc for Graph
-  FilePdf: makeIconComponent(FilePdfBox, '#607D8B'),  // Using file-pdf-box
-  Markdown: makeIconComponent(LanguageMarkdown, '#607D8B'),
+  FilePdf: makeIconComponent(FilePdf, '#607D8B'),  // Using file-pdf-box
+  Markdown: makeIconComponent(Markdown, '#607D8B'),
   Printer: makeIconComponent(Printer, '#607D8B'),
   Diff: makeIconComponent(FileCompare, '#607D8B'),  // Using file-compare for Diff
   Report: makeIconComponent(FileReport, '#607D8B'),
@@ -626,11 +641,30 @@ export const InquiryOptionIcons = {
   ClockAlert: makeIconComponent(ClockAlertOutline, '#607D8B'),  // Using clock-alert-outline
   TextBox: makeIconComponent(TextBox, '#607D8B'),
   Layers: makeIconComponent(Layers, '#5D4037'),
+  ArrowRight: makeIconComponent(ArrowRight, '#5E35B1'),
 
 
-  ThumbUp: makeIconComponent(ThumbUpOutline, '#4CAF50'),
-  ThumbDown: makeIconComponent(ThumbDownOutline, '#F44336'),
-  Checkmark: makeIconComponent(CheckCircleOutline, '#4CAF50'),
+  // ======================
+  // Families
+  // ======================
+  ThumbUp: makeIconComponent(ThumbUp, '#2E7D32'),
+  Checkmark: makeIconComponent(CheckCircle, '#2E7D32'),
+  
+  // ======================
+  // Decision
+  // ======================
+  Gavel: makeIconComponent(Gavel, '#5D4037'),
+  Bell: makeIconComponent(Bell, '#FFA000'),
+
+  // ======================
+  // Debate
+  // ======================
+  Download: makeIconComponent(Download, '#1976D2'),
+
+  // ======================
+  // Consensus
+  // ======================
+  Map: makeIconComponent(MapOutline, '#2E7D32'),
   File: makeIconComponent(NoteText, '#3F51B5'),
   Flag: makeIconComponent(Flag, '#283593'),
 
@@ -665,6 +699,9 @@ export const InquiryOptionIcons = {
   AlertOutline: makeIconComponent(AlertOutline, '#FF9800'),
   HelpCircle: makeIconComponent(HelpCircle, '#03A9F4'),
   CheckCircle: makeIconComponent(CheckCircle, '#4CAF50'),
+  Play: makeIconComponent(Play, '#2E7D32'),   
+  Tune: makeIconComponent(Tune, '#6A1B9A'), 
+
 
   // Stats
   BarChart2: makeIconComponent(ChartBar, '#673AB7'),
@@ -708,7 +745,7 @@ export const ImportIcons = {
 
   Close: makeIconComponent(Close, '#F44336'),
 
-  Eye: makeIconComponent(Eye, '#546E7A'),
+  Eye: makeIconComponent(EyeOutline, '#546E7A'),
   EyeOff: makeIconComponent(EyeOff, '#9E9E9E'),
 
   FileUpload: makeIconComponent(FileUpload, '#2E7D32'),

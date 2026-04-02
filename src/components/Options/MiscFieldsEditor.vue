@@ -256,7 +256,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { t } from '@nextcloud/l10n'
 import NcRichContenteditable from '@nextcloud/vue/components/NcRichContenteditable'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
@@ -267,7 +267,8 @@ import NcDateTimePickerNative from '@nextcloud/vue/components/NcDateTimePickerNa
 import UserSearch from '../User/UserSearch.vue'
 import SearchSelect from '../Base/modules/SearchSelect.vue'
 import type { Component } from 'vue'
-
+import { User } from '../../Types/index.ts'
+import { Location, Category } from '../../stores/appSettings.ts'
 import { useSessionStore } from '../../stores/session'
 import { InquiryOptionIcons } from '../../utils/icons.ts'
 import {
@@ -286,25 +287,25 @@ const props = defineProps<{
     initialValues?: Record<string, MiscValue>
     editable?: boolean
     optionId?: number | null
-    inquiryId?: number
-    locationItems?: any[]
-    categoryItems?: any[]
+    // inquiryId?: number
+    locationItems?: Location[]
+    categoryItems?: Category[]
     users?: Record<string, { displayName: string }>
-    options?: any[]
-    inquiries?: any[]
+    // options?: Option[]
+    // inquiries?: Inquiry[]
 }>()
 
 // Emits
 const emit = defineEmits<{
-    update: [values: Record<string, any>]
+    update: [values: Record<string, unknown>]
 }>()
 
 // Stores
 const sessionStore = useSessionStore()
 
 // State for user/group selections
-const selectedUsers = ref<Record<string, any>>({})
-const selectedGroups = ref<Record<string, any>>({})
+const selectedUsers = ref<Record<string, User>>({})
+const selectedGroups = ref<Record<string, User>>({})
 
 // Create a ref for initial values to track changes
 const initialValuesRef = ref(props.initialValues || {})
@@ -312,7 +313,7 @@ const initialValuesRef = ref(props.initialValues || {})
 // Initialize misc fields handler
 const miscFields = useMiscFields(
     computed(() => props.fields),
-    props.optionId ? { id: props.optionId } as any : null,
+    props.optionId ? { id: props.optionId } as number : null,
     initialValuesRef,
     {
         saveImmediateTypes: ['boolean', 'enum', 'datetime', 'users', 'groups', 'location', 'category'],
@@ -348,7 +349,7 @@ const getSafeStringValue = (key: string): string => {
 }
 
 // FIXED: Safe method for select values (returns null for empty)
-const getSafeSelectValue = (key: string): any => {
+const getSafeSelectValue = (key: string): unknown => {
     const value = miscFields.getValue(key)
     if (value === null || value === undefined || value === '') {
         return null
@@ -375,7 +376,7 @@ const getSafeNumberString = (key: string): string => {
 }
 
 // FIXED: Update method for number fields
-const updateNumberValue = (key: string, value: any, type: string) => {
+const updateNumberValue = (key: string, value: unknown, type: string) => {
     let parsedValue: number | null = null
     
     if (value !== null && value !== undefined && value !== '') {
@@ -402,7 +403,7 @@ const getBooleanValue = (key: string): boolean => {
     return false
 }
 
-const updateValue = (key: string, value: any, type: string) => {
+const updateValue = (key: string, value: unknown, type: string) => {
     miscFields.updateValue(key, value, type)
     // Emit the updated values
     emit('update', miscFields.values.value)
@@ -450,28 +451,11 @@ const getSelectedCategoryOption = (key: string) => {
     return categoryOptions.value.find(opt => String(opt.value) === String(value)) || null
 }
 
-// If you need the string format too
-const getFormattedDateTime = (key: string): string | null => {
-    const date = getDateTimeValue(key)
-    if (!date) return null
-    
-    const year = date.getFullYear()
-    const month = String(date.getMonth() + 1).padStart(2, '0')
-    const day = String(date.getDate()).padStart(2, '0')
-    const hours = String(date.getHours()).padStart(2, '0')
-    const minutes = String(date.getMinutes()).padStart(2, '0')
-    return `${year}-${month}-${day}T${hours}:${minutes}`
-}
 // DateTime methods - Fixed to handle both string and Date
 const getDateTimeValue = (key: string): Date | null => {
     const value = miscFields.getValue(key)
     if (!value) return null
     
-    console.log('Value type:', typeof value)
-    console.log('Value:', value)
-    console.log('Is Date?', value instanceof Date)
-    console.log('Constructor?', value?.constructor?.name)
-
     // If it's already a Date object
     if (value instanceof Date && !isNaN(value.getTime())) {
         return value  // Return the Date object directly
@@ -519,8 +503,6 @@ const getDateTimeValue = (key: string): Date | null => {
 
 const handleDateTimeUpdate = (fieldKey: string, value: string | null) => {
     let storageValue: string | null = null
-    console.log(" DATE TIPME UPDATE VALUE ",value)
-    console.log(" DATE TIPME UPDATE KEY ",fieldKey)
     if (value) {
         // Convert from datetime-local format to storage format
         const date = new Date(value)
@@ -533,13 +515,12 @@ const handleDateTimeUpdate = (fieldKey: string, value: string | null) => {
             storageValue = `${year}-${month}-${day} ${hours}:${minutes}`
         }
     }
-    console.log(" FINISH UPDATE MISC ",storageValue)
     miscFields.updateValue(fieldKey, storageValue, 'datetime')
     emit('update', miscFields.values.value)
 }
 
 // User/Group methods
-const getUserObjectForField = (fieldKey: string): any => {
+const getUserObjectForField = (fieldKey: string): User => {
     const value = miscFields.getValue(fieldKey)
     if (!value) return null
 
@@ -554,14 +535,14 @@ const getUserObjectForField = (fieldKey: string): any => {
     }
 }
 
-const handleUserSelected = (fieldKey: string, user: any) => {
+const handleUserSelected = (fieldKey: string, user: User) => {
     const valueToStore = user?.id || ''
     selectedUsers.value[fieldKey] = user
     miscFields.updateValue(fieldKey, valueToStore, 'users')
     emit('update', miscFields.values.value)
 }
 
-const getGroupObjectForField = (fieldKey: string): any => {
+const getGroupObjectForField = (fieldKey: string): unknown => {
     const value = miscFields.getValue(fieldKey)
     if (!value) return null
 
@@ -576,7 +557,7 @@ const getGroupObjectForField = (fieldKey: string): any => {
     }
 }
 
-const handleGroupSelected = (fieldKey: string, group: any) => {
+const handleGroupSelected = (fieldKey: string, group: User) => {
     const valueToStore = group?.id || ''
     selectedGroups.value[fieldKey] = group
     miscFields.updateValue(fieldKey, valueToStore, 'groups')
@@ -584,7 +565,7 @@ const handleGroupSelected = (fieldKey: string, group: any) => {
 }
 
 // Hierarchical update
-const handleHierarchicalUpdate = (val: any, fieldType: string, updateCallback: any, fieldKey: string) => {
+const handleHierarchicalUpdate = (val: unknown, fieldType: string, updateCallback: unknown, fieldKey: string) => {
     baseHandleHierarchicalUpdate(val, fieldType, updateCallback, fieldKey)
     emit('update', miscFields.values.value)
 }
@@ -661,24 +642,6 @@ const getFieldColor = (field: MiscField): string => {
     }
     return colors[field.type as keyof typeof colors] || 'var(--color-text-lighter)'
 }
-
-/* Watch for initialValues changes
-watch(() => props.initialValues, (newValues) => {
-    console.log('[MiscFieldsEditor] initialValues changed:', newValues)
-    initialValuesRef.value = newValues || {}
-    // Reinitialize the misc fields handler
-    miscFields.reinitialize()
-    // Emit updated values
-    emit('update', miscFields.values.value)
-}, { deep: true })
-
-// Watch for fields changes
-watch(() => props.fields, (newFields) => {
-    console.log('[MiscFieldsEditor] fields changed:', newFields.length)
-    miscFields.reinitialize()
-    emit('update', miscFields.values.value)
-}, { deep: true })
-*/
 
 // Initialize on mount
 onMounted(() => {

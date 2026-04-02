@@ -291,7 +291,7 @@ function resetInquiry() {
 
       <!-- Access Configuration - Groups Nextcloud -->
       <ConfigBox
-        v-if="props.availableGroups && props.availableGroups.length > 0"
+        v-if="availableGroups && availableGroups.length > 0"
         :name="t('agora', 'Access Settings')"
       >
         <template #icon>
@@ -322,7 +322,7 @@ function resetInquiry() {
               </h4>
               <div class="groups-list">
                   <NcRadioGroup :label="t('agora','Groups Selections')">
-                  <div v-for="group in props.availableGroups" :key="group" class="group-item">
+                  <div v-for="group in availableGroups" :key="group" class="group-item">
                       <NcCheckboxRadioSwitch
                               v-model="selectedNextcloudGroup"
                               :value="group"
@@ -421,7 +421,7 @@ function resetInquiry() {
                   :variant="'primary'"
                   @click="addGroupInquiry"
                   >
-                  {{ adding ? t('agora', 'Creating …') :
+                  {{ adding ? t('agora', 'Creating …') :
                   props.parentGroupId ? 
                   t('agora', 'Add to Parent') : 
                   t('agora', 'Create Group') }}

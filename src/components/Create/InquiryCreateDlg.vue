@@ -313,7 +313,7 @@ function resetInquiry() {
           :variant="'primary'"
           @click="addInquiry"
         >
-          {{ adding ? t('agora', 'Creating …') : t('agora', 'Create Inquiry') }}
+          {{ adding ? t('agora', 'Creating …') : t('agora', 'Create Inquiry') }}
         </NcButton>
       </div>
     </div>

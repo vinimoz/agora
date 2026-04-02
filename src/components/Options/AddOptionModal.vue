@@ -212,7 +212,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed,  onMounted } from 'vue'
 import type { Component } from 'vue'
 
 import { t } from '@nextcloud/l10n'
@@ -220,7 +220,7 @@ import NcModal from '@nextcloud/vue/components/NcModal'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcRichContenteditable from '@nextcloud/vue/components/NcRichContenteditable'
 
-import type { Option, User } from '../../Types/index.ts'
+import type { Option } from '../../Types/index.ts'
 
 import { useOptionsStore } from '../../stores/options'
 import { useOptionStore } from '../../stores/option'
@@ -274,7 +274,7 @@ const formData = ref({
   title: '',
   text: ''
 })
-const miscFieldsValues = ref<Record<string, any>>({})
+const miscFieldsValues = ref<Record<string, {key:string, value: unknown}>>({})
 const formErrors = ref<string[]>([])
 
 // Computed - using helpers
@@ -287,9 +287,8 @@ const additionalFields = computed<MiscField[]>(() => {
 })
 
 // Handle misc fields updates from editor
-const handleMiscFieldsUpdate = (values: Record<string, any>) => {
+const handleMiscFieldsUpdate = (values: Record<string, {key:string, value: unknown}>) => {
   miscFieldsValues.value = { ...values }
-  console.log('[AddOptionModal] Misc fields updated:', miscFieldsValues.value)
 }
 
 // Computed properties
@@ -408,7 +407,7 @@ const getStatusIcon = (status: string) => {
 }
 
 // Sanitize value for storage
-const sanitizeValue = (value: any): string => {
+const sanitizeValue = (value: unknown): string => {
   if (value === null || value === undefined) return ''
 
   if (Array.isArray(value) && value.length > 0) {
@@ -457,7 +456,7 @@ const previewOption = computed((): Option => {
     parentId: props.parentId || 0,
     type: props.optionType || '',
     title: formData.value.title || t('agora', 'Preview Title'),
-    text: formData.value.text || t('agora', 'Preview text …'),
+    text: formData.value.text || t('agora', 'Preview text …'),
     textSafe: '',
     sortOrder: 0,
     configuration: {
@@ -548,8 +547,6 @@ const createOption = async () => {
 
     const miscFieldsForStorage: Record<string, string> = {}
 
-    console.log(" MISC FIELDS ",additionalFields.value)
-
     // Process all misc fields from the editor
     additionalFields.value.forEach(field => {
       let value = miscFieldsValues.value[field.key]
@@ -567,8 +564,6 @@ const createOption = async () => {
       }
     })
 
-    console.log(" MISC FIELDS ",miscFieldsForStorage)
-    
     const optionData = {
       title: formData.value.title.trim() || '',
       text: formData.value.text.trim() || '',
@@ -584,7 +579,6 @@ const createOption = async () => {
       miscFields: miscFieldsForStorage
     }
 
-    console.log('[AddOptionModal] Creating option into CREATE OPTION:', optionData)
 
     const newOption = await optionStore.create(optionData)
 

@@ -129,7 +129,7 @@ onMounted(() => {
     <div v-if="selectedFamily" class="navigation-header">
       <div class="family-badge">
         <component :is="NavigationIcons.Family" :size="16" class="family-icon" />
-        <span class="family-label">{{ t('agora', 'Family') }}:</span>
+        <!--  <span class="family-label">{{ t('agora', 'Family') }}:</span> -->
         <span class="family-name">{{ formattedFamilyType }}</span>
       </div>
     </div>
@@ -325,6 +325,7 @@ onMounted(() => {
   .family-label {
     color: var(--color-text-lighter);
     font-weight: normal;
+    text-transform: uppercase;
   }
   
   .family-name {
@@ -333,6 +334,7 @@ onMounted(() => {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    text-transform: uppercase;
   }
 }
 

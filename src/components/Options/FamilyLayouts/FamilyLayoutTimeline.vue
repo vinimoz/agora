@@ -139,8 +139,15 @@
 				</NcButton>
 			</div>
 		</div>
+<AddOptionToFamily
+  v-if="showAddModal"
+  family-type="timeline"
+  @close="showAddModal = false"
+  @success="handleAddSuccess"
+/>
 
 		<!-- Add option modal -->
+<!--
 		<NcModal 
 			v-if="showAddModal"
 			name="add-to-timeline" 
@@ -150,6 +157,8 @@
 		>
 			<div class="add-timeline-modal">
 				<!-- Search for existing option -->
+<!--
+		<NcModal 
 				<div class="search-section">
 					<h4>{{ t('agora', 'Add existing option') }}</h4>
 					<p class="section-desc">{{ t('agora', 'Search and add an option to the timeline') }}</p>
@@ -164,6 +173,8 @@
 						/>
 
 						<!-- Date range selection -->
+<!--
+		<NcModal 
 						<div v-if="selectedOption" class="date-selector">
 							<div class="date-field">
 								<label>{{ t('agora', 'Start date') }}</label>
@@ -205,7 +216,7 @@
 					</NcButton>
 				</div>
 			</div>
-		</NcModal>
+        </NcModal> -->
 
 		<!-- FullCalendar component – single instance with dynamic options -->
 		<FullCalendar
@@ -229,19 +240,13 @@ import { InquiryOptionIcons } from '../../../utils/icons.ts'
 import { 
   filterOptionsByLayout,
   addToTimeline,
-  addLayoutToOption,
-  removeFromTimeline,  
-  updateTimelineDates,
-  clearTimelineDates, 
   getForceLayouts,
   getTimelineStartDate,
-  setTimelineDates,
   getTimelineEndDate
 } from '../../../helpers/modules/InquiryOptionHelper'
 import type { Option, InquiryOptionType, OptionFamily } from '../../../Types/index.ts'
-import { useOptionsStore } from '../../../stores/options'
-import { showSuccess, showError } from '@nextcloud/dialogs'
 import SearchSelect from '../../Base/modules/SearchSelect.vue'
+import AddOptionToFamily from '../../Modals/AddOptionToFamily.vue'
 
 // FullCalendar imports
 import FullCalendar from '@fullcalendar/vue3'
@@ -264,9 +269,6 @@ const emit = defineEmits<{
   'openDetail': [option: Option]
   'update:options': []
 }>()
-
-// Stores
-const optionsStore = useOptionsStore()
 
 // Calendar ref
 const calendarRef = ref<InstanceType<typeof FullCalendar> | null>(null)
@@ -296,72 +298,6 @@ const processOptions = computed(() => timelineOptions.value.filter(opt =>
     // Need to have start date to show on timeline
      getTimelineStartDate(opt) !== null
   ))
-
-const addSelectedToTimeline = async () => {
-  if (!selectedOption.value || !startDate.value) return
-  
-  try {
-    // Use the dedicated addToTimeline function
-    await addToTimeline(
-      selectedOption.value,
-      startDate.value,
-      endDate.value,
-      optionsStore
-    )
-    
-    showAddModal.value = false
-    selectedOption.value = null
-    startDate.value = null
-    endDate.value = null
-    showSuccess(t('agora', 'Option added to timeline'))
-    emit('update:options')
-  } catch (error) {
-    console.error('Failed to add option to timeline:', error)
-    showError(t('agora', 'Could not add option to timeline'))
-  }
-}
-
-const updateOptionDates = async (option: Option, newStartDate: Date, newEndDate?: Date | null) => {
-  try {
-    await updateTimelineDates(
-      option,
-      newStartDate,
-      newEndDate,
-      optionsStore
-    )
-    
-    showSuccess(t('agora', 'Timeline dates updated'))
-    emit('update:options')
-  } catch (error) {
-    console.error('Failed to update dates:', error)
-    showError(t('agora', 'Could not update dates'))
-  }
-}
-
-const removeFromTimelineView = async (option: Option) => {
-  try {
-    await removeFromTimeline(option, optionsStore)
-    
-    showSuccess(t('agora', 'Option removed from timeline'))
-    emit('update:options')
-  } catch (error) {
-    console.error('Failed to remove from timeline:', error)
-    showError(t('agora', 'Could not remove from timeline'))
-  }
-}
-
-const clearDates = async (option: Option) => {
-  try {
-    await clearTimelineDates(option, optionsStore)
-    
-    showSuccess(t('agora', 'Timeline dates cleared'))
-    emit('update:options')
-  } catch (error) {
-    console.error('Failed to clear dates:', error)
-    showError(t('agora', 'Could not clear dates'))
-  }
-}
-
 
 // Transform options into FullCalendar resources
 const resources = computed(() => processOptions.value.map(opt => ({
@@ -428,39 +364,6 @@ const canAddToTimeline = computed(() => {
   return !forceLayouts.includes('timeline')
 })
 
-const addToTimeline = async () => {
-  if (!selectedOption.value || !startDate.value) return
-  
-  try {
-    // Step 1: Set the timeline dates
-    let updatedOption = setTimelineDates(
-      selectedOption.value,
-      startDate.value,
-      endDate.value
-    )
-    
-    // Step 2: Add 'timeline' to force_layouts (just like Kanban does)
-    updatedOption = addLayoutToOption(updatedOption, 'timeline')
-    
-      // Update the option
-    await optionsStore.updateOptionFromModal(
-      updatedOption.id,
-      updatedOption.status.optionStatus,
-     updatedOption.miscFields 
-    )
-
-    
-    showAddModal.value = false
-    selectedOption.value = null
-    startDate.value = null
-    endDate.value = null
-    showSuccess(t('agora', 'Option added to timeline'))
-    emit('update:options')
-  } catch (error) {
-    console.error('Failed to add option to timeline:', error)
-    showError(t('agora', 'Could not add option to timeline'))
-  }
-}
 
 // Update current period text for calendar view
 const updateCurrentPeriodText = () => {
@@ -552,7 +455,7 @@ const calendarOptions = computed(() => {
           titleFormat: { year: 'numeric', month: 'long' },
         },
       },
-      eventContent: (arg: any) => ({
+      eventContent: (arg: unknown) => ({
           html: `
             <div class="custom-list-event">
               <div class="event-title">${arg.event.title}</div>
@@ -635,6 +538,15 @@ const centerOnToday = () => {
 onMounted(() => {
   setTimeout(updateCurrentPeriodText, 200)
 })
+
+const handleAddSuccess = () => {
+  emit('update:options')
+  // Refresh the calendar view
+  if (calendarRef.value) {
+    const api = calendarRef.value.getApi()
+    api.refetchEvents()
+  }
+}
 
 defineExpose({ moveTimeline, centerOnToday })
 </script>

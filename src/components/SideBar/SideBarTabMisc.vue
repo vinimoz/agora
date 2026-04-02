@@ -18,6 +18,7 @@ import NcDateTimePickerNative from '@nextcloud/vue/components/NcDateTimePickerNa
 // import NcCheckboxRadioSwitchSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
 import UserSearch from '../User/UserSearch.vue'
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const props = withDefaults(defineProps<{
   isReadonly?: boolean
 }>(), {
@@ -614,13 +615,13 @@ onMounted(() => {
             <!-- Content when not loading and no error -->
             <template v-else>
                 <!-- No data state -->
-                <div v-if="!displayFields.length && props.isReadonly" class="no-data-state">
+                <div v-if="!displayFields.length && isReadonly" class="no-data-state">
                     <component :is="StatusIcons.Info" class="no-data-icon" />
                     <p>{{ t('No additional settings configured.') }}</p>
                 </div>
 
                 <!-- Readonly mode -->
-                <div v-else-if="props.isReadonly" class="misc-fields-readonly">
+                <div v-else-if="isReadonly" class="misc-fields-readonly">
                     <div class="misc-fields-list">
                         <div
                             v-for="field in displayFields"
@@ -642,7 +643,7 @@ onMounted(() => {
                 <div v-else class="misc-fields-edit">
                     <div v-if="isSaving" class="saving-indicator">
                         <div class="icon-loading-small"></div>
-                        <span>{{ t('agora', 'Saving …') }}</span>
+                        <span>{{ t('agora', 'Saving …') }}</span>
                     </div>
 
                     <div class="edit-fields">

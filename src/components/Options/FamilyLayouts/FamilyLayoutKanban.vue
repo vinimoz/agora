@@ -20,7 +20,13 @@
     </div>
 
     <!-- Add option modal -->
-    <NcModal 
+    <AddOptionToFamily
+  v-if="showAddModal"
+  family-type="kanban"
+  @close="showAddModal = false"
+  @success="handleAddSuccess"
+/>
+   <!-- <NcModal 
       v-if="showAddModal" 
       size="normal"
       :name="t('agora', 'Add option to kanban board')"
@@ -78,6 +84,7 @@
         </div>
       </div>
     </NcModal>
+    -->
 
     <!-- Column headers -->
     <div class="kanban-header">
@@ -174,7 +181,8 @@ import type { Option, InquiryOptionType, OptionFamily } from '../../../Types/ind
 import { useOptionsStore } from '../../../stores/options'
 import { showSuccess, showError } from '@nextcloud/dialogs'
 import SearchSelect from '../../Base/modules/SearchSelect.vue'
-import { filterOptionsByLayout, addLayoutToOption, getAvailableForeignOptionsForLayout } from '../../../helpers/modules/InquiryOptionHelper'
+import { filterOptionsByLayout  } from '../../../helpers/modules/InquiryOptionHelper'
+import AddOptionToFamily from '../../Modals/AddOptionToFamily.vue'
 
 // Props
 const props = defineProps<{
@@ -199,14 +207,51 @@ const emit = defineEmits<{
   'openDetail': [option: Option]
   'update:options': []
 }>()
-
+/*
 // Status columns
 const statusColumns = [
   { value: 'draft', label: t('agora', 'Draft'), color: '#949494' },
   { value: 'active', label: t('agora', 'Active'), color: '#3498db' },
   { value: 'completed', label: t('agora', 'Completed'), color: '#27ae60' },
   { value: 'cancelled', label: t('agora', 'Cancelled'), color: '#e74c3c' }
-]
+]*/
+const statusColumns = computed(() => {
+  // Check if we have kanban column settings from the UI configuration
+  const kanbanColumns = props.appSettings?.optionFamilyTab?.[props.family?.key]?.ui?.kanban_column
+
+  if (kanbanColumns && Array.isArray(kanbanColumns) && kanbanColumns.length > 0) {
+    // Map the settings to the expected format
+    return kanbanColumns.map((column: unknown) => ({
+      value: column.value,
+      label: t('agora', column.label), 
+      color: column.color
+    }))
+  }
+
+  // Fallback to default columns if no settings available
+  return [
+    { value: 'draft', label: t('agora', 'Draft'), color: '#949494' },
+    { value: 'active', label: t('agora', 'Active'), color: '#3498db' },
+    { value: 'completed', label: t('agora', 'Completed'), color: '#27ae60' },
+    { value: 'cancelled', label: t('agora', 'Cancelled'), color: '#e74c3c' }
+  ]
+})
+
+// Update the grid template columns to be dynamic
+const columnCount = computed(() => statusColumns.value.length)
+
+// Update getOptionsByStatus to handle dynamic status values
+const getOptionsByStatus = (status: string) => kanbanOptions.value.filter(opt => {
+  const optStatus = opt.status?.optionStatus || 'draft'
+  return optStatus === status
+})
+
+// Update getStatusLabel to use the computed columns
+const getStatusLabel = (status: string) => {
+  const found = statusColumns.value.find(s => s.value === status)
+  return found?.label || status
+}
+
 
 // Filter options for kanban
 const kanbanOptions = computed(() => filterOptionsByLayout(
@@ -216,22 +261,10 @@ const kanbanOptions = computed(() => filterOptionsByLayout(
     props.family.key
   ))
 
-// Available foreign options
-const availableForeignOptions = computed(() => getAvailableForeignOptionsForLayout(
-    props.options,
-    'kanban',
-    props.family.key,
-    props.optionTypes
-  ))
 
 // Computed
 const canAddExisting = computed(() => selectedOption.value && targetStatus.value)
 
-// Helper functions
-const getOptionsByStatus = (status: string) => kanbanOptions.value.filter(opt => {
-    const optStatus = opt.status?.optionStatus || 'draft'
-    return optStatus === status
-  })
 
 // Drag and drop handlers
 const handleDragStart = (event: DragEvent, option: Option) => {
@@ -251,11 +284,6 @@ const handleDrop = async (event: DragEvent, newStatus: string) => {
   if (!optionId) return
   
   await changeStatus(parseInt(optionId), newStatus)
-}
-
-const getStatusLabel = (status: string) => {
-  const found = statusColumns.find(s => s.value === status)
-  return found?.label || status
 }
 
 const changeStatus = async (optionId: number, newStatus: string) => {
@@ -308,6 +336,11 @@ const addExistingToKanban = async () => {
   }
 }
 
+const handleAddSuccess = () => {
+  emit('update:options')
+  // Refresh the kanban view
+  // The options will be updated via the watcher
+}
 </script>
 
 <style scoped lang="scss">
@@ -340,6 +373,7 @@ const addExistingToKanban = async () => {
   .kanban-header {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(v-bind(columnCount), 1fr);
     gap: 16px;
 
     .kanban-column-header {
@@ -388,7 +422,7 @@ const addExistingToKanban = async () => {
 
   .kanban-board {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(v-bind(columnCount), 1fr);
     gap: 16px;
     min-height: 600px;
 

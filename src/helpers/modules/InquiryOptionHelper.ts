@@ -9,7 +9,9 @@ import type { InquiryType, InquiryOptionType, OptionFamily } from '../../Types/i
 import { useAppSettingsStore } from '../../stores/appSettings.ts'
 import { t } from '@nextcloud/l10n'
 import type { Component } from 'vue'
+import type { useOptionsStore } from '@/stores/options'
 
+type OptionsStore = ReturnType<typeof useOptionsStore>
 
 
 /**
@@ -1233,7 +1235,7 @@ export function removeLayoutFromOption(option: Option, layout: string): Option {
  */
 export async function removeFromTimeline(
   option: Option,
-  optionsStore: any
+  optionsStore: OptionsStore
 ): Promise<void> {
   try {
     // Remove 'timeline' from force_layouts
@@ -1292,12 +1294,10 @@ export function getAllowedLayoutsForFamily(familyKey: string): string[] {
  * 
  * @param option - The option
  * @param layout - The layout to check
- * @param optionTypes - All option types
  */
 export function canShowInLayout(
   option: Option,
-  layout: string,
-  optionTypes: InquiryOptionType[]
+  layout: string
 ): boolean {
   // Simply check if the layout is in force_layouts
   const forceLayouts = getForceLayouts(option)
@@ -1323,13 +1323,6 @@ export function filterOptionsByLayout(
   optionTypes: InquiryOptionType[],
   targetFamily?: string
 ): Option[] {
-  console.log('🔍 filterOptionsByLayout called:', {
-    layout,
-    targetFamily,
-    totalOptions: options.length
-  })
-  console.log(" INTO OPTION FILTER ",options)
-
   return options.filter(option => {
     const optionFamily = getOptionTypeFamily(option.type, optionTypes)
     const forceLayouts = getForceLayouts(option)
@@ -1342,23 +1335,6 @@ export function filterOptionsByLayout(
     // 1. It's in the target family, OR
     // 2. It has this layout in force_layouts
     const shouldInclude = isTargetFamily || hasForceLayout
-
-    if (shouldInclude) {
-      console.log(`✅ Including option ${option.id} (${option.title}):`, {
-        family: optionFamily,
-        targetFamily,
-        isTargetFamily,
-        hasForceLayout,
-        forceLayouts
-      })
-    } else {
-      console.log(`❌ Excluding option ${option.id} (${option.title}):`, {
-        family: optionFamily,
-        targetFamily,
-        isTargetFamily,
-        hasForceLayout
-      })
-    }
 
     return shouldInclude
   })
@@ -1526,7 +1502,7 @@ export async function addToTimeline(
   option: Option,
   startDate: Date | string,
   endDate: Date | string | null | undefined,
-  optionsStore: any
+  optionsStore: OptionsStore
 ): Promise<void> {
   try {
     // Step 1: Set the timeline dates
@@ -1555,7 +1531,7 @@ export async function updateTimelineDates(
   option: Option,
   startDate: Date | string | null,
   endDate: Date | string | null | undefined,
-  optionsStore: any
+  optionsStore: OptionsStore
 ): Promise<void> {
   try {
     // Update dates while preserving existing force_layouts
@@ -1585,7 +1561,7 @@ export async function setTimelineDatesForOption(
   optionId: number,
   startDate: Date | string | null,
   endDate: Date | string | null | undefined,
-  optionsStore: any
+  optionsStore: OptionsStore
 ): Promise<void> {
   try {
     // First get the current option
@@ -1616,7 +1592,7 @@ export async function setTimelineDatesForOption(
  */
 export async function clearTimelineDates(
   option: Option,
-  optionsStore: any
+  optionsStore: OptionsStore
 ): Promise<void> {
   try {
     const miscFields = { ...(option.miscFields || {}) }

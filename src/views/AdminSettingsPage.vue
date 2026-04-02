@@ -81,7 +81,7 @@ const sections = {
   },
   globalSettings: {
     name: t('agora', 'Global inquiry settings'),
-    description: t('agora', 'Let you configure, family, type of inquiries and associed rights, like comment, supports, status …'),
+    description: t('agora', 'Let you configure, family, type of inquiries and associed rights, like comment, supports, status …'),
   },
   publicSettings: {
     name: t('agora', 'Public inquiry registration dialog options'),

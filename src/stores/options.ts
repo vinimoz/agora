@@ -659,7 +659,7 @@ export const useOptionsStore = defineStore('options', {
         },
 
 
-        async updateOptionFromModal(optionId: number,stat_value: string, miscFields: Record<string, { key: string , value: string } >): Promise<void> {
+        async updateOptionFromModal(optionId: number,statValue: string, miscFields: Record<string, { key: string , value: string } >): Promise<void> {
             try {
                 // Find the option in the store
                 const option = this.options.find(opt => opt.id === optionId)
@@ -670,12 +670,12 @@ export const useOptionsStore = defineStore('options', {
                 // Prepare the update payload
                 const updatePayload = {
                     id: optionId,
-                    status: stat_value,
+                    status: statValue,
                     miscFields
                 }
 
                 // Call the API to update
-                const response = await OptionsAPI.updateOption(optionId, updatePayload)
+                 await OptionsAPI.updateOption(optionId, updatePayload)
 
                 // Update the option in the local store
                 const index = this.options.findIndex(opt => opt.id === optionId)

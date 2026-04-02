@@ -109,11 +109,11 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import { InquiryOptionIcons } from '../../../utils/icons.ts'
 import OptionCard from '../OptionCard.vue'
 import { getOptionTypeIconComponent } from '../../../helpers/modules/InquiryOptionHelper'
-import type { InquiryOptionType, Option, OptionFamily } from '../../Types/index.ts'
+import type { InquiryOptionType, Option } from '../../Types/index.ts'
 
 const props = defineProps<{
   options: Option[]
-  family: OptionFamily
+  // family: OptionFamily
   inquiryId: number
   optionTypes: InquiryOptionType[]
   quorumNeeded?: number

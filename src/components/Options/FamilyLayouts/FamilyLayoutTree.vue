@@ -747,7 +747,7 @@ import {
 } from '../../../helpers/modules/InquiryOptionHelper'
 
 // Types
-import type { Option, OptionFamily, OptionType, OptionStoreLike } from '../../../Types/index.ts'
+import type { Option, OptionType, OptionStoreLike } from '../../../Types/index.ts'
 
 import AddOptionModal from '../AddOptionModal.vue'
 import OptionDetailModal from '../OptionDetailModal.vue'

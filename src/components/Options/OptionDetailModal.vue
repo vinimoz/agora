@@ -341,7 +341,6 @@ import { useSessionStore } from '../../stores/session'
 import { InquiryOptionIcons } from '../../utils/icons.ts'
 import SupportFeature from '../../helpers/modules/SupportFeature.vue'
 import OptionCard from './OptionCard.vue'
-
 import {
     getOptionTypeLabel as getOptionTypeLabelHelper,
     getOptionTypeIconComponent,
@@ -361,7 +360,7 @@ import CommentAdd from '../Comments/CommentAdd.vue'
 import AddOptionModal from './AddOptionModal.vue'
 
 // Types
-import type { Option, User, MiscField } from '../../Types/index.ts'
+import type { Option, MiscField } from '../../Types/index.ts'
 import {
     createOptionContext,
     canEditOption,
@@ -404,7 +403,7 @@ const selectedChildType = ref<string | null>(null)
 const subMenu = ref<string | null>(null)
 const commentsSection = ref<HTMLElement | null>(null)
 const activeFilter = ref<string | null>(null)
-const miscFieldsValues = ref<Record<string, any>>({})
+const miscFieldsValues = ref<Record<string, MiscField>>({})
 
 // Get all option types from session store
 const allOptionTypes = computed(() => sessionStore.appSettings?.inquiryOptionTypeTab || [])
@@ -419,7 +418,7 @@ const additionalFields = computed<MiscField[]>(() => {
 })
 
 // Handle misc fields updates from editor
-const handleMiscFieldsUpdate = (values: Record<string, any>) => {
+const handleMiscFieldsUpdate = (values: Record<string, MiscField>) => {
     miscFieldsValues.value = { ...values }
 }
 
@@ -516,10 +515,8 @@ const loadOption = async () => {
     error.value = null
 
     try {
-        console.log("lets reload option BEFORE the optionsStore load ")
         await optionStore.load(props.optionId)
         if (optionStore) {
-            console.log("lets reload option BEFORE the optionsStore load ",optionStore)
             // Initialize edit form with current values
             editForm.value = {
                 title: optionStore.title || '',
@@ -528,7 +525,7 @@ const loadOption = async () => {
             
             // Initialize misc fields values with proper defaults
             const currentMiscFields = optionStore.miscFields || {}
-            const initializedMiscFields: Record<string, any> = {}
+            const initializedMiscFields: Record<string, MiscField> = {}
             
             // Set default values for all fields that have defaults
             additionalFields.value.forEach(field => {
@@ -558,14 +555,6 @@ const loadOption = async () => {
             
             miscFieldsValues.value = initializedMiscFields
             
-            // Debug log
-            console.log('[OptionDetailModal] Loaded option:', {
-                id: optionStore.id,
-                type: optionStore.type,
-                additionalFieldsCount: additionalFields.value.length,
-                miscFields: miscFieldsValues.value,
-                specialFields: SPECIAL_FIELDS.filter(f => optionStore.miscFields?.[f])
-            })
         } else {
             error.value = t('agora', 'Error loading option store')
         }
@@ -597,7 +586,7 @@ const cancelEdit = () => {
             text: optionStore.text || ''
         }
         // Reset misc fields to original values
-        const originalMiscFields: Record<string, any> = {}
+        const originalMiscFields: Record<string, MiscField> = {}
         additionalFields.value.forEach(field => {
             if (optionStore.miscFields?.[field.key] !== undefined) {
                 originalMiscFields[field.key] = optionStore.miscFields[field.key]
@@ -625,9 +614,8 @@ const saveEdit = async () => {
                     stringValue = value ? 'true' : 'false'
                 } else if (field.type === 'json') {
                     stringValue = typeof value === 'object' ? JSON.stringify(value) : String(value)
-                } else if (field.type === 'datetime' || field.type === 'date' ) {
+                } else if (field.type === 'datetime' || field.type === 'date' ) {
                     stringValue = value instanceof Date ? value.toISOString() : String(value)
-                    console.log(" SAVE EDIT DATETIME",stringValue)
                 } else {
                     stringValue = String(value)
                 }

@@ -757,7 +757,7 @@ const handleTitleInput = () => {
                                 <component :is="InquiryGeneralIcons.Plus" :size="20" />
                             </template>
                     <span v-if="isCreating">
-                        {{ isFileType ? t('agora', 'Uploading …') : t('agora', 'Creating …') }}
+                        {{ isFileType ? t('agora', 'Uploading …') : t('agora', 'Creating …') }}
                     </span>
                     <span v-else-if="canLinkResource">
                         {{ t('agora', 'Link {resource}', { resource: getResourceName(currentResourceType) }) }}
