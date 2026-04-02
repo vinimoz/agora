@@ -1179,7 +1179,7 @@ OC.L10N.register(
     "Unnamed" : "Sem nome",
     "Preview & Customize Template" : "Pré-visualizar e personalizar modelos",
     "Review and customize the template before import" : "Revise e personalize o modelo antes de importá-lo",
-    "Preparing template data …" : "Preparando dadas do modelo …",
+    "Preparing template data …" : "Preparando dados do modelo …",
     "Analyzing template for duplicates …" : "Analisando o modelo em busca de duplicatas …",
     "Failed to analyze template:" : "Falha ao analisar o modelo:",
     "Import Preview" : "Pré-visualização da importação",
