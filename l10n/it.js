@@ -252,7 +252,7 @@ OC.L10N.register(
     "Polls" : "Sondaggi",
     "Collectives" : "Collettivi",
     "Title is required" : "Il titolo è richiesto",
-    "Files uploaded successfully" : "Files caricati correttamente",
+    "Files uploaded successfully" : "File caricati correttamente",
     "Uploading …" : "Caricamento in corso …",
     "OK" : "OK",
     "Add date option" : "Aggiungi opzione data",
