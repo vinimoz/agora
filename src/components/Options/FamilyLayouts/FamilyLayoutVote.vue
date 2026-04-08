@@ -92,25 +92,25 @@
     <div v-if="currentLayout === 'cards'" class="cards-layout">
       <div class="cards-grid">
         <div
-          v-for="candidate in rankedCandidates"
-          :key="candidate.id"
+          v-for="option in voteOptions"
+          :key="option.id"
           class="vote-card-wrapper"
-          :class="{ 'selected-for-vote': isSelectedForVote(candidate.id) }"
+          :class="{ 'selected-for-vote': isSelectedForVote(option.id) }"
         >
           <OptionCard
-            :option="candidate"
+            :option="option"
             :compact="false"
             :show-action="!isReadonly"
             :progress-bar="true"
-            @click="handleCandidateClick(candidate)"
+            @click="handleOptionClick(option)"
           >
             <!-- Selection indicator for multi-vote -->
             <template v-if="currentEngine.behavior === 'multi' && canVote && !hasUserVoted">
               <div class="selection-checkbox">
                 <input
                   type="checkbox"
-                  :checked="isSelectedForVote(candidate.id)"
-                  @change="toggleCandidateSelection(candidate.id)"
+                  :checked="isSelectedForVote(option.id)"
+                  @change="toggleOptionSelection(option.id)"
                   @click.stop
                 />
               </div>
@@ -120,7 +120,7 @@
             <template v-if="currentEngineId === 'ranked' && canVote && !hasUserVoted">
               <div class="rank-input">
                 <label>{{ t('agora', 'Rank') }}</label>
-                <select v-model="rankings[candidate.id]" @click.stop>
+                <select v-model="rankings[option.id]" @click.stop>
                   <option :value="null">-</option>
                   <option v-for="i in maxRank" :key="i" :value="i">{{ i }}</option>
                 </select>
@@ -131,20 +131,20 @@
             <template v-if="currentEngineId === 'score' && canVote && !hasUserVoted">
               <div class="score-input">
                 <input
-                  v-model="scores[candidate.id]"
+                  v-model="scores[option.id]"
                   type="range"
                   :min="scoreMin"
                   :max="scoreMax"
                   @click.stop
                 />
-                <span>{{ scores[candidate.id] || 0 }}</span>
+                <span>{{ scores[option.id] || 0 }}</span>
               </div>
             </template>
 
             <!-- Grade input for majority judgment -->
             <template v-if="currentEngineId === 'majority_judgment' && canVote && !hasUserVoted">
               <div class="grade-input">
-                <select v-model="grades[candidate.id]" @click.stop>
+                <select v-model="grades[option.id]" @click.stop>
                   <option :value="null">-</option>
                   <option v-for="grade in gradeOptions" :key="grade" :value="grade">
                     {{ grade }}
@@ -154,11 +154,11 @@
             </template>
 
             <!-- Vote button for single-choice engines -->
-            <template v-else-if="currentEngine.behavior === 'single' && canVote && !hasUserVotedFor(candidate.id) && !hasUserVoted">
+            <template v-else-if="currentEngine.behavior === 'single' && canVote && !hasUserVotedFor(option.id) && !hasUserVoted">
               <NcButton
                 type="primary"
                 size="small"
-                @click.stop="voteForCandidate(candidate)"
+                @click.stop="voteForOption(option)"
               >
                 <template #icon>
                   <Vote :size="16" />
@@ -173,20 +173,20 @@
                 <div class="vote-stats">
                   <div class="votes-count">
                     <ThumbsUp :size="14" />
-                    <strong>{{ candidate.metadata?.votes || 0 }}</strong>
+                    <strong>{{ option.metadata?.votes || 0 }}</strong>
                     {{ t('agora', 'votes') }}
                   </div>
                   <div class="percentage">
-                    {{ getPercentage(candidate) }}%
+                    {{ getPercentage(option) }}%
                   </div>
                 </div>
                 <div class="progress-bar">
                   <div
                     class="progress-fill"
-                    :style="{ width: getPercentage(candidate) + '%' }"
+                    :style="{ width: getPercentage(option) + '%' }"
                     :class="{
-                      'fill-leading': candidate.metadata?.status === 'leading',
-                      'fill-selected': candidate.metadata?.status === 'selected'
+                      'fill-leading': option.metadata?.status === 'leading',
+                      'fill-selected': option.metadata?.status === 'selected'
                     }"
                   />
                 </div>
@@ -217,20 +217,20 @@
     <div v-else-if="currentLayout === 'list'" class="list-layout">
       <div class="list-header">
         <div class="list-cell rank">{{ t('agora', 'Rank') }}</div>
-        <div class="list-cell candidate">{{ t('agora', 'Candidate') }}</div>
+        <div class="list-cell option">{{ t('agora', 'Option') }}</div>
         <div class="list-cell votes">{{ t('agora', 'Votes') }}</div>
         <div class="list-cell percentage">{{ t('agora', 'Percentage') }}</div>
         <div class="list-cell action">{{ t('agora', 'Action') }}</div>
       </div>
 
       <div
-        v-for="(candidate, index) in rankedCandidates"
-        :key="candidate.id"
+        v-for="(option, index) in rankedOptions"
+        :key="option.id"
         class="list-row"
         :class="{
-          'is-leading': candidate.metadata?.status === 'leading',
-          'user-voted': hasUserVotedFor(candidate.id),
-          'selected-for-vote': isSelectedForVote(candidate.id)
+          'is-leading': option.metadata?.status === 'leading',
+          'user-voted': hasUserVotedFor(option.id),
+          'selected-for-vote': isSelectedForVote(option.id)
         }"
       >
         <div class="list-cell rank">
@@ -241,33 +241,33 @@
             <span v-else>{{ index + 1 }}</span>
           </div>
         </div>
-        <div class="list-cell candidate">
+        <div class="list-cell option">
           <OptionCard
-            :option="candidate"
+            :option="option"
             :compact="true"
             :inline="true"
             :show-action="false"
-            @click="handleCandidateClick(candidate)"
+            @click="handleOptionClick(option)"
           />
         </div>
         <div class="list-cell votes">
-          <strong>{{ candidate.metadata?.votes || 0 }}</strong>
+          <strong>{{ option.metadata?.votes || 0 }}</strong>
         </div>
         <div class="list-cell percentage">
           <div class="percentage-bar">
             <div
               class="percentage-fill"
-              :style="{ width: getPercentage(candidate) + '%' }"
+              :style="{ width: getPercentage(option) + '%' }"
             />
-            <span class="percentage-text">{{ getPercentage(candidate) }}%</span>
+            <span class="percentage-text">{{ getPercentage(option) }}%</span>
           </div>
         </div>
         <div class="list-cell action">
           <NcButton
-            v-if="currentEngine.behavior === 'single' && canVote && !hasUserVotedFor(candidate.id) && !hasUserVoted"
+            v-if="currentEngine.behavior === 'single' && canVote && !hasUserVotedFor(option.id) && !hasUserVoted"
             type="primary"
             size="small"
-            @click.stop="voteForCandidate(candidate)"
+            @click.stop="voteForOption(option)"
           >
             <Vote :size="14" />
             {{ t('agora', 'Vote') }}
@@ -276,13 +276,13 @@
           <input
             v-else-if="currentEngine.behavior === 'multi' && canVote && !hasUserVoted"
             type="checkbox"
-            :checked="isSelectedForVote(candidate.id)"
-            @change="toggleCandidateSelection(candidate.id)"
+            :checked="isSelectedForVote(option.id)"
+            @change="toggleOptionSelection(option.id)"
           />
           
           <select
             v-else-if="currentEngineId === 'ranked' && canVote && !hasUserVoted"
-            v-model="rankings[candidate.id]"
+            v-model="rankings[option.id]"
             class="rank-select-mini"
           >
             <option :value="null">-</option>
@@ -291,14 +291,14 @@
           
           <input
             v-else-if="currentEngineId === 'score' && canVote && !hasUserVoted"
-            v-model="scores[candidate.id]"
+            v-model="scores[option.id]"
             type="number"
             :min="scoreMin"
             :max="scoreMax"
             class="score-input-mini"
           />
           
-          <div v-else-if="hasUserVotedFor(candidate.id)" class="voted-icon">
+          <div v-else-if="hasUserVotedFor(option.id)" class="voted-icon">
             <CheckCircle :size="16" />
           </div>
         </div>
@@ -375,37 +375,37 @@
           <thead>
             <tr>
               <th>{{ t('agora', 'Rank') }}</th>
-              <th>{{ t('agora', 'Candidate') }}</th>
+              <th>{{ t('agora', 'Option') }}</th>
               <th>{{ t('agora', 'Votes') }}</th>
               <th>{{ t('agora', 'Percentage') }}</th>
               <th>{{ t('agora', 'Status') }}</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(candidate, index) in rankedCandidates" :key="candidate.id">
+            <tr v-for="(option, index) in rankedOptions" :key="option.id">
               <td class="rank-cell">
                 <span class="rank-badge" :class="getRankClass(index)">
                   {{ index + 1 }}
                 </span>
               </td>
               <td>
-                <div class="candidate-name">
-                  {{ candidate.title }}
+                <div class="option-name">
+                  {{ option.title }}
                 </div>
               </td>
-              <td class="votes-cell">{{ candidate.metadata?.votes || 0 }}</td>
+              <td class="votes-cell">{{ option.metadata?.votes || 0 }}</td>
               <td class="percentage-cell">
                 <div class="mini-progress">
                   <div
                     class="mini-progress-fill"
-                    :style="{ width: getPercentage(candidate) + '%' }"
+                    :style="{ width: getPercentage(option) + '%' }"
                   />
-                  <span>{{ getPercentage(candidate) }}%</span>
+                  <span>{{ getPercentage(option) }}%</span>
                 </div>
               </td>
               <td>
-                <span v-if="candidate.metadata?.status" class="status-tag" :class="candidate.metadata.status">
-                  {{ candidate.metadata.status }}
+                <span v-if="option.metadata?.status" class="status-tag" :class="option.metadata.status">
+                  {{ option.metadata.status }}
                 </span>
                 <span v-else>-</span>
               </td>
@@ -416,10 +416,10 @@
     </div>
 
     <!-- Empty state -->
-    <div v-if="candidates.length === 0" class="empty-state">
-      <component :is="getOptionTypeIcon('candidate')" :size="48" />
-      <h4>{{ t('agora', 'No candidates yet') }}</h4>
-      <p>{{ t('agora', 'Add candidates to start the voting process') }}</p>
+    <div v-if="voteOptions.length === 0" class="empty-state">
+      <component :is="getOptionTypeIcon('vote')" :size="48" />
+      <h4>{{ t('agora', 'No options to vote on yet') }}</h4>
+      <p>{{ t('agora', 'Add options to start the voting process') }}</p>
       <NcButton
         v-if="!isReadonly"
         type="primary"
@@ -428,7 +428,7 @@
         <template #icon>
           <Plus :size="16" />
         </template>
-        {{ t('agora', 'Add Candidate') }}
+        {{ t('agora', 'Add Option') }}
       </NcButton>
     </div>
 
@@ -445,19 +445,12 @@
     
     <AddOptionToFamily
       v-if="showAddToVoteModal"
-      :engines="availableEnginesForAdd"
-      :engine-definitions="ENGINE_DEFINITIONS"
-      :current-engine-id="currentEngineId"
+      :inquiry-id="inquiryId"
       family-type="vote"
+      :allowed-families="allowedFamiliesForVote"
       @close="closeAddToVoteModal"
       @success="handleAddSuccess"
     />
-
-    <!-- Success toast -->
-    <div v-if="voteSuccessMessage" class="vote-success-toast">
-      <CheckCircle :size="20" />
-      {{ voteSuccessMessage }}
-    </div>
   </div>
 </template>
 
@@ -469,7 +462,7 @@ import Chart from 'chart.js/auto'
 import { showError } from '@nextcloud/dialogs'
 
 import OptionCard from '../OptionCard.vue'
-import { getOptionTypeIconComponent } from '../../../helpers/modules/InquiryOptionHelper'
+import { getOptionTypeIconComponent , filterOptionsByLayout } from '../../../helpers/modules/InquiryOptionHelper'
 import type { Option, SupportData } from '../../Types/index'
 import {
   calculateOptionResult,
@@ -496,7 +489,7 @@ import EngineSelectorModal from '../../Modals/EngineSelectorModal.vue'
 import AddOptionToFamily from '../../Modals/AddOptionToFamily.vue'
 
 // ----------------------------------------------------------------------------
-// Type Definitions (aligned with index.ts)
+// Types
 // ----------------------------------------------------------------------------
 
 interface VoteSession {
@@ -504,12 +497,6 @@ interface VoteSession {
   end_date?: string
   quorum?: number
   engine?: string
-  [key: string]: unknown
-}
-
-interface UserVote {
-  candidate_id?: number
-  votes?: Array<{ candidate_id: number; value?: unknown }>
   [key: string]: unknown
 }
 
@@ -530,16 +517,15 @@ interface EngineDefinition {
   behavior: 'single' | 'multi' | 'flex'
   description: string
   constraints: {
-    min_candidates?: number
-    max_candidates?: number
+    min_options?: number
+    max_options?: number
     requires_weight_source?: boolean
   }
   config_schema: Record<string, ConfigSchemaField>
 }
 
-
 // ----------------------------------------------------------------------------
-// Engine Definitions (aligned with index.ts SupportFeature and VotingEngine)
+// Engine Definitions
 // ----------------------------------------------------------------------------
 
 const ENGINE_DEFINITIONS: Record<string, EngineDefinition> = {
@@ -547,21 +533,21 @@ const ENGINE_DEFINITIONS: Record<string, EngineDefinition> = {
     label: 'Yes / No',
     behavior: 'single',
     description: 'Simple yes/no voting on a single option',
-    constraints: { min_candidates: 1, max_candidates: 1 },
+    constraints: { min_options: 1, max_options: 1 },
     config_schema: {}
   },
   ternary: {
     label: 'For / Abstain / Against',
     behavior: 'single',
     description: 'Choose between For, Abstain, or Against',
-    constraints: { min_candidates: 1, max_candidates: 1 },
+    constraints: { min_options: 1, max_options: 1 },
     config_schema: {}
   },
   reaction: {
     label: 'Reactions',
     behavior: 'single',
     description: 'React with emojis to show your opinion',
-    constraints: { min_candidates: 1, max_candidates: 1 },
+    constraints: { min_options: 1, max_options: 1 },
     config_schema: {
       allowed_reactions: {
         type: 'array',
@@ -574,7 +560,7 @@ const ENGINE_DEFINITIONS: Record<string, EngineDefinition> = {
     label: 'Score Voting',
     behavior: 'single',
     description: 'Rate options on a numeric scale',
-    constraints: { min_candidates: 1, max_candidates: 1 },
+    constraints: { min_options: 1, max_options: 1 },
     config_schema: {
       min: { type: 'number', default: 0, label: 'Minimum score' },
       max: { type: 'number', default: 10, label: 'Maximum score' }
@@ -584,7 +570,7 @@ const ENGINE_DEFINITIONS: Record<string, EngineDefinition> = {
     label: 'Approval Voting',
     behavior: 'multi',
     description: 'Select all options you approve of',
-    constraints: { min_candidates: 2 },
+    constraints: { min_options: 2 },
     config_schema: {
       min_choices: { type: 'number', default: 1, label: 'Minimum choices' },
       max_choices: { type: 'number', default: null, label: 'Maximum choices' }
@@ -594,7 +580,7 @@ const ENGINE_DEFINITIONS: Record<string, EngineDefinition> = {
     label: 'Ranked Choice',
     behavior: 'multi',
     description: 'Rank options in order of preference',
-    constraints: { min_candidates: 2 },
+    constraints: { min_options: 2 },
     config_schema: {
       max_rank: { type: 'number', default: null, label: 'Maximum rank' }
     }
@@ -603,14 +589,14 @@ const ENGINE_DEFINITIONS: Record<string, EngineDefinition> = {
     label: 'Borda Count',
     behavior: 'multi',
     description: 'Rank options, points assigned by rank position',
-    constraints: { min_candidates: 2 },
+    constraints: { min_options: 2 },
     config_schema: {}
   },
   condorcet: {
     label: 'Condorcet',
     behavior: 'multi',
     description: 'Pairwise comparison voting method',
-    constraints: { min_candidates: 2 },
+    constraints: { min_options: 2 },
     config_schema: {
       method: {
         type: 'string',
@@ -624,7 +610,7 @@ const ENGINE_DEFINITIONS: Record<string, EngineDefinition> = {
     label: 'Majority Judgment',
     behavior: 'multi',
     description: 'Grade each option, median grade determines winner',
-    constraints: { min_candidates: 2 },
+    constraints: { min_options: 2 },
     config_schema: {
       grades: {
         type: 'array',
@@ -637,7 +623,7 @@ const ENGINE_DEFINITIONS: Record<string, EngineDefinition> = {
     label: 'Token / Weighted',
     behavior: 'flex',
     description: 'Vote with weighted tokens',
-    constraints: { min_candidates: 1, requires_weight_source: true },
+    constraints: { min_options: 1, requires_weight_source: true },
     config_schema: {
       weight_source: { type: 'object', default: null, label: 'Weight source' },
       normalization: {
@@ -652,7 +638,7 @@ const ENGINE_DEFINITIONS: Record<string, EngineDefinition> = {
     label: 'Quadratic Voting',
     behavior: 'flex',
     description: 'Vote with quadratic cost mechanism',
-    constraints: { min_candidates: 1 },
+    constraints: { min_options: 1 },
     config_schema: {
       credits_per_user: { type: 'number', default: 100, label: 'Credits per user' }
     }
@@ -664,45 +650,137 @@ const ENGINE_DEFINITIONS: Record<string, EngineDefinition> = {
 // ----------------------------------------------------------------------------
 
 const props = defineProps<{
-  options: Option[]
+  options: Option[]  // ALL options from ALL families can be voted on
   voteSession?: VoteSession
   canVote?: boolean
   isReadonly?: boolean
-  userVote?: UserVote
+  currentUserVotes?: SupportData[]
+  inquiryId?: number
   supports?: SupportData[]
+  optionTypes: InquiryOptionType[]
+  userId?: string
+  family?: OptionFamily
+  optionsByInquiry: Option[]
 }>()
 
 const emit = defineEmits<{
-  'vote': [candidateId: number, voteData?: Record<string, unknown>]
-  'multiVote': [votes: Array<{ candidateId: number; value: unknown }>]
-  'select': [candidate: Option]
+  'vote': [supportData: SupportData]
+  'multiVote': [supports: SupportData[]]
+  'select': [option: Option]
   'addOption': [optionType: string]
   'update:options': []
 }>()
 
 // ----------------------------------------------------------------------------
-// Layout & UI State
+// State
 // ----------------------------------------------------------------------------
 
-const allowedLayouts = ['cards', 'list', 'results']
-const currentLayout = ref<'cards' | 'list' | 'results'>('cards')
-
-// Multi-vote state
-const selectedCandidates = ref<Set<number>>(new Set())
+const refreshKey = ref(0)
+const selectedOptions = ref<Set<number>>(new Set())
 const rankings = ref<Record<number, number>>({})
 const scores = ref<Record<number, number>>({})
 const grades = ref<Record<number, string>>({})
 
-// Engine configuration
 const currentEngineId = ref<string>(props.voteSession?.engine || 'binary')
 const showEngineSelector = ref(false)
 const engineConfig = ref<Record<string, unknown>>({})
+const showAddToVoteModal = ref(false)
+const voteSuccessMessage = ref('')
+let successTimeout: NodeJS.Timeout
+
+// Layout
+const allowedLayouts = ['cards', 'list', 'results']
+const currentLayout = ref<'cards' | 'list' | 'results'>('cards')
+
+// ----------------------------------------------------------------------------
+
+// Filter options for vote
+const voteOptions = computed(() => filterOptionsByLayout(
+    props.optionsByInquiry,
+    'vote',
+    props.optionTypes,
+    props.family.key
+  ))
+
+
+
+// Define which families can be added to vote (all of them)
+const allowedFamiliesForVote = computed(() => 
+  // Return all available families or specific ones
+  // This could be configurable based on your needs
+   ['kanban', 'vote', 'calendar', 'default']
+)
 
 // ----------------------------------------------------------------------------
 // Computed: Current Engine
 // ----------------------------------------------------------------------------
 
 const currentEngine = computed(() => ENGINE_DEFINITIONS[currentEngineId.value])
+
+// ----------------------------------------------------------------------------
+// Computed: User's votes (using SupportData)
+// ----------------------------------------------------------------------------
+
+const getUserVoteForOption = (optionId: number): SupportData | undefined => props.currentUserVotes?.find(vote => vote.optionId === optionId)
+
+const hasUserVotedFor = (optionId: number): boolean => !!getUserVoteForOption(optionId)
+
+const hasUserVoted = computed(() => (props.currentUserVotes?.length ?? 0) > 0)
+
+// ----------------------------------------------------------------------------
+// Computed: Vote Options - ALL options from props
+// ----------------------------------------------------------------------------
+
+watch(
+  () => props.options,
+  () => {
+    refreshKey.value = refreshKey.value + 1
+    selectedOptions.value.clear()
+    rankings.value = {}
+    scores.value = {}
+    grades.value = {}
+  },
+  { deep: true }
+)
+
+watch(
+  () => props.options.length,
+  (newLength, oldLength) => {
+    if (newLength !== oldLength) {
+      refreshKey.value=refreshKey.value + 1
+    }
+  }
+)
+
+// ----------------------------------------------------------------------------
+// Computed: Option Results
+// ----------------------------------------------------------------------------
+
+const optionResults = computed(() => {
+  const results: Record<number, ReturnType<typeof calculateOptionResult>> = {}
+
+  if (currentEngineId.value === 'ranked' || currentEngineId.value === 'borda' || currentEngineId.value === 'condorcet') {
+    const allSupports = props.supports ?? []
+    const scoresMap = calculateRankingScores(allSupports, engineConfig.value.max_rank as number)
+    const rankingResults = calculateRankingResults(scoresMap)
+    for (const opt of voteOptions.value) {
+      results[opt.id] = rankingResults[opt.id] ?? { type: 'ranking', rank: 0, score: 0 }
+    }
+    return results
+  }
+
+  for (const opt of voteOptions.value) {
+    const optionSupports = (props.supports ?? []).filter(s => s.optionId === opt.id)
+    const config = {
+      min: scoreMin.value,
+      max: scoreMax.value,
+      grades: gradeOptions.value.map((_, idx) => idx),
+      maxRank: maxRank.value
+    }
+    results[opt.id] = calculateOptionResult(currentEngineId.value, optionSupports, config)
+  }
+  return results
+})
 
 // ----------------------------------------------------------------------------
 // Computed: Engine Config Helpers
@@ -712,7 +790,7 @@ const maxRank = computed(() => {
   if (currentEngineId.value === 'ranked' && engineConfig.value.max_rank) {
     return engineConfig.value.max_rank as number
   }
-  return candidates.value.length
+  return voteOptions.value.length
 })
 
 const scoreMin = computed(() => {
@@ -737,47 +815,7 @@ const gradeOptions = computed(() => {
 })
 
 // ----------------------------------------------------------------------------
-// Computed: Candidates
-// ----------------------------------------------------------------------------
-
-const candidates = computed(() =>
-  props.options.filter(opt => opt.type === 'candidate' || opt.type === 'proposal')
-)
-
-// ----------------------------------------------------------------------------
-// Computed: Option Results (using calculateOptionResult from voteCalculations)
-// ----------------------------------------------------------------------------
-
-const optionResults = computed(() => {
-  const results: Record<number, ReturnType<typeof calculateOptionResult>> = {}
-
-  // For ranking engines we need global scores first
-  if (currentEngineId.value === 'ranked' || currentEngineId.value === 'borda' || currentEngineId.value === 'condorcet') {
-    const allSupports = props.supports ?? []
-    const scoresMap = calculateRankingScores(allSupports, engineConfig.value.max_rank as number)
-    const rankingResults = calculateRankingResults(scoresMap)
-    for (const opt of candidates.value) {
-      results[opt.id] = rankingResults[opt.id] ?? { type: 'ranking', rank: 0, score: 0 }
-    }
-    return results
-  }
-
-  // For other engines, compute per option
-  for (const opt of candidates.value) {
-    const optionSupports = (props.supports ?? []).filter(s => s.optionId === opt.id)
-    const config = {
-      min: scoreMin.value,
-      max: scoreMax.value,
-      grades: gradeOptions.value.map((_, idx) => idx),
-      maxRank: maxRank.value
-    }
-    results[opt.id] = calculateOptionResult(currentEngineId.value, optionSupports, config)
-  }
-  return results
-})
-
-// ----------------------------------------------------------------------------
-// Computed: Total Votes (aligned with SupportData structure)
+// Computed: Total Votes & Rankings
 // ----------------------------------------------------------------------------
 
 const totalVotes = computed(() => {
@@ -806,17 +844,13 @@ const totalVotes = computed(() => {
   return sum
 })
 
-// ----------------------------------------------------------------------------
-// Computed: Ranked Candidates with Results
-// ----------------------------------------------------------------------------
-
-const rankedCandidates = computed(() => {
-  const candidatesWithResults = candidates.value.map(candidate => ({
-    ...candidate,
-    result: optionResults.value[candidate.id]
+const rankedOptions = computed(() => {
+  const optionsWithResults = voteOptions.value.map(option => ({
+    ...option,
+    result: optionResults.value[option.id]
   }))
 
-  return candidatesWithResults.sort((a, b) => {
+  return optionsWithResults.sort((a, b) => {
     const resA = a.result
     const resB = b.result
     if (!resA || !resB) return 0
@@ -846,7 +880,7 @@ const rankedCandidates = computed(() => {
   })
 })
 
-const winner = computed(() => rankedCandidates.value[0] ?? null)
+const winner = computed(() => rankedOptions.value[0] ?? null)
 
 const winnerPercentage = computed(() => {
   if (!winner.value) return 0
@@ -885,50 +919,41 @@ function getPercentage(option: Option & { result?: ReturnType<typeof calculateOp
 }
 
 // ----------------------------------------------------------------------------
-// User Vote Helpers
+// Selection Helpers
 // ----------------------------------------------------------------------------
 
-const hasUserVoted = computed(() => !!props.userVote)
-
-function hasUserVotedFor(candidateId: number): boolean {
-  if (currentEngine.value?.behavior === 'multi') {
-    return (props.userVote?.votes ?? []).some(v => v.candidate_id === candidateId)
-  }
-  return props.userVote?.candidate_id === candidateId
-}
-
-function isSelectedForVote(candidateId: number): boolean {
+function isSelectedForVote(optionId: number): boolean {
   if (currentEngineId.value === 'ranked') {
-    return rankings.value[candidateId] !== null && rankings.value[candidateId] !== undefined
+    return rankings.value[optionId] !== null && rankings.value[optionId] !== undefined
   }
   if (currentEngineId.value === 'score') {
-    return scores.value[candidateId] !== null && scores.value[candidateId] !== undefined
+    return scores.value[optionId] !== null && scores.value[optionId] !== undefined
   }
   if (currentEngineId.value === 'majority_judgment') {
-    return grades.value[candidateId] !== null && grades.value[candidateId] !== undefined
+    return grades.value[optionId] !== null && grades.value[optionId] !== undefined
   }
-  return selectedCandidates.value.has(candidateId)
+  return selectedOptions.value.has(optionId)
 }
 
-function toggleCandidateSelection(candidateId: number): void {
-  if (selectedCandidates.value.has(candidateId)) {
-    selectedCandidates.value.delete(candidateId)
+function toggleOptionSelection(optionId: number): void {
+  if (selectedOptions.value.has(optionId)) {
+    selectedOptions.value.delete(optionId)
   } else {
     const maxChoices = engineConfig.value.max_choices as number | null
-    if (maxChoices && selectedCandidates.value.size >= maxChoices) {
+    if (maxChoices && selectedOptions.value.size >= maxChoices) {
       showError(t('agora', 'You can only select up to {max} options', { max: maxChoices }))
       return
     }
-    selectedCandidates.value.add(candidateId)
+    selectedOptions.value.add(optionId)
   }
-  selectedCandidates.value = new Set(selectedCandidates.value)
+  selectedOptions.value = new Set(selectedOptions.value)
 }
 
-function handleCandidateClick(candidate: Option): void {
+function handleOptionClick(option: Option): void {
   if (currentEngine.value?.behavior === 'multi' && props.canVote && !hasUserVoted.value) {
-    toggleCandidateSelection(candidate.id)
+    toggleOptionSelection(option.id)
   } else {
-    emit('select', candidate)
+    emit('select', option)
   }
 }
 
@@ -936,59 +961,101 @@ function handleCandidateClick(candidate: Option): void {
 // Voting Actions
 // ----------------------------------------------------------------------------
 
-function voteForCandidate(candidate: Option): void {
-  if (!props.canVote || hasUserVoted.value) return
+function voteForOption(option: Option): void {
+  if (!props.canVote || hasUserVoted.value || !props.userId) return
 
-  const voteData: Record<string, unknown> = {}
-  if (currentEngineId.value === 'score') {
-    voteData.score = scores.value[candidate.id] ?? 0
+  let value: SupportValue = null
+  
+  if (currentEngineId.value === 'binary') {
+    value = 1
+  } else if (currentEngineId.value === 'ternary') {
+    value = 1
+  } else if (currentEngineId.value === 'score') {
+    value = scores.value[option.id] ?? 0
   } else if (currentEngineId.value === 'reaction') {
-    voteData.reaction = '👍'
+    value = '👍'
   }
 
-  emit('vote', candidate.id, voteData)
-  showSuccessToast(t('agora', 'Your vote for "{candidate}" has been recorded!', { candidate: candidate.title }))
+  const supportData: SupportData = {
+    inquiryId: props.inquiryId!,
+    optionId: option.id,
+    groupId: 0,
+    userId: props.userId,
+    support_engine_id: undefined,
+    value,
+    created: Date.now()
+  }
+
+  emit('vote', supportData)
+  showSuccessToast(t('agora', 'Your vote for "{option}" has been recorded!', { option: option.title }))
 }
 
 function submitMultiVote(): void {
-  if (!props.canVote || hasUserVoted.value) return
+  if (!props.canVote || hasUserVoted.value || !props.userId) return
 
-  const votes: Array<{ candidateId: number; value: unknown }> = []
+  const supports: SupportData[] = []
 
   if (currentEngineId.value === 'approval') {
-    for (const candidateId of selectedCandidates.value) {
-      votes.push({ candidateId, value: 1 })
+    for (const optionId of selectedOptions.value) {
+      supports.push({
+        inquiryId: props.inquiryId!,
+        optionId,
+        groupId: 0,
+        userId: props.userId,
+        value: 1,
+        created: Date.now()
+      })
     }
   } else if (currentEngineId.value === 'ranked') {
-    for (const [candidateId, rank] of Object.entries(rankings.value)) {
+    for (const [optionId, rank] of Object.entries(rankings.value)) {
       if (rank !== null) {
-        votes.push({ candidateId: parseInt(candidateId, 10), value: rank })
+        supports.push({
+          inquiryId: props.inquiryId!,
+          optionId: parseInt(optionId, 10),
+          groupId: 0,
+          userId: props.userId,
+          value: rank,
+          created: Date.now()
+        })
       }
     }
   } else if (currentEngineId.value === 'score') {
-    for (const [candidateId, score] of Object.entries(scores.value)) {
+    for (const [optionId, score] of Object.entries(scores.value)) {
       if (score !== null && score !== undefined) {
-        votes.push({ candidateId: parseInt(candidateId, 10), value: score })
+        supports.push({
+          inquiryId: props.inquiryId!,
+          optionId: parseInt(optionId, 10),
+          groupId: 0,
+          userId: props.userId,
+          value: score,
+          created: Date.now()
+        })
       }
     }
   } else if (currentEngineId.value === 'majority_judgment') {
-    for (const [candidateId, grade] of Object.entries(grades.value)) {
+    for (const [optionId, grade] of Object.entries(grades.value)) {
       if (grade !== null) {
-        votes.push({ candidateId: parseInt(candidateId, 10), value: grade })
+        supports.push({
+          inquiryId: props.inquiryId!,
+          optionId: parseInt(optionId, 10),
+          groupId: 0,
+          userId: props.userId,
+          value: grade,
+          created: Date.now()
+        })
       }
     }
   }
 
-  emit('multiVote', votes)
+  emit('multiVote', supports)
 
-  const voteCount = votes.length
+  const voteCount = supports.length
   showSuccessToast(t('agora', 'Your vote for {count} {countLabel} has been recorded!', {
     count: voteCount,
     countLabel: voteCount === 1 ? t('agora', 'option') : t('agora', 'options')
   }))
 
-  // Clear selection state
-  selectedCandidates.value.clear()
+  selectedOptions.value.clear()
   rankings.value = {}
   scores.value = {}
   grades.value = {}
@@ -997,9 +1064,6 @@ function submitMultiVote(): void {
 // ----------------------------------------------------------------------------
 // Toast Helper
 // ----------------------------------------------------------------------------
-
-const voteSuccessMessage = ref('')
-let successTimeout: NodeJS.Timeout
 
 function showSuccessToast(message: string): void {
   voteSuccessMessage.value = message
@@ -1013,8 +1077,6 @@ function showSuccessToast(message: string): void {
 // Modal Handlers
 // ----------------------------------------------------------------------------
 
-const showAddToVoteModal = ref(false)
-
 function handleEngineApply(engineId: string, config: Record<string, unknown>): void {
   currentEngineId.value = engineId
   engineConfig.value = config
@@ -1022,9 +1084,13 @@ function handleEngineApply(engineId: string, config: Record<string, unknown>): v
   emit('update:options')
 }
 
-function handleAddSuccess(): void {
+// FIXED: Handle add success - refresh and show options from any family
+async function handleAddSuccess(): Promise<void> {
+  showAddToVoteModal.value = false
+  refreshKey.value=refreshKey.value + 1
   emit('update:options')
-  emit('addOption', 'candidate')
+  await nextTick()
+  showSuccessToast(t('agora', 'Option added successfully'))
 }
 
 function closeAddToVoteModal(): void {
@@ -1043,8 +1109,8 @@ let barChart: Chart | null = null
 function createCharts(): void {
   if (!pieChartCanvas.value || !barChartCanvas.value) return
 
-  const labels = rankedCandidates.value.map(c => c.title)
-  const votes = rankedCandidates.value.map(c => getOptionScore(c))
+  const labels = rankedOptions.value.map(o => o.title)
+  const votes = rankedOptions.value.map(o => getOptionScore(o))
   const colors = ['#42b883', '#3490dc', '#f6993f', '#e74c3c', '#9b59b6', '#1abc9c', '#e67e22', '#2c3e50']
 
   if (pieChart) pieChart.destroy()
@@ -1089,7 +1155,7 @@ function createCharts(): void {
   })
 }
 
-watch([rankedCandidates, currentLayout], () => {
+watch([rankedOptions, currentLayout], () => {
   if (currentLayout.value === 'results') {
     nextTick(() => createCharts())
   }
@@ -1137,7 +1203,7 @@ const getLayoutIcon = (layout: string): unknown => {
 const getOptionTypeIcon = (type: string): unknown => getOptionTypeIconComponent(type, [])
 
 // ----------------------------------------------------------------------------
-// Computed: Available Engines (based on candidate count)
+// Computed: Available Engines
 // ----------------------------------------------------------------------------
 
 const availableEngines = computed(() => {
@@ -1148,16 +1214,14 @@ const availableEngines = computed(() => {
     description: def.description,
     constraints: def.constraints
   }))
-  const candidateCount = candidates.value.length
+  const optionCount = voteOptions.value.length
   return engines.filter(engine => {
     const constraints = ENGINE_DEFINITIONS[engine.id]?.constraints
-    if (constraints?.min_candidates && candidateCount < constraints.min_candidates) return false
-    if (constraints?.max_candidates && candidateCount > constraints.max_candidates) return false
+    if (constraints?.min_options && optionCount < constraints.min_options) return false
+    if (constraints?.max_options && optionCount > constraints.max_options) return false
     return true
   })
 })
-
-const availableEnginesForAdd = computed(() => availableEngines.value)
 
 // ----------------------------------------------------------------------------
 // Computed: UI Info
@@ -1183,7 +1247,7 @@ const voteLimitInfo = computed(() => {
 
 const voteSelectionInfo = computed(() => {
   if (currentEngineId.value === 'approval') {
-    const selectedCount = selectedCandidates.value.size
+    const selectedCount = selectedOptions.value.size
     const min = engineConfig.value.min_choices as number
     const max = engineConfig.value.max_choices as number | null
     if (min && max) return t('agora', '{selected}/{min}-{max} selected', { selected: selectedCount, min, max })
@@ -1192,7 +1256,7 @@ const voteSelectionInfo = computed(() => {
   }
   if (currentEngineId.value === 'ranked') {
     const rankedCount = Object.values(rankings.value).filter(r => r !== null).length
-    const max = (engineConfig.value.max_rank as number) || candidates.value.length
+    const max = (engineConfig.value.max_rank as number) || voteOptions.value.length
     return t('agora', '{ranked}/{max} ranked', { ranked: rankedCount, max })
   }
   return null
@@ -1200,7 +1264,7 @@ const voteSelectionInfo = computed(() => {
 
 const canSubmitMultiVote = computed(() => {
   if (currentEngineId.value === 'approval') {
-    const selectedCount = selectedCandidates.value.size
+    const selectedCount = selectedOptions.value.size
     const min = (engineConfig.value.min_choices as number) || 1
     const max = engineConfig.value.max_choices as number | null
     if (max !== null && selectedCount > max) return false
@@ -1212,7 +1276,7 @@ const canSubmitMultiVote = computed(() => {
       .map(([, rank]) => rank as number)
     const uniqueRanks = new Set(ranks)
     if (uniqueRanks.size !== ranks.length) return false
-    const maxRankValue = (engineConfig.value.max_rank as number) || candidates.value.length
+    const maxRankValue = (engineConfig.value.max_rank as number) || voteOptions.value.length
     return ranks.length > 0 && Math.max(...ranks) <= maxRankValue
   }
   if (currentEngineId.value === 'score') {
@@ -1221,7 +1285,7 @@ const canSubmitMultiVote = computed(() => {
   if (currentEngineId.value === 'majority_judgment') {
     return Object.values(grades.value).some(g => g !== null)
   }
-  return selectedCandidates.value.size > 0
+  return selectedOptions.value.size > 0
 })
 
 const timeRemaining = computed(() => {
@@ -1236,7 +1300,7 @@ const timeRemaining = computed(() => {
   return t('agora', '{hours}h', { hours })
 })
 
-// Initialize engine config from voteSession if available
+// Initialize engine config
 if (props.voteSession?.engine) {
   const engineDef = ENGINE_DEFINITIONS[props.voteSession.engine]
   if (engineDef?.config_schema) {
@@ -1250,7 +1314,6 @@ if (props.voteSession?.engine) {
 </script>
 
 <style scoped lang="scss">
-/* Styles remain unchanged from original */
 .vote-layout {
   padding: 20px;
 

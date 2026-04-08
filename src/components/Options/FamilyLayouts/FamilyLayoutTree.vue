@@ -703,7 +703,7 @@
             @deleted="handleNodeDeleted"
         />
 
-        <AddOptionModal
+        <OptionAddModal
             v-if="showAddOptionModal"
             :inquiry-id="inquiryStore.id"
             :option-type="selectedOptionTypeKey"
@@ -749,7 +749,7 @@ import {
 // Types
 import type { Option, OptionType, OptionStoreLike } from '../../../Types/index.ts'
 
-import AddOptionModal from '../AddOptionModal.vue'
+import OptionAddModal from '../OptionAddModal.vue'
 import OptionDetailModal from '../OptionDetailModal.vue'
 
 // Stores

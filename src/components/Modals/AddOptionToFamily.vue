@@ -170,7 +170,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { t } from '@nextcloud/l10n'
 import NcModal from '@nextcloud/vue/components/NcModal'
 import NcDateTimePickerNative from '@nextcloud/vue/components/NcDateTimePickerNative'
@@ -178,7 +178,6 @@ import { showSuccess, showError } from '@nextcloud/dialogs'
 import SearchSelect from '../Base/modules/SearchSelect.vue'
 import { useInquiryStore } from '../../stores/inquiry'
 import { useOptionsStore } from '../../stores/options'
-import { OptionsAPI } from '../../Api/index'
 import type { Option, EngineDefinition } from '../../Types/index'
 import {
   Plus,
@@ -207,7 +206,7 @@ const props = defineProps<{
   familyType: FamilyType
   currentEngineId?: string
   currentEngineDefinition?: EngineDefinition
-  currentEngineConfig?: Record<string, unknown>
+  // currentEngineConfig?: Record<string, unknown>
 }>()
 
 const emit = defineEmits<{
@@ -217,7 +216,15 @@ const emit = defineEmits<{
 
 const inquiryStore = useInquiryStore()
 const optionsStore = useOptionsStore()
-const inquiryId = computed(() => inquiryStore.id)
+const inquiryId = computed(() => {
+  // Ensure we have a valid inquiry ID
+  const id = inquiryStore.id
+  if (!id || id === 0) {
+    console.warn('Invalid inquiry ID in AddOptionToFamily:', id)
+    return null
+  }
+  return id
+})
 
 const selectedOption = ref<Option | null>(null)
 const startDate = ref<Date | null>(null)
@@ -324,9 +331,7 @@ const currentConfigSchema = computed(() => {
   return props.currentEngineDefinition?.config_schema || null
 })
 
-const hasConfigFields = computed(() => {
-  return currentConfigSchema.value && Object.keys(currentConfigSchema.value).length > 0
-})
+const hasConfigFields = computed(() => currentConfigSchema.value && Object.keys(currentConfigSchema.value).length > 0)
 
 // Helper to get force_layouts from miscFields
 function getForceLayouts(option: Option): string[] {
@@ -389,64 +394,114 @@ function getBehaviorLabel(behavior: string): string {
 async function addToKanban(): Promise<void> {
   if (!selectedOption.value || !targetStatus.value) return
 
-  // Get current miscFields
-  const currentMiscFields = selectedOption.value.miscFields || {}
+  try {
+    // Get current miscFields
+    const currentMiscFields = selectedOption.value.miscFields || {}
 
-  // Update the option status
-  await optionsStore.setOptionStatus(selectedOption.value.id, targetStatus.value)
+    // Update the option status
+    await optionsStore.setOptionStatus(selectedOption.value.id, targetStatus.value)
 
-  // Add kanban to force_layouts in miscFields
-  const forceLayouts = currentMiscFields.force_layouts || []
-  const updatedLayouts = [...forceLayouts, 'kanban']
+    // Add kanban to force_layouts in miscFields
+    const forceLayouts = getForceLayouts(selectedOption.value)
+    const updatedLayouts = [...forceLayouts, 'kanban']
 
-  const miscFieldsUpdate: Record<string, string> = {
-    ...currentMiscFields,
-    force_layouts: JSON.stringify(updatedLayouts)
+    const miscFieldsUpdate: Record<string, string> = {
+      ...currentMiscFields,
+      force_layouts: JSON.stringify(updatedLayouts)
+    }
+
+    // Update the option
+    await optionsStore.updateOptionFromModal(
+      selectedOption.value.id,
+      targetStatus.value,
+      miscFieldsUpdate
+    )
+  } catch (error) {
+    console.error('Error in addToKanban:', error)
+    throw error
   }
-
-  // Update the option
-  await optionsStore.updateOptionFromModal(
-    selectedOption.value.id,
-    targetStatus.value,
-    miscFieldsUpdate
-  )
 }
 
 async function addToTimeline(): Promise<void> {
   if (!selectedOption.value || !startDate.value) return
 
-  // Check if option already has timeline in force_layouts
-  const forceLayouts = getForceLayouts(selectedOption.value)
-  if (forceLayouts.includes('timeline')) {
-    showError(t('agora', 'Option already added to timeline'))
-    return
-  }
+  try {
+    // Check if option already has timeline in force_layouts
+    const forceLayouts = getForceLayouts(selectedOption.value)
+    if (forceLayouts.includes('timeline')) {
+      showError(t('agora', 'Option already added to timeline'))
+      return
+    }
 
-  // Add timeline to force_layouts
-  const updatedLayouts = [...forceLayouts, 'timeline']
-  
-  // Prepare miscFields with timeline dates
-  const currentMiscFields = selectedOption.value.miscFields || {}
-  const miscFieldsUpdate: Record<string, any> = {
-    ...currentMiscFields,
-    force_layouts: JSON.stringify(updatedLayouts),
-    timeline_start_date: startDate.value.toISOString()
-  }
-  
-  if (endDate.value) {
-    miscFieldsUpdate.timeline_end_date = endDate.value.toISOString()
-  }
+    // Add timeline to force_layouts
+    const updatedLayouts = [...forceLayouts, 'timeline']
+    
+    // Prepare miscFields with timeline dates
+    const currentMiscFields = selectedOption.value.miscFields || {}
+    const miscFieldsUpdate: Record<string, MiscFields> = {
+      ...currentMiscFields,
+      force_layouts: JSON.stringify(updatedLayouts),
+      timeline_start_date: startDate.value.toISOString()
+    }
+    
+    if (endDate.value) {
+      miscFieldsUpdate.timeline_end_date = endDate.value.toISOString()
+    }
 
-  // Update the option
-  await optionsStore.updateOptionFromModal(
-    selectedOption.value.id,
-    selectedOption.value.status?.optionStatus || 'draft',
-    miscFieldsUpdate
-  )
+    // Update the option
+    await optionsStore.updateOptionFromModal(
+      selectedOption.value.id,
+      selectedOption.value.status?.optionStatus || 'draft',
+      miscFieldsUpdate
+    )
+  } catch (error) {
+    console.error('Error in addToTimeline:', error)
+    throw error
+  }
 }
+
+async function addToVote(): Promise<void> {
+  if (!selectedOption.value ) return
+
+  try {
+    // Check if option already has timeline in force_layouts
+    const forceLayouts = getForceLayouts(selectedOption.value)
+    if (forceLayouts.includes('vote')) {
+      showError(t('agora', 'Option already added to vote'))
+      return
+    }
+
+    // Add timeline to force_layouts
+    const updatedLayouts = [...forceLayouts, 'vote']
+
+    // Prepare miscFields with vote
+    const currentMiscFields = selectedOption.value.miscFields || {}
+    const miscFieldsUpdate: Record<string, MiscFields> = {
+      ...currentMiscFields,
+      force_layouts: JSON.stringify(updatedLayouts),
+      start_date: currentMiscField.start_date || new Date().toISOString()
+    }
+    await optionsStore.updateOptionFromModal(
+      selectedOption.value.id,
+      selectedOption.value.status?.optionStatus || 'draft',
+      miscFieldsUpdate
+    )
+  } catch (error) {
+    console.error('Error in addToVote:', error)
+    throw error
+  }
+}
+
+
 
 async function add(): Promise<void> {
   if (!selectedOption.value) return
+
+  // Check if we have a valid inquiry ID before proceeding
+  if (!inquiryId.value) {
+    showError(t('agora', 'Invalid inquiry context. Please refresh the page and try again.'))
+    return
+  }
 
   loading.value = true
   try {
@@ -458,14 +513,20 @@ async function add(): Promise<void> {
         await addToTimeline()
         break
       case 'vote':
-        // TODO: Implement vote addition
-        showError(t('agora', 'Vote addition not implemented yet'))
-        return
+        await addToVote()
+       break 
     }
     
-    // Refresh data
-    await inquiryStore.load()
-    await optionsStore.load()
+    // Refresh data - but only if we have a valid inquiry ID
+    if (inquiryId.value && inquiryId.value !== 0) {
+      try {
+        await inquiryStore.load()
+        await optionsStore.load()
+      } catch (refreshError) {
+        console.warn('Could not refresh data after adding option:', refreshError)
+        // Don't throw here - the operation succeeded, just refresh failed
+      }
+    }
     
     showSuccess(t('agora', 'Option added to {family} successfully!', {
       family: props.familyType === 'timeline' ? t('agora', 'timeline') : t('agora', 'board')
@@ -482,6 +543,20 @@ async function add(): Promise<void> {
     loading.value = false
   }
 }
+
+// Watch for changes in selected option to validate
+watch(selectedOption, (newOption) => {
+  if (newOption && !inquiryId.value) {
+    console.warn('Selected option but inquiry ID is invalid')
+  }
+})
+
+// Log on mount for debugging
+onMounted(() => {
+  if (!inquiryId.value || inquiryId.value === 0) {
+    console.warn('AddOptionToFamily mounted with invalid inquiry ID:', inquiryId.value)
+  }
+})
 </script>
 
 <style scoped lang="scss">

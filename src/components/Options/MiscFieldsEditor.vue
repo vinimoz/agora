@@ -645,13 +645,6 @@ const getFieldColor = (field: MiscField): string => {
 
 // Initialize on mount
 onMounted(() => {
-    console.log('[MiscFieldsEditor] mounted with fields:', props.fields.length, 'initialValues:', props.initialValues)
-     console.log('[MiscFieldsEditor] mounted with:', {
-    fieldsCount: props.fields.length,
-    fields: props.fields.map(f => ({ key: f.key, type: f.type })),
-    initialValues: props.initialValues,
-    editable: props.editable
-  })
     miscFields.reinitialize()
     // Emit initial values
     setTimeout(() => {

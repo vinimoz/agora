@@ -309,7 +309,7 @@
     />
 
     <!-- Add child modal -->
-    <AddOptionModal
+    <OptionAddModal
         v-if="showAddChildModal"
         :inquiry-id="inquiryId"
         :option-type="selectedChildType"
@@ -357,7 +357,7 @@ import {
 // Import components
 import Comments from '../Comments/Comments.vue'
 import CommentAdd from '../Comments/CommentAdd.vue'
-import AddOptionModal from './AddOptionModal.vue'
+import OptionAddModal from './OptionAddModal.vue'
 
 // Types
 import type { Option, MiscField } from '../../Types/index.ts'

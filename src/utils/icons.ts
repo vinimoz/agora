@@ -70,6 +70,7 @@ import EyeCheckOutline from '@iconify-icons/mdi/eye-check-outline'
 import FileSearch from '@iconify-icons/mdi/file-search'
 import AlertOctagon from '@iconify-icons/mdi/alert-octagon-outline'
 import ShieldAlert from '@iconify-icons/mdi/shield-alert-outline'
+import ShieldAccount from '@iconify-icons/mdi/shield-account'
 
 
 // Options
@@ -110,14 +111,14 @@ import Reply from '@iconify-icons/mdi/reply'
 import ArrowUp from '@iconify-icons/mdi/arrow-up'
 import ArrowDown from '@iconify-icons/mdi/arrow-down' 
 // Families
-import ChatProcessing from '@iconify-icons/mdi/chat-processing' // Discussion
+// import ChatProcessing from '@iconify-icons/mdi/chat-processing' // Discussion
 
 // Decision / legal
-import ProgressCheck from '@iconify-icons/mdi/progress-check'
+// import ProgressCheck from '@iconify-icons/mdi/progress-check'
 
 // Debate actions
-import TextBoxCheck from '@iconify-icons/mdi/text-box-check-outline' // Summarize
-import GraphOutline from '@iconify-icons/mdi/graph-outline'
+// import TextBoxCheck from '@iconify-icons/mdi/text-box-check-outline' // Summarize
+// import GraphOutline from '@iconify-icons/mdi/graph-outline'
 
 // Consensus actions
 import ClipboardText from '@iconify-icons/mdi/clipboard-text-outline' // Minutes
@@ -318,6 +319,7 @@ export const InquiryGeneralIcons: Record<string, Component> = {
   IdCard: makeIconComponent(IdCard, '#546E7A'),
   Newspaper: makeIconComponent(Newspaper, '#546E7A'),
   Megaphone: makeIconComponent(Megaphone, '#C62828'),
+  HelpCircle: makeIconComponent(HelpCircle, '#03A9F4'),
   ClipboardList: makeIconComponent(ClipboardList, '#283593'),
   Question: makeIconComponent(HelpCircle, '#999'),
   CheckCircle: makeIconComponent(CheckCircle, '#4CAF50'),
@@ -442,10 +444,13 @@ export const InquiryGeneralIcons: Record<string, Component> = {
   Magnify: makeIconComponent(Magnify, '#1565C0'),
   CurrencyUsd: makeIconComponent(Cash, '#2E7D32'),
   FileSearch: makeIconComponent(FileSearch, '#455A64'),
+  ClipboardSearch: makeIconComponent(ClipboardCheck, '#455A64'),
   AlertOctagon: makeIconComponent(AlertOctagon, '#F44336'),
   ShieldAlert: makeIconComponent(ShieldAlert, '#FF9800'),
+  ShieldAccount: makeIconComponent(ShieldAccount, '#FF9800'),
   FileBarChart: makeIconComponent(FileChart, '#1E88E5'),
   Search: makeIconComponent(Magnify, '#455A64'),
+  ChartLine: makeIconComponent(ChartLine, '#607D8B'),
   AlertTriangle: makeIconComponent(Alert, '#FB8C00'),
   Shield: makeIconComponent(ShieldOutline, '#2E7D32'),
   Info: makeIconComponent(InformationVariant, '#1976D2'),
@@ -648,6 +653,7 @@ export const InquiryOptionIcons = {
   // Families
   // ======================
   ThumbUp: makeIconComponent(ThumbUp, '#2E7D32'),
+  ThumbDown: makeIconComponent(ThumbDown, '#D32F2F'),
   Checkmark: makeIconComponent(CheckCircle, '#2E7D32'),
   
   // ======================
@@ -660,6 +666,7 @@ export const InquiryOptionIcons = {
   // Debate
   // ======================
   Download: makeIconComponent(Download, '#1976D2'),
+  Upload: makeIconComponent(Upload, '#2E7D32'),
 
   // ======================
   // Consensus

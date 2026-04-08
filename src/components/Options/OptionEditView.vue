@@ -133,7 +133,7 @@
         </div>
 
         <!-- Modals -->
-        <AddOptionModal
+        <OptionAddModal
                 v-if="showAddOptionModal && !isReadOnly"
                 :inquiry-id="inquiryStore.id"
                 :option-type="selectedOptionTypeKey"
@@ -179,7 +179,7 @@ import FamilyLayoutTimeline from './FamilyLayouts/FamilyLayoutTimeline.vue'
 import FamilyLayoutVote from './FamilyLayouts/FamilyLayoutVote.vue'
 
 // Import option cards and modals
-import AddOptionModal from './AddOptionModal.vue'
+import OptionAddModal from './OptionAddModal.vue'
 import OptionDetailModal from './OptionDetailModal.vue'
 
 // Import helpers
@@ -284,7 +284,6 @@ const getActionIcon = (icon: string | Component): Component => {
  * @param action
  */
 const handleFamilyAction = async (action: Action) => {
-  // If action has a modal key, try to load and show modal
   if (action.modal) {
     const modalComponent = await loadModalComponent(action.key)
 
@@ -293,22 +292,27 @@ const handleFamilyAction = async (action: Action) => {
       currentActionKey.value = action.key
       currentActionData.value = action.data || {}
       showModal.value = true
-    } else {
-      // Fallback to direct execution if no modal found
-      if (action.handler) {
-        await action.handler(action.data)
-        console.warn(`Handler or modal found for action: ${action.key}`)
-      } else {
-        console.warn(`No handler or modal found for action: ${action.key}`)
-      }
+      return
     }
-  } else if (action.handler) {
-    // Direct execution without modal
-    await action.handler(action.data)
-  } else {
-    console.warn(`No handler or modal defined for action: ${action.key}`)
+
+    if (action.handler) {
+      await action.handler(action.data)
+      console.warn(`Handler or modal found for action: ${action.key}`)
+      return
+    }
+
+    console.warn(`No handler or modal found for action: ${action.key}`)
+    return
   }
+
+  if (action.handler) {
+    await action.handler(action.data)
+    return
+  }
+
+  console.warn(`No handler or modal defined for action: ${action.key}`)
 }
+
 
 /**
  * Close modal and clean up

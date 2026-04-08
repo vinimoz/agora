@@ -142,81 +142,10 @@
 <AddOptionToFamily
   v-if="showAddModal"
   family-type="timeline"
+  :inquiry-id="inquiryId"
   @close="showAddModal = false"
   @success="handleAddSuccess"
 />
-
-		<!-- Add option modal -->
-<!--
-		<NcModal 
-			v-if="showAddModal"
-			name="add-to-timeline" 
-			size="normal"
-			:title="t('agora', 'Add option to timeline')"
-			@close="showAddModal = false"
-		>
-			<div class="add-timeline-modal">
-				<!-- Search for existing option -->
-<!--
-		<NcModal 
-				<div class="search-section">
-					<h4>{{ t('agora', 'Add existing option') }}</h4>
-					<p class="section-desc">{{ t('agora', 'Search and add an option to the timeline') }}</p>
-					
-					<div class="search-controls">
-						<SearchSelect
-							v-model="selectedOption"
-							type="options"
-							:inquiry-id="inquiryId"
-							:placeholder="t('agora', 'Search for an option by title or #id…')"
-							class="search-select"
-						/>
-
-						<!-- Date range selection -->
-<!--
-		<NcModal 
-						<div v-if="selectedOption" class="date-selector">
-							<div class="date-field">
-								<label>{{ t('agora', 'Start date') }}</label>
-								<NcDateTimePickerNative
-									v-model="startDate"
-									type="date"
-									:placeholder="t('agora', 'Select start date')"
-									:clearable="false"
-									required
-								/>
-							</div>
-							
-							<div class="date-field">
-								<label>{{ t('agora', 'End date (optional)') }}</label>
-								<NcDateTimePickerNative
-									v-model="endDate"
-									type="date"
-									:placeholder="t('agora', 'Select end date')"
-									:clearable="true"
-								/>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<div class="modal-actions">
-					<NcButton @click="showAddModal = false">
-						{{ t('agora', 'Cancel') }}
-					</NcButton>
-					<NcButton
-						type="primary"
-						:disabled="!canAddToTimeline"
-						@click="addToTimeline"
-					>
-						<template #icon>
-							<component :is="InquiryOptionIcons.Timeline" :size="18" />
-						</template>
-						{{ t('agora', 'Add to timeline') }}
-					</NcButton>
-				</div>
-			</div>
-        </NcModal> -->
 
 		<!-- FullCalendar component – single instance with dynamic options -->
 		<FullCalendar
@@ -232,20 +161,16 @@
 import { ref, computed, watch, onMounted } from 'vue'
 import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
-import NcModal from '@nextcloud/vue/components/NcModal'
-import NcDateTimePickerNative from '@nextcloud/vue/components/NcDateTimePickerNative'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
 import { DateTime } from 'luxon'
 import { InquiryOptionIcons } from '../../../utils/icons.ts'
 import { 
   filterOptionsByLayout,
-  addToTimeline,
-  getForceLayouts,
   getTimelineStartDate,
   getTimelineEndDate
 } from '../../../helpers/modules/InquiryOptionHelper'
 import type { Option, InquiryOptionType, OptionFamily } from '../../../Types/index.ts'
-import SearchSelect from '../../Base/modules/SearchSelect.vue'
+// import SearchSelect from '../../Base/modules/SearchSelect.vue'
 import AddOptionToFamily from '../../Modals/AddOptionToFamily.vue'
 
 // FullCalendar imports
@@ -275,9 +200,6 @@ const calendarRef = ref<InstanceType<typeof FullCalendar> | null>(null)
 
 // Modal state
 const showAddModal = ref(false)
-const selectedOption = ref<Option | null>(null)
-const startDate = ref<Date | null>(null)
-const endDate = ref<Date | null>(null)
 
 // Current period display text for calendar view
 const currentPeriodText = ref('')
@@ -354,16 +276,6 @@ const getStatusColor = (status: string) => {
 const viewMode = ref<'list' | 'timeline' | 'calendar'>('timeline')
 const scale = ref<'day' | 'week' | 'month'>('week')
 const dateFilter = ref('')
-
-// Modal computed - can add if option doesn't already have timeline in force_layouts
-const canAddToTimeline = computed(() => {
-  if (!selectedOption.value || !startDate.value) return false
-  
-  // Check if option already has timeline in force_layouts
-  const forceLayouts = getForceLayouts(selectedOption.value)
-  return !forceLayouts.includes('timeline')
-})
-
 
 // Update current period text for calendar view
 const updateCurrentPeriodText = () => {
