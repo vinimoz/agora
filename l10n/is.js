@@ -175,6 +175,7 @@ OC.L10N.register(
     "Neutral" : "Hlutlaus",
     "Email options" : "Tölvupóststillingar",
     "Home" : "Heim",
+    "Loading …" : "Hleð inn…",
     "Archive" : "Safn",
     "Back to home" : "Til baka á upphafssíðu",
     "Restore" : "Endurheimta",

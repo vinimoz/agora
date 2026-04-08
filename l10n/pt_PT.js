@@ -1,7 +1,18 @@
 OC.L10N.register(
     "agora",
     {
+    "Inquiry changes" : "Alterações de consulta",
+    "Recent inquiries" : "Consultas recentes",
+    "Team" : "Equipa",
+    "Contact group" : "Grupo de contactos",
     "Group" : "Grupo",
+    "Inquiry \"%s\" - Confirmation" : "Consulta \"%s\" - Confirmação",
+    "{owner} wants to inform you about the final result of the inquiry \"{title}\"" : "{owner} quer informá-lo sobre o resultado final da consulta \"{title}\"",
+    "Inquiry invitation \"%s\"" : "Convite para consulta \"%s\"",
+    "{owner} invited you to take part in the inquiry \"{title}\" as a member of the group {group_name}" : "{owner} convidou-o para participar na consulta \"{title}\" como membro do grupo {group_name}",
+    "{owner} invited you to take part in the inquiry \"{title}\"" : "{owner} convidou-o para participar na consulta \"{title}\"",
+    "Notification for inquiry \"%s\"" : "Notificação para consulta \"%s\"",
+    "Go to inquiry" : "Ir para consulta",
     "Legal Notice" : "Notícia de legalidade",
     "Privacy Policy" : "Política de Privacidade",
     "Contact" : "Contacto",

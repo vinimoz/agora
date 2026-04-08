@@ -240,6 +240,7 @@ OC.L10N.register(
     "Add Option" : "新增選項",
     "Add {type}" : "新增{type}",
     "Option" : "選項",
+    "Parent" : "上層",
     "Create" : "建立",
     "Draft" : "草稿",
     "Active" : "作用中",
