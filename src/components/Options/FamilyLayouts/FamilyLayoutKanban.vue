@@ -70,6 +70,7 @@
                       :inquiry-id="inquiryId"
                       :compact="true"
                       :show-action="true"
+                      :family-type="family?.key || 'kanban'"
                       @click="$emit('openDetail', option)"
                       />
 
@@ -395,96 +396,96 @@ const handleAddSuccess = () => {
     }
 }
 
-  // Modal styles
-      .add-option-modal {
-      padding: 24px;
-      max-width: 600px;
+      // Modal styles
+          .add-option-modal {
+          padding: 24px;
+          max-width: 600px;
 
-      h4 {
-          margin: 0 0 4px 0;
-          font-size: 16px;
-          font-weight: 600;
-          color: var(--color-main-text);
-      }
-
-      .section-desc {
-          margin: 0 0 16px 0;
-          font-size: 13px;
-          color: var(--color-text-lighter);
-      }
-
-      .search-section {
-          margin-bottom: 24px;
-
-          .search-select {
-              margin-bottom: 20px;
+          h4 {
+              margin: 0 0 4px 0;
+              font-size: 16px;
+              font-weight: 600;
+              color: var(--color-main-text);
           }
 
-          .column-selector {
-              label {
-                  display: block;
-                  margin-bottom: 12px;
-                  font-weight: 600;
-                  font-size: 14px;
+          .section-desc {
+              margin: 0 0 16px 0;
+              font-size: 13px;
+              color: var(--color-text-lighter);
+          }
+
+          .search-section {
+              margin-bottom: 24px;
+
+              .search-select {
+                  margin-bottom: 20px;
               }
 
-              .column-options {
-                  display: grid;
-                  grid-template-columns: repeat(2, 1fr);
-                  gap: 8px;
+              .column-selector {
+                  label {
+                      display: block;
+                      margin-bottom: 12px;
+                      font-weight: 600;
+                      font-size: 14px;
+                  }
 
-                  .column-option {
-                      display: flex;
-                      align-items: center;
+                  .column-options {
+                      display: grid;
+                      grid-template-columns: repeat(2, 1fr);
                       gap: 8px;
-                      padding: 10px 12px;
-                      background: var(--color-background-dark);
-                      border: 2px solid transparent;
-                      border-radius: 12px;
-                      cursor: pointer;
 
-                      .column-color {
-                          width: 10px;
-                          height: 10px;
-                          border-radius: 50%;
-                      }
+                      .column-option {
+                          display: flex;
+                          align-items: center;
+                          gap: 8px;
+                          padding: 10px 12px;
+                          background: var(--color-background-dark);
+                          border: 2px solid transparent;
+                          border-radius: 12px;
+                          cursor: pointer;
 
-                      .column-label {
-                          flex: 1;
-                          font-size: 13px;
-                          font-weight: 500;
-                      }
+                          .column-color {
+                              width: 10px;
+                              height: 10px;
+                              border-radius: 50%;
+                          }
 
-                      .check-icon {
-                          color: var(--color-success);
-                      }
+                          .column-label {
+                              flex: 1;
+                              font-size: 13px;
+                              font-weight: 500;
+                          }
 
-                      &:hover {
-                          background: var(--color-background-hover);
-                      }
+                          .check-icon {
+                              color: var(--color-success);
+                          }
 
-                      &.selected {
-                          border-color: var(--color-primary-element);
-                          background: var(--color-primary-light);
+                          &:hover {
+                              background: var(--color-background-hover);
+                          }
+
+                          &.selected {
+                              border-color: var(--color-primary-element);
+                              background: var(--color-primary-light);
+                          }
                       }
                   }
               }
           }
+
+          .modal-actions {
+              display: flex;
+              justify-content: flex-end;
+              gap: 12px;
+              margin-top: 32px;
+              padding-top: 20px;
+              border-top: 1px solid var(--color-border);
+          }
       }
 
-      .modal-actions {
-          display: flex;
-          justify-content: flex-end;
-          gap: 12px;
-          margin-top: 32px;
-          padding-top: 20px;
-          border-top: 1px solid var(--color-border);
+      .status-dot-small {
+          width: 10px;
+          height: 10px;
+          border-radius: 50%;
       }
-  }
-
-  .status-dot-small {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-  }
 </style>

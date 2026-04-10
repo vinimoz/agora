@@ -115,7 +115,9 @@ const formattedFamilyType = computed(() => {
   return t('agora', `${value}`) 
 })
 
-
+const handleHomeNavigation = () => {
+  selectedFamily.value = null
+}
 
 onMounted(() => {
   inquiriesStore.load(false)
@@ -277,6 +279,7 @@ onMounted(() => {
                    }"
               :exact="true"
               class="navigation-item"
+              @click="handleHomeNavigation"
               >
               <template #icon>
                   <component :is="NavigationIcons.Home" />

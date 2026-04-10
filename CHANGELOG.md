@@ -5,6 +5,14 @@
 
 # Changelog
 All notable changes to this project will be documented in this file.
+# [1.7.1] - 2026-04-06
+New Features:
+- Options add to vote, Kanban, Timeline from others family.
+- New vote family option of inquiry and template for ( vote, tree, paired, Cards .. ) ( some parts experimental )
+
+Fix:
+- Create/View switch
+
 # [1.7.0] - 2026-03-05
 New Features:
 - Templates loading.

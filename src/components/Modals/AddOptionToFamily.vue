@@ -178,7 +178,8 @@ import { showSuccess, showError } from '@nextcloud/dialogs'
 import SearchSelect from '../Base/modules/SearchSelect.vue'
 import { useInquiryStore } from '../../stores/inquiry'
 import { useOptionsStore } from '../../stores/options'
-import type { Option, EngineDefinition } from '../../Types/index'
+import type { Option, EngineDefinition, MiscField } from '../../Types/index'
+
 import {
   Plus,
   Vote,
@@ -391,29 +392,33 @@ function getBehaviorLabel(behavior: string): string {
   return labels[behavior] || behavior
 }
 
+
 async function addToKanban(): Promise<void> {
   if (!selectedOption.value || !targetStatus.value) return
 
   try {
-    // Get current miscFields
-    const currentMiscFields = selectedOption.value.miscFields || {}
-
-    // Update the option status
-    await optionsStore.setOptionStatus(selectedOption.value.id, targetStatus.value)
-
-    // Add kanban to force_layouts in miscFields
+    // Check if option already has kanban in force_layouts
     const forceLayouts = getForceLayouts(selectedOption.value)
+    if (forceLayouts.includes('kanban')) {
+      showError(t('agora', 'Option already added to kanban board'))
+      return
+    }
+
+    // Add kanban to force_layouts
     const updatedLayouts = [...forceLayouts, 'kanban']
 
-    const miscFieldsUpdate: Record<string, string> = {
+    // Prepare miscFields update
+    const currentMiscFields = selectedOption.value.miscFields || {}
+    const miscFieldsUpdate: Record<string, MiscField> = {
       ...currentMiscFields,
       force_layouts: JSON.stringify(updatedLayouts)
     }
 
-    // Update the option
+    // Update the option - first update the status, then the misc fields
+    // If updateOptionFromModal expects (id, status, miscFields)
     await optionsStore.updateOptionFromModal(
       selectedOption.value.id,
-      targetStatus.value,
+      targetStatus.value,  // Update the status to the selected column
       miscFieldsUpdate
     )
   } catch (error) {
@@ -438,14 +443,14 @@ async function addToTimeline(): Promise<void> {
     
     // Prepare miscFields with timeline dates
     const currentMiscFields = selectedOption.value.miscFields || {}
-    const miscFieldsUpdate: Record<string, MiscFields> = {
+    const miscFieldsUpdate: Record<string, MiscField> = {
       ...currentMiscFields,
       force_layouts: JSON.stringify(updatedLayouts),
-      timeline_start_date: startDate.value.toISOString()
+      start_date: startDate.value.toISOString()
     }
     
     if (endDate.value) {
-      miscFieldsUpdate.timeline_end_date = endDate.value.toISOString()
+      miscFieldsUpdate.end_date = endDate.value.toISOString()
     }
 
     // Update the option
@@ -461,17 +466,17 @@ async function addToTimeline(): Promise<void> {
 }
 
 async function addToVote(): Promise<void> {
-  if (!selectedOption.value ) return
+  if (!selectedOption.value) return
 
   try {
-    // Check if option already has timeline in force_layouts
+    // Check if option already has vote in force_layouts
     const forceLayouts = getForceLayouts(selectedOption.value)
     if (forceLayouts.includes('vote')) {
       showError(t('agora', 'Option already added to vote'))
       return
     }
 
-    // Add timeline to force_layouts
+    // Add vote to force_layouts
     const updatedLayouts = [...forceLayouts, 'vote']
 
     // Prepare miscFields with vote
@@ -479,8 +484,9 @@ async function addToVote(): Promise<void> {
     const miscFieldsUpdate: Record<string, MiscFields> = {
       ...currentMiscFields,
       force_layouts: JSON.stringify(updatedLayouts),
-      start_date: currentMiscField.start_date || new Date().toISOString()
+      start_date: currentMiscFields.start_date || new Date().toISOString() 
     }
+    
     await optionsStore.updateOptionFromModal(
       selectedOption.value.id,
       selectedOption.value.status?.optionStatus || 'draft',
@@ -491,7 +497,6 @@ async function addToVote(): Promise<void> {
     throw error
   }
 }
-
 
 
 async function add(): Promise<void> {

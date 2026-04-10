@@ -325,6 +325,7 @@ const props = defineProps<{
   preventClick?: boolean
   textMaxLength?: number
   progressBar?: boolean
+  familyType?: string
 }>()
 
 // Emits
@@ -335,6 +336,7 @@ const emit = defineEmits<{
   supportChanged: [optionId: number, support: string]
   comment: [option: Option]
   viewResponses: [option: Option, responseType: string]
+  removeFromView: [optionId: number, updatedForceLayouts: string[]]
 }>()
 
 
@@ -390,6 +392,9 @@ const allowComment = computed(() =>
 const hasSupportFeature = computed(() => 
   hasSupportFeatureHelper(props.option.type, allOptionTypes.value)
 )
+
+// Check if option has force_layouts from import
+const hasForceLayouts = computed(() => props.option.miscFields?.force_layouts?.length > 0)
 
 // Get allowed responses from option type data
 const allowedResponses = computed(() => 
@@ -482,6 +487,38 @@ const formatDate = (timestamp: number) => {
   }).format(date)
 }
 
+const removeFromCurrentView = async () => {
+  try {
+    // Handle different possible formats of force_layouts
+    let currentLayouts = props.option.miscFields?.force_layouts || []
+    
+    // If it's a string, try to parse it as JSON
+    if (typeof currentLayouts === 'string') {
+      try {
+        currentLayouts = JSON.parse(currentLayouts)
+      } catch (e) {
+        currentLayouts = []
+        showError("Error removing from current view",e)
+      }
+    }
+    
+    // Ensure it's an array
+    if (!Array.isArray(currentLayouts)) {
+      currentLayouts = []
+    }
+    
+    
+    // Remove the current layout from the array
+    const updatedLayouts = currentLayouts.filter((layout: string) => layout !== props.familyType)
+    
+    
+    emit('removeFromView', props.option.id, updatedLayouts)
+  } catch (err) {
+    console.error('Error removing option from view:', err)
+    showError(t('agora', 'Failed to remove option from view'))
+  }
+}
+
 const truncateText = (text: string, maxLength: number) => {
   if (!text) return ''
   if (text.length <= maxLength) return text
@@ -495,9 +532,23 @@ const handleCardClick = () => {
 }
 
 const confirmDelete = () => {
-  if (confirm(t('agora', 'Are you sure you want to delete this option ?'))) {
-    deleteOption()
-  }
+  // Check if option was imported (has force_layouts)
+  if (hasForceLayouts.value) {
+    const userChoice = confirm(
+      `${t('agora', 'This option was imported from another view.')  }\n\n${ 
+      t('agora', 'What would you like to do?')  }\n\n${ 
+      t('agora', '• Click OK to completely delete this option')  }\n${ 
+      t('agora', '• Click Cancel to only remove it from the current view')}`
+    )
+    
+    if (userChoice) {
+      deleteOption()
+    } else {
+      removeFromCurrentView()
+    }
+  } else if (confirm(t('agora', 'Are you sure you want to delete this option?'))) {
+      deleteOption()
+    }
 }
 
 const deleteOption = async () => {

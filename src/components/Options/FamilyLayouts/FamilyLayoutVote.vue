@@ -102,6 +102,7 @@
             :compact="false"
             :show-action="!isReadonly"
             :progress-bar="true"
+            :family-type="family.key"
             @click="handleOptionClick(option)"
           >
             <!-- Selection indicator for multi-vote -->

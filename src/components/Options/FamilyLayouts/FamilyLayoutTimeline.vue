@@ -206,7 +206,6 @@ const currentPeriodText = ref('')
 
 const timelineOptions = computed(() => {
   const sourceOptions = props.optionsByInquiry || props.options
-  
   return filterOptionsByLayout(
     sourceOptions,
     'timeline',           // Layout name
