@@ -24,7 +24,7 @@
             v-model="selectedOption"
             type="options"
             :inquiry-id="inquiryId"
-            :placeholder="t('agora', 'Search by title or #id...')"
+            :placeholder="t('agora', 'Search by title or #id …')"
             class="search-select"
           />
         </div>
@@ -109,7 +109,7 @@
           @click="add"
         >
           <Plus :size="16" />
-          {{ loading ? t('agora', 'Adding...') : t('agora', 'Add to vote') }}
+          {{ loading ? t('agora', 'Adding …') : t('agora', 'Add to vote') }}
         </button>
       </div>
     </div>

@@ -11,13 +11,13 @@
   }
 })();
 const appName = "agora";
-const appVersion = "1.7.0";
-import { A as defineStore, aR as generateOcsUrl, aS as cancelableClient, d as defineComponent, q as translate, _ as _export_sfc, o as openBlock, c as createElementBlock, j as createBaseVNode, t as toDisplayString, T as Fragment, U as renderList, E as normalizeClass, B as createTextVNode, k as createCommentVNode, b as computed, s as onMounted, aX as ref, a7 as NcButton, aP as NcEmptyContent, ak as NcLoadingIcon, i as createVNode, g as withCtx, f as createBlock, w as watch, aM as NcModal, h as resolveDynamicComponent, m as mergeProps, a5 as withDirectives, a6 as vShow, aZ as vModelText, C as purify, ax as withModifiers, ai as resolveComponent, n as normalizeStyle, v as normalizeProps, x as guardReactiveProps, y as createApp, z as pinia } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_ef057a6f_lang-BczwJJ0P.chunk.mjs";
-import { I as InputDiv, a as NcAppSettingsDialog, N as NcSettingsSection } from "./index-5WDnmRpi.chunk.mjs";
-import { L as Logger, d as useAppSettingsStore, e as gfmHeadingId, k, f as adminJobs, I as InquiryGeneralIcons, s as showError, S as StatusIcons, h as showSuccess } from "./NcDashboardWidget-DCBQdRFz-Dpg-GLB_.chunk.mjs";
-import { F as FlexSettings } from "./FlexSettings-CbyAqg1N.chunk.mjs";
-import { _ as _sfc_main$B, N as NcCheckboxRadioSwitch, a as NcSelect, b as NcInputField } from "./NcRichText-DJlaHs_Q-CyU_PorF.chunk.mjs";
-import { N as NcNoteCard, a as NcTextArea, R as RadioGroupDiv, C as CardDiv } from "./markdown-Bry8OJ4L.chunk.mjs";
+const appVersion = "1.7.1";
+import { A as defineStore, aS as generateOcsUrl, aT as cancelableClient, d as defineComponent, q as translate, _ as _export_sfc, o as openBlock, c as createElementBlock, j as createBaseVNode, t as toDisplayString, J as Fragment, K as renderList, I as normalizeClass, B as createTextVNode, k as createCommentVNode, b as computed, s as onMounted, E as ref, F as NcButton, aQ as NcEmptyContent, an as NcLoadingIcon, i as createVNode, g as withCtx, f as createBlock, w as watch, G as NcModal, h as resolveDynamicComponent, m as mergeProps, a9 as withDirectives, aa as vShow, aZ as vModelText, C as purify, H as withModifiers, al as resolveComponent, n as normalizeStyle, v as normalizeProps, x as guardReactiveProps, y as createApp, z as pinia } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_ef057a6f_lang-CP9qC4iz.chunk.mjs";
+import { I as InputDiv, b as NcAppSettingsDialog, N as NcSettingsSection } from "./index-CPK_9_Aw.chunk.mjs";
+import { L as Logger, h as useAppSettingsStore, i as gfmHeadingId, k, j as adminJobs, I as InquiryGeneralIcons, s as showError, S as StatusIcons, e as showSuccess } from "./NcDashboardWidget-CvpYMKur-B_hmAVFy.chunk.mjs";
+import { F as FlexSettings } from "./FlexSettings-CIoVuw3I.chunk.mjs";
+import { _ as _sfc_main$B, N as NcCheckboxRadioSwitch, a as NcSelect, b as NcInputField } from "./NcRichText-D_ssz6sB-8UY9eufb.chunk.mjs";
+import { N as NcNoteCard, a as NcTextArea, R as RadioGroupDiv, C as CardDiv } from "./markdown-BVP3gZI6.chunk.mjs";
 const useTemplateWizardStore = defineStore("templateWizard", {
   state: () => ({
     isOpen: false,
@@ -499,7 +499,7 @@ function _sfc_render$A(_ctx, _cache, $props, $setup, $data, $options) {
     ])
   ]);
 }
-const StepUseCaseSelection = /* @__PURE__ */ _export_sfc(_sfc_main$A, [["render", _sfc_render$A], ["__scopeId", "data-v-cbe6b281"], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora/src/components/Wizard/steps/StepUseCaseSelection.vue"]]);
+const StepUseCaseSelection = /* @__PURE__ */ _export_sfc(_sfc_main$A, [["render", _sfc_render$A], ["__scopeId", "data-v-cbe6b281"], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora1.7.1/src/components/Wizard/steps/StepUseCaseSelection.vue"]]);
 const _sfc_main$z = /* @__PURE__ */ defineComponent({
   __name: "StepTemplateSelection",
   setup(__props, { expose: __expose }) {
@@ -1138,7 +1138,7 @@ function _sfc_render$z(_ctx, _cache, $props, $setup, $data, $options) {
     ])) : createCommentVNode("v-if", true)
   ]);
 }
-const StepTemplateSelection = /* @__PURE__ */ _export_sfc(_sfc_main$z, [["render", _sfc_render$z], ["__scopeId", "data-v-4e395d60"], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora/src/components/Wizard/steps/StepTemplateSelection.vue"]]);
+const StepTemplateSelection = /* @__PURE__ */ _export_sfc(_sfc_main$z, [["render", _sfc_render$z], ["__scopeId", "data-v-4e395d60"], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora1.7.1/src/components/Wizard/steps/StepTemplateSelection.vue"]]);
 const _sfc_main$y = /* @__PURE__ */ defineComponent({
   __name: "StepLanguageSelection",
   setup(__props, { expose: __expose }) {
@@ -1264,7 +1264,7 @@ function _sfc_render$y(_ctx, _cache, $props, $setup, $data, $options) {
     ])) : createCommentVNode("v-if", true)
   ]);
 }
-const StepLanguageSelection = /* @__PURE__ */ _export_sfc(_sfc_main$y, [["render", _sfc_render$y], ["__scopeId", "data-v-e6e1081e"], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora/src/components/Wizard/steps/StepLanguageSelection.vue"]]);
+const StepLanguageSelection = /* @__PURE__ */ _export_sfc(_sfc_main$y, [["render", _sfc_render$y], ["__scopeId", "data-v-e6e1081e"], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora1.7.1/src/components/Wizard/steps/StepLanguageSelection.vue"]]);
 const _sfc_main$x = /* @__PURE__ */ defineComponent({
   __name: "StepPreview",
   setup(__props, { expose: __expose }) {
@@ -1587,7 +1587,7 @@ function _sfc_render$x(_ctx, _cache, $props, $setup, $data, $options) {
       createBaseVNode(
         "p",
         null,
-        toDisplayString($setup.t("agora", "Preparing template data …")),
+        toDisplayString($setup.t("agora", "Preparing template data …")),
         1
         /* TEXT */
       )
@@ -1598,7 +1598,7 @@ function _sfc_render$x(_ctx, _cache, $props, $setup, $data, $options) {
         createBaseVNode(
           "p",
           null,
-          toDisplayString($setup.t("agora", "Analyzing template for duplicates …")),
+          toDisplayString($setup.t("agora", "Analyzing template for duplicates …")),
           1
           /* TEXT */
         )
@@ -1778,7 +1778,7 @@ function _sfc_render$x(_ctx, _cache, $props, $setup, $data, $options) {
       }, {
         default: withCtx(() => [
           createTextVNode(
-            toDisplayString($setup.t("agora", "{count} item(s) already exist in the database and will be skipped during import.", { count: $setup.duplicateAnalysis.totals.existing })),
+            toDisplayString($setup.t("agora", "{count} items already exist in the database and will be skipped during import.", { count: $setup.duplicateAnalysis.totals.existing })),
             1
             /* TEXT */
           )
@@ -2004,7 +2004,7 @@ function _sfc_render$x(_ctx, _cache, $props, $setup, $data, $options) {
     ]))
   ]);
 }
-const StepPreview = /* @__PURE__ */ _export_sfc(_sfc_main$x, [["render", _sfc_render$x], ["__scopeId", "data-v-1aff519f"], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora/src/components/Wizard/steps/StepPreview.vue"]]);
+const StepPreview = /* @__PURE__ */ _export_sfc(_sfc_main$x, [["render", _sfc_render$x], ["__scopeId", "data-v-1aff519f"], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora1.7.1/src/components/Wizard/steps/StepPreview.vue"]]);
 const _sfc_main$w = /* @__PURE__ */ defineComponent({
   __name: "StepSummary",
   setup(__props, { expose: __expose }) {
@@ -2300,7 +2300,7 @@ function _sfc_render$w(_ctx, _cache, $props, $setup, $data, $options) {
     ])) : createCommentVNode("v-if", true)
   ]);
 }
-const StepSummary = /* @__PURE__ */ _export_sfc(_sfc_main$w, [["render", _sfc_render$w], ["__scopeId", "data-v-13b1c365"], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora/src/components/Wizard/steps/StepSummary.vue"]]);
+const StepSummary = /* @__PURE__ */ _export_sfc(_sfc_main$w, [["render", _sfc_render$w], ["__scopeId", "data-v-13b1c365"], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora1.7.1/src/components/Wizard/steps/StepSummary.vue"]]);
 const _sfc_main$v = /* @__PURE__ */ defineComponent({
   __name: "StepImporting",
   setup(__props, { expose: __expose }) {
@@ -2332,7 +2332,7 @@ function _sfc_render$v(_ctx, _cache, $props, $setup, $data, $options) {
       createBaseVNode(
         "p",
         _hoisted_3$h,
-        toDisplayString($setup.t("agora", "Please wait while the template is being imported …")),
+        toDisplayString($setup.t("agora", "Please wait while the template is being imported …")),
         1
         /* TEXT */
       ),
@@ -2346,7 +2346,7 @@ function _sfc_render$v(_ctx, _cache, $props, $setup, $data, $options) {
     ])
   ]);
 }
-const StepImporting = /* @__PURE__ */ _export_sfc(_sfc_main$v, [["render", _sfc_render$v], ["__scopeId", "data-v-38620be8"], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora/src/components/Wizard/steps/StepImporting.vue"]]);
+const StepImporting = /* @__PURE__ */ _export_sfc(_sfc_main$v, [["render", _sfc_render$v], ["__scopeId", "data-v-38620be8"], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora1.7.1/src/components/Wizard/steps/StepImporting.vue"]]);
 const _sfc_main$u = /* @__PURE__ */ defineComponent({
   __name: "StepResults",
   setup(__props, { expose: __expose }) {
@@ -2529,7 +2529,7 @@ function _sfc_render$u(_ctx, _cache, $props, $setup, $data, $options) {
       }, {
         default: withCtx(() => [
           createTextVNode(
-            toDisplayString($setup.t("agora", "Admin Settings")),
+            toDisplayString($setup.t("agora", "Administration Settings")),
             1
             /* TEXT */
           )
@@ -2554,7 +2554,7 @@ function _sfc_render$u(_ctx, _cache, $props, $setup, $data, $options) {
     ])
   ]);
 }
-const StepResults = /* @__PURE__ */ _export_sfc(_sfc_main$u, [["render", _sfc_render$u], ["__scopeId", "data-v-0e206bd8"], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora/src/components/Wizard/steps/StepResults.vue"]]);
+const StepResults = /* @__PURE__ */ _export_sfc(_sfc_main$u, [["render", _sfc_render$u], ["__scopeId", "data-v-0e206bd8"], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora1.7.1/src/components/Wizard/steps/StepResults.vue"]]);
 const _sfc_main$t = /* @__PURE__ */ defineComponent({
   __name: "TemplateSetupWizard",
   setup(__props, { expose: __expose }) {
@@ -2777,7 +2777,7 @@ function _sfc_render$t(_ctx, _cache, $props, $setup, $data, $options) {
     /* STABLE */
   }, 8, ["can-close", "name"])) : createCommentVNode("v-if", true);
 }
-const TemplateSetupWizard = /* @__PURE__ */ _export_sfc(_sfc_main$t, [["render", _sfc_render$t], ["__scopeId", "data-v-d2f4206c"], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora/src/components/Wizard/TemplateSetupWizard.vue"]]);
+const TemplateSetupWizard = /* @__PURE__ */ _export_sfc(_sfc_main$t, [["render", _sfc_render$t], ["__scopeId", "data-v-d2f4206c"], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora1.7.1/src/components/Wizard/TemplateSetupWizard.vue"]]);
 const _sfc_main$s = {
   __name: "AdminActivities",
   setup(__props, { expose: __expose }) {
@@ -2817,7 +2817,7 @@ function _sfc_render$s(_ctx, _cache, $props, $setup, $data, $options) {
     }, 8, ["modelValue"])
   ]);
 }
-const AdminActivities = /* @__PURE__ */ _export_sfc(_sfc_main$s, [["render", _sfc_render$s], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora/src/components/Settings/AdminSettings/AdminActivities.vue"]]);
+const AdminActivities = /* @__PURE__ */ _export_sfc(_sfc_main$s, [["render", _sfc_render$s], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora1.7.1/src/components/Settings/AdminSettings/AdminActivities.vue"]]);
 const _sfc_main$r = {
   __name: "AdminArchiveInquiries",
   setup(__props, { expose: __expose }) {
@@ -2870,7 +2870,7 @@ function _sfc_render$r(_ctx, _cache, $props, $setup, $data, $options) {
     }, null, 8, ["modelValue", "label"])) : createCommentVNode("v-if", true)
   ]);
 }
-const AdminArchiveInquiries = /* @__PURE__ */ _export_sfc(_sfc_main$r, [["render", _sfc_render$r], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora/src/components/Settings/AdminSettings/AdminArchiveInquiries.vue"]]);
+const AdminArchiveInquiries = /* @__PURE__ */ _export_sfc(_sfc_main$r, [["render", _sfc_render$r], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora1.7.1/src/components/Settings/AdminSettings/AdminArchiveInquiries.vue"]]);
 const _sfc_main$q = {
   __name: "AdminDeleteInquiries",
   setup(__props, { expose: __expose }) {
@@ -2923,7 +2923,7 @@ function _sfc_render$q(_ctx, _cache, $props, $setup, $data, $options) {
     }, null, 8, ["modelValue", "label"])) : createCommentVNode("v-if", true)
   ]);
 }
-const AdminDeleteInquiries = /* @__PURE__ */ _export_sfc(_sfc_main$q, [["render", _sfc_render$q], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora/src/components/Settings/AdminSettings/AdminDeleteInquiries.vue"]]);
+const AdminDeleteInquiries = /* @__PURE__ */ _export_sfc(_sfc_main$q, [["render", _sfc_render$q], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora1.7.1/src/components/Settings/AdminSettings/AdminDeleteInquiries.vue"]]);
 const _sfc_main$p = {
   __name: "AdminExpireInquiries",
   setup(__props, { expose: __expose }) {
@@ -2976,7 +2976,7 @@ function _sfc_render$p(_ctx, _cache, $props, $setup, $data, $options) {
     }, null, 8, ["modelValue", "label"])) : createCommentVNode("v-if", true)
   ]);
 }
-const AdminExpireInquiries = /* @__PURE__ */ _export_sfc(_sfc_main$p, [["render", _sfc_render$p], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora/src/components/Settings/AdminSettings/AdminExpireInquiries.vue"]]);
+const AdminExpireInquiries = /* @__PURE__ */ _export_sfc(_sfc_main$p, [["render", _sfc_render$p], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora1.7.1/src/components/Settings/AdminSettings/AdminExpireInquiries.vue"]]);
 const _sfc_main$o = {
   name: "LanguageMarkdownIcon",
   emits: ["click"],
@@ -3025,7 +3025,7 @@ function _sfc_render$o(_ctx, _cache, $props, $setup, $data, $options) {
     ], 8, _hoisted_2$k))
   ], 16, _hoisted_1$o);
 }
-const LanguageMarkdownIcon = /* @__PURE__ */ _export_sfc(_sfc_main$o, [["render", _sfc_render$o], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora/node_modules/vue-material-design-icons/LanguageMarkdown.vue"]]);
+const LanguageMarkdownIcon = /* @__PURE__ */ _export_sfc(_sfc_main$o, [["render", _sfc_render$o], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora1.7.1/node_modules/vue-material-design-icons/LanguageMarkdown.vue"]]);
 const _sfc_main$n = {
   __name: "AdminEmail",
   setup(__props, { expose: __expose }) {
@@ -3130,7 +3130,7 @@ function _sfc_render$n(_ctx, _cache, $props, $setup, $data, $options) {
     ])
   ]);
 }
-const AdminEmail = /* @__PURE__ */ _export_sfc(_sfc_main$n, [["render", _sfc_render$n], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora/src/components/Settings/AdminSettings/AdminEmail.vue"]]);
+const AdminEmail = /* @__PURE__ */ _export_sfc(_sfc_main$n, [["render", _sfc_render$n], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora1.7.1/src/components/Settings/AdminSettings/AdminEmail.vue"]]);
 const _sfc_main$m = {
   __name: "AdminModeration",
   setup(__props, { expose: __expose }) {
@@ -3194,7 +3194,7 @@ function _sfc_render$m(_ctx, _cache, $props, $setup, $data, $options) {
     ])) : createCommentVNode("v-if", true)
   ]);
 }
-const AdminModeration = /* @__PURE__ */ _export_sfc(_sfc_main$m, [["render", _sfc_render$m], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora/src/components/Settings/AdminSettings/AdminModeration.vue"]]);
+const AdminModeration = /* @__PURE__ */ _export_sfc(_sfc_main$m, [["render", _sfc_render$m], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora1.7.1/src/components/Settings/AdminSettings/AdminModeration.vue"]]);
 const _sfc_main$l = {
   __name: "AdminJobs",
   setup(__props, { expose: __expose }) {
@@ -3343,7 +3343,7 @@ function _sfc_render$l(_ctx, _cache, $props, $setup, $data, $options) {
     ])
   ]);
 }
-const AdminJobs = /* @__PURE__ */ _export_sfc(_sfc_main$l, [["render", _sfc_render$l], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora/src/components/Settings/AdminSettings/AdminJobs.vue"]]);
+const AdminJobs = /* @__PURE__ */ _export_sfc(_sfc_main$l, [["render", _sfc_render$l], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora1.7.1/src/components/Settings/AdminSettings/AdminJobs.vue"]]);
 const _sfc_main$k = {
   __name: "AdminLegal",
   setup(__props, { expose: __expose }) {
@@ -3438,7 +3438,7 @@ function _sfc_render$k(_ctx, _cache, $props, $setup, $data, $options) {
     /* STABLE_FRAGMENT */
   );
 }
-const AdminLegal = /* @__PURE__ */ _export_sfc(_sfc_main$k, [["render", _sfc_render$k], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora/src/components/Settings/AdminSettings/AdminLegal.vue"]]);
+const AdminLegal = /* @__PURE__ */ _export_sfc(_sfc_main$k, [["render", _sfc_render$k], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora1.7.1/src/components/Settings/AdminSettings/AdminLegal.vue"]]);
 const _sfc_main$j = {
   __name: "AdminFamiliesManager",
   emits: ["familySelected"],
@@ -3822,7 +3822,7 @@ function _sfc_render$j(_ctx, _cache, $props, $setup, $data, $options) {
     ])) : createCommentVNode("v-if", true)
   ]);
 }
-const AdminFamiliesManager = /* @__PURE__ */ _export_sfc(_sfc_main$j, [["render", _sfc_render$j], ["__scopeId", "data-v-b0578289"], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora/src/components/Settings/AdminSettings/AdminFamiliesManager.vue"]]);
+const AdminFamiliesManager = /* @__PURE__ */ _export_sfc(_sfc_main$j, [["render", _sfc_render$j], ["__scopeId", "data-v-b0578289"], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora1.7.1/src/components/Settings/AdminSettings/AdminFamiliesManager.vue"]]);
 const _sfc_main$i = /* @__PURE__ */ defineComponent({
   __name: "AdminTypesManager",
   props: {
@@ -4316,7 +4316,7 @@ function _sfc_render$i(_ctx, _cache, $props, $setup, $data, $options) {
     ])) : createCommentVNode("v-if", true)
   ]);
 }
-const AdminTypesManager = /* @__PURE__ */ _export_sfc(_sfc_main$i, [["render", _sfc_render$i], ["__scopeId", "data-v-f2f32798"], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora/src/components/Settings/AdminSettings/AdminTypesManager.vue"]]);
+const AdminTypesManager = /* @__PURE__ */ _export_sfc(_sfc_main$i, [["render", _sfc_render$i], ["__scopeId", "data-v-f2f32798"], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora1.7.1/src/components/Settings/AdminSettings/AdminTypesManager.vue"]]);
 const _sfc_main$h = /* @__PURE__ */ defineComponent({
   __name: "AdminTypeRights",
   props: {
@@ -4496,7 +4496,7 @@ function _sfc_render$h(_ctx, _cache, $props, $setup, $data, $options) {
             createBaseVNode(
               "p",
               _hoisted_12$2,
-              toDisplayString($setup.t("agora", "Users can support or not support")),
+              toDisplayString($setup.t("agora", "People can support or not support")),
               1
               /* TEXT */
             )
@@ -4525,7 +4525,7 @@ function _sfc_render$h(_ctx, _cache, $props, $setup, $data, $options) {
             createBaseVNode(
               "p",
               _hoisted_14$2,
-              toDisplayString($setup.t("agora", "Users can support, be neutral, or oppose")),
+              toDisplayString($setup.t("agora", "People can support, be neutral, or oppose")),
               1
               /* TEXT */
             )
@@ -4617,7 +4617,7 @@ function _sfc_render$h(_ctx, _cache, $props, $setup, $data, $options) {
     ])) : createCommentVNode("v-if", true)
   ]);
 }
-const AdminTypeRights = /* @__PURE__ */ _export_sfc(_sfc_main$h, [["render", _sfc_render$h], ["__scopeId", "data-v-60290e39"], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora/src/components/Settings/AdminSettings/AdminTypeRights.vue"]]);
+const AdminTypeRights = /* @__PURE__ */ _export_sfc(_sfc_main$h, [["render", _sfc_render$h], ["__scopeId", "data-v-60290e39"], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora1.7.1/src/components/Settings/AdminSettings/AdminTypeRights.vue"]]);
 const _sfc_main$g = /* @__PURE__ */ defineComponent({
   __name: "AdminTypeStatus",
   props: {
@@ -5092,7 +5092,7 @@ function _sfc_render$g(_ctx, _cache, $props, $setup, $data, $options) {
     ]))
   ]);
 }
-const AdminTypeStatus = /* @__PURE__ */ _export_sfc(_sfc_main$g, [["render", _sfc_render$g], ["__scopeId", "data-v-832d89d2"], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora/src/components/Settings/AdminSettings/AdminTypeStatus.vue"]]);
+const AdminTypeStatus = /* @__PURE__ */ _export_sfc(_sfc_main$g, [["render", _sfc_render$g], ["__scopeId", "data-v-832d89d2"], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora1.7.1/src/components/Settings/AdminSettings/AdminTypeStatus.vue"]]);
 const _sfc_main$f = {
   __name: "TypeSettingsModal",
   props: {
@@ -5149,7 +5149,7 @@ function _sfc_render$f(_ctx, _cache, $props, $setup, $data, $options) {
     createBaseVNode("div", _hoisted_2$b, [
       createBaseVNode("div", _hoisted_3$6, [
         createBaseVNode("div", _hoisted_4$6, [
-          (openBlock(), createBlock(resolveDynamicComponent($setup.getIconComponent($setup.props.selectedType.icon)), { size: 20 }))
+          (openBlock(), createBlock(resolveDynamicComponent($setup.getIconComponent($props.selectedType.icon)), { size: 20 }))
         ]),
         createBaseVNode("div", _hoisted_5$5, [
           createBaseVNode(
@@ -5202,7 +5202,7 @@ function _sfc_render$f(_ctx, _cache, $props, $setup, $data, $options) {
     ])
   ]);
 }
-const TypeSettingsModal = /* @__PURE__ */ _export_sfc(_sfc_main$f, [["render", _sfc_render$f], ["__scopeId", "data-v-077dce28"], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora/src/components/Settings/AdminSettings/TypeSettingsModal.vue"]]);
+const TypeSettingsModal = /* @__PURE__ */ _export_sfc(_sfc_main$f, [["render", _sfc_render$f], ["__scopeId", "data-v-077dce28"], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora1.7.1/src/components/Settings/AdminSettings/TypeSettingsModal.vue"]]);
 const _sfc_main$e = {
   __name: "AdminSettings",
   setup(__props, { expose: __expose }) {
@@ -5334,7 +5334,7 @@ function _sfc_render$e(_ctx, _cache, $props, $setup, $data, $options) {
     }, 8, ["open", "name"])
   ]);
 }
-const AdminSettings = /* @__PURE__ */ _export_sfc(_sfc_main$e, [["render", _sfc_render$e], ["__scopeId", "data-v-cd782848"], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora/src/components/Settings/AdminSettings/AdminSettings.vue"]]);
+const AdminSettings = /* @__PURE__ */ _export_sfc(_sfc_main$e, [["render", _sfc_render$e], ["__scopeId", "data-v-cd782848"], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora1.7.1/src/components/Settings/AdminSettings/AdminSettings.vue"]]);
 const _sfc_main$d = /* @__PURE__ */ defineComponent({
   __name: "AdminPerformance",
   setup(__props, { expose: __expose }) {
@@ -5372,7 +5372,7 @@ function _sfc_render$d(_ctx, _cache, $props, $setup, $data, $options) {
     }, null, 8, ["modelValue"])
   ]);
 }
-const AdminPerformance = /* @__PURE__ */ _export_sfc(_sfc_main$d, [["render", _sfc_render$d], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora/src/components/Settings/AdminSettings/AdminPerformance.vue"]]);
+const AdminPerformance = /* @__PURE__ */ _export_sfc(_sfc_main$d, [["render", _sfc_render$d], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora1.7.1/src/components/Settings/AdminSettings/AdminPerformance.vue"]]);
 const _sfc_main$c = /* @__PURE__ */ defineComponent({
   __name: "TreeItem",
   props: {
@@ -5487,7 +5487,7 @@ function _sfc_render$c(_ctx, _cache, $props, $setup, $data, $options) {
     ])) : createCommentVNode("v-if", true)
   ]);
 }
-const TreeItem = /* @__PURE__ */ _export_sfc(_sfc_main$c, [["render", _sfc_render$c], ["__scopeId", "data-v-37a5142a"], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora/src/components/Settings/AdminSettings/TreeItem.vue"]]);
+const TreeItem = /* @__PURE__ */ _export_sfc(_sfc_main$c, [["render", _sfc_render$c], ["__scopeId", "data-v-37a5142a"], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora1.7.1/src/components/Settings/AdminSettings/TreeItem.vue"]]);
 const _sfc_main$b = /* @__PURE__ */ defineComponent({
   __name: "AdminCategoryLocation",
   setup(__props, { expose: __expose }) {
@@ -5894,7 +5894,7 @@ function _sfc_render$b(_ctx, _cache, $props, $setup, $data, $options) {
     ]))
   ]);
 }
-const AdminCategoryLocation = /* @__PURE__ */ _export_sfc(_sfc_main$b, [["render", _sfc_render$b], ["__scopeId", "data-v-da2e3bfe"], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora/src/components/Settings/AdminSettings/AdminCategoryLocation.vue"]]);
+const AdminCategoryLocation = /* @__PURE__ */ _export_sfc(_sfc_main$b, [["render", _sfc_render$b], ["__scopeId", "data-v-da2e3bfe"], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora1.7.1/src/components/Settings/AdminSettings/AdminCategoryLocation.vue"]]);
 const _sfc_main$a = {
   __name: "AdminModeratorRights",
   setup(__props, { expose: __expose }) {
@@ -6021,7 +6021,7 @@ function _sfc_render$a(_ctx, _cache, $props, $setup, $data, $options) {
     ])
   ]);
 }
-const AdminModeratorRights = /* @__PURE__ */ _export_sfc(_sfc_main$a, [["render", _sfc_render$a], ["__scopeId", "data-v-fb7cbc5e"], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora/src/components/Settings/AdminSettings/AdminModeratorRights.vue"]]);
+const AdminModeratorRights = /* @__PURE__ */ _export_sfc(_sfc_main$a, [["render", _sfc_render$a], ["__scopeId", "data-v-fb7cbc5e"], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora1.7.1/src/components/Settings/AdminSettings/AdminModeratorRights.vue"]]);
 const _sfc_main$9 = {
   __name: "AdminOfficialRights",
   setup(__props, { expose: __expose }) {
@@ -6177,7 +6177,7 @@ function _sfc_render$9(_ctx, _cache, $props, $setup, $data, $options) {
     ])
   ]);
 }
-const AdminOfficialRights = /* @__PURE__ */ _export_sfc(_sfc_main$9, [["render", _sfc_render$9], ["__scopeId", "data-v-14c25bb2"], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora/src/components/Settings/AdminSettings/AdminOfficialRights.vue"]]);
+const AdminOfficialRights = /* @__PURE__ */ _export_sfc(_sfc_main$9, [["render", _sfc_render$9], ["__scopeId", "data-v-14c25bb2"], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora1.7.1/src/components/Settings/AdminSettings/AdminOfficialRights.vue"]]);
 const _sfc_main$8 = {
   __name: "AdminInquiryCreation",
   setup(__props, { expose: __expose }) {
@@ -6240,7 +6240,7 @@ function _sfc_render$8(_ctx, _cache, $props, $setup, $data, $options) {
     ])) : createCommentVNode("v-if", true)
   ]);
 }
-const AdminInquiryCreation = /* @__PURE__ */ _export_sfc(_sfc_main$8, [["render", _sfc_render$8], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora/src/components/Settings/AdminSettings/AdminInquiryCreation.vue"]]);
+const AdminInquiryCreation = /* @__PURE__ */ _export_sfc(_sfc_main$8, [["render", _sfc_render$8], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora1.7.1/src/components/Settings/AdminSettings/AdminInquiryCreation.vue"]]);
 const _sfc_main$7 = {
   __name: "AdminInquiriesInNavigation",
   setup(__props, { expose: __expose }) {
@@ -6280,7 +6280,7 @@ function _sfc_render$7(_ctx, _cache, $props, $setup, $data, $options) {
     }, 8, ["modelValue"])
   ]);
 }
-const AdminInquiriesInNavigation = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["render", _sfc_render$7], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora/src/components/Settings/AdminSettings/AdminInquiriesInNavigation.vue"]]);
+const AdminInquiriesInNavigation = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["render", _sfc_render$7], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora1.7.1/src/components/Settings/AdminSettings/AdminInquiriesInNavigation.vue"]]);
 const _sfc_main$6 = {
   __name: "AdminShareOpenInquiry",
   setup(__props, { expose: __expose }) {
@@ -6343,7 +6343,7 @@ function _sfc_render$6(_ctx, _cache, $props, $setup, $data, $options) {
     ])) : createCommentVNode("v-if", true)
   ]);
 }
-const AdminShareOpenInquiry = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["render", _sfc_render$6], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora/src/components/Settings/AdminSettings/AdminShareOpenInquiry.vue"]]);
+const AdminShareOpenInquiry = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["render", _sfc_render$6], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora1.7.1/src/components/Settings/AdminSettings/AdminShareOpenInquiry.vue"]]);
 const _sfc_main$5 = {
   __name: "AdminSharePublicCreate",
   setup(__props, { expose: __expose }) {
@@ -6406,7 +6406,7 @@ function _sfc_render$5(_ctx, _cache, $props, $setup, $data, $options) {
     ])) : createCommentVNode("v-if", true)
   ]);
 }
-const AdminSharePublicCreate = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["render", _sfc_render$5], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora/src/components/Settings/AdminSettings/AdminSharePublicCreate.vue"]]);
+const AdminSharePublicCreate = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["render", _sfc_render$5], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora1.7.1/src/components/Settings/AdminSettings/AdminSharePublicCreate.vue"]]);
 const _sfc_main$4 = {
   __name: "AdminSharePublicShowLogin",
   setup(__props, { expose: __expose }) {
@@ -6446,7 +6446,7 @@ function _sfc_render$4(_ctx, _cache, $props, $setup, $data, $options) {
     }, 8, ["modelValue"])
   ]);
 }
-const AdminSharePublicShowLogin = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["render", _sfc_render$4], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora/src/components/Settings/AdminSettings/AdminSharePublicShowLogin.vue"]]);
+const AdminSharePublicShowLogin = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["render", _sfc_render$4], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora1.7.1/src/components/Settings/AdminSettings/AdminSharePublicShowLogin.vue"]]);
 const _sfc_main$3 = {
   __name: "AdminShowMailAddresses",
   setup(__props, { expose: __expose }) {
@@ -6509,7 +6509,7 @@ function _sfc_render$3(_ctx, _cache, $props, $setup, $data, $options) {
     ])) : createCommentVNode("v-if", true)
   ]);
 }
-const AdminShowMailAddresses = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["render", _sfc_render$3], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora/src/components/Settings/AdminSettings/AdminShowMailAddresses.vue"]]);
+const AdminShowMailAddresses = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["render", _sfc_render$3], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora1.7.1/src/components/Settings/AdminSettings/AdminShowMailAddresses.vue"]]);
 const _sfc_main$2 = {
   __name: "AdminUnrescrictedOwners",
   setup(__props, { expose: __expose }) {
@@ -6604,7 +6604,7 @@ function _sfc_render$2(_ctx, _cache, $props, $setup, $data, $options) {
     })
   ]);
 }
-const AdminUnrescrictedOwners = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["render", _sfc_render$2], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora/src/components/Settings/AdminSettings/AdminUnrescrictedOwners.vue"]]);
+const AdminUnrescrictedOwners = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["render", _sfc_render$2], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora1.7.1/src/components/Settings/AdminSettings/AdminUnrescrictedOwners.vue"]]);
 const _sfc_main$1 = {
   __name: "AdminCleanInstance",
   setup(__props, { expose: __expose }) {
@@ -6632,7 +6632,7 @@ const _sfc_main$1 = {
           return;
         }
         cleanInstance.value.disabled = true;
-        cleanInstance.value.text = translate("agora", "Cleaning instance …");
+        cleanInstance.value.text = translate("agora", "Cleaning instance …");
         await adminJobs.cleanInstance();
         cleanInstance.value.text = translate("agora", "Instance cleaned");
         showSuccess(translate("agora", "All data has been successfully destroyed"));
@@ -6737,7 +6737,7 @@ function _sfc_render$1(_ctx, _cache, $props, $setup, $data, $options) {
     ])
   ]);
 }
-const AdminCleanInstance = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["render", _sfc_render$1], ["__scopeId", "data-v-ee1ac32d"], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora/src/components/Settings/AdminSettings/AdminCleanInstance.vue"]]);
+const AdminCleanInstance = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["render", _sfc_render$1], ["__scopeId", "data-v-ee1ac32d"], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora1.7.1/src/components/Settings/AdminSettings/AdminCleanInstance.vue"]]);
 const _sfc_main = /* @__PURE__ */ defineComponent({
   __name: "AdminSettingsPage",
   setup(__props, { expose: __expose }) {
@@ -6782,7 +6782,7 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
       },
       globalSettings: {
         name: translate("agora", "Global inquiry settings"),
-        description: translate("agora", "Let you configure, family, type of inquiries and associed rights, like comment, supports, status …")
+        description: translate("agora", "Let you configure, family, type of inquiries and associed rights, like comment, supports, status …")
       },
       publicSettings: {
         name: translate("agora", "Public inquiry registration dialog options"),
@@ -7091,7 +7091,7 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
     })
   ])) : createCommentVNode("v-if", true);
 }
-const AdminSettingsPage = /* @__PURE__ */ _export_sfc(_sfc_main, [["render", _sfc_render], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora/src/views/AdminSettingsPage.vue"]]);
+const AdminSettingsPage = /* @__PURE__ */ _export_sfc(_sfc_main, [["render", _sfc_render], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora1.7.1/src/views/AdminSettingsPage.vue"]]);
 const Agora = createApp(AdminSettingsPage).use(pinia);
 Agora.mount("#content_agora");
 //# sourceMappingURL=agora-adminSettings.mjs.map

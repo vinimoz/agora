@@ -11,11 +11,11 @@
   }
 })();
 const appName = "agora";
-const appVersion = "1.7.0";
-import { _ as _export_sfc, o as openBlock, c as createElementBlock, j as createBaseVNode, t as toDisplayString, k as createCommentVNode, m as mergeProps, d as defineComponent, f as createBlock, g as withCtx, r as renderSlot, h as resolveDynamicComponent, V as DateTime, q as translate, i as createVNode, B as createTextVNode, E as normalizeClass, y as createApp, z as pinia } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_ef057a6f_lang-BczwJJ0P.chunk.mjs";
-import { r as registerWidget } from "./NcRichText-DJlaHs_Q-CyU_PorF.chunk.mjs";
-import { N as NcUserBubble } from "./NcUserBubble-vOAXLHB5-Cb7I991N.chunk.mjs";
-import { A as AgoraAppIcon } from "./agora-icon-BCcaMzhs.chunk.mjs";
+const appVersion = "1.7.1";
+import { _ as _export_sfc, o as openBlock, c as createElementBlock, j as createBaseVNode, t as toDisplayString, k as createCommentVNode, m as mergeProps, d as defineComponent, f as createBlock, g as withCtx, r as renderSlot, h as resolveDynamicComponent, Z as DateTime, q as translate, i as createVNode, B as createTextVNode, I as normalizeClass, y as createApp, z as pinia } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_ef057a6f_lang-CP9qC4iz.chunk.mjs";
+import { r as registerWidget } from "./NcRichText-D_ssz6sB-8UY9eufb.chunk.mjs";
+import { N as NcUserBubble } from "./NcUserBubble-BE6yD-R0-ZiYFWivE.chunk.mjs";
+import { A as AgoraAppIcon } from "./agora-icon-LJ50tMPL.chunk.mjs";
 const _sfc_main$2 = {
   name: "CalendarEndIcon",
   emits: ["click"],
@@ -64,7 +64,7 @@ function _sfc_render$2(_ctx, _cache, $props, $setup, $data, $options) {
     ], 8, _hoisted_2$1))
   ], 16, _hoisted_1$2);
 }
-const ExpirationIcon = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["render", _sfc_render$2], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora/node_modules/vue-material-design-icons/CalendarEnd.vue"]]);
+const ExpirationIcon = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["render", _sfc_render$2], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora1.7.1/node_modules/vue-material-design-icons/CalendarEnd.vue"]]);
 const _sfc_main$1 = /* @__PURE__ */ defineComponent({
   __name: "BadgeSmallDiv",
   props: {
@@ -90,7 +90,7 @@ function _sfc_render$1(_ctx, _cache, $props, $setup, $data, $options) {
     /* FORWARDED */
   });
 }
-const BadgeSmallDiv = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["render", _sfc_render$1], ["__scopeId", "data-v-a4bfe739"], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora/src/components/Base/modules/BadgeSmallDiv.vue"]]);
+const BadgeSmallDiv = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["render", _sfc_render$1], ["__scopeId", "data-v-a4bfe739"], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora1.7.1/src/components/Base/modules/BadgeSmallDiv.vue"]]);
 const _sfc_main = /* @__PURE__ */ defineComponent({
   __name: "Reference",
   props: {
@@ -204,7 +204,7 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
     ])) : createCommentVNode("v-if", true)
   ])) : createCommentVNode("v-if", true);
 }
-const Reference = /* @__PURE__ */ _export_sfc(_sfc_main, [["render", _sfc_render], ["__scopeId", "data-v-dd2984c0"], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora/src/views/Reference.vue"]]);
+const Reference = /* @__PURE__ */ _export_sfc(_sfc_main, [["render", _sfc_render], ["__scopeId", "data-v-dd2984c0"], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora1.7.1/src/views/Reference.vue"]]);
 registerWidget(
   "agora_reference_widget",
   async (el, { richObject }) => {

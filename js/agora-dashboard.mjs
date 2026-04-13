@@ -11,10 +11,10 @@
   }
 })();
 const appName = "agora";
-const appVersion = "1.7.0";
-import { d as defineComponent, q as translate, b as computed, s as onMounted, C as purify, D as generateUrl, _ as _export_sfc, o as openBlock, c as createElementBlock, i as createVNode, g as withCtx, j as createBaseVNode, k as createCommentVNode, f as createBlock, h as resolveDynamicComponent, t as toDisplayString, y as createApp, z as pinia } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_ef057a6f_lang-BczwJJ0P.chunk.mjs";
-import { a as useSessionStore, b as useInquiriesStore, s as showError, L as Logger, g as getInquiryTypeData, I as InquiryGeneralIcons, N as NcDashboardWidget } from "./NcDashboardWidget-DCBQdRFz-Dpg-GLB_.chunk.mjs";
-import { A as AgoraAppIcon } from "./agora-icon-BCcaMzhs.chunk.mjs";
+const appVersion = "1.7.1";
+import { d as defineComponent, q as translate, b as computed, s as onMounted, C as purify, D as generateUrl, _ as _export_sfc, o as openBlock, c as createElementBlock, i as createVNode, g as withCtx, j as createBaseVNode, k as createCommentVNode, f as createBlock, h as resolveDynamicComponent, t as toDisplayString, y as createApp, z as pinia } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_ef057a6f_lang-CP9qC4iz.chunk.mjs";
+import { a as useSessionStore, b as useInquiriesStore, s as showError, L as Logger, g as getInquiryTypeData, I as InquiryGeneralIcons, N as NcDashboardWidget } from "./NcDashboardWidget-CvpYMKur-B_hmAVFy.chunk.mjs";
+import { A as AgoraAppIcon } from "./agora-icon-LJ50tMPL.chunk.mjs";
 const _sfc_main = /* @__PURE__ */ defineComponent({
   __name: "Dashboard",
   setup(__props, { expose: __expose }) {
@@ -121,7 +121,7 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
     }, 8, ["items", "empty-content-message", "show-more-text", "loading"])
   ]);
 }
-const Dashboard = /* @__PURE__ */ _export_sfc(_sfc_main, [["render", _sfc_render], ["__scopeId", "data-v-7f773d42"], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora/src/views/Dashboard.vue"]]);
+const Dashboard = /* @__PURE__ */ _export_sfc(_sfc_main, [["render", _sfc_render], ["__scopeId", "data-v-7f773d42"], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora1.7.1/src/views/Dashboard.vue"]]);
 document.addEventListener("DOMContentLoaded", () => {
   OCA.Dashboard.register("agora", (el) => {
     const AgoraDashboard = createApp(Dashboard).use(pinia).mount(el);

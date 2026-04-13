@@ -253,7 +253,7 @@ const loadModalComponent = async (actionKey: string): Promise<Component | null> 
       .join('')  }Modal`
 
     // Dynamically import the component
-    const module = await import(`./actions/${componentName}.vue`)
+    const module = await import(`./Actions/${componentName}.vue`)
     const component = markRaw(module.default || module)
 
     // Cache for future use

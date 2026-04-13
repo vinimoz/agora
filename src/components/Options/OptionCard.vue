@@ -4,6 +4,7 @@
 -->
 <template>
   <div 
+    v-if="option" 
     :class="[
       'option-card',
       `type-${option.type}`,
@@ -167,8 +168,6 @@
       </div>
     </div>
 
-    <!-- INLINE MODE: All features in one row with actions at the end -->
-    <!-- Conditionally hide responses in inline mode when progressBar is true -->
     <div v-if="inline" class="inline-features-row">
       <!-- Child responses - hide when progressBar is true -->
       <div v-if="hasAllowedResponses && !compact && !progressBar" class="inline-feature-item child-responses">
@@ -276,6 +275,14 @@
       </div>
     </div>
   </div>
+  <DeleteConfirmationDialog
+  v-model:visible="showDeleteDialog"
+  :option-title="option?.title || option?.label || ''"
+  :is-imported="isImportedFromView"
+  :view-type="familyType || 'view'"
+  @confirm="handleConfirmDelete"
+  @remove-from-view="handleRemoveFromView"
+/>
 </template>
 
 <script setup lang="ts">
@@ -308,6 +315,8 @@ import {
   usesTitle
 } from '../../helpers/modules/InquiryOptionHelper'
 
+import DeleteConfirmationDialog from '../Modals/DeleteConfirmationDialog.vue'
+
 // Props
 const props = defineProps<{
   option: Option & {
@@ -316,6 +325,7 @@ const props = defineProps<{
       supportValue: number | null
     }
   }
+  inquiryId?: number
   compact?: boolean
   inline?: boolean
   official?: boolean
@@ -347,6 +357,21 @@ const textMaxLength = props.textMaxLength || 200
 const optionsStore = useOptionsStore()
 const sessionStore = useSessionStore()
 
+const showDeleteDialog = ref(false)
+
+const confirmDelete = () => {
+  showDeleteDialog.value = true
+}
+
+// Add handler functions
+const handleConfirmDelete = () => {
+  deleteOption()
+}
+
+const handleRemoveFromView = () => {
+  removeFromCurrentView()
+}
+
 // Create context once as computed
 const optionContext = computed(() => {
   if (!props.option) return null
@@ -369,17 +394,27 @@ const canEditOrDelete = computed(() => canEdit.value || canDelete.value)
 // Get option types from session store
 const allOptionTypes = computed(() => sessionStore.appSettings?.inquiryOptionTypeTab || [])
 
-const optionTypeLabel = computed(() => 
-  getOptionTypeLabel(props.option.type, allOptionTypes.value, t('agora', 'Option'))
-)
+// Add null checks
+const optionTypeLabel = computed(() => {
+  if (!props.option?.type || !allOptionTypes.value) {
+    return t('agora', 'Option')
+  }
+  return getOptionTypeLabel(props.option.type, allOptionTypes.value, t('agora', 'Option'))
+})
 
-const optionIcon = computed(() => 
-  getOptionTypeIconComponent(props.option.type, allOptionTypes.value)
-)
+const optionIcon = computed(() => {
+  if (!props.option?.type || !allOptionTypes.value) {
+    return InquiryOptionIcons.Default // Make sure this exists
+  }
+  return getOptionTypeIconComponent(props.option.type, allOptionTypes.value)
+})
 
-const optionTypeColor = computed(() => 
-  getOptionTypeColor(props.option.type, allOptionTypes.value)
-)
+const optionTypeColor = computed(() => {
+  if (!props.option?.type || !allOptionTypes.value) {
+    return 'var(--color-text-light)'
+  }
+  return getOptionTypeColor(props.option.type, allOptionTypes.value)
+})
 
 const showTitle = computed(() => 
   usesTitle(props.option.type, allOptionTypes.value)
@@ -392,9 +427,6 @@ const allowComment = computed(() =>
 const hasSupportFeature = computed(() => 
   hasSupportFeatureHelper(props.option.type, allOptionTypes.value)
 )
-
-// Check if option has force_layouts from import
-const hasForceLayouts = computed(() => props.option.miscFields?.force_layouts?.length > 0)
 
 // Get allowed responses from option type data
 const allowedResponses = computed(() => 
@@ -487,37 +519,9 @@ const formatDate = (timestamp: number) => {
   }).format(date)
 }
 
-const removeFromCurrentView = async () => {
-  try {
-    // Handle different possible formats of force_layouts
-    let currentLayouts = props.option.miscFields?.force_layouts || []
-    
-    // If it's a string, try to parse it as JSON
-    if (typeof currentLayouts === 'string') {
-      try {
-        currentLayouts = JSON.parse(currentLayouts)
-      } catch (e) {
-        currentLayouts = []
-        showError("Error removing from current view",e)
-      }
-    }
-    
-    // Ensure it's an array
-    if (!Array.isArray(currentLayouts)) {
-      currentLayouts = []
-    }
-    
-    
-    // Remove the current layout from the array
-    const updatedLayouts = currentLayouts.filter((layout: string) => layout !== props.familyType)
-    
-    
-    emit('removeFromView', props.option.id, updatedLayouts)
-  } catch (err) {
-    console.error('Error removing option from view:', err)
-    showError(t('agora', 'Failed to remove option from view'))
-  }
-}
+const isImportedFromView = computed(() => {
+  return props.option.family !== props.familyType
+})
 
 const truncateText = (text: string, maxLength: number) => {
   if (!text) return ''
@@ -531,41 +535,61 @@ const handleCardClick = () => {
   }
 }
 
-const confirmDelete = () => {
-  // Check if option was imported (has force_layouts)
-  if (hasForceLayouts.value) {
-    const userChoice = confirm(
-      `${t('agora', 'This option was imported from another view.')  }\n\n${ 
-      t('agora', 'What would you like to do?')  }\n\n${ 
-      t('agora', '• Click OK to completely delete this option')  }\n${ 
-      t('agora', '• Click Cancel to only remove it from the current view')}`
-    )
-    
-    if (userChoice) {
-      deleteOption()
-    } else {
-      removeFromCurrentView()
-    }
-  } else if (confirm(t('agora', 'Are you sure you want to delete this option?'))) {
-      deleteOption()
-    }
-}
-
 const deleteOption = async () => {
   try {
-    // Remove from store
+    await optionsStore.deleteOption(props.option.id)
+    
+    // Then update local store
     const index = optionsStore.options.findIndex(opt => opt.id === props.option.id)
     if (index >= 0) {
       optionsStore.options.splice(index, 1)
     }
+    
     emit('delete', props.option.id)
+    showSuccess(t('agora', 'Option deleted successfully'))
   } catch (err) {
     console.error('Error deleting option:', err)
     showError(t('agora', 'Failed to delete option'))
   }
 }
-</script
->
+
+const removeFromCurrentView = async () => {
+  try {
+    let currentLayouts = props.option.miscFields?.force_layouts || []
+
+    if (typeof currentLayouts === 'string') {
+      try {
+        currentLayouts = JSON.parse(currentLayouts)
+      } catch (e) {
+        currentLayouts = []
+      }
+    }
+
+    if (!Array.isArray(currentLayouts)) {
+      currentLayouts = []
+    }
+
+    const updatedLayouts = currentLayouts.filter((layout: string) => layout !== props.familyType)
+
+    await optionsStore.updateOption({
+      ...props.option,
+      miscFields: {
+        ...props.option.miscFields,
+        force_layouts: updatedLayouts
+      }
+    })
+
+    emit('removeFromView', props.option.id, updatedLayouts)
+    showSuccess(t('agora', 'Option removed from view'))
+  } catch (err) {
+    console.error('Error removing option from view:', err)
+    showError(t('agora', 'Failed to remove option from view'))
+  }
+}
+
+
+
+</script>
 <style scoped lang="scss">
 .option-card {
   background: var(--color-main-background);

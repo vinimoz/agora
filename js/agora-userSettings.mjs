@@ -1,11 +1,11 @@
 const appName = "agora";
-const appVersion = "1.7.0";
-import { d as defineComponent, q as translate, s as onMounted, _ as _export_sfc, o as openBlock, f as createBlock, g as withCtx, i as createVNode, v as normalizeProps, x as guardReactiveProps, y as createApp, z as pinia } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_ef057a6f_lang-BczwJJ0P.chunk.mjs";
-import { N as NcSettingsSection } from "./index-5WDnmRpi.chunk.mjs";
-import "./NcDashboardWidget-DCBQdRFz-Dpg-GLB_.chunk.mjs";
-import { F as FlexSettings } from "./FlexSettings-CbyAqg1N.chunk.mjs";
-import "./NcRichText-DJlaHs_Q-CyU_PorF.chunk.mjs";
-import { u as usePreferencesStore, S as StyleSettings, F as FeatureSettings } from "./StyleSettings-B0CES9RB.chunk.mjs";
+const appVersion = "1.7.1";
+import { d as defineComponent, q as translate, s as onMounted, _ as _export_sfc, o as openBlock, f as createBlock, g as withCtx, i as createVNode, v as normalizeProps, x as guardReactiveProps, y as createApp, z as pinia } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_ef057a6f_lang-CP9qC4iz.chunk.mjs";
+import { N as NcSettingsSection } from "./index-CPK_9_Aw.chunk.mjs";
+import "./NcDashboardWidget-CvpYMKur-B_hmAVFy.chunk.mjs";
+import { F as FlexSettings } from "./FlexSettings-CIoVuw3I.chunk.mjs";
+import "./NcRichText-D_ssz6sB-8UY9eufb.chunk.mjs";
+import { u as usePreferencesStore, S as StyleSettings, F as FeatureSettings } from "./StyleSettings-BapZHhBf.chunk.mjs";
 const _sfc_main = /* @__PURE__ */ defineComponent({
   __name: "UserSettingsPage",
   setup(__props, { expose: __expose }) {
@@ -71,7 +71,7 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
     /* STABLE */
   });
 }
-const UserSettingsPage = /* @__PURE__ */ _export_sfc(_sfc_main, [["render", _sfc_render], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora/src/views/UserSettingsPage.vue"]]);
+const UserSettingsPage = /* @__PURE__ */ _export_sfc(_sfc_main, [["render", _sfc_render], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora1.7.1/src/views/UserSettingsPage.vue"]]);
 const Agora = createApp(UserSettingsPage).use(pinia);
 Agora.mount("#content_agora");
 //# sourceMappingURL=agora-userSettings.mjs.map

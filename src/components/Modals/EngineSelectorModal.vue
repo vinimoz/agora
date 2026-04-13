@@ -65,7 +65,7 @@
         <NcSelect 
           v-model="selectedVariant" 
           :options="condorcetVariants" 
-          :placeholder="t('agora', 'Choose a Condorcet variant...')" 
+          :placeholder="t('agora', 'Choose a Condorcet variant …')" 
           :reduce="option => option.id" 
           label="label"
           :aria-label="t('agora', 'Select specific Condorcet method variant')"

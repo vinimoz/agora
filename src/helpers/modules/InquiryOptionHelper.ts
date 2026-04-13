@@ -708,6 +708,7 @@ export function getOptionTypeIconComponent(
   return InquiryOptionIcons[iconName] || InquiryOptionIcons.File
 }
 
+
 /**
  * Get option type icon name as string
  * @param optionType

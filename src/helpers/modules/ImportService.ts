@@ -64,7 +64,7 @@ export class ImportService {
       throw new Error(`File size exceeds ${this.maxFileSize / 1024 / 1024}MB limit`)
     }
 
-    showInfo(t('agora', 'Processing file: {filename}...', {
+    showInfo(t('agora', 'Processing file: {filename} …', {
       filename: file.name
     }))
 
