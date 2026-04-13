@@ -138,6 +138,7 @@ OC.L10N.register(
     "Pending" : "Laukiantis",
     "Save" : "Įrašyti",
     "{file} uploaded" : "{file} įkelta",
+    "Failed to upload {file}" : "Nepavyko įkelti {file}",
     "never" : "niekada",
     "Comments" : "Komentarai",
     "Location" : "Vieta",
