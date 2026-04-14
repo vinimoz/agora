@@ -5,7 +5,7 @@
 
 import { InquiryGeneralIcons, InquiryOptionIcons } from '../../utils/icons.ts'
 import { toRaw } from 'vue'
-import type { InquiryType, InquiryOptionType, OptionFamily } from '../../Types/index.ts'
+import type { InquiryType, InquiryOptionType, Option, OptionFamily } from '../../Types/index.ts'
 import { useAppSettingsStore } from '../../stores/appSettings.ts'
 import { t } from '@nextcloud/l10n'
 import type { Component } from 'vue'
@@ -13,6 +13,8 @@ import type { useOptionsStore } from '@/stores/options'
 
 type OptionsStore = ReturnType<typeof useOptionsStore>
 
+
+export const isImportedFromView = (option: Option, familyKey: string): boolean => !( option.family === familyKey )
 
 /**
  * Get option item data
@@ -1616,4 +1618,3 @@ export async function clearTimelineDates(
     throw error
   }
 }
-

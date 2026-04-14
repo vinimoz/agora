@@ -49,6 +49,30 @@ class TableManager extends DbManager
     }
 
     /**
+     * Disable foreign key checks for the current session (MySQL only)
+     * On PostgreSQL, this is a no-op as TRUNCATE with CASCADE handles dependencies
+     */
+    private function disableForeignKeyChecks(): void
+    {
+        $platform = $this->connection->getDatabasePlatform()->getName();
+        if ($platform === 'mysql') {
+            $this->connection->executeStatement('SET FOREIGN_KEY_CHECKS = 0');
+        }
+        // PostgreSQL doesn't need this - use CASCADE instead
+    }
+
+    /**
+     * Enable foreign key checks for the current session (MySQL only)
+     */
+    private function enableForeignKeyChecks(): void
+    {
+        $platform = $this->connection->getDatabasePlatform()->getName();
+        if ($platform === 'mysql') {
+            $this->connection->executeStatement('SET FOREIGN_KEY_CHECKS = 1');
+        }
+    }
+
+    /**
      * Purge all tables and all data
      * @return string[] Messages as array
      */
@@ -60,9 +84,7 @@ class TableManager extends DbManager
         $platform = $this->connection->getDatabasePlatform()->getName();
         $tables = array_keys(TableSchema::TABLES);
 
-        if ($platform === 'mysql') {
-            $this->connection->executeStatement('SET FOREIGN_KEY_CHECKS = 0');
-        }
+        $this->disableForeignKeyChecks();
 
         try {
             foreach ($tables as $tableName) {
@@ -106,9 +128,7 @@ class TableManager extends DbManager
             );
             $messages[] = 'Removed all app config records from ' . $this->dbPrefix . 'appconfig';
         } finally {
-            if ($platform === 'mysql') {
-                $this->connection->executeStatement('SET FOREIGN_KEY_CHECKS = 1');
-            }
+            $this->enableForeignKeyChecks();
         }
 
         $messages[] = 'Done.';
@@ -181,42 +201,11 @@ class TableManager extends DbManager
         }
         return $messages;
     }
+
     /**
-     * Remove obsolete tables if they still exist
+     * Initialize default data like during installation
      *
      * @return string[] Messages as array
-     public function removeObsoleteTables(): array {
-         $dropped = false;
-         $messages = [];
-         $platform = $this->connection->getDatabasePlatform()->getName();
-         if ($platform === 'mysql') {
-             $this->connection->executeStatement('SET FOREIGN_KEY_CHECKS = 0');
-}
-foreach (TableSchema::GONE_TABLES as $tableName) {
-    $this->logger->warning('INTO REMOVE table {table}: {error}', [
-        'table' => $tableName,
-    ]);
-    if ($this->connection->tableExists($tableName)) {
-        $dropped = true;
-        $this->connection->dropTable($tableName);
-        $messages[] = 'Dropped ' . $this->dbPrefix . $tableName;
-}
-}
-$platform = $this->connection->getDatabasePlatform()->getName();
-if ($platform === 'mysql') {
-    $this->connection->executeStatement('SET FOREIGN_KEY_CHECKS = 1');
-}
-if (!$dropped) {
-    $messages[] = 'No orphaned tables found';
-}
-return $messages;
-}
-
-
-/**
- * Initialize default data like during installation
- *
- * @return string[] Messages as array
      */
     public function initDefaultData(IOutput $output): array
     {
@@ -231,6 +220,7 @@ return $messages;
 
         return $messages;
     }
+
     /**
      * Remove obsolete tables if they still exist
      *
@@ -240,18 +230,19 @@ return $messages;
     {
         $dropped = false;
         $messages = [];
+        $platform = $this->connection->getDatabasePlatform()->getName();
 
         foreach (TableSchema::GONE_TABLES as $tableName) {
             try {
-                $platform = $this->connection->getDatabasePlatform()->getName();
-                if ($platform === 'mysql') {
-                    $this->connection->executeStatement('SET FOREIGN_KEY_CHECKS = 0');
-                }
-                $this->connection->executeStatement("DROP TABLE IF EXISTS `$tableName`");
+                $this->disableForeignKeyChecks();
 
-                if ($platform === 'mysql') {
-                    $this->connection->executeStatement('SET FOREIGN_KEY_CHECKS = 1');
+                if ($platform === 'postgresql') {
+                    $this->connection->executeStatement('DROP TABLE IF EXISTS "' . $tableName . '" CASCADE');
+                } else {
+                    $this->connection->executeStatement('DROP TABLE IF EXISTS `' . $tableName . '`');
                 }
+
+                $this->enableForeignKeyChecks();
                 $dropped = true;
                 $messages[] = 'Dropped obsolete table ' . $tableName;
                 $this->logger->info('Dropped obsolete table {table}', ['table' => $tableName]);
@@ -261,10 +252,7 @@ return $messages;
                     'table' => $tableName,
                     'error' => $e->getMessage()
                 ]);
-                $platform = $this->connection->getDatabasePlatform()->getName();
-                if ($platform === 'mysql') {
-                    $this->connection->executeStatement('SET FOREIGN_KEY_CHECKS = 1');
-                }
+                $this->enableForeignKeyChecks();
             }
         }
 
@@ -275,11 +263,6 @@ return $messages;
         return $messages;
     }
 
-    /**
-     * Transfer data from mod_status to inq_status table
-     *
-     * @return string[] Messages as array
-     */
     /**
      * Transfer data from mod_status to inq_status table
      *
@@ -301,7 +284,7 @@ return $messages;
             }
 
             $existingCount = $this->connection->executeQuery(
-                "SELECT COUNT(*) FROM oc_agora_inq_status"
+                'SELECT COUNT(*) FROM oc_agora_inq_status'
             )->fetchOne();
 
             if ($existingCount > 0) {
@@ -310,7 +293,7 @@ return $messages;
             }
 
             $sourceCount = $this->connection->executeQuery(
-                "SELECT COUNT(*) FROM oc_agora_mod_status"
+                'SELECT COUNT(*) FROM oc_agora_mod_status'
             )->fetchOne();
 
             if ($sourceCount === 0) {
@@ -318,22 +301,22 @@ return $messages;
                 return $messages;
             }
 
-            // Transfert des données
-            $this->connection->executeStatement("
-    INSERT INTO oc_agora_inq_status
-    (inquiry_type, status_key, label, description, is_final, icon, sort_order, created, updated)
-    SELECT
-    inquiry_type,
-    status_key,
-    label,
-    description,
-    is_final,
-    icon,
-    sort_order,
-    created,
-    updated
-    FROM oc_agora_mod_status
-    ");
+            // Transfer data
+            $this->connection->executeStatement('
+                INSERT INTO oc_agora_inq_status
+                (inquiry_type, status_key, label, description, is_final, icon, sort_order, created, updated)
+                SELECT
+                    inquiry_type,
+                    status_key,
+                    label,
+                    description,
+                    is_final,
+                    icon,
+                    sort_order,
+                    created,
+                    updated
+                FROM oc_agora_mod_status
+            ');
 
             $messages[] = "Transferred $sourceCount records from mod_status to inq_status";
             $this->logger->info('Transferred {count} records from mod_status to inq_status', ['count' => $sourceCount]);
@@ -342,67 +325,42 @@ return $messages;
             $this->logger->error('Failed to transfer mod_status data: {error}', ['error' => $e->getMessage()]);
         }
 
-    // LOG pour debug
         $this->logger->info('transferModStatusToInqStatus returning messages: ' . count($messages));
 
         return $messages;
     }
+
     /**
-     * Remove obsolete columns if they still exist
-     *
-     * @return string[] Messages as array
-    public function removeObsoleteColumns(): array {
-    $messages = [];
-    $dropped = false;
-
-    foreach (TableSchema::GONE_COLUMNS as $tableName => $columns) {
-        $prefixedTableName = $this->dbPrefix . $tableName;
-         $this->logger->error('Failed to drop obsolete column from table {table}: {error}', ['table' => $prefixedTableName]);
-
-        if (!$this->schema->hasTable($prefixedTableName)) {
-        continue;
-        }
-
-        $table = $this->schema->getTable($prefixedTableName);
-
-        foreach ($columns as $columnName) {
-         $this->logger->error('Failed to drop obsolete column {columns}: {error}', [
-    'columns' => $columnName]);
-
-        if ($table->hasColumn($columnName)) {
-            $dropped = true;
-            $table->dropColumn($columnName);
-            $messages[] = 'Dropped ' . $columnName . ' from ' . $prefixedTableName;
-        }
-        }
-    }
-
-    if (!$dropped) {
-        $messages[] = 'No orphaned columns found';
-    }
-
-    return $messages;
-    }
-
+     * Remove obsolete columns if they still exist - Database-agnostic version
      */
-    /**
- * Remove obsolete columns if they still exist - Version ultra simple
- */
     public function removeObsoleteColumns(): array
     {
         $messages = [];
         $dropped = false;
+        $platform = $this->connection->getDatabasePlatform()->getName();
 
         foreach (TableSchema::GONE_COLUMNS as $tableName => $columns) {
+            $prefixedTableName = $this->dbPrefix . $tableName;
+            
+            if (!$this->connection->tableExists($prefixedTableName)) {
+                continue;
+            }
+
             foreach ($columns as $columnName) {
                 try {
-                    $this->connection->executeStatement(
-                        "ALTER TABLE `$tableName` DROP COLUMN IF EXISTS `$columnName`"
-                    );
+                    if ($platform === 'postgresql') {
+                        $this->connection->executeStatement(
+                            'ALTER TABLE "' . $prefixedTableName . '" DROP COLUMN IF EXISTS "' . $columnName . '" CASCADE'
+                        );
+                    } else {
+                        $this->connection->executeStatement(
+                            'ALTER TABLE `' . $prefixedTableName . '` DROP COLUMN IF EXISTS `' . $columnName . '`'
+                        );
+                    }
                     $dropped = true;
-                    $messages[] = 'Dropped obsolete column ' . $columnName . ' from ' . $tableName;
+                    $messages[] = 'Dropped obsolete column ' . $columnName . ' from ' . $prefixedTableName;
                 } catch (\Exception $e) {
-                    $messages[] = 'Failed to drop column ' . $columnName . ' from ' . $tableName . ': ' . $e->getMessage();
+                    $messages[] = 'Failed to drop column ' . $columnName . ' from ' . $prefixedTableName . ': ' . $e->getMessage();
                 }
             }
         }
@@ -412,20 +370,9 @@ return $messages;
         }
         return $messages;
     }
+
     /**
-     * delete all orphaned entries by selecting all rows
-     * those inquiry_ids are not present in the agora table
-     *
-     * Because we allowed nullish inquiry_ids between version 8.0.0 and 8.1.0,
-     * we also delete all entries with a nullish inquiry_id.
-     *
-     * This method is used to clean up orphaned entries in the database and
-     * is used by the occ command `occ agora:db:rebuild and while updating
-     *
-     * @return string[] Messages as array
-     */
-    /**
-     * delete all orphaned entries by selecting all rows
+     * Delete all orphaned entries by selecting all rows
      * those inquiry_ids are not present in the inquiry table
      *
      * @return string[] Messages as array
@@ -434,15 +381,15 @@ return $messages;
     {
         $orphanedCount = [];
 
-    // collects all inquiryIds
+        // collects all inquiryIds
         $subqueryInquiry = $this->connection->getQueryBuilder();
         $subqueryInquiry->selectDistinct('id')->from(Inquiry::TABLE);
 
-    // Only process essential tables that definitely have inquiry_id
+        // Only process essential tables that definitely have inquiry_id
         $essentialTables = [
-        Support::TABLE,
-        Share::TABLE,
-        InquiryGroup::RELATION_TABLE
+            Support::TABLE,
+            Share::TABLE,
+            InquiryGroup::RELATION_TABLE
         ];
 
         foreach ($essentialTables as $tableName) {
@@ -453,16 +400,16 @@ return $messages;
             try {
                 $query = $this->connection->getQueryBuilder();
                 $query->delete($tableName)
-                ->where(
-                    $query->expr()->orX(
-                        $query->expr()->notIn('inquiry_id', $query->createFunction($subqueryInquiry->getSQL()), IQueryBuilder::PARAM_INT_ARRAY),
-                        $query->expr()->isNull('inquiry_id')
-                    )
-                );
+                    ->where(
+                        $query->expr()->orX(
+                            $query->expr()->notIn('inquiry_id', $query->createFunction($subqueryInquiry->getSQL()), IQueryBuilder::PARAM_INT_ARRAY),
+                            $query->expr()->isNull('inquiry_id')
+                        )
+                    );
                 $executed = $query->executeStatement();
                 $orphanedCount[$tableName] = $executed;
             } catch (\Exception $e) {
-            // Skip tables that don't have inquiry_id column
+                // Skip tables that don't have inquiry_id column
                 $this->logger->info('Skipping table {table} - no inquiry_id column', ['table' => $tableName]);
             }
         }
@@ -500,8 +447,8 @@ return $messages;
         $query = $this->connection->getQueryBuilder();
 
         $query->update(Inquiry::TABLE)
-        ->set('last_interaction', $query->createNamedParameter($timestamp))
-        ->where($query->expr()->eq('last_interaction', $query->expr()->literal(0, IQueryBuilder::PARAM_INT)));
+            ->set('last_interaction', $query->createNamedParameter($timestamp))
+            ->where($query->expr()->eq('last_interaction', $query->expr()->literal(0, IQueryBuilder::PARAM_INT)));
         $count = $query->executeStatement();
 
         if ($count > 0) {
@@ -520,11 +467,11 @@ return $messages;
         try {
             $messages[] = 'Starting hash updates...';
 
-        // Update support hashes
+            // Update support hashes
             $supportCount = $this->updateSupportHashes();
             $messages[] = "Updated hashes for {$supportCount} support entries";
 
-        // Update option hashes if needed
+            // Update option hashes if needed
             $optionCount = $this->updateOptionHashes();
             $messages[] = "Updated hashes for {$optionCount} option entries";
 
@@ -537,7 +484,6 @@ return $messages;
         return $messages;
     }
 
-
     private function updateSupportHashes(): int
     {
         $updatedCount = 0;
@@ -545,13 +491,13 @@ return $messages;
 
         foreach ($supports as $support) {
             try {
-            // Skip if hash already exists and looks valid
+                // Skip if hash already exists and looks valid
                 $currentHash = $support->getSupportHash();
                 if ($currentHash && $this->isValidHash($currentHash)) {
                     continue;
                 }
 
-            // Generate new hash
+                // Generate new hash
                 $newHash = $this->generateSupportHash(
                     $support->getUserId(),
                     $support->getOptionId(),
@@ -563,9 +509,9 @@ return $messages;
                 $updatedCount++;
             } catch (\Exception $e) {
                 $this->logger->error('Failed to update hash for support ID: ' . $support->getId(), [
-                'exception' => $e
+                    'exception' => $e
                 ]);
-            // Continue with next record
+                // Continue with next record
             }
         }
 
@@ -583,12 +529,12 @@ return $messages;
 
                 foreach ($options as $option) {
                     try {
-                    // Skip if hash already exists
+                        // Skip if hash already exists
                         if ($option->getOptionHash()) {
                             continue;
                         }
 
-                    // Generate hash based on option text and inquiry ID
+                        // Generate hash based on option text and inquiry ID
                         $newHash = $this->generateOptionHash(
                             $option->getText(),
                             $option->getInquiryId()
@@ -616,10 +562,10 @@ return $messages;
     private function generateSupportHash(string $userId, int $optionId, int $inquiryId): string
     {
         $data = implode('|', [
-        $userId,
-        (string)$optionId,
-        (string)$inquiryId,
-        $this->generateRandomString()
+            $userId,
+            (string)$optionId,
+            (string)$inquiryId,
+            $this->generateRandomString()
         ]);
         return hash('sha256', $data);
     }
@@ -654,6 +600,7 @@ return $messages;
         }
         return $result;
     }
+
     /**
      * Delete all duplicate entries in all tables based on the unique indices defined in TableSchema::UNIQUE_INDICES
      *
@@ -664,7 +611,7 @@ return $messages;
         $messages = [];
         foreach (TableSchema::UNIQUE_INDICES as $tableName => $uniqueIndices) {
             foreach ($uniqueIndices as $definition) {
-            // delete all duplicates based on the unique index definition
+                // delete all duplicates based on the unique index definition
                 $count = $this->deleteDuplicates($tableName, $definition['columns']);
 
                 if ($count) {
@@ -697,7 +644,7 @@ return $messages;
 
         $qb = $this->connection->getQueryBuilder();
 
-    // identify duplicates
+        // identify duplicates
         $selection = $qb->selectDistinct('t1.id')
             ->from($table, 't1')
             ->innerJoin('t1', $table, 't2', $qb->expr()->lt('t1.id', 't2.id'));
@@ -716,10 +663,10 @@ return $messages;
         $duplicates = $qb->executeQuery()->fetchAll(PDO::FETCH_COLUMN);
 
         $this->connection->getQueryBuilder()
-             ->delete($table)
-             ->where('id in (:ids)')
-             ->setParameter('ids', $duplicates, IQueryBuilder::PARAM_INT_ARRAY)
-             ->executeStatement();
+            ->delete($table)
+            ->where('id in (:ids)')
+            ->setParameter('ids', $duplicates, IQueryBuilder::PARAM_INT_ARRAY)
+            ->executeStatement();
         return count($duplicates);
     }
 
@@ -732,9 +679,9 @@ return $messages;
     {
         $query = $this->connection->getQueryBuilder();
         $query->delete(Watch::TABLE)
-          ->where(
-              $query->expr()->lt('updated', $query->createNamedParameter($offset))
-          );
+            ->where(
+                $query->expr()->lt('updated', $query->createNamedParameter($offset))
+            );
         $count = $query->executeStatement();
 
         if ($count > 0) {
@@ -745,7 +692,6 @@ return $messages;
         $this->logger->info('Watch table is clean');
         return 'Watch table is clean';
     }
-
 
     /**
      * Fix all shares with nullish group_id or inquiry_id
@@ -794,11 +740,11 @@ return $messages;
         $messages[] = 'tidy migration entries';
         foreach (TableSchema::GONE_MIGRATIONS as $version) {
             $query->delete('migrations')
-              ->where('app = :appName')
-              ->andWhere('version = :version')
-              ->setParameter('appName', AppConstants::APP_ID)
-              ->setParameter('version', $version)
-              ->executeStatement();
+                ->where('app = :appName')
+                ->andWhere('version = :version')
+                ->setParameter('appName', AppConstants::APP_ID)
+                ->setParameter('version', $version)
+                ->executeStatement();
         }
         return $messages;
     }
@@ -814,7 +760,7 @@ return $messages;
         $messages = [];
 
         try {
-            $tableName = PollGroup::RELATION_TABLE;
+            $tableName = InquiryGroup::RELATION_TABLE;
             $affectedColumns = ['group_id', 'inquiry_id'];
             $this->checkPrecondition($tableName, $affectedColumns);
 
@@ -844,7 +790,6 @@ return $messages;
      * Migrate all share labels to display_name
      *
      * @return string[] Messages as array
-     *
      */
     public function migrateShareLabels(): array
     {
@@ -864,27 +809,26 @@ return $messages;
         $qb = $this->connection->getQueryBuilder();
 
         $qb->update($tableName)
-        ->set('display_name', $affectedColumn)
-        ->andWhere($qb->expr()->isNotNull($prefixedTableName . '.' . $affectedColumn))
-        ->andWhere($qb->expr()->eq($prefixedTableName . '.' . $affectedColumn, $qb->expr()->literal('')));
+            ->set('display_name', $affectedColumn)
+            ->andWhere($qb->expr()->isNotNull($prefixedTableName . '.' . $affectedColumn))
+            ->andWhere($qb->expr()->eq($prefixedTableName . '.' . $affectedColumn, $qb->expr()->literal('')));
         $updated = $qb->executeStatement();
 
         if ($updated === 0) {
             $this->logger->info('Verified all share labels in {db}', [
-            'db' => $prefixedTableName
+                'db' => $prefixedTableName
             ]);
             $messages[] = 'No share labels to update';
         } else {
             $this->logger->info('Updated {updated} share labels in {db}', [
-            'updated' => $updated,
-            'db' => $prefixedTableName
+                'updated' => $updated,
+                'db' => $prefixedTableName
             ]);
             $messages[] = 'Updated ' . $updated . ' labels';
         }
 
         return $messages;
     }
-
 
     /**
      * Migrate all nullish values in $columnName of $tableName to 0
@@ -898,17 +842,17 @@ return $messages;
     {
         $query = $this->connection->getQueryBuilder();
         $query->update($tableName)
-          ->set($columnName, $query->createNamedParameter(0, IQueryBuilder::PARAM_INT))
-          ->where($query->expr()->isNull($columnName));
+            ->set($columnName, $query->createNamedParameter(0, IQueryBuilder::PARAM_INT))
+            ->where($query->expr()->isNull($columnName));
 
         $count = $query->executeStatement();
         return $count;
     }
+
     /**
      * Migrate all agora with access 'public' to access 'open'
      *
      * @return string[] Messages as array
-     *
      */
     public function migratePublicToOpen(): array
     {
@@ -928,19 +872,19 @@ return $messages;
         $qb = $this->connection->getQueryBuilder();
 
         $qb->update($tableName)
-        ->set('access', $qb->expr()->literal(Inquiry::ACCESS_OPEN))
-        ->where($qb->expr()->eq($prefixedTableName . '.' . $affectedColumn, $qb->expr()->literal(Inquiry::ACCESS_PUBLIC)));
+            ->set('access', $qb->expr()->literal(Inquiry::ACCESS_OPEN))
+            ->where($qb->expr()->eq($prefixedTableName . '.' . $affectedColumn, $qb->expr()->literal(Inquiry::ACCESS_PUBLIC)));
         $updated = $qb->executeStatement();
 
         if ($updated === 0) {
             $this->logger->info('Verified inquiry access to be \'open\' instead of \'public\' in {db}', [
-            'db' => $prefixedTableName
+                'db' => $prefixedTableName
             ]);
             $messages[] = 'No inquiry access values to update';
         } else {
             $this->logger->info('Updated {updated} access values in {db}', [
-            'updated' => $updated,
-            'db' => $prefixedTableName
+                'updated' => $updated,
+                'db' => $prefixedTableName
             ]);
             $messages[] = 'Updated ' . $updated . ' inquiry access value';
         }
@@ -1017,23 +961,23 @@ return $messages;
             return $messages;
         }
 
-        // Disable foreign key checks to allow truncation in any order
-        $this->connection->executeStatement('SET FOREIGN_KEY_CHECKS = 0');
+        // Disable foreign key checks to allow truncation in any order (MySQL only)
+        $this->disableForeignKeyChecks();
 
         try {
             foreach ($tables as $tableName) {
                 $messages = array_merge($messages, $this->truncateTable($tableName));
             }
         } finally {
-            // Re-enable foreign key checks
-            $this->connection->executeStatement('SET FOREIGN_KEY_CHECKS = 1');
+            // Re-enable foreign key checks (MySQL only)
+            $this->enableForeignKeyChecks();
         }
 
         return $messages;
     }
 
     /**
-     * Truncate a single table
+     * Truncate a single table - Database-agnostic version
      *
      * @param string $tableName The table name (without prefix)
      * @return string[] Messages as array
@@ -1041,26 +985,37 @@ return $messages;
     private function truncateTable(string $tableName): array
     {
         $messages = [];
+        $fullTableName = $this->dbPrefix . $tableName;
+        $platform = $this->connection->getDatabasePlatform()->getName();
 
-        if (!$this->connection->tableExists($tableName)) {
-            $messages[] = 'Table ' . $this->dbPrefix . $tableName . ' does not exist, skipping';
+        if (!$this->connection->tableExists($fullTableName)) {
+            $messages[] = 'Table ' . $fullTableName . ' does not exist, skipping';
             return $messages;
         }
 
         try {
-            $this->connection->executeStatement("TRUNCATE TABLE `{$this->dbPrefix}{$tableName}`");
-            $messages[] = 'Truncated ' . $this->dbPrefix . $tableName;
-            $this->logger->info('Truncated table {table}', ['table' => $this->dbPrefix . $tableName]);
+            if ($platform === 'postgresql') {
+                // PostgreSQL uses TRUNCATE with CASCADE to handle foreign key dependencies
+                $this->connection->executeStatement('TRUNCATE TABLE "' . $fullTableName . '" CASCADE');
+            } else {
+                $this->connection->executeStatement('TRUNCATE TABLE `' . $fullTableName . '`');
+            }
+            $messages[] = 'Truncated ' . $fullTableName;
+            $this->logger->info('Truncated table {table}', ['table' => $fullTableName]);
         } catch (\Exception $e) {
             // Fallback: try DELETE FROM if TRUNCATE fails
             try {
-                $this->connection->executeStatement("DELETE FROM `{$this->dbPrefix}{$tableName}`");
-                $messages[] = 'Cleared ' . $this->dbPrefix . $tableName;
-                $this->logger->info('Cleared table {table}', ['table' => $this->dbPrefix . $tableName]);
+                if ($platform === 'postgresql') {
+                    $this->connection->executeStatement('DELETE FROM "' . $fullTableName . '"');
+                } else {
+                    $this->connection->executeStatement('DELETE FROM `' . $fullTableName . '`');
+                }
+                $messages[] = 'Cleared ' . $fullTableName;
+                $this->logger->info('Cleared table {table}', ['table' => $fullTableName]);
             } catch (\Exception $e2) {
-                $messages[] = 'Failed to clean ' . $this->dbPrefix . $tableName . ': ' . $e2->getMessage();
+                $messages[] = 'Failed to clean ' . $fullTableName . ': ' . $e2->getMessage();
                 $this->logger->error('Failed to clean table {table}: {error}', [
-                    'table' => $this->dbPrefix . $tableName,
+                    'table' => $fullTableName,
                     'error' => $e2->getMessage()
                 ]);
             }
@@ -1070,10 +1025,10 @@ return $messages;
     }
 
     /**
- * Add new columns to existing tables and migrate data
- *
- * @return string[] Messages as array
- */
+     * Add new columns to existing tables and migrate data
+     *
+     * @return string[] Messages as array
+     */
     public function addNewColumns(): array
     {
         $messages = [];
@@ -1118,9 +1073,9 @@ return $messages;
         return $messages;
     }
 
-/**
- * Main migration method that orchestrates all changes
- */
+    /**
+     * Main migration method that orchestrates all changes
+     */
     public function migrateToNewSchema(): array
     {
         $messages = [];
@@ -1132,11 +1087,11 @@ return $messages;
         return $messages;
     }
 
-/**
- * Migrate support table to use unique index
- *
- * @return string[] Messages as array
- */
+    /**
+     * Migrate support table to use unique index - Database-agnostic version
+     *
+     * @return string[] Messages as array
+     */
     public function migrateSupportUniqueIndex(): array
     {
         $messages = [];
@@ -1144,6 +1099,7 @@ return $messages;
         try {
             $tableName = Support::TABLE;
             $fullTableName = $this->dbPrefix . $tableName;
+            $platform = $this->connection->getDatabasePlatform()->getName();
 
             if (!$this->connection->tableExists($fullTableName)) {
                 $messages[] = "Support table does not exist, skipping unique index migration";
@@ -1170,9 +1126,15 @@ return $messages;
 
             if (!$hasUniqueIndex) {
                 // Create unique index if it doesn't exist
-                $this->connection->executeStatement(
-                    "CREATE UNIQUE INDEX UNIQ_supports ON `{$fullTableName}` (inquiry_id, option_id, user_id)"
-                );
+                if ($platform === 'postgresql') {
+                    $this->connection->executeStatement(
+                        'CREATE UNIQUE INDEX "UNIQ_supports" ON "' . $fullTableName . '" (inquiry_id, option_id, user_id)'
+                    );
+                } else {
+                    $this->connection->executeStatement(
+                        'CREATE UNIQUE INDEX `UNIQ_supports` ON `' . $fullTableName . '` (inquiry_id, option_id, user_id)'
+                    );
+                }
                 $messages[] = "Created unique index UNIQ_supports on Support table";
             } else {
                 $messages[] = "Support table already has unique index";
@@ -1185,11 +1147,11 @@ return $messages;
         return $messages;
     }
 
-/**
- * Generate missing support hashes
- *
- * @return string[] Messages as array
- */
+    /**
+     * Generate missing support hashes - Database-agnostic version
+     *
+     * @return string[] Messages as array
+     */
     public function generateMissingSupportHashes(): array
     {
         $messages = [];
@@ -1197,6 +1159,7 @@ return $messages;
         try {
             $tableName = Support::TABLE;
             $fullTableName = $this->dbPrefix . $tableName;
+            $platform = $this->connection->getDatabasePlatform()->getName();
 
             if (!$this->connection->tableExists($fullTableName)) {
                 $messages[] = "Support table does not exist, skipping hash generation";
@@ -1206,21 +1169,30 @@ return $messages;
             // Count supports without hash or with empty hash
             $countQuery = $this->connection->getQueryBuilder();
             $count = $countQuery->select('COUNT(*)')
-            ->from($tableName)
-            ->where($countQuery->expr()->orX(
-                $countQuery->expr()->isNull('support_hash'),
-                $countQuery->expr()->eq('support_hash', $countQuery->expr()->literal(''))
-            ))
+                ->from($tableName)
+                ->where($countQuery->expr()->orX(
+                    $countQuery->expr()->isNull('support_hash'),
+                    $countQuery->expr()->eq('support_hash', $countQuery->expr()->literal(''))
+                ))
                 ->executeQuery()
                 ->fetchOne();
 
             if ($count > 0) {
                 // Generate hashes for supports without them
-                $this->connection->executeStatement("
-                UPDATE `{$fullTableName}`
-                SET support_hash = SHA2(CONCAT(user_id, '-', option_id, '-', inquiry_id, '-', RAND()), 256)
-                WHERE support_hash IS NULL OR support_hash = ''
-            ");
+                if ($platform === 'postgresql') {
+                    // PostgreSQL uses double quotes for identifiers and different hash function
+                    $this->connection->executeStatement('
+                        UPDATE "' . $fullTableName . '"
+                        SET support_hash = encode(digest(CONCAT(user_id, \'-\', option_id, \'-\', inquiry_id, \'-\', gen_random_uuid()), \'sha256\'), \'hex\')
+                        WHERE support_hash IS NULL OR support_hash = \'\'
+                    ');
+                } else {
+                    $this->connection->executeStatement('
+                        UPDATE `' . $fullTableName . '`
+                        SET support_hash = SHA2(CONCAT(user_id, \'-\', option_id, \'-\', inquiry_id, \'-\', RAND()), 256)
+                        WHERE support_hash IS NULL OR support_hash = \'\'
+                    ');
+                }
                 $messages[] = "Generated hashes for {$count} support entries";
             } else {
                 $messages[] = "All support entries already have hashes";
@@ -1233,14 +1205,14 @@ return $messages;
         return $messages;
     }
 
-/**
- * Add a column to a table if it doesn't already exist
- *
- * @param string $tableName The table name
- * @param string $columnName The column name
- * @param array $columnDefinition The column definition
- * @return void
- */
+    /**
+     * Add a column to a table if it doesn't already exist - Database-agnostic version
+     *
+     * @param string $tableName The table name
+     * @param string $columnName The column name
+     * @param array $columnDefinition The column definition
+     * @return void
+     */
     private function addColumnIfNotExists(string $tableName, string $columnName, array $columnDefinition): void
     {
         $fullTableName = $this->dbPrefix . $tableName;
@@ -1282,16 +1254,16 @@ return $messages;
         }
     }
 
-/**
- * Migrate allow_support (BIGINT) values to support_feature (STRING)
- *
- * Rules:
- * - If allow_support = 0 → support_feature = 'none'
- * - If allow_support = 1 → support_feature = 'binary' (default)
- * - If allow_support > 1 → support_feature = 'binary' (treat as enabled)
- *
- * @param string $tableName The table to migrate
- */
+    /**
+     * Migrate allow_support (BIGINT) values to support_feature (STRING)
+     *
+     * Rules:
+     * - If allow_support = 0 → support_feature = 'none'
+     * - If allow_support = 1 → support_feature = 'binary' (default)
+     * - If allow_support > 1 → support_feature = 'binary' (treat as enabled)
+     *
+     * @param string $tableName The table to migrate
+     */
     private function migrateAllowSupportToSupportFeature(string $tableName): void
     {
         // Check if allow_support column exists
@@ -1314,15 +1286,15 @@ return $messages;
 
         // First, set all to 'binary' (default)
         $query->update($tableName)
-          ->set('support_feature', $query->expr()->literal('binary'))
-          ->executeStatement();
+            ->set('support_feature', $query->expr()->literal('binary'))
+            ->executeStatement();
 
         // Then update rows where allow_support = 0 to 'none'
         $query = $this->connection->getQueryBuilder();
         $query->update($tableName)
-          ->set('support_feature', $query->expr()->literal('none'))
-          ->where($query->expr()->eq('allow_support', $query->expr()->literal(0, IQueryBuilder::PARAM_INT)))
-          ->executeStatement();
+            ->set('support_feature', $query->expr()->literal('none'))
+            ->where($query->expr()->eq('allow_support', $query->expr()->literal(0, IQueryBuilder::PARAM_INT)))
+            ->executeStatement();
 
         $this->logger->info("Migrated allow_support to support_feature in $tableName");
 
@@ -1334,11 +1306,11 @@ return $messages;
         }
     }
 
-/**
- * Remove allow_support column after migration (optional)
- *
- * @return string[] Messages as array
- */
+    /**
+     * Remove allow_support column after migration (optional)
+     *
+     * @return string[] Messages as array
+     */
     public function removeOldAllowSupportColumn(): array
     {
         $messages = [];
@@ -1366,138 +1338,131 @@ return $messages;
      * @param ISchemaWrapper $schema The schema to modify
      * @return string[] Messages
      */
-    /**
- * Rename unique indices to use app-specific prefix to avoid collisions with other apps.
- * Drops old indices (with generic names) and adds new ones with 'agora_' prefix.
- *
- * @param ISchemaWrapper $schema The schema to modify
- * @return string[] Messages
- */
-public function renameUniqueIndices(ISchemaWrapper $schema): array
-{
-    $messages = [];
+    public function renameUniqueIndices(ISchemaWrapper $schema): array
+    {
+        $messages = [];
 
-    // Mapping from old index name to new index name and columns per table
-    $indexMapping = [
-        'oc_agora_log' => [
-            'old' => 'UNIQ_unprocessed',
-            'new' => 'agora_uniq_log_unprocessed',
-            'columns' => ['processed', 'inquiry_id', 'user_id', 'message_id'],
-        ],
-        'oc_agora_share' => [
-            [
-                'old' => 'UNIQ_shares',
-                'new' => 'agora_uniq_shares',
-                'columns' => ['inquiry_id', 'group_id', 'user_id'],
+        // Mapping from old index name to new index name and columns per table
+        $indexMapping = [
+            'oc_agora_log' => [
+                'old' => 'UNIQ_unprocessed',
+                'new' => 'agora_uniq_log_unprocessed',
+                'columns' => ['processed', 'inquiry_id', 'user_id', 'message_id'],
             ],
-            [
-                'old' => 'UNIQ_token',
-                'new' => 'agora_uniq_token',
-                'columns' => ['token'],
+            'oc_agora_share' => [
+                [
+                    'old' => 'UNIQ_shares',
+                    'new' => 'agora_uniq_shares',
+                    'columns' => ['inquiry_id', 'group_id', 'user_id'],
+                ],
+                [
+                    'old' => 'UNIQ_token',
+                    'new' => 'agora_uniq_token',
+                    'columns' => ['token'],
+                ],
             ],
-        ],
-        'oc_agora_support' => [
-            'old' => 'UNIQ_supports',
-            'new' => 'agora_uniq_supports',
-            'columns' => ['inquiry_id', 'option_id', 'user_id'],
-        ],
-        'oc_agora_subscription' => [
-            'old' => 'UNIQ_subscription',
-            'new' => 'agora_uniq_subscription',
-            'columns' => ['inquiry_id', 'user_id'],
-        ],
-        'oc_agora_watch' => [
-            'old' => 'UNIQ_watch',
-            'new' => 'agora_uniq_watch',
-            'columns' => ['inquiry_id', 'table', 'session_id'],
-        ],
-        'oc_agora_preferences' => [
-            'old' => 'UNIQ_preferences',
-            'new' => 'agora_uniq_preferences',
-            'columns' => ['user_id'],
-        ],
-        'oc_agora_inq_group_misc' => [
-            'old' => 'UNIQ_group_misc',
-            'new' => 'agora_uniq_group_misc',
-            'columns' => ['inquiry_group_id', 'key'],
-        ],
-        'oc_agora_inq_type' => [
-            'old' => 'UNIQ_inquiry_type',
-            'new' => 'agora_uniq_inquiry_type',
-            'columns' => ['inquiry_type'],
-        ],
-        'oc_agora_inq_option_type' => [
-            'old' => 'UNIQ_option_type',
-            'new' => 'agora_uniq_option_type',
-            'columns' => ['option_type'],
-        ],
-        'oc_agora_inq_group_type' => [
-            'old' => 'UNIQ_group_type',
-            'new' => 'agora_uniq_group_type',
-            'columns' => ['group_type'],
-        ],
-        'oc_agora_inq_group_relation' => [
-            'old' => 'UNIQ_inquiry_group_relation',
-            'new' => 'agora_uniq_inquiry_group_relation',
-            'columns' => ['inquiry_id', 'group_id'],
-        ],
-        'oc_agora_inq_misc' => [
-            'old' => 'UNIQ_inquiry_misc',
-            'new' => 'agora_uniq_inquiry_misc',
-            'columns' => ['inquiry_id', 'key'],
-        ],
-        'oc_agora_opt_misc' => [
-            'old' => 'UNIQ_option_misc',
-            'new' => 'agora_uniq_option_misc',
-            'columns' => ['option_id', 'key'],
-        ],
-        'oc_agora_inq_families' => [
-            'old' => 'UNIQ_family_inquiry_type',
-            'new' => 'agora_uniq_family_inquiry_type',
-            'columns' => ['family_type'],
-        ],
-        'oc_agora_opt_families' => [
-            'old' => 'UNIQ_family_option_type',
-            'new' => 'agora_uniq_family_option_type',
-            'columns' => ['family_type'],
-        ],
-        'oc_agora_inq_status' => [
-            'old' => 'UNIQ_inquiry_status',
-            'new' => 'agora_uniq_inquiry_status',
-            'columns' => ['inquiry_type', 'status_key'],
-        ],
-    ];
+            'oc_agora_support' => [
+                'old' => 'UNIQ_supports',
+                'new' => 'agora_uniq_supports',
+                'columns' => ['inquiry_id', 'option_id', 'user_id'],
+            ],
+            'oc_agora_subscription' => [
+                'old' => 'UNIQ_subscription',
+                'new' => 'agora_uniq_subscription',
+                'columns' => ['inquiry_id', 'user_id'],
+            ],
+            'oc_agora_watch' => [
+                'old' => 'UNIQ_watch',
+                'new' => 'agora_uniq_watch',
+                'columns' => ['inquiry_id', 'table', 'session_id'],
+            ],
+            'oc_agora_preferences' => [
+                'old' => 'UNIQ_preferences',
+                'new' => 'agora_uniq_preferences',
+                'columns' => ['user_id'],
+            ],
+            'oc_agora_inq_group_misc' => [
+                'old' => 'UNIQ_group_misc',
+                'new' => 'agora_uniq_group_misc',
+                'columns' => ['inquiry_group_id', 'key'],
+            ],
+            'oc_agora_inq_type' => [
+                'old' => 'UNIQ_inquiry_type',
+                'new' => 'agora_uniq_inquiry_type',
+                'columns' => ['inquiry_type'],
+            ],
+            'oc_agora_inq_option_type' => [
+                'old' => 'UNIQ_option_type',
+                'new' => 'agora_uniq_option_type',
+                'columns' => ['option_type'],
+            ],
+            'oc_agora_inq_group_type' => [
+                'old' => 'UNIQ_group_type',
+                'new' => 'agora_uniq_group_type',
+                'columns' => ['group_type'],
+            ],
+            'oc_agora_inq_group_relation' => [
+                'old' => 'UNIQ_inquiry_group_relation',
+                'new' => 'agora_uniq_inquiry_group_relation',
+                'columns' => ['inquiry_id', 'group_id'],
+            ],
+            'oc_agora_inq_misc' => [
+                'old' => 'UNIQ_inquiry_misc',
+                'new' => 'agora_uniq_inquiry_misc',
+                'columns' => ['inquiry_id', 'key'],
+            ],
+            'oc_agora_opt_misc' => [
+                'old' => 'UNIQ_option_misc',
+                'new' => 'agora_uniq_option_misc',
+                'columns' => ['option_id', 'key'],
+            ],
+            'oc_agora_inq_families' => [
+                'old' => 'UNIQ_family_inquiry_type',
+                'new' => 'agora_uniq_family_inquiry_type',
+                'columns' => ['family_type'],
+            ],
+            'oc_agora_opt_families' => [
+                'old' => 'UNIQ_family_option_type',
+                'new' => 'agora_uniq_family_option_type',
+                'columns' => ['family_type'],
+            ],
+            'oc_agora_inq_status' => [
+                'old' => 'UNIQ_inquiry_status',
+                'new' => 'agora_uniq_inquiry_status',
+                'columns' => ['inquiry_type', 'status_key'],
+            ],
+        ];
 
-    foreach ($indexMapping as $tableName => $mapping) {
-        if (!$schema->hasTable($tableName)) {
-            continue;
-        }
-        $table = $schema->getTable($tableName);
+        foreach ($indexMapping as $tableName => $mapping) {
+            if (!$schema->hasTable($tableName)) {
+                continue;
+            }
+            $table = $schema->getTable($tableName);
 
-        // Normalize to array of mappings (handles tables with multiple indices)
-        if (isset($mapping['old'])) {
-            $mapping = [$mapping];
-        }
-
-        foreach ($mapping as $idx) {
-            $oldName = $idx['old'];
-            $newName = $idx['new'];
-            $columns = $idx['columns'];
-
-            // Drop old index if it exists
-            if ($table->hasIndex($oldName)) {
-                $table->dropIndex($oldName);
-                $messages[] = "Dropped old unique index $oldName from $tableName";
+            // Normalize to array of mappings (handles tables with multiple indices)
+            if (isset($mapping['old'])) {
+                $mapping = [$mapping];
             }
 
-            // Add new unique index if not already present
-            if (!$table->hasIndex($newName)) {
-                $table->addUniqueIndex($columns, $newName);
-                $messages[] = "Added new unique index $newName to $tableName";
+            foreach ($mapping as $idx) {
+                $oldName = $idx['old'];
+                $newName = $idx['new'];
+                $columns = $idx['columns'];
+
+                // Drop old index if it exists
+                if ($table->hasIndex($oldName)) {
+                    $table->dropIndex($oldName);
+                    $messages[] = "Dropped old unique index $oldName from $tableName";
+                }
+
+                // Add new unique index if not already present
+                if (!$table->hasIndex($newName)) {
+                    $table->addUniqueIndex($columns, $newName);
+                    $messages[] = "Added new unique index $newName to $tableName";
+                }
             }
         }
+
+        return $messages;
     }
-
-    return $messages;
-}
 }

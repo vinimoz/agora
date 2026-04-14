@@ -325,7 +325,8 @@ const props = defineProps<{
       supportValue: number | null
     }
   }
-  inquiryId?: number
+  // eslint-disable-next-line vue/no-unused-properties
+  inquiryId: number
   compact?: boolean
   inline?: boolean
   official?: boolean
@@ -519,9 +520,7 @@ const formatDate = (timestamp: number) => {
   }).format(date)
 }
 
-const isImportedFromView = computed(() => {
-  return props.option.family !== props.familyType
-})
+const isImportedFromView = computed(() => props.option.family !== props.familyType)
 
 const truncateText = (text: string, maxLength: number) => {
   if (!text) return ''
@@ -560,7 +559,7 @@ const removeFromCurrentView = async () => {
     if (typeof currentLayouts === 'string') {
       try {
         currentLayouts = JSON.parse(currentLayouts)
-      } catch (e) {
+      } catch {
         currentLayouts = []
       }
     }

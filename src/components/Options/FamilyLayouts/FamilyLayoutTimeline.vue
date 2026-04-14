@@ -193,6 +193,7 @@ import { InquiryOptionIcons } from '../../../utils/icons.ts'
 import { 
   filterOptionsByLayout,
   getTimelineStartDate,
+  isImportedFromView,
   getTimelineEndDate,
   getOptionTypeIconComponent
 } from '../../../helpers/modules/InquiryOptionHelper'
@@ -218,7 +219,6 @@ import DeleteConfirmationDialog from '../../Modals/DeleteConfirmationDialog.vue'
 import resourcePlugin from '@fullcalendar/resource'
 import resourceTimeGridPlugin from '@fullcalendar/resource-timegrid'
 import resourceTimelinePlugin from '@fullcalendar/resource-timeline'
-import { confirmAndHandleOption, isImportedFromView } from '../../../helpers/modules/OptionDeleteHelper'
 
 // Props
 const props = defineProps<{
@@ -274,8 +274,7 @@ let pendingCallbacks: {
 } | null = null
 
 const handleEventClick = (info: EventClickArg) => {
-  console.log('Event clicked - button:', info.jsEvent.button)
-  console.log('Event title:', info.event.title)
+  // console.log('Event title:', info.event.title)
   
   // Always prevent default to stop browser context menu
   info.jsEvent.preventDefault()
@@ -283,7 +282,7 @@ const handleEventClick = (info: EventClickArg) => {
   
   // Check for right click (button === 2)
   if (info.jsEvent.button === 2) {
-    console.log('Right click detected - showing context menu')
+    // console.log('Right click detected - showing context menu')
     
     const option = info.event.extendedProps?.option
     if (option) {
@@ -298,53 +297,11 @@ const handleEventClick = (info: EventClickArg) => {
   } 
   // Left click (button === 0)
   else if (info.jsEvent.button === 0) {
-    console.log('Left click detected - opening detail')
+     // console.log('Left click detected - opening detail')
     emit('openDetail', info.event.extendedProps.option)
   }
 }
 
-
-// Add this new function to handle right clicks
-const handleEventContextMenu = (info: any) => {
-  console.log('eventDidMount called for event:', info.event.title) // Debug log
-  
-  // Add the contextmenu listener directly
-  info.el.addEventListener('contextmenu', (e: MouseEvent) => {
-    console.log('Right click detected!') // Debug log - this should appear
-    e.preventDefault()
-    e.stopPropagation()
-    
-    const option = info.event.extendedProps?.option
-    console.log('Option found:', option) // Debug log
-    
-    if (option) {
-      // Show your custom context menu instead of the dialog
-      contextMenu.value = {
-        visible: true,
-        x: e.clientX,
-        y: e.clientY,
-        event: info.event
-      }
-    }
-  })
-}
-
-
-const showContextMenu = (e: MouseEvent, event: any) => {
-  e.preventDefault()
-  e.stopPropagation()
-
-  const option = event.extendedProps?.option
-  if (option) {
-    selectedOption.value = option
-    contextMenu.value = {
-      visible: true,
-      x: e.clientX,
-      y: e.clientY,
-      event
-    }
-  }
-}
 
 // Add a global context menu prevention for the calendar container
 
@@ -362,13 +319,13 @@ const contextMenu = ref({
   visible: false,
   x: 0,
   y: 0,
-  event: null as any
+  event: null as unknown
 })
 
 const popoverStyle = computed(() => ({
   position: 'fixed',
-  left: contextMenu.value.x + 'px',
-  top: contextMenu.value.y + 'px',
+  left: `${contextMenu.value.x  }px`,
+  top: `${contextMenu.value.y  }px`,
   zIndex: 9999
 }))
 
@@ -601,7 +558,7 @@ const resourceDayViewOptions = computed(() => ({
 }))
 
 const handleContextMenuDelete = () => {
-  console.log('Delete clicked from context menu') // Debug log
+  // console.log('Delete clicked from context menu') // Debug log
   if (contextMenu.value.event) {
     const option = contextMenu.value.event.extendedProps?.option
     if (option) {
@@ -611,7 +568,7 @@ const handleContextMenuDelete = () => {
           emit('deleteOption', option.id)
           if (calendarRef.value) {
             setTimeout(() => {
-              (calendarRef.value as any).getApi().refetchEvents()
+              (calendarRef.value as unknown).getApi().refetchEvents()
             }, 100)
           }
         },
@@ -620,7 +577,7 @@ const handleContextMenuDelete = () => {
           if (typeof currentLayouts === 'string') {
             try {
               currentLayouts = JSON.parse(currentLayouts)
-            } catch (e) {
+            } catch {
               currentLayouts = []
             }
           }
@@ -628,7 +585,7 @@ const handleContextMenuDelete = () => {
           emit('removeFromTimeline', option.id, updatedLayouts)
           if (calendarRef.value) {
             setTimeout(() => {
-              (calendarRef.value as any).getApi().refetchEvents()
+              (calendarRef.value as unknown).getApi().refetchEvents()
             }, 100)
           }
         }
@@ -841,7 +798,6 @@ onMounted(() => {
       if (target.closest?.('.fc-event')) {
         e.preventDefault()
         e.stopPropagation()
-        console.log('Calendar container context menu prevented')
       }
     })
   }

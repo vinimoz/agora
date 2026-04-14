@@ -1,4 +1,4 @@
-const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=[window.OC.filePath('agora', '', 'js/ActionStructure-zeWEr1KF.chunk.mjs'),window.OC.filePath('agora', '', 'js/TernarySupportIcon.vue_vue_type_style_index_0_scoped_ef057a6f_lang-CP9qC4iz.chunk.mjs'),window.OC.filePath('agora', '', 'js/ImportDocumentModal-ZnNk7UF2.chunk.mjs'),window.OC.filePath('agora', '', 'js/NcDashboardWidget-CvpYMKur-B_hmAVFy.chunk.mjs'),window.OC.filePath('agora', '', 'js/NcRichText-D_ssz6sB-8UY9eufb.chunk.mjs'),window.OC.filePath('agora', '', 'js/index-CPK_9_Aw.chunk.mjs'),window.OC.filePath('agora', '', 'js/StyleSettings-BapZHhBf.chunk.mjs'),window.OC.filePath('agora', '', 'js/markdown-BVP3gZI6.chunk.mjs'),window.OC.filePath('agora', '', 'js/agora-icon-LJ50tMPL.chunk.mjs'),window.OC.filePath('agora', '', 'js/NcUserBubble-BE6yD-R0-ZiYFWivE.chunk.mjs')])))=>i.map(i=>d[i]);
+const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=[window.OC.filePath('agora', '', 'js/ActionStructure-4hYUVjkw.chunk.mjs'),window.OC.filePath('agora', '', 'js/TernarySupportIcon.vue_vue_type_style_index_0_scoped_ef057a6f_lang-CP9qC4iz.chunk.mjs'),window.OC.filePath('agora', '', 'js/ImportDocumentModal-BHzJ3OCy.chunk.mjs'),window.OC.filePath('agora', '', 'js/NcDashboardWidget-CvpYMKur-k5GDApP3.chunk.mjs'),window.OC.filePath('agora', '', 'js/NcRichText-D_ssz6sB-8UY9eufb.chunk.mjs'),window.OC.filePath('agora', '', 'js/index-O8438umE.chunk.mjs'),window.OC.filePath('agora', '', 'js/StyleSettings-BXkfOcgv.chunk.mjs'),window.OC.filePath('agora', '', 'js/markdown-DE2m3dfB.chunk.mjs'),window.OC.filePath('agora', '', 'js/agora-icon-LJ50tMPL.chunk.mjs'),window.OC.filePath('agora', '', 'js/NcUserBubble-BE6yD-R0-ZiYFWivE.chunk.mjs')])))=>i.map(i=>d[i]);
 (function() {
   "use strict";
   try {
@@ -15458,11 +15458,11 @@ tr.file-picker__row td.row-name[data-v-1f96131b] {
 const appName = "agora";
 const appVersion = "1.7.1";
 import { a7 as getCurrentInstance, a1 as inject, b3 as onUnmounted, bi as onDeactivated, bj as onActivated, w as watch, L as unref, bk as shallowReactive, b4 as shallowRef, d as defineComponent, a0 as reactive, b as computed, a3 as h$2, bl as provide, E as ref, a6 as watchEffect, aX as nextTick$1, A as defineStore, q as translate, aO as emit, bm as Settings$1, a as _export_sfc, o as openBlock, c as createElementBlock, t as toDisplayString, I as normalizeClass, bn as getCanonicalLocale, bf as NcActionButton, _ as _export_sfc$1, f as createBlock, g as withCtx, k as createCommentVNode, h as resolveDynamicComponent, j as createBaseVNode, bo as NC_ACTIONS_IS_SEMANTIC_MENU, bp as ActionGlobalMixin, M as NcIconSvgWrapper, al as resolveComponent, a9 as withDirectives, bq as vModelRadio, i as createVNode, br as mdiRadioboxMarked, bs as mdiRadioboxBlank, u as useModel, Y as createElementId, bt as useSlots, V as logger, s as onMounted, aW as onBeforeUnmount, r as renderSlot, aj as useCssVars, bu as useIsDarkTheme, bv as mdiCreation, af as createSlots, B as createTextVNode, F as NcButton, bw as useCssModule, bx as NC_FORM_BOX_CONTEXT_KEY, bg as NcActions, m as mergeProps$1, aP as withKeys, aa as vShow, v as normalizeProps, x as guardReactiveProps, by as userStatus, N as NcAvatar, n as normalizeStyle, p as mergeModels, e as warn, J as Fragment$1, K as renderList, an as NcLoadingIcon, bz as Teleport, H as withModifiers, aQ as NcEmptyContent, Z as DateTime, bA as translatePlural, bB as TransitionGroup, D as generateUrl, G as NcModal, bC as markRaw, bD as customRef, bE as global, bF as getAugmentedNamespace, bG as process$1, bc as commonjsGlobal, bH as Buffer, a$ as getDefaultExportFromCjs, bI as vModelSelect, bd as getCurrentUser, aA as Transition, C as purify, aZ as vModelText, bJ as vModelCheckbox, l as NcPopover, be as toRaw, bK as subscribe, bL as unsubscribe, aS as generateOcsUrl, aT as cancelableClient, bM as axios, y as createApp, z as pinia } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_ef057a6f_lang-CP9qC4iz.chunk.mjs";
-import { l as getFamilyIconName, m as getFamilyColor, a as useSessionStore, p as publicInquiry, o as options, L as Logger, n as useOptionStore, q as useInquiryStore, s as showError, E as Event$1, r as useCommentsStore, h as useAppSettingsStore, t as getFamilyIconComponent, v as getFamiliesWithOptionTypes, w as getFamilyFallbackData, x as createInquiryContext, y as canTransfer, z as canDelete, A as canArchive, I as InquiryGeneralIcons, g as getInquiryTypeData, b as useInquiriesStore, B as useInquiryGroupsStore, C as NavigationIcons, e as showSuccess$1, D as getAvailableInquiryTypesForCreation, F as getInquiryTypeOptions, G as useInquiryGroupStore, H as getAllowedResponseGroupTypes, J as getAvailableInquiryGroupTypesForCreation, K as getInquiryGroupTypeData, M as accessFamilyMenu, O as getInquiryTypesForFamily, P as getInquiryItemData, Q as canCreateInquiryGroupInGeneral, R as getInquiryTypesByFamily, T as supports, U as canSupportOption, V as canSupport, S as StatusIcons, W as BadgeIcons, X as canComment, Y as sortTitlesMapping, Z as lodashExports, _ as appSettings, $ as canRestore, a0 as getInquiryGroupTypesByFamily, a1 as getInquiryGroupTypesForFamily, a2 as canViewToggle, a3 as getAvailableResponseTypesWithPermissions, a4 as getAvailableTransformTypesWithPermissions, a5 as validators, a6 as inquiries, a7 as commonjsRequire, a8 as useAttachmentsStore, a9 as InquiryOptionIcons, aa as getOptionTypeIconComponent, ab as getOptionTypeLabel, ac as createOptionContext, ad as canEditOption, ae as canDeleteOption, af as getOptionTypeColor, ag as usesTitle, ah as allowsComments, ai as hasSupportFeature, aj as getAllowedResponses, ak as findOptionType, al as getOptionTypeFields, am as getOptionTypeDescription, an as getSupportFeatureLabel, ao as createDefault, ap as getAvailableResponseTypes, aq as canCommentOption, ar as filterOptionsByLayout, as as getTimelineStartDate, at as getTimelineEndDate, au as getLayoutForFamily, av as useSharesStore, aw as canEdit, ax as createInquiryGroupContext, ay as inquiryLinks, az as ShareIcons, aA as getEditPermissions, aB as getAvailableFields, aC as getAvailableGroupFields, aD as canShare, aE as canUseResource } from "./NcDashboardWidget-CvpYMKur-B_hmAVFy.chunk.mjs";
-import { u as usePreferencesStore, S as StyleSettings, F as FeatureSettings } from "./StyleSettings-BapZHhBf.chunk.mjs";
-import { c as NcAppNavigationItem, u as useAppSettingsDialog, A as APP_SETTINGS_LEGACY_DESIGN_KEY, _ as _sfc_main$1$, d as NcAppNavigationList, e as NcAppNavigation, S as Spinner, Q as QRCode, I as InputDiv, f as NcAppContent, g as NcActionButtonGroup, h as NcDialog, i as find$1, r as registerCustomProtocol, t as tokenize, j as reset, k as NcDateTimePickerNative, l as NcRichContenteditable, O as Options, m as __vitePreload, n as NcActionInput, o as NcActionCaption, P as PlusIcon, p as NcAppSidebar, b as NcAppSettingsDialog, q as NcContent } from "./index-CPK_9_Aw.chunk.mjs";
+import { l as getFamilyIconName, m as getFamilyColor, a as useSessionStore, p as publicInquiry, o as options, L as Logger, n as useOptionStore, q as useInquiryStore, s as showError, E as Event$1, r as useCommentsStore, h as useAppSettingsStore, t as getFamilyIconComponent, v as getFamiliesWithOptionTypes, w as getFamilyFallbackData, x as createInquiryContext, y as canTransfer, z as canDelete, A as canArchive, I as InquiryGeneralIcons, g as getInquiryTypeData, b as useInquiriesStore, B as useInquiryGroupsStore, C as NavigationIcons, e as showSuccess$1, D as getAvailableInquiryTypesForCreation, F as getInquiryTypeOptions, G as useInquiryGroupStore, H as getAllowedResponseGroupTypes, J as getAvailableInquiryGroupTypesForCreation, K as getInquiryGroupTypeData, M as accessFamilyMenu, O as getInquiryTypesForFamily, P as getInquiryItemData, Q as canCreateInquiryGroupInGeneral, R as getInquiryTypesByFamily, T as supports, U as canSupportOption, V as canSupport, S as StatusIcons, W as BadgeIcons, X as canComment, Y as sortTitlesMapping, Z as lodashExports, _ as appSettings, $ as canRestore, a0 as getInquiryGroupTypesByFamily, a1 as getInquiryGroupTypesForFamily, a2 as canViewToggle, a3 as getAvailableResponseTypesWithPermissions, a4 as getAvailableTransformTypesWithPermissions, a5 as validators, a6 as inquiries, a7 as commonjsRequire, a8 as useAttachmentsStore, a9 as InquiryOptionIcons, aa as getOptionTypeIconComponent, ab as getOptionTypeLabel, ac as createOptionContext, ad as canEditOption, ae as canDeleteOption, af as getOptionTypeColor, ag as usesTitle, ah as allowsComments, ai as hasSupportFeature, aj as getAllowedResponses, ak as findOptionType, al as getOptionTypeFields, am as getOptionTypeDescription, an as getSupportFeatureLabel, ao as createDefault, ap as getAvailableResponseTypes, aq as canCommentOption, ar as filterOptionsByLayout, as as isImportedFromView, at as getTimelineStartDate, au as getTimelineEndDate, av as getLayoutForFamily, aw as useSharesStore, ax as canEdit, ay as createInquiryGroupContext, az as inquiryLinks, aA as ShareIcons, aB as getEditPermissions, aC as getAvailableFields, aD as getAvailableGroupFields, aE as canShare, aF as canUseResource } from "./NcDashboardWidget-CvpYMKur-k5GDApP3.chunk.mjs";
+import { u as usePreferencesStore, S as StyleSettings, F as FeatureSettings } from "./StyleSettings-BXkfOcgv.chunk.mjs";
+import { c as NcAppNavigationItem, u as useAppSettingsDialog, A as APP_SETTINGS_LEGACY_DESIGN_KEY, _ as _sfc_main$1$, d as NcAppNavigationList, e as NcAppNavigation, S as Spinner, Q as QRCode, I as InputDiv, f as NcAppContent, g as NcActionButtonGroup, h as NcDialog, i as find$1, r as registerCustomProtocol, t as tokenize, j as reset, k as NcDateTimePickerNative, l as NcRichContenteditable, O as Options, m as __vitePreload, n as NcActionInput, o as NcActionCaption, P as PlusIcon, p as NcAppSidebar, b as NcAppSettingsDialog, q as NcContent } from "./index-O8438umE.chunk.mjs";
 import { c as _sfc_main$20, I as INSIDE_RADIO_GROUP_KEY, a as NcSelect, N as NcCheckboxRadioSwitch, _ as _sfc_main$21, b as NcInputField } from "./NcRichText-D_ssz6sB-8UY9eufb.chunk.mjs";
-import { R as RadioGroupDiv, a as NcTextArea, N as NcNoteCard, C as CardDiv } from "./markdown-BVP3gZI6.chunk.mjs";
+import { R as RadioGroupDiv, a as NcTextArea, N as NcNoteCard, C as CardDiv } from "./markdown-DE2m3dfB.chunk.mjs";
 import { A as AgoraAppIcon } from "./agora-icon-LJ50tMPL.chunk.mjs";
 import { N as NcUserBubble } from "./NcUserBubble-BE6yD-R0-ZiYFWivE.chunk.mjs";
 function getDevtoolsGlobalHook() {
@@ -76536,8 +76536,7 @@ const _sfc_main$10 = /* @__PURE__ */ defineComponent({
   props: {
     visible: { type: Boolean, required: true, default: false },
     optionTitle: { type: String, required: false, default: "" },
-    isImported: { type: Boolean, required: false, default: false },
-    viewType: { type: String, required: false, default: "view" }
+    isImported: { type: Boolean, required: false, default: false }
   },
   emits: ["confirm", "cancel", "removeFromView", "update:visible"],
   setup(__props, { expose: __expose, emit: __emit }) {
@@ -76662,7 +76661,6 @@ const _sfc_main$$ = /* @__PURE__ */ defineComponent({
   __name: "OptionCard",
   props: {
     option: { type: Object, required: true },
-    inquiryId: { type: Number, required: false },
     compact: { type: Boolean, required: false },
     inline: { type: Boolean, required: false },
     official: { type: Boolean, required: false },
@@ -76789,9 +76787,7 @@ const _sfc_main$$ = /* @__PURE__ */ defineComponent({
         minute: "2-digit"
       }).format(date);
     };
-    const isImportedFromView2 = computed(() => {
-      return props2.option.family !== props2.familyType;
-    });
+    const isImportedFromView2 = computed(() => props2.option.family !== props2.familyType);
     const truncateText = (text, maxLength) => {
       if (!text) return "";
       if (text.length <= maxLength) return text;
@@ -76822,7 +76818,7 @@ const _sfc_main$$ = /* @__PURE__ */ defineComponent({
         if (typeof currentLayouts === "string") {
           try {
             currentLayouts = JSON.parse(currentLayouts);
-          } catch (e2) {
+          } catch {
             currentLayouts = [];
           }
         }
@@ -83884,48 +83880,6 @@ const _sfc_main$N = /* @__PURE__ */ defineComponent({
         { value: "cancelled", label: translate("agora", "Cancelled"), color: "#e74c3c" }
       ];
     });
-    const handleDeleteOption = async (option2) => {
-      const isImported = isImportedFromView(option2, props2.family.key);
-      if (isImported) {
-        showDeleteConfirmation(option2, props2.family.key, {
-          onDelete: async () => {
-            try {
-              await optionsStore.deleteOption(option2.id);
-              showSuccess$1(translate("agora", "Option deleted successfully"));
-              emit2("update:options");
-            } catch (error) {
-              showError(translate("agora", "Failed to delete option"));
-            }
-          },
-          onRemoveFromView: async () => {
-            try {
-              const { updatedLayouts } = removeLayoutFromOption(option2, props2.family.key);
-              await optionsStore.updateOption({
-                ...option2,
-                miscFields: {
-                  ...option2.miscFields,
-                  force_layouts: updatedLayouts
-                }
-              });
-              showSuccess$1(translate("agora", "Option removed from {view}", { view: props2.family.key }));
-              emit2("update:options");
-            } catch (error) {
-              showError(translate("agora", "Failed to remove option"));
-            }
-          }
-        });
-      } else {
-        if (confirm(translate("agora", "Are you sure you want to delete this option?"))) {
-          try {
-            await optionsStore.deleteOption(option2.id);
-            showSuccess$1(translate("agora", "Option deleted successfully"));
-            emit2("update:options");
-          } catch (error) {
-            showError(translate("agora", "Failed to delete option"));
-          }
-        }
-      }
-    };
     const columnCount = computed(() => statusColumns.value.length);
     const getOptionsByStatus = (status) => kanbanOptions.value.filter((opt) => {
       const optStatus = opt.status?.optionStatus || "draft";
@@ -83970,7 +83924,7 @@ const _sfc_main$N = /* @__PURE__ */ defineComponent({
     const handleAddSuccess = () => {
       emit2("update:options");
     };
-    const __returned__ = { props: props2, optionsStore, showAddModal, draggingOptionId, emit: emit2, statusColumns, handleDeleteOption, columnCount, getOptionsByStatus, getStatusLabel, kanbanOptions, handleDragStart, handleDragEnd, handleDrop: handleDrop2, changeStatus, handleAddSuccess, get t() {
+    const __returned__ = { props: props2, optionsStore, showAddModal, draggingOptionId, emit: emit2, statusColumns, columnCount, getOptionsByStatus, getStatusLabel, kanbanOptions, handleDragStart, handleDragEnd, handleDrop: handleDrop2, changeStatus, handleAddSuccess, get t() {
       return translate;
     }, get NcButton() {
       return NcButton;
@@ -102862,9 +102816,6 @@ var index$1 = createPlugin({
     }
   }
 });
-const isImportedFromView$1 = (option2, familyKey) => {
-  return !(option2.family === familyKey);
-};
 const _sfc_main$M = /* @__PURE__ */ defineComponent({
   __name: "FamilyLayoutTimeline",
   props: {
@@ -102970,8 +102921,8 @@ const _sfc_main$M = /* @__PURE__ */ defineComponent({
     });
     const popoverStyle = computed(() => ({
       position: "fixed",
-      left: contextMenu.value.x + "px",
-      top: contextMenu.value.y + "px",
+      left: `${contextMenu.value.x}px`,
+      top: `${contextMenu.value.y}px`,
       zIndex: 9999
     }));
     const handleConfirmDelete = () => {
@@ -103429,7 +103380,7 @@ const _sfc_main$M = /* @__PURE__ */ defineComponent({
     }, get FullCalendar() {
       return FullCalendar;
     }, DeleteConfirmationDialog, get isImportedFromView() {
-      return isImportedFromView$1;
+      return isImportedFromView;
     } };
     Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
     return __returned__;
@@ -120820,7 +120771,7 @@ const _sfc_main$J = /* @__PURE__ */ defineComponent({
       }
       try {
         const componentName = `${actionKey.split("_").map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join("")}Modal`;
-        const module = await __variableDynamicImportRuntimeHelper(/* @__PURE__ */ Object.assign({ "./Actions/ActionStructure.vue": () => __vitePreload(() => import("./ActionStructure-zeWEr1KF.chunk.mjs"), true ? __vite__mapDeps([0,1,2,3,4,5,6,7,8,9]) : void 0, import.meta.url), "./Actions/ImportDocumentModal.vue": () => __vitePreload(() => import("./ImportDocumentModal-ZnNk7UF2.chunk.mjs"), true ? __vite__mapDeps([2,1,3,4,5,6,7,8,9]) : void 0, import.meta.url) }), `./Actions/${componentName}.vue`, 3);
+        const module = await __variableDynamicImportRuntimeHelper(/* @__PURE__ */ Object.assign({ "./Actions/ActionStructure.vue": () => __vitePreload(() => import("./ActionStructure-4hYUVjkw.chunk.mjs"), true ? __vite__mapDeps([0,1,2,3,4,5,6,7,8,9]) : void 0, import.meta.url), "./Actions/ImportDocumentModal.vue": () => __vitePreload(() => import("./ImportDocumentModal-BHzJ3OCy.chunk.mjs"), true ? __vite__mapDeps([2,1,3,4,5,6,7,8,9]) : void 0, import.meta.url) }), `./Actions/${componentName}.vue`, 3);
         const component = markRaw(module.default || module);
         modalComponentCache.set(actionKey, component);
         return component;

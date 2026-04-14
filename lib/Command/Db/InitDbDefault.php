@@ -1291,7 +1291,7 @@ class InitDbDefault extends Command
             ],
             'allowed_response' => ['objection','suggestion','official'],
             'allowed_transformation' => ['law_proposal'],
-            'allowed_option_type' => ['candidate','chapter','workflow_item','process_phase','position_for','position_against','alternative','consensus'],
+            'allowed_option_type' => ['candidate','proposal','chapter','workflow_item','process_phase','position_for','position_against','alternative','consultation_question'],
             'allow_comment' => true,
             'support_feature' => 'binary',
             'is_root' => true,

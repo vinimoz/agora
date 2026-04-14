@@ -29,7 +29,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, computed } from 'vue'
+import { computed } from 'vue'
 import { t } from '@nextcloud/l10n'
 import NcDialog from '@nextcloud/vue/components/NcDialog'
 import NcButton from '@nextcloud/vue/components/NcButton'
@@ -38,7 +38,6 @@ interface Props {
   visible: boolean
   optionTitle?: string
   isImported?: boolean
-  viewType?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {

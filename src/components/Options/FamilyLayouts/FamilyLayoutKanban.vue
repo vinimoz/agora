@@ -67,8 +67,8 @@
               >
               <OptionCard
                       :option="option"
-                      :inquiry-id="inquiryId"
                       :compact="true"
+                      :inquiry-id="inquiryId"
                       :show-action="true"
                       :family-type="family.key"
                       @click="$emit('openDetail', option)"
@@ -167,57 +167,6 @@ const statusColumns = computed(() => {
     { value: 'cancelled', label: t('agora', 'Cancelled'), color: '#e74c3c' }
   ]
 })
-
-const handleDeleteOption = async (option: Option) => {
-  const isImported = isImportedFromView(option, props.family.key)
-
-  if (isImported) {
-    // Show dialog with both options
-    showDeleteConfirmation(option, props.family.key, {
-      onDelete: async () => {
-        // Complete deletion
-        try {
-          await optionsStore.deleteOption(option.id)
-          showSuccess(t('agora', 'Option deleted successfully'))
-          emit('update:options')
-        } catch (error) {
-          showError(t('agora', 'Failed to delete option'))
-        }
-      },
-      onRemoveFromView: async () => {
-        // Only remove from this view
-        try {
-          const { updatedLayouts } = removeLayoutFromOption(option, props.family.key)
-
-          // Update option with new force_layouts
-          await optionsStore.updateOption({
-            ...option,
-            miscFields: {
-              ...option.miscFields,
-              force_layouts: updatedLayouts
-            }
-          })
-
-          showSuccess(t('agora', 'Option removed from {view}', { view: props.family.key }))
-          emit('update:options')
-        } catch (error) {
-          showError(t('agora', 'Failed to remove option'))
-        }
-      }
-    })
-  } else {
-    // Simple deletion for non-imported options
-    if (confirm(t('agora', 'Are you sure you want to delete this option?'))) {
-      try {
-        await optionsStore.deleteOption(option.id)
-        showSuccess(t('agora', 'Option deleted successfully'))
-        emit('update:options')
-      } catch (error) {
-        showError(t('agora', 'Failed to delete option'))
-      }
-    }
-  }
-}
 
 // Update the grid template columns to be dynamic
 const columnCount = computed(() => statusColumns.value.length)

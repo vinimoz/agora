@@ -1,4 +1,3 @@
-// types/VotingTypes.ts
 // SPDX-FileCopyrightText: 2018-2025 Nextcloud contributors
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -49,19 +48,6 @@ export type InquiryMode =
   | 'progressive'     // 🧠 Iterative consensus
   | 'liquid'          // 🏛 Liquid democracy
 
-/**
- * 🎯 VOTING CONFIGURATION (embedded in Inquiry / Option)
- */
-export interface VotingConfiguration {
-  /** Informal feature used during deliberation */
-  supportFeature: SupportFeature
-  /** Formal engine used during voting (null if not applicable) */
-  votingEngine: VotingEngine | null
-  /** Current mode of the inquiry */
-  mode: InquiryMode
-  /** Feature‑specific options */
-  options?: VotingOptions
-}
 
 /**
  * ⚙️ FEATURE‑SPECIFIC OPTIONS
@@ -117,6 +103,22 @@ export interface VotingOptions {
   }
 }
 
+
+/**
+ * 🎯 VOTING CONFIGURATION (embedded in Inquiry / Option)
+ */
+export interface VotingConfiguration {
+  /** Informal feature used during deliberation */
+  supportFeature: SupportFeature
+  /** Formal engine used during voting (null if not applicable) */
+  votingEngine: VotingEngine | null
+  /** Current mode of the inquiry */
+  mode: InquiryMode
+  /** Feature‑specific options */
+  options?: VotingOptions
+}
+
+
 /**
  * 📊 SUPPORT DATA STRUCTURE (matches existing `Support` type in store)
  */
@@ -139,7 +141,7 @@ export interface SupportData {
  * 📈 VOTING RESULTS (for display)
  */
 export interface VotingResults {
-  raw: any
+  raw: unknown
   aggregates: {
     total: number
     participation: number
