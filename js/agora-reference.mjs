@@ -3,217 +3,27 @@
   try {
     if (typeof document != "undefined") {
       var elementStyle = document.createElement("style");
-      elementStyle.appendChild(document.createTextNode("#body-user .badge-small[data-v-a4bfe739] {\n  display: flex;\n  flex: 0 0 fit-content;\n  align-items: center;\n  gap: 5px;\n  border: 2px solid;\n  border-radius: var(--border-radius-pill) !important;\n  text-align: center;\n  font-size: 0.9em;\n  overflow: hidden;\n  padding: 0px 8px !important;\n  margin: 0 !important;\n  min-height: 1.4rem;\n}\n#body-user .badge-small span[data-v-a4bfe739] {\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\nh2 #body-user .badge-small[data-v-a4bfe739] {\n  font-size: 0.6em;\n}\n#body-user .badge-small.error[data-v-a4bfe739] {\n  background-color: rgba(var(--color-error-rgb), 0.2);\n  border-color: var(--color-error);\n}\n#body-user .badge-small.success[data-v-a4bfe739] {\n  background-color: rgba(var(--color-success-rgb), 0.2);\n  border-color: var(--color-success);\n}\n#body-user .badge-small.warning[data-v-a4bfe739] {\n  background-color: rgba(var(--color-warning-rgb), 0.2) !important;\n  border-color: var(--color-warning);\n}.agora_widget[data-v-dd2984c0] {\n  padding: 0.6rem;\n}\n.widget_header[data-v-dd2984c0],\n.widget_footer[data-v-dd2984c0] {\n  display: flex;\n  column-gap: 0.3rem;\n}\n.badge-small[data-v-dd2984c0] {\n  flex: 0;\n}\n.agora_app_icon[data-v-dd2984c0] {\n  flex: 0 0 1.4rem;\n}\n.title[data-v-dd2984c0] {\n  flex: 1;\n  font-weight: bold;\n  padding-inline-start: 0.6rem;\n  text-wrap: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n.description[data-v-dd2984c0] {\n  margin-inline-start: 1.4rem;\n  padding: 0.6rem;\n}\n.owner[data-v-dd2984c0] {\n  margin-inline-start: 1.4rem;\n  padding-inline-start: 0.6rem;\n}\n.clamped[data-v-dd2984c0] {\n  display: -webkit-box !important;\n  -webkit-line-clamp: 4;\n  line-clamp: 4;\n  -webkit-box-orient: vertical;\n  text-wrap: wrap;\n  overflow: clip !important;\n  text-overflow: ellipsis !important;\n  padding: 0 !important;\n}"));
+      elementStyle.appendChild(document.createTextNode("#body-user .badge-small[data-v-a75cba4f] {\n  display: flex;\n  flex: 0 0 fit-content;\n  align-items: center;\n  gap: 5px;\n  border: 2px solid;\n  border-radius: var(--border-radius-pill) !important;\n  text-align: center;\n  font-size: 0.9em;\n  overflow: hidden;\n  padding: 0px 8px !important;\n  margin: 0 !important;\n  min-height: 1.4rem;\n}\n#body-user .badge-small span[data-v-a75cba4f] {\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\nh2 #body-user .badge-small[data-v-a75cba4f] {\n  font-size: 0.6em;\n}\n#body-user .badge-small.error[data-v-a75cba4f] {\n  background-color: rgba(var(--color-error-rgb), 0.2);\n  border-color: var(--color-error);\n}\n#body-user .badge-small.success[data-v-a75cba4f] {\n  background-color: rgba(var(--color-success-rgb), 0.2);\n  border-color: var(--color-success);\n}\n#body-user .badge-small.warning[data-v-a75cba4f] {\n  background-color: rgba(var(--color-warning-rgb), 0.2) !important;\n  border-color: var(--color-warning);\n}.agora_widget[data-v-148b2b73] {\n  padding: 0.6rem;\n}\n.widget_header[data-v-148b2b73],\n.widget_footer[data-v-148b2b73] {\n  display: flex;\n  column-gap: 0.3rem;\n}\n.badge-small[data-v-148b2b73] {\n  flex: 0;\n}\n.agora_app_icon[data-v-148b2b73] {\n  flex: 0 0 1.4rem;\n}\n.title[data-v-148b2b73] {\n  flex: 1;\n  font-weight: bold;\n  padding-inline-start: 0.6rem;\n  text-wrap: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n.description[data-v-148b2b73] {\n  margin-inline-start: 1.4rem;\n  padding: 0.6rem;\n}\n.owner[data-v-148b2b73] {\n  margin-inline-start: 1.4rem;\n  padding-inline-start: 0.6rem;\n}\n.clamped[data-v-148b2b73] {\n  display: -webkit-box !important;\n  -webkit-line-clamp: 4;\n  line-clamp: 4;\n  -webkit-box-orient: vertical;\n  text-wrap: wrap;\n  overflow: clip !important;\n  text-overflow: ellipsis !important;\n  padding: 0 !important;\n}"));
       document.head.appendChild(elementStyle);
     }
   } catch (e) {
     console.error("vite-plugin-css-injected-by-js", e);
   }
 })();
-const appName = "agora";
-const appVersion = "1.7.1";
-import { _ as _export_sfc, o as openBlock, c as createElementBlock, j as createBaseVNode, t as toDisplayString, k as createCommentVNode, m as mergeProps, d as defineComponent, f as createBlock, g as withCtx, r as renderSlot, h as resolveDynamicComponent, Z as DateTime, q as translate, i as createVNode, B as createTextVNode, I as normalizeClass, y as createApp, z as pinia } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_ef057a6f_lang-CP9qC4iz.chunk.mjs";
-import { r as registerWidget } from "./NcRichText-D_ssz6sB-8UY9eufb.chunk.mjs";
-import { N as NcUserBubble } from "./NcUserBubble-BE6yD-R0-ZiYFWivE.chunk.mjs";
-import { A as AgoraAppIcon } from "./agora-icon-LJ50tMPL.chunk.mjs";
-const _sfc_main$2 = {
-  name: "CalendarEndIcon",
-  emits: ["click"],
-  props: {
-    title: {
-      type: String
-    },
-    fillColor: {
-      type: String,
-      default: "currentColor"
-    },
-    size: {
-      type: Number,
-      default: 24
-    }
-  }
-};
-const _hoisted_1$2 = ["aria-hidden", "aria-label"];
-const _hoisted_2$1 = ["fill", "width", "height"];
-const _hoisted_3$1 = { d: "M22 14V22H20V18L16 22V19H11V17H16V14L20 18V14H22M5 19L9 19V21L5 21C3.9 21 3 20.1 3 19V5C3 3.89 3.9 3 5 3H6V.998H8V3H16V.998H18V3H19C20.11 3 21 3.89 21 5L21 12H19V8H5V19Z" };
-const _hoisted_4$1 = { key: 0 };
-function _sfc_render$2(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("span", mergeProps(_ctx.$attrs, {
-    "aria-hidden": $props.title ? null : "true",
-    "aria-label": $props.title,
-    class: "material-design-icon calendar-end-icon",
-    role: "img",
-    onClick: _cache[0] || (_cache[0] = ($event) => _ctx.$emit("click", $event))
-  }), [
-    (openBlock(), createElementBlock("svg", {
-      fill: $props.fillColor,
-      class: "material-design-icon__svg",
-      width: $props.size,
-      height: $props.size,
-      viewBox: "0 0 24 24"
-    }, [
-      createBaseVNode("path", _hoisted_3$1, [
-        $props.title ? (openBlock(), createElementBlock(
-          "title",
-          _hoisted_4$1,
-          toDisplayString($props.title),
-          1
-          /* TEXT */
-        )) : createCommentVNode("v-if", true)
-      ])
-    ], 8, _hoisted_2$1))
-  ], 16, _hoisted_1$2);
+const F = "agora", J = "1.7.1";
+import { _ as u, o as a, c, h as n, t as s, i as o, m as v, d as y, b as d, f as C, e as l, r as _, Z as b, g as h, v as r, C as m, q as f, G as j, z as k, A as w } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_f6cfe8f3_lang-BWB8wMGc.chunk.mjs";
+import { r as O } from "./NcRichText-D_ssz6sB-DIPyN8sK.chunk.mjs";
+import { N as q } from "./NcUserBubble-BE6yD-R0-Ct37AmYL.chunk.mjs";
+import { _ as H } from "./agora-icon-0wbFIYdr.chunk.mjs";
+const N = { name: "CalendarEndIcon", emits: ["click"], props: { title: { type: String }, fillColor: { type: String, default: "currentColor" }, size: { type: Number, default: 24 } } }, $ = ["aria-hidden", "aria-label"], x = ["fill", "width", "height"], B = { d: "M22 14V22H20V18L16 22V19H11V17H16V14L20 18V14H22M5 19L9 19V21L5 21C3.9 21 3 20.1 3 19V5C3 3.89 3.9 3 5 3H6V.998H8V3H16V.998H18V3H19C20.11 3 21 3.89 21 5L21 12H19V8H5V19Z" }, z = { key: 0 };
+function D(e, t, i, p, U, W) {
+  return a(), c("span", v(e.$attrs, { "aria-hidden": i.title ? null : "true", "aria-label": i.title, class: "material-design-icon calendar-end-icon", role: "img", onClick: t[0] || (t[0] = (V) => e.$emit("click", V)) }), [(a(), c("svg", { fill: i.fillColor, class: "material-design-icon__svg", width: i.size, height: i.size, viewBox: "0 0 24 24" }, [n("path", B, [i.title ? (a(), c("title", z, s(i.title), 1)) : o("", true)])], 8, x))], 16, $);
 }
-const ExpirationIcon = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["render", _sfc_render$2], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora1.7.1/node_modules/vue-material-design-icons/CalendarEnd.vue"]]);
-const _sfc_main$1 = /* @__PURE__ */ defineComponent({
-  __name: "BadgeSmallDiv",
-  props: {
-    tag: { type: String, required: false, default: "span" }
-  },
-  setup(__props, { expose: __expose }) {
-    __expose();
-    const __returned__ = {};
-    Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
-    return __returned__;
-  }
-});
-const _hoisted_1$1 = { key: 0 };
-function _sfc_render$1(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createBlock(resolveDynamicComponent($props.tag), { class: "badge-small" }, {
-    default: withCtx(() => [
-      renderSlot(_ctx.$slots, "icon", {}, void 0, true),
-      _ctx.$slots.default ? (openBlock(), createElementBlock("span", _hoisted_1$1, [
-        renderSlot(_ctx.$slots, "default", {}, void 0, true)
-      ])) : createCommentVNode("v-if", true)
-    ]),
-    _: 3
-    /* FORWARDED */
-  });
-}
-const BadgeSmallDiv = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["render", _sfc_render$1], ["__scopeId", "data-v-a4bfe739"], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora1.7.1/src/components/Base/modules/BadgeSmallDiv.vue"]]);
-const _sfc_main = /* @__PURE__ */ defineComponent({
-  __name: "Reference",
-  props: {
-    richObject: { type: Object, required: false }
-  },
-  setup(__props, { expose: __expose }) {
-    __expose();
-    const expiryClass = __props.richObject?.inquiry?.expiry ? DateTime.fromMillis(__props.richObject.inquiry.expiry * 1e3).diffNow("hours").hours < 36 ? "warning" : "success" : "";
-    const __returned__ = { expiryClass, get NcUserBubble() {
-      return NcUserBubble;
-    }, get AgoraAppIcon() {
-      return AgoraAppIcon;
-    }, ExpirationIcon, BadgeSmallDiv, get t() {
-      return translate;
-    }, get DateTime() {
-      return DateTime;
-    } };
-    Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
-    return __returned__;
-  }
-});
-const _hoisted_1 = {
-  key: 0,
-  class: "agora_widget"
-};
-const _hoisted_2 = { class: "widget_header" };
-const _hoisted_3 = ["href"];
-const _hoisted_4 = { class: "description" };
-const _hoisted_5 = { class: "clamped" };
-const _hoisted_6 = {
-  key: 0,
-  class: "widget_footer"
-};
-function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
-  return $props.richObject ? (openBlock(), createElementBlock("div", _hoisted_1, [
-    createBaseVNode("div", _hoisted_2, [
-      createVNode($setup["AgoraAppIcon"], {
-        size: 20,
-        class: "title-icon"
-      }),
-      createBaseVNode("a", {
-        class: "title",
-        href: $props.richObject.inquiry.url,
-        target: "_blank"
-      }, toDisplayString($props.richObject.inquiry.title), 9, _hoisted_3),
-      $props.richObject.inquiry.participated ? (openBlock(), createBlock($setup["BadgeSmallDiv"], {
-        key: 0,
-        class: "success"
-      }, {
-        default: withCtx(() => [
-          createTextVNode(
-            toDisplayString($setup.t("agora", "participated")),
-            1
-            /* TEXT */
-          )
-        ]),
-        _: 1
-        /* STABLE */
-      })) : $props.richObject.inquiry.expired ? (openBlock(), createBlock($setup["BadgeSmallDiv"], {
-        key: 1,
-        class: "error"
-      }, {
-        default: withCtx(() => [
-          createTextVNode(
-            toDisplayString($setup.t("agora", "closed")),
-            1
-            /* TEXT */
-          )
-        ]),
-        _: 1
-        /* STABLE */
-      })) : $props.richObject.inquiry.expiry > 0 ? (openBlock(), createBlock($setup["BadgeSmallDiv"], {
-        key: 2,
-        class: normalizeClass($setup.expiryClass)
-      }, {
-        icon: withCtx(() => [
-          createVNode($setup["ExpirationIcon"], { size: 16 })
-        ]),
-        default: withCtx(() => [
-          createTextVNode(
-            " " + toDisplayString($setup.DateTime.fromMillis($props.richObject.inquiry.expiry * 1e3).toRelative()),
-            1
-            /* TEXT */
-          )
-        ]),
-        _: 1
-        /* STABLE */
-      }, 8, ["class"])) : createCommentVNode("v-if", true)
-    ]),
-    createBaseVNode("div", _hoisted_4, [
-      createBaseVNode(
-        "span",
-        _hoisted_5,
-        toDisplayString($props.richObject.inquiry.description),
-        1
-        /* TEXT */
-      )
-    ]),
-    $props.richObject.inquiry.ownerId ? (openBlock(), createElementBlock("div", _hoisted_6, [
-      createBaseVNode(
-        "span",
-        null,
-        toDisplayString($setup.t("agora", "By")),
-        1
-        /* TEXT */
-      ),
-      createVNode($setup["NcUserBubble"], {
-        user: $props.richObject.inquiry.ownerId,
-        "display-name": $props.richObject.inquiry.ownerDisplayName
-      }, null, 8, ["user", "display-name"])
-    ])) : createCommentVNode("v-if", true)
-  ])) : createCommentVNode("v-if", true);
-}
-const Reference = /* @__PURE__ */ _export_sfc(_sfc_main, [["render", _sfc_render], ["__scopeId", "data-v-dd2984c0"], ["__file", "/home/vini/Bureau/PERSO/Nextcloud/agora1.7.1/src/views/Reference.vue"]]);
-registerWidget(
-  "agora_reference_widget",
-  async (el, { richObject }) => {
-    const AgoraReference = createApp(Reference, {
-      richObject
-    }).use(pinia).mount(el);
-    return AgoraReference;
-  },
-  (el) => el.classList.add("nc-agora-reference-widget"),
-  {}
-);
+const I = u(N, [["render", D]]), L = { key: 0 }, S = y({ __name: "BadgeSmallDiv", props: { tag: { default: "span" } }, setup(e) {
+  return (t, i) => (a(), d(C(e.tag), { class: "badge-small" }, { default: l(() => [_(t.$slots, "icon", {}, void 0, true), t.$slots.default ? (a(), c("span", L, [_(t.$slots, "default", {}, void 0, true)])) : o("", true)]), _: 3 }));
+} }), g = u(S, [["__scopeId", "data-v-a75cba4f"]]), R = { key: 0, class: "agora_widget" }, A = { class: "widget_header" }, M = ["href"], E = { class: "description" }, T = { class: "clamped" }, Z = { key: 0, class: "widget_footer" }, G = y({ __name: "Reference", props: { richObject: {} }, setup(e) {
+  const t = e.richObject?.inquiry?.expiry ? b.fromMillis(e.richObject.inquiry.expiry * 1e3).diffNow("hours").hours < 36 ? "warning" : "success" : "";
+  return (i, p) => e.richObject ? (a(), c("div", R, [n("div", A, [h(r(H), { size: 20, class: "title-icon" }), n("a", { class: "title", href: e.richObject.inquiry.url, target: "_blank" }, s(e.richObject.inquiry.title), 9, M), e.richObject.inquiry.participated ? (a(), d(g, { key: 0, class: "success" }, { default: l(() => [m(s(r(f)("agora", "participated")), 1)]), _: 1 })) : e.richObject.inquiry.expired ? (a(), d(g, { key: 1, class: "error" }, { default: l(() => [m(s(r(f)("agora", "closed")), 1)]), _: 1 })) : e.richObject.inquiry.expiry > 0 ? (a(), d(g, { key: 2, class: j(r(t)) }, { icon: l(() => [h(I, { size: 16 })]), default: l(() => [m(" " + s(r(b).fromMillis(e.richObject.inquiry.expiry * 1e3).toRelative()), 1)]), _: 1 }, 8, ["class"])) : o("", true)]), n("div", E, [n("span", T, s(e.richObject.inquiry.description), 1)]), e.richObject.inquiry.ownerId ? (a(), c("div", Z, [n("span", null, s(r(f)("agora", "By")), 1), h(r(q), { user: e.richObject.inquiry.ownerId, "display-name": e.richObject.inquiry.ownerDisplayName }, null, 8, ["user", "display-name"])])) : o("", true)])) : o("", true);
+} }), P = u(G, [["__scopeId", "data-v-148b2b73"]]);
+O("agora_reference_widget", async (e, { richObject: t }) => k(P, { richObject: t }).use(w).mount(e), (e) => e.classList.add("nc-agora-reference-widget"), {});
 //# sourceMappingURL=agora-reference.mjs.map

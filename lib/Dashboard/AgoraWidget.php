@@ -78,7 +78,7 @@ class AgoraWidget implements IWidget, IIconWidget
     #[\Override]
     public function getUrl(): ?string
     {
-        return $this->urlGenerator->linkToRouteAbsolute(AppConstants::APP_ID . '.page.indexindex');
+        return $this->urlGenerator->linkToRouteAbsolute(AppConstants::APP_ID . '.page.index');
     }
 
     public function load(): void
