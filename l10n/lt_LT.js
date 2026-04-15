@@ -186,6 +186,7 @@ OC.L10N.register(
     "Forms" : "Anketos",
     "Polls" : "Apklausos",
     "Collectives" : "Kolektyvai",
+    "Title is required" : "Pavadinimas būtinas",
     "Files uploaded successfully" : "Failai sėkmingai įkelti",
     "Failed to create {resource}" : "Nepavyko sukurti {resource}",
     "Remove file" : "Šalinti failą",
