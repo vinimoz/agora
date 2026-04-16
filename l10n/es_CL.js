@@ -56,6 +56,7 @@ OC.L10N.register(
     "Edit" : "Editar",
     "None" : "Ninguno",
     "Retry" : "Reintentar",
+    "Privacy policy" : "Política de privacidad",
     "Login" : "Iniciar sesión",
     "Select an icon" : "Selecciona un ícono",
     "Sort Order" : "Cirterio para ordenar",
