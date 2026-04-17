@@ -153,6 +153,7 @@ OC.L10N.register(
     "Active filters" : "Aktyvūs filtrai",
     "Search" : "Paieška",
     "Archived" : "Archyvuota",
+    "Archived {relativeTime}" : "Archyvuota {relativeTime}",
     "No description provided" : "Nepateikta jokio aprašo",
     "Created on {date}" : "Sukurta {date}",
     "Back" : "Atgal",

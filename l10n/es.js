@@ -108,6 +108,7 @@ OC.L10N.register(
     "You have deleted option {optionTitle}" : "Has eliminado la opción {optionTitle}",
     "{actor} has deleted option {optionTitle}" : "{actor} ha eliminado la opción {optionTitle}",
     "You have restored option {optionTitle} from inquiry {inquiryTitle}" : "Has restaurado la opción {optionTitle} de consulta {inquiryTitle}",
+    "{actor} has restored option {optionTitle} from inquiry {inquiryTitle}" : "{actor}ha restaurado la opción {optionTitle}de consulta {inquiryTitle}",
     "You have restored option {optionTitle}" : "Has restaurado la opción {optionTitle}",
     "{actor} has restored option {optionTitle}" : "{actor} ha restaurado la opción {optionTitle}",
     "You have changed the configuration" : "Has cambiado la configuración",
