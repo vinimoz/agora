@@ -84,6 +84,6 @@ class AgoraWidget implements IWidget, IIconWidget
     public function load(): void
     {
         \OCP\Util::addScript(AppConstants::APP_ID, 'agora-dashboard');
-         \OCP\Util::addStyle(AppConstants::APP_ID, 'dashboard');
+         \OCP\Util::addStyle(AppConstants::APP_ID, '../src/assets/scss/dashboard');
     }
 }

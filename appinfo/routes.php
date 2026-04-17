@@ -7,14 +7,13 @@
 
 return [
 	'routes' => [
+		// Page routes
+		['name' => 'page#index', 'url' => '/', 'verb' => 'GET'],
+		['name' => 'page#list', 'url' => '/list/{category}', 'verb' => 'GET'],
+		['name' => 'page#group', 'url' => '/group/{slug}', 'verb' => 'GET'],
+		['name' => 'page#inquiry', 'url' => '/page/inquiry/{id}', 'verb' => 'GET'],
+		
 		// REST-API calls
 		['name' => 'baseApiV1#preflighted_cors', 'url' => '/api/v1.0/{path}', 'verb' => 'OPTIONS', 'requirements' => ['path' => '.+']],
 	],
-	// 'ocs' => [
-	// 	// CORS Preflight
-	// 	['name' => 'api#preflightedCors', 'url' => $apiBase . '{path}', 'verb' => 'OPTIONS', 'requirements' => [
-	// 		'path' => '.+',
-	// 		'apiVersion' => 'v2'
-	// 	]],
-	// ],
 ];

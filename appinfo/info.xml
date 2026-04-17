@@ -39,7 +39,6 @@
     <website>https://github.com/vinimoz/agora</website>
     <bugs>https://github.com/vinimoz/agora/issues</bugs>
     <repository type="git">https://github.com/vinimoz/agora.git</repository>
-    <screenshots>
     <screenshot>https://raw.githubusercontent.com/vinimoz/agora/main/screenshots/Family.png</screenshot>
     <screenshot>https://raw.githubusercontent.com/vinimoz/agora/main/screenshots/GroupView.png</screenshot>
     <screenshot>https://raw.githubusercontent.com/vinimoz/agora/main/screenshots/GroupView2.png</screenshot>
@@ -48,7 +47,6 @@
     <screenshot>https://raw.githubusercontent.com/vinimoz/agora/main/screenshots/CreateInquiryView.png</screenshot>
     <screenshot>https://raw.githubusercontent.com/vinimoz/agora/main/screenshots/Grid2.png</screenshot>
     <screenshot>https://raw.githubusercontent.com/vinimoz/agora/main/screenshots/ListView.png</screenshot>
-    </screenshots>
     <dependencies>
         <php min-version="8.1"/>
         <nextcloud min-version="31" max-version="33"/>

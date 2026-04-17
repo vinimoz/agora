@@ -45,7 +45,7 @@ class PageController extends Controller
     #[NoAdminRequired]
     #[NoCSRFRequired]
     #[OpenAPI(OpenAPI::SCOPE_IGNORE)]
-    #[FrontpageRoute(verb: 'GET', url: '/', postfix: 'index')]
+    #[FrontpageRoute(verb: 'GET', url: '/', postfix: '')]
     #[FrontpageRoute(verb: 'GET', url: '/list/{category}', postfix: 'list')]
     #[FrontpageRoute(verb: 'GET', url: '/group/{slug}', postfix: 'group')]
     public function index(): TemplateResponse

@@ -233,9 +233,8 @@ const routes: RouteRecordRaw[] = [
 	  },
   },
 ]
-
 const router = createRouter({
-	history: createWebHistory(generateUrl('/apps/agora')),
+    history: createWebHistory(generateUrl('/apps/agora') + '/'),
 	routes,
 	linkActiveClass: 'active',
 })
