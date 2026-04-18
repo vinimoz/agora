@@ -138,6 +138,7 @@ OC.L10N.register(
     "List" : "Список",
     "Not defined" : "Не задана",
     "Just now" : "Только что",
+    "Expiring soon" : "Скоро истекает",
     "Today" : "Сегодня",
     "Yesterday" : "Вчера",
     "No description available" : "Описание отсутствует",
