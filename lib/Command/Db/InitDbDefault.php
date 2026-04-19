@@ -3219,135 +3219,154 @@ class InitDbDefault extends Command
         }
     }
 
-    //Inquiry Group Types
-    private function insertDefaultInquiryGroupTypes(?IOutput $output = null): void
-    {
-        $this->log($output, 'Inserting default inquiry group types...');
+private function insertDefaultInquiryFamilies(?IOutput $output = null): void
+{
+    $this->log($output, 'Inserting default inquiry families...');
 
-        $inserted = [];
+    $inserted = [];
 
-        foreach ($this->inquiryGroupTypes as $inquiryGroupType) {
-            $uniqueKey = $inquiryGroupType['group_type'];
+    foreach ($this->inquiryTypeFamilies as $family) {
+        if (isset($inserted[$family['family_type']])) {
+            $this->log($output, 'Inquiry family already processed: ' . $family['family_type']);
+            continue;
+        }
 
-            if (isset($inserted[$uniqueKey])) {
-                $this->log($output, 'Inquiry group type already processed: ' . $inquiryGroupType['group_type']);
-                continue;
-            }
+        $query = $this->connection->prepare(
+            'SELECT `id` FROM `*PREFIX*' . InquiryFamily::TABLE . '`
+            WHERE `family_type` = ?'
+        );
+        $cursor = $query->execute([$family['family_type']]);
+        $row = $cursor->fetch();
 
-            $tableName = '*PREFIX*' . InquiryGroupType::TABLE;
+        if ($row !== false) {
+               $this->log($output, 'Inquiry family already exists in DB: ' . $family['family_type']);
+               $inserted[$family['family_type']] = (int) $row['id'];
+               continue;
+        }
 
-            $query = $this->connection->prepare(
-                'SELECT `id` FROM `' . $tableName . '`
-            WHERE `group_type` = ?'
-            );
+        $insert = $this->connection->prepare(
+            'INSERT INTO `*PREFIX*' . InquiryFamily::TABLE . '`
+            (`family_type`, `label`, `description`, `icon`, `ui`, `rules`, `features`, `actions`, `sort_order`, `created`)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+        );
 
-            $cursor = $query->execute([$inquiryGroupType['group_type']]);
-            $row = $cursor->fetch();
+        try {
+            $created = !empty($family['created']) ? (int)$family['created'] : time();
 
-            if ($row !== false) {
-                $this->log($output, 'Inquiry group type already exists in DB: ' . $inquiryGroupType['group_type']);
-                $inserted[$uniqueKey] = (int) $row['id'];
-                continue;
-            }
+            // Default values for missing fields
+            $ui = !empty($family['ui']) ? json_encode($family['ui']) : '{}';
+            $rules = !empty($family['rules']) ? json_encode($family['rules']) : '{}';
+            $features = !empty($family['features']) ? json_encode($family['features']) : '[]';
+            $actions = !empty($family['actions']) ? json_encode($family['actions']) : '[]';
 
-            $insert = $this->connection->prepare(
-                'INSERT INTO `' . $tableName . '`
-            (`group_type`, `family`, `icon`, `label`, `description`, `fields`, `allowed_inquiry_types`, `allowed_response`, `is_root`, `sort_order`, `created`)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
-            );
-
-            $icon = !empty($inquiryGroupType['icon']) ? $inquiryGroupType['icon'] : '';
-            $family = !empty($inquiryGroupType['family']) ? $inquiryGroupType['family'] : '';
-            $description = !empty($inquiryGroupType['description']) ? $inquiryGroupType['description'] : '';
-            $fields = !empty($inquiryGroupType['fields']) ? json_encode($inquiryGroupType['fields']) : '';
-            $allowedInquiryTypes = !empty($inquiryGroupType['allowed_inquiry_types']) ? json_encode($inquiryGroupType['allowed_inquiry_types']) : '';
-            $allowedResponse = !empty($inquiryGroupType['allowed_response']) ? json_encode($inquiryGroupType['allowed_response']) : '';
-            $isRoot = !empty($inquiryGroupType['is_root']) ? 1 : 0;
-            $sortOrder = isset($inquiryGroupType['sort_order']) ? $inquiryGroupType['sort_order'] : 0;
-
-            $created = !empty($inquiryGroupType['created']) ? (int)$inquiryGroupType['created'] : time();
-
-            try {
-                $insert->execute([
-                    $inquiryGroupType['group_type'],
-                    $family,
-                    $icon,
-                    $inquiryGroupType['label'],
-                    $description,
-                    $fields,
-                    $allowedInquiryTypes,
-                    $allowedResponse,
-                    $isRoot,
-                    $sortOrder,
+            $insert->execute(
+                [
+                    $family['family_type'],
+                    $family['label'],
+                    $family['description'] ?? '',
+                    $family['icon'] ?? '',
+                    $ui,
+                    $rules,
+                    $features,
+                    $actions,
+                    $family['sort_order'] ?? 0,
                     $created,
-                ]);
-
-                $id = (int) $this->connection->lastInsertId($tableName);
-                $inserted[$uniqueKey] = $id;
-
-                $this->log($output, 'Inserted inquiry group type: ' . $inquiryGroupType['group_type']);
-            } catch (\Exception $e) {
-                $this->log($output, 'ERROR inserting inquiry group type ' . $inquiryGroupType['group_type'] . ': ' . $e->getMessage());
-            }
-        }
-    }
-
-    //Families
-    private function insertDefaultInquiryFamilies(?IOutput $output = null): void
-    {
-        $this->log($output, 'Inserting default inquiry families...');
-
-        $inserted = [];
-
-        foreach ($this->inquiryTypeFamilies as $family) {
-            if (isset($inserted[$family['family_type']])) {
-                $this->log($output, 'Inquiry family already processed: ' . $family['family_type']);
-                continue;
-            }
-
-            $query = $this->connection->prepare(
-                'SELECT `id` FROM `*PREFIX*' . InquiryFamily::TABLE . '`
-                WHERE `family_type` = ?'
-            );
-            $cursor = $query->execute([$family['family_type']]);
-            $row = $cursor->fetch();
-
-            if ($row !== false) {
-                   $this->log($output, 'Inquiry family already exists in DB: ' . $family['family_type']);
-                   $inserted[$family['family_type']] = (int) $row['id'];
-                   continue;
-            }
-
-            $insert = $this->connection->prepare(
-                'INSERT INTO `*PREFIX*' . InquiryFamily::TABLE . '`
-                (`family_type`, `label`, `description`, `icon`, `sort_order`, `created`)
-                VALUES (?, ?, ?, ?, ?, ?)'
+                ]
             );
 
-            try {
-                     $created = !empty($family['created']) ? (int)$family['created'] : time();
+            $id = (int) $this->connection->lastInsertId('*PREFIX*' . InquiryFamily::TABLE);
+            $inserted[$family['family_type']] = $id;
 
-                        $insert->execute(
-                            [
-                            $family['family_type'],
-                            $family['label'],
-                            $family['description'] ?? '',
-                            $family['icon'] ?? '',
-                            $family['sort_order'] ?? 0,
-                            $created,
-                            ]
-                        );
-
-                        $id = (int) $this->connection->lastInsertId('*PREFIX*' . InquiryFamily::TABLE);
-                        $inserted[$family['family_type']] = $id;
-
-                        $this->log($output, 'Inserted inquiry family: ' . $family['family_type']);
-            } catch (\Exception $e) {
-                  $this->log($output, 'ERROR inserting inquiry family ' . $family['family_type'] . ': ' . $e->getMessage());
-            }
+            $this->log($output, 'Inserted inquiry family: ' . $family['family_type']);
+        } catch (\Exception $e) {
+            $this->log($output, 'ERROR inserting inquiry family ' . $family['family_type'] . ': ' . $e->getMessage());
         }
     }
+}
 
+private function insertDefaultInquiryGroupTypes(?IOutput $output = null): void
+{
+    $this->log($output, 'Inserting default inquiry group types...');
+
+    $inserted = [];
+
+    foreach ($this->inquiryGroupTypes as $inquiryGroupType) {
+        $uniqueKey = $inquiryGroupType['group_type'];
+
+        if (isset($inserted[$uniqueKey])) {
+            $this->log($output, 'Inquiry group type already processed: ' . $inquiryGroupType['group_type']);
+            continue;
+        }
+
+        $tableName = '*PREFIX*' . InquiryGroupType::TABLE;
+
+        $query = $this->connection->prepare(
+            'SELECT `id` FROM `' . $tableName . '`
+            WHERE `group_type` = ?'
+        );
+
+        $cursor = $query->execute([$inquiryGroupType['group_type']]);
+        $row = $cursor->fetch();
+
+        if ($row !== false) {
+            $this->log($output, 'Inquiry group type already exists in DB: ' . $inquiryGroupType['group_type']);
+            $inserted[$uniqueKey] = (int) $row['id'];
+            continue;
+        }
+
+        $insert = $this->connection->prepare(
+            'INSERT INTO `' . $tableName . '`
+            (`group_type`, `family`, `icon`, `label`, `description`, `fields`, `allowed_inquiry_types`, `allowed_response`, `ui`, `rules`, `features`, `actions`, `is_root`, `sort_order`, `created`)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+        );
+
+        $icon = !empty($inquiryGroupType['icon']) ? $inquiryGroupType['icon'] : '';
+        $family = !empty($inquiryGroupType['family']) ? $inquiryGroupType['family'] : '';
+        $description = !empty($inquiryGroupType['description']) ? $inquiryGroupType['description'] : '';
+        $fields = !empty($inquiryGroupType['fields']) ? json_encode($inquiryGroupType['fields']) : '';
+        $allowedInquiryTypes = !empty($inquiryGroupType['allowed_inquiry_types']) ? json_encode($inquiryGroupType['allowed_inquiry_types']) : '';
+        $allowedResponse = !empty($inquiryGroupType['allowed_response']) ? json_encode($inquiryGroupType['allowed_response']) : '';
+
+        // Default values for missing fields
+        $ui = !empty($inquiryGroupType['ui']) ? json_encode($inquiryGroupType['ui']) : '{}';
+        $rules = !empty($inquiryGroupType['rules']) ? json_encode($inquiryGroupType['rules']) : '{}';
+        $features = !empty($inquiryGroupType['features']) ? json_encode($inquiryGroupType['features']) : '[]';
+        $actions = !empty($inquiryGroupType['actions']) ? json_encode($inquiryGroupType['actions']) : '[]';
+
+        $isRoot = !empty($inquiryGroupType['is_root']) ? 1 : 0;
+        $sortOrder = isset($inquiryGroupType['sort_order']) ? $inquiryGroupType['sort_order'] : 0;
+
+        $created = !empty($inquiryGroupType['created']) ? (int)$inquiryGroupType['created'] : time();
+
+        try {
+            $insert->execute([
+                $inquiryGroupType['group_type'],
+                $family,
+                $icon,
+                $inquiryGroupType['label'],
+                $description,
+                $fields,
+                $allowedInquiryTypes,
+                $allowedResponse,
+                $ui,
+                $rules,
+                $features,
+                $actions,
+                $isRoot,
+                $sortOrder,
+                $created,
+            ]);
+
+            $id = (int) $this->connection->lastInsertId($tableName);
+            $inserted[$uniqueKey] = $id;
+
+            $this->log($output, 'Inserted inquiry group type: ' . $inquiryGroupType['group_type']);
+        } catch (\Exception $e) {
+            $this->log($output, 'ERROR inserting inquiry group type ' . $inquiryGroupType['group_type'] . ': ' . $e->getMessage());
+        }
+    }
+}
+    
 private function insertDefaultOptionFamilies(?IOutput $output = null): void
 {
     $this->log($output, 'Inserting default option families...');
