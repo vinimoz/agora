@@ -207,6 +207,7 @@ OC.L10N.register(
     "Never" : "Ei koskaan",
     "Change" : "Muuta",
     "Expiration" : "Vanheneminen",
+    "Saving changes …" : "Tallennetaan muutoksia …",
     "Changes saved" : "Muutokset tallennettu",
     "Saving …" : "Tallennetaan …",
     "Poll" : "Kysely",
