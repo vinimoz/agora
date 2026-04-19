@@ -313,7 +313,7 @@ abstract class TableSchema
             'agora_uniq_supports' => ['columns' => ['inquiry_id', 'option_id', 'user_id']],
         ],
         Preferences::TABLE => [
-            'agora_uniq_preferences' => ['columns' => ['user_id']],
+        'agora_uniq_preferences' => ['columns' => ['user_id']], // Already correct, but verify
         ],
         Watch::TABLE => [
             'agora_uniq_watch' => ['columns' => ['inquiry_id', 'table', 'session_id']],
@@ -342,11 +342,8 @@ abstract class TableSchema
      * obsolete migration entries, which can be deleted
      */
     public const GONE_MIGRATIONS = [
-        '20250715120000',
-        '01050020251027120000',
-        '01060020251115120000',
-        '02070020260102120000',
-
+     '01050020251027120000',
+     '01060020251115120000',
     ];
 
     /**

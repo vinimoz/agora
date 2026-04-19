@@ -2,204 +2,92 @@
 
 declare(strict_types=1);
 
-/**
- * SPDX-FileCopyrightText: 2021 Nextcloud contributors
- * SPDX-License-Identifier: AGPL-3.0-or-later
- */
-
 namespace OCA\Agora\Command\Db;
 
-use Doctrine\DBAL\Schema\Schema;
-use OCA\Agora\Db\TableManager;
-use OCA\Agora\Db\IndexManager;
 use OCA\Agora\Command\Command;
+use OCA\Agora\Db\IndexManager;
+use OCA\Agora\Db\TableManager;
+use OCA\Agora\Migration\Version20250715120000;
 use OCP\IDBConnection;
+use OCP\Migration\IOutput;
 
-/**
- * @psalm-api
- */
 class Rebuild extends Command
 {
     protected string $name = parent::NAME_PREFIX . 'db:rebuild';
-    protected string $description = 'Rebuilds inquiry\'s table structure';
+    protected string $description = 'Rebuilds Agora\'s table structure from the base migration';
     protected array $operationHints = [
-    'All agora tables will get checked against the current schema.',
-    'NO data migration will be executed, so make sure you have a backup of your database.',
-    '',
-    '*****************************',
-    '**    Please understand    **',
-    '*****************************',
-    'The process will also recreate all indices and foreign key constraints.',
-    'This can lead to a database performance impact on the app after the recreation is done.',
+        'WARNING: This drops and recreates all Agora tables!',
+        'Make sure you have a backup of your database before proceeding.',
     ];
 
     public function __construct(
         private TableManager $tableManager,
         private IndexManager $indexManager,
         private IDBConnection $connection,
-        private Schema $schema,
     ) {
         parent::__construct();
     }
 
     protected function runCommands(): int
     {
-        $this->schema = $this->connection->createSchema();
-        $this->indexManager->setSchema($this->schema);
-        $this->tableManager->setSchema($this->schema);
+        $this->printComment('Step 1. Removing foreign key constraints...');
+        $this->removeForeignKeyConstraints();
 
-        $this->printComment('Step 1. Remove all indices and foreign key constraints');
-        $this->deleteForeignKeyConstraints();
-        $this->deleteGenericIndices();
-        $this->deleteUniqueIndices();
-        $this->deleteNamedIndices();
+        $this->printComment('Step 2. Purging all Agora tables...');
+        $messages = $this->tableManager->purgeTables();
+        $this->printInfo($messages, '   ');
 
-        $this->printComment('Step 2. Remove all orphaned tables and columns');
-        $this->removeObsoleteTables();
-        $this->removeObsoleteColumns();
+        $this->printComment('Step 3. Recreating tables from base migration...');
+        $this->recreateTablesFromBaseMigration();
 
-        $this->connection->migrateToSchema($this->schema);
+        $this->printComment('Step 4. Recreating indices and constraints...');
+        $this->recreateIndicesAndConstraints();
 
-        $this->printComment('Step 3. Create or update tables to current shema');
-        $this->createOrUpdateSchema();
-
-        $this->connection->migrateToSchema($this->schema);
-
-        $this->printComment('Step 4. set hashes for supports and options');
-        $this->migrateOptionsToHash();
-
-        $this->printComment('Step 5. Remove invalid records (orphaned and duplicates)');
-        $this->cleanTables();
-
-        $this->printComment('Step 6. Recreate indices and foreign key constraints');
-        $this->addForeignKeyConstraints();
-        $this->addIndices();
-
-        $this->connection->migrateToSchema($this->schema);
+        $this->printInfo('✅ Database schema rebuilt successfully.');
+        $this->printInfo('Run \'occ agora:db:init-default\' to restore default configuration.');
 
         return 0;
     }
 
-    /**
-     * add an on delete fk contraint to all tables referencing the main agora table
-     */
-    private function addForeignKeyConstraints(): void
+    private function removeForeignKeyConstraints(): void
     {
-        $this->printComment(' - Add foreign key constraints');
-        $messages = $this->indexManager->createForeignKeyConstraints();
-        $this->printInfo($messages, '   ');
+        $schema = $this->connection->createSchema();
+        $this->indexManager->setSchema($schema);
+        $this->indexManager->removeAllForeignKeyConstraints();
+        $this->connection->migrateToSchema($schema);
     }
 
-    /**
-     * Create index for $table
-     */
-    private function addIndices(): void
+    private function recreateTablesFromBaseMigration(): void
     {
-        $this->printComment(' - Add indices');
-        $messages = $this->indexManager->createIndices();
-        $this->printInfo($messages, '   ');
+        $output = new class implements IOutput {
+            public function debug($message) {}
+            public function info($message) {}
+            public function warning($message) {}
+            public function startProgress($max = 0) {}
+            public function advance($step = 1, $description = '') {}
+            public function finishProgress() {}
+        };
+
+        $migration = new Version20250715120000();
+        $schema = $this->connection->createSchema();
+        
+        $schemaClosure = function() use ($schema) {
+            return $schema;
+        };
+        
+        $migration->changeSchema($output, $schemaClosure, []);
+        $this->connection->migrateToSchema($schema);
+        
+        $this->printInfo('   Base migration applied successfully');
     }
 
-    /**
-     * Iterate over tables and make sure, the are created or updated
-     * according to the schema
-     */
-    private function createOrUpdateSchema(): void
+    private function recreateIndicesAndConstraints(): void
     {
-        $this->printComment(' - Set db structure');
-        $messages = $this->tableManager->createTables();
-        $this->printInfo($messages, '   ');
-    }
-
-    /**
-     * Add or update hash for supports and options
-     */
-    private function migrateOptionsToHash(): void
-    {
-        $this->printComment(' - Add or update hashes');
-        $messages = $this->tableManager->migrateOptionsToHash();
-        $this->printInfo($messages, '   ');
-    }
-
-    private function removeObsoleteColumns(): void
-    {
-        $this->printComment(' - Drop orphaned columns');
-        $messages = $this->tableManager->removeObsoleteColumns();
-        $this->printInfo($messages, '   ');
-    }
-
-    /**
-     * Remove obsolete tables if they still exist
-     */
-    private function removeObsoleteTables(): void
-    {
-        $this->printComment(' - Drop orphaned tables');
-        $messages = $this->tableManager->removeObsoleteTables();
-        $this->printInfo($messages, '   ');
-    }
-
-    /**
-     * Initialize last inquiry interactions timestamps
-     */
-    public function resetLastInteraction(): void
-    {
-        $messages = $this->tableManager->resetLastInteraction();
-        $this->printInfo($messages, '   ');
-    }
-
-    /**
-     * Remove obsolete tables if they still exist
-     */
-    private function cleanTables(): void
-    {
-        $this->printComment(' - Remove orphaned records');
-        $orphaned = $this->tableManager->removeOrphaned();
-        foreach ($orphaned as $table => $count) {
-            $this->printInfo("    Removed $count orphaned records from $table");
-        }
-
-        $this->printComment(' - Remove duplicates');
-        $messages = $this->tableManager->deleteAllDuplicates();
-        $this->printInfo($messages, '   ');
-    }
-
-    /**
-     * remove on delete fk constraints from all tables referencing the main agora table
-     */
-    private function deleteForeignKeyConstraints(): void
-    {
-        $this->printComment(' - Remove foreign key constraints');
-        $messages = $this->indexManager->removeAllForeignKeyConstraints();
-        $this->printInfo($messages, '   ');
-    }
-
-    /**
-     * remove all generic indices
-     */
-    private function deleteGenericIndices(): void
-    {
-        $this->printComment(' - Remove generic indices');
-        $messages = $this->indexManager->removeAllGenericIndices();
-        $this->printInfo($messages, '   ');
-    }
-
-    /**
-     * remove all unique indices
-     */
-    private function deleteUniqueIndices(): void
-    {
-        $this->printComment(' - Remove unique indices');
-        $messages = $this->indexManager->removeAllUniqueIndices();
-        $this->printInfo($messages, '   ');
-    }
-
-    /**
-     * remove all named indices
-     */
-    private function deleteNamedIndices(): void
-    {
-        $this->printComment(' - Remove common indices');
-        $messages = $this->indexManager->removeNamedIndices();
-        $this->printInfo($messages, ' - ');
+        $schema = $this->connection->createSchema();
+        $this->indexManager->setSchema($schema);
+        $this->indexManager->createIndices();
+        $this->indexManager->createForeignKeyConstraints();
+        $this->indexManager->createUniqueIndices();
+        $this->connection->migrateToSchema($schema);
     }
 }

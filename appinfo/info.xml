@@ -56,12 +56,7 @@
         <job>OCA\Agora\Cron\AutoReminderCron</job>
     </background-jobs>
     <repair-steps>
-        <pre-migration>
-            <step>OCA\Agora\Migration\RepairSteps\RemoveObsoleteMigrations</step>
-        </pre-migration>
         <post-migration>
-            <step>OCA\Agora\Migration\RepairSteps\DropOrphanedTables</step>
-            <step>OCA\Agora\Migration\RepairSteps\DropOrphanedColumns</step>
             <step>OCA\Agora\Migration\RepairSteps\DeleteInvalidRecords</step>
             <step>OCA\Agora\Migration\RepairSteps\UpdateHashes</step>
             <step>OCA\Agora\Migration\RepairSteps\CreateIndices</step>
@@ -78,7 +73,6 @@
         <command>OCA\Agora\Command\Db\RemoveIndices</command>
         <command>OCA\Agora\Command\Db\Rebuild</command>
         <command>OCA\Agora\Command\Db\CreateIndices</command>
-        <command>OCA\Agora\Command\Db\CleanMigrations</command>
         <command>OCA\Agora\Command\Db\ResetWatch</command>
         <command>OCA\Agora\Command\Db\InitDbDefault</command>
         <command>OCA\Agora\Command\Inquiry\TransferOwnership</command>

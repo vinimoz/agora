@@ -256,6 +256,8 @@ class IndexManager extends DbManager
         return $messages;
     }
 
+
+
     /**
      * remove all UNIQUE indices from $table
      *
