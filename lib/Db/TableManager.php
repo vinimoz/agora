@@ -829,4 +829,192 @@ class TableManager extends DbManager
     {
         return [$this->setLastInteraction()];
     }
+
+
+    /**
+     * Update hashes for supports and options
+     *
+     * @return string[] Messages as array
+     */
+    public function updateHashes(): array
+    {
+        $messages = [];
+
+        try {
+            $messages[] = 'Starting hash updates...';
+
+            // Update support hashes
+            $supportCount = $this->updateSupportHashes();
+            if ($supportCount > 0) {
+                $messages[] = "Updated hashes for {$supportCount} support entries";
+            }
+
+            // Update option hashes if needed
+            $optionCount = $this->updateOptionHashes();
+            if ($optionCount > 0) {
+                $messages[] = "Updated hashes for {$optionCount} option entries";
+            }
+
+            if ($supportCount === 0 && $optionCount === 0) {
+                $messages[] = 'All hashes are already up to date';
+            }
+
+            $messages[] = 'Hash updates completed successfully';
+        } catch (\Exception $e) {
+            $messages[] = 'Error during hash updates: ' . $e->getMessage();
+            $this->logger->error('Hash update failed', ['exception' => $e]);
+        }
+
+        return $messages;
+    }
+
+    /**
+     * Update support hashes for entries that don't have one
+     */
+    private function updateSupportHashes(): int
+    {
+        $updatedCount = 0;
+        $tableName = $this->dbPrefix . 'agora_support';
+
+        if (!$this->connection->tableExists($tableName)) {
+            return 0;
+        }
+
+        try {
+            // Get all supports that need hash updates
+            $qb = $this->connection->getQueryBuilder();
+            $qb->select('id', 'user_id', 'option_id', 'inquiry_id')
+                ->from('agora_support')
+                ->where($qb->expr()->orX(
+                    $qb->expr()->isNull('support_hash'),
+                    $qb->expr()->eq('support_hash', $qb->expr()->literal(''))
+                ));
+
+            $supports = $qb->executeQuery()->fetchAll();
+
+            foreach ($supports as $support) {
+                $newHash = $this->generateSupportHash(
+                    $support['user_id'],
+                    (int)$support['option_id'],
+                    (int)$support['inquiry_id']
+                );
+
+                $update = $this->connection->getQueryBuilder();
+                $update->update('agora_support')
+                    ->set('support_hash', $update->createNamedParameter($newHash))
+                    ->where($update->expr()->eq('id', $update->createNamedParameter($support['id'])))
+                    ->executeStatement();
+
+                $updatedCount++;
+            }
+        } catch (\Exception $e) {
+            $this->logger->error('Failed to update support hashes: ' . $e->getMessage());
+        }
+
+        return $updatedCount;
+    }
+
+    /**
+     * Update option hashes for entries that don't have one
+     */
+    private function updateOptionHashes(): int
+    {
+        $updatedCount = 0;
+        $tableName = $this->dbPrefix . 'agora_options';
+
+        if (!$this->connection->tableExists($tableName)) {
+            return 0;
+        }
+
+        // Check if option_hash column exists
+        $schemaManager = $this->connection->createSchemaManager();
+        $columns = $schemaManager->listTableColumns($tableName);
+        $hasOptionHash = false;
+        foreach ($columns as $column) {
+            if ($column->getName() === 'option_hash') {
+                $hasOptionHash = true;
+                break;
+            }
+        }
+
+        if (!$hasOptionHash) {
+            return 0;
+        }
+
+        try {
+            $qb = $this->connection->getQueryBuilder();
+            $qb->select('id', 'text', 'parent_id')
+                ->from('agora_options')
+                ->where($qb->expr()->orX(
+                    $qb->expr()->isNull('option_hash'),
+                    $qb->expr()->eq('option_hash', $qb->expr()->literal(''))
+                ));
+
+            $options = $qb->executeQuery()->fetchAll();
+
+            foreach ($options as $option) {
+                $newHash = $this->generateOptionHash(
+                    $option['text'] ?? '',
+                    (int)$option['parent_id']
+                );
+
+                $update = $this->connection->getQueryBuilder();
+                $update->update('agora_options')
+                    ->set('option_hash', $update->createNamedParameter($newHash))
+                    ->where($update->expr()->eq('id', $update->createNamedParameter($option['id'])))
+                    ->executeStatement();
+
+                $updatedCount++;
+            }
+        } catch (\Exception $e) {
+            $this->logger->error('Failed to update option hashes: ' . $e->getMessage());
+        }
+
+        return $updatedCount;
+    }
+
+    /**
+     * Generate support hash
+     */
+    private function generateSupportHash(string $userId, int $optionId, int $inquiryId): string
+    {
+        $data = implode('|', [
+            $userId,
+            (string)$optionId,
+            (string)$inquiryId,
+            $this->generateRandomString()
+        ]);
+        return hash('sha256', $data);
+    }
+
+    /**
+     * Generate option hash
+     */
+    private function generateOptionHash(string $text, int $inquiryId): string
+    {
+        $normalizedText = trim(mb_strtolower($text));
+        $data = $normalizedText . '|' . $inquiryId;
+        return hash('sha256', $data);
+    }
+
+    /**
+     * Check if hash looks valid
+     */
+    private function isValidHash(string $hash): bool
+    {
+        return preg_match('/^[a-f0-9]{64}$/', $hash) === 1;
+    }
+
+    /**
+     * Generate random string for hash salting
+     */
+    private function generateRandomString(int $length = 16): string
+    {
+        $chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $result = '';
+        for ($i = 0; $i < $length; $i++) {
+            $result .= $chars[random_int(0, strlen($chars) - 1)];
+        }
+        return $result;
+    }
 }
