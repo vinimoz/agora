@@ -5,13 +5,19 @@
 
 # Changelog
 All notable changes to this project will be documented in this file.
-# [1.7.1] - 2026-04-06
+# [1.7.1] - 2026-04-20
 New Features:
-- Options add to vote, Kanban, Timeline from others family.
-- New vote family option of inquiry and template for ( vote, tree, paired, Cards .. ) ( some parts experimental )
+- Options add to vote, Kanban, Timeline from other options family.
+- Actions are now displayed, with NcActions.
+- New vote family option of inquiry and template for ( vote, tree, paired, Cards .. ) ( beta state  )
 
 Fix:
 - Create/View switch
+- First attempt to fix Install/upate process rebuild. 1 - Polls index issues; 2 - Postgresql foreign keys...; 3 -  Json ui, rules, features, format
+- Remove and adjust info.xml
+- Dashboard css file.
+- indexindex page change to page.index
+
 
 # [1.7.0] - 2026-03-05
 New Features:
