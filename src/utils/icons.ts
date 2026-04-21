@@ -426,6 +426,7 @@ export const InquiryGeneralIcons: Record<string, Component> = {
   Presentation: makeIconComponent(Presentation, '#5D4037'),
   Settings: makeIconComponent(Cog, '#455A64'),
   Close: makeIconComponent(Close, '#F44336'),
+  Vote: makeIconComponent(Vote, '#1565C0'),
   Download: makeIconComponent(Download, '#2196F3'),
   Upload: makeIconComponent(Upload, '#4CAF50'),
   Refresh: makeIconComponent(Refresh, '#FF9800'),
