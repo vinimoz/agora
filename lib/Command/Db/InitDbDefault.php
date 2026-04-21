@@ -79,6 +79,14 @@ class InitDbDefault extends Command
             'created' => '',
         ],
         [
+            'family_type' => 'governance',
+            'label' => 'Governance',
+            'description' => 'Citizen oversight, accountability, audits and performance evaluation of public entities.',
+            'icon' => 'ShieldAccount',
+            'sort_order' => 8,
+            'created' => '',
+        ],
+        [
             'family_type' => 'official',
             'label' => 'Official',
             'description' => 'Responses and contributions from official entities such as city hall, experts, or commissions.',
@@ -98,6 +106,9 @@ class InitDbDefault extends Command
             'icon' => 'Discussion',
             'ui' => [
                 'layout' => 'paired', 
+                'layout_style' => 'vertical',
+
+                'allowed_layout' => 'paired',
                 'show_metrics' => true, 
                 'thread_visualization' => 'tree', 
             ],
@@ -126,6 +137,7 @@ class InitDbDefault extends Command
             'icon' => 'Settings',
             'ui' => [
                 'layout' => 'tree',
+                'allowed_layout' => 'tree',
                 'show_toc' => true,
                 'collapsible_sections' => true,
                 'breadcrumb_navigation' => true,
@@ -141,11 +153,11 @@ class InitDbDefault extends Command
                 'commentary',
             ],
             'actions' => [
-                ['key' => 'import_document', 'label' => 'Import Document', 'icon' => 'Upload'],
-                ['key' => 'export_pdf', 'label' => 'Export as PDF', 'icon' => 'FilePdf'],
-                ['key' => 'export_markdown', 'label' => 'Export as Markdown', 'icon' => 'Markdown'],
-                ['key' => 'print_view', 'label' => 'Print View', 'icon' => 'Printer'],
-                ['key' => 'compare_versions', 'label' => 'Compare Versions', 'icon' => 'Diff'],
+                ['key' => 'import_document', 'label' => 'Import Document', 'icon' => 'Upload' , 'modal' => true],
+                ['key' => 'export_pdf', 'label' => 'Export as PDF', 'icon' => 'FilePdf' , 'modal' => true],
+                ['key' => 'export_markdown', 'label' => 'Export as Markdown', 'icon' => 'Markdown' , 'modal' => true],
+                ['key' => 'print_view', 'label' => 'Print View', 'icon' => 'Printer' , 'modal' => true],
+                ['key' => 'compare_versions', 'label' => 'Compare Versions', 'icon' => 'Diff' , 'modal' => true],
             ],
             'sort_order' => 2,
             'created' => '',
@@ -211,6 +223,210 @@ class InitDbDefault extends Command
             'created' => '',
         ],
         [
+            'family_type' => 'vote',
+            'label' => 'Vote',
+            'description' => 'Voting and decision-making system',
+            'icon' => 'Vote',
+
+            'ui' => [
+                'layout' => ['type' => 'string', 'default' => 'vote'],
+
+                'show_results' => ['type' => 'boolean', 'default' => true],
+                'show_progress' => ['type' => 'boolean', 'default' => true],
+                'show_ranking' => ['type' => 'boolean', 'default' => true],
+                'allow_comparison' => ['type' => 'boolean', 'default' => true],
+
+                'engine_selector' => ['type' => 'boolean', 'default' => true],
+                'config_panel' => ['type' => 'boolean', 'default' => true],
+                'phase_indicator' => ['type' => 'boolean', 'default' => false],
+                'mode_selector' => ['type' => 'boolean', 'default' => false],
+            ],
+
+            'rules' => [
+                'require_candidates' => ['type' => 'boolean', 'default' => true],
+                'allow_multiple_votes' => ['type' => 'boolean', 'default' => false],
+                'vote_limit_per_user' => ['type' => 'number', 'default' => 1],
+
+                'require_quorum' => ['type' => 'boolean', 'default' => false],
+                'auto_close_on_expire' => ['type' => 'boolean', 'default' => true],
+
+                'one_engine_per_phase' => ['type' => 'boolean', 'default' => true],
+                'immutable_after_close' => ['type' => 'boolean', 'default' => true],
+            ],
+
+            'features' => [
+
+                'engines' => [
+
+                    'binary' => [
+                        'label' => 'Yes / No',
+                        'input' => 'binary',
+                        'behavior' => 'single',
+                        'constraints' => [
+                            'min_candidates' => ['type' => 'number', 'default' => 1],
+                            'max_candidates' => ['type' => 'number', 'default' => 1],
+                        ],
+                        'config_schema' => [],
+                    ],
+
+                    'ternary' => [
+                        'label' => 'For / Abstain / Against',
+                        'input' => 'ternary',
+                        'behavior' => 'single',
+                        'constraints' => [
+                            'min_candidates' => ['type' => 'number', 'default' => 1],
+                            'max_candidates' => ['type' => 'number', 'default' => 1],
+                        ],
+                        'config_schema' => [],
+                    ],
+
+                    'reaction' => [
+                        'label' => 'Reactions',
+                        'input' => 'reaction',
+                        'behavior' => 'single',
+                        'constraints' => [
+                            'min_candidates' => ['type' => 'number', 'default' => 1],
+                            'max_candidates' => ['type' => 'number', 'default' => 1],
+                        ],
+                        'config_schema' => [
+                            'allowed_reactions' => [
+                                'type' => 'array',
+                                'default' => ['👍','👎','❤️','😂','😢']
+                            ]
+                        ],
+                    ],
+
+                    'score' => [
+                        'label' => 'Score',
+                        'input' => 'score',
+                        'behavior' => 'single',
+                        'constraints' => [
+                            'min_candidates' => ['type' => 'number', 'default' => 1],
+                            'max_candidates' => ['type' => 'number', 'default' => 1],
+                        ],
+                        'config_schema' => [
+                            'min' => ['type' => 'number', 'default' => 0],
+                            'max' => ['type' => 'number', 'default' => 10],
+                        ],
+                    ],
+
+                    'approval' => [
+                        'label' => 'Approval',
+                        'input' => 'approval',
+                        'behavior' => 'multi',
+                        'constraints' => [
+                            'min_candidates' => ['type' => 'number', 'default' => 2],
+                        ],
+                        'config_schema' => [
+                            'min_choices' => ['type' => 'number', 'default' => 1],
+                            'max_choices' => ['type' => 'number|null', 'default' => null],
+                        ],
+                    ],
+
+                    'ranked' => [
+                        'label' => 'Ranked Choice',
+                        'input' => 'ranking',
+                        'behavior' => 'multi',
+                        'constraints' => [
+                            'min_candidates' => ['type' => 'number', 'default' => 2],
+                        ],
+                        'config_schema' => [
+                            'max_rank' => ['type' => 'number|null', 'default' => null],
+                        ],
+                    ],
+
+                    'borda' => [
+                        'label' => 'Borda',
+                        'input' => 'ranking',
+                        'behavior' => 'multi',
+                        'constraints' => [
+                            'min_candidates' => ['type' => 'number', 'default' => 2],
+                        ],
+                        'config_schema' => [],
+                    ],
+
+                    'condorcet' => [
+                        'label' => 'Condorcet',
+                        'input' => 'ranking',
+                        'behavior' => 'multi',
+                        'constraints' => [
+                            'min_candidates' => ['type' => 'number', 'default' => 2],
+                        ],
+                        'config_schema' => [
+                            'method' => [
+                                'type' => 'string',
+                                'default' => 'schulze'
+                            ]
+                        ],
+                    ],
+
+                    'majority_judgment' => [
+                        'label' => 'Majority Judgment',
+                        'input' => 'grade',
+                        'behavior' => 'multi',
+                        'constraints' => [
+                            'min_candidates' => ['type' => 'number', 'default' => 2],
+                        ],
+                        'config_schema' => [
+                            'grades' => [
+                                'type' => 'array',
+                                'default' => ['Reject','Poor','Fair','Good','Excellent']
+                            ]
+                        ],
+                    ],
+
+                    'token_weighted' => [
+                        'label' => 'Token / Weight',
+                        'input' => 'weighted',
+                        'behavior' => 'flex',
+                        'constraints' => [
+                            'min_candidates' => ['type' => 'number', 'default' => 1],
+                            'requires_weight_source' => ['type' => 'boolean', 'default' => true],
+                        ],
+                        'config_schema' => [
+                            'weight_source' => [
+                                'type' => 'object',
+                                'default' => null
+                            ],
+                            'normalization' => [
+                                'type' => 'string',
+                                'default' => 'none'
+                            ],
+                        ],
+                    ],
+
+                    'quadratic' => [
+                        'label' => 'Quadratic',
+                        'input' => 'score',
+                        'behavior' => 'flex',
+                        'constraints' => [
+                            'min_candidates' => ['type' => 'number', 'default' => 1],
+                        ],
+                        'config_schema' => [
+                            'credits_per_user' => ['type' => 'number', 'default' => 100],
+                        ],
+                    ],
+                ],
+
+                'real_time_results' => ['type' => 'boolean', 'default' => true],
+                'ranking' => ['type' => 'boolean', 'default' => true],
+                'tie_breaking' => ['type' => 'boolean', 'default' => true],
+                'quorum_tracking' => ['type' => 'boolean', 'default' => false],
+            ],
+            'actions' => [
+                ['key' => 'start_vote', 'label' => 'Start Vote', 'icon' => 'Play'],
+                ['key' => 'close_vote', 'label' => 'Close Vote', 'icon' => 'Lock'],
+                ['key' => 'next_phase', 'label' => 'Next Phase', 'icon' => 'ArrowRight'],
+                ['key' => 'view_results', 'label' => 'View Results', 'icon' => 'ChartBar'],
+                ['key' => 'export_results', 'label' => 'Export Results', 'icon' => 'FileExport'],
+                ['key' => 'manage_candidates', 'label' => 'Manage Candidates', 'icon' => 'AccountGroup'],
+                ['key' => 'configure_vote', 'label' => 'Configure Vote', 'icon' => 'Tune'],
+            ],
+            'sort_order' => 5,
+            'created' => '',
+
+        ],
+        [
             'family_type' => 'proposal',
             'label' => 'Proposal',
             'description' => 'Initial proposals and suggestions',
@@ -237,7 +453,7 @@ class InitDbDefault extends Command
                 ['key' => 'export_proposal', 'label' => 'Export Proposal', 'icon' => 'FileExport'],
                 ['key' => 'request_review', 'label' => 'Request Expert Review', 'icon' => 'AccountReview'],
             ],
-            'sort_order' => 5,
+            'sort_order' => 6,
             'created' => '',
         ],
         [
@@ -247,6 +463,12 @@ class InitDbDefault extends Command
             'icon' => 'ViewKanban',
             'ui' => [
                 'layout' => 'kanban',
+                'kanban_column' => [
+                    ['value' => 'draft', 'label' => 'Draft', 'color' => '#949494'],
+                    ['value' => 'active', 'label' => 'Active', 'color' => '#3498db'],
+                    ['value' => 'completed', 'label' => 'Completed', 'color' => '#27ae60'],
+                    ['value' => 'cancelled', 'label' => 'Cancelled', 'color' => '#e74c3c'],
+                ],
                 'show_swimlanes' => true,
                 'wip_limits' => true,
                 'cycle_time_visualization' => true,
@@ -267,7 +489,7 @@ class InitDbDefault extends Command
                 ['key' => 'configure_workflow', 'label' => 'Configure Workflow', 'icon' => 'Cog'],
                 ['key' => 'bulk_transition', 'label' => 'Bulk Transition', 'icon' => 'ArrowRightBold'],
             ],
-            'sort_order' => 6,
+            'sort_order' => 7,
             'created' => '',
         ],
         [
@@ -297,12 +519,47 @@ class InitDbDefault extends Command
                 ['key' => 'adjust_schedule', 'label' => 'Adjust Schedule', 'icon' => 'CalendarClock'],
                 ['key' => 'identify_bottlenecks', 'label' => 'Identify Bottlenecks', 'icon' => 'AlertCircle'],
             ],
-            'sort_order' => 7,
+            'sort_order' => 8,
             'created' => '',
         ],
     ];
 
     private array $optionTypes = [
+        // ====================================================
+        // Vote Family
+        // Root: candidate
+        // ====================================================
+        [
+            'family' => 'vote',
+            'option_type' => 'candidate',
+            'icon' => 'Account',
+            'label' => 'Candidate',
+            'description' => 'A candidate or option to vote for.',
+
+            'fields' => [
+                ['key' => 'description', 'label' => 'Description', 'type' => 'textarea', 'required' => false],
+                ['key' => 'image', 'label' => 'Image', 'type' => 'file', 'required' => false],
+                ['key' => 'start_date', 'label' => 'Start date', 'type' => 'datetime', 'required' => false], 
+                ['key' => 'status', 'label' => 'Status', 'type' => 'string', 'required' => false], 
+            ],
+
+            'allowed_response' => [
+            ],
+
+            'allow_comment' => true,
+            'support_feature' => 'voting',
+
+            'statuses' => [
+                'draft:Draft',
+                'active:Active',
+                'leading:Leading',
+                'selected:Selected',
+                'rejected:Rejected',
+            ],
+
+            'use_title' => true,
+        ],
+
         // ====================================================
         // Workflow Family
         // Root: workflow_item
@@ -314,9 +571,9 @@ class InitDbDefault extends Command
             'label' => 'Workflow Item',
             'description' => 'Task or decision moving through workflow stages.',
             'fields' => [
-                ['key' => 'priority', 'type' => 'enum', 'required' => true, 'allowed_values' => ['low', 'medium', 'high', 'critical']],
-                ['key' => 'assigned_to', 'type' => 'users', 'required' => false],
-                ['key' => 'due_date', 'type' => 'datetime', 'required' => false],
+                ['key' => 'priority', 'label' => 'Priority', 'type' => 'enum', 'required' => true, 'allowed_values' => ['low', 'medium', 'high', 'critical']],
+                ['key' => 'assigned_to', 'label' => 'Assisgned to', 'type' => 'users', 'required' => false],
+                ['key' => 'due_date', 'label' => ' Due date', 'type' => 'datetime', 'required' => false],
             ],
             'allowed_response' => [
                 'workflow_comment',
@@ -870,7 +1127,7 @@ class InitDbDefault extends Command
                 ["key" => "auto_reminder","label" => "Auto Reminder","type" => "boolean","required" => true,"default" => true,"rules" => []],
                 ["key" => "layout_zone","label" => "Position display into the layout","type" => "enum","required" => false,"default" => "footer","allowed_values" => ["sidebar","main","footer","header"],"rules" => []],
                 ["key" => "render_mode","label" => "Render mode of inquiries","type" => "enum","required" => false,"default" => "cards","allowed_values" => ["cards","list","full","summary","rich_html"],"rules" => []],
-                ["key" => "open_mode","label" => "Open Mode","type" => "enum","required" => false,"default" => "page","allowed_values" => ["page","modal","develop","none"],"rules" => []],
+                ["key" => "open_mode","label" => "Open Mode","type" => "enum","required" => false,"default" => "page","allowed_values" => ["page","modal","none"],"rules" => []],
 
             ],
             'allowed_response' => ['amendment','objection','official'],
@@ -1034,7 +1291,7 @@ class InitDbDefault extends Command
             ],
             'allowed_response' => ['objection','suggestion','official'],
             'allowed_transformation' => ['law_proposal'],
-            'allowed_option_type' => ['chapter','workflow_item','process_phase','position_for','position_against','alternative'],
+            'allowed_option_type' => ['candidate','proposal','chapter','workflow_item','process_phase','position_for','position_against','alternative','consultation_question'],
             'allow_comment' => true,
             'support_feature' => 'binary',
             'is_root' => true,
@@ -1131,6 +1388,37 @@ class InitDbDefault extends Command
             'is_root' => true,
             'created' => '',
         ],
+        [
+            'inquiry_type' => 'participatory_budget',
+            'family' => 'deliberative',
+            'icon' => 'CurrencyUsd',
+            'label' => 'Participatory Budget',
+            'description' => 'Citizen-driven allocation of public budget funds.',
+            'fields' => [
+                ["key" => "total_budget", "label" => "Total Budget", "type" => "integer", "required" => true],
+                ["key" => "currency", "label" => "Currency", "type" => "string", "required" => false, "default" => "CHF"],
+                ["key" => "min_project_amount", "label" => "Minimum Project Amount", "type" => "integer", "required" => false],
+                ["key" => "max_project_amount", "label" => "Maximum Project Amount", "type" => "integer", "required" => false],
+                ["key" => "budget_year", "label" => "Budget Year", "type" => "integer", "required" => true],
+                ["key" => "district_allocation", "label" => "District Allocation", "type" => "json", "required" => false],
+                ["key" => "eligible_categories", "label" => "Eligible Categories", "type" => "json", "required" => false],
+                ["key" => "submission_deadline", "label" => "Submission Deadline", "type" => "datetime", "required" => true],
+                ["key" => "voting_period_start", "label" => "Voting Period Start", "type" => "datetime", "required" => true],
+                ["key" => "voting_period_end", "label" => "Voting Period End", "type" => "datetime", "required" => true],
+                ["key" => "max_votes_per_citizen", "label" => "Max Votes per Citizen", "type" => "integer", "required" => false, "default" => 5],
+                ["key" => "voting_method", "label" => "Voting Method", "type" => "enum", "required" => true, "default" => "cumulative",
+                "allowed_values" => ["cumulative", "ranked_choice", "approval", "weighted"]],
+                ["key" => "technical_evaluation_required", "label" => "Technical Evaluation Required", "type" => "boolean", "required" => false, "default" => true],
+                ["key" => "feasibility_check_by", "label" => "Feasibility Check By", "type" => "users", "required" => false],
+            ],
+             'allowed_response' => ['official_response', 'project', 'proposal'], 
+    'allowed_transformation' => [],
+    'allowed_option_type' => ['proposal', 'candidate', 'position_for', 'official_summary'],
+            'allow_comment' => false,
+            'support_feature' => 'none',
+            'is_root' => true,
+            'created' => '',
+        ],
 
         // --- Project / Review ---
         [
@@ -1185,26 +1473,95 @@ class InitDbDefault extends Command
             'created' => '',
         ],
 
-        // DELIBERATION
+        // --- CITIZEN REQUEST ---
         [
-            'inquiry_type' => 'deliberation',
-            'family' => 'deliberative',
-            'icon' => 'Users',
-            'label' => 'Deliberation',
-            'description' => 'Collective citizen deliberation or assembly.',
+            'inquiry_type' => 'accountability_request',
+            'family' => 'governance',
+            'icon' => 'HelpCircle',
+            'label' => 'Accountability Request',
+            'description' => 'Citizen request for justification or explanation from an elected official or administration.',
             'fields' => [
-                ["key" => "title","label" => "Title","type" => "string","required" => true,"default" => null,"rules" => []],
-                ["key" => "form_schema","label" => "Form Schema","type" => "json","required" => false,"default" => null,"rules" => []],
-                ["key" => "layout_zone","label" => "Position display into the layout","type" => "enum","required" => false,"default" => "footer","allowed_values" => ["sidebar","main","footer","header"],"rules" => []],
-                ["key" => "render_mode","label" => "Render mode of inquiries","type" => "enum","required" => false,"default" => "cards","allowed_values" => ["cards","list","full","summary","rich_html"],"rules" => []],
+                ["key" => "target_entity","label" => "Target Entity","type" => "string","required" => true,"default" => null,"rules" => ["maxLength" => 255]],
+                ["key" => "scope","label" => "Scope","type" => "string","required" => true,"default" => null,"rules" => ["maxLength" => 255]],
+                ["key" => "period","label" => "Period","type" => "string","required" => false,"default" => null,"rules" => []],
+                ["key" => "severity","label" => "Severity","type" => "enum","required" => true,"default" => "medium","allowed_values" => ["low","medium","high","critical"],"rules" => []],
+                ["key" => "deadline","label" => "Response Deadline","type" => "datetime","required" => false,"default" => null,"rules" => []],
+
+                ["key" => "layout_zone","label" => "Position display into the layout","type" => "enum","required" => false,"default" => "main","allowed_values" => ["sidebar","main","footer","header"],"rules" => []],
+                ["key" => "render_mode","label" => "Render mode of inquiries","type" => "enum","required" => false,"default" => "full","allowed_values" => ["cards","list","full","summary","rich_html"],"rules" => []],
                 ["key" => "open_mode","label" => "Open Mode","type" => "enum","required" => false,"default" => "page","allowed_values" => ["page","modal","none"],"rules" => []],
             ],
-            'allowed_response' => ['proposal','recommendation'],
-            'allowed_transformation' => ['policy_consultation'],
-            'allowed_option_type' => ['position_for','position_against','message','official_summary'],
+            'allowed_response' => ['official_response','audit_request','performance_review'],
+            'allowed_transformation' => [],
+            'allowed_option_type' => [
+                'position_for',
+                'position_against',
+                'argument_for',
+                'argument_against',
+                'official_summary',
+                'process_phase',
+                'deadline',
+            ],
             'allow_comment' => true,
             'support_feature' => 'binary',
             'is_root' => true,
+            'created' => '',
+        ],
+        [
+            'inquiry_type' => 'performance_review',
+            'family' => 'governance',
+            'icon' => 'ChartLine',
+            'label' => 'Performance Review',
+            'description' => 'Evaluation of an elected official, institution or public program.',
+            'fields' => [
+                ["key" => "target","label" => "Target","type" => "string","required" => true,"default" => null,"rules" => ["maxLength" => 255]],
+                ["key" => "period","label" => "Evaluation Period","type" => "string","required" => false,"default" => null,"rules" => []],
+                ["key" => "objectives","label" => "Objectives","type" => "json","required" => false,"default" => null,"rules" => []],
+                ["key" => "results","label" => "Results","type" => "json","required" => false,"default" => null,"rules" => []],
+
+                ["key" => "layout_zone","label" => "Position display into the layout","type" => "enum","required" => false,"default" => "main","allowed_values" => ["sidebar","main","footer","header"],"rules" => []],
+                ["key" => "render_mode","label" => "Render mode of inquiries","type" => "enum","required" => false,"default" => "full","allowed_values" => ["cards","list","full","summary","rich_html"],"rules" => []],
+                ["key" => "open_mode","label" => "Open Mode","type" => "enum","required" => false,"default" => "page","allowed_values" => ["page","modal","none"],"rules" => []],
+            ],
+            'allowed_response' => ['official_response','audit_request'],
+            'allowed_transformation' => [],
+            'allowed_option_type' => [
+                'position_for',
+                'position_against',
+                'argument_for',
+                'argument_against',
+                'official_summary',
+            ],
+            'allow_comment' => true,
+            'support_feature' => 'ternary',
+            'is_root' => true,
+            'created' => '',
+        ],
+        [
+            'inquiry_type' => 'audit_request',
+            'family' => 'governance',
+            'icon' => 'ClipboardSearch',
+            'label' => 'Audit Request',
+            'description' => 'Request for an investigation or audit on a public matter.',
+            'fields' => [
+                ["key" => "target","label" => "Target","type" => "string","required" => true,"default" => null,"rules" => []],
+                ["key" => "reason","label" => "Reason","type" => "text","required" => true,"default" => null,"rules" => []],
+                ["key" => "priority","label" => "Priority","type" => "enum","required" => true,"default" => "medium","allowed_values" => ["low","medium","high","critical"],"rules" => []],
+
+                ["key" => "layout_zone","label" => "Position display into the layout","type" => "enum","required" => false,"default" => "main","allowed_values" => ["sidebar","main","footer","header"],"rules" => []],
+                ["key" => "render_mode","label" => "Render mode of inquiries","type" => "enum","required" => false,"default" => "full","allowed_values" => ["cards","list","full","summary","rich_html"],"rules" => []],
+                ["key" => "open_mode","label" => "Open Mode","type" => "enum","required" => false,"default" => "page","allowed_values" => ["page","modal","none"],"rules" => []],
+            ],
+            'allowed_response' => ['official_response','performance_review'],
+            'allowed_transformation' => [],
+            'allowed_option_type' => [
+                'process_phase',
+                'milestone',
+                'official_summary',
+            ],
+            'allow_comment' => true,
+            'support_feature' => 'binary',
+            'is_root' => false,
             'created' => '',
         ],
 
@@ -1656,7 +2013,7 @@ class InitDbDefault extends Command
         ],
         [
             'inquiry_type' => 'maintenance_request',
-            'family' => 'services',
+            'family' => 'service',
             'icon' => 'Wrench',
             'label' => 'Maintenance Request',
             'description' => 'Citizen report of infrastructure problems or needed repairs.',
@@ -1676,7 +2033,7 @@ class InitDbDefault extends Command
         ],
         [
             'inquiry_type' => 'booking_request',
-            'family' => 'services',
+            'family' => 'service',
             'icon' => 'Calendar',
             'label' => 'Booking Request',
             'description' => 'Request to book a municipal room or public space.',
@@ -1696,7 +2053,7 @@ class InitDbDefault extends Command
         ],
         [
             'inquiry_type' => 'classified_ad',
-            'family' => 'services',
+            'family' => 'service',
             'icon' => 'Megaphone',
             'label' => 'Classified Ad',
             'description' => 'Citizen classified advertisement.',
@@ -1739,6 +2096,32 @@ class InitDbDefault extends Command
             'support_feature' => 'binary',
             'is_root' => true,
             'created' => '',
+        ],
+        [
+            'inquiry_type' => 'recall_initiative',
+            'family' => 'oversight',
+            'icon' => 'AccountCancel',
+            'label' => 'Recall Initiative',
+            'description' => 'Citizen initiative to recall/remove an elected official before term end.',
+            'fields' => [
+                ["key" => "target_official_id", "label" => "Target Official", "type" => "users", "required" => true],
+                ["key" => "official_position", "label" => "Official Position", "type" => "string", "required" => true],
+                ["key" => "recall_grounds", "label" => "Grounds for Recall", "type" => "rich_text", "required" => true],
+                ["key" => "signatures_required", "label" => "Signatures Required", "type" => "integer", "required" => true],
+                ["key" => "signatures_collected", "label" => "Signatures Collected", "type" => "integer", "required" => false, "default" => 0],
+                ["key" => "collection_deadline", "label" => "Collection Deadline", "type" => "datetime", "required" => true],
+                ["key" => "recall_election_date", "label" => "Recall Election Date", "type" => "datetime", "required" => false],
+                ["key" => "legal_review_status", "label" => "Legal Review Status", "type" => "enum", "required" => false, "default" => "pending",
+                "allowed_values" => ["pending", "approved_for_circulation", "rejected", "qualified_for_ballot"]],
+                ["key" => "proponent_committee", "label" => "Proponent Committee", "type" => "users", "required" => true],
+                ["key" => "official_response", "label" => "Official Response", "type" => "rich_text", "required" => false],
+            ],
+            'allowed_inquiry_types' => ['proposal', 'petition'],
+            'allowed_response' => ['official_response', 'official_result'],
+            'allowed_option_type' => ['position_for', 'position_against', 'official_summary'],
+            'allow_comment' => false,
+            'support_feature' => 'binary',
+            'is_root' => true,
         ],
         [
             'inquiry_type' => 'public_spending_review',
@@ -1824,7 +2207,7 @@ class InitDbDefault extends Command
             'label' => 'Scholarship Request',
             'description' => 'Request for scholarship or educational aid.',
             'fields' => [
-                ["key" => "student_id","label" => "Student ID","type" => "users","required" => true,"default" => null,"rules" => []],
+                ["key" => "student_id","label" => "Student ID","type" => "string","required" => true,"default" => null,"rules" => []],
                 ["key" => "requested_amount","label" => "Requested Amount","type" => "integer","required" => true,"default" => null,"rules" => []],
                 ["key" => "assigned_unit","label" => "Assigned Unit","type" => "string","required" => false,"default" => null,"rules" => []],
                 ["key" => "auto_load","label" => "Auto load forms","type" => "boolean","required" => true,"default" => true,"rules" => []],
@@ -2026,6 +2409,212 @@ class InitDbDefault extends Command
         // ==========================================================
         // ROOT COLLECTIVE TYPES (TOP LEVEL)
         // ==========================================================
+
+        // Citizen Jury
+        [
+            'family' => 'collective',
+            'group_type' => 'citizen_jury',
+            'icon' => 'Gavel',
+            'label' => 'Citizen Jury',
+            'description' => 'A randomly selected citizen jury for deliberation and recommendations on public issues.',
+            'fields' => [
+                // Core identification
+                ["key" => "title", "label" => "Title", "type" => "string", "required" => true, "default" => null, "rules" => ["maxLength" => 255]],
+                ["key" => "mandate", "label" => "Mandate / Question", "type" => "rich_text", "required" => true, "default" => null, "rules" => []],
+                ["key" => "topic", "label" => "Topic", "type" => "string", "required" => true, "default" => null, "rules" => ["maxLength" => 255]],
+
+                // Selection configuration
+                ["key" => "selection_method", "label" => "Selection Method", "type" => "enum", "required" => true, "default" => "stratified_sortition",
+                "allowed_values" => [
+                    "pure_sortition" => "Pure Sortition (Random)",
+                    "stratified_sortition" => "Stratified Sortition (Demographic Quotas)",
+                    "volunteer_pool_sortition" => "Volunteer Pool + Sortition",
+                    "mixed_hybrid" => "Mixed (Elected + Sortition)",
+                    "civic_lottery" => "Civic Lottery"
+                ],
+                "rules" => []
+                ],
+
+                // Jury composition
+                ["key" => "jury_size", "label" => "Jury Size", "type" => "integer", "required" => true, "default" => 24, "rules" => ["min" => 12, "max" => 150]],
+                ["key" => "alternates_count", "label" => "Number of Alternates", "type" => "integer", "required" => false, "default" => 4, "rules" => ["min" => 0, "max" => 20]],
+
+                // Stratification criteria (if stratified_sortition)
+                ["key" => "stratification_criteria", "label" => "Stratification Criteria", "type" => "json", "required" => false, "default" => [
+                    "gender" => ["male" => 50, "female" => 50, "other" => "proportional"],
+                    "age_groups" => ["18-35" => 25, "36-55" => 40, "56+" => 35],
+                    "geographic_distribution" => true,
+                    "socioeconomic_diversity" => "optional"
+                ], "rules" => []],
+
+                // Eligibility
+                ["key" => "eligibility_criteria", "label" => "Eligibility Criteria", "type" => "json", "required" => false, "default" => [
+                    "min_age" => 16,
+                    "residency_requirement" => "municipal_resident",
+                    "voter_registration_required" => false,
+                    "excluded_positions" => ["elected_official", "municipal_employee", "direct_stakeholder"],
+                    "language_requirements" => ["official_languages"]
+                ], "rules" => []],
+
+                ["key" => "population_pool", "label" => "Selection Pool", "type" => "enum", "required" => true, "default" => "municipal_residents",
+                "allowed_values" => [
+                    "municipal_residents" => "All Municipal Residents",
+                    "registered_voters" => "Registered Voters Only",
+                    "specific_district" => "Specific District/Neighborhood",
+                    "volunteer_registry" => "Civic Volunteer Registry",
+                    "thematic_experts" => "Thematic Interest Group"
+                ],
+                "rules" => []
+                ],
+
+                // Compensation
+                ["key" => "compensation", "label" => "Compensation", "type" => "json", "required" => false, "default" => [
+                    "amount" => 150,
+                    "currency" => "CHF",
+                    "unit" => "per_day",
+                    "expenses_covered" => true,
+                    "childcare_provided" => true,
+                    "employer_compensation_letter" => true
+                ], "rules" => []],
+
+                ["key" => "compensation_amount", "label" => "Compensation Amount", "type" => "integer", "required" => false, "default" => null, "rules" => ["min" => 0]],
+                ["key" => "compensation_unit", "label" => "Compensation Unit", "type" => "enum", "required" => false, "default" => "per_day",
+                "allowed_values" => ["per_hour", "per_half_day", "per_day", "lump_sum", "voluntary"], "rules" => []],
+
+                // Timeline and logistics
+                ["key" => "start_date", "label" => "Start Date", "type" => "datetime", "required" => true, "default" => null, "rules" => []],
+                ["key" => "end_date", "label" => "End Date", "type" => "datetime", "required" => false, "default" => null, "rules" => []],
+                ["key" => "session_count", "label" => "Number of Sessions", "type" => "integer", "required" => false, "default" => 4, "rules" => ["min" => 1, "max" => 20]],
+                ["key" => "session_duration_hours", "label" => "Session Duration (hours)", "type" => "integer", "required" => false, "default" => 4, "rules" => ["min" => 2, "max" => 8]],
+                ["key" => "session_schedule", "label" => "Session Schedule", "type" => "json", "required" => false, "default" => [
+                    "weekend_sessions" => true,
+                    "evening_sessions" => true,
+                    "consecutive_days" => false
+                ], "rules" => []],
+
+                // Location and format
+                ["key" => "location", "label" => "Location", "type" => "location", "required" => true, "default" => null, "rules" => []],
+                ["key" => "format", "label" => "Format", "type" => "enum", "required" => true, "default" => "in_person",
+                "allowed_values" => ["in_person", "hybrid", "fully_online"], "rules" => []],
+                ["key" => "online_platform", "label" => "Online Platform", "type" => "string", "required" => false, "default" => null, "rules" => []],
+                ["key" => "accessibility_accommodations", "label" => "Accessibility Accommodations", "type" => "json", "required" => false, "default" => [
+                    "wheelchair_access" => true,
+                    "sign_language_interpretation" => false,
+                    "translation_services" => false,
+                    "transportation_assistance" => true
+                ], "rules" => []],
+
+                // Facilitation
+                ["key" => "facilitator_ids", "label" => "Facilitators", "type" => "users", "required" => true, "default" => null, "rules" => []],
+                ["key" => "expert_witness_ids", "label" => "Expert Witnesses", "type" => "users", "required" => false, "default" => null, "rules" => []],
+                ["key" => "observer_ids", "label" => "Observers", "type" => "users", "required" => false, "default" => null, "rules" => []],
+
+                // Deliberation rules
+                ["key" => "decision_rule", "label" => "Decision Rule", "type" => "enum", "required" => true, "default" => "consensus_aim",
+                "allowed_values" => [
+                    "consensus_aim" => "Consensus Aim (fallback to supermajority)",
+                    "supermajority_66" => "⅔ Supermajority",
+                    "supermajority_75" => "¾ Supermajority",
+                    "majority_vote" => "Simple Majority",
+                    "unanimity" => "Unanimity Required"
+                ], "rules" => []],
+
+                ["key" => "quorum_requirement", "label" => "Quorum Requirement (%)", "type" => "integer", "required" => false, "default" => 75, "rules" => ["min" => 50, "max" => 100]],
+                ["key" => "allow_dissent_opinion", "label" => "Allow Dissenting Opinion", "type" => "boolean", "required" => false, "default" => true, "rules" => []],
+                ["key" => "deliberation_protocol", "label" => "Deliberation Protocol", "type" => "enum", "required" => false, "default" => "structured",
+                "allowed_values" => ["open_discussion", "structured", "fishbowl", "world_cafe", "citizen_assembly_format"], "rules" => []],
+
+                // Transparency and output
+                ["key" => "public_observation", "label" => "Public Observation", "type" => "enum", "required" => true, "default" => "partial",
+                "allowed_values" => ["closed_deliberation", "livestream_only", "public_gallery", "fully_public"], "rules" => []],
+                ["key" => "transparency_level", "label" => "Transparency Level", "type" => "enum", "required" => true, "default" => "transparent",
+                "allowed_values" => ["confidential", "anonymized_output", "attributed_output", "fully_transparent"], "rules" => []],
+                ["key" => "output_format", "label" => "Expected Output", "type" => "enum", "required" => true, "default" => "recommendation_report",
+                "allowed_values" => [
+                    "recommendation_report" => "Recommendation Report",
+                    "binding_decision" => "Binding Decision",
+                    "advisory_opinion" => "Advisory Opinion",
+                    "policy_proposal" => "Policy Proposal",
+                    "evaluation_report" => "Evaluation Report"
+                ], "rules" => []],
+
+                // Official response requirements
+                ["key" => "official_response_required", "label" => "Official Response Required", "type" => "boolean", "required" => true, "default" => true, "rules" => []],
+                ["key" => "response_deadline_days", "label" => "Response Deadline (days)", "type" => "integer", "required" => false, "default" => 60, "rules" => ["min" => 14, "max" => 180]],
+                ["key" => "implementation_tracking", "label" => "Track Implementation", "type" => "boolean", "required" => false, "default" => true, "rules" => []],
+
+                // Metadata and status
+                ["key" => "status", "label" => "Status", "type" => "enum", "required" => false, "default" => "planning",
+                "allowed_values" => [
+                    "planning" => "Planning",
+                    "recruiting" => "Recruiting",
+                    "selected" => "Jury Selected",
+                    "in_session" => "In Session",
+                    "deliberating" => "Deliberating",
+                    "drafting" => "Drafting Report",
+                    "completed" => "Completed",
+                    "archived" => "Archived"
+                ], "rules" => []],
+
+                ["key" => "sortition_transparency", "label" => "Sortition Transparency", "type" => "enum", "required" => false, "default" => "full",
+                "allowed_values" => [
+                    "full" => "Full Disclosure (public algorithm and selection)",
+                    "auditable" => "Auditable by Third Party",
+                    "verifiable_anonymized" => "Verifiable with Privacy",
+                    "private" => "Private Process"
+                ], "rules" => []],
+
+                ["key" => "sortition_algorithm", "label" => "Sortition Algorithm", "type" => "string", "required" => false, "default" => "cryptographic_random", "rules" => []],
+                ["key" => "random_seed_public", "label" => "Public Random Seed", "type" => "string", "required" => false, "default" => null, "rules" => []],
+
+                // Evaluation
+                ["key" => "evaluation_metrics", "label" => "Evaluation Metrics", "type" => "json", "required" => false, "default" => [
+                    "participant_satisfaction" => true,
+                    "deliberation_quality" => true,
+                    "representativeness" => true,
+                    "influence_on_policy" => true
+                ], "rules" => []],
+
+                // UI configuration (standard across all types)
+                ["key" => "layout_zone", "label" => "Position display into the layout", "type" => "enum", "required" => false, "default" => "main",
+                "allowed_values" => ["sidebar", "main", "footer", "header"], "rules" => []],
+                ["key" => "render_mode", "label" => "Render mode of inquiries", "type" => "enum", "required" => false, "default" => "full",
+                "allowed_values" => ["cards", "list", "full", "summary", "rich_html"], "rules" => []],
+                ["key" => "open_mode", "label" => "Open Mode", "type" => "enum", "required" => false, "default" => "page",
+                "allowed_values" => ["page", "modal", "none"], "rules" => []],
+            ],
+
+            'allowed_inquiry_types' => [
+                'deliberation',
+                'proposal',
+                'consultation',
+                'poll',
+                'law_proposal'
+            ],
+
+            'allowed_response' => [
+                'citizen_jury_recommendation',
+                'official_response',
+                'proposal',
+                'report'
+            ],
+
+            'allowed_option_type' => [
+                'consultation_question',
+                'position_for',
+                'position_against',
+                'alternative',
+                'official_summary',
+                'poll_option',
+                'chapter',
+                'process_phase',
+                'milestone'
+            ],
+
+            'is_root' => false,
+            'sort_order' => 1,
+            'created' => '',
+        ],
 
         // Citizens Initiative
         [
@@ -2265,25 +2854,6 @@ class InitDbDefault extends Command
             ],
 
             'allowed_inquiry_types' => ['deliberation','proposal','official'],
-            'allowed_response' => ['chapter','delib_block'],
-            'is_root' => false,
-            'sort_order' => 1,
-            'created' => '',
-        ],
-
-        // Citizen Jury
-        [
-            'family' => 'collective',
-            'group_type' => 'citizen_jury',
-            'icon' => 'Gavel',
-            'label' => 'Citizen Jury',
-            'description' => 'A randomly selected citizen jury.',
-            'fields' => [
-                ["key" => "title","label" => "Title","type" => "string","required" => true,"default" => null,"rules" => []],
-                ["key" => "mandate","label" => "Mandate","type" => "text","required" => false,"default" => null,"rules" => []],
-            ],
-
-            'allowed_inquiry_types' => ['deliberation','proposal'],
             'allowed_response' => ['chapter','delib_block'],
             'is_root' => false,
             'sort_order' => 1,
@@ -2709,87 +3279,78 @@ class InitDbDefault extends Command
 
     //Inquiry Types
     private function insertDefaultInquiryTypes(?IOutput $output = null): void
-    {
-        $this->log($output, 'Inserting default inquiry types...');
+{
+    $this->log($output, 'Inserting default inquiry types...');
 
-        $inserted = [];
+    $inserted = [];
 
-        foreach ($this->inquiryTypes as $inquiryType) {
-            $uniqueKey = $inquiryType['inquiry_type'] . '_' . $inquiryType['family'];
+    foreach ($this->inquiryTypes as $inquiryType) {
+        $uniqueKey = $inquiryType['inquiry_type'];
 
-            if (isset($inserted[$uniqueKey])) {
-                $this->log($output, 'Inquiry type already processed: ' . $inquiryType['inquiry_type']);
-                continue;
-            }
+        if (isset($inserted[$uniqueKey])) {
+            $this->log($output, 'Inquiry type already processed: ' . $inquiryType['inquiry_type']);
+            continue;
+        }
 
-            $tableName = '*PREFIX*' . InquiryType::TABLE;
+        $tableName = '*PREFIX*' . InquiryType::TABLE;
 
-            $query = $this->connection->prepare(
-                'SELECT `id` FROM `' . $tableName . '`
-                WHERE `inquiry_type` = ? AND `family` = ?'
-            );
+        $query = $this->connection->prepare(
+            'SELECT `id`, `family` FROM `' . $tableName . '`
+            WHERE `inquiry_type` = ?'
+        );
 
-            $cursor = $query->execute(
-                [
+        $cursor = $query->execute([$inquiryType['inquiry_type']]);
+        $row = $cursor->fetch();
+
+        if ($row !== false) {
+            $this->log($output, 'Inquiry type already exists in DB: ' . $inquiryType['inquiry_type'] . ' (family: ' . $row['family'] . ')');
+            $inserted[$uniqueKey] = (int) $row['id'];
+            continue;
+        }
+
+        $insert = $this->connection->prepare(
+            'INSERT INTO `' . $tableName . '`
+            (`inquiry_type`, `family`, `icon`, `label`, `description`, `fields`, `allowed_response`, `allowed_transformation`, `allowed_option_type`, `allow_comment`, `support_feature`, `is_root`, `created`)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+        );
+
+        $created = !empty($inquiryType['created']) ? (int)$inquiryType['created'] : time();
+        $icon = !empty($inquiryType['icon']) ? $inquiryType['icon'] : '';
+        $isRoot = isset($inquiryType['is_root']) && $inquiryType['is_root'] ? 1 : 0;
+        $description = !empty($inquiryType['description']) ? $inquiryType['description'] : '';
+        $fields = !empty($inquiryType['fields']) ? json_encode($inquiryType['fields']) : '';
+        $allowedResponse = !empty($inquiryType['allowed_response']) ? json_encode($inquiryType['allowed_response']) : '';
+        $allowedTransformation = !empty($inquiryType['allowed_transformation']) ? json_encode($inquiryType['allowed_transformation']) : '';
+        $supportFeature = !empty($inquiryType['support_feature']) ? $inquiryType['support_feature'] : 'none';
+        $allowComment = array_key_exists('allow_comment', $inquiryType) ? (int)(bool)$inquiryType['allow_comment'] : 1;
+        $allowedOptionType = !empty($inquiryType['allowed_option_type']) ? json_encode($inquiryType['allowed_option_type']) : '';
+
+        try {
+            $insert->execute([
                 $inquiryType['inquiry_type'],
                 $inquiryType['family'],
-                ]
-            );
-            $row = $cursor->fetch();
+                $icon,
+                $inquiryType['label'],
+                $description,
+                $fields,
+                $allowedResponse,
+                $allowedTransformation,
+                $allowedOptionType,
+                $allowComment,
+                $supportFeature,
+                $isRoot,
+                $created,
+            ]);
 
-            if ($row !== false) {
-                   $this->log($output, 'Inquiry type already exists in DB: ' . $inquiryType['inquiry_type']);
-                   $inserted[$uniqueKey] = (int) $row['id'];
-                   continue;
-            }
+            $id = (int)$this->connection->lastInsertId($tableName);
+            $inserted[$uniqueKey] = $id;
 
-            $insert = $this->connection->prepare(
-                'INSERT INTO `' . $tableName . '`
-                (`inquiry_type`, `family`, `icon`, `label`, `description`, `fields`, `allowed_response`, `allowed_transformation`, `allowed_option_type`, `allow_comment`,`support_feature`,`is_root`,`created`)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
-            );
-
-            $created = !empty($inquiryType['created']) ? (int)$inquiryType['created'] : time();
-            $icon = !empty($inquiryType['icon']) ? $inquiryType['icon'] : '';
-            $isRoot = $inquiryType['is_root'] ? 1 : 0;
-            $description = !empty($inquiryType['description']) ? $inquiryType['description'] : '';
-            $fields = !empty($inquiryType['fields']) ? json_encode($inquiryType['fields']) : '';
-            $allowedResponse = !empty($inquiryType['allowed_response']) ? json_encode($inquiryType['allowed_response']) : '';
-            $allowedTransformation = !empty($inquiryType['allowed_transformation']) ? json_encode($inquiryType['allowed_transformation']) : '';
-            $supportFeature = !empty($inquiryType['support_feature']) ? json_encode($inquiryType['support_feature']) : 'none';
-            $allowComment = array_key_exists('allow_comment', $inquiryType) ? (int) (bool) $inquiryType['allow_comment'] : null;
-            $allowedOptionType = !empty($inquiryType['allowed_option_type']) ? json_encode($inquiryType['allowed_option_type']) : '';
-
-
-            try {
-                        $insert->execute(
-                            [
-                            $inquiryType['inquiry_type'],
-                            $inquiryType['family'],
-                            $icon,
-                            $inquiryType['label'],
-                            $description,
-                            $fields,
-                            $allowedResponse,
-                            $allowedTransformation,
-                            $allowedOptionType,
-                            $allowComment,
-                            $supportFeature,
-                            $isRoot,
-                            $created,
-                            ]
-                        );
-
-                        $id = (int) $this->connection->lastInsertId($tableName);
-                        $inserted[$uniqueKey] = $id;
-
-                        $this->log($output, 'Inserted inquiry type: ' . $inquiryType['inquiry_type'] . ' (family: ' . $inquiryType['family'] . ')');
-            } catch (\Exception $e) {
-                  $this->log($output, 'ERROR inserting inquiry type ' . $inquiryType['inquiry_type'] . ': ' . $e->getMessage());
-            }
+            $this->log($output, 'Inserted inquiry type: ' . $inquiryType['inquiry_type'] . ' (family: ' . $inquiryType['family'] . ')');
+        } catch (\Exception $e) {
+            $this->log($output, 'ERROR inserting inquiry type ' . $inquiryType['inquiry_type'] . ': ' . $e->getMessage());
         }
     }
-
+}
     //Option Types
     private function insertDefaultInquiryOptionTypes(?IOutput $output = null): void
     {
@@ -2870,134 +3431,153 @@ class InitDbDefault extends Command
         }
     }
 
-    //Inquiry Group Types
-    private function insertDefaultInquiryGroupTypes(?IOutput $output = null): void
-    {
-        $this->log($output, 'Inserting default inquiry group types...');
+private function insertDefaultInquiryFamilies(?IOutput $output = null): void
+{
+    $this->log($output, 'Inserting default inquiry families...');
 
-        $inserted = [];
+    $inserted = [];
 
-        foreach ($this->inquiryGroupTypes as $inquiryGroupType) {
-            $uniqueKey = $inquiryGroupType['group_type'];
+    foreach ($this->inquiryTypeFamilies as $family) {
+        if (isset($inserted[$family['family_type']])) {
+            $this->log($output, 'Inquiry family already processed: ' . $family['family_type']);
+            continue;
+        }
 
-            if (isset($inserted[$uniqueKey])) {
-                $this->log($output, 'Inquiry group type already processed: ' . $inquiryGroupType['group_type']);
-                continue;
-            }
+        $query = $this->connection->prepare(
+            'SELECT `id` FROM `*PREFIX*' . InquiryFamily::TABLE . '`
+            WHERE `family_type` = ?'
+        );
+        $cursor = $query->execute([$family['family_type']]);
+        $row = $cursor->fetch();
 
-            $tableName = '*PREFIX*' . InquiryGroupType::TABLE;
+        if ($row !== false) {
+               $this->log($output, 'Inquiry family already exists in DB: ' . $family['family_type']);
+               $inserted[$family['family_type']] = (int) $row['id'];
+               continue;
+        }
 
-            $query = $this->connection->prepare(
-                'SELECT `id` FROM `' . $tableName . '`
-            WHERE `group_type` = ?'
-            );
+        $insert = $this->connection->prepare(
+            'INSERT INTO `*PREFIX*' . InquiryFamily::TABLE . '`
+            (`family_type`, `label`, `description`, `icon`, `ui`, `rules`, `features`, `actions`, `sort_order`, `created`)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+        );
 
-            $cursor = $query->execute([$inquiryGroupType['group_type']]);
-            $row = $cursor->fetch();
+        try {
+            $created = !empty($family['created']) ? (int)$family['created'] : time();
 
-            if ($row !== false) {
-                $this->log($output, 'Inquiry group type already exists in DB: ' . $inquiryGroupType['group_type']);
-                $inserted[$uniqueKey] = (int) $row['id'];
-                continue;
-            }
+            // Default values for missing fields
+            $ui = !empty($family['ui']) ? json_encode($family['ui']) : '{}';
+            $rules = !empty($family['rules']) ? json_encode($family['rules']) : '{}';
+            $features = !empty($family['features']) ? json_encode($family['features']) : '[]';
+            $actions = !empty($family['actions']) ? json_encode($family['actions']) : '[]';
 
-            $insert = $this->connection->prepare(
-                'INSERT INTO `' . $tableName . '`
-            (`group_type`, `family`, `icon`, `label`, `description`, `fields`, `allowed_inquiry_types`, `allowed_response`, `is_root`, `sort_order`, `created`)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
-            );
-
-            $icon = !empty($inquiryGroupType['icon']) ? $inquiryGroupType['icon'] : '';
-            $family = !empty($inquiryGroupType['family']) ? $inquiryGroupType['family'] : '';
-            $description = !empty($inquiryGroupType['description']) ? $inquiryGroupType['description'] : '';
-            $fields = !empty($inquiryGroupType['fields']) ? json_encode($inquiryGroupType['fields']) : '';
-            $allowedInquiryTypes = !empty($inquiryGroupType['allowed_inquiry_types']) ? json_encode($inquiryGroupType['allowed_inquiry_types']) : '';
-            $allowedResponse = !empty($inquiryGroupType['allowed_response']) ? json_encode($inquiryGroupType['allowed_response']) : '';
-            $isRoot = !empty($inquiryGroupType['is_root']) ? 1 : 0;
-            $sortOrder = isset($inquiryGroupType['sort_order']) ? $inquiryGroupType['sort_order'] : 0;
-
-            $created = !empty($inquiryGroupType['created']) ? (int)$inquiryGroupType['created'] : time();
-
-            try {
-                $insert->execute([
-                    $inquiryGroupType['group_type'],
-                    $family,
-                    $icon,
-                    $inquiryGroupType['label'],
-                    $description,
-                    $fields,
-                    $allowedInquiryTypes,
-                    $allowedResponse,
-                    $isRoot,
-                    $sortOrder,
+            $insert->execute(
+                [
+                    $family['family_type'],
+                    $family['label'],
+                    $family['description'] ?? '',
+                    $family['icon'] ?? '',
+                    $ui,
+                    $rules,
+                    $features,
+                    $actions,
+                    $family['sort_order'] ?? 0,
                     $created,
-                ]);
-
-                $id = (int) $this->connection->lastInsertId($tableName);
-                $inserted[$uniqueKey] = $id;
-
-                $this->log($output, 'Inserted inquiry group type: ' . $inquiryGroupType['group_type']);
-            } catch (\Exception $e) {
-                $this->log($output, 'ERROR inserting inquiry group type ' . $inquiryGroupType['group_type'] . ': ' . $e->getMessage());
-            }
-        }
-    }
-
-    //Families
-    private function insertDefaultInquiryFamilies(?IOutput $output = null): void
-    {
-        $this->log($output, 'Inserting default inquiry families...');
-
-        $inserted = [];
-
-        foreach ($this->inquiryTypeFamilies as $family) {
-            if (isset($inserted[$family['family_type']])) {
-                $this->log($output, 'Inquiry family already processed: ' . $family['family_type']);
-                continue;
-            }
-
-            $query = $this->connection->prepare(
-                'SELECT `id` FROM `*PREFIX*' . InquiryFamily::TABLE . '`
-                WHERE `family_type` = ?'
-            );
-            $cursor = $query->execute([$family['family_type']]);
-            $row = $cursor->fetch();
-
-            if ($row !== false) {
-                   $this->log($output, 'Inquiry family already exists in DB: ' . $family['family_type']);
-                   $inserted[$family['family_type']] = (int) $row['id'];
-                   continue;
-            }
-
-            $insert = $this->connection->prepare(
-                'INSERT INTO `*PREFIX*' . InquiryFamily::TABLE . '`
-                (`family_type`, `label`, `description`, `icon`, `sort_order`, `created`)
-                VALUES (?, ?, ?, ?, ?, ?)'
+                ]
             );
 
-            try {
-                     $created = !empty($family['created']) ? (int)$family['created'] : time();
+            $id = (int) $this->connection->lastInsertId('*PREFIX*' . InquiryFamily::TABLE);
+            $inserted[$family['family_type']] = $id;
 
-                        $insert->execute(
-                            [
-                            $family['family_type'],
-                            $family['label'],
-                            $family['description'] ?? '',
-                            $family['icon'] ?? '',
-                            $family['sort_order'] ?? 0,
-                            $created,
-                            ]
-                        );
-
-                        $id = (int) $this->connection->lastInsertId('*PREFIX*' . InquiryFamily::TABLE);
-                        $inserted[$family['family_type']] = $id;
-
-                        $this->log($output, 'Inserted inquiry family: ' . $family['family_type']);
-            } catch (\Exception $e) {
-                  $this->log($output, 'ERROR inserting inquiry family ' . $family['family_type'] . ': ' . $e->getMessage());
-            }
+            $this->log($output, 'Inserted inquiry family: ' . $family['family_type']);
+        } catch (\Exception $e) {
+            $this->log($output, 'ERROR inserting inquiry family ' . $family['family_type'] . ': ' . $e->getMessage());
         }
     }
+}
+
+private function insertDefaultInquiryGroupTypes(?IOutput $output = null): void
+{
+    $this->log($output, 'Inserting default inquiry group types...');
+
+    $inserted = [];
+
+    foreach ($this->inquiryGroupTypes as $inquiryGroupType) {
+        $uniqueKey = $inquiryGroupType['group_type'];
+
+        if (isset($inserted[$uniqueKey])) {
+            $this->log($output, 'Inquiry group type already processed: ' . $inquiryGroupType['group_type']);
+            continue;
+        }
+
+        $tableName = '*PREFIX*' . InquiryGroupType::TABLE;
+
+        $query = $this->connection->prepare(
+            'SELECT `id` FROM `' . $tableName . '`
+            WHERE `group_type` = ?'
+        );
+
+        $cursor = $query->execute([$inquiryGroupType['group_type']]);
+        $row = $cursor->fetch();
+
+        if ($row !== false) {
+            $this->log($output, 'Inquiry group type already exists in DB: ' . $inquiryGroupType['group_type']);
+            $inserted[$uniqueKey] = (int) $row['id'];
+            continue;
+        }
+
+        $insert = $this->connection->prepare(
+            'INSERT INTO `' . $tableName . '`
+            (`group_type`, `family`, `icon`, `label`, `description`, `fields`, `allowed_inquiry_types`, `allowed_response`, `ui`, `rules`, `features`, `actions`, `is_root`, `sort_order`, `created`)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+        );
+
+        $icon = !empty($inquiryGroupType['icon']) ? $inquiryGroupType['icon'] : '';
+        $family = !empty($inquiryGroupType['family']) ? $inquiryGroupType['family'] : '';
+        $description = !empty($inquiryGroupType['description']) ? $inquiryGroupType['description'] : '';
+        $fields = !empty($inquiryGroupType['fields']) ? json_encode($inquiryGroupType['fields']) : '';
+        $allowedInquiryTypes = !empty($inquiryGroupType['allowed_inquiry_types']) ? json_encode($inquiryGroupType['allowed_inquiry_types']) : '';
+        $allowedResponse = !empty($inquiryGroupType['allowed_response']) ? json_encode($inquiryGroupType['allowed_response']) : '';
+
+        // Default values for missing fields
+        $ui = !empty($inquiryGroupType['ui']) ? json_encode($inquiryGroupType['ui']) : '{}';
+        $rules = !empty($inquiryGroupType['rules']) ? json_encode($inquiryGroupType['rules']) : '{}';
+        $features = !empty($inquiryGroupType['features']) ? json_encode($inquiryGroupType['features']) : '[]';
+        $actions = !empty($inquiryGroupType['actions']) ? json_encode($inquiryGroupType['actions']) : '[]';
+
+        $isRoot = !empty($inquiryGroupType['is_root']) ? 1 : 0;
+        $sortOrder = isset($inquiryGroupType['sort_order']) ? $inquiryGroupType['sort_order'] : 0;
+
+        $created = !empty($inquiryGroupType['created']) ? (int)$inquiryGroupType['created'] : time();
+
+        try {
+            $insert->execute([
+                $inquiryGroupType['group_type'],
+                $family,
+                $icon,
+                $inquiryGroupType['label'],
+                $description,
+                $fields,
+                $allowedInquiryTypes,
+                $allowedResponse,
+                $ui,
+                $rules,
+                $features,
+                $actions,
+                $isRoot,
+                $sortOrder,
+                $created,
+            ]);
+
+            $id = (int) $this->connection->lastInsertId($tableName);
+            $inserted[$uniqueKey] = $id;
+
+            $this->log($output, 'Inserted inquiry group type: ' . $inquiryGroupType['group_type']);
+        } catch (\Exception $e) {
+            $this->log($output, 'ERROR inserting inquiry group type ' . $inquiryGroupType['group_type'] . ': ' . $e->getMessage());
+        }
+    }
+}
 
 private function insertDefaultOptionFamilies(?IOutput $output = null): void
 {

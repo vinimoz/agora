@@ -37,7 +37,6 @@ class Install implements IRepairStep
         $this->schema = $this->connection->createSchema();
         $this->indexManager->setSchema($this->schema);
 
-        $messages = array_merge($messages, $this->indexManager->createForeignKeyConstraints());
         $messages = array_merge($messages, $this->indexManager->createUniqueIndices());
 
         $this->connection->migrateToSchema($this->schema);
@@ -46,7 +45,6 @@ class Install implements IRepairStep
             $output->info($message);
         }
 
-        $output->info('Agora - Foreign key contraints created.');
         $output->info('Agora - Indices created.');
         $output->info('Agora - Initialization begin.');
         $this->initDbDefault->runCommands($output);

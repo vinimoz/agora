@@ -4,7 +4,7 @@
 -->
 
 <script setup lang="ts">
-import { computed, ref, watch, onMounted } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { t } from '@nextcloud/l10n'
 import NcDialog from '@nextcloud/vue/components/NcDialog'
@@ -48,24 +48,25 @@ const preferencesStore = usePreferencesStore()
 
 const canUserCreateInquiryGroup = computed(() => canCreateInquiryGroupInGeneral())
 
+const isNavigating = ref(false)
 
-
-// ViewMode state
-// const viewMode = ref<string>((route.query.viewMode as string) || (preferencesStore.user?.defaultDisplayMode || 'view'))
-const viewMode = ref<string>(
-  (route.query.viewMode as string) || (preferencesStore.user?.defaultDisplayMode || 'view')
-)
-
-watch(viewMode, (value) => {
-  router.replace({
-    query: {
-      ...route.query,
-      viewMode: value,
-    },
-  })
+// ViewMode state - directly from URL with fallback to user preference
+const viewMode = computed({
+  get: () => (route.query.viewMode as string) || (preferencesStore.user?.defaultDisplayMode || 'view'),
+  set: (value: string) => {
+    if (isNavigating.value || viewMode.value === value) return
+    
+    isNavigating.value = true
+    router.replace({
+      query: {
+        ...route.query,
+        viewMode: value,
+      },
+    }).finally(() => {
+      isNavigating.value = false
+    })
+  }
 })
-
-
 
 const availableGroups = computed(() => {
   const groups = sessionStore.currentUser.groups || {}
@@ -75,8 +76,7 @@ const availableGroups = computed(() => {
   return groups
 })
 
-// State for selected family
-// const selectedFamily = ref<string | null>(inquiriesStore.familyType || null)
+// Selected family - directly from store
 const selectedFamily = computed({
   get: () => inquiriesStore.advancedFilters.familyType || null,
   set: (value) => inquiriesStore.setFamilyType(value || '')
@@ -100,8 +100,8 @@ const allInquiryGroupTypes = computed((): InquiryGroupType[] => {
 const inquiryTypesByFamily = computed(() => {
   const types = allInquiryTypes.value
   return getInquiryTypesByFamily(types)
-}
-)
+})
+
 const inquiryGroupTypesByFamily = computed(() => {
   const types = allInquiryGroupTypes.value
   return getInquiryGroupTypesByFamily(types)
@@ -127,14 +127,6 @@ const filteredInquiryGroupTypes = computed(() => {
   return getInquiryGroupTypesForFamily(family.family_type, inquiryGroupTypesByFamily.value)
 })
 
-// DEBUG: Check data
-onMounted(() => {
-  inquiriesStore.load(false)
-   if (inquiriesStore.advancedFilters.familyType) {
-    selectedFamily.value = inquiriesStore.advancedFilters.familyType
-  }
-})
-
 // Get family by ID
 const currentFamily = computed(() => {
   if (!selectedFamily.value) return null
@@ -144,140 +136,94 @@ const currentFamily = computed(() => {
 // Get current family data (icon, label, description)
 const currentFamilyData = computed(() => getInquiryItemData(currentFamily.value, t('agora', 'Inquiry Types')))
 
-// Watch for preferences changes
-watch(
-  () => preferencesStore.user.defaultDisplayMode,
-  (newMode) => {
-    // Only update if no viewMode in URL
-    if (!route.query.viewMode && newMode) {
-      viewMode.value = newMode
-    }
-  },
-  { immediate: true }
-)
-
-// Watch for store familyType changes 
-watch(
-  () => inquiriesStore.advancedFilters.familyType,
-  (newFamilyType) => {
-    if (newFamilyType && newFamilyType !== selectedFamily.value) {
-      selectedFamily.value = newFamilyType
-    }
-  },
-  { immediate: true }
-)
-
 // Function to select a family
 function selectFamily(familyType: string) {
-  if (accessFamilyMenu(familyType) ) {
-    selectedFamily.value = familyType
-    inquiriesStore.setFamilyType(familyType)
-    
-  if (viewMode.value === 'view') {
-      if (shouldRedirectToGroupView(familyType)) {
-        router.push({
-          name: 'group-list',
-          params: {
-            slug: 'none'
-          },
-          query: {
-            viewMode: 'group',
-          }
-        })
-        } else {
-         router.push({
-            name: 'list',
-            params: { type: 'relevant' }
-            })
-         }
-    }else {
-        router.push({
-            name: 'menu',
-            query: { viewMode: 'create' }
-      })
-    }
-  } else { showError("You are not allowed to access this family") }
+  if (!accessFamilyMenu(familyType)) {
+    showError(t('agora', 'You are not allowed to access this family'))
+    return
+  }
+  
+  if (isNavigating.value) return
+  isNavigating.value = true
+  
+  // Update store
+  selectedFamily.value = familyType
+  
+  // Navigate based on view mode
+  if (viewMode.value === 'create') {
+    router.push({
+      name: 'menu',
+      query: { viewMode: 'create' }
+    }).finally(() => {
+      isNavigating.value = false
+    })
+  } else if (shouldRedirectToGroupView(familyType)) {
+    router.push({
+      name: 'group-list',
+      params: { slug: 'none' },
+      query: { viewMode: 'group' }
+    }).finally(() => {
+      isNavigating.value = false
+    })
+  } else {
+    router.push({
+      name: 'list',
+      params: { type: 'relevant' },
+      query: { viewMode: 'view' }
+    }).finally(() => {
+      isNavigating.value = false
+    })
+  }
 }
 
 // Function to clear family selection
 function clearFamilySelection() {
-  inquiriesStore.setFamilyType('')
+  if (isNavigating.value) return
+  isNavigating.value = true
+  
   selectedFamily.value = null
+  
   router.push({ 
     name: 'menu',
     query: { viewMode: viewMode.value }
+  }).finally(() => {
+    isNavigating.value = false
   })
 }
 
-// Watch for family selection changes
-watch(
-  () => selectedFamily.value,
-  (newFamilyId) => {
-    if (!newFamilyId) return
-   
-   inquiriesStore.setFamilyType(newFamilyId)
-    // Navigate based on current viewMode
-    if (viewMode.value === 'create' ) {
-      router.push({
-        name: 'menu',
-        query: { viewMode: 'create' }
-      })
-    } else if (shouldRedirectToGroupView(inquiriesStore.advancedFilters.familyType)) {
-        router.push({
-          name: 'group-list',
-          params: {
-            slug: 'none'
-          },
-          query: {
-            viewMode: 'group',
-          }
-        })
-        }else {
-      router.push({
-        name: 'list',
-        params: { type: 'relevant' },
-        query: { viewMode: 'view' }
-      })
-      }
-  }
-)
-
 // Check if a family has inquiry groups OR inquiry group types defined
-const shouldRedirectToGroupView = (familyType: string) => {
+function shouldRedirectToGroupView(familyType: string) {
   const hasGroupTypes = getInquiryGroupTypesForCurrentFamily(familyType).length > 0
   return hasGroupTypes
 }
 
-
-
 // Function to handle view mode change
 function handleViewModeChange(mode: string) {
+  if (viewMode.value === mode) return
   viewMode.value = mode
-  inquiriesStore.setFamilyType(selectedFamily.value)
   
-  // If family is selected, navigate with new mode
+  // If we have a selected family, navigate to appropriate view
   if (selectedFamily.value) {
     if (mode === 'create') {
       router.push({
         name: 'menu',
         query: { viewMode: 'create' }
       })
-      } else {
-        router.push({
-          name: 'list',
-          params: { type: 'relevant' },
-          query: { viewMode: 'view' }
-        })
-      }
+    } else {
+      router.push({
+        name: 'list',
+        params: { type: 'relevant' },
+        query: { viewMode: 'view' }
+      })
     }
   }
+}
 
 // Get inquiry group types for a specific family
 function getInquiryGroupTypesForCurrentFamily(familyInquiryType: string) {
   const groupTypes = getInquiryTypesForFamily(familyInquiryType, inquiryGroupTypesByFamily.value)
   return groupTypes
 }
-
 
 // Function to check if user can create inquiry group for current family
 function canCreateInquiryGroupForFamily(familyType: string): boolean {
@@ -290,7 +236,6 @@ function canCreateInquiryGroupForFamily(familyType: string): boolean {
   return canUserCreateInquiryGroup.value
 }
 
-
 // Function to create new inquiry from type
 function createInquiry(inquiryType: InquiryType) {
   selectedInquiryTypeForCreation.value = inquiryType
@@ -299,7 +244,7 @@ function createInquiry(inquiryType: InquiryType) {
 
 // Function to create new inquiry group from type
 function createInquiryGroup(inquiryGroupType: InquiryGroupType) {
-if (!selectedFamily.value || !canCreateInquiryGroupForFamily(selectedFamily.value)) {
+  if (!selectedFamily.value || !canCreateInquiryGroupForFamily(selectedFamily.value)) {
     showError(t('agora', 'You do not have permission to create inquiry groups for this family'))
     return
   }
@@ -350,7 +295,18 @@ function handleCloseGroupDialog() {
   selectedInquiryGroupTypeForCreation.value = null
   selectedGroups.value = []
 }
+
+// Initialize on mount
+onMounted(() => {
+  inquiriesStore.load(false)
+  
+  // If there's a family type in the store, ensure it's reflected in selectedFamily
+  if (inquiriesStore.advancedFilters.familyType && !selectedFamily.value) {
+    selectedFamily.value = inquiriesStore.advancedFilters.familyType
+  }
+})
 </script>
+
 
 <template>
     <NcAppContent class="inquiry-menu">
@@ -367,7 +323,7 @@ function handleCloseGroupDialog() {
         <NcButton 
          v-if="selectedFamily" 
          class="back-button" 
-         aria-label="t('agora', 'Back to families')"
+         :aria-label="t('agora', 'Back to families')"
          @click="clearFamilySelection"
          >
          <span class="back-button__icon">←</span>
@@ -466,30 +422,6 @@ function handleCloseGroupDialog() {
             </div>
         </div>
 
-        <!-- Inquiry Group Types Section 
-        <div v-if="filteredInquiryGroupTypes.length > 0" class="inquiry-section">
-            <h3 class="section-title">{{ t('agora', 'Inquiry Groups') }}</h3>
-            <div class="inquiry-types-grid">
-                <div
-                        v-for="inquiryGroupType in filteredInquiryGroupTypes"
-                        :key="inquiryGroupType.id"
-                        class="inquiry-type-card"
-                        @click="createInquiryGroup(inquiryGroupType)"
-                        >
-                        <div class="inquiry-type-card__icon">
-                            <component :is="getInquiryGroupTypeData(inquiryGroupType.group_type, allInquiryGroupTypes).icon" />
-                        </div>
-                    <div class="inquiry-type-card__content">
-                        <h4 class="inquiry-type-card__title">
-                            {{ t('agora', getInquiryGroupTypeData(inquiryGroupType.group_type, allInquiryGroupTypes).label) }}
-                        </h4>
-                        <p v-if="getInquiryGroupTypeData(inquiryGroupType.group_type, allInquiryGroupTypes).description" class="inquiry-type-card__description">
-                        {{ t('agora', getInquiryGroupTypeData(inquiryGroupType.group_type, allInquiryGroupTypes).description) }}
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div> -->
         <!-- Inquiry Group Types Section -->
   <div v-if="filteredInquiryGroupTypes.length > 0" class="inquiry-section">
     <h3 class="section-title">{{ t('agora', 'Inquiry Groups') }}</h3>

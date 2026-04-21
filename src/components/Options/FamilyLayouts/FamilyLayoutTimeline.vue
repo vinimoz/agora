@@ -1,361 +1,1092 @@
-<!--
-  SPDX-FileCopyrightText: 2024 Nextcloud contributors
-  SPDX-License-Identifier: AGPL-3.0-or-later
--->
+<!-- SPDX-FileCopyrightText: 2024 Nextcloud contributors -->
+<!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
 <template>
 	<div class="timeline-layout">
 		<!-- Timeline controls -->
 		<div class="timeline-controls">
-			<div class="view-mode">
-				<NcButton
-					:type="viewMode === 'list' ? 'primary' : 'tertiary'"
-					size="small"
-					@click="viewMode = 'list'"
-				>
-					<template #icon>
-						<component :is="InquiryOptionIcons.List" :size="18" />
-					</template>
-					{{ t('agora', 'List') }}
-				</NcButton>
-				<NcButton
-					:type="viewMode === 'timeline' ? 'primary' : 'tertiary'"
-					size="small"
-					@click="viewMode = 'timeline'"
-				>
-					<template #icon>
-						<component :is="InquiryOptionIcons.Timeline" :size="18" />
-					</template>
-					{{ t('agora', 'Timeline') }}
-				</NcButton>
-				<NcButton
-					:type="viewMode === 'calendar' ? 'primary' : 'tertiary'"
-					size="small"
-					@click="viewMode = 'calendar'"
-				>
-					<template #icon>
-						<component :is="InquiryOptionIcons.Calendar" :size="18" />
-					</template>
-					{{ t('agora', 'Calendar') }}
-				</NcButton>
+			<!-- View type group -->
+			<div class="control-group">
+				<div class="view-mode">
+					<NcButton
+						:type="viewMode === 'list' ? 'primary' : 'tertiary'"
+						size="small"
+						@click="switchView('list')"
+					>
+						<template #icon>
+							<component :is="InquiryOptionIcons.List" :size="16" />
+						</template>
+						{{ t('agora', 'List') }}
+					</NcButton>
+					<NcButton
+						:type="viewMode === 'calendar' ? 'primary' : 'tertiary'"
+						size="small"
+						@click="switchView('calendar')"
+					>
+						<template #icon>
+							<component :is="InquiryOptionIcons.Calendar" :size="16" />
+						</template>
+						{{ t('agora', 'Calendar') }}
+					</NcButton>
+					<NcButton
+						:type="viewMode === 'timeline' ? 'primary' : 'tertiary'"
+						size="small"
+						@click="switchView('timeline')"
+					>
+						<template #icon>
+							<component :is="InquiryOptionIcons.Timeline" :size="16" />
+						</template>
+						{{ t('agora', 'Timeline') }}
+					</NcButton>
+				</div>
 			</div>
 
-			<div class="filter-controls">
-				<NcTextField
-					:value="dateFilter"
-					:label="t('agora', 'Filter by date')"
-					type="date"
-					@update:value="dateFilter = $event"
-				/>
+			<!-- Period navigation group -->
+			<div class="control-group">
+				<div class="period-controls">
+					<NcButton size="small" @click="moveTimeline(-1)">
+						<template #icon>
+							<component :is="InquiryOptionIcons.ChevronLeft" :size="16" />
+						</template>
+					</NcButton>
+					
+					<div class="period-selector">
+						<NcButton 
+							size="small"
+							:type="scale === 'day' ? 'primary' : 'tertiary'"
+							@click="setScale('day')"
+						>
+							{{ t('agora', 'Day') }}
+						</NcButton>
+						<NcButton 
+							size="small"
+							:type="scale === 'week' ? 'primary' : 'tertiary'"
+							@click="setScale('week')"
+						>
+							{{ t('agora', 'Week') }}
+						</NcButton>
+						<NcButton 
+							size="small"
+							:type="scale === 'month' ? 'primary' : 'tertiary'"
+							@click="setScale('month')"
+						>
+							{{ t('agora', 'Month') }}
+						</NcButton>
+						<NcButton 
+							size="small"
+							:type="scale === 'year' ? 'primary' : 'tertiary'"
+							@click="setScale('year')"
+						>
+							{{ t('agora', 'Year') }}
+						</NcButton>
+					</div>
+					
+					<NcButton size="small" @click="moveTimeline(1)">
+						<template #icon>
+							<component :is="InquiryOptionIcons.ChevronRight" :size="16" />
+						</template>
+					</NcButton>
+					
+					<NcButton size="small" @click="centerOnToday">
+						<template #icon>
+							<component :is="InquiryOptionIcons.CalendarToday" :size="16" />
+						</template>
+						{{ t('agora', 'Today') }}
+					</NcButton>
+				</div>
+			</div>
+
+			<!-- Actions group -->
+			<div class="control-group">
+				<div class="filter-controls">
+					<NcTextField
+						:value="dateFilter"
+						:label="t('agora', 'Filter by date')"
+						type="date"
+						@update:value="dateFilter = $event"
+					/>
+				</div>
+				
+				<NcButton
+					type="primary"
+					class="add-timeline-btn"
+					@click="showAddModal = true"
+				>
+					<template #icon>
+						<component :is="InquiryOptionIcons.Plus" :size="16" />
+					</template>
+					{{ t('agora', 'Add to timeline') }}
+				</NcButton>
 			</div>
 		</div>
 
-		<!-- FullCalendar component – single instance with dynamic options -->
-		<FullCalendar
-			ref="calendarRef"
-			:options="calendarOptions"
-			class="calendar-wrapper"
-		/>
-	</div>
+		<!-- Draggable options pool -->
+		<div v-if="showDraggablePool" class="draggable-pool">
+			<h4>{{ t('agora', 'Draggable Options') }}</h4>
+			<div class="draggable-items">
+				<div 
+					v-for="option in options" 
+					:key="option.id"
+					class="draggable-item"
+					:data-event="JSON.stringify({
+						title: option.title || option.label,
+						duration: '02:00',
+                        extendedProps: { optionId: option.id, option }
+                        })"
+                    >
+                    <component :is="getOptionTypeIcon(option.type)" :size="16" />
+                    <span>{{ option.title || option.label }}</span>
+                </div>
+            </div>
+        </div>
+
+        <NcPopover
+                v-if="contextMenu.visible"
+                :show="contextMenu.visible"
+                :style="popoverStyle"
+                @close="contextMenu.visible = false"
+                >
+                <NcActions>
+                <NcActionButton @click="handleContextMenuDelete">
+                {{ t('agora', 'Delete') }}
+                </NcActionButton>
+        <NcActionButton @click="handleRemoveFromView">
+        {{ t('agora', 'Remove from timeline') }}
+        </NcActionButton>
+                </NcActions>
+        </NcPopover>
+
+        <DeleteConfirmationDialog
+                v-model:visible="showDeleteDialog"
+                :option-title="selectedOption?.title || selectedOption?.label || ''"
+                :is-imported="selectedOption ? isImportedFromView(selectedOption,family.key) : false"
+                :view-type="'timeline'"
+                @confirm="handleConfirmDelete"
+                @remove-from-view="handleRemoveFromView"
+                />
+        <AddOptionToFamily
+                v-if="showAddModal"
+                family-type="timeline"
+                :inquiry-id="inquiryId"
+                @close="showAddModal = false"
+                @success="handleAddSuccess"
+                />
+
+        <!-- FullCalendar component -->
+        <FullCalendar
+                v-if="calendarInitialized"
+                :key="calendarKey"
+                ref="calendarRef"
+                :options="currentCalendarOptions"
+                class="calendar-wrapper"
+                />
+    </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, nextTick } from 'vue'
+    import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
 import { DateTime } from 'luxon'
+import { showError, showSuccess } from '@nextcloud/dialogs'
 import { InquiryOptionIcons } from '../../../utils/icons.ts'
-import { getOptionTypeFamily } from '../../../helpers/modules/InquiryOptionHelper'
-import type { Option } from '../../../Types/index.ts'
-import { useOptionsStore } from '../../../stores/options'
+import { 
+  filterOptionsByLayout,
+  getTimelineStartDate,
+  isImportedFromView,
+  getTimelineEndDate,
+  getOptionTypeIconComponent
+} from '../../../helpers/modules/InquiryOptionHelper'
+import type { Option, InquiryOptionType, OptionFamily } from '../../../Types/index.ts'
+import AddOptionToFamily from '../../Modals/AddOptionToFamily.vue'
+import NcPopover from '@nextcloud/vue/components/NcPopover'
+import NcActions from '@nextcloud/vue/components/NcActions'
+import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 
 // FullCalendar imports
 import FullCalendar from '@fullcalendar/vue3'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
-import interactionPlugin from '@fullcalendar/interaction'
+import interactionPlugin, { Draggable } from '@fullcalendar/interaction'
 import listPlugin from '@fullcalendar/list'
-import resourceTimelinePlugin from '@fullcalendar/resource-timeline' // 👈 key plugin
-import type { EventClickArg } from '@fullcalendar/core/index.js'
+import multiMonthPlugin from '@fullcalendar/multimonth'
+import scrollGridPlugin from '@fullcalendar/scrollgrid'
+// import adaptivePlugin from '@fullcalendar/adaptive'
+import type { EventClickArg, DropArg } from '@fullcalendar/core/index.js'
+import DeleteConfirmationDialog from '../../Modals/DeleteConfirmationDialog.vue'
 
+// Premium imports
+import resourcePlugin from '@fullcalendar/resource'
+import resourceTimeGridPlugin from '@fullcalendar/resource-timegrid'
+import resourceTimelinePlugin from '@fullcalendar/resource-timeline'
+
+// Props
 const props = defineProps<{
-	options: Option[]
+  options: Option[]
+  inquiryId: number
+  optionTypes: InquiryOptionType[]
+  family: OptionFamily
+  optionsByInquiry?: Option[]
+  showDraggablePool?: boolean
+  // draggableOptions?: Option[]
 }>()
 
+// Emit
 const emit = defineEmits<{
-	'openDetail': [option: Option]
+  openDetail: [option: Option]
+  'update:options': []
+  eventDrop: [eventData: unknown]
+  dateSelect: [dateInfo: unknown]
+  eventReceive: [eventInfo: unknown]
+  deleteOption: [optionId: number]
+  removeFromTimeline: [optionId: number, updatedForceLayouts: string[]]
 }>()
 
-// Stores
-const optionsStore = useOptionsStore()
+// State refs
+const calendarRef = ref<unknown>(null)
+const calendarInitialized = ref(true)
+const calendarKey = ref(0)
+let draggableInstance: unknown = null
+const showAddModal = ref(false)
+const currentPeriodText = ref('')
+const viewMode = ref<'list' | 'timeline' | 'calendar' | 'resourceDay' | 'resourceWeek'>('timeline')
+const scale = ref<'day' | 'week' | 'month' | 'year'>('week')
+const dateFilter = ref('')
+const showDeleteDialog = ref(false)
+const selectedOption = ref<Option | null>(null)
 
-// Calendar ref
-const calendarRef = ref<InstanceType<typeof FullCalendar> | null>(null)
-
-// ---------- Date parsing ----------
-const parseDate = (value: number | string | undefined): DateTime | null => {
-	if (!value || value === 0) return null
-	if (typeof value === 'string') {
-		const dt = DateTime.fromISO(value)
-		return dt.isValid ? dt.toLocal() : null
-	} 
-	const isSeconds = value < 10000000000
-	const dt = isSeconds ? DateTime.fromSeconds(value) : DateTime.fromMillis(value)
-	return dt.toLocal()
+// Helper functions
+const getStatusColor = (status: string) => {
+  const colors: Record<string, string> = {
+    draft: '#949494',
+    active: '#3498db',
+    completed: '#27ae60',
+    cancelled: '#e74c3c',
+    pending: '#f39c12',
+    approved: '#2ecc71'
+  }
+  return colors[status] || '#949494'
 }
 
-const getStartDate = (option: Option): DateTime | null => {
-	const value = option.miscFields?.start_date ||
-		option.miscFields?.voting_start ||
-		option.miscFields?.support_start
-	return parseDate(value)
+let pendingCallbacks: {
+  onDelete: () => void
+  onRemoveFromView: () => void
+} | null = null
+
+const handleEventClick = (info: EventClickArg) => {
+  // console.log('Event title:', info.event.title)
+  
+  // Always prevent default to stop browser context menu
+  info.jsEvent.preventDefault()
+  info.jsEvent.stopPropagation()
+  
+  // Check for right click (button === 2)
+  if (info.jsEvent.button === 2) {
+    // console.log('Right click detected - showing context menu')
+    
+    const option = info.event.extendedProps?.option
+    if (option) {
+      // Show the NcPopover context menu
+      contextMenu.value = {
+        visible: true,
+        x: info.jsEvent.clientX,
+        y: info.jsEvent.clientY,
+        event: info.event
+      }
+    }
+  } 
+  // Left click (button === 0)
+  else if (info.jsEvent.button === 0) {
+     // console.log('Left click detected - opening detail')
+    emit('openDetail', info.event.extendedProps.option)
+  }
 }
 
-const getEndDate = (option: Option): DateTime | null => parseDate(option.miscFields?.end_date)
 
-// ---------- Process options ----------
-const processOptions = computed(() => props.options.filter(opt => {
-	const family = getOptionTypeFamily(opt.type, optionsStore.getOptionTypesArray)
-	return family === 'process'
+// Add a global context menu prevention for the calendar container
+
+const preventGlobalContextMenu = (e: MouseEvent) => {
+  // Only prevent on event elements, but let eventClick do the main work
+  const target = e.target as HTMLElement
+  if (target.closest?.('.fc-event, .fc-list-event, .fc-daygrid-event, .fc-timegrid-event')) {
+    e.preventDefault()
+    e.stopPropagation()
+  }
+}
+
+
+const contextMenu = ref({
+  visible: false,
+  x: 0,
+  y: 0,
+  event: null as unknown
+})
+
+const popoverStyle = computed(() => ({
+  position: 'fixed',
+  left: `${contextMenu.value.x  }px`,
+  top: `${contextMenu.value.y  }px`,
+  zIndex: 9999
 }))
 
-// Transform options into FullCalendar resources (each option becomes a row)
+
+// Add these handler functions
+const handleConfirmDelete = () => {
+  if (pendingCallbacks?.onDelete) {
+    pendingCallbacks.onDelete()
+    showSuccess(t('agora', 'Option deleted successfully'))
+  }
+  pendingCallbacks = null
+  selectedOption.value = null
+}
+
+const handleRemoveFromView = () => {
+  if (pendingCallbacks?.onRemoveFromView) {
+    pendingCallbacks.onRemoveFromView()
+    showSuccess(t('agora', 'Option removed from timeline'))
+  }
+  pendingCallbacks = null
+  selectedOption.value = null
+}
+
+
+const getOptionTypeIcon = (type: string) => getOptionTypeIconComponent(type, props.optionTypes)
+
+const updateCurrentPeriodText = () => {
+  if (!calendarRef.value) return
+  const api = calendarRef.value.getApi()
+  const currentDate = api.getDate()
+  currentPeriodText.value = currentDate.toLocaleString('default', { month: 'long', year: 'numeric' })
+}
+
+// Computed properties
+const timelineOptions = computed(() => {
+  const sourceOptions = props.optionsByInquiry || props.options
+  return filterOptionsByLayout(
+    sourceOptions,
+    'timeline',
+    props.optionTypes,
+    props.family.key
+  )
+})
+
+const processOptions = computed(() => timelineOptions.value.filter(opt => getTimelineStartDate(opt) !== null))
+
 const resources = computed(() => processOptions.value.map(opt => ({
-	id: opt.id.toString(),
-	title: opt.title,
-	// You can add more fields here for resourceAreaColumns if needed
-})))
+    id: opt.id.toString(),
+    title: opt.title || opt.label || 'Untitled',
+    eventColor: getStatusColor(opt.status?.optionStatus || 'draft')
+  })))
 
-// Transform options into FullCalendar events (each option's time span)
 const events = computed(() => processOptions.value
-	.map(opt => {
-		const start = getStartDate(opt)
-		if (!start) return null
+    .map(opt => {
+      const start = getTimelineStartDate(opt)
+      if (!start) return null
 
-		// Apply date filter if set
-		if (dateFilter.value) {
-			const filterDate = DateTime.fromISO(dateFilter.value).toLocal()
-			if (!start.hasSame(filterDate, 'day')) return null
-		}
+      if (dateFilter.value) {
+        const filterDate = DateTime.fromISO(dateFilter.value).toLocal()
+        const startDateObj = DateTime.fromJSDate(start)
+        if (!startDateObj.hasSame(filterDate, 'day')) return null
+      }
 
-		const end = getEndDate(opt)
-		let endDate: Date | undefined
-		if (end) {
-			// For all-day events, end is exclusive – add one day to include the end day
-			endDate = end.plus({ days: 1 }).toJSDate()
-		}
+      const end = getTimelineEndDate(opt)
+      let endDateObj: Date | undefined
+      if (end) {
+        endDateObj = DateTime.fromJSDate(end).plus({ days: 1 }).toJSDate()
+      }
 
-		return {
-			resourceId: opt.id.toString(), // link to the resource
-			title: opt.title,
-			start: start.toJSDate(),
-			end: endDate,
-			allDay: true,
-			extendedProps: { option: opt },
-			backgroundColor: getStatusColor(opt.status?.optionStatus),
-			borderColor: getStatusColor(opt.status?.optionStatus),
-			textColor: '#ffffff',
-		}
-	})
-	.filter(Boolean))
+      return {
+        id: opt.id.toString(),
+        resourceId: opt.id.toString(),
+        title: opt.title || opt.label || 'Untitled',
+        start,
+        end: endDateObj,
+        allDay: true,
+        extendedProps: { option: opt },
+        backgroundColor: getStatusColor(opt.status?.optionStatus || 'draft'),
+        borderColor: getStatusColor(opt.status?.optionStatus || 'draft'),
+        textColor: '#ffffff'
+      }
+    })
+    .filter(Boolean))
 
-// Helper for status color
-const getStatusColor = (status: string) => {
-	const colors: Record<string, string> = {
-		draft: '#949494',
-		active: '#3498db',
-		completed: '#27ae60',
-		cancelled: '#e74c3c'
-	}
-	return colors[status] || '#949494'
+// Event Handlers
+const handleExternalDrop = async (dropInfo: DropArg) => {
+  const eventData = dropInfo.draggedEl?.getAttribute('data-event')
+  if (eventData) {
+    try {
+      const parsedEvent = JSON.parse(eventData)
+      const startDate = dropInfo.date
+      const endDate = new Date(startDate)
+      endDate.setHours(endDate.getHours() + 2)
+
+      const newEvent = {
+        title: parsedEvent.title,
+        start: startDate,
+        end: endDate,
+        allDay: dropInfo.allDay,
+        resourceId: dropInfo.resource?.id,
+        extendedProps: {
+          ...parsedEvent.extendedProps,
+          created: Date.now()
+        }
+      }
+
+      emit('eventDrop', newEvent)
+      showSuccess(t('agora', 'Event added to timeline'))
+
+      if (calendarRef.value) {
+        calendarRef.value.getApi().refetchEvents()
+      }
+    } catch (e) {
+      console.error('Error parsing event data:', e)
+      showError(t('agora', 'Failed to add event'))
+    }
+  }
 }
 
-// ---------- View state ----------
-const viewMode = ref<'list' | 'timeline' | 'calendar'>('timeline')
-const scale = ref<'day' | 'week' | 'month'>('week')
-const dateFilter = ref('')
+const handleEventDrop = async (dropInfo: unknown) => {
+  const event = dropInfo.event
+  const optionId = parseInt(event.id)
+  const option = timelineOptions.value.find((opt: Option) => opt.id === optionId)
 
-// Determine which view to show in FullCalendar
-const getCurrentView = () => {
-	switch (viewMode.value) {
-		case 'list':
-			return 'listWeek' // or listDay, listMonth – you can change
-		case 'calendar':
-			return 'dayGridMonth'
-		case 'timeline':
-			// Use resource timeline views
-			switch (scale.value) {
-				case 'day': return 'resourceTimelineDay'
-				case 'week': return 'resourceTimelineWeek'
-				case 'month': return 'resourceTimelineMonth'
-				default: return 'resourceTimelineWeek'
-			}
-		default:
-			return 'dayGridMonth'
-	}
+  if (option) {
+    emit('eventDrop', {
+      optionId,
+      newStart: event.start,
+      newEnd: event.end,
+      newResourceId: event.resource?.id,
+      option
+    })
+    showSuccess(t('agora', 'Event updated'))
+  }
 }
 
-// FullCalendar options – computed so they update reactively
-const calendarOptions = computed(() => {
-	const base = {
-		plugins: [
-			dayGridPlugin,
-			timeGridPlugin,
-			interactionPlugin,
-			listPlugin,
-			resourceTimelinePlugin, // 👈 important
-		],
-		schedulerLicenseKey: 'CC-Attribution-NonCommercial-NoDerivatives',
-		headerToolbar: false, // we use our own controls
-		initialView: getCurrentView(),
-		views: {
-			// Optional: configure custom durations for timeline
-			resourceTimelineDay: { type: 'resourceTimeline', duration: { days: 1 } },
-			resourceTimelineWeek: { type: 'resourceTimeline', duration: { days: 7 } },
-			resourceTimelineMonth: { type: 'resourceTimeline', duration: { months: 1 } },
-		},
-		resources: resources.value,
-		events: events.value,
-		eventClick: (info: EventClickArg) => {
-			emit('openDetail', info.event.extendedProps.option)
-		},
-		height: 'auto',
-		firstDay: 1, // Monday
-		locale: 'en',
-		buttonText: {
-			today: t('agora', 'Today'),
-			month: t('agora', 'Month'),
-			week: t('agora', 'Week'),
-			day: t('agora', 'Day'),
-			list: t('agora', 'List'),
-		},
-		// Resource timeline specific options
-		resourceAreaWidth: '200px', // width of the left column
-		resourceGroupField: 'title', // Use title as the resource group field
-		// If you want to customize the resource area header text, you can use:
-		// resourceAreaHeaderContent: t('agora', 'Options'),
-	}
+const handleEventResize = async (resizeInfo: unknown) => {
+  const event = resizeInfo.event
+  const optionId = parseInt(event.id)
+  const option = timelineOptions.value.find((opt: Option) => opt.id === optionId)
 
-	// Add view-specific options
-	if (viewMode.value !== 'list') {
-		return {
-			...base,
-			slotMinTime: '00:00:00',
-			slotMaxTime: '24:00:00',
-			allDaySlot: false,
-			nowIndicator: true,
-			editable: false,
-			selectable: false,
-		}
-	}
-	return base
+  if (option) {
+    emit('eventDrop', {
+      optionId,
+      newStart: event.start,
+      newEnd: event.end,
+      option,
+      resized: true
+    })
+    showSuccess(t('agora', 'Event duration updated'))
+  }
+}
+
+const handleDateSelect = (selectInfo: unknown) => {
+  emit('dateSelect', {
+    start: selectInfo.start,
+    end: selectInfo.end,
+    allDay: selectInfo.allDay,
+    resource: selectInfo.resource
+  })
+}
+
+// View configurations
+const listViewOptions = computed(() => ({
+  plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin],
+  headerToolbar: false,
+  initialView: scale.value === 'day' ? 'listDay' : scale.value === 'week' ? 'listWeek' : 'listMonth',
+  views: {
+    listDay: { type: 'list', duration: { days: 1 } },
+    listWeek: { type: 'list', duration: { days: 7 } },
+    listMonth: { type: 'list', duration: { months: 1 } }
+  },
+  events: events.value,
+  eventClick: handleEventClick,
+  height: 'auto',
+  firstDay: 1,
+  locale: 'en',
+  droppable: true,
+  drop: handleExternalDrop,
+  datesSet: () => {
+    updateCurrentPeriodText()
+  }
+}))
+
+const calendarViewOptions = computed(() => ({
+  plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin, multiMonthPlugin],
+  headerToolbar: false,
+  initialView: scale.value === 'day' ? 'timeGridDay' : scale.value === 'week' ? 'timeGridWeek' : 'dayGridMonth',
+  views: {
+    timeGridDay: { type: 'timeGrid', duration: { days: 1 } },
+    timeGridWeek: { type: 'timeGrid', duration: { days: 7 } },
+    dayGridMonth: { type: 'dayGrid', duration: { months: 1 } }
+  },
+  events: events.value,
+  eventClick: handleEventClick,
+  eventDrop: handleEventDrop,
+  eventResize: handleEventResize,
+  droppable: true,
+  drop: handleExternalDrop,
+  selectable: true,
+  select: handleDateSelect,
+  height: 'auto',
+  firstDay: 1,
+  locale: 'en',
+  datesSet: () => {
+    updateCurrentPeriodText()
+  }
+}))
+
+const resourceDayViewOptions = computed(() => ({
+  plugins: [resourcePlugin, resourceTimeGridPlugin, interactionPlugin],
+  schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
+  headerToolbar: false,
+  initialView: 'resourceTimeGridDay',
+  resources: resources.value,
+  events: events.value,
+  eventClick: handleEventClick,
+  eventDrop: handleEventDrop,
+  eventResize: handleEventResize,
+  droppable: true,
+  drop: handleExternalDrop,
+  selectable: true,
+  select: handleDateSelect,
+  height: 'auto',
+  firstDay: 1,
+  locale: 'en',
+  datesSet: () => {
+    updateCurrentPeriodText()
+  }
+}))
+
+const handleContextMenuDelete = () => {
+  // console.log('Delete clicked from context menu') // Debug log
+  if (contextMenu.value.event) {
+    const option = contextMenu.value.event.extendedProps?.option
+    if (option) {
+      selectedOption.value = option
+      pendingCallbacks = {
+        onDelete: () => {
+          emit('deleteOption', option.id)
+          if (calendarRef.value) {
+            setTimeout(() => {
+              (calendarRef.value as unknown).getApi().refetchEvents()
+            }, 100)
+          }
+        },
+        onRemoveFromView: () => {
+          let currentLayouts = option.miscFields?.force_layouts || []
+          if (typeof currentLayouts === 'string') {
+            try {
+              currentLayouts = JSON.parse(currentLayouts)
+            } catch {
+              currentLayouts = []
+            }
+          }
+          const updatedLayouts = currentLayouts.filter((l: string) => l !== 'timeline')
+          emit('removeFromTimeline', option.id, updatedLayouts)
+          if (calendarRef.value) {
+            setTimeout(() => {
+              (calendarRef.value as unknown).getApi().refetchEvents()
+            }, 100)
+          }
+        }
+      }
+      showDeleteDialog.value = true
+    }
+  }
+  contextMenu.value.visible = false
+}
+
+
+// Update onMounted to remove the calendar wrapper specific listener (not needed anymore)
+onMounted(() => {
+  setTimeout(updateCurrentPeriodText, 200)
+  if (props.showDraggablePool) {
+    initDraggable()
+  }
+  // Keep global prevention but simplified
+  document.addEventListener('contextmenu', preventGlobalContextMenu, true)
 })
 
-// Watch for view mode changes – update the calendar view
-watch([viewMode, scale], () => {
-	if (!calendarRef.value) return
-	const api = calendarRef.value.getApi()
-	api.changeView(getCurrentView())
+const timelineViewOptions = computed(() => {
+  const getViewName = () => {
+    switch (scale.value) {
+      case 'day': return 'resourceTimelineDay'
+      case 'week': return 'resourceTimelineWeek'
+      case 'month': return 'resourceTimelineMonth'
+      case 'year': return 'resourceTimelineYear'
+      default: return 'resourceTimelineWeek'
+    }
+  }
+
+  return {
+    plugins: [resourcePlugin, resourceTimelinePlugin, interactionPlugin, scrollGridPlugin],
+    schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
+    headerToolbar: false,
+    initialView: getViewName(),
+    views: {
+      resourceTimelineDay: { type: 'resourceTimeline', duration: { days: 1 } },
+      resourceTimelineWeek: { type: 'resourceTimeline', duration: { days: 7 } },
+      resourceTimelineMonth: { type: 'resourceTimeline', duration: { months: 1 } },
+      resourceTimelineYear: { type: 'resourceTimeline', duration: { years: 1 } }
+    },
+    resources: resources.value,
+    events: events.value,
+    eventClick: handleEventClick,
+    eventDrop: handleEventDrop,
+    eventResize: handleEventResize,
+    droppable: true,
+    drop: handleExternalDrop,
+    selectable: true,
+    select: handleDateSelect,
+    height: 'auto',
+    firstDay: 1,
+    locale: 'en',
+    resourceAreaWidth: '200px',
+    datesSet: () => {
+      updateCurrentPeriodText()
+    }
+  }
 })
 
-// Watch for events changes – refresh events
-watch(events, () => {
-	if (!calendarRef.value) return
-	const api = calendarRef.value.getApi()
-	api.refetchEvents()
+const resourceWeekViewOptions = computed(() => ({
+  plugins: [resourcePlugin, resourceTimeGridPlugin, interactionPlugin],
+  schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
+  headerToolbar: false,
+  initialView: 'resourceTimeGridWeek',
+  resources: resources.value,
+  events: events.value,
+  eventClick: handleEventClick,
+  eventDrop: handleEventDrop,
+  eventResize: handleEventResize,
+  droppable: true,
+  drop: handleExternalDrop,
+  selectable: true,
+  select: handleDateSelect,
+  height: 'auto',
+  firstDay: 1,
+  locale: 'en',
+  datesSet: () => {
+    updateCurrentPeriodText()
+  }
+}))
+    
+
+const currentCalendarOptions = computed(() => {
+  switch (viewMode.value) {
+    case 'list': return listViewOptions.value
+    case 'calendar': return calendarViewOptions.value
+    case 'resourceDay': return resourceDayViewOptions.value
+    case 'resourceWeek': return resourceWeekViewOptions.value
+    default: return timelineViewOptions.value
+  }
 })
 
-// Navigation methods (used by the template buttons)
+// Navigation methods
+const switchView = async (newView: 'list' | 'timeline' | 'calendar' | 'resourceDay' | 'resourceWeek') => {
+  if (viewMode.value === newView) return
+
+  calendarInitialized.value = false
+  await new Promise(resolve => setTimeout(resolve, 50))
+  viewMode.value = newView
+  calendarKey.value = calendarKey.value + 1
+  calendarInitialized.value = true
+}
+
+const setScale = async (newScale: 'day' | 'week' | 'month' | 'year') => {
+  if (scale.value === newScale) return
+  scale.value = newScale
+
+  if (viewMode.value !== 'resourceDay' && viewMode.value !== 'resourceWeek') {
+    calendarInitialized.value = false
+    await new Promise(resolve => setTimeout(resolve, 50))
+    calendarKey.value = calendarKey.value + 1
+    calendarInitialized.value = true
+  }
+}
+
 const moveTimeline = (direction: number) => {
-	if (!calendarRef.value) return
-	const api = calendarRef.value.getApi()
-	if (direction < 0) {
-		api.prev()
-	} else {
-		api.next()
-	}
+  if (!calendarRef.value) return
+  const api = calendarRef.value.getApi()
+  if (direction < 0) {
+    api.prev()
+  } else {
+    api.next()
+  }
+  setTimeout(updateCurrentPeriodText, 100)
 }
 
 const centerOnToday = () => {
-	if (!calendarRef.value) return
-	const api = calendarRef.value.getApi()
-	api.today()
+  if (!calendarRef.value) return
+  const api = calendarRef.value.getApi()
+  api.today()
+  setTimeout(updateCurrentPeriodText, 100)
 }
 
-// Expose navigation to parent if needed
-defineExpose({ moveTimeline, centerOnToday })
-
-// Helper to format the date range shown in the header
-const formatDateRange = (start: Date, end: Date, scale: string) => {
-	const startDt = DateTime.fromJSDate(start)
-	const endDt = DateTime.fromJSDate(end)
-	switch (scale) {
-		case 'day': return startDt.toFormat('DDD')
-		case 'week': return `${startDt.toFormat('MMM d')} - ${endDt.toFormat('MMM d, yyyy')}`
-		case 'month': return startDt.toFormat('MMMM yyyy')
-		default: return ''
-	}
+const handleAddSuccess = () => {
+  emit('update:options')
+  calendarInitialized.value = false
+  setTimeout(() => {
+    calendarKey.value = calendarKey.value + 1 
+    calendarInitialized.value = true
+  }, 50)
 }
 
-// Reactive visible range text (for the header)
-const visibleRangeText = ref('')
+const initDraggable = () => {
+  if (!props.showDraggablePool) return
 
-watch([viewMode, scale], async () => {
-	await nextTick()
-	if (!calendarRef.value) return
-	const api = calendarRef.value.getApi()
-	const view = api.view
-	if (view) {
-		visibleRangeText.value = formatDateRange(view.currentStart, view.currentEnd, scale.value)
-	}
+  nextTick(() => {
+    const containerEl = document.querySelector('.draggable-items')
+    if (containerEl && !draggableInstance) {
+      draggableInstance = new Draggable(containerEl, {
+        itemSelector: '.draggable-item',
+        eventData: (eventEl: HTMLElement) => {
+          const eventAttr = eventEl.getAttribute('data-event')
+          if (eventAttr) {
+            return JSON.parse(eventAttr)
+          }
+          return {
+            title: eventEl.innerText,
+            duration: '02:00'
+          }
+        }
+      })
+    }
+  })
+}
+
+const destroyDraggable = () => {
+  if (draggableInstance) {
+    draggableInstance.destroy()
+    draggableInstance = null
+  }
+}
+
+// Watchers
+watch(events, () => {
+  if (calendarRef.value && calendarInitialized.value) {
+    try {
+      calendarRef.value.getApi().refetchEvents()
+    } catch (e) {
+      console.warn('Error refreshing events:', e)
+    }
+  }
+}, { deep: true })
+
+watch(() => props.showDraggablePool, (show) => {
+  if (show) {
+    initDraggable()
+  } else {
+    destroyDraggable()
+  }
 })
-</script>
 
+// Lifecycle
+// Update the onMounted to use event listener properly
+onMounted(() => {
+  setTimeout(updateCurrentPeriodText, 200)
+  if (props.showDraggablePool) {
+    initDraggable()
+  }
+  // Add event listener with capture phase to ensure we catch it early
+  document.addEventListener('contextmenu', preventGlobalContextMenu, true)
+
+  // Also add a specific listener for the calendar container
+  const calendarEl = document.querySelector('.calendar-wrapper')
+  if (calendarEl) {
+    calendarEl.addEventListener('contextmenu', (e) => {
+      const target = e.target as HTMLElement
+      if (target.closest?.('.fc-event')) {
+        e.preventDefault()
+        e.stopPropagation()
+      }
+    })
+  }
+})
+
+onBeforeUnmount(() => {
+  calendarInitialized.value = false
+  destroyDraggable()
+  // Remove global context menu prevention
+  document.removeEventListener('contextmenu', preventGlobalContextMenu)
+})
+
+defineExpose({ moveTimeline, centerOnToday, switchView, setScale })
+</script>
 <style scoped lang="scss">
 .timeline-layout {
-	.timeline-controls {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		margin-bottom: 24px;
-		padding: 16px;
-		background: var(--color-background-dark);
-		border-radius: 12px;
+    .timeline-controls {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 24px;
+        padding: 12px 20px;
+        background: var(--color-background-dark);
+        border-radius: 16px;
+        flex-wrap: wrap;
 
-		.view-mode {
-			display: flex;
-			gap: 8px;
-		}
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
 
-		.filter-controls {
-			width: 200px;
-		}
-	}
+            &:not(:last-child) {
+                padding-right: 16px;
+                border-right: 1px solid var(--color-border);
+            }
+        }
 
-	.calendar-wrapper {
-		margin-top: 20px;
-		min-height: 500px;
-	}
+        .view-mode {
+            display: flex;
+            gap: 4px;
+            background: var(--color-background-hover);
+            padding: 4px;
+            border-radius: 12px;
+        }
+
+        .period-controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+
+            .period-selector {
+                display: flex;
+                gap: 4px;
+                background: var(--color-background-hover);
+                padding: 4px;
+                border-radius: 12px;
+            }
+        }
+
+        .filter-controls {
+            width: 180px;
+        }
+
+        .add-timeline-btn {
+            background: linear-gradient(135deg, var(--color-primary-element-light) 0%, var(--color-primary-element) 100%);
+            border: none;
+            color: white;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 20px;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+
+            &:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(var(--color-primary-element-rgb), 0.3);
+            }
+        }
+    }
+
+    .draggable-pool {
+        margin-bottom: 20px;
+        padding: 16px;
+        background: var(--color-background-dark);
+        border-radius: 12px;
+        border: 2px dashed var(--color-border);
+
+        h4 {
+            margin: 0 0 12px 0;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .draggable-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+
+            .draggable-item {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                padding: 8px 12px;
+                background: var(--color-main-background);
+                border: 1px solid var(--color-border);
+                border-radius: 8px;
+                cursor: grab;
+                transition: all 0.2s ease;
+                font-size: 13px;
+
+                &:active {
+                    cursor: grabbing;
+                }
+
+                &:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                    border-color: var(--color-primary-element);
+                }
+
+                svg {
+                    color: var(--color-primary-element);
+                }
+            }
+        }
+    }
+
+    .calendar-wrapper {
+        margin-top: 20px;
+        min-height: 500px;
+    }
 }
+
+                                    // Responsive
+                                @media (max-width: 1200px) {
+                                        .timeline-layout .timeline-controls {
+                                            flex-direction: column;
+                                            align-items: stretch;
+
+                                            .control-group {
+                                                justify-content: space-between;
+
+                                                &:not(:last-child) {
+                                                    padding-right: 0;
+                                                    border-right: none;
+                                                    padding-bottom: 12px;
+                                                    border-bottom: 1px solid var(--color-border);
+                                                }
+                                            }
+
+                                            .view-mode, .period-controls {
+                                                flex-wrap: wrap;
+                                            }
+                                        }
+                                    }
+
+                                    @media (max-width: 768px) {
+                                        .timeline-layout .timeline-controls {
+                                            .control-group {
+                                                flex-direction: column;
+                                                align-items: stretch;
+
+                                                .view-mode, .period-controls, .filter-controls {
+                                                    width: 100%;
+                                                    justify-content: center;
+                                                }
+                                            }
+                                        }
+                                    }
 </style>
 
-<!-- Global FullCalendar styles (already in index.html via CDN) -->
 <style>
-/* Your custom overrides – if any */
+/* FullCalendar Global Styles */
+.fc {
+    max-width: 100%;
+}
+
+/* Prevent default context menu on events globally */
+.fc-event,
+.fc-event-main,
+.fc-event-main-frame {
+    user-select: none;
+    -webkit-user-select: none;
+}
+
 .fc-event {
-	cursor: pointer;
-	padding: 2px 4px;
-	border-radius: 4px;
-	font-size: 0.85em;
-	transition: transform 0.1s ease;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 0.85em;
+    transition: all 0.2s ease;
 }
 
 .fc-event:hover {
-	transform: scale(1.02);
-	filter: brightness(1.1);
+    transform: translateY(-1px);
+    filter: brightness(1.05);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .fc-header-toolbar {
-	display: none;
+    display: none;
+}
+
+.fc-day-today {
+    background: rgba(var(--color-primary-element-rgb), 0.1) !important;
+}
+
+.fc-highlight {
+    background: rgba(var(--color-primary-element-rgb), 0.2) !important;
+}
+
+/* Resource Views */
+.fc-resource-area td {
+    padding: 12px 8px;
+    font-weight: 500;
+}
+
+.fc-resource-cell {
+    font-weight: 600;
+}
+
+/* Timeline View */
+.fc-timeline-event {
+    border-radius: 6px;
+    padding: 4px 8px;
+}
+
+.fc-timeline .fc-resource-area tr:hover {
+    background: var(--color-background-hover);
+}
+
+/* List View */
+.fc-list-table {
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.fc-list-day-cushion {
+    background: var(--color-background-dark);
+    padding: 12px 16px;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.fc-list-table td {
+    padding: 12px 16px;
+}
+
+.fc-list-event {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.fc-list-event:hover {
+    background-color: var(--color-background-hover);
+}
+
+/* Calendar View */
+.fc-daygrid-day {
+    transition: background-color 0.2s ease;
+}
+
+.fc-daygrid-day:hover {
+    background-color: var(--color-background-hover);
+}
+
+.fc-daygrid-day-number {
+    font-weight: 500;
+    padding: 8px;
+}
+
+.fc-daygrid-event {
+    margin: 2px 4px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+}
+
+/* Drag and Drop */
+.fc-dragging {
+    opacity: 0.7;
+}
+
+.fc-event-dragging {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.fc-event-resizing {
+    opacity: 0.8;
 }
 </style>

@@ -332,13 +332,10 @@ function closePopup() {
   min-height: 100vh;
 }
 
-/* Envelope Styles - Applied to ALL inquiry items */
 .header-item,
 .sidebar-item,
 .footer-item,
 .main-item {
-  border: 8px solid var(--inquiry-gray-200);
-  border-radius: var(--inquiry-border-radius-lg);
   box-shadow: var(--inquiry-shadow-sm);
   transition: var(--inquiry-transition-slow);
   cursor: pointer;

@@ -262,29 +262,28 @@ const archivedInquiryGroupsByType = computed(() => {
 
       <NcAppNavigationSpacer />
 
-       <!-- Archived Groups Section (Conditional) -->
-        <!-- Archived Groups Section -->
-<NcAppNavigationList v-if="hasArchivedGroups && filteredInquiryGroupTypes.length > 0">
-  <NcAppNavigationItem
-    :name="t('agora', 'Archived Groups')"
-    :title="t('agora', 'View archived groups')"
-    class="navigation-item archived-groups-item"
-    :to="{
-      name: 'group-archived',
-    }"
-  >
-    <template #icon>
-      <component :is="NavigationIcons.Archive" />
-    </template>
-    
-    <template #counter>
-      <NcCounterBubble
-        :count="Object.values(archivedInquiryGroupsByType).flat().length"
-        class="navigation-counter archived-counter"
-      />
-    </template>
-  </NcAppNavigationItem>
-</NcAppNavigationList>
+      <!-- Archived Groups Section -->
+      <NcAppNavigationList v-if="hasArchivedGroups && filteredInquiryGroupTypes.length > 0">
+      <NcAppNavigationItem
+              :name="t('agora', 'Archived Groups')"
+              :title="t('agora', 'View archived groups')"
+              class="navigation-item archived-groups-item"
+              :to="{
+                   name: 'group-archived',
+                   }"
+              >
+              <template #icon>
+                  <component :is="NavigationIcons.Archive" />
+              </template>
+
+      <template #counter>
+          <NcCounterBubble
+                  :count="Object.values(archivedInquiryGroupsByType).flat().length"
+                  class="navigation-counter archived-counter"
+                  />
+      </template>
+      </NcAppNavigationItem>
+      </NcAppNavigationList>
 
       <NcAppNavigationSpacer />
 
@@ -294,22 +293,22 @@ const archivedInquiryGroupsByType = computed(() => {
           {{ t('agora', 'Quick Actions') }}
       </h3>
 
-        <NcAppNavigationItem
-          :name="t('agora', 'Home')"
-          :to="{
-               name: 'menu',
-               params: { },
-               query: { }
-               }"
-          :exact="true"
-          class="navigation-item"
-          @click="clearFamilySelection"
-        >
+      <NcAppNavigationItem
+              :name="t('agora', 'Home')"
+              :to="{
+                   name: 'menu',
+                   params: { },
+                   query: { }
+                   }"
+              :exact="true"
+              class="navigation-item"
+              @click="clearFamilySelection"
+              >
               <template #icon>
-         <component
-            :is="NavigationIcons.Home"
-        />
-        </template>
+                  <component
+                          :is="NavigationIcons.Home"
+                          />
+              </template>
       </NcAppNavigationItem>
 
 
@@ -327,15 +326,15 @@ const archivedInquiryGroupsByType = computed(() => {
               @click="navigateToCreateOrView"
               >
               <template #icon>
-    <component
-        :is="NavigationIcons.Plus"
-        v-if="viewMode === 'create'"
-    />
-    <component
-        :is="NavigationIcons.View"
-        v-else
-    />
-</template>
+                  <component
+                          :is="NavigationIcons.Plus"
+                          v-if="viewMode === 'create'"
+                          />
+                  <component
+                          :is="NavigationIcons.View"
+                          v-else
+                          />
+              </template>
       </NcAppNavigationItem>
 
       <NcAppNavigationItem
@@ -378,89 +377,89 @@ const archivedInquiryGroupsByType = computed(() => {
     padding-bottom: 8px;
 }
 
-      .navigation-item {
-          margin: 2px 8px;
-          border-radius: 8px;
+          .navigation-item {
+              margin: 2px 8px;
+              border-radius: 8px;
 
-          &:hover {
-              background-color: var(--color-background-hover);
-          }
+              &:hover {
+                  background-color: var(--color-background-hover);
+              }
 
-          &.active {
-              background-color: var(--color-primary-light);
+              &.active {
+                  background-color: var(--color-primary-light);
 
-              :deep(.app-navigation-entry__title) {
-                  font-weight: 600;
+                  :deep(.app-navigation-entry__title) {
+                      font-weight: 600;
+                  }
               }
           }
-      }
 
-      .navigation-sublist {
-          margin-left: 8px;
-      }
-
-      .navigation-subitem {
-          margin: 1px 4px;
-          border-radius: 6px;
-
-          &:hover {
-              background-color: var(--color-background-hover);
+          .navigation-sublist {
+              margin-left: 8px;
           }
-      }
 
-      .navigation-counter {
-          background-color: var(--color-background-darker);
-          color: var(--color-text-lighter);
-      }
+          .navigation-subitem {
+              margin: 1px 4px;
+              border-radius: 6px;
 
-      .navigation-empty {
-          opacity: 0.6;
-          font-style: italic;
-      }
+              &:hover {
+                  background-color: var(--color-background-hover);
+              }
+          }
 
-      // Override default navigation styles
-          :deep(.app-navigation__body) {
-          overflow: revert;
-      }
+          .navigation-counter {
+              background-color: var(--color-background-darker);
+              color: var(--color-text-lighter);
+          }
 
-      :deep(.app-navigation-entry-icon),
-      :deep(.app-navigation-entry__title) {
-          transition: opacity 0.2s ease;
-      }
+          .navigation-empty {
+              opacity: 0.6;
+              font-style: italic;
+          }
 
-      :deep(.app-navigation-entry.active .app-navigation-entry-icon),
-      :deep(.app-navigation-entry.active .app-navigation-entry__title) {
-          opacity: 1;
-      }
+          // Override default navigation styles
+              :deep(.app-navigation__body) {
+              overflow: revert;
+          }
 
-      .closed {
           :deep(.app-navigation-entry-icon),
           :deep(.app-navigation-entry__title) {
-              opacity: 0.6;
+              transition: opacity 0.2s ease;
           }
-      }
 
-      .force-not-active {
-          :deep(.app-navigation-entry.active) {
-              background-color: transparent !important;
+          :deep(.app-navigation-entry.active .app-navigation-entry-icon),
+          :deep(.app-navigation-entry.active .app-navigation-entry__title) {
+              opacity: 1;
+          }
 
-              * {
-                  color: unset !important;
+          .closed {
+              :deep(.app-navigation-entry-icon),
+              :deep(.app-navigation-entry__title) {
+                  opacity: 0.6;
               }
           }
-      }
 
-      // Responsive adjustments
-  @media (max-width: 768px) {
-          .agora-navigation {
-              padding: 8px 0;
-          }
-      }
+          .force-not-active {
+              :deep(.app-navigation-entry.active) {
+                  background-color: transparent !important;
 
-      // Dark theme adjustments
-          .theme--dark {
-          .navigation-caption {
-              color: var(--color-text-light);
+                  * {
+                      color: unset !important;
+                  }
+              }
           }
-      }
+
+          // Responsive adjustments
+      @media (max-width: 768px) {
+              .agora-navigation {
+                  padding: 8px 0;
+              }
+          }
+
+          // Dark theme adjustments
+              .theme--dark {
+              .navigation-caption {
+                  color: var(--color-text-light);
+              }
+          }
 </style>

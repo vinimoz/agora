@@ -19,6 +19,7 @@ import UserSearch from '../User/UserSearch.vue'
 
 
 // Props
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const props = defineProps<{
   isReadonly?: boolean
 }>()
@@ -430,13 +431,13 @@ onMounted(() => {
             </div>
 
             <!-- No data state -->
-            <div v-else-if="!displayFields.length && props.isReadonly" class="no-data-state">
+            <div v-else-if="!displayFields.length && isReadonly" class="no-data-state">
                 <component :is="StatusIcons.Info" class="no-data-icon" />
                 <p>{{ t('No additional settings configured.') }}</p>
             </div>
 
             <!-- Readonly mode -->
-            <div v-else-if="props.isReadonly" class="misc-fields-readonly">
+            <div v-else-if="isReadonly" class="misc-fields-readonly">
                 <div class="misc-fields-list">
                     <div
                             v-for="field in displayFields"

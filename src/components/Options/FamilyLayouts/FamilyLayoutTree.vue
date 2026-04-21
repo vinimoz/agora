@@ -697,15 +697,15 @@
         <OptionDetailModal
             v-if="showDetailModal && selectedNode"
             :option-id="selectedNode.id"
-            :inquiry-id="inquiryId"
+            :inquiry-id="inquiryStore.id"
             @close="closeDetailModal"
             @updated="handleNodeUpdated"
             @deleted="handleNodeDeleted"
         />
 
-        <AddOptionModal
+        <OptionAddModal
             v-if="showAddOptionModal"
-            :inquiry-id="inquiryId"
+            :inquiry-id="inquiryStore.id"
             :option-type="selectedOptionTypeKey"
             :parent-id="selectedParentId"
             @close="closeAddOptionModal"
@@ -749,7 +749,7 @@ import {
 // Types
 import type { Option, OptionType, OptionStoreLike } from '../../../Types/index.ts'
 
-import AddOptionModal from '../AddOptionModal.vue'
+import OptionAddModal from '../OptionAddModal.vue'
 import OptionDetailModal from '../OptionDetailModal.vue'
 
 // Stores

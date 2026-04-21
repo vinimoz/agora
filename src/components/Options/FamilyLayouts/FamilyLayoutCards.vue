@@ -111,7 +111,7 @@ import type { InquiryOptionType, Option , OptionFamily } from '../../Types/index
 
 const props = defineProps<{
   options: Option[]
-  family:OptionFamily
+  family: OptionFamily
   inquiryId: number
   optionTypes: InquiryOptionType[]
 }>()
@@ -129,7 +129,7 @@ const viewMode = ref<'grid' | 'list' | 'compact'>('grid')
 // Check if family supports multiple view modes
 const hasMultipleViewModes = computed(() => 
   // You can check family.config?.viewModes or default to true for cards layout
-   props.family?.config?.viewModes?.length > 1 || true
+   props.family?.ui?.viewModes?.length > 1 || true
 )
 
 // Get family icon

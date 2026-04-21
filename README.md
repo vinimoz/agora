@@ -3,7 +3,7 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
-# Agora 1.7.0
+# Agora 1.7.1
 
 [![Dependabot status](https://img.shields.io/badge/Dependabot-enabled-brightgreen.svg?longCache=true\&style=flat-square\&logo=dependabot)](https://dependabot.com)
 [![Software License](https://img.shields.io/badge/license-AGPL-brightgreen.svg?style=flat-square)](COPYING)
@@ -14,22 +14,20 @@ It enables communities and organizations to collaborate on **proposals, debates,
 
 ---
 
-## 🚀 What’s New in 1.7.0
-Update: Introduction of a full Options system enabling real decision-making (supports, comments, and much more) directly inside inquiries and template creation with IA assistant.
+## 🚀 What’s New in 1.7.1
+Update: Improvement of a full Options system enabling real decision-making (supports, comments, and much more) directly inside inquiries and template creation with IA assistant.
 
 ## 🚀🗳 Options
 
-Agora 1.7.0 introduces a native Options system that allows inquiries to move beyond simple comments and supports.
+Agora 1.7.1 introduces a native Options still experimental with a system that allows inquiries to move beyond simple comments and supports.
 
 With Options, you can:
 
 Define multiple choices for an inquiry.
 
-Four different layout for options: Tree, Cards, Paired, Consensus ( not fully dynamic yet )
+Four different layout for options: Vote, Timeline, Kanban, Tree, Cards, Paired, Consensus ( not fully dynamic yet )
 
 Allow users to support/comments / select options
-
-Build real consultation and decision-making workflows
 
 
 ### 🧰 Templates 
@@ -110,6 +108,7 @@ Install directly from the [Nextcloud App Store](https://apps.nextcloud.com/apps/
 | Document | Description | Link |
 |:--------:|:-----------:|:----:|
 | **👤 User Guide** | Complete user manual with step-by-step instructions | [📖 USER_GUIDE.md](docs/USER_GUIDE.md) |
+| **👤 Admin Guide** | Admin manual with step-by-step instructions for template and customization | [📖 ADMIN_GUIDE.md](docs/ADMIN_GUIDE.md) |
 | **🔧 Template Guide** | Template configuration for administrators | [📘 template_guide.md](docs/template_guide.md) |
 | **🔌 API Guide** | REST API documentation for developers | [🔌 API_v1.0.md](docs/API_v1.0.md) |
 | **📋 Template Schema** | JSON schema for template validation | [📋 Agora-template-schema.json](docs/Agora-template-schema.json) |

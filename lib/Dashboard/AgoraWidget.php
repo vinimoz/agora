@@ -78,12 +78,12 @@ class AgoraWidget implements IWidget, IIconWidget
     #[\Override]
     public function getUrl(): ?string
     {
-        return $this->urlGenerator->linkToRouteAbsolute(AppConstants::APP_ID . '.page.indexindex');
+        return $this->urlGenerator->linkToRouteAbsolute(AppConstants::APP_ID . '.page.index');
     }
 
     public function load(): void
     {
         \OCP\Util::addScript(AppConstants::APP_ID, 'agora-dashboard');
-         \OCP\Util::addStyle(AppConstants::APP_ID, 'dashboard');
+         \OCP\Util::addStyle(AppConstants::APP_ID, '../src/assets/scss/dashboard');
     }
 }

@@ -7,10 +7,10 @@ import { t } from '@nextcloud/l10n'
 import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import { Component } from '@nextcloud/vue'
+import { useOptionStore , Option } from './option' 
 
 import { Logger } from '../helpers/index.ts'
 import { OptionsAPI, PublicAPI } from '../Api/index.ts'
-import { Option } from './option.ts'
 import { OptionFamily, Event, InquiryOptionType } from '../Types/index.ts'
 import { useInquiryStore } from './inquiry.ts'
 import { useSessionStore } from './session.ts'
@@ -267,6 +267,8 @@ export const useOptionsStore = defineStore('options', {
             })
             return counts
         },
+        // Add this getter to get options by targetId from current store state
+        getOptionsByTargetId: (state) => (targetId: number): Option[] => state.options.filter(option => option.targetId === targetId),
 
         // Check if can add options
         canAddOptions(): boolean {
@@ -652,6 +654,56 @@ export const useOptionsStore = defineStore('options', {
                     return
                 }
                 Logger.error('Error adding option:', { error, payload })
+                throw error
+            }
+        },
+
+
+        async updateOptionFromModal(optionId: number,statValue: string, miscFields: Record<string, { key: string , value: string } >): Promise<void> {
+            try {
+                // Find the option in the store
+                const option = this.options.find(opt => opt.id === optionId)
+                if (!option) {
+                    throw new Error(t('agora', 'Option not found'))
+                }
+
+                // Prepare the update payload
+                const updatePayload = {
+                    id: optionId,
+                    status: statValue,
+                    miscFields
+                }
+
+                // Call the API to update
+                 await OptionsAPI.updateOption(optionId, updatePayload)
+
+                // Update the option in the local store
+                const index = this.options.findIndex(opt => opt.id === optionId)
+                if (index !== -1) {
+                    this.options[index] = {
+                        ...this.options[index],
+                        miscFields: {
+                            ...this.options[index].miscFields,
+                            ...miscFields
+                        }
+                    }
+                }
+
+                // Also update in option store if it's the current option
+                const optionStore = useOptionStore()
+                if (optionStore.id === optionId) {
+                    await optionStore.load(optionId)
+                }
+
+            } catch (error) {
+                if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+                    return
+                }
+                Logger.error('Error updating option misc fields:', {
+                    error,
+                    optionId,
+                    miscFields
+                })
                 throw error
             }
         },

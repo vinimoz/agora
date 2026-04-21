@@ -25,7 +25,7 @@ class UpdateInteraction implements IRepairStep
     ) {
     }
 
-    public function getName()
+    public function getName(): string
     {
         return 'Agora - Validate and set last inquiry interaction';
     }
@@ -34,9 +34,8 @@ class UpdateInteraction implements IRepairStep
     {
         $this->tableManager->setConnection($this->connection);
 
-        $messages = $this->tableManager->resetLastInteraction();
-        foreach ($messages as $message) {
-            $output->info($message);
-        }
+        // Fixed: use setLastInteraction() not resetLastInteraction()
+        $message = $this->tableManager->setLastInteraction();
+        $output->info($message);
     }
 }

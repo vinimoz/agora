@@ -571,7 +571,7 @@ onMounted(async () => {
 
         <AddResourceModal
                 v-model:open="showAddModal"
-                :available-apps="props.availableApps"
+                :available-apps="availableApps"
                 :inquiry="currentInquiry"
                 />
     </div>

@@ -52,7 +52,7 @@ const updateTypeRights = (typeKey, rights) => {
     <div class="modal-header">
       <div class="type-info">
         <div class="type-icon">
-          <component :is="getIconComponent(props.selectedType.icon)" :size="20" />
+          <component :is="getIconComponent(selectedType.icon)" :size="20" />
         </div>
         <div class="type-details">
           <h3>{{ props.selectedType.label }}</h3>

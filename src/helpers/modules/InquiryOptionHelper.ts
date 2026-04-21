@@ -5,12 +5,16 @@
 
 import { InquiryGeneralIcons, InquiryOptionIcons } from '../../utils/icons.ts'
 import { toRaw } from 'vue'
-import type { InquiryType, InquiryOptionType, OptionFamily } from '../../Types/index.ts'
+import type { InquiryType, InquiryOptionType, Option, OptionFamily } from '../../Types/index.ts'
 import { useAppSettingsStore } from '../../stores/appSettings.ts'
 import { t } from '@nextcloud/l10n'
 import type { Component } from 'vue'
+import type { useOptionsStore } from '@/stores/options'
+
+type OptionsStore = ReturnType<typeof useOptionsStore>
 
 
+export const isImportedFromView = (option: Option, familyKey: string): boolean => !( option.family === familyKey )
 
 /**
  * Get option item data
@@ -83,6 +87,7 @@ export function getFamilyColor(familyKey: string): string {
         'proposal': '#E69138',    // Orange
         'workflow': '#A64D79',    // Purple
         'process': '#45818E',     // Teal
+        'vote': '#4A818E',     // Teal
         'default': '#999999',     // Gray
     }
     
@@ -182,18 +187,18 @@ export function getFamilyIconName(familyKey: string): string {
   try {
     // Try to get the store - this only works in setup context
     const appSettingsStore = useAppSettingsStore()
-    
+        
     // Check if optionFamilyTab exists and is an array
-    if (appSettingsStore?.settings?.optionFamilyTab && Array.isArray(appSettingsStore.settings.optionFamilyTab)) {
+    if (appSettingsStore?.optionFamilyTab && Array.isArray(appSettingsStore.optionFamilyTab)) {
       // Find the family config by family_type
-      const familyConfig = appSettingsStore.settings.optionFamilyTab.find(
-    (item: FamilyConfig) => item?.family_type === familyKey  // Removed any and {}
+      const familyConfig = appSettingsStore.optionFamilyTab.find(
+    (item: FamilyConfig) => item?.family_type === familyKey  
     )
       if (familyConfig?.icon) {
         return familyConfig.icon
       }
     }
-    
+      
     // If not found in appSettings, try fallback data
     const fallbackData = getFamilyFallbackData()
     const fallback = fallbackData[familyKey] || fallbackData.default
@@ -242,7 +247,7 @@ export function getFamilyUIConfig(
   // Try to get from appSettings
   try {
     const appSettingsStore = useAppSettingsStore()
-    const storedUI = appSettingsStore?.settings?.optionFamilyTab?.[familyKey]?.ui
+    const storedUI = appSettingsStore?.optionFamilyTab?.[familyKey]?.ui
     if (storedUI) {
       return { ...defaultUIConfig, ...storedUI }
     }
@@ -268,7 +273,7 @@ export function getFamilyRules(
 
   try {
     const appSettingsStore = useAppSettingsStore()
-    const storedRules = appSettingsStore?.settings?.optionFamilyTab?.[familyKey]?.rules
+    const storedRules = appSettingsStore?.optionFamilyTab?.[familyKey]?.rules
     if (storedRules) {
       return storedRules
     }
@@ -294,7 +299,7 @@ export function getFamilyFeatures(
 
   try {
     const appSettingsStore = useAppSettingsStore()
-    const storedFeatures = appSettingsStore?.settings?.optionFamilyTab?.[familyKey]?.features
+    const storedFeatures = appSettingsStore?.optionFamilyTab?.[familyKey]?.features
     if (storedFeatures) {
       return storedFeatures
     }
@@ -320,7 +325,7 @@ export function getFamilyActions(
 
   try {
     const appSettingsStore = useAppSettingsStore()
-    const storedActions = appSettingsStore?.settings?.optionFamilyTab?.[familyKey]?.actions
+    const storedActions = appSettingsStore?.optionFamilyTab?.[familyKey]?.actions
     if (storedActions) {
       return storedActions
     }
@@ -390,9 +395,9 @@ export function getFamiliesWithOptionTypes(
     
     // PRIORITY 1: Get from appSettings.optionFamilyTab if available
     let familyConfig = null
-    if (appSettingsStore?.settings?.optionFamilyTab) {
+    if (appSettingsStore?.optionFamilyTab) {
       // Find the family config by family_type
-      familyConfig = appSettingsStore.settings.optionFamilyTab.find(
+      familyConfig = appSettingsStore.optionFamilyTab.find(
         (item: unknown) => item.family_type === familyKey
       )
     }
@@ -705,6 +710,7 @@ export function getOptionTypeIconComponent(
   return InquiryOptionIcons[iconName] || InquiryOptionIcons.File
 }
 
+
 /**
  * Get option type icon name as string
  * @param optionType
@@ -906,6 +912,106 @@ export function usesTitle(
   return found?.use_title !== false
 }
 
+// Add these functions to InquiryOptionHelper.ts
+
+/**
+ * Get allowed layouts for an option type from its family configuration
+ * @param optionType - The option type
+ * @param optionTypes - All option types
+ * @param familyKey - Optional family key (will be derived if not provided)
+ */
+export function getAllowedLayouts(
+  optionType: string | null | undefined,
+  optionTypes: InquiryOptionType[],
+  familyKey?: string
+): string[] {
+  if (!optionType) return ['cards'] // Default fallback
+
+  // Get family if not provided
+  const family = familyKey || getOptionTypeFamily(optionType, optionTypes)
+  
+  // Get family UI config
+  const uiConfig = getFamilyUIConfig(family)
+  
+  // Check if family has allowed_layouts in its UI config
+  if (uiConfig?.allowed_layouts && Array.isArray(uiConfig.allowed_layouts)) {
+    return uiConfig.allowed_layouts
+  }
+  
+  // Fallback to default layouts based on family
+  const defaultLayouts: Record<string, string[]> = {
+    'debate': ['paired', 'cards', 'list'],
+    'structure': ['tree', 'cards', 'list'],
+    'consensus': ['consensus_flow', 'cards', 'list'],
+    'decision': ['cards', 'list', 'results'],
+    'proposal': ['cards', 'list', 'results'],
+    'workflow': ['kanban', 'cards', 'list', 'timeline'],
+    'process': ['timeline', 'cards', 'list', 'kanban'],
+    'vote': ['timeline', 'cards', 'list', 'kanban'],
+    'default': ['cards', 'list']
+  }
+  
+  return defaultLayouts[family] || defaultLayouts.default
+}
+
+/**
+ * Get default layout for an option type
+ * @param optionType - The option type
+ * @param optionTypes - All option types
+ * @param familyKey - Optional family key
+ */
+export function getDefaultLayout(
+  optionType: string | null | undefined,
+  optionTypes: InquiryOptionType[],
+  familyKey?: string
+): string {
+  if (!optionType) return 'cards'
+
+  const family = familyKey || getOptionTypeFamily(optionType, optionTypes)
+  const uiConfig = getFamilyUIConfig(family)
+  
+  // Check if family has default_layout in its UI config
+  if (uiConfig?.default_layout) {
+    return uiConfig.default_layout
+  }
+  
+  // Fallback to family-based default
+  const defaultLayoutMap: Record<string, string> = {
+    'debate': 'paired',
+    'structure': 'tree',
+    'consensus': 'consensus_flow',
+    'decision': 'cards',
+    'proposal': 'cards',
+    'workflow': 'kanban',
+    'process': 'timeline',
+    'vote': 'vote'
+  }
+  
+  return defaultLayoutMap[family] || 'cards'
+}
+
+/**
+ * Check if an option should be displayed in a specific layout
+ * @param option - The option to check
+ * @param layout - The layout to check against
+ * @param optionTypes - All option types
+ */
+export function shouldShowInLayout(
+  option: Option,
+  layout: string,
+  optionTypes: InquiryOptionType[]
+): boolean {
+  // First check if option has force_layouts in miscFields
+  if (option.miscFields?.force_layouts && Array.isArray(option.miscFields.force_layouts)) {
+    return option.miscFields.force_layouts.includes(layout)
+  }
+  
+  // Otherwise check based on option type's family allowed layouts
+  const allowedLayouts = getAllowedLayouts(option.type, optionTypes)
+  return allowedLayouts.includes(layout)
+}
+
+
 /**
  * Get layout for family
  * @param familyKey
@@ -918,8 +1024,597 @@ export const getLayoutForFamily = (familyKey: string): string => {
     decision: 'cards',
     proposal: 'cards',
     workflow: 'kanban',
-    process: 'timeline'
+    process: 'timeline',
+    vote: 'vote'
   }
 
   return layoutMap[familyKey] || 'cards'
+}
+
+/**
+ * Check if an option type belongs to a specific family
+ * @param optionType
+ * @param familyKey
+ * @param optionTypes
+ */
+export function isOptionTypeInFamily(
+  optionType: string | null | undefined,
+  familyKey: string,
+  optionTypes: InquiryOptionType[]
+): boolean {
+  if (!optionType) return false
+  const typeFamily = getOptionTypeFamily(optionType, optionTypes)
+  return typeFamily === familyKey
+}
+
+/**
+ * Get allowed layouts for an option type (from its family configuration)
+ * @param optionType
+ * @param optionTypes
+ */
+export function getAllowedLayoutsForType(
+  optionType: string | null | undefined,
+  optionTypes: InquiryOptionType[]
+): string[] {
+  if (!optionType) return ['cards']
+
+  const family = getOptionTypeFamily(optionType, optionTypes)
+  const uiConfig = getFamilyUIConfig(family)
+
+  // Check if family has allowed_layouts in its UI config
+  if (uiConfig?.allowed_layouts && Array.isArray(uiConfig.allowed_layouts)) {
+    return uiConfig.allowed_layouts
+  }
+
+  // Fallback to default layouts based on family
+  const defaultLayouts: Record<string, string[]> = {
+    'debate': ['paired', 'cards', 'list'],
+    'structure': ['tree', 'cards', 'list'],
+    'consensus': ['consensus_flow', 'cards', 'list'],
+    'decision': ['cards', 'list', 'results'],
+    'proposal': ['cards', 'list', 'results'],
+    'workflow': ['kanban', 'cards', 'list', 'timeline'],
+    'process': ['timeline', 'cards', 'list', 'kanban'],
+    'default': ['cards', 'list']
+  }
+
+  return defaultLayouts[family] || defaultLayouts.default
+}
+
+
+/**
+ * Get available foreign options that can be added to a layout
+ * These are options that don't belong to the family but can be force-shown
+ * @param allOptions
+ * @param layout
+ * @param familyKey
+ * @param optionTypes
+ */
+export function getAvailableForeignOptionsForLayout(
+  allOptions: Option[],
+  layout: string,
+  familyKey: string | undefined,
+  optionTypes: InquiryOptionType[]
+): Option[] {
+  return allOptions.filter(option => {
+    // Skip options that already belong to this family (if familyKey is provided)
+    if (familyKey) {
+      const optionFamily = getOptionTypeFamily(option.type, optionTypes)
+      if (optionFamily === familyKey) {
+        return false
+      }
+    }
+
+    // Check if they can be shown in this layout
+    return canShowInLayout(option, layout, optionTypes)
+  })
+}
+
+
+/**
+ * Check if an option should be displayed in timeline layout
+ * Options can be displayed in timeline if:
+ * 1. They belong to the process family, OR
+ * 2. They have timeline dates set
+ * @param option - The option to check
+ * @param optionTypes - All option types
+ * @param targetFamily - Optional family to filter by
+ */
+export function shouldShowInTimeline(
+  option: Option,
+  optionTypes: InquiryOptionType[],
+  targetFamily?: string
+): boolean {
+  // Get the option's family
+  const optionFamily = getOptionTypeFamily(option.type, optionTypes)
+  
+  // If target family is specified and option belongs to it, include it
+  if (targetFamily && optionFamily === targetFamily) {
+    return true
+  }
+  
+  // Otherwise check if it has timeline dates
+  return hasTimelineDates(option)
+}
+
+/**
+ * Filter options for timeline layout
+ * @param options - All options to filter
+ * @param optionTypes - All option types
+ * @param targetFamily - Optional family to filter by (e.g., 'process')
+ */
+export function filterOptionsForTimeline(
+  options: Option[],
+  optionTypes: InquiryOptionType[],
+  targetFamily?: string
+): Option[] {
+  return options.filter(option => shouldShowInTimeline(option, optionTypes, targetFamily))
+}
+
+/// //////////////////////////////////////
+/**
+ * Get force_layouts from option's miscFields
+ * @param option - The option
+ */
+export function getForceLayouts(option: Option): string[] {
+  const miscFields = option.miscFields || {}
+  
+  if (!miscFields.force_layouts) {
+    return []
+  }
+  
+  // Handle both string and array formats
+  if (typeof miscFields.force_layouts === 'string') {
+    try {
+      const parsed = JSON.parse(miscFields.force_layouts)
+      if (Array.isArray(parsed)) {
+        return parsed
+      } if (typeof parsed === 'string') {
+        return [parsed]
+      } 
+        return []
+      
+    } catch {
+      // If parsing fails, treat as a single layout string
+      if (miscFields.force_layouts) {
+        return [miscFields.force_layouts]
+      }
+      return []
+    }
+  } else if (Array.isArray(miscFields.force_layouts)) {
+    return miscFields.force_layouts
+  }
+  
+  return []
+}
+
+/**
+ * Add a layout to an option's force_layouts
+ * @param option - The option
+ * @param layout - The layout to add
+ */
+export function addLayoutToOption(option: Option, layout: string): Option {
+  const miscFields = { ...(option.miscFields || {}) }
+  const currentLayouts = getForceLayouts(option)
+  
+  if (!currentLayouts.includes(layout)) {
+    currentLayouts.push(layout)
+    // Store as JSON string for consistency
+    miscFields.force_layouts = JSON.stringify(currentLayouts)
+  }
+  
+  return {
+    ...option,
+    miscFields
+  }
+}
+
+/**
+ * Remove a layout from an option's force_layouts
+ * @param option - The option
+ * @param layout - The layout to remove
+ */
+export function removeLayoutFromOption(option: Option, layout: string): Option {
+  const miscFields = { ...(option.miscFields || {}) }
+  const currentLayouts = getForceLayouts(option)
+  const updatedLayouts = currentLayouts.filter(l => l !== layout)
+  
+  if (updatedLayouts.length === 0) {
+    delete miscFields.force_layouts
+  } else {
+    miscFields.force_layouts = JSON.stringify(updatedLayouts)
+  }
+  
+  return {
+    ...option,
+    miscFields
+  }
+}
+
+/**
+ * Remove an option from timeline (removes timeline from force_layouts)
+ * @param option - The option to remove
+ * @param optionsStore - The options store instance
+ */
+export async function removeFromTimeline(
+  option: Option,
+  optionsStore: OptionsStore
+): Promise<void> {
+  try {
+    // Remove 'timeline' from force_layouts
+    const updatedOption = removeLayoutFromOption(option, 'timeline')
+    
+    // Update the option
+    await optionsStore.updateOption({ option: updatedOption })
+    
+  } catch (error) {
+    console.error('Failed to remove option from timeline:', error)
+    throw error
+  }
+}
+
+
+/**
+ * Get default layout for a family
+ * @param familyKey - The family key
+ */
+export function getDefaultLayoutForFamily(familyKey: string): string {
+  const layoutMap: Record<string, string> = {
+    debate: 'paired',
+    structure: 'tree',
+    consensus: 'consensus_flow',
+    decision: 'cards',
+    proposal: 'cards',
+    workflow: 'kanban',
+    process: 'timeline',
+    vote: 'cards'
+  }
+  return layoutMap[familyKey] || 'cards'
+}
+
+/**
+ * Get allowed layouts for a family
+ * @param familyKey - The family key
+ */
+export function getAllowedLayoutsForFamily(familyKey: string): string[] {
+  const layoutsMap: Record<string, string[]> = {
+    debate: ['paired', 'cards', 'list'],
+    structure: ['tree', 'cards', 'list'],
+    consensus: ['consensus_flow', 'cards', 'list'],
+    decision: ['cards', 'list', 'results'],
+    proposal: ['cards', 'list', 'results'],
+    workflow: ['kanban', 'cards', 'list', 'timeline'],
+    process: ['timeline', 'cards', 'list', 'kanban'],
+    vote: ['cards', 'list', 'results'],
+    default: ['cards', 'list']
+  }
+  return layoutsMap[familyKey] || layoutsMap.default
+}
+
+/**
+ * Check if an option should be shown in a specific layout
+ * This is used for checking if an option can be added to a layout
+ * 
+ * @param option - The option
+ * @param layout - The layout to check
+ */
+export function canShowInLayout(
+  option: Option,
+  layout: string
+): boolean {
+  // Simply check if the layout is in force_layouts
+  const forceLayouts = getForceLayouts(option)
+  return forceLayouts.includes(layout)
+}
+
+/**
+ * Filter options by layout
+ * Shows options that:
+ * 1. Belong to the target family (if specified), OR
+ * 2. Have force_layouts containing this layout
+ * 
+ * @param options - All options
+ * @param layout - The layout to filter for (e.g., 'timeline', 'kanban')
+ * @param optionTypes - All option types
+ * @param targetFamily - Optional family to include all options from (e.g., 'process' for timeline, 'workflow' for kanban)
+ */
+
+
+export function filterOptionsByLayout(
+  options: Option[],
+  layout: string,
+  optionTypes: InquiryOptionType[],
+  targetFamily?: string
+): Option[] {
+  return options.filter(option => {
+    const optionFamily = getOptionTypeFamily(option.type, optionTypes)
+    const forceLayouts = getForceLayouts(option)
+    const hasForceLayout = forceLayouts.includes(layout)
+
+    // Check if option belongs to target family
+    const isTargetFamily = targetFamily ? optionFamily === targetFamily : false
+
+    // Include if:
+    // 1. It's in the target family, OR
+    // 2. It has this layout in force_layouts
+    const shouldInclude = isTargetFamily || hasForceLayout
+
+    return shouldInclude
+  })
+}
+
+/**
+ * Format a date to YYYY-MM-DD string
+ * @param date - Date object or string
+ */
+function formatDateToISO(date: Date | string | null): string | null {
+  if (!date) return null
+
+  let dateObj: Date
+
+  if (date instanceof Date) {
+    dateObj = date
+  } else if (typeof date === 'string') {
+    dateObj = new Date(date)
+    if (isNaN(dateObj.getTime())) return null
+  } else {
+    return null
+  }
+
+  const year = dateObj.getFullYear()
+  const month = String(dateObj.getMonth() + 1).padStart(2, '0')
+  const day = String(dateObj.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
+/**
+ * Set timeline dates on an option
+ * @param option - The option to update
+ * @param startDate - Start date (Date object or string)
+ * @param endDate - End date (Date object or string, optional)
+ */
+export function setTimelineDates(
+  option: Option,
+  startDate: Date | string | null,
+  endDate?: Date | string | null
+): Option {
+  const miscFields = { ...(option.miscFields || {}) }
+  
+  // Set start date
+  if (startDate) {
+    const formattedStart = formatDateToISO(startDate)
+    if (formattedStart) {
+      miscFields.start_date = formattedStart
+    }
+  } else if (startDate === null) {
+    // Remove start_date if null is passed
+    delete miscFields.start_date
+  }
+  
+  // Set end date (if provided)
+  if (endDate !== undefined) {
+    if (endDate === null) {
+      // Remove end_date if null is passed
+      delete miscFields.end_date
+    } else {
+      const formattedEnd = formatDateToISO(endDate)
+      if (formattedEnd) {
+        miscFields.end_date = formattedEnd
+      }
+    }
+  }
+  
+  return {
+    ...option,
+    miscFields
+  }
+}
+
+/**
+ * Get timeline start date from an option
+ * @param option - The option to check
+ */
+export function getTimelineStartDate(option: Option): Date | null {
+  const miscFields = option.miscFields || {}
+  
+  // Check multiple possible date fields
+  const dateStr = miscFields.start_date || 
+                  miscFields.voting_start || 
+                  miscFields.support_start
+  
+  if (!dateStr) return null
+  
+  try {
+    // Handle string dates
+    if (typeof dateStr === 'string') {
+      const date = new Date(dateStr)
+      return isNaN(date.getTime()) ? null : date
+    }
+    
+    // Handle timestamp numbers
+    if (typeof dateStr === 'number') {
+      // Check if it's seconds or milliseconds
+      const timestamp = dateStr < 10000000000 ? dateStr * 1000 : dateStr
+      const date = new Date(timestamp)
+      return isNaN(date.getTime()) ? null : date
+    }
+    
+    // Handle Date objects
+    if (dateStr instanceof Date) {
+      return isNaN(dateStr.getTime()) ? null : dateStr
+    }
+    
+    return null
+  } catch {
+    return null
+  }
+}
+
+/**
+ * Get timeline end date from an option
+ * @param option - The option to check
+ */
+export function getTimelineEndDate(option: Option): Date | null {
+  const miscFields = option.miscFields || {}
+  const dateStr = miscFields.end_date
+  
+  if (!dateStr) return null
+  
+  try {
+    // Handle string dates
+    if (typeof dateStr === 'string') {
+      const date = new Date(dateStr)
+      return isNaN(date.getTime()) ? null : date
+    }
+    
+    // Handle timestamp numbers
+    if (typeof dateStr === 'number') {
+      const timestamp = dateStr < 10000000000 ? dateStr * 1000 : dateStr
+      const date = new Date(timestamp)
+      return isNaN(date.getTime()) ? null : date
+    }
+    
+    // Handle Date objects
+    if (dateStr instanceof Date) {
+      return isNaN(dateStr.getTime()) ? null : dateStr
+    }
+    
+    return null
+  } catch {
+    return null
+  }
+}
+
+/**
+ * Check if an option has timeline dates set
+ * @param option - The option to check
+ */
+export function hasTimelineDates(option: Option): boolean {
+  return getTimelineStartDate(option) !== null
+}
+
+/**
+ * Add an option to timeline (sets dates and adds to force_layouts)
+ * This is the equivalent of setOptionStatus for Kanban
+ * @param option - The option to add
+ * @param startDate - Start date
+ * @param endDate - End date (optional)
+ * @param optionsStore - The options store instance
+ */
+export async function addToTimeline(
+  option: Option,
+  startDate: Date | string,
+  endDate: Date | string | null | undefined,
+  optionsStore: OptionsStore
+): Promise<void> {
+  try {
+    // Step 1: Set the timeline dates
+    let updatedOption = setTimelineDates(option, startDate, endDate)
+    
+    // Step 2: Add 'timeline' to force_layouts
+    updatedOption = addLayoutToOption(updatedOption, 'timeline')
+    
+    // Step 3: Update the option
+    await optionsStore.updateOption({ option: updatedOption })
+    
+  } catch (error) {
+    console.error('Failed to add option to timeline:', error)
+    throw error
+  }
+}
+
+/**
+ * Update timeline dates for an option (preserves force_layouts)
+ * @param option - The option to update
+ * @param startDate - New start date
+ * @param endDate - New end date (optional)
+ * @param optionsStore - The options store instance
+ */
+export async function updateTimelineDates(
+  option: Option,
+  startDate: Date | string | null,
+  endDate: Date | string | null | undefined,
+  optionsStore: OptionsStore
+): Promise<void> {
+  try {
+    // Update dates while preserving existing force_layouts
+    const updatedOption = setTimelineDates(option, startDate, endDate)
+    
+    await optionsStore.updateOption({ option: updatedOption })
+    
+  } catch (error) {
+    console.error('Failed to update timeline dates:', error)
+    throw error
+  }
+}
+
+
+/**
+ * Timeline-specific helper functions for managing dates
+ */
+
+/**
+ * Set timeline dates for an option
+ * @param optionId - The option ID
+ * @param startDate - Start date (Date object or string)
+ * @param endDate - End date (Date object or string, optional)
+ * @param optionsStore - The options store instance
+ */
+export async function setTimelineDatesForOption(
+  optionId: number,
+  startDate: Date | string | null,
+  endDate: Date | string | null | undefined,
+  optionsStore: OptionsStore
+): Promise<void> {
+  try {
+    // First get the current option
+    const currentOption = optionsStore.getOptionById(optionId)
+    if (!currentOption) {
+      throw new Error('Option not found')
+    }
+
+    // Update the dates using the helper
+    const updatedOption = setTimelineDates(currentOption, startDate, endDate)
+
+    // Also add 'timeline' to force_layouts if not already present
+    const finalOption = addLayoutToOption(updatedOption, 'timeline')
+
+    // Update the option
+    await optionsStore.updateOption({ option: finalOption })
+
+  } catch (error) {
+    console.error('Failed to set timeline dates:', error)
+    throw error
+  }
+}
+
+/**
+ * Clear timeline dates from an option (removes start_date and end_date)
+ * @param option - The option to clear dates from
+ * @param optionsStore - The options store instance
+ */
+export async function clearTimelineDates(
+  option: Option,
+  optionsStore: OptionsStore
+): Promise<void> {
+  try {
+    const miscFields = { ...(option.miscFields || {}) }
+
+    // Remove date fields
+    delete miscFields.start_date
+    delete miscFields.end_date
+    delete miscFields.voting_start
+    delete miscFields.support_start
+
+    const updatedOption = {
+      ...option,
+      miscFields
+    }
+
+    await optionsStore.updateOption({ option: updatedOption })
+
+  } catch (error) {
+    console.error('Failed to clear timeline dates:', error)
+    throw error
+  }
 }

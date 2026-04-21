@@ -45,17 +45,36 @@ import ClipboardList from '@iconify-icons/mdi/clipboard-list'
 import HelpCircle from '@iconify-icons/mdi/help-circle'
 import Wrench from '@iconify-icons/mdi/wrench'
 import ThumbDownOutline from '@iconify-icons/mdi/thumb-down-outline'
+import Account from '@iconify-icons/mdi/account'
+import Upload from '@iconify-icons/mdi/upload'
+import Link from '@iconify-icons/mdi/link'
+import File from '@iconify-icons/mdi/file'
+import FilePdf from '@iconify-icons/mdi/file-pdf-box'
+import FileWord from '@iconify-icons/mdi/file-word-box'
+import FileText from '@iconify-icons/mdi/file-document-outline'
+import FileCode from '@iconify-icons/mdi/file-code-outline'
+import Markdown from '@iconify-icons/mdi/language-markdown'
+import DatabaseImport from '@iconify-icons/mdi/database-import'
+
+import Close from '@iconify-icons/mdi/close'
+// import Eye from '@iconify-icons/mdi/eye-outline'
+import EyeOff from '@iconify-icons/mdi/eye-off-outline'
+import FileUpload from '@iconify-icons/mdi/file-upload-outline'
+import Play from '@iconify-icons/mdi/play'
+import Tune from '@iconify-icons/mdi/tune'
+
+import Vote from '@iconify-icons/mdi/vote'
 
 import FileCheck from '@iconify-icons/mdi/file-check'
 import EyeCheckOutline from '@iconify-icons/mdi/eye-check-outline'
 import FileSearch from '@iconify-icons/mdi/file-search'
 import AlertOctagon from '@iconify-icons/mdi/alert-octagon-outline'
 import ShieldAlert from '@iconify-icons/mdi/shield-alert-outline'
+import ShieldAccount from '@iconify-icons/mdi/shield-account'
 
 
 // Options
-import FilePdfBox from '@iconify-icons/mdi/file-pdf-box'  // For 'FilePdf' ✓
-import LanguageMarkdown from '@iconify-icons/mdi/language-markdown'  // For 'Markdown' ✓
+// import LanguageMarkdown from '@iconify-icons/mdi/language-markdown'  // For 'Markdown' ✓
 import Printer from '@iconify-icons/mdi/printer'  // For 'Printer' ✓
 import FileCompare from '@iconify-icons/mdi/file-compare'  // For 'Diff' ✓
 import FileExport from '@iconify-icons/mdi/file-export'  // For 'FileExport' ✓
@@ -91,6 +110,20 @@ import Reply from '@iconify-icons/mdi/reply'
 // import Timeline from '@iconify-icons/mdi/timeline'
 import ArrowUp from '@iconify-icons/mdi/arrow-up'
 import ArrowDown from '@iconify-icons/mdi/arrow-down' 
+// Families
+// import ChatProcessing from '@iconify-icons/mdi/chat-processing' // Discussion
+
+// Decision / legal
+// import ProgressCheck from '@iconify-icons/mdi/progress-check'
+
+// Debate actions
+// import TextBoxCheck from '@iconify-icons/mdi/text-box-check-outline' // Summarize
+// import GraphOutline from '@iconify-icons/mdi/graph-outline'
+
+// Consensus actions
+import ClipboardText from '@iconify-icons/mdi/clipboard-text-outline' // Minutes
+import MapOutline from '@iconify-icons/mdi/map-outline'
+
 // import Circle from '@iconify-icons/mdi/circle'    
 // import Information from '@iconify-icons/mdi/information'
 // import CloseCircle from '@iconify-icons/mdi/close-circle'
@@ -156,7 +189,6 @@ import TagOutline from '@iconify-icons/mdi/tag-outline'
 
 import DotsVertical from '@iconify-icons/mdi/dots-vertical'
 import DeleteOutline from '@iconify-icons/mdi/delete-outline'
-import Close from '@iconify-icons/mdi/close'
 
 import CommentOutline from '@iconify-icons/mdi/comment-outline'
 import AutoFix from '@iconify-icons/mdi/auto-fix'
@@ -197,7 +229,6 @@ import BookOpen from '@iconify-icons/mdi/book-open-page-variant'
 import CalendarMultiselect from '@iconify-icons/mdi/calendar-multiselect'
 import UsersCog from '@iconify-icons/mdi/account-cog'
 import Download from '@iconify-icons/mdi/download'
-import Upload from '@iconify-icons/mdi/upload'
 import Refresh from '@iconify-icons/mdi/refresh'
 import Bell from '@iconify-icons/mdi/bell'
 import BellOutline from '@iconify-icons/mdi/bell-outline'
@@ -248,7 +279,6 @@ import BabyFace from '@iconify-icons/mdi/baby-face'
 import TagMultiple from '@iconify-icons/mdi/tag-multiple'
 import MapMarkerRadius from '@iconify-icons/mdi/map-marker-radius'
 
-import Link from '@iconify-icons/mdi/link'
 import LinkVariant from '@iconify-icons/mdi/link-variant'
 import Poll from '@iconify-icons/mdi/poll'
 import CardsPlaying from '@iconify-icons/mdi/cards-playing'
@@ -289,6 +319,7 @@ export const InquiryGeneralIcons: Record<string, Component> = {
   IdCard: makeIconComponent(IdCard, '#546E7A'),
   Newspaper: makeIconComponent(Newspaper, '#546E7A'),
   Megaphone: makeIconComponent(Megaphone, '#C62828'),
+  HelpCircle: makeIconComponent(HelpCircle, '#03A9F4'),
   ClipboardList: makeIconComponent(ClipboardList, '#283593'),
   Question: makeIconComponent(HelpCircle, '#999'),
   CheckCircle: makeIconComponent(CheckCircle, '#4CAF50'),
@@ -395,6 +426,7 @@ export const InquiryGeneralIcons: Record<string, Component> = {
   Presentation: makeIconComponent(Presentation, '#5D4037'),
   Settings: makeIconComponent(Cog, '#455A64'),
   Close: makeIconComponent(Close, '#F44336'),
+  Vote: makeIconComponent(Vote, '#1565C0'),
   Download: makeIconComponent(Download, '#2196F3'),
   Upload: makeIconComponent(Upload, '#4CAF50'),
   Refresh: makeIconComponent(Refresh, '#FF9800'),
@@ -413,10 +445,13 @@ export const InquiryGeneralIcons: Record<string, Component> = {
   Magnify: makeIconComponent(Magnify, '#1565C0'),
   CurrencyUsd: makeIconComponent(Cash, '#2E7D32'),
   FileSearch: makeIconComponent(FileSearch, '#455A64'),
+  ClipboardSearch: makeIconComponent(ClipboardCheck, '#455A64'),
   AlertOctagon: makeIconComponent(AlertOctagon, '#F44336'),
   ShieldAlert: makeIconComponent(ShieldAlert, '#FF9800'),
+  ShieldAccount: makeIconComponent(ShieldAccount, '#FF9800'),
   FileBarChart: makeIconComponent(FileChart, '#1E88E5'),
   Search: makeIconComponent(Magnify, '#455A64'),
+  ChartLine: makeIconComponent(ChartLine, '#607D8B'),
   AlertTriangle: makeIconComponent(Alert, '#FB8C00'),
   Shield: makeIconComponent(ShieldOutline, '#2E7D32'),
   Info: makeIconComponent(InformationVariant, '#1976D2'),
@@ -566,6 +601,7 @@ export const StatusIcons: Record<string, Component> = {
 
 export const InquiryOptionIcons = {
   // Families / types
+  Drag: makeIconComponent(DragHorizontal, '#999'),
   Plus: makeIconComponent(Plus, '#4CAF50'),
   Discussion: makeIconComponent(ChatOutline, '#2196F3'),
   Question: makeIconComponent(HelpCircleOutline, '#03A9F4'),
@@ -573,11 +609,24 @@ export const InquiryOptionIcons = {
   Settings: makeIconComponent(Presentation, '#607D8B'),
   Code: makeIconComponent(CodeTags, '#9C27B0'),
   CategoryOther: makeIconComponent(TagOutline, '#795548'),
+  
+  // Families
+  Vote: makeIconComponent(Vote, '#1565C0'),
+
+  // Actions
+  ChartBar: makeIconComponent(ChartBar),
+  Lock: makeIconComponent(Lock),
+  LockOpen: makeIconComponent(LockOpen),
+  AccountGroup: makeIconComponent(AccountGroup),
+  Cog: makeIconComponent(Cog),
+
+  // Vote option types
+  Account: makeIconComponent(Account),
 
   Summarize: makeIconComponent(TextBoxMultiple, '#607D8B'),  // Using text-box-multiple
   Graph: makeIconComponent(ChartArc, '#607D8B'),  // Using chart-arc for Graph
-  FilePdf: makeIconComponent(FilePdfBox, '#607D8B'),  // Using file-pdf-box
-  Markdown: makeIconComponent(LanguageMarkdown, '#607D8B'),
+  FilePdf: makeIconComponent(FilePdf, '#607D8B'),  // Using file-pdf-box
+  Markdown: makeIconComponent(Markdown, '#607D8B'),
   Printer: makeIconComponent(Printer, '#607D8B'),
   Diff: makeIconComponent(FileCompare, '#607D8B'),  // Using file-compare for Diff
   Report: makeIconComponent(FileReport, '#607D8B'),
@@ -598,11 +647,32 @@ export const InquiryOptionIcons = {
   ClockAlert: makeIconComponent(ClockAlertOutline, '#607D8B'),  // Using clock-alert-outline
   TextBox: makeIconComponent(TextBox, '#607D8B'),
   Layers: makeIconComponent(Layers, '#5D4037'),
+  ArrowRight: makeIconComponent(ArrowRight, '#5E35B1'),
 
 
-  ThumbUp: makeIconComponent(ThumbUpOutline, '#4CAF50'),
-  ThumbDown: makeIconComponent(ThumbDownOutline, '#F44336'),
-  Checkmark: makeIconComponent(CheckCircleOutline, '#4CAF50'),
+  // ======================
+  // Families
+  // ======================
+  ThumbUp: makeIconComponent(ThumbUp, '#2E7D32'),
+  ThumbDown: makeIconComponent(ThumbDown, '#D32F2F'),
+  Checkmark: makeIconComponent(CheckCircle, '#2E7D32'),
+  
+  // ======================
+  // Decision
+  // ======================
+  Gavel: makeIconComponent(Gavel, '#5D4037'),
+  Bell: makeIconComponent(Bell, '#FFA000'),
+
+  // ======================
+  // Debate
+  // ======================
+  Download: makeIconComponent(Download, '#1976D2'),
+  Upload: makeIconComponent(Upload, '#2E7D32'),
+
+  // ======================
+  // Consensus
+  // ======================
+  Map: makeIconComponent(MapOutline, '#2E7D32'),
   File: makeIconComponent(NoteText, '#3F51B5'),
   Flag: makeIconComponent(Flag, '#283593'),
 
@@ -637,6 +707,9 @@ export const InquiryOptionIcons = {
   AlertOutline: makeIconComponent(AlertOutline, '#FF9800'),
   HelpCircle: makeIconComponent(HelpCircle, '#03A9F4'),
   CheckCircle: makeIconComponent(CheckCircle, '#4CAF50'),
+  Play: makeIconComponent(Play, '#2E7D32'),   
+  Tune: makeIconComponent(Tune, '#6A1B9A'), 
+
 
   // Stats
   BarChart2: makeIconComponent(ChartBar, '#673AB7'),
@@ -661,6 +734,29 @@ export const InquiryOptionIcons = {
   Information: makeIconComponent(InformationVariant, '#607D8B'),
   CloseCircle: makeIconComponent(Close, '#F44336'), 
   ClockOutline: makeIconComponent(ClockOutline, '#FFA000'),
+}
+
+export const ImportIcons = {
+  Upload: makeIconComponent(Upload, '#2E7D32'),
+
+  Link: makeIconComponent(Link, '#1976D2'),
+
+  File: makeIconComponent(File, '#546E7A'),
+  FilePdf: makeIconComponent(FilePdf, '#D32F2F'),
+  FileWord: makeIconComponent(FileWord, '#1976D2'),
+  FileText: makeIconComponent(FileText, '#546E7A'),
+  FileCode: makeIconComponent(FileCode, '#5E35B1'),
+
+  Markdown: makeIconComponent(Markdown, '#000000'),
+
+  Import: makeIconComponent(DatabaseImport, '#00897B'),
+
+  Close: makeIconComponent(Close, '#F44336'),
+
+  Eye: makeIconComponent(EyeOutline, '#546E7A'),
+  EyeOff: makeIconComponent(EyeOff, '#9E9E9E'),
+
+  FileUpload: makeIconComponent(FileUpload, '#2E7D32'),
 }
 
 export const getStatusIcon = (iconName: string) => StatusIcons[iconName] || StatusIcons.Default

@@ -4,6 +4,7 @@
 -->
 <template>
   <div 
+    v-if="option" 
     :class="[
       'option-card',
       `type-${option.type}`,
@@ -14,7 +15,8 @@
         'highlight': highlight,
         'show-poll': showPoll,
         'has-support': hasSupportFeature,
-        'has-comments': allowComment
+        'has-comments': allowComment,
+        'has-progress-bar': progressBar 
       }
     ]"
     @click="handleCardClick"
@@ -71,11 +73,26 @@
       </div>
     </div>
 
+    <!-- Progress Bar Section - Only shown when progressBar is true -->
+    <div v-if="progressBar" class="progress-bar-section">
+      <div class="progress-bar-container">
+        <div 
+          class="progress-bar-fill" 
+          :style="{ width: `${progressPercentage}%` }"
+        ></div>
+      </div>
+      <div class="progress-stats">
+        <span class="progress-label">{{ t('agora', 'Progress') }}</span>
+        <span class="progress-percentage">{{ Math.round(progressPercentage) }}%</span>
+      </div>
+    </div>
+
     <!-- Separator - hide in inline mode -->
     <div v-if="!inline" class="section-separator"></div>
 
     <!-- Third Box: Support and Comments in single line (normal mode) -->
-    <div v-if="!inline && (hasSupportFeature || allowComment)" class="card-features">
+    <!-- Conditionally hide responses when progressBar is true -->
+    <div v-if="!inline && (hasSupportFeature || allowComment) && !progressBar" class="card-features">
       <!-- Support feature -->
       <div v-if="hasSupportFeature" class="feature-item support-feature">
         <SupportFeature
@@ -99,7 +116,8 @@
     </div>
 
     <!-- Fourth Box: Responses - normal mode -->
-    <div v-if="!inline && hasAllowedResponses && !compact" class="card-responses">
+    <!-- Conditionally hide responses when progressBar is true -->
+    <div v-if="!inline && hasAllowedResponses && !compact && !progressBar" class="card-responses">
       <div class="responses-header">
         <component :is="InquiryOptionIcons.MessageReplyText" :size="14" />
         <span class="responses-title">{{ t('agora', 'Responses') }}</span>
@@ -141,7 +159,7 @@
                   <span class="child-title">{{ child.title || child.text?.substring(0, 30) }}</span>
                 </div>
                 <div v-if="childCounts[responseType] > 3" class="tooltip-more">
-                  {{ t('agora', 'and {count} more …', { count: childCounts[responseType] - 3 }) }}
+                  {{ t('agora', 'and {count} more …', { count: childCounts[responseType] - 3 }) }}
                 </div>
               </div>
             </div>
@@ -150,10 +168,9 @@
       </div>
     </div>
 
-    <!-- INLINE MODE: All features in one row with actions at the end -->
     <div v-if="inline" class="inline-features-row">
-      <!-- Child responses -->
-      <div v-if="hasAllowedResponses && !compact" class="inline-feature-item child-responses">
+      <!-- Child responses - hide when progressBar is true -->
+      <div v-if="hasAllowedResponses && !compact && !progressBar" class="inline-feature-item child-responses">
         <div class="responses-list">
           <div v-if="childCountsTotal === 0" class="no-responses">
             <span class="no-responses-text">{{ t('agora', 'None') }}</span>
@@ -190,7 +207,7 @@
                     <span class="child-title">{{ child.title || child.text?.substring(0, 30) }}</span>
                   </div>
                   <div v-if="childCounts[responseType] > 3" class="tooltip-more">
-                    {{ t('agora', 'and {count} more …', { count: childCounts[responseType] - 3 }) }}
+                    {{ t('agora', 'and {count} more …', { count: childCounts[responseType] - 3 }) }}
                   </div>
                 </div>
               </div>
@@ -212,8 +229,8 @@
         />
       </div>
       
-      <!-- Comments feature -->
-      <div v-if="allowComment" class="inline-feature-item comments-feature" @click.stop="$emit('comment', option)">
+      <!-- Comments feature - hide when progressBar is true -->
+      <div v-if="allowComment && !progressBar" class="inline-feature-item comments-feature" @click.stop="$emit('comment', option)">
         <div class="feature-content">
           <component :is="InquiryOptionIcons.Comment" :size="14" class="feature-icon" />
           <span class="feature-count">{{ option.status.countComments || 0 }}</span>
@@ -258,6 +275,14 @@
       </div>
     </div>
   </div>
+  <DeleteConfirmationDialog
+  v-model:visible="showDeleteDialog"
+  :option-title="option?.title || option?.label || ''"
+  :is-imported="isImportedFromView"
+  :view-type="familyType || 'view'"
+  @confirm="handleConfirmDelete"
+  @remove-from-view="handleRemoveFromView"
+/>
 </template>
 
 <script setup lang="ts">
@@ -290,6 +315,8 @@ import {
   usesTitle
 } from '../../helpers/modules/InquiryOptionHelper'
 
+import DeleteConfirmationDialog from '../Modals/DeleteConfirmationDialog.vue'
+
 // Props
 const props = defineProps<{
   option: Option & {
@@ -298,6 +325,8 @@ const props = defineProps<{
       supportValue: number | null
     }
   }
+  // eslint-disable-next-line vue/no-unused-properties
+  inquiryId: number
   compact?: boolean
   inline?: boolean
   official?: boolean
@@ -306,6 +335,8 @@ const props = defineProps<{
   showAction?: boolean
   preventClick?: boolean
   textMaxLength?: number
+  progressBar?: boolean
+  familyType?: string
 }>()
 
 // Emits
@@ -316,6 +347,7 @@ const emit = defineEmits<{
   supportChanged: [optionId: number, support: string]
   comment: [option: Option]
   viewResponses: [option: Option, responseType: string]
+  removeFromView: [optionId: number, updatedForceLayouts: string[]]
 }>()
 
 
@@ -325,6 +357,21 @@ const textMaxLength = props.textMaxLength || 200
 // Stores
 const optionsStore = useOptionsStore()
 const sessionStore = useSessionStore()
+
+const showDeleteDialog = ref(false)
+
+const confirmDelete = () => {
+  showDeleteDialog.value = true
+}
+
+// Add handler functions
+const handleConfirmDelete = () => {
+  deleteOption()
+}
+
+const handleRemoveFromView = () => {
+  removeFromCurrentView()
+}
 
 // Create context once as computed
 const optionContext = computed(() => {
@@ -348,17 +395,27 @@ const canEditOrDelete = computed(() => canEdit.value || canDelete.value)
 // Get option types from session store
 const allOptionTypes = computed(() => sessionStore.appSettings?.inquiryOptionTypeTab || [])
 
-const optionTypeLabel = computed(() => 
-  getOptionTypeLabel(props.option.type, allOptionTypes.value, t('agora', 'Option'))
-)
+// Add null checks
+const optionTypeLabel = computed(() => {
+  if (!props.option?.type || !allOptionTypes.value) {
+    return t('agora', 'Option')
+  }
+  return getOptionTypeLabel(props.option.type, allOptionTypes.value, t('agora', 'Option'))
+})
 
-const optionIcon = computed(() => 
-  getOptionTypeIconComponent(props.option.type, allOptionTypes.value)
-)
+const optionIcon = computed(() => {
+  if (!props.option?.type || !allOptionTypes.value) {
+    return InquiryOptionIcons.Default // Make sure this exists
+  }
+  return getOptionTypeIconComponent(props.option.type, allOptionTypes.value)
+})
 
-const optionTypeColor = computed(() => 
-  getOptionTypeColor(props.option.type, allOptionTypes.value)
-)
+const optionTypeColor = computed(() => {
+  if (!props.option?.type || !allOptionTypes.value) {
+    return 'var(--color-text-light)'
+  }
+  return getOptionTypeColor(props.option.type, allOptionTypes.value)
+})
 
 const showTitle = computed(() => 
   usesTitle(props.option.type, allOptionTypes.value)
@@ -385,6 +442,20 @@ const getOptionTypeLabelLocal = (type: string) => getOptionTypeLabel(type, allOp
 const useTitle = computed(() => 
   usesTitle(props.option.type, allOptionTypes.value)
 )
+
+const progressPercentage = computed(() => {
+  if (!props.progressBar) return 0
+
+  if (props.option.status?.supportCount !== undefined) {
+    // Assuming there's a total target or max value
+    const maxSupport = props.option.maxSupport || 100 // Define your max value
+    return Math.min(100, (props.option.status.supportCount / maxSupport) * 100)
+  }
+
+  // Default fallback
+  return 50
+})
+
 
 const hasAllowedResponses = computed(() => allowedResponses.value.length > 0)
 
@@ -449,6 +520,8 @@ const formatDate = (timestamp: number) => {
   }).format(date)
 }
 
+const isImportedFromView = computed(() => props.option.family !== props.familyType)
+
 const truncateText = (text: string, maxLength: number) => {
   if (!text) return ''
   if (text.length <= maxLength) return text
@@ -461,25 +534,60 @@ const handleCardClick = () => {
   }
 }
 
-const confirmDelete = () => {
-  if (confirm(t('agora', 'Are you sure you want to delete this option?'))) {
-    deleteOption()
-  }
-}
-
 const deleteOption = async () => {
   try {
-    // Remove from store
+    await optionsStore.deleteOption(props.option.id)
+    
+    // Then update local store
     const index = optionsStore.options.findIndex(opt => opt.id === props.option.id)
     if (index >= 0) {
       optionsStore.options.splice(index, 1)
     }
+    
     emit('delete', props.option.id)
+    showSuccess(t('agora', 'Option deleted successfully'))
   } catch (err) {
     console.error('Error deleting option:', err)
     showError(t('agora', 'Failed to delete option'))
   }
 }
+
+const removeFromCurrentView = async () => {
+  try {
+    let currentLayouts = props.option.miscFields?.force_layouts || []
+
+    if (typeof currentLayouts === 'string') {
+      try {
+        currentLayouts = JSON.parse(currentLayouts)
+      } catch {
+        currentLayouts = []
+      }
+    }
+
+    if (!Array.isArray(currentLayouts)) {
+      currentLayouts = []
+    }
+
+    const updatedLayouts = currentLayouts.filter((layout: string) => layout !== props.familyType)
+
+    await optionsStore.updateOption({
+      ...props.option,
+      miscFields: {
+        ...props.option.miscFields,
+        force_layouts: updatedLayouts
+      }
+    })
+
+    emit('removeFromView', props.option.id, updatedLayouts)
+    showSuccess(t('agora', 'Option removed from view'))
+  } catch (err) {
+    console.error('Error removing option from view:', err)
+    showError(t('agora', 'Failed to remove option from view'))
+  }
+}
+
+
+
 </script>
 <style scoped lang="scss">
 .option-card {
@@ -855,6 +963,83 @@ const deleteOption = async () => {
     }
   }
 
+  .progress-bar-section {
+  margin: 8px 0 12px 0;
+  
+  .progress-bar-container {
+    background: var(--color-background-dark);
+    border-radius: 10px;
+    height: 8px;
+    overflow: hidden;
+    margin-bottom: 6px;
+    
+    .progress-bar-fill {
+      background: linear-gradient(90deg, var(--color-primary-element-light), var(--color-primary-element));
+      height: 100%;
+      border-radius: 10px;
+      transition: width 0.3s ease;
+      position: relative;
+      
+      &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(90deg, 
+          rgba(255, 255, 255, 0.2) 0%, 
+          rgba(255, 255, 255, 0) 50%,
+          rgba(255, 255, 255, 0.2) 100%);
+        animation: shimmer 2s infinite;
+      }
+    }
+  }
+  
+  .progress-stats {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    
+    .progress-label {
+      color: var(--color-text-lighter);
+    }
+    
+    .progress-percentage {
+      font-weight: 600;
+      color: var(--color-primary-element);
+    }
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.option-card.has-progress-bar {
+  .card-features,
+  .card-responses {
+    display: none;
+  }
+  
+  &.inline {
+    .inline-features-row {
+      .inline-feature-item {
+        &.child-responses,
+        &.support-feature,
+        &.comments-feature {
+          display: none;
+        }
+      }
+    }
+  }
+}
   // Footer
   .card-footer {
     padding-top: 12px;
