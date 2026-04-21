@@ -19,7 +19,7 @@ Update: Improvement of a full Options system enabling real decision-making (supp
 
 ## 🚀🗳 Options
 
-Agora 1.7.1 introduces a native Options still experimental, ystem that allows inquiries to move beyond simple comments and supports.
+Agora 1.7.1 introduces a native Options still experimental with a system that allows inquiries to move beyond simple comments and supports.
 
 With Options, you can:
 
@@ -28,8 +28,6 @@ Define multiple choices for an inquiry.
 Four different layout for options: Vote, Timeline, Kanban, Tree, Cards, Paired, Consensus ( not fully dynamic yet )
 
 Allow users to support/comments / select options
-
-Build real consultation and decision-making workflows
 
 
 ### 🧰 Templates 
