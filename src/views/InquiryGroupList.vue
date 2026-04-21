@@ -275,7 +275,7 @@ onMounted(async () => {
         <!-- Loading State -->
         <div v-if="isLoading" class="loading-state">
           <div class="spinner"></div>
-          <p>{{ t('agora', 'Loading archived groups …') }}</p>
+          <p>{{ t('agora', 'Loading archived groups …') }}</p>
         </div>
 
         <!-- No Archived Groups -->

@@ -1,4 +1,4 @@
-const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=[window.OC.filePath('agora', '', 'js/ActionStructure-DKcPgGUy.chunk.mjs'),window.OC.filePath('agora', '', 'js/ImportDocumentModal-EmtCNVsU.chunk.mjs'),window.OC.filePath('agora', '', 'js/TernarySupportIcon.vue_vue_type_style_index_0_scoped_f6cfe8f3_lang-BWB8wMGc.chunk.mjs'),window.OC.filePath('agora', '', 'js/NcDashboardWidget-CvpYMKur-C_DgEGB8.chunk.mjs'),window.OC.filePath('agora', '', 'js/NcRichText-D_ssz6sB-DIPyN8sK.chunk.mjs'),window.OC.filePath('agora', '', 'js/index-D9BQlKob.chunk.mjs'),window.OC.filePath('agora', '', 'js/StyleSettings-pXAVRVpu.chunk.mjs'),window.OC.filePath('agora', '', 'js/markdown-DXzvkEhg.chunk.mjs'),window.OC.filePath('agora', '', 'js/agora-icon-0wbFIYdr.chunk.mjs'),window.OC.filePath('agora', '', 'js/NcUserBubble-BE6yD-R0-Ct37AmYL.chunk.mjs')])))=>i.map(i=>d[i]);
+const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=[window.OC.filePath('agora', '', 'js/ActionStructure-BYlaj6Oo.chunk.mjs'),window.OC.filePath('agora', '', 'js/ImportDocumentModal-BCBPS8XO.chunk.mjs'),window.OC.filePath('agora', '', 'js/TernarySupportIcon.vue_vue_type_style_index_0_scoped_f6cfe8f3_lang-BWB8wMGc.chunk.mjs'),window.OC.filePath('agora', '', 'js/NcDashboardWidget-CvpYMKur-cOX7G7Zd.chunk.mjs'),window.OC.filePath('agora', '', 'js/NcRichText-D_ssz6sB-DIPyN8sK.chunk.mjs'),window.OC.filePath('agora', '', 'js/index-D7YUthxf.chunk.mjs'),window.OC.filePath('agora', '', 'js/StyleSettings-2O69Uxc2.chunk.mjs'),window.OC.filePath('agora', '', 'js/markdown-DUjqwGFI.chunk.mjs'),window.OC.filePath('agora', '', 'js/agora-icon-0wbFIYdr.chunk.mjs'),window.OC.filePath('agora', '', 'js/NcUserBubble-BE6yD-R0-Ct37AmYL.chunk.mjs')])))=>i.map(i=>d[i]);
 (function() {
   "use strict";
   try {
@@ -166,7 +166,7 @@ to {
 .theme--dark .navigation-sublist {
   background: var(--color-background-darker);
 }
-.dialog-overlay[data-v-3029e91b] {
+.dialog-overlay[data-v-ce097ea4] {
   position: fixed;
   top: 0;
   left: 0;
@@ -178,7 +178,7 @@ to {
   align-items: center;
   z-index: 10000;
 }
-.create-dialog[data-v-3029e91b] {
+.create-dialog[data-v-ce097ea4] {
   background-color: var(--color-main-background);
   padding: 20px;
   max-width: 400px;
@@ -189,7 +189,7 @@ to {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   margin: 20px;
 }
-.create-buttons[data-v-3029e91b] {
+.create-buttons[data-v-ce097ea4] {
   display: flex;
   justify-content: flex-end;
   gap: 8px;
@@ -197,55 +197,55 @@ to {
   padding-top: 16px;
   border-top: 1px solid var(--color-border);
 }
-.selected-type[data-v-3029e91b] {
+.selected-type[data-v-ce097ea4] {
   padding: 8px 0;
 }
-.type-description[data-v-3029e91b] {
+.type-description[data-v-ce097ea4] {
   color: var(--color-text-lighter);
   font-size: 0.9em;
   margin-top: 4px;
 }
-.access-settings[data-v-3029e91b] {
+.access-settings[data-v-ce097ea4] {
   padding: 8px 0;
 }
-.access-description[data-v-3029e91b] {
+.access-description[data-v-ce097ea4] {
   color: var(--color-text-lighter);
   margin-bottom: 16px;
   font-size: 0.95em;
 }
-.access-radio-group[data-v-3029e91b] {
+.access-radio-group[data-v-ce097ea4] {
   margin-bottom: 16px;
 }
-.groups-selection[data-v-3029e91b] {
+.groups-selection[data-v-ce097ea4] {
   margin-top: 16px;
   padding: 16px;
   background: var(--color-background-dark);
   border-radius: 8px;
 }
-.groups-title[data-v-3029e91b] {
+.groups-title[data-v-ce097ea4] {
   margin: 0 0 8px 0;
   font-size: 1em;
   font-weight: 600;
 }
-.groups-description[data-v-3029e91b] {
+.groups-description[data-v-ce097ea4] {
   color: var(--color-text-lighter);
   font-size: 0.9em;
   margin: 0 0 12px 0;
 }
-.groups-list[data-v-3029e91b] {
+.groups-list[data-v-ce097ea4] {
   display: flex;
   flex-direction: column;
   gap: 8px;
   max-height: 200px;
   overflow-y: auto;
 }
-.group-item[data-v-3029e91b] {
+.group-item[data-v-ce097ea4] {
   display: flex;
   align-items: center;
   padding: 4px 0;
 }
 
-.dialog-overlay[data-v-481ad49b] {
+.dialog-overlay[data-v-a65e9199] {
     position: fixed;
     top: 0;
     left: 0;
@@ -257,7 +257,7 @@ to {
     align-items: center;
     z-index: 10000;
 }
-.create-dialog[data-v-481ad49b] {
+.create-dialog[data-v-a65e9199] {
     background-color: var(--color-main-background);
     padding: 24px;
     max-width: 500px;
@@ -268,7 +268,7 @@ to {
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
     margin: 20px;
 }
-.dialog-header[data-v-481ad49b] {
+.dialog-header[data-v-a65e9199] {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -276,39 +276,39 @@ to {
     padding-bottom: 15px;
     border-bottom: 1px solid var(--color-border);
 }
-.dialog-header h3[data-v-481ad49b] {
+.dialog-header h3[data-v-a65e9199] {
     margin: 0;
     font-size: 1.2em;
     color: var(--color-main-text);
 }
-.mode-badge[data-v-481ad49b] {
+.mode-badge[data-v-a65e9199] {
     padding: 4px 8px;
     border-radius: 4px;
     font-size: 0.8em;
     font-weight: 600;
 }
-.mode-badge.child[data-v-481ad49b] {
+.mode-badge.child[data-v-a65e9199] {
     background: var(--color-info);
     color: var(--color-info-text);
 }
-.mode-badge.creation[data-v-481ad49b] {
+.mode-badge.creation[data-v-a65e9199] {
     background: var(--color-success);
     color: var(--color-success-text);
 }
-.context-description[data-v-481ad49b] {
+.context-description[data-v-a65e9199] {
     margin-bottom: 20px;
     padding: 12px;
     background: var(--color-background-hover);
     border-radius: 6px;
     border-left: 3px solid var(--color-primary);
 }
-.context-description p[data-v-481ad49b] {
+.context-description p[data-v-a65e9199] {
     margin: 0;
     color: var(--color-text-lighter);
     font-size: 0.9em;
     line-height: 1.4;
 }
-.create-buttons[data-v-481ad49b] {
+.create-buttons[data-v-a65e9199] {
     display: flex;
     justify-content: flex-end;
     gap: 12px;
@@ -316,60 +316,60 @@ to {
     padding-top: 20px;
     border-top: 1px solid var(--color-border);
 }
-.selected-type[data-v-481ad49b] {
+.selected-type[data-v-a65e9199] {
     padding: 12px 0;
 }
-.type-description[data-v-481ad49b] {
+.type-description[data-v-a65e9199] {
     color: var(--color-text-lighter);
     font-size: 0.9em;
     margin-top: 8px;
     line-height: 1.4;
 }
-.type-info[data-v-481ad49b] {
+.type-info[data-v-a65e9199] {
     margin-top: 8px;
     color: var(--color-info);
     font-size: 0.85em;
 }
-.type-help[data-v-481ad49b] {
+.type-help[data-v-a65e9199] {
     margin-top: 8px;
     color: var(--color-text-lighter);
     font-size: 0.85em;
 }
-.access-settings[data-v-481ad49b] {
+.access-settings[data-v-a65e9199] {
     padding: 12px 0;
 }
-.access-description[data-v-481ad49b] {
+.access-description[data-v-a65e9199] {
     color: var(--color-text-lighter);
     margin-bottom: 16px;
     font-size: 0.95em;
 }
-.access-radio-group[data-v-481ad49b] {
+.access-radio-group[data-v-a65e9199] {
     margin-bottom: 20px;
 }
-.nextcloud-groups-selection[data-v-481ad49b] {
+.nextcloud-groups-selection[data-v-a65e9199] {
     margin-top: 16px;
     padding: 16px;
     background: var(--color-background-dark);
     border-radius: 8px;
 }
-.groups-title[data-v-481ad49b] {
+.groups-title[data-v-a65e9199] {
     margin: 0 0 8px 0;
     font-size: 1em;
     font-weight: 600;
 }
-.groups-description[data-v-481ad49b] {
+.groups-description[data-v-a65e9199] {
     color: var(--color-text-lighter);
     font-size: 0.9em;
     margin: 0 0 12px 0;
 }
-.groups-list[data-v-481ad49b] {
+.groups-list[data-v-a65e9199] {
     display: flex;
     flex-direction: column;
     gap: 8px;
     max-height: 200px;
     overflow-y: auto;
 }
-.group-item[data-v-481ad49b] {
+.group-item[data-v-a65e9199] {
     display: flex;
     align-items: center;
     padding: 4px 0;
@@ -2478,20 +2478,20 @@ to {
   height: 44px;
 }
 /* Main container */
-.editor-container[data-v-6d367f60] {
+.editor-container[data-v-d309a753] {
   display: flex;
   flex-direction: column;
   height: 100%;
   width: 100%;
   position: relative;
 }
-.editor-content[data-v-6d367f60] {
+.editor-content[data-v-d309a753] {
   flex: 1;
   min-height: 300px;
   padding: 1rem;
   outline: none;
 }
-.editor-toolbar[data-v-6d367f60] {
+.editor-toolbar[data-v-d309a753] {
   padding: 0.5rem;
   background: var(--color-background-hover, #f5f5f5);
   border-bottom: 1px solid var(--color-border, #ddd);
@@ -2500,7 +2500,7 @@ to {
   gap: 0.25rem;
   align-items: center;
 }
-.heading-select[data-v-6d367f60] {
+.heading-select[data-v-d309a753] {
   padding: 0.5rem;
   border: 1px solid var(--color-border, #ddd);
   border-radius: var(--border-radius, 4px);
@@ -2508,42 +2508,42 @@ to {
   color: var(--color-text);
   min-width: 120px;
 }
-.editor-content-wrapper[data-v-6d367f60] {
+.editor-content-wrapper[data-v-d309a753] {
   flex: 1;
   overflow: auto;
   border: 1px solid var(--color-border, #e2e8f0);
   background: var(--color-main-background, #fff);
 }
-.tiptap-editor-content[data-v-6d367f60] {
+.tiptap-editor-content[data-v-d309a753] {
   height: 100% !important;
   width: 100% !important;
   padding: 1rem;
   outline: none;
 }
-.ProseMirror[data-v-6d367f60] {
+.ProseMirror[data-v-d309a753] {
   height: 100% !important;
   min-height: 100% !important;
   padding: 1rem;
 }
-.ProseMirror-focused[data-v-6d367f60] {
+.ProseMirror-focused[data-v-d309a753] {
   outline: none;
   border-color: var(--color-primary-element, #0082c9);
 }
 
 /* Modal styles */
-.modal__content[data-v-6d367f60] {
+.modal__content[data-v-d309a753] {
   padding: 20px;
 }
-.form-group[data-v-6d367f60] {
+.form-group[data-v-d309a753] {
   margin-bottom: 1.5rem;
 }
-.form-group label[data-v-6d367f60] {
+.form-group label[data-v-d309a753] {
   display: block;
   margin-bottom: 0.5rem;
   font-weight: bold;
   color: var(--color-text);
 }
-.modal-actions[data-v-6d367f60] {
+.modal-actions[data-v-d309a753] {
   display: flex;
   gap: 0.75rem;
   justify-content: flex-end;
@@ -2551,31 +2551,31 @@ to {
 }
 
 /* AI Preview styles */
-.ai-preview[data-v-6d367f60] {
+.ai-preview[data-v-d309a753] {
   border: 1px solid var(--color-border, #ddd);
   border-radius: var(--border-radius, 4px);
   padding: 1rem;
   background: var(--color-background-hover, #f8f9fa);
   margin-top: 1.5rem;
 }
-.ai-preview h3[data-v-6d367f60] {
+.ai-preview h3[data-v-d309a753] {
   margin-top: 0;
   margin-bottom: 0.75rem;
   color: var(--color-text);
 }
-.preview-content[data-v-6d367f60] {
+.preview-content[data-v-d309a753] {
   line-height: 1.5;
 }
-.preview-content p[data-v-6d367f60] {
+.preview-content p[data-v-d309a753] {
   margin-bottom: 0.75rem;
   color: var(--color-text);
 }
-.content-length[data-v-6d367f60] {
+.content-length[data-v-d309a753] {
   font-size: 0.9em;
   color: var(--color-text-lighter);
   margin-bottom: 0.5rem;
 }
-.content-summary[data-v-6d367f60] {
+.content-summary[data-v-d309a753] {
   font-size: 0.9em;
   color: var(--color-text);
   background: var(--color-background-hover, #e9ecef);
@@ -2583,22 +2583,22 @@ to {
   border-radius: var(--border-radius, 4px);
   border-left: 3px solid var(--color-primary-element, #0082c9);
 }
-.content-summary strong[data-v-6d367f60] {
+.content-summary strong[data-v-d309a753] {
   color: var(--color-text);
 }
 
 /* Loading animation */
-.loading-icon[data-v-6d367f60] {
+.loading-icon[data-v-d309a753] {
   display: inline-block;
   width: 16px;
   height: 16px;
   border: 2px solid transparent;
   border-top: 2px solid currentColor;
   border-radius: 50%;
-  animation: spin-6d367f60 1s linear infinite;
+  animation: spin-d309a753 1s linear infinite;
   margin-right: 0.5rem;
 }
-@keyframes spin-6d367f60 {
+@keyframes spin-d309a753 {
 from { transform: rotate(0deg);
 }
 to { transform: rotate(360deg);
@@ -2606,56 +2606,56 @@ to { transform: rotate(360deg);
 }
 
 /* Image alignment styles */
-[data-v-6d367f60] .image-align-left {
+[data-v-d309a753] .image-align-left {
   display: block;
   margin-left: 0;
   margin-right: auto;
 }
-[data-v-6d367f60] .image-align-center {
+[data-v-d309a753] .image-align-center {
   display: block;
   margin-left: auto;
   margin-right: auto;
 }
-[data-v-6d367f60] .image-align-right {
+[data-v-d309a753] .image-align-right {
   display: block;
   margin-left: auto;
   margin-right: 0;
 }
-[data-v-6d367f60] .editor-image {
+[data-v-d309a753] .editor-image {
   max-width: 100%;
   height: auto;
   border-radius: var(--border-radius, 4px);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   border: 1px solid var(--color-border, #e2e8f0);
 }
-[data-v-6d367f60] .ProseMirror img {
+[data-v-d309a753] .ProseMirror img {
   max-width: 100%;
   height: auto;
 }
-[data-v-6d367f60] .ProseMirror .editor-image {
+[data-v-d309a753] .ProseMirror .editor-image {
   border: 1px solid var(--color-border, #e2e8f0);
   padding: 4px;
   background: white;
 }
-[data-v-6d367f60] img[src*="agora"] {
+[data-v-d309a753] img[src*="agora"] {
   display: block !important;
   visibility: visible !important;
   opacity: 1 !important;
 }
 
 /* Assistant Content Styles */
-.container[data-v-6d367f60] {
+.container[data-v-d309a753] {
   display: flex;
   align-items: start;
   flex-direction: row;
   gap: 12px;
 }
-.content[data-v-6d367f60] {
+.content[data-v-d309a753] {
   display: flex;
   flex-direction: column;
   flex: 1;
 }
-.heading[data-v-6d367f60] {
+.heading[data-v-d309a753] {
   margin-top: 0;
   font-size: var(--default-font-size);
   font-weight: bold;
@@ -2849,7 +2849,7 @@ to { transform: rotate(360deg);
   border-left: 3px solid var(--color-warning, #ffc107);
   font-size: 0.9em;
   color: var(--color-text-light);
-}.option-card[data-v-12a3d5c3] {
+}.option-card[data-v-87601bd1] {
   background: var(--color-main-background);
   border: 2px solid var(--color-border);
   border-radius: 12px;
@@ -2859,38 +2859,38 @@ to { transform: rotate(360deg);
   position: relative;
   margin-bottom: 8px;
 }
-.option-card[data-v-12a3d5c3]:hover {
+.option-card[data-v-87601bd1]:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   border-color: var(--color-primary-element);
 }
-.option-card.compact[data-v-12a3d5c3] {
+.option-card.compact[data-v-87601bd1] {
   padding: 12px;
 }
-.option-card.compact .card-features[data-v-12a3d5c3],
-.option-card.compact .card-responses[data-v-12a3d5c3],
-.option-card.compact .card-footer[data-v-12a3d5c3] {
+.option-card.compact .card-features[data-v-87601bd1],
+.option-card.compact .card-responses[data-v-87601bd1],
+.option-card.compact .card-footer[data-v-87601bd1] {
   display: none;
 }
-.option-card.compact .card-content .description-section[data-v-12a3d5c3] {
+.option-card.compact .card-content .description-section[data-v-87601bd1] {
   display: block;
   -webkit-line-clamp: 1;
 }
-.option-card .card-header[data-v-12a3d5c3] {
+.option-card .card-header[data-v-87601bd1] {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 12px;
   min-height: 32px;
 }
-.option-card .card-header .header-left[data-v-12a3d5c3] {
+.option-card .card-header .header-left[data-v-87601bd1] {
   display: flex;
   align-items: center;
   gap: 10px;
   flex: 1;
   min-width: 0;
 }
-.option-card .card-header .header-left .type-icon[data-v-12a3d5c3] {
+.option-card .card-header .header-left .type-icon[data-v-87601bd1] {
   flex-shrink: 0;
   width: 32px;
   height: 32px;
@@ -2900,13 +2900,13 @@ to { transform: rotate(360deg);
   background: var(--color-background-darker);
   border-radius: 8px;
 }
-.option-card .card-header .header-left .header-meta[data-v-12a3d5c3] {
+.option-card .card-header .header-left .header-meta[data-v-87601bd1] {
   display: flex;
   flex-direction: column;
   gap: 2px;
   min-width: 0;
 }
-.option-card .card-header .header-left .header-meta .option-type-label[data-v-12a3d5c3] {
+.option-card .card-header .header-left .header-meta .option-type-label[data-v-87601bd1] {
   font-size: 13px;
   font-weight: 600;
   color: var(--color-text-light);
@@ -2914,31 +2914,31 @@ to { transform: rotate(360deg);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.option-card .card-header .header-left .header-meta .timestamp[data-v-12a3d5c3] {
+.option-card .card-header .header-left .header-meta .timestamp[data-v-87601bd1] {
   font-size: 11px;
   color: var(--color-text-lighter);
 }
-.option-card .card-header .header-right[data-v-12a3d5c3] {
+.option-card .card-header .header-right[data-v-87601bd1] {
   flex-shrink: 0;
   margin-left: 8px;
 }
-.option-card .card-header .header-right .card-actions[data-v-12a3d5c3] button {
+.option-card .card-header .header-right .card-actions[data-v-87601bd1] button {
   background: transparent;
   border: none;
   padding: 4px;
   color: var(--color-text-lighter);
   cursor: pointer;
 }
-.option-card .card-header .header-right .card-actions[data-v-12a3d5c3] button:hover {
+.option-card .card-header .header-right .card-actions[data-v-87601bd1] button:hover {
   color: var(--color-primary-element);
 }
-.option-card .card-content[data-v-12a3d5c3] {
+.option-card .card-content[data-v-87601bd1] {
   display: flex;
   flex-direction: column;
   gap: 8px;
   margin-bottom: 12px;
 }
-.option-card .card-content .content-section.title-section .card-title[data-v-12a3d5c3] {
+.option-card .card-content .content-section.title-section .card-title[data-v-87601bd1] {
   margin: 0;
   font-size: 16px;
   font-weight: 600;
@@ -2946,7 +2946,7 @@ to { transform: rotate(360deg);
   line-height: 1.4;
   word-break: break-word;
 }
-.option-card .card-content .content-section.description-section .card-text[data-v-12a3d5c3] {
+.option-card .card-content .content-section.description-section .card-text[data-v-87601bd1] {
   margin: 0;
   font-size: 13px;
   line-height: 1.5;
@@ -2957,49 +2957,49 @@ to { transform: rotate(360deg);
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
 }
-.option-card .section-separator[data-v-12a3d5c3] {
+.option-card .section-separator[data-v-87601bd1] {
   height: 1px;
   background: var(--color-border);
   margin: 0 0 12px 0;
 }
-.option-card .card-features[data-v-12a3d5c3] {
+.option-card .card-features[data-v-87601bd1] {
   display: flex;
   align-items: center;
   gap: 24px;
   margin-bottom: 12px;
   min-height: 32px;
 }
-.option-card .card-features .feature-item[data-v-12a3d5c3] {
+.option-card .card-features .feature-item[data-v-87601bd1] {
   display: flex;
   align-items: center;
   height: 52px;
 }
-.option-card .card-features .feature-item.support-feature[data-v-12a3d5c3] .support-feature-container {
+.option-card .card-features .feature-item.support-feature[data-v-87601bd1] .support-feature-container {
   display: flex;
   align-items: center;
   height: 100%;
   gap: 6px;
 }
-.option-card .card-features .feature-item.support-feature[data-v-12a3d5c3] .support-feature-container .support-button {
+.option-card .card-features .feature-item.support-feature[data-v-87601bd1] .support-feature-container .support-button {
   height: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.option-card .card-features .feature-item.support-feature[data-v-12a3d5c3] .support-feature-container .support-button svg {
+.option-card .card-features .feature-item.support-feature[data-v-87601bd1] .support-feature-container .support-button svg {
   width: 16px;
   height: 16px;
 }
-.option-card .card-features .feature-item.support-feature[data-v-12a3d5c3] .support-feature-container .support-stats {
+.option-card .card-features .feature-item.support-feature[data-v-87601bd1] .support-feature-container .support-stats {
   display: flex;
   align-items: center;
   gap: 4px;
   font-size: 12px;
 }
-.option-card .card-features .feature-item.support-feature[data-v-12a3d5c3] .support-feature-container .support-stats .stat-value {
+.option-card .card-features .feature-item.support-feature[data-v-87601bd1] .support-feature-container .support-stats .stat-value {
   font-weight: 600;
 }
-.option-card .card-features .feature-item.comments-feature .feature-content[data-v-12a3d5c3] {
+.option-card .card-features .feature-item.comments-feature .feature-content[data-v-87601bd1] {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -3009,35 +3009,35 @@ to { transform: rotate(360deg);
   cursor: pointer;
   height: 28px;
 }
-.option-card .card-features .feature-item.comments-feature .feature-content[data-v-12a3d5c3]:hover {
+.option-card .card-features .feature-item.comments-feature .feature-content[data-v-87601bd1]:hover {
   background: var(--color-background-hover);
 }
-.option-card .card-features .feature-item.comments-feature .feature-content .feature-icon[data-v-12a3d5c3] {
+.option-card .card-features .feature-item.comments-feature .feature-content .feature-icon[data-v-87601bd1] {
   color: var(--color-text-lighter);
   width: 26px;
   height: 26px;
   flex-shrink: 0;
 }
-.option-card .card-features .feature-item.comments-feature .feature-content .feature-count[data-v-12a3d5c3] {
+.option-card .card-features .feature-item.comments-feature .feature-content .feature-count[data-v-87601bd1] {
   font-size: 12px;
   font-weight: 600;
   color: var(--color-text-light);
 }
-.option-card .card-responses[data-v-12a3d5c3] {
+.option-card .card-responses[data-v-87601bd1] {
   margin-bottom: 12px;
 }
-.option-card .card-responses .responses-header[data-v-12a3d5c3] {
+.option-card .card-responses .responses-header[data-v-87601bd1] {
   display: flex;
   align-items: center;
   gap: 6px;
   margin-bottom: 8px;
 }
-.option-card .card-responses .responses-header .responses-title[data-v-12a3d5c3] {
+.option-card .card-responses .responses-header .responses-title[data-v-87601bd1] {
   font-size: 12px;
   font-weight: 600;
   color: var(--color-text-light);
 }
-.option-card .card-responses .responses-list .no-responses[data-v-12a3d5c3] {
+.option-card .card-responses .responses-list .no-responses[data-v-87601bd1] {
   padding: 6px 10px;
   background: var(--color-background-dark);
   border: 1px solid var(--color-border);
@@ -3047,12 +3047,12 @@ to { transform: rotate(360deg);
   font-style: italic;
   text-align: center;
 }
-.option-card .card-responses .responses-list .responses-summary[data-v-12a3d5c3] {
+.option-card .card-responses .responses-list .responses-summary[data-v-87601bd1] {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
 }
-.option-card .card-responses .responses-list .responses-summary .response-type-summary[data-v-12a3d5c3] {
+.option-card .card-responses .responses-list .responses-summary .response-type-summary[data-v-87601bd1] {
   position: relative;
   display: flex;
   align-items: center;
@@ -3065,25 +3065,25 @@ to { transform: rotate(360deg);
   transition: all 0.2s ease;
   font-size: 11px;
 }
-.option-card .card-responses .responses-list .responses-summary .response-type-summary[data-v-12a3d5c3]:hover {
+.option-card .card-responses .responses-list .responses-summary .response-type-summary[data-v-87601bd1]:hover {
   background: var(--color-background-darker);
   border-color: var(--color-primary-element);
 }
-.option-card .card-responses .responses-list .responses-summary .response-type-summary .response-type-info[data-v-12a3d5c3] {
+.option-card .card-responses .responses-list .responses-summary .response-type-summary .response-type-info[data-v-87601bd1] {
   display: flex;
   align-items: center;
   gap: 4px;
 }
-.option-card .card-responses .responses-list .responses-summary .response-type-summary .response-type-info svg[data-v-12a3d5c3] {
+.option-card .card-responses .responses-list .responses-summary .response-type-summary .response-type-info svg[data-v-87601bd1] {
   width: 14px;
   height: 14px;
 }
-.option-card .card-responses .responses-list .responses-summary .response-type-summary .response-type-info .response-count[data-v-12a3d5c3] {
+.option-card .card-responses .responses-list .responses-summary .response-type-summary .response-type-info .response-count[data-v-87601bd1] {
   font-weight: 600;
   color: var(--color-primary-element);
   font-size: 11px;
 }
-.option-card .card-responses .responses-list .responses-summary .response-type-summary .child-tooltip[data-v-12a3d5c3] {
+.option-card .card-responses .responses-list .responses-summary .response-type-summary .child-tooltip[data-v-87601bd1] {
   position: absolute;
   bottom: 100%;
   left: 50%;
@@ -3097,9 +3097,9 @@ to { transform: rotate(360deg);
   max-width: 300px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   z-index: 1000;
-  animation: fadeIn-12a3d5c3 0.2s ease-out;
+  animation: fadeIn-87601bd1 0.2s ease-out;
 }
-.option-card .card-responses .responses-list .responses-summary .response-type-summary .child-tooltip[data-v-12a3d5c3]::after {
+.option-card .card-responses .responses-list .responses-summary .response-type-summary .child-tooltip[data-v-87601bd1]::after {
   content: "";
   position: absolute;
   top: 100%;
@@ -3109,7 +3109,7 @@ to { transform: rotate(360deg);
   border-style: solid;
   border-color: var(--color-main-background) transparent transparent transparent;
 }
-.option-card .card-responses .responses-list .responses-summary .response-type-summary .child-tooltip .tooltip-header[data-v-12a3d5c3] {
+.option-card .card-responses .responses-list .responses-summary .response-type-summary .child-tooltip .tooltip-header[data-v-87601bd1] {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -3117,15 +3117,15 @@ to { transform: rotate(360deg);
   margin-bottom: 6px;
   border-bottom: 1px solid var(--color-border);
 }
-.option-card .card-responses .responses-list .responses-summary .response-type-summary .child-tooltip .tooltip-header strong[data-v-12a3d5c3] {
+.option-card .card-responses .responses-list .responses-summary .response-type-summary .child-tooltip .tooltip-header strong[data-v-87601bd1] {
   font-size: 12px;
   color: var(--color-main-text);
 }
-.option-card .card-responses .responses-list .responses-summary .response-type-summary .child-tooltip .tooltip-header .tooltip-count[data-v-12a3d5c3] {
+.option-card .card-responses .responses-list .responses-summary .response-type-summary .child-tooltip .tooltip-header .tooltip-count[data-v-87601bd1] {
   font-size: 11px;
   color: var(--color-text-lighter);
 }
-.option-card .card-responses .responses-list .responses-summary .response-type-summary .child-tooltip .tooltip-children .tooltip-child-item[data-v-12a3d5c3] {
+.option-card .card-responses .responses-list .responses-summary .response-type-summary .child-tooltip .tooltip-children .tooltip-child-item[data-v-87601bd1] {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -3134,40 +3134,40 @@ to { transform: rotate(360deg);
   cursor: pointer;
   font-size: 11px;
 }
-.option-card .card-responses .responses-list .responses-summary .response-type-summary .child-tooltip .tooltip-children .tooltip-child-item[data-v-12a3d5c3]:hover {
+.option-card .card-responses .responses-list .responses-summary .response-type-summary .child-tooltip .tooltip-children .tooltip-child-item[data-v-87601bd1]:hover {
   background: var(--color-background-hover);
 }
-.option-card .card-responses .responses-list .responses-summary .response-type-summary .child-tooltip .tooltip-children .tooltip-child-item .child-title[data-v-12a3d5c3] {
+.option-card .card-responses .responses-list .responses-summary .response-type-summary .child-tooltip .tooltip-children .tooltip-child-item .child-title[data-v-87601bd1] {
   color: var(--color-text-light);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 180px;
 }
-.option-card .card-responses .responses-list .responses-summary .response-type-summary .child-tooltip .tooltip-children .tooltip-more[data-v-12a3d5c3] {
+.option-card .card-responses .responses-list .responses-summary .response-type-summary .child-tooltip .tooltip-children .tooltip-more[data-v-87601bd1] {
   padding: 4px 6px;
   font-size: 10px;
   color: var(--color-text-lighter);
   font-style: italic;
 }
-.option-card .progress-bar-section[data-v-12a3d5c3] {
+.option-card .progress-bar-section[data-v-87601bd1] {
   margin: 8px 0 12px 0;
 }
-.option-card .progress-bar-section .progress-bar-container[data-v-12a3d5c3] {
+.option-card .progress-bar-section .progress-bar-container[data-v-87601bd1] {
   background: var(--color-background-dark);
   border-radius: 10px;
   height: 8px;
   overflow: hidden;
   margin-bottom: 6px;
 }
-.option-card .progress-bar-section .progress-bar-container .progress-bar-fill[data-v-12a3d5c3] {
+.option-card .progress-bar-section .progress-bar-container .progress-bar-fill[data-v-87601bd1] {
   background: linear-gradient(90deg, var(--color-primary-element-light), var(--color-primary-element));
   height: 100%;
   border-radius: 10px;
   transition: width 0.3s ease;
   position: relative;
 }
-.option-card .progress-bar-section .progress-bar-container .progress-bar-fill[data-v-12a3d5c3]::after {
+.option-card .progress-bar-section .progress-bar-container .progress-bar-fill[data-v-87601bd1]::after {
   content: "";
   position: absolute;
   top: 0;
@@ -3175,22 +3175,22 @@ to { transform: rotate(360deg);
   right: 0;
   bottom: 0;
   background: linear-gradient(90deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 50%, rgba(255, 255, 255, 0.2) 100%);
-  animation: shimmer-12a3d5c3 2s infinite;
+  animation: shimmer-87601bd1 2s infinite;
 }
-.option-card .progress-bar-section .progress-stats[data-v-12a3d5c3] {
+.option-card .progress-bar-section .progress-stats[data-v-87601bd1] {
   display: flex;
   justify-content: space-between;
   align-items: center;
   font-size: 11px;
 }
-.option-card .progress-bar-section .progress-stats .progress-label[data-v-12a3d5c3] {
+.option-card .progress-bar-section .progress-stats .progress-label[data-v-87601bd1] {
   color: var(--color-text-lighter);
 }
-.option-card .progress-bar-section .progress-stats .progress-percentage[data-v-12a3d5c3] {
+.option-card .progress-bar-section .progress-stats .progress-percentage[data-v-87601bd1] {
   font-weight: 600;
   color: var(--color-primary-element);
 }
-@keyframes shimmer-12a3d5c3 {
+@keyframes shimmer-87601bd1 {
 0% {
     transform: translateX(-100%);
 }
@@ -3198,108 +3198,108 @@ to { transform: rotate(360deg);
     transform: translateX(100%);
 }
 }
-.option-card .option-card.has-progress-bar .card-features[data-v-12a3d5c3],
-.option-card .option-card.has-progress-bar .card-responses[data-v-12a3d5c3] {
+.option-card .option-card.has-progress-bar .card-features[data-v-87601bd1],
+.option-card .option-card.has-progress-bar .card-responses[data-v-87601bd1] {
   display: none;
 }
-.option-card .option-card.has-progress-bar.inline .inline-features-row .inline-feature-item.child-responses[data-v-12a3d5c3], .option-card .option-card.has-progress-bar.inline .inline-features-row .inline-feature-item.support-feature[data-v-12a3d5c3], .option-card .option-card.has-progress-bar.inline .inline-features-row .inline-feature-item.comments-feature[data-v-12a3d5c3] {
+.option-card .option-card.has-progress-bar.inline .inline-features-row .inline-feature-item.child-responses[data-v-87601bd1], .option-card .option-card.has-progress-bar.inline .inline-features-row .inline-feature-item.support-feature[data-v-87601bd1], .option-card .option-card.has-progress-bar.inline .inline-features-row .inline-feature-item.comments-feature[data-v-87601bd1] {
   display: none;
 }
-.option-card .card-footer[data-v-12a3d5c3] {
+.option-card .card-footer[data-v-87601bd1] {
   padding-top: 12px;
   border-top: 1px solid var(--color-border);
 }
-.option-card .card-footer .owner-info[data-v-12a3d5c3] {
+.option-card .card-footer .owner-info[data-v-87601bd1] {
   display: flex;
   align-items: center;
   gap: 6px;
   font-size: 11px;
 }
-.option-card .card-footer .owner-info .owner-name[data-v-12a3d5c3] {
+.option-card .card-footer .owner-info .owner-name[data-v-87601bd1] {
   color: var(--color-text-lighter);
   font-size: 11px;
 }
-.option-card.inline[data-v-12a3d5c3] {
+.option-card.inline[data-v-87601bd1] {
   display: flex;
   align-items: center;
   padding: 8px 12px;
   margin-bottom: 4px;
 }
-.option-card.inline .card-features[data-v-12a3d5c3],
-.option-card.inline .card-responses[data-v-12a3d5c3],
-.option-card.inline .card-footer[data-v-12a3d5c3] {
+.option-card.inline .card-features[data-v-87601bd1],
+.option-card.inline .card-responses[data-v-87601bd1],
+.option-card.inline .card-footer[data-v-87601bd1] {
   display: none;
 }
-.option-card.inline .card-header[data-v-12a3d5c3] {
+.option-card.inline .card-header[data-v-87601bd1] {
   margin-bottom: 0;
   min-height: unset;
   flex: 0 0 auto;
   width: auto;
 }
-.option-card.inline .card-header .header-left[data-v-12a3d5c3] {
+.option-card.inline .card-header .header-left[data-v-87601bd1] {
   gap: 8px;
 }
-.option-card.inline .card-header .header-left .type-icon[data-v-12a3d5c3] {
+.option-card.inline .card-header .header-left .type-icon[data-v-87601bd1] {
   width: 24px;
   height: 24px;
 }
-.option-card.inline .card-header .header-left .type-icon svg[data-v-12a3d5c3] {
+.option-card.inline .card-header .header-left .type-icon svg[data-v-87601bd1] {
   width: 16px;
   height: 16px;
 }
-.option-card.inline .card-header .header-left .header-meta[data-v-12a3d5c3] {
+.option-card.inline .card-header .header-left .header-meta[data-v-87601bd1] {
   flex-direction: row;
   align-items: center;
   gap: 6px;
 }
-.option-card.inline .card-header .header-left .header-meta .option-type-label[data-v-12a3d5c3] {
+.option-card.inline .card-header .header-left .header-meta .option-type-label[data-v-87601bd1] {
   font-size: 12px;
 }
-.option-card.inline .card-header .header-left .header-meta .timestamp[data-v-12a3d5c3] {
+.option-card.inline .card-header .header-left .header-meta .timestamp[data-v-87601bd1] {
   font-size: 11px;
 }
-.option-card.inline .card-header .header-right[data-v-12a3d5c3] {
+.option-card.inline .card-header .header-right[data-v-87601bd1] {
   display: none;
 }
-.option-card.inline .card-content[data-v-12a3d5c3] {
+.option-card.inline .card-content[data-v-87601bd1] {
   margin-bottom: 0;
   flex: 1;
   min-width: 0;
   padding: 0 10px;
 }
-.option-card.inline .card-content .content-section.title-section .card-title[data-v-12a3d5c3] {
+.option-card.inline .card-content .content-section.title-section .card-title[data-v-87601bd1] {
   font-size: 14px;
   margin: 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.option-card.inline .card-content .content-section.description-section[data-v-12a3d5c3] {
+.option-card.inline .card-content .content-section.description-section[data-v-87601bd1] {
   display: none;
 }
-.option-card.inline .section-separator[data-v-12a3d5c3] {
+.option-card.inline .section-separator[data-v-87601bd1] {
   display: none;
 }
-.option-card.inline .inline-features-row[data-v-12a3d5c3] {
+.option-card.inline .inline-features-row[data-v-87601bd1] {
   display: flex;
   align-items: center;
   gap: 12px;
   flex: 0 0 auto;
 }
-.option-card.inline .inline-features-row .inline-spacer[data-v-12a3d5c3] {
+.option-card.inline .inline-features-row .inline-spacer[data-v-87601bd1] {
   flex: 1;
   min-width: 6px;
 }
-.option-card.inline .inline-features-row .inline-feature-item[data-v-12a3d5c3] {
+.option-card.inline .inline-features-row .inline-feature-item[data-v-87601bd1] {
   display: flex;
   align-items: center;
   height: 24px;
 }
-.option-card.inline .inline-features-row .inline-feature-item.child-responses .responses-list .responses-summary[data-v-12a3d5c3] {
+.option-card.inline .inline-features-row .inline-feature-item.child-responses .responses-list .responses-summary[data-v-87601bd1] {
   display: flex;
   gap: 4px;
 }
-.option-card.inline .inline-features-row .inline-feature-item.child-responses .responses-list .responses-summary .response-type-summary[data-v-12a3d5c3] {
+.option-card.inline .inline-features-row .inline-feature-item.child-responses .responses-list .responses-summary .response-type-summary[data-v-87601bd1] {
   position: relative;
   display: flex;
   align-items: center;
@@ -3311,20 +3311,20 @@ to { transform: rotate(360deg);
   font-size: 11px;
   line-height: 1;
 }
-.option-card.inline .inline-features-row .inline-feature-item.child-responses .responses-list .responses-summary .response-type-summary .response-type-info[data-v-12a3d5c3] {
+.option-card.inline .inline-features-row .inline-feature-item.child-responses .responses-list .responses-summary .response-type-summary .response-type-info[data-v-87601bd1] {
   display: flex;
   align-items: center;
   gap: 3px;
 }
-.option-card.inline .inline-features-row .inline-feature-item.child-responses .responses-list .responses-summary .response-type-summary .response-type-info svg[data-v-12a3d5c3] {
+.option-card.inline .inline-features-row .inline-feature-item.child-responses .responses-list .responses-summary .response-type-summary .response-type-info svg[data-v-87601bd1] {
   width: 14px;
   height: 14px;
 }
-.option-card.inline .inline-features-row .inline-feature-item.child-responses .responses-list .responses-summary .response-type-summary .response-type-info .response-count[data-v-12a3d5c3] {
+.option-card.inline .inline-features-row .inline-feature-item.child-responses .responses-list .responses-summary .response-type-summary .response-type-info .response-count[data-v-87601bd1] {
   font-size: 10px;
   font-weight: 600;
 }
-.option-card.inline .inline-features-row .inline-feature-item.child-responses .responses-list .no-responses[data-v-12a3d5c3] {
+.option-card.inline .inline-features-row .inline-feature-item.child-responses .responses-list .no-responses[data-v-87601bd1] {
   padding: 3px 8px;
   background: var(--color-background-dark);
   border: 1px solid var(--color-border);
@@ -3334,32 +3334,32 @@ to { transform: rotate(360deg);
   font-style: italic;
   line-height: 1;
 }
-.option-card.inline .inline-features-row .inline-feature-item.support-feature[data-v-12a3d5c3] .support-feature-container {
+.option-card.inline .inline-features-row .inline-feature-item.support-feature[data-v-87601bd1] .support-feature-container {
   display: flex;
   align-items: center;
   gap: 4px;
 }
-.option-card.inline .inline-features-row .inline-feature-item.support-feature[data-v-12a3d5c3] .support-feature-container .support-button {
+.option-card.inline .inline-features-row .inline-feature-item.support-feature[data-v-87601bd1] .support-feature-container .support-button {
   height: 22px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.option-card.inline .inline-features-row .inline-feature-item.support-feature[data-v-12a3d5c3] .support-feature-container .support-button svg {
+.option-card.inline .inline-features-row .inline-feature-item.support-feature[data-v-87601bd1] .support-feature-container .support-button svg {
   width: 14px;
   height: 14px;
 }
-.option-card.inline .inline-features-row .inline-feature-item.support-feature[data-v-12a3d5c3] .support-feature-container .support-stats {
+.option-card.inline .inline-features-row .inline-feature-item.support-feature[data-v-87601bd1] .support-feature-container .support-stats {
   display: flex;
   align-items: center;
   gap: 3px;
   font-size: 11px;
   line-height: 1;
 }
-.option-card.inline .inline-features-row .inline-feature-item.support-feature[data-v-12a3d5c3] .support-feature-container .support-stats .stat-value {
+.option-card.inline .inline-features-row .inline-feature-item.support-feature[data-v-87601bd1] .support-feature-container .support-stats .stat-value {
   font-weight: 600;
 }
-.option-card.inline .inline-features-row .inline-feature-item.comments-feature .feature-content[data-v-12a3d5c3] {
+.option-card.inline .inline-features-row .inline-feature-item.comments-feature .feature-content[data-v-87601bd1] {
   display: flex;
   align-items: center;
   gap: 3px;
@@ -3369,21 +3369,21 @@ to { transform: rotate(360deg);
   height: 22px;
   line-height: 1;
 }
-.option-card.inline .inline-features-row .inline-feature-item.comments-feature .feature-content[data-v-12a3d5c3]:hover {
+.option-card.inline .inline-features-row .inline-feature-item.comments-feature .feature-content[data-v-87601bd1]:hover {
   background: var(--color-background-hover);
 }
-.option-card.inline .inline-features-row .inline-feature-item.comments-feature .feature-content .feature-icon[data-v-12a3d5c3] {
+.option-card.inline .inline-features-row .inline-feature-item.comments-feature .feature-content .feature-icon[data-v-87601bd1] {
   width: 14px;
   height: 14px;
 }
-.option-card.inline .inline-features-row .inline-feature-item.comments-feature .feature-content .feature-count[data-v-12a3d5c3] {
+.option-card.inline .inline-features-row .inline-feature-item.comments-feature .feature-content .feature-count[data-v-87601bd1] {
   font-size: 11px;
   font-weight: 600;
 }
-.option-card.inline .inline-features-row .inline-actions[data-v-12a3d5c3] {
+.option-card.inline .inline-features-row .inline-actions[data-v-87601bd1] {
   flex-shrink: 0;
 }
-.option-card.inline .inline-features-row .inline-actions .card-actions[data-v-12a3d5c3] button {
+.option-card.inline .inline-features-row .inline-actions .card-actions[data-v-87601bd1] button {
   min-height: 24px;
   padding: 4px;
   background: transparent;
@@ -3392,15 +3392,15 @@ to { transform: rotate(360deg);
   cursor: pointer;
   opacity: 0.7;
 }
-.option-card.inline .inline-features-row .inline-actions .card-actions[data-v-12a3d5c3] button:hover {
+.option-card.inline .inline-features-row .inline-actions .card-actions[data-v-87601bd1] button:hover {
   opacity: 1;
   color: var(--color-primary-element);
 }
-.option-card.inline .inline-features-row .inline-actions .card-actions[data-v-12a3d5c3] button svg {
+.option-card.inline .inline-features-row .inline-actions .card-actions[data-v-87601bd1] button svg {
   width: 16px;
   height: 16px;
 }
-.option-card.inline .child-tooltip[data-v-12a3d5c3] {
+.option-card.inline .child-tooltip[data-v-87601bd1] {
   position: absolute;
   bottom: 100%;
   left: 50%;
@@ -3414,10 +3414,10 @@ to { transform: rotate(360deg);
   max-width: 250px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   z-index: 1000;
-  animation: fadeIn-12a3d5c3 0.2s ease-out;
+  animation: fadeIn-87601bd1 0.2s ease-out;
   font-size: 11px;
 }
-.option-card.inline .child-tooltip[data-v-12a3d5c3]::after {
+.option-card.inline .child-tooltip[data-v-87601bd1]::after {
   content: "";
   position: absolute;
   top: 100%;
@@ -3427,7 +3427,7 @@ to { transform: rotate(360deg);
   border-style: solid;
   border-color: var(--color-main-background) transparent transparent transparent;
 }
-.option-card.inline .child-tooltip .tooltip-header[data-v-12a3d5c3] {
+.option-card.inline .child-tooltip .tooltip-header[data-v-87601bd1] {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -3435,15 +3435,15 @@ to { transform: rotate(360deg);
   margin-bottom: 5px;
   border-bottom: 1px solid var(--color-border);
 }
-.option-card.inline .child-tooltip .tooltip-header strong[data-v-12a3d5c3] {
+.option-card.inline .child-tooltip .tooltip-header strong[data-v-87601bd1] {
   font-size: 11px;
   color: var(--color-main-text);
 }
-.option-card.inline .child-tooltip .tooltip-header .tooltip-count[data-v-12a3d5c3] {
+.option-card.inline .child-tooltip .tooltip-header .tooltip-count[data-v-87601bd1] {
   font-size: 10px;
   color: var(--color-text-lighter);
 }
-.option-card.inline .child-tooltip .tooltip-children .tooltip-child-item[data-v-12a3d5c3] {
+.option-card.inline .child-tooltip .tooltip-children .tooltip-child-item[data-v-87601bd1] {
   display: flex;
   align-items: center;
   gap: 5px;
@@ -3453,32 +3453,32 @@ to { transform: rotate(360deg);
   font-size: 10px;
   line-height: 1;
 }
-.option-card.inline .child-tooltip .tooltip-children .tooltip-child-item[data-v-12a3d5c3]:hover {
+.option-card.inline .child-tooltip .tooltip-children .tooltip-child-item[data-v-87601bd1]:hover {
   background: var(--color-background-hover);
 }
-.option-card.inline .child-tooltip .tooltip-children .tooltip-child-item svg[data-v-12a3d5c3] {
+.option-card.inline .child-tooltip .tooltip-children .tooltip-child-item svg[data-v-87601bd1] {
   width: 10px;
   height: 10px;
   flex-shrink: 0;
 }
-.option-card.inline .child-tooltip .tooltip-children .tooltip-child-item .child-title[data-v-12a3d5c3] {
+.option-card.inline .child-tooltip .tooltip-children .tooltip-child-item .child-title[data-v-87601bd1] {
   color: var(--color-text-light);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 140px;
 }
-.option-card.inline .child-tooltip .tooltip-children .tooltip-more[data-v-12a3d5c3] {
+.option-card.inline .child-tooltip .tooltip-children .tooltip-more[data-v-87601bd1] {
   padding: 4px 5px;
   font-size: 9px;
   color: var(--color-text-lighter);
   font-style: italic;
 }
-.option-card.inline[data-v-12a3d5c3]:hover {
+.option-card.inline[data-v-87601bd1]:hover {
   transform: translateY(-1px);
   background: var(--color-background-hover);
 }
-@keyframes fadeIn-12a3d5c3 {
+@keyframes fadeIn-87601bd1 {
 from {
     opacity: 0;
     transform: translateX(-50%) translateY(-5px);
@@ -3489,69 +3489,69 @@ to {
 }
 }
 @media (max-width: 768px) {
-.option-card[data-v-12a3d5c3] {
+.option-card[data-v-87601bd1] {
     padding: 12px;
 }
-.option-card.inline[data-v-12a3d5c3] {
+.option-card.inline[data-v-87601bd1] {
     flex-wrap: wrap;
 }
-.option-card.inline .card-header[data-v-12a3d5c3] {
+.option-card.inline .card-header[data-v-87601bd1] {
     width: 100%;
 }
-.option-card.inline .card-content[data-v-12a3d5c3] {
+.option-card.inline .card-content[data-v-87601bd1] {
     width: 100%;
     padding: 4px 0;
 }
-.option-card.inline .inline-features-row[data-v-12a3d5c3] {
+.option-card.inline .inline-features-row[data-v-87601bd1] {
     width: 100%;
     flex-wrap: wrap;
 }
-.option-card.inline .inline-features-row .inline-spacer[data-v-12a3d5c3] {
+.option-card.inline .inline-features-row .inline-spacer[data-v-87601bd1] {
     display: none;
 }
-.option-card.inline .inline-features-row .inline-actions[data-v-12a3d5c3] {
+.option-card.inline .inline-features-row .inline-actions[data-v-87601bd1] {
     margin-left: auto;
 }
-}.add-option-modal[data-v-5ca3aea1] {
+}.add-option-modal[data-v-c387394c] {
   display: flex;
   flex-direction: column;
   height: 80vh;
   max-height: 800px;
 }
-.add-option-modal .modal-header[data-v-5ca3aea1] {
+.add-option-modal .modal-header[data-v-c387394c] {
   padding: 24px 24px 16px 24px;
   border-bottom: 1px solid var(--color-border);
 }
-.add-option-modal .modal-header h2[data-v-5ca3aea1] {
+.add-option-modal .modal-header h2[data-v-c387394c] {
   margin: 0 0 8px 0;
   font-size: 20px;
   font-weight: 700;
   color: var(--color-main-text);
 }
-.add-option-modal .modal-header .modal-subtitle[data-v-5ca3aea1] {
+.add-option-modal .modal-header .modal-subtitle[data-v-c387394c] {
   margin: 0;
   color: var(--color-text-lighter);
   font-size: 14px;
   line-height: 1.4;
 }
-.add-option-modal .modal-content[data-v-5ca3aea1] {
+.add-option-modal .modal-content[data-v-c387394c] {
   flex: 1;
   overflow-y: auto;
   padding: 24px;
 }
-.add-option-modal .modal-content .form-grid[data-v-5ca3aea1] {
+.add-option-modal .modal-content .form-grid[data-v-c387394c] {
   display: grid;
   grid-template-columns: 1fr 300px;
   gap: 32px;
   height: 100%;
 }
 @media (max-width: 1024px) {
-.add-option-modal .modal-content .form-grid[data-v-5ca3aea1] {
+.add-option-modal .modal-content .form-grid[data-v-c387394c] {
     grid-template-columns: 1fr;
     gap: 24px;
 }
 }
-.add-option-modal .modal-content .form-grid .form-column .option-type-indicator[data-v-5ca3aea1] {
+.add-option-modal .modal-content .form-grid .form-column .option-type-indicator[data-v-c387394c] {
   display: flex;
   align-items: center;
   gap: 16px;
@@ -3561,7 +3561,7 @@ to {
   border-radius: 12px;
   border: 1px solid var(--color-border);
 }
-.add-option-modal .modal-content .form-grid .form-column .option-type-indicator .type-icon[data-v-5ca3aea1] {
+.add-option-modal .modal-content .form-grid .form-column .option-type-indicator .type-icon[data-v-c387394c] {
   flex-shrink: 0;
   width: 48px;
   height: 48px;
@@ -3571,24 +3571,24 @@ to {
   background: var(--color-background-darker);
   border-radius: 10px;
 }
-.add-option-modal .modal-content .form-grid .form-column .option-type-indicator .type-info[data-v-5ca3aea1] {
+.add-option-modal .modal-content .form-grid .form-column .option-type-indicator .type-info[data-v-c387394c] {
   flex: 1;
   min-width: 0;
 }
-.add-option-modal .modal-content .form-grid .form-column .option-type-indicator .type-info h3[data-v-5ca3aea1] {
+.add-option-modal .modal-content .form-grid .form-column .option-type-indicator .type-info h3[data-v-c387394c] {
   margin: 0 0 4px 0;
   font-size: 16px;
   font-weight: 600;
   color: var(--color-main-text);
 }
-.add-option-modal .modal-content .form-grid .form-column .option-type-indicator .type-info p[data-v-5ca3aea1] {
+.add-option-modal .modal-content .form-grid .form-column .option-type-indicator .type-info p[data-v-c387394c] {
   margin: 0;
   font-size: 14px;
   color: var(--color-text-light);
   line-height: 1.4;
 }
-.add-option-modal .modal-content .form-grid .form-column .parent-info[data-v-5ca3aea1],
-.add-option-modal .modal-content .form-grid .form-column .responses-info[data-v-5ca3aea1] {
+.add-option-modal .modal-content .form-grid .form-column .parent-info[data-v-c387394c],
+.add-option-modal .modal-content .form-grid .form-column .responses-info[data-v-c387394c] {
   display: flex;
   align-items: flex-start;
   gap: 12px;
@@ -3598,10 +3598,10 @@ to {
   border-radius: 8px;
   border: 1px solid var(--color-border);
 }
-.add-option-modal .modal-content .form-grid .form-column .parent-info .parent-label[data-v-5ca3aea1],
-.add-option-modal .modal-content .form-grid .form-column .parent-info .responses-label[data-v-5ca3aea1],
-.add-option-modal .modal-content .form-grid .form-column .responses-info .parent-label[data-v-5ca3aea1],
-.add-option-modal .modal-content .form-grid .form-column .responses-info .responses-label[data-v-5ca3aea1] {
+.add-option-modal .modal-content .form-grid .form-column .parent-info .parent-label[data-v-c387394c],
+.add-option-modal .modal-content .form-grid .form-column .parent-info .responses-label[data-v-c387394c],
+.add-option-modal .modal-content .form-grid .form-column .responses-info .parent-label[data-v-c387394c],
+.add-option-modal .modal-content .form-grid .form-column .responses-info .responses-label[data-v-c387394c] {
   font-size: 13px;
   font-weight: 600;
   color: var(--color-text-light);
@@ -3610,29 +3610,29 @@ to {
   gap: 4px;
   flex-shrink: 0;
 }
-.add-option-modal .modal-content .form-grid .form-column .parent-info .parent-details[data-v-5ca3aea1],
-.add-option-modal .modal-content .form-grid .form-column .responses-info .parent-details[data-v-5ca3aea1] {
+.add-option-modal .modal-content .form-grid .form-column .parent-info .parent-details[data-v-c387394c],
+.add-option-modal .modal-content .form-grid .form-column .responses-info .parent-details[data-v-c387394c] {
   display: flex;
   align-items: center;
   gap: 8px;
   flex: 1;
 }
-.add-option-modal .modal-content .form-grid .form-column .parent-info .parent-details span[data-v-5ca3aea1],
-.add-option-modal .modal-content .form-grid .form-column .responses-info .parent-details span[data-v-5ca3aea1] {
+.add-option-modal .modal-content .form-grid .form-column .parent-info .parent-details span[data-v-c387394c],
+.add-option-modal .modal-content .form-grid .form-column .responses-info .parent-details span[data-v-c387394c] {
   font-size: 14px;
   color: var(--color-main-text);
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.add-option-modal .modal-content .form-grid .form-column .parent-info .responses-list[data-v-5ca3aea1],
-.add-option-modal .modal-content .form-grid .form-column .responses-info .responses-list[data-v-5ca3aea1] {
+.add-option-modal .modal-content .form-grid .form-column .parent-info .responses-list[data-v-c387394c],
+.add-option-modal .modal-content .form-grid .form-column .responses-info .responses-list[data-v-c387394c] {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
   flex: 1;
 }
-.add-option-modal .modal-content .form-grid .form-column .parent-info .responses-list .response-type[data-v-5ca3aea1],
-.add-option-modal .modal-content .form-grid .form-column .responses-info .responses-list .response-type[data-v-5ca3aea1] {
+.add-option-modal .modal-content .form-grid .form-column .parent-info .responses-list .response-type[data-v-c387394c],
+.add-option-modal .modal-content .form-grid .form-column .responses-info .responses-list .response-type[data-v-c387394c] {
   display: flex;
   align-items: center;
   gap: 4px;
@@ -3642,70 +3642,70 @@ to {
   border-radius: 6px;
   color: var(--color-text-lighter);
 }
-.add-option-modal .modal-content .form-grid .form-column .features-info[data-v-5ca3aea1] {
+.add-option-modal .modal-content .form-grid .form-column .features-info[data-v-c387394c] {
   margin-bottom: 24px;
   padding: 12px;
   background: var(--color-background-dark);
   border-radius: 8px;
   border: 1px solid var(--color-border);
 }
-.add-option-modal .modal-content .form-grid .form-column .features-info .features-grid[data-v-5ca3aea1] {
+.add-option-modal .modal-content .form-grid .form-column .features-info .features-grid[data-v-c387394c] {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 12px;
 }
-.add-option-modal .modal-content .form-grid .form-column .features-info .features-grid .feature-item[data-v-5ca3aea1] {
+.add-option-modal .modal-content .form-grid .form-column .features-info .features-grid .feature-item[data-v-c387394c] {
   display: flex;
   align-items: center;
   gap: 8px;
   font-size: 13px;
   color: var(--color-text-light);
 }
-.add-option-modal .modal-content .form-grid .form-column .features-info .features-grid .feature-item .feature-label[data-v-5ca3aea1] {
+.add-option-modal .modal-content .form-grid .form-column .features-info .features-grid .feature-item .feature-label[data-v-c387394c] {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.add-option-modal .modal-content .form-grid .form-column .form-fields[data-v-5ca3aea1] {
+.add-option-modal .modal-content .form-grid .form-column .form-fields[data-v-c387394c] {
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
-.add-option-modal .modal-content .form-grid .form-column .form-fields .form-field label[data-v-5ca3aea1] {
+.add-option-modal .modal-content .form-grid .form-column .form-fields .form-field label[data-v-c387394c] {
   display: block;
   margin-bottom: 8px;
   font-size: 14px;
   font-weight: 600;
   color: var(--color-main-text);
 }
-.add-option-modal .modal-content .form-grid .form-column .form-fields .form-field label .required[data-v-5ca3aea1] {
+.add-option-modal .modal-content .form-grid .form-column .form-fields .form-field label .required[data-v-c387394c] {
   color: var(--color-error);
   margin-left: 2px;
 }
-.add-option-modal .modal-content .form-grid .form-column .form-fields .additional-fields-section[data-v-5ca3aea1] {
+.add-option-modal .modal-content .form-grid .form-column .form-fields .additional-fields-section[data-v-c387394c] {
   margin-top: 16px;
   padding-top: 16px;
   border-top: 1px solid var(--color-border);
 }
-.add-option-modal .modal-content .form-grid .form-column .form-fields .additional-fields-section h4[data-v-5ca3aea1] {
+.add-option-modal .modal-content .form-grid .form-column .form-fields .additional-fields-section h4[data-v-c387394c] {
   margin: 0 0 16px 0;
   font-size: 16px;
   font-weight: 600;
   color: var(--color-main-text);
 }
-.add-option-modal .modal-content .form-grid .preview-column h4[data-v-5ca3aea1] {
+.add-option-modal .modal-content .form-grid .preview-column h4[data-v-c387394c] {
   margin: 0 0 16px 0;
   font-size: 16px;
   font-weight: 600;
   color: var(--color-main-text);
 }
-.add-option-modal .modal-content .form-grid .preview-column .preview-card[data-v-5ca3aea1] {
+.add-option-modal .modal-content .form-grid .preview-column .preview-card[data-v-c387394c] {
   margin-bottom: 20px;
   border: 2px dashed var(--color-border);
   border-radius: 12px;
   overflow: hidden;
 }
-.add-option-modal .modal-content .form-grid .preview-column .help-text[data-v-5ca3aea1] {
+.add-option-modal .modal-content .form-grid .preview-column .help-text[data-v-c387394c] {
   padding: 16px;
   background: var(--color-background-dark);
   border-radius: 12px;
@@ -3714,29 +3714,29 @@ to {
   display: flex;
   gap: 12px;
 }
-.add-option-modal .modal-content .form-grid .preview-column .help-text svg[data-v-5ca3aea1] {
+.add-option-modal .modal-content .form-grid .preview-column .help-text svg[data-v-c387394c] {
   flex-shrink: 0;
   color: var(--color-text-lighter);
   margin-top: 2px;
 }
-.add-option-modal .modal-content .form-grid .preview-column .help-text p[data-v-5ca3aea1] {
+.add-option-modal .modal-content .form-grid .preview-column .help-text p[data-v-c387394c] {
   margin: 0;
   font-size: 13px;
   color: var(--color-text-light);
   line-height: 1.5;
 }
-.add-option-modal .modal-content .form-grid .preview-column .statuses-preview h5[data-v-5ca3aea1] {
+.add-option-modal .modal-content .form-grid .preview-column .statuses-preview h5[data-v-c387394c] {
   margin: 0 0 12px 0;
   font-size: 14px;
   font-weight: 600;
   color: var(--color-text-light);
 }
-.add-option-modal .modal-content .form-grid .preview-column .statuses-preview .statuses-list[data-v-5ca3aea1] {
+.add-option-modal .modal-content .form-grid .preview-column .statuses-preview .statuses-list[data-v-c387394c] {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
 }
-.add-option-modal .modal-content .form-grid .preview-column .statuses-preview .statuses-list .status-badge[data-v-5ca3aea1] {
+.add-option-modal .modal-content .form-grid .preview-column .statuses-preview .statuses-list .status-badge[data-v-c387394c] {
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -3745,35 +3745,35 @@ to {
   border-radius: 10px;
   font-weight: 600;
 }
-.add-option-modal .modal-content .form-grid .preview-column .statuses-preview .statuses-list .status-badge.status-draft[data-v-5ca3aea1] {
+.add-option-modal .modal-content .form-grid .preview-column .statuses-preview .statuses-list .status-badge.status-draft[data-v-c387394c] {
   background: var(--color-background-darker);
   color: var(--color-text-lighter);
 }
-.add-option-modal .modal-content .form-grid .preview-column .statuses-preview .statuses-list .status-badge.status-published[data-v-5ca3aea1], .add-option-modal .modal-content .form-grid .preview-column .statuses-preview .statuses-list .status-badge.status-accepted[data-v-5ca3aea1], .add-option-modal .modal-content .form-grid .preview-column .statuses-preview .statuses-list .status-badge.status-resolved[data-v-5ca3aea1] {
+.add-option-modal .modal-content .form-grid .preview-column .statuses-preview .statuses-list .status-badge.status-published[data-v-c387394c], .add-option-modal .modal-content .form-grid .preview-column .statuses-preview .statuses-list .status-badge.status-accepted[data-v-c387394c], .add-option-modal .modal-content .form-grid .preview-column .statuses-preview .statuses-list .status-badge.status-resolved[data-v-c387394c] {
   background: var(--color-success-light);
   color: var(--color-success);
 }
-.add-option-modal .modal-content .form-grid .preview-column .statuses-preview .statuses-list .status-badge.status-rejected[data-v-5ca3aea1] {
+.add-option-modal .modal-content .form-grid .preview-column .statuses-preview .statuses-list .status-badge.status-rejected[data-v-c387394c] {
   background: var(--color-error-light);
   color: var(--color-error);
 }
-.add-option-modal .modal-content .form-grid .preview-column .statuses-preview .statuses-list .status-badge.status-proposed[data-v-5ca3aea1], .add-option-modal .modal-content .form-grid .preview-column .statuses-preview .statuses-list .status-badge.status-active[data-v-5ca3aea1] {
+.add-option-modal .modal-content .form-grid .preview-column .statuses-preview .statuses-list .status-badge.status-proposed[data-v-c387394c], .add-option-modal .modal-content .form-grid .preview-column .statuses-preview .statuses-list .status-badge.status-active[data-v-c387394c] {
   background: var(--color-warning-light);
   color: var(--color-warning);
 }
-.add-option-modal .modal-content .form-grid .preview-column .statuses-preview .statuses-list .status-badge.status-review[data-v-5ca3aea1] {
+.add-option-modal .modal-content .form-grid .preview-column .statuses-preview .statuses-list .status-badge.status-review[data-v-c387394c] {
   background: var(--color-info-light);
   color: var(--color-info);
 }
-.add-option-modal .modal-footer[data-v-5ca3aea1] {
+.add-option-modal .modal-footer[data-v-c387394c] {
   padding: 16px 24px;
   border-top: 1px solid var(--color-border);
   background: var(--color-background-dark);
 }
-.add-option-modal .modal-footer .form-errors[data-v-5ca3aea1] {
+.add-option-modal .modal-footer .form-errors[data-v-c387394c] {
   margin-bottom: 12px;
 }
-.add-option-modal .modal-footer .form-errors .error-item[data-v-5ca3aea1] {
+.add-option-modal .modal-footer .form-errors .error-item[data-v-c387394c] {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -3781,30 +3781,30 @@ to {
   color: var(--color-error);
   margin-bottom: 4px;
 }
-.add-option-modal .modal-footer .form-errors .error-item[data-v-5ca3aea1]:last-child {
+.add-option-modal .modal-footer .form-errors .error-item[data-v-c387394c]:last-child {
   margin-bottom: 0;
 }
-.add-option-modal .modal-footer .footer-actions[data-v-5ca3aea1] {
+.add-option-modal .modal-footer .footer-actions[data-v-c387394c] {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
 }
 @media (max-width: 768px) {
-.add-option-modal[data-v-5ca3aea1] {
+.add-option-modal[data-v-c387394c] {
     height: 90vh;
 }
-.add-option-modal .modal-content[data-v-5ca3aea1] {
+.add-option-modal .modal-content[data-v-c387394c] {
     padding: 16px;
 }
-.add-option-modal .modal-content .form-grid .form-column .option-type-indicator[data-v-5ca3aea1] {
+.add-option-modal .modal-content .form-grid .form-column .option-type-indicator[data-v-c387394c] {
     flex-direction: column;
     text-align: center;
     gap: 12px;
 }
-.add-option-modal .modal-content .form-grid .form-column .option-type-indicator .type-info[data-v-5ca3aea1] {
+.add-option-modal .modal-content .form-grid .form-column .option-type-indicator .type-info[data-v-c387394c] {
     text-align: center;
 }
-.add-option-modal .modal-content .form-grid .form-column .features-info .features-grid[data-v-5ca3aea1] {
+.add-option-modal .modal-content .form-grid .form-column .features-info .features-grid[data-v-c387394c] {
     grid-template-columns: 1fr;
 }
 }.avatar-wrapper {
@@ -4084,31 +4084,31 @@ to {
 .list-leave-to[data-v-073595b7] {
   opacity: 0;
   transform: translateY(-10px);
-}.comment-add[data-v-de197686] {
+}.comment-add[data-v-ca97d9ac] {
   margin-bottom: 16px;
   display: flex;
   gap: 12px;
   width: 100%;
 }
-.comment-add .user-item[data-v-de197686] {
+.comment-add .user-item[data-v-ca97d9ac] {
   align-items: flex-start;
   flex-shrink: 0;
 }
-.comment-add .comment-add__input[data-v-de197686] {
+.comment-add .comment-add__input[data-v-ca97d9ac] {
   flex: 1;
   min-width: 0;
   width: 100%;
 }
-.comment-add .comment-add__editor[data-v-de197686] {
+.comment-add .comment-add__editor[data-v-ca97d9ac] {
   display: flex;
   gap: 8px;
   align-items: flex-start;
   width: 100%;
 }
-.comment-add .rich-contenteditable[data-v-de197686] {
+.comment-add .rich-contenteditable[data-v-ca97d9ac] {
   width: 100%;
 }
-.comment-add .comment-add__submit[data-v-de197686] {
+.comment-add .comment-add__submit[data-v-ca97d9ac] {
   flex-shrink: 0;
   align-self: flex-start;
   min-width: 70px;
@@ -4117,15 +4117,15 @@ to {
   white-space: nowrap;
   border-radius: var(--border-radius-pill);
 }
-.comment-add .comment-add__options[data-v-de197686] {
+.comment-add .comment-add__options[data-v-ca97d9ac] {
   margin-top: 8px;
   display: flex;
   align-items: center;
 }
-.comment-add .comment-add__options .nc-checkbox-radio-switch__label[data-v-de197686] {
+.comment-add .comment-add__options .nc-checkbox-radio-switch__label[data-v-ca97d9ac] {
   font-size: 13px;
 }
-.comment-add .comment-add__options .confidential-forced[data-v-de197686] {
+.comment-add .comment-add__options .confidential-forced[data-v-ca97d9ac] {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -4135,34 +4135,34 @@ to {
   background: var(--color-background-dark);
   border-radius: var(--border-radius);
 }
-.comment-add .comment-add__options .confidential-forced.disabled[data-v-de197686] {
+.comment-add .comment-add__options .confidential-forced.disabled[data-v-ca97d9ac] {
   opacity: 0.5;
 }
-.comment-add .comment-add__options .confidential-forced .confidential-icon[data-v-de197686] {
+.comment-add .comment-add__options .confidential-forced .confidential-icon[data-v-ca97d9ac] {
   font-size: 14px;
 }
 @media (max-width: 768px) {
-.comment-add[data-v-de197686] {
+.comment-add[data-v-ca97d9ac] {
     flex-direction: column;
     gap: 8px;
 }
-.comment-add .comment-add__editor[data-v-de197686] {
+.comment-add .comment-add__editor[data-v-ca97d9ac] {
     flex-direction: column;
     gap: 8px;
     align-items: stretch;
 }
-.comment-add .comment-add__submit[data-v-de197686] {
+.comment-add .comment-add__submit[data-v-ca97d9ac] {
     align-self: flex-end;
     width: 100%;
 }
-}.option-detail-modal[data-v-20b45941] {
+}.option-detail-modal[data-v-edb03781] {
   display: flex;
   flex-direction: column;
   height: 80vh;
   max-height: 800px;
 }
-.option-detail-modal .loading-state[data-v-20b45941],
-.option-detail-modal .error-state[data-v-20b45941] {
+.option-detail-modal .loading-state[data-v-edb03781],
+.option-detail-modal .error-state[data-v-edb03781] {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -4171,18 +4171,18 @@ to {
   padding: 40px;
   text-align: center;
 }
-.option-detail-modal .loading-state p[data-v-20b45941],
-.option-detail-modal .error-state p[data-v-20b45941] {
+.option-detail-modal .loading-state p[data-v-edb03781],
+.option-detail-modal .error-state p[data-v-edb03781] {
   margin-top: 16px;
   color: var(--color-text-lighter);
 }
-.option-detail-modal .modal-content[data-v-20b45941] {
+.option-detail-modal .modal-content[data-v-edb03781] {
   display: flex;
   flex-direction: column;
   flex: 1;
   overflow: hidden;
 }
-.option-detail-modal .modal-header[data-v-20b45941] {
+.option-detail-modal .modal-header[data-v-edb03781] {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -4191,14 +4191,14 @@ to {
   background: var(--color-main-background);
   flex-shrink: 0;
 }
-.option-detail-modal .modal-header .header-left[data-v-20b45941] {
+.option-detail-modal .modal-header .header-left[data-v-edb03781] {
   display: flex;
   align-items: center;
   gap: 16px;
   flex: 1;
   min-width: 0;
 }
-.option-detail-modal .modal-header .header-left .option-type-indicator[data-v-20b45941] {
+.option-detail-modal .modal-header .header-left .option-type-indicator[data-v-edb03781] {
   flex-shrink: 0;
   width: 48px;
   height: 48px;
@@ -4208,11 +4208,11 @@ to {
   background: var(--color-background-darker);
   border-radius: 10px;
 }
-.option-detail-modal .modal-header .header-left .header-text[data-v-20b45941] {
+.option-detail-modal .modal-header .header-left .header-text[data-v-edb03781] {
   flex: 1;
   min-width: 0;
 }
-.option-detail-modal .modal-header .header-left .header-text .option-title[data-v-20b45941] {
+.option-detail-modal .modal-header .header-left .header-text .option-title[data-v-edb03781] {
   margin: 0 0 4px 0;
   font-size: 20px;
   font-weight: 700;
@@ -4221,25 +4221,25 @@ to {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.option-detail-modal .modal-header .header-left .header-text .option-meta[data-v-20b45941] {
+.option-detail-modal .modal-header .header-left .header-text .option-meta[data-v-edb03781] {
   display: flex;
   align-items: center;
   gap: 12px;
   font-size: 14px;
   color: var(--color-text-lighter);
 }
-.option-detail-modal .modal-header .header-left .header-text .option-meta .option-type[data-v-20b45941] {
+.option-detail-modal .modal-header .header-left .header-text .option-meta .option-type[data-v-edb03781] {
   background: var(--color-background-dark);
   padding: 2px 8px;
   border-radius: 8px;
   font-weight: 600;
 }
-.option-detail-modal .modal-header .header-right[data-v-20b45941] {
+.option-detail-modal .modal-header .header-right[data-v-edb03781] {
   display: flex;
   align-items: center;
   gap: 12px;
 }
-.option-detail-modal .main-content[data-v-20b45941] {
+.option-detail-modal .main-content[data-v-edb03781] {
   flex: 1;
   overflow-y: auto;
   padding: 24px;
@@ -4247,7 +4247,7 @@ to {
   flex-direction: column;
   gap: 32px;
 }
-.option-detail-modal .main-content .content-section .editor-container[data-v-20b45941] {
+.option-detail-modal .main-content .content-section .editor-container[data-v-edb03781] {
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -4256,30 +4256,30 @@ to {
   border-radius: 12px;
   border: 1px solid var(--color-border);
 }
-.option-detail-modal .main-content .content-section .editor-container .additional-fields[data-v-20b45941] {
+.option-detail-modal .main-content .content-section .editor-container .additional-fields[data-v-edb03781] {
   margin-top: 20px;
   padding-top: 20px;
   border-top: 1px solid var(--color-border);
 }
-.option-detail-modal .main-content .content-section .editor-container .additional-fields h4[data-v-20b45941] {
+.option-detail-modal .main-content .content-section .editor-container .additional-fields h4[data-v-edb03781] {
   margin: 0 0 16px 0;
   font-size: 16px;
   font-weight: 600;
   color: var(--color-main-text);
 }
-.option-detail-modal .main-content .content-section .content-display .text-content[data-v-20b45941] {
+.option-detail-modal .main-content .content-section .content-display .text-content[data-v-edb03781] {
   margin-bottom: 24px;
 }
-.option-detail-modal .main-content .content-section .content-display .text-content .text-text[data-v-20b45941] {
+.option-detail-modal .main-content .content-section .content-display .text-content .text-text[data-v-edb03781] {
   font-size: 16px;
   line-height: 1.6;
   color: var(--color-main-text);
   white-space: pre-wrap;
 }
-.option-detail-modal .main-content .content-section .content-display .additional-fields-display[data-v-20b45941] {
+.option-detail-modal .main-content .content-section .content-display .additional-fields-display[data-v-edb03781] {
   margin-bottom: 24px;
 }
-.option-detail-modal .main-content .content-section .content-display .additional-fields-display h4[data-v-20b45941] {
+.option-detail-modal .main-content .content-section .content-display .additional-fields-display h4[data-v-edb03781] {
   margin: 0 0 20px 0;
   font-size: 16px;
   font-weight: 600;
@@ -4288,17 +4288,17 @@ to {
   align-items: center;
   gap: 8px;
 }
-.option-detail-modal .main-content .content-section .content-display .additional-fields-display h4[data-v-20b45941]::before {
+.option-detail-modal .main-content .content-section .content-display .additional-fields-display h4[data-v-edb03781]::before {
   content: "";
   width: 3px;
   height: 20px;
   background: var(--color-primary-element);
   border-radius: 2px;
 }
-.option-detail-modal .main-content .content-section .content-display[data-v-20b45941] {
+.option-detail-modal .main-content .content-section .content-display[data-v-edb03781] {
   /* Feature buttons container - FIXED ALIGNMENT */
 }
-.option-detail-modal .main-content .content-section .content-display .feature-buttons-container[data-v-20b45941] {
+.option-detail-modal .main-content .content-section .content-display .feature-buttons-container[data-v-edb03781] {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -4308,17 +4308,17 @@ to {
   border-top: 1px solid var(--color-border-light);
   border-bottom: 1px solid var(--color-border-light);
 }
-.option-detail-modal .main-content .content-section .content-display .feature-buttons-container .features-left[data-v-20b45941] {
+.option-detail-modal .main-content .content-section .content-display .feature-buttons-container .features-left[data-v-edb03781] {
   display: flex;
   align-items: center;
   gap: 24px;
   flex-wrap: wrap;
 }
-.option-detail-modal .main-content .content-section .content-display .feature-buttons-container .features-left .feature-group[data-v-20b45941] {
+.option-detail-modal .main-content .content-section .content-display .feature-buttons-container .features-left .feature-group[data-v-edb03781] {
   display: flex;
   align-items: center;
 }
-.option-detail-modal .main-content .content-section .content-display .feature-buttons-container .owner-section-right .owner-details-right[data-v-20b45941] {
+.option-detail-modal .main-content .content-section .content-display .feature-buttons-container .owner-section-right .owner-details-right[data-v-edb03781] {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -4326,20 +4326,20 @@ to {
   background: var(--color-background-dark);
   border-radius: 24px;
 }
-.option-detail-modal .main-content .content-section .content-display .feature-buttons-container .owner-section-right .owner-details-right .owner-text .owner-name[data-v-20b45941] {
+.option-detail-modal .main-content .content-section .content-display .feature-buttons-container .owner-section-right .owner-details-right .owner-text .owner-name[data-v-edb03781] {
   font-size: 13px;
   font-weight: 500;
   color: var(--color-text-light);
 }
-.option-detail-modal .main-content[data-v-20b45941] {
+.option-detail-modal .main-content[data-v-edb03781] {
   /* Comment container alignment fix */
 }
-.option-detail-modal .main-content .comment-container[data-v-20b45941] {
+.option-detail-modal .main-content .comment-container[data-v-edb03781] {
   display: flex;
   align-items: center;
   gap: 12px;
 }
-.option-detail-modal .main-content .comment-container .comment-count-badge[data-v-20b45941] {
+.option-detail-modal .main-content .comment-container .comment-count-badge[data-v-edb03781] {
   display: flex;
   align-items: center;
   gap: 4px;
@@ -4350,128 +4350,128 @@ to {
   font-weight: 500;
   color: var(--color-text-light);
 }
-.option-detail-modal .main-content[data-v-20b45941] {
+.option-detail-modal .main-content[data-v-edb03781] {
   /* Children section */
 }
-.option-detail-modal .main-content .children-section .section-header[data-v-20b45941] {
+.option-detail-modal .main-content .children-section .section-header[data-v-edb03781] {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 16px;
 }
-.option-detail-modal .main-content .children-section .section-header h3[data-v-20b45941] {
+.option-detail-modal .main-content .children-section .section-header h3[data-v-edb03781] {
   margin: 0;
   font-size: 18px;
   font-weight: 600;
   color: var(--color-main-text);
 }
-.option-detail-modal .main-content .children-section .children-list .empty-children[data-v-20b45941] {
+.option-detail-modal .main-content .children-section .children-list .empty-children[data-v-edb03781] {
   text-align: center;
   padding: 40px 20px;
   background: var(--color-background-dark);
   border: 2px dashed var(--color-border);
   border-radius: 16px;
 }
-.option-detail-modal .main-content .children-section .children-list .empty-children svg[data-v-20b45941] {
+.option-detail-modal .main-content .children-section .children-list .empty-children svg[data-v-edb03781] {
   color: var(--color-text-lighter);
   margin-bottom: 16px;
 }
-.option-detail-modal .main-content .children-section .children-list .empty-children h4[data-v-20b45941] {
+.option-detail-modal .main-content .children-section .children-list .empty-children h4[data-v-edb03781] {
   margin: 0 0 8px 0;
   color: var(--color-main-text);
   font-size: 16px;
 }
-.option-detail-modal .main-content .children-section .children-list .empty-children p[data-v-20b45941] {
+.option-detail-modal .main-content .children-section .children-list .empty-children p[data-v-edb03781] {
   margin: 0;
   color: var(--color-text-lighter);
   font-style: italic;
 }
-.option-detail-modal .main-content .children-section .children-list .children-grid[data-v-20b45941] {
+.option-detail-modal .main-content .children-section .children-list .children-grid[data-v-edb03781] {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 @media (min-width: 768px) {
-.option-detail-modal .main-content .children-section .children-list .children-grid[data-v-20b45941] {
+.option-detail-modal .main-content .children-section .children-list .children-grid[data-v-edb03781] {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
     gap: 8px;
 }
-.option-detail-modal .main-content .children-section .children-list .children-grid[data-v-20b45941] .option-card.inline {
+.option-detail-modal .main-content .children-section .children-list .children-grid[data-v-edb03781] .option-card.inline {
     height: 100%;
 }
 }
-.option-detail-modal .main-content[data-v-20b45941] {
+.option-detail-modal .main-content[data-v-edb03781] {
   /* Comments section */
 }
-.option-detail-modal .main-content .comments-section .comment-form[data-v-20b45941] {
+.option-detail-modal .main-content .comments-section .comment-form[data-v-edb03781] {
   margin-bottom: 24px;
   padding: 20px;
   background: var(--color-background-dark);
   border-radius: 12px;
   border: 1px solid var(--color-border);
 }
-.option-detail-modal .main-content .comments-section .no-comments[data-v-20b45941] {
+.option-detail-modal .main-content .comments-section .no-comments[data-v-edb03781] {
   text-align: center;
   padding: 40px 20px;
   background: var(--color-background-dark);
   border: 2px dashed var(--color-border);
   border-radius: 16px;
 }
-.option-detail-modal .main-content .comments-section .no-comments svg[data-v-20b45941] {
+.option-detail-modal .main-content .comments-section .no-comments svg[data-v-edb03781] {
   color: var(--color-text-lighter);
   margin-bottom: 16px;
 }
-.option-detail-modal .main-content .comments-section .no-comments h4[data-v-20b45941] {
+.option-detail-modal .main-content .comments-section .no-comments h4[data-v-edb03781] {
   margin: 0 0 8px 0;
   color: var(--color-main-text);
   font-size: 16px;
 }
-.option-detail-modal .main-content .comments-section .no-comments p[data-v-20b45941] {
+.option-detail-modal .main-content .comments-section .no-comments p[data-v-edb03781] {
   margin: 0;
   color: var(--color-text-lighter);
   font-style: italic;
 }
-.option-detail-modal .fade-enter-active[data-v-20b45941],
-.option-detail-modal .fade-leave-active[data-v-20b45941] {
+.option-detail-modal .fade-enter-active[data-v-edb03781],
+.option-detail-modal .fade-leave-active[data-v-edb03781] {
   transition: opacity 0.3s ease;
 }
-.option-detail-modal .fade-enter-from[data-v-20b45941],
-.option-detail-modal .fade-leave-to[data-v-20b45941] {
+.option-detail-modal .fade-enter-from[data-v-edb03781],
+.option-detail-modal .fade-leave-to[data-v-edb03781] {
   opacity: 0;
 }
 @media (max-width: 768px) {
-.option-detail-modal[data-v-20b45941] {
+.option-detail-modal[data-v-edb03781] {
     height: 90vh;
 }
-.option-detail-modal .modal-header[data-v-20b45941] {
+.option-detail-modal .modal-header[data-v-edb03781] {
     flex-direction: column;
     align-items: flex-start;
     gap: 16px;
 }
-.option-detail-modal .modal-header .header-left[data-v-20b45941] {
+.option-detail-modal .modal-header .header-left[data-v-edb03781] {
     width: 100%;
 }
-.option-detail-modal .modal-header .header-right[data-v-20b45941] {
+.option-detail-modal .modal-header .header-right[data-v-edb03781] {
     width: 100%;
     justify-content: space-between;
 }
-.option-detail-modal .main-content[data-v-20b45941] {
+.option-detail-modal .main-content[data-v-edb03781] {
     padding: 16px;
 }
-.option-detail-modal .main-content .content-section .content-display .feature-buttons-container[data-v-20b45941] {
+.option-detail-modal .main-content .content-section .content-display .feature-buttons-container[data-v-edb03781] {
     flex-direction: column;
     align-items: stretch;
     gap: 16px;
 }
-.option-detail-modal .main-content .content-section .content-display .feature-buttons-container .features-left[data-v-20b45941] {
+.option-detail-modal .main-content .content-section .content-display .feature-buttons-container .features-left[data-v-edb03781] {
     width: 100%;
     justify-content: space-between;
 }
-.option-detail-modal .main-content .content-section .content-display .feature-buttons-container .owner-section-right[data-v-20b45941] {
+.option-detail-modal .main-content .content-section .content-display .feature-buttons-container .owner-section-right[data-v-edb03781] {
     width: 100%;
 }
-.option-detail-modal .main-content .content-section .content-display .feature-buttons-container .owner-section-right .owner-details-right[data-v-20b45941] {
+.option-detail-modal .main-content .content-section .content-display .feature-buttons-container .owner-section-right .owner-details-right[data-v-edb03781] {
     max-width: 100%;
     width: 100%;
     justify-content: center;
@@ -5480,20 +5480,20 @@ to {
   gap: 12px;
   justify-content: center;
   flex-wrap: wrap;
-}.add-option-to-family-modal[data-v-7a3dff2a] {
+}.add-option-to-family-modal[data-v-7533867d] {
   padding: 0;
   max-width: 600px;
   background: var(--color-main-background);
   border-radius: 24px;
   overflow: hidden;
 }
-.add-option-to-family-modal .modal-header[data-v-7a3dff2a] {
+.add-option-to-family-modal .modal-header[data-v-7533867d] {
   text-align: center;
   padding: 32px 32px 24px;
   background: linear-gradient(135deg, rgba(var(--color-primary-element-rgb), 0.05) 0%, rgba(var(--color-primary-element-rgb), 0.02) 100%);
   border-bottom: 1px solid var(--color-border);
 }
-.add-option-to-family-modal .modal-header .header-icon[data-v-7a3dff2a] {
+.add-option-to-family-modal .modal-header .header-icon[data-v-7533867d] {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -5504,42 +5504,42 @@ to {
   margin-bottom: 16px;
   color: white;
 }
-.add-option-to-family-modal .modal-header .header-icon.vote-icon[data-v-7a3dff2a] {
+.add-option-to-family-modal .modal-header .header-icon.vote-icon[data-v-7533867d] {
   background: linear-gradient(135deg, #3498db 0%, #9b59b6 100%);
 }
-.add-option-to-family-modal .modal-header h3[data-v-7a3dff2a] {
+.add-option-to-family-modal .modal-header h3[data-v-7533867d] {
   margin: 0 0 8px 0;
   font-size: 24px;
   font-weight: 700;
 }
-.add-option-to-family-modal .modal-header .modal-description[data-v-7a3dff2a] {
+.add-option-to-family-modal .modal-header .modal-description[data-v-7533867d] {
   margin: 0;
   font-size: 14px;
   color: var(--color-text-lighter);
 }
-.add-option-to-family-modal .modal-content[data-v-7a3dff2a] {
+.add-option-to-family-modal .modal-content[data-v-7533867d] {
   padding: 24px;
 }
-.add-option-to-family-modal .modal-content .search-section[data-v-7a3dff2a] {
+.add-option-to-family-modal .modal-content .search-section[data-v-7533867d] {
   margin-bottom: 24px;
 }
-.add-option-to-family-modal .modal-content .search-section label[data-v-7a3dff2a] {
+.add-option-to-family-modal .modal-content .search-section label[data-v-7533867d] {
   display: block;
   margin-bottom: 8px;
   font-weight: 600;
   font-size: 14px;
 }
-.add-option-to-family-modal .modal-content .search-section .search-select[data-v-7a3dff2a] {
+.add-option-to-family-modal .modal-content .search-section .search-select[data-v-7533867d] {
   width: 100%;
 }
-.add-option-to-family-modal .modal-content .timeline-config-section[data-v-7a3dff2a],
-.add-option-to-family-modal .modal-content .kanban-config-section[data-v-7a3dff2a],
-.add-option-to-family-modal .modal-content .vote-config-section[data-v-7a3dff2a] {
+.add-option-to-family-modal .modal-content .timeline-config-section[data-v-7533867d],
+.add-option-to-family-modal .modal-content .kanban-config-section[data-v-7533867d],
+.add-option-to-family-modal .modal-content .vote-config-section[data-v-7533867d] {
   margin-top: 24px;
 }
-.add-option-to-family-modal .modal-content .timeline-config-section .config-header[data-v-7a3dff2a],
-.add-option-to-family-modal .modal-content .kanban-config-section .config-header[data-v-7a3dff2a],
-.add-option-to-family-modal .modal-content .vote-config-section .config-header[data-v-7a3dff2a] {
+.add-option-to-family-modal .modal-content .timeline-config-section .config-header[data-v-7533867d],
+.add-option-to-family-modal .modal-content .kanban-config-section .config-header[data-v-7533867d],
+.add-option-to-family-modal .modal-content .vote-config-section .config-header[data-v-7533867d] {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -5547,35 +5547,35 @@ to {
   padding-bottom: 12px;
   border-bottom: 1px solid var(--color-border);
 }
-.add-option-to-family-modal .modal-content .timeline-config-section .config-header svg[data-v-7a3dff2a],
-.add-option-to-family-modal .modal-content .kanban-config-section .config-header svg[data-v-7a3dff2a],
-.add-option-to-family-modal .modal-content .vote-config-section .config-header svg[data-v-7a3dff2a] {
+.add-option-to-family-modal .modal-content .timeline-config-section .config-header svg[data-v-7533867d],
+.add-option-to-family-modal .modal-content .kanban-config-section .config-header svg[data-v-7533867d],
+.add-option-to-family-modal .modal-content .vote-config-section .config-header svg[data-v-7533867d] {
   color: var(--color-primary-element);
 }
-.add-option-to-family-modal .modal-content .timeline-config-section .config-header h4[data-v-7a3dff2a],
-.add-option-to-family-modal .modal-content .kanban-config-section .config-header h4[data-v-7a3dff2a],
-.add-option-to-family-modal .modal-content .vote-config-section .config-header h4[data-v-7a3dff2a] {
+.add-option-to-family-modal .modal-content .timeline-config-section .config-header h4[data-v-7533867d],
+.add-option-to-family-modal .modal-content .kanban-config-section .config-header h4[data-v-7533867d],
+.add-option-to-family-modal .modal-content .vote-config-section .config-header h4[data-v-7533867d] {
   margin: 0;
   font-size: 15px;
   font-weight: 600;
 }
-.add-option-to-family-modal .modal-content .date-selector[data-v-7a3dff2a] {
+.add-option-to-family-modal .modal-content .date-selector[data-v-7533867d] {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
-.add-option-to-family-modal .modal-content .date-selector .date-field label[data-v-7a3dff2a] {
+.add-option-to-family-modal .modal-content .date-selector .date-field label[data-v-7533867d] {
   display: block;
   margin-bottom: 8px;
   font-weight: 500;
   font-size: 13px;
 }
-.add-option-to-family-modal .modal-content .column-options[data-v-7a3dff2a] {
+.add-option-to-family-modal .modal-content .column-options[data-v-7533867d] {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 8px;
 }
-.add-option-to-family-modal .modal-content .column-options .column-option[data-v-7a3dff2a] {
+.add-option-to-family-modal .modal-content .column-options .column-option[data-v-7533867d] {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -5586,33 +5586,33 @@ to {
   cursor: pointer;
   transition: all 0.2s;
 }
-.add-option-to-family-modal .modal-content .column-options .column-option .column-color[data-v-7a3dff2a] {
+.add-option-to-family-modal .modal-content .column-options .column-option .column-color[data-v-7533867d] {
   width: 10px;
   height: 10px;
   border-radius: 50%;
 }
-.add-option-to-family-modal .modal-content .column-options .column-option .column-label[data-v-7a3dff2a] {
+.add-option-to-family-modal .modal-content .column-options .column-option .column-label[data-v-7533867d] {
   flex: 1;
   font-size: 13px;
   font-weight: 500;
 }
-.add-option-to-family-modal .modal-content .column-options .column-option .check-icon[data-v-7a3dff2a] {
+.add-option-to-family-modal .modal-content .column-options .column-option .check-icon[data-v-7533867d] {
   color: var(--color-success);
 }
-.add-option-to-family-modal .modal-content .column-options .column-option[data-v-7a3dff2a]:hover {
+.add-option-to-family-modal .modal-content .column-options .column-option[data-v-7533867d]:hover {
   background: var(--color-background-hover);
 }
-.add-option-to-family-modal .modal-content .column-options .column-option.selected[data-v-7a3dff2a] {
+.add-option-to-family-modal .modal-content .column-options .column-option.selected[data-v-7533867d] {
   border-color: var(--color-primary-element);
   background: rgba(var(--color-primary-element-rgb), 0.05);
 }
-.add-option-to-family-modal .modal-content .vote-config-section .engine-info-message[data-v-7a3dff2a] {
+.add-option-to-family-modal .modal-content .vote-config-section .engine-info-message[data-v-7533867d] {
   margin-bottom: 20px;
   padding: 16px;
   background: var(--color-background-dark);
   border-radius: 12px;
 }
-.add-option-to-family-modal .modal-content .vote-config-section .engine-info-message .engine-badge-display[data-v-7a3dff2a] {
+.add-option-to-family-modal .modal-content .vote-config-section .engine-info-message .engine-badge-display[data-v-7533867d] {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -5623,46 +5623,46 @@ to {
   font-weight: 500;
   font-size: 13px;
 }
-.add-option-to-family-modal .modal-content .vote-config-section .engine-info-message .engine-badge-display .engine-badge-mini[data-v-7a3dff2a] {
+.add-option-to-family-modal .modal-content .vote-config-section .engine-info-message .engine-badge-display .engine-badge-mini[data-v-7533867d] {
   font-size: 9px;
   padding: 2px 8px;
   border-radius: 12px;
 }
-.add-option-to-family-modal .modal-content .vote-config-section .engine-info-message .engine-badge-display .engine-badge-mini.single[data-v-7a3dff2a] {
+.add-option-to-family-modal .modal-content .vote-config-section .engine-info-message .engine-badge-display .engine-badge-mini.single[data-v-7533867d] {
   background: rgba(52, 152, 219, 0.1254901961);
   color: #3498db;
 }
-.add-option-to-family-modal .modal-content .vote-config-section .engine-info-message .engine-badge-display .engine-badge-mini.multi[data-v-7a3dff2a] {
+.add-option-to-family-modal .modal-content .vote-config-section .engine-info-message .engine-badge-display .engine-badge-mini.multi[data-v-7533867d] {
   background: rgba(155, 89, 182, 0.1254901961);
   color: #9b59b6;
 }
-.add-option-to-family-modal .modal-content .vote-config-section .engine-info-message .engine-badge-display .engine-badge-mini.flex[data-v-7a3dff2a] {
+.add-option-to-family-modal .modal-content .vote-config-section .engine-info-message .engine-badge-display .engine-badge-mini.flex[data-v-7533867d] {
   background: rgba(230, 126, 34, 0.1254901961);
   color: #e67e22;
 }
-.add-option-to-family-modal .modal-content .vote-config-section .engine-info-message .engine-description[data-v-7a3dff2a] {
+.add-option-to-family-modal .modal-content .vote-config-section .engine-info-message .engine-description[data-v-7533867d] {
   margin: 0;
   font-size: 13px;
   color: var(--color-text-lighter);
   line-height: 1.5;
 }
-.add-option-to-family-modal .modal-content .vote-config-section .engine-config-details[data-v-7a3dff2a] {
+.add-option-to-family-modal .modal-content .vote-config-section .engine-config-details[data-v-7533867d] {
   padding: 16px;
   background: var(--color-background-dark);
   border-radius: 12px;
 }
-.add-option-to-family-modal .modal-content .vote-config-section .engine-config-details .config-fields[data-v-7a3dff2a] {
+.add-option-to-family-modal .modal-content .vote-config-section .engine-config-details .config-fields[data-v-7533867d] {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
-.add-option-to-family-modal .modal-content .vote-config-section .engine-config-details .config-fields .config-field label[data-v-7a3dff2a] {
+.add-option-to-family-modal .modal-content .vote-config-section .engine-config-details .config-fields .config-field label[data-v-7533867d] {
   display: block;
   margin-bottom: 6px;
   font-size: 12px;
   font-weight: 600;
 }
-.add-option-to-family-modal .modal-content .vote-config-section .engine-config-details .config-fields .config-field .config-input[data-v-7a3dff2a], .add-option-to-family-modal .modal-content .vote-config-section .engine-config-details .config-fields .config-field .config-select[data-v-7a3dff2a] {
+.add-option-to-family-modal .modal-content .vote-config-section .engine-config-details .config-fields .config-field .config-input[data-v-7533867d], .add-option-to-family-modal .modal-content .vote-config-section .engine-config-details .config-fields .config-field .config-select[data-v-7533867d] {
   width: 100%;
   padding: 8px 12px;
   border: 1px solid var(--color-border);
@@ -5671,32 +5671,32 @@ to {
   font-size: 13px;
   transition: all 0.2s;
 }
-.add-option-to-family-modal .modal-content .vote-config-section .engine-config-details .config-fields .config-field .config-input[data-v-7a3dff2a]:focus, .add-option-to-family-modal .modal-content .vote-config-section .engine-config-details .config-fields .config-field .config-select[data-v-7a3dff2a]:focus {
+.add-option-to-family-modal .modal-content .vote-config-section .engine-config-details .config-fields .config-field .config-input[data-v-7533867d]:focus, .add-option-to-family-modal .modal-content .vote-config-section .engine-config-details .config-fields .config-field .config-select[data-v-7533867d]:focus {
   outline: none;
   border-color: var(--color-primary-element);
   box-shadow: 0 0 0 2px rgba(var(--color-primary-element-rgb), 0.1);
 }
-.add-option-to-family-modal .modal-content .vote-config-section .engine-config-details .config-fields .config-field .checkbox-label[data-v-7a3dff2a] {
+.add-option-to-family-modal .modal-content .vote-config-section .engine-config-details .config-fields .config-field .checkbox-label[data-v-7533867d] {
   display: flex;
   align-items: center;
   gap: 8px;
   cursor: pointer;
 }
-.add-option-to-family-modal .modal-content .vote-config-section .engine-config-details .config-fields .config-field .checkbox-label input[data-v-7a3dff2a] {
+.add-option-to-family-modal .modal-content .vote-config-section .engine-config-details .config-fields .config-field .checkbox-label input[data-v-7533867d] {
   width: 16px;
   height: 16px;
   cursor: pointer;
 }
-.add-option-to-family-modal .modal-content .vote-config-section .engine-config-details .config-fields .config-field .checkbox-label span[data-v-7a3dff2a] {
+.add-option-to-family-modal .modal-content .vote-config-section .engine-config-details .config-fields .config-field .checkbox-label span[data-v-7533867d] {
   font-size: 13px;
   font-weight: normal;
 }
-.add-option-to-family-modal .modal-content .vote-config-section .engine-config-details .config-fields .config-field .config-description[data-v-7a3dff2a] {
+.add-option-to-family-modal .modal-content .vote-config-section .engine-config-details .config-fields .config-field .config-description[data-v-7533867d] {
   margin: 4px 0 0 0;
   font-size: 11px;
   color: var(--color-text-lighter);
 }
-.add-option-to-family-modal .modal-footer[data-v-7a3dff2a] {
+.add-option-to-family-modal .modal-footer[data-v-7533867d] {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
@@ -5704,7 +5704,7 @@ to {
   background: var(--color-background-dark);
   border-top: 1px solid var(--color-border);
 }
-.add-option-to-family-modal .modal-footer .btn-secondary[data-v-7a3dff2a], .add-option-to-family-modal .modal-footer .btn-primary[data-v-7a3dff2a] {
+.add-option-to-family-modal .modal-footer .btn-secondary[data-v-7533867d], .add-option-to-family-modal .modal-footer .btn-primary[data-v-7533867d] {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -5716,27 +5716,27 @@ to {
   cursor: pointer;
   transition: all 0.2s;
 }
-.add-option-to-family-modal .modal-footer .btn-secondary[data-v-7a3dff2a]:disabled, .add-option-to-family-modal .modal-footer .btn-primary[data-v-7a3dff2a]:disabled {
+.add-option-to-family-modal .modal-footer .btn-secondary[data-v-7533867d]:disabled, .add-option-to-family-modal .modal-footer .btn-primary[data-v-7533867d]:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
-.add-option-to-family-modal .modal-footer .btn-secondary[data-v-7a3dff2a] {
+.add-option-to-family-modal .modal-footer .btn-secondary[data-v-7533867d] {
   background: var(--color-background-hover);
   color: var(--color-main-text);
 }
-.add-option-to-family-modal .modal-footer .btn-secondary[data-v-7a3dff2a]:hover:not(:disabled) {
+.add-option-to-family-modal .modal-footer .btn-secondary[data-v-7533867d]:hover:not(:disabled) {
   background: var(--color-background-dark);
   transform: translateY(-1px);
 }
-.add-option-to-family-modal .modal-footer .btn-primary[data-v-7a3dff2a] {
+.add-option-to-family-modal .modal-footer .btn-primary[data-v-7533867d] {
   background: linear-gradient(135deg, var(--color-primary-element) 0%, var(--color-primary-element-light) 100%);
   color: white;
 }
-.add-option-to-family-modal .modal-footer .btn-primary.loading[data-v-7a3dff2a] {
+.add-option-to-family-modal .modal-footer .btn-primary.loading[data-v-7533867d] {
   opacity: 0.7;
   cursor: wait;
 }
-.add-option-to-family-modal .modal-footer .btn-primary[data-v-7a3dff2a]:hover:not(:disabled):not(.loading) {
+.add-option-to-family-modal .modal-footer .btn-primary[data-v-7533867d]:hover:not(:disabled):not(.loading) {
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(var(--color-primary-element-rgb), 0.3);
 }.kanban-layout[data-v-e2674e25] {
@@ -6189,20 +6189,20 @@ to {
 .fc-event-resizing {
     opacity: 0.8;
 }
-.engine-selector-modal[data-v-d4a79a8c] {
+.engine-selector-modal[data-v-7e40130b] {
   padding: 0;
   max-width: 700px;
   background: var(--color-main-background);
   border-radius: 24px;
   overflow: visible;
 }
-.engine-selector-modal .modal-header[data-v-d4a79a8c] {
+.engine-selector-modal .modal-header[data-v-7e40130b] {
   text-align: center;
   padding: 32px 32px 24px;
   background: linear-gradient(135deg, rgba(var(--color-primary-element-rgb), 0.05) 0%, rgba(var(--color-primary-element-rgb), 0.02) 100%);
   border-bottom: 1px solid var(--color-border);
 }
-.engine-selector-modal .modal-header .header-icon[data-v-d4a79a8c] {
+.engine-selector-modal .modal-header .header-icon[data-v-7e40130b] {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -6213,17 +6213,17 @@ to {
   margin-bottom: 16px;
   color: white;
 }
-.engine-selector-modal .modal-header h3[data-v-d4a79a8c] {
+.engine-selector-modal .modal-header h3[data-v-7e40130b] {
   margin: 0 0 8px 0;
   font-size: 24px;
   font-weight: 700;
 }
-.engine-selector-modal .modal-header .modal-description[data-v-d4a79a8c] {
+.engine-selector-modal .modal-header .modal-description[data-v-7e40130b] {
   margin: 0;
   font-size: 14px;
   color: var(--color-text-lighter);
 }
-.engine-selector-modal .engine-grid[data-v-d4a79a8c] {
+.engine-selector-modal .engine-grid[data-v-7e40130b] {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 16px;
@@ -6231,7 +6231,7 @@ to {
   max-height: 400px;
   overflow-y: auto;
 }
-.engine-selector-modal .engine-grid .engine-card[data-v-d4a79a8c] {
+.engine-selector-modal .engine-grid .engine-card[data-v-7e40130b] {
   position: relative;
   padding: 20px;
   background: var(--color-background-dark);
@@ -6240,22 +6240,22 @@ to {
   cursor: pointer;
   transition: all 0.3s ease;
 }
-.engine-selector-modal .engine-grid .engine-card[data-v-d4a79a8c]:hover {
+.engine-selector-modal .engine-grid .engine-card[data-v-7e40130b]:hover {
   transform: translateY(-2px);
   border-color: var(--color-primary-element);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
-.engine-selector-modal .engine-grid .engine-card.selected[data-v-d4a79a8c] {
+.engine-selector-modal .engine-grid .engine-card.selected[data-v-7e40130b] {
   border-color: var(--color-primary-element);
   background: rgba(var(--color-primary-element-rgb), 0.05);
 }
-.engine-selector-modal .engine-grid .engine-card .engine-card-header[data-v-d4a79a8c] {
+.engine-selector-modal .engine-grid .engine-card .engine-card-header[data-v-7e40130b] {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 12px;
 }
-.engine-selector-modal .engine-grid .engine-card .engine-card-header .engine-icon[data-v-d4a79a8c] {
+.engine-selector-modal .engine-grid .engine-card .engine-card-header .engine-icon[data-v-7e40130b] {
   width: 48px;
   height: 48px;
   display: flex;
@@ -6265,130 +6265,130 @@ to {
   border-radius: 12px;
   color: var(--color-primary-element);
 }
-.engine-selector-modal .engine-grid .engine-card .engine-card-header .engine-badge[data-v-d4a79a8c] {
+.engine-selector-modal .engine-grid .engine-card .engine-card-header .engine-badge[data-v-7e40130b] {
   font-size: 11px;
   padding: 4px 8px;
   border-radius: 20px;
   font-weight: 500;
 }
-.engine-selector-modal .engine-grid .engine-card .engine-card-header .engine-badge.single[data-v-d4a79a8c] {
+.engine-selector-modal .engine-grid .engine-card .engine-card-header .engine-badge.single[data-v-7e40130b] {
   background: rgba(52, 152, 219, 0.1254901961);
   color: #3498db;
 }
-.engine-selector-modal .engine-grid .engine-card .engine-card-header .engine-badge.multi[data-v-d4a79a8c] {
+.engine-selector-modal .engine-grid .engine-card .engine-card-header .engine-badge.multi[data-v-7e40130b] {
   background: rgba(155, 89, 182, 0.1254901961);
   color: #9b59b6;
 }
-.engine-selector-modal .engine-grid .engine-card .engine-card-header .engine-badge.flex[data-v-d4a79a8c] {
+.engine-selector-modal .engine-grid .engine-card .engine-card-header .engine-badge.flex[data-v-7e40130b] {
   background: rgba(230, 126, 34, 0.1254901961);
   color: #e67e22;
 }
-.engine-selector-modal .engine-grid .engine-card .engine-card-content h4[data-v-d4a79a8c] {
+.engine-selector-modal .engine-grid .engine-card .engine-card-content h4[data-v-7e40130b] {
   margin: 0 0 8px 0;
   font-size: 16px;
   font-weight: 600;
 }
-.engine-selector-modal .engine-grid .engine-card .engine-card-content p[data-v-d4a79a8c] {
+.engine-selector-modal .engine-grid .engine-card .engine-card-content p[data-v-7e40130b] {
   margin: 0 0 8px 0;
   font-size: 12px;
   color: var(--color-text-lighter);
   line-height: 1.4;
 }
-.engine-selector-modal .engine-grid .engine-card .engine-card-content .engine-constraints[data-v-d4a79a8c] {
+.engine-selector-modal .engine-grid .engine-card .engine-card-content .engine-constraints[data-v-7e40130b] {
   display: flex;
   gap: 8px;
   margin-top: 8px;
 }
-.engine-selector-modal .engine-grid .engine-card .engine-card-content .engine-constraints .constraint-badge[data-v-d4a79a8c] {
+.engine-selector-modal .engine-grid .engine-card .engine-card-content .engine-constraints .constraint-badge[data-v-7e40130b] {
   font-size: 10px;
   padding: 2px 6px;
   background: var(--color-background-hover);
   border-radius: 12px;
   color: var(--color-text-lighter);
 }
-.engine-selector-modal .engine-grid .engine-card .engine-check[data-v-d4a79a8c] {
+.engine-selector-modal .engine-grid .engine-card .engine-check[data-v-7e40130b] {
   position: absolute;
   top: 12px;
   right: 12px;
   color: var(--color-primary-element);
 }
-.engine-selector-modal .subtype-selection-section[data-v-d4a79a8c] {
+.engine-selector-modal .subtype-selection-section[data-v-7e40130b] {
   margin: 0 24px 24px 24px;
   padding: 20px;
   background: var(--color-background-dark);
   border-radius: 16px;
   border: 1px solid var(--color-border);
 }
-.engine-selector-modal .subtype-selection-section .subtype-header[data-v-d4a79a8c] {
+.engine-selector-modal .subtype-selection-section .subtype-header[data-v-7e40130b] {
   display: flex;
   align-items: center;
   gap: 8px;
   margin-bottom: 16px;
 }
-.engine-selector-modal .subtype-selection-section .subtype-header svg[data-v-d4a79a8c] {
+.engine-selector-modal .subtype-selection-section .subtype-header svg[data-v-7e40130b] {
   color: var(--color-primary-element);
 }
-.engine-selector-modal .subtype-selection-section .subtype-header h5[data-v-d4a79a8c] {
+.engine-selector-modal .subtype-selection-section .subtype-header h5[data-v-7e40130b] {
   margin: 0;
   font-size: 15px;
   font-weight: 600;
 }
-.engine-selector-modal .subtype-selection-section .subtype-select[data-v-d4a79a8c] .vs__dropdown-menu {
+.engine-selector-modal .subtype-selection-section .subtype-select[data-v-7e40130b] .vs__dropdown-menu {
   max-height: 300px;
 }
-.engine-selector-modal .subtype-selection-section .subtype-select .variant-option[data-v-d4a79a8c] {
+.engine-selector-modal .subtype-selection-section .subtype-select .variant-option[data-v-7e40130b] {
   display: flex;
   align-items: flex-start;
   gap: 12px;
   padding: 8px;
 }
-.engine-selector-modal .subtype-selection-section .subtype-select .variant-option .variant-icon[data-v-d4a79a8c] {
+.engine-selector-modal .subtype-selection-section .subtype-select .variant-option .variant-icon[data-v-7e40130b] {
   flex-shrink: 0;
   margin-top: 2px;
   color: var(--color-primary-element);
 }
-.engine-selector-modal .subtype-selection-section .subtype-select .variant-option .variant-content[data-v-d4a79a8c] {
+.engine-selector-modal .subtype-selection-section .subtype-select .variant-option .variant-content[data-v-7e40130b] {
   flex: 1;
 }
-.engine-selector-modal .subtype-selection-section .subtype-select .variant-option .variant-content .variant-label[data-v-d4a79a8c] {
+.engine-selector-modal .subtype-selection-section .subtype-select .variant-option .variant-content .variant-label[data-v-7e40130b] {
   font-weight: 500;
   margin-bottom: 2px;
 }
-.engine-selector-modal .subtype-selection-section .subtype-select .variant-option .variant-content .variant-description[data-v-d4a79a8c] {
+.engine-selector-modal .subtype-selection-section .subtype-select .variant-option .variant-content .variant-description[data-v-7e40130b] {
   font-size: 12px;
   color: var(--color-text-lighter);
 }
-.engine-selector-modal .grade-config-section[data-v-d4a79a8c] {
+.engine-selector-modal .grade-config-section[data-v-7e40130b] {
   margin: 0 24px 24px 24px;
   padding: 20px;
   background: var(--color-background-dark);
   border-radius: 16px;
   border: 1px solid var(--color-border);
 }
-.engine-selector-modal .grade-config-section .config-header[data-v-d4a79a8c] {
+.engine-selector-modal .grade-config-section .config-header[data-v-7e40130b] {
   display: flex;
   align-items: center;
   gap: 8px;
   margin-bottom: 16px;
 }
-.engine-selector-modal .grade-config-section .config-header svg[data-v-d4a79a8c] {
+.engine-selector-modal .grade-config-section .config-header svg[data-v-7e40130b] {
   color: var(--color-primary-element);
 }
-.engine-selector-modal .grade-config-section .config-header h5[data-v-d4a79a8c] {
+.engine-selector-modal .grade-config-section .config-header h5[data-v-7e40130b] {
   margin: 0;
   font-size: 15px;
   font-weight: 600;
 }
-.engine-selector-modal .grade-config-section .grades-list[data-v-d4a79a8c] {
+.engine-selector-modal .grade-config-section .grades-list[data-v-7e40130b] {
   margin-bottom: 12px;
 }
-.engine-selector-modal .grade-config-section .grades-list .grade-item[data-v-d4a79a8c] {
+.engine-selector-modal .grade-config-section .grades-list .grade-item[data-v-7e40130b] {
   display: flex;
   align-items: center;
   gap: 8px;
   margin-bottom: 8px;
 }
-.engine-selector-modal .grade-config-section .grades-list .grade-item .grade-input[data-v-d4a79a8c] {
+.engine-selector-modal .grade-config-section .grades-list .grade-item .grade-input[data-v-7e40130b] {
   flex: 1;
   padding: 8px 12px;
   border: 1px solid var(--color-border);
@@ -6397,12 +6397,12 @@ to {
   font-size: 13px;
   transition: all 0.2s;
 }
-.engine-selector-modal .grade-config-section .grades-list .grade-item .grade-input[data-v-d4a79a8c]:focus {
+.engine-selector-modal .grade-config-section .grades-list .grade-item .grade-input[data-v-7e40130b]:focus {
   outline: none;
   border-color: var(--color-primary-element);
   box-shadow: 0 0 0 2px rgba(var(--color-primary-element-rgb), 0.1);
 }
-.engine-selector-modal .grade-config-section .grades-list .grade-item .grade-remove[data-v-d4a79a8c] {
+.engine-selector-modal .grade-config-section .grades-list .grade-item .grade-remove[data-v-7e40130b] {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -6415,11 +6415,11 @@ to {
   cursor: pointer;
   transition: all 0.2s;
 }
-.engine-selector-modal .grade-config-section .grades-list .grade-item .grade-remove[data-v-d4a79a8c]:hover {
+.engine-selector-modal .grade-config-section .grades-list .grade-item .grade-remove[data-v-7e40130b]:hover {
   background: var(--color-error);
   color: white;
 }
-.engine-selector-modal .grade-config-section .grade-add[data-v-d4a79a8c] {
+.engine-selector-modal .grade-config-section .grade-add[data-v-7e40130b] {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -6432,37 +6432,37 @@ to {
   cursor: pointer;
   transition: all 0.2s;
 }
-.engine-selector-modal .grade-config-section .grade-add[data-v-d4a79a8c]:hover {
+.engine-selector-modal .grade-config-section .grade-add[data-v-7e40130b]:hover {
   background: rgba(var(--color-primary-element-rgb), 0.05);
   border-color: var(--color-primary-element);
 }
-.engine-selector-modal .reactions-config-section[data-v-d4a79a8c] {
+.engine-selector-modal .reactions-config-section[data-v-7e40130b] {
   margin: 0 24px 24px 24px;
   padding: 20px;
   background: var(--color-background-dark);
   border-radius: 16px;
   border: 1px solid var(--color-border);
 }
-.engine-selector-modal .reactions-config-section .config-header[data-v-d4a79a8c] {
+.engine-selector-modal .reactions-config-section .config-header[data-v-7e40130b] {
   display: flex;
   align-items: center;
   gap: 8px;
   margin-bottom: 16px;
 }
-.engine-selector-modal .reactions-config-section .config-header svg[data-v-d4a79a8c] {
+.engine-selector-modal .reactions-config-section .config-header svg[data-v-7e40130b] {
   color: var(--color-primary-element);
 }
-.engine-selector-modal .reactions-config-section .config-header h5[data-v-d4a79a8c] {
+.engine-selector-modal .reactions-config-section .config-header h5[data-v-7e40130b] {
   margin: 0;
   font-size: 15px;
   font-weight: 600;
 }
-.engine-selector-modal .reactions-config-section .reactions-grid[data-v-d4a79a8c] {
+.engine-selector-modal .reactions-config-section .reactions-grid[data-v-7e40130b] {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
   gap: 12px;
 }
-.engine-selector-modal .reactions-config-section .reactions-grid .reaction-item[data-v-d4a79a8c] {
+.engine-selector-modal .reactions-config-section .reactions-grid .reaction-item[data-v-7e40130b] {
   position: relative;
   display: flex;
   flex-direction: column;
@@ -6475,41 +6475,41 @@ to {
   cursor: pointer;
   transition: all 0.2s ease;
 }
-.engine-selector-modal .reactions-config-section .reactions-grid .reaction-item[data-v-d4a79a8c]:hover {
+.engine-selector-modal .reactions-config-section .reactions-grid .reaction-item[data-v-7e40130b]:hover {
   transform: translateY(-2px);
   border-color: var(--color-primary-element);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
-.engine-selector-modal .reactions-config-section .reactions-grid .reaction-item.selected[data-v-d4a79a8c] {
+.engine-selector-modal .reactions-config-section .reactions-grid .reaction-item.selected[data-v-7e40130b] {
   border-color: var(--color-primary-element);
   background: rgba(var(--color-primary-element-rgb), 0.05);
 }
-.engine-selector-modal .reactions-config-section .reactions-grid .reaction-item.selected .reaction-emoji[data-v-d4a79a8c] {
+.engine-selector-modal .reactions-config-section .reactions-grid .reaction-item.selected .reaction-emoji[data-v-7e40130b] {
   transform: scale(1.1);
 }
-.engine-selector-modal .reactions-config-section .reactions-grid .reaction-item .reaction-emoji[data-v-d4a79a8c] {
+.engine-selector-modal .reactions-config-section .reactions-grid .reaction-item .reaction-emoji[data-v-7e40130b] {
   font-size: 32px;
   transition: transform 0.2s ease;
 }
-.engine-selector-modal .reactions-config-section .reactions-grid .reaction-item .reaction-label[data-v-d4a79a8c] {
+.engine-selector-modal .reactions-config-section .reactions-grid .reaction-item .reaction-label[data-v-7e40130b] {
   font-size: 12px;
   color: var(--color-text-lighter);
   text-align: center;
 }
-.engine-selector-modal .reactions-config-section .reactions-grid .reaction-item .reaction-check[data-v-d4a79a8c] {
+.engine-selector-modal .reactions-config-section .reactions-grid .reaction-item .reaction-check[data-v-7e40130b] {
   position: absolute;
   top: 8px;
   right: 8px;
   color: var(--color-primary-element);
 }
-.engine-selector-modal .engine-config-section[data-v-d4a79a8c] {
+.engine-selector-modal .engine-config-section[data-v-7e40130b] {
   margin: 0 24px 24px 24px;
   padding: 20px;
   background: var(--color-background-dark);
   border-radius: 16px;
   border: 1px solid var(--color-border);
 }
-.engine-selector-modal .engine-config-section .config-header[data-v-d4a79a8c] {
+.engine-selector-modal .engine-config-section .config-header[data-v-7e40130b] {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -6517,42 +6517,42 @@ to {
   padding-bottom: 12px;
   border-bottom: 1px solid var(--color-border);
 }
-.engine-selector-modal .engine-config-section .config-header svg[data-v-d4a79a8c] {
+.engine-selector-modal .engine-config-section .config-header svg[data-v-7e40130b] {
   color: var(--color-primary-element);
 }
-.engine-selector-modal .engine-config-section .config-header h5[data-v-d4a79a8c] {
+.engine-selector-modal .engine-config-section .config-header h5[data-v-7e40130b] {
   margin: 0;
   font-size: 15px;
   font-weight: 600;
 }
-.engine-selector-modal .engine-config-section .config-fields .config-field[data-v-d4a79a8c] {
+.engine-selector-modal .engine-config-section .config-fields .config-field[data-v-7e40130b] {
   margin-bottom: 20px;
 }
-.engine-selector-modal .engine-config-section .config-fields .config-field[data-v-d4a79a8c]:last-child {
+.engine-selector-modal .engine-config-section .config-fields .config-field[data-v-7e40130b]:last-child {
   margin-bottom: 0;
 }
-.engine-selector-modal .engine-config-section .config-fields .config-field label[data-v-d4a79a8c] {
+.engine-selector-modal .engine-config-section .config-fields .config-field label[data-v-7e40130b] {
   display: block;
   margin-bottom: 8px;
   font-size: 13px;
   font-weight: 500;
 }
-.engine-selector-modal .engine-config-section .config-fields .config-field label .field-hint[data-v-d4a79a8c] {
+.engine-selector-modal .engine-config-section .config-fields .config-field label .field-hint[data-v-7e40130b] {
   font-size: 11px;
   color: var(--color-text-lighter);
   font-weight: normal;
 }
-.engine-selector-modal .engine-config-section .config-fields .config-field .field-input[data-v-d4a79a8c] {
+.engine-selector-modal .engine-config-section .config-fields .config-field .field-input[data-v-7e40130b] {
   position: relative;
 }
-.engine-selector-modal .engine-config-section .config-fields .config-field .field-input .range-container[data-v-d4a79a8c] {
+.engine-selector-modal .engine-config-section .config-fields .config-field .field-input .range-container[data-v-7e40130b] {
   position: relative;
   display: flex;
   align-items: center;
   gap: 12px;
   padding: 8px 0;
 }
-.engine-selector-modal .engine-config-section .config-fields .config-field .field-input .range-container .range-input[data-v-d4a79a8c] {
+.engine-selector-modal .engine-config-section .config-fields .config-field .field-input .range-container .range-input[data-v-7e40130b] {
   flex: 1;
   height: 6px;
   -webkit-appearance: none;
@@ -6560,7 +6560,7 @@ to {
   border-radius: 3px;
   outline: none;
 }
-.engine-selector-modal .engine-config-section .config-fields .config-field .field-input .range-container .range-input[data-v-d4a79a8c]::-webkit-slider-thumb {
+.engine-selector-modal .engine-config-section .config-fields .config-field .field-input .range-container .range-input[data-v-7e40130b]::-webkit-slider-thumb {
   -webkit-appearance: none;
   width: 20px;
   height: 20px;
@@ -6571,10 +6571,10 @@ to {
   border: 2px solid white;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
-.engine-selector-modal .engine-config-section .config-fields .config-field .field-input .range-container .range-input[data-v-d4a79a8c]::-webkit-slider-thumb:hover {
+.engine-selector-modal .engine-config-section .config-fields .config-field .field-input .range-container .range-input[data-v-7e40130b]::-webkit-slider-thumb:hover {
   transform: scale(1.1);
 }
-.engine-selector-modal .engine-config-section .config-fields .config-field .field-input .range-container .range-input[data-v-d4a79a8c]::-moz-range-thumb {
+.engine-selector-modal .engine-config-section .config-fields .config-field .field-input .range-container .range-input[data-v-7e40130b]::-moz-range-thumb {
   width: 20px;
   height: 20px;
   border-radius: 50%;
@@ -6584,7 +6584,7 @@ to {
   border: 2px solid white;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
-.engine-selector-modal .engine-config-section .config-fields .config-field .field-input .range-container .range-value-display[data-v-d4a79a8c] {
+.engine-selector-modal .engine-config-section .config-fields .config-field .field-input .range-container .range-value-display[data-v-7e40130b] {
   min-width: 40px;
   text-align: center;
   font-size: 14px;
@@ -6594,7 +6594,7 @@ to {
   padding: 4px 8px;
   border-radius: 12px;
 }
-.engine-selector-modal .engine-config-section .config-fields .config-field .field-input .text-input[data-v-d4a79a8c] {
+.engine-selector-modal .engine-config-section .config-fields .config-field .field-input .text-input[data-v-7e40130b] {
   width: 100%;
   padding: 8px 12px;
   border: 1px solid var(--color-border);
@@ -6603,34 +6603,34 @@ to {
   font-size: 13px;
   transition: all 0.2s;
 }
-.engine-selector-modal .engine-config-section .config-fields .config-field .field-input .text-input[data-v-d4a79a8c]:focus {
+.engine-selector-modal .engine-config-section .config-fields .config-field .field-input .text-input[data-v-7e40130b]:focus {
   outline: none;
   border-color: var(--color-primary-element);
   box-shadow: 0 0 0 2px rgba(var(--color-primary-element-rgb), 0.1);
 }
-.engine-selector-modal .engine-config-section .config-fields .config-field .field-input .boolean-field[data-v-d4a79a8c] {
+.engine-selector-modal .engine-config-section .config-fields .config-field .field-input .boolean-field[data-v-7e40130b] {
   display: flex;
   align-items: center;
   gap: 12px;
 }
-.engine-selector-modal .engine-config-section .config-fields .config-field .field-input .boolean-field .toggle-switch[data-v-d4a79a8c] {
+.engine-selector-modal .engine-config-section .config-fields .config-field .field-input .boolean-field .toggle-switch[data-v-7e40130b] {
   position: relative;
   display: inline-block;
   width: 44px;
   height: 24px;
 }
-.engine-selector-modal .engine-config-section .config-fields .config-field .field-input .boolean-field .toggle-switch input[data-v-d4a79a8c] {
+.engine-selector-modal .engine-config-section .config-fields .config-field .field-input .boolean-field .toggle-switch input[data-v-7e40130b] {
   opacity: 0;
   width: 0;
   height: 0;
 }
-.engine-selector-modal .engine-config-section .config-fields .config-field .field-input .boolean-field .toggle-switch input:checked + .toggle-slider[data-v-d4a79a8c] {
+.engine-selector-modal .engine-config-section .config-fields .config-field .field-input .boolean-field .toggle-switch input:checked + .toggle-slider[data-v-7e40130b] {
   background-color: var(--color-primary-element);
 }
-.engine-selector-modal .engine-config-section .config-fields .config-field .field-input .boolean-field .toggle-switch input:checked + .toggle-slider[data-v-d4a79a8c]:before {
+.engine-selector-modal .engine-config-section .config-fields .config-field .field-input .boolean-field .toggle-switch input:checked + .toggle-slider[data-v-7e40130b]:before {
   transform: translateX(20px);
 }
-.engine-selector-modal .engine-config-section .config-fields .config-field .field-input .boolean-field .toggle-switch .toggle-slider[data-v-d4a79a8c] {
+.engine-selector-modal .engine-config-section .config-fields .config-field .field-input .boolean-field .toggle-switch .toggle-slider[data-v-7e40130b] {
   position: absolute;
   cursor: pointer;
   top: 0;
@@ -6641,7 +6641,7 @@ to {
   transition: 0.3s;
   border-radius: 34px;
 }
-.engine-selector-modal .engine-config-section .config-fields .config-field .field-input .boolean-field .toggle-switch .toggle-slider[data-v-d4a79a8c]:before {
+.engine-selector-modal .engine-config-section .config-fields .config-field .field-input .boolean-field .toggle-switch .toggle-slider[data-v-7e40130b]:before {
   position: absolute;
   content: "";
   height: 18px;
@@ -6652,46 +6652,46 @@ to {
   transition: 0.3s;
   border-radius: 50%;
 }
-.engine-selector-modal .engine-config-section .config-fields .config-field .field-input .boolean-field .boolean-label[data-v-d4a79a8c] {
+.engine-selector-modal .engine-config-section .config-fields .config-field .field-input .boolean-field .boolean-label[data-v-7e40130b] {
   font-size: 13px;
 }
-.engine-selector-modal .engine-config-section .config-fields .config-field .field-input[data-v-d4a79a8c] .select-input .v-select .vs__dropdown-toggle {
+.engine-selector-modal .engine-config-section .config-fields .config-field .field-input[data-v-7e40130b] .select-input .v-select .vs__dropdown-toggle {
   border: 1px solid var(--color-border);
   border-radius: 8px;
   background: var(--color-main-background);
   padding: 4px 8px;
 }
-.engine-selector-modal .engine-config-section .config-fields .config-field .field-input[data-v-d4a79a8c] .select-input .v-select .vs__selected-options {
+.engine-selector-modal .engine-config-section .config-fields .config-field .field-input[data-v-7e40130b] .select-input .v-select .vs__selected-options {
   padding: 0;
 }
-.engine-selector-modal .engine-config-section .config-fields .config-field .field-input[data-v-d4a79a8c] .select-input .v-select .vs__search {
+.engine-selector-modal .engine-config-section .config-fields .config-field .field-input[data-v-7e40130b] .select-input .v-select .vs__search {
   padding: 0;
   margin: 0;
 }
-.engine-selector-modal .engine-config-section .config-fields .config-field .field-description[data-v-d4a79a8c] {
+.engine-selector-modal .engine-config-section .config-fields .config-field .field-description[data-v-7e40130b] {
   margin: 4px 0 0 0;
   font-size: 11px;
   color: var(--color-text-lighter);
 }
-.engine-selector-modal .engine-info-section[data-v-d4a79a8c] {
+.engine-selector-modal .engine-info-section[data-v-7e40130b] {
   margin: 0 24px 24px 24px;
   padding: 16px;
   background: var(--color-background-dark);
   border-radius: 12px;
   border: 1px solid var(--color-border);
 }
-.engine-selector-modal .engine-info-section .info-message[data-v-d4a79a8c] {
+.engine-selector-modal .engine-info-section .info-message[data-v-7e40130b] {
   display: flex;
   align-items: center;
   gap: 12px;
   color: var(--color-text-lighter);
   font-size: 13px;
 }
-.engine-selector-modal .engine-info-section .info-message svg[data-v-d4a79a8c] {
+.engine-selector-modal .engine-info-section .info-message svg[data-v-7e40130b] {
   flex-shrink: 0;
   color: var(--color-primary-element);
 }
-.engine-selector-modal .modal-footer[data-v-d4a79a8c] {
+.engine-selector-modal .modal-footer[data-v-7e40130b] {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
@@ -6699,7 +6699,7 @@ to {
   background: var(--color-background-dark);
   border-top: 1px solid var(--color-border);
 }
-.engine-selector-modal .modal-footer .btn-secondary[data-v-d4a79a8c], .engine-selector-modal .modal-footer .btn-primary[data-v-d4a79a8c] {
+.engine-selector-modal .modal-footer .btn-secondary[data-v-7e40130b], .engine-selector-modal .modal-footer .btn-primary[data-v-7e40130b] {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -6711,23 +6711,23 @@ to {
   cursor: pointer;
   transition: all 0.2s;
 }
-.engine-selector-modal .modal-footer .btn-secondary[data-v-d4a79a8c]:disabled, .engine-selector-modal .modal-footer .btn-primary[data-v-d4a79a8c]:disabled {
+.engine-selector-modal .modal-footer .btn-secondary[data-v-7e40130b]:disabled, .engine-selector-modal .modal-footer .btn-primary[data-v-7e40130b]:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
-.engine-selector-modal .modal-footer .btn-secondary[data-v-d4a79a8c] {
+.engine-selector-modal .modal-footer .btn-secondary[data-v-7e40130b] {
   background: var(--color-background-hover);
   color: var(--color-main-text);
 }
-.engine-selector-modal .modal-footer .btn-secondary[data-v-d4a79a8c]:hover:not(:disabled) {
+.engine-selector-modal .modal-footer .btn-secondary[data-v-7e40130b]:hover:not(:disabled) {
   background: var(--color-background-dark);
   transform: translateY(-1px);
 }
-.engine-selector-modal .modal-footer .btn-primary[data-v-d4a79a8c] {
+.engine-selector-modal .modal-footer .btn-primary[data-v-7e40130b] {
   background: linear-gradient(135deg, var(--color-primary-element) 0%, var(--color-primary-element-light) 100%);
   color: white;
 }
-.engine-selector-modal .modal-footer .btn-primary[data-v-d4a79a8c]:hover:not(:disabled) {
+.engine-selector-modal .modal-footer .btn-primary[data-v-7e40130b]:hover:not(:disabled) {
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(var(--color-primary-element-rgb), 0.3);
 }.vote-layout[data-v-4d63805c] {
@@ -9421,20 +9421,20 @@ to {
 }
 #expiring.open {
   color: var(--color-text-lighter);
-}.inquiry-group-archive-page[data-v-1c9bc79b] {
+}.inquiry-group-archive-page[data-v-fa7a116f] {
   width: 100%;
   background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
   min-height: 100vh;
 }
 
 /* Breadcrumb - smaller on left */
-.breadcrumb-bar[data-v-1c9bc79b] {
+.breadcrumb-bar[data-v-fa7a116f] {
   background: linear-gradient(135deg, #495057 0%, #343a40 100%);
   padding: 15px 0;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
   border-bottom: 3px solid #6c757d;
 }
-.breadcrumb-bar .breadcrumb-container[data-v-1c9bc79b] {
+.breadcrumb-bar .breadcrumb-container[data-v-fa7a116f] {
   max-width: 1600px;
   margin: 0 auto;
   padding: 0 20px;
@@ -9442,7 +9442,7 @@ to {
   align-items: center;
   gap: 10px;
 }
-.breadcrumb-bar .breadcrumb-container .breadcrumb-home[data-v-1c9bc79b] {
+.breadcrumb-bar .breadcrumb-container .breadcrumb-home[data-v-fa7a116f] {
   color: white;
   font-weight: 600;
   font-size: 14px;
@@ -9452,25 +9452,25 @@ to {
   transition: all 0.3s ease;
   min-width: auto;
 }
-.breadcrumb-bar .breadcrumb-container .breadcrumb-home[data-v-1c9bc79b]:hover {
+.breadcrumb-bar .breadcrumb-container .breadcrumb-home[data-v-fa7a116f]:hover {
   background: rgba(255, 255, 255, 0.2);
 }
-.breadcrumb-bar .breadcrumb-container .breadcrumb-home .breadcrumb-label[data-v-1c9bc79b] {
+.breadcrumb-bar .breadcrumb-container .breadcrumb-home .breadcrumb-label[data-v-fa7a116f] {
   margin-left: 6px;
 }
-.breadcrumb-bar .breadcrumb-container .breadcrumb-separator[data-v-1c9bc79b] {
+.breadcrumb-bar .breadcrumb-container .breadcrumb-separator[data-v-fa7a116f] {
   color: rgba(255, 255, 255, 0.6);
   margin: 0 3px;
   font-weight: 300;
   font-size: 16px;
 }
-.breadcrumb-bar .breadcrumb-container .breadcrumb-current[data-v-1c9bc79b] {
+.breadcrumb-bar .breadcrumb-container .breadcrumb-current[data-v-fa7a116f] {
   color: white;
   font-weight: 700;
   font-size: 16px;
   margin-left: 3px;
 }
-.breadcrumb-bar .breadcrumb-container .breadcrumb-current .breadcrumb-current-content[data-v-1c9bc79b] {
+.breadcrumb-bar .breadcrumb-container .breadcrumb-current .breadcrumb-current-content[data-v-fa7a116f] {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -9479,13 +9479,13 @@ to {
   border-radius: 8px;
   border-left: 3px solid #6c757d;
 }
-.breadcrumb-bar .breadcrumb-container .breadcrumb-current .inquiry-count[data-v-1c9bc79b] {
+.breadcrumb-bar .breadcrumb-container .breadcrumb-current .inquiry-count[data-v-fa7a116f] {
   font-weight: 400;
   font-size: 12px;
   opacity: 0.9;
   margin-left: 6px;
 }
-.breadcrumb-bar .breadcrumb-container .breadcrumb-icon[data-v-1c9bc79b] {
+.breadcrumb-bar .breadcrumb-container .breadcrumb-icon[data-v-fa7a116f] {
   width: 16px;
   height: 16px;
   display: flex;
@@ -9494,28 +9494,28 @@ to {
 }
 
 /* White Separation Line */
-.separation-line[data-v-1c9bc79b] {
+.separation-line[data-v-fa7a116f] {
   height: 1px;
   background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
   margin: 0;
 }
 
 /* Archive Header */
-.archive-header[data-v-1c9bc79b] {
+.archive-header[data-v-fa7a116f] {
   padding: 30px 20px 20px;
   background: white;
   border-radius: 0 0 20px 20px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   margin-bottom: 30px;
 }
-.archive-header .header-left[data-v-1c9bc79b] {
+.archive-header .header-left[data-v-fa7a116f] {
   display: flex;
   align-items: center;
   gap: 20px;
   max-width: 1600px;
   margin: 0 auto;
 }
-.archive-header .archive-icon-badge[data-v-1c9bc79b] {
+.archive-header .archive-icon-badge[data-v-fa7a116f] {
   width: 60px;
   height: 60px;
   background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
@@ -9525,32 +9525,32 @@ to {
   justify-content: center;
   box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3);
 }
-.archive-header .archive-icon-badge .archive-icon[data-v-1c9bc79b] {
+.archive-header .archive-icon-badge .archive-icon[data-v-fa7a116f] {
   width: 30px;
   height: 30px;
   color: white;
 }
-.archive-header .archive-title-section[data-v-1c9bc79b] {
+.archive-header .archive-title-section[data-v-fa7a116f] {
   flex: 1;
 }
-.archive-header .archive-title-section .archive-title[data-v-1c9bc79b] {
+.archive-header .archive-title-section .archive-title[data-v-fa7a116f] {
   font-size: 28px;
   font-weight: 700;
   margin: 0;
   color: #2c3e50;
   line-height: 1.2;
 }
-.archive-header .archive-title-section .archive-subtitle[data-v-1c9bc79b] {
+.archive-header .archive-title-section .archive-subtitle[data-v-fa7a116f] {
   margin-top: 10px;
 }
-.archive-header .archive-title-section .archive-subtitle p[data-v-1c9bc79b] {
+.archive-header .archive-title-section .archive-subtitle p[data-v-fa7a116f] {
   color: #5d6d7e;
   font-size: 16px;
   line-height: 1.4;
   max-width: 800px;
   margin: 0 0 10px 0;
 }
-.archive-header .archive-title-section .archive-subtitle .archive-count-badge[data-v-1c9bc79b] {
+.archive-header .archive-title-section .archive-subtitle .archive-count-badge[data-v-fa7a116f] {
   background: linear-gradient(135deg, #6c757d, #495057);
   color: white;
   padding: 6px 12px;
@@ -9561,37 +9561,37 @@ to {
 }
 
 /* Loading State */
-.loading-state[data-v-1c9bc79b] {
+.loading-state[data-v-fa7a116f] {
   text-align: center;
   padding: 60px 20px;
 }
-.loading-state .spinner[data-v-1c9bc79b] {
+.loading-state .spinner[data-v-fa7a116f] {
   width: 40px;
   height: 40px;
   border: 3px solid #e0e6ed;
   border-top-color: #6c757d;
   border-radius: 50%;
   margin: 0 auto 20px;
-  animation: spin-1c9bc79b 1s linear infinite;
+  animation: spin-fa7a116f 1s linear infinite;
 }
-.loading-state p[data-v-1c9bc79b] {
+.loading-state p[data-v-fa7a116f] {
   color: #5d6d7e;
   font-size: 16px;
 }
-@keyframes spin-1c9bc79b {
+@keyframes spin-fa7a116f {
 to {
     transform: rotate(360deg);
 }
 }
 /* Content Area */
-.content-area[data-v-1c9bc79b] {
+.content-area[data-v-fa7a116f] {
   max-width: 1600px;
   margin: 0 auto;
   padding: 0 20px 40px;
 }
 
 /* Empty State */
-.empty-state[data-v-1c9bc79b] {
+.empty-state[data-v-fa7a116f] {
   text-align: center;
   padding: 80px 20px;
   background: white;
@@ -9599,7 +9599,7 @@ to {
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
   border: 2px dashed #dee2e6;
 }
-.empty-state .empty-icon[data-v-1c9bc79b] {
+.empty-state .empty-icon[data-v-fa7a116f] {
   width: 80px;
   height: 80px;
   background: #f8f9fa;
@@ -9610,16 +9610,16 @@ to {
   margin: 0 auto 25px;
   color: #6c757d;
 }
-.empty-state .empty-icon[data-v-1c9bc79b] svg {
+.empty-state .empty-icon[data-v-fa7a116f] svg {
   width: 40px;
   height: 40px;
 }
-.empty-state h3[data-v-1c9bc79b] {
+.empty-state h3[data-v-fa7a116f] {
   font-size: 24px;
   color: #2c3e50;
   margin: 0 0 15px 0;
 }
-.empty-state p[data-v-1c9bc79b] {
+.empty-state p[data-v-fa7a116f] {
   color: #7f8c8d;
   font-size: 16px;
   margin-bottom: 30px;
@@ -9629,7 +9629,7 @@ to {
 }
 
 /* Archived Groups Grid */
-.archived-groups-grid[data-v-1c9bc79b] {
+.archived-groups-grid[data-v-fa7a116f] {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 25px;
@@ -9637,21 +9637,21 @@ to {
 }
 
 /* Container for vignette + menu */
-.group-vignette-wrapper[data-v-1c9bc79b] {
+.group-vignette-wrapper[data-v-fa7a116f] {
   position: relative;
   margin-bottom: 0px;
 }
-.vignette-container[data-v-1c9bc79b] {
+.vignette-container[data-v-fa7a116f] {
   position: relative;
   margin-bottom: 60px;
 }
-.vignette-container:hover .owner-menu-under[data-v-1c9bc79b] {
+.vignette-container:hover .owner-menu-under[data-v-fa7a116f] {
   opacity: 1;
   visibility: visible;
   transform: translateY(0);
   pointer-events: auto;
 }
-.group-vignette[data-v-1c9bc79b] {
+.group-vignette[data-v-fa7a116f] {
   background: white;
   border-radius: 15px;
   overflow: hidden;
@@ -9665,34 +9665,34 @@ to {
   flex-direction: column;
   height: 100%;
 }
-.group-vignette.archived[data-v-1c9bc79b] {
+.group-vignette.archived[data-v-fa7a116f] {
   border-left: 4px solid #6c757d;
   opacity: 0.9;
 }
-.group-vignette.archived[data-v-1c9bc79b]:hover {
+.group-vignette.archived[data-v-fa7a116f]:hover {
   opacity: 1;
   border-color: #495057;
 }
-.group-vignette[data-v-1c9bc79b]:hover {
+.group-vignette[data-v-fa7a116f]:hover {
   transform: translateY(-5px);
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
 }
-.group-vignette:hover .vignette-cover img[data-v-1c9bc79b] {
+.group-vignette:hover .vignette-cover img[data-v-fa7a116f] {
   transform: scale(1.05);
 }
-.group-vignette .vignette-cover[data-v-1c9bc79b] {
+.group-vignette .vignette-cover[data-v-fa7a116f] {
   height: 120px;
   overflow: hidden;
   position: relative;
 }
-.group-vignette .vignette-cover img[data-v-1c9bc79b] {
+.group-vignette .vignette-cover img[data-v-fa7a116f] {
   width: 100%;
   height: 100%;
   object-fit: cover;
   transition: transform 0.5s ease;
   filter: grayscale(30%);
 }
-.group-vignette .vignette-cover .vignette-cover-overlay[data-v-1c9bc79b] {
+.group-vignette .vignette-cover .vignette-cover-overlay[data-v-fa7a116f] {
   position: absolute;
   bottom: 0;
   left: 0;
@@ -9700,7 +9700,7 @@ to {
   height: 50px;
   background: linear-gradient(to top, rgba(0, 0, 0, 0.3), transparent);
 }
-.group-vignette .vignette-cover .archived-overlay[data-v-1c9bc79b] {
+.group-vignette .vignette-cover .archived-overlay[data-v-fa7a116f] {
   position: absolute;
   top: 10px;
   right: 10px;
@@ -9714,17 +9714,17 @@ to {
   align-items: center;
   gap: 4px;
 }
-.group-vignette .vignette-cover .archived-overlay[data-v-1c9bc79b] svg {
+.group-vignette .vignette-cover .archived-overlay[data-v-fa7a116f] svg {
   width: 12px;
   height: 12px;
 }
-.group-vignette .vignette-content[data-v-1c9bc79b] {
+.group-vignette .vignette-content[data-v-fa7a116f] {
   padding: 16px 20px;
   flex: 1;
   display: flex;
   flex-direction: column;
 }
-.group-vignette .vignette-content .vignette-icon[data-v-1c9bc79b] {
+.group-vignette .vignette-content .vignette-icon[data-v-fa7a116f] {
   width: 36px;
   height: 36px;
   background: linear-gradient(135deg, #6c757d, #495057);
@@ -9737,17 +9737,17 @@ to {
   box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
   margin-bottom: 10px;
 }
-.group-vignette .vignette-content .vignette-icon.archived[data-v-1c9bc79b] {
+.group-vignette .vignette-content .vignette-icon.archived[data-v-fa7a116f] {
   background: linear-gradient(135deg, #adb5bd, #6c757d);
 }
-.group-vignette .vignette-content h4[data-v-1c9bc79b] {
+.group-vignette .vignette-content h4[data-v-fa7a116f] {
   font-size: 16px;
   font-weight: 600;
   margin: 0 0 8px 0;
   color: #2c3e50;
   line-height: 1.3;
 }
-.group-vignette .vignette-content .vignette-description[data-v-1c9bc79b] {
+.group-vignette .vignette-content .vignette-description[data-v-fa7a116f] {
   color: #7f8c8d;
   font-size: 13px;
   line-height: 1.3;
@@ -9758,44 +9758,44 @@ to {
   overflow: hidden;
   flex: 0 0 auto;
 }
-.group-vignette .vignette-content .vignette-stats[data-v-1c9bc79b] {
+.group-vignette .vignette-content .vignette-stats[data-v-fa7a116f] {
   display: flex;
   gap: 15px;
   margin-bottom: 15px;
 }
-.group-vignette .vignette-content .vignette-stats .stat-item[data-v-1c9bc79b] {
+.group-vignette .vignette-content .vignette-stats .stat-item[data-v-fa7a116f] {
   display: flex;
   align-items: center;
   gap: 5px;
   font-size: 13px;
 }
-.group-vignette .vignette-content .vignette-stats .stat-item .stat-icon[data-v-1c9bc79b] {
+.group-vignette .vignette-content .vignette-stats .stat-item .stat-icon[data-v-fa7a116f] {
   opacity: 0.8;
 }
-.group-vignette .vignette-content .vignette-stats .stat-item .stat-value[data-v-1c9bc79b] {
+.group-vignette .vignette-content .vignette-stats .stat-item .stat-value[data-v-fa7a116f] {
   font-weight: 600;
   color: #2c3e50;
 }
-.group-vignette .vignette-content .vignette-footer[data-v-1c9bc79b] {
+.group-vignette .vignette-content .vignette-footer[data-v-fa7a116f] {
   margin-top: auto;
 }
-.group-vignette .vignette-content .vignette-footer .archive-date[data-v-1c9bc79b] {
+.group-vignette .vignette-content .vignette-footer .archive-date[data-v-fa7a116f] {
   display: flex;
   flex-direction: column;
   gap: 4px;
   font-size: 12px;
 }
-.group-vignette .vignette-content .vignette-footer .archive-date .date-label[data-v-1c9bc79b] {
+.group-vignette .vignette-content .vignette-footer .archive-date .date-label[data-v-fa7a116f] {
   color: #6c757d;
   font-weight: 500;
 }
-.group-vignette .vignette-content .vignette-footer .archive-date .date-value[data-v-1c9bc79b] {
+.group-vignette .vignette-content .vignette-footer .archive-date .date-value[data-v-fa7a116f] {
   color: #495057;
   font-weight: 600;
 }
 
 /* Owner menu - appears under the vignette */
-.owner-menu-under[data-v-1c9bc79b] {
+.owner-menu-under[data-v-fa7a116f] {
   position: absolute;
   top: calc(100% + 5px);
   left: 0;
@@ -9811,18 +9811,18 @@ to {
   transform: translateY(-10px);
   transition: all 0.3s ease;
 }
-.group-vignette-wrapper:hover .owner-menu-under[data-v-1c9bc79b] {
+.group-vignette-wrapper:hover .owner-menu-under[data-v-fa7a116f] {
   opacity: 1;
   visibility: visible;
   transform: translateY(0);
 }
-.owner-menu-under .owner-menu-content[data-v-1c9bc79b] {
+.owner-menu-under .owner-menu-content[data-v-fa7a116f] {
   display: flex;
   padding: 8px;
   gap: 6px;
   background: #f8fafc;
 }
-.owner-menu-under .owner-menu-content .menu-item[data-v-1c9bc79b] {
+.owner-menu-under .owner-menu-content .menu-item[data-v-fa7a116f] {
   flex: 1;
   justify-content: center;
   padding: 8px 6px;
@@ -9837,80 +9837,80 @@ to {
   white-space: nowrap;
   cursor: pointer;
 }
-.owner-menu-under .owner-menu-content .menu-item[data-v-1c9bc79b]:hover {
+.owner-menu-under .owner-menu-content .menu-item[data-v-fa7a116f]:hover {
   background: #f1f5f9;
   color: #475569;
   border-color: #cbd5e1;
   transform: translateY(-1px);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
-.owner-menu-under .owner-menu-content .menu-item[data-v-1c9bc79b]:active {
+.owner-menu-under .owner-menu-content .menu-item[data-v-fa7a116f]:active {
   transform: translateY(0);
 }
-.owner-menu-under .owner-menu-content .menu-item[data-v-1c9bc79b] svg {
+.owner-menu-under .owner-menu-content .menu-item[data-v-fa7a116f] svg {
   margin-right: 6px;
   fill: #64748b;
 }
-.owner-menu-under .owner-menu-content .menu-item.restore[data-v-1c9bc79b]:hover {
+.owner-menu-under .owner-menu-content .menu-item.restore[data-v-fa7a116f]:hover {
   color: #10b981;
   border-color: #a7f3d0;
 }
-.owner-menu-under .owner-menu-content .menu-item.restore[data-v-1c9bc79b]:hover svg {
+.owner-menu-under .owner-menu-content .menu-item.restore[data-v-fa7a116f]:hover svg {
   fill: #10b981;
 }
-.owner-menu-under .owner-menu-content .menu-item.delete[data-v-1c9bc79b]:hover {
+.owner-menu-under .owner-menu-content .menu-item.delete[data-v-fa7a116f]:hover {
   color: #ef4444;
   border-color: #fca5a5;
 }
-.owner-menu-under .owner-menu-content .menu-item.delete[data-v-1c9bc79b]:hover svg {
+.owner-menu-under .owner-menu-content .menu-item.delete[data-v-fa7a116f]:hover svg {
   fill: #ef4444;
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
-.breadcrumb-bar[data-v-1c9bc79b] {
+.breadcrumb-bar[data-v-fa7a116f] {
     padding: 12px 0;
 }
-.breadcrumb-bar .breadcrumb-container[data-v-1c9bc79b] {
+.breadcrumb-bar .breadcrumb-container[data-v-fa7a116f] {
     padding: 0 15px;
     gap: 6px;
 }
-.breadcrumb-bar .breadcrumb-container .breadcrumb-home[data-v-1c9bc79b] {
+.breadcrumb-bar .breadcrumb-container .breadcrumb-home[data-v-fa7a116f] {
     font-size: 13px;
     padding: 6px 8px;
 }
-.breadcrumb-bar .breadcrumb-container .breadcrumb-current[data-v-1c9bc79b] {
+.breadcrumb-bar .breadcrumb-container .breadcrumb-current[data-v-fa7a116f] {
     font-size: 14px;
 }
-.breadcrumb-bar .breadcrumb-container .breadcrumb-current .breadcrumb-current-content[data-v-1c9bc79b] {
+.breadcrumb-bar .breadcrumb-container .breadcrumb-current .breadcrumb-current-content[data-v-fa7a116f] {
     padding: 6px 10px;
 }
-.archive-header[data-v-1c9bc79b] {
+.archive-header[data-v-fa7a116f] {
     padding: 25px 15px 15px;
 }
-.archive-header .archive-icon-badge[data-v-1c9bc79b] {
+.archive-header .archive-icon-badge[data-v-fa7a116f] {
     width: 50px;
     height: 50px;
     border-radius: 12px;
 }
-.archive-header .archive-icon-badge .archive-icon[data-v-1c9bc79b] {
+.archive-header .archive-icon-badge .archive-icon[data-v-fa7a116f] {
     width: 25px;
     height: 25px;
 }
-.archive-header .archive-title[data-v-1c9bc79b] {
+.archive-header .archive-title[data-v-fa7a116f] {
     font-size: 22px;
 }
-.content-area[data-v-1c9bc79b] {
+.content-area[data-v-fa7a116f] {
     padding: 0 15px 30px;
 }
-.archived-groups-grid[data-v-1c9bc79b] {
+.archived-groups-grid[data-v-fa7a116f] {
     grid-template-columns: 1fr;
     gap: 20px;
 }
-.owner-menu-under .owner-menu-content[data-v-1c9bc79b] {
+.owner-menu-under .owner-menu-content[data-v-fa7a116f] {
     flex-direction: column;
 }
-.owner-menu-under .owner-menu-content .menu-item[data-v-1c9bc79b] {
+.owner-menu-under .owner-menu-content .menu-item[data-v-fa7a116f] {
     width: 100%;
     justify-content: flex-start;
     padding: 10px 12px;
@@ -11187,49 +11187,49 @@ to {
     margin-right: 8px;
 }
 }
-.modal-content[data-v-ea99397a] {
+.modal-content[data-v-ed7220fd] {
     padding: 20px;
     display: flex;
     flex-direction: column;
     gap: 20px;
     height: 100%;
 }
-.modal-header[data-v-ea99397a] {
+.modal-header[data-v-ed7220fd] {
     text-align: center;
 }
-.modal-header h2[data-v-ea99397a] {
+.modal-header h2[data-v-ed7220fd] {
     margin: 0 0 8px 0;
     font-size: 24px;
     font-weight: 600;
 }
-.modal-description[data-v-ea99397a] {
+.modal-description[data-v-ed7220fd] {
     margin: 0;
     color: var(--color-text-lighter);
     font-size: 14px;
 }
-.modal-body[data-v-ea99397a] {
+.modal-body[data-v-ed7220fd] {
     display: flex;
     flex-direction: column;
     gap: 24px;
     flex: 1;
     overflow-y: auto;
 }
-.resource-type-section[data-v-ea99397a] {
+.resource-type-section[data-v-ed7220fd] {
     display: flex;
     flex-direction: column;
     gap: 12px;
 }
-.section-title[data-v-ea99397a] {
+.section-title[data-v-ed7220fd] {
     margin: 0;
     font-size: 16px;
     font-weight: 600;
 }
-.resource-type-grid[data-v-ea99397a] {
+.resource-type-grid[data-v-ed7220fd] {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 12px;
 }
-.resource-type-card[data-v-ea99397a] {
+.resource-type-card[data-v-ed7220fd] {
     display: flex;
     align-items: center;
     gap: 12px;
@@ -11239,112 +11239,112 @@ to {
     cursor: pointer;
     transition: all 0.2s ease;
 }
-.resource-type-card[data-v-ea99397a]:hover {
+.resource-type-card[data-v-ed7220fd]:hover {
     border-color: var(--color-primary);
     background-color: var(--color-background-hover);
 }
-.resource-type-card.active[data-v-ea99397a] {
+.resource-type-card.active[data-v-ed7220fd] {
     border-color: var(--color-primary);
     background-color: var(--color-primary-light);
 }
-.type-icon[data-v-ea99397a] {
+.type-icon[data-v-ed7220fd] {
     color: var(--color-primary);
     flex-shrink: 0;
 }
-.type-info[data-v-ea99397a] {
+.type-info[data-v-ed7220fd] {
     flex: 1;
 }
-.type-name[data-v-ea99397a] {
+.type-name[data-v-ed7220fd] {
     margin: 0 0 4px 0;
     font-size: 14px;
     font-weight: 600;
 }
-.type-description[data-v-ea99397a] {
+.type-description[data-v-ed7220fd] {
     margin: 0;
     font-size: 12px;
     color: var(--color-text-lighter);
     line-height: 1.4;
 }
-.form-section[data-v-ea99397a] {
+.form-section[data-v-ed7220fd] {
     display: flex;
     flex-direction: column;
     gap: 16px;
 }
-.section-header[data-v-ea99397a] {
+.section-header[data-v-ed7220fd] {
     display: flex;
     align-items: center;
     gap: 8px;
 }
-.section-header h3[data-v-ea99397a] {
+.section-header h3[data-v-ed7220fd] {
     margin: 0;
     font-size: 16px;
     font-weight: 600;
 }
-.section-icon[data-v-ea99397a] {
+.section-icon[data-v-ed7220fd] {
     color: var(--color-primary);
 }
-.select-wrapper[data-v-ea99397a] {
+.select-wrapper[data-v-ed7220fd] {
     display: flex;
     flex-direction: column;
     gap: 8px;
 }
-.select-label[data-v-ea99397a] {
+.select-label[data-v-ed7220fd] {
     font-size: 14px;
     font-weight: 500;
 }
-.select-hint[data-v-ea99397a] {
+.select-hint[data-v-ed7220fd] {
     margin: 0;
     font-size: 12px;
     color: var(--color-text-lighter);
 }
-.separator[data-v-ea99397a] {
+.separator[data-v-ed7220fd] {
     display: flex;
     align-items: center;
     text-align: center;
     margin: 16px 0;
 }
-.separator[data-v-ea99397a]::before,
-.separator[data-v-ea99397a]::after {
+.separator[data-v-ed7220fd]::before,
+.separator[data-v-ed7220fd]::after {
     content: '';
     flex: 1;
     border-bottom: 1px solid var(--color-border);
 }
-.separator-text[data-v-ea99397a] {
+.separator-text[data-v-ed7220fd] {
     padding: 0 16px;
     font-size: 12px;
     font-weight: 500;
     color: var(--color-text-lighter);
     text-transform: uppercase;
 }
-.create-resource-fields[data-v-ea99397a] {
+.create-resource-fields[data-v-ed7220fd] {
     display: flex;
     flex-direction: column;
     gap: 16px;
 }
-.file-upload-section[data-v-ea99397a] {
+.file-upload-section[data-v-ed7220fd] {
     display: flex;
     flex-direction: column;
     gap: 16px;
 }
-.file-select-button[data-v-ea99397a] {
+.file-select-button[data-v-ed7220fd] {
     align-self: flex-start;
 }
-.selected-files[data-v-ea99397a] {
+.selected-files[data-v-ed7220fd] {
     display: flex;
     flex-direction: column;
     gap: 8px;
 }
-.files-title[data-v-ea99397a] {
+.files-title[data-v-ed7220fd] {
     margin: 0;
     font-size: 14px;
     font-weight: 500;
 }
-.file-list[data-v-ea99397a] {
+.file-list[data-v-ed7220fd] {
     display: flex;
     flex-direction: column;
     gap: 8px;
 }
-.file-item[data-v-ea99397a] {
+.file-item[data-v-ed7220fd] {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -11353,31 +11353,31 @@ to {
     border-radius: 8px;
     background-color: var(--color-background-dark);
 }
-.file-info[data-v-ea99397a] {
+.file-info[data-v-ed7220fd] {
     display: flex;
     align-items: center;
     gap: 8px;
     flex: 1;
 }
-.file-icon[data-v-ea99397a] {
+.file-icon[data-v-ed7220fd] {
     color: var(--color-text-lighter);
     flex-shrink: 0;
 }
-.file-name[data-v-ea99397a] {
+.file-name[data-v-ed7220fd] {
     font-size: 14px;
     flex: 1;
 }
-.file-size[data-v-ea99397a] {
+.file-size[data-v-ed7220fd] {
     font-size: 12px;
     color: var(--color-text-lighter);
 }
-.form-field[data-v-ea99397a] {
+.form-field[data-v-ed7220fd] {
     width: 100%;
 }
-.info-card[data-v-ea99397a] {
+.info-card[data-v-ed7220fd] {
     margin: 0;
 }
-.loading-state[data-v-ea99397a] {
+.loading-state[data-v-ed7220fd] {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -11385,114 +11385,114 @@ to {
     justify-content: center;
     color: var(--color-text-lighter);
 }
-.loading-spinner[data-v-ea99397a] {
+.loading-spinner[data-v-ed7220fd] {
     width: 16px;
     height: 16px;
     border: 2px solid var(--color-border);
     border-top: 2px solid var(--color-primary);
     border-radius: 50%;
-    animation: spin-ea99397a 1s linear infinite;
+    animation: spin-ed7220fd 1s linear infinite;
 }
-@keyframes spin-ea99397a {
+@keyframes spin-ed7220fd {
 0% { transform: rotate(0deg);
 }
 100% { transform: rotate(360deg);
 }
 }
-.hidden[data-v-ea99397a] {
+.hidden[data-v-ed7220fd] {
       display: none;
 }
-.modal-actions[data-v-ea99397a] {
+.modal-actions[data-v-ed7220fd] {
       display: flex;
       justify-content: flex-end;
       gap: 12px;
       padding-top: 16px;
       border-top: 1px solid var(--color-border);
 }
-.cancel-button[data-v-ea99397a],
-  .submit-button[data-v-ea99397a] {
+.cancel-button[data-v-ed7220fd],
+  .submit-button[data-v-ed7220fd] {
       min-width: 100px;
 }
-.select-option[data-v-ea99397a] {
+.select-option[data-v-ed7220fd] {
       padding: 8px 12px;
 }
-.option-title[data-v-ea99397a] {
+.option-title[data-v-ed7220fd] {
       font-weight: 500;
       margin-bottom: 4px;
 }
-.option-description[data-v-ea99397a] {
+.option-description[data-v-ed7220fd] {
       font-size: 12px;
       color: var(--color-text-lighter);
 }
-.selected-option[data-v-ea99397a] {
+.selected-option[data-v-ed7220fd] {
       padding: 4px 0;
 }
-.selected-title[data-v-ea99397a] {
+.selected-title[data-v-ed7220fd] {
       font-weight: 500;
 }
-.sidebar-links[data-v-72a5091d] {
+.sidebar-links[data-v-449c1364] {
   padding: var(--default-grid-baseline);
   height: 100%;
   display: flex;
   flex-direction: column;
   gap: var(--default-grid-baseline);
 }
-.sidebar-links .sidebar-header[data-v-72a5091d] {
+.sidebar-links .sidebar-header[data-v-449c1364] {
   margin-bottom: var(--default-grid-baseline);
   border-bottom: 1px solid var(--color-border);
   padding-bottom: var(--default-grid-baseline);
 }
-.sidebar-links .sidebar-header .header-content[data-v-72a5091d] {
+.sidebar-links .sidebar-header .header-content[data-v-449c1364] {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   gap: var(--default-grid-baseline);
 }
-.sidebar-links .sidebar-header .header-content .header-text[data-v-72a5091d] {
+.sidebar-links .sidebar-header .header-content .header-text[data-v-449c1364] {
   flex-grow: 1;
 }
-.sidebar-links .sidebar-header .header-content .header-text h2[data-v-72a5091d] {
+.sidebar-links .sidebar-header .header-content .header-text h2[data-v-449c1364] {
   margin: 0;
   font-size: 1.2em;
   font-weight: 600;
   color: var(--color-text);
 }
-.sidebar-links .sidebar-header .header-content .header-text .description[data-v-72a5091d] {
+.sidebar-links .sidebar-header .header-content .header-text .description[data-v-449c1364] {
   margin: calc(var(--default-grid-baseline) / 2) 0 0 0;
   font-size: 0.9em;
   color: var(--color-text-lighter);
 }
-.sidebar-links .sidebar-header .header-content .add-resource-btn[data-v-72a5091d] {
+.sidebar-links .sidebar-header .header-content .add-resource-btn[data-v-449c1364] {
   flex-shrink: 0;
 }
-.sidebar-links .resources-list[data-v-72a5091d] {
+.sidebar-links .resources-list[data-v-449c1364] {
   flex-grow: 1;
   overflow-y: auto;
 }
-.sidebar-links .resources-list .loading-state[data-v-72a5091d],
-.sidebar-links .resources-list .empty-state[data-v-72a5091d] {
+.sidebar-links .resources-list .loading-state[data-v-449c1364],
+.sidebar-links .resources-list .empty-state[data-v-449c1364] {
   text-align: center;
   color: var(--color-text-lighter);
   padding: calc(var(--default-grid-baseline) * 3);
   font-style: italic;
 }
-.sidebar-links .resources-list .loading-state .empty-icon[data-v-72a5091d],
-.sidebar-links .resources-list .empty-state .empty-icon[data-v-72a5091d] {
+.sidebar-links .resources-list .loading-state .empty-icon[data-v-449c1364],
+.sidebar-links .resources-list .empty-state .empty-icon[data-v-449c1364] {
   margin-bottom: var(--default-grid-baseline);
   color: var(--color-border);
 }
-.sidebar-links .resources-list .loading-state .empty-description[data-v-72a5091d],
-.sidebar-links .resources-list .empty-state .empty-description[data-v-72a5091d] {
+.sidebar-links .resources-list .loading-state .empty-description[data-v-449c1364],
+.sidebar-links .resources-list .empty-state .empty-description[data-v-449c1364] {
   font-size: 0.9em;
   margin-top: calc(var(--default-grid-baseline) / 2);
   margin-bottom: var(--default-grid-baseline);
 }
-.sidebar-links .resources-list .resources-groups[data-v-72a5091d] {
+.sidebar-links .resources-list .resources-groups[data-v-449c1364] {
   display: flex;
   flex-direction: column;
   gap: var(--default-grid-baseline);
 }
-.sidebar-links .resources-list .resource-group .group-title[data-v-72a5091d] {
+.sidebar-links .resources-list .resource-group .group-title[data-v-449c1364] {
   display: flex;
   align-items: center;
   gap: calc(var(--default-grid-baseline) / 2);
@@ -11501,10 +11501,10 @@ to {
   font-weight: 600;
   color: var(--color-text);
 }
-.sidebar-links .resources-list .resource-group .group-title .group-icon[data-v-72a5091d] {
+.sidebar-links .resources-list .resource-group .group-title .group-icon[data-v-449c1364] {
   color: var(--color-primary-element);
 }
-.sidebar-links .resources-list .resource-group .group-items[data-v-72a5091d] {
+.sidebar-links .resources-list .resource-group .group-items[data-v-449c1364] {
   display: flex;
   flex-direction: column;
   gap: 1px;
@@ -13458,13 +13458,13 @@ to {
 .layout-container[data-v-759119ce] {
     padding: 1rem;
 }
-}.inquiry-group-content[data-v-c7738d8d] {
+}.inquiry-group-content[data-v-ff93a627] {
   margin-top: 2rem;
   display: flex;
   flex-direction: column;
   gap: 2rem;
 }
-.inquiry-group-page[data-v-c7738d8d] {
+.inquiry-group-page[data-v-ff93a627] {
   width: 100%;
   height: 100%;
   /* background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); */
@@ -13473,13 +13473,13 @@ to {
 }
 
 /* Breadcrumb - smaller on left */
-.breadcrumb-bar[data-v-c7738d8d] {
+.breadcrumb-bar[data-v-ff93a627] {
   background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
   padding: 15px 0;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
   border-bottom: 3px solid var(--color-primary, #2196f3);
 }
-.breadcrumb-bar .breadcrumb-container[data-v-c7738d8d] {
+.breadcrumb-bar .breadcrumb-container[data-v-ff93a627] {
   max-width: 1600px;
   margin: 0 auto;
   padding: 0 20px;
@@ -13487,7 +13487,7 @@ to {
   align-items: center;
   gap: 10px;
 }
-.breadcrumb-bar .breadcrumb-container .breadcrumb-home[data-v-c7738d8d] {
+.breadcrumb-bar .breadcrumb-container .breadcrumb-home[data-v-ff93a627] {
   color: white;
   font-weight: 600;
   font-size: 14px;
@@ -13497,19 +13497,19 @@ to {
   transition: all 0.3s ease;
   min-width: auto;
 }
-.breadcrumb-bar .breadcrumb-container .breadcrumb-home[data-v-c7738d8d]:hover {
+.breadcrumb-bar .breadcrumb-container .breadcrumb-home[data-v-ff93a627]:hover {
   background: rgba(255, 255, 255, 0.2);
 }
-.breadcrumb-bar .breadcrumb-container .breadcrumb-home .breadcrumb-label[data-v-c7738d8d] {
+.breadcrumb-bar .breadcrumb-container .breadcrumb-home .breadcrumb-label[data-v-ff93a627] {
   margin-left: 6px;
 }
-.breadcrumb-bar .breadcrumb-container .breadcrumb-separator[data-v-c7738d8d] {
+.breadcrumb-bar .breadcrumb-container .breadcrumb-separator[data-v-ff93a627] {
   color: rgba(255, 255, 255, 0.6);
   margin: 0 3px;
   font-weight: 300;
   font-size: 16px;
 }
-.breadcrumb-bar .breadcrumb-container .breadcrumb-item[data-v-c7738d8d] {
+.breadcrumb-bar .breadcrumb-container .breadcrumb-item[data-v-ff93a627] {
   color: rgba(255, 255, 255, 0.9);
   font-weight: 500;
   font-size: 14px;
@@ -13519,21 +13519,21 @@ to {
   transition: all 0.3s ease;
   min-width: auto;
 }
-.breadcrumb-bar .breadcrumb-container .breadcrumb-item[data-v-c7738d8d]:hover {
+.breadcrumb-bar .breadcrumb-container .breadcrumb-item[data-v-ff93a627]:hover {
   background: rgba(255, 255, 255, 0.15);
 }
-.breadcrumb-bar .breadcrumb-container .breadcrumb-item .breadcrumb-item-content[data-v-c7738d8d] {
+.breadcrumb-bar .breadcrumb-container .breadcrumb-item .breadcrumb-item-content[data-v-ff93a627] {
   display: flex;
   align-items: center;
   gap: 6px;
 }
-.breadcrumb-bar .breadcrumb-container .breadcrumb-current[data-v-c7738d8d] {
+.breadcrumb-bar .breadcrumb-container .breadcrumb-current[data-v-ff93a627] {
   color: white;
   font-weight: 700;
   font-size: 16px;
   margin-left: 3px;
 }
-.breadcrumb-bar .breadcrumb-container .breadcrumb-current .breadcrumb-current-content[data-v-c7738d8d] {
+.breadcrumb-bar .breadcrumb-container .breadcrumb-current .breadcrumb-current-content[data-v-ff93a627] {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -13542,13 +13542,13 @@ to {
   border-radius: 8px;
   border-left: 3px solid var(--color-primary, #2196f3);
 }
-.breadcrumb-bar .breadcrumb-container .breadcrumb-current .inquiry-count[data-v-c7738d8d] {
+.breadcrumb-bar .breadcrumb-container .breadcrumb-current .inquiry-count[data-v-ff93a627] {
   font-weight: 400;
   font-size: 12px;
   opacity: 0.9;
   margin-left: 6px;
 }
-.breadcrumb-bar .breadcrumb-container .breadcrumb-icon[data-v-c7738d8d] {
+.breadcrumb-bar .breadcrumb-container .breadcrumb-icon[data-v-ff93a627] {
   width: 16px;
   height: 16px;
   display: flex;
@@ -13557,28 +13557,28 @@ to {
 }
 
 /* White Separation Line */
-.separation-line[data-v-c7738d8d] {
+.separation-line[data-v-ff93a627] {
   height: 1px;
   background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
   margin: 0;
 }
 
 /* Group Header */
-.group-header[data-v-c7738d8d] {
+.group-header[data-v-ff93a627] {
   padding: 30px 20px 20px;
   background: white;
   border-radius: 0 0 20px 20px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   margin-bottom: 30px;
 }
-.group-header .header-left[data-v-c7738d8d] {
+.group-header .header-left[data-v-ff93a627] {
   display: flex;
   align-items: center;
   gap: 20px;
   max-width: 1600px;
   margin: 0 auto;
 }
-.group-header .group-icon-badge[data-v-c7738d8d] {
+.group-header .group-icon-badge[data-v-ff93a627] {
   width: 60px;
   height: 60px;
   /* background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); */
@@ -13589,33 +13589,33 @@ to {
   justify-content: center;
   box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
 }
-.group-header .group-icon-badge .group-icon[data-v-c7738d8d] {
+.group-header .group-icon-badge .group-icon[data-v-ff93a627] {
   width: 30px;
   height: 30px;
   color: white;
 }
-.group-header .group-title-section[data-v-c7738d8d] {
+.group-header .group-title-section[data-v-ff93a627] {
   flex: 1;
 }
-.group-header .group-title-section .group-title[data-v-c7738d8d] {
+.group-header .group-title-section .group-title[data-v-ff93a627] {
   font-size: 28px;
   font-weight: 700;
   margin: 0;
   color: #2c3e50;
   line-height: 1.2;
 }
-.group-header .group-title-section .group-subtitle[data-v-c7738d8d] {
+.group-header .group-title-section .group-subtitle[data-v-ff93a627] {
   margin-top: 10px;
 }
-.group-header .group-title-section .group-subtitle p[data-v-c7738d8d] {
+.group-header .group-title-section .group-subtitle p[data-v-ff93a627] {
   color: #5d6d7e;
   font-size: 16px;
   line-height: 1.4;
   max-width: 800px;
   margin: 0 0 10px 0;
 }
-.group-header .group-title-section .group-subtitle .inquiry-count-badge[data-v-c7738d8d],
-.group-header .group-title-section .group-subtitle .groups-count-badge[data-v-c7738d8d] {
+.group-header .group-title-section .group-subtitle .inquiry-count-badge[data-v-ff93a627],
+.group-header .group-title-section .group-subtitle .groups-count-badge[data-v-ff93a627] {
   /* background: linear-gradient(135deg, #00b09b, #96c93d); */
   background: linear-gradient(135deg, #6C8EB2 0%, #4A6F8F 100%);
   color: white;
@@ -13625,56 +13625,56 @@ to {
   font-size: 13px;
   box-shadow: 0 2px 8px rgba(0, 176, 155, 0.3);
 }
-.group-header .group-title-section .group-subtitle .groups-count-badge[data-v-c7738d8d] {
+.group-header .group-title-section .group-subtitle .groups-count-badge[data-v-ff93a627] {
   /* background: linear-gradient(135deg, #667eea, #764ba2); */
   background: linear-gradient(135deg, #6C8EB2 0%, #4A6F8F 100%);
 }
 
 /* Loading State */
-.loading-state[data-v-c7738d8d] {
+.loading-state[data-v-ff93a627] {
   text-align: center;
   padding: 60px 20px;
 }
-.loading-state .spinner[data-v-c7738d8d] {
+.loading-state .spinner[data-v-ff93a627] {
   width: 40px;
   height: 40px;
   border: 3px solid #e0e6ed;
   border-top-color: #667eea;
   border-radius: 50%;
   margin: 0 auto 20px;
-  animation: spin-c7738d8d 1s linear infinite;
+  animation: spin-ff93a627 1s linear infinite;
 }
-.loading-state p[data-v-c7738d8d] {
+.loading-state p[data-v-ff93a627] {
   color: #5d6d7e;
   font-size: 16px;
 }
-@keyframes spin-c7738d8d {
+@keyframes spin-ff93a627 {
 to {
     transform: rotate(360deg);
 }
 }
 /* Content Area */
-.content-area[data-v-c7738d8d] {
+.content-area[data-v-ff93a627] {
   max-width: 1600px;
   margin: 0 auto;
   padding: 0 20px 40px;
 }
 
 /* Section Header */
-.section-header[data-v-c7738d8d] {
+.section-header[data-v-ff93a627] {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 25px;
 }
-.section-header h3[data-v-c7738d8d] {
+.section-header h3[data-v-ff93a627] {
   font-size: 24px;
   font-weight: 600;
   /* color: #2c3e50; */
   color: white;
   margin: 0;
 }
-.section-header .section-actions .create-button[data-v-c7738d8d] {
+.section-header .section-actions .create-button[data-v-ff93a627] {
   background: linear-gradient(135deg, #6C8EB2 0%, #4A6F8F 100%);
   color: white;
   font-weight: 600;
@@ -13685,13 +13685,13 @@ to {
   cursor: pointer;
   transition: all 0.3s ease;
 }
-.section-header .section-actions .create-button[data-v-c7738d8d]:hover {
+.section-header .section-actions .create-button[data-v-ff93a627]:hover {
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(0, 176, 155, 0.4);
 }
 
 /* Groups Grid */
-.groups-grid[data-v-c7738d8d] {
+.groups-grid[data-v-ff93a627] {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 25px;
@@ -13699,21 +13699,21 @@ to {
 }
 
 /* Container for vignette + menu */
-.group-vignette-wrapper[data-v-c7738d8d] {
+.group-vignette-wrapper[data-v-ff93a627] {
   position: relative;
   margin-bottom: 0px;
 }
-.vignette-container[data-v-c7738d8d] {
+.vignette-container[data-v-ff93a627] {
   position: relative;
   margin-bottom: 60px; /* Space for the menu */
 }
-.vignette-container:hover .owner-menu-under[data-v-c7738d8d] {
+.vignette-container:hover .owner-menu-under[data-v-ff93a627] {
   opacity: 1;
   visibility: visible;
   transform: translateY(0);
   pointer-events: auto; /* Enable clicks on menu */
 }
-.group-vignette[data-v-c7738d8d] {
+.group-vignette[data-v-ff93a627] {
   background: white;
   border-radius: 15px;
   overflow: hidden;
@@ -13727,26 +13727,26 @@ to {
   flex-direction: column;
   height: 100%;
 }
-.group-vignette[data-v-c7738d8d]:hover {
+.group-vignette[data-v-ff93a627]:hover {
   transform: translateY(-5px);
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
   border-color: var(--color-primary, #2196f3);
 }
-.group-vignette:hover .vignette-cover img[data-v-c7738d8d] {
+.group-vignette:hover .vignette-cover img[data-v-ff93a627] {
   transform: scale(1.05);
 }
-.group-vignette .vignette-cover[data-v-c7738d8d] {
+.group-vignette .vignette-cover[data-v-ff93a627] {
   height: 120px;
   overflow: hidden;
   position: relative;
 }
-.group-vignette .vignette-cover img[data-v-c7738d8d] {
+.group-vignette .vignette-cover img[data-v-ff93a627] {
   width: 100%;
   height: 100%;
   object-fit: cover;
   transition: transform 0.5s ease;
 }
-.group-vignette .vignette-cover .vignette-cover-overlay[data-v-c7738d8d] {
+.group-vignette .vignette-cover .vignette-cover-overlay[data-v-ff93a627] {
   position: absolute;
   bottom: 0;
   left: 0;
@@ -13754,13 +13754,13 @@ to {
   height: 50px;
   background: linear-gradient(to top, rgba(0, 0, 0, 0.2), transparent);
 }
-.group-vignette .vignette-content[data-v-c7738d8d] {
+.group-vignette .vignette-content[data-v-ff93a627] {
   padding: 16px 20px;
   flex: 1;
   display: flex;
   flex-direction: column;
 }
-.group-vignette .vignette-content .vignette-icon[data-v-c7738d8d] {
+.group-vignette .vignette-content .vignette-icon[data-v-ff93a627] {
   width: 36px;
   height: 36px;
   /*   background: linear-gradient(135deg, #667eea, #764ba2); */
@@ -13774,14 +13774,14 @@ to {
   box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
   margin-bottom: 10px;
 }
-.group-vignette .vignette-content h4[data-v-c7738d8d] {
+.group-vignette .vignette-content h4[data-v-ff93a627] {
   font-size: 16px;
   font-weight: 600;
   margin: 0 0 8px 0;
   color: #2c3e50;
   line-height: 1.3;
 }
-.group-vignette .vignette-content .vignette-description[data-v-c7738d8d] {
+.group-vignette .vignette-content .vignette-description[data-v-ff93a627] {
   color: #7f8c8d;
   font-size: 13px;
   line-height: 1.3;
@@ -13792,28 +13792,28 @@ to {
   overflow: hidden;
   flex: 0 0 auto;
 }
-.group-vignette .vignette-content .vignette-stats[data-v-c7738d8d] {
+.group-vignette .vignette-content .vignette-stats[data-v-ff93a627] {
   display: flex;
   gap: 15px;
   margin-bottom: 15px;
 }
-.group-vignette .vignette-content .vignette-stats .stat-item[data-v-c7738d8d] {
+.group-vignette .vignette-content .vignette-stats .stat-item[data-v-ff93a627] {
   display: flex;
   align-items: center;
   gap: 5px;
   font-size: 13px;
 }
-.group-vignette .vignette-content .vignette-stats .stat-item .stat-icon[data-v-c7738d8d] {
+.group-vignette .vignette-content .vignette-stats .stat-item .stat-icon[data-v-ff93a627] {
   opacity: 0.8;
 }
-.group-vignette .vignette-content .vignette-stats .stat-item .stat-value[data-v-c7738d8d] {
+.group-vignette .vignette-content .vignette-stats .stat-item .stat-value[data-v-ff93a627] {
   font-weight: 600;
   color: #2c3e50;
 }
-.group-vignette .vignette-content .vignette-footer[data-v-c7738d8d] {
+.group-vignette .vignette-content .vignette-footer[data-v-ff93a627] {
   margin-top: auto;
 }
-.group-vignette .vignette-content .vignette-footer .view-group-button[data-v-c7738d8d] {
+.group-vignette .vignette-content .vignette-footer .view-group-button[data-v-ff93a627] {
   width: 100%;
   justify-content: center;
   background: linear-gradient(135deg, #6C8EB2 0%, #4A6F8F 100%);
@@ -13825,13 +13825,13 @@ to {
   font-size: 12px;
   transition: all 0.3s ease;
 }
-.group-vignette .vignette-content .vignette-footer .view-group-button[data-v-c7738d8d]:hover {
+.group-vignette .vignette-content .vignette-footer .view-group-button[data-v-ff93a627]:hover {
   background: linear-gradient(135deg, #764ba2, #667eea);
   transform: translateY(-1px);
 }
 
 /* FIXED: Owner menu - appears under the vignette */
-.owner-menu-under[data-v-c7738d8d] {
+.owner-menu-under[data-v-ff93a627] {
   position: absolute;
   top: calc(100% + 5px); /* Position it right below the vignette with a small gap */
   left: 0;
@@ -13848,18 +13848,18 @@ to {
   transition: all 0.3s ease;
   /* Show when parent wrapper is hovered */
 }
-.group-vignette-wrapper:hover .owner-menu-under[data-v-c7738d8d] {
+.group-vignette-wrapper:hover .owner-menu-under[data-v-ff93a627] {
   opacity: 1;
   visibility: visible;
   transform: translateY(0);
 }
-.owner-menu-under .owner-menu-content[data-v-c7738d8d] {
+.owner-menu-under .owner-menu-content[data-v-ff93a627] {
   display: flex;
   padding: 8px;
   gap: 6px;
   background: #f8fafc;
 }
-.owner-menu-under .owner-menu-content .menu-item[data-v-c7738d8d] {
+.owner-menu-under .owner-menu-content .menu-item[data-v-ff93a627] {
   flex: 1;
   justify-content: center;
   padding: 8px 6px;
@@ -13874,83 +13874,83 @@ to {
   white-space: nowrap;
   cursor: pointer;
 }
-.owner-menu-under .owner-menu-content .menu-item[data-v-c7738d8d]:hover {
+.owner-menu-under .owner-menu-content .menu-item[data-v-ff93a627]:hover {
   background: #f1f5f9;
   color: #475569;
   border-color: #cbd5e1;
   transform: translateY(-1px);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
-.owner-menu-under .owner-menu-content .menu-item[data-v-c7738d8d]:active {
+.owner-menu-under .owner-menu-content .menu-item[data-v-ff93a627]:active {
   transform: translateY(0);
 }
-.owner-menu-under .owner-menu-content .menu-item[data-v-c7738d8d] svg {
+.owner-menu-under .owner-menu-content .menu-item[data-v-ff93a627] svg {
   margin-right: 6px;
   fill: #64748b;
 }
-.owner-menu-under .owner-menu-content .menu-item.modify[data-v-c7738d8d]:hover {
+.owner-menu-under .owner-menu-content .menu-item.modify[data-v-ff93a627]:hover {
   color: #3b82f6;
   border-color: #93c5fd;
 }
-.owner-menu-under .owner-menu-content .menu-item.modify[data-v-c7738d8d]:hover svg {
+.owner-menu-under .owner-menu-content .menu-item.modify[data-v-ff93a627]:hover svg {
   fill: #3b82f6;
 }
-.owner-menu-under .owner-menu-content .menu-item.delete[data-v-c7738d8d]:hover {
+.owner-menu-under .owner-menu-content .menu-item.delete[data-v-ff93a627]:hover {
   color: #ef4444;
   border-color: #fca5a5;
 }
-.owner-menu-under .owner-menu-content .menu-item.delete[data-v-c7738d8d]:hover svg {
+.owner-menu-under .owner-menu-content .menu-item.delete[data-v-ff93a627]:hover svg {
   fill: #ef4444;
 }
-.owner-menu-under .owner-menu-content .menu-item.archive[data-v-c7738d8d]:hover {
+.owner-menu-under .owner-menu-content .menu-item.archive[data-v-ff93a627]:hover {
   color: #10b981;
   border-color: #a7f3d0;
 }
-.owner-menu-under .owner-menu-content .menu-item.archive[data-v-c7738d8d]:hover svg {
+.owner-menu-under .owner-menu-content .menu-item.archive[data-v-ff93a627]:hover svg {
   fill: #10b981;
 }
 
 /* Empty State */
-.empty-state[data-v-c7738d8d] {
+.empty-state[data-v-ff93a627] {
   text-align: center;
   padding: 50px 20px;
   background: white;
   border-radius: 15px;
   border: 2px dashed #e0e6ed;
 }
-.empty-state .empty-icon[data-v-c7738d8d] {
+.empty-state .empty-icon[data-v-ff93a627] {
   font-size: 48px;
   margin-bottom: 20px;
   opacity: 0.5;
 }
-.empty-state h3[data-v-c7738d8d] {
+.empty-state h3[data-v-ff93a627] {
   font-size: 20px;
   /*color: #2c3e50;*/
   color: white;
   margin: 0 0 10px 0;
 }
-.empty-state p[data-v-c7738d8d] {
+.empty-state p[data-v-ff93a627] {
   color: #7f8c8d;
   margin-bottom: 25px;
   font-size: 15px;
 }
 
 /* Not Found State */
-.not-found-state[data-v-c7738d8d] {
+.not-found-state[data-v-ff93a627] {
   text-align: center;
   padding: 80px 20px;
 }
-.not-found-state .not-found-icon[data-v-c7738d8d] {
+.not-found-state .not-found-icon[data-v-ff93a627] {
   font-size: 60px;
   margin-bottom: 25px;
   opacity: 0.5;
 }
-.not-found-state h2[data-v-c7738d8d] {
+.not-found-state h2[data-v-ff93a627] {
   font-size: 28px;
   color: #2c3e50;
   margin: 0 0 15px 0;
 }
-.not-found-state p[data-v-c7738d8d] {
+.not-found-state p[data-v-ff93a627] {
   color: #7f8c8d;
   font-size: 16px;
   margin-bottom: 30px;
@@ -13960,7 +13960,7 @@ to {
 }
 
 /* Debug styles to check if owner menu is working */
-.debug-info[data-v-c7738d8d] {
+.debug-info[data-v-ff93a627] {
   position: fixed;
   top: 10px;
   right: 10px;
@@ -13974,58 +13974,58 @@ to {
 
 /* Responsive Design */
 @media (max-width: 768px) {
-.breadcrumb-bar[data-v-c7738d8d] {
+.breadcrumb-bar[data-v-ff93a627] {
     padding: 12px 0;
 }
-.breadcrumb-bar .breadcrumb-container[data-v-c7738d8d] {
+.breadcrumb-bar .breadcrumb-container[data-v-ff93a627] {
     padding: 0 15px;
     gap: 6px;
 }
-.breadcrumb-bar .breadcrumb-container .breadcrumb-home[data-v-c7738d8d],
-  .breadcrumb-bar .breadcrumb-container .breadcrumb-item[data-v-c7738d8d] {
+.breadcrumb-bar .breadcrumb-container .breadcrumb-home[data-v-ff93a627],
+  .breadcrumb-bar .breadcrumb-container .breadcrumb-item[data-v-ff93a627] {
     font-size: 13px;
     padding: 6px 8px;
 }
-.breadcrumb-bar .breadcrumb-container .breadcrumb-current[data-v-c7738d8d] {
+.breadcrumb-bar .breadcrumb-container .breadcrumb-current[data-v-ff93a627] {
     font-size: 14px;
 }
-.breadcrumb-bar .breadcrumb-container .breadcrumb-current .breadcrumb-current-content[data-v-c7738d8d] {
+.breadcrumb-bar .breadcrumb-container .breadcrumb-current .breadcrumb-current-content[data-v-ff93a627] {
     padding: 6px 10px;
 }
-.group-header[data-v-c7738d8d] {
+.group-header[data-v-ff93a627] {
     padding: 25px 15px 15px;
 }
-.group-header .group-icon-badge[data-v-c7738d8d] {
+.group-header .group-icon-badge[data-v-ff93a627] {
     width: 50px;
     height: 50px;
     border-radius: 12px;
 }
-.group-header .group-icon-badge .group-icon[data-v-c7738d8d] {
+.group-header .group-icon-badge .group-icon[data-v-ff93a627] {
     width: 25px;
     height: 25px;
 }
-.group-header .group-title[data-v-c7738d8d] {
+.group-header .group-title[data-v-ff93a627] {
     font-size: 22px;
 }
-.content-area[data-v-c7738d8d] {
+.content-area[data-v-ff93a627] {
     padding: 0 15px 30px;
 }
-.section-header[data-v-c7738d8d] {
+.section-header[data-v-ff93a627] {
     flex-direction: column;
     align-items: flex-start;
     gap: 15px;
 }
-.section-header h3[data-v-c7738d8d] {
+.section-header h3[data-v-ff93a627] {
     font-size: 20px;
 }
-.groups-grid[data-v-c7738d8d] {
+.groups-grid[data-v-ff93a627] {
     grid-template-columns: 1fr;
     gap: 20px;
 }
-.owner-menu-under .owner-menu-content[data-v-c7738d8d] {
+.owner-menu-under .owner-menu-content[data-v-ff93a627] {
     flex-direction: column;
 }
-.owner-menu-under .owner-menu-content .menu-item[data-v-c7738d8d] {
+.owner-menu-under .owner-menu-content .menu-item[data-v-ff93a627] {
     width: 100%;
     justify-content: flex-start;
     padding: 10px 12px;
@@ -14157,56 +14157,56 @@ to {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.optional-label[data-v-9239983f] {
+.optional-label[data-v-4f8976b7] {
     color: var(--color-text-maxcontrast);
     font-size: 0.75rem;
     font-weight: normal;
     font-style: italic;
     margin-left: 4px;
 }
-.checkbox-main-label[data-v-9239983f] {
+.checkbox-main-label[data-v-4f8976b7] {
     display: flex;
     align-items: center;
     gap: 8px;
     font-weight: 600;
     cursor: pointer;
 }
-.checkbox-wrapper[data-v-9239983f] {
+.checkbox-wrapper[data-v-4f8976b7] {
     display: flex;
     align-items: center;
     gap: 8px;
 }
-.standard-field[data-v-9239983f] {
+.standard-field[data-v-4f8976b7] {
     display: flex;
     flex-direction: column;
     gap: 8px;
 }
-.sidebar-tab-misc[data-v-9239983f] {
+.sidebar-tab-misc[data-v-4f8976b7] {
     padding: 12px;
     height: 100%;
 }
-.tab-content[data-v-9239983f] {
+.tab-content[data-v-4f8976b7] {
     height: 100%;
     overflow-y: auto;
 }
-.field-row[data-v-9239983f] {
+.field-row[data-v-4f8976b7] {
     display: flex;
     align-items: flex-start;
     gap: 12px;
     padding: 8px 0;
 }
-.field-label[data-v-9239983f] {
+.field-label[data-v-4f8976b7] {
     font-weight: 600;
     min-width: 120px;
     color: var(--color-text-lighter);
 }
-.field-value[data-v-9239983f] {
+.field-value[data-v-4f8976b7] {
     flex: 1;
     word-break: break-word;
 }
-.loading-state[data-v-9239983f],
-.error-state[data-v-9239983f],
-.no-data-state[data-v-9239983f] {
+.loading-state[data-v-4f8976b7],
+.error-state[data-v-4f8976b7],
+.no-data-state[data-v-4f8976b7] {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -14216,18 +14216,18 @@ to {
     color: var(--color-text-maxcontrast);
     height: 100%;
 }
-.loading-state .icon-loading[data-v-9239983f],
-.error-state .icon-error[data-v-9239983f] {
+.loading-state .icon-loading[data-v-4f8976b7],
+.error-state .icon-error[data-v-4f8976b7] {
     width: 24px;
     height: 24px;
     margin-bottom: 1rem;
 }
-.loading-state .icon-loading[data-v-9239983f] {
+.loading-state .icon-loading[data-v-4f8976b7] {
     background-image: var(--icon-loading);
-    animation: rotate-9239983f 1s linear infinite;
+    animation: rotate-4f8976b7 1s linear infinite;
 }
-.error-icon[data-v-9239983f],
-.no-data-icon[data-v-9239983f] {
+.error-icon[data-v-4f8976b7],
+.no-data-icon[data-v-4f8976b7] {
     width: 48px;
     height: 48px;
     margin-bottom: 1rem;
@@ -14235,35 +14235,35 @@ to {
 }
 
 /* Readonly styles */
-.misc-fields-list[data-v-9239983f] {
+.misc-fields-list[data-v-4f8976b7] {
     display: flex;
     flex-direction: column;
     gap: 16px;
 }
-.misc-field-item[data-v-9239983f] {
+.misc-field-item[data-v-4f8976b7] {
     border-bottom: 1px solid var(--color-border);
     padding-bottom: 16px;
 }
-.misc-field-item[data-v-9239983f]:last-child {
+.misc-field-item[data-v-4f8976b7]:last-child {
     border-bottom: none;
     padding-bottom: 0;
 }
-.field-row[data-v-9239983f] {
+.field-row[data-v-4f8976b7] {
     display: flex;
     flex-direction: column;
     gap: 6px;
 }
-.field-label[data-v-9239983f] {
+.field-label[data-v-4f8976b7] {
     font-weight: 600;
     font-size: 0.875rem;
     color: var(--color-text-lighter);
 }
-.field-value[data-v-9239983f] {
+.field-value[data-v-4f8976b7] {
     font-size: 0.875rem;
     word-break: break-word;
     line-height: 1.4;
 }
-.json-value[data-v-9239983f] {
+.json-value[data-v-4f8976b7] {
     background: var(--color-background-dark);
     padding: 8px;
     border-radius: 4px;
@@ -14277,7 +14277,7 @@ to {
 }
 
 /* Saving indicator */
-.saving-indicator[data-v-9239983f] {
+.saving-indicator[data-v-4f8976b7] {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -14288,20 +14288,20 @@ to {
     font-size: 0.875rem;
     color: var(--color-text-maxcontrast);
 }
-.icon-loading-small[data-v-9239983f] {
+.icon-loading-small[data-v-4f8976b7] {
     width: 16px;
     height: 16px;
     background-image: var(--icon-loading);
-    animation: rotate-9239983f 1s linear infinite;
+    animation: rotate-4f8976b7 1s linear infinite;
 }
 
 /* Edit mode styles */
-.edit-fields[data-v-9239983f] {
+.edit-fields[data-v-4f8976b7] {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
 }
-.edit-field-item[data-v-9239983f] {
+.edit-field-item[data-v-4f8976b7] {
     display: flex;
     flex-direction: column;
     gap: 8px;
@@ -14310,28 +14310,28 @@ to {
     border-radius: 8px;
     border: 1px solid var(--color-border);
 }
-.edit-field-label[data-v-9239983f] {
+.edit-field-label[data-v-4f8976b7] {
     font-weight: 600;
     font-size: 0.875rem;
     color: var(--color-text-lighter);
 }
-.required-asterisk[data-v-9239983f] {
+.required-asterisk[data-v-4f8976b7] {
     color: var(--color-error);
 }
-.optional-label[data-v-9239983f] {
+.optional-label[data-v-4f8976b7] {
     color: var(--color-text-maxcontrast);
     font-size: 0.75rem;
     font-weight: normal;
 }
-.field-description[data-v-9239983f] {
+.field-description[data-v-4f8976b7] {
     font-size: 0.75rem;
     color: var(--color-text-maxcontrast);
     font-style: italic;
 }
-.json-field[data-v-9239983f] {
+.json-field[data-v-4f8976b7] {
     width: 100%;
 }
-@keyframes rotate-9239983f {
+@keyframes rotate-4f8976b7 {
 from {
                                                                                                           transform: rotate(0deg);
 }
@@ -14340,56 +14340,56 @@ to {
 }
 }
 
-.optional-label[data-v-da62064d] {
+.optional-label[data-v-ad5253ea] {
     color: var(--color-text-maxcontrast);
     font-size: 0.75rem;
     font-weight: normal;
     font-style: italic;
     margin-left: 4px;
 }
-.checkbox-main-label[data-v-da62064d] {
+.checkbox-main-label[data-v-ad5253ea] {
     display: flex;
     align-items: center;
     gap: 8px;
     font-weight: 600;
     cursor: pointer;
 }
-.checkbox-wrapper[data-v-da62064d] {
+.checkbox-wrapper[data-v-ad5253ea] {
     display: flex;
     align-items: center;
     gap: 8px;
 }
-.standard-field[data-v-da62064d] {
+.standard-field[data-v-ad5253ea] {
     display: flex;
     flex-direction: column;
     gap: 8px;
 }
-.sidebar-tab-misc[data-v-da62064d] {
+.sidebar-tab-misc[data-v-ad5253ea] {
     padding: 12px;
     height: 100%;
 }
-.tab-content[data-v-da62064d] {
+.tab-content[data-v-ad5253ea] {
     height: 100%;
     overflow-y: auto;
 }
-.field-row[data-v-da62064d] {
+.field-row[data-v-ad5253ea] {
     display: flex;
     align-items: flex-start;
     gap: 12px;
     padding: 8px 0;
 }
-.field-label[data-v-da62064d] {
+.field-label[data-v-ad5253ea] {
     font-weight: 600;
     min-width: 120px;
     color: var(--color-text-lighter);
 }
-.field-value[data-v-da62064d] {
+.field-value[data-v-ad5253ea] {
     flex: 1;
     word-break: break-word;
 }
-.loading-state[data-v-da62064d],
-.error-state[data-v-da62064d],
-.no-data-state[data-v-da62064d] {
+.loading-state[data-v-ad5253ea],
+.error-state[data-v-ad5253ea],
+.no-data-state[data-v-ad5253ea] {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -14399,18 +14399,18 @@ to {
     color: var(--color-text-maxcontrast);
     height: 100%;
 }
-.loading-state .icon-loading[data-v-da62064d],
-.error-state .icon-error[data-v-da62064d] {
+.loading-state .icon-loading[data-v-ad5253ea],
+.error-state .icon-error[data-v-ad5253ea] {
     width: 24px;
     height: 24px;
     margin-bottom: 1rem;
 }
-.loading-state .icon-loading[data-v-da62064d] {
+.loading-state .icon-loading[data-v-ad5253ea] {
     background-image: var(--icon-loading);
-    animation: rotate-da62064d 1s linear infinite;
+    animation: rotate-ad5253ea 1s linear infinite;
 }
-.error-icon[data-v-da62064d],
-.no-data-icon[data-v-da62064d] {
+.error-icon[data-v-ad5253ea],
+.no-data-icon[data-v-ad5253ea] {
     width: 48px;
     height: 48px;
     margin-bottom: 1rem;
@@ -14418,35 +14418,35 @@ to {
 }
 
 /* Readonly styles */
-.misc-fields-list[data-v-da62064d] {
+.misc-fields-list[data-v-ad5253ea] {
     display: flex;
     flex-direction: column;
     gap: 16px;
 }
-.misc-field-item[data-v-da62064d] {
+.misc-field-item[data-v-ad5253ea] {
     border-bottom: 1px solid var(--color-border);
     padding-bottom: 16px;
 }
-.misc-field-item[data-v-da62064d]:last-child {
+.misc-field-item[data-v-ad5253ea]:last-child {
     border-bottom: none;
     padding-bottom: 0;
 }
-.field-row[data-v-da62064d] {
+.field-row[data-v-ad5253ea] {
     display: flex;
     flex-direction: column;
     gap: 6px;
 }
-.field-label[data-v-da62064d] {
+.field-label[data-v-ad5253ea] {
     font-weight: 600;
     font-size: 0.875rem;
     color: var(--color-text-lighter);
 }
-.field-value[data-v-da62064d] {
+.field-value[data-v-ad5253ea] {
     font-size: 0.875rem;
     word-break: break-word;
     line-height: 1.4;
 }
-.json-value[data-v-da62064d] {
+.json-value[data-v-ad5253ea] {
     background: var(--color-background-dark);
     padding: 8px;
     border-radius: 4px;
@@ -14460,7 +14460,7 @@ to {
 }
 
 /* Saving indicator */
-.saving-indicator[data-v-da62064d] {
+.saving-indicator[data-v-ad5253ea] {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -14471,20 +14471,20 @@ to {
     font-size: 0.875rem;
     color: var(--color-text-maxcontrast);
 }
-.icon-loading-small[data-v-da62064d] {
+.icon-loading-small[data-v-ad5253ea] {
     width: 16px;
     height: 16px;
     background-image: var(--icon-loading);
-    animation: rotate-da62064d 1s linear infinite;
+    animation: rotate-ad5253ea 1s linear infinite;
 }
 
 /* Edit mode styles */
-.edit-fields[data-v-da62064d] {
+.edit-fields[data-v-ad5253ea] {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
 }
-.edit-field-item[data-v-da62064d] {
+.edit-field-item[data-v-ad5253ea] {
     display: flex;
     flex-direction: column;
     gap: 8px;
@@ -14493,28 +14493,28 @@ to {
     border-radius: 8px;
     border: 1px solid var(--color-border);
 }
-.edit-field-label[data-v-da62064d] {
+.edit-field-label[data-v-ad5253ea] {
     font-weight: 600;
     font-size: 0.875rem;
     color: var(--color-text-lighter);
 }
-.required-asterisk[data-v-da62064d] {
+.required-asterisk[data-v-ad5253ea] {
     color: var(--color-error);
 }
-.optional-label[data-v-da62064d] {
+.optional-label[data-v-ad5253ea] {
     color: var(--color-text-maxcontrast);
     font-size: 0.75rem;
     font-weight: normal;
 }
-.field-description[data-v-da62064d] {
+.field-description[data-v-ad5253ea] {
     font-size: 0.75rem;
     color: var(--color-text-maxcontrast);
     font-style: italic;
 }
-.json-field[data-v-da62064d] {
+.json-field[data-v-ad5253ea] {
     width: 100%;
 }
-@keyframes rotate-da62064d {
+@keyframes rotate-ad5253ea {
 from {
                                                                                                               transform: rotate(0deg);
 }
@@ -14522,28 +14522,28 @@ to {
                                                                                                               transform: rotate(360deg);
 }
 }
-.inquiry-group-sidebar-settings[data-v-2a663e3c] {
+.inquiry-group-sidebar-settings[data-v-567e557d] {
   padding: 20px;
   max-width: 600px;
   margin: 0 auto;
 }
-.sidebar-header[data-v-2a663e3c] {
+.sidebar-header[data-v-567e557d] {
   margin-bottom: 24px;
   padding-bottom: 16px;
   border-bottom: 2px solid var(--color-border);
 }
-.sidebar-header h2[data-v-2a663e3c] {
+.sidebar-header h2[data-v-567e557d] {
   font-size: 20px;
   font-weight: 600;
   color: var(--color-main-text);
   margin-bottom: 4px;
 }
-.sidebar-header .subtitle[data-v-2a663e3c] {
+.sidebar-header .subtitle[data-v-567e557d] {
   font-size: 14px;
   color: var(--color-text-lighter);
   margin: 0 0 8px 0;
 }
-.sidebar-header .readonly-notice[data-v-2a663e3c] {
+.sidebar-header .readonly-notice[data-v-567e557d] {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -14554,13 +14554,13 @@ to {
   font-size: 13px;
   color: var(--color-warning-text);
 }
-.sidebar-header .readonly-notice svg[data-v-2a663e3c] {
+.sidebar-header .readonly-notice svg[data-v-567e557d] {
   color: var(--color-warning);
 }
-.settings-section[data-v-2a663e3c] {
+.settings-section[data-v-567e557d] {
   margin-bottom: 28px;
 }
-.settings-section .section-title[data-v-2a663e3c] {
+.settings-section .section-title[data-v-567e557d] {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -14569,10 +14569,10 @@ to {
   color: var(--color-main-text);
   margin-bottom: 16px;
 }
-.settings-section .section-title svg[data-v-2a663e3c] {
+.settings-section .section-title svg[data-v-567e557d] {
   color: var(--color-primary-element);
 }
-.cover-section .cover-preview[data-v-2a663e3c] {
+.cover-section .cover-preview[data-v-567e557d] {
   position: relative;
   width: 100%;
   height: 150px;
@@ -14580,18 +14580,18 @@ to {
   overflow: hidden;
   border: 2px solid var(--color-border);
 }
-.cover-section .cover-preview[data-v-2a663e3c]:not(.readonly) {
+.cover-section .cover-preview[data-v-567e557d]:not(.readonly) {
   cursor: pointer;
 }
-.cover-section .cover-preview:not(.readonly):hover .cover-overlay[data-v-2a663e3c] {
+.cover-section .cover-preview:not(.readonly):hover .cover-overlay[data-v-567e557d] {
   opacity: 1;
 }
-.cover-section .cover-preview .cover-image[data-v-2a663e3c] {
+.cover-section .cover-preview .cover-image[data-v-567e557d] {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
-.cover-section .cover-preview .cover-overlay[data-v-2a663e3c] {
+.cover-section .cover-preview .cover-overlay[data-v-567e557d] {
   position: absolute;
   top: 0;
   left: 0;
@@ -14605,12 +14605,12 @@ to {
   opacity: 0;
   transition: opacity 0.3s ease;
 }
-.cover-section .cover-preview .cover-overlay .change-cover-btn[data-v-2a663e3c],
-.cover-section .cover-preview .cover-overlay .remove-cover-btn[data-v-2a663e3c] {
+.cover-section .cover-preview .cover-overlay .change-cover-btn[data-v-567e557d],
+.cover-section .cover-preview .cover-overlay .remove-cover-btn[data-v-567e557d] {
   padding: 8px 16px;
   font-size: 12px;
 }
-.cover-section .cover-placeholder[data-v-2a663e3c] {
+.cover-section .cover-placeholder[data-v-567e557d] {
   width: 100%;
   height: 100px;
   border: 2px dashed var(--color-border);
@@ -14618,17 +14618,17 @@ to {
   background: var(--color-background-dark);
   transition: all 0.2s ease;
 }
-.cover-section .cover-placeholder[data-v-2a663e3c]:not(.readonly) {
+.cover-section .cover-placeholder[data-v-567e557d]:not(.readonly) {
   cursor: pointer;
 }
-.cover-section .cover-placeholder[data-v-2a663e3c]:not(.readonly):hover {
+.cover-section .cover-placeholder[data-v-567e557d]:not(.readonly):hover {
   border-color: var(--color-primary);
   background: var(--color-background-hover);
 }
-.cover-section .cover-placeholder:not(.readonly):hover .placeholder-icon[data-v-2a663e3c] {
+.cover-section .cover-placeholder:not(.readonly):hover .placeholder-icon[data-v-567e557d] {
   color: var(--color-primary);
 }
-.cover-section .cover-placeholder .placeholder-content[data-v-2a663e3c] {
+.cover-section .cover-placeholder .placeholder-content[data-v-567e557d] {
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -14636,137 +14636,137 @@ to {
   justify-content: center;
   text-align: center;
 }
-.cover-section .cover-placeholder .placeholder-content .placeholder-icon[data-v-2a663e3c] {
+.cover-section .cover-placeholder .placeholder-content .placeholder-icon[data-v-567e557d] {
   color: var(--color-text-lighter);
   margin-bottom: 12px;
   transition: color 0.2s ease;
 }
-.cover-section .cover-placeholder .placeholder-content .add-cover-btn[data-v-2a663e3c] {
+.cover-section .cover-placeholder .placeholder-content .add-cover-btn[data-v-567e557d] {
   margin-bottom: 8px;
 }
-.cover-section .cover-placeholder .placeholder-content .placeholder-text[data-v-2a663e3c] {
+.cover-section .cover-placeholder .placeholder-content .placeholder-text[data-v-567e557d] {
   font-size: 12px;
   color: var(--color-text-lighter);
   margin: 0;
 }
-.cover-section .cover-help[data-v-2a663e3c] {
+.cover-section .cover-help[data-v-567e557d] {
   font-size: 12px;
   color: var(--color-text-lighter);
   margin-top: 8px;
   margin-bottom: 0;
   font-style: italic;
 }
-.form-fields[data-v-2a663e3c] {
+.form-fields[data-v-567e557d] {
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
-[data-v-2a663e3c] .form-input {
+[data-v-567e557d] .form-input {
   width: 100%;
 }
-[data-v-2a663e3c] .form-input.full-width {
+[data-v-567e557d] .form-input.full-width {
   margin-bottom: 8px;
 }
-[data-v-2a663e3c] .form-input .input-field__input-wrapper .input-field__icon {
+[data-v-567e557d] .form-input .input-field__input-wrapper .input-field__icon {
   color: var(--color-primary-element);
 }
-[data-v-2a663e3c] .form-input .input-field__input-wrapper .input-field__input:disabled {
+[data-v-567e557d] .form-input .input-field__input-wrapper .input-field__input:disabled {
   background: var(--color-background-dark);
   cursor: not-allowed;
 }
-[data-v-2a663e3c] .form-input .input-field__input-wrapper.input-field__input-wrapper--error .input-field__icon {
+[data-v-567e557d] .form-input .input-field__input-wrapper.input-field__input-wrapper--error .input-field__icon {
   color: var(--color-error);
 }
-[data-v-2a663e3c] .form-input .input-field__input-wrapper.input-field__input-wrapper--success .input-field__icon {
+[data-v-567e557d] .form-input .input-field__input-wrapper.input-field__input-wrapper--success .input-field__icon {
   color: var(--color-success);
 }
-.form-group.full-width[data-v-2a663e3c] {
+.form-group.full-width[data-v-567e557d] {
   width: 100%;
 }
-.form-group .form-label[data-v-2a663e3c] {
+.form-group .form-label[data-v-567e557d] {
   display: block;
   font-size: 14px;
   font-weight: 500;
   color: var(--color-main-text);
   margin-bottom: 8px;
 }
-.form-group .form-textarea[data-v-2a663e3c] {
+.form-group .form-textarea[data-v-567e557d] {
   width: 100%;
 }
-.form-group .form-textarea.large[data-v-2a663e3c] {
+.form-group .form-textarea.large[data-v-567e557d] {
   min-height: 260px;
 }
-.form-group .form-textarea[data-v-2a663e3c]:disabled {
+.form-group .form-textarea[data-v-567e557d]:disabled {
   background: var(--color-background-dark);
   cursor: not-allowed;
 }
-.form-group .form-help[data-v-2a663e3c] {
+.form-group .form-help[data-v-567e557d] {
   font-size: 12px;
   color: var(--color-text-lighter);
   margin-top: 6px;
   margin-bottom: 0;
 }
-.form-group .character-count[data-v-2a663e3c] {
+.form-group .character-count[data-v-567e557d] {
   font-size: 12px;
   color: var(--color-text-lighter);
   margin-top: 6px;
   text-align: right;
 }
-.form-group .character-count .error-text[data-v-2a663e3c] {
+.form-group .character-count .error-text[data-v-567e557d] {
   color: var(--color-error);
   margin-left: 8px;
 }
-.expiration-info[data-v-2a663e3c] {
+.expiration-info[data-v-567e557d] {
   padding: 12px;
   background: var(--color-warning-light);
   border: 1px solid var(--color-warning);
   border-radius: 8px;
 }
-.expiration-info p[data-v-2a663e3c] {
+.expiration-info p[data-v-567e557d] {
   margin: 0 0 8px 0;
   font-size: 14px;
   color: var(--color-main-text);
 }
-.form-select[data-v-2a663e3c] {
+.form-select[data-v-567e557d] {
   width: 100%;
 }
-.form-select[data-v-2a663e3c] .multiselect[disabled] {
+.form-select[data-v-567e557d] .multiselect[disabled] {
   opacity: 0.5;
   cursor: not-allowed;
 }
-.form-select[data-v-2a663e3c] .multiselect[disabled] .multiselect__tags {
+.form-select[data-v-567e557d] .multiselect[disabled] .multiselect__tags {
   background: var(--color-background-dark);
 }
-.auto-save-status[data-v-2a663e3c] {
+.auto-save-status[data-v-567e557d] {
   margin-top: 32px;
   padding-top: 20px;
   border-top: 2px solid var(--color-border);
 }
-.auto-save-status .saving-indicator[data-v-2a663e3c],
-.auto-save-status .saved-indicator[data-v-2a663e3c] {
+.auto-save-status .saving-indicator[data-v-567e557d],
+.auto-save-status .saved-indicator[data-v-567e557d] {
   display: flex;
   align-items: center;
   gap: 8px;
   font-size: 14px;
 }
-.auto-save-status .saving-indicator[data-v-2a663e3c] {
+.auto-save-status .saving-indicator[data-v-567e557d] {
   color: var(--color-text-lighter);
 }
-.auto-save-status .saving-indicator .saving-spinner[data-v-2a663e3c] {
+.auto-save-status .saving-indicator .saving-spinner[data-v-567e557d] {
   width: 16px;
   height: 16px;
   border: 2px solid var(--color-border);
   border-top-color: var(--color-primary);
   border-radius: 50%;
-  animation: spin-2a663e3c 1s linear infinite;
+  animation: spin-567e557d 1s linear infinite;
 }
-.auto-save-status .saved-indicator[data-v-2a663e3c] {
+.auto-save-status .saved-indicator[data-v-567e557d] {
   color: var(--color-success);
 }
-.auto-save-status .saved-indicator svg[data-v-2a663e3c] {
+.auto-save-status .saved-indicator svg[data-v-567e557d] {
   color: var(--color-success);
 }
-.loading-overlay[data-v-2a663e3c] {
+.loading-overlay[data-v-567e557d] {
   position: fixed;
   top: 0;
   left: 0;
@@ -14778,29 +14778,29 @@ to {
   justify-content: center;
   z-index: 1000;
 }
-.loading-overlay .loading-content[data-v-2a663e3c] {
+.loading-overlay .loading-content[data-v-567e557d] {
   text-align: center;
 }
-.loading-overlay .loading-content .loading-spinner[data-v-2a663e3c] {
+.loading-overlay .loading-content .loading-spinner[data-v-567e557d] {
   width: 40px;
   height: 40px;
   border: 3px solid var(--color-border);
   border-top-color: var(--color-primary);
   border-radius: 50%;
-  animation: spin-2a663e3c 1s linear infinite;
+  animation: spin-567e557d 1s linear infinite;
   margin: 0 auto 16px;
 }
-.loading-overlay .loading-content p[data-v-2a663e3c] {
+.loading-overlay .loading-content p[data-v-567e557d] {
   font-size: 14px;
   color: var(--color-main-text);
   margin: 0;
 }
-@keyframes spin-2a663e3c {
+@keyframes spin-567e557d {
 to {
     transform: rotate(360deg);
 }
 }
-.hidden[data-v-2a663e3c] {
+.hidden[data-v-567e557d] {
   display: none;
 }/*!
  * SPDX-FileCopyrightText: 2019 Nextcloud GmbH and Nextcloud contributors
@@ -15399,7 +15399,19 @@ tr.file-picker__row td.row-name[data-v-1f96131b] {
 
 .sticky-top.sticky-left {
   z-index: 6;
-}.app-content {
+}/*
+ * SPDX-FileCopyrightText: 2022 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+.icon-agora-dark {
+    width: 32px;
+    height: 32px;
+	background-image: url('../img/agora-dark.svg');
+    background-repeat: no-repeat;
+    background-position: center;
+    filter: var(--background-invert-if-dark);
+} 
+.app-content {
   display: flex;
   flex-direction: column;
   padding: 0px 8px;
@@ -15457,11 +15469,11 @@ tr.file-picker__row td.row-name[data-v-1f96131b] {
 })();
 const vIe = "agora", bIe = "1.7.1";
 import { a1 as pr, b0 as Un, bf as WU, bg as VU, v as m, bh as HU, b1 as p0, d as Fe, a0 as jU, a3 as Xi, l as z, w as ot, L as ue, aU as Yi, bi as Fl, B as Up, q as w, aL as Fr, bj as GU, a as ni, o as x, c as R, t as E, G as Ne, bk as XU, b as B, e as j, bc as yt, f as se, i as G, h as _, _ as Qe, bl as YU, bm as KU, M as Op, ai as ms, a6 as jt, bn as ZU, g as J, bo as QU, bp as JU, u as wo, X as Np, bq as g0, s as dt, aT as ys, r as xt, Y as eO, ag as m0, br as tO, bs as y0, ac as Do, C as _e, J as Me, bt as nO, bu as iO, bd as vi, m as wt, aM as Fp, a7 as gr, x as mr, y as Bl, bv as rO, N as fn, n as ft, k as Ki, H as Oe, I as $e, ak as v0, bw as b0, F as Ze, aN as Aa, Z as Mt, bx as vs, by as So, D as Zi, K as Ri, bz as _0, bA as sO, bB as yr, bC as oO, bD as Mu, bE as aO, bF as li, b9 as bs, bG as ci, aY as lO, bH as $l, ba as Bp, ax as x0, E as $p, aW as Co, bI as w0, j as cO, bJ as vr, bK as Ii, bb as D0, aP as pn, aQ as $t, bL as uO, z as dO, A as hO } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_f6cfe8f3_lang-BWB8wMGc.chunk.mjs";
-import { l as S0, m as ko, a as Ke, p as bi, o as Br, L as He, n as Uu, q as vt, s as We, E as Ft, r as $r, h as Pp, t as Lp, v as C0, w as qp, x as Mi, y as zp, I as Ee, z as Ou, A as k0, g as nn, b as rn, B as To, C as Gt, e as tt, D as fO, F as pO, G as _s, H as gO, J as mO, K as Qi, M as Ra, O as Nu, P as Ia, Q as T0, R as Wp, T as br, U as E0, V as Pl, S as pt, W as Ll, X as A0, Y as Pr, Z as Fu, _ as yO, $ as R0, a0 as vO, a1 as bO, a2 as _O, a3 as xO, a4 as wO, a5 as I0, a6 as DO, a7 as Bu, a8 as ql, a9 as qe, aa as _i, ab as Ma, ac as zl, ad as M0, ae as Vp, af as Wl, ag as $u, ah as Pu, ai as Lu, aj as Hp, ak as Vl, al as U0, am as O0, an as SO, ao as CO, ap as kO, aq as TO, ar as jp, as as EO, at as N0, au as AO, av as RO, aw as _r, ax as qu, ay as F0, az as Lr, aA as Ji, aB as B0, aC as IO, aD as MO, aE as UO, aF as OO } from "./NcDashboardWidget-CvpYMKur-C_DgEGB8.chunk.mjs";
-import { u as qr, _ as NO, a as FO } from "./StyleSettings-pXAVRVpu.chunk.mjs";
-import { c as Xt, u as BO, A as $O, _ as PO, d as Ui, e as Gp, S as LO, Q as qO, I as zu, f as xs, g as zO, h as zr, i as $0, r as P0, t as L0, j as WO, k as xi, l as Hl, O as VO, m as q0, n as HO, o as jO, P as GO, p as z0, b as XO, q as YO } from "./index-D9BQlKob.chunk.mjs";
+import { l as S0, m as ko, a as Ke, p as bi, o as Br, L as He, n as Uu, q as vt, s as We, E as Ft, r as $r, h as Pp, t as Lp, v as C0, w as qp, x as Mi, y as zp, I as Ee, z as Ou, A as k0, g as nn, b as rn, B as To, C as Gt, e as tt, D as fO, F as pO, G as _s, H as gO, J as mO, K as Qi, M as Ra, O as Nu, P as Ia, Q as T0, R as Wp, T as br, U as E0, V as Pl, S as pt, W as Ll, X as A0, Y as Pr, Z as Fu, _ as yO, $ as R0, a0 as vO, a1 as bO, a2 as _O, a3 as xO, a4 as wO, a5 as I0, a6 as DO, a7 as Bu, a8 as ql, a9 as qe, aa as _i, ab as Ma, ac as zl, ad as M0, ae as Vp, af as Wl, ag as $u, ah as Pu, ai as Lu, aj as Hp, ak as Vl, al as U0, am as O0, an as SO, ao as CO, ap as kO, aq as TO, ar as jp, as as EO, at as N0, au as AO, av as RO, aw as _r, ax as qu, ay as F0, az as Lr, aA as Ji, aB as B0, aC as IO, aD as MO, aE as UO, aF as OO } from "./NcDashboardWidget-CvpYMKur-cOX7G7Zd.chunk.mjs";
+import { u as qr, _ as NO, a as FO } from "./StyleSettings-2O69Uxc2.chunk.mjs";
+import { c as Xt, u as BO, A as $O, _ as PO, d as Ui, e as Gp, S as LO, Q as qO, I as zu, f as xs, g as zO, h as zr, i as $0, r as P0, t as L0, j as WO, k as xi, l as Hl, O as VO, m as q0, n as HO, o as jO, P as GO, p as z0, b as XO, q as YO } from "./index-D7YUthxf.chunk.mjs";
 import { c as KO, I as ZO, b as en, N as gn, _ as ws, a as Ua } from "./NcRichText-D_ssz6sB-DIPyN8sK.chunk.mjs";
-import { _ as QO, a as Oa, N as Xp, b as Eo } from "./markdown-DXzvkEhg.chunk.mjs";
+import { _ as QO, a as Oa, N as Xp, b as Eo } from "./markdown-DUjqwGFI.chunk.mjs";
 import { _ as Yp } from "./agora-icon-0wbFIYdr.chunk.mjs";
 import { N as JO } from "./NcUserBubble-BE6yD-R0-Ct37AmYL.chunk.mjs";
 const Na = typeof document < "u";
@@ -16993,8 +17005,8 @@ const u5 = Qe(r5, [["render", c5]]), d5 = { class: "config-box" }, h5 = { class:
     a.value = null, o.value = "", c.value = "user", u.value = null, i("update:selected-groups", []);
   }
   return (O, N) => (x(), R("div", { class: "dialog-overlay", onClick: N[6] || (N[6] = (q) => i("close")) }, [_("div", { class: "create-dialog", onClick: N[5] || (N[5] = Ze(() => {
-  }, ["stop"])) }, [t10.availableGroups.length > 0 ? (x(), B(m(Oi), { key: 0, name: m(w)("agora", "Access Settings") }, { icon: j(() => [(x(), B(se(m(Ee).AccountGroup)))]), default: j(() => [_("div", $5, [J(m(Kl), { "model-value": c.value, label: m(w)("agora", "Choose who opening this inquiry"), class: "access-radio-group", description: m(w)("agora", "Choose who is opening this inquiry"), "onUpdate:modelValue": N[0] || (N[0] = (q) => c.value = q) }, { default: j(() => [J(m(gn), { value: "user" }, { default: j(() => [_e(E(m(w)("agora", "Only me (personal inquiry)")), 1)]), _: 1 }), J(m(gn), { value: "groups" }, { default: j(() => [_e(E(m(w)("agora", "Open with this group")), 1)]), _: 1 })]), _: 1 }, 8, ["model-value", "label", "description"]), c.value === "groups" ? (x(), R("div", P5, [_("h4", L5, E(m(w)("agora", "Select groups")), 1), _("div", q5, [J(m(Kl), { "model-value": u.value, label: m(w)("agora", "Choose ths group assigned to your inquiry"), description: m(w)("agora", "Choose which of your groups can access this inquiry"), "onUpdate:modelValue": N[1] || (N[1] = (q) => b(q)) }, { default: j(() => [(x(true), R(Oe, null, $e(t10.availableGroups, (q) => (x(), R("div", { key: q, class: "group-item" }, [J(m(gn), { value: q, type: "radio", name: "group-selection" }, { default: j(() => [_e(E(q), 1)]), _: 2 }, 1032, ["value"])]))), 128))]), _: 1 }, 8, ["model-value", "label", "description"])])])) : G("", true)])]), _: 1 }, 8, ["name"])) : G("", true), J(m(Oi), { name: m(w)("agora", "Title") }, { icon: j(() => [(x(), B(se(m(Ee).Bullhorn)))]), default: j(() => [J(m(zu), { "model-value": o.value, focus: "", type: "text", placeholder: m(w)("agora", "Enter title"), "helper-text": m(w)("agora", "Choose a meaningful title for your inquiry"), label: m(w)("agora", "Enter title"), "onUpdate:modelValue": N[2] || (N[2] = (q) => o.value = q), onSubmit: T }, null, 8, ["model-value", "placeholder", "helper-text", "label"])]), _: 1 }, 8, ["name"]), v.value ? (x(), B(m(Oi), { key: 2, name: m(w)("agora", "Inquiry type"), label: m(w)("agora", "Inquiry type") }, { icon: j(() => [(x(), B(se(m(Ee).Check)))]), default: j(() => [_("div", z5, [_("strong", null, E(y.value?.label), 1), y.value?.description ? (x(), R("p", W5, E(y.value.description), 1)) : G("", true)])]), _: 1 }, 8, ["name", "label"])) : (x(), B(m(Oi), { key: 1, name: m(w)("agora", "Inquiry type"), label: m(w)("agora", "Inquiry type") }, { icon: j(() => [(x(), B(se(m(Ee).Check)))]), default: j(() => [J(m(QO), { "model-value": p.value, options: f.value, "onUpdate:modelValue": N[3] || (N[3] = (q) => D(q)) }, null, 8, ["model-value", "options"])]), _: 1 }, 8, ["name", "label"])), _("div", V5, [J(m(Me), { onClick: N[4] || (N[4] = (q) => i("close")) }, { default: j(() => [_e(E(m(w)("agora", "Cancel")), 1)]), _: 1 }), J(m(Me), { disabled: C.value, variant: "primary", onClick: T }, { default: j(() => [_e(E(l.value ? m(w)("agora", "Creating …") : m(w)("agora", "Create Inquiry")), 1)]), _: 1 }, 8, ["disabled"])])])]));
-} }), lg = Qe(H5, [["__scopeId", "data-v-3029e91b"]]), j5 = { class: "dialog-header" }, G5 = { key: 0, class: "mode-badge child" }, X5 = { key: 1, class: "mode-badge creation" }, Y5 = { class: "context-description" }, K5 = { class: "access-settings" }, Z5 = { key: 0, class: "nextcloud-groups-selection" }, Q5 = { class: "groups-title" }, J5 = { class: "groups-list" }, e4 = { class: "type-option" }, t4 = { key: 0, class: "type-description-small" }, n4 = { key: 1, class: "selected-type" }, i4 = { key: 0, class: "type-description" }, r4 = { class: "type-info" }, s4 = { key: 2, class: "type-help" }, o4 = { key: 3, class: "type-help" }, a4 = { class: "create-buttons" }, l4 = Fe({ __name: "InquiryGroupCreateDlg", props: { inquiryGroupType: { default: null }, parentGroupId: { default: null }, availableGroups: { default: () => [] }, defaultTitle: { default: null } }, emits: ["close", "added", "update:selected-groups"], setup(t10, { emit: e }) {
+  }, ["stop"])) }, [t10.availableGroups.length > 0 ? (x(), B(m(Oi), { key: 0, name: m(w)("agora", "Access Settings") }, { icon: j(() => [(x(), B(se(m(Ee).AccountGroup)))]), default: j(() => [_("div", $5, [J(m(Kl), { "model-value": c.value, label: m(w)("agora", "Choose who opening this inquiry"), class: "access-radio-group", description: m(w)("agora", "Choose who is opening this inquiry"), "onUpdate:modelValue": N[0] || (N[0] = (q) => c.value = q) }, { default: j(() => [J(m(gn), { value: "user" }, { default: j(() => [_e(E(m(w)("agora", "Only me (personal inquiry)")), 1)]), _: 1 }), J(m(gn), { value: "groups" }, { default: j(() => [_e(E(m(w)("agora", "Open with this group")), 1)]), _: 1 })]), _: 1 }, 8, ["model-value", "label", "description"]), c.value === "groups" ? (x(), R("div", P5, [_("h4", L5, E(m(w)("agora", "Select groups")), 1), _("div", q5, [J(m(Kl), { "model-value": u.value, label: m(w)("agora", "Choose ths group assigned to your inquiry"), description: m(w)("agora", "Choose which of your groups can access this inquiry"), "onUpdate:modelValue": N[1] || (N[1] = (q) => b(q)) }, { default: j(() => [(x(true), R(Oe, null, $e(t10.availableGroups, (q) => (x(), R("div", { key: q, class: "group-item" }, [J(m(gn), { value: q, type: "radio", name: "group-selection" }, { default: j(() => [_e(E(q), 1)]), _: 2 }, 1032, ["value"])]))), 128))]), _: 1 }, 8, ["model-value", "label", "description"])])])) : G("", true)])]), _: 1 }, 8, ["name"])) : G("", true), J(m(Oi), { name: m(w)("agora", "Title") }, { icon: j(() => [(x(), B(se(m(Ee).Bullhorn)))]), default: j(() => [J(m(zu), { "model-value": o.value, focus: "", type: "text", placeholder: m(w)("agora", "Enter title"), "helper-text": m(w)("agora", "Choose a meaningful title for your inquiry"), label: m(w)("agora", "Enter title"), "onUpdate:modelValue": N[2] || (N[2] = (q) => o.value = q), onSubmit: T }, null, 8, ["model-value", "placeholder", "helper-text", "label"])]), _: 1 }, 8, ["name"]), v.value ? (x(), B(m(Oi), { key: 2, name: m(w)("agora", "Inquiry type"), label: m(w)("agora", "Inquiry type") }, { icon: j(() => [(x(), B(se(m(Ee).Check)))]), default: j(() => [_("div", z5, [_("strong", null, E(y.value?.label), 1), y.value?.description ? (x(), R("p", W5, E(y.value.description), 1)) : G("", true)])]), _: 1 }, 8, ["name", "label"])) : (x(), B(m(Oi), { key: 1, name: m(w)("agora", "Inquiry type"), label: m(w)("agora", "Inquiry type") }, { icon: j(() => [(x(), B(se(m(Ee).Check)))]), default: j(() => [J(m(QO), { "model-value": p.value, options: f.value, "onUpdate:modelValue": N[3] || (N[3] = (q) => D(q)) }, null, 8, ["model-value", "options"])]), _: 1 }, 8, ["name", "label"])), _("div", V5, [J(m(Me), { onClick: N[4] || (N[4] = (q) => i("close")) }, { default: j(() => [_e(E(m(w)("agora", "Cancel")), 1)]), _: 1 }), J(m(Me), { disabled: C.value, variant: "primary", onClick: T }, { default: j(() => [_e(E(l.value ? m(w)("agora", "Creating …") : m(w)("agora", "Create Inquiry")), 1)]), _: 1 }, 8, ["disabled"])])])]));
+} }), lg = Qe(H5, [["__scopeId", "data-v-ce097ea4"]]), j5 = { class: "dialog-header" }, G5 = { key: 0, class: "mode-badge child" }, X5 = { key: 1, class: "mode-badge creation" }, Y5 = { class: "context-description" }, K5 = { class: "access-settings" }, Z5 = { key: 0, class: "nextcloud-groups-selection" }, Q5 = { class: "groups-title" }, J5 = { class: "groups-list" }, e4 = { class: "type-option" }, t4 = { key: 0, class: "type-description-small" }, n4 = { key: 1, class: "selected-type" }, i4 = { key: 0, class: "type-description" }, r4 = { class: "type-info" }, s4 = { key: 2, class: "type-help" }, o4 = { key: 3, class: "type-help" }, a4 = { class: "create-buttons" }, l4 = Fe({ __name: "InquiryGroupCreateDlg", props: { inquiryGroupType: { default: null }, parentGroupId: { default: null }, availableGroups: { default: () => [] }, defaultTitle: { default: null } }, emits: ["close", "added", "update:selected-groups"], setup(t10, { emit: e }) {
   const n = t10, i = e, r = _s(), s = Ke(), o = ue(""), a = ue(null), l = ue(false), c = ue("user"), u = ue(null), d = ue(""), h = z(() => s.appSettings.inquiryGroupTypeTab || []), f = (q) => h.value.find((V) => V.group_type === q) || null, p = z(() => n.inquiryGroupType ? f(n.inquiryGroupType) : null), g = z(() => {
     if (!n.parentGroupId && p.value) return [p.value];
     if (n.parentGroupId && p.value) {
@@ -17045,8 +17057,8 @@ const u5 = Qe(r5, [["render", c5]]), d5 = { class: "config-box" }, h5 = { class:
     a.value = null, o.value = "", c.value = "user", u.value = null, i("update:selected-groups", []);
   }
   return (q, V) => (x(), R("div", { class: "dialog-overlay", onClick: V[6] || (V[6] = (M) => i("close")) }, [_("div", { class: "create-dialog", onClick: V[5] || (V[5] = Ze(() => {
-  }, ["stop"])) }, [_("div", j5, [_("h3", null, E(S.value), 1), n.parentGroupId ? (x(), R("div", G5, E(m(w)("agora", "Child Group")), 1)) : (x(), R("div", X5, E(m(w)("agora", "New Group")), 1))]), _("div", Y5, [_("p", null, E(C.value), 1)]), t10.availableGroups && t10.availableGroups.length > 0 ? (x(), B(m(Oi), { key: 0, name: m(w)("agora", "Access Settings") }, { icon: j(() => [(x(), B(se(m(Ee).AccountGroup)))]), default: j(() => [_("div", K5, [J(m(Kl), { "model-value": c.value, class: "access-radio-group", label: m(w)("agora", "Who can access ?"), description: m(w)("agora", "Choose who can access this group"), "onUpdate:modelValue": V[0] || (V[0] = (M) => c.value = M) }, { default: j(() => [J(m(gn), { value: "user" }, { default: j(() => [_e(E(m(w)("agora", "Only me (personal group)")), 1)]), _: 1 }), J(m(gn), { value: "groups" }, { default: j(() => [_e(E(m(w)("agora", "Open with Nextcloud group")), 1)]), _: 1 })]), _: 1 }, 8, ["model-value", "label", "description"]), c.value === "groups" ? (x(), R("div", Z5, [_("h4", Q5, E(m(w)("agora", "Select Nextcloud group")), 1), _("div", J5, [J(m(Kl), { label: m(w)("agora", "Groups Selections") }, { default: j(() => [(x(true), R(Oe, null, $e(t10.availableGroups, (M) => (x(), R("div", { key: M, class: "group-item" }, [J(m(gn), { modelValue: u.value, "onUpdate:modelValue": V[1] || (V[1] = (F) => u.value = F), value: M, type: "radio", name: "nextcloud-group-selection" }, { default: j(() => [_e(E(M), 1)]), _: 2 }, 1032, ["modelValue", "value"])]))), 128))]), _: 1 }, 8, ["label"])])])) : G("", true)])]), _: 1 }, 8, ["name"])) : G("", true), J(m(Oi), { name: m(w)("agora", "Title") }, { icon: j(() => [(x(), B(se(m(Ee).Bullhorn)))]), default: j(() => [J(m(zu), { "model-value": o.value, focus: "", type: "text", placeholder: m(w)("agora", "Enter group title"), "helper-text": m(w)("agora", "Choose a meaningful title for your group"), label: m(w)("agora", "Group Title"), "onUpdate:modelValue": V[2] || (V[2] = (M) => o.value = M), onSubmit: O }, null, 8, ["model-value", "placeholder", "helper-text", "label"])]), _: 1 }, 8, ["name"]), D.value || !n.parentGroupId && g.value.length === 1 ? (x(), B(m(Oi), { key: 1, name: m(w)("agora", "Group Type"), label: m(w)("agora", "Select group type") }, { icon: j(() => [(x(), B(se(m(Ee).Check)))]), default: j(() => [D.value ? (x(), B(m(Kl), { key: 0, label: m(w)("agora", "Groups Selections"), "model-value": d.value, "onUpdate:modelValue": V[3] || (V[3] = (M) => d.value = M) }, { default: j(() => [(x(true), R(Oe, null, $e(g.value, (M) => (x(), R("div", { key: M.group_type, class: "type-item" }, [J(m(gn), { value: M.group_type, type: "radio", name: "inquiry-group-type-selection" }, { default: j(() => [_("div", e4, [_("strong", null, E(M.label), 1), M.description ? (x(), R("p", t4, E(M.description), 1)) : G("", true)])]), _: 2 }, 1032, ["value"])]))), 128))]), _: 1 }, 8, ["label", "model-value"])) : (x(), R("div", n4, [_("strong", null, E(b.value?.label), 1), b.value?.description ? (x(), R("p", i4, E(b.value.description), 1)) : G("", true), _("div", r4, [_("small", null, E(m(w)("agora", "Creating new {type} group", { type: b.value?.label || "selected" })), 1)])])), n.parentGroupId && D.value ? (x(), R("div", s4, [_("small", null, E(m(w)("agora", "You can create the same type as parent or choose from allowed response types")), 1)])) : !n.parentGroupId && D.value ? (x(), R("div", o4, [_("small", null, E(m(w)("agora", "Select the type of group you want to create")), 1)])) : G("", true)]), _: 1 }, 8, ["name", "label"])) : G("", true), _("div", a4, [J(m(Me), { onClick: V[4] || (V[4] = (M) => i("close")) }, { default: j(() => [_e(E(m(w)("agora", "Cancel")), 1)]), _: 1 }), J(m(Me), { disabled: A.value, variant: "primary", onClick: O }, { default: j(() => [_e(E(l.value ? m(w)("agora", "Creating …") : n.parentGroupId ? m(w)("agora", "Add to Parent") : m(w)("agora", "Create Group")), 1)]), _: 1 }, 8, ["disabled"])])])]));
-} }), Ql = Qe(l4, [["__scopeId", "data-v-481ad49b"]]), c4 = { class: "navigation-caption" }, u4 = { class: "navigation-caption" }, d4 = { class: "family-counter" }, h4 = { key: 0, class: "navigation-subcaption" }, f4 = { class: "navigation-subcaption" }, p4 = ["title"], g4 = Fe({ __name: "NavigationMenu", setup(t10) {
+  }, ["stop"])) }, [_("div", j5, [_("h3", null, E(S.value), 1), n.parentGroupId ? (x(), R("div", G5, E(m(w)("agora", "Child Group")), 1)) : (x(), R("div", X5, E(m(w)("agora", "New Group")), 1))]), _("div", Y5, [_("p", null, E(C.value), 1)]), t10.availableGroups && t10.availableGroups.length > 0 ? (x(), B(m(Oi), { key: 0, name: m(w)("agora", "Access Settings") }, { icon: j(() => [(x(), B(se(m(Ee).AccountGroup)))]), default: j(() => [_("div", K5, [J(m(Kl), { "model-value": c.value, class: "access-radio-group", label: m(w)("agora", "Who can access ?"), description: m(w)("agora", "Choose who can access this group"), "onUpdate:modelValue": V[0] || (V[0] = (M) => c.value = M) }, { default: j(() => [J(m(gn), { value: "user" }, { default: j(() => [_e(E(m(w)("agora", "Only me (personal group)")), 1)]), _: 1 }), J(m(gn), { value: "groups" }, { default: j(() => [_e(E(m(w)("agora", "Open with Nextcloud group")), 1)]), _: 1 })]), _: 1 }, 8, ["model-value", "label", "description"]), c.value === "groups" ? (x(), R("div", Z5, [_("h4", Q5, E(m(w)("agora", "Select Nextcloud group")), 1), _("div", J5, [J(m(Kl), { label: m(w)("agora", "Groups Selections") }, { default: j(() => [(x(true), R(Oe, null, $e(t10.availableGroups, (M) => (x(), R("div", { key: M, class: "group-item" }, [J(m(gn), { modelValue: u.value, "onUpdate:modelValue": V[1] || (V[1] = (F) => u.value = F), value: M, type: "radio", name: "nextcloud-group-selection" }, { default: j(() => [_e(E(M), 1)]), _: 2 }, 1032, ["modelValue", "value"])]))), 128))]), _: 1 }, 8, ["label"])])])) : G("", true)])]), _: 1 }, 8, ["name"])) : G("", true), J(m(Oi), { name: m(w)("agora", "Title") }, { icon: j(() => [(x(), B(se(m(Ee).Bullhorn)))]), default: j(() => [J(m(zu), { "model-value": o.value, focus: "", type: "text", placeholder: m(w)("agora", "Enter group title"), "helper-text": m(w)("agora", "Choose a meaningful title for your group"), label: m(w)("agora", "Group Title"), "onUpdate:modelValue": V[2] || (V[2] = (M) => o.value = M), onSubmit: O }, null, 8, ["model-value", "placeholder", "helper-text", "label"])]), _: 1 }, 8, ["name"]), D.value || !n.parentGroupId && g.value.length === 1 ? (x(), B(m(Oi), { key: 1, name: m(w)("agora", "Group Type"), label: m(w)("agora", "Select group type") }, { icon: j(() => [(x(), B(se(m(Ee).Check)))]), default: j(() => [D.value ? (x(), B(m(Kl), { key: 0, label: m(w)("agora", "Groups Selections"), "model-value": d.value, "onUpdate:modelValue": V[3] || (V[3] = (M) => d.value = M) }, { default: j(() => [(x(true), R(Oe, null, $e(g.value, (M) => (x(), R("div", { key: M.group_type, class: "type-item" }, [J(m(gn), { value: M.group_type, type: "radio", name: "inquiry-group-type-selection" }, { default: j(() => [_("div", e4, [_("strong", null, E(M.label), 1), M.description ? (x(), R("p", t4, E(M.description), 1)) : G("", true)])]), _: 2 }, 1032, ["value"])]))), 128))]), _: 1 }, 8, ["label", "model-value"])) : (x(), R("div", n4, [_("strong", null, E(b.value?.label), 1), b.value?.description ? (x(), R("p", i4, E(b.value.description), 1)) : G("", true), _("div", r4, [_("small", null, E(m(w)("agora", "Creating new {type} group", { type: b.value?.label || "selected" })), 1)])])), n.parentGroupId && D.value ? (x(), R("div", s4, [_("small", null, E(m(w)("agora", "You can create the same type as parent or choose from allowed response types")), 1)])) : !n.parentGroupId && D.value ? (x(), R("div", o4, [_("small", null, E(m(w)("agora", "Select the type of group you want to create")), 1)])) : G("", true)]), _: 1 }, 8, ["name", "label"])) : G("", true), _("div", a4, [J(m(Me), { onClick: V[4] || (V[4] = (M) => i("close")) }, { default: j(() => [_e(E(m(w)("agora", "Cancel")), 1)]), _: 1 }), J(m(Me), { disabled: A.value, variant: "primary", onClick: O }, { default: j(() => [_e(E(l.value ? m(w)("agora", "Creating …") : n.parentGroupId ? m(w)("agora", "Add to Parent") : m(w)("agora", "Create Group")), 1)]), _: 1 }, 8, ["disabled"])])])]));
+} }), Ql = Qe(l4, [["__scopeId", "data-v-a65e9199"]]), c4 = { class: "navigation-caption" }, u4 = { class: "navigation-caption" }, d4 = { class: "family-counter" }, h4 = { key: 0, class: "navigation-subcaption" }, f4 = { class: "navigation-subcaption" }, p4 = ["title"], g4 = Fe({ __name: "NavigationMenu", setup(t10) {
   const e = qr(), n = xr(), i = Ke(), r = rn(), s = ue(false), o = ue(false), a = ue(null), l = ue(null), c = z(() => T0());
   function u(L) {
     return L && !Ra(L) ? false : c.value;
@@ -40326,8 +40338,8 @@ const uX = lO(cX), dX = { key: 0 }, hX = { key: 0, class: "editor-toolbar" }, fX
     });
   }), Un(() => {
     y.value && y.value.destroy();
-  }), ($, U) => (x(), R("div", { ref_key: "editorContainer", ref: o, class: "editor-container" }, [i.readonly ? G("", true) : (x(), R("div", dX, [_("input", { ref_key: "imageFileInput", ref: r, type: "file", accept: "image/*", style: { display: "none" }, onChange: p }, null, 544), m(y) ? (x(), R("div", hX, [J(m(Me), { type: "button", class: Ne({ "is-active": m(y).isActive("bold") }), title: m(w)("agora", "Bold"), "aria-label": m(w)("agora", "Bold"), onClick: U[0] || (U[0] = (W) => m(y).chain().focus().toggleBold().run()) }, { default: j(() => [...U[22] || (U[22] = [_e(" B ", -1)])]), _: 1 }, 8, ["class", "title", "aria-label"]), J(m(Me), { type: "button", class: Ne({ "is-active": m(y).isActive("italic") }), title: m(w)("agora", "Italic"), "aria-label": m(w)("agora", "Italic"), onClick: U[1] || (U[1] = (W) => m(y).chain().focus().toggleItalic().run()) }, { default: j(() => [...U[23] || (U[23] = [_e(" I ", -1)])]), _: 1 }, 8, ["class", "title", "aria-label"]), J(m(Me), { type: "button", class: Ne({ "is-active": m(y).isActive("underline") }), title: m(w)("agora", "Underline"), "aria-label": m(w)("agora", "Underline"), onClick: U[2] || (U[2] = (W) => m(y).chain().focus().toggleUnderline().run()) }, { default: j(() => [...U[24] || (U[24] = [_e(" U ", -1)])]), _: 1 }, 8, ["class", "title", "aria-label"]), J(m(Me), { type: "button", class: Ne({ "is-active": m(y).isActive("strike") }), title: m(w)("agora", "Strikethrough"), "aria-label": m(w)("agora", "Strikethrough"), onClick: U[3] || (U[3] = (W) => m(y).chain().focus().toggleStrike().run()) }, { default: j(() => [...U[25] || (U[25] = [_e(" S ", -1)])]), _: 1 }, 8, ["class", "title", "aria-label"]), jt(_("select", { "onUpdate:modelValue": U[4] || (U[4] = (W) => C.value = W), title: m(w)("agora", "Text heading"), "aria-label": m(w)("agora", "Text heading"), class: "heading-select", onChange: T }, [_("option", pX, E(m(w)("agora", "Normal text")), 1), _("option", gX, E(m(w)("agora", "Heading 1")), 1), _("option", mX, E(m(w)("agora", "Heading 2")), 1), _("option", yX, E(m(w)("agora", "Heading 3")), 1)], 40, fX), [[$l, C.value]]), J(m(Me), { type: "button", class: Ne({ "is-active": m(y).isActive("bulletList") }), title: m(w)("agora", "Bullet list"), "aria-label": m(w)("agora", "Bullet list"), onClick: U[5] || (U[5] = (W) => m(y).chain().focus().toggleBulletList().run()) }, { default: j(() => [...U[26] || (U[26] = [_e(" • ", -1)])]), _: 1 }, 8, ["class", "title", "aria-label"]), J(m(Me), { type: "button", class: Ne({ "is-active": m(y).isActive("orderedList") }), title: m(w)("agora", "Numbered list"), "aria-label": m(w)("agora", "Numbered list"), onClick: U[6] || (U[6] = (W) => m(y).chain().focus().toggleOrderedList().run()) }, { default: j(() => [...U[27] || (U[27] = [_e(" 1. ", -1)])]), _: 1 }, 8, ["class", "title", "aria-label"]), J(m(Me), { type: "button", class: Ne({ "is-active": m(y).isActive("taskList") }), title: m(w)("agora", "Task list"), "aria-label": m(w)("agora", "Task list"), onClick: U[7] || (U[7] = (W) => m(y).chain().focus().toggleTaskList().run()) }, { default: j(() => [...U[28] || (U[28] = [_e(" ✓ ", -1)])]), _: 1 }, 8, ["class", "title", "aria-label"]), J(m(Me), { type: "button", class: Ne({ "is-active": m(y).isActive({ textAlign: "left" }) }), title: m(w)("agora", "Align left"), "aria-label": m(w)("agora", "Align left"), onClick: U[8] || (U[8] = (W) => m(y).chain().focus().setTextAlign("left").run()) }, { default: j(() => [...U[29] || (U[29] = [_e(" ← ", -1)])]), _: 1 }, 8, ["class", "title", "aria-label"]), J(m(Me), { type: "button", class: Ne({ "is-active": m(y).isActive({ textAlign: "center" }) }), title: m(w)("agora", "Align center"), "aria-label": m(w)("agora", "Align center"), onClick: U[9] || (U[9] = (W) => m(y).chain().focus().setTextAlign("center").run()) }, { default: j(() => [...U[30] || (U[30] = [_e(" ↔ ", -1)])]), _: 1 }, 8, ["class", "title", "aria-label"]), J(m(Me), { type: "button", class: Ne({ "is-active": m(y).isActive({ textAlign: "right" }) }), title: m(w)("agora", "Align right"), "aria-label": m(w)("agora", "Align right"), onClick: U[10] || (U[10] = (W) => m(y).chain().focus().setTextAlign("right").run()) }, { default: j(() => [...U[31] || (U[31] = [_e(" → ", -1)])]), _: 1 }, 8, ["class", "title", "aria-label"]), J(m(Me), { type: "button", class: Ne({ "is-active": m(y).isActive("blockquote") }), title: m(w)("agora", "Blockquote"), "aria-label": m(w)("agora", "Blockquote"), onClick: U[11] || (U[11] = (W) => m(y).chain().focus().toggleBlockquote().run()) }, { default: j(() => [...U[32] || (U[32] = [_e(" ❝ ", -1)])]), _: 1 }, 8, ["class", "title", "aria-label"]), J(m(Me), { type: "button", title: m(w)("agora", "Horizontal rule"), "aria-label": m(w)("agora", "Horizontal rule"), onClick: U[12] || (U[12] = (W) => m(y).chain().focus().setHorizontalRule().run()) }, { default: j(() => [...U[33] || (U[33] = [_e(" ― ", -1)])]), _: 1 }, 8, ["title", "aria-label"]), J(m(Me), { type: "button", title: m(w)("agora", "Hard break"), "aria-label": m(w)("agora", "Hard break"), onClick: U[13] || (U[13] = (W) => m(y).chain().focus().setHardBreak().run()) }, { default: j(() => [...U[34] || (U[34] = [_e(" ↵ ", -1)])]), _: 1 }, 8, ["title", "aria-label"]), J(m(Me), { type: "button", class: Ne({ "is-active": m(y).isActive("link") }), title: m(w)("agora", "Link"), "aria-label": m(w)("agora", "Link"), onClick: A }, { default: j(() => [...U[35] || (U[35] = [_e(" 🔗 ", -1)])]), _: 1 }, 8, ["class", "title", "aria-label"]), J(m(Me), { type: "button", title: m(w)("agora", "Insert image"), "aria-label": m(w)("agora", "Insert image"), onClick: h }, { default: j(() => [...U[36] || (U[36] = [_e(" 🖼️ ", -1)])]), _: 1 }, 8, ["title", "aria-label"]), J(m(Me), { type: "button", class: Ne({ "is-active": b.value && D() === "left" }), title: m(w)("agora", "Align image left"), "aria-label": m(w)("agora", "Align image left"), disabled: !b.value, onClick: U[14] || (U[14] = (W) => S("left")) }, { default: j(() => [...U[37] || (U[37] = [_e(" 🖼️← ", -1)])]), _: 1 }, 8, ["class", "title", "aria-label", "disabled"]), J(m(Me), { type: "button", class: Ne({ "is-active": b.value && D() === "center" }), title: m(w)("agora", "Align image center"), "aria-label": m(w)("agora", "Align image center"), disabled: !b.value, onClick: U[15] || (U[15] = (W) => S("center")) }, { default: j(() => [...U[38] || (U[38] = [_e(" 🖼️↔ ", -1)])]), _: 1 }, 8, ["class", "title", "aria-label", "disabled"]), J(m(Me), { type: "button", class: Ne({ "is-active": b.value && D() === "right" }), title: m(w)("agora", "Align image right"), "aria-label": m(w)("agora", "Align image right"), disabled: !b.value, onClick: U[16] || (U[16] = (W) => S("right")) }, { default: j(() => [...U[39] || (U[39] = [_e(" 🖼️→ ", -1)])]), _: 1 }, 8, ["class", "title", "aria-label", "disabled"]), J(m(Me), { type: "button", class: Ne({ "is-active": m(y).isActive("code") }), title: m(w)("agora", "Code"), "aria-label": m(w)("agora", "Code"), onClick: U[17] || (U[17] = (W) => m(y).chain().focus().toggleCode().run()) }, { default: j(() => [...U[40] || (U[40] = [_e(" {} ", -1)])]), _: 1 }, 8, ["class", "title", "aria-label"]), J(m(Me), { type: "button", class: Ne({ "is-active": m(y).isActive("codeBlock") }), title: m(w)("agora", "Code block"), "aria-label": m(w)("agora", "Code block"), onClick: U[18] || (U[18] = (W) => m(y).chain().focus().toggleCodeBlock().run()) }, { default: j(() => [...U[41] || (U[41] = [_e(" ⎘ ", -1)])]), _: 1 }, 8, ["class", "title", "aria-label"]), J(m(Me), { type: "button", disabled: !m(y).can().undo(), title: m(w)("agora", "Undo"), "aria-label": m(w)("agora", "Undo"), onClick: U[19] || (U[19] = (W) => m(y).chain().focus().undo().run()) }, { default: j(() => [...U[42] || (U[42] = [_e(" ↩ ", -1)])]), _: 1 }, 8, ["disabled", "title", "aria-label"]), J(m(Me), { type: "button", disabled: !m(y).can().redo(), title: m(w)("agora", "Redo"), "aria-label": m(w)("agora", "Redo"), onClick: U[20] || (U[20] = (W) => m(y).chain().focus().redo().run()) }, { default: j(() => [...U[43] || (U[43] = [_e(" ↪ ", -1)])]), _: 1 }, 8, ["disabled", "title", "aria-label"]), J(m(Me), { type: "button", title: m(w)("agora", "Import Word document"), "aria-label": m(w)("agora", "Import Word document"), onClick: O }, { default: j(() => [...U[44] || (U[44] = [_e(" 📄 ", -1)])]), _: 1 }, 8, ["title", "aria-label"]), _("input", { ref_key: "wordFileInput", ref: s, type: "file", accept: ".docx", style: { display: "none" }, onChange: N }, null, 544), J(m(D_), { title: m(w)("agora", "Generate with AI"), "aria-label": m(w)("agora", "Generate with AI"), disabled: l.value, onClick: q }, null, 8, ["title", "aria-label", "disabled"])])) : G("", true)])), _("div", vX, [J(m(o7), { editor: m(y), class: "editor-content" }, null, 8, ["editor"])]), a.value ? (x(), B(m(Ri), { key: 1, name: m(w)("agora", "Generate content with AI"), onClose: V }, { default: j(() => [J(m(rF), null, { default: j(() => [_("div", bX, [J(m(w_)), _("div", _X, [_("h3", xX, E(m(w)("agora", "Generate content with AI")), 1), _("div", wX, [_("label", DX, E(m(w)("agora", "Describe what you want to generate")), 1), J(m(ws), { id: "ai-prompt", value: c.value, "onUpdate:value": [U[21] || (U[21] = (W) => c.value = W), M], placeholder: m(w)("agora", "e.g. Write a professional introduction for a business inquiry about"), type: "textarea", label: "Prompt for AI", rows: 4 }, null, 8, ["value", "placeholder"])]), u.value ? (x(), R("div", SX, [_("h3", null, E(m(w)("agora", "Preview")), 1), _("div", CX, [_("p", null, E(m(w)("agora", "AI generated content is ready to be inserted")), 1), _("div", kX, E(m(w)("agora", "Content length: {length} characters", { length: u.value.length })), 1), _("div", TX, [_("strong", null, E(m(w)("agora", "Summary")), 1), _e(" " + E(f(u.value)), 1)])])])) : G("", true), _("div", EX, [J(m(Me), { type: "secondary", onClick: V }, { default: j(() => [_e(E(m(w)("agora", "Cancel")), 1)]), _: 1 }), J(m(D_), { disabled: !c.value.trim() || l.value, onClick: F }, { default: j(() => [_e(E(l.value ? m(w)("agora", "Generating …") : m(w)("agora", "Generate")), 1)]), _: 1 }, 8, ["disabled"]), u.value ? (x(), B(m(Me), { key: 0, disabled: l.value, type: "primary", onClick: k }, { default: j(() => [_e(E(m(w)("agora", "Insert content")), 1)]), _: 1 }, 8, ["disabled"])) : G("", true)])])])]), _: 1 })]), _: 1 }, 8, ["name"])) : G("", true)], 512));
-} }, RX = Qe(AX, [["__scopeId", "data-v-6d367f60"]]), IX = (t10, e, n) => {
+  }), ($, U) => (x(), R("div", { ref_key: "editorContainer", ref: o, class: "editor-container" }, [i.readonly ? G("", true) : (x(), R("div", dX, [_("input", { ref_key: "imageFileInput", ref: r, type: "file", accept: "image/*", style: { display: "none" }, onChange: p }, null, 544), m(y) ? (x(), R("div", hX, [J(m(Me), { type: "button", class: Ne({ "is-active": m(y).isActive("bold") }), title: m(w)("agora", "Bold"), "aria-label": m(w)("agora", "Bold"), onClick: U[0] || (U[0] = (W) => m(y).chain().focus().toggleBold().run()) }, { default: j(() => [...U[22] || (U[22] = [_e(" B ", -1)])]), _: 1 }, 8, ["class", "title", "aria-label"]), J(m(Me), { type: "button", class: Ne({ "is-active": m(y).isActive("italic") }), title: m(w)("agora", "Italic"), "aria-label": m(w)("agora", "Italic"), onClick: U[1] || (U[1] = (W) => m(y).chain().focus().toggleItalic().run()) }, { default: j(() => [...U[23] || (U[23] = [_e(" I ", -1)])]), _: 1 }, 8, ["class", "title", "aria-label"]), J(m(Me), { type: "button", class: Ne({ "is-active": m(y).isActive("underline") }), title: m(w)("agora", "Underline"), "aria-label": m(w)("agora", "Underline"), onClick: U[2] || (U[2] = (W) => m(y).chain().focus().toggleUnderline().run()) }, { default: j(() => [...U[24] || (U[24] = [_e(" U ", -1)])]), _: 1 }, 8, ["class", "title", "aria-label"]), J(m(Me), { type: "button", class: Ne({ "is-active": m(y).isActive("strike") }), title: m(w)("agora", "Strikethrough"), "aria-label": m(w)("agora", "Strikethrough"), onClick: U[3] || (U[3] = (W) => m(y).chain().focus().toggleStrike().run()) }, { default: j(() => [...U[25] || (U[25] = [_e(" S ", -1)])]), _: 1 }, 8, ["class", "title", "aria-label"]), jt(_("select", { "onUpdate:modelValue": U[4] || (U[4] = (W) => C.value = W), title: m(w)("agora", "Text heading"), "aria-label": m(w)("agora", "Text heading"), class: "heading-select", onChange: T }, [_("option", pX, E(m(w)("agora", "Normal text")), 1), _("option", gX, E(m(w)("agora", "Heading 1")), 1), _("option", mX, E(m(w)("agora", "Heading 2")), 1), _("option", yX, E(m(w)("agora", "Heading 3")), 1)], 40, fX), [[$l, C.value]]), J(m(Me), { type: "button", class: Ne({ "is-active": m(y).isActive("bulletList") }), title: m(w)("agora", "Bullet list"), "aria-label": m(w)("agora", "Bullet list"), onClick: U[5] || (U[5] = (W) => m(y).chain().focus().toggleBulletList().run()) }, { default: j(() => [...U[26] || (U[26] = [_e(" • ", -1)])]), _: 1 }, 8, ["class", "title", "aria-label"]), J(m(Me), { type: "button", class: Ne({ "is-active": m(y).isActive("orderedList") }), title: m(w)("agora", "Numbered list"), "aria-label": m(w)("agora", "Numbered list"), onClick: U[6] || (U[6] = (W) => m(y).chain().focus().toggleOrderedList().run()) }, { default: j(() => [...U[27] || (U[27] = [_e(" 1. ", -1)])]), _: 1 }, 8, ["class", "title", "aria-label"]), J(m(Me), { type: "button", class: Ne({ "is-active": m(y).isActive("taskList") }), title: m(w)("agora", "Task list"), "aria-label": m(w)("agora", "Task list"), onClick: U[7] || (U[7] = (W) => m(y).chain().focus().toggleTaskList().run()) }, { default: j(() => [...U[28] || (U[28] = [_e(" ✓ ", -1)])]), _: 1 }, 8, ["class", "title", "aria-label"]), J(m(Me), { type: "button", class: Ne({ "is-active": m(y).isActive({ textAlign: "left" }) }), title: m(w)("agora", "Align left"), "aria-label": m(w)("agora", "Align left"), onClick: U[8] || (U[8] = (W) => m(y).chain().focus().setTextAlign("left").run()) }, { default: j(() => [...U[29] || (U[29] = [_e(" ← ", -1)])]), _: 1 }, 8, ["class", "title", "aria-label"]), J(m(Me), { type: "button", class: Ne({ "is-active": m(y).isActive({ textAlign: "center" }) }), title: m(w)("agora", "Align center"), "aria-label": m(w)("agora", "Align center"), onClick: U[9] || (U[9] = (W) => m(y).chain().focus().setTextAlign("center").run()) }, { default: j(() => [...U[30] || (U[30] = [_e(" ↔ ", -1)])]), _: 1 }, 8, ["class", "title", "aria-label"]), J(m(Me), { type: "button", class: Ne({ "is-active": m(y).isActive({ textAlign: "right" }) }), title: m(w)("agora", "Align right"), "aria-label": m(w)("agora", "Align right"), onClick: U[10] || (U[10] = (W) => m(y).chain().focus().setTextAlign("right").run()) }, { default: j(() => [...U[31] || (U[31] = [_e(" → ", -1)])]), _: 1 }, 8, ["class", "title", "aria-label"]), J(m(Me), { type: "button", class: Ne({ "is-active": m(y).isActive("blockquote") }), title: m(w)("agora", "Blockquote"), "aria-label": m(w)("agora", "Blockquote"), onClick: U[11] || (U[11] = (W) => m(y).chain().focus().toggleBlockquote().run()) }, { default: j(() => [...U[32] || (U[32] = [_e(" ❝ ", -1)])]), _: 1 }, 8, ["class", "title", "aria-label"]), J(m(Me), { type: "button", title: m(w)("agora", "Horizontal rule"), "aria-label": m(w)("agora", "Horizontal rule"), onClick: U[12] || (U[12] = (W) => m(y).chain().focus().setHorizontalRule().run()) }, { default: j(() => [...U[33] || (U[33] = [_e(" ― ", -1)])]), _: 1 }, 8, ["title", "aria-label"]), J(m(Me), { type: "button", title: m(w)("agora", "Hard break"), "aria-label": m(w)("agora", "Hard break"), onClick: U[13] || (U[13] = (W) => m(y).chain().focus().setHardBreak().run()) }, { default: j(() => [...U[34] || (U[34] = [_e(" ↵ ", -1)])]), _: 1 }, 8, ["title", "aria-label"]), J(m(Me), { type: "button", class: Ne({ "is-active": m(y).isActive("link") }), title: m(w)("agora", "Link"), "aria-label": m(w)("agora", "Link"), onClick: A }, { default: j(() => [...U[35] || (U[35] = [_e(" 🔗 ", -1)])]), _: 1 }, 8, ["class", "title", "aria-label"]), J(m(Me), { type: "button", title: m(w)("agora", "Insert image"), "aria-label": m(w)("agora", "Insert image"), onClick: h }, { default: j(() => [...U[36] || (U[36] = [_e(" 🖼️ ", -1)])]), _: 1 }, 8, ["title", "aria-label"]), J(m(Me), { type: "button", class: Ne({ "is-active": b.value && D() === "left" }), title: m(w)("agora", "Align image left"), "aria-label": m(w)("agora", "Align image left"), disabled: !b.value, onClick: U[14] || (U[14] = (W) => S("left")) }, { default: j(() => [...U[37] || (U[37] = [_e(" 🖼️← ", -1)])]), _: 1 }, 8, ["class", "title", "aria-label", "disabled"]), J(m(Me), { type: "button", class: Ne({ "is-active": b.value && D() === "center" }), title: m(w)("agora", "Align image center"), "aria-label": m(w)("agora", "Align image center"), disabled: !b.value, onClick: U[15] || (U[15] = (W) => S("center")) }, { default: j(() => [...U[38] || (U[38] = [_e(" 🖼️↔ ", -1)])]), _: 1 }, 8, ["class", "title", "aria-label", "disabled"]), J(m(Me), { type: "button", class: Ne({ "is-active": b.value && D() === "right" }), title: m(w)("agora", "Align image right"), "aria-label": m(w)("agora", "Align image right"), disabled: !b.value, onClick: U[16] || (U[16] = (W) => S("right")) }, { default: j(() => [...U[39] || (U[39] = [_e(" 🖼️→ ", -1)])]), _: 1 }, 8, ["class", "title", "aria-label", "disabled"]), J(m(Me), { type: "button", class: Ne({ "is-active": m(y).isActive("code") }), title: m(w)("agora", "Code"), "aria-label": m(w)("agora", "Code"), onClick: U[17] || (U[17] = (W) => m(y).chain().focus().toggleCode().run()) }, { default: j(() => [...U[40] || (U[40] = [_e(" {} ", -1)])]), _: 1 }, 8, ["class", "title", "aria-label"]), J(m(Me), { type: "button", class: Ne({ "is-active": m(y).isActive("codeBlock") }), title: m(w)("agora", "Code block"), "aria-label": m(w)("agora", "Code block"), onClick: U[18] || (U[18] = (W) => m(y).chain().focus().toggleCodeBlock().run()) }, { default: j(() => [...U[41] || (U[41] = [_e(" ⎘ ", -1)])]), _: 1 }, 8, ["class", "title", "aria-label"]), J(m(Me), { type: "button", disabled: !m(y).can().undo(), title: m(w)("agora", "Undo"), "aria-label": m(w)("agora", "Undo"), onClick: U[19] || (U[19] = (W) => m(y).chain().focus().undo().run()) }, { default: j(() => [...U[42] || (U[42] = [_e(" ↩ ", -1)])]), _: 1 }, 8, ["disabled", "title", "aria-label"]), J(m(Me), { type: "button", disabled: !m(y).can().redo(), title: m(w)("agora", "Redo"), "aria-label": m(w)("agora", "Redo"), onClick: U[20] || (U[20] = (W) => m(y).chain().focus().redo().run()) }, { default: j(() => [...U[43] || (U[43] = [_e(" ↪ ", -1)])]), _: 1 }, 8, ["disabled", "title", "aria-label"]), J(m(Me), { type: "button", title: m(w)("agora", "Import Word document"), "aria-label": m(w)("agora", "Import Word document"), onClick: O }, { default: j(() => [...U[44] || (U[44] = [_e(" 📄 ", -1)])]), _: 1 }, 8, ["title", "aria-label"]), _("input", { ref_key: "wordFileInput", ref: s, type: "file", accept: ".docx", style: { display: "none" }, onChange: N }, null, 544), J(m(D_), { title: m(w)("agora", "Generate with AI"), "aria-label": m(w)("agora", "Generate with AI"), disabled: l.value, onClick: q }, null, 8, ["title", "aria-label", "disabled"])])) : G("", true)])), _("div", vX, [J(m(o7), { editor: m(y), class: "editor-content" }, null, 8, ["editor"])]), a.value ? (x(), B(m(Ri), { key: 1, name: m(w)("agora", "Generate content with AI"), onClose: V }, { default: j(() => [J(m(rF), null, { default: j(() => [_("div", bX, [J(m(w_)), _("div", _X, [_("h3", xX, E(m(w)("agora", "Generate content with AI")), 1), _("div", wX, [_("label", DX, E(m(w)("agora", "Describe what you want to generate")), 1), J(m(ws), { id: "ai-prompt", value: c.value, "onUpdate:value": [U[21] || (U[21] = (W) => c.value = W), M], placeholder: m(w)("agora", "e.g. Write a professional introduction for a business inquiry about"), type: "textarea", label: "Prompt for AI", rows: 4 }, null, 8, ["value", "placeholder"])]), u.value ? (x(), R("div", SX, [_("h3", null, E(m(w)("agora", "Preview")), 1), _("div", CX, [_("p", null, E(m(w)("agora", "AI generated content is ready to be inserted")), 1), _("div", kX, E(m(w)("agora", "Content length: {length} characters", { length: u.value.length })), 1), _("div", TX, [_("strong", null, E(m(w)("agora", "Summary")), 1), _e(" " + E(f(u.value)), 1)])])])) : G("", true), _("div", EX, [J(m(Me), { type: "secondary", onClick: V }, { default: j(() => [_e(E(m(w)("agora", "Cancel")), 1)]), _: 1 }), J(m(D_), { disabled: !c.value.trim() || l.value, onClick: F }, { default: j(() => [_e(E(l.value ? m(w)("agora", "Generating …") : m(w)("agora", "Generate")), 1)]), _: 1 }, 8, ["disabled"]), u.value ? (x(), B(m(Me), { key: 0, disabled: l.value, type: "primary", onClick: k }, { default: j(() => [_e(E(m(w)("agora", "Insert content")), 1)]), _: 1 }, 8, ["disabled"])) : G("", true)])])])]), _: 1 })]), _: 1 }, 8, ["name"])) : G("", true)], 512));
+} }, RX = Qe(AX, [["__scopeId", "data-v-d309a753"]]), IX = (t10, e, n) => {
   const i = t10[e];
   return i ? typeof i == "function" ? i() : Promise.resolve(i) : new Promise((r, s) => {
     (typeof queueMicrotask == "function" ? queueMicrotask : setTimeout)(s.bind(null, new Error("Unknown variable dynamic import: " + e + (e.split("/").length !== n ? ". Note that variables only represent file names one level deep." : ""))));
@@ -40852,10 +40864,10 @@ const PX = { class: "search-option-item" }, LX = { class: "item-id" }, qX = { cl
   };
   return (Z, me) => (x(), R(Oe, null, [t10.option ? (x(), R("div", { key: 0, class: Ne(["option-card", `type-${t10.option.type}`, { compact: t10.compact, inline: t10.inline, official: t10.official, highlight: t10.highlight, "show-poll": t10.showPoll, "has-support": C.value, "has-comments": S.value, "has-progress-bar": t10.progressBar }]), onClick: X }, [_("div", yY, [_("div", vY, [_("div", { class: "type-icon", style: ft({ color: b.value }) }, [(x(), B(se(v.value), { size: t10.compact ? 16 : 20 }, null, 8, ["size"]))], 4), _("div", bY, [_("span", _Y, E(y.value), 1), _("span", xY, E(H(t10.option.status.created)), 1)])]), !t10.inline && p.value && t10.showAction ? (x(), R("div", { key: 0, class: "header-right", onClick: me[0] || (me[0] = Ze(() => {
   }, ["stop"])) }, [p.value ? (x(), B(m(vi), { key: 0, "force-menu": true, "aria-label": m(w)("agora", "Option actions"), class: "card-actions" }, { default: j(() => [f.value ? (x(), B(m(yt), { key: 0, "close-after-click": true, onClick: l }, { icon: j(() => [(x(), B(se(m(qe).Delete), { size: 20 }))]), default: j(() => [_e(" " + E(m(w)("agora", "Delete")), 1)]), _: 1 })) : G("", true)]), _: 1 }, 8, ["aria-label"])) : G("", true)])) : G("", true)]), _("div", wY, [D.value ? (x(), R("div", DY, [_("h3", SY, E(t10.option.label || t10.option.title), 1)])) : G("", true), t10.option.text && (!t10.compact || !N.value) ? (x(), R("div", CY, [_("div", kY, E(P(t10.option.text, m(r))), 1)])) : G("", true)]), t10.progressBar ? (x(), R("div", TY, [_("div", EY, [_("div", { class: "progress-bar-fill", style: ft({ width: `${q.value}%` }) }, null, 4)]), _("div", AY, [_("span", RY, E(m(w)("agora", "Progress")), 1), _("span", IY, E(Math.round(q.value)) + "%", 1)])])) : G("", true), t10.inline ? G("", true) : (x(), R("div", MY)), !t10.inline && (C.value || S.value) && !t10.progressBar ? (x(), R("div", UY, [C.value ? (x(), R("div", OY, [J(di, { item: t10.option, "item-type": "option", context: d.value, "show-quorum": true, "show-details-on-hover": true, "icon-size": t10.compact ? 12 : 14, onClick: me[1] || (me[1] = Ze(() => {
-  }, ["stop"])) }, null, 8, ["item", "context", "icon-size"])])) : G("", true), S.value ? (x(), R("div", { key: 1, class: "feature-item comments-feature", onClick: me[2] || (me[2] = Ze((oe) => Z.$emit("comment", t10.option), ["stop"])) }, [_("div", NY, [(x(), B(se(m(qe).Comment), { size: t10.compact ? 14 : 16, class: "feature-icon" }, null, 8, ["size"])), _("span", FY, E(t10.option.status.countComments || 0), 1)])])) : G("", true)])) : G("", true), !t10.inline && V.value && !t10.compact && !t10.progressBar ? (x(), R("div", BY, [_("div", $Y, [(x(), B(se(m(qe).MessageReplyText), { size: 14 })), _("span", PY, E(m(w)("agora", "Responses")), 1)]), _("div", LY, [k.value === 0 ? (x(), R("div", qY, [_("span", zY, E(m(w)("agora", "None")), 1)])) : (x(), R("div", WY, [(x(true), R(Oe, null, $e(T.value, (oe) => (x(), R("div", { key: oe, class: "response-type-summary", onMouseenter: (be) => U(oe), onMouseleave: W, onClick: Ze((be) => Z.$emit("viewResponses", t10.option, oe), ["stop"]) }, [_("div", HY, [(x(), B(se(A(oe)), { size: t10.inline ? 10 : 12 }, null, 8, ["size"])), _("span", jY, E(F.value[oe] || 0), 1)]), $.value === oe && F.value[oe] > 0 ? (x(), R("div", GY, [_("div", XY, [_("strong", null, E(O(oe)), 1), _("span", YY, E(F.value[oe]) + " " + E(m(w)("agora", "items")), 1)]), _("div", KY, [(x(true), R(Oe, null, $e(ne(oe), (be) => (x(), R("div", { key: be.id, class: "tooltip-child-item", onClick: Ze((De) => Z.$emit("click", be), ["stop"]) }, [(x(), B(se(A(be.type)), { size: 10 })), _("span", QY, E(be.title || be.text?.substring(0, 30)), 1)], 8, ZY))), 128)), F.value[oe] > 3 ? (x(), R("div", JY, E(m(w)("agora", "and {count} more …", { count: F.value[oe] - 3 })), 1)) : G("", true)])])) : G("", true)], 40, VY))), 128))]))])])) : G("", true), t10.inline ? (x(), R("div", eK, [V.value && !t10.compact && !t10.progressBar ? (x(), R("div", tK, [_("div", nK, [k.value === 0 ? (x(), R("div", iK, [_("span", rK, E(m(w)("agora", "None")), 1)])) : (x(), R("div", sK, [(x(true), R(Oe, null, $e(T.value, (oe) => (x(), R("div", { key: oe, class: "response-type-summary", onMouseenter: (be) => U(oe), onMouseleave: W, onClick: Ze((be) => Z.$emit("viewResponses", t10.option, oe), ["stop"]) }, [_("div", aK, [(x(), B(se(A(oe)), { size: 10 })), _("span", lK, E(F.value[oe] || 0), 1)]), $.value === oe && F.value[oe] > 0 ? (x(), R("div", cK, [_("div", uK, [_("strong", null, E(O(oe)), 1), _("span", dK, E(F.value[oe]) + " " + E(m(w)("agora", "items")), 1)]), _("div", hK, [(x(true), R(Oe, null, $e(ne(oe), (be) => (x(), R("div", { key: be.id, class: "tooltip-child-item", onClick: Ze((De) => Z.$emit("click", be), ["stop"]) }, [(x(), B(se(A(be.type)), { size: 10 })), _("span", pK, E(be.title || be.text?.substring(0, 30)), 1)], 8, fK))), 128)), F.value[oe] > 3 ? (x(), R("div", gK, E(m(w)("agora", "and {count} more …", { count: F.value[oe] - 3 })), 1)) : G("", true)])])) : G("", true)], 40, oK))), 128))]))])])) : G("", true), C.value ? (x(), R("div", mK, [J(di, { item: t10.option, "item-type": "option", context: d.value, "show-quorum": true, "show-details-on-hover": true, "icon-size": 12, onClick: me[3] || (me[3] = Ze(() => {
+  }, ["stop"])) }, null, 8, ["item", "context", "icon-size"])])) : G("", true), S.value ? (x(), R("div", { key: 1, class: "feature-item comments-feature", onClick: me[2] || (me[2] = Ze((oe) => Z.$emit("comment", t10.option), ["stop"])) }, [_("div", NY, [(x(), B(se(m(qe).Comment), { size: t10.compact ? 14 : 16, class: "feature-icon" }, null, 8, ["size"])), _("span", FY, E(t10.option.status.countComments || 0), 1)])])) : G("", true)])) : G("", true), !t10.inline && V.value && !t10.compact && !t10.progressBar ? (x(), R("div", BY, [_("div", $Y, [(x(), B(se(m(qe).MessageReplyText), { size: 14 })), _("span", PY, E(m(w)("agora", "Responses")), 1)]), _("div", LY, [k.value === 0 ? (x(), R("div", qY, [_("span", zY, E(m(w)("agora", "None")), 1)])) : (x(), R("div", WY, [(x(true), R(Oe, null, $e(T.value, (oe) => (x(), R("div", { key: oe, class: "response-type-summary", onMouseenter: (be) => U(oe), onMouseleave: W, onClick: Ze((be) => Z.$emit("viewResponses", t10.option, oe), ["stop"]) }, [_("div", HY, [(x(), B(se(A(oe)), { size: t10.inline ? 10 : 12 }, null, 8, ["size"])), _("span", jY, E(F.value[oe] || 0), 1)]), $.value === oe && F.value[oe] > 0 ? (x(), R("div", GY, [_("div", XY, [_("strong", null, E(O(oe)), 1), _("span", YY, E(F.value[oe]) + " " + E(m(w)("agora", "items")), 1)]), _("div", KY, [(x(true), R(Oe, null, $e(ne(oe), (be) => (x(), R("div", { key: be.id, class: "tooltip-child-item", onClick: Ze((De) => Z.$emit("click", be), ["stop"]) }, [(x(), B(se(A(be.type)), { size: 10 })), _("span", QY, E(be.title || be.text?.substring(0, 30)), 1)], 8, ZY))), 128)), F.value[oe] > 3 ? (x(), R("div", JY, E(m(w)("agora", "and {count} more …", { count: F.value[oe] - 3 })), 1)) : G("", true)])])) : G("", true)], 40, VY))), 128))]))])])) : G("", true), t10.inline ? (x(), R("div", eK, [V.value && !t10.compact && !t10.progressBar ? (x(), R("div", tK, [_("div", nK, [k.value === 0 ? (x(), R("div", iK, [_("span", rK, E(m(w)("agora", "None")), 1)])) : (x(), R("div", sK, [(x(true), R(Oe, null, $e(T.value, (oe) => (x(), R("div", { key: oe, class: "response-type-summary", onMouseenter: (be) => U(oe), onMouseleave: W, onClick: Ze((be) => Z.$emit("viewResponses", t10.option, oe), ["stop"]) }, [_("div", aK, [(x(), B(se(A(oe)), { size: 10 })), _("span", lK, E(F.value[oe] || 0), 1)]), $.value === oe && F.value[oe] > 0 ? (x(), R("div", cK, [_("div", uK, [_("strong", null, E(O(oe)), 1), _("span", dK, E(F.value[oe]) + " " + E(m(w)("agora", "items")), 1)]), _("div", hK, [(x(true), R(Oe, null, $e(ne(oe), (be) => (x(), R("div", { key: be.id, class: "tooltip-child-item", onClick: Ze((De) => Z.$emit("click", be), ["stop"]) }, [(x(), B(se(A(be.type)), { size: 10 })), _("span", pK, E(be.title || be.text?.substring(0, 30)), 1)], 8, fK))), 128)), F.value[oe] > 3 ? (x(), R("div", gK, E(m(w)("agora", "and {count} more …", { count: F.value[oe] - 3 })), 1)) : G("", true)])])) : G("", true)], 40, oK))), 128))]))])])) : G("", true), C.value ? (x(), R("div", mK, [J(di, { item: t10.option, "item-type": "option", context: d.value, "show-quorum": true, "show-details-on-hover": true, "icon-size": 12, onClick: me[3] || (me[3] = Ze(() => {
   }, ["stop"])) }, null, 8, ["item", "context"])])) : G("", true), S.value && !t10.progressBar ? (x(), R("div", { key: 2, class: "inline-feature-item comments-feature", onClick: me[4] || (me[4] = Ze((oe) => Z.$emit("comment", t10.option), ["stop"])) }, [_("div", yK, [(x(), B(se(m(qe).Comment), { size: 14, class: "feature-icon" })), _("span", vK, E(t10.option.status.countComments || 0), 1)])])) : G("", true), me[7] || (me[7] = _("div", { class: "inline-spacer" }, null, -1)), p.value && t10.showAction ? (x(), R("div", { key: 3, class: "inline-actions", onClick: me[5] || (me[5] = Ze(() => {
   }, ["stop"])) }, [J(m(vi), { "force-menu": true, "aria-label": m(w)("agora", "Option actions"), class: "card-actions" }, { default: j(() => [f.value ? (x(), B(m(yt), { key: 0, "close-after-click": true, onClick: l }, { icon: j(() => [(x(), B(se(m(qe).Delete), { size: 20 }))]), default: j(() => [_e(" " + E(m(w)("agora", "Delete")), 1)]), _: 1 })) : G("", true)]), _: 1 }, 8, ["aria-label"])])) : G("", true)])) : G("", true), t10.inline ? G("", true) : (x(), R("div", bK, [_("div", _K, [t10.option.owner?.id ? (x(), B(m(fn), { key: 0, user: t10.option.owner.id, "display-name": t10.option.owner.displayName, size: 18 }, null, 8, ["user", "display-name"])) : G("", true), _("span", xK, E(t10.option.owner?.displayName || m(w)("agora", "Unknown owner")), 1)])]))], 2)) : G("", true), J(rE, { visible: a.value, "onUpdate:visible": me[6] || (me[6] = (oe) => a.value = oe), "option-title": t10.option?.title || t10.option?.label || "", "is-imported": te.value, "view-type": t10.familyType || "view", onConfirm: c, onRemoveFromView: u }, null, 8, ["visible", "option-title", "is-imported", "view-type"])], 64));
-} }), Cn = Qe(wK, [["__scopeId", "data-v-12a3d5c3"]]), DK = { class: "add-option-modal" }, SK = { class: "modal-header" }, CK = { class: "modal-subtitle" }, kK = { class: "modal-content" }, TK = { class: "form-grid" }, EK = { class: "form-column" }, AK = { class: "option-type-indicator" }, RK = { class: "type-info" }, IK = { key: 0, class: "parent-info" }, MK = { class: "parent-label" }, UK = { class: "parent-details" }, OK = { key: 1, class: "responses-info" }, NK = { class: "responses-label" }, FK = { class: "responses-list" }, BK = { class: "features-info" }, $K = { class: "features-grid" }, PK = { key: 0, class: "feature-item" }, LK = { class: "feature-label" }, qK = { key: 1, class: "feature-item" }, zK = { class: "feature-label" }, WK = { key: 2, class: "feature-item" }, VK = { class: "feature-label" }, HK = { class: "form-fields" }, jK = { key: 0, class: "form-field" }, GK = { for: "option-title" }, XK = { class: "form-field" }, YK = { for: "option-text" }, KK = { key: 1, class: "additional-fields-section" }, ZK = { class: "preview-column" }, QK = { class: "preview-card" }, JK = { key: 0, class: "help-text" }, eZ = { key: 1, class: "statuses-preview" }, tZ = { class: "statuses-list" }, nZ = { class: "modal-footer" }, iZ = { key: 0, class: "form-errors" }, rZ = { class: "footer-actions" }, sZ = Fe({ __name: "OptionAddModal", props: { inquiryId: {}, optionType: {}, parentId: {} }, emits: ["close", "created"], setup(t10, { emit: e }) {
+} }), Cn = Qe(wK, [["__scopeId", "data-v-87601bd1"]]), DK = { class: "add-option-modal" }, SK = { class: "modal-header" }, CK = { class: "modal-subtitle" }, kK = { class: "modal-content" }, TK = { class: "form-grid" }, EK = { class: "form-column" }, AK = { class: "option-type-indicator" }, RK = { class: "type-info" }, IK = { key: 0, class: "parent-info" }, MK = { class: "parent-label" }, UK = { class: "parent-details" }, OK = { key: 1, class: "responses-info" }, NK = { class: "responses-label" }, FK = { class: "responses-list" }, BK = { class: "features-info" }, $K = { class: "features-grid" }, PK = { key: 0, class: "feature-item" }, LK = { class: "feature-label" }, qK = { key: 1, class: "feature-item" }, zK = { class: "feature-label" }, WK = { key: 2, class: "feature-item" }, VK = { class: "feature-label" }, HK = { class: "form-fields" }, jK = { key: 0, class: "form-field" }, GK = { for: "option-title" }, XK = { class: "form-field" }, YK = { for: "option-text" }, KK = { key: 1, class: "additional-fields-section" }, ZK = { class: "preview-column" }, QK = { class: "preview-card" }, JK = { key: 0, class: "help-text" }, eZ = { key: 1, class: "statuses-preview" }, tZ = { class: "statuses-list" }, nZ = { class: "modal-footer" }, iZ = { key: 0, class: "form-errors" }, rZ = { class: "footer-actions" }, sZ = Fe({ __name: "OptionAddModal", props: { inquiryId: {}, optionType: {}, parentId: {} }, emits: ["close", "created"], setup(t10, { emit: e }) {
   const n = t10, i = e, r = ui(), s = Uu(), o = Ke(), a = ue(true), l = ue({ title: "", text: "" }), c = ue({}), u = ue([]), d = z(() => o.appSettings?.inquiryOptionTypeTab || []), h = z(() => U0(n.optionType, d.value) || []), f = (P) => {
     c.value = { ...P };
   }, p = z(() => n.optionType ? w("agora", "Add {type}", { type: y.value }) : w("agora", "Add Option")), g = z(() => v.value || ""), y = z(() => Ma(n.optionType, d.value, w("agora", "Option"))), v = z(() => O0(n.optionType, d.value)), b = z(() => _i(n.optionType, d.value)), D = z(() => Vp(n.optionType, d.value)), S = z(() => n.parentId ? r.options.find((P) => P.id === n.parentId) : null), C = z(() => Lu(n.optionType, d.value)), T = z(() => Pu(n.optionType, d.value)), A = z(() => SO(n.optionType, d.value)), O = z(() => $u(n.optionType, d.value)), N = z(() => (Vl(n.optionType, d.value)?.statuses || []).length > 0), q = z(() => {
@@ -40884,7 +40896,7 @@ const PX = { class: "search-option-item" }, LX = { class: "item-id" }, qX = { cl
     return h.value.forEach((Y) => {
       let Z = c.value[Y.key];
       (Y.type === "users" || Y.type === "groups") && (Z = ne(Z)), Z != null && Z !== "" ? L[Y.key] = al(Z, Y.type) : Y.default !== void 0 && Y.default !== null && Y.default !== "" && (L[Y.key] = al(Y.default, Y.type));
-    }), { id: 0, targetId: n.inquiryId, parentId: n.parentId || 0, type: n.optionType || "", title: l.value.title || w("agora", "Preview Title"), text: l.value.text || w("agora", "Preview text …"), textSafe: "", sortOrder: 0, configuration: { access: "private", showResults: "always", allowComment: O.value ? 1 : 0, supportFeature: X.support_feature || "none", family: X.family || "" }, miscFields: L, ownedGroup: "", owner: { id: P?.id || "preview-user", displayName: P?.displayName || w("agora", "Current User"), userRole: P?.userRole || "" }, currentUserStatus: { isInvolved: false, hasSupported: false, supportValue: null, isLoggedIn: !!P?.id, isOwner: true, shareToken: "", userId: P?.id || "", userRole: P?.userRole || "" }, status: { created: Math.floor(Date.now() / 1e3), updated: Math.floor(Date.now() / 1e3), isArchived: false, isDeleted: false, countParticipants: 0, countComments: 0, countSupports: 0, optionStatus: "draft", countPositiveSupports: 0, countNegativeSupports: 0, countNeutralSupports: 0 }, permissions: { view: true, edit: true, delete: true, archive: true, support: true, comment: true, addShares: false, addSharesExternal: false, changeForeignSupports: false, changeOwner: false, reorderOptions: false, seeResults: true, seeUsernames: true, subscribe: true, takeOver: false, addOption: true, confirmOption: false }, childs: [], meta: { chunking: { size: 0, loaded: 0 }, status: "loaded" }, inquiryInfo: { targetId: n.inquiryId, inquiryTitle: "", inquiryType: "", inquiryAccess: "" } };
+    }), { id: 0, targetId: n.inquiryId, parentId: n.parentId || 0, type: n.optionType || "", title: l.value.title || w("agora", "Preview Title"), text: l.value.text || w("agora", "Preview text …"), textSafe: "", sortOrder: 0, configuration: { access: "private", showResults: "always", allowComment: O.value ? 1 : 0, supportFeature: X.support_feature || "none", family: X.family || "" }, miscFields: L, ownedGroup: "", owner: { id: P?.id || "preview-user", displayName: P?.displayName || w("agora", "Current User"), userRole: P?.userRole || "" }, currentUserStatus: { isInvolved: false, hasSupported: false, supportValue: null, isLoggedIn: !!P?.id, isOwner: true, shareToken: "", userId: P?.id || "", userRole: P?.userRole || "" }, status: { created: Math.floor(Date.now() / 1e3), updated: Math.floor(Date.now() / 1e3), isArchived: false, isDeleted: false, countParticipants: 0, countComments: 0, countSupports: 0, optionStatus: "draft", countPositiveSupports: 0, countNegativeSupports: 0, countNeutralSupports: 0 }, permissions: { view: true, edit: true, delete: true, archive: true, support: true, comment: true, addShares: false, addSharesExternal: false, changeForeignSupports: false, changeOwner: false, reorderOptions: false, seeResults: true, seeUsernames: true, subscribe: true, takeOver: false, addOption: true, confirmOption: false }, childs: [], meta: { chunking: { size: 0, loaded: 0 }, status: "loaded" }, inquiryInfo: { targetId: n.inquiryId, inquiryTitle: "", inquiryType: "", inquiryAccess: "" } };
   }), te = async () => {
     if (!(!k.value || !n.optionType)) try {
       const P = Vl(n.optionType, d.value) || {}, X = "private", L = "draft", Y = P.support_feature || "none", Z = O.value ? 1 : 0, me = P.family || "", oe = {};
@@ -40904,7 +40916,7 @@ const PX = { class: "search-option-item" }, LX = { class: "item-id" }, qX = { cl
       P && P.focus();
     }, 100);
   }), (P, X) => a.value ? (x(), B(m(Ri), { key: 0, name: p.value, size: "large", onClose: X[4] || (X[4] = (L) => P.$emit("close")) }, { default: j(() => [_("div", DK, [_("div", SK, [_("h2", null, E(p.value), 1), _("p", CK, E(g.value), 1)]), _("div", kK, [_("div", TK, [_("div", EK, [_("div", AK, [_("div", { class: "type-icon", style: ft({ color: D.value }) }, [(x(), B(se(b.value), { size: 24 }))], 4), _("div", RK, [_("h3", null, E(y.value), 1), _("p", null, E(v.value), 1)])]), S.value ? (x(), R("div", IK, [_("div", MK, [(x(), B(se(m(qe).ArrowUp), { size: 14 })), _e(" " + E(m(w)("agora", "Parent")) + ": ", 1)]), _("div", UK, [(x(), B(se($(S.value)), { size: 16 })), _("span", null, E(S.value.label || S.value.title), 1)])])) : G("", true), C.value.length > 0 ? (x(), R("div", OK, [_("div", NK, [(x(), B(se(m(qe).ArrowDown), { size: 14 })), _e(" " + E(m(w)("agora", "Can have responses")) + ": ", 1)]), _("div", FK, [(x(true), R(Oe, null, $e(C.value, (L) => (x(), R("span", { key: L, class: "response-type" }, [(x(), B(se(U(L)), { size: 12 })), _e(" " + E(m(Ma)(L)), 1)]))), 128))])])) : G("", true), _("div", BK, [_("div", $K, [T.value ? (x(), R("div", PK, [(x(), B(se(m(qe).ThumbUp), { size: 16 })), _("span", LK, E(A.value), 1)])) : G("", true), O.value ? (x(), R("div", qK, [(x(), B(se(m(qe).Comment), { size: 16 })), _("span", zK, E(m(w)("agora", "Comments allowed")), 1)])) : G("", true), N.value ? (x(), R("div", WK, [(x(), B(se(m(qe).Circle), { size: 16 })), _("span", VK, E(m(w)("agora", "Has statuses")), 1)])) : G("", true)])]), _("div", HK, [M.value ? (x(), R("div", jK, [_("label", GK, E(m(w)("agora", "Title")) + " *", 1), J(m(xi), { id: "option-title", modelValue: l.value.title, "onUpdate:modelValue": X[0] || (X[0] = (L) => l.value.title = L), autolink: true, "use-markdown": true, "emoji-autocomplete": true, "link-autocomplete": true, placeholder: m(w)("agora", "Enter a title for this option"), "full-width": "", onKeyup: X[1] || (X[1] = Fp((L) => l.value.text && te(), ["enter"])) }, null, 8, ["modelValue", "placeholder"])])) : G("", true), _("div", XK, [_("label", YK, E(m(w)("agora", "Description")), 1), J(m(xi), { id: "option-text", modelValue: l.value.text, "onUpdate:modelValue": X[2] || (X[2] = (L) => l.value.text = L), placeholder: m(w)("agora", "Add a text (optional)"), "emoji-autocomplete": true, "link-autocomplete": true, autolink: true, "use-markdown": true, multiline: true, rows: 4, "full-width": "", onKeydown: Fp(Ze(te, ["ctrl"]), ["enter"]) }, null, 8, ["modelValue", "placeholder", "onKeydown"])]), V.value ? (x(), R("div", KK, [_("h4", null, E(m(w)("agora", "Additional Information")), 1), J(Uv, { fields: h.value, "initial-values": c.value, editable: true, "inquiry-id": t10.inquiryId, "location-items": m(o).appSettings?.locationTab || [], "category-items": m(o).appSettings?.categoryTab || [], users: m(o).appSettings?.users || {}, options: m(r).options, inquiries: m(o).appSettings?.inquiries || [], onUpdate: f }, null, 8, ["fields", "initial-values", "inquiry-id", "location-items", "category-items", "users", "options", "inquiries"])])) : G("", true)])]), _("div", ZK, [_("h4", null, E(m(w)("agora", "Preview")), 1), _("div", QK, [J(Cn, { option: H.value, "inquiry-id": t10.inquiryId, "show-action": false, compact: false, "prevent-click": "" }, null, 8, ["option", "inquiry-id"])]), F.value ? (x(), R("div", JK, [(x(), B(se(m(qe).Information), { size: 16 })), _("p", null, E(F.value), 1)])) : G("", true), N.value ? (x(), R("div", eZ, [_("h5", null, E(m(w)("agora", "Available Statuses")), 1), _("div", tZ, [(x(true), R(Oe, null, $e(q.value, (L) => (x(), R("span", { key: L.value, class: Ne(["status-badge", `status-${L.value}`]) }, [(x(), B(se(W(L.value)), { size: 12 })), _e(" " + E(L.label), 1)], 2))), 128))])])) : G("", true)])])]), _("div", nZ, [u.value.length > 0 ? (x(), R("div", iZ, [(x(true), R(Oe, null, $e(u.value, (L) => (x(), R("span", { key: L, class: "error-item" }, [(x(), B(se(m(qe).AlertCircle), { size: 14 })), _e(" " + E(L), 1)]))), 128))])) : G("", true), _("div", rZ, [J(m(Me), { type: "tertiary", onClick: X[3] || (X[3] = (L) => P.$emit("close")) }, { default: j(() => [_e(E(m(w)("agora", "Cancel")), 1)]), _: 1 }), J(m(Me), { type: "primary", disabled: !k.value, onClick: te }, { icon: j(() => [(x(), B(se(b.value), { size: 16 }))]), default: j(() => [_e(" " + E(m(w)("agora", "Create")), 1)]), _: 1 }, 8, ["disabled"])])])])]), _: 1 }, 8, ["name"])) : G("", true);
-} }), Ov = Qe(sZ, [["__scopeId", "data-v-5ca3aea1"]]), oZ = { name: "PencilIcon", emits: ["click"], props: { title: { type: String }, fillColor: { type: String, default: "currentColor" }, size: { type: Number, default: 24 } } }, aZ = ["aria-hidden", "aria-label"], lZ = ["fill", "width", "height"], cZ = { d: "M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z" }, uZ = { key: 0 };
+} }), Ov = Qe(sZ, [["__scopeId", "data-v-c387394c"]]), oZ = { name: "PencilIcon", emits: ["click"], props: { title: { type: String }, fillColor: { type: String, default: "currentColor" }, size: { type: Number, default: 24 } } }, aZ = ["aria-hidden", "aria-label"], lZ = ["fill", "width", "height"], cZ = { d: "M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z" }, uZ = { key: 0 };
 function dZ(t10, e, n, i, r, s) {
   return x(), R("span", wt(t10.$attrs, { "aria-hidden": n.title ? null : "true", "aria-label": n.title, class: "material-design-icon pencil-icon", role: "img", onClick: e[0] || (e[0] = (o) => t10.$emit("click", o)) }), [(x(), R("svg", { fill: n.fillColor, class: "material-design-icon__svg", width: n.size, height: n.size, viewBox: "0 0 24 24" }, [_("path", cZ, [n.title ? (x(), R("title", uZ, E(n.title), 1)) : G("", true)])], 8, lZ))], 16, aZ);
 }
@@ -41050,8 +41062,8 @@ const mZ = { class: "avatar-wrapper" }, yZ = { key: 0, class: "hover-menu" }, vZ
   function h(f) {
     (f.ctrlKey || f.metaKey) && f.key === "Enter" && (f.preventDefault(), d());
   }
-  return (f, p) => (x(), R("div", FZ, [J(Xh, { user: m(i).currentUser, "hide-names": "" }, null, 8, ["user"]), _("div", BZ, [_("div", $Z, [J(m(xi), { modelValue: s.value, "onUpdate:modelValue": p[0] || (p[0] = (g) => s.value = g), placeholder: m(w)("agora", "Write a comment …"), autolink: true, "use-markdown": true, "emoji-autocomplete": true, "link-autocomplete": true, maxlength: 150, disabled: !l.value || a.value, onSubmit: d, onKeydown: h }, null, 8, ["modelValue", "placeholder", "disabled"]), J(m(Me), { class: "comment-add__submit", type: "primary", disabled: !s.value.trim() || !l.value || a.value, loading: a.value, onClick: d }, { default: j(() => [_e(E(m(w)("agora", "Send")), 1)]), _: 1 }, 8, ["disabled", "loading"])]), _("div", PZ, [u.value ? (x(), R("div", { key: 1, class: Ne(["confidential-forced", { disabled: !l.value }]) }, [p[2] || (p[2] = _("span", { class: "confidential-icon" }, "🔒", -1)), _e(" " + E(c.value), 1)], 2)) : (x(), B(m(gn), { key: 0, modelValue: o.value, "onUpdate:modelValue": p[1] || (p[1] = (g) => o.value = g), type: "switch", disabled: !l.value || a.value }, { default: j(() => [_e(E(c.value), 1)]), _: 1 }, 8, ["modelValue", "disabled"]))])])]));
-} }), Fv = Qe(LZ, [["__scopeId", "data-v-de197686"]]), qZ = { class: "option-detail-modal" }, zZ = { key: 0, class: "loading-state" }, WZ = { key: 1, class: "error-state" }, VZ = { key: 2, class: "modal-content" }, HZ = { class: "modal-header" }, jZ = { class: "header-left" }, GZ = { class: "header-text" }, XZ = { class: "option-title" }, YZ = { class: "option-meta" }, KZ = { class: "option-type" }, ZZ = { class: "option-date" }, QZ = { class: "header-right" }, JZ = { class: "main-content" }, eQ = { class: "content-section" }, tQ = { key: 0, class: "editor-container" }, nQ = { key: 1, class: "additional-fields" }, iQ = { key: 1, class: "content-display" }, rQ = { key: 0, class: "text-content" }, sQ = { class: "text-text" }, oQ = { key: 1, class: "additional-fields-display" }, aQ = { class: "feature-buttons-container" }, lQ = { class: "features-left" }, cQ = { key: 0, class: "feature-group" }, uQ = { key: 1, class: "feature-group" }, dQ = { class: "comment-container" }, hQ = { class: "comment-count-badge" }, fQ = { class: "owner-section-right" }, pQ = { class: "owner-details-right" }, gQ = { class: "owner-text" }, mQ = { class: "owner-name" }, yQ = { key: 0, class: "children-section" }, vQ = { class: "section-header" }, bQ = { class: "children-list" }, _Q = { key: 0, class: "empty-children" }, xQ = { key: 1, class: "children-grid" }, wQ = { key: 0, class: "comment-form" }, DQ = { key: 0, class: "comments-list" }, SQ = { key: 1, class: "no-comments" }, CQ = Fe({ __name: "OptionDetailModal", props: { optionId: {}, inquiryId: {} }, emits: ["close", "updated", "deleted"], setup(t10, { emit: e }) {
+  return (f, p) => (x(), R("div", FZ, [J(Xh, { user: m(i).currentUser, "hide-names": "" }, null, 8, ["user"]), _("div", BZ, [_("div", $Z, [J(m(xi), { modelValue: s.value, "onUpdate:modelValue": p[0] || (p[0] = (g) => s.value = g), placeholder: m(w)("agora", "Write a comment …"), autolink: true, "use-markdown": true, "emoji-autocomplete": true, "link-autocomplete": true, maxlength: 150, disabled: !l.value || a.value, onSubmit: d, onKeydown: h }, null, 8, ["modelValue", "placeholder", "disabled"]), J(m(Me), { class: "comment-add__submit", type: "primary", disabled: !s.value.trim() || !l.value || a.value, loading: a.value, onClick: d }, { default: j(() => [_e(E(m(w)("agora", "Send")), 1)]), _: 1 }, 8, ["disabled", "loading"])]), _("div", PZ, [u.value ? (x(), R("div", { key: 1, class: Ne(["confidential-forced", { disabled: !l.value }]) }, [p[2] || (p[2] = _("span", { class: "confidential-icon" }, "🔒", -1)), _e(" " + E(c.value), 1)], 2)) : (x(), B(m(gn), { key: 0, modelValue: o.value, "onUpdate:modelValue": p[1] || (p[1] = (g) => o.value = g), type: "switch", disabled: !l.value || a.value }, { default: j(() => [_e(E(c.value), 1)]), _: 1 }, 8, ["modelValue", "disabled"]))])])]));
+} }), Fv = Qe(LZ, [["__scopeId", "data-v-ca97d9ac"]]), qZ = { class: "option-detail-modal" }, zZ = { key: 0, class: "loading-state" }, WZ = { key: 1, class: "error-state" }, VZ = { key: 2, class: "modal-content" }, HZ = { class: "modal-header" }, jZ = { class: "header-left" }, GZ = { class: "header-text" }, XZ = { class: "option-title" }, YZ = { class: "option-meta" }, KZ = { class: "option-type" }, ZZ = { class: "option-date" }, QZ = { class: "header-right" }, JZ = { class: "main-content" }, eQ = { class: "content-section" }, tQ = { key: 0, class: "editor-container" }, nQ = { key: 1, class: "additional-fields" }, iQ = { key: 1, class: "content-display" }, rQ = { key: 0, class: "text-content" }, sQ = { class: "text-text" }, oQ = { key: 1, class: "additional-fields-display" }, aQ = { class: "feature-buttons-container" }, lQ = { class: "features-left" }, cQ = { key: 0, class: "feature-group" }, uQ = { key: 1, class: "feature-group" }, dQ = { class: "comment-container" }, hQ = { class: "comment-count-badge" }, fQ = { class: "owner-section-right" }, pQ = { class: "owner-details-right" }, gQ = { class: "owner-text" }, mQ = { class: "owner-name" }, yQ = { key: 0, class: "children-section" }, vQ = { class: "section-header" }, bQ = { class: "children-list" }, _Q = { key: 0, class: "empty-children" }, xQ = { key: 1, class: "children-grid" }, wQ = { key: 0, class: "comment-form" }, DQ = { key: 0, class: "comments-list" }, SQ = { key: 1, class: "no-comments" }, CQ = Fe({ __name: "OptionDetailModal", props: { optionId: {}, inquiryId: {} }, emits: ["close", "updated", "deleted"], setup(t10, { emit: e }) {
   const n = t10, i = e, r = ui(), s = Uu(), o = Ke(), a = $r(), l = ue(true), c = ue(false), u = ue(null), d = ue(false), h = ue(false), f = ue({ title: "", text: "" }), p = ue(false), g = ue(null), y = ue(false), v = ue(null), b = ue(null), D = ue(null), S = ue(null), C = ue({}), T = z(() => o.appSettings?.inquiryOptionTypeTab || []), A = ["force_layouts"], O = z(() => U0(s.type, T.value).filter((Ye) => !A.includes(Ye.key))), N = (Pe) => {
     C.value = { ...Pe };
   }, q = z(() => Ma(s.type, T.value, w("agora", "Option"))), V = z(() => _i(s.type, T.value)), M = z(() => Vp(s.type, T.value)), F = z(() => $u(s.type, T.value)), k = z(() => Pu(s.type, T.value)), $ = z(() => Wl(s.type, T.value)), U = z(() => !s?.type || c.value ? [] : Lu(s.type, T.value)), W = z(() => U.value.length > 0), ne = z(() => kO(s.type, T.value)), H = z(() => s ? zl(s) : null), te = z(() => Hp(H.value)), P = z(() => M0(H.value)), X = z(() => s.title || w("agora", "Option Details")), L = z(() => te.value || P.value), Y = z(() => f.value.text.trim().length > 0), Z = z(() => s?.id ? r.options.filter((Pe) => Pe.parentId === s.id) : []), me = z(() => Z.value.length > 0), oe = z(() => O.value.length > 0), be = z(() => s.miscFields ? Object.keys(s.miscFields).some((Pe) => !A.includes(Pe) && s.miscFields?.[Pe] !== void 0 && s.miscFields[Pe] !== null && s.miscFields[Pe] !== "") : false), De = z(() => S.value ? Z.value.filter((Pe) => Pe.type === S.value) : Z.value), ke = (Pe) => Mt.fromMillis(Pe * 1e3).toLocaleString(Mt.DATE_SHORT), Le = (Pe) => O0(Pe, T.value), fe = (Pe) => _i(Pe, T.value), xe = async () => {
@@ -41172,11 +41184,11 @@ const mZ = { class: "avatar-wrapper" }, yZ = { key: 0, class: "hover-menu" }, vZ
     }
   }, { deep: true }), (Pe, Ye) => {
     const ve = ms("OptionDetailModal", true);
-    return x(), R(Oe, null, [l.value && t10.optionId ? (x(), B(m(Ri), { key: 0, name: X.value, size: "large", onClose: I }, { default: j(() => [_("div", qZ, [c.value ? (x(), R("div", zZ, [J(m(v0), { size: 48 }), _("p", null, E(m(w)("agora", "Loading option details …")), 1)])) : u.value ? (x(), R("div", WZ, [J(m(Xp), { type: "error" }, { default: j(() => [_e(E(u.value), 1)]), _: 1 }), J(m(Me), { onClick: xe }, { default: j(() => [_e(E(m(w)("agora", "Retry")), 1)]), _: 1 })])) : m(s).id !== 0 ? (x(), R("div", VZ, [_("div", HZ, [_("div", jZ, [_("div", { class: "option-type-indicator", style: ft({ color: M.value }) }, [(x(), B(se(V.value), { size: 24 }))], 4), _("div", GZ, [_("h2", XZ, E(m(s).title || m(s).label), 1), _("div", YZ, [_("span", KZ, E(q.value), 1), _("span", ZZ, E(ke(m(s).status.created)), 1)])])]), _("div", QZ, [h.value ? (x(), R(Oe, { key: 1 }, [J(m(Me), { onClick: re }, { default: j(() => [_e(E(m(w)("agora", "Cancel")), 1)]), _: 1 }), J(m(Me), { type: "primary", disabled: !Y.value, onClick: Q }, { default: j(() => [_e(E(m(w)("agora", "Save")), 1)]), _: 1 }, 8, ["disabled"])], 64)) : (x(), R(Oe, { key: 0 }, [te.value ? (x(), B(m(Me), { key: 0, onClick: le }, { icon: j(() => [J(hZ, { size: 20 })]), default: j(() => [_e(" " + E(m(w)("agora", "Edit")), 1)]), _: 1 })) : G("", true)], 64)), L.value || W.value ? (x(), B(m(vi), { key: 2, "force-menu": true, "aria-label": m(w)("agora", "Option actions") }, { default: j(() => [W.value ? (x(), B(m(yt), { key: 0, "is-menu": "", name: m(w)("agora", "Add Response"), onClick: Ye[0] || (Ye[0] = (Ue) => Re("addResponse")) }, { icon: j(() => [(x(), B(se(m(qe).Plus), { size: 20 }))]), _: 1 }, 8, ["name"])) : G("", true), b.value === "addResponse" ? (x(true), R(Oe, { key: 1 }, $e(ne.value, (Ue) => (x(), B(m(yt), { key: Ue.option_type, "close-after-click": true, name: Ue.label, description: Le(Ue.option_type), onClick: (Ge) => {
+    return x(), R(Oe, null, [l.value && t10.optionId ? (x(), B(m(Ri), { key: 0, name: X.value, size: "large", onClose: I }, { default: j(() => [_("div", qZ, [c.value ? (x(), R("div", zZ, [J(m(v0), { size: 48 }), _("p", null, E(m(w)("agora", "Loading option details …")), 1)])) : u.value ? (x(), R("div", WZ, [J(m(Xp), { type: "error" }, { default: j(() => [_e(E(u.value), 1)]), _: 1 }), J(m(Me), { onClick: xe }, { default: j(() => [_e(E(m(w)("agora", "Retry")), 1)]), _: 1 })])) : m(s).id !== 0 ? (x(), R("div", VZ, [_("div", HZ, [_("div", jZ, [_("div", { class: "option-type-indicator", style: ft({ color: M.value }) }, [(x(), B(se(V.value), { size: 24 }))], 4), _("div", GZ, [_("h2", XZ, E(m(s).title || m(s).label), 1), _("div", YZ, [_("span", KZ, E(q.value), 1), _("span", ZZ, E(ke(m(s).status.created)), 1)])])]), _("div", QZ, [h.value ? (x(), R(Oe, { key: 1 }, [J(m(Me), { onClick: re }, { default: j(() => [_e(E(m(w)("agora", "Cancel")), 1)]), _: 1 }), J(m(Me), { type: "primary", disabled: !Y.value, onClick: Q }, { default: j(() => [_e(E(m(w)("agora", "Save")), 1)]), _: 1 }, 8, ["disabled"])], 64)) : (x(), R(Oe, { key: 0 }, [te.value ? (x(), B(m(Me), { key: 0, onClick: le }, { icon: j(() => [J(hZ, { size: 20 })]), default: j(() => [_e(" " + E(m(w)("agora", "Edit")), 1)]), _: 1 })) : G("", true)], 64)), L.value || W.value ? (x(), B(m(vi), { key: 2, "force-menu": true, "aria-label": m(w)("agora", "Option actions") }, { default: j(() => [W.value ? (x(), B(m(yt), { key: 0, "is-menu": "", name: m(w)("agora", "Add Response"), onClick: Ye[0] || (Ye[0] = (Ue) => Re("addResponse")) }, { icon: j(() => [(x(), B(se(m(qe).Plus), { size: 20 }))]), _: 1 }, 8, ["name"])) : G("", true), b.value === "addResponse" ? (x(true), R(Oe, { key: 1 }, $e(ne.value, (Ue) => (x(), B(m(yt), { key: Ue.option_type, "close-after-click": true, name: Ue.label, description: Le(Ue.option_type), onClick: (Ge) => {
       we(Ue.option_type), b.value = null;
     } }, { icon: j(() => [(x(), B(se(fe(Ue.option_type)), { size: 20 }))]), _: 2 }, 1032, ["name", "description", "onClick"]))), 128)) : G("", true), P.value ? (x(), B(m(yt), { key: 2, "close-after-click": true, onClick: ie }, { icon: j(() => [(x(), B(se(m(qe).Delete), { size: 20 }))]), default: j(() => [_e(" " + E(m(w)("agora", "Delete")), 1)]), _: 1 })) : G("", true)]), _: 1 }, 8, ["aria-label"])) : G("", true)])]), _("div", JZ, [_("div", eQ, [h.value ? (x(), R("div", tQ, [$.value ? (x(), B(m(xi), { key: 0, modelValue: f.value.title, "onUpdate:modelValue": Ye[1] || (Ye[1] = (Ue) => f.value.title = Ue), "emoji-autocomplete": true, "link-autocomplete": true, autolink: true, "use-markdown": true, label: m(w)("agora", "Title"), placeholder: m(w)("agora", "Enter option title"), "full-width": "" }, null, 8, ["modelValue", "label", "placeholder"])) : G("", true), J(m(xi), { modelValue: f.value.text, "onUpdate:modelValue": Ye[2] || (Ye[2] = (Ue) => f.value.text = Ue), label: m(w)("agora", "Description"), placeholder: m(w)("agora", "Enter option text"), "emoji-autocomplete": true, "link-autocomplete": true, autolink: true, "use-markdown": true, maxlength: 400, required: "", multiline: true, "full-width": "" }, null, 8, ["modelValue", "label", "placeholder"]), oe.value ? (x(), R("div", nQ, [_("h4", null, E(m(w)("agora", "Additional Information")), 1), J(Uv, { fields: O.value, "initial-values": C.value, editable: true, "option-id": m(s).id, "inquiry-id": t10.inquiryId, "location-items": m(o).appSettings?.locationTab || [], "category-items": m(o).appSettings?.categoryTab || [], users: m(o).appSettings?.users || {}, options: m(r).options, inquiries: m(o).appSettings?.inquiries || [], onUpdate: N }, null, 8, ["fields", "initial-values", "option-id", "inquiry-id", "location-items", "category-items", "users", "options", "inquiries"])])) : G("", true)])) : (x(), R("div", iQ, [m(s).text ? (x(), R("div", rQ, [_("div", sQ, E(m(s).text), 1)])) : G("", true), be.value ? (x(), R("div", oQ, [_("h4", null, E(m(w)("agora", "Additional Information")), 1), (x(), B(Uv, { key: m(s).id + "-" + JSON.stringify(m(s).miscFields), fields: O.value, "initial-values": m(s).miscFields || {}, editable: false, "location-items": m(o).appSettings?.locationTab || [], "category-items": m(o).appSettings?.categoryTab || [], users: m(o).appSettings?.users || {}, options: m(r).options, inquiries: m(o).appSettings?.inquiries || [] }, null, 8, ["fields", "initial-values", "location-items", "category-items", "users", "options", "inquiries"]))])) : G("", true), _("div", aQ, [_("div", lQ, [k.value ? (x(), R("div", cQ, [J(di, { item: m(s), "item-type": "option", context: H.value, "show-quorum": true, "show-details-on-hover": true, "icon-size": 14 }, null, 8, ["item", "context"])])) : G("", true), F.value ? (x(), R("div", uQ, [_("div", dQ, [_("div", hQ, [(x(), B(se(m(qe).Comment), { size: 16 })), _("span", null, E(m(s).status.countComments || 0), 1)]), J(m(Me), { type: "tertiary", class: "add-comment-btn", onClick: Ye[3] || (Ye[3] = (Ue) => d.value = !d.value) }, { icon: j(() => [(x(), B(se(d.value ? m(qe).Close : m(qe).Comment), { size: 16 }))]), default: j(() => [_e(" " + E(d.value ? m(w)("agora", "Cancel") : m(w)("agora", "Add comment")), 1)]), _: 1 })])])) : G("", true)]), _("div", fQ, [_("div", pQ, [m(s).owner?.id ? (x(), B(m(fn), { key: 0, user: m(s).owner.id, "display-name": m(s).owner.displayName, size: 22 }, null, 8, ["user", "display-name"])) : G("", true), _("div", gQ, [_("span", mQ, E(m(s).owner?.displayName || m(w)("agora", "Unknown owner")), 1)])])])])]))]), me.value ? (x(), R("div", yQ, [_("div", vQ, [_("h3", null, E(m(w)("agora", "Child Options")), 1)]), _("div", bQ, [De.value.length === 0 ? (x(), R("div", _Q, [(x(), B(se(m(qe).MessageText), { size: 48 })), _("h4", null, E(m(w)("agora", "No child options yet")), 1), _("p", null, E(m(w)("agora", "Child options will appear here when created")), 1)])) : (x(), R("div", xQ, [(x(true), R(Oe, null, $e(De.value, (Ue) => (x(), B(Cn, { key: Ue.id, option: Ue, "inquiry-id": t10.inquiryId, compact: false, inline: true, onClick: (Ge) => ce(Ue.id), onComment: Ae, onDelete: Ie, onUpdated: Se }, null, 8, ["option", "inquiry-id", "onClick"]))), 128))]))])])) : G("", true), _("div", { ref_key: "commentsSection", ref: D, class: "comments-section" }, [J(x0, { name: "fade" }, { default: j(() => [d.value ? (x(), R("div", wQ, [J(Fv, { "inquiry-id": t10.inquiryId, "option-id": t10.optionId, onCommentAdded: Ve }, null, 8, ["inquiry-id", "option-id"])])) : G("", true)]), _: 1 }), m(s).status.countComments > 0 ? (x(), R("div", DQ, [J(Nv, { "inquiry-only": false, "option-id": t10.optionId, onCommentCountUpdated: et }, null, 8, ["option-id"])])) : d.value ? G("", true) : (x(), R("div", SQ, [(x(), B(se(m(qe).Comment), { size: 48 })), _("h4", null, E(m(w)("agora", "No comments yet")), 1), _("p", null, E(m(w)("agora", "Start the discussion")), 1)]))], 512)])])) : G("", true)])]), _: 1 }, 8, ["name"])) : G("", true), p.value ? (x(), B(ve, { key: 1, "option-id": g.value, "inquiry-id": t10.inquiryId, onClose: he, onUpdated: Se, onDeleted: Ie }, null, 8, ["option-id", "inquiry-id"])) : G("", true), y.value ? (x(), B(Ov, { key: 2, "inquiry-id": t10.inquiryId, "option-type": v.value, "parent-id": m(s)?.id, onClose: de, onCreated: ye }, null, 8, ["inquiry-id", "option-type", "parent-id"])) : G("", true)], 64);
   };
-} }), lE = Qe(CQ, [["__scopeId", "data-v-20b45941"]]), kQ = { class: "book-view" }, TQ = { class: "book-container" }, EQ = { class: "table-of-contents" }, AQ = { class: "toc-header" }, RQ = { class: "toc-list" }, IQ = ["onClick"], MQ = { class: "toc-item-content" }, UQ = { class: "toc-icon" }, OQ = { class: "toc-text" }, NQ = { class: "toc-title-display" }, FQ = { class: "toc-title" }, BQ = { class: "toc-subtitle" }, $Q = { key: 0, class: "toc-children" }, PQ = ["onClick"], LQ = { class: "toc-item-content" }, qQ = { class: "toc-icon" }, zQ = { class: "toc-text" }, WQ = { class: "toc-title-display" }, VQ = { class: "toc-title" }, HQ = { class: "toc-subtitle" }, jQ = { key: 0, class: "toc-empty" }, GQ = { class: "book-content" }, XQ = { key: 0, class: "content-panel" }, YQ = { class: "content-header" }, KQ = { class: "content-title-area" }, ZQ = { class: "title-display" }, QQ = { key: 0 }, JQ = { class: "title-meta" }, eJ = { class: "type-label" }, tJ = { class: "created-date" }, nJ = { class: "content-body" }, iJ = { class: "content-display" }, rJ = { class: "text-content" }, sJ = ["innerHTML"], oJ = { key: 1, class: "empty-content" }, aJ = { class: "support-comments-footer" }, lJ = { key: 0, class: "support-section" }, cJ = { key: 1, class: "comments-section" }, uJ = { class: "structure-layout" }, dJ = { class: "structure-tree" }, hJ = ["onClick"], fJ = { class: "node-header" }, pJ = { class: "node-icon-title" }, gJ = { class: "node-content" }, mJ = { class: "node-title-row" }, yJ = { key: 0, class: "inline-edit-full" }, vJ = { class: "edit-section" }, bJ = { class: "edit-label" }, _J = { class: "edit-section" }, xJ = { class: "edit-label" }, wJ = { class: "edit-actions-full" }, DJ = { key: 1, class: "display-mode" }, SJ = ["onClick"], CJ = { key: 0, class: "node-preview" }, kJ = ["onClick"], TJ = { class: "node-meta-actions" }, EJ = { class: "node-meta" }, AJ = { class: "node-type" }, RJ = { class: "node-date" }, IJ = { class: "node-interactions" }, MJ = { key: 0, class: "node-support-inline" }, UJ = ["onClick"], OJ = { key: 0, class: "node-quick-actions" }, NJ = { key: 0, class: "allowed-responses-hover" }, FJ = { class: "responses-header" }, BJ = { class: "responses-title" }, $J = { class: "responses-options" }, PJ = { key: 0, class: "structure-children" }, LJ = ["onClick"], qJ = { class: "node-header" }, zJ = { class: "node-icon-title" }, WJ = { class: "node-content" }, VJ = { class: "node-title-row" }, HJ = { key: 0, class: "inline-edit-full" }, jJ = { class: "edit-section" }, GJ = { class: "edit-label" }, XJ = { class: "edit-section" }, YJ = { class: "edit-label" }, KJ = { class: "edit-actions-full" }, ZJ = { key: 1, class: "display-mode" }, QJ = ["onClick"], JJ = { key: 0, class: "node-preview" }, eee = ["onClick"], tee = { class: "node-meta-actions" }, nee = { class: "node-meta" }, iee = { class: "node-type" }, ree = { class: "node-date" }, see = { class: "node-interactions" }, oee = { key: 0, class: "node-support-inline" }, aee = ["onClick"], lee = { key: 0, class: "node-quick-actions" }, cee = { key: 0, class: "allowed-responses-hover" }, uee = { class: "responses-header" }, dee = { class: "responses-title" }, hee = { class: "responses-options" }, fee = { key: 0, class: "structure-children" }, pee = ["onClick"], gee = { class: "node-header" }, mee = { class: "node-icon-title" }, yee = { class: "node-content" }, vee = { class: "node-title-row" }, bee = { key: 0, class: "inline-edit-full" }, _ee = { class: "edit-section" }, xee = { class: "edit-label" }, wee = { class: "edit-section" }, Dee = { class: "edit-label" }, See = { class: "edit-actions-full" }, Cee = { key: 1, class: "display-mode" }, kee = ["onClick"], Tee = { key: 0, class: "node-preview" }, Eee = ["onClick"], Aee = { class: "node-meta-actions" }, Ree = { class: "node-meta" }, Iee = { class: "node-type" }, Mee = { class: "node-date" }, Uee = { class: "node-interactions" }, Oee = { key: 0, class: "node-support-inline" }, Nee = ["onClick"], Fee = { key: 0, class: "node-quick-actions" }, Bee = { key: 0, class: "allowed-responses-hover" }, $ee = { class: "responses-header" }, Pee = { class: "responses-title" }, Lee = { class: "responses-options" }, qee = { key: 0, class: "structure-empty" }, zee = Fe({ __name: "FamilyLayoutTree", setup(t10) {
+} }), lE = Qe(CQ, [["__scopeId", "data-v-edb03781"]]), kQ = { class: "book-view" }, TQ = { class: "book-container" }, EQ = { class: "table-of-contents" }, AQ = { class: "toc-header" }, RQ = { class: "toc-list" }, IQ = ["onClick"], MQ = { class: "toc-item-content" }, UQ = { class: "toc-icon" }, OQ = { class: "toc-text" }, NQ = { class: "toc-title-display" }, FQ = { class: "toc-title" }, BQ = { class: "toc-subtitle" }, $Q = { key: 0, class: "toc-children" }, PQ = ["onClick"], LQ = { class: "toc-item-content" }, qQ = { class: "toc-icon" }, zQ = { class: "toc-text" }, WQ = { class: "toc-title-display" }, VQ = { class: "toc-title" }, HQ = { class: "toc-subtitle" }, jQ = { key: 0, class: "toc-empty" }, GQ = { class: "book-content" }, XQ = { key: 0, class: "content-panel" }, YQ = { class: "content-header" }, KQ = { class: "content-title-area" }, ZQ = { class: "title-display" }, QQ = { key: 0 }, JQ = { class: "title-meta" }, eJ = { class: "type-label" }, tJ = { class: "created-date" }, nJ = { class: "content-body" }, iJ = { class: "content-display" }, rJ = { class: "text-content" }, sJ = ["innerHTML"], oJ = { key: 1, class: "empty-content" }, aJ = { class: "support-comments-footer" }, lJ = { key: 0, class: "support-section" }, cJ = { key: 1, class: "comments-section" }, uJ = { class: "structure-layout" }, dJ = { class: "structure-tree" }, hJ = ["onClick"], fJ = { class: "node-header" }, pJ = { class: "node-icon-title" }, gJ = { class: "node-content" }, mJ = { class: "node-title-row" }, yJ = { key: 0, class: "inline-edit-full" }, vJ = { class: "edit-section" }, bJ = { class: "edit-label" }, _J = { class: "edit-section" }, xJ = { class: "edit-label" }, wJ = { class: "edit-actions-full" }, DJ = { key: 1, class: "display-mode" }, SJ = ["onClick"], CJ = { key: 0, class: "node-preview" }, kJ = ["onClick"], TJ = { class: "node-meta-actions" }, EJ = { class: "node-meta" }, AJ = { class: "node-type" }, RJ = { class: "node-date" }, IJ = { class: "node-interactions" }, MJ = { key: 0, class: "node-support-inline" }, UJ = ["onClick"], OJ = { key: 0, class: "node-quick-actions" }, NJ = { key: 0, class: "allowed-responses-hover" }, FJ = { class: "responses-header" }, BJ = { class: "responses-title" }, $J = { class: "responses-options" }, PJ = { key: 0, class: "structure-children" }, LJ = ["onClick"], qJ = { class: "node-header" }, zJ = { class: "node-icon-title" }, WJ = { class: "node-content" }, VJ = { class: "node-title-row" }, HJ = { key: 0, class: "inline-edit-full" }, jJ = { class: "edit-section" }, GJ = { class: "edit-label" }, XJ = { class: "edit-section" }, YJ = { class: "edit-label" }, KJ = { class: "edit-actions-full" }, ZJ = { key: 1, class: "display-mode" }, QJ = ["onClick"], JJ = { key: 0, class: "node-preview" }, eee = ["onClick"], tee = { class: "node-meta-actions" }, nee = { class: "node-meta" }, iee = { class: "node-type" }, ree = { class: "node-date" }, see = { class: "node-interactions" }, oee = { key: 0, class: "node-support-inline" }, aee = ["onClick"], lee = { key: 0, class: "node-quick-actions" }, cee = { key: 0, class: "allowed-responses-hover" }, uee = { class: "responses-header" }, dee = { class: "responses-title" }, hee = { class: "responses-options" }, fee = { key: 0, class: "structure-children" }, pee = ["onClick"], gee = { class: "node-header" }, mee = { class: "node-icon-title" }, yee = { class: "node-content" }, vee = { class: "node-title-row" }, bee = { key: 0, class: "inline-edit-full" }, _ee = { class: "edit-section" }, xee = { class: "edit-label" }, wee = { class: "edit-section" }, Dee = { class: "edit-label" }, See = { class: "edit-actions-full" }, Cee = { key: 1, class: "display-mode" }, kee = ["onClick"], Tee = { key: 0, class: "node-preview" }, Eee = ["onClick"], Aee = { class: "node-meta-actions" }, Ree = { class: "node-meta" }, Iee = { class: "node-type" }, Mee = { class: "node-date" }, Uee = { class: "node-interactions" }, Oee = { key: 0, class: "node-support-inline" }, Nee = ["onClick"], Fee = { key: 0, class: "node-quick-actions" }, Bee = { key: 0, class: "allowed-responses-hover" }, $ee = { class: "responses-header" }, Pee = { class: "responses-title" }, Lee = { class: "responses-options" }, qee = { key: 0, class: "structure-empty" }, zee = Fe({ __name: "FamilyLayoutTree", setup(t10) {
   const e = vt(), n = ui(), i = Ke(), r = Uu(), s = ue(null), o = ue(null), a = ue(null), l = ue(""), c = ue(""), u = ue(false), d = ue(false), h = ue(null), f = ue(null), p = z(() => i.appSettings?.inquiryOptionTypeTab || []), g = z(() => p.value.filter((fe) => fe.family === "structure")), y = z(() => g.value.filter((fe) => {
     const xe = fe.option_type || fe.optionType;
     return ["chapter", "structure_intro"].includes(xe) || !p.value.some((I) => {
@@ -41466,8 +41478,8 @@ const ar = Zt("vote", [["path", { d: "m9 12 2 2 4-4", key: "dzmm74" }], ["path",
     U && !o.value && console.warn("Selected option but inquiry ID is invalid");
   }), dt(() => {
     (!o.value || o.value === 0) && console.warn("AddOptionToFamily mounted with invalid inquiry ID:", o.value);
-  }), (U, W) => (x(), B(m(Ri), { size: "normal", name: p.value, onClose: W[4] || (W[4] = (ne) => U.$emit("close")) }, { default: j(() => [_("div", gne, [_("div", mne, [_("div", { class: Ne(["header-icon", { "vote-icon": t10.familyType === "vote" }]) }, [(x(), B(se(y.value), { size: 32 }))], 2), _("h3", null, E(p.value), 1), _("p", yne, E(g.value), 1)]), _("div", vne, [_("div", bne, [_("label", null, E(m(w)("agora", "Select an option")), 1), J(Mv, { modelValue: a.value, "onUpdate:modelValue": W[0] || (W[0] = (ne) => a.value = ne), type: "options", "inquiry-id": o.value, placeholder: m(w)("agora", "Search by title or #id …"), class: "search-select" }, null, 8, ["modelValue", "inquiry-id", "placeholder"])]), t10.familyType === "timeline" && a.value ? (x(), R("div", _ne, [_("div", xne, [J(m(Yh), { size: 18 }), _("h4", null, E(m(w)("agora", "Date range")), 1)]), _("div", wne, [_("div", Dne, [_("label", null, E(m(w)("agora", "Start date")) + " *", 1), J(m(Hl), { modelValue: l.value, "onUpdate:modelValue": W[1] || (W[1] = (ne) => l.value = ne), type: "date", placeholder: m(w)("agora", "Select start date"), clearable: false, required: "" }, null, 8, ["modelValue", "placeholder"])]), _("div", Sne, [_("label", null, E(m(w)("agora", "End date (optional)")), 1), J(m(Hl), { modelValue: c.value, "onUpdate:modelValue": W[2] || (W[2] = (ne) => c.value = ne), type: "date", placeholder: m(w)("agora", "Select end date"), clearable: true }, null, 8, ["modelValue", "placeholder"])])])])) : G("", true), t10.familyType === "kanban" && a.value ? (x(), R("div", Cne, [_("div", kne, [J(m(Lc), { size: 18 }), _("h4", null, E(m(w)("agora", "Select column")), 1)]), _("div", Tne, [_("div", Ene, [(x(), R(Oe, null, $e(f, (ne) => _("button", { key: ne.value, class: Ne(["column-option", { selected: u.value === ne.value }]), onClick: (H) => u.value = ne.value }, [_("span", { class: "column-color", style: ft({ backgroundColor: ne.color }) }, null, 4), _("span", Rne, E(ne.label), 1), u.value === ne.value ? (x(), R("span", Ine, [J(m(ote), { size: 14 })])) : G("", true)], 10, Ane)), 64))])])])) : G("", true), t10.familyType === "vote" && a.value ? (x(), R("div", Mne, [_("div", Une, [J(m(zv), { size: 18 }), _("h4", null, E(m(w)("agora", "Voting configuration")), 1)]), _("div", One, [_("div", Nne, [(x(), B(se(N(t10.currentEngineId)), { size: 16 })), _("span", null, E(q(t10.currentEngineId)), 1), _("span", { class: Ne(["engine-badge-mini", S.value]) }, E(V(S.value)), 3)]), _("p", Fne, E(C.value), 1)]), A.value ? (x(), R("div", Bne, [_("div", $ne, [(x(true), R(Oe, null, $e(T.value, (ne, H) => (x(), R("div", { key: H, class: "config-field" }, [_("label", null, E(ne.label || H), 1), ne.type === "number" ? jt((x(), R("input", { key: 0, "onUpdate:modelValue": (te) => d.value[H] = te, type: "number", min: ne.min, max: ne.max, class: "config-input" }, null, 8, Pne)), [[Co, d.value[H], void 0, { number: true }]]) : ne.type === "string" ? jt((x(), R("input", { key: 1, "onUpdate:modelValue": (te) => d.value[H] = te, type: "text", class: "config-input" }, null, 8, Lne)), [[Co, d.value[H]]]) : ne.type === "boolean" ? (x(), R("label", qne, [jt(_("input", { "onUpdate:modelValue": (te) => d.value[H] = te, type: "checkbox" }, null, 8, zne), [[w0, d.value[H]]]), _("span", null, E(m(w)("agora", "Enable")), 1)])) : ne.type === "array" && ne.options ? jt((x(), R("select", { key: 3, "onUpdate:modelValue": (te) => d.value[H] = te, class: "config-select" }, [(x(true), R(Oe, null, $e(ne.options, (te) => (x(), R("option", { key: te, value: te }, E(te), 9, Vne))), 128))], 8, Wne)), [[$l, d.value[H]]]) : G("", true), ne.description ? (x(), R("p", Hne, E(ne.description), 1)) : G("", true)]))), 128))])])) : G("", true)])) : G("", true)]), _("div", jne, [_("button", { class: "btn-secondary", onClick: W[3] || (W[3] = (ne) => U.$emit("close")) }, E(m(w)("agora", "Cancel")), 1), _("button", { class: Ne(["btn-primary", { loading: h.value }]), disabled: !D.value, onClick: $ }, [(x(), B(se(v.value), { size: 16 })), _e(" " + E(h.value ? m(w)("agora", "Adding …") : b.value), 1)], 10, Gne)])])]), _: 1 }, 8, ["name"]));
-} }), Wv = Qe(Xne, [["__scopeId", "data-v-7a3dff2a"]]), Yne = { class: "kanban-layout" }, Kne = { class: "kanban-actions" }, Zne = { class: "kanban-header" }, Qne = ["onDrop"], Jne = { class: "header-content" }, eie = { class: "status-label" }, tie = { class: "item-count" }, nie = { class: "kanban-board" }, iie = ["onDrop"], rie = { class: "column-items" }, sie = ["onDragstart"], oie = { class: "item-footer" }, aie = { class: "item-id" }, lie = { class: "item-actions" }, cie = ["onDrop"], uie = { class: "empty-icon" }, die = Fe({ __name: "FamilyLayoutKanban", props: { inquiryId: {}, optionTypes: {}, family: {}, optionsByInquiry: {} }, emits: ["addOption", "openDetail", "update:options"], setup(t10, { emit: e }) {
+  }), (U, W) => (x(), B(m(Ri), { size: "normal", name: p.value, onClose: W[4] || (W[4] = (ne) => U.$emit("close")) }, { default: j(() => [_("div", gne, [_("div", mne, [_("div", { class: Ne(["header-icon", { "vote-icon": t10.familyType === "vote" }]) }, [(x(), B(se(y.value), { size: 32 }))], 2), _("h3", null, E(p.value), 1), _("p", yne, E(g.value), 1)]), _("div", vne, [_("div", bne, [_("label", null, E(m(w)("agora", "Select an option")), 1), J(Mv, { modelValue: a.value, "onUpdate:modelValue": W[0] || (W[0] = (ne) => a.value = ne), type: "options", "inquiry-id": o.value, placeholder: m(w)("agora", "Search by title or #id …"), class: "search-select" }, null, 8, ["modelValue", "inquiry-id", "placeholder"])]), t10.familyType === "timeline" && a.value ? (x(), R("div", _ne, [_("div", xne, [J(m(Yh), { size: 18 }), _("h4", null, E(m(w)("agora", "Date range")), 1)]), _("div", wne, [_("div", Dne, [_("label", null, E(m(w)("agora", "Start date")) + " *", 1), J(m(Hl), { modelValue: l.value, "onUpdate:modelValue": W[1] || (W[1] = (ne) => l.value = ne), type: "date", placeholder: m(w)("agora", "Select start date"), clearable: false, required: "" }, null, 8, ["modelValue", "placeholder"])]), _("div", Sne, [_("label", null, E(m(w)("agora", "End date (optional)")), 1), J(m(Hl), { modelValue: c.value, "onUpdate:modelValue": W[2] || (W[2] = (ne) => c.value = ne), type: "date", placeholder: m(w)("agora", "Select end date"), clearable: true }, null, 8, ["modelValue", "placeholder"])])])])) : G("", true), t10.familyType === "kanban" && a.value ? (x(), R("div", Cne, [_("div", kne, [J(m(Lc), { size: 18 }), _("h4", null, E(m(w)("agora", "Select column")), 1)]), _("div", Tne, [_("div", Ene, [(x(), R(Oe, null, $e(f, (ne) => _("button", { key: ne.value, class: Ne(["column-option", { selected: u.value === ne.value }]), onClick: (H) => u.value = ne.value }, [_("span", { class: "column-color", style: ft({ backgroundColor: ne.color }) }, null, 4), _("span", Rne, E(ne.label), 1), u.value === ne.value ? (x(), R("span", Ine, [J(m(ote), { size: 14 })])) : G("", true)], 10, Ane)), 64))])])])) : G("", true), t10.familyType === "vote" && a.value ? (x(), R("div", Mne, [_("div", Une, [J(m(zv), { size: 18 }), _("h4", null, E(m(w)("agora", "Voting configuration")), 1)]), _("div", One, [_("div", Nne, [(x(), B(se(N(t10.currentEngineId)), { size: 16 })), _("span", null, E(q(t10.currentEngineId)), 1), _("span", { class: Ne(["engine-badge-mini", S.value]) }, E(V(S.value)), 3)]), _("p", Fne, E(C.value), 1)]), A.value ? (x(), R("div", Bne, [_("div", $ne, [(x(true), R(Oe, null, $e(T.value, (ne, H) => (x(), R("div", { key: H, class: "config-field" }, [_("label", null, E(ne.label || H), 1), ne.type === "number" ? jt((x(), R("input", { key: 0, "onUpdate:modelValue": (te) => d.value[H] = te, type: "number", min: ne.min, max: ne.max, class: "config-input" }, null, 8, Pne)), [[Co, d.value[H], void 0, { number: true }]]) : ne.type === "string" ? jt((x(), R("input", { key: 1, "onUpdate:modelValue": (te) => d.value[H] = te, type: "text", class: "config-input" }, null, 8, Lne)), [[Co, d.value[H]]]) : ne.type === "boolean" ? (x(), R("label", qne, [jt(_("input", { "onUpdate:modelValue": (te) => d.value[H] = te, type: "checkbox" }, null, 8, zne), [[w0, d.value[H]]]), _("span", null, E(m(w)("agora", "Enable")), 1)])) : ne.type === "array" && ne.options ? jt((x(), R("select", { key: 3, "onUpdate:modelValue": (te) => d.value[H] = te, class: "config-select" }, [(x(true), R(Oe, null, $e(ne.options, (te) => (x(), R("option", { key: te, value: te }, E(te), 9, Vne))), 128))], 8, Wne)), [[$l, d.value[H]]]) : G("", true), ne.description ? (x(), R("p", Hne, E(ne.description), 1)) : G("", true)]))), 128))])])) : G("", true)])) : G("", true)]), _("div", jne, [_("button", { class: "btn-secondary", onClick: W[3] || (W[3] = (ne) => U.$emit("close")) }, E(m(w)("agora", "Cancel")), 1), _("button", { class: Ne(["btn-primary", { loading: h.value }]), disabled: !D.value, onClick: $ }, [(x(), B(se(v.value), { size: 16 })), _e(" " + E(h.value ? m(w)("agora", "Adding …") : b.value), 1)], 10, Gne)])])]), _: 1 }, 8, ["name"]));
+} }), Wv = Qe(Xne, [["__scopeId", "data-v-7533867d"]]), Yne = { class: "kanban-layout" }, Kne = { class: "kanban-actions" }, Zne = { class: "kanban-header" }, Qne = ["onDrop"], Jne = { class: "header-content" }, eie = { class: "status-label" }, tie = { class: "item-count" }, nie = { class: "kanban-board" }, iie = ["onDrop"], rie = { class: "column-items" }, sie = ["onDragstart"], oie = { class: "item-footer" }, aie = { class: "item-id" }, lie = { class: "item-actions" }, cie = ["onDrop"], uie = { class: "empty-icon" }, die = Fe({ __name: "FamilyLayoutKanban", props: { inquiryId: {}, optionTypes: {}, family: {}, optionsByInquiry: {} }, emits: ["addOption", "openDetail", "update:options"], setup(t10, { emit: e }) {
   m0((v) => ({ v3588a4c1: l.value }));
   const n = t10, i = ui(), r = ue(false), s = ue(null), o = e, a = z(() => {
     const v = n.appSettings?.optionFamilyTab?.[n.family?.key]?.ui?.kanban_column;
@@ -55701,8 +55713,8 @@ const dve = { class: "engine-selector-modal" }, hve = { class: "modal-header" },
       r.value === "condorcet" && (q.variant = s.value), i("apply", r.value, q), i("close");
     }
   };
-  return (q, V) => (x(), B(m(Ri), { size: "normal", name: m(w)("agora", "Choose Voting Method"), onClose: V[2] || (V[2] = (M) => q.$emit("close")) }, { default: j(() => [_("div", dve, [_("div", hve, [_("div", fve, [J(m(ar), { size: 32 })]), _("h3", null, E(m(w)("agora", "Select a voting method")), 1), _("p", pve, E(m(w)("agora", "Different voting methods offer different ways to express preferences. Choose the one that best fits your decision-making process.")), 1)]), _("div", gve, [(x(true), R(Oe, null, $e(u.value, (M) => (x(), R("div", { key: M.id, class: Ne(["engine-card", { selected: r.value === M.id, [M.behavior]: true }]), onClick: (F) => O(M.id) }, [_("div", yve, [_("div", vve, [(x(), B(se(S(M.id)), { size: 24 }))]), _("div", { class: Ne(["engine-badge", M.behavior]) }, E(A(M.behavior)), 3)]), _("div", bve, [_("h4", null, E(M.label), 1), _("p", null, E(M.description || T(M.id)), 1), M.constraints ? (x(), R("div", _ve, [M.constraints.min_candidates ? (x(), R("span", xve, E(m(w)("agora", "Min {n} candidates", { n: M.constraints.min_candidates })), 1)) : G("", true), M.constraints.max_candidates ? (x(), R("span", wve, E(m(w)("agora", "Max {n} candidates", { n: M.constraints.max_candidates })), 1)) : G("", true)])) : G("", true)]), r.value === M.id ? (x(), R("div", Dve, [J(m(ea), { size: 20 })])) : G("", true)], 10, mve))), 128))]), r.value === "condorcet" ? (x(), R("div", Sve, [_("div", Cve, [J(m(ll), { size: 18 }), _("h5", null, E(m(w)("agora", "Select Condorcet method")), 1)]), J(m(en), { modelValue: s.value, "onUpdate:modelValue": V[0] || (V[0] = (M) => s.value = M), options: l, placeholder: m(w)("agora", "Choose a Condorcet variant …"), reduce: (M) => M.id, label: "label", "aria-label": m(w)("agora", "Select specific Condorcet method variant"), class: "subtype-select" }, { option: j((M) => [_("div", kve, [(x(), B(se(p(M.id)), { size: 16, class: "variant-icon" })), _("div", Tve, [_("div", Eve, E(M.label), 1), _("div", Ave, E(M.description), 1)])])]), _: 1 }, 8, ["modelValue", "placeholder", "reduce", "aria-label"])])) : G("", true), r.value === "majority_judgment" ? (x(), R("div", Rve, [_("div", Ive, [J(m(Pv), { size: 18 }), _("h5", null, E(m(w)("agora", "Configure grades")), 1)]), _("div", Mve, [(x(true), R(Oe, null, $e(o.value.grades || a, (M, F) => (x(), R("div", { key: F, class: "grade-item" }, [jt(_("input", { "onUpdate:modelValue": (k) => o.value.grades[F] = k, type: "text", class: "grade-input", placeholder: m(w)("agora", "Grade {n}", { n: F + 1 }) }, null, 8, Uve), [[Co, o.value.grades[F]]]), (o.value.grades || a).length > 2 ? (x(), R("button", { key: 0, class: "grade-remove", "aria-label": m(w)("agora", "Remove grade"), onClick: (k) => b(F) }, [J(m(ute), { size: 14 })], 8, Ove)) : G("", true)]))), 128))]), _("button", { class: "grade-add", onClick: v }, [J(m(or), { size: 16 }), _e(" " + E(m(w)("agora", "Add grade")), 1)])])) : G("", true), r.value === "reaction" ? (x(), R("div", Nve, [_("div", Fve, [J(m(Lv), { size: 18 }), _("h5", null, E(m(w)("agora", "Select reactions")), 1)]), _("div", Bve, [(x(), R(Oe, null, $e(c, (M) => _("div", { key: M.value, class: Ne(["reaction-item", { selected: g(M.value) }]), onClick: (F) => y(M.value) }, [_("div", Pve, E(M.emoji), 1), _("div", Lve, E(M.label), 1), g(M.value) ? (x(), R("div", qve, [J(m(ea), { size: 16 })])) : G("", true)], 10, $ve)), 64))])])) : G("", true), r.value && d.value && Object.keys(d.value).length > 0 && !h.value ? (x(), R("div", zve, [_("div", Wve, [J(m(zv), { size: 18 }), _("h5", null, E(m(w)("agora", "Configure settings")), 1)]), _("div", Vve, [(x(true), R(Oe, null, $e(d.value, (M, F) => (x(), R("div", { key: F, class: "config-field" }, [_("label", { for: `config-${F}` }, [_e(E(M.label || F) + " ", 1), M.type === "number" && M.min !== void 0 && M.max !== void 0 ? (x(), R("span", jve, E(m(w)("agora", "({min}-{max})", { min: M.min, max: M.max })), 1)) : G("", true)], 8, Hve), _("div", Gve, [M.type === "number" ? (x(), R("div", Xve, [jt(_("input", { id: `config-${F}`, "onUpdate:modelValue": (k) => o.value[F] = k, type: "range", min: M.min ?? 0, max: M.max ?? 100, step: M.step ?? 1, class: "range-input", style: ft({ "--range-progress": f(o.value[F], M.min ?? 0, M.max ?? 100) + "%" }) }, null, 12, Yve), [[Co, o.value[F], void 0, { number: true }]]), _("span", Kve, E(o.value[F] ?? M.default ?? 0), 1)])) : M.type === "string" && !M.options ? jt((x(), R("input", { key: 1, id: `config-${F}`, "onUpdate:modelValue": (k) => o.value[F] = k, type: "text", placeholder: M.placeholder || "", class: "text-input" }, null, 8, Zve)), [[Co, o.value[F]]]) : M.type === "boolean" ? (x(), R("div", Qve, [_("label", Jve, [jt(_("input", { "onUpdate:modelValue": (k) => o.value[F] = k, type: "checkbox" }, null, 8, ebe), [[w0, o.value[F]]]), V[3] || (V[3] = _("span", { class: "toggle-slider" }, null, -1))]), _("span", tbe, E(o.value[F] ? m(w)("agora", "Enabled") : m(w)("agora", "Disabled")), 1)])) : M.options ? (x(), B(m(en), { key: 3, id: `config-${F}`, modelValue: o.value[F], "onUpdate:modelValue": (k) => o.value[F] = k, options: D(M), placeholder: m(w)("agora", "Select an option"), clearable: false, class: "select-input" }, null, 8, ["id", "modelValue", "onUpdate:modelValue", "options", "placeholder"])) : G("", true)]), M.description ? (x(), R("p", nbe, E(M.description), 1)) : G("", true)]))), 128))])])) : r.value && !h.value && (!d.value || Object.keys(d.value).length === 0) ? (x(), R("div", ibe, [_("div", rbe, [J(m(lte), { size: 18 }), _("span", null, E(m(w)("agora", "This voting method requires no additional configuration.")), 1)])])) : G("", true), _("div", sbe, [_("button", { class: "btn-secondary", onClick: V[1] || (V[1] = (M) => q.$emit("close")) }, E(m(w)("agora", "Cancel")), 1), _("button", { class: "btn-primary", disabled: !r.value, onClick: N }, [J(m(ar), { size: 16 }), _e(" " + E(m(w)("agora", "Apply {engine}", { engine: C(r.value) })), 1)], 8, obe)])])]), _: 1 }, 8, ["name"]));
-} }), lbe = Qe(abe, [["__scopeId", "data-v-d4a79a8c"]]), cbe = { class: "vote-header" }, ube = { class: "header-info" }, dbe = { class: "vote-metadata" }, hbe = { key: 0, class: "metadata-badge" }, fbe = { key: 0 }, pbe = { key: 1, class: "metadata-badge" }, gbe = { class: "metadata-badge" }, mbe = { key: 2, class: "metadata-badge" }, ybe = { class: "action-bar" }, vbe = { class: "layout-switcher" }, bbe = { class: "engine-selector-header" }, _be = { key: 0, class: "engine-info" }, xbe = { class: "engine-badge" }, wbe = { key: 0 }, Dbe = { key: 1 }, Sbe = { key: 2 }, Cbe = { key: 0, class: "vote-limit-info" }, kbe = { key: 1, class: "cards-layout" }, Tbe = { class: "cards-grid" }, Ebe = { key: 0, class: "selection-checkbox" }, Abe = ["checked", "onChange"], Rbe = { key: 1, class: "rank-input" }, Ibe = ["onUpdate:modelValue"], Mbe = ["value"], Ube = { key: 2, class: "score-input" }, Obe = ["onUpdate:modelValue", "min", "max"], Nbe = { key: 3, class: "grade-input" }, Fbe = ["onUpdate:modelValue"], Bbe = ["value"], $be = { class: "vote-progress-section" }, Pbe = { class: "vote-stats" }, Lbe = { class: "votes-count" }, qbe = { class: "percentage" }, zbe = { class: "progress-bar" }, Wbe = { key: 0, class: "submit-vote-section" }, Vbe = { key: 0, class: "selection-info" }, Hbe = { key: 2, class: "list-layout" }, jbe = { class: "list-header" }, Gbe = { class: "list-cell rank" }, Xbe = { class: "list-cell option" }, Ybe = { class: "list-cell votes" }, Kbe = { class: "list-cell percentage" }, Zbe = { class: "list-cell action" }, Qbe = { class: "list-cell rank" }, Jbe = { class: "rank-number" }, e1e = { key: 0, class: "medal" }, t1e = { key: 1, class: "medal" }, n1e = { key: 2, class: "medal" }, i1e = { key: 3 }, r1e = { class: "list-cell option" }, s1e = { class: "list-cell votes" }, o1e = { class: "list-cell percentage" }, a1e = { class: "percentage-bar" }, l1e = { class: "percentage-text" }, c1e = { class: "list-cell action" }, u1e = ["checked", "onChange"], d1e = ["onUpdate:modelValue"], h1e = ["value"], f1e = ["onUpdate:modelValue", "min", "max"], p1e = { key: 4, class: "voted-icon" }, g1e = { key: 0, class: "submit-vote-section list-submit" }, m1e = { key: 3, class: "results-layout" }, y1e = { class: "results-summary" }, v1e = { class: "summary-card" }, b1e = { class: "summary-icon" }, _1e = { class: "summary-content" }, x1e = { class: "summary-value" }, w1e = { class: "summary-label" }, D1e = { class: "summary-card" }, S1e = { class: "summary-icon" }, C1e = { class: "summary-content" }, k1e = { class: "summary-value" }, T1e = { class: "summary-label" }, E1e = { class: "summary-card" }, A1e = { class: "summary-icon" }, R1e = { class: "summary-content" }, I1e = { class: "summary-value" }, M1e = { class: "summary-label" }, U1e = { class: "summary-card" }, O1e = { class: "summary-icon" }, N1e = { class: "summary-content" }, F1e = { class: "summary-value" }, B1e = { class: "summary-label" }, $1e = { class: "charts-section" }, P1e = { class: "chart-container" }, L1e = { class: "chart-container" }, q1e = { class: "ranking-table" }, z1e = { class: "rank-cell" }, W1e = { class: "option-name" }, V1e = { class: "votes-cell" }, H1e = { class: "percentage-cell" }, j1e = { class: "mini-progress" }, G1e = { key: 1 }, X1e = { key: 4, class: "empty-state" }, Y1e = Fe({ __name: "FamilyLayoutVote", props: { options: {}, voteSession: {}, canVote: { type: Boolean }, isReadonly: { type: Boolean }, currentUserVotes: {}, inquiryId: {}, supports: {}, optionTypes: {}, userId: {}, family: {}, optionsByInquiry: {} }, emits: ["vote", "multiVote", "select", "addOption", "update:options"], setup(t10, { emit: e }) {
+  return (q, V) => (x(), B(m(Ri), { size: "normal", name: m(w)("agora", "Choose Voting Method"), onClose: V[2] || (V[2] = (M) => q.$emit("close")) }, { default: j(() => [_("div", dve, [_("div", hve, [_("div", fve, [J(m(ar), { size: 32 })]), _("h3", null, E(m(w)("agora", "Select a voting method")), 1), _("p", pve, E(m(w)("agora", "Different voting methods offer different ways to express preferences. Choose the one that best fits your decision-making process.")), 1)]), _("div", gve, [(x(true), R(Oe, null, $e(u.value, (M) => (x(), R("div", { key: M.id, class: Ne(["engine-card", { selected: r.value === M.id, [M.behavior]: true }]), onClick: (F) => O(M.id) }, [_("div", yve, [_("div", vve, [(x(), B(se(S(M.id)), { size: 24 }))]), _("div", { class: Ne(["engine-badge", M.behavior]) }, E(A(M.behavior)), 3)]), _("div", bve, [_("h4", null, E(M.label), 1), _("p", null, E(M.description || T(M.id)), 1), M.constraints ? (x(), R("div", _ve, [M.constraints.min_candidates ? (x(), R("span", xve, E(m(w)("agora", "Min {n} candidates", { n: M.constraints.min_candidates })), 1)) : G("", true), M.constraints.max_candidates ? (x(), R("span", wve, E(m(w)("agora", "Max {n} candidates", { n: M.constraints.max_candidates })), 1)) : G("", true)])) : G("", true)]), r.value === M.id ? (x(), R("div", Dve, [J(m(ea), { size: 20 })])) : G("", true)], 10, mve))), 128))]), r.value === "condorcet" ? (x(), R("div", Sve, [_("div", Cve, [J(m(ll), { size: 18 }), _("h5", null, E(m(w)("agora", "Select Condorcet method")), 1)]), J(m(en), { modelValue: s.value, "onUpdate:modelValue": V[0] || (V[0] = (M) => s.value = M), options: l, placeholder: m(w)("agora", "Choose a Condorcet variant …"), reduce: (M) => M.id, label: "label", "aria-label": m(w)("agora", "Select specific Condorcet method variant"), class: "subtype-select" }, { option: j((M) => [_("div", kve, [(x(), B(se(p(M.id)), { size: 16, class: "variant-icon" })), _("div", Tve, [_("div", Eve, E(M.label), 1), _("div", Ave, E(M.description), 1)])])]), _: 1 }, 8, ["modelValue", "placeholder", "reduce", "aria-label"])])) : G("", true), r.value === "majority_judgment" ? (x(), R("div", Rve, [_("div", Ive, [J(m(Pv), { size: 18 }), _("h5", null, E(m(w)("agora", "Configure grades")), 1)]), _("div", Mve, [(x(true), R(Oe, null, $e(o.value.grades || a, (M, F) => (x(), R("div", { key: F, class: "grade-item" }, [jt(_("input", { "onUpdate:modelValue": (k) => o.value.grades[F] = k, type: "text", class: "grade-input", placeholder: m(w)("agora", "Grade {n}", { n: F + 1 }) }, null, 8, Uve), [[Co, o.value.grades[F]]]), (o.value.grades || a).length > 2 ? (x(), R("button", { key: 0, class: "grade-remove", "aria-label": m(w)("agora", "Remove grade"), onClick: (k) => b(F) }, [J(m(ute), { size: 14 })], 8, Ove)) : G("", true)]))), 128))]), _("button", { class: "grade-add", onClick: v }, [J(m(or), { size: 16 }), _e(" " + E(m(w)("agora", "Add grade")), 1)])])) : G("", true), r.value === "reaction" ? (x(), R("div", Nve, [_("div", Fve, [J(m(Lv), { size: 18 }), _("h5", null, E(m(w)("agora", "Select reactions")), 1)]), _("div", Bve, [(x(), R(Oe, null, $e(c, (M) => _("div", { key: M.value, class: Ne(["reaction-item", { selected: g(M.value) }]), onClick: (F) => y(M.value) }, [_("div", Pve, E(M.emoji), 1), _("div", Lve, E(M.label), 1), g(M.value) ? (x(), R("div", qve, [J(m(ea), { size: 16 })])) : G("", true)], 10, $ve)), 64))])])) : G("", true), r.value && d.value && Object.keys(d.value).length > 0 && !h.value ? (x(), R("div", zve, [_("div", Wve, [J(m(zv), { size: 18 }), _("h5", null, E(m(w)("agora", "Configure settings")), 1)]), _("div", Vve, [(x(true), R(Oe, null, $e(d.value, (M, F) => (x(), R("div", { key: F, class: "config-field" }, [_("label", { for: `config-${F}` }, [_e(E(M.label || F) + " ", 1), M.type === "number" && M.min !== void 0 && M.max !== void 0 ? (x(), R("span", jve, E(m(w)("agora", "({min}-{max})", { min: M.min, max: M.max })), 1)) : G("", true)], 8, Hve), _("div", Gve, [M.type === "number" ? (x(), R("div", Xve, [jt(_("input", { id: `config-${F}`, "onUpdate:modelValue": (k) => o.value[F] = k, type: "range", min: M.min ?? 0, max: M.max ?? 100, step: M.step ?? 1, class: "range-input", style: ft({ "--range-progress": f(o.value[F], M.min ?? 0, M.max ?? 100) + "%" }) }, null, 12, Yve), [[Co, o.value[F], void 0, { number: true }]]), _("span", Kve, E(o.value[F] ?? M.default ?? 0), 1)])) : M.type === "string" && !M.options ? jt((x(), R("input", { key: 1, id: `config-${F}`, "onUpdate:modelValue": (k) => o.value[F] = k, type: "text", placeholder: M.placeholder || "", class: "text-input" }, null, 8, Zve)), [[Co, o.value[F]]]) : M.type === "boolean" ? (x(), R("div", Qve, [_("label", Jve, [jt(_("input", { "onUpdate:modelValue": (k) => o.value[F] = k, type: "checkbox" }, null, 8, ebe), [[w0, o.value[F]]]), V[3] || (V[3] = _("span", { class: "toggle-slider" }, null, -1))]), _("span", tbe, E(o.value[F] ? m(w)("agora", "Enabled") : m(w)("agora", "Disabled")), 1)])) : M.options ? (x(), B(m(en), { key: 3, id: `config-${F}`, modelValue: o.value[F], "onUpdate:modelValue": (k) => o.value[F] = k, options: D(M), placeholder: m(w)("agora", "Select an option"), clearable: false, class: "select-input" }, null, 8, ["id", "modelValue", "onUpdate:modelValue", "options", "placeholder"])) : G("", true)]), M.description ? (x(), R("p", nbe, E(M.description), 1)) : G("", true)]))), 128))])])) : r.value && !h.value && (!d.value || Object.keys(d.value).length === 0) ? (x(), R("div", ibe, [_("div", rbe, [J(m(lte), { size: 18 }), _("span", null, E(m(w)("agora", "This voting method requires no additional configuration.")), 1)])])) : G("", true), _("div", sbe, [_("button", { class: "btn-secondary", onClick: V[1] || (V[1] = (M) => q.$emit("close")) }, E(m(w)("agora", "Cancel")), 1), _("button", { class: "btn-primary", disabled: !r.value, onClick: N }, [J(m(ar), { size: 16 }), _e(" " + E(m(w)("agora", "Apply {engine}", { engine: C(r.value) })), 1)], 8, obe)])])]), _: 1 }, 8, ["name"]));
+} }), lbe = Qe(abe, [["__scopeId", "data-v-7e40130b"]]), cbe = { class: "vote-header" }, ube = { class: "header-info" }, dbe = { class: "vote-metadata" }, hbe = { key: 0, class: "metadata-badge" }, fbe = { key: 0 }, pbe = { key: 1, class: "metadata-badge" }, gbe = { class: "metadata-badge" }, mbe = { key: 2, class: "metadata-badge" }, ybe = { class: "action-bar" }, vbe = { class: "layout-switcher" }, bbe = { class: "engine-selector-header" }, _be = { key: 0, class: "engine-info" }, xbe = { class: "engine-badge" }, wbe = { key: 0 }, Dbe = { key: 1 }, Sbe = { key: 2 }, Cbe = { key: 0, class: "vote-limit-info" }, kbe = { key: 1, class: "cards-layout" }, Tbe = { class: "cards-grid" }, Ebe = { key: 0, class: "selection-checkbox" }, Abe = ["checked", "onChange"], Rbe = { key: 1, class: "rank-input" }, Ibe = ["onUpdate:modelValue"], Mbe = ["value"], Ube = { key: 2, class: "score-input" }, Obe = ["onUpdate:modelValue", "min", "max"], Nbe = { key: 3, class: "grade-input" }, Fbe = ["onUpdate:modelValue"], Bbe = ["value"], $be = { class: "vote-progress-section" }, Pbe = { class: "vote-stats" }, Lbe = { class: "votes-count" }, qbe = { class: "percentage" }, zbe = { class: "progress-bar" }, Wbe = { key: 0, class: "submit-vote-section" }, Vbe = { key: 0, class: "selection-info" }, Hbe = { key: 2, class: "list-layout" }, jbe = { class: "list-header" }, Gbe = { class: "list-cell rank" }, Xbe = { class: "list-cell option" }, Ybe = { class: "list-cell votes" }, Kbe = { class: "list-cell percentage" }, Zbe = { class: "list-cell action" }, Qbe = { class: "list-cell rank" }, Jbe = { class: "rank-number" }, e1e = { key: 0, class: "medal" }, t1e = { key: 1, class: "medal" }, n1e = { key: 2, class: "medal" }, i1e = { key: 3 }, r1e = { class: "list-cell option" }, s1e = { class: "list-cell votes" }, o1e = { class: "list-cell percentage" }, a1e = { class: "percentage-bar" }, l1e = { class: "percentage-text" }, c1e = { class: "list-cell action" }, u1e = ["checked", "onChange"], d1e = ["onUpdate:modelValue"], h1e = ["value"], f1e = ["onUpdate:modelValue", "min", "max"], p1e = { key: 4, class: "voted-icon" }, g1e = { key: 0, class: "submit-vote-section list-submit" }, m1e = { key: 3, class: "results-layout" }, y1e = { class: "results-summary" }, v1e = { class: "summary-card" }, b1e = { class: "summary-icon" }, _1e = { class: "summary-content" }, x1e = { class: "summary-value" }, w1e = { class: "summary-label" }, D1e = { class: "summary-card" }, S1e = { class: "summary-icon" }, C1e = { class: "summary-content" }, k1e = { class: "summary-value" }, T1e = { class: "summary-label" }, E1e = { class: "summary-card" }, A1e = { class: "summary-icon" }, R1e = { class: "summary-content" }, I1e = { class: "summary-value" }, M1e = { class: "summary-label" }, U1e = { class: "summary-card" }, O1e = { class: "summary-icon" }, N1e = { class: "summary-content" }, F1e = { class: "summary-value" }, B1e = { class: "summary-label" }, $1e = { class: "charts-section" }, P1e = { class: "chart-container" }, L1e = { class: "chart-container" }, q1e = { class: "ranking-table" }, z1e = { class: "rank-cell" }, W1e = { class: "option-name" }, V1e = { class: "votes-cell" }, H1e = { class: "percentage-cell" }, j1e = { class: "mini-progress" }, G1e = { key: 1 }, X1e = { key: 4, class: "empty-state" }, Y1e = Fe({ __name: "FamilyLayoutVote", props: { options: {}, voteSession: {}, canVote: { type: Boolean }, isReadonly: { type: Boolean }, currentUserVotes: {}, inquiryId: {}, supports: {}, optionTypes: {}, userId: {}, family: {}, optionsByInquiry: {} }, emits: ["vote", "multiVote", "select", "addOption", "update:options"], setup(t10, { emit: e }) {
   const n = { binary: { label: "Yes / No", behavior: "single", description: "Simple yes/no voting on a single option", constraints: { min_options: 1, max_options: 1 }, config_schema: {} }, ternary: { label: "For / Abstain / Against", behavior: "single", description: "Choose between For, Abstain, or Against", constraints: { min_options: 1, max_options: 1 }, config_schema: {} }, reaction: { label: "Reactions", behavior: "single", description: "React with emojis to show your opinion", constraints: { min_options: 1, max_options: 1 }, config_schema: { allowed_reactions: { type: "array", default: ["👍", "👎", "❤️", "😂", "😢"], label: "Allowed reactions" } } }, score: { label: "Score Voting", behavior: "single", description: "Rate options on a numeric scale", constraints: { min_options: 1, max_options: 1 }, config_schema: { min: { type: "number", default: 0, label: "Minimum score" }, max: { type: "number", default: 10, label: "Maximum score" } } }, approval: { label: "Approval Voting", behavior: "multi", description: "Select all options you approve of", constraints: { min_options: 2 }, config_schema: { min_choices: { type: "number", default: 1, label: "Minimum choices" }, max_choices: { type: "number", default: null, label: "Maximum choices" } } }, ranked: { label: "Ranked Choice", behavior: "multi", description: "Rank options in order of preference", constraints: { min_options: 2 }, config_schema: { max_rank: { type: "number", default: null, label: "Maximum rank" } } }, borda: { label: "Borda Count", behavior: "multi", description: "Rank options, points assigned by rank position", constraints: { min_options: 2 }, config_schema: {} }, condorcet: { label: "Condorcet", behavior: "multi", description: "Pairwise comparison voting method", constraints: { min_options: 2 }, config_schema: { method: { type: "string", default: "schulze", label: "Method", options: ["schulze", "copeland", "minimax"] } } }, majority_judgment: { label: "Majority Judgment", behavior: "multi", description: "Grade each option, median grade determines winner", constraints: { min_options: 2 }, config_schema: { grades: { type: "array", default: ["Reject", "Poor", "Fair", "Good", "Excellent"], label: "Grade options" } } }, token_weighted: { label: "Token / Weighted", behavior: "flex", description: "Vote with weighted tokens", constraints: { min_options: 1, requires_weight_source: true }, config_schema: { weight_source: { type: "object", default: null, label: "Weight source" }, normalization: { type: "string", default: "none", label: "Normalization", options: ["none", "min-max", "z-score"] } } }, quadratic: { label: "Quadratic Voting", behavior: "flex", description: "Vote with quadratic cost mechanism", constraints: { min_options: 1 }, config_schema: { credits_per_user: { type: "number", default: 100, label: "Credits per user" } } } }, i = t10, r = e, s = ue(0), o = ue(/* @__PURE__ */ new Set()), a = ue({}), l = ue({}), c = ue({}), u = ue(i.voteSession?.engine || "binary"), d = ue(false), h = ue({}), f = ue(false), p = ue("");
   let g;
   const y = ["cards", "list", "results"], v = ue("cards"), b = z(() => jp(i.optionsByInquiry, "vote", i.optionTypes, i.family.key)), D = z(() => ["kanban", "vote", "calendar", "default"]), S = z(() => n[u.value]), C = (ce) => i.currentUserVotes?.find((he) => he.optionId === ce), T = (ce) => !!C(ce), A = z(() => (i.currentUserVotes?.length ?? 0) > 0);
@@ -55919,7 +55931,7 @@ const dve = { class: "engine-selector-modal" }, hve = { class: "modal-header" },
   const e = vt(), n = ui(), i = Ke(), r = tr(), s = ue(""), o = ue(false), a = ue(false), l = ue(null), c = ue(null), u = ue(null), d = ue(false), h = ue(null), f = ue(null), p = ue(null), g = /* @__PURE__ */ new Map(), y = z(() => r.name === "publicInquiry"), v = { tree: yr(Wee), cards: yr(cE), paired: yr(Kte), consensus_flow: yr(pne), kanban: yr(hie), timeline: yr(Mhe), vote: yr(K1e), default: yr(cE) }, b = (oe) => Lp(oe), D = (oe) => ko(oe), S = async (oe) => {
     if (g.has(oe)) return g.get(oe);
     try {
-      const be = `${oe.split("_").map((Le) => Le.charAt(0).toUpperCase() + Le.slice(1)).join("")}Modal`, De = await IX(Object.assign({ "./Actions/ActionStructure.vue": () => q0(() => import("./ActionStructure-DKcPgGUy.chunk.mjs"), true ? __vite__mapDeps([0,1,2,3,4,5,6,7,8,9]) : void 0, import.meta.url), "./Actions/ImportDocumentModal.vue": () => q0(() => import("./ImportDocumentModal-EmtCNVsU.chunk.mjs"), true ? __vite__mapDeps([1,2,3,4,5,6,7,8,9]) : void 0, import.meta.url) }), `./Actions/${be}.vue`, 3), ke = yr(De.default || De);
+      const be = `${oe.split("_").map((Le) => Le.charAt(0).toUpperCase() + Le.slice(1)).join("")}Modal`, De = await IX(Object.assign({ "./Actions/ActionStructure.vue": () => q0(() => import("./ActionStructure-BYlaj6Oo.chunk.mjs"), true ? __vite__mapDeps([0,1,2,3,4,5,6,7,8,9]) : void 0, import.meta.url), "./Actions/ImportDocumentModal.vue": () => q0(() => import("./ImportDocumentModal-BCBPS8XO.chunk.mjs"), true ? __vite__mapDeps([1,2,3,4,5,6,7,8,9]) : void 0, import.meta.url) }), `./Actions/${be}.vue`, 3), ke = yr(De.default || De);
       return g.set(oe, ke), ke;
     } catch (be) {
       return console.error(`Failed to load modal component for action "${oe}":`, be), null;
@@ -56366,8 +56378,8 @@ const dve = { class: "engine-selector-modal" }, hve = { class: "modal-header" },
     } finally {
       r.value = false;
     }
-  }), (M, F) => (x(), B(m(xs), { class: "inquiry-group-archive-page" }, { default: j(() => [_("div", H2e, [_("div", j2e, [_("div", G2e, [J(m(Me), { type: "tertiary", class: "breadcrumb-home", onClick: A }, { icon: j(() => [(x(), B(se(m(Ee).Home), { size: 20 }))]), default: j(() => [_("span", X2e, E(m(w)("agora", "Home")), 1)]), _: 1 }), F[4] || (F[4] = _("div", { class: "breadcrumb-separator" }, "❯", -1)), _("div", Y2e, [_("div", K2e, [(x(), B(se(m(Gt).Archive), { class: "breadcrumb-icon" })), _("span", Z2e, E(m(w)("agora", "Archived Groups")), 1), _("span", Q2e, " (" + E(d.value.length) + ") ", 1)])])])]), F[10] || (F[10] = _("div", { class: "separation-line" }, null, -1)), _("div", J2e, [_("div", ewe, [_("div", twe, [_("div", nwe, [(x(), B(se(m(Gt).Archive), { class: "archive-icon" }))]), _("div", iwe, [_("h1", rwe, E(m(w)("agora", "Archived Groups")), 1), _("div", swe, [_("p", null, E(m(w)("agora", "Groups that have been archived. You can restore or delete them.")), 1), _("span", owe, E(d.value.length) + " " + E(m(w)("agora", "archived groups")), 1)])])])]), r.value ? (x(), R("div", awe, [F[5] || (F[5] = _("div", { class: "spinner" }, null, -1)), _("p", null, E(m(w)("agora", "Loading archived groups …")), 1)])) : d.value.length === 0 ? (x(), R("div", lwe, [_("div", cwe, [(x(), B(se(m(Gt).Archive)))]), _("h3", null, E(m(w)("agora", "No archived groups")), 1), _("p", null, E(m(w)("agora", "There are no archived groups at the moment.")), 1), J(m(Me), { type: "primary", onClick: A }, { default: j(() => [_e(E(m(w)("agora", "Back to Home")), 1)]), _: 1 })])) : (x(), R("div", uwe, [(x(true), R(Oe, null, $e(d.value, (k) => (x(), R("div", { key: k.id, class: "group-vignette-wrapper", onMouseenter: ($) => s.value = k.id, onMouseleave: F[1] || (F[1] = ($) => s.value = null) }, [_("div", hwe, [_("div", { class: "group-vignette archived", onClick: ($) => M.selectGroup(k) }, [k.cover_id ? (x(), R("div", pwe, [_("img", { src: M.getCoverUrl(k.cover_id), alt: k.title }, null, 8, gwe), F[6] || (F[6] = _("div", { class: "vignette-cover-overlay" }, null, -1)), _("div", mwe, [(x(), B(se(m(Gt).Archive))), _("span", null, E(m(w)("agora", "Archived")), 1)])])) : G("", true), _("div", ywe, [_("div", vwe, [(x(), B(se(g(k.type))))]), _("h4", null, E(k.title), 1), k.description ? (x(), R("p", bwe, E(k.description), 1)) : G("", true), _("div", _we, [_("div", xwe, [F[7] || (F[7] = _("span", { class: "stat-icon" }, "📝", -1)), _("span", wwe, E(k.inquiryIds?.length || 0), 1)])]), _("div", Dwe, [_("div", Swe, [_("span", Cwe, E(m(w)("agora", "Archived on:")), 1), _("span", kwe, E(V(k.created)), 1)])])])], 8, fwe), (f(k) || p(k)) && s.value === k.id ? (x(), R("div", { key: 0, class: "owner-menu-under", onMouseenter: ($) => s.value = k.id, onMouseleave: F[0] || (F[0] = ($) => s.value = null) }, [_("div", Ewe, [f(k) ? (x(), B(m(Me), { key: 0, type: "tertiary", class: "menu-item restore", onClick: Ze(($) => T(k), ["stop"]) }, { icon: j(() => [...F[8] || (F[8] = [_("svg", { width: "14", height: "14", viewBox: "0 0 24 24" }, [_("path", { d: "M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z" })], -1)])]), default: j(() => [_e(" " + E(m(w)("agora", "Restore")), 1)]), _: 1 }, 8, ["onClick"])) : G("", true), p(k) ? (x(), B(m(Me), { key: 1, type: "tertiary", class: "menu-item delete", onClick: Ze(($) => O(k), ["stop"]) }, { icon: j(() => [...F[9] || (F[9] = [_("svg", { width: "14", height: "14", viewBox: "0 0 24 24" }, [_("path", { d: "M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" })], -1)])]), default: j(() => [_e(" " + E(m(w)("agora", "Delete")), 1)]), _: 1 }, 8, ["onClick"])) : G("", true)])], 40, Twe)) : G("", true)])], 40, dwe))), 128))]))])]), a.value ? (x(), B(m(zr), { key: 0, open: o.value, "onUpdate:open": F[2] || (F[2] = (k) => o.value = k), name: y.value, message: v.value, buttons: b.value }, null, 8, ["open", "name", "message", "buttons"])) : G("", true), c.value ? (x(), B(m(zr), { key: 1, open: l.value, "onUpdate:open": F[3] || (F[3] = (k) => l.value = k), name: D.value, message: S.value, buttons: C.value }, null, 8, ["open", "name", "message", "buttons"])) : G("", true)]), _: 1 }));
-} }), Rwe = Qe(Awe, [["__scopeId", "data-v-1c9bc79b"]]), Iwe = { class: "consultation-layout" }, Mwe = { class: "left-column" }, Uwe = { class: "description-section" }, Owe = { class: "section-title" }, Nwe = { key: 0, class: "description-container" }, Fwe = { class: "rich-text-display" }, Bwe = ["aria-expanded"], $we = { class: "button-text" }, Pwe = { class: "right-sidebar" }, Lwe = { class: "sidebar-header" }, qwe = { class: "sidebar-title" }, zwe = { class: "inquiry-count" }, Wwe = { key: 0, class: "inquiries-container" }, Vwe = ["onClick"], Hwe = { class: "type-info" }, jwe = { class: "type-icon" }, Gwe = { class: "type-name" }, Xwe = { class: "type-badge" }, Ywe = { class: "type-inquiries" }, Kwe = { class: "inquiry-icon" }, Zwe = { key: 1, class: "empty-state" }, Qwe = Fe({ __name: "InquiryGroupViewMiddle", props: { group: {}, inquiryIds: {} }, emits: ["viewInquiry"], setup(t10, { emit: e }) {
+  }), (M, F) => (x(), B(m(xs), { class: "inquiry-group-archive-page" }, { default: j(() => [_("div", H2e, [_("div", j2e, [_("div", G2e, [J(m(Me), { type: "tertiary", class: "breadcrumb-home", onClick: A }, { icon: j(() => [(x(), B(se(m(Ee).Home), { size: 20 }))]), default: j(() => [_("span", X2e, E(m(w)("agora", "Home")), 1)]), _: 1 }), F[4] || (F[4] = _("div", { class: "breadcrumb-separator" }, "❯", -1)), _("div", Y2e, [_("div", K2e, [(x(), B(se(m(Gt).Archive), { class: "breadcrumb-icon" })), _("span", Z2e, E(m(w)("agora", "Archived Groups")), 1), _("span", Q2e, " (" + E(d.value.length) + ") ", 1)])])])]), F[10] || (F[10] = _("div", { class: "separation-line" }, null, -1)), _("div", J2e, [_("div", ewe, [_("div", twe, [_("div", nwe, [(x(), B(se(m(Gt).Archive), { class: "archive-icon" }))]), _("div", iwe, [_("h1", rwe, E(m(w)("agora", "Archived Groups")), 1), _("div", swe, [_("p", null, E(m(w)("agora", "Groups that have been archived. You can restore or delete them.")), 1), _("span", owe, E(d.value.length) + " " + E(m(w)("agora", "archived groups")), 1)])])])]), r.value ? (x(), R("div", awe, [F[5] || (F[5] = _("div", { class: "spinner" }, null, -1)), _("p", null, E(m(w)("agora", "Loading archived groups …")), 1)])) : d.value.length === 0 ? (x(), R("div", lwe, [_("div", cwe, [(x(), B(se(m(Gt).Archive)))]), _("h3", null, E(m(w)("agora", "No archived groups")), 1), _("p", null, E(m(w)("agora", "There are no archived groups at the moment.")), 1), J(m(Me), { type: "primary", onClick: A }, { default: j(() => [_e(E(m(w)("agora", "Back to Home")), 1)]), _: 1 })])) : (x(), R("div", uwe, [(x(true), R(Oe, null, $e(d.value, (k) => (x(), R("div", { key: k.id, class: "group-vignette-wrapper", onMouseenter: ($) => s.value = k.id, onMouseleave: F[1] || (F[1] = ($) => s.value = null) }, [_("div", hwe, [_("div", { class: "group-vignette archived", onClick: ($) => M.selectGroup(k) }, [k.cover_id ? (x(), R("div", pwe, [_("img", { src: M.getCoverUrl(k.cover_id), alt: k.title }, null, 8, gwe), F[6] || (F[6] = _("div", { class: "vignette-cover-overlay" }, null, -1)), _("div", mwe, [(x(), B(se(m(Gt).Archive))), _("span", null, E(m(w)("agora", "Archived")), 1)])])) : G("", true), _("div", ywe, [_("div", vwe, [(x(), B(se(g(k.type))))]), _("h4", null, E(k.title), 1), k.description ? (x(), R("p", bwe, E(k.description), 1)) : G("", true), _("div", _we, [_("div", xwe, [F[7] || (F[7] = _("span", { class: "stat-icon" }, "📝", -1)), _("span", wwe, E(k.inquiryIds?.length || 0), 1)])]), _("div", Dwe, [_("div", Swe, [_("span", Cwe, E(m(w)("agora", "Archived on:")), 1), _("span", kwe, E(V(k.created)), 1)])])])], 8, fwe), (f(k) || p(k)) && s.value === k.id ? (x(), R("div", { key: 0, class: "owner-menu-under", onMouseenter: ($) => s.value = k.id, onMouseleave: F[0] || (F[0] = ($) => s.value = null) }, [_("div", Ewe, [f(k) ? (x(), B(m(Me), { key: 0, type: "tertiary", class: "menu-item restore", onClick: Ze(($) => T(k), ["stop"]) }, { icon: j(() => [...F[8] || (F[8] = [_("svg", { width: "14", height: "14", viewBox: "0 0 24 24" }, [_("path", { d: "M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z" })], -1)])]), default: j(() => [_e(" " + E(m(w)("agora", "Restore")), 1)]), _: 1 }, 8, ["onClick"])) : G("", true), p(k) ? (x(), B(m(Me), { key: 1, type: "tertiary", class: "menu-item delete", onClick: Ze(($) => O(k), ["stop"]) }, { icon: j(() => [...F[9] || (F[9] = [_("svg", { width: "14", height: "14", viewBox: "0 0 24 24" }, [_("path", { d: "M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" })], -1)])]), default: j(() => [_e(" " + E(m(w)("agora", "Delete")), 1)]), _: 1 }, 8, ["onClick"])) : G("", true)])], 40, Twe)) : G("", true)])], 40, dwe))), 128))]))])]), a.value ? (x(), B(m(zr), { key: 0, open: o.value, "onUpdate:open": F[2] || (F[2] = (k) => o.value = k), name: y.value, message: v.value, buttons: b.value }, null, 8, ["open", "name", "message", "buttons"])) : G("", true), c.value ? (x(), B(m(zr), { key: 1, open: l.value, "onUpdate:open": F[3] || (F[3] = (k) => l.value = k), name: D.value, message: S.value, buttons: C.value }, null, 8, ["open", "name", "message", "buttons"])) : G("", true)]), _: 1 }));
+} }), Rwe = Qe(Awe, [["__scopeId", "data-v-fa7a116f"]]), Iwe = { class: "consultation-layout" }, Mwe = { class: "left-column" }, Uwe = { class: "description-section" }, Owe = { class: "section-title" }, Nwe = { key: 0, class: "description-container" }, Fwe = { class: "rich-text-display" }, Bwe = ["aria-expanded"], $we = { class: "button-text" }, Pwe = { class: "right-sidebar" }, Lwe = { class: "sidebar-header" }, qwe = { class: "sidebar-title" }, zwe = { class: "inquiry-count" }, Wwe = { key: 0, class: "inquiries-container" }, Vwe = ["onClick"], Hwe = { class: "type-info" }, jwe = { class: "type-icon" }, Gwe = { class: "type-name" }, Xwe = { class: "type-badge" }, Ywe = { class: "type-inquiries" }, Kwe = { class: "inquiry-icon" }, Zwe = { key: 1, class: "empty-state" }, Qwe = Fe({ __name: "InquiryGroupViewMiddle", props: { group: {}, inquiryIds: {} }, emits: ["viewInquiry"], setup(t10, { emit: e }) {
   const n = t10, i = e, r = rn(), s = Pp(), o = ue([]), a = ue(false), l = ue(false), c = ue(), u = z(() => (r.inquiries || []).filter((S) => n.inquiryIds.includes(S.id))), d = z(() => s.inquiryTypeTab || []), h = z(() => {
     const D = {};
     return u.value.forEach((S) => {
@@ -57023,8 +57035,8 @@ const dve = { class: "engine-selector-modal" }, hve = { class: "modal-header" },
   }, X = () => {
     l.value && (l.value = null);
   };
-  return (L, Y) => t10.open ? (x(), B(m(Ri), { key: 0, name: m(w)("agora", "Add Resource to Inquiry"), size: "large", onClose: H }, { default: j(() => [_("div", IDe, [_("div", MDe, [_("h2", null, E(m(w)("agora", "Add Resource to Inquiry")), 1), _("p", UDe, E(m(w)("agora", "Link an existing resource or create a new one for this inquiry")), 1)]), _("div", ODe, [_("div", NDe, [_("h3", FDe, E(m(w)("agora", "Resource Type")), 1), _("div", BDe, [(x(true), R(Oe, null, $e(b.value, (Z) => (x(), R("div", { key: Z.id, class: Ne(["resource-type-card", { active: c.value === Z.id }]), onClick: (me) => c.value = Z.id }, [(x(), B(se(Z.icon), { size: 24, class: "type-icon" })), _("div", PDe, [_("h4", LDe, E(Z.name), 1), _("p", qDe, E(Z.description), 1)])], 10, $De))), 128))])]), N.value ? G("", true) : (x(), R("div", zDe, [_("div", WDe, [(x(), B(se(m(Ee).Link), { size: 20, class: "section-icon" })), _("h3", null, E(m(w)("agora", "Link Existing {resource}", { resource: S.value?.name })), 1)]), !C.value && !d.value ? (x(), B(m(Xp), { key: 0, type: "info", class: "info-card" }, { default: j(() => [_e(E(m(w)("agora", "No {resource} found. You can create a new one instead.", { resource: V(S.value) })), 1)]), _: 1 })) : G("", true), d.value ? (x(), R("div", VDe, [Y[3] || (Y[3] = _("div", { class: "loading-spinner" }, null, -1)), _("span", null, E(m(w)("agora", "Loading your {resource} …", { resource: V(S.value) })), 1)])) : C.value ? (x(), R("div", HDe, [_("label", jDe, E(m(w)("agora", "Choose a {resource} to link", { resource: V(S.value) })), 1), J(m(en), { modelValue: l.value, "onUpdate:modelValue": [Y[0] || (Y[0] = (Z) => l.value = Z), P], options: D.value, clearable: true, placeholder: m(w)("agora", "Select a {resource} …", { resource: V(S.value) }), disabled: a.value, label: "label" }, { option: j((Z) => [_("div", GDe, [_("div", XDe, E(Z.label), 1), Z.description ? (x(), R("div", YDe, E(Z.description), 1)) : G("", true)])]), selected: j((Z) => [_("div", KDe, [_("div", ZDe, E(Z.label), 1)])]), _: 1 }, 8, ["modelValue", "options", "placeholder", "disabled"]), _("p", QDe, E(m(w)("agora", "Select a {resource} you own or have access to", { resource: V(S.value) })), 1)])) : G("", true)])), !N.value && C.value ? (x(), R("div", JDe, [_("span", eSe, E(m(w)("agora", "OR")), 1)])) : G("", true), _("div", tSe, [_("div", nSe, [(x(), B(se(m(Ee).Plus), { size: 20, class: "section-icon" })), _("h3", null, [N.value ? (x(), R("span", iSe, E(m(w)("agora", "Upload Files")), 1)) : (x(), R("span", rSe, E(m(w)("agora", "Create New {resource}", { resource: q(S.value) })), 1))])]), _("div", sSe, [N.value ? (x(), R("div", oSe, [_("input", { ref_key: "fileInput", ref: h, type: "file", multiple: "", class: "hidden", accept: "*/*", onChange: k }, null, 544), J(m(Me), { type: "secondary", class: "file-select-button", onClick: F }, { icon: j(() => [(x(), B(se(m(Ee).Attachment), { size: 20 }))]), default: j(() => [_e(" " + E(m(w)("agora", "Select Files")), 1)]), _: 1 }), f.value.length > 0 ? (x(), R("div", aSe, [_("h4", lSe, E(m(w)("agora", "Selected Files")), 1), _("div", cSe, [(x(true), R(Oe, null, $e(f.value, (Z, me) => (x(), R("div", { key: me, class: "file-item" }, [_("div", uSe, [(x(), B(se(m(Ee).Document), { size: 16, class: "file-icon" })), _("span", dSe, E(Z.name), 1), _("span", hSe, E(U(Z.size)), 1)]), J(m(Me), { type: "error", "aria-label": m(w)("agora", "Remove file"), onClick: (oe) => $(me) }, { icon: j(() => [(x(), B(se(m(Ee).Delete), { size: 16 }))]), _: 1 }, 8, ["aria-label", "onClick"])]))), 128))])])) : G("", true)])) : (x(), R("div", fSe, [J(m(ws), { modelValue: g.value, "onUpdate:modelValue": [Y[1] || (Y[1] = (Z) => g.value = Z), X], label: m(w)("agora", "{resource} Title", { resource: q(S.value) }), placeholder: m(w)("agora", "Enter {resource} title", { resource: V(S.value) }), disabled: a.value, required: true, class: "form-field" }, null, 8, ["modelValue", "label", "placeholder", "disabled"]), J(m(ws), { modelValue: y.value, "onUpdate:modelValue": Y[2] || (Y[2] = (Z) => y.value = Z), label: m(w)("agora", "Description"), placeholder: m(w)("agora", "Enter description (optional)"), disabled: a.value, type: "textarea", class: "form-field" }, null, 8, ["modelValue", "label", "placeholder", "disabled"]), p.value.expires && c.value === "forms" ? (x(), B(m(Xp), { key: 0, type: "info", class: "info-card" }, { default: j(() => [_e(E(m(w)("agora", "This form will inherit the inquiry expiration date.")), 1)]), _: 1 })) : G("", true)]))])])]), _("div", pSe, [J(m(Me), { disabled: a.value, class: "cancel-button", onClick: H }, { default: j(() => [_e(E(m(w)("agora", "Cancel")), 1)]), _: 1 }, 8, ["disabled"]), J(m(Me), { type: "primary", disabled: a.value || !O.value, loading: a.value, class: "submit-button", onClick: te }, { icon: j(() => [(x(), B(se(m(Ee).Plus), { size: 20 }))]), default: j(() => [a.value ? (x(), R("span", gSe, E(N.value ? m(w)("agora", "Uploading …") : m(w)("agora", "Creating …")), 1)) : A.value ? (x(), R("span", mSe, E(m(w)("agora", "Link {resource}", { resource: q(S.value) })), 1)) : N.value ? (x(), R("span", ySe, E(m(w)("agora", "Upload Files")), 1)) : (x(), R("span", vSe, E(m(w)("agora", "Create {resource}", { resource: q(S.value) })), 1))]), _: 1 }, 8, ["disabled", "loading"])])])]), _: 1 }, 8, ["name"])) : G("", true);
-} }), _Se = Qe(bSe, [["__scopeId", "data-v-ea99397a"]]), xSe = { class: "sidebar-links" }, wSe = { class: "sidebar-header" }, DSe = { class: "header-content" }, SSe = { class: "header-text" }, CSe = { class: "description" }, kSe = { class: "resources-list" }, TSe = { key: 0, class: "loading-state" }, ESe = { key: 1, class: "empty-state" }, ASe = { class: "empty-description" }, RSe = { key: 2, class: "resources-groups" }, ISe = { class: "group-title" }, MSe = { class: "group-items" }, USe = Fe({ __name: "SideBarTabResources", props: { availableApps: {}, inquiry: {} }, setup(t10) {
+  return (L, Y) => t10.open ? (x(), B(m(Ri), { key: 0, name: m(w)("agora", "Add Resource to Inquiry"), size: "large", onClose: H }, { default: j(() => [_("div", IDe, [_("div", MDe, [_("h2", null, E(m(w)("agora", "Add Resource to Inquiry")), 1), _("p", UDe, E(m(w)("agora", "Link an existing resource or create a new one for this inquiry")), 1)]), _("div", ODe, [_("div", NDe, [_("h3", FDe, E(m(w)("agora", "Resource Type")), 1), _("div", BDe, [(x(true), R(Oe, null, $e(b.value, (Z) => (x(), R("div", { key: Z.id, class: Ne(["resource-type-card", { active: c.value === Z.id }]), onClick: (me) => c.value = Z.id }, [(x(), B(se(Z.icon), { size: 24, class: "type-icon" })), _("div", PDe, [_("h4", LDe, E(Z.name), 1), _("p", qDe, E(Z.description), 1)])], 10, $De))), 128))])]), N.value ? G("", true) : (x(), R("div", zDe, [_("div", WDe, [(x(), B(se(m(Ee).Link), { size: 20, class: "section-icon" })), _("h3", null, E(m(w)("agora", "Link Existing {resource}", { resource: S.value?.name })), 1)]), !C.value && !d.value ? (x(), B(m(Xp), { key: 0, type: "info", class: "info-card" }, { default: j(() => [_e(E(m(w)("agora", "No {resource} found. You can create a new one instead.", { resource: V(S.value) })), 1)]), _: 1 })) : G("", true), d.value ? (x(), R("div", VDe, [Y[3] || (Y[3] = _("div", { class: "loading-spinner" }, null, -1)), _("span", null, E(m(w)("agora", "Loading your {resource} …", { resource: V(S.value) })), 1)])) : C.value ? (x(), R("div", HDe, [_("label", jDe, E(m(w)("agora", "Choose a {resource} to link", { resource: V(S.value) })), 1), J(m(en), { modelValue: l.value, "onUpdate:modelValue": [Y[0] || (Y[0] = (Z) => l.value = Z), P], options: D.value, clearable: true, placeholder: m(w)("agora", "Select a {resource} …", { resource: V(S.value) }), disabled: a.value, label: "label" }, { option: j((Z) => [_("div", GDe, [_("div", XDe, E(Z.label), 1), Z.description ? (x(), R("div", YDe, E(Z.description), 1)) : G("", true)])]), selected: j((Z) => [_("div", KDe, [_("div", ZDe, E(Z.label), 1)])]), _: 1 }, 8, ["modelValue", "options", "placeholder", "disabled"]), _("p", QDe, E(m(w)("agora", "Select a {resource} you own or have access to", { resource: V(S.value) })), 1)])) : G("", true)])), !N.value && C.value ? (x(), R("div", JDe, [_("span", eSe, E(m(w)("agora", "OR")), 1)])) : G("", true), _("div", tSe, [_("div", nSe, [(x(), B(se(m(Ee).Plus), { size: 20, class: "section-icon" })), _("h3", null, [N.value ? (x(), R("span", iSe, E(m(w)("agora", "Upload Files")), 1)) : (x(), R("span", rSe, E(m(w)("agora", "Create New {resource}", { resource: q(S.value) })), 1))])]), _("div", sSe, [N.value ? (x(), R("div", oSe, [_("input", { ref_key: "fileInput", ref: h, type: "file", multiple: "", class: "hidden", accept: "*/*", onChange: k }, null, 544), J(m(Me), { type: "secondary", class: "file-select-button", onClick: F }, { icon: j(() => [(x(), B(se(m(Ee).Attachment), { size: 20 }))]), default: j(() => [_e(" " + E(m(w)("agora", "Select Files")), 1)]), _: 1 }), f.value.length > 0 ? (x(), R("div", aSe, [_("h4", lSe, E(m(w)("agora", "Selected Files")), 1), _("div", cSe, [(x(true), R(Oe, null, $e(f.value, (Z, me) => (x(), R("div", { key: me, class: "file-item" }, [_("div", uSe, [(x(), B(se(m(Ee).Document), { size: 16, class: "file-icon" })), _("span", dSe, E(Z.name), 1), _("span", hSe, E(U(Z.size)), 1)]), J(m(Me), { type: "error", "aria-label": m(w)("agora", "Remove file"), onClick: (oe) => $(me) }, { icon: j(() => [(x(), B(se(m(Ee).Delete), { size: 16 }))]), _: 1 }, 8, ["aria-label", "onClick"])]))), 128))])])) : G("", true)])) : (x(), R("div", fSe, [J(m(ws), { modelValue: g.value, "onUpdate:modelValue": [Y[1] || (Y[1] = (Z) => g.value = Z), X], label: m(w)("agora", "{resource} Title", { resource: q(S.value) }), placeholder: m(w)("agora", "Enter {resource} title", { resource: V(S.value) }), disabled: a.value, required: true, class: "form-field" }, null, 8, ["modelValue", "label", "placeholder", "disabled"]), J(m(ws), { modelValue: y.value, "onUpdate:modelValue": Y[2] || (Y[2] = (Z) => y.value = Z), label: m(w)("agora", "Description"), placeholder: m(w)("agora", "Enter description (optional)"), disabled: a.value, type: "textarea", class: "form-field" }, null, 8, ["modelValue", "label", "placeholder", "disabled"]), p.value.expires && c.value === "forms" ? (x(), B(m(Xp), { key: 0, type: "info", class: "info-card" }, { default: j(() => [_e(E(m(w)("agora", "This form will inherit the inquiry expiration date.")), 1)]), _: 1 })) : G("", true)]))])])]), _("div", pSe, [J(m(Me), { disabled: a.value, class: "cancel-button", onClick: H }, { default: j(() => [_e(E(m(w)("agora", "Cancel")), 1)]), _: 1 }, 8, ["disabled"]), J(m(Me), { type: "primary", disabled: a.value || !O.value, loading: a.value, class: "submit-button", onClick: te }, { icon: j(() => [(x(), B(se(m(Ee).Plus), { size: 20 }))]), default: j(() => [a.value ? (x(), R("span", gSe, E(N.value ? m(w)("agora", "Uploading …") : m(w)("agora", "Creating …")), 1)) : A.value ? (x(), R("span", mSe, E(m(w)("agora", "Link {resource}", { resource: q(S.value) })), 1)) : N.value ? (x(), R("span", ySe, E(m(w)("agora", "Upload Files")), 1)) : (x(), R("span", vSe, E(m(w)("agora", "Create {resource}", { resource: q(S.value) })), 1))]), _: 1 }, 8, ["disabled", "loading"])])])]), _: 1 }, 8, ["name"])) : G("", true);
+} }), _Se = Qe(bSe, [["__scopeId", "data-v-ed7220fd"]]), xSe = { class: "sidebar-links" }, wSe = { class: "sidebar-header" }, DSe = { class: "header-content" }, SSe = { class: "header-text" }, CSe = { class: "description" }, kSe = { class: "resources-list" }, TSe = { key: 0, class: "loading-state" }, ESe = { key: 1, class: "empty-state" }, ASe = { class: "empty-description" }, RSe = { key: 2, class: "resources-groups" }, ISe = { class: "group-title" }, MSe = { class: "group-items" }, USe = Fe({ __name: "SideBarTabResources", props: { availableApps: {}, inquiry: {} }, setup(t10) {
   const e = t10, n = OU(), i = vt(), r = Ke(), s = ql(), o = ue(false), a = ue(false), l = z(() => i.id ? i : e.inquiry ? e.inquiry : null), c = z(() => {
     if (!e.inquiry || !e.inquiry.id) return null;
     try {
@@ -57150,8 +57162,8 @@ const dve = { class: "engine-selector-modal" }, hve = { class: "modal-header" },
   }, { deep: true }), ot(() => s.attachments, () => {
   }, { deep: true }), dt(async () => {
     await F();
-  }), (k, $) => (x(), R("div", xSe, [_("div", wSe, [_("div", DSe, [_("div", SSe, [_("h2", null, E(m(w)("agora", "Linked Resources")), 1), _("p", CSe, E(m(w)("agora", "Manage links to other Nextcloud resources and files")), 1)]), l.value.currentUserStatus?.isOwner ? (x(), B(m(Me), { key: 0, type: "primary", class: "add-resource-btn", onClick: f }, { icon: j(() => [(x(), B(se(m(Ee).Plus), { size: 20 }))]), default: j(() => [_e(" " + E(m(w)("agora", "Add Resource")), 1)]), _: 1 })) : G("", true)])]), _("div", kSe, [o.value ? (x(), R("div", TSe, E(m(w)("agora", "Loading resources …")), 1)) : h.value ? (x(), R("div", RSe, [(x(true), R(Oe, null, $e(d.value, (U, W) => (x(), R("div", { key: W, class: "resource-group" }, [_("h3", ISe, [(x(), B(se(y(W)), { size: 20, class: "group-icon" })), _e(" " + E(g(W)), 1)]), _("div", MSe, [(x(true), R(Oe, null, $e(U, (ne) => (x(), B(m(S_), { key: ne.id || ne.target_id, name: ne.displayName, bold: true, "force-display-actions": true, target: O(), href: q(ne), to: null, onClick: V }, { icon: j(() => [(x(), B(se(ne.icon), { size: 20 }))]), indicator: j(() => [_e(E(T(ne)), 1)]), actions: j(() => [N() ? (x(), B(m(yt), { key: 0, onClick: Ze((H) => v(ne), ["stop"]) }, { icon: j(() => [(x(), B(se(m(Ee).Delete), { size: 16 }))]), default: j(() => [_e(" " + E(m(w)("agora", "Delete")), 1)]), _: 1 }, 8, ["onClick"])) : G("", true)]), _: 2 }, 1032, ["name", "target", "href"]))), 128))])]))), 128))])) : (x(), R("div", ESe, [(x(), B(se(m(Ee).Link), { size: 48, class: "empty-icon" })), _("p", null, E(m(w)("agora", "No linked resources")), 1), _("p", ASe, E(m(w)("agora", "Add resources or files to connect with other apps")), 1)]))]), J(_Se, { open: a.value, "onUpdate:open": $[0] || ($[0] = (U) => a.value = U), "available-apps": t10.availableApps, inquiry: l.value }, null, 8, ["open", "available-apps", "inquiry"])]));
-} }), NU = Qe(USe, [["__scopeId", "data-v-72a5091d"]]), OSe = { class: "inquiry-full-view professional-theme" }, NSe = { class: "full-view-wrapper" }, FSe = { class: "full-view-content" }, BSe = { key: 0, class: "cover-hero" }, $Se = ["src", "alt"], PSe = { class: "cover-overlay" }, LSe = { class: "cover-badges" }, qSe = { class: "type-badge" }, zSe = { class: "type-label" }, WSe = { key: 0, class: "status-badge" }, VSe = { class: "cover-title" }, HSe = { class: "cover-actions" }, jSe = { class: "action-text" }, GSe = { class: "action-count" }, XSe = { class: "action-text" }, YSe = { class: "action-count" }, KSe = { class: "action-button participants-button" }, ZSe = { class: "action-text" }, QSe = { class: "action-count" }, JSe = { key: 1, class: "header-section" }, eCe = { class: "header-content" }, tCe = { class: "header-badges" }, nCe = { class: "type-badge" }, iCe = { class: "type-label" }, rCe = { key: 0, class: "status-badge" }, sCe = { class: "page-title" }, oCe = { class: "header-actions" }, aCe = { class: "action-text" }, lCe = { class: "action-count" }, cCe = { class: "action-text" }, uCe = { class: "action-count" }, dCe = { class: "action-button participants-button" }, hCe = { class: "action-text" }, fCe = { class: "action-count" }, pCe = { class: "author-meta-section" }, gCe = { class: "author-info" }, mCe = { class: "author-details" }, yCe = { class: "author-name" }, vCe = { class: "creation-date" }, bCe = { class: "meta-actions" }, _Ce = { key: 0, class: "meta-item" }, xCe = { class: "meta-label" }, wCe = { class: "meta-value" }, DCe = { key: 1, class: "meta-item" }, SCe = { class: "meta-value" }, CCe = { class: "meta-item" }, kCe = { class: "meta-value" }, TCe = { class: "location-category-section" }, ECe = { class: "meta-grid" }, ACe = { class: "meta-card" }, RCe = { class: "meta-card-header" }, ICe = { class: "meta-card-title" }, MCe = { class: "meta-card-content" }, UCe = { class: "meta-card" }, OCe = { class: "meta-card-header" }, NCe = { class: "meta-card-title" }, FCe = { class: "meta-card-content" }, BCe = { class: "description-section" }, $Ce = { class: "section-header" }, PCe = { class: "section-title" }, LCe = ["innerHTML"], qCe = { key: 2, class: "resources-section" }, zCe = { class: "section-header" }, WCe = { class: "section-title" }, VCe = { class: "resources-content" }, HCe = { key: 3, class: "additional-info-section" }, jCe = { class: "section-header" }, GCe = { class: "section-title" }, XCe = { class: "info-grid" }, YCe = { class: "info-label" }, KCe = { class: "info-value" }, ZCe = { key: 4, class: "ternary-support-section" }, QCe = { class: "section-header" }, JCe = { class: "section-title" }, eke = { class: "modal-header" }, tke = { class: "modal-title" }, nke = { class: "modal-subtitle" }, ike = { class: "modal-comments-container" }, rke = Fe({ __name: "InquiryFull", props: { inquiry: {} }, setup(t10) {
+  }), (k, $) => (x(), R("div", xSe, [_("div", wSe, [_("div", DSe, [_("div", SSe, [_("h2", null, E(m(w)("agora", "Linked Resources")), 1), _("p", CSe, E(m(w)("agora", "Manage links to other Nextcloud resources and files")), 1)]), l.value.currentUserStatus?.isOwner ? (x(), B(m(Me), { key: 0, type: "primary", class: "add-resource-btn", onClick: f }, { icon: j(() => [(x(), B(se(m(Ee).Plus), { size: 20 }))]), default: j(() => [_e(" " + E(m(w)("agora", "Add Resource")), 1)]), _: 1 })) : G("", true)])]), _("div", kSe, [o.value ? (x(), R("div", TSe, E(m(w)("agora", "Loading resources …")), 1)) : h.value ? (x(), R("div", RSe, [(x(true), R(Oe, null, $e(d.value, (U, W) => (x(), R("div", { key: W, class: "resource-group" }, [_("h3", ISe, [(x(), B(se(y(W)), { size: 20, class: "group-icon" })), _e(" " + E(g(W)), 1)]), _("div", MSe, [(x(true), R(Oe, null, $e(U, (ne) => (x(), B(m(S_), { key: ne.id || ne.target_id, name: ne.displayName, bold: true, "force-display-actions": true, target: O(), href: q(ne), to: null, onClick: V }, { icon: j(() => [(x(), B(se(ne.icon), { size: 20 }))]), indicator: j(() => [_e(E(T(ne)), 1)]), actions: j(() => [N() ? (x(), B(m(yt), { key: 0, onClick: Ze((H) => v(ne), ["stop"]) }, { icon: j(() => [(x(), B(se(m(Ee).Delete), { size: 16 }))]), default: j(() => [_e(" " + E(m(w)("agora", "Delete")), 1)]), _: 1 }, 8, ["onClick"])) : G("", true)]), _: 2 }, 1032, ["name", "target", "href"]))), 128))])]))), 128))])) : (x(), R("div", ESe, [(x(), B(se(m(Ee).Link), { size: 48, class: "empty-icon" })), _("p", null, E(m(w)("agora", "No linked resources")), 1), _("p", ASe, E(m(w)("agora", "Add resources or files to connect with other apps")), 1)]))]), J(_Se, { open: a.value, "onUpdate:open": $[0] || ($[0] = (U) => a.value = U), "available-apps": t10.availableApps, inquiry: l.value }, null, 8, ["open", "available-apps", "inquiry"])]));
+} }), NU = Qe(USe, [["__scopeId", "data-v-449c1364"]]), OSe = { class: "inquiry-full-view professional-theme" }, NSe = { class: "full-view-wrapper" }, FSe = { class: "full-view-content" }, BSe = { key: 0, class: "cover-hero" }, $Se = ["src", "alt"], PSe = { class: "cover-overlay" }, LSe = { class: "cover-badges" }, qSe = { class: "type-badge" }, zSe = { class: "type-label" }, WSe = { key: 0, class: "status-badge" }, VSe = { class: "cover-title" }, HSe = { class: "cover-actions" }, jSe = { class: "action-text" }, GSe = { class: "action-count" }, XSe = { class: "action-text" }, YSe = { class: "action-count" }, KSe = { class: "action-button participants-button" }, ZSe = { class: "action-text" }, QSe = { class: "action-count" }, JSe = { key: 1, class: "header-section" }, eCe = { class: "header-content" }, tCe = { class: "header-badges" }, nCe = { class: "type-badge" }, iCe = { class: "type-label" }, rCe = { key: 0, class: "status-badge" }, sCe = { class: "page-title" }, oCe = { class: "header-actions" }, aCe = { class: "action-text" }, lCe = { class: "action-count" }, cCe = { class: "action-text" }, uCe = { class: "action-count" }, dCe = { class: "action-button participants-button" }, hCe = { class: "action-text" }, fCe = { class: "action-count" }, pCe = { class: "author-meta-section" }, gCe = { class: "author-info" }, mCe = { class: "author-details" }, yCe = { class: "author-name" }, vCe = { class: "creation-date" }, bCe = { class: "meta-actions" }, _Ce = { key: 0, class: "meta-item" }, xCe = { class: "meta-label" }, wCe = { class: "meta-value" }, DCe = { key: 1, class: "meta-item" }, SCe = { class: "meta-value" }, CCe = { class: "meta-item" }, kCe = { class: "meta-value" }, TCe = { class: "location-category-section" }, ECe = { class: "meta-grid" }, ACe = { class: "meta-card" }, RCe = { class: "meta-card-header" }, ICe = { class: "meta-card-title" }, MCe = { class: "meta-card-content" }, UCe = { class: "meta-card" }, OCe = { class: "meta-card-header" }, NCe = { class: "meta-card-title" }, FCe = { class: "meta-card-content" }, BCe = { class: "description-section" }, $Ce = { class: "section-header" }, PCe = { class: "section-title" }, LCe = ["innerHTML"], qCe = { key: 2, class: "resources-section" }, zCe = { class: "section-header" }, WCe = { class: "section-title" }, VCe = { class: "resources-content" }, HCe = { key: 3, class: "additional-info-section" }, jCe = { class: "section-header" }, GCe = { class: "section-title" }, XCe = { class: "info-grid" }, YCe = { class: "info-label" }, KCe = { class: "info-value" }, ZCe = { key: 4, class: "ternary-support-section" }, QCe = { class: "section-header" }, JCe = { class: "section-title" }, eke = { class: "modal-header" }, tke = { class: "modal-title" }, nke = { class: "modal-subtitle" }, ike = { class: "modal-comments-container" }, rke = Fe({ __name: "InquiryFull", props: { inquiry: {} }, setup(t10) {
   const e = t10, n = Ke(), i = rn(), r = ue(false), s = ue(e.inquiry.currentUserStatus?.supportValue || null);
   function o() {
     r.value = true;
@@ -57537,8 +57549,8 @@ const dve = { class: "engine-selector-modal" }, hve = { class: "modal-header" },
       s.bySlug(re) || (h.value = true);
     }
     a.value = false;
-  }), (re, Q) => (x(), B(m(xs), { class: "inquiry-group-page" }, { default: j(() => [_("div", STe, [_("div", CTe, [_("div", kTe, [J(m(Me), { type: "tertiary", "aria-label": "t('agora', 'Home')", class: "breadcrumb-home", onClick: L }, { icon: j(() => [(x(), B(se(m(Ee).Home), { size: 20 }))]), default: j(() => [_("span", TTe, E(m(w)("agora", "Home")), 1)]), _: 1 }), (x(true), R(Oe, null, $e(A.value, (ie) => (x(), R(Oe, { key: ie.id }, [Q[4] || (Q[4] = _("div", { class: "breadcrumb-separator" }, "❯", -1)), J(m(Me), { type: "tertiary", class: "breadcrumb-item", "aria-label": "t('agora', 'Parent')", onClick: (pe) => Y(ie) }, { default: j(() => [_("div", ETe, [(x(), B(se(V(ie.type)), { class: "breadcrumb-icon" })), _("span", ATe, E(ie.title), 1)])]), _: 2 }, 1032, ["onClick"])], 64))), 128)), y.value || A.value.length > 0 ? (x(), R("div", RTe, "❯")) : G("", true), _("div", ITe, [_("div", MTe, [(x(), B(se(F.value), { class: "breadcrumb-icon" })), _("span", UTe, E(H.value), 1), N.value > 0 && y.value ? (x(), R("span", OTe, " (" + E(N.value) + ") ", 1)) : O.value.length > 0 && !y.value ? (x(), R("span", NTe, " (" + E(O.value.length) + ") ", 1)) : G("", true)])])])]), Q[14] || (Q[14] = _("div", { class: "separation-line" }, null, -1)), h.value ? (x(), R("div", fEe, [Q[13] || (Q[13] = _("div", { class: "not-found-icon" }, "🔍", -1)), _("h2", null, E(m(w)("agora", "Group not found")), 1), _("p", null, E(m(w)("agora", "The group you are looking for does not exist or you do not have permission to access it.")), 1), J(m(Me), { type: "primary", onClick: L }, { default: j(() => [_e(E(m(w)("agora", "Back to home")), 1)]), _: 1 })])) : (x(), R("div", FTe, [_("div", BTe, [_("div", $Te, [_("div", PTe, [(x(), B(se(F.value), { class: "group-icon" }))]), _("div", LTe, [_("h1", qTe, E(W.value), 1), _("div", zTe, [_("p", null, E(ne.value), 1), N.value > 0 && y.value ? (x(), R("span", WTe, E(N.value) + " " + E(m(w)("agora", "inquiries")), 1)) : G("", true), O.value.length > 0 && !y.value ? (x(), R("span", VTe, E(O.value.length) + " " + E(m(w)("agora", "groups")), 1)) : G("", true)])])])]), a.value ? (x(), R("div", HTe, [Q[5] || (Q[5] = _("div", { class: "spinner" }, null, -1)), _("p", null, E(m(w)("agora", "Loading …")), 1)])) : (x(), R("div", jTe, [_("div", GTe, [_("h3", null, E(q.value), 1), D.value && C(D.value) ? (x(), R("div", XTe, [J(m(Me), { class: "create-button", "arial-label": "", onClick: Q[0] || (Q[0] = (ie) => Z(b.value)) }, { default: j(() => [_e(" ➕ " + E(m(w)("agora", "Create Group")), 1)]), _: 1 })])) : G("", true)]), O.value.length > 0 ? (x(), R("div", YTe, [(x(true), R(Oe, null, $e(O.value, (ie) => (x(), R("div", { key: ie.id, class: "group-vignette-wrapper", onMouseenter: (pe) => l.value = ie.id, onMouseleave: Q[2] || (Q[2] = (pe) => l.value = null) }, [_("div", ZTe, [_("div", { class: "group-vignette", onClick: (pe) => Y(ie) }, [ie.coverId ? (x(), R("div", JTe, [_("img", { src: be(ie.coverId), alt: ie.title }, null, 8, eEe), Q[6] || (Q[6] = _("div", { class: "vignette-cover-overlay" }, null, -1))])) : G("", true), _("div", tEe, [_("div", nEe, [(x(), B(se(V(ie.type))))]), _("h4", null, E(ie.title), 1), ie.description ? (x(), R("p", iEe, E(ie.description), 1)) : G("", true), _("div", rEe, [_("div", sEe, [Q[7] || (Q[7] = _("span", { class: "stat-icon" }, "📝", -1)), _("span", oEe, E(ie.inquiryIds?.length || 0), 1)]), M(ie).length > 0 ? (x(), R("div", aEe, [Q[8] || (Q[8] = _("span", { class: "stat-icon" }, "👥", -1)), _("span", lEe, E(M(ie).length), 1)])) : G("", true)]), _("div", cEe, [J(m(Me), { class: "view-group-button", onClick: Ze((pe) => Y(ie), ["stop"]) }, { icon: j(() => [...Q[9] || (Q[9] = [_("svg", { width: "16", height: "16", viewBox: "0 0 24 24" }, [_("path", { d: "M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" })], -1)])]), default: j(() => [_e(E(m(w)("agora", "View Group")) + " ", 1)]), _: 1 }, 8, ["onClick"])])])], 8, QTe), ie && ie.slug && (C(ie) || T(ie) || S(ie)) && l.value === ie.id ? (x(), R("div", { key: 0, class: "owner-menu-under", onMouseenter: (pe) => l.value = ie.id, onMouseleave: Q[1] || (Q[1] = (pe) => l.value = null) }, [_("div", dEe, [C(ie) ? (x(), B(m(Me), { key: 0, type: "tertiary", class: "menu-item modify", onClick: Ze((pe) => De(ie), ["stop"]) }, { icon: j(() => [...Q[10] || (Q[10] = [_("svg", { width: "14", height: "14", viewBox: "0 0 24 24" }, [_("path", { d: "M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" })], -1)])]), default: j(() => [_e(" " + E(m(w)("agora", "Modify")), 1)]), _: 1 }, 8, ["onClick"])) : G("", true), T(ie) ? (x(), B(m(Me), { key: 1, type: "tertiary", class: "menu-item delete", onClick: Ze((pe) => ke(ie), ["stop"]) }, { icon: j(() => [...Q[11] || (Q[11] = [_("svg", { width: "14", height: "14", viewBox: "0 0 24 24" }, [_("path", { d: "M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" })], -1)])]), default: j(() => [_e(" " + E(m(w)("agora", "Delete")), 1)]), _: 1 }, 8, ["onClick"])) : G("", true), S(ie) ? (x(), B(m(Me), { key: 2, type: "tertiary", class: "menu-item archive", onClick: Ze((pe) => fe(ie), ["stop"]) }, { icon: j(() => [...Q[12] || (Q[12] = [_("svg", { width: "14", height: "14", viewBox: "0 0 24 24" }, [_("path", { d: "M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" })], -1)])]), default: j(() => [_e(" " + E(m(w)("agora", "Archive")), 1)]), _: 1 }, 8, ["onClick"])) : G("", true)])], 40, uEe)) : G("", true)])], 40, KTe))), 128))])) : G("", true), y.value && D.value ? (x(), R("div", hEe, [J(Jwe, { group: D.value, "inquiry-ids": D.value.inquiryIds }, null, 8, ["group", "inquiry-ids"]), J(DTe, { group: D.value, "inquiry-ids": D.value.inquiryIds }, null, 8, ["group", "inquiry-ids"])])) : G("", true)]))]))]), u.value ? (x(), B(m(zr), { key: 0, name: m(w)("agora", "Create New Inquiry Group"), "enable-slide-up": false, onClose: xe }, { default: j(() => [J(Ql, { "inquiry-group-type": d.value, "parent-group-id": c.value, "available-groups": le.value, onAdded: I, onClose: xe }, null, 8, ["inquiry-group-type", "parent-group-id", "available-groups"])]), _: 1 }, 8, ["name"])) : G("", true), g.value ? (x(), B(m(zr), { key: 1, open: p.value, "onUpdate:open": Q[3] || (Q[3] = (ie) => p.value = ie), name: te.value, message: P.value, buttons: X.value }, null, 8, ["open", "name", "message", "buttons"])) : G("", true)]), _: 1 }));
-} }), gEe = Qe(pEe, [["__scopeId", "data-v-c7738d8d"]]), mEe = { name: "CommentProcessingOutlineIcon", emits: ["click"], props: { title: { type: String }, fillColor: { type: String, default: "currentColor" }, size: { type: Number, default: 24 } } }, yEe = ["aria-hidden", "aria-label"], vEe = ["fill", "width", "height"], bEe = { d: "M9,22A1,1 0 0,1 8,21V18H4A2,2 0 0,1 2,16V4C2,2.89 2.9,2 4,2H20A2,2 0 0,1 22,4V16A2,2 0 0,1 20,18H13.9L10.2,21.71C10,21.9 9.75,22 9.5,22V22H9M10,16V19.08L13.08,16H20V4H4V16H10M17,11H15V9H17V11M13,11H11V9H13V11M9,11H7V9H9V11Z" }, _Ee = { key: 0 };
+  }), (re, Q) => (x(), B(m(xs), { class: "inquiry-group-page" }, { default: j(() => [_("div", STe, [_("div", CTe, [_("div", kTe, [J(m(Me), { type: "tertiary", "aria-label": "t('agora', 'Home')", class: "breadcrumb-home", onClick: L }, { icon: j(() => [(x(), B(se(m(Ee).Home), { size: 20 }))]), default: j(() => [_("span", TTe, E(m(w)("agora", "Home")), 1)]), _: 1 }), (x(true), R(Oe, null, $e(A.value, (ie) => (x(), R(Oe, { key: ie.id }, [Q[4] || (Q[4] = _("div", { class: "breadcrumb-separator" }, "❯", -1)), J(m(Me), { type: "tertiary", class: "breadcrumb-item", "aria-label": "t('agora', 'Parent')", onClick: (pe) => Y(ie) }, { default: j(() => [_("div", ETe, [(x(), B(se(V(ie.type)), { class: "breadcrumb-icon" })), _("span", ATe, E(ie.title), 1)])]), _: 2 }, 1032, ["onClick"])], 64))), 128)), y.value || A.value.length > 0 ? (x(), R("div", RTe, "❯")) : G("", true), _("div", ITe, [_("div", MTe, [(x(), B(se(F.value), { class: "breadcrumb-icon" })), _("span", UTe, E(H.value), 1), N.value > 0 && y.value ? (x(), R("span", OTe, " (" + E(N.value) + ") ", 1)) : O.value.length > 0 && !y.value ? (x(), R("span", NTe, " (" + E(O.value.length) + ") ", 1)) : G("", true)])])])]), Q[14] || (Q[14] = _("div", { class: "separation-line" }, null, -1)), h.value ? (x(), R("div", fEe, [Q[13] || (Q[13] = _("div", { class: "not-found-icon" }, "🔍", -1)), _("h2", null, E(m(w)("agora", "Group not found")), 1), _("p", null, E(m(w)("agora", "The group you are looking for does not exist or you do not have permission to access it.")), 1), J(m(Me), { type: "primary", onClick: L }, { default: j(() => [_e(E(m(w)("agora", "Back to home")), 1)]), _: 1 })])) : (x(), R("div", FTe, [_("div", BTe, [_("div", $Te, [_("div", PTe, [(x(), B(se(F.value), { class: "group-icon" }))]), _("div", LTe, [_("h1", qTe, E(W.value), 1), _("div", zTe, [_("p", null, E(ne.value), 1), N.value > 0 && y.value ? (x(), R("span", WTe, E(N.value) + " " + E(m(w)("agora", "inquiries")), 1)) : G("", true), O.value.length > 0 && !y.value ? (x(), R("span", VTe, E(O.value.length) + " " + E(m(w)("agora", "groups")), 1)) : G("", true)])])])]), a.value ? (x(), R("div", HTe, [Q[5] || (Q[5] = _("div", { class: "spinner" }, null, -1)), _("p", null, E(m(w)("agora", "Loading …")), 1)])) : (x(), R("div", jTe, [_("div", GTe, [_("h3", null, E(q.value), 1), D.value && C(D.value) ? (x(), R("div", XTe, [J(m(Me), { class: "create-button", "arial-label": "", onClick: Q[0] || (Q[0] = (ie) => Z(b.value)) }, { default: j(() => [_e(" ➕ " + E(m(w)("agora", "Create Group")), 1)]), _: 1 })])) : G("", true)]), O.value.length > 0 ? (x(), R("div", YTe, [(x(true), R(Oe, null, $e(O.value, (ie) => (x(), R("div", { key: ie.id, class: "group-vignette-wrapper", onMouseenter: (pe) => l.value = ie.id, onMouseleave: Q[2] || (Q[2] = (pe) => l.value = null) }, [_("div", ZTe, [_("div", { class: "group-vignette", onClick: (pe) => Y(ie) }, [ie.coverId ? (x(), R("div", JTe, [_("img", { src: be(ie.coverId), alt: ie.title }, null, 8, eEe), Q[6] || (Q[6] = _("div", { class: "vignette-cover-overlay" }, null, -1))])) : G("", true), _("div", tEe, [_("div", nEe, [(x(), B(se(V(ie.type))))]), _("h4", null, E(ie.title), 1), ie.description ? (x(), R("p", iEe, E(ie.description), 1)) : G("", true), _("div", rEe, [_("div", sEe, [Q[7] || (Q[7] = _("span", { class: "stat-icon" }, "📝", -1)), _("span", oEe, E(ie.inquiryIds?.length || 0), 1)]), M(ie).length > 0 ? (x(), R("div", aEe, [Q[8] || (Q[8] = _("span", { class: "stat-icon" }, "👥", -1)), _("span", lEe, E(M(ie).length), 1)])) : G("", true)]), _("div", cEe, [J(m(Me), { class: "view-group-button", onClick: Ze((pe) => Y(ie), ["stop"]) }, { icon: j(() => [...Q[9] || (Q[9] = [_("svg", { width: "16", height: "16", viewBox: "0 0 24 24" }, [_("path", { d: "M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" })], -1)])]), default: j(() => [_e(E(m(w)("agora", "View Group")) + " ", 1)]), _: 1 }, 8, ["onClick"])])])], 8, QTe), ie && ie.slug && (C(ie) || T(ie) || S(ie)) && l.value === ie.id ? (x(), R("div", { key: 0, class: "owner-menu-under", onMouseenter: (pe) => l.value = ie.id, onMouseleave: Q[1] || (Q[1] = (pe) => l.value = null) }, [_("div", dEe, [C(ie) ? (x(), B(m(Me), { key: 0, type: "tertiary", class: "menu-item modify", onClick: Ze((pe) => De(ie), ["stop"]) }, { icon: j(() => [...Q[10] || (Q[10] = [_("svg", { width: "14", height: "14", viewBox: "0 0 24 24" }, [_("path", { d: "M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" })], -1)])]), default: j(() => [_e(" " + E(m(w)("agora", "Modify")), 1)]), _: 1 }, 8, ["onClick"])) : G("", true), T(ie) ? (x(), B(m(Me), { key: 1, type: "tertiary", class: "menu-item delete", onClick: Ze((pe) => ke(ie), ["stop"]) }, { icon: j(() => [...Q[11] || (Q[11] = [_("svg", { width: "14", height: "14", viewBox: "0 0 24 24" }, [_("path", { d: "M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" })], -1)])]), default: j(() => [_e(" " + E(m(w)("agora", "Delete")), 1)]), _: 1 }, 8, ["onClick"])) : G("", true), S(ie) ? (x(), B(m(Me), { key: 2, type: "tertiary", class: "menu-item archive", onClick: Ze((pe) => fe(ie), ["stop"]) }, { icon: j(() => [...Q[12] || (Q[12] = [_("svg", { width: "14", height: "14", viewBox: "0 0 24 24" }, [_("path", { d: "M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" })], -1)])]), default: j(() => [_e(" " + E(m(w)("agora", "Archive")), 1)]), _: 1 }, 8, ["onClick"])) : G("", true)])], 40, uEe)) : G("", true)])], 40, KTe))), 128))])) : G("", true), y.value && D.value ? (x(), R("div", hEe, [J(Jwe, { group: D.value, "inquiry-ids": D.value.inquiryIds }, null, 8, ["group", "inquiry-ids"]), J(DTe, { group: D.value, "inquiry-ids": D.value.inquiryIds }, null, 8, ["group", "inquiry-ids"])])) : G("", true)]))]))]), u.value ? (x(), B(m(zr), { key: 0, name: m(w)("agora", "Create New Inquiry Group"), "enable-slide-up": false, onClose: xe }, { default: j(() => [J(Ql, { "inquiry-group-type": d.value, "parent-group-id": c.value, "available-groups": le.value, onAdded: I, onClose: xe }, null, 8, ["inquiry-group-type", "parent-group-id", "available-groups"])]), _: 1 }, 8, ["name"])) : G("", true), g.value ? (x(), B(m(zr), { key: 1, open: p.value, "onUpdate:open": Q[3] || (Q[3] = (ie) => p.value = ie), name: te.value, message: P.value, buttons: X.value }, null, 8, ["open", "name", "message", "buttons"])) : G("", true)]), _: 1 }));
+} }), gEe = Qe(pEe, [["__scopeId", "data-v-ff93a627"]]), mEe = { name: "CommentProcessingOutlineIcon", emits: ["click"], props: { title: { type: String }, fillColor: { type: String, default: "currentColor" }, size: { type: Number, default: 24 } } }, yEe = ["aria-hidden", "aria-label"], vEe = ["fill", "width", "height"], bEe = { d: "M9,22A1,1 0 0,1 8,21V18H4A2,2 0 0,1 2,16V4C2,2.89 2.9,2 4,2H20A2,2 0 0,1 22,4V16A2,2 0 0,1 20,18H13.9L10.2,21.71C10,21.9 9.75,22 9.5,22V22H9M10,16V19.08L13.08,16H20V4H4V16H10M17,11H15V9H17V11M13,11H11V9H13V11M9,11H7V9H9V11Z" }, _Ee = { key: 0 };
 function xEe(t10, e, n, i, r, s) {
   return x(), R("span", wt(t10.$attrs, { "aria-hidden": n.title ? null : "true", "aria-label": n.title, class: "material-design-icon comment-processing-outline-icon", role: "img", onClick: e[0] || (e[0] = (o) => t10.$emit("click", o)) }), [(x(), R("svg", { fill: n.fillColor, class: "material-design-icon__svg", width: n.size, height: n.size, viewBox: "0 0 24 24" }, [_("path", bEe, [n.title ? (x(), R("title", _Ee, E(n.title), 1)) : G("", true)])], 8, vEe))], 16, yEe);
 }
@@ -57881,7 +57893,7 @@ const nAe = Qe(KEe, [["render", tAe]]), iAe = Fe({ __name: "SharesListUnsent", s
   }, X = (L) => p.value[L] || false;
   return dt(() => {
     V();
-  }), (L, Y) => (x(), R("div", aAe, [_("div", lAe, [c.value ? (x(), R("div", cAe, [Y[1] || (Y[1] = _("div", { class: "icon-loading" }, null, -1)), _("p", null, E(m(w)("Loading settings...")), 1)])) : u.value ? (x(), R("div", uAe, [(x(), B(se(m(pt).AlertCircleOutline), { class: "error-icon" })), _("p", null, E(u.value), 1)])) : (x(), R(Oe, { key: 2 }, [!q.value.length && t10.isReadonly ? (x(), R("div", dAe, [(x(), B(se(m(pt).Info), { class: "no-data-icon" })), _("p", null, E(m(w)("No additional settings configured.")), 1)])) : t10.isReadonly ? (x(), R("div", hAe, [_("div", fAe, [(x(true), R(Oe, null, $e(q.value, (Z) => (x(), R("div", { key: Z.key, class: "misc-field-item" }, [_("div", pAe, [_("label", gAe, E(Z.label) + ":", 1), _("div", mAe, [Z.type === "json" ? (x(), R("pre", yAe, E(Z.displayValue), 1)) : (x(), R("span", vAe, E(Z.displayValue), 1))])])]))), 128))])])) : (x(), R("div", bAe, [d.value ? (x(), R("div", _Ae, [Y[2] || (Y[2] = _("div", { class: "icon-loading-small" }, null, -1)), _("span", null, E(m(w)("agora", "Saving …")), 1)])) : G("", true), _("div", xAe, [s.value ? (x(), R("div", wAe, [_("label", DAe, E(m(w)("agora", "Support feature")), 1), _("div", SAe, [J(m(en), { "model-value": g.value, options: v, reduce: (Z) => Z.id, "label-outside": true, "input-label": m(w)("Support feature"), disabled: d.value, placeholder: m(w)("Select support feature"), "onUpdate:modelValue": $ }, null, 8, ["model-value", "reduce", "input-label", "disabled", "placeholder"])]), _("div", CAe, E(m(w)("agora", "Choose the type of support feature for this inquiry")), 1)])) : G("", true), o.value ? (x(), R("div", kAe, [_("div", TAe, [_("div", EAe, [_("input", { id: "checkbox-allowComment", type: "checkbox", checked: y.value, name: "allowComment", disabled: d.value, class: "simple-checkbox", onChange: Y[0] || (Y[0] = (Z) => U(Z.target.checked)) }, null, 40, AAe), _("label", RAe, [_e(E(m(w)("agora", "Allow comments")) + " ", 1), _("span", IAe, "(" + E(m(w)("agora", "optional")) + ")", 1)])])]), _("div", MAe, E(m(w)("agora", "Allow users to add comments to their votes")), 1)])) : G("", true), (x(true), R(Oe, null, $e(b.value, (Z) => (x(), R("div", { key: Z.key, class: "edit-field-item" }, [Z.type === "boolean" ? (x(), R("div", UAe, [_("div", OAe, [_("input", { id: `checkbox-${Z.key}`, type: "checkbox", checked: X(Z.key), name: Z.key, disabled: d.value, onChange: (me) => H(Z.key, me.target.checked, "boolean") }, null, 40, NAe), _("label", { for: `checkbox-${Z.key}`, class: "checkbox-label" }, [_e(E(Z.label) + " ", 1), Z.required ? G("", true) : (x(), R("span", BAe, "(" + E(m(w)("agora", "optional")) + ")", 1))], 8, FAe)])])) : (x(), R("div", $Ae, [_("label", PAe, [_e(E(Z.label) + " ", 1), Z.required ? (x(), R("span", LAe, "*")) : (x(), R("span", qAe, "(" + E(m(w)("agora", "optional")) + ")", 1))]), _("div", zAe, [Z.type === "enum" ? (x(), B(m(en), { key: 0, "model-value": A(Z) || "", options: Z.allowed_values || [], reduce: (me) => typeof me == "string" ? me : me.value, "get-option-label": O, clearable: !Z.required, "label-outside": true, "input-label": Z.label, disabled: d.value, placeholder: m(w)("Select an option"), "onUpdate:modelValue": (me) => H(Z.key, me, "enum") }, null, 8, ["model-value", "options", "reduce", "clearable", "input-label", "disabled", "placeholder", "onUpdate:modelValue"])) : Z.type === "integer" ? (x(), B(m(Ua), { key: 1, "model-value": M(S(Z.key)), type: "number", label: Z.label, disabled: d.value, "onUpdate:modelValue": (me) => H(Z.key, me ? parseInt(me) : null, "integer") }, null, 8, ["model-value", "label", "disabled", "onUpdate:modelValue"])) : Z.type === "datetime" ? (x(), B(m(Hl), { key: 2, "model-value": P(Z.key), type: "date", label: Z.label, disabled: d.value, "onUpdate:modelValue": (me) => H(Z.key, me, "datetime") }, null, 8, ["model-value", "label", "disabled", "onUpdate:modelValue"])) : Z.type === "users" || Z.type === "groups" ? (x(), B(Io, { key: 3, "model-value": f.value[Z.key], "search-types": Z.type === "users" ? [99] : [1], placeholder: m(w)("Type to search for users"), "aria-label": Z.label, "close-on-select": true, "onUpdate:modelValue": (me) => te(Z.key, me) }, null, 8, ["model-value", "search-types", "placeholder", "aria-label", "onUpdate:modelValue"])) : Z.type === "json" ? (x(), R("div", WAe, [J(m(Ua), { "model-value": M(S(Z.key)), type: "textarea", rows: 5, label: Z.label, disabled: d.value, "onUpdate:modelValue": (me) => {
+  }), (L, Y) => (x(), R("div", aAe, [_("div", lAe, [c.value ? (x(), R("div", cAe, [Y[1] || (Y[1] = _("div", { class: "icon-loading" }, null, -1)), _("p", null, E(m(w)("Loading settings...")), 1)])) : u.value ? (x(), R("div", uAe, [(x(), B(se(m(pt).AlertCircleOutline), { class: "error-icon" })), _("p", null, E(u.value), 1)])) : (x(), R(Oe, { key: 2 }, [!q.value.length && t10.isReadonly ? (x(), R("div", dAe, [(x(), B(se(m(pt).Info), { class: "no-data-icon" })), _("p", null, E(m(w)("No additional settings configured.")), 1)])) : t10.isReadonly ? (x(), R("div", hAe, [_("div", fAe, [(x(true), R(Oe, null, $e(q.value, (Z) => (x(), R("div", { key: Z.key, class: "misc-field-item" }, [_("div", pAe, [_("label", gAe, E(Z.label) + ":", 1), _("div", mAe, [Z.type === "json" ? (x(), R("pre", yAe, E(Z.displayValue), 1)) : (x(), R("span", vAe, E(Z.displayValue), 1))])])]))), 128))])])) : (x(), R("div", bAe, [d.value ? (x(), R("div", _Ae, [Y[2] || (Y[2] = _("div", { class: "icon-loading-small" }, null, -1)), _("span", null, E(m(w)("agora", "Saving …")), 1)])) : G("", true), _("div", xAe, [s.value ? (x(), R("div", wAe, [_("label", DAe, E(m(w)("agora", "Support feature")), 1), _("div", SAe, [J(m(en), { "model-value": g.value, options: v, reduce: (Z) => Z.id, "label-outside": true, "input-label": m(w)("Support feature"), disabled: d.value, placeholder: m(w)("Select support feature"), "onUpdate:modelValue": $ }, null, 8, ["model-value", "reduce", "input-label", "disabled", "placeholder"])]), _("div", CAe, E(m(w)("agora", "Choose the type of support feature for this inquiry")), 1)])) : G("", true), o.value ? (x(), R("div", kAe, [_("div", TAe, [_("div", EAe, [_("input", { id: "checkbox-allowComment", type: "checkbox", checked: y.value, name: "allowComment", disabled: d.value, class: "simple-checkbox", onChange: Y[0] || (Y[0] = (Z) => U(Z.target.checked)) }, null, 40, AAe), _("label", RAe, [_e(E(m(w)("agora", "Allow comments")) + " ", 1), _("span", IAe, "(" + E(m(w)("agora", "optional")) + ")", 1)])])]), _("div", MAe, E(m(w)("agora", "Allow users to add comments to their votes")), 1)])) : G("", true), (x(true), R(Oe, null, $e(b.value, (Z) => (x(), R("div", { key: Z.key, class: "edit-field-item" }, [Z.type === "boolean" ? (x(), R("div", UAe, [_("div", OAe, [_("input", { id: `checkbox-${Z.key}`, type: "checkbox", checked: X(Z.key), name: Z.key, disabled: d.value, onChange: (me) => H(Z.key, me.target.checked, "boolean") }, null, 40, NAe), _("label", { for: `checkbox-${Z.key}`, class: "checkbox-label" }, [_e(E(Z.label) + " ", 1), Z.required ? G("", true) : (x(), R("span", BAe, "(" + E(m(w)("agora", "optional")) + ")", 1))], 8, FAe)])])) : (x(), R("div", $Ae, [_("label", PAe, [_e(E(Z.label) + " ", 1), Z.required ? (x(), R("span", LAe, "*")) : (x(), R("span", qAe, "(" + E(m(w)("agora", "optional")) + ")", 1))]), _("div", zAe, [Z.type === "enum" ? (x(), B(m(en), { key: 0, "model-value": A(Z) || "", options: Z.allowed_values || [], reduce: (me) => typeof me == "string" ? me : me.value, "get-option-label": O, clearable: !Z.required, "label-outside": true, "input-label": Z.label, disabled: d.value, placeholder: m(w)("Select an option"), "onUpdate:modelValue": (me) => H(Z.key, me, "enum") }, null, 8, ["model-value", "options", "reduce", "clearable", "input-label", "disabled", "placeholder", "onUpdate:modelValue"])) : Z.type === "integer" ? (x(), B(m(Ua), { key: 1, "model-value": M(S(Z.key)), type: "number", label: Z.label, disabled: d.value, "onUpdate:modelValue": (me) => H(Z.key, me ? parseInt(me) : null, "integer") }, null, 8, ["model-value", "label", "disabled", "onUpdate:modelValue"])) : Z.type === "datetime" ? (x(), B(m(Hl), { key: 2, "model-value": P(Z.key), type: "date", label: Z.label, disabled: d.value, "onUpdate:modelValue": (me) => H(Z.key, me, "datetime") }, null, 8, ["model-value", "label", "disabled", "onUpdate:modelValue"])) : Z.type === "users" || Z.type === "groups" ? (x(), B(Io, { key: 3, "model-value": f.value[Z.key], "search-types": Z.type === "users" ? [99] : [1], placeholder: m(w)("Type to search for users"), "aria-label": Z.label, "close-on-select": true, "onUpdate:modelValue": (me) => te(Z.key, me) }, null, 8, ["model-value", "search-types", "placeholder", "aria-label", "onUpdate:modelValue"])) : Z.type === "json" ? (x(), R("div", WAe, [J(m(Ua), { "model-value": M(S(Z.key)), type: "textarea", rows: 5, label: Z.label, disabled: d.value, "onUpdate:modelValue": (me) => {
     try {
       const oe = me ? JSON.parse(me) : null;
       H(Z.key, oe, "json");
@@ -57889,7 +57901,7 @@ const nAe = Qe(KEe, [["render", tAe]]), iAe = Fe({ __name: "SharesListUnsent", s
       H(Z.key, me, "json");
     }
   } }, null, 8, ["model-value", "label", "disabled", "onUpdate:modelValue"])])) : (x(), B(m(Ua), { key: 5, "model-value": M(S(Z.key)), type: "text", label: Z.label, disabled: d.value, "onUpdate:modelValue": (me) => H(Z.key, me, "string") }, null, 8, ["model-value", "label", "disabled", "onUpdate:modelValue"]))])])), Z.description ? (x(), R("div", VAe, E(Z.description), 1)) : G("", true)]))), 128))])]))], 64))])]));
-} }), jAe = Qe(HAe, [["__scopeId", "data-v-9239983f"]]), GAe = { class: "sidebar-tab-misc" }, XAe = { class: "tab-content" }, YAe = { key: 0, class: "loading-state" }, KAe = { key: 1, class: "error-state" }, ZAe = { key: 2, class: "no-data-state" }, QAe = { key: 3, class: "misc-fields-readonly" }, JAe = { class: "misc-fields-list" }, eRe = { class: "field-row" }, tRe = { class: "field-label" }, nRe = { class: "field-value" }, iRe = { key: 0, class: "json-value" }, rRe = { key: 1 }, sRe = { key: 4, class: "misc-fields-edit" }, oRe = { key: 0, class: "saving-indicator" }, aRe = { class: "edit-fields" }, lRe = { key: 0, class: "checkbox-field" }, cRe = { class: "checkbox-wrapper" }, uRe = ["id", "checked", "name", "disabled", "onChange"], dRe = ["for"], hRe = { key: 0, class: "optional-label" }, fRe = { key: 1, class: "standard-field" }, pRe = { class: "edit-field-label" }, gRe = { key: 0, class: "required-asterisk" }, mRe = { key: 1, class: "optional-label" }, yRe = { class: "edit-field-input" }, vRe = { key: 0, class: "location-field" }, bRe = { key: 0, class: "metadata-value" }, _Re = { key: 1, class: "category-field" }, xRe = { key: 0, class: "metadata-value" }, wRe = { key: 6, class: "json-field" }, DRe = { key: 2, class: "field-description" }, SRe = Fe({ __name: "SideBarTabGroupMisc", props: { isReadonly: { type: Boolean } }, setup(t10) {
+} }), jAe = Qe(HAe, [["__scopeId", "data-v-4f8976b7"]]), GAe = { class: "sidebar-tab-misc" }, XAe = { class: "tab-content" }, YAe = { key: 0, class: "loading-state" }, KAe = { key: 1, class: "error-state" }, ZAe = { key: 2, class: "no-data-state" }, QAe = { key: 3, class: "misc-fields-readonly" }, JAe = { class: "misc-fields-list" }, eRe = { class: "field-row" }, tRe = { class: "field-label" }, nRe = { class: "field-value" }, iRe = { key: 0, class: "json-value" }, rRe = { key: 1 }, sRe = { key: 4, class: "misc-fields-edit" }, oRe = { key: 0, class: "saving-indicator" }, aRe = { class: "edit-fields" }, lRe = { key: 0, class: "checkbox-field" }, cRe = { class: "checkbox-wrapper" }, uRe = ["id", "checked", "name", "disabled", "onChange"], dRe = ["for"], hRe = { key: 0, class: "optional-label" }, fRe = { key: 1, class: "standard-field" }, pRe = { class: "edit-field-label" }, gRe = { key: 0, class: "required-asterisk" }, mRe = { key: 1, class: "optional-label" }, yRe = { class: "edit-field-input" }, vRe = { key: 0, class: "location-field" }, bRe = { key: 0, class: "metadata-value" }, _Re = { key: 1, class: "category-field" }, xRe = { key: 0, class: "metadata-value" }, wRe = { key: 6, class: "json-field" }, DRe = { key: 2, class: "field-description" }, SRe = Fe({ __name: "SideBarTabGroupMisc", props: { isReadonly: { type: Boolean } }, setup(t10) {
   const e = _s(), n = Ke(), i = ue(true), r = ue(null), s = ue(false), o = ue({}), a = ue({}), l = ue({}), c = z(() => {
     try {
       if (!e.type) return [];
@@ -58026,7 +58038,7 @@ const nAe = Qe(KEe, [["render", tAe]]), iAe = Fe({ __name: "SharesListUnsent", s
   }, M = (F) => l.value[F] || false;
   return dt(() => {
     C();
-  }), (F, k) => (x(), R("div", GAe, [_("div", XAe, [i.value ? (x(), R("div", YAe, [k[0] || (k[0] = _("div", { class: "icon-loading" }, null, -1)), _("p", null, E(m(w)("Loading settings...")), 1)])) : r.value ? (x(), R("div", KAe, [(x(), B(se(m(pt).AlertCircleOutline), { class: "error-icon" })), _("p", null, E(r.value), 1)])) : !S.value.length && t10.isReadonly ? (x(), R("div", ZAe, [(x(), B(se(m(pt).Info), { class: "no-data-icon" })), _("p", null, E(m(w)("No additional settings configured.")), 1)])) : t10.isReadonly ? (x(), R("div", QAe, [_("div", JAe, [(x(true), R(Oe, null, $e(S.value, ($) => (x(), R("div", { key: $.key, class: "misc-field-item" }, [_("div", eRe, [_("label", tRe, E($.label) + ":", 1), _("div", nRe, [$.type === "json" ? (x(), R("pre", iRe, E($.displayValue), 1)) : (x(), R("span", rRe, E($.displayValue), 1))])])]))), 128))])])) : (x(), R("div", sRe, [s.value ? (x(), R("div", oRe, [k[1] || (k[1] = _("div", { class: "icon-loading-small" }, null, -1)), _("span", null, E(m(w)("agora", "Saving …")), 1)])) : G("", true), _("div", aRe, [(x(true), R(Oe, null, $e(c.value.slice(), ($) => (x(), R("div", { key: $.key, class: "edit-field-item" }, [$.type === "boolean" ? (x(), R("div", lRe, [_("div", cRe, [_("input", { id: `checkbox-${$.key}`, type: "checkbox", checked: M($.key), name: $.key, disabled: s.value, onChange: (U) => N($.key, U.target.checked, "boolean") }, null, 40, uRe), _("label", { for: `checkbox-${$.key}`, class: "checkbox-label" }, [_e(E($.label) + " ", 1), $.required ? G("", true) : (x(), R("span", hRe, "(" + E(m(w)("agora", "optional")) + ")", 1))], 8, dRe)])])) : (x(), R("div", fRe, [_("label", pRe, [_e(E($.label) + " ", 1), $.required ? (x(), R("span", gRe, "*")) : (x(), R("span", mRe, "(" + E(m(w)("agora", "optional")) + ")", 1))]), _("div", yRe, [$.type === "location" ? (x(), R("div", vRe, [p.value ? (x(), R("div", bRe, E(v(m(n).appSettings.locationTab, u($.key)) || m(w)("agora", "Inherited from parent")), 1)) : (x(), B(m(en), { key: 1, "model-value": u($.key), options: h.value, clearable: !$.required, "label-outside": true, disabled: s.value, class: "select-field location-select", placeholder: m(w)("Select location"), required: $.required, "onUpdate:modelValue": (U) => N($.key, U, "location") }, null, 8, ["model-value", "options", "clearable", "disabled", "placeholder", "required", "onUpdate:modelValue"]))])) : $.type === "category" ? (x(), R("div", _Re, [g.value ? (x(), R("div", xRe, E(v(m(n).appSettings.categoryTab, u($.key)) || m(w)("agora", "Inherited from parent")), 1)) : (x(), B(m(en), { key: 1, "model-value": u($.key), options: f.value, clearable: !$.required, "label-outside": true, disabled: s.value, class: "select-field category-select", placeholder: m(w)("Select category"), required: $.required, "onUpdate:modelValue": (U) => N($.key, U, "category") }, null, 8, ["model-value", "options", "clearable", "disabled", "placeholder", "required", "onUpdate:modelValue"]))])) : $.type === "enum" ? (x(), B(m(en), { key: 2, "model-value": u($.key) || $.default, options: $.allowed_values || [], reduce: (U) => U, clearable: !$.required, "label-outside": true, "input-label": $.label, disabled: s.value, placeholder: m(w)("Select an option"), "onUpdate:modelValue": (U) => N($.key, U, "enum") }, null, 8, ["model-value", "options", "reduce", "clearable", "input-label", "disabled", "placeholder", "onUpdate:modelValue"])) : $.type === "integer" ? (x(), B(m(Ua), { key: 3, modelValue: m(e).miscFields[$.key], "onUpdate:modelValue": [(U) => m(e).miscFields[$.key] = U, (U) => N($.key, parseInt(U) || null, "integer")], type: "number", label: $.label, disabled: s.value }, null, 8, ["modelValue", "onUpdate:modelValue", "label", "disabled"])) : $.type === "datetime" ? (x(), B(m(Hl), { key: 4, "model-value": V($.key), type: "date", label: $.label, disabled: s.value, "onUpdate:modelValue": (U) => N($.key, U, "datetime") }, null, 8, ["model-value", "label", "disabled", "onUpdate:modelValue"])) : $.type === "users" || $.type === "groups" ? (x(), B(Io, { key: 5, modelValue: a.value[$.key], "onUpdate:modelValue": (U) => a.value[$.key] = U, "search-types": $.type === "users" ? [99] : [1], placeholder: m(w)("Type to search for users"), "aria-label": $.label, "close-on-select": true, onUserSelected: (U) => q($.key, U) }, null, 8, ["modelValue", "onUpdate:modelValue", "search-types", "placeholder", "aria-label", "onUserSelected"])) : $.type === "json" ? (x(), R("div", wRe, [J(m(Ua), { modelValue: m(e).miscFields[$.key], "onUpdate:modelValue": [(U) => m(e).miscFields[$.key] = U, (U) => {
+  }), (F, k) => (x(), R("div", GAe, [_("div", XAe, [i.value ? (x(), R("div", YAe, [k[0] || (k[0] = _("div", { class: "icon-loading" }, null, -1)), _("p", null, E(m(w)("Loading settings...")), 1)])) : r.value ? (x(), R("div", KAe, [(x(), B(se(m(pt).AlertCircleOutline), { class: "error-icon" })), _("p", null, E(r.value), 1)])) : !S.value.length && t10.isReadonly ? (x(), R("div", ZAe, [(x(), B(se(m(pt).Info), { class: "no-data-icon" })), _("p", null, E(m(w)("No additional settings configured.")), 1)])) : t10.isReadonly ? (x(), R("div", QAe, [_("div", JAe, [(x(true), R(Oe, null, $e(S.value, ($) => (x(), R("div", { key: $.key, class: "misc-field-item" }, [_("div", eRe, [_("label", tRe, E($.label) + ":", 1), _("div", nRe, [$.type === "json" ? (x(), R("pre", iRe, E($.displayValue), 1)) : (x(), R("span", rRe, E($.displayValue), 1))])])]))), 128))])])) : (x(), R("div", sRe, [s.value ? (x(), R("div", oRe, [k[1] || (k[1] = _("div", { class: "icon-loading-small" }, null, -1)), _("span", null, E(m(w)("agora", "Saving …")), 1)])) : G("", true), _("div", aRe, [(x(true), R(Oe, null, $e(c.value.slice(), ($) => (x(), R("div", { key: $.key, class: "edit-field-item" }, [$.type === "boolean" ? (x(), R("div", lRe, [_("div", cRe, [_("input", { id: `checkbox-${$.key}`, type: "checkbox", checked: M($.key), name: $.key, disabled: s.value, onChange: (U) => N($.key, U.target.checked, "boolean") }, null, 40, uRe), _("label", { for: `checkbox-${$.key}`, class: "checkbox-label" }, [_e(E($.label) + " ", 1), $.required ? G("", true) : (x(), R("span", hRe, "(" + E(m(w)("agora", "optional")) + ")", 1))], 8, dRe)])])) : (x(), R("div", fRe, [_("label", pRe, [_e(E($.label) + " ", 1), $.required ? (x(), R("span", gRe, "*")) : (x(), R("span", mRe, "(" + E(m(w)("agora", "optional")) + ")", 1))]), _("div", yRe, [$.type === "location" ? (x(), R("div", vRe, [p.value ? (x(), R("div", bRe, E(v(m(n).appSettings.locationTab, u($.key)) || m(w)("agora", "Inherited from parent")), 1)) : (x(), B(m(en), { key: 1, "model-value": u($.key), options: h.value, clearable: !$.required, "label-outside": true, disabled: s.value, class: "select-field location-select", placeholder: m(w)("Select location"), required: $.required, "onUpdate:modelValue": (U) => N($.key, U, "location") }, null, 8, ["model-value", "options", "clearable", "disabled", "placeholder", "required", "onUpdate:modelValue"]))])) : $.type === "category" ? (x(), R("div", _Re, [g.value ? (x(), R("div", xRe, E(v(m(n).appSettings.categoryTab, u($.key)) || m(w)("agora", "Inherited from parent")), 1)) : (x(), B(m(en), { key: 1, "model-value": u($.key), options: f.value, clearable: !$.required, "label-outside": true, disabled: s.value, class: "select-field category-select", placeholder: m(w)("Select category"), required: $.required, "onUpdate:modelValue": (U) => N($.key, U, "category") }, null, 8, ["model-value", "options", "clearable", "disabled", "placeholder", "required", "onUpdate:modelValue"]))])) : $.type === "enum" ? (x(), B(m(en), { key: 2, "model-value": u($.key) || $.default, options: $.allowed_values || [], reduce: (U) => U, clearable: !$.required, "label-outside": true, "input-label": $.label, disabled: s.value, placeholder: m(w)("Select an option"), "onUpdate:modelValue": (U) => N($.key, U, "enum") }, null, 8, ["model-value", "options", "reduce", "clearable", "input-label", "disabled", "placeholder", "onUpdate:modelValue"])) : $.type === "integer" ? (x(), B(m(Ua), { key: 3, modelValue: m(e).miscFields[$.key], "onUpdate:modelValue": [(U) => m(e).miscFields[$.key] = U, (U) => N($.key, parseInt(U) || null, "integer")], type: "number", label: $.label, disabled: s.value }, null, 8, ["modelValue", "onUpdate:modelValue", "label", "disabled"])) : $.type === "datetime" ? (x(), B(m(Hl), { key: 4, "model-value": V($.key), type: "date", label: $.label, disabled: s.value, "onUpdate:modelValue": (U) => N($.key, U, "datetime") }, null, 8, ["model-value", "label", "disabled", "onUpdate:modelValue"])) : $.type === "users" || $.type === "groups" ? (x(), B(Io, { key: 5, modelValue: a.value[$.key], "onUpdate:modelValue": (U) => a.value[$.key] = U, "search-types": $.type === "users" ? [99] : [1], placeholder: m(w)("Type to search for users"), "aria-label": $.label, "close-on-select": true, onUserSelected: (U) => q($.key, U) }, null, 8, ["modelValue", "onUpdate:modelValue", "search-types", "placeholder", "aria-label", "onUserSelected"])) : $.type === "json" ? (x(), R("div", wRe, [J(m(Ua), { modelValue: m(e).miscFields[$.key], "onUpdate:modelValue": [(U) => m(e).miscFields[$.key] = U, (U) => {
     try {
       const W = U ? JSON.parse(U) : null;
       N($.key, W, "json");
@@ -58034,7 +58046,7 @@ const nAe = Qe(KEe, [["render", tAe]]), iAe = Fe({ __name: "SharesListUnsent", s
       N($.key, U, "json");
     }
   }], type: "textarea", rows: 5, label: $.label, disabled: s.value }, null, 8, ["modelValue", "onUpdate:modelValue", "label", "disabled"])])) : (x(), B(m(Ua), { key: 7, modelValue: m(e).miscFields[$.key], "onUpdate:modelValue": [(U) => m(e).miscFields[$.key] = U, (U) => N($.key, U, "string")], type: "text", label: $.label, disabled: s.value }, null, 8, ["modelValue", "onUpdate:modelValue", "label", "disabled"]))])])), $.description ? (x(), R("div", DRe, E($.description), 1)) : G("", true)]))), 128))])]))])]));
-} }), CRe = Qe(SRe, [["__scopeId", "data-v-da62064d"]]), kRe = { class: "inquiry-group-sidebar-settings" }, TRe = { class: "sidebar-header" }, ERe = { class: "subtitle" }, ARe = { key: 0, class: "readonly-notice" }, RRe = { class: "settings-section" }, IRe = { class: "section-title" }, MRe = { class: "cover-section" }, URe = ["aria-label", "disabled"], ORe = ["src", "alt"], NRe = { key: 0, class: "cover-overlay" }, FRe = { class: "placeholder-content" }, BRe = { class: "placeholder-text" }, $Re = { class: "cover-help" }, PRe = { class: "settings-section" }, LRe = { class: "section-title" }, qRe = { class: "form-fields" }, zRe = { class: "settings-section" }, WRe = { class: "section-title" }, VRe = { class: "form-group" }, HRe = { class: "character-count" }, jRe = { key: 0, class: "error-text" }, GRe = { class: "settings-section" }, XRe = { class: "section-title" }, YRe = { class: "form-fields" }, KRe = { class: "form-group full-width" }, ZRe = { class: "form-label" }, QRe = { class: "form-help" }, JRe = { key: 0, class: "form-group full-width" }, eIe = { class: "form-label" }, tIe = { class: "expiration-info" }, nIe = { key: 0, class: "auto-save-status" }, iIe = { key: 0, class: "saving-indicator" }, rIe = { key: 1, class: "saved-indicator" }, sIe = { key: 1, class: "loading-overlay" }, oIe = { class: "loading-content" }, aIe = Fe({ __name: "SideBarTabConfigurationInquiryGroup", emits: ["saved"], setup(t10, { emit: e }) {
+} }), CRe = Qe(SRe, [["__scopeId", "data-v-ad5253ea"]]), kRe = { class: "inquiry-group-sidebar-settings" }, TRe = { class: "sidebar-header" }, ERe = { class: "subtitle" }, ARe = { key: 0, class: "readonly-notice" }, RRe = { class: "settings-section" }, IRe = { class: "section-title" }, MRe = { class: "cover-section" }, URe = ["aria-label", "disabled"], ORe = ["src", "alt"], NRe = { key: 0, class: "cover-overlay" }, FRe = { class: "placeholder-content" }, BRe = { class: "placeholder-text" }, $Re = { class: "cover-help" }, PRe = { class: "settings-section" }, LRe = { class: "section-title" }, qRe = { class: "form-fields" }, zRe = { class: "settings-section" }, WRe = { class: "section-title" }, VRe = { class: "form-group" }, HRe = { class: "character-count" }, jRe = { key: 0, class: "error-text" }, GRe = { class: "settings-section" }, XRe = { class: "section-title" }, YRe = { class: "form-fields" }, KRe = { class: "form-group full-width" }, ZRe = { class: "form-label" }, QRe = { class: "form-help" }, JRe = { key: 0, class: "form-group full-width" }, eIe = { class: "form-label" }, tIe = { class: "expiration-info" }, nIe = { key: 0, class: "auto-save-status" }, iIe = { key: 0, class: "saving-indicator" }, rIe = { key: 1, class: "saved-indicator" }, sIe = { key: 1, class: "loading-overlay" }, oIe = { class: "loading-content" }, aIe = Fe({ __name: "SideBarTabConfigurationInquiryGroup", emits: ["saved"], setup(t10, { emit: e }) {
   const n = e, i = _s(), r = Ke(), s = ql(), o = ue(false), a = ue(false), l = ue(null), c = ue("");
   let u = null, d = "";
   const h = ue({ title: "", titleExt: "", description: "" }), f = z(() => [{ id: "draft", label: w("agora", "Draft"), icon: pt.Draft }, { id: "active", label: w("agora", "Active"), icon: pt.Active }, { id: "archived", label: w("agora", "Archived"), icon: pt.Archived }]), p = z(() => f.value.map((V) => ({ id: V.id, label: V.label }))), g = z(() => i.currentUserStatus?.isOwner || r.currentUser.type === "admin" || i.allowEdit), y = async () => {
@@ -58105,8 +58117,8 @@ const nAe = Qe(KEe, [["render", tAe]]), iAe = Fe({ __name: "SharesListUnsent", s
     u && clearTimeout(u);
   }), dt(() => {
     y();
-  }), (V, M) => (x(), R("div", kRe, [_("div", TRe, [_("h2", null, E(m(w)("agora", "Group Configuration")), 1), _("p", ERe, E(m(i).title || m(w)("agora", "Untitled group")), 1), g.value ? G("", true) : (x(), R("div", ARe, [(x(), B(se(m(Ee).AlertCircle))), _("span", null, E(m(w)("agora", "Read-only mode")), 1)]))]), _("div", RRe, [_("h3", IRe, [(x(), B(se(m(Ee).Image))), _e(" " + E(m(w)("agora", "Cover Image")), 1)]), _("div", MRe, [_("input", { ref_key: "imageFileInput", ref: l, type: "file", class: "hidden", accept: "image/*", "aria-label": m(w)("agora", "Select cover image"), disabled: !g.value, onChange: D }, null, 40, URe), c.value ? (x(), R("div", { key: 0, class: Ne(["cover-preview", { readonly: !g.value }]), onClick: b }, [_("img", { src: c.value, alt: m(w)("agora", "Cover image"), class: "cover-image" }, null, 8, ORe), g.value ? (x(), R("div", NRe, [J(m(Me), { type: "primary", class: "change-cover-btn" }, { default: j(() => [(x(), B(se(m(Ee).Edit))), _e(" " + E(m(w)("agora", "Change")), 1)]), _: 1 }), J(m(Me), { type: "error", class: "remove-cover-btn", onClick: Ze(O, ["stop"]) }, { default: j(() => [_e(E(m(w)("agora", "Remove")), 1)]), _: 1 })])) : G("", true)], 2)) : (x(), R("div", { key: 1, class: Ne(["cover-placeholder", { readonly: !g.value }]), onClick: b }, [_("div", FRe, [(x(), B(se(m(Ee).Image), { class: "placeholder-icon" })), J(m(Me), { type: "primary", class: "add-cover-btn", disabled: !g.value || a.value }, { default: j(() => [_e(E(m(w)("agora", "Add cover image")), 1)]), _: 1 }, 8, ["disabled"]), _("p", BRe, E(m(w)("agora", "Click to add a cover image")), 1)])], 2)), _("p", $Re, E(m(w)("agora", "Recommended size: 1200×400 pixels")), 1)])]), _("div", PRe, [_("h3", LRe, [(x(), B(se(m(Ee).Title))), _e(" " + E(m(w)("agora", "Basic Information")), 1)]), _("div", qRe, [J(m(Oa), { modelValue: m(i).title, "onUpdate:modelValue": M[0] || (M[0] = (F) => m(i).title = F), label: m(w)("agora", "Title") + " *", placeholder: m(w)("agora", "Enter group title"), maxlength: 200, disabled: !g.value || a.value, error: q("title").error, success: q("title").success, "helper-text": q("title").helperText, class: "form-input full-width" }, { icon: j(() => [(x(), B(se(m(Ee).Text)))]), _: 1 }, 8, ["modelValue", "label", "placeholder", "disabled", "error", "success", "helper-text"]), J(m(Oa), { modelValue: m(i).titleExt, "onUpdate:modelValue": M[1] || (M[1] = (F) => m(i).titleExt = F), label: m(w)("agora", "Extended Title"), placeholder: m(w)("agora", "Optional extended title"), maxlength: 200, disabled: !g.value || a.value, error: q("titleExt").error, success: q("titleExt").success, "helper-text": q("titleExt").helperText, class: "form-input full-width" }, { icon: j(() => [(x(), B(se(m(Ee).Text)))]), _: 1 }, 8, ["modelValue", "label", "placeholder", "disabled", "error", "success", "helper-text"])])]), _("div", zRe, [_("h3", WRe, [(x(), B(se(m(Ee).Description))), _e(" " + E(m(w)("agora", "Description")), 1)]), _("div", VRe, [J(m(Oa), { modelValue: m(i).description, "onUpdate:modelValue": M[2] || (M[2] = (F) => m(i).description = F), placeholder: m(w)("agora", "Enter group description …"), rows: 10, disabled: !g.value || a.value, class: "form-textarea large" }, null, 8, ["modelValue", "placeholder", "disabled"]), _("div", HRe, [_e(E(m(i).description.length) + "/2000 ", 1), h.value.description ? (x(), R("span", jRe, E(h.value.description), 1)) : G("", true)])])]), _("div", GRe, [_("h3", XRe, [(x(), B(se(m(Ee).Status))), _e(" " + E(m(w)("agora", "Status & Settings")), 1)]), _("div", YRe, [_("div", KRe, [_("label", ZRe, E(m(w)("agora", "Status")), 1), J(m(en), { modelValue: m(i).groupStatus, "onUpdate:modelValue": M[3] || (M[3] = (F) => m(i).groupStatus = F), options: p.value, clearable: false, disabled: !g.value || a.value, class: "form-select" }, null, 8, ["modelValue", "options", "disabled"]), _("p", QRe, E(m(w)("agora", "Current status of the group")), 1)]), m(i).expire ? (x(), R("div", JRe, [_("label", eIe, E(m(w)("agora", "Expiration")), 1), _("div", tIe, [_("p", null, E(N(m(i).expire)), 1), J(m(Me), { type: "secondary", size: "small", disabled: !g.value || a.value, onClick: M[4] || (M[4] = (F) => m(i).expire = null) }, { default: j(() => [_e(E(m(w)("agora", "Remove expiration")), 1)]), _: 1 }, 8, ["disabled"])])])) : G("", true)])]), g.value ? (x(), R("div", nIe, [a.value ? (x(), R("div", iIe, [M[5] || (M[5] = _("div", { class: "saving-spinner" }, null, -1)), _("span", null, E(m(w)("agora", "Saving changes …")), 1)])) : (x(), R("div", rIe, [(x(), B(se(m(Ee).CheckCircle))), _("span", null, E(m(w)("agora", "Changes saved")), 1)]))])) : G("", true), o.value ? (x(), R("div", sIe, [_("div", oIe, [M[6] || (M[6] = _("div", { class: "loading-spinner" }, null, -1)), _("p", null, E(m(w)("agora", "Loading group settings …")), 1)])])) : G("", true)]));
-} }), lIe = Qe(aIe, [["__scopeId", "data-v-2a663e3c"]]), cIe = { key: 0 }, s0 = Fe({ __name: "SideBar", setup(t10) {
+  }), (V, M) => (x(), R("div", kRe, [_("div", TRe, [_("h2", null, E(m(w)("agora", "Group Configuration")), 1), _("p", ERe, E(m(i).title || m(w)("agora", "Untitled group")), 1), g.value ? G("", true) : (x(), R("div", ARe, [(x(), B(se(m(Ee).AlertCircle))), _("span", null, E(m(w)("agora", "Read-only mode")), 1)]))]), _("div", RRe, [_("h3", IRe, [(x(), B(se(m(Ee).Image))), _e(" " + E(m(w)("agora", "Cover Image")), 1)]), _("div", MRe, [_("input", { ref_key: "imageFileInput", ref: l, type: "file", class: "hidden", accept: "image/*", "aria-label": m(w)("agora", "Select cover image"), disabled: !g.value, onChange: D }, null, 40, URe), c.value ? (x(), R("div", { key: 0, class: Ne(["cover-preview", { readonly: !g.value }]), onClick: b }, [_("img", { src: c.value, alt: m(w)("agora", "Cover image"), class: "cover-image" }, null, 8, ORe), g.value ? (x(), R("div", NRe, [J(m(Me), { type: "primary", class: "change-cover-btn" }, { default: j(() => [(x(), B(se(m(Ee).Edit))), _e(" " + E(m(w)("agora", "Change")), 1)]), _: 1 }), J(m(Me), { type: "error", class: "remove-cover-btn", onClick: Ze(O, ["stop"]) }, { default: j(() => [_e(E(m(w)("agora", "Remove")), 1)]), _: 1 })])) : G("", true)], 2)) : (x(), R("div", { key: 1, class: Ne(["cover-placeholder", { readonly: !g.value }]), onClick: b }, [_("div", FRe, [(x(), B(se(m(Ee).Image), { class: "placeholder-icon" })), J(m(Me), { type: "primary", class: "add-cover-btn", disabled: !g.value || a.value }, { default: j(() => [_e(E(m(w)("agora", "Add cover image")), 1)]), _: 1 }, 8, ["disabled"]), _("p", BRe, E(m(w)("agora", "Click to add a cover image")), 1)])], 2)), _("p", $Re, E(m(w)("agora", "Recommended size: 1200×400 pixels")), 1)])]), _("div", PRe, [_("h3", LRe, [(x(), B(se(m(Ee).Title))), _e(" " + E(m(w)("agora", "Basic Information")), 1)]), _("div", qRe, [J(m(Oa), { modelValue: m(i).title, "onUpdate:modelValue": M[0] || (M[0] = (F) => m(i).title = F), label: m(w)("agora", "Title") + " *", placeholder: m(w)("agora", "Enter group title"), maxlength: 200, disabled: !g.value || a.value, error: q("title").error, success: q("title").success, "helper-text": q("title").helperText, class: "form-input full-width" }, { icon: j(() => [(x(), B(se(m(Ee).Text)))]), _: 1 }, 8, ["modelValue", "label", "placeholder", "disabled", "error", "success", "helper-text"]), J(m(Oa), { modelValue: m(i).titleExt, "onUpdate:modelValue": M[1] || (M[1] = (F) => m(i).titleExt = F), label: m(w)("agora", "Extended Title"), placeholder: m(w)("agora", "Optional extended title"), maxlength: 200, disabled: !g.value || a.value, error: q("titleExt").error, success: q("titleExt").success, "helper-text": q("titleExt").helperText, class: "form-input full-width" }, { icon: j(() => [(x(), B(se(m(Ee).Text)))]), _: 1 }, 8, ["modelValue", "label", "placeholder", "disabled", "error", "success", "helper-text"])])]), _("div", zRe, [_("h3", WRe, [(x(), B(se(m(Ee).Description))), _e(" " + E(m(w)("agora", "Description")), 1)]), _("div", VRe, [J(m(Oa), { modelValue: m(i).description, "onUpdate:modelValue": M[2] || (M[2] = (F) => m(i).description = F), placeholder: m(w)("agora", "Enter group description …"), rows: 10, disabled: !g.value || a.value, class: "form-textarea large" }, null, 8, ["modelValue", "placeholder", "disabled"]), _("div", HRe, [_e(E(m(i).description.length) + "/2000 ", 1), h.value.description ? (x(), R("span", jRe, E(h.value.description), 1)) : G("", true)])])]), _("div", GRe, [_("h3", XRe, [(x(), B(se(m(Ee).Status))), _e(" " + E(m(w)("agora", "Status & Settings")), 1)]), _("div", YRe, [_("div", KRe, [_("label", ZRe, E(m(w)("agora", "Status")), 1), J(m(en), { modelValue: m(i).groupStatus, "onUpdate:modelValue": M[3] || (M[3] = (F) => m(i).groupStatus = F), options: p.value, clearable: false, disabled: !g.value || a.value, class: "form-select" }, null, 8, ["modelValue", "options", "disabled"]), _("p", QRe, E(m(w)("agora", "Current status of the group")), 1)]), m(i).expire ? (x(), R("div", JRe, [_("label", eIe, E(m(w)("agora", "Expiration")), 1), _("div", tIe, [_("p", null, E(N(m(i).expire)), 1), J(m(Me), { type: "secondary", size: "small", disabled: !g.value || a.value, onClick: M[4] || (M[4] = (F) => m(i).expire = null) }, { default: j(() => [_e(E(m(w)("agora", "Remove expiration")), 1)]), _: 1 }, 8, ["disabled"])])])) : G("", true)])]), g.value ? (x(), R("div", nIe, [a.value ? (x(), R("div", iIe, [M[5] || (M[5] = _("div", { class: "saving-spinner" }, null, -1)), _("span", null, E(m(w)("agora", "Saving changes …")), 1)])) : (x(), R("div", rIe, [(x(), B(se(m(Ee).CheckCircle))), _("span", null, E(m(w)("agora", "Changes saved")), 1)]))])) : G("", true), o.value ? (x(), R("div", sIe, [_("div", oIe, [M[6] || (M[6] = _("div", { class: "loading-spinner" }, null, -1)), _("p", null, E(m(w)("agora", "Loading group settings …")), 1)])])) : G("", true)]));
+} }), lIe = Qe(aIe, [["__scopeId", "data-v-567e557d"]]), cIe = { key: 0 }, s0 = Fe({ __name: "SideBar", setup(t10) {
   const e = vt(), n = Ke(), i = z(() => Mi(e, n.appSettings)), r = z(() => {
     const c = n.currentUser;
     return e.status.moderationStatus === "rejected" || e.status.moderationStatus === "pending" || !c ? true : !qu(i.value);
@@ -58159,7 +58171,7 @@ async function dIe(t10, e) {
   }
   vt().load();
 }
-const hIe = [{ name: "group-archived", path: "/groups/archived", components: { default: Rwe, navigation: cg }, props: { default: true, navigation: false }, meta: { listPage: true } }, { name: "list", path: "/list/:type?", components: { default: j$, navigation: Zl }, props: true, meta: { listPage: true } }, { name: "menu", path: "/", components: { default: SP, navigation: g4 }, props: true, meta: { listPage: true, noReload: true } }, { name: "group-list", path: "/groups/:slug?", components: { default: gEe, navigation: cg }, props: { default: true, navigation: false }, meta: { groupPage: true } }, { name: "notfound", path: "/not-found", components: { default: MP, navigation: Zl }, meta: { errorPage: true } }, { name: "forbidden", path: "/forbidden", components: { default: k4, navigation: Zl }, meta: { errorPage: true } }, { name: "group", path: "/group/:id", components: { default: V2e, navigation: cg, sidebar: uIe }, props: { default: true, navigation: false }, meta: { groupPage: true, listPage: true } }, { name: "page", path: "/page/inquiry/:id", components: { default: r0, navigation: Zl, sidebar: s0 }, props: true, meta: { inquiryPage: true } }, { name: "inquiry", path: "/inquiry/:id", components: { default: r0, navigation: Zl, sidebar: s0 }, props: true, meta: { inquiryPage: true } }, { name: "publicInquiry", path: "/s/:token", components: { default: r0, sidebar: s0 }, beforeEnter: (t10, e) => dIe(t10, e), props: true, meta: { publicPage: true, inquiryPage: true } }, { path: "/:pathMatch(.*)*", redirect: { name: "notfound" } }], o0 = r8({ history: BN(Zi("/apps/agora")), routes: hIe, linkActiveClass: "active" });
+const hIe = [{ name: "group-archived", path: "/groups/archived", components: { default: Rwe, navigation: cg }, props: { default: true, navigation: false }, meta: { listPage: true } }, { name: "list", path: "/list/:type?", components: { default: j$, navigation: Zl }, props: true, meta: { listPage: true } }, { name: "menu", path: "/", components: { default: SP, navigation: g4 }, props: true, meta: { listPage: true, noReload: true } }, { name: "group-list", path: "/groups/:slug?", components: { default: gEe, navigation: cg }, props: { default: true, navigation: false }, meta: { groupPage: true } }, { name: "notfound", path: "/not-found", components: { default: MP, navigation: Zl }, meta: { errorPage: true } }, { name: "forbidden", path: "/forbidden", components: { default: k4, navigation: Zl }, meta: { errorPage: true } }, { name: "group", path: "/group/:id", components: { default: V2e, navigation: cg, sidebar: uIe }, props: { default: true, navigation: false }, meta: { groupPage: true, listPage: true } }, { name: "page", path: "/page/inquiry/:id", components: { default: r0, navigation: Zl, sidebar: s0 }, props: true, meta: { inquiryPage: true } }, { name: "inquiry", path: "/inquiry/:id", components: { default: r0, navigation: Zl, sidebar: s0 }, props: true, meta: { inquiryPage: true } }, { name: "publicInquiry", path: "/s/:token", components: { default: r0, sidebar: s0 }, beforeEnter: (t10, e) => dIe(t10, e), props: true, meta: { publicPage: true, inquiryPage: true } }, { path: "/:pathMatch(.*)*", redirect: { name: "notfound" } }], o0 = r8({ history: BN(Zi("/apps/agora") + "/"), routes: hIe, linkActiveClass: "active" });
 o0.beforeEach(async (t10, e) => {
   const n = Ke();
   let i = false;

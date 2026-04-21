@@ -138,7 +138,7 @@ function handleKeydown(event: KeyboardEvent) {
       <div class="comment-add__editor">
         <NcRichContenteditable
           v-model="comment"
-          :placeholder="t('agora', 'Write a comment …')"
+          :placeholder="t('agora', 'Write a comment …')"
                   :autolink="true"
                   :use-markdown="true"
                   :emoji-autocomplete="true"

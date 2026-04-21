@@ -643,7 +643,7 @@ onMounted(() => {
                 <div v-else class="misc-fields-edit">
                     <div v-if="isSaving" class="saving-indicator">
                         <div class="icon-loading-small"></div>
-                        <span>{{ t('agora', 'Saving …') }}</span>
+                        <span>{{ t('agora', 'Saving …') }}</span>
                     </div>
 
                     <div class="edit-fields">
