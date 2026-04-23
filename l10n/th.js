@@ -46,6 +46,7 @@ OC.L10N.register(
     "Cancelled" : "ยกเลิกแล้ว",
     "Start date" : "วันที่เริ่มต้น",
     "Forms" : "ฟอร์ม",
+    "Delete permanently" : "ลบแบบถาวร",
     "OK" : "OK",
     "Enabled" : "เปิดใช้งาน",
     "Disabled" : "ปิดใช้งาน",
