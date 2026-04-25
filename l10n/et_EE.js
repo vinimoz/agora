@@ -2,6 +2,7 @@ OC.L10N.register(
     "agora",
     {
     "Inquiry changes" : "Järelpärimise muudatused",
+    "Recent inquiries" : "Hiljutised järelpärimised",
     "Agora" : "Agora",
     "Team" : "Tiim",
     "Contact group" : "Kontaktigrupp",
