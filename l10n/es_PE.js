@@ -63,6 +63,7 @@ OC.L10N.register(
     "Select an icon" : "Selecciona un ícono",
     "Sort Order" : "Cirterio para ordenar",
     "Allow comments" : "Permitir comentarios",
+    "Configure" : "Configurar",
     "Close" : "Cerrar",
     "Shares" : "Elementos compartido",
     "No activity yet" : "Aún no hay actividades",
