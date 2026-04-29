@@ -71,7 +71,7 @@ OC.L10N.register(
     "Loading" : "Läser in",
     "Previous day" : "Föregående dag",
     "Next day" : "Nästa dag",
-    "Please wait" : "Vänligen vänta",
+    "Please wait" : "Vänta",
     "No results found" : "Inga resultat funna",
     "This share is locked and allows only read access. Registering is not possible." : "Denna omröstning är låst och tillåter endast läs-åtkomst. Registrering är inte möjlig.",
     "To participate, register with your email address and a name." : "För att delta, registrera din e-postadress och även ett namn.",
