@@ -118,7 +118,7 @@
             </template>
 
             <!-- Rank input for ranked voting -->
-            <template v-if="currentEngineId === 'ranked' && canVote && !hasUserVoted">
+            <template v-if="currentEngineId === 'ranking' && canVote && !hasUserVoted">
               <div class="rank-input">
                 <label>{{ t('agora', 'Rank') }}</label>
                 <select v-model="rankings[option.id]" @click.stop>
@@ -439,7 +439,6 @@
       :current-engine-id="currentEngineId"
       :current-config="engineConfig"
       :engines="availableEngines"
-      :engine-definitions="ENGINE_DEFINITIONS"
       @close="showEngineSelector = false"
       @apply="handleEngineApply"
     />
@@ -464,7 +463,12 @@ import { showError } from '@nextcloud/dialogs'
 
 import OptionCard from '../OptionCard.vue'
 import { getOptionTypeIconComponent , filterOptionsByLayout } from '../../../helpers/modules/InquiryOptionHelper'
-import type { Option, SupportData } from '../../Types/index'
+import type {
+     InquiryOptionType,
+     OptionFamily,
+     Option  
+    } from '../../Types/index'
+
 import {
   calculateOptionResult,
   calculateRankingScores,
@@ -488,6 +492,18 @@ import {
 
 import EngineSelectorModal from '../../Modals/EngineSelectorModal.vue'
 import AddOptionToFamily from '../../Modals/AddOptionToFamily.vue'
+
+// Import from single source of truth
+import { 
+  ENGINE_DEFINITIONS,
+  getAvailableEngines,
+  initializeEngineConfig,
+  getDefaultEngineConfig,
+  type EngineDefinition,
+  type SupportData,
+  type SupportValue
+} from '../../../Types/votingType'
+
 
 // ----------------------------------------------------------------------------
 // Types
@@ -513,138 +529,7 @@ interface ConfigSchemaField {
   description?: string
 }
 
-interface EngineDefinition {
-  label: string
-  behavior: 'single' | 'multi' | 'flex'
-  description: string
-  constraints: {
-    min_options?: number
-    max_options?: number
-    requires_weight_source?: boolean
-  }
-  config_schema: Record<string, ConfigSchemaField>
-}
 
-// ----------------------------------------------------------------------------
-// Engine Definitions
-// ----------------------------------------------------------------------------
-
-const ENGINE_DEFINITIONS: Record<string, EngineDefinition> = {
-  binary: {
-    label: 'Yes / No',
-    behavior: 'single',
-    description: 'Simple yes/no voting on a single option',
-    constraints: { min_options: 1, max_options: 1 },
-    config_schema: {}
-  },
-  ternary: {
-    label: 'For / Abstain / Against',
-    behavior: 'single',
-    description: 'Choose between For, Abstain, or Against',
-    constraints: { min_options: 1, max_options: 1 },
-    config_schema: {}
-  },
-  reaction: {
-    label: 'Reactions',
-    behavior: 'single',
-    description: 'React with emojis to show your opinion',
-    constraints: { min_options: 1, max_options: 1 },
-    config_schema: {
-      allowed_reactions: {
-        type: 'array',
-        default: ['👍', '👎', '❤️', '😂', '😢'],
-        label: 'Allowed reactions'
-      }
-    }
-  },
-  score: {
-    label: 'Score Voting',
-    behavior: 'single',
-    description: 'Rate options on a numeric scale',
-    constraints: { min_options: 1, max_options: 1 },
-    config_schema: {
-      min: { type: 'number', default: 0, label: 'Minimum score' },
-      max: { type: 'number', default: 10, label: 'Maximum score' }
-    }
-  },
-  approval: {
-    label: 'Approval Voting',
-    behavior: 'multi',
-    description: 'Select all options you approve of',
-    constraints: { min_options: 2 },
-    config_schema: {
-      min_choices: { type: 'number', default: 1, label: 'Minimum choices' },
-      max_choices: { type: 'number', default: null, label: 'Maximum choices' }
-    }
-  },
-  ranked: {
-    label: 'Ranked Choice',
-    behavior: 'multi',
-    description: 'Rank options in order of preference',
-    constraints: { min_options: 2 },
-    config_schema: {
-      max_rank: { type: 'number', default: null, label: 'Maximum rank' }
-    }
-  },
-  borda: {
-    label: 'Borda Count',
-    behavior: 'multi',
-    description: 'Rank options, points assigned by rank position',
-    constraints: { min_options: 2 },
-    config_schema: {}
-  },
-  condorcet: {
-    label: 'Condorcet',
-    behavior: 'multi',
-    description: 'Pairwise comparison voting method',
-    constraints: { min_options: 2 },
-    config_schema: {
-      method: {
-        type: 'string',
-        default: 'schulze',
-        label: 'Method',
-        options: ['schulze', 'copeland', 'minimax']
-      }
-    }
-  },
-  majority_judgment: {
-    label: 'Majority Judgment',
-    behavior: 'multi',
-    description: 'Grade each option, median grade determines winner',
-    constraints: { min_options: 2 },
-    config_schema: {
-      grades: {
-        type: 'array',
-        default: ['Reject', 'Poor', 'Fair', 'Good', 'Excellent'],
-        label: 'Grade options'
-      }
-    }
-  },
-  token_weighted: {
-    label: 'Token / Weighted',
-    behavior: 'flex',
-    description: 'Vote with weighted tokens',
-    constraints: { min_options: 1, requires_weight_source: true },
-    config_schema: {
-      weight_source: { type: 'object', default: null, label: 'Weight source' },
-      normalization: {
-        type: 'string',
-        default: 'none',
-        label: 'Normalization',
-        options: ['none', 'min-max', 'z-score']
-      }
-    }
-  },
-  quadratic: {
-    label: 'Quadratic Voting',
-    behavior: 'flex',
-    description: 'Vote with quadratic cost mechanism',
-    constraints: { min_options: 1 },
-    config_schema: {
-      credits_per_user: { type: 'number', default: 100, label: 'Credits per user' }
-    }
-  }
-}
 
 // ----------------------------------------------------------------------------
 // Props
@@ -716,7 +601,7 @@ const allowedFamiliesForVote = computed(() =>
 // Computed: Current Engine
 // ----------------------------------------------------------------------------
 
-const currentEngine = computed(() => ENGINE_DEFINITIONS[currentEngineId.value])
+const currentEngine = computed(() => ENGINE_DEFINITIONS[currentEngineId.value] as EngineDefinition | undefined)
 
 // ----------------------------------------------------------------------------
 // Computed: User's votes (using SupportData)
@@ -1176,7 +1061,9 @@ onUnmounted(() => {
 // Additional Helpers
 // ----------------------------------------------------------------------------
 
+
 const getEngineLabel = (engineId: string): string => ENGINE_DEFINITIONS[engineId]?.label || engineId
+
 
 const getSubmitButtonText = (): string => {
   if (currentEngineId.value === 'approval') return t('agora', 'Submit selections')
@@ -1206,23 +1093,11 @@ const getOptionTypeIcon = (type: string): unknown => getOptionTypeIconComponent(
 // ----------------------------------------------------------------------------
 // Computed: Available Engines
 // ----------------------------------------------------------------------------
-
 const availableEngines = computed(() => {
-  const engines = Object.entries(ENGINE_DEFINITIONS).map(([id, def]) => ({
-    id,
-    label: def.label,
-    behavior: def.behavior,
-    description: def.description,
-    constraints: def.constraints
-  }))
   const optionCount = voteOptions.value.length
-  return engines.filter(engine => {
-    const constraints = ENGINE_DEFINITIONS[engine.id]?.constraints
-    if (constraints?.min_options && optionCount < constraints.min_options) return false
-    if (constraints?.max_options && optionCount > constraints.max_options) return false
-    return true
-  })
+  return getAvailableEngines(optionCount)
 })
+
 
 // ----------------------------------------------------------------------------
 // Computed: UI Info
@@ -1303,15 +1178,10 @@ const timeRemaining = computed(() => {
 
 // Initialize engine config
 if (props.voteSession?.engine) {
-  const engineDef = ENGINE_DEFINITIONS[props.voteSession.engine]
-  if (engineDef?.config_schema) {
-    const initialConfig: Record<string, unknown> = {}
-    for (const [key, value] of Object.entries(engineDef.config_schema)) {
-      initialConfig[key] = value.default
-    }
-    engineConfig.value = initialConfig
-  }
+  currentEngineId.value = props.voteSession.engine
+  engineConfig.value = initializeEngineConfig(props.voteSession.engine)
 }
+
 </script>
 
 <style scoped lang="scss">

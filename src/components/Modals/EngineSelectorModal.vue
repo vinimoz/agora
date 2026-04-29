@@ -41,11 +41,11 @@
             <h4>{{ engine.label }}</h4>
             <p>{{ engine.description || getEngineDescription(engine.id) }}</p>
             <div v-if="engine.constraints" class="engine-constraints">
-              <span v-if="engine.constraints.min_candidates" class="constraint-badge">
-                {{ t('agora', 'Min {n} candidates', { n: engine.constraints.min_candidates }) }}
+              <span v-if="engine.constraints.min_options" class="constraint-badge">
+                {{ t('agora', 'Min {n} candidates', { n: engine.constraints.min_options }) }}
               </span>
-              <span v-if="engine.constraints.max_candidates" class="constraint-badge">
-                {{ t('agora', 'Max {n} candidates', { n: engine.constraints.max_candidates }) }}
+              <span v-if="engine.constraints.max_options" class="constraint-badge">
+                {{ t('agora', 'Max {n} candidates', { n: engine.constraints.max_options }) }}
               </span>
             </div>
           </div>
@@ -65,7 +65,7 @@
         <NcSelect 
           v-model="selectedVariant" 
           :options="condorcetVariants" 
-          :placeholder="t('agora', 'Choose a Condorcet variant …')" 
+          :placeholder="t('agora', 'Choose a Condorcet variant …')" 
           :reduce="option => option.id" 
           label="label"
           :aria-label="t('agora', 'Select specific Condorcet method variant')"
@@ -258,47 +258,19 @@ import {
   Minus,
 } from 'lucide-vue-next'
 
-// Define types for engine definitions
-interface ConfigSchemaField {
-  type: string
-  default?: unknown
-  label?: string
-  min?: number
-  max?: number
-  step?: number
-  placeholder?: string
-  options?: string[] | Record<string, string>
-  description?: string
-}
+// 👇 Import from single source of truth - MUST be before local type references
+import { 
+  ENGINE_DEFINITIONS, 
+  initializeEngineConfig,
+  type EngineInfo, 
+  type ConfigSchemaField 
+} from '../../Types/votingType'
 
-interface EngineDefinition {
-  label: string
-  behavior: 'single' | 'multi' | 'flex'
-  description: string
-  constraints: {
-    min_candidates?: number
-    max_candidates?: number
-    requires_weight_source?: boolean
-  }
-  config_schema?: Record<string, ConfigSchemaField>
-}
-
-interface Engine {
-  id: string
-  label: string
-  behavior: string
-  description: string
-  constraints?: {
-    min_candidates?: number
-    max_candidates?: number
-  }
-}
-
+// 👇 Props - simplified, no longer needs engineDefinitions
 const props = defineProps<{
   currentEngineId: string
   currentConfig: Record<string, unknown>
-  engines: Engine[]
-  engineDefinitions: Record<string, EngineDefinition>
+  engines: EngineInfo[]
 }>()
 
 const emit = defineEmits<{
@@ -336,24 +308,26 @@ const reactionOptions = [
 
 const availableEngines = computed(() => props.engines)
 
+// 👇 Fixed: use ENGINE_DEFINITIONS directly instead of props.engineDefinitions
 const currentConfigSchema = computed(() => {
   if (!selectedEngine.value) return null
-  const engine = props.engineDefinitions[selectedEngine.value]
+  const engine = ENGINE_DEFINITIONS[selectedEngine.value]
   return engine?.config_schema || null
 })
 
-const isSpecialEngine = computed(() => selectedEngine.value === 'condorcet' || 
-         selectedEngine.value === 'majority_judgment' || 
-         selectedEngine.value === 'reaction')
+const isSpecialEngine = computed(() => 
+  selectedEngine.value === 'condorcet' || 
+  selectedEngine.value === 'majority_judgment' || 
+  selectedEngine.value === 'reaction'
+)
 
-// Initialize grades if not present
+// Initialize config for special engines
 if (selectedEngine.value === 'majority_judgment' && !tempConfig.value.grades) {
   tempConfig.value.grades = [...defaultGrades]
 }
-
-// Initialize reactions if not present
-if (selectedEngine.value === 'reaction' && !tempConfig.value.reactions) {
-  tempConfig.value.reactions = []
+if (selectedEngine.value === 'reaction' && !tempConfig.value.allowed_reactions) {
+  tempConfig.value.allowed_reactions = ['👍', '❤️', '🎉', '🤔', '👎']
+  tempConfig.value.max_per_user = 3
 }
 
 const getRangeProgress = (value: unknown, min: number, max: number): number => {
@@ -373,16 +347,16 @@ const getVariantIcon = (variantId: string) => {
 }
 
 const isReactionSelected = (value: string): boolean => {
-  const reactions = tempConfig.value.reactions as string[] || []
+  const reactions = tempConfig.value.allowed_reactions as string[] || []
   return reactions.includes(value)
 }
 
 const toggleReaction = (value: string) => {
-  const reactions = tempConfig.value.reactions as string[] || []
+  const reactions = tempConfig.value.allowed_reactions as string[] || []
   if (reactions.includes(value)) {
-    tempConfig.value.reactions = reactions.filter(r => r !== value)
+    tempConfig.value.allowed_reactions = reactions.filter(r => r !== value)
   } else {
-    tempConfig.value.reactions = [...reactions, value]
+    tempConfig.value.allowed_reactions = [...reactions, value]
   }
 }
 
@@ -398,6 +372,7 @@ const removeGrade = (index: number) => {
   }
 }
 
+// 👇 Fixed: use imported ConfigSchemaField type
 const getSelectOptions = (schema: ConfigSchemaField) => {
   if (!schema.options) return []
   
@@ -419,29 +394,23 @@ const getEngineIcon = (engineId: string) => {
     star: Star,
     score: Star,
     approval: CheckCircle,
-    ranked: TrendingUp,
+    ranking: TrendingUp,
     borda: Award,
     condorcet: Brain,
     majority_judgment: Gauge,
     token_weighted: Users,
     quadratic: TrendingUp,
-    schulze: Brain,
-    copeland: BarChart3,
-    nauru: Hash,
     phased_voting: ListChecks,
-    ranked_choice: TrendingUp,
-    binary_voting: ThumbsUp,
-    ternary_voting: Scale,
-    star_voting: Star,
-    approval_voting: CheckCircle,
-    score_voting: Star
+    trending: TrendingUp,
+    none: Vote,
   }
   return icons[engineId] || Vote
 }
 
-const getEngineLabel = (engineId: string): string => props.engineDefinitions[engineId]?.label || engineId
+// 👇 Fixed: use ENGINE_DEFINITIONS directly
+const getEngineLabel = (engineId: string): string => ENGINE_DEFINITIONS[engineId]?.label || engineId
 
-const getEngineDescription = (engineId: string): string => props.engineDefinitions[engineId]?.description || t('agora', 'Vote using this method')
+const getEngineDescription = (engineId: string): string => ENGINE_DEFINITIONS[engineId]?.description || t('agora', 'Vote using this method')
 
 const getBehaviorLabel = (behavior: string): string => {
   const labels: Record<string, string> = {
@@ -455,11 +424,21 @@ const getBehaviorLabel = (behavior: string): string => {
 const selectEngine = (engineId: string): void => {
   selectedEngine.value = engineId
   
-  // Reset config for special engines
+  // Initialize config for newly selected engine
+  const engine = ENGINE_DEFINITIONS[engineId]
+  if (engine?.config_schema) {
+    const newConfig = initializeEngineConfig(engineId)
+    tempConfig.value = { ...newConfig }
+  } else {
+    tempConfig.value = {}
+  }
+  
+  // Special initialization
   if (engineId === 'majority_judgment') {
     tempConfig.value.grades = [...defaultGrades]
   } else if (engineId === 'reaction') {
-    tempConfig.value.reactions = []
+    tempConfig.value.allowed_reactions = ['👍', '❤️', '🎉', '🤔', '👎']
+    tempConfig.value.max_per_user = 3
   } else if (engineId === 'condorcet') {
     selectedVariant.value = 'schulze'
   }

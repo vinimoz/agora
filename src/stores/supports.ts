@@ -16,7 +16,8 @@ export type Support = {
     optionId?: number // Optional: 0 or undefined = inquiry support, >0 = option support
     groupId: number
     userId: string
-    value: number
+    value: SupportValue
+    weigth: number
     created: number
 }
 
