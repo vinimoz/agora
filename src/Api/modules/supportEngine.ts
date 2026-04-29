@@ -2,14 +2,51 @@
  * SPDX-FileCopyrightText: 2024 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-// supportEngineApi.ts
-export const SupportEngineAPI = {
+
+import { AxiosResponse } from '@nextcloud/axios'
+import { httpInstance, createCancelTokenHandler } from './HttpApi.js'
+import type { SupportEngine, SupportResult } from '../Types/index.ts'
+
+export const supportEngine = {
     // Get all engines for a group
     getEngines(groupId: number): Promise<AxiosResponse<{ engines: SupportEngine[] }>> {
         return httpInstance.request({
             method: 'GET',
             url: `support/engine/group/${groupId}`,
             cancelToken: cancelTokenHandlerObject[this.getEngines.name].handleRequestCancellation().token,
+        })
+    },
+
+    // Get engines by target
+    getEnginesByTarget(
+        targetType: 'inquiry' | 'option', 
+        targetId: number
+    ): Promise<AxiosResponse<{ engines: SupportEngine[] }>> {
+        return httpInstance.request({
+            method: 'GET',
+            url: `support/engine/target/${targetType}/${targetId}`,
+            cancelToken: cancelTokenHandlerObject[this.getEnginesByTarget.name].handleRequestCancellation().token,
+        })
+    },
+
+    // Get active engines by target
+    getActiveEnginesByTarget(
+        targetType: 'inquiry' | 'option',
+        targetId: number
+    ): Promise<AxiosResponse<{ engines: SupportEngine[] }>> {
+        return httpInstance.request({
+            method: 'GET',
+            url: `support/engine/active/${targetType}/${targetId}`,
+            cancelToken: cancelTokenHandlerObject[this.getActiveEnginesByTarget.name].handleRequestCancellation().token,
+        })
+    },
+
+    // Get a single engine
+    getEngine(id: number): Promise<AxiosResponse<{ engine: SupportEngine }>> {
+        return httpInstance.request({
+            method: 'GET',
+            url: `support/engine/${id}`,
+            cancelToken: cancelTokenHandlerObject[this.getEngine.name].handleRequestCancellation().token,
         })
     },
 
@@ -30,6 +67,32 @@ export const SupportEngineAPI = {
             url: `support/engine/${id}`,
             data: { config },
             cancelToken: cancelTokenHandlerObject[this.updateEngine.name].handleRequestCancellation().token,
+        })
+    },
+
+    // Update engine status
+    updateEngineStatus(
+        id: number, 
+        status: 'draft' | 'active' | 'closed'
+    ): Promise<AxiosResponse<SupportEngine>> {
+        return httpInstance.request({
+            method: 'PUT',
+            url: `support/engine/${id}/status`,
+            data: { status },
+            cancelToken: cancelTokenHandlerObject[this.updateEngineStatus.name].handleRequestCancellation().token,
+        })
+    },
+
+    // Update engine targets
+    updateEngineTargets(
+        id: number, 
+        targetIds: number[]
+    ): Promise<AxiosResponse<SupportEngine>> {
+        return httpInstance.request({
+            method: 'PUT',
+            url: `support/engine/${id}/targets`,
+            data: { target_ids: targetIds },
+            cancelToken: cancelTokenHandlerObject[this.updateEngineTargets.name].handleRequestCancellation().token,
         })
     },
 
@@ -58,5 +121,9 @@ export const SupportEngineAPI = {
             url: `support/engine/${engineId}/calculate`,
             cancelToken: cancelTokenHandlerObject[this.calculateResults.name].handleRequestCancellation().token,
         })
-    }
+    },
 }
+
+const cancelTokenHandlerObject = createCancelTokenHandler(SupportEngineAPI)
+
+export default supportEngine

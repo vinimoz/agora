@@ -1,5 +1,4 @@
 <?php
-// Db/SupportProcess.php
 
 declare(strict_types=1);
 

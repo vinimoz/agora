@@ -1,4 +1,5 @@
 <?php
+// Db/Support.php
 
 declare(strict_types=1);
 
@@ -17,11 +18,10 @@ use JsonSerializable;
  * @psalm-suppress UnusedProperty
  * @method         int getId()
  * @method         void setId(int $value)
- * @method         int getValue()
- * @method         void setValue(int $value)
+ * @method         mixed getValue()
+ * @method         void setValue(mixed $value)
  * @method         string getSupportHash()
  * @method         void setSupportHash(string $value)
- * @method         string getSupportHash()
  * @method         int getInquiryId()
  * @method         void setInquiryId(int $value)
  * @method         int getOptionId()
@@ -30,10 +30,10 @@ use JsonSerializable;
  * @method         void setUserId(string $value)
  * @method         int getCreated()
  * @method         void setCreated(int $value)
- * @method         int getInquiryId()
- * @method         void setInquiryId(int $value)
- * @method         string getUserId()
- * @method         void setUserId(string $value)
+ * @method         int getWeight()
+ * @method         void setWeight(int $value)
+ * @method         int getSupportEngineId()
+ * @method         void setSupportEngineId(int $value)
  */
 class Support extends Entity implements JsonSerializable
 {
@@ -42,10 +42,12 @@ class Support extends Entity implements JsonSerializable
     // Schema columns
     protected int $inquiryId = 0;
     protected int $optionId = 0;
-    protected int $value = 0;
+    protected mixed $value = null;
+    protected int $weight = 1;
     protected string $supportHash = '';
     protected string $userId = '';
-    protected string $created = '';
+    protected int $created = 0;
+    protected int $supportEngineId = 0;
 
     // Computed attributes
     protected ?UserBase $user = null;
@@ -54,10 +56,12 @@ class Support extends Entity implements JsonSerializable
     {
         $this->addType('id', 'integer');
         $this->addType('inquiryId', 'integer');
-        $this->addType('value', 'integer');
         $this->addType('optionId', 'integer');
+        $this->addType('value', 'json');
+        $this->addType('weight', 'integer');
         $this->addType('userId', 'string');
         $this->addType('created', 'integer');
+        $this->addType('supportEngineId', 'integer');
     }
 
     public function getUser(): ?UserBase
@@ -81,6 +85,40 @@ class Support extends Entity implements JsonSerializable
     }
 
     /**
+     * Set value with JSON encoding
+     */
+    public function setValue(mixed $value): void
+    {
+        if (is_array($value) || is_object($value)) {
+            $this->value = json_encode($value);
+        } else {
+            $this->value = $value;
+        }
+    }
+
+    /**
+     * Get value with JSON decoding if needed
+     */
+    public function getValue(): mixed
+    {
+        if (is_string($this->value)) {
+            $decoded = json_decode($this->value, true);
+            if (json_last_error() === JSON_ERROR_NONE) {
+                return $decoded;
+            }
+        }
+        return $this->value;
+    }
+
+    /**
+     * Get raw value (for database operations)
+     */
+    public function getRawValue(): mixed
+    {
+        return $this->value;
+    }
+
+    /**
      * @return array
      *
      * @psalm-suppress PossiblyUnusedMethod
@@ -95,7 +133,9 @@ class Support extends Entity implements JsonSerializable
             'userId' => $this->getUserId(),
             'user' => $this->getUser(),
             'value' => $this->getValue(),
+            'weight' => $this->getWeight(),
             'created' => $this->getCreated(),
+            'supportEngineId' => $this->getSupportEngineId(),
         ];
     }
 }

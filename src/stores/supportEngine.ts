@@ -8,18 +8,13 @@ import { emit } from '@nextcloud/event-bus'
 import type { 
   SupportEngine, 
   SupportResult, 
-  SupportResultData,
   EngineDefinition,
-  VotingConfiguration,
   Phase,
-  SupportFeature,
-  Option
 } from '../Types/index'
-import { SupportEngineAPI } from '../Api/supportEngineApi'
-import { SupportResultAPI } from '../Api/supportResultApi'
-import { useSupportResultStore } from './supportResultStore'
+import { ENGINE_DEFINITIONS , Event } from '../Types/index'
+import { SupportEngineAPI } from '../Api/index'
+import { useSupportResultStore } from './supportResult'
 import { Logger } from '../helpers/index'
-import { Event } from '../Types/index'
 
 export const useSupportEngineStore = defineStore('supportEngine', () => {
   // State
@@ -45,49 +40,40 @@ export const useSupportEngineStore = defineStore('supportEngine', () => {
     engines.value.filter(engine => engine.status === 'closed')
   )
 
-  const getEngineById = computed(() => {
-    return (id: number) => 
-      engines.value.find(engine => engine.id === id) || null
+  const getEngineById = computed(() => (id: number) => 
+    engines.value.find(engine => engine.id === id) || null
+  )
+
+  const getEngineByType = computed(() => (type: string) =>
+    engines.value.find(engine => engine.engine === type) || null
+  )
+
+  const getEnginesByTarget = computed(() => (targetType: 'inquiry' | 'option', targetId: number) =>
+    engines.value.filter(engine => 
+      engine.target_type === targetType && engine.target_ids.includes(targetId)
+    )
+  )
+
+  const getEnginesByGroup = computed(() => (groupId: number) =>
+    engines.value.filter(engine => engine.group_id === groupId)
+  )
+
+  const getActiveEngineForTarget = computed(() => (targetType: 'inquiry' | 'option', targetId: number) =>
+    engines.value.find(engine => 
+      engine.status === 'active' &&
+      engine.target_type === targetType && 
+      engine.target_ids.includes(targetId)
+    ) || null
+  )
+
+  const isEngineActive = computed(() => (engineId: number) => {
+    const engine = engines.value.find(e => e.id === engineId)
+    return engine?.status === 'active'
   })
 
-  const getEngineByType = computed(() => {
-    return (type: string) =>
-      engines.value.find(engine => engine.engine === type) || null
-  })
-
-  const getEnginesByTarget = computed(() => {
-    return (targetType: 'inquiry' | 'option', targetId: number) =>
-      engines.value.filter(engine => 
-        engine.target_type === targetType && engine.target_ids.includes(targetId)
-      )
-  })
-
-  const getEnginesByGroup = computed(() => {
-    return (groupId: number) =>
-      engines.value.filter(engine => engine.group_id === groupId)
-  })
-
-  const getActiveEngineForTarget = computed(() => {
-    return (targetType: 'inquiry' | 'option', targetId: number) =>
-      engines.value.find(engine => 
-        engine.status === 'active' &&
-        engine.target_type === targetType && 
-        engine.target_ids.includes(targetId)
-      ) || null
-  })
-
-  const isEngineActive = computed(() => {
-    return (engineId: number) => {
-      const engine = engines.value.find(e => e.id === engineId)
-      return engine?.status === 'active'
-    }
-  })
-
-  const getEngineConfig = computed(() => {
-    return (engineId: number): Record<string, unknown> => {
-      const engine = engines.value.find(e => e.id === engineId)
-      return engine?.config || {}
-    }
+  const getEngineConfig = computed(() => (engineId: number): Record<string, unknown> => {
+    const engine = engines.value.find(e => e.id === engineId)
+    return engine?.config || {}
   })
 
   const hasActiveEngine = computed(() => activeEngines.value.length > 0)
@@ -172,7 +158,6 @@ export const useSupportEngineStore = defineStore('supportEngine', () => {
         engines.value[index] = updatedEngine
       }
       
-      // Update current engine if it's the same
       if (currentEngine.value?.id === id) {
         currentEngine.value = updatedEngine
       }
@@ -204,7 +189,6 @@ export const useSupportEngineStore = defineStore('supportEngine', () => {
         engines.value[index] = updatedEngine
       }
       
-      // If activating, calculate results
       if (status === 'active') {
         await resultStore.calculateAndGetResults(id)
       }
@@ -250,6 +234,7 @@ export const useSupportEngineStore = defineStore('supportEngine', () => {
 
   /**
    * Activate an engine and load its results
+   * @param engine - The engine to activate
    */
   async function activateEngine(engine: SupportEngine): Promise<void> {
     if (engine.status !== 'active') {
@@ -258,7 +243,6 @@ export const useSupportEngineStore = defineStore('supportEngine', () => {
     
     setCurrentEngine(engine)
     
-    // Load or calculate results
     if (resultStore.needsRecalculation(engine.id)) {
       await resultStore.calculateAndGetResults(engine.id)
     } else {
@@ -266,17 +250,11 @@ export const useSupportEngineStore = defineStore('supportEngine', () => {
     }
   }
 
-  /**
-   * Get results for the current engine
-   */
   function getCurrentEngineResults(): SupportResult[] {
     if (!currentEngine.value) return []
     return resultStore.getResultsByEngine(currentEngine.value.id)
   }
 
-  /**
-   * Calculate results for all active engines
-   */
   async function calculateAllActiveResults(): Promise<void> {
     const active = activeEngines.value
     for (const engine of active) {
@@ -286,9 +264,6 @@ export const useSupportEngineStore = defineStore('supportEngine', () => {
     }
   }
 
-  /**
-   * Load results for all active engines
-   */
   async function loadActiveEngineResults(): Promise<void> {
     const active = activeEngines.value
     for (const engine of active) {
@@ -297,7 +272,9 @@ export const useSupportEngineStore = defineStore('supportEngine', () => {
   }
 
   /**
-   * Apply engine to options (for option-level engines)
+   * Apply engine to options
+   * @param engineId - The engine ID
+   * @param optionIds - The option IDs to apply to
    */
   async function applyEngineToOptions(
     engineId: number, 
@@ -306,7 +283,6 @@ export const useSupportEngineStore = defineStore('supportEngine', () => {
     try {
       await SupportEngineAPI.updateEngineTargets(engineId, optionIds)
       
-      // Update local engine
       const engine = engines.value.find(e => e.id === engineId)
       if (engine) {
         engine.target_ids = optionIds
@@ -321,6 +297,8 @@ export const useSupportEngineStore = defineStore('supportEngine', () => {
 
   /**
    * Validate engine configuration
+   * @param engineType - The engine type
+   * @param config - The configuration to validate
    */
   function validateEngineConfig(
     engineType: string, 
@@ -328,7 +306,6 @@ export const useSupportEngineStore = defineStore('supportEngine', () => {
   ): { valid: boolean; errors: string[] } {
     const errors: string[] = []
     
-    // Basic validation per engine type
     switch (engineType) {
       case 'quadratic':
         if (config.credits_per_user && (config.credits_per_user as number) <= 0) {
@@ -352,6 +329,7 @@ export const useSupportEngineStore = defineStore('supportEngine', () => {
 
   /**
    * Get engine definition from registry
+   * @param engineType - The engine type
    */
   function getEngineDefinition(engineType: string): EngineDefinition | null {
     return ENGINE_DEFINITIONS[engineType] || null
@@ -359,6 +337,8 @@ export const useSupportEngineStore = defineStore('supportEngine', () => {
 
   /**
    * Clone an engine configuration
+   * @param engineId - The engine ID to clone
+   * @param targetIds - The new target IDs
    */
   async function cloneEngine(engineId: number, targetIds: number[]): Promise<SupportEngine | null> {
     const source = engines.value.find(e => e.id === engineId)
@@ -380,6 +360,8 @@ export const useSupportEngineStore = defineStore('supportEngine', () => {
 
   /**
    * Duplicate engine for different phase
+   * @param engineId - The engine ID to duplicate
+   * @param phase - The new phase
    */
   async function duplicateForPhase(
     engineId: number, 
@@ -398,9 +380,6 @@ export const useSupportEngineStore = defineStore('supportEngine', () => {
     })
   }
 
-  /**
-   * Reset store state
-   */
   function reset(): void {
     engines.value = []
     currentEngine.value = null
@@ -410,14 +389,11 @@ export const useSupportEngineStore = defineStore('supportEngine', () => {
   }
 
   return {
-    // State
     engines,
     currentEngine,
     loading,
     error,
     initialized,
-    
-    // Getters
     activeEngines,
     draftEngines,
     closedEngines,
@@ -429,8 +405,6 @@ export const useSupportEngineStore = defineStore('supportEngine', () => {
     isEngineActive,
     getEngineConfig,
     hasActiveEngine,
-    
-    // Basic CRUD
     loadEngines,
     loadEnginesForTarget,
     createEngine,
@@ -438,8 +412,6 @@ export const useSupportEngineStore = defineStore('supportEngine', () => {
     updateEngineStatus,
     deleteEngine,
     setCurrentEngine,
-    
-    // Advanced operations
     activateEngine,
     getCurrentEngineResults,
     calculateAllActiveResults,
@@ -449,8 +421,6 @@ export const useSupportEngineStore = defineStore('supportEngine', () => {
     getEngineDefinition,
     cloneEngine,
     duplicateForPhase,
-    
-    // Utility
     reset
   }
 })

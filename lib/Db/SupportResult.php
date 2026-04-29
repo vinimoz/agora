@@ -1,6 +1,4 @@
 <?php
-// Db/SupportResult.php
-
 declare(strict_types=1);
 
 /**

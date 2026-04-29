@@ -206,7 +206,7 @@
               <span class="stat-label">{{ t('agora', 'Average') }}</span>
               <span class="stat-value">{{ scoreResult.average.toFixed(1) }}</span>
             </div>
-            <div class="score-stat" v-if="scoreResult.median">
+            <div v-if="scoreResult.median" class="score-stat">
               <span class="stat-label">{{ t('agora', 'Median') }}</span>
               <span class="stat-value">{{ scoreResult.median }}</span>
             </div>
@@ -362,9 +362,7 @@ const tooltipStyles = computed(() => ({
 }))
 
 // Support feature detection
-const supportFeature = computed((): SupportFeature => {
-  return (props.item?.configuration?.supportFeature as SupportFeature) || 'none'
-})
+const supportFeature = computed((): SupportFeature => (props.item?.configuration?.supportFeature as SupportFeature) || 'none')
 
 // Current user support
 const currentUserSupportValue = computed(() => props.item?.currentUserStatus?.supportValue ?? null)
@@ -377,9 +375,7 @@ const getUserReaction = computed(() => {
 })
 
 // Results from SupportResult table (JSON stored in result field)
-const supportResult = computed(() => {
-  return (props.item as any)?.supportResult?.result || null
-})
+const supportResult = computed(() => (props.item as any)?.supportResult?.result || null)
 
 const binaryResult = computed(() => {
   if (supportFeature.value === 'binary' && supportResult.value?.type === 'binary') {
@@ -459,33 +455,33 @@ const currentUserSupportInfo = computed(() => {
   const value = currentUserSupportValue.value
   
   if (feature === 'binary') {
-    return value === 1 ? '✅ ' + t('agora', 'You voted Yes') : null
+    return value === 1 ? `✅ ${  t('agora', 'You voted Yes')}` : null
   }
   if (feature === 'ternary') {
-    if (value === 1) return '✅ ' + t('agora', 'You voted In Favor')
-    if (value === 0) return '⚪ ' + t('agora', 'You voted Neutral')
-    if (value === -1) return '❌ ' + t('agora', 'You voted Against')
+    if (value === 1) return `✅ ${  t('agora', 'You voted In Favor')}`
+    if (value === 0) return `⚪ ${  t('agora', 'You voted Neutral')}`
+    if (value === -1) return `❌ ${  t('agora', 'You voted Against')}`
   }
   if (feature === 'star') {
-    return `⭐ ${value}/5 ` + t('agora', 'stars')
+    return `⭐ ${value}/5 ${  t('agora', 'stars')}`
   }
   if (feature === 'score') {
     return `📊 ${value}/10`
   }
   if (feature === 'reaction' && value) {
-    return `${value} ` + t('agora', 'reacted')
+    return `${value} ${  t('agora', 'reacted')}`
   }
   if (feature === 'majority_judgment') {
     return `📝 ${getGradeLabel(value as number)}`
   }
   if (feature === 'approval') {
-    return '✅ ' + t('agora', 'Approved')
+    return `✅ ${  t('agora', 'Approved')}`
   }
   if (feature === 'ranking') {
-    return '📊 ' + t('agora', 'Ranked')
+    return `📊 ${  t('agora', 'Ranked')}`
   }
   
-  return '👍 ' + t('agora', 'Supported')
+  return `👍 ${  t('agora', 'Supported')}`
 })
 
 const userSupportClass = computed(() => {
@@ -644,13 +640,11 @@ const showSupportSuccessMessage = (hadSupportedBefore: boolean) => {
     showSuccess(t('agora', 'Score saved!'), { timeout: 2000 })
   } else if (feature === 'reaction') {
     showSuccess(t('agora', 'Reaction saved!'), { timeout: 2000 })
-  } else {
-    if (hasSupportedAfter && !hadSupportedBefore) {
+  } else if (hasSupportedAfter && !hadSupportedBefore) {
       showSuccess(t('agora', 'Thanks for participating!'), { timeout: 2000 })
     } else {
       showSuccess(t('agora', 'Participation removed!'), { timeout: 2000 })
     }
-  }
 }
 
 // Initialize tooltip title

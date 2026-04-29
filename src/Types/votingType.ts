@@ -565,6 +565,7 @@ export const ENGINE_DEFINITIONS: Record<string, EngineDefinition> = {
 
 /**
  * Get available engines filtered by option count
+ * @param optionCount
  */
 export function getAvailableEngines(optionCount: number): EngineInfo[] {
   return Object.entries(ENGINE_DEFINITIONS)
@@ -586,6 +587,7 @@ export function getAvailableEngines(optionCount: number): EngineInfo[] {
 
 /**
  * Initialize engine config from schema defaults
+ * @param engineId
  */
 export function initializeEngineConfig(engineId: string): Record<string, unknown> {
   const engine = ENGINE_DEFINITIONS[engineId]
@@ -600,6 +602,7 @@ export function initializeEngineConfig(engineId: string): Record<string, unknown
 
 /**
  * Type guard for SupportFeature
+ * @param feature
  */
 export function isValidSupportFeature(feature: string): feature is SupportFeature {
   return Object.keys(ENGINE_DEFINITIONS).includes(feature)
@@ -607,6 +610,7 @@ export function isValidSupportFeature(feature: string): feature is SupportFeatur
 
 /**
  * Type guard for Phase
+ * @param phase
  */
 export function isValidPhase(phase: string): phase is Phase {
   return ['deliberative', 'voting', 'hybrid', 'filtration', 'progressive', 'liquid'].includes(phase)
@@ -614,6 +618,7 @@ export function isValidPhase(phase: string): phase is Phase {
 
 /**
  * Get recommended view modes for an engine
+ * @param engineId
  */
 export function getRecommendedViews(engineId: string): OptionViewMode[] {
   return ENGINE_DEFINITIONS[engineId]?.recommendedViews || ['cards', 'list']

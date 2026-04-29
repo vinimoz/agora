@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-// supportResultApi.ts
 import { AxiosResponse } from '@nextcloud/axios'
 import { httpInstance, createCancelTokenHandler } from './HttpApi.js'
-import type { SupportResult, SupportResultData } from '../Types/index.ts'
+import type { SupportResult } from '../Types/index.ts'
 
-export const SupportResultAPI = {
+export const supportResult = {
     /**
      * Get results for a specific support engine
+     * @param engineId - The engine ID
      */
     getResultsByEngine(engineId: number): Promise<AxiosResponse<{ results: SupportResult[] }>> {
         return httpInstance.request({
@@ -23,6 +23,9 @@ export const SupportResultAPI = {
 
     /**
      * Get results for a specific target (inquiry or option)
+     * @param targetType - The target type (inquiry or option)
+     * @param targetId - The target ID
+     * @param engineId - Optional engine ID filter
      */
     getResultsByTarget(
         targetType: 'inquiry' | 'option',
@@ -42,6 +45,7 @@ export const SupportResultAPI = {
 
     /**
      * Get a single result by ID
+     * @param resultId - The result ID
      */
     getResult(resultId: number): Promise<AxiosResponse<{ result: SupportResult }>> {
         return httpInstance.request({
@@ -53,6 +57,7 @@ export const SupportResultAPI = {
 
     /**
      * Calculate/refresh results for an engine
+     * @param engineId - The engine ID
      */
     calculateResults(engineId: number): Promise<AxiosResponse<{ results: SupportResult[] }>> {
         return httpInstance.request({
@@ -64,6 +69,9 @@ export const SupportResultAPI = {
 
     /**
      * Calculate results for a specific target
+     * @param engineId - The engine ID
+     * @param targetType - The target type
+     * @param targetId - The target ID
      */
     calculateTargetResults(
         engineId: number,
@@ -79,6 +87,7 @@ export const SupportResultAPI = {
 
     /**
      * Get live results (real-time aggregated)
+     * @param engineId - The engine ID
      */
     getLiveResults(engineId: number): Promise<AxiosResponse<{ results: SupportResult[] }>> {
         return httpInstance.request({
@@ -91,6 +100,8 @@ export const SupportResultAPI = {
 
     /**
      * Export results in different formats
+     * @param engineId - The engine ID
+     * @param format - The export format (json, csv, pdf)
      */
     exportResults(
         engineId: number,
@@ -107,6 +118,7 @@ export const SupportResultAPI = {
 
     /**
      * Get results history/changelog
+     * @param resultId - The result ID
      */
     getResultHistory(resultId: number): Promise<AxiosResponse<{ history: SupportResult[] }>> {
         return httpInstance.request({
@@ -119,4 +131,4 @@ export const SupportResultAPI = {
 
 const cancelTokenHandlerObject = createCancelTokenHandler(SupportResultAPI)
 
-export default SupportResultAPI
+export default supportResult
