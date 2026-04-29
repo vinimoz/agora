@@ -1,3 +1,8 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
 export interface CreateEngineRequest {
   engine: string           // Voting engine type
   type: string             // Support feature type
