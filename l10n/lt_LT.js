@@ -222,6 +222,7 @@ OC.L10N.register(
     "No content yet" : "Kol kas nėra jokio turinio",
     "Edit" : "Taisyti",
     "Details" : "Išsamiau",
+    "Submit vote" : "Pateikti balsavimą",
     "Vote" : "Balsuoti",
     "Action" : "Veiksmas",
     "Progress" : "Eiga",
