@@ -1,11 +1,11 @@
+<?php
+
+namespace OCA\Agora\Controller;
 /**
  * SPDX-FileCopyrightText: 2026 Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-<?php
-
-namespace OCA\Agora\Controller;
 
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\JSONResponse;

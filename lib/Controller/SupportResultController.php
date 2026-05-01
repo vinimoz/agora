@@ -9,18 +9,18 @@ declare(strict_types=1);
 
 namespace OCA\Agora\Controller;
 
+use OCA\Agora\Db\SupportResult;
 use OCA\Agora\Service\SupportResultService;
-use OCP\AppFramework\Http\Attribute\ApiRoute;
-use OCP\AppFramework\Http\Attribute\CORS;
+use OCP\AppFramework\Http\Attribute\FrontpageRoute;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
-use OCP\AppFramework\Http\DataResponse;
+use OCP\AppFramework\Http\JSONResponse;
 use OCP\IRequest;
 
 /**
  * @psalm-api
  */
-class SupportResultApiController extends BaseApiV2Controller
+class SupportResultController extends BaseController
 {
     public function __construct(
         string $appName,
@@ -34,12 +34,13 @@ class SupportResultApiController extends BaseApiV2Controller
      * Get results for a specific support engine
      *
      * @param int $engineId ID of the support engine
+     *
+     * @psalm-return JSONResponse<array{results: array<SupportResult>}>
      */
-    #[CORS]
     #[NoAdminRequired]
     #[NoCSRFRequired]
-    #[ApiRoute(verb: 'GET', url: '/api/v1.0/support/engine/{engineId}/results', requirements: ['apiVersion' => '(v2)'])]
-    public function getResultsByEngine(int $engineId): DataResponse
+    #[FrontpageRoute(verb: 'GET', url: '/support/engine/{engineId}/results')]
+    public function getResultsByEngine(int $engineId): JSONResponse
     {
         return $this->response(
             fn () => [
@@ -53,12 +54,13 @@ class SupportResultApiController extends BaseApiV2Controller
      *
      * @param string $targetType The target type ('inquiry' or 'option')
      * @param int $targetId The target ID
+     *
+     * @psalm-return JSONResponse<array{results: array<SupportResult>}>
      */
-    #[CORS]
     #[NoAdminRequired]
     #[NoCSRFRequired]
-    #[ApiRoute(verb: 'GET', url: '/api/v1.0/support/results/{targetType}/{targetId}', requirements: ['apiVersion' => '(v2)'])]
-    public function getResultsByTarget(string $targetType, int $targetId): DataResponse
+    #[FrontpageRoute(verb: 'GET', url: '/support/results/{targetType}/{targetId}')]
+    public function getResultsByTarget(string $targetType, int $targetId): JSONResponse
     {
         $engineId = $this->request->getParam('engineId') ? (int) $this->request->getParam('engineId') : null;
         
@@ -73,12 +75,13 @@ class SupportResultApiController extends BaseApiV2Controller
      * Get a single result by ID
      *
      * @param int $resultId ID of the result
+     *
+     * @psalm-return JSONResponse<array{result: SupportResult}>
      */
-    #[CORS]
     #[NoAdminRequired]
     #[NoCSRFRequired]
-    #[ApiRoute(verb: 'GET', url: '/api/v1.0/support/result/{resultId}', requirements: ['apiVersion' => '(v2)'])]
-    public function getResult(int $resultId): DataResponse
+    #[FrontpageRoute(verb: 'GET', url: '/support/result/{resultId}')]
+    public function getResult(int $resultId): JSONResponse
     {
         return $this->response(
             fn () => [
@@ -91,11 +94,12 @@ class SupportResultApiController extends BaseApiV2Controller
      * Calculate/refresh results for an engine
      *
      * @param int $engineId ID of the support engine
+     *
+     * @psalm-return JSONResponse<array{results: array<SupportResult>}>
      */
-    #[CORS]
     #[NoAdminRequired]
-    #[ApiRoute(verb: 'POST', url: '/api/v1.0/support/engine/{engineId}/calculate', requirements: ['apiVersion' => '(v2)'])]
-    public function calculateResults(int $engineId): DataResponse
+    #[FrontpageRoute(verb: 'POST', url: '/support/engine/{engineId}/calculate')]
+    public function calculateResults(int $engineId): JSONResponse
     {
         return $this->response(
             fn () => [
@@ -110,11 +114,12 @@ class SupportResultApiController extends BaseApiV2Controller
      * @param int $engineId ID of the support engine
      * @param string $targetType The target type ('inquiry' or 'option')
      * @param int $targetId The target ID
+     *
+     * @psalm-return JSONResponse<array{result: SupportResult}>
      */
-    #[CORS]
     #[NoAdminRequired]
-    #[ApiRoute(verb: 'POST', url: '/api/v1.0/support/engine/{engineId}/calculate/{targetType}/{targetId}', requirements: ['apiVersion' => '(v2)'])]
-    public function calculateTargetResults(int $engineId, string $targetType, int $targetId): DataResponse
+    #[FrontpageRoute(verb: 'POST', url: '/support/engine/{engineId}/calculate/{targetType}/{targetId}')]
+    public function calculateTargetResults(int $engineId, string $targetType, int $targetId): JSONResponse
     {
         return $this->response(
             fn () => [
@@ -127,12 +132,13 @@ class SupportResultApiController extends BaseApiV2Controller
      * Get live results (real-time aggregated)
      *
      * @param int $engineId ID of the support engine
+     *
+     * @psalm-return JSONResponse<array{results: array<SupportResult>}>
      */
-    #[CORS]
     #[NoAdminRequired]
     #[NoCSRFRequired]
-    #[ApiRoute(verb: 'GET', url: '/api/v1.0/support/engine/{engineId}/results/live', requirements: ['apiVersion' => '(v2)'])]
-    public function getLiveResults(int $engineId): DataResponse
+    #[FrontpageRoute(verb: 'GET', url: '/support/engine/{engineId}/results/live')]
+    public function getLiveResults(int $engineId): JSONResponse
     {
         return $this->response(
             fn () => [
@@ -145,12 +151,13 @@ class SupportResultApiController extends BaseApiV2Controller
      * Export results in different formats
      *
      * @param int $engineId ID of the support engine
+     *
+     * @psalm-return JSONResponse<array{results: mixed}>
      */
-    #[CORS]
     #[NoAdminRequired]
     #[NoCSRFRequired]
-    #[ApiRoute(verb: 'GET', url: '/api/v1.0/support/engine/{engineId}/results/export', requirements: ['apiVersion' => '(v2)'])]
-    public function exportResults(int $engineId): DataResponse
+    #[FrontpageRoute(verb: 'GET', url: '/support/engine/{engineId}/results/export')]
+    public function exportResults(int $engineId): JSONResponse
     {
         $format = $this->request->getParam('format', 'json');
         return $this->response(
@@ -164,12 +171,13 @@ class SupportResultApiController extends BaseApiV2Controller
      * Get results history/changelog
      *
      * @param int $resultId ID of the result
+     *
+     * @psalm-return JSONResponse<array{history: array<SupportResult>}>
      */
-    #[CORS]
     #[NoAdminRequired]
     #[NoCSRFRequired]
-    #[ApiRoute(verb: 'GET', url: '/api/v1.0/support/result/{resultId}/history', requirements: ['apiVersion' => '(v2)'])]
-    public function getResultHistory(int $resultId): DataResponse
+    #[FrontpageRoute(verb: 'GET', url: '/support/result/{resultId}/history')]
+    public function getResultHistory(int $resultId): JSONResponse
     {
         return $this->response(
             fn () => [
