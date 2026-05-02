@@ -730,7 +730,7 @@ OC.L10N.register(
     "Select the user to transfer the ownership to" : "Benutzer auswählen, an den die Besitzrechte übertragen werden sollen",
     "Import Document" : "Dokument importieren",
     "Image files are not supported. Please upload document files (DOC, DOCX, PDF, ODT, HTML, TXT, MD)" : "Bilddateien werden nicht unterstützt. Bitte laden Sie Dokumentdateien hoch (DOC, DOCX, PDF, ODT, HTML, TXT, MD).",
-    "Unsupported file type. Please upload: {formats}" : "Nicht unterstützter Dateityp. Bitte laden Sie folgendes hoch: {formats}",
+    "Unsupported file type. Please upload: {formats}" : "Nicht unterstützter Dateityp. Bitte folgendes hochladen: {formats}",
     "Document imported successfully" : "Dokument wurde importiert",
     "Failed to import document: {error}" : "Dokumentenimport fehlgeschlagen: {error}",
     "Import documents, law proposals, or structured content from files" : "Dokumente importieren, Gesetzesentwürfe oder strukturierte Inhalte aus Dateien",

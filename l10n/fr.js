@@ -5,7 +5,7 @@ OC.L10N.register(
     "Recent inquiries" : "Enquêtes récentes",
     "Agora" : "Agora",
     "Team" : "Équipe",
-    "Contact group" : "Groupe de contact",
+    "Contact group" : "Contacter le groupe",
     "Group" : "Groupe",
     "Inquiry \"%s\" - Confirmation" : "Requête \" 1%s \" - Confirmation",
     "This email is sent to you to inform you about the result of a inquiry you participated in. At least your name or your email address was recorded in this inquiry. If you want to be removed from this inquiry, contact the site administrator or the inquiry initiator, where the mail is sent from." : "Cet e-mail vous est envoyé pour vous informer des résultats d'une enquête à laquelle vous avez participé. Au moins votre nom ou votre adresse e-mail a été enregistré dans cette enquête. Si vous voulez être retiré de cette enquête, contactez l'administrateur du site ou le créateur de l'enquête, de qui l'e-mail est envoyé.",
