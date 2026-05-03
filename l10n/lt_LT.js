@@ -272,6 +272,7 @@ OC.L10N.register(
     "Expiration" : "Veikimo pabaiga",
     "Changes saved" : "Pakeitimai įrašyti",
     "Saving …" : "Įrašoma…",
+    "optional" : "nebūtina",
     "Poll" : "Apklausa",
     "File" : "Failas",
     "Deck" : "Darbai",
