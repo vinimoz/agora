@@ -120,6 +120,7 @@ OC.L10N.register(
     "Summary" : "Sammanfattning",
     "Generate" : "Generera",
     "Pending" : "Väntande",
+    "Accepted" : "Accepterad",
     "Rejected" : "Avvisad",
     "Save" : "Spara",
     "Failed to upload {file}" : "Kunde inte ladda upp {file}",
