@@ -52,9 +52,6 @@ class OptionMapper extends QBMapper
             $this->addSupportValueSubquery($qb, self::TABLE, $currentUserId);
             $this->addParticipantsCountSubquery($qb, self::TABLE);
             $this->addSupportsCountSubquery($qb, self::TABLE);
-            $this->addNegativeSupportsCountSubquery($qb, self::TABLE);
-            $this->addPositiveSupportsCountSubquery($qb, self::TABLE);
-            $this->addNeutralSupportsCountSubquery($qb, self::TABLE);
             $this->addCommentsCountSubquery($qb, self::TABLE);
             $this->addMiscsSubquery($qb, self::TABLE);
         }
@@ -300,10 +297,6 @@ class OptionMapper extends QBMapper
         $this->addHasSupportedSubquery($qb, self::TABLE, $currentUserId);
         $this->addSupportValueSubquery($qb, self::TABLE, $currentUserId);
         $this->addParticipantsCountSubquery($qb, self::TABLE);
-        $this->addSupportsCountSubquery($qb, self::TABLE);
-        $this->addNegativeSupportsCountSubquery($qb, self::TABLE);
-        $this->addPositiveSupportsCountSubquery($qb, self::TABLE);
-        $this->addNeutralSupportsCountSubquery($qb, self::TABLE);
         $this->addCommentsCountSubquery($qb, self::TABLE);
         $this->addMiscsSubquery($qb, self::TABLE);
 
@@ -371,76 +364,6 @@ class OptionMapper extends QBMapper
         );
     }
 
-    /**
-     * Add correlated subquery for negative supports count - always returns 0 or positive integer
-     */
-    protected function addNegativeSupportsCountSubquery(
-        IQueryBuilder &$qb,
-        string $tableAlias,
-        string $alias = 'count_negative_supports'
-    ): void {
-        $qb->addSelect(
-            $qb->createFunction(
-                'COALESCE(' .
-                '(SELECT COUNT(s.user_id) FROM ' . $this->getFullTableName(Support::TABLE) . ' s ' .
-                'WHERE s.option_id = ' . $tableAlias . '.id ' .
-                'AND s.value = -1), 0) AS ' . $alias
-            )
-        );
-    }
-
-    /**
-     * Add correlated subquery for neutral supports count - always returns 0 or positive integer
-     */
-    protected function addNeutralSupportsCountSubquery(
-        IQueryBuilder &$qb,
-        string $tableAlias,
-        string $alias = 'count_neutral_supports'
-    ): void {
-        $qb->addSelect(
-            $qb->createFunction(
-                'COALESCE(' .
-                '(SELECT COUNT(s.user_id) FROM ' . $this->getFullTableName(Support::TABLE) . ' s ' .
-                'WHERE s.option_id = ' . $tableAlias . '.id ' .
-                'AND s.value = 0), 0) AS ' . $alias
-            )
-        );
-    }
-
-    /**
-     * Add correlated subquery for positive supports count - always returns 0 or positive integer
-     */
-    protected function addPositiveSupportsCountSubquery(
-        IQueryBuilder &$qb,
-        string $tableAlias,
-        string $alias = 'count_positive_supports'
-    ): void {
-        $qb->addSelect(
-            $qb->createFunction(
-                'COALESCE(' .
-                '(SELECT COUNT(s.user_id) FROM ' . $this->getFullTableName(Support::TABLE) . ' s ' .
-                'WHERE s.option_id = ' . $tableAlias . '.id ' .
-                'AND s.value = 1), 0) AS ' . $alias
-            )
-        );
-    }
-
-    /**
-     * Add correlated subquery for total supports count - always returns 0 or positive integer
-     */
-    protected function addSupportsCountSubquery(
-        IQueryBuilder &$qb,
-        string $tableAlias,
-        string $alias = 'count_supports'
-    ): void {
-        $qb->addSelect(
-            $qb->createFunction(
-                'COALESCE(' .
-                '(SELECT COUNT(DISTINCT s.user_id) FROM ' . $this->getFullTableName(Support::TABLE) . ' s ' .
-                'WHERE s.option_id = ' . $tableAlias . '.id), 0) AS ' . $alias
-            )
-        );
-    }
 
     /**
      * Add correlated subquery for comments count - always returns 0 or positive integer

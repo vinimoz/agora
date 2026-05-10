@@ -48,7 +48,10 @@ export interface SupportEngine {
   id: number
   engine: string           // The voting engine type (binary, score, ranking, etc.)
   type: string             // The support feature type
-  group_id: number
+  title: string             // The support feature type
+  description: string             // The support feature type
+  inquiry_group_id: number
+  inquiry_id: number
   status: 'draft' | 'active' | 'closed'
   config: Record<string, unknown>  // Engine-specific configuration
   created: number
@@ -69,31 +72,16 @@ export interface SupportEngine {
 
 
 // ============================================================================
-// SUPPORT PROCESS & RESULTS
+// SUPPORT  RESULTS
 // ============================================================================
 
 export interface SupportResult {
   id: number
-  support_process_id: number
-  target_type: SupportEngineTarget
-  target_id: number        // inquiry_id OR option_id depending on target_type
-  option_id?: number       // For option-specific results (if target_type is 'option')
-  result: SupportResultData
-  updated: number
-}
-
-
-export interface SupportProcess {
-  id: number
   support_engine_id: number
   target_type: SupportEngineTarget
-  target_id: number
-  phase: Phase
-  status: 'pending' | 'active' | 'completed' | 'cancelled'
-  started_at: number
-  ended_at?: number
-  results?: SupportResult[]
-  metadata?: Record<string, unknown>
+  target_id: number        // inquiry_id OR option_id depending on target_type
+  result: SupportResultData
+  updated: number
 }
 
 

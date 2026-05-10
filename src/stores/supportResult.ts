@@ -27,7 +27,7 @@ export const useSupportResultStore = defineStore('supportResult', () => {
     const resultHistory = ref<Map<number, SupportResult[]>>(new Map())
 
     const getResultsByEngine = computed(() => (engineId: number) => 
-        results.value.filter(r => r.support_process_id === engineId)
+        results.value.filter(r => r.support_engine_id === engineId)
     )
 
     const getResultsByTarget = computed(() => (targetType: 'inquiry' | 'option', targetId: number) =>
@@ -36,9 +36,9 @@ export const useSupportResultStore = defineStore('supportResult', () => {
         )
     )
 
-    const getResultByTargetAndOption = computed(() => (targetId: number, optionId: number) =>
+    const getResultByTarget = computed(() => (targetId: number) =>
         results.value.find(r => 
-            r.target_id === targetId && r.option_id === optionId
+            r.target_id === targetId
         )
     )
 
@@ -116,7 +116,7 @@ export const useSupportResultStore = defineStore('supportResult', () => {
             results.value.push(...newResults)
             
             newResults.forEach(result => {
-                const key = `${result.target_type}-${result.target_id}-${result.option_id || 'inquiry'}`
+                const key = `${result.target_type}-${result.target_id} || 'inquiry'}`
                 currentResults.value.set(key, result.result)
             })
             
@@ -144,7 +144,7 @@ export const useSupportResultStore = defineStore('supportResult', () => {
             results.value.push(...newResults)
             
             newResults.forEach(result => {
-                const key = `${result.target_type}-${result.target_id}-${result.option_id || 'inquiry'}`
+                const key = `${result.target_type}-${result.target_id} || 'inquiry'}`
                 currentResults.value.set(key, result.result)
             })
             
@@ -164,12 +164,12 @@ export const useSupportResultStore = defineStore('supportResult', () => {
         try {
             const response = await SupportResultAPI.calculateResults(engineId)
             
-            results.value = results.value.filter(r => r.support_process_id !== engineId)
+            results.value = results.value.filter(r => r.support_engine_id !== engineId)
             results.value.push(...response.data.results)
             
             currentResults.value.clear()
             response.data.results.forEach(result => {
-                const key = `${result.target_type}-${result.target_id}-${result.option_id || 'inquiry'}`
+                const key = `${result.target_type}-${result.target_id} || 'inquiry'}`
                 currentResults.value.set(key, result.result)
             })
             
@@ -195,23 +195,21 @@ export const useSupportResultStore = defineStore('supportResult', () => {
 
     function getResultDisplay(
         targetType: 'inquiry' | 'option',
-        targetId: number,
-        optionId?: number
+        targetId: number
     ): SupportResult | undefined {
         return results.value.find(r =>
-            r.target_type === targetType &&
-            r.target_id === targetId &&
-            (optionId ? r.option_id === optionId : !r.option_id)
-        )
+                                  r.target_type === targetType &&
+                                      r.target_id === targetId
+                                 )
     }
 
     function needsRecalculation(engineId: number, maxAge: number = 60000): boolean {
         if (!lastCalculated.value) return true
-        const engineResults = results.value.filter(r => r.support_process_id === engineId)
+            const engineResults = results.value.filter(r => r.support_engine_id === engineId)
         if (engineResults.length === 0) return true
-        
-        const oldestUpdate = Math.min(...engineResults.map(r => r.updated))
-        return Date.now() - oldestUpdate > maxAge
+
+            const oldestUpdate = Math.min(...engineResults.map(r => r.updated))
+            return Date.now() - oldestUpdate > maxAge
     }
 
     function reset(): void {

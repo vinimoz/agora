@@ -13,7 +13,6 @@ use OCA\Agora\Db\SupportResult;
 use OCA\Agora\Db\SupportResultMapper;
 use OCA\Agora\Db\SupportMapper;
 use OCA\Agora\Db\SupportEngineMapper;
-use OCA\Agora\Db\SupportProcessMapper;
 use OCP\AppFramework\Db\DoesNotExistException;
 use Psr\Log\LoggerInterface;
 
@@ -23,19 +22,18 @@ class SupportResultService
         private SupportResultMapper $resultMapper,
         private SupportMapper $supportMapper,
         private SupportEngineMapper $engineMapper,
-        private SupportProcessMapper $processMapper,
         private LoggerInterface $logger,
     ) {
     }
 
     public function getResultsByEngine(int $engineId): array
     {
-        $processes = $this->processMapper->findByEngineId($engineId);
+        $engines = $this->processMapper->findByEngineId($engineId);
         $results = [];
         
-        foreach ($processes as $process) {
-            $processResults = $this->resultMapper->findByProcessId($process->getId());
-            $results = array_merge($results, $processResults);
+        foreach ($engines as $process) {
+            $engineResults = $this->resultMapper->findByEngineId($process->getId());
+            $results = array_merge($results, $engineResults);
         }
         
         return $results;
@@ -46,11 +44,11 @@ class SupportResultService
         $results = $this->resultMapper->findByTarget($targetType, $targetId);
         
         if ($engineId !== null) {
-            $processes = $this->processMapper->findByEngineId($engineId);
-            $processIds = array_map(fn($p) => $p->getId(), $processes);
+            $engines = $this->processMapper->findByEngineId($engineId);
+            $engineIds = array_map(fn($p) => $p->getId(), $processes);
             
-            $results = array_filter($results, function($result) use ($processIds) {
-                return in_array($result->getSupportProcessId(), $processIds);
+            $results = array_filter($results, function($result) use ($engineIds) {
+                return in_array($result->getSupportEngineId(), $engineIds);
             });
         }
         
@@ -67,6 +65,7 @@ class SupportResultService
         }
     }
 
+
     public function calculateResults(int $engineId): array
     {
         $engine = $this->engineMapper->find($engineId);
@@ -75,20 +74,19 @@ class SupportResultService
         }
 
         $supports = $this->supportMapper->findBySupportEngineId($engineId);
-        $grouped = $this->groupSupportsByOption($supports);
+        $grouped = $this->groupSupportsByTarget($supports);
         $results = $this->calculateByEngineType($engine->getEngine(), $grouped);
 
-        $processes = $this->processMapper->findByEngineId($engineId);
+        $engines = $this->processMapper->findByEngineId($engineId);
         $storedResults = [];
         
-        foreach ($processes as $process) {
-            foreach ($results as $optionId => $resultData) {
+        foreach ($engines as $process) {
+            foreach ($results as $targetId => $resultData) {
                 $stored = $this->resultMapper->upsertResult(
-                    $process->getId(),
+                    $engine->getId(),
                     $engine->getTargetType(),
-                    $engine->getTargetIds()[0] ?? 0,
-                    $resultData,
-                    $optionId > 0 ? $optionId : null
+                    $targetId,
+                    $resultData
                 );
                 $storedResults[] = $stored;
             }
@@ -97,6 +95,58 @@ class SupportResultService
         return $storedResults;
     }
 
+
+/**
+     * Calculate results for a specific target
+     */
+    public function calculateTargetResults(int $engineId, string $targetType, int $targetId): ?SupportResult
+    {
+        $engine = $this->engineMapper->find($engineId);
+        if ($engine === null) {
+            throw new \InvalidArgumentException('Engine not found');
+        }
+
+        $supports = $this->supportMapper->findBySupportEngineId($engineId);
+        $grouped = $this->groupSupportsByTarget($supports);
+        $results = $this->calculateByEngineType($engine->getEngine(), $grouped);
+
+        $engines = $this->processMapper->findByEngineId($engineId);
+        $engine = $processes[0] ?? null;
+        
+        if ($engine && isset($results[$targetId])) {
+            return $this->resultMapper->upsertResult(
+                $engine->getId(),
+                $targetType,
+                $targetId,
+                $results[$targetId]
+            );
+        }
+
+        return null;
+    }
+
+    /**
+     * Group supports by target_id (not option_id)
+     */
+    private function groupSupportsByTarget(array $supports): array
+    {
+        $grouped = [];
+        foreach ($supports as $support) {
+            // Group by what we're voting ON
+            // If the support has an option_id > 0, that's the target
+            // Otherwise, the inquiry_id is the target
+            $targetId = $support->getOptionId() > 0 
+                ? $support->getOptionId() 
+                : $support->getInquiryId();
+            
+            if (!isset($grouped[$targetId])) {
+                $grouped[$targetId] = [];
+            }
+            $grouped[$targetId][] = $support;
+        }
+        return $grouped;
+    }
+    
     public function exportResults(int $engineId, string $format = 'json'): mixed
     {
         $results = $this->getResultsByEngine($engineId);
@@ -105,19 +155,6 @@ class SupportResultService
             'csv' => $this->exportToCsv($results),
             default => $results,
         };
-    }
-
-    private function groupSupportsByOption(array $supports): array
-    {
-        $grouped = [];
-        foreach ($supports as $support) {
-            $optionId = $support->getOptionId();
-            if (!isset($grouped[$optionId])) {
-                $grouped[$optionId] = [];
-            }
-            $grouped[$optionId][] = $support;
-        }
-        return $grouped;
     }
 
     private function calculateByEngineType(string $engineType, array $grouped): array

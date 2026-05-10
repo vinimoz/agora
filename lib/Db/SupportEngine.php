@@ -17,10 +17,16 @@ use JsonSerializable;
  * @method         void setId(int $value)
  * @method         string getEngine()
  * @method         void setEngine(string $value)
+ * @method         string getTitle()
+ * @method         void setTitle(string $value)
+ * @method         void setDescription(string $value)
+ * @method         string getDescription()
  * @method         string getType()
  * @method         void setType(string $value)
- * @method         int getGroupId()
- * @method         void setGroupId(int $value)
+ * @method         int getInquiryId()
+ * @method         void setInquiryId(int $value)
+ * @method         int getInquiryGroupId()
+ * @method         void setInquiryGroupId(int $value)
  * @method         string getStatus()
  * @method         void setStatus(string $value)
  * @method         array getConfig()
@@ -47,21 +53,30 @@ class SupportEngine extends Entity implements JsonSerializable
     public const TARGET_INQUIRY = 'inquiry';
     public const TARGET_OPTION = 'option';
 
+    // Phase constants (stored in config)
+    public const PHASE_DELIBERATIVE = 'deliberative';
+    public const PHASE_VOTING = 'voting';
+    public const PHASE_CLOSED = 'closed';
+
     // Schema columns
+    protected string $title = '';
+    protected ?string $description = null;
     protected string $engine = '';
     protected string $type = '';
-    protected int $groupId = 0;
+    protected int $inquiryId = 0;
+    protected ?int $inquiryGroupId = null; // Nullable: links to inquiry OR inquiry group
     protected string $status = self::STATUS_DRAFT;
     protected array $config = [];
     protected int $created = 0;
-    protected string $targetType = self::TARGET_INQUIRY;
+    protected string $targetType = self::TARGET_OPTION; // Default to options for now
     protected array $targetIds = [];
     protected array $metadata = [];
 
     public function __construct()
     {
         $this->addType('id', 'integer');
-        $this->addType('groupId', 'integer');
+        $this->addType('inquiryId', 'integer');
+        $this->addType('inquiryGroupId', 'integer');
         $this->addType('created', 'integer');
         $this->addType('config', 'json');
         $this->addType('targetIds', 'json');
@@ -95,6 +110,48 @@ class SupportEngine extends Entity implements JsonSerializable
         }
     }
 
+    // Helper methods for config-driven fields
+
+    public function getPhase(): string
+    {
+        return $this->config['phase'] ?? self::PHASE_DELIBERATIVE;
+    }
+
+    public function setPhase(string $phase): void
+    {
+        $this->config['phase'] = $phase;
+    }
+
+    public function getStartedAt(): ?int
+    {
+        return $this->config['started_at'] ?? null;
+    }
+
+    public function setStartedAt(?int $timestamp): void
+    {
+        $this->config['started_at'] = $timestamp;
+    }
+
+    public function getEndedAt(): ?int
+    {
+        return $this->config['ended_at'] ?? null;
+    }
+
+    public function setEndedAt(?int $timestamp): void
+    {
+        $this->config['ended_at'] = $timestamp;
+    }
+
+    public function isActive(): bool
+    {
+        return $this->status === self::STATUS_ACTIVE;
+    }
+
+    public function isLinkedToGroup(): bool
+    {
+        return $this->inquiryGroupId !== null && $this->inquiryGroupId > 0;
+    }
+
     public function isValid(): bool
     {
         return in_array($this->status, [self::STATUS_DRAFT, self::STATUS_ACTIVE, self::STATUS_CLOSED])
@@ -106,8 +163,11 @@ class SupportEngine extends Entity implements JsonSerializable
         return [
             'id' => $this->getId(),
             'engine' => $this->engine,
+            'title' => $this->getTitle(),
+            'description' => $this->getDescription(),
             'type' => $this->type,
-            'group_id' => $this->groupId,
+            'inquiry_id' => $this->inquiryId,
+            'inquiry_group_id' => $this->inquiryGroupId,
             'status' => $this->status,
             'config' => $this->config,
             'created' => $this->created,

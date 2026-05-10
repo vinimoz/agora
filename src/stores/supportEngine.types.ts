@@ -4,9 +4,12 @@
  */
 
 export interface CreateEngineRequest {
-  engine: string           // Voting engine type
-  type: string             // Support feature type
-  group_id: number
+  engine: string  
+  type: string       
+  title: string         
+  description: string          
+  inquiry_group_id: number
+  inquiry_id: number
   status: 'draft' | 'active' | 'closed'
   config: Record<string, unknown>
   target_type: 'inquiry' | 'option'

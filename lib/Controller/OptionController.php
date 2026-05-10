@@ -12,6 +12,7 @@ namespace OCA\Agora\Controller;
 use OCA\Agora\Service\CalendarService;
 use OCA\Agora\Service\OptionService;
 use OCA\Agora\Service\SupportService;
+use OCA\Agora\Service\SupportResultService;
 use OCA\Agora\Service\OptionMiscService;
 use OCA\Agora\Service\CommentService;
 use OCP\AppFramework\Http;
@@ -32,6 +33,7 @@ class OptionController extends BaseController
         private OptionService $optionService,
         private CalendarService $calendarService,
         private SupportService $supportService,
+        private SupportResultService $supportResult,
         private CommentService $commentService,
         private OptionMiscService $optionMiscService,
         private LoggerInterface $logger,
@@ -138,15 +140,14 @@ class OptionController extends BaseController
 
     private function getFullOption(int $optionId, bool $withTimings = false): array
     {
-        $this->logger->error(' OPTIONNNNNNNNNNNNNNNNN ', ['data' => $optionId]);
         $timerMicro['start'] = microtime(true);
 
         $option = $this->optionService->get($optionId);
         $option->setMiscFields($this->optionMiscService->findByOptionId($optionId));
-        $this->logger->error(' OPTIONNNNNNNNNNNNNNNNN FULL LOAD ', ['data' => $option]);
 
         $diffMicro['total'] = microtime(true) - $timerMicro['start'];
         $timerMicro['option'] = microtime(true);
+        $subscribed = $this->subscriptionService->get($inquiryId);
 
         // $subscribed = $this->subscriptionService->get($inquiryId);
        // $timerMicro['subscribed'] = microtime(true);

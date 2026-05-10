@@ -16,6 +16,8 @@ import { PublicAPI, InquiriesAPI } from '../Api/index.ts'
 import { Chunking, createDefault, Event, StatusResults, User, UserType } from '../Types/index.ts'
 
 import { useInquiriesStore } from './inquiries.ts'
+import type { SupportResult } from '../Types/index.ts'
+import { SupportEngine } from '../Types/index.ts'
 import { useSessionStore } from './session.ts'
 import { useSubscriptionStore } from './subscription.ts'
 import { useSharesStore } from './shares.ts'
@@ -42,6 +44,7 @@ export type InquiryConfiguration = {
   forceConfidentialComments: boolean
   supportFeature: string
   allowComment: number
+  supportEngine: SupportEngine[]
 }
 
 export type InquiryStatus = {
@@ -53,12 +56,9 @@ export type InquiryStatus = {
   relevantThreshold: number
   deletionDate: number
   archivedDate: number
+  supportResult: SupportResult | null,
   countParticipants: number
   countComments: number
-  countSupports: number
-  countiNegativeSupports: number
-  countPositiveSupports: number
-  countNeutralSupports: number
   moderationStatus: ModerationWorkflowStatus
   inquiryStatus: inquiryWorkflowStatus
 }
@@ -145,6 +145,7 @@ export const useInquiryStore = defineStore('inquiry', {
       suggestionsExpire: 0,
       supportFeature: 'none',
       allowComment: null,
+      supportEngine: [],
     },
     owner: createDefault<User>(),
     ownedGroup: '',
@@ -158,15 +159,12 @@ export const useInquiryStore = defineStore('inquiry', {
       isArchived: false,
       isExpired: false,
       isRealAnonymous: false,
+      supportResult: null,
       relevantThreshold: 0,
       deletionDate: 0,
       archivedDate: 0,
       countParticipants: 0,
       countComments: 0,
-      countSupports: 0,
-      countNegativeSupports: 0,
-      countNeutralSupports: 0,
-      countPostiveSupports: 0,
       moderationStatus: 'draft',
       inquiryStatus: 'draft',
     },

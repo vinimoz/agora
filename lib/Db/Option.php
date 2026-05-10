@@ -66,10 +66,6 @@ use OCP\IURLGenerator;
  * @method    int getCurrentUserSupports()
  * @method    int getCountParticipants()
  * @method    int getCountComments()
- * @method    int getCountSupports()
- * @method    int getCountPositiveSupports()
- * @method    int getCountNegativeSupports()
- * @method    int getCountNeutralSupports()
  */
 class Option extends EntityWithUser implements JsonSerializable
 {
@@ -157,10 +153,6 @@ class Option extends EntityWithUser implements JsonSerializable
     protected int $currentUserSupports = 0;
     protected int $countParticipants = 0;
     protected int $countComments = 0;
-    protected int $countSupports = 0;
-    protected int $countPositiveSupports = 0;
-    protected int $countNegativeSupports = 0;
-    protected int $countNeutralSupports = 0;
     protected string $groupShares = '';
     protected string $optionGroups = '';
     protected string $optionGroupUserShares = '';
@@ -193,10 +185,6 @@ class Option extends EntityWithUser implements JsonSerializable
         $this->addType('currentUserSupports', 'integer');
         $this->addType('countParticipants', 'integer');
         $this->addType('countComments', 'integer');
-        $this->addType('countSupports', 'integer');
-        $this->addType('countPositiveSupports', 'integer');
-        $this->addType('countNegativeSupports', 'integer');
-        $this->addType('countNeutralSupports', 'integer');
         $this->addType('miscSettingsConcat', 'string');
 
         $this->urlGenerator = Container::queryClass(IURLGenerator::class);
@@ -304,10 +292,6 @@ class Option extends EntityWithUser implements JsonSerializable
             'isDeleted' => (bool)$this->getDeleted(),
             'countParticipants' => $this->getIsAllowed(self::PERMISSION_OPTION_RESULTS_VIEW) ? $this->getCountParticipants() : 0,
             'countComments' => $this->getIsAllowed(self::PERMISSION_OPTION_RESULTS_VIEW) ? $this->getCountComments() : 0,
-            'countSupports' => $this->getIsAllowed(self::PERMISSION_OPTION_RESULTS_VIEW) ? $this->getCountSupports() : 0,
-            'countPositiveSupports' => $this->getIsAllowed(self::PERMISSION_OPTION_RESULTS_VIEW) ? $this->getCountPositiveSupports() : 0,
-            'countNegativeSupports' => $this->getIsAllowed(self::PERMISSION_OPTION_RESULTS_VIEW) ? $this->getCountNegativeSupports() : 0,
-            'countNeutralSupports' => $this->getIsAllowed(self::PERMISSION_OPTION_RESULTS_VIEW) ? $this->getCountNeutralSupports() : 0,
         ];
     }
 

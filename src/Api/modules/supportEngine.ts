@@ -7,37 +7,22 @@ import { AxiosResponse } from '@nextcloud/axios'
 import { httpInstance, createCancelTokenHandler } from './HttpApi.js'
 import type { SupportEngine, SupportResult } from '../Types/index.ts'
 
-export const supportEngine = {
-    // Get all engines for a group
-    getEngines(groupId: number): Promise<AxiosResponse<{ engines: SupportEngine[] }>> {
+export const supportEngineApi = {
+    // Get all engines for an inquiry
+    getEnginesByInquiry(inquiryId: number): Promise<AxiosResponse<{ engines: SupportEngine[] }>> {
         return httpInstance.request({
             method: 'GET',
-            url: `support/engine/group/${groupId}`,
-            cancelToken: cancelTokenHandlerObject[this.getEngines.name].handleRequestCancellation().token,
+            url: `support/engine/inquiry/${inquiryId}`,
+            cancelToken: cancelTokenHandlerObject[this.getEnginesByInquiry.name].handleRequestCancellation().token,
         })
     },
 
-    // Get engines by target
-    getEnginesByTarget(
-        targetType: 'inquiry' | 'option', 
-        targetId: number
-    ): Promise<AxiosResponse<{ engines: SupportEngine[] }>> {
+    // Get all engines for an inquiry group
+    getEnginesByInquiryGroup(inquiryGroupId: number): Promise<AxiosResponse<{ engines: SupportEngine[] }>> {
         return httpInstance.request({
             method: 'GET',
-            url: `support/engine/target/${targetType}/${targetId}`,
-            cancelToken: cancelTokenHandlerObject[this.getEnginesByTarget.name].handleRequestCancellation().token,
-        })
-    },
-
-    // Get active engines by target
-    getActiveEnginesByTarget(
-        targetType: 'inquiry' | 'option',
-        targetId: number
-    ): Promise<AxiosResponse<{ engines: SupportEngine[] }>> {
-        return httpInstance.request({
-            method: 'GET',
-            url: `support/engine/active/${targetType}/${targetId}`,
-            cancelToken: cancelTokenHandlerObject[this.getActiveEnginesByTarget.name].handleRequestCancellation().token,
+            url: `support/engine/inquiry-group/${inquiryGroupId}`,
+            cancelToken: cancelTokenHandlerObject[this.getEnginesByInquiryGroup.name].handleRequestCancellation().token,
         })
     },
 
@@ -51,48 +36,22 @@ export const supportEngine = {
     },
 
     // Create new engine
-    createEngine(engine: Omit<SupportEngine, 'id' | 'created'>): Promise<AxiosResponse<SupportEngine>> {
+    createEngine(data: Record<string, unknown>): Promise<AxiosResponse<SupportEngine>> {
         return httpInstance.request({
             method: 'POST',
             url: 'support/engine',
-            data: engine,
+            data,
             cancelToken: cancelTokenHandlerObject[this.createEngine.name].handleRequestCancellation().token,
         })
     },
 
-    // Update engine config
-    updateEngine(id: number, config: Record<string, unknown>): Promise<AxiosResponse<SupportEngine>> {
+    // Update engine
+    updateEngine(id: number, data: Record<string, unknown>): Promise<AxiosResponse<SupportEngine>> {
         return httpInstance.request({
             method: 'PUT',
             url: `support/engine/${id}`,
-            data: { config },
+            data,
             cancelToken: cancelTokenHandlerObject[this.updateEngine.name].handleRequestCancellation().token,
-        })
-    },
-
-    // Update engine status
-    updateEngineStatus(
-        id: number, 
-        status: 'draft' | 'active' | 'closed'
-    ): Promise<AxiosResponse<SupportEngine>> {
-        return httpInstance.request({
-            method: 'PUT',
-            url: `support/engine/${id}/status`,
-            data: { status },
-            cancelToken: cancelTokenHandlerObject[this.updateEngineStatus.name].handleRequestCancellation().token,
-        })
-    },
-
-    // Update engine targets
-    updateEngineTargets(
-        id: number, 
-        targetIds: number[]
-    ): Promise<AxiosResponse<SupportEngine>> {
-        return httpInstance.request({
-            method: 'PUT',
-            url: `support/engine/${id}/targets`,
-            data: { target_ids: targetIds },
-            cancelToken: cancelTokenHandlerObject[this.updateEngineTargets.name].handleRequestCancellation().token,
         })
     },
 
@@ -122,8 +81,19 @@ export const supportEngine = {
             cancelToken: cancelTokenHandlerObject[this.calculateResults.name].handleRequestCancellation().token,
         })
     },
+
+    // Export results
+    exportResults(engineId: number, format: 'json' | 'csv' = 'json'): Promise<AxiosResponse<Blob>> {
+        return httpInstance.request({
+            method: 'GET',
+            url: `support/engine/${engineId}/results/export`,
+            params: { format },
+            responseType: 'blob',
+            cancelToken: cancelTokenHandlerObject[this.exportResults.name].handleRequestCancellation().token,
+        })
+    },
 }
 
-const cancelTokenHandlerObject = createCancelTokenHandler(SupportEngineAPI)
+const cancelTokenHandlerObject = createCancelTokenHandler(supportEngineApi)
 
-export default supportEngine
+export default supportEngineApi

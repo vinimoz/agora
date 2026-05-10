@@ -70,20 +70,6 @@ class SupportMapper extends QBMapperWithUser
     /**
      * @return Support[]
      */
-    public function findByOptionId(int $inquiryId, int $optionId): array
-    {
-        $qb = $this->db->getQueryBuilder();
-        $qb->select('*')
-            ->from($this->getTableName())
-            ->where($qb->expr()->eq('inquiry_id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT)))
-            ->andWhere($qb->expr()->eq('option_id', $qb->createNamedParameter($optionId, IQueryBuilder::PARAM_INT)));
-
-        return $this->findEntities($qb);
-    }
-
-    /**
-     * @return Support[]
-     */
     public function findBySupportEngineId(int $engineId): array
     {
         $qb = $this->db->getQueryBuilder();

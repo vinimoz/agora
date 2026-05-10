@@ -18,7 +18,6 @@ class SupportEngineService
 {
     public function __construct(
         private SupportEngineMapper $engineMapper,
-        private SupportProcessService $processService,
         private LoggerInterface $logger,
     ) {
     }
@@ -26,9 +25,17 @@ class SupportEngineService
     /**
      * @return SupportEngine[]
      */
-    public function getEnginesByGroup(int $groupId): array
+    public function getEnginesByInquiry(int $inquiryId): array
     {
-        return $this->engineMapper->findByGroupId($groupId);
+        return $this->engineMapper->findByInquiryId($inquiryId);
+    }
+
+    /**
+     * @return SupportEngine[]
+     */
+    public function getEnginesByInquiryGroup(int $inquiryGroupId): array
+    {
+        return $this->engineMapper->findByInquiryGroupId($inquiryGroupId);
     }
 
     /**
@@ -61,30 +68,30 @@ class SupportEngineService
     {
         $engine = new SupportEngine();
         $engine->setEngine($data['engine'] ?? '');
+        $engine->setTitle($data['title'] ?? '');
+        $engine->setDescription($data['description'] ?? '');
         $engine->setType($data['type'] ?? '');
-        $engine->setGroupId($data['group_id'] ?? 0);
+        $engine->setInquiryId($data['inquiry_id'] ?? 0);
+        $engine->setInquiryGroupId($data['inquiry_group_id'] ?? null);
         $engine->setStatus($data['status'] ?? SupportEngine::STATUS_DRAFT);
-        $engine->setConfig($data['config'] ?? []);
         $engine->setCreated(time());
-        $engine->setTargetType($data['target_type'] ?? SupportEngine::TARGET_INQUIRY);
+        $engine->setTargetType($data['target_type'] ?? SupportEngine::TARGET_OPTION);
         $engine->setTargetIds($data['target_ids'] ?? []);
         $engine->setMetadata($data['metadata'] ?? []);
-
-        $created = $this->engineMapper->insert($engine);
         
-        // Create initial process if engine is active
-        if ($created->getStatus() === SupportEngine::STATUS_ACTIVE) {
-            foreach ($created->getTargetIds() as $targetId) {
-                $this->processService->createProcess(
-                    $created->getId(),
-                    $created->getTargetType(),
-                    $targetId,
-                    $data['phase'] ?? 'deliberative'
-                );
-            }
+        // Set config with phase and timing
+        $config = $data['config'] ?? [];
+        $config['phase'] = $data['phase'] ?? SupportEngine::PHASE_DELIBERATIVE;
+        
+        // If activating immediately, set started_at
+        if (($data['status'] ?? '') === SupportEngine::STATUS_ACTIVE) {
+            $config['started_at'] = time();
+            $config['ended_at'] = null;
         }
+        
+        $engine->setConfig($config);
 
-        return $created;
+        return $this->engineMapper->insert($engine);
     }
 
     public function updateEngine(int $id, array $data): ?SupportEngine
@@ -94,35 +101,46 @@ class SupportEngineService
             return null;
         }
 
+        // Update config with phase handling
         if (isset($data['config'])) {
-            $engine->setConfig($data['config']);
+            $config = array_merge($engine->getConfig(), $data['config']);
+            $engine->setConfig($config);
         }
+        
+        // Handle status transitions
         if (isset($data['status'])) {
             $oldStatus = $engine->getStatus();
-            $engine->setStatus($data['status']);
+            $config = $engine->getConfig();
             
+            // Activating engine
             if ($oldStatus !== SupportEngine::STATUS_ACTIVE && $data['status'] === SupportEngine::STATUS_ACTIVE) {
-                foreach ($engine->getTargetIds() as $targetId) {
-                    $existingProcess = $this->processService->getActiveProcess($id);
-                    if ($existingProcess === null) {
-                        $this->processService->createProcess(
-                            $id,
-                            $engine->getTargetType(),
-                            $targetId,
-                            $data['phase'] ?? 'deliberative'
-                        );
-                    }
-                }
+                $config['started_at'] = $config['started_at'] ?? time();
+                $config['ended_at'] = null;
+                $config['phase'] = $config['phase'] ?? SupportEngine::PHASE_VOTING;
             }
             
+            // Closing engine
             if ($data['status'] === SupportEngine::STATUS_CLOSED) {
-                $processes = $this->processService->getProcessesByEngine($id);
-                foreach ($processes as $process) {
-                    if ($process->getStatus() === 'active') {
-                        $this->processService->updateStatus($process->getId(), 'completed');
-                    }
-                }
+                $config['ended_at'] = time();
+                $config['phase'] = SupportEngine::PHASE_CLOSED;
             }
+            
+            $engine->setConfig($config);
+            $engine->setStatus($data['status']);
+        }
+        
+        // Update phase independently
+        if (isset($data['phase'])) {
+            $config = $engine->getConfig();
+            $config['phase'] = $data['phase'];
+            $engine->setConfig($config);
+        }
+        
+        if (isset($data['title'])) {
+            $engine->setTitle($data['title']);
+        }
+        if (isset($data['description'])) {
+            $engine->setDescription($data['description']);
         }
         if (isset($data['target_type'])) {
             $engine->setTargetType($data['target_type']);
@@ -132,6 +150,12 @@ class SupportEngineService
         }
         if (isset($data['metadata'])) {
             $engine->setMetadata($data['metadata']);
+        }
+        if (isset($data['inquiry_id'])) {
+            $engine->setInquiryId($data['inquiry_id']);
+        }
+        if (isset($data['inquiry_group_id'])) {
+            $engine->setInquiryGroupId($data['inquiry_group_id']);
         }
 
         return $this->engineMapper->update($engine);
@@ -145,7 +169,6 @@ class SupportEngineService
         }
 
         try {
-            $this->processService->deleteProcessesByEngine($id);
             $this->engineMapper->delete($engine);
             return true;
         } catch (\Exception $e) {

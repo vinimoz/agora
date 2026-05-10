@@ -18,6 +18,8 @@ use OCA\Agora\Service\OptionService;
 use OCA\Agora\Service\InquiryGroupService;
 use OCA\Agora\Service\AttachmentService;
 use OCA\Agora\Service\InquiryService;
+use OCA\Agora\Service\SupportResultService;
+use OCA\Agora\Service\SupportEngineService;
 use OCA\Agora\Service\InquiryMiscService;
 use OCA\Agora\Service\InquiryLinkService;
 use OCA\Agora\Service\ShareService;
@@ -47,6 +49,8 @@ class InquiryController extends BaseController
         private SubscriptionService $subscriptionService,
         private ShareService $shareService,
         private AttachmentService $attachmentService,
+        private SupportResultService $supportResult,
+        private SupportEngineService $supportEngine,
         private AppSettings $appSettings,
         private LoggerInterface $logger,
     ) {
@@ -168,6 +172,12 @@ class InquiryController extends BaseController
 
         $inquiryLink = $this->inquiryLinkService->findByInquiryId($inquiryId);
         $timerMicro['inquiryLink'] = microtime(true);
+        
+        $supportResult = $this->supportResult->getResultsByTarget('inquiry', $inquiryId, null);
+        $timerMicro['supportResult'] = microtime(true);
+
+        $supportEngine = $this->supportEngine->getEnginesByTarget('option', $inquiryId);
+        $timerMicro['supportEngine'] = microtime(true);
 
         $diffMicro['inquiry'] = $timerMicro['inquiry'] - $timerMicro['start'];
         $diffMicro['options'] = $timerMicro['options'] - $timerMicro['inquiry'];
@@ -176,7 +186,8 @@ class InquiryController extends BaseController
         $diffMicro['subscribed'] = $timerMicro['subscribed'] - $timerMicro['shares'];
         $diffMicro['attachments'] = $timerMicro['attachments'] - $timerMicro['subscribed'];
         $diffMicro['inquiryLink'] = $timerMicro['inquiryLink'] - $timerMicro['attachments'];
-
+        $diffMicro['supportResult'] = $timerMicro['supportResult'] - $timerMicro['inquiryLink'];
+        $diffMicro['supportEngine'] = $timerMicro['supportEngine'] - $timerMicro['supportResult'];
 
         if ($withTimings) {
             return [
@@ -187,6 +198,8 @@ class InquiryController extends BaseController
                 'subscribed' => $subscribed,
                 'attachments' => $attachments,
                 'inquiryLink' => $inquiryLink,
+                'supportResult' => $supportResult,
+                'supportEngine' => $supportEngine,
                 'diffMicro' => $diffMicro,
             ];
         }
@@ -197,6 +210,9 @@ class InquiryController extends BaseController
             'shares' => $shares,
             'subscribed' => $subscribed,
             'attachments' => $attachments,
+            'inquiryLink' => $inquiryLink,
+            'supportResult' => $supportResult,
+            'supportEngine' => $supportEngine,
         ];
     }
 
@@ -347,7 +363,6 @@ class InquiryController extends BaseController
         $rawData = $this->request->getParams('data');
 
 
-        $this->logger->error('RAWWWWWWWWWWWWWWDATaAAAAAAAAAAAAAAAAAAA', ['data' => $rawData]);
         return $this->response(
             fn () => [
                 'inquiry' => $this->inquiryService->updateConfig($inquiryId, $rawData['inquiryConfiguration']),

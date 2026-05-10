@@ -30,36 +30,158 @@ class InquiryMapper extends QBMapper
         parent::__construct($db, Inquiry::TABLE, Inquiry::class);
     }
 
+    
     public function get(int $id, bool $getDeleted = false, bool $withRoles = false): Inquiry
-    {
-        $qb = $this->db->getQueryBuilder();
-        $qb->select(self::TABLE . '.*')
-            ->from($this->getTableName(), self::TABLE)
-            ->where($qb->expr()->eq(self::TABLE . '.id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT)));
+{
+    $qb = $this->db->getQueryBuilder();
 
-        if (!$getDeleted) {
-            $qb->andWhere($qb->expr()->eq(self::TABLE . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)));
-        }
+    // Explicitly list all columns
+    $qb->select([
+        self::TABLE . '.id',
+        self::TABLE . '.cover_id',
+        self::TABLE . '.type',
+        self::TABLE . '.title',
+        self::TABLE . '.description',
+        self::TABLE . '.location_id',
+        self::TABLE . '.category_id',
+        self::TABLE . '.owner',
+        self::TABLE . '.created',
+        self::TABLE . '.archived',
+        self::TABLE . '.expire',
+        self::TABLE . '.deleted',
+        self::TABLE . '.owned_group',
+        self::TABLE . '.access',
+        self::TABLE . '.show_results',
+        self::TABLE . '.last_interaction',
+        self::TABLE . '.parent_id',
+        self::TABLE . '.moderation_status',
+        self::TABLE . '.inquiry_status',
+        self::TABLE . '.allow_comment',
+        self::TABLE . '.support_feature',
+        self::TABLE . '.family'
+    ])
+    ->from($this->getTableName(), self::TABLE)
+    ->where($qb->expr()->eq(self::TABLE . '.id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT)));
 
-        if ($withRoles) {
-            $inquiryGroupsAlias = 'inquiry_groups';
-            $currentUserId = $this->userSession->getCurrentUserId();
-        
-            $this->joinUserRole($qb, self::TABLE, $currentUserId);
-            $this->joinGroupShares($qb, self::TABLE);
-            $this->joinHasSupported($qb, self::TABLE, $currentUserId);
-            $this->joinInquiryGroups($qb, self::TABLE, $inquiryGroupsAlias);
-            $this->joinInquiryGroupShares($qb, $inquiryGroupsAlias, $currentUserId, $inquiryGroupsAlias);
-            $this->joinSupportValue($qb, self::TABLE, $currentUserId);
-            $this->joinParticipantsCount($qb, self::TABLE);
-            $this->joinSupportsCount($qb, self::TABLE);
-            $this->joinNegativeSupportsCount($qb, self::TABLE);
-            $this->joinPositiveSupportsCount($qb, self::TABLE);
-            $this->joinNeutralSupportsCount($qb, self::TABLE);
-            $this->joinCommentsCount($qb, self::TABLE);
-            $this->joinMiscs($qb, self::TABLE);
-        }
-        return $this->findEntity($qb);
+    if (!$getDeleted) {
+        $qb->andWhere($qb->expr()->eq(self::TABLE . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)));
+    }
+
+    if ($withRoles) {
+        $inquiryGroupsAlias = 'inquiry_groups';
+        $currentUserId = $this->userSession->getCurrentUserId();
+
+        $this->joinUserRole($qb, self::TABLE, $currentUserId);
+        $this->joinGroupShares($qb, self::TABLE);
+        $this->joinHasSupported($qb, self::TABLE, $currentUserId);
+        $this->joinInquiryGroups($qb, self::TABLE, $inquiryGroupsAlias);
+        $this->joinInquiryGroupShares($qb, $inquiryGroupsAlias, $currentUserId, $inquiryGroupsAlias);
+        $this->joinSupportValue($qb, self::TABLE, $currentUserId);
+        $this->joinParticipantsCount($qb, self::TABLE);
+        $this->joinCommentsCount($qb, self::TABLE);
+        $this->joinMiscs($qb, self::TABLE);
+
+        // Add GROUP BY with all columns
+        $qb->groupBy([
+            self::TABLE . '.id',
+            self::TABLE . '.cover_id',
+            self::TABLE . '.type',
+            self::TABLE . '.title',
+            self::TABLE . '.description',
+            self::TABLE . '.location_id',
+            self::TABLE . '.category_id',
+            self::TABLE . '.owner',
+            self::TABLE . '.created',
+            self::TABLE . '.archived',
+            self::TABLE . '.expire',
+            self::TABLE . '.deleted',
+            self::TABLE . '.owned_group',
+            self::TABLE . '.access',
+            self::TABLE . '.show_results',
+            self::TABLE . '.last_interaction',
+            self::TABLE . '.parent_id',
+            self::TABLE . '.moderation_status',
+            self::TABLE . '.inquiry_status',
+            self::TABLE . '.allow_comment',
+            self::TABLE . '.support_feature',
+            self::TABLE . '.family'
+        ]);
+    }
+
+    return $this->findEntity($qb);
+    }
+
+    protected function buildQuery(): IQueryBuilder
+{
+    $qb = $this->db->getQueryBuilder();
+
+    // Explicitly list all columns from the inquiry table
+    $qb->select([
+        self::TABLE . '.id',
+        self::TABLE . '.cover_id',
+        self::TABLE . '.type',
+        self::TABLE . '.title',
+        self::TABLE . '.description',
+        self::TABLE . '.location_id',
+        self::TABLE . '.category_id',
+        self::TABLE . '.owner',
+        self::TABLE . '.created',
+        self::TABLE . '.archived',
+        self::TABLE . '.expire',
+        self::TABLE . '.deleted',
+        self::TABLE . '.owned_group',
+        self::TABLE . '.access',
+        self::TABLE . '.show_results',
+        self::TABLE . '.last_interaction',
+        self::TABLE . '.parent_id',
+        self::TABLE . '.moderation_status',
+        self::TABLE . '.inquiry_status',
+        self::TABLE . '.allow_comment',
+        self::TABLE . '.support_feature',
+        self::TABLE . '.family'
+    ])
+    ->from($this->getTableName(), self::TABLE);
+
+    $currentUserId = $this->userSession->getCurrentUserId();
+    $inquiryGroupsAlias = 'inquiry_groups';
+
+    $this->joinUserRole($qb, self::TABLE, $currentUserId);
+    $this->joinGroupShares($qb, self::TABLE);
+    $this->joinHasSupported($qb, self::TABLE, $currentUserId);
+    $this->joinSupportValue($qb, self::TABLE, $currentUserId);
+    $this->joinInquiryGroups($qb, self::TABLE, $inquiryGroupsAlias);
+    $this->joinInquiryGroupShares($qb, $inquiryGroupsAlias, $currentUserId, $inquiryGroupsAlias);
+    $this->joinParticipantsCount($qb, self::TABLE);
+    $this->joinCommentsCount($qb, self::TABLE);
+    $this->joinMiscs($qb, self::TABLE);
+
+    // Add GROUP BY with all inquiry table columns for PostgreSQL compatibility
+    $qb->groupBy([
+        self::TABLE . '.id',
+        self::TABLE . '.cover_id',
+        self::TABLE . '.type',
+        self::TABLE . '.title',
+        self::TABLE . '.description',
+        self::TABLE . '.location_id',
+        self::TABLE . '.category_id',
+        self::TABLE . '.owner',
+        self::TABLE . '.created',
+        self::TABLE . '.archived',
+        self::TABLE . '.expire',
+        self::TABLE . '.deleted',
+        self::TABLE . '.owned_group',
+        self::TABLE . '.access',
+        self::TABLE . '.show_results',
+        self::TABLE . '.last_interaction',
+        self::TABLE . '.parent_id',
+        self::TABLE . '.moderation_status',
+        self::TABLE . '.inquiry_status',
+        self::TABLE . '.allow_comment',
+        self::TABLE . '.support_feature',
+        self::TABLE . '.family'
+    ]);
+
+    return $qb;
     }
 
     public function getChildInquiryIds(int $parentId): array
@@ -273,31 +395,32 @@ class InquiryMapper extends QBMapper
         $qb->executeStatement();
     }
 
+    /*
     protected function buildQuery(): IQueryBuilder
-    {
-        $qb = $this->db->getQueryBuilder();
+{
+    $qb = $this->db->getQueryBuilder();
 
-        $qb->select(self::TABLE . '.*')
-           ->from($this->getTableName(), self::TABLE);
+    $qb->select(self::TABLE . '.*')
+       ->from($this->getTableName(), self::TABLE);
 
-        $currentUserId = $this->userSession->getCurrentUserId();
-        $inquiryGroupsAlias = 'inquiry_groups';
-        $this->joinUserRole($qb, self::TABLE, $currentUserId);
-        $this->joinGroupShares($qb, self::TABLE);
-        $this->joinHasSupported($qb, self::TABLE, $currentUserId);
-        $this->joinSupportValue($qb, self::TABLE, $currentUserId);
-        $this->joinInquiryGroups($qb, self::TABLE, $inquiryGroupsAlias);
-        $this->joinInquiryGroupShares($qb, $inquiryGroupsAlias, $currentUserId, $inquiryGroupsAlias);
-        $this->joinParticipantsCount($qb, self::TABLE);
-        $this->joinSupportsCount($qb, self::TABLE);
-        $this->joinNegativeSupportsCount($qb, self::TABLE);
-        $this->joinPositiveSupportsCount($qb, self::TABLE);
-        $this->joinNeutralSupportsCount($qb, self::TABLE);
-        $this->joinCommentsCount($qb, self::TABLE);
-        $this->joinMiscs($qb, self::TABLE);
+    $currentUserId = $this->userSession->getCurrentUserId();
+    $inquiryGroupsAlias = 'inquiry_groups';
+    $this->joinUserRole($qb, self::TABLE, $currentUserId);
+    $this->joinGroupShares($qb, self::TABLE);
+    $this->joinHasSupported($qb, self::TABLE, $currentUserId);
+    $this->joinSupportValue($qb, self::TABLE, $currentUserId);
+    $this->joinInquiryGroups($qb, self::TABLE, $inquiryGroupsAlias);
+    $this->joinInquiryGroupShares($qb, $inquiryGroupsAlias, $currentUserId, $inquiryGroupsAlias);
+    $this->joinParticipantsCount($qb, self::TABLE);
+    $this->joinCommentsCount($qb, self::TABLE);
+    $this->joinMiscs($qb, self::TABLE);
+    
+    // Add GROUP BY for PostgreSQL compatibility - all SELECTed columns must be in GROUP BY
+    $qb->groupBy(self::TABLE . '.id');
 
-        return $qb;
+    return $qb;
     }
+     */
 
     protected function joinSupportValue(
         IQueryBuilder &$qb,
@@ -323,11 +446,15 @@ class InquiryMapper extends QBMapper
         $dbProvider = $this->db->getDatabaseProvider();
 
         if ($dbProvider === IDBConnection::PLATFORM_POSTGRES) {
-            // For PostgreSQL, use MAX() to make it an aggregate function
-            $qb->addSelect($qb->createFunction('MAX(' . $joinAlias . '.value) AS support_value'));
+            // For PostgreSQL, extract first element of JSON array and use MAX() to make it an aggregate function
+            $qb->addSelect($qb->createFunction(
+                'MAX((' . $joinAlias . '.value->>0)::int) AS support_value'
+            ));
         } else {
-            // For MySQL, keep as is
-            $qb->addSelect($qb->createFunction($joinAlias . '.value AS support_value'));
+            // For MySQL, extract first element of JSON array
+            $qb->addSelect($qb->createFunction(
+                'JSON_EXTRACT(' . $joinAlias . '.value, \'$[0]\') AS support_value'
+            ));
         }
     }
 
@@ -719,75 +846,6 @@ class InquiryMapper extends QBMapper
         );
     }
 
-    protected function joinNegativeSupportsCount(
-        IQueryBuilder $qb,
-        string $fromAlias,
-        string $joinAlias = 'supports_negative',
-    ): void {
-        $qb->leftJoin(
-            $fromAlias,
-            Support::TABLE,
-            $joinAlias,
-            $qb->expr()->andX(
-                $qb->expr()->eq($joinAlias . '.inquiry_id', $fromAlias . '.id'),
-                $qb->expr()->eq($joinAlias . '.value', $qb->createNamedParameter(-1)),
-                $qb->expr()->eq($joinAlias . '.option_id', $qb->createNamedParameter(0))
-            )
-        );
-
-        $qb->addSelect(
-            $qb->createFunction(
-                'COUNT(DISTINCT ' . $joinAlias . '.user_id) AS count_negative_supports'
-            )
-        );
-    }
-
-
-    protected function joinPositiveSupportsCount(
-        IQueryBuilder $qb,
-        string $fromAlias,
-        string $joinAlias = 'supports_positive',
-    ): void {
-        $qb->leftJoin(
-            $fromAlias,
-            Support::TABLE,
-            $joinAlias,
-            $qb->expr()->andX(
-                $qb->expr()->eq($joinAlias . '.inquiry_id', $fromAlias . '.id'),
-                $qb->expr()->eq($joinAlias . '.value', $qb->createNamedParameter(1)),
-                $qb->expr()->eq($joinAlias . '.option_id', $qb->createNamedParameter(0))
-            )
-        );
-
-        $qb->addSelect(
-            $qb->createFunction(
-                'COUNT(DISTINCT ' . $joinAlias . '.user_id) AS count_positive_supports'
-            )
-        );
-    }
-
-    protected function joinNeutralSupportsCount(
-        IQueryBuilder $qb,
-        string $fromAlias,
-        string $joinAlias = 'supports_neutral',
-    ): void {
-        $qb->leftJoin(
-            $fromAlias,
-            Support::TABLE,
-            $joinAlias,
-            $qb->expr()->andX(
-                $qb->expr()->eq($joinAlias . '.inquiry_id', $fromAlias . '.id'),
-                $qb->expr()->eq($joinAlias . '.value', $qb->createNamedParameter(0)),
-                $qb->expr()->eq($joinAlias . '.option_id', $qb->createNamedParameter(0))
-            )
-        );
-
-        $qb->addSelect(
-            $qb->createFunction(
-                'COUNT(DISTINCT ' . $joinAlias . '.user_id) AS count_neutral_supports'
-            )
-        );
-    }
 
     protected function joinParticipantsCount(
         IQueryBuilder &$qb,

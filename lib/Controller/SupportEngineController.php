@@ -34,18 +34,52 @@ class SupportEngineController extends BaseController
     }
 
     /**
-     * Get all engines for a group
+     * Get all engines for an inquiry
      *
      * @psalm-return JSONResponse<array{engines: array<SupportEngine>}>
      */
     #[NoAdminRequired]
     #[NoCSRFRequired]
-    #[FrontpageRoute(verb: 'GET', url: '/support/engine/group/{groupId}')]
-    public function getEngines(int $groupId): JSONResponse
+    #[FrontpageRoute(verb: 'GET', url: '/support/engine/inquiry/{inquiryId}')]
+    public function getEnginesByInquiry(int $inquiryId): JSONResponse
     {
         return $this->response(
             fn () => [
-                'engines' => $this->engineService->getEnginesByGroup($groupId)
+                'engines' => $this->engineService->getEnginesByInquiry($inquiryId)
+            ]
+        );
+    }
+
+    /**
+     * Get all engines for an inquiry group
+     *
+     * @psalm-return JSONResponse<array{engines: array<SupportEngine>}>
+     */
+    #[NoAdminRequired]
+    #[NoCSRFRequired]
+    #[FrontpageRoute(verb: 'GET', url: '/support/engine/inquiry-group/{inquiryGroupId}')]
+    public function getEnginesByInquiryGroup(int $inquiryGroupId): JSONResponse
+    {
+        return $this->response(
+            fn () => [
+                'engines' => $this->engineService->getEnginesByInquiryGroup($inquiryGroupId)
+            ]
+        );
+    }
+
+    /**
+     * Get a single engine
+     *
+     * @psalm-return JSONResponse<array{engine: SupportEngine}>
+     */
+    #[NoAdminRequired]
+    #[NoCSRFRequired]
+    #[FrontpageRoute(verb: 'GET', url: '/support/engine/{id}')]
+    public function getEngine(int $id): JSONResponse
+    {
+        return $this->response(
+            fn () => [
+                'engine' => $this->engineService->getEngine($id)
             ]
         );
     }
@@ -61,7 +95,8 @@ class SupportEngineController extends BaseController
     {
         $data = $this->request->getParsedBody();
         return $this->response(
-            fn () => $this->engineService->createEngine($data)
+            fn () => $this->engineService->createEngine($data),
+            Http::STATUS_CREATED
         );
     }
 
@@ -114,23 +149,6 @@ class SupportEngineController extends BaseController
     }
 
     /**
-     * Get live results
-     *
-     * @psalm-return JSONResponse<array{results: array}>
-     */
-    #[NoAdminRequired]
-    #[NoCSRFRequired]
-    #[FrontpageRoute(verb: 'GET', url: '/support/engine/{engineId}/results/live')]
-    public function getLiveResults(int $engineId): JSONResponse
-    {
-        return $this->response(
-            fn () => [
-                'results' => $this->resultService->getResultsByEngine($engineId)
-            ]
-        );
-    }
-
-    /**
      * Calculate results for an engine
      *
      * @psalm-return JSONResponse<array{results: array}>
@@ -142,22 +160,6 @@ class SupportEngineController extends BaseController
         return $this->response(
             fn () => [
                 'results' => $this->resultService->calculateResults($engineId)
-            ]
-        );
-    }
-
-    /**
-     * Calculate results for a specific target
-     *
-     * @psalm-return JSONResponse<array{result: mixed}>
-     */
-    #[NoAdminRequired]
-    #[FrontpageRoute(verb: 'POST', url: '/support/engine/{engineId}/calculate/{targetType}/{targetId}')]
-    public function calculateTargetResults(int $engineId, string $targetType, int $targetId): JSONResponse
-    {
-        return $this->response(
-            fn () => [
-                'result' => $this->resultService->calculateTargetResults($engineId, $targetType, $targetId)
             ]
         );
     }

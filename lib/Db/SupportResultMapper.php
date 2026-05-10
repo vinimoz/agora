@@ -57,24 +57,6 @@ class SupportResultMapper extends QBMapper
     }
 
     /**
-     * Get result for specific option within a process
-     */
-    public function findOptionResult(int $processId, int $optionId): ?SupportResult
-    {
-        $qb = $this->db->getQueryBuilder();
-        $qb->select('*')
-            ->from($this->getTableName())
-            ->where($qb->expr()->eq('support_process_id', $qb->createNamedParameter($processId, IQueryBuilder::PARAM_INT)))
-            ->andWhere($qb->expr()->eq('option_id', $qb->createNamedParameter($optionId, IQueryBuilder::PARAM_INT)));
-
-        try {
-            return $this->findEntity($qb);
-        } catch (\OCP\AppFramework\Db\DoesNotExistException $e) {
-            return null;
-        }
-    }
-
-    /**
      * Get latest result for a target
      */
     public function findLatestByTarget(string $targetType, int $targetId): ?SupportResult
@@ -102,13 +84,9 @@ class SupportResultMapper extends QBMapper
         string $targetType,
         int $targetId,
         array $result,
-        ?int $optionId = null
     ): SupportResult {
         // Try to find existing
         $existing = null;
-        if ($optionId !== null) {
-            $existing = $this->findOptionResult($processId, $optionId);
-        } else {
             $qb = $this->db->getQueryBuilder();
             $qb->select('*')
                 ->from($this->getTableName())
@@ -121,7 +99,6 @@ class SupportResultMapper extends QBMapper
             } catch (\OCP\AppFramework\Db\DoesNotExistException $e) {
                 // Will create new below
             }
-        }
 
         if ($existing !== null) {
             $existing->setResult($result);
@@ -136,10 +113,6 @@ class SupportResultMapper extends QBMapper
         $supportResult->setTargetId($targetId);
         $supportResult->setResult($result);
         $supportResult->setUpdated(time());
-
-        if ($optionId !== null) {
-            $supportResult->setOptionId($optionId);
-        }
 
         return $this->insert($supportResult);
     }

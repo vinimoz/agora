@@ -14,14 +14,12 @@ use JsonSerializable;
 /**
  * @method         int getId()
  * @method         void setId(int $value)
- * @method         int getSupportProcessId()
- * @method         void setSupportProcessId(int $value)
+ * @method         int getSupportEngineId()
+ * @method         void setSupportEngineId(int $value)
  * @method         string getTargetType()
  * @method         void setTargetType(string $value)
  * @method         int getTargetId()
  * @method         void setTargetId(int $value)
- * @method         int getOptionId()
- * @method         void setOptionId(int $value)
  * @method         array getResult()
  * @method         void setResult(array $value)
  * @method         int getUpdated()
@@ -31,19 +29,18 @@ class SupportResult extends Entity implements JsonSerializable
 {
     public const TABLE = 'agora_support_results';
 
-    protected int $supportProcessId = 0;
+    protected int $supportEngineId = 0;
     protected string $targetType = '';
     protected int $targetId = 0;
-    protected ?int $optionId = null;
     protected array $result = [];
     protected int $updated = 0;
 
     public function __construct()
     {
         $this->addType('id', 'integer');
-        $this->addType('supportProcessId', 'integer');
+        $this->addType('supportEngineId', 'integer');
         $this->addType('targetId', 'integer');
-        $this->addType('optionId', 'integer');
+        $this->addType('targetType', 'string');
         $this->addType('updated', 'integer');
         $this->addType('result', 'json');
     }
@@ -66,11 +63,20 @@ class SupportResult extends Entity implements JsonSerializable
     {
         return [
             'id' => $this->getId(),
-            'support_process_id' => $this->supportProcessId,
+            'support_engine_id' => $this->supportEngineId,
             'target_type' => $this->targetType,
             'target_id' => $this->targetId,
-            'option_id' => $this->optionId,
             'result' => $this->result,
+            'updated' => $this->updated,
+        ];
+    }
+
+    public function getResultSummary(): array
+    {
+        return [
+            'target_type' => $this->targetType,
+            'target_id' => $this->targetId,
+            'result_type' => $this->result['type'] ?? 'unknown',
             'updated' => $this->updated,
         ];
     }
