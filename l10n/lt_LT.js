@@ -205,6 +205,7 @@ OC.L10N.register(
     "Title is required" : "Pavadinimas būtinas",
     "Files uploaded successfully" : "Failai sėkmingai įkelti",
     "Failed to create {resource}" : "Nepavyko sukurti {resource}",
+    "OR" : "ARBA",
     "Remove file" : "Šalinti failą",
     "Delete permanently" : "Ištrinti visam laikui",
     "OK" : "OK",
