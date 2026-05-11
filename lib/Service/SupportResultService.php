@@ -39,11 +39,11 @@ class SupportResultService
         return $results;
     }
 
-    public function getResultsByTarget(string $targetType, int $targetId, ?int $engineId = null): array
+    public function getResultsByTarget(string $targetType, int $targetId, ?int $engineId = 0): array
     {
         $results = $this->resultMapper->findByTarget($targetType, $targetId);
         
-        if ($engineId !== null) {
+        if ($engineId !== 0) {
             $engines = $this->processMapper->findByEngineId($engineId);
             $engineIds = array_map(fn($p) => $p->getId(), $processes);
             

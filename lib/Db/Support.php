@@ -30,10 +30,12 @@ use JsonSerializable;
  * @method         void setUserId(string $value)
  * @method         int getCreated()
  * @method         void setCreated(int $value)
+ * @method         int getUpdated()
+ * @method         void setUpdated(int $value)
  * @method         int getWeight()
  * @method         void setWeight(int $value)
- * @method         int getSupportEngineId()
- * @method         void setSupportEngineId(int $value)
+ * @method         int|null getSupportEngineId()
+ * @method         void setSupportEngineId(?int $value)
  */
 class Support extends Entity implements JsonSerializable
 {
@@ -47,7 +49,8 @@ class Support extends Entity implements JsonSerializable
     protected string $supportHash = '';
     protected string $userId = '';
     protected int $created = 0;
-    protected int $supportEngineId = 0;
+    protected ?int $supportEngineId = null;
+    protected int $updated = 0; 
 
     // Computed attributes
     protected ?UserBase $user = null;
@@ -61,6 +64,7 @@ class Support extends Entity implements JsonSerializable
         $this->addType('weight', 'integer');
         $this->addType('userId', 'string');
         $this->addType('created', 'integer');
+        $this->addType('updated', 'integer');
         $this->addType('supportEngineId', 'integer');
     }
 
@@ -94,6 +98,29 @@ class Support extends Entity implements JsonSerializable
         } else {
             $this->value = $value;
         }
+    }
+
+    /**
+     * Get the value as a decoded PHP array/object
+     */
+    public function getValueDecoded(): mixed
+    {
+        $value = $this->getValue();
+        if (is_string($value)) {
+            return json_decode($value, true);
+        }
+        return $value;
+    }
+
+    /**
+     * Set the value, automatically encoding if needed
+     */
+    public function setValueEncoded(mixed $value): void
+    {
+        if (is_array($value) || is_object($value)) {
+            $value = json_encode($value, JSON_UNESCAPED_UNICODE);
+        }
+        $this->setValue($value);
     }
 
     /**
@@ -135,6 +162,7 @@ class Support extends Entity implements JsonSerializable
             'value' => $this->getValue(),
             'weight' => $this->getWeight(),
             'created' => $this->getCreated(),
+            'updated' => $this->getUpdated(),
             'supportEngineId' => $this->getSupportEngineId(),
         ];
     }

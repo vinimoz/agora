@@ -18,8 +18,6 @@ use OCA\Agora\Service\OptionService;
 use OCA\Agora\Service\InquiryGroupService;
 use OCA\Agora\Service\AttachmentService;
 use OCA\Agora\Service\InquiryService;
-use OCA\Agora\Service\SupportResultService;
-use OCA\Agora\Service\SupportEngineService;
 use OCA\Agora\Service\InquiryMiscService;
 use OCA\Agora\Service\InquiryLinkService;
 use OCA\Agora\Service\ShareService;
@@ -49,8 +47,6 @@ class InquiryController extends BaseController
         private SubscriptionService $subscriptionService,
         private ShareService $shareService,
         private AttachmentService $attachmentService,
-        private SupportResultService $supportResult,
-        private SupportEngineService $supportEngine,
         private AppSettings $appSettings,
         private LoggerInterface $logger,
     ) {
@@ -68,26 +64,31 @@ class InquiryController extends BaseController
      *     inquiryGroups: array<int, InquiryGroup>
      * }>
      */
+    /**
+     * Get list of inquiries
+     */
     #[NoAdminRequired]
     #[FrontpageRoute(verb: 'GET', url: '/inquiries')]
     public function listInquiries(): JSONResponse
     {
         return $this->response(
             function () {
-                $appSettings = $this->appSettings;
                 return [
-                'inquiries' => $this->inquiryService->listInquiries(),
-                'permissions' => [
-                'inquiryCreationAllowed' => $appSettings->getInquiryCreationAllowed(),
-                ],
-                'inquiryGroups' => $this->inquiryGroupService->listInquiryGroups(),
+                    'inquiries' => $this->inquiryService->listInquiries(),
+                    'permissions' => [
+                        'inquiryCreationAllowed' => $this->appSettings->getInquiryCreationAllowed(),
+                    ],
+                    'inquiryGroups' => $this->inquiryGroupService->listInquiryGroups(),
                 ];
             }
         );
     }
+
+
+
     /**
      * get childs from an inquiry
-  *
+     *
      * @param int $inquiryId Inquiry id
      *
      *                       psalm-return JSONResponse<array{inquiry: Inquiry}>
@@ -107,7 +108,7 @@ class InquiryController extends BaseController
 
     /**
      * get inquiry
-  *
+     *
      * @param int $inquiryId Inquiry id
      *
      *                       psalm-return JSONResponse<array{inquiry: Inquiry}>
@@ -138,8 +139,8 @@ class InquiryController extends BaseController
      *                       }>
      */
 
-     #[NoAdminRequired]
-     #[FrontpageRoute(verb: 'GET', url: '/inquiry/{inquiryId}')]
+    #[NoAdminRequired]
+    #[FrontpageRoute(verb: 'GET', url: '/inquiry/{inquiryId}')]
     public function getFull(int $inquiryId): JSONResponse
     {
         return $this->response(fn () => $this->getFullInquiry($inquiryId, true), Http::STATUS_OK);
@@ -172,12 +173,6 @@ class InquiryController extends BaseController
 
         $inquiryLink = $this->inquiryLinkService->findByInquiryId($inquiryId);
         $timerMicro['inquiryLink'] = microtime(true);
-        
-        $supportResult = $this->supportResult->getResultsByTarget('inquiry', $inquiryId, null);
-        $timerMicro['supportResult'] = microtime(true);
-
-        $supportEngine = $this->supportEngine->getEnginesByTarget('option', $inquiryId);
-        $timerMicro['supportEngine'] = microtime(true);
 
         $diffMicro['inquiry'] = $timerMicro['inquiry'] - $timerMicro['start'];
         $diffMicro['options'] = $timerMicro['options'] - $timerMicro['inquiry'];
@@ -186,8 +181,6 @@ class InquiryController extends BaseController
         $diffMicro['subscribed'] = $timerMicro['subscribed'] - $timerMicro['shares'];
         $diffMicro['attachments'] = $timerMicro['attachments'] - $timerMicro['subscribed'];
         $diffMicro['inquiryLink'] = $timerMicro['inquiryLink'] - $timerMicro['attachments'];
-        $diffMicro['supportResult'] = $timerMicro['supportResult'] - $timerMicro['inquiryLink'];
-        $diffMicro['supportEngine'] = $timerMicro['supportEngine'] - $timerMicro['supportResult'];
 
         if ($withTimings) {
             return [
@@ -198,8 +191,6 @@ class InquiryController extends BaseController
                 'subscribed' => $subscribed,
                 'attachments' => $attachments,
                 'inquiryLink' => $inquiryLink,
-                'supportResult' => $supportResult,
-                'supportEngine' => $supportEngine,
                 'diffMicro' => $diffMicro,
             ];
         }
@@ -211,8 +202,6 @@ class InquiryController extends BaseController
             'subscribed' => $subscribed,
             'attachments' => $attachments,
             'inquiryLink' => $inquiryLink,
-            'supportResult' => $supportResult,
-            'supportEngine' => $supportEngine,
         ];
     }
 

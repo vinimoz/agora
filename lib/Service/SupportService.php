@@ -14,7 +14,6 @@ use OCA\Agora\Db\SupportMapper;
 use OCA\Agora\Db\Inquiry;
 use OCA\Agora\Db\InquiryMapper;
 use OCA\Agora\Db\InquiryTypeMapper;
-use OCP\AppFramework\Db\DoesNotExistException;
 use Psr\Log\LoggerInterface;
 
 class SupportService
@@ -23,12 +22,13 @@ class SupportService
         private InquiryMapper $inquiryMapper,
         private SupportMapper $supportMapper,
         private InquiryTypeMapper $inquiryTypeMapper,
+        private SupportResultService $supportResultService,
         private LoggerInterface $logger,
     ) {
     }
 
     /**
-     * Add support for an inquiry
+     * Add support for an inquiry (will update if exists)
      */
     public function addSupport(
         int $inquiryId,
@@ -44,34 +44,69 @@ class SupportService
 
         // Check if support already exists
         $existing = $this->supportMapper->findSupport($inquiryId, $userId, $optionId, $engineId);
+        
+        $support = null;
+        
         if ($existing !== null) {
+            // Update existing support
+            $this->logger->info('Updating existing support', [
+                'id' => $existing->getId(),
+                'inquiryId' => $inquiryId,
+                'userId' => $userId,
+                'optionId' => $optionId,
+                'oldValue' => $existing->getValue(),
+                'newValue' => $value
+            ]);
+            
             $existing->setValue($value);
             $existing->setWeight($weight);
-            return $this->supportMapper->update($existing);
+            $existing->setUpdated(time());
+            if ($engineId !== null && $engineId !== 0) {
+                $existing->setSupportEngineId($engineId);
+            }
+            
+            $support = $this->supportMapper->update($existing);
+        } else {
+            // Create new support
+            $this->logger->info('Creating new support', [
+                'inquiryId' => $inquiryId,
+                'userId' => $userId,
+                'optionId' => $optionId,
+                'value' => $value
+            ]);
+            
+            $support = $this->supportMapper->addSupport($inquiryId, $userId, $value, $optionId, $weight, $engineId);
         }
 
-        return $this->supportMapper->addSupport($inquiryId, $userId, $value, $optionId, $weight, $engineId);
+        // Recalculate results after support change if engine is involved
+        if ($engineId !== null && $engineId !== 0) {
+            try {
+                $this->supportResultService->calculateTargetResults(
+                    $engineId,
+                    $optionId > 0 ? 'option' : 'inquiry',
+                    $optionId > 0 ? $optionId : $inquiryId
+                );
+                $this->logger->info('Results recalculated for engine ' . $engineId);
+            } catch (\Exception $e) {
+                $this->logger->error('Failed to recalculate results: ' . $e->getMessage());
+            }
+        }
+
+        return $support;
     }
 
     /**
-     * Update support value
+     * Update support value (same as addSupport with upsert logic)
      */
     public function updateSupport(
         int $inquiryId,
         string $userId,
-        int $value,
+        int $value = 1,
         int $optionId = 0,
         int $weight = 1,
         ?int $engineId = null
     ): Support {
-        $existing = $this->supportMapper->findSupport($inquiryId, $userId, $optionId, $engineId);
-        if ($existing === null) {
-            return $this->addSupport($inquiryId, $userId, $value, $optionId, $weight, $engineId);
-        }
-
-        $existing->setValue($value);
-        $existing->setWeight($weight);
-        return $this->supportMapper->update($existing);
+        return $this->addSupport($inquiryId, $userId, $value, $optionId, $weight, $engineId);
     }
 
     /**
@@ -79,7 +114,22 @@ class SupportService
      */
     public function removeSupport(int $inquiryId, string $userId, int $optionId = 0, ?int $engineId = null): bool
     {
-        return $this->supportMapper->removeSupport($inquiryId, $userId, $optionId, $engineId);
+        $result = $this->supportMapper->removeSupport($inquiryId, $userId, $optionId, $engineId);
+        
+        // Recalculate results after removal if engine is involved
+        if ($result && $engineId !== null && $engineId !== 0) {
+            try {
+                $this->supportResultService->calculateTargetResults(
+                    $engineId,
+                    $optionId > 0 ? 'option' : 'inquiry',
+                    $optionId > 0 ? $optionId : $inquiryId
+                );
+            } catch (\Exception $e) {
+                $this->logger->error('Failed to recalculate results after removal: ' . $e->getMessage());
+            }
+        }
+        
+        return $result;
     }
 
     /**
@@ -87,23 +137,25 @@ class SupportService
      */
     public function removeAllSupportForInquiry(int $inquiryId, ?int $engineId = null): int
     {
-        return $this->supportMapper->removeAllSupportForInquiry($inquiryId, $engineId);
+        $count = $this->supportMapper->removeAllSupportForInquiry($inquiryId, $engineId);
+        
+        if ($count > 0 && $engineId !== null && $engineId !== 0) {
+            try {
+                $this->supportResultService->calculateResults($engineId);
+            } catch (\Exception $e) {
+                $this->logger->error('Failed to recalculate results after bulk removal: ' . $e->getMessage());
+            }
+        }
+        
+        return $count;
     }
 
     /**
-     * Get supports for a user (matching your existing method name)
+     * Get supports for a user
      */
     public function getSupportsForUser(string $userId): array
     {
         return $this->supportMapper->findByUserId($userId);
-    }
-
-    /**
-     * Get supports by user ID (alias)
-     */
-    public function getSupportByUserId(string $userId): array
-    {
-        return $this->getSupportsForUser($userId);
     }
 
     /**
@@ -114,8 +166,8 @@ class SupportService
         try {
             if ($wRoles) {
                 $this->inquiryMapper
-                    ->get($inquiryId, withRoles: $wRoles)
-                    ->request(Inquiry::PERMISSION_SUPPORT_ADD);
+                     ->get($inquiryId, withRoles: $wRoles)
+                     ->request(Inquiry::PERMISSION_SUPPORT_ADD);
             } else {
                 $this->inquiryMapper->get($inquiryId, withRoles: $wRoles);
             }
@@ -136,22 +188,6 @@ class SupportService
     }
 
     /**
-     * Get supports by option ID
-     */
-    public function getSupportByOptionId(int $inquiryId, int $optionId): array
-    {
-        return $this->supportMapper->findByOptionId($inquiryId, $optionId);
-    }
-
-    /**
-     * Get supports by engine ID
-     */
-    public function getSupportByEngineId(int $engineId): array
-    {
-        return $this->supportMapper->findBySupportEngineId($engineId);
-    }
-
-    /**
      * Get single support
      */
     public function getSupport(int $inquiryId, string $userId, ?int $optionId = null, ?int $engineId = null): ?Support
@@ -165,11 +201,11 @@ class SupportService
     }
 
     /**
-     * Generate support hash
+     * Get supports by engine ID
      */
-    public function generateHash(Support $support): string
+    public function getSupportByEngineId(int $engineId): array
     {
-        return hash('sha256', $support->getInquiryId() . '|' . $support->getUserId() . '|' . $support->getOptionId());
+        return $this->supportMapper->findBySupportEngineId($engineId);
     }
 
     /**
@@ -186,6 +222,34 @@ class SupportService
     public function countByUser(string $userId): int
     {
         return $this->supportMapper->countByUser($userId);
+    }
+
+    /**
+     * Get statistics grouped by inquiry type
+     */
+    public function getStatsGroupedByType(): array
+    {
+        $types = $this->inquiryTypeMapper->findAll();
+        $stats = [];
+
+        foreach ($types as $type) {
+            $inquiries = $this->inquiryMapper->findByType($type->getId());
+            $count = 0;
+            foreach ($inquiries as $inquiry) {
+                $count += $this->countByInquiry($inquiry->getId());
+            }
+            $stats[$type->getInquiryType()] = $count;
+        }
+
+        return $stats;
+    }
+
+    /**
+     * Generate support hash
+     */
+    public function generateHash(Support $support): string
+    {
+        return hash('sha256', $support->getInquiryId() . '|' . $support->getUserId() . '|' . $support->getOptionId());
     }
 
     /**
@@ -209,25 +273,5 @@ class SupportService
             );
         }
         return $results;
-    }
-
-    /**
-     * Get statistics grouped by inquiry type (matching your existing method)
-     */
-    public function getStatsGroupedByType(): array
-    {
-        $types = $this->inquiryTypeMapper->findAll();
-        $stats = [];
-        
-        foreach ($types as $type) {
-            $inquiries = $this->inquiryMapper->findByType($type->getId());
-            $count = 0;
-            foreach ($inquiries as $inquiry) {
-                $count += $this->countByInquiry($inquiry->getId());
-            }
-            $stats[$type->getInquiryType()] = $count;
-        }
-        
-        return $stats;
     }
 }

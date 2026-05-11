@@ -80,7 +80,7 @@ class SupportMapper extends QBMapperWithUser
         return $this->findEntities($qb);
     }
 
-    public function findSupport(int $inquiryId, string $userId, int $optionId, ?int $engineId = null): ?Support
+    public function findSupport(int $inquiryId, string $userId, int $optionId, ?int $engineId = 0): ?Support
     {
         $qb = $this->db->getQueryBuilder();
         $qb->select('*')
@@ -106,7 +106,7 @@ class SupportMapper extends QBMapperWithUser
         mixed $value,
         int $optionId,
         int $weight = 1,
-        ?int $engineId = null
+        ?int $engineId = 0
     ): Support {
         $support = new Support();
         $support->setInquiryId($inquiryId);
@@ -115,8 +115,9 @@ class SupportMapper extends QBMapperWithUser
         $support->setOptionId($optionId);
         $support->setWeight($weight);
         $support->setCreated(time());
+        $support->setUpdated(time());
 
-        if ($engineId !== null) {
+        if ($engineId !== 0) {
             $support->setSupportEngineId($engineId);
         }
 
@@ -126,7 +127,7 @@ class SupportMapper extends QBMapperWithUser
         return $this->insert($support);
     }
 
-    public function removeSupport(int $inquiryId, string $userId, int $optionId, ?int $engineId = null): bool
+    public function removeSupport(int $inquiryId, string $userId, int $optionId, ?int $engineId = 0): bool
     {
         $qb = $this->db->getQueryBuilder();
         $qb->delete($this->getTableName())
@@ -134,34 +135,34 @@ class SupportMapper extends QBMapperWithUser
             ->andWhere($qb->expr()->eq('option_id', $qb->createNamedParameter($optionId, IQueryBuilder::PARAM_INT)))
             ->andWhere($qb->expr()->eq('user_id', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR)));
 
-        if ($engineId !== null) {
+        if ($engineId !== 0) {
             $qb->andWhere($qb->expr()->eq('support_engine_id', $qb->createNamedParameter($engineId, IQueryBuilder::PARAM_INT)));
         }
 
         return $qb->executeStatement() > 0;
     }
 
-    public function removeAllSupportForInquiry(int $inquiryId, ?int $engineId = null): int
+    public function removeAllSupportForInquiry(int $inquiryId, ?int $engineId = 0): int
     {
         $qb = $this->db->getQueryBuilder();
         $qb->delete($this->getTableName())
             ->where($qb->expr()->eq('inquiry_id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT)));
 
-        if ($engineId !== null) {
+        if ($engineId !== 0) {
             $qb->andWhere($qb->expr()->eq('support_engine_id', $qb->createNamedParameter($engineId, IQueryBuilder::PARAM_INT)));
         }
 
         return $qb->executeStatement();
     }
 
-    public function countByInquiry(int $inquiryId, ?int $engineId = null): int
+    public function countByInquiry(int $inquiryId, ?int $engineId = 0): int
     {
         $qb = $this->db->getQueryBuilder();
         $qb->select($qb->func()->count('*', 'count'))
             ->from($this->getTableName())
             ->where($qb->expr()->eq('inquiry_id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT)));
 
-        if ($engineId !== null) {
+        if ($engineId !== 0) {
             $qb->andWhere($qb->expr()->eq('support_engine_id', $qb->createNamedParameter($engineId, IQueryBuilder::PARAM_INT)));
         }
 
