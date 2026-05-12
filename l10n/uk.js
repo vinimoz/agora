@@ -747,6 +747,7 @@ OC.L10N.register(
     "Portuguese" : "Португальська",
     "Dutch" : "Голландська",
     "Unnamed" : "Без назви",
+    "Template:" : "Шаблон:",
     "Language:" : "Мова:",
     "Types" : "Категорії",
     "Selected" : "Вибрано",
