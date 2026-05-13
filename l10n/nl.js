@@ -261,6 +261,7 @@ OC.L10N.register(
     "Edit" : "Bewerken",
     "Details" : "Details",
     "options" : "opties",
+    "Submit vote" : "Stem indienen",
     "Rank" : "Positie",
     "Vote" : "Stemmen",
     "Action" : "Actie",
