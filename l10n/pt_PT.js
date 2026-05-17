@@ -86,6 +86,7 @@ OC.L10N.register(
     "Presentation" : "Apresentação",
     "Show less" : "Mostrar menos",
     "Read more" : "Ler mais",
+    "Draft" : "Rascunho",
     "Completed" : "Concluída",
     "Cancelled" : "Cancelado",
     "Start date" : "Data de início",
