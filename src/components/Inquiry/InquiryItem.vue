@@ -9,7 +9,7 @@ import { computed } from 'vue'
 import { DateTime } from 'luxon'
 import { t } from '@nextcloud/l10n'
 import NcAvatar from '@nextcloud/vue/components/NcAvatar'
-import SupportFeature from '../../helpers/modules/SupportFeature.vue'
+import { SupportFeature } from '../Base/index.ts'
 import {
   canComment,
   canSupport,

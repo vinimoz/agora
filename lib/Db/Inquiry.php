@@ -261,21 +261,35 @@ class Inquiry extends EntityWithUser implements JsonSerializable
             return $this->supportValue;
         }
 
-        // If it's a JSON string from PostgreSQL, decode it
+        // If it's a JSON string from PostgreSQL or JSON column
         if (is_string($this->supportValue)) {
             $decoded = json_decode($this->supportValue, true);
             if (json_last_error() === JSON_ERROR_NONE) {
-                // If it's an array with one element, return the element
+                // Extract the actual value from {"value": N} format
+                if (is_array($decoded) && isset($decoded['value'])) {
+                    return $decoded['value'];  // Return just the number, not the array
+                }
+                // Handle array with single element (old format)
                 if (is_array($decoded) && count($decoded) === 1) {
-                    return $decoded[0];
+                    return reset($decoded);
                 }
-                // If it's an array with multiple elements (future use)
-                if (is_array($decoded)) {
-                    return $decoded;
-                }
-                // If it's a direct value
                 return $decoded;
             }
+            // If it's a simple numeric string
+            if (is_numeric($this->supportValue)) {
+                return (int)$this->supportValue;
+            }
+        }
+
+        // If it's already an array (from MySQL JSON column)
+        if (is_array($this->supportValue)) {
+            if (isset($this->supportValue['value'])) {
+                return $this->supportValue['value'];
+            }
+            if (count($this->supportValue) === 1) {
+                return reset($this->supportValue);
+            }
+            return $this->supportValue;
         }
 
         return $this->supportValue;

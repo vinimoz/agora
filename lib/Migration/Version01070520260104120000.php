@@ -62,7 +62,7 @@ class Version01070520260104120000 extends SimpleMigrationStep
     public function postSchemaChange(IOutput $output, \Closure $schemaClosure, array $options): void
     {
         $this->output = $output;
-        
+
         if (!$this->connection) {
             $this->log('ERROR: No database connection!');
             return;
@@ -70,14 +70,17 @@ class Version01070520260104120000 extends SimpleMigrationStep
 
         $this->log('POST-SCHEMA: Running post-migration operations...');
 
-        // 1. Convert value column from SMALLINT to JSON
+        // 1. Convert value column from SMALLINT to JSON (using consistent format)
         $this->convertValueColumnToJson();
-        
-        // 3. Add unique index on results
+
+        // 2. Add unique index on results
         $this->addResultUniqueIndex();
-        
-        // 4. Migrate existing supports to results
+
+        // 3. Migrate existing supports to results
         $this->migrateExistingSupportsToResults();
+
+        // 4. Fix empty results for targets with no supports
+        $this->fixEmptyResults();
 
         // 5. Add indices
         $this->addIndices();
@@ -98,7 +101,7 @@ class Version01070520260104120000 extends SimpleMigrationStep
             $this->log("  Skip: " . self::S_ENGINES . " exists");
             return;
         }
-        
+
         $this->log("  Create: " . self::S_ENGINES);
         $table = $this->schema->createTable(self::S_ENGINES);
         $table->addColumn('id', Types::BIGINT, ['autoincrement' => true, 'notnull' => true, 'unsigned' => true, 'length' => 20]);
@@ -109,11 +112,11 @@ class Version01070520260104120000 extends SimpleMigrationStep
         $table->addColumn('inquiry_id', Types::BIGINT, ['notnull' => true, 'default' => 0, 'unsigned' => true, 'length' => 20]);
         $table->addColumn('inquiry_group_id', Types::BIGINT, ['notnull' => false, 'default' => null, 'unsigned' => true, 'length' => 20]);
         $table->addColumn('status', Types::STRING, ['notnull' => true, 'default' => 'draft', 'length' => 32]);
-        $table->addColumn('config', Types::JSON, $this->jsonOpts(['notnull' => true, 'default' => '{}']));
+        $table->addColumn('config', Types::JSON, ['notnull' => true, 'default' => '{}']);
         $table->addColumn('created', Types::BIGINT, ['notnull' => true, 'default' => 0, 'unsigned' => true, 'length' => 20]);
         $table->addColumn('target_type', Types::STRING, ['notnull' => true, 'default' => 'option', 'length' => 32]);
-        $table->addColumn('target_ids', Types::JSON, $this->jsonOpts(['notnull' => true, 'default' => '[]']));
-        $table->addColumn('metadata', Types::JSON, $this->jsonOpts(['notnull' => false, 'default' => null]));
+        $table->addColumn('target_ids', Types::JSON, ['notnull' => true, 'default' => '[]']);
+        $table->addColumn('metadata', Types::JSON, ['notnull' => false, 'default' => null]);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['inquiry_id'], 'engine_inquiry_idx');
         $table->addIndex(['inquiry_group_id'], 'engine_inquiry_group_idx');
@@ -128,20 +131,31 @@ class Version01070520260104120000 extends SimpleMigrationStep
             $this->log("  Skip: " . self::S_RESULTS . " exists");
             return;
         }
-        
+
         $this->log("  Create: " . self::S_RESULTS);
         $table = $this->schema->createTable(self::S_RESULTS);
         $table->addColumn('id', Types::BIGINT, ['autoincrement' => true, 'notnull' => true, 'unsigned' => true, 'length' => 20]);
-        // Make nullable for historical data that has no engine
         $table->addColumn('support_engine_id', Types::BIGINT, [
-            'notnull' => true,
-            'default' => 0,
+            'notnull' => false,  // Use NULL instead of 0
+            'default' => null,
             'unsigned' => true,
             'length' => 20
         ]);
         $table->addColumn('target_type', Types::STRING, ['notnull' => true, 'default' => 'inquiry', 'length' => 32]);
         $table->addColumn('target_id', Types::BIGINT, ['notnull' => true, 'default' => 0, 'unsigned' => true, 'length' => 20]);
-        $table->addColumn('result', Types::JSON, $this->jsonOpts(['notnull' => true, 'default' => '{}']));
+        // Consistent empty result structure
+        $defaultEmptyResult = json_encode([
+            'type' => 'binary',
+            'totals' => [
+                'yes' => 0,
+                'no' => 0
+            ],
+            'percentages' => [
+                'yes' => 0,
+                'no' => 0
+            ]
+        ]);
+        $table->addColumn('result', Types::JSON, ['notnull' => true, 'default' => $defaultEmptyResult]);
         $table->addColumn('updated', Types::BIGINT, ['notnull' => true, 'default' => 0, 'unsigned' => true, 'length' => 20]);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['support_engine_id'], 'result_engine_idx');
@@ -178,7 +192,7 @@ class Version01070520260104120000 extends SimpleMigrationStep
             $table->addColumn('inquiry_id', Types::BIGINT, ['notnull' => true, 'default' => 0, 'unsigned' => true, 'length' => 20]);
             $table->addColumn('option_id', Types::BIGINT, ['notnull' => true, 'default' => 0, 'unsigned' => true, 'length' => 20]);
             $table->addColumn('user_id', Types::STRING, ['notnull' => true, 'default' => '', 'length' => 256]);
-            $table->addColumn('value', Types::JSON, $this->jsonOpts(['notnull' => true, 'default' => '0']));
+            $table->addColumn('value', Types::JSON, ['notnull' => false, 'default' => null]); // NULL allowed during migration
             $table->addColumn('weight', Types::INTEGER, ['notnull' => true, 'default' => 1]);
             $table->addColumn('created', Types::BIGINT, ['notnull' => true, 'default' => 0, 'unsigned' => true, 'length' => 20]);
             $table->addColumn('updated', Types::BIGINT, ['notnull' => true, 'default' => 0, 'unsigned' => true, 'length' => 20]);
@@ -192,110 +206,176 @@ class Version01070520260104120000 extends SimpleMigrationStep
     }
 
     // ====================================================================
-    // POST-SCHEMA: Convert value column using value_new approach
+    // POST-SCHEMA: Convert value column using consistent JSON format
     // ====================================================================
 
     private function convertValueColumnToJson(): void
     {
-        $this->log('Converting value column: SMALLINT → JSON...');
-        $this->log('  Using: Create value_new, copy data, drop value, rename value_new -> value');
+        $this->log('Converting value column: SMALLINT → JSON (numeric only)');
 
         try {
             $tableName = self::T_SUPPORTS;
-            $this->log('  Table: ' . $tableName);
 
-            // Step 1: Add new JSON column value_new
+            // Step 1: Add new column
             if ($this->isPostgreSQL) {
+                $this->connection->executeStatement("ALTER TABLE \"" . $tableName . "\" ADD COLUMN value_new JSON");
+            } elseif ($this->isMySQL) {
+                $this->connection->executeStatement("ALTER TABLE `" . $tableName . "` ADD COLUMN value_new JSON");
+            } else {
+                $this->connection->executeStatement("ALTER TABLE \"" . $tableName . "\" ADD COLUMN value_new TEXT");
+            }
+
+            // Step 2: Convert - store as simple JSON with just the value
+            if ($this->isPostgreSQL) {
+                // Store as JSON object with value field
                 $this->connection->executeStatement(
-                    "ALTER TABLE \"" . $tableName . "\" ADD COLUMN value_new JSON DEFAULT '0'::json"
+                    "UPDATE \"" . $tableName . "\" SET value_new = jsonb_build_object('value', value) WHERE value IS NOT NULL"
                 );
             } elseif ($this->isMySQL) {
+                // Store as JSON object with value field
                 $this->connection->executeStatement(
-                    "ALTER TABLE `" . $tableName . "` ADD COLUMN value_new JSON DEFAULT (JSON_ARRAY(0))"
+                    "UPDATE `" . $tableName . "` SET `value_new` = JSON_OBJECT('value', `value`) WHERE `value` IS NOT NULL"
                 );
             } else {
                 // SQLite
                 $this->connection->executeStatement(
-                    "ALTER TABLE \"" . $tableName . "\" ADD COLUMN value_new TEXT DEFAULT '0'"
+                    "UPDATE \"" . $tableName . "\" SET value_new = json_object('value', value) WHERE value IS NOT NULL"
                 );
             }
-            $this->log('  ✓ Added value_new column');
 
-            // Step 2: Copy and convert data from value to value_new
-            if ($this->isPostgreSQL) {
-                $this->connection->executeStatement(
-                    "UPDATE \"" . $tableName . "\" SET value_new = to_json(value::integer)::json WHERE value IS NOT NULL"
-                );
-            } elseif ($this->isMySQL) {
-                $this->connection->executeStatement(
-                    "UPDATE `" . $tableName . "` SET `value_new` = JSON_ARRAY(CAST(`value` AS SIGNED)) WHERE `value` IS NOT NULL"
-                );
-            } else {
-                // SQLite
-                $this->connection->executeStatement(
-                    "UPDATE \"" . $tableName . "\" SET value_new = CAST(value AS TEXT) WHERE value IS NOT NULL"
-                );
-            }
-            $this->log('  ✓ Copied data to value_new');
-
-            // Step 3: Set default for any remaining null values
-            if ($this->isPostgreSQL) {
-                $this->connection->executeStatement(
-                    "UPDATE \"" . $tableName . "\" SET value_new = '0'::json WHERE value_new IS NULL"
-                );
-            } elseif ($this->isMySQL) {
-                $this->connection->executeStatement(
-                    "UPDATE `" . $tableName . "` SET `value_new` = JSON_ARRAY(0) WHERE `value_new` IS NULL"
-                );
-            } else {
-                $this->connection->executeStatement(
-                    "UPDATE \"" . $tableName . "\" SET value_new = '0' WHERE value_new IS NULL"
-                );
-            }
-            $this->log('  ✓ Set defaults for null values');
-
-            // Step 4: Drop old value column
+            // Step 3: Handle NULL values
+            $defaultJson = $this->isPostgreSQL ? "'{\"value\":0}'::jsonb" : ("'{\"value\":0}'");
             $this->connection->executeStatement(
-                "ALTER TABLE \"" . $tableName . "\" DROP COLUMN value"
+                "UPDATE \"" . $tableName . "\" SET value_new = " . $defaultJson . " WHERE value_new IS NULL"
             );
-            $this->log('  ✓ Dropped old value column');
 
-            // Step 5: Rename value_new to value
+            // Step 4: Drop old column
+            $this->connection->executeStatement("ALTER TABLE \"" . $tableName . "\" DROP COLUMN value");
+
+            // Step 5: Rename new column
             if ($this->isPostgreSQL) {
-                $this->connection->executeStatement(
-                    "ALTER TABLE \"" . $tableName . "\" RENAME COLUMN value_new TO value"
-                );
-                // Set NOT NULL
-                $this->connection->executeStatement(
-                    "ALTER TABLE \"" . $tableName . "\" ALTER COLUMN value SET NOT NULL"
-                );
+                $this->connection->executeStatement("ALTER TABLE \"" . $tableName . "\" RENAME COLUMN value_new TO value");
+                $this->connection->executeStatement("ALTER TABLE \"" . $tableName . "\" ALTER COLUMN value SET NOT NULL");
+                $this->connection->executeStatement("ALTER TABLE \"" . $tableName . "\" ALTER COLUMN value SET DEFAULT '{\"value\":0}'::jsonb");
             } elseif ($this->isMySQL) {
-                $this->connection->executeStatement(
-                    "ALTER TABLE `" . $tableName . "` RENAME COLUMN value_new TO value"
-                );
-                // Set NOT NULL with default
-                $this->connection->executeStatement(
-                    "ALTER TABLE `" . $tableName . "` MODIFY COLUMN `value` JSON NOT NULL DEFAULT (JSON_ARRAY(0))"
-                );
-            } else {
-                // SQLite
-                $this->connection->executeStatement(
-                    "ALTER TABLE \"" . $tableName . "\" RENAME COLUMN value_new TO value"
-                );
+                $this->connection->executeStatement("ALTER TABLE `" . $tableName . "` RENAME COLUMN value_new TO value");
+                $this->connection->executeStatement("ALTER TABLE `" . $tableName . "` MODIFY COLUMN `value` JSON NOT NULL DEFAULT ('{\"value\":0}')");
             }
-            $this->log('  ✓ Renamed value_new to value');
-            $this->log('  ✓✓ value column successfully converted to JSON!');
+
+            $this->log('  ✓ Converted to {\"value\": N} format');
 
         } catch (\Exception $e) {
             $this->log('  ERROR: ' . $e->getMessage());
         }
     }
 
+    // ====================================================================
+    // POST-SCHEMA: Fix empty results
+    // ====================================================================
+
+    private function fixEmptyResults(): void
+    {
+        $this->log('Fixing empty results...');
+
+        try {
+            // Get all results with empty {} or null result
+            $sql = "SELECT id, target_type, target_id FROM \"" . self::T_RESULTS . "\" WHERE ";
+            if ($this->isPostgreSQL) {
+                $sql .= "result::text = '{}' OR result IS NULL";
+            } else {
+                $sql .= "result = '{}' OR result IS NULL OR result = ''";
+            }
+
+            $emptyResults = $this->connection->executeQuery($sql)->fetchAllAssociative();
+
+            $this->log("  Found " . count($emptyResults) . " empty results to fix");
+
+            foreach ($emptyResults as $empty) {
+                $targetType = $empty['target_type'];
+                $targetId = (int) $empty['target_id'];
+
+                // Determine the support feature for this target
+                if ($targetType === 'inquiry') {
+                    $supportFeature = $this->getInquirySupportFeature($targetId);
+                } else {
+                    $supportFeature = $this->getOptionSupportFeature($targetId);
+                }
+
+                // Create proper empty result structure
+                $emptyResult = $this->getEmptyResultStructure($supportFeature);
+                $resultJson = json_encode($emptyResult, JSON_UNESCAPED_UNICODE);
+
+                $this->connection->executeStatement(
+                    "UPDATE \"" . self::T_RESULTS . "\" SET result = ? WHERE id = ?",
+                    [$resultJson, $empty['id']]
+                );
+
+                $this->log("    Fixed: {$targetType}-{$targetId} with type {$supportFeature}");
+            }
+
+            $this->log('  ✓ Empty results fixed');
+        } catch (\Exception $e) {
+            $this->log('  Error fixing empty results: ' . $e->getMessage());
+        }
+    }
+
+    private function getEmptyResultStructure(string $type): array
+    {
+        return match($type) {
+            'ternary' => [
+                'type' => 'ternary',
+                'totals' => [
+                    'yes' => 0,
+                    'no' => 0,
+                    'abstain' => 0
+                ],
+                'percentages' => [
+                    'yes' => 0,
+                    'no' => 0,
+                    'abstain' => 0
+                ],
+            ],
+            'score', 'star' => [
+                'type' => $type,
+                'totals' => [
+                    'total' => 0,
+                    'average' => 0,
+                ],
+            ],
+            'reaction' => [
+                'type' => 'reaction',
+                'counts' => [],
+            ],
+            'approval' => [
+                'type' => 'approval',
+                'counts' => [],
+            ],
+            'ranking' => [
+                'type' => 'ranking',
+                'rankings' => [],
+            ],
+            'none' => [
+                'type' => 'none',
+                'total_participants' => 0,
+            ],
+            default => [
+                'type' => 'binary',
+                'totals' => [
+                    'yes' => 0,
+                    'no' => 0
+                ],
+                'percentages' => [
+                    'yes' => 0,
+                    'no' => 0
+                ],
+            ],
+        };
+    }
 
     // ====================================================================
     // POST-SCHEMA: Migrate existing supports to results
     // ====================================================================
-    
+
     private function migrateExistingSupportsToResults(): void
     {
         $this->log('Migrating existing supports to results...');
@@ -335,7 +415,10 @@ class Version01070520260104120000 extends SimpleMigrationStep
                 $this->log("    Result: " . json_encode($result));
                 $this->insertResult($targetType, $targetId, $result);
             } else {
-                $this->log("    Result is NULL, skipping");
+                // Insert empty result structure instead of skipping
+                $emptyResult = $this->getEmptyResultStructure($supportFeature);
+                $this->log("    No supports, inserting empty result: " . json_encode($emptyResult));
+                $this->insertResult($targetType, $targetId, $emptyResult);
             }
         }
 
@@ -404,7 +487,7 @@ class Version01070520260104120000 extends SimpleMigrationStep
             $supports = $this->connection->executeQuery(
                 "SELECT value, weight FROM \"" . self::T_SUPPORTS . "\" 
                 WHERE inquiry_id = ? AND option_id = ?",
-                [$inquiryId, $optionId]
+            [$inquiryId, $optionId]
             )->fetchAllAssociative();
 
             $this->log("    Found " . count($supports) . " supports");
@@ -414,15 +497,15 @@ class Version01070520260104120000 extends SimpleMigrationStep
             }
 
             switch ($supportFeature) {
-                case 'binary':
-                    return $this->calculateBinary($supports);
-                case 'ternary':
-                    return $this->calculateTernary($supports);
-                case 'none':
-                    $total = count($supports);
-                    return ['type' => 'trending', 'score' => $total];
-                default:
-                    return $this->calculateBinary($supports);
+            case 'binary':
+                return $this->calculateBinary($supports);
+            case 'ternary':
+                return $this->calculateTernary($supports);
+            case 'none':
+                $total = count($supports);
+                return ['type' => 'none', 'total_participants' => $total];
+            default:
+                return $this->calculateBinary($supports);
             }
         } catch (\Exception $e) {
             $this->log('  Error calculating result: ' . $e->getMessage());
@@ -430,63 +513,76 @@ class Version01070520260104120000 extends SimpleMigrationStep
         }
     }
 
+    private function extractVoteValue($value): int
+    {
+        if (is_string($value)) {
+            $value = json_decode($value, true);
+        }
+
+        if (is_array($value)) {
+            // Look for 'value' field
+            return (int) ($value['value'] ?? reset($value) ?? 0);
+        }
+
+        return (int) $value;
+    }
+
     private function calculateBinary(array $supports): array
     {
         $yes = 0;
         $no = 0;
+
         foreach ($supports as $support) {
-            // Handle JSON values from PostgreSQL - they might be returned as strings
-            $value = $support['value'];
-            if (is_string($value)) {
-                $value = json_decode($value, true);
-            }
-            $value = (int) $value;
+            $voteValue = $this->extractVoteValue($support['value']);
             $weight = (int) ($support['weight'] ?? 1);
-            if ($value > 0) {
+
+            if ($voteValue > 0) {
                 $yes += $weight;
-            } else {
+            } elseif ($voteValue < 0) {
                 $no += $weight;
             }
+            // 0 = no vote/abstain - ignore
         }
+
         $total = $yes + $no;
         return [
             'type' => 'binary',
-            'total_yes' => $yes,
-            'total_no' => $no,
-            'percentage_yes' => $total > 0 ? round(($yes / $total) * 100, 2) : 0,
-            'percentage_no' => $total > 0 ? round(($no / $total) * 100, 2) : 0,
+            'totals' => ['yes' => $yes, 'no' => $no],
+            'percentages' => [
+                'yes' => $total > 0 ? round(($yes / $total) * 100, 2) : 0,
+                'no' => $total > 0 ? round(($no / $total) * 100, 2) : 0
+            ],
         ];
     }
 
     private function calculateTernary(array $supports): array
     {
-        $for = 0;
-        $against = 0;
+        $yes = 0;
+        $no = 0;
         $abstain = 0;
+
         foreach ($supports as $support) {
-            $value = $support['value'];
-            if (is_string($value)) {
-                $value = json_decode($value, true);
-            }
-            $value = (int) $value;
+            $voteValue = $this->extractVoteValue($support['value']);
             $weight = (int) ($support['weight'] ?? 1);
-            if ($value > 0) {
-                $for += $weight;
-            } elseif ($value < 0) {
-                $against += $weight;
+
+            if ($voteValue > 0) {
+                $yes += $weight;
+            } elseif ($voteValue < 0) {
+                $no += $weight;
             } else {
-                $abstain += $weight;
+                $abstain += $weight;  // 0 explicitly means abstain
             }
         }
-        $total = $for + $against + $abstain;
+
+        $total = $yes + $no + $abstain;
         return [
             'type' => 'ternary',
-            'total_for' => $for,
-            'total_against' => $against,
-            'total_abstain' => $abstain,
-            'percentage_for' => $total > 0 ? round(($for / $total) * 100, 2) : 0,
-            'percentage_against' => $total > 0 ? round(($against / $total) * 100, 2) : 0,
-            'percentage_abstain' => $total > 0 ? round(($abstain / $total) * 100, 2) : 0,
+            'totals' => ['yes' => $yes, 'no' => $no, 'abstain' => $abstain],
+            'percentages' => [
+                'yes' => $total > 0 ? round(($yes / $total) * 100, 2) : 0,
+                'no' => $total > 0 ? round(($no / $total) * 100, 2) : 0,
+                'abstain' => $total > 0 ? round(($abstain / $total) * 100, 2) : 0
+            ],
         ];
     }
 
@@ -495,32 +591,32 @@ class Version01070520260104120000 extends SimpleMigrationStep
         try {
             $now = time();
             $resultJson = json_encode($result, JSON_UNESCAPED_UNICODE);
-            
-            // support_engine_id is NULL for historically migrated data (pre-engine system)
+
+            // Use NULL for support_engine_id when not associated with an engine
             if ($this->isPostgreSQL) {
                 $this->connection->executeStatement(
                     "INSERT INTO \"" . self::T_RESULTS . "\" 
-                     (support_engine_id, target_type, target_id, result, updated) 
-                     VALUES (0, ?, ?, ?::json, ?)
-                     ON CONFLICT (target_type, target_id) 
-                     DO UPDATE SET result = EXCLUDED.result, updated = EXCLUDED.updated",
-                    [$targetType, $targetId, $resultJson, $now]
+                    (support_engine_id, target_type, target_id, result, updated) 
+                    VALUES (NULL, ?, ?, ?::json, ?)
+                    ON CONFLICT (target_type, target_id, support_engine_id) 
+                    DO UPDATE SET result = EXCLUDED.result, updated = EXCLUDED.updated",
+            [$targetType, $targetId, $resultJson, $now]
                 );
             } elseif ($this->isMySQL) {
                 $this->connection->executeStatement(
                     "INSERT INTO `" . self::T_RESULTS . "` 
-                     (support_engine_id, target_type, target_id, result, updated) 
-                     VALUES (0, ?, ?, ?, ?)
-                     ON DUPLICATE KEY UPDATE result = VALUES(result), updated = VALUES(updated)",
-                    [$targetType, $targetId, $resultJson, $now]
+                    (support_engine_id, target_type, target_id, result, updated) 
+                    VALUES (NULL, ?, ?, ?, ?)
+                    ON DUPLICATE KEY UPDATE result = VALUES(result), updated = VALUES(updated)",
+            [$targetType, $targetId, $resultJson, $now]
                 );
             } else {
                 // SQLite
                 $this->connection->executeStatement(
                     "INSERT OR REPLACE INTO \"" . self::T_RESULTS . "\" 
-                     (support_engine_id, target_type, target_id, result, updated) 
-                     VALUES (0, ?, ?, ?, ?)",
-                    [$targetType, $targetId, $resultJson, $now]
+                    (support_engine_id, target_type, target_id, result, updated) 
+                    VALUES (NULL, ?, ?, ?, ?)",
+            [$targetType, $targetId, $resultJson, $now]
                 );
             }
         } catch (\Exception $e) {
@@ -538,7 +634,7 @@ class Version01070520260104120000 extends SimpleMigrationStep
         try {
             $this->connection->executeStatement(
                 "CREATE UNIQUE INDEX IF NOT EXISTS result_target_uniq 
-                 ON \"" . self::T_RESULTS . "\" (target_type, target_id)"
+                ON \"" . self::T_RESULTS . "\" (target_type, target_id, support_engine_id)"
             );
             $this->log('  ✓ result_target_uniq');
         } catch (\Exception $e) {
@@ -578,7 +674,7 @@ class Version01070520260104120000 extends SimpleMigrationStep
 
         $fks = [
             "ALTER TABLE \"" . self::T_SUPPORTS . "\" ADD CONSTRAINT IF NOT EXISTS fk_supports_engine FOREIGN KEY (support_engine_id) REFERENCES \"" . self::T_ENGINES . "\"(id) ON DELETE SET NULL",
-            "ALTER TABLE \"" . self::T_RESULTS . "\" ADD CONSTRAINT IF NOT EXISTS fk_results_engine FOREIGN KEY (support_engine_id) REFERENCES \"" . self::T_ENGINES . "\"(id) ON DELETE CASCADE",
+            "ALTER TABLE \"" . self::T_RESULTS . "\" ADD CONSTRAINT IF NOT EXISTS fk_results_engine FOREIGN KEY (support_engine_id) REFERENCES \"" . self::T_ENGINES . "\"(id) ON DELETE SET NULL",
         ];
 
         foreach ($fks as $sql) {
@@ -589,14 +685,6 @@ class Version01070520260104120000 extends SimpleMigrationStep
             }
         }
         $this->log('  Foreign keys done');
-    }
-
-    private function jsonOpts(array $opts): array
-    {
-        if ($this->isMySQL) {
-            unset($opts['default']);
-        }
-        return $opts;
     }
 
     private function log(string $msg): void

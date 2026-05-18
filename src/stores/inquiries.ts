@@ -635,6 +635,17 @@ export const useInquiriesStore = defineStore('inquiries', {
           this.advancedFilters[key] = value
           this.resetChunks()
       },
+
+      async refreshInquiryStatus(inquiryId: number) {
+          const response = await InquiriesAPI.getInquiry(inquiryId)
+          const idx = this.inquiries.findIndex(i => i.id === inquiryId)
+          if (idx !== -1) {
+              // update relevant fields
+              this.inquiries[idx].status.countSupports = response.data.status.countSupports
+              this.inquiries[idx].status.supportResult = response.data.status.supportResult
+              // etc.
+          }
+      },
       /**
        * Load all inquiries and inquiry groups from the API.
        * This will set the `inquiries` and `inquiryGroups` state properties.

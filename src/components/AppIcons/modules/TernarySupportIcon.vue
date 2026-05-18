@@ -1,4 +1,4 @@
-<!--
+!--
   - SPDX-FileCopyrightText: Nextcloud 2026
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
@@ -13,19 +13,18 @@ const {
   supportValue = null, 
 } = defineProps<IconProps & { supportValue?: number | null }>()
 
-
 const emojiSymbol = computed(() => {
   if (supportValue === 1) return '👍'
   if (supportValue === 0) return '😐'
   if (supportValue === -1) return '👎'
-  return '👍' // no participation
+  return '👍' // no participation → grey thumb up
 })
 
 const iconColor = computed(() => {
   if (supportValue === 1) return '#facc15' // yellow
   if (supportValue === 0) return '#facc15' // yellow
   if (supportValue === -1) return '#facc15' // yellow
-  return '#9ca3af' // grey for null
+  return '#9ca3af' // solid grey for null
 })
 
 const dynamicTitle = computed(() => {
@@ -68,7 +67,7 @@ const dynamicTitle = computed(() => {
 }
 
 .emoji-support-icon.against {
-  transform: scaleX(-1); /* Flip horizontally for visual consistency */
+  transform: scaleX(-1);
 }
 
 .emoji-support-icon.neutral {
@@ -79,9 +78,11 @@ const dynamicTitle = computed(() => {
   opacity: 1;
 }
 
+/* Null state: solid grey, no transparency or grayscale */
 .emoji-support-icon.no-participation {
-  opacity: 0.5;
-  filter: grayscale(0.7);
+  opacity: 1;
+  filter: none;
+  color: #9ca3af;
 }
 
 /* Hover effects */
@@ -94,7 +95,8 @@ const dynamicTitle = computed(() => {
 }
 
 .emoji-support-icon.no-participation:hover {
-  opacity: 0.8;
-  filter: grayscale(0.3);
+  opacity: 1;
+  filter: none;
+  transform: scale(1.1);
 }
 </style>

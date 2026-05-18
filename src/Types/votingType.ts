@@ -205,28 +205,37 @@ export interface SupportData {
 
 export interface BinaryResult {
   type: 'binary'
-  total_yes: number
-  total_no: number
-  percentage_yes: number
-  percentage_no: number
+  totals: {
+    yes: number
+    no: number
+  }
+  percentages: {
+    yes: number
+    no: number
+  }
 }
 
 export interface TernaryResult {
   type: 'ternary'
-  total_yes: number
-  total_no: number
-  total_abstain: number
-  percentage_yes: number
-  percentage_no: number
-  percentage_abstain: number
+  totals: {
+    yes: number
+    no: number
+    abstain: number
+  }
+  percentages: {
+    yes: number
+    no: number
+    abstain: number
+  }
 }
 
 export interface ScoreResult {
   type: 'score'
-  total: number
-  average: number
+  totals: {
+    total: number
+    average: number
+  }
   median?: number
-  weight_sum?: number
 }
 
 export interface RankingResult {

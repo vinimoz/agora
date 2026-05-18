@@ -1,5 +1,4 @@
 <?php
-// Db/SupportResultMapper.php
 
 declare(strict_types=1);
 
@@ -10,64 +9,55 @@ declare(strict_types=1);
 
 namespace OCA\Agora\Db;
 
+use OCA\Agora\Db\SupportResultSqlRepository;
+use OCP\AppFramework\Db\QBMapper;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
-use OCP\AppFramework\Db\QBMapper;
 
-/**
- * @template-extends QBMapper<SupportResult>
- */
 class SupportResultMapper extends QBMapper
 {
+    
     public const TABLE = SupportResult::TABLE;
-
     public function __construct(
-        IDBConnection $db,
-    ) {
-        parent::__construct($db, self::TABLE, SupportResult::class);
+    IDBConnection $db,
+    private SupportResultSqlRepository $sqlRepo)
+    {
+        parent::__construct($db, 'agora_support_results', SupportResult::class);
     }
 
     /**
-     * @return SupportResult[]
-     */
-    public function findByProcessId(int $processId): array
-    {
-        $qb = $this->db->getQueryBuilder();
-        $qb->select('*')
-            ->from($this->getTableName())
-            ->where($qb->expr()->eq('support_process_id', $qb->createNamedParameter($processId, IQueryBuilder::PARAM_INT)))
-            ->orderBy('updated', 'DESC');
-
-        return $this->findEntities($qb);
+ * Find a result by its ID
+ * @return ?SupportResult
+ */
+public function findResultById(int $id): ?SupportResult
+{
+    $qb = $this->db->getQueryBuilder();
+    $qb->select('*')
+        ->from($this->getTableName())
+        ->where($qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT)));
+    try {
+        return $this->findEntity($qb);
+    } catch (\OCP\AppFramework\Db\DoesNotExistException $e) {
+        return null;
     }
+}
 
     /**
-     * @return SupportResult[]
+     * Find single result by target and engine
      */
-    public function findByTarget(string $targetType, int $targetId): array
+    public function findByTargetAndEngine(string $targetType, int $targetId, ?int $engineId): ?SupportResult
     {
         $qb = $this->db->getQueryBuilder();
         $qb->select('*')
-            ->from($this->getTableName())
-            ->where($qb->expr()->eq('target_type', $qb->createNamedParameter($targetType, IQueryBuilder::PARAM_STR)))
-            ->andWhere($qb->expr()->eq('target_id', $qb->createNamedParameter($targetId, IQueryBuilder::PARAM_INT)))
-            ->orderBy('updated', 'DESC');
+           ->from($this->getTableName())
+           ->where($qb->expr()->eq('target_type', $qb->createNamedParameter($targetType)))
+           ->andWhere($qb->expr()->eq('target_id', $qb->createNamedParameter($targetId, IQueryBuilder::PARAM_INT)));
 
-        return $this->findEntities($qb);
-    }
-
-    /**
-     * Get latest result for a target
-     */
-    public function findLatestByTarget(string $targetType, int $targetId): ?SupportResult
-    {
-        $qb = $this->db->getQueryBuilder();
-        $qb->select('*')
-            ->from($this->getTableName())
-            ->where($qb->expr()->eq('target_type', $qb->createNamedParameter($targetType, IQueryBuilder::PARAM_STR)))
-            ->andWhere($qb->expr()->eq('target_id', $qb->createNamedParameter($targetId, IQueryBuilder::PARAM_INT)))
-            ->orderBy('updated', 'DESC')
-            ->setMaxResults(1);
+        if ($engineId === null) {
+            $qb->andWhere($qb->expr()->isNull('support_engine_id'));
+        } else {
+            $qb->andWhere($qb->expr()->eq('support_engine_id', $qb->createNamedParameter($engineId, IQueryBuilder::PARAM_INT)));
+        }
 
         try {
             return $this->findEntity($qb);
@@ -77,66 +67,66 @@ class SupportResultMapper extends QBMapper
     }
 
     /**
-     * Create or update a result
+     * Insert or update a result
      */
-    public function upsertResult(
-        int $processId,
-        string $targetType,
-        int $targetId,
-        array $result,
-    ): SupportResult {
-        // Try to find existing
-        $existing = null;
-            $qb = $this->db->getQueryBuilder();
-            $qb->select('*')
-                ->from($this->getTableName())
-                ->where($qb->expr()->eq('support_process_id', $qb->createNamedParameter($processId, IQueryBuilder::PARAM_INT)))
-                ->andWhere($qb->expr()->eq('target_type', $qb->createNamedParameter($targetType, IQueryBuilder::PARAM_STR)))
-                ->andWhere($qb->expr()->eq('target_id', $qb->createNamedParameter($targetId, IQueryBuilder::PARAM_INT)));
+    public function upsertResult(?int $engineId, string $targetType, int $targetId, array $result): SupportResult
+    {
+        $id = $this->sqlRepo->upsertResultWithJson(
+            self::TABLE,
+            $engineId,
+            $targetType,
+            $targetId,
+            $result
+        );
 
-            try {
-                $existing = $this->findEntity($qb);
-            } catch (\OCP\AppFramework\Db\DoesNotExistException $e) {
-                // Will create new below
-            }
+        return $this->findResultById($id);
+    }
 
-        if ($existing !== null) {
-            $existing->setResult($result);
-            $existing->setUpdated(time());
-            return $this->update($existing);
-        }
+    public function updateResult(SupportResult $result): SupportResult
+    {
+        $this->sqlRepo->updateResultWithJson(
+            self::TABLE,
+            $result->getId(),
+            $result->getResult(),
+            $result->getUpdated()
+        );
 
-        // Create new result
-        $supportResult = new SupportResult();
-        $supportResult->setSupportProcessId($processId);
-        $supportResult->setTargetType($targetType);
-        $supportResult->setTargetId($targetId);
-        $supportResult->setResult($result);
-        $supportResult->setUpdated(time());
-
-        return $this->insert($supportResult);
+        return $this->findResultById($result->getId());
     }
 
     /**
-     * Delete all results for a process
+     * Find results by target
      */
-    public function deleteByProcess(int $processId): int
+    public function findResultsByTarget(string $targetType, int $targetId, ?int $engineId = null): array
     {
         $qb = $this->db->getQueryBuilder();
-        $qb->delete($this->getTableName())
-            ->where($qb->expr()->eq('support_process_id', $qb->createNamedParameter($processId, IQueryBuilder::PARAM_INT)));
+        $qb->select('*')
+           ->from($this->getTableName())
+           ->where($qb->expr()->eq('target_type', $qb->createNamedParameter($targetType)))
+           ->andWhere($qb->expr()->eq('target_id', $qb->createNamedParameter($targetId, IQueryBuilder::PARAM_INT)));
 
-        return $qb->executeStatement();
+        if ($engineId !== null) {
+            $qb->andWhere($qb->expr()->eq('support_engine_id', $qb->createNamedParameter($engineId, IQueryBuilder::PARAM_INT)));
+        }
+
+        return $this->findEntities($qb);
     }
 
     /**
-     * Get results with history (for changelog)
+     * Find results by engine
      */
-    public function getResultHistory(int $resultId): array
+    public function findByEngineId(?int $engineId): array
     {
-        // Since we use upsert, history would need to be in a separate table
-        // For now, just return the current result
-        $result = $this->find($resultId);
-        return $result ? [$result] : [];
+        $qb = $this->db->getQueryBuilder();
+        $qb->select('*')
+           ->from($this->getTableName());
+
+        if ($engineId === null) {
+            $qb->where($qb->expr()->isNull('support_engine_id'));
+        } else {
+            $qb->where($qb->expr()->eq('support_engine_id', $qb->createNamedParameter($engineId, IQueryBuilder::PARAM_INT)));
+        }
+
+        return $this->findEntities($qb);
     }
 }

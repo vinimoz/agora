@@ -3,7 +3,7 @@
     - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
-    import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useInquiryStore } from '../../stores/inquiry.ts'
 import { useSessionStore } from '../../stores/session.ts'
 import { getAvailableFields } from '../../helpers/modules/InquiryHelper.ts'
@@ -15,8 +15,11 @@ import { createInquiryContext, getEditPermissions } from '../../utils/permission
 import NcSelect from '@nextcloud/vue/components/NcSelect'
 import NcInputField from '@nextcloud/vue/components/NcInputField'
 import NcDateTimePickerNative from '@nextcloud/vue/components/NcDateTimePickerNative'
-// import NcCheckboxRadioSwitchSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
 import UserSearch from '../User/UserSearch.vue'
+import EngineSelectorModal from '../Modals/EngineSelectorModal.vue' 
+
+// Import engine definitions to build the list of available engines
+import { ENGINE_DEFINITIONS } from '../../Types/votingType'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const props = withDefaults(defineProps<{
@@ -31,15 +34,15 @@ const sessionStore = useSessionStore()
 
 // Get current language from session
 const currentLanguage = computed(() => sessionStore.language || 'en')
-const permissionContext = computed(() => 
+const permissionContext = computed(() =>
   createInquiryContext(inquiryStore, sessionStore.appSettings)
 )
 
-const userCanConfigureSupport = computed(() => 
+const userCanConfigureSupport = computed(() =>
   getEditPermissions(permissionContext.value).canSupport
 )
 
-const userCanConfigureComments = computed(() => 
+const userCanConfigureComments = computed(() =>
   getEditPermissions(permissionContext.value).canComment
 )
 
@@ -47,22 +50,11 @@ const inquiryTypeConfig = computed(() => {
   if (!inquiryStore.type || !sessionStore.appSettings.inquiryTypeTab) {
     return null
   }
-  
+
   return sessionStore.appSettings.inquiryTypeTab.find(
     (type: string) => type.inquiry_type === inquiryStore.type
   )
 })
-
-
-
-// Helper to check if object is multi-language
-/* const isMultiLangObject = (obj: any): boolean => {
-  if (!obj || typeof obj !== 'object' || Array.isArray(obj)) return false
-  const keys = Object.keys(obj)
-  const langKeys = ['en', 'fr', 'de', 'gsw', 'it', 'es', 'pt']
-  return keys.some(k => langKeys.includes(k)) &&
-         keys.every(k => typeof obj[k] === 'string' || obj[k] === undefined)
-} */
 
 // Extract language string from multi-language object
 const extractLangString = (obj: unknown, lang: string = 'en'): string => {
@@ -82,7 +74,7 @@ const error = ref<string | null>(null)
 const isSaving = ref(false)
 const saveTimeouts = ref<Record<string, NodeJS.Timeout>>({})
 const selectedUsers = ref<Record<string, User | undefined>>({})
-
+const showEngineModal = ref(false) // new state for modal visibility
 
 // Reactive state for checkbox values
 const localCheckboxes = ref<Record<string, boolean>>({})
@@ -99,13 +91,53 @@ interface Field {
   allowed_values?: string[]
 }
 
+// Helper to build the list of engines from ENGINE_DEFINITIONS
+const availableEngines = computed(() => {
+  return Object.entries(ENGINE_DEFINITIONS).map(([id, def]) => ({
+    id,
+    label: def.label,
+    description: def.description,
+    behavior: def.behavior || 'flex',
+    constraints: def.constraints || null,
+    config_schema: def.config_schema || {}
+  }))
+})
 
-// Get current support feature value
+// Get current support feature value (engine ID)
 const getSupportFeatureValue = computed(() => {
   if (inquiryStore.configuration.supportFeature !== null) {
     return inquiryStore.configuration.supportFeature
   }
   return getDefaultFromTemplate('supportFeature') || 'none'
+})
+
+// Get current support engine configuration (e.g., grades, allowed_reactions)
+const getSupportEngineConfig = computed(() => {
+  const config: Record<string, unknown> = {}
+  const engineId = getSupportFeatureValue.value
+  const engine = ENGINE_DEFINITIONS[engineId]
+  if (!engine?.config_schema) return config
+
+  // Extract existing values from inquiryStore.configuration
+  for (const key of Object.keys(engine.config_schema)) {
+    if (inquiryStore.configuration[key] !== undefined) {
+      config[key] = inquiryStore.configuration[key]
+    }
+  }
+  // Special handling for majority_judgment grades
+  if (engineId === 'majority_judgment' && !config.grades) {
+    config.grades = ['Reject', 'Insufficient', 'Passable', 'Fairly Good', 'Good', 'Very Good', 'Excellent']
+  }
+  // Special handling for reaction allowed_reactions
+  if (engineId === 'reaction' && !config.allowed_reactions) {
+    config.allowed_reactions = ['👍', '❤️', '🎉', '🤔', '👎']
+    config.max_per_user = 3
+  }
+  // Condorcet variant
+  if (engineId === 'condorcet' && !config.variant) {
+    config.variant = 'schulze'
+  }
+  return config
 })
 
 // Get current allow comment value
@@ -116,13 +148,6 @@ const getAllowCommentValue = computed(() => {
   return getDefaultFromTemplate('allowComment') || false
 })
 
-// Support feature options
-const supportFeatureOptions = [
-  { id: 'none', label: t('agora','None') },
-  { id: 'binary', label: t('agora','Binary (Yes/No)') },
-  { id: 'ternary', label: t('agora','Ternary (Yes/No/Abstain)') }
-]
-
 // Get fields using your working helper function
 const dynamicFields = computed(() => {
   try {
@@ -131,7 +156,7 @@ const dynamicFields = computed(() => {
     }
 
     const fields = getAvailableFields(
-      inquiryStore.type, 
+      inquiryStore.type,
       sessionStore.appSettings.inquiryTypeTab || [],
       inquiryStore.type
     )
@@ -142,14 +167,6 @@ const dynamicFields = computed(() => {
     return []
   }
 })
-
-// Format support feature for display
-const getSupportFeatureDisplay = (value: string) => {
-  const option = supportFeatureOptions.find(opt => opt.value === value)
-  return option ? option.label : value
-}
-
-
 
 const getMiscValue = (key: string) => {
   try {
@@ -300,7 +317,6 @@ const getEnumLabel = (option: string): string => {
   return String(option?.value || option)
 }
 
-
 // Check if field should be displayed (has value or has default)
 const shouldDisplayField = (field: Field, value: MiscValue) => {
   // Always show fields that have defaults defined, even if value is empty
@@ -322,6 +338,7 @@ const shouldDisplayField = (field: Field, value: MiscValue) => {
 
   return true
 }
+
 // Get fields that should be displayed (for readonly mode)
 const displayFields = computed(() => {
   const fields = [...dynamicFields.value]
@@ -333,7 +350,7 @@ const displayFields = computed(() => {
       type: 'enum',
       label: t('agora','Support feature'),
       value: getSupportFeatureValue.value,
-      displayValue: getSupportFeatureDisplay(getSupportFeatureValue.value),
+      displayValue: getSupportFeatureLabel(getSupportFeatureValue.value),
       hasValue: true
     } as unknown)
   }
@@ -368,6 +385,11 @@ const displayFields = computed(() => {
     .filter(field => field.hasValue)
 })
 
+// Helper to get label for support feature
+const getSupportFeatureLabel = (engineId: string): string => {
+  const engine = ENGINE_DEFINITIONS[engineId]
+  return engine?.label || engineId
+}
 
 // Load misc data
 const loadMiscData = () => {
@@ -446,7 +468,7 @@ const getDefaultFromTemplate = (field: string) => {
   if (!inquiryTypeConfig.value) {
     return null
   }
-  
+
   switch (field) {
     case 'supportFeature':
       return inquiryTypeConfig.value.support_feature || 'none'
@@ -462,45 +484,35 @@ const getDefaultFromTemplate = (field: string) => {
   }
 }
 
-
-// Handle support feature change
-const handleSupportFeatureChange = async (id: string) => {
-   try {
-       isSaving.value = true
-
-       inquiryStore.configuration.supportFeature = id
-
-    // Save to backend (you need to implement this method in your store)
-    await inquiryStore.write()
-
-  } catch (e) {
-    console.error(`❌ Error saving configuration field `, e)
-    // Revert on error
-     inquiryStore.configuration.supportFeature = getSupportFeatureValue.value
-  } finally {
-    isSaving.value = false
-  }   
-
-}
-
-// Handle allow comment change
-const handleAllowCommentChange = async (id: boolean) => {
+// New method: handle engine selection from modal
+const handleApplySupportEngine = async (engineId: string, config: Record<string, unknown>) => {
   try {
     isSaving.value = true
 
-      inquiryStore.configuration.allowComment = id
-    // Save to backend (you need to implement this method in your store)
+    // Update supportFeature
+    inquiryStore.configuration.supportFeature = engineId
+
+    // Update engine-specific configuration
+    for (const [key, value] of Object.entries(config)) {
+      inquiryStore.configuration[key] = value
+    }
+
+    // Save to backend (assumes inquiryStore.write() persists configuration)
     await inquiryStore.write()
 
-  } catch (e) { 
-    console.error(`❌ Error saving configuration field`, e)
-      inquiryStore.configuration.allowComment = getAllowCommentValue.value
+    // Optionally show success message
+    // showSuccess(t('agora', 'Voting method updated'))
+  } catch (e) {
+    console.error('Error saving support engine configuration:', e)
+    // Revert changes on error? Might be complex; maybe just log.
+    // You could also revert by reloading the inquiry data.
   } finally {
     isSaving.value = false
+    showEngineModal.value = false
   }
-
 }
 
+// Remove old handleSupportFeatureChange and its NcSelect usage
 
 // Ensure miscFields has all dynamic fields with proper defaults - UPDATED
 const initializeMiscFields = () => {
@@ -533,7 +545,6 @@ const initializeLocalCheckboxes = () => {
     }
   })
   }
-
 
 // Update the updateFieldValue method to handle user objects
 const updateFieldValue = (fieldKey: string, value: string, fieldType: string) => {
@@ -647,25 +658,24 @@ onMounted(() => {
                     </div>
 
                     <div class="edit-fields">
-                        <!-- Support feature field -->
+                        <!-- Support feature field - now a button to open modal -->
                         <div v-if="userCanConfigureSupport" class="edit-field-item">
                             <label class="edit-field-label">
-                                {{ t('agora',"Support feature") }}
+                                {{ t('agora', 'Support feature') }}
                             </label>
                             <div class="edit-field-input">
-                                <NcSelect
-                                    :model-value="getSupportFeatureValue"
-                                    :options="supportFeatureOptions"
-                                    :reduce="(option: unknown) => option.id"
-                                    :label-outside="true"
-                                    :input-label="t('Support feature')"
+                                <button
+                                    type="button"
+                                    class="btn-select-engine"
                                     :disabled="isSaving"
-                                    :placeholder="t('Select support feature')"
-                                    @update:model-value="handleSupportFeatureChange"
-                                />
+                                    @click="showEngineModal = true"
+                                >
+                                    <span class="engine-label">{{ getSupportFeatureLabel(getSupportFeatureValue) }}</span>
+                                    <span class="engine-change-icon">⚙️</span>
+                                </button>
                             </div>
                             <div class="field-description">
-                                {{ t('agora','Choose the type of support feature for this inquiry') }}
+                                {{ t('agora', 'Choose the voting method for this inquiry') }}
                             </div>
                         </div>
 
@@ -695,7 +705,7 @@ onMounted(() => {
 
                         <!-- Dynamic fields -->
                         <div
-                            v-for="field in dynamicFields" 
+                            v-for="field in dynamicFields"
                             :key="field.key"
                             class="edit-field-item"
                         >
@@ -811,10 +821,50 @@ onMounted(() => {
                 </div>
             </template>
         </div>
+
+        <!-- Engine Selector Modal -->
+        <EngineSelectorModal
+            v-if="showEngineModal"
+            :current-engine-id="getSupportFeatureValue"
+            :current-config="getSupportEngineConfig"
+            :engines="availableEngines"
+            @close="showEngineModal = false"
+            @apply="handleApplySupportEngine"
+        />
     </div>
 </template>
 
 <style scoped>
+/* existing styles plus new button style */
+.btn-select-engine {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 8px 12px;
+    background: var(--color-main-background);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-select-engine:hover:not(:disabled) {
+    border-color: var(--color-primary-element);
+    background: var(--color-background-hover);
+}
+
+.engine-label {
+    font-weight: 500;
+}
+
+.engine-change-icon {
+    opacity: 0.6;
+    font-size: 16px;
+}
+
+/* rest of existing styles unchanged */
 .optional-label {
     color: var(--color-text-maxcontrast);
     font-size: 0.75rem;
@@ -1015,12 +1065,12 @@ onMounted(() => {
     width: 100%;
 }
 
-                                                                                                  @keyframes rotate {
-                                                                                                      from {
-                                                                                                          transform: rotate(0deg);
-                                                                                                      }
-                                                                                                      to {
-                                                                                                          transform: rotate(360deg);
-                                                                                                      }
-                                                                                                  }
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
 </style>

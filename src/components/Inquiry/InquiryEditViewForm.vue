@@ -18,7 +18,7 @@ import {
   getInquiryTypeData,
 } from '../../helpers/modules/InquiryHelper.ts'
 
-import SupportFeature from '../../helpers/modules/SupportFeature.vue'
+import { SupportFeature } from '../Base/index.ts'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcTextField from '@nextcloud/vue/components/NcTextField'

@@ -32,23 +32,25 @@ class SupportController extends BaseController
 
     /**
      * Add support for an inquiry
-     *
-     * @param int $inquiryId ID of the inquiry to support
-     *
-     * @psalm-return JSONResponse<array{status: string, support: Support}>
      */
     #[NoAdminRequired]
-    #[FrontpageRoute(verb: 'POST', url: '/inquiry/support/{inquiryId}/{userId}/{value}/{optionId}')]
-    public function add(int $inquiryId, string $userId, int $value, int $optionId): JSONResponse
+    #[FrontpageRoute(verb: 'POST', url: '/inquiry/support/{inquiryId}/{userId}/{optionId}')]
+    public function add(int $inquiryId, string $userId, int $optionId): JSONResponse
     {
         return $this->response(
-            function () use ($inquiryId, $userId, $value, $optionId) {
-                if (!in_array($value, [-1, 0, 1], true)) {
-                    throw new \InvalidArgumentException("Invalid support value");
+            function () use ($inquiryId, $userId, $optionId) {
+                // Get the value from request body using file_get_contents
+                $body = json_decode(file_get_contents('php://input'), true);
+                $value = $body['value'] ?? null;
+                $weight = $body['weight'] ?? 1;
+                $engineId = $body['engineId'] ?? null;
+                
+                if ($value === null) {
+                    throw new \InvalidArgumentException("Support value is required");
                 }
-
+                
                 return [
-                    'support' => $this->supportService->addSupport($inquiryId, $userId, $value, $optionId),
+                    'support' => $this->supportService->addSupport($inquiryId, $userId, $value, $optionId, $weight, $engineId),
                 ];
             }
         );
@@ -56,36 +58,27 @@ class SupportController extends BaseController
 
     /**
      * Update support for an inquiry
-     *
-     * @param int $inquiryId ID of the inquiry to support
-     *
-     * @psalm-return JSONResponse<array{status: string, support: Support}>
      */
     #[NoAdminRequired]
-    #[FrontpageRoute(verb: 'PUT', url: '/inquiry/support/{inquiryId}/{userId}/{value}/{optionId}')]
-    public function update(int $inquiryId, string $userId, int $value, int $optionId): JSONResponse
+    #[FrontpageRoute(verb: 'PUT', url: '/inquiry/support/{inquiryId}/{userId}/{optionId}')]
+    public function update(int $inquiryId, string $userId, int $optionId): JSONResponse
     {
         return $this->response(
-            function () use ($inquiryId, $userId, $value, $optionId) {
-                if (!in_array($value, [-1, 0, 1], true)) {
-                    throw new \InvalidArgumentException("Invalid support value");
-                }
-
+            function () use ($inquiryId, $userId, $optionId) {
+                $body = json_decode(file_get_contents('php://input'), true);
+                $value = $body['value'] ?? null;
+                $weight = $body['weight'] ?? 1;
+                $engineId = $body['engineId'] ?? null;
+                
                 return [
-                    'support' => $this->supportService->updateSupport($inquiryId, $userId, $value, $optionId),
+                    'support' => $this->supportService->updateSupport($inquiryId, $userId, $value, $optionId, $weight, $engineId),
                 ];
             }
         );
     }
 
-
     /**
-     * Remove support from an user of an inquiry
-     *
-     * @param int $inquiryId ID and userId f the inquiry to remove support from
-     *
-     * @psalm-return JSONResponse<array{status: string}>
-     S>
+     * Remove support from a user for an inquiry
      */
     #[NoAdminRequired]
     #[FrontpageRoute(verb: 'DELETE', url: '/inquiry/support/{inquiryId}/{userId}/{optionId}')]
@@ -93,36 +86,41 @@ class SupportController extends BaseController
     {
         return $this->response(
             fn () => [
-                'support' => $this->supportService->removeSupport($inquiryId, $userId, $optionId)
+                'success' => $this->supportService->removeSupport($inquiryId, $userId, $optionId)
             ]
         );
     }
+    
+    /**
+     * Remove support with engine context
+     */
+    #[NoAdminRequired]
+    #[FrontpageRoute(verb: 'DELETE', url: '/inquiry/support/{inquiryId}/{userId}/{optionId}/{engineId}')]
+    public function removeWithEngine(int $inquiryId, string $userId, int $optionId, int $engineId): JSONResponse
+    {
+        return $this->response(
+            fn () => [
+                'success' => $this->supportService->removeSupport($inquiryId, $userId, $optionId, $engineId)
+            ]
+        );
+    }
+
     /**
      * Remove all supports for an inquiry
-     *
-     * @param int $inquiryId ID of the inquiry
-     *
-     * @psalm-return JSONResponse<array{status: string}>
      */
     #[FrontpageRoute(verb: 'DELETE', url: '/inquiry/support/inquiry/{inquiryId}/all')]
     public function removeAll(int $inquiryId): JSONResponse
     {
         return $this->response(
             function () use ($inquiryId) {
-                $this->supportService->removeAllSupportForInquiry($inquiryId);
-                return ['status' => 'success'];
+                $count = $this->supportService->removeAllSupportForInquiry($inquiryId);
+                return ['success' => true, 'count' => $count];
             }
         );
     }
 
     /**
-     * Get support for an inquiry
-     /**
-      * Get supports by user
-      *
-      * @param string $userId User ID
-      *
-      * @psalm-return JSONResponse<array{supports: array<Support>}>
+     * Get supports by user
      */
     #[NoAdminRequired]
     #[FrontpageRoute(verb: 'GET', url: '/inquiry/support/user/{userId}')]
@@ -137,10 +135,6 @@ class SupportController extends BaseController
 
     /**
      * Get supports for an inquiry
-     *
-     * @param int $inquiryId ID of the inquiry
-     *
-     * @psalm-return JSONResponse<array{supports: array<Support>}>
      */
     #[NoAdminRequired]
     #[FrontpageRoute(verb: 'GET', url: '/inquiry/support/inquiry/{inquiryId}')]
@@ -153,11 +147,8 @@ class SupportController extends BaseController
         );
     }
 
-
     /**
      * Get support statistics grouped by inquiry type
-     *
-     * @psalm-return JSONResponse<array<string, int>>
      */
     #[FrontpageRoute(verb: 'GET', url: '/inquiry/support/stats/grouped')]
     public function getGroupedStats(): JSONResponse

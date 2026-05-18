@@ -88,16 +88,52 @@ class Support extends Entity implements JsonSerializable
         $this->setUserId($user->getId());
     }
 
-    /**
-     * Set value with JSON encoding
-     */
     public function setValue(mixed $value): void
     {
-        if (is_array($value) || is_object($value)) {
-            $this->value = json_encode($value);
-        } else {
+         \OCP\Server::get(\Psr\Log\LoggerInterface::class)->debug('Support::setValue received', [
+        'type' => gettype($value),
+        'value' => is_array($value) ? json_encode($value) : $value
+         ]);
+
+        // If it's already a string (possibly JSON), store as-is
+        if (is_string($value)) {
             $this->value = $value;
+            return;
         }
+
+        // If it's an array, encode to JSON
+        if (is_array($value)) {
+            $this->value = json_encode($value);
+            return;
+        }
+
+        // For primitive types, convert to appropriate format
+        if (is_bool($value)) {
+            $this->value = json_encode(['value' => $value ? 1 : 0]);
+            return;
+        }
+
+        if (is_numeric($value)) {
+            $this->value = json_encode(['value' => (int)$value]);
+            return;
+        }
+
+
+        // Fallback
+        $this->value = json_encode(['value' => 0]);
+    }
+    /**
+     * Get value with JSON decoding if needed
+     */
+    public function getValue(): mixed
+    {
+        if (is_string($this->value)) {
+            $decoded = json_decode($this->value, true);
+            if (json_last_error() === JSON_ERROR_NONE) {
+                return $decoded;
+            }
+        }
+        return $this->value;
     }
 
     /**
@@ -121,20 +157,6 @@ class Support extends Entity implements JsonSerializable
             $value = json_encode($value, JSON_UNESCAPED_UNICODE);
         }
         $this->setValue($value);
-    }
-
-    /**
-     * Get value with JSON decoding if needed
-     */
-    public function getValue(): mixed
-    {
-        if (is_string($this->value)) {
-            $decoded = json_decode($this->value, true);
-            if (json_last_error() === JSON_ERROR_NONE) {
-                return $decoded;
-            }
-        }
-        return $this->value;
     }
 
     /**

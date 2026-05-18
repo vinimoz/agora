@@ -25,7 +25,7 @@ import type { Inquiry, InquiryType } from '../../Types/index.ts'
 import { useSessionStore } from '../../stores/session.ts'
 import { useInquiriesStore } from '../../stores/inquiries.ts'
 import { createInquiryContext, canSupport, canComment } from '../../utils/permissions.ts'
-import SupportFeature from '../../helpers/modules/SupportFeature.vue'
+import { SupportFeature } from '../Base/index.ts'
 
 interface Props {
   inquiry: Inquiry

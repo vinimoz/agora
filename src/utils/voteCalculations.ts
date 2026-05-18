@@ -14,22 +14,41 @@ import type {
   SupportResultData
 } from '../types/index.ts'
 
+
+function extractVoteValue(value: SupportValue): number {
+  if (value === null || value === undefined) return 0
+  
+  // Format JSON: {"type":"binary","value":1}
+  if (typeof value === 'string') {
+    try {
+      const parsed = JSON.parse(value)
+      if (parsed?.value !== undefined) return parsed.value
+    } catch {}
+  }
+  
+  // Format objet
+  if (typeof value === 'object' && value !== null && 'value' in value) {
+    return Number(value.value)
+  }
+  
+  // Valeur brute
+  return Number(value)
+}
+
 // ----------------------------------------------------------------------------
 // Individual result calculators
 // ----------------------------------------------------------------------------
 export function calculateBinaryResult(supports: SupportData[]): BinaryResult {
   const total = supports.length
-  const yes = supports.filter(s => s.value === 1).length
+  const yes = supports.filter(s => extractVoteValue(s.value) === 1).length
   const no = total - yes
   const percentageYes = total ? (yes / total) * 100 : 0
   const percentageNo = total ? (no / total) * 100 : 0
 
   return {
     type: 'binary',
-    total_yes: yes,
-    total_no: no,
-    percentageYes,
-    percentageNo
+    totals: { yes, no },
+    percentages: { yes: percentageYes, no: percentageNo }
   }
 }
 

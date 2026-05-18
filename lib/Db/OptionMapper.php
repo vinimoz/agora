@@ -106,7 +106,7 @@ class OptionMapper extends QBMapper
     public function findByType(string $type, int $targetId = 0): array
     {
         $qb = $this->buildQuery();
-        $qb->where($qb->expr()->eq(self::TABLE . '.type', $qb->createNamedParameter($type, IQueryBuilder::PARAM_STR)))
+        $qb->andWhere($qb->expr()->eq(self::TABLE . '.type', $qb->createNamedParameter($type, IQueryBuilder::PARAM_STR)))
            ->andWhere($qb->expr()->eq(self::TABLE . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)));
 
         if ($targetId > 0) {
@@ -129,7 +129,7 @@ class OptionMapper extends QBMapper
     public function findForMe(string $userId): array
     {
         $qb = $this->buildQuery();
-        $qb->where($qb->expr()->eq(self::TABLE . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)))
+        $qb->andWhere($qb->expr()->eq(self::TABLE . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)))
            ->andWhere(
                $qb->expr()->orX(
                    $qb->expr()->eq(self::TABLE . '.owner', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR)),
@@ -150,7 +150,7 @@ class OptionMapper extends QBMapper
     public function listByOwner(string $userId): array
     {
         $qb = $this->buildQuery();
-        $qb->where($qb->expr()->eq(self::TABLE . '.owner', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR)))
+        $qb->andWhere($qb->expr()->eq(self::TABLE . '.owner', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR)))
            ->andWhere($qb->expr()->eq(self::TABLE . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)));
 
         $options = $this->findEntities($qb);
@@ -166,7 +166,7 @@ class OptionMapper extends QBMapper
     public function search(ISearchQuery $query): array
     {
         $qb = $this->buildQuery();
-        $qb->where($qb->expr()->eq(self::TABLE . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)))
+        $qb->andWhere($qb->expr()->eq(self::TABLE . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)))
            ->andWhere(
                $qb->expr()->orX(
                    ...array_map(
@@ -194,7 +194,7 @@ class OptionMapper extends QBMapper
     public function findForAdmin(string $userId): array
     {
         $qb = $this->buildQuery();
-        $qb->where($qb->expr()->neq(self::TABLE . '.owner', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR)))
+        $qb->andWhere($qb->expr()->neq(self::TABLE . '.owner', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR)))
            ->andWhere($qb->expr()->eq(self::TABLE . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)));
 
         $options = $this->findEntities($qb);

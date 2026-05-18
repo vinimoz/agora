@@ -13,95 +13,269 @@ use OCA\Agora\Db\Support;
 use OCA\Agora\Db\SupportMapper;
 use OCA\Agora\Db\Inquiry;
 use OCA\Agora\Db\InquiryMapper;
-use OCA\Agora\Db\InquiryTypeMapper;
 use Psr\Log\LoggerInterface;
 
 class SupportService
 {
+    private array $supportsCache = [];
+
     public function __construct(
         private InquiryMapper $inquiryMapper,
         private SupportMapper $supportMapper,
-        private InquiryTypeMapper $inquiryTypeMapper,
         private SupportResultService $supportResultService,
         private LoggerInterface $logger,
     ) {
     }
 
-    /**
-     * Add support for an inquiry (will update if exists)
+        /**
+     * Get supports for a target without causing dirty reads
+     * Uses cache within the request to avoid multiple DB reads
      */
+    private function getSupportsForTarget(int $inquiryId, int $optionId): array
+    {
+        $cacheKey = "{$inquiryId}_{$optionId}";
+        
+        if (!isset($this->supportsCache[$cacheKey])) {
+            $this->supportsCache[$cacheKey] = $this->supportMapper->findByInquiryIdAndOption($inquiryId, $optionId);
+        }
+        
+        return $this->supportsCache[$cacheKey];
+    }
+
+    /*
     public function addSupport(
-        int $inquiryId,
-        string $userId,
-        int $value = 1,
-        int $optionId = 0,
-        int $weight = 1,
-        ?int $engineId = null
-    ): Support {
-        // Check permission
-        $inquiry = $this->inquiryMapper->get($inquiryId, withRoles: true);
-        $inquiry->request(Inquiry::PERMISSION_SUPPORT_ADD);
+    int $inquiryId,
+    string $userId,
+    mixed $value = 1,
+    int $optionId = 0,
+    int $weight = 1,
+    ?int $engineId = null
+): Support {
+    // Convert engineId 0 to NULL (clean architecture)
+    $engineId = ($engineId === 0) ? null : $engineId;
+    
+    // Check permission
+    $inquiry = $this->inquiryMapper->get($inquiryId, withRoles: true);
+    $inquiry->request(Inquiry::PERMISSION_SUPPORT_ADD);
+    
+    $this->logger->debug('DEBUG ADDDD', [
+            'inquiryId' => $inquiryId,
+            'original_value' => $value
+        ]);
 
-        // Check if support already exists
-        $existing = $this->supportMapper->findSupport($inquiryId, $userId, $optionId, $engineId);
-        
-        $support = null;
-        
-        if ($existing !== null) {
-            // Update existing support
-            $this->logger->info('Updating existing support', [
-                'id' => $existing->getId(),
-                'inquiryId' => $inquiryId,
-                'userId' => $userId,
-                'optionId' => $optionId,
-                'oldValue' => $existing->getValue(),
-                'newValue' => $value
-            ]);
-            
-            $existing->setValue($value);
-            $existing->setWeight($weight);
-            $existing->setUpdated(time());
-            if ($engineId !== null && $engineId !== 0) {
-                $existing->setSupportEngineId($engineId);
-            }
-            
-            $support = $this->supportMapper->update($existing);
-        } else {
-            // Create new support
-            $this->logger->info('Creating new support', [
-                'inquiryId' => $inquiryId,
-                'userId' => $userId,
-                'optionId' => $optionId,
-                'value' => $value
-            ]);
-            
-            $support = $this->supportMapper->addSupport($inquiryId, $userId, $value, $optionId, $weight, $engineId);
+    // Normalize the value to standard JSON format
+    $normalizedValue = $this->normalizeToJsonFormat($inquiry, $value);
+    
+    $this->logger->debug('NORMALIZED VALUE DEBUG ADDDD', [
+            'inquiryId' => $inquiryId,
+            'Normalized value' => $normalizedValue
+        ]);
+
+    
+    // Validate after normalization
+    $this->validateSupportValue($inquiry, $normalizedValue);
+
+    // Get current supports BEFORE modification
+    $currentSupports = $this->getSupportsForTarget($inquiryId, $optionId);
+    
+    // Check if support already exists
+    $existing = $this->supportMapper->findSupport($inquiryId, $userId, $optionId, $engineId);
+
+    $support = null;
+    if ($existing !== null) {
+        // Update existing support
+        $existing->setValue($normalizedValue);
+        $existing->setWeight($weight);
+        $existing->setUpdated(time());
+        if ($engineId !== null) {
+            $existing->setSupportEngineId($engineId);
         }
+        $support = $this->supportMapper->update($existing);
+        
+        // Update the support in our array
+        $updatedSupports = array_map(function($s) use ($support) {
+            return $s->getUserId() === $support->getUserId() ? $support : $s;
+        }, $currentSupports);
+    } else {
+        // Add new support
+        $support = $this->supportMapper->addSupport(
+            $inquiryId, 
+            $userId, 
+            $normalizedValue, 
+            $optionId, 
+            $weight, 
+            $engineId
+        );
+        
+        // Add to array
+        $updatedSupports = $currentSupports;
+        $updatedSupports[] = $support;
+    }
+    
+    // Update cache with new supports
+    $cacheKey = "{$inquiryId}_{$optionId}";
+    $this->supportsCache[$cacheKey] = $updatedSupports;
+    
+    // Calculate and store result using the array (no DB read needed)
+    $this->supportResultService->calculateFromSupports(
+        $inquiryId, 
+        $optionId, 
+        $updatedSupports,
+        $engineId
+    );
 
-        // Recalculate results after support change if engine is involved
-        if ($engineId !== null && $engineId !== 0) {
-            try {
-                $this->supportResultService->calculateTargetResults(
-                    $engineId,
-                    $optionId > 0 ? 'option' : 'inquiry',
-                    $optionId > 0 ? $optionId : $inquiryId
-                );
-                $this->logger->info('Results recalculated for engine ' . $engineId);
-            } catch (\Exception $e) {
-                $this->logger->error('Failed to recalculate results: ' . $e->getMessage());
-            }
+    return $support;
+    }*/
+
+    public function addSupport(
+    int $inquiryId,
+    string $userId,
+    mixed $value = 1,
+    int $optionId = 0,
+    int $weight = 1,
+    ?int $engineId = null
+): Support {
+    // Convert engineId 0 to NULL (clean architecture)
+    $engineId = ($engineId === 0) ? null : $engineId;
+
+    // Check permission
+    $inquiry = $this->inquiryMapper->get($inquiryId, withRoles: true);
+    $inquiry->request(Inquiry::PERMISSION_SUPPORT_ADD);
+
+    $this->logger->debug('DEBUG ADDDD', [
+        'inquiryId' => $inquiryId,
+        'original_value' => $value
+    ]);
+
+    // Normalize the value to standard JSON format
+    $normalizedValue = $this->normalizeToJsonFormat($inquiry, $value);
+
+    $this->logger->debug('NORMALIZED VALUE DEBUG ADDDD', [
+        'inquiryId' => $inquiryId,
+        'Normalized value' => json_encode($normalizedValue)
+    ]);
+
+    // Validate after normalization
+    $this->validateSupportValue($inquiry, $normalizedValue);
+
+    // Check if support already exists
+    $existing = $this->supportMapper->findSupport($inquiryId, $userId, $optionId, $engineId);
+
+    $support = null;
+    if ($existing !== null) {
+        // Update existing support
+        $existing->setValue($normalizedValue);
+        $existing->setWeight($weight);
+        $existing->setUpdated(time());
+        if ($engineId !== null) {
+            $existing->setSupportEngineId($engineId);
         }
+        $support = $this->supportMapper->updateSupport($existing);
+        $this->logger->debug('UPDATED SUPPORT', [
+            'support_id' => $support->getId(),
+            'value' => $support->getValue()
+        ]);
+    } else {
+        // Add new support
+        $support = $this->supportMapper->addSupport(
+            $inquiryId,
+            $userId,
+            $normalizedValue,
+            $optionId,
+            $weight,
+            $engineId
+        );
+        $this->logger->debug('CREATED NEW SUPPORT', [
+            'support_id' => $support->getId(),
+            'value' => $support->getValue()
+        ]);
+    }
 
-        return $support;
+    // Get current supports for cache
+    $currentSupports = $this->getSupportsForTarget($inquiryId, $optionId);
+
+    // Update cache with new supports
+    $cacheKey = "{$inquiryId}_{$optionId}";
+    $this->supportsCache[$cacheKey] = $currentSupports;
+
+    // Calculate and store result using the array (no DB read needed)
+    $this->supportResultService->calculateFromSupports(
+        $inquiryId,
+        $optionId,
+        $currentSupports,
+        $engineId
+    );
+
+    $this->logger->debug('SUPPORT ADDED WITHOUT RESULT CALCULATION', [
+        'support_value' => $support->getValue(),
+        'raw_value' => $support->getRawValue()
+    ]);
+
+    return $support;
+}
+
+    /**
+     * Validate support value based on support feature
+     */
+    private function validateSupportValue(Inquiry $inquiry, array $normalizedValue): void
+    {
+        $feature = $inquiry->getSupportFeature();
+        $value = $normalizedValue['value'] ?? null;
+
+        switch ($feature) {
+        case 'binary':
+            if (!in_array($value, [0, 1], true)) {
+                throw new \InvalidArgumentException('Binary value must be 0 or 1');
+            }
+            break;
+
+        case 'ternary':
+            if (!in_array($value, [-1, 0, 1], true)) {
+                throw new \InvalidArgumentException('Ternary value must be -1, 0, or 1');
+            }
+            break;
+
+        case 'score':
+            if (!is_int($value) || $value < 0 || $value > 10) {
+                throw new \InvalidArgumentException('Score must be between 0 and 10');
+            }
+            break;
+
+        case 'star':
+            if (!is_int($value) || $value < 1 || $value > 5) {
+                throw new \InvalidArgumentException('Star rating must be between 1 and 5');
+            }
+            break;
+
+        case 'reaction':
+            if (!is_string($value) || empty($value)) {
+                throw new \InvalidArgumentException('Reaction must be a non-empty string');
+            }
+            break;
+
+        case 'approval':
+        case 'ranking':
+            if (!is_array($value)) {
+                throw new \InvalidArgumentException('Value must be an array');
+            }
+            break;
+
+        default:
+            // Unknown feature, default to binary validation
+            if (!in_array($value, [0, 1], true)) {
+                throw new \InvalidArgumentException('Invalid support value');
+            }
+            break;
+        }
     }
 
     /**
-     * Update support value (same as addSupport with upsert logic)
+     * Update support value
      */
     public function updateSupport(
         int $inquiryId,
         string $userId,
-        int $value = 1,
+        mixed $value = 1,  
         int $optionId = 0,
         int $weight = 1,
         ?int $engineId = null
@@ -109,27 +283,185 @@ class SupportService
         return $this->addSupport($inquiryId, $userId, $value, $optionId, $weight, $engineId);
     }
 
+
     /**
-     * Remove support
+     * Normalize support value to standard JSON format
      */
+    private function normalizeToJsonFormat(Inquiry $inquiry, mixed $value): array
+{
+    $feature = $inquiry->getSupportFeature();
+    
+    $this->logger->debug('Normalizing value', [
+        'feature' => $feature,
+        'original_value' => $value,
+        'original_type' => gettype($value)
+    ]);
+    
+    // For individual votes, we ONLY store {"value": N} - NO type field!
+    // The type (binary/ternary/etc) is determined by the inquiry/option context
+    
+    return match($feature) {
+        'binary' => ['value' => $this->normalizeBinaryValue($value)],
+        'ternary' => ['value' => $this->normalizeTernaryValue($value)],
+        'score' => ['value' => $this->normalizeScoreValue($value)],
+        'star' => ['value' => $this->normalizeStarValue($value)],
+        'reaction' => ['value' => (string)$value],
+        'approval' => ['value' => $this->normalizeArrayValue($value)],
+        'ranking' => ['value' => $this->normalizeArrayValue($value)],
+        default => ['value' => $this->normalizeBinaryValue($value)]
+    };
+}
+
+    /**
+     * Normalize binary value (0 or 1)
+     */
+    private function normalizeBinaryValue(mixed $value): int
+    {
+        if (is_bool($value)) {
+            return $value ? 1 : 0;
+        }
+
+        if (is_string($value)) {
+            return match(strtolower($value)) {
+            '1', 'yes', 'true', 'support', 'agree', '👍', '❤️', '🎉' => 1,
+                '0', 'no', 'false', 'oppose', 'disagree', '👎' => 0,
+                default => 0
+        };
+        }
+
+        $intVal = (int)$value;
+        return $intVal > 0 ? 1 : 0;
+    }
+
+    /**
+     * Normalize ternary value (-1, 0, 1)
+     */
+    private function normalizeTernaryValue(mixed $value): int
+    {
+        if (is_bool($value)) {
+            return $value ? 1 : -1;
+        }
+
+        if (is_string($value)) {
+            return match(strtolower($value)) {
+            '1', 'yes', 'true', 'support', 'agree', 'for', '👍', '❤️', '🎉' => 1,
+                '-1', 'no', 'false', 'oppose', 'disagree', 'against', '👎' => -1,
+                '0', 'abstain', 'neutral' => 0,
+                default => 0
+        };
+        }
+
+        $intVal = (int)$value;
+        return min(1, max(-1, $intVal));
+    }
+
+    /**
+     * Normalize score value (0-10)
+     */
+    private function normalizeScoreValue(mixed $value): int
+    {
+        $intVal = (int)$value;
+        return min(10, max(0, $intVal));
+    }
+
+    /**
+     * Normalize star value (1-5)
+     */
+    private function normalizeStarValue(mixed $value): int
+    {
+        $intVal = (int)$value;
+        return min(5, max(1, $intVal));
+    }
+
+    /**
+     * Normalize array value (for approval/ranking)
+     */
+    private function normalizeArrayValue(mixed $value): array
+    {
+        if (is_string($value)) {
+            $decoded = json_decode($value, true);
+            return is_array($decoded) ? $decoded : [];
+        }
+
+        return is_array($value) ? $value : [];
+    }
+
+    private function validateTernary($value): void
+    {
+        if (!in_array($value, [-1, 0, 1], true)) {
+            throw new \InvalidArgumentException('Ternary value must be -1, 0, or 1');
+        }
+    }
+
+    private function validateBinary($value): void
+    {
+        if (!in_array($value, [0, 1], true)) {
+            throw new \InvalidArgumentException('Binary value must be 0 or 1');
+        }
+    }
+
+    private function validateStar($value): void
+    {
+        if (!is_int($value) || $value < 1 || $value > 5) {
+            throw new \InvalidArgumentException('Star rating must be between 1 and 5');
+        }
+    }
+
+    private function validateScore($value): void
+    {
+        if (!is_int($value) || $value < 0 || $value > 10) {
+            throw new \InvalidArgumentException('Score must be between 0 and 10');
+        }
+    }
+
+    private function validateReaction($value): void
+    {
+        if (!is_string($value) || empty($value)) {
+            throw new \InvalidArgumentException('Reaction must be a non-empty string');
+        }
+    }
+
+    private function validateArray($value): void
+    {
+        if (!is_array($value)) {
+            throw new \InvalidArgumentException('Value must be an array');
+        }
+    }
+
     public function removeSupport(int $inquiryId, string $userId, int $optionId = 0, ?int $engineId = null): bool
     {
-        $result = $this->supportMapper->removeSupport($inquiryId, $userId, $optionId, $engineId);
-        
-        // Recalculate results after removal if engine is involved
-        if ($result && $engineId !== null && $engineId !== 0) {
-            try {
-                $this->supportResultService->calculateTargetResults(
-                    $engineId,
-                    $optionId > 0 ? 'option' : 'inquiry',
-                    $optionId > 0 ? $optionId : $inquiryId
-                );
-            } catch (\Exception $e) {
-                $this->logger->error('Failed to recalculate results after removal: ' . $e->getMessage());
-            }
+        $engineId = ($engineId === 0) ? null : $engineId;
+
+        $this->logger->debug('REMOVE SUPPORT ', [
+            'inquiry_id' => $inquiryId,
+            'user_id' => $userId,
+            'option_id' => $optionId,
+            'engine_id' => $engineId
+        ]);
+
+        // First, perform the deletion from database
+        $deleted = $this->supportMapper->removeSupport($inquiryId, $userId, $optionId, $engineId);
+
+        if (!$deleted) {
+            return false;
         }
-        
-        return $result;
+
+        // Now get current supports AFTER deletion
+        $currentSupports = $this->getSupportsForTarget($inquiryId, $optionId);
+
+        // Update cache with current supports
+        $cacheKey = "{$inquiryId}_{$optionId}";
+        $this->supportsCache[$cacheKey] = array_values($currentSupports);
+
+        // Calculate and store result using the current supports
+        $this->supportResultService->calculateFromSupports(
+            $inquiryId,
+            $optionId,
+            array_values($currentSupports), // Re-index array
+            $engineId
+        );
+
+        return true;
     }
 
     /**
@@ -137,18 +469,20 @@ class SupportService
      */
     public function removeAllSupportForInquiry(int $inquiryId, ?int $engineId = null): int
     {
-        $count = $this->supportMapper->removeAllSupportForInquiry($inquiryId, $engineId);
-        
-        if ($count > 0 && $engineId !== null && $engineId !== 0) {
+        $count = $this->supportMapper->removeAllSupportForInquiry($inquiryId);
+
+        if ($count > 0) {
             try {
-                $this->supportResultService->calculateResults($engineId);
+                $this->supportResultService->calculateResults($engineId ?? 0);
+                $this->logger->info('Results recalculated after bulk removal');
             } catch (\Exception $e) {
                 $this->logger->error('Failed to recalculate results after bulk removal: ' . $e->getMessage());
             }
         }
-        
+
         return $count;
     }
+
 
     /**
      * Get supports for a user
@@ -213,7 +547,7 @@ class SupportService
      */
     public function countByInquiry(int $inquiryId, ?int $engineId = null): int
     {
-        return $this->supportMapper->countByInquiry($inquiryId, $engineId);
+        return $this->supportMapper->countByInquiry($inquiryId, $engineId ?? 0);
     }
 
     /**
@@ -249,7 +583,7 @@ class SupportService
      */
     public function generateHash(Support $support): string
     {
-        return hash('sha256', $support->getInquiryId() . '|' . $support->getUserId() . '|' . $support->getOptionId());
+        return hash('sha256', $support->getInquiryId() . '_' . $support->getUserId() . '_' . $support->getOptionId());
     }
 
     /**

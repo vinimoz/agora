@@ -124,7 +124,6 @@ export const useSupportEngineStore = defineStore('supportEngine', () => {
     }
   }
 
-  // ✅ Create engine
   async function createEngine(engine: Omit<SupportEngine, 'id' | 'created'>): Promise<SupportEngine | null> {
     loading.value = true
     error.value = null
@@ -145,7 +144,6 @@ export const useSupportEngineStore = defineStore('supportEngine', () => {
     }
   }
 
-  // ✅ Update engine
   async function updateEngine(
     id: number, 
     data: Record<string, unknown>
@@ -177,7 +175,6 @@ export const useSupportEngineStore = defineStore('supportEngine', () => {
     }
   }
 
-  // ✅ Delete engine
   async function deleteEngine(id: number): Promise<boolean> {
     loading.value = true
     error.value = null
@@ -240,7 +237,6 @@ export const useSupportEngineStore = defineStore('supportEngine', () => {
     }
   }
 
-  // ✅ Clone engine - uses inquiry_id now
   async function cloneEngine(engineId: number, targetIds: number[]): Promise<SupportEngine | null> {
     const source = engines.value.find(e => e.id === engineId)
     if (!source) return null

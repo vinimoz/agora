@@ -11,6 +11,8 @@ namespace OCA\Agora\Db;
 use OCA\Agora\UserSession;
 use OCA\Agora\Helper\SqlHelper;
 use OCA\Agora\Db\InquiryType;
+use OCA\Agora\Db\SupportResult;
+use OCA\Agora\Db\SupportEngine;
 use OCP\AppFramework\Db\QBMapper;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
@@ -22,6 +24,8 @@ use OCP\Search\ISearchQuery;
 class InquiryMapper extends QBMapper
 {
     public const TABLE = Inquiry::TABLE;
+    public const SUPPORT_RESULT_TABLE = SupportResult::TABLE;
+    public const SUPPORT_ENGINE_TABLE = SupportEngine::TABLE;
     public const CONCAT_SEPARATOR = ',';
 
     public function __construct(
@@ -201,7 +205,7 @@ class InquiryMapper extends QBMapper
         string $joinAlias = 'support_result'
     ): void {
         $dbProvider = $this->db->getDatabaseProvider();
-
+        $table= '*PREFIX*'. self::SUPPORT_RESULT_TABLE;
         if ($dbProvider === IDBConnection::PLATFORM_POSTGRES) {
             $qb->addSelect($qb->createFunction(
                 "COALESCE(
@@ -213,7 +217,7 @@ class InquiryMapper extends QBMapper
                         'result', sr.result,
                         'updated', sr.updated
             ))
-            FROM oc_agora_support_results sr
+            FROM $table sr
             WHERE sr.target_type = 'inquiry' AND sr.target_id = {$fromAlias}.id),
             '[]'::json
             )::text AS support_result"
@@ -232,7 +236,7 @@ class InquiryMapper extends QBMapper
                         'updated', sr.updated
                     ) SEPARATOR ','
                 ), ']')
-                FROM oc_agora_support_results sr
+                FROM $table sr
                 WHERE sr.target_type = 'inquiry' AND sr.target_id = {$fromAlias}.id),
                 '[]'
             ) AS support_result"
@@ -252,6 +256,8 @@ protected function joinSupportEngine(
     string $joinAlias = 'support_engine'
 ): void {
     $dbProvider = $this->db->getDatabaseProvider();
+    
+    $table= '*PREFIX*'. self::SUPPORT_ENGINE_TABLE;
 
     if ($dbProvider === IDBConnection::PLATFORM_POSTGRES) {
         $qb->addSelect($qb->createFunction(
@@ -269,7 +275,7 @@ protected function joinSupportEngine(
                     'target_type', se.target_type,
                     'target_ids', se.target_ids
                 ))
-                FROM oc_agora_support_engines se
+                FROM $table se
                 WHERE se.target_type = 'option' AND se.inquiry_id = {$fromAlias}.id),
                 '[]'::json
             )::text AS support_engine"
@@ -293,7 +299,7 @@ protected function joinSupportEngine(
                         'target_ids', se.target_ids
                     ) SEPARATOR ','
                 ), ']')
-                FROM oc_agora_support_engines se
+                FROM $table se
                 WHERE se.target_type = 'option' AND se.inquiry_id = {$fromAlias}.id),
                 '[]'
             ) AS support_engine"

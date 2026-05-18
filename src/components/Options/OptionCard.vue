@@ -291,7 +291,7 @@ import { t } from '@nextcloud/l10n'
 import NcAvatar from '@nextcloud/vue/components/NcAvatar'
 import NcActions from '@nextcloud/vue/components/NcActions'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
-import SupportFeature from '../../helpers/modules/SupportFeature.vue'
+import { SupportFeature } from '../Base/index.ts'
 
 import { useOptionsStore } from '../../stores/options'
 import { useSessionStore } from '../../stores/session'

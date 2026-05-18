@@ -9,125 +9,71 @@ declare(strict_types=1);
 
 namespace OCA\Agora\Controller;
 
-use OCA\Agora\Db\SupportResult;
 use OCA\Agora\Service\SupportResultService;
 use OCP\AppFramework\Http\Attribute\FrontpageRoute;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
-use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
 use OCP\AppFramework\Http\JSONResponse;
 use OCP\IRequest;
 
-/**
- * @psalm-api
- */
 class SupportResultController extends BaseController
 {
     public function __construct(
         string $appName,
         IRequest $request,
-        private SupportResultService $resultService,
+        private SupportResultService $supportResultService,
     ) {
         parent::__construct($appName, $request);
     }
 
-
     /**
-     * Get results for a specific target (inquiry or option)
-     *
-     * @param string $targetType The target type ('inquiry' or 'option')
-     * @param int $targetId The target ID
-     *
-     * @psalm-return JSONResponse<array{results: array<SupportResult>}>
+     * Get results for a support engine
      */
     #[NoAdminRequired]
-    #[NoCSRFRequired]
+    #[FrontpageRoute(verb: 'GET', url: '/support/engine/{engineId}/results')]
+    public function getResults(int $engineId): JSONResponse
+    {
+        return $this->response(fn () => [
+            'results' => $this->supportResultService->getResultsByEngine($engineId),
+        ]);
+    }
+
+    /**
+     * Calculate/refresh results for an engine
+     */
+    #[NoAdminRequired]
+    #[FrontpageRoute(verb: 'POST', url: '/support/engine/{engineId}/calculate')]
+    public function calculate(int $engineId): JSONResponse
+    {
+        return $this->response(fn () => [
+            'results' => $this->supportResultService->calculateResults($engineId),
+        ]);
+    }
+
+    /**
+     * Export engine results
+     */
+    #[NoAdminRequired]
+    #[FrontpageRoute(verb: 'GET', url: '/support/engine/{engineId}/results/export')]
+    public function export(int $engineId): JSONResponse
+    {
+        $format = $this->request->getParam('format', 'json');
+        $data = $this->supportResultService->exportResults($engineId, $format);
+        if ($format === 'csv') {
+            return new JSONResponse(['csv' => $data]); // Or use StreamResponse for file download
+        }
+        return new JSONResponse(['results' => $data]);
+    }
+
+    /**
+     * Get results for a specific target
+     */
+    #[NoAdminRequired]
     #[FrontpageRoute(verb: 'GET', url: '/support/results/{targetType}/{targetId}')]
-    public function getResultsByTarget(string $targetType, int $targetId): JSONResponse
+    public function getByTarget(string $targetType, int $targetId): JSONResponse
     {
-        $engineId = $this->request->getParam('engineId') ? (int) $this->request->getParam('engineId') : null;
-        
-        return $this->response(
-            fn () => [
-                'results' => $this->resultService->getResultsByTarget($targetType, $targetId, $engineId)
-            ]
-        );
-    }
-
-    /**
-     * Get a single result by ID
-     *
-     * @param int $resultId ID of the result
-     *
-     * @psalm-return JSONResponse<array{result: SupportResult}>
-     */
-    #[NoAdminRequired]
-    #[NoCSRFRequired]
-    #[FrontpageRoute(verb: 'GET', url: '/support/result/{resultId}')]
-    public function getResult(int $resultId): JSONResponse
-    {
-        return $this->response(
-            fn () => [
-                'result' => $this->resultService->getResult($resultId)
-            ]
-        );
-    }
-
-
-    /**
-     * Calculate results for a specific target
-     *
-     * @param int $engineId ID of the support engine
-     * @param string $targetType The target type ('inquiry' or 'option')
-     * @param int $targetId The target ID
-     *
-     * @psalm-return JSONResponse<array{result: SupportResult}>
-     */
-    #[NoAdminRequired]
-    #[FrontpageRoute(verb: 'POST', url: '/support/engine/{engineId}/calculate/{targetType}/{targetId}')]
-    public function calculateTargetResults(int $engineId, string $targetType, int $targetId): JSONResponse
-    {
-        return $this->response(
-            fn () => [
-                'result' => $this->resultService->calculateTargetResults($engineId, $targetType, $targetId)
-            ]
-        );
-    }
-
-    /**
-     * Get live results (real-time aggregated)
-     *
-     * @param int $engineId ID of the support engine
-     *
-     * @psalm-return JSONResponse<array{results: array<SupportResult>}>
-     */
-    #[NoAdminRequired]
-    #[NoCSRFRequired]
-    #[FrontpageRoute(verb: 'GET', url: '/support/engine/{engineId}/results/live')]
-    public function getLiveResults(int $engineId): JSONResponse
-    {
-        return $this->response(
-            fn () => [
-                'results' => $this->resultService->getResultsByEngine($engineId)
-            ]
-        );
-    }
-
-    /**
-     * Get results history/changelog
-     *
-     * @param int $resultId ID of the result
-     *
-     * @psalm-return JSONResponse<array{history: array<SupportResult>}>
-     */
-    #[NoAdminRequired]
-    #[NoCSRFRequired]
-    #[FrontpageRoute(verb: 'GET', url: '/support/result/{resultId}/history')]
-    public function getResultHistory(int $resultId): JSONResponse
-    {
-        return $this->response(
-            fn () => [
-                'history' => $this->resultService->getResultHistory($resultId)
-            ]
-        );
+        $engineId = $this->request->getParam('engineId', 0);
+        return $this->response(fn () => [
+            'results' => $this->supportResultService->getResultsByTarget($targetType, $targetId, (int) $engineId),
+        ]);
     }
 }

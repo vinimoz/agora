@@ -339,7 +339,7 @@ import { useOptionsStore } from '../../stores/options'
 import { useOptionStore } from '../../stores/option'
 import { useSessionStore } from '../../stores/session'
 import { InquiryOptionIcons } from '../../utils/icons.ts'
-import SupportFeature from '../../helpers/modules/SupportFeature.vue'
+import { SupportFeature } from '../Base/index.ts'
 import OptionCard from './OptionCard.vue'
 import {
     getOptionTypeLabel as getOptionTypeLabelHelper,
