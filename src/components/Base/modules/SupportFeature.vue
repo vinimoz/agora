@@ -1,99 +1,106 @@
 <!--
-  - SPDX-FileCopyrightText: 2018-2025 Nextcloud contributors
-  - SPDX-License-Identifier: AGPL-3.0-or-later
+    - SPDX-FileCopyrightText: 2018-2025 Nextcloud contributors
+    - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
 <template>
-  <NcPopover 
+    <NcPopover 
     v-if="showDetailsOnHover && hasResults && !isReadonly"
     :delay="{ show: 300, hide: 150 }"
     :triggers="['hover']"
     :popover-base-class="'support-details-popover'"
+    :no-focus-trap="true"
     placement="bottom">
     <template #trigger>
-      <div 
-        ref="containerRef"
-        class="counter-item supports"
-        :class="{ 
-          'clickable': canSupport && !isReadonly, 
-          'disabled': !canSupport || isReadonly,
-          'has-support': hasUserParticipated
-        }"
-        :style="containerStyles"
-        @click="handleSupportClick">
-          <!-- Icon based on support feature type -->
-          <div class="counter-icon" :style="iconContainerStyles">
-              <template v-if="supportFeature === 'ternary'">
-                  <TernarySupportIcon
-                          :support-value="Number(currentUserSupportValue)"
-                          :size="iconSize" />
-              </template>
+        <div
+                ref="containerRef"
+                class="counter-item supports"
+                :class="{
+                        'clickable': canSupport && !isReadonly,
+                        'disabled': !canSupport || isReadonly,
+                        'has-support': hasUserParticipated,
+                        'has-star-rating': supportFeature === 'star',
+                        'has-majority-judgment': supportFeature === 'majority_judgment',
+                        'has-reaction': supportFeature === 'reaction',
+                        'has-score': supportFeature === 'score',
+                        'has-approval': supportFeature === 'approval'
+                        }"
+                :style="containerStyles"
+                @click="handleSupportClick">
+            <!-- Icon based on support feature type -->
+            <div class="counter-icon" :style="iconContainerStyles">
+                <template v-if="supportFeature === 'ternary' || supportFeature === 'binary'">
+                    <TernarySupportIcon
+                            :support-value="Number(currentUserSupportValue)"
+                            :size="iconSize" />
+                </template>
 
-              <ThumbIcon
-                      v-else-if="supportFeature === 'binary'"
-                      :supported="hasUserParticipated"
-                      :size="iconSize" />
+                <ThumbIcon
+                        v-else-if="supportFeature === 'approval'"
+                        :supported="hasUserParticipated"
+                        :size="iconSize" />
 
-              <div v-else-if="supportFeature === 'reaction'" class="reaction-icon">
-                  <span class="reaction-emoji">{{ getUserReaction || '👍' }}</span>
-              </div>
+                <div v-else-if="supportFeature === 'reaction'" class="reaction-icon">
+                    <span class="reaction-emoji">{{ getUserReaction || '👍' }}</span>
+                </div>
+                <div v-else-if="supportFeature === 'star'" class="star-rating-icon">
+                    <span v-if="hasUserParticipated" class="rating-value">{{ currentUserSupportValue }}</span>
+                    <div class="stars-container">
+                        <Star 
+                         v-for="n in 5" 
+                         :key="n"
+                         :size="12"
+                         :class="{ filled: hasUserParticipated && (currentUserSupportValue as number) >= n }"
+                         />
+                    </div>
+                </div>
 
-              <div v-else-if="supportFeature === 'star'" class="star-rating-icon">
-                  <Star :size="iconSize" :class="{ filled: hasUserParticipated }" />
-                  <span v-if="hasUserParticipated" class="rating-value">{{ currentUserSupportValue }}</span>
-              </div>
+                <div v-else-if="supportFeature === 'score'" class="score-icon">
+                    <Hash :size="iconSize" />
+                    <span v-if="hasUserParticipated" class="score-value">{{ currentUserSupportValue }}</span>
+                </div>
 
-              <div v-else-if="supportFeature === 'score'" class="score-icon">
-                  <Hash :size="iconSize" />
-                  <span v-if="hasUserParticipated" class="score-value">{{ currentUserSupportValue }}</span>
-              </div>
+                <div v-else-if="supportFeature === 'majority_judgment'" class="grade-icon">
+                    <Gauge :size="iconSize" />
+                    <span v-if="hasUserParticipated" class="grade-value">
+                        {{ getGradeLabel(currentUserSupportValue as number) }}
+                    </span>
+                </div>
 
-              <div v-else-if="supportFeature === 'majority_judgment'" class="grade-icon">
-                  <Gauge :size="iconSize" />
-                  <span v-if="hasUserParticipated" class="grade-value">
-                      {{ getGradeLabel(currentUserSupportValue as number) }}
-                  </span>
-              </div>
+                <ListOrdered
+                        v-else-if="supportFeature === 'ranking'"
+                        :size="iconSize"
+                        :class="{ ranked: hasUserParticipated }" />
 
-              <CheckCircle
-                      v-else-if="supportFeature === 'approval'"
-                      :size="iconSize"
-                      :class="{ approved: hasUserParticipated }" />
+                <TrendingUp
+                        v-else-if="supportFeature === 'trending'"
+                        :size="iconSize" />
 
-              <ListOrdered
-                      v-else-if="supportFeature === 'ranking'"
-                      :size="iconSize"
-                      :class="{ ranked: hasUserParticipated }" />
+                <ThumbIcon
+                        v-else
+                        :supported="false"
+                        :size="iconSize"
+                        class="disabled-icon" />
+            </div>
 
-              <TrendingUp
-                      v-else-if="supportFeature === 'trending'"
-                      :size="iconSize" />
-
-              <ThumbIcon
-                      v-else
-                      :supported="false"
-                      :size="iconSize"
-                      class="disabled-icon" />
-          </div>
-
-          <!-- Counter Content -->
-          <div class="counter-content">
-              <div class="support-count">
-                  <span class="counter-value" :style="{ fontSize: `${iconSize}px` }">
-                      {{ displayCount }}
-                  </span>
-                  <span v-if="showQuorum && quorumValue" 
-                        class="quorum-compact" 
-                        :style="{ fontSize: `${iconSize * 0.6}px` }">
-                      <span class="quorum-separator"> / </span>
-                      <span class="quorum-target">{{ quorumValue }}</span>
-                  </span>
-              </div>
-              <span class="counter-label" :style="{ fontSize: `${iconSize * 0.5}px` }">
-                  {{ getSupportLabel() }}
-              </span>
-          </div>
-      </div>
+            <!-- Counter Content -->
+            <div class="counter-content">
+                <div class="support-count">
+                    <span class="counter-value">
+                        {{ displayCount }}
+                    </span>
+                    <span v-if="showQuorum && quorumValue" 
+                          class="quorum-compact" 
+                          :style="{ fontSize: `${iconSize * 0.6}px` }">
+                        <span class="quorum-separator"> / </span>
+                        <span class="quorum-target">{{ quorumValue }}</span>
+                    </span>
+                </div>
+                <span class="counter-label" :style="{ fontSize: `${iconSize * 0.5}px` }">
+                    {{ getSupportLabel() }}
+                </span>
+            </div>
+        </div>
     </template>
 
     <!-- Popover Content -->
@@ -106,6 +113,13 @@
                   :class="userSupportClass">
                 {{ currentUserSupportInfo }}
             </span>
+        </div>
+
+        <div v-if="!hasDetailedResults" class="no-results-message">
+            <p>{{ t('agora', 'No detailed results available yet.') }}</p>
+            <p v-if="totalParticipants > 0" class="total-participants">
+            {{ t('agora', 'Total participants: {count}', { count: totalParticipants }) }}
+            </p>
         </div>
 
         <!-- Binary Results -->
@@ -185,23 +199,34 @@
                                     </div>
                                 </div>
                             </div>
+                            
                             <!-- Score Results -->
                             <div v-if="supportFeature === 'score' && scoreResult" class="score-breakdown">
                                 <div class="score-summary">
                                     <div class="score-stat">
                                         <span class="stat-label">{{ t('agora', 'Average') }}</span>
-                                        <span class="stat-value">{{ scoreResult.average.toFixed(1) }}</span>
-                                    </div>
-                                    <div v-if="scoreResult.median !== undefined" class="score-stat">
-                                        <span class="stat-label">{{ t('agora', 'Median') }}</span>
-                                        <span class="stat-value">{{ scoreResult.median }}</span>
+                                        <span class="stat-value">{{ scoreResult.average ? scoreResult.average.toFixed(1) : '0.0' }}</span>
                                     </div>
                                     <div class="score-stat">
                                         <span class="stat-label">{{ t('agora', 'Total Votes') }}</span>
-                                        <span class="stat-value">{{ scoreResult.total }}</span>
+                                        <span class="stat-value">{{ scoreResult.total || 0 }}</span>
                                     </div>
                                 </div>
                             </div>
+
+                            <!-- Star Results -->
+                            <div v-if="supportFeature === 'star' && starResult" class="score-breakdown">
+                                <div class="score-summary">
+                                    <div class="score-stat">
+                                        <span class="stat-label">{{ t('agora', 'Average') }}</span>
+                                        <span class="stat-value">{{ starResult.totals.average ? starResult.totals.average.toFixed(1) : '0.0' }}</span>
+                                    </div>
+                                    <div class="score-stat">
+                                        <span class="stat-label">{{ t('agora', 'Total Ratings') }}</span>
+                                        <span class="stat-value">{{ starResult.totals.total || 0 }}</span>
+                                    </div>
+                                </div>
+                            </div> 
 
                             <!-- Reaction Results -->
                             <div v-if="supportFeature === 'reaction' && reactionResult" class="reaction-breakdown">
@@ -217,130 +242,151 @@
                                 </div>
                             </div>
 
-                            <!-- Majority Judgment Results -->
-                            <div v-if="supportFeature === 'majority_judgment' && majorityResult" class="majority-breakdown">
-                                <div class="grade-distribution">
-                                    <div 
-                                     v-for="(count, grade) in majorityResult.distribution" 
-                                     :key="grade"
-                                     class="grade-bar">
-                                        <span class="grade-label">{{ getGradeLabel(Number(grade)) }}</span>
-                                        <div class="grade-bar-container">
-                                            <div 
-                                             class="grade-bar-fill"
-                                             :style="{ width: `${totalVotes > 0 ? (count / totalVotes) * 100 : 0}%` }" />
-                                            </div>
-                                            <span class="grade-count">{{ count }}</span>
+                            <!-- Approval Results -->
+                            <div v-if="supportFeature === 'approval' && approvalResult" class="binary-breakdown">
+                                <div class="breakdown-item positive">
+                                    <div class="breakdown-header">
+                                        <ThumbIcon :supported="true" :size="iconSize * 0.8" />
+                                        <span class="breakdown-label">{{ t('agora', 'Approved') }}</span>
+                                    </div>
+                                    <div class="breakdown-stats">
+                                        <span class="count">{{ approvalResult.totals.approved }}</span>
+                                        <span class="percentage" v-if="approvalResult.totals.total > 0">({{ Math.round(approvalResult.percentages.approved) }}%)</span>
+                                        <span class="percentage" v-else>(0%)</span>
+                                    </div>
+                                    <div class="breakdown-bar">
+                                        <div class="bar-fill positive-bar" 
+                                             :style="{ width: `${approvalResult.percentages.approved}%` }" />
                                         </div>
                                     </div>
-                                    <div class="median-info">
-                                        <span class="median-label">{{ t('agora', 'Median Grade') }}:</span>
-                                        <span class="median-value">{{ getGradeLabel(majorityResult.median) }}</span>
+                                </div>
+                                
+                                <!-- Majority Judgment Results -->
+                                <div v-if="supportFeature === 'majority_judgment' && majorityResult" class="majority-breakdown">
+                                    <div class="grade-distribution">
+                                        <div 
+                                         v-for="(count, grade) in majorityResult.distribution" 
+                                         :key="grade"
+                                         class="grade-bar">
+                                            <span class="grade-label">{{ getGradeLabel(Number(grade)) }}</span>
+                                            <div class="grade-bar-container">
+                                                <div 
+                                                 class="grade-bar-fill"
+                                                 :style="{ width: `${majorityResult.total_votes > 0 ? (count / majorityResult.total_votes) * 100 : 0}%` }" />
+                                                </div>
+                                                <span class="grade-count">{{ count }}</span>
+                                            </div>
+                                        </div>
+                                        <div class="median-info">
+                                            <span class="median-label">{{ t('agora', 'Median Grade') }}:</span>
+                                            <span class="median-value">{{ getGradeLabel(majorityResult.median) }}</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Footer Summary -->
+                                    <div class="tooltip-footer">
+                                        <div class="summary-item">
+                                            <span class="summary-label">{{ t('agora', 'Total Participants') }}</span>
+                                            <span class="summary-value">{{ totalParticipants }}</span>
+                                        </div>
+                                        <div v-if="quorumValue" class="summary-item">
+                                            <span class="summary-label">{{ t('agora', 'Quorum') }}</span>
+                                            <span class="summary-value" :class="{ reached: totalParticipants >= quorumValue }">
+                                                {{ totalParticipants }}/{{ quorumValue }}
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
+    </NcPopover>
 
-                                <!-- Footer Summary -->
-                                <div class="tooltip-footer">
-                                    <div class="summary-item">
-                                        <span class="summary-label">{{ t('agora', 'Total Participants') }}</span>
-                                        <span class="summary-value">{{ totalParticipants }}</span>
-                                    </div>
-                                    <div v-if="quorumValue" class="summary-item">
-                                        <span class="summary-label">{{ t('agora', 'Quorum') }}</span>
-                                        <span class="summary-value" :class="{ reached: totalParticipants >= quorumValue }">
-                                            {{ totalParticipants }}/{{ quorumValue }}
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-  </NcPopover>
+    <!-- Simple version without popover (when disabled or no results) -->
+    <div 
+                                                  v-else
+                                                  ref="containerRef"
+                                                  class="counter-item supports"
+                                                  :class="{ 
+                                                          'clickable': canSupport && !isReadonly, 
+                                                          'disabled': !canSupport || isReadonly,
+                                                          'has-support': hasUserParticipated
+                                                          }"
+                                                  :style="containerStyles"
+                                                  @click="handleSupportClick">
+        <div class="counter-icon" :style="iconContainerStyles">
+            <TernarySupportIcon
+                    v-if="supportFeature === 'ternary'"
+                    :support-value="Number(currentUserSupportValue)"
+                    :size="iconSize" />
 
-  <!-- Simple version without popover (when disabled or no results) -->
-  <div 
-                                              v-else
-                                              ref="containerRef"
-                                              class="counter-item supports"
-                                              :class="{ 
-                                                      'clickable': canSupport && !isReadonly, 
-                                                      'disabled': !canSupport || isReadonly,
-                                                      'has-support': hasUserParticipated
-                                                      }"
-                                              :style="containerStyles"
-                                              @click="handleSupportClick">
-      <div class="counter-icon" :style="iconContainerStyles">
-          <TernarySupportIcon
-                  v-if="supportFeature === 'ternary'"
-                  :support-value="Number(currentUserSupportValue)"
-                  :size="iconSize" />
+            <ThumbIcon
+                    v-else-if="supportFeature === 'binary'"
+                    :supported="hasUserParticipated"
+                    :size="iconSize" />
 
-          <ThumbIcon
-                  v-else-if="supportFeature === 'binary'"
-                  :supported="hasUserParticipated"
-                  :size="iconSize" />
+            <div v-else-if="supportFeature === 'reaction'" class="reaction-icon">
+                <span class="reaction-emoji">{{ getUserReaction || '👍' }}</span>
+            </div>
 
-          <div v-else-if="supportFeature === 'reaction'" class="reaction-icon">
-              <span class="reaction-emoji">{{ getUserReaction || '👍' }}</span>
-          </div>
+            <div v-else-if="supportFeature === 'star'" class="star-rating-icon">
+                <div class="stars-container">
+                    <Star 
+                     v-for="n in 5" 
+                     :key="n"
+                     :size="iconSize * 0.7"
+                     :class="{ filled: hasUserParticipated && (currentUserSupportValue as number) >= n }"
+                     />
+                </div>
+                <span v-if="hasUserParticipated" class="rating-value">{{ currentUserSupportValue }}</span>
+            </div>
 
-          <div v-else-if="supportFeature === 'star'" class="star-rating-icon">
-              <Star :size="iconSize" :class="{ filled: hasUserParticipated }" />
-              <span v-if="hasUserParticipated" class="rating-value">{{ currentUserSupportValue }}</span>
-          </div>
+            <div v-else-if="supportFeature === 'score'" class="score-icon">
+                <Hash :size="iconSize" />
+                <span v-if="hasUserParticipated" class="score-value">{{ currentUserSupportValue }}</span>
+            </div>
 
-          <div v-else-if="supportFeature === 'score'" class="score-icon">
-              <Hash :size="iconSize" />
-              <span v-if="hasUserParticipated" class="score-value">{{ currentUserSupportValue }}</span>
-          </div>
+            <div v-else-if="supportFeature === 'majority_judgment'" class="grade-icon">
+                <Gauge :size="iconSize" />
+                <span v-if="hasUserParticipated" class="grade-value">
+                    {{ getGradeLabel(currentUserSupportValue as number) }}
+                </span>
+            </div>
 
-          <div v-else-if="supportFeature === 'majority_judgment'" class="grade-icon">
-              <Gauge :size="iconSize" />
-              <span v-if="hasUserParticipated" class="grade-value">
-                  {{ getGradeLabel(currentUserSupportValue as number) }}
-              </span>
-          </div>
+            <ListOrdered
+                    v-else-if="supportFeature === 'ranking'"
+                    :size="iconSize"
+                    :class="{ ranked: hasUserParticipated }" />
 
-          <CheckCircle
-                  v-else-if="supportFeature === 'approval'"
-                  :size="iconSize"
-                  :class="{ approved: hasUserParticipated }" />
+            <TrendingUp
+                    v-else-if="supportFeature === 'trending'"
+                    :size="iconSize" />
 
-          <ListOrdered
-                  v-else-if="supportFeature === 'ranking'"
-                  :size="iconSize"
-                  :class="{ ranked: hasUserParticipated }" />
+            <ThumbIcon
+                    v-else
+                    :supported="false"
+                    :size="iconSize"
+                    class="disabled-icon" />
+        </div>
 
-          <TrendingUp
-                  v-else-if="supportFeature === 'trending'"
-                  :size="iconSize" />
-
-          <ThumbIcon
-                  v-else
-                  :supported="false"
-                  :size="iconSize"
-                  class="disabled-icon" />
-      </div>
-
-      <div class="counter-content">
-          <div class="support-count">
-              <span class="counter-value" :style="{ fontSize: `${iconSize}px` }">
-                  {{ displayCount }}
-              </span>
-              <span v-if="showQuorum && quorumValue" 
-                    class="quorum-compact" 
-                    :style="{ fontSize: `${iconSize * 0.6}px` }">
-                  <span class="quorum-separator"> / </span>
-                  <span class="quorum-target">{{ quorumValue }}</span>
-              </span>
-          </div>
-          <span class="counter-label" :style="{ fontSize: `${iconSize * 0.5}px` }">
-              {{ getSupportLabel() }}
-          </span>
-      </div>
-  </div>
+        <div class="counter-content">
+            <div class="support-count">
+                <span class="counter-value" :style="{ fontSize: `${iconSize}px` }">
+                    {{ displayCount }}
+                </span>
+                <span v-if="showQuorum && quorumValue" 
+                      class="quorum-compact" 
+                      :style="{ fontSize: `${iconSize * 0.6}px` }">
+                    <span class="quorum-separator"> / </span>
+                    <span class="quorum-target">{{ quorumValue }}</span>
+                </span>
+            </div>
+            <span class="counter-label" :style="{ fontSize: `${iconSize * 0.5}px` }">
+                {{ getSupportLabel() }}
+            </span>
+        </div>
+    </div>
 </template>
 
 <script setup lang="ts">
-    import { ref, computed } from 'vue'
+import { ref, computed } from 'vue'
 import { showSuccess, showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import NcPopover from '@nextcloud/vue/components/NcPopover'
@@ -353,7 +399,6 @@ import {
   Star, 
   Hash, 
   Gauge, 
-  CheckCircle, 
   ListOrdered, 
   TrendingUp 
 } from 'lucide-vue-next'
@@ -368,7 +413,8 @@ import type {
   TernaryResult,
   ScoreResult,
   ReactionResult,
-  MajorityJudgmentResult
+  MajorityJudgmentResult,
+  ApprovalResult,
 } from '../../../Types/votingType'
 
 // Define emits
@@ -426,10 +472,6 @@ const getUserReaction = computed(() => {
 })
 
 // Results from item (set by parent/inquiry store)
-const supportResult = computed(() => 
-  (props.item as any)?.status?.supportResult?.result || null
-)
-
 const normalizedSupportResult = computed(() => {
   const raw = (props.item as any)?.status?.supportResult
   if (!raw) return null
@@ -440,97 +482,281 @@ const normalizedSupportResult = computed(() => {
     actual = raw[0].result ?? raw[0]
   }
 
-  // If it's still not an object with 'type', return null
-  if (!actual || typeof actual !== 'object' || !('type' in actual)) {
+  // If it's a string, try to parse it
+  if (typeof actual === 'string') {
+    try {
+      actual = JSON.parse(actual)
+    } catch (e) {
+      console.error('Failed to parse support result:', e)
+      return null
+    }
+  }
+
+  // If it's still not an object, return null
+  if (!actual || typeof actual !== 'object') {
+    return null
+  }
+
+  // Return as is - it already has the correct structure from CSV
+  // Just ensure it has a type
+  if (!actual.type) {
+    console.warn('Result missing type:', actual)
     return null
   }
 
   return actual
 })
 
-const hasResults = computed(() => normalizedSupportResult.value !== null)
+// Check if the feature is active and results should be loaded
+const shouldShowResults = computed(() => {
+  return supportFeature.value !== 'none' && normalizedSupportResult.value !== null
+})
+
+const hasDetailedResults = computed(() => {
+  if (supportFeature.value === 'binary') return !!binaryResult.value
+  if (supportFeature.value === 'ternary') return !!ternaryResult.value
+  if (supportFeature.value === 'score') return !!scoreResult.value
+  if (supportFeature.value === 'star') return !!starResult.value
+  if (supportFeature.value === 'approval') return !!approvalResult.value
+  if (supportFeature.value === 'reaction') return !!reactionResult.value
+  if (supportFeature.value === 'majority_judgment') return !!majorityResult.value
+  return false
+})
+
+const hasResults = computed(() => {
+  if (supportFeature.value === 'none') return false
+  if (supportFeature.value === 'binary') return !!binaryResult.value
+  if (supportFeature.value === 'ternary') return !!ternaryResult.value
+  if (supportFeature.value === 'star') return !!starResult.value
+  if (supportFeature.value === 'score') return !!scoreResult.value
+  if (supportFeature.value === 'approval') return !!approvalResult.value
+  if (supportFeature.value === 'reaction') return !!reactionResult.value
+  if (supportFeature.value === 'majority_judgment') return !!majorityResult.value
+  // Fallback - check if we have any result data
+  return normalizedSupportResult.value !== null && 
+         Object.keys(normalizedSupportResult.value).length > 0
+})
 
 const binaryResult = computed(() => {
-  const result = normalizedSupportResult.value.value
-  if (result?.type !== 'binary') return null
-
-  // Support nouveau format
-  if ('totals' in result && 'percentages' in result) {
-    return result
+  if (supportFeature.value !== 'binary' || !normalizedSupportResult.value) {
+    return null
   }
 
-  // Support ancien format (conversion temporaire)
-  const old = result as any
-  return {
-    type: 'binary',
-    totals: { yes: old.total_yes, no: old.total_no },
-    percentages: { yes: old.percentage_yes, no: old.percentage_no }
+  const result = normalizedSupportResult.value
+
+  // Your data structure: { type: 'binary', totals: { yes: 1, no: 0 }, percentages: {...} }
+  if (result.type === 'binary' && result.totals) {
+    return {
+      total_yes: result.totals.yes || 0,
+      total_no: result.totals.no || 0,
+      percentage_yes: result.percentages?.yes || 0,
+      percentage_no: result.percentages?.no || 0
+    }
   }
+
+  return null
 })
 
 const ternaryResult = computed(() => {
+  if (supportFeature.value !== 'ternary' || !normalizedSupportResult.value) {
+    return null
+  }
+
   const result = normalizedSupportResult.value
-  if (result?.type !== 'ternary') return null
 
-  if ('totals' in result && 'percentages' in result) {
-    return result
+  // Your data structure: { type: 'ternary', totals: {...}, percentages: {...} }
+  if (result.type === 'ternary' && result.totals) {
+    return {
+      totals: {
+        yes: result.totals.yes || 0,
+        no: result.totals.no || 0,
+        abstain: result.totals.abstain || 0
+      },
+      percentages: {
+        yes: result.percentages?.yes || 0,
+        no: result.percentages?.no || 0,
+        abstain: result.percentages?.abstain || 0
+      }
+    }
   }
 
-  const old = result as any
-  return {
-    type: 'ternary',
-    totals: { yes: old.total_yes, no: old.total_no, abstain: old.total_abstain },
-    percentages: { yes: old.percentage_yes, no: old.percentage_no, abstain: old.percentage_abstain }
+  return null
+})
+
+const starResult = computed(() => {
+  if (supportFeature.value !== 'star' || !normalizedSupportResult.value) {
+    return null
   }
+
+  const result = normalizedSupportResult.value
+  
+  // Your data structure: { type: 'star', totals: { total: 2, average: 2.5 } }
+  if (result.type === 'star' && result.totals) {
+    return {
+      totals: {
+        total: result.totals.total || 0,
+        average: result.totals.average || 0
+      }
+    }
+  }
+
+  return null
 })
 
 const scoreResult = computed(() => {
+  if (supportFeature.value !== 'score' || !normalizedSupportResult.value) {
+    return null
+  }
+
   const result = normalizedSupportResult.value
-  if (result?.type !== 'score') return null
-
-  if ('totals' in result) {
-    return result
+  
+  // Your data structure: { type: 'score', totals: { total: 2, average: 7 } }
+  if (result.type === 'score' && result.totals) {
+    return {
+      average: result.totals.average || 0,
+      total: result.totals.total || 0
+    }
   }
 
-  const old = result as any
-  return {
-    type: 'score',
-    totals: { total: old.total, average: old.average },
-    median: old.median
-  }
+  return null
 })
 
-const reactionResult = computed(() =>
-  supportResult.value?.type === 'reaction' ? supportResult.value as ReactionResult : null
-)
+const approvalResult = computed(() => {
+  if (supportFeature.value !== 'approval' || !normalizedSupportResult.value) {
+    return null
+  }
 
-const majorityResult = computed(() =>
-  supportResult.value?.type === 'majority_judgment' ? supportResult.value as MajorityJudgmentResult : null
-)
+  const result = normalizedSupportResult.value
 
-// Display count
+  // Your data structure: { type: 'approval', counts: [] }
+  if (result.type === 'approval') {
+    const counts = result.counts || []
+    const totalApproved = counts.reduce((a: number, b: number) => a + b, 0)
+    const total = counts.length
+    
+    return {
+      totals: {
+        approved: totalApproved,
+        total: total
+      },
+      percentages: {
+        approved: total > 0 ? (totalApproved / total) * 100 : 0
+      }
+    }
+  }
+
+  return null
+})
+
+const reactionResult = computed(() => {
+  if (supportFeature.value !== 'reaction' || !normalizedSupportResult.value) {
+    return null
+  }
+
+  const result = normalizedSupportResult.value
+  
+  // Your data structure: { type: 'reaction', counts: {...} }
+  if (result.type === 'reaction' && result.counts) {
+    return {
+      counts: result.counts
+    }
+  }
+
+  return null
+})
+
+const majorityResult = computed(() => {
+  if (supportFeature.value !== 'majority_judgment' || !normalizedSupportResult.value) {
+    return null
+  }
+
+  const result = normalizedSupportResult.value
+  
+  // Your data structure: { type: 'majority_judgment', grades: [...], total_votes: 0 }
+  if (result.type === 'majority_judgment') {
+    // Create distribution from grades (all zeros since no votes)
+    const distribution: Record<number, number> = {}
+    if (result.grades && Array.isArray(result.grades)) {
+      result.grades.forEach((_: string, index: number) => {
+        distribution[index] = 0
+      })
+    }
+    
+    return {
+      distribution: distribution,
+      median: 0,
+      total_votes: result.total_votes || 0
+    }
+  }
+
+  return null
+})
+
 const displayCount = computed(() => {
+  // Early return for 'none' feature
+  if (supportFeature.value === 'none') {
+    return props.item?.status?.countSupports ?? 0
+  }
+
+  // Binary
   if (binaryResult.value) {
-    return binaryResult.value.totals.yes + binaryResult.value.totals.no
+    return (binaryResult.value.total_yes || 0) + (binaryResult.value.total_no || 0)
   }
-  if (ternaryResult.value) {
-    return ternaryResult.value.totals.yes + ternaryResult.value.totals.no + ternaryResult.value.totals.abstain
+  
+  // Ternary
+  if (ternaryResult.value?.totals) {
+    const totals = ternaryResult.value.totals
+    return (totals.yes || 0) + (totals.no || 0) + (totals.abstain || 0)
   }
-  if (scoreResult.value) {
-    return scoreResult.value.totals.total
+  
+  // Star
+  if (starResult.value?.totals?.total) {
+    return starResult.value.totals.total
   }
-  if (reactionResult.value) {
+  
+  // Score
+  if (scoreResult.value?.total) {
+    return scoreResult.value.total
+  }
+  
+  // Reaction
+  if (reactionResult.value?.counts) {
     return Object.values(reactionResult.value.counts).reduce((a, b) => a + b, 0)
   }
+  
+  // Majority Judgment
+  if (majorityResult.value?.total_votes !== undefined) {
+    return majorityResult.value.total_votes
+  }
+  
+  // Approval
+  if (approvalResult.value?.totals?.approved !== undefined) {
+    return approvalResult.value.totals.approved
+  }
+  
   return props.item?.status?.countSupports ?? 0
 })
 
 const totalParticipants = computed(() => displayCount.value)
-const totalVotes = computed(() => displayCount.value)
 
 const quorumValue = computed(() => 
   (props.item as any)?.miscFields?.quorum ?? 0
 )
+
+interface SupportTemplate {
+  grades?: Record<number, string>
+  allowed_reactions?: string[]
+}
+
+const supportTemplate = computed<SupportTemplate | null>(() => {
+  const raw = (props.item as any)?.miscFields?.support_template
+  if (typeof raw === 'string' && raw) {
+    try { return JSON.parse(raw) }
+    catch { return null }
+  }
+  if (raw && typeof raw === 'object') return raw
+  return null
+})
 
 // Styles
 const containerStyles = computed(() => ({
@@ -618,7 +844,6 @@ const getSupportLabel = (): string => {
     majority_judgment: t('agora', 'Grades'),
     approval: t('agora', 'Approvals'),
     ranking: t('agora', 'Rankings'),
-    trending: t('agora', 'Trending'),
     none: t('agora', 'Supports')
   }
 
@@ -626,13 +851,25 @@ const getSupportLabel = (): string => {
 }
 
 const getGradeLabel = (grade: number): string => {
-  const grades = (props.item?.configuration as any)?.options?.grades?.labels || 
-    ['Reject', 'Insufficient', 'Passable', 'Fairly Good', 'Good', 'Very Good', 'Excellent']
-  return grades[grade] || String(grade)
+  // First try support_template
+  if (supportTemplate.value?.grades && supportTemplate.value.grades[grade]) {
+    return supportTemplate.value.grades[grade]
+  }
+  // Fallback to default grades
+  const grades = [
+    t('agora', 'Reject'),
+    t('agora', 'Insufficient'),
+    t('agora', 'Passable'),
+    t('agora', 'Fairly Good'),
+    t('agora', 'Good'),
+    t('agora', 'Very Good'),
+    t('agora', 'Excellent')
+  ]
+
+  return grades[grade] || ''
 }
 
 // Support action
-
 const handleSupportClick = async () => {
   if (!canSupport.value || isReadonly.value) {
     return
@@ -642,34 +879,138 @@ const handleSupportClick = async () => {
   const currentValue = props.item.currentUserStatus?.supportValue
   const feature = supportFeature.value
 
+  // Skip complex features
+  if (feature === 'ranking' || feature === 'trending') {
+    return
+  }
+
   try {
     const supportsStore = useSupportsStore()
     const sessionStore = useSessionStore()
     const optionsStore = useOptionsStore()
 
-    // For binary and ternary, we handle differently based on feature
-    if (feature === 'binary') {
-      await supportsStore.toggleBinarySupport(
-        props.item.id, 
-        sessionStore.currentUser.id, 
-        props.item, 
-        props.itemType
-      )
-    } else if (feature === 'ternary') {
-      await supportsStore.toggleTernarySupport(
-        props.item.id, 
-        sessionStore.currentUser.id, 
-        props.item, 
-        props.itemType
-      )
-    } else {
-      // Fallback to generic toggle
-      await supportsStore.toggleSupport(
-        props.item.id, 
-        sessionStore.currentUser.id, 
-        props.item, 
-        props.itemType
-      )
+    switch (feature) {
+      case 'binary':
+      case 'approval':
+        // Use the store's toggle function
+        await supportsStore.toggleBinarySupport(
+          props.item.id, 
+          sessionStore.currentUser.id, 
+          props.item, 
+          props.itemType
+        )
+        break
+
+      case 'ternary':
+        await supportsStore.toggleTernarySupport(
+          props.item.id, 
+          sessionStore.currentUser.id, 
+          props.item, 
+          props.itemType
+        )
+        break
+
+      case 'star': {
+        let nextValue: number | null = null
+
+        if (!hadSupportedBefore) {
+          nextValue = 5
+        } else if (currentValue === 5) {
+          nextValue = 4
+        } else if (currentValue === 4) {
+          nextValue = 3
+        } else if (currentValue === 3) {
+          nextValue = 2
+        } else if (currentValue === 2) {
+          nextValue = 1
+        } else if (currentValue === 1) {
+          nextValue = null
+        }
+
+        await supportsStore.submitScoreSupport(
+          props.item.id, sessionStore.currentUser.id,
+          props.item, props.itemType, nextValue
+        )
+        break
+      }
+
+      case 'score': {
+        let nextValue: number | null = null
+
+        if (!hadSupportedBefore) {
+          nextValue = 10
+        } else if (typeof currentValue === 'number' && currentValue > 0) {
+          nextValue = currentValue - 1
+        } else if (currentValue === 0) {
+          nextValue = null
+        }
+
+        await supportsStore.submitScoreSupport(
+          props.item.id, sessionStore.currentUser.id,
+          props.item, props.itemType, nextValue
+        )
+        break
+      }
+
+      case 'reaction': {
+        const reactions = supportTemplate.value?.allowed_reactions || ['👍', '❤️', '🎉', '🤔', '👎']
+        const currentReaction = getUserReaction.value
+        let nextReaction: string | null = null
+
+        if (!hadSupportedBefore) {
+          nextReaction = reactions[0]
+        } else {
+          const currentIndex = reactions.indexOf(currentReaction as string)
+          if (currentIndex !== -1 && currentIndex < reactions.length - 1) {
+            nextReaction = reactions[currentIndex + 1]
+          } else {
+            nextReaction = null // Remove after last reaction
+          }
+        }
+
+        if (nextReaction) {
+          // For single reaction cycling, we store as string, not array
+          await supportsStore.submitScoreSupport(
+            props.item.id, sessionStore.currentUser.id,
+            props.item, props.itemType, nextReaction
+          )
+        } else if (currentReaction) {
+          // Remove reaction
+          await supportsStore.removeSupport(
+            props.item.id, sessionStore.currentUser.id,
+            props.itemType === 'option' ? props.item.id : 0
+          )
+        }
+        break
+      }
+
+      case 'majority_judgment': {
+        const grades = supportTemplate.value?.grades || [
+          'Reject', 'Insufficient', 'Passable', 
+          'Fairly Good', 'Good', 'Very Good', 'Excellent'
+        ]
+        const maxGrade = grades.length - 1
+        const currentGrade = typeof currentValue === 'number' ? currentValue : null
+
+        let nextValue: number | null = null
+
+        if (!hadSupportedBefore) {
+          nextValue = maxGrade
+        } else if (currentGrade !== null && currentGrade > 0) {
+          nextValue = currentGrade - 1
+        } else if (currentGrade === 0) {
+          nextValue = null
+        }
+
+        await supportsStore.submitScoreSupport(
+          props.item.id, sessionStore.currentUser.id,
+          props.item, props.itemType, nextValue
+        )
+        break
+      }
+
+      default:
+        return
     }
 
     // Update store if needed
@@ -681,10 +1022,7 @@ const handleSupportClick = async () => {
       })
     }
 
-    // Emit event
     emit('support-toggled', props.item.id, props.item.currentUserStatus?.hasSupported ?? false)
-
-    // Show appropriate success message
     showSupportSuccessMessage(hadSupportedBefore ?? false)
 
   } catch (error) {
@@ -698,48 +1036,96 @@ const showSupportSuccessMessage = (hadSupportedBefore: boolean) => {
   const supportValueAfter = props.item.currentUserStatus?.supportValue
   const feature = supportFeature.value
 
-  if (feature === 'binary') {
-    if (hasSupportedAfter && !hadSupportedBefore) {
-      showSuccess(t('agora', 'Thanks for your support!'), { timeout: 2000 })
-    } else if (!hasSupportedAfter && hadSupportedBefore) {
-      showSuccess(t('agora', 'Support removed!'), { timeout: 2000 })
-    }
-  } else if (feature === 'ternary') {
-    if (supportValueAfter === 1) {
-      showSuccess(t('agora', 'Position saved: In Favor'), { timeout: 2000 })
-    } else if (supportValueAfter === 0) {
-      showSuccess(t('agora', 'Position saved: Neutral'), { timeout: 2000 })
-    } else if (supportValueAfter === -1) {
-      showSuccess(t('agora', 'Position saved: Against'), { timeout: 2000 })
-    } else if (supportValueAfter === null && hadSupportedBefore) {
-      showSuccess(t('agora', 'Vote removed!'), { timeout: 2000 })
-    }
-  } else if (feature === 'star') {
-    showSuccess(t('agora', 'Rating saved!'), { timeout: 2000 })
-  } else if (feature === 'score') {
-    showSuccess(t('agora', 'Score saved!'), { timeout: 2000 })
-  } else if (feature === 'reaction') {
-    showSuccess(t('agora', 'Reaction saved!'), { timeout: 2000 })
-  } else if (hasSupportedAfter && !hadSupportedBefore) {
-    showSuccess(t('agora', 'Thanks for participating!'), { timeout: 2000 })
-  } else {
-    showSuccess(t('agora', 'Participation removed!'), { timeout: 2000 })
+  switch (feature) {
+    case 'binary':
+      if (supportValueAfter === 1) {
+        showSuccess(t('agora', 'Voted: Yes'), { timeout: 2000 })
+      } else if (supportValueAfter === -1) {
+        showSuccess(t('agora', 'Voted: No'), { timeout: 2000 })
+      } else {
+        showSuccess(t('agora', 'Vote removed'), { timeout: 2000 })
+      }
+      break
+
+    case 'ternary':
+      if (supportValueAfter === 1) {
+        showSuccess(t('agora', 'Voted: In Favor'), { timeout: 2000 })
+      } else if (supportValueAfter === 0) {
+        showSuccess(t('agora', 'Voted: Neutral'), { timeout: 2000 })
+      } else if (supportValueAfter === -1) {
+        showSuccess(t('agora', 'Voted: Against'), { timeout: 2000 })
+      } else {
+        showSuccess(t('agora', 'Vote removed'), { timeout: 2000 })
+      }
+      break
+
+    case 'approval':
+      if (hasSupportedAfter) {
+        showSuccess(t('agora', 'Approved'), { timeout: 2000 })
+      } else {
+        showSuccess(t('agora', 'Approval removed'), { timeout: 2000 })
+      }
+      break
+
+    case 'star':
+      if (supportValueAfter) {
+        showSuccess(t('agora', 'Rating: {stars} stars', { stars: supportValueAfter }), { timeout: 2000 })
+      } else {
+        showSuccess(t('agora', 'Rating removed'), { timeout: 2000 })
+      }
+      break
+
+    case 'score':
+      if (supportValueAfter !== null) {
+        showSuccess(t('agora', 'Score: {score}/10', { score: supportValueAfter }), { timeout: 2000 })
+      } else {
+        showSuccess(t('agora', 'Score removed'), { timeout: 2000 })
+      }
+      break
+
+    case 'reaction':
+      if (hasSupportedAfter && getUserReaction.value) {
+        showSuccess(t('agora', 'Reaction: {reaction}', { reaction: getUserReaction.value }), { timeout: 2000 })
+      } else {
+        showSuccess(t('agora', 'Reaction removed'), { timeout: 2000 })
+      }
+      break
+
+    case 'majority_judgment':
+      if (supportValueAfter !== null) {
+        const gradeLabel = getGradeLabel(supportValueAfter as number)
+        showSuccess(t('agora', 'Grade: {grade}', { grade: gradeLabel }), { timeout: 2000 })
+      } else {
+        showSuccess(t('agora', 'Grade removed'), { timeout: 2000 })
+      }
+      break
+
+    default:
+      if (hasSupportedAfter && !hadSupportedBefore) {
+        showSuccess(t('agora', 'Supported'), { timeout: 2000 })
+      } else if (!hasSupportedAfter && hadSupportedBefore) {
+        showSuccess(t('agora', 'Support removed'), { timeout: 2000 })
+      }
   }
 }
 </script>
-
 <style lang="scss" scoped>
 .counter-item.supports {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     transition: all 0.2s ease;
     position: relative;
     user-select: none;
     white-space: nowrap;
-    height: 32px;
+    min-height: 32px;
+    height: auto;
     min-width: auto;
     border: 1px solid var(--color-border);
     background: var(--color-main-background);
+    border-radius: 16px;
+    padding: 4px 8px;
+    gap: 4px;
+    box-sizing: border-box;
 
     &.clickable {
         cursor: pointer;
@@ -760,15 +1146,76 @@ const showSupportSuccessMessage = (hadSupportedBefore: boolean) => {
         opacity: 0.6;
     }
 
+    &.has-star-rating {
+    min-width: 100px;
+    width: auto; // Allow natural growth
+    max-width: 150px; // Optional: set a max width if needed
+    
+    .counter-content {
+        .support-count {
+            .counter-value {
+                min-width: 28px;
+                text-align: right;
+            }
+        }
+    }
+}
+
+&.has-majority-judgment {
+    min-width: 110px;
+    width: auto; // Allow natural growth
+    max-width: 160px; // Optional: set a max width if needed
+    gap: 2px; 
+    .counter-content {
+        .support-count {
+            .counter-value {
+                min-width: 28px;
+                text-align: right;
+            }
+        }
+        
+        .counter-label {
+            white-space: nowrap; // Prevent label from wrapping
+        }
+    }
+}
+
+    &.has-reaction {
+        min-width: 55px;
+    }
+
+    &.has-score {
+        min-width: 60px;
+    }
+
+    &.has-approval {
+        min-width: 65px;
+    }
+
     .counter-icon {
         background: linear-gradient(135deg, var(--color-background-darker), var(--color-background-dark));
         display: flex;
         align-items: center;
         justify-content: center;
         flex-shrink: 0;
+        width: 28px;
+        height: 28px;
+        border-radius: 8px;
+        margin-right: 0;
+        svg {
+            width: 16px !important;
+            height: 16px !important;
+        }
 
         .reaction-icon {
-            .reaction-emoji { font-size: 1.2em; }
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            .reaction-emoji { 
+                font-size: 16px;
+                line-height: 1;
+            }
         }
 
         .star-rating-icon {
@@ -776,11 +1223,26 @@ const showSupportSuccessMessage = (hadSupportedBefore: boolean) => {
             align-items: center;
             gap: 2px;
 
-            .filled { color: #fbbf24; fill: #fbbf24; }
+            .stars-container {
+                display: flex;
+                gap: 1px;
+
+                svg {
+                    width: 10px !important;
+                    height: 10px !important;
+                }
+            }
+
+            .filled { 
+                color: #fbbf24; 
+                fill: #fbbf24; 
+            }
+
             .rating-value {
                 font-size: 10px;
                 font-weight: 600;
                 color: var(--color-main-text);
+                margin-left: 2px;
             }
         }
 
@@ -788,6 +1250,11 @@ const showSupportSuccessMessage = (hadSupportedBefore: boolean) => {
             display: flex;
             align-items: center;
             gap: 2px;
+
+            svg {
+                width: 14px !important;
+                height: 14px !important;
+            }
 
             .score-value {
                 font-size: 10px;
@@ -801,17 +1268,33 @@ const showSupportSuccessMessage = (hadSupportedBefore: boolean) => {
             align-items: center;
             gap: 2px;
 
+            svg {
+                width: 14px !important;
+                height: 14px !important;
+            }
+
             .grade-value {
                 font-size: 9px;
                 font-weight: 600;
-                max-width: 40px;
+                max-width: 50px;
                 overflow: hidden;
                 text-overflow: ellipsis;
+                white-space: nowrap;
+                color: var(--color-main-text);
             }
         }
 
-        .approved { color: var(--color-success); }
-        .ranked { color: var(--color-primary-element); }
+        .approved { 
+            color: var(--color-success);
+            width: 16px !important;
+            height: 16px !important;
+        }
+
+        .ranked { 
+            color: var(--color-primary-element);
+            width: 16px !important;
+            height: 16px !important;
+        }
     }
 
     .counter-content {
@@ -819,19 +1302,31 @@ const showSupportSuccessMessage = (hadSupportedBefore: boolean) => {
         flex-direction: column;
         min-width: 0;
         justify-content: center;
+        align-items: flex-end; // This ensures content is right-aligned
+        line-height: 1.2;
+        flex: 1; // Take remaining space
 
         .support-count {
             display: flex;
             align-items: baseline;
-            line-height: 1;
+            justify-content: flex-end; // Right align the count
+            gap: 2px;
+            width: 100%; // Take full width
 
             .counter-value {
-                font-weight: 700;
+                font-weight: 600;
+                font-size: 14px;
                 color: var(--color-main-text);
+                text-align: right; // Ensure text is right-aligned
             }
 
             .quorum-compact {
                 color: var(--color-text-lighter);
+                font-size: 10px;
+
+                .quorum-separator {
+                    margin: 0 1px;
+                }
 
                 .quorum-target {
                     color: var(--color-primary-element);
@@ -843,10 +1338,23 @@ const showSupportSuccessMessage = (hadSupportedBefore: boolean) => {
         .counter-label {
             color: var(--color-text-lighter);
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-weight: 600;
-            line-height: 1.2;
+            letter-spacing: 0.3px;
+            font-weight: 500;
+            font-size: 9px;
+            line-height: 1.3;
             margin-top: 2px;
+            text-align: right; // Right align the label
+        }
+    }
+}
+
+// Additional fix for star rating in simple mode (without popover)
+.counter-item.supports:not(.has-star-rating):not(.has-majority-judgment) {
+    .counter-content {
+        .support-count {
+            .counter-value {
+                min-width: auto;
+            }
         }
     }
 }
@@ -875,6 +1383,7 @@ const showSupportSuccessMessage = (hadSupportedBefore: boolean) => {
             h4 {
                 margin: 0;
                 font-weight: 600;
+                font-size: 14px;
             }
 
             .user-support-badge {
@@ -886,6 +1395,22 @@ const showSupportSuccessMessage = (hadSupportedBefore: boolean) => {
                 &.positive { background: #10b98120; color: #10b981; }
                 &.neutral { background: #6b728020; color: #6b7280; }
                 &.negative { background: #ef444420; color: #ef4444; }
+            }
+        }
+
+        .no-results-message {
+            text-align: center;
+            padding: 16px;
+            color: var(--color-text-lighter);
+
+            p {
+                margin: 8px 0;
+                font-size: 12px;
+            }
+
+            .total-participants {
+                font-weight: 600;
+                color: var(--color-main-text);
             }
         }
 
@@ -910,7 +1435,10 @@ const showSupportSuccessMessage = (hadSupportedBefore: boolean) => {
                     gap: 8px;
                     margin-bottom: 6px;
 
-                    .breakdown-label { font-weight: 600; }
+                    .breakdown-label { 
+                        font-weight: 600;
+                        font-size: 12px;
+                    }
                 }
 
                 .breakdown-stats {
@@ -918,8 +1446,14 @@ const showSupportSuccessMessage = (hadSupportedBefore: boolean) => {
                     justify-content: space-between;
                     margin-bottom: 6px;
 
-                    .count { font-weight: 700; }
-                    .percentage { color: var(--color-text-lighter); font-size: 11px; }
+                    .count { 
+                        font-weight: 700;
+                        font-size: 14px;
+                    }
+                    .percentage { 
+                        color: var(--color-text-lighter);
+                        font-size: 11px;
+                    }
                 }
 
                 .breakdown-bar {
@@ -931,6 +1465,7 @@ const showSupportSuccessMessage = (hadSupportedBefore: boolean) => {
                     .bar-fill {
                         height: 100%;
                         transition: width 0.3s ease;
+
                         &.positive-bar { background: #10b981; }
                         &.neutral-bar { background: #6b7280; }
                         &.negative-bar { background: #ef4444; }
@@ -944,7 +1479,7 @@ const showSupportSuccessMessage = (hadSupportedBefore: boolean) => {
 
             .score-summary {
                 display: grid;
-                grid-template-columns: repeat(3, 1fr);
+                grid-template-columns: repeat(2, 1fr);
                 gap: 12px;
 
                 .score-stat {
@@ -955,13 +1490,13 @@ const showSupportSuccessMessage = (hadSupportedBefore: boolean) => {
 
                     .stat-label {
                         display: block;
-                        font-size: 11px;
+                        font-size: 10px;
                         color: var(--color-text-lighter);
                         margin-bottom: 4px;
                     }
 
                     .stat-value {
-                        font-size: 18px;
+                        font-size: 16px;
                         font-weight: 700;
                         color: var(--color-primary-element);
                     }
@@ -986,14 +1521,22 @@ const showSupportSuccessMessage = (hadSupportedBefore: boolean) => {
                     background: var(--color-background-dark);
                     border-radius: 8px;
                     min-width: 50px;
+                    transition: all 0.2s ease;
 
                     &.selected {
                         background: rgba(var(--color-primary-element-rgb), 0.1);
                         border: 1px solid var(--color-primary-element);
                     }
 
-                    .reaction-emoji { font-size: 20px; margin-bottom: 4px; }
-                    .reaction-count { font-weight: 600; font-size: 14px; }
+                    .reaction-emoji { 
+                        font-size: 20px; 
+                        margin-bottom: 4px;
+                    }
+
+                    .reaction-count { 
+                        font-weight: 600;
+                        font-size: 13px;
+                    }
                 }
             }
         }
@@ -1004,7 +1547,7 @@ const showSupportSuccessMessage = (hadSupportedBefore: boolean) => {
             .grade-distribution {
                 display: flex;
                 flex-direction: column;
-                gap: 6px;
+                gap: 8px;
 
                 .grade-bar {
                     display: flex;
@@ -1012,7 +1555,7 @@ const showSupportSuccessMessage = (hadSupportedBefore: boolean) => {
                     gap: 8px;
 
                     .grade-label {
-                        min-width: 60px;
+                        min-width: 70px;
                         font-size: 11px;
                         color: var(--color-text-lighter);
                     }
@@ -1032,7 +1575,7 @@ const showSupportSuccessMessage = (hadSupportedBefore: boolean) => {
                     }
 
                     .grade-count {
-                        min-width: 30px;
+                        min-width: 35px;
                         text-align: right;
                         font-weight: 600;
                         font-size: 12px;
@@ -1046,9 +1589,18 @@ const showSupportSuccessMessage = (hadSupportedBefore: boolean) => {
                 border-top: 1px solid var(--color-border);
                 display: flex;
                 justify-content: space-between;
+                align-items: center;
 
-                .median-label { font-size: 12px; color: var(--color-text-lighter); }
-                .median-value { font-weight: 700; color: var(--color-primary-element); }
+                .median-label { 
+                    font-size: 11px;
+                    color: var(--color-text-lighter);
+                }
+
+                .median-value { 
+                    font-weight: 700;
+                    font-size: 13px;
+                    color: var(--color-primary-element);
+                }
             }
         }
 
@@ -1061,13 +1613,19 @@ const showSupportSuccessMessage = (hadSupportedBefore: boolean) => {
 
             .summary-item {
                 .summary-label { 
-                    font-size: 11px; 
-                    color: var(--color-text-lighter); 
-                    display: block; 
+                    font-size: 10px;
+                    color: var(--color-text-lighter);
+                    display: block;
+                    margin-bottom: 2px;
                 }
+
                 .summary-value { 
-                    font-weight: 700; 
-                    &.reached { color: var(--color-success); }
+                    font-weight: 700;
+                    font-size: 13px;
+
+                    &.reached { 
+                        color: var(--color-success);
+                    }
                 }
             }
         }

@@ -25,6 +25,76 @@ export type SupportFeature =
   | 'none'                // ⛔ Pure discussion
 
 
+
+// ============================================================================
+// SUPPORT TEMPLATE - Voting Engine Configuration stored in miscFields
+// ============================================================================
+
+/**
+ * Configuration template for a voting/support engine.
+ * Stored as a JSON string in `miscFields.support_template` of an inquiry or option.
+ * 
+ * @example
+ * // Condorcet with Schulze variant
+ * { "engine": "condorcet", "variant": "schulze" }
+ * 
+ * // Majority Judgment with custom grades
+ * { "engine": "majority_judgment", "grades": ["Poor", "Average", "Good", "Excellent"] }
+ * 
+ * // Reaction with specific emojis
+ * { "engine": "reaction", "allowed_reactions": ["👍", "❤️", "🎉"], "max_per_user": 5 }
+ */
+export interface SupportTemplate extends Record<string, unknown> {
+  /** The selected voting engine ID (must match a key in ENGINE_DEFINITIONS) */
+  engine: string
+
+  /** Grades for Majority Judgment (array of strings) */
+  grades?: string[]
+
+  /** Allowed reaction emojis (array of strings) */
+  allowed_reactions?: string[]
+
+  /** Maximum number of reactions per user (for reaction engine) */
+  max_per_user?: number
+
+  /** Variant for Condorcet method: 'schulze', 'copeland', 'minimax', 'ranked_pairs', 'kemeny_young' */
+  variant?: string
+
+  /** Minimum score/rating value (for star, score engines) */
+  min?: number
+
+  /** Maximum score/rating value (for star, score engines) */
+  max?: number
+
+  /** Credits per user (for quadratic voting) */
+  credits_per_user?: number
+
+  /** Number of rounds (for phased voting) */
+  rounds?: number
+
+  /** Elimination rule: 'bottom', 'threshold', or 'top' (for phased voting) */
+  elimination_rule?: string
+
+  /** Minimum choices allowed (for approval voting) */
+  min_choices?: number
+
+  /** Maximum choices allowed (for approval voting); null means unlimited */
+  max_choices?: number | null
+
+  /** Maximum rank allowed (for ranking); null means rank all */
+  max_rank?: number | null
+
+  /** Allow tied ranks (for ranking) */
+  allow_ties?: boolean
+
+  /** Source of voting weight (for token_weighted engine) */
+  weight_source?: Record<string, unknown> | null
+
+  /** Normalization method: 'none', 'min-max', or 'z-score' (for token_weighted) */
+  normalization?: string
+}
+
+
 // ============================================================================
 // 🔵 VOTING ENGINES - Used in both deliberative and voting phases
 // ============================================================================

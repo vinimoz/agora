@@ -273,48 +273,62 @@ export const useSupportsStore = defineStore('supports', () => {
                                                                                                                                    * Binary support (Simple Yes/No)
                                                                                                                                    */
                                                                                                                                   async function toggleBinarySupport(
-                                                                                                                                      itemId: number, 
-                                                                                                                                      userId: string, 
-                                                                                                                                      item: SupportableItem, 
+                                                                                                                                      itemId: number,
+                                                                                                                                      userId: string,
+                                                                                                                                      item: SupportableItem,
                                                                                                                                       itemType: 'inquiry' | 'option'
                                                                                                                                   ) {
                                                                                                                                       if (!item.currentUserStatus) item.currentUserStatus = {}
 
-                                                                                                                                      console.log(" AS SUPPPPPPPPPORTED VALUE USER ID ",userId)
-                                                                                                                                      console.log(" AS SUPPPPPPPPPORTED VALUE ITEM TYPE",itemType)
-                                                                                                                                      console.log(" AS SUPPPPPPPPPORTED VALUE ITEM ",item.currentUserStatus.supportValue)
+                                                                                                                                      const currentValue = item.currentUserStatus.supportValue as number | null
 
+                                                                                                                                      // Cycle: null -> 1 (Yes) -> -1 (No) -> null
+                                                                                                                                      let nextValue: number | null = null
+
+                                                                                                                                      if (currentValue === null) {
+                                                                                                                                          nextValue = 1  // Yes
+                                                                                                                                      } else if (currentValue === 1) {
+                                                                                                                                          nextValue = -1 // No
+                                                                                                                                      } else if (currentValue === -1) {
+                                                                                                                                          nextValue = null // Remove
+                                                                                                                                      }
+
+                                                                                                                                      const oldValue = currentValue
                                                                                                                                       const oldHasSupported = item.currentUserStatus.hasSupported ?? false
-                                                                                                                                      console.log(" AS SUPPPPPPPPPORTED ",item.currentUserStatus.hasSupported)
-                                                                                                                                      // For binary, we just toggle on/off
-                                                                                                                                      const hasSupported = !oldHasSupported
-                                                                                                                                      console.log(" AS SUPPPPPPPPPORTED AFTER ",hasSupported)
 
                                                                                                                                       // Optimistic update
-                                                                                                                                      item.currentUserStatus.hasSupported = hasSupported
-                                                                                                                                      item.currentUserStatus.supportValue = hasSupported ? 1 : null
+                                                                                                                                      if (nextValue === null) {
+                                                                                                                                          item.currentUserStatus.supportValue = null
+                                                                                                                                          item.currentUserStatus.hasSupported = false
+                                                                                                                                          if (item.status) {
+                                                                                                                                              item.status.countSupports = Math.max(0, (item.status.countSupports || 0) - 1)
+                                                                                                                                          }
+                                                                                                                                      } else {
+                                                                                                                                          item.currentUserStatus.supportValue = nextValue
+                                                                                                                                          item.currentUserStatus.hasSupported = true
+                                                                                                                                          if (item.status && oldValue === null) {
+                                                                                                                                              item.status.countSupports = (item.status.countSupports || 0) + 1
+                                                                                                                                          }
+                                                                                                                                      }
 
                                                                                                                                       try {
                                                                                                                                           const { inquiryId, optionId } = resolveIds(itemId, item, itemType)
 
-                                                                                                                                          if (hasSupported) {
-                                                                                                                                              console.log(" HAS SUPPPPPPPPPPPPPPPORTED sending result to backend ")
-                                                                                                                                              // Send 1 for support
-                                                                                                                                              const result = await addSupport(inquiryId, userId, 1, optionId)
-                                                                                                                                              updateResultFromSupport(result, inquiryId, optionId)
-                                                                                                                                              item.status.countSupports = item.status.countSupports + 1
-                                                                                                                                          } else {
-                                                                                                                                              console.log(" DELETE SEND TO BACKEND ")
-                                                                                                                                              // Send DELETE request to remove support
+                                                                                                                                          if (nextValue === null) {
                                                                                                                                               await removeSupport(inquiryId, userId, optionId)
-                                                                                                                                              item.status.countSupports = item.status.countSupports - 1
+                                                                                                                                          } else if (oldValue === null) {
+                                                                                                                                              const result = await addSupport(inquiryId, userId, nextValue, optionId)
+                                                                                                                                              updateResultFromSupport(result, inquiryId, optionId)
+                                                                                                                                          } else {
+                                                                                                                                              const result = await updateSupport(inquiryId, userId, nextValue, optionId)
+                                                                                                                                              updateResultFromSupport(result, inquiryId, optionId)
                                                                                                                                           }
 
-                                                                                                                                          return hasSupported
+                                                                                                                                          return nextValue
                                                                                                                                       } catch (error) {
                                                                                                                                           // Rollback
+                                                                                                                                          item.currentUserStatus.supportValue = oldValue
                                                                                                                                           item.currentUserStatus.hasSupported = oldHasSupported
-                                                                                                                                          item.currentUserStatus.supportValue = oldHasSupported ? 1 : null
                                                                                                                                           throw error
                                                                                                                                       }
                                                                                                                                   }
@@ -427,31 +441,24 @@ export const useSupportsStore = defineStore('supports', () => {
                                                                                                                                    * Score/Star support (Rating 1-5 or 0-10)
                                                                                                                                    */
                                                                                                                                   async function submitScoreSupport(
-                                                                                                                                      itemId: number, 
-                                                                                                                                      userId: string, 
-                                                                                                                                      item: SupportableItem, 
+                                                                                                                                      itemId: number,
+                                                                                                                                      userId: string,
+                                                                                                                                      item: SupportableItem,
                                                                                                                                       itemType: 'inquiry' | 'option',
-                                                                                                                                      score: number | null  // Allow null for removal
+                                                                                                                                      value: number | string | null
                                                                                                                                   ) {
                                                                                                                                       if (!item.currentUserStatus) item.currentUserStatus = {}
 
                                                                                                                                       const supportFeature = getSupportFeature(item)
-
-                                                                                                                                      let oldScore = normalizeSupportValue(
-                                                                                                                                          item.currentUserStatus.supportValue ?? null, 
-                                                                                                                                          supportFeature
-                                                                                                                                      ) as number | null
-
-                                                                                                                                      // If score is null, we're removing the vote
-                                                                                                                                      const shouldRemove = score === null
+                                                                                                                                      const oldValue = item.currentUserStatus.supportValue ?? null
+                                                                                                                                      const shouldRemove = value === null
 
                                                                                                                                       // Optimistic update
                                                                                                                                       if (shouldRemove) {
                                                                                                                                           item.currentUserStatus.supportValue = null
                                                                                                                                           item.currentUserStatus.hasSupported = false
                                                                                                                                       } else {
-                                                                                                                                          const normalizedScore = typeof score === 'string' ? Number(score) : score
-                                                                                                                                          item.currentUserStatus.supportValue = normalizedScore
+                                                                                                                                          item.currentUserStatus.supportValue = value
                                                                                                                                           item.currentUserStatus.hasSupported = true
                                                                                                                                       }
 
@@ -460,20 +467,20 @@ export const useSupportsStore = defineStore('supports', () => {
 
                                                                                                                                           if (shouldRemove) {
                                                                                                                                               await removeSupport(inquiryId, userId, optionId)
-                                                                                                                                          } else if (oldScore === null) {
-                                                                                                                                              const result = await addSupport(inquiryId, userId, score!, optionId)
+                                                                                                                                          } else if (oldValue === null) {
+                                                                                                                                              const result = await addSupport(inquiryId, userId, value!, optionId)
                                                                                                                                               updateResultFromSupport(result, inquiryId, optionId)
                                                                                                                                           } else {
-                                                                                                                                              const result = await updateSupport(inquiryId, userId, score!, optionId)
+                                                                                                                                              const result = await updateSupport(inquiryId, userId, value!, optionId)
                                                                                                                                               updateResultFromSupport(result, inquiryId, optionId)
                                                                                                                                           }
 
-                                                                                                                                          return score
+                                                                                                                                          return value
                                                                                                                                       } catch (error) {
                                                                                                                                           // Rollback
-                                                                                                                                          item.currentUserStatus.supportValue = oldScore
-                                                                                                                                          if (oldScore === null) item.currentUserStatus.hasSupported = false
-                                                                                                                                              throw error
+                                                                                                                                          item.currentUserStatus.supportValue = oldValue
+                                                                                                                                          item.currentUserStatus.hasSupported = oldValue !== null
+                                                                                                                                          throw error
                                                                                                                                       }
                                                                                                                                   }
                                                                                                                                   /**
@@ -533,40 +540,37 @@ export const useSupportsStore = defineStore('supports', () => {
                                                                                                                                   ) {
                                                                                                                                       if (!item.currentUserStatus) item.currentUserStatus = {}
 
-                                                                                                                                      const currentApproved = (item.currentUserStatus.supportValue as number[]) ?? []
-                                                                                                                                      const isApproved = currentApproved.includes(itemId)
+                                                                                                                                      const oldHasSupported = item.currentUserStatus.hasSupported ?? false
+                                                                                                                                      const newHasSupported = !oldHasSupported
 
-                                                                                                                                      let newApproved: number[]
-                                                                                                                                      if (isApproved) {
-                                                                                                                                          newApproved = currentApproved.filter(id => id !== itemId)
-                                                                                                                                      } else {
-                                                                                                                                          newApproved = [...currentApproved, itemId]
-                                                                                                                                      }
-
-                                                                                                                                      item.currentUserStatus.supportValue = newApproved
-                                                                                                                                      item.currentUserStatus.hasSupported = newApproved.length > 0
+                                                                                                                                      // Optimistic update
+                                                                                                                                      item.currentUserStatus.hasSupported = newHasSupported
+                                                                                                                                      item.currentUserStatus.supportValue = newHasSupported ? 1 : null
 
                                                                                                                                       try {
                                                                                                                                           const { inquiryId, optionId } = resolveIds(itemId, item, itemType)
 
-                                                                                                                                          if (newApproved.length === 0) {
-                                                                                                                                              await removeSupport(inquiryId, userId, optionId)
-                                                                                                                                          } else if (currentApproved.length === 0) {
-                                                                                                                                              const result = await addSupport(inquiryId, userId, newApproved, optionId)
+                                                                                                                                          if (newHasSupported) {
+                                                                                                                                              const result = await addSupport(inquiryId, userId, 1, optionId)
                                                                                                                                               updateResultFromSupport(result, inquiryId, optionId)
+                                                                                                                                              if (item.status) {
+                                                                                                                                                  item.status.countSupports = (item.status.countSupports || 0) + 1
+                                                                                                                                              }
                                                                                                                                           } else {
-                                                                                                                                              const result = await updateSupport(inquiryId, userId, newApproved, optionId)
-                                                                                                                                              updateResultFromSupport(result, inquiryId, optionId)
+                                                                                                                                              await removeSupport(inquiryId, userId, optionId)
+                                                                                                                                              if (item.status) {
+                                                                                                                                                  item.status.countSupports = Math.max(0, (item.status.countSupports || 0) - 1)
+                                                                                                                                              }
                                                                                                                                           }
 
-                                                                                                                                          return newApproved
+                                                                                                                                          return newHasSupported
                                                                                                                                       } catch (error) {
-                                                                                                                                          item.currentUserStatus.supportValue = currentApproved
-                                                                                                                                          item.currentUserStatus.hasSupported = currentApproved.length > 0
+                                                                                                                                          // Rollback
+                                                                                                                                          item.currentUserStatus.hasSupported = oldHasSupported
+                                                                                                                                          item.currentUserStatus.supportValue = oldHasSupported ? 1 : null
                                                                                                                                           throw error
                                                                                                                                       }
                                                                                                                                   }
-
                                                                                                                                   /**
                                                                                                                                    * Ranking support (Ranked choice ordering)
                                                                                                                                    */

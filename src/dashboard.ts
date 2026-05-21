@@ -5,9 +5,9 @@
 
 import { createApp } from 'vue'
 import { pinia } from './stores'
+import './assets/scss/agora-icon.scss'
 
 import Dashboard from './views/Dashboard.vue'
-import './assets/scss/agora-icon.scss'
 
 /** global: OCA */
 document.addEventListener('DOMContentLoaded', () => {

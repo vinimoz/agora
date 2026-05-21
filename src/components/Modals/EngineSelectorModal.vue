@@ -258,7 +258,6 @@ import {
   Minus,
 } from 'lucide-vue-next'
 
-// 👇 Import from single source of truth - MUST be before local type references
 import { 
   ENGINE_DEFINITIONS, 
   initializeEngineConfig,
@@ -266,11 +265,11 @@ import {
   type ConfigSchemaField 
 } from '../../Types/votingType'
 
-// 👇 Props - simplified, no longer needs engineDefinitions
 const props = defineProps<{
   currentEngineId: string
   currentConfig: Record<string, unknown>
   engines: EngineInfo[]
+  optionCount?: number  
 }>()
 
 const emit = defineEmits<{
@@ -306,9 +305,17 @@ const reactionOptions = [
   { value: '😡', label: 'Angry', emoji: '😡' },
 ]
 
-const availableEngines = computed(() => props.engines)
+const availableEngines = computed(() => {
+  if (!props.optionCount) return props.engines
+  
+  return props.engines.filter(engine => {
+    const constraints = engine.constraints
+    if (constraints?.min_options && props.optionCount! < constraints.min_options) return false
+    if (constraints?.max_options && props.optionCount! > constraints.max_options) return false
+    return true
+  })
+})
 
-// 👇 Fixed: use ENGINE_DEFINITIONS directly instead of props.engineDefinitions
 const currentConfigSchema = computed(() => {
   if (!selectedEngine.value) return null
   const engine = ENGINE_DEFINITIONS[selectedEngine.value]

@@ -272,3 +272,5 @@ export interface BaseEntry {
 export function createDefault<T>(): T {
   return {} as T
 }
+
+export type { SupportTemplate } from './votingType'

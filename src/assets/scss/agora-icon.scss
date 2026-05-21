@@ -3,12 +3,18 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 .icon-agora {
-  //background-image: url(../../../img/agora.svg);
   background-image: url(../../../img/agora.svg);
   filter: var(--background-invert-if-dark);
 }
 
 .icon-agora-dark {
-	background-image: url(../../../img/agora-dark.svg);
-	filter: var(--background-invert-if-dark);
+  // background-image: url(../../../img/agora-dark.svg);
+    background-image: url(/apps/agora/img/agora-dark.svg);
+  background-size: contain;      // or 32px 32px
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 32px;
+  height: 32px;
+  display: inline-block;
+  filter: var(--background-invert-if-dark);
 }

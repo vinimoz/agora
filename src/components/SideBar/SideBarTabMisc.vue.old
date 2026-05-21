@@ -2,7 +2,6 @@
     - SPDX-FileCopyrightText: 2018 Nextcloud contributors
     - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
-
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 import { useInquiryStore } from '../../stores/inquiry.ts'
@@ -11,13 +10,17 @@ import { getAvailableFields } from '../../helpers/modules/InquiryHelper.ts'
 import { StatusIcons } from '../../utils/icons.ts'
 import { t } from '@nextcloud/l10n'
 import { createInquiryContext, getEditPermissions } from '../../utils/permissions.ts'
+
+// Components
 import NcSelect from '@nextcloud/vue/components/NcSelect'
 import NcInputField from '@nextcloud/vue/components/NcInputField'
 import NcDateTimePickerNative from '@nextcloud/vue/components/NcDateTimePickerNative'
 import UserSearch from '../User/UserSearch.vue'
-import EngineSelectorModal from '../Modals/EngineSelectorModal.vue'
-import { ENGINE_DEFINITIONS } from '../../Types/votingType'
+import EngineSelectorModal from '../Modals/EngineSelectorModal.vue' 
 import type { SupportTemplate } from '../../Types/votingType'
+
+// Import engine definitions to build the list of available engines
+import { ENGINE_DEFINITIONS } from '../../Types/votingType'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const props = withDefaults(defineProps<{
@@ -89,17 +92,6 @@ interface Field {
   allowed_values?: string[]
 }
 
-
-const supportTemplate = computed<SupportTemplate | null>(() => {
-  const raw = inquiryStore.miscFields.support_template
-  if (typeof raw === 'string' && raw) {
-    try { return JSON.parse(raw) as SupportTemplate }
-    catch { return null }
-  }
-  if (raw && typeof raw === 'object') return raw as SupportTemplate
-  return null
-})
-
 // Helper to build the list of engines from ENGINE_DEFINITIONS
 const availableEngines = computed(() => {
   return Object.entries(ENGINE_DEFINITIONS).map(([id, def]) => ({
@@ -122,8 +114,30 @@ const getSupportFeatureValue = computed(() => {
 
 // Get current support engine configuration (e.g., grades, allowed_reactions)
 const getSupportEngineConfig = computed(() => {
-  if (!supportTemplate.value) return {}
-  const { engine, ...config } = supportTemplate.value
+  const config: Record<string, unknown> = {}
+  const engineId = getSupportFeatureValue.value
+  const engine = ENGINE_DEFINITIONS[engineId]
+  if (!engine?.config_schema) return config
+
+  // Extract existing values from inquiryStore.configuration
+  for (const key of Object.keys(engine.config_schema)) {
+    if (inquiryStore.configuration[key] !== undefined) {
+      config[key] = inquiryStore.configuration[key]
+    }
+  }
+  // Special handling for majority_judgment grades
+  if (engineId === 'majority_judgment' && !config.grades) {
+    config.grades = ['Reject', 'Insufficient', 'Passable', 'Fairly Good', 'Good', 'Very Good', 'Excellent']
+  }
+  // Special handling for reaction allowed_reactions
+  if (engineId === 'reaction' && !config.allowed_reactions) {
+    config.allowed_reactions = ['👍', '❤️', '🎉', '🤔', '👎']
+    config.max_per_user = 3
+  }
+  // Condorcet variant
+  if (engineId === 'condorcet' && !config.variant) {
+    config.variant = 'schulze'
+  }
   return config
 })
 
@@ -476,22 +490,55 @@ const handleApplySupportEngine = async (engineId: string, config: Record<string,
   try {
     isSaving.value = true
 
-    // 1. Save engine type to configuration.supportFeature
+    // Update supportFeature
     inquiryStore.configuration.supportFeature = engineId
 
-    // 2. Save configuration parameters to miscFields.support_template
-    await inquiryStore.updateMiscField('support_template', JSON.stringify(config))
+    // Update engine-specific configuration
+    for (const [key, value] of Object.entries(config)) {
+      inquiryStore.configuration[key] = value
+    }
 
-    // 3. Persist both changes
+    // Save to backend (assumes inquiryStore.write() persists configuration)
     await inquiryStore.write()
 
+    // Optionally show success message
+    // showSuccess(t('agora', 'Voting method updated'))
   } catch (e) {
-    console.error('Error saving support configuration:', e)
+    console.error('Error saving support engine configuration:', e)
+    // Revert changes on error? Might be complex; maybe just log.
+    // You could also revert by reloading the inquiry data.
   } finally {
     isSaving.value = false
     showEngineModal.value = false
   }
 }
+
+const supportTemplate = computed<SupportTemplate | null>(() => {
+  const raw = inquiryStore.miscFields.support_template
+  if (typeof raw === 'string' && raw) {
+    try {
+      return JSON.parse(raw) as SupportTemplate
+    } catch (e) {
+      console.warn('Invalid support_template JSON', e)
+      return null
+    }
+  }
+  if (raw && typeof raw === 'object') {
+    return raw as SupportTemplate
+  }
+  return null
+})
+
+// Current engine ID and config for the modal
+const currentVotingEngineId = computed(() => supportTemplate.value?.engine || 'none')
+const currentVotingEngineConfig = computed(() => {
+  if (!supportTemplate.value) return {}
+  const { engine, ...config } = supportTemplate.value
+  return config
+})
+
+
+// Remove old handleSupportFeatureChange and its NcSelect usage
 
 // Ensure miscFields has all dynamic fields with proper defaults - UPDATED
 const initializeMiscFields = () => {
@@ -556,7 +603,6 @@ const handleUserSelected = (fieldKey: string, user: User) => {
   // Store the user ID (or whatever identifier you need)
   updateFieldValue(fieldKey, user?.id || '', 'users')
 }
-
 
 // Helper function to format date for datetime picker
 const getFormattedDate = (key: string) => {
