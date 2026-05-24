@@ -161,7 +161,7 @@ OC.L10N.register(
     "Bold" : "Grassetto",
     "Italic" : "Corsivo",
     "Underline" : "Sottolinea",
-    "Strikethrough" : "Sbarrato",
+    "Strikethrough" : "Barrato",
     "Heading 1" : "Intestazione 1",
     "Heading 2" : "Intestazione 2",
     "Heading 3" : "Intestazione 3",
