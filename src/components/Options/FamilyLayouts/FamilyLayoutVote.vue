@@ -28,7 +28,7 @@
         </div>
       </div>
 
-      <!-- Layout switcher + Add to vote button -->
+      <!-- Layout switcher + Engine selector + Add to vote button -->
       <div class="action-bar">
         <div class="layout-switcher">
           <NcButton
@@ -45,23 +45,48 @@
           </NcButton>
         </div>
 
-        <!-- Engine selector -->
-        <div class="engine-selector-header">
-          <NcButton
-            v-if="!isReadonly"
-            type="secondary"
-            size="small"
-            @click="showEngineSelector = true"
+        <!-- Engine selector dropdown -->
+        <div v-if="availableEnginesList.length > 0" class="engine-selector">
+          <NcSelect
+            v-model="selectedEngineId"
+            :options="engineSelectOptions"
+            :placeholder="t('agora', 'Select voting method')"
+            :clearable="false"
+            class="engine-select"
+            @option:selected="handleEngineChange"
           >
-            <template #icon>
-              <Settings :size="16" />
+            <template #option="option">
+              <div class="engine-option">
+                <component :is="getEngineIcon(option.value)" :size="16" class="engine-option-icon" />
+                <div class="engine-option-content">
+                  <div class="engine-option-label">{{ option.label }}</div>
+                  <div class="engine-option-desc">{{ getEngineDescription(option.value) }}</div>
+                </div>
+              </div>
             </template>
-            {{ getEngineLabel(currentEngineId) }}
-          </NcButton>
+            <template #selected-option="option">
+              <div class="engine-selected">
+                <component :is="getEngineIcon(option.value)" :size="14" />
+                <span>{{ option.label }}</span>
+              </div>
+            </template>
+          </NcSelect>
         </div>
 
         <NcButton
-          v-if="!isReadonly"
+          v-if="!isReadonly && canManageVote"
+          type="secondary"
+          size="small"
+          @click="openEngineModal"
+        >
+          <template #icon>
+            <Settings :size="16" />
+          </template>
+          {{ activeEngine ? t('agora', 'Edit Method') : t('agora', 'Configure Method') }}
+        </NcButton>
+
+        <NcButton
+          v-if="!isReadonly && canManageVote"
           type="primary"
           size="small"
           class="add-to-vote-btn"
@@ -75,17 +100,53 @@
       </div>
     </div>
 
+    <!-- No engine state - show configuration banner -->
+    <div v-if="!activeEngine && !isLoadingEngines" class="no-engine-banner">
+      <Info :size="32" />
+      <div class="banner-content">
+        <h4>{{ t('agora', 'No Voting Method Configured') }}</h4>
+        <p>{{ t('agora', 'A voting method needs to be configured before voting can begin.') }}</p>
+      </div>
+      <NcButton v-if="canManageVote" type="primary" @click="openEngineModal">
+        <template #icon>
+          <Settings :size="16" />
+        </template>
+        {{ t('agora', 'Configure Voting Method') }}
+      </NcButton>
+    </div>
+
+    <!-- Loading state -->
+    <div v-else-if="isLoadingEngines" class="loading-state">
+      <NcLoadingIcon :size="32" />
+      <p>{{ t('agora', 'Loading voting configuration...') }}</p>
+    </div>
+
     <!-- Current voting engine info -->
-    <div v-if="currentEngine" class="engine-info">
-      <span class="engine-badge">
-        {{ getEngineLabel(currentEngineId) }}
-        <span v-if="currentEngine.behavior === 'multi'">({{ t('agora', 'Multi-choice') }})</span>
-        <span v-else-if="currentEngine.behavior === 'flex'">({{ t('agora', 'Flexible') }})</span>
-        <span v-else>({{ t('agora', 'Single-choice') }})</span>
-      </span>
-      <span v-if="voteLimitInfo" class="vote-limit-info">
-        {{ voteLimitInfo }}
-      </span>
+    <div v-else-if="activeEngine" class="engine-info">
+      <div class="engine-info-left">
+        <span class="engine-badge">
+          <component :is="getEngineIcon(activeEngine.engine)" :size="14" />
+          {{ getEngineLabel(activeEngine.engine) }}
+          <span v-if="currentEngine?.behavior === 'multi'">({{ t('agora', 'Multi-choice') }})</span>
+          <span v-else-if="currentEngine?.behavior === 'flex'">({{ t('agora', 'Flexible') }})</span>
+          <span v-else>({{ t('agora', 'Single-choice') }})</span>
+        </span>
+        <span v-if="activeEngine.title" class="engine-title">{{ activeEngine.title }}</span>
+      </div>
+      <div class="engine-info-right">
+        <span v-if="voteLimitInfo" class="vote-limit-info">
+          {{ voteLimitInfo }}
+        </span>
+        <NcButton
+          v-if="canManageVote"
+          type="tertiary"
+          size="small"
+          @click="openEngineModal"
+        >
+          <Settings :size="14" />
+          {{ t('agora', 'Edit') }}
+        </NcButton>
+      </div>
     </div>
 
     <!-- Cards Layout -->
@@ -100,13 +161,14 @@
           <OptionCard
             :option="option"
             :compact="false"
-            :show-action="!isReadonly"
+            :inquiryId="inquiryId"
+            :show-action="!isReadonly && canManageVote"
             :progress-bar="true"
-            :family-type="family.key"
+            :family-type="family?.key || 'vote'"
             @click="handleOptionClick(option)"
           >
             <!-- Selection indicator for multi-vote -->
-            <template v-if="currentEngine.behavior === 'multi' && canVote && !hasUserVoted">
+            <template v-if="currentEngine?.behavior === 'multi' && canVote && !hasUserVoted && activeEngine?.status === 'active'">
               <div class="selection-checkbox">
                 <input
                   type="checkbox"
@@ -118,7 +180,7 @@
             </template>
 
             <!-- Rank input for ranked voting -->
-            <template v-if="currentEngineId === 'ranking' && canVote && !hasUserVoted">
+            <template v-if="effectiveEngineId === 'ranking' && canVote && !hasUserVoted && activeEngine?.status === 'active'">
               <div class="rank-input">
                 <label>{{ t('agora', 'Rank') }}</label>
                 <select v-model="rankings[option.id]" @click.stop>
@@ -129,7 +191,7 @@
             </template>
 
             <!-- Score input for score voting -->
-            <template v-if="currentEngineId === 'score' && canVote && !hasUserVoted">
+            <template v-if="(effectiveEngineId === 'score' || effectiveEngineId === 'star') && canVote && !hasUserVoted && activeEngine?.status === 'active'">
               <div class="score-input">
                 <input
                   v-model="scores[option.id]"
@@ -143,7 +205,7 @@
             </template>
 
             <!-- Grade input for majority judgment -->
-            <template v-if="currentEngineId === 'majority_judgment' && canVote && !hasUserVoted">
+            <template v-if="effectiveEngineId === 'majority_judgment' && canVote && !hasUserVoted && activeEngine?.status === 'active'">
               <div class="grade-input">
                 <select v-model="grades[option.id]" @click.stop>
                   <option :value="null">-</option>
@@ -154,8 +216,23 @@
               </div>
             </template>
 
+            <!-- Reaction buttons for reaction voting -->
+            <template v-if="effectiveEngineId === 'reaction' && canVote && !hasUserVoted && activeEngine?.status === 'active'">
+              <div class="reaction-input">
+                <button
+                  v-for="reaction in allowedReactions"
+                  :key="reaction"
+                  class="reaction-btn"
+                  :class="{ active: userReactions[option.id] === reaction }"
+                  @click.stop="setReaction(option.id, reaction)"
+                >
+                  {{ reaction }}
+                </button>
+              </div>
+            </template>
+
             <!-- Vote button for single-choice engines -->
-            <template v-else-if="currentEngine.behavior === 'single' && canVote && !hasUserVotedFor(option.id) && !hasUserVoted">
+            <template v-else-if="currentEngine?.behavior === 'single' && canVote && !hasUserVotedFor(option.id) && !hasUserVoted && activeEngine?.status === 'active'">
               <NcButton
                 type="primary"
                 size="small"
@@ -168,13 +245,19 @@
               </NcButton>
             </template>
 
+            <!-- Already voted indicator -->
+            <div v-else-if="hasUserVotedFor(option.id) && activeEngine?.status === 'active'" class="voted-badge">
+              <CheckCircle :size="16" />
+              {{ t('agora', 'Voted') }}
+            </div>
+
             <!-- Custom progress bar slot -->
             <template #progress-bar>
               <div class="vote-progress-section">
                 <div class="vote-stats">
                   <div class="votes-count">
                     <ThumbsUp :size="14" />
-                    <strong>{{ option.metadata?.votes || 0 }}</strong>
+                    <strong>{{ getOptionVoteCount(option.id) }}</strong>
                     {{ t('agora', 'votes') }}
                   </div>
                   <div class="percentage">
@@ -198,7 +281,7 @@
       </div>
 
       <!-- Submit button for multi/flex votes -->
-      <div v-if="(currentEngine.behavior === 'multi' || currentEngine.behavior === 'flex') && canVote && !hasUserVoted" class="submit-vote-section">
+      <div v-if="(currentEngine?.behavior === 'multi' || currentEngine?.behavior === 'flex') && canVote && !hasUserVoted && activeEngine?.status === 'active'" class="submit-vote-section">
         <NcButton
           type="primary"
           size="medium"
@@ -248,11 +331,12 @@
             :compact="true"
             :inline="true"
             :show-action="false"
+            :family-type="family?.key || 'vote'"
             @click="handleOptionClick(option)"
           />
         </div>
         <div class="list-cell votes">
-          <strong>{{ option.metadata?.votes || 0 }}</strong>
+          <strong>{{ getOptionVoteCount(option.id) }}</strong>
         </div>
         <div class="list-cell percentage">
           <div class="percentage-bar">
@@ -265,7 +349,7 @@
         </div>
         <div class="list-cell action">
           <NcButton
-            v-if="currentEngine.behavior === 'single' && canVote && !hasUserVotedFor(option.id) && !hasUserVoted"
+            v-if="currentEngine?.behavior === 'single' && canVote && !hasUserVotedFor(option.id) && !hasUserVoted && activeEngine?.status === 'active'"
             type="primary"
             size="small"
             @click.stop="voteForOption(option)"
@@ -275,14 +359,14 @@
           </NcButton>
           
           <input
-            v-else-if="currentEngine.behavior === 'multi' && canVote && !hasUserVoted"
+            v-else-if="currentEngine?.behavior === 'multi' && canVote && !hasUserVoted && activeEngine?.status === 'active'"
             type="checkbox"
             :checked="isSelectedForVote(option.id)"
             @change="toggleOptionSelection(option.id)"
           />
           
           <select
-            v-else-if="currentEngineId === 'ranked' && canVote && !hasUserVoted"
+            v-else-if="effectiveEngineId === 'ranking' && canVote && !hasUserVoted && activeEngine?.status === 'active'"
             v-model="rankings[option.id]"
             class="rank-select-mini"
           >
@@ -291,7 +375,7 @@
           </select>
           
           <input
-            v-else-if="currentEngineId === 'score' && canVote && !hasUserVoted"
+            v-else-if="(effectiveEngineId === 'score' || effectiveEngineId === 'star') && canVote && !hasUserVoted && activeEngine?.status === 'active'"
             v-model="scores[option.id]"
             type="number"
             :min="scoreMin"
@@ -299,13 +383,13 @@
             class="score-input-mini"
           />
           
-          <div v-else-if="hasUserVotedFor(option.id)" class="voted-icon">
+          <div v-else-if="hasUserVotedFor(option.id) && activeEngine?.status === 'active'" class="voted-icon">
             <CheckCircle :size="16" />
           </div>
         </div>
       </div>
       
-      <div v-if="(currentEngine.behavior === 'multi' || currentEngine.behavior === 'flex') && canVote && !hasUserVoted" class="submit-vote-section list-submit">
+      <div v-if="(currentEngine?.behavior === 'multi' || currentEngine?.behavior === 'flex') && canVote && !hasUserVoted && activeEngine?.status === 'active'" class="submit-vote-section list-submit">
         <NcButton
           type="primary"
           size="medium"
@@ -394,7 +478,7 @@
                   {{ option.title }}
                 </div>
               </td>
-              <td class="votes-cell">{{ option.metadata?.votes || 0 }}</td>
+              <td class="votes-cell">{{ getOptionVoteCount(option.id) }}</td>
               <td class="percentage-cell">
                 <div class="mini-progress">
                   <div
@@ -417,12 +501,12 @@
     </div>
 
     <!-- Empty state -->
-    <div v-if="voteOptions.length === 0" class="empty-state">
+    <div v-if="voteOptions.length === 0 && !isLoadingEngines" class="empty-state">
       <component :is="getOptionTypeIcon('vote')" :size="48" />
       <h4>{{ t('agora', 'No options to vote on yet') }}</h4>
       <p>{{ t('agora', 'Add options to start the voting process') }}</p>
       <NcButton
-        v-if="!isReadonly"
+        v-if="!isReadonly && canManageVote"
         type="primary"
         @click="showAddToVoteModal = true"
       >
@@ -435,12 +519,12 @@
 
     <!-- Modals -->
     <EngineSelectorModal
-      v-if="showEngineSelector"
-      :current-engine-id="currentEngineId"
-      :current-config="engineConfig"
-      :engines="availableEngines"
-      @close="showEngineSelector = false"
-      @apply="handleEngineApply"
+      v-if="showEngineModal"
+      :mode="engineModalMode"
+      :existing-engine="activeEngine"
+      :option-count="voteOptions.length"
+      @close="showEngineModal = false"
+      @save="handleEngineSave"
     />
     
     <AddOptionToFamily
@@ -455,24 +539,25 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onUnmounted, watch, nextTick } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue' 
 import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
+import NcSelect from '@nextcloud/vue/components/NcSelect'
+import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import Chart from 'chart.js/auto'
-import { showError } from '@nextcloud/dialogs'
+import { showError, showSuccess } from '@nextcloud/dialogs'
 
 import OptionCard from '../OptionCard.vue'
 import { getOptionTypeIconComponent , filterOptionsByLayout } from '../../../helpers/modules/InquiryOptionHelper'
 import type {
      InquiryOptionType,
      OptionFamily,
-     Option  
+     Option,
+     SupportEngine
     } from '../../Types/index'
 
 import {
   calculateOptionResult,
-  calculateRankingScores,
-  calculateRankingResults
 } from '../../../utils/voteCalculations'
 import {
   Plus,
@@ -488,6 +573,13 @@ import {
   List,
   BarChart3,
   Settings,
+  Info,
+  Star,
+  Heart,
+  Scale,
+  Brain,
+  Gauge,
+  Award,
 } from 'lucide-vue-next'
 
 import EngineSelectorModal from '../../Modals/EngineSelectorModal.vue'
@@ -497,13 +589,16 @@ import AddOptionToFamily from '../../Modals/AddOptionToFamily.vue'
 import { 
   ENGINE_DEFINITIONS,
   getAvailableEngines,
-  initializeEngineConfig,
-  getDefaultEngineConfig,
   type EngineDefinition,
   type SupportData,
   type SupportValue
 } from '../../../Types/votingType'
 
+// Stores
+import { useSupportEngineStore } from '../../../stores/supportEngine'
+import { useSupportResultStore } from '../../../stores/supportResult'
+import { useSupportsStore } from '../../../stores/supports'
+import { useSessionStore } from '../../../stores/session'
 
 // ----------------------------------------------------------------------------
 // Types
@@ -517,26 +612,12 @@ interface VoteSession {
   [key: string]: unknown
 }
 
-interface ConfigSchemaField {
-  type: string
-  default?: unknown
-  label?: string
-  min?: number
-  max?: number
-  step?: number
-  placeholder?: string
-  options?: string[]
-  description?: string
-}
-
-
-
 // ----------------------------------------------------------------------------
 // Props
 // ----------------------------------------------------------------------------
 
 const props = defineProps<{
-  options: Option[]  // ALL options from ALL families can be voted on
+  options: Option[]
   voteSession?: VoteSession
   canVote?: boolean
   isReadonly?: boolean
@@ -558,6 +639,15 @@ const emit = defineEmits<{
 }>()
 
 // ----------------------------------------------------------------------------
+// Stores
+// ----------------------------------------------------------------------------
+
+const engineStore = useSupportEngineStore()
+const resultStore = useSupportResultStore()
+const supportsStore = useSupportsStore()
+const sessionStore = useSessionStore()
+
+// ----------------------------------------------------------------------------
 // State
 // ----------------------------------------------------------------------------
 
@@ -566,257 +656,262 @@ const selectedOptions = ref<Set<number>>(new Set())
 const rankings = ref<Record<number, number>>({})
 const scores = ref<Record<number, number>>({})
 const grades = ref<Record<number, string>>({})
+const userReactions = ref<Record<number, string>>({})
 
-const currentEngineId = ref<string>(props.voteSession?.engine || 'binary')
-const showEngineSelector = ref(false)
-const engineConfig = ref<Record<string, unknown>>({})
+const showEngineModal = ref(false)
+const engineModalMode = ref<'create' | 'edit'>('create')
 const showAddToVoteModal = ref(false)
-const voteSuccessMessage = ref('')
-let successTimeout: NodeJS.Timeout
+const isLoadingEngines = ref(true)
+const selectedEngineId = ref<number | null>(null)
 
 // Layout
 const allowedLayouts = ['cards', 'list', 'results']
 const currentLayout = ref<'cards' | 'list' | 'results'>('cards')
 
 // ----------------------------------------------------------------------------
+// Computed: Active Engine from Store
+// ----------------------------------------------------------------------------
 
-// Filter options for vote
+const activeEngine = computed(() =>
+  engineStore.getActiveEngineForTarget('inquiry', props.inquiryId || 0)
+)
+
+const effectiveEngineId = computed(() => activeEngine.value?.engine || 'binary')
+const effectiveEngineConfig = computed(() => activeEngine.value?.config || {})
+
+const currentEngine = computed(() => 
+  ENGINE_DEFINITIONS[effectiveEngineId.value] as EngineDefinition | undefined
+)
+
+const canManageVote = computed(() =>
+  sessionStore.currentUser.isAdmin || sessionStore.currentUser.isModerator
+)
+
+// ----------------------------------------------------------------------------
+// Computed: Available Engines for Dropdown
+// ----------------------------------------------------------------------------
+
+const availableEnginesList = computed(() => {
+  return engineStore.getEnginesByTarget('inquiry', props.inquiryId || 0)
+})
+
+const engineSelectOptions = computed(() => {
+  return availableEnginesList.value.map(engine => ({
+    value: engine.id,
+    label: engine.title || getEngineLabel(engine.engine),
+    description: engine.description || getEngineDescription(engine.engine),
+    engine: engine.engine
+  }))
+})
+
+// Set selected engine ID when active engine changes
+watch(activeEngine, (newEngine) => {
+  if (newEngine) {
+    selectedEngineId.value = newEngine.id
+  } else {
+    selectedEngineId.value = null
+  }
+}, { immediate: true })
+
+// ----------------------------------------------------------------------------
+// Computed: Vote Options
+// ----------------------------------------------------------------------------
+
 const voteOptions = computed(() => filterOptionsByLayout(
     props.optionsByInquiry,
     'vote',
     props.optionTypes,
-    props.family.key
-  ))
+    props.family?.key || 'vote'
+))
 
-
-
-// Define which families can be added to vote (all of them)
-const allowedFamiliesForVote = computed(() => 
-  // Return all available families or specific ones
-  // This could be configurable based on your needs
-   ['kanban', 'vote', 'calendar', 'default']
-)
+const allowedFamiliesForVote = computed(() => ['kanban', 'vote', 'calendar', 'default'])
 
 // ----------------------------------------------------------------------------
-// Computed: Current Engine
+// Computed: User's votes
 // ----------------------------------------------------------------------------
 
-const currentEngine = computed(() => ENGINE_DEFINITIONS[currentEngineId.value] as EngineDefinition | undefined)
-
-// ----------------------------------------------------------------------------
-// Computed: User's votes (using SupportData)
-// ----------------------------------------------------------------------------
-
-const getUserVoteForOption = (optionId: number): SupportData | undefined => props.currentUserVotes?.find(vote => vote.optionId === optionId)
+const getUserVoteForOption = (optionId: number): SupportData | undefined => {
+  const votes = supportsStore.supports.length > 0 ? supportsStore.supports : (props.currentUserVotes || [])
+  return votes.find(vote => vote.optionId === optionId && vote.userId === props.userId)
+}
 
 const hasUserVotedFor = (optionId: number): boolean => !!getUserVoteForOption(optionId)
 
-const hasUserVoted = computed(() => (props.currentUserVotes?.length ?? 0) > 0)
-
-// ----------------------------------------------------------------------------
-// Computed: Vote Options - ALL options from props
-// ----------------------------------------------------------------------------
-
-watch(
-  () => props.options,
-  () => {
-    refreshKey.value = refreshKey.value + 1
-    selectedOptions.value.clear()
-    rankings.value = {}
-    scores.value = {}
-    grades.value = {}
-  },
-  { deep: true }
-)
-
-watch(
-  () => props.options.length,
-  (newLength, oldLength) => {
-    if (newLength !== oldLength) {
-      refreshKey.value=refreshKey.value + 1
-    }
-  }
-)
+const hasUserVoted = computed(() => {
+  const votes = supportsStore.supports.length > 0 ? supportsStore.supports : (props.currentUserVotes || [])
+  return votes.filter(v => v.userId === props.userId).length > 0
+})
 
 // ----------------------------------------------------------------------------
 // Computed: Option Results
 // ----------------------------------------------------------------------------
 
 const optionResults = computed(() => {
-  const results: Record<number, ReturnType<typeof calculateOptionResult>> = {}
-
-  if (currentEngineId.value === 'ranked' || currentEngineId.value === 'borda' || currentEngineId.value === 'condorcet') {
-    const allSupports = props.supports ?? []
-    const scoresMap = calculateRankingScores(allSupports, engineConfig.value.max_rank as number)
-    const rankingResults = calculateRankingResults(scoresMap)
-    for (const opt of voteOptions.value) {
-      results[opt.id] = rankingResults[opt.id] ?? { type: 'ranking', rank: 0, score: 0 }
-    }
-    return results
-  }
-
+  const results: Record<number, any> = {}
+  
   for (const opt of voteOptions.value) {
-    const optionSupports = (props.supports ?? []).filter(s => s.optionId === opt.id)
-    const config = {
-      min: scoreMin.value,
-      max: scoreMax.value,
-      grades: gradeOptions.value.map((_, idx) => idx),
-      maxRank: maxRank.value
+    const storeResult = resultStore.getResultByTarget(opt.id)
+    if (storeResult) {
+      results[opt.id] = storeResult.result
+    } else {
+      const optionSupports = (props.supports || []).filter(s => s.optionId === opt.id)
+      const config = {
+        min: scoreMin.value,
+        max: scoreMax.value,
+        grades: gradeOptions.value.map((_, idx) => idx),
+        maxRank: maxRank.value
+      }
+      results[opt.id] = calculateOptionResult(effectiveEngineId.value, optionSupports, config)
     }
-    results[opt.id] = calculateOptionResult(currentEngineId.value, optionSupports, config)
   }
   return results
 })
 
-// ----------------------------------------------------------------------------
-// Computed: Engine Config Helpers
-// ----------------------------------------------------------------------------
-
-const maxRank = computed(() => {
-  if (currentEngineId.value === 'ranked' && engineConfig.value.max_rank) {
-    return engineConfig.value.max_rank as number
+const getOptionVoteCount = (optionId: number): number => {
+  const result = optionResults.value[optionId]
+  if (!result) return 0
+  
+  if (result.type === 'binary') {
+    return (result.totals?.yes || 0) + (result.totals?.no || 0)
   }
-  return voteOptions.value.length
-})
-
-const scoreMin = computed(() => {
-  if (currentEngineId.value === 'score') {
-    return (engineConfig.value.min as number) ?? 0
+  if (result.type === 'ternary') {
+    return (result.totals?.yes || 0) + (result.totals?.no || 0) + (result.totals?.abstain || 0)
+  }
+  if (result.type === 'score') {
+    return result.totals?.total || 0
+  }
+  if (result.type === 'approval') {
+    return result.count || 0
+  }
+  if (result.type === 'approval_delib') {
+    return result.totals?.approved || 0
+  }
+  if (result.type === 'ranking') {
+    return (props.supports || []).filter(s => s.optionId === optionId).length
   }
   return 0
-})
-
-const scoreMax = computed(() => {
-  if (currentEngineId.value === 'score') {
-    return (engineConfig.value.max as number) ?? 10
-  }
-  return 10
-})
-
-const gradeOptions = computed(() => {
-  if (currentEngineId.value === 'majority_judgment') {
-    return (engineConfig.value.grades as string[]) || ['Reject', 'Poor', 'Fair', 'Good', 'Excellent']
-  }
-  return []
-})
-
-// ----------------------------------------------------------------------------
-// Computed: Total Votes & Rankings
-// ----------------------------------------------------------------------------
+}
 
 const totalVotes = computed(() => {
   let sum = 0
-  for (const result of Object.values(optionResults.value)) {
-    switch (result.type) {
-      case 'binary':
-        sum += result.total_yes + result.total_no
-        break
-      case 'ternary':
-        sum += result.total_yes + result.total_no + result.total_abstain
-        break
-      case 'score':
-        sum += result.total
-        break
-      case 'approval':
-        sum += (result as { count: number }).count
-        break
-      case 'ranking':
-        sum += (props.supports ?? []).length
-        break
-      default:
-        sum += (props.supports ?? []).length
-    }
+  for (const opt of voteOptions.value) {
+    sum += getOptionVoteCount(opt.id)
   }
   return sum
 })
 
+function getOptionScore(option: Option): number {
+  const result = optionResults.value[option.id]
+  if (!result) return 0
+  switch (result.type) {
+    case 'binary':
+      return result.totals?.yes || 0
+    case 'ternary':
+      return result.totals?.yes || 0
+    case 'score':
+      return result.totals?.average || 0
+    case 'ranking':
+      return result.score || 0
+    case 'majority_judgment':
+      return result.median || 0
+    case 'approval':
+      return result.count || 0
+    case 'approval_delib':
+      return result.totals?.approved || 0
+    default:
+      return 0
+  }
+}
+
+function getPercentage(option: Option): number {
+  const score = getOptionScore(option)
+  if (totalVotes.value === 0) return 0
+  return Math.round((score / totalVotes.value) * 100)
+}
+
 const rankedOptions = computed(() => {
-  const optionsWithResults = voteOptions.value.map(option => ({
-    ...option,
-    result: optionResults.value[option.id]
-  }))
-
-  return optionsWithResults.sort((a, b) => {
-    const resA = a.result
-    const resB = b.result
-    if (!resA || !resB) return 0
-
-    switch (resA.type) {
-      case 'binary':
-        if (resB.type !== 'binary') return -1
-        return (resB.total_yes - resA.total_yes)
-      case 'ternary':
-        if (resB.type !== 'ternary') return -1
-        return (resB.total_yes - resA.total_yes)
-      case 'score':
-        if (resB.type !== 'score') return -1
-        return (resB.average - resA.average)
-      case 'ranking':
-        if (resB.type !== 'ranking') return -1
-        return (resA.rank - resB.rank)
-      case 'majority_judgment':
-        if (resB.type !== 'majority_judgment') return -1
-        return (resB.median - resA.median)
-      case 'approval':
-        if (resB.type !== 'approval') return -1
-        return ((resB as { count: number }).count - (resA as { count: number }).count)
-      default:
-        return 0
-    }
+  return [...voteOptions.value].sort((a, b) => {
+    const votesA = getOptionVoteCount(a.id)
+    const votesB = getOptionVoteCount(b.id)
+    return votesB - votesA
   })
 })
 
-const winner = computed(() => rankedOptions.value[0] ?? null)
-
+const winner = computed(() => rankedOptions.value[0] || null)
 const winnerPercentage = computed(() => {
   if (!winner.value) return 0
   return getPercentage(winner.value)
 })
 
 // ----------------------------------------------------------------------------
-// Helper Functions
+// Engine Config Helpers
 // ----------------------------------------------------------------------------
 
-function getOptionScore(option: Option & { result?: ReturnType<typeof calculateOptionResult> }): number {
-  const res = option.result
-  if (!res) return 0
-  switch (res.type) {
-    case 'binary':
-      return res.total_yes
-    case 'ternary':
-      return res.total_yes
-    case 'score':
-      return res.average
-    case 'ranking':
-      return res.score ?? 0
-    case 'majority_judgment':
-      return res.median
-    case 'approval':
-      return (res as { count: number }).count
-    default:
-      return 0
+const maxRank = computed(() => {
+  if (effectiveEngineId.value === 'ranking' && effectiveEngineConfig.value.max_rank) {
+    return effectiveEngineConfig.value.max_rank as number
   }
-}
+  return voteOptions.value.length
+})
 
-function getPercentage(option: Option & { result?: ReturnType<typeof calculateOptionResult> }): number {
-  const score = getOptionScore(option)
-  if (totalVotes.value === 0) return 0
-  return Math.round((score / totalVotes.value) * 100)
-}
+const scoreMin = computed(() => {
+  if (effectiveEngineId.value === 'score' || effectiveEngineId.value === 'star') {
+    return (effectiveEngineConfig.value.min as number) ?? 0
+  }
+  return 0
+})
+
+const scoreMax = computed(() => {
+  if (effectiveEngineId.value === 'score' || effectiveEngineId.value === 'star') {
+    return (effectiveEngineConfig.value.max as number) ?? (effectiveEngineId.value === 'star' ? 5 : 10)
+  }
+  return effectiveEngineId.value === 'star' ? 5 : 10
+})
+
+const gradeOptions = computed(() => {
+  if (effectiveEngineId.value === 'majority_judgment') {
+    return (effectiveEngineConfig.value.grades as string[]) || ['Reject', 'Poor', 'Fair', 'Good', 'Excellent']
+  }
+  return []
+})
+
+const allowedReactions = computed(() => {
+  if (effectiveEngineId.value === 'reaction') {
+    return (effectiveEngineConfig.value.allowed_reactions as string[]) || ['👍', '❤️', '🎉', '🤔', '👎']
+  }
+  return []
+})
+
+const maxApprovalChoices = computed(() => {
+  if (effectiveEngineId.value === 'approval') {
+    return (effectiveEngineConfig.value.max_choices as number | null) ?? null
+  }
+  return null
+})
+
+const minApprovalChoices = computed(() => {
+  if (effectiveEngineId.value === 'approval') {
+    return (effectiveEngineConfig.value.min_choices as number) ?? 1
+  }
+  return 1
+})
 
 // ----------------------------------------------------------------------------
 // Selection Helpers
 // ----------------------------------------------------------------------------
 
 function isSelectedForVote(optionId: number): boolean {
-  if (currentEngineId.value === 'ranked') {
+  if (effectiveEngineId.value === 'ranking') {
     return rankings.value[optionId] !== null && rankings.value[optionId] !== undefined
   }
-  if (currentEngineId.value === 'score') {
+  if (effectiveEngineId.value === 'score' || effectiveEngineId.value === 'star') {
     return scores.value[optionId] !== null && scores.value[optionId] !== undefined
   }
-  if (currentEngineId.value === 'majority_judgment') {
+  if (effectiveEngineId.value === 'majority_judgment') {
     return grades.value[optionId] !== null && grades.value[optionId] !== undefined
+  }
+  if (effectiveEngineId.value === 'reaction') {
+    return userReactions.value[optionId] !== null && userReactions.value[optionId] !== undefined
   }
   return selectedOptions.value.has(optionId)
 }
@@ -825,9 +920,9 @@ function toggleOptionSelection(optionId: number): void {
   if (selectedOptions.value.has(optionId)) {
     selectedOptions.value.delete(optionId)
   } else {
-    const maxChoices = engineConfig.value.max_choices as number | null
-    if (maxChoices && selectedOptions.value.size >= maxChoices) {
-      showError(t('agora', 'You can only select up to {max} options', { max: maxChoices }))
+    // Enforce max choices if configured
+    if (maxApprovalChoices.value && selectedOptions.value.size >= maxApprovalChoices.value) {
+      showError(t('agora', 'You can only select up to {max} options', { max: maxApprovalChoices.value }))
       return
     }
     selectedOptions.value.add(optionId)
@@ -835,8 +930,17 @@ function toggleOptionSelection(optionId: number): void {
   selectedOptions.value = new Set(selectedOptions.value)
 }
 
+function setReaction(optionId: number, reaction: string): void {
+  if (userReactions.value[optionId] === reaction) {
+    delete userReactions.value[optionId]
+  } else {
+    userReactions.value[optionId] = reaction
+  }
+  userReactions.value = { ...userReactions.value }
+}
+
 function handleOptionClick(option: Option): void {
-  if (currentEngine.value?.behavior === 'multi' && props.canVote && !hasUserVoted.value) {
+  if (currentEngine?.behavior === 'multi' && props.canVote && !hasUserVoted.value && activeEngine.value?.status === 'active') {
     toggleOptionSelection(option.id)
   } else {
     emit('select', option)
@@ -847,19 +951,23 @@ function handleOptionClick(option: Option): void {
 // Voting Actions
 // ----------------------------------------------------------------------------
 
-function voteForOption(option: Option): void {
+async function voteForOption(option: Option): Promise<void> {
   if (!props.canVote || hasUserVoted.value || !props.userId) return
+  if (!activeEngine.value) {
+    showError(t('agora', 'No voting method configured'))
+    return
+  }
 
   let value: SupportValue = null
   
-  if (currentEngineId.value === 'binary') {
+  if (effectiveEngineId.value === 'binary') {
     value = 1
-  } else if (currentEngineId.value === 'ternary') {
+  } else if (effectiveEngineId.value === 'ternary') {
     value = 1
-  } else if (currentEngineId.value === 'score') {
-    value = scores.value[option.id] ?? 0
-  } else if (currentEngineId.value === 'reaction') {
-    value = '👍'
+  } else if (effectiveEngineId.value === 'score' || effectiveEngineId.value === 'star') {
+    value = scores.value[option.id] ?? scoreMax.value
+  } else if (effectiveEngineId.value === 'reaction') {
+    value = userReactions.value[option.id] || '👍'
   }
 
   const supportData: SupportData = {
@@ -867,32 +975,61 @@ function voteForOption(option: Option): void {
     optionId: option.id,
     groupId: 0,
     userId: props.userId,
-    support_engine_id: undefined,
+    support_engine_id: activeEngine.value.id,
     value,
     created: Date.now()
   }
 
-  emit('vote', supportData)
-  showSuccessToast(t('agora', 'Your vote for "{option}" has been recorded!', { option: option.title }))
+  try {
+    await supportsStore.addSupport(
+      supportData.inquiryId,
+      supportData.userId,
+      supportData.value,
+      supportData.optionId,
+      supportData.support_engine_id
+    )
+    
+    // Refresh results
+    if (activeEngine.value.id) {
+      await resultStore.calculateAndGetResults(activeEngine.value.id)
+    }
+    
+    showSuccess(t('agora', 'Your vote for "{option}" has been recorded!', { option: option.title }))
+    emit('update:options')
+  } catch (error) {
+    console.error('Failed to vote:', error)
+    showError(t('agora', 'Failed to record vote'))
+  }
 }
 
-function submitMultiVote(): void {
+async function submitMultiVote(): Promise<void> {
   if (!props.canVote || hasUserVoted.value || !props.userId) return
+  if (!activeEngine.value) {
+    showError(t('agora', 'No voting method configured'))
+    return
+  }
 
   const supports: SupportData[] = []
+  const engineType = effectiveEngineId.value
 
-  if (currentEngineId.value === 'approval') {
+  // Enforce min choices for approval
+  if (engineType === 'approval') {
+    if (selectedOptions.value.size < minApprovalChoices.value) {
+      showError(t('agora', 'You must select at least {min} options', { min: minApprovalChoices.value }))
+      return
+    }
     for (const optionId of selectedOptions.value) {
       supports.push({
         inquiryId: props.inquiryId!,
         optionId,
         groupId: 0,
         userId: props.userId,
+        support_engine_id: activeEngine.value.id,
         value: 1,
         created: Date.now()
       })
     }
-  } else if (currentEngineId.value === 'ranked') {
+  } else if (engineType === 'ranking') {
     for (const [optionId, rank] of Object.entries(rankings.value)) {
       if (rank !== null) {
         supports.push({
@@ -900,12 +1037,13 @@ function submitMultiVote(): void {
           optionId: parseInt(optionId, 10),
           groupId: 0,
           userId: props.userId,
+          support_engine_id: activeEngine.value.id,
           value: rank,
           created: Date.now()
         })
       }
     }
-  } else if (currentEngineId.value === 'score') {
+  } else if (engineType === 'score' || engineType === 'star') {
     for (const [optionId, score] of Object.entries(scores.value)) {
       if (score !== null && score !== undefined) {
         supports.push({
@@ -913,12 +1051,13 @@ function submitMultiVote(): void {
           optionId: parseInt(optionId, 10),
           groupId: 0,
           userId: props.userId,
+          support_engine_id: activeEngine.value.id,
           value: score,
           created: Date.now()
         })
       }
     }
-  } else if (currentEngineId.value === 'majority_judgment') {
+  } else if (engineType === 'majority_judgment') {
     for (const [optionId, grade] of Object.entries(grades.value)) {
       if (grade !== null) {
         supports.push({
@@ -926,57 +1065,159 @@ function submitMultiVote(): void {
           optionId: parseInt(optionId, 10),
           groupId: 0,
           userId: props.userId,
+          support_engine_id: activeEngine.value.id,
           value: grade,
+          created: Date.now()
+        })
+      }
+    }
+  } else if (engineType === 'reaction') {
+    for (const [optionId, reaction] of Object.entries(userReactions.value)) {
+      if (reaction) {
+        supports.push({
+          inquiryId: props.inquiryId!,
+          optionId: parseInt(optionId, 10),
+          groupId: 0,
+          userId: props.userId,
+          support_engine_id: activeEngine.value.id,
+          value: reaction,
           created: Date.now()
         })
       }
     }
   }
 
-  emit('multiVote', supports)
+  if (supports.length === 0) {
+    showError(t('agora', 'No votes to submit'))
+    return
+  }
 
-  const voteCount = supports.length
-  showSuccessToast(t('agora', 'Your vote for {count} {countLabel} has been recorded!', {
-    count: voteCount,
-    countLabel: voteCount === 1 ? t('agora', 'option') : t('agora', 'options')
-  }))
+  try {
+    for (const support of supports) {
+      await supportsStore.addSupport(
+        support.inquiryId,
+        support.userId,
+        support.value,
+        support.optionId,
+        support.support_engine_id
+      )
+    }
+    if (activeEngine.value.id) {
+      await resultStore.calculateAndGetResults(activeEngine.value.id)
+    }
+    
+    const voteCount = supports.length
+    showSuccess(t('agora', 'Your vote for {count} {countLabel} has been recorded!', {
+      count: voteCount,
+      countLabel: voteCount === 1 ? t('agora', 'option') : t('agora', 'options')
+    }))
 
-  selectedOptions.value.clear()
-  rankings.value = {}
-  scores.value = {}
-  grades.value = {}
+    // Clear selections
+    selectedOptions.value.clear()
+    rankings.value = {}
+    scores.value = {}
+    grades.value = {}
+    userReactions.value = {}
+    
+    emit('update:options')
+  } catch (error) {
+    console.error('Failed to submit multi-vote:', error)
+    showError(t('agora', 'Failed to submit votes'))
+  }
 }
 
 // ----------------------------------------------------------------------------
-// Toast Helper
+// Engine Management Handlers
 // ----------------------------------------------------------------------------
 
-function showSuccessToast(message: string): void {
-  voteSuccessMessage.value = message
-  if (successTimeout) clearTimeout(successTimeout)
-  successTimeout = setTimeout(() => {
-    voteSuccessMessage.value = ''
-  }, 3000)
+function openEngineModal(): void {
+  engineModalMode.value = activeEngine.value ? 'edit' : 'create'
+  showEngineModal.value = true
 }
 
-// ----------------------------------------------------------------------------
-// Modal Handlers
-// ----------------------------------------------------------------------------
-
-function handleEngineApply(engineId: string, config: Record<string, unknown>): void {
-  currentEngineId.value = engineId
-  engineConfig.value = config
-  showEngineSelector.value = false
-  emit('update:options')
+async function handleEngineSave(data: {
+  title: string
+  description: string
+  engine: string
+  config: Record<string, unknown>
+  status?: 'draft' | 'active'
+}): Promise<void> {
+  try {
+    if (engineModalMode.value === 'create') {
+      await engineStore.createEngine({
+        engine: data.engine,
+        type: 'vote',
+        title: data.title,
+        description: data.description,
+        inquiry_group_id: 0,
+        inquiry_id: props.inquiryId!,
+        status: 'active',
+        config: data.config,
+        target_type: 'inquiry',
+        target_ids: [props.inquiryId!],
+        metadata: { phase: 'voting' }
+      })
+      showSuccess(t('agora', 'Voting method created successfully'))
+    } else if (activeEngine.value) {
+      await engineStore.updateEngine(activeEngine.value.id, {
+        title: data.title,
+        description: data.description,
+        engine: data.engine,
+        config: data.config,
+        status: data.status || activeEngine.value.status
+      })
+      showSuccess(t('agora', 'Voting method updated successfully'))
+    }
+    
+    // Reload engines and results
+    await engineStore.loadEnginesByInquiry(props.inquiryId!)
+    if (activeEngine.value) {
+      await resultStore.loadEngineResults(activeEngine.value.id)
+    }
+    
+    // Clear any pending selections
+    selectedOptions.value.clear()
+    rankings.value = {}
+    scores.value = {}
+    grades.value = {}
+    userReactions.value = {}
+    
+  } catch (error) {
+    console.error('Failed to configure voting method:', error)
+    showError(t('agora', 'Failed to configure voting method'))
+    throw error
+  } finally {
+    showEngineModal.value = false
+  }
 }
 
-// FIXED: Handle add success - refresh and show options from any family
+async function handleEngineChange(selected: { value: number }): Promise<void> {
+  const engine = availableEnginesList.value.find(e => e.id === selected.value)
+  if (engine && engine.id !== activeEngine.value?.id) {
+    // Ask for confirmation before switching engines
+    const confirmed = confirm(t('agora', 'Switching the voting method will reset all votes. Continue?'))
+    if (confirmed) {
+      try {
+        await engineStore.setActiveEngine('inquiry', props.inquiryId!, engine.id)
+        await engineStore.loadEnginesByInquiry(props.inquiryId!)
+        if (activeEngine.value) {
+          await resultStore.loadEngineResults(activeEngine.value.id)
+        }
+        showSuccess(t('agora', 'Voting method switched successfully'))
+      } catch (error) {
+        console.error('Failed to switch voting method:', error)
+        showError(t('agora', 'Failed to switch voting method'))
+      }
+    }
+  }
+}
+
 async function handleAddSuccess(): Promise<void> {
   showAddToVoteModal.value = false
-  refreshKey.value=refreshKey.value + 1
+  refreshKey.value = refreshKey.value + 1
   emit('update:options')
   await nextTick()
-  showSuccessToast(t('agora', 'Option added successfully'))
+  showSuccess(t('agora', 'Option added successfully'))
 }
 
 function closeAddToVoteModal(): void {
@@ -996,7 +1237,7 @@ function createCharts(): void {
   if (!pieChartCanvas.value || !barChartCanvas.value) return
 
   const labels = rankedOptions.value.map(o => o.title)
-  const votes = rankedOptions.value.map(o => getOptionScore(o))
+  const votes = rankedOptions.value.map(o => getOptionVoteCount(o.id))
   const colors = ['#42b883', '#3490dc', '#f6993f', '#e74c3c', '#9b59b6', '#1abc9c', '#e67e22', '#2c3e50']
 
   if (pieChart) pieChart.destroy()
@@ -1051,25 +1292,60 @@ watch([rankedOptions, currentLayout], () => {
 // Lifecycle
 // ----------------------------------------------------------------------------
 
+onMounted(async () => {
+  isLoadingEngines.value = true
+  try {
+    await engineStore.loadEnginesByInquiry(props.inquiryId || 0)
+    if (activeEngine.value) {
+      await resultStore.loadEngineResults(activeEngine.value.id)
+    }
+  } catch (error) {
+    console.error('Failed to load engines:', error)
+  } finally {
+    isLoadingEngines.value = false
+  }
+})
+
 onUnmounted(() => {
   if (pieChart) pieChart.destroy()
   if (barChart) barChart.destroy()
-  if (successTimeout) clearTimeout(successTimeout)
 })
 
 // ----------------------------------------------------------------------------
 // Additional Helpers
 // ----------------------------------------------------------------------------
 
-
 const getEngineLabel = (engineId: string): string => ENGINE_DEFINITIONS[engineId]?.label || engineId
+const getEngineDescription = (engineId: string): string => ENGINE_DEFINITIONS[engineId]?.description || t('agora', 'Vote using this method')
 
+const getEngineIcon = (engineId: string) => {
+  const icons: Record<string, unknown> = {
+    binary: ThumbsUp,
+    ternary: Scale,
+    reaction: Heart,
+    star: Star,
+    score: Star,
+    approval: CheckCircle,
+    ranking: TrendingUp,
+    borda: Award,
+    condorcet: Brain,
+    majority_judgment: Gauge,
+    token_weighted: Users,
+    quadratic: TrendingUp,
+    phased_voting: List,
+    trending: TrendingUp,
+    none: Vote,
+  }
+  return icons[engineId] || Vote
+}
 
 const getSubmitButtonText = (): string => {
-  if (currentEngineId.value === 'approval') return t('agora', 'Submit selections')
-  if (currentEngineId.value === 'ranked') return t('agora', 'Submit ranking')
-  if (currentEngineId.value === 'score') return t('agora', 'Submit scores')
-  if (currentEngineId.value === 'majority_judgment') return t('agora', 'Submit grades')
+  if (effectiveEngineId.value === 'approval') return t('agora', 'Submit selections')
+  if (effectiveEngineId.value === 'ranking') return t('agora', 'Submit ranking')
+  if (effectiveEngineId.value === 'score') return t('agora', 'Submit scores')
+  if (effectiveEngineId.value === 'star') return t('agora', 'Submit ratings')
+  if (effectiveEngineId.value === 'majority_judgment') return t('agora', 'Submit grades')
+  if (effectiveEngineId.value === 'reaction') return t('agora', 'Submit reactions')
   return t('agora', 'Submit vote')
 }
 
@@ -1091,75 +1367,76 @@ const getLayoutIcon = (layout: string): unknown => {
 const getOptionTypeIcon = (type: string): unknown => getOptionTypeIconComponent(type, [])
 
 // ----------------------------------------------------------------------------
-// Computed: Available Engines
-// ----------------------------------------------------------------------------
-const availableEngines = computed(() => {
-  const optionCount = voteOptions.value.length
-  return getAvailableEngines(optionCount)
-})
-
-
-// ----------------------------------------------------------------------------
 // Computed: UI Info
 // ----------------------------------------------------------------------------
 
 const voteLimitInfo = computed(() => {
   if (!currentEngine.value) return null
-  const config = engineConfig.value
-  if (currentEngineId.value === 'approval') {
+  const config = effectiveEngineConfig.value
+  if (effectiveEngineId.value === 'approval') {
     const min = config.min_choices as number
     const max = config.max_choices as number | null
     if (min && max) return t('agora', 'Select {min}-{max} options', { min, max })
     if (min) return t('agora', 'Select at least {min} options', { min })
     if (max) return t('agora', 'Select up to {max} options', { max })
   }
-  if (currentEngineId.value === 'ranked') {
+  if (effectiveEngineId.value === 'ranking') {
     const max = config.max_rank as number
     if (max) return t('agora', 'Rank up to {max} options', { max })
     return t('agora', 'Rank all options')
+  }
+  if (effectiveEngineId.value === 'score' || effectiveEngineId.value === 'star') {
+    return t('agora', 'Rate from {min} to {max}', { min: scoreMin.value, max: scoreMax.value })
   }
   return null
 })
 
 const voteSelectionInfo = computed(() => {
-  if (currentEngineId.value === 'approval') {
+  if (effectiveEngineId.value === 'approval') {
     const selectedCount = selectedOptions.value.size
-    const min = engineConfig.value.min_choices as number
-    const max = engineConfig.value.max_choices as number | null
+    const min = effectiveEngineConfig.value.min_choices as number || 1
+    const max = effectiveEngineConfig.value.max_choices as number | null
     if (min && max) return t('agora', '{selected}/{min}-{max} selected', { selected: selectedCount, min, max })
     if (min) return t('agora', '{selected}/{min}+ selected', { selected: selectedCount, min })
     if (max) return t('agora', '{selected}/{max} selected', { selected: selectedCount, max })
   }
-  if (currentEngineId.value === 'ranked') {
+  if (effectiveEngineId.value === 'ranking') {
     const rankedCount = Object.values(rankings.value).filter(r => r !== null).length
-    const max = (engineConfig.value.max_rank as number) || voteOptions.value.length
+    const max = (effectiveEngineConfig.value.max_rank as number) || voteOptions.value.length
     return t('agora', '{ranked}/{max} ranked', { ranked: rankedCount, max })
+  }
+  if (effectiveEngineId.value === 'score' || effectiveEngineId.value === 'star') {
+    const scoredCount = Object.values(scores.value).filter(s => s !== null && s !== undefined).length
+    return t('agora', '{count} options rated', { count: scoredCount })
   }
   return null
 })
 
 const canSubmitMultiVote = computed(() => {
-  if (currentEngineId.value === 'approval') {
+  if (effectiveEngineId.value === 'approval') {
     const selectedCount = selectedOptions.value.size
-    const min = (engineConfig.value.min_choices as number) || 1
-    const max = engineConfig.value.max_choices as number | null
+    const min = (effectiveEngineConfig.value.min_choices as number) || 1
+    const max = effectiveEngineConfig.value.max_choices as number | null
     if (max !== null && selectedCount > max) return false
     return selectedCount >= min
   }
-  if (currentEngineId.value === 'ranked') {
+  if (effectiveEngineId.value === 'ranking') {
     const ranks = Object.entries(rankings.value)
       .filter(([, rank]) => rank !== null)
       .map(([, rank]) => rank as number)
     const uniqueRanks = new Set(ranks)
     if (uniqueRanks.size !== ranks.length) return false
-    const maxRankValue = (engineConfig.value.max_rank as number) || voteOptions.value.length
+    const maxRankValue = (effectiveEngineConfig.value.max_rank as number) || voteOptions.value.length
     return ranks.length > 0 && Math.max(...ranks) <= maxRankValue
   }
-  if (currentEngineId.value === 'score') {
+  if (effectiveEngineId.value === 'score' || effectiveEngineId.value === 'star') {
     return Object.values(scores.value).some(s => s !== null && s !== undefined)
   }
-  if (currentEngineId.value === 'majority_judgment') {
+  if (effectiveEngineId.value === 'majority_judgment') {
     return Object.values(grades.value).some(g => g !== null)
+  }
+  if (effectiveEngineId.value === 'reaction') {
+    return Object.values(userReactions.value).some(r => r !== null && r !== undefined)
   }
   return selectedOptions.value.size > 0
 })
@@ -1175,13 +1452,6 @@ const timeRemaining = computed(() => {
   if (days > 0) return t('agora', '{days}d {hours}h', { days, hours })
   return t('agora', '{hours}h', { hours })
 })
-
-// Initialize engine config
-if (props.voteSession?.engine) {
-  currentEngineId.value = props.voteSession.engine
-  engineConfig.value = initializeEngineConfig(props.voteSession.engine)
-}
-
 </script>
 
 <style scoped lang="scss">
@@ -1221,6 +1491,7 @@ if (props.voteSession?.engine) {
       display: flex;
       gap: 12px;
       align-items: center;
+      flex-wrap: wrap;
 
       .layout-switcher {
         display: flex;
@@ -1230,8 +1501,53 @@ if (props.voteSession?.engine) {
         border-radius: 12px;
       }
 
-      .engine-selector-header {
-        margin-right: 8px;
+      .engine-selector {
+        min-width: 200px;
+        
+        .engine-select {
+          width: 100%;
+          
+          :deep(.vs__dropdown-toggle) {
+            border-radius: 8px;
+            background: var(--color-main-background);
+          }
+        }
+        
+        .engine-option {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 8px;
+          
+          .engine-option-icon {
+            flex-shrink: 0;
+            color: var(--color-primary-element);
+          }
+          
+          .engine-option-content {
+            flex: 1;
+            
+            .engine-option-label {
+              font-weight: 500;
+              font-size: 13px;
+            }
+            
+            .engine-option-desc {
+              font-size: 11px;
+              color: var(--color-text-lighter);
+            }
+          }
+        }
+        
+        .engine-selected {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          
+          svg {
+            color: var(--color-primary-element);
+          }
+        }
       }
 
       .add-to-vote-btn {
@@ -1247,9 +1563,51 @@ if (props.voteSession?.engine) {
     }
   }
 
+  .no-engine-banner {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 24px;
+    background: linear-gradient(135deg, rgba(var(--color-primary-element-rgb), 0.05) 0%, rgba(var(--color-primary-element-rgb), 0.02) 100%);
+    border: 2px dashed var(--color-primary-element);
+    border-radius: 16px;
+    margin-bottom: 24px;
+    
+    svg {
+      color: var(--color-primary-element);
+      flex-shrink: 0;
+    }
+    
+    .banner-content {
+      flex: 1;
+      
+      h4 {
+        margin: 0 0 4px 0;
+        font-size: 16px;
+        font-weight: 600;
+      }
+      
+      p {
+        margin: 0;
+        font-size: 13px;
+        color: var(--color-text-lighter);
+      }
+    }
+  }
+
+  .loading-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    gap: 16px;
+    color: var(--color-text-lighter);
+  }
+
   .engine-info {
     margin-bottom: 20px;
-    padding: 8px 12px;
+    padding: 12px 16px;
     background: var(--color-background-dark);
     border-radius: 12px;
     display: flex;
@@ -1257,16 +1615,36 @@ if (props.voteSession?.engine) {
     align-items: center;
     font-size: 13px;
 
-    .engine-badge {
-      display: inline-flex;
+    .engine-info-left {
+      display: flex;
       align-items: center;
-      gap: 6px;
-      font-weight: 500;
+      gap: 12px;
+      
+      .engine-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-weight: 500;
+        background: var(--color-main-background);
+        padding: 4px 10px;
+        border-radius: 20px;
+      }
+      
+      .engine-title {
+        color: var(--color-text-lighter);
+        font-size: 12px;
+      }
     }
 
-    .vote-limit-info {
-      color: var(--color-text-lighter);
-      font-size: 12px;
+    .engine-info-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      
+      .vote-limit-info {
+        color: var(--color-text-lighter);
+        font-size: 12px;
+      }
     }
   }
 
@@ -1331,6 +1709,37 @@ if (props.voteSession?.engine) {
             }
           }
 
+          .reaction-input {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+            padding: 8px;
+            background: var(--color-background-dark);
+            border-radius: 8px;
+            
+            .reaction-btn {
+              font-size: 20px;
+              padding: 4px 8px;
+              border: 2px solid var(--color-border);
+              border-radius: 30px;
+              background: var(--color-main-background);
+              cursor: pointer;
+              transition: all 0.2s ease;
+              
+              &:hover {
+                transform: scale(1.05);
+                border-color: var(--color-primary-element);
+              }
+              
+              &.active {
+                background: rgba(var(--color-primary-element-rgb), 0.1);
+                border-color: var(--color-primary-element);
+                transform: scale(1.05);
+              }
+            }
+          }
+
           .vote-progress-section {
             margin-top: 12px;
             padding-top: 12px;
@@ -1384,6 +1793,11 @@ if (props.voteSession?.engine) {
             color: #42b883;
             font-size: 13px;
             font-weight: 500;
+            margin-top: 8px;
+            padding: 4px 8px;
+            background: rgba(66, 184, 131, 0.1);
+            border-radius: 20px;
+            width: fit-content;
           }
         }
       }
@@ -1687,38 +2101,25 @@ if (props.voteSession?.engine) {
       color: var(--color-text-lighter);
     }
   }
-
-  .vote-success-toast {
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    background: #42b883;
-    color: white;
-    padding: 12px 20px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-weight: 500;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    animation: slideIn 0.3s ease;
-    z-index: 1000;
-  }
-}
-
-@keyframes slideIn {
-  from {
-    transform: translateX(100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
 }
 
 @media (max-width: 768px) {
   .vote-layout {
+    .no-engine-banner {
+      flex-direction: column;
+      text-align: center;
+    }
+    
+    .engine-info {
+      flex-direction: column;
+      gap: 12px;
+      
+      .engine-info-right {
+        width: 100%;
+        justify-content: space-between;
+      }
+    }
+    
     .list-layout {
       .list-header,
       .list-row {

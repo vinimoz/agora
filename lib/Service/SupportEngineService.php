@@ -70,7 +70,7 @@ class SupportEngineService
         $engine->setEngine($data['engine'] ?? '');
         $engine->setTitle($data['title'] ?? '');
         $engine->setDescription($data['description'] ?? '');
-        $engine->setType($data['type'] ?? '');
+        $engine->setPurpose($data['purpose'] ?? '');
         $engine->setInquiryId($data['inquiry_id'] ?? 0);
         $engine->setInquiryGroupId($data['inquiry_group_id'] ?? null);
         $engine->setStatus($data['status'] ?? SupportEngine::STATUS_DRAFT);
@@ -176,4 +176,28 @@ class SupportEngineService
             return false;
         }
     }
+
+/**
+ * Get support feature for a target (inquiry or option)
+ */
+private function getTargetSupportFeature(string $targetType, int $targetId): string
+{
+    try {
+        if ($targetType === 'inquiry') {
+            $inquiry = $this->inquiryMapper->find($targetId);
+            return $inquiry->getSupportFeature() ?: 'binary';
+        } else { // option
+            $option = $this->optionMapper->find($targetId);
+            return $option->getSupportFeature() ?: 'binary';
+        }
+    } catch (\Exception $e) {
+        $this->logger->error('Failed to get target support feature', [
+            'targetType' => $targetType,
+            'targetId' => $targetId,
+            'error' => $e->getMessage()
+        ]);
+        return 'binary';
+    }
+}
+
 }

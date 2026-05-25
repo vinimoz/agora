@@ -9,6 +9,7 @@ use OCA\Agora\Db\SupportResultMapper;
 use OCA\Agora\Db\SupportMapper;
 use OCA\Agora\Db\SupportEngineMapper;
 use OCA\Agora\Db\InquiryMapper;
+use OCA\Agora\Service\InquiryMiscService;
 use OCA\Agora\Db\OptionMapper;
 use Psr\Log\LoggerInterface;
 
@@ -20,6 +21,7 @@ class SupportResultService
         private SupportEngineMapper $engineMapper,
         private InquiryMapper $inquiryMapper,
         private OptionMapper $optionMapper,
+        private InquiryMiscService $inquiryMiscService,
         private LoggerInterface $logger,
     ) {
     }
@@ -60,7 +62,7 @@ class SupportResultService
     /**
      * Calculate results based on type for a single target
      */
-    private function calculateByType(string $type, array $supports, ?int $inquiryId = null, ?int $optionId = null): array
+    private function calculateByType(string $type, array $supports, ?int $inquiryId = null, ?int $optionId = null, ?int $engineId=null): array
     {
         $this->debug('calculateByType called', [
             'type' => $type,
@@ -75,15 +77,28 @@ class SupportResultService
             return $emptyResult;
         }
 
+        // **FIX: Handle null inquiryId for majority_judgment**
+        if ($type === 'majority_judgment' && ($inquiryId === null || $inquiryId === 0)) {
+            // Try to get inquiryId from the first support if available
+            foreach ($supports as $support) {
+                if ($support->getInquiryId() > 0) {
+                    $inquiryId = $support->getInquiryId();
+                    $this->debug('Retrieved inquiryId from support', ['inquiryId' => $inquiryId]);
+                    break;
+                }
+            }
+        }
+
         $result = match($type) {
             'ternary' => $this->calculateTernaryResults($supports),
             'score' => $this->calculateScoreResults($supports),
             'star' => $this->calculateStarResults($supports),
             'reaction' => $this->calculateReactionResults($supports),
             'approval' => $this->calculateApprovalResults($supports),
+            'approval_delib' => $this->calculateApprovalDeliberativeResults($supports),
             'ranking' => $this->calculateRankingResults($supports),
             'binary' => $this->calculateBinaryResults($supports),
-            'majority_judgment' => $this->calculateMajorityJudgmentResults($supports, $inquiryId, $optionId),
+            'majority_judgment' => $this->calculateMajorityJudgmentResults($supports, $inquiryId, $optionId, $engineId),
             default => $this->calculateBinaryResults($supports),
         };
 
@@ -213,103 +228,86 @@ class SupportResultService
 
 
     /**
-     * Calculate majority judgment results
-     *
-     * Majority judgment: Each voter assigns a grade to each option.
-     * Grades are defined in the inquiry/option miscFields or supportTemplate
+     * Calculate majority judgment results for a single target (inquiry or option)
      *
      * @param array $supports Array of Support entities
      * @param int|null $inquiryId The inquiry ID
-     * @param int|null $optionId The option ID
+     * @param int|null $optionId The option ID (0 or null = inquiry level)
+     * @param int|null $engineId Not used for logic, only for logging
      * @return array
      */
-    private function calculateMajorityJudgmentResults(array $supports, ?int $inquiryId = null, ?int $optionId = null): array
+    private function calculateMajorityJudgmentResults(array $supports, ?int $inquiryId = null, ?int $optionId = null, ?int $engineId = null): array
     {
-        // Get grade scale from inquiry/option configuration
         $grades = $this->getMajorityJudgmentGrades($inquiryId, $optionId);
-
         if (empty($grades)) {
-            $this->logger->error('No grades defined for majority judgment vote', [
-                'inquiryId' => $inquiryId,
-                'optionId' => $optionId
-            ]);
             return $this->getEmptyResult('majority_judgment');
         }
 
-        // Create grade order mapping (higher index = better rank? depends on order)
-        // We assume grades are ordered from best to worst as stored
         $gradeOrder = array_flip($grades);
+        $targetId = ($optionId !== null && $optionId > 0) ? $optionId : ($inquiryId ?? 0);
+        $targetType = ($optionId !== null && $optionId > 0) ? 'option' : 'inquiry';
 
-        // Group supports by option
-        $optionsResults = [];
-        $totalVotes = 0;
+        $optionsResults = [
+            $targetId => [
+                'grades' => [],
+                'grade_counts' => array_fill_keys($grades, 0),
+                'total_weight' => 0
+            ]
+        ];
 
         foreach ($supports as $support) {
             $value = $support->getValue();
             $weight = $support->getWeight();
-            $supportOptionId = $support->getOptionId();
 
-            if ($supportOptionId <= 0) {
-                continue; // Skip if not associated with an option
-            }
-
-            // Extract grade from JSON format: {"type":"majority_judgment","value":"Good"}
-            // or just the grade string directly
-            $grade = null;
+            // Extract raw grade
+            $rawGrade = null;
             if (is_array($value)) {
-                $grade = $value['value'] ?? null;
+                $rawGrade = $value['value'] ?? null;
             } elseif (is_string($value)) {
                 $decoded = json_decode($value, true);
-                $grade = $decoded['value'] ?? $value;
+                $rawGrade = $decoded['value'] ?? $value;
             } else {
-                $grade = (string)$value;
+                $rawGrade = (string)$value;
             }
 
-            // Validate grade exists in defined scale
-            if (!in_array($grade, $grades)) {
-                $this->logger->warning('Invalid grade for majority judgment', [
-                    'grade' => $grade,
-                    'valid_grades' => $grades,
-                    'optionId' => $supportOptionId,
-                    'userId' => $support->getUserId()
-                ]);
+            // Map numeric grade (1-based) to grade string if needed
+            if (is_numeric($rawGrade) && !empty($grades) && is_string($grades[0])) {
+                $index = (int)$rawGrade;
+                $grade = $grades[$index] ?? null;
+            } else {
+                $grade = (string)$rawGrade;
+            }
+
+            if (!$grade || !in_array($grade, $grades)) {
+                $this->logger->warning('Invalid grade', ['grade' => $grade, 'valid' => $grades]);
                 continue;
             }
 
-            // Initialize option if not exists
-            if (!isset($optionsResults[$supportOptionId])) {
-                $optionsResults[$supportOptionId] = [
-                    'grades' => [], // All grades (weighted, flattened for median calculation)
-                    'grade_counts' => array_fill_keys($grades, 0),
-                    'total_weight' => 0
-                ];
-            }
-
-            // Add weighted grade (flatten by weight for median calculation)
             for ($i = 0; $i < $weight; $i++) {
-                $optionsResults[$supportOptionId]['grades'][] = $grade;
+                $optionsResults[$targetId]['grades'][] = $grade;
             }
-            $optionsResults[$supportOptionId]['grade_counts'][$grade] += $weight;
-            $optionsResults[$supportOptionId]['total_weight'] += $weight;
-            $totalVotes += $weight;
+            $optionsResults[$targetId]['grade_counts'][$grade] += $weight;
+            $optionsResults[$targetId]['total_weight'] += $weight;
         }
 
-        // Calculate median grade and tie-breaking for each option
-        $optionRankings = [];
-        foreach ($optionsResults as $optionId => $data) {
-            if (empty($data['grades'])) {
-                $optionRankings[$optionId] = [
+
+        $data = $optionsResults[$targetId];
+        $totalVotes = $data['total_weight'];
+
+        // Calculate median and tie‑breaking
+        if (empty($data['grades'])) {
+            $optionRankings = [
+                $targetId => [
                     'median_grade' => null,
                     'median_index' => -1,
                     'above_share' => 0,
                     'below_share' => 0,
                     'grade_distribution' => $data['grade_counts'],
                     'total_votes' => 0
-                ];
-                continue;
-            }
-
-            // Sort grades according to defined order (best first)
+                ]
+            ];
+        } else {
+            // Sort grades from best to worst according to $gradeOrder
             $sortedGrades = $data['grades'];
             usort($sortedGrades, function($a, $b) use ($gradeOrder) {
                 return $gradeOrder[$a] <=> $gradeOrder[$b];
@@ -319,69 +317,59 @@ class SupportResultService
             $medianIndex = (int)floor(($total - 1) / 2);
             $medianGrade = $sortedGrades[$medianIndex];
 
-            // Calculate majority judgment tie-breaking
-            // Count votes strictly above and below the median grade
             $aboveCount = 0;
             $belowCount = 0;
-
             foreach ($sortedGrades as $grade) {
                 if ($gradeOrder[$grade] < $gradeOrder[$medianGrade]) {
-                    $aboveCount++; // Better than median
+                    $aboveCount++;
                 } elseif ($gradeOrder[$grade] > $gradeOrder[$medianGrade]) {
-                    $belowCount++; // Worse than median
+                    $belowCount++;
                 }
             }
-
             $aboveShare = $total > 0 ? $aboveCount / $total : 0;
             $belowShare = $total > 0 ? $belowCount / $total : 0;
 
-            $optionRankings[$optionId] = [
-                'median_grade' => $medianGrade,
-                'median_index' => $gradeOrder[$medianGrade],
-                'above_share' => round($aboveShare, 4),
-                'below_share' => round($belowShare, 4),
-                'grade_distribution' => $data['grade_counts'],
-                'total_votes' => $total
+            $optionRankings = [
+                $targetId => [
+                    'median_grade' => $medianGrade,
+                    'median_index' => $gradeOrder[$medianGrade],
+                    'above_share' => round($aboveShare, 4),
+                    'below_share' => round($belowShare, 4),
+                    'grade_distribution' => $data['grade_counts'],
+                    'total_votes' => $total
+                ]
             ];
         }
 
-        // Sort options by majority judgment rule:
-        // 1. Higher median grade (lower index = better) wins
-        // 2. If tied, the option with more grades ABOVE median wins
-        // 3. If still tied, the option with fewer grades BELOW median wins
-        uasort($optionRankings, function($a, $b) {
-            // No votes case
-            if ($a['median_grade'] === null && $b['median_grade'] === null) return 0;
-            if ($a['median_grade'] === null) return 1;
-            if ($b['median_grade'] === null) return -1;
+        // Winner is the only option
+        $winnerOptionId = $targetId;
+        $winnerRanking = $optionRankings[$targetId];
 
-            // Compare median indices (lower = better)
-            if ($a['median_index'] != $b['median_index']) {
-                return $a['median_index'] <=> $b['median_index'];
+        // Option name for display
+        $optionNames = [];
+        if ($targetType === 'option') {
+            try {
+                $option = $this->optionMapper->find($targetId);
+                $optionNames[$targetId] = $option->getOption();
+            } catch (\Exception $e) {
+                $optionNames[$targetId] = "Option $targetId";
             }
-
-            // Tie: compare above shares (higher is better)
-            if ($a['above_share'] != $b['above_share']) {
-                return $b['above_share'] <=> $a['above_share'];
+        } else {
+            try {
+                $inquiry = $this->inquiryMapper->find($targetId);
+                $optionNames[$targetId] = $inquiry->getTitle() ?: "Inquiry $targetId";
+            } catch (\Exception $e) {
+                $optionNames[$targetId] = "Inquiry $targetId";
             }
-
-            // Still tied: compare below shares (lower is better)
-            return $a['below_share'] <=> $b['below_share'];
-        });
-
-        // Determine winner (first option after sort)
-        $winnerOptionId = null;
-        $winnerRanking = null;
-        if (!empty($optionRankings)) {
-            $winnerOptionId = array_key_first($optionRankings);
-            $winnerRanking = $optionRankings[$winnerOptionId];
         }
 
         return [
             'type' => 'majority_judgment',
-            'grades' => $grades, // Dynamic grades from configuration
+            'grades' => $grades,
             'options' => $optionRankings,
+            'option_names' => $optionNames,
             'winner' => $winnerOptionId,
+            'winner_name' => $optionNames[$winnerOptionId] ?? null,
             'winner_details' => $winnerRanking,
             'total_votes' => $totalVotes
         ];
@@ -400,20 +388,16 @@ class SupportResultService
      */
     private function getMajorityJudgmentGrades(?int $inquiryId, ?int $optionId = null): array
     {
-        // First try to get from option (if provided and has its own grade scale)
+        // First try to get from option
         if ($optionId !== null && $optionId > 0) {
             try {
                 $option = $this->optionMapper->find($optionId);
                 if ($option) {
                     $miscFields = $option->getMiscFields();
-
-                    // Check for grades in supportTemplate
                     if (isset($miscFields['support_template']['grades']) && is_array($miscFields['support_template']['grades'])) {
                         $this->debug('Got grades from option support_template', ['grades' => $miscFields['support_template']['grades']]);
                         return $miscFields['support_template']['grades'];
                     }
-
-                    // Check for direct grades field
                     if (isset($miscFields['grades']) && is_array($miscFields['grades'])) {
                         $this->debug('Got grades from option miscFields', ['grades' => $miscFields['grades']]);
                         return $miscFields['grades'];
@@ -430,17 +414,18 @@ class SupportResultService
                 $inquiry = $this->inquiryMapper->find($inquiryId);
                 if ($inquiry) {
                     $miscFields = $inquiry->getMiscFields();
-
-                    // Check for grades in supportTemplate
-                    if (isset($miscFields['support_template']['grades']) && is_array($miscFields['support_template']['grades'])) {
+                    if (isset($miscFields['support_template']['grades'])) {
                         $this->debug('Got grades from inquiry support_template', ['grades' => $miscFields['support_template']['grades']]);
                         return $miscFields['support_template']['grades'];
                     }
-
-                    // Check for direct grades field
-                    if (isset($miscFields['grades']) && is_array($miscFields['grades'])) {
-                        $this->debug('Got grades from inquiry miscFields', ['grades' => $miscFields['grades']]);
-                        return $miscFields['grades'];
+                }
+                // Fallback: query misc table via service
+                $templateJson = $this->inquiryMiscService->getValue($inquiryId, 'support_template');
+                if ($templateJson) {
+                    $template = json_decode($templateJson, true);
+                    if (isset($template['grades'])) {
+                        $this->debug('Got grades from inquiry misc service', ['grades' => $template['grades']]);
+                        return $template['grades'];
                     }
                 }
             } catch (\Exception $e) {
@@ -448,138 +433,140 @@ class SupportResultService
             }
         }
 
-        // Default fallback (should not happen if vote is properly configured)
+        // Default fallback
         $defaultGrades = ['Excellent', 'Good', 'Fair', 'Poor'];
         $this->logger->warning('No grades found for majority judgment, using defaults', [
             'inquiryId' => $inquiryId,
             'optionId' => $optionId,
             'defaultGrades' => $defaultGrades
         ]);
-
         return $defaultGrades;
     }
 
-    /**
-    private function calculateApprovalDeliberativeResults(array $supports, array $options = []): array
-    {
-        $counts = [];
-        $totalVotes = 0;
 
-        // Initialize counts for all options
-        foreach ($options as $optionId) {
-            $counts[$optionId] = 0;
-        }
+    /**
+     * Calculate approval results for deliberative phase (simple approve/not approve)
+     * In deliberative mode, support value is simply 1 (approved) or not set
+     *
+     * @param array $supports Array of support objects
+     * @return array Result structure for approval voting
+     */
+    private function calculateApprovalDeliberativeResults(array $supports): array
+    {
+        $totalApproved = 0;
+        $totalParticipants = count($supports);
 
         foreach ($supports as $support) {
             $value = $support->getValue();
-            $weight = $support->getWeight();
 
-            // Parse the value - support value can be:
-            // 1. Direct array: [1, 3, 5]
-            // 2. JSON string: {"value": [1, 3, 5]} or {"type":"approval","value":[1,3,5]}
-            // 3. Single value: 1 (for simple approval)
-            $approvedOptions = [];
+            $this->debug('Processing deliberative support', [
+                'user_id' => $support->getUserId(),
+                'raw_value' => $value,
+                'value_type' => gettype($value)
+            ]);
 
-            if (is_array($value)) {
-                // Check if it's the new format with 'value' key
-                if (isset($value['value']) && is_array($value['value'])) {
-                    $approvedOptions = $value['value'];
-                } elseif (isset($value['type']) && $value['type'] === 'approval' && isset($value['value'])) {
-                    $approvedOptions = $value['value'];
-                } else {
-                    // Assume array of option IDs
-                    $approvedOptions = $value;
-                }
+            // Check if value is 1 (approved)
+            $isApproved = false;
+
+            if (is_int($value) && $value === 1) {
+                $isApproved = true;
             } elseif (is_string($value)) {
-                // Try to parse JSON
+                // Handle JSON format: {"value":1}
                 $decoded = json_decode($value, true);
-                if (json_last_error() === JSON_ERROR_NONE) {
-                    if (isset($decoded['value']) && is_array($decoded['value'])) {
-                        $approvedOptions = $decoded['value'];
-                    } elseif (isset($decoded['type']) && $decoded['type'] === 'approval' && isset($decoded['value'])) {
-                        $approvedOptions = $decoded['value'];
-                    } elseif (is_array($decoded)) {
-                        $approvedOptions = $decoded;
-                    }
-                } else {
-                    // Single numeric value
-                    $numericValue = (int)$value;
-                    if ($numericValue > 0) {
-                        $approvedOptions = [$numericValue];
-                    }
+                if (isset($decoded['value']) && $decoded['value'] === 1) {
+                    $isApproved = true;
+                } elseif ($value === '1' || $value === '1') {
+                    $isApproved = true;
                 }
-            } elseif (is_numeric($value)) {
-                // Single numeric value (option ID or 1 for simple approval)
-                $numericValue = (int)$value;
-                if ($numericValue > 0) {
-                    $approvedOptions = [$numericValue];
+            } elseif (is_array($value)) {
+                // Handle array format: ['value' => 1]
+                if (isset($value['value']) && $value['value'] === 1) {
+                    $isApproved = true;
                 }
             }
 
-            // Count each approved option
-            foreach ($approvedOptions as $optionId) {
-                $optionId = (int)$optionId;
-                if ($optionId > 0) {
-                    $counts[$optionId] = ($counts[$optionId] ?? 0) + $weight;
-                    $totalVotes++;
-                }
+            if ($isApproved) {
+                $totalApproved++;
+                $this->debug('Approved', ['user_id' => $support->getUserId()]);
             }
         }
 
-        // Calculate percentages if needed
-        $percentages = [];
-        foreach ($counts as $optionId => $count) {
-            $percentages[$optionId] = $totalVotes > 0 ? round(($count / $totalVotes) * 100, 1) : 0;
-        }
+        $percentage = $totalParticipants > 0 ? round(($totalApproved / $totalParticipants) * 100, 1) : 0;
 
         return [
-            'type' => 'approval',
-            'counts' => $counts,
-            'percentages' => $percentages,
-            'total_votes' => $totalVotes
+            'type' => 'approval_delib',
+            'totals' => [
+                'approved' => $totalApproved,
+                'total' => $totalParticipants
+            ],
+            'percentages' => [
+                'approved' => $percentage
+            ]
         ];
-    }*/
-
-    /**
- * Calculate approval results for deliberative phase (simple approve/not approve)
- *
- * @param array $supports Array of support objects
- * @return array Result structure for approval voting
- */
-private function calculateApprovalDeliberativeResults(array $supports): array
-{
-    $totalApproved = 0;
-    $totalParticipants = count($supports);
-
-    foreach ($supports as $support) {
-        $value = $support->getValue();
-
-        // Simple check: value is 1 (approved) or null/0 (not approved)
-        if ($value === 1 || $value === '1') {
-            $totalApproved++;
-        }
-        // Also handle JSON format
-        if (is_string($value)) {
-            $decoded = json_decode($value, true);
-            if (isset($decoded['value']) && $decoded['value'] === 1) {
-                $totalApproved++;
-            }
-        }
     }
 
-    $percentage = $totalParticipants > 0 ? round(($totalApproved / $totalParticipants) * 100, 1) : 0;
+    /**
+     * Calculate results for deliberative phase (no engine)
+     * In deliberative mode, each target has simple approval: 1 (approved) or not
+     */
+    public function calculateDeliberativeResults(string $targetType, int $targetId): ?SupportResult
+    {
+        $this->logger->info('Calculating deliberative results', [
+            'targetType' => $targetType,
+            'targetId' => $targetId
+        ]);
 
-    return [
-        'type' => 'approval',
-        'totals' => [
-            'approved' => $totalApproved,
-            'total' => $totalParticipants
-        ],
-        'percentages' => [
-            'approved' => $percentage
-        ]
-    ];
-}
+        // Get supports for this specific target (engineId = null for deliberative)
+        $supports = $this->getSupportsForTarget(null, $targetType, $targetId);
+
+        // Get the support feature type
+        $supportType = $this->getSupportType(null, $targetType, $targetId);
+
+        // Get inquiryId and optionId for context
+        $inquiryId = $targetType === 'inquiry' ? $targetId : null;
+        $optionId = $targetType === 'option' ? $targetId : null;
+
+        // Calculate result based on type
+        $resultData = $this->calculateByType($supportType, $supports, $inquiryId, $optionId);
+
+        // Store the result
+        return $this->resultMapper->upsertResult(
+            null, // engineId = null for deliberative
+            $targetType,
+            $targetId,
+            $resultData
+        );
+    }
+
+    /**
+     * Calculate all deliberative results for all targets
+     */
+    public function calculateAllDeliberativeResults(): array
+    {
+        $this->logger->info('Calculating all deliberative results');
+
+        $results = [];
+
+        // Get all inquiries with their supports
+        $inquiries = $this->inquiryMapper->findAll();
+        foreach ($inquiries as $inquiry) {
+            $result = $this->calculateDeliberativeResults('inquiry', $inquiry->getId());
+            if ($result) {
+                $results[] = $result;
+            }
+
+            // Get all options for this inquiry
+            $options = $this->optionMapper->findByTargetId($inquiry->getId());
+            foreach ($options as $option) {
+                $result = $this->calculateDeliberativeResults('option', $option->getId());
+                if ($result) {
+                    $results[] = $result;
+                }
+            }
+        }
+
+        return $results;
+    }
 
     /**
      * Calculate score results
@@ -737,6 +724,12 @@ private function calculateApprovalDeliberativeResults(array $supports): array
                 'type' => 'ranking',
                 'rankings' => []
             ],
+            'approval_delib' => [
+                'type' => 'approval_delib',
+                'totals' => ['approved' => 0, 'total' => 0],
+                'percentages' => ['approved' => 0]
+            ],
+
             'majority_judgment' => [
                 'type' => 'majority_judgment',
                 'grades' => [], // Will be filled by caller if needed
@@ -784,22 +777,25 @@ private function calculateApprovalDeliberativeResults(array $supports): array
     private function getSupportType(?int $engineId, string $targetType, int $targetId): string
     {
         if ($engineId === null) {
-            // For informal supports, get from inquiry or option
+            // For deliberative/ informal supports, get from inquiry or option
             if ($targetType === 'inquiry') {
                 try {
                     $inquiry = $this->inquiryMapper->find($targetId);
-                    return $inquiry->getSupportFeature() ?: 'binary';
+                    $feature = $inquiry->getSupportFeature() ?: 'approval_delib';
+                    // In deliberative mode, force approval_delib if no feature set
+                    return $feature === 'none' ? 'approval_delib' : $feature;
                 } catch (\Exception $e) {
                     $this->logger->error('Failed to get inquiry support feature', ['error' => $e->getMessage()]);
-                    return 'binary';
+                    return 'approval_delib';
                 }
             } else {
                 try {
                     $option = $this->optionMapper->find($targetId);
-                    return $option->getSupportFeature() ?: 'binary';
+                    $feature = $option->getSupportFeature() ?: 'approval_delib';
+                    return $feature === 'none' ? 'approval_delib' : $feature;
                 } catch (\Exception $e) {
                     $this->logger->error('Failed to get option support feature', ['error' => $e->getMessage()]);
-                    return 'binary';
+                    return 'approval_delib';
                 }
             }
         }
@@ -817,6 +813,7 @@ private function calculateApprovalDeliberativeResults(array $supports): array
 
         return 'binary';
     }
+
     /**
      * Calculate results for all targets of a specific engine
      * For engineId = null (informal), calculates for all supports without engine
@@ -838,9 +835,17 @@ private function calculateApprovalDeliberativeResults(array $supports): array
 
             // Get support type for this target
             $supportType = $this->getSupportTypeForTarget((int)$targetId, $targetType);
+            $inquiryIdParam = null;
+            $optionIdParam = null;
+            if ($targetType === 'inquiry') {
+                $inquiryIdParam = (int)$targetId;
+            } else {
+                $optionIdParam = (int)$targetId;
+            }
 
-            // Calculate result
-            $resultData = $this->calculateByType($supportType, $targetSupports);
+
+            // Calculate result based on supports array
+            $resultData = $this->calculateByType($supportType, $targetSupports, $inquiryIdParam, $optionIdParam);
 
             // Store result
             $stored = $this->resultMapper->upsertResult(
@@ -912,6 +917,17 @@ private function calculateApprovalDeliberativeResults(array $supports): array
      * @return array The calculated result
      */
 
+    /**
+     * Calculate results from a provided array of supports (no DB read)
+     * This avoids dirty table reads by using already fetched data
+     * 
+     * @param int $inquiryId
+     * @param int $optionId
+     * @param array $supports Array of Support entities
+     * @param int|null $engineId
+     * @return array The calculated result
+     */
+
     public function calculateFromSupports(int $inquiryId, int $optionId, array $supports, ?int $engineId = null): array
     {
         $targetType = $optionId > 0 ? 'option' : 'inquiry';
@@ -941,8 +957,7 @@ private function calculateApprovalDeliberativeResults(array $supports): array
         $supportType = $this->getSupportTypeFromTarget($inquiryId, $optionId);
         $this->debug('Support type', ['type' => $supportType]);
 
-        // Calculate result based on supports array
-        $resultData = $this->calculateByType($supportType, $supports);
+        $resultData = $this->calculateByType($supportType, $supports, $inquiryId, $optionId,$engineId);
         $this->debug('Calculated result', ['result' => $resultData]);
 
         // Store the result

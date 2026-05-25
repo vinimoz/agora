@@ -18,6 +18,7 @@ use OCA\Agora\Service\OptionService;
 use OCA\Agora\Service\InquiryGroupService;
 use OCA\Agora\Service\AttachmentService;
 use OCA\Agora\Service\InquiryService;
+use OCA\Agora\Service\SupportEngineService;
 use OCA\Agora\Service\InquiryMiscService;
 use OCA\Agora\Service\InquiryLinkService;
 use OCA\Agora\Service\ShareService;
@@ -48,6 +49,7 @@ class InquiryController extends BaseController
         private ShareService $shareService,
         private AttachmentService $attachmentService,
         private AppSettings $appSettings,
+        private SupportEngineService $supportEngineService,
         private LoggerInterface $logger,
     ) {
         parent::__construct($appName, $request);
@@ -173,6 +175,9 @@ class InquiryController extends BaseController
 
         $inquiryLink = $this->inquiryLinkService->findByInquiryId($inquiryId);
         $timerMicro['inquiryLink'] = microtime(true);
+        
+        $supportEngine = $this->supportEngineService->getEnginesByInquiry($inquiryId);
+        $timerMicro['supportEngine'] = microtime(true);
 
         $diffMicro['inquiry'] = $timerMicro['inquiry'] - $timerMicro['start'];
         $diffMicro['options'] = $timerMicro['options'] - $timerMicro['inquiry'];
@@ -181,6 +186,7 @@ class InquiryController extends BaseController
         $diffMicro['subscribed'] = $timerMicro['subscribed'] - $timerMicro['shares'];
         $diffMicro['attachments'] = $timerMicro['attachments'] - $timerMicro['subscribed'];
         $diffMicro['inquiryLink'] = $timerMicro['inquiryLink'] - $timerMicro['attachments'];
+        $diffMicro['supportEngine'] = $timerMicro['supportEngine'] - $timerMicro['inquryLink'];
 
         if ($withTimings) {
             return [
@@ -191,6 +197,7 @@ class InquiryController extends BaseController
                 'subscribed' => $subscribed,
                 'attachments' => $attachments,
                 'inquiryLink' => $inquiryLink,
+                'supportEngine' => $supportEngine,
                 'diffMicro' => $diffMicro,
             ];
         }

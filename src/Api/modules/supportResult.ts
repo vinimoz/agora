@@ -37,6 +37,19 @@ export const supportResultApi = {
             cancelToken: cancelTokenHandlerObject[this.exportResults.name].handleRequestCancellation().token,
         })
     },
+
+    createEmptyResult(data: {
+    support_engine_id: number
+    target_type: 'inquiry' | 'option'
+    target_id: number
+  }): Promise<AxiosResponse<{ result: SupportResult }>> {
+    return httpInstance.request({
+      method: 'POST',
+      url: 'support/result/empty',
+      data,
+      cancelToken: cancelTokenHandlerObject[this.createEmptyResult.name].handleRequestCancellation().token,
+    })
+  },
 }
 
 const cancelTokenHandlerObject = createCancelTokenHandler(supportResultApi)

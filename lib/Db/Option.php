@@ -145,7 +145,7 @@ class Option extends EntityWithUser implements JsonSerializable
     protected string $family = 'debate';
     protected int $sortOrder = 0;
     protected bool $hasSupported = false;
-    protected ?int $supportValue = null;
+    protected mixed $supportValue = null;
 
     // joined columns
     protected string $userRole = '';
@@ -153,6 +153,7 @@ class Option extends EntityWithUser implements JsonSerializable
     protected int $currentUserSupports = 0;
     protected int $countParticipants = 0;
     protected int $countComments = 0;
+    protected int $countSupports = 0;
     protected string $groupShares = '';
     protected string $optionGroups = '';
     protected string $optionGroupUserShares = '';
@@ -160,8 +161,9 @@ class Option extends EntityWithUser implements JsonSerializable
     protected string $inquiryType = '';
     protected string $inquiryAccess = '';
     protected ?string $miscSettingsConcat = '';
-
+    
     // Dynamic fields for option types
+    protected ?string $supportResult = null;
     protected array $miscFields = [];
     private array $optionTypeConfig = [];
 
@@ -180,6 +182,7 @@ class Option extends EntityWithUser implements JsonSerializable
         $this->addType('type', 'string');
         $this->addType('title', 'string');
         $this->addType('optionStatus', 'string');
+        $this->addType('supportResult', 'string');
 
         // joined Attributes
         $this->addType('currentUserSupports', 'integer');
@@ -215,17 +218,45 @@ class Option extends EntityWithUser implements JsonSerializable
             'inquiryInfo' => $this->getInquiryInfoArray(),
             'miscFields' => $this->getMiscArray(),
             'childs' => $this->getChildren(),
+            'supportResult' => $this->getSupportResult(), 
         ];
 
         return $baseData;
     }
 
+        /**
+     * Get option status array - matching TypeScript InquiryStatus interface
+     */
+    public function getStatusArray(): array
+    {
+        return [
+            'optionStatus' => $this->getOptionStatus(),
+            'updated' => $this->getUpdated(),
+            'created' => $this->getCreated(),
+            'archivedDate' => $this->getArchived(),
+            'supportResult' => $this->getSupportResult(),
+            'countSupports' => $this->getIsAllowed(self::PERMISSION_OPTION_RESULTS_VIEW) ? $this->getCountSupports() : 0,
+            'countParticipants' => $this->getIsAllowed(self::PERMISSION_OPTION_RESULTS_VIEW)
+            ? $this->getCountParticipants()
+            : 0,
+            'countComments' => $this->getIsAllowed(self::PERMISSION_OPTION_RESULTS_VIEW)
+            ? $this->getCountComments()
+            : 0,
+        ];
+    }
+
+    public function getCountSupports(): int
+    {
+        return $this->countSupports;
+    }
+
+    
     public function getConfigurationArray(): array
     {
         return [
-        'access' => $this->getAccess(),
-        'allowComment' => boolval($this->getAllowComment()),
-        'supportFeature' => $this->getSupportFeature(),
+            'access' => $this->getAccess(),
+            'allowComment' => boolval($this->getAllowComment()),
+            'supportFeature' => $this->getSupportFeature(),
         ];
     }
 
@@ -282,18 +313,18 @@ class Option extends EntityWithUser implements JsonSerializable
         };
     }
 
-    public function getStatusArray(): array
+    /**
+     * Get support result as array (decoded from JSON string)
+     */
+    public function getSupportResult(): ?array
     {
-        return [
-            'created' => $this->getCreated(),
-            'updated' => $this->getUpdated(),
-            'optionStatus' => $this->getOptionStatus(),
-            'isArchived' => (bool)$this->getArchived(),
-            'isDeleted' => (bool)$this->getDeleted(),
-            'countParticipants' => $this->getIsAllowed(self::PERMISSION_OPTION_RESULTS_VIEW) ? $this->getCountParticipants() : 0,
-            'countComments' => $this->getIsAllowed(self::PERMISSION_OPTION_RESULTS_VIEW) ? $this->getCountComments() : 0,
-        ];
+        if ($this->supportResult === null || $this->supportResult === '') {
+            return null;
+        }
+        $decoded = json_decode($this->supportResult, true);
+        return is_array($decoded) ? $decoded : [];
     }
+
 
     /**
      * Check if user can view the option
@@ -582,8 +613,44 @@ class Option extends EntityWithUser implements JsonSerializable
         return $this->hasSupported;
     }
 
-    private function supportValue(): ?int
+    // Current (fine but different from Inquiry)
+
+    private function supportValue(): mixed
     {
+        if ($this->supportValue === null) {
+            return null;
+        }
+
+        if (is_int($this->supportValue)) {
+            return $this->supportValue;
+        }
+
+        if (is_string($this->supportValue)) {
+            $decoded = json_decode($this->supportValue, true);
+            if (json_last_error() === JSON_ERROR_NONE) {
+                if (is_array($decoded) && isset($decoded['value'])) {
+                    return $decoded['value'];
+                }
+                if (is_array($decoded) && count($decoded) === 1) {
+                    return reset($decoded);
+                }
+                return $decoded;
+            }
+            if (is_numeric($this->supportValue)) {
+                return (int)$this->supportValue;
+            }
+        }
+
+        if (is_array($this->supportValue)) {
+            if (isset($this->supportValue['value'])) {
+                return $this->supportValue['value'];
+            }
+            if (count($this->supportValue) === 1) {
+                return reset($this->supportValue);
+            }
+            return $this->supportValue;
+        }
+
         return $this->supportValue;
     }
 
@@ -770,7 +837,7 @@ class Option extends EntityWithUser implements JsonSerializable
         $this->inquiryAccess = $access;
     }
 
-    public function setSupported(bool $hasSupported, ?int $supportValue = null): void
+    public function setSupported(bool $hasSupported, mixed $supportValue = null): void
     {
         $this->hasSupported = $hasSupported;
         $this->supportValue = $supportValue;

@@ -13,7 +13,7 @@ import { emit } from '@nextcloud/event-bus'
 
 import { Logger } from '../helpers/index.ts'
 import { OptionsAPI } from '../Api/index.ts'
-import { Chunking, createDefault, Event, StatusResults, User, UserType , InquiryOptionType } from '../Types/index.ts'
+import { Chunking, createDefault, Event, StatusResults, User, UserType , InquiryOptionType, SupportResult } from '../Types/index.ts'
 import { getFamilyColor 
 } from '../helpers/modules/InquiryOptionHelper.ts'
 
@@ -41,15 +41,13 @@ export type OptionCurrentStatus = {
     countComments: number
     countSupports: number
     optionStatus: string
-    countPositiveSupports: number
-    countNegativeSupports: number
-    countNeutralSupports: number
+  supportResult: SupportResult | null
 }
 
 export type CurrentUserOptionStatus = {
     isInvolved: boolean
     hasSupported: boolean
-    supportValue: number | null
+  supportValue: string | null
     isLoggedIn: boolean
     isOwner: boolean
     shareToken: string

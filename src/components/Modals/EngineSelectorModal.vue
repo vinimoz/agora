@@ -3,7 +3,7 @@
 <template>
   <NcModal
     size="normal"
-    :name="t('agora', 'Choose Voting Method')"
+    :name="modalTitle"
     @close="$emit('close')"
   >
     <div class="engine-selector-modal">
@@ -11,10 +11,34 @@
         <div class="header-icon">
           <Vote :size="32" />
         </div>
-        <h3>{{ t('agora', 'Select a voting method') }}</h3>
+        <h3>{{ modalTitle }}</h3>
         <p class="modal-description">
           {{ t('agora', 'Different voting methods offer different ways to express preferences. Choose the one that best fits your decision-making process.') }}
         </p>
+      </div>
+
+      <!-- Basic Info Fields -->
+      <div class="engine-basic-info">
+        <div class="field">
+          <label>{{ t('agora', 'Title') }} <span class="required">*</span></label>
+          <input 
+            v-model="localTitle" 
+            type="text" 
+            :placeholder="t('agora', 'e.g., Final Vote 2025, Community Decision')" 
+            class="text-input"
+            :class="{ error: titleError }"
+          />
+          <p v-if="titleError" class="field-error">{{ titleError }}</p>
+        </div>
+        <div class="field">
+          <label>{{ t('agora', 'Description (optional)') }}</label>
+          <textarea 
+            v-model="localDescription" 
+            :placeholder="t('agora', 'Describe the voting method or purpose')" 
+            rows="2"
+            class="textarea-input"
+          />
+        </div>
       </div>
 
       <div class="engine-grid">
@@ -91,7 +115,7 @@
         </div>
         
         <div class="grades-list">
-          <div v-for="(grade, index) in tempConfig.grades || defaultGrades" :key="index" class="grade-item">
+          <div v-for="(grade, index) in (tempConfig.grades || defaultGrades)" :key="index" class="grade-item">
             <input 
               v-model="tempConfig.grades[index]" 
               type="text" 
@@ -136,6 +160,17 @@
               <CheckCircle :size="16" />
             </div>
           </div>
+        </div>
+        
+        <div class="reaction-limit">
+          <label>{{ t('agora', 'Max reactions per user') }}</label>
+          <input 
+            v-model.number="tempConfig.max_per_user" 
+            type="number" 
+            min="1" 
+            max="10"
+            class="limit-input"
+          />
         </div>
       </div>
 
@@ -215,17 +250,45 @@
         </div>
       </div>
 
+      <!-- Status for edit mode -->
+      <div v-if="mode === 'edit' && existingEngine" class="engine-status-section">
+        <div class="status-header">
+          <Info :size="18" />
+          <h5>{{ t('agora', 'Status') }}</h5>
+        </div>
+        <div class="status-options">
+          <label class="status-option">
+            <input 
+              v-model="tempStatus" 
+              type="radio" 
+              value="active" 
+              :disabled="hasVotes"
+            />
+            <span>{{ t('agora', 'Active') }}</span>
+            <span v-if="hasVotes" class="status-hint">{{ t('agora', '(Cannot change - votes exist)') }}</span>
+          </label>
+          <label class="status-option">
+            <input v-model="tempStatus" type="radio" value="closed" />
+            <span>{{ t('agora', 'Closed') }}</span>
+          </label>
+          <label class="status-option">
+            <input v-model="tempStatus" type="radio" value="draft" />
+            <span>{{ t('agora', 'Draft') }}</span>
+          </label>
+        </div>
+      </div>
+
       <div class="modal-footer">
         <button class="btn-secondary" @click="$emit('close')">
           {{ t('agora', 'Cancel') }}
         </button>
         <button
           class="btn-primary"
-          :disabled="!selectedEngine"
-          @click="apply"
+          :disabled="!selectedEngine || !localTitle.trim()"
+          @click="save"
         >
           <Vote :size="16" />
-          {{ t('agora', 'Apply {engine}', { engine: getEngineLabel(selectedEngine) }) }}
+          {{ mode === 'create' ? t('agora', 'Create Voting Method') : t('agora', 'Update Voting Method') }}
         </button>
       </div>
     </div>
@@ -233,7 +296,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { t } from '@nextcloud/l10n'
 import NcModal from '@nextcloud/vue/components/NcModal'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
@@ -261,25 +324,44 @@ import {
 import { 
   ENGINE_DEFINITIONS, 
   initializeEngineConfig,
-  type EngineInfo, 
   type ConfigSchemaField 
 } from '../../Types/votingType'
+import type { SupportEngine } from '../../Types/index'
 
 const props = defineProps<{
-  currentEngineId: string
-  currentConfig: Record<string, unknown>
-  engines: EngineInfo[]
+  mode: 'create' | 'edit'
+  existingEngine?: SupportEngine | null
   optionCount?: number  
 }>()
 
 const emit = defineEmits<{
   close: []
-  apply: [engineId: string, config: Record<string, unknown>]
+  save: [data: {
+    title: string
+    description: string
+    engine: string
+    config: Record<string, unknown>
+    status?: 'draft' | 'active' | 'closed'
+  }]
 }>()
 
-const selectedEngine = ref(props.currentEngineId)
+const localTitle = ref(props.existingEngine?.title || '')
+const localDescription = ref(props.existingEngine?.description || '')
+const selectedEngine = ref(props.existingEngine?.engine || 'binary')
 const selectedVariant = ref('schulze')
-const tempConfig = ref<Record<string, unknown>>({ ...props.currentConfig })
+const tempConfig = ref<Record<string, unknown>>(props.existingEngine?.config || {})
+const tempStatus = ref<'draft' | 'active' | 'closed'>(props.existingEngine?.status || 'active')
+const hasVotes = ref(false)
+
+const titleError = computed(() => {
+  if (!localTitle.value.trim()) return t('agora', 'Title is required')
+  return null
+})
+
+const modalTitle = computed(() => {
+  if (props.mode === 'create') return t('agora', 'Configure Voting Method')
+  return t('agora', 'Edit Voting Method')
+})
 
 // Default grades for majority judgment
 const defaultGrades = ['Reject', 'Insufficient', 'Passable', 'Fairly Good', 'Good', 'Very Good', 'Excellent']
@@ -306,9 +388,20 @@ const reactionOptions = [
 ]
 
 const availableEngines = computed(() => {
-  if (!props.optionCount) return props.engines
+  const engines = Object.entries(ENGINE_DEFINITIONS)
+    .filter(([id]) => id !== 'none') // Exclude 'none' from selection
+    .map(([id, engine]) => ({
+      id,
+      label: engine.label,
+      behavior: engine.behavior,
+      description: engine.description,
+      constraints: engine.constraints,
+      recommendedViews: engine.recommendedViews
+    }))
   
-  return props.engines.filter(engine => {
+  if (!props.optionCount) return engines
+  
+  return engines.filter(engine => {
     const constraints = engine.constraints
     if (constraints?.min_options && props.optionCount! < constraints.min_options) return false
     if (constraints?.max_options && props.optionCount! > constraints.max_options) return false
@@ -329,13 +422,18 @@ const isSpecialEngine = computed(() =>
 )
 
 // Initialize config for special engines
-if (selectedEngine.value === 'majority_judgment' && !tempConfig.value.grades) {
-  tempConfig.value.grades = [...defaultGrades]
-}
-if (selectedEngine.value === 'reaction' && !tempConfig.value.allowed_reactions) {
-  tempConfig.value.allowed_reactions = ['👍', '❤️', '🎉', '🤔', '👎']
-  tempConfig.value.max_per_user = 3
-}
+watch(selectedEngine, (newEngine) => {
+  if (newEngine === 'majority_judgment' && !tempConfig.value.grades) {
+    tempConfig.value.grades = [...defaultGrades]
+  }
+  if (newEngine === 'reaction' && !tempConfig.value.allowed_reactions) {
+    tempConfig.value.allowed_reactions = ['👍', '❤️', '🎉', '🤔', '👎']
+    if (!tempConfig.value.max_per_user) tempConfig.value.max_per_user = 3
+  }
+  if (newEngine === 'condorcet' && !tempConfig.value.variant) {
+    tempConfig.value.variant = selectedVariant.value
+  }
+}, { immediate: true })
 
 const getRangeProgress = (value: unknown, min: number, max: number): number => {
   const numValue = typeof value === 'number' ? value : (min + (max - min) / 2)
@@ -379,7 +477,6 @@ const removeGrade = (index: number) => {
   }
 }
 
-// 👇 Fixed: use imported ConfigSchemaField type
 const getSelectOptions = (schema: ConfigSchemaField) => {
   if (!schema.options) return []
   
@@ -409,15 +506,12 @@ const getEngineIcon = (engineId: string) => {
     quadratic: TrendingUp,
     phased_voting: ListChecks,
     trending: TrendingUp,
-    none: Vote,
   }
   return icons[engineId] || Vote
 }
 
-// 👇 Fixed: use ENGINE_DEFINITIONS directly
-const getEngineLabel = (engineId: string): string => ENGINE_DEFINITIONS[engineId]?.label || engineId
-
-const getEngineDescription = (engineId: string): string => ENGINE_DEFINITIONS[engineId]?.description || t('agora', 'Vote using this method')
+const getEngineDescription = (engineId: string): string => 
+  ENGINE_DEFINITIONS[engineId]?.description || t('agora', 'Vote using this method')
 
 const getBehaviorLabel = (behavior: string): string => {
   const labels: Record<string, string> = {
@@ -447,22 +541,33 @@ const selectEngine = (engineId: string): void => {
     tempConfig.value.allowed_reactions = ['👍', '❤️', '🎉', '🤔', '👎']
     tempConfig.value.max_per_user = 3
   } else if (engineId === 'condorcet') {
-    selectedVariant.value = 'schulze'
+    tempConfig.value.variant = selectedVariant.value
   }
 }
 
-const apply = (): void => {
-  if (selectedEngine.value) {
-    const config = { ...tempConfig.value }
-    
-    // Add variant for condorcet
-    if (selectedEngine.value === 'condorcet') {
-      config.variant = selectedVariant.value
-    }
-    
-    emit('apply', selectedEngine.value, config)
-    emit('close')
+const save = (): void => {
+  if (!selectedEngine.value || !localTitle.value.trim()) return
+  
+  const config = { ...tempConfig.value }
+  
+  // Add variant for condorcet
+  if (selectedEngine.value === 'condorcet') {
+    config.variant = selectedVariant.value
   }
+  
+  // Clean up empty grades
+  if (selectedEngine.value === 'majority_judgment' && config.grades) {
+    config.grades = (config.grades as string[]).filter(g => g.trim() !== '')
+  }
+  
+  emit('save', {
+    title: localTitle.value.trim(),
+    description: localDescription.value.trim(),
+    engine: selectedEngine.value,
+    config,
+    status: props.mode === 'edit' ? tempStatus.value : 'active'
+  })
+  emit('close')
 }
 </script>
 
@@ -502,6 +607,56 @@ const apply = (): void => {
       margin: 0;
       font-size: 14px;
       color: var(--color-text-lighter);
+    }
+  }
+
+  .engine-basic-info {
+    padding: 24px 24px 0 24px;
+    
+    .field {
+      margin-bottom: 16px;
+      
+      label {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 13px;
+        font-weight: 500;
+        
+        .required {
+          color: var(--color-error);
+        }
+      }
+      
+      .text-input, .textarea-input {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid var(--color-border);
+        border-radius: 8px;
+        background: var(--color-main-background);
+        font-size: 13px;
+        transition: all 0.2s;
+        
+        &:focus {
+          outline: none;
+          border-color: var(--color-primary-element);
+          box-shadow: 0 0 0 2px rgba(var(--color-primary-element-rgb), 0.1);
+        }
+        
+        &.error {
+          border-color: var(--color-error);
+        }
+      }
+      
+      .textarea-input {
+        resize: vertical;
+        font-family: inherit;
+      }
+      
+      .field-error {
+        margin: 4px 0 0 0;
+        font-size: 11px;
+        color: var(--color-error);
+      }
     }
   }
 
@@ -776,6 +931,7 @@ const apply = (): void => {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
       gap: 12px;
+      margin-bottom: 16px;
 
       .reaction-item {
         position: relative;
@@ -822,6 +978,24 @@ const apply = (): void => {
           right: 8px;
           color: var(--color-primary-element);
         }
+      }
+    }
+    
+    .reaction-limit {
+      label {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 13px;
+        font-weight: 500;
+      }
+      
+      .limit-input {
+        width: 100px;
+        padding: 8px 12px;
+        border: 1px solid var(--color-border);
+        border-radius: 8px;
+        background: var(--color-main-background);
+        font-size: 13px;
       }
     }
   }
@@ -1053,6 +1227,53 @@ const apply = (): void => {
       svg {
         flex-shrink: 0;
         color: var(--color-primary-element);
+      }
+    }
+  }
+
+  .engine-status-section {
+    margin: 0 24px 24px 24px;
+    padding: 20px;
+    background: var(--color-background-dark);
+    border-radius: 16px;
+    border: 1px solid var(--color-border);
+
+    .status-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+
+      svg {
+        color: var(--color-primary-element);
+      }
+
+      h5 {
+        margin: 0;
+        font-size: 15px;
+        font-weight: 600;
+      }
+    }
+
+    .status-options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+
+      .status-option {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        cursor: pointer;
+        
+        input {
+          margin: 0;
+        }
+        
+        .status-hint {
+          font-size: 11px;
+          color: var(--color-text-lighter);
+        }
       }
     }
   }

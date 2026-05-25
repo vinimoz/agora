@@ -47,9 +47,9 @@ export type SupportEngineTarget = 'inquiry' | 'option'
 export interface SupportEngine {
   id: number
   engine: string           // The voting engine type (binary, score, ranking, etc.)
-  type: string             // The support feature type
-  title: string             // The support feature type
-  description: string             // The support feature type
+  purpose: string             // The support purpose
+  title: string             // The support feature title
+  description: string             // The support feature description
   inquiry_group_id: number
   inquiry_id: number
   status: 'draft' | 'active' | 'closed'

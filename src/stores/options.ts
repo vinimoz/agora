@@ -382,6 +382,17 @@ export const useOptionsStore = defineStore('options', {
             }
         },
 
+      async refreshOptionStatus(optionId: number) {
+          const response = await OptionsAPI.getInquiry(optionId)
+          const idx = this.inquiries.findIndex(i => i.id === optionId)
+          if (idx !== -1) {
+              // update relevant fields
+              this.options[idx].status.countSupports = response.data.status.countSupports
+              this.options[idx].status.supportResult = response.data.status.supportResult
+          }
+      },
+
+
         // Load all options for current inquiry
         async load(inquiryId?: number, token?: string): Promise<void> {
             const inquiryStore = useInquiryStore()

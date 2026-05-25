@@ -5,7 +5,7 @@
 
 export interface CreateEngineRequest {
   engine: string  
-  type: string       
+  purpose: string       
   title: string         
   description: string          
   inquiry_group_id: number

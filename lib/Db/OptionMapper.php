@@ -24,6 +24,7 @@ class OptionMapper extends QBMapper
 {
     public const TABLE = Option::TABLE;
     public const CONCAT_SEPARATOR = ',';
+    public const SUPPORT_RESULT_TABLE = SupportResult::TABLE;
 
     public function __construct(
         IDBConnection $db,
@@ -32,6 +33,23 @@ class OptionMapper extends QBMapper
     ) {
         $this->logger = $logger;
         parent::__construct($db, Option::TABLE, Option::class);
+    }
+
+    /**
+     * Add correlated subquery for supports count
+     */
+    protected function addSupportsCountSubquery(
+        IQueryBuilder &$qb,
+        string $tableAlias,
+        string $alias = 'count_supports'
+    ): void {
+        $qb->addSelect(
+            $qb->createFunction(
+                'COALESCE(' .
+                '(SELECT COUNT(s.id) FROM ' . $this->getFullTableName(Support::TABLE) . ' s ' .
+                'WHERE s.option_id = ' . $tableAlias . '.id), 0) AS ' . $alias
+            )
+        );
     }
 
     public function get(int $id, bool $getDeleted = false, bool $withRoles = false): Option
@@ -54,6 +72,7 @@ class OptionMapper extends QBMapper
             $this->addSupportsCountSubquery($qb, self::TABLE);
             $this->addCommentsCountSubquery($qb, self::TABLE);
             $this->addMiscsSubquery($qb, self::TABLE);
+            $this->addSupportResultSubquery($qb, self::TABLE);  
         }
 
         return $this->findEntity($qb);
@@ -62,17 +81,20 @@ class OptionMapper extends QBMapper
     public function find(int $id): Option
     {
         $qb = $this->buildQuery();
-        $qb->where($qb->expr()->eq(self::TABLE . '.id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT)));
+        $qb->andWhere($qb->expr()->eq(self::TABLE . '.id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT)));
 
         return $this->findEntity($qb);
     }
 
+    /**
+     * FIXED: Use andWhere() instead of where() since buildQuery() already has a WHERE clause
+     */
     public function findByTargetId(int $targetId): array
     {
         $qb = $this->buildQuery();
 
-        $qb->where($qb->expr()->eq(self::TABLE . '.target_id', $qb->createNamedParameter($targetId, IQueryBuilder::PARAM_INT)))
-           ->andWhere($qb->expr()->eq(self::TABLE . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)))
+        // Use andWhere() instead of where() to add to existing conditions
+        $qb->andWhere($qb->expr()->eq(self::TABLE . '.target_id', $qb->createNamedParameter($targetId, IQueryBuilder::PARAM_INT)))
            ->orderBy(self::TABLE . '.sort_order', 'ASC')
            ->addOrderBy(self::TABLE . '.created', 'ASC');
 
@@ -85,11 +107,13 @@ class OptionMapper extends QBMapper
         return $options;
     }
 
+    /**
+     * FIXED: Use andWhere() instead of where() since buildQuery() already has a WHERE clause
+     */
     public function findByParentId(int $parentId): array
     {
         $qb = $this->buildQuery();
-        $qb->where($qb->expr()->eq(self::TABLE . '.parent_id', $qb->createNamedParameter($parentId, IQueryBuilder::PARAM_INT)))
-           ->andWhere($qb->expr()->eq(self::TABLE . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)))
+        $qb->andWhere($qb->expr()->eq(self::TABLE . '.parent_id', $qb->createNamedParameter($parentId, IQueryBuilder::PARAM_INT)))
            ->orderBy(self::TABLE . '.sort_order', 'ASC')
            ->addOrderBy(self::TABLE . '.created', 'ASC');
 
@@ -103,11 +127,18 @@ class OptionMapper extends QBMapper
         return $options;
     }
 
+    /**
+     * FIXED: Create fresh query builder instead of using buildQuery() since we have custom WHERE logic
+     */
     public function findByType(string $type, int $targetId = 0): array
     {
-        $qb = $this->buildQuery();
-        $qb->andWhere($qb->expr()->eq(self::TABLE . '.type', $qb->createNamedParameter($type, IQueryBuilder::PARAM_STR)))
-           ->andWhere($qb->expr()->eq(self::TABLE . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)));
+        // Start with fresh query builder to avoid WHERE clause conflicts
+        $qb = $this->db->getQueryBuilder();
+        
+        $qb->select(self::TABLE . '.*')
+           ->from($this->getTableName(), self::TABLE)
+           ->where($qb->expr()->eq(self::TABLE . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)))
+           ->andWhere($qb->expr()->eq(self::TABLE . '.type', $qb->createNamedParameter($type, IQueryBuilder::PARAM_STR)));
 
         if ($targetId > 0) {
             $qb->andWhere($qb->expr()->eq(self::TABLE . '.target_id', $qb->createNamedParameter($targetId, IQueryBuilder::PARAM_INT)));
@@ -116,6 +147,16 @@ class OptionMapper extends QBMapper
         $qb->orderBy(self::TABLE . '.sort_order', 'ASC')
            ->addOrderBy(self::TABLE . '.created', 'ASC');
 
+        // Add the dynamic subqueries
+        $currentUserId = $this->userSession->getCurrentUserId();
+        $this->addHasSupportedSubquery($qb, self::TABLE, $currentUserId);
+        $this->addSupportValueSubquery($qb, self::TABLE, $currentUserId);
+        $this->addParticipantsCountSubquery($qb, self::TABLE);
+        $this->addCommentsCountSubquery($qb, self::TABLE);
+        $this->addMiscsSubquery($qb, self::TABLE);
+        $this->addSupportResultSubquery($qb, self::TABLE);
+        $this->addSupportsCountSubquery($qb, self::TABLE);
+
         $options = $this->findEntities($qb);
 
         // Load dynamic fields for all options
@@ -126,11 +167,35 @@ class OptionMapper extends QBMapper
         return $options;
     }
 
+    /**
+     * Add correlated subquery for support value - can be NULL
+     */
+    protected function addSupportValueSubquery(
+        IQueryBuilder &$qb,
+        string $tableAlias,
+        ?string $currentUserId
+    ): void {
+        if ($currentUserId === null) {
+            $qb->addSelect('NULL AS support_value');
+            return;
+        }
+
+        $userIdParam = $qb->createNamedParameter($currentUserId, IQueryBuilder::PARAM_STR);
+
+        $qb->addSelect(
+            $qb->createFunction(
+                '(SELECT s.value FROM ' . $this->getFullTableName(Support::TABLE) . ' s ' .
+                'WHERE s.option_id = ' . $tableAlias . '.id ' .
+                'AND s.user_id = ' . $userIdParam . ' ' .
+                'LIMIT 1) AS support_value'
+            )
+        );
+    }
+
     public function findForMe(string $userId): array
     {
         $qb = $this->buildQuery();
-        $qb->andWhere($qb->expr()->eq(self::TABLE . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)))
-           ->andWhere(
+        $qb->andWhere(
                $qb->expr()->orX(
                    $qb->expr()->eq(self::TABLE . '.owner', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR)),
                    $qb->expr()->eq(self::TABLE . '.access', $qb->createNamedParameter(Option::ACCESS_OPEN, IQueryBuilder::PARAM_STR))
@@ -150,8 +215,7 @@ class OptionMapper extends QBMapper
     public function listByOwner(string $userId): array
     {
         $qb = $this->buildQuery();
-        $qb->andWhere($qb->expr()->eq(self::TABLE . '.owner', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR)))
-           ->andWhere($qb->expr()->eq(self::TABLE . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)));
+        $qb->andWhere($qb->expr()->eq(self::TABLE . '.owner', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR)));
 
         $options = $this->findEntities($qb);
 
@@ -166,8 +230,7 @@ class OptionMapper extends QBMapper
     public function search(ISearchQuery $query): array
     {
         $qb = $this->buildQuery();
-        $qb->andWhere($qb->expr()->eq(self::TABLE . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)))
-           ->andWhere(
+        $qb->andWhere(
                $qb->expr()->orX(
                    ...array_map(
                        function (string $token) use ($qb) {
@@ -194,8 +257,7 @@ class OptionMapper extends QBMapper
     public function findForAdmin(string $userId): array
     {
         $qb = $this->buildQuery();
-        $qb->andWhere($qb->expr()->neq(self::TABLE . '.owner', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR)))
-           ->andWhere($qb->expr()->eq(self::TABLE . '.deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)));
+        $qb->andWhere($qb->expr()->neq(self::TABLE . '.owner', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR)));
 
         $options = $this->findEntities($qb);
 
@@ -282,7 +344,6 @@ class OptionMapper extends QBMapper
         $qb->executeStatement();
     }
 
-
     protected function buildQuery(): IQueryBuilder
     {
         $qb = $this->db->getQueryBuilder();
@@ -293,14 +354,13 @@ class OptionMapper extends QBMapper
 
         $currentUserId = $this->userSession->getCurrentUserId();
 
-
         $this->addHasSupportedSubquery($qb, self::TABLE, $currentUserId);
         $this->addSupportValueSubquery($qb, self::TABLE, $currentUserId);
         $this->addParticipantsCountSubquery($qb, self::TABLE);
         $this->addCommentsCountSubquery($qb, self::TABLE);
         $this->addMiscsSubquery($qb, self::TABLE);
-
-
+        $this->addSupportResultSubquery($qb, self::TABLE);
+        $this->addSupportsCountSubquery($qb, self::TABLE);
 
         return $qb;
     }
@@ -342,28 +402,50 @@ class OptionMapper extends QBMapper
     /**
      * Add correlated subquery for support value - can be NULL
      */
-    protected function addSupportValueSubquery(
+    protected function addSupportResultSubquery(
         IQueryBuilder &$qb,
-        string $tableAlias,
-        ?string $currentUserId
+        string $tableAlias
     ): void {
-        if ($currentUserId === null) {
-            $qb->addSelect('NULL AS support_value');
-            return;
+        $dbProvider = $this->db->getDatabaseProvider();
+        $table = '*PREFIX*' . self::SUPPORT_RESULT_TABLE;
+
+        if ($dbProvider === IDBConnection::PLATFORM_POSTGRES) {
+            $qb->addSelect($qb->createFunction(
+                "COALESCE(
+                    (SELECT json_agg(json_build_object(
+                        'id', sr.id,
+                        'support_engine_id', sr.support_engine_id,
+                        'target_type', sr.target_type,
+                        'target_id', sr.target_id,
+                        'result', sr.result,
+                        'updated', sr.updated
+                    ))
+                    FROM $table sr
+                    WHERE sr.target_type = 'option' AND sr.target_id = {$tableAlias}.id),
+                    '[]'::json
+                )::text AS support_result"
+            ));
+        } else {
+            // MySQL version
+            $qb->addSelect($qb->createFunction(
+                "COALESCE(
+                    (SELECT CONCAT('[', GROUP_CONCAT(
+                        JSON_OBJECT(
+                            'id', sr.id,
+                            'support_engine_id', sr.support_engine_id,
+                            'target_type', sr.target_type,
+                            'target_id', sr.target_id,
+                            'result', CAST(sr.result AS JSON),
+                            'updated', sr.updated
+                        ) SEPARATOR ','
+                    ), ']')
+                    FROM $table sr
+                    WHERE sr.target_type = 'option' AND sr.target_id = {$tableAlias}.id),
+                    '[]'
+                ) AS support_result"
+            ));
         }
-
-        $userIdParam = $qb->createNamedParameter($currentUserId, IQueryBuilder::PARAM_STR);
-
-        $qb->addSelect(
-            $qb->createFunction(
-                '(SELECT s.value FROM ' . $this->getFullTableName(Support::TABLE) . ' s ' .
-                'WHERE s.option_id = ' . $tableAlias . '.id ' .
-                'AND s.user_id = ' . $userIdParam . ' ' .
-                'LIMIT 1) AS support_value'
-            )
-        );
     }
-
 
     /**
      * Add correlated subquery for comments count - always returns 0 or positive integer
@@ -402,9 +484,6 @@ class OptionMapper extends QBMapper
     }
 
     /**
-     * Add subquery for misc settings using GROUP_CONCAT - can be NULL if no misc settings
-     */
-    /**
      * Add subquery for misc settings using platform-specific concatenation
      */
     protected function addMiscsSubquery(
@@ -415,8 +494,6 @@ class OptionMapper extends QBMapper
         $platform = $this->db->getDatabasePlatform()->getName();
 
         if ($platform === 'postgresql') {
-            // For PostgreSQL, we need to use a subquery approach without string_agg
-            // This avoids the GROUP BY issue
             $qb->addSelect(
                 $qb->createFunction(
                     '(SELECT COALESCE(' .
@@ -427,7 +504,6 @@ class OptionMapper extends QBMapper
                 )
             );
         } else {
-            // MySQL and others use GROUP_CONCAT
             $qb->addSelect(
                 $qb->createFunction(
                     '(SELECT GROUP_CONCAT(CONCAT(m.key, \':\', m.value) SEPARATOR \',\') ' .
@@ -436,17 +512,6 @@ class OptionMapper extends QBMapper
                 )
             );
         }
-    }
-
-    /**
-     * Join misc settings from OptionMisc table (kept for backward compatibility)
-     */
-    protected function joinMiscs(
-        IQueryBuilder &$qb,
-        string $fromAlias,
-        string $joinAlias = 'option_misc_settings'
-    ): void {
-        $this->addMiscsSubquery($qb, $fromAlias);
     }
 
     private function loadDynamicFields(Option $option): void
@@ -479,31 +544,31 @@ class OptionMapper extends QBMapper
         }
 
         switch ($type) {
-        case 'integer':
-        case 'int':
-            return (int)$value;
-        case 'boolean':
-        case 'bool':
-            return (bool)$value;
-        case 'float':
-        case 'double':
-            return (float)$value;
-        case 'datetime':
-            return is_numeric($value) ? (int)$value : $value;
-        case 'json':
-            if (is_array($value) || is_object($value)) {
-                return json_encode($value);
-            }
-            return $value;
-        case 'enum':
-            $allowed = $fieldDef['allowed_values'] ?? [];
-            if (in_array($value, $allowed, true)) {
+            case 'integer':
+            case 'int':
+                return (int)$value;
+            case 'boolean':
+            case 'bool':
+                return (bool)$value;
+            case 'float':
+            case 'double':
+                return (float)$value;
+            case 'datetime':
+                return is_numeric($value) ? (int)$value : $value;
+            case 'json':
+                if (is_array($value) || is_object($value)) {
+                    return json_encode($value);
+                }
                 return $value;
-            }
-            return $fieldDef['default'] ?? null;
-        case 'string':
-        default:
-        return (string)$value;
+            case 'enum':
+                $allowed = $fieldDef['allowed_values'] ?? [];
+                if (in_array($value, $allowed, true)) {
+                    return $value;
+                }
+                return $fieldDef['default'] ?? null;
+            case 'string':
+            default:
+                return (string)$value;
         }
     }
 
@@ -637,7 +702,7 @@ class OptionMapper extends QBMapper
     {
         // First get all parent options
         $qb = $this->buildQuery();
-        $qb->where($qb->expr()->eq(self::TABLE . '.target_id', $qb->createNamedParameter($targetId, IQueryBuilder::PARAM_INT)))
+        $qb->andWhere($qb->expr()->eq(self::TABLE . '.target_id', $qb->createNamedParameter($targetId, IQueryBuilder::PARAM_INT)))
            ->andWhere($qb->expr()->eq(self::TABLE . '.parent_id', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)))
            ->orderBy(self::TABLE . '.sort_order', 'ASC')
            ->addOrderBy(self::TABLE . '.created', 'ASC');

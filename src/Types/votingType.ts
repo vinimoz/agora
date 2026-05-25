@@ -19,9 +19,7 @@ export type SupportFeature =
   | 'star'                // ⭐ Rating 1-5 stars
   | 'score'               // 🔢 Free score 0-10
   | 'majority_judgment'   // 🧠 Graded evaluation
-  | 'approval'            // ✅ Multi-select approval
-  | 'ranking'             // 📊 Prioritization ranking
-  | 'trending'            // 🔥 Popularity-based
+  | 'approval_delib'            // ✅ Multi-select approval
   | 'none'                // ⛔ Pure discussion
 
 
@@ -239,7 +237,6 @@ export interface VotingConfiguration {
   viewMode: OptionViewMode
   optionType: OptionType
   options?: VotingOptions
-  mode?: Phase  // @deprecated
 }
 
 
@@ -339,6 +336,17 @@ export interface ApprovalResult {
   counts: Record<number, number>
 }
 
+export interface ApprovaliDelibResult {
+  type: 'approval_delib'
+  totals: {
+    approved: number
+  }
+  percentages: {
+    approved: number
+  }
+}
+
+
 export interface TrendingResult {
   type: 'trending'
   score: number
@@ -358,6 +366,7 @@ export type SupportResultData =
   | MajorityJudgmentResult
   | ReactionResult
   | ApprovalResult
+  | ApprovalDelibResult
   | TrendingResult
 
 
@@ -542,98 +551,109 @@ export const ENGINE_DEFINITIONS: Record<string, EngineDefinition> = {
     }
   },
   
+  approval_delib: {
+      id: 'approval_delib',
+      label: 'Simple Approval (Deliberative)',
+      behavior: 'single',
+      description: 'Simple yes/no approval voting for deliberation phase - users can either approve or not',
+      constraints: { min_options: 1 },
+      recommendedViews: ['cards', 'list', 'checkbox'],
+      compatibleOptionTypes: ['text', 'boolean'],
+      config_schema: {}
+  },
+
   // === Advanced Methods ===
   quadratic: {
-    id: 'quadratic',
-    label: 'Quadratic Voting',
-    behavior: 'flex',
-    description: 'Vote with quadratic cost mechanism',
-    constraints: { min_options: 1 },
-    recommendedViews: ['cards', 'slider'],
-    compatibleOptionTypes: ['text', 'number'],
-    config_schema: {
-      credits_per_user: { type: 'number', default: 100, label: 'Credits per user', min: 1 }
-    }
+      id: 'quadratic',
+      label: 'Quadratic Voting',
+      behavior: 'flex',
+      description: 'Vote with quadratic cost mechanism',
+      constraints: { min_options: 1 },
+      recommendedViews: ['cards', 'slider'],
+      compatibleOptionTypes: ['text', 'number'],
+      config_schema: {
+          credits_per_user: { type: 'number', default: 100, label: 'Credits per user', min: 1 }
+      }
   },
-  
+
   token_weighted: {
-    id: 'token_weighted',
-    label: 'Token / Weighted',
-    behavior: 'flex',
-    description: 'Vote with weighted tokens',
-    constraints: { min_options: 1, requires_weight_source: true },
-    recommendedViews: ['cards', 'slider'],
-    compatibleOptionTypes: ['text', 'number'],
-    config_schema: {
-      weight_source: { type: 'object', default: null, label: 'Weight source' },
-      normalization: {
-        type: 'select',
-        default: 'none',
-        label: 'Normalization',
-        options: ['none', 'min-max', 'z-score']
+      id: 'token_weighted',
+      label: 'Token / Weighted',
+      behavior: 'flex',
+      description: 'Vote with weighted tokens',
+      constraints: { min_options: 1, requires_weight_source: true },
+      recommendedViews: ['cards', 'slider'],
+      compatibleOptionTypes: ['text', 'number'],
+      config_schema: {
+          weight_source: { type: 'object', default: null, label: 'Weight source' },
+          normalization: {
+              type: 'select',
+              default: 'none',
+              label: 'Normalization',
+              options: ['none', 'min-max', 'z-score']
+          }
       }
-    }
   },
-  
+
   phased_voting: {
-    id: 'phased_voting',
-    label: 'Phased Voting',
-    behavior: 'flex',
-    description: 'Multi-round elimination voting',
-    constraints: { min_options: 3 },
-    recommendedViews: ['cards', 'list'],
-    compatibleOptionTypes: ['text'],
-    config_schema: {
-      rounds: { type: 'number', default: 2, label: 'Number of rounds', min: 2 },
-      elimination_rule: {
-        type: 'select',
-        default: 'bottom',
-        label: 'Elimination rule',
-        options: ['bottom', 'threshold', 'top']
+      id: 'phased_voting',
+      label: 'Phased Voting',
+      behavior: 'flex',
+      description: 'Multi-round elimination voting',
+      constraints: { min_options: 3 },
+      recommendedViews: ['cards', 'list'],
+      compatibleOptionTypes: ['text'],
+      config_schema: {
+          rounds: { type: 'number', default: 2, label: 'Number of rounds', min: 2 },
+          elimination_rule: {
+              type: 'select',
+              default: 'bottom',
+              label: 'Elimination rule',
+              options: ['bottom', 'threshold', 'top']
+          }
       }
-    }
   },
-  
+
   // === Reaction Support (Informal) ===
   reaction: {
-    id: 'reaction',
-    label: 'Reactions',
-    behavior: 'multi',
-    description: 'React with emojis to show your opinion',
-    constraints: { min_options: 1 },
-    recommendedViews: ['cards', 'emoji', 'grid'],
-    compatibleOptionTypes: ['text'],
-    config_schema: {
-      allowed_reactions: {
-        type: 'array',
-        default: ['👍', '❤️', '🎉', '🤔', '👎'],
-        label: 'Allowed reactions'
-      },
-      max_per_user: { type: 'number', default: 3, label: 'Max reactions per user' }
-    }
+      id: 'reaction',
+      label: 'Reactions',
+      behavior: 'multi',
+      description: 'React with emojis to show your opinion',
+      constraints: { min_options: 1 },
+      recommendedViews: ['cards', 'emoji', 'grid'],
+      compatibleOptionTypes: ['text'],
+      config_schema: {
+          allowed_reactions: {
+              type: 'array',
+              default: ['👍', '❤️', '🎉', '🤔', '👎'],
+              label: 'Allowed reactions'
+          },
+          max_per_user: { type: 'number', default: 3, label: 'Max reactions per user' }
+      }
   },
-  
+
   // === Additional support features (no formal voting) ===
   trending: {
-    id: 'trending',
-    label: 'Trending',
-    behavior: 'single',
-    description: 'Popularity-based trending (votes + activity)',
-    constraints: { min_options: 1 },
-    recommendedViews: ['cards', 'list'],
-    compatibleOptionTypes: ['text'],
-    config_schema: {}
+      id: 'trending',
+      label: 'Trending',
+      behavior: 'single',
+      description: 'Popularity-based trending (votes + activity)',
+      constraints: { min_options: 1 },
+      recommendedViews: ['cards', 'list'],
+      compatibleOptionTypes: ['text'],
+      config_schema: {}
   },
-  
+
   none: {
-    id: 'none',
-    label: 'No Support',
-    behavior: 'single',
-    description: 'Pure discussion without support features',
-    constraints: {},
-    recommendedViews: ['list'],
-    compatibleOptionTypes: ['text'],
-    config_schema: {}
+      id: 'none',
+      label: 'No Support',
+      behavior: 'single',
+      description: 'Pure discussion without support features',
+      constraints: {},
+      recommendedViews: ['list'],
+      compatibleOptionTypes: ['text'],
+      config_schema: {}
   }
 }
 
@@ -648,7 +668,10 @@ export const ENGINE_DEFINITIONS: Record<string, EngineDefinition> = {
  */
 export function getAvailableEngines(optionCount: number): EngineInfo[] {
   return Object.entries(ENGINE_DEFINITIONS)
-    .filter(([, engine]) => {
+    .filter(([id, engine]) => {
+      // Include approval_delib for any option count
+      if (id === 'approval_delib') return true;
+      
       const c = engine.constraints
       if (c.min_options && optionCount < c.min_options) return false
       if (c.max_options && optionCount > c.max_options) return false
@@ -669,14 +692,14 @@ export function getAvailableEngines(optionCount: number): EngineInfo[] {
  * @param engineId
  */
 export function initializeEngineConfig(engineId: string): Record<string, unknown> {
-  const engine = ENGINE_DEFINITIONS[engineId]
-  if (!engine?.config_schema) return {}
-  
-  const config: Record<string, unknown> = {}
-  for (const [key, schema] of Object.entries(engine.config_schema)) {
-    config[key] = schema.default
-  }
-  return config
+    const engine = ENGINE_DEFINITIONS[engineId]
+    if (!engine?.config_schema) return {}
+
+    const config: Record<string, unknown> = {}
+    for (const [key, schema] of Object.entries(engine.config_schema)) {
+        config[key] = schema.default
+    }
+    return config
 }
 
 /**
@@ -684,7 +707,7 @@ export function initializeEngineConfig(engineId: string): Record<string, unknown
  * @param feature
  */
 export function isValidSupportFeature(feature: string): feature is SupportFeature {
-  return Object.keys(ENGINE_DEFINITIONS).includes(feature)
+    return Object.keys(ENGINE_DEFINITIONS).includes(feature)
 }
 
 /**
@@ -692,7 +715,7 @@ export function isValidSupportFeature(feature: string): feature is SupportFeatur
  * @param phase
  */
 export function isValidPhase(phase: string): phase is Phase {
-  return ['deliberative', 'voting', 'hybrid', 'filtration', 'progressive', 'liquid'].includes(phase)
+    return ['deliberative', 'voting', 'hybrid', 'filtration', 'progressive', 'liquid'].includes(phase)
 }
 
 /**
@@ -700,5 +723,5 @@ export function isValidPhase(phase: string): phase is Phase {
  * @param engineId
  */
 export function getRecommendedViews(engineId: string): OptionViewMode[] {
-  return ENGINE_DEFINITIONS[engineId]?.recommendedViews || ['cards', 'list']
+    return ENGINE_DEFINITIONS[engineId]?.recommendedViews || ['cards', 'list']
 }

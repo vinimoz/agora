@@ -30,6 +30,7 @@ import { useSessionStore } from './session.ts'
 import { useSubscriptionStore } from './subscription.ts'
 import { useSharesStore } from './shares.ts'
 import { useCommentsStore } from './comments.ts'
+import { useSupportEngineStore } from './supportEngine.ts'
 import { useAttachmentsStore } from './attachments.ts'
 import { useAppSettingsStore } from '../stores/appSettings.ts'
 
@@ -354,6 +355,7 @@ export const useInquiryStore = defineStore('inquiry', {
       const commentsStore = useCommentsStore()
       const attachmentsStore = useAttachmentsStore()
       const subscriptionStore = useSubscriptionStore()
+      const supportEngineStore = useSupportEngineStore()
       
       this.meta.status = 'loading'
       
@@ -380,6 +382,7 @@ export const useInquiryStore = defineStore('inquiry', {
         commentsStore.comments = response.data.comments
         subscriptionStore.subscribed = response.data.subscribed
         attachmentsStore.attachments = response.data.attachments
+        this.supportEngine = response.data.supportEngine
         inquiriesStore.setFamilyType(this.family)
 
         if (response.data.inquiry.owner.id === sessionStore.currentUser.id) {

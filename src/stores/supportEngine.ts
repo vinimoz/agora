@@ -12,9 +12,10 @@ import type {
   Phase,
 } from '../Types/index'
 import { ENGINE_DEFINITIONS , Event } from '../Types/index'
-import { supportEngineApi } from '../Api/supportEngine'
+import { SupportEngineAPI } from '../Api/index'
 import { useSupportResultStore } from './supportResult'
 import { Logger } from '../helpers/index'
+import { SupportResultAPI } from '../Api/index'
 
 export const useSupportEngineStore = defineStore('supportEngine', () => {
   // State
@@ -90,7 +91,7 @@ export const useSupportEngineStore = defineStore('supportEngine', () => {
     loading.value = true
     error.value = null
     try {
-      const response = await supportEngineApi.getEnginesByInquiry(inquiryId)
+      const response = await SupportEngineAPI.getEnginesByInquiry(inquiryId)
       engines.value = response.data.engines
       initialized.value = true
       
@@ -109,7 +110,7 @@ export const useSupportEngineStore = defineStore('supportEngine', () => {
     loading.value = true
     error.value = null
     try {
-      const response = await supportEngineApi.getEnginesByInquiryGroup(inquiryGroupId)
+      const response = await SupportEngineAPI.getEnginesByInquiryGroup(inquiryGroupId)
       engines.value = response.data.engines
       initialized.value = true
       
@@ -124,34 +125,41 @@ export const useSupportEngineStore = defineStore('supportEngine', () => {
     }
   }
 
-  async function createEngine(engine: Omit<SupportEngine, 'id' | 'created'>): Promise<SupportEngine | null> {
-    loading.value = true
-    error.value = null
-    try {
-      const response = await supportEngineApi.createEngine(engine)
-      const newEngine = response.data
-      engines.value.push(newEngine)
-      
-      emit(Event.UpdateSupports, { action: 'engine-created', engine: newEngine })
-      
-      return newEngine
-    } catch (err) {
-      error.value = err instanceof Error ? err.message : 'Failed to create engine'
-      Logger.error('Error creating support engine:', { error: err, engine })
-      return null
-    } finally {
-      loading.value = false
-    }
+async function createEngine(engine: Omit<SupportEngine, 'id' | 'created'>): Promise<SupportEngine | null> {
+  loading.value = true
+  error.value = null
+  try {
+    const response = await SupportEngineAPI.createEngine(engine)
+    const newEngine = response.data
+    engines.value.push(newEngine)
+    
+    emit(Event.UpdateSupports, { action: 'engine-created', engine: newEngine })
+    return newEngine
+  } catch (err) {
+    error.value = err instanceof Error ? err.message : 'Failed to create engine'
+    Logger.error('Error creating support engine:', { error: err, engine })
+    return null
+  } finally {
+    loading.value = false
   }
+}
 
-  async function updateEngine(
-    id: number, 
-    data: Record<string, unknown>
-  ): Promise<SupportEngine | null> {
+async function updateEngine(id: number, data: Partial<SupportEngine>): Promise<SupportEngine | null> {
+  const engine = engines.value.find(e => e.id === id)
+  if (!engine) return null
+
+  const hasExistingSupports = await hasSupports(id)
+  const allowedUpdatesForActive = ['status']  // only status can change after votes exist
+  const requestedKeys = Object.keys(data)
+
+  if (hasExistingSupports && !requestedKeys.every(k => allowedUpdatesForActive.includes(k))) {
+    error.value = 'Cannot modify engine configuration after votes have been cast. Only status changes are allowed.'
+    return null
+  }
     loading.value = true
     error.value = null
     try {
-      const response = await supportEngineApi.updateEngine(id, data)
+      const response = await SupportEngineAPI.updateEngine(id, data)
       const updatedEngine = response.data
       
       const index = engines.value.findIndex(e => e.id === id)
@@ -174,12 +182,17 @@ export const useSupportEngineStore = defineStore('supportEngine', () => {
       loading.value = false
     }
   }
+  
+  async function hasSupports(engineId: number): Promise<boolean> {
+      const { supports } = useSupportsStore()
+     return supports.value.some(s => s.supportEngineId === engineId)
+    }
 
   async function deleteEngine(id: number): Promise<boolean> {
     loading.value = true
     error.value = null
     try {
-      await supportEngineApi.deleteEngine(id)
+      await SupportEngineAPI.deleteEngine(id)
       engines.value = engines.value.filter(e => e.id !== id)
       
       if (currentEngine.value?.id === id) {

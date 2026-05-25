@@ -199,7 +199,7 @@
                                     </div>
                                 </div>
                             </div>
-
+                            
                             <!-- Score Results -->
                             <div v-if="supportFeature === 'score' && scoreResult" class="score-breakdown">
                                 <div class="score-summary">
@@ -260,15 +260,15 @@
                                         </div>
                                     </div>
                                 </div>
-
+                                
                                 <!-- Majority Judgment Results -->
                                 <div v-if="supportFeature === 'majority_judgment' && majorityResult" class="majority-breakdown">
                                     <div class="grade-distribution">
                                         <div 
-                                         v-for="(count, gradeIndex) in majorityResult.distribution" 
-                                         :key="gradeIndex"
+                                         v-for="(count, grade) in majorityResult.distribution" 
+                                         :key="grade"
                                          class="grade-bar">
-                                            <span class="grade-label">{{ getGradeLabel(Number(gradeIndex)) }}</span>
+                                            <span class="grade-label">{{ getGradeLabel(Number(grade)) }}</span>
                                             <div class="grade-bar-container">
                                                 <div 
                                                  class="grade-bar-fill"
@@ -279,9 +279,7 @@
                                         </div>
                                         <div class="median-info">
                                             <span class="median-label">{{ t('agora', 'Median Grade') }}:</span>
-                                            <span class="median-value">
-                                                {{ majorityResult.median_label || getGradeLabel(majorityResult.median) }}
-                                            </span>
+                                            <span class="median-value">{{ getGradeLabel(majorityResult.median) }}</span>
                                         </div>
                                     </div>
 
@@ -388,7 +386,7 @@
 </template>
 
 <script setup lang="ts">
-    import { ref, computed } from 'vue'
+import { ref, computed } from 'vue'
 import { showSuccess, showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import NcPopover from '@nextcloud/vue/components/NcPopover'
@@ -591,7 +589,7 @@ const starResult = computed(() => {
   }
 
   const result = normalizedSupportResult.value
-
+  
   // Your data structure: { type: 'star', totals: { total: 2, average: 2.5 } }
   if (result.type === 'star' && result.totals) {
     return {
@@ -611,7 +609,7 @@ const scoreResult = computed(() => {
   }
 
   const result = normalizedSupportResult.value
-
+  
   // Your data structure: { type: 'score', totals: { total: 2, average: 7 } }
   if (result.type === 'score' && result.totals) {
     return {
@@ -651,7 +649,7 @@ const reactionResult = computed(() => {
   }
 
   const result = normalizedSupportResult.value
-
+  
   // Your data structure: { type: 'reaction', counts: {...} }
   if (result.type === 'reaction' && result.counts) {
     return {
@@ -668,63 +666,21 @@ const majorityResult = computed(() => {
   }
 
   const result = normalizedSupportResult.value
-
-  // Handle the nested structure from your CSV
+  
+  // Your data structure: { type: 'majority_judgment', grades: [...], total_votes: 0 }
   if (result.type === 'majority_judgment') {
-    // For inquiries with options (like #4 and #5004)
-    if (result.options && Object.keys(result.options).length > 0) {
-      // Get the first option's data (or find the winner)
-      const firstOptionId = Object.keys(result.options)[0]
-      const optionData = result.options[firstOptionId]
-
-      if (optionData && optionData.grade_distribution) {
-        // Convert the distribution object to array format
-        const distribution: Record<number, number> = {}
-        const gradeLabels = result.grades || []
-
-        // Map grade names to indices
-        gradeLabels.forEach((gradeName: string, index: number) => {
-          distribution[index] = optionData.grade_distribution[gradeName] || 0
-        })
-
-        return {
-          distribution: distribution,
-          median: optionData.median_index || 0,
-          total_votes: optionData.total_votes || 0,
-          median_label: optionData.median_grade || ''
-        }
-      }
-    }
-
-    // For direct result format (if no options wrapper)
-    if (result.grade_distribution) {
-      const distribution: Record<number, number> = {}
-      const gradeLabels = result.grades || []
-
-      gradeLabels.forEach((gradeName: string, index: number) => {
-        distribution[index] = result.grade_distribution[gradeName] || 0
-      })
-
-      return {
-        distribution: distribution,
-        median: result.median_index || 0,
-        total_votes: result.total_votes || 0,
-        median_label: result.median_grade || ''
-      }
-    }
-
-    // Fallback for empty data
+    // Create distribution from grades (all zeros since no votes)
+    const distribution: Record<number, number> = {}
     if (result.grades && Array.isArray(result.grades)) {
-      const distribution: Record<number, number> = {}
       result.grades.forEach((_: string, index: number) => {
         distribution[index] = 0
       })
-
-      return {
-        distribution: distribution,
-        median: 0,
-        total_votes: result.total_votes || 0
-      }
+    }
+    
+    return {
+      distribution: distribution,
+      median: 0,
+      total_votes: result.total_votes || 0
     }
   }
 
@@ -741,38 +697,38 @@ const displayCount = computed(() => {
   if (binaryResult.value) {
     return (binaryResult.value.total_yes || 0) + (binaryResult.value.total_no || 0)
   }
-
+  
   // Ternary
   if (ternaryResult.value?.totals) {
     const totals = ternaryResult.value.totals
     return (totals.yes || 0) + (totals.no || 0) + (totals.abstain || 0)
   }
-
+  
   // Star
   if (starResult.value?.totals?.total) {
     return starResult.value.totals.total
   }
-
+  
   // Score
   if (scoreResult.value?.total) {
     return scoreResult.value.total
   }
-
+  
   // Reaction
   if (reactionResult.value?.counts) {
     return Object.values(reactionResult.value.counts).reduce((a, b) => a + b, 0)
   }
-
+  
   // Majority Judgment
   if (majorityResult.value?.total_votes !== undefined) {
     return majorityResult.value.total_votes
   }
-
+  
   // Approval Delib
   if (approvalDelibResult.value?.totals?.approved !== undefined) {
     return approvalDelibResult.value.totals.approved
   }
-
+  
   return props.item?.status?.countSupports ?? 0
 })
 
@@ -890,19 +846,12 @@ const getSupportLabel = (): string => {
 }
 
 const getGradeLabel = (grade: number): string => {
-  // First try to get from the current result's grades
-  if (majorityResult.value && (majorityResult.value as any).gradeLabels) {
-    const labels = (majorityResult.value as any).gradeLabels
-    if (labels[grade]) return labels[grade]
-  }
-
-  // Then try support_template
+  // First try support_template
   if (supportTemplate.value?.grades && supportTemplate.value.grades[grade]) {
     return supportTemplate.value.grades[grade]
   }
-
-  // Fallback to default grades for majority judgment
-  const defaultGrades = [
+  // Fallback to default grades
+  const grades = [
     t('agora', 'Reject'),
     t('agora', 'Insufficient'),
     t('agora', 'Passable'),
@@ -912,16 +861,7 @@ const getGradeLabel = (grade: number): string => {
     t('agora', 'Excellent')
   ]
 
-  // Fallback for other features
-  const otherGrades: Record<number, string> = {
-    0: t('agora', 'Poor'),
-    1: t('agora', 'Fair'),
-    2: t('agora', 'Good'),
-    3: t('agora', 'Very Good'),
-    4: t('agora', 'Excellent')
-  }
-
-  return defaultGrades[grade] || otherGrades[grade] || String(grade)
+  return grades[grade] || ''
 }
 
 // Support action
@@ -1164,25 +1104,22 @@ const showSupportSuccessMessage = (hadSupportedBefore: boolean) => {
   }
 }
 </script>
-
 <style lang="scss" scoped>
 .counter-item.supports {
     display: inline-flex;
     align-items: center;
-    justify-content: space-between; // This pushes content to opposite ends
     transition: all 0.2s ease;
     position: relative;
     user-select: none;
     white-space: nowrap;
     min-height: 32px;
     height: auto;
-    width: auto;
-    max-width: none;
+    min-width: auto;
     border: 1px solid var(--color-border);
     background: var(--color-main-background);
     border-radius: 16px;
-    padding: 4px 12px;
-    gap: 12px;
+    padding: 4px 8px;
+    gap: 4px;
     box-sizing: border-box;
 
     &.clickable {
@@ -1204,20 +1141,103 @@ const showSupportSuccessMessage = (hadSupportedBefore: boolean) => {
         opacity: 0.6;
     }
 
-    // Base icon container
+    // Fix for star rating - wider box, remove grey background from icon
+    &.has-star-rating {
+        min-width: 90px;
+        
+        .counter-icon {
+            background: transparent !important; // Remove grey background
+            width: auto;
+            padding: 0 2px;
+        }
+        
+        .counter-content {
+            .support-count {
+                .counter-value {
+                    min-width: 28px;
+                    text-align: right;
+                }
+            }
+        }
+    }
+
+    // Fix for majority judgment - wider box, remove grey background from icon
+    &.has-majority-judgment {
+        min-width: 110px;
+        
+        .counter-icon {
+            background: transparent !important; // Remove grey background
+            width: auto;
+            padding: 0 2px;
+        }
+        
+        .counter-content {
+            .support-count {
+                .counter-value {
+                    min-width: 28px;
+                    text-align: right;
+                }
+            }
+            
+            .counter-label {
+                white-space: nowrap;
+            }
+        }
+    }
+
+    &.has-reaction {
+        min-width: 55px;
+        
+        .counter-icon {
+            background: transparent !important;
+            width: auto;
+        }
+    }
+
+    &.has-score {
+        min-width: 60px;
+        
+        .counter-icon {
+            background: transparent !important;
+            width: auto;
+        }
+    }
+
+    &.has-approval-delib {
+        min-width: 65px;
+        
+        .counter-icon {
+            background: transparent !important;
+            width: auto;
+        }
+    }
+
     .counter-icon {
+        // Remove the gradient background for all icon types
         background: transparent !important;
-        background-image: none !important;
-        box-shadow: none !important;
         display: inline-flex;
         align-items: center;
-        justify-content: flex-start; // Align icon content to left
+        justify-content: center;
         flex-shrink: 0;
-
+        width: auto;
+        height: auto;
+        border-radius: 0;
+        margin-right: 0;
+        
         svg {
-            background: transparent;
             width: 16px !important;
             height: 16px !important;
+        }
+
+        .reaction-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            .reaction-emoji { 
+                font-size: 16px;
+                line-height: 1;
+            }
         }
 
         .star-rating-icon {
@@ -1235,32 +1255,16 @@ const showSupportSuccessMessage = (hadSupportedBefore: boolean) => {
                 }
             }
 
-            .filled {
-                color: #fbbf24;
-                fill: #fbbf24;
+            .filled { 
+                color: #fbbf24; 
+                fill: #fbbf24; 
             }
 
             .rating-value {
                 font-size: 12px;
                 font-weight: 600;
-                margin-left: 0;
-            }
-        }
-
-        .grade-icon {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-
-            svg {
-                width: 14px !important;
-                height: 14px !important;
-            }
-
-            .grade-value {
-                font-size: 11px;
-                font-weight: 600;
-                white-space: nowrap;
+                color: var(--color-main-text);
+                margin-left: 2px;
             }
         }
 
@@ -1268,140 +1272,56 @@ const showSupportSuccessMessage = (hadSupportedBefore: boolean) => {
             display: flex;
             align-items: center;
             gap: 4px;
-        }
-    }
 
-    // Star rating - LONGER BOX with proper spacing
-    &.has-star-rating {
-        width: max-content;
-        min-width: 180px;
-        max-width: none;
-        justify-content: space-between; // Push icon and counter apart
-        
-        .counter-icon {
-            background: transparent !important;
-            width: auto;
-            padding: 0;
-            margin: 0;
-            flex-shrink: 0;
-        }
-
-        .star-rating-icon {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            
-            .stars-container {
-                display: flex;
-                gap: 2px;
-
-                svg {
-                    width: 12px !important;
-                    height: 12px !important;
-                }
+            svg {
+                width: 14px !important;
+                height: 14px !important;
             }
 
-            .rating-value {
+            .score-value {
                 font-size: 12px;
                 font-weight: 600;
-                margin-left: 4px;
-                display: inline-block;
-                white-space: nowrap;
+                color: var(--color-main-text);
             }
-        }
-
-        .counter-content {
-            min-width: auto;
-            flex-shrink: 0;
-            text-align: right; // Ensure counter text is right-aligned
-        }
-    }
-
-    // Majority judgment - LONGER BOX with proper spacing
-    &.has-majority-judgment {
-        width: max-content;
-        min-width: 200px;
-        max-width: none;
-        justify-content: space-between; // Push icon and counter apart
-        
-        .counter-icon {
-            background: transparent !important;
-            width: auto;
-            padding: 0;
-            margin: 0;
-            flex-shrink: 0;
         }
 
         .grade-icon {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
 
             svg {
                 width: 14px !important;
                 height: 14px !important;
-                flex-shrink: 0;
             }
 
             .grade-value {
                 font-size: 11px;
                 font-weight: 600;
-                max-width: none !important;
-                overflow: visible !important;
-                text-overflow: clip !important;
+                max-width: 60px;
+                overflow: hidden;
+                text-overflow: ellipsis;
                 white-space: nowrap;
-                display: inline-block;
-                line-height: 1.3;
+                color: var(--color-main-text);
             }
         }
 
-        .counter-content {
-            min-width: auto;
-            flex-shrink: 0;
-            text-align: right; // Ensure counter text is right-aligned
+        .approved { 
+            color: var(--color-success);
         }
-    }
 
-    // Reaction type
-    &.has-reaction {
-        .counter-icon {
-            background: transparent !important;
-            width: auto;
-            padding: 0;
-            margin: 0;
-            flex-shrink: 0;
-        }
-    }
-
-    // Score type
-    &.has-score {
-        .counter-icon {
-            background: transparent !important;
-            width: auto;
-            padding: 0;
-            margin: 0;
-            flex-shrink: 0;
-        }
-    }
-
-    // Approval type
-    &.has-approval-delib {
-        .counter-icon {
-            background: transparent !important;
-            width: auto;
-            padding: 0;
-            margin: 0;
-            flex-shrink: 0;
+        .ranked { 
+            color: var(--color-primary-element);
         }
     }
 
     .counter-content {
         display: flex;
         flex-direction: column;
+        min-width: 0;
         justify-content: center;
+        align-items: flex-end;
         line-height: 1.2;
-        min-width: auto;
-        text-align: right; // Right-align the counter content
 
         .support-count {
             display: flex;
@@ -1413,7 +1333,8 @@ const showSupportSuccessMessage = (hadSupportedBefore: boolean) => {
             .counter-value {
                 font-weight: 600;
                 font-size: 14px;
-                white-space: nowrap;
+                color: var(--color-main-text);
+                text-align: right;
             }
 
             .quorum-compact {
@@ -1440,7 +1361,16 @@ const showSupportSuccessMessage = (hadSupportedBefore: boolean) => {
             line-height: 1.3;
             margin-top: 2px;
             text-align: right;
-            white-space: nowrap;
+        }
+    }
+}
+
+.counter-item.supports:not(.has-star-rating):not(.has-majority-judgment) {
+    .counter-content {
+        .support-count {
+            .counter-value {
+                min-width: auto;
+            }
         }
     }
 }
@@ -1454,9 +1384,8 @@ const showSupportSuccessMessage = (hadSupportedBefore: boolean) => {
         border: 1px solid var(--color-border);
         border-radius: 12px;
         padding: 16px;
-        min-width: 280px;
-        max-width: 400px;
-        width: auto;
+        min-width: 250px;
+        max-width: 320px;
         box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
 
         .tooltip-header {
@@ -1522,7 +1451,7 @@ const showSupportSuccessMessage = (hadSupportedBefore: boolean) => {
                     gap: 8px;
                     margin-bottom: 6px;
 
-                    .breakdown-label {
+                    .breakdown-label { 
                         font-weight: 600;
                         font-size: 12px;
                     }
@@ -1533,11 +1462,11 @@ const showSupportSuccessMessage = (hadSupportedBefore: boolean) => {
                     justify-content: space-between;
                     margin-bottom: 6px;
 
-                    .count {
+                    .count { 
                         font-weight: 700;
                         font-size: 14px;
                     }
-                    .percentage {
+                    .percentage { 
                         color: var(--color-text-lighter);
                         font-size: 11px;
                     }
@@ -1615,12 +1544,12 @@ const showSupportSuccessMessage = (hadSupportedBefore: boolean) => {
                         border: 1px solid var(--color-primary-element);
                     }
 
-                    .reaction-emoji {
-                        font-size: 20px;
+                    .reaction-emoji { 
+                        font-size: 20px; 
                         margin-bottom: 4px;
                     }
 
-                    .reaction-count {
+                    .reaction-count { 
                         font-weight: 600;
                         font-size: 13px;
                     }
@@ -1642,7 +1571,7 @@ const showSupportSuccessMessage = (hadSupportedBefore: boolean) => {
                     gap: 8px;
 
                     .grade-label {
-                        min-width: 85px;
+                        min-width: 70px;
                         font-size: 11px;
                         color: var(--color-text-lighter);
                     }
@@ -1678,12 +1607,12 @@ const showSupportSuccessMessage = (hadSupportedBefore: boolean) => {
                 justify-content: space-between;
                 align-items: center;
 
-                .median-label {
+                .median-label { 
                     font-size: 11px;
                     color: var(--color-text-lighter);
                 }
 
-                .median-value {
+                .median-value { 
                     font-weight: 700;
                     font-size: 13px;
                     color: var(--color-primary-element);
@@ -1699,29 +1628,23 @@ const showSupportSuccessMessage = (hadSupportedBefore: boolean) => {
             border-top: 1px solid var(--color-border);
 
             .summary-item {
-                .summary-label {
+                .summary-label { 
                     font-size: 10px;
                     color: var(--color-text-lighter);
                     display: block;
                     margin-bottom: 2px;
                 }
 
-                .summary-value {
+                .summary-value { 
                     font-weight: 700;
                     font-size: 13px;
 
-                    &.reached {
+                    &.reached { 
                         color: var(--color-success);
                     }
                 }
             }
         }
-    }
-
-    .counter-icon,
-    .breakdown-header svg,
-    .reaction-stat svg {
-        background: transparent !important;
     }
 }
 </style>

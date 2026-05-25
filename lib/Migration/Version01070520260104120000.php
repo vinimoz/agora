@@ -108,7 +108,7 @@ class Version01070520260104120000 extends SimpleMigrationStep
         $table->addColumn('title', Types::STRING, ['notnull' => true, 'default' => '', 'length' => 128]);
         $table->addColumn('description', Types::TEXT, ['notnull' => false, 'default' => null]);
         $table->addColumn('engine', Types::STRING, ['notnull' => true, 'default' => '', 'length' => 64]);
-        $table->addColumn('type', Types::STRING, ['notnull' => true, 'default' => '', 'length' => 64]);
+        $table->addColumn('purpose', Types::STRING, ['notnull' => true, 'default' => '', 'length' => 64]);
         $table->addColumn('inquiry_id', Types::BIGINT, ['notnull' => true, 'default' => 0, 'unsigned' => true, 'length' => 20]);
         $table->addColumn('inquiry_group_id', Types::BIGINT, ['notnull' => false, 'default' => null, 'unsigned' => true, 'length' => 20]);
         $table->addColumn('status', Types::STRING, ['notnull' => true, 'default' => 'draft', 'length' => 32]);

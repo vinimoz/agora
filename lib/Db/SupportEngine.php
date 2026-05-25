@@ -21,8 +21,8 @@ use JsonSerializable;
  * @method         void setTitle(string $value)
  * @method         void setDescription(string $value)
  * @method         string getDescription()
- * @method         string getType()
- * @method         void setType(string $value)
+ * @method         string getPurpose()
+ * @method         void setPurpose(string $value)
  * @method         int getInquiryId()
  * @method         void setInquiryId(int $value)
  * @method         int getInquiryGroupId()
@@ -53,25 +53,20 @@ class SupportEngine extends Entity implements JsonSerializable
     public const TARGET_INQUIRY = 'inquiry';
     public const TARGET_OPTION = 'option';
 
-    // Phase constants (stored in config)
-    public const PHASE_DELIBERATIVE = 'deliberative';
-    public const PHASE_VOTING = 'voting';
-    public const PHASE_CLOSED = 'closed';
 
     // Schema columns
     protected string $title = '';
     protected ?string $description = null;
     protected string $engine = '';
-    protected string $type = '';
+    protected string $purpose = '';
     protected int $inquiryId = 0;
-    protected ?int $inquiryGroupId = null; // Nullable: links to inquiry OR inquiry group
+    protected ?int $inquiryGroupId = null; 
     protected string $status = self::STATUS_DRAFT;
     protected array $config = [];
     protected int $created = 0;
-    protected string $targetType = self::TARGET_OPTION; // Default to options for now
+    protected string $targetType = self::TARGET_OPTION;
     protected array $targetIds = [];
-    protected array $metadata = [];
-
+    protected ?array $metadata = null;
     public function __construct()
     {
         $this->addType('id', 'integer');
@@ -101,14 +96,17 @@ class SupportEngine extends Entity implements JsonSerializable
         }
     }
 
-    public function setMetadata(array|string $metadata): void
-    {
-        if (is_string($metadata)) {
-            $this->metadata = json_decode($metadata, true) ?? [];
-        } else {
-            $this->metadata = $metadata;
-        }
+public function setMetadata(array|string|null $metadata): void
+{
+    if ($metadata === null) {
+        $this->metadata = null;
+    } elseif (is_string($metadata)) {
+        $this->metadata = json_decode($metadata, true) ?? [];
+    } else {
+        $this->metadata = $metadata;
     }
+}
+
 
     // Helper methods for config-driven fields
 
@@ -165,7 +163,7 @@ class SupportEngine extends Entity implements JsonSerializable
             'engine' => $this->engine,
             'title' => $this->getTitle(),
             'description' => $this->getDescription(),
-            'type' => $this->type,
+            'purpose' => $this->purpose,
             'inquiry_id' => $this->inquiryId,
             'inquiry_group_id' => $this->inquiryGroupId,
             'status' => $this->status,
@@ -173,7 +171,7 @@ class SupportEngine extends Entity implements JsonSerializable
             'created' => $this->created,
             'target_type' => $this->targetType,
             'target_ids' => $this->targetIds,
-            'metadata' => $this->metadata,
+            'metadata' => $this->metadata ?? [],
         ];
     }
 }
