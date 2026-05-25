@@ -756,6 +756,7 @@ OC.L10N.register(
     "No chapters yet" : "Henüz bir bölüm yok",
     "options" : "seçenekler",
     "Submit vote" : "Oyu gönder",
+    "No deadline" : "Bitiş tarihi yok",
     "Rank" : "Değerlendirme",
     "Vote" : "Oy",
     "Percentage" : "Yüzde",

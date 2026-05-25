@@ -301,6 +301,7 @@ OC.L10N.register(
     "Existing options" : "Esami variantai",
     "Select the user to transfer the ownership to" : "Pasirinkite vartotoją, kuriam norite perduoti nuosavybės teises",
     "or" : "ar",
+    "Introduction" : "Įvadas",
     "Add {type}" : "Pridėti {type}",
     "Option" : "Parinktis",
     "Create" : "Sukurti",
