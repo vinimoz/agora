@@ -11,6 +11,7 @@ namespace OCA\Agora\Service;
 
 use OCA\Agora\Db\SupportEngine;
 use OCA\Agora\Db\SupportEngineMapper;
+use OCA\Agora\Db\SupportResultMapper;
 use OCP\AppFramework\Db\DoesNotExistException;
 use Psr\Log\LoggerInterface;
 
@@ -18,6 +19,7 @@ class SupportEngineService
 {
     public function __construct(
         private SupportEngineMapper $engineMapper,
+        private SupportResultMapper $resultMapper,
         private LoggerInterface $logger,
     ) {
     }
@@ -55,15 +57,14 @@ class SupportEngineService
     }
 
     public function getEngine(int $id): ?SupportEngine
-    {
-        try {
-            return $this->engineMapper->find($id);
-        } catch (DoesNotExistException $e) {
-            $this->logger->warning('Support engine not found: ' . $id);
-            return null;
-        }
+{
+    try {
+        return $this->engineMapper->find($id);
+    } catch (DoesNotExistException $e) {
+        $this->logger->warning('Support engine not found: ' . $id);
+        return null;
     }
-
+}
     public function createEngine(array $data): SupportEngine
     {
         $engine = new SupportEngine();
@@ -81,7 +82,6 @@ class SupportEngineService
         
         // Set config with phase and timing
         $config = $data['config'] ?? [];
-        $config['phase'] = $data['phase'] ?? SupportEngine::PHASE_DELIBERATIVE;
         
         // If activating immediately, set started_at
         if (($data['status'] ?? '') === SupportEngine::STATUS_ACTIVE) {
@@ -116,24 +116,15 @@ class SupportEngineService
             if ($oldStatus !== SupportEngine::STATUS_ACTIVE && $data['status'] === SupportEngine::STATUS_ACTIVE) {
                 $config['started_at'] = $config['started_at'] ?? time();
                 $config['ended_at'] = null;
-                $config['phase'] = $config['phase'] ?? SupportEngine::PHASE_VOTING;
             }
             
             // Closing engine
             if ($data['status'] === SupportEngine::STATUS_CLOSED) {
                 $config['ended_at'] = time();
-                $config['phase'] = SupportEngine::PHASE_CLOSED;
             }
             
             $engine->setConfig($config);
             $engine->setStatus($data['status']);
-        }
-        
-        // Update phase independently
-        if (isset($data['phase'])) {
-            $config = $engine->getConfig();
-            $config['phase'] = $data['phase'];
-            $engine->setConfig($config);
         }
         
         if (isset($data['title'])) {
@@ -142,11 +133,20 @@ class SupportEngineService
         if (isset($data['description'])) {
             $engine->setDescription($data['description']);
         }
+        if (isset($data['engine'])) {
+            $engine->setEngine($data['engine']);
+        }
+        if (isset($data['purpose'])) {
+            $engine->setPurpose($data['purpose']);
+        }
         if (isset($data['target_type'])) {
             $engine->setTargetType($data['target_type']);
         }
         if (isset($data['target_ids'])) {
             $engine->setTargetIds($data['target_ids']);
+        }
+        if (isset($data['config'])) {
+            $engine->setConfig($data['config']);
         }
         if (isset($data['metadata'])) {
             $engine->setMetadata($data['metadata']);
@@ -177,27 +177,62 @@ class SupportEngineService
         }
     }
 
-/**
- * Get support feature for a target (inquiry or option)
- */
-private function getTargetSupportFeature(string $targetType, int $targetId): string
-{
-    try {
-        if ($targetType === 'inquiry') {
-            $inquiry = $this->inquiryMapper->find($targetId);
-            return $inquiry->getSupportFeature() ?: 'binary';
-        } else { // option
-            $option = $this->optionMapper->find($targetId);
-            return $option->getSupportFeature() ?: 'binary';
+    /**
+     * Check if an engine has votes
+     */
+    public function hasVotes(int $engineId): bool
+    {
+        try {
+            $count = $this->resultMapper->countByEngine($engineId);
+            return $count > 0;
+        } catch (\Exception $e) {
+            $this->logger->error('Failed to check votes for engine: ' . $engineId, [
+                'error' => $e->getMessage()
+            ]);
+            return false;
         }
-    } catch (\Exception $e) {
-        $this->logger->error('Failed to get target support feature', [
-            'targetType' => $targetType,
-            'targetId' => $targetId,
-            'error' => $e->getMessage()
-        ]);
-        return 'binary';
+    }
+
+    /**
+     * Set active engine for a target
+     */
+public function setActiveEngine(string $targetType, int $targetId, int $engineId): void
+{
+    // First, deactivate all active engines for this target
+    $activeEngines = $this->getActiveEnginesByTarget($targetType, $targetId);
+    foreach ($activeEngines as $engine) {
+        $engine->setStatus(SupportEngine::STATUS_DRAFT);
+        $this->engineMapper->update($engine);
+    }
+
+    // Then activate the specified engine
+    $engine = $this->getEngine($engineId);
+    if ($engine) {
+        // Check if target_ids contains this target
+        $targetIds = $engine->getTargetIds();
+        if (!in_array($targetId, $targetIds)) {
+            $this->logger->warning('Engine does not target this ID', [
+                'engineId' => $engineId,
+                'targetId' => $targetId,
+                'targetIds' => $targetIds
+            ]);
+        }
+
+        $engine->setStatus(SupportEngine::STATUS_ACTIVE);
+        $config = $engine->getConfig();
+        $config['started_at'] = $config['started_at'] ?? time();
+        $config['ended_at'] = null;
+        $engine->setConfig($config);
+        $this->engineMapper->update($engine);
     }
 }
-
+    
+    /**
+     * Get active engine for a target
+     */
+    public function getActiveEngine(string $targetType, int $targetId): ?SupportEngine
+    {
+        $activeEngines = $this->getActiveEnginesByTarget($targetType, $targetId);
+        return !empty($activeEngines) ? $activeEngines[0] : null;
+    }
 }

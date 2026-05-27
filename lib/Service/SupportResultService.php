@@ -60,6 +60,21 @@ class SupportResultService
     }
 
     /**
+ * Get existing results for a specific support engine
+ *
+ * @param int $engineId The engine ID
+ * @return SupportResult[] Array of support results
+ */
+public function getResultsByEngine(int $engineId): array
+{
+    $this->logger->info('Getting results by engine', ['engineId' => $engineId]);
+
+    // This assumes your SupportResultMapper has a findByEngineId method
+    // If not, you'll need to add it there too
+    return $this->resultMapper->findByEngineId($engineId);
+}
+
+    /**
      * Calculate results based on type for a single target
      */
     private function calculateByType(string $type, array $supports, ?int $inquiryId = null, ?int $optionId = null, ?int $engineId=null): array

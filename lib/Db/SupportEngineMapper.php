@@ -12,6 +12,9 @@ namespace OCA\Agora\Db;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 use OCP\AppFramework\Db\QBMapper;
+use OCP\AppFramework\Db\DoesNotExistException;
+use OCP\AppFramework\Db\Entity;
+use OCA\Agora\Db\SupportEngineSqlRepository;
 
 /**
  * @template-extends QBMapper<SupportEngine>
@@ -22,10 +25,126 @@ class SupportEngineMapper extends QBMapper
 
     public function __construct(
         IDBConnection $db,
+        private SupportEngineSqlRepository $sqlRepo,
     ) {
         parent::__construct($db, self::TABLE, SupportEngine::class);
     }
 
+    /**
+     * Find engine by this ID
+     *
+     * @return ?SupportEngine
+     */
+    public function find(int $engineId): ?SupportEngine
+    {
+        $qb = $this->db->getQueryBuilder();
+        $qb->select('*')
+           ->from($this->getTableName())
+           ->where($qb->expr()->eq('id', $qb->createNamedParameter($engineId, IQueryBuilder::PARAM_INT)));
+
+        try {
+            return $this->findEntity($qb);
+        } catch (DoesNotExistException $e) {
+            return null;
+        }
+    }
+
+    /**
+     * Override insert to handle all JSON columns
+     * Must match parent signature: insert(Entity $entity): Entity
+     */
+    public function insert(Entity $entity): Entity
+    {
+        /** @var SupportEngine $entity */
+        $data = [
+            'engine' => $entity->getEngine(),
+            'title' => $entity->getTitle(),
+            'description' => $entity->getDescription(),
+            'purpose' => $entity->getPurpose(),
+            'inquiry_id' => $entity->getInquiryId(),
+            'inquiry_group_id' => $entity->getInquiryGroupId(),
+            'status' => $entity->getStatus(),
+            'config' => $entity->getConfig(),
+            'created' => $entity->getCreated(),
+            'target_type' => $entity->getTargetType(),
+            'target_ids' => $entity->getTargetIds(),
+            'metadata' => $entity->getMetadata(),
+        ];
+        
+        $id = $this->sqlRepo->insertEngineWithJson(
+            self::TABLE, 
+            $data,
+            ['config', 'target_ids', 'metadata']
+        );
+        
+        return $this->find($id);
+    }
+
+    /**
+     * Override update to handle all JSON columns
+     * Must match parent signature: update(Entity $entity): Entity
+     */
+    public function update(Entity $entity): Entity
+    {
+        if (!($entity instanceof SupportEngine)) {
+            throw new \InvalidArgumentException('Expected SupportEngine instance');
+        }
+
+        // Get the original entity from database to compare
+        $original = $this->find($entity->getId());
+        
+        if (!$original) {
+            throw new DoesNotExistException('Entity not found for update');
+        }
+        
+        $data = [];
+        
+        // Compare and only include changed fields
+        if ($entity->getEngine() !== $original->getEngine()) {
+            $data['engine'] = $entity->getEngine();
+        }
+        if ($entity->getTitle() !== $original->getTitle()) {
+            $data['title'] = $entity->getTitle();
+        }
+        if ($entity->getDescription() !== $original->getDescription()) {
+            $data['description'] = $entity->getDescription();
+        }
+        if ($entity->getPurpose() !== $original->getPurpose()) {
+            $data['purpose'] = $entity->getPurpose();
+        }
+        if ($entity->getInquiryId() !== $original->getInquiryId()) {
+            $data['inquiry_id'] = $entity->getInquiryId();
+        }
+        if ($entity->getInquiryGroupId() !== $original->getInquiryGroupId()) {
+            $data['inquiry_group_id'] = $entity->getInquiryGroupId();
+        }
+        if ($entity->getStatus() !== $original->getStatus()) {
+            $data['status'] = $entity->getStatus();
+        }
+        if ($entity->getConfig() !== $original->getConfig()) {
+            $data['config'] = $entity->getConfig();
+        }
+        if ($entity->getTargetType() !== $original->getTargetType()) {
+            $data['target_type'] = $entity->getTargetType();
+        }
+        if ($entity->getTargetIds() !== $original->getTargetIds()) {
+            $data['target_ids'] = $entity->getTargetIds();
+        }
+        if ($entity->getMetadata() !== $original->getMetadata()) {
+            $data['metadata'] = $entity->getMetadata();
+        }
+        
+        if (!empty($data)) {
+            $this->sqlRepo->updateEngineWithJson(
+                self::TABLE, 
+                $data, 
+                ['config', 'target_ids', 'metadata'],
+                $entity->getId()
+            );
+        }
+        
+        return $this->find($entity->getId());
+    }
     /**
      * Find engines by inquiry ID
      * 
@@ -58,7 +177,6 @@ class SupportEngineMapper extends QBMapper
         return $this->findEntities($qb);
     }
 
-
     /**
      * Find engines by status
      * 
@@ -77,6 +195,7 @@ class SupportEngineMapper extends QBMapper
 
     /**
      * Find engines by target type and ID
+     * Checks if target_id exists in the target_ids JSON array
      * 
      * @return SupportEngine[]
      */
@@ -90,19 +209,23 @@ class SupportEngineMapper extends QBMapper
         $dbProvider = $this->db->getDatabaseProvider();
 
         if ($dbProvider === IDBConnection::PLATFORM_POSTGRES) {
-            // PostgreSQL: Use JSON operators to check if target_id exists in the JSON array
-            // Cast targetId to text and use JSON array contains operator
-            $qb->andWhere($qb->expr()->eq(
-                $qb->createFunction('CAST(' . $qb->createNamedParameter($targetId) . ' AS text)'),
-                $qb->createFunction('ANY(SELECT json_array_elements_text(target_ids))')
-            ));
-            // Alternative simpler approach using jsonb if column is jsonb:
-            // $qb->andWhere($qb->expr()->eq(
-            //     $qb->createFunction('target_ids::jsonb @> ' . $qb->createNamedParameter('[' . $targetId . ']', IQueryBuilder::PARAM_STR) . '::jsonb'),
-            //     $qb->expr()->literal(true)
-            // ));
+            // PostgreSQL: Use JSONB contains operator @>
+            $qb->andWhere(
+                $qb->expr()->eq(
+                    $qb->createFunction('target_ids::jsonb @> ' . $qb->createNamedParameter('[' . $targetId . ']', IQueryBuilder::PARAM_STR) . '::jsonb'),
+                    $qb->expr()->literal(true)
+                )
+            );
+        } elseif ($dbProvider === IDBConnection::PLATFORM_MYSQL) {
+            // MySQL 5.7+: Use JSON_CONTAINS
+            $qb->andWhere(
+                $qb->expr()->eq(
+                    $qb->createFunction('JSON_CONTAINS(target_ids, ' . $qb->createNamedParameter($targetId, IQueryBuilder::PARAM_STR) . ')'),
+                    $qb->createNamedParameter(1, IQueryBuilder::PARAM_INT)
+                )
+            );
         } else {
-            // MySQL: Use LIKE on JSON
+            // SQLite or fallback: Use LIKE (less precise but works)
             $qb->andWhere(
                 $qb->expr()->like(
                     'target_ids',
@@ -127,18 +250,28 @@ class SupportEngineMapper extends QBMapper
         $qb->select('*')
            ->from($this->getTableName())
            ->where($qb->expr()->eq('target_type', $qb->createNamedParameter($targetType, IQueryBuilder::PARAM_STR)))
-           ->andWhere($qb->expr()->eq('status', $qb->createNamedParameter('active', IQueryBuilder::PARAM_STR)));
+           ->andWhere($qb->expr()->eq('status', $qb->createNamedParameter(SupportEngine::STATUS_ACTIVE, IQueryBuilder::PARAM_STR)));
 
         $dbProvider = $this->db->getDatabaseProvider();
 
         if ($dbProvider === IDBConnection::PLATFORM_POSTGRES) {
-            // PostgreSQL: Use JSON operators
-            $qb->andWhere($qb->expr()->eq(
-                $qb->createFunction('CAST(' . $qb->createNamedParameter($targetId) . ' AS text)'),
-                $qb->createFunction('ANY(SELECT json_array_elements_text(target_ids))')
-            ));
+            // PostgreSQL: Use JSONB contains operator
+            $qb->andWhere(
+                $qb->expr()->eq(
+                    $qb->createFunction('target_ids::jsonb @> ' . $qb->createNamedParameter('[' . $targetId . ']', IQueryBuilder::PARAM_STR) . '::jsonb'),
+                    $qb->expr()->literal(true)
+                )
+            );
+        } elseif ($dbProvider === IDBConnection::PLATFORM_MYSQL) {
+            // MySQL: Use JSON_CONTAINS
+            $qb->andWhere(
+                $qb->expr()->eq(
+                    $qb->createFunction('JSON_CONTAINS(target_ids, ' . $qb->createNamedParameter($targetId, IQueryBuilder::PARAM_STR) . ')'),
+                    $qb->createNamedParameter(1, IQueryBuilder::PARAM_INT)
+                )
+            );
         } else {
-            // MySQL: Use LIKE on JSON
+            // SQLite or fallback: Use LIKE
             $qb->andWhere(
                 $qb->expr()->like(
                     'target_ids',
@@ -151,7 +284,6 @@ class SupportEngineMapper extends QBMapper
 
         return $this->findEntities($qb);
     }
-
 
     /**
      * Find engines by type and inquiry
@@ -168,34 +300,6 @@ class SupportEngineMapper extends QBMapper
            ->orderBy('created', 'DESC');
 
         return $this->findEntities($qb);
-    }
-
-    /**
-     * Update engine status
-     */
-    public function updateStatus(int $id, string $status): ?SupportEngine
-    {
-        $engine = $this->find($id);
-        if ($engine === null) {
-            return null;
-        }
-
-        $engine->setStatus($status);
-        return $this->update($engine);
-    }
-
-    /**
-     * Update engine configuration
-     */
-    public function updateConfig(int $id, array $config): ?SupportEngine
-    {
-        $engine = $this->find($id);
-        if ($engine === null) {
-            return null;
-        }
-
-        $engine->setConfig($config);
-        return $this->update($engine);
     }
 
     /**
@@ -223,4 +327,4 @@ class SupportEngineMapper extends QBMapper
 
         return $qb->executeStatement();
     }
-    }
+}

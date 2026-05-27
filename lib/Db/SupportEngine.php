@@ -48,6 +48,11 @@ class SupportEngine extends Entity implements JsonSerializable
     public const STATUS_DRAFT = 'draft';
     public const STATUS_ACTIVE = 'active';
     public const STATUS_CLOSED = 'closed';
+    
+    // Phase constants (add these)
+    public const PHASE_DELIBERATIVE = 'deliberative';
+    public const PHASE_VOTING = 'voting';
+    public const PHASE_CLOSED = 'closed';
 
     // Target type constants
     public const TARGET_INQUIRY = 'inquiry';
@@ -107,6 +112,8 @@ public function setMetadata(array|string|null $metadata): void
     }
 }
 
+    
+
 
     // Helper methods for config-driven fields
 
@@ -114,6 +121,26 @@ public function setMetadata(array|string|null $metadata): void
     {
         return $this->config['phase'] ?? self::PHASE_DELIBERATIVE;
     }
+/*
+    public function setTargetIds(array|string $targetIds): void
+    {
+        if (is_string($targetIds)) {
+            $decoded = json_decode($targetIds, true);
+            $this->targetIds = is_array($decoded) ? $decoded : [];
+        } elseif (is_array($targetIds)) {
+            // Ensure all values are integers
+            $this->targetIds = array_map('intval', $targetIds);
+        } else {
+            $this->targetIds = [];
+        }
+    }
+
+    // Add getter with guarantee of array return
+    public function getTargetIds(): array
+    {
+        return is_array($this->targetIds) ? $this->targetIds : [];
+    }*/
+
 
     public function setPhase(string $phase): void
     {

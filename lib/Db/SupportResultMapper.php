@@ -95,6 +95,20 @@ public function findResultById(int $id): ?SupportResult
     }
 
     /**
+ * Count results by engine ID
+ */
+public function countByEngine(int $engineId): int
+{
+    $qb = $this->db->getQueryBuilder();
+    $qb->select($qb->func()->count('*', 'count'))
+       ->from($this->getTableName())
+       ->where($qb->expr()->eq('support_engine_id', $qb->createNamedParameter($engineId, IQueryBuilder::PARAM_INT)));
+
+    $result = $qb->executeQuery()->fetch();
+    return (int) ($result['count'] ?? 0);
+}
+
+    /**
      * Find results by target
      */
     public function findResultsByTarget(string $targetType, int $targetId, ?int $engineId = null): array

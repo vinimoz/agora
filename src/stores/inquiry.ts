@@ -382,269 +382,270 @@ export const useInquiryStore = defineStore('inquiry', {
         commentsStore.comments = response.data.comments
         subscriptionStore.subscribed = response.data.subscribed
         attachmentsStore.attachments = response.data.attachments
-        this.supportEngine = response.data.supportEngine
+        await supportEngineStore.initializeFromInquiry(this.id, response.data.supportEngine)
+        this.configuration.supportEngine = response.data.supportEngine
         inquiriesStore.setFamilyType(this.family)
 
         if (response.data.inquiry.owner.id === sessionStore.currentUser.id) {
-          sessionStore.currentUser.isOwner = true
+            sessionStore.currentUser.isOwner = true
         } else {
-          sessionStore.currentUser.isOwner = false
+            sessionStore.currentUser.isOwner = false
         }
-        
+
         this.meta.status = 'loaded'
         return response
       } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return
-        }
-        this.meta.status = 'error'
-        Logger.error('Error loading inquiry', { error })
-        throw error
+          if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+              return
+          }
+          this.meta.status = 'error'
+          Logger.error('Error loading inquiry', { error })
+          throw error
       }
     },
 
     async add(payload: {
-      title?: string
-      type?: InquiryType
-      ownedGroup?: string
-      description?: string
-      parentId?: number
-      locationId?: number
-      categoryId?: number
-      owner?: User
+        title?: string
+        type?: InquiryType
+        ownedGroup?: string
+        description?: string
+        parentId?: number
+        locationId?: number
+        categoryId?: number
+        owner?: User
     }): Promise<Inquiry | void> {
-      try {
-        const response = await InquiriesAPI.addInquiry({
-          title: payload.title,
-          type: payload.type,
-          parentId: payload.parentId,
-          locationId: payload.locationId,
-          categoryId: payload.categoryId,
-          description: payload.description,
-          owner: payload.owner,
-          ownedGroup: payload.ownedGroup,
-        })
+        try {
+            const response = await InquiriesAPI.addInquiry({
+                title: payload.title,
+                type: payload.type,
+                parentId: payload.parentId,
+                locationId: payload.locationId,
+                categoryId: payload.categoryId,
+                description: payload.description,
+                owner: payload.owner,
+                ownedGroup: payload.ownedGroup,
+            })
 
-        return response.data.inquiry
-      } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return
+            return response.data.inquiry
+        } catch (error) {
+            if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+                return
+            }
+            Logger.error('Error adding inquiry:', {
+                error,
+                payload,
+                state: this.$state,
+            })
+            throw error
         }
-        Logger.error('Error adding inquiry:', {
-          error,
-          payload,
-          state: this.$state,
-        })
-        throw error
-      }
     },
 
     async update(payload: {
-      id?: number
-      title?: string
-      type?: InquiryType
-      description?: string
-      parentId?: number | null
-      locationId?: number | null
-      categoryId?: number | null
+        id?: number
+        title?: string
+        type?: InquiryType
+        description?: string
+        parentId?: number | null
+        locationId?: number | null
+        categoryId?: number | null
     }): Promise<Inquiry | void> {
-      const inquiriesStore = useInquiriesStore()
+        const inquiriesStore = useInquiriesStore()
 
-      const debouncedUpdate = this.$debounce(async () => {
-        try {
-          const response = await InquiriesAPI.updateInquiry(payload.id || this.id, {
-            title: payload.title,
-            type: payload.type,
-            description: payload.description,
-            parentId: payload.parentId,
-            locationId: payload.locationId,
-            categoryId: payload.categoryId,
-          })
-          return response.data.inquiry
-        } catch (error) {
-          if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-            return
-          }
-          Logger.error('Error updating inquiry', {
-            error,
-            state: this.$state,
-          })
-          throw error
-        } finally {
-          await this.load()
-          await inquiriesStore.load()
-        }
-      }, 500)
-      
-      return debouncedUpdate()
+        const debouncedUpdate = this.$debounce(async () => {
+            try {
+                const response = await InquiriesAPI.updateInquiry(payload.id || this.id, {
+                    title: payload.title,
+                    type: payload.type,
+                    description: payload.description,
+                    parentId: payload.parentId,
+                    locationId: payload.locationId,
+                    categoryId: payload.categoryId,
+                })
+                return response.data.inquiry
+            } catch (error) {
+                if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+                    return
+                }
+                Logger.error('Error updating inquiry', {
+                    error,
+                    state: this.$state,
+                })
+                throw error
+            } finally {
+                await this.load()
+                await inquiriesStore.load()
+            }
+        }, 500)
+
+        return debouncedUpdate()
     },
 
     async updateMiscField(key: string, value: any): Promise<void> {
-      try {
-        await InquiriesAPI.updateMiscField(this.id, { key, value })
-        this.miscFields[key] = value
-      } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return
+        try {
+            await InquiriesAPI.updateMiscField(this.id, { key, value })
+            this.miscFields[key] = value
+        } catch (error) {
+            if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+                return
+            }
+            Logger.error('Error updating misc field:', {
+                error,
+                key,
+                value,
+                state: this.$state,
+            })
+            throw error
         }
-        Logger.error('Error updating misc field:', {
-          error,
-          key,
-          value,
-          state: this.$state,
-        })
-        throw error
-      }
     },
 
     async setInquiryStatus(status: InquiryWorkflowStatus): Promise<void> {
-      try {
-        await InquiriesAPI.updateInquiryStatus(this.id, status)
-        this.status.inquiryStatus = status
-      } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return
+        try {
+            await InquiriesAPI.updateInquiryStatus(this.id, status)
+            this.status.inquiryStatus = status
+        } catch (error) {
+            if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+                return
+            }
+            Logger.error('Error setting inquiry status:', {
+                error,
+                status,
+                state: this.$state,
+            })
+            throw error
         }
-        Logger.error('Error setting inquiry status:', {
-          error,
-          status,
-          state: this.$state,
-        })
-        throw error
-      }
     },
 
     async setModerationStatus(status: ModerationWorkflowStatus): Promise<void> {
-      try {
-        await InquiriesAPI.updateModerationStatus(this.id, status)
-        this.status.moderationStatus = status
-      } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return
+        try {
+            await InquiriesAPI.updateModerationStatus(this.id, status)
+            this.status.moderationStatus = status
+        } catch (error) {
+            if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+                return
+            }
+            Logger.error('Error setting moderation status:', {
+                error,
+                status,
+                state: this.$state,
+            })
+            throw error
         }
-        Logger.error('Error setting moderation status:', {
-          error,
-          status,
-          state: this.$state,
-        })
-        throw error
-      }
     },
 
     async lockAnonymous(): Promise<void> {
-      try {
-        await InquiriesAPI.lockAnonymous(this.id)
-      } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return
+        try {
+            await InquiriesAPI.lockAnonymous(this.id)
+        } catch (error) {
+            if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+                return
+            }
+            Logger.error('Error locking inquiry to anonymous:', {
+                error,
+                state: this.$state,
+            })
+            throw error
+        } finally {
+            await this.load()
         }
-        Logger.error('Error locking inquiry to anonymous:', {
-          error,
-          state: this.$state,
-        })
-        throw error
-      } finally {
-        await this.load()
-      }
     },
 
     write(): void {
-      const inquiriesStore = useInquiriesStore()
+        const inquiriesStore = useInquiriesStore()
 
-      const debouncedWrite = this.$debounce(async () => {
-        if (this.title === '') {
-          showError(t('agora', 'Title must not be empty!'))
-          return
-        }
+        const debouncedWrite = this.$debounce(async () => {
+            if (this.title === '') {
+                showError(t('agora', 'Title must not be empty!'))
+                return
+            }
 
-        try {
-          const response = await InquiriesAPI.updateInquiryConfig(this.id, this.configuration)
-          this.$patch(response.data.inquiry)
-          emit(Event.UpdateInquiry, {
-            store: 'inquiry',
-            message: t('agora', 'Inquiry updated'),
-          })
-        } catch (error) {
-          if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-            return
-          }
-          Logger.error('Error updating inquiry:', {
-            error,
-            inquiry: this.$state,
-          })
-          showError(t('agora', 'Error writing inquiry'))
-          throw error
-        } finally {
-          await this.load()
-          await inquiriesStore.load()
-        }
-      }, 500)
-      
-      debouncedWrite()
+            try {
+                const response = await InquiriesAPI.updateInquiryConfig(this.id, this.configuration)
+                this.$patch(response.data.inquiry)
+                emit(Event.UpdateInquiry, {
+                    store: 'inquiry',
+                    message: t('agora', 'Inquiry updated'),
+                })
+            } catch (error) {
+                if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+                    return
+                }
+                Logger.error('Error updating inquiry:', {
+                    error,
+                    inquiry: this.$state,
+                })
+                showError(t('agora', 'Error writing inquiry'))
+                throw error
+            } finally {
+                await this.load()
+                await inquiriesStore.load()
+            }
+        }, 500)
+
+        debouncedWrite()
     },
 
     async close(): Promise<void> {
-      const inquiriesStore = useInquiriesStore()
+        const inquiriesStore = useInquiriesStore()
 
-      try {
-        const response = await InquiriesAPI.closeInquiry(this.id)
-        this.$patch(response.data.inquiry)
-      } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return
+        try {
+            const response = await InquiriesAPI.closeInquiry(this.id)
+            this.$patch(response.data.inquiry)
+        } catch (error) {
+            if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+                return
+            }
+            Logger.error('Error closing inquiry', {
+                error,
+                inquiryId: this.id,
+            })
+            await this.load()
+            throw error
+        } finally {
+            await inquiriesStore.load()
         }
-        Logger.error('Error closing inquiry', {
-          error,
-          inquiryId: this.id,
-        })
-        await this.load()
-        throw error
-      } finally {
-        await inquiriesStore.load()
-      }
     },
 
     async reopen(): Promise<void> {
-      const inquiriesStore = useInquiriesStore()
+        const inquiriesStore = useInquiriesStore()
 
-      try {
-        const response = await InquiriesAPI.reopenInquiry(this.id)
-        this.$patch(response.data.inquiry)
-      } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return
+        try {
+            const response = await InquiriesAPI.reopenInquiry(this.id)
+            this.$patch(response.data.inquiry)
+        } catch (error) {
+            if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+                return
+            }
+            Logger.error('Error reopening inquiry', {
+                error,
+                inquiryId: this.id,
+            })
+            await this.load()
+            throw error
+        } finally {
+            await inquiriesStore.load()
         }
-        Logger.error('Error reopening inquiry', {
-          error,
-          inquiryId: this.id,
-        })
-        await this.load()
-        throw error
-      } finally {
-        await inquiriesStore.load()
-      }
     },
 
     async toggleArchive(inquiryId: number): Promise<void> {
-      const inquiriesStore = useInquiriesStore()
+        const inquiriesStore = useInquiriesStore()
 
-      try {
-        const response = await InquiriesAPI.toggleArchive(inquiryId)
-        if (this.id === inquiryId) {
-          this.$patch(response.data.inquiry)
+        try {
+            const response = await InquiriesAPI.toggleArchive(inquiryId)
+            if (this.id === inquiryId) {
+                this.$patch(response.data.inquiry)
+            }
+        } catch (error) {
+            if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+                return
+            }
+            Logger.error('Error archiving/restoring', {
+                error,
+                inquiryId,
+            })
+            throw error
+        } finally {
+            await inquiriesStore.load()
         }
-      } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return
-        }
-        Logger.error('Error archiving/restoring', {
-          error,
-          inquiryId,
-        })
-        throw error
-      } finally {
-        await inquiriesStore.load()
-      }
     },
   },
 })

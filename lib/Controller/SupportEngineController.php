@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace OCA\Agora\Controller;
 
-use OCP\AppFramework\Controller;  // ← ADD THIS IMPORT
+use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\Attribute\FrontpageRoute;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
@@ -18,30 +18,18 @@ use OCP\AppFramework\Http\JSONResponse;
 use OCP\IRequest;
 use OCP\AppFramework\Http;
 use OCA\Agora\Service\SupportEngineService;
-use OCA\Agora\Db\SupportEngineMapper;
-use OCA\Agora\Db\SupportResultMapper;
 use Psr\Log\LoggerInterface;
+use OCA\Agora\Db\SupportEngine; 
 
-class SupportEngineController extends Controller  // Now extends the correct Controller class
+class SupportEngineController extends Controller
 {
-    private SupportEngineService $engineService;
-    private SupportEngineMapper $engineMapper;
-    private SupportResultMapper $resultMapper;
-    private LoggerInterface $logger;
-
     public function __construct(
         string $appName,
         IRequest $request,
-        SupportEngineService $engineService,
-        SupportEngineMapper $engineMapper,
-        SupportResultMapper $resultMapper,
-        LoggerInterface $logger
+        private SupportEngineService $engineService,
+        private LoggerInterface $logger,
     ) {
         parent::__construct($appName, $request);
-        $this->engineService = $engineService;
-        $this->engineMapper = $engineMapper;
-        $this->resultMapper = $resultMapper;
-        $this->logger = $logger;
     }
 
     /**
@@ -53,7 +41,7 @@ class SupportEngineController extends Controller  // Now extends the correct Con
     public function getByInquiry(int $inquiryId): DataResponse
     {
         try {
-            $engines = $this->engineMapper->findByInquiryId($inquiryId);
+            $engines = $this->engineService->getEnginesByInquiry($inquiryId);
             return new DataResponse($engines);
         } catch (\Exception $e) {
             $this->logger->error('Error getting engines by inquiry', [
@@ -73,7 +61,7 @@ class SupportEngineController extends Controller  // Now extends the correct Con
     public function getByInquiryGroup(int $inquiryGroupId): DataResponse
     {
         try {
-            $engines = $this->engineMapper->findByInquiryGroupId($inquiryGroupId);
+            $engines = $this->engineService->getEnginesByInquiryGroup($inquiryGroupId);
             return new DataResponse($engines);
         } catch (\Exception $e) {
             $this->logger->error('Error getting engines by inquiry group', [
@@ -93,7 +81,7 @@ class SupportEngineController extends Controller  // Now extends the correct Con
     public function getEngine(int $id): DataResponse
     {
         try {
-            $engine = $this->engineMapper->find($id);
+            $engine = $this->engineService->getEngine($id);
             if (!$engine) {
                 return new DataResponse(['error' => 'Engine not found'], Http::STATUS_NOT_FOUND);
             }
@@ -124,7 +112,7 @@ class SupportEngineController extends Controller  // Now extends the correct Con
             }
 
             // Validate required fields
-            $requiredFields = ['engine', 'type', 'title', 'target_type', 'target_ids'];
+            $requiredFields = ['engine', 'title', 'target_type', 'target_ids'];
             foreach ($requiredFields as $field) {
                 if (!isset($data[$field])) {
                     return new JSONResponse(['error' => "Missing required field: {$field}"], Http::STATUS_BAD_REQUEST);
@@ -133,18 +121,17 @@ class SupportEngineController extends Controller  // Now extends the correct Con
 
             $engine = $this->engineService->createEngine([
                 'engine' => $data['engine'],
-                'type' => $data['type'],
                 'title' => $data['title'],
                 'description' => $data['description'] ?? '',
-                'inquiry_group_id' => $data['inquiry_group_id'] ?? 0,
+                'purpose' => $data['purpose'] ?? '',
+                'inquiry_group_id' => $data['inquiry_group_id'] ?? null,
                 'inquiry_id' => $data['inquiry_id'] ?? 0,
-                'status' => $data['status'] ?? 'draft',
+                'status' => $data['status'] ?? SupportEngine::STATUS_DRAFT,
                 'config' => $data['config'] ?? [],
                 'target_type' => $data['target_type'],
                 'target_ids' => $data['target_ids'],
                 'metadata' => $data['metadata'] ?? []
             ]);
-
 
             return new JSONResponse($engine, Http::STATUS_CREATED);
         } catch (\Exception $e) {
@@ -171,40 +158,19 @@ class SupportEngineController extends Controller  // Now extends the correct Con
                 return new JSONResponse(['error' => 'Invalid JSON data'], Http::STATUS_BAD_REQUEST);
             }
 
-            $engine = $this->engineMapper->find($id);
-            if (!$engine) {
-                return new JSONResponse(['error' => 'Engine not found'], Http::STATUS_NOT_FOUND);
-            }
-
             // Check if engine can be modified (has votes?)
-            if (isset($data['engine']) && $data['engine'] !== $engine->getEngine()) {
+            if (isset($data['engine'])) {
                 $hasVotes = $this->engineService->hasVotes($id);
                 if ($hasVotes) {
                     return new JSONResponse(['error' => 'Cannot change engine type after votes have been cast'], Http::STATUS_CONFLICT);
                 }
             }
 
-            // Update fields
-            if (isset($data['title'])) {
-                $engine->setTitle($data['title']);
-            }
-            if (isset($data['description'])) {
-                $engine->setDescription($data['description']);
-            }
-            if (isset($data['engine'])) {
-                $engine->setEngine($data['engine']);
-            }
-            if (isset($data['config'])) {
-                $engine->setConfig($data['config']);
-            }
-            if (isset($data['status'])) {
-                $engine->setStatus($data['status']);
-            }
-            if (isset($data['metadata'])) {
-                $engine->setMetadata($data['metadata']);
+            $updatedEngine = $this->engineService->updateEngine($id, $data);
+            if (!$updatedEngine) {
+                return new JSONResponse(['error' => 'Engine not found'], Http::STATUS_NOT_FOUND);
             }
 
-            $updatedEngine = $this->engineMapper->update($engine);
             return new JSONResponse($updatedEngine);
         } catch (\Exception $e) {
             $this->logger->error('Error updating support engine', [
@@ -224,18 +190,17 @@ class SupportEngineController extends Controller  // Now extends the correct Con
     public function delete(int $id): JSONResponse
     {
         try {
-            $engine = $this->engineMapper->find($id);
-            if (!$engine) {
-                return new JSONResponse(['error' => 'Engine not found'], Http::STATUS_NOT_FOUND);
-            }
-
             // Check if there are votes before deletion
             $hasVotes = $this->engineService->hasVotes($id);
             if ($hasVotes) {
                 return new JSONResponse(['error' => 'Cannot delete engine with existing votes'], Http::STATUS_CONFLICT);
             }
 
-            $this->engineMapper->delete($engine);
+            $deleted = $this->engineService->deleteEngine($id);
+            if (!$deleted) {
+                return new JSONResponse(['error' => 'Engine not found'], Http::STATUS_NOT_FOUND);
+            }
+
             return new JSONResponse(['success' => true]);
         } catch (\Exception $e) {
             $this->logger->error('Error deleting support engine', [

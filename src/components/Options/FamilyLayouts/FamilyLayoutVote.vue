@@ -1,545 +1,559 @@
 <!-- SPDX-FileCopyrightText: 2024 Nextcloud contributors -->
 <!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
 <template>
-  <div class="vote-layout" :class="`layout-${currentLayout}`">
-    <!-- Header with vote session info and action buttons -->
-    <div class="vote-header">
-      <div class="header-info">
-        <div class="vote-metadata">
-          <span v-if="voteSession" class="metadata-badge">
-            <Calendar :size="14" />
-            {{ formatDate(voteSession.start_date) }}
-            <span v-if="voteSession.end_date">
-              - {{ formatDate(voteSession.end_date) }}
-            </span>
-          </span>
-          <span v-if="voteSession?.quorum" class="metadata-badge">
-            <Users :size="14" />
-            {{ t('agora', 'Quorum: {quorum}', { quorum: voteSession.quorum }) }}
-          </span>
-          <span class="metadata-badge">
-            <Vote :size="14" />
-            {{ t('agora', 'Total votes: {total}', { total: totalVotes }) }}
-          </span>
-          <span v-if="currentEngine?.behavior === 'multi'" class="metadata-badge">
-            <CheckCircle :size="14" />
-            {{ t('agora', 'Multiple votes allowed') }}
-          </span>
-        </div>
-      </div>
-
-      <!-- Layout switcher + Engine selector + Add to vote button -->
-      <div class="action-bar">
-        <div class="layout-switcher">
-          <NcButton
-            v-for="layout in allowedLayouts"
-            :key="layout"
-            :type="currentLayout === layout ? 'primary' : 'tertiary'"
-            size="small"
-            @click="currentLayout = layout"
-          >
-            <template #icon>
-              <component :is="getLayoutIcon(layout)" :size="16" />
-            </template>
-            {{ t('agora', capitalize(layout)) }}
-          </NcButton>
-        </div>
-
-        <!-- Engine selector dropdown -->
-        <div v-if="availableEnginesList.length > 0" class="engine-selector">
-          <NcSelect
-            v-model="selectedEngineId"
-            :options="engineSelectOptions"
-            :placeholder="t('agora', 'Select voting method')"
-            :clearable="false"
-            class="engine-select"
-            @option:selected="handleEngineChange"
-          >
-            <template #option="option">
-              <div class="engine-option">
-                <component :is="getEngineIcon(option.value)" :size="16" class="engine-option-icon" />
-                <div class="engine-option-content">
-                  <div class="engine-option-label">{{ option.label }}</div>
-                  <div class="engine-option-desc">{{ getEngineDescription(option.value) }}</div>
+    <div class="vote-layout" :class="`layout-${currentLayout}`">
+        <!-- Header with vote session info and action buttons -->
+        <div class="vote-header">
+            <div class="header-info">
+                <div class="vote-metadata">
+                    <span v-if="voteSession" class="metadata-badge">
+                        <Calendar :size="14" />
+                        {{ formatDate(voteSession.start_date) }}
+                        <span v-if="voteSession.end_date">
+                            - {{ formatDate(voteSession.end_date) }}
+                        </span>
+                    </span>
+                    <span v-if="voteSession?.quorum" class="metadata-badge">
+                        <Users :size="14" />
+                        {{ t('agora', 'Quorum: {quorum}', { quorum: voteSession.quorum }) }}
+                    </span>
+                    <span class="metadata-badge">
+                        <Vote :size="14" />
+                        {{ t('agora', 'Total votes: {total}', { total: totalVotes }) }}
+                    </span>
+                    <span v-if="currentEngine?.behavior === 'multi'" class="metadata-badge">
+                        <CheckCircle :size="14" />
+                        {{ t('agora', 'Multiple votes allowed') }}
+                    </span>
                 </div>
-              </div>
-            </template>
-            <template #selected-option="option">
-              <div class="engine-selected">
-                <component :is="getEngineIcon(option.value)" :size="14" />
-                <span>{{ option.label }}</span>
-              </div>
-            </template>
-          </NcSelect>
-        </div>
-
-        <NcButton
-          v-if="!isReadonly && canManageVote"
-          type="secondary"
-          size="small"
-          @click="openEngineModal"
-        >
-          <template #icon>
-            <Settings :size="16" />
-          </template>
-          {{ activeEngine ? t('agora', 'Edit Method') : t('agora', 'Configure Method') }}
-        </NcButton>
-
-        <NcButton
-          v-if="!isReadonly && canManageVote"
-          type="primary"
-          size="small"
-          class="add-to-vote-btn"
-          @click="showAddToVoteModal = true"
-        >
-          <template #icon>
-            <Plus :size="16" />
-          </template>
-          {{ t('agora', 'Add to vote') }}
-        </NcButton>
-      </div>
-    </div>
-
-    <!-- No engine state - show configuration banner -->
-    <div v-if="!activeEngine && !isLoadingEngines" class="no-engine-banner">
-      <Info :size="32" />
-      <div class="banner-content">
-        <h4>{{ t('agora', 'No Voting Method Configured') }}</h4>
-        <p>{{ t('agora', 'A voting method needs to be configured before voting can begin.') }}</p>
-      </div>
-      <NcButton v-if="canManageVote" type="primary" @click="openEngineModal">
-        <template #icon>
-          <Settings :size="16" />
-        </template>
-        {{ t('agora', 'Configure Voting Method') }}
-      </NcButton>
-    </div>
-
-    <!-- Loading state -->
-    <div v-else-if="isLoadingEngines" class="loading-state">
-      <NcLoadingIcon :size="32" />
-      <p>{{ t('agora', 'Loading voting configuration...') }}</p>
-    </div>
-
-    <!-- Current voting engine info -->
-    <div v-else-if="activeEngine" class="engine-info">
-      <div class="engine-info-left">
-        <span class="engine-badge">
-          <component :is="getEngineIcon(activeEngine.engine)" :size="14" />
-          {{ getEngineLabel(activeEngine.engine) }}
-          <span v-if="currentEngine?.behavior === 'multi'">({{ t('agora', 'Multi-choice') }})</span>
-          <span v-else-if="currentEngine?.behavior === 'flex'">({{ t('agora', 'Flexible') }})</span>
-          <span v-else>({{ t('agora', 'Single-choice') }})</span>
-        </span>
-        <span v-if="activeEngine.title" class="engine-title">{{ activeEngine.title }}</span>
-      </div>
-      <div class="engine-info-right">
-        <span v-if="voteLimitInfo" class="vote-limit-info">
-          {{ voteLimitInfo }}
-        </span>
-        <NcButton
-          v-if="canManageVote"
-          type="tertiary"
-          size="small"
-          @click="openEngineModal"
-        >
-          <Settings :size="14" />
-          {{ t('agora', 'Edit') }}
-        </NcButton>
-      </div>
-    </div>
-
-    <!-- Cards Layout -->
-    <div v-if="currentLayout === 'cards'" class="cards-layout">
-      <div class="cards-grid">
-        <div
-          v-for="option in voteOptions"
-          :key="option.id"
-          class="vote-card-wrapper"
-          :class="{ 'selected-for-vote': isSelectedForVote(option.id) }"
-        >
-          <OptionCard
-            :option="option"
-            :compact="false"
-            :inquiryId="inquiryId"
-            :show-action="!isReadonly && canManageVote"
-            :progress-bar="true"
-            :family-type="family?.key || 'vote'"
-            @click="handleOptionClick(option)"
-          >
-            <!-- Selection indicator for multi-vote -->
-            <template v-if="currentEngine?.behavior === 'multi' && canVote && !hasUserVoted && activeEngine?.status === 'active'">
-              <div class="selection-checkbox">
-                <input
-                  type="checkbox"
-                  :checked="isSelectedForVote(option.id)"
-                  @change="toggleOptionSelection(option.id)"
-                  @click.stop
-                />
-              </div>
-            </template>
-
-            <!-- Rank input for ranked voting -->
-            <template v-if="effectiveEngineId === 'ranking' && canVote && !hasUserVoted && activeEngine?.status === 'active'">
-              <div class="rank-input">
-                <label>{{ t('agora', 'Rank') }}</label>
-                <select v-model="rankings[option.id]" @click.stop>
-                  <option :value="null">-</option>
-                  <option v-for="i in maxRank" :key="i" :value="i">{{ i }}</option>
-                </select>
-              </div>
-            </template>
-
-            <!-- Score input for score voting -->
-            <template v-if="(effectiveEngineId === 'score' || effectiveEngineId === 'star') && canVote && !hasUserVoted && activeEngine?.status === 'active'">
-              <div class="score-input">
-                <input
-                  v-model="scores[option.id]"
-                  type="range"
-                  :min="scoreMin"
-                  :max="scoreMax"
-                  @click.stop
-                />
-                <span>{{ scores[option.id] || 0 }}</span>
-              </div>
-            </template>
-
-            <!-- Grade input for majority judgment -->
-            <template v-if="effectiveEngineId === 'majority_judgment' && canVote && !hasUserVoted && activeEngine?.status === 'active'">
-              <div class="grade-input">
-                <select v-model="grades[option.id]" @click.stop>
-                  <option :value="null">-</option>
-                  <option v-for="grade in gradeOptions" :key="grade" :value="grade">
-                    {{ grade }}
-                  </option>
-                </select>
-              </div>
-            </template>
-
-            <!-- Reaction buttons for reaction voting -->
-            <template v-if="effectiveEngineId === 'reaction' && canVote && !hasUserVoted && activeEngine?.status === 'active'">
-              <div class="reaction-input">
-                <button
-                  v-for="reaction in allowedReactions"
-                  :key="reaction"
-                  class="reaction-btn"
-                  :class="{ active: userReactions[option.id] === reaction }"
-                  @click.stop="setReaction(option.id, reaction)"
-                >
-                  {{ reaction }}
-                </button>
-              </div>
-            </template>
-
-            <!-- Vote button for single-choice engines -->
-            <template v-else-if="currentEngine?.behavior === 'single' && canVote && !hasUserVotedFor(option.id) && !hasUserVoted && activeEngine?.status === 'active'">
-              <NcButton
-                type="primary"
-                size="small"
-                @click.stop="voteForOption(option)"
-              >
-                <template #icon>
-                  <Vote :size="16" />
-                </template>
-                {{ t('agora', 'Vote') }}
-              </NcButton>
-            </template>
-
-            <!-- Already voted indicator -->
-            <div v-else-if="hasUserVotedFor(option.id) && activeEngine?.status === 'active'" class="voted-badge">
-              <CheckCircle :size="16" />
-              {{ t('agora', 'Voted') }}
             </div>
 
-            <!-- Custom progress bar slot -->
-            <template #progress-bar>
-              <div class="vote-progress-section">
-                <div class="vote-stats">
-                  <div class="votes-count">
-                    <ThumbsUp :size="14" />
-                    <strong>{{ getOptionVoteCount(option.id) }}</strong>
-                    {{ t('agora', 'votes') }}
-                  </div>
-                  <div class="percentage">
-                    {{ getPercentage(option) }}%
-                  </div>
+            <!-- Layout switcher + Engine selector + Add to vote button -->
+            <div class="action-bar">
+                <div class="layout-switcher">
+                    <NcButton
+                            v-for="layout in allowedLayouts"
+                            :key="layout"
+                            :type="currentLayout === layout ? 'primary' : 'tertiary'"
+                            size="small"
+                            @click="currentLayout = layout"
+                            >
+                            <template #icon>
+                                <component :is="getLayoutIcon(layout)" :size="16" />
+                            </template>
+                    {{ t('agora', capitalize(layout)) }}
+                    </NcButton>
                 </div>
-                <div class="progress-bar">
-                  <div
-                    class="progress-fill"
-                    :style="{ width: getPercentage(option) + '%' }"
-                    :class="{
-                      'fill-leading': option.metadata?.status === 'leading',
-                      'fill-selected': option.metadata?.status === 'selected'
-                    }"
-                  />
+
+                <!-- Engine selector dropdown - only show when engines exist -->
+                <div v-if="availableEnginesList.length > 0" class="engine-selector">
+                    <NcSelect
+                            v-model="selectedEngineId"
+                            :options="availableEnginesList"
+                            :placeholder="t('agora', 'Select voting method')"
+                            :clearable="false"
+                            label="title"
+                            :reduce="engine => engine.id"
+                            class="engine-select"
+                            @option:selected="handleEngineChange"
+                            >
+                            <template #option="{ option }">
+                                <div class="engine-option">
+                                    <component :is="getEngineIcon(option.engine)" :size="16" class="engine-option-icon" />
+                                    <div class="engine-option-content">
+                                        <div class="engine-option-label">{{ option.title || getEngineLabel(option.engine) }}</div>
+                                        <div class="engine-option-desc">{{ option.description || getEngineDescription(option.engine) }}</div>
+                                    </div>
+                                </div>
+                            </template>
+                            <template #selected-option="{ option }">
+                                <div v-if="option" class="engine-selected">
+                                    <component :is="getEngineIcon(option.engine)" :size="14" />
+                                    <span>{{ option.title || getEngineLabel(option.engine) }}</span>
+                                </div>
+                                <div v-else class="engine-selected">
+                                    <Vote :size="14" />
+                                    <span>{{ t('agora', 'Select voting method') }}</span>
+                                </div>
+                            </template>
+                    </NcSelect>
                 </div>
-              </div>
+
+                <NcButton
+                        v-if="!isReadonly && canManageVote"
+                        type="primary"
+                        size="small"
+                        @click="openCreateEngineModal"
+                        >
+                        <template #icon>
+                            <Plus :size="16" />
+                        </template>
+                {{ t('agora', 'Create Method') }}
+                </NcButton>
+
+                <!-- Add to vote button -->
+                <NcButton
+                        v-if="!isReadonly && canManageVote && activeEngine"
+                        type="primary"
+                        size="small"
+                        class="add-to-vote-btn"
+                        @click="showAddToVoteModal = true"
+                        >
+                        <template #icon>
+                            <Plus :size="16" />
+                        </template>
+                {{ t('agora', 'Add to vote') }}
+                </NcButton>
+            </div>
+
+        </div>
+
+        <!-- No engine state - show configuration banner -->
+        <div v-if="!activeEngine && availableEnginesList.length === 0" class="no-engine-banner">
+            <Info :size="32" />
+            <div class="banner-content">
+                <h4>{{ t('agora', 'No Voting Method Configured') }}</h4>
+                <p>{{ t('agora', 'A voting method needs to be configured before voting can begin.') }}</p>
+            </div>
+            <NcButton v-if="canManageVote" type="primary" @click="openEngineModal">
+            <template #icon>
+                <Settings :size="16" />
             </template>
-          </OptionCard>
+            {{ t('agora', 'Configure Voting Method') }}
+            </NcButton>
         </div>
-      </div>
 
-      <!-- Submit button for multi/flex votes -->
-      <div v-if="(currentEngine?.behavior === 'multi' || currentEngine?.behavior === 'flex') && canVote && !hasUserVoted && activeEngine?.status === 'active'" class="submit-vote-section">
-        <NcButton
-          type="primary"
-          size="medium"
-          :disabled="!canSubmitMultiVote"
-          @click="submitMultiVote"
-        >
-          <template #icon>
-            <Vote :size="18" />
-          </template>
-          {{ getSubmitButtonText() }}
-        </NcButton>
-        <span v-if="voteSelectionInfo" class="selection-info">{{ voteSelectionInfo }}</span>
-      </div>
-    </div>
-
-    <!-- List Layout -->
-    <div v-else-if="currentLayout === 'list'" class="list-layout">
-      <div class="list-header">
-        <div class="list-cell rank">{{ t('agora', 'Rank') }}</div>
-        <div class="list-cell option">{{ t('agora', 'Option') }}</div>
-        <div class="list-cell votes">{{ t('agora', 'Votes') }}</div>
-        <div class="list-cell percentage">{{ t('agora', 'Percentage') }}</div>
-        <div class="list-cell action">{{ t('agora', 'Action') }}</div>
-      </div>
-
-      <div
-        v-for="(option, index) in rankedOptions"
-        :key="option.id"
-        class="list-row"
-        :class="{
-          'is-leading': option.metadata?.status === 'leading',
-          'user-voted': hasUserVotedFor(option.id),
-          'selected-for-vote': isSelectedForVote(option.id)
-        }"
-      >
-        <div class="list-cell rank">
-          <div class="rank-number">
-            <span v-if="index === 0" class="medal">🥇</span>
-            <span v-else-if="index === 1" class="medal">🥈</span>
-            <span v-else-if="index === 2" class="medal">🥉</span>
-            <span v-else>{{ index + 1 }}</span>
-          </div>
-        </div>
-        <div class="list-cell option">
-          <OptionCard
-            :option="option"
-            :compact="true"
-            :inline="true"
-            :show-action="false"
-            :family-type="family?.key || 'vote'"
-            @click="handleOptionClick(option)"
-          />
-        </div>
-        <div class="list-cell votes">
-          <strong>{{ getOptionVoteCount(option.id) }}</strong>
-        </div>
-        <div class="list-cell percentage">
-          <div class="percentage-bar">
-            <div
-              class="percentage-fill"
-              :style="{ width: getPercentage(option) + '%' }"
-            />
-            <span class="percentage-text">{{ getPercentage(option) }}%</span>
-          </div>
-        </div>
-        <div class="list-cell action">
-          <NcButton
-            v-if="currentEngine?.behavior === 'single' && canVote && !hasUserVotedFor(option.id) && !hasUserVoted && activeEngine?.status === 'active'"
-            type="primary"
-            size="small"
-            @click.stop="voteForOption(option)"
-          >
-            <Vote :size="14" />
-            {{ t('agora', 'Vote') }}
-          </NcButton>
-          
-          <input
-            v-else-if="currentEngine?.behavior === 'multi' && canVote && !hasUserVoted && activeEngine?.status === 'active'"
-            type="checkbox"
-            :checked="isSelectedForVote(option.id)"
-            @change="toggleOptionSelection(option.id)"
-          />
-          
-          <select
-            v-else-if="effectiveEngineId === 'ranking' && canVote && !hasUserVoted && activeEngine?.status === 'active'"
-            v-model="rankings[option.id]"
-            class="rank-select-mini"
-          >
-            <option :value="null">-</option>
-            <option v-for="i in maxRank" :key="i" :value="i">{{ i }}</option>
-          </select>
-          
-          <input
-            v-else-if="(effectiveEngineId === 'score' || effectiveEngineId === 'star') && canVote && !hasUserVoted && activeEngine?.status === 'active'"
-            v-model="scores[option.id]"
-            type="number"
-            :min="scoreMin"
-            :max="scoreMax"
-            class="score-input-mini"
-          />
-          
-          <div v-else-if="hasUserVotedFor(option.id) && activeEngine?.status === 'active'" class="voted-icon">
-            <CheckCircle :size="16" />
-          </div>
-        </div>
-      </div>
-      
-      <div v-if="(currentEngine?.behavior === 'multi' || currentEngine?.behavior === 'flex') && canVote && !hasUserVoted && activeEngine?.status === 'active'" class="submit-vote-section list-submit">
-        <NcButton
-          type="primary"
-          size="medium"
-          :disabled="!canSubmitMultiVote"
-          @click="submitMultiVote"
-        >
-          <Vote :size="18" />
-          {{ getSubmitButtonText() }}
-        </NcButton>
-      </div>
-    </div>
-
-    <!-- Results Layout -->
-    <div v-else-if="currentLayout === 'results'" class="results-layout">
-      <div class="results-summary">
-        <div class="summary-card">
-          <div class="summary-icon">
-            <Users :size="24" />
-          </div>
-          <div class="summary-content">
-            <div class="summary-value">{{ totalVotes }}</div>
-            <div class="summary-label">{{ t('agora', 'Total Votes') }}</div>
-          </div>
-        </div>
-        <div class="summary-card">
-          <div class="summary-icon">
-            <Trophy :size="24" />
-          </div>
-          <div class="summary-content">
-            <div class="summary-value">{{ winner?.title || '-' }}</div>
-            <div class="summary-label">{{ t('agora', 'Current Leader') }}</div>
-          </div>
-        </div>
-        <div class="summary-card">
-          <div class="summary-icon">
-            <TrendingUp :size="24" />
-          </div>
-          <div class="summary-content">
-            <div class="summary-value">{{ winnerPercentage }}%</div>
-            <div class="summary-label">{{ t('agora', 'Leading Percentage') }}</div>
-          </div>
-        </div>
-        <div class="summary-card">
-          <div class="summary-icon">
-            <Clock :size="24" />
-          </div>
-          <div class="summary-content">
-            <div class="summary-value">{{ timeRemaining }}</div>
-            <div class="summary-label">{{ t('agora', 'Time Remaining') }}</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="charts-section">
-        <div class="chart-container">
-          <h4>{{ t('agora', 'Vote Distribution') }}</h4>
-          <canvas ref="pieChartCanvas"></canvas>
-        </div>
-        <div class="chart-container">
-          <h4>{{ t('agora', 'Vote Ranking') }}</h4>
-          <canvas ref="barChartCanvas"></canvas>
-        </div>
-      </div>
-
-      <div class="ranking-table">
-        <h4>{{ t('agora', 'Detailed Ranking') }}</h4>
-        <table>
-          <thead>
-            <tr>
-              <th>{{ t('agora', 'Rank') }}</th>
-              <th>{{ t('agora', 'Option') }}</th>
-              <th>{{ t('agora', 'Votes') }}</th>
-              <th>{{ t('agora', 'Percentage') }}</th>
-              <th>{{ t('agora', 'Status') }}</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(option, index) in rankedOptions" :key="option.id">
-              <td class="rank-cell">
-                <span class="rank-badge" :class="getRankClass(index)">
-                  {{ index + 1 }}
-                </span>
-              </td>
-              <td>
-                <div class="option-name">
-                  {{ option.title }}
+        <!-- Current voting engine info -->
+        <!-- Current voting engine info -->
+        <div v-else-if="activeEngine" class="engine-info">
+            <div class="engine-info-left">
+                <div class="engine-badges">
+                    <span class="engine-badge">
+                        <component :is="getEngineIcon(activeEngine.engine)" :size="14" />
+                        {{ getEngineLabel(activeEngine.engine) }}
+                    </span>
+                    <span v-if="activeEngine.purpose" class="purpose-badge" :class="`purpose-${activeEngine.purpose}`">
+                        <span class="purpose-icon">{{ getPurposeIcon(activeEngine.purpose) }}</span>
+                        <span class="purpose-label">{{ getPurposeLabel(activeEngine.purpose) }}</span>
+                    </span>
+                    <span class="behavior-badge" :class="currentEngine?.behavior">
+                        <span v-if="currentEngine?.behavior === 'multi'">📋 {{ t('agora', 'Multi-choice') }}</span>
+                        <span v-else-if="currentEngine?.behavior === 'flex'">🔄 {{ t('agora', 'Flexible') }}</span>
+                        <span v-else>✓ {{ t('agora', 'Single-choice') }}</span>
+                    </span>
                 </div>
-              </td>
-              <td class="votes-cell">{{ getOptionVoteCount(option.id) }}</td>
-              <td class="percentage-cell">
-                <div class="mini-progress">
-                  <div
-                    class="mini-progress-fill"
-                    :style="{ width: getPercentage(option) + '%' }"
-                  />
-                  <span>{{ getPercentage(option) }}%</span>
-                </div>
-              </td>
-              <td>
-                <span v-if="option.metadata?.status" class="status-tag" :class="option.metadata.status">
-                  {{ option.metadata.status }}
+                <span v-if="activeEngine.title" class="engine-title">{{ activeEngine.title }}</span>
+            </div>
+            <div class="engine-info-right">
+                <span v-if="voteLimitInfo" class="vote-limit-info">
+                    ℹ️ {{ voteLimitInfo }}
                 </span>
-                <span v-else>-</span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
+                <NcButton
+                        v-if="canManageVote"
+                        type="tertiary"
+                        size="small"
+                        @click="openEditEngineModal"
+                        >
+                        <template #icon>
+                            <Settings :size="14" />
+                        </template>
+                {{ t('agora', 'Edit') }}
+                </NcButton>
+            </div>
+        </div>
 
-    <!-- Empty state -->
-    <div v-if="voteOptions.length === 0 && !isLoadingEngines" class="empty-state">
-      <component :is="getOptionTypeIcon('vote')" :size="48" />
-      <h4>{{ t('agora', 'No options to vote on yet') }}</h4>
-      <p>{{ t('agora', 'Add options to start the voting process') }}</p>
-      <NcButton
-        v-if="!isReadonly && canManageVote"
-        type="primary"
-        @click="showAddToVoteModal = true"
-      >
-        <template #icon>
-          <Plus :size="16" />
-        </template>
-        {{ t('agora', 'Add Option') }}
-      </NcButton>
-    </div>
+        <!-- Cards Layout -->
+        <div v-if="currentLayout === 'cards'" class="cards-layout">
+            <div class="cards-grid">
+                <div
+                        v-for="option in voteOptions"
+                        :key="option.id"
+                        class="vote-card-wrapper"
+                        :class="{ 'selected-for-vote': isSelectedForVote(option.id) }"
+                        >
+                        <OptionCard
+                                :option="option"
+                                :compact="false"
+                                :show-action="!isReadonly && canManageVote"
+                                :progress-bar="true"
+                                :inquiry-id="inquiryId"
+                                :family-type="family?.key || 'vote'"
+                                @click="handleOptionClick(option)"
+                                >
+                                <!-- Selection indicator for multi-vote -->
+                        <template v-if="currentEngine?.behavior === 'multi' && canVote && !hasUserVoted && activeEngine?.status === 'active'">
+                            <div class="selection-checkbox">
+                                <input
+                                        type="checkbox"
+                                        :checked="isSelectedForVote(option.id)"
+                                        @change="toggleOptionSelection(option.id)"
+                                        @click.stop
+                                        />
+                            </div>
+                        </template>
 
-    <!-- Modals -->
-    <EngineSelectorModal
-      v-if="showEngineModal"
-      :mode="engineModalMode"
-      :existing-engine="activeEngine"
-      :option-count="voteOptions.length"
-      @close="showEngineModal = false"
-      @save="handleEngineSave"
-    />
-    
-    <AddOptionToFamily
-      v-if="showAddToVoteModal"
-      :inquiry-id="inquiryId"
-      family-type="vote"
-      :allowed-families="allowedFamiliesForVote"
-      @close="closeAddToVoteModal"
-      @success="handleAddSuccess"
-    />
-  </div>
+                        <!-- Rank input for ranked voting -->
+                        <template v-if="effectiveEngineId === 'ranking' && canVote && !hasUserVoted && activeEngine?.status === 'active'">
+                            <div class="rank-input">
+                                <label>{{ t('agora', 'Rank') }}</label>
+                                <select v-model="rankings[option.id]" @click.stop>
+                                    <option :value="null">-</option>
+                                    <option v-for="i in maxRank" :key="i" :value="i">{{ i }}</option>
+                                </select>
+                            </div>
+                        </template>
+
+                        <!-- Score input for score voting -->
+                        <template v-if="(effectiveEngineId === 'score' || effectiveEngineId === 'star') && canVote && !hasUserVoted && activeEngine?.status === 'active'">
+                            <div class="score-input">
+                                <input
+                                        v-model="scores[option.id]"
+                                        type="range"
+                                        :min="scoreMin"
+                                        :max="scoreMax"
+                                        @click.stop
+                                        />
+                                <span>{{ scores[option.id] || 0 }}</span>
+                            </div>
+                        </template>
+
+                        <!-- Grade input for majority judgment -->
+                        <template v-if="effectiveEngineId === 'majority_judgment' && canVote && !hasUserVoted && activeEngine?.status === 'active'">
+                            <div class="grade-input">
+                                <select v-model="grades[option.id]" @click.stop>
+                                    <option :value="null">-</option>
+                                    <option v-for="grade in gradeOptions" :key="grade" :value="grade">
+                                    {{ grade }}
+                                    </option>
+                                </select>
+                            </div>
+                        </template>
+
+                        <!-- Reaction buttons for reaction voting -->
+                        <template v-if="effectiveEngineId === 'reaction' && canVote && !hasUserVoted && activeEngine?.status === 'active'">
+                            <div class="reaction-input">
+                                <button
+                                        v-for="reaction in allowedReactions"
+                                        :key="reaction"
+                                        class="reaction-btn"
+                                        :class="{ active: userReactions[option.id] === reaction }"
+                                        @click.stop="setReaction(option.id, reaction)"
+                                        >
+                                        {{ reaction }}
+                                </button>
+                            </div>
+                        </template>
+
+                        <!-- Vote button for single-choice engines -->
+                        <template v-else-if="currentEngine?.behavior === 'single' && canVote && !hasUserVotedFor(option.id) && !hasUserVoted && activeEngine?.status === 'active'">
+                            <NcButton
+                                    type="primary"
+                                    size="small"
+                                    @click.stop="voteForOption(option)"
+                                    >
+                                    <template #icon>
+                                        <Vote :size="16" />
+                                    </template>
+                            {{ t('agora', 'Vote') }}
+                            </NcButton>
+                        </template>
+
+                        <!-- Already voted indicator -->
+                        <div v-else-if="hasUserVotedFor(option.id) && activeEngine?.status === 'active'" class="voted-badge">
+                            <CheckCircle :size="16" />
+                            {{ t('agora', 'Voted') }}
+                        </div>
+
+                        <!-- Custom progress bar slot -->
+                        <template #progress-bar>
+                            <div class="vote-progress-section">
+                                <div class="vote-stats">
+                                    <div class="votes-count">
+                                        <ThumbsUp :size="14" />
+                                        <strong>{{ getOptionVoteCount(option.id) }}</strong>
+                                        {{ t('agora', 'votes') }}
+                                    </div>
+                                    <div class="percentage">
+                                        {{ getPercentage(option) }}%
+                                    </div>
+                                </div>
+                                <div class="progress-bar">
+                                    <div
+                                            class="progress-fill"
+                                            :style="{ width: getPercentage(option) + '%' }"
+                                            :class="{
+                                                    'fill-leading': option.metadata?.status === 'leading',
+                                                    'fill-selected': option.metadata?.status === 'selected'
+                                                    }"
+                                            />
+                                    </div>
+                                </div>
+                        </template>
+                        </OptionCard>
+                            </div>
+                </div>
+
+                <!-- Submit button for multi/flex votes -->
+                <div v-if="(currentEngine?.behavior === 'multi' || currentEngine?.behavior === 'flex') && canVote && !hasUserVoted && activeEngine?.status === 'active'" class="submit-vote-section">
+                    <NcButton
+                            type="primary"
+                            size="medium"
+                            :disabled="!canSubmitMultiVote"
+                            @click="submitMultiVote"
+                            >
+                            <template #icon>
+                                <Vote :size="18" />
+                            </template>
+                    {{ getSubmitButtonText() }}
+                    </NcButton>
+                    <span v-if="voteSelectionInfo" class="selection-info">{{ voteSelectionInfo }}</span>
+                </div>
+            </div>
+
+            <!-- List Layout -->
+            <div v-else-if="currentLayout === 'list'" class="list-layout">
+                <div class="list-header">
+                    <div class="list-cell rank">{{ t('agora', 'Rank') }}</div>
+                    <div class="list-cell option">{{ t('agora', 'Option') }}</div>
+                    <div class="list-cell votes">{{ t('agora', 'Votes') }}</div>
+                    <div class="list-cell percentage">{{ t('agora', 'Percentage') }}</div>
+                    <div class="list-cell action">{{ t('agora', 'Action') }}</div>
+                </div>
+
+                <div
+                        v-for="(option, index) in rankedOptions"
+                        :key="option.id"
+                        class="list-row"
+                        :class="{
+                                'is-leading': option.metadata?.status === 'leading',
+                                'user-voted': hasUserVotedFor(option.id),
+                                'selected-for-vote': isSelectedForVote(option.id)
+                                }"
+                        >
+                        <div class="list-cell rank">
+                            <div class="rank-number">
+                                <span v-if="index === 0" class="medal">🥇</span>
+                                <span v-else-if="index === 1" class="medal">🥈</span>
+                                <span v-else-if="index === 2" class="medal">🥉</span>
+                                <span v-else>{{ index + 1 }}</span>
+                            </div>
+                        </div>
+                        <div class="list-cell option">
+                            <OptionCard
+                                    :option="option"
+                                    :compact="true"
+                                    :inline="true"
+                                    :show-action="false"
+                                    :family-type="family?.key || 'vote'"
+                                    :inquiry-id="inquiryId"
+                                    @click="handleOptionClick(option)"
+                                    />
+                        </div>
+                        <div class="list-cell votes">
+                            <strong>{{ getOptionVoteCount(option.id) }}</strong>
+                        </div>
+                        <div class="list-cell percentage">
+                            <div class="percentage-bar">
+                                <div
+                                        class="percentage-fill"
+                                        :style="{ width: getPercentage(option) + '%' }"
+                                        />
+                                    <span class="percentage-text">{{ getPercentage(option) }}%</span>
+                                </div>
+                            </div>
+                            <div class="list-cell action">
+                                <NcButton
+                                        v-if="currentEngine?.behavior === 'single' && canVote && !hasUserVotedFor(option.id) && !hasUserVoted && activeEngine?.status === 'active'"
+                                        type="primary"
+                                        size="small"
+                                        @click.stop="voteForOption(option)"
+                                        >
+                                        <Vote :size="14" />
+                                        {{ t('agora', 'Vote') }}
+                                </NcButton>
+
+                                <input
+                                        v-else-if="currentEngine?.behavior === 'multi' && canVote && !hasUserVoted && activeEngine?.status === 'active'"
+                                        type="checkbox"
+                                        :checked="isSelectedForVote(option.id)"
+                                        @change="toggleOptionSelection(option.id)"
+                                        />
+
+                                <select
+                                        v-else-if="effectiveEngineId === 'ranking' && canVote && !hasUserVoted && activeEngine?.status === 'active'"
+                                        v-model="rankings[option.id]"
+                                        class="rank-select-mini"
+                                        >
+                                        <option :value="null">-</option>
+                                        <option v-for="i in maxRank" :key="i" :value="i">{{ i }}</option>
+                                </select>
+
+                                <input
+                                        v-else-if="(effectiveEngineId === 'score' || effectiveEngineId === 'star') && canVote && !hasUserVoted && activeEngine?.status === 'active'"
+                                        v-model="scores[option.id]"
+                                        type="number"
+                                        :min="scoreMin"
+                                        :max="scoreMax"
+                                        class="score-input-mini"
+                                        />
+
+                                <div v-else-if="hasUserVotedFor(option.id) && activeEngine?.status === 'active'" class="voted-icon">
+                                    <CheckCircle :size="16" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div v-if="(currentEngine?.behavior === 'multi' || currentEngine?.behavior === 'flex') && canVote && !hasUserVoted && activeEngine?.status === 'active'" class="submit-vote-section list-submit">
+                            <NcButton
+                                    type="primary"
+                                    size="medium"
+                                    :disabled="!canSubmitMultiVote"
+                                    @click="submitMultiVote"
+                                    >
+                                    <Vote :size="18" />
+                                    {{ getSubmitButtonText() }}
+                            </NcButton>
+                        </div>
+                </div>
+
+                <!-- Results Layout -->
+                <div v-else-if="currentLayout === 'results'" class="results-layout">
+                    <div class="results-summary">
+                        <div class="summary-card">
+                            <div class="summary-icon">
+                                <Users :size="24" />
+                            </div>
+                            <div class="summary-content">
+                                <div class="summary-value">{{ totalVotes }}</div>
+                                <div class="summary-label">{{ t('agora', 'Total Votes') }}</div>
+                            </div>
+                        </div>
+                        <div class="summary-card">
+                            <div class="summary-icon">
+                                <Trophy :size="24" />
+                            </div>
+                            <div class="summary-content">
+                                <div class="summary-value">{{ winner?.title || '-' }}</div>
+                                <div class="summary-label">{{ t('agora', 'Current Leader') }}</div>
+                            </div>
+                        </div>
+                        <div class="summary-card">
+                            <div class="summary-icon">
+                                <TrendingUp :size="24" />
+                            </div>
+                            <div class="summary-content">
+                                <div class="summary-value">{{ winnerPercentage }}%</div>
+                                <div class="summary-label">{{ t('agora', 'Leading Percentage') }}</div>
+                            </div>
+                        </div>
+                        <div class="summary-card">
+                            <div class="summary-icon">
+                                <Clock :size="24" />
+                            </div>
+                            <div class="summary-content">
+                                <div class="summary-value">{{ timeRemaining }}</div>
+                                <div class="summary-label">{{ t('agora', 'Time Remaining') }}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="charts-section">
+                        <div class="chart-container">
+                            <h4>{{ t('agora', 'Vote Distribution') }}</h4>
+                            <canvas ref="pieChartCanvas"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <h4>{{ t('agora', 'Vote Ranking') }}</h4>
+                            <canvas ref="barChartCanvas"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="ranking-table">
+                        <h4>{{ t('agora', 'Detailed Ranking') }}</h4>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>{{ t('agora', 'Rank') }}</th>
+                                    <th>{{ t('agora', 'Option') }}</th>
+                                    <th>{{ t('agora', 'Votes') }}</th>
+                                    <th>{{ t('agora', 'Percentage') }}</th>
+                                    <th>{{ t('agora', 'Status') }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(option, index) in rankedOptions" :key="option.id">
+                                    <td class="rank-cell">
+                                        <span class="rank-badge" :class="getRankClass(index)">
+                                            {{ index + 1 }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="option-name">
+                                            {{ option.title }}
+                                        </div>
+                                    </td>
+                                    <td class="votes-cell">{{ getOptionVoteCount(option.id) }}</td>
+                                    <td class="percentage-cell">
+                                        <div class="mini-progress">
+                                            <div
+                                                    class="mini-progress-fill"
+                                                    :style="{ width: getPercentage(option) + '%' }"
+                                                    />
+                                                <span>{{ getPercentage(option) }}%</span>
+                                            </div>
+                                    </td>
+                                    <td>
+                                        <span v-if="option.metadata?.status" class="status-tag" :class="option.metadata.status">
+                                            {{ option.metadata.status }}
+                                        </span>
+                                        <span v-else>-</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                                        </div>
+                    </div>
+
+                    <!-- Empty state -->
+                    <div v-if="voteOptions.length === 0" class="empty-state">
+                        <component :is="getOptionTypeIcon('vote')" :size="48" />
+                        <h4>{{ t('agora', 'No options to vote on yet') }}</h4>
+                        <p>{{ t('agora', 'Add options to start the voting process') }}</p>
+                        <NcButton
+                                v-if="!isReadonly && canManageVote"
+                                type="primary"
+                                @click="showAddToVoteModal = true"
+                                >
+                                <template #icon>
+                                    <Plus :size="16" />
+                                </template>
+                        {{ t('agora', 'Add Option') }}
+                        </NcButton>
+                    </div>
+
+                    <!-- Modals -->
+                    <EngineSelectorModal
+                            v-if="showEngineModal"
+                            :mode="engineModalMode"
+                            :existing-engine="activeEngine"
+                            :option-count="voteOptions.length"
+                            @close="showEngineModal = false"
+                            @save="handleEngineSave"
+                            />
+
+                    <AddOptionToFamily
+                            v-if="showAddToVoteModal"
+                            :inquiry-id="inquiryId"
+                            family-type="vote"
+                            :allowed-families="allowedFamiliesForVote"
+                            @close="closeAddToVoteModal"
+                            @success="handleAddSuccess"
+                            />
+                </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue' 
+    import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue' 
 import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
@@ -661,7 +675,6 @@ const userReactions = ref<Record<number, string>>({})
 const showEngineModal = ref(false)
 const engineModalMode = ref<'create' | 'edit'>('create')
 const showAddToVoteModal = ref(false)
-const isLoadingEngines = ref(true)
 const selectedEngineId = ref<number | null>(null)
 
 // Layout
@@ -672,9 +685,24 @@ const currentLayout = ref<'cards' | 'list' | 'results'>('cards')
 // Computed: Active Engine from Store
 // ----------------------------------------------------------------------------
 
-const activeEngine = computed(() =>
-  engineStore.getActiveEngineForTarget('inquiry', props.inquiryId || 0)
-)
+// Get all engines for this inquiry
+const availableEnginesList = computed(() => {
+  return engineStore.getEnginesByInquiry(props.inquiryId || 0)
+})
+
+// Get active engine (first active one, or first in list if none active)
+const activeEngine = computed(() => {
+  const engines = availableEnginesList.value
+
+  if (engines.length === 0) return null
+
+  // First try to find an active engine
+  const active = engines.find(e => e.status === 'active')
+  if (active) return active
+
+  // If no active engine but we have engines, return the first one
+  return engines[0]
+})
 
 const effectiveEngineId = computed(() => activeEngine.value?.engine || 'binary')
 const effectiveEngineConfig = computed(() => activeEngine.value?.config || {})
@@ -690,41 +718,51 @@ const canManageVote = computed(() =>
 // ----------------------------------------------------------------------------
 // Computed: Available Engines for Dropdown
 // ----------------------------------------------------------------------------
-
-const availableEnginesList = computed(() => {
-  return engineStore.getEnginesByTarget('inquiry', props.inquiryId || 0)
-})
-
-const engineSelectOptions = computed(() => {
+/*const engineSelectOptions = computed(() => {
+  if (!availableEnginesList.value || availableEnginesList.value.length === 0) {
+    return []
+  }
   return availableEnginesList.value.map(engine => ({
     value: engine.id,
     label: engine.title || getEngineLabel(engine.engine),
     description: engine.description || getEngineDescription(engine.engine),
-    engine: engine.engine
+    engine: engine.engine 
   }))
-})
+})*/
 
-// Set selected engine ID when active engine changes
-watch(activeEngine, (newEngine) => {
-  if (newEngine) {
-    selectedEngineId.value = newEngine.id
-  } else {
-    selectedEngineId.value = null
-  }
-}, { immediate: true })
 
 // ----------------------------------------------------------------------------
 // Computed: Vote Options
 // ----------------------------------------------------------------------------
-
+/*
 const voteOptions = computed(() => filterOptionsByLayout(
     props.optionsByInquiry,
     'vote',
     props.optionTypes,
     props.family?.key || 'vote'
 ))
+*/
 
-const allowedFamiliesForVote = computed(() => ['kanban', 'vote', 'calendar', 'default'])
+const voteOptions = computed(() => {
+  // First filter by layout/type
+  const filteredByLayout = filterOptionsByLayout(
+    props.optionsByInquiry,
+    'vote',
+    props.optionTypes,
+    props.family?.key || 'vote'
+  )
+
+  // Then filter by engine target_ids if engine exists and has target_ids
+  if (activeEngine.value?.target_ids && activeEngine.value.target_ids.length > 0) {
+    return filteredByLayout.filter(opt => 
+      activeEngine.value!.target_ids!.includes(opt.id)
+    )
+  }
+
+  return filteredByLayout
+})
+
+const allowedFamiliesForVote = computed(() => ['kanban', 'proposal', 'calendar', 'default'])
 
 // ----------------------------------------------------------------------------
 // Computed: User's votes
@@ -748,7 +786,7 @@ const hasUserVoted = computed(() => {
 
 const optionResults = computed(() => {
   const results: Record<number, any> = {}
-  
+
   for (const opt of voteOptions.value) {
     const storeResult = resultStore.getResultByTarget(opt.id)
     if (storeResult) {
@@ -770,7 +808,7 @@ const optionResults = computed(() => {
 const getOptionVoteCount = (optionId: number): number => {
   const result = optionResults.value[optionId]
   if (!result) return 0
-  
+
   if (result.type === 'binary') {
     return (result.totals?.yes || 0) + (result.totals?.no || 0)
   }
@@ -843,6 +881,7 @@ const winnerPercentage = computed(() => {
   return getPercentage(winner.value)
 })
 
+
 // ----------------------------------------------------------------------------
 // Engine Config Helpers
 // ----------------------------------------------------------------------------
@@ -896,6 +935,32 @@ const minApprovalChoices = computed(() => {
   return 1
 })
 
+const getPurposeLabel = (purpose: string): string => {
+  const labels: Record<string, string> = {
+    'vote': t('agora', 'Vote'),
+    'deliberation': t('agora', 'Deliberation'),
+    'election': t('agora', 'Election'),
+    'consultation': t('agora', 'Consultation'),
+    'moderation': t('agora', 'Moderation'),
+    'prioritization': t('agora', 'Prioritization'),
+    'referendum': t('agora', 'Referendum')
+  }
+  return labels[purpose] || purpose
+}
+
+const getPurposeIcon = (purpose: string): string => {
+  const icons: Record<string, string> = {
+    'vote': '🗳️',
+    'deliberation': '💬',
+    'election': '🏛️',
+    'consultation': '📢',
+    'moderation': '⚖️',
+    'prioritization': '📊',
+    'referendum': '📜'
+  }
+  return icons[purpose] || '🎯'
+}
+
 // ----------------------------------------------------------------------------
 // Selection Helpers
 // ----------------------------------------------------------------------------
@@ -940,7 +1005,7 @@ function setReaction(optionId: number, reaction: string): void {
 }
 
 function handleOptionClick(option: Option): void {
-  if (currentEngine?.behavior === 'multi' && props.canVote && !hasUserVoted.value && activeEngine.value?.status === 'active') {
+  if (currentEngine.value?.behavior === 'multi' && props.canVote && !hasUserVoted.value && activeEngine.value?.status === 'active') {
     toggleOptionSelection(option.id)
   } else {
     emit('select', option)
@@ -959,7 +1024,7 @@ async function voteForOption(option: Option): Promise<void> {
   }
 
   let value: SupportValue = null
-  
+
   if (effectiveEngineId.value === 'binary') {
     value = 1
   } else if (effectiveEngineId.value === 'ternary') {
@@ -988,12 +1053,12 @@ async function voteForOption(option: Option): Promise<void> {
       supportData.optionId,
       supportData.support_engine_id
     )
-    
+
     // Refresh results
     if (activeEngine.value.id) {
       await resultStore.calculateAndGetResults(activeEngine.value.id)
     }
-    
+
     showSuccess(t('agora', 'Your vote for "{option}" has been recorded!', { option: option.title }))
     emit('update:options')
   } catch (error) {
@@ -1015,173 +1080,191 @@ async function submitMultiVote(): Promise<void> {
   // Enforce min choices for approval
   if (engineType === 'approval') {
     if (selectedOptions.value.size < minApprovalChoices.value) {
-      showError(t('agora', 'You must select at least {min} options', { min: minApprovalChoices.value }))
-      return
-    }
-    for (const optionId of selectedOptions.value) {
-      supports.push({
-        inquiryId: props.inquiryId!,
-        optionId,
-        groupId: 0,
-        userId: props.userId,
-        support_engine_id: activeEngine.value.id,
-        value: 1,
-        created: Date.now()
-      })
-    }
-  } else if (engineType === 'ranking') {
-    for (const [optionId, rank] of Object.entries(rankings.value)) {
-      if (rank !== null) {
-        supports.push({
-          inquiryId: props.inquiryId!,
-          optionId: parseInt(optionId, 10),
-          groupId: 0,
-          userId: props.userId,
-          support_engine_id: activeEngine.value.id,
-          value: rank,
-          created: Date.now()
-        })
-      }
-    }
-  } else if (engineType === 'score' || engineType === 'star') {
-    for (const [optionId, score] of Object.entries(scores.value)) {
-      if (score !== null && score !== undefined) {
-        supports.push({
-          inquiryId: props.inquiryId!,
-          optionId: parseInt(optionId, 10),
-          groupId: 0,
-          userId: props.userId,
-          support_engine_id: activeEngine.value.id,
-          value: score,
-          created: Date.now()
-        })
-      }
-    }
-  } else if (engineType === 'majority_judgment') {
-    for (const [optionId, grade] of Object.entries(grades.value)) {
-      if (grade !== null) {
-        supports.push({
-          inquiryId: props.inquiryId!,
-          optionId: parseInt(optionId, 10),
-          groupId: 0,
-          userId: props.userId,
-          support_engine_id: activeEngine.value.id,
-          value: grade,
-          created: Date.now()
-        })
-      }
-    }
-  } else if (engineType === 'reaction') {
-    for (const [optionId, reaction] of Object.entries(userReactions.value)) {
-      if (reaction) {
-        supports.push({
-          inquiryId: props.inquiryId!,
-          optionId: parseInt(optionId, 10),
-          groupId: 0,
-          userId: props.userId,
-          support_engine_id: activeEngine.value.id,
-          value: reaction,
-          created: Date.now()
-        })
-      }
-    }
-  }
+              showError(t('agora', 'You must select at least {min} options', { min: minApprovalChoices.value }))
+              return
+              }
+              for (const optionId of selectedOptions.value) {
+              supports.push({
+              inquiryId: props.inquiryId!,
+              optionId,
+              groupId: 0,
+              userId: props.userId,
+              support_engine_id: activeEngine.value.id,
+              value: 1,
+              created: Date.now()
+              })
+              }
+              } else if (engineType === 'ranking') {
+              for (const [optionId, rank] of Object.entries(rankings.value)) {
+              if (rank !== null) {
+              supports.push({
+              inquiryId: props.inquiryId!,
+              optionId: parseInt(optionId, 10),
+              groupId: 0,
+              userId: props.userId,
+              support_engine_id: activeEngine.value.id,
+              value: rank,
+              created: Date.now()
+              })
+              }
+              }
+              } else if (engineType === 'score' || engineType === 'star') {
+              for (const [optionId, score] of Object.entries(scores.value)) {
+              if (score !== null && score !== undefined) {
+              supports.push({
+              inquiryId: props.inquiryId!,
+              optionId: parseInt(optionId, 10),
+              groupId: 0,
+              userId: props.userId,
+              support_engine_id: activeEngine.value.id,
+              value: score,
+              created: Date.now()
+              })
+              }
+              }
+              } else if (engineType === 'majority_judgment') {
+              for (const [optionId, grade] of Object.entries(grades.value)) {
+              if (grade !== null) {
+              supports.push({
+              inquiryId: props.inquiryId!,
+              optionId: parseInt(optionId, 10),
+              groupId: 0,
+              userId: props.userId,
+              support_engine_id: activeEngine.value.id,
+              value: grade,
+              created: Date.now()
+              })
+              }
+              }
+              } else if (engineType === 'reaction') {
+              for (const [optionId, reaction] of Object.entries(userReactions.value)) {
+              if (reaction) {
+              supports.push({
+              inquiryId: props.inquiryId!,
+              optionId: parseInt(optionId, 10),
+              groupId: 0,
+              userId: props.userId,
+              support_engine_id: activeEngine.value.id,
+              value: reaction,
+              created: Date.now()
+              })
+              }
+              }
+              }
 
-  if (supports.length === 0) {
-    showError(t('agora', 'No votes to submit'))
-    return
-  }
+              if (supports.length === 0) {
+              showError(t('agora', 'No votes to submit'))
+              return
+              }
 
-  try {
-    for (const support of supports) {
-      await supportsStore.addSupport(
-        support.inquiryId,
-        support.userId,
-        support.value,
-        support.optionId,
-        support.support_engine_id
-      )
-    }
-    if (activeEngine.value.id) {
-      await resultStore.calculateAndGetResults(activeEngine.value.id)
-    }
-    
-    const voteCount = supports.length
-    showSuccess(t('agora', 'Your vote for {count} {countLabel} has been recorded!', {
-      count: voteCount,
-      countLabel: voteCount === 1 ? t('agora', 'option') : t('agora', 'options')
-    }))
+              try {
+              for (const support of supports) {
+              await supportsStore.addSupport(
+              support.inquiryId,
+              support.userId,
+              support.value,
+              support.optionId,
+              support.support_engine_id
+              )
+              }
+              if (activeEngine.value.id) {
+              await resultStore.calculateAndGetResults(activeEngine.value.id)
+              }
 
-    // Clear selections
-    selectedOptions.value.clear()
-    rankings.value = {}
-    scores.value = {}
-    grades.value = {}
-    userReactions.value = {}
-    
-    emit('update:options')
-  } catch (error) {
-    console.error('Failed to submit multi-vote:', error)
-    showError(t('agora', 'Failed to submit votes'))
-  }
-}
+              const voteCount = supports.length
+              showSuccess(t('agora', 'Your vote for {count} {countLabel} has been recorded!', {
+              count: voteCount,
+              countLabel: voteCount === 1 ? t('agora', 'option') : t('agora', 'options')
+              }))
 
-// ----------------------------------------------------------------------------
-// Engine Management Handlers
-// ----------------------------------------------------------------------------
+              // Clear selections
+              selectedOptions.value.clear()
+              rankings.value = {}
+              scores.value = {}
+              grades.value = {}
+              userReactions.value = {}
 
-function openEngineModal(): void {
-  engineModalMode.value = activeEngine.value ? 'edit' : 'create'
+              emit('update:options')
+              } catch (error) {
+              console.error('Failed to submit multi-vote:', error)
+              showError(t('agora', 'Failed to submit votes'))
+              }
+              }
+
+              // ----------------------------------------------------------------------------
+              // Engine Management Handlers
+              // ----------------------------------------------------------------------------
+    function openCreateEngineModal(): void {
+  engineModalMode.value = 'create'
   showEngineModal.value = true
 }
 
-async function handleEngineSave(data: {
-  title: string
-  description: string
-  engine: string
-  config: Record<string, unknown>
+function openEditEngineModal(): void {
+  engineModalMode.value = 'edit'
+  showEngineModal.value = true
+}
+
+              function openEngineModal(): void {
+  if (activeEngine.value) {
+    engineModalMode.value = 'edit'
+  } else {
+    engineModalMode.value = 'create'
+  }
+  showEngineModal.value = true
+}
+
+              async function handleEngineSave(data: {
+              title: string
+              description: string
+              engine: string
+              purpose: string
+              config: Record<string, unknown>
   status?: 'draft' | 'active'
 }): Promise<void> {
   try {
     if (engineModalMode.value === 'create') {
       await engineStore.createEngine({
         engine: data.engine,
-        type: 'vote',
+        purpose: data.purpose,
         title: data.title,
         description: data.description,
         inquiry_group_id: 0,
         inquiry_id: props.inquiryId!,
-        status: 'active',
+        status: 'draft',
         config: data.config,
-        target_type: 'inquiry',
-        target_ids: [props.inquiryId!],
+        target_type: 'option',
+        target_ids: voteOptions.value.map(opt => opt.id),
         metadata: { phase: 'voting' }
       })
       showSuccess(t('agora', 'Voting method created successfully'))
     } else if (activeEngine.value) {
       await engineStore.updateEngine(activeEngine.value.id, {
-        title: data.title,
-        description: data.description,
-        engine: data.engine,
-        config: data.config,
-        status: data.status || activeEngine.value.status
+      title: data.title,
+  description: data.description,
+  engine: data.engine,
+  purpose: data.purpose,
+  config: data.config,
+  status: data.status,
+  target_type: activeEngine.value.target_type, 
+  target_ids:voteOptions.value.map(opt => opt.id),
+
       })
       showSuccess(t('agora', 'Voting method updated successfully'))
     }
-    
+
     // Reload engines and results
     await engineStore.loadEnginesByInquiry(props.inquiryId!)
     if (activeEngine.value) {
       await resultStore.loadEngineResults(activeEngine.value.id)
     }
-    
+
     // Clear any pending selections
     selectedOptions.value.clear()
     rankings.value = {}
     scores.value = {}
     grades.value = {}
     userReactions.value = {}
-    
+
   } catch (error) {
     console.error('Failed to configure voting method:', error)
     showError(t('agora', 'Failed to configure voting method'))
@@ -1190,15 +1273,16 @@ async function handleEngineSave(data: {
     showEngineModal.value = false
   }
 }
-
-async function handleEngineChange(selected: { value: number }): Promise<void> {
-  const engine = availableEnginesList.value.find(e => e.id === selected.value)
+async function handleEngineChange(engineId: number): Promise<void> {
+  const engine = availableEnginesList.value.find(e => e.id === engineId)
   if (engine && engine.id !== activeEngine.value?.id) {
-    // Ask for confirmation before switching engines
     const confirmed = confirm(t('agora', 'Switching the voting method will reset all votes. Continue?'))
     if (confirmed) {
       try {
-        await engineStore.setActiveEngine('inquiry', props.inquiryId!, engine.id)
+        if (activeEngine.value) {
+          await engineStore.updateEngine(activeEngine.value.id, { status: 'draft' })
+        }
+        await engineStore.updateEngine(engine.id, { status: 'active' })
         await engineStore.loadEnginesByInquiry(props.inquiryId!)
         if (activeEngine.value) {
           await resultStore.loadEngineResults(activeEngine.value.id)
@@ -1212,11 +1296,37 @@ async function handleEngineChange(selected: { value: number }): Promise<void> {
   }
 }
 
-async function handleAddSuccess(): Promise<void> {
+async function handleAddSuccess(createdOption?: Option | Option[]): Promise<void> {
   showAddToVoteModal.value = false
   refreshKey.value = refreshKey.value + 1
   emit('update:options')
   await nextTick()
+
+  // Update engine target_ids if engine exists and we have a new option
+  if (activeEngine.value && canManageVote.value && createdOption) {
+    const newOptionIds = Array.isArray(createdOption) 
+      ? createdOption.map(o => o.id) 
+      : [createdOption.id]
+
+    if (newOptionIds.length > 0) {
+      const currentTargets = activeEngine.value.target_ids || []
+      const updatedTargets = [...new Set([...currentTargets, ...newOptionIds])]
+
+      // Only update if there are new targets
+      if (updatedTargets.length > currentTargets.length) {
+        try {
+          await engineStore.updateEngine(activeEngine.value.id, {
+            target_ids: updatedTargets
+          })
+          showSuccess(t('agora', 'Voting method updated with new options'))
+        } catch (error) {
+          console.error('Failed to update engine target_ids', error)
+          showError(t('agora', 'Could not link new option to voting method'))
+        }
+      }
+    }
+  }
+
   showSuccess(t('agora', 'Option added successfully'))
 }
 
@@ -1288,24 +1398,13 @@ watch([rankedOptions, currentLayout], () => {
   }
 })
 
+watch(activeEngine, (newEngine) => {
+  selectedEngineId.value = newEngine?.id || null
+}, { immediate: true })
+
 // ----------------------------------------------------------------------------
 // Lifecycle
 // ----------------------------------------------------------------------------
-
-onMounted(async () => {
-  isLoadingEngines.value = true
-  try {
-    await engineStore.loadEnginesByInquiry(props.inquiryId || 0)
-    if (activeEngine.value) {
-      await resultStore.loadEngineResults(activeEngine.value.id)
-    }
-  } catch (error) {
-    console.error('Failed to load engines:', error)
-  } finally {
-    isLoadingEngines.value = false
-  }
-})
-
 onUnmounted(() => {
   if (pieChart) pieChart.destroy()
   if (barChart) barChart.destroy()
@@ -1319,6 +1418,7 @@ const getEngineLabel = (engineId: string): string => ENGINE_DEFINITIONS[engineId
 const getEngineDescription = (engineId: string): string => ENGINE_DEFINITIONS[engineId]?.description || t('agora', 'Vote using this method')
 
 const getEngineIcon = (engineId: string) => {
+  if (!engineId) return Vote
   const icons: Record<string, unknown> = {
     binary: ThumbsUp,
     ternary: Scale,
@@ -1338,7 +1438,6 @@ const getEngineIcon = (engineId: string) => {
   }
   return icons[engineId] || Vote
 }
-
 const getSubmitButtonText = (): string => {
   if (effectiveEngineId.value === 'approval') return t('agora', 'Submit selections')
   if (effectiveEngineId.value === 'ranking') return t('agora', 'Submit ranking')
@@ -1428,9 +1527,9 @@ const canSubmitMultiVote = computed(() => {
     if (uniqueRanks.size !== ranks.length) return false
     const maxRankValue = (effectiveEngineConfig.value.max_rank as number) || voteOptions.value.length
     return ranks.length > 0 && Math.max(...ranks) <= maxRankValue
-  }
-  if (effectiveEngineId.value === 'score' || effectiveEngineId.value === 'star') {
-    return Object.values(scores.value).some(s => s !== null && s !== undefined)
+              }
+              if (effectiveEngineId.value === 'score' || effectiveEngineId.value === 'star') {
+              return Object.values(scores.value).some(s => s !== null && s !== undefined)
   }
   if (effectiveEngineId.value === 'majority_judgment') {
     return Object.values(grades.value).some(g => g !== null)
@@ -1447,180 +1546,171 @@ const timeRemaining = computed(() => {
   const now = new Date()
   const diff = end.getTime() - now.getTime()
   if (diff <= 0) return t('agora', 'Voting ended')
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24))
-  const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
-  if (days > 0) return t('agora', '{days}d {hours}h', { days, hours })
+              const days = Math.floor(diff / (1000 * 60 * 60 * 24))
+              const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+              if (days > 0) return t('agora', '{days}d {hours}h', { days, hours })
   return t('agora', '{hours}h', { hours })
 })
 </script>
 
 <style scoped lang="scss">
 .vote-layout {
-  padding: 20px;
+    padding: 20px;
 
-  .vote-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 24px;
-    flex-wrap: wrap;
-    gap: 16px;
-
-    .header-info {
-      flex: 1;
-
-      .vote-metadata {
+    .vote-header {
         display: flex;
-        gap: 16px;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 24px;
         flex-wrap: wrap;
+        gap: 16px;
 
-        .metadata-badge {
-          display: inline-flex;
-          align-items: center;
-          gap: 6px;
-          padding: 4px 12px;
-          background: var(--color-background-dark);
-          border-radius: 20px;
-          font-size: 13px;
-          color: var(--color-text-lighter);
-        }
-      }
-    }
-
-    .action-bar {
-      display: flex;
-      gap: 12px;
-      align-items: center;
-      flex-wrap: wrap;
-
-      .layout-switcher {
-        display: flex;
-        gap: 8px;
-        background: var(--color-background-dark);
-        padding: 4px;
-        border-radius: 12px;
-      }
-
-      .engine-selector {
-        min-width: 200px;
-        
-        .engine-select {
-          width: 100%;
-          
-          :deep(.vs__dropdown-toggle) {
-            border-radius: 8px;
-            background: var(--color-main-background);
-          }
-        }
-        
-        .engine-option {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          padding: 8px;
-          
-          .engine-option-icon {
-            flex-shrink: 0;
-            color: var(--color-primary-element);
-          }
-          
-          .engine-option-content {
+        .header-info {
             flex: 1;
-            
-            .engine-option-label {
-              font-weight: 500;
-              font-size: 13px;
+
+            .vote-metadata {
+                display: flex;
+                gap: 16px;
+                flex-wrap: wrap;
+
+                .metadata-badge {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 6px;
+                    padding: 4px 12px;
+                    background: var(--color-background-dark);
+                    border-radius: 20px;
+                    font-size: 13px;
+                    color: var(--color-text-lighter);
+                }
             }
-            
-            .engine-option-desc {
-              font-size: 11px;
-              color: var(--color-text-lighter);
-            }
-          }
         }
-        
-        .engine-selected {
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          
-          svg {
+
+        .action-bar {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+
+            .layout-switcher {
+                display: flex;
+                gap: 8px;
+                background: var(--color-background-dark);
+                padding: 4px;
+                border-radius: 12px;
+            }
+
+            .engine-selector {
+                min-width: 200px;
+
+                .engine-select {
+                    width: 100%;
+
+                    :deep(.vs__dropdown-toggle) {
+                        border-radius: 8px;
+                        background: var(--color-main-background);
+                    }
+                }
+
+                .engine-option {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    padding: 8px;
+
+                    .engine-option-icon {
+                        flex-shrink: 0;
+                        color: var(--color-primary-element);
+                    }
+
+                    .engine-option-content {
+                        flex: 1;
+
+                        .engine-option-label {
+                            font-weight: 500;
+                            font-size: 13px;
+                        }
+
+                        .engine-option-desc {
+                            font-size: 11px;
+                            color: var(--color-text-lighter);
+                        }
+                    }
+                }
+
+                .engine-selected {
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+
+                    svg {
+                        color: var(--color-primary-element);
+                    }
+                }
+            }
+
+            .add-to-vote-btn {
+                background: linear-gradient(135deg, var(--color-primary-element-light) 0%, var(--color-primary-element) 100%);
+                border: none;
+                color: white;
+
+                &:hover {
+                    transform: translateY(-1px);
+                    box-shadow: 0 2px 8px rgba(var(--color-primary-element-rgb), 0.3);
+                }
+            }
+        }
+    }
+
+    .no-engine-banner {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        padding: 24px;
+        background: linear-gradient(135deg, rgba(var(--color-primary-element-rgb), 0.05) 0%, rgba(var(--color-primary-element-rgb), 0.02) 100%);
+        border: 2px dashed var(--color-primary-element);
+        border-radius: 16px;
+        margin-bottom: 24px;
+
+        svg {
             color: var(--color-primary-element);
-          }
+            flex-shrink: 0;
         }
-      }
 
-      .add-to-vote-btn {
-        background: linear-gradient(135deg, var(--color-primary-element-light) 0%, var(--color-primary-element) 100%);
-        border: none;
-        color: white;
+        .banner-content {
+            flex: 1;
 
-        &:hover {
-          transform: translateY(-1px);
-          box-shadow: 0 2px 8px rgba(var(--color-primary-element-rgb), 0.3);
+            h4 {
+                margin: 0 0 4px 0;
+                font-size: 16px;
+                font-weight: 600;
+            }
+
+            p {
+                margin: 0;
+                font-size: 13px;
+                color: var(--color-text-lighter);
+            }
         }
-      }
     }
-  }
 
-  .no-engine-banner {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    padding: 24px;
-    background: linear-gradient(135deg, rgba(var(--color-primary-element-rgb), 0.05) 0%, rgba(var(--color-primary-element-rgb), 0.02) 100%);
-    border: 2px dashed var(--color-primary-element);
-    border-radius: 16px;
-    margin-bottom: 24px;
-    
-    svg {
-      color: var(--color-primary-element);
-      flex-shrink: 0;
-    }
-    
-    .banner-content {
-      flex: 1;
-      
-      h4 {
-        margin: 0 0 4px 0;
-        font-size: 16px;
-        font-weight: 600;
-      }
-      
-      p {
-        margin: 0;
-        font-size: 13px;
+    .loading-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 60px 20px;
+        gap: 16px;
         color: var(--color-text-lighter);
-      }
     }
-  }
+    .engine-badges {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
 
-  .loading-state {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 60px 20px;
-    gap: 16px;
-    color: var(--color-text-lighter);
-  }
-
-  .engine-info {
-    margin-bottom: 20px;
-    padding: 12px 16px;
-    background: var(--color-background-dark);
-    border-radius: 12px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 13px;
-
-    .engine-info-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      
-      .engine-badge {
+    .engine-badge {
         display: inline-flex;
         align-items: center;
         gap: 6px;
@@ -1628,519 +1718,652 @@ const timeRemaining = computed(() => {
         background: var(--color-main-background);
         padding: 4px 10px;
         border-radius: 20px;
-      }
-      
-      .engine-title {
-        color: var(--color-text-lighter);
         font-size: 12px;
-      }
     }
 
-    .engine-info-right {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      
-      .vote-limit-info {
-        color: var(--color-text-lighter);
+    .purpose-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px;
+        border-radius: 20px;
         font-size: 12px;
-      }
-    }
-  }
+        font-weight: 500;
 
-  .cards-layout {
-    .cards-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 20px;
-
-      .vote-card-wrapper {
-        position: relative;
-
-        &.selected-for-vote {
-          :deep(.option-card) {
-            border: 2px solid var(--color-primary-element);
-            box-shadow: 0 0 0 2px rgba(var(--color-primary-element-rgb), 0.2);
-          }
+        &.purpose-vote {
+            background: rgba(66, 184, 131, 0.15);
+            color: #2c8c5a;
         }
 
-        :deep(.option-card) {
-          height: 100%;
-          display: flex;
-          flex-direction: column;
-          transition: all 0.2s;
-
-          .selection-checkbox {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-
-            input {
-              width: 20px;
-              height: 20px;
-              cursor: pointer;
-            }
-          }
-
-          .rank-input, .score-input, .grade-input {
-            margin-top: 8px;
-            padding: 8px;
-            background: var(--color-background-dark);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-
-            label {
-              font-size: 12px;
-              color: var(--color-text-lighter);
-            }
-
-            select, input {
-              flex: 1;
-              padding: 4px 8px;
-              border: 1px solid var(--color-border);
-              border-radius: 4px;
-              background: var(--color-main-background);
-            }
-
-            input[type="range"] {
-              flex: 2;
-            }
-          }
-
-          .reaction-input {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            margin-top: 8px;
-            padding: 8px;
-            background: var(--color-background-dark);
-            border-radius: 8px;
-            
-            .reaction-btn {
-              font-size: 20px;
-              padding: 4px 8px;
-              border: 2px solid var(--color-border);
-              border-radius: 30px;
-              background: var(--color-main-background);
-              cursor: pointer;
-              transition: all 0.2s ease;
-              
-              &:hover {
-                transform: scale(1.05);
-                border-color: var(--color-primary-element);
-              }
-              
-              &.active {
-                background: rgba(var(--color-primary-element-rgb), 0.1);
-                border-color: var(--color-primary-element);
-                transform: scale(1.05);
-              }
-            }
-          }
-
-          .vote-progress-section {
-            margin-top: 12px;
-            padding-top: 12px;
-            border-top: 1px solid var(--color-border);
-
-            .vote-stats {
-              display: flex;
-              justify-content: space-between;
-              align-items: baseline;
-              margin-bottom: 8px;
-
-              .votes-count {
-                display: flex;
-                align-items: center;
-                gap: 4px;
-                font-size: 13px;
-              }
-
-              .percentage {
-                font-weight: 600;
-                color: var(--color-primary-element);
-              }
-            }
-
-            .progress-bar {
-              height: 8px;
-              background: var(--color-background-dark);
-              border-radius: 4px;
-              overflow: hidden;
-
-              .progress-fill {
-                height: 100%;
-                background: var(--color-primary-element);
-                transition: width 0.5s ease;
-
-                &.fill-leading {
-                  background: #f6c343;
-                }
-
-                &.fill-selected {
-                  background: #42b883;
-                }
-              }
-            }
-          }
-
-          .voted-badge {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            color: #42b883;
-            font-size: 13px;
-            font-weight: 500;
-            margin-top: 8px;
-            padding: 4px 8px;
-            background: rgba(66, 184, 131, 0.1);
-            border-radius: 20px;
-            width: fit-content;
-          }
-        }
-      }
-    }
-
-    .submit-vote-section {
-      margin-top: 24px;
-      padding: 20px;
-      background: var(--color-background-dark);
-      border-radius: 12px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 16px;
-
-      .selection-info {
-        font-size: 13px;
-        color: var(--color-text-lighter);
-      }
-    }
-  }
-
-  .list-layout {
-    background: var(--color-main-background);
-    border-radius: 16px;
-    border: 1px solid var(--color-border);
-    overflow: hidden;
-
-    .list-header {
-      display: grid;
-      grid-template-columns: 80px 1fr 100px 150px 100px;
-      background: var(--color-background-dark);
-      padding: 12px 16px;
-      font-weight: 600;
-      border-bottom: 1px solid var(--color-border);
-
-      .list-cell {
-        font-size: 13px;
-        text-transform: uppercase;
-        color: var(--color-text-lighter);
-      }
-    }
-
-    .list-row {
-      display: grid;
-      grid-template-columns: 80px 1fr 100px 150px 100px;
-      padding: 8px 16px;
-      border-bottom: 1px solid var(--color-border);
-      transition: background 0.2s;
-
-      &:hover {
-        background: var(--color-background-hover);
-      }
-
-      &.is-leading {
-        background: rgba(246, 195, 67, 0.05);
-      }
-
-      &.user-voted {
-        background: rgba(66, 184, 131, 0.05);
-      }
-
-      &.selected-for-vote {
-        background: rgba(var(--color-primary-element-rgb), 0.05);
-      }
-
-      .list-cell {
-        display: flex;
-        align-items: center;
-
-        .rank-number {
-          font-weight: 600;
-          .medal { font-size: 20px; }
+        &.purpose-deliberation {
+            background: rgba(52, 152, 219, 0.15);
+            color: #2980b9;
         }
 
-        .percentage-bar {
-          flex: 1;
-          position: relative;
-          height: 24px;
-          background: var(--color-background-dark);
-          border-radius: 12px;
-          overflow: hidden;
-
-          .percentage-fill {
-            height: 100%;
-            background: var(--color-primary-element);
-            transition: width 0.3s;
-          }
-
-          .percentage-text {
-            position: absolute;
-            left: 8px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--color-main-text);
-            z-index: 1;
-          }
+        &.purpose-election {
+            background: rgba(155, 89, 182, 0.15);
+            color: #8e44ad;
         }
 
-        input[type="checkbox"] {
-          width: 18px;
-          height: 18px;
-          cursor: pointer;
+        &.purpose-consultation {
+            background: rgba(241, 196, 15, 0.15);
+            color: #d4ac0d;
         }
 
-        .rank-select-mini, .score-input-mini {
-          width: 60px;
-          padding: 4px;
-          border: 1px solid var(--color-border);
-          border-radius: 4px;
+        &.purpose-moderation {
+            background: rgba(230, 126, 34, 0.15);
+            color: #ca6f1e;
         }
 
-        .voted-icon {
-          color: #42b883;
-        }
-      }
-    }
-
-    .submit-vote-section.list-submit {
-      padding: 16px;
-      text-align: center;
-      border-top: 1px solid var(--color-border);
-    }
-  }
-
-  .results-layout {
-    .results-summary {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 20px;
-      margin-bottom: 32px;
-
-      .summary-card {
-        background: var(--color-main-background);
-        border-radius: 16px;
-        padding: 20px;
-        display: flex;
-        align-items: center;
-        gap: 16px;
-        border: 1px solid var(--color-border);
-
-        .summary-icon {
-          width: 48px;
-          height: 48px;
-          background: var(--color-background-dark);
-          border-radius: 12px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: var(--color-primary-element);
+        &.purpose-prioritization {
+            background: rgba(26, 188, 156, 0.15);
+            color: #17a589;
         }
 
-        .summary-content {
-          flex: 1;
+        &.purpose-referendum {
+            background: rgba(231, 76, 60, 0.15);
+            color: #c0392b;
+        }
 
-          .summary-value {
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 4px;
-          }
-
-          .summary-label {
+        .purpose-icon {
             font-size: 12px;
-            color: var(--color-text-lighter);
-          }
         }
-      }
+
+        .purpose-label {
+            text-transform: capitalize;
+        }
     }
 
-    .charts-section {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 24px;
-      margin-bottom: 32px;
+    .behavior-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 500;
 
-      .chart-container {
-        background: var(--color-main-background);
-        border-radius: 16px;
-        padding: 20px;
-        border: 1px solid var(--color-border);
-
-        h4 {
-          margin: 0 0 16px 0;
-          font-size: 16px;
+        &.single {
+            background: rgba(52, 152, 219, 0.1);
+            color: #3498db;
         }
 
-        canvas {
-          max-height: 300px;
+        &.multi {
+            background: rgba(155, 89, 182, 0.1);
+            color: #9b59b6;
         }
-      }
+
+        &.flex {
+            background: rgba(230, 126, 34, 0.1);
+            color: #e67e22;
+        }
     }
 
-    .ranking-table {
-      background: var(--color-main-background);
-      border-radius: 16px;
-      border: 1px solid var(--color-border);
-      overflow: hidden;
+    .engine-title {
+        color: var(--color-text-lighter);
+        font-size: 12px;
+        background: var(--color-background-hover);
+        padding: 2px 8px;
+        border-radius: 12px;
+    }
 
-      h4 {
-        margin: 0;
-        padding: 16px 20px;
+    .vote-limit-info {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 11px;
+        padding: 2px 8px;
+        background: var(--color-background-hover);
+        border-radius: 12px;
+    }
+
+    .engine-info {
+        margin-bottom: 20px;
+        padding: 12px 16px;
         background: var(--color-background-dark);
-        border-bottom: 1px solid var(--color-border);
-        font-size: 16px;
-      }
+        border-radius: 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 13px;
 
-      table {
-        width: 100%;
-        border-collapse: collapse;
+        .engine-info-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
 
-        th, td {
-          padding: 12px 16px;
-          text-align: left;
-          border-bottom: 1px solid var(--color-border);
+            .engine-badge {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                font-weight: 500;
+                background: var(--color-main-background);
+                padding: 4px 10px;
+                border-radius: 20px;
+            }
+
+            .engine-title {
+                color: var(--color-text-lighter);
+                font-size: 12px;
+            }
         }
 
-        th {
-          background: var(--color-background-dark);
-          font-weight: 600;
-          font-size: 13px;
+        .engine-info-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+
+            .vote-limit-info {
+                color: var(--color-text-lighter);
+                font-size: 12px;
+            }
+            .engine-purpose-badge {
+                display: inline-flex;
+                align-items: center;
+                padding: 2px 8px;
+                background: rgba(var(--color-primary-element-rgb), 0.1);
+                border-radius: 12px;
+                font-size: 11px;
+                font-weight: 500;
+                color: var(--color-primary-element);
+                text-transform: capitalize;
+            }
+        }
+    }
+
+    .cards-layout {
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+
+            .vote-card-wrapper {
+                position: relative;
+
+                &.selected-for-vote {
+                    :deep(.option-card) {
+                        border: 2px solid var(--color-primary-element);
+                        box-shadow: 0 0 0 2px rgba(var(--color-primary-element-rgb), 0.2);
+                    }
+                }
+
+                :deep(.option-card) {
+                    height: 100%;
+                    display: flex;
+                    flex-direction: column;
+                    transition: all 0.2s;
+
+                    .selection-checkbox {
+                        position: absolute;
+                        top: 12px;
+                        right: 12px;
+
+                        input {
+                            width: 20px;
+                            height: 20px;
+                            cursor: pointer;
+                        }
+                    }
+
+                    .rank-input, .score-input, .grade-input {
+                        margin-top: 8px;
+                        padding: 8px;
+                        background: var(--color-background-dark);
+                        border-radius: 8px;
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
+
+                        label {
+                            font-size: 12px;
+                            color: var(--color-text-lighter);
+                        }
+
+                        select, input {
+                            flex: 1;
+                            padding: 4px 8px;
+                            border: 1px solid var(--color-border);
+                            border-radius: 4px;
+                            background: var(--color-main-background);
+                        }
+
+                        input[type="range"] {
+                            flex: 2;
+                        }
+                    }
+
+                    .reaction-input {
+                        display: flex;
+                        gap: 8px;
+                        flex-wrap: wrap;
+                        margin-top: 8px;
+                        padding: 8px;
+                        background: var(--color-background-dark);
+                        border-radius: 8px;
+
+                        .reaction-btn {
+                            font-size: 20px;
+                            padding: 4px 8px;
+                            border: 2px solid var(--color-border);
+                            border-radius: 30px;
+                            background: var(--color-main-background);
+                            cursor: pointer;
+                            transition: all 0.2s ease;
+
+                            &:hover {
+                                transform: scale(1.05);
+                                border-color: var(--color-primary-element);
+                            }
+
+                            &.active {
+                                background: rgba(var(--color-primary-element-rgb), 0.1);
+                                border-color: var(--color-primary-element);
+                                transform: scale(1.05);
+                            }
+                        }
+                    }
+
+                    .vote-progress-section {
+                        margin-top: 12px;
+                        padding-top: 12px;
+                        border-top: 1px solid var(--color-border);
+
+                        .vote-stats {
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: baseline;
+                            margin-bottom: 8px;
+
+                            .votes-count {
+                                display: flex;
+                                align-items: center;
+                                gap: 4px;
+                                font-size: 13px;
+                            }
+
+                            .percentage {
+                                font-weight: 600;
+                                color: var(--color-primary-element);
+                            }
+                        }
+
+                        .progress-bar {
+                            height: 8px;
+                            background: var(--color-background-dark);
+                            border-radius: 4px;
+                            overflow: hidden;
+
+                            .progress-fill {
+                                height: 100%;
+                                background: var(--color-primary-element);
+                                transition: width 0.5s ease;
+
+                                &.fill-leading {
+                                    background: #f6c343;
+                                }
+
+                                &.fill-selected {
+                                    background: #42b883;
+                                }
+                            }
+                        }
+                    }
+
+                    .voted-badge {
+                        display: flex;
+                        align-items: center;
+                        gap: 6px;
+                        color: #42b883;
+                        font-size: 13px;
+                        font-weight: 500;
+                        margin-top: 8px;
+                        padding: 4px 8px;
+                        background: rgba(66, 184, 131, 0.1);
+                        border-radius: 20px;
+                        width: fit-content;
+                    }
+                }
+            }
         }
 
-        .rank-cell {
-          width: 80px;
-
-          .rank-badge {
-            display: inline-block;
-            width: 32px;
-            height: 32px;
-            line-height: 32px;
-            text-align: center;
-            border-radius: 8px;
-            font-weight: 600;
-
-            &.gold { background: #f6c34320; color: #f6c343; }
-            &.silver { background: #c0c0c020; color: #c0c0c0; }
-            &.bronze { background: #cd7f3220; color: #cd7f32; }
-          }
-        }
-
-        .percentage-cell {
-          .mini-progress {
-            position: relative;
-            height: 24px;
+        .submit-vote-section {
+            margin-top: 24px;
+            padding: 20px;
             background: var(--color-background-dark);
             border-radius: 12px;
-            overflow: hidden;
-            width: 120px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 16px;
 
-            .mini-progress-fill {
-              height: 100%;
-              background: var(--color-primary-element);
-              transition: width 0.3s;
+            .selection-info {
+                font-size: 13px;
+                color: var(--color-text-lighter);
             }
-
-            span {
-              position: absolute;
-              left: 8px;
-              top: 50%;
-              transform: translateY(-50%);
-              font-size: 11px;
-              font-weight: 600;
-            }
-          }
         }
-
-        .status-tag {
-          font-size: 11px;
-          padding: 2px 8px;
-          border-radius: 12px;
-          text-transform: uppercase;
-
-          &.leading { background: #f6c34320; color: #f6c343; }
-          &.selected { background: #42b88320; color: #42b883; }
-        }
-      }
-    }
-  }
-
-  .empty-state {
-    text-align: center;
-    padding: 60px 20px;
-    background: var(--color-background-dark);
-    border: 2px dashed var(--color-border);
-    border-radius: 16px;
-
-    svg {
-      color: var(--color-text-lighter);
-      margin-bottom: 20px;
     }
 
-    h4 {
-      margin: 0 0 8px 0;
-      font-size: 18px;
-    }
-
-    p {
-      margin: 0 0 24px 0;
-      color: var(--color-text-lighter);
-    }
-  }
-}
-
-@media (max-width: 768px) {
-  .vote-layout {
-    .no-engine-banner {
-      flex-direction: column;
-      text-align: center;
-    }
-    
-    .engine-info {
-      flex-direction: column;
-      gap: 12px;
-      
-      .engine-info-right {
-        width: 100%;
-        justify-content: space-between;
-      }
-    }
-    
     .list-layout {
-      .list-header,
-      .list-row {
-        grid-template-columns: 60px 1fr 80px;
+        background: var(--color-main-background);
+        border-radius: 16px;
+        border: 1px solid var(--color-border);
+        overflow: hidden;
 
-        .list-cell.percentage,
-        .list-cell.action {
-          display: none;
+        .list-header {
+            display: grid;
+            grid-template-columns: 80px 1fr 100px 150px 100px;
+            background: var(--color-background-dark);
+            padding: 12px 16px;
+            font-weight: 600;
+            border-bottom: 1px solid var(--color-border);
+
+            .list-cell {
+                font-size: 13px;
+                text-transform: uppercase;
+                color: var(--color-text-lighter);
+            }
         }
-      }
+
+        .list-row {
+            display: grid;
+            grid-template-columns: 80px 1fr 100px 150px 100px;
+            padding: 8px 16px;
+            border-bottom: 1px solid var(--color-border);
+            transition: background 0.2s;
+
+            &:hover {
+                background: var(--color-background-hover);
+            }
+
+            &.is-leading {
+                background: rgba(246, 195, 67, 0.05);
+            }
+
+            &.user-voted {
+                background: rgba(66, 184, 131, 0.05);
+            }
+
+            &.selected-for-vote {
+                background: rgba(var(--color-primary-element-rgb), 0.05);
+            }
+
+            .list-cell {
+                display: flex;
+                align-items: center;
+
+                .rank-number {
+                    font-weight: 600;
+                    .medal { font-size: 20px; }
+                }
+
+                .percentage-bar {
+                    flex: 1;
+                    position: relative;
+                    height: 24px;
+                    background: var(--color-background-dark);
+                    border-radius: 12px;
+                    overflow: hidden;
+
+                    .percentage-fill {
+                        height: 100%;
+                        background: var(--color-primary-element);
+                        transition: width 0.3s;
+                    }
+
+                    .percentage-text {
+                        position: absolute;
+                        left: 8px;
+                        top: 50%;
+                        transform: translateY(-50%);
+                        font-size: 11px;
+                        font-weight: 600;
+                        color: var(--color-main-text);
+                        z-index: 1;
+                    }
+                }
+
+                input[type="checkbox"] {
+                    width: 18px;
+                    height: 18px;
+                    cursor: pointer;
+                }
+
+                .rank-select-mini, .score-input-mini {
+                    width: 60px;
+                    padding: 4px;
+                    border: 1px solid var(--color-border);
+                    border-radius: 4px;
+                }
+
+                .voted-icon {
+                    color: #42b883;
+                }
+            }
+        }
+
+        .submit-vote-section.list-submit {
+            padding: 16px;
+            text-align: center;
+            border-top: 1px solid var(--color-border);
+        }
     }
 
     .results-layout {
-      .charts-section {
-        grid-template-columns: 1fr;
-      }
+        .results-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 32px;
 
-      .ranking-table {
-        overflow-x: auto;
-      }
+            .summary-card {
+                background: var(--color-main-background);
+                border-radius: 16px;
+                padding: 20px;
+                display: flex;
+                align-items: center;
+                gap: 16px;
+                border: 1px solid var(--color-border);
+
+                .summary-icon {
+                    width: 48px;
+                    height: 48px;
+                    background: var(--color-background-dark);
+                    border-radius: 12px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: var(--color-primary-element);
+                }
+
+                .summary-content {
+                    flex: 1;
+
+                    .summary-value {
+                        font-size: 24px;
+                        font-weight: 700;
+                        margin-bottom: 4px;
+                    }
+
+                    .summary-label {
+                        font-size: 12px;
+                        color: var(--color-text-lighter);
+                    }
+                }
+            }
+        }
+
+        .charts-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 32px;
+
+            .chart-container {
+                background: var(--color-main-background);
+                border-radius: 16px;
+                padding: 20px;
+                border: 1px solid var(--color-border);
+
+                h4 {
+                    margin: 0 0 16px 0;
+                    font-size: 16px;
+                }
+
+                canvas {
+                    max-height: 300px;
+                }
+            }
+        }
+
+        .ranking-table {
+            background: var(--color-main-background);
+            border-radius: 16px;
+            border: 1px solid var(--color-border);
+            overflow: hidden;
+
+            h4 {
+                margin: 0;
+                padding: 16px 20px;
+                background: var(--color-background-dark);
+                border-bottom: 1px solid var(--color-border);
+                font-size: 16px;
+            }
+
+            table {
+                width: 100%;
+                border-collapse: collapse;
+
+                th, td {
+                    padding: 12px 16px;
+                    text-align: left;
+                    border-bottom: 1px solid var(--color-border);
+                }
+
+                th {
+                    background: var(--color-background-dark);
+                    font-weight: 600;
+                    font-size: 13px;
+                }
+
+                .rank-cell {
+                    width: 80px;
+
+                    .rank-badge {
+                        display: inline-block;
+                        width: 32px;
+                        height: 32px;
+                        line-height: 32px;
+                        text-align: center;
+                        border-radius: 8px;
+                        font-weight: 600;
+
+                        &.gold { background: #f6c34320; color: #f6c343; }
+                        &.silver { background: #c0c0c020; color: #c0c0c0; }
+                        &.bronze { background: #cd7f3220; color: #cd7f32; }
+                    }
+                }
+
+                .percentage-cell {
+                    .mini-progress {
+                        position: relative;
+                        height: 24px;
+                        background: var(--color-background-dark);
+                        border-radius: 12px;
+                        overflow: hidden;
+                        width: 120px;
+
+                        .mini-progress-fill {
+                            height: 100%;
+                            background: var(--color-primary-element);
+                            transition: width 0.3s;
+                        }
+
+                        span {
+                            position: absolute;
+                            left: 8px;
+                            top: 50%;
+                            transform: translateY(-50%);
+                            font-size: 11px;
+                            font-weight: 600;
+                        }
+                    }
+                }
+
+                .status-tag {
+                    font-size: 11px;
+                    padding: 2px 8px;
+                    border-radius: 12px;
+                    text-transform: uppercase;
+
+                    &.leading { background: #f6c34320; color: #f6c343; }
+                    &.selected { background: #42b88320; color: #42b883; }
+                }
+            }
+        }
     }
-  }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        background: var(--color-background-dark);
+        border: 2px dashed var(--color-border);
+        border-radius: 16px;
+
+        svg {
+            color: var(--color-text-lighter);
+            margin-bottom: 20px;
+        }
+
+        h4 {
+            margin: 0 0 8px 0;
+            font-size: 18px;
+        }
+
+        p {
+            margin: 0 0 24px 0;
+            color: var(--color-text-lighter);
+        }
+    }
 }
+
+                                                                    @media (max-width: 768px) {
+                                                                        .vote-layout {
+                                                                            .no-engine-banner {
+                                                                                flex-direction: column;
+                                                                                text-align: center;
+                                                                            }
+
+                                                                            .engine-info {
+                                                                                flex-direction: column;
+                                                                                gap: 12px;
+
+                                                                                .engine-info-right {
+                                                                                    width: 100%;
+                                                                                    justify-content: space-between;
+                                                                                }
+                                                                            }
+
+                                                                            .list-layout {
+                                                                                .list-header,
+                                                                                .list-row {
+                                                                                    grid-template-columns: 60px 1fr 80px;
+
+                                                                                    .list-cell.percentage,
+                                                                                    .list-cell.action {
+                                                                                        display: none;
+                                                                                    }
+                                                                                }
+                                                                            }
+
+                                                                            .results-layout {
+                                                                                .charts-section {
+                                                                                    grid-template-columns: 1fr;
+                                                                                }
+
+                                                                                .ranking-table {
+                                                                                    overflow-x: auto;
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
 </style>
