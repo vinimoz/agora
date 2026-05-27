@@ -111,6 +111,7 @@ OC.L10N.register(
     "Summary" : "Podsumowanie",
     "Generate" : "Wygeneruj",
     "Pending" : "Oczekujące",
+    "Accepted" : "Zaakceptowano",
     "Rejected" : "Odrzucone",
     "Save" : "Zapisz",
     "Moderate" : "Umiarkowane",
