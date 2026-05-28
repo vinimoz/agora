@@ -382,6 +382,7 @@ OC.L10N.register(
     "List" : "Lista",
     "Not defined" : "No definido",
     "Just now" : "Justo ahora",
+    "Expiring soon" : "Caduca pronto",
     "Today" : "Hoy",
     "Yesterday" : "Ayer",
     "Yes" : "Sí",
