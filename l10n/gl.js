@@ -1051,6 +1051,7 @@ OC.L10N.register(
     "Dutch" : "Neerlandés",
     "Inquiry Types" : "Tipos de consulta",
     "Unnamed" : "Sen nome",
+    "Template:" : "Modelo:",
     "Language:" : "Idioma:",
     "Types" : "Tipos",
     "Selected" : "Seleccionado",
