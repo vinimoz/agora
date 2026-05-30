@@ -415,6 +415,7 @@ OC.L10N.register(
     "or" : "või",
     "Add {type}" : "Lisa {type}",
     "Option" : "Valik",
+    "Parent" : "Ülemobjekt",
     "Create" : "Lisa",
     "Messages" : "Sõnumid",
     "Vertical" : "Vertikaalne",
