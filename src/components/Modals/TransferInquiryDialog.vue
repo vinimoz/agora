@@ -31,7 +31,7 @@ async function dialogOK() {
       userId: newUser.value ? newUser.value.id : '',
     })
     showSuccess(
-      t('agora', 'Transfered inquiry to {user}', {
+      t('agora', 'Transferred inquiry to {user}', {
         user: newUser.value ? newUser.value.displayName : '',
       })
     )
