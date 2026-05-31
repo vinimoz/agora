@@ -16,6 +16,7 @@ OC.L10N.register(
     "Loading" : "Ielādē",
     "Previous day" : "Iepriekšējā diena",
     "Next day" : "Nākamā diena",
+    "the owner" : "īpašnieks",
     "Send" : "Sūtīt",
     "Unknown user" : "Nezināms lietotājs",
     "Delete comment" : "Izdzēst piebildi",
@@ -90,6 +91,7 @@ OC.L10N.register(
     "Action" : "Darbība",
     "Progress" : "Progress",
     "None" : "Nekas",
+    "Unknown owner" : "Nezināms īpašnieks",
     "Retry" : "Mēģināt vēlreiz",
     "Email" : "E-pasts",
     "Remember me for 30 days" : "Atcerēties mani 30 dienas",
@@ -132,6 +134,7 @@ OC.L10N.register(
     "Sharing" : "Koplietošana",
     "Hour" : "Stunda",
     "Not found" : "Nav atrasts",
+    "Owner" : "Īpašnieks",
     "Administration" : "Pārvaldīšana"
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : 2);");
