@@ -164,7 +164,7 @@ class Notifier implements INotifier
             ],
             self::NOTIFY_INQUIRY_CHANGED_OWNER => [
             self::SUBJECT_PARSED => $l->t('%s is the new owner of your inquiry.', $parameters['newOwner']),
-            self::SUBJECT_RICH => $l->t('{actor} transfered your inquiry "%s" to {newOwner}. You are no more the owner.', $inquiryTitle),
+            self::SUBJECT_RICH => $l->t('{actor} transferred your inquiry "%s" to {newOwner}. You are no more the owner.', $inquiryTitle),
             ],
             self::NOTIFY_INQUIRY_DELETED_BY_OTHER => [
             self::SUBJECT_PARSED => $l->t('%s deleted your inquiry', $actor->getDisplayName()),
