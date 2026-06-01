@@ -15,12 +15,13 @@
 
 <script setup lang="ts">
 import { t } from '@nextcloud/l10n'
-import type { SupportData } from '../../Types/index'
+import type { SupportData, Option } from '../../Types/index'
 
 const props = defineProps<{
   engineConfig: Record<string, unknown>
-  option: any
+  option: Option
   userVote?: SupportData
+  disabled?: boolean
   isSelected?: boolean
 }>()
 

@@ -56,7 +56,7 @@
                             @click.stop="openAddOptionModal(optionType.option_type)"
                         >
                             <template #icon>
-                                <component :is="getOptionTypeIconHelper(optionType.option_type)" :size="18" />
+                                <component :is="getOptionTypeIcon(optionType.option_type)" :size="18" />
                             </template>
                             + {{ optionType.label || optionType.option_type }}
                         </NcButton>
@@ -193,28 +193,12 @@ import FamilyLayoutVote from './FamilyLayouts/FamilyLayoutVote.vue'
 import OptionAddModal from '../Modals/OptionAddModal.vue'
 import OptionDetailModal from '../Modals/OptionDetailModal.vue'
 
-// Import all helpers
+// Import helpers
 import {
     getFamiliesWithOptionTypes,
     getFamilyIconComponent,
     getFamilyColor as importedGetFamilyColor,
     getLayoutForFamily,
-    getOptionTypeIconComponent,
-    getOptionTypeLabel,
-    getOptionTypeDescription,
-    getOptionTypeFamily,
-    getOptionTypeColor,
-    isOptionTypeInFamily,
-    getAllowedResponses,
-    getAvailableResponseTypes,
-    getOptionTypeFields,
-    hasSupportFeature,
-    getSupportFeatureLabel,
-    getSupportFeatureType,
-    allowsComments,
-    usesTitle,
-    getAllFamilyKeys,
-    getOptionsCountByFamily,
 } from '../../helpers/modules/InquiryOptionHelper'
 
 // Stores
@@ -247,7 +231,7 @@ const modalComponentCache = new Map<string, Component>()
 
 // Computed
 const isReadOnly = computed(() => route.name === 'publicInquiry')
-const canManageVote = computed(() => inquiryStore.currentUserStatus?.isOwner || sessionStore.currentUser?.isAdmin || sessionStore.currentUser?.isOfficial)
+const canManageVote = computed(() => inquiryStore.currentUserStatus?.isOwner || sessionStore.currentUser?.isAdmin || sessionStore.currentUser?.isOfficial )
 
 // Layout component registry
 const layoutComponents: Record<string, Component> = {
@@ -261,10 +245,9 @@ const layoutComponents: Record<string, Component> = {
     default: markRaw(FamilyLayoutCards)
 }
 
-// Helper methods using the imported functions
+// Helper methods
 const getFamilyIconHelper = (familyKey: string) => getFamilyIconComponent(familyKey)
 const getFamilyColorHelper = (familyKey: string) => importedGetFamilyColor(familyKey)
-const getOptionTypeIconHelper = (optionTypeKey: string) => getOptionTypeIconComponent(optionTypeKey, allOptionTypes.value)
 
 // Check if the vote family has an active engine
 const hasActiveEngineForActiveFamily = computed(() => {
@@ -288,45 +271,23 @@ const showCreateOptionButtons = computed(() => {
 })
 
 // Load modal component dynamically
-const loadModalComponent = async (actionKey: string, familyKey?: string): Promise<Component | null> => {
-    const cacheKey = `${familyKey}-${actionKey}`
-    
-    if (modalComponentCache.has(cacheKey)) {
-        return modalComponentCache.get(cacheKey)!
+const loadModalComponent = async (actionKey: string): Promise<Component | null> => {
+    if (modalComponentCache.has(actionKey)) {
+        return modalComponentCache.get(actionKey)!
     }
 
     try {
-        let component: Component | null = null
-        
-        // For vote family, always use ActionVote.vue (handles all vote actions)
-        if (familyKey === 'vote') {
-            const module = await import(`./Actions/ActionVote.vue`)
-            component = markRaw(module.default || module)
-        } 
-        // For structure family, always use ActionStructure.vue
-        else if (familyKey === 'structure') {
-            const module = await import(`./Actions/ActionStructure.vue`)
-            component = markRaw(module.default || module)
-        }
-        // For other families, try to load individual action modals
-        else {
-            const componentName = `${actionKey
-                .split('_')
-                .map(part => part.charAt(0).toUpperCase() + part.slice(1))
-                .join('')}Modal`
-            
-            const module = await import(`./Actions/${componentName}.vue`)
-            component = markRaw(module.default || module)
-        }
-        
-        if (component) {
-            modalComponentCache.set(cacheKey, component)
-            return component
-        }
-        
-        return null
+        const componentName = `${actionKey
+            .split('_')
+            .map(part => part.charAt(0).toUpperCase() + part.slice(1))
+            .join('')}Modal`
+
+        const module = await import(`./Actions/${componentName}.vue`)
+        const component = markRaw(module.default || module)
+        modalComponentCache.set(actionKey, component)
+        return component
     } catch (error) {
-        console.error(`Failed to load action component for family "${familyKey}" action "${actionKey}":`, error)
+        console.error(`Failed to load modal component for action "${actionKey}":`, error)
         return null
     }
 }
@@ -340,7 +301,7 @@ const getActionIcon = (icon: string | Component): Component => {
 
 const handleFamilyAction = async (action: Action) => {
     if (action.modal) {
-        const modalComponent = await loadModalComponent(action.key, activeFamilyData.value?.key)
+        const modalComponent = await loadModalComponent(action.key)
         if (modalComponent) {
             currentModalComponent.value = modalComponent
             currentActionKey.value = action.key
@@ -377,6 +338,7 @@ const handleActionCompleted = (result: unknown) => {
 
 // Handle vote-specific actions
 const handleConfigureEngine = () => {
+    // Emit or navigate to engine configuration
     console.log('Configure voting engine')
 }
 
@@ -405,7 +367,6 @@ const familiesWithOptions = computed(() => {
         allInquiryTypes.value,
         allOptionTypes.value
     )
-
     return families.map(family => ({
         ...family,
         name: t('agora', family.name),
@@ -413,7 +374,7 @@ const familiesWithOptions = computed(() => {
         description: t('agora', family.description),
         layout_ux: family.layout_ux || getLayoutForFamily(family.key),
         isOfficial: family.isOfficial || false,
-        features: family.features || {},
+        features: family.features || {}, // Include features for conditional rendering
     }))
 })
 
@@ -424,15 +385,22 @@ const activeFamilyData = computed(() => {
     return familiesWithOptions.value.find(f => f.key === activeFamily.value)
 })
 
+
 const currentFamilyLayout = computed(() => {
     if (!activeFamilyData.value) return layoutComponents.default
     const layoutKey = activeFamilyData.value.layout_ux || 'default'
     return layoutComponents[layoutKey] || layoutComponents.default
 })
 
-// Use helper for family counts
 const familyCounts = computed(() => {
-    return getOptionsCountByFamily(optionsStore.options, allOptionTypes.value)
+    const counts: Record<string, number> = {}
+    familiesWithOptions.value.forEach(family => {
+        const familyOptionTypeKeys = family.optionTypes.map(opt => opt.option_type)
+        counts[family.key] = optionsStore.options.filter(option =>
+            familyOptionTypeKeys.includes(option.type)
+        ).length
+    })
+    return counts
 })
 
 const optionsByInquiry = computed(() => {
@@ -448,9 +416,20 @@ const activeFamilyOptions = computed(() => {
     )
 })
 
+const getOptionTypeIcon = (optionTypeKey: string) => {
+    const optionType = allOptionTypes.value.find(opt =>
+        opt.option_type === optionTypeKey || opt.optionType === optionTypeKey
+    )
+    if (optionType?.icon) {
+        return InquiryOptionIcons[optionType.icon] || InquiryOptionIcons.File
+    }
+    return InquiryOptionIcons.File
+}
+
 const setActiveFamily = (familyKey: string) => {
     activeFamily.value = familyKey
 }
+
 
 const openAddOptionModal = (optionTypeKey: string, parentId?: number) => {
     if (isReadOnly.value) return
@@ -482,31 +461,34 @@ const closeOptionDetail = () => {
     selectedOptionId.value = null
 }
 
-// Use helper for checking option type family
 const handleOptionCreated = async (newOption: Option) => {
-    optionsStore.options.push(newOption)
-    closeAddOptionModal()
+  optionsStore.options.push(newOption)
+  closeAddOptionModal()
 
-    // Use helper to check if option belongs to vote family
-    if (isOptionTypeInFamily(newOption.type, 'vote', allOptionTypes.value)) {
-        const activeEngine = engineStore.getCurrentEngine()
-        if (activeEngine && !activeEngine.target_ids.includes(newOption.id)) {
-            const newTargetIds = [...activeEngine.target_ids, newOption.id]
-            await engineStore.updateEngine(activeEngine.id, { target_ids: newTargetIds })
-        }
+  // If the new option belongs to the vote family, add it to the engine's target_ids
+  const optionType = allOptionTypes.value.find(opt => opt.option_type === newOption.type)
+  if (optionType?.family === 'vote') { 
+    const activeEngine = engineStore.getCurrentEngine()
+    console.log(" WE ARE CREATING A OPTION FROM FAMILY ",activeEngine) 
+    if (activeEngine && !activeEngine.target_ids.includes(newOption.id)) {
+      const newTargetIds = [...activeEngine.target_ids, newOption.id]
+      await engineStore.updateEngine(activeEngine.id, { target_ids: newTargetIds })
     }
+  }
 }
 
-const handleOptionFamilyChanged = async ({ optionId, familyKey, action }: { optionId: number; familyKey: string; action: string }) => {
-    if (familyKey !== 'vote') return
-    if (action !== 'added') return
+const handleOptionFamilyChanged = async ({ optionId, familyKey, action }) => {
+  if (familyKey !== 'vote') return
+  if (action !== 'added') return
 
-    const activeEngine = engineStore.getCurrentEngine()
+  const activeEngine = engineStore.getCurrentEngine()
+ 
+ console.log(" WE ARE ADDING A OPTION FROM FAMILY ",activeEngine) 
 
-    if (activeEngine && !activeEngine.target_ids.includes(optionId)) {
-        const newTargetIds = [...activeEngine.target_ids, optionId]
-        await engineStore.updateEngine(activeEngine.id, { target_ids: newTargetIds })
-    }
+  if (activeEngine && !activeEngine.target_ids.includes(optionId)) {
+    const newTargetIds = [...activeEngine.target_ids, optionId]
+    await engineStore.updateEngine(activeEngine.id, { target_ids: newTargetIds })
+  }
 }
 
 const handleOptionUpdated = (updatedOption: Option) => {
@@ -526,6 +508,7 @@ const handleOptionDeleted = (deletedOptionId: number) => {
 
 // Initialize
 onMounted(() => {
+
     if (familiesWithOptions.value.length > 0) {
         activeFamily.value = familiesWithOptions.value[0].key
     }
@@ -537,15 +520,6 @@ watch(() => inquiryStore.type, () => {
         activeFamily.value = familiesWithOptions.value[0].key
     }
 })
-
-// Example of how to use other helpers if needed in child components:
-// - getAllowedResponses(optionType, allOptionTypes.value)
-// - getAvailableResponseTypes(optionType, allOptionTypes.value)
-// - getOptionTypeFields(optionType, allOptionTypes.value)
-// - hasSupportFeature(optionType, allOptionTypes.value)
-// - getSupportFeatureLabel(optionType, allOptionTypes.value)
-// - allowsComments(optionType, allOptionTypes.value)
-// - usesTitle(optionType, allOptionTypes.value)
 </script>
 
 <style scoped lang="scss">
@@ -709,7 +683,7 @@ watch(() => inquiryStore.type, () => {
                     border-radius: 12px;
                     color: var(--color-text-lighter);
                     font-size: 13px;
-
+                    
                     svg {
                         color: var(--color-primary-element);
                     }

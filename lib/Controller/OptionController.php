@@ -147,7 +147,7 @@ class OptionController extends BaseController
 
         $diffMicro['total'] = microtime(true) - $timerMicro['start'];
         $timerMicro['option'] = microtime(true);
-        $subscribed = $this->subscriptionService->get($inquiryId);
+       //œ $subscribed = $this->subscriptionService->get($inquiryId);
 
         // $subscribed = $this->subscriptionService->get($inquiryId);
        // $timerMicro['subscribed'] = microtime(true);

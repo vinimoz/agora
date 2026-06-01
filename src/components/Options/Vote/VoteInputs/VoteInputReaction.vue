@@ -27,11 +27,12 @@
 import { computed } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import { X } from 'lucide-vue-next'
-import type { SupportData, SupportValue } from '../../Types/index'
+import type { SupportData, SupportValue, Option } from '../../Types/index'
 
 const props = defineProps<{
   engineConfig: Record<string, unknown>
-  option: any
+  option: Option
+  disabled?: boolean
   userVote?: SupportData
 }>()
 

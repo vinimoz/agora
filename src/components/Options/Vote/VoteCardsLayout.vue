@@ -1,0 +1,119 @@
+<!-- SPDX-FileCopyrightText: 2024 Nextcloud contributors -->
+<!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
+<template>
+  <div class="cards-layout">
+    <div class="cards-grid">
+      <VoteCard
+        v-for="option in rankedOptions"
+        :key="option.id"
+        :option="option"
+        :effective-engine-id="effectiveEngineId"
+        :engine-config="activeEngine?.config || {}"
+        :can-vote="canVote"
+        :has-user-voted="hasUserVoted"
+        :has-user-voted-for="hasUserVotedFor"
+        :vote-count="getOptionVoteCount(option.id)"
+        :percentage="getPercentage(option)"
+        :is-selected="isSelectedForVote(option.id)"
+        :current-rank="rankings[option.id]"
+        :current-grade="scores[option.id]?.toString()"
+        @vote="(option, value) => $emit('vote', option, value)"
+        @approval-toggle="(optionId) => $emit('toggle-selection', optionId)"
+        @change-rank="(optionId, rank) => $emit('update:rankings', { ...rankings, [optionId]: rank })"
+        @change-grade="(optionId, grade) => $emit('update:scores', { ...scores, [optionId]: grade ? parseInt(grade) : null })"
+      />
+    </div>
+
+    <!-- Submit button for multi-vote engines -->
+    <div v-if="showSubmitButton" class="submit-vote-section">
+      <NcButton
+        type="primary"
+        size="medium"
+        :disabled="!canSubmitMultiVote"
+        @click="$emit('submit-multi-vote')"
+      >
+        <Vote :size="18" />
+        {{ getSubmitButtonText() }}
+      </NcButton>
+      <span v-if="voteSelectionInfo" class="selection-info">{{ voteSelectionInfo }}</span>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { computed } from 'vue'
+import { t } from '@nextcloud/l10n'
+import NcButton from '@nextcloud/vue/components/NcButton'
+import { Vote } from 'lucide-vue-next'
+import VoteCard from './VoteCard.vue'
+import type { Option } from '../../Types/index'
+
+const props = defineProps<{
+  rankedOptions: Option[]
+  effectiveEngineId: string
+  activeEngine?: any
+  canVote?: boolean
+  hasUserVoted: boolean
+  rankings: Record<number, number>
+  scores: Record<number, number>
+  canSubmitMultiVote: boolean
+  voteSelectionInfo: string | null
+  getOptionVoteCount: (optionId: number) => number
+  getPercentage: (option: Option) => number
+  hasUserVotedFor: (optionId: number) => boolean
+  isSelectedForVote: (optionId: number) => boolean
+}>()
+
+const emit = defineEmits<{
+  'toggle-selection': [optionId: number]
+  'update:rankings': [rankings: Record<number, number>]
+  'update:scores': [scores: Record<number, number>]
+  'vote': [option: Option, value: any]
+  'submit-multi-vote': []
+}>()
+
+const showSubmitButton = computed(() =>
+  (props.activeEngine?.behavior === 'multi' || props.activeEngine?.behavior === 'flex') &&
+  props.canVote && !props.hasUserVoted && props.activeEngine?.status === 'active'
+)
+
+const getSubmitButtonText = (): string => {
+  if (props.effectiveEngineId === 'approval') return t('agora', 'Submit selections')
+  if (props.effectiveEngineId === 'ranking') return t('agora', 'Submit ranking')
+  if (props.effectiveEngineId === 'score') return t('agora', 'Submit scores')
+  if (props.effectiveEngineId === 'star') return t('agora', 'Submit ratings')
+  return t('agora', 'Submit vote')
+}
+</script>
+
+<style scoped lang="scss">
+.cards-layout {
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 20px;
+    margin-bottom: 24px;
+  }
+
+  .submit-vote-section {
+    text-align: center;
+    padding: 20px;
+    background: var(--color-background-dark);
+    border-radius: 20px;
+    margin-top: 8px;
+
+    .selection-info {
+      display: inline-block;
+      margin-left: 12px;
+      font-size: 12px;
+      color: var(--color-text-lighter);
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .cards-layout .cards-grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style>

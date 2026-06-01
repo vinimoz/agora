@@ -247,8 +247,8 @@ import {
 } from '../../helpers/modules/MiscFieldsHelper'
 
 // Import components
-import MiscFieldsEditor from './MiscFieldsEditor.vue'
-import OptionCard from './OptionCard.vue'
+import MiscFieldsEditor from '../Options/MiscFieldsEditor.vue'
+import OptionCard from '../Options/OptionCard.vue'
 
 // Props
 const props = defineProps<{
@@ -595,22 +595,6 @@ const createOption = async () => {
     }))
   }
 }
-/*
-// Watch for option type changes
-watch(() => props.optionType, (newType) => {
-  if (newType) {
-    // Reset misc fields when option type changes
-    miscFieldsValues.value = {}
-    // Initialize with defaults if needed
-    additionalFields.value.forEach(field => {
-      if (field.default !== undefined && field.default !== null && field.default !== '') {
-        miscFieldsValues.value[field.key] = field.default
-      }
-    })
-  }
-}, { immediate: true })
-*/
-
 
 // Lifecycle
 onMounted(() => {

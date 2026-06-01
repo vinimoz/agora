@@ -1,8 +1,3 @@
-/**
- * SPDX-FileCopyrightText: 2026 Nextcloud contributors
- * SPDX-License-Identifier: AGPL-3.0-or-later
- */
-
 <!--
     SPDX-FileCopyrightText: 2024 Nextcloud contributors
 -->
@@ -754,8 +749,8 @@ import {
 // Types
 import type { Option, OptionType, OptionStoreLike } from '../../../Types/index.ts'
 
-import OptionAddModal from '../OptionAddModal.vue'
-import OptionDetailModal from '../OptionDetailModal.vue'
+import OptionAddModal from '../../Modals/OptionAddModal.vue'
+import OptionDetailModal from '../../Modals/OptionDetailModal.vue'
 
 // Stores
 const inquiryStore = useInquiryStore()

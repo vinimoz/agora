@@ -1,1696 +1,361 @@
-<!-- SPDX-FileCopyrightText: 2024 Nextcloud contributors -->
-<!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
+<!--
+    SPDX-FileCopyrightText: 2024 Nextcloud contributors
+    SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+
 <template>
-    <div class="vote-layout" :class="`layout-${currentLayout}`">
-        <!-- Header with vote session info and action buttons -->
-        <div class="vote-header">
-            <div class="header-info">
-                <div class="vote-metadata">
-                    <span v-if="voteSession" class="metadata-badge">
-                        <Calendar :size="14" />
-                        {{ formatDate(voteSession.start_date) }}
-                        <span v-if="voteSession.end_date">
-                            - {{ formatDate(voteSession.end_date) }}
-                        </span>
-                    </span>
-                    <span v-if="voteSession?.quorum" class="metadata-badge">
-                        <Users :size="14" />
-                        {{ t('agora', 'Quorum: {quorum}', { quorum: voteSession.quorum }) }}
-                    </span>
-                    <span class="metadata-badge">
-                        <Vote :size="14" />
-                        {{ t('agora', 'Total votes: {total}', { total: totalVotes }) }}
-                    </span>
-                    <span v-if="currentEngine?.behavior === 'multi'" class="metadata-badge">
-                        <CheckCircle :size="14" />
-                        {{ t('agora', 'Multiple votes allowed') }}
-                    </span>
-                </div>
-            </div>
+  <div class="family-layout-vote">
+    <div v-if="loadingEngines" class="loading-state">
+      <NcLoadingIcon :size="40" />
+      <p>{{ t('agora', 'Loading vote interface...') }}</p>
+    </div>
 
-            <!-- Layout switcher + Engine selector + Add to vote button -->
-            <div class="action-bar">
-                <div class="layout-switcher">
-                    <NcButton
-                            v-for="layout in allowedLayouts"
-                            :key="layout"
-                            :type="currentLayout === layout ? 'primary' : 'tertiary'"
-                            size="small"
-                            @click="currentLayout = layout"
-                            >
-                            <template #icon>
-                                <component :is="getLayoutIcon(layout)" :size="16" />
-                            </template>
-                    {{ t('agora', capitalize(layout)) }}
-                    </NcButton>
-                </div>
+    <!-- Show header when there's an active engine, even without options -->
+    <div v-else-if="hasActiveEngine && currentEngine" class="vote-interface">
+      <VoteHeader
+        :vote-session="voteSession"
+        :total-votes="totalVotes"
+        :current-engine="currentEngine"
+        :available-engines="availableEngines"
+        :can-manage-vote="canManageVote"
+        :is-readonly="isReadonly"
+        :current-layout="currentLayout"
+        :allowed-layouts="allowedLayouts"
+        @update:layout="currentLayout = $event"
+        @update:engine="handleEngineUpdate"
+        @create-engine="showCreateEngineModal = true"
+        @edit-engine="handleEditEngine"
+        @delete-engine="handleDeleteEngine"
+        @add-to-vote="showAddToVoteModal = true"
+      />
 
-                <!-- Engine selector dropdown - only show when engines exist -->
-                <div v-if="availableEnginesList.length > 0" class="engine-selector">
-                    <NcSelect
-                            v-model="selectedEngineId"
-                            :options="availableEnginesList"
-                            :placeholder="t('agora', 'Select voting method')"
-                            :clearable="false"
-                            label="title"
-                            :reduce="engine => engine.id"
-                            class="engine-select"
-                            @option:selected="handleEngineChange"
-                            >
-                            <template #option="{ option }">
-                                <div class="engine-option">
-                                    <component :is="getEngineIcon(option.engine)" :size="16" class="engine-option-icon" />
-                                    <div class="engine-option-content">
-                                        <div class="engine-option-label">{{ option.title || getEngineLabel(option.engine) }}</div>
-                                        <div class="engine-option-desc">{{ option.description || getEngineDescription(option.engine) }}</div>
-                                    </div>
-                                </div>
-                            </template>
-                            <template #selected-option="{ option }">
-                                <div v-if="option" class="engine-selected">
-                                    <component :is="getEngineIcon(option.engine)" :size="14" />
-                                    <span>{{ option.title || getEngineLabel(option.engine) }}</span>
-                                </div>
-                                <div v-else class="engine-selected">
-                                    <Vote :size="14" />
-                                    <span>{{ t('agora', 'Select voting method') }}</span>
-                                </div>
-                            </template>
-                    </NcSelect>
-                </div>
+      <!-- Empty state when no options are linked -->
+      <VoteEmptyState
+        v-if="(!currentEngine.target_ids || currentEngine.target_ids.length === 0)"
+        :no-options-linked="true"
+        :can-manage-vote="canManageVote"
+        :is-readonly="isReadonly"
+        @add-to-vote="showAddToVoteModal = true"
+        @configure="showCreateEngineModal = true"
+      />
+      
+      <!-- Empty state when no votable options exist -->
+      <VoteEmptyState
+        v-else-if="votableOptions.length === 0"
+        :show-add-button="canAddOptions"
+        :can-manage-vote="canManageVote && canAddOptions"
+        :is-readonly="isReadonly"
+        @add-option="$emit('add-option')"
+      />
 
-                <NcButton
-                        v-if="!isReadonly && canManageVote"
-                        type="primary"
-                        size="small"
-                        @click="openCreateEngineModal"
-                        >
-                        <template #icon>
-                            <Plus :size="16" />
-                        </template>
-                {{ t('agora', 'Create Method') }}
-                </NcButton>
+      <!-- Actual vote interface when options exist -->
+      <component
+        v-else
+        :is="currentLayoutComponent"
+        :ranked-options="rankedOptions"
+        :current-engine="currentEngine"
+        :effective-engine-id="effectiveEngineId"
+        :active-engine="currentEngine"
+        :can-vote="canVote"
+        :has-user-voted="hasUserVoted"
+        :rankings="rankings"
+        :scores="scores"
+        :selected-options="selectedOptions"
+        :can-submit-multi-vote="canSubmitMultiVote"
+        :vote-selection-info="voteSelectionInfo"
+        :get-option-vote-count="getOptionVoteCount"
+        :get-percentage="(option) => getPercentage(option)"
+        :has-user-voted-for="hasUserVotedFor"
+        :is-selected-for-vote="isSelectedForVote"
+        :winner="winner"
+        :winner-percentage="winnerPercentage"
+        :time-remaining="timeRemaining"
+        @toggle-selection="toggleSelection"
+        @update:rankings="rankings = $event"
+        @update:scores="scores = $event"
+        @vote="(option) => submitSingleVote(option)"
+        @submit-multi-vote="submitMultiVote"
+        @select-option="$emit('select-option', $event)"
+      />
+    </div>
 
-                <!-- Add to vote button -->
-                <NcButton
-                        v-if="!isReadonly && canManageVote && activeEngine"
-                        type="primary"
-                        size="small"
-                        class="add-to-vote-btn"
-                        @click="showAddToVoteModal = true"
-                        >
-                        <template #icon>
-                            <Plus :size="16" />
-                        </template>
-                {{ t('agora', 'Add to vote') }}
-                </NcButton>
-            </div>
+    <!-- Show empty state when no engine exists -->
+    <VoteEmptyState
+      v-else-if="!hasActiveEngine"
+      :no-engine="true"
+      :can-manage-vote="canManageVote"
+      :is-readonly="isReadonly"
+      @configure="showCreateEngineModal = true"
+      @add-option="$emit('add-option')"
+    />
 
-        </div>
+    <!-- Create/Edit Engine Modal -->
+    <EngineSelectorModal
+      v-if="showCreateEngineModal"
+      :mode="engineModalMode"
+      :existing-engine="engineToEdit"
+      :option-count="allOptions.length"
+      @close="closeEngineModal"
+      @save="onEngineSaved"
+    />
 
-        <!-- No engine state - show configuration banner -->
-        <div v-if="!activeEngine && availableEnginesList.length === 0" class="no-engine-banner">
-            <Info :size="32" />
-            <div class="banner-content">
-                <h4>{{ t('agora', 'No Voting Method Configured') }}</h4>
-                <p>{{ t('agora', 'A voting method needs to be configured before voting can begin.') }}</p>
-            </div>
-            <NcButton v-if="canManageVote" type="primary" @click="openEngineModal">
-            <template #icon>
-                <Settings :size="16" />
-            </template>
-            {{ t('agora', 'Configure Voting Method') }}
-            </NcButton>
-        </div>
+    <!-- Add Options to Vote Modal -->
+    <AddOptionToFamily
+      v-if="showAddToVoteModal"
+      :inquiry-id="inquiryId"
+      family-type="vote"
+      :current-engine="currentEngine"
+      :available-options="allOptions"
+      :already-linked-option-ids="votableOptionIds"
+      @close="showAddToVoteModal = false"
+      @options-added="onOptionsAdded"
+      @option-family-changed="handleOptionFamilyChanged"
+    />
 
-        <!-- Current voting engine info -->
-        <!-- Current voting engine info -->
-        <div v-else-if="activeEngine" class="engine-info">
-            <div class="engine-info-left">
-                <div class="engine-badges">
-                    <span class="engine-badge">
-                        <component :is="getEngineIcon(activeEngine.engine)" :size="14" />
-                        {{ getEngineLabel(activeEngine.engine) }}
-                    </span>
-                    <span v-if="activeEngine.purpose" class="purpose-badge" :class="`purpose-${activeEngine.purpose}`">
-                        <span class="purpose-icon">{{ getPurposeIcon(activeEngine.purpose) }}</span>
-                        <span class="purpose-label">{{ getPurposeLabel(activeEngine.purpose) }}</span>
-                    </span>
-                    <span class="behavior-badge" :class="currentEngine?.behavior">
-                        <span v-if="currentEngine?.behavior === 'multi'">📋 {{ t('agora', 'Multi-choice') }}</span>
-                        <span v-else-if="currentEngine?.behavior === 'flex'">🔄 {{ t('agora', 'Flexible') }}</span>
-                        <span v-else>✓ {{ t('agora', 'Single-choice') }}</span>
-                    </span>
-                </div>
-                <span v-if="activeEngine.title" class="engine-title">{{ activeEngine.title }}</span>
-            </div>
-            <div class="engine-info-right">
-                <span v-if="voteLimitInfo" class="vote-limit-info">
-                    ℹ️ {{ voteLimitInfo }}
-                </span>
-                <NcButton
-                        v-if="canManageVote"
-                        type="tertiary"
-                        size="small"
-                        @click="openEditEngineModal"
-                        >
-                        <template #icon>
-                            <Settings :size="14" />
-                        </template>
-                {{ t('agora', 'Edit') }}
-                </NcButton>
-            </div>
-        </div>
-
-        <!-- Cards Layout -->
-        <div v-if="currentLayout === 'cards'" class="cards-layout">
-            <div class="cards-grid">
-                <div
-                        v-for="option in voteOptions"
-                        :key="option.id"
-                        class="vote-card-wrapper"
-                        :class="{ 'selected-for-vote': isSelectedForVote(option.id) }"
-                        >
-                        <OptionCard
-                                :option="option"
-                                :compact="false"
-                                :show-action="!isReadonly && canManageVote"
-                                :progress-bar="true"
-                                :inquiry-id="inquiryId"
-                                :family-type="family?.key || 'vote'"
-                                @click="handleOptionClick(option)"
-                                >
-                                <!-- Selection indicator for multi-vote -->
-                        <template v-if="currentEngine?.behavior === 'multi' && canVote && !hasUserVoted && activeEngine?.status === 'active'">
-                            <div class="selection-checkbox">
-                                <input
-                                        type="checkbox"
-                                        :checked="isSelectedForVote(option.id)"
-                                        @change="toggleOptionSelection(option.id)"
-                                        @click.stop
-                                        />
-                            </div>
-                        </template>
-
-                        <!-- Rank input for ranked voting -->
-                        <template v-if="effectiveEngineId === 'ranking' && canVote && !hasUserVoted && activeEngine?.status === 'active'">
-                            <div class="rank-input">
-                                <label>{{ t('agora', 'Rank') }}</label>
-                                <select v-model="rankings[option.id]" @click.stop>
-                                    <option :value="null">-</option>
-                                    <option v-for="i in maxRank" :key="i" :value="i">{{ i }}</option>
-                                </select>
-                            </div>
-                        </template>
-
-                        <!-- Score input for score voting -->
-                        <template v-if="(effectiveEngineId === 'score' || effectiveEngineId === 'star') && canVote && !hasUserVoted && activeEngine?.status === 'active'">
-                            <div class="score-input">
-                                <input
-                                        v-model="scores[option.id]"
-                                        type="range"
-                                        :min="scoreMin"
-                                        :max="scoreMax"
-                                        @click.stop
-                                        />
-                                <span>{{ scores[option.id] || 0 }}</span>
-                            </div>
-                        </template>
-
-                        <!-- Grade input for majority judgment -->
-                        <template v-if="effectiveEngineId === 'majority_judgment' && canVote && !hasUserVoted && activeEngine?.status === 'active'">
-                            <div class="grade-input">
-                                <select v-model="grades[option.id]" @click.stop>
-                                    <option :value="null">-</option>
-                                    <option v-for="grade in gradeOptions" :key="grade" :value="grade">
-                                    {{ grade }}
-                                    </option>
-                                </select>
-                            </div>
-                        </template>
-
-                        <!-- Reaction buttons for reaction voting -->
-                        <template v-if="effectiveEngineId === 'reaction' && canVote && !hasUserVoted && activeEngine?.status === 'active'">
-                            <div class="reaction-input">
-                                <button
-                                        v-for="reaction in allowedReactions"
-                                        :key="reaction"
-                                        class="reaction-btn"
-                                        :class="{ active: userReactions[option.id] === reaction }"
-                                        @click.stop="setReaction(option.id, reaction)"
-                                        >
-                                        {{ reaction }}
-                                </button>
-                            </div>
-                        </template>
-
-                        <!-- Vote button for single-choice engines -->
-                        <template v-else-if="currentEngine?.behavior === 'single' && canVote && !hasUserVotedFor(option.id) && !hasUserVoted && activeEngine?.status === 'active'">
-                            <NcButton
-                                    type="primary"
-                                    size="small"
-                                    @click.stop="voteForOption(option)"
-                                    >
-                                    <template #icon>
-                                        <Vote :size="16" />
-                                    </template>
-                            {{ t('agora', 'Vote') }}
-                            </NcButton>
-                        </template>
-
-                        <!-- Already voted indicator -->
-                        <div v-else-if="hasUserVotedFor(option.id) && activeEngine?.status === 'active'" class="voted-badge">
-                            <CheckCircle :size="16" />
-                            {{ t('agora', 'Voted') }}
-                        </div>
-
-                        <!-- Custom progress bar slot -->
-                        <template #progress-bar>
-                            <div class="vote-progress-section">
-                                <div class="vote-stats">
-                                    <div class="votes-count">
-                                        <ThumbsUp :size="14" />
-                                        <strong>{{ getOptionVoteCount(option.id) }}</strong>
-                                        {{ t('agora', 'votes') }}
-                                    </div>
-                                    <div class="percentage">
-                                        {{ getPercentage(option) }}%
-                                    </div>
-                                </div>
-                                <div class="progress-bar">
-                                    <div
-                                            class="progress-fill"
-                                            :style="{ width: getPercentage(option) + '%' }"
-                                            :class="{
-                                                    'fill-leading': option.metadata?.status === 'leading',
-                                                    'fill-selected': option.metadata?.status === 'selected'
-                                                    }"
-                                            />
-                                    </div>
-                                </div>
-                        </template>
-                        </OptionCard>
-                            </div>
-                </div>
-
-                <!-- Submit button for multi/flex votes -->
-                <div v-if="(currentEngine?.behavior === 'multi' || currentEngine?.behavior === 'flex') && canVote && !hasUserVoted && activeEngine?.status === 'active'" class="submit-vote-section">
-                    <NcButton
-                            type="primary"
-                            size="medium"
-                            :disabled="!canSubmitMultiVote"
-                            @click="submitMultiVote"
-                            >
-                            <template #icon>
-                                <Vote :size="18" />
-                            </template>
-                    {{ getSubmitButtonText() }}
-                    </NcButton>
-                    <span v-if="voteSelectionInfo" class="selection-info">{{ voteSelectionInfo }}</span>
-                </div>
-            </div>
-
-            <!-- List Layout -->
-            <div v-else-if="currentLayout === 'list'" class="list-layout">
-                <div class="list-header">
-                    <div class="list-cell rank">{{ t('agora', 'Rank') }}</div>
-                    <div class="list-cell option">{{ t('agora', 'Option') }}</div>
-                    <div class="list-cell votes">{{ t('agora', 'Votes') }}</div>
-                    <div class="list-cell percentage">{{ t('agora', 'Percentage') }}</div>
-                    <div class="list-cell action">{{ t('agora', 'Action') }}</div>
-                </div>
-
-                <div
-                        v-for="(option, index) in rankedOptions"
-                        :key="option.id"
-                        class="list-row"
-                        :class="{
-                                'is-leading': option.metadata?.status === 'leading',
-                                'user-voted': hasUserVotedFor(option.id),
-                                'selected-for-vote': isSelectedForVote(option.id)
-                                }"
-                        >
-                        <div class="list-cell rank">
-                            <div class="rank-number">
-                                <span v-if="index === 0" class="medal">🥇</span>
-                                <span v-else-if="index === 1" class="medal">🥈</span>
-                                <span v-else-if="index === 2" class="medal">🥉</span>
-                                <span v-else>{{ index + 1 }}</span>
-                            </div>
-                        </div>
-                        <div class="list-cell option">
-                            <OptionCard
-                                    :option="option"
-                                    :compact="true"
-                                    :inline="true"
-                                    :show-action="false"
-                                    :family-type="family?.key || 'vote'"
-                                    :inquiry-id="inquiryId"
-                                    @click="handleOptionClick(option)"
-                                    />
-                        </div>
-                        <div class="list-cell votes">
-                            <strong>{{ getOptionVoteCount(option.id) }}</strong>
-                        </div>
-                        <div class="list-cell percentage">
-                            <div class="percentage-bar">
-                                <div
-                                        class="percentage-fill"
-                                        :style="{ width: getPercentage(option) + '%' }"
-                                        />
-                                    <span class="percentage-text">{{ getPercentage(option) }}%</span>
-                                </div>
-                            </div>
-                            <div class="list-cell action">
-                                <NcButton
-                                        v-if="currentEngine?.behavior === 'single' && canVote && !hasUserVotedFor(option.id) && !hasUserVoted && activeEngine?.status === 'active'"
-                                        type="primary"
-                                        size="small"
-                                        @click.stop="voteForOption(option)"
-                                        >
-                                        <Vote :size="14" />
-                                        {{ t('agora', 'Vote') }}
-                                </NcButton>
-
-                                <input
-                                        v-else-if="currentEngine?.behavior === 'multi' && canVote && !hasUserVoted && activeEngine?.status === 'active'"
-                                        type="checkbox"
-                                        :checked="isSelectedForVote(option.id)"
-                                        @change="toggleOptionSelection(option.id)"
-                                        />
-
-                                <select
-                                        v-else-if="effectiveEngineId === 'ranking' && canVote && !hasUserVoted && activeEngine?.status === 'active'"
-                                        v-model="rankings[option.id]"
-                                        class="rank-select-mini"
-                                        >
-                                        <option :value="null">-</option>
-                                        <option v-for="i in maxRank" :key="i" :value="i">{{ i }}</option>
-                                </select>
-
-                                <input
-                                        v-else-if="(effectiveEngineId === 'score' || effectiveEngineId === 'star') && canVote && !hasUserVoted && activeEngine?.status === 'active'"
-                                        v-model="scores[option.id]"
-                                        type="number"
-                                        :min="scoreMin"
-                                        :max="scoreMax"
-                                        class="score-input-mini"
-                                        />
-
-                                <div v-else-if="hasUserVotedFor(option.id) && activeEngine?.status === 'active'" class="voted-icon">
-                                    <CheckCircle :size="16" />
-                                </div>
-                            </div>
-                        </div>
-
-                        <div v-if="(currentEngine?.behavior === 'multi' || currentEngine?.behavior === 'flex') && canVote && !hasUserVoted && activeEngine?.status === 'active'" class="submit-vote-section list-submit">
-                            <NcButton
-                                    type="primary"
-                                    size="medium"
-                                    :disabled="!canSubmitMultiVote"
-                                    @click="submitMultiVote"
-                                    >
-                                    <Vote :size="18" />
-                                    {{ getSubmitButtonText() }}
-                            </NcButton>
-                        </div>
-                </div>
-
-                <!-- Results Layout -->
-                <div v-else-if="currentLayout === 'results'" class="results-layout">
-                    <div class="results-summary">
-                        <div class="summary-card">
-                            <div class="summary-icon">
-                                <Users :size="24" />
-                            </div>
-                            <div class="summary-content">
-                                <div class="summary-value">{{ totalVotes }}</div>
-                                <div class="summary-label">{{ t('agora', 'Total Votes') }}</div>
-                            </div>
-                        </div>
-                        <div class="summary-card">
-                            <div class="summary-icon">
-                                <Trophy :size="24" />
-                            </div>
-                            <div class="summary-content">
-                                <div class="summary-value">{{ winner?.title || '-' }}</div>
-                                <div class="summary-label">{{ t('agora', 'Current Leader') }}</div>
-                            </div>
-                        </div>
-                        <div class="summary-card">
-                            <div class="summary-icon">
-                                <TrendingUp :size="24" />
-                            </div>
-                            <div class="summary-content">
-                                <div class="summary-value">{{ winnerPercentage }}%</div>
-                                <div class="summary-label">{{ t('agora', 'Leading Percentage') }}</div>
-                            </div>
-                        </div>
-                        <div class="summary-card">
-                            <div class="summary-icon">
-                                <Clock :size="24" />
-                            </div>
-                            <div class="summary-content">
-                                <div class="summary-value">{{ timeRemaining }}</div>
-                                <div class="summary-label">{{ t('agora', 'Time Remaining') }}</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="charts-section">
-                        <div class="chart-container">
-                            <h4>{{ t('agora', 'Vote Distribution') }}</h4>
-                            <canvas ref="pieChartCanvas"></canvas>
-                        </div>
-                        <div class="chart-container">
-                            <h4>{{ t('agora', 'Vote Ranking') }}</h4>
-                            <canvas ref="barChartCanvas"></canvas>
-                        </div>
-                    </div>
-
-                    <div class="ranking-table">
-                        <h4>{{ t('agora', 'Detailed Ranking') }}</h4>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>{{ t('agora', 'Rank') }}</th>
-                                    <th>{{ t('agora', 'Option') }}</th>
-                                    <th>{{ t('agora', 'Votes') }}</th>
-                                    <th>{{ t('agora', 'Percentage') }}</th>
-                                    <th>{{ t('agora', 'Status') }}</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr v-for="(option, index) in rankedOptions" :key="option.id">
-                                    <td class="rank-cell">
-                                        <span class="rank-badge" :class="getRankClass(index)">
-                                            {{ index + 1 }}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <div class="option-name">
-                                            {{ option.title }}
-                                        </div>
-                                    </td>
-                                    <td class="votes-cell">{{ getOptionVoteCount(option.id) }}</td>
-                                    <td class="percentage-cell">
-                                        <div class="mini-progress">
-                                            <div
-                                                    class="mini-progress-fill"
-                                                    :style="{ width: getPercentage(option) + '%' }"
-                                                    />
-                                                <span>{{ getPercentage(option) }}%</span>
-                                            </div>
-                                    </td>
-                                    <td>
-                                        <span v-if="option.metadata?.status" class="status-tag" :class="option.metadata.status">
-                                            {{ option.metadata.status }}
-                                        </span>
-                                        <span v-else>-</span>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                                        </div>
-                    </div>
-
-                    <!-- Empty state -->
-                    <div v-if="voteOptions.length === 0" class="empty-state">
-                        <component :is="getOptionTypeIcon('vote')" :size="48" />
-                        <h4>{{ t('agora', 'No options to vote on yet') }}</h4>
-                        <p>{{ t('agora', 'Add options to start the voting process') }}</p>
-                        <NcButton
-                                v-if="!isReadonly && canManageVote"
-                                type="primary"
-                                @click="showAddToVoteModal = true"
-                                >
-                                <template #icon>
-                                    <Plus :size="16" />
-                                </template>
-                        {{ t('agora', 'Add Option') }}
-                        </NcButton>
-                    </div>
-
-                    <!-- Modals -->
-                    <EngineSelectorModal
-                            v-if="showEngineModal"
-                            :mode="engineModalMode"
-                            :existing-engine="activeEngine"
-                            :option-count="voteOptions.length"
-                            @close="showEngineModal = false"
-                            @save="handleEngineSave"
-                            />
-
-                    <AddOptionToFamily
-                            v-if="showAddToVoteModal"
-                            :inquiry-id="inquiryId"
-                            family-type="vote"
-                            :allowed-families="allowedFamiliesForVote"
-                            @close="closeAddToVoteModal"
-                            @success="handleAddSuccess"
-                            />
-                </div>
+    <!-- Delete Confirmation Dialog -->
+    <NcDialog
+      v-if="showDeleteConfirm"
+      :name="t('agora', 'Delete Voting Method')"
+      :message="deleteConfirmMessage"
+      @confirm="confirmDelete"
+      @cancel="cancelDelete"
+    >
+      <template #actions>
+        <NcButton type="primary" @click="confirmDelete">
+          {{ t('agora', 'Delete') }}
+        </NcButton>
+        <NcButton type="tertiary" @click="cancelDelete">
+          {{ t('agora', 'Cancel') }}
+        </NcButton>
+      </template>
+    </NcDialog>
+  </div>
 </template>
 
 <script setup lang="ts">
-    import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue' 
+import { ref, computed } from 'vue'
 import { t } from '@nextcloud/l10n'
+import { NcLoadingIcon, NcDialog } from '@nextcloud/vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
-import NcSelect from '@nextcloud/vue/components/NcSelect'
-import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
-import Chart from 'chart.js/auto'
-import { showError, showSuccess } from '@nextcloud/dialogs'
+import type { Option, SupportEngine } from '../../Types/index'
+import { useVoteContext } from '../../../composables/useVoteContext'
+import { useOptionsStore } from '../../../stores/options'
+import { useSupportEngineStore } from '../../../stores/supportEngine'
 
-import OptionCard from '../OptionCard.vue'
-import { getOptionTypeIconComponent , filterOptionsByLayout } from '../../../helpers/modules/InquiryOptionHelper'
-import type {
-     InquiryOptionType,
-     OptionFamily,
-     Option,
-     SupportEngine
-    } from '../../Types/index'
-
-import {
-  calculateOptionResult,
-} from '../../../utils/voteCalculations'
-import {
-  Plus,
-  Vote,
-  Users,
-  Calendar,
-  ThumbsUp,
-  CheckCircle,
-  Trophy,
-  TrendingUp,
-  Clock,
-  LayoutGrid,
-  List,
-  BarChart3,
-  Settings,
-  Info,
-  Star,
-  Heart,
-  Scale,
-  Brain,
-  Gauge,
-  Award,
-} from 'lucide-vue-next'
-
+import VoteHeader from '../Vote/VoteHeader.vue'
+import VoteEmptyState from '../Vote/VoteEmptyState.vue'
+import VoteCardsLayout from '../Vote/VoteCardsLayout.vue'
+import VoteListLayout from '../Vote/VoteListLayout.vue'
+import VoteResultsLayout from '../Vote/VoteResultsLayout.vue'
 import EngineSelectorModal from '../../Modals/EngineSelectorModal.vue'
 import AddOptionToFamily from '../../Modals/AddOptionToFamily.vue'
 
-// Import from single source of truth
-import { 
-  ENGINE_DEFINITIONS,
-  getAvailableEngines,
-  type EngineDefinition,
-  type SupportData,
-  type SupportValue
-} from '../../../Types/votingType'
-
-// Stores
-import { useSupportEngineStore } from '../../../stores/supportEngine'
-import { useSupportResultStore } from '../../../stores/supportResult'
-import { useSupportsStore } from '../../../stores/supports'
-import { useSessionStore } from '../../../stores/session'
-
-// ----------------------------------------------------------------------------
-// Types
-// ----------------------------------------------------------------------------
-
-interface VoteSession {
-  start_date?: string
-  end_date?: string
-  quorum?: number
-  engine?: string
-  [key: string]: unknown
-}
-
-// ----------------------------------------------------------------------------
-// Props
-// ----------------------------------------------------------------------------
-
 const props = defineProps<{
-  options: Option[]
-  voteSession?: VoteSession
-  canVote?: boolean
-  isReadonly?: boolean
-  currentUserVotes?: SupportData[]
-  inquiryId?: number
-  supports?: SupportData[]
-  optionTypes: InquiryOptionType[]
-  userId?: string
-  family?: OptionFamily
-  optionsByInquiry: Option[]
+  inquiryId: number
+  familyType?: string
+  canManageVote: boolean
+  isReadonly: boolean
+  canAddOptions: boolean
 }>()
 
 const emit = defineEmits<{
-  'vote': [supportData: SupportData]
-  'multiVote': [supports: SupportData[]]
-  'select': [option: Option]
-  'addOption': [optionType: string]
-  'update:options': []
+  'configure-engine': []
+  'add-option': []
+  'add-to-vote': []
+  'select-option': [option: Option]
+  'option-family-changed': [payload: { optionId: number, familyKey: string, action: string }]
 }>()
 
-// ----------------------------------------------------------------------------
-// Stores
-// ----------------------------------------------------------------------------
-
+const optionsStore = useOptionsStore()
 const engineStore = useSupportEngineStore()
-const resultStore = useSupportResultStore()
-const supportsStore = useSupportsStore()
-const sessionStore = useSessionStore()
+const allOptions = computed(() => optionsStore.options || [])
+const votableOptionIds = computed(() => votableOptions.value.map(opt => opt.id))
 
-// ----------------------------------------------------------------------------
-// State
-// ----------------------------------------------------------------------------
+const {
+  loadingEngines,
+  availableEngines,
+  selectedEngineId,
+  currentEngine,
+  votableOptions,
+  hasActiveEngine,
+  rankings,
+  scores,
+  selectedOptions,
+  hasUserVoted,
+  canVote,
+  canSubmitMultiVote,
+  voteSelectionInfo,
+  hasUserVotedFor,
+  isSelectedForVote,
+  toggleSelection,
+  submitSingleVote,
+  submitMultiVote,
+  totalVotes,
+  getOptionVoteCount,
+  getPercentage,
+  getRankedOptions,
+  getWinner,
+  getWinnerPercentage,
+  refreshEngines,
+  effectiveEngineId,
+  maxRank,
+  scoreMin,
+  scoreMax,
+  selectEngine,
+} = useVoteContext(props.inquiryId)
 
-const refreshKey = ref(0)
-const selectedOptions = ref<Set<number>>(new Set())
-const rankings = ref<Record<number, number>>({})
-const scores = ref<Record<number, number>>({})
-const grades = ref<Record<number, string>>({})
-const userReactions = ref<Record<number, string>>({})
-
-const showEngineModal = ref(false)
-const engineModalMode = ref<'create' | 'edit'>('create')
-const showAddToVoteModal = ref(false)
-const selectedEngineId = ref<number | null>(null)
-
-// Layout
-const allowedLayouts = ['cards', 'list', 'results']
+// Local UI state
 const currentLayout = ref<'cards' | 'list' | 'results'>('cards')
+const allowedLayouts = ['cards', 'list', 'results']
+const showCreateEngineModal = ref(false)
+const showAddToVoteModal = ref(false)
+const showDeleteConfirm = ref(false)
+const engineModalMode = ref<'create' | 'edit'>('create')
+const engineToEdit = ref<SupportEngine | null>(null)
+const engineToDelete = ref<SupportEngine | null>(null)
+const voteSession = ref({ start_date: null, end_date: null, quorum: null })
+const winner = computed(() => getWinner(votableOptions.value))
+const winnerPercentage = computed(() => getWinnerPercentage(votableOptions.value))
 
-// ----------------------------------------------------------------------------
-// Computed: Active Engine from Store
-// ----------------------------------------------------------------------------
-
-// Get all engines for this inquiry
-const availableEnginesList = computed(() => {
-  return engineStore.getEnginesByInquiry(props.inquiryId || 0)
+const rankedOptions = computed(() => getRankedOptions(votableOptions.value))
+const currentLayoutComponent = computed(() => {
+  if (currentLayout.value === 'cards') return VoteCardsLayout
+  if (currentLayout.value === 'list') return VoteListLayout
+  return VoteResultsLayout
 })
 
-// Get active engine (first active one, or first in list if none active)
-const activeEngine = computed(() => {
-  const engines = availableEnginesList.value
-
-  if (engines.length === 0) return null
-
-  // First try to find an active engine
-  const active = engines.find(e => e.status === 'active')
-  if (active) return active
-
-  // If no active engine but we have engines, return the first one
-  return engines[0]
-})
-
-const effectiveEngineId = computed(() => activeEngine.value?.engine || 'binary')
-const effectiveEngineConfig = computed(() => activeEngine.value?.config || {})
-
-const currentEngine = computed(() => 
-  ENGINE_DEFINITIONS[effectiveEngineId.value] as EngineDefinition | undefined
-)
-
-const canManageVote = computed(() =>
-  sessionStore.currentUser.isAdmin || sessionStore.currentUser.isModerator
-)
-
-// ----------------------------------------------------------------------------
-// Computed: Available Engines for Dropdown
-// ----------------------------------------------------------------------------
-/*const engineSelectOptions = computed(() => {
-  if (!availableEnginesList.value || availableEnginesList.value.length === 0) {
-    return []
-  }
-  return availableEnginesList.value.map(engine => ({
-    value: engine.id,
-    label: engine.title || getEngineLabel(engine.engine),
-    description: engine.description || getEngineDescription(engine.engine),
-    engine: engine.engine 
-  }))
-})*/
-
-
-// ----------------------------------------------------------------------------
-// Computed: Vote Options
-// ----------------------------------------------------------------------------
-/*
-const voteOptions = computed(() => filterOptionsByLayout(
-    props.optionsByInquiry,
-    'vote',
-    props.optionTypes,
-    props.family?.key || 'vote'
-))
-*/
-
-const voteOptions = computed(() => {
-  // First filter by layout/type
-  const filteredByLayout = filterOptionsByLayout(
-    props.optionsByInquiry,
-    'vote',
-    props.optionTypes,
-    props.family?.key || 'vote'
-  )
-
-  // Then filter by engine target_ids if engine exists and has target_ids
-  if (activeEngine.value?.target_ids && activeEngine.value.target_ids.length > 0) {
-    return filteredByLayout.filter(opt => 
-      activeEngine.value!.target_ids!.includes(opt.id)
-    )
-  }
-
-  return filteredByLayout
-})
-
-const allowedFamiliesForVote = computed(() => ['kanban', 'proposal', 'calendar', 'default'])
-
-// ----------------------------------------------------------------------------
-// Computed: User's votes
-// ----------------------------------------------------------------------------
-
-const getUserVoteForOption = (optionId: number): SupportData | undefined => {
-  const votes = supportsStore.supports.length > 0 ? supportsStore.supports : (props.currentUserVotes || [])
-  return votes.find(vote => vote.optionId === optionId && vote.userId === props.userId)
-}
-
-const hasUserVotedFor = (optionId: number): boolean => !!getUserVoteForOption(optionId)
-
-const hasUserVoted = computed(() => {
-  const votes = supportsStore.supports.length > 0 ? supportsStore.supports : (props.currentUserVotes || [])
-  return votes.filter(v => v.userId === props.userId).length > 0
-})
-
-// ----------------------------------------------------------------------------
-// Computed: Option Results
-// ----------------------------------------------------------------------------
-
-const optionResults = computed(() => {
-  const results: Record<number, any> = {}
-
-  for (const opt of voteOptions.value) {
-    const storeResult = resultStore.getResultByTarget(opt.id)
-    if (storeResult) {
-      results[opt.id] = storeResult.result
-    } else {
-      const optionSupports = (props.supports || []).filter(s => s.optionId === opt.id)
-      const config = {
-        min: scoreMin.value,
-        max: scoreMax.value,
-        grades: gradeOptions.value.map((_, idx) => idx),
-        maxRank: maxRank.value
-      }
-      results[opt.id] = calculateOptionResult(effectiveEngineId.value, optionSupports, config)
-    }
-  }
-  return results
-})
-
-const getOptionVoteCount = (optionId: number): number => {
-  const result = optionResults.value[optionId]
-  if (!result) return 0
-
-  if (result.type === 'binary') {
-    return (result.totals?.yes || 0) + (result.totals?.no || 0)
-  }
-  if (result.type === 'ternary') {
-    return (result.totals?.yes || 0) + (result.totals?.no || 0) + (result.totals?.abstain || 0)
-  }
-  if (result.type === 'score') {
-    return result.totals?.total || 0
-  }
-  if (result.type === 'approval') {
-    return result.count || 0
-  }
-  if (result.type === 'approval_delib') {
-    return result.totals?.approved || 0
-  }
-  if (result.type === 'ranking') {
-    return (props.supports || []).filter(s => s.optionId === optionId).length
-  }
-  return 0
-}
-
-const totalVotes = computed(() => {
-  let sum = 0
-  for (const opt of voteOptions.value) {
-    sum += getOptionVoteCount(opt.id)
-  }
-  return sum
-})
-
-function getOptionScore(option: Option): number {
-  const result = optionResults.value[option.id]
-  if (!result) return 0
-  switch (result.type) {
-    case 'binary':
-      return result.totals?.yes || 0
-    case 'ternary':
-      return result.totals?.yes || 0
-    case 'score':
-      return result.totals?.average || 0
-    case 'ranking':
-      return result.score || 0
-    case 'majority_judgment':
-      return result.median || 0
-    case 'approval':
-      return result.count || 0
-    case 'approval_delib':
-      return result.totals?.approved || 0
-    default:
-      return 0
-  }
-}
-
-function getPercentage(option: Option): number {
-  const score = getOptionScore(option)
-  if (totalVotes.value === 0) return 0
-  return Math.round((score / totalVotes.value) * 100)
-}
-
-const rankedOptions = computed(() => {
-  return [...voteOptions.value].sort((a, b) => {
-    const votesA = getOptionVoteCount(a.id)
-    const votesB = getOptionVoteCount(b.id)
-    return votesB - votesA
+const deleteConfirmMessage = computed(() => {
+  if (!engineToDelete.value) return ''
+  return t('agora', 'Are you sure you want to delete the voting method "{title}"? This action cannot be undone.', {
+    title: engineToDelete.value.title || t('agora', 'Untitled')
   })
 })
 
-const winner = computed(() => rankedOptions.value[0] || null)
-const winnerPercentage = computed(() => {
-  if (!winner.value) return 0
-  return getPercentage(winner.value)
-})
+const getOptionRank = (optionId: number, ranked: Option[]): number =>
+  ranked.findIndex(opt => opt.id === optionId) + 1
 
-
-// ----------------------------------------------------------------------------
-// Engine Config Helpers
-// ----------------------------------------------------------------------------
-
-const maxRank = computed(() => {
-  if (effectiveEngineId.value === 'ranking' && effectiveEngineConfig.value.max_rank) {
-    return effectiveEngineConfig.value.max_rank as number
-  }
-  return voteOptions.value.length
-})
-
-const scoreMin = computed(() => {
-  if (effectiveEngineId.value === 'score' || effectiveEngineId.value === 'star') {
-    return (effectiveEngineConfig.value.min as number) ?? 0
-  }
-  return 0
-})
-
-const scoreMax = computed(() => {
-  if (effectiveEngineId.value === 'score' || effectiveEngineId.value === 'star') {
-    return (effectiveEngineConfig.value.max as number) ?? (effectiveEngineId.value === 'star' ? 5 : 10)
-  }
-  return effectiveEngineId.value === 'star' ? 5 : 10
-})
-
-const gradeOptions = computed(() => {
-  if (effectiveEngineId.value === 'majority_judgment') {
-    return (effectiveEngineConfig.value.grades as string[]) || ['Reject', 'Poor', 'Fair', 'Good', 'Excellent']
-  }
-  return []
-})
-
-const allowedReactions = computed(() => {
-  if (effectiveEngineId.value === 'reaction') {
-    return (effectiveEngineConfig.value.allowed_reactions as string[]) || ['👍', '❤️', '🎉', '🤔', '👎']
-  }
-  return []
-})
-
-const maxApprovalChoices = computed(() => {
-  if (effectiveEngineId.value === 'approval') {
-    return (effectiveEngineConfig.value.max_choices as number | null) ?? null
-  }
-  return null
-})
-
-const minApprovalChoices = computed(() => {
-  if (effectiveEngineId.value === 'approval') {
-    return (effectiveEngineConfig.value.min_choices as number) ?? 1
-  }
-  return 1
-})
-
-const getPurposeLabel = (purpose: string): string => {
-  const labels: Record<string, string> = {
-    'vote': t('agora', 'Vote'),
-    'deliberation': t('agora', 'Deliberation'),
-    'election': t('agora', 'Election'),
-    'consultation': t('agora', 'Consultation'),
-    'moderation': t('agora', 'Moderation'),
-    'prioritization': t('agora', 'Prioritization'),
-    'referendum': t('agora', 'Referendum')
-  }
-  return labels[purpose] || purpose
-}
-
-const getPurposeIcon = (purpose: string): string => {
-  const icons: Record<string, string> = {
-    'vote': '🗳️',
-    'deliberation': '💬',
-    'election': '🏛️',
-    'consultation': '📢',
-    'moderation': '⚖️',
-    'prioritization': '📊',
-    'referendum': '📜'
-  }
-  return icons[purpose] || '🎯'
-}
-
-// ----------------------------------------------------------------------------
-// Selection Helpers
-// ----------------------------------------------------------------------------
-
-function isSelectedForVote(optionId: number): boolean {
-  if (effectiveEngineId.value === 'ranking') {
-    return rankings.value[optionId] !== null && rankings.value[optionId] !== undefined
-  }
-  if (effectiveEngineId.value === 'score' || effectiveEngineId.value === 'star') {
-    return scores.value[optionId] !== null && scores.value[optionId] !== undefined
-  }
-  if (effectiveEngineId.value === 'majority_judgment') {
-    return grades.value[optionId] !== null && grades.value[optionId] !== undefined
-  }
-  if (effectiveEngineId.value === 'reaction') {
-    return userReactions.value[optionId] !== null && userReactions.value[optionId] !== undefined
-  }
-  return selectedOptions.value.has(optionId)
-}
-
-function toggleOptionSelection(optionId: number): void {
-  if (selectedOptions.value.has(optionId)) {
-    selectedOptions.value.delete(optionId)
-  } else {
-    // Enforce max choices if configured
-    if (maxApprovalChoices.value && selectedOptions.value.size >= maxApprovalChoices.value) {
-      showError(t('agora', 'You can only select up to {max} options', { max: maxApprovalChoices.value }))
-      return
-    }
-    selectedOptions.value.add(optionId)
-  }
-  selectedOptions.value = new Set(selectedOptions.value)
-}
-
-function setReaction(optionId: number, reaction: string): void {
-  if (userReactions.value[optionId] === reaction) {
-    delete userReactions.value[optionId]
-  } else {
-    userReactions.value[optionId] = reaction
-  }
-  userReactions.value = { ...userReactions.value }
-}
-
-function handleOptionClick(option: Option): void {
-  if (currentEngine.value?.behavior === 'multi' && props.canVote && !hasUserVoted.value && activeEngine.value?.status === 'active') {
-    toggleOptionSelection(option.id)
-  } else {
-    emit('select', option)
-  }
-}
-
-// ----------------------------------------------------------------------------
-// Voting Actions
-// ----------------------------------------------------------------------------
-
-async function voteForOption(option: Option): Promise<void> {
-  if (!props.canVote || hasUserVoted.value || !props.userId) return
-  if (!activeEngine.value) {
-    showError(t('agora', 'No voting method configured'))
-    return
-  }
-
-  let value: SupportValue = null
-
-  if (effectiveEngineId.value === 'binary') {
-    value = 1
-  } else if (effectiveEngineId.value === 'ternary') {
-    value = 1
-  } else if (effectiveEngineId.value === 'score' || effectiveEngineId.value === 'star') {
-    value = scores.value[option.id] ?? scoreMax.value
-  } else if (effectiveEngineId.value === 'reaction') {
-    value = userReactions.value[option.id] || '👍'
-  }
-
-  const supportData: SupportData = {
-    inquiryId: props.inquiryId!,
-    optionId: option.id,
-    groupId: 0,
-    userId: props.userId,
-    support_engine_id: activeEngine.value.id,
-    value,
-    created: Date.now()
-  }
-
-  try {
-    await supportsStore.addSupport(
-      supportData.inquiryId,
-      supportData.userId,
-      supportData.value,
-      supportData.optionId,
-      supportData.support_engine_id
-    )
-
-    // Refresh results
-    if (activeEngine.value.id) {
-      await resultStore.calculateAndGetResults(activeEngine.value.id)
-    }
-
-    showSuccess(t('agora', 'Your vote for "{option}" has been recorded!', { option: option.title }))
-    emit('update:options')
-  } catch (error) {
-    console.error('Failed to vote:', error)
-    showError(t('agora', 'Failed to record vote'))
-  }
-}
-
-async function submitMultiVote(): Promise<void> {
-  if (!props.canVote || hasUserVoted.value || !props.userId) return
-  if (!activeEngine.value) {
-    showError(t('agora', 'No voting method configured'))
-    return
-  }
-
-  const supports: SupportData[] = []
-  const engineType = effectiveEngineId.value
-
-  // Enforce min choices for approval
-  if (engineType === 'approval') {
-    if (selectedOptions.value.size < minApprovalChoices.value) {
-              showError(t('agora', 'You must select at least {min} options', { min: minApprovalChoices.value }))
-              return
-              }
-              for (const optionId of selectedOptions.value) {
-              supports.push({
-              inquiryId: props.inquiryId!,
-              optionId,
-              groupId: 0,
-              userId: props.userId,
-              support_engine_id: activeEngine.value.id,
-              value: 1,
-              created: Date.now()
-              })
-              }
-              } else if (engineType === 'ranking') {
-              for (const [optionId, rank] of Object.entries(rankings.value)) {
-              if (rank !== null) {
-              supports.push({
-              inquiryId: props.inquiryId!,
-              optionId: parseInt(optionId, 10),
-              groupId: 0,
-              userId: props.userId,
-              support_engine_id: activeEngine.value.id,
-              value: rank,
-              created: Date.now()
-              })
-              }
-              }
-              } else if (engineType === 'score' || engineType === 'star') {
-              for (const [optionId, score] of Object.entries(scores.value)) {
-              if (score !== null && score !== undefined) {
-              supports.push({
-              inquiryId: props.inquiryId!,
-              optionId: parseInt(optionId, 10),
-              groupId: 0,
-              userId: props.userId,
-              support_engine_id: activeEngine.value.id,
-              value: score,
-              created: Date.now()
-              })
-              }
-              }
-              } else if (engineType === 'majority_judgment') {
-              for (const [optionId, grade] of Object.entries(grades.value)) {
-              if (grade !== null) {
-              supports.push({
-              inquiryId: props.inquiryId!,
-              optionId: parseInt(optionId, 10),
-              groupId: 0,
-              userId: props.userId,
-              support_engine_id: activeEngine.value.id,
-              value: grade,
-              created: Date.now()
-              })
-              }
-              }
-              } else if (engineType === 'reaction') {
-              for (const [optionId, reaction] of Object.entries(userReactions.value)) {
-              if (reaction) {
-              supports.push({
-              inquiryId: props.inquiryId!,
-              optionId: parseInt(optionId, 10),
-              groupId: 0,
-              userId: props.userId,
-              support_engine_id: activeEngine.value.id,
-              value: reaction,
-              created: Date.now()
-              })
-              }
-              }
-              }
-
-              if (supports.length === 0) {
-              showError(t('agora', 'No votes to submit'))
-              return
-              }
-
-              try {
-              for (const support of supports) {
-              await supportsStore.addSupport(
-              support.inquiryId,
-              support.userId,
-              support.value,
-              support.optionId,
-              support.support_engine_id
-              )
-              }
-              if (activeEngine.value.id) {
-              await resultStore.calculateAndGetResults(activeEngine.value.id)
-              }
-
-              const voteCount = supports.length
-              showSuccess(t('agora', 'Your vote for {count} {countLabel} has been recorded!', {
-              count: voteCount,
-              countLabel: voteCount === 1 ? t('agora', 'option') : t('agora', 'options')
-              }))
-
-              // Clear selections
-              selectedOptions.value.clear()
-              rankings.value = {}
-              scores.value = {}
-              grades.value = {}
-              userReactions.value = {}
-
-              emit('update:options')
-              } catch (error) {
-              console.error('Failed to submit multi-vote:', error)
-              showError(t('agora', 'Failed to submit votes'))
-              }
-              }
-
-              // ----------------------------------------------------------------------------
-              // Engine Management Handlers
-              // ----------------------------------------------------------------------------
-    function openCreateEngineModal(): void {
-  engineModalMode.value = 'create'
-  showEngineModal.value = true
-}
-
-function openEditEngineModal(): void {
+const handleEditEngine = (engine: SupportEngine) => {
+  engineToEdit.value = engine
   engineModalMode.value = 'edit'
-  showEngineModal.value = true
+  showCreateEngineModal.value = true
 }
 
-              function openEngineModal(): void {
-  if (activeEngine.value) {
-    engineModalMode.value = 'edit'
-  } else {
-    engineModalMode.value = 'create'
+const handleDeleteEngine = (engine: SupportEngine) => {
+  engineToDelete.value = engine
+  showDeleteConfirm.value = true
+}
+
+const confirmDelete = async () => {
+  if (engineToDelete.value) {
+    try {
+      await engineStore.deleteEngine(engineToDelete.value.id)
+      await refreshEngines()
+      
+      // After deletion, select another engine if available
+      if (availableEngines.value.length > 0) {
+        selectEngine(availableEngines.value[0].id)
+      }
+    } catch (error) {
+      console.error('Failed to delete engine:', error)
+    }
   }
-  showEngineModal.value = true
+  showDeleteConfirm.value = false
+  engineToDelete.value = null
 }
 
-              async function handleEngineSave(data: {
-              title: string
-              description: string
-              engine: string
-              purpose: string
-              config: Record<string, unknown>
-  status?: 'draft' | 'active'
-}): Promise<void> {
-  try {
-    if (engineModalMode.value === 'create') {
-      await engineStore.createEngine({
-        engine: data.engine,
-        purpose: data.purpose,
-        title: data.title,
-        description: data.description,
-        inquiry_group_id: 0,
-        inquiry_id: props.inquiryId!,
-        status: 'draft',
-        config: data.config,
-        target_type: 'option',
-        target_ids: voteOptions.value.map(opt => opt.id),
-        metadata: { phase: 'voting' }
-      })
-      showSuccess(t('agora', 'Voting method created successfully'))
-    } else if (activeEngine.value) {
-      await engineStore.updateEngine(activeEngine.value.id, {
+const cancelDelete = () => {
+  showDeleteConfirm.value = false
+  engineToDelete.value = null
+}
+
+const onEngineSaved = async (data: {
+  title: string
+  description: string
+  engine: string
+  purpose: string
+  config: Record<string, unknown>
+  status?: 'draft' | 'active' | 'closed'
+}) => {
+  if (engineModalMode.value === 'create') {
+    // Create new engine
+    await engineStore.createEngine({
+      inquiry_id: props.inquiryId,
       title: data.title,
-  description: data.description,
-  engine: data.engine,
-  purpose: data.purpose,
-  config: data.config,
-  status: data.status,
-  target_type: activeEngine.value.target_type, 
-  target_ids:voteOptions.value.map(opt => opt.id),
-
-      })
-      showSuccess(t('agora', 'Voting method updated successfully'))
-    }
-
-    // Reload engines and results
-    await engineStore.loadEnginesByInquiry(props.inquiryId!)
-    if (activeEngine.value) {
-      await resultStore.loadEngineResults(activeEngine.value.id)
-    }
-
-    // Clear any pending selections
-    selectedOptions.value.clear()
-    rankings.value = {}
-    scores.value = {}
-    grades.value = {}
-    userReactions.value = {}
-
-  } catch (error) {
-    console.error('Failed to configure voting method:', error)
-    showError(t('agora', 'Failed to configure voting method'))
-    throw error
-  } finally {
-    showEngineModal.value = false
+      description: data.description,
+      engine: data.engine,
+      purpose: data.purpose,
+      config: data.config,
+      status: data.status || 'draft',
+      target_type: 'option',
+      target_ids: []
+    })
+  } else if (engineToEdit.value) {
+    // Update existing engine
+    await engineStore.updateEngine(engineToEdit.value.id, {
+      title: data.title,
+      description: data.description,
+      engine: data.engine,
+      purpose: data.purpose,
+      config: data.config,
+      status: data.status
+    })
   }
-}
-async function handleEngineChange(engineId: number): Promise<void> {
-  const engine = availableEnginesList.value.find(e => e.id === engineId)
-  if (engine && engine.id !== activeEngine.value?.id) {
-    const confirmed = confirm(t('agora', 'Switching the voting method will reset all votes. Continue?'))
-    if (confirmed) {
-      try {
-        if (activeEngine.value) {
-          await engineStore.updateEngine(activeEngine.value.id, { status: 'draft' })
-        }
-        await engineStore.updateEngine(engine.id, { status: 'active' })
-        await engineStore.loadEnginesByInquiry(props.inquiryId!)
-        if (activeEngine.value) {
-          await resultStore.loadEngineResults(activeEngine.value.id)
-        }
-        showSuccess(t('agora', 'Voting method switched successfully'))
-      } catch (error) {
-        console.error('Failed to switch voting method:', error)
-        showError(t('agora', 'Failed to switch voting method'))
-      }
-    }
-  }
+  
+  await refreshEngines()
+  closeEngineModal()
 }
 
-async function handleAddSuccess(createdOption?: Option | Option[]): Promise<void> {
-  showAddToVoteModal.value = false
-  refreshKey.value = refreshKey.value + 1
-  emit('update:options')
-  await nextTick()
-
-  // Update engine target_ids if engine exists and we have a new option
-  if (activeEngine.value && canManageVote.value && createdOption) {
-    const newOptionIds = Array.isArray(createdOption) 
-      ? createdOption.map(o => o.id) 
-      : [createdOption.id]
-
-    if (newOptionIds.length > 0) {
-      const currentTargets = activeEngine.value.target_ids || []
-      const updatedTargets = [...new Set([...currentTargets, ...newOptionIds])]
-
-      // Only update if there are new targets
-      if (updatedTargets.length > currentTargets.length) {
-        try {
-          await engineStore.updateEngine(activeEngine.value.id, {
-            target_ids: updatedTargets
-          })
-          showSuccess(t('agora', 'Voting method updated with new options'))
-        } catch (error) {
-          console.error('Failed to update engine target_ids', error)
-          showError(t('agora', 'Could not link new option to voting method'))
-        }
-      }
-    }
-  }
-
-  showSuccess(t('agora', 'Option added successfully'))
+const closeEngineModal = () => {
+  showCreateEngineModal.value = false
+  engineToEdit.value = null
+  engineModalMode.value = 'create'
 }
 
-function closeAddToVoteModal(): void {
-  showAddToVoteModal.value = false
+const handleEngineUpdate = (engineId: number | null) => {
+  console.log('Engine update received:', engineId)
+  if (engineId) {
+    selectEngine(engineId)
+  }
 }
-
-// ----------------------------------------------------------------------------
-// Chart Creation
-// ----------------------------------------------------------------------------
-
-const pieChartCanvas = ref<HTMLCanvasElement | null>(null)
-const barChartCanvas = ref<HTMLCanvasElement | null>(null)
-let pieChart: Chart | null = null
-let barChart: Chart | null = null
-
-function createCharts(): void {
-  if (!pieChartCanvas.value || !barChartCanvas.value) return
-
-  const labels = rankedOptions.value.map(o => o.title)
-  const votes = rankedOptions.value.map(o => getOptionVoteCount(o.id))
-  const colors = ['#42b883', '#3490dc', '#f6993f', '#e74c3c', '#9b59b6', '#1abc9c', '#e67e22', '#2c3e50']
-
-  if (pieChart) pieChart.destroy()
-  if (barChart) barChart.destroy()
-
-  pieChart = new Chart(pieChartCanvas.value, {
-    type: 'pie',
-    data: {
-      labels,
-      datasets: [{
-        data: votes,
-        backgroundColor: colors,
-        borderWidth: 0
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: true,
-      plugins: {
-        legend: { position: 'bottom', labels: { font: { size: 11 } } }
-      }
-    }
-  })
-
-  barChart = new Chart(barChartCanvas.value, {
-    type: 'bar',
-    data: {
-      labels,
-      datasets: [{
-        label: t('agora', 'Votes'),
-        data: votes,
-        backgroundColor: colors,
-        borderRadius: 8
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: true,
-      scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } },
-      plugins: { legend: { display: false } }
-    }
-  })
-}
-
-watch([rankedOptions, currentLayout], () => {
-  if (currentLayout.value === 'results') {
-    nextTick(() => createCharts())
-  }
-})
-
-watch(activeEngine, (newEngine) => {
-  selectedEngineId.value = newEngine?.id || null
-}, { immediate: true })
-
-// ----------------------------------------------------------------------------
-// Lifecycle
-// ----------------------------------------------------------------------------
-onUnmounted(() => {
-  if (pieChart) pieChart.destroy()
-  if (barChart) barChart.destroy()
-})
-
-// ----------------------------------------------------------------------------
-// Additional Helpers
-// ----------------------------------------------------------------------------
-
-const getEngineLabel = (engineId: string): string => ENGINE_DEFINITIONS[engineId]?.label || engineId
-const getEngineDescription = (engineId: string): string => ENGINE_DEFINITIONS[engineId]?.description || t('agora', 'Vote using this method')
-
-const getEngineIcon = (engineId: string) => {
-  if (!engineId) return Vote
-  const icons: Record<string, unknown> = {
-    binary: ThumbsUp,
-    ternary: Scale,
-    reaction: Heart,
-    star: Star,
-    score: Star,
-    approval: CheckCircle,
-    ranking: TrendingUp,
-    borda: Award,
-    condorcet: Brain,
-    majority_judgment: Gauge,
-    token_weighted: Users,
-    quadratic: TrendingUp,
-    phased_voting: List,
-    trending: TrendingUp,
-    none: Vote,
-  }
-  return icons[engineId] || Vote
-}
-const getSubmitButtonText = (): string => {
-  if (effectiveEngineId.value === 'approval') return t('agora', 'Submit selections')
-  if (effectiveEngineId.value === 'ranking') return t('agora', 'Submit ranking')
-  if (effectiveEngineId.value === 'score') return t('agora', 'Submit scores')
-  if (effectiveEngineId.value === 'star') return t('agora', 'Submit ratings')
-  if (effectiveEngineId.value === 'majority_judgment') return t('agora', 'Submit grades')
-  if (effectiveEngineId.value === 'reaction') return t('agora', 'Submit reactions')
-  return t('agora', 'Submit vote')
-}
-
-const formatDate = (date?: string): string => date ? new Date(date).toLocaleDateString() : ''
-const capitalize = (str: string): string => str.charAt(0).toUpperCase() + str.slice(1)
-
-const getRankClass = (index: number): string => {
-  if (index === 0) return 'gold'
-  if (index === 1) return 'silver'
-  if (index === 2) return 'bronze'
-  return ''
-}
-
-const getLayoutIcon = (layout: string): unknown => {
-  const icons: Record<string, unknown> = { cards: LayoutGrid, list: List, results: BarChart3 }
-  return icons[layout] || LayoutGrid
-}
-
-const getOptionTypeIcon = (type: string): unknown => getOptionTypeIconComponent(type, [])
-
-// ----------------------------------------------------------------------------
-// Computed: UI Info
-// ----------------------------------------------------------------------------
-
-const voteLimitInfo = computed(() => {
-  if (!currentEngine.value) return null
-  const config = effectiveEngineConfig.value
-  if (effectiveEngineId.value === 'approval') {
-    const min = config.min_choices as number
-    const max = config.max_choices as number | null
-    if (min && max) return t('agora', 'Select {min}-{max} options', { min, max })
-    if (min) return t('agora', 'Select at least {min} options', { min })
-    if (max) return t('agora', 'Select up to {max} options', { max })
-  }
-  if (effectiveEngineId.value === 'ranking') {
-    const max = config.max_rank as number
-    if (max) return t('agora', 'Rank up to {max} options', { max })
-    return t('agora', 'Rank all options')
-  }
-  if (effectiveEngineId.value === 'score' || effectiveEngineId.value === 'star') {
-    return t('agora', 'Rate from {min} to {max}', { min: scoreMin.value, max: scoreMax.value })
-  }
-  return null
-})
-
-const voteSelectionInfo = computed(() => {
-  if (effectiveEngineId.value === 'approval') {
-    const selectedCount = selectedOptions.value.size
-    const min = effectiveEngineConfig.value.min_choices as number || 1
-    const max = effectiveEngineConfig.value.max_choices as number | null
-    if (min && max) return t('agora', '{selected}/{min}-{max} selected', { selected: selectedCount, min, max })
-    if (min) return t('agora', '{selected}/{min}+ selected', { selected: selectedCount, min })
-    if (max) return t('agora', '{selected}/{max} selected', { selected: selectedCount, max })
-  }
-  if (effectiveEngineId.value === 'ranking') {
-    const rankedCount = Object.values(rankings.value).filter(r => r !== null).length
-    const max = (effectiveEngineConfig.value.max_rank as number) || voteOptions.value.length
-    return t('agora', '{ranked}/{max} ranked', { ranked: rankedCount, max })
-  }
-  if (effectiveEngineId.value === 'score' || effectiveEngineId.value === 'star') {
-    const scoredCount = Object.values(scores.value).filter(s => s !== null && s !== undefined).length
-    return t('agora', '{count} options rated', { count: scoredCount })
-  }
-  return null
-})
-
-const canSubmitMultiVote = computed(() => {
-  if (effectiveEngineId.value === 'approval') {
-    const selectedCount = selectedOptions.value.size
-    const min = (effectiveEngineConfig.value.min_choices as number) || 1
-    const max = effectiveEngineConfig.value.max_choices as number | null
-    if (max !== null && selectedCount > max) return false
-    return selectedCount >= min
-  }
-  if (effectiveEngineId.value === 'ranking') {
-    const ranks = Object.entries(rankings.value)
-      .filter(([, rank]) => rank !== null)
-      .map(([, rank]) => rank as number)
-    const uniqueRanks = new Set(ranks)
-    if (uniqueRanks.size !== ranks.length) return false
-    const maxRankValue = (effectiveEngineConfig.value.max_rank as number) || voteOptions.value.length
-    return ranks.length > 0 && Math.max(...ranks) <= maxRankValue
-              }
-              if (effectiveEngineId.value === 'score' || effectiveEngineId.value === 'star') {
-              return Object.values(scores.value).some(s => s !== null && s !== undefined)
-  }
-  if (effectiveEngineId.value === 'majority_judgment') {
-    return Object.values(grades.value).some(g => g !== null)
-  }
-  if (effectiveEngineId.value === 'reaction') {
-    return Object.values(userReactions.value).some(r => r !== null && r !== undefined)
-  }
-  return selectedOptions.value.size > 0
-})
 
 const timeRemaining = computed(() => {
-  if (!props.voteSession?.end_date) return t('agora', 'No deadline')
-  const end = new Date(props.voteSession.end_date)
+  if (!voteSession.value?.end_date) return t('agora', 'No end date')
+  const end = new Date(voteSession.value.end_date)
   const now = new Date()
   const diff = end.getTime() - now.getTime()
-  if (diff <= 0) return t('agora', 'Voting ended')
-              const days = Math.floor(diff / (1000 * 60 * 60 * 24))
-              const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
-              if (days > 0) return t('agora', '{days}d {hours}h', { days, hours })
-  return t('agora', '{hours}h', { hours })
+  if (diff <= 0) return t('agora', 'Ended')
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24))
+  const hours = Math.floor((diff % (86400000)) / (3600000))
+  return days > 0 ? `${days}d ${hours}h` : `${hours}h`
 })
+
+const handleOptionFamilyChanged = (payload) => {
+  emit('option-family-changed', payload)
+}
+
+const onOptionsAdded = () => {
+  showAddToVoteModal.value = false
+}
 </script>
 
 <style scoped lang="scss">
-.vote-layout {
-    padding: 20px;
-
-    .vote-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        margin-bottom: 24px;
-        flex-wrap: wrap;
-        gap: 16px;
-
-        .header-info {
-            flex: 1;
-
-            .vote-metadata {
-                display: flex;
-                gap: 16px;
-                flex-wrap: wrap;
-
-                .metadata-badge {
-                    display: inline-flex;
-                    align-items: center;
-                    gap: 6px;
-                    padding: 4px 12px;
-                    background: var(--color-background-dark);
-                    border-radius: 20px;
-                    font-size: 13px;
-                    color: var(--color-text-lighter);
-                }
-            }
-        }
-
-        .action-bar {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-            flex-wrap: wrap;
-
-            .layout-switcher {
-                display: flex;
-                gap: 8px;
-                background: var(--color-background-dark);
-                padding: 4px;
-                border-radius: 12px;
-            }
-
-            .engine-selector {
-                min-width: 200px;
-
-                .engine-select {
-                    width: 100%;
-
-                    :deep(.vs__dropdown-toggle) {
-                        border-radius: 8px;
-                        background: var(--color-main-background);
-                    }
-                }
-
-                .engine-option {
-                    display: flex;
-                    align-items: center;
-                    gap: 8px;
-                    padding: 8px;
-
-                    .engine-option-icon {
-                        flex-shrink: 0;
-                        color: var(--color-primary-element);
-                    }
-
-                    .engine-option-content {
-                        flex: 1;
-
-                        .engine-option-label {
-                            font-weight: 500;
-                            font-size: 13px;
-                        }
-
-                        .engine-option-desc {
-                            font-size: 11px;
-                            color: var(--color-text-lighter);
-                        }
-                    }
-                }
-
-                .engine-selected {
-                    display: flex;
-                    align-items: center;
-                    gap: 6px;
-
-                    svg {
-                        color: var(--color-primary-element);
-                    }
-                }
-            }
-
-            .add-to-vote-btn {
-                background: linear-gradient(135deg, var(--color-primary-element-light) 0%, var(--color-primary-element) 100%);
-                border: none;
-                color: white;
-
-                &:hover {
-                    transform: translateY(-1px);
-                    box-shadow: 0 2px 8px rgba(var(--color-primary-element-rgb), 0.3);
-                }
-            }
-        }
+.family-layout-vote {
+    .vote-interface {
+        animation: fadeIn 0.3s ease;
     }
 
-    .no-engine-banner {
-        display: flex;
-        align-items: center;
-        gap: 20px;
-        padding: 24px;
-        background: linear-gradient(135deg, rgba(var(--color-primary-element-rgb), 0.05) 0%, rgba(var(--color-primary-element-rgb), 0.02) 100%);
-        border: 2px dashed var(--color-primary-element);
-        border-radius: 16px;
-        margin-bottom: 24px;
+    .debug-panel {
+        background: #f0f0f0;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        padding: 16px;
+        margin: 16px;
 
-        svg {
-            color: var(--color-primary-element);
-            flex-shrink: 0;
-        }
-
-        .banner-content {
-            flex: 1;
-
-            h4 {
-                margin: 0 0 4px 0;
-                font-size: 16px;
-                font-weight: 600;
-            }
-
-            p {
-                margin: 0;
-                font-size: 13px;
-                color: var(--color-text-lighter);
-            }
+        pre {
+            background: #fff;
+            padding: 12px;
+            overflow-x: auto;
+            font-size: 12px;
         }
     }
 
@@ -1699,671 +364,19 @@ const timeRemaining = computed(() => {
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        padding: 60px 20px;
+        padding: 48px;
         gap: 16px;
-        color: var(--color-text-lighter);
-    }
-    .engine-badges {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        flex-wrap: wrap;
-    }
-
-    .engine-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        font-weight: 500;
-        background: var(--color-main-background);
-        padding: 4px 10px;
-        border-radius: 20px;
-        font-size: 12px;
-    }
-
-    .purpose-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 4px 10px;
-        border-radius: 20px;
-        font-size: 12px;
-        font-weight: 500;
-
-        &.purpose-vote {
-            background: rgba(66, 184, 131, 0.15);
-            color: #2c8c5a;
-        }
-
-        &.purpose-deliberation {
-            background: rgba(52, 152, 219, 0.15);
-            color: #2980b9;
-        }
-
-        &.purpose-election {
-            background: rgba(155, 89, 182, 0.15);
-            color: #8e44ad;
-        }
-
-        &.purpose-consultation {
-            background: rgba(241, 196, 15, 0.15);
-            color: #d4ac0d;
-        }
-
-        &.purpose-moderation {
-            background: rgba(230, 126, 34, 0.15);
-            color: #ca6f1e;
-        }
-
-        &.purpose-prioritization {
-            background: rgba(26, 188, 156, 0.15);
-            color: #17a589;
-        }
-
-        &.purpose-referendum {
-            background: rgba(231, 76, 60, 0.15);
-            color: #c0392b;
-        }
-
-        .purpose-icon {
-            font-size: 12px;
-        }
-
-        .purpose-label {
-            text-transform: capitalize;
-        }
-    }
-
-    .behavior-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-        padding: 4px 10px;
-        border-radius: 20px;
-        font-size: 11px;
-        font-weight: 500;
-
-        &.single {
-            background: rgba(52, 152, 219, 0.1);
-            color: #3498db;
-        }
-
-        &.multi {
-            background: rgba(155, 89, 182, 0.1);
-            color: #9b59b6;
-        }
-
-        &.flex {
-            background: rgba(230, 126, 34, 0.1);
-            color: #e67e22;
-        }
-    }
-
-    .engine-title {
-        color: var(--color-text-lighter);
-        font-size: 12px;
-        background: var(--color-background-hover);
-        padding: 2px 8px;
-        border-radius: 12px;
-    }
-
-    .vote-limit-info {
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-        font-size: 11px;
-        padding: 2px 8px;
-        background: var(--color-background-hover);
-        border-radius: 12px;
-    }
-
-    .engine-info {
-        margin-bottom: 20px;
-        padding: 12px 16px;
-        background: var(--color-background-dark);
-        border-radius: 12px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-size: 13px;
-
-        .engine-info-left {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-
-            .engine-badge {
-                display: inline-flex;
-                align-items: center;
-                gap: 6px;
-                font-weight: 500;
-                background: var(--color-main-background);
-                padding: 4px 10px;
-                border-radius: 20px;
-            }
-
-            .engine-title {
-                color: var(--color-text-lighter);
-                font-size: 12px;
-            }
-        }
-
-        .engine-info-right {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-
-            .vote-limit-info {
-                color: var(--color-text-lighter);
-                font-size: 12px;
-            }
-            .engine-purpose-badge {
-                display: inline-flex;
-                align-items: center;
-                padding: 2px 8px;
-                background: rgba(var(--color-primary-element-rgb), 0.1);
-                border-radius: 12px;
-                font-size: 11px;
-                font-weight: 500;
-                color: var(--color-primary-element);
-                text-transform: capitalize;
-            }
-        }
-    }
-
-    .cards-layout {
-        .cards-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 20px;
-
-            .vote-card-wrapper {
-                position: relative;
-
-                &.selected-for-vote {
-                    :deep(.option-card) {
-                        border: 2px solid var(--color-primary-element);
-                        box-shadow: 0 0 0 2px rgba(var(--color-primary-element-rgb), 0.2);
-                    }
-                }
-
-                :deep(.option-card) {
-                    height: 100%;
-                    display: flex;
-                    flex-direction: column;
-                    transition: all 0.2s;
-
-                    .selection-checkbox {
-                        position: absolute;
-                        top: 12px;
-                        right: 12px;
-
-                        input {
-                            width: 20px;
-                            height: 20px;
-                            cursor: pointer;
-                        }
-                    }
-
-                    .rank-input, .score-input, .grade-input {
-                        margin-top: 8px;
-                        padding: 8px;
-                        background: var(--color-background-dark);
-                        border-radius: 8px;
-                        display: flex;
-                        align-items: center;
-                        gap: 8px;
-
-                        label {
-                            font-size: 12px;
-                            color: var(--color-text-lighter);
-                        }
-
-                        select, input {
-                            flex: 1;
-                            padding: 4px 8px;
-                            border: 1px solid var(--color-border);
-                            border-radius: 4px;
-                            background: var(--color-main-background);
-                        }
-
-                        input[type="range"] {
-                            flex: 2;
-                        }
-                    }
-
-                    .reaction-input {
-                        display: flex;
-                        gap: 8px;
-                        flex-wrap: wrap;
-                        margin-top: 8px;
-                        padding: 8px;
-                        background: var(--color-background-dark);
-                        border-radius: 8px;
-
-                        .reaction-btn {
-                            font-size: 20px;
-                            padding: 4px 8px;
-                            border: 2px solid var(--color-border);
-                            border-radius: 30px;
-                            background: var(--color-main-background);
-                            cursor: pointer;
-                            transition: all 0.2s ease;
-
-                            &:hover {
-                                transform: scale(1.05);
-                                border-color: var(--color-primary-element);
-                            }
-
-                            &.active {
-                                background: rgba(var(--color-primary-element-rgb), 0.1);
-                                border-color: var(--color-primary-element);
-                                transform: scale(1.05);
-                            }
-                        }
-                    }
-
-                    .vote-progress-section {
-                        margin-top: 12px;
-                        padding-top: 12px;
-                        border-top: 1px solid var(--color-border);
-
-                        .vote-stats {
-                            display: flex;
-                            justify-content: space-between;
-                            align-items: baseline;
-                            margin-bottom: 8px;
-
-                            .votes-count {
-                                display: flex;
-                                align-items: center;
-                                gap: 4px;
-                                font-size: 13px;
-                            }
-
-                            .percentage {
-                                font-weight: 600;
-                                color: var(--color-primary-element);
-                            }
-                        }
-
-                        .progress-bar {
-                            height: 8px;
-                            background: var(--color-background-dark);
-                            border-radius: 4px;
-                            overflow: hidden;
-
-                            .progress-fill {
-                                height: 100%;
-                                background: var(--color-primary-element);
-                                transition: width 0.5s ease;
-
-                                &.fill-leading {
-                                    background: #f6c343;
-                                }
-
-                                &.fill-selected {
-                                    background: #42b883;
-                                }
-                            }
-                        }
-                    }
-
-                    .voted-badge {
-                        display: flex;
-                        align-items: center;
-                        gap: 6px;
-                        color: #42b883;
-                        font-size: 13px;
-                        font-weight: 500;
-                        margin-top: 8px;
-                        padding: 4px 8px;
-                        background: rgba(66, 184, 131, 0.1);
-                        border-radius: 20px;
-                        width: fit-content;
-                    }
-                }
-            }
-        }
-
-        .submit-vote-section {
-            margin-top: 24px;
-            padding: 20px;
-            background: var(--color-background-dark);
-            border-radius: 12px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 16px;
-
-            .selection-info {
-                font-size: 13px;
-                color: var(--color-text-lighter);
-            }
-        }
-    }
-
-    .list-layout {
-        background: var(--color-main-background);
-        border-radius: 16px;
-        border: 1px solid var(--color-border);
-        overflow: hidden;
-
-        .list-header {
-            display: grid;
-            grid-template-columns: 80px 1fr 100px 150px 100px;
-            background: var(--color-background-dark);
-            padding: 12px 16px;
-            font-weight: 600;
-            border-bottom: 1px solid var(--color-border);
-
-            .list-cell {
-                font-size: 13px;
-                text-transform: uppercase;
-                color: var(--color-text-lighter);
-            }
-        }
-
-        .list-row {
-            display: grid;
-            grid-template-columns: 80px 1fr 100px 150px 100px;
-            padding: 8px 16px;
-            border-bottom: 1px solid var(--color-border);
-            transition: background 0.2s;
-
-            &:hover {
-                background: var(--color-background-hover);
-            }
-
-            &.is-leading {
-                background: rgba(246, 195, 67, 0.05);
-            }
-
-            &.user-voted {
-                background: rgba(66, 184, 131, 0.05);
-            }
-
-            &.selected-for-vote {
-                background: rgba(var(--color-primary-element-rgb), 0.05);
-            }
-
-            .list-cell {
-                display: flex;
-                align-items: center;
-
-                .rank-number {
-                    font-weight: 600;
-                    .medal { font-size: 20px; }
-                }
-
-                .percentage-bar {
-                    flex: 1;
-                    position: relative;
-                    height: 24px;
-                    background: var(--color-background-dark);
-                    border-radius: 12px;
-                    overflow: hidden;
-
-                    .percentage-fill {
-                        height: 100%;
-                        background: var(--color-primary-element);
-                        transition: width 0.3s;
-                    }
-
-                    .percentage-text {
-                        position: absolute;
-                        left: 8px;
-                        top: 50%;
-                        transform: translateY(-50%);
-                        font-size: 11px;
-                        font-weight: 600;
-                        color: var(--color-main-text);
-                        z-index: 1;
-                    }
-                }
-
-                input[type="checkbox"] {
-                    width: 18px;
-                    height: 18px;
-                    cursor: pointer;
-                }
-
-                .rank-select-mini, .score-input-mini {
-                    width: 60px;
-                    padding: 4px;
-                    border: 1px solid var(--color-border);
-                    border-radius: 4px;
-                }
-
-                .voted-icon {
-                    color: #42b883;
-                }
-            }
-        }
-
-        .submit-vote-section.list-submit {
-            padding: 16px;
-            text-align: center;
-            border-top: 1px solid var(--color-border);
-        }
-    }
-
-    .results-layout {
-        .results-summary {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 32px;
-
-            .summary-card {
-                background: var(--color-main-background);
-                border-radius: 16px;
-                padding: 20px;
-                display: flex;
-                align-items: center;
-                gap: 16px;
-                border: 1px solid var(--color-border);
-
-                .summary-icon {
-                    width: 48px;
-                    height: 48px;
-                    background: var(--color-background-dark);
-                    border-radius: 12px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    color: var(--color-primary-element);
-                }
-
-                .summary-content {
-                    flex: 1;
-
-                    .summary-value {
-                        font-size: 24px;
-                        font-weight: 700;
-                        margin-bottom: 4px;
-                    }
-
-                    .summary-label {
-                        font-size: 12px;
-                        color: var(--color-text-lighter);
-                    }
-                }
-            }
-        }
-
-        .charts-section {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 24px;
-            margin-bottom: 32px;
-
-            .chart-container {
-                background: var(--color-main-background);
-                border-radius: 16px;
-                padding: 20px;
-                border: 1px solid var(--color-border);
-
-                h4 {
-                    margin: 0 0 16px 0;
-                    font-size: 16px;
-                }
-
-                canvas {
-                    max-height: 300px;
-                }
-            }
-        }
-
-        .ranking-table {
-            background: var(--color-main-background);
-            border-radius: 16px;
-            border: 1px solid var(--color-border);
-            overflow: hidden;
-
-            h4 {
-                margin: 0;
-                padding: 16px 20px;
-                background: var(--color-background-dark);
-                border-bottom: 1px solid var(--color-border);
-                font-size: 16px;
-            }
-
-            table {
-                width: 100%;
-                border-collapse: collapse;
-
-                th, td {
-                    padding: 12px 16px;
-                    text-align: left;
-                    border-bottom: 1px solid var(--color-border);
-                }
-
-                th {
-                    background: var(--color-background-dark);
-                    font-weight: 600;
-                    font-size: 13px;
-                }
-
-                .rank-cell {
-                    width: 80px;
-
-                    .rank-badge {
-                        display: inline-block;
-                        width: 32px;
-                        height: 32px;
-                        line-height: 32px;
-                        text-align: center;
-                        border-radius: 8px;
-                        font-weight: 600;
-
-                        &.gold { background: #f6c34320; color: #f6c343; }
-                        &.silver { background: #c0c0c020; color: #c0c0c0; }
-                        &.bronze { background: #cd7f3220; color: #cd7f32; }
-                    }
-                }
-
-                .percentage-cell {
-                    .mini-progress {
-                        position: relative;
-                        height: 24px;
-                        background: var(--color-background-dark);
-                        border-radius: 12px;
-                        overflow: hidden;
-                        width: 120px;
-
-                        .mini-progress-fill {
-                            height: 100%;
-                            background: var(--color-primary-element);
-                            transition: width 0.3s;
-                        }
-
-                        span {
-                            position: absolute;
-                            left: 8px;
-                            top: 50%;
-                            transform: translateY(-50%);
-                            font-size: 11px;
-                            font-weight: 600;
-                        }
-                    }
-                }
-
-                .status-tag {
-                    font-size: 11px;
-                    padding: 2px 8px;
-                    border-radius: 12px;
-                    text-transform: uppercase;
-
-                    &.leading { background: #f6c34320; color: #f6c343; }
-                    &.selected { background: #42b88320; color: #42b883; }
-                }
-            }
-        }
-    }
-
-    .empty-state {
-        text-align: center;
-        padding: 60px 20px;
-        background: var(--color-background-dark);
-        border: 2px dashed var(--color-border);
-        border-radius: 16px;
-
-        svg {
-            color: var(--color-text-lighter);
-            margin-bottom: 20px;
-        }
-
-        h4 {
-            margin: 0 0 8px 0;
-            font-size: 18px;
-        }
-
-        p {
-            margin: 0 0 24px 0;
-            color: var(--color-text-lighter);
-        }
     }
 }
 
-                                                                    @media (max-width: 768px) {
-                                                                        .vote-layout {
-                                                                            .no-engine-banner {
-                                                                                flex-direction: column;
-                                                                                text-align: center;
-                                                                            }
-
-                                                                            .engine-info {
-                                                                                flex-direction: column;
-                                                                                gap: 12px;
-
-                                                                                .engine-info-right {
-                                                                                    width: 100%;
-                                                                                    justify-content: space-between;
-                                                                                }
-                                                                            }
-
-                                                                            .list-layout {
-                                                                                .list-header,
-                                                                                .list-row {
-                                                                                    grid-template-columns: 60px 1fr 80px;
-
-                                                                                    .list-cell.percentage,
-                                                                                    .list-cell.action {
-                                                                                        display: none;
-                                                                                    }
-                                                                                }
-                                                                            }
-
-                                                                            .results-layout {
-                                                                                .charts-section {
-                                                                                    grid-template-columns: 1fr;
-                                                                                }
-
-                                                                                .ranking-table {
-                                                                                    overflow-x: auto;
-                                                                                }
-                                                                            }
-                                                                        }
-                                                                    }
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
 </style>

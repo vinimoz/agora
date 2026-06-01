@@ -27,6 +27,7 @@ import {
 
 import { useInquiriesStore } from './inquiries.ts'
 import { useSessionStore } from './session.ts'
+import { useOptionsStore } from './options.ts'
 import { useSubscriptionStore } from './subscription.ts'
 import { useSharesStore } from './shares.ts'
 import { useCommentsStore } from './comments.ts'
@@ -350,6 +351,7 @@ export const useInquiryStore = defineStore('inquiry', {
 
     async load(inquiryId: number | null = null): Promise<any> {
       const sessionStore = useSessionStore()
+      const optionsStore = useOptionsStore()
       const inquiriesStore = useInquiriesStore()
       const sharesStore = useSharesStore()
       const commentsStore = useCommentsStore()
@@ -377,7 +379,7 @@ export const useInquiryStore = defineStore('inquiry', {
 
         this.$patch(response.data.inquiry)
 
-        // optionsStore.options = response.data.options
+        optionsStore.options = response.data.options
         sharesStore.shares = response.data.shares
         commentsStore.comments = response.data.comments
         subscriptionStore.subscribed = response.data.subscribed

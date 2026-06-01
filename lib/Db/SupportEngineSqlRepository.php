@@ -24,63 +24,52 @@ class SupportEngineSqlRepository
      * @param array $jsonColumns List of columns that are JSON type
      */
     public function insertEngineWithJson(
-        string $table,
-        array $data,
-        array $jsonColumns = ['config', 'target_ids', 'metadata']
-    ): int {
-        $isPostgres = ($this->db->getDatabaseProvider() === IDBConnection::PLATFORM_POSTGRES);
-        
-        // Normalize all JSON columns
-        foreach ($jsonColumns as $column) {
-            if (isset($data[$column])) {
-                $data[$column] = $this->normalizeToJsonString($data[$column]);
-                $this->logger->debug('Normalized JSON column', [
-                    'column' => $column,
-                    'value' => substr($data[$column], 0, 200)
-                ]);
-            } elseif ($column === 'target_ids') {
-                // Ensure target_ids is always an array, even if empty
-                $data[$column] = '[]';
-            } elseif ($column === 'config') {
-                // Ensure config is always an object, even if empty
-                $data[$column] = '{}';
-            } elseif ($column === 'metadata') {
-                // Ensure metadata is always an object or null
-                $data[$column] = '{}';
-            }
+    string $table,
+    array $data,
+    array $jsonColumns = ['config', 'target_ids', 'metadata']
+): int {
+    $isPostgres = ($this->db->getDatabaseProvider() === IDBConnection::PLATFORM_POSTGRES);
+    
+    // Normalize JSON columns (unchanged)
+    foreach ($jsonColumns as $column) {
+        if (isset($data[$column])) {
+            $data[$column] = $this->normalizeToJsonString($data[$column]);
+        } elseif ($column === 'target_ids') {
+            $data[$column] = '[]';
+        } elseif ($column === 'config' || $column === 'metadata') {
+            $data[$column] = '{}';
         }
-        
-        $columns = array_keys($data);
-        $placeholders = array_map(function ($col) use ($jsonColumns, $isPostgres) {
-            $placeholder = ':' . $col;
-            if ($isPostgres && in_array($col, $jsonColumns)) {
-                return $placeholder . '::json';
-            }
-            return $placeholder;
-        }, $columns);
-        
-        $prefixedTable = '*PREFIX*' . $table;
-        $sql = sprintf(
-            'INSERT INTO %s (%s) VALUES (%s)',
-            $prefixedTable,
-            implode(', ', $columns),
-            implode(', ', $placeholders)
-        );
-        
-        $this->logger->debug('Executing JSON insert for support engine', [
-            'table' => $table,
-            'is_postgres' => $isPostgres,
-            'json_columns' => $jsonColumns,
-            'columns' => $columns
-        ]);
-        
-        $stmt = $this->db->executeQuery($sql, $data);
-        
-        if ($isPostgres) {
-            return (int)$stmt->fetchOne();
+    }
+    
+    $columns = array_keys($data);
+    $placeholders = array_map(function ($col) use ($jsonColumns, $isPostgres) {
+        $placeholder = ':' . $col;
+        if ($isPostgres && in_array($col, $jsonColumns)) {
+            return $placeholder . '::json';
         }
-        
-        return (int)$this->db->lastInsertId();
+        return $placeholder;
+    }, $columns);
+    
+    $prefixedTable = '*PREFIX*' . $table;
+    $sql = sprintf(
+        'INSERT INTO %s (%s) VALUES (%s)',
+        $prefixedTable,
+        implode(', ', $columns),
+        implode(', ', $placeholders)
+    );
+    
+    // 🔧 FIX: Add RETURNING id for PostgreSQL
+    if ($isPostgres) {
+        $sql .= ' RETURNING id';
+    }
+    
+    $stmt = $this->db->executeQuery($sql, $data);
+    
+    if ($isPostgres) {
+        return (int)$stmt->fetchOne();
+    }
+    
+    return (int)$this->db->lastInsertId();
     }
 
     /**

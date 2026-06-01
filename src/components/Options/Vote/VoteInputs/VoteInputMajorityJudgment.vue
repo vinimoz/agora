@@ -1,9 +1,9 @@
 <template>
-  <div class="vote-input-ranking">
-    <select v-model="localRank" class="rank-select" @change="handleChange">
-      <option :value="null">{{ t('agora', 'Not ranked') }}</option>
-      <option v-for="i in maxRank" :key="i" :value="i">
-        {{ t('agora', 'Rank {n}', { n: i }) }}
+  <div class="vote-input-majority">
+    <select v-model="localGrade" class="grade-select" @change="handleChange">
+      <option :value="null">{{ t('agora', 'No grade') }}</option>
+      <option v-for="(grade, index) in grades" :key="index" :value="grade">
+        {{ grade }}
       </option>
     </select>
   </div>
@@ -12,47 +12,49 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { t } from '@nextcloud/l10n'
-import type { SupportData } from '../../Types/index'
+import type { SupportData, Option } from '../../Types/index'
 
 const props = defineProps<{
   engineConfig: Record<string, unknown>
-  option: any
+  option: Option
+  disabled?: boolean
   userVote?: SupportData
-  rank?: number | null
+  grade?: string | null
 }>()
 
 const emit = defineEmits<{
-  'change-rank': [rank: number | null]
+  'change-grade': [grade: string | null]
 }>()
 
-const maxRank = computed(() => {
-  const max = props.engineConfig.max_rank as number
-  return max || 10
+const grades = computed(() => {
+  const g = props.engineConfig.grades as string[]
+  return g || ['Reject', 'Poor', 'Fair', 'Good', 'Excellent']
 })
 
-const localRank = computed({
-  get: () => props.rank ?? null,
+const localGrade = computed({
+  get: () => props.grade ?? null,
   set: (value) => {
-    emit('change-rank', value)
+    emit('change-grade', value)
   }
 })
 
 function handleChange(event: Event) {
   const target = event.target as HTMLSelectElement
-  const value = target.value === 'null' ? null : parseInt(target.value, 10)
-  emit('change-rank', value)
+  const value = target.value === 'null' ? null : target.value
+  emit('change-grade', value)
 }
 </script>
 
 <style scoped lang="scss">
-.vote-input-ranking {
-  .rank-select {
+.vote-input-majority {
+  .grade-select {
     padding: 4px 8px;
     border: 1px solid var(--color-border);
     border-radius: 6px;
     background: var(--color-main-background);
     font-size: 12px;
     cursor: pointer;
+    max-width: 120px;
     transition: all 0.2s ease;
 
     &:hover {

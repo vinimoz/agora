@@ -1,3 +1,7 @@
+<!--
+  SPDX-FileCopyrightText: 2024 Nextcloud contributors
+  SPDX-License-Identifier: AGPL-3.0-or-later
+-->
 <template>
   <div class="vote-input-container" :class="`engine-${engineId}`">
     <!-- Binary Voting -->
@@ -15,6 +19,7 @@
       :option="option"
       :engine-config="engineConfig"
       :user-vote="userVote"
+      :disabled="disabled"
       @vote="handleVote"
     />
 
@@ -24,6 +29,7 @@
       :option="option"
       :engine-config="engineConfig"
       :user-vote="userVote"
+      :disabled="disabled"
       @vote="handleVote"
     />
 
@@ -33,6 +39,7 @@
       :option="option"
       :engine-config="engineConfig"
       :user-vote="userVote"
+      :disabled="disabled"
       @vote="handleVote"
     />
 
@@ -42,6 +49,7 @@
       :option="option"
       :engine-config="engineConfig"
       :user-vote="userVote"
+      :disabled="disabled"
       @vote="handleVote"
     />
 
@@ -52,6 +60,7 @@
       :engine-config="engineConfig"
       :user-vote="userVote"
       :is-selected="isSelected"
+      :disabled="disabled"
       @toggle="handleApprovalToggle"
     />
 
@@ -62,6 +71,7 @@
       :engine-config="engineConfig"
       :user-vote="userVote"
       :rank="currentRank"
+      :disabled="disabled"
       @change-rank="handleRankChange"
     />
 
@@ -72,6 +82,7 @@
       :engine-config="engineConfig"
       :user-vote="userVote"
       :grade="currentGrade"
+      :disabled="disabled"
       @change-grade="handleGradeChange"
     />
 
@@ -81,6 +92,7 @@
       :option="option"
       :engine-config="engineConfig"
       :user-vote="userVote"
+      :disabled="disabled"
       @vote="handleVote"
     />
 
@@ -90,6 +102,7 @@
       :option="option"
       :engine-config="engineConfig"
       :user-vote="userVote"
+      :disabled="disabled"
       @vote="handleVote"
     />
 
@@ -133,21 +146,22 @@ import { Info, AlertCircle, X } from 'lucide-vue-next'
 import type { Option, SupportData, SupportValue } from '../../Types/index'
 
 // Import all input components
-import VoteInputBinary from './vote-inputs/VoteInputBinary.vue'
-import VoteInputTernary from './vote-inputs/VoteInputTernary.vue'
-import VoteInputStar from './vote-inputs/VoteInputStar.vue'
-import VoteInputScore from './vote-inputs/VoteInputScore.vue'
-import VoteInputReaction from './vote-inputs/VoteInputReaction.vue'
-import VoteInputApproval from './vote-inputs/VoteInputApproval.vue'
-import VoteInputRanking from './vote-inputs/VoteInputRanking.vue'
-import VoteInputMajorityJudgment from './vote-inputs/VoteInputMajorityJudgment.vue'
-import VoteInputQuadratic from './vote-inputs/VoteInputQuadratic.vue'
-import VoteInputTokenWeighted from './vote-inputs/VoteInputTokenWeighted.vue'
+import VoteInputBinary from './VoteInputs/VoteInputBinary.vue'
+import VoteInputTernary from './VoteInputs/VoteInputTernary.vue'
+import VoteInputStar from './VoteInputs/VoteInputStar.vue'
+import VoteInputScore from './VoteInputs/VoteInputScore.vue'
+import VoteInputReaction from './VoteInputs/VoteInputReaction.vue'
+import VoteInputApproval from './VoteInputs/VoteInputApproval.vue'
+import VoteInputRanking from './VoteInputs/VoteInputRanking.vue'
+import VoteInputMajorityJudgment from './VoteInputs/VoteInputMajorityJudgment.vue'
+import VoteInputQuadratic from './VoteInputs/VoteInputQuadratic.vue'
+import VoteInputTokenWeighted from './VoteInputs/VoteInputTokenWeighted.vue'
 
 const props = defineProps<{
   engineId: string
   engineConfig: Record<string, unknown>
   option: Option
+  disabled?: boolean
   userVote?: SupportData
   isMultiEngine?: boolean
   isSelected?: boolean
@@ -181,6 +195,7 @@ function handleGradeChange(grade: string | null) {
 }
 
 function handleRemoveVote() {
+   if (props.disabled) return 
   emit('remove-vote')
 }
 </script>

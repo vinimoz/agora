@@ -332,7 +332,7 @@ import NcRichContenteditable from '@nextcloud/vue/components/NcRichContenteditab
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import { DateTime } from 'luxon'
 import Pencil from 'vue-material-design-icons/Pencil.vue'
-import MiscFieldsEditor from './MiscFieldsEditor.vue'
+import MiscFieldsEditor from '../Options/MiscFieldsEditor.vue'
 
 import { useCommentsStore } from '../../stores/comments'
 import { useOptionsStore } from '../../stores/options'
@@ -340,7 +340,7 @@ import { useOptionStore } from '../../stores/option'
 import { useSessionStore } from '../../stores/session'
 import { InquiryOptionIcons } from '../../utils/icons.ts'
 import { SupportFeature } from '../Base/index.ts'
-import OptionCard from './OptionCard.vue'
+import OptionCard from '../Options/OptionCard.vue'
 import {
     getOptionTypeLabel as getOptionTypeLabelHelper,
     getOptionTypeIconComponent,

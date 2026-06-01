@@ -145,6 +145,16 @@ export interface Option {
 // FAMILY TYPES
 // ============================================================================
 
+export interface FamilyFeatures {
+    create_option_button?: boolean
+    real_time_results?: boolean
+    ranking?: boolean
+    tie_breaking?: boolean
+    quorum_tracking?: boolean
+    [key: string]: unknown
+}
+
+
 export interface OptionFamily {
   id: number
   family_type: string
@@ -152,7 +162,7 @@ export interface OptionFamily {
   description?: string
   icon: string
   ui: string[]
-  features: string[]
+  features: FamilyFeatures
   rules: string[]
   actions: string[]
   sort_order: number
@@ -173,6 +183,13 @@ export interface InquiryFamily {
   created: number
 }
 
+interface OptionFamilyEvent {
+  optionId: number
+  familyKey: 'vote' | 'kanban' | 'timeline'
+  action: 'added' | 'removed'  
+}
+
+export type FamilyType = 'vote' | 'timeline' | 'kanban'
 
 // ============================================================================
 // UTILITY TYPES

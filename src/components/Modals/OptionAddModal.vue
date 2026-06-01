@@ -247,8 +247,8 @@ import {
 } from '../../helpers/modules/MiscFieldsHelper'
 
 // Import components
-import MiscFieldsEditor from './MiscFieldsEditor.vue'
-import OptionCard from './OptionCard.vue'
+import MiscFieldsEditor from '../Options/MiscFieldsEditor.vue'
+import OptionCard from '../Options/OptionCard.vue'
 
 // Props
 const props = defineProps<{
