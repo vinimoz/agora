@@ -50,7 +50,6 @@
     "%s took over your inquiry" : "%s prevzame anketo",
     "{actor} took over your inquiry \"%s\" and is the new owner." : "{actor} prevzame anketo »%s« in lastništvo te ankete.",
     "%s is the new owner of your inquiry." : "%s prevzame anketo",
-    "{actor} transfered your inquiry \"%s\" to {newOwner}. You are no more the owner." : "{actor} prenese anketo %s na {newOwner} Nisi več lastnik.",
     "%s deleted your inquiry" : "%s je izbrisal anketo.",
     "{actor} deleted your inquiry \"%s\"." : "{actor} je izbrisal vašo anketo »%s«.",
     "%s archived your inquiry" : "%s arhiviral anketo.",

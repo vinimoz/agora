@@ -54,7 +54,6 @@ OC.L10N.register(
     "%s took over your inquiry" : "%s је преузео ваш упитник",
     "{actor} took over your inquiry \"%s\" and is the new owner." : "{actor} је преузео ваш упитник „%s” и сада је он нови власник.",
     "%s is the new owner of your inquiry." : "%s је нови власник вашег упитника.",
-    "{actor} transfered your inquiry \"%s\" to {newOwner}. You are no more the owner." : "{actor} је пренео ваш упитник „%s” на {newOwner}. Више нисте власник.",
     "%s deleted your inquiry" : "%s је обрисао ваш упитник",
     "{actor} deleted your inquiry \"%s\"." : "{actor} је обрисао ваш упитник „%s”.",
     "%s archived your inquiry" : "%s је архивирао ваш упитник",

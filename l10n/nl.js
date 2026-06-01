@@ -55,7 +55,6 @@ OC.L10N.register(
     "%s took over your inquiry" : "%s heeft je aanvraag overgenomen.",
     "{actor} took over your inquiry \"%s\" and is the new owner." : "{actor} heeft je aanvraag \"%s\" overgenomen en is de nieuwe eigenaar.",
     "%s is the new owner of your inquiry." : "%s is de nieuwe eigenaar van je aanvraag.",
-    "{actor} transfered your inquiry \"%s\" to {newOwner}. You are no more the owner." : "{actor} heeft je aanvraag \"%s\" overgedragen aan {newOwner}. Je bent niet langer de eigenaar.",
     "%s deleted your inquiry" : "%s heeft je aanvraag verwijderd",
     "{actor} deleted your inquiry \"%s\"." : "{actor} heeft je aanvraag \"%s\" verwijderd.",
     "%s archived your inquiry" : "%s heeft je aanvraag gearchiveerd",
