@@ -1,3 +1,7 @@
+<!--
+  SPDX-FileCopyrightText: 2026 Nextcloud contributors
+  SPDX-License-Identifier: AGPL-3.0-or-later
+-->
 <template>
   <div class="vote-input-binary">
     <NcButton
@@ -5,6 +9,7 @@
       :key="option.value"
       :type="isSelected(option.value) ? 'primary' : 'tertiary'"
       size="small"
+       :disabled="disabled"
       @click="vote(option.value)"
     >
       <template #icon>
@@ -58,7 +63,16 @@ function vote(value: number) {
 <style scoped lang="scss">
 .vote-input-binary {
   display: flex;
-  gap: 6px;
+  gap: 8px;
   align-items: center;
+
+  :deep(.button-vue--primary) {
+    background: var(--color-primary-element);
+    border-color: var(--color-primary-element);
+    
+    &:hover {
+      transform: scale(1.02);
+    }
+  }
 }
 </style>

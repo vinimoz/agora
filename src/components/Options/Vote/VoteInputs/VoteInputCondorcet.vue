@@ -1,21 +1,38 @@
-<!--
-  SPDX-FileCopyrightText: 2026 Nextcloud contributors
-  SPDX-License-Identifier: AGPL-3.0-or-later
--->
+<!-- SPDX-FileCopyrightText: 2026 Nextcloud contributors -->
+<!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
 <template>
-  <div class="vote-input-ranking">
-    <select v-model="localRank" class="rank-select" @change="handleChange">
+  <div class="vote-input-condorcet">
+    <select
+      :value="currentRank"
+      class="rank-select"
+      :disabled="disabled"
+      @change="handleChange"
+    >
       <option :value="null">{{ t('agora', 'Not ranked') }}</option>
-      <option v-for="i in maxRank" :key="i" :value="i">
+      <option
+        v-for="i in maxRank"
+        :key="i"
+        :value="i"
+      >
         {{ t('agora', 'Rank {n}', { n: i }) }}
       </option>
     </select>
+    <NcButton
+      v-if="currentRank !== null"
+      type="tertiary"
+      size="small"
+      @click="clearRank"
+    >
+      <X :size="14" />
+    </NcButton>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue'
 import { t } from '@nextcloud/l10n'
+import NcButton from '@nextcloud/vue/components/NcButton'
+import { X } from 'lucide-vue-next'
 import type { SupportData, Option } from '../../Types/index'
 
 const props = defineProps<{
@@ -24,39 +41,42 @@ const props = defineProps<{
   disabled?: boolean
   userVote?: SupportData
   rank?: number | null
-  totalOptions?: number
+  totalOptions?: number  // added
 }>()
-
-const maxRank = computed(() => {
-  // If max_rank is null or not set, rank all options
-  const max = props.engineConfig.max_rank as number
-  if (max === null || max === undefined) {
-    return props.totalOptions || 10
-  }
-  return max
-})
 
 const emit = defineEmits<{
   'change-rank': [rank: number | null]
 }>()
 
-
-const localRank = computed({
-  get: () => props.rank ?? null,
-  set: (value) => {
-    emit('change-rank', value)
+// If max_rank is null or undefined, rank all options (use totalOptions)
+const maxRank = computed(() => {
+  const max = props.engineConfig.max_rank
+  if (max === null || max === undefined) {
+    return props.totalOptions ?? 10
   }
+  return max as number
 })
+
+const currentRank = computed(() => props.rank ?? null)
 
 function handleChange(event: Event) {
   const target = event.target as HTMLSelectElement
   const value = target.value === 'null' ? null : parseInt(target.value, 10)
   emit('change-rank', value)
 }
+
+function clearRank() {
+  emit('change-rank', null)
+}
 </script>
 
+
 <style scoped lang="scss">
-.vote-input-ranking {
+.vote-input-condorcet {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
   .rank-select {
     padding: 4px 8px;
     border: 1px solid var(--color-border);

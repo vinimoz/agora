@@ -85,9 +85,15 @@
 
             <!-- Counter Content -->
             <div class="counter-content">
-                <div class="support-count">
-                    <span class="counter-value">
-                        {{ displayCount }}
+                <NcCounterBubble
+                        :count="displayCount"
+                        :active="hasUserParticipated"
+                        :type="getCounterType()"
+                        :raw="true"
+                        />
+                <div class="counter-label-wrapper">
+                    <span class="counter-label" :style="{ fontSize: `${iconSize * 0.5}px` }">
+                        {{ getSupportLabel() }}
                     </span>
                     <span v-if="showQuorum && quorumValue" 
                           class="quorum-compact" 
@@ -96,9 +102,6 @@
                         <span class="quorum-target">{{ quorumValue }}</span>
                     </span>
                 </div>
-                <span class="counter-label" :style="{ fontSize: `${iconSize * 0.5}px` }">
-                    {{ getSupportLabel() }}
-                </span>
             </div>
         </div>
     </template>
@@ -367,23 +370,25 @@
                     :size="iconSize"
                     class="disabled-icon" />
         </div>
-
-        <div class="counter-content">
-            <div class="support-count">
-                <span class="counter-value" :style="{ fontSize: `${iconSize}px` }">
-                    {{ displayCount }}
-                </span>
-                <span v-if="showQuorum && quorumValue" 
-                      class="quorum-compact" 
-                      :style="{ fontSize: `${iconSize * 0.6}px` }">
-                    <span class="quorum-separator"> / </span>
-                    <span class="quorum-target">{{ quorumValue }}</span>
-                </span>
-            </div>
-            <span class="counter-label" :style="{ fontSize: `${iconSize * 0.5}px` }">
-                {{ getSupportLabel() }}
-            </span>
-        </div>
+    <div class="counter-content">
+    <NcCounterBubble
+        :count="displayCount"
+        :active="hasUserParticipated"
+        :type="getCounterType()"
+        :raw="true"
+    />
+    <div class="counter-label-wrapper">
+        <span class="counter-label" :style="{ fontSize: `${iconSize * 0.5}px` }">
+            {{ getSupportLabel() }}
+        </span>
+        <span v-if="showQuorum && quorumValue" 
+              class="quorum-compact" 
+              :style="{ fontSize: `${iconSize * 0.6}px` }">
+            <span class="quorum-separator"> / </span>
+            <span class="quorum-target">{{ quorumValue }}</span>
+        </span>
+    </div>
+</div>
     </div>
 </template>
 
@@ -397,6 +402,7 @@ import { useSessionStore } from '../../../stores/session'
 import { useOptionsStore } from '../../../stores/options'
 import TernarySupportIcon from '../../AppIcons/modules/TernarySupportIcon.vue'
 import ThumbIcon from '../../AppIcons/modules/ThumbIcon.vue'
+import NcCounterBubble from '@nextcloud/vue/components/NcCounterBubble'
 import { 
   Star, 
   Hash, 
@@ -472,6 +478,12 @@ const getUserReaction = computed(() => {
   }
   return null
 })
+
+const getCounterType = (): 'highlighted' | 'outlined' | '' => {
+    if (hasUserParticipated.value) return 'highlighted'
+    if (displayCount.value > 0) return 'outlined'
+    return ''
+}
 
 // Results from item (set by parent/inquiry store)
 const normalizedSupportResult = computed(() => {
@@ -1169,7 +1181,7 @@ const showSupportSuccessMessage = (hadSupportedBefore: boolean) => {
 .counter-item.supports {
     display: inline-flex;
     align-items: center;
-    justify-content: space-between; // This pushes content to opposite ends
+    justify-content: space-between;
     transition: all 0.2s ease;
     position: relative;
     user-select: none;
@@ -1211,7 +1223,7 @@ const showSupportSuccessMessage = (hadSupportedBefore: boolean) => {
         box-shadow: none !important;
         display: inline-flex;
         align-items: center;
-        justify-content: flex-start; // Align icon content to left
+        justify-content: flex-start;
         flex-shrink: 0;
 
         svg {
@@ -1271,13 +1283,53 @@ const showSupportSuccessMessage = (hadSupportedBefore: boolean) => {
         }
     }
 
-    // Star rating - LONGER BOX with proper spacing
+    // Counter content - unified definition
+    .counter-content {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 4px;
+        min-width: auto;
+        flex-shrink: 0;
+
+        .counter-label-wrapper {
+            display: flex;
+            align-items: baseline;
+            justify-content: flex-end;
+            gap: 4px;
+
+            .counter-label {
+                color: var(--color-text-lighter);
+                text-transform: uppercase;
+                letter-spacing: 0.3px;
+                font-weight: 500;
+                white-space: nowrap;
+                font-size: 9px;
+                line-height: 1.3;
+            }
+
+            .quorum-compact {
+                color: var(--color-text-lighter);
+
+                .quorum-separator {
+                    margin: 0 2px;
+                }
+
+                .quorum-target {
+                    color: var(--color-primary-element);
+                    font-weight: 600;
+                }
+            }
+        }
+    }
+
+    // Star rating specific
     &.has-star-rating {
         width: max-content;
         min-width: 180px;
         max-width: none;
-        justify-content: space-between; // Push icon and counter apart
-        
+        justify-content: space-between;
+
         .counter-icon {
             background: transparent !important;
             width: auto;
@@ -1290,7 +1342,7 @@ const showSupportSuccessMessage = (hadSupportedBefore: boolean) => {
             display: flex;
             align-items: center;
             gap: 6px;
-            
+
             .stars-container {
                 display: flex;
                 gap: 2px;
@@ -1309,21 +1361,15 @@ const showSupportSuccessMessage = (hadSupportedBefore: boolean) => {
                 white-space: nowrap;
             }
         }
-
-        .counter-content {
-            min-width: auto;
-            flex-shrink: 0;
-            text-align: right; // Ensure counter text is right-aligned
-        }
     }
 
-    // Majority judgment - LONGER BOX with proper spacing
+    // Majority judgment specific
     &.has-majority-judgment {
         width: max-content;
         min-width: 200px;
         max-width: none;
-        justify-content: space-between; // Push icon and counter apart
-        
+        justify-content: space-between;
+
         .counter-icon {
             background: transparent !important;
             width: auto;
@@ -1354,37 +1400,11 @@ const showSupportSuccessMessage = (hadSupportedBefore: boolean) => {
                 line-height: 1.3;
             }
         }
-
-        .counter-content {
-            min-width: auto;
-            flex-shrink: 0;
-            text-align: right; // Ensure counter text is right-aligned
-        }
     }
 
-    // Reaction type
-    &.has-reaction {
-        .counter-icon {
-            background: transparent !important;
-            width: auto;
-            padding: 0;
-            margin: 0;
-            flex-shrink: 0;
-        }
-    }
-
-    // Score type
-    &.has-score {
-        .counter-icon {
-            background: transparent !important;
-            width: auto;
-            padding: 0;
-            margin: 0;
-            flex-shrink: 0;
-        }
-    }
-
-    // Approval type
+    // Reaction, Score, Approval types
+    &.has-reaction,
+    &.has-score,
     &.has-approval-delib {
         .counter-icon {
             background: transparent !important;
@@ -1394,57 +1414,9 @@ const showSupportSuccessMessage = (hadSupportedBefore: boolean) => {
             flex-shrink: 0;
         }
     }
-
-    .counter-content {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        line-height: 1.2;
-        min-width: auto;
-        text-align: right; // Right-align the counter content
-
-        .support-count {
-            display: flex;
-            align-items: baseline;
-            justify-content: flex-end;
-            gap: 2px;
-            width: 100%;
-
-            .counter-value {
-                font-weight: 600;
-                font-size: 14px;
-                white-space: nowrap;
-            }
-
-            .quorum-compact {
-                color: var(--color-text-lighter);
-                font-size: 10px;
-
-                .quorum-separator {
-                    margin: 0 1px;
-                }
-
-                .quorum-target {
-                    color: var(--color-primary-element);
-                    font-weight: 600;
-                }
-            }
-        }
-
-        .counter-label {
-            color: var(--color-text-lighter);
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-            font-weight: 500;
-            font-size: 9px;
-            line-height: 1.3;
-            margin-top: 2px;
-            text-align: right;
-            white-space: nowrap;
-        }
-    }
 }
 </style>
+
 
 <style lang="scss">
 // Global styles for popover content (must not be scoped)

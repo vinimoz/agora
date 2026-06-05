@@ -1,4 +1,5 @@
-<!-- vote-inputs/VoteInputScore.vue -->
+<!-- SPDX-FileCopyrightText: 2026 Nextcloud contributors -->
+<!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
 <template>
   <div class="vote-input-score">
     <div class="slider-container">
@@ -19,7 +20,7 @@
       v-if="currentValue !== null"
       type="tertiary"
       size="small"
-      @click="vote(null)"
+      @click="clearScore"
     >
       <X :size="14" />
     </NcButton>
@@ -27,19 +28,19 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import { X } from 'lucide-vue-next'
-import type { SupportData, SupportValue } from '../../Types/index'
+import type {  Option } from '../../Types/index'
 
 const props = defineProps<{
   engineConfig: Record<string, unknown>
-  option: any
-  userVote?: SupportData
+  option: Option
+  currentScore?: number | null
 }>()
 
 const emit = defineEmits<{
-  vote: [value: SupportValue]
+  'update:score': [optionId: number, score: number | null]
 }>()
 
 const minValue = computed(() => (props.engineConfig.min as number) || 0)
@@ -47,15 +48,12 @@ const maxValue = computed(() => (props.engineConfig.max as number) || 10)
 const step = computed(() => (props.engineConfig.step as number) || 1)
 const defaultValue = computed(() => Math.floor((minValue.value + maxValue.value) / 2))
 
-const currentValue = computed(() => {
-  if (!props.userVote) return null
-  const raw = props.userVote.value
-  if (typeof raw === 'number') return raw
-  if (typeof raw === 'string') return Number(raw)
-  return null
-})
-
+const currentValue = computed(() => props.currentScore ?? null)
 const displayValue = ref(currentValue.value ?? defaultValue.value)
+
+watch(currentValue, (newValue) => {
+  displayValue.value = newValue ?? defaultValue.value
+})
 
 function handleSliderInput(event: Event) {
   const target = event.target as HTMLInputElement
@@ -65,19 +63,19 @@ function handleSliderInput(event: Event) {
 function handleSliderChange(event: Event) {
   const target = event.target as HTMLInputElement
   const value = parseInt(target.value, 10)
-  if (currentValue.value === value) {
-    vote(null)
+  if (currentValue.value === value && value !== 0) {
+    emit('update:score', props.option.id, null)
   } else {
-    vote(value)
+    emit('update:score', props.option.id, value)
   }
+}
+
+function clearScore() {
+  emit('update:score', props.option.id, null)
 }
 
 function getProgress(value: number): number {
   return ((value - minValue.value) / (maxValue.value - minValue.value)) * 100
-}
-
-function vote(value: number | null) {
-  emit('vote', value)
 }
 </script>
 
@@ -110,24 +108,31 @@ function vote(value: number | null) {
 
       &::-webkit-slider-thumb {
         -webkit-appearance: none;
-        width: 16px;
-        height: 16px;
+        width: 18px;
+        height: 18px;
         border-radius: 50%;
         background: var(--color-primary-element);
         cursor: pointer;
         border: 2px solid white;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-
-        &:hover {
-          transform: scale(1.2);
-        }
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        transition: transform 0.1s;
+        &:hover { transform: scale(1.2); }
+      }
+      &::-moz-range-thumb {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: var(--color-primary-element);
+        cursor: pointer;
+        border: 2px solid white;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
       }
     }
 
     .score-value {
-      min-width: 30px;
+      min-width: 40px;
       text-align: center;
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 600;
       color: var(--color-primary-element);
     }

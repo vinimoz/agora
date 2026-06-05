@@ -1,12 +1,14 @@
+<!-- SPDX-FileCopyrightText: 2026 Nextcloud contributors -->
+<!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
 <template>
   <div class="vote-input-star">
     <div class="stars-container">
       <Star
         v-for="n in maxStars"
         :key="n"
-        :size="20"
+        :size="24"
         :class="{ filled: hoverValue >= n || (currentValue >= n && hoverValue === null) }"
-        @click="vote(n)"
+        @click="setStar(n)"
         @mouseenter="hoverValue = n"
         @mouseleave="hoverValue = null"
       />
@@ -18,7 +20,7 @@
       v-if="currentValue"
       type="tertiary"
       size="small"
-      @click="vote(null)"
+      @click="clearStar"
     >
       <X :size="14" />
     </NcButton>
@@ -29,31 +31,32 @@
 import { ref, computed } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import { Star, X } from 'lucide-vue-next'
-import type { SupportData, SupportValue } from '../../Types/index'
+import type {  Option } from '../../Types/index'
 
 const props = defineProps<{
   engineConfig: Record<string, unknown>
-  option: any
-  userVote?: SupportData
+  option: Option
+  currentStar?: number | null
 }>()
 
 const emit = defineEmits<{
-  vote: [value: SupportValue]
+  'update:star': [optionId: number, star: number | null]
 }>()
 
 const maxStars = computed(() => (props.engineConfig.max as number) || 5)
 const hoverValue = ref<number | null>(null)
+const currentValue = computed(() => props.currentStar ?? null)
 
-const currentValue = computed(() => {
-  if (!props.userVote) return null
-  const raw = props.userVote.value
-  if (typeof raw === 'number') return raw
-  if (typeof raw === 'string') return Number(raw)
-  return null
-})
+function setStar(value: number) {
+  if (currentValue.value === value) {
+    emit('update:star', props.option.id, null)
+  } else {
+    emit('update:star', props.option.id, value)
+  }
+}
 
-function vote(value: number | null) {
-  emit('vote', value)
+function clearStar() {
+  emit('update:star', props.option.id, null)
 }
 </script>
 
@@ -61,16 +64,17 @@ function vote(value: number | null) {
 .vote-input-star {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
 
   .stars-container {
     display: flex;
-    gap: 4px;
+    gap: 6px;
     cursor: pointer;
 
     svg {
       transition: all 0.2s ease;
       color: var(--color-text-lighter);
+      stroke-width: 1.5;
 
       &.filled {
         color: #fbbf24;

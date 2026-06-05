@@ -1,4 +1,5 @@
-<!-- vote-inputs/VoteInputTokenWeighted.vue -->
+<!-- SPDX-FileCopyrightText: 2026 Nextcloud contributors -->
+<!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
 <template>
   <div class="vote-input-weighted">
     <div class="weight-controls">
@@ -11,6 +12,7 @@
         @input="handleSliderInput"
         @change="handleSliderChange"
         class="weight-slider"
+        :style="{ '--progress': getProgress(currentValue ?? 0) + '%' }"
       />
       <span class="weight-value">{{ displayValue }}</span>
     </div>
@@ -18,7 +20,7 @@
       v-if="currentValue !== null && currentValue > 0"
       type="tertiary"
       size="small"
-      @click="vote(null)"
+      @click="clearWeight"
     >
       <X :size="14" />
     </NcButton>
@@ -26,32 +28,33 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import { X } from 'lucide-vue-next'
-import type { SupportData, SupportValue } from '../../Types/index'
+import type {  Option } from '../../Types/index'
 
 const props = defineProps<{
   engineConfig: Record<string, unknown>
-  option: any
-  userVote?: SupportData
+  option: Option
+  currentWeight?: number | null
 }>()
 
 const emit = defineEmits<{
-  vote: [value: SupportValue]
+  'update:token_weight': [optionId: number, weight: number | null]
 }>()
 
 const maxWeight = computed(() => (props.engineConfig.max_weight as number) || 100)
 const step = computed(() => (props.engineConfig.step as number) || 1)
+const currentValue = computed(() => props.currentWeight ?? null)
+const displayValue = ref(currentValue.value ?? 0)
 
-const currentValue = computed(() => {
-  if (!props.userVote) return null
-  const raw = props.userVote.value
-  if (typeof raw === 'number') return raw
-  return null
+watch(currentValue, (newValue) => {
+  displayValue.value = newValue ?? 0
 })
 
-const displayValue = ref(currentValue.value ?? 0)
+function getProgress(value: number): number {
+  return (value / maxWeight.value) * 100
+}
 
 function handleSliderInput(event: Event) {
   const target = event.target as HTMLInputElement
@@ -62,14 +65,14 @@ function handleSliderChange(event: Event) {
   const target = event.target as HTMLInputElement
   const value = parseInt(target.value, 10)
   if (value === 0) {
-    vote(null)
+    emit('update:token_weight', props.option.id, null)
   } else {
-    vote(value)
+    emit('update:token_weight', props.option.id, value)
   }
 }
 
-function vote(value: number | null) {
-  emit('vote', value)
+function clearWeight() {
+  emit('update:token_weight', props.option.id, null)
 }
 </script>
 
@@ -90,26 +93,34 @@ function vote(value: number | null) {
       flex: 1;
       height: 6px;
       -webkit-appearance: none;
-      background: var(--color-border);
+      background: linear-gradient(
+        to right,
+        var(--color-primary-element) 0%,
+        var(--color-primary-element) var(--progress, 0%),
+        var(--color-border) var(--progress, 0%),
+        var(--color-border) 100%
+      );
       border-radius: 3px;
       outline: none;
 
       &::-webkit-slider-thumb {
         -webkit-appearance: none;
-        width: 16px;
-        height: 16px;
+        width: 18px;
+        height: 18px;
         border-radius: 50%;
         background: var(--color-primary-element);
         cursor: pointer;
         border: 2px solid white;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        transition: transform 0.1s;
+        &:hover { transform: scale(1.2); }
       }
     }
 
     .weight-value {
       min-width: 40px;
       text-align: center;
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 600;
       color: var(--color-primary-element);
     }

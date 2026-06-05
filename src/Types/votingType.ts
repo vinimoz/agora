@@ -19,7 +19,7 @@ export type SupportFeature =
   | 'star'                // ⭐ Rating 1-5 stars
   | 'score'               // 🔢 Free score 0-10
   | 'majority_judgment'   // 🧠 Graded evaluation
-  | 'approval_delib'            // ✅ Multi-select approval
+  | 'approval_delib'            // ✅ select approval
   | 'none'                // ⛔ Pure discussion
 
 
@@ -384,6 +384,7 @@ export interface ConfigSchemaField {
   placeholder?: string
   options?: string[] | Record<string, string>
   description?: string
+  nullable?: boolean
 }
 
 export interface EngineDefinition {
@@ -423,238 +424,287 @@ export interface EngineInfo {
 // ============================================================================
 
 export const ENGINE_DEFINITIONS: Record<string, EngineDefinition> = {
-  // === Simple Voting ===
-  binary: {
-    id: 'binary',
-    label: 'Yes / No',
-    behavior: 'single',
-    description: 'Simple yes/no voting on options',
-    constraints: { min_options: 1 },
-    recommendedViews: ['cards', 'list', 'radio'],
-    compatibleOptionTypes: ['text', 'boolean'],
-    config_schema: {}
-  },
-  
-  ternary: {
-    id: 'ternary',
-    label: 'For / Abstain / Against',
-    behavior: 'single',
-    description: 'Three-way voting with abstention option',
-    constraints: { min_options: 1 },
-    recommendedViews: ['cards', 'list', 'radio'],
-    compatibleOptionTypes: ['text'],
-    config_schema: {}
-  },
-  
-  // === Rated Voting ===
-  star: {
-    id: 'star',
-    label: 'Star Rating',
-    behavior: 'single',
-    description: 'Rate options from 1 to 5 stars',
-    constraints: { min_options: 1 },
-    recommendedViews: ['cards', 'grid', 'slider'],
-    compatibleOptionTypes: ['text', 'number'],
-    config_schema: {
-      min: { type: 'number', default: 1, label: 'Minimum stars', min: 1, max: 5 },
-      max: { type: 'number', default: 5, label: 'Maximum stars', min: 1, max: 10 }
-    }
-  },
-  
-  score: {
+    // === Simple Voting ===
+    binary: {
+        id: 'binary',
+        label: 'Yes / No',
+        supportFeature: true,
+        behavior: 'multi',
+        description: 'Simple yes/no voting on options',
+        constraints: { min_options: 1 },
+        recommendedViews: ['cards', 'list', 'radio'],
+        compatibleOptionTypes: ['text', 'boolean'],
+        config_schema: {}
+    },
+
+    ternary: {
+        id: 'ternary',
+        label: 'For / Abstain / Against',
+        supportFeature: true,
+        behavior: 'multi',
+        description: 'Three-way voting with abstention option',
+        constraints: { min_options: 1 },
+        recommendedViews: ['cards', 'list', 'radio'],
+        compatibleOptionTypes: ['text'],
+        config_schema: {}
+    },
+
+    // === Rated Voting ===
+    star: {
+        id: 'star',
+        label: 'Star Rating',
+        supportFeature: true,
+        behavior: 'multi',
+        description: 'Rate options from 1 to 5 stars',
+        constraints: { min_options: 1 },
+        recommendedViews: ['cards', 'grid', 'slider'],
+        compatibleOptionTypes: ['text', 'number'],
+        config_schema: {
+            min: { type: 'number', default: 1, label: 'Minimum stars', min: 1, max: 5 },
+            max: { type: 'number', default: 5, label: 'Maximum stars', min: 1, max: 10 },
+            step: { type: 'number', default: 1, label: 'Step', min: 1, max: 5 }
+        }
+    },
+
+    score: {
     id: 'score',
     label: 'Score Voting',
-    behavior: 'single',
+    supportFeature: true,
+    behavior: 'multi',
     description: 'Rate options on a numeric scale (0-10)',
     constraints: { min_options: 1 },
     recommendedViews: ['cards', 'list', 'slider'],
     compatibleOptionTypes: ['text', 'number'],
     config_schema: {
-      min: { type: 'number', default: 0, label: 'Minimum score', min: 0 },
-      max: { type: 'number', default: 10, label: 'Maximum score', max: 100 }
+        min: { type: 'number', default: 0, label: 'Minimum score', min: 0, max: 100 },
+        max: { type: 'number', default: 10, label: 'Maximum score', min: 1, max: 100 },
+        step: { type: 'number', default: 1, label: 'Step', min: 1, max: 10 }
     }
-  },
-  
-  majority_judgment: {
-    id: 'majority_judgment',
-    label: 'Majority Judgment',
-    behavior: 'multi',
-    description: 'Grade each option, median grade determines winner',
-    constraints: { min_options: 2 },
-    recommendedViews: ['cards', 'matrix'],
-    compatibleOptionTypes: ['text'],
-    config_schema: {
-      grades: {
-        type: 'array',
-        default: ['Reject', 'Insufficient', 'Passable', 'Fairly Good', 'Good', 'Very Good', 'Excellent'],
-        label: 'Grade options'
-      }
+    },
+
+
+    majority_judgment: {
+        id: 'majority_judgment',
+        label: 'Majority Judgment',
+        supportFeature: true,
+        behavior: 'multi',
+        description: 'Grade each option, median grade determines winner',
+        constraints: { min_options: 2 },
+        recommendedViews: ['cards', 'matrix'],
+        compatibleOptionTypes: ['text'],
+        config_schema: {
+            grades: {
+                type: 'array',
+                default: ['Reject', 'Insufficient', 'Passable', 'Fairly Good', 'Good', 'Very Good', 'Excellent'],
+                label: 'Grade options'
+            }
+        }
+    },
+
+    // === Approval-Based ===
+    approval: {
+        id: 'approval',
+        supportFeature: false,
+        label: 'Approval Voting',
+        behavior: 'multi',
+        description: 'Select all options you approve of',
+        constraints: { min_options: 2 },
+        recommendedViews: ['cards', 'list', 'checkbox'],
+        compatibleOptionTypes: ['text'],
+        config_schema: {
+            min_choices: { type: 'number', default: 1, label: 'Minimum choices', min: 1 },
+            max_choices: { type: 'number', default: null, label: 'Maximum choices (null = unlimited)', min: 1, nullable: true }
+        }
+    },
+
+    // === Ranked Methods ===
+    ranking: {
+        id: 'ranking',
+        label: 'Ranked Choice',
+        supportFeature: false,
+        behavior: 'multi',
+        description: 'Rank options in order of preference',
+        constraints: { min_options: 2 },
+        recommendedViews: ['cards', 'list', 'ranking'],
+        compatibleOptionTypes: ['text'],
+        config_schema: {
+            max_rank: { type: 'number', default: null, label: 'Maximum rank (null = rank all)', min: 1, nullable: true },
+            allow_ties: { type: 'boolean', default: false, label: 'Allow tied ranks' }
+        }
+    },
+
+
+    borda: {
+        id: 'borda',
+        label: 'Borda Count',
+        supportFeature: false,
+        behavior: 'multi',
+        description: 'Rank options, points assigned by rank position',
+        constraints: { min_options: 2 },
+        recommendedViews: ['cards', 'ranking'],
+        compatibleOptionTypes: ['text'],
+        config_schema: {
+            max_rank: { 
+                type: 'number', 
+                default: null, 
+                label: 'Maximum rank (null = rank all)', 
+                min: 1, 
+                nullable: true 
+            },
+            allow_ties: { 
+                type: 'boolean', 
+                default: false, 
+                label: 'Allow tied ranks' 
+            }
+        }
+    },
+
+
+    condorcet: {
+        id: 'condorcet',
+        label: 'Condorcet',
+        supportFeature: false,
+        behavior: 'multi',
+        description: 'Pairwise comparison voting method',
+        constraints: { min_options: 2 },
+        recommendedViews: ['cards', 'ranking', 'matrix'],
+        compatibleOptionTypes: ['text'],
+        config_schema: {
+            variant: {
+                type: 'select',
+                default: 'schulze',
+                label: 'Condorcet method',
+                options: ['schulze', 'copeland', 'minimax', 'ranked_pairs', 'kemeny_young']
+            },
+            max_rank: { 
+                type: 'number', 
+                default: null, 
+                label: 'Maximum rank (null = rank all)', 
+                min: 1, 
+                nullable: true 
+            },
+            allow_ties: { 
+                type: 'boolean', 
+                default: false, 
+                label: 'Allow tied ranks' 
+            }
+        }
+    },
+
+
+
+    approval_delib: {
+        id: 'approval_delib',
+        label: 'Simple Approval (Deliberative)',
+        supportFeature: true,
+        behavior: 'multi',
+        description: 'Simple yes/no approval voting for deliberation phase - users can either approve or not',
+        constraints: { min_options: 1 },
+        recommendedViews: ['cards', 'list', 'checkbox'],
+        compatibleOptionTypes: ['text', 'boolean'],
+        config_schema: {}
+    },
+
+    // === Advanced Methods ===
+    quadratic: {
+        id: 'quadratic',
+        supportFeature: false,
+        label: 'Quadratic Voting',
+        behavior: 'flex',
+        description: 'Vote with quadratic cost mechanism',
+        constraints: { min_options: 1 },
+        recommendedViews: ['cards', 'slider'],
+        compatibleOptionTypes: ['text', 'number'],
+        config_schema: {
+            credits_per_user: { type: 'number', default: 100, label: 'Credits per user', min: 1 }
+        }
+    },
+
+    token_weighted: {
+        id: 'token_weighted',
+        label: 'Token / Weighted',
+        supportFeature: false,
+        behavior: 'flex',
+        description: 'Vote with weighted tokens',
+        constraints: { min_options: 1, requires_weight_source: true },
+        recommendedViews: ['cards', 'slider'],
+        compatibleOptionTypes: ['text', 'number'],
+        config_schema: {
+            weight_source: { type: 'object', default: null, label: 'Weight source' },
+            normalization: {
+                type: 'select',
+                default: 'none',
+                label: 'Normalization',
+                options: ['none', 'min-max', 'z-score']
+            },
+            max_weight: { type: 'number', default: 100, label: 'Maximum weight', min: 1 }
+        }
+    },
+
+    phased_voting: {
+        id: 'phased_voting',
+        label: 'Phased Voting',
+        supportFeature: false,
+        behavior: 'flex',
+        description: 'Multi-round elimination voting',
+        constraints: { min_options: 3 },
+        recommendedViews: ['cards', 'list'],
+        compatibleOptionTypes: ['text'],
+        config_schema: {
+            rounds: { type: 'number', default: 2, label: 'Number of rounds', min: 2 },
+            elimination_rule: {
+                type: 'select',
+                default: 'bottom',
+                label: 'Elimination rule',
+                options: ['bottom', 'threshold', 'top']
+            }
+        }
+    },
+
+    // === Reaction Support (Informal) ===
+    reaction: {
+        id: 'reaction',
+        label: 'Reactions',
+        supportFeature: true,
+        behavior: 'multi',
+        description: 'React with emojis to show your opinion',
+        constraints: { min_options: 1 },
+        recommendedViews: ['cards', 'emoji', 'grid'],
+        compatibleOptionTypes: ['text'],
+        config_schema: {
+            allowed_reactions: {
+                type: 'array',
+                default: ['👍', '❤️', '🎉', '🤔', '👎'],
+                label: 'Allowed reactions'
+            },
+            max_per_user: { type: 'number', default: 3, label: 'Max reactions per user', min: 1, max: 10 }
+        }
+    },
+
+    // === Additional support features (no formal voting) ===
+    trending: {
+        id: 'trending',
+        label: 'Trending',
+        supportFeature: true,
+        behavior: 'multi',
+        description: 'Popularity-based trending (votes + activity)',
+        constraints: { min_options: 1 },
+        recommendedViews: ['cards', 'list'],
+        compatibleOptionTypes: ['text'],
+        config_schema: {}
+    },
+
+    none: {
+        id: 'none',
+        label: 'No Support',
+        supportFeature: true,
+        behavior: 'multi',
+        description: 'Pure discussion without support features',
+        constraints: {},
+        recommendedViews: ['list'],
+        compatibleOptionTypes: ['text'],
+        config_schema: {}
     }
-  },
-  
-  // === Approval-Based ===
-  approval: {
-    id: 'approval',
-    label: 'Approval Voting',
-    behavior: 'multi',
-    description: 'Select all options you approve of',
-    constraints: { min_options: 2 },
-    recommendedViews: ['cards', 'list', 'checkbox'],
-    compatibleOptionTypes: ['text'],
-    config_schema: {
-      min_choices: { type: 'number', default: 1, label: 'Minimum choices', min: 1 },
-      max_choices: { type: 'number', default: null, label: 'Maximum choices (null = unlimited)' }
-    }
-  },
-  
-  // === Ranked Methods ===
-  ranking: {
-    id: 'ranking',
-    label: 'Ranked Choice',
-    behavior: 'multi',
-    description: 'Rank options in order of preference',
-    constraints: { min_options: 2 },
-    recommendedViews: ['cards', 'list', 'ranking'],
-    compatibleOptionTypes: ['text'],
-    config_schema: {
-      max_rank: { type: 'number', default: null, label: 'Maximum rank (null = rank all)' },
-      allow_ties: { type: 'boolean', default: false, label: 'Allow tied ranks' }
-    }
-  },
-  
-  borda: {
-    id: 'borda',
-    label: 'Borda Count',
-    behavior: 'multi',
-    description: 'Rank options, points assigned by rank position',
-    constraints: { min_options: 2 },
-    recommendedViews: ['cards', 'ranking'],
-    compatibleOptionTypes: ['text'],
-    config_schema: {}
-  },
-  
-  condorcet: {
-    id: 'condorcet',
-    label: 'Condorcet',
-    behavior: 'multi',
-    description: 'Pairwise comparison voting method',
-    constraints: { min_options: 2 },
-    recommendedViews: ['cards', 'ranking', 'matrix'],
-    compatibleOptionTypes: ['text'],
-    config_schema: {
-      variant: {
-        type: 'select',
-        default: 'schulze',
-        label: 'Condorcet method',
-        options: ['schulze', 'copeland', 'minimax', 'ranked_pairs', 'kemeny_young']
-      }
-    }
-  },
-  
-  approval_delib: {
-      id: 'approval_delib',
-      label: 'Simple Approval (Deliberative)',
-      behavior: 'single',
-      description: 'Simple yes/no approval voting for deliberation phase - users can either approve or not',
-      constraints: { min_options: 1 },
-      recommendedViews: ['cards', 'list', 'checkbox'],
-      compatibleOptionTypes: ['text', 'boolean'],
-      config_schema: {}
-  },
-
-  // === Advanced Methods ===
-  quadratic: {
-      id: 'quadratic',
-      label: 'Quadratic Voting',
-      behavior: 'flex',
-      description: 'Vote with quadratic cost mechanism',
-      constraints: { min_options: 1 },
-      recommendedViews: ['cards', 'slider'],
-      compatibleOptionTypes: ['text', 'number'],
-      config_schema: {
-          credits_per_user: { type: 'number', default: 100, label: 'Credits per user', min: 1 }
-      }
-  },
-
-  token_weighted: {
-      id: 'token_weighted',
-      label: 'Token / Weighted',
-      behavior: 'flex',
-      description: 'Vote with weighted tokens',
-      constraints: { min_options: 1, requires_weight_source: true },
-      recommendedViews: ['cards', 'slider'],
-      compatibleOptionTypes: ['text', 'number'],
-      config_schema: {
-          weight_source: { type: 'object', default: null, label: 'Weight source' },
-          normalization: {
-              type: 'select',
-              default: 'none',
-              label: 'Normalization',
-              options: ['none', 'min-max', 'z-score']
-          }
-      }
-  },
-
-  phased_voting: {
-      id: 'phased_voting',
-      label: 'Phased Voting',
-      behavior: 'flex',
-      description: 'Multi-round elimination voting',
-      constraints: { min_options: 3 },
-      recommendedViews: ['cards', 'list'],
-      compatibleOptionTypes: ['text'],
-      config_schema: {
-          rounds: { type: 'number', default: 2, label: 'Number of rounds', min: 2 },
-          elimination_rule: {
-              type: 'select',
-              default: 'bottom',
-              label: 'Elimination rule',
-              options: ['bottom', 'threshold', 'top']
-          }
-      }
-  },
-
-  // === Reaction Support (Informal) ===
-  reaction: {
-      id: 'reaction',
-      label: 'Reactions',
-      behavior: 'multi',
-      description: 'React with emojis to show your opinion',
-      constraints: { min_options: 1 },
-      recommendedViews: ['cards', 'emoji', 'grid'],
-      compatibleOptionTypes: ['text'],
-      config_schema: {
-          allowed_reactions: {
-              type: 'array',
-              default: ['👍', '❤️', '🎉', '🤔', '👎'],
-              label: 'Allowed reactions'
-          },
-          max_per_user: { type: 'number', default: 3, label: 'Max reactions per user' }
-      }
-  },
-
-  // === Additional support features (no formal voting) ===
-  trending: {
-      id: 'trending',
-      label: 'Trending',
-      behavior: 'single',
-      description: 'Popularity-based trending (votes + activity)',
-      constraints: { min_options: 1 },
-      recommendedViews: ['cards', 'list'],
-      compatibleOptionTypes: ['text'],
-      config_schema: {}
-  },
-
-  none: {
-      id: 'none',
-      label: 'No Support',
-      behavior: 'single',
-      description: 'Pure discussion without support features',
-      constraints: {},
-      recommendedViews: ['list'],
-      compatibleOptionTypes: ['text'],
-      config_schema: {}
-  }
 }
 
 
@@ -667,23 +717,23 @@ export const ENGINE_DEFINITIONS: Record<string, EngineDefinition> = {
  * @param optionCount
  */
 export function getAvailableEngines(optionCount: number): EngineInfo[] {
-  return Object.entries(ENGINE_DEFINITIONS)
+    return Object.entries(ENGINE_DEFINITIONS)
     .filter(([id, engine]) => {
-      // Include approval_delib for any option count
-      if (id === 'approval_delib') return true;
-      
-      const c = engine.constraints
-      if (c.min_options && optionCount < c.min_options) return false
-      if (c.max_options && optionCount > c.max_options) return false
-      return true
+        // Include approval_delib for any option count
+        if (id === 'approval_delib') return true;
+
+        const c = engine.constraints
+        if (c.min_options && optionCount < c.min_options) return false
+            if (c.max_options && optionCount > c.max_options) return false
+                return true
     })
     .map(([id, engine]) => ({
-      id,
-      label: engine.label,
-      behavior: engine.behavior,
-      description: engine.description,
-      constraints: engine.constraints,
-      recommendedViews: engine.recommendedViews
+        id,
+        label: engine.label,
+        behavior: engine.behavior,
+        description: engine.description,
+        constraints: engine.constraints,
+        recommendedViews: engine.recommendedViews
     }))
 }
 

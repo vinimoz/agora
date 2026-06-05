@@ -1,19 +1,17 @@
-<!--
-  SPDX-FileCopyrightText: 2024 Nextcloud contributors
-  SPDX-License-Identifier: AGPL-3.0-or-later
--->
+<!-- SPDX-FileCopyrightText: 2024 Nextcloud contributors -->
+<!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
 <template>
   <div class="vote-input-container" :class="`engine-${engineId}`">
-    <!-- Binary Voting -->
+    <!-- Binary -->
     <VoteInputBinary
       v-if="engineId === 'binary'"
       :option="option"
       :engine-config="engineConfig"
       :user-vote="userVote"
+      :disabled="disabled"
       @vote="handleVote"
     />
-
-    <!-- Ternary Voting -->
+    <!-- Ternary -->
     <VoteInputTernary
       v-else-if="engineId === 'ternary'"
       :option="option"
@@ -22,107 +20,122 @@
       :disabled="disabled"
       @vote="handleVote"
     />
-
-    <!-- Star Rating -->
+    <!-- Star -->
     <VoteInputStar
       v-else-if="engineId === 'star'"
       :option="option"
       :engine-config="engineConfig"
-      :user-vote="userVote"
-      :disabled="disabled"
-      @vote="handleVote"
+      :current-star="currentStar"
+      @update:star="(id, val) => $emit('update:star', id, val)"
     />
-
-    <!-- Score Voting -->
+    <!-- Score -->
     <VoteInputScore
       v-else-if="engineId === 'score'"
       :option="option"
       :engine-config="engineConfig"
-      :user-vote="userVote"
-      :disabled="disabled"
-      @vote="handleVote"
+      :current-score="currentScore"
+      @update:score="(id, val) => $emit('update:score', id, val)"
     />
-
-    <!-- Reaction Voting -->
+    <!-- Reaction -->
     <VoteInputReaction
       v-else-if="engineId === 'reaction'"
       :option="option"
       :engine-config="engineConfig"
-      :user-vote="userVote"
-      :disabled="disabled"
-      @vote="handleVote"
+      :current-reaction-value="currentReaction"
+      @update:reaction="(id, val) => $emit('update:reaction', id, val)"
     />
-
-    <!-- Approval Voting (multi-option) -->
+    <!-- Approval -->
     <VoteInputApproval
       v-else-if="engineId === 'approval'"
       :option="option"
       :engine-config="engineConfig"
-      :user-vote="userVote"
       :is-selected="isSelected"
       :disabled="disabled"
       @toggle="handleApprovalToggle"
     />
-
-    <!-- Ranking Voting -->
+    <!-- Ranking -->
     <VoteInputRanking
       v-else-if="engineId === 'ranking'"
       :option="option"
       :engine-config="engineConfig"
-      :user-vote="userVote"
       :rank="currentRank"
       :disabled="disabled"
-      @change-rank="handleRankChange"
+      :total-options="totalOptions"
+      @change-rank="(rank) => $emit('change-rank', rank)"
     />
-
     <!-- Majority Judgment -->
     <VoteInputMajorityJudgment
       v-else-if="engineId === 'majority_judgment'"
       :option="option"
       :engine-config="engineConfig"
-      :user-vote="userVote"
       :grade="currentGrade"
       :disabled="disabled"
-      @change-grade="handleGradeChange"
+      @change-grade="(grade) => $emit('change-grade', grade)"
     />
-
-    <!-- Quadratic Voting -->
+    <!-- Quadratic -->
     <VoteInputQuadratic
       v-else-if="engineId === 'quadratic'"
       :option="option"
       :engine-config="engineConfig"
-      :user-vote="userVote"
+      :current-votes="currentQuadraticVotes"
       :disabled="disabled"
-      @vote="handleVote"
+      @update:quadratic="(id, val) => $emit('update:quadratic', id, val)"
     />
-
-    <!-- Token Weighted Voting -->
+    <!-- Token Weighted -->
     <VoteInputTokenWeighted
       v-else-if="engineId === 'token_weighted'"
+      :option="option"
+      :engine-config="engineConfig"
+      :current-weight="currentTokenWeight"
+      @update:token_weight="(id, val) => $emit('update:token_weight', id, val)"
+    />
+    <!-- Condorcet -->
+    <VoteInputCondorcet
+      v-else-if="engineId === 'condorcet'"
+      :option="option"
+      :engine-config="engineConfig"
+      :rank="currentRank"
+      :disabled="disabled"
+      :total-options="totalOptions"
+      @change-rank="(rank) => $emit('change-rank', rank)"
+    />
+    <!-- Borda -->
+    <VoteInputBorda
+      v-else-if="engineId === 'borda'"
+      :option="option"
+      :engine-config="engineConfig"
+      :rank="currentRank"
+      :disabled="disabled"
+      :total-options="totalOptions"
+      @change-rank="(rank) => $emit('change-rank', rank)"
+    />
+    <!-- Phased Voting -->
+    <VoteInputPhasedVoting
+      v-else-if="engineId === 'phased_voting'"
       :option="option"
       :engine-config="engineConfig"
       :user-vote="userVote"
       :disabled="disabled"
       @vote="handleVote"
     />
-
-    <!-- Condorcet (complex - usually handled at inquiry level) -->
-    <div v-else-if="engineId === 'condorcet'" class="condorcet-placeholder">
-      <Info :size="16" />
-      <span>{{ t('agora', 'Condorcet voting requires ranking all options') }}</span>
-    </div>
-
-    <!-- Phased Voting (special case) -->
-    <div v-else-if="engineId === 'phased_voting'" class="phased-placeholder">
-      <Info :size="16" />
-      <span>{{ t('agora', 'Phased voting is managed by the system') }}</span>
-    </div>
-
-    <!-- Unsupported -->
-    <div v-else class="unsupported-engine">
-      <AlertCircle :size="16" />
-      <span>{{ t('agora', 'Voting method not supported') }}</span>
-    </div>
+    <!-- Approval Deliberative -->
+    <VoteInputApprovalDelib
+      v-else-if="engineId === 'approval_delib'"
+      :option="option"
+      :engine-config="engineConfig"
+      :is-selected="isSelected"
+      :disabled="disabled"
+      @toggle="handleApprovalToggle"
+    />
+    <!-- Trending -->
+    <VoteInputTrending
+      v-else-if="engineId === 'trending'"
+      :option="option"
+      :engine-config="engineConfig"
+      :user-vote="userVote"
+    />
+    <!-- None -->
+    <VoteInputNone v-else-if="engineId === 'none'" />
 
     <!-- Remove vote button for single-choice engines -->
     <NcButton
@@ -142,10 +155,9 @@
 import { computed } from 'vue'
 import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
-import { Info, AlertCircle, X } from 'lucide-vue-next'
+import { X } from 'lucide-vue-next'
 import type { Option, SupportData, SupportValue } from '../../Types/index'
 
-// Import all input components
 import VoteInputBinary from './VoteInputs/VoteInputBinary.vue'
 import VoteInputTernary from './VoteInputs/VoteInputTernary.vue'
 import VoteInputStar from './VoteInputs/VoteInputStar.vue'
@@ -156,6 +168,12 @@ import VoteInputRanking from './VoteInputs/VoteInputRanking.vue'
 import VoteInputMajorityJudgment from './VoteInputs/VoteInputMajorityJudgment.vue'
 import VoteInputQuadratic from './VoteInputs/VoteInputQuadratic.vue'
 import VoteInputTokenWeighted from './VoteInputs/VoteInputTokenWeighted.vue'
+import VoteInputCondorcet from './VoteInputs/VoteInputCondorcet.vue'
+import VoteInputPhasedVoting from './VoteInputs/VoteInputPhasedVoting.vue'
+import VoteInputBorda from './VoteInputs/VoteInputBorda.vue'
+import VoteInputApprovalDelib from './VoteInputs/VoteInputApprovalDelib.vue'
+import VoteInputTrending from './VoteInputs/VoteInputTrending.vue'
+import VoteInputNone from './VoteInputs/VoteInputNone.vue'
 
 const props = defineProps<{
   engineId: string
@@ -167,7 +185,13 @@ const props = defineProps<{
   isSelected?: boolean
   currentRank?: number | null
   currentGrade?: string | null
+  currentScore?: number | null
+  currentStar?: number | null
+  currentReaction?: string | null
+  currentQuadraticVotes?: number | null
+  currentTokenWeight?: number | null
   canRemoveVote?: boolean
+  totalOptions?: number
 }>()
 
 const emit = defineEmits<{
@@ -176,29 +200,20 @@ const emit = defineEmits<{
   'change-rank': [optionId: number, rank: number | null]
   'change-grade': [optionId: number, grade: string | null]
   'remove-vote': []
+  'update:score': [optionId: number, score: number | null]
+  'update:star': [optionId: number, star: number | null]
+  'update:reaction': [optionId: number, reaction: string | null]
+  'update:quadratic': [optionId: number, votes: number | null]
+  'update:token_weight': [optionId: number, weight: number | null]
 }>()
 
-function handleVote(value: SupportValue) {
-  emit('vote', value)
-}
-
-function handleApprovalToggle() {
-  emit('approval-toggle', props.option.id)
-}
-
-function handleRankChange(rank: number | null) {
-  emit('change-rank', props.option.id, rank)
-}
-
-function handleGradeChange(grade: string | null) {
-  emit('change-grade', props.option.id, grade)
-}
-
-function handleRemoveVote() {
-   if (props.disabled) return 
-  emit('remove-vote')
-}
+function handleVote(value: SupportValue) { emit('vote', value) }
+function handleApprovalToggle() { emit('approval-toggle', props.option.id) }
+function handleRankChange(rank: number | null) { emit('change-rank', props.option.id, rank) }
+function handleGradeChange(grade: string | null) { emit('change-grade', props.option.id, grade) }
+function handleRemoveVote() { if (!props.disabled) emit('remove-vote') }
 </script>
+
 
 <style scoped lang="scss">
 .vote-input-container {

@@ -76,11 +76,12 @@ export const useSupportsStore = defineStore('supports', () => {
     const count = computed(() => supports.value.length)
 
     const getSupport = computed(() => 
-                                (inquiryId: number, userId: string, optionId: number = 0): Support | undefined => 
+                                (inquiryId: number, userId: string, optionId: number = 0,engineId: number = null): Support | undefined => 
                                 supports.value.find(s => 
                                                     s.inquiryId === inquiryId && 
                                                         s.userId === userId && 
-                                                        s.optionId === optionId
+                                                        s.optionId === optionId &&
+                                                        s.engineId === engineId
                                                    )
                                )
 
@@ -200,7 +201,12 @@ export const useSupportsStore = defineStore('supports', () => {
                                                                                                                                                   return Number(value)
                                                                                                                                               }
                                                                                                                                               return value
-
+                                                                                                                                              case 'ranking':
+                                                                                                                                                  // For per‑option ranking, value should be a number or null
+                                                                                                                                                  if (typeof value === 'number') return value
+                                                                                                                                              if (typeof value === 'string' && !isNaN(Number(value))) return Number(value)
+                                                                                                                                                  if (value === null) return null
+                                                                                                                                                      return null
                                                                                                                                               case 'reaction':
                                                                                                                                                   // Ensure it's a string or array of strings
                                                                                                                                                   if (typeof value === 'string') return value
@@ -208,7 +214,6 @@ export const useSupportsStore = defineStore('supports', () => {
                                                                                                                                                   return null
 
                                                                                                                                               case 'approval':
-                                                                                                                                                  case 'ranking':
                                                                                                                                                   // Ensure it's an array of numbers
                                                                                                                                                   if (Array.isArray(value)) {
                                                                                                                                                   return value.map(v => typeof v === 'string' ? Number(v) : v)
@@ -238,75 +243,76 @@ export const useSupportsStore = defineStore('supports', () => {
                                                                                                                                   /**
                                                                                                                                    * Main toggle support handler - routes to appropriate handler based on support feature
                                                                                                                                    */
-                                                                                                                                    async function toggleSupport(
-  inquiryId: number,        // ✅ ADD THIS
-  itemId: number, 
-  userId: string, 
-  item: SupportableItem, 
-  itemType: 'inquiry' | 'option',
-  customValue?: SupportValue,
-) {
-  // ✅ Get active engine
-  const engineStore = useSupportEngineStore()
-  const activeEngine = engineStore.getActiveEngineForTarget(itemType, itemId)
-  
-  const supportEngineId = activeEngine?.id ?? null
-  const effectiveFeature = activeEngine?.engine ?? getSupportFeature(item)
-  
-  let result: any = null
-  
-  switch (effectiveFeature) {
-    case 'binary':
-      result = await toggleBinarySupport(itemId, userId, item, itemType, supportEngineId)
-      break
-    case 'ternary':
-      result = await toggleTernarySupport(itemId, userId, item, itemType, supportEngineId)
-      break
-    case 'star':
-    case 'score':
-      if (customValue !== undefined) {
-        result = await submitScoreSupport(itemId, userId, item, itemType, customValue as number, supportEngineId)
-      }
-      break
-    case 'reaction':
-      if (typeof customValue === 'string') {
-        result = await toggleReactionSupport(itemId, userId, item, itemType, customValue, supportEngineId)
-      }
-      break
-    case 'majority_judgment':  
-      if (typeof customValue === 'string' || customValue === null) {
-        result = await toggleMajorityJudgmentSupport(itemId, userId, item, itemType, customValue as string | null, supportEngineId)
-      }
-      break
-    case 'approval':
-      result = await toggleApprovalSupport(itemId, userId, item, itemType, supportEngineId)
-      break
-    case 'ranking':
-      if (Array.isArray(customValue)) {
-        result = await submitRankingSupport(itemId, userId, item, itemType, customValue, supportEngineId)
-      }
-      break
-    case 'approval_delib':  
-      result = await toggleApprovalDeliberativeSupport(itemId, userId, item, itemType, supportEngineId)
-      break
-    case 'none':
-      return null
-    default:
-      result = await toggleBinarySupport(itemId, userId, item, itemType, supportEngineId)
-  }
-  
-  // Refresh status
-  /*
-  if (itemType === 'inquiry') {
-    const inquiryStore = useInquiriesStore()
-    await inquiryStore.refreshInquiryStatus(itemId)
-  } else {
-    const optionStore = useOptionsStore()
-    await optionStore.refreshOptionStatus(itemId)
-  }*/
-  
-  return result
-}
+                                                                                                                                  async function toggleSupport(
+                                                                                                                                      inquiryId: number,       
+                                                                                                                                      itemId: number, 
+                                                                                                                                      userId: string, 
+                                                                                                                                      item: SupportableItem, 
+                                                                                                                                      itemType: 'inquiry' | 'option',
+                                                                                                                                      customValue?: SupportValue,
+                                                                                                                                  ) {
+                                                                                                                                      //  Get active engine
+                                                                                                                                      const engineStore = useSupportEngineStore()
+                                                                                                                                      const activeEngine = engineStore.getCurrentEngine()
+
+                                                                                                                                      const supportEngineId = activeEngine?.id ?? null
+                                                                                                                                      console.log(" LETS GO TOGGLE SUPPORT ") 
+                                                                                                                                      const effectiveFeature = activeEngine?.engine ?? getSupportFeature(item)
+
+                                                                                                                                      let result: any = null
+
+                                                                                                                                      switch (effectiveFeature) {
+                                                                                                                                          case 'binary':
+                                                                                                                                              result = await toggleBinarySupport(itemId, userId, item, itemType, supportEngineId)
+                                                                                                                                          break
+                                                                                                                                          case 'ternary':
+                                                                                                                                              result = await toggleTernarySupport(itemId, userId, item, itemType, supportEngineId)
+                                                                                                                                          break
+                                                                                                                                          case 'star':
+                                                                                                                                              case 'score':
+                                                                                                                                              if (customValue !== undefined) {
+                                                                                                                                              result = await submitScoreSupport(itemId, userId, item, itemType, customValue as number, supportEngineId)
+                                                                                                                                          }
+                                                                                                                                          break
+                                                                                                                                          case 'reaction':
+                                                                                                                                              if (typeof customValue === 'string') {
+                                                                                                                                              result = await toggleReactionSupport(itemId, userId, item, itemType, customValue, supportEngineId)
+                                                                                                                                          }
+                                                                                                                                          break
+                                                                                                                                          case 'majority_judgment':  
+                                                                                                                                              if (typeof customValue === 'string' || customValue === null) {
+                                                                                                                                              result = await toggleMajorityJudgmentSupport(itemId, userId, item, itemType, customValue as string | null, supportEngineId)
+                                                                                                                                          }
+                                                                                                                                          break
+                                                                                                                                          case 'approval':
+                                                                                                                                              result = await toggleApprovalSupport(itemId, userId, item, itemType, supportEngineId)
+                                                                                                                                          break
+                                                                                                                                          case 'ranking':
+                                                                                                                                              if (typeof customValue === 'number' || customValue === null) {
+                                                                                                                                              result = await toggleRankingSupport(itemId, userId, item, itemType, customValue as number | null, supportEngineId)
+                                                                                                                                          }
+                                                                                                                                          break
+                                                                                                                                          case 'approval_delib':  
+                                                                                                                                              result = await toggleApprovalDeliberativeSupport(itemId, userId, item, itemType, supportEngineId)
+                                                                                                                                          break
+                                                                                                                                          case 'none':
+                                                                                                                                              return null
+                                                                                                                                          default:
+                                                                                                                                              result = await toggleBinarySupport(itemId, userId, item, itemType, supportEngineId)
+                                                                                                                                      }
+
+                                                                                                                                      // Refresh status
+                                                                                                                                      /*
+                                                                                                                                         if (itemType === 'inquiry') {
+                                                                                                                                         const inquiryStore = useInquiriesStore()
+                                                                                                                                         await inquiryStore.refreshInquiryStatus(itemId)
+                                                                                                                                         } else {
+                                                                                                                                         const optionStore = useOptionsStore()
+                                                                                                                                         await optionStore.refreshOptionStatus(itemId)
+                                                                                                                                         }*/
+
+                                                                                                                                      return result
+                                                                                                                                  }
                                                                                                                                   /**
                                                                                                                                    * Binary support (Simple Yes/No)
                                                                                                                                    */
@@ -715,44 +721,61 @@ export const useSupportsStore = defineStore('supports', () => {
                                                                                                                                           throw error
                                                                                                                                       }
                                                                                                                                   }
+
                                                                                                                                   /**
-                                                                                                                                   * Ranking support (Ranked choice ordering)
+                                                                                                                                   * Ranking support (per‑option rank number)
+                                                                                                                                   * Each option gets a rank number (1 = highest preference)
                                                                                                                                    */
-                                                                                                                                  async function submitRankingSupport(
-                                                                                                                                      itemId: number, 
-                                                                                                                                      userId: string, 
-                                                                                                                                      item: SupportableItem, 
+                                                                                                                                  async function toggleRankingSupport(
+                                                                                                                                      itemId: number,
+                                                                                                                                      userId: string,
+                                                                                                                                      item: SupportableItem,
                                                                                                                                       itemType: 'inquiry' | 'option',
-                                                                                                                                      ranking: number[],
+                                                                                                                                      rank: number | null,
                                                                                                                                       engineId: number | null = null
                                                                                                                                   ) {
                                                                                                                                       if (!item.currentUserStatus) item.currentUserStatus = {}
 
-                                                                                                                                      const oldRanking = (item.currentUserStatus.supportValue as number[]) ?? []
+                                                                                                                                      const oldRank = item.currentUserStatus.supportValue as number | null
+                                                                                                                                      const oldHasSupported = item.currentUserStatus.hasSupported ?? false
 
-                                                                                                                                      item.currentUserStatus.supportValue = ranking
-                                                                                                                                      item.currentUserStatus.hasSupported = ranking.length > 0
+                                                                                                                                      // Optimistic update
+                                                                                                                                      if (rank === null) {
+                                                                                                                                          item.currentUserStatus.supportValue = null
+                                                                                                                                          item.currentUserStatus.hasSupported = false
+                                                                                                                                      } else {
+                                                                                                                                          item.currentUserStatus.supportValue = rank
+                                                                                                                                          item.currentUserStatus.hasSupported = true
+                                                                                                                                      }
 
                                                                                                                                       try {
                                                                                                                                           const { inquiryId, optionId } = resolveIds(itemId, item, itemType)
 
-                                                                                                                                          if (ranking.length === 0) {
-                                                                                                                                              await removeSupport(inquiryId, userId, optionId,engineId)
-                                                                                                                                          } else if (oldRanking.length === 0) {
-                                                                                                                                              const result = await addSupport(inquiryId, userId, ranking, optionId,engineId)
-                                                                                                                                              updateResultFromSupport(result, inquiryId, optionId,engineId)
+                                                                                                                                          if (rank === null) {
+                                                                                                                                              await removeSupport(inquiryId, userId, optionId, engineId)
+                                                                                                                                              if (item.status && oldHasSupported) {
+                                                                                                                                                  item.status.countSupports = Math.max(0, (item.status.countSupports || 0) - 1)
+                                                                                                                                              }
+                                                                                                                                          } else if (oldRank === null) {
+                                                                                                                                              const result = await addSupport(inquiryId, userId, rank, optionId, engineId)
+                                                                                                                                              updateResultFromSupport(result, inquiryId, optionId, engineId)
+                                                                                                                                              if (item.status) {
+                                                                                                                                                  item.status.countSupports = (item.status.countSupports || 0) + 1
+                                                                                                                                              }
                                                                                                                                           } else {
-                                                                                                                                              const result = await updateSupport(inquiryId, userId, ranking, optionId,engineId)
-                                                                                                                                              updateResultFromSupport(result, inquiryId, optionId,engineId)
+                                                                                                                                              const result = await updateSupport(inquiryId, userId, rank, optionId, engineId)
+                                                                                                                                              updateResultFromSupport(result, inquiryId, optionId, engineId)
                                                                                                                                           }
 
-                                                                                                                                          return ranking
+                                                                                                                                          return rank
                                                                                                                                       } catch (error) {
-                                                                                                                                          item.currentUserStatus.supportValue = oldRanking
-                                                                                                                                          item.currentUserStatus.hasSupported = oldRanking.length > 0
+                                                                                                                                          // Rollback
+                                                                                                                                          item.currentUserStatus.supportValue = oldRank
+                                                                                                                                          item.currentUserStatus.hasSupported = oldHasSupported
                                                                                                                                           throw error
                                                                                                                                       }
                                                                                                                                   }
+
 
                                                                                                                                   /**
                                                                                                                                    * Resolve inquiryId and optionId based on item type
@@ -898,7 +921,7 @@ export const useSupportsStore = defineStore('supports', () => {
                                                                                                                                                   return PublicAPI.getSupports(sessionStore.route.params.token as string)
                                                                                                                                               }
                                                                                                                                               if (inquiryId) {
-                                                                                                                                                  return SupportsAPI.getSupportsByInquiryId(inquiryId)
+                                                                                                                                                  return SupportsAPI.getByInquiryId(inquiryId)
                                                                                                                                               }
                                                                                                                                               return null
                                                                                                                                           })()
@@ -1025,7 +1048,7 @@ export const useSupportsStore = defineStore('supports', () => {
                                                                                                                                       submitScoreSupport,
                                                                                                                                       toggleReactionSupport,
                                                                                                                                       toggleApprovalSupport,
-                                                                                                                                      submitRankingSupport,
+                                                                                                                                      toggleRankingSupport,
                                                                                                                                       formatResult,
                                                                                                                                       loadSupports,
                                                                                                                                       addSupport,

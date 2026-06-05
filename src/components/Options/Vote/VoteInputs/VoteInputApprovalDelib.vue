@@ -3,11 +3,12 @@
   SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <template>
-  <div class="vote-input-approval">
+  <div class="vote-input-approval-delib">
     <label class="approval-checkbox">
       <input
         type="checkbox"
         :checked="isSelected"
+        :disabled="disabled"
         @change="handleToggle"
       />
       <span class="checkmark"></span>
@@ -38,7 +39,7 @@ function handleToggle() {
 </script>
 
 <style scoped lang="scss">
-.vote-input-approval {
+.vote-input-approval-delib {
   .approval-checkbox {
     display: flex;
     align-items: center;

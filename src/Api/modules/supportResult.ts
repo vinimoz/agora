@@ -10,6 +10,7 @@ import type { SupportResult } from '../Types/index.ts'
 export const supportResultApi = {
     // Get results for a specific engine
     getResultsByEngine(engineId: number): Promise<AxiosResponse<{ results: SupportResult[] }>> {
+        console.log(" GET RESULTS BY ENGINE ")
         return httpInstance.request({
             method: 'GET',
             url: `support/engine/${engineId}/results`,

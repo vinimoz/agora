@@ -66,31 +66,55 @@ const executeAction = async () => {
     emit('close')
   }
 }
-
 const startVote = async () => {
   try {
     const engine = engineStore.getCurrentEngine()
-    if (!engine) throw new Error('No voting engine found')
     
+    if (!engine) {
+      showError('Please create a vote system before starting a vote')
+      return 
+    }
+
+    if (engine.target_ids.length === 0) {
+      showError('Please add options before starting a vote')
+      return
+    }
+
     await engineStore.updateEngine(engine.id, { status: 'active' })
-    
     showSuccess('Vote started successfully')
-    
     emit('actionCompleted', { 
       refreshOptions: true, 
       message: 'Vote started successfully'
     })
   } catch (error) {
+    // Only unexpected errors (e.g. network failure) will reach this point
     console.error('Failed to start vote:', error)
     showError('Failed to start vote')
   }
 }
 
+
 const closeVote = async () => {
   try {
     const engine = engineStore.getCurrentEngine()
-    if (!engine) throw new Error('No voting engine found')
-    
+   
+   
+    if (!engine) {
+      showError('Please create a vote system before starting a vote')
+      return   
+    }
+
+    if (engine.target_ids.length === 0) {
+      showError('Please add options before starting a vote')
+      return
+    }
+   
+       if (engine.status === 'draft') {
+      showError('Could not close a vote not started')
+      return
+    }
+
+
     await engineStore.updateEngine(engine.id, { status: 'closed' })
     
     showSuccess('Vote closed successfully')
@@ -108,7 +132,17 @@ const closeVote = async () => {
 const nextPhase = async () => {
   try {
     const engine = engineStore.getCurrentEngine()
-    if (!engine) throw new Error('No voting engine found')
+
+    if (!engine) {
+      showError('Please create a vote system before starting a vote')
+      return   
+    }
+
+    if (engine.target_ids.length === 0) {
+      showError('Please add options before starting a vote')
+      return
+    }
+   
     
     const phases = ['draft', 'active', 'closed']
     const currentIdx = phases.indexOf(engine.status)

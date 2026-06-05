@@ -1,4 +1,7 @@
-<!-- vote-inputs/VoteInputTernary.vue -->
+<!--
+  SPDX-FileCopyrightText: 2026 Nextcloud contributors
+  SPDX-License-Identifier: AGPL-3.0-or-later
+-->
 <template>
   <div class="vote-input-ternary">
     <NcButton
@@ -6,6 +9,7 @@
       :key="option.value"
       :type="isSelected(option.value) ? 'primary' : 'tertiary'"
       size="small"
+       :disabled="disabled"
       @click="vote(option.value)"
     >
       <template #icon>
@@ -21,11 +25,12 @@ import { computed } from 'vue'
 import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import { ThumbsUp, Minus, ThumbsDown } from 'lucide-vue-next'
-import type { SupportData, SupportValue } from '../../Types/index'
+import type { SupportData, SupportValue, Option } from '../../Types/index'
 
 const props = defineProps<{
   engineConfig: Record<string, unknown>
-  option: any
+  option: Option
+  disabled?: boolean
   userVote?: SupportData
 }>()
 
@@ -59,7 +64,16 @@ function vote(value: number) {
 <style scoped lang="scss">
 .vote-input-ternary {
   display: flex;
-  gap: 6px;
+  gap: 8px;
   align-items: center;
+
+  :deep(.button-vue--primary) {
+    background: var(--color-primary-element);
+    border-color: var(--color-primary-element);
+    
+    .button-vue__icon {
+      color: white;
+    }
+  }
 }
 </style>

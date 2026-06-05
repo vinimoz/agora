@@ -3,7 +3,8 @@
 
 <template>
     <div class="vote-header">
-        <div class="header-info">
+        <!-- Top row: Metadata left, Layout switcher right -->
+        <div class="header-top-row">
             <div class="vote-metadata">
                 <span v-if="voteSession" class="metadata-badge">
                     <Calendar :size="14" />
@@ -25,9 +26,7 @@
                     {{ t('agora', 'Multiple votes allowed') }}
                 </span>
             </div>
-        </div>
 
-        <div class="action-bar">
             <div class="layout-switcher">
                 <NcButton
                     v-for="layout in allowedLayouts"
@@ -42,7 +41,10 @@
                     {{ t('agora', capitalize(layout)) }}
                 </NcButton>
             </div>
+        </div>
 
+        <!-- Middle row: Engine selector and action buttons -->
+        <div class="action-bar">
             <!-- Engine selector - Beautiful display of support engines -->
             <div v-if="availableEngines.length > 0" class="engine-selector">
                 <NcSelect
@@ -168,17 +170,6 @@
             <div class="engine-card-content">
                 <div class="engine-card-header">
                     <h3 class="engine-card-title">{{ currentEngine.title || getEngineLabel(currentEngine.engine) }}</h3>
-                    <div class="engine-card-badges">
-                        <span v-if="currentEngine.purpose" class="card-purpose-badge">
-                            {{ getPurposeLabel(currentEngine.purpose) }}
-                        </span>
-                        <span v-if="currentEngine.metadata?.phase" class="card-phase-badge" :class="`phase-${currentEngine.metadata.phase}`">
-                            {{ formatPhase(currentEngine.metadata.phase) }}
-                        </span>
-                        <span v-if="currentEngine.status" class="card-status-badge" :class="`status-${currentEngine.status}`">
-                            {{ formatStatus(currentEngine.status) }}
-                        </span>
-                    </div>
                     <div class="engine-card-actions">
                         <!-- Edit button for the current engine -->
                         <NcButton
@@ -236,6 +227,18 @@
                     </div>
                 </div>
             </div>
+            <!-- Engine purpose, phase, status badges moved to bottom right -->
+            <div class="engine-card-bottom-badges">
+                <span v-if="currentEngine.purpose" class="card-purpose-badge">
+                    {{ getPurposeLabel(currentEngine.purpose) }}
+                </span>
+                <span v-if="currentEngine.metadata?.phase" class="card-phase-badge" :class="`phase-${currentEngine.metadata.phase}`">
+                    {{ formatPhase(currentEngine.metadata.phase) }}
+                </span>
+                <span v-if="currentEngine.status" class="card-status-badge" :class="`status-${currentEngine.status}`">
+                    {{ formatStatus(currentEngine.status) }}
+                </span>
+            </div>
         </div>
     </div>
 </template>
@@ -253,7 +256,6 @@ import {
     Calendar,
     CheckCircle,
     LayoutGrid,
-    List,
     BarChart3,
     ThumbsUp,
     Scale,
@@ -396,7 +398,6 @@ const capitalize = (str: string): string =>
 const getLayoutIcon = (layout: string): unknown => {
     const icons: Record<string, unknown> = { 
         cards: LayoutGrid, 
-        list: List, 
         results: BarChart3 
     }
     return icons[layout] || LayoutGrid
@@ -410,7 +411,13 @@ const getLayoutIcon = (layout: string): unknown => {
     gap: 20px;
     margin-bottom: 24px;
 
-    .header-info {
+    .header-top-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+
         .vote-metadata {
             display: flex;
             gap: 12px;
@@ -439,13 +446,6 @@ const getLayoutIcon = (layout: string): unknown => {
                 }
             }
         }
-    }
-
-    .action-bar {
-        display: flex;
-        gap: 12px;
-        align-items: center;
-        flex-wrap: wrap;
 
         .layout-switcher {
             display: flex;
@@ -464,6 +464,13 @@ const getLayoutIcon = (layout: string): unknown => {
                 }
             }
         }
+    }
+
+    .action-bar {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        flex-wrap: wrap;
 
         .engine-selector {
             min-width: 360px;
@@ -880,76 +887,6 @@ const getLayoutIcon = (layout: string): unknown => {
                     margin: 0;
                 }
 
-                .engine-card-badges {
-                    display: flex;
-                    gap: 8px;
-                    flex-wrap: wrap;
-
-                    .card-purpose-badge {
-                        font-size: 11px;
-                        padding: 4px 10px;
-                        background: linear-gradient(135deg, rgba(var(--color-primary-element-rgb), 0.15) 0%, rgba(var(--color-primary-element-rgb), 0.08) 100%);
-                        border-radius: 12px;
-                        color: var(--color-primary-element);
-                        font-weight: 600;
-                    }
-
-                    .card-phase-badge {
-                        font-size: 11px;
-                        padding: 4px 10px;
-                        border-radius: 12px;
-                        font-weight: 600;
-                        text-transform: uppercase;
-                        
-                        &.phase-draft {
-                            background: rgba(241, 196, 15, 0.15);
-                            color: rgb(241, 196, 15);
-                        }
-                        
-                        &.phase-voting {
-                            background: rgba(52, 152, 219, 0.15);
-                            color: rgb(52, 152, 219);
-                        }
-                        
-                        &.phase-counting {
-                            background: rgba(155, 89, 182, 0.15);
-                            color: rgb(155, 89, 182);
-                        }
-                        
-                        &.phase-published {
-                            background: rgba(46, 204, 113, 0.15);
-                            color: rgb(46, 204, 113);
-                        }
-                        
-                        &.phase-closed {
-                            background: rgba(231, 76, 60, 0.15);
-                            color: rgb(231, 76, 60);
-                        }
-                    }
-
-                    .card-status-badge {
-                        font-size: 11px;
-                        padding: 4px 10px;
-                        border-radius: 12px;
-                        font-weight: 600;
-                        
-                        &.status-draft {
-                            background: rgba(241, 196, 15, 0.15);
-                            color: rgb(241, 196, 15);
-                        }
-                        
-                        &.status-active {
-                            background: rgba(46, 204, 113, 0.15);
-                            color: rgb(46, 204, 113);
-                        }
-                        
-                        &.status-closed {
-                            background: rgba(231, 76, 60, 0.15);
-                            color: rgb(231, 76, 60);
-                        }
-                    }
-                }
-
                 .engine-card-actions {
                     display: flex;
                     gap: 4px;
@@ -1001,11 +938,93 @@ const getLayoutIcon = (layout: string): unknown => {
                 }
             }
         }
+
+        .engine-card-bottom-badges {
+            position: absolute;
+            bottom: 16px;
+            right: 20px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+
+            .card-purpose-badge {
+                font-size: 11px;
+                padding: 4px 10px;
+                background: linear-gradient(135deg, rgba(var(--color-primary-element-rgb), 0.15) 0%, rgba(var(--color-primary-element-rgb), 0.08) 100%);
+                border-radius: 12px;
+                color: var(--color-primary-element);
+                font-weight: 600;
+            }
+
+            .card-phase-badge {
+                font-size: 11px;
+                padding: 4px 10px;
+                border-radius: 12px;
+                font-weight: 600;
+                text-transform: uppercase;
+                
+                &.phase-draft {
+                    background: rgba(241, 196, 15, 0.15);
+                    color: rgb(241, 196, 15);
+                }
+                
+                &.phase-voting {
+                    background: rgba(52, 152, 219, 0.15);
+                    color: rgb(52, 152, 219);
+                }
+                
+                &.phase-counting {
+                    background: rgba(155, 89, 182, 0.15);
+                    color: rgb(155, 89, 182);
+                }
+                
+                &.phase-published {
+                    background: rgba(46, 204, 113, 0.15);
+                    color: rgb(46, 204, 113);
+                }
+                
+                &.phase-closed {
+                    background: rgba(231, 76, 60, 0.15);
+                    color: rgb(231, 76, 60);
+                }
+            }
+
+            .card-status-badge {
+                font-size: 11px;
+                padding: 4px 10px;
+                border-radius: 12px;
+                font-weight: 600;
+                
+                &.status-draft {
+                    background: rgba(241, 196, 15, 0.15);
+                    color: rgb(241, 196, 15);
+                }
+                
+                &.status-active {
+                    background: rgba(46, 204, 113, 0.15);
+                    color: rgb(46, 204, 113);
+                }
+                
+                &.status-closed {
+                    background: rgba(231, 76, 60, 0.15);
+                    color: rgb(231, 76, 60);
+                }
+            }
+        }
     }
 }
 
 @media (max-width: 768px) {
     .vote-header {
+        .header-top-row {
+            flex-direction: column;
+            align-items: stretch;
+            
+            .layout-switcher {
+                justify-content: center;
+            }
+        }
+        
         .action-bar {
             width: 100%;
             justify-content: flex-start;
@@ -1018,9 +1037,16 @@ const getLayoutIcon = (layout: string): unknown => {
 
         .current-engine-card {
             flex-direction: column;
+            padding-bottom: 60px;
             
             .engine-card-icon {
                 align-self: flex-start;
+            }
+
+            .engine-card-bottom-badges {
+                bottom: 16px;
+                right: 16px;
+                left: auto;
             }
         }
     }

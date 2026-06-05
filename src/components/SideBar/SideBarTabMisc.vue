@@ -66,6 +66,18 @@ const extractLangString = (obj: unknown, lang: string = 'en'): string => {
   return firstKey ? obj[firstKey] : ''
 }
 
+const availableEngines = computed(() =>
+  Object.values(ENGINE_DEFINITIONS)
+    .filter(engine => {
+      if (!engine.supportFeature) {
+        return false
+      }
+
+      return true
+    })
+    .sort((a, b) => a.label.localeCompare(b.label)) // Sort alphabetically by label
+)
+
 // Reactive state
 const isLoading = ref(true)
 const error = ref<string | null>(null)
@@ -100,25 +112,7 @@ const supportTemplate = computed<SupportTemplate | null>(() => {
   return null
 })
 
-// Helper to build the list of engines from ENGINE_DEFINITIONS
-const availableEngines = computed(() => {
-  let engines = props.engines
-  
-  // If in deliberative mode, filter to only support features (not complex voting engines)
-  if (props.mode === 'deliberative') {
-    const deliberativeOnly = ['none', 'binary', 'ternary', 'reaction', 'star', 'score', 'majority_judgment', 'approval_delib']
-    engines = engines.filter(engine => deliberativeOnly.includes(engine.id))
-  }
-  
-  if (!props.optionCount) return engines
-  
-  return engines.filter(engine => {
-    const constraints = engine.constraints
-    if (constraints?.min_options && props.optionCount! < constraints.min_options) return false
-    if (constraints?.max_options && props.optionCount! > constraints.max_options) return false
-    return true
-  })
-})
+
 
 // Get current support feature value (engine ID)
 const getSupportFeatureValue = computed(() => {
@@ -824,7 +818,6 @@ onMounted(() => {
 </template>
 
 <style scoped>
-/* existing styles plus new button style */
 .btn-select-engine {
     display: flex;
     align-items: center;
@@ -853,7 +846,6 @@ onMounted(() => {
     font-size: 16px;
 }
 
-/* rest of existing styles unchanged */
 .optional-label {
     color: var(--color-text-maxcontrast);
     font-size: 0.75rem;

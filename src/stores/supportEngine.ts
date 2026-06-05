@@ -149,7 +149,7 @@ export const useSupportEngineStore = defineStore('supportEngine', () => {
             }
 
             // Load results for active engines
-            await loadActiveEngineResults()
+             await loadActiveEngineResults()
         } catch (err) {
             error.value = err instanceof Error ? err.message : 'Failed to load engines'
             Logger.error('Error loading support engines for inquiry:', { error: err, inquiryId })
@@ -299,7 +299,7 @@ export const useSupportEngineStore = defineStore('supportEngine', () => {
         } else {
             currentEngine.value = null
         }
-        await loadActiveEngineResults()
+       // await loadActiveEngineResults()
     }
 
     async function activateEngine(engine: SupportEngine): Promise<void> {
@@ -317,11 +317,6 @@ export const useSupportEngineStore = defineStore('supportEngine', () => {
     }
     function getCurrentEngine(): SupportEngine[] {
         return currentEngine.value
-    }
-
-    function getCurrentEngineResults(): SupportResult[] {
-        if (!currentEngine.value) return []
-        return resultStore.getResultsByEngine(currentEngine.value.id)
     }
 
     async function calculateAllActiveResults(): Promise<void> {
@@ -446,7 +441,7 @@ export const useSupportEngineStore = defineStore('supportEngine', () => {
         deleteEngine,
         setCurrentEngine,
         activateEngine,
-        getCurrentEngineResults,
+       // getCurrentEngineResults,
         calculateAllActiveResults,
         loadActiveEngineResults,
         validateEngineConfig,

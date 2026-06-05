@@ -473,7 +473,7 @@ const closeAddOptionModal = () => {
 
 const openOptionDetail = (option: Option) => {
     if (isReadOnly.value) return
-    selectedOptionId.value = option.id
+    selectedOptionId.value = option.d
     showOptionDetail.value = true
 }
 
@@ -502,6 +502,9 @@ const handleOptionFamilyChanged = async ({ optionId, familyKey, action }: { opti
     if (action !== 'added') return
 
     const activeEngine = engineStore.getCurrentEngine()
+    console.log(" HANDLE OPTION FAMILT ADD ",activeEngine)
+    console.log(" HANDLE OPTION FAMILT ADD ACTIVE ENGINE",optionId)
+    console.log(" HANDLE OPTION FAMILT ADD ACTIVE ENGINE",familyKey)
 
     if (activeEngine && !activeEngine.target_ids.includes(optionId)) {
         const newTargetIds = [...activeEngine.target_ids, optionId]

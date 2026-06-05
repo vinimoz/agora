@@ -1,0 +1,209 @@
+<!--
+  SPDX-FileCopyrightText: 2026 Nextcloud contributors
+  SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+<template>
+<div 
+    class="vote-card" 
+    :class="{ 'user-voted': hasUserVotedFor(option.id) }"
+    @click="handleCardClick"
+  >
+    <div class="option-info">
+      <h3 class="option-title">{{ option.title }}</h3>
+      <p v-if="option.text && !compact" class="option-text">{{ option.text }}</p>
+      <div v-if="!canVote || hasUserVoted" class="results-stats">
+        <div class="stats-row">
+          <span class="vote-count" @click.stop="openSupportsModal">{{ voteCount }}</span>
+          <span class="percentage">{{ percentage }}%</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" :style="{ width: percentage + '%' }" />
+        </div>
+      </div>
+    </div>
+
+    <VoteInput
+      v-if="showVoteInput"
+      :engine-id="effectiveEngineId"
+      :engine-config="engineConfig"
+      :option="option"
+      :disabled="!canVote"
+      :is-selected="isSelected"
+      :current-rank="currentRank"
+      :current-grade="currentGrade"
+      :current-score="currentScore"
+      :current-star="currentStar"
+      :current-reaction="currentReaction"
+      :current-quadratic-votes="currentQuadraticVotes"
+      :current-token-weight="currentTokenWeight"
+      :total-options="totalOptions"
+      @vote="handleVote"
+      @update:score="handleUpdateScore"
+      @update:star="handleUpdateStar"
+      @update:reaction="handleUpdateReaction"
+      @update:quadratic="handleUpdateQuadratic"
+      @update:token_weight="handleUpdateTokenWeight"
+      @approval-toggle="handleApprovalToggle"
+      @change-rank="handleRankChange"
+      @change-grade="handleGradeChange"
+    />
+
+    <div v-if="hasUserVotedFor(option.id) && !showVoteInput" class="voted-badge">
+      <CheckCircle :size="16" />
+      <span>{{ t('agora', 'Voted') }}</span>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { computed } from 'vue'
+import { t } from '@nextcloud/l10n'
+import { CheckCircle } from 'lucide-vue-next'
+import VoteInput from './VoteInput.vue'
+import type { Option, SupportValue } from '../../Types/index'
+
+const props = defineProps<{
+  option: Option
+  compact?: boolean
+  effectiveEngineId: string
+  engineConfig: Record<string, unknown>
+  canVote: boolean
+  hasUserVoted: boolean
+  hasUserVotedFor: (optionId: number) => boolean
+  voteCount: number
+  percentage: number
+  isSelected?: boolean
+  currentRank?: number | null
+  currentGrade?: string | null
+  currentScore?: number | null
+  currentStar?: number | null
+  currentReaction?: string | null
+  currentQuadraticVotes?: number | null
+  currentTokenWeight?: number | null
+  totalOptions?: number
+}>()
+
+const emit = defineEmits<{
+  vote: [option: Option, value: SupportValue]
+  'approval-toggle': [optionId: number]
+  'change-rank': [optionId: number, rank: number | null]
+  'change-grade': [optionId: number, grade: string | null]
+  'update:score': [optionId: number, score: number | null]
+  'update:star': [optionId: number, star: number | null]
+  'update:reaction': [optionId: number, reaction: string | null]
+  'update:quadratic': [optionId: number, votes: number | null]
+  'update:token_weight': [optionId: number, weight: number | null]
+  'open-supports-modal': [optionId: number]
+}>()
+
+
+function openSupportsModal() {
+  emit('open-supports-modal', props.option.id)
+}
+
+const showVoteInput = computed(() => props.canVote && !props.hasUserVoted)
+
+function handleVote(value: SupportValue) { emit('vote', props.option, value) }
+function handleApprovalToggle() { emit('approval-toggle', props.option.id) }
+function handleRankChange(rank: number | null) { emit('change-rank', props.option.id, rank) }
+function handleGradeChange(grade: string | null) { emit('change-grade', props.option.id, grade) }
+function handleUpdateScore(optionId: number, score: number | null) { emit('update:score', optionId, score) }
+function handleUpdateStar(optionId: number, star: number | null) { emit('update:star', optionId, star) }
+function handleUpdateReaction(optionId: number, reaction: string | null) { emit('update:reaction', optionId, reaction) }
+function handleUpdateQuadratic(optionId: number, votes: number | null) { emit('update:quadratic', optionId, votes) }
+function handleUpdateTokenWeight(optionId: number, weight: number | null) { emit('update:token_weight', optionId, weight) }
+
+function handleCardClick(event: MouseEvent) {
+  // Don't open modal if clicking inside interactive elements
+  const target = event.target as HTMLElement
+  if (target.closest('.vote-input-container') || target.closest('.voted-badge')) {
+    return
+  }
+  emit('open-supports-modal', props.option.id)
+}
+
+</script>
+
+<style scoped lang="scss">
+.vote-card {
+  background: var(--color-main-background);
+  border: 2px solid var(--color-border);
+  border-radius: 16px;
+  padding: 20px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-color: var(--color-primary-element);
+  }
+
+  &.user-voted {
+    background: linear-gradient(135deg, rgba(66, 184, 131, 0.05) 0%, transparent 100%);
+    border-color: #42b883;
+  }
+
+  .option-info {
+    margin-bottom: 16px;
+
+    .option-title {
+      margin: 0 0 8px 0;
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .option-text {
+      margin: 0;
+      font-size: 14px;
+      color: var(--color-text-light);
+      line-height: 1.5;
+    }
+
+    .results-stats {
+      margin-top: 12px;
+
+      .stats-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 6px;
+        font-size: 14px;
+
+        .vote-count {
+          font-weight: 700;
+          color: var(--color-primary-element);
+        }
+
+        .percentage {
+          color: var(--color-text-lighter);
+        }
+      }
+
+      .progress-bar {
+        height: 6px;
+        background: var(--color-background-dark);
+        border-radius: 3px;
+        overflow: hidden;
+
+        .progress-fill {
+          height: 100%;
+          background: linear-gradient(90deg, var(--color-primary-element-light), var(--color-primary-element));
+          border-radius: 3px;
+          transition: width 0.3s ease;
+        }
+      }
+    }
+  }
+
+  .voted-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--color-border);
+    color: #42b883;
+    font-size: 13px;
+    font-weight: 500;
+  }
+}
+</style>

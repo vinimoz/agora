@@ -66,6 +66,7 @@ export const supportEngineApi = {
 
     // Get engine results
     getEngineResults(engineId: number): Promise<AxiosResponse<{ results: SupportResult[] }>> {
+        console.log(" GET ENGINES RESULTS INTO ENGINE API")
         return httpInstance.request({
             method: 'GET',
             url: `support/engine/${engineId}/results`,

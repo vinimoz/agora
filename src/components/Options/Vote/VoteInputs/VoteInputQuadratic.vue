@@ -1,10 +1,12 @@
+<!-- SPDX-FileCopyrightText: 2026 Nextcloud contributors -->
+<!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
 <template>
   <div class="vote-input-quadratic">
     <div class="quadratic-controls">
       <NcButton
         type="tertiary"
         size="small"
-        :disabled="currentValue <= 0"
+        :disabled="currentValue === null || currentValue <= 0"
         @click="decrement"
       >
         <Minus :size="14" />
@@ -19,16 +21,16 @@
         <Plus :size="14" />
       </NcButton>
     </div>
-    <div class="cost-info" v-if="currentValue">
-      <span class="cost-label">{{ t('agora', 'Cost') }}:</span>
-      <span class="cost-value">{{ getCost(currentValue) }}</span>
+    <div v-if="currentValue !== null && currentValue > 0" class="cost-info">
+      <NcProgressBar :value="costPercentage" size="small" class="cost-progress" />
+      <span class="cost-value">{{ currentCost }}</span>
       <span class="credits-label">{{ t('agora', 'credits') }}</span>
     </div>
     <NcButton
       v-if="currentValue !== null && currentValue > 0"
       type="tertiary"
       size="small"
-      @click="vote(null)"
+      @click="clearVotes"
     >
       <X :size="14" />
     </NcButton>
@@ -36,65 +38,69 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
+import NcProgressBar from '@nextcloud/vue/components/NcProgressBar'
 import { Plus, Minus, X } from 'lucide-vue-next'
-import type { SupportData, SupportValue, Option } from '../../Types/index'
+import type {  Option } from '../../Types/index'
 
 const props = defineProps<{
   engineConfig: Record<string, unknown>
   option: Option
-  disabled?: boolean
-  userVote?: SupportData
+  currentVotes?: number | null
 }>()
 
 const emit = defineEmits<{
-  vote: [value: SupportValue]
+  'update:quadratic': [optionId: number, votes: number | null]
 }>()
 
 const maxCredits = computed(() => (props.engineConfig.credits_per_user as number) || 100)
-const currentValue = ref<number | null>(() => {
-  if (!props.userVote) return null
-  const raw = props.userVote.value
-  if (typeof raw === 'number') return raw
-  return null
+const currentValue = computed(() => props.currentVotes ?? null)
+const displayValue = ref(currentValue.value ?? 0)
+
+watch(currentValue, (newValue) => {
+  displayValue.value = newValue ?? 0
 })
 
-const displayValue = computed(() => currentValue.value ?? 0)
-
 function getCost(votes: number): number {
-  // Quadratic cost: cost = votes^2
   return votes * votes
 }
 
+const currentCost = computed(() => {
+  const val = currentValue.value
+  if (val === null || val === 0) return 0
+  return getCost(val)
+})
+
+const costPercentage = computed(() => (currentCost.value / maxCredits.value) * 100)
+
 const canIncrement = computed(() => {
-  const nextVotes = (currentValue.value || 0) + 1
+  const current = currentValue.value || 0
+  const nextVotes = current + 1
   return getCost(nextVotes) <= maxCredits.value
 })
 
 function increment() {
-  const newValue = (currentValue.value || 0) + 1
+  const current = currentValue.value || 0
+  const newValue = current + 1
   if (getCost(newValue) <= maxCredits.value) {
-    currentValue.value = newValue
-    emit('vote', newValue)
+    emit('update:quadratic', props.option.id, newValue)
   }
 }
 
 function decrement() {
-  const newValue = Math.max(0, (currentValue.value || 0) - 1)
+  const current = currentValue.value || 0
+  const newValue = Math.max(0, current - 1)
   if (newValue === 0) {
-    currentValue.value = null
-    emit('vote', null)
+    emit('update:quadratic', props.option.id, null)
   } else {
-    currentValue.value = newValue
-    emit('vote', newValue)
+    emit('update:quadratic', props.option.id, newValue)
   }
 }
 
-function vote(value: number | null) {
-  currentValue.value = value
-  emit('vote', value)
+function clearVotes() {
+  emit('update:quadratic', props.option.id, null)
 }
 </script>
 
@@ -110,8 +116,8 @@ function vote(value: number | null) {
     align-items: center;
     gap: 8px;
     background: var(--color-background-dark);
-    border-radius: 8px;
-    padding: 4px;
+    border-radius: 40px;
+    padding: 4px 8px;
 
     .vote-count {
       min-width: 40px;
@@ -124,12 +130,14 @@ function vote(value: number | null) {
 
   .cost-info {
     display: flex;
-    align-items: baseline;
-    gap: 4px;
-    font-size: 11px;
+    align-items: center;
+    gap: 8px;
+    background: var(--color-background-dark);
+    padding: 4px 12px;
+    border-radius: 20px;
 
-    .cost-label {
-      color: var(--color-text-lighter);
+    .cost-progress {
+      width: 80px;
     }
 
     .cost-value {
@@ -138,6 +146,7 @@ function vote(value: number | null) {
     }
 
     .credits-label {
+      font-size: 11px;
       color: var(--color-text-lighter);
     }
   }
