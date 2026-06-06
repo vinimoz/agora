@@ -1167,7 +1167,7 @@ OC.L10N.register(
     "Add a new public link" : "Pridėti naują viešą nuorodą",
     "Error adding public link" : "Klaida pridedant viešąją nuorodą",
     "Shares" : "Bendrinimai",
-    "Error while adding share" : "Klaida pridedant viešinį",
+    "Error while adding share" : "Klaida pridedant bendrinimą",
     "Add shares" : "Pridėti bendrinimus",
     "Type to add an individual share" : "Įveskite, kad pridėtumėte individualų bendrinimą",
     "Locked shares (read only access)" : "Užrakinti bendrinimai (tik skaitymo prieiga)",

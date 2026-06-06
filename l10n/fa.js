@@ -68,6 +68,7 @@ OC.L10N.register(
     "Next day" : "روز بعد",
     "Please wait" : "لطفا صبر کنید",
     "Error while saving comment" : "هنگام ذخیره توضیح خطایی رخ داد",
+    "Write a comment …" : "نوشتن دیدگاه …",
     "Send" : "ارسال",
     "Error while deleting the comment" : "هنگام حذف توضیح خطایی رخ داد",
     "Unknown user" : "کاربر نامعلوم",
