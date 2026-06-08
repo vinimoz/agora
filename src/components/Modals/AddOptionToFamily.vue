@@ -429,10 +429,9 @@ async function addToVote(): Promise<void> {
   try {
     // Check if option already has vote in force_layouts
     const forceLayouts = getForceLayouts(selectedOption.value)
-   /* if (forceLayouts.includes('vote')) {
-      showError(t('agora', 'Option already added to vote'))
+   if (forceLayouts.includes('vote')) {
       return
-    }*/
+    }
 
     // Add vote to force_layouts
     const updatedLayouts = [...forceLayouts, 'vote']

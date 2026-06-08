@@ -66,15 +66,29 @@ class SupportResultService
  */
 private function calculateBordaResults(array $supports, ?int $engineId = null): array
 {
+    $maxRank = $this->getMaxRankForEngine($engineId);
     $allOptions = $this->getEngineOptionIds($engineId);
+    $numOptions = count($allOptions);
+    $scores = array_fill_keys($allOptions, 0);
+
     if (empty($allOptions)) {
         // Fallback: extract from rankings
         $allOptions = [];
         foreach ($supports as $support) {
-            $value = $support->getValue();
-            $rankingMap = is_array($value) ? ($value['ranking'] ?? []) : [];
+             $value = $support->getValue();
+        $weight = $support->getWeight();
+        $rankingMap = is_array($value) ? ($value['ranking'] ?? []) : [];
+        if ($maxRank !== null) {
+            $rankingMap = array_filter($rankingMap, fn($rank) => $rank <= $maxRank);
+        }
+         foreach ($rankingMap as $oid => $rank) {
+            $points = ($numOptions - $rank + 1) * $weight;
+            $scores[(int)$oid] += $points;
+        }
+
             foreach (array_keys($rankingMap) as $oid) {
                 $allOptions[$oid] = true;
+
             }
         }
         $allOptions = array_keys($allOptions);
@@ -143,6 +157,25 @@ private function getEngineOptionIds(?int $engineId): array
     }
 }
 
+private function getMaxRankForEngine(?int $engineId): ?int
+{
+    if ($engineId === null) {
+        return null;
+    }
+    try {
+        $engine = $this->engineMapper->find($engineId);
+        if ($engine) {
+            $config = $engine->getConfig();
+            $maxRank = $config['max_rank'] ?? null;
+            // null means unlimited (allow all ranks)
+            return $maxRank === null ? null : (int)$maxRank;
+        }
+    } catch (\Exception $e) {
+        $this->logger->error('Failed to get max_rank for engine', ['error' => $e->getMessage()]);
+    }
+    return null;
+}
+
 /**
  * Calculate Condorcet results (pairwise comparison)
  * For each pair of options, count how many voters prefer one over the other.
@@ -151,13 +184,21 @@ private function getEngineOptionIds(?int $engineId): array
 private function calculateCondorcetResults(array $supports, ?int $engineId = null): array
 {
     // Get all options from engine target_ids
+    $maxRank = $this->getMaxRankForEngine($engineId);
     $allOptions = $this->getEngineOptionIds($engineId);
     if (empty($allOptions)) {
         // Fallback: extract from rankings
         $allOptions = [];
         foreach ($supports as $support) {
             $value = $support->getValue();
+            $weight = $support->getWeight();
             $rankingMap = is_array($value) ? ($value['ranking'] ?? []) : [];
+            if ($maxRank !== null) {
+            $rankingMap = array_filter($rankingMap, fn($rank) => $rank <= $maxRank);
+            }
+asort($rankingMap); // sort by rank ascending
+        $ordered = array_keys($rankingMap);
+
             foreach (array_keys($rankingMap) as $oid) {
                 $allOptions[$oid] = true;
             }
@@ -306,7 +347,7 @@ private function calculateCondorcetResults(array $supports, ?int $engineId = nul
              'borda' => $this->calculateBordaResults($supports, $engineId),
             'quadratic' => $this->calculateQuadraticResults($supports),
             'token_weighted' => $this->calculateTokenWeightedResults($supports),
-            'phased_voting' => $this->calculatePhasedVotingResults($supports, $inquiryId),
+            'phased_voting' => $this->calculatePhasedVotingResults($supports, $inquiryId,$engineId),
             'binary' => $this->calculateBinaryResults($supports),
             'majority_judgment' => $this->calculateMajorityJudgmentResults($supports, $inquiryId, $optionId, $engineId),
             default => $this->calculateBinaryResults($supports),
@@ -337,16 +378,21 @@ private function calculateCondorcetResults(array $supports, ?int $engineId = nul
     /**
      * Calculate ranking results (rank order)
      */
-    private function calculateRankingResults(array $supports): array
+    private function calculateRankingResults(array $supports, ?int $engineId = null): array
 {
+    $maxRank = $this->getMaxRankForEngine($engineId);
     $rankings = [];
     foreach ($supports as $support) {
         $value = $support->getValue();
         $weight = $support->getWeight();
         $rankingMap = is_array($value) ? ($value['ranking'] ?? []) : [];
         foreach ($rankingMap as $optionId => $rank) {
-            $optionId = (int)$optionId;
             $rank = (int)$rank;
+            // Filter out ranks exceeding maxRank
+            if ($maxRank !== null && $rank > $maxRank) {
+                continue;
+            }
+            $optionId = (int)$optionId;
             if (!isset($rankings[$optionId])) {
                 $rankings[$optionId] = ['sum' => 0, 'count' => 0];
             }
@@ -358,14 +404,12 @@ private function calculateCondorcetResults(array $supports, ?int $engineId = nul
     foreach ($rankings as $oid => $data) {
         $averages[$oid] = $data['count'] ? round($data['sum'] / $data['count'], 2) : 0;
     }
-    
     return [
         'type' => 'ranking',
         'rankings' => $averages,
-        'total_voters' => count($supports)  
+        'total_voters' => count($supports)
     ];
-    }
-
+}
     /**
      * Calculate quadratic voting results
      */
@@ -425,18 +469,37 @@ private function calculateCondorcetResults(array $supports, ?int $engineId = nul
      * Phased voting – each round stores {selected: [optionId], round: N}
      * The result can be the current leader after the last round.
      */
-    private function calculatePhasedVotingResults(array $supports, ?int $inquiryId = null): array
-    {
-        // Simplified: count selections per option across the latest round (or all rounds)
-        $counts = [];
-        foreach ($supports as $support) {
-            $value = $support->getValue();
-            $selected = is_array($value) ? ($value['selected'] ?? []) : [];
-            foreach ($selected as $optionId) {
-                $counts[(int)$optionId] = ($counts[(int)$optionId] ?? 0) + 1;
+    private function calculatePhasedVotingResults(array $supports, ?int $inquiryId = null, ?int $engineId = null): array
+{
+    // Get current round from engine config
+    $currentRound = 1;
+    if ($engineId !== null) {
+        try {
+            $engine = $this->engineMapper->find($engineId);
+            if ($engine) {
+                $config = $engine->getConfig();
+                $currentRound = $config['current_round'] ?? 1;
             }
+        } catch (\Exception $e) {
+            $this->logger->error('Failed to get current round', ['error' => $e->getMessage()]);
         }
-        return ['type' => 'phased_voting', 'counts' => $counts];
+    }
+
+    $counts = [];
+    foreach ($supports as $support) {
+        $value = $support->getValue();
+        // Extract round number from stored value
+        $round = isset($value['round']) ? (int)$value['round'] : 1;
+        // Only count supports for the current round
+        if ($round !== $currentRound) {
+            continue;
+        }
+        $selected = isset($value['selected']) && is_array($value['selected']) ? $value['selected'] : [];
+        foreach ($selected as $optionId) {
+            $counts[(int)$optionId] = ($counts[(int)$optionId] ?? 0) + 1;
+        }
+    }
+    return ['type' => 'phased_voting', 'counts' => $counts];
     }
 
     /**
@@ -570,7 +633,7 @@ private function calculateCondorcetResults(array $supports, ?int $engineId = nul
      */
     private function calculateMajorityJudgmentResults(array $supports, ?int $inquiryId = null, ?int $optionId = null, ?int $engineId = null): array
     {
-        $grades = $this->getMajorityJudgmentGrades($inquiryId, $optionId);
+        $grades = $this->getMajorityJudgmentGrades($inquiryId, $optionId, $engineId);
         if (empty($grades)) {
             return $this->getEmptyResult('majority_judgment');
         }
@@ -718,63 +781,74 @@ private function calculateCondorcetResults(array $supports, ?int $engineId = nul
      * @param int|null $optionId
      * @return array List of grades ordered from best to worst
      */
-    private function getMajorityJudgmentGrades(?int $inquiryId, ?int $optionId = null): array
-    {
-        // First try to get from option
-        if ($optionId !== null && $optionId > 0) {
-            try {
-                $option = $this->optionMapper->find($optionId);
-                if ($option) {
-                    $miscFields = $option->getMiscFields();
-                    if (isset($miscFields['support_template']['grades']) && is_array($miscFields['support_template']['grades'])) {
-                        $this->debug('Got grades from option support_template', ['grades' => $miscFields['support_template']['grades']]);
-                        return $miscFields['support_template']['grades'];
-                    }
-                    if (isset($miscFields['grades']) && is_array($miscFields['grades'])) {
-                        $this->debug('Got grades from option miscFields', ['grades' => $miscFields['grades']]);
-                        return $miscFields['grades'];
-                    }
+    private function getMajorityJudgmentGrades(?int $inquiryId, ?int $optionId = null, ?int $engineId = null): array
+{
+    // NEW: If engineId is provided, read grades from engine config
+    if ($engineId !== null) {
+        try {
+            $engine = $this->engineMapper->find($engineId);
+            if ($engine) {
+                $config = $engine->getConfig();
+                if (isset($config['grades']) && is_array($config['grades'])) {
+                    $this->debug('Got grades from engine config', ['grades' => $config['grades']]);
+                    return $config['grades'];
                 }
-            } catch (\Exception $e) {
-                $this->logger->error('Failed to get option grades', ['error' => $e->getMessage()]);
             }
+        } catch (\Exception $e) {
+            $this->logger->error('Failed to get engine grades', ['error' => $e->getMessage()]);
         }
-
-        // Fall back to inquiry configuration
-        if ($inquiryId !== null) {
-            try {
-                $inquiry = $this->inquiryMapper->find($inquiryId);
-                if ($inquiry) {
-                    $miscFields = $inquiry->getMiscFields();
-                    if (isset($miscFields['support_template']['grades'])) {
-                        $this->debug('Got grades from inquiry support_template', ['grades' => $miscFields['support_template']['grades']]);
-                        return $miscFields['support_template']['grades'];
-                    }
-                }
-                // Fallback: query misc table via service
-                $templateJson = $this->inquiryMiscService->getValue($inquiryId, 'support_template');
-                if ($templateJson) {
-                    $template = json_decode($templateJson, true);
-                    if (isset($template['grades'])) {
-                        $this->debug('Got grades from inquiry misc service', ['grades' => $template['grades']]);
-                        return $template['grades'];
-                    }
-                }
-            } catch (\Exception $e) {
-                $this->logger->error('Failed to get inquiry grades', ['error' => $e->getMessage()]);
-            }
-        }
-
-        // Default fallback
-        $defaultGrades = ['Excellent', 'Good', 'Fair', 'Poor'];
-        $this->logger->warning('No grades found for majority judgment, using defaults', [
-            'inquiryId' => $inquiryId,
-            'optionId' => $optionId,
-            'defaultGrades' => $defaultGrades
-        ]);
-        return $defaultGrades;
     }
 
+    // Then try option (for per-option overrides)
+    if ($optionId !== null && $optionId > 0) {
+        try {
+            $option = $this->optionMapper->find($optionId);
+            if ($option) {
+                $miscFields = $option->getMiscFields();
+                if (isset($miscFields['support_template']['grades']) && is_array($miscFields['support_template']['grades'])) {
+                    return $miscFields['support_template']['grades'];
+                }
+                if (isset($miscFields['grades']) && is_array($miscFields['grades'])) {
+                    return $miscFields['grades'];
+                }
+            }
+        } catch (\Exception $e) {
+            $this->logger->error('Failed to get option grades', ['error' => $e->getMessage()]);
+        }
+    }
+
+    // Fall back to inquiry configuration
+    if ($inquiryId !== null) {
+        try {
+            $inquiry = $this->inquiryMapper->find($inquiryId);
+            if ($inquiry) {
+                $miscFields = $inquiry->getMiscFields();
+                if (isset($miscFields['support_template']['grades'])) {
+                    return $miscFields['support_template']['grades'];
+                }
+            }
+            $templateJson = $this->inquiryMiscService->getValue($inquiryId, 'support_template');
+            if ($templateJson) {
+                $template = json_decode($templateJson, true);
+                if (isset($template['grades'])) {
+                    return $template['grades'];
+                }
+            }
+        } catch (\Exception $e) {
+            $this->logger->error('Failed to get inquiry grades', ['error' => $e->getMessage()]);
+        }
+    }
+
+    // Default fallback
+    $defaultGrades = ['Excellent', 'Good', 'Fair', 'Poor'];
+    $this->logger->warning('No grades found for majority judgment, using defaults', [
+        'inquiryId' => $inquiryId,
+        'optionId' => $optionId,
+        'engineId' => $engineId,
+        'defaultGrades' => $defaultGrades
+    ]);
+    return $defaultGrades;
+}
 
     /**
      * Calculate approval results for deliberative phase (simple approve/not approve)
@@ -1135,7 +1209,7 @@ private function calculateCondorcetResults(array $supports, ?int $engineId = nul
 
 
             // Calculate result based on supports array
-            $resultData = $this->calculateByType($supportType, $targetSupports, $inquiryIdParam, $optionIdParam);
+            $resultData = $this->calculateByType($supportType, $targetSupports, $inquiryIdParam, $optionIdParam,$engineId);
 
             // Store result
             $stored = $this->resultMapper->upsertResult(

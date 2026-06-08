@@ -275,16 +275,28 @@ private function validateSupportValue(Inquiry $inquiry, array $normalizedValue, 
         break;
 
     case 'reaction':
-    $reactions = is_array($value) ? $value : [$value];
-    if (empty($reactions)) {
-        throw new \InvalidArgumentException('Reaction must have at least one emoji');
-    }
-    foreach ($reactions as $reaction) {
-        if (!is_string($reaction) || $reaction === '') {
-            throw new \InvalidArgumentException('Each reaction must be a non‑empty string');
+        $reactions = is_array($value) ? $value : [$value];
+        if (empty($reactions)) {
+            throw new \InvalidArgumentException('Reaction must have at least one emoji');
         }
-    }
-    break;
+        foreach ($reactions as $reaction) {
+            if (!is_string($reaction) || $reaction === '') {
+                throw new \InvalidArgumentException('Each reaction must be a non‑empty string');
+            }
+        }
+
+        // NEW: Enforce max_per_user from engine config
+        if ($engineId !== null) {
+            $engine = $this->engineService->getEngine($engineId);
+            if ($engine) {
+                $config = $engine->getConfig();
+                $maxPerUser = $config['max_per_user'] ?? null;
+                if ($maxPerUser !== null && count($reactions) > $maxPerUser) {
+                    throw new \InvalidArgumentException("Maximum {$maxPerUser} reactions allowed per user");
+                }
+            }
+        }
+        break;
 
     case 'approval_delib':
         if (!is_int($value)) {
@@ -385,14 +397,14 @@ private function normalizeApprovalValue(mixed $value): int
     if (is_bool($value)) {
         return $value ? 1 : 1; // Always 1 if true, but false should never be sent
     }
-    
+
     if (is_string($value)) {
         return match(strtolower($value)) {
-            '1', 'yes', 'true', 'support', 'agree', '👍', '❤️', '🎉' => 1,
+        '1', 'yes', 'true', 'support', 'agree', '👍', '❤️', '🎉' => 1,
             default => 1 // Any non‑empty string → approve
-        };
+    };
     }
-    
+
     $intVal = (int)$value;
     return $intVal > 0 ? 1 : 1; // Any positive int → 1
 }
