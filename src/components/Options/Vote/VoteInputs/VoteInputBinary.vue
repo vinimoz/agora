@@ -45,11 +45,13 @@ const binaryOptions = [
 
 const currentValue = computed(() => {
   if (!props.userVote) return null
-  const raw = props.userVote.value
+  let raw = props.userVote.value
+  if (raw && typeof raw === 'object' && 'value' in raw) raw = raw.value
   if (typeof raw === 'number') return raw
   if (typeof raw === 'string') return Number(raw)
   return null
 })
+
 
 function isSelected(value: number) {
   return currentValue.value === value

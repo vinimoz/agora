@@ -13,10 +13,21 @@ import type {
     ScoreResult,
     RankingResult,
     ReactionResult,
-    ApprovalResult
+    ApprovalResult,
+    CondorcetResult,    
+    MajorityJudgmentResult,
+    BordaResult, 
+    QuadraticResult, 
+    TokenWeightedResult, 
+    PhasedVotingResult, 
+    ApprovalDelibResult,
+     StarResult,
+      TrendingResult,
 } from '../Types/index'
 import { SupportResultAPI } from '../Api/index'
 import { Logger } from '../helpers/index'
+import { useSupportsStore } from './supports'
+import type { Support } from './supports' 
 
 export const useSupportResultStore = defineStore('supportResult', () => {
     const results = ref<SupportResult[]>([])
@@ -47,61 +58,166 @@ export const useSupportResultStore = defineStore('supportResult', () => {
                                                                           const getRankingResult = (result: SupportResultData): RankingResult | null =>
                                                                           result.type === 'ranking' ? result as RankingResult : null
 
+                                                                          const getCondorcetResult = (result: SupportResultData): CondorcetResult | null =>
+                                                                          result.type === 'condorcet' ? result as CondorcetResult : null
+
                                                                           const getReactionResult = (result: SupportResultData): ReactionResult | null =>
                                                                           result.type === 'reaction' ? result as ReactionResult : null
 
                                                                           const getApprovalResult = (result: SupportResultData): ApprovalResult | null =>
                                                                           result.type === 'approval' ? result as ApprovalResult : null
 
+                                                                          const getMajorityJudgmentResult = (result: SupportResultData): MajorityJudgmentResult | null =>
+                                                                          result.type === 'majority_judgment' ? result as MajorityJudgmentResult : null
+
+                                                                          const getBordaResult = (result: SupportResultData): BordaResult | null =>
+                                                                          result.type === 'borda' ? result as BordaResult : null
+
+                                                                          // Add getter for Token Weighted
+const getTokenWeightedResult = (result: SupportResultData): TokenWeightedResult | null =>
+    result.type === 'token_weighted' ? result as TokenWeightedResult : null;
+
+const getPhasedVotingResult = (result: SupportResultData): PhasedVotingResult | null =>
+    result.type === 'phased_voting' ? result as PhasedVotingResult : null;
+    // Add getter for Quadratic
+
+const getQuadraticResult = (result: SupportResultData): QuadraticResult | null =>
+    result.type === 'quadratic' ? result as QuadraticResult : null;
 
 
+                                                                          
                                                                           const getFormattedResult = computed(() => (result: SupportResultData) => {
-                                                                              switch (result.type) {
-                                                                                  case 'binary': {
-                                                                                      const binaryResult = result as BinaryResult
-                                                                                      return {
-                                                                                          primary: `${Math.round(binaryResult.percentages.yes)}%`,
-                                                                                          secondary: `${binaryResult.totals.yes} yes / ${binaryResult.totals.no} no`,
-                                                                                          icon: binaryResult.percentages.yes > 50 ? 'check' : 'close'
-                                                                                      }
-                                                                                  }
-                                                                                  case 'score': {
-                                                                                      const scoreResult = result as ScoreResult
-                                                                                      return {
-                                                                                          primary: `${scoreResult.totals.average.toFixed(1)}`,
-                                                                                          secondary: `of ${scoreResult.totals.total} votes`,
-                                                                                          icon: 'star'
-                                                                                      }
-                                                                                  }
-                                                                                  case 'ternary': {
-                                                                                      const tResult = result as TernaryResult
-                                                                                      const max = Math.max(tResult.percentages.yes, tResult.percentages.no, tResult.percentages.abstain)
-                                                                                      return {
-                                                                                          primary: `${Math.round(max)}%`,
-                                                                                          secondary: `${tResult.totals.yes}F / ${tResult.totals.abstain}A / ${tResult.totals.no}N`,
-                                                                                          icon: max === tResult.percentages.yes ? 'thumb-up' : 'thumb-down'
-                                                                                      }
-                                                                                  }
-                                                                                  case 'reaction': {
-                                                                                      const rResult = result as ReactionResult
-                                                                                      const topReaction = Object.entries(rResult.counts)
-                                                                                      .sort(([,a], [,b]) => b - a)[0]
-                                                                                      return {
-                                                                                          primary: topReaction?.[0] || '',
-                                                                                          secondary: `${Object.values(rResult.counts).reduce((a, b) => a + b, 0)} reactions`,
-                                                                                              icon: 'emoticon'
-                                                                                      }
-                                                                                  }
-                                                                                  default:
-                                                                                      return {
-                                                                                      primary: 'N/A',
-                                                                                      secondary: '',
-                                                                                      icon: 'help'
-                                                                                  }
-                                                                              }
-                                                                          })
-
-
+  switch (result.type) {
+    case 'binary': {
+      const r = result as BinaryResult
+      return {
+        primary: `${Math.round(r.percentages.yes)}%`,
+        secondary: `${r.totals.yes} yes / ${r.totals.no} no`,
+        icon: r.percentages.yes > 50 ? 'check' : 'close',
+      }
+    }
+    case 'ternary': {
+      const r = result as TernaryResult
+      const max = Math.max(r.percentages.yes, r.percentages.no, r.percentages.abstain)
+      return {
+        primary: `${Math.round(max)}%`,
+        secondary: `${r.totals.yes}F / ${r.totals.abstain}A / ${r.totals.no}N`,
+        icon: max === r.percentages.yes ? 'thumb-up' : 'thumb-down',
+      }
+    }
+    case 'score':
+    case 'star': {
+      const r = result as ScoreResult | StarResult
+      return {
+        primary: r.totals.average.toFixed(1),
+        secondary: `of ${r.totals.total} votes`,
+        icon: 'star',
+      }
+    }
+    case 'reaction': {
+      const r = result as ReactionResult
+      const topReaction = Object.entries(r.counts).sort(([, a], [, b]) => b - a)[0]
+      return {
+        primary: topReaction?.[0] || '',
+        secondary: `${Object.values(r.counts).reduce((a, b) => a + b, 0)} reactions`,
+        icon: 'emoticon',
+      }
+    }
+    case 'approval': {
+      const r = result as ApprovalResult
+      const total = Object.values(r.counts).reduce((a, b) => a + b, 0)
+      return {
+        primary: `${total}`,
+        secondary: 'approvals',
+        icon: 'check-all',
+      }
+    }
+    case 'approval_delib': {
+      const r = result as ApprovalDelibResult
+      return {
+        primary: `${Math.round(r.percentages.approved)}%`,
+        secondary: `${r.totals.approved}/${r.totals.total} approved`,
+        icon: r.percentages.approved >= 50 ? 'check' : 'help',
+      }
+    }
+    case 'trending': {
+      const r = result as TrendingResult
+      return {
+        primary: `${r.score}`,
+        secondary: 'trending',
+        icon: 'fire',
+      }
+    }
+    case 'ranking': {
+      const r = result as RankingResult
+      const bestRank = Math.min(...Object.values(r.rankings))
+      const bestOption = Object.keys(r.rankings).find(key => r.rankings[Number(key)] === bestRank)
+      return {
+        primary: bestOption ? `#${bestRank}` : '—',
+        secondary: `${Object.keys(r.rankings).length} options ranked`,
+        icon: 'trophy',
+      }
+    }
+    case 'condorcet': {
+      const r = result as CondorcetResult
+      const winnerInfo = r.winner ? `Winner: ${r.winner}` : 'No winner'
+      return {
+        primary: winnerInfo,
+        secondary: `${r.wins[r.winner ?? 0] || 0}W / ${r.losses[r.winner ?? 0] || 0}L`,
+        icon: r.winner ? 'crown' : 'scale',
+      }
+    }
+    case 'borda': {
+      const r = result as BordaResult
+      const best = Object.entries(r.ranking).sort(([, a], [, b]) => a - b)[0]
+      return {
+        primary: best ? `#${best[1]}` : '—',
+        secondary: `${Object.keys(r.scores).length} options scored`,
+        icon: 'medal',
+      }
+    }
+    case 'quadratic': {
+      const r = result as QuadraticResult
+      return {
+        primary: `${r.total_credits} credits`,
+        secondary: `${r.total_votes} votes cast`,
+        icon: 'currency',
+      }
+    }
+    case 'token_weighted': {
+      const r = result as TokenWeightedResult
+      return {
+        primary: `${r.total_weight} weight`,
+        secondary: `${r.participant_count} participants`,
+        icon: 'weight',
+      }
+    }
+    case 'majority_judgment': {
+      const r = result as MajorityJudgmentResult
+      const winnerGrade = r.winner_details?.median_grade ?? 'No winner'
+      return {
+        primary: winnerGrade,
+        secondary: `${r.total_votes} votes, ${r.grades.length} grades`,
+        icon: 'award',
+      }
+    }
+    case 'phased_voting': {
+      const r = result as PhasedVotingResult
+      const total = Object.values(r.counts).reduce((a, b) => a + b, 0)
+      return {
+        primary: `${total}`,
+        secondary: 'votes in current round',
+        icon: 'clock',
+      }
+    }
+    default:
+      return {
+        primary: 'N/A',
+        secondary: '',
+        icon: 'help',
+      }
+  }
+})
                                                                           async function loadEngineResults(engineId: number): Promise<void> {
                                                                               loading.value = true
                                                                               error.value = null
@@ -204,13 +320,13 @@ export const useSupportResultStore = defineStore('supportResult', () => {
                                                                            * Recalculate a single target result locally (no API call)
                                                                            * This updates the local cache immediately for UI responsiveness
                                                                            */
+
                                                                           function recalculateTargetResult(
                                                                               targetType: 'inquiry' | 'option',
                                                                               targetId: number,
                                                                               engineId: number,
                                                                               changedSupport: Support
                                                                           ): SupportResultData | null {
-                                                                              // Get all supports for this target from the supports store
                                                                               const { supports } = useSupportsStore()
 
                                                                               const targetSupports = supports.filter(s => {
@@ -221,14 +337,14 @@ export const useSupportResultStore = defineStore('supportResult', () => {
                                                                                   }
                                                                               })
 
-                                                                              // Determine result type based on support feature
-                                                                              const inquiriesStore = useInquiriesStore()
-                                                                              const inquiry = inquiriesStore.byId[changedSupport.inquiryId]
-                                                                              const supportFeature = inquiry?.configuration?.supportFeature || 'binary'
+                                                                              // Get the engine type from the engine store
+                                                                              const engineStore = useSupportEngineStore()
+                                                                              const engine = engineStore.getEngineById(engineId)
+                                                                              const engineType = engine?.engine || 'binary'
 
                                                                               let resultData: SupportResultData | null = null
 
-                                                                              switch (supportFeature) {
+                                                                              switch (engineType) {
                                                                                   case 'ternary':
                                                                                       resultData = calculateTernaryResultLocal(targetSupports)
                                                                                   break
@@ -236,18 +352,32 @@ export const useSupportResultStore = defineStore('supportResult', () => {
                                                                                       resultData = calculateBinaryResultLocal(targetSupports)
                                                                                   break
                                                                                   case 'score':
+                                                                                      case 'star':
                                                                                       resultData = calculateScoreResultLocal(targetSupports)
                                                                                   break
+                                                                                  // For complex engines, we should NOT recalculate locally - rely on backend
+                                                                                  // Just return null and let the backend results be loaded
+                                                                                  case 'ranking':
+                                                                                      case 'condorcet':
+                                                                                      case 'borda':
+                                                                                      case 'quadratic':
+                                                                                      case 'token_weighted':
+                                                                                      case 'phased_voting':
+                                                                                      case 'majority_judgment':
+                                                                                      case 'reaction':
+                                                                                      case 'approval':
+                                                                                      case 'approval_delib':
+                                                                                      case 'trending':
+                                                                                      // Don't calculate locally - return null to trigger backend fetch
+                                                                                      return null
                                                                                   default:
                                                                                       resultData = calculateBinaryResultLocal(targetSupports)
                                                                               }
 
                                                                               if (resultData) {
-                                                                                  // Update local cache
                                                                                   const key = `${targetType}-${targetId}`
                                                                                   currentResults.value.set(key, resultData)
 
-                                                                                  // Update or add to results array
                                                                                   const existingIndex = results.value.findIndex(r =>
                                                                                                                                 r.target_type === targetType &&
                                                                                                                                     r.target_id === targetId &&
@@ -273,6 +403,7 @@ export const useSupportResultStore = defineStore('supportResult', () => {
 
                                                                               return resultData
                                                                           }
+
                                                                           function getResultByTarget(targetId: number): SupportResult | undefined {
                                                                               return results.value.find(r => r.target_id === targetId)
                                                                           }
@@ -298,24 +429,15 @@ export const useSupportResultStore = defineStore('supportResult', () => {
                                                                           }
 
                                                                           function calculateBinaryResultLocal(supports: Support[]): BinaryResult {
-                                                                              let yes = 0, no = 0
-
-                                                                              supports.forEach(support => {
-                                                                                  const value = extractValueFromSupport(support)
-                                                                                  if (value === 1) yes++
-                                                                                          else if (value === -1 || value === 0) no++  // 0 = no en binaire
-                                                                              })
-
-                                                                                      const total = yes + no
-                                                                                      return {
-                                                                                          type: 'binary',
-                                                                                          totals: { yes, no },
-                                                                                          percentages: {
-                                                                                              yes: total > 0 ? (yes / total) * 100 : 0,
-                                                                                              no: total > 0 ? (no / total) * 100 : 0
-                                                                                          }
-                                                                                      }
-                                                                          }
+  let yes = 0, no = 0
+  supports.forEach(support => {
+    const value = extractValueFromSupport(support)
+    if (value === 1) yes++
+    else if (value === -1) no++
+  })
+  const total = yes + no
+  return { type: 'binary', totals: { yes, no }, percentages: { yes: total ? (yes/total)*100 : 0, no: total ? (no/total)*100 : 0 } }
+}
 
                                                                           function calculateTernaryResultLocal(supports: Support[]): TernaryResult {
                                                                               let yes = 0, no = 0, abstain = 0
@@ -392,6 +514,11 @@ export const useSupportResultStore = defineStore('supportResult', () => {
                                                                               getTernaryResult,
                                                                               getScoreResult,
                                                                               getRankingResult,
+                                                                              getCondorcetResult,
+                                                                              getMajorityJudgmentResult,
+                                                                              getBordaResult,
+                                                                              getQuadraticResult,
+                                                                              getTokenWeightedResult,
                                                                               getReactionResult,
                                                                               getApprovalResult,
                                                                               loadEngineResults,

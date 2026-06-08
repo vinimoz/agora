@@ -72,10 +72,9 @@ const availableEngines = computed(() =>
       if (!engine.supportFeature) {
         return false
       }
-
       return true
     })
-    .sort((a, b) => a.label.localeCompare(b.label)) // Sort alphabetically by label
+    .sort((a, b) => a.label.localeCompare(b.label))
 )
 
 // Reactive state
@@ -186,6 +185,7 @@ const getMiscValue = (key: string) => {
     return null
   }
 }
+
 
 // Parse misc value for display
 const parseMiscValue = (value: MiscValue) => {
@@ -474,17 +474,26 @@ const getDefaultFromTemplate = (field: string) => {
 }
 /////////////////////////////////////////// SUPPORT ///////////////////////////////////////////
 
-const handleApplySupportEngine = async (engineId: string, config: Record<string, unknown>) => {
+const handleApplySupportEngine = async (saveData: {
+  engine: string
+  config: Record<string, unknown>
+  status?: 'draft' | 'active' | 'closed'
+  title?: string
+  description?: string
+  purpose?: string
+}) => {
   try {
     isSaving.value = true
 
-    // 1. Save engine type to configuration.supportFeature
-    inquiryStore.configuration.supportFeature = engineId
+    // Make sure we're assigning a string, not the entire object
+    const engineId = saveData.engine  // Extract the string
+    inquiryStore.configuration.supportFeature = engineId  // Now this is a string
 
-    // 2. Save configuration parameters to miscFields.support_template
-    await inquiryStore.updateMiscField('support_template', JSON.stringify(config))
+    await inquiryStore.updateMiscField('support_template', JSON.stringify({
+      engine: engineId,
+      ...saveData.config
+    }))
 
-    // 3. Persist both changes
     await inquiryStore.write()
 
   } catch (e) {
@@ -807,12 +816,12 @@ onMounted(() => {
         <!-- Engine Selector Modal -->
         <EngineSelectorModal
             v-if="showEngineModal"
+            :mode="'deliberative'"
             :current-engine-id="getSupportFeatureValue"
             :current-config="getSupportEngineConfig"
-            :engines="availableEngines"
-            :mode="'deliberative'"
+            :available-engines="availableEngines"
             @close="showEngineModal = false"
-            @apply="handleApplySupportEngine"
+            @save="handleApplySupportEngine"
         />
     </div>
 </template>

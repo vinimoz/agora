@@ -20,6 +20,7 @@ export type SupportFeature =
   | 'score'               // 🔢 Free score 0-10
   | 'majority_judgment'   // 🧠 Graded evaluation
   | 'approval_delib'            // ✅ select approval
+   | 'trending'         // 🔥 Popularity (votes + activity) – Reddit‑style
   | 'none'                // ⛔ Pure discussion
 
 
@@ -270,60 +271,73 @@ export interface SupportData {
 // 📈 RESULT TYPES (for SupportResult.result JSON field)
 // ============================================================================
 
+// ============================================================================
+// 📈 RESULT TYPES (for SupportResult.result JSON field)
+// ============================================================================
+
 export interface BinaryResult {
   type: 'binary'
-  totals: {
-    yes: number
-    no: number
-  }
-  percentages: {
-    yes: number
-    no: number
-  }
+  totals: { yes: number; no: number }
+  percentages: { yes: number; no: number }
 }
 
 export interface TernaryResult {
   type: 'ternary'
-  totals: {
-    yes: number
-    no: number
-    abstain: number
-  }
-  percentages: {
-    yes: number
-    no: number
-    abstain: number
-  }
+  totals: { yes: number; no: number; abstain: number }
+  percentages: { yes: number; no: number; abstain: number }
 }
 
 export interface ScoreResult {
   type: 'score'
-  totals: {
-    total: number
-    average: number
-  }
-  median?: number
+  totals: { total: number; average: number }
 }
 
+export interface StarResult {
+  type: 'star'
+  totals: { total: number; average: number }
+}
+
+/** Backend returns average rank per option (lower is better) */
 export interface RankingResult {
   type: 'ranking'
-  rank: number
-  score?: number
+  rankings: Record<number, number>   // optionId → average rank
+  total_voters?: number              // number of participants who voted (optional, but needed for accurate totals)
 }
 
+/** Condorcet pairwise comparison results */
 export interface CondorcetResult {
   type: 'condorcet'
-  wins: number
-  losses: number
-  ties: number
-  is_winner: boolean
-  score?: number
+  preferences: Record<number, Record<number, number>>  // a → b → votes
+  wins: Record<number, number>      // optionId → number of pairwise wins
+  losses: Record<number, number>    // optionId → number of pairwise losses
+  ties: Record<number, number>      // optionId → number of pairwise ties
+  winner: number | null             // optionId of Condorcet winner (if any)
+  total_voters: number
 }
 
+/** Majority Judgment – per‑option median grade and distribution */
 export interface MajorityJudgmentResult {
   type: 'majority_judgment'
-  median: number
-  distribution: Record<number, number>
+  grades: string[]                   // ordered best → worst
+  options: Record<number, {
+    median_grade: string | null
+    median_index: number
+    above_share: number
+    below_share: number
+    grade_distribution: Record<string, number>
+    total_votes: number
+  }>
+  winner: number | null
+  winner_name?: string
+  winner_details?: {
+    median_grade: string | null
+    median_index: number
+    above_share: number
+    below_share: number
+    grade_distribution: Record<string, number>
+    total_votes: number
+  }
+  total_votes: number
 }
 
 export interface ReactionResult {
@@ -333,34 +347,58 @@ export interface ReactionResult {
 
 export interface ApprovalResult {
   type: 'approval'
-  counts: Record<number, number>
+  counts: Record<number, number>      // optionId → approval count
 }
 
-export interface ApprovaliDelibResult {
+/** Approval Deliberative – simple approval count with total participants */
+export interface ApprovalDelibResult {
   type: 'approval_delib'
-  totals: {
-    approved: number
-  }
-  percentages: {
-    approved: number
-  }
+  totals: { approved: number; total: number }
+  percentages: { approved: number }
 }
-
 
 export interface TrendingResult {
   type: 'trending'
   score: number
-  components?: {
-    votes?: number
-    activity?: number
-    recency?: number
-  }
+  components?: { votes?: number; activity?: number; recency?: number }
 }
 
+/** Borda Count results */
+export interface BordaResult {
+  type: 'borda'
+  scores: Record<number, number>      // optionId → total points
+  ranking: Record<number, number>     // optionId → rank (1 = best)
+  total_voters: number
+}
+
+/** Quadratic Voting results */
+export interface QuadraticResult {
+  type: 'quadratic'
+  total_credits: number
+  total_votes: number
+  scores: Record<number, number>      // optionId → total votes cast
+}
+
+/** Token‑Weighted Voting results */
+export interface TokenWeightedResult {
+  type: 'token_weighted'
+  total_weight: number
+  weights: Record<number, number>     // optionId → total weight
+  participant_count: number
+}
+
+/** Phased Voting results (simple counts for the current round) */
+export interface PhasedVotingResult {
+  type: 'phased_voting'
+  counts: Record<number, number>      // optionId → selection count
+}
+
+// Union of all possible result types
 export type SupportResultData =
   | BinaryResult
   | TernaryResult
   | ScoreResult
+  | StarResult
   | RankingResult
   | CondorcetResult
   | MajorityJudgmentResult
@@ -368,6 +406,10 @@ export type SupportResultData =
   | ApprovalResult
   | ApprovalDelibResult
   | TrendingResult
+  | BordaResult
+  | QuadraticResult
+  | TokenWeightedResult
+  | PhasedVotingResult
 
 
 // ============================================================================
@@ -392,7 +434,7 @@ export interface EngineDefinition {
   label: string
   behavior: 'single' | 'multi' | 'flex'
   description: string
-  
+  supportFeature: boolean
   constraints: {
     min_options?: number
     max_options?: number

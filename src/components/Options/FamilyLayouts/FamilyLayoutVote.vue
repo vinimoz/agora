@@ -146,6 +146,7 @@
                 :mode="engineModalMode"
                 :existing-engine="engineToEdit"
                 :option-count="allOptions.length"
+                :available-engines="availableEnginesSelector"
                 :has-votes="currentEngineHasVotes"
                 @close="closeEngineModal"
                 @save="onEngineSaved"
@@ -201,7 +202,7 @@ import VoteResultsLayout from '../Vote/VoteResultsLayout.vue'
 import EngineSelectorModal from '../../Modals/EngineSelectorModal.vue'
 import AddOptionToFamily from '../../Modals/AddOptionToFamily.vue'
 import SupportsDetailModal from '../../Modals/SupportsDetailModal.vue'
-
+import { ENGINE_DEFINITIONS } from '../../../Types/votingType'
 
 const props = defineProps<{
   inquiryId: number
@@ -233,8 +234,8 @@ const engineHasVotes = (engineId: number): boolean => {
 
 const {
   loadingEngines,
-  availableEngines,
   selectedEngineId,
+  availableEngines,
   currentEngine,
   votableOptions,
   hasActiveEngine,
@@ -292,6 +293,29 @@ const layoutComponents = {
   cards: VoteCardsLayout,
   results: VoteResultsLayout
 }
+
+const availableEnginesSelector = computed(() => {
+  const engines = Object.entries(ENGINE_DEFINITIONS)
+    .filter(([id]) => id !== 'none') // Exclude 'none' from selection
+    .map(([id, engine]) => ({
+      id,
+      label: engine.label,
+      behavior: engine.behavior,
+      description: engine.description,
+      constraints: engine.constraints,
+      recommendedViews: engine.recommendedViews
+    }))
+
+  if (!props.optionCount) return engines
+
+  return engines.filter(engine => {
+    const constraints = engine.constraints
+    if (constraints?.min_options && props.optionCount! < constraints.min_options) return false
+    if (constraints?.max_options && props.optionCount! > constraints.max_options) return false
+    return true
+  })
+})
+
 
 const currentLayoutComponent = computed(() => {
   console.log('Layout changed to:', currentLayout.value)

@@ -185,6 +185,8 @@ class Version01070520260104120000 extends SimpleMigrationStep
                 ]);
                 $this->log("    + updated");
             }
+            $table->dropUnique('agora_uniq_supports');
+            $table->addUniqueIndex(['inquiry_id', 'option_id', 'user_id', 'support_engine_id'], 'agora_uniq_supports');
         } else {
             $this->log("  Create: " . self::S_SUPPORTS);
             $table = $this->schema->createTable(self::S_SUPPORTS);
@@ -201,7 +203,7 @@ class Version01070520260104120000 extends SimpleMigrationStep
                 'notnull' => false, 'default' => null, 'unsigned' => true, 'length' => 20
             ]);
             $table->setPrimaryKey(['id']);
-            $table->addUniqueIndex(['inquiry_id', 'option_id', 'user_id'], 'agora_uniq_supports');
+            $table->addUniqueIndex(['inquiry_id', 'option_id', 'user_id', 'support_engine_id'], 'agora_uniq_supports');
         }
     }
 
@@ -324,35 +326,34 @@ class Version01070520260104120000 extends SimpleMigrationStep
         return match($type) {
             'ternary' => [
                 'type' => 'ternary',
-                'totals' => [
-                    'yes' => 0,
-                    'no' => 0,
-                    'abstain' => 0
-                ],
-                'percentages' => [
-                    'yes' => 0,
-                    'no' => 0,
-                    'abstain' => 0
-                ],
-            ],
-            'score', 'star' => [
-                'type' => $type,
-                'totals' => [
-                    'total' => 0,
-                    'average' => 0,
-                ],
+                'totals' => ['yes' => 0, 'no' => 0, 'abstain' => 0],
+                'percentages' => ['yes' => 0, 'no' => 0, 'abstain' => 0],
             ],
             'reaction' => [
                 'type' => 'reaction',
                 'counts' => [],
             ],
+            'ranking' => [
+                'type' => 'ranking',
+                'rankings' => [],
+                'total_participants' => 0,
+            ],
             'approval' => [
                 'type' => 'approval',
                 'counts' => [],
             ],
-            'ranking' => [
-                'type' => 'ranking',
-                'rankings' => [],
+            'score' => [
+                'type' => 'score',
+                'totals' => ['total' => 0, 'average' => 0],
+            ],
+            'star' => [
+                'type' => 'star',
+                'totals' => ['total' => 0, 'average' => 0],
+            ],
+            'majority_judgment' => [
+                'type' => 'majority_judgment',
+                'median' => null,
+                'distribution' => [],
             ],
             'none' => [
                 'type' => 'none',
@@ -360,14 +361,8 @@ class Version01070520260104120000 extends SimpleMigrationStep
             ],
             default => [
                 'type' => 'binary',
-                'totals' => [
-                    'yes' => 0,
-                    'no' => 0
-                ],
-                'percentages' => [
-                    'yes' => 0,
-                    'no' => 0
-                ],
+                'totals' => ['yes' => 0, 'no' => 0],
+                'percentages' => ['yes' => 0, 'no' => 0],
             ],
         };
     }

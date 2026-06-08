@@ -60,19 +60,209 @@ class SupportResultService
     }
 
     /**
- * Get existing results for a specific support engine
- *
- * @param int $engineId The engine ID
- * @return SupportResult[] Array of support results
+ * Calculate Borda Count results
+ * Points: if there are N options, rank 1 gets N points, rank 2 gets N-1, ... last rank gets 1.
+ * Options not ranked receive 0 points (or could be given lowest points – here we give 0).
  */
-public function getResultsByEngine(int $engineId): array
+private function calculateBordaResults(array $supports, ?int $engineId = null): array
 {
-    $this->logger->info('Getting results by engine', ['engineId' => $engineId]);
+    $allOptions = $this->getEngineOptionIds($engineId);
+    if (empty($allOptions)) {
+        // Fallback: extract from rankings
+        $allOptions = [];
+        foreach ($supports as $support) {
+            $value = $support->getValue();
+            $rankingMap = is_array($value) ? ($value['ranking'] ?? []) : [];
+            foreach (array_keys($rankingMap) as $oid) {
+                $allOptions[$oid] = true;
+            }
+        }
+        $allOptions = array_keys($allOptions);
+    }
+    sort($allOptions);
+    $numOptions = count($allOptions);
+    if ($numOptions === 0) {
+        return ['type' => 'borda', 'scores' => [], 'ranking' => []];
+    }
 
-    // This assumes your SupportResultMapper has a findByEngineId method
-    // If not, you'll need to add it there too
-    return $this->resultMapper->findByEngineId($engineId);
+    // Initialize scores
+    $scores = array_fill_keys($allOptions, 0);
+
+    foreach ($supports as $support) {
+        $value = $support->getValue();
+        $weight = $support->getWeight();
+        $rankingMap = is_array($value) ? ($value['ranking'] ?? []) : [];
+
+        // For each ranked option, calculate points = (numOptions - rank + 1) * weight
+        foreach ($rankingMap as $oid => $rank) {
+            $points = ($numOptions - $rank + 1) * $weight;
+            $scores[(int)$oid] += $points;
+        }
+        // Unranked options receive 0 points (no action needed)
+    }
+
+    // Sort options by score descending
+    arsort($scores);
+    $rank = 1;
+    $ranking = [];
+    $prevScore = null;
+    $skip = 0;
+    foreach ($scores as $oid => $score) {
+        if ($score !== $prevScore) {
+            $rank += $skip;
+            $skip = 0;
+        } else {
+            $skip++;
+        }
+        $ranking[$oid] = $rank;
+        $prevScore = $score;
+    }
+
+    return [
+        'type' => 'borda',
+        'scores' => $scores,
+        'ranking' => $ranking,
+        'total_voters' => count($supports)
+    ];
 }
+
+
+/**
+ * Get all option IDs for a specific engine (from its target_ids)
+ */
+private function getEngineOptionIds(?int $engineId): array
+{
+    if (!$engineId) {
+        return [];
+    }
+    try {
+        $engine = $this->engineMapper->find($engineId);
+        return $engine ? $engine->getTargetIds() : [];
+    } catch (\Exception $e) {
+        return [];
+    }
+}
+
+/**
+ * Calculate Condorcet results (pairwise comparison)
+ * For each pair of options, count how many voters prefer one over the other.
+ * The Condorcet winner is the option that beats every other option in pairwise comparisons.
+ */
+private function calculateCondorcetResults(array $supports, ?int $engineId = null): array
+{
+    // Get all options from engine target_ids
+    $allOptions = $this->getEngineOptionIds($engineId);
+    if (empty($allOptions)) {
+        // Fallback: extract from rankings
+        $allOptions = [];
+        foreach ($supports as $support) {
+            $value = $support->getValue();
+            $rankingMap = is_array($value) ? ($value['ranking'] ?? []) : [];
+            foreach (array_keys($rankingMap) as $oid) {
+                $allOptions[$oid] = true;
+            }
+        }
+        $allOptions = array_keys($allOptions);
+    }
+    sort($allOptions);
+
+    // Initialize pairwise matrix: $preferences[$a][$b] = number of voters preferring a over b
+    $preferences = [];
+    foreach ($allOptions as $a) {
+        foreach ($allOptions as $b) {
+            if ($a !== $b) {
+                $preferences[$a][$b] = 0;
+            }
+        }
+    }
+
+    // Process each support (each voter's ranking)
+    foreach ($supports as $support) {
+        $value = $support->getValue();
+        $weight = $support->getWeight(); // may be >1 for weighted votes
+        $rankingMap = is_array($value) ? ($value['ranking'] ?? []) : [];
+
+        // Convert ranking map to a sorted list by rank (lower rank = better)
+        $sorted = [];
+        foreach ($rankingMap as $oid => $rank) {
+            $sorted[$oid] = $rank;
+        }
+        asort($sorted); // sort by rank ascending (1 is best)
+        $ordered = array_keys($sorted); // options ordered from best to worst
+
+        // For every pair (a, b) where a appears before b in the ordered list, increment preference a->b
+        $count = count($ordered);
+        for ($i = 0; $i < $count; $i++) {
+            for ($j = $i + 1; $j < $count; $j++) {
+                $a = $ordered[$i];
+                $b = $ordered[$j];
+                $preferences[$a][$b] += $weight;
+            }
+        }
+    }
+
+    // Determine Condorcet winner(s)
+    $wins = [];
+    $losses = [];
+    $ties = [];
+    foreach ($allOptions as $a) {
+        $wins[$a] = 0;
+        $losses[$a] = 0;
+        $ties[$a] = 0;
+        foreach ($allOptions as $b) {
+            if ($a === $b) continue;
+            $prefAB = $preferences[$a][$b] ?? 0;
+            $prefBA = $preferences[$b][$a] ?? 0;
+            if ($prefAB > $prefBA) {
+                $wins[$a]++;
+            } elseif ($prefBA > $prefAB) {
+                $losses[$a]++;
+            } else {
+                $ties[$a]++;
+            }
+        }
+    }
+
+    // Find options that beat or tie all others (Condorcet winner / weak winner)
+    $winner = null;
+    foreach ($allOptions as $a) {
+        if ($losses[$a] === 0) {
+            $winner = $a;
+            break; // strong Condorcet winner (no losses)
+        }
+    }
+    // If no strong winner, pick one with fewest losses (simple tie-breaking)
+    if ($winner === null && !empty($allOptions)) {
+        $minLoss = min($losses);
+        $candidates = array_keys(array_filter($losses, fn($l) => $l === $minLoss));
+        $winner = $candidates[0] ?? null;
+    }
+
+    return [
+        'type' => 'condorcet',
+        'preferences' => $preferences,
+        'wins' => $wins,
+        'losses' => $losses,
+        'ties' => $ties,
+        'winner' => $winner,
+        'total_voters' => count($supports)
+    ];
+}
+
+    /**
+     * Get existing results for a specific support engine
+     *
+     * @param int $engineId The engine ID
+     * @return SupportResult[] Array of support results
+     */
+    public function getResultsByEngine(int $engineId): array
+    {
+        $this->logger->info('Getting results by engine', ['engineId' => $engineId]);
+
+        // This assumes your SupportResultMapper has a findByEngineId method
+        // If not, you'll need to add it there too
+        return $this->resultMapper->findByEngineId($engineId);
+    }
 
     /**
      * Calculate results based on type for a single target
@@ -112,14 +302,141 @@ public function getResultsByEngine(int $engineId): array
             'approval' => $this->calculateApprovalResults($supports),
             'approval_delib' => $this->calculateApprovalDeliberativeResults($supports),
             'ranking' => $this->calculateRankingResults($supports),
+            'condorcet' => $this->calculateCondorcetResults($supports, $engineId),
+             'borda' => $this->calculateBordaResults($supports, $engineId),
+            'quadratic' => $this->calculateQuadraticResults($supports),
+            'token_weighted' => $this->calculateTokenWeightedResults($supports),
+            'phased_voting' => $this->calculatePhasedVotingResults($supports, $inquiryId),
             'binary' => $this->calculateBinaryResults($supports),
             'majority_judgment' => $this->calculateMajorityJudgmentResults($supports, $inquiryId, $optionId, $engineId),
             default => $this->calculateBinaryResults($supports),
         };
-
         $this->debug('calculateByType result', ['result' => $result]);
 
         return $result;
+    }
+
+    /**
+     * Calculate approval results (multi‑select)
+     */
+    private function calculateApprovalResults(array $supports): array
+    {
+        $counts = [];
+        foreach ($supports as $support) {
+            $value = $support->getValue();
+            $weight = $support->getWeight();
+            // Stored as {selected: [105, 130]}
+            $selected = is_array($value) ? ($value['selected'] ?? []) : [];
+            foreach ($selected as $optionId) {
+                $counts[(int)$optionId] = ($counts[(int)$optionId] ?? 0) + $weight;
+            }
+        }
+        return ['type' => 'approval', 'counts' => $counts];
+    }
+
+    /**
+     * Calculate ranking results (rank order)
+     */
+    private function calculateRankingResults(array $supports): array
+{
+    $rankings = [];
+    foreach ($supports as $support) {
+        $value = $support->getValue();
+        $weight = $support->getWeight();
+        $rankingMap = is_array($value) ? ($value['ranking'] ?? []) : [];
+        foreach ($rankingMap as $optionId => $rank) {
+            $optionId = (int)$optionId;
+            $rank = (int)$rank;
+            if (!isset($rankings[$optionId])) {
+                $rankings[$optionId] = ['sum' => 0, 'count' => 0];
+            }
+            $rankings[$optionId]['sum'] += $rank * $weight;
+            $rankings[$optionId]['count'] += $weight;
+        }
+    }
+    $averages = [];
+    foreach ($rankings as $oid => $data) {
+        $averages[$oid] = $data['count'] ? round($data['sum'] / $data['count'], 2) : 0;
+    }
+    
+    return [
+        'type' => 'ranking',
+        'rankings' => $averages,
+        'total_voters' => count($supports)  
+    ];
+    }
+
+    /**
+     * Calculate quadratic voting results
+     */
+    private function calculateQuadraticResults(array $supports): array
+    {
+        $totalCredits = 0;
+        $totalVotes = 0;
+        $scores = [];
+        foreach ($supports as $support) {
+            $value = $support->getValue();
+            $weight = $support->getWeight(); // weight = 1 for quadratic (credits per vote)
+            // Stored as {scores: {105: 3, 120: 2}} where value = votes
+            $voteMap = is_array($value) ? ($value['scores'] ?? []) : [];
+            foreach ($voteMap as $optionId => $votes) {
+                $votes = (int)$votes;
+                $credits = $votes * $votes;
+                $totalCredits += $credits;
+                $totalVotes += $votes;
+                $scores[(int)$optionId] = ($scores[(int)$optionId] ?? 0) + $votes;
+            }
+        }
+        return [
+            'type' => 'quadratic',
+            'total_credits' => $totalCredits,
+            'total_votes' => $totalVotes,
+            'scores' => $scores
+        ];
+    }
+
+    /**
+     * Calculate token‑weighted results
+     */
+    private function calculateTokenWeightedResults(array $supports): array
+    {
+        $totalWeight = 0;
+        $weights = [];
+        foreach ($supports as $support) {
+            $value = $support->getValue();
+            $weight = $support->getWeight(); // the actual weight assigned to this vote
+            // Stored as {scores: {105: 100}} where value = weight
+            $weightMap = is_array($value) ? ($value['scores'] ?? []) : [];
+            foreach ($weightMap as $optionId => $w) {
+                $w = (int)$w;
+                $totalWeight += $w;
+                $weights[(int)$optionId] = ($weights[(int)$optionId] ?? 0) + $w;
+            }
+        }
+        return [
+            'type' => 'token_weighted',
+            'total_weight' => $totalWeight,
+            'weights' => $weights,
+            'participant_count' => count($supports)
+        ];
+    }
+
+    /**
+     * Phased voting – each round stores {selected: [optionId], round: N}
+     * The result can be the current leader after the last round.
+     */
+    private function calculatePhasedVotingResults(array $supports, ?int $inquiryId = null): array
+    {
+        // Simplified: count selections per option across the latest round (or all rounds)
+        $counts = [];
+        foreach ($supports as $support) {
+            $value = $support->getValue();
+            $selected = is_array($value) ? ($value['selected'] ?? []) : [];
+            foreach ($selected as $optionId) {
+                $counts[(int)$optionId] = ($counts[(int)$optionId] ?? 0) + 1;
+            }
+        }
+        return ['type' => 'phased_voting', 'counts' => $counts];
     }
 
     /**
@@ -627,84 +944,16 @@ public function getResultsByEngine(int $engineId): array
     private function calculateReactionResults(array $supports): array
     {
         $counts = [];
-
         foreach ($supports as $support) {
             $value = $support->getValue();
             $weight = $support->getWeight();
-
-            // Extract reaction from JSON format: {"type":"reaction","value":"👍"}
-            $reaction = is_array($value) ? ($value['value'] ?? null) : (string)$value;
-
-            if ($reaction) {
+            // Value can be array of strings (multi‑reaction)
+            $reactions = is_array($value) ? $value : (array)$value;
+            foreach ($reactions as $reaction) {
                 $counts[$reaction] = ($counts[$reaction] ?? 0) + $weight;
             }
         }
-
-        return [
-            'type' => 'reaction',
-            'counts' => $counts
-        ];
-    }
-
-    /**
-     * Calculate approval results
-     */
-    private function calculateApprovalResults(array $supports): array
-    {
-        $counts = [];
-
-        foreach ($supports as $support) {
-            $value = $support->getValue();
-            $weight = $support->getWeight();
-
-            // Extract approved options from JSON format: {"type":"approval","value":[1,3,5]}
-            $approved = is_array($value) ? ($value['value'] ?? []) : [];
-
-            foreach ($approved as $optionId) {
-                $optionId = (int)$optionId;
-                $counts[$optionId] = ($counts[$optionId] ?? 0) + $weight;
-            }
-        }
-
-        return [
-            'type' => 'approval',
-            'counts' => $counts
-        ];
-    }
-
-    /**
-     * Calculate ranking results
-     */
-    private function calculateRankingResults(array $supports): array
-    {
-        $rankings = [];
-
-        foreach ($supports as $support) {
-            $value = $support->getValue();
-            $weight = $support->getWeight();
-
-            // Extract ranking from JSON format: {"type":"ranking","value":[2,1,3]}
-            $ranking = is_array($value) ? ($value['value'] ?? []) : [];
-
-            foreach ($ranking as $position => $optionId) {
-                if (!isset($rankings[$optionId])) {
-                    $rankings[$optionId] = ['total' => 0, 'count' => 0];
-                }
-                $rankings[$optionId]['total'] += $weight * ($position + 1);
-                $rankings[$optionId]['count'] += $weight;
-            }
-        }
-
-        // Calculate average ranks
-        $averages = [];
-        foreach ($rankings as $optionId => $data) {
-            $averages[$optionId] = round($data['total'] / $data['count'], 2);
-        }
-
-        return [
-            'type' => 'ranking',
-            'rankings' => $averages
-        ];
+        return ['type' => 'reaction', 'counts' => $counts];
     }
 
     /**
@@ -753,6 +1002,32 @@ public function getResultsByEngine(int $engineId): array
                 'winner_details' => null,
                 'total_votes' => 0
             ],
+            'quadratic' => [
+                'type' => 'quadratic',
+                'total_credits' => 0,
+                'total_votes' => 0,
+                'scores' => []
+            ],
+            'condorcet' => [
+                'type' => 'condorcet',
+                'preferences' => [],
+                'wins' => [],
+                'losses' => [],
+                'ties' => [],
+                'winner' => null,
+                'total_voters' => 0
+            ],
+            'borda' => [
+                'type' => 'borda',
+                'scores' => [],
+                'ranking' => [],
+                'total_voters' => 0
+            ],
+            'phased_voting' => [
+                'type' => 'phased_voting',
+                'counts' => []
+            ],
+
             'none' => [
                 'type' => 'none',
                 'total_participants' => 0

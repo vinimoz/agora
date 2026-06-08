@@ -315,7 +315,8 @@ export const useSupportEngineStore = defineStore('supportEngine', () => {
             await resultStore.loadEngineResults(engine.id)
         }
     }
-    function getCurrentEngine(): SupportEngine[] {
+
+    function getCurrentEngine(): SupportEngine | null {
         return currentEngine.value
     }
 

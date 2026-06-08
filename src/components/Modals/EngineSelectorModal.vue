@@ -138,21 +138,21 @@
               :placeholder="t('agora', 'Grade {n}', { n: index + 1 })"
               class="grade-input"
             />
-            <button
+            <NcButton
               v-if="(tempConfig.grades || defaultGrades).length > 2"
               class="grade-remove"
               :aria-label="t('agora', 'Remove grade')"
               @click="removeGrade(index)"
             >
               <Minus :size="14" />
-            </button>
+            </NcButton>
           </div>
         </div>
 
-        <button class="grade-add" @click="addGrade">
+        <NcButton class="grade-add" @click="addGrade">
           <Plus :size="16" />
           {{ t('agora', 'Add grade') }}
-        </button>
+        </NcButton>
       </div>
 
       <!-- Reactions configuration -->
@@ -190,11 +190,11 @@
 
       <!-- Config Settings Button -->
       <div v-if="selectedEngine && currentConfigSchema && Object.keys(currentConfigSchema).length > 0 && !isSpecialEngine" class="engine-config-section">
-        <button class="config-settings-trigger" @click="showConfigDialog = true">
+        <NcButton class="config-settings-trigger" @click="showConfigDialog = true">
           <Settings :size="20" />
           <span>{{ t('agora', 'Configure Settings') }}</span>
           <span class="config-count-badge">{{ Object.keys(currentConfigSchema).length }}</span>
-        </button>
+        </NcButton>
       </div>
 
       <div v-else-if="selectedEngine && !isSpecialEngine && (!currentConfigSchema || Object.keys(currentConfigSchema).length === 0)" class="engine-info-section">
@@ -239,17 +239,17 @@
       </div>
 
       <div class="modal-footer">
-        <button class="btn-secondary" @click="$emit('close')">
+        <NcButton class="btn-secondary" @click="$emit('close')">
           {{ t('agora', 'Cancel') }}
-        </button>
-        <button
+        </NcButton>
+        <NcButton
           class="btn-primary"
           :disabled="isSaveDisabled"
           @click="save"
         >
           <Vote :size="16" />
           {{ mode === 'create' ? t('agora', 'Create Voting Method') : t('agora', 'Update Voting Method') }}
-        </button>
+        </NcButton>
       </div>
     </div>
 
@@ -409,6 +409,7 @@ const props = defineProps<{
   existingEngine?: SupportEngine | null
   optionCount?: number
   hasVotes?: boolean
+  availableEngines: ENGINE_DEFINITIONS
 }>()
 
 const emit = defineEmits<{
@@ -490,7 +491,7 @@ const reactionOptions = [
   { value: '😡', label: 'Angry', emoji: '😡' },
 ]
 
-const availableEngines = computed(() => {
+/* const availableEngines = computed(() => {
   const engines = Object.entries(ENGINE_DEFINITIONS)
     .filter(([id]) => id !== 'none' && id !== 'phased_voting')
     .map(([id, engine]) => ({
@@ -510,7 +511,8 @@ const availableEngines = computed(() => {
     if (constraints?.max_options && props.optionCount! > constraints.max_options) return false
     return true
   })
-})
+}) 
+*/
 
 const currentConfigSchema = computed(() => {
   if (!selectedEngine.value) return null

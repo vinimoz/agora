@@ -33,10 +33,10 @@ const supports = {
         inquiryId: number, 
         userId: string, 
         optionId: number, 
-         engineId: number | null = null,
         data: AddSupportOptions
     ): Promise<AxiosResponse<{ support: Support }>> {
         console.log(" VALUUUUUUUUUUUUUUUUUUUUUUU ",data.value)
+        console.log(" VALUUUUUUUUUUUUUUUUUUUUUUU ENGINE ID ",data.engineId)
         return httpInstance.request({
             method: 'POST',
             url: `inquiry/support/${inquiryId}/${userId}/${optionId}`,
@@ -56,10 +56,10 @@ const supports = {
         inquiryId: number, 
         userId: string, 
         optionId: number, 
-         engineId: number | null = null,
         data: AddSupportOptions
     ): Promise<AxiosResponse<{ support: Support }>> {
         console.log(" VALUUUUUUUUUUUUUUUUUUUUUUU ",data.value)
+        console.log(" VALUUUUUUUUUUUUUUUUUUUUUUU ENGINE ID ",data.engineId)
         return httpInstance.request({
             method: 'PUT',
             url: `inquiry/support/${inquiryId}/${userId}/${optionId}`,

@@ -13,6 +13,9 @@ use OCA\Agora\Db\Support;
 use OCA\Agora\Db\SupportMapper;
 use OCA\Agora\Db\Inquiry;
 use OCA\Agora\Db\InquiryMapper;
+use OCA\Agora\Service\SupportEngineService;
+use OCA\Agora\Service\SupportResultService;
+
 use Psr\Log\LoggerInterface;
 
 class SupportService
@@ -23,6 +26,7 @@ class SupportService
         private InquiryMapper $inquiryMapper,
         private SupportMapper $supportMapper,
         private SupportResultService $supportResultService,
+        private SupportEngineService $engineService,
         private LoggerInterface $logger,
     ) {
     }
@@ -142,8 +146,8 @@ class SupportService
     $inquiry = $this->inquiryMapper->get($inquiryId, withRoles: true);
     $inquiry->request(Inquiry::PERMISSION_SUPPORT_ADD);
 
-    $normalizedValue = $this->normalizeToJsonFormat($inquiry, $value);
-    $this->validateSupportValue($inquiry, $normalizedValue);
+    $normalizedValue = $this->normalizeToJsonFormat($inquiry, $value,$engineId);
+    $this->validateSupportValue($inquiry, $normalizedValue,$engineId);
 
     $existing = $this->supportMapper->findSupport($inquiryId, $userId, $optionId, $engineId);
 
@@ -225,77 +229,95 @@ private function normalizeMajorityJudgmentValue(mixed $value): string
 }
 
 
-    /**
-     * Validate support value based on support feature
-     */
-    private function validateSupportValue(Inquiry $inquiry, array $normalizedValue): void
-    {
-        $feature = $inquiry->getSupportFeature();
-        $value = $normalizedValue['value'] ?? null;
+/**
+ * Validate support value based on support feature
+ */
+private function validateSupportValue(Inquiry $inquiry, array $normalizedValue, ?int $engineId = null): void
+{
+    if ($engineId) {
+        $engine = $this->engineService->getEngine($engineId);
+        $type = $engine ? $engine->getEngine() : $inquiry->getSupportFeature();
+    } else {
+        $type = $inquiry->getSupportFeature();
+    }
 
-        switch ($feature) {
-        case 'binary':
-            if (!in_array($value, [0, 1], true)) {
-                throw new \InvalidArgumentException('Binary value must be 0 or 1');
-            }
-            break;
+    $value = $normalizedValue['value'] ?? null;
 
-        case 'ternary':
-            if (!in_array($value, [-1, 0, 1], true)) {
-                throw new \InvalidArgumentException('Ternary value must be -1, 0, or 1');
-            }
-            break;
+    $complexTypes = ['approval', 'ranking', 'condorcet', 'borda', 'quadratic', 'token_weighted', 'phased_voting'];
+    if (in_array($type, $complexTypes)) {
+        return;
+    }
 
-        case 'score':
-            if (!is_int($value) || $value < 0 || $value > 10) {
-                throw new \InvalidArgumentException('Score must be between 0 and 10');
-            }
-            break;
 
-        case 'star':
-            if (!is_int($value) || $value < 1 || $value > 5) {
-                throw new \InvalidArgumentException('Star rating must be between 1 and 5');
-            }
-            break;
+    switch ($type) {
+    case 'binary':
+        if (!in_array($value, [-1, 1], true)) {
+            throw new \InvalidArgumentException('Binary value must be -1 or 1');
+        }
+        break;
 
-        case 'reaction':
-            if (!is_string($value) || empty($value)) {
-                throw new \InvalidArgumentException('Reaction must be a non-empty string');
-            }
-            break;
+    case 'ternary':
+        if (!in_array($value, [-1, 0, 1], true)) {
+            throw new \InvalidArgumentException('Ternary value must be -1, 0, or 1');
+        }
+        break;
 
-        case 'approval_delib':
-            if (!is_int($value)) {
-                throw new \InvalidArgumentException('Approval rating must be 1');
-            }
-            break;
-            
+    case 'score':
+        if (!is_int($value) || $value < 0 || $value > 10) {
+            throw new \InvalidArgumentException('Score must be between 0 and 10');
+        }
+        break;
 
-        case 'approval':
-        case 'ranking':
-            if (!is_array($value)) {
-                throw new \InvalidArgumentException('Value must be an array');
-            }
-            break;
+    case 'star':
+        if (!is_int($value) || $value < 1 || $value > 5) {
+            throw new \InvalidArgumentException('Star rating must be between 1 and 5');
+        }
+        break;
 
-        case 'majority_judgment': 
-            if ($value === null || $value === '') {
-                throw new \InvalidArgumentException('Majority judgment value cannot be empty');
-            }
-            // Allow any scalar (string or numeric)
-            if (!is_scalar($value)) {
-                throw new \InvalidArgumentException('Majority judgment value must be a string or number');
-            }
-            break;
-
-        default:
-            // Unknown feature, default to binary validation
-            if (!in_array($value, [0, 1], true)) {
-                throw new \InvalidArgumentException('Invalid support value');
-            }
-            break;
+    case 'reaction':
+    $reactions = is_array($value) ? $value : [$value];
+    if (empty($reactions)) {
+        throw new \InvalidArgumentException('Reaction must have at least one emoji');
+    }
+    foreach ($reactions as $reaction) {
+        if (!is_string($reaction) || $reaction === '') {
+            throw new \InvalidArgumentException('Each reaction must be a non‑empty string');
         }
     }
+    break;
+
+    case 'approval_delib':
+        if (!is_int($value)) {
+            throw new \InvalidArgumentException('Approval rating must be 1');
+        }
+        break;
+
+
+    case 'approval':
+    case 'ranking':
+        if (!is_array($value)) {
+            throw new \InvalidArgumentException('Value must be an array');
+        }
+        break;
+
+    case 'majority_judgment': 
+        if ($value === null || $value === '') {
+            throw new \InvalidArgumentException('Majority judgment value cannot be empty');
+        }
+        // Allow any scalar (string or numeric)
+        if (!is_scalar($value)) {
+            throw new \InvalidArgumentException('Majority judgment value must be a string or number');
+        }
+        break;
+
+    default:
+        // Unknown feature, default to binary validation
+        if (!in_array($value, [0, 1], true)) {
+            throw new \InvalidArgumentException('Invalid support value');
+        }
+        break;
+    }
+}
 
 /**
  * Update support value
@@ -315,28 +337,41 @@ public function updateSupport(
 /**
  * Normalize support value to standard JSON format
  */
-private function normalizeToJsonFormat(Inquiry $inquiry, mixed $value): array
+private function normalizeToJsonFormat(Inquiry $inquiry, mixed $value, ?int $engineId): array
 {
-    $feature = $inquiry->getSupportFeature();
+    // Determine the actual engine type
+    if ($engineId) {
+        $engine = $this->engineService->getEngine($engineId);
+        $type = $engine ? $engine->getEngine() : $inquiry->getSupportFeature();
+    } else {
+        $type = $inquiry->getSupportFeature();
+    }
 
     $this->logger->debug('Normalizing value', [
-        'feature' => $feature,
+        'type' => $type,
         'original_value' => $value,
         'original_type' => gettype($value)
     ]);
 
-    // For individual votes, we ONLY store {"value": N} - NO type field!
-    // The type (binary/ternary/etc) is determined by the inquiry/option context
+    // Define complex engine types that should store the value as‑is (no wrapping)
+    $complexTypes = [
+        'approval', 'ranking', 'condorcet', 'borda','reaction',
+        'quadratic', 'token_weighted', 'phased_voting'
+    ];
 
-    return match($feature) {
+    if (in_array($type, $complexTypes)) {
+        // Store the raw value directly (e.g., {ranking: {...}} or {selected: [...]})
+        return is_array($value) ? $value : (array)$value;
+    }
+
+    // For simple types, wrap in {"value": ...}
+    return match($type) {
         'binary' => ['value' => $this->normalizeBinaryValue($value)],
         'ternary' => ['value' => $this->normalizeTernaryValue($value)],
         'score' => ['value' => $this->normalizeScoreValue($value)],
         'star' => ['value' => $this->normalizeStarValue($value)],
         'reaction' => ['value' => (string)$value],
-        'approval' => ['value' => $this->normalizeArrayValue($value)],
         'approval_delib' => ['value' => $this->normalizeApprovalValue($value)],
-        'ranking' => ['value' => $this->normalizeArrayValue($value)],
         'majority_judgment' => ['value' => $this->normalizeMajorityJudgmentValue($value)],
         default => ['value' => $this->normalizeBinaryValue($value)]
     };
@@ -348,20 +383,19 @@ private function normalizeToJsonFormat(Inquiry $inquiry, mixed $value): array
 private function normalizeApprovalValue(mixed $value): int
 {
     if (is_bool($value)) {
-        return $value ;
+        return $value ? 1 : 1; // Always 1 if true, but false should never be sent
     }
-
+    
     if (is_string($value)) {
         return match(strtolower($value)) {
-        '1', 'yes', 'true', 'support', 'agree', '👍', '❤️', '🎉' => 1,
-            default => 1
-    };
+            '1', 'yes', 'true', 'support', 'agree', '👍', '❤️', '🎉' => 1,
+            default => 1 // Any non‑empty string → approve
+        };
     }
-
+    
     $intVal = (int)$value;
-    return $intVal;
+    return $intVal > 0 ? 1 : 1; // Any positive int → 1
 }
-
 
 
 
@@ -371,19 +405,19 @@ private function normalizeApprovalValue(mixed $value): int
 private function normalizeBinaryValue(mixed $value): int
 {
     if (is_bool($value)) {
-        return $value ? 1 : 0;
+        return $value ? 1 : -1;
     }
 
     if (is_string($value)) {
         return match(strtolower($value)) {
         '1', 'yes', 'true', 'support', 'agree', '👍', '❤️', '🎉' => 1,
-            '0', 'no', 'false', 'oppose', 'disagree', '👎' => 0,
-            default => 0
+            '-1', 'no', 'false', 'oppose', 'disagree', '👎' => -1,
+            default => -1
     };
     }
 
     $intVal = (int)$value;
-    return $intVal > 0 ? 1 : 0;
+    return (int)$value > 0 ? 1 : -1;
 }
 
 /**

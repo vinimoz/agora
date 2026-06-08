@@ -7,20 +7,22 @@
         v-for="reaction in allowedReactions"
         :key="reaction"
         class="reaction-button"
-        :class="{ active: currentReaction === reaction }"
-        @click="selectReaction(reaction)"
+        :class="{ active: currentReactions.includes(reaction) }"
+        :disabled="disabled"
+        @click="toggleReaction(reaction)"
       >
         <span class="reaction-emoji">{{ reaction }}</span>
       </button>
     </div>
     <NcButton
-      v-if="currentReaction"
+      v-if="currentReactions.length > 0"
       type="tertiary"
       size="small"
-      @click="clearReaction"
+      :disabled="disabled"
+      @click="clearAllReactions"
     >
       <X :size="14" />
-      {{ t('agora', 'Remove reaction') }}
+      {{ t('agora', 'Remove all reactions') }}
     </NcButton>
   </div>
 </template>
@@ -30,16 +32,17 @@ import { computed } from 'vue'
 import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import { X } from 'lucide-vue-next'
-import type { Option } from '../../Types/index'
+import type { Option, SupportData } from '../../Types/index'
 
 const props = defineProps<{
   engineConfig: Record<string, unknown>
   option: Option
-  currentReactionValue?: string | null
+  disabled?: boolean
+  userVote?: SupportData
 }>()
 
 const emit = defineEmits<{
-  'update:reaction': [optionId: number, reaction: string | null]
+  'update:reactions': [optionId: number, reactions: string[]]
 }>()
 
 const allowedReactions = computed(() => {
@@ -47,21 +50,26 @@ const allowedReactions = computed(() => {
   return reactions || ['👍', '❤️', '🎉', '🤔', '👎']
 })
 
-const currentReaction = computed(() => props.currentReactionValue ?? null)
+// Current user's reactions (array of strings)
+const currentReactions = computed(() => {
+  const value = props.userVote?.value
+  if (Array.isArray(value)) return value
+  if (typeof value === 'string') return [value]
+  return []
+})
 
-// Single selection - replace, don't toggle
-function selectReaction(reaction: string) {
-  if (currentReaction.value === reaction) {
-    // Same reaction clicked again -> remove it
-    emit('update:reaction', props.option.id, null)
+function toggleReaction(reaction: string) {
+  let newReactions: string[]
+  if (currentReactions.value.includes(reaction)) {
+    newReactions = currentReactions.value.filter(r => r !== reaction)
   } else {
-    // Different reaction -> replace the previous one
-    emit('update:reaction', props.option.id, reaction)
+    newReactions = [...currentReactions.value, reaction]
   }
+  emit('update:reactions', props.option.id, newReactions)
 }
 
-function clearReaction() {
-  emit('update:reaction', props.option.id, null)
+function clearAllReactions() {
+  emit('update:reactions', props.option.id, [])
 }
 </script>
 
