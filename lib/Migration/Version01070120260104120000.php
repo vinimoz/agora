@@ -495,7 +495,7 @@ class Version01070120260104120000 extends SimpleMigrationStep
     {
         $uniqueIndices = [
             InquiryGroup::RELATION_TABLE => [
-                'agora_uniq_inquiry_group_relation' => ['inquiry_id', 'group_id']
+             'uq_agora_ginq_ig' => ['inquiry_id', 'group_id']
             ],
             InquiryGroupType::TABLE => [
                 'agora_uniq_group_type' => ['group_type']

@@ -1,4 +1,4 @@
-const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=[window.OC.filePath('agora', '', 'js/ActionStructure-BYlaj6Oo.chunk.mjs'),window.OC.filePath('agora', '', 'js/ImportDocumentModal-BCBPS8XO.chunk.mjs'),window.OC.filePath('agora', '', 'js/TernarySupportIcon.vue_vue_type_style_index_0_scoped_f6cfe8f3_lang-BWB8wMGc.chunk.mjs'),window.OC.filePath('agora', '', 'js/NcDashboardWidget-CvpYMKur-cOX7G7Zd.chunk.mjs'),window.OC.filePath('agora', '', 'js/NcRichText-D_ssz6sB-DIPyN8sK.chunk.mjs'),window.OC.filePath('agora', '', 'js/index-D7YUthxf.chunk.mjs'),window.OC.filePath('agora', '', 'js/StyleSettings-2O69Uxc2.chunk.mjs'),window.OC.filePath('agora', '', 'js/markdown-DUjqwGFI.chunk.mjs'),window.OC.filePath('agora', '', 'js/agora-icon-0wbFIYdr.chunk.mjs'),window.OC.filePath('agora', '', 'js/NcUserBubble-BE6yD-R0-Ct37AmYL.chunk.mjs')])))=>i.map(i=>d[i]);
+const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=[window.OC.filePath('agora', '', 'js/ActionStructure-C0YusJMc.chunk.mjs'),window.OC.filePath('agora', '', 'js/ImportDocumentModal-BoanotJT.chunk.mjs'),window.OC.filePath('agora', '', 'js/TernarySupportIcon.vue_vue_type_style_index_0_scoped_f6cfe8f3_lang-D3x6Vvt6.chunk.mjs'),window.OC.filePath('agora', '', 'js/NcDashboardWidget-CvpYMKur-CMKgLZAp.chunk.mjs'),window.OC.filePath('agora', '', 'js/NcRichText-D_ssz6sB-CFASdyoj.chunk.mjs'),window.OC.filePath('agora', '', 'js/index-VK0TNJJj.chunk.mjs'),window.OC.filePath('agora', '', 'js/StyleSettings-BAEkohPX.chunk.mjs'),window.OC.filePath('agora', '', 'js/markdown-C9wcfh-k.chunk.mjs'),window.OC.filePath('agora', '', 'js/agora-icon-1Bw-_DmK.chunk.mjs'),window.OC.filePath('agora', '', 'js/NcUserBubble-BE6yD-R0-CtKot9_A.chunk.mjs')])))=>i.map(i=>d[i]);
 (function() {
   "use strict";
   try {
@@ -9915,7 +9915,10 @@ to {
     justify-content: flex-start;
     padding: 10px 12px;
 }
-}/* inquiry-theme.css - Unified theme variables and base styles */
+}/**
+ * SPDX-FileCopyrightText: 2026 Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
 [data-v-9cc17a0c]:root {
   /* ===== CORE COLORS ===== */
   --inquiry-bg-primary: var(--color-main-background);
@@ -10009,6 +10012,7 @@ to {
   --inquiry-font-size-5xl: 40px;
 }
 
+
 /* ===== BASE CARD STYLES ===== */
 .inquiry-card-base {
 &[data-v-9cc17a0c] {
@@ -10046,6 +10050,7 @@ to {
 }
 }
 
+
 /* ===== BASE SURFACE STYLES ===== */
 .inquiry-surface-base {
 &[data-v-9cc17a0c] {
@@ -10061,6 +10066,7 @@ to {
 }
 }
 
+
 /* ===== TEXT ON SURFACES ===== */
 .inquiry-text-on-light[data-v-9cc17a0c] {
   color: var(--inquiry-text-primary);
@@ -10071,6 +10077,7 @@ to {
 .inquiry-text-secondary[data-v-9cc17a0c] {
   color: var(--inquiry-text-secondary);
 }
+
 
 /* ===== BADGE STYLES ===== */
 .inquiry-badge {
@@ -10119,6 +10126,7 @@ to {
 }
 }
 
+
 /* ===== ACTION BUTTON STYLES ===== */
 .inquiry-action-button {
 &[data-v-9cc17a0c] {
@@ -10148,6 +10156,7 @@ to {
     color: var(--inquiry-text-on-dark);
 }
 }
+
 
 /* ===== EXPIRY BADGE STYLES ===== */
 .inquiry-expiry-badge {
@@ -10187,6 +10196,7 @@ to {
   align-items: flex-start;
   box-sizing: border-box;
 }
+
 
 /* Left Column: Description */
 .left-column[data-v-9cc17a0c] {
@@ -10284,6 +10294,7 @@ to {
   transform: rotate(180deg);
 }
 
+
 /* Right Sidebar: Inquiries */
 .right-sidebar[data-v-9cc17a0c] {
   flex: 0 0 30%;
@@ -10320,6 +10331,7 @@ to {
   min-width: 32px;
   text-align: center;
 }
+
 
 /* Inquiry Type Groups */
 .inquiry-type-group[data-v-9cc17a0c] {
@@ -10440,6 +10452,7 @@ to {
   font-weight: 500;
 }
 
+
 /* Empty State - ADDED background */
 .empty-state[data-v-9cc17a0c] {
   text-align: center;
@@ -10465,6 +10478,7 @@ to {
   font-size: 14px;
   margin: 0;
 }
+
 
 /* Responsive Design */
 @media (max-width: 1200px) {
@@ -15397,21 +15411,16 @@ tr.file-picker__row td.row-name[data-v-1f96131b] {
   height: var(--shadow-height);
 }
 
+.nc-counter-bubble {
+  border-radius: 12px !important;
+  min-width: auto !important;
+  padding: 0 6px !important;
+  background: transparent !important;
+}
+
 .sticky-top.sticky-left {
   z-index: 6;
-}/*
- * SPDX-FileCopyrightText: 2022 Nextcloud GmbH and Nextcloud contributors
- * SPDX-License-Identifier: AGPL-3.0-or-later
- */
-.icon-agora-dark {
-    width: 32px;
-    height: 32px;
-	background-image: url('../img/agora-dark.svg');
-    background-repeat: no-repeat;
-    background-position: center;
-    filter: var(--background-invert-if-dark);
-} 
-.app-content {
+}.app-content {
   display: flex;
   flex-direction: column;
   padding: 0px 8px;
@@ -15467,15 +15476,15 @@ tr.file-picker__row td.row-name[data-v-1f96131b] {
     console.error("vite-plugin-css-injected-by-js", e);
   }
 })();
-const vIe = "agora", bIe = "1.7.1";
-import { a1 as pr, b0 as Un, bf as WU, bg as VU, v as m, bh as HU, b1 as p0, d as Fe, a0 as jU, a3 as Xi, l as z, w as ot, L as ue, aU as Yi, bi as Fl, B as Up, q as w, aL as Fr, bj as GU, a as ni, o as x, c as R, t as E, G as Ne, bk as XU, b as B, e as j, bc as yt, f as se, i as G, h as _, _ as Qe, bl as YU, bm as KU, M as Op, ai as ms, a6 as jt, bn as ZU, g as J, bo as QU, bp as JU, u as wo, X as Np, bq as g0, s as dt, aT as ys, r as xt, Y as eO, ag as m0, br as tO, bs as y0, ac as Do, C as _e, J as Me, bt as nO, bu as iO, bd as vi, m as wt, aM as Fp, a7 as gr, x as mr, y as Bl, bv as rO, N as fn, n as ft, k as Ki, H as Oe, I as $e, ak as v0, bw as b0, F as Ze, aN as Aa, Z as Mt, bx as vs, by as So, D as Zi, K as Ri, bz as _0, bA as sO, bB as yr, bC as oO, bD as Mu, bE as aO, bF as li, b9 as bs, bG as ci, aY as lO, bH as $l, ba as Bp, ax as x0, E as $p, aW as Co, bI as w0, j as cO, bJ as vr, bK as Ii, bb as D0, aP as pn, aQ as $t, bL as uO, z as dO, A as hO } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_f6cfe8f3_lang-BWB8wMGc.chunk.mjs";
-import { l as S0, m as ko, a as Ke, p as bi, o as Br, L as He, n as Uu, q as vt, s as We, E as Ft, r as $r, h as Pp, t as Lp, v as C0, w as qp, x as Mi, y as zp, I as Ee, z as Ou, A as k0, g as nn, b as rn, B as To, C as Gt, e as tt, D as fO, F as pO, G as _s, H as gO, J as mO, K as Qi, M as Ra, O as Nu, P as Ia, Q as T0, R as Wp, T as br, U as E0, V as Pl, S as pt, W as Ll, X as A0, Y as Pr, Z as Fu, _ as yO, $ as R0, a0 as vO, a1 as bO, a2 as _O, a3 as xO, a4 as wO, a5 as I0, a6 as DO, a7 as Bu, a8 as ql, a9 as qe, aa as _i, ab as Ma, ac as zl, ad as M0, ae as Vp, af as Wl, ag as $u, ah as Pu, ai as Lu, aj as Hp, ak as Vl, al as U0, am as O0, an as SO, ao as CO, ap as kO, aq as TO, ar as jp, as as EO, at as N0, au as AO, av as RO, aw as _r, ax as qu, ay as F0, az as Lr, aA as Ji, aB as B0, aC as IO, aD as MO, aE as UO, aF as OO } from "./NcDashboardWidget-CvpYMKur-cOX7G7Zd.chunk.mjs";
-import { u as qr, _ as NO, a as FO } from "./StyleSettings-2O69Uxc2.chunk.mjs";
-import { c as Xt, u as BO, A as $O, _ as PO, d as Ui, e as Gp, S as LO, Q as qO, I as zu, f as xs, g as zO, h as zr, i as $0, r as P0, t as L0, j as WO, k as xi, l as Hl, O as VO, m as q0, n as HO, o as jO, P as GO, p as z0, b as XO, q as YO } from "./index-D7YUthxf.chunk.mjs";
-import { c as KO, I as ZO, b as en, N as gn, _ as ws, a as Ua } from "./NcRichText-D_ssz6sB-DIPyN8sK.chunk.mjs";
-import { _ as QO, a as Oa, N as Xp, b as Eo } from "./markdown-DUjqwGFI.chunk.mjs";
-import { _ as Yp } from "./agora-icon-0wbFIYdr.chunk.mjs";
-import { N as JO } from "./NcUserBubble-BE6yD-R0-Ct37AmYL.chunk.mjs";
+const vIe = "agora", bIe = "1.7.2";
+import { a1 as pr, b0 as Un, bf as WU, bg as VU, v as m, bh as HU, b1 as p0, d as Fe, a0 as jU, a3 as Xi, l as z, w as ot, L as ue, aU as Yi, bi as Fl, B as Up, q as w, aL as Fr, bj as GU, a as ni, o as x, c as R, t as E, G as Ne, bk as XU, b as B, e as j, bc as yt, f as se, i as G, h as _, _ as Qe, bl as YU, bm as KU, M as Op, ai as ms, a6 as jt, bn as ZU, g as J, bo as QU, bp as JU, u as wo, X as Np, bq as g0, s as dt, aT as ys, r as xt, Y as eO, ag as m0, br as tO, bs as y0, ac as Do, C as _e, J as Me, bt as nO, bu as iO, bd as vi, m as wt, aM as Fp, a7 as gr, x as mr, y as Bl, bv as rO, N as fn, n as ft, k as Ki, H as Oe, I as $e, ak as v0, bw as b0, F as Ze, aN as Aa, Z as Mt, bx as vs, by as So, D as Zi, K as Ri, bz as _0, bA as sO, bB as yr, bC as oO, bD as Mu, bE as aO, bF as li, b9 as bs, bG as ci, aY as lO, bH as $l, ba as Bp, ax as x0, E as $p, aW as Co, bI as w0, j as cO, bJ as vr, bK as Ii, bb as D0, aP as pn, aQ as $t, bL as uO, z as dO, A as hO } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_f6cfe8f3_lang-D3x6Vvt6.chunk.mjs";
+import { l as S0, m as ko, a as Ke, p as bi, o as Br, L as He, n as Uu, q as vt, s as We, E as Ft, r as $r, h as Pp, t as Lp, v as C0, w as qp, x as Mi, y as zp, I as Ee, z as Ou, A as k0, g as nn, b as rn, B as To, C as Gt, e as tt, D as fO, F as pO, G as _s, H as gO, J as mO, K as Qi, M as Ra, O as Nu, P as Ia, Q as T0, R as Wp, T as br, U as E0, V as Pl, S as pt, W as Ll, X as A0, Y as Pr, Z as Fu, _ as yO, $ as R0, a0 as vO, a1 as bO, a2 as _O, a3 as xO, a4 as wO, a5 as I0, a6 as DO, a7 as Bu, a8 as ql, a9 as qe, aa as _i, ab as Ma, ac as zl, ad as M0, ae as Vp, af as Wl, ag as $u, ah as Pu, ai as Lu, aj as Hp, ak as Vl, al as U0, am as O0, an as SO, ao as CO, ap as kO, aq as TO, ar as jp, as as EO, at as N0, au as AO, av as RO, aw as _r, ax as qu, ay as F0, az as Lr, aA as Ji, aB as B0, aC as IO, aD as MO, aE as UO, aF as OO } from "./NcDashboardWidget-CvpYMKur-CMKgLZAp.chunk.mjs";
+import { u as qr, _ as NO, a as FO } from "./StyleSettings-BAEkohPX.chunk.mjs";
+import { c as Xt, u as BO, A as $O, _ as PO, d as Ui, e as Gp, S as LO, Q as qO, I as zu, f as xs, g as zO, h as zr, i as $0, r as P0, t as L0, j as WO, k as xi, l as Hl, O as VO, m as q0, n as HO, o as jO, P as GO, p as z0, b as XO, q as YO } from "./index-VK0TNJJj.chunk.mjs";
+import { c as KO, I as ZO, b as en, N as gn, _ as ws, a as Ua } from "./NcRichText-D_ssz6sB-CFASdyoj.chunk.mjs";
+import { _ as QO, a as Oa, N as Xp, b as Eo } from "./markdown-C9wcfh-k.chunk.mjs";
+import { _ as Yp } from "./agora-icon-1Bw-_DmK.chunk.mjs";
+import { N as JO } from "./NcUserBubble-BE6yD-R0-CtKot9_A.chunk.mjs";
 const Na = typeof document < "u";
 function W0(t10) {
   return typeof t10 == "object" || "displayName" in t10 || "props" in t10 || "__vccOpts" in t10;
@@ -17423,7 +17432,7 @@ const C4 = Qe(b4, [["render", S4]]), k4 = Fe({ __name: "Forbidden", setup(t10) {
   const n = e, i = wo(t10, "modelValue"), r = rn(), s = vt(), o = ue(void 0);
   async function a() {
     try {
-      await r.changeOwner({ inquiryId: t10.inquiry.id, userId: o.value ? o.value.id : "" }), tt(w("agora", "Transfered inquiry to {user}", { user: o.value ? o.value.displayName : "" }));
+      await r.changeOwner({ inquiryId: t10.inquiry.id, userId: o.value ? o.value.id : "" }), tt(w("agora", "Transferred inquiry to {user}", { user: o.value ? o.value.displayName : "" }));
     } catch {
       We(w("agora", "Error transferring inquiry"));
     } finally {
@@ -55931,7 +55940,7 @@ const dve = { class: "engine-selector-modal" }, hve = { class: "modal-header" },
   const e = vt(), n = ui(), i = Ke(), r = tr(), s = ue(""), o = ue(false), a = ue(false), l = ue(null), c = ue(null), u = ue(null), d = ue(false), h = ue(null), f = ue(null), p = ue(null), g = /* @__PURE__ */ new Map(), y = z(() => r.name === "publicInquiry"), v = { tree: yr(Wee), cards: yr(cE), paired: yr(Kte), consensus_flow: yr(pne), kanban: yr(hie), timeline: yr(Mhe), vote: yr(K1e), default: yr(cE) }, b = (oe) => Lp(oe), D = (oe) => ko(oe), S = async (oe) => {
     if (g.has(oe)) return g.get(oe);
     try {
-      const be = `${oe.split("_").map((Le) => Le.charAt(0).toUpperCase() + Le.slice(1)).join("")}Modal`, De = await IX(Object.assign({ "./Actions/ActionStructure.vue": () => q0(() => import("./ActionStructure-BYlaj6Oo.chunk.mjs"), true ? __vite__mapDeps([0,1,2,3,4,5,6,7,8,9]) : void 0, import.meta.url), "./Actions/ImportDocumentModal.vue": () => q0(() => import("./ImportDocumentModal-BCBPS8XO.chunk.mjs"), true ? __vite__mapDeps([1,2,3,4,5,6,7,8,9]) : void 0, import.meta.url) }), `./Actions/${be}.vue`, 3), ke = yr(De.default || De);
+      const be = `${oe.split("_").map((Le) => Le.charAt(0).toUpperCase() + Le.slice(1)).join("")}Modal`, De = await IX(Object.assign({ "./Actions/ActionStructure.vue": () => q0(() => import("./ActionStructure-C0YusJMc.chunk.mjs"), true ? __vite__mapDeps([0,1,2,3,4,5,6,7,8,9]) : void 0, import.meta.url), "./Actions/ImportDocumentModal.vue": () => q0(() => import("./ImportDocumentModal-BoanotJT.chunk.mjs"), true ? __vite__mapDeps([1,2,3,4,5,6,7,8,9]) : void 0, import.meta.url) }), `./Actions/${be}.vue`, 3), ke = yr(De.default || De);
       return g.set(oe, ke), ke;
     } catch (be) {
       return console.error(`Failed to load modal component for action "${oe}":`, be), null;

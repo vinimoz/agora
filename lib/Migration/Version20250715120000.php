@@ -167,7 +167,7 @@ class Version20250715120000 extends SimpleMigrationStep
         $table->addColumn('inquiry_id', Types::BIGINT, ['notnull' => true, 'unsigned' => true, 'length' => 20]);
         $table->addColumn('group_id', Types::BIGINT, ['notnull' => true, 'unsigned' => true, 'length' => 20]);
         $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(['inquiry_id', 'group_id'], 'agora_uniq_inquiry_group_relation');
+        $table->addUniqueIndex(['inquiry_id', 'group_id'], 'uq_agora_ginq_ig');
     }
 
     private function createInquiryGroupMiscTable(ISchemaWrapper $schema): void {

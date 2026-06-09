@@ -5,6 +5,10 @@
 
 # Changelog
 All notable changes to this project will be documented in this file.
+# [1.7.2] - 2026-06-8
+Fix: https://github.com/vinimoz/agora/issues/23
+Fix: Dasboard css file as before
+
 # [1.7.1] - 2026-04-20
 New Features:
 - Options add to vote, Kanban, Timeline from other options family.

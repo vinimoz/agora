@@ -4,19 +4,17 @@
  */
 
 import { createApp } from 'vue'
-import { pinia } from './stores/index.ts'
-
-import Dashboard from './views/Dashboard.vue'
+import { pinia } from './stores'
 import './assets/scss/agora-icon.scss'
 
-// Vue.config.devtools = import.meta.env.MODE !== 'production'
+import Dashboard from './views/Dashboard.vue'
+
 /** global: OCA */
-
 document.addEventListener('DOMContentLoaded', () => {
-  // @ts-expect-error: Name not found error
-  OCA.Dashboard.register('agora', (el) => {
-    const AgoraDashboard = createApp(Dashboard).use(pinia).mount(el)
+	// @ts-expect-error: Name not found error
+	OCA.Dashboard.register('agora', (el) => {
+		const AgoraDashboard = createApp(Dashboard).use(pinia).mount(el)
 
-    return AgoraDashboard
-  })
+		return AgoraDashboard
+	})
 })

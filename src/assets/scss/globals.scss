@@ -46,6 +46,14 @@
   }
 }
 
+.nc-counter-bubble {
+  border-radius: 12px !important;   // or 0 for completely flat
+  min-width: auto !important;
+  padding: 0 6px !important;
+  background: transparent !important; // if you want no background at all
+}
+
+
 .sticky-top.sticky-left {
   z-index: 6;
 }
