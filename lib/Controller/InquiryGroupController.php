@@ -99,7 +99,6 @@ class InquiryGroupController extends BaseController
     public function get(int $inquiryGroupId): JSONResponse
     {
         $inquiryGroup = $this->inquiryGroupService->get($inquiryGroupId, true, true);
-        $this->logger->debug('Creating new inquiry group', ['inquiryGroup' => $inquiryGroup->getMiscFields()]);
         return $this->response(
             fn () => [
                 'inquiryGroup' => $inquiryGroup,
@@ -124,7 +123,6 @@ class InquiryGroupController extends BaseController
             if (empty($data['title'])) {
                 throw new \InvalidArgumentException('Title is required');
             }
-            $this->logger->debug('ADDIIIIIIIIIIIIII inquiry group', ['type' => $data['type']]);
 
             return $this->response(
                 fn () => [
@@ -175,7 +173,6 @@ class InquiryGroupController extends BaseController
             $rawData = $this->request->getParams('updateData');
             $data = $rawData;
 
-            $this->logger->debug('Updating inquiry group', ['id' => $inquiryGroupId, 'data' => $data]);
 
             return $this->response(
                 fn () => [

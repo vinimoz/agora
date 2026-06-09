@@ -346,8 +346,6 @@ class InquiryController extends BaseController
     {
         $rawData = $this->request->getParams('data');
 
-
-        $this->logger->error('RAWWWWWWWWWWWWWWDATaAAAAAAAAAAAAAAAAAAA', ['data' => $rawData]);
         return $this->response(
             fn () => [
                 'inquiry' => $this->inquiryService->updateConfig($inquiryId, $rawData['inquiryConfiguration']),

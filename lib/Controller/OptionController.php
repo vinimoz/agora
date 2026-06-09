@@ -138,12 +138,10 @@ class OptionController extends BaseController
 
     private function getFullOption(int $optionId, bool $withTimings = false): array
     {
-        $this->logger->error(' OPTIONNNNNNNNNNNNNNNNN ', ['data' => $optionId]);
         $timerMicro['start'] = microtime(true);
 
         $option = $this->optionService->get($optionId);
         $option->setMiscFields($this->optionMiscService->findByOptionId($optionId));
-        $this->logger->error(' OPTIONNNNNNNNNNNNNNNNN FULL LOAD ', ['data' => $option]);
 
         $diffMicro['total'] = microtime(true) - $timerMicro['start'];
         $timerMicro['option'] = microtime(true);
