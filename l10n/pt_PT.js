@@ -137,6 +137,7 @@ OC.L10N.register(
     "Delete file" : "Apagar ficheiro",
     "Change name" : "Alterar nome",
     "Public link" : "Hiperligação Pública",
+    "Switch to list view" : "Mudar visualização para o modo lista",
     "Template" : "Modelo",
     "Language" : "Idioma",
     "Confirm" : "Confirmar",
