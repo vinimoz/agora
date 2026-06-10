@@ -2,7 +2,6 @@ OC.L10N.register(
     "agora",
     {
     "Inquiry changes" : "تغييرات الاستفسار",
-    "Recent inquiries" : "الاستفسارات الأخيرة",
     "Team" : "الفريق",
     "Contact group" : "الاتصال بالمجموعة",
     "Group" : "المجموعة",

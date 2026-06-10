@@ -2,7 +2,6 @@ OC.L10N.register(
     "agora",
     {
     "Inquiry changes" : "Järelpärimise muudatused",
-    "Recent inquiries" : "Hiljutised järelpärimised",
     "Agora" : "Agora",
     "Team" : "Tiim",
     "Contact group" : "Kontaktigrupp",
@@ -551,6 +550,7 @@ OC.L10N.register(
     "Add Family" : "Lisa perekond",
     "Edit Family" : "Muuda perekonda",
     "Save Changes" : "Salvesta muudatused",
+    "Textarea" : "Tekstiala",
     "Enable only for the following groups" : "Lülita sisse järgmiste gruppide jaoks",
     "Leave empty to disable globally" : "Kui soovid kõikide jaoks välja lülitada, siis jäta tühjaks",
     "Run autoreminder" : "Käivita automaatne meeldetuletus",
@@ -720,6 +720,7 @@ OC.L10N.register(
     "German" : "saksa keel",
     "Italian" : "itaalia keel",
     "Portuguese" : "portugali keel",
+    "Dutch" : "hollandi keel",
     "Unnamed" : "Nimeta",
     "Template:" : "Mall:",
     "Language:" : "Keel:",
@@ -767,6 +768,10 @@ OC.L10N.register(
     "Administrative access" : "Ligipääs halduseks",
     "Title must not be empty!" : "Pealkiri ei tohi olla tühi!",
     "Invalid Group ID" : "Vigane grupi tunnus",
+    "Text must not be empty!" : "Tekst ei tohi olla tühi!",
+    "Validation errors: {errors}" : "Õigsuse kontrollimise vead: {errors}",
+    "Error writing option" : "Viga valiku salvestamisel",
+    "Invalid value for {field}" : "Vigane väärtus „{field}“ välja jaoks",
     "Option added" : "Valik on lisatud"
 },
 "nplurals=2; plural=(n != 1);");

@@ -2,7 +2,6 @@ OC.L10N.register(
     "agora",
     {
     "Inquiry changes" : "Mabadiliko ya uchunguzi",
-    "Recent inquiries" : "Maulizo ya hivi karibuni",
     "Agora" : "Agora",
     "Team" : "Timu",
     "Contact group" : "Kikundi cha mawasiliano",

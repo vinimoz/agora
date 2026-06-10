@@ -2,7 +2,6 @@ OC.L10N.register(
     "agora",
     {
     "Inquiry changes" : "Alterações de consulta",
-    "Recent inquiries" : "Consultas recentes",
     "Team" : "Equipa",
     "Contact group" : "Grupo de contactos",
     "Group" : "Grupo",

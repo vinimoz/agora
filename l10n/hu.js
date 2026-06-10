@@ -2,7 +2,6 @@ OC.L10N.register(
     "agora",
     {
     "Inquiry changes" : "Vizsgálati változások",
-    "Recent inquiries" : "Legutóbbi vizsgálatok",
     "Agora" : "Agora",
     "Team" : "Csapat",
     "Contact group" : "Névjegycsoport",

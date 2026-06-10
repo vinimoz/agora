@@ -2,7 +2,6 @@ OC.L10N.register(
     "agora",
     {
     "Inquiry changes" : "Inquiry changes",
-    "Recent inquiries" : "Recent inquiries",
     "Agora" : "Agora",
     "Team" : "Team",
     "Contact group" : "Contact group",

@@ -2,7 +2,6 @@ OC.L10N.register(
     "agora",
     {
     "Inquiry changes" : "Athruithe fiosrúcháin",
-    "Recent inquiries" : "Fiosrúcháin le déanaí",
     "Agora" : "Agora",
     "Team" : "Foireann",
     "Contact group" : "Grúpa teagmhála",

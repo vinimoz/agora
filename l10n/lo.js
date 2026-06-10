@@ -2,7 +2,6 @@ OC.L10N.register(
     "agora",
     {
     "Inquiry changes" : "ການປ່ຽນແປງການສຳຫຼວດ",
-    "Recent inquiries" : "ການສຳຫຼວດຫຼ້າສຸດ",
     "Agora" : "Agora",
     "Team" : "ທີມ",
     "Contact group" : "ກຸ່ມລາຍຊື່ຜູ້ຕິດຕໍ່",
