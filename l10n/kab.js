@@ -28,6 +28,7 @@ OC.L10N.register(
     "Created" : "Yettwarna.",
     "Status" : "Addad",
     "All categories" : "Akk taggayin",
+    "Filters" : "Imsizdigen",
     "Type" : "Anaw",
     "Search" : "Nadi",
     "Back" : "Uɣal",

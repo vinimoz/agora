@@ -1,6 +1,7 @@
 OC.L10N.register(
     "agora",
     {
+    "Inquiry changes" : "Cambios en la consulta",
     "Group" : "Grupo",
     "Legal Notice" : "Aviso legal",
     "Contact" : "Contacto",
