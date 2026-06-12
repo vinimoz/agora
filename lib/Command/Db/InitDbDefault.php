@@ -107,7 +107,6 @@ class InitDbDefault extends Command
             'ui' => [
                 'layout' => 'paired', 
                 'layout_style' => 'vertical',
-
                 'allowed_layout' => 'paired',
                 'show_metrics' => true, 
                 'thread_visualization' => 'tree', 
@@ -120,7 +119,6 @@ class InitDbDefault extends Command
             'features' => [
                 'argument_rating',
                 'thread_collapsing',
-                'consensus_indicators'
             ],
             'actions' => [
                 ['key' => 'export_thread', 'label' => 'Export Debate Thread', 'icon' => 'Download'],
@@ -230,16 +228,11 @@ class InitDbDefault extends Command
 
             'ui' => [
                 'layout' => ['type' => 'string', 'default' => 'vote'],
-
                 'show_results' => ['type' => 'boolean', 'default' => true],
                 'show_progress' => ['type' => 'boolean', 'default' => true],
                 'show_ranking' => ['type' => 'boolean', 'default' => true],
                 'allow_comparison' => ['type' => 'boolean', 'default' => true],
-
-                'engine_selector' => ['type' => 'boolean', 'default' => true],
-                'config_panel' => ['type' => 'boolean', 'default' => true],
                 'phase_indicator' => ['type' => 'boolean', 'default' => false],
-                'mode_selector' => ['type' => 'boolean', 'default' => false],
             ],
 
             'rules' => [
@@ -419,8 +412,6 @@ class InitDbDefault extends Command
                 ['key' => 'next_phase', 'label' => 'Next Phase', 'icon' => 'ArrowRight'],
                 ['key' => 'view_results', 'label' => 'View Results', 'icon' => 'ChartBar'],
                 ['key' => 'export_results', 'label' => 'Export Results', 'icon' => 'FileExport'],
-                ['key' => 'manage_candidates', 'label' => 'Manage Candidates', 'icon' => 'AccountGroup'],
-                ['key' => 'configure_vote', 'label' => 'Configure Vote', 'icon' => 'Tune'],
             ],
             'sort_order' => 5,
             'created' => '',
@@ -1121,8 +1112,8 @@ class InitDbDefault extends Command
                 ["key" => "topic","label" => "Topic","type" => "string","required" => true,"default" => null,"rules" => ["maxLength" => 255]],
                 ["key" => "form_schema","label" => "Form Schema","type" => "json","required" => false,"default" => null,"rules" => []],
                 ["key" => "type_of_vote","label" => "Type of Vote","type" => "enum","required" => false,"default" => "simple","allowed_values" => ["simple","majority_judgement_beneficial","majority_judgement_number"],"rules" => []],
-                ["key" => "support_start","label" => "Supporting Start","type" => "datetime","required" => false,"default" => null,"rules" => []],
-                ["key" => "support_end","label" => "Supporting End","type" => "datetime","required" => false,"default" => null,"rules" => []],
+                ["key" => "start_date","label" => "Supporting Start","type" => "datetime","required" => false,"default" => null,"rules" => []],
+                ["key" => "end_date","label" => "Supporting End","type" => "datetime","required" => false,"default" => null,"rules" => []],
                 ["key" => "facilitator_id","label" => "Facilitateur","type" => "users","required" => false,"default" => null,"rules" => []],
                 ["key" => "auto_reminder","label" => "Auto Reminder","type" => "boolean","required" => true,"default" => true,"rules" => []],
                 ["key" => "layout_zone","label" => "Position display into the layout","type" => "enum","required" => false,"default" => "footer","allowed_values" => ["sidebar","main","footer","header"],"rules" => []],

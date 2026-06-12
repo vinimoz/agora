@@ -5,6 +5,9 @@
 
 # Changelog
 All notable changes to this project will be documented in this file.
+# [1.7.3] - 2026-06-8
+Fix: TableManager: createSchemaManager and fix bug binary for support in migration from allow_support to support_feature.
+
 # [1.7.2] - 2026-06-8
 Fix: https://github.com/vinimoz/agora/issues/23
 
