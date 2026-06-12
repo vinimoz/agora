@@ -208,7 +208,7 @@ function resetInquiry() {
         <div class="access-settings">
           <NcRadioGroup
             :model-value="accessType"
-            :label="t('agora','Choose who opening this inquiry')"
+            :label="t('agora','Choose who is opening this inquiry')"
             class="access-radio-group"
             :description="t('agora', 'Choose who is opening this inquiry')"
             @update:model-value="accessType = $event"
