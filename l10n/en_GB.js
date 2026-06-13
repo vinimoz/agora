@@ -356,7 +356,6 @@ OC.L10N.register(
     "Only me (personal inquiry)" : "Only me (personal inquiry)",
     "Open with this group" : "Open with this group",
     "Select groups" : "Select groups",
-    "Choose ths group assigned to your inquiry" : "Choose ths group assigned to your inquiry",
     "Choose which of your groups can access this inquiry" : "Choose which of your groups can access this inquiry",
     "Title" : "Title",
     "Enter title" : "Enter title",

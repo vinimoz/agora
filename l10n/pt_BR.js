@@ -357,7 +357,6 @@ OC.L10N.register(
     "Only me (personal inquiry)" : "Somente eu (consulta pessoal)",
     "Open with this group" : "Abrir com este grupo",
     "Select groups" : "Selecione grupos",
-    "Choose ths group assigned to your inquiry" : "Escolha o grupo atribuído à sua consulta",
     "Choose which of your groups can access this inquiry" : "Escolha quais dos seus grupos podem acessar esta consulta",
     "Title" : "Título",
     "Enter title" : "Digite o título",

@@ -357,7 +357,6 @@ OC.L10N.register(
     "Only me (personal inquiry)" : "Yalnızca ben (kişisel araştırma)",
     "Open with this group" : "Bu grup açabilsin",
     "Select groups" : "Grupları seçin",
-    "Choose ths group assigned to your inquiry" : "Araştırmanızın atanacağı grupları seçin",
     "Choose which of your groups can access this inquiry" : "Bu araştırmaya erişebilecek gruplarınızı seçin",
     "Title" : "Başlık",
     "Enter title" : "Başlığı yazın",

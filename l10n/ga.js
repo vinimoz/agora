@@ -357,7 +357,6 @@ OC.L10N.register(
     "Only me (personal inquiry)" : "Mise amháin (fiosrúchán pearsanta)",
     "Open with this group" : "Oscail leis an ngrúpa seo",
     "Select groups" : "Roghnaigh grúpaí",
-    "Choose ths group assigned to your inquiry" : "Roghnaigh an grúpa atá sannta do d'fhiosrúchán",
     "Choose which of your groups can access this inquiry" : "Roghnaigh cé acu de do ghrúpaí a bhfuil rochtain acu ar an bhfiosrúchán seo",
     "Title" : "Teideal",
     "Enter title" : "Cuir isteach teideal",

@@ -357,7 +357,6 @@ OC.L10N.register(
     "Only me (personal inquiry)" : "僅限本人（個人查詢）",
     "Open with this group" : "與此群組共享",
     "Select groups" : "選擇群組",
-    "Choose ths group assigned to your inquiry" : "選擇分配至此議題的群組",
     "Choose which of your groups can access this inquiry" : "選擇你哪些群組可存取此查詢",
     "Title" : "標題",
     "Enter title" : "輸入標題",

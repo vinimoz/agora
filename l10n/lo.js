@@ -356,7 +356,6 @@ OC.L10N.register(
     "Only me (personal inquiry)" : "ສະເພາະຂ້ອຍ (ການສຳຫຼວດສ່ວນຕົວ)",
     "Open with this group" : "ເປີດກັບກຸ່ມນີ້",
     "Select groups" : "ເລືອກກຸ່ມ",
-    "Choose ths group assigned to your inquiry" : "ເລືອກກຸ່ມທີ່ໄດ້ຮັບມອບໝາຍໃຫ້ການສຳຫຼວດຂອງທ່ານ",
     "Choose which of your groups can access this inquiry" : "ເລືອກກຸ່ມຂອງທ່ານທີ່ສາມາດເຂົ້າເຖິງການສຳຫຼວດນີ້",
     "Title" : "ຫົວຂໍ້",
     "Enter title" : "ໃສ່ຫົວຂໍ້",

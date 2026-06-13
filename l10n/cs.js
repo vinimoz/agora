@@ -355,7 +355,6 @@ OC.L10N.register(
     "Only me (personal inquiry)" : "Pouze já (osobní dotaz)",
     "Open with this group" : "Otevřít s touto skupinou",
     "Select groups" : "Vybrat skupiny",
-    "Choose ths group assigned to your inquiry" : "Zvolte ths skupinu přiřazenou k tomuto dotazu",
     "Choose which of your groups can access this inquiry" : "Zvolte které z vašich skupin mohou k tomuto dotazu přistupovat",
     "Title" : "Titul",
     "Enter title" : "Zadejte nadpis",
