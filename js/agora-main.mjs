@@ -1,4 +1,4 @@
-const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=[window.OC.filePath('agora', '', 'js/ActionStructure-DKh9gFrw.chunk.mjs'),window.OC.filePath('agora', '', 'js/ImportDocumentModal-BOVy6YU9.chunk.mjs'),window.OC.filePath('agora', '', 'js/TernarySupportIcon.vue_vue_type_style_index_0_scoped_f6cfe8f3_lang-B6qJqDjp.chunk.mjs'),window.OC.filePath('agora', '', 'js/NcDashboardWidget-CvpYMKur-Bg5G_TIL.chunk.mjs'),window.OC.filePath('agora', '', 'js/NcRichText-D_ssz6sB-DmXlzMnR.chunk.mjs'),window.OC.filePath('agora', '', 'js/index-CYJDLKU7.chunk.mjs'),window.OC.filePath('agora', '', 'js/StyleSettings-CQxqibiv.chunk.mjs'),window.OC.filePath('agora', '', 'js/markdown-DOQ9XFCl.chunk.mjs'),window.OC.filePath('agora', '', 'js/agora-icon-G_6rXXlS.chunk.mjs'),window.OC.filePath('agora', '', 'js/NcUserBubble-BE6yD-R0-BHyUrtPF.chunk.mjs')])))=>i.map(i=>d[i]);
+const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=[window.OC.filePath('agora', '', 'js/ActionStructure-B6CoQuNX.chunk.mjs'),window.OC.filePath('agora', '', 'js/ImportDocumentModal-CyBPWitP.chunk.mjs'),window.OC.filePath('agora', '', 'js/TernarySupportIcon.vue_vue_type_style_index_0_scoped_f6cfe8f3_lang-B6qJqDjp.chunk.mjs'),window.OC.filePath('agora', '', 'js/NcDashboardWidget-CvpYMKur-Bg5G_TIL.chunk.mjs'),window.OC.filePath('agora', '', 'js/NcRichText-D_ssz6sB-DmXlzMnR.chunk.mjs'),window.OC.filePath('agora', '', 'js/index-CYJDLKU7.chunk.mjs'),window.OC.filePath('agora', '', 'js/StyleSettings-CQxqibiv.chunk.mjs'),window.OC.filePath('agora', '', 'js/markdown-DOQ9XFCl.chunk.mjs'),window.OC.filePath('agora', '', 'js/agora-icon-D0469xb5.chunk.mjs'),window.OC.filePath('agora', '', 'js/NcUserBubble-BE6yD-R0-BHyUrtPF.chunk.mjs')])))=>i.map(i=>d[i]);
 (function() {
   "use strict";
   try {
@@ -166,7 +166,7 @@ to {
 .theme--dark .navigation-sublist {
   background: var(--color-background-darker);
 }
-.dialog-overlay[data-v-ce097ea4] {
+.dialog-overlay[data-v-0b420a14] {
   position: fixed;
   top: 0;
   left: 0;
@@ -178,7 +178,7 @@ to {
   align-items: center;
   z-index: 10000;
 }
-.create-dialog[data-v-ce097ea4] {
+.create-dialog[data-v-0b420a14] {
   background-color: var(--color-main-background);
   padding: 20px;
   max-width: 400px;
@@ -189,7 +189,7 @@ to {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   margin: 20px;
 }
-.create-buttons[data-v-ce097ea4] {
+.create-buttons[data-v-0b420a14] {
   display: flex;
   justify-content: flex-end;
   gap: 8px;
@@ -197,49 +197,49 @@ to {
   padding-top: 16px;
   border-top: 1px solid var(--color-border);
 }
-.selected-type[data-v-ce097ea4] {
+.selected-type[data-v-0b420a14] {
   padding: 8px 0;
 }
-.type-description[data-v-ce097ea4] {
+.type-description[data-v-0b420a14] {
   color: var(--color-text-lighter);
   font-size: 0.9em;
   margin-top: 4px;
 }
-.access-settings[data-v-ce097ea4] {
+.access-settings[data-v-0b420a14] {
   padding: 8px 0;
 }
-.access-description[data-v-ce097ea4] {
+.access-description[data-v-0b420a14] {
   color: var(--color-text-lighter);
   margin-bottom: 16px;
   font-size: 0.95em;
 }
-.access-radio-group[data-v-ce097ea4] {
+.access-radio-group[data-v-0b420a14] {
   margin-bottom: 16px;
 }
-.groups-selection[data-v-ce097ea4] {
+.groups-selection[data-v-0b420a14] {
   margin-top: 16px;
   padding: 16px;
   background: var(--color-background-dark);
   border-radius: 8px;
 }
-.groups-title[data-v-ce097ea4] {
+.groups-title[data-v-0b420a14] {
   margin: 0 0 8px 0;
   font-size: 1em;
   font-weight: 600;
 }
-.groups-description[data-v-ce097ea4] {
+.groups-description[data-v-0b420a14] {
   color: var(--color-text-lighter);
   font-size: 0.9em;
   margin: 0 0 12px 0;
 }
-.groups-list[data-v-ce097ea4] {
+.groups-list[data-v-0b420a14] {
   display: flex;
   flex-direction: column;
   gap: 8px;
   max-height: 200px;
   overflow-y: auto;
 }
-.group-item[data-v-ce097ea4] {
+.group-item[data-v-0b420a14] {
   display: flex;
   align-items: center;
   padding: 4px 0;
@@ -15483,7 +15483,7 @@ import { u as qr, _ as NO, a as FO } from "./StyleSettings-CQxqibiv.chunk.mjs";
 import { c as Xt, u as BO, A as $O, _ as PO, d as Ui, e as Gp, S as LO, Q as qO, I as zu, f as xs, g as zO, h as zr, i as $0, r as P0, t as L0, j as WO, k as xi, l as Hl, O as VO, m as q0, n as HO, o as jO, P as GO, p as z0, b as XO, q as YO } from "./index-CYJDLKU7.chunk.mjs";
 import { c as KO, I as ZO, b as en, N as gn, _ as ws, a as Ua } from "./NcRichText-D_ssz6sB-DmXlzMnR.chunk.mjs";
 import { _ as QO, a as Oa, N as Xp, b as Eo } from "./markdown-DOQ9XFCl.chunk.mjs";
-import { _ as Yp } from "./agora-icon-G_6rXXlS.chunk.mjs";
+import { _ as Yp } from "./agora-icon-D0469xb5.chunk.mjs";
 import { N as JO } from "./NcUserBubble-BE6yD-R0-BHyUrtPF.chunk.mjs";
 const Na = typeof document < "u";
 function W0(t10) {
@@ -17014,8 +17014,8 @@ const u5 = Qe(r5, [["render", c5]]), d5 = { class: "config-box" }, h5 = { class:
     a.value = null, o.value = "", c.value = "user", u.value = null, i("update:selected-groups", []);
   }
   return (O, N) => (x(), R("div", { class: "dialog-overlay", onClick: N[6] || (N[6] = (q) => i("close")) }, [_("div", { class: "create-dialog", onClick: N[5] || (N[5] = Ze(() => {
-  }, ["stop"])) }, [t10.availableGroups.length > 0 ? (x(), B(m(Oi), { key: 0, name: m(w)("agora", "Access Settings") }, { icon: j(() => [(x(), B(se(m(Ee).AccountGroup)))]), default: j(() => [_("div", $5, [J(m(Kl), { "model-value": c.value, label: m(w)("agora", "Choose who opening this inquiry"), class: "access-radio-group", description: m(w)("agora", "Choose who is opening this inquiry"), "onUpdate:modelValue": N[0] || (N[0] = (q) => c.value = q) }, { default: j(() => [J(m(gn), { value: "user" }, { default: j(() => [_e(E(m(w)("agora", "Only me (personal inquiry)")), 1)]), _: 1 }), J(m(gn), { value: "groups" }, { default: j(() => [_e(E(m(w)("agora", "Open with this group")), 1)]), _: 1 })]), _: 1 }, 8, ["model-value", "label", "description"]), c.value === "groups" ? (x(), R("div", P5, [_("h4", L5, E(m(w)("agora", "Select groups")), 1), _("div", q5, [J(m(Kl), { "model-value": u.value, label: m(w)("agora", "Choose ths group assigned to your inquiry"), description: m(w)("agora", "Choose which of your groups can access this inquiry"), "onUpdate:modelValue": N[1] || (N[1] = (q) => b(q)) }, { default: j(() => [(x(true), R(Oe, null, $e(t10.availableGroups, (q) => (x(), R("div", { key: q, class: "group-item" }, [J(m(gn), { value: q, type: "radio", name: "group-selection" }, { default: j(() => [_e(E(q), 1)]), _: 2 }, 1032, ["value"])]))), 128))]), _: 1 }, 8, ["model-value", "label", "description"])])])) : G("", true)])]), _: 1 }, 8, ["name"])) : G("", true), J(m(Oi), { name: m(w)("agora", "Title") }, { icon: j(() => [(x(), B(se(m(Ee).Bullhorn)))]), default: j(() => [J(m(zu), { "model-value": o.value, focus: "", type: "text", placeholder: m(w)("agora", "Enter title"), "helper-text": m(w)("agora", "Choose a meaningful title for your inquiry"), label: m(w)("agora", "Enter title"), "onUpdate:modelValue": N[2] || (N[2] = (q) => o.value = q), onSubmit: T }, null, 8, ["model-value", "placeholder", "helper-text", "label"])]), _: 1 }, 8, ["name"]), v.value ? (x(), B(m(Oi), { key: 2, name: m(w)("agora", "Inquiry type"), label: m(w)("agora", "Inquiry type") }, { icon: j(() => [(x(), B(se(m(Ee).Check)))]), default: j(() => [_("div", z5, [_("strong", null, E(y.value?.label), 1), y.value?.description ? (x(), R("p", W5, E(y.value.description), 1)) : G("", true)])]), _: 1 }, 8, ["name", "label"])) : (x(), B(m(Oi), { key: 1, name: m(w)("agora", "Inquiry type"), label: m(w)("agora", "Inquiry type") }, { icon: j(() => [(x(), B(se(m(Ee).Check)))]), default: j(() => [J(m(QO), { "model-value": p.value, options: f.value, "onUpdate:modelValue": N[3] || (N[3] = (q) => D(q)) }, null, 8, ["model-value", "options"])]), _: 1 }, 8, ["name", "label"])), _("div", V5, [J(m(Me), { onClick: N[4] || (N[4] = (q) => i("close")) }, { default: j(() => [_e(E(m(w)("agora", "Cancel")), 1)]), _: 1 }), J(m(Me), { disabled: C.value, variant: "primary", onClick: T }, { default: j(() => [_e(E(l.value ? m(w)("agora", "Creating …") : m(w)("agora", "Create Inquiry")), 1)]), _: 1 }, 8, ["disabled"])])])]));
-} }), lg = Qe(H5, [["__scopeId", "data-v-ce097ea4"]]), j5 = { class: "dialog-header" }, G5 = { key: 0, class: "mode-badge child" }, X5 = { key: 1, class: "mode-badge creation" }, Y5 = { class: "context-description" }, K5 = { class: "access-settings" }, Z5 = { key: 0, class: "nextcloud-groups-selection" }, Q5 = { class: "groups-title" }, J5 = { class: "groups-list" }, e4 = { class: "type-option" }, t4 = { key: 0, class: "type-description-small" }, n4 = { key: 1, class: "selected-type" }, i4 = { key: 0, class: "type-description" }, r4 = { class: "type-info" }, s4 = { key: 2, class: "type-help" }, o4 = { key: 3, class: "type-help" }, a4 = { class: "create-buttons" }, l4 = Fe({ __name: "InquiryGroupCreateDlg", props: { inquiryGroupType: { default: null }, parentGroupId: { default: null }, availableGroups: { default: () => [] }, defaultTitle: { default: null } }, emits: ["close", "added", "update:selected-groups"], setup(t10, { emit: e }) {
+  }, ["stop"])) }, [t10.availableGroups.length > 0 ? (x(), B(m(Oi), { key: 0, name: m(w)("agora", "Access Settings") }, { icon: j(() => [(x(), B(se(m(Ee).AccountGroup)))]), default: j(() => [_("div", $5, [J(m(Kl), { "model-value": c.value, label: m(w)("agora", "Choose who is opening this inquiry"), class: "access-radio-group", description: m(w)("agora", "Choose who is opening this inquiry"), "onUpdate:modelValue": N[0] || (N[0] = (q) => c.value = q) }, { default: j(() => [J(m(gn), { value: "user" }, { default: j(() => [_e(E(m(w)("agora", "Only me (personal inquiry)")), 1)]), _: 1 }), J(m(gn), { value: "groups" }, { default: j(() => [_e(E(m(w)("agora", "Open with this group")), 1)]), _: 1 })]), _: 1 }, 8, ["model-value", "label", "description"]), c.value === "groups" ? (x(), R("div", P5, [_("h4", L5, E(m(w)("agora", "Select groups")), 1), _("div", q5, [J(m(Kl), { "model-value": u.value, label: m(w)("agora", "Choose the group to which your enquiry is assigned"), description: m(w)("agora", "Choose which of your groups can access this inquiry"), "onUpdate:modelValue": N[1] || (N[1] = (q) => b(q)) }, { default: j(() => [(x(true), R(Oe, null, $e(t10.availableGroups, (q) => (x(), R("div", { key: q, class: "group-item" }, [J(m(gn), { value: q, type: "radio", name: "group-selection" }, { default: j(() => [_e(E(q), 1)]), _: 2 }, 1032, ["value"])]))), 128))]), _: 1 }, 8, ["model-value", "label", "description"])])])) : G("", true)])]), _: 1 }, 8, ["name"])) : G("", true), J(m(Oi), { name: m(w)("agora", "Title") }, { icon: j(() => [(x(), B(se(m(Ee).Bullhorn)))]), default: j(() => [J(m(zu), { "model-value": o.value, focus: "", type: "text", placeholder: m(w)("agora", "Enter title"), "helper-text": m(w)("agora", "Choose a meaningful title for your inquiry"), label: m(w)("agora", "Enter title"), "onUpdate:modelValue": N[2] || (N[2] = (q) => o.value = q), onSubmit: T }, null, 8, ["model-value", "placeholder", "helper-text", "label"])]), _: 1 }, 8, ["name"]), v.value ? (x(), B(m(Oi), { key: 2, name: m(w)("agora", "Inquiry type"), label: m(w)("agora", "Inquiry type") }, { icon: j(() => [(x(), B(se(m(Ee).Check)))]), default: j(() => [_("div", z5, [_("strong", null, E(y.value?.label), 1), y.value?.description ? (x(), R("p", W5, E(y.value.description), 1)) : G("", true)])]), _: 1 }, 8, ["name", "label"])) : (x(), B(m(Oi), { key: 1, name: m(w)("agora", "Inquiry type"), label: m(w)("agora", "Inquiry type") }, { icon: j(() => [(x(), B(se(m(Ee).Check)))]), default: j(() => [J(m(QO), { "model-value": p.value, options: f.value, "onUpdate:modelValue": N[3] || (N[3] = (q) => D(q)) }, null, 8, ["model-value", "options"])]), _: 1 }, 8, ["name", "label"])), _("div", V5, [J(m(Me), { onClick: N[4] || (N[4] = (q) => i("close")) }, { default: j(() => [_e(E(m(w)("agora", "Cancel")), 1)]), _: 1 }), J(m(Me), { disabled: C.value, variant: "primary", onClick: T }, { default: j(() => [_e(E(l.value ? m(w)("agora", "Creating …") : m(w)("agora", "Create Inquiry")), 1)]), _: 1 }, 8, ["disabled"])])])]));
+} }), lg = Qe(H5, [["__scopeId", "data-v-0b420a14"]]), j5 = { class: "dialog-header" }, G5 = { key: 0, class: "mode-badge child" }, X5 = { key: 1, class: "mode-badge creation" }, Y5 = { class: "context-description" }, K5 = { class: "access-settings" }, Z5 = { key: 0, class: "nextcloud-groups-selection" }, Q5 = { class: "groups-title" }, J5 = { class: "groups-list" }, e4 = { class: "type-option" }, t4 = { key: 0, class: "type-description-small" }, n4 = { key: 1, class: "selected-type" }, i4 = { key: 0, class: "type-description" }, r4 = { class: "type-info" }, s4 = { key: 2, class: "type-help" }, o4 = { key: 3, class: "type-help" }, a4 = { class: "create-buttons" }, l4 = Fe({ __name: "InquiryGroupCreateDlg", props: { inquiryGroupType: { default: null }, parentGroupId: { default: null }, availableGroups: { default: () => [] }, defaultTitle: { default: null } }, emits: ["close", "added", "update:selected-groups"], setup(t10, { emit: e }) {
   const n = t10, i = e, r = _s(), s = Ke(), o = ue(""), a = ue(null), l = ue(false), c = ue("user"), u = ue(null), d = ue(""), h = z(() => s.appSettings.inquiryGroupTypeTab || []), f = (q) => h.value.find((V) => V.group_type === q) || null, p = z(() => n.inquiryGroupType ? f(n.inquiryGroupType) : null), g = z(() => {
     if (!n.parentGroupId && p.value) return [p.value];
     if (n.parentGroupId && p.value) {
@@ -55940,7 +55940,7 @@ const dve = { class: "engine-selector-modal" }, hve = { class: "modal-header" },
   const e = vt(), n = ui(), i = Ke(), r = tr(), s = ue(""), o = ue(false), a = ue(false), l = ue(null), c = ue(null), u = ue(null), d = ue(false), h = ue(null), f = ue(null), p = ue(null), g = /* @__PURE__ */ new Map(), y = z(() => r.name === "publicInquiry"), v = { tree: yr(Wee), cards: yr(cE), paired: yr(Kte), consensus_flow: yr(pne), kanban: yr(hie), timeline: yr(Mhe), vote: yr(K1e), default: yr(cE) }, b = (oe) => Lp(oe), D = (oe) => ko(oe), S = async (oe) => {
     if (g.has(oe)) return g.get(oe);
     try {
-      const be = `${oe.split("_").map((Le) => Le.charAt(0).toUpperCase() + Le.slice(1)).join("")}Modal`, De = await IX(Object.assign({ "./Actions/ActionStructure.vue": () => q0(() => import("./ActionStructure-DKh9gFrw.chunk.mjs"), true ? __vite__mapDeps([0,1,2,3,4,5,6,7,8,9]) : void 0, import.meta.url), "./Actions/ImportDocumentModal.vue": () => q0(() => import("./ImportDocumentModal-BOVy6YU9.chunk.mjs"), true ? __vite__mapDeps([1,2,3,4,5,6,7,8,9]) : void 0, import.meta.url) }), `./Actions/${be}.vue`, 3), ke = yr(De.default || De);
+      const be = `${oe.split("_").map((Le) => Le.charAt(0).toUpperCase() + Le.slice(1)).join("")}Modal`, De = await IX(Object.assign({ "./Actions/ActionStructure.vue": () => q0(() => import("./ActionStructure-B6CoQuNX.chunk.mjs"), true ? __vite__mapDeps([0,1,2,3,4,5,6,7,8,9]) : void 0, import.meta.url), "./Actions/ImportDocumentModal.vue": () => q0(() => import("./ImportDocumentModal-CyBPWitP.chunk.mjs"), true ? __vite__mapDeps([1,2,3,4,5,6,7,8,9]) : void 0, import.meta.url) }), `./Actions/${be}.vue`, 3), ke = yr(De.default || De);
       return g.set(oe, ke), ke;
     } catch (be) {
       return console.error(`Failed to load modal component for action "${oe}":`, be), null;
