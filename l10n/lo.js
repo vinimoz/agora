@@ -351,7 +351,6 @@ OC.L10N.register(
     "\"{inquiryTitle}\" has been added" : "ໄດ້ເພີ່ມ \"{inquiryTitle}\" ແລ້ວ",
     "Error while creating Inquiry \"{inquiryTitle}\"" : "ຜິດພາດຂະນະສ້າງການສຳຫຼວດ \"{inquiryTitle}\"",
     "Access Settings" : "ການຕັ້ງຄ່າການເຂົ້າເຖິງ",
-    "Choose who opening this inquiry" : "ເລືອກຜູ້ທີ່ສາມາດເປີດການສຳຫຼວດນີ້",
     "Choose who is opening this inquiry" : "ເລືອກວ່າໃຜເປັນຜູ້ເປີດການສຳຫຼວດນີ້",
     "Only me (personal inquiry)" : "ສະເພາະຂ້ອຍ (ການສຳຫຼວດສ່ວນຕົວ)",
     "Open with this group" : "ເປີດກັບກຸ່ມນີ້",

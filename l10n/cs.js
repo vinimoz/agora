@@ -350,7 +350,6 @@ OC.L10N.register(
     "\"{inquiryTitle}\" has been added" : "„{inquiryTitle}“ bylo přidáno",
     "Error while creating Inquiry \"{inquiryTitle}\"" : "Chyba při vytváření dotazu „{inquiryTitle}“",
     "Access Settings" : "Nastavení přístupu",
-    "Choose who opening this inquiry" : "Zvolte kdo otevírá tento dotaz",
     "Choose who is opening this inquiry" : "Zvolte kdo tento dotaz otevírá",
     "Only me (personal inquiry)" : "Pouze já (osobní dotaz)",
     "Open with this group" : "Otevřít s touto skupinou",

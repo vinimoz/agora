@@ -352,7 +352,6 @@ OC.L10N.register(
     "\"{inquiryTitle}\" has been added" : "„{inquiryTitle}“ buvo pridėtas",
     "Error while creating Inquiry \"{inquiryTitle}\"" : "Klaida kuriant užklausą „{inquiryTitle}“",
     "Access Settings" : "Prieigos nustatymai",
-    "Choose who opening this inquiry" : "Pasirinkite, kas atidaro šią užklausą",
     "Choose who is opening this inquiry" : "Pasirinkite, kas atidaro šią užklausą",
     "Only me (personal inquiry)" : "Tik man (asmeninė užklausa)",
     "Open with this group" : "Atidaryti su šia grupe",

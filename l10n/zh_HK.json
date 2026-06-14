@@ -350,7 +350,6 @@
     "\"{inquiryTitle}\" has been added" : "「{inquiryTitle}」已被添加",
     "Error while creating Inquiry \"{inquiryTitle}\"" : "創建查詢「{inquiryTitle}」時出現錯誤",
     "Access Settings" : "存取設定",
-    "Choose who opening this inquiry" : "選擇此議題的發起人",
     "Choose who is opening this inquiry" : "選擇誰可以開啟此查詢",
     "Only me (personal inquiry)" : "僅限本人（個人查詢）",
     "Open with this group" : "與此群組共享",

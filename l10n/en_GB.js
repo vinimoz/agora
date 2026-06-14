@@ -351,7 +351,6 @@ OC.L10N.register(
     "\"{inquiryTitle}\" has been added" : "\"{inquiryTitle}\" has been added",
     "Error while creating Inquiry \"{inquiryTitle}\"" : "Error while creating Inquiry \"{inquiryTitle}\"",
     "Access Settings" : "Access Settings",
-    "Choose who opening this inquiry" : "Choose who opening this inquiry",
     "Choose who is opening this inquiry" : "Choose who is opening this inquiry",
     "Only me (personal inquiry)" : "Only me (personal inquiry)",
     "Open with this group" : "Open with this group",

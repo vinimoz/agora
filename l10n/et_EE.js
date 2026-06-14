@@ -217,6 +217,7 @@ OC.L10N.register(
     "Only me (personal inquiry)" : "Ainult mina (isiklikk järelpärimine)",
     "Open with this group" : "Ava selle grupiga",
     "Select groups" : "Vali grupid",
+    "Choose the group to which your enquiry is assigned" : "Vali grupp, millele sinu järelepärimine on määratud",
     "Choose which of your groups can access this inquiry" : "Määra, missugune grupp saab avada seda järelpärimist",
     "Title" : "Pealkiri",
     "Enter title" : "Sisesta pealkiri",

@@ -352,7 +352,6 @@ OC.L10N.register(
     "\"{inquiryTitle}\" has been added" : "\"{inquiryTitle}\" foi adicionada",
     "Error while creating Inquiry \"{inquiryTitle}\"" : "Erro ao criar consulta \"{inquiryTitle}\"",
     "Access Settings" : "Configurações de Acesso",
-    "Choose who opening this inquiry" : "Escolha quem iniciará esta consulta",
     "Choose who is opening this inquiry" : "Escolha quem está abrindo esta consulta",
     "Only me (personal inquiry)" : "Somente eu (consulta pessoal)",
     "Open with this group" : "Abrir com este grupo",
