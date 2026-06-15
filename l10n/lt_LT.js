@@ -356,6 +356,7 @@ OC.L10N.register(
     "Only me (personal inquiry)" : "Tik man (asmeninė užklausa)",
     "Open with this group" : "Atidaryti su šia grupe",
     "Select groups" : "Pasirinkti grupes",
+    "Choose the group to which your enquiry is assigned" : "Pasirinkite grupę, kuriai priskirta jūsų užklausa",
     "Choose which of your groups can access this inquiry" : "Pasirinkite, kurios jūsų grupės gali pasiekti šią užklausą",
     "Title" : "Pavadinimas",
     "Enter title" : "Įveskite pavadinimą",
