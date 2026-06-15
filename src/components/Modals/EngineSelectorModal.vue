@@ -63,34 +63,34 @@
             class="engine-card"
             :class="{
               selected: selectedEngine === engine.id,
-              [engine.behavior]: true
+              [engine.scope]: true
             }"
             @click="selectEngine(engine.id)"
           >
             <div class="engine-card-header">
-              <div class="engine-icon">
-                <component :is="getEngineIcon(engine.id)" :size="28" />
-              </div>
-              <div class="engine-badge" :class="engine.behavior">
-                {{ getBehaviorLabel(engine.behavior) }}
+                <div class="engine-icon">
+                    <component :is="getEngineIcon(engine.id)" :size="28" />
+                </div>
+              <div class="engine-badge" :class="engine.voteScope">
+                  {{ getScopeLabel(engine.voteScope) }}
               </div>
             </div>
 
             <div class="engine-card-content">
-              <h4>{{ engine.label }}</h4>
-              <p>{{ engine.description || getEngineDescription(engine.id) }}</p>
-              <div v-if="engine.constraints && (engine.constraints.min_options || engine.constraints.max_options)" class="engine-constraints">
-                <span v-if="engine.constraints.min_options" class="constraint-badge">
-                  {{ t('agora', 'Min {n}', { n: engine.constraints.min_options }) }}
-                </span>
-                <span v-if="engine.constraints.max_options" class="constraint-badge">
-                  {{ t('agora', 'Max {n}', { n: engine.constraints.max_options }) }}
-                </span>
-              </div>
+                <h4>{{ engine.label }}</h4>
+                <p>{{ engine.description || getEngineDescription(engine.id) }}</p>
+                <div v-if="engine.constraints && (engine.constraints.min_options || engine.constraints.max_options)" class="engine-constraints">
+                    <span v-if="engine.constraints.min_options" class="constraint-badge">
+                        {{ t('agora', 'Min {n}', { n: engine.constraints.min_options }) }}
+                    </span>
+                    <span v-if="engine.constraints.max_options" class="constraint-badge">
+                        {{ t('agora', 'Max {n}', { n: engine.constraints.max_options }) }}
+                    </span>
+                </div>
             </div>
 
             <div v-if="selectedEngine === engine.id" class="engine-check">
-              <CheckCircle :size="20" fill="currentColor" />
+                <CheckCircle :size="20" fill="currentColor" />
             </div>
           </div>
         </div>
@@ -98,276 +98,276 @@
 
       <!-- Subtype selection for Condorcet methods -->
       <div v-if="selectedEngine === 'condorcet'" class="subtype-selection-section">
-        <div class="subtype-header">
-          <Brain :size="18" />
-          <h5>{{ t('agora', 'Select Condorcet method') }}</h5>
-        </div>
-        <NcSelect
-          v-model="selectedVariant"
-          :options="condorcetVariants"
-          :placeholder="t('agora', 'Choose a Condorcet variant …')"
-          :reduce="option => option.id"
-          label="label"
-          :aria-label="t('agora', 'Select specific Condorcet method variant')"
-          class="subtype-select"
-        >
-          <template #option="option">
-            <div class="variant-option">
-              <component :is="getVariantIcon(option.id)" :size="16" class="variant-icon" />
-              <div class="variant-content">
-                <div class="variant-label">{{ option.label }}</div>
-                <div class="variant-description">{{ option.description }}</div>
-              </div>
-            </div>
-          </template>
-        </NcSelect>
+          <div class="subtype-header">
+              <Brain :size="18" />
+              <h5>{{ t('agora', 'Select Condorcet method') }}</h5>
+          </div>
+          <NcSelect
+                  v-model="selectedVariant"
+                  :options="condorcetVariants"
+                  :placeholder="t('agora', 'Choose a Condorcet variant …')"
+                  :reduce="option => option.id"
+                  label="label"
+                  :aria-label="t('agora', 'Select specific Condorcet method variant')"
+                  class="subtype-select"
+                  >
+                  <template #option="option">
+                      <div class="variant-option">
+                          <component :is="getVariantIcon(option.id)" :size="16" class="variant-icon" />
+                          <div class="variant-content">
+                              <div class="variant-label">{{ option.label }}</div>
+                              <div class="variant-description">{{ option.description }}</div>
+                          </div>
+                      </div>
+                  </template>
+          </NcSelect>
       </div>
 
       <!-- Grade configuration for Majority Judgment -->
       <div v-if="selectedEngine === 'majority_judgment'" class="grade-config-section">
-        <div class="config-header">
-          <Gauge :size="18" />
-          <h5>{{ t('agora', 'Configure grades') }}</h5>
-        </div>
-
-        <div class="grades-list">
-          <div v-for="(grade, index) in (tempConfig.grades || defaultGrades)" :key="index" class="grade-item">
-            <NcTextField
-              v-model="tempConfig.grades[index]"
-              label-outside
-              :placeholder="t('agora', 'Grade {n}', { n: index + 1 })"
-              class="grade-input"
-            />
-            <NcButton
-              v-if="(tempConfig.grades || defaultGrades).length > 2"
-              class="grade-remove"
-              :aria-label="t('agora', 'Remove grade')"
-              @click="removeGrade(index)"
-            >
-              <Minus :size="14" />
-            </NcButton>
+          <div class="config-header">
+              <Gauge :size="18" />
+              <h5>{{ t('agora', 'Configure grades') }}</h5>
           </div>
-        </div>
 
-        <NcButton class="grade-add" @click="addGrade">
+          <div class="grades-list">
+              <div v-for="(grade, index) in (tempConfig.grades || defaultGrades)" :key="index" class="grade-item">
+                  <NcTextField
+                          v-model="tempConfig.grades[index]"
+                          label-outside
+                          :placeholder="t('agora', 'Grade {n}', { n: index + 1 })"
+                          class="grade-input"
+                          />
+                  <NcButton
+                          v-if="(tempConfig.grades || defaultGrades).length > 2"
+                          class="grade-remove"
+                          :aria-label="t('agora', 'Remove grade')"
+                          @click="removeGrade(index)"
+                          >
+                          <Minus :size="14" />
+                  </NcButton>
+              </div>
+          </div>
+
+          <NcButton class="grade-add" @click="addGrade">
           <Plus :size="16" />
           {{ t('agora', 'Add grade') }}
-        </NcButton>
+          </NcButton>
       </div>
 
       <!-- Reactions configuration -->
       <div v-if="selectedEngine === 'reaction'" class="reactions-config-section">
-        <div class="config-header">
-          <Heart :size="18" />
-          <h5>{{ t('agora', 'Select reactions') }}</h5>
-        </div>
-
-        <div class="reactions-grid">
-          <div
-            v-for="reaction in reactionOptions"
-            :key="reaction.value"
-            class="reaction-item"
-            :class="{ selected: isReactionSelected(reaction.value) }"
-            @click="toggleReaction(reaction.value)"
-          >
-            <div class="reaction-emoji">{{ reaction.emoji }}</div>
-            <div class="reaction-label">{{ reaction.label }}</div>
-            <div v-if="isReactionSelected(reaction.value)" class="reaction-check">
-              <CheckCircle :size="16" fill="currentColor" />
-            </div>
+          <div class="config-header">
+              <Heart :size="18" />
+              <h5>{{ t('agora', 'Select reactions') }}</h5>
           </div>
-        </div>
 
-        <div class="reaction-limit">
-          <label>{{ t('agora', 'Max reactions per user') }}</label>
-          <NcTextField
-            v-model.number="tempConfig.max_per_user"
-            type="number"
-            class="limit-input"
-          />
-        </div>
+          <div class="reactions-grid">
+              <div
+                      v-for="reaction in reactionOptions"
+                      :key="reaction.value"
+                      class="reaction-item"
+                      :class="{ selected: isReactionSelected(reaction.value) }"
+                      @click="toggleReaction(reaction.value)"
+                      >
+                      <div class="reaction-emoji">{{ reaction.emoji }}</div>
+                      <div class="reaction-label">{{ reaction.label }}</div>
+                      <div v-if="isReactionSelected(reaction.value)" class="reaction-check">
+                          <CheckCircle :size="16" fill="currentColor" />
+                      </div>
+              </div>
+          </div>
+
+          <div class="reaction-limit">
+              <label>{{ t('agora', 'Max reactions per user') }}</label>
+              <NcTextField
+                      v-model.number="tempConfig.max_per_user"
+                      type="number"
+                      class="limit-input"
+                      />
+          </div>
       </div>
 
       <!-- Config Settings Button -->
       <div v-if="selectedEngine && currentConfigSchema && Object.keys(currentConfigSchema).length > 0 && !isSpecialEngine" class="engine-config-section">
-        <NcButton class="config-settings-trigger" @click="showConfigDialog = true">
+          <NcButton class="config-settings-trigger" @click="showConfigDialog = true">
           <Settings :size="20" />
           <span>{{ t('agora', 'Configure Settings') }}</span>
           <span class="config-count-badge">{{ Object.keys(currentConfigSchema).length }}</span>
-        </NcButton>
+          </NcButton>
       </div>
 
       <div v-else-if="selectedEngine && !isSpecialEngine && (!currentConfigSchema || Object.keys(currentConfigSchema).length === 0)" class="engine-info-section">
-        <div class="info-message">
-          <Info :size="18" />
-          <span>{{ t('agora', 'This voting method requires no additional configuration.') }}</span>
-        </div>
+          <div class="info-message">
+              <Info :size="18" />
+              <span>{{ t('agora', 'This voting method requires no additional configuration.') }}</span>
+          </div>
       </div>
 
       <!-- Status for edit mode -->
       <div v-if="mode === 'edit' && existingEngine" class="engine-status-section">
-        <div class="status-header">
-          <Info :size="18" />
-          <h5>{{ t('agora', 'Status') }}</h5>
-        </div>
-        <NcRadioGroup
-          v-model="tempStatus"
-          :label="t('agora', 'Voting method status')"
-          :hide-label="true"
-        >
+          <div class="status-header">
+              <Info :size="18" />
+              <h5>{{ t('agora', 'Status') }}</h5>
+          </div>
+          <NcRadioGroup
+                  v-model="tempStatus"
+                  :label="t('agora', 'Voting method status')"
+                  :hide-label="true"
+                  >
+                  <NcCheckboxRadioSwitch
+                          type="radio"
+                          value="active"
+                          :disabled="hasVotes"
+                          >
+                          {{ t('agora', 'Active') }}
+                          <span v-if="hasVotes" class="status-hint">{{ t('agora', '(Cannot change - votes exist)') }}</span>
+                  </NcCheckboxRadioSwitch>
           <NcCheckboxRadioSwitch
-            type="radio"
-            value="active"
-            :disabled="hasVotes"
-          >
-            {{ t('agora', 'Active') }}
-            <span v-if="hasVotes" class="status-hint">{{ t('agora', '(Cannot change - votes exist)') }}</span>
+                  type="radio"
+                  value="closed"
+                  >
+                  {{ t('agora', 'Closed') }}
           </NcCheckboxRadioSwitch>
           <NcCheckboxRadioSwitch
-            type="radio"
-            value="closed"
-          >
-            {{ t('agora', 'Closed') }}
+                  type="radio"
+                  value="draft"
+                  >
+                  {{ t('agora', 'Draft') }}
           </NcCheckboxRadioSwitch>
-          <NcCheckboxRadioSwitch
-            type="radio"
-            value="draft"
-          >
-            {{ t('agora', 'Draft') }}
-          </NcCheckboxRadioSwitch>
-        </NcRadioGroup>
+          </NcRadioGroup>
       </div>
 
       <div class="modal-footer">
-        <NcButton class="btn-secondary" @click="$emit('close')">
+          <NcButton class="btn-secondary" @click="$emit('close')">
           {{ t('agora', 'Cancel') }}
-        </NcButton>
-        <NcButton
-          class="btn-primary"
-          :disabled="isSaveDisabled"
-          @click="save"
-        >
-          <Vote :size="16" />
-          {{ mode === 'create' ? t('agora', 'Create Voting Method') : t('agora', 'Update Voting Method') }}
-        </NcButton>
+          </NcButton>
+          <NcButton
+                  class="btn-primary"
+                  :disabled="isSaveDisabled"
+                  @click="save"
+                  >
+                  <Vote :size="16" />
+                  {{ mode === 'create' ? t('agora', 'Create Voting Method') : t('agora', 'Update Voting Method') }}
+          </NcButton>
       </div>
     </div>
 
     <!-- Settings Dialog -->
     <NcDialog
-      v-if="showConfigDialog"
-      :name="t('agora', 'Configure {engine} Settings', { engine: getEngineLabel(selectedEngine) })"
-      :close-on-click-outside="true"
-      size="normal"
-      @close="showConfigDialog = false"
-    >
-      <div class="settings-dialog-content">
-        <div class="settings-header">
-          <div class="settings-icon">
-            <Settings :size="32" />
-          </div>
-          <h4>{{ t('agora', 'Configuration Settings') }}</h4>
-          <p>{{ t('agora', 'Adjust the settings for this voting method') }}</p>
-        </div>
-
-        <div class="settings-fields">
-          <div v-for="(schema, key) in currentConfigSchema" :key="key" class="settings-field">
-            <label :for="`config-${key}`" class="settings-field-label">
-              {{ schema.label || key }}
-              <span v-if="schema.type === 'number' && schema.min !== undefined && schema.max !== undefined" class="field-hint">
-                ({{ schema.min }}-{{ schema.max }})
-              </span>
-            </label>
-
-            <div class="settings-field-input">
-              <!-- Number input with slider -->
-              <div v-if="schema.type === 'number'" class="number-config">
-                <div v-if="schema.nullable || key === 'max_choices'" class="null-number-control">
-                  <NcCheckboxRadioSwitch
-                    type="checkbox"
-                    :checked="tempConfig[key] === null"
-                    @update:model-value="(checked) => setUnlimited(key, checked)"
-                  >
-                    {{ t('agora', 'Unlimited') }}
-                  </NcCheckboxRadioSwitch>
+            v-if="showConfigDialog"
+            :name="t('agora', 'Configure {engine} Settings', { engine: getEngineLabel(selectedEngine) })"
+            :close-on-click-outside="true"
+            size="normal"
+            @close="showConfigDialog = false"
+            >
+            <div class="settings-dialog-content">
+                <div class="settings-header">
+                    <div class="settings-icon">
+                        <Settings :size="32" />
+                    </div>
+    <h4>{{ t('agora', 'Configuration Settings') }}</h4>
+    <p>{{ t('agora', 'Adjust the settings for this voting method') }}</p>
                 </div>
-                
-                <div v-if="tempConfig[key] !== null || !(schema.nullable || key === 'max_choices')" class="slider-control">
-                  <input
-                    :id="`config-${key}`"
-                    v-model.number="tempConfig[key]"
-                    type="range"
-                    :min="schema.min ?? 0"
-                    :max="schema.max ?? 100"
-                    :step="schema.step ?? 1"
-                    class="settings-range-input"
-                    :style="{ '--range-progress': getRangeProgress(tempConfig[key], schema.min ?? 0, schema.max ?? 100) + '%' }"
-                  />
-                  <div class="slider-value">
-                    <span class="value-number">{{ tempConfig[key] ?? schema.default ?? 0 }}</span>
-                    <NcProgressBar
-                      :value="getRangeProgress(tempConfig[key], schema.min ?? 0, schema.max ?? 100)"
-                      :show-value="true"
-                      size="small"
-                    />
-                  </div>
+
+                <div class="settings-fields">
+                    <div v-for="(schema, key) in currentConfigSchema" :key="key" class="settings-field">
+                        <label :for="`config-${key}`" class="settings-field-label">
+                            {{ schema.label || key }}
+                            <span v-if="schema.type === 'number' && schema.min !== undefined && schema.max !== undefined" class="field-hint">
+                                ({{ schema.min }}-{{ schema.max }})
+                            </span>
+                        </label>
+
+                        <div class="settings-field-input">
+                            <!-- Number input with slider -->
+                            <div v-if="schema.type === 'number'" class="number-config">
+                                <div v-if="schema.nullable || key === 'max_choices'" class="null-number-control">
+                                    <NcCheckboxRadioSwitch
+                                            type="checkbox"
+                                            :checked="tempConfig[key] === null"
+                                            @update:model-value="(checked) => setUnlimited(key, checked)"
+                                            >
+                                            {{ t('agora', 'Unlimited') }}
+                                    </NcCheckboxRadioSwitch>
+                                </div>
+
+                                <div v-if="tempConfig[key] !== null || !(schema.nullable || key === 'max_choices')" class="slider-control">
+                                    <input
+                                            :id="`config-${key}`"
+                                            v-model.number="tempConfig[key]"
+                                            type="range"
+                                            :min="schema.min ?? 0"
+                                            :max="schema.max ?? 100"
+                                            :step="schema.step ?? 1"
+                                            class="settings-range-input"
+                                            :style="{ '--range-progress': getRangeProgress(tempConfig[key], schema.min ?? 0, schema.max ?? 100) + '%' }"
+                                            />
+                                    <div class="slider-value">
+                                        <span class="value-number">{{ tempConfig[key] ?? schema.default ?? 0 }}</span>
+                                        <NcProgressBar
+                                                :value="getRangeProgress(tempConfig[key], schema.min ?? 0, schema.max ?? 100)"
+                                                :show-value="true"
+                                                size="small"
+                                                />
+                                    </div>
+                                </div>
+                                <span v-else-if="tempConfig[key] === null" class="null-indicator">
+                                    {{ t('agora', 'Unlimited (no restriction)') }}
+                                </span>
+                            </div>
+
+                            <!-- Text input -->
+                            <NcTextField
+                                    v-else-if="schema.type === 'string' && !schema.options"
+                                    :id="`config-${key}`"
+                                    v-model="tempConfig[key]"
+                                    :placeholder="schema.placeholder || ''"
+                                    class="settings-text-input"
+                                    />
+
+                            <!-- Boolean toggle -->
+                            <div v-else-if="schema.type === 'boolean'" class="boolean-config">
+                                <NcCheckboxRadioSwitch
+                                        v-model="tempConfig[key]"
+                                        type="switch"
+                                        class="settings-switch"
+                                        >
+                                        {{ tempConfig[key] ? t('agora', 'Enabled') : t('agora', 'Disabled') }}
+                                </NcCheckboxRadioSwitch>
+                            </div>
+
+                            <!-- Select dropdown -->
+                            <NcSelect
+                                    v-else-if="schema.options"
+                                    :id="`config-${key}`"
+                                    v-model="tempConfig[key]"
+                                    :options="getSelectOptions(schema)"
+                                    :placeholder="t('agora', 'Select an option')"
+                                    :clearable="false"
+                                    label-outside
+                                    class="settings-select"
+                                    />
+                        </div>
+
+                        <p v-if="schema.description" class="settings-field-description">
+                        {{ schema.description }}
+                        </p>
+                    </div>
                 </div>
-                <span v-else-if="tempConfig[key] === null" class="null-indicator">
-                  {{ t('agora', 'Unlimited (no restriction)') }}
-                </span>
-              </div>
-
-              <!-- Text input -->
-              <NcTextField
-                v-else-if="schema.type === 'string' && !schema.options"
-                :id="`config-${key}`"
-                v-model="tempConfig[key]"
-                :placeholder="schema.placeholder || ''"
-                class="settings-text-input"
-              />
-
-              <!-- Boolean toggle -->
-              <div v-else-if="schema.type === 'boolean'" class="boolean-config">
-                <NcCheckboxRadioSwitch
-                  v-model="tempConfig[key]"
-                  type="switch"
-                  class="settings-switch"
-                >
-                  {{ tempConfig[key] ? t('agora', 'Enabled') : t('agora', 'Disabled') }}
-                </NcCheckboxRadioSwitch>
-              </div>
-
-              <!-- Select dropdown -->
-              <NcSelect
-                v-else-if="schema.options"
-                :id="`config-${key}`"
-                v-model="tempConfig[key]"
-                :options="getSelectOptions(schema)"
-                :placeholder="t('agora', 'Select an option')"
-                :clearable="false"
-                label-outside
-                class="settings-select"
-              />
             </div>
 
-            <p v-if="schema.description" class="settings-field-description">
-              {{ schema.description }}
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <template #actions>
-        <NcButton @click="showConfigDialog = false">
-          {{ t('agora', 'Close') }}
-        </NcButton>
-      </template>
+            <template #actions>
+                <NcButton @click="showConfigDialog = false">
+                {{ t('agora', 'Close') }}
+                </NcButton>
+            </template>
     </NcDialog>
   </NcModal>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue'
+    import { ref, computed, watch, onMounted } from 'vue'
 import { t } from '@nextcloud/l10n'
 import NcModal from '@nextcloud/vue/components/NcModal'
 import NcDialog from '@nextcloud/vue/components/NcDialog'
@@ -491,28 +491,6 @@ const reactionOptions = [
   { value: '😡', label: 'Angry', emoji: '😡' },
 ]
 
-/* const availableEngines = computed(() => {
-  const engines = Object.entries(ENGINE_DEFINITIONS)
-    .filter(([id]) => id !== 'none' && id !== 'phased_voting')
-    .map(([id, engine]) => ({
-      id,
-      label: engine.label,
-      behavior: engine.behavior,
-      description: engine.description,
-      constraints: engine.constraints,
-      recommendedViews: engine.recommendedViews
-    }))
-
-  if (!props.optionCount) return engines
-
-  return engines.filter(engine => {
-    const constraints = engine.constraints
-    if (constraints?.min_options && props.optionCount! < constraints.min_options) return false
-    if (constraints?.max_options && props.optionCount! > constraints.max_options) return false
-    return true
-  })
-}) 
-*/
 
 const currentConfigSchema = computed(() => {
   if (!selectedEngine.value) return null
@@ -556,9 +534,7 @@ const getVariantIcon = (variantId: string) => {
   return icons[variantId] || Brain
 }
 
-const getEngineLabel = (engineId: string): string => {
-  return ENGINE_DEFINITIONS[engineId]?.label || engineId
-}
+const getEngineLabel = (engineId: string): string => ENGINE_DEFINITIONS[engineId]?.label || engineId
 
 const isReactionSelected = (value: string): boolean => {
   const reactions = tempConfig.value.allowed_reactions as string[] || []
@@ -630,13 +606,14 @@ const getEngineIcon = (engineId: string) => {
 const getEngineDescription = (engineId: string): string => 
   ENGINE_DEFINITIONS[engineId]?.description || t('agora', 'Vote using this method')
 
-const getBehaviorLabel = (behavior: string): string => {
+const getScopeLabel = (scope: string): string => {
   const labels: Record<string, string> = {
-    single: t('agora', 'Single choice'),
-    multi: t('agora', 'Multiple choices'),
-    flex: t('agora', 'Flexible')
+    per_option: t('agora', 'Per option'),
+    cross_option: t('agora', 'Cross option'),
+    flex: t('agora', 'Flexible'),
+    none: t('agora', 'No voting')
   }
-  return labels[behavior] || behavior
+  return labels[scope] || scope
 }
 
 const selectEngine = (engineId: string): void => {
@@ -741,733 +718,735 @@ onMounted(() => {
 
 <style scoped lang="scss">
 .engine-selector-modal {
-  padding: 0;
-  max-width: 900px;
-  background: var(--color-main-background);
-  border-radius: 24px;
-  overflow: visible;
+    padding: 0;
+    max-width: 900px;
+    background: var(--color-main-background);
+    border-radius: 24px;
+    overflow: visible;
 
-  .modal-header {
-    text-align: center;
-    padding: 32px 32px 24px;
-    background: linear-gradient(135deg, rgba(var(--color-primary-element-rgb), 0.05) 0%, rgba(var(--color-primary-element-rgb), 0.02) 100%);
-    border-bottom: 1px solid var(--color-border);
+    .modal-header {
+        text-align: center;
+        padding: 32px 32px 24px;
+        background: linear-gradient(135deg, rgba(var(--color-primary-element-rgb), 0.05) 0%, rgba(var(--color-primary-element-rgb), 0.02) 100%);
+        border-bottom: 1px solid var(--color-border);
 
-    .header-icon {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 72px;
-      height: 72px;
-      background: linear-gradient(135deg, var(--color-primary-element) 0%, var(--color-primary-element-light) 100%);
-      border-radius: 36px;
-      margin-bottom: 16px;
-      color: white;
-    }
-
-    h3 {
-      margin: 0 0 8px 0;
-      font-size: 24px;
-      font-weight: 700;
-    }
-
-    .modal-description {
-      margin: 0;
-      font-size: 14px;
-      color: var(--color-text-lighter);
-    }
-  }
-
-  .engine-basic-info {
-    padding: 24px 24px 0 24px;
-
-    .field {
-      margin-bottom: 16px;
-
-      label {
-        display: block;
-        margin-bottom: 8px;
-        font-size: 13px;
-        font-weight: 500;
-
-        .required {
-          color: var(--color-error);
-        }
-      }
-
-      .textarea-input {
-        width: 100%;
-        padding: 10px 12px;
-        border: 1px solid var(--color-border);
-        border-radius: 8px;
-        background: var(--color-main-background);
-        font-size: 13px;
-        font-family: inherit;
-        resize: vertical;
-        transition: all 0.2s;
-
-        &:focus {
-          outline: none;
-          border-color: var(--color-primary-element);
-          box-shadow: 0 0 0 2px rgba(var(--color-primary-element-rgb), 0.1);
-        }
-      }
-
-      .field-error {
-        margin: 4px 0 0 0;
-        font-size: 11px;
-        color: var(--color-error);
-      }
-    }
-  }
-
-  .engine-grid-wrapper {
-    padding: 24px;
-    max-height: 500px;
-    overflow-y: auto;
-    
-    &::-webkit-scrollbar {
-      width: 8px;
-      height: 8px;
-    }
-    
-    &::-webkit-scrollbar-track {
-      background: var(--color-background-dark);
-      border-radius: 4px;
-    }
-    
-    &::-webkit-scrollbar-thumb {
-      background: var(--color-border);
-      border-radius: 4px;
-      
-      &:hover {
-        background: var(--color-text-lighter);
-      }
-    }
-  }
-
-  .engine-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 20px;
-
-    .engine-card {
-      position: relative;
-      padding: 20px;
-      background: var(--color-background-dark);
-      border: 2px solid var(--color-border);
-      border-radius: 16px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-
-      &:hover {
-        transform: translateY(-2px);
-        border-color: var(--color-primary-element);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      }
-
-      &.selected {
-        border-color: var(--color-primary-element);
-        background: rgba(var(--color-primary-element-rgb), 0.05);
-      }
-
-      .engine-card-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 12px;
-
-        .engine-icon {
-          width: 52px;
-          height: 52px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          background: var(--color-main-background);
-          border-radius: 12px;
-          color: var(--color-primary-element);
-        }
-
-        .engine-badge {
-          font-size: 11px;
-          padding: 4px 8px;
-          border-radius: 20px;
-          font-weight: 500;
-
-          &.single { background: #3498db20; color: #3498db; }
-          &.multi { background: #9b59b620; color: #9b59b6; }
-          &.flex { background: #e67e2220; color: #e67e22; }
-        }
-      }
-
-      .engine-card-content {
-        h4 {
-          margin: 0 0 8px 0;
-          font-size: 16px;
-          font-weight: 600;
-        }
-
-        p {
-          margin: 0 0 8px 0;
-          font-size: 12px;
-          color: var(--color-text-lighter);
-          line-height: 1.4;
-        }
-
-        .engine-constraints {
-          display: flex;
-          gap: 8px;
-          margin-top: 8px;
-
-          .constraint-badge {
-            font-size: 10px;
-            padding: 2px 6px;
-            background: var(--color-background-hover);
-            border-radius: 12px;
-            color: var(--color-text-lighter);
-          }
-        }
-      }
-
-      .engine-check {
-        position: absolute;
-        top: 12px;
-        right: 12px;
-        color: var(--color-primary-element);
-      }
-    }
-  }
-
-  .subtype-selection-section {
-    margin: 0 24px 24px 24px;
-    padding: 20px;
-    background: var(--color-background-dark);
-    border-radius: 16px;
-    border: 1px solid var(--color-border);
-
-    .subtype-header {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 16px;
-
-      svg {
-        color: var(--color-primary-element);
-      }
-
-      h5 {
-        margin: 0;
-        font-size: 15px;
-        font-weight: 600;
-      }
-    }
-
-    .subtype-select {
-      :deep(.vs__dropdown-menu) {
-        max-height: 300px;
-      }
-
-      .variant-option {
-        display: flex;
-        align-items: flex-start;
-        gap: 12px;
-        padding: 8px;
-
-        .variant-icon {
-          flex-shrink: 0;
-          margin-top: 2px;
-          color: var(--color-primary-element);
-        }
-
-        .variant-content {
-          flex: 1;
-
-          .variant-label {
-            font-weight: 500;
-            margin-bottom: 2px;
-          }
-
-          .variant-description {
-            font-size: 12px;
-            color: var(--color-text-lighter);
-          }
-        }
-      }
-    }
-  }
-
-  .grade-config-section {
-    margin: 0 24px 24px 24px;
-    padding: 20px;
-    background: var(--color-background-dark);
-    border-radius: 16px;
-    border: 1px solid var(--color-border);
-
-    .config-header {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 16px;
-
-      svg {
-        color: var(--color-primary-element);
-      }
-
-      h5 {
-        margin: 0;
-        font-size: 15px;
-        font-weight: 600;
-      }
-    }
-
-    .grades-list {
-      margin-bottom: 12px;
-
-      .grade-item {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        margin-bottom: 8px;
-
-        .grade-input {
-          flex: 1;
-        }
-
-        .grade-remove {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          width: 32px;
-          height: 32px;
-          border: none;
-          border-radius: 8px;
-          background: var(--color-background-hover);
-          color: var(--color-text-lighter);
-          cursor: pointer;
-          transition: all 0.2s;
-
-          &:hover {
-            background: var(--color-error);
+        .header-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 72px;
+            height: 72px;
+            background: linear-gradient(135deg, var(--color-primary-element) 0%, var(--color-primary-element-light) 100%);
+            border-radius: 36px;
+            margin-bottom: 16px;
             color: white;
-          }
-        }
-      }
-    }
-
-    .grade-add {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 16px;
-      border: 1px dashed var(--color-border);
-      border-radius: 8px;
-      background: transparent;
-      color: var(--color-primary-element);
-      font-size: 13px;
-      cursor: pointer;
-      transition: all 0.2s;
-
-      &:hover {
-        background: rgba(var(--color-primary-element-rgb), 0.05);
-        border-color: var(--color-primary-element);
-      }
-    }
-  }
-
-  .reactions-config-section {
-    margin: 0 24px 24px 24px;
-    padding: 20px;
-    background: var(--color-background-dark);
-    border-radius: 16px;
-    border: 1px solid var(--color-border);
-
-    .config-header {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 16px;
-
-      svg {
-        color: var(--color-primary-element);
-      }
-
-      h5 {
-        margin: 0;
-        font-size: 15px;
-        font-weight: 600;
-      }
-    }
-
-    .reactions-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-      gap: 12px;
-      margin-bottom: 16px;
-
-      .reaction-item {
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 8px;
-        padding: 16px 12px;
-        background: var(--color-main-background);
-        border: 2px solid var(--color-border);
-        border-radius: 12px;
-        cursor: pointer;
-        transition: all 0.2s ease;
-
-        &:hover {
-          transform: translateY(-2px);
-          border-color: var(--color-primary-element);
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
-        &.selected {
-          border-color: var(--color-primary-element);
-          background: rgba(var(--color-primary-element-rgb), 0.05);
-
-          .reaction-emoji {
-            transform: scale(1.1);
-          }
+        h3 {
+            margin: 0 0 8px 0;
+            font-size: 24px;
+            font-weight: 700;
         }
 
-        .reaction-emoji {
-          font-size: 32px;
-          transition: transform 0.2s ease;
+        .modal-description {
+            margin: 0;
+            font-size: 14px;
+            color: var(--color-text-lighter);
         }
-
-        .reaction-label {
-          font-size: 12px;
-          color: var(--color-text-lighter);
-          text-align: center;
-        }
-
-        .reaction-check {
-          position: absolute;
-          top: 8px;
-          right: 8px;
-          color: var(--color-primary-element);
-        }
-      }
     }
 
-    .reaction-limit {
-      label {
-        display: block;
-        margin-bottom: 8px;
-        font-size: 13px;
-        font-weight: 500;
-      }
+    .engine-basic-info {
+        padding: 24px 24px 0 24px;
 
-      .limit-input {
-        width: 100px;
-      }
-    }
-  }
+        .field {
+            margin-bottom: 16px;
 
-  .engine-config-section {
-    margin: 0 24px 24px 24px;
-    
-    .config-settings-trigger {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      width: 100%;
-      padding: 16px;
-      background: linear-gradient(135deg, rgba(var(--color-primary-element-rgb), 0.08) 0%, rgba(var(--color-primary-element-rgb), 0.03) 100%);
-      border: 2px dashed var(--color-border);
-      border-radius: 16px;
-      color: var(--color-primary-element);
-      font-size: 14px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.2s;
+            label {
+                display: block;
+                margin-bottom: 8px;
+                font-size: 13px;
+                font-weight: 500;
 
-      &:hover {
-        background: rgba(var(--color-primary-element-rgb), 0.12);
-        border-color: var(--color-primary-element);
-        transform: translateY(-1px);
-      }
+                .required {
+                    color: var(--color-error);
+                }
+            }
 
-      .config-count-badge {
-        background: var(--color-primary-element);
-        color: white;
-        padding: 2px 8px;
-        border-radius: 12px;
-        font-size: 12px;
-        font-weight: 600;
-      }
-    }
-  }
-
-  .engine-info-section {
-    margin: 0 24px 24px 24px;
-    padding: 16px;
-    background: var(--color-background-dark);
-    border-radius: 12px;
-    border: 1px solid var(--color-border);
-
-    .info-message {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      color: var(--color-text-lighter);
-      font-size: 13px;
-
-      svg {
-        flex-shrink: 0;
-        color: var(--color-primary-element);
-      }
-    }
-  }
-
-  .engine-status-section {
-    margin: 0 24px 24px 24px;
-    padding: 20px;
-    background: var(--color-background-dark);
-    border-radius: 16px;
-    border: 1px solid var(--color-border);
-
-    .status-header {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 16px;
-
-      svg {
-        color: var(--color-primary-element);
-      }
-
-      h5 {
-        margin: 0;
-        font-size: 15px;
-        font-weight: 600;
-      }
-    }
-
-    .status-hint {
-      margin-left: 8px;
-      font-size: 11px;
-      color: var(--color-text-lighter);
-    }
-  }
-
-  .modal-footer {
-    display: flex;
-    justify-content: flex-end;
-    gap: 12px;
-    padding: 20px 24px;
-    background: var(--color-background-dark);
-    border-top: 1px solid var(--color-border);
-
-    .btn-secondary, .btn-primary {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 12px;
-      font-size: 14px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.2s;
-
-      &:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-      }
-    }
-
-    .btn-secondary {
-      background: var(--color-background-hover);
-      color: var(--color-main-text);
-
-      &:hover:not(:disabled) {
-        background: var(--color-background-dark);
-        transform: translateY(-1px);
-      }
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, var(--color-primary-element) 0%, var(--color-primary-element-light) 100%);
-      color: white;
-
-      &:hover:not(:disabled) {
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(var(--color-primary-element-rgb), 0.3);
-      }
-    }
-  }
-}
-
-// Settings Dialog Styles
-.settings-dialog-content {
-  padding: 0;
-
-  .settings-header {
-    text-align: center;
-    padding: 24px 24px 20px;
-    background: linear-gradient(135deg, rgba(var(--color-primary-element-rgb), 0.05) 0%, rgba(var(--color-primary-element-rgb), 0.02) 100%);
-    border-bottom: 1px solid var(--color-border);
-    margin: -8px -8px 0 -8px;
-
-    .settings-icon {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 56px;
-      height: 56px;
-      background: linear-gradient(135deg, var(--color-primary-element) 0%, var(--color-primary-element-light) 100%);
-      border-radius: 28px;
-      margin-bottom: 16px;
-      color: white;
-    }
-
-    h4 {
-      margin: 0 0 8px 0;
-      font-size: 20px;
-      font-weight: 600;
-    }
-
-    p {
-      margin: 0;
-      font-size: 13px;
-      color: var(--color-text-lighter);
-    }
-  }
-
-  .settings-fields {
-    padding: 24px;
-    max-height: 500px;
-    overflow-y: auto;
-
-    .settings-field {
-      margin-bottom: 24px;
-
-      &:last-child {
-        margin-bottom: 0;
-      }
-
-      .settings-field-label {
-        display: block;
-        margin-bottom: 8px;
-        font-size: 13px;
-        font-weight: 500;
-        color: var(--color-main-text);
-
-        .field-hint {
-          font-size: 11px;
-          color: var(--color-text-lighter);
-          font-weight: normal;
-        }
-      }
-
-      .settings-field-input {
-        .number-config {
-          .null-number-control {
-            margin-bottom: 12px;
-          }
-
-          .slider-control {
-            .settings-range-input {
-              width: 100%;
-              height: 6px;
-              -webkit-appearance: none;
-              background: linear-gradient(to right, 
-                var(--color-primary-element) 0%, 
-                var(--color-primary-element) var(--range-progress, 0%), 
-                var(--color-border) var(--range-progress, 0%), 
-                var(--color-border) 100%);
-              border-radius: 3px;
-              outline: none;
-              margin-bottom: 12px;
-
-              &::-webkit-slider-thumb {
-                -webkit-appearance: none;
-                width: 20px;
-                height: 20px;
-                border-radius: 50%;
-                background: var(--color-primary-element);
-                cursor: pointer;
+            .textarea-input {
+                width: 100%;
+                padding: 10px 12px;
+                border: 1px solid var(--color-border);
+                border-radius: 8px;
+                background: var(--color-main-background);
+                font-size: 13px;
+                font-family: inherit;
+                resize: vertical;
                 transition: all 0.2s;
-                border: 2px solid white;
-                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+
+                &:focus {
+                    outline: none;
+                    border-color: var(--color-primary-element);
+                    box-shadow: 0 0 0 2px rgba(var(--color-primary-element-rgb), 0.1);
+                }
+            }
+
+            .field-error {
+                margin: 4px 0 0 0;
+                font-size: 11px;
+                color: var(--color-error);
+            }
+        }
+    }
+
+    .engine-grid-wrapper {
+        padding: 24px;
+        max-height: 500px;
+        overflow-y: auto;
+
+        &::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        &::-webkit-scrollbar-track {
+            background: var(--color-background-dark);
+            border-radius: 4px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background: var(--color-border);
+            border-radius: 4px;
+
+            &:hover {
+                background: var(--color-text-lighter);
+            }
+        }
+    }
+
+    .engine-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+
+        .engine-card {
+            position: relative;
+            padding: 20px;
+            background: var(--color-background-dark);
+            border: 2px solid var(--color-border);
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+
+            &:hover {
+                transform: translateY(-2px);
+                border-color: var(--color-primary-element);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            }
+
+            &.selected {
+                border-color: var(--color-primary-element);
+                background: rgba(var(--color-primary-element-rgb), 0.05);
+            }
+
+            .engine-card-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 12px;
+
+                .engine-icon {
+                    width: 52px;
+                    height: 52px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    background: var(--color-main-background);
+                    border-radius: 12px;
+                    color: var(--color-primary-element);
+                }
+
+                .engine-badge {
+                    font-size: 11px;
+                    padding: 4px 8px;
+                    border-radius: 20px;
+                    font-weight: 500;
+                    
+  &.per_option { background: #3498db20; color: #3498db; }
+  &.cross_option { background: #9b59b620; color: #9b59b6; }
+  &.flex { background: #e67e2220; color: #e67e22; }
+  &.none { background: #95a5a620; color: #95a5a6; }
+
+                }
+            }
+
+            .engine-card-content {
+                h4 {
+                    margin: 0 0 8px 0;
+                    font-size: 16px;
+                    font-weight: 600;
+                }
+
+                p {
+                    margin: 0 0 8px 0;
+                    font-size: 12px;
+                    color: var(--color-text-lighter);
+                    line-height: 1.4;
+                }
+
+                .engine-constraints {
+                    display: flex;
+                    gap: 8px;
+                    margin-top: 8px;
+
+                    .constraint-badge {
+                        font-size: 10px;
+                        padding: 2px 6px;
+                        background: var(--color-background-hover);
+                        border-radius: 12px;
+                        color: var(--color-text-lighter);
+                    }
+                }
+            }
+
+            .engine-check {
+                position: absolute;
+                top: 12px;
+                right: 12px;
+                color: var(--color-primary-element);
+            }
+        }
+    }
+
+    .subtype-selection-section {
+        margin: 0 24px 24px 24px;
+        padding: 20px;
+        background: var(--color-background-dark);
+        border-radius: 16px;
+        border: 1px solid var(--color-border);
+
+        .subtype-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+
+            svg {
+                color: var(--color-primary-element);
+            }
+
+            h5 {
+                margin: 0;
+                font-size: 15px;
+                font-weight: 600;
+            }
+        }
+
+        .subtype-select {
+            :deep(.vs__dropdown-menu) {
+                max-height: 300px;
+            }
+
+            .variant-option {
+                display: flex;
+                align-items: flex-start;
+                gap: 12px;
+                padding: 8px;
+
+                .variant-icon {
+                    flex-shrink: 0;
+                    margin-top: 2px;
+                    color: var(--color-primary-element);
+                }
+
+                .variant-content {
+                    flex: 1;
+
+                    .variant-label {
+                        font-weight: 500;
+                        margin-bottom: 2px;
+                    }
+
+                    .variant-description {
+                        font-size: 12px;
+                        color: var(--color-text-lighter);
+                    }
+                }
+            }
+        }
+    }
+
+    .grade-config-section {
+        margin: 0 24px 24px 24px;
+        padding: 20px;
+        background: var(--color-background-dark);
+        border-radius: 16px;
+        border: 1px solid var(--color-border);
+
+        .config-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+
+            svg {
+                color: var(--color-primary-element);
+            }
+
+            h5 {
+                margin: 0;
+                font-size: 15px;
+                font-weight: 600;
+            }
+        }
+
+        .grades-list {
+            margin-bottom: 12px;
+
+            .grade-item {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin-bottom: 8px;
+
+                .grade-input {
+                    flex: 1;
+                }
+
+                .grade-remove {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    width: 32px;
+                    height: 32px;
+                    border: none;
+                    border-radius: 8px;
+                    background: var(--color-background-hover);
+                    color: var(--color-text-lighter);
+                    cursor: pointer;
+                    transition: all 0.2s;
+
+                    &:hover {
+                        background: var(--color-error);
+                        color: white;
+                    }
+                }
+            }
+        }
+
+        .grade-add {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border: 1px dashed var(--color-border);
+            border-radius: 8px;
+            background: transparent;
+            color: var(--color-primary-element);
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+
+            &:hover {
+                background: rgba(var(--color-primary-element-rgb), 0.05);
+                border-color: var(--color-primary-element);
+            }
+        }
+    }
+
+    .reactions-config-section {
+        margin: 0 24px 24px 24px;
+        padding: 20px;
+        background: var(--color-background-dark);
+        border-radius: 16px;
+        border: 1px solid var(--color-border);
+
+        .config-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+
+            svg {
+                color: var(--color-primary-element);
+            }
+
+            h5 {
+                margin: 0;
+                font-size: 15px;
+                font-weight: 600;
+            }
+        }
+
+        .reactions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
+
+            .reaction-item {
+                position: relative;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 8px;
+                padding: 16px 12px;
+                background: var(--color-main-background);
+                border: 2px solid var(--color-border);
+                border-radius: 12px;
+                cursor: pointer;
+                transition: all 0.2s ease;
 
                 &:hover {
-                  transform: scale(1.1);
+                    transform: translateY(-2px);
+                    border-color: var(--color-primary-element);
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
                 }
-              }
 
-              &::-moz-range-thumb {
-                width: 20px;
-                height: 20px;
-                border-radius: 50%;
-                background: var(--color-primary-element);
-                cursor: pointer;
-                transition: all 0.2s;
-                border: 2px solid white;
-                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-              }
+                &.selected {
+                    border-color: var(--color-primary-element);
+                    background: rgba(var(--color-primary-element-rgb), 0.05);
+
+                    .reaction-emoji {
+                        transform: scale(1.1);
+                    }
+                }
+
+                .reaction-emoji {
+                    font-size: 32px;
+                    transition: transform 0.2s ease;
+                }
+
+                .reaction-label {
+                    font-size: 12px;
+                    color: var(--color-text-lighter);
+                    text-align: center;
+                }
+
+                .reaction-check {
+                    position: absolute;
+                    top: 8px;
+                    right: 8px;
+                    color: var(--color-primary-element);
+                }
+            }
+        }
+
+        .reaction-limit {
+            label {
+                display: block;
+                margin-bottom: 8px;
+                font-size: 13px;
+                font-weight: 500;
             }
 
-            .slider-value {
-              display: flex;
-              align-items: center;
-              justify-content: space-between;
-              gap: 12px;
-
-              .value-number {
-                font-size: 14px;
-                font-weight: 600;
-                color: var(--color-primary-element);
-                background: rgba(var(--color-primary-element-rgb), 0.1);
-                padding: 4px 12px;
-                border-radius: 20px;
-                min-width: 50px;
-                text-align: center;
-              }
-
-              :deep(.progress-bar) {
-                flex: 1;
-              }
+            .limit-input {
+                width: 100px;
             }
-          }
-
-          .null-indicator {
-            font-size: 13px;
-            color: var(--color-text-lighter);
-            font-style: italic;
-            padding: 8px 0;
-            display: inline-block;
-          }
         }
-
-        .settings-text-input {
-          width: 100%;
-        }
-
-        .boolean-config {
-          .settings-switch {
-            :deep(.checkbox-radio-switch) {
-              justify-content: flex-start;
-            }
-          }
-        }
-
-        .settings-select {
-          width: 100%;
-        }
-      }
-
-      .settings-field-description {
-        margin: 8px 0 0 0;
-        font-size: 11px;
-        color: var(--color-text-lighter);
-        line-height: 1.4;
-      }
     }
-  }
+
+    .engine-config-section {
+        margin: 0 24px 24px 24px;
+
+        .config-settings-trigger {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, rgba(var(--color-primary-element-rgb), 0.08) 0%, rgba(var(--color-primary-element-rgb), 0.03) 100%);
+            border: 2px dashed var(--color-border);
+            border-radius: 16px;
+            color: var(--color-primary-element);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+
+            &:hover {
+                background: rgba(var(--color-primary-element-rgb), 0.12);
+                border-color: var(--color-primary-element);
+                transform: translateY(-1px);
+            }
+
+            .config-count-badge {
+                background: var(--color-primary-element);
+                color: white;
+                padding: 2px 8px;
+                border-radius: 12px;
+                font-size: 12px;
+                font-weight: 600;
+            }
+        }
+    }
+
+    .engine-info-section {
+        margin: 0 24px 24px 24px;
+        padding: 16px;
+        background: var(--color-background-dark);
+        border-radius: 12px;
+        border: 1px solid var(--color-border);
+
+        .info-message {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--color-text-lighter);
+            font-size: 13px;
+
+            svg {
+                flex-shrink: 0;
+                color: var(--color-primary-element);
+            }
+        }
+    }
+
+    .engine-status-section {
+        margin: 0 24px 24px 24px;
+        padding: 20px;
+        background: var(--color-background-dark);
+        border-radius: 16px;
+        border: 1px solid var(--color-border);
+
+        .status-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+
+            svg {
+                color: var(--color-primary-element);
+            }
+
+            h5 {
+                margin: 0;
+                font-size: 15px;
+                font-weight: 600;
+            }
+        }
+
+        .status-hint {
+            margin-left: 8px;
+            font-size: 11px;
+            color: var(--color-text-lighter);
+        }
+    }
+
+    .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        padding: 20px 24px;
+        background: var(--color-background-dark);
+        border-top: 1px solid var(--color-border);
+
+        .btn-secondary, .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+
+            &:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
+        }
+
+        .btn-secondary {
+            background: var(--color-background-hover);
+            color: var(--color-main-text);
+
+            &:hover:not(:disabled) {
+                background: var(--color-background-dark);
+                transform: translateY(-1px);
+            }
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--color-primary-element) 0%, var(--color-primary-element-light) 100%);
+            color: white;
+
+            &:hover:not(:disabled) {
+                transform: translateY(-1px);
+                box-shadow: 0 4px 12px rgba(var(--color-primary-element-rgb), 0.3);
+            }
+        }
+    }
 }
+
+    // Settings Dialog Styles
+        .settings-dialog-content {
+        padding: 0;
+
+        .settings-header {
+            text-align: center;
+            padding: 24px 24px 20px;
+            background: linear-gradient(135deg, rgba(var(--color-primary-element-rgb), 0.05) 0%, rgba(var(--color-primary-element-rgb), 0.02) 100%);
+            border-bottom: 1px solid var(--color-border);
+            margin: -8px -8px 0 -8px;
+
+            .settings-icon {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 56px;
+                height: 56px;
+                background: linear-gradient(135deg, var(--color-primary-element) 0%, var(--color-primary-element-light) 100%);
+                border-radius: 28px;
+                margin-bottom: 16px;
+                color: white;
+            }
+
+            h4 {
+                margin: 0 0 8px 0;
+                font-size: 20px;
+                font-weight: 600;
+            }
+
+            p {
+                margin: 0;
+                font-size: 13px;
+                color: var(--color-text-lighter);
+            }
+        }
+
+        .settings-fields {
+            padding: 24px;
+            max-height: 500px;
+            overflow-y: auto;
+
+            .settings-field {
+                margin-bottom: 24px;
+
+                &:last-child {
+                    margin-bottom: 0;
+                }
+
+                .settings-field-label {
+                    display: block;
+                    margin-bottom: 8px;
+                    font-size: 13px;
+                    font-weight: 500;
+                    color: var(--color-main-text);
+
+                    .field-hint {
+                        font-size: 11px;
+                        color: var(--color-text-lighter);
+                        font-weight: normal;
+                    }
+                }
+
+                .settings-field-input {
+                    .number-config {
+                        .null-number-control {
+                            margin-bottom: 12px;
+                        }
+
+                        .slider-control {
+                            .settings-range-input {
+                                width: 100%;
+                                height: 6px;
+                                -webkit-appearance: none;
+                                background: linear-gradient(to right, 
+                                    var(--color-primary-element) 0%, 
+                                    var(--color-primary-element) var(--range-progress, 0%), 
+                                    var(--color-border) var(--range-progress, 0%), 
+                                    var(--color-border) 100%);
+                                border-radius: 3px;
+                                outline: none;
+                                margin-bottom: 12px;
+
+                                &::-webkit-slider-thumb {
+                                    -webkit-appearance: none;
+                                    width: 20px;
+                                    height: 20px;
+                                    border-radius: 50%;
+                                    background: var(--color-primary-element);
+                                    cursor: pointer;
+                                    transition: all 0.2s;
+                                    border: 2px solid white;
+                                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+
+                                    &:hover {
+                                        transform: scale(1.1);
+                                    }
+                                }
+
+                                &::-moz-range-thumb {
+                                    width: 20px;
+                                    height: 20px;
+                                    border-radius: 50%;
+                                    background: var(--color-primary-element);
+                                    cursor: pointer;
+                                    transition: all 0.2s;
+                                    border: 2px solid white;
+                                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+                                }
+                            }
+
+                            .slider-value {
+                                display: flex;
+                                align-items: center;
+                                justify-content: space-between;
+                                gap: 12px;
+
+                                .value-number {
+                                    font-size: 14px;
+                                    font-weight: 600;
+                                    color: var(--color-primary-element);
+                                    background: rgba(var(--color-primary-element-rgb), 0.1);
+                                    padding: 4px 12px;
+                                    border-radius: 20px;
+                                    min-width: 50px;
+                                    text-align: center;
+                                }
+
+                                :deep(.progress-bar) {
+                                    flex: 1;
+                                }
+                            }
+                        }
+
+                        .null-indicator {
+                            font-size: 13px;
+                            color: var(--color-text-lighter);
+                            font-style: italic;
+                            padding: 8px 0;
+                            display: inline-block;
+                        }
+                    }
+
+                    .settings-text-input {
+                        width: 100%;
+                    }
+
+                    .boolean-config {
+                        .settings-switch {
+                            :deep(.checkbox-radio-switch) {
+                                justify-content: flex-start;
+                            }
+                        }
+                    }
+
+                    .settings-select {
+                        width: 100%;
+                    }
+                }
+
+                .settings-field-description {
+                    margin: 8px 0 0 0;
+                    font-size: 11px;
+                    color: var(--color-text-lighter);
+                    line-height: 1.4;
+                }
+            }
+        }
+    }
 </style>

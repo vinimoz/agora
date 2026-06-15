@@ -526,12 +526,6 @@ const hasVotePeriod = computed(() => inquiry.miscFields?.support_start && inquir
 </template>
 
 <style lang="scss" scoped>
-// Common variables for consistent metadata chips
-$metadata-chip-bg: var(--color-background-dark);
-$metadata-chip-radius: 16px;
-$metadata-chip-padding: 4px 8px;
-$metadata-gap: 4px;
-
 .inquiry-item {
     &.list-view {
         display: flex;
@@ -556,7 +550,7 @@ $metadata-gap: 4px;
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: $metadata-gap;
+            gap: 4px;
         }
 
         .item__title {
@@ -601,22 +595,18 @@ $metadata-gap: 4px;
             align-items: center;
             justify-content: flex-end;
 
-            // UNIFIED STYLES: All metadata chips (badge-bubble and metadata-item) get same background
-            .badge-bubble,
-            .metadata-item {
+            .badge-bubble {
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
-                gap: $metadata-gap;
-                border-radius: $metadata-chip-radius;
-                padding: $metadata-chip-padding;
+                border-radius: 16px;
+                padding: 4px 8px;
                 font-size: 0.8rem;
                 line-height: 1;
                 min-height: 32px;
-                background-color: $metadata-chip-bg;
+                min-width: 32px;
                 transition: all 0.2s ease;
 
-                // Override specific backgrounds to maintain consistency
                 &.error {
                     background-color: var(--color-error);
                     color: white;
@@ -635,21 +625,19 @@ $metadata-gap: 4px;
                     border-color: var(--color-success);
                 }
 
-                // Remove special background for participated - make it consistent
                 &.participated {
-                    background-color: $metadata-chip-bg;
+                    background-color: var(--color-success);
+                    color: white;
+                    border-color: var(--color-success);
+                }
+
+                &.status--inquiry {
                 }
 
                 .icon {
+                    margin-right: 4px;
                     display: flex;
                     align-items: center;
-                }
-
-                // SupportFeature wrapper inside badge needs same styling
-                .support-feature-wrapper {
-                    display: inline-flex;
-                    align-items: center;
-                    gap: $metadata-gap;
                 }
 
                 // Quorum compact style inside badge
@@ -671,13 +659,6 @@ $metadata-gap: 4px;
                         margin-left: 2px;
                     }
                 }
-            }
-
-            // Parent link should remain transparent
-            .metadata-item.parent-link {
-                background-color: transparent;
-                padding: 0;
-                min-height: auto;
             }
 
             .user-bubble__wrapper {
@@ -859,21 +840,25 @@ $metadata-gap: 4px;
                         gap: 8px;
                     }
 
-                    // UNIFIED STYLES: All metadata items get consistent background
                     .metadata-item {
-                        display: inline-flex;
+                        display: flex;
                         align-items: center;
-                        gap: $metadata-gap;
-                        padding: $metadata-chip-padding;
-                        border-radius: $metadata-chip-radius;
+                        gap: 4px;
+                        padding: 4px 8px;
+                        border-radius: 6px;
                         font-size: 12px;
-                        color: var(--color-main-text);
-                        background-color: $metadata-chip-bg;
+                        color: var(--color-text-maxcontrast);
+                        background-color: var(--color-background-dark);
                         white-space: nowrap;
 
-                        // Remove special background colors for consistency
+                        &.parent-link {
+                            background-color: transparent;
+                            padding: 2px 4px;
+                        }
+
                         &.participated {
-                            background-color: $metadata-chip-bg;
+                            background-color: var(--color-success-light);
+                            color: var(--color-success);
                         }
 
                         &.comments,
@@ -884,19 +869,6 @@ $metadata-gap: 4px;
                             &:hover {
                                 background-color: var(--color-background-darker);
                             }
-                        }
-
-                        // Parent link remains transparent
-                        &.parent-link {
-                            background-color: transparent;
-                            padding: 2px 4px;
-                        }
-
-                        // SupportFeature needs consistent styling - wrap in a span with this class
-                        .support-feature-wrapper {
-                            display: inline-flex;
-                            align-items: center;
-                            gap: $metadata-gap;
                         }
 
                         // Quorum compact style inside badge for grid mode
@@ -938,16 +910,15 @@ $metadata-gap: 4px;
                         gap: 8px;
                     }
 
-                    // UNIFIED STYLES: Vote date boxes get same background as metadata items
                     .vote-date-box {
                         display: flex;
                         align-items: center;
-                        gap: $metadata-gap;
-                        padding: $metadata-chip-padding;
-                        background-color: $metadata-chip-bg;
-                        border-radius: $metadata-chip-radius;
+                        gap: 4px;
+                        padding: 6px 10px;
+                        background-color: var(--color-background-dark);
+                        border-radius: 6px;
                         font-size: 11px;
-                        color: var(--color-main-text);
+                        color: var(--color-text-maxcontrast);
                         flex: 1;
 
                         &.start-date {
@@ -984,7 +955,7 @@ $metadata-gap: 4px;
                         .date-item {
                             display: flex;
                             align-items: center;
-                            gap: $metadata-gap;
+                            gap: 4px;
                             white-space: nowrap;
 
                             &.last-interaction,

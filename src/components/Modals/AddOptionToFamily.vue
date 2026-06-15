@@ -88,23 +88,6 @@
 
         <!-- Configuration section for vote family -->
         <div v-if="familyType === 'vote' && selectedOption" class="vote-config-section">
-          <div class="config-header">
-            <Settings :size="18" />
-            <h4>{{ t('agora', 'Voting configuration') }}</h4>
-          </div>
-
-          <div class="engine-info-message">
-            <div class="engine-badge-display">
-              <component :is="getEngineIcon(currentEngineId)" :size="16" />
-              <span>{{ getEngineLabel(currentEngineId) }}</span>
-              <span class="engine-badge-mini" :class="currentEngineBehavior">
-                {{ getBehaviorLabel(currentEngineBehavior) }}
-              </span>
-            </div>
-            <p class="engine-description">
-              {{ currentEngineDescription }}
-            </p>
-          </div>
         </div>
       </div>
 
@@ -307,49 +290,6 @@ function getForceLayouts(option: Option): string[] {
   return []
 }
 
-function getEngineIcon(engineId: string): unknown {
-  const icons: Record<string, unknown> = {
-    binary: ThumbsUp,
-    ternary: Scale,
-    reaction: Heart,
-    score: Star,
-    approval: CheckCircle,
-    ranked: TrendingUp,
-    borda: Award,
-    condorcet: Brain,
-    majority_judgment: Gauge,
-    token_weighted: Users,
-    quadratic: TrendingUp
-  }
-  return icons[engineId] || Vote
-}
-
-function getEngineLabel(engineId: string): string {
-  const labels: Record<string, string> = {
-    binary: t('agora', 'Yes / No'),
-    ternary: t('agora', 'For / Abstain / Against'),
-    reaction: t('agora', 'Reactions'),
-    score: t('agora', 'Score Voting'),
-    approval: t('agora', 'Approval Voting'),
-    ranked: t('agora', 'Ranked Choice'),
-    borda: t('agora', 'Borda Count'),
-    condorcet: t('agora', 'Condorcet'),
-    majority_judgment: t('agora', 'Majority Judgment'),
-    token_weighted: t('agora', 'Token / Weighted'),
-    quadratic: t('agora', 'Quadratic Voting')
-  }
-  return labels[engineId] || engineId
-}
-
-function getBehaviorLabel(behavior: string): string {
-  const labels: Record<string, string> = {
-    single: t('agora', 'Single choice'),
-    multi: t('agora', 'Multiple choices'),
-    flex: t('agora', 'Flexible')
-  }
-  return labels[behavior] || behavior
-}
-
 
 async function addToKanban(): Promise<void> {
   if (!selectedOption.value || !targetStatus.value) return
@@ -429,12 +369,15 @@ async function addToVote(): Promise<void> {
   try {
     // Check if option already has vote in force_layouts
     const forceLayouts = getForceLayouts(selectedOption.value)
-   if (forceLayouts.includes('vote')) {
-      return
-    }
+    const updatedLayouts = null
 
-    // Add vote to force_layouts
-    const updatedLayouts = [...forceLayouts, 'vote']
+   if (forceLayouts.includes('vote')) {
+      const updatedLayouts = forceLayouts
+    }
+    else {
+      const updatedLayouts = [...forceLayouts, 'vote']
+
+    }
 
     // Prepare miscFields with vote
     const currentMiscFields = selectedOption.value.miscFields || {}

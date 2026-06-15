@@ -25,7 +25,7 @@ import { computed } from 'vue'
 import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import { ThumbsUp, ThumbsDown } from 'lucide-vue-next'
-import type { SupportData, SupportValue, Option } from '../../Types/index'
+import type { SupportData, Option } from '../../Types/index'
 
 const props = defineProps<{
   engineConfig: Record<string, unknown>
@@ -35,7 +35,7 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  vote: [value: SupportValue]
+  'update:score': [optionId: number, score: number | null]
 }>()
 
 const binaryOptions = [
@@ -52,13 +52,14 @@ const currentValue = computed(() => {
   return null
 })
 
-
 function isSelected(value: number) {
   return currentValue.value === value
 }
 
 function vote(value: number) {
-  emit('vote', value)
+  // Toggle: if already selected, remove; otherwise set
+  const newValue = currentValue.value === value ? null : value
+  emit('update:score', props.option.id, newValue)
 }
 </script>
 

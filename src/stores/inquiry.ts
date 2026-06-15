@@ -30,15 +30,16 @@ import { useSessionStore } from './session.ts'
 import { useOptionsStore } from './options.ts'
 import { useSubscriptionStore } from './subscription.ts'
 import { useSharesStore } from './shares.ts'
+import { useSupportsStore } from './supports.ts'
 import { useCommentsStore } from './comments.ts'
 import { useSupportEngineStore } from './supportEngine.ts'
 import { useAttachmentsStore } from './attachments.ts'
 import { useAppSettingsStore } from '../stores/appSettings.ts'
+import { useSupportResultStore } from './supportResult.ts'
 
 // Type definitions matching PHP constants
 export type AccessType = 'hidden' | 'public' | 'moderate' | 'private' | 'open'
 export type ShowResultsType = 'always' | 'closed' | 'never'
-export type InquiryType = 'debate' | 'proposal'
 export type ModerationWorkflowStatus = 'draft' | 'pending' | 'accepted' | 'rejected'
 export type InquiryWorkflowStatus = 'draft' | 'waiting_approval' | 'active' | 'closed' | 'rejected'
 export type SortParticipants = 'alphabetical' | 'supportCount' | 'unordered'
@@ -49,7 +50,6 @@ export type Meta = {
   status: StatusResults
 }
 
-// Configuration matching PHP InquiryConfiguration
 export type InquiryConfiguration = {
   access: AccessType
   autoReminder: boolean
@@ -72,7 +72,7 @@ export type InquiryStatus = {
   relevantThreshold: number
   deletionDate: number
   archivedDate: number
-  supportResult: SupportResult | null
+  supportResult: SupportResult[] | null
   countParticipants: number
   countComments: number
   countSupports: number
@@ -120,7 +120,7 @@ export type CurrentUserStatus = {
 // Main Inquiry type matching PHP jsonSerialize()
 export type Inquiry = {
   id: number
-  type: InquiryType
+  type: string
   family: string
   coverId: number
   title: string
@@ -184,7 +184,7 @@ export const useInquiryStore = defineStore('inquiry', {
       relevantThreshold: 0,
       deletionDate: 0,
       archivedDate: 0,
-      supportResult: null,
+      supportResult: [],
       countParticipants: 0,
       countComments: 0,
       countSupports: 0,
@@ -358,7 +358,9 @@ export const useInquiryStore = defineStore('inquiry', {
       const attachmentsStore = useAttachmentsStore()
       const subscriptionStore = useSubscriptionStore()
       const supportEngineStore = useSupportEngineStore()
-      
+      const supportsStore = useSupportsStore()
+      const supportResultStore = useSupportResultStore()
+
       this.meta.status = 'loading'
       
       try {
@@ -380,12 +382,15 @@ export const useInquiryStore = defineStore('inquiry', {
         this.$patch(response.data.inquiry)
 
         optionsStore.options = response.data.options
+        supportsStore.supports = response.data.supports
         sharesStore.shares = response.data.shares
         commentsStore.comments = response.data.comments
         subscriptionStore.subscribed = response.data.subscribed
         attachmentsStore.attachments = response.data.attachments
+        supportResultStore.setResults(response.data.supportResult || [])
         await supportEngineStore.initializeFromInquiry(this.id, response.data.supportEngine)
         this.configuration.supportEngine = response.data.supportEngine
+        this.status.supportResult = response.data.supportResult 
         inquiriesStore.setFamilyType(this.family)
 
         if (response.data.inquiry.owner.id === sessionStore.currentUser.id) {
@@ -408,7 +413,7 @@ export const useInquiryStore = defineStore('inquiry', {
 
     async add(payload: {
         title?: string
-        type?: InquiryType
+        type?: string
         ownedGroup?: string
         description?: string
         parentId?: number
@@ -445,7 +450,7 @@ export const useInquiryStore = defineStore('inquiry', {
     async update(payload: {
         id?: number
         title?: string
-        type?: InquiryType
+        type?: string
         description?: string
         parentId?: number | null
         locationId?: number | null

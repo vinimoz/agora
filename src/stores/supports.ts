@@ -76,16 +76,22 @@ export const useSupportsStore = defineStore('supports', () => {
   // Getters
   const count = computed(() => supports.value.length)
 
-
-  const getSupport = computed(() => 
-    (inquiryId: number, userId: string, optionId: number = 0, supportEngineId: number | null = null): Support | undefined => 
-        supports.value.find(s => 
-            s.inquiryId === inquiryId && 
-            s.userId === userId && 
+  const getSupport = computed(
+    () =>
+      (
+        inquiryId: number,
+        userId: string,
+        optionId: number = 0,
+        supportEngineId: number | null = null
+      ): Support | undefined =>
+        supports.value.find(
+          (s) =>
+            s.inquiryId === inquiryId &&
+            s.userId === userId &&
             s.optionId === optionId &&
             s.supportEngineId === supportEngineId
         )
-    )
+  )
 
   const getSupportsByInquiryId = computed(
     () =>
@@ -153,9 +159,9 @@ export const useSupportsStore = defineStore('supports', () => {
   }
 
   function calculateTernaryResultLocal(supports: Support[]): TernaryResult {
-    let yes = 0,
-      no = 0,
-      abstain = 0
+    let yes = 0
+    let no = 0
+    let abstain = 0
 
     supports.forEach((support) => {
       const value = extractValueFromSupport(support)
@@ -194,6 +200,8 @@ export const useSupportsStore = defineStore('supports', () => {
   /**
    * Normalize support value based on support feature type
    * This ensures values are in the correct format for processing
+   * @param value
+   * @param supportFeature
    */
   function normalizeSupportValue(
     value: SupportValue,
@@ -270,6 +278,12 @@ export const useSupportsStore = defineStore('supports', () => {
   }
   /**
    * Main toggle support handler - routes to appropriate handler based on support feature
+   * @param inquiryId
+   * @param itemId
+   * @param userId
+   * @param item
+   * @param itemType
+   * @param customValue
    */
   async function toggleSupport(
     inquiryId: number,
@@ -285,6 +299,8 @@ export const useSupportsStore = defineStore('supports', () => {
     console.log(' ACTIVE ENGINE ', activeEngine)
     const supportEngineId = activeEngine?.id ?? null
     const effectiveFeature = activeEngine?.engine ?? getSupportFeature(item)
+    console.log(' EFFECTIVE FEATURE ', effectiveFeature)
+    console.log(' CUSTOM VALUE ', customValue)
 
     let result: any = null
 
@@ -393,152 +409,152 @@ export const useSupportsStore = defineStore('supports', () => {
   }
   /**
    * Binary support (Simple Yes/No)
+   * @param itemId
+   * @param userId
+   * @param item
+   * @param itemType
+   * @param engineId
    */
   async function toggleBinarySupport(
-    itemId: number,
-    userId: string,
-    item: SupportableItem,
-    itemType: 'inquiry' | 'option',
-    engineId: number | null = null
-  ) {
-    if (!item.currentUserStatus) item.currentUserStatus = {}
+  itemId: number,
+  userId: string,
+  item: SupportableItem,
+  itemType: 'inquiry' | 'option',
+  engineId: number | null = null
+) {
+  if (!item.currentUserStatus) item.currentUserStatus = {}
 
-    const currentValue = item.currentUserStatus.supportValue as number | null
+  const rawCurrent = normalizeSupportPrimitive(item.currentUserStatus.supportValue ?? null)
+  const currentValue = typeof rawCurrent === 'number' ? rawCurrent : null
 
-    // Cycle: null -> 1 (Yes) -> -1 (No) -> null
-    let nextValue: number | null = null
+  let nextValue: number | null = null
+  if (currentValue === null) nextValue = 1
+  else if (currentValue === 1) nextValue = -1
+  else if (currentValue === -1) nextValue = null
 
-    if (currentValue === null) {
-      nextValue = 1 // Yes
-    } else if (currentValue === 1) {
-      nextValue = -1 // No
-    } else if (currentValue === -1) {
-      nextValue = null // Remove
+  const oldValue = currentValue
+  const oldHasSupported = item.currentUserStatus.hasSupported ?? false
+
+  // Optimistic update
+  if (nextValue === null) {
+    item.currentUserStatus.supportValue = null
+    item.currentUserStatus.hasSupported = false
+    if (item.status) {
+      item.status.countSupports = Math.max(0, (item.status.countSupports || 0) - 1)
     }
-
-    const oldValue = currentValue
-    const oldHasSupported = item.currentUserStatus.hasSupported ?? false
-
-    // Optimistic update
-    if (nextValue === null) {
-      item.currentUserStatus.supportValue = null
-      item.currentUserStatus.hasSupported = false
-      if (item.status) {
-        item.status.countSupports = Math.max(0, (item.status.countSupports || 0) - 1)
-      }
-    } else {
-      item.currentUserStatus.supportValue = nextValue
-      item.currentUserStatus.hasSupported = true
-      if (item.status && oldValue === null) {
-        item.status.countSupports = (item.status.countSupports || 0) + 1
-      }
-    }
-
-    try {
-      const { inquiryId, optionId } = resolveIds(itemId, item, itemType)
-
-      if (nextValue === null) {
-        await removeSupport(inquiryId, userId, optionId, engineId)
-      } else if (oldValue === null) {
-        const result = await addSupport(inquiryId, userId, nextValue, optionId, engineId)
-        updateResultFromSupport(result, inquiryId, optionId, engineId)
-      } else {
-        const result = await updateSupport(inquiryId, userId, nextValue, optionId, engineId)
-        updateResultFromSupport(result, inquiryId, optionId, engineId)
-      }
-
-      return nextValue
-    } catch (error) {
-      // Rollback
-      item.currentUserStatus.supportValue = oldValue
-      item.currentUserStatus.hasSupported = oldHasSupported
-      throw error
+  } else {
+    item.currentUserStatus.supportValue = nextValue
+    item.currentUserStatus.hasSupported = true
+    if (item.status && oldValue === null) {
+      item.status.countSupports = (item.status.countSupports || 0) + 1
     }
   }
+
+  try {
+    const { inquiryId, optionId } = resolveIds(itemId, item, itemType)
+
+    if (nextValue === null) {
+      await removeSupport(inquiryId, userId, optionId, engineId)
+    } else if (oldValue === null) {
+      const result = await addSupport(inquiryId, userId, nextValue, optionId, engineId)
+      updateResultFromSupport(result, inquiryId, optionId, engineId)
+    } else {
+      const result = await updateSupport(inquiryId, userId, nextValue, optionId, engineId)
+      updateResultFromSupport(result, inquiryId, optionId, engineId)
+    }
+
+    return nextValue
+  } catch (error) {
+    // Rollback
+    item.currentUserStatus.supportValue = oldValue
+    item.currentUserStatus.hasSupported = oldHasSupported
+    throw error
+  }
+}
+
+
   /**
    * Ternary support (For/Abstain/Against)
+   * @param itemId
+   * @param userId
+   * @param item
+   * @param itemType
+   * @param engineId
    */
-  async function toggleTernarySupport(
-    itemId: number,
-    userId: string,
-    item: SupportableItem,
-    itemType: 'inquiry' | 'option',
-    engineId: number | null = null
-  ) {
-    if (!item.currentUserStatus) item.currentUserStatus = {}
+    async function toggleTernarySupport(
+  itemId: number,
+  userId: string,
+  item: SupportableItem,
+  itemType: 'inquiry' | 'option',
+  engineId: number | null = null
+) {
+  if (!item.currentUserStatus) item.currentUserStatus = {}
 
-    let currentValue = normalizeSupportValue(
-      item.currentUserStatus.supportValue ?? null,
-      getSupportFeature(item)
-    ) as number | null
+  const rawCurrent = normalizeSupportPrimitive(item.currentUserStatus.supportValue ?? null)
+  const currentValue = typeof rawCurrent === 'number' ? rawCurrent : null
+  const oldHasSupported = item.currentUserStatus.hasSupported ?? false
 
-    const oldState: OldState = {
-      value: currentValue,
-      hasSupported: currentValue !== null,
-      result: null,
+  let nextValue: number | null = null
+  let shouldRemove = false
+  let firstSupport = false
+
+  if (currentValue === null) {
+    firstSupport = true
+    nextValue = 1
+  } else if (currentValue === 1) {
+    nextValue = 0
+  } else if (currentValue === 0) {
+    nextValue = -1
+  } else if (currentValue === -1) {
+    shouldRemove = true
+  }
+
+  // Optimistic update
+  if (shouldRemove) {
+    item.currentUserStatus.supportValue = null
+    item.currentUserStatus.hasSupported = false
+    if (item.status) {
+      item.status.countSupports = Math.max(0, (item.status.countSupports || 0) - 1)
     }
-
-    // Calculate next value in cycle: null -> 1 -> 0 -> -1 -> null
-    let nextValue: number | null = null
-    let shouldRemove = false
-    let firstSupport = false
-
-    console.log(' CURRENT VALUE ', currentValue)
-
-    if (currentValue === null) {
-      firstSupport = true
-      nextValue = 1 // First click: vote "In Favor"
-    } else if (currentValue === 1) {
-      nextValue = 0 // Second click: change to "Neutral"
-    } else if (currentValue === 0) {
-      nextValue = -1 // Third click: change to "Against"
-    } else if (currentValue === -1) {
-      shouldRemove = true // Fourth click: remove vote
-    }
-
-    console.log(' CURRENT NEXT VALUE ', nextValue)
-
-    // Optimistic update
-    if (shouldRemove) {
-      item.currentUserStatus.supportValue = null
-      item.currentUserStatus.hasSupported = false
-      item.status.countSupports = item.status.countSupports - 1
-    } else {
-      item.currentUserStatus.supportValue = nextValue
-      item.currentUserStatus.hasSupported = true
-      if (firstSupport) {
-        item.status.countSupports = item.status.countSupports + 1
-      }
-    }
-
-    try {
-      const { inquiryId, optionId } = resolveIds(itemId, item, itemType)
-
-      if (shouldRemove) {
-        // Send DELETE request to remove support
-        await removeSupport(inquiryId, userId, optionId, engineId)
-      } else if (currentValue === null) {
-        // First time voting - add support
-        const result = await addSupport(inquiryId, userId, nextValue!, optionId, engineId)
-        updateResultFromSupport(result, inquiryId, optionId, engineId)
-      } else {
-        // Update existing support with new value
-        const result = await updateSupport(inquiryId, userId, nextValue!, optionId, engineId)
-        updateResultFromSupport(result, inquiryId, optionId, engineId)
-      }
-
-      return nextValue
-    } catch (error) {
-      // Rollback
-      item.currentUserStatus.supportValue = oldState.value
-      item.currentUserStatus.hasSupported = oldState.hasSupported
-      throw error
+  } else {
+    item.currentUserStatus.supportValue = nextValue
+    item.currentUserStatus.hasSupported = true
+    if (firstSupport && item.status) {
+      item.status.countSupports = (item.status.countSupports || 0) + 1
     }
   }
+
+  try {
+    const { inquiryId, optionId } = resolveIds(itemId, item, itemType)
+
+    if (shouldRemove) {
+      await removeSupport(inquiryId, userId, optionId, engineId)
+    } else if (currentValue === null) {
+      const result = await addSupport(inquiryId, userId, nextValue!, optionId, engineId)
+      updateResultFromSupport(result, inquiryId, optionId, engineId)
+    } else {
+      const result = await updateSupport(inquiryId, userId, nextValue!, optionId, engineId)
+      updateResultFromSupport(result, inquiryId, optionId, engineId)
+    }
+
+    return nextValue
+  } catch (error) {
+    // Rollback
+    item.currentUserStatus.supportValue = currentValue
+    item.currentUserStatus.hasSupported = oldHasSupported
+    throw error
+  }
+}
 
   /**
    * Majority Judgment support (Grade-based voting)
    * Each option gets a grade like "Excellent", "Good", "Fair", "Poor"
+   * @param itemId
+   * @param userId
+   * @param item
+   * @param itemType
+   * @param grade
+   * @param engineId
    */
   async function toggleMajorityJudgmentSupport(
     itemId: number,
@@ -594,23 +610,22 @@ export const useSupportsStore = defineStore('supports', () => {
   function normalizeSupportPrimitive(value: SupportValue): SupportValue {
     if (value === null || value === undefined) return null
 
-    // If it's a string that looks like a number, convert
+    // Parse JSON string
     if (typeof value === 'string') {
-      const num = Number(value)
-      if (!isNaN(num)) return num
       try {
         const parsed = JSON.parse(value)
-        if (parsed && 'value' in parsed) {
-          return normalizeSupportPrimitive(parsed.value)
+        if (parsed && typeof parsed === 'object') {
+          if ('value' in parsed) return normalizeSupportPrimitive(parsed.value)
+          return parsed
         }
-        return parsed
+        const num = Number(value)
+        if (!isNaN(num)) return num
+        return value
       } catch {
-        /* not JSON */
+        return value
       }
-      return value
     }
 
-    // If it's an object with a 'value' property, extract it
     if (typeof value === 'object' && value !== null && 'value' in value) {
       return normalizeSupportPrimitive((value as any).value)
     }
@@ -620,6 +635,12 @@ export const useSupportsStore = defineStore('supports', () => {
 
   /**
    * Score/Star support (Rating 1-5 or 0-10)
+   * @param itemId
+   * @param userId
+   * @param item
+   * @param itemType
+   * @param value
+   * @param engineId
    */
   async function submitScoreSupport(
     itemId: number,
@@ -667,50 +688,101 @@ export const useSupportsStore = defineStore('supports', () => {
   }
   /**
    * Reaction support (Emoji reactions)
+   * @param itemId
+   * @param userId
+   * @param item
+   * @param itemType
+   * @param reaction
+   * @param engineId
    */
-  async function toggleReactionSupport(
-    itemId: number,
-    userId: string,
-    item: SupportableItem,
-    itemType: 'inquiry' | 'option',
-    reaction: string,
-    engineId: number | null = null
-  ) {
-    if (!item.currentUserStatus) item.currentUserStatus = {}
+    async function toggleReactionSupport(
+  itemId: number,
+  userId: string,
+  item: SupportableItem,
+  itemType: 'inquiry' | 'option',
+  reaction: string,
+  engineId: number | null = null
+) {
+  if (!item.currentUserStatus) item.currentUserStatus = {}
 
-    const currentReactions = (item.currentUserStatus.supportValue as string[]) ?? []
-    const hasReacted = currentReactions.includes(reaction)
+  const rawCurrent = normalizeSupportPrimitive(item.currentUserStatus.supportValue ?? null)
+  
+  // Deliberative mode: single string
+  if (engineId === null) {
+    const currentReaction = typeof rawCurrent === 'string' ? rawCurrent : null
+    const newReaction = currentReaction === reaction ? null : reaction
+    const oldReaction = currentReaction
+    const oldHasSupported = oldReaction !== null
 
-    let newReactions: string[]
-    if (hasReacted) {
-      newReactions = currentReactions.filter((r) => r !== reaction)
-    } else {
-      newReactions = [...currentReactions, reaction]
-    }
-
-    item.currentUserStatus.supportValue = newReactions
-    item.currentUserStatus.hasSupported = newReactions.length > 0
+    // Optimistic update
+    item.currentUserStatus.supportValue = newReaction
+    item.currentUserStatus.hasSupported = newReaction !== null
 
     try {
       const { inquiryId, optionId } = resolveIds(itemId, item, itemType)
 
-      if (newReactions.length === 0) {
+      if (newReaction === null) {
         await removeSupport(inquiryId, userId, optionId)
-      } else if (currentReactions.length === 0) {
-        const result = await addSupport(inquiryId, userId, newReactions, optionId, engineId)
+      } else if (oldReaction === null) {
+        const result = await addSupport(inquiryId, userId, newReaction, optionId, engineId)
         updateResultFromSupport(result, inquiryId, optionId, engineId)
       } else {
-        const result = await updateSupport(inquiryId, userId, newReactions, optionId, engineId)
+        const result = await updateSupport(inquiryId, userId, newReaction, optionId, engineId)
         updateResultFromSupport(result, inquiryId, optionId, engineId)
       }
-
-      return newReactions
+      return newReaction
     } catch (error) {
-      item.currentUserStatus.supportValue = currentReactions
-      item.currentUserStatus.hasSupported = currentReactions.length > 0
+      // Rollback
+      item.currentUserStatus.supportValue = oldReaction
+      item.currentUserStatus.hasSupported = oldHasSupported
       throw error
     }
   }
+
+  // Engine mode: array of reactions (existing code, unchanged)
+  let currentReactions: string[] = []
+  if (Array.isArray(rawCurrent)) {
+    currentReactions = rawCurrent as string[]
+  } else if (typeof rawCurrent === 'string') {
+    currentReactions = [rawCurrent]
+  }
+
+  const hasReacted = currentReactions.includes(reaction)
+  let newReactions: string[]
+  if (hasReacted) {
+    newReactions = currentReactions.filter((r) => r !== reaction)
+  } else {
+    newReactions = [...currentReactions, reaction]
+  }
+
+  const oldReactions = currentReactions
+  const oldHasSupported = oldReactions.length > 0
+
+  // Optimistic update
+  item.currentUserStatus.supportValue = newReactions
+  item.currentUserStatus.hasSupported = newReactions.length > 0
+
+  try {
+    const { inquiryId, optionId } = resolveIds(itemId, item, itemType)
+
+    if (newReactions.length === 0) {
+      await removeSupport(inquiryId, userId, optionId, engineId)
+    } else if (oldReactions.length === 0) {
+      const result = await addSupport(inquiryId, userId, newReactions, optionId, engineId)
+      updateResultFromSupport(result, inquiryId, optionId, engineId)
+    } else {
+      const result = await updateSupport(inquiryId, userId, newReactions, optionId, engineId)
+      updateResultFromSupport(result, inquiryId, optionId, engineId)
+    }
+
+    return newReactions
+  } catch (error) {
+    // Rollback
+    item.currentUserStatus.supportValue = oldReactions
+    item.currentUserStatus.hasSupported = oldHasSupported
+    throw error
+  }
+}
 
   async function submitComplexSupport(
     engineId: number,
@@ -735,14 +807,18 @@ export const useSupportsStore = defineStore('supports', () => {
 
     if (!currentSupport) {
       return await addSupport(inquiryId, userId, value, optionId, engineId)
-    } else {
-      return await updateSupport(inquiryId, userId, value, optionId, engineId)
     }
+    return await updateSupport(inquiryId, userId, value, optionId, engineId)
   }
 
   /**
    * Approval Deliberative support (Simple Yes/No approval for deliberative phase)
    * In deliberative mode, each user can either approve (1) or not (null)
+   * @param itemId
+   * @param userId
+   * @param item
+   * @param itemType
+   * @param engineId
    */
   async function toggleApprovalDeliberativeSupport(
     itemId: number,
@@ -787,6 +863,11 @@ export const useSupportsStore = defineStore('supports', () => {
 
   /**
    * Approval support (Multi-select approval)
+   * @param itemId
+   * @param userId
+   * @param item
+   * @param itemType
+   * @param engineId
    */
   async function toggleApprovalSupport(
     itemId: number,
@@ -832,6 +913,12 @@ export const useSupportsStore = defineStore('supports', () => {
   /**
    * Ranking support (per‑option rank number)
    * Each option gets a rank number (1 = highest preference)
+   * @param itemId
+   * @param userId
+   * @param item
+   * @param itemType
+   * @param rank
+   * @param engineId
    */
   async function toggleRankingSupport(
     itemId: number,
@@ -885,6 +972,9 @@ export const useSupportsStore = defineStore('supports', () => {
 
   /**
    * Resolve inquiryId and optionId based on item type
+   * @param itemId
+   * @param item
+   * @param itemType
    */
   function resolveIds(
     itemId: number,
@@ -906,6 +996,10 @@ export const useSupportsStore = defineStore('supports', () => {
 
   /**
    * Update result based on support change
+   * @param support
+   * @param inquiryId
+   * @param optionId
+   * @param supportEngineId
    */
   function updateResultFromSupport(
     support: Support,
@@ -918,20 +1012,18 @@ export const useSupportsStore = defineStore('supports', () => {
 
     // Only fetch and update calculated results
     const supportResultStore = useSupportResultStore()
-    supportResultStore.calculateAndGetResults(supportEngineId).then(() => {
-      const updatedResult = supportResultStore.getResultByTarget(targetId)
-      if (updatedResult) {
-        const inquiriesStore = useInquiriesStore()
-        const inquiry = inquiriesStore.byId[inquiryId]
-        if (inquiry?.status) {
-          inquiry.status.supportResult = updatedResult.result
-        }
-        const currentInquiryStore = useInquiryStore()
-        if (currentInquiryStore.id === inquiryId && currentInquiryStore.status) {
-          currentInquiryStore.status.supportResult = updatedResult.result
-        }
+    const updatedResult = supportResultStore.getResultByTarget(targetId)
+    if (updatedResult) {
+      const inquiriesStore = useInquiriesStore()
+      const inquiry = inquiriesStore.byId[inquiryId]
+      if (inquiry?.status) {
+        inquiry.status.supportResult = updatedResult.result
       }
-    })
+      const currentInquiryStore = useInquiryStore()
+      if (currentInquiryStore.id === inquiryId && currentInquiryStore.status) {
+        currentInquiryStore.status.supportResult = updatedResult.result
+      }
+    }
   }
 
   function formatResult(result: SupportResultData): {
@@ -1002,64 +1094,66 @@ export const useSupportsStore = defineStore('supports', () => {
         }
       }
       case 'ranking': {
-  const r = result as RankingResult
-  // Display the number of ranked options or the best rank, etc.
-  const bestRank = Math.min(...Object.values(r.rankings))
-  const bestOption = Object.keys(r.rankings).find(key => r.rankings[Number(key)] === bestRank)
-  return {
-    primary: bestOption ? `#${bestRank}` : '—',
-    secondary: `${Object.keys(r.rankings).length} options ranked`,
-    icon: 'trophy',
-  }
-}
+        const r = result as RankingResult
+        // Display the number of ranked options or the best rank, etc.
+        const bestRank = Math.min(...Object.values(r.rankings))
+        const bestOption = Object.keys(r.rankings).find(
+          (key) => r.rankings[Number(key)] === bestRank
+        )
+        return {
+          primary: bestOption ? `#${bestRank}` : '—',
+          secondary: `${Object.keys(r.rankings).length} options ranked`,
+          icon: 'trophy',
+        }
+      }
 
-case 'condorcet': {
-  const r = result as CondorcetResult
-  const winnerInfo = r.winner ? `Winner: ${r.winner}` : 'No winner'
-  return {
-    primary: winnerInfo,
-    secondary: `${r.wins[r.winner ?? 0] || 0}W / ${r.losses[r.winner ?? 0] || 0}L`,
-    icon: r.winner ? 'crown' : 'scale',
-  }
-}
+      case 'condorcet': {
+        const r = result as CondorcetResult
+        const winnerInfo = r.winner ? `Winner: ${r.winner}` : 'No winner'
+        return {
+          primary: winnerInfo,
+          secondary: `${r.wins[r.winner ?? 0] || 0}W / ${r.losses[r.winner ?? 0] || 0}L`,
+          icon: r.winner ? 'crown' : 'scale',
+        }
+      }
 
-case 'borda': {
-  const r = result as BordaResult
-  const best = Object.entries(r.ranking).sort(([,a], [,b]) => a - b)[0]
-  return {
-    primary: best ? `#${best[1]}` : '—',
-    secondary: `${Object.keys(r.scores).length} options scored`,
-    icon: 'medal',
-  }
-}
+      case 'borda': {
+        const r = result as BordaResult
+        const best = Object.entries(r.ranking).sort(([, a], [, b]) => a - b)[0]
+        return {
+          primary: best ? `#${best[1]}` : '—',
+          secondary: `${Object.keys(r.scores).length} options scored`,
+          icon: 'medal',
+        }
+      }
 
-case 'quadratic': {
-  const r = result as QuadraticResult
-  return {
-    primary: `${r.total_credits} credits`,
-    secondary: `${r.total_votes} votes cast`,
-    icon: 'currency',
-  }
-}
+      case 'quadratic': {
+        const r = result as QuadraticResult
+        return {
+          primary: `${r.total_credits} credits`,
+          secondary: `${r.total_votes} votes cast`,
+          icon: 'currency',
+        }
+      }
 
-case 'token_weighted': {
-  const r = result as TokenWeightedResult
-  return {
-    primary: `${r.total_weight} weight`,
-    secondary: `${r.participant_count} participants`,
-    icon: 'weight',
-  }
-}
+      case 'token_weighted': {
+        const r = result as TokenWeightedResult
+        return {
+          primary: `${r.total_weight} weight`,
+          secondary: `${r.participant_count} participants`,
+          icon: 'weight',
+        }
+      }
 
-case 'majority_judgment': {
-  const r = result as MajorityJudgmentResult
-  const winnerGrade = r.winner_details?.median_grade ?? 'No winner'
-  return {
-    primary: winnerGrade,
-    secondary: `${r.total_votes} votes, ${r.grades.length} grades`,
-    icon: 'award',
-  }
-}
+      case 'majority_judgment': {
+        const r = result as MajorityJudgmentResult
+        const winnerGrade = r.winner_details?.median_grade ?? 'No winner'
+        return {
+          primary: winnerGrade,
+          secondary: `${r.total_votes} votes, ${r.grades.length} grades`,
+          icon: 'award',
+        }
+      }
       default:
         return {
           primary: 'N/A',
@@ -1087,11 +1181,12 @@ case 'majority_judgment': {
 
       if (response) {
         // Normalize support values based on inquiry type
-        const normalizedSupports = response.data.supports.map((support: Support) => {
-          // You might need to get the inquiry type here
-          // For now, just pass through
-          return support
-        })
+        const normalizedSupports = response.data.supports.map(
+          (support: Support) =>
+            // You might need to get the inquiry type here
+            // For now, just pass through
+            support
+        )
         supports.value = normalizedSupports
       }
     } catch (error) {
@@ -1102,6 +1197,7 @@ case 'majority_judgment': {
       loading.value = false
     }
   }
+
   async function addSupport(
     inquiryId: number,
     userId: string,
@@ -1114,15 +1210,17 @@ case 'majority_judgment': {
     try {
       const response = await (() => {
         if (sessionStore.route.name === 'publicInquiry') {
-          return PublicAPI.addSupport(
-            sessionStore.publicToken,
-            inquiryId,
-            userId,
-            optionId,
-            { value, weight: 1, engineId: supportEngineId }
-          )
+          return PublicAPI.addSupport(sessionStore.publicToken, inquiryId, userId, optionId, {
+            value,
+            weight: 1,
+            engineId: supportEngineId,
+          })
         }
-        return SupportsAPI.addSupport(inquiryId, userId, optionId, { value, weight: 1, engineId: supportEngineId })
+        return SupportsAPI.addSupport(inquiryId, userId, optionId, {
+          value,
+          weight: 1,
+          engineId: supportEngineId,
+        })
       })()
 
       if (response) {
@@ -1142,6 +1240,12 @@ case 'majority_judgment': {
   /**
    * Generic support submission for complex engines.
    * Adds/updates a support with the given value (no cycling).
+   * @param itemId
+   * @param userId
+   * @param item
+   * @param itemType
+   * @param value
+   * @param engineId
    */
   async function submitGenericSupport(
     itemId: number,
@@ -1189,6 +1293,7 @@ case 'majority_judgment': {
       throw error
     }
   }
+
   async function updateSupport(
     inquiryId: number,
     userId: string,
@@ -1207,10 +1312,14 @@ case 'majority_judgment': {
             userId,
             value,
             optionId,
-             { value, weight: 1, engineId: supportEngineId }
+            { value, weight: 1, engineId: supportEngineId }
           )
         }
-        return SupportsAPI.updateSupport(inquiryId, userId, optionId, { value, weight: 1, engineId: supportEngineId })
+        return SupportsAPI.updateSupport(inquiryId, userId, optionId, {
+          value,
+          weight: 1,
+          engineId: supportEngineId,
+        })
       })()
 
       if (response) {

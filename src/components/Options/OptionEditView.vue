@@ -431,9 +431,7 @@ const currentFamilyLayout = computed(() => {
 })
 
 // Use helper for family counts
-const familyCounts = computed(() => {
-    return getOptionsCountByFamily(optionsStore.options, allOptionTypes.value)
-})
+const familyCounts = computed(() => getOptionsCountByFamily(optionsStore.options, allOptionTypes.value))
 
 const optionsByInquiry = computed(() => {
     if (!optionsStore.options) return []

@@ -68,13 +68,14 @@
                         :get-percentage="(option) => getPercentage(option)"
                         :has-user-voted-for="hasUserVotedFor"
                         :is-selected-for-vote="isSelectedForVote"
+                        :get-user-vote-value-for-option="getUserVoteValueForOption"
                         @toggle-selection="toggleSelection"
                         @update:rankings="rankings = $event"
                         @update:scores="scores = $event"
                         @update:grades="grades = $event"
                         @update:reactions="reactions = $event"
-                        @update:quadraticVotes="quadraticVotes = $event"
-                        @update:tokenWeights="tokenWeights = $event"
+                        @update:quadratic-votes="quadraticVotes = $event"
+                        @update:token-weights="tokenWeights = $event"
                         @vote="(option, value) => submitSingleVote(option, value)"
                         @submit-multi-vote="submitMultiVote"
                         @select-option="$emit('select-option', $event)"
@@ -228,9 +229,7 @@ const supportsStore = useSupportsStore()
 const showSupportsModal = ref(false)
 const selectedOptionId = ref<number | null>(null)
 
-const engineHasVotes = (engineId: number): boolean => {
-  return supportsStore.supports?.some(s => s.support_engine_id === engineId) ?? false
-}
+const engineHasVotes = (engineId: number): boolean => supportsStore.supports?.some(s => s.support_engine_id === engineId) ?? false
 
 const {
   loadingEngines,
@@ -257,6 +256,7 @@ const {
   getRankedOptions,
   getWinner,
   getWinnerPercentage,
+  getUserVoteValueForOption,
   refreshEngines,
   effectiveEngineId,
   maxRank,
@@ -300,7 +300,8 @@ const availableEnginesSelector = computed(() => {
     .map(([id, engine]) => ({
       id,
       label: engine.label,
-      behavior: engine.behavior,
+       voteScope: engine.voteScope,
+       inputModel: engine.inputModel,
       description: engine.description,
       constraints: engine.constraints,
       recommendedViews: engine.recommendedViews

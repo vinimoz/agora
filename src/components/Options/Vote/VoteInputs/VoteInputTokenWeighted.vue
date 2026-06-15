@@ -9,10 +9,10 @@
         :max="maxWeight"
         :step="step"
         :value="currentValue ?? 0"
-        @input="handleSliderInput"
-        @change="handleSliderChange"
         class="weight-slider"
         :style="{ '--progress': getProgress(currentValue ?? 0) + '%' }"
+        @input="handleSliderInput"
+        @change="handleSliderChange"
       />
       <span class="weight-value">{{ displayValue }}</span>
     </div>

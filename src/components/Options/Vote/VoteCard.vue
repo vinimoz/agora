@@ -64,6 +64,7 @@
       :current-rank="currentRank"
       :current-grade="currentGrade"
       :current-score="currentScore"
+      :user-vote="userVoteForOption"
       :current-star="currentStar"
       :current-reaction="currentReaction"
       :current-quadratic-votes="currentQuadraticVotes"
@@ -134,9 +135,10 @@ const props = defineProps<{
   currentGrade?: string | null
   currentScore?: number | null
   currentStar?: number | null
-  currentReaction?: string | null
+  currentReaction?: string[] | null
   currentQuadraticVotes?: number | null
   currentTokenWeight?: number | null
+  getUserVoteValueForOption: (optionId: number) => SupportValue | null
   totalOptions?: number
 }>()
 
@@ -147,7 +149,7 @@ const emit = defineEmits<{
   'change-grade': [optionId: number, grade: string | null]
   'update:score': [optionId: number, score: number | null]
   'update:star': [optionId: number, star: number | null]
-  'update:reaction': [optionId: number, reaction: string | null]
+  'update:reaction': [optionId: number, reaction: string[] | null]
   'update:quadratic': [optionId: number, votes: number | null]
   'update:token_weight': [optionId: number, weight: number | null]
   'open-supports-modal': [optionId: number]
@@ -196,11 +198,19 @@ const formatDate = (timestamp: number) => {
   }).format(date)
 }
 
+const userVoteForOption = computed(() => {
+  const value = props.getUserVoteValueForOption?.(props.option.id)
+  if (!value) return undefined
+  return { value, optionId: props.option.id } as SupportData
+})
+
 function openSupportsModal() {
   emit('open-supports-modal', props.option.id)
 }
 
-const showVoteInput = computed(() => props.canVote && !props.hasUserVoted)
+const showVoteInput = computed(() => props.canVote)
+
+console.log(" SHOW VOTE INPUT ",showVoteInput.value)
 
 function handleVote(value: SupportValue) { emit('vote', props.option, value) }
 function handleApprovalToggle() { emit('approval-toggle', props.option.id) }
@@ -208,7 +218,7 @@ function handleRankChange(rank: number | null) { emit('change-rank', props.optio
 function handleGradeChange(grade: string | null) { emit('change-grade', props.option.id, grade) }
 function handleUpdateScore(optionId: number, score: number | null) { emit('update:score', optionId, score) }
 function handleUpdateStar(optionId: number, star: number | null) { emit('update:star', optionId, star) }
-function handleUpdateReaction(optionId: number, reaction: string | null) { emit('update:reaction', optionId, reaction) }
+function handleUpdateReaction(optionId: number, reaction: string[] | null) { emit('update:reaction', optionId, reaction) }
 function handleUpdateQuadratic(optionId: number, votes: number | null) { emit('update:quadratic', optionId, votes) }
 function handleUpdateTokenWeight(optionId: number, weight: number | null) { emit('update:token_weight', optionId, weight) }
 

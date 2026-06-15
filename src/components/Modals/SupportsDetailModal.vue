@@ -76,9 +76,9 @@ const modalTitle = computed(() => t('agora', 'Votes for {option}', { option: opt
 function formatSupportValue(support: Support): string {
   const value = support.value
   if (typeof value === 'number') {
-    if (value === 1) return '👍 ' + t('agora', 'Yes')
-    if (value === -1) return '👎 ' + t('agora', 'No')
-    if (value === 0) return '⚪ ' + t('agora', 'Abstain')
+    if (value === 1) return `👍 ${  t('agora', 'Yes')}`
+    if (value === -1) return `👎 ${  t('agora', 'No')}`
+    if (value === 0) return `⚪ ${  t('agora', 'Abstain')}`
     return `${value}`
   }
   if (typeof value === 'string') {

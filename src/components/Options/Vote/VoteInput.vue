@@ -187,7 +187,7 @@ const props = defineProps<{
   currentGrade?: string | null
   currentScore?: number | null
   currentStar?: number | null
-  currentReaction?: string | null
+  currentReaction?: string[] | null
   currentQuadraticVotes?: number | null
   currentTokenWeight?: number | null
   canRemoveVote?: boolean
@@ -202,7 +202,7 @@ const emit = defineEmits<{
   'remove-vote': []
   'update:score': [optionId: number, score: number | null]
   'update:star': [optionId: number, star: number | null]
-  'update:reaction': [optionId: number, reaction: string | null]
+  'update:reaction': [optionId: number, reaction: string[] | null]
   'update:quadratic': [optionId: number, votes: number | null]
   'update:token_weight': [optionId: number, weight: number | null]
 }>()

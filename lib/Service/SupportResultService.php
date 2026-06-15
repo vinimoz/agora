@@ -60,235 +60,235 @@ class SupportResultService
     }
 
     /**
- * Calculate Borda Count results
- * Points: if there are N options, rank 1 gets N points, rank 2 gets N-1, ... last rank gets 1.
- * Options not ranked receive 0 points (or could be given lowest points – here we give 0).
- */
-private function calculateBordaResults(array $supports, ?int $engineId = null): array
-{
-    $maxRank = $this->getMaxRankForEngine($engineId);
-    $allOptions = $this->getEngineOptionIds($engineId);
-    $numOptions = count($allOptions);
-    $scores = array_fill_keys($allOptions, 0);
+     * Calculate Borda Count results
+     * Points: if there are N options, rank 1 gets N points, rank 2 gets N-1, ... last rank gets 1.
+     * Options not ranked receive 0 points (or could be given lowest points – here we give 0).
+     */
+    private function calculateBordaResults(array $supports, ?int $engineId = null): array
+    {
+        $maxRank = $this->getMaxRankForEngine($engineId);
+        $allOptions = $this->getEngineOptionIds($engineId);
+        $numOptions = count($allOptions);
+        $scores = array_fill_keys($allOptions, 0);
 
-    if (empty($allOptions)) {
-        // Fallback: extract from rankings
-        $allOptions = [];
-        foreach ($supports as $support) {
-             $value = $support->getValue();
-        $weight = $support->getWeight();
-        $rankingMap = is_array($value) ? ($value['ranking'] ?? []) : [];
-        if ($maxRank !== null) {
-            $rankingMap = array_filter($rankingMap, fn($rank) => $rank <= $maxRank);
-        }
-         foreach ($rankingMap as $oid => $rank) {
-            $points = ($numOptions - $rank + 1) * $weight;
-            $scores[(int)$oid] += $points;
-        }
+        if (empty($allOptions)) {
+            // Fallback: extract from rankings
+            $allOptions = [];
+            foreach ($supports as $support) {
+                $value = $support->getValue();
+                $weight = $support->getWeight();
+                $rankingMap = is_array($value) ? ($value['ranking'] ?? []) : [];
+                if ($maxRank !== null) {
+                    $rankingMap = array_filter($rankingMap, fn($rank) => $rank <= $maxRank);
+                }
+                foreach ($rankingMap as $oid => $rank) {
+                    $points = ($numOptions - $rank + 1) * $weight;
+                    $scores[(int)$oid] += $points;
+                }
 
-            foreach (array_keys($rankingMap) as $oid) {
-                $allOptions[$oid] = true;
+                foreach (array_keys($rankingMap) as $oid) {
+                    $allOptions[$oid] = true;
 
+                }
             }
+            $allOptions = array_keys($allOptions);
         }
-        $allOptions = array_keys($allOptions);
-    }
-    sort($allOptions);
-    $numOptions = count($allOptions);
-    if ($numOptions === 0) {
-        return ['type' => 'borda', 'scores' => [], 'ranking' => []];
-    }
-
-    // Initialize scores
-    $scores = array_fill_keys($allOptions, 0);
-
-    foreach ($supports as $support) {
-        $value = $support->getValue();
-        $weight = $support->getWeight();
-        $rankingMap = is_array($value) ? ($value['ranking'] ?? []) : [];
-
-        // For each ranked option, calculate points = (numOptions - rank + 1) * weight
-        foreach ($rankingMap as $oid => $rank) {
-            $points = ($numOptions - $rank + 1) * $weight;
-            $scores[(int)$oid] += $points;
+        sort($allOptions);
+        $numOptions = count($allOptions);
+        if ($numOptions === 0) {
+            return ['type' => 'borda', 'scores' => [], 'ranking' => []];
         }
-        // Unranked options receive 0 points (no action needed)
-    }
 
-    // Sort options by score descending
-    arsort($scores);
-    $rank = 1;
-    $ranking = [];
-    $prevScore = null;
-    $skip = 0;
-    foreach ($scores as $oid => $score) {
-        if ($score !== $prevScore) {
-            $rank += $skip;
-            $skip = 0;
-        } else {
-            $skip++;
-        }
-        $ranking[$oid] = $rank;
-        $prevScore = $score;
-    }
+        // Initialize scores
+        $scores = array_fill_keys($allOptions, 0);
 
-    return [
-        'type' => 'borda',
-        'scores' => $scores,
-        'ranking' => $ranking,
-        'total_voters' => count($supports)
-    ];
-}
-
-
-/**
- * Get all option IDs for a specific engine (from its target_ids)
- */
-private function getEngineOptionIds(?int $engineId): array
-{
-    if (!$engineId) {
-        return [];
-    }
-    try {
-        $engine = $this->engineMapper->find($engineId);
-        return $engine ? $engine->getTargetIds() : [];
-    } catch (\Exception $e) {
-        return [];
-    }
-}
-
-private function getMaxRankForEngine(?int $engineId): ?int
-{
-    if ($engineId === null) {
-        return null;
-    }
-    try {
-        $engine = $this->engineMapper->find($engineId);
-        if ($engine) {
-            $config = $engine->getConfig();
-            $maxRank = $config['max_rank'] ?? null;
-            // null means unlimited (allow all ranks)
-            return $maxRank === null ? null : (int)$maxRank;
-        }
-    } catch (\Exception $e) {
-        $this->logger->error('Failed to get max_rank for engine', ['error' => $e->getMessage()]);
-    }
-    return null;
-}
-
-/**
- * Calculate Condorcet results (pairwise comparison)
- * For each pair of options, count how many voters prefer one over the other.
- * The Condorcet winner is the option that beats every other option in pairwise comparisons.
- */
-private function calculateCondorcetResults(array $supports, ?int $engineId = null): array
-{
-    // Get all options from engine target_ids
-    $maxRank = $this->getMaxRankForEngine($engineId);
-    $allOptions = $this->getEngineOptionIds($engineId);
-    if (empty($allOptions)) {
-        // Fallback: extract from rankings
-        $allOptions = [];
         foreach ($supports as $support) {
             $value = $support->getValue();
             $weight = $support->getWeight();
             $rankingMap = is_array($value) ? ($value['ranking'] ?? []) : [];
-            if ($maxRank !== null) {
-            $rankingMap = array_filter($rankingMap, fn($rank) => $rank <= $maxRank);
+
+            // For each ranked option, calculate points = (numOptions - rank + 1) * weight
+            foreach ($rankingMap as $oid => $rank) {
+                $points = ($numOptions - $rank + 1) * $weight;
+                $scores[(int)$oid] += $points;
             }
-asort($rankingMap); // sort by rank ascending
-        $ordered = array_keys($rankingMap);
-
-            foreach (array_keys($rankingMap) as $oid) {
-                $allOptions[$oid] = true;
-            }
+            // Unranked options receive 0 points (no action needed)
         }
-        $allOptions = array_keys($allOptions);
-    }
-    sort($allOptions);
 
-    // Initialize pairwise matrix: $preferences[$a][$b] = number of voters preferring a over b
-    $preferences = [];
-    foreach ($allOptions as $a) {
-        foreach ($allOptions as $b) {
-            if ($a !== $b) {
-                $preferences[$a][$b] = 0;
-            }
-        }
-    }
-
-    // Process each support (each voter's ranking)
-    foreach ($supports as $support) {
-        $value = $support->getValue();
-        $weight = $support->getWeight(); // may be >1 for weighted votes
-        $rankingMap = is_array($value) ? ($value['ranking'] ?? []) : [];
-
-        // Convert ranking map to a sorted list by rank (lower rank = better)
-        $sorted = [];
-        foreach ($rankingMap as $oid => $rank) {
-            $sorted[$oid] = $rank;
-        }
-        asort($sorted); // sort by rank ascending (1 is best)
-        $ordered = array_keys($sorted); // options ordered from best to worst
-
-        // For every pair (a, b) where a appears before b in the ordered list, increment preference a->b
-        $count = count($ordered);
-        for ($i = 0; $i < $count; $i++) {
-            for ($j = $i + 1; $j < $count; $j++) {
-                $a = $ordered[$i];
-                $b = $ordered[$j];
-                $preferences[$a][$b] += $weight;
-            }
-        }
-    }
-
-    // Determine Condorcet winner(s)
-    $wins = [];
-    $losses = [];
-    $ties = [];
-    foreach ($allOptions as $a) {
-        $wins[$a] = 0;
-        $losses[$a] = 0;
-        $ties[$a] = 0;
-        foreach ($allOptions as $b) {
-            if ($a === $b) continue;
-            $prefAB = $preferences[$a][$b] ?? 0;
-            $prefBA = $preferences[$b][$a] ?? 0;
-            if ($prefAB > $prefBA) {
-                $wins[$a]++;
-            } elseif ($prefBA > $prefAB) {
-                $losses[$a]++;
+        // Sort options by score descending
+        arsort($scores);
+        $rank = 1;
+        $ranking = [];
+        $prevScore = null;
+        $skip = 0;
+        foreach ($scores as $oid => $score) {
+            if ($score !== $prevScore) {
+                $rank += $skip;
+                $skip = 0;
             } else {
-                $ties[$a]++;
+                $skip++;
+            }
+            $ranking[$oid] = $rank;
+            $prevScore = $score;
+        }
+
+        return [
+            'type' => 'borda',
+            'scores' => $scores,
+            'ranking' => $ranking,
+            'total_voters' => count($supports)
+        ];
+    }
+
+
+    /**
+     * Get all option IDs for a specific engine (from its target_ids)
+     */
+    private function getEngineOptionIds(?int $engineId): array
+    {
+        if (!$engineId) {
+            return [];
+        }
+        try {
+            $engine = $this->engineMapper->find($engineId);
+            return $engine ? $engine->getTargetIds() : [];
+        } catch (\Exception $e) {
+            return [];
+        }
+    }
+
+    private function getMaxRankForEngine(?int $engineId): ?int
+    {
+        if ($engineId === null) {
+            return null;
+        }
+        try {
+            $engine = $this->engineMapper->find($engineId);
+            if ($engine) {
+                $config = $engine->getConfig();
+                $maxRank = $config['max_rank'] ?? null;
+                // null means unlimited (allow all ranks)
+                return $maxRank === null ? null : (int)$maxRank;
+            }
+        } catch (\Exception $e) {
+            $this->logger->error('Failed to get max_rank for engine', ['error' => $e->getMessage()]);
+        }
+        return null;
+    }
+
+    /**
+     * Calculate Condorcet results (pairwise comparison)
+     * For each pair of options, count how many voters prefer one over the other.
+     * The Condorcet winner is the option that beats every other option in pairwise comparisons.
+     */
+    private function calculateCondorcetResults(array $supports, ?int $engineId = null): array
+    {
+        // Get all options from engine target_ids
+        $maxRank = $this->getMaxRankForEngine($engineId);
+        $allOptions = $this->getEngineOptionIds($engineId);
+        if (empty($allOptions)) {
+            // Fallback: extract from rankings
+            $allOptions = [];
+            foreach ($supports as $support) {
+                $value = $support->getValue();
+                $weight = $support->getWeight();
+                $rankingMap = is_array($value) ? ($value['ranking'] ?? []) : [];
+                if ($maxRank !== null) {
+                    $rankingMap = array_filter($rankingMap, fn($rank) => $rank <= $maxRank);
+                }
+                asort($rankingMap); // sort by rank ascending
+                $ordered = array_keys($rankingMap);
+
+                foreach (array_keys($rankingMap) as $oid) {
+                    $allOptions[$oid] = true;
+                }
+            }
+            $allOptions = array_keys($allOptions);
+        }
+        sort($allOptions);
+
+        // Initialize pairwise matrix: $preferences[$a][$b] = number of voters preferring a over b
+        $preferences = [];
+        foreach ($allOptions as $a) {
+            foreach ($allOptions as $b) {
+                if ($a !== $b) {
+                    $preferences[$a][$b] = 0;
+                }
             }
         }
-    }
 
-    // Find options that beat or tie all others (Condorcet winner / weak winner)
-    $winner = null;
-    foreach ($allOptions as $a) {
-        if ($losses[$a] === 0) {
-            $winner = $a;
-            break; // strong Condorcet winner (no losses)
+        // Process each support (each voter's ranking)
+        foreach ($supports as $support) {
+            $value = $support->getValue();
+            $weight = $support->getWeight(); // may be >1 for weighted votes
+            $rankingMap = is_array($value) ? ($value['ranking'] ?? []) : [];
+
+            // Convert ranking map to a sorted list by rank (lower rank = better)
+            $sorted = [];
+            foreach ($rankingMap as $oid => $rank) {
+                $sorted[$oid] = $rank;
+            }
+            asort($sorted); // sort by rank ascending (1 is best)
+            $ordered = array_keys($sorted); // options ordered from best to worst
+
+            // For every pair (a, b) where a appears before b in the ordered list, increment preference a->b
+            $count = count($ordered);
+            for ($i = 0; $i < $count; $i++) {
+                for ($j = $i + 1; $j < $count; $j++) {
+                    $a = $ordered[$i];
+                    $b = $ordered[$j];
+                    $preferences[$a][$b] += $weight;
+                }
+            }
         }
-    }
-    // If no strong winner, pick one with fewest losses (simple tie-breaking)
-    if ($winner === null && !empty($allOptions)) {
-        $minLoss = min($losses);
-        $candidates = array_keys(array_filter($losses, fn($l) => $l === $minLoss));
-        $winner = $candidates[0] ?? null;
-    }
 
-    return [
-        'type' => 'condorcet',
-        'preferences' => $preferences,
-        'wins' => $wins,
-        'losses' => $losses,
-        'ties' => $ties,
-        'winner' => $winner,
-        'total_voters' => count($supports)
-    ];
-}
+        // Determine Condorcet winner(s)
+        $wins = [];
+        $losses = [];
+        $ties = [];
+        foreach ($allOptions as $a) {
+            $wins[$a] = 0;
+            $losses[$a] = 0;
+            $ties[$a] = 0;
+            foreach ($allOptions as $b) {
+                if ($a === $b) continue;
+                $prefAB = $preferences[$a][$b] ?? 0;
+                $prefBA = $preferences[$b][$a] ?? 0;
+                if ($prefAB > $prefBA) {
+                    $wins[$a]++;
+                } elseif ($prefBA > $prefAB) {
+                    $losses[$a]++;
+                } else {
+                    $ties[$a]++;
+                }
+            }
+        }
+
+        // Find options that beat or tie all others (Condorcet winner / weak winner)
+        $winner = null;
+        foreach ($allOptions as $a) {
+            if ($losses[$a] === 0) {
+                $winner = $a;
+                break; // strong Condorcet winner (no losses)
+            }
+        }
+        // If no strong winner, pick one with fewest losses (simple tie-breaking)
+        if ($winner === null && !empty($allOptions)) {
+            $minLoss = min($losses);
+            $candidates = array_keys(array_filter($losses, fn($l) => $l === $minLoss));
+            $winner = $candidates[0] ?? null;
+        }
+
+        return [
+            'type' => 'condorcet',
+            'preferences' => $preferences,
+            'wins' => $wins,
+            'losses' => $losses,
+            'ties' => $ties,
+            'winner' => $winner,
+            'total_voters' => count($supports)
+        ];
+    }
 
     /**
      * Get existing results for a specific support engine
@@ -344,7 +344,7 @@ asort($rankingMap); // sort by rank ascending
             'approval_delib' => $this->calculateApprovalDeliberativeResults($supports),
             'ranking' => $this->calculateRankingResults($supports),
             'condorcet' => $this->calculateCondorcetResults($supports, $engineId),
-             'borda' => $this->calculateBordaResults($supports, $engineId),
+            'borda' => $this->calculateBordaResults($supports, $engineId),
             'quadratic' => $this->calculateQuadraticResults($supports),
             'token_weighted' => $this->calculateTokenWeightedResults($supports),
             'phased_voting' => $this->calculatePhasedVotingResults($supports, $inquiryId,$engineId),
@@ -379,37 +379,37 @@ asort($rankingMap); // sort by rank ascending
      * Calculate ranking results (rank order)
      */
     private function calculateRankingResults(array $supports, ?int $engineId = null): array
-{
-    $maxRank = $this->getMaxRankForEngine($engineId);
-    $rankings = [];
-    foreach ($supports as $support) {
-        $value = $support->getValue();
-        $weight = $support->getWeight();
-        $rankingMap = is_array($value) ? ($value['ranking'] ?? []) : [];
-        foreach ($rankingMap as $optionId => $rank) {
-            $rank = (int)$rank;
-            // Filter out ranks exceeding maxRank
-            if ($maxRank !== null && $rank > $maxRank) {
-                continue;
+    {
+        $maxRank = $this->getMaxRankForEngine($engineId);
+        $rankings = [];
+        foreach ($supports as $support) {
+            $value = $support->getValue();
+            $weight = $support->getWeight();
+            $rankingMap = is_array($value) ? ($value['ranking'] ?? []) : [];
+            foreach ($rankingMap as $optionId => $rank) {
+                $rank = (int)$rank;
+                // Filter out ranks exceeding maxRank
+                if ($maxRank !== null && $rank > $maxRank) {
+                    continue;
+                }
+                $optionId = (int)$optionId;
+                if (!isset($rankings[$optionId])) {
+                    $rankings[$optionId] = ['sum' => 0, 'count' => 0];
+                }
+                $rankings[$optionId]['sum'] += $rank * $weight;
+                $rankings[$optionId]['count'] += $weight;
             }
-            $optionId = (int)$optionId;
-            if (!isset($rankings[$optionId])) {
-                $rankings[$optionId] = ['sum' => 0, 'count' => 0];
-            }
-            $rankings[$optionId]['sum'] += $rank * $weight;
-            $rankings[$optionId]['count'] += $weight;
         }
+        $averages = [];
+        foreach ($rankings as $oid => $data) {
+            $averages[$oid] = $data['count'] ? round($data['sum'] / $data['count'], 2) : 0;
+        }
+        return [
+            'type' => 'ranking',
+            'rankings' => $averages,
+            'total_voters' => count($supports)
+        ];
     }
-    $averages = [];
-    foreach ($rankings as $oid => $data) {
-        $averages[$oid] = $data['count'] ? round($data['sum'] / $data['count'], 2) : 0;
-    }
-    return [
-        'type' => 'ranking',
-        'rankings' => $averages,
-        'total_voters' => count($supports)
-    ];
-}
     /**
      * Calculate quadratic voting results
      */
@@ -470,36 +470,36 @@ asort($rankingMap); // sort by rank ascending
      * The result can be the current leader after the last round.
      */
     private function calculatePhasedVotingResults(array $supports, ?int $inquiryId = null, ?int $engineId = null): array
-{
-    // Get current round from engine config
-    $currentRound = 1;
-    if ($engineId !== null) {
-        try {
-            $engine = $this->engineMapper->find($engineId);
-            if ($engine) {
-                $config = $engine->getConfig();
-                $currentRound = $config['current_round'] ?? 1;
+    {
+        // Get current round from engine config
+        $currentRound = 1;
+        if ($engineId !== null) {
+            try {
+                $engine = $this->engineMapper->find($engineId);
+                if ($engine) {
+                    $config = $engine->getConfig();
+                    $currentRound = $config['current_round'] ?? 1;
+                }
+            } catch (\Exception $e) {
+                $this->logger->error('Failed to get current round', ['error' => $e->getMessage()]);
             }
-        } catch (\Exception $e) {
-            $this->logger->error('Failed to get current round', ['error' => $e->getMessage()]);
         }
-    }
 
-    $counts = [];
-    foreach ($supports as $support) {
-        $value = $support->getValue();
-        // Extract round number from stored value
-        $round = isset($value['round']) ? (int)$value['round'] : 1;
-        // Only count supports for the current round
-        if ($round !== $currentRound) {
-            continue;
+        $counts = [];
+        foreach ($supports as $support) {
+            $value = $support->getValue();
+            // Extract round number from stored value
+            $round = isset($value['round']) ? (int)$value['round'] : 1;
+            // Only count supports for the current round
+            if ($round !== $currentRound) {
+                continue;
+            }
+            $selected = isset($value['selected']) && is_array($value['selected']) ? $value['selected'] : [];
+            foreach ($selected as $optionId) {
+                $counts[(int)$optionId] = ($counts[(int)$optionId] ?? 0) + 1;
+            }
         }
-        $selected = isset($value['selected']) && is_array($value['selected']) ? $value['selected'] : [];
-        foreach ($selected as $optionId) {
-            $counts[(int)$optionId] = ($counts[(int)$optionId] ?? 0) + 1;
-        }
-    }
-    return ['type' => 'phased_voting', 'counts' => $counts];
+        return ['type' => 'phased_voting', 'counts' => $counts];
     }
 
     /**
@@ -562,6 +562,63 @@ asort($rankingMap); // sort by rank ascending
     }
     /**
      * Calculate ternary results
+     private function calculateTernaryResults(array $supports): array
+     {
+         $yes = 0;
+         $no = 0;
+         $abstain = 0;
+
+         foreach ($supports as $support) {
+             $value = $support->getValue();
+             $weight = $support->getWeight();
+
+             $this->debug('Processing ternary support', [
+                 'user_id' => $support->getUserId(),
+                 'raw_value' => $value,
+                 'value_type' => gettype($value),
+                 'weight' => $weight
+            ]);
+
+             // Extract value from JSON format: {"value":1} or {"type":"ternary","value":1}
+             $voteValue = 0;
+             if (is_array($value)) {
+                 $voteValue = $value['value'] ?? 0;
+} elseif (is_string($value)) {
+    $decoded = json_decode($value, true);
+    $voteValue = $decoded['value'] ?? (int)$value;
+} else {
+    $voteValue = (int)$value;
+}
+
+$this->debug('Extracted vote value', ['voteValue' => $voteValue]);
+
+if ($voteValue === 1) {
+    $yes += $weight;
+    $this->debug('Added to YES', ['weight' => $weight, 'total_yes' => $yes]);
+} elseif ($voteValue === -1) {
+    $no += $weight;
+    $this->debug('Added to NO', ['weight' => $weight, 'total_no' => $no]);
+} else {
+    $abstain += $weight;
+    $this->debug('Added to ABSTAIN', ['weight' => $weight, 'total_abstain' => $abstain]);
+}
+}
+
+$total = $yes + $no + $abstain;
+$result = [
+    'type' => 'ternary',
+    'totals' => ['yes' => $yes, 'no' => $no, 'abstain' => $abstain],
+    'percentages' => [
+        'yes' => $total > 0 ? round(($yes / $total) * 100, 2) : 0,
+        'no' => $total > 0 ? round(($no / $total) * 100, 2) : 0,
+        'abstain' => $total > 0 ? round(($abstain / $total) * 100, 2) : 0
+            ]
+        ];
+
+$this->debug('Ternary result final', ['result' => $result]);
+
+return $result;
+}
      */
     private function calculateTernaryResults(array $supports): array
     {
@@ -573,40 +630,35 @@ asort($rankingMap); // sort by rank ascending
             $value = $support->getValue();
             $weight = $support->getWeight();
 
-            $this->debug('Processing ternary support', [
-                'user_id' => $support->getUserId(),
-                'raw_value' => $value,
-                'value_type' => gettype($value),
-                'weight' => $weight
-            ]);
+            // Decode if the value is a JSON string (from deliberation mode)
+            if (is_string($value)) {
+                $decoded = json_decode($value, true);
+                if (is_array($decoded) && isset($decoded['value'])) {
+                    $value = $decoded['value'];
+                } else {
+                    $value = (int)$value;
+                }
+            }
 
-            // Extract value from JSON format: {"value":1} or {"type":"ternary","value":1}
+            // Extract numeric vote value
             $voteValue = 0;
             if (is_array($value)) {
                 $voteValue = $value['value'] ?? 0;
-            } elseif (is_string($value)) {
-                $decoded = json_decode($value, true);
-                $voteValue = $decoded['value'] ?? (int)$value;
-            } else {
+            } elseif (is_numeric($value)) {
                 $voteValue = (int)$value;
             }
 
-            $this->debug('Extracted vote value', ['voteValue' => $voteValue]);
-
             if ($voteValue === 1) {
                 $yes += $weight;
-                $this->debug('Added to YES', ['weight' => $weight, 'total_yes' => $yes]);
             } elseif ($voteValue === -1) {
                 $no += $weight;
-                $this->debug('Added to NO', ['weight' => $weight, 'total_no' => $no]);
             } else {
                 $abstain += $weight;
-                $this->debug('Added to ABSTAIN', ['weight' => $weight, 'total_abstain' => $abstain]);
             }
         }
 
         $total = $yes + $no + $abstain;
-        $result = [
+        return [
             'type' => 'ternary',
             'totals' => ['yes' => $yes, 'no' => $no, 'abstain' => $abstain],
             'percentages' => [
@@ -615,10 +667,6 @@ asort($rankingMap); // sort by rank ascending
                 'abstain' => $total > 0 ? round(($abstain / $total) * 100, 2) : 0
             ]
         ];
-
-        $this->debug('Ternary result final', ['result' => $result]);
-
-        return $result;
     }
 
 
@@ -782,73 +830,73 @@ asort($rankingMap); // sort by rank ascending
      * @return array List of grades ordered from best to worst
      */
     private function getMajorityJudgmentGrades(?int $inquiryId, ?int $optionId = null, ?int $engineId = null): array
-{
-    // NEW: If engineId is provided, read grades from engine config
-    if ($engineId !== null) {
-        try {
-            $engine = $this->engineMapper->find($engineId);
-            if ($engine) {
-                $config = $engine->getConfig();
-                if (isset($config['grades']) && is_array($config['grades'])) {
-                    $this->debug('Got grades from engine config', ['grades' => $config['grades']]);
-                    return $config['grades'];
+    {
+        // NEW: If engineId is provided, read grades from engine config
+        if ($engineId !== null) {
+            try {
+                $engine = $this->engineMapper->find($engineId);
+                if ($engine) {
+                    $config = $engine->getConfig();
+                    if (isset($config['grades']) && is_array($config['grades'])) {
+                        $this->debug('Got grades from engine config', ['grades' => $config['grades']]);
+                        return $config['grades'];
+                    }
                 }
+            } catch (\Exception $e) {
+                $this->logger->error('Failed to get engine grades', ['error' => $e->getMessage()]);
             }
-        } catch (\Exception $e) {
-            $this->logger->error('Failed to get engine grades', ['error' => $e->getMessage()]);
         }
-    }
 
-    // Then try option (for per-option overrides)
-    if ($optionId !== null && $optionId > 0) {
-        try {
-            $option = $this->optionMapper->find($optionId);
-            if ($option) {
-                $miscFields = $option->getMiscFields();
-                if (isset($miscFields['support_template']['grades']) && is_array($miscFields['support_template']['grades'])) {
-                    return $miscFields['support_template']['grades'];
+        // Then try option (for per-option overrides)
+        if ($optionId !== null && $optionId > 0) {
+            try {
+                $option = $this->optionMapper->find($optionId);
+                if ($option) {
+                    $miscFields = $option->getMiscFields();
+                    if (isset($miscFields['support_template']['grades']) && is_array($miscFields['support_template']['grades'])) {
+                        return $miscFields['support_template']['grades'];
+                    }
+                    if (isset($miscFields['grades']) && is_array($miscFields['grades'])) {
+                        return $miscFields['grades'];
+                    }
                 }
-                if (isset($miscFields['grades']) && is_array($miscFields['grades'])) {
-                    return $miscFields['grades'];
-                }
+            } catch (\Exception $e) {
+                $this->logger->error('Failed to get option grades', ['error' => $e->getMessage()]);
             }
-        } catch (\Exception $e) {
-            $this->logger->error('Failed to get option grades', ['error' => $e->getMessage()]);
         }
-    }
 
-    // Fall back to inquiry configuration
-    if ($inquiryId !== null) {
-        try {
-            $inquiry = $this->inquiryMapper->find($inquiryId);
-            if ($inquiry) {
-                $miscFields = $inquiry->getMiscFields();
-                if (isset($miscFields['support_template']['grades'])) {
-                    return $miscFields['support_template']['grades'];
+        // Fall back to inquiry configuration
+        if ($inquiryId !== null) {
+            try {
+                $inquiry = $this->inquiryMapper->find($inquiryId);
+                if ($inquiry) {
+                    $miscFields = $inquiry->getMiscFields();
+                    if (isset($miscFields['support_template']['grades'])) {
+                        return $miscFields['support_template']['grades'];
+                    }
                 }
-            }
-            $templateJson = $this->inquiryMiscService->getValue($inquiryId, 'support_template');
-            if ($templateJson) {
-                $template = json_decode($templateJson, true);
-                if (isset($template['grades'])) {
-                    return $template['grades'];
+                $templateJson = $this->inquiryMiscService->getValue($inquiryId, 'support_template');
+                if ($templateJson) {
+                    $template = json_decode($templateJson, true);
+                    if (isset($template['grades'])) {
+                        return $template['grades'];
+                    }
                 }
+            } catch (\Exception $e) {
+                $this->logger->error('Failed to get inquiry grades', ['error' => $e->getMessage()]);
             }
-        } catch (\Exception $e) {
-            $this->logger->error('Failed to get inquiry grades', ['error' => $e->getMessage()]);
         }
-    }
 
-    // Default fallback
-    $defaultGrades = ['Excellent', 'Good', 'Fair', 'Poor'];
-    $this->logger->warning('No grades found for majority judgment, using defaults', [
-        'inquiryId' => $inquiryId,
-        'optionId' => $optionId,
-        'engineId' => $engineId,
-        'defaultGrades' => $defaultGrades
-    ]);
-    return $defaultGrades;
-}
+        // Default fallback
+        $defaultGrades = ['Excellent', 'Good', 'Fair', 'Poor'];
+        $this->logger->warning('No grades found for majority judgment, using defaults', [
+            'inquiryId' => $inquiryId,
+            'optionId' => $optionId,
+            'engineId' => $engineId,
+            'defaultGrades' => $defaultGrades
+        ]);
+        return $defaultGrades;
+    }
 
     /**
      * Calculate approval results for deliberative phase (simple approve/not approve)
@@ -1014,6 +1062,20 @@ asort($rankingMap); // sort by rank ascending
 
     /**
      * Calculate reaction results
+     private function calculateReactionResults(array $supports): array
+     {
+         $counts = [];
+         foreach ($supports as $support) {
+             $value = $support->getValue();
+             $weight = $support->getWeight();
+             // Value can be array of strings (multi‑reaction)
+             $reactions = is_array($value) ? $value : (array)$value;
+             foreach ($reactions as $reaction) {
+                 $counts[$reaction] = ($counts[$reaction] ?? 0) + $weight;
+}
+}
+return ['type' => 'reaction', 'counts' => $counts];
+}
      */
     private function calculateReactionResults(array $supports): array
     {
@@ -1021,10 +1083,20 @@ asort($rankingMap); // sort by rank ascending
         foreach ($supports as $support) {
             $value = $support->getValue();
             $weight = $support->getWeight();
-            // Value can be array of strings (multi‑reaction)
-            $reactions = is_array($value) ? $value : (array)$value;
+
+            // Decode JSON string if necessary
+            if (is_string($value)) {
+                $decoded = json_decode($value, true);
+                if (json_last_error() === JSON_ERROR_NONE) {
+                    $value = $decoded;
+                }
+            }
+
+            $reactions = is_array($value) ? $value : [$value];
             foreach ($reactions as $reaction) {
-                $counts[$reaction] = ($counts[$reaction] ?? 0) + $weight;
+                if (is_string($reaction)) {
+                    $counts[$reaction] = ($counts[$reaction] ?? 0) + $weight;
+                }
             }
         }
         return ['type' => 'reaction', 'counts' => $counts];
@@ -1113,6 +1185,23 @@ asort($rankingMap); // sort by rank ascending
             ]
         };
     }
+
+    /**
+     * Get all support results for a specific inquiry
+     *
+     * This returns all stored results where target_type = 'inquiry' and target_id = $inquiryId.
+     * Results may exist for different support engines (including null for informal/deliberative).
+     *
+     * @param int $inquiryId The inquiry ID
+     * @return SupportResult[] Array of SupportResult entities
+     */
+    public function getResultsByInquiry(int $inquiryId): array
+    {
+        $this->logger->debug('Getting results by inquiry', ['inquiryId' => $inquiryId]);
+        $results = $this->resultMapper->findResultsByTarget('inquiry', $inquiryId);
+        return array_filter($results, fn($r) => $r !== null);
+    }
+
     /**
      * Get supports for a specific target
      */
@@ -1133,6 +1222,25 @@ asort($rankingMap); // sort by rank ascending
         } else {
             return $this->supportMapper->findByEngineAndOption($engineId, $targetId);
         }
+    }
+
+    /**
+     * Get the voting engine type, respecting engineId if provided.
+     */
+    private function getSupportTypeFromEngineOrTarget(?int $engineId, int $inquiryId, int $optionId): string
+    {
+        if ($engineId !== null) {
+            try {
+                $engine = $this->engineMapper->find($engineId);
+                if ($engine) {
+                    return $engine->getEngine(); // e.g., 'quadratic', 'ranking', 'approval', etc.
+                }
+            } catch (\Exception $e) {
+                $this->logger->error('Failed to get engine type', ['engineId' => $engineId]);
+            }
+        }
+        // Fallback to target's support feature (inquiry or option)
+        return $this->getSupportTypeFromTarget($inquiryId, $optionId);
     }
 
     /**
@@ -1186,36 +1294,32 @@ asort($rankingMap); // sort by rank ascending
     {
         $this->logger->info('Calculating all results', ['engineId' => $engineId]);
 
-        // Get all supports for this engine (or all informal if engineId = null)
+        $engineType = null;
+        if ($engineId !== null) {
+            $engine = $this->engineMapper->find($engineId);
+            $engineType = $engine?->getEngine();
+        }
+
         $supports = $this->getSupportsForEngine($engineId);
-
-        // Group supports by target
         $grouped = $this->groupSupportsByTarget($supports);
-
-        // Calculate results for each target
         $results = [];
+
         foreach ($grouped as $targetKey => $targetSupports) {
             [$targetType, $targetId] = explode('-', $targetKey);
+            $targetId = (int)$targetId;
 
-            // Get support type for this target
-            $supportType = $this->getSupportTypeForTarget((int)$targetId, $targetType);
-            $inquiryIdParam = null;
-            $optionIdParam = null;
-            if ($targetType === 'inquiry') {
-                $inquiryIdParam = (int)$targetId;
-            } else {
-                $optionIdParam = (int)$targetId;
-            }
+            // Use engine type if available, otherwise fallback to target's feature
+            $supportType = $engineType ?? $this->getSupportTypeForTarget($targetId, $targetType);
 
+            $inquiryIdParam = $targetType === 'inquiry' ? $targetId : null;
+            $optionIdParam = $targetType === 'option' ? $targetId : null;
 
-            // Calculate result based on supports array
-            $resultData = $this->calculateByType($supportType, $targetSupports, $inquiryIdParam, $optionIdParam,$engineId);
+            $resultData = $this->calculateByType($supportType, $targetSupports, $inquiryIdParam, $optionIdParam, $engineId);
 
-            // Store result
             $stored = $this->resultMapper->upsertResult(
                 $engineId,
                 $targetType,
-                (int)$targetId,
+                $targetId,
                 $resultData
             );
             $results[] = $stored;
@@ -1280,64 +1384,62 @@ asort($rankingMap); // sort by rank ascending
      * @param int|null $engineId
      * @return array The calculated result
      */
-
-    /**
-     * Calculate results from a provided array of supports (no DB read)
-     * This avoids dirty table reads by using already fetched data
-     * 
-     * @param int $inquiryId
-     * @param int $optionId
-     * @param array $supports Array of Support entities
-     * @param int|null $engineId
-     * @return array The calculated result
-     */
-
     public function calculateFromSupports(int $inquiryId, int $optionId, array $supports, ?int $engineId = null): array
     {
-        $targetType = $optionId > 0 ? 'option' : 'inquiry';
-        $targetId = $optionId > 0 ? $optionId : $inquiryId;
-
-        $this->debug('=== calculateFromSupports START ===', [
-            'inquiryId' => $inquiryId,
-            'optionId' => $optionId,
-            'targetType' => $targetType,
-            'targetId' => $targetId,
-            'engineId' => $engineId,
-            'supportsCount' => count($supports)
-        ]);
-
-        // Debug each support
-        foreach ($supports as $index => $support) {
-            $this->debug("Support #{$index}", [
-                'userId' => $support->getUserId(),
-                'optionId' => $support->getOptionId(),
-                'value_raw' => $support->getValue(),
-                'value_decoded' => is_string($support->getValue()) ? json_decode($support->getValue(), true) : $support->getValue(),
-                'weight' => $support->getWeight()
-            ]);
+        // Determine target type and ID based on mode
+        if ($engineId !== null) {
+            // Engine mode: get target info from the engine
+            try {
+                $engine = $this->engineMapper->find($engineId);
+                if ($engine) {
+                    // Use the engine's target_type ('inquiry' or 'option')
+                    $targetType = $engine->getTargetType();
+                    // For the target ID:
+                    // - If engine targets 'option', use $optionId (must be > 0)
+                    // - If engine targets 'inquiry', use $inquiryId
+                    $targetId = ($targetType === 'option') ? $optionId : $inquiryId;
+                } else {
+                    // Fallback: derive from optionId
+                    $targetType = $optionId > 0 ? 'option' : 'inquiry';
+                    $targetId = $optionId > 0 ? $optionId : $inquiryId;
+                }
+            } catch (\Exception $e) {
+                $this->logger->error('Failed to get engine for target determination', ['engineId' => $engineId]);
+                $targetType = $optionId > 0 ? 'option' : 'inquiry';
+                $targetId = $optionId > 0 ? $optionId : $inquiryId;
+            }
+        } else {
+            // Deliberative mode: always based on optionId
+            $targetType = $optionId > 0 ? 'option' : 'inquiry';
+            $targetId = $optionId > 0 ? $optionId : $inquiryId;
         }
 
+        // Filter supports to only those relevant for this calculation
+        $filteredSupports = array_filter($supports, function($support) use ($engineId, $optionId) {
+            if ($engineId === null) {
+                // Deliberative mode: only supports with NULL engine_id and matching option_id
+                return $support->getSupportEngineId() === null && $support->getOptionId() === $optionId;
+            }
+            // Engine mode: only supports with this engine_id
+            return $support->getSupportEngineId() === $engineId;
+        });
+
+        // Reindex array
+        $filteredSupports = array_values($filteredSupports);
+
         // Get the support feature type for this target
-        $supportType = $this->getSupportTypeFromTarget($inquiryId, $optionId);
-        $this->debug('Support type', ['type' => $supportType]);
+        $supportType = $this->getSupportTypeFromEngineOrTarget($engineId, $inquiryId, $optionId);
 
-        $resultData = $this->calculateByType($supportType, $supports, $inquiryId, $optionId,$engineId);
-        $this->debug('Calculated result', ['result' => $resultData]);
+        // Calculate using filtered supports
+        $resultData = $this->calculateByType($supportType, $filteredSupports, $inquiryId, $optionId, $engineId);
 
-        // Store the result
+        // Store the result with correct target_type and target_id
         $stored = $this->resultMapper->upsertResult(
             $engineId,
             $targetType,
             $targetId,
             $resultData
         );
-
-        $this->debug('Result stored', [
-            'resultId' => $stored->getId(),
-            'stored_result' => $stored->getResult()
-        ]);
-
-        $this->debug('=== calculateFromSupports END ===');
 
         return $resultData;
     }

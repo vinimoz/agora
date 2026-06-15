@@ -128,7 +128,7 @@ const getRankClass = (index: number): string => {
 const createCharts = (): void => {
     if (!pieChartCanvas.value || !barChartCanvas.value) return
 
-    const labels = props.rankedOptions.map(o => o.title.length > 20 ? o.title.substring(0, 20) + '...' : o.title)
+    const labels = props.rankedOptions.map(o => o.title.length > 20 ? `${o.title.substring(0, 20)  }...` : o.title)
     const votes = props.rankedOptions.map(o => props.getOptionVoteCount(o.id))
     const colors = ['#42b883', '#3490dc', '#f6993f', '#e74c3c', '#9b59b6', '#1abc9c', '#e67e22', '#2c3e50', '#16a085', '#27ae60']
 

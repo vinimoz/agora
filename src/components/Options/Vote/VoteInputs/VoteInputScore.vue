@@ -9,10 +9,10 @@
         :max="maxValue"
         :step="step"
         :value="currentValue ?? defaultValue"
-        @input="handleSliderInput"
-        @change="handleSliderChange"
         class="score-slider"
         :style="{ '--progress': getProgress(currentValue ?? defaultValue) + '%' }"
+        @input="handleSliderInput"
+        @change="handleSliderChange"
       />
       <span class="score-value">{{ displayValue }}</span>
     </div>

@@ -40,7 +40,7 @@ const supports = {
         return httpInstance.request({
             method: 'POST',
             url: `inquiry/support/${inquiryId}/${userId}/${optionId}`,
-            data: data,  // Send in request body
+            data,  // Send in request body
             cancelToken: cancelTokenHandlerObject[this.addSupport.name].handleRequestCancellation().token,
         })
     },
@@ -63,7 +63,7 @@ const supports = {
         return httpInstance.request({
             method: 'PUT',
             url: `inquiry/support/${inquiryId}/${userId}/${optionId}`,
-            data: data,  // Send in request body
+            data,  // Send in request body
             cancelToken: cancelTokenHandlerObject[this.updateSupport.name].handleRequestCancellation().token,
         })
     },
@@ -87,7 +87,7 @@ const supports = {
         
         return httpInstance.request({
             method: 'DELETE',
-            url: url,
+            url,
             cancelToken: cancelTokenHandlerObject[this.removeSupport.name].handleRequestCancellation().token,
         })
     },

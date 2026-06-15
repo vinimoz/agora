@@ -161,10 +161,12 @@ class SupportService
         if ($engineId !== null) {
             $existing->setSupportEngineId($engineId);
         }
-        $support = $this->supportMapper->updateSupport($existing);
+        $support = $this->supportMapper->updateSupport($existing,$engineId);
         $this->logger->debug('UPDATED SUPPORT', [
             'support_id' => $support->getId(),
-            'value' => $support->getValue()
+            'value' => $support->getValue(),
+            'EXISTING' => $existing,
+            'ENIGNE ID' => $engineId
         ]);
     } else {
         $support = $this->supportMapper->addSupport(
@@ -231,7 +233,6 @@ private function normalizeMajorityJudgmentValue(mixed $value): string
 
 /**
  * Validate support value based on support feature
- */
 private function validateSupportValue(Inquiry $inquiry, array $normalizedValue, ?int $engineId = null): void
 {
     if ($engineId) {
@@ -243,7 +244,7 @@ private function validateSupportValue(Inquiry $inquiry, array $normalizedValue, 
 
     $value = $normalizedValue['value'] ?? null;
 
-    $complexTypes = ['approval', 'ranking', 'condorcet', 'borda', 'quadratic', 'token_weighted', 'phased_voting'];
+    $complexTypes = ['approval', 'ranking', 'condorcet', 'borda', 'quadratic', 'token_weighted', 'phased_voting','majority_judgment'];
     if (in_array($type, $complexTypes)) {
         return;
     }
@@ -285,7 +286,6 @@ private function validateSupportValue(Inquiry $inquiry, array $normalizedValue, 
             }
         }
 
-        // NEW: Enforce max_per_user from engine config
         if ($engineId !== null) {
             $engine = $this->engineService->getEngine($engineId);
             if ($engine) {
@@ -330,6 +330,98 @@ private function validateSupportValue(Inquiry $inquiry, array $normalizedValue, 
         break;
     }
 }
+ */
+
+private function validateSupportValue(Inquiry $inquiry, array $normalizedValue, ?int $engineId = null): void
+{
+    if ($engineId) {
+        $engine = $this->engineService->getEngine($engineId);
+        $type = $engine ? $engine->getEngine() : $inquiry->getSupportFeature();
+    } else {
+        $type = $inquiry->getSupportFeature();
+    }
+
+    // Detect if the value is wrapped (has a 'value' key) – deliberation mode
+    $isWrapped = array_key_exists('value', $normalizedValue) && count($normalizedValue) === 1;
+    $value = $isWrapped ? $normalizedValue['value'] : $normalizedValue;
+
+    switch ($type) {
+        case 'binary':
+        case 'ternary':
+        case 'star':
+        case 'score':
+            // These are always wrapped (even in engine mode they use wrapper because not in complexTypes)
+            $numericValue = is_numeric($value) ? (int)$value : null;
+            if ($type === 'binary' && !in_array($numericValue, [-1, 1], true)) {
+                throw new \InvalidArgumentException('Binary value must be -1 or 1');
+            }
+            if ($type === 'ternary' && !in_array($numericValue, [-1, 0, 1], true)) {
+                throw new \InvalidArgumentException('Ternary value must be -1, 0, or 1');
+            }
+            if ($type === 'score' && (!is_int($value) || $value < 0 || $value > 10)) {
+                throw new \InvalidArgumentException('Score must be between 0 and 10');
+            }
+            if ($type === 'star' && (!is_int($value) || $value < 1 || $value > 5)) {
+                throw new \InvalidArgumentException('Star rating must be between 1 and 5');
+            }
+            break;
+
+        case 'reaction':
+            // $value can be string (deliberation: {"value":"❤️"}) or array (engine: ["❤️"])
+            $reactions = is_array($value) ? $value : [$value];
+            if (empty($reactions)) {
+                throw new \InvalidArgumentException('Reaction must have at least one emoji');
+            }
+            foreach ($reactions as $reaction) {
+                if (!is_string($reaction) || $reaction === '') {
+                    throw new \InvalidArgumentException('Each reaction must be a non‑empty string');
+                }
+            }
+            if ($engineId !== null) {
+                $engine = $this->engineService->getEngine($engineId);
+                if ($engine) {
+                    $config = $engine->getConfig();
+                    $maxPerUser = $config['max_per_user'] ?? null;
+                    if ($maxPerUser !== null && count($reactions) > $maxPerUser) {
+                        throw new \InvalidArgumentException("Maximum {$maxPerUser} reactions allowed per user");
+                    }
+                }
+            }
+            break;
+
+        case 'majority_judgment':
+            // $value can be numeric index (deliberation: {"value":4}) or string grade (engine: "Excellent")
+            if ($value === null || $value === '' || (is_array($value) && empty($value))) {
+                throw new \InvalidArgumentException('Majority judgment value cannot be empty');
+            }
+            // Allow any scalar – actual grade mapping happens in result calculation
+            break;
+
+        case 'approval_delib':
+            if (!is_int($value) || $value !== 1) {
+                throw new \InvalidArgumentException('Approval value must be 1');
+            }
+            break;
+
+        case 'approval':
+        case 'ranking':
+        case 'condorcet':
+        case 'borda':
+        case 'quadratic':
+        case 'token_weighted':
+        case 'phased_voting':
+            // Complex structures – no additional validation needed
+            break;
+
+        default:
+            $numericValue = is_numeric($value) ? (int)$value : null;
+            if (!in_array($numericValue, [0, 1], true)) {
+                throw new \InvalidArgumentException('Invalid support value');
+            }
+            break;
+    }
+}
+
 
 /**
  * Update support value
@@ -366,10 +458,16 @@ private function normalizeToJsonFormat(Inquiry $inquiry, mixed $value, ?int $eng
     ]);
 
     // Define complex engine types that should store the value as‑is (no wrapping)
-    $complexTypes = [
-        'approval', 'ranking', 'condorcet', 'borda','reaction',
+    $complexTypes = match (true) {
+    $engineId !== null => [
+        'approval', 'ranking', 'condorcet', 'borda', 'reaction',
+        'quadratic', 'token_weighted', 'phased_voting', 'majority_judgment'
+    ],
+    default => [
+        'approval', 'ranking', 'condorcet', 'borda',
         'quadratic', 'token_weighted', 'phased_voting'
-    ];
+    ]
+    };
 
     if (in_array($type, $complexTypes)) {
         // Store the raw value directly (e.g., {ranking: {...}} or {selected: [...]})
@@ -589,6 +687,20 @@ public function removeAllSupportForInquiry(int $inquiryId, ?int $engineId = null
     return $count;
 }
 
+/**
+ * Get all supports for a specific inquiry
+ *
+ * Returns all support votes (including those for options and the inquiry itself)
+ * without any permission checks.
+ *
+ * @param int $inquiryId The inquiry ID
+ * @return Support[] Array of Support entities
+ */
+public function getSupportsByInquiry(int $inquiryId): array
+{
+    $this->logger->debug('Getting supports by inquiry', ['inquiryId' => $inquiryId]);
+    return $this->supportMapper->findByInquiryId($inquiryId);
+}
 
 /**
  * Get supports for a user

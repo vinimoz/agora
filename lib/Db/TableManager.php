@@ -57,6 +57,7 @@ class TableManager extends DbManager
      * Get all Agora tables by querying the database directly
      * Returns FULL table names including prefix
      */
+    /*
     private function getAllAgoraTables(): array
     {
         $platform = $this->connection->getDatabasePlatform()->getName();
@@ -93,7 +94,25 @@ class TableManager extends DbManager
         $this->logger->info('Found Agora tables', ['tables' => $agoraTables]);
 
         return $agoraTables;
+    }*/
+    private function getAllAgoraTables(): array
+{
+    $schema = $this->connection->createSchema();
+
+    $agoraTables = [];
+
+    foreach ($schema->getTables() as $table) {
+        $tableName = $table->getName();
+
+        if (str_contains($tableName, 'agora_')) {
+            $agoraTables[] = $tableName;
+        }
     }
+
+    $this->logger->info('Found Agora tables', ['tables' => $agoraTables]);
+
+    return $agoraTables;
+}
 
     /**
      * Purge all tables and all data
@@ -620,53 +639,53 @@ class TableManager extends DbManager
      *             Will be removed in 1.8.0.
      *
      * @return string[] Messages as array
-     */
+      */
     public function removeObsoleteTables(): array
-    {
-        $messages = [];
-        $platform = $this->connection->getDatabasePlatform()->getName();
+{
+    $messages = [];
+    $platform = $this->connection->getDatabasePlatform()->getName();
 
-        $goneTables = [
-            'oc_agora_assembly',
-            'oc_agora_assembly_inq',
-            'oc_agora_mod_status',
-        ];
+    $goneTables = [
+        'agora_assembly',
+        'agora_assembly_inq',
+        'agora_mod_status',
+    ];
 
-        $this->disableForeignKeyChecks();
+    $this->disableForeignKeyChecks();
 
-        try {
-            foreach ($goneTables as $tableName) {
-                $fullTableName = $this->dbPrefix . $tableName;
+    try {
+        foreach ($goneTables as $logicalName) {
+            $fullTableName = $this->dbPrefix . $logicalName;
 
-                if (!$this->connection->tableExists($fullTableName)) {
-                    continue;
-                }
-
-                try {
-                    if ($platform === 'postgresql') {
-                        $this->connection->executeStatement(
-                            'DROP TABLE IF EXISTS "' . $fullTableName . '" CASCADE'
-                        );
-                    } else {
-                        $this->connection->executeStatement(
-                            'DROP TABLE IF EXISTS `' . $fullTableName . '`'
-                        );
-                    }
-                    $messages[] = 'Dropped obsolete table ' . $fullTableName;
-                } catch (\Exception $e) {
-                    $messages[] = 'Failed to drop obsolete table ' . $fullTableName . ': ' . $e->getMessage();
-                }
+            if (!$this->connection->tableExists($fullTableName)) {
+                continue;
             }
-        } finally {
-            $this->enableForeignKeyChecks();
-        }
 
-        if (empty($messages)) {
-            $messages[] = 'No obsolete tables found';
+            try {
+                if ($platform === 'postgresql') {
+                    $this->connection->executeStatement(
+                        'DROP TABLE IF EXISTS "' . $fullTableName . '" CASCADE'
+                    );
+                } else {
+                    $this->connection->executeStatement(
+                        'DROP TABLE IF EXISTS `' . $fullTableName . '`'
+                    );
+                }
+                $messages[] = 'Dropped obsolete table ' . $fullTableName;
+            } catch (\Exception $e) {
+                $messages[] = 'Failed to drop obsolete table ' . $fullTableName . ': ' . $e->getMessage();
+            }
         }
-
-        return $messages;
+    } finally {
+        $this->enableForeignKeyChecks();
     }
+
+    if (empty($messages)) {
+        $messages[] = 'No obsolete tables found';
+    }
+    return $messages;
+    }
+
 
     /**
      * Remove obsolete columns if they still exist
@@ -678,68 +697,62 @@ class TableManager extends DbManager
      * @return string[] Messages as array
      */
     public function removeObsoleteColumns(): array
-    {
-        $messages = [];
-        $platform = $this->connection->getDatabasePlatform()->getName();
+{
+    $messages = [];
+    $platform = $this->connection->getDatabasePlatform()->getName();
 
-        $goneColumns = [
-            'oc_agora_inquiries' => [
-                'anonymous', 'suggestions_expire', 'support_limit', 'admin_access',
-                'hide_booked_up', 'misc_settings', 'allow_support', 'level', 'slug', 'tags',
-            ],
-            'oc_agora_options' => [
-                'inquiry_option_hash', 'timestamp', 'duration', 'order', 'confirmed',
-                'allow_support', 'target_type', 'option_text', 'released'
-            ],
-            'oc_agora_inq_group' => ['groupStatus'],
-            'oc_agora_inq_type' => ['is_option'],
-        ];
+    $goneColumns = [
+        'agora_inquiries' => [
+            'anonymous', 'suggestions_expire', 'support_limit', 'admin_access',
+            'hide_booked_up', 'misc_settings', 'allow_support', 'level', 'slug', 'tags',
+        ],
+        'agora_options' => [
+            'inquiry_option_hash', 'timestamp', 'duration', 'order', 'confirmed',
+            'allow_support', 'target_type', 'option_text', 'released'
+        ],
+        'agora_inq_group' => ['groupStatus'],
+        'agora_inq_type' => ['is_option'],
+    ];
 
-        foreach ($goneColumns as $tableName => $columns) {
-            $prefixedTableName = $this->dbPrefix . $tableName;
+    foreach ($goneColumns as $logicalName => $columns) {
+        $fullTableName = $this->dbPrefix . $logicalName;
 
-            if (!$this->connection->tableExists($prefixedTableName)) {
+        try {
+            $schema = $this->connection->createSchema();
+            if (!$schema->hasTable($fullTableName)) {
                 continue;
             }
+            $table = $schema->getTable($fullTableName);
+        } catch (\Exception $e) {
+            $this->logger->warning('Cannot read schema for table ' . $fullTableName, ['error' => $e->getMessage()]);
+            continue;
+        }
 
-            foreach ($columns as $columnName) {
-                try {
-                    $schemaManager = $this->connection->createSchemaManager();
-                    $tableColumns = $schemaManager->listTableColumns($prefixedTableName);
-
-                    $columnExists = false;
-                    foreach ($tableColumns as $col) {
-                        if ($col->getName() === $columnName) {
-                            $columnExists = true;
-                            break;
-                        }
-                    }
-
-                    if (!$columnExists) {
-                        continue;
-                    }
-
-                    if ($platform === 'postgresql') {
-                        $this->connection->executeStatement(
-                            'ALTER TABLE "' . $prefixedTableName . '" DROP COLUMN IF EXISTS "' . $columnName . '" CASCADE'
-                        );
-                    } else {
-                        $this->connection->executeStatement(
-                            'ALTER TABLE `' . $prefixedTableName . '` DROP COLUMN IF EXISTS `' . $columnName . '`'
-                        );
-                    }
-                    $messages[] = 'Dropped obsolete column ' . $columnName . ' from ' . $prefixedTableName;
-                } catch (\Exception $e) {
-                    // Column might not exist, that's fine
+        foreach ($columns as $columnName) {
+            if (!$table->hasColumn($columnName)) {
+                continue;
+            }
+            try {
+                if ($platform === 'postgresql') {
+                    $this->connection->executeStatement(
+                        'ALTER TABLE "' . $fullTableName . '" DROP COLUMN IF EXISTS "' . $columnName . '" CASCADE'
+                    );
+                } else {
+                    $this->connection->executeStatement(
+                        'ALTER TABLE `' . $fullTableName . '` DROP COLUMN IF EXISTS `' . $columnName . '`'
+                    );
                 }
+                $messages[] = 'Dropped obsolete column ' . $columnName . ' from ' . $fullTableName;
+            } catch (\Exception $e) {
+                $this->logger->error('Failed to drop column', ['column' => $columnName, 'table' => $fullTableName, 'error' => $e->getMessage()]);
             }
         }
+    }
 
-        if (empty($messages)) {
-            $messages[] = 'No obsolete columns found';
-        }
-
-        return $messages;
+    if (empty($messages)) {
+        $messages[] = 'No obsolete columns found';
+    }
+    return $messages;
     }
 
     /**
@@ -923,59 +936,58 @@ class TableManager extends DbManager
      * Update option hashes for entries that don't have one
      */
     private function updateOptionHashes(): int
-    {
-        $updatedCount = 0;
-        $tableName = $this->dbPrefix . 'agora_options';
+{
+    $updatedCount = 0;
+    $tableName = $this->dbPrefix . 'agora_options';
 
-        if (!$this->connection->tableExists($tableName)) {
+    if (!$this->connection->tableExists($tableName)) {
+        return 0;
+    }
+
+    // Vérifier l'existence de la colonne option_hash via le schéma
+    try {
+        $schema = $this->connection->createSchema();
+        if (!$schema->hasTable($tableName)) {
             return 0;
         }
-
-        // Check if option_hash column exists
-        $schemaManager = $this->connection->createSchemaManager();
-        $columns = $schemaManager->listTableColumns($tableName);
-        $hasOptionHash = false;
-        foreach ($columns as $column) {
-            if ($column->getName() === 'option_hash') {
-                $hasOptionHash = true;
-                break;
-            }
-        }
-
-        if (!$hasOptionHash) {
+        $table = $schema->getTable($tableName);
+        if (!$table->hasColumn('option_hash')) {
             return 0;
         }
+    } catch (\Exception $e) {
+        $this->logger->error('Failed to check option_hash column: ' . $e->getMessage());
+        return 0;
+    }
 
-        try {
-            $qb = $this->connection->getQueryBuilder();
-            $qb->select('id', 'text', 'parent_id')
-                ->from('agora_options')
-                ->where($qb->expr()->orX(
-                    $qb->expr()->isNull('option_hash'),
-                    $qb->expr()->eq('option_hash', $qb->expr()->literal(''))
-                ));
+    try {
+        $qb = $this->connection->getQueryBuilder();
+        $qb->select('id', 'text', 'parent_id')
+            ->from($tableName)   // attention : utiliser le nom complet
+            ->where($qb->expr()->orX(
+                $qb->expr()->isNull('option_hash'),
+                $qb->expr()->eq('option_hash', $qb->expr()->literal(''))
+            ));
+        $options = $qb->executeQuery()->fetchAll();
 
-            $options = $qb->executeQuery()->fetchAll();
+        foreach ($options as $option) {
+            $newHash = $this->generateOptionHash(
+                $option['text'] ?? '',
+                (int)$option['parent_id']
+            );
 
-            foreach ($options as $option) {
-                $newHash = $this->generateOptionHash(
-                    $option['text'] ?? '',
-                    (int)$option['parent_id']
-                );
+            $update = $this->connection->getQueryBuilder();
+            $update->update($tableName)
+                ->set('option_hash', $update->createNamedParameter($newHash))
+                ->where($update->expr()->eq('id', $update->createNamedParameter($option['id'])))
+                ->executeStatement();
 
-                $update = $this->connection->getQueryBuilder();
-                $update->update('agora_options')
-                    ->set('option_hash', $update->createNamedParameter($newHash))
-                    ->where($update->expr()->eq('id', $update->createNamedParameter($option['id'])))
-                    ->executeStatement();
-
-                $updatedCount++;
-            }
-        } catch (\Exception $e) {
-            $this->logger->error('Failed to update option hashes: ' . $e->getMessage());
+            $updatedCount++;
         }
+    } catch (\Exception $e) {
+        $this->logger->error('Failed to update option hashes: ' . $e->getMessage());
+    }
 
-        return $updatedCount;
+    return $updatedCount;
     }
 
     /**

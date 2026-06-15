@@ -570,7 +570,8 @@ protected function joinFamily(
             $joinAlias,
             $qb->expr()->andX(
                 $qb->expr()->eq($joinAlias . '.inquiry_id', $fromAlias . '.id'),
-                $qb->expr()->eq($joinAlias . '.user_id', $qb->createNamedParameter($currentUserId, IQueryBuilder::PARAM_STR))
+                $qb->expr()->eq($joinAlias . '.user_id', $qb->createNamedParameter($currentUserId, IQueryBuilder::PARAM_STR)),
+                $qb->expr()->isNull($joinAlias . '.support_engine_id')
             )
         );
 
@@ -830,7 +831,8 @@ protected function joinFamily(
             $joinAlias,
             $qb->expr()->andX(
                 $qb->expr()->eq($joinAlias . '.inquiry_id', $fromAlias . '.id'),
-                $qb->expr()->eq($joinAlias . '.user_id', $qb->createNamedParameter($currentUserId, IQueryBuilder::PARAM_STR))
+                $qb->expr()->eq($joinAlias . '.user_id', $qb->createNamedParameter($currentUserId, IQueryBuilder::PARAM_STR)),
+                $qb->expr()->isNull($joinAlias . '.support_engine_id')
             )
         );
 
@@ -940,12 +942,13 @@ protected function joinFamily(
             Support::TABLE,
             $joinAlias,
             $qb->expr()->andX(
-                $qb->expr()->eq($joinAlias . '.inquiry_id', $fromAlias . '.id')
+                $qb->expr()->eq($joinAlias . '.inquiry_id', $fromAlias . '.id'),
+                $qb->expr()->isNull($joinAlias . '.support_engine_id')
             )
         )
            ->addSelect(
                $qb->createFunction(
-                   'COUNT(DISTINCT CASE WHEN ' . $joinAlias . '.option_id = 0 THEN ' . $joinAlias . '.user_id ELSE NULL END) AS count_supports'
+                   'COUNT(DISTINCT CASE WHEN ' . $joinAlias . '.option_id = 0  THEN ' . $joinAlias . '.user_id ELSE NULL END) AS count_supports'
                )
            );
            // ->groupBy($fromAlias . '.id');

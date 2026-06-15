@@ -16,6 +16,8 @@ use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 use OCP\AppFramework\Db\QBMapper;
 use OCP\AppFramework\Db\Entity; 
+use OCP\AppFramework\Db\DoesNotExistException; 
+use OCP\AppFramework\Db\MultipleObjectsReturnedException;
 
 /**
  * @template-extends QBMapper<Support>
@@ -145,10 +147,9 @@ public function findSupportById(int $id): ?Support
 
     /**
      * Find support by inquiry, user, option, and engine
-     */
     public function findSupport(int $inquiryId, string $userId, int $optionId = 0, ?int $engineId = null): ?Support
     {
-        $qb = $this->db->getQueryBuilder();
+        $qb = $this->db->getQueryBuilder()  ;
         $qb->select('*')
            ->from($this->getTableName())
            ->where($qb->expr()->eq('inquiry_id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT)))
@@ -164,8 +165,33 @@ public function findSupportById(int $id): ?Support
         } catch (\OCP\AppFramework\Db\DoesNotExistException $e) {
             return null;
         }
+        return $this->findOne($qb);
+    }*/
+    public function findSupport(int $inquiryId, string $userId, int $optionId = 0, ?int $engineId = null): ?Support
+{
+    $qb = $this->db->getQueryBuilder();
+    $qb->select('*')
+        ->from($this->getTableName())
+        ->where($qb->expr()->eq('inquiry_id', $qb->createNamedParameter($inquiryId)))
+        ->andWhere($qb->expr()->eq('user_id', $qb->createNamedParameter($userId)))
+        ->andWhere($qb->expr()->eq('option_id', $qb->createNamedParameter($optionId)));
+    
+    if ($engineId === null) {
+        $qb->andWhere($qb->expr()->isNull('support_engine_id'));
+    } else {
+        $qb->andWhere($qb->expr()->eq('support_engine_id', $qb->createNamedParameter($engineId)));
     }
-
+    
+    try {
+        return $this->findEntity($qb);
+    } catch (DoesNotExistException $e) {
+        return null;
+    } catch (MultipleObjectsReturnedException $e) {
+        // Fallback: return the most recent
+        $qb->orderBy('updated', 'DESC')->setMaxResults(1);
+        return $this->findEntity($qb);
+    }
+}
 
     /**
      * Add support with proper JSON casting using SQL Repository
@@ -206,7 +232,7 @@ public function findSupportById(int $id): ?Support
     /**
      * Update support with proper JSON casting using SQL Repository
      */
-    public function updateSupport(Support $support): Support
+    public function updateSupport(Support $support, ?int $engineId = null): Support
     {
         $prefixedTable =self::TABLE;
         $this->sqlRepo->updateSupportWithJson(
@@ -215,7 +241,7 @@ public function findSupportById(int $id): ?Support
                 'value' => $support->getValue(),
                 'weight' => $support->getWeight(),
                 'updated' => time(),
-                'support_engine_id' => $support->getSupportEngineId(),
+                'support_engine_id' => $engineId,
             ],
             'value',
             $support->getId()

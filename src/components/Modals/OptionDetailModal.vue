@@ -202,7 +202,7 @@
                                         <div class="comment-container">
                                             <div class="comment-count-badge">
                                                 <component :is="InquiryOptionIcons.Comment" :size="16" />
-                                                <span>{{ optionStore.status.countComments || 0 }}</span>
+                                                 <NcCounterBubble :count="optionStore.status.countComments || 0" :raw="true" />
                                             </div>
                                             <NcButton
                                                 type="tertiary"
@@ -330,6 +330,8 @@ import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcRichContenteditable from '@nextcloud/vue/components/NcRichContenteditable'
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
+import NcCounterBubble from '@nextcloud/vue/components/NcCounterBubble' 
+
 import { DateTime } from 'luxon'
 import Pencil from 'vue-material-design-icons/Pencil.vue'
 import MiscFieldsEditor from '../Options/MiscFieldsEditor.vue'

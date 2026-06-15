@@ -23,6 +23,7 @@
         :current-quadratic-votes="quadraticVotes[option.id]"
         :current-token-weight="tokenWeights[option.id]"
         :total-options="rankedOptions.length"
+        :get-user-vote-value-for-option="getUserVoteValueForOption"
         @vote="(option, value) => $emit('vote', option, value)"
         @approval-toggle="(optionId) => $emit('toggle-selection', optionId)"
         @change-rank="(optionId, rank) => $emit('update:rankings', { ...rankings, [optionId]: rank })"
@@ -73,6 +74,7 @@ import { Vote } from 'lucide-vue-next'
 import VoteCard from './VoteCard.vue'
 import { InquiryOptionIcons } from '../../../utils/icons.ts'
 import type { Option, SupportEngine } from '../../../Types/index'
+import type { SupportValue } from '../../../Types/votingType'
 
 const props = defineProps<{
   rankedOptions: Option[]
@@ -83,7 +85,7 @@ const props = defineProps<{
   rankings: Record<number, number>
   scores: Record<number, number>
   grades: Record<number, string | null>
-  reactions: Record<number, string | null>
+  reactions: Record<number, string[] | null>
   quadraticVotes: Record<number, number>
   tokenWeights: Record<number, number>
   canSubmitMultiVote: boolean
@@ -92,6 +94,7 @@ const props = defineProps<{
   getPercentage: (option: Option) => number
   hasUserVotedFor: (optionId: number) => boolean
   isSelectedForVote: (optionId: number) => boolean
+  getUserVoteValueForOption: (optionId: number) => SupportValue | null
 }>()
 
 const emit = defineEmits<{
@@ -99,7 +102,7 @@ const emit = defineEmits<{
   'update:rankings': [rankings: Record<number, number>]
   'update:scores': [scores: Record<number, number>]
   'update:grades': [grades: Record<number, string | null>]
-  'update:reactions': [reactions: Record<number, string | null>]
+  'update:reactions': [reactions: Record<number, string[] | null>]
   'update:quadraticVotes': [votes: Record<number, number>]
   'update:tokenWeights': [weights: Record<number, number>]
   'vote': [option: Option, value: unknown]
@@ -108,7 +111,7 @@ const emit = defineEmits<{
 }>()
 
 const showSubmitButton = computed(() =>
-  props.canVote && !props.hasUserVoted &&
+  props.canVote &&
   props.activeEngine?.status === 'active' &&
   props.effectiveEngineId !== 'trending' &&
   props.rankedOptions.length > 0

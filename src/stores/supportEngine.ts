@@ -308,12 +308,12 @@ export const useSupportEngineStore = defineStore('supportEngine', () => {
         }
 
         setCurrentEngine(engine)
-
+        /*
         if (resultStore.needsRecalculation(engine.id)) {
             await resultStore.calculateAndGetResults(engine.id)
         } else {
             await resultStore.loadEngineResults(engine.id)
-        }
+        */
     }
 
     function getCurrentEngine(): SupportEngine | null {

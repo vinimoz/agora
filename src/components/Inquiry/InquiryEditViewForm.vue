@@ -23,6 +23,8 @@ import NcSelect from '@nextcloud/vue/components/NcSelect'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
 import NcAvatar from '@nextcloud/vue/components/NcAvatar'
+import NcCounterBubble from '@nextcloud/vue/components/NcCounterBubble'
+
 import { NcTextArea } from '@nextcloud/vue'
 import NcRichContenteditable from '@nextcloud/vue/components/NcRichContenteditable'
 
@@ -538,7 +540,7 @@ return isPublicRoute
                             <component :is="InquiryGeneralIcons.Comment" :size="20" />
                         </div>
                         <div class="counter-content">
-                            <span class="counter-value">{{ inquiryStore.status.countComments || 0 }}</span>
+                            <NcCounterBubble :count="inquiryStore.status.countComments || 0" :raw="true" />
                             <span class="counter-label">{{ t('agora', 'Comments') }}</span>
                         </div>
                     </div>
