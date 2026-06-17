@@ -271,6 +271,7 @@ const hasVotePeriod = computed(() => inquiry.miscFields?.support_start && inquir
           class="badge-bubble"
           >
                             <SupportFeature
+                                     :key="inquiry.id + '-' + (inquiry.status?.countSupports ?? 0)"
                                     :item="inquiry"
                                     item-type="inquiry"
                                     :context="context"

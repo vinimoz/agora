@@ -140,6 +140,35 @@ class SupportResultService
         ];
     }
 
+    /**
+ * Get results by target type and target ID
+ *
+ * @param string $targetType 'inquiry' or 'option'
+ * @param int $targetId The target ID
+ * @param int|null $engineId Optional engine ID to filter results
+ * @return SupportResult[] Array of SupportResult entities
+ */
+public function getResultsByTarget(string $targetType, int $targetId, ?int $engineId = null): array
+{
+    $this->logger->debug('Getting results by target', [
+        'targetType' => $targetType,
+        'targetId' => $targetId,
+        'engineId' => $engineId
+    ]);
+
+    // Use the mapper method that already exists
+    $results = $this->resultMapper->findResultsByTarget($targetType, $targetId);
+
+    // Filter by engine ID if provided
+    if ($engineId !== null) {
+        $results = array_filter($results, function ($result) use ($engineId) {
+            return $result->getSupportEngineId() === $engineId;
+        });
+        $results = array_values($results); // re-index
+    }
+
+    return $results;
+}
 
     /**
      * Get all option IDs for a specific engine (from its target_ids)

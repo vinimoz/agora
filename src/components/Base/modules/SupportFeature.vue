@@ -30,7 +30,9 @@
         @click="handleSupportClick"
       >
         <!-- Icon based on support feature type -->
-        <div class="counter-icon" :style="iconContainerStyles">
+        <div class="counter-icon" :style="iconContainerStyles"
+            :class="{ 'inactive': !hasUserParticipated && (supportFeature === 'ternary' || supportFeature === 'reaction') }"
+            >
           <template v-if="supportFeature === 'ternary' || supportFeature === 'binary'">
             <TernarySupportIcon :support-value="Number(currentUserSupportValue)" :size="iconSize" />
           </template>
@@ -42,7 +44,7 @@
           />
 
           <div v-else-if="supportFeature === 'reaction'" class="reaction-icon">
-            <span class="reaction-emoji">{{ getUserReaction || '👍' }}</span>
+            <span class="reaction-emoji" :class="{ 'inactive': !hasUserParticipated }">{{ getUserReaction || '👍' }}</span>
           </div>
           <div v-else-if="supportFeature === 'star'" class="star-rating-icon">
             <span v-if="hasUserParticipated" class="rating-value">{{
@@ -430,8 +432,8 @@ import { showSuccess, showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import NcPopover from '@nextcloud/vue/components/NcPopover'
 import { useSupportsStore } from '../../../stores/supports'
-import { useSessionStore } from '../../../stores/session'
 import { useOptionsStore } from '../../../stores/options'
+import { useSessionStore } from '../../../stores/session'
 import TernarySupportIcon from '../../AppIcons/modules/TernarySupportIcon.vue'
 import ThumbIcon from '../../AppIcons/modules/ThumbIcon.vue'
 import NcCounterBubble from '@nextcloud/vue/components/NcCounterBubble'
@@ -781,50 +783,56 @@ const majorityResult = computed(() => {
   return null
 })
 
-const displayCount = computed(() => {
-  // Early return for 'none' feature
-  if (supportFeature.value === 'none') {
-    return props.item?.status?.countSupports ?? 0
+const supportsStore = useSupportsStore()
+
+/*const displayCount = computed(() => {
+  const itemId = props.item.id
+  const itemType = props.itemType
+
+  let inquiryId: number
+  let optionId: number | undefined
+
+  if (itemType === 'option') {
+    const option = props.item as Option
+    inquiryId = option.targetId || (option as any).inquiryId
+    optionId = itemId
+  } else {
+    inquiryId = itemId
+    optionId = undefined
   }
 
-  // Binary
-  if (binaryResult.value) {
-    return (binaryResult.value.total_yes || 0) + (binaryResult.value.total_no || 0)
+  // Directly filter the reactive array
+  const allSupports = supportsStore.supports
+  let relevantSupports = allSupports.filter(s => s.inquiryId === inquiryId)
+
+  if (optionId !== undefined && optionId > 0) {
+    relevantSupports = relevantSupports.filter(s => s.optionId === optionId)
+  } else {
+    relevantSupports = relevantSupports.filter(s => !s.optionId || s.optionId === 0)
   }
 
-  // Ternary
-  if (ternaryResult.value?.totals) {
-    const totals = ternaryResult.value.totals
-    return (totals.yes || 0) + (totals.no || 0) + (totals.abstain || 0)
+  const feature = props.item.configuration?.supportFeature || 'none'
+  if (feature === 'binary' || feature === 'ternary') {
+    return relevantSupports.filter(s => s.value !== null && s.value !== undefined).length
+  }
+  if (feature === 'star' || feature === 'score') {
+    return relevantSupports.filter(s => typeof s.value === 'number').length
+  }
+  if (feature === 'reaction') {
+    return relevantSupports.length // each user has one reaction
+  }
+  if (feature === 'approval_delib') {
+    return relevantSupports.filter(s => s.value === 1).length
+  }
+  if (feature === 'majority_judgment') {
+    return relevantSupports.filter(s => s.value !== null && s.value !== undefined).length
   }
 
-  // Star
-  if (starResult.value?.totals?.total) {
-    return starResult.value.totals.total
-  }
+  // Fallback: count all supports for this item
+  return relevantSupports.length
+})*/
 
-  // Score
-  if (scoreResult.value?.total) {
-    return scoreResult.value.total
-  }
-
-  // Reaction
-  if (reactionResult.value?.counts) {
-    return Object.values(reactionResult.value.counts).reduce((a, b) => a + b, 0)
-  }
-
-  // Majority Judgment
-  if (majorityResult.value?.total_votes !== undefined) {
-    return majorityResult.value.total_votes
-  }
-
-  // Approval Delib
-  if (approvalDelibResult.value?.totals?.approved !== undefined) {
-    return approvalDelibResult.value.totals.approved
-  }
-
-  return props.item?.status?.countSupports ?? 0
-})
+const displayCount = computed(() => props.item?.status?.countSupports ?? 0)
 
 const totalParticipants = computed(() => displayCount.value)
 
@@ -999,7 +1007,7 @@ const handleSupportClick = async () => {
     switch (feature) {
       case 'binary':
       case 'approval_delib':
-        await supportsStore.toggleBinarySupport(itemId, userId, item, itemType)
+        await supportsStore.toggleApprovalDeliberativeSupport(itemId, userId, item, itemType)
         break
 
       case 'ternary':
@@ -1066,12 +1074,10 @@ const handleSupportClick = async () => {
 
       case 'reaction': {
         const normaliseReaction = (r: string) => r.replace(/[\uFE0F]/g, '').trim()
-        const reactions = (supportTemplate.value?.allowed_reactions || DEFAULT_REACTIONS).map(
-          normaliseReaction
-        )
+        const reactions = (supportTemplate.value?.allowed_reactions ?? []).map(normaliseReaction)
         const currentReaction = normaliseReaction(getUserReaction.value ?? '')
-
-        let nextReaction: string | null = null
+       console.log(" REACTIONS ",reactions)
+       let nextReaction: string | null = null
 
         if (!hadSupportedBefore) {
           nextReaction = reactions[0]
@@ -1083,11 +1089,11 @@ const handleSupportClick = async () => {
             nextReaction = null
           }
         }
-
+        console.log(" NEXT REACTION ",nextReaction)
         if (nextReaction) {
           await supportsStore.toggleReactionSupport(itemId, userId, item, itemType, nextReaction)
         } else if (currentReaction) {
-          await supportsStore.removeSupport(itemId, userId, itemType === 'option' ? itemId : 0)
+          await supportsStore.removeSupport(itemId, userId, itemType === 'option' ? itemId : 0,null)
         }
         break
       }
@@ -1116,7 +1122,8 @@ const showSupportSuccessMessage = (hadSupportedBefore: boolean) => {
   const hasSupportedAfter = props.item.currentUserStatus?.hasSupported
   const supportValueAfter = props.item.currentUserStatus?.supportValue
   const feature = supportFeature.value
-
+    console.log(" HAS SUPPPORTED ",hasSupportedAfter)
+    console.log(" SUPPORT VALUE ",supportValueAfter)
   switch (feature) {
     case 'binary':
       if (supportValueAfter === 1) {
@@ -1434,6 +1441,15 @@ const showSupportSuccessMessage = (hadSupportedBefore: boolean) => {
       flex-shrink: 0;
     }
   }
+    .counter-icon.inactive {
+        opacity: 0.5;
+        filter: grayscale(1);
+    }
+
+    .reaction-emoji.inactive {
+        opacity: 0.4;
+        filter: grayscale(1);
+    }    
 }
 </style>
 
@@ -1575,166 +1591,166 @@ const showSupportSuccessMessage = (hadSupportedBefore: boolean) => {
     }
 
     .score-breakdown {
-      margin-bottom: 16px;
+        margin-bottom: 16px;
 
-      .score-summary {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 12px;
+        .score-summary {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
 
-        .score-stat {
-          text-align: center;
-          padding: 8px;
-          background: var(--color-background-dark);
-          border-radius: 8px;
+            .score-stat {
+                text-align: center;
+                padding: 8px;
+                background: var(--color-background-dark);
+                border-radius: 8px;
 
-          .stat-label {
-            display: block;
-            font-size: 10px;
-            color: var(--color-text-lighter);
-            margin-bottom: 4px;
-          }
+                .stat-label {
+                    display: block;
+                    font-size: 10px;
+                    color: var(--color-text-lighter);
+                    margin-bottom: 4px;
+                }
 
-          .stat-value {
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--color-primary-element);
-          }
+                .stat-value {
+                    font-size: 16px;
+                    font-weight: 700;
+                    color: var(--color-primary-element);
+                }
+            }
         }
-      }
     }
 
     .reaction-breakdown {
-      margin-bottom: 16px;
+        margin-bottom: 16px;
 
-      .reaction-grid {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        justify-content: center;
+        .reaction-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
 
-        .reaction-stat {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          padding: 8px 12px;
-          background: var(--color-background-dark);
-          border-radius: 8px;
-          min-width: 50px;
-          transition: all 0.2s ease;
+            .reaction-stat {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                padding: 8px 12px;
+                background: var(--color-background-dark);
+                border-radius: 8px;
+                min-width: 50px;
+                transition: all 0.2s ease;
 
-          &.selected {
-            background: rgba(var(--color-primary-element-rgb), 0.1);
-            border: 1px solid var(--color-primary-element);
-          }
+                &.selected {
+                    background: rgba(var(--color-primary-element-rgb), 0.1);
+                    border: 1px solid var(--color-primary-element);
+                }
 
-          .reaction-emoji {
-            font-size: 20px;
-            margin-bottom: 4px;
-          }
+                .reaction-emoji {
+                    font-size: 20px;
+                    margin-bottom: 4px;
+                }
 
-          .reaction-count {
-            font-weight: 600;
-            font-size: 13px;
-          }
+                .reaction-count {
+                    font-weight: 600;
+                    font-size: 13px;
+                }
+            }
         }
-      }
     }
 
     .majority-breakdown {
-      margin-bottom: 16px;
+        margin-bottom: 16px;
 
-      .grade-distribution {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
+        .grade-distribution {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
 
-        .grade-bar {
-          display: flex;
-          align-items: center;
-          gap: 8px;
+            .grade-bar {
+                display: flex;
+                align-items: center;
+                gap: 8px;
 
-          .grade-label {
-            min-width: 85px;
-            font-size: 11px;
-            color: var(--color-text-lighter);
-          }
+                .grade-label {
+                    min-width: 85px;
+                    font-size: 11px;
+                    color: var(--color-text-lighter);
+                }
 
-          .grade-bar-container {
-            flex: 1;
-            height: 6px;
-            background: var(--color-border);
-            border-radius: 3px;
-            overflow: hidden;
+                .grade-bar-container {
+                    flex: 1;
+                    height: 6px;
+                    background: var(--color-border);
+                    border-radius: 3px;
+                    overflow: hidden;
 
-            .grade-bar-fill {
-              height: 100%;
-              background: var(--color-primary-element);
-              transition: width 0.3s ease;
+                    .grade-bar-fill {
+                        height: 100%;
+                        background: var(--color-primary-element);
+                        transition: width 0.3s ease;
+                    }
+                }
+
+                .grade-count {
+                    min-width: 35px;
+                    text-align: right;
+                    font-weight: 600;
+                    font-size: 12px;
+                }
             }
-          }
-
-          .grade-count {
-            min-width: 35px;
-            text-align: right;
-            font-weight: 600;
-            font-size: 12px;
-          }
-        }
-      }
-
-      .median-info {
-        margin-top: 12px;
-        padding-top: 8px;
-        border-top: 1px solid var(--color-border);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-
-        .median-label {
-          font-size: 11px;
-          color: var(--color-text-lighter);
         }
 
-        .median-value {
-          font-weight: 700;
-          font-size: 13px;
-          color: var(--color-primary-element);
+        .median-info {
+            margin-top: 12px;
+            padding-top: 8px;
+            border-top: 1px solid var(--color-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            .median-label {
+                font-size: 11px;
+                color: var(--color-text-lighter);
+            }
+
+            .median-value {
+                font-weight: 700;
+                font-size: 13px;
+                color: var(--color-primary-element);
+            }
         }
-      }
     }
 
     .tooltip-footer {
-      display: flex;
-      justify-content: space-between;
-      padding-top: 12px;
-      margin-top: 4px;
-      border-top: 1px solid var(--color-border);
+        display: flex;
+        justify-content: space-between;
+        padding-top: 12px;
+        margin-top: 4px;
+        border-top: 1px solid var(--color-border);
 
-      .summary-item {
-        .summary-label {
-          font-size: 10px;
-          color: var(--color-text-lighter);
-          display: block;
-          margin-bottom: 2px;
+        .summary-item {
+            .summary-label {
+                font-size: 10px;
+                color: var(--color-text-lighter);
+                display: block;
+                margin-bottom: 2px;
+            }
+
+            .summary-value {
+                font-weight: 700;
+                font-size: 13px;
+
+                &.reached {
+                    color: var(--color-success);
+                }
+            }
         }
-
-        .summary-value {
-          font-weight: 700;
-          font-size: 13px;
-
-          &.reached {
-            color: var(--color-success);
-          }
-        }
-      }
     }
   }
 
   .counter-icon,
   .breakdown-header svg,
   .reaction-stat svg {
-    background: transparent !important;
+      background: transparent !important;
   }
 }
 </style>

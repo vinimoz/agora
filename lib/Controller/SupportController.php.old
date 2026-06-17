@@ -18,22 +18,23 @@ use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\JSONResponse;
 use OCP\IRequest;
 
+
 /**
  * @psalm-api
  */
-class SupportController extends BaseController
-{
+class SupportController extends BaseController {
     private SupportResultService $supportResultService;
 
     public function __construct(
         string $appName,
         IRequest $request,
         private SupportService $supportService,
-        SupportResultService $supportResultService,
+        SupportResultService $supportResultService, 
     ) {
         parent::__construct($appName, $request);
         $this->supportResultService = $supportResultService;
     }
+
 
     /**
      * Add support for an inquiry
@@ -44,27 +45,19 @@ class SupportController extends BaseController
     {
         return $this->response(
             function () use ($inquiryId, $userId, $optionId) {
+                // Get the value from request body using file_get_contents
                 $body = json_decode(file_get_contents('php://input'), true);
                 $value = $body['value'] ?? null;
                 $weight = $body['weight'] ?? 1;
                 $engineId = $body['engineId'] ?? null;
 
                 if ($value === null) {
-                    throw new \InvalidArgumentException('Support value is required');
+                    throw new \InvalidArgumentException("Support value is required");
                 }
-
-                $support = $this->supportService->addSupport($inquiryId, $userId, $value, $optionId, $weight, $engineId);
-
-                // Determine target
-                $targetType = $optionId > 0 ? 'option' : 'inquiry';
-                $targetId = $optionId > 0 ? $optionId : $inquiryId;
-
-                // Fetch the stored result
-                $results = $this->supportResultService->getResultsByTarget($targetType, $targetId, $engineId);
-                $resultData = !empty($results) ? $results[0]->getResult() : null;
-
+                $result = $this->supportResultService->getResultsByTarget($targetType, $targetId, $engineId);
+                $resultData = $result ? $result->getResult() : null; 
                 return [
-                    'support' => $support,
+                    'support' => $this->supportService->addSupport($inquiryId, $userId, $value, $optionId, $weight, $engineId),
                     'result' => $resultData,
                 ];
             }
@@ -85,16 +78,10 @@ class SupportController extends BaseController
                 $weight = $body['weight'] ?? 1;
                 $engineId = $body['engineId'] ?? null;
 
-                $support = $this->supportService->updateSupport($inquiryId, $userId, $value, $optionId, $weight, $engineId);
-
-                $targetType = $optionId > 0 ? 'option' : 'inquiry';
-                $targetId = $optionId > 0 ? $optionId : $inquiryId;
-
-                $results = $this->supportResultService->getResultsByTarget($targetType, $targetId, $engineId);
-                $resultData = !empty($results) ? $results[0]->getResult() : null;
-
+                $result = $this->supportResultService->getResultsByTarget($targetType, $targetId, $engineId);
+                $resultData = $result ? $result->getResult() : null; 
                 return [
-                    'support' => $support,
+                    'support' => $this->supportService->updateSupport($inquiryId, $userId, $value, $optionId, $weight, $engineId),
                     'result' => $resultData,
                 ];
             }
@@ -108,29 +95,13 @@ class SupportController extends BaseController
     #[FrontpageRoute(verb: 'DELETE', url: '/inquiry/support/{inquiryId}/{userId}/{optionId}')]
     public function remove(int $inquiryId, string $userId, int $optionId): JSONResponse
     {
+        $result = $this->supportResultService->getResultsByTarget($targetType, $targetId, $engineId);
+        $resultData = $result ? $result->getResult() : null; 
         return $this->response(
-            function () use ($inquiryId, $userId, $optionId) {
-                // Try to get engineId from query or body (optional)
-                $engineId = $this->request->getParam('engineId');
-                if ($engineId === null) {
-                    // fallback: parse from body if sent as JSON
-                    $body = json_decode(file_get_contents('php://input'), true);
-                    $engineId = $body['engineId'] ?? null;
-                }
-
-                $success = $this->supportService->removeSupport($inquiryId, $userId, $optionId, $engineId);
-
-                $targetType = $optionId > 0 ? 'option' : 'inquiry';
-                $targetId = $optionId > 0 ? $optionId : $inquiryId;
-
-                $results = $this->supportResultService->getResultsByTarget($targetType, $targetId, $engineId);
-                $resultData = !empty($results) ? $results[0]->getResult() : null;
-
-                return [
-                    'success' => $success,
-                    'result' => $resultData,
-                ];
-            }
+            fn () => [
+                'success' => $this->supportService->removeSupport($inquiryId, $userId, $optionId),
+                'result' => $resultData,
+            ]
         );
     }
 
@@ -142,20 +113,9 @@ class SupportController extends BaseController
     public function removeWithEngine(int $inquiryId, string $userId, int $optionId, int $engineId): JSONResponse
     {
         return $this->response(
-            function () use ($inquiryId, $userId, $optionId, $engineId) {
-                $success = $this->supportService->removeSupport($inquiryId, $userId, $optionId, $engineId);
-
-                $targetType = $optionId > 0 ? 'option' : 'inquiry';
-                $targetId = $optionId > 0 ? $optionId : $inquiryId;
-
-                $results = $this->supportResultService->getResultsByTarget($targetType, $targetId, $engineId);
-                $resultData = !empty($results) ? $results[0]->getResult() : null;
-
-                return [
-                    'success' => $success,
-                    'result' => $resultData,
-                ];
-            }
+            fn () => [
+                'success' => $this->supportService->removeSupport($inquiryId, $userId, $optionId, $engineId)
+            ]
         );
     }
 

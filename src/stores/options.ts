@@ -239,13 +239,13 @@ export const useOptionsStore = defineStore('options', {
         // Statistics
         totalSupports(): number {
             return this.options.reduce((total, option) =>
-                total + (option.currentUserStatus?.countSupports || 0), 0
+                total + (option.status?.countSupports || 0), 0
             )
         },
 
         totalComments(): number {
             return this.options.reduce((total, option) =>
-                total + (option.currentUserStatus?.countComments || 0), 0
+                total + (option.status?.countComments || 0), 0
             )
         },
 
@@ -468,9 +468,6 @@ export const useOptionsStore = defineStore('options', {
         // Optional: Update all support-related counts at once
         updateOptionSupportDetails(optionId: number, supportData: {
             countSupports: number
-            countPositiveSupports?: number
-            countNegativeSupports?: number
-            countNeutralSupports?: number
             hasSupported?: boolean
             supportValue?: number | null
         }): void {
@@ -478,15 +475,6 @@ export const useOptionsStore = defineStore('options', {
             if (option) {
                 if (option.status) {
                     option.status.countSupports = supportData.countSupports
-                    if (supportData.countPositiveSupports !== undefined) {
-                        option.status.countPositiveSupports = supportData.countPositiveSupports
-                    }
-                    if (supportData.countNegativeSupports !== undefined) {
-                        option.status.countNegativeSupports = supportData.countNegativeSupports
-                    }
-                    if (supportData.countNeutralSupports !== undefined) {
-                        option.status.countNeutralSupports = supportData.countNeutralSupports
-                    }
                 }
 
                 // Update current user's support status if provided
@@ -922,9 +910,9 @@ export const useOptionsStore = defineStore('options', {
                     icon: family.icon || getFamilyIconName(family.key),
                     count: familyOptions.length,
                     totalSupports: familyOptions.reduce((total, option) =>
-                                                        total + (option.currentUserStatus?.countSupports || 0), 0),
+                                                        total + (option.status?.countSupports || 0), 0),
                                                         totalComments: familyOptions.reduce((total, option) =>
-                                                                                            total + (option.currentUserStatus?.countComments || 0), 0),
+                                                                                            total + (option.status?.countComments || 0), 0),
                                                                                             types: Object.entries(typeCounts).map(([type, count]) => ({
                                                                                                 type,
                                                                                                 name: this.getOptionTypeInfo(type)?.name || 
