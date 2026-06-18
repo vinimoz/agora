@@ -1006,6 +1006,9 @@ const handleSupportClick = async () => {
 
     switch (feature) {
       case 'binary':
+        await supportsStore.toggleBinarySupport(itemId, userId, item, itemType)
+        break
+
       case 'approval_delib':
         await supportsStore.toggleApprovalDeliberativeSupport(itemId, userId, item, itemType)
         break
@@ -1090,11 +1093,7 @@ const handleSupportClick = async () => {
           }
         }
         console.log(" NEXT REACTION ",nextReaction)
-        if (nextReaction) {
-          await supportsStore.toggleReactionSupport(itemId, userId, item, itemType, nextReaction)
-        } else if (currentReaction) {
-          await supportsStore.removeSupport(itemId, userId, itemType === 'option' ? itemId : 0,null)
-        }
+        await supportsStore.toggleReactionSupport(itemId, userId, item, itemType, nextReaction)
         break
       }
 

@@ -77,7 +77,7 @@ export interface SupportEngine {
 
 export interface SupportResult {
   id: number
-  support_engine_id: number
+  support_engine_id: number | null 
   target_type: SupportEngineTarget
   target_id: number        // inquiry_id OR option_id depending on target_type
   result: SupportResultData

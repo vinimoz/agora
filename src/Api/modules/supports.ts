@@ -5,6 +5,7 @@
 import { AxiosResponse } from '@nextcloud/axios'
 import { httpInstance, createCancelTokenHandler } from './HttpApi.js'
 import { Support } from '../../stores/supports.ts'
+import type { SupportResultData } from './index.ts' 
 
 export interface SupportValue {
     value?: number | string | boolean
@@ -34,7 +35,7 @@ const supports = {
         userId: string, 
         optionId: number, 
         data: AddSupportOptions
-    ): Promise<AxiosResponse<{ support: Support }>> {
+    ): Promise<AxiosResponse<{ support: Support; result: SupportResultData | null } >> {
         console.log(" VALUUUUUUUUUUUUUUUUUUUUUUU ",data.value)
         console.log(" VALUUUUUUUUUUUUUUUUUUUUUUU ENGINE ID ",data.engineId)
         return httpInstance.request({
@@ -57,7 +58,7 @@ const supports = {
         userId: string, 
         optionId: number, 
         data: AddSupportOptions
-    ): Promise<AxiosResponse<{ support: Support }>> {
+    ): Promise<AxiosResponse<{ support: Support; result: SupportResultData | null } >> {
         console.log(" VALUUUUUUUUUUUUUUUUUUUUUUU ",data.value)
         console.log(" VALUUUUUUUUUUUUUUUUUUUUUUU ENGINE ID ",data.engineId)
         return httpInstance.request({
@@ -80,7 +81,7 @@ const supports = {
         userId: string, 
         optionId: number, 
         engineId?: number
-    ): Promise<AxiosResponse<{ success: boolean }>> {
+    ): Promise<AxiosResponse<{ success: boolean; result: SupportResultData | null } >> {
         const url = engineId 
             ? `inquiry/support/${inquiryId}/${userId}/${optionId}/${engineId}`
             : `inquiry/support/${inquiryId}/${userId}/${optionId}`

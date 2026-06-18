@@ -647,7 +647,7 @@ const loadResults = async () => {
 
             if (engineResults.length === 0) {
                 try {
-                    await resultStore.calculateAndGetResults(engineId)
+                    //await resultStore.calculateAndGetResults(engineId)
                     engineResults = resultStore.getResultsByEngine(engineId)
                 } catch (error) {
                     if (error?.name === 'CanceledError' || error?.message?.includes('canceled')) {
