@@ -81,6 +81,7 @@ OC.L10N.register(
     "Allow comments" : "Permesi komentojn",
     "Configure" : "Agordi",
     "Close" : "Malfermi",
+    "Share label" : "Share label",
     "Link copied to clipboard" : "Ligilo kopiita al tondujo",
     "Restore share" : "Restaŭri kunhavon",
     "Delete share" : "Forigi kunhavigon",

@@ -123,6 +123,7 @@ OC.L10N.register(
     "Label" : "Legenda",
     "Configure" : "Configurar",
     "Close" : "Fechar",
+    "Share label" : "Share label",
     "Link copied to clipboard" : "Ligação copiada para a área de transferência",
     "Shares" : "Partilhas",
     "No activity yet" : "Ainda sem atividade",

@@ -65,6 +65,7 @@ OC.L10N.register(
     "Allow comments" : "კომენტარების დაშვება",
     "Label" : "ლეიბლი",
     "Close" : "დახურვა",
+    "Share label" : "Share label",
     "No activity yet" : "აქტოვობა ჯერ არაა",
     "Never" : "არასდროს",
     "Change" : "შეცვლა",

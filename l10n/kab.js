@@ -181,6 +181,7 @@ OC.L10N.register(
     "Configure" : "Swel",
     "Close" : "Mdel",
     "Styles" : "Iɣunab",
+    "Share label" : "Share label",
     "Error sending invitation" : "Tuccḍa di tuzna n tinubga",
     "No activity yet" : "Ulac armud yakan",
     "No comments" : "Ulac iwenniten.",

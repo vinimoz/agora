@@ -77,6 +77,7 @@ OC.L10N.register(
     "Label" : "Etiketë",
     "Configure" : "Konfiguro",
     "Close" : "Mbylleni",
+    "Share label" : "Share label",
     "Shares" : "Shpërndarje",
     "No activity yet" : "Akoma asnjë aktivitet",
     "Never" : "Kurrë",

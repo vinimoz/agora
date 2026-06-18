@@ -88,6 +88,7 @@ OC.L10N.register(
     "Sort Order" : "Òrdre de triada",
     "Allow comments" : "Permetre los comentaris",
     "Close" : "Plegar",
+    "Share label" : "Share label",
     "Shares" : "Partatges",
     "No activity yet" : "Cap d’activitat pel moment",
     "No comments" : "Cap de comentari",

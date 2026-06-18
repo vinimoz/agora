@@ -596,6 +596,7 @@ OC.L10N.register(
     "Conversion Options" : "Teisenduse valikud",
     "Convert to Markdown" : "Teisenda Markdown-vormingusse",
     "Extract document structure (chapters/sections)" : "Eralda dokumendi struktuur (peatükid/jaotised)",
+    "Import Options" : "Importimise valikud",
     "Document Title" : "Dokumendi pealkiri",
     "Enter document title" : "Sisesta dokumendi pealkiri",
     "Import as" : "Impordi kui",

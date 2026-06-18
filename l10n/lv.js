@@ -103,6 +103,7 @@ OC.L10N.register(
     "Label" : "Iezīme",
     "Configure" : "Konfigurēt",
     "Close" : "Aizvērt",
+    "Share label" : "Share label",
     "Copy link to clipboard" : "Ievietot saiti starpliktuvē",
     "Show QR code" : "Parādīt kvadrātkodu",
     "Restore share" : "Atjaunot koplietojumu",

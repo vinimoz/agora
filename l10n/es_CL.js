@@ -70,6 +70,8 @@ OC.L10N.register(
     "Sort Order" : "Cirterio para ordenar",
     "Allow comments" : "Permitir comentarios",
     "Configure" : "Configurar",
+    "Close" : "Close",
+    "Share label" : "Share label",
     "Shares" : "Elementos compartido",
     "No activity yet" : "Aún no tiene actividad",
     "Never" : "Nunca",
