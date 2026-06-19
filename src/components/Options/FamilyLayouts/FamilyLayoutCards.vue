@@ -72,6 +72,7 @@
           v-for="option in options"
           :key="option.id"
           :option="option"
+          :showAction="true"
           :inquiry-id="inquiryId"
           :compact="false"
           :detailed="true"

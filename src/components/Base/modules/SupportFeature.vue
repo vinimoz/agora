@@ -1352,7 +1352,7 @@ const showSupportSuccessMessage = (hadSupportedBefore: boolean) => {
   // Star rating specific
   &.has-star-rating {
     width: max-content;
-    min-width: 180px;
+    min-width: 150px;
     max-width: none;
     justify-content: space-between;
 
@@ -1392,7 +1392,7 @@ const showSupportSuccessMessage = (hadSupportedBefore: boolean) => {
   // Majority judgment specific
   &.has-majority-judgment {
     width: max-content;
-    min-width: 200px;
+    min-width: 150px;
     max-width: none;
     justify-content: space-between;
 
@@ -1437,6 +1437,7 @@ const showSupportSuccessMessage = (hadSupportedBefore: boolean) => {
       width: auto;
       padding: 0;
       margin: 0;
+       margin-right: 8px;
       flex-shrink: 0;
     }
   }

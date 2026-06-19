@@ -1034,6 +1034,8 @@ function updateItemResult(
 ) {
     const targetType = optionId > 0 ? 'option' : 'inquiry';
     const targetId = optionId > 0 ? optionId : inquiryId;
+    const optionsStore = useOptionsStore()
+    const inquiriesStore = useInquiriesStore()
 
     if (targetType === 'option') {
         const option = optionsStore.options.find(o => o.id === targetId);

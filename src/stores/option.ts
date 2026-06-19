@@ -578,6 +578,7 @@ export const useOptionStore = defineStore('option', {
 
       this.meta.status = 'loading'
       try {
+        /*
         const response = await (() => {
           if (sessionStore.route.name === 'publicOption') {
             return PublicAPI.getOption(sessionStore.route.params.token)
@@ -585,8 +586,9 @@ export const useOptionStore = defineStore('option', {
           if (sessionStore.route.name === 'option') {
             return OptionsAPI.getFullOption(optionId ?? sessionStore.currentOptionId)
           }
-        })()
-        //const response = await (() => OptionsAPI.getFullOption(optionId ?? sessionStore.currentOptionId))()
+        })()*/
+
+        const response = await (() => OptionsAPI.getFullOption(optionId ?? sessionStore.currentOptionId))()
 
         if (!response) {
           this.$reset()

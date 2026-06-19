@@ -217,6 +217,11 @@ import {
     getOptionsCountByFamily,
 } from '../../helpers/modules/InquiryOptionHelper'
 
+const props = defineProps<{
+  hasVisibleFamilies: boolean
+}>()
+
+
 // Stores
 const inquiryStore = useInquiryStore()
 const optionsStore = useOptionsStore()
@@ -375,14 +380,6 @@ const handleActionCompleted = (result: unknown) => {
     closeModal()
 }
 
-// Handle vote-specific actions
-const handleConfigureEngine = () => {
-    console.log('Configure voting engine')
-}
-
-const handleAddToVote = () => {
-    console.log('Add options to vote')
-}
 
 // Computed for families and options
 const allInquiryTypes = computed<InquiryType[]>(() =>
@@ -417,7 +414,15 @@ const familiesWithOptions = computed(() => {
     }))
 })
 
-const hasVisibleFamilies = computed(() => familiesWithOptions.value.length > 0)
+
+// Handle vote-specific actions
+const handleConfigureEngine = () => {
+    console.log('Configure voting engine')
+}
+
+const handleAddToVote = () => {
+    console.log('Add options to vote')
+}
 
 const activeFamilyData = computed(() => {
     if (!activeFamily.value) return null
@@ -471,7 +476,7 @@ const closeAddOptionModal = () => {
 
 const openOptionDetail = (option: Option) => {
     if (isReadOnly.value) return
-    selectedOptionId.value = option.d
+    selectedOptionId.value = option.id
     showOptionDetail.value = true
 }
 
@@ -539,14 +544,6 @@ watch(() => inquiryStore.type, () => {
     }
 })
 
-// Example of how to use other helpers if needed in child components:
-// - getAllowedResponses(optionType, allOptionTypes.value)
-// - getAvailableResponseTypes(optionType, allOptionTypes.value)
-// - getOptionTypeFields(optionType, allOptionTypes.value)
-// - hasSupportFeature(optionType, allOptionTypes.value)
-// - getSupportFeatureLabel(optionType, allOptionTypes.value)
-// - allowsComments(optionType, allOptionTypes.value)
-// - usesTitle(optionType, allOptionTypes.value)
 </script>
 
 <style scoped lang="scss">

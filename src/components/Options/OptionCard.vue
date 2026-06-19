@@ -115,7 +115,6 @@
       </div>
     </div>
 
-    <!-- Fourth Box: Responses - normal mode -->
     <!-- Conditionally hide responses when progressBar is true -->
     <div v-if="!inline && hasAllowedResponses && !compact && !progressBar" class="card-responses">
       <div class="responses-header">
