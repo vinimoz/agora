@@ -19,7 +19,7 @@ import {
 } from '../../helpers/modules/InquiryHelper.ts'
 import {
   getFamiliesWithOptionTypes,
-    getLayoutForFamily,
+    // getLayoutForFamily,
 } from '../../helpers/modules/InquiryOptionHelper'
 import { SupportFeature } from '../Base/index.ts'
 import NcSelect from '@nextcloud/vue/components/NcSelect'

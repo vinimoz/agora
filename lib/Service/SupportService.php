@@ -332,93 +332,208 @@ private function validateSupportValue(Inquiry $inquiry, array $normalizedValue, 
 }
  */
 
-private function validateSupportValue(Inquiry $inquiry, array $normalizedValue, ?int $engineId = null): void
+
+
+private function validateEngineModeSupportValue(string $type, array $payload): void
 {
-    if ($engineId) {
-        $engine = $this->engineService->getEngine($engineId);
-        $type = $engine ? $engine->getEngine() : $inquiry->getSupportFeature();
-    } else {
-        $type = $inquiry->getSupportFeature();
-    }
-
-    // Detect if the value is wrapped (has a 'value' key) – deliberation mode
-    $isWrapped = array_key_exists('value', $normalizedValue) && count($normalizedValue) === 1;
-    $value = $isWrapped ? $normalizedValue['value'] : $normalizedValue;
-
     switch ($type) {
         case 'binary':
+            $allowed = [-1, 1];
+            if (!isset($payload['scores']) || !is_array($payload['scores'])) {
+                throw new \InvalidArgumentException("Missing 'scores' object for $type engine");
+            }
+            foreach ($payload['scores'] as $optionId => $value) {
+                if (!in_array($value, $allowed, true)) {
+                    throw new \InvalidArgumentException("Score for option $optionId must be one of: " . implode(', ', $allowed));
+                }
+            }
+            break;
+
         case 'ternary':
-        case 'star':
+            $allowed = [-1, 0, 1];
+            if (!isset($payload['scores']) || !is_array($payload['scores'])) {
+                throw new \InvalidArgumentException("Missing 'scores' object for $type engine");
+            }
+            foreach ($payload['scores'] as $optionId => $value) {
+                if (!in_array($value, $allowed, true)) {
+                    throw new \InvalidArgumentException("Score for option $optionId must be one of: " . implode(', ', $allowed));
+                }
+            }
+            break;
         case 'score':
-            // These are always wrapped (even in engine mode they use wrapper because not in complexTypes)
-            $numericValue = is_numeric($value) ? (int)$value : null;
-            if ($type === 'binary' && !in_array($numericValue, [-1, 1], true)) {
-                throw new \InvalidArgumentException('Binary value must be -1 or 1');
+        case 'star':
+            if (!isset($payload['scores']) || !is_array($payload['scores'])) {
+                throw new \InvalidArgumentException("Missing 'scores' object for $type engine");
             }
-            if ($type === 'ternary' && !in_array($numericValue, [-1, 0, 1], true)) {
-                throw new \InvalidArgumentException('Ternary value must be -1, 0, or 1');
-            }
-            if ($type === 'score' && (!is_int($value) || $value < 0 || $value > 10)) {
-                throw new \InvalidArgumentException('Score must be between 0 and 10');
-            }
-            if ($type === 'star' && (!is_int($value) || $value < 1 || $value > 5)) {
-                throw new \InvalidArgumentException('Star rating must be between 1 and 5');
+            $range = match($type) {
+                'binary' => [-1, 1],
+                'ternary' => [-1, 0, 1],
+                'score' => [0, 10],
+                'star' => [1, 5],
+            };
+            foreach ($payload['scores'] as $optionId => $value) {
+                if (!is_int($value) || $value < $range[0] || $value > $range[1]) {
+                    throw new \InvalidArgumentException("Score for option $optionId must be between {$range[0]} and {$range[1]}");
+                }
             }
             break;
 
         case 'reaction':
-            // $value can be string (deliberation: {"value":"❤️"}) or array (engine: ["❤️"])
-            $reactions = is_array($value) ? $value : [$value];
-            if (empty($reactions)) {
-                throw new \InvalidArgumentException('Reaction must have at least one emoji');
+            if (!isset($payload['reactions']) || !is_array($payload['reactions'])) {
+                throw new \InvalidArgumentException("Missing 'reactions' object");
             }
-            foreach ($reactions as $reaction) {
-                if (!is_string($reaction) || $reaction === '') {
-                    throw new \InvalidArgumentException('Each reaction must be a non‑empty string');
+            foreach ($payload['reactions'] as $optionId => $reactions) {
+                if (!is_array($reactions)) {
+                    throw new \InvalidArgumentException("Reactions for option $optionId must be an array");
                 }
-            }
-            if ($engineId !== null) {
-                $engine = $this->engineService->getEngine($engineId);
-                if ($engine) {
-                    $config = $engine->getConfig();
-                    $maxPerUser = $config['max_per_user'] ?? null;
-                    if ($maxPerUser !== null && count($reactions) > $maxPerUser) {
-                        throw new \InvalidArgumentException("Maximum {$maxPerUser} reactions allowed per user");
+                foreach ($reactions as $r) {
+                    if (!is_string($r) || $r === '') {
+                        throw new \InvalidArgumentException("Reaction must be a non‑empty string");
                     }
                 }
             }
             break;
 
-        case 'majority_judgment':
-            // $value can be numeric index (deliberation: {"value":4}) or string grade (engine: "Excellent")
-            if ($value === null || $value === '' || (is_array($value) && empty($value))) {
-                throw new \InvalidArgumentException('Majority judgment value cannot be empty');
+        case 'ranking':
+        case 'condorcet':
+        case 'borda':
+            if (!isset($payload['ranking']) || !is_array($payload['ranking'])) {
+                throw new \InvalidArgumentException("Missing 'ranking' object");
             }
-            // Allow any scalar – actual grade mapping happens in result calculation
+            foreach ($payload['ranking'] as $optionId => $rank) {
+                if (!is_int($rank) || $rank < 1) {
+                    throw new \InvalidArgumentException("Rank must be a positive integer");
+                }
+            }
             break;
 
-        case 'approval_delib':
-            if (!is_int($value) || $value !== 1) {
-                throw new \InvalidArgumentException('Approval value must be 1');
+        case 'majority_judgment':
+            if (!isset($payload['grades']) || !is_array($payload['grades'])) {
+                throw new \InvalidArgumentException("Missing 'grades' object");
+            }
+            foreach ($payload['grades'] as $optionId => $grade) {
+                if (!is_string($grade) || $grade === '') {
+                    throw new \InvalidArgumentException("Grade must be a non‑empty string");
+                }
             }
             break;
 
         case 'approval':
-        case 'ranking':
-        case 'condorcet':
-        case 'borda':
+        case 'phased_voting':
+            if (!isset($payload['selected']) || !is_array($payload['selected'])) {
+                throw new \InvalidArgumentException("Missing 'selected' array");
+            }
+            break;
+
         case 'quadratic':
         case 'token_weighted':
-        case 'phased_voting':
-            // Complex structures – no additional validation needed
+            if (!isset($payload['scores']) || !is_array($payload['scores'])) {
+                throw new \InvalidArgumentException("Missing 'scores' object");
+            }
+            // Quadratic: votes are positive integers; token_weighted: weights are positive integers
+            foreach ($payload['scores'] as $optionId => $value) {
+                if (!is_int($value) || $value <= 0) {
+                    throw new \InvalidArgumentException("Value must be a positive integer");
+                }
+            }
             break;
 
         default:
-            $numericValue = is_numeric($value) ? (int)$value : null;
-            if (!in_array($numericValue, [0, 1], true)) {
-                throw new \InvalidArgumentException('Invalid support value');
-            }
+            // Unknown engine – allow any structure (fallback)
             break;
+    }
+}
+
+
+private function validateSupportValue(Inquiry $inquiry, array $normalizedValue, ?int $engineId = null): void
+{
+    if ($engineId !== null) {
+        // Engine mode – validate structured payload
+        $engine = $this->engineService->getEngine($engineId);
+        $type = $engine ? $engine->getEngine() : $inquiry->getSupportFeature();
+        $this->validateEngineModeSupportValue($type, $normalizedValue);
+        return;
+    }
+
+    // Deliberative mode – scalar/wrapped value
+    $type = $inquiry->getSupportFeature();
+    $isWrapped = array_key_exists('value', $normalizedValue) && count($normalizedValue) === 1;
+    $value = $isWrapped ? $normalizedValue['value'] : $normalizedValue;
+
+    switch ($type) {
+    case 'binary':
+    case 'ternary':
+    case 'star':
+    case 'score':
+        // These are always wrapped (even in engine mode they use wrapper because not in complexTypes)
+        $numericValue = is_numeric($value) ? (int)$value : null;
+        if ($type === 'binary' && !in_array($numericValue, [-1, 1], true)) {
+            throw new \InvalidArgumentException('Binary value must be -1 or 1');
+        }
+        if ($type === 'ternary' && !in_array($numericValue, [-1, 0, 1], true)) {
+            throw new \InvalidArgumentException('Ternary value must be -1, 0, or 1');
+        }
+        if ($type === 'score' && (!is_int($value) || $value < 0 || $value > 10)) {
+            throw new \InvalidArgumentException('Score must be between 0 and 10');
+        }
+        if ($type === 'star' && (!is_int($value) || $value < 1 || $value > 5)) {
+            throw new \InvalidArgumentException('Star rating must be between 1 and 5');
+        }
+        break;
+
+    case 'reaction':
+        // $value can be string (deliberation: {"value":"❤️"}) or array (engine: ["❤️"])
+        $reactions = is_array($value) ? $value : [$value];
+        if (empty($reactions)) {
+            throw new \InvalidArgumentException('Reaction must have at least one emoji');
+        }
+        foreach ($reactions as $reaction) {
+            if (!is_string($reaction) || $reaction === '') {
+                throw new \InvalidArgumentException('Each reaction must be a non‑empty string');
+            }
+        }
+        if ($engineId !== null) {
+            $engine = $this->engineService->getEngine($engineId);
+            if ($engine) {
+                $config = $engine->getConfig();
+                $maxPerUser = $config['max_per_user'] ?? null;
+                if ($maxPerUser !== null && count($reactions) > $maxPerUser) {
+                    throw new \InvalidArgumentException("Maximum {$maxPerUser} reactions allowed per user");
+                }
+            }
+        }
+        break;
+
+    case 'majority_judgment':
+        // $value can be numeric index (deliberation: {"value":4}) or string grade (engine: "Excellent")
+        if ($value === null || $value === '' || (is_array($value) && empty($value))) {
+            throw new \InvalidArgumentException('Majority judgment value cannot be empty');
+        }
+        // Allow any scalar – actual grade mapping happens in result calculation
+        break;
+
+    case 'approval_delib':
+        if (!is_int($value) || $value !== 1) {
+            throw new \InvalidArgumentException('Approval value must be 1');
+        }
+        break;
+
+    case 'approval':
+    case 'ranking':
+    case 'condorcet':
+    case 'borda':
+    case 'quadratic':
+    case 'token_weighted':
+    case 'phased_voting':
+        // Complex structures – no additional validation needed
+        break;
+
+    default:
+        $numericValue = is_numeric($value) ? (int)$value : null;
+        if (!in_array($numericValue, [0, 1], true)) {
+            throw new \InvalidArgumentException('Invalid support value');
+        }
+        break;
     }
 }
 
@@ -447,44 +562,44 @@ private function normalizeToJsonFormat(Inquiry $inquiry, mixed $value, ?int $eng
     if ($engineId) {
         $engine = $this->engineService->getEngine($engineId);
         $type = $engine ? $engine->getEngine() : $inquiry->getSupportFeature();
+
+        $this->logger->debug('Normalizing value', [
+            'type' => $type,
+            'original_value' => $value,
+            'original_type' => gettype($value)
+        ]);
+
+        // Define complex engine types that should store the value as‑is (no wrapping)
+        $complexTypes = match (true) {
+            $engineId !== null => [
+                'ternary','binary','score','star','approval', 'ranking', 'condorcet', 'borda', 'reaction',
+                'quadratic', 'token_weighted', 'phased_voting', 'majority_judgment'
+            ],
+            default => [
+                'ternary','binary','score','star','approval', 'ranking', 'condorcet', 'borda', 'reaction',
+                'quadratic', 'token_weighted', 'phased_voting', 'majority_judgment'
+            ]
+        };
+
+        if (in_array($type, $complexTypes)) {
+            // Store the raw value directly (e.g., {ranking: {...}} or {selected: [...]})
+            return is_array($value) ? $value : (array)$value;
+        }
+
     } else {
         $type = $inquiry->getSupportFeature();
+        // For simple types, wrap in {"value": ...}
+        return match($type) {
+            'binary' => ['value' => $this->normalizeBinaryValue($value)],
+            'ternary' => ['value' => $this->normalizeTernaryValue($value)],
+            'score' => ['value' => $this->normalizeScoreValue($value)],
+            'star' => ['value' => $this->normalizeStarValue($value)],
+            'reaction' => ['value' => (string)$value],
+            'approval_delib' => ['value' => $this->normalizeApprovalValue($value)],
+            'majority_judgment' => ['value' => $this->normalizeMajorityJudgmentValue($value)],
+            default => ['value' => $this->normalizeBinaryValue($value)]
+        };
     }
-
-    $this->logger->debug('Normalizing value', [
-        'type' => $type,
-        'original_value' => $value,
-        'original_type' => gettype($value)
-    ]);
-
-    // Define complex engine types that should store the value as‑is (no wrapping)
-    $complexTypes = match (true) {
-    $engineId !== null => [
-        'approval', 'ranking', 'condorcet', 'borda', 'reaction',
-        'quadratic', 'token_weighted', 'phased_voting', 'majority_judgment'
-    ],
-    default => [
-        'approval', 'ranking', 'condorcet', 'borda',
-        'quadratic', 'token_weighted', 'phased_voting'
-    ]
-    };
-
-    if (in_array($type, $complexTypes)) {
-        // Store the raw value directly (e.g., {ranking: {...}} or {selected: [...]})
-        return is_array($value) ? $value : (array)$value;
-    }
-
-    // For simple types, wrap in {"value": ...}
-    return match($type) {
-        'binary' => ['value' => $this->normalizeBinaryValue($value)],
-        'ternary' => ['value' => $this->normalizeTernaryValue($value)],
-        'score' => ['value' => $this->normalizeScoreValue($value)],
-        'star' => ['value' => $this->normalizeStarValue($value)],
-        'reaction' => ['value' => (string)$value],
-        'approval_delib' => ['value' => $this->normalizeApprovalValue($value)],
-        'majority_judgment' => ['value' => $this->normalizeMajorityJudgmentValue($value)],
-        default => ['value' => $this->normalizeBinaryValue($value)]
-    };
 }
 
 /**

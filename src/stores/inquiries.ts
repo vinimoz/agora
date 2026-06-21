@@ -577,6 +577,7 @@ export const useInquiriesStore = defineStore('inquiries', {
       }
     },
 
+
     updateInquiryModerationStatus(inquiryId, moderationStatus) {
       const inquiry = this.inquiries.find((inq) => inq.id === inquiryId)
       if (inquiry) {
@@ -734,6 +735,26 @@ export const useInquiriesStore = defineStore('inquiries', {
 
     resetChunks(): void {
       this.meta.chunks.loaded = 1
+    },
+
+
+      async setInquiryStatus( inquiryId , inquiryStatus ): Promise<void> {
+      try {
+        await InquiriesAPI.updateInquiryStatus(inquiryId, status)
+        const inquiry = this.inquiries.find((inq) => inq.id === inquiryId)
+        if (inquiry) {
+         inquiry.inquiryStatus = inquiryStatus
+        }
+      } catch (error) {
+        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+          return
+        }
+        Logger.error('Error setting inquiry status:', {
+          error,
+          status,
+          state: this.$state,
+        })
+      }
     },
 
     async clone(payload: { inquiryId: number }): Promise<void> {

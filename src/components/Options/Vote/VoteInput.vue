@@ -8,18 +8,31 @@
       :option="option"
       :engine-config="engineConfig"
       :user-vote="userVote"
+      :current-score="currentScore"
       :disabled="disabled"
-      @vote="handleVote"
+      @update:score="(id, val) => $emit('update:score', id, val)"
     />
+
     <!-- Ternary -->
     <VoteInputTernary
       v-else-if="engineId === 'ternary'"
       :option="option"
       :engine-config="engineConfig"
       :user-vote="userVote"
+      :current-score="currentScore"
       :disabled="disabled"
-      @vote="handleVote"
+      @update:score="(id, val) => $emit('update:score', id, val)"
     />
+
+    <!-- Reaction -->
+    <VoteInputReaction
+      v-else-if="engineId === 'reaction'"
+      :option="option"
+      :engine-config="engineConfig"
+      :user-vote="userVote"
+      @update:reactions="(id, val) => $emit('update:reaction', id, val)"
+    />
+
     <!-- Star -->
     <VoteInputStar
       v-else-if="engineId === 'star'"
@@ -35,14 +48,6 @@
       :engine-config="engineConfig"
       :current-score="currentScore"
       @update:score="(id, val) => $emit('update:score', id, val)"
-    />
-    <!-- Reaction -->
-    <VoteInputReaction
-      v-else-if="engineId === 'reaction'"
-      :option="option"
-      :engine-config="engineConfig"
-      :current-reaction-value="currentReaction"
-      @update:reaction="(id, val) => $emit('update:reaction', id, val)"
     />
     <!-- Approval -->
     <VoteInputApproval
@@ -137,16 +142,16 @@
     <!-- None -->
     <VoteInputNone v-else-if="engineId === 'none'" />
 
-    <!-- Remove vote button for single-choice engines -->
+    <!-- Reset vote button for single-choice engines -->
     <NcButton
-      v-if="userVote && !isMultiEngine && canRemoveVote"
+      v-if="userVote && !isMultiEngine && canResetVote"
       type="tertiary"
       size="small"
-      class="remove-vote-btn"
-      @click="handleRemoveVote"
+      class="reset-vote-btn"
+      @click="handleResetVote"
     >
       <X :size="14" />
-      {{ t('agora', 'Remove') }}
+      {{ t('agora', 'Reset') }}
     </NcButton>
   </div>
 </template>
@@ -190,8 +195,10 @@ const props = defineProps<{
   currentReaction?: string[] | null
   currentQuadraticVotes?: number | null
   currentTokenWeight?: number | null
-  canRemoveVote?: boolean
+  canResetVote?: boolean
   totalOptions?: number
+  isMultiEngine?: boolean
+  canResetVote?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -199,7 +206,7 @@ const emit = defineEmits<{
   'approval-toggle': [optionId: number]
   'change-rank': [optionId: number, rank: number | null]
   'change-grade': [optionId: number, grade: string | null]
-  'remove-vote': []
+  'reset-vote': []
   'update:score': [optionId: number, score: number | null]
   'update:star': [optionId: number, star: number | null]
   'update:reaction': [optionId: number, reaction: string[] | null]
@@ -207,13 +214,22 @@ const emit = defineEmits<{
   'update:token_weight': [optionId: number, weight: number | null]
 }>()
 
-function handleVote(value: SupportValue) { emit('vote', value) }
-function handleApprovalToggle() { emit('approval-toggle', props.option.id) }
-function handleRankChange(rank: number | null) { emit('change-rank', props.option.id, rank) }
-function handleGradeChange(grade: string | null) { emit('change-grade', props.option.id, grade) }
-function handleRemoveVote() { if (!props.disabled) emit('remove-vote') }
+function handleVote(value: SupportValue) {
+  emit('vote', value)
+}
+function handleApprovalToggle() {
+  emit('approval-toggle', props.option.id)
+}
+function handleRankChange(rank: number | null) {
+  emit('change-rank', props.option.id, rank)
+}
+function handleGradeChange(grade: string | null) {
+  emit('change-grade', props.option.id, grade)
+}
+function handleResetVote() {
+  if (!props.disabled) emit('reset-vote')
+}
 </script>
-
 
 <style scoped lang="scss">
 .vote-input-container {
@@ -225,7 +241,7 @@ function handleRemoveVote() { if (!props.disabled) emit('remove-vote') }
   border-top: 1px solid var(--color-border);
   flex-wrap: wrap;
 
-  .remove-vote-btn {
+  .reset-vote-btn {
     margin-left: auto;
   }
 

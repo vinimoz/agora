@@ -68,9 +68,23 @@
                 <tbody>
                     <tr v-for="(option, index) in rankedOptions" :key="option.id">
                         <td class="rank-cell">
-                            <span class="rank-badge" :class="getRankClass(index)">
-                                {{ index + 1 }}
-                            </span>
+                            <span 
+    v-if="index === 0" 
+    class="medal" 
+    aria-label="First place"
+>🥇</span>
+<span 
+    v-else-if="index === 1" 
+    class="medal" 
+    aria-label="Second place"
+>🥈</span>
+<span 
+    v-else-if="index === 2" 
+    class="medal" 
+    aria-label="Third place"
+>🥉</span>
+                            <span v-else class="rank-badge">{{ index + 1 }}</span>
+
                         </td>
                         <td>
                             <div class="option-name">{{ option.title }}</div>
@@ -79,8 +93,8 @@
                         <td class="percentage-cell">
                             <div class="mini-progress">
                                 <div class="mini-progress-fill" :style="{ width: getPercentage(option) + '%' }" />
-                                <span>{{ getPercentage(option) }}%</span>
-                            </div>
+                                    <span>{{ getPercentage(option) }}%</span>
+                                </div>
                         </td>
                         <td>
                             <span v-if="option.metadata?.status" class="status-tag" :class="option.metadata.status">
@@ -91,12 +105,12 @@
                     </tr>
                 </tbody>
             </table>
+                            </div>
         </div>
-    </div>
 </template>
 
 <script setup lang="ts">
-import { ref, watch, nextTick, onUnmounted } from 'vue'
+    import { ref, watch, nextTick, onUnmounted } from 'vue'
 import { t } from '@nextcloud/l10n'
 import Chart from 'chart.js/auto'
 import { Users, Trophy, TrendingUp, Clock } from 'lucide-vue-next'
@@ -351,7 +365,7 @@ onUnmounted(() => {
 
             tr {
                 transition: background 0.2s ease;
-                
+
                 &:hover {
                     background: var(--color-background-hover);
                 }
@@ -431,19 +445,30 @@ onUnmounted(() => {
     }
 }
 
-@media (max-width: 768px) {
-    .results-layout {
-        .charts-section {
-            grid-template-columns: 1fr;
-        }
+.medal {
+    display: inline-block;
+    width: 36px;
+    height: 36px;
+    line-height: 36px;
+    text-align: center;
+    font-size: 24px;          /* scale the emoji */
+    border-radius: 12px;
+    background: transparent;  /* or a subtle background */
+}
 
-        .ranking-table {
-            overflow-x: auto;
-            
-            table {
-                min-width: 600px;
+        @media (max-width: 768px) {
+            .results-layout {
+                .charts-section {
+                    grid-template-columns: 1fr;
+                }
+
+                .ranking-table {
+                    overflow-x: auto;
+
+                    table {
+                        min-width: 600px;
+                    }
+                }
             }
         }
-    }
-}
 </style>

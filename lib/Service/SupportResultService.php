@@ -58,32 +58,32 @@ class SupportResultService
             $resultData
         );
     }
-private function normalizeGrade($value, array $validGrades): ?string
-{
-    // If value is array, extract grade key
-    if (is_array($value)) {
-        $value = $value['value'] ?? $value['grade'] ?? null;
-    }
-    // If string, try to JSON decode
-    if (is_string($value)) {
-        $decoded = json_decode($value, true);
-        if (is_array($decoded) && isset($decoded['value'])) {
-            $value = $decoded['value'];
+    private function normalizeGrade($value, array $validGrades): ?string
+    {
+        // If value is array, extract grade key
+        if (is_array($value)) {
+            $value = $value['value'] ?? $value['grade'] ?? null;
         }
-    }
+        // If string, try to JSON decode
+        if (is_string($value)) {
+            $decoded = json_decode($value, true);
+            if (is_array($decoded) && isset($decoded['value'])) {
+                $value = $decoded['value'];
+            }
+        }
 
-    // If numeric, treat as index (1‑based)
-    if (is_numeric($value) && isset($validGrades[(int)$value])) {
-        return $validGrades[(int)$value];
-    }
+        // If numeric, treat as index (1‑based)
+        if (is_numeric($value) && isset($validGrades[(int)$value])) {
+            return $validGrades[(int)$value];
+        }
 
-    // If string, check if it's a valid grade
-    if (is_string($value) && in_array($value, $validGrades)) {
-        return $value;
-    }
+        // If string, check if it's a valid grade
+        if (is_string($value) && in_array($value, $validGrades)) {
+            return $value;
+        }
 
-    return null;
-}
+        return null;
+    }
 
     /**
      * Calculate Borda Count results
@@ -167,34 +167,34 @@ private function normalizeGrade($value, array $validGrades): ?string
     }
 
     /**
- * Get results by target type and target ID
- *
- * @param string $targetType 'inquiry' or 'option'
- * @param int $targetId The target ID
- * @param int|null $engineId Optional engine ID to filter results
- * @return SupportResult[] Array of SupportResult entities
- */
-public function getResultsByTarget(string $targetType, int $targetId, ?int $engineId = null): array
-{
-    $this->logger->debug('Getting results by target', [
-        'targetType' => $targetType,
-        'targetId' => $targetId,
-        'engineId' => $engineId
-    ]);
+     * Get results by target type and target ID
+     *
+     * @param string $targetType 'inquiry' or 'option'
+     * @param int $targetId The target ID
+     * @param int|null $engineId Optional engine ID to filter results
+     * @return SupportResult[] Array of SupportResult entities
+     */
+    public function getResultsByTarget(string $targetType, int $targetId, ?int $engineId = null): array
+    {
+        $this->logger->debug('Getting results by target', [
+            'targetType' => $targetType,
+            'targetId' => $targetId,
+            'engineId' => $engineId
+        ]);
 
-    // Use the mapper method that already exists
-    $results = $this->resultMapper->findResultsByTarget($targetType, $targetId);
+        // Use the mapper method that already exists
+        $results = $this->resultMapper->findResultsByTarget($targetType, $targetId);
 
-    // Filter by engine ID if provided
-    if ($engineId !== null) {
-        $results = array_filter($results, function ($result) use ($engineId) {
-            return $result->getSupportEngineId() === $engineId;
-        });
-        $results = array_values($results); // re-index
+        // Filter by engine ID if provided
+        if ($engineId !== null) {
+            $results = array_filter($results, function ($result) use ($engineId) {
+                return $result->getSupportEngineId() === $engineId;
+            });
+            $results = array_values($results); // re-index
+        }
+
+        return $results;
     }
-
-    return $results;
-}
 
     /**
      * Get all option IDs for a specific engine (from its target_ids)
@@ -1455,6 +1455,28 @@ public function getResultsByTarget(string $targetType, int $targetId, ?int $engi
     }
 
     /**
+     * Extract numeric value from support value, handling JSON strings and arrays
+     */
+    private function extractNumericValue($value): int
+    {
+        // If it's an array, look for 'value' key (deliberative mode)
+        if (is_array($value)) {
+            return (int)($value['value'] ?? 0);
+        }
+        // If it's a JSON string, decode and extract
+        if (is_string($value)) {
+            $decoded = json_decode($value, true);
+            if (is_array($decoded) && isset($decoded['value'])) {
+                return (int)$decoded['value'];
+            }
+            // Otherwise, treat the string as a number (legacy)
+            return (int)$value;
+        }
+        // Fallback
+        return (int)$value;
+    }
+
+    /**
      * Calculate results from a provided array of supports (no DB read)
      * This avoids dirty table reads by using already fetched data
      * 
@@ -1464,95 +1486,95 @@ public function getResultsByTarget(string $targetType, int $targetId, ?int $engi
      * @param int|null $engineId
      * @return array The calculated result
      */
-public function calculateFromSupports(int $inquiryId, int $optionId, array $supports, ?int $engineId = null): array
-{
-    // Determine target type and ID based on mode
-    if ($engineId !== null) {
-        // Engine mode: store at inquiry level
-        $targetType = 'inquiry';
-        $targetId = $inquiryId;
-    } else {
-        // Deliberative mode: based on optionId
-        $targetType = $optionId > 0 ? 'option' : 'inquiry';
-        $targetId = $optionId > 0 ? $optionId : $inquiryId;
+    public function calculateFromSupports(int $inquiryId, int $optionId, array $supports, ?int $engineId = null): array
+    {
+        // Determine target type and ID based on mode
+        if ($engineId !== null) {
+            // Engine mode: store at inquiry level
+            $targetType = 'inquiry';
+            $targetId = $inquiryId;
+        } else {
+            // Deliberative mode: based on optionId
+            $targetType = $optionId > 0 ? 'option' : 'inquiry';
+            $targetId = $optionId > 0 ? $optionId : $inquiryId;
+        }
+
+        // Get option IDs from engine (only needed for engine mode)
+        $optionIds = $this->getOptionIdsFromEngine($engineId);
+
+        // Filter supports
+        $filteredSupports = array_filter($supports, function($support) use ($engineId, $optionId) {
+            if ($engineId === null) {
+                return $support->getSupportEngineId() === null && $support->getOptionId() === $optionId;
+            }
+            return $support->getSupportEngineId() === $engineId;
+        });
+        $filteredSupports = array_values($filteredSupports);
+
+        // Get support type
+        $supportType = $this->getSupportTypeFromEngineOrTarget($engineId, $inquiryId, $optionId);
+
+        // Calculate result
+        $resultData = $this->calculateByType(
+            $supportType,
+            $filteredSupports,
+            $inquiryId,
+            $optionId,
+            $engineId,
+            $optionIds  // ← correct variable name
+        );
+
+        // Store result
+        $stored = $this->resultMapper->upsertResult(
+            $engineId,
+            $targetType,
+            $targetId,
+            $resultData
+        );
+
+        return $resultData;
     }
 
-    // Get option IDs from engine (only needed for engine mode)
-    $optionIds = $this->getOptionIdsFromEngine($engineId);
-
-    // Filter supports
-    $filteredSupports = array_filter($supports, function($support) use ($engineId, $optionId) {
-        if ($engineId === null) {
-            return $support->getSupportEngineId() === null && $support->getOptionId() === $optionId;
+    /**
+     * Get support type from inquiry or option without reading supports table
+     */
+    private function getSupportTypeFromTarget(int $inquiryId, int $optionId): string
+    {
+        if ($optionId > 0) {
+            try {
+                $option = $this->optionMapper->find($optionId);
+                return $option->getSupportFeature() ?: 'binary';
+            } catch (\Exception $e) {
+                $this->logger->error('Failed to get option support feature', ['error' => $e->getMessage()]);
+                return 'binary';
+            }
         }
-        return $support->getSupportEngineId() === $engineId;
-    });
-    $filteredSupports = array_values($filteredSupports);
 
-    // Get support type
-    $supportType = $this->getSupportTypeFromEngineOrTarget($engineId, $inquiryId, $optionId);
-
-    // Calculate result
-    $resultData = $this->calculateByType(
-        $supportType,
-        $filteredSupports,
-        $inquiryId,
-        $optionId,
-        $engineId,
-        $optionIds  // ← correct variable name
-    );
-
-    // Store result
-    $stored = $this->resultMapper->upsertResult(
-        $engineId,
-        $targetType,
-        $targetId,
-        $resultData
-    );
-
-    return $resultData;
-}
-
-/**
- * Get support type from inquiry or option without reading supports table
- */
-private function getSupportTypeFromTarget(int $inquiryId, int $optionId): string
-{
-    if ($optionId > 0) {
         try {
-            $option = $this->optionMapper->find($optionId);
-            return $option->getSupportFeature() ?: 'binary';
+            $inquiry = $this->inquiryMapper->find($inquiryId);
+            return $inquiry->getSupportFeature() ?: 'binary';
         } catch (\Exception $e) {
-            $this->logger->error('Failed to get option support feature', ['error' => $e->getMessage()]);
+            $this->logger->error('Failed to get inquiry support feature', ['error' => $e->getMessage()]);
             return 'binary';
         }
     }
 
-    try {
-        $inquiry = $this->inquiryMapper->find($inquiryId);
-        return $inquiry->getSupportFeature() ?: 'binary';
-    } catch (\Exception $e) {
-        $this->logger->error('Failed to get inquiry support feature', ['error' => $e->getMessage()]);
-        return 'binary';
-    }
-}
+    /**
+     * Group supports by target
+     */
+    private function groupSupportsByTarget(array $supports): array
+    {
+        $grouped = [];
+        foreach ($supports as $support) {
+            $targetType = $support->getOptionId() > 0 ? 'option' : 'inquiry';
+            $targetId = $support->getOptionId() > 0 ? $support->getOptionId() : $support->getInquiryId();
+            $key = $targetType . '-' . $targetId;
 
-/**
- * Group supports by target
- */
-private function groupSupportsByTarget(array $supports): array
-{
-    $grouped = [];
-    foreach ($supports as $support) {
-        $targetType = $support->getOptionId() > 0 ? 'option' : 'inquiry';
-        $targetId = $support->getOptionId() > 0 ? $support->getOptionId() : $support->getInquiryId();
-        $key = $targetType . '-' . $targetId;
-
-        if (!isset($grouped[$key])) {
-            $grouped[$key] = [];
+            if (!isset($grouped[$key])) {
+                $grouped[$key] = [];
+            }
+            $grouped[$key][] = $support;
         }
-        $grouped[$key][] = $support;
+        return $grouped;
     }
-    return $grouped;
-}
 }

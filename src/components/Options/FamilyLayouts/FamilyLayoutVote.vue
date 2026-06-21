@@ -69,17 +69,19 @@
                         :has-user-voted-for="hasUserVotedFor"
                         :is-selected-for-vote="isSelectedForVote"
                         :get-user-vote-value-for-option="getUserVoteValueForOption"
+                        :has-selections-changed="hasSelectionsChanged"
                         @toggle-selection="toggleSelection"
-                        @update:rankings="rankings = $event"
-                        @update:scores="scores = $event"
-                        @update:grades="grades = $event"
-                        @update:reactions="reactions = $event"
-                        @update:quadratic-votes="quadraticVotes = $event"
-                        @update:token-weights="tokenWeights = $event"
+                        @update:rankings="updateRankings"
+                        @update:scores="updateScores"
+                        @update:grades="updateGrades"
+                        @update:reactions="updateReactions"
+                        @update:quadratic-votes="updateQuadraticVotes"
+                        @update:token-weights="updateTokenWeights"
                         @vote="(option, value) => submitSingleVote(option, value)"
-                        @submit-multi-vote="submitMultiVote"
+                        @submit-multi-vote="onSubmitMultiVote"
+                        @remove-my-vote="removeMyVote"
                         @select-option="$emit('select-option', $event)"
-                         @open-supports-modal="openSupportsModal"
+                        @open-supports-modal="openSupportsModal"
                         />
             </div>
             <!-- Results Layout -->
@@ -128,6 +130,7 @@
                 v-if="showSupportsModal"
                 :option-id="selectedOptionId"
                 :inquiry-id="inquiryId"
+                 :display-vote="true"
                 @close="showSupportsModal = false"
                 />
 
@@ -204,6 +207,7 @@ import EngineSelectorModal from '../../Modals/EngineSelectorModal.vue'
 import AddOptionToFamily from '../../Modals/AddOptionToFamily.vue'
 import SupportsDetailModal from '../../Modals/SupportsDetailModal.vue'
 import { ENGINE_DEFINITIONS } from '../../../Types/votingType'
+import { showError, showSuccess } from '@nextcloud/dialogs'
 
 const props = defineProps<{
   inquiryId: number
@@ -238,6 +242,7 @@ const {
   currentEngine,
   votableOptions,
   hasActiveEngine,
+  hasSelectionsChanged,
   rankings,
   scores,
   selectedOptions,
@@ -263,6 +268,7 @@ const {
   scoreMin,
   scoreMax,
   selectEngine,
+  removeMyVote,
   grades,
   reactions,
   quadraticVotes,
@@ -294,6 +300,18 @@ const layoutComponents = {
   results: VoteResultsLayout
 }
 
+
+const handleRemoveMyVote = async () => {
+  const success = await removeMyVote()
+  if (success) {
+    // Optionally show a toast notification
+    showSuccess(t('agora', 'Your vote has been removed'))
+  } else {
+    showSuccess(t('agora', 'Erro vote not saved! Contact your administrator'))
+    
+  }
+}
+
 const availableEnginesSelector = computed(() => {
   const engines = Object.entries(ENGINE_DEFINITIONS)
     .filter(([id]) => id !== 'none') // Exclude 'none' from selection
@@ -317,6 +335,31 @@ const availableEnginesSelector = computed(() => {
   })
 })
 
+const onSubmitMultiVote = async () => {
+  const success = await submitMultiVote()
+  if (success) {
+    showSuccess(t('agora', 'Your vote has been recorded.'))
+  }
+}
+
+function updateRankings(newRankings) {
+  rankings.value = newRankings
+}
+function updateScores(newScores) {
+  scores.value = newScores
+}
+function updateGrades(newGrades) {
+  grades.value = newGrades
+}
+function updateReactions(newReactions) {
+  reactions.value = newReactions
+}
+function updateQuadraticVotes(newVotes) {
+  quadraticVotes.value = newVotes
+}
+function updateTokenWeights(newWeights) {
+  tokenWeights.value = newWeights
+}
 
 const currentLayoutComponent = computed(() => {
   console.log('Layout changed to:', currentLayout.value)
@@ -440,6 +483,7 @@ const handleOptionFamilyChanged = (payload) => {
   emit('option-family-changed', payload)
 }
 
+
 const onOptionsAdded = () => {
   showAddToVoteModal.value = false
 }
@@ -476,14 +520,14 @@ const onOptionsAdded = () => {
     }
 }
 
-                  @keyframes fadeIn {
-                      from {
-                          opacity: 0;
-                          transform: translateY(10px);
+                      @keyframes fadeIn {
+                          from {
+                              opacity: 0;
+                              transform: translateY(10px);
+                          }
+                          to {
+                              opacity: 1;
+                              transform: translateY(0);
+                          }
                       }
-                      to {
-                          opacity: 1;
-                          transform: translateY(0);
-                      }
-                  }
 </style>

@@ -119,7 +119,8 @@ export const useSupportsStore = defineStore('supports', () => {
       (s) =>
         s.inquiryId === support.inquiryId &&
         s.userId === support.userId &&
-        s.optionId === support.optionId
+        s.optionId === support.optionId &&
+      s.supportEngineId === support.supportEngineId
     )
 
     if (index === -1) {
@@ -129,9 +130,10 @@ export const useSupportsStore = defineStore('supports', () => {
     }
   }
 
-  function removeItem(inquiryId: number, userId: string, optionId: number = 0) {
+  function removeItem(inquiryId: number, userId: string, optionId: number = 0,   engineId?: number) {
     const index = supports.value.findIndex(
-      (s) => s.inquiryId === inquiryId && s.userId === userId && s.optionId === optionId
+      (s) => s.inquiryId === inquiryId && s.userId === userId && s.optionId === optionId &&
+      s.supportEngineId === engineId
     )
 
     if (index !== -1) {
@@ -139,7 +141,7 @@ export const useSupportsStore = defineStore('supports', () => {
     }
   }
 
-  function extractValueFromSupport(support: Support): number | string | any {
+  function extractValueFromSupport(support: Support): number | string | unknown {
     const rawValue = support.value
 
     if (typeof rawValue === 'string') {
@@ -266,10 +268,10 @@ export const useSupportsStore = defineStore('supports', () => {
         if (typeof value === 'string') return value
         if (typeof value === 'number') return String(value)
         if (value && typeof value === 'object' && 'grade' in value) {
-          return String((value as any).grade)
+          return String((value as unknown).grade)
         }
         if (value && typeof value === 'object' && 'value' in value) {
-          return String((value as any).value)
+          return String((value as unknown).value)
         }
         return null
 
@@ -297,13 +299,10 @@ export const useSupportsStore = defineStore('supports', () => {
     // Get active engine
     const engineStore = useSupportEngineStore()
     const activeEngine = engineStore.getCurrentEngine()
-    console.log(' ACTIVE ENGINE ', activeEngine)
     const supportEngineId = activeEngine?.id ?? null
     const effectiveFeature = activeEngine?.engine ?? getSupportFeature(item)
-    console.log(' EFFECTIVE FEATURE ', effectiveFeature)
-    console.log(' CUSTOM VALUE ', customValue)
 
-    let result: any = null
+    let result: SupportResultData = null
 
     switch (effectiveFeature) {
       // === Deliberative simple toggles (cycling) ===
@@ -521,9 +520,9 @@ export const useSupportsStore = defineStore('supports', () => {
       if (shouldRemove) {
           await removeSupport(inquiryId, userId, optionId, engineId)
       } else if (currentValue === null) {
-          const result = await addSupport(inquiryId, userId, nextValue!, optionId, engineId)
+         await addSupport(inquiryId, userId, nextValue!, optionId, engineId)
       } else {
-          const result = await updateSupport(inquiryId, userId, nextValue!, optionId, engineId)
+         await updateSupport(inquiryId, userId, nextValue!, optionId, engineId)
       }
 
       return nextValue
@@ -578,9 +577,9 @@ async function toggleMajorityJudgmentSupport(
             await removeSupport(inquiryId, userId, optionId,engineId)
             // Update count
         } else if (oldValue === null) {
-            const result = await addSupport(inquiryId, userId, grade, optionId, engineId)
+             await addSupport(inquiryId, userId, grade, optionId, engineId)
         } else {
-            const result = await updateSupport(inquiryId, userId, grade, optionId, engineId)
+             await updateSupport(inquiryId, userId, grade, optionId, engineId)
         }
 
         return grade
@@ -614,7 +613,7 @@ function normalizeSupportPrimitive(value: SupportValue): SupportValue {
         }
 
         if (typeof value === 'object' && value !== null && 'value' in value) {
-            return normalizeSupportPrimitive((value as any).value)
+            return normalizeSupportPrimitive((value as unknown).value)
         }
 
         return value
@@ -660,9 +659,9 @@ async function submitScoreSupport(
         if (shouldRemove) {
             await removeSupport(inquiryId, userId, optionId, engineId)
         } else if (oldValue === null) {
-            const result = await addSupport(inquiryId, userId, value!, optionId, engineId)
+             await addSupport(inquiryId, userId, value!, optionId, engineId)
         } else {
-            const result = await updateSupport(inquiryId, userId, value!, optionId, engineId)
+             await updateSupport(inquiryId, userId, value!, optionId, engineId)
         }
 
         return value
@@ -705,9 +704,6 @@ async function toggleReactionSupport(
         // Optimistic update
         item.currentUserStatus.supportValue = reaction
         item.currentUserStatus.hasSupported = reaction !== null
-        console.log(" ITEM CURRENT SUPPORT VALUE ",item.currentUserStatus.supportValue)
-        console.log(" ITEM CURRENT HAS SUPPORTED ",item.currentUserStatus.hasSupported)
-        console.log(" RAW CURRENT ",rawCurrent)
 
         try {
             const { inquiryId, optionId } = resolveIds(itemId, item, itemType)
@@ -715,9 +711,9 @@ async function toggleReactionSupport(
             if (reaction === null) {
                 await removeSupport(inquiryId, userId, optionId,engineId)
             } else if (oldReaction === null) {
-                const result = await addSupport(inquiryId, userId, reaction, optionId, engineId)
+                 await addSupport(inquiryId, userId, reaction, optionId, engineId)
             } else {
-                const result = await updateSupport(inquiryId, userId, reaction, optionId, engineId)
+                 await updateSupport(inquiryId, userId, reaction, optionId, engineId)
             }
             return reaction
         } catch (error) {
@@ -760,9 +756,9 @@ async function toggleReactionSupport(
         if (newReactions.length === 0) {
             await removeSupport(inquiryId, userId, optionId, engineId)
         } else if (oldReactions.length === 0) {
-            const result = await addSupport(inquiryId, userId, newReactions, optionId, engineId)
+              await addSupport(inquiryId, userId, newReactions, optionId, engineId)
         } else {
-            const result = await updateSupport(inquiryId, userId, newReactions, optionId, engineId)
+             await updateSupport(inquiryId, userId, newReactions, optionId, engineId)
         }
 
         return newReactions
@@ -833,7 +829,7 @@ async function toggleApprovalDeliberativeSupport(
         const { inquiryId, optionId } = resolveIds(itemId, item, itemType)
 
         if (newHasSupported) {
-            const result = await addSupport(inquiryId, userId, 1, optionId, engineId)
+             await addSupport(inquiryId, userId, 1, optionId, engineId)
         } else {
             await removeSupport(inquiryId, userId, optionId, engineId)
         }
@@ -873,7 +869,7 @@ async function toggleApprovalSupport(
         const { inquiryId, optionId } = resolveIds(itemId, item, itemType)
 
         if (newHasSupported) {
-            const result = await addSupport(inquiryId, userId, 1, optionId)
+             await addSupport(inquiryId, userId, 1, optionId)
         } else {
             await removeSupport(inquiryId, userId, optionId,engineId)
         }
@@ -924,9 +920,9 @@ async function toggleRankingSupport(
         if (rank === null) {
             await removeSupport(inquiryId, userId, optionId, engineId)
         } else if (oldRank === null) {
-            const result = await addSupport(inquiryId, userId, rank, optionId, engineId)
+             await addSupport(inquiryId, userId, rank, optionId, engineId)
         } else {
-            const result = await updateSupport(inquiryId, userId, rank, optionId, engineId)
+             await updateSupport(inquiryId, userId, rank, optionId, engineId)
         }
 
         return rank
@@ -945,10 +941,6 @@ function updateItemCount(inquiryId: number, optionId: number, delta: number) {
     const optionsStore = useOptionsStore()
 
     const inquiry = inquiriesStore.byId[inquiryId]
-    console.log(" INQUIRY ID ",inquiryId)
-    console.log(" OPTION ID ", optionId)
-    console.log(" INQUIRY ID ",delta)
-    console.log(" INQUIR ", inquiry.status.countSupports)
 
     if (optionId > 0) {
         // It's an option – update the option in the options store
@@ -1024,7 +1016,7 @@ function updateItemResult(inquiryId: number, optionId: number, resultData: Suppo
             currentInquiryStore.status.supportResult = resultData
         }
     }
-}*/
+} */
 
 function updateItemResult(
     inquiryId: number,
@@ -1056,9 +1048,9 @@ function updateItemResult(
         updated: Date.now(),
     };
 
-    const updateInquiry = (inquiry: any) => {
+    const updateInquiry = (inquiry: Inquiry) => {
         if (!inquiry.status) inquiry.status = {};
-        let arr = inquiry.status.supportResult || [];
+        const arr = inquiry.status.supportResult || [];
 
         // Find existing entry for this engine
         const index = arr.findIndex(r => r.support_engine_id === engineId);
@@ -1292,7 +1284,9 @@ async function addSupport(
                 setItem(response.data.support)
                 updateItemResult(inquiryId, optionId, response.data.result ?? null, supportEngineId)
             }
-            return response.data.support
+           setItem(response.data.support)
+           updateItemResult(inquiryId, optionId, response.data.result ?? null, supportEngineId)
+          return response.data.support
         }
         throw new Error('No response from API')
     } catch (error) {
@@ -1370,10 +1364,8 @@ async function updateSupport(
         })()
 
         if (response) {
-            if (supportEngineId === null ) { 
                 setItem(response.data.support)
                 updateItemResult(inquiryId, optionId, response.data.result ?? null, supportEngineId)
-            }
             return response.data.support
         }
         throw new Error('No response from API')
@@ -1403,10 +1395,10 @@ async function removeSupport(
         })()
         if (response) {
             if (engineId === null ) { 
-                removeItem(inquiryId, userId, optionId)
-                updateItemResult(inquiryId, optionId, response.data.result ?? null, engineId)
                 updateItemCount(inquiryId, optionId, -1)
             }
+            removeItem(inquiryId, userId, optionId,engineId)
+            updateItemResult(inquiryId, optionId, response.data.result ?? null, engineId)
             return response
         }
 

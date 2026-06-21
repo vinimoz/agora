@@ -70,6 +70,8 @@
       :current-quadratic-votes="currentQuadraticVotes"
       :current-token-weight="currentTokenWeight"
       :total-options="totalOptions"
+      :is-multi-engine="isMultiEngine"
+      :can-remove-vote="canRemoveVote"
       @vote="handleVote"
       @update:score="handleUpdateScore"
       @update:star="handleUpdateStar"
@@ -77,6 +79,7 @@
       @update:quadratic="handleUpdateQuadratic"
       @update:token_weight="handleUpdateTokenWeight"
       @approval-toggle="handleApprovalToggle"
+      @remove-vote="handleRemoveVote"
       @change-rank="handleRankChange"
       @change-grade="handleGradeChange"
     />
@@ -165,6 +168,30 @@ const optionTypeLabel = computed(() => {
   return getOptionTypeLabel(props.option.type, allOptionTypes.value, t('agora', 'Option'))
 })
 
+const isMultiEngine = computed(() => {
+  const multiTypes = [
+    'reaction', 'approval', 'approval_delib',
+    'ranking', 'condorcet', 'borda',
+    'quadratic', 'token_weighted', 'phased_voting'
+  ]
+  return multiTypes.includes(props.effectiveEngineId)
+})
+
+const canRemoveVote = computed(() => {
+  const value = props.getUserVoteValueForOption?.(props.option.id)
+  return value !== null && value !== undefined
+})
+
+function handleRemoveVote() {
+  const engine = props.effectiveEngineId
+  // Clear the value for this option
+  if (['binary', 'ternary', 'score', 'star'].includes(engine)) {
+    emit('update:score', props.option.id, null)
+  } else if (engine === 'majority_judgment') {
+    emit('change-grade', props.option.id, null)
+  }
+}
+
 const optionIcon = computed(() => {
   if (!props.option?.type || !allOptionTypes.value) {
     return InquiryOptionIcons.Default
@@ -221,6 +248,8 @@ function handleUpdateStar(optionId: number, star: number | null) { emit('update:
 function handleUpdateReaction(optionId: number, reaction: string[] | null) { emit('update:reaction', optionId, reaction) }
 function handleUpdateQuadratic(optionId: number, votes: number | null) { emit('update:quadratic', optionId, votes) }
 function handleUpdateTokenWeight(optionId: number, weight: number | null) { emit('update:token_weight', optionId, weight) }
+
+
 
 function handleCardClick(event: MouseEvent) {
   const target = event.target as HTMLElement

@@ -30,7 +30,8 @@
         @click="handleSupportClick"
       >
         <!-- Icon based on support feature type -->
-        <div class="counter-icon" :style="iconContainerStyles"
+        <div
+class="counter-icon" :style="iconContainerStyles"
             :class="{ 'inactive': !hasUserParticipated && (supportFeature === 'ternary' || supportFeature === 'reaction') }"
             >
           <template v-if="supportFeature === 'ternary' || supportFeature === 'binary'">
@@ -485,7 +486,6 @@ const resolvedTooltipTitle = computed(() => props.tooltipTitle || t('agora', 'Su
 const supportFeature = computed(
   (): SupportFeature => (props.item?.configuration?.supportFeature as SupportFeature) || 'none'
 )
-console.log(' SUPPORT FEATURE ', supportFeature)
 // Current user support
 const currentUserSupportValue = computed(() => props.item?.currentUserStatus?.supportValue ?? null)
 
@@ -551,8 +551,6 @@ const normalizedSupportResult = computed(() => {
     console.warn('Result missing type:', actual)
     return null
   }
-  console.log('Support Feature:', supportFeature.value)
-  console.log('Normalized Result:', normalizedSupportResult.value)
 
   return actual
 })
@@ -609,7 +607,6 @@ const binaryResult = computed(() => {
 })
 
 const ternaryResult = computed(() => {
-  console.log('Ternary Result:', ternaryResult.value)
   if (supportFeature.value !== 'ternary' || !normalizedSupportResult.value) {
     return null
   }
@@ -696,7 +693,6 @@ const approvalDelibResult = computed(() => {
 })
 
 const reactionResult = computed(() => {
-  console.log('Reaction Result:', reactionResult.value)
   if (supportFeature.value !== 'reaction' || !normalizedSupportResult.value) {
     return null
   }
@@ -714,7 +710,6 @@ const reactionResult = computed(() => {
 })
 
 const majorityResult = computed(() => {
-  console.log('Majority Result:', majorityResult.value)
   if (supportFeature.value !== 'majority_judgment' || !normalizedSupportResult.value) {
     return null
   }
@@ -785,7 +780,7 @@ const majorityResult = computed(() => {
 
 const supportsStore = useSupportsStore()
 
-/*const displayCount = computed(() => {
+/* const displayCount = computed(() => {
   const itemId = props.item.id
   const itemType = props.itemType
 
@@ -830,7 +825,7 @@ const supportsStore = useSupportsStore()
 
   // Fallback: count all supports for this item
   return relevantSupports.length
-})*/
+}) */
 
 const displayCount = computed(() => props.item?.status?.countSupports ?? 0)
 
@@ -1079,7 +1074,6 @@ const handleSupportClick = async () => {
         const normaliseReaction = (r: string) => r.replace(/[\uFE0F]/g, '').trim()
         const reactions = (supportTemplate.value?.allowed_reactions ?? []).map(normaliseReaction)
         const currentReaction = normaliseReaction(getUserReaction.value ?? '')
-       console.log(" REACTIONS ",reactions)
        let nextReaction: string | null = null
 
         if (!hadSupportedBefore) {
@@ -1092,7 +1086,6 @@ const handleSupportClick = async () => {
             nextReaction = null
           }
         }
-        console.log(" NEXT REACTION ",nextReaction)
         await supportsStore.toggleReactionSupport(itemId, userId, item, itemType, nextReaction)
         break
       }
@@ -1121,8 +1114,6 @@ const showSupportSuccessMessage = (hadSupportedBefore: boolean) => {
   const hasSupportedAfter = props.item.currentUserStatus?.hasSupported
   const supportValueAfter = props.item.currentUserStatus?.supportValue
   const feature = supportFeature.value
-    console.log(" HAS SUPPPORTED ",hasSupportedAfter)
-    console.log(" SUPPORT VALUE ",supportValueAfter)
   switch (feature) {
     case 'binary':
       if (supportValueAfter === 1) {

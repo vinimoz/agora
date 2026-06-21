@@ -5,7 +5,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { emit } from '@nextcloud/event-bus'
-import type { SupportEngine, SupportResult, EngineDefinition, Phase } from '../Types/index'
+import type { SupportEngine,  EngineDefinition, Phase } from '../Types/index'
 import { ENGINE_DEFINITIONS, Event } from '../Types/index'
 import { SupportEngineAPI } from '../Api/index'
 import { useSupportResultStore } from './supportResult'
@@ -54,17 +54,11 @@ export const useSupportEngineStore = defineStore('supportEngine', () => {
   })
 
   const getEnginesByInquiry = computed(() => (inquiryId: number) => {
-    console.log('[supportEngine] getEnginesByInquiry:', {
-      requestedId: inquiryId,
-      enginesCount: engines.value?.length || 0,
-      hasEngines: !!engines.value,
-    })
-
     // Ensure we return an array even if engines.value is undefined
     if (!engines.value || !Array.isArray(engines.value)) {
       return []
     }
-    return engines.value
+    return engines.value.filter((engine) => engine.inquiry_id === inquiryId)
   })
 
   const getEnginesByInquiryGroup = computed(() => (inquiryGroupId: number) => {
@@ -118,11 +112,9 @@ export const useSupportEngineStore = defineStore('supportEngine', () => {
 
   async function loadEnginesByInquiry(inquiryId: number): Promise<void> {
     if (isLoadingEngines.value) {
-      console.log('[supportEngine] Already loading engines, skipping')
       return
     }
 
-    console.log('[supportEngine] Loading engines for inquiry:', inquiryId)
     isLoadingEngines.value = true
     loading.value = true
     error.value = null
@@ -132,7 +124,6 @@ export const useSupportEngineStore = defineStore('supportEngine', () => {
 
       const loadedEngines = response.data?.engines || []
       engines.value = loadedEngines
-      console.log('[supportEngine] Loaded engines:', engines.value.length)
 
       initialized.value = true
 
@@ -141,10 +132,8 @@ export const useSupportEngineStore = defineStore('supportEngine', () => {
         const active = engines.value.find((e) => e.status === 'active')
         if (active) {
           currentEngine.value = active
-          console.log('[supportEngine] Set current engine to active:', active.id)
         } else {
           currentEngine.value = engines.value[0]
-          console.log('[supportEngine] Set current engine to first:', engines.value[0].id)
         }
       } else {
         currentEngine.value = null

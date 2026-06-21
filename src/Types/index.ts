@@ -183,7 +183,7 @@ export interface InquiryFamily {
   created: number
 }
 
-interface OptionFamilyEvent {
+export interface OptionFamilyEvent {
   optionId: number
   familyKey: 'vote' | 'kanban' | 'timeline'
   action: 'added' | 'removed'  

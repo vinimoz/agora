@@ -18,6 +18,7 @@ import UserSearch from '../User/UserSearch.vue'
 import EngineSelectorModal from '../Modals/EngineSelectorModal.vue'
 import { ENGINE_DEFINITIONS } from '../../Types/votingType'
 import type { SupportTemplate } from '../../Types/votingType'
+import type { SupportEngine } from '../../Types/index'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const props = withDefaults(defineProps<{
@@ -52,6 +53,26 @@ const inquiryTypeConfig = computed(() => {
   return sessionStore.appSettings.inquiryTypeTab.find(
     (type: string) => type.inquiry_type === inquiryStore.type
   )
+})
+
+const existingEngineForModal = computed<SupportEngine | null>(() => {
+  const engineId = getSupportFeatureValue.value
+  if (!engineId) return null
+  const config = getSupportEngineConfig.value
+  return {
+    id: 0,                     // not used in deliberative mode
+    inquiry_id: 0,             // not used
+    engine: engineId,
+    config: config || {},
+    title: '',
+    description: '',
+    purpose: '',
+    status: 'active',
+    target_type: 'inquiry',
+    target_ids: [],
+    created: '',
+    updated: '',
+  } as SupportEngine
 })
 
 // Extract language string from multi-language object
@@ -817,8 +838,7 @@ onMounted(() => {
         <EngineSelectorModal
             v-if="showEngineModal"
             :mode="'deliberative'"
-            :current-engine-id="getSupportFeatureValue"
-            :current-config="getSupportEngineConfig"
+            :existing-engine="existingEngineForModal"
             :available-engines="availableEngines"
             @close="showEngineModal = false"
             @save="handleApplySupportEngine"

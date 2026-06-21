@@ -36,8 +36,6 @@ const supports = {
         optionId: number, 
         data: AddSupportOptions
     ): Promise<AxiosResponse<{ support: Support; result: SupportResultData | null } >> {
-        console.log(" VALUUUUUUUUUUUUUUUUUUUUUUU ",data.value)
-        console.log(" VALUUUUUUUUUUUUUUUUUUUUUUU ENGINE ID ",data.engineId)
         return httpInstance.request({
             method: 'POST',
             url: `inquiry/support/${inquiryId}/${userId}/${optionId}`,
@@ -59,8 +57,6 @@ const supports = {
         optionId: number, 
         data: AddSupportOptions
     ): Promise<AxiosResponse<{ support: Support; result: SupportResultData | null } >> {
-        console.log(" VALUUUUUUUUUUUUUUUUUUUUUUU ",data.value)
-        console.log(" VALUUUUUUUUUUUUUUUUUUUUUUU ENGINE ID ",data.engineId)
         return httpInstance.request({
             method: 'PUT',
             url: `inquiry/support/${inquiryId}/${userId}/${optionId}`,

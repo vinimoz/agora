@@ -586,7 +586,7 @@ export const useOptionStore = defineStore('option', {
           if (sessionStore.route.name === 'option') {
             return OptionsAPI.getFullOption(optionId ?? sessionStore.currentOptionId)
           }
-        })()*/
+        })() */
 
         const response = await (() => OptionsAPI.getFullOption(optionId ?? sessionStore.currentOptionId))()
 

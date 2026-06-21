@@ -37,6 +37,7 @@
       />
     </div>
 
+
     <!-- Empty state -->
     <div v-if="rankedOptions.length === 0" class="empty-state">
       <component :is="InquiryOptionIcons.Inbox" :size="48" />
@@ -49,7 +50,7 @@
         <NcButton
           type="primary"
           size="large"
-          :disabled="!canSubmitMultiVote"
+          :disabled="!canSubmitMultiVote || (hasUserVoted && !hasSelectionsChanged)"
           @click="$emit('submit-multi-vote')"
         >
           <template #icon>
@@ -57,6 +58,18 @@
           </template>
           {{ getSubmitButtonText() }}
         </NcButton>
+        
+        <!-- Global remove button -->
+        <NcButton
+          v-if="hasUserVoted"
+          type="tertiary"
+          size="large"
+          @click="$emit('remove-my-vote')"
+        >
+          <template #icon><X :size="18" /></template>
+          {{ t('agora', 'Remove my vote') }}
+        </NcButton>
+
         <div v-if="voteSelectionInfo" class="selection-info">
           <component :is="InquiryOptionIcons.Info" :size="14" />
           <span>{{ voteSelectionInfo }}</span>
@@ -70,7 +83,7 @@
 import { computed } from 'vue'
 import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
-import { Vote } from 'lucide-vue-next'
+import { Vote , X } from 'lucide-vue-next'
 import VoteCard from './VoteCard.vue'
 import { InquiryOptionIcons } from '../../../utils/icons.ts'
 import type { Option, SupportEngine } from '../../../Types/index'
@@ -82,6 +95,7 @@ const props = defineProps<{
   activeEngine?: SupportEngine
   canVote?: boolean
   hasUserVoted: boolean
+  hasSelectionsChanged: boolean
   rankings: Record<number, number>
   scores: Record<number, number>
   grades: Record<number, string | null>
@@ -106,10 +120,12 @@ const emit = defineEmits<{
   'update:quadraticVotes': [votes: Record<number, number>]
   'update:tokenWeights': [weights: Record<number, number>]
   'vote': [option: Option, value: unknown]
+  'remove-my-vote': []
   'open-supports-modal': [optionId: number]
   'submit-multi-vote': []
 }>()
 
+console.log(" CAN SUBMIT MULTI VOTE ", props.canSubmitMultiVote)
 const showSubmitButton = computed(() =>
   props.canVote &&
   props.activeEngine?.status === 'active' &&
@@ -128,6 +144,7 @@ const getSubmitButtonText = (): string => {
   }
   return texts[props.effectiveEngineId] || t('agora', 'Submit vote')
 }
+
 </script>
 
 <style scoped lang="scss">
