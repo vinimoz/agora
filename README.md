@@ -12,7 +12,6 @@ Agora 1.7.5 introduces the largest evolution of the participation and voting sys
 The former support mechanism has been replaced by a unified **Support & Voting Engine** architecture. Deliberative participation and formal voting now share the same foundation while remaining adapted to different democratic processes.
 
 ### 🗳 Deliberative Supports
-
 Supports are no longer limited to simple "for" or "against" interactions.
 
 During the deliberation phase, administrators can now select different participation models:
@@ -38,21 +37,15 @@ During the deliberation phase, administrators can now select different participa
 This allows each inquiry, proposal, project, or option to use the most appropriate participation mechanism.
 
 ### 🏛 Advanced Voting Utilities
-
 Agora now includes a much more complete voting toolkit for formal decision-making.
 
 Available voting methods include:
 
 - 🏆 Condorcet voting
-
   - Schulze
-
   - Copeland
-
   - Minimax
-
   - Ranked Pairs
-
   - Kemeny-Young
 
 - 📊 Borda Count
@@ -72,7 +65,6 @@ Available voting methods include:
 This enables organizations to move beyond simple majority voting and adopt decision methods adapted to their governance needs.
 
 ### 🎯 Unified Architecture
-
 The new engine architecture provides:
 
 - Shared support and voting framework
@@ -89,7 +81,6 @@ The new engine architecture provides:
 
 
 ## ⚠️ IMPORTANT UPDATE NOTICE
-
 ### Backup Required Before Updating
 
 **Agora 1.7.5 introduces a major redesign of the support system.**
@@ -97,7 +88,6 @@ The new engine architecture provides:
 The internal support architecture, storage model, and participation engines have been significantly modified.
 
 #### Before upgrading:
-
 1. Perform a complete Nextcloud backup
 
 2. Backup your database
@@ -106,21 +96,7 @@ The internal support architecture, storage model, and participation engines have
 
 4. Test the update in a staging environment whenever possible
 
-#### Recommended Backup Commands
-
-```
-\# Database dump  
-mysqldump -u \[user\] -p \[database\] \> backup.sql  
-  
-\# Nextcloud data backup  
-tar -czf nextcloud-backup.tar.gz /path/to/nextcloud  
-  
-\# Agora app backup  
-tar -czf agora-backup.tar.gz /path/to/nextcloud/apps/agora
-```
-
 #### Warning
-
 Administrators upgrading from previous versions should carefully verify:
 
 - Existing supports
@@ -137,48 +113,28 @@ Although migration scripts are provided, a full backup is strongly recommended b
 
 **Do not upgrade a production instance without a verified backup.**
 
-
 ## ✨ Key Features
-
 - 💬 Comments and discussions
-
 - 👍 Flexible support systems (binary, ternary, star rating, score, majority judgment, approval, reactions, trending, discussion-only)
-
 - 🗳 Advanced voting methods (Condorcet, Borda, Majority Judgment, Approval, Ranked Choice, Quadratic, Token/Weighted, Phased)
-
 - 🧠 Majority Judgment support
-
 - 🏆 Condorcet methods (Schulze, Copeland, Minimax, Ranked Pairs, Kemeny-Young)
-
 - 📊 Borda Count
-
 - ✅ Approval Voting
-
 - 🧩 Custom inquiry families and types
-
 - 🧾 Multiple inquiry formats (proposals, debates, petitions, projects…)
-
 - 🏛 Collective decision-making tools
-
 - 📂 Categorization and filtering by family or location
-
 - 🔒 Privacy-first architecture — all data stays on your Nextcloud server
-
 - 🔗 Integration with Forms, Polls, Deck, Collectives, and the Nextcloud ecosystem
-
 - 🏛 Collectives design UX
-
 - 🗣 Real debate features (structured replies, multi-thread discussions)
-
 - 📜 Structured debate and consultation workflows
-
 - 🧰 Templates for democracy, university, company, and custom use cases
-
 - 🧱 Scalable architecture and modern UX
 
 
 ## 🧰 Templates
-
 Agora introduces **ready-to-use templates** to quickly bootstrap participatory spaces for different contexts:
 
 - **Template 1 – Option-based workflow** — Ideal for consultations and decision-making with predefined options
@@ -194,17 +150,14 @@ Agora introduces **ready-to-use templates** to quickly bootstrap participatory s
 ## 📥 Installation / Update
 
 ### Requirements
-
 - Nextcloud 31+
 
 - PHP 8.1+
 
 ### Install Latest Release
-
 Install directly from the [Nextcloud App Store](https://apps.nextcloud.com/apps/agora).
 
 ### From Git
-
 ```
 git clone https://github.com/vinimoz/agora.git  
 cd agora  
@@ -225,7 +178,6 @@ occ app:enable agora
 
 
 ## 📚 Documentation
-
 | Document | Description | Link |
 | :-: | :-: | :-: |
 | **👤 User Guide** | Complete user manual with step-by-step instructions | [📖 USER\_GUIDE.md](docs/USER_GUIDE.md) |
@@ -233,67 +185,20 @@ occ app:enable agora
 | **🔧 Template Guide** | Template configuration for administrators | [📘 template\_guide.md](docs/template_guide.md) |
 | **🔌 API Guide** | REST API documentation for developers | [🔌 API\_v1.0.md](docs/API_v1.0.md) |
 | **📋 Template Schema** | JSON schema for template validation | [📋 Agora-template-schema.json](docs/Agora-template-schema.json) |
+| **🏛  Democratic Guide** | Democratic voting guide |🏛 [ Democratic_vote](docs/Democratic_vote.md) |
 
 
 
 ## 🗺️ Roadmap
-
 ### 1.8 — Lottery 🎲
-
-- Sortition-based selection for participatory bodies
-
-- Random selection algorithms (seeded, stratified, weighted)
-
-- Lottery pools and eligibility criteria
-
-- Integration with support and voting data
-
-- Automated notification and selection workflows
-
-- Transparency logs for lottery processes
-
 ### 1.9 — Process & Workflow 🔄
-
-- End-to-end decision workflow management
-
-- Multi-phase processes (consultation → deliberation → voting → implementation)
-
-- Workflow templates and automation rules
-
-- Deadline and milestone management
-
-- Approval chains and delegation workflows
-
-- Process visualization and tracking tools
-
-- Parallel and sequential process configurations
-
 ### 2.0 — Rights & Permissions 🔐
 
-- Fine-grained permission system for participatory spaces
-
-- Role-based access control (RBAC) with customizable roles
-
-- Granular permissions per inquiry, family, and group
-
-- Dynamic access based on participation and reputation
-
-- Advanced moderation tools and delegated moderation
-
-- User group integration with Nextcloud's existing groups
-
-- Permission inheritance and override capabilities
-
-- Activity-based access control
-
-
 ## 📄 License
-
 This project is licensed under the GNU Affero General Public License v3.0 — see the [COPYING](COPYING) file for details.
 
 
 ## 🙏 Credits
-
 Developed by ViniMoz
 
 Icons by Material Design Icons
@@ -302,14 +207,12 @@ Thanks to all contributors and community members helping shape participatory dem
 
 
 ## 🛠 Support
-
 - Report bugs or request features: [GitHub Issues](https://github.com/vinimoz/agora/issues)
 
 - Community support: [Nextcloud Help](https://help.vinimoz.com/c/apps/agora/)
 
 
 ## 🤝 Contribution
-
 Please read our [Code of Conduct](https://vinimoz.com/community/code-of-conduct/) to ensure collaboration in a positive and respectful way.
 
 All contributions are welcome! Whether you're fixing bugs, improving documentation, or adding new features, we appreciate your help in making participatory democracy more accessible.
