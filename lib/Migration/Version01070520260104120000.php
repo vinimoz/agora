@@ -185,7 +185,7 @@ class Version01070520260104120000 extends SimpleMigrationStep
                 ]);
                 $this->log("    + updated");
             }
-            $table->dropUnique('agora_uniq_supports');
+            $table->dropIndex('agora_uniq_supports');
             $table->addUniqueIndex(['inquiry_id', 'option_id', 'user_id', 'support_engine_id'], 'agora_uniq_supports');
         } else {
             $this->log("  Create: " . self::S_SUPPORTS);
