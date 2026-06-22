@@ -66,6 +66,7 @@ OC.L10N.register(
     "Allow comments" : "อนุญาตแสดงความคิดเก็น",
     "Configure" : "กำหนดค่า",
     "Close" : "ปิด",
+    "Share label" : "Share label",
     "Shares" : "การแชร์",
     "No activity yet" : "ยังไม่มีกิจกรรม",
     "Failed to save settings" : "ไม่สามารถบันทึกการตั้งค่าได้",

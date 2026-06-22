@@ -68,6 +68,8 @@ OC.L10N.register(
     "Allow comments" : "Permitir comentarios",
     "Label" : "Etiqueta",
     "Configure" : "Configurar",
+    "Close" : "Close",
+    "Share label" : "Share label",
     "Shares" : "Elementos compartido",
     "No activity yet" : "Aún no tiene actividad",
     "Never" : "Nunca",

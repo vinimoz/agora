@@ -2,7 +2,6 @@ OC.L10N.register(
     "agora",
     {
     "Inquiry changes" : "Mabadiliko ya uchunguzi",
-    "Recent inquiries" : "Maulizo ya hivi karibuni",
     "Agora" : "Agora",
     "Team" : "Timu",
     "Contact group" : "Kikundi cha mawasiliano",
@@ -55,7 +54,6 @@ OC.L10N.register(
     "%s took over your inquiry" : "%s alichukua juu ya uchunguzi wako",
     "{actor} took over your inquiry \"%s\" and is the new owner." : "{actor} alichukua uchunguzi wako \"%s\" na ndiye mmiliki mpya.",
     "%s is the new owner of your inquiry." : "%s ndiye mmiliki mpya wa uchunguzi wako.",
-    "{actor} transfered your inquiry \"%s\" to {newOwner}. You are no more the owner." : "{actor} alihamisha swali lako \"%s\" kwa {newOwner}. Wewe si mmiliki tena.",
     "%s deleted your inquiry" : "%s ilifuta uchunguzi wako",
     "{actor} deleted your inquiry \"%s\"." : "{actor} ilifuta uchunguzi wako \"%s\".",
     "%s archived your inquiry" : "%s aliweka kumbukumbu ya uchunguzi wako",
@@ -644,7 +642,6 @@ OC.L10N.register(
     "Add date option" : "Ongeza chaguo la tarehe",
     "Adding options is disabled" : "Chaguzi za kuongeza zimezimwa",
     "Existing options" : "Chaguzi zilizopo",
-    "Transfered inquiry to {user}" : "Imehamisha swali kwa {user}",
     "Error transferring inquiry" : "Hitilafu katika kuhamisha swali",
     "Transferring a inquiry to another user may result in loss of access to this inquiry." : "Kuhamisha swali kwa mtumiaji mwingine kunaweza kusababisha kupoteza ufikiaji wa swali hili.",
     "Transferring a inquiry to {user} may result in loss of access to this inquiry." : "Kuhamisha swali kwa {user} kunaweza kusababisha kupoteza ufikiaji wa swali hili.",

@@ -103,6 +103,7 @@ OC.L10N.register(
     "Label" : "Etichetă",
     "Configure" : "Configurează",
     "Close" : "Închide",
+    "Share label" : "Share label",
     "Show QR code" : "Afișează codul QR",
     "Restore share" : "Restabilește partajarea",
     "Shares" : "Partajări",

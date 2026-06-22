@@ -59,6 +59,7 @@ OC.L10N.register(
     "Label" : "Tiketenn",
     "Configure" : "Kefluniañ",
     "Close" : "Serriñ",
+    "Share label" : "Share label",
     "Shares" : "Rannañ",
     "No activity yet" : "Tamm obererezh ebet",
     "Never" : "James",

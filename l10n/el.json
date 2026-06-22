@@ -52,7 +52,6 @@
     "%s took over your inquiry" : "Ο/Η %ς ανέλαβε τη δημοσκόπησή σας",
     "{actor} took over your inquiry \"%s\" and is the new owner." : "Ο/Η {actor} ανέλαβε τη δημοσκόπησή σας \"%s\" και είναι ο νέος κάτοχος.",
     "%s is the new owner of your inquiry." : "Ο/Η %ς είναι ο νέος κάτοχος της δημοσκόπησής σας.",
-    "{actor} transfered your inquiry \"%s\" to {newOwner}. You are no more the owner." : "Ο/Η {actor} μεταβίβασε τη δημοσκόπησή σας \"%s\" στον/στην {newOwner}. Δεν είστε πλέον ο κάτοχος.",
     "%s deleted your inquiry" : "Ο/Η %ς διέγραψε τη δημοσκόπησή σας",
     "{actor} deleted your inquiry \"%s\"." : "Ο/Η {actor} διέγραψε τη δημοσκόπησή σας \"%s\".",
     "%s archived your inquiry" : "Ο/Η %ς αρχειοθέτησε τη δημοσκόπησή σας",

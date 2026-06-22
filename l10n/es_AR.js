@@ -81,6 +81,7 @@ OC.L10N.register(
     "Label" : "Etiqueta",
     "Configure" : "Configurar",
     "Close" : "Cerrar",
+    "Share label" : "Share label",
     "Link copied to clipboard" : "Enlace copiado al portapapeles",
     "Shares" : "Elementos compartido",
     "No activity yet" : "Aún no hay actividades",

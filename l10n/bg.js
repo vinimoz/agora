@@ -54,7 +54,6 @@ OC.L10N.register(
     "%s took over your inquiry" : "%sпое Вашето запитване",
     "{actor} took over your inquiry \"%s\" and is the new owner." : "{actor}пое Вашето запитване \"%s\" и е новия собственик.",
     "%s is the new owner of your inquiry." : "%sе новия собственик на Вашето запитване.",
-    "{actor} transfered your inquiry \"%s\" to {newOwner}. You are no more the owner." : "{actor}прехвърли Вашето запитване \"%s\" към {newOwner}. Вече не сте собственик.",
     "%s deleted your inquiry" : "%sизтри Вашето запитване",
     "{actor} deleted your inquiry \"%s\"." : "{actor}изтри Вашето запитване \"%s\".",
     "%s archived your inquiry" : "%sархивира Вашето запитване",

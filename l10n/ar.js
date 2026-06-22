@@ -1,10 +1,12 @@
 OC.L10N.register(
     "agora",
     {
+    "Inquiry changes" : "تغييرات الاستفسار",
     "Team" : "الفريق",
     "Contact group" : "الاتصال بالمجموعة",
     "Group" : "المجموعة",
     "_Confirmed option:_::_Confirmed options:_" : ["الخيارات المؤكدة:","خيار مؤكد:","الخيارات المؤكدة:","الخيارات المؤكدة:","الخيارات المؤكدة:","الخيارات المؤكدة:"],
+    "Go to inquiry" : "انتقل الى الاستفسار",
     "Legal Notice" : "ملاحظة قانونية",
     "Privacy Policy" : "سياسة الخصوصية",
     "\"{title}\" has recent activity:" : "\"{title}\" له نشاط حديث:",

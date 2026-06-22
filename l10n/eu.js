@@ -136,6 +136,7 @@ OC.L10N.register(
     "Search" : "Bilatu",
     "Archived" : "Artxibatuta",
     "Unpublished" : "Argitaratu gabea",
+    "Archived {relativeTime}" : "{relativeTime} artxibatuta",
     "No description provided" : "Ez da deskribapenik eman",
     "{count} participants" : "{count} parte-hartzaile",
     "Created on {date}" : "Sortze-data {date}",

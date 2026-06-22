@@ -14,6 +14,7 @@
     "Loading" : "Ielādē",
     "Previous day" : "Iepriekšējā diena",
     "Next day" : "Nākamā diena",
+    "the owner" : "īpašnieks",
     "Send" : "Sūtīt",
     "Unknown user" : "Nezināms lietotājs",
     "Delete comment" : "Izdzēst piebildi",
@@ -88,8 +89,10 @@
     "Action" : "Darbība",
     "Progress" : "Progress",
     "None" : "Nekas",
+    "Unknown owner" : "Nezināms īpašnieks",
     "Retry" : "Mēģināt vēlreiz",
     "Email" : "E-pasts",
+    "Remember me for 30 days" : "Atcerēties mani 30 dienas",
     "Privacy policy" : "Privātuma pamatnostādnes",
     "Login" : "Pieteikumvārds",
     "Select an icon" : "Atlasīt ikonu",
@@ -98,6 +101,7 @@
     "Label" : "Iezīme",
     "Configure" : "Konfigurēt",
     "Close" : "Aizvērt",
+    "Share label" : "Share label",
     "Copy link to clipboard" : "Ievietot saiti starpliktuvē",
     "Show QR code" : "Parādīt kvadrātkodu",
     "Restore share" : "Atjaunot koplietojumu",
@@ -115,6 +119,8 @@
     "Confirm" : "Apstiprināt",
     "Results" : "Rezultāti",
     "Unnamed" : "Nenosaukts",
+    "Preview & Customize Template" : "Priekšskatīt un pielāgot sagatavi",
+    "Review and customize the template before import" : "Pārskatīt un pielāgot sagatavi pirms ievietošanas",
     "Selected" : "Atlasītās",
     "Neutral" : "Neitrāls",
     "Other settings" : "Citi iestatījumi",
@@ -127,6 +133,7 @@
     "Sharing" : "Koplietošana",
     "Hour" : "Stunda",
     "Not found" : "Nav atrasts",
+    "Owner" : "Īpašnieks",
     "Administration" : "Pārvaldīšana"
 },"pluralForm" :"nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : 2);"
 }
