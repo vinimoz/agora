@@ -24,10 +24,8 @@ import { useSupportEngineStore } from '../../../stores/supportEngine'
 
 interface Props {
   show: boolean
-  familyKey: string
   inquiryId: number
   actionKey?: string
-  actionData?: unknown
 }
 
 const props = defineProps<Props>()

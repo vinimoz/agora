@@ -236,16 +236,6 @@ export const useInquiryStore = defineStore('inquiry', {
   }),
 
   getters: {
-    safeParticipants(state): User[] {
-      const sessionStore = useSessionStore()
-      const inquiriesStore = useInquiriesStore()
-      // Note: viewMode is not defined in state - add if needed
-      // if (this.viewMode === 'list-view') {
-      //   return [sessionStore.currentUser]
-      // }
-      return inquiriesStore.getChunkedParticipants
-    },
-
     isConfirmationAllowed(state): boolean {
       return state.permissions.confirmOptions || !this.isClosed
     },
@@ -353,7 +343,7 @@ export const useInquiryStore = defineStore('inquiry', {
       }
     },
 
-    async load(inquiryId: number | null = null): Promise<any> {
+    async load(inquiryId: number | null = null): Promise<unknown> {
       const sessionStore = useSessionStore()
       const optionsStore = useOptionsStore()
       const inquiriesStore = useInquiriesStore()
@@ -491,7 +481,7 @@ export const useInquiryStore = defineStore('inquiry', {
       return debouncedUpdate()
     },
 
-    async updateMiscField(key: string, value: any): Promise<void> {
+    async updateMiscField(key: string, value: { key: string; value: string }): Promise<void> {
       try {
         await InquiriesAPI.updateMiscField(this.id, { key, value })
         this.miscFields[key] = value

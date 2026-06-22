@@ -45,7 +45,7 @@
                     :show-add-button="canAddOptions"
                     :can-manage-vote="canManageVote && canAddOptions"
                     :is-readonly="isReadonly"
-                    @add-option="$emit('add-option')"
+                    @add-option="$emit('addOption')"
                     />
 
             <!-- Cards Layout -->
@@ -80,7 +80,7 @@
                         @vote="(option, value) => submitSingleVote(option, value)"
                         @submit-multi-vote="onSubmitMultiVote"
                         @remove-my-vote="removeMyVote"
-                        @select-option="$emit('select-option', $event)"
+                        @select-option="$emit('selectOption', $event)"
                         @open-supports-modal="openSupportsModal"
                         />
             </div>
@@ -120,7 +120,7 @@
                         @update:token-weights="tokenWeights = $event"
                         @vote="(option, value) => submitSingleVote(option, value)"
                         @submit-multi-vote="submitMultiVote"
-                        @select-option="$emit('select-option', $event)"
+                        @select-option="$emit('selectOption', $event)"
                         />
             </div>
         </div>
@@ -141,7 +141,7 @@
                 :can-manage-vote="canManageVote"
                 :is-readonly="isReadonly"
                 @configure="showCreateEngineModal = true"
-                @add-option="$emit('add-option')"
+                @add-option="$emit('addOption')"
                 />
 
         <!-- Create/Edit Engine Modal -->
@@ -190,7 +190,7 @@
 </template>
 
 <script setup lang="ts">
-    import { ref, computed, watch } from 'vue'
+import { ref, computed } from 'vue'
 import { t } from '@nextcloud/l10n'
 import { NcLoadingIcon, NcDialog } from '@nextcloud/vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
@@ -207,22 +207,21 @@ import EngineSelectorModal from '../../Modals/EngineSelectorModal.vue'
 import AddOptionToFamily from '../../Modals/AddOptionToFamily.vue'
 import SupportsDetailModal from '../../Modals/SupportsDetailModal.vue'
 import { ENGINE_DEFINITIONS } from '../../../Types/votingType'
-import { showError, showSuccess } from '@nextcloud/dialogs'
+import { showSuccess } from '@nextcloud/dialogs'
 
 const props = defineProps<{
   inquiryId: number
-  familyType?: string
   canManageVote: boolean
   isReadonly: boolean
   canAddOptions: boolean
 }>()
 
 const emit = defineEmits<{
-  'configure-engine': []
-  'add-option': []
-  'add-to-vote': []
-  'select-option': [option: Option]
-  'option-family-changed': [payload: { optionId: number, familyKey: string, action: string }]
+  'configureEngine': []
+  'addOption': []
+  'addToVote': []
+  'selectOption': [option: Option]
+  'optionFamilyChanged': [payload: { optionId: number, familyKey: string, action: string }]
 }>()
 
 const optionsStore = useOptionsStore()
@@ -237,7 +236,6 @@ const engineHasVotes = (engineId: number): boolean => supportsStore.supports?.so
 
 const {
   loadingEngines,
-  selectedEngineId,
   availableEngines,
   currentEngine,
   votableOptions,
@@ -264,19 +262,12 @@ const {
   getUserVoteValueForOption,
   refreshEngines,
   effectiveEngineId,
-  maxRank,
-  scoreMin,
-  scoreMax,
   selectEngine,
   removeMyVote,
   grades,
   reactions,
   quadraticVotes,
   tokenWeights,
-  updateGrade,
-  updateReaction,
-  updateQuadratic,
-  updateTokenWeight,
 } = useVoteContext(props.inquiryId)
 
 // Local UI state
@@ -294,23 +285,6 @@ const winnerPercentage = computed(() => getWinnerPercentage(votableOptions.value
 const currentEngineHasVotes = ref(false)
 
 const rankedOptions = computed(() => getRankedOptions(votableOptions.value))
-
-const layoutComponents = {
-  cards: VoteCardsLayout,
-  results: VoteResultsLayout
-}
-
-
-const handleRemoveMyVote = async () => {
-  const success = await removeMyVote()
-  if (success) {
-    // Optionally show a toast notification
-    showSuccess(t('agora', 'Your vote has been removed'))
-  } else {
-    showSuccess(t('agora', 'Erro vote not saved! Contact your administrator'))
-    
-  }
-}
 
 const availableEnginesSelector = computed(() => {
   const engines = Object.entries(ENGINE_DEFINITIONS)
@@ -361,22 +335,12 @@ function updateTokenWeights(newWeights) {
   tokenWeights.value = newWeights
 }
 
-const currentLayoutComponent = computed(() => {
-  console.log('Layout changed to:', currentLayout.value)
-  const component = layoutComponents[currentLayout.value]
-  console.log('Component found:', component?.name || component?.__name || 'Unknown')
-  return component
-})
-
 const deleteConfirmMessage = computed(() => {
   if (!engineToDelete.value) return ''
   return t('agora', 'Are you sure you want to delete the voting method "{title}"? This action cannot be undone.', {
     title: engineToDelete.value.title || t('agora', 'Untitled')
   })
 })
-
-const getOptionRank = (optionId: number, ranked: Option[]): number =>
-  ranked.findIndex(opt => opt.id === optionId) + 1
 
 const handleEditEngine = (engine: SupportEngine) => {
   engineToEdit.value = engine
@@ -457,7 +421,6 @@ const closeEngineModal = () => {
 }
 
 const handleEngineUpdate = (engineId: number | null) => {
-  console.log('Engine update received:', engineId)
   if (engineId) {
     selectEngine(engineId)
   }
@@ -480,7 +443,7 @@ const timeRemaining = computed(() => {
 })
 
 const handleOptionFamilyChanged = (payload) => {
-  emit('option-family-changed', payload)
+  emit('optionFamilyChanged', payload)
 }
 
 

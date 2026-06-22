@@ -12,6 +12,7 @@ namespace OCA\Agora\Service;
 use OCA\Agora\Db\Option;
 use OCA\Agora\Db\OptionMapper;
 use OCA\Agora\Db\InquiryOptionTypeMapper;
+use OCA\Agora\Service\TrendingService;
 use OCA\Agora\Db\InquiryMapper;
 use OCA\Agora\Db\UserMapper;
 use OCA\Agora\Db\SupportMapper;
@@ -55,6 +56,7 @@ class OptionService
         private UserSession $userSession,
         private SupportMapper $supportMapper,
         private SettingsService $settings,
+        private TrendingService $trendingService,
         private LoggerInterface $logger,
     ) {
     }
@@ -228,6 +230,26 @@ class OptionService
         }
         return $this->transferOption($optionId, $targetUser);
     }
+    /**
+ * Get options with trending scores
+ * Only works when inquiry supportFeature is 'trending'
+ */
+public function listByTargetIdWithTrending(int $targetId, bool $includeTrending = false): array
+{
+    $options = $this->listByTargetId($targetId);
+    
+    if ($includeTrending) {
+        $trendingScores = $this->trendingService->getTrendingScores($targetId);
+        foreach ($options as $option) {
+            $optionId = $option->getId();
+            if (isset($trendingScores[$optionId])) {
+                $option->setTrendingScore($trendingScores[$optionId]);
+            }
+        }
+    }
+    
+    return $options;
+}
 
     /**
      * Transfer ownership of an option

@@ -68,9 +68,10 @@ import { InquiryGeneralIcons} from '../../../utils/icons.ts'
 
 interface Props {
   show: boolean
-  inquiryId: number
+  // inquiryId: number
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const props = defineProps<Props>()
 const emit = defineEmits<{
   close: []

@@ -16,13 +16,10 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { t } from '@nextcloud/l10n'
-import type { SupportData, Option } from '../../Types/index'
+// import type { SupportData } from '../../Types/index'
 
 const props = defineProps<{
   engineConfig: Record<string, unknown>
-  option: Option
-  disabled?: boolean
-  userVote?: SupportData
   rank?: number | null
   totalOptions?: number
 }>()
@@ -37,21 +34,21 @@ const maxRank = computed(() => {
 })
 
 const emit = defineEmits<{
-  'change-rank': [rank: number | null]
+  'changeRank': [rank: number | null]
 }>()
 
 
 const localRank = computed({
   get: () => props.rank ?? null,
   set: (value) => {
-    emit('change-rank', value)
+    emit('changeRank', value)
   }
 })
 
 function handleChange(event: Event) {
   const target = event.target as HTMLSelectElement
   const value = target.value === 'null' ? null : parseInt(target.value, 10)
-  emit('change-rank', value)
+  emit('changeRank', value)
 }
 </script>
 

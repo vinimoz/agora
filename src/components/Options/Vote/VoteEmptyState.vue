@@ -35,8 +35,8 @@ const props = defineProps<{
 
 const emit = defineEmits<{
     configure: []
-    'add-option': []
-    'add-to-vote': []
+    'addOption': []
+    'addToVote': []
 }>()
 
 const iconComponent = computed(() => {
@@ -68,17 +68,6 @@ const showButton = computed(() => {
     return false
 })
 
-const showConfigureButton = computed(() => 
-    props.noEngine && props.canManageVote && !props.isReadonly
-)
-
-const showAddToVoteButton = computed(() => 
-    props.noOptionsLinked && props.canManageVote && !props.isReadonly
-)
-
-const showAddOptionButton = computed(() => 
-    props.showAddButton && props.canManageVote && !props.isReadonly
-)
 
 const buttonType = computed(() => props.noEngine ? 'primary' : 'primary')
 const buttonText = computed(() => {
@@ -92,9 +81,9 @@ const handleClick = () => {
     if (props.noEngine) {
         emit('configure')
     } else if (props.showAddButton) {
-        emit('add-option')
+        emit('addOption')
     } else if (props.showAddToVoteButton) {
-        emit('add-to-vote')
+        emit('addToVote')
     }
 }
 

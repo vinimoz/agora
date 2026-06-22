@@ -443,25 +443,17 @@ import type { Inquiry, Option } from '../../../Types/index.ts'
 import { canSupportOption, canSupport as canSupportInquiry } from '../../../utils/permissions.ts'
 import type {
   SupportFeature,
-   SupportResultData,
-  BinaryResult,
-  TernaryResult,
-  StarResult,
-  ScoreResult,
-  ApprovalDelibResult,
-  ReactionResult,
-  MajorityJudgmentResult,
 } from '../../../Types/votingType'
 
 // Define emits
 const emit = defineEmits<{
-  (e: 'supportToggled', itemId: number, newState: boolean): void
+  (e: 'support-toggled', itemId: number, newState: boolean): void
 }>()
 
 interface Props {
   item: Inquiry | Option
   itemType: 'inquiry' | 'option'
-  context?:  Record<string, unknown> | null
+  context?: any
   showQuorum?: boolean
   viewOnly?: boolean
   showDetailsOnHover?: boolean
@@ -477,8 +469,6 @@ const props = withDefaults(defineProps<Props>(), {
   context: () => ({}),
   viewOnly: false,
 })
-
-type Item = Inquiry | Option
 
 // Refs
 const containerRef = ref<HTMLElement>()
@@ -524,68 +514,40 @@ const getCounterType = (): 'highlighted' | 'outlined' | '' => {
 }
 
 // Results from item (set by parent/inquiry store)
-const normalizedSupportResult = computed((): SupportResultData => {
-  const raw = (props.item as Item)?.status?.supportResult
+const normalizedSupportResult = computed(() => {
+  const raw = (props.item as any)?.status?.supportResult
   if (!raw) return null
 
-  // If it's an array, check if it's empty or get the first element
-  if (Array.isArray(raw)) {
-    // If array is empty, return null
-    if (raw.length === 0) return null
-    
-    const first = raw[0]
-    // If the first element has a result property, use that
-    const actual = first?.result ?? first
-    // If actual is undefined or null, return null
-    if (!actual) return null
-    
-    // If actual is an empty array or empty object, return null
-    if (Array.isArray(actual) && actual.length === 0) return null
-    if (typeof actual === 'object' && actual !== null && Object.keys(actual).length === 0) return null
-    
-    // Process string/object as before
-    return processResultData(actual)
+  // If it's an array, assume the first element contains the actual result
+  let actual = raw
+  if (Array.isArray(raw) && raw.length > 0) {
+    actual = raw[0].result ?? raw[0]
   }
 
   // If it's a string, try to parse it
-  if (typeof raw === 'string') {
+  if (typeof actual === 'string') {
     try {
-      const parsed = JSON.parse(raw)
-      return processResultData(parsed)
+      actual = JSON.parse(actual)
     } catch (e) {
       console.error('Failed to parse support result:', e)
       return null
     }
   }
 
-  // If it's an object, process it directly
-  if (raw && typeof raw === 'object') {
-    return processResultData(raw)
-  }
-
-  return null
-})
-
-// Helper function to process result data
-const processResultData = (data: any): SupportResultData => {
-  if (!data) return null
-  if (Array.isArray(data) && data.length === 0) return null
-  if (typeof data === 'object' && data !== null && Object.keys(data).length === 0) return null
-  
   // If it's still not an object, return null
-  if (!data || typeof data !== 'object') {
+  if (!actual || typeof actual !== 'object') {
     return null
   }
 
   // Return as is - it already has the correct structure from CSV
   // Just ensure it has a type
-  if (!data.type) {
-    console.warn('Result missing type:', data)
+  if (!actual.type) {
+    console.warn('Result missing type:', actual)
     return null
   }
 
-  return data
-}
+  return actual
+})
 
 const hasDetailedResults = computed(() => {
   if (supportFeature.value === 'binary') return !!binaryResult.value
@@ -613,47 +575,45 @@ const hasResults = computed(() => {
   )
 })
 
-const binaryResult = computed((): BinaryResult | null => {
-  if (supportFeature.value !== 'binary' || normalizedSupportResult.value == null) {
+const binaryResult = computed(() => {
+  if (supportFeature.value !== 'binary' || !normalizedSupportResult.value) {
     return null
   }
 
   const result = normalizedSupportResult.value
 
   // Your data structure: { type: 'binary', totals: { yes: 1, no: 0 }, percentages: {...} }
-  if (result.type === 'binary' && (result as BinaryResult).totals) {
-    const r = result as BinaryResult
+  if (result.type === 'binary' && result.totals) {
     return {
-      total_yes: r.totals.yes || 0,
-      total_no: r.totals.no || 0,
-      percentage_yes: r.percentages?.yes || 0,
-      percentage_no: r.percentages?.no || 0,
+      total_yes: result.totals.yes || 0,
+      total_no: result.totals.no || 0,
+      percentage_yes: result.percentages?.yes || 0,
+      percentage_no: result.percentages?.no || 0,
     }
   }
 
   return null
 })
 
-const ternaryResult = computed((): TernaryResult | null => {
-  if (supportFeature.value !== 'ternary' || normalizedSupportResult.value == null) {
+const ternaryResult = computed(() => {
+  if (supportFeature.value !== 'ternary' || !normalizedSupportResult.value) {
     return null
   }
 
   const result = normalizedSupportResult.value
 
   // Your data structure: { type: 'ternary', totals: {...}, percentages: {...} }
-  if (result.type === 'ternary' && (result as TernaryResult).totals) {
-    const r = result as TernaryResult
+  if (result.type === 'ternary' && result.totals) {
     return {
       totals: {
-        yes: r.totals.yes || 0,
-        no: r.totals.no || 0,
-        abstain: r.totals.abstain || 0,
+        yes: result.totals.yes || 0,
+        no: result.totals.no || 0,
+        abstain: result.totals.abstain || 0,
       },
       percentages: {
-        yes: r.percentages?.yes || 0,
-        no: r.percentages?.no || 0,
-        abstain: r.percentages?.abstain || 0,
+        yes: result.percentages?.yes || 0,
+        no: result.percentages?.no || 0,
+        abstain: result.percentages?.abstain || 0,
       },
     }
   }
@@ -661,20 +621,19 @@ const ternaryResult = computed((): TernaryResult | null => {
   return null
 })
 
-const starResult = computed((): StarResult | null => {
-  if (supportFeature.value !== 'star' || normalizedSupportResult.value == null) {
+const starResult = computed(() => {
+  if (supportFeature.value !== 'star' || !normalizedSupportResult.value) {
     return null
   }
 
   const result = normalizedSupportResult.value
 
   // Your data structure: { type: 'star', totals: { total: 2, average: 2.5 } }
-  if (result.type === 'star' && (result as StarResult).totals) {
-    const r = result as StarResult
+  if (result.type === 'star' && result.totals) {
     return {
       totals: {
-        total: r.totals.total || 0,
-        average: r.totals.average || 0,
+        total: result.totals.total || 0,
+        average: result.totals.average || 0,
       },
     }
   }
@@ -682,41 +641,39 @@ const starResult = computed((): StarResult | null => {
   return null
 })
 
-const scoreResult = computed((): ScoreResult | null => {
-  if (supportFeature.value !== 'score' || normalizedSupportResult.value == null) {
+const scoreResult = computed(() => {
+  if (supportFeature.value !== 'score' || !normalizedSupportResult.value) {
     return null
   }
 
   const result = normalizedSupportResult.value
 
   // Your data structure: { type: 'score', totals: { total: 2, average: 7 } }
-  if (result.type === 'score' && (result as ScoreResult).totals) {
-    const r = result as ScoreResult
+  if (result.type === 'score' && result.totals) {
     return {
-      average: r.totals.average || 0,
-      total: r.totals.total || 0,
+      average: result.totals.average || 0,
+      total: result.totals.total || 0,
     }
   }
 
   return null
 })
 
-const approvalDelibResult = computed((): ApprovalDelibResult | null => {
-  if (supportFeature.value !== 'approval_delib' || normalizedSupportResult.value == null) {
+const approvalDelibResult = computed(() => {
+  if (supportFeature.value !== 'approval_delib' || !normalizedSupportResult.value) {
     return null
   }
 
   const result = normalizedSupportResult.value
 
-  if (result.type === 'approval_delib' && (result as ApprovalDelibResult).totals) {
-    const r = result as ApprovalDelibResult
+  if (result.type === 'approval_delib' && result.totals) {
     return {
       totals: {
-        approved: r.totals.approved || 0,
-        total: r.totals.total || 0,
+        approved: result.totals.approved || 0,
+        total: result.totals.total || 0,
       },
       percentages: {
-        approved: r.percentages?.approved || 0,
+        approved: result.percentages?.approved || 0,
       },
     }
   }
@@ -724,39 +681,39 @@ const approvalDelibResult = computed((): ApprovalDelibResult | null => {
   return null
 })
 
-const reactionResult = computed((): ReactionResult | null => {
-  if (supportFeature.value !== 'reaction' || normalizedSupportResult.value == null) {
+const reactionResult = computed(() => {
+  if (supportFeature.value !== 'reaction' || !normalizedSupportResult.value) {
     return null
   }
 
   const result = normalizedSupportResult.value
 
   // Your data structure: { type: 'reaction', counts: {...} }
-  if (result.type === 'reaction' && (result as ReactionResult).counts) {
+  if (result.type === 'reaction' && result.counts) {
     return {
-      counts: (result as ReactionResult).counts,
+      counts: result.counts,
     }
   }
 
   return null
 })
 
-const majorityResult = computed((): MajorityJudgmentResult | null => {
-  if (supportFeature.value !== 'majority_judgment' || normalizedSupportResult.value == null) {
+const majorityResult = computed(() => {
+  if (supportFeature.value !== 'majority_judgment' || !normalizedSupportResult.value) {
     return null
   }
 
-  const result = normalizedSupportResult.value as MajorityJudgmentResult
+  const result = normalizedSupportResult.value
 
   // Handle the nested structure from your CSV
   if (result.type === 'majority_judgment') {
     // For inquiries with options (like #4 and #5004)
-    if (result.options != null && Object.keys(result.options).length > 0) {
+    if (result.options && Object.keys(result.options).length > 0) {
       // Get the first option's data (or find the winner)
       const firstOptionId = Object.keys(result.options)[0]
       const optionData = result.options[firstOptionId]
 
-      if (optionData?.grade_distribution != null) {
+      if (optionData && optionData.grade_distribution) {
         // Convert the distribution object to array format
         const distribution: Record<number, number> = {}
         const gradeLabels = result.grades || []
@@ -771,22 +728,17 @@ const majorityResult = computed((): MajorityJudgmentResult | null => {
           median: optionData.median_index || 0,
           total_votes: optionData.total_votes || 0,
           median_label: optionData.median_grade || '',
-          grades: result.grades,
-          options: result.options,
-          winner: result.winner,
-          winner_details: result.winner_details,
-          winner_name: result.winner_name,
         }
       }
     }
 
     // For direct result format (if no options wrapper)
-    if (result.grade_distribution != null) {
+    if (result.grade_distribution) {
       const distribution: Record<number, number> = {}
       const gradeLabels = result.grades || []
 
       gradeLabels.forEach((gradeName: string, index: number) => {
-        distribution[index] = result.grade_distribution?.[gradeName] || 0
+        distribution[index] = result.grade_distribution[gradeName] || 0
       })
 
       return {
@@ -794,16 +746,11 @@ const majorityResult = computed((): MajorityJudgmentResult | null => {
         median: result.median_index || 0,
         total_votes: result.total_votes || 0,
         median_label: result.median_grade || '',
-        grades: result.grades,
-        options: result.options,
-        winner: result.winner,
-        winner_details: result.winner_details,
-        winner_name: result.winner_name,
       }
     }
 
     // Fallback for empty data
-    if (result.grades != null && Array.isArray(result.grades)) {
+    if (result.grades && Array.isArray(result.grades)) {
       const distribution: Record<number, number> = {}
       result.grades.forEach((_: string, index: number) => {
         distribution[index] = 0
@@ -813,11 +760,6 @@ const majorityResult = computed((): MajorityJudgmentResult | null => {
         distribution,
         median: 0,
         total_votes: result.total_votes || 0,
-        grades: result.grades,
-        options: result.options,
-        winner: result.winner,
-        winner_details: result.winner_details,
-        winner_name: result.winner_name,
       }
     }
   }
@@ -829,7 +771,7 @@ const displayCount = computed(() => props.item?.status?.countSupports ?? 0)
 
 const totalParticipants = computed(() => displayCount.value)
 
-const quorumValue = computed(() => (props.item as Item)?.miscFields?.quorum ?? 0)
+const quorumValue = computed(() => (props.item as any)?.miscFields?.quorum ?? 0)
 
 interface SupportTemplate {
   grades?: Record<number, string>
@@ -837,7 +779,7 @@ interface SupportTemplate {
 }
 
 const supportTemplate = computed<SupportTemplate | null>(() => {
-  const raw = (props.item as Item)?.miscFields?.support_template
+  const raw = (props.item as any)?.miscFields?.support_template
   if (typeof raw === 'string' && raw) {
     try {
       return JSON.parse(raw)
@@ -947,8 +889,8 @@ const getGradeLabel = (grade: number | string | null): string => {
   // Convert numeric strings to numbers
   if (typeof grade === 'string') {
     const num = Number(grade)
-    if (isNaN(num)) return grade // it's a real string label
-    grade = num
+    if (!isNaN(num)) grade = num
+    else return grade // it's a real string label
   }
 
   if (typeof grade === 'number') {
@@ -958,8 +900,8 @@ const getGradeLabel = (grade: number | string | null): string => {
       return supportTemplate.value.grades[idx]
     }
     // Fallback to result's grades if available
-    if (majorityResult.value && (majorityResult.value as unknown).grades?.[idx]) {
-      return (majorityResult.value as unknown).grades[idx]
+    if (majorityResult.value && (majorityResult.value as any).grades?.[idx]) {
+      return (majorityResult.value as any).grades[idx]
     }
     // Default grades
     const defaultGrades = [
@@ -1074,43 +1016,41 @@ const handleSupportClick = async () => {
         const currentReaction = normaliseReaction(getUserReaction.value ?? '')
        let nextReaction: string | null = null
 
-        if (hadSupportedBefore) {
-              const currentIndex = reactions.indexOf(currentReaction as string)
+        if (!hadSupportedBefore) {
+          nextReaction = reactions[0]
+        } else {
+          const currentIndex = reactions.indexOf(currentReaction as string)
           if (currentIndex !== -1 && currentIndex < reactions.length - 1) {
-              nextReaction = reactions[currentIndex + 1]
-              } else {
-              nextReaction = null
-              }
-              }
-              else {  
-              nextReaction = reactions[0]
-              }
+            nextReaction = reactions[currentIndex + 1]
+          } else {
+            nextReaction = null
+          }
+        }
+        await supportsStore.toggleReactionSupport(itemId, userId, item, itemType, nextReaction)
+        break
+      }
 
-              await supportsStore.toggleReactionSupport(itemId, userId, item, itemType, nextReaction)
-              break
-              }
+      default:
+        return
+    }
 
-              default:
-              return
-              }
+    // Update local store and emit
+    if (itemType === 'option' && item.id) {
+      optionsStore.updateOptionSupportDetails(item.id, {
+        countSupports: item.status?.countSupports ?? 0,
+        hasSupported: item.currentUserStatus?.hasSupported ?? false,
+        supportValue: item.currentUserStatus?.supportValue ?? null,
+      })
+    }
+    emit('support-toggled', item.id, item.currentUserStatus?.hasSupported ?? false)
+    showSupportSuccessMessage(hadSupportedBefore ?? false)
+  } catch (error) {
+    console.error('Failed to toggle support:', error)
+    showError(t('agora', 'Failed to update support status'))
+  }
+}
 
-              // Update local store and emit
-              if (itemType === 'option' && item.id) {
-              optionsStore.updateOptionSupportDetails(item.id, {
-              countSupports: item.status?.countSupports ?? 0,
-              hasSupported: item.currentUserStatus?.hasSupported ?? false,
-              supportValue: item.currentUserStatus?.supportValue ?? null,
-              })
-              }
-              emit('supportToggled', item.id, item.currentUserStatus?.hasSupported ?? false)
-              showSupportSuccessMessage(hadSupportedBefore ?? false)
-              } catch (error) {
-              console.error('Failed to toggle support:', error)
-              showError(t('agora', 'Failed to update support status'))
-              }
-              }
-
-              const showSupportSuccessMessage = (hadSupportedBefore: boolean) => {
+const showSupportSuccessMessage = (hadSupportedBefore: boolean) => {
   const hasSupportedAfter = props.item.currentUserStatus?.hasSupported
   const supportValueAfter = props.item.currentUserStatus?.supportValue
   const feature = supportFeature.value
@@ -1156,14 +1096,13 @@ const handleSupportClick = async () => {
       break
 
     case 'score':
-      if (supportValueAfter === null) {
-        showSuccess(t('agora', 'Score removed'), { timeout: 2000 })
-      }
-    else {
+      if (supportValueAfter !== null) {
         showSuccess(t('agora', 'Score: {score}/10', { score: supportValueAfter }), {
           timeout: 2000,
         })
-      } 
+      } else {
+        showSuccess(t('agora', 'Score removed'), { timeout: 2000 })
+      }
       break
 
     case 'reaction':
@@ -1176,13 +1115,12 @@ const handleSupportClick = async () => {
       }
       break
 
-    case 'majority_judgment': 
-      if (supportValueAfter === null) {
-        showSuccess(t('agora', 'Grade removed'), { timeout: 2000 })
-    } else { 
+    case 'majority_judgment':
+      if (supportValueAfter !== null) {
         const gradeLabel = getGradeLabel(supportValueAfter as string) // adapt to string
         showSuccess(t('agora', 'Grade: {grade}', { grade: gradeLabel }), { timeout: 2000 })
-
+      } else {
+        showSuccess(t('agora', 'Grade removed'), { timeout: 2000 })
       }
       break
 
@@ -1198,242 +1136,242 @@ const handleSupportClick = async () => {
 
 <style lang="scss" scoped>
 .counter-item.supports {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.2s ease;
+  position: relative;
+  user-select: none;
+  white-space: nowrap;
+  min-height: 32px;
+  height: auto;
+  width: auto;
+  max-width: none;
+  border: 1px solid var(--color-border);
+  background: var(--color-main-background);
+  border-radius: 16px;
+  padding: 4px 12px;
+  gap: 12px;
+  box-sizing: border-box;
+
+  &.clickable {
+    cursor: pointer;
+
+    &:hover {
+      border-color: var(--color-primary-element);
+      background: var(--color-background-hover);
+    }
+  }
+
+  &.has-support {
+    border-color: var(--color-success);
+    background: rgba(var(--color-success-rgb), 0.05);
+  }
+
+  &.disabled {
+    cursor: default;
+    opacity: 0.6;
+  }
+
+  // Base icon container
+  .counter-icon {
+    background: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
     display: inline-flex;
     align-items: center;
-    justify-content: space-between;
-    transition: all 0.2s ease;
-    position: relative;
-    user-select: none;
-    white-space: nowrap;
-    min-height: 32px;
-    height: auto;
-    width: auto;
-    max-width: none;
-    border: 1px solid var(--color-border);
-    background: var(--color-main-background);
-    border-radius: 16px;
-    padding: 4px 12px;
-    gap: 12px;
-    box-sizing: border-box;
+    justify-content: flex-start;
+    flex-shrink: 0;
 
-    &.clickable {
-        cursor: pointer;
-
-        &:hover {
-            border-color: var(--color-primary-element);
-            background: var(--color-background-hover);
-        }
+    svg {
+      background: transparent;
+      width: 16px !important;
+      height: 16px !important;
     }
 
-    &.has-support {
-        border-color: var(--color-success);
-        background: rgba(var(--color-success-rgb), 0.05);
-    }
+    .star-rating-icon {
+      display: flex;
+      align-items: center;
+      gap: 4px;
 
-    &.disabled {
-        cursor: default;
-        opacity: 0.6;
-    }
-
-    // Base icon container
-        .counter-icon {
-        background: transparent !important;
-        background-image: none !important;
-        box-shadow: none !important;
-        display: inline-flex;
-        align-items: center;
-        justify-content: flex-start;
-        flex-shrink: 0;
+      .stars-container {
+        display: flex;
+        gap: 2px;
 
         svg {
-            background: transparent;
-            width: 16px !important;
-            height: 16px !important;
+          width: 12px !important;
+          height: 12px !important;
         }
+      }
 
-        .star-rating-icon {
-            display: flex;
-            align-items: center;
-            gap: 4px;
+      .filled {
+        color: #fbbf24;
+        fill: #fbbf24;
+      }
 
-            .stars-container {
-                display: flex;
-                gap: 2px;
-
-                svg {
-                    width: 12px !important;
-                    height: 12px !important;
-                }
-            }
-
-            .filled {
-                color: #fbbf24;
-                fill: #fbbf24;
-            }
-
-            .rating-value {
-                font-size: 12px;
-                font-weight: 600;
-                margin-left: 0;
-            }
-        }
-
-        .grade-icon {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-
-            svg {
-                width: 14px !important;
-                height: 14px !important;
-            }
-
-            .grade-value {
-                font-size: 11px;
-                font-weight: 600;
-                white-space: nowrap;
-            }
-        }
-
-        .score-icon {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
+      .rating-value {
+        font-size: 12px;
+        font-weight: 600;
+        margin-left: 0;
+      }
     }
 
-    // Counter content - unified definition
-        .counter-content {
+    .grade-icon {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+
+      svg {
+        width: 14px !important;
+        height: 14px !important;
+      }
+
+      .grade-value {
+        font-size: 11px;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+    }
+
+    .score-icon {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+  }
+
+  // Counter content - unified definition
+  .counter-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+    min-width: auto;
+    flex-shrink: 0;
+
+    .counter-label-wrapper {
+      display: flex;
+      align-items: baseline;
+      justify-content: flex-end;
+      gap: 4px;
+
+      .counter-label {
+        color: var(--color-text-lighter);
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        font-weight: 500;
+        white-space: nowrap;
+        font-size: 9px;
+        line-height: 1.3;
+      }
+
+      .quorum-compact {
+        color: var(--color-text-lighter);
+
+        .quorum-separator {
+          margin: 0 2px;
+        }
+
+        .quorum-target {
+          color: var(--color-primary-element);
+          font-weight: 600;
+        }
+      }
+    }
+  }
+
+  // Star rating specific
+  &.has-star-rating {
+    width: max-content;
+    min-width: 150px;
+    max-width: none;
+    justify-content: space-between;
+
+    .counter-icon {
+      background: transparent !important;
+      width: auto;
+      padding: 0;
+      margin: 0;
+      flex-shrink: 0;
+    }
+
+    .star-rating-icon {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+
+      .stars-container {
         display: flex;
-        flex-direction: column;
-        align-items: flex-end;
-        gap: 4px;
-        min-width: auto;
+        gap: 2px;
+
+        svg {
+          width: 12px !important;
+          height: 12px !important;
+        }
+      }
+
+      .rating-value {
+        font-size: 12px;
+        font-weight: 600;
+        margin-left: 4px;
+        display: inline-block;
+        white-space: nowrap;
+      }
+    }
+  }
+
+  // Majority judgment specific
+  &.has-majority-judgment {
+    width: max-content;
+    min-width: 150px;
+    max-width: none;
+    justify-content: space-between;
+
+    .counter-icon {
+      background: transparent !important;
+      width: auto;
+      padding: 0;
+      margin: 0;
+      flex-shrink: 0;
+    }
+
+    .grade-icon {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+
+      svg {
+        width: 14px !important;
+        height: 14px !important;
         flex-shrink: 0;
+      }
 
-        .counter-label-wrapper {
-            display: flex;
-            align-items: baseline;
-            justify-content: flex-end;
-            gap: 4px;
-
-            .counter-label {
-                color: var(--color-text-lighter);
-                text-transform: uppercase;
-                letter-spacing: 0.3px;
-                font-weight: 500;
-                white-space: nowrap;
-                font-size: 9px;
-                line-height: 1.3;
-            }
-
-            .quorum-compact {
-                color: var(--color-text-lighter);
-
-                .quorum-separator {
-                    margin: 0 2px;
-                }
-
-                .quorum-target {
-                    color: var(--color-primary-element);
-                    font-weight: 600;
-                }
-            }
-        }
+      .grade-value {
+        font-size: 11px;
+        font-weight: 600;
+        max-width: none !important;
+        overflow: visible !important;
+        text-overflow: clip !important;
+        white-space: nowrap;
+        display: inline-block;
+        line-height: 1.3;
+      }
     }
+  }
 
-    // Star rating specific
-        &.has-star-rating {
-        width: max-content;
-        min-width: 150px;
-        max-width: none;
-        justify-content: space-between;
-
-        .counter-icon {
-            background: transparent !important;
-            width: auto;
-            padding: 0;
-            margin: 0;
-            flex-shrink: 0;
-        }
-
-        .star-rating-icon {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-
-            .stars-container {
-                display: flex;
-                gap: 2px;
-
-                svg {
-                    width: 12px !important;
-                    height: 12px !important;
-                }
-            }
-
-            .rating-value {
-                font-size: 12px;
-                font-weight: 600;
-                margin-left: 4px;
-                display: inline-block;
-                white-space: nowrap;
-            }
-        }
+  // Reaction, Score, Approval types
+  &.has-reaction,
+  &.has-score,
+  &.has-approval-delib {
+    .counter-icon {
+      background: transparent !important;
+      width: auto;
+      padding: 0;
+      margin: 0;
+       margin-right: 8px;
+      flex-shrink: 0;
     }
-
-    // Majority judgment specific
-        &.has-majority-judgment {
-        width: max-content;
-        min-width: 150px;
-        max-width: none;
-        justify-content: space-between;
-
-        .counter-icon {
-            background: transparent !important;
-            width: auto;
-            padding: 0;
-            margin: 0;
-            flex-shrink: 0;
-        }
-
-        .grade-icon {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-
-            svg {
-                width: 14px !important;
-                height: 14px !important;
-                flex-shrink: 0;
-            }
-
-            .grade-value {
-                font-size: 11px;
-                font-weight: 600;
-                max-width: none !important;
-                overflow: visible !important;
-                text-overflow: clip !important;
-                white-space: nowrap;
-                display: inline-block;
-                line-height: 1.3;
-            }
-        }
-    }
-
-    // Reaction, Score, Approval types
-        &.has-reaction,
-    &.has-score,
-    &.has-approval-delib {
-        .counter-icon {
-            background: transparent !important;
-            width: auto;
-            padding: 0;
-            margin: 0;
-            margin-right: 8px;
-            flex-shrink: 0;
-        }
-    }
+  }
     .counter-icon.inactive {
         opacity: 0.5;
         filter: grayscale(1);
@@ -1449,301 +1387,301 @@ const handleSupportClick = async () => {
 <style lang="scss">
 // Global styles for popover content (must not be scoped)
 .support-details-popover {
-    .support-tooltip-content {
-        background: var(--color-main-background);
-        border: 1px solid var(--color-border);
+  .support-tooltip-content {
+    background: var(--color-main-background);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    padding: 16px;
+    min-width: 280px;
+    max-width: 400px;
+    width: auto;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+
+    .tooltip-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--color-border);
+
+      h4 {
+        margin: 0;
+        font-weight: 600;
+        font-size: 14px;
+      }
+
+      .user-support-badge {
+        padding: 4px 8px;
         border-radius: 12px;
-        padding: 16px;
-        min-width: 280px;
-        max-width: 400px;
-        width: auto;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+        font-size: 11px;
+        font-weight: 500;
 
-        .tooltip-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid var(--color-border);
+        &.positive {
+          background: #10b98120;
+          color: #10b981;
+        }
+        &.neutral {
+          background: #6b728020;
+          color: #6b7280;
+        }
+        &.negative {
+          background: #ef444420;
+          color: #ef4444;
+        }
+      }
+    }
 
-            h4 {
-                margin: 0;
-                font-weight: 600;
-                font-size: 14px;
-            }
+    .no-results-message {
+      text-align: center;
+      padding: 16px;
+      color: var(--color-text-lighter);
 
-            .user-support-badge {
-                padding: 4px 8px;
-                border-radius: 12px;
-                font-size: 11px;
-                font-weight: 500;
+      p {
+        margin: 8px 0;
+        font-size: 12px;
+      }
 
-                &.positive {
-                    background: #10b98120;
-                    color: #10b981;
-                }
-                &.neutral {
-                    background: #6b728020;
-                    color: #6b7280;
-                }
-                &.negative {
-                    background: #ef444420;
-                    color: #ef4444;
-                }
-            }
+      .total-participants {
+        font-weight: 600;
+        color: var(--color-main-text);
+      }
+    }
+
+    .binary-breakdown,
+    .ternary-breakdown {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 16px;
+
+      .breakdown-item {
+        padding: 8px;
+        border-radius: 8px;
+        background: var(--color-background-dark);
+
+        &.positive {
+          border-left: 3px solid #10b981;
+        }
+        &.neutral {
+          border-left: 3px solid #6b7280;
+        }
+        &.negative {
+          border-left: 3px solid #ef4444;
         }
 
-        .no-results-message {
-            text-align: center;
-            padding: 16px;
+        .breakdown-header {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          margin-bottom: 6px;
+
+          .breakdown-label {
+            font-weight: 600;
+            font-size: 12px;
+          }
+        }
+
+        .breakdown-stats {
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 6px;
+
+          .count {
+            font-weight: 700;
+            font-size: 14px;
+          }
+          .percentage {
             color: var(--color-text-lighter);
-
-            p {
-                margin: 8px 0;
-                font-size: 12px;
-            }
-
-            .total-participants {
-                font-weight: 600;
-                color: var(--color-main-text);
-            }
+            font-size: 11px;
+          }
         }
 
-        .binary-breakdown,
-        .ternary-breakdown {
-            display: flex;
-            flex-direction: column;
+        .breakdown-bar {
+          height: 4px;
+          background: var(--color-border);
+          border-radius: 2px;
+          overflow: hidden;
+
+          .bar-fill {
+            height: 100%;
+            transition: width 0.3s ease;
+
+            &.positive-bar {
+              background: #10b981;
+            }
+            &.neutral-bar {
+              background: #6b7280;
+            }
+            &.negative-bar {
+              background: #ef4444;
+            }
+          }
+        }
+      }
+    }
+
+    .score-breakdown {
+        margin-bottom: 16px;
+
+        .score-summary {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
             gap: 12px;
-            margin-bottom: 16px;
 
-            .breakdown-item {
+            .score-stat {
+                text-align: center;
                 padding: 8px;
-                border-radius: 8px;
                 background: var(--color-background-dark);
+                border-radius: 8px;
 
-                &.positive {
-                    border-left: 3px solid #10b981;
-                }
-                &.neutral {
-                    border-left: 3px solid #6b7280;
-                }
-                &.negative {
-                    border-left: 3px solid #ef4444;
-                }
-
-                .breakdown-header {
-                    display: flex;
-                    align-items: center;
-                    gap: 8px;
-                    margin-bottom: 6px;
-
-                    .breakdown-label {
-                        font-weight: 600;
-                        font-size: 12px;
-                    }
-                }
-
-                .breakdown-stats {
-                    display: flex;
-                    justify-content: space-between;
-                    margin-bottom: 6px;
-
-                    .count {
-                        font-weight: 700;
-                        font-size: 14px;
-                    }
-                    .percentage {
-                        color: var(--color-text-lighter);
-                        font-size: 11px;
-                    }
-                }
-
-                .breakdown-bar {
-                    height: 4px;
-                    background: var(--color-border);
-                    border-radius: 2px;
-                    overflow: hidden;
-
-                    .bar-fill {
-                        height: 100%;
-                        transition: width 0.3s ease;
-
-                        &.positive-bar {
-                            background: #10b981;
-                        }
-                        &.neutral-bar {
-                            background: #6b7280;
-                        }
-                        &.negative-bar {
-                            background: #ef4444;
-                        }
-                    }
-                }
-            }
-        }
-
-        .score-breakdown {
-            margin-bottom: 16px;
-
-            .score-summary {
-                display: grid;
-                grid-template-columns: repeat(2, 1fr);
-                gap: 12px;
-
-                .score-stat {
-                    text-align: center;
-                    padding: 8px;
-                    background: var(--color-background-dark);
-                    border-radius: 8px;
-
-                    .stat-label {
-                        display: block;
-                        font-size: 10px;
-                        color: var(--color-text-lighter);
-                        margin-bottom: 4px;
-                    }
-
-                    .stat-value {
-                        font-size: 16px;
-                        font-weight: 700;
-                        color: var(--color-primary-element);
-                    }
-                }
-            }
-        }
-
-        .reaction-breakdown {
-            margin-bottom: 16px;
-
-            .reaction-grid {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 8px;
-                justify-content: center;
-
-                .reaction-stat {
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    padding: 8px 12px;
-                    background: var(--color-background-dark);
-                    border-radius: 8px;
-                    min-width: 50px;
-                    transition: all 0.2s ease;
-
-                    &.selected {
-                        background: rgba(var(--color-primary-element-rgb), 0.1);
-                        border: 1px solid var(--color-primary-element);
-                    }
-
-                    .reaction-emoji {
-                        font-size: 20px;
-                        margin-bottom: 4px;
-                    }
-
-                    .reaction-count {
-                        font-weight: 600;
-                        font-size: 13px;
-                    }
-                }
-            }
-        }
-
-        .majority-breakdown {
-            margin-bottom: 16px;
-
-            .grade-distribution {
-                display: flex;
-                flex-direction: column;
-                gap: 8px;
-
-                .grade-bar {
-                    display: flex;
-                    align-items: center;
-                    gap: 8px;
-
-                    .grade-label {
-                        min-width: 85px;
-                        font-size: 11px;
-                        color: var(--color-text-lighter);
-                    }
-
-                    .grade-bar-container {
-                        flex: 1;
-                        height: 6px;
-                        background: var(--color-border);
-                        border-radius: 3px;
-                        overflow: hidden;
-
-                        .grade-bar-fill {
-                            height: 100%;
-                            background: var(--color-primary-element);
-                            transition: width 0.3s ease;
-                        }
-                    }
-
-                    .grade-count {
-                        min-width: 35px;
-                        text-align: right;
-                        font-weight: 600;
-                        font-size: 12px;
-                    }
-                }
-            }
-
-            .median-info {
-                margin-top: 12px;
-                padding-top: 8px;
-                border-top: 1px solid var(--color-border);
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-
-                .median-label {
-                    font-size: 11px;
+                .stat-label {
+                    display: block;
+                    font-size: 10px;
                     color: var(--color-text-lighter);
+                    margin-bottom: 4px;
                 }
 
-                .median-value {
+                .stat-value {
+                    font-size: 16px;
                     font-weight: 700;
-                    font-size: 13px;
                     color: var(--color-primary-element);
                 }
             }
         }
+    }
 
-        .tooltip-footer {
+    .reaction-breakdown {
+        margin-bottom: 16px;
+
+        .reaction-grid {
             display: flex;
-            justify-content: space-between;
-            padding-top: 12px;
-            margin-top: 4px;
-            border-top: 1px solid var(--color-border);
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
 
-            .summary-item {
-                .summary-label {
-                    font-size: 10px;
-                    color: var(--color-text-lighter);
-                    display: block;
-                    margin-bottom: 2px;
+            .reaction-stat {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                padding: 8px 12px;
+                background: var(--color-background-dark);
+                border-radius: 8px;
+                min-width: 50px;
+                transition: all 0.2s ease;
+
+                &.selected {
+                    background: rgba(var(--color-primary-element-rgb), 0.1);
+                    border: 1px solid var(--color-primary-element);
                 }
 
-                .summary-value {
-                    font-weight: 700;
-                    font-size: 13px;
+                .reaction-emoji {
+                    font-size: 20px;
+                    margin-bottom: 4px;
+                }
 
-                    &.reached {
-                        color: var(--color-success);
-                    }
+                .reaction-count {
+                    font-weight: 600;
+                    font-size: 13px;
                 }
             }
         }
     }
 
-    .counter-icon,
-    .breakdown-header svg,
-    .reaction-stat svg {
-        background: transparent !important;
+    .majority-breakdown {
+        margin-bottom: 16px;
+
+        .grade-distribution {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+
+            .grade-bar {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+
+                .grade-label {
+                    min-width: 85px;
+                    font-size: 11px;
+                    color: var(--color-text-lighter);
+                }
+
+                .grade-bar-container {
+                    flex: 1;
+                    height: 6px;
+                    background: var(--color-border);
+                    border-radius: 3px;
+                    overflow: hidden;
+
+                    .grade-bar-fill {
+                        height: 100%;
+                        background: var(--color-primary-element);
+                        transition: width 0.3s ease;
+                    }
+                }
+
+                .grade-count {
+                    min-width: 35px;
+                    text-align: right;
+                    font-weight: 600;
+                    font-size: 12px;
+                }
+            }
+        }
+
+        .median-info {
+            margin-top: 12px;
+            padding-top: 8px;
+            border-top: 1px solid var(--color-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            .median-label {
+                font-size: 11px;
+                color: var(--color-text-lighter);
+            }
+
+            .median-value {
+                font-weight: 700;
+                font-size: 13px;
+                color: var(--color-primary-element);
+            }
+        }
     }
+
+    .tooltip-footer {
+        display: flex;
+        justify-content: space-between;
+        padding-top: 12px;
+        margin-top: 4px;
+        border-top: 1px solid var(--color-border);
+
+        .summary-item {
+            .summary-label {
+                font-size: 10px;
+                color: var(--color-text-lighter);
+                display: block;
+                margin-bottom: 2px;
+            }
+
+            .summary-value {
+                font-weight: 700;
+                font-size: 13px;
+
+                &.reached {
+                    color: var(--color-success);
+                }
+            }
+        }
+    }
+  }
+
+  .counter-icon,
+  .breakdown-header svg,
+  .reaction-stat svg {
+      background: transparent !important;
+  }
 }
 </style>

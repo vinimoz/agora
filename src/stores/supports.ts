@@ -8,7 +8,6 @@ import { ref, computed } from 'vue'
 import { SupportsAPI, PublicAPI } from '../Api/index.ts'
 import { Logger } from '../helpers/index.ts'
 import { useSessionStore } from './session.ts'
-import { useSupportResultStore } from './supportResult.ts'
 import { useInquiriesStore } from './inquiries.ts'
 import { useSupportEngineStore } from './supportEngine.ts'
 import { useOptionsStore } from './options.ts'
@@ -19,7 +18,6 @@ import type {
   Option,
   SupportValue,
   SupportFeature,
-  SupportEngine,
   SupportResultData,
   BinaryResult,
   TernaryResult,
@@ -59,12 +57,6 @@ export interface SupportableItem {
     countNegativeSupports?: number
     supportResult?: SupportResultData
   }
-}
-
-interface OldState {
-  value: SupportValue | null
-  hasSupported: boolean
-  result: SupportResultData | null
 }
 
 export const useSupportsStore = defineStore('supports', () => {
@@ -141,144 +133,12 @@ export const useSupportsStore = defineStore('supports', () => {
     }
   }
 
-  function extractValueFromSupport(support: Support): number | string | unknown {
-    const rawValue = support.value
-
-    if (typeof rawValue === 'string') {
-      try {
-        const parsed = JSON.parse(rawValue)
-        if (parsed && 'value' in parsed) {
-          return parsed.value
-        }
-        return parsed
-      } catch {}
-    }
-
-    if (typeof rawValue === 'object' && rawValue !== null && 'value' in rawValue) {
-      return rawValue.value
-    }
-
-    return rawValue
-  }
-
-  function calculateTernaryResultLocal(supports: Support[]): TernaryResult {
-    let yes = 0
-    let no = 0
-    let abstain = 0
-
-    supports.forEach((support) => {
-      const value = extractValueFromSupport(support)
-      if (value === 1) yes++
-      else if (value === -1) no++
-      else if (value === 0) abstain++
-    })
-
-    const total = yes + no + abstain
-    return {
-      type: 'ternary',
-      totals: { yes, no, abstain },
-      percentages: {
-        yes: total > 0 ? (yes / total) * 100 : 0,
-        no: total > 0 ? (no / total) * 100 : 0,
-        abstain: total > 0 ? (abstain / total) * 100 : 0,
-      },
-    }
-  }
 
   function getSupportFeature(item: SupportableItem): SupportFeature {
     return item.configuration?.supportFeature || 'none'
   }
 
-  function getSupportResultKey(
-    itemId: number,
-    itemType: 'inquiry' | 'option',
-    inquiryId?: number
-  ): string {
-    if (itemType === 'option' && inquiryId) {
-      return `option-${itemId}`
-    }
-    return `inquiry-${itemId}`
-  }
 
-  /**
-   * Normalize support value based on support feature type
-   * This ensures values are in the correct format for processing
-   * @param value
-   * @param supportFeature
-   */
-  function normalizeSupportValue(
-    value: SupportValue,
-    supportFeature: SupportFeature
-  ): SupportValue {
-    if (value === null || value === undefined) return null
-
-    switch (supportFeature) {
-      case 'ternary':
-      case 'binary':
-      case 'star':
-      case 'score':
-        // Convert numeric strings to numbers
-        if (typeof value === 'string' && !isNaN(Number(value))) {
-          return Number(value)
-        }
-        return value
-
-      case 'ranking':
-      case 'condorcet':
-      case 'borda':
-        // Rank should be a number (1 = highest)
-        if (typeof value === 'number') return value
-        if (typeof value === 'string' && !isNaN(Number(value))) return Number(value)
-        if (value === null) return null
-        return null
-
-      case 'quadratic':
-      case 'token_weighted':
-      case 'phased_voting':
-        // Numeric values (votes, weights)
-        if (typeof value === 'number') return value
-        if (typeof value === 'string' && !isNaN(Number(value))) return Number(value)
-        return null
-
-      case 'reaction':
-        // Ensure it's a string or array of strings
-        if (typeof value === 'string') return value
-        if (Array.isArray(value) && value.every((v) => typeof v === 'string')) return value
-        return null
-
-      case 'approval':
-        // Ensure it's an array of numbers
-        if (Array.isArray(value)) {
-          return value.map((v) => (typeof v === 'string' ? Number(v) : v))
-        }
-        return []
-
-      case 'approval_delib':
-        if (value === 1 || value === '1' || value === true) {
-          return 1
-        }
-        return null
-
-      case 'trending':
-        // No user input for trending
-        return null
-
-      case 'majority_judgment':
-        // Grade should be a string
-        if (typeof value === 'string') return value
-        if (typeof value === 'number') return String(value)
-        if (value && typeof value === 'object' && 'grade' in value) {
-          return String((value as unknown).grade)
-        }
-        if (value && typeof value === 'object' && 'value' in value) {
-          return String((value as unknown).value)
-        }
-        return null
-
-      default:
-        return value
-    }
-  }
   /**
    * Main toggle support handler - routes to appropriate handler based on support feature
    * @param inquiryId
@@ -391,7 +251,9 @@ export const useSupportsStore = defineStore('supports', () => {
 
       default:
         // Unknown engine – treat as generic if value provided
-        if (customValue !== undefined) {
+        if (customValue === undefined) {
+          result = await toggleBinarySupport(itemId, userId, item, itemType, supportEngineId)
+        } else {
           result = await submitGenericSupport(
             itemId,
             userId,
@@ -400,8 +262,6 @@ export const useSupportsStore = defineStore('supports', () => {
             customValue,
             supportEngineId
           )
-        } else {
-          result = await toggleBinarySupport(itemId, userId, item, itemType, supportEngineId)
         }
     }
 
@@ -453,9 +313,9 @@ export const useSupportsStore = defineStore('supports', () => {
     if (nextValue === null) {
       await removeSupport(inquiryId, userId, optionId, engineId)
     } else if (oldValue === null) {
-      const result = await addSupport(inquiryId, userId, nextValue, optionId, engineId)
+       await addSupport(inquiryId, userId, nextValue, optionId, engineId)
     } else {
-      const result = await updateSupport(inquiryId, userId, nextValue, optionId, engineId)
+       await updateSupport(inquiryId, userId, nextValue, optionId, engineId)
     }
 
     return nextValue
@@ -491,10 +351,8 @@ export const useSupportsStore = defineStore('supports', () => {
 
   let nextValue: number | null = null
   let shouldRemove = false
-  let firstSupport = false
 
   if (currentValue === null) {
-    firstSupport = true
     nextValue = 1
   } else if (currentValue === 1) {
     nextValue = 0
@@ -638,7 +496,6 @@ async function submitScoreSupport(
 ) {
     if (!item.currentUserStatus) item.currentUserStatus = {}
 
-    const supportFeature = getSupportFeature(item)
     const oldValue = item.currentUserStatus.supportValue ?? null
     const shouldRemove = value === null
 
@@ -865,7 +722,6 @@ async function toggleApprovalSupport(
     const newHasSupported = !oldHasSupported
 
 
-    try {
         const { inquiryId, optionId } = resolveIds(itemId, item, itemType)
 
         if (newHasSupported) {
@@ -875,10 +731,6 @@ async function toggleApprovalSupport(
         }
 
         return newHasSupported
-    } catch (error) {
-        // Rollback
-        throw error
-    }
 }
 
 /**
@@ -940,7 +792,7 @@ function updateItemCount(inquiryId: number, optionId: number, delta: number) {
     const inquiriesStore = useInquiriesStore()
     const optionsStore = useOptionsStore()
 
-    const inquiry = inquiriesStore.byId[inquiryId]
+    // const inquiry = inquiriesStore.byId[inquiryId]
 
     if (optionId > 0) {
         // It's an option – update the option in the options store
@@ -989,34 +841,6 @@ function resolveIds(
     }
 }
 
-/*
-function updateItemResult(inquiryId: number, optionId: number, resultData: SupportResultData | null) {
-    const targetType = optionId > 0 ? 'option' : 'inquiry'
-    const targetId = optionId > 0 ? optionId : inquiryId
-
-    const inquiriesStore = useInquiriesStore()
-    const optionsStore = useOptionsStore()
-
-    if (targetType === 'option') {
-        const option = optionsStore.options.find(o => o.id === targetId)
-        if (option) {
-            if (!option.status) option.status = {}
-            option.status.supportResult = resultData
-        }
-    } else {
-        const inquiry = inquiriesStore.byId[targetId]
-        if (inquiry) {
-            if (!inquiry.status) inquiry.status = {}
-            inquiry.status.supportResult = resultData
-        }
-        // Also update the current inquiry store if open
-        const currentInquiryStore = useInquiryStore()
-        if (currentInquiryStore.id === targetId) {
-            if (!currentInquiryStore.status) currentInquiryStore.status = {}
-            currentInquiryStore.status.supportResult = resultData
-        }
-    }
-} */
 
 function updateItemResult(
     inquiryId: number,
@@ -1319,20 +1143,15 @@ async function submitGenericSupport(
     const shouldRemove = value === null
 
     // Optimistic update
-    try {
         const { inquiryId, optionId } = resolveIds(itemId, item, itemType)
         if (shouldRemove) {
             await removeSupport(inquiryId, userId, optionId, engineId)
         } else if (oldValue === null) {
-            const result = await addSupport(inquiryId, userId, value, optionId, engineId)
+             await addSupport(inquiryId, userId, value, optionId, engineId)
         } else {
-            const result = await updateSupport(inquiryId, userId, value, optionId, engineId)
+             await updateSupport(inquiryId, userId, value, optionId, engineId)
         }
         return value
-    } catch (error) {
-        // Rollback
-        throw error
-    }
 }
 
 async function updateSupport(

@@ -22,15 +22,13 @@
 </template>
 
 <script setup lang="ts">
-import { computed, watch } from 'vue'
+import { computed } from 'vue'
 import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import { ThumbsUp, Minus, ThumbsDown } from 'lucide-vue-next'
-import type { SupportData, Option } from '../../Types/index'
+import type { SupportData } from '../../Types/index'
 
 const props = defineProps<{
-  engineConfig: Record<string, unknown>
-  option: Option
   disabled?: boolean
   userVote?: SupportData
   currentScore?: number | null
@@ -59,10 +57,6 @@ const currentValue = computed(() => {
   if (typeof raw === 'number') return raw
   if (typeof raw === 'string') return Number(raw)
   return null
-})
-
-watch(() => props.currentScore, (newVal) => {
-  console.log('[VoteInputTernary] currentScore changed:', newVal)
 })
 
 function isSelected(value: number) {

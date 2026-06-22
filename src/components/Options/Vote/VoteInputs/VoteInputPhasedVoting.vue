@@ -41,12 +41,9 @@ import { computed } from 'vue'
 import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import { Info, X, ThumbsUp, ThumbsDown, Minus } from 'lucide-vue-next'
-import type { SupportData, SupportValue, Option } from '../../Types/index'
+import type { SupportData, SupportValue } from '../../Types/index'
 
 const props = defineProps<{
-  engineConfig: Record<string, unknown>
-  option: Option
-  disabled?: boolean
   userVote?: SupportData
   currentRound?: number
   totalRounds?: number

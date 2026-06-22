@@ -9,8 +9,8 @@
 
 		### ✨ Key Features
 		- 💬 Comments and discussions
-		- 👍 Supports (likes/upvotes)
-        - 👍 Supports (likes/neutral/against)
+		- 👍 Deliberative mode : Binary, Ternary, Star, Score, Reactions, Majority
+        - 👍 Voting tool : 🗳️ Condorcet, 📊 Borda, ⭐ Majority Judgment, ✅ Approval, Quadratic, Weighted…
         - 🧩 Custom inquiry families and types
         - 🧾 Multiple inquiry formats (proposals, debates, petitions, projects…)
         - 📂 Categorization and filtering by family or location
@@ -23,7 +23,7 @@
         - 🧰 Template for different goal, democraty, university, company, custom 
 
         ### 🧭 Coming Next
-        - 🏛 Collectives → Submit group of inquiries to Polls application for consultation or referendum  
+        - 🏛 Lottery.
         - 🧮 Quorums and workflow automation  
         - 🧰 Better permission control and moderation tools  
         ]]></description>
@@ -57,7 +57,6 @@
     </background-jobs>
     <repair-steps>
         <post-migration>
-            <step>OCA\Agora\Migration\RepairSteps\DeleteInvalidRecords</step>
             <step>OCA\Agora\Migration\RepairSteps\UpdateHashes</step>
             <step>OCA\Agora\Migration\RepairSteps\CreateIndices</step>
         </post-migration>

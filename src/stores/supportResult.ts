@@ -26,8 +26,6 @@ import type {
 } from '../Types/index'
 import { SupportResultAPI } from '../Api/index'
 import { Logger } from '../helpers/index'
-import { useSupportsStore } from './supports'
-import type { Support } from './supports'
 
 export const useSupportResultStore = defineStore('supportResult', () => {
   const results = ref<SupportResult[]>([])
@@ -76,8 +74,8 @@ export const useSupportResultStore = defineStore('supportResult', () => {
   const getTokenWeightedResult = (result: SupportResultData): TokenWeightedResult | null =>
     result.type === 'token_weighted' ? (result as TokenWeightedResult) : null
 
-  const getPhasedVotingResult = (result: SupportResultData): PhasedVotingResult | null =>
-    result.type === 'phased_voting' ? (result as PhasedVotingResult) : null
+  // const getPhasedVotingResult = (result: SupportResultData): PhasedVotingResult | null =>
+  //  result.type === 'phased_voting' ? (result as PhasedVotingResult) : null
   // Add getter for Quadratic
 
   const getQuadraticResult = (result: SupportResultData): QuadraticResult | null =>
@@ -311,117 +309,8 @@ export const useSupportResultStore = defineStore('supportResult', () => {
     return results.value.find((r) => r.target_type === targetType && r.target_id === targetId)
   }
 
-  /**
-   * Recalculate a single target result locally (no API call)
-   * This updates the local cache immediately for UI responsiveness
-   */
-
-  function recalculateTargetResult(
-    targetType: 'inquiry' | 'option',
-    targetId: number,
-    engineId: number,
-    changedSupport: Support
-  ): SupportResultData | null {
-    const { supports } = useSupportsStore()
-
-    const targetSupports = supports.filter((s) => {
-      if (targetType === 'option') {
-        return s.optionId === targetId
-      } 
-        return s.inquiryId === targetId && s.optionId === 0
-      
-    })
-
-    // Get the engine type from the engine store
-    const engineStore = useSupportEngineStore()
-    const engine = engineStore.getEngineById(engineId)
-    const engineType = engine?.engine || 'binary'
-
-    let resultData: SupportResultData | null = null
-
-    switch (engineType) {
-      case 'ternary':
-        resultData = calculateTernaryResultLocal(targetSupports)
-        break
-      case 'binary':
-        resultData = calculateBinaryResultLocal(targetSupports)
-        break
-      case 'score':
-      case 'star':
-        resultData = calculateScoreResultLocal(targetSupports)
-        break
-      // For complex engines, we should NOT recalculate locally - rely on backend
-      // Just return null and let the backend results be loaded
-      case 'ranking':
-      case 'condorcet':
-      case 'borda':
-      case 'quadratic':
-      case 'token_weighted':
-      case 'phased_voting':
-      case 'majority_judgment':
-      case 'reaction':
-      case 'approval':
-      case 'approval_delib':
-      case 'trending':
-        // Don't calculate locally - return null to trigger backend fetch
-        return null
-      default:
-        resultData = calculateBinaryResultLocal(targetSupports)
-    }
-
-    if (resultData) {
-      const key = `${targetType}-${targetId}`
-      currentResults.value.set(key, resultData)
-
-      const existingIndex = results.value.findIndex(
-        (r) =>
-          r.target_type === targetType &&
-          r.target_id === targetId &&
-          r.support_engine_id === engineId
-      )
-
-      const newResult: SupportResult = {
-        id: existingIndex !== -1 ? results.value[existingIndex].id : Date.now(),
-        support_engine_id: engineId,
-        target_type: targetType,
-        target_id: targetId,
-        result: resultData,
-        created: Date.now(),
-        updated: Date.now(),
-      }
-
-      if (existingIndex !== -1) {
-        results.value[existingIndex] = newResult
-      } else {
-        results.value.push(newResult)
-      }
-    }
-
-    return resultData
-  }
-
   function getResultByTarget(targetId: number): SupportResult | undefined {
     return results.value.find((r) => r.target_id === targetId)
-  }
-
-  function extractValueFromSupport(support: Support): number | string | any {
-    const rawValue = support.value
-
-    if (typeof rawValue === 'string') {
-      try {
-        const parsed = JSON.parse(rawValue)
-        if (parsed && 'value' in parsed) {
-          return parsed.value
-        }
-        return parsed
-      } catch {}
-    }
-
-    if (typeof rawValue === 'object' && rawValue !== null && 'value' in rawValue) {
-      return rawValue.value
-    }
-
-    return rawValue
   }
 
   function setResults(newResults: SupportResult[]): void {
@@ -438,66 +327,6 @@ export const useSupportResultStore = defineStore('supportResult', () => {
   lastCalculated.value = Date.now()
 }
 
-  function calculateBinaryResultLocal(supports: Support[]): BinaryResult {
-    let yes = 0;
-      let no = 0
-    supports.forEach((support) => {
-      const value = extractValueFromSupport(support)
-      if (value === 1) yes++
-      else if (value === -1) no++
-    })
-    const total = yes + no
-    return {
-      type: 'binary',
-      totals: { yes, no },
-      percentages: { yes: total ? (yes / total) * 100 : 0, no: total ? (no / total) * 100 : 0 },
-    }
-  }
-
-  function calculateTernaryResultLocal(supports: Support[]): TernaryResult {
-    let yes = 0;
-      let no = 0;
-      let abstain = 0
-
-    supports.forEach((support) => {
-      const value = extractValueFromSupport(support)
-      if (value === 1) yes++
-      else if (value === -1) no++
-      else if (value === 0) abstain++
-    })
-
-    const total = yes + no + abstain
-    return {
-      type: 'ternary',
-      totals: { yes, no, abstain },
-      percentages: {
-        yes: total > 0 ? (yes / total) * 100 : 0,
-        no: total > 0 ? (no / total) * 100 : 0,
-        abstain: total > 0 ? (abstain / total) * 100 : 0,
-      },
-    }
-  }
-
-  function calculateScoreResultLocal(supports: Support[]): ScoreResult {
-    let total = 0
-    let sum = 0
-
-    supports.forEach((support) => {
-      const value = extractValueFromSupport(support)
-      if (typeof value === 'number') {
-        total++
-        sum += value
-      }
-    })
-
-    return {
-      type: 'score',
-      totals: {
-        total,
-        average: total > 0 ? sum / total : 0,
-      },
-    }
-  }
   function needsRecalculation(engineId: number, maxAge: number = 60000): boolean {
     if (!lastCalculated.value) return true
     const engineResults = results.value.filter((r) => r.support_engine_id === engineId)

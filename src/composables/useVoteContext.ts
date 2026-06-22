@@ -6,13 +6,13 @@
 import { t } from '@nextcloud/l10n'
 import { computed, ref, watch, onMounted, type ComputedRef, type Ref } from 'vue'
 import { useSupportEngineStore } from '../stores/supportEngine'
-import { useSupportResultStore } from '../stores/supportResult'
 import { useSupportsStore } from '../stores/supports'
 import { useOptionsStore } from '../stores/options'
 import { useSessionStore } from '../stores/session'
 import { useInquiryStore } from '../stores/inquiry'
-import type { Option, SupportEngine, SupportValue, SupportResult } from '../Types/index'
-import { useTrending } from './useTrending'
+import type { SupportResultData } from './index.ts'
+import type { Option, SupportEngine, SupportValue } from '../Types/index'
+// import { useTrending } from './useTrending'
 import { ENGINE_DEFINITIONS } from '../Types/votingType'
 
 export interface VoteContext {
@@ -67,7 +67,6 @@ export interface VoteContext {
 
 export function useVoteContext(inquiryId: number): VoteContext {
   const engineStore = useSupportEngineStore()
-  const resultStore = useSupportResultStore()
   const supportsStore = useSupportsStore()
   const optionsStore = useOptionsStore()
   const sessionStore = useSessionStore()
@@ -78,7 +77,7 @@ export function useVoteContext(inquiryId: number): VoteContext {
   const selectedEngineId = ref<number | null>(null)
 
   const availableEngines = computed(() => engineStore.getEnginesByInquiry(inquiryId))
-  const { calculateTrendingScore } = useTrending(inquiryId)
+ // const { calculateTrendingScore } = useTrending(inquiryId)
 
   const currentEngine = computed<SupportEngine | null>(() => {
     const engines = availableEngines.value
@@ -235,7 +234,7 @@ export function useVoteContext(inquiryId: number): VoteContext {
           if (typeof saved !== 'object' || saved === null) return true
 
               // Helper to compare two objects (shallow)
-              const objectsEqual = (a: Record<string, any>, b: Record<string, any>) => {
+              const objectsEqual = (a: Record<string, unknown>, b: Record<string, unknown>) => {
                   const keysA = Object.keys(a).sort()
                   const keysB = Object.keys(b).sort()
                   if (keysA.length !== keysB.length) return false
@@ -304,7 +303,8 @@ export function useVoteContext(inquiryId: number): VoteContext {
 
   const updateRanking = (optionId: number, rank: number | null) => {
       if (rank === null || rank === undefined) {
-          const { [optionId]: _, ...rest } = rankings.value
+          const rest = { ...rankings.value }
+          delete rest[optionId]
           rankings.value = rest
       } else {
           rankings.value = { ...rankings.value, [optionId]: rank }
@@ -313,7 +313,8 @@ export function useVoteContext(inquiryId: number): VoteContext {
 
   const updateScore = (optionId: number, score: number | null) => {
       if (score === null || score === undefined) {
-          const { [optionId]: _, ...rest } = scores.value
+          const rest = { ...scores.value }
+          delete rest[optionId]
           scores.value = rest
       } else {
           scores.value = { ...scores.value, [optionId]: score }
@@ -322,7 +323,8 @@ export function useVoteContext(inquiryId: number): VoteContext {
 
   const updateGrade = (optionId: number, grade: string | null) => {
       if (grade === null || grade === undefined) {
-          const { [optionId]: _, ...rest } = grades.value
+          const rest = { ...grades.value }
+          delete rest[optionId]
           grades.value = rest
       } else {
           grades.value = { ...grades.value, [optionId]: grade }
@@ -331,7 +333,8 @@ export function useVoteContext(inquiryId: number): VoteContext {
 
   const updateReaction = (optionId: number, reaction: string[] | null) => {
       if (reaction === null || reaction === undefined || reaction.length === 0) {
-          const { [optionId]: _, ...rest } = reactions.value
+          const rest = { ...reactions.value }
+          delete rest[optionId]
           reactions.value = rest
       } else {
           reactions.value = { ...reactions.value, [optionId]: reaction }
@@ -340,7 +343,8 @@ export function useVoteContext(inquiryId: number): VoteContext {
 
   const updateQuadratic = (optionId: number, votes: number | null) => {
       if (votes === null || votes === undefined || votes === 0) {
-          const { [optionId]: _, ...rest } = quadraticVotes.value
+          const rest = { ...quadraticVotes.value }
+          delete rest[optionId]
           quadraticVotes.value = rest
       } else {
           quadraticVotes.value = { ...quadraticVotes.value, [optionId]: votes }
@@ -349,7 +353,8 @@ export function useVoteContext(inquiryId: number): VoteContext {
 
   const updateTokenWeight = (optionId: number, weight: number | null) => {
       if (weight === null || weight === undefined || weight === 0) {
-          const { [optionId]: _, ...rest } = tokenWeights.value
+          const rest = { ...tokenWeights.value }
+          delete rest[optionId]
           tokenWeights.value = rest
       } else {
           tokenWeights.value = { ...tokenWeights.value, [optionId]: weight }
@@ -409,7 +414,7 @@ export function useVoteContext(inquiryId: number): VoteContext {
               case 'condorcet':
               case 'borda': {
               const ranked = Object.entries(rankings.value).filter(
-                  ([_, r]) => r !== null && r !== undefined
+                  ([, r]) => r !== null && r !== undefined
               )
               if (ranked.length < 2) {
                   valid = false
@@ -417,7 +422,7 @@ export function useVoteContext(inquiryId: number): VoteContext {
               }
               const ranks = new Set<number>()
               let ok = true
-              for (const [_, r] of ranked) {
+              for (const [, r] of ranked) {
                   if (ranks.has(r as number)) {
                       ok = false
                       break
@@ -428,7 +433,7 @@ export function useVoteContext(inquiryId: number): VoteContext {
                   valid = false
                   break
               }
-              for (const [_, r] of ranked) {
+              for (const [, r] of ranked) {
                   if ((r as number) < 1 || (r as number) > maxRank.value) {
                       ok = false
                       break
@@ -440,10 +445,10 @@ export function useVoteContext(inquiryId: number): VoteContext {
 
           case 'score':
               case 'star': {
-              const scored = Object.entries(scores.value).filter(([_, s]) => s !== null && s !== undefined)
+              const scored = Object.entries(scores.value).filter(([, s]) => s !== null && s !== undefined)
               if (scored.length === 0) { valid = false; break }
               let ok = true
-              for (const [_, s] of scored) {
+              for (const [, s] of scored) {
                   const num = Number(s)
                   if (isNaN(num) || num < scoreMin.value || num > scoreMax.value) {
                       ok = false
@@ -661,8 +666,8 @@ export function useVoteContext(inquiryId: number): VoteContext {
   }
 
   // ---------- Results ----------
-  const resultsMap = ref<Map<number, any>>(new Map())
-  const engineResult = ref<any>(null) // store the inquiry-level result for complex engines
+  const resultsMap = ref<Map<number, unknown>>(new Map())
+  const engineResult = ref<SupportResultData>(null) // store the inquiry-level result for complex engines
 
   const getOptionVoteCount = (optionId: number): number => {
       if (effectiveEngineId.value === 'trending') {
@@ -891,7 +896,6 @@ export function useVoteContext(inquiryId: number): VoteContext {
                   } else if (Array.isArray(value) && engine === 'reaction') {
                       reactions.value[optionId] = value
                   }
-                  continue
               }
 
               // Engine‑level (optionId === 0)

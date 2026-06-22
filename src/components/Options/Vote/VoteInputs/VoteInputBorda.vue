@@ -35,19 +35,16 @@ import { computed } from 'vue'
 import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import { X } from 'lucide-vue-next'
-import type { SupportData, Option } from '../../Types/index'
 
 const props = defineProps<{
   engineConfig: Record<string, unknown>
-  option: Option
   disabled?: boolean
-  userVote?: SupportData
   rank?: number | null
   totalOptions?: number
 }>()
 
 const emit = defineEmits<{
-  'change-rank': [rank: number | null]
+  'changeRank': [rank: number | null]
 }>()
 
 
@@ -64,11 +61,11 @@ const currentRank = computed(() => props.rank ?? null)
 function handleChange(event: Event) {
   const target = event.target as HTMLSelectElement
   const value = target.value === 'null' ? null : parseInt(target.value, 10)
-  emit('change-rank', value)
+  emit('changeRank', value)
 }
 
 function clearRank() {
-  emit('change-rank', null)
+  emit('changeRank', null)
 }
 </script>
 

@@ -570,6 +570,7 @@ protected function joinFamily(
             $joinAlias,
             $qb->expr()->andX(
                 $qb->expr()->eq($joinAlias . '.inquiry_id', $fromAlias . '.id'),
+                $qb->expr()->eq($joinAlias . '.option_id', $qb->createNamedParameter(0)),
                 $qb->expr()->eq($joinAlias . '.user_id', $qb->createNamedParameter($currentUserId, IQueryBuilder::PARAM_STR)),
                 $qb->expr()->isNull($joinAlias . '.support_engine_id')
             )

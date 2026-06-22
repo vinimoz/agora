@@ -16,18 +16,14 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { t } from '@nextcloud/l10n'
-import type { SupportData, Option } from '../../Types/index'
 
 const props = defineProps<{
   engineConfig: Record<string, unknown>
-  option: Option
-  disabled?: boolean
-  userVote?: SupportData
-  grade?: string | null
+  gradeb?: string | null
 }>()
 
 const emit = defineEmits<{
-  'change-grade': [grade: string | null]
+  'changeGrade': [grade: string | null]
 }>()
 
 const grades = computed(() => {
@@ -36,16 +32,16 @@ const grades = computed(() => {
 })
 
 const localGrade = computed({
-  get: () => props.grade ?? null,
+  get: () => props.gradeb ?? null,
   set: (value) => {
-    emit('change-grade', value)
+    emit('changeGrade', value)
   }
 })
 
 function handleChange(event: Event) {
   const target = event.target as HTMLSelectElement
   const value = target.value === 'null' ? null : target.value
-  emit('change-grade', value)
+  emit('changeGrade', value)
 }
 </script>
 

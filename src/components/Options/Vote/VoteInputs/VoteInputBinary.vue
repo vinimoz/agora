@@ -22,15 +22,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed, watch } from 'vue'
+import { computed } from 'vue'
 import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import { ThumbsUp, ThumbsDown } from 'lucide-vue-next'
 import type { SupportData, Option } from '../../Types/index'
 
 const props = defineProps<{
-  engineConfig: Record<string, unknown>
-  option: Option
+  optionb: Option
   disabled?: boolean
   userVote?: SupportData
   currentScore?: number | null
@@ -58,17 +57,13 @@ const currentValue = computed(() => {
   return null
 })
 
-watch(() => props.currentScore, (newVal) => {
-  console.log('[VoteInputBinary] currentScore changed:', newVal)
-})
-
 function isSelected(value: number) {
   return currentValue.value === value
 }
 
 function vote(value: number) {
   const newValue = currentValue.value === value ? null : value
-  emit('update:score', props.option.id, newValue)
+  emit('update:score', props.optionb.id, newValue)
 }
 </script>
 

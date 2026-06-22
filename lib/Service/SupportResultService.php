@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace OCA\Agora\Service;
 
+use OCA\Agora\Service\TrendingService;
 use OCA\Agora\Db\SupportResult;
 use OCA\Agora\Db\SupportResultMapper;
+use OCA\Agora\Db\CommentMapper;
 use OCA\Agora\Db\SupportMapper;
 use OCA\Agora\Db\SupportEngineMapper;
 use OCA\Agora\Db\InquiryMapper;
@@ -20,7 +22,9 @@ class SupportResultService
         private SupportMapper $supportMapper,
         private SupportEngineMapper $engineMapper,
         private InquiryMapper $inquiryMapper,
+        private TrendingService $trendingService,
         private OptionMapper $optionMapper,
+        private CommentMapper $commentMapper,
         private InquiryMiscService $inquiryMiscService,
         private LoggerInterface $logger,
     ) {
@@ -403,12 +407,76 @@ class SupportResultService
             'token_weighted' => $this->calculateTokenWeightedResults($supports), // no $optionIds
             'phased_voting' => $this->calculatePhasedVotingResults($supports, $inquiryId, $engineId), // no $optionIds
             'binary' => $this->calculateBinaryResults($supports, $optionIds),
+            'trending' => $this->calculateTrendingResults($supports, $inquiryId),
             'majority_judgment' => $this->calculateMajorityJudgmentResults($supports, $inquiryId, $optionId, $engineId, $optionIds),
             default => $this->calculateBinaryResults($supports),
         };
         $this->debug('calculateByType result', ['result' => $result]);
 
         return $result;
+    }
+
+    /**
+     * Calculate trending results - purely informational
+     * No user-submitted support, just activity metrics
+     */
+    private function calculateTrendingResults(array $supports, ?int $inquiryId = null): array
+    {
+        if ($inquiryId === null) {
+            return ['type' => 'trending', 'scores' => [], 'winner' => null];
+        }
+
+        // Get all options for this inquiry
+        $options = $this->optionMapper->findByTargetId($inquiryId);
+
+        // Get comments for this inquiry (you'll need CommentMapper)
+        $comments = $this->commentMapper->findByInquiryId($inquiryId);
+
+        // Group comments by option
+        $commentsByOption = [];
+        foreach ($comments as $comment) {
+            $optionId = $comment->getOptionId();
+            if (!isset($commentsByOption[$optionId])) {
+                $commentsByOption[$optionId] = [];
+            }
+            $commentsByOption[$optionId][] = $comment;
+        }
+
+        // Group supports by option (for activity metrics)
+        $supportsByOption = [];
+        foreach ($supports as $support) {
+            $optionId = $support->getOptionId();
+            if (!isset($supportsByOption[$optionId])) {
+                $supportsByOption[$optionId] = [];
+            }
+            $supportsByOption[$optionId][] = $support;
+        }
+
+        $scores = [];
+        $currentTime = time();
+
+        foreach ($options as $option) {
+            $optionId = $option->getId();
+            $optionSupports = $supportsByOption[$optionId] ?? [];
+            $optionComments = $commentsByOption[$optionId] ?? [];
+
+            $scores[$optionId] = $this->trendingService->calculateTrendingScore(
+                $option,
+                $optionSupports,
+                $optionComments,
+                $currentTime
+            );
+        }
+
+        // Find winner (highest score)
+        $winner = !empty($scores) ? array_keys($scores, max($scores))[0] : null;
+
+        return [
+            'type' => 'trending',
+            'scores' => $scores,
+            'winner' => $winner,
+            'total_voters' => count($supports)
+        ];
     }
 
     /**
@@ -1179,6 +1247,12 @@ class SupportResultService
                 'totals' => ['yes' => 0, 'no' => 0],
                 'percentages' => ['yes' => 0, 'no' => 0]
             ],
+            'trending' => [
+                'type' => 'trending',
+                'scores' => [],
+                'winner' => null,
+                'total_voters' => 0
+            ],
             'score', 'star' => [
                 'type' => $type,
                 'totals' => ['total' => 0, 'average' => 0]
@@ -1531,6 +1605,10 @@ class SupportResultService
             $targetId,
             $resultData
         );
+
+        if ($engineId === null) {
+            $this->trendingService->invalidateCache($inquiryId);
+        }
 
         return $resultData;
     }

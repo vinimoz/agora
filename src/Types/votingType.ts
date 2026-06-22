@@ -785,7 +785,7 @@ export const ENGINE_DEFINITIONS: Record<string, EngineDefinition> = {
   trending: {
     id: 'trending',
     label: 'Trending',
-    supportFeature: true,
+    supportFeature: false,
     voteScope: 'none',
     inputModel: 'scalar',
     description: 'Popularity-based trending (votes + activity)',

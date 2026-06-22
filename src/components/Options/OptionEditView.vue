@@ -200,23 +200,11 @@ import {
     getFamilyColor as importedGetFamilyColor,
     getLayoutForFamily,
     getOptionTypeIconComponent,
-    getOptionTypeLabel,
-    getOptionTypeDescription,
-    getOptionTypeFamily,
-    getOptionTypeColor,
     isOptionTypeInFamily,
-    getAllowedResponses,
-    getAvailableResponseTypes,
-    getOptionTypeFields,
-    hasSupportFeature,
-    getSupportFeatureLabel,
-    getSupportFeatureType,
-    allowsComments,
-    usesTitle,
-    getAllFamilyKeys,
     getOptionsCountByFamily,
 } from '../../helpers/modules/InquiryOptionHelper'
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const props = defineProps<{
   hasVisibleFamilies: boolean
 }>()
@@ -374,9 +362,6 @@ const handleActionCompleted = (result: unknown) => {
     if (result?.refreshOptions) {
         optionsStore.load(inquiryStore.id)
     }
-    if (result?.message) {
-        console.log('Action completed:', result.message)
-    }
     closeModal()
 }
 
@@ -417,11 +402,11 @@ const familiesWithOptions = computed(() => {
 
 // Handle vote-specific actions
 const handleConfigureEngine = () => {
-    console.log('Configure voting engine')
+    // console.log('Configure voting engine')
 }
 
 const handleAddToVote = () => {
-    console.log('Add options to vote')
+    // console.log('Add options to vote')
 }
 
 const activeFamilyData = computed(() => {
@@ -505,9 +490,6 @@ const handleOptionFamilyChanged = async ({ optionId, familyKey, action }: { opti
     if (action !== 'added') return
 
     const activeEngine = engineStore.getCurrentEngine()
-    console.log(" HANDLE OPTION FAMILT ADD ",activeEngine)
-    console.log(" HANDLE OPTION FAMILT ADD ACTIVE ENGINE",optionId)
-    console.log(" HANDLE OPTION FAMILT ADD ACTIVE ENGINE",familyKey)
 
     if (activeEngine && !activeEngine.target_ids.includes(optionId)) {
         const newTargetIds = [...activeEngine.target_ids, optionId]

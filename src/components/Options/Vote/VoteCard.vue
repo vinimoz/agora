@@ -147,15 +147,15 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   vote: [option: Option, value: SupportValue]
-  'approval-toggle': [optionId: number]
-  'change-rank': [optionId: number, rank: number | null]
-  'change-grade': [optionId: number, grade: string | null]
+  'approvalToggle': [optionId: number]
+  'changeRank': [optionId: number, rank: number | null]
+  'changeGrade': [optionId: number, grade: string | null]
   'update:score': [optionId: number, score: number | null]
   'update:star': [optionId: number, star: number | null]
   'update:reaction': [optionId: number, reaction: string[] | null]
   'update:quadratic': [optionId: number, votes: number | null]
   'update:token_weight': [optionId: number, weight: number | null]
-  'open-supports-modal': [optionId: number]
+  'openSupportsModal': [optionId: number]
 }>()
 
 const sessionStore = useSessionStore()
@@ -188,7 +188,7 @@ function handleRemoveVote() {
   if (['binary', 'ternary', 'score', 'star'].includes(engine)) {
     emit('update:score', props.option.id, null)
   } else if (engine === 'majority_judgment') {
-    emit('change-grade', props.option.id, null)
+    emit('changeGrade', props.option.id, null)
   }
 }
 
@@ -232,17 +232,16 @@ const userVoteForOption = computed(() => {
 })
 
 function openSupportsModal() {
-  emit('open-supports-modal', props.option.id)
+  emit('openSupportsModal', props.option.id)
 }
 
 const showVoteInput = computed(() => props.canVote)
 
-console.log(" SHOW VOTE INPUT ",showVoteInput.value)
 
 function handleVote(value: SupportValue) { emit('vote', props.option, value) }
-function handleApprovalToggle() { emit('approval-toggle', props.option.id) }
-function handleRankChange(rank: number | null) { emit('change-rank', props.option.id, rank) }
-function handleGradeChange(grade: string | null) { emit('change-grade', props.option.id, grade) }
+function handleApprovalToggle() { emit('approvalToggle', props.option.id) }
+function handleRankChange(rank: number | null) { emit('changeRank', props.option.id, rank) }
+function handleGradeChange(grade: string | null) { emit('changeGrade', props.option.id, grade) }
 function handleUpdateScore(optionId: number, score: number | null) { emit('update:score', optionId, score) }
 function handleUpdateStar(optionId: number, star: number | null) { emit('update:star', optionId, star) }
 function handleUpdateReaction(optionId: number, reaction: string[] | null) { emit('update:reaction', optionId, reaction) }
@@ -256,7 +255,7 @@ function handleCardClick(event: MouseEvent) {
   if (target.closest('.vote-input-container') || target.closest('.voted-badge') || target.closest('.support-stats')) {
     return
   }
-  emit('open-supports-modal', props.option.id)
+  emit('openSupportsModal', props.option.id)
 }
 </script>
 

@@ -210,7 +210,7 @@ const currentCalendarOptions = computed(() => ({
   plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin],
   initialView: getViewName(),
   events: events.value,
-  eventClick: (info: any) => {
+  eventClick: (info: unknown) => {
     const inquiryId = parseInt(info.event.id)
     emit('openDetail', inquiryId)
   },
@@ -230,13 +230,13 @@ const currentCalendarOptions = computed(() => ({
   slotMaxTime: '24:00:00',
 }))
 
-// Navigation methods
+/* Navigation methods
 const moveTimeline = (direction: number) => {
   if (!calendarRef.value) return
   const api = calendarRef.value.getApi()
-  direction < 0 ? api.prev() : api.next()
+  // direction < 0 ? api.prev() : api.next()
   // update period text if needed (optional)
-}
+} */
 
 const centerOnToday = () => {
   if (!calendarRef.value) return

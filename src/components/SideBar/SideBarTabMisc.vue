@@ -145,7 +145,7 @@ const getSupportFeatureValue = computed(() => {
 // Get current support engine configuration (e.g., grades, allowed_reactions)
 const getSupportEngineConfig = computed(() => {
   if (!supportTemplate.value) return {}
-  const { engine, ...config } = supportTemplate.value
+  const { config } = supportTemplate.value
   return config
 })
 

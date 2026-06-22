@@ -139,7 +139,7 @@
                     v-if="!isReadonly && canManageVote"
                     type="primary"
                     size="small"
-                    @click="$emit('create-engine')"
+                    @click="$emit('createEngine')"
                     >
                     <template #icon>
                         <Plus :size="16" />
@@ -153,7 +153,7 @@
                     type="primary"
                     size="small"
                     class="add-to-vote-btn"
-                    @click="$emit('add-to-vote', currentEngine)"
+                    @click="$emit('addToVote', currentEngine)"
                     >
                     <template #icon>
                         <Plus :size="16" />
@@ -177,7 +177,7 @@
                                 type="tertiary"
                                 size="small"
                                 class="engine-action-btn"
-                                @click="$emit('edit-engine', currentEngine)"
+                                @click="$emit('editEngine', currentEngine)"
                                 >
                                 <template #icon>
                                     <Edit :size="14" />
@@ -189,7 +189,7 @@
                                 type="tertiary"
                                 size="small"
                                 class="engine-action-btn delete-btn"
-                                @click="$emit('delete-engine', currentEngine)"
+                                @click="$emit('deleteEngine', currentEngine)"
                                 >
                                 <template #icon>
                                     <Trash2 :size="14" />
@@ -290,10 +290,10 @@ const props = defineProps<{
 const emit = defineEmits<{
     'update:layout': [layout: string]
     'update:engine': [engineId: number | null]
-    'create-engine': []
-    'edit-engine': [engine: SupportEngine]
-    'delete-engine': [engine: SupportEngine]
-    'add-to-vote': [engine: SupportEngine]
+    'createEngine': []
+    'editEngine': [engine: SupportEngine]
+    'deleteEngine': [engine: SupportEngine]
+    'addToVote': [engine: SupportEngine]
 }>()
 
 // Handle engine change from NcSelect (receives the full engine object)

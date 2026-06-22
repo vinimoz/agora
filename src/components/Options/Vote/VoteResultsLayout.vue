@@ -117,7 +117,7 @@ import { Users, Trophy, TrendingUp, Clock } from 'lucide-vue-next'
 import type { Option } from '../../Types/index'
 
 const props = defineProps<{
-    options: Option[]
+    // options: Option[]
     rankedOptions: Option[]
     totalVotes: number
     winner: Option | null
@@ -132,12 +132,14 @@ const barChartCanvas = ref<HTMLCanvasElement | null>(null)
 let pieChart: Chart | null = null
 let barChart: Chart | null = null
 
+/*
 const getRankClass = (index: number): string => {
     if (index === 0) return 'gold'
     if (index === 1) return 'silver'
     if (index === 2) return 'bronze'
     return ''
 }
+*/
 
 const createCharts = (): void => {
     if (!pieChartCanvas.value || !barChartCanvas.value) return

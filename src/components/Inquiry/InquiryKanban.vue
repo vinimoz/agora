@@ -5,7 +5,7 @@
 
 <template>
   <div class="kanban-layout">
-    <!-- Add option button (optional) -->
+    <!-- Add inquiry button (optional) -->
     <div class="kanban-actions">
       <NcButton
         type="primary"
@@ -19,13 +19,10 @@
       </NcButton>
     </div>
 
-    <!-- Add inquiry modal (optional – you can implement later) -->
-    <!-- <AddInquiryToBoard v-if="showAddModal" ... /> -->
-
     <!-- Column headers -->
     <div class="kanban-header">
       <div
-        v-for="column in statusColumns"
+        v-for="column in columns"
         :key="column.status"
         class="kanban-column-header"
         :class="`status-${column.status}`"
@@ -43,7 +40,7 @@
     <!-- Kanban board -->
     <div class="kanban-board">
       <div
-        v-for="column in statusColumns"
+        v-for="column in columns"
         :key="column.status"
         class="kanban-column"
         :class="`column-${column.status}`"
@@ -61,7 +58,6 @@
             @dragend="handleDragEnd"
             @click="emit('openDetail', inquiry.id)"
           >
-            <!-- Use a compact version of InquiryItem or a custom card -->
             <div class="item-content">
               <div class="item-title">{{ inquiry.title }}</div>
               <div class="item-meta">
@@ -70,11 +66,11 @@
               </div>
             </div>
 
-            <!-- Footer with actions (move to other columns) -->
+            <!-- Footer with move actions -->
             <div class="item-footer">
               <NcActions>
                 <NcActionButton
-                  v-for="target in statusColumns.filter(s => s.status !== inquiry.status.inquiryStatus)"
+                  v-for="target in columns.filter(c => c.status !== inquiry.status.inquiryStatus)"
                   :key="target.status"
                   @click="changeStatus(inquiry.id, target.status)"
                 >
@@ -127,26 +123,85 @@ const emit = defineEmits<{
   statusChanged: []
 }>()
 
-// Stores
+// Store
 const inquiriesStore = useInquiriesStore()
 
 // State
 const draggingInquiryId = ref<number | null>(null)
 const showAddModal = ref(false)
 
-// Columns definition – maps inquiryStatus to display
-const statusColumns = computed(() => [
-  { status: 'draft', label: t('agora', 'Draft'), color: '#949494' },
-  { status: 'waiting_approval', label: t('agora', 'Waiting Approval'), color: '#f39c12' },
-  { status: 'active', label: t('agora', 'Active'), color: '#3498db' },
-  { status: 'closed', label: t('agora', 'Closed'), color: '#27ae60' },
-  { status: 'rejected', label: t('agora', 'Rejected'), color: '#e74c3c' }
-])
+// Helper: generate a color based on status string (deterministic)
+const getColorForStatus = (status: string): string => {
+  const colors: Record<string, string> = {
+    draft: '#949494',
+    waiting_approval: '#f39c12',
+    pending: '#f39c12',
+    under_process: '#f39c12',
+    need_revised: '#f39c12',
+    collecting_support: '#3498db',
+    quorum_reached: '#27ae60',
+    active: '#3498db',
+    closed: '#27ae60',
+    rejected: '#e74c3c',
+    resolved: '#27ae60',
+    dismissed: '#e74c3c',
+    integrated: '#27ae60',
+    discarded: '#e74c3c',
+    funded: '#27ae60',
+    not_funded: '#e74c3c',
+    in_progress: '#3498db',
+    completed: '#27ae60',
+    planned: '#3498db',
+    in_session: '#3498db',
+    concluded: '#27ae60',
+    open: '#3498db',
+    under_review: '#f39c12',
+    accepted: '#27ae60',
+    drafting: '#3498db',
+    reviewing: '#f39c12',
+    validated: '#27ae60',
+    resolved_by_proposal: '#27ae60',
+    resolved_directly: '#27ae60',
+    unresolved: '#e74c3c',
+    published: '#27ae60',
+    archived: '#949494',
+    // add more as needed
+  }
+  return colors[status] || `hsl(${Math.abs(hashString(status)) % 360}, 70%, 60%)`
+}
+
+// Simple hash for generating fallback colors
+const hashString = (str: string): number => {
+  let hash = 0
+  for (let i = 0; i < str.length; i++) {
+    hash = (hash << 5) - hash + str.charCodeAt(i)
+    hash |= 0 // Convert to 32-bit integer
+  }
+  return Math.abs(hash)
+}
+
+// Compute columns dynamically from the actual statuses present in the inquiries
+const columns = computed(() => {
+  // Get unique statuses
+  const statusSet = new Set<string>()
+  props.inquiries.forEach(inquiry => {
+    if (inquiry.status.inquiryStatus) {
+      statusSet.add(inquiry.status.inquiryStatus)
+    }
+  })
+
+  // Build column definitions
+  return Array.from(statusSet).map(status => ({
+    status,
+    label: status.charAt(0).toUpperCase() + status.replace(/_/g, ' ').slice(1),
+    color: getColorForStatus(status)
+  }))
+})
 
 // Helper: filter inquiries by status
 const getInquiriesByStatus = (status: string) => props.inquiries.filter(inquiry => inquiry.status.inquiryStatus === status)
 
-// Drag and drop handlers
+// Drag handlers
 const handleDragStart = (event: DragEvent, inquiry: Inquiry) => {
   draggingInquiryId.value = inquiry.id
   event.dataTransfer?.setData('text/plain', inquiry.id.toString())
@@ -165,36 +220,38 @@ const handleDrop = async (event: DragEvent, newStatus: string) => {
   await changeStatus(inquiryId, newStatus)
 }
 
-// Change status API call
+// Change status: direct API call + local update
 const changeStatus = async (inquiryId: number, newStatus: string) => {
   const inquiry = props.inquiries.find(i => i.id === inquiryId)
   if (!inquiry) return
   if (inquiry.status.inquiryStatus === newStatus) return
 
-  // Permission check
   if (!inquiry.permissions.edit) {
     showError(t('agora', 'You do not have permission to change the status'))
     return
   }
 
   try {
-    // Use the inquiries store to update status – this should call the API
+    // Call the API directly
     await inquiriesStore.setInquiryStatus(inquiryId, newStatus)
+
+    // Update local state in the store
+    const storeInquiry = inquiriesStore.inquiries.find(i => i.id === inquiryId)
+    if (storeInquiry) {
+      storeInquiry.status.inquiryStatus = newStatus
+    }
+
     showSuccess(t('agora', 'Inquiry moved to {column}', {
-      column: statusColumns.value.find(c => c.status === newStatus)?.label || newStatus
+      column: columns.value.find(c => c.status === newStatus)?.label || newStatus
     }))
-    // Notify parent to refresh the list
+
+    // Notify parent to refresh (optional)
     emit('statusChanged')
   } catch (error) {
     console.error('Failed to update inquiry status', error)
     showError(t('agora', 'Failed to update status'))
   }
 }
-
-// Optional: handle adding a new inquiry (if you implement the modal)
-// const handleAddSuccess = () => {
-//   emit('statusChanged')
-// }
 </script>
 
 <style scoped lang="scss">

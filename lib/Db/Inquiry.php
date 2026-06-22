@@ -184,6 +184,7 @@ class Inquiry extends EntityWithUser implements JsonSerializable
     
     // Dynamic fields for inquiry types
     protected array $miscFields = [];
+    protected ?float $trendingScore = null;
 
     public function __construct()
     {
@@ -243,6 +244,7 @@ class Inquiry extends EntityWithUser implements JsonSerializable
             'status' => $this->getStatusArray(),
             'currentUserStatus' => $this->getCurrentUserStatus(),
             'permissions' => $this->getPermissionsArray(),
+            'trendingScore' => $this->getTrendingScore(),
         ];
     }
 
@@ -293,6 +295,16 @@ class Inquiry extends EntityWithUser implements JsonSerializable
         }
 
         return $this->supportValue;
+    }
+
+    public function getTrendingScore(): ?float
+    {
+        return $this->trendingScore;
+    }
+
+    public function setTrendingScore(?float $score): void
+    {
+        $this->trendingScore = $score;
     }
 
     /**

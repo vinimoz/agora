@@ -66,7 +66,7 @@
       :rank="currentRank"
       :disabled="disabled"
       :total-options="totalOptions"
-      @change-rank="(rank) => $emit('change-rank', rank)"
+      @change-rank="(rank) => $emit('changeRank', rank)"
     />
     <!-- Majority Judgment -->
     <VoteInputMajorityJudgment
@@ -75,7 +75,7 @@
       :engine-config="engineConfig"
       :grade="currentGrade"
       :disabled="disabled"
-      @change-grade="(grade) => $emit('change-grade', grade)"
+      @change-grade="(grade) => $emit('changeGrade', grade)"
     />
     <!-- Quadratic -->
     <VoteInputQuadratic
@@ -102,7 +102,7 @@
       :rank="currentRank"
       :disabled="disabled"
       :total-options="totalOptions"
-      @change-rank="(rank) => $emit('change-rank', rank)"
+      @change-rank="(rank) => $emit('changeRank', rank)"
     />
     <!-- Borda -->
     <VoteInputBorda
@@ -112,7 +112,7 @@
       :rank="currentRank"
       :disabled="disabled"
       :total-options="totalOptions"
-      @change-rank="(rank) => $emit('change-rank', rank)"
+      @change-rank="(rank) => $emit('changeRank', rank)"
     />
     <!-- Phased Voting -->
     <VoteInputPhasedVoting
@@ -122,22 +122,6 @@
       :user-vote="userVote"
       :disabled="disabled"
       @vote="handleVote"
-    />
-    <!-- Approval Deliberative -->
-    <VoteInputApprovalDelib
-      v-else-if="engineId === 'approval_delib'"
-      :option="option"
-      :engine-config="engineConfig"
-      :is-selected="isSelected"
-      :disabled="disabled"
-      @toggle="handleApprovalToggle"
-    />
-    <!-- Trending -->
-    <VoteInputTrending
-      v-else-if="engineId === 'trending'"
-      :option="option"
-      :engine-config="engineConfig"
-      :user-vote="userVote"
     />
     <!-- None -->
     <VoteInputNone v-else-if="engineId === 'none'" />
@@ -157,7 +141,6 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
 import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import { X } from 'lucide-vue-next'
@@ -176,8 +159,6 @@ import VoteInputTokenWeighted from './VoteInputs/VoteInputTokenWeighted.vue'
 import VoteInputCondorcet from './VoteInputs/VoteInputCondorcet.vue'
 import VoteInputPhasedVoting from './VoteInputs/VoteInputPhasedVoting.vue'
 import VoteInputBorda from './VoteInputs/VoteInputBorda.vue'
-import VoteInputApprovalDelib from './VoteInputs/VoteInputApprovalDelib.vue'
-import VoteInputTrending from './VoteInputs/VoteInputTrending.vue'
 import VoteInputNone from './VoteInputs/VoteInputNone.vue'
 
 const props = defineProps<{
@@ -192,7 +173,6 @@ const props = defineProps<{
   currentGrade?: string | null
   currentScore?: number | null
   currentStar?: number | null
-  currentReaction?: string[] | null
   currentQuadraticVotes?: number | null
   currentTokenWeight?: number | null
   canResetVote?: boolean
@@ -203,10 +183,10 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   vote: [value: SupportValue]
-  'approval-toggle': [optionId: number]
-  'change-rank': [optionId: number, rank: number | null]
-  'change-grade': [optionId: number, grade: string | null]
-  'reset-vote': []
+  'approvalToggle': [optionId: number]
+  'changeRank': [optionId: number, rank: number | null]
+  'changeGrade': [optionId: number, grade: string | null]
+  'resetVote': []
   'update:score': [optionId: number, score: number | null]
   'update:star': [optionId: number, star: number | null]
   'update:reaction': [optionId: number, reaction: string[] | null]
@@ -218,16 +198,19 @@ function handleVote(value: SupportValue) {
   emit('vote', value)
 }
 function handleApprovalToggle() {
-  emit('approval-toggle', props.option.id)
+  emit('approvalToggle', props.option.id)
 }
+/*
 function handleRankChange(rank: number | null) {
-  emit('change-rank', props.option.id, rank)
+  emit('changeRank', props.option.id, rank)
 }
 function handleGradeChange(grade: string | null) {
-  emit('change-grade', props.option.id, grade)
+  emit('changeGrade', props.option.id, grade)
 }
+*/
+
 function handleResetVote() {
-  if (!props.disabled) emit('reset-vote')
+  if (!props.disabled) emit('resetVote')
 }
 </script>
 

@@ -16,6 +16,7 @@ use OCA\Agora\Db\InquiryTypeMapper;
 use OCA\Agora\Dto\InquiryDto;
 use OCA\Agora\Db\UserMapper;
 use OCA\Agora\Db\SupportMapper;
+use OCA\Agora\Service\TrendingService;
 use OCA\Agora\Event\InquiryArchivedEvent;
 use OCA\Agora\Event\InquiryCloseEvent;
 use OCA\Agora\Event\InquiryCreatedEvent;
@@ -53,6 +54,7 @@ class InquiryService
         private UserSession $userSession,
         private SupportMapper $supportMapper,
         private SettingsService $settings,
+        private TrendingService $trendingService,
         private LoggerInterface $logger,
     ) {
     }
@@ -746,6 +748,36 @@ class InquiryService
         $this->eventDispatcher->dispatchTyped(new InquiryUpdatedEvent($this->inquiry));
         return $this->inquiry;
     }
+
+/**
+ * Get inquiry with trending scores included
+ */
+public function getWithTrending(int $inquiryId): array
+{
+    $inquiry = $this->get($inquiryId);
+    
+    // Only include trending if supportFeature is 'trending'
+    if ($inquiry->getSupportFeature() === 'trending') {
+        $trendingScores = $this->trendingService->getTrendingScores($inquiryId);
+        
+        $inquiryData = $inquiry->jsonSerialize();
+        $inquiryData['trending'] = $trendingScores;
+        
+        // Add trending scores to each option
+        if (isset($inquiryData['childs']) && is_array($inquiryData['childs'])) {
+            foreach ($inquiryData['childs'] as &$option) {
+                if (isset($option['id']) && isset($trendingScores[$option['id']])) {
+                    $option['trendingScore'] = $trendingScores[$option['id']];
+                }
+            }
+        }
+        
+        return $inquiryData;
+    }
+    
+    return $inquiry->jsonSerialize();
+}
+
 
     /**
      * Collect email addresses from particitipants

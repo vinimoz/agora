@@ -118,22 +118,11 @@ import { showSuccess, showError } from '@nextcloud/dialogs'
 import SearchSelect from '../Base/modules/SearchSelect.vue'
 import { useInquiryStore } from '../../stores/inquiry'
 import { useOptionsStore } from '../../stores/options'
-import type { Option, EngineDefinition, MiscField, FamilyType,OptionFamilyEvent } from '../../Types/index'
+import type { Option,  MiscField, FamilyType } from '../../Types/index'
 
 import {
   Plus,
   Vote,
-  Settings,
-  ThumbsUp,
-  Scale,
-  Heart,
-  Star,
-  CheckCircle,
-  TrendingUp,
-  Award,
-  Brain,
-  Gauge,
-  Users,
   LayoutGrid,
   Clock,
   Check
@@ -144,9 +133,6 @@ import {
 // Props
 const props = defineProps<{
   familyType: FamilyType
-  currentEngineId?: string
-  currentEngineDefinition?: EngineDefinition
-  // currentEngineConfig?: Record<string, unknown>
 }>()
 
 const emit = defineEmits<{
@@ -172,7 +158,6 @@ const selectedOption = ref<Option | null>(null)
 const startDate = ref<Date | null>(null)
 const endDate = ref<Date | null>(null)
 const targetStatus = ref<string | null>(null)
-const engineConfig = ref<Record<string, unknown>>({})
 const loading = ref(false)
 
 // Status columns for kanban
@@ -256,24 +241,6 @@ const canAdd = computed(() => {
       return true
   }
 })
-
-// Engine helpers
-const currentEngineBehavior = computed(() => {
-  if (props.familyType !== 'vote') return null
-  return props.currentEngineDefinition?.behavior || 'single'
-})
-
-const currentEngineDescription = computed(() => {
-  if (props.familyType !== 'vote') return ''
-  return props.currentEngineDefinition?.description || ''
-})
-
-const currentConfigSchema = computed(() => {
-  if (props.familyType !== 'vote') return null
-  return props.currentEngineDefinition?.config_schema || null
-})
-
-const hasConfigFields = computed(() => currentConfigSchema.value && Object.keys(currentConfigSchema.value).length > 0)
 
 // Helper to get force_layouts from miscFields
 function getForceLayouts(option: Option): string[] {
@@ -369,13 +336,13 @@ async function addToVote(): Promise<void> {
   try {
     // Check if option already has vote in force_layouts
     const forceLayouts = getForceLayouts(selectedOption.value)
-    const updatedLayouts = null
+    let updatedLayouts = null
 
    if (forceLayouts.includes('vote')) {
-      const updatedLayouts = forceLayouts
+      updatedLayouts = forceLayouts
     }
     else {
-      const updatedLayouts = [...forceLayouts, 'vote']
+      updatedLayouts = [...forceLayouts, 'vote']
 
     }
 

@@ -98,6 +98,7 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcAvatar from '@nextcloud/vue/components/NcAvatar'
 import { InquiryOptionIcons } from '../../utils/icons.ts'
+import { Option } from '../../Types/index.ts'
 import { useSupportsStore } from '../../stores/supports'
 import { useSupportEngineStore } from '../../stores/supportEngine'
 import { useSessionStore } from '../../stores/session'
@@ -114,6 +115,7 @@ const props = defineProps<{
 	displayVote?: boolean // highlight current user's vote
 }>()
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const emit = defineEmits<{
 	close: []
 }>()
@@ -124,7 +126,7 @@ const sessionStore = useSessionStore()
 
 const supports = ref<Support[]>([])
 const loading = ref(true)
-const option = ref<any>(null)
+const option = ref<Option>(null)
 
 const currentUser = computed(() => sessionStore.user?.uid || '')
 
@@ -163,7 +165,7 @@ const sortedSupports = computed(() =>
 )
 
 // Helper: get icon for a support value
-function getValueIcon(value: Support['value']): any {
+function getValueIcon(value: Support['value']): string {
 	if (value === 1) return InquiryOptionIcons.ThumbUp
 	if (value === -1) return InquiryOptionIcons.ThumbDown
 	if (value === 0) return InquiryOptionIcons.Minus
@@ -198,9 +200,9 @@ function getEngineName(engineId?: number): string {
 	return engine?.title || engine?.engine || t('agora', 'Voting method')
 }
 
-function getEngineIcon(engineId?: number): any {
+function getEngineIcon(engineId?: number): string {
 	if (!engineId) return InquiryOptionIcons.Help
-	const engine = engineStore.getEngineById(engineId)
+	// const engine = engineStore.getEngineById(engineId)
 	// Map engine types to icons if needed
 	return InquiryOptionIcons.Settings
 }

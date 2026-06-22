@@ -28,7 +28,6 @@ import { getFamilyColor } from '../helpers/modules/InquiryOptionHelper.ts'
 import { useInquiryStore } from './inquiry.ts'
 import { useSessionStore } from './session.ts'
 import { AxiosError } from '@nextcloud/axios'
-import { useSupportResultStore } from './supportResult.ts'
 
 export type OptionAccessType = 'private' | 'public' | 'open' | 'hidden'
 export type OptionStatus = 'draft' | 'published' | 'archived' | 'deleted'

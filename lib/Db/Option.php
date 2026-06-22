@@ -166,7 +166,7 @@ class Option extends EntityWithUser implements JsonSerializable
     protected ?string $supportResult = null;
     protected array $miscFields = [];
     private array $optionTypeConfig = [];
-
+    protected ?float $trendingScore = null;
     private array $childs = [];
 
     public function __construct()
@@ -219,6 +219,7 @@ class Option extends EntityWithUser implements JsonSerializable
             'miscFields' => $this->getMiscArray(),
             'childs' => $this->getChildren(),
             'supportResult' => $this->getSupportResult(), 
+            'trendingScore' => $this->getTrendingScore(),
         ];
 
         return $baseData;
@@ -268,6 +269,17 @@ class Option extends EntityWithUser implements JsonSerializable
             $prefixedMiscFields["$key"] = $value;
         }
         return $prefixedMiscFields;
+    }
+
+
+    public function getTrendingScore(): ?float
+    {
+        return $this->trendingScore;
+    }
+
+    public function setTrendingScore(?float $score): void
+    {
+        $this->trendingScore = $score;
     }
 
     public function getIsAllowed(string $permission): bool

@@ -15,6 +15,7 @@ use OCA\Agora\Db\Inquiry;
 use OCA\Agora\Db\InquiryMapper;
 use OCA\Agora\Service\SupportEngineService;
 use OCA\Agora\Service\SupportResultService;
+use OCA\Agora\Service\TrendingService;
 
 use Psr\Log\LoggerInterface;
 
@@ -27,6 +28,7 @@ class SupportService
         private SupportMapper $supportMapper,
         private SupportResultService $supportResultService,
         private SupportEngineService $engineService,
+        private TrendingService $trendingService, 
         private LoggerInterface $logger,
     ) {
     }
@@ -146,6 +148,12 @@ class SupportService
     $inquiry = $this->inquiryMapper->get($inquiryId, withRoles: true);
     $inquiry->request(Inquiry::PERMISSION_SUPPORT_ADD);
 
+     if ($inquiry->getSupportFeature() === 'trending') {
+        throw new \InvalidArgumentException(
+            'Trending is an informational feature - users cannot submit support votes.'
+        );
+     }
+
     $normalizedValue = $this->normalizeToJsonFormat($inquiry, $value,$engineId);
     $this->validateSupportValue($inquiry, $normalizedValue,$engineId);
 
@@ -162,12 +170,13 @@ class SupportService
             $existing->setSupportEngineId($engineId);
         }
         $support = $this->supportMapper->updateSupport($existing,$engineId);
-        $this->logger->debug('UPDATED SUPPORT', [
+        /*$this->logger->debug('UPDATED SUPPORT', [
             'support_id' => $support->getId(),
             'value' => $support->getValue(),
             'EXISTING' => $existing,
             'ENIGNE ID' => $engineId
-        ]);
+        ]);*/
+
     } else {
         $support = $this->supportMapper->addSupport(
             $inquiryId,
@@ -201,7 +210,15 @@ class SupportService
         $currentSupports,
         $engineId
     );
-
+   
+    if ($engineId === null) {
+        $this->trendingService->invalidateCache($inquiryId);
+        $this->logger->debug('Trending cache invalidated after support change', [
+            'inquiryId' => $inquiryId,
+            'optionId' => $optionId
+        ]);
+    }
+    
     return $support;
 }
     
@@ -229,109 +246,6 @@ private function normalizeMajorityJudgmentValue(mixed $value): string
     // Fallback
     return (string)$value;
 }
-
-
-/**
- * Validate support value based on support feature
-private function validateSupportValue(Inquiry $inquiry, array $normalizedValue, ?int $engineId = null): void
-{
-    if ($engineId) {
-        $engine = $this->engineService->getEngine($engineId);
-        $type = $engine ? $engine->getEngine() : $inquiry->getSupportFeature();
-    } else {
-        $type = $inquiry->getSupportFeature();
-    }
-
-    $value = $normalizedValue['value'] ?? null;
-
-    $complexTypes = ['approval', 'ranking', 'condorcet', 'borda', 'quadratic', 'token_weighted', 'phased_voting','majority_judgment'];
-    if (in_array($type, $complexTypes)) {
-        return;
-    }
-
-
-    switch ($type) {
-    case 'binary':
-        if (!in_array($value, [-1, 1], true)) {
-            throw new \InvalidArgumentException('Binary value must be -1 or 1');
-        }
-        break;
-
-    case 'ternary':
-        if (!in_array($value, [-1, 0, 1], true)) {
-            throw new \InvalidArgumentException('Ternary value must be -1, 0, or 1');
-        }
-        break;
-
-    case 'score':
-        if (!is_int($value) || $value < 0 || $value > 10) {
-            throw new \InvalidArgumentException('Score must be between 0 and 10');
-        }
-        break;
-
-    case 'star':
-        if (!is_int($value) || $value < 1 || $value > 5) {
-            throw new \InvalidArgumentException('Star rating must be between 1 and 5');
-        }
-        break;
-
-    case 'reaction':
-        $reactions = is_array($value) ? $value : [$value];
-        if (empty($reactions)) {
-            throw new \InvalidArgumentException('Reaction must have at least one emoji');
-        }
-        foreach ($reactions as $reaction) {
-            if (!is_string($reaction) || $reaction === '') {
-                throw new \InvalidArgumentException('Each reaction must be a non‑empty string');
-            }
-        }
-
-        if ($engineId !== null) {
-            $engine = $this->engineService->getEngine($engineId);
-            if ($engine) {
-                $config = $engine->getConfig();
-                $maxPerUser = $config['max_per_user'] ?? null;
-                if ($maxPerUser !== null && count($reactions) > $maxPerUser) {
-                    throw new \InvalidArgumentException("Maximum {$maxPerUser} reactions allowed per user");
-                }
-            }
-        }
-        break;
-
-    case 'approval_delib':
-        if (!is_int($value)) {
-            throw new \InvalidArgumentException('Approval rating must be 1');
-        }
-        break;
-
-
-    case 'approval':
-    case 'ranking':
-        if (!is_array($value)) {
-            throw new \InvalidArgumentException('Value must be an array');
-        }
-        break;
-
-    case 'majority_judgment': 
-        if ($value === null || $value === '') {
-            throw new \InvalidArgumentException('Majority judgment value cannot be empty');
-        }
-        // Allow any scalar (string or numeric)
-        if (!is_scalar($value)) {
-            throw new \InvalidArgumentException('Majority judgment value must be a string or number');
-        }
-        break;
-
-    default:
-        // Unknown feature, default to binary validation
-        if (!in_array($value, [0, 1], true)) {
-            throw new \InvalidArgumentException('Invalid support value');
-        }
-        break;
-    }
-}
- */
-
 
 
 private function validateEngineModeSupportValue(string $type, array $payload): void
@@ -444,6 +358,32 @@ private function validateEngineModeSupportValue(string $type, array $payload): v
     }
 }
 
+/**
+ * Update trending scores for an inquiry
+ * This is called when supports change in deliberative mode
+ */
+private function updateTrendingForInquiry(int $inquiryId): void
+{
+    try {
+        // Get existing deliberative result for this inquiry
+        $result = $this->supportResultService->resultMapper->findByTargetAndEngine('inquiry', $inquiryId, null);
+        
+        if ($result !== null) {
+            $resultData = $result->getResult();
+            $resultData['trending'] = $this->trendingService->getTrendingScores($inquiryId);
+            $result->setResult($resultData);
+            
+            $this->supportResultService->resultMapper->updateResult($result);
+            
+            $this->logger->debug('Updated trending scores for inquiry', ['inquiryId' => $inquiryId]);
+        }
+    } catch (\Exception $e) {
+        $this->logger->error('Failed to update trending scores', [
+            'inquiryId' => $inquiryId,
+            'error' => $e->getMessage()
+        ]);
+    }
+}
 
 private function validateSupportValue(Inquiry $inquiry, array $normalizedValue, ?int $engineId = null): void
 {
@@ -779,6 +719,15 @@ public function removeSupport(int $inquiryId, string $userId, int $optionId = 0,
         array_values($currentSupports), // Re-index array
         $engineId
     );
+
+    if ($deleted && $engineId === null) {
+        $this->trendingService->invalidateCache($inquiryId);
+        $this->logger->debug('Trending cache invalidated after support removal', [
+            'inquiryId' => $inquiryId,
+            'optionId' => $optionId
+        ]);
+    }
+
 
     return true;
 }

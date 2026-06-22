@@ -407,7 +407,6 @@ import type { SupportEngine } from '../../Types/index'
 const props = defineProps<{
   mode: 'deliberative' | 'create' | 'edit'
   existingEngine?: SupportEngine | null
-  optionCount?: number
   hasVotes?: boolean
   availableEngines: ENGINE_DEFINITIONS
 }>()

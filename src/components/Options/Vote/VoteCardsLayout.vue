@@ -25,7 +25,7 @@
         :total-options="rankedOptions.length"
         :get-user-vote-value-for-option="getUserVoteValueForOption"
         @vote="(option, value) => $emit('vote', option, value)"
-        @approval-toggle="(optionId) => $emit('toggle-selection', optionId)"
+        @approval-toggle="(optionId) => $emit('toggleSelection', optionId)"
         @change-rank="(optionId, rank) => $emit('update:rankings', { ...rankings, [optionId]: rank })"
         @change-grade="(optionId, grade) => $emit('update:grades', { ...grades, [optionId]: grade })"
         @update:score="(optionId, score) => $emit('update:scores', { ...scores, [optionId]: score })"
@@ -33,7 +33,7 @@
         @update:reaction="(optionId, reaction) => $emit('update:reactions', { ...reactions, [optionId]: reaction })"
         @update:quadratic="(optionId, votes) => $emit('update:quadraticVotes', { ...quadraticVotes, [optionId]: votes })"
         @update:token_weight="(optionId, weight) => $emit('update:tokenWeights', { ...tokenWeights, [optionId]: weight })"
-        @open-supports-modal="(optionId) => $emit('open-supports-modal', optionId)"
+        @open-supports-modal="(optionId) => $emit('openSupportsModal', optionId)"
       />
     </div>
 
@@ -51,7 +51,7 @@
           type="primary"
           size="large"
           :disabled="!canSubmitMultiVote || (hasUserVoted && !hasSelectionsChanged)"
-          @click="$emit('submit-multi-vote')"
+          @click="$emit('submitMultiVote')"
         >
           <template #icon>
             <Vote :size="18" />
@@ -64,7 +64,7 @@
           v-if="hasUserVoted"
           type="tertiary"
           size="large"
-          @click="$emit('remove-my-vote')"
+          @click="$emit('removeMyVote')"
         >
           <template #icon><X :size="18" /></template>
           {{ t('agora', 'Remove my vote') }}
@@ -111,8 +111,9 @@ const props = defineProps<{
   getUserVoteValueForOption: (optionId: number) => SupportValue | null
 }>()
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const emit = defineEmits<{
-  'toggle-selection': [optionId: number]
+  'toggleSelection': [optionId: number]
   'update:rankings': [rankings: Record<number, number>]
   'update:scores': [scores: Record<number, number>]
   'update:grades': [grades: Record<number, string | null>]
@@ -120,12 +121,11 @@ const emit = defineEmits<{
   'update:quadraticVotes': [votes: Record<number, number>]
   'update:tokenWeights': [weights: Record<number, number>]
   'vote': [option: Option, value: unknown]
-  'remove-my-vote': []
-  'open-supports-modal': [optionId: number]
-  'submit-multi-vote': []
+  'removeMyVote': []
+  'openSupportsModal': [optionId: number]
+  'submitMultiVote': []
 }>()
 
-console.log(" CAN SUBMIT MULTI VOTE ", props.canSubmitMultiVote)
 const showSubmitButton = computed(() =>
   props.canVote &&
   props.activeEngine?.status === 'active' &&
