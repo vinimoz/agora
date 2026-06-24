@@ -435,7 +435,7 @@ class OptionMapper extends QBMapper
                             'support_engine_id', sr.support_engine_id,
                             'target_type', sr.target_type,
                             'target_id', sr.target_id,
-                            'result', CAST(sr.result AS JSON),
+                            'result', sr.result,
                             'updated', sr.updated
                         ) SEPARATOR ','
                     ), ']')

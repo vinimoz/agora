@@ -17,29 +17,43 @@ class SupportSqlRepository
     }
 
     /**
-     * Insert with proper JSON casting for PostgreSQL
+     * Insert with proper JSON handling for PostgreSQL and MariaDB
      */
     public function insertSupportWithJson(
         string $table,
         array $data,
-        string $jsonColumn
+        string $jsonColumn,
+        bool $isJsonColumn = true // Set to false for integer columns
     ): int {
-        // Normalize the JSON value
-        $value = $data[$jsonColumn];
-        $jsonValue = $this->normalizeToJsonString($value);
-        $data[$jsonColumn] = $jsonValue;
-        
         $isPostgres = ($this->db->getDatabaseProvider() === IDBConnection::PLATFORM_POSTGRES);
+        $isMariadb = ($this->db->getDatabaseProvider() === IDBConnection::PLATFORM_MYSQL);
+        
+        // Handle the column value based on type
+        if (isset($data[$jsonColumn])) {
+            if ($isJsonColumn) {
+                // For JSON columns - encode as JSON string
+                $data[$jsonColumn] = $this->normalizeToJsonString($data[$jsonColumn]);
+            } else {
+                // For integer columns - convert to integer
+                if (is_array($data[$jsonColumn])) {
+                    $data[$jsonColumn] = (int)($data[$jsonColumn]['value'] ?? 0);
+                } else {
+                    $data[$jsonColumn] = (int)$data[$jsonColumn];
+                }
+            }
+        }
+        
         $columns = array_keys($data);
-        $placeholders = array_map(function ($col) use ($jsonColumn, $isPostgres) {
+        $placeholders = array_map(function ($col) use ($jsonColumn, $isPostgres, $isJsonColumn) {
             $placeholder = ':' . $col;
-            if ($isPostgres && $col === $jsonColumn) {
+            // Only add ::json casting for PostgreSQL JSON columns
+            if ($isPostgres && $col === $jsonColumn && $isJsonColumn) {
                 return $placeholder . '::json';
             }
             return $placeholder;
         }, $columns);
         
-        $prefixedTable='*PREFIX*'.$table; 
+        $prefixedTable = '*PREFIX*' . $table;
         $sql = sprintf(
             'INSERT INTO %s (%s) VALUES (%s)',
             $prefixedTable,
@@ -51,10 +65,12 @@ class SupportSqlRepository
             $sql .= ' RETURNING id';
         }
         
-        $this->logger->debug('Executing JSON insert', [
+        $this->logger->debug('Executing insert', [
             'table' => $table,
             'is_postgres' => $isPostgres,
-            'json_column' => $jsonColumn
+            'is_mariadb' => $isMariadb,
+            'json_column' => $jsonColumn,
+            'is_json_column' => $isJsonColumn
         ]);
         
         $stmt = $this->db->executeQuery($sql, $data);
@@ -63,29 +79,42 @@ class SupportSqlRepository
             return (int)$stmt->fetchOne();
         }
         
-        return (int)$this->db->lastInsertId();
+        // For MariaDB/MySQL
+        return (int)$this->db->lastInsertId($table . '_id_seq');
     }
 
     /**
-     * Update with JSON casting for PostgreSQL
+     * Update with JSON handling for PostgreSQL and MariaDB
      */
     public function updateSupportWithJson(
         string $table,
         array $data,
         string $jsonColumn,
-        int $id
+        int $id,
+        bool $isJsonColumn = true
     ): void {
-        // Normalize the JSON value
-        if (isset($data[$jsonColumn])) {
-            $data[$jsonColumn] = $this->normalizeToJsonString($data[$jsonColumn]);
-        }
-        
         $isPostgres = ($this->db->getDatabaseProvider() === IDBConnection::PLATFORM_POSTGRES);
+        
+        // Handle the column value based on type
+        if (isset($data[$jsonColumn])) {
+            if ($isJsonColumn) {
+                // For JSON columns - encode as JSON string
+                $data[$jsonColumn] = $this->normalizeToJsonString($data[$jsonColumn]);
+            } else {
+                // For integer columns - convert to integer
+                if (is_array($data[$jsonColumn])) {
+                    $data[$jsonColumn] = (int)($data[$jsonColumn]['value'] ?? 0);
+                } else {
+                    $data[$jsonColumn] = (int)$data[$jsonColumn];
+                }
+            }
+        }
         
         $sets = [];
         foreach ($data as $column => $value) {
             $paramName = ':' . $column;
-            if ($isPostgres && $column === $jsonColumn) {
+            // Only add ::json casting for PostgreSQL JSON columns
+            if ($isPostgres && $column === $jsonColumn && $isJsonColumn) {
                 $sets[] = "$column = $paramName::json";
             } else {
                 $sets[] = "$column = $paramName";
@@ -93,7 +122,7 @@ class SupportSqlRepository
         }
         
         $data['id'] = $id;
-        $prefixedTable='*PREFIX*'.$table; 
+        $prefixedTable = '*PREFIX*' . $table;
         $sql = sprintf(
             'UPDATE %s SET %s WHERE id = :id',
             $prefixedTable,
@@ -104,12 +133,16 @@ class SupportSqlRepository
             'table' => $table,
             'is_postgres' => $isPostgres,
             'json_column' => $jsonColumn,
+            'is_json_column' => $isJsonColumn,
             'id' => $id
         ]);
         
         $this->db->executeQuery($sql, $data);
     }
 
+    /**
+     * Normalize value to JSON string for all databases
+     */
     private function normalizeToJsonString(mixed $value): string
     {
         if (is_array($value)) {

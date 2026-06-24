@@ -69,7 +69,7 @@ class SupportEngineSqlRepository
         return (int)$stmt->fetchOne();
     }
     
-    return (int)$this->db->lastInsertId();
+    return (int)$this->db->lastInsertId($table . '_id_seq');
     }
 
     /**

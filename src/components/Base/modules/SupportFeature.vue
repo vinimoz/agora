@@ -898,6 +898,8 @@ const currentUserSupportInfo = computed(() => {
   }
 
   return `👍 ${t('agora', 'Supported')}`
+
+
 })
 
 const userSupportClass = computed(() => {

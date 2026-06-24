@@ -20,7 +20,6 @@ export type SupportFeature =
   | 'score' // 🔢 Free score 0-10
   | 'majority_judgment' // 🧠 Graded evaluation
   | 'approval_delib' // ✅ select approval
-  | 'trending' // 🔥 Popularity (votes + activity) – Reddit‑style
   | 'none' // ⛔ Pure discussion
 
 // ============================================================================
@@ -463,6 +462,11 @@ export interface EngineDefinition {
     min_options?: number
     max_options?: number
     requires_weight_source?: boolean
+  }
+  ui?: {
+    layout?: string
+    show_results?: boolean
+    show_progress?: boolean
   }
 
   recommendedViews?: OptionViewMode[]

@@ -29,14 +29,491 @@ class InitDbDefault extends Command
     private IGroupManager $groupManager;
     private IDBConnection $connection;
 
+
     private array $inquiryTypeFamilies = [
-        // … unchanged (all family definitions are correct) …
-        // (Keep the existing $inquiryTypeFamilies array as it is)
+        [
+            'family_type' => 'deliberative',
+            'label' => 'Deliberative',
+            'description' => 'Citizen-driven processes such as debates, proposals, petitions, projects, and deliberations.',
+            'icon' => 'AccountGroup',
+            'sort_order' => 1,
+            'created' => '',
+        ],
+        [
+            'family_type' => 'legislative',
+            'label' => 'Legislative',
+            'description' => 'Law proposals, amendments, constitutional workshops, and official legislative responses.',
+            'icon' => 'Gavel',
+            'sort_order' => 2,
+            'created' => '',
+        ],
+        [
+            'family_type' => 'administrative',
+            'label' => 'Administrative',
+            'description' => 'Administrative requests and grievances addressed to institutions.',
+            'icon' => 'OfficeBuilding',
+            'sort_order' => 3,
+            'created' => '',
+        ],
+        [
+            'family_type' => 'service',
+            'label' => 'Service',
+            'description' => 'Social and citizen service requests such as housing, childcare, or scholarships.',
+            'icon' => 'Offer',
+            'sort_order' => 4,
+            'created' => '',
+        ],
+        [
+            'family_type' => 'collective',
+            'label' => 'Collective',
+            'description' => 'Assemblies and grouped consultations on themes or topics, could be used for submit it to polls',
+            'icon' => 'AccountMultiple',
+            'sort_order' => 5,
+            'created' => '',
+        ],
+        [
+            'family_type' => 'oversight',
+            'label' => 'Oversight',
+            'description' => 'Citizen oversight, transparency mechanisms and investigation processes to prevent corruption and ensure accountability.',
+            'icon' => 'EyeCheck',
+            'sort_order' => 6,
+            'created' => '',
+        ],
+        [
+            'family_type' => 'governance',
+            'label' => 'Governance',
+            'description' => 'Citizen oversight, accountability, audits and performance evaluation of public entities.',
+            'icon' => 'ShieldAccount',
+            'sort_order' => 8,
+            'created' => '',
+        ],
+        [
+            'family_type' => 'official',
+            'label' => 'Official',
+            'description' => 'Responses and contributions from official entities such as city hall, experts, or commissions.',
+            'icon' => 'Seal',
+            'sort_order' => 7,
+            'created' => '',
+        ],
     ];
 
+
+
     private array $optionTypeFamilies = [
-        // … unchanged (all option family definitions are correct) …
-        // (Keep the existing $optionTypeFamilies array as it is)
+        [
+            'family_type' => 'debate',
+            'label' => 'Debate',
+            'description' => 'Debate positions, arguments, and alternatives',
+            'icon' => 'Discussion',
+            'ui' => [
+                'layout' => 'paired', 
+                'layout_style' => 'vertical',
+                'allowed_layout' => 'paired',
+                'show_metrics' => true, 
+                'thread_visualization' => 'tree', 
+            ],
+            'rules' => [
+                'require_initial_position' => true,
+                'max_thread_depth' => 10,
+                'min_arguments_before_summary' => 3,
+            ],
+            'features' => [
+                'argument_rating',
+                'thread_collapsing',
+            ],
+            'actions' => [
+                ['key' => 'export_thread', 'label' => 'Export Debate Thread', 'icon' => 'Download'],
+                ['key' => 'generate_summary', 'label' => 'Generate Summary', 'icon' => 'Summarize'],
+                ['key' => 'visualize_network', 'label' => 'View Argument Network', 'icon' => 'Graph'],
+            ],
+            'sort_order' => 1,
+            'created' => '',
+        ],
+        [
+            'family_type' => 'structure',
+            'label' => 'Structure',
+            'description' => 'Structured documents with chapters and articles',
+            'icon' => 'Settings',
+            'ui' => [
+                'layout' => 'tree',
+                'allowed_layout' => 'tree',
+                'show_toc' => true,
+                'collapsible_sections' => true,
+                'breadcrumb_navigation' => true,
+            ],
+            'rules' => [
+                'max_depth' => 5,
+                'require_numeric_notation' => true,
+                'allow_cross_references' => true,
+            ],
+            'features' => [
+                'version_control',
+                'change_tracking',
+                'commentary',
+            ],
+            'actions' => [
+                ['key' => 'import_document', 'label' => 'Import Document', 'icon' => 'Upload' , 'modal' => true],
+                ['key' => 'export_pdf', 'label' => 'Export as PDF', 'icon' => 'FilePdf' , 'modal' => true],
+                ['key' => 'export_markdown', 'label' => 'Export as Markdown', 'icon' => 'Markdown' , 'modal' => true],
+                ['key' => 'print_view', 'label' => 'Print View', 'icon' => 'Printer' , 'modal' => true],
+                ['key' => 'compare_versions', 'label' => 'Compare Versions', 'icon' => 'Diff' , 'modal' => true],
+            ],
+            'sort_order' => 2,
+            'created' => '',
+        ],
+        [
+            'family_type' => 'consensus',
+            'label' => 'Consensus',
+            'description' => 'Consultation questions and consensus building',
+            'icon' => 'ThumbUp',
+            'ui' => [
+                'layout' => 'consensus_flow',
+                'show_consensus_meter' => true,
+                'highlight_objections' => true,
+                'visualize_progress' => true,
+            ],
+            'rules' => [
+                'consensus_threshold' => 0.8,
+                'require_objection_response' => true,
+                'objection_escalation_time' => 7, // days
+            ],
+            'features' => [
+                'consensus_tracking',
+                'objection_management',
+                'poll_integration',
+            ],
+            'actions' => [
+                ['key' => 'export_consensus_report', 'label' => 'Export Consensus Report', 'icon' => 'Report'],
+                ['key' => 'generate_minutes', 'label' => 'Generate Minutes', 'icon' => 'Minutes'],
+                ['key' => 'visualize_consensus', 'label' => 'View Consensus Map', 'icon' => 'Map'],
+                ['key' => 'schedule_facilitation', 'label' => 'Schedule Facilitation', 'icon' => 'Calendar'],
+            ],
+            'sort_order' => 3,
+            'created' => '',
+        ],
+        [
+            'family_type' => 'decision',
+            'label' => 'Decision',
+            'description' => 'Official decisions and results',
+            'icon' => 'Checkmark',
+            'ui' => [
+                'layout' => 'cards',
+                'show_metadata' => true,
+                'highlight_authority' => true,
+                'timeline_view' => true,
+            ],
+            'rules' => [
+                'require_official_endorsement' => true,
+                'min_approval_count' => 1,
+                'appeal_period_days' => 14,
+            ],
+            'features' => [
+                'legal_binding',
+                'appeal_mechanism',
+                'implementation_tracking',
+            ],
+            'actions' => [
+                ['key' => 'generate_legal_document', 'label' => 'Generate Legal Document', 'icon' => 'Gavel'],
+                ['key' => 'export_decision', 'label' => 'Export Decision', 'icon' => 'FileExport'],
+                ['key' => 'notify_stakeholders', 'label' => 'Notify Stakeholders', 'icon' => 'Bell'],
+                ['key' => 'track_implementation', 'label' => 'Track Implementation', 'icon' => 'ProgressCheck'],
+            ],
+            'sort_order' => 4,
+            'created' => '',
+        ],
+        [
+            'family_type' => 'vote',
+            'label' => 'Vote',
+            'description' => 'Voting and decision-making system',
+            'icon' => 'Vote',
+
+            'ui' => [
+                'layout' => ['type' => 'string', 'default' => 'vote'],
+                'show_results' => ['type' => 'boolean', 'default' => true],
+                'show_progress' => ['type' => 'boolean', 'default' => true],
+                'show_ranking' => ['type' => 'boolean', 'default' => true],
+                'allow_comparison' => ['type' => 'boolean', 'default' => true],
+                'phase_indicator' => ['type' => 'boolean', 'default' => false],
+            ],
+
+            'rules' => [
+                'require_candidates' => ['type' => 'boolean', 'default' => true],
+                'allow_multiple_votes' => ['type' => 'boolean', 'default' => false],
+                'vote_limit_per_user' => ['type' => 'number', 'default' => 1],
+
+                'require_quorum' => ['type' => 'boolean', 'default' => false],
+                'auto_close_on_expire' => ['type' => 'boolean', 'default' => true],
+
+                'one_engine_per_phase' => ['type' => 'boolean', 'default' => true],
+                'immutable_after_close' => ['type' => 'boolean', 'default' => true],
+            ],
+
+            'features' => [
+
+                'engines' => [
+
+                    'binary' => [
+                        'label' => 'Yes / No',
+                        'input' => 'binary',
+                        'behavior' => 'single',
+                        'constraints' => [
+                            'min_candidates' => ['type' => 'number', 'default' => 1],
+                            'max_candidates' => ['type' => 'number', 'default' => 1],
+                        ],
+                        'config_schema' => [],
+                    ],
+
+                    'ternary' => [
+                        'label' => 'For / Abstain / Against',
+                        'input' => 'ternary',
+                        'behavior' => 'single',
+                        'constraints' => [
+                            'min_candidates' => ['type' => 'number', 'default' => 1],
+                            'max_candidates' => ['type' => 'number', 'default' => 1],
+                        ],
+                        'config_schema' => [],
+                    ],
+
+                    'reaction' => [
+                        'label' => 'Reactions',
+                        'input' => 'reaction',
+                        'behavior' => 'single',
+                        'constraints' => [
+                            'min_candidates' => ['type' => 'number', 'default' => 1],
+                            'max_candidates' => ['type' => 'number', 'default' => 1],
+                        ],
+                        'config_schema' => [
+                            'allowed_reactions' => [
+                                'type' => 'array',
+                                'default' => ['👍','👎','❤️','😂','😢']
+                            ]
+                        ],
+                    ],
+
+                    'score' => [
+                        'label' => 'Score',
+                        'input' => 'score',
+                        'behavior' => 'single',
+                        'constraints' => [
+                            'min_candidates' => ['type' => 'number', 'default' => 1],
+                            'max_candidates' => ['type' => 'number', 'default' => 1],
+                        ],
+                        'config_schema' => [
+                            'min' => ['type' => 'number', 'default' => 0],
+                            'max' => ['type' => 'number', 'default' => 10],
+                        ],
+                    ],
+
+                    'approval' => [
+                        'label' => 'Approval',
+                        'input' => 'approval',
+                        'behavior' => 'multi',
+                        'constraints' => [
+                            'min_candidates' => ['type' => 'number', 'default' => 2],
+                        ],
+                        'config_schema' => [
+                            'min_choices' => ['type' => 'number', 'default' => 1],
+                            'max_choices' => ['type' => 'number|null', 'default' => null],
+                        ],
+                    ],
+
+                    'ranked' => [
+                        'label' => 'Ranked Choice',
+                        'input' => 'ranking',
+                        'behavior' => 'multi',
+                        'constraints' => [
+                            'min_candidates' => ['type' => 'number', 'default' => 2],
+                        ],
+                        'config_schema' => [
+                            'max_rank' => ['type' => 'number|null', 'default' => null],
+                        ],
+                    ],
+
+                    'borda' => [
+                        'label' => 'Borda',
+                        'input' => 'ranking',
+                        'behavior' => 'multi',
+                        'constraints' => [
+                            'min_candidates' => ['type' => 'number', 'default' => 2],
+                        ],
+                        'config_schema' => [],
+                    ],
+
+                    'condorcet' => [
+                        'label' => 'Condorcet',
+                        'input' => 'ranking',
+                        'behavior' => 'multi',
+                        'constraints' => [
+                            'min_candidates' => ['type' => 'number', 'default' => 2],
+                        ],
+                        'config_schema' => [
+                            'method' => [
+                                'type' => 'string',
+                                'default' => 'schulze'
+                            ]
+                        ],
+                    ],
+
+                    'majority_judgment' => [
+                        'label' => 'Majority Judgment',
+                        'input' => 'grade',
+                        'behavior' => 'multi',
+                        'constraints' => [
+                            'min_candidates' => ['type' => 'number', 'default' => 2],
+                        ],
+                        'config_schema' => [
+                            'grades' => [
+                                'type' => 'array',
+                                'default' => ['Reject','Poor','Fair','Good','Excellent']
+                            ]
+                        ],
+                    ],
+
+                    'token_weighted' => [
+                        'label' => 'Token / Weight',
+                        'input' => 'weighted',
+                        'behavior' => 'flex',
+                        'constraints' => [
+                            'min_candidates' => ['type' => 'number', 'default' => 1],
+                            'requires_weight_source' => ['type' => 'boolean', 'default' => true],
+                        ],
+                        'config_schema' => [
+                            'weight_source' => [
+                                'type' => 'object',
+                                'default' => null
+                            ],
+                            'normalization' => [
+                                'type' => 'string',
+                                'default' => 'none'
+                            ],
+                        ],
+                    ],
+
+                    'quadratic' => [
+                        'label' => 'Quadratic',
+                        'input' => 'score',
+                        'behavior' => 'flex',
+                        'constraints' => [
+                            'min_candidates' => ['type' => 'number', 'default' => 1],
+                        ],
+                        'config_schema' => [
+                            'credits_per_user' => ['type' => 'number', 'default' => 100],
+                        ],
+                    ],
+                ],
+
+                'real_time_results' => ['type' => 'boolean', 'default' => true],
+                'ranking' => ['type' => 'boolean', 'default' => true],
+                'tie_breaking' => ['type' => 'boolean', 'default' => true],
+                'quorum_tracking' => ['type' => 'boolean', 'default' => false],
+            ],
+            'actions' => [
+                ['key' => 'start_vote', 'label' => 'Start Vote', 'icon' => 'Play'],
+                ['key' => 'close_vote', 'label' => 'Close Vote', 'icon' => 'Lock'],
+                ['key' => 'next_phase', 'label' => 'Next Phase', 'icon' => 'ArrowRight'],
+                ['key' => 'view_results', 'label' => 'View Results', 'icon' => 'ChartBar'],
+                ['key' => 'export_results', 'label' => 'Export Results', 'icon' => 'FileExport'],
+            ],
+            'sort_order' => 5,
+            'created' => '',
+
+        ],
+        [
+            'family_type' => 'proposal',
+            'label' => 'Proposal',
+            'description' => 'Initial proposals and suggestions',
+            'icon' => 'Lightbulb',
+            'ui' => [
+                'layout' => 'cards',
+                'show_support_meter' => true,
+                'highlight_impact' => true,
+                'proposal_template' => 'standard',
+            ],
+            'rules' => [
+                'requires_cost_estimate' => false,
+                'requires_impact_assessment' => true,
+                'min_support_threshold' => 5,
+            ],
+            'features' => [
+                'budget_estimation',
+                'impact_analysis',
+                'community_feedback',
+            ],
+            'actions' => [
+                ['key' => 'duplicate_proposal', 'label' => 'Duplicate Proposal', 'icon' => 'ContentCopy'],
+                ['key' => 'merge_proposals', 'label' => 'Merge with Similar', 'icon' => 'CallMerge'],
+                ['key' => 'export_proposal', 'label' => 'Export Proposal', 'icon' => 'FileExport'],
+                ['key' => 'request_review', 'label' => 'Request Expert Review', 'icon' => 'AccountReview'],
+            ],
+            'sort_order' => 6,
+            'created' => '',
+        ],
+        [
+            'family_type' => 'workflow',
+            'label' => 'Workflow',
+            'description' => 'Project and decision workflow management',
+            'icon' => 'ViewKanban',
+            'ui' => [
+                'layout' => 'kanban',
+                'kanban_column' => [
+                    ['value' => 'draft', 'label' => 'Draft', 'color' => '#949494'],
+                    ['value' => 'active', 'label' => 'Active', 'color' => '#3498db'],
+                    ['value' => 'completed', 'label' => 'Completed', 'color' => '#27ae60'],
+                    ['value' => 'cancelled', 'label' => 'Cancelled', 'color' => '#e74c3c'],
+                ],
+                'show_swimlanes' => true,
+                'wip_limits' => true,
+                'cycle_time_visualization' => true,
+            ],
+            'rules' => [
+                'require_status_transitions' => true,
+                'enforce_wip_limits' => true,
+                'auto_assign_on_move' => false,
+            ],
+            'features' => [
+                'automated_transitions',
+                'blocker_detection',
+                'sla_tracking',
+            ],
+            'actions' => [
+                ['key' => 'export_board', 'label' => 'Export Board', 'icon' => 'FileExport'],
+                ['key' => 'generate_flow_report', 'label' => 'Flow Report', 'icon' => 'ChartLine'],
+                ['key' => 'configure_workflow', 'label' => 'Configure Workflow', 'icon' => 'Cog'],
+                ['key' => 'bulk_transition', 'label' => 'Bulk Transition', 'icon' => 'ArrowRightBold'],
+            ],
+            'sort_order' => 7,
+            'created' => '',
+        ],
+        [
+            'family_type' => 'process',
+            'label' => 'Process',
+            'description' => 'Timeline and procedural events',
+            'icon' => 'Timeline',
+            'ui' => [
+                'layout' => 'timeline',
+                'show_gantt' => true,
+                'milestone_highlight' => true,
+                'dependency_lines' => true,
+            ],
+            'rules' => [
+                'chronological_order' => true,
+                'require_dates' => true,
+                'allow_overlap' => false,
+            ],
+            'features' => [
+                'gantt_chart',
+                'critical_path',
+                'resource_allocation',
+            ],
+            'actions' => [
+                ['key' => 'export_gantt', 'label' => 'Export Gantt', 'icon' => 'FileExport'],
+                ['key' => 'print_timeline', 'label' => 'Print Timeline', 'icon' => 'Printer'],
+                ['key' => 'adjust_schedule', 'label' => 'Adjust Schedule', 'icon' => 'CalendarClock'],
+                ['key' => 'identify_bottlenecks', 'label' => 'Identify Bottlenecks', 'icon' => 'AlertCircle'],
+            ],
+            'sort_order' => 8,
+            'created' => '',
+        ],
     ];
 
     private array $optionTypes = [

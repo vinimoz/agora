@@ -180,11 +180,14 @@
 
           <div class="reaction-limit">
               <label>{{ t('agora', 'Max reactions per user') }}</label>
-              <NcTextField
-                      v-model.number="tempConfig.max_per_user"
-                      type="number"
-                      class="limit-input"
-                      />
+	         <NcTextField
+        id="max-reactions-input"
+        v-model.number="tempConfig.max_per_user"
+        type="number"
+        class="limit-input"
+        label-outside
+        :label="t('agora', 'Max reactions per user')"
+    />
           </div>
       </div>
 

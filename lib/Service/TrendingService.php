@@ -17,6 +17,7 @@ use OCA\Agora\Db\OptionMapper;
 use Psr\Log\LoggerInterface;
 use OCP\Cache\IMemcache;
 use OCP\ICacheFactory;
+use OCP\ICache;
 
 class TrendingService
 {
@@ -30,7 +31,7 @@ class TrendingService
     private const CACHE_TTL = 300;
     private const CACHE_PREFIX = 'trending_';
 
-    private ?IMemcache $cache = null;
+    private ?ICache $cache = null;
 
     public function __construct(
         private SupportMapper $supportMapper,
@@ -39,8 +40,23 @@ class TrendingService
         private LoggerInterface $logger,
         ICacheFactory $cacheFactory,
     ) {
-        if ($cacheFactory->isAvailable()) {
-            $this->cache = $cacheFactory->createDistributed(self::CACHE_PREFIX);
+        // Use the factory to create a cache instance
+        try {
+            // Try to create a distributed cache
+            if (method_exists($cacheFactory, 'createDistributed')) {
+                $cache = $cacheFactory->createDistributed(self::CACHE_PREFIX);
+                if ($cache instanceof ICache) {
+                    $this->cache = $cache;
+                }
+            } elseif (method_exists($cacheFactory, 'create')) {
+                $cache = $cacheFactory->create(self::CACHE_PREFIX);
+                if ($cache instanceof ICache) {
+                    $this->cache = $cache;
+                }
+            }
+        } catch (\Exception $e) {
+            $this->logger->warning('Could not initialize cache for TrendingService: ' . $e->getMessage());
+            $this->cache = null;
         }
     }
 

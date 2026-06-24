@@ -45,6 +45,7 @@ export interface SupportableItem {
   id: number
   configuration?: {
     supportFeature?: SupportFeature
+    grades?: string[]  
   }
   currentUserStatus?: {
     supportValue?: SupportValue
@@ -52,9 +53,6 @@ export interface SupportableItem {
   }
   status?: {
     countSupports?: number
-    countPositiveSupports?: number
-    countNeutralSupports?: number
-    countNegativeSupports?: number
     supportResult?: SupportResultData
   }
 }
@@ -401,7 +399,7 @@ export const useSupportsStore = defineStore('supports', () => {
  * @param userId
  * @param item
  * @param itemType
- * @param grade
+ * @param grade - Can be a string grade name or a number index
  * @param engineId
  */
 async function toggleMajorityJudgmentSupport(
@@ -409,7 +407,7 @@ async function toggleMajorityJudgmentSupport(
     userId: string,
     item: SupportableItem,
     itemType: 'inquiry' | 'option',
-    grade: string | null,
+    grade: string | number | null,
     engineId: number | null = null
 ) {
     if (!item.currentUserStatus) item.currentUserStatus = {}
@@ -417,13 +415,28 @@ async function toggleMajorityJudgmentSupport(
     const oldValue = item.currentUserStatus.supportValue as string | null
     const oldHasSupported = item.currentUserStatus.hasSupported ?? false
 
+    // Convert numeric grade to string if needed
+    let gradeString: string | null = null
+    if (grade !== null) {
+        if (typeof grade === 'number') {
+            // Get grade labels from item configuration
+            const gradeLabels = item.configuration?.grades || [
+                'Reject', 'Insufficient', 'Passable', 
+                'Fairly Good', 'Good', 'Very Good', 'Excellent'
+            ]
+            gradeString = gradeLabels[grade] || String(grade)
+        } else {
+            gradeString = grade
+        }
+    }
+
     // Optimistic update
-    if ( engineId === null ) {
-        if ( grade === null ) {
+    if (engineId === null) {
+        if (gradeString === null) {
             item.currentUserStatus.supportValue = null
             item.currentUserStatus.hasSupported = false
         } else {
-            item.currentUserStatus.supportValue = grade
+            item.currentUserStatus.supportValue = gradeString
             item.currentUserStatus.hasSupported = true
         }
     }
@@ -431,22 +444,21 @@ async function toggleMajorityJudgmentSupport(
     try {
         const { inquiryId, optionId } = resolveIds(itemId, item, itemType)
 
-        if (grade === null) {
-            await removeSupport(inquiryId, userId, optionId,engineId)
-            // Update count
+        if (gradeString === null) {
+            await removeSupport(inquiryId, userId, optionId, engineId)
         } else if (oldValue === null) {
-             await addSupport(inquiryId, userId, grade, optionId, engineId)
+            await addSupport(inquiryId, userId, gradeString, optionId, engineId)
         } else {
-             await updateSupport(inquiryId, userId, grade, optionId, engineId)
+            await updateSupport(inquiryId, userId, gradeString, optionId, engineId)
         }
 
-        return grade
+        return gradeString
     } catch (error) {
         // Rollback
-    if ( engineId === null ) {
+        if (engineId === null) {
             item.currentUserStatus.supportValue = oldValue
-        item.currentUserStatus.hasSupported = oldHasSupported
-    }
+            item.currentUserStatus.hasSupported = oldHasSupported
+        }
         throw error
     }
 }
@@ -1259,6 +1271,7 @@ return {
     toggleReactionSupport,
     toggleApprovalSupport,
     toggleApprovalDeliberativeSupport,
+    toggleMajorityJudgmentSupport,
     toggleRankingSupport,
     formatResult,
     loadSupports,

@@ -223,7 +223,8 @@ public function findSupportById(int $id): ?Support
                 'updated' => $now,
                 'support_hash' => $supportHash,
             ],
-            'value'
+            'value',
+            false
         );
 
         return $this->findSupportById($id);
@@ -232,6 +233,7 @@ public function findSupportById(int $id): ?Support
     /**
      * Update support with proper JSON casting using SQL Repository
      */
+
     public function updateSupport(Support $support, ?int $engineId = null): Support
     {
         $prefixedTable =self::TABLE;
@@ -244,7 +246,8 @@ public function findSupportById(int $id): ?Support
                 'support_engine_id' => $engineId,
             ],
             'value',
-            $support->getId()
+            $support->getId(),
+            false
         );
 
         return $this->findSupportById($support->getId());

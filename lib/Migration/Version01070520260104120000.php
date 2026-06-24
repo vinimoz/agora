@@ -212,6 +212,23 @@ class Version01070520260104120000 extends SimpleMigrationStep
     }
 
     // ====================================================================
+    // HELPER METHODS
+    // ====================================================================
+
+    /**
+     * Quote a table/column name according to the current database platform
+     */
+    private function quoteIdentifier(string $identifier): string
+    {
+        if ($this->isMySQL) {
+            return '`' . str_replace('`', '``', $identifier) . '`';
+        } else {
+            // PostgreSQL and SQLite both accept double quotes
+            return '"' . str_replace('"', '""', $identifier) . '"';
+        }
+    }
+
+    // ====================================================================
     // POST-SCHEMA: Convert value column
     // ====================================================================
 
@@ -284,14 +301,18 @@ class Version01070520260104120000 extends SimpleMigrationStep
                      WHERE table_name = ?",
                     [$tableName]
                 );
-                return $result->fetchFirstColumn();
+                $columns = [];
+                while ($row = $result->fetch()) {
+                    $columns[] = $row['column_name'];
+                }
+                return $columns;
             } else {
                 // SQLite
                 $result = $this->connection->executeQuery(
                     "PRAGMA table_info(" . $tableName . ")"
                 );
                 $columns = [];
-                while ($row = $result->fetchAssociative()) {
+                while ($row = $result->fetch()) {
                     $columns[] = $row['name'];
                 }
                 return $columns;
@@ -434,7 +455,7 @@ class Version01070520260104120000 extends SimpleMigrationStep
         try {
             // First, check if we have supports
             $count = $this->connection->executeQuery(
-                "SELECT COUNT(*) FROM \"" . self::T_SUPPORTS . "\""
+                "SELECT COUNT(*) FROM " . $this->quoteIdentifier(self::T_SUPPORTS)
             )->fetchOne();
 
             if ((int)$count === 0) {
@@ -445,20 +466,25 @@ class Version01070520260104120000 extends SimpleMigrationStep
             $this->log("  Found {$count} supports");
 
             // Get all distinct targets with their support types
-            $targets = $this->connection->executeQuery(
+            $result = $this->connection->executeQuery(
                 "SELECT 
                     s.inquiry_id,
                     s.option_id,
                     i.support_feature as inquiry_feature,
                     o.support_feature as option_feature,
                     COUNT(*) as support_count
-                FROM \"" . self::T_SUPPORTS . "\" s
-                LEFT JOIN \"" . self::T_INQUIRIES . "\" i ON s.inquiry_id = i.id
-                LEFT JOIN \"" . self::T_OPTIONS . "\" o ON s.option_id = o.id
+                FROM " . $this->quoteIdentifier(self::T_SUPPORTS) . " s
+                LEFT JOIN " . $this->quoteIdentifier(self::T_INQUIRIES) . " i ON s.inquiry_id = i.id
+                LEFT JOIN " . $this->quoteIdentifier(self::T_OPTIONS) . " o ON s.option_id = o.id
                 WHERE s.support_engine_id IS NULL
                 GROUP BY s.inquiry_id, s.option_id, i.support_feature, o.support_feature
                 ORDER BY s.inquiry_id, s.option_id"
-            )->fetchAllAssociative();
+            );
+            
+            $targets = [];
+            while ($row = $result->fetch()) {
+                $targets[] = $row;
+            }
 
             $this->log("  Processing " . count($targets) . " targets");
 
@@ -487,7 +513,7 @@ class Version01070520260104120000 extends SimpleMigrationStep
 
                 // Check if result already exists
                 $exists = $this->connection->executeQuery(
-                    "SELECT id FROM \"" . self::T_RESULTS . "\" 
+                    "SELECT id FROM " . $this->quoteIdentifier(self::T_RESULTS) . " 
                      WHERE target_type = ? AND target_id = ? AND support_engine_id IS NULL",
                     [$targetType, $targetId]
                 )->fetchOne();
@@ -497,10 +523,10 @@ class Version01070520260104120000 extends SimpleMigrationStep
                 }
 
                 // Calculate result
-                $result = $this->calculateResult($inquiryId, $optionId, $feature);
+                $resultData = $this->calculateResult($inquiryId, $optionId, $feature);
                 
-                if ($result !== null) {
-                    $this->insertResult($targetType, $targetId, $result);
+                if ($resultData !== null) {
+                    $this->insertResult($targetType, $targetId, $resultData);
                     $inserted++;
                 }
             }
@@ -517,12 +543,17 @@ class Version01070520260104120000 extends SimpleMigrationStep
     {
         try {
             $supports = $this->connection->executeQuery(
-                "SELECT value, weight FROM \"" . self::T_SUPPORTS . "\" 
+                "SELECT value, weight FROM " . $this->quoteIdentifier(self::T_SUPPORTS) . " 
                  WHERE inquiry_id = ? AND option_id = ? AND support_engine_id IS NULL",
                 [$inquiryId, $optionId]
-            )->fetchAllAssociative();
+            );
+            
+            $rows = [];
+            while ($row = $supports->fetch()) {
+                $rows[] = $row;
+            }
 
-            if (empty($supports)) {
+            if (empty($rows)) {
                 return null;
             }
 
@@ -530,7 +561,7 @@ class Version01070520260104120000 extends SimpleMigrationStep
             $no = 0;
             $abstain = 0;
 
-            foreach ($supports as $support) {
+            foreach ($rows as $support) {
                 $value = $this->extractValue($support['value']);
                 $weight = (int)($support['weight'] ?? 1);
 
@@ -600,21 +631,14 @@ class Version01070520260104120000 extends SimpleMigrationStep
 
         if ($this->isPostgreSQL) {
             $this->connection->executeStatement(
-                "INSERT INTO \"" . self::T_RESULTS . "\" 
+                "INSERT INTO " . $this->quoteIdentifier(self::T_RESULTS) . " 
                  (support_engine_id, target_type, target_id, result, updated) 
                  VALUES (NULL, ?, ?, ?::json, ?)",
                 [$targetType, $targetId, $resultJson, $now]
             );
-        } elseif ($this->isMySQL) {
-            $this->connection->executeStatement(
-                "INSERT INTO `" . self::T_RESULTS . "` 
-                 (support_engine_id, target_type, target_id, result, updated) 
-                 VALUES (NULL, ?, ?, ?, ?)",
-                [$targetType, $targetId, $resultJson, $now]
-            );
         } else {
             $this->connection->executeStatement(
-                "INSERT INTO \"" . self::T_RESULTS . "\" 
+                "INSERT INTO " . $this->quoteIdentifier(self::T_RESULTS) . " 
                  (support_engine_id, target_type, target_id, result, updated) 
                  VALUES (NULL, ?, ?, ?, ?)",
                 [$targetType, $targetId, $resultJson, $now]
@@ -631,7 +655,7 @@ class Version01070520260104120000 extends SimpleMigrationStep
         $this->log('Fixing empty results...');
 
         try {
-            $sql = "SELECT id, target_type, target_id FROM \"" . self::T_RESULTS . "\" WHERE ";
+            $sql = "SELECT id, target_type, target_id FROM " . $this->quoteIdentifier(self::T_RESULTS) . " WHERE ";
             if ($this->isPostgreSQL) {
                 $sql .= "result::text = '{}' OR result IS NULL";
             } elseif ($this->isMySQL) {
@@ -640,7 +664,11 @@ class Version01070520260104120000 extends SimpleMigrationStep
                 $sql .= "result = '{}' OR result IS NULL OR result = ''";
             }
 
-            $emptyResults = $this->connection->executeQuery($sql)->fetchAllAssociative();
+            $result = $this->connection->executeQuery($sql);
+            $emptyResults = [];
+            while ($row = $result->fetch()) {
+                $emptyResults[] = $row;
+            }
 
             if (empty($emptyResults)) {
                 $this->log('  No empty results found');
@@ -664,7 +692,7 @@ class Version01070520260104120000 extends SimpleMigrationStep
                 $resultJson = json_encode($emptyResult, JSON_UNESCAPED_UNICODE);
 
                 $this->connection->executeStatement(
-                    "UPDATE \"" . self::T_RESULTS . "\" SET result = ? WHERE id = ?",
+                    "UPDATE " . $this->quoteIdentifier(self::T_RESULTS) . " SET result = ? WHERE id = ?",
                     [$resultJson, $empty['id']]
                 );
             }
@@ -680,7 +708,7 @@ class Version01070520260104120000 extends SimpleMigrationStep
     {
         try {
             $result = $this->connection->executeQuery(
-                "SELECT support_feature FROM \"" . self::T_INQUIRIES . "\" WHERE id = ?",
+                "SELECT support_feature FROM " . $this->quoteIdentifier(self::T_INQUIRIES) . " WHERE id = ?",
                 [$inquiryId]
             );
             return $result->fetchOne() ?: 'binary';
@@ -693,7 +721,7 @@ class Version01070520260104120000 extends SimpleMigrationStep
     {
         try {
             $result = $this->connection->executeQuery(
-                "SELECT support_feature FROM \"" . self::T_OPTIONS . "\" WHERE id = ?",
+                "SELECT support_feature FROM " . $this->quoteIdentifier(self::T_OPTIONS) . " WHERE id = ?",
                 [$optionId]
             );
             return $result->fetchOne() ?: 'binary';
@@ -734,13 +762,13 @@ class Version01070520260104120000 extends SimpleMigrationStep
                 if (!$exists) {
                     $this->connection->executeStatement(
                         "CREATE UNIQUE INDEX result_target_uniq 
-                         ON \"" . self::T_RESULTS . "\" (target_type, target_id, support_engine_id)"
+                         ON " . $this->quoteIdentifier(self::T_RESULTS) . " (target_type, target_id, support_engine_id)"
                     );
                 }
             } elseif ($this->isMySQL) {
                 $this->connection->executeStatement(
                     "CREATE UNIQUE INDEX IF NOT EXISTS result_target_uniq 
-                     ON `" . self::T_RESULTS . "` (target_type, target_id, support_engine_id)"
+                     ON " . $this->quoteIdentifier(self::T_RESULTS) . " (target_type, target_id, support_engine_id)"
                 );
             } else {
                 $exists = $this->connection->executeQuery(
@@ -749,7 +777,7 @@ class Version01070520260104120000 extends SimpleMigrationStep
                 if (!$exists) {
                     $this->connection->executeStatement(
                         "CREATE UNIQUE INDEX result_target_uniq 
-                         ON \"" . self::T_RESULTS . "\" (target_type, target_id, support_engine_id)"
+                         ON " . $this->quoteIdentifier(self::T_RESULTS) . " (target_type, target_id, support_engine_id)"
                     );
                 }
             }
@@ -764,15 +792,15 @@ class Version01070520260104120000 extends SimpleMigrationStep
         $this->log('Adding indices...');
 
         $indices = [
-            "CREATE INDEX IF NOT EXISTS supports_inq_opt_idx ON \"" . self::T_SUPPORTS . "\" (inquiry_id, option_id)",
-            "CREATE INDEX IF NOT EXISTS supports_inq_user_idx ON \"" . self::T_SUPPORTS . "\" (inquiry_id, user_id)",
-            "CREATE INDEX IF NOT EXISTS supports_opt_user_idx ON \"" . self::T_SUPPORTS . "\" (option_id, user_id)",
-            "CREATE INDEX IF NOT EXISTS supports_engine_idx ON \"" . self::T_SUPPORTS . "\" (support_engine_id)",
-            "CREATE INDEX IF NOT EXISTS supports_weight_idx ON \"" . self::T_SUPPORTS . "\" (weight)",
-            "CREATE INDEX IF NOT EXISTS supports_created_idx ON \"" . self::T_SUPPORTS . "\" (created)",
-            "CREATE INDEX IF NOT EXISTS supports_inq_created_idx ON \"" . self::T_SUPPORTS . "\" (inquiry_id, created)",
-            "CREATE INDEX IF NOT EXISTS engine_inquiry_status_idx ON \"" . self::T_ENGINES . "\" (inquiry_id, status)",
-            "CREATE INDEX IF NOT EXISTS engine_target_type_idx ON \"" . self::T_ENGINES . "\" (target_type)",
+            "CREATE INDEX IF NOT EXISTS supports_inq_opt_idx ON " . $this->quoteIdentifier(self::T_SUPPORTS) . " (inquiry_id, option_id)",
+            "CREATE INDEX IF NOT EXISTS supports_inq_user_idx ON " . $this->quoteIdentifier(self::T_SUPPORTS) . " (inquiry_id, user_id)",
+            "CREATE INDEX IF NOT EXISTS supports_opt_user_idx ON " . $this->quoteIdentifier(self::T_SUPPORTS) . " (option_id, user_id)",
+            "CREATE INDEX IF NOT EXISTS supports_engine_idx ON " . $this->quoteIdentifier(self::T_SUPPORTS) . " (support_engine_id)",
+            "CREATE INDEX IF NOT EXISTS supports_weight_idx ON " . $this->quoteIdentifier(self::T_SUPPORTS) . " (weight)",
+            "CREATE INDEX IF NOT EXISTS supports_created_idx ON " . $this->quoteIdentifier(self::T_SUPPORTS) . " (created)",
+            "CREATE INDEX IF NOT EXISTS supports_inq_created_idx ON " . $this->quoteIdentifier(self::T_SUPPORTS) . " (inquiry_id, created)",
+            "CREATE INDEX IF NOT EXISTS engine_inquiry_status_idx ON " . $this->quoteIdentifier(self::T_ENGINES) . " (inquiry_id, status)",
+            "CREATE INDEX IF NOT EXISTS engine_target_type_idx ON " . $this->quoteIdentifier(self::T_ENGINES) . " (target_type)",
         ];
 
         foreach ($indices as $sql) {
@@ -790,8 +818,8 @@ class Version01070520260104120000 extends SimpleMigrationStep
         $this->log('Adding foreign keys...');
 
         $fks = [
-            "ALTER TABLE \"" . self::T_SUPPORTS . "\" ADD CONSTRAINT IF NOT EXISTS fk_supports_engine FOREIGN KEY (support_engine_id) REFERENCES \"" . self::T_ENGINES . "\"(id) ON DELETE SET NULL",
-            "ALTER TABLE \"" . self::T_RESULTS . "\" ADD CONSTRAINT IF NOT EXISTS fk_results_engine FOREIGN KEY (support_engine_id) REFERENCES \"" . self::T_ENGINES . "\"(id) ON DELETE SET NULL",
+            "ALTER TABLE " . $this->quoteIdentifier(self::T_SUPPORTS) . " ADD CONSTRAINT IF NOT EXISTS fk_supports_engine FOREIGN KEY (support_engine_id) REFERENCES " . $this->quoteIdentifier(self::T_ENGINES) . "(id) ON DELETE SET NULL",
+            "ALTER TABLE " . $this->quoteIdentifier(self::T_RESULTS) . " ADD CONSTRAINT IF NOT EXISTS fk_results_engine FOREIGN KEY (support_engine_id) REFERENCES " . $this->quoteIdentifier(self::T_ENGINES) . "(id) ON DELETE SET NULL",
         ];
 
         foreach ($fks as $sql) {
