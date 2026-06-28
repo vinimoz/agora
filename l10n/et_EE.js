@@ -179,13 +179,10 @@ OC.L10N.register(
     "{actor} has shared inquiry {inquiryTitle} with contact group {sharee}" : "{actor} jagas „{inquiryTitle}“ järelpärimist {sharee} kontaktgrupiga",
     "You have shared this inquiry with contact group {sharee}" : "Sa jagasid seda järelpärimist {sharee} kontaktgrupiga",
     "{actor} has shared this inquiry with contact group {sharee}" : "{actor} jagas seda järelpärimist {sharee} kontaktgrupiga",
-<<<<<<< HEAD
     "You have shared inquiry {inquiryTitle} with {sharee}" : "Sa jagasid „{inquiryTitle}“ järelpärimist {sharee} kasutajaga",
     "{actor} has shared inquiry {inquiryTitle} with {sharee}" : "{actor} jagas „{inquiryTitle}“ järelpärimist {sharee} kasutajaga",
     "You have shared this inquiry with {sharee}" : "Sa jagasid seda järelpärimist {sharee}kasutajaga",
     "{actor} has shared this inquiry with {sharee}" : "{actor} jagas seda järelpärimist kasutajaga {sharee}",
-=======
->>>>>>> origin/release/1.7.5
     "You have deleted share of {sharee}" : "Sa oled kustutanud „{sharee}“ jaosmeedia",
     "{actor} has deleted a share" : "{actor} on kustutanud jaosmeedia",
     "You have deleted a public share" : "Sina oled kustutanud avaliku jaosmeedia",
@@ -775,11 +772,8 @@ OC.L10N.register(
     "Additional email disclaimer" : "E-kirjas olev täiendav lahtiütlus vastutusest",
     "Enable the automatic inquiry expiration" : "Võta kasutusele järelpärimiste automaatne aegumine",
     "Days after which inquiries should expire after being opened" : "Päevade arv, mille avamisest möödumisel peaks järelpärimise automaatselt märkima aegunuks",
-<<<<<<< HEAD
     "Inquiry family type is mandatory" : "Järelpärimise pere tüüp on kohustuslik",
     "Inquiry Families Management" : "Järelpärimiste perede haldus",
-=======
->>>>>>> origin/release/1.7.5
     "Display Label" : "Kuvatav silt",
     "e.g., Deliberative Process" : "nt. Aruteluprotsess",
     "Select an icon" : "Vali ikoon",
@@ -842,7 +836,6 @@ OC.L10N.register(
     "Inquiry type is mandatory" : "Järelpärimise tüüp on kohustuslik",
     "Are you sure you want to delete this inquiry type?" : "Kas oled kindel, et tahad selle järelpärimise tüübi kustutada?",
     "Back to Families" : "Tagasi peredkondade juurde",
-<<<<<<< HEAD
     "Types for {family}" : "„{family}“ pere tüübid",
     "Configured Types" : "Seadistatud tüübid",
     "Click on a type to configure its rights and status settings" : "Klõpsates tüübil saad seadistada tema õigusi ja olekuseadistusi",
@@ -852,9 +845,6 @@ OC.L10N.register(
     "Type Key" : "Tüübi võti",
     "e.g., petition, survey, poll" : "nt. petitsioon, uuring, küsitlus",
     "e.g., Public Petition, Survey" : "nt. Avalik petitsioon, Uuring",
-=======
-    "Configure" : "Seadista",
->>>>>>> origin/release/1.7.5
     "Add Type" : "Lisa tüüp",
     "Edit Inquiry Type" : "Muuda järelpärimise tüüpi",
     "Enable unrestricted owners globally" : "Kasuta üldiseid piiranguteta omanikke",
@@ -1005,12 +995,9 @@ OC.L10N.register(
     "Dutch" : "hollandi keel",
     "Choose Your Language" : "Vali oma keel",
     "Select the language for your template content" : "Vali oma malli sisu keel",
-<<<<<<< HEAD
     "Inquiry Types" : "Järelpärimiste tüübid",
     "Inquiry Statuses" : "Järelpärimiste olekud",
     "Inquiry Group Types" : "Järelpärimisegruppide tüübid",
-=======
->>>>>>> origin/release/1.7.5
     "Unnamed" : "Nimeta",
     "Preparing template data …" : "Valmistan malli andmeid ette…",
     "Analyzing template for duplicates …" : "Analüüsin malli topeltsisu välistamiseks…",
@@ -1045,11 +1032,8 @@ OC.L10N.register(
     "Inquiry support removed!" : "Toetusavaldus on järelpärimisel eemaldatud!",
     "Neutral" : "Neutraalne",
     "Total Participants" : "Osalejaid kokku",
-<<<<<<< HEAD
     "Inquiry settings" : "Järelpärimise seadistused",
     "Change inquiry settings globally (for all accounts)" : "Muuda järelpärimiste üldiseid seadistusi (kõikide kasutajakontode jaoks)",
-=======
->>>>>>> origin/release/1.7.5
     "Share settings" : "Jagamise seadistused",
     "Change share settings globally (for all accounts)" : "Muuda jagamise üldiseid seadistusi (kõikide kasutajakontode jaoks)",
     "Other settings" : "Muud seadistused",
@@ -1072,7 +1056,6 @@ OC.L10N.register(
     "Create New Inquiry Group" : "Lisa uue järelpärimisgrupp",
     "Restore" : "Taasta",
     "Loading archived groups …" : "Laadin arhiveeritud gruppe…",
-<<<<<<< HEAD
     "Failed to load inquiry group" : "Järelpärimisgrupi laadimine ei õnnestunud",
     "Inquiry group {title} added" : "Järelpärimisgrupp „{title}“ on lisatud",
     "_{loadedInquiries} of {countInquiries} inquiry loaded._::_{loadedInquiries} of {countInquiries} inquiries loaded._" : ["{loadedInquiries}/{countInquiries} järelpärimine on laaditud.","{loadedInquiries}/{countInquiries} järelpärimist on laaditud."],
@@ -1089,20 +1072,12 @@ OC.L10N.register(
     "Create New Inquiry" : "Koosta uus järelpärimine",
     "Failed to load public inquiry. The link may be invalid or expired." : "Avaliku järelpärimise laadimine ei õnnestunud. Link võib olla vigane või aegunud.",
     "Failed to load inquiry" : "Järelpärimise laadimine ei õnnestunud",
-=======
-    "Add one or change category!" : "Lisa mõni või muuda  kategooriat!",
-    "Click here to load more" : "Lisateabe laadimiseks vajuta siia",
-    "You are not allowed to access this family" : "Sul puudub ligipääs sellele perekonnale",
->>>>>>> origin/release/1.7.5
     "Title is mandatory" : "Pealkiri on kohustuslik",
     "The inquiry has been saved" : "See järelpärimine on salvestatud",
     "Error saving inquiry!" : "Viga järelpärimise salvestamisel!",
     "Inquiry {title} added" : "„{title}“ järelpärimine on lisatud",
-<<<<<<< HEAD
     "Error loading inquiry" : "Viga järelpärimise laadimisel",
     "You are viewing a public inquiry" : "Sa oled vaatamas avalikku järelpärimist",
-=======
->>>>>>> origin/release/1.7.5
     "Failed to archive or restore the inquiry" : "Järelpärimise arhiveerimine või taastamine ei õnnestunud",
     "All families" : "Kõik perekonnad",
     "Family" : "Perekond",
@@ -1113,13 +1088,9 @@ OC.L10N.register(
     "Recent Inquiries" : "Hiljutised järelpärimised",
     "No recent inquiries" : "Hiljutisi järelpärimisi pole",
     "No inquiry types" : "Järelpärimise tüüpe pole",
-<<<<<<< HEAD
     "No inquiry group types" : "Järelpärimise grupi tüüpe pole",
     "No families configured" : "Ühtegi peret pole seadistatud",
     "404 - inquiry not found" : "404 - järelpärimist ei leidu",
-=======
-    "No families configured" : "Ühtegi peret pole seadistatud",
->>>>>>> origin/release/1.7.5
     "Enter a inquiry or start a new one" : "Sisesta järelpärimine või alusta uut",
     "participated" : "osales",
     "closed" : "suletud",
@@ -1156,10 +1127,7 @@ OC.L10N.register(
     "Validation errors: {errors}" : "Õigsuse kontrollimise vead: {errors}",
     "Error writing option" : "Viga valiku salvestamisel",
     "Invalid value for {field}" : "Vigane väärtus „{field}“ välja jaoks",
-<<<<<<< HEAD
     "No inquiry selected" : "Ükski järelpärimine pole valitud",
-=======
->>>>>>> origin/release/1.7.5
     "Option added" : "Valik on lisatud",
     "Option not found" : "Valikut ei leidu"
 },

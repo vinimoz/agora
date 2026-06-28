@@ -1204,11 +1204,7 @@
     "Loading group settings …" : "Įkeliami grupės nustatymai …",
     "Saving …" : "Įrašoma…",
     "optional" : "nebūtina",
-<<<<<<< HEAD
     "Binary (Yes/No)" : "Vykdomasis failas (Taip/Ne)",
-=======
-    "Binary (Yes/No)" : "Dvejetainis (Taip/Ne)",
->>>>>>> origin/release/1.7.5
     "Ternary (Yes/No/Abstain)" : "Trijų variantų (Taip/Ne/Susilaikau)",
     "Support feature" : "Palaikymo funkcija",
     "Choose the type of support feature for this inquiry" : "Pasirinkite šios užklausos palaikymo funkcijos tipą",
@@ -1571,11 +1567,7 @@
     "Not found" : "Nerasta",
     "No name" : "Vardo nėra",
     "Ternary support (for/against/neutral)" : "Trijų variantų palaikymas (už/prieš/neutrali pozicija)",
-<<<<<<< HEAD
     "Binary support (like/dislike)" : "Vykdomojo failo palaikymas (patinka/nepatinka)",
-=======
-    "Binary support (like/dislike)" : "Dvejetainis palaikymas (patinka/nepatinka)",
->>>>>>> origin/release/1.7.5
     "Support enabled" : "Palaikymas įjungtas",
     "Access" : "Prieiga",
     "Owner" : "Savininkas",

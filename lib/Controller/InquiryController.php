@@ -200,27 +200,6 @@ class InquiryController extends BaseController
         $diffMicro['supportEngine'] = $timerMicro['supportEngine'] - $timerMicro['inquiryLink'];
         $diffMicro['supportResult'] = $timerMicro['supportResult'] - $timerMicro['supportEngine'];
         $diffMicro['supports'] = $timerMicro['supports'] - $timerMicro['supportResult'];
-        $this->logger->error('SUPPORTS', [
-            'supports' => array_map(function(\OCA\Agora\Db\Support $s) {
-                return [
-                    'id' => $s->getId(),
-                    'userId' => $s->getUserId(),
-                    'optionId' => $s->getOptionId(),
-                    'value' => $s->getValue(),
-                    'weight' => $s->getWeight(),
-                ];
-            }, $supports)
-        ]);
-        $this->logger->error('SUPPORTS RESULT', [
-    'supportResult' => array_map(function(\OCA\Agora\Db\SupportResult $s) {
-        return [
-            'id' => $s->getId(),
-            'target_type' => $s->getTargetType(),
-            'target_id' => $s->getTargetId(),
-            'result' => $s->getResult(),
-        ];
-    }, $supportResult)
-]);
 
         if ($withTimings) {
             return [

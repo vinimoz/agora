@@ -157,11 +157,8 @@ OC.L10N.register(
     "Configure" : "Configurar",
     "Close" : "Fechar",
     "Share label" : "Share label",
-<<<<<<< HEAD
     "Resend invitation mail" : "Reenviar e-mail de convite",
     "Resolving of {name} is not possible. The contacts app is not enabled." : "A resolução de {name} não é possível. O aplicativo de contatos não está ativo.",
-=======
->>>>>>> origin/release/1.7.5
     "Link copied to clipboard" : "Ligação copiada para a área de transferência",
     "Error while changing lock status of share {displayName}" : "Erro ao alterar o status de trancamento do compartilhamento {displayName}",
     "Shares" : "Partilhas",
@@ -180,10 +177,7 @@ OC.L10N.register(
     "Change name" : "Alterar nome",
     "Deleted participant" : "Participante excluído",
     "Public link" : "Hiperligação Pública",
-<<<<<<< HEAD
     "Mail could not be resent to {emailAddress}" : "Não foi possível reenvia o e-mail para {emailAddress}",
-=======
->>>>>>> origin/release/1.7.5
     "Switch to list view" : "Mudar visualização para o modo lista",
     "Template" : "Modelo",
     "Language" : "Idioma",
