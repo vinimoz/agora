@@ -49,6 +49,7 @@
             :placeholder="t('agora', 'Select the purpose of this voting method')"
             :reduce="option => option.value"
             label="label"
+            :label-outside="true"
             class="purpose-select"
           />
         </div>
@@ -108,6 +109,7 @@
                   :placeholder="t('agora', 'Choose a Condorcet variant …')"
                   :reduce="option => option.id"
                   label="label"
+                  :label-outside="true"
                   :aria-label="t('agora', 'Select specific Condorcet method variant')"
                   class="subtype-select"
                   >
@@ -348,7 +350,7 @@
                                     :options="getSelectOptions(schema)"
                                     :placeholder="t('agora', 'Select an option')"
                                     :clearable="false"
-                                    label-outside
+                                    :label-outside="true"
                                     class="settings-select"
                                     />
                         </div>

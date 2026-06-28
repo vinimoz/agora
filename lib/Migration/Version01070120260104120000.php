@@ -610,7 +610,6 @@ class Version01070120260104120000 extends SimpleMigrationStep
 			    'support_inquiry_user' => ['inquiry_id', 'user_id'],
 			    'support_option_user' => ['option_id', 'user_id'],
 			    'support_created' => ['created'],
-			    'support_option_value' => ['option_id', 'value'],
 		    ],
 		    Comment::TABLE => [
 			    'comment_inquiry_timestamp' => ['inquiry_id', 'timestamp'],

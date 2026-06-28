@@ -17,7 +17,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'  // ← ADD 'ref' here!
+import { ref, onMounted, watch } from 'vue'  
 import { showSuccess, showError } from '@nextcloud/dialogs'
 import ExportResultsModal from './ExportResultsModal.vue'
 import { useSupportEngineStore } from '../../../stores/supportEngine'
@@ -35,10 +35,12 @@ const emit = defineEmits<{
 }>()
 
 const engineStore = useSupportEngineStore()
-const showExportResult = ref(false)  // Now ref is defined!
+const showExportResult = ref(false) 
 
 // Execute action immediately when component mounts
 const executeAction = async () => {
+ if (!props.show) return
+
   switch (props.actionKey) {
     case 'start_vote':
       await startVote()
@@ -186,8 +188,17 @@ const handleClose = () => {
   emit('close')
 }
 
+watch(() => props.show, (newValue) => {
+  if (newValue) {
+    executeAction()
+  }
+})
+
+
 // Execute immediately when component mounts
 onMounted(() => {
-  executeAction()
+ if (props.show) {
+    executeAction()
+  }
 })
 </script>

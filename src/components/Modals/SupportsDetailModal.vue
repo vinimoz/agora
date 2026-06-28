@@ -34,7 +34,7 @@
 			<!-- Loading -->
 			<div v-if="loading" class="loading-state">
 				<NcLoadingIcon :size="32" />
-				<span>{{ t('agora', 'Loading supports…') }}</span>
+				<span>{{ t('agora', 'Loading supports …') }}</span>
 			</div>
 
 			<!-- Empty -->

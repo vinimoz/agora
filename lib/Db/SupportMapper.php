@@ -224,7 +224,7 @@ public function findSupportById(int $id): ?Support
                 'support_hash' => $supportHash,
             ],
             'value',
-            false
+            true
         );
 
         return $this->findSupportById($id);
@@ -247,7 +247,7 @@ public function findSupportById(int $id): ?Support
             ],
             'value',
             $support->getId(),
-            false
+            true
         );
 
         return $this->findSupportById($support->getId());

@@ -7,7 +7,7 @@
     <div class="family-layout-vote">
         <div v-if="loadingEngines" class="loading-state">
             <NcLoadingIcon :size="40" />
-            <p>{{ t('agora', 'Loading vote interface...') }}</p>
+            <p>{{ t('agora', 'Loading vote interface …') }}</p>
         </div>
 
         <!-- Show header when there's an active engine, even without options -->
@@ -77,7 +77,7 @@
                         @update:reactions="updateReactions"
                         @update:quadratic-votes="updateQuadraticVotes"
                         @update:token-weights="updateTokenWeights"
-                        @vote="(option, value) => submitSingleVote(option, value)"
+                        @vote="(option, value) => submitSingleVote(inquiryId,option, value)"
                         @submit-multi-vote="onSubmitMultiVote"
                         @remove-my-vote="removeMyVote"
                         @select-option="$emit('selectOption', $event)"
@@ -118,7 +118,7 @@
                         @update:reactions="reactions = $event"
                         @update:quadratic-votes="quadraticVotes = $event"
                         @update:token-weights="tokenWeights = $event"
-                        @vote="(option, value) => submitSingleVote(option, value)"
+                        @vote="(option, value) => submitSingleVote(inquiryId,option, value)"
                         @submit-multi-vote="submitMultiVote"
                         @select-option="$emit('selectOption', $event)"
                         />

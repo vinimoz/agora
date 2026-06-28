@@ -136,7 +136,7 @@ class SupportSqlRepository
             'is_json_column' => $isJsonColumn,
             'id' => $id
         ]);
-        
+
         $this->db->executeQuery($sql, $data);
     }
 
@@ -145,22 +145,10 @@ class SupportSqlRepository
      */
     private function normalizeToJsonString(mixed $value): string
     {
-        if (is_array($value)) {
-            return json_encode($value);
-        }
-        if (is_string($value)) {
-            // Check if already valid JSON
-            if (str_starts_with($value, '{') || str_starts_with($value, '[')) {
-                return $value;
-            }
-            return json_encode(['value' => $value]);
-        }
-        if (is_numeric($value)) {
-            return json_encode(['value' => (int)$value]);
-        }
-        if (is_bool($value)) {
-            return json_encode(['value' => $value ? 1 : 0]);
-        }
-        return json_encode(['value' => 0]);
+        return json_encode(
+            $value,
+            JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR
+        );
     }
+
 }

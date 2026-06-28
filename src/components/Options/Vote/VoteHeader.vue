@@ -55,6 +55,7 @@
                         label="title"
                         :reduce="(engine) => engine"
                         class="engine-select"
+			:label-outside="true"
                         @update:model-value="handleEngineChange"
                         >
                         <!-- Custom dropdown option rendering -->

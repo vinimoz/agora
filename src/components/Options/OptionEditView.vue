@@ -332,23 +332,37 @@ const getActionIcon = (icon: string | Component): Component => {
 }
 
 const handleFamilyAction = async (action: Action) => {
-    if (action.modal) {
-        const modalComponent = await loadModalComponent(action.key, activeFamilyData.value?.key)
-        if (modalComponent) {
-            currentModalComponent.value = modalComponent
-            currentActionKey.value = action.key
-            currentActionData.value = action.data || {}
-            showModal.value = true
-            return
-        }
+  // For vote family actions, always use ActionVote component
+  if (activeFamilyData.value?.key === 'vote') {
+    const modalComponent = await loadModalComponent(action.key, 'vote')
+    if (modalComponent) {
+      currentModalComponent.value = modalComponent
+      currentActionKey.value = action.key
+      currentActionData.value = action.data || {}
+      showModal.value = true
+      return
     }
+  }
 
-    if (action.handler) {
-        await action.handler(action.data)
-        return
+  // For other families, check if it's a modal action
+  if (action.modal) {
+    const modalComponent = await loadModalComponent(action.key, activeFamilyData.value?.key)
+    if (modalComponent) {
+      currentModalComponent.value = modalComponent
+      currentActionKey.value = action.key
+      currentActionData.value = action.data || {}
+      showModal.value = true
+      return
     }
+  }
 
-    console.warn(`No handler or modal defined for action: ${action.key}`)
+  // If action has a direct handler
+  if (action.handler) {
+    await action.handler(action.data)
+    return
+  }
+
+  console.warn(`No handler or modal defined for action: ${action.key}`)
 }
 
 const closeModal = () => {

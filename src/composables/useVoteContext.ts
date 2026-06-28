@@ -58,7 +58,7 @@ export interface VoteContext {
   updateReaction: (optionId: number, reaction: string[] | null) => void
   updateQuadratic: (optionId: number, votes: number | null) => void
   updateTokenWeight: (optionId: number, weight: number | null) => void
-  submitSingleVote: (option: Option, value: SupportValue) => Promise<boolean>
+  submitSingleVote: (inquiryId: number, option: Option, value: SupportValue) => Promise<boolean>
   submitMultiVote: () => Promise<boolean>
   resetSelections: () => void
   hasUserVotedFor: (optionId: number) => boolean
@@ -372,7 +372,7 @@ export function useVoteContext(inquiryId: number): VoteContext {
   }
 
   // ---------- Submission ----------
-  const submitSingleVote = async (option: Option, value: SupportValue) => {
+  const submitSingleVote = async (inquiryId: Inquiry, option: Option, value: SupportValue) => {
       if (!canVote.value) return false
           try {
               await supportsStore.toggleSupport(

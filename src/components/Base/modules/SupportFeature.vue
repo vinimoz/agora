@@ -12,8 +12,9 @@
     :no-focus-trap="true"
     placement="bottom"
   >
-    <template #trigger>
+    <template #trigger="{ attrs }">
       <div
+        v-bind="attrs"
         ref="containerRef"
         class="counter-item supports"
         :class="{
