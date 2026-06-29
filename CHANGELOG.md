@@ -1,10 +1,8 @@
-<!--
-  - SPDX-FileCopyrightText: 2017 Nextcloud contributors
-  - SPDX-License-Identifier: CC0-1.0
--->
-
 # Changelog
 All notable changes to this project will be documented in this file.
+# [1.7.5] - 2026-06-28
+New vote/support feature: Majority judgement, Condorcet, score, etc.
+
 # [1.7.3] - 2026-06-8
 Fix: TableManager: createSchemaManager and fix bug binary for support in migration from allow_support to support_feature.
 
