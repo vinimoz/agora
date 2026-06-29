@@ -102,17 +102,16 @@
             </div>
 
             <!-- Dynamic Modals Container -->
-            <component
-                :is="currentModalComponent"
-                v-if="currentModalComponent && showModal"
-                :show="showModal"
-                :family-key="activeFamilyData.key"
-                :inquiry-id="inquiryStore.id"
-                :action-key="currentActionKey"
-                :action-data="currentActionData"
-                @close="closeModal"
-                @action-completed="handleActionCompleted"
-            />
+		  <component
+            :is="currentActionComponent"
+            v-if="currentActionComponent && showActionComponent"
+            :show="showActionComponent"
+            :inquiry-id="inquiryStore.id"
+            :action-key="currentActionKey"
+            :action-data="currentActionData"
+            @close="closeActionComponent"
+            @action-completed="handleActionCompleted"
+        />
 
             <!-- Dynamic Family Layout Component -->
             <component
@@ -231,6 +230,8 @@ const showModal = ref(false)
 const currentActionKey = ref<string | null>(null)
 const currentActionData = ref<unknown>(null)
 const currentModalComponent = ref<Component | null>(null)
+const currentActionComponent = ref<Component | null>(null)
+const showActionComponent = ref(false)
 
 // Refs to dynamic layout components
 const currentFamilyLayoutRef = ref<InstanceType<typeof FamilyLayoutVote> | null>(null)
@@ -331,6 +332,7 @@ const getActionIcon = (icon: string | Component): Component => {
     return icon
 }
 
+/*
 const handleFamilyAction = async (action: Action) => {
   // For vote family actions, always use ActionVote component
   if (activeFamilyData.value?.key === 'vote') {
@@ -363,11 +365,82 @@ const handleFamilyAction = async (action: Action) => {
   }
 
   console.warn(`No handler or modal defined for action: ${action.key}`)
+}*/
+
+const loadActionComponent = async (familyKey: string, actionKey: string): Promise<Component | null> => {
+    const cacheKey = `${familyKey}-${actionKey}`
+
+    if (modalComponentCache.has(cacheKey)) {
+        return modalComponentCache.get(cacheKey)!
+    }
+
+    try {
+        let component: Component | null = null
+
+        // For vote family, always use ActionVue.vue
+        if (familyKey === 'vote') {
+            const module = await import(`./Actions/ActionVote.vue`)
+            component = markRaw(module.default || module)
+        }
+        // For structure family, use ActionStructure.vue
+        else if (familyKey === 'structure') {
+            const module = await import(`./Actions/ActionStructure.vue`)
+            component = markRaw(module.default || module)
+        }
+        // For other families, try to load individual action modals
+        else {
+            const componentName = `${actionKey
+                .split('_')
+                .map(part => part.charAt(0).toUpperCase() + part.slice(1))
+                .join('')}Modal`
+
+            const module = await import(`./Actions/${componentName}.vue`)
+            component = markRaw(module.default || module)
+        }
+
+        if (component) {
+            modalComponentCache.set(cacheKey, component)
+            return component
+        }
+
+        return null
+    } catch (error) {
+        console.error(`Failed to load action component for family "${familyKey}" action "${actionKey}":`, error)
+        return null
+    }
 }
 
-const closeModal = () => {
-    showModal.value = false
-    currentModalComponent.value = null
+const handleFamilyAction = async (action: Action) => {
+    // For all actions, load the appropriate component
+    const familyKey = activeFamilyData.value?.key
+
+    if (!familyKey) {
+        console.warn('No active family found')
+        return
+    }
+
+    const actionComponent = await loadActionComponent(familyKey, action.key)
+
+    if (actionComponent) {
+        currentActionComponent.value = actionComponent
+        currentActionKey.value = action.key
+        currentActionData.value = action.data || {}
+        showActionComponent.value = true
+        return
+    }
+
+    // If no component found, try direct handler
+    if (action.handler) {
+        await action.handler(action.data)
+        return
+    }
+
+    console.warn(`No handler or component defined for action: ${action.key}`)
+}
+
+const closeActionComponent = () => {
+    showActionComponent.value = false
+    currentActionComponent.value = null
     currentActionKey.value = null
     currentActionData.value = null
 }
@@ -376,7 +449,15 @@ const handleActionCompleted = (result: unknown) => {
     if (result?.refreshOptions) {
         optionsStore.load(inquiryStore.id)
     }
-    closeModal()
+    closeActionComponent()
+}
+
+
+const closeModal = () => {
+    showModal.value = false
+    currentModalComponent.value = null
+    currentActionKey.value = null
+    currentActionData.value = null
 }
 
 
