@@ -13,6 +13,9 @@ use OCA\Agora\AppConstants;
 use OCA\Agora\Dashboard\AgoraWidget;
 use OCA\Agora\Db\CommentMapper;
 use OCA\Agora\Db\SupportMapper;
+use OCA\Agora\Db\SupporResultMapper;
+use OCA\Agora\Db\SupportSqlRepository;
+use OCA\Agora\Db\SupportResultSqlRepository;
 use OCA\Agora\Db\AttachmentMapper;
 use OCA\Agora\Db\LogMapper;
 use OCA\Agora\Db\OptionMapper;
@@ -247,6 +250,15 @@ class Application extends App implements IBootstrap
             }
         );
 
+        $context->registerService(
+            SupportResultMapper::class,
+            function (ContainerInterface $c): SupportMapper {
+                return new SupportResultMapper(
+                    $c->get(IDBConnection::class),
+                    $c->get(SupportSqlRepository::class),
+                );
+            }
+        );
 
         $context->registerService(
             SupportMapper::class,
@@ -254,6 +266,7 @@ class Application extends App implements IBootstrap
                 return new SupportMapper(
                     $c->get(IDBConnection::class),
                     $c->get(UserSession::class),
+                    $c->get(SupportSqlRepository::class),
                 );
             }
         );

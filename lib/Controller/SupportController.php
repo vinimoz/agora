@@ -11,6 +11,7 @@ namespace OCA\Agora\Controller;
 
 use OCA\Agora\Db\Support;
 use OCA\Agora\Service\SupportService;
+use OCA\Agora\Service\SupportResultService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\FrontpageRoute;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
@@ -22,33 +23,49 @@ use OCP\IRequest;
  */
 class SupportController extends BaseController
 {
+    private SupportResultService $supportResultService;
+
     public function __construct(
         string $appName,
         IRequest $request,
         private SupportService $supportService,
+        SupportResultService $supportResultService,
     ) {
         parent::__construct($appName, $request);
+        $this->supportResultService = $supportResultService;
     }
 
     /**
      * Add support for an inquiry
-     *
-     * @param int $inquiryId ID of the inquiry to support
-     *
-     * @psalm-return JSONResponse<array{status: string, support: Support}>
      */
     #[NoAdminRequired]
-    #[FrontpageRoute(verb: 'POST', url: '/inquiry/support/{inquiryId}/{userId}/{value}/{optionId}')]
-    public function add(int $inquiryId, string $userId, int $value, int $optionId): JSONResponse
+    #[FrontpageRoute(verb: 'POST', url: '/inquiry/support/{inquiryId}/{userId}/{optionId}')]
+    public function add(int $inquiryId, string $userId, int $optionId): JSONResponse
     {
         return $this->response(
-            function () use ($inquiryId, $userId, $value, $optionId) {
-                if (!in_array($value, [-1, 0, 1], true)) {
-                    throw new \InvalidArgumentException("Invalid support value");
+            function () use ($inquiryId, $userId, $optionId) {
+                $body = json_decode(file_get_contents('php://input'), true);
+                $value = $body['value'] ?? null;
+                $weight = $body['weight'] ?? 1;
+                $engineId = $body['engineId'] ?? null;
+
+                if ($value === null) {
+                    throw new \InvalidArgumentException('Support value is required');
                 }
 
+                $support = $this->supportService->addSupport($inquiryId, $userId, $value, $optionId, $weight, $engineId);
+
+                // Determine target
+                $targetType = $optionId > 0 ? 'option' : 'inquiry';
+                $targetId = $optionId > 0 ? $optionId : $inquiryId;
+
+                // Fetch the stored result
+                $results = $this->supportResultService->getResultsByTarget($targetType, $targetId, $engineId);
+                $resultData = !empty($results) ? $results[0]->getResult() : null;
+
                 return [
-                    'support' => $this->supportService->addSupport($inquiryId, $userId, $value, $optionId),
+                    'support' => $support,
+                    'result' => $resultData,
                 ];
             }
         );
@@ -56,73 +73,108 @@ class SupportController extends BaseController
 
     /**
      * Update support for an inquiry
-     *
-     * @param int $inquiryId ID of the inquiry to support
-     *
-     * @psalm-return JSONResponse<array{status: string, support: Support}>
      */
     #[NoAdminRequired]
-    #[FrontpageRoute(verb: 'PUT', url: '/inquiry/support/{inquiryId}/{userId}/{value}/{optionId}')]
-    public function update(int $inquiryId, string $userId, int $value, int $optionId): JSONResponse
+    #[FrontpageRoute(verb: 'PUT', url: '/inquiry/support/{inquiryId}/{userId}/{optionId}')]
+    public function update(int $inquiryId, string $userId, int $optionId): JSONResponse
     {
         return $this->response(
-            function () use ($inquiryId, $userId, $value, $optionId) {
-                if (!in_array($value, [-1, 0, 1], true)) {
-                    throw new \InvalidArgumentException("Invalid support value");
-                }
+            function () use ($inquiryId, $userId, $optionId) {
+                $body = json_decode(file_get_contents('php://input'), true);
+                $value = $body['value'] ?? null;
+                $weight = $body['weight'] ?? 1;
+                $engineId = $body['engineId'] ?? null;
+
+                $support = $this->supportService->updateSupport($inquiryId, $userId, $value, $optionId, $weight, $engineId);
+
+                $targetType = $optionId > 0 ? 'option' : 'inquiry';
+                $targetId = $optionId > 0 ? $optionId : $inquiryId;
+
+                $results = $this->supportResultService->getResultsByTarget($targetType, $targetId, $engineId);
+                $resultData = !empty($results) ? $results[0]->getResult() : null;
 
                 return [
-                    'support' => $this->supportService->updateSupport($inquiryId, $userId, $value, $optionId),
+                    'support' => $support,
+                    'result' => $resultData,
                 ];
             }
         );
     }
 
-
     /**
-     * Remove support from an user of an inquiry
-     *
-     * @param int $inquiryId ID and userId f the inquiry to remove support from
-     *
-     * @psalm-return JSONResponse<array{status: string}>
-     S>
+     * Remove support from a user for an inquiry
      */
     #[NoAdminRequired]
     #[FrontpageRoute(verb: 'DELETE', url: '/inquiry/support/{inquiryId}/{userId}/{optionId}')]
     public function remove(int $inquiryId, string $userId, int $optionId): JSONResponse
     {
         return $this->response(
-            fn () => [
-                'support' => $this->supportService->removeSupport($inquiryId, $userId, $optionId)
-            ]
+            function () use ($inquiryId, $userId, $optionId) {
+                // Try to get engineId from query or body (optional)
+                $engineId = $this->request->getParam('engineId');
+                if ($engineId === null) {
+                    // fallback: parse from body if sent as JSON
+                    $body = json_decode(file_get_contents('php://input'), true);
+                    $engineId = $body['engineId'] ?? null;
+                }
+
+                $success = $this->supportService->removeSupport($inquiryId, $userId, $optionId, $engineId);
+
+                $targetType = $optionId > 0 ? 'option' : 'inquiry';
+                $targetId = $optionId > 0 ? $optionId : $inquiryId;
+
+                $results = $this->supportResultService->getResultsByTarget($targetType, $targetId, $engineId);
+                $resultData = !empty($results) ? $results[0]->getResult() : null;
+
+                return [
+                    'success' => $success,
+                    'result' => $resultData,
+                ];
+            }
         );
     }
+
+    /**
+     * Remove support with engine context
+     */
+    #[NoAdminRequired]
+    #[FrontpageRoute(verb: 'DELETE', url: '/inquiry/support/{inquiryId}/{userId}/{optionId}/{engineId}')]
+    public function removeWithEngine(int $inquiryId, string $userId, int $optionId, int $engineId): JSONResponse
+    {
+        return $this->response(
+            function () use ($inquiryId, $userId, $optionId, $engineId) {
+                $success = $this->supportService->removeSupport($inquiryId, $userId, $optionId, $engineId);
+
+                $targetType = $optionId > 0 ? 'option' : 'inquiry';
+                $targetId = $optionId > 0 ? $optionId : $inquiryId;
+
+                $results = $this->supportResultService->getResultsByTarget($targetType, $targetId, $engineId);
+                $resultData = !empty($results) ? $results[0]->getResult() : null;
+
+                return [
+                    'success' => $success,
+                    'result' => $resultData,
+                ];
+            }
+        );
+    }
+
     /**
      * Remove all supports for an inquiry
-     *
-     * @param int $inquiryId ID of the inquiry
-     *
-     * @psalm-return JSONResponse<array{status: string}>
      */
     #[FrontpageRoute(verb: 'DELETE', url: '/inquiry/support/inquiry/{inquiryId}/all')]
     public function removeAll(int $inquiryId): JSONResponse
     {
         return $this->response(
             function () use ($inquiryId) {
-                $this->supportService->removeAllSupportForInquiry($inquiryId);
-                return ['status' => 'success'];
+                $count = $this->supportService->removeAllSupportForInquiry($inquiryId);
+                return ['success' => true, 'count' => $count];
             }
         );
     }
 
     /**
-     * Get support for an inquiry
-     /**
-      * Get supports by user
-      *
-      * @param string $userId User ID
-      *
-      * @psalm-return JSONResponse<array{supports: array<Support>}>
+     * Get supports by user
      */
     #[NoAdminRequired]
     #[FrontpageRoute(verb: 'GET', url: '/inquiry/support/user/{userId}')]
@@ -137,10 +189,6 @@ class SupportController extends BaseController
 
     /**
      * Get supports for an inquiry
-     *
-     * @param int $inquiryId ID of the inquiry
-     *
-     * @psalm-return JSONResponse<array{supports: array<Support>}>
      */
     #[NoAdminRequired]
     #[FrontpageRoute(verb: 'GET', url: '/inquiry/support/inquiry/{inquiryId}')]
@@ -153,11 +201,8 @@ class SupportController extends BaseController
         );
     }
 
-
     /**
      * Get support statistics grouped by inquiry type
-     *
-     * @psalm-return JSONResponse<array<string, int>>
      */
     #[FrontpageRoute(verb: 'GET', url: '/inquiry/support/stats/grouped')]
     public function getGroupedStats(): JSONResponse

@@ -234,7 +234,7 @@ const routes: RouteRecordRaw[] = [
   },
 ]
 const router = createRouter({
-    history: createWebHistory(generateUrl('/apps/agora') + '/'),
+    history: createWebHistory(`${generateUrl('/apps/agora')  }/`),
 	routes,
 	linkActiveClass: 'active',
 })
@@ -244,11 +244,6 @@ router.beforeEach(async (to: RouteLocationNormalized, from: RouteLocationNormali
 	let forceReload = false
 
 
-/*        console.group('Router Navigation to:', to.path)
-        console.log('Route name:', to.name)
-        console.log('Route params:', to.params)
-        console.log('Session store exists:', !!sessionStore)
-*/
 
 
 	// if the previous and the requested routes have the same name and

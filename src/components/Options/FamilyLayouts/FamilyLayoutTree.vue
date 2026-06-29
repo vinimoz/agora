@@ -719,7 +719,7 @@ import { ref, computed, onMounted } from 'vue'
 import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcRichContenteditable from '@nextcloud/vue/components/NcRichContenteditable'
-import SupportFeature from '../../../helpers/modules/SupportFeature.vue'
+import { SupportFeature } from '../../Base/index.ts'
 import { DateTime } from 'luxon'
 import DOMPurify from 'dompurify'
 
@@ -749,8 +749,8 @@ import {
 // Types
 import type { Option, OptionType, OptionStoreLike } from '../../../Types/index.ts'
 
-import OptionAddModal from '../OptionAddModal.vue'
-import OptionDetailModal from '../OptionDetailModal.vue'
+import OptionAddModal from '../../Modals/OptionAddModal.vue'
+import OptionDetailModal from '../../Modals/OptionDetailModal.vue'
 
 // Stores
 const inquiryStore = useInquiryStore()

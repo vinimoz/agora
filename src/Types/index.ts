@@ -4,116 +4,54 @@
  */
 
 // ============================================================================
-// SUPPORT DATA - Results
 // ============================================================================
 
+// Re-export voting types for backward compatibility
+export type {
+  BinaryResult,
+  TernaryResult,
+  ScoreResult,
+  RankingResult,
+  CondorcetResult,
+  MajorityJudgmentResult,
+  ReactionResult,
+  ApprovalResult,
+  TrendingResult,
+  SupportResultData,
+  SupportFeature,
+  VotingEngine,
+  Phase,
+  VotingConfiguration,
+  VotingOptions,
+  SupportData,
+  SupportValue,
+} from './votingType'
 
-export interface BinaryResult {
-  type: 'binary'
-  total_yes: number
-  total_no: number
-  percentage_yes: number
-  percentage_no: number
-}
-
-export interface TernaryResult {
-  type: 'ternary'
-  total_yes: number
-  total_no: number
-  total_abstain: number
-  percentage_yes: number
-  percentage_no: number
-  percentage_abstain: number
-}
-
-export interface ScoreResult {
-  type: 'score'
-  total: number
-  average: number
-  median?: number
-  weight_sum?: number
-}
-
-export interface RankingResult {
-  type: 'ranking'
-  rank: number
-  score?: number
-}
-
-export interface CondorcetResult {
-  type: 'condorcet'
-  wins: number
-  losses: number
-  ties: number
-  is_winner: boolean
-  score?: number
-}
-
-export interface MajorityJudgmentResult {
-  type: 'majority_judgment'
-  median: number
-  distribution: Record<number, number>
-}
-
-export interface ReactionResult {
-  type: 'reaction'
-  counts: Record<string, number>
-}
-
-export interface ApprovalResult {
-  type: 'approval'
-  counts: Record<number, number> 
-}
-
-export interface TrendingResult {
-  type: 'trending'
-  score: number
-  components?: {
-    votes?: number
-    activity?: number
-    recency?: number
-  }
-}
-
-export type SupportResultData =
-  | BinaryResult
-  | TernaryResult
-  | ScoreResult
-  | RankingResult
-  | CondorcetResult
-  | MajorityJudgmentResult
-  | ReactionResult
-  | ApprovalResult
-  | TrendingResult
+export {
+  ENGINE_DEFINITIONS,
+  getAvailableEngines,
+  initializeEngineConfig,
+  isValidSupportFeature,
+  isValidPhase,
+} from './votingType'
 
 
 // ============================================================================
 // SUPPORT ENGINE - Core Structure (Multipurpose)
 // ============================================================================
 
-
 export type SupportResultType = SupportResultData['type']
 
 export type SupportEngineTarget = 'inquiry' | 'option'
 
-// ============================================================================
-// PHASES (formerly)
-// ============================================================================
-
-export type Phase =
-  | 'deliberative'    // Discussion / support only
-  | 'voting'          // Formal voting only
-  | 'hybrid'          // Deliberation → Vote
-  | 'filtration'      // Top selection → final vote
-  | 'progressive'     // Iterative consensus
-  | 'liquid'          // Liquid democracy
-
-
 export interface SupportEngine {
   id: number
-  engine: string           // The voting engine type (binary, score, ranked, etc.)
-  type: string             // The support feature type
-  group_id: number
+  engine: string           // The voting engine type (binary, score, ranking, etc.)
+  purpose: string             // The support purpose
+  title: string             // The support feature title
+  description: string             // The support feature description
+  inquiry_group_id: number
+  inquiry_id: number
   status: 'draft' | 'active' | 'closed'
   config: Record<string, unknown>  // Engine-specific configuration
   created: number
@@ -132,145 +70,18 @@ export interface SupportEngine {
   }
 }
 
+
 // ============================================================================
-// SUPPORT PROCESS & RESULTS
+// SUPPORT  RESULTS
 // ============================================================================
+
 export interface SupportResult {
   id: number
-  support_process_id: number
+  support_engine_id: number | null 
   target_type: SupportEngineTarget
   target_id: number        // inquiry_id OR option_id depending on target_type
-  option_id?: number       // For option-specific results (if target_type is 'option')
   result: SupportResultData
   updated: number
-}
-
-
-
-export interface SupportProcess {
-  id: number
-  support_engine_id: number
-  target_type: SupportEngineTarget
-  target_id: number
-  phase: Phase
-  status: 'pending' | 'active' | 'completed' | 'cancelled'
-  started_at: number
-  ended_at?: number
-  results?: SupportResult[]
-  metadata?: Record<string, unknown>
-}
-
-
-// ============================================================================
-// SUPPORT DATA (User votes/supports)
-// ============================================================================
-
-export type SupportFeature =
-  | 'binary'
-  | 'ternary'
-  | 'reaction'
-  | 'star'
-  | 'score'
-  | 'majority_judgment'
-  | 'approval'
-  | 'ranking'
-  | 'trending'
-  | 'none'
-
-export type VotingEngine =
-  | 'binary_voting'
-  | 'ternary_voting'
-  | 'star_voting'
-  | 'majority_judgment'
-  | 'approval_voting'
-  | 'score_voting'
-  | 'ranked_choice'
-  | 'borda_count'
-  | 'condorcet'
-  | 'nauru'
-  | 'schulze'
-  | 'copeland'
-  | 'quadratic'
-  | 'token_weighted'
-  | 'phased_voting'
-
-export type SupportValue =
-  | number              // score, binary, ternary
-  | number[]            // ranking
-  | string              // reaction
-  | string[]            // multi reaction / approval
-  | null
-
-export interface SupportData {
-  id?: number
-  inquiryId: number
-  optionId?: number        // Nullable - can be support for the inquiry itself
-  groupId: number
-  userId: string
-  support_engine_id?: number  // Which engine this support belongs to
-  value: SupportValue
-  created: number
-  metadata?: {
-    reaction?: string
-    weight?: number
-    delegation?: string
-    proof?: string          // For cryptographic voting
-  }
-}
-
-export type SupportInputType = SupportFeature
-
-// ============================================================================
-// VOTING CONFIGURATION
-// ============================================================================
-
-export interface VotingOptions {
-  scale?: {
-    min: number
-    max: number
-    labels?: Record<number, string>
-  }
-  grades?: {
-    values: number[]
-    labels: string[]
-  }
-  reactions?: {
-    available: string[]
-    maxPerUser?: number
-  }
-  ranking?: {
-    maxChoices: number
-    allowTies: boolean
-  }
-  approval?: {
-    maxChoices: number | null
-  }
-  quadratic?: {
-    creditsPerUser: number
-    costFunction: 'square' | 'custom'
-  }
-  tokenWeighted?: {
-    tokenType: string
-    minBalance: number
-    weightFormula: 'linear' | 'sqrt' | 'log'
-  }
-  phased?: {
-    rounds: number
-    eliminationRule: 'bottom' | 'threshold'
-    threshold?: number
-  }
-  quorum?: {
-    type: 'count' | 'percentage' | 'token'
-    value: number
-    scope: 'global' | 'group'
-  }
-}
-
-export interface VotingConfiguration {
-  supportFeature: SupportFeature
-  votingEngine: VotingEngine | null
-  phase: Phase 
-  options?: VotingOptions
 }
 
 
@@ -324,14 +135,25 @@ export interface Option {
   metadata?: {
     votes?: number
     status?: 'leading' | 'selected' | 'normal'
-    support_engine_id?: number  // Active support engine for this option
+    support_engine_id?: number
     [key: string]: unknown
   }
 }
 
+
 // ============================================================================
 // FAMILY TYPES
 // ============================================================================
+
+export interface FamilyFeatures {
+    create_option_button?: boolean
+    real_time_results?: boolean
+    ranking?: boolean
+    tie_breaking?: boolean
+    quorum_tracking?: boolean
+    [key: string]: unknown
+}
+
 
 export interface OptionFamily {
   id: number
@@ -340,7 +162,7 @@ export interface OptionFamily {
   description?: string
   icon: string
   ui: string[]
-  features: string[]
+  features: FamilyFeatures
   rules: string[]
   actions: string[]
   sort_order: number
@@ -361,28 +183,13 @@ export interface InquiryFamily {
   created: number
 }
 
-// ============================================================================
-// ENGINE CONFIGURATION HELPERS
-// ============================================================================
-
-export interface EngineConfig {
-  min_choices?: number
-  max_choices?: number | null
-  max_rank?: number | null
-  min?: number
-  max?: number
-  grades?: string[]
-  allowed_reactions?: string[]
-  method?: string
-  credits_per_user?: number
-  weight_source?: unknown
-  normalization?: string
-  // Phase-specific configs
-  phase_transition?: {
-    auto_advance: boolean
-    conditions?: Record<string, unknown>
-  }
+export interface OptionFamilyEvent {
+  optionId: number
+  familyKey: 'vote' | 'kanban' | 'timeline'
+  action: 'added' | 'removed'  
 }
+
+export type FamilyType = 'vote' | 'timeline' | 'kanban'
 
 // ============================================================================
 // UTILITY TYPES
@@ -391,27 +198,13 @@ export interface EngineConfig {
 export type ButtonMode = 'navigation' | 'actionMenu' | 'native'
 
 export type StatusResults =
-  | 'error'
-  | 'warning'
-  | 'success'
-  | 'loading'
-  | 'loaded'
-  | 'unchanged'
-  | ''
+  | 'error' | 'warning' | 'success' | 'loading' | 'loaded' | 'unchanged' | ''
 
 export type SignalingType = '' | 'empty' | 'error' | 'valid' | 'invalid' | 'success' | 'checking'
 
 export type UserType =
-  | 'email'
-  | 'external'
-  | 'contact'
-  | 'user'
-  | 'group'
-  | 'admin'
-  | 'public'
-  | 'circle'
-  | 'contactGroup'
-  | ''
+  | 'email' | 'external' | 'contact' | 'user' | 'group'
+  | 'admin' | 'public' | 'circle' | 'contactGroup' | ''
 
 export type VirtualUserItemType = 'addPublicLink' | 'internalAccess' | 'deleted' | 'anonymous'
 
@@ -497,11 +290,4 @@ export function createDefault<T>(): T {
   return {} as T
 }
 
-// Type guards
-export function isValidSupportFeature(feature: string): feature is SupportFeature {
-  return ['binary', 'ternary', 'reaction', 'star', 'score', 'majority_judgment', 'approval', 'ranking', 'trending', 'none'].includes(feature)
-}
-
-export function isValidPhase(phase: string): phase is Phase {
-  return ['deliberative', 'voting', 'hybrid', 'filtration', 'progressive', 'liquid'].includes(phase)
-}
+export type { SupportTemplate } from './votingType'

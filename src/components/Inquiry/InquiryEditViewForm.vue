@@ -17,12 +17,17 @@ import { useRoute } from 'vue-router'
 import {
   getInquiryTypeData,
 } from '../../helpers/modules/InquiryHelper.ts'
-
-import SupportFeature from '../../helpers/modules/SupportFeature.vue'
+import {
+  getFamiliesWithOptionTypes,
+    // getLayoutForFamily,
+} from '../../helpers/modules/InquiryOptionHelper'
+import { SupportFeature } from '../Base/index.ts'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
 import NcAvatar from '@nextcloud/vue/components/NcAvatar'
+import NcCounterBubble from '@nextcloud/vue/components/NcCounterBubble'
+
 import { NcTextArea } from '@nextcloud/vue'
 import NcRichContenteditable from '@nextcloud/vue/components/NcRichContenteditable'
 
@@ -81,6 +86,25 @@ const inquiryTypeData = computed(() => {
   const data = getInquiryTypeData(inquiryStore.type, sessionStore.appSettings.inquiryTypeTab || [])
   return data
 })
+
+
+
+// Computed for families and options
+const allInquiryTypes = computed<InquiryType[]>(() =>
+    sessionStore.appSettings?.inquiryTypeTab || []
+)
+
+const allOptionTypes = computed<OptionType[]>(() =>
+    sessionStore.appSettings?.inquiryOptionTypeTab || []
+)
+
+
+const hasVisibleFamilies = computed(() => getFamiliesWithOptionTypes(
+        inquiryStore.type,
+        allInquiryTypes.value,
+        allOptionTypes.value
+    ).length > 0)
+
 
 const availableInquiryStatuses = computed(() => {
   const statusesFromSettings = sessionStore.appSettings.inquiryStatusTab
@@ -538,7 +562,7 @@ return isPublicRoute
                             <component :is="InquiryGeneralIcons.Comment" :size="20" />
                         </div>
                         <div class="counter-content">
-                            <span class="counter-value">{{ inquiryStore.status.countComments || 0 }}</span>
+                            <NcCounterBubble :count="inquiryStore.status.countComments || 0" :raw="true" />
                             <span class="counter-label">{{ t('agora', 'Comments') }}</span>
                         </div>
                     </div>
@@ -707,7 +731,8 @@ return isPublicRoute
                 </div>
             </div>
         </div>
-        <OptionEditView :inquiry-id="inquiryStore.id"/>
+
+        <OptionEditView v-if="hasVisibleFamilies" :has-visible-families="hasVisibleFamilies"/>
     </div>
 </template>
 

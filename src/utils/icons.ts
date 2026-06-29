@@ -316,6 +316,7 @@ export const InquiryGeneralIcons: Record<string, Component> = {
   Empty: makeIconComponent(InboxRemove, '#999'),
   Drag: makeIconComponent(DragHorizontal, '#999'),
   FolderMultiple: makeIconComponent(FolderMultiple, '#546E7A'),
+  ViewKanban: makeIconComponent(ViewDashboard, '#607D8B'),  // Using view-dashboard as alternative
   IdCard: makeIconComponent(IdCard, '#546E7A'),
   Newspaper: makeIconComponent(Newspaper, '#546E7A'),
   Megaphone: makeIconComponent(Megaphone, '#C62828'),
@@ -368,6 +369,7 @@ export const InquiryGeneralIcons: Record<string, Component> = {
   ThumbDown: makeIconComponent(ThumbDownOutline, '#C62828'),
   Thumb: makeIconComponent(ThumbUp, '#1976D2'),
   TownHall: makeIconComponent(TownHall, '#1976D2'),
+  Timeline: makeIconComponent(CalendarMultiselect, '#607D8B'), 
   Talk: makeIconComponent(ChatOutline, '#0097A7'),
   CommentAlert: makeIconComponent(CommentAlert, '#0097A7'),
   Collectives: makeIconComponent(AccountGroup, '#6D4C41'),

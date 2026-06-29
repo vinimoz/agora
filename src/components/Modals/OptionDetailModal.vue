@@ -13,7 +13,7 @@
             <!-- Loading state -->
             <div v-if="isLoading" class="loading-state">
                 <NcLoadingIcon :size="48" />
-                <p>{{ t('agora', 'Loading option details …') }}</p>
+                <p>{{ t('agora', 'Loading option details …') }}</p>
             </div>
 
             <!-- Error state -->
@@ -202,7 +202,7 @@
                                         <div class="comment-container">
                                             <div class="comment-count-badge">
                                                 <component :is="InquiryOptionIcons.Comment" :size="16" />
-                                                <span>{{ optionStore.status.countComments || 0 }}</span>
+                                                 <NcCounterBubble :count="optionStore.status.countComments || 0" :raw="true" />
                                             </div>
                                             <NcButton
                                                 type="tertiary"
@@ -330,17 +330,19 @@ import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcRichContenteditable from '@nextcloud/vue/components/NcRichContenteditable'
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
+import NcCounterBubble from '@nextcloud/vue/components/NcCounterBubble' 
+
 import { DateTime } from 'luxon'
 import Pencil from 'vue-material-design-icons/Pencil.vue'
-import MiscFieldsEditor from './MiscFieldsEditor.vue'
+import MiscFieldsEditor from '../Options/MiscFieldsEditor.vue'
 
 import { useCommentsStore } from '../../stores/comments'
 import { useOptionsStore } from '../../stores/options'
 import { useOptionStore } from '../../stores/option'
 import { useSessionStore } from '../../stores/session'
 import { InquiryOptionIcons } from '../../utils/icons.ts'
-import SupportFeature from '../../helpers/modules/SupportFeature.vue'
-import OptionCard from './OptionCard.vue'
+import { SupportFeature } from '../Base/index.ts'
+import OptionCard from '../Options/OptionCard.vue'
 import {
     getOptionTypeLabel as getOptionTypeLabelHelper,
     getOptionTypeIconComponent,

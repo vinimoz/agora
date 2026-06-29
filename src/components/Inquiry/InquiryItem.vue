@@ -9,7 +9,8 @@ import { computed } from 'vue'
 import { DateTime } from 'luxon'
 import { t } from '@nextcloud/l10n'
 import NcAvatar from '@nextcloud/vue/components/NcAvatar'
-import SupportFeature from '../../helpers/modules/SupportFeature.vue'
+import NcCounterBubble from '@nextcloud/vue/components/NcCounterBubble'
+import { SupportFeature } from '../Base/index.ts'
 import {
   canComment,
   canSupport,
@@ -262,7 +263,7 @@ const hasVotePeriod = computed(() => inquiry.miscFields?.support_start && inquir
           "
         >
           <component :is="StatusIcons.ForumOutline" :size="12" class="icon" />
-            <span>{{ inquiry.status.countComments || 0 }}</span>
+             <NcCounterBubble :count="inquiry.status.countComments || 0" :raw="true" />
         </div>
 
         <div
@@ -270,6 +271,7 @@ const hasVotePeriod = computed(() => inquiry.miscFields?.support_start && inquir
           class="badge-bubble"
           >
                             <SupportFeature
+                                     :key="inquiry.id + '-' + (inquiry.status?.countSupports ?? 0)"
                                     :item="inquiry"
                                     item-type="inquiry"
                                     :context="context"
@@ -289,7 +291,7 @@ const hasVotePeriod = computed(() => inquiry.miscFields?.support_start && inquir
                         "
                 >
                 <component :is="BadgeIcons.Participated" :size="16" class="icon" />
-                <span>{{ inquiry.status.countParticipants }}</span>
+               <NcCounterBubble :count="inquiry.status.countParticipants || 0" :raw="true" />
         </div>
 
            <!-- User info section -->
@@ -430,7 +432,7 @@ const hasVotePeriod = computed(() => inquiry.miscFields?.support_start && inquir
                                             "
                                     >
                                     <component :is="BadgeIcons.Participated" :size="14" />
-                                    <span>{{ inquiry.status.countParticipants }}</span>
+                                    <NcCounterBubble :count="inquiry.status.countParticipants || 0" :raw="true" />
                             </div>
 
                             <!-- Only show expire when no vote period -->
@@ -451,7 +453,8 @@ const hasVotePeriod = computed(() => inquiry.miscFields?.support_start && inquir
                                             "
                                     >
                                     <component :is="StatusIcons.ForumOutline" :size="14" />
-                                    <span>{{ inquiry.status.countComments || 0 }}</span>
+                                    <NcCounterBubble :count="inquiry.status.countComments || 0" :raw="true" />
+
                             </div>
 
                             <SupportFeature
@@ -524,6 +527,12 @@ const hasVotePeriod = computed(() => inquiry.miscFields?.support_start && inquir
 </template>
 
 <style lang="scss" scoped>
+// Common variables for consistent metadata chips
+$metadata-chip-bg: var(--color-background-dark);
+$metadata-chip-radius: 16px;
+$metadata-chip-padding: 4px 8px;
+$metadata-gap: 4px;
+
 .inquiry-item {
     &.list-view {
         display: flex;
@@ -548,7 +557,7 @@ const hasVotePeriod = computed(() => inquiry.miscFields?.support_start && inquir
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 4px;
+            gap: $metadata-gap;
         }
 
         .item__title {
@@ -593,18 +602,22 @@ const hasVotePeriod = computed(() => inquiry.miscFields?.support_start && inquir
             align-items: center;
             justify-content: flex-end;
 
-            .badge-bubble {
+            // UNIFIED STYLES: All metadata chips (badge-bubble and metadata-item) get same background
+            .badge-bubble,
+            .metadata-item {
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
-                border-radius: 16px;
-                padding: 4px 8px;
+                gap: $metadata-gap;
+                border-radius: $metadata-chip-radius;
+                padding: $metadata-chip-padding;
                 font-size: 0.8rem;
                 line-height: 1;
                 min-height: 32px;
-                min-width: 32px;
+                background-color: $metadata-chip-bg;
                 transition: all 0.2s ease;
 
+                // Override specific backgrounds to maintain consistency
                 &.error {
                     background-color: var(--color-error);
                     color: white;
@@ -623,19 +636,21 @@ const hasVotePeriod = computed(() => inquiry.miscFields?.support_start && inquir
                     border-color: var(--color-success);
                 }
 
+                // Remove special background for participated - make it consistent
                 &.participated {
-                    background-color: var(--color-success);
-                    color: white;
-                    border-color: var(--color-success);
-                }
-
-                &.status--inquiry {
+                    background-color: $metadata-chip-bg;
                 }
 
                 .icon {
-                    margin-right: 4px;
                     display: flex;
                     align-items: center;
+                }
+
+                // SupportFeature wrapper inside badge needs same styling
+                .support-feature-wrapper {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: $metadata-gap;
                 }
 
                 // Quorum compact style inside badge
@@ -657,6 +672,13 @@ const hasVotePeriod = computed(() => inquiry.miscFields?.support_start && inquir
                         margin-left: 2px;
                     }
                 }
+            }
+
+            // Parent link should remain transparent
+            .metadata-item.parent-link {
+                background-color: transparent;
+                padding: 0;
+                min-height: auto;
             }
 
             .user-bubble__wrapper {
@@ -838,25 +860,21 @@ const hasVotePeriod = computed(() => inquiry.miscFields?.support_start && inquir
                         gap: 8px;
                     }
 
+                    // UNIFIED STYLES: All metadata items get consistent background
                     .metadata-item {
-                        display: flex;
+                        display: inline-flex;
                         align-items: center;
-                        gap: 4px;
-                        padding: 4px 8px;
-                        border-radius: 6px;
+                        gap: $metadata-gap;
+                        padding: $metadata-chip-padding;
+                        border-radius: $metadata-chip-radius;
                         font-size: 12px;
-                        color: var(--color-text-maxcontrast);
-                        background-color: var(--color-background-dark);
+                        color: var(--color-main-text);
+                        background-color: $metadata-chip-bg;
                         white-space: nowrap;
 
-                        &.parent-link {
-                            background-color: transparent;
-                            padding: 2px 4px;
-                        }
-
+                        // Remove special background colors for consistency
                         &.participated {
-                            background-color: var(--color-success-light);
-                            color: var(--color-success);
+                            background-color: $metadata-chip-bg;
                         }
 
                         &.comments,
@@ -867,6 +885,19 @@ const hasVotePeriod = computed(() => inquiry.miscFields?.support_start && inquir
                             &:hover {
                                 background-color: var(--color-background-darker);
                             }
+                        }
+
+                        // Parent link remains transparent
+                        &.parent-link {
+                            background-color: transparent;
+                            padding: 2px 4px;
+                        }
+
+                        // SupportFeature needs consistent styling - wrap in a span with this class
+                        .support-feature-wrapper {
+                            display: inline-flex;
+                            align-items: center;
+                            gap: $metadata-gap;
                         }
 
                         // Quorum compact style inside badge for grid mode
@@ -908,15 +939,16 @@ const hasVotePeriod = computed(() => inquiry.miscFields?.support_start && inquir
                         gap: 8px;
                     }
 
+                    // UNIFIED STYLES: Vote date boxes get same background as metadata items
                     .vote-date-box {
                         display: flex;
                         align-items: center;
-                        gap: 4px;
-                        padding: 6px 10px;
-                        background-color: var(--color-background-dark);
-                        border-radius: 6px;
+                        gap: $metadata-gap;
+                        padding: $metadata-chip-padding;
+                        background-color: $metadata-chip-bg;
+                        border-radius: $metadata-chip-radius;
                         font-size: 11px;
-                        color: var(--color-text-maxcontrast);
+                        color: var(--color-main-text);
                         flex: 1;
 
                         &.start-date {
@@ -953,7 +985,7 @@ const hasVotePeriod = computed(() => inquiry.miscFields?.support_start && inquir
                         .date-item {
                             display: flex;
                             align-items: center;
-                            gap: 4px;
+                            gap: $metadata-gap;
                             white-space: nowrap;
 
                             &.last-interaction,

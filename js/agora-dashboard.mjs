@@ -10,12 +10,12 @@
     console.error("vite-plugin-css-injected-by-js", e);
   }
 })();
-const U = "agora", j = "1.7.3";
-import { d as b, q as a, s as q, o as p, c as v, g as l, e as _, h as s, v as e, D, b as I, f as C, t as u, E as S, l as w, _ as x, z as L, A as N } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_f6cfe8f3_lang-B6qJqDjp.chunk.mjs";
-import { _ as E } from "./agora-icon-D0469xb5.chunk.mjs";
-import { a as M, b as T, N as A, s as g, L as B, g as k, I as V } from "./NcDashboardWidget-CvpYMKur-Bg5G_TIL.chunk.mjs";
-const z = ["href"], O = { class: "inquiry-item__item" }, W = { class: "type-icon" }, $ = { class: "item__title" }, F = { class: "item__title__title" }, G = { class: "item__title__description" }, P = b({ __name: "Dashboard", setup(c) {
-  const o = M(), d = { emptyContentMessage: a("agora", "No inquiries found for this category"), showMoreText: a("agora", "Relevant inquiries") }, h = w(() => o.appSettings.inquiryTypeTab || []), n = T();
+const R = "agora", U = "1.7.5";
+import { d as b, q as a, s as q, o as p, c as v, g as l, e as _, h as s, v as e, H as I, b as D, f as C, t as u, I as S, l as w, _ as x, z as L, A as N } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_33f034c5_lang-f8L7Y3yB.chunk.mjs";
+import { _ as M } from "./agora-icon-velAqvZn.chunk.mjs";
+import { d as T, e as A, N as E, s as g, L as B, g as k, I as V } from "./NcDashboardWidget-CvpYMKur-DELyE4GR.chunk.mjs";
+const z = ["href"], O = { class: "inquiry-item__item" }, W = { class: "type-icon" }, $ = { class: "item__title" }, F = { class: "item__title__title" }, G = { class: "item__title__description" }, H = b({ __name: "Dashboard", setup(c) {
+  const o = T(), d = { emptyContentMessage: a("agora", "No inquiries found for this category"), showMoreText: a("agora", "Relevant inquiries") }, h = w(() => o.appSettings.inquiryTypeTab || []), n = A();
   function m() {
     try {
       o.load(null, false, false);
@@ -40,9 +40,9 @@ const z = ["href"], O = { class: "inquiry-item__item" }, W = { class: "type-icon
   }
   return q(() => {
     m(), y();
-  }), (i, r) => (p(), v("div", null, [l(e(A), { items: e(n).dashboardList, "empty-content-message": d.emptyContentMessage, "show-more-text": d.showMoreText, loading: e(n).inquiriesLoading }, { emptyContentIcon: _(() => [l(e(E))]), default: _(({ item: t }) => [s("a", { href: e(D)(`/apps/agora/page/inquiry/${t.id}`) }, [s("div", O, [s("div", W, [(p(), I(C(f(t)), { class: "nav-icon" }))]), s("div", $, [s("div", F, u(t.title), 1), s("div", G, u(e(S).sanitize(t.description ? t.description : e(a)("agora", "No description provided"))), 1)])])], 8, z)]), _: 1 }, 8, ["items", "empty-content-message", "show-more-text", "loading"])]));
-} }), R = x(P, [["__scopeId", "data-v-83ac5e0f"]]);
+  }), (i, r) => (p(), v("div", null, [l(e(E), { items: e(n).dashboardList, "empty-content-message": d.emptyContentMessage, "show-more-text": d.showMoreText, loading: e(n).inquiriesLoading }, { emptyContentIcon: _(() => [l(e(M))]), default: _(({ item: t }) => [s("a", { href: e(I)(`/apps/agora/page/inquiry/${t.id}`) }, [s("div", O, [s("div", W, [(p(), D(C(f(t)), { class: "nav-icon" }))]), s("div", $, [s("div", F, u(t.title), 1), s("div", G, u(e(S).sanitize(t.description ? t.description : e(a)("agora", "No description provided"))), 1)])])], 8, z)]), _: 1 }, 8, ["items", "empty-content-message", "show-more-text", "loading"])]));
+} }), P = x(H, [["__scopeId", "data-v-83ac5e0f"]]);
 document.addEventListener("DOMContentLoaded", () => {
-  OCA.Dashboard.register("agora", (c) => L(R).use(N).mount(c));
+  OCA.Dashboard.register("agora", (c) => L(P).use(N).mount(c));
 });
 //# sourceMappingURL=agora-dashboard.mjs.map

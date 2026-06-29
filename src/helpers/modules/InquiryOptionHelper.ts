@@ -158,6 +158,61 @@ export function getAllowedOptionTypes(
   return result
 }
 
+
+/**
+ * Get the support feature type as a string
+ * @param optionTypeKey - The option type key
+ * @param optionTypes - All option types
+ */
+export function getSupportFeatureType(
+  optionTypeKey: string | null | undefined,
+  optionTypes: InquiryOptionType[]
+): 'ternary' | 'binary' | 'simple' | 'none' {
+  if (!optionTypeKey) return 'none'
+  
+  const hasSupport = hasSupportFeature(optionTypeKey, optionTypes)
+  if (!hasSupport) return 'none'
+  
+  const label = getSupportFeatureLabel(optionTypeKey, optionTypes).toLowerCase()
+  if (label.includes('ternary')) return 'ternary'
+  if (label.includes('binary')) return 'binary'
+  return 'simple'
+}
+
+/**
+ * Get all family keys from option types
+ * @param optionTypes - All option types
+ */
+export function getAllFamilyKeys(optionTypes: InquiryOptionType[]): string[] {
+  const families = new Set<string>()
+  optionTypes.forEach(opt => {
+    if (opt.family) {
+      families.add(opt.family)
+    }
+  })
+  return Array.from(families)
+}
+
+/**
+ * Get option types count by family
+ * @param options - List of options
+ * @param optionTypes - All option types
+ */
+export function getOptionsCountByFamily(
+  options: Option[],
+  optionTypes: InquiryOptionType[]
+): Record<string, number> {
+  const counts: Record<string, number> = {}
+  
+  options.forEach(option => {
+    const family = getOptionTypeFamily(option.type, optionTypes)
+    counts[family] = (counts[family] || 0) + 1
+  })
+  
+  return counts
+}
+
+
 /**
  * Group option types by their family
  * @param optionTypes

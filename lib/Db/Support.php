@@ -1,4 +1,5 @@
 <?php
+// Db/Support.php
 
 declare(strict_types=1);
 
@@ -17,11 +18,10 @@ use JsonSerializable;
  * @psalm-suppress UnusedProperty
  * @method         int getId()
  * @method         void setId(int $value)
- * @method         int getValue()
- * @method         void setValue(int $value)
+ * @method         mixed getValue()
+ * @method         void setValue(mixed $value)
  * @method         string getSupportHash()
  * @method         void setSupportHash(string $value)
- * @method         string getSupportHash()
  * @method         int getInquiryId()
  * @method         void setInquiryId(int $value)
  * @method         int getOptionId()
@@ -30,10 +30,12 @@ use JsonSerializable;
  * @method         void setUserId(string $value)
  * @method         int getCreated()
  * @method         void setCreated(int $value)
- * @method         int getInquiryId()
- * @method         void setInquiryId(int $value)
- * @method         string getUserId()
- * @method         void setUserId(string $value)
+ * @method         int getUpdated()
+ * @method         void setUpdated(int $value)
+ * @method         int getWeight()
+ * @method         void setWeight(int $value)
+ * @method         int|null getSupportEngineId()
+ * @method         void setSupportEngineId(?int $value)
  */
 class Support extends Entity implements JsonSerializable
 {
@@ -42,10 +44,13 @@ class Support extends Entity implements JsonSerializable
     // Schema columns
     protected int $inquiryId = 0;
     protected int $optionId = 0;
-    protected int $value = 0;
+    protected mixed $value = null;
+    protected int $weight = 1;
     protected string $supportHash = '';
     protected string $userId = '';
-    protected string $created = '';
+    protected int $created = 0;
+    protected ?int $supportEngineId = null;
+    protected int $updated = 0; 
 
     // Computed attributes
     protected ?UserBase $user = null;
@@ -54,10 +59,13 @@ class Support extends Entity implements JsonSerializable
     {
         $this->addType('id', 'integer');
         $this->addType('inquiryId', 'integer');
-        $this->addType('value', 'integer');
         $this->addType('optionId', 'integer');
+        $this->addType('value', 'json');
+        $this->addType('weight', 'integer');
         $this->addType('userId', 'string');
         $this->addType('created', 'integer');
+        $this->addType('updated', 'integer');
+        $this->addType('supportEngineId', 'integer');
     }
 
     public function getUser(): ?UserBase
@@ -80,6 +88,85 @@ class Support extends Entity implements JsonSerializable
         $this->setUserId($user->getId());
     }
 
+    public function setValue(mixed $value): void
+    {
+         \OCP\Server::get(\Psr\Log\LoggerInterface::class)->debug('Support::setValue received', [
+        'type' => gettype($value),
+        'value' => is_array($value) ? json_encode($value) : $value
+         ]);
+
+        // If it's already a string (possibly JSON), store as-is
+        if (is_string($value)) {
+            $this->value = $value;
+            return;
+        }
+
+        // If it's an array, encode to JSON
+        if (is_array($value)) {
+            $this->value = json_encode($value);
+            return;
+        }
+
+        // For primitive types, convert to appropriate format
+        if (is_bool($value)) {
+            $this->value = json_encode(['value' => $value ? 1 : 0]);
+            return;
+        }
+
+        if (is_numeric($value)) {
+            $this->value = json_encode(['value' => (int)$value]);
+            return;
+        }
+
+
+        // Fallback
+        $this->value = json_encode(['value' => 0]);
+    }
+    /**
+     * Get value with JSON decoding if needed
+     */
+    public function getValue(): mixed
+    {
+        if (is_string($this->value)) {
+            $decoded = json_decode($this->value, true);
+            if (json_last_error() === JSON_ERROR_NONE) {
+                return $decoded;
+            }
+        }
+        return $this->value;
+    }
+
+    /**
+     * Get the value as a decoded PHP array/object
+     */
+    public function getValueDecoded(): mixed
+    {
+        $value = $this->getValue();
+        if (is_string($value)) {
+            return json_decode($value, true);
+        }
+        return $value;
+    }
+
+    /**
+     * Set the value, automatically encoding if needed
+     */
+    public function setValueEncoded(mixed $value): void
+    {
+        if (is_array($value) || is_object($value)) {
+            $value = json_encode($value, JSON_UNESCAPED_UNICODE);
+        }
+        $this->setValue($value);
+    }
+
+    /**
+     * Get raw value (for database operations)
+     */
+    public function getRawValue(): mixed
+    {
+        return $this->value;
+    }
+
     /**
      * @return array
      *
@@ -95,7 +182,10 @@ class Support extends Entity implements JsonSerializable
             'userId' => $this->getUserId(),
             'user' => $this->getUser(),
             'value' => $this->getValue(),
+            'weight' => $this->getWeight(),
             'created' => $this->getCreated(),
+            'updated' => $this->getUpdated(),
+            'supportEngineId' => $this->getSupportEngineId(),
         ];
     }
 }

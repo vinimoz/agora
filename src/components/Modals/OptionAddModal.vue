@@ -247,8 +247,8 @@ import {
 } from '../../helpers/modules/MiscFieldsHelper'
 
 // Import components
-import MiscFieldsEditor from './MiscFieldsEditor.vue'
-import OptionCard from './OptionCard.vue'
+import MiscFieldsEditor from '../Options/MiscFieldsEditor.vue'
+import OptionCard from '../Options/OptionCard.vue'
 
 // Props
 const props = defineProps<{
@@ -456,7 +456,7 @@ const previewOption = computed((): Option => {
     parentId: props.parentId || 0,
     type: props.optionType || '',
     title: formData.value.title || t('agora', 'Preview Title'),
-    text: formData.value.text || t('agora', 'Preview text …'),
+    text: formData.value.text || t('agora', 'Preview text …'),
     textSafe: '',
     sortOrder: 0,
     configuration: {

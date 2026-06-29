@@ -24,7 +24,7 @@
             v-model="selectedOption"
             type="options"
             :inquiry-id="inquiryId"
-            :placeholder="t('agora', 'Search by title or #id …')"
+            :placeholder="t('agora', 'Search by title or #id …')"
             class="search-select"
           />
         </div>
@@ -88,66 +88,6 @@
 
         <!-- Configuration section for vote family -->
         <div v-if="familyType === 'vote' && selectedOption" class="vote-config-section">
-          <div class="config-header">
-            <Settings :size="18" />
-            <h4>{{ t('agora', 'Voting configuration') }}</h4>
-          </div>
-
-          <div class="engine-info-message">
-            <div class="engine-badge-display">
-              <component :is="getEngineIcon(currentEngineId)" :size="16" />
-              <span>{{ getEngineLabel(currentEngineId) }}</span>
-              <span class="engine-badge-mini" :class="currentEngineBehavior">
-                {{ getBehaviorLabel(currentEngineBehavior) }}
-              </span>
-            </div>
-            <p class="engine-description">
-              {{ currentEngineDescription }}
-            </p>
-          </div>
-
-          <div v-if="hasConfigFields" class="engine-config-details">
-            <div class="config-fields">
-              <div v-for="(schema, key) in currentConfigSchema" :key="key" class="config-field">
-                <label>{{ schema.label || key }}</label>
-                
-                <input
-                  v-if="schema.type === 'number'"
-                  v-model.number="engineConfig[key]"
-                  type="number"
-                  :min="schema.min"
-                  :max="schema.max"
-                  class="config-input"
-                />
-                
-                <input
-                  v-else-if="schema.type === 'string'"
-                  v-model="engineConfig[key]"
-                  type="text"
-                  class="config-input"
-                />
-                
-                <label v-else-if="schema.type === 'boolean'" class="checkbox-label">
-                  <input v-model="engineConfig[key]" type="checkbox" />
-                  <span>{{ t('agora', 'Enable') }}</span>
-                </label>
-                
-                <select
-                  v-else-if="schema.type === 'array' && schema.options"
-                  v-model="engineConfig[key]"
-                  class="config-select"
-                >
-                  <option v-for="opt in schema.options" :key="opt" :value="opt">
-                    {{ opt }}
-                  </option>
-                </select>
-
-                <p v-if="schema.description" class="config-description">
-                  {{ schema.description }}
-                </p>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
 
@@ -162,7 +102,7 @@
           @click="add"
         >
           <component :is="actionIcon" :size="16" />
-          {{ loading ? t('agora', 'Adding …') : actionButtonText }}
+          {{ loading ? t('agora', 'Adding …') : actionButtonText }}
         </button>
       </div>
     </div>
@@ -178,42 +118,29 @@ import { showSuccess, showError } from '@nextcloud/dialogs'
 import SearchSelect from '../Base/modules/SearchSelect.vue'
 import { useInquiryStore } from '../../stores/inquiry'
 import { useOptionsStore } from '../../stores/options'
-import type { Option, EngineDefinition, MiscField } from '../../Types/index'
+import type { Option,  MiscField, FamilyType } from '../../Types/index'
 
 import {
   Plus,
   Vote,
-  Settings,
-  ThumbsUp,
-  Scale,
-  Heart,
-  Star,
-  CheckCircle,
-  TrendingUp,
-  Award,
-  Brain,
-  Gauge,
-  Users,
   LayoutGrid,
   Clock,
   Check
 } from 'lucide-vue-next'
 
 // Types
-type FamilyType = 'vote' | 'timeline' | 'kanban'
 
 // Props
 const props = defineProps<{
   familyType: FamilyType
-  currentEngineId?: string
-  currentEngineDefinition?: EngineDefinition
-  // currentEngineConfig?: Record<string, unknown>
 }>()
 
 const emit = defineEmits<{
   close: []
   success: []
+   optionFamilyChanged: [payload: { optionId: number, familyKey: string, action: 'added' }]
 }>()
+
 
 const inquiryStore = useInquiryStore()
 const optionsStore = useOptionsStore()
@@ -231,7 +158,6 @@ const selectedOption = ref<Option | null>(null)
 const startDate = ref<Date | null>(null)
 const endDate = ref<Date | null>(null)
 const targetStatus = ref<string | null>(null)
-const engineConfig = ref<Record<string, unknown>>({})
 const loading = ref(false)
 
 // Status columns for kanban
@@ -316,24 +242,6 @@ const canAdd = computed(() => {
   }
 })
 
-// Engine helpers
-const currentEngineBehavior = computed(() => {
-  if (props.familyType !== 'vote') return null
-  return props.currentEngineDefinition?.behavior || 'single'
-})
-
-const currentEngineDescription = computed(() => {
-  if (props.familyType !== 'vote') return ''
-  return props.currentEngineDefinition?.description || ''
-})
-
-const currentConfigSchema = computed(() => {
-  if (props.familyType !== 'vote') return null
-  return props.currentEngineDefinition?.config_schema || null
-})
-
-const hasConfigFields = computed(() => currentConfigSchema.value && Object.keys(currentConfigSchema.value).length > 0)
-
 // Helper to get force_layouts from miscFields
 function getForceLayouts(option: Option): string[] {
   const miscFields = option.miscFields || {}
@@ -347,49 +255,6 @@ function getForceLayouts(option: Option): string[] {
     }
   }
   return []
-}
-
-function getEngineIcon(engineId: string): unknown {
-  const icons: Record<string, unknown> = {
-    binary: ThumbsUp,
-    ternary: Scale,
-    reaction: Heart,
-    score: Star,
-    approval: CheckCircle,
-    ranked: TrendingUp,
-    borda: Award,
-    condorcet: Brain,
-    majority_judgment: Gauge,
-    token_weighted: Users,
-    quadratic: TrendingUp
-  }
-  return icons[engineId] || Vote
-}
-
-function getEngineLabel(engineId: string): string {
-  const labels: Record<string, string> = {
-    binary: t('agora', 'Yes / No'),
-    ternary: t('agora', 'For / Abstain / Against'),
-    reaction: t('agora', 'Reactions'),
-    score: t('agora', 'Score Voting'),
-    approval: t('agora', 'Approval Voting'),
-    ranked: t('agora', 'Ranked Choice'),
-    borda: t('agora', 'Borda Count'),
-    condorcet: t('agora', 'Condorcet'),
-    majority_judgment: t('agora', 'Majority Judgment'),
-    token_weighted: t('agora', 'Token / Weighted'),
-    quadratic: t('agora', 'Quadratic Voting')
-  }
-  return labels[engineId] || engineId
-}
-
-function getBehaviorLabel(behavior: string): string {
-  const labels: Record<string, string> = {
-    single: t('agora', 'Single choice'),
-    multi: t('agora', 'Multiple choices'),
-    flex: t('agora', 'Flexible')
-  }
-  return labels[behavior] || behavior
 }
 
 
@@ -471,13 +336,15 @@ async function addToVote(): Promise<void> {
   try {
     // Check if option already has vote in force_layouts
     const forceLayouts = getForceLayouts(selectedOption.value)
-    if (forceLayouts.includes('vote')) {
-      showError(t('agora', 'Option already added to vote'))
-      return
-    }
+    let updatedLayouts = null
 
-    // Add vote to force_layouts
-    const updatedLayouts = [...forceLayouts, 'vote']
+   if (forceLayouts.includes('vote')) {
+      updatedLayouts = forceLayouts
+    }
+    else {
+      updatedLayouts = [...forceLayouts, 'vote']
+
+    }
 
     // Prepare miscFields with vote
     const currentMiscFields = selectedOption.value.miscFields || {}
@@ -492,6 +359,12 @@ async function addToVote(): Promise<void> {
       selectedOption.value.status?.optionStatus || 'draft',
       miscFieldsUpdate
     )
+    emit('optionFamilyChanged', {
+  optionId: selectedOption.value.id,
+  familyKey: 'vote',
+  action: 'added'
+})
+
   } catch (error) {
     console.error('Error in addToVote:', error)
     throw error
@@ -521,7 +394,7 @@ async function add(): Promise<void> {
         await addToVote()
        break 
     }
-    
+
     // Refresh data - but only if we have a valid inquiry ID
     if (inquiryId.value && inquiryId.value !== 0) {
       try {
@@ -532,11 +405,11 @@ async function add(): Promise<void> {
         // Don't throw here - the operation succeeded, just refresh failed
       }
     }
-    
+
     showSuccess(t('agora', 'Option added to {family} successfully!', {
       family: props.familyType === 'timeline' ? t('agora', 'timeline') : t('agora', 'board')
     }))
-    
+
     emit('success')
     emit('close')
   } catch (error) {
@@ -566,298 +439,298 @@ onMounted(() => {
 
 <style scoped lang="scss">
 .add-option-to-family-modal {
-  padding: 0;
-  max-width: 600px;
-  background: var(--color-main-background);
-  border-radius: 24px;
-  overflow: hidden;
+    padding: 0;
+    max-width: 600px;
+    background: var(--color-main-background);
+    border-radius: 24px;
+    overflow: hidden;
 
-  .modal-header {
-    text-align: center;
-    padding: 32px 32px 24px;
-    background: linear-gradient(135deg, rgba(var(--color-primary-element-rgb), 0.05) 0%, rgba(var(--color-primary-element-rgb), 0.02) 100%);
-    border-bottom: 1px solid var(--color-border);
-
-    .header-icon {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 64px;
-      height: 64px;
-      background: linear-gradient(135deg, var(--color-primary-element) 0%, var(--color-primary-element-light) 100%);
-      border-radius: 32px;
-      margin-bottom: 16px;
-      color: white;
-
-      &.vote-icon {
-        background: linear-gradient(135deg, #3498db 0%, #9b59b6 100%);
-      }
-    }
-
-    h3 {
-      margin: 0 0 8px 0;
-      font-size: 24px;
-      font-weight: 700;
-    }
-
-    .modal-description {
-      margin: 0;
-      font-size: 14px;
-      color: var(--color-text-lighter);
-    }
-  }
-
-  .modal-content {
-    padding: 24px;
-
-    .search-section {
-      margin-bottom: 24px;
-
-      label {
-        display: block;
-        margin-bottom: 8px;
-        font-weight: 600;
-        font-size: 14px;
-      }
-
-      .search-select {
-        width: 100%;
-      }
-    }
-
-    .timeline-config-section,
-    .kanban-config-section,
-    .vote-config-section {
-      margin-top: 24px;
-
-      .config-header {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        margin-bottom: 16px;
-        padding-bottom: 12px;
+    .modal-header {
+        text-align: center;
+        padding: 32px 32px 24px;
+        background: linear-gradient(135deg, rgba(var(--color-primary-element-rgb), 0.05) 0%, rgba(var(--color-primary-element-rgb), 0.02) 100%);
         border-bottom: 1px solid var(--color-border);
 
-        svg {
-          color: var(--color-primary-element);
+        .header-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, var(--color-primary-element) 0%, var(--color-primary-element-light) 100%);
+            border-radius: 32px;
+            margin-bottom: 16px;
+            color: white;
+
+            &.vote-icon {
+                background: linear-gradient(135deg, #3498db 0%, #9b59b6 100%);
+            }
         }
 
-        h4 {
-          margin: 0;
-          font-size: 15px;
-          font-weight: 600;
+        h3 {
+            margin: 0 0 8px 0;
+            font-size: 24px;
+            font-weight: 700;
         }
-      }
+
+        .modal-description {
+            margin: 0;
+            font-size: 14px;
+            color: var(--color-text-lighter);
+        }
     }
 
-    .date-selector {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
+    .modal-content {
+        padding: 24px;
 
-      .date-field {
-        label {
-          display: block;
-          margin-bottom: 8px;
-          font-weight: 500;
-          font-size: 13px;
-        }
-      }
-    }
+        .search-section {
+            margin-bottom: 24px;
 
-    .column-options {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 8px;
-
-      .column-option {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 10px 12px;
-        background: var(--color-background-dark);
-        border: 2px solid transparent;
-        border-radius: 12px;
-        cursor: pointer;
-        transition: all 0.2s;
-
-        .column-color {
-          width: 10px;
-          height: 10px;
-          border-radius: 50%;
-        }
-
-        .column-label {
-          flex: 1;
-          font-size: 13px;
-          font-weight: 500;
-        }
-
-        .check-icon {
-          color: var(--color-success);
-        }
-
-        &:hover {
-          background: var(--color-background-hover);
-        }
-
-        &.selected {
-          border-color: var(--color-primary-element);
-          background: rgba(var(--color-primary-element-rgb), 0.05);
-        }
-      }
-    }
-
-    .vote-config-section {
-      .engine-info-message {
-        margin-bottom: 20px;
-        padding: 16px;
-        background: var(--color-background-dark);
-        border-radius: 12px;
-
-        .engine-badge-display {
-          display: inline-flex;
-          align-items: center;
-          gap: 8px;
-          padding: 6px 12px;
-          background: var(--color-main-background);
-          border-radius: 20px;
-          margin-bottom: 12px;
-          font-weight: 500;
-          font-size: 13px;
-
-          .engine-badge-mini {
-            font-size: 9px;
-            padding: 2px 8px;
-            border-radius: 12px;
-
-            &.single { background: #3498db20; color: #3498db; }
-            &.multi { background: #9b59b620; color: #9b59b6; }
-            &.flex { background: #e67e2220; color: #e67e22; }
-          }
-        }
-
-        .engine-description {
-          margin: 0;
-          font-size: 13px;
-          color: var(--color-text-lighter);
-          line-height: 1.5;
-        }
-      }
-
-      .engine-config-details {
-        padding: 16px;
-        background: var(--color-background-dark);
-        border-radius: 12px;
-
-        .config-fields {
-          display: flex;
-          flex-direction: column;
-          gap: 16px;
-
-          .config-field {
             label {
-              display: block;
-              margin-bottom: 6px;
-              font-size: 12px;
-              font-weight: 600;
+                display: block;
+                margin-bottom: 8px;
+                font-weight: 600;
+                font-size: 14px;
             }
 
-            .config-input, .config-select {
-              width: 100%;
-              padding: 8px 12px;
-              border: 1px solid var(--color-border);
-              border-radius: 8px;
-              background: var(--color-main-background);
-              font-size: 13px;
-              transition: all 0.2s;
-
-              &:focus {
-                outline: none;
-                border-color: var(--color-primary-element);
-                box-shadow: 0 0 0 2px rgba(var(--color-primary-element-rgb), 0.1);
-              }
+            .search-select {
+                width: 100%;
             }
-
-            .checkbox-label {
-              display: flex;
-              align-items: center;
-              gap: 8px;
-              cursor: pointer;
-
-              input {
-                width: 16px;
-                height: 16px;
-                cursor: pointer;
-              }
-
-              span {
-                font-size: 13px;
-                font-weight: normal;
-              }
-            }
-
-            .config-description {
-              margin: 4px 0 0 0;
-              font-size: 11px;
-              color: var(--color-text-lighter);
-            }
-          }
         }
-      }
+
+        .timeline-config-section,
+        .kanban-config-section,
+        .vote-config-section {
+            margin-top: 24px;
+
+            .config-header {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin-bottom: 16px;
+                padding-bottom: 12px;
+                border-bottom: 1px solid var(--color-border);
+
+                svg {
+                    color: var(--color-primary-element);
+                }
+
+                h4 {
+                    margin: 0;
+                    font-size: 15px;
+                    font-weight: 600;
+                }
+            }
+        }
+
+        .date-selector {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+
+            .date-field {
+                label {
+                    display: block;
+                    margin-bottom: 8px;
+                    font-weight: 500;
+                    font-size: 13px;
+                }
+            }
+        }
+
+        .column-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+
+            .column-option {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                padding: 10px 12px;
+                background: var(--color-background-dark);
+                border: 2px solid transparent;
+                border-radius: 12px;
+                cursor: pointer;
+                transition: all 0.2s;
+
+                .column-color {
+                    width: 10px;
+                    height: 10px;
+                    border-radius: 50%;
+                }
+
+                .column-label {
+                    flex: 1;
+                    font-size: 13px;
+                    font-weight: 500;
+                }
+
+                .check-icon {
+                    color: var(--color-success);
+                }
+
+                &:hover {
+                    background: var(--color-background-hover);
+                }
+
+                &.selected {
+                    border-color: var(--color-primary-element);
+                    background: rgba(var(--color-primary-element-rgb), 0.05);
+                }
+            }
+        }
+
+        .vote-config-section {
+            .engine-info-message {
+                margin-bottom: 20px;
+                padding: 16px;
+                background: var(--color-background-dark);
+                border-radius: 12px;
+
+                .engine-badge-display {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 8px;
+                    padding: 6px 12px;
+                    background: var(--color-main-background);
+                    border-radius: 20px;
+                    margin-bottom: 12px;
+                    font-weight: 500;
+                    font-size: 13px;
+
+                    .engine-badge-mini {
+                        font-size: 9px;
+                        padding: 2px 8px;
+                        border-radius: 12px;
+
+                        &.single { background: #3498db20; color: #3498db; }
+                        &.multi { background: #9b59b620; color: #9b59b6; }
+                        &.flex { background: #e67e2220; color: #e67e22; }
+                    }
+                }
+
+                .engine-description {
+                    margin: 0;
+                    font-size: 13px;
+                    color: var(--color-text-lighter);
+                    line-height: 1.5;
+                }
+            }
+
+            .engine-config-details {
+                padding: 16px;
+                background: var(--color-background-dark);
+                border-radius: 12px;
+
+                .config-fields {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 16px;
+
+                    .config-field {
+                        label {
+                            display: block;
+                            margin-bottom: 6px;
+                            font-size: 12px;
+                            font-weight: 600;
+                        }
+
+                        .config-input, .config-select {
+                            width: 100%;
+                            padding: 8px 12px;
+                            border: 1px solid var(--color-border);
+                            border-radius: 8px;
+                            background: var(--color-main-background);
+                            font-size: 13px;
+                            transition: all 0.2s;
+
+                            &:focus {
+                                outline: none;
+                                border-color: var(--color-primary-element);
+                                box-shadow: 0 0 0 2px rgba(var(--color-primary-element-rgb), 0.1);
+                            }
+                        }
+
+                        .checkbox-label {
+                            display: flex;
+                            align-items: center;
+                            gap: 8px;
+                            cursor: pointer;
+
+                            input {
+                                width: 16px;
+                                height: 16px;
+                                cursor: pointer;
+                            }
+
+                            span {
+                                font-size: 13px;
+                                font-weight: normal;
+                            }
+                        }
+
+                        .config-description {
+                            margin: 4px 0 0 0;
+                            font-size: 11px;
+                            color: var(--color-text-lighter);
+                        }
+                    }
+                }
+            }
+        }
     }
-  }
 
-  .modal-footer {
-    display: flex;
-    justify-content: flex-end;
-    gap: 12px;
-    padding: 20px 24px;
-    background: var(--color-background-dark);
-    border-top: 1px solid var(--color-border);
-
-    .btn-secondary, .btn-primary {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 12px;
-      font-size: 14px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.2s;
-
-      &:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-      }
-    }
-
-    .btn-secondary {
-      background: var(--color-background-hover);
-      color: var(--color-main-text);
-
-      &:hover:not(:disabled) {
+    .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        padding: 20px 24px;
         background: var(--color-background-dark);
-        transform: translateY(-1px);
-      }
+        border-top: 1px solid var(--color-border);
+
+        .btn-secondary, .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+
+            &:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
+        }
+
+        .btn-secondary {
+            background: var(--color-background-hover);
+            color: var(--color-main-text);
+
+            &:hover:not(:disabled) {
+                background: var(--color-background-dark);
+                transform: translateY(-1px);
+            }
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--color-primary-element) 0%, var(--color-primary-element-light) 100%);
+            color: white;
+
+            &.loading {
+                opacity: 0.7;
+                cursor: wait;
+            }
+
+            &:hover:not(:disabled):not(.loading) {
+                transform: translateY(-1px);
+                box-shadow: 0 4px 12px rgba(var(--color-primary-element-rgb), 0.3);
+            }
+        }
     }
-
-    .btn-primary {
-      background: linear-gradient(135deg, var(--color-primary-element) 0%, var(--color-primary-element-light) 100%);
-      color: white;
-
-      &.loading {
-        opacity: 0.7;
-        cursor: wait;
-      }
-
-      &:hover:not(:disabled):not(.loading) {
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(var(--color-primary-element-rgb), 0.3);
-      }
-    }
-  }
 }
 </style>
