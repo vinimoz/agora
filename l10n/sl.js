@@ -123,6 +123,7 @@ OC.L10N.register(
     "Neutral" : "Neopredeljeno",
     "Average" : "Povprečje",
     "Error while saving comment" : "Napaka med shranjevanjem opombe",
+    "Write a comment …" : "Dopišite opombo ...",
     "Send" : "Pošlji",
     "Error while deleting the comment" : "Prišlo je do napake med brisanjem opombe",
     "Error while restoring the comment" : "Prišlo je do napake med obnavljanjem opombe",

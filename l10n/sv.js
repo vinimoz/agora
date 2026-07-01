@@ -229,6 +229,7 @@ OC.L10N.register(
     "Progress" : "Status",
     "Responses" : "Svar",
     "None" : "Ingen",
+    "Voted" : "Röstat",
     "Submit vote" : "Skicka in röst",
     "Voting" : "Röstning",
     "Poll" : "Omröstning",

@@ -600,6 +600,7 @@ OC.L10N.register(
     "Progress" : "ئىلگىرىلەش",
     "Responses" : "جاۋابلار",
     "None" : "يوق",
+    "Voted" : "ئاۋاز بېرىلدى",
     "Submit vote" : "بېلەت تاشلاڭ",
     "Voting" : "بېلەت تاشلاش",
     "Poll" : "راي سىناش",

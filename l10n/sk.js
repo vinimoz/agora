@@ -124,6 +124,7 @@ OC.L10N.register(
     "Only visible to me" : "Viditeľné iba pre mňa",
     "Only visible to {displayName}" : "Viditeľné iba pre {displayName}",
     "Error while saving comment" : "Pri ukladaní komentára sa vyskytla chyba",
+    "Write a comment …" : "Napísať komentár ...",
     "Send" : "Odoslať",
     "Error while deleting the comment" : "Pri odstraňovaní komentára sa vyskytla chyba",
     "Error while restoring the comment" : "Chyba pri obnovovaní komentára",

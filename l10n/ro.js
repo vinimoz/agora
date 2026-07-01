@@ -82,6 +82,7 @@ OC.L10N.register(
     "Vote" : "Vot",
     "Election" : "Alegeri",
     "Moderation" : "Moderare",
+    "Closed" : "închis",
     "Unlimited" : "Nelimitată",
     "Enabled" : "Activat",
     "Disabled" : "Dezactivați",

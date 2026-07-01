@@ -76,6 +76,7 @@ OC.L10N.register(
     "To participate, register with your email address and a name." : "Чтобы принять участие, зарегистрируйтесь, указав свой адрес электронной почты и имя.",
     "To participate, register a name and optionally with your email address." : "Чтобы принять участие, зарегистрируйте свое имя и, при необходимости, свой адрес электронной почты.",
     "Error while saving comment" : "При сохранении комментария произошла ошибка",
+    "Write a comment …" : "Напишите комментарий…",
     "Send" : "Отправить",
     "Error while deleting the comment" : "При удалении комментария произошла ошибка",
     "Unknown user" : "Неизвестный пользователь",
