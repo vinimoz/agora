@@ -15,23 +15,14 @@ The former support mechanism has been replaced by a unified **Support & Voting E
 Supports are no longer limited to simple "for" or "against" interactions.
 
 During the deliberation phase, administrators can now select different participation models:
-
 - 👍 Binary support (Yes / No)
-
 - ⚖️ Ternary support (For / Abstain / Against)
-
 - ⭐ Star rating
-
 - 🔢 Score voting
-
 - 🧠 Majority Judgment
-
 - ✅ Approval support
-
 - ❤️ Reactions
-
 - 🔥 Trending participation
-
 - 💬 Pure discussion mode
 
 This allows each inquiry, proposal, project, or option to use the most appropriate participation mechanism.
@@ -39,33 +30,21 @@ This allows each inquiry, proposal, project, or option to use the most appropria
 ### 🏛 Advanced Voting Utilities
 
 Agora now includes a much more complete voting toolkit for formal decision-making.
-
 Available voting methods include:
 
 - 🏆 Condorcet voting
-
   - Schulze
-
   - Copeland
-
   - Minimax
-
   - Ranked Pairs
-
   - Kemeny-Young
 
 - 📊 Borda Count
-
 - 🧠 Majority Judgment
-
 - ✅ Approval Voting
-
 - 📝 Ranked Choice Voting
-
 - ⚡ Quadratic Voting
-
 - ⚖️ Token / Weighted Voting
-
 - 🔄 Phased Voting
 
 This enables organizations to move beyond simple majority voting and adopt decision methods adapted to their governance needs.
@@ -73,17 +52,11 @@ This enables organizations to move beyond simple majority voting and adopt decis
 ### 🎯 Unified Architecture
 
 The new engine architecture provides:
-
 - Shared support and voting framework
-
 - Flexible configuration templates
-
 - Cross-option and per-option voting modes
-
 - Multiple presentation layouts
-
 - Configurable voting parameters
-
 - Future extensibility for additional democratic methods
 
 ## ⚠️ IMPORTANT UPDATE NOTICE
@@ -97,11 +70,8 @@ The internal support architecture, storage model, and participation engines have
 #### Before upgrading:
 
 1. Perform a complete Nextcloud backup
-
 2. Backup your database
-
 3. Backup your Agora application data
-
 4. Test the update in a staging environment whenever possible
 
 #### Warning
@@ -109,13 +79,9 @@ The internal support architecture, storage model, and participation engines have
 Administrators upgrading from previous versions should carefully verify:
 
 - Existing supports
-
 - Participation statistics
-
 - Templates
-
 - Inquiry configurations
-
 - Custom integrations
 
 
@@ -126,39 +92,22 @@ Although migration scripts are provided, a full backup is strongly recommended b
 ## ✨ Key Features
 
 - 💬 Comments and discussions
-
 - 👍 Flexible support systems (binary, ternary, star rating, score, majority judgment, approval, reactions, trending, discussion-only)
-
 - 🗳 Advanced voting methods (Condorcet, Borda, Majority Judgment, Approval, Ranked Choice, Quadratic, Token/Weighted, Phased)
-
 - 🧠 Majority Judgment support
-
 - 🏆 Condorcet methods (Schulze, Copeland, Minimax, Ranked Pairs, Kemeny-Young)
-
 - 📊 Borda Count
-
 - ✅ Approval Voting
-
 - 🧩 Custom inquiry families and types
-
 - 🧾 Multiple inquiry formats (proposals, debates, petitions, projects…)
-
 - 🏛 Collective decision-making tools
-
 - 📂 Categorization and filtering by family or location
-
 - 🔒 Privacy-first architecture — all data stays on your Nextcloud server
-
 - 🔗 Integration with Forms, Polls, Deck, Collectives, and the Nextcloud ecosystem
-
 - 🏛 Collectives design UX
-
 - 🗣 Real debate features (structured replies, multi-thread discussions)
-
 - 📜 Structured debate and consultation workflows
-
 - 🧰 Templates for democracy, university, company, and custom use cases
-
 - 🧱 Scalable architecture and modern UX
 
 ## 🧰 Templates
@@ -166,7 +115,6 @@ Although migration scripts are provided, a full backup is strongly recommended b
 Agora introduces **ready-to-use templates** to quickly bootstrap participatory spaces for different contexts:
 
 - **Template 1 – Option-based workflow** — Ideal for consultations and decision-making with predefined options
-
 - **Template 2 – Thematic / structured template** — Designed for democracy initiatives, universities, companies, and custom organizational workflows
 
 📄 **Instructions**: `agora-template-instructions.md`  
@@ -220,9 +168,7 @@ occ app:enable agora
 ## 🗺️ Roadmap
 
 **1.8 — Lottery 🎲**
-
 **1.9 — Process & Workflow 🔄**
-
 **2.0 — Rights & Permissions 🔐**
 
 ## 📄 License
@@ -240,7 +186,6 @@ Thanks to all contributors and community members helping shape participatory dem
 ## 🛠 Support
 
 - Report bugs or request features: [GitHub Issues](https://github.com/vinimoz/agora/issues)
-
 - Community support: [Nextcloud Help](https://help.vinimoz.com/c/apps/agora/)
 
 ## 🤝 Contribution
