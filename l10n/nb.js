@@ -215,6 +215,8 @@ OC.L10N.register(
     "Show less" : "Vis mindre",
     "Read more" : "Les mer",
     "{hours}h" : "{hours}t",
+    "{hours} hours ago" : "{hours} timer siden",
+    "{minutes} minutes ago" : "{minutes} minutter siden",
     "Draft" : "Kladd",
     "Active" : "Aktiv",
     "Completed" : "Ferdig",
