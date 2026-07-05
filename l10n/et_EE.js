@@ -726,7 +726,6 @@ OC.L10N.register(
     "Votes for {option}" : "„{option}“ valikule antud hääled",
     "Abstain" : "Ei hääleta",
     "Voting method" : "Hääletusmeetod",
-    "Loading supports …" : "Laadin toetusavaldusi…",
     "No votes yet for this option." : "Selle valiku poolt pole veel hääletatud",
     "You" : "Sina",
     "Transferred inquiry to {user}" : "Järelpärimine on edasi antud kasutajale {user}",
