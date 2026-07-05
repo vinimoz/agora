@@ -123,7 +123,7 @@
 
               <!-- Use MiscFieldsEditor for all additional fields -->
               <div v-if="hasAdditionalFields" class="additional-fields-section">
-                <h4>{{ t('agora', 'Additional Information') }}</h4>
+                <h4>{{ t('agora', 'Additional information') }}</h4>
                 <MiscFieldsEditor
                   :fields="additionalFields"
                   :initial-values="miscFieldsValues"
@@ -161,7 +161,7 @@
 
             <!-- Statuses preview (if available) -->
             <div v-if="hasStatuses" class="statuses-preview">
-              <h5>{{ t('agora', 'Available Statuses') }}</h5>
+              <h5>{{ t('agora', 'Available statuses') }}</h5>
               <div class="statuses-list">
                 <span
                   v-for="status in statusesList"
@@ -293,7 +293,7 @@ const handleMiscFieldsUpdate = (values: Record<string, {key:string, value: unkno
 
 // Computed properties
 const modalTitle = computed(() => {
-  if (!props.optionType) return t('agora', 'Add Option')
+  if (!props.optionType) return t('agora', 'Add option')
   return t('agora', 'Add {type}', { type: optionTypeLabel.value })
 })
 
@@ -455,7 +455,7 @@ const previewOption = computed((): Option => {
     targetId: props.inquiryId,
     parentId: props.parentId || 0,
     type: props.optionType || '',
-    title: formData.value.title || t('agora', 'Preview Title'),
+    title: formData.value.title || t('agora', 'Preview title'),
     text: formData.value.text || t('agora', 'Preview text …'),
     textSafe: '',
     sortOrder: 0,
@@ -470,7 +470,7 @@ const previewOption = computed((): Option => {
     ownedGroup: '',
     owner: {
       id: currentUser?.id || 'preview-user',
-      displayName: currentUser?.displayName || t('agora', 'Current User'),
+      displayName: currentUser?.displayName || t('agora', 'Current user'),
       userRole: currentUser?.userRole || ''
     },
     currentUserStatus: {

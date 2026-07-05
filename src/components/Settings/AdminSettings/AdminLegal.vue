@@ -12,8 +12,8 @@ import { NcCheckboxRadioSwitch } from '@nextcloud/vue'
 
 const appSettingsStore = useAppSettingsStore()
 const placeholder = computed(() => {
-  let privacy = t('agora', 'Enter the URL of your privacy policy')
-  let imprint = t('agora', 'Enter the URL of your legal notice')
+  let privacy = t('agora', 'Enter the url of your privacy policy')
+  let imprint = t('agora', 'Enter the url of your legal notice')
   if (appSettingsStore.defaultPrivacyUrl) {
     privacy = appSettingsStore.defaultPrivacyUrl
   }

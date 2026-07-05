@@ -8,7 +8,7 @@
     <div v-if="objections.length > 0" class="consensus-section">
       <h4 class="section-title blocking">
         <component :is="InquiryOptionIcons.AlertCircle" :size="16" />
-        {{ t('agora', 'Blocking Objections') }} ({{ objections.length }})
+        {{ t('agora', 'Blocking objections') }} ({{ objections.length }})
         <span v-if="quorumNeeded" class="quorum-badge">
           {{ t('agora', 'Quorum: {count}/{total}', { count: objectionsQuorum, total: quorumNeeded }) }}
         </span>
@@ -47,7 +47,7 @@
     <div v-if="consents.length > 0" class="consensus-section">
       <h4 class="section-title consent">
         <component :is="InquiryOptionIcons.CheckCircle" :size="16" />
-        {{ t('agora', 'Consent Given') }} ({{ consents.length }})
+        {{ t('agora', 'Consent given') }} ({{ consents.length }})
       </h4>
       <div class="options-list">
         <OptionCard
@@ -65,7 +65,7 @@
     <div v-if="consultationQuestions.length > 0" class="consensus-section">
       <h4 class="section-title">
         <component :is="InquiryOptionIcons.HelpCircle" :size="16" />
-        {{ t('agora', 'Consultation Questions') }} ({{ consultationQuestions.length }})
+        {{ t('agora', 'Consultation questions') }} ({{ consultationQuestions.length }})
       </h4>
       <div class="options-list">
         <OptionCard

@@ -14,7 +14,7 @@ const appSettingsStore = useAppSettingsStore()
 
 <template>
   <div class="rights-management">
-    <h2>{{ t('agora', 'Moderator Rights') }}</h2>
+    <h2>{{ t('agora', 'Moderator rights') }}</h2>
     <p class="description">
       {{ t('agora', 'Define permissions for users with moderator role') }}
     </p>

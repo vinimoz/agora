@@ -200,7 +200,7 @@ function resetInquiry() {
       <!-- Access Configuration -->
       <ConfigBox
         v-if="availableGroups.length > 0"
-        :name="t('agora', 'Access Settings')"
+        :name="t('agora', 'Access settings')"
       >
         <template #icon>
           <Component :is="InquiryGeneralIcons.AccountGroup" />
@@ -313,7 +313,7 @@ function resetInquiry() {
           :variant="'primary'"
           @click="addInquiry"
         >
-          {{ adding ? t('agora', 'Creating …') : t('agora', 'Create Inquiry') }}
+          {{ adding ? t('agora', 'Creating …') : t('agora', 'Create inquiry') }}
         </NcButton>
       </div>
     </div>

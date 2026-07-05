@@ -261,7 +261,7 @@ async function submitRegistration(): Promise<void> {
           :signaling-class="checkStatus.userName"
           :placeholder="t('agora', 'Enter your name or a nickname')"
           :helper-text="userNameHint"
-          :label="t('agora','User Name')"
+          :label="t('agora', 'User name')"
           focus
           @input="validatePublicUsername()"
           @submit="submitRegistration()"
@@ -296,7 +296,7 @@ async function submitRegistration(): Promise<void> {
                 v-if="sessionStore.appSettings.finalImprintUrl"
                 :href="sessionStore.appSettings.finalImprintUrl"
                 target="_blank"
-                :name="t('agora', 'Legal Notice')"
+                :name="t('agora', 'Legal notice')"
               />
               <SimpleLink
                 v-if="sessionStore.appSettings.finalPrivacyUrl"

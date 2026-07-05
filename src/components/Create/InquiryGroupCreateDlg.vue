@@ -141,7 +141,7 @@ const dialogTitle = computed(() => {
     })
     return title
   } 
-    const title = t('agora', 'Add Group to Parent')
+    const title = t('agora', 'Add group to parent')
     return title
   
 })
@@ -277,10 +277,10 @@ function resetInquiry() {
       <div class="dialog-header">
         <h3>{{ dialogTitle }}</h3>
         <div v-if="props.parentGroupId" class="mode-badge child">
-          {{ t('agora', 'Child Group') }}
+          {{ t('agora', 'Child group') }}
         </div>
         <div v-else class="mode-badge creation">
-          {{ t('agora', 'New Group') }}
+          {{ t('agora', 'New group') }}
         </div>
       </div>
 
@@ -292,7 +292,7 @@ function resetInquiry() {
       <!-- Access Configuration - Groups Nextcloud -->
       <ConfigBox
         v-if="availableGroups && availableGroups.length > 0"
-        :name="t('agora', 'Access Settings')"
+        :name="t('agora', 'Access settings')"
       >
         <template #icon>
           <Component :is="InquiryGeneralIcons.AccountGroup" />
@@ -311,17 +311,17 @@ function resetInquiry() {
             </NcCheckboxRadioSwitch>
 
             <NcCheckboxRadioSwitch value="groups">
-              {{ t('agora', 'Open with Nextcloud group') }}
+              {{ t('agora', 'Open with nextcloud group') }}
             </NcCheckboxRadioSwitch>
           </NcRadioGroup>
 
           <!-- Nextcloud Group Selection -->
           <div v-if="accessType === 'groups'" class="nextcloud-groups-selection">
               <h4 class="groups-title">
-                  {{ t('agora', 'Select Nextcloud group') }}
+                  {{ t('agora', 'Select nextcloud group') }}
               </h4>
               <div class="groups-list">
-                  <NcRadioGroup :label="t('agora','Groups Selections')">
+                  <NcRadioGroup :label="t('agora', 'Groups selections')">
                   <div v-for="group in availableGroups" :key="group" class="group-item">
                       <NcCheckboxRadioSwitch
                               v-model="selectedNextcloudGroup"
@@ -350,7 +350,7 @@ function resetInquiry() {
               type="text"
               :placeholder="t('agora', 'Enter group title')"
               :helper-text="t('agora', 'Choose a meaningful title for your group')"
-              :label="t('agora', 'Group Title')"
+              :label="t('agora', 'Group title')"
               @update:model-value="inquiryTitle = $event"
               @submit="addGroupInquiry"
               />
@@ -359,7 +359,7 @@ function resetInquiry() {
       <!-- Group Type Selection  -->
       <ConfigBox
               v-if="showGroupTypeSelector || (!props.parentGroupId && availableInquiryGroupTypes.length === 1)"
-              :name="t('agora', 'Group Type')"
+              :name="t('agora', 'Group type')"
               :label="t('agora', 'Select group type')"
               >
               <template #icon>
@@ -368,7 +368,7 @@ function resetInquiry() {
 
       <NcRadioGroup
               v-if="showGroupTypeSelector"
-              :label="t('agora','Groups Selections')"
+              :label="t('agora', 'Groups selections')"
               :model-value="localInquiryGroupType"
               @update:model-value="localInquiryGroupType = $event"
               >
@@ -423,8 +423,8 @@ function resetInquiry() {
                   >
                   {{ adding ? t('agora', 'Creating …') :
                   props.parentGroupId ? 
-                  t('agora', 'Add to Parent') : 
-                  t('agora', 'Create Group') }}
+                  t('agora', 'Add to parent') : 
+                  t('agora', 'Create group') }}
           </NcButton>
       </div>
     </div>

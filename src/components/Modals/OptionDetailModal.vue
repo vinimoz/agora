@@ -72,7 +72,7 @@
                             <NcActionButton
                                 v-if="hasAllowedResponses"
                                 is-menu
-                                :name="t('agora', 'Add Response')"
+                                :name="t('agora', 'Add response')"
                                 @click="toggleSubMenu('addResponse')"
                             >
                                 <template #icon>
@@ -143,7 +143,7 @@
 
                             <!-- Additional fields in edit mode -->
                             <div v-if="hasAdditionalFields" class="additional-fields">
-                                <h4>{{ t('agora', 'Additional Information') }}</h4>
+                                <h4>{{ t('agora', 'Additional information') }}</h4>
                                 <MiscFieldsEditor
                                     :fields="additionalFields"
                                     :initial-values="miscFieldsValues"
@@ -167,7 +167,7 @@
 
                             <!-- Additional fields display in view mode -->
                             <div v-if="hasAdditionalFieldsData" class="additional-fields-display">
-                                <h4>{{ t('agora', 'Additional Information') }}</h4>
+                                <h4>{{ t('agora', 'Additional information') }}</h4>
                                 <MiscFieldsEditor
                                     :key="optionStore.id + '-' + JSON.stringify(optionStore.miscFields)"  
                                     :fields="additionalFields"
@@ -239,7 +239,7 @@
                     <!-- Child options display -->
                     <div v-if="hasChildOptions" class="children-section">
                         <div class="section-header">
-                            <h3>{{ t('agora', 'Child Options') }}</h3>
+                            <h3>{{ t('agora', 'Child options') }}</h3>
                         </div>
                         <div class="children-list">
                             <div v-if="filteredChildOptions.length === 0" class="empty-children">
@@ -473,7 +473,7 @@ const canEdit = computed(() => canEditOption(optionContext.value))
 const canDelete = computed(() => canDeleteOption(optionContext.value))
 
 // Computed properties
-const modalTitle = computed(() => optionStore.title || t('agora', 'Option Details'))
+const modalTitle = computed(() => optionStore.title || t('agora', 'Option details'))
 
 const canEditOrDelete = computed(() => canEdit.value || canDelete.value)
 

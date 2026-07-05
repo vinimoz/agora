@@ -111,14 +111,14 @@ const selectFamily = (family) => {
 
 <template>
   <div class="families-manager">
-    <h2>{{ t('agora', 'Inquiry Families Management') }}</h2>
+    <h2>{{ t('agora', 'Inquiry families management') }}</h2>
     <p class="description">
       {{ t('agora', 'Manage inquiry families to organize different types of inquiries. Each family can contain multiple inquiry types.') }}
     </p>
 
     <!-- Families List -->
     <div class="families-list">
-      <h3>{{ t('agora', 'Existing Families') }}</h3>
+      <h3>{{ t('agora', 'Existing families') }}</h3>
       <div 
         v-for="family in familiesWithStats" 
         :key="family.id" 
@@ -155,21 +155,21 @@ const selectFamily = (family) => {
 
     <!-- Add New Family Form -->
     <div class="add-family-form">
-      <h3>{{ t('agora', 'Add New Family') }}</h3>
+      <h3>{{ t('agora', 'Add new family') }}</h3>
       <div class="form-grid">
         <div class="form-row">
           <NcInputField
             v-model="newFamily.family_type"
-            :label="t('agora', 'Family Type Key')"
-            :placeholder="t('agora', 'e.g., deliberative, consultative')"
+            :label="t('agora', 'Family type key')"
+            :placeholder="t('agora', 'E.g., deliberative, consultative')"
             required
             class="form-field"
           />
           
           <NcInputField
             v-model="newFamily.label"
-            :label="t('agora', 'Display Label')"
-            :placeholder="t('agora', 'e.g., Deliberative Process')"
+            :label="t('agora', 'Display label')"
+            :placeholder="t('agora', 'E.g., deliberative process')"
             required
            class="form-field"
           />
@@ -194,7 +194,7 @@ const selectFamily = (family) => {
         
         <NcInputField
           v-model="newFamily.sort_order"
-          :label="t('agora', 'Sort Order')"
+          :label="t('agora', 'Sort order')"
           type="number"
           :min="0"
           class="form-field"
@@ -206,7 +206,7 @@ const selectFamily = (family) => {
             :disabled="!newFamily.family_type || !newFamily.label"
             @click="addFamily"
           >
-            {{ t('agora', 'Add Family') }}
+            {{ t('agora', 'Add family') }}
           </NcButton>
         </div>
       </div>
@@ -215,18 +215,18 @@ const selectFamily = (family) => {
     <!-- Edit Family Modal -->
     <div v-if="editingFamily" class="modal-overlay">
       <div class="modal-content large-modal">
-        <h3>{{ t('agora', 'Edit Family') }}</h3>
+        <h3>{{ t('agora', 'Edit family') }}</h3>
         <div class="form-grid">
           <div class="form-row">
             <NcInputField
               v-model="editingFamily.family_type"
-              :label="t('agora', 'Family Type Key')"
+              :label="t('agora', 'Family type key')"
               required
               class="form-field"
             />
             <NcInputField
               v-model="editingFamily.label"
-              :label="t('agora', 'Display Label')"
+              :label="t('agora', 'Display label')"
               required
               class="form-field"
             />
@@ -255,7 +255,7 @@ const selectFamily = (family) => {
               type="primary" 
               @click="updateFamily(editingFamily)"
             >
-              {{ t('agora', 'Save Changes') }}
+              {{ t('agora', 'Save changes') }}
             </NcButton>
           </div>
         </div>

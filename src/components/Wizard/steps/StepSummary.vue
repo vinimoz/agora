@@ -38,7 +38,7 @@ const totalItems = computed(() => counts.value.inquiry_families +
 <template>
 	<div class="summary-step">
 		<div class="summary-header">
-			<h2>{{ t('agora', 'Review & Confirm') }}</h2>
+			<h2>{{ t('agora', 'Review & confirm') }}</h2>
 			<p class="subtitle">
 				{{ t('agora', 'Please review your selections before importing') }}
 			</p>
@@ -52,7 +52,7 @@ const totalItems = computed(() => counts.value.inquiry_families +
 
 		<div v-if="template" class="summary-content">
 			<div class="summary-box">
-				<h3>{{ t('agora', 'Import Summary') }}</h3>
+				<h3>{{ t('agora', 'Import summary') }}</h3>
 
 				<div class="summary-item">
 					<span class="label">{{ t('agora', 'Template:') }}</span>
@@ -72,7 +72,7 @@ const totalItems = computed(() => counts.value.inquiry_families +
 				</div>
 
 				<div class="summary-item">
-					<span class="label">{{ t('agora', 'Inquiry Types:') }}</span>
+					<span class="label">{{ t('agora', 'Inquiry types:') }}</span>
 					<span class="value">{{ counts.inquiry_types }} {{ t('agora', 'items') }}</span>
 				</div>
 
@@ -82,12 +82,12 @@ const totalItems = computed(() => counts.value.inquiry_families +
 				</div>
 
 				<div v-if="counts.option_types > 0" class="summary-item">
-					<span class="label">{{ t('agora', 'Option Types:') }}</span>
+					<span class="label">{{ t('agora', 'Option types:') }}</span>
 					<span class="value">{{ counts.option_types }} {{ t('agora', 'items') }}</span>
 				</div>
 
 				<div v-if="counts.inquiry_group_types > 0" class="summary-item">
-					<span class="label">{{ t('agora', 'Group Types:') }}</span>
+					<span class="label">{{ t('agora', 'Group types:') }}</span>
 					<span class="value">{{ counts.inquiry_group_types }} {{ t('agora', 'items') }}</span>
 				</div>
 
@@ -104,7 +104,7 @@ const totalItems = computed(() => counts.value.inquiry_families +
 				<div class="summary-divider" />
 
 				<div class="summary-total">
-					<span class="label">{{ t('agora', 'Total Items:') }}</span>
+					<span class="label">{{ t('agora', 'Total items:') }}</span>
 					<span class="value">{{ totalItems }}</span>
 				</div>
 			</div>

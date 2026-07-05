@@ -28,10 +28,10 @@ const iconColor = computed(() => {
 })
 
 const dynamicTitle = computed(() => {
-  if (supportValue === 1) return t('agora', 'Support - Click for neutral')
-  if (supportValue === -1) return t('agora', 'Against - Click to remove participation')
-  if (supportValue === 0) return t('agora', 'Neutral - Click for against')
-  return t('agora', 'No participation - Click for support')
+  if (supportValue === 1) return t('agora', 'Support - click for neutral')
+  if (supportValue === -1) return t('agora', 'Against - click to remove participation')
+  if (supportValue === 0) return t('agora', 'Neutral - click for against')
+  return t('agora', 'No participation - click for support')
 })
 </script>
 

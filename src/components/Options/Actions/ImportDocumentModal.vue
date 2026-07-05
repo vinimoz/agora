@@ -13,7 +13,7 @@
     <div class="modal-content">
       <div class="import-header">
         <component :is="ImportIcons.FileUpload" :size="48" class="header-icon" />
-        <h2>{{ t('agora', 'Import Document') }}</h2>
+        <h2>{{ t('agora', 'Import document') }}</h2>
         <p>{{ t('agora', 'Import documents, law proposals, or structured content from files') }}</p>
       </div>
 
@@ -73,10 +73,10 @@
 
       <!-- Conversion Options -->
       <div class="form-group">
-          <label>{{ t('agora', 'Conversion Options') }}</label>
+          <label>{{ t('agora', 'Conversion options') }}</label>
           <div class="checkbox-group">
               <NcCheckboxRadioSwitch v-model="convertToMarkdown" type="switch">
-              {{ t('agora', 'Convert to Markdown') }}
+              {{ t('agora', 'Convert to markdown') }}
               </NcCheckboxRadioSwitch>
               <NcCheckboxRadioSwitch v-model="extractStructure" type="switch">
               {{ t('agora', 'Extract document structure (chapters/sections)') }}
@@ -86,14 +86,14 @@
 
       <!-- Import Options -->
       <div class="import-options">
-          <h3>{{ t('agora', 'Import Options') }}</h3>
+          <h3>{{ t('agora', 'Import options') }}</h3>
 
           <div class="form-group">
-              <label for="document-title">{{ t('agora', 'Document Title') }}</label>
+              <label for="document-title">{{ t('agora', 'Document title') }}</label>
               <NcInputField
                       id="document-title"
                       v-model="title"
-                      :label="t('agora', 'Document Title')"
+                      :label="t('agora', 'Document title')"
                       :label-outside="true"
                       :placeholder="t('agora', 'Enter document title')"
                       />
@@ -110,12 +110,12 @@
           </div>
 
           <div class="form-group">
-              <label>{{ t('agora', 'Target Section') }}</label>
+              <label>{{ t('agora', 'Target section') }}</label>
               <NcSelect
                       v-model="parentOption"
                       :options="parentOptions"
                       :placeholder="t('agora', 'Select parent section (optional)')"
-                      :input-label="t('agora', 'Target Section')"
+                      :input-label="t('agora', 'Target section')"
                       />
           </div>
       </div>
@@ -135,16 +135,16 @@
               <!-- eslint-enable vue/no-v-html -->
               <div class="markdown-preview" v-html="sanitizedPreviewContent"></div> <!-- eslint-disable-line vue/no-v-html -->
               <div v-if="documentMetadata" class="metadata-preview">
-                  <h4>{{ t('agora', 'Document Metadata') }}</h4>
+                  <h4>{{ t('agora', 'Document metadata') }}</h4>
                   <ul>
                       <li v-if="documentMetadata.wordCount">
-                          <strong>{{ t('agora', 'Word Count') }}:</strong> {{ documentMetadata.wordCount }}
+                          <strong>{{ t('agora', 'Word count') }}:</strong> {{ documentMetadata.wordCount }}
                       </li>
                       <li v-if="documentMetadata.chapterCount">
                           <strong>{{ t('agora', 'Chapters/Sections') }}:</strong> {{ documentMetadata.chapterCount }}
                       </li>
                       <li v-if="documentMetadata.detectedStructure">
-                          <strong>{{ t('agora', 'Detected Structure') }}:</strong>
+                          <strong>{{ t('agora', 'Detected structure') }}:</strong>
                           <ul class="structure-list">
                               <li v-if="documentMetadata.detectedStructure.hasIntroduction">
                                   ✓ {{ t('agora', 'Introduction') }}
@@ -162,7 +162,7 @@
                       </li>
                   </ul>
                   <div v-if="documentMetadata.sections && documentMetadata.sections.length > 0" class="sections-list">
-                      <h4>{{ t('agora', 'Detected Sections') }}</h4>
+                      <h4>{{ t('agora', 'Detected sections') }}</h4>
                       <ul>
                           <li v-for="(section, idx) in documentMetadata.sections.slice(0, 10)" :key="idx">
                               <strong>{{ section.type }}:</strong> {{ section.title }}
@@ -187,7 +187,7 @@
                   <template #icon>
                       <component :is="ImportIcons.Import" :size="20" />
                   </template>
-          {{ t('agora', 'Import Document') }}
+          {{ t('agora', 'Import document') }}
           </NcButton>
       </div>
     </div>
@@ -244,7 +244,7 @@ const sanitizedPreviewContent = computed(() => domPurify.sanitize(previewContent
 const supportedFormats = ['doc', 'docx', 'odt', 'html', 'md', 'pdf','txt']
 const acceptedFormats = supportedFormats // Array, not joined string
 
-const modalTitle = computed(() => t('agora', 'Import Document'))
+const modalTitle = computed(() => t('agora', 'Import document'))
 const canImport = computed(() => selectedFile.value !== null)
 
 const importTypes = computed(() => {
@@ -279,7 +279,7 @@ const validateAndSetFile = (file: File) => {
   const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'svg', 'ico', 'heic', 'heif']
 
   if (file.type.startsWith('image/') || imageExtensions.includes(fileExt)) {
-    showError(t('agora', 'Image files are not supported. Please upload document files (DOC, DOCX, PDF, ODT, HTML, TXT, MD)'))
+    showError(t('agora', 'Image files are not supported. Please upload document files (doc, docx, pdf, odt, html, txt, md)'))
     return false
   }
 

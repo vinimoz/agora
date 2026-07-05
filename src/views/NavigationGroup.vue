@@ -209,7 +209,7 @@ const archivedInquiryGroupsByType = computed(() => {
       <!-- Groups Section -->
       <NcAppNavigationList v-if="filteredInquiryGroupTypes.length > 0">
       <h3 class="navigation-caption">
-          {{ t('agora', 'Group Types') }}
+          {{ t('agora', 'Group types') }}
       </h3>
       <NcAppNavigationItem
               v-for="inquiryGroupType in filteredInquiryGroupTypes"
@@ -265,7 +265,7 @@ const archivedInquiryGroupsByType = computed(() => {
       <!-- Archived Groups Section -->
       <NcAppNavigationList v-if="hasArchivedGroups && filteredInquiryGroupTypes.length > 0">
       <NcAppNavigationItem
-              :name="t('agora', 'Archived Groups')"
+              :name="t('agora', 'Archived groups')"
               :title="t('agora', 'View archived groups')"
               class="navigation-item archived-groups-item"
               :to="{
@@ -290,7 +290,7 @@ const archivedInquiryGroupsByType = computed(() => {
       <!-- Quick Actions Section -->
       <NcAppNavigationList>
       <h3 class="navigation-caption">
-          {{ t('agora', 'Quick Actions') }}
+          {{ t('agora', 'Quick actions') }}
       </h3>
 
       <NcAppNavigationItem

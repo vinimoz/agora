@@ -611,7 +611,7 @@ watch(() => storeInquiry.value.currentUserStatus?.supportValue, (newValue) => {
         <!-- Additional Information - Only if has fields -->
         <div v-if="displayFields.length > 0" class="additional-info-section">
           <div class="section-header">
-            <h2 class="section-title">{{ t('agora', 'Additional Information') }}</h2>
+            <h2 class="section-title">{{ t('agora', 'Additional information') }}</h2>
           </div>
           <div class="info-grid">
             <div v-for="field in displayFields" :key="field.key" class="info-item">

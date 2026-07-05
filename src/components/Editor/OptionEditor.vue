@@ -151,8 +151,8 @@
         <!-- Word import -->
         <NcButton
           type="button"
-          :title="t('agora', 'Import Word document')"
-          :aria-label="t('agora', 'Import Word document')"
+          :title="t('agora', 'Import word document')"
+          :aria-label="t('agora', 'Import word document')"
           @click="importWord"
         >
           📄
@@ -440,7 +440,7 @@ const handleWordImport = async (event) => {
     showSuccess(t('agora', 'Word document imported'))
   } catch (error) {
     console.error('Error importing Word document:', error)
-    showError(t('agora', 'Failed to import Word document'))
+    showError(t('agora', 'Failed to import word document'))
   } finally {
     event.target.value = ''
   }

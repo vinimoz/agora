@@ -42,7 +42,7 @@
           <template #icon>
             <PlusIcon />
           </template>
-          {{ t('agora', 'Add Inquiry to this Group') }}
+          {{ t('agora', 'Add inquiry to this group') }}
         </NcButton>
       </div>
     </div>

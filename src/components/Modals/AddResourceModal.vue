@@ -102,13 +102,13 @@ const resourceTypes: ResourceType[] = [
   },
   {
     id: 'deck',
-    name: t('agora', 'Deck Cards'),
+    name: t('agora', 'Deck cards'),
     icon: InquiryGeneralIcons.Deck,
-    description: t('agora', 'Create task cards in Deck'),
+    description: t('agora', 'Create task cards in deck'),
   },
   {
     id: 'cospend',
-    name: t('agora', 'Cospend Expenses'),
+    name: t('agora', 'Cospend expenses'),
     icon: InquiryGeneralIcons.Money,
     description: t('agora', 'Track shared expenses'),
   },
@@ -561,13 +561,13 @@ const handleTitleInput = () => {
 <template>
     <NcModal
             v-if="open"
-            :name="t('agora', 'Add Resource to Inquiry')"
+            :name="t('agora', 'Add resource to inquiry')"
             size="large"
             @close="closeModal"
             >
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2>{{ t('agora', 'Add Resource to Inquiry') }}</h2>
+                    <h2>{{ t('agora', 'Add resource to inquiry') }}</h2>
                     <p class="modal-description">
                     {{ t('agora', 'Link an existing resource or create a new one for this inquiry') }}
                     </p>
@@ -576,7 +576,7 @@ const handleTitleInput = () => {
                 <div class="modal-body">
                     <!-- Resource Type Selection -->
                     <div class="resource-type-section">
-                        <h3 class="section-title">{{ t('agora', 'Resource Type') }}</h3>
+                        <h3 class="section-title">{{ t('agora', 'Resource type') }}</h3>
                         <div class="resource-type-grid">
                             <div
                                     v-for="type in availableResourceTypes"
@@ -653,7 +653,7 @@ const handleTitleInput = () => {
                         <div class="section-header">
                             <component :is="InquiryGeneralIcons.Plus" :size="20" class="section-icon" />
                             <h3>
-                                <span v-if="isFileType">{{ t('agora', 'Upload Files') }}</span>
+                                <span v-if="isFileType">{{ t('agora', 'Upload files') }}</span>
                                 <span v-else>{{ t('agora', 'Create New {resource}', { resource: getResourceName(currentResourceType) }) }}</span>
                             </h3>
                         </div>
@@ -677,12 +677,12 @@ const handleTitleInput = () => {
                                         <template #icon>
                                             <component :is="InquiryGeneralIcons.Attachment" :size="20" />
                                         </template>
-                                {{ t('agora', 'Select Files') }}
+                                {{ t('agora', 'Select files') }}
                                 </NcButton>
 
                                 <!-- Selected Files List -->
                                 <div v-if="selectedFiles.length > 0" class="selected-files">
-                                    <h4 class="files-title">{{ t('agora', 'Selected Files') }}</h4>
+                                    <h4 class="files-title">{{ t('agora', 'Selected files') }}</h4>
                                     <div class="file-list">
                                         <div
                                                 v-for="(file, index) in selectedFiles"
@@ -763,7 +763,7 @@ const handleTitleInput = () => {
                         {{ t('agora', 'Link {resource}', { resource: getResourceName(currentResourceType) }) }}
                     </span>
                     <span v-else-if="isFileType">
-                        {{ t('agora', 'Upload Files') }}
+                        {{ t('agora', 'Upload files') }}
                     </span>
                     <span v-else>
                         {{ t('agora', 'Create {resource}', { resource: getResourceName(currentResourceType) }) }}

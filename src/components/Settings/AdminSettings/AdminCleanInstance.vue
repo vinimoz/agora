@@ -25,20 +25,14 @@ const cleanInstance = ref({
 async function runCleanInstanceJob() {
   try {
     // Show warning confirmation before proceeding
-    const confirmMessage = t(
-      'agora',
-      'WARNING: This will permanently destroy ALL data in the instance. This action cannot be undone. Are you absolutely sure?'
-    )
+    const confirmMessage = t('agora', 'Warning: this will permanently destroy all data in the instance. This action cannot be undone. Are you absolutely sure?')
     
     if (!confirm(confirmMessage)) {
       return
     }
 
     // Second confirmation for safety
-    const secondConfirmMessage = t(
-      'agora',
-      'FINAL WARNING: All polls, votes, comments, and settings will be permanently deleted. Type "DELETE" to confirm:'
-    )
+    const secondConfirmMessage = t('agora', 'Final warning: all polls, votes, comments, and settings will be permanently deleted. Type "delete" to confirm:')
     
     const userInput = prompt(secondConfirmMessage)
     if (userInput !== 'DELETE') {
@@ -69,22 +63,16 @@ async function runCleanInstanceJob() {
   <div class="user_settings clean-instance-section">
     <div class="job_hints danger-warning">
       <p class="warning-title">
-        ⚠️ {{ t('agora', 'DANGER ZONE - Data Destruction') }} ⚠️
+        ⚠️ {{ t('agora', 'Danger zone - data destruction') }} ⚠️
       </p>
       <p>
         {{ 
-          t(
-            'agora',
-            'This action will permanently destroy ALL data including polls, votes, comments, and settings.'
-          ) 
+          t('agora', 'This action will permanently destroy all data including polls, votes, comments, and settings.') 
         }}
       </p>
       <p class="warning-highlight">
         {{
-          t(
-            'agora',
-            'This operation CANNOT be undone. All data will be lost forever.'
-          )
+          t('agora', 'This operation cannot be undone. All data will be lost forever.')
         }}
       </p>
       <p>

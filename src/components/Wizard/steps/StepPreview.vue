@@ -47,7 +47,7 @@ const sections = computed((): Section[] => {
 	return [
 		{
 			key: 'inquiry_families',
-			label: t('agora', 'Inquiry Families'),
+			label: t('agora', 'Inquiry families'),
 			icon: '📁',
 			count: editableData.value.inquiry_families?.length || 0,
 			itemLabelKey: 'label',
@@ -55,7 +55,7 @@ const sections = computed((): Section[] => {
 		},
 		{
 			key: 'inquiry_types',
-			label: t('agora', 'Inquiry Types'),
+			label: t('agora', 'Inquiry types'),
 			icon: '📋',
 			count: editableData.value.inquiry_types?.length || 0,
 			itemLabelKey: 'label',
@@ -63,7 +63,7 @@ const sections = computed((): Section[] => {
 		},
 		{
 			key: 'inquiry_statuses',
-			label: t('agora', 'Inquiry Statuses'),
+			label: t('agora', 'Inquiry statuses'),
 			icon: '📊',
 			count: editableData.value.inquiry_statuses?.length || 0,
 			itemLabelKey: 'label',
@@ -71,7 +71,7 @@ const sections = computed((): Section[] => {
 		},
 		{
 			key: 'option_types',
-			label: t('agora', 'Option Types'),
+			label: t('agora', 'Option types'),
 			icon: '🎯',
 			count: editableData.value.option_types?.length || 0,
 			itemLabelKey: 'label',
@@ -79,7 +79,7 @@ const sections = computed((): Section[] => {
 		},
 		{
 			key: 'inquiry_group_types',
-			label: t('agora', 'Inquiry Group Types'),
+			label: t('agora', 'Inquiry group types'),
 			icon: '👥',
 			count: editableData.value.inquiry_group_types?.length || 0,
 			itemLabelKey: 'label',
@@ -285,7 +285,7 @@ watch(() => editableData.value, () => {
 <template>
 	<div class="preview-step">
 		<div class="preview-header">
-			<h2>{{ t('agora', 'Preview & Customize Template') }}</h2>
+			<h2>{{ t('agora', 'Preview & customize template') }}</h2>
 			<p class="subtitle">
 				{{ t('agora', 'Review and customize the template before import') }}
 			</p>
@@ -309,22 +309,22 @@ watch(() => editableData.value, () => {
 
 			<!-- Summary Card with Duplicate Analysis -->
 			<div class="summary-card">
-				<h3>{{ t('agora', 'Import Preview') }}</h3>
+				<h3>{{ t('agora', 'Import preview') }}</h3>
 				<div v-if="duplicateAnalysis" class="summary-stats">
 					<div class="stat-item">
 						<span class="stat-icon">✨</span>
 						<span class="stat-value stat-new">{{ duplicateAnalysis.totals.new }}</span>
-						<span class="stat-label">{{ t('agora', 'New Items') }}</span>
+						<span class="stat-label">{{ t('agora', 'New items') }}</span>
 					</div>
 					<div class="stat-item">
 						<span class="stat-icon">📋</span>
 						<span class="stat-value stat-existing">{{ duplicateAnalysis.totals.existing }}</span>
-						<span class="stat-label">{{ t('agora', 'Existing (Skipped)') }}</span>
+						<span class="stat-label">{{ t('agora', 'Existing (skipped)') }}</span>
 					</div>
 					<div class="stat-item">
 						<span class="stat-icon">📦</span>
 						<span class="stat-value">{{ totalItems }}</span>
-						<span class="stat-label">{{ t('agora', 'Total Items') }}</span>
+						<span class="stat-label">{{ t('agora', 'Total items') }}</span>
 					</div>
 					<div class="stat-item">
 						<span class="stat-icon">🌐</span>
@@ -336,7 +336,7 @@ watch(() => editableData.value, () => {
 					<div class="stat-item">
 						<span class="stat-icon">📦</span>
 						<span class="stat-value">{{ totalItems }}</span>
-						<span class="stat-label">{{ t('agora', 'Total Items') }}</span>
+						<span class="stat-label">{{ t('agora', 'Total items') }}</span>
 					</div>
 					<div class="stat-item">
 						<span class="stat-icon">🌐</span>
@@ -422,7 +422,7 @@ v-if="duplicateAnalysis && getItemStatus(section.key, getItemType(item, section)
 								<div class="edit-form">
 									<NcTextField
 										v-model="editingItemData[section.itemTypeKey]"
-										:label="t('agora', 'Type Key')"
+										:label="t('agora', 'Type key')"
 										:placeholder="t('agora', 'Change to avoid duplicates')"
 										class="edit-field" />
 

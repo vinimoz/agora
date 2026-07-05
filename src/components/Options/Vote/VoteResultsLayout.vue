@@ -10,7 +10,7 @@
                 </div>
                 <div class="summary-content">
                     <div class="summary-value">{{ totalVotes }}</div>
-                    <div class="summary-label">{{ t('agora', 'Total Votes') }}</div>
+                    <div class="summary-label">{{ t('agora', 'Total votes') }}</div>
                 </div>
             </div>
             <div class="summary-card">
@@ -19,7 +19,7 @@
                 </div>
                 <div class="summary-content">
                     <div class="summary-value">{{ winner?.title || '-' }}</div>
-                    <div class="summary-label">{{ t('agora', 'Current Leader') }}</div>
+                    <div class="summary-label">{{ t('agora', 'Current leader') }}</div>
                 </div>
             </div>
             <div class="summary-card">
@@ -28,7 +28,7 @@
                 </div>
                 <div class="summary-content">
                     <div class="summary-value">{{ winnerPercentage }}%</div>
-                    <div class="summary-label">{{ t('agora', 'Leading Percentage') }}</div>
+                    <div class="summary-label">{{ t('agora', 'Leading percentage') }}</div>
                 </div>
             </div>
             <div class="summary-card">
@@ -37,24 +37,24 @@
                 </div>
                 <div class="summary-content">
                     <div class="summary-value">{{ timeRemaining }}</div>
-                    <div class="summary-label">{{ t('agora', 'Time Remaining') }}</div>
+                    <div class="summary-label">{{ t('agora', 'Time remaining') }}</div>
                 </div>
             </div>
         </div>
 
         <div class="charts-section">
             <div class="chart-container">
-                <h4>{{ t('agora', 'Vote Distribution') }}</h4>
+                <h4>{{ t('agora', 'Vote distribution') }}</h4>
                 <canvas ref="pieChartCanvas"></canvas>
             </div>
             <div class="chart-container">
-                <h4>{{ t('agora', 'Vote Ranking') }}</h4>
+                <h4>{{ t('agora', 'Vote ranking') }}</h4>
                 <canvas ref="barChartCanvas"></canvas>
             </div>
         </div>
 
         <div class="ranking-table">
-            <h4>{{ t('agora', 'Detailed Ranking') }}</h4>
+            <h4>{{ t('agora', 'Detailed ranking') }}</h4>
             <table>
                 <thead>
                     <tr>

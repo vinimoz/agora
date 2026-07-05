@@ -371,7 +371,7 @@ const handleImageUpload = async (event) => {
   // Check image size 5Mb max
   const maxSize = 5 * 1024 * 1024
   if (file.size > maxSize) {
-    showError(t('agora', 'Image size should be less than 5MB'))
+    showError(t('agora', 'Image size should be less than 5mb'))
     return
   }
 

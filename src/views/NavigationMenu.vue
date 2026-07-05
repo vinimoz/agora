@@ -269,7 +269,7 @@ watch(
       <!-- Recent Inquiries Section -->
       <NcAppNavigationList>
         <h3 class="navigation-caption">
-          {{ t('agora', 'Recent Inquiries') }}
+          {{ t('agora', 'Recent inquiries') }}
         </h3>
         <NcAppNavigationItem
           v-for="inquiry in recentInquiries"
@@ -295,7 +295,7 @@ watch(
       <!-- Inquiry Families Section -->
       <NcAppNavigationList>
         <h3 class="navigation-caption">
-          {{ t('agora', 'Inquiry Families') }}
+          {{ t('agora', 'Inquiry families') }}
         </h3>
 
         <NcAppNavigationItem
@@ -356,7 +356,7 @@ watch(
             class="navigation-sublist"
           >
             <h4 class="navigation-subcaption">
-              {{ t('agora', 'Inquiry Groups') }}
+              {{ t('agora', 'Inquiry groups') }}
             </h4>
 
             <NcAppNavigationItem

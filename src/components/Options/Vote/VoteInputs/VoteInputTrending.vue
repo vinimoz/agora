@@ -7,7 +7,7 @@
     <div class="trending-info">
       <TrendingUp :size="14" />
       <span class="trend-score">{{ displayScore }}</span>
-      <span class="trend-label">{{ t('agora', 'trending score') }}</span>
+      <span class="trend-label">{{ t('agora', 'Trending score') }}</span>
     </div>
   </div>
 </template>

@@ -151,7 +151,7 @@
 			    <template #icon>
 				    <Plus :size="16" />
 			    </template>
-	    {{ availableEngines.length === 0 ? t('agora', 'Create Voting Method') : t('agora', 'New Method') }}
+	    {{ availableEngines.length === 0 ? t('agora', 'Create voting method') : t('agora', 'New method') }}
 	    </NcButton>
 
 	    <!-- Add to vote button - only show when there's a current engine -->

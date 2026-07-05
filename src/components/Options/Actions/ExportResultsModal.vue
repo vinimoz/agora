@@ -12,12 +12,12 @@
     <div class="modal-content">
       <div class="export-header">
         <component :is="InquiryGeneralIcons.Export" :size="48" class="header-icon" />
-        <h2>{{ t('agora', 'Export Results') }}</h2>
+        <h2>{{ t('agora', 'Export results') }}</h2>
         <p>{{ t('agora', 'Export voting results in your preferred format') }}</p>
       </div>
 
       <div class="form-group">
-        <label>{{ t('agora', 'Export Format') }}</label>
+        <label>{{ t('agora', 'Export format') }}</label>
         <NcSelect
           v-model="exportFormat"
           :options="exportFormats"

@@ -45,20 +45,20 @@ const currentStepComponent = computed(() => {
 
 const stepTitle = computed(() => {
 	const titles = {
-		'use-case': t('agora', 'Choose Your Use Case'),
-		'template-selection': t('agora', 'Select Template'),
-		'language': t('agora', 'Choose Language'),
-		'preview': t('agora', 'Preview Template'),
-		'summary': t('agora', 'Review & Confirm'),
-		'importing': t('agora', 'Importing Template'),
-		'results': t('agora', 'Import Complete'),
+		'use-case': t('agora', 'Choose your use case'),
+		'template-selection': t('agora', 'Select template'),
+		'language': t('agora', 'Choose language'),
+		'preview': t('agora', 'Preview template'),
+		'summary': t('agora', 'Review & confirm'),
+		'importing': t('agora', 'Importing template'),
+		'results': t('agora', 'Import complete'),
 	}
 	return titles[wizardStore.currentStep] || ''
 })
 
 const getStepTitle = (step: string): string => {
 	const titles = {
-		'use-case': t('agora', 'Use Case'),
+		'use-case': t('agora', 'Use case'),
 		'template-selection': t('agora', 'Template'),
 		'language': t('agora', 'Language'),
 		'preview': t('agora', 'Preview'),
@@ -73,7 +73,7 @@ const canShowNavigation = computed(() => !['importing', 'results'].includes(wiza
 
 const nextButtonLabel = computed(() => {
 	if (wizardStore.currentStep === 'summary') {
-		return t('agora', 'Import Template')
+		return t('agora', 'Import template')
 	}
 	return t('agora', 'Next')
 })

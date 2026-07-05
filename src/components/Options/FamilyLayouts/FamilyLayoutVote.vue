@@ -172,7 +172,7 @@
         <!-- Delete Confirmation Dialog -->
         <NcDialog
                 v-if="showDeleteConfirm"
-                :name="t('agora', 'Delete Voting Method')"
+                :name="t('agora', 'Delete voting method')"
                 :message="deleteConfirmMessage"
                 @confirm="confirmDelete"
                 @cancel="cancelDelete"

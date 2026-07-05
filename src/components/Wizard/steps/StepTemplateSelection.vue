@@ -122,7 +122,7 @@ const toggleHelp = () => {
 <template>
 	<div class="template-selection">
 		<div class="template-header">
-			<h2>{{ t('agora', 'Select a Template') }}</h2>
+			<h2>{{ t('agora', 'Select a template') }}</h2>
 			<p v-if="wizardStore.selectedUseCase === 'custom'" class="subtitle">
 				{{ t('agora', 'Choose a pre-configured template or upload your own') }}
 			</p>
@@ -139,7 +139,7 @@ const toggleHelp = () => {
 				<template #icon>
 					<span class="icon-upload" />
 				</template>
-				{{ t('agora', 'Upload Custom Template') }}
+				{{ t('agora', 'Upload custom template') }}
 			</NcButton>
 			<input
 				ref="fileInput"
@@ -169,7 +169,7 @@ const toggleHelp = () => {
 
 				<div v-if="showHelp" class="help-content">
 					<NcNoteCard type="info">
-						<p>{{ t('agora', 'Use AI assistants like ChatGPT, Claude, Gemini, or local LLMs to generate custom templates.') }}</p>
+						<p>{{ t('agora', 'Use ai assistants like chatgpt, claude, gemini, or local llms to generate custom templates.') }}</p>
 					</NcNoteCard>
 
 					<div class="help-actions">
@@ -179,7 +179,7 @@ const toggleHelp = () => {
 							<template #icon>
 								<span class="icon-download" />
 							</template>
-							{{ t('agora', 'Download Schema') }}
+							{{ t('agora', 'Download schema') }}
 						</NcButton>
 
 						<NcButton
@@ -188,26 +188,26 @@ const toggleHelp = () => {
 							<template #icon>
 								<span class="icon-info" />
 							</template>
-							{{ t('agora', 'Download Instructions') }}
+							{{ t('agora', 'Download instructions') }}
 						</NcButton>
 					</div>
 
 					<div class="help-instructions">
-						<h4>{{ t('agora', 'Quick Guide:') }}</h4>
+						<h4>{{ t('agora', 'Quick guide:') }}</h4>
 						<ol>
 							<li>{{ t('agora', 'Download the schema and instructions above') }}</li>
-							<li>{{ t('agora', 'Open your preferred AI assistant (ChatGPT, Claude, Gemini, or local LLM)') }}</li>
+							<li>{{ t('agora', 'Open your preferred ai assistant (chatgpt, claude, gemini, or local llm)') }}</li>
 							<li>{{ t('agora', 'Provide the schema and describe your use case') }}</li>
-							<li>{{ t('agora', 'Copy the generated JSON and save it as a .json file') }}</li>
+							<li>{{ t('agora', 'Copy the generated json and save it as a .json file') }}</li>
 							<li>{{ t('agora', 'Upload the file using the button above') }}</li>
 						</ol>
 
-						<h4>{{ t('agora', 'Recommended AI Tools:') }}</h4>
+						<h4>{{ t('agora', 'Recommended ai tools:') }}</h4>
 						<ul class="ai-list">
 							<li><strong>ChatGPT:</strong> {{ t('agora', 'Best for complex templates with many types') }}</li>
 							<li><strong>Claude:</strong> {{ t('agora', 'Best for detailed, well-structured templates') }}</li>
 							<li><strong>Gemini:</strong> {{ t('agora', 'Best for multilingual templates') }}</li>
-							<li><strong>Local LLMs:</strong> {{ t('agora', 'Best for privacy-sensitive use cases (Ollama, LM Studio)') }}</li>
+							<li><strong>Local LLMs:</strong> {{ t('agora', 'Best for privacy-sensitive use cases (ollama, lm studio)') }}</li>
 						</ul>
 					</div>
 				</div>
@@ -215,7 +215,7 @@ const toggleHelp = () => {
 		</div>
 
 		<div v-if="wizardStore.selectedUseCase === 'custom' && !wizardStore.customTemplate" class="divider">
-			<span>{{ t('agora', 'or choose from catalog') }}</span>
+			<span>{{ t('agora', 'Or choose from catalog') }}</span>
 		</div>
 
 		<NcLoadingIcon v-if="isLoading && !wizardStore.customTemplate" :size="64" />

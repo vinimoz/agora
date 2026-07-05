@@ -72,7 +72,7 @@ const confidentialText = computed(() => {
   }
   
   return t('agora', 'Only visible to {displayName}', {
-    displayName: owner.displayName || t('agora', 'the owner'),
+    displayName: owner.displayName || t('agora', 'The owner'),
   })
 })
 

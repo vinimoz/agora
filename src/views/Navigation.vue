@@ -269,7 +269,7 @@ onMounted(() => {
       <!-- Quick Actions Section -->
       <NcAppNavigationList>
       <h3 class="navigation-caption">
-          {{ t('agora', 'Quick Actions') }}
+          {{ t('agora', 'Quick actions') }}
       </h3>
 
       <NcAppNavigationItem

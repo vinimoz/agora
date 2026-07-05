@@ -252,7 +252,7 @@ onMounted(() => {
     <div class="inquiries-management-section">
       <div class="section-header">
         <div class="section-title-container">
-          <h2>{{ t('agora', 'Inquiry Management') }}</h2>
+          <h2>{{ t('agora', 'Inquiry management') }}</h2>
           <p class="section-subtitle">{{ t('agora', 'LIST OF INQUIRIES IN THE GROUP') }}</p>
         </div>
       </div>
@@ -265,7 +265,7 @@ onMounted(() => {
           </div>
           <div>
             <h3 class="section-subtitle">{{ t('agora', 'ATTACHED INQUIRIES') }}</h3>
-            <p class="section-description">{{ t('agora', 'Drag to remove or click "Remove"') }}</p>
+            <p class="section-description">{{ t('agora', 'Drag to remove or click "remove"') }}</p>
           </div>
         </div>
         

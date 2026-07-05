@@ -165,7 +165,7 @@ const copyLinkButton = computed<ButtonProps>(() => ({
 
 const showQrCodeButton = computed<ButtonProps>(() => ({
   activate: !share.groupId && !share.deleted && !!share.URL,
-  name: t('agora', 'Show QR code'),
+  name: t('agora', 'Show qr code'),
   action: () => {
     emit('showQrCode')
   },

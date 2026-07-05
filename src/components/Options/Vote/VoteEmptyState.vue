@@ -49,8 +49,8 @@ const iconComponent = computed(() => {
 const iconSize = computed(() => props.noEngine ? 48 : 64)
 
 const title = computed(() => {
-    if (props.noEngine) return t('agora', 'No Voting Method Configured')
-     if (props.noOptionsLinked) return t('agora', 'No Options Linked to Vote')
+    if (props.noEngine) return t('agora', 'No voting method configured')
+     if (props.noOptionsLinked) return t('agora', 'No options linked to vote')
     if (props.showAddButton) return t('agora', 'No options to vote on yet')
     return t('agora', 'No voting data available')
 })
@@ -71,9 +71,9 @@ const showButton = computed(() => {
 
 const buttonType = computed(() => props.noEngine ? 'primary' : 'primary')
 const buttonText = computed(() => {
-    if (props.noEngine) return t('agora', 'Configure Voting Method')
+    if (props.noEngine) return t('agora', 'Configure voting method')
     
-    if (props.showAddButton) return t('agora', 'Add Option')
+    if (props.showAddButton) return t('agora', 'Add option')
     return ''
 })
 

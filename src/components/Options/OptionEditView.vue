@@ -97,7 +97,7 @@
                     class="read-only-indicator"
                 >
                     <component :is="InquiryOptionIcons.Lock" :size="16" />
-                    <span>{{ t('agora', 'Official content - View only') }}</span>
+                    <span>{{ t('agora', 'Official content - view only') }}</span>
                 </div>
             </div>
 

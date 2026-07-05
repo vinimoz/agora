@@ -578,7 +578,7 @@ export const useOptionsStore = defineStore('options', {
       if (otherOptions.length > 0) {
         groups.push({
           id: 999,
-          name: t('agora', 'Other Options'),
+          name: t('agora', 'Other options'),
           description: t('agora', 'Options without type classification'),
           family: 'other',
           color: '#999999',

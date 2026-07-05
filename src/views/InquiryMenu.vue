@@ -134,7 +134,7 @@ const currentFamily = computed(() => {
 })
 
 // Get current family data (icon, label, description)
-const currentFamilyData = computed(() => getInquiryItemData(currentFamily.value, t('agora', 'Inquiry Types')))
+const currentFamilyData = computed(() => getInquiryItemData(currentFamily.value, t('agora', 'Inquiry types')))
 
 // Function to select a family
 function selectFamily(familyType: string) {
@@ -313,7 +313,7 @@ onMounted(() => {
     <template #title>
         {{ selectedFamily 
         ? currentFamilyData.label
-        : t('agora', 'Select Inquiry Family') 
+        : t('agora', 'Select inquiry family') 
         }}
     </template>
 
@@ -341,7 +341,7 @@ onMounted(() => {
                     button-variant-grouped="horizontal"
                     @update:model-value="handleViewModeChange"
                     >
-                    {{ t('agora', 'Create Mode') }}
+                    {{ t('agora', 'Create mode') }}
             </NcCheckboxRadioSwitch>
             <NcCheckboxRadioSwitch
                     :button-variant="true"
@@ -352,7 +352,7 @@ onMounted(() => {
                     button-variant-grouped="horizontal"
                     @update:model-value="handleViewModeChange"
                     >
-                    {{ t('agora', 'View Mode') }}
+                    {{ t('agora', 'View mode') }}
             </NcCheckboxRadioSwitch>
         </div>
     </div>
@@ -399,7 +399,7 @@ onMounted(() => {
 
         <!-- Inquiry Types Section -->
         <div v-if="filteredInquiryTypes.length > 0" class="inquiry-section">
-            <h3 class="section-title">{{ t('agora', 'Inquiry Types') }}</h3>
+            <h3 class="section-title">{{ t('agora', 'Inquiry types') }}</h3>
             <div class="inquiry-types-grid">
                 <div
                         v-for="inquiryType in filteredInquiryTypes"
@@ -424,7 +424,7 @@ onMounted(() => {
 
         <!-- Inquiry Group Types Section -->
   <div v-if="filteredInquiryGroupTypes.length > 0" class="inquiry-section">
-    <h3 class="section-title">{{ t('agora', 'Inquiry Groups') }}</h3>
+    <h3 class="section-title">{{ t('agora', 'Inquiry groups') }}</h3>
     <div class="inquiry-types-grid">
       <div
         v-for="inquiryGroupType in filteredInquiryGroupTypes"
@@ -467,7 +467,7 @@ onMounted(() => {
     <!-- Inquiry Creation Dialog -->
     <NcDialog
             v-if="createDlgToggle"
-            :name="t('agora', 'Create New Inquiry')"
+            :name="t('agora', 'Create new inquiry')"
             :enable-slide-up="false"
             @close="handleCloseDialog"
             >
@@ -484,7 +484,7 @@ onMounted(() => {
     <!-- Inquiry Group Creation Dialog -->
     <NcDialog
             v-if="createGroupDlgToggle"
-            :name="t('agora', 'Create New Inquiry Group')"
+            :name="t('agora', 'Create new inquiry group')"
             :enable-slide-up="false"
             @close="handleCloseGroupDialog"
             >

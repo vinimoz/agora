@@ -33,7 +33,7 @@ const defaultInquirySettings = Object.values(InquiriesType).reduce((acc, type) =
 
 <template>
   <div class="admin-inquiry-settings">
-    <h2>{{ t('agora', 'Inquiry Download Settings') }}</h2>
+    <h2>{{ t('agora', 'Inquiry download settings') }}</h2>
 
     <div class="global-setting">
       <NcCheckboxRadioSwitch
@@ -61,7 +61,7 @@ const defaultInquirySettings = Object.values(InquiriesType).reduce((acc, type) =
     </div>
 
     <div class="inquiry-type-settings">
-      <h3>{{ t('agora', 'Inquiry Type Settings') }}</h3>
+      <h3>{{ t('agora', 'Inquiry type settings') }}</h3>
       <p class="settings-description">
         {{ t('agora', 'Configure settings for each type of inquiry') }}
       </p>
@@ -69,9 +69,9 @@ const defaultInquirySettings = Object.values(InquiriesType).reduce((acc, type) =
       <table class="inquiry-types-table">
         <thead>
           <tr>
-            <th>{{ t('agora', 'Inquiry Type') }}</th>
+            <th>{{ t('agora', 'Inquiry type') }}</th>
             <th>{{ t('agora', 'Enabled') }}</th>
-            <th>{{ t('agora', 'Editor Type') }}</th>
+            <th>{{ t('agora', 'Editor type') }}</th>
           </tr>
         </thead>
         <tbody>

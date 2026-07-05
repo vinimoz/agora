@@ -166,7 +166,7 @@ const getResourceDisplayName = (link: InquiryLink): string => {
     card: t('agora', 'Card'),
     expense: t('agora', 'Expense'),
     file: t('agora', 'File'),
-    page: t('agora', 'Collective Page'),
+    page: t('agora', 'Collective page'),
   }
 
   const typeName = typeNames[link.target_type] || link.target_type
@@ -233,7 +233,7 @@ const deleteResource = async (resource: ResourceItem) => {
     }
 
     const confirmedLinkDeletion = await confirmDeletion(
-      t('agora', 'Are you sure you want to delete this resource link? This will remove the reference from Agora.'),
+      t('agora', 'Are you sure you want to delete this resource link? This will remove the reference from agora.'),
       t('agora', 'Confirm link deletion'),
       t('agora', 'Delete link'),
       t('agora', 'Cancel')
@@ -285,7 +285,7 @@ const handleSpecificResourceDeletion = async (resource: ResourceItem, deleteExte
         await inquiryLinksStore.deleteCospendProjectViaAPI(resource.target_id); 
         showSuccess(t('agora', 'Cospend project and link deleted successfully'));
       } else {
-        showSuccess(t('agora', 'Link deleted successfully - Cospend project kept'));
+        showSuccess(t('agora', 'Link deleted successfully - cospend project kept'));
       }
     },
     deck: async () => {
@@ -293,7 +293,7 @@ const handleSpecificResourceDeletion = async (resource: ResourceItem, deleteExte
         await inquiryLinksStore.deleteDeckViaAPI(resource.target_id);
         showSuccess(t('agora', 'Deck board and link deleted successfully'));
       } else {
-        showSuccess(t('agora', 'Link deleted successfully - Deck board kept'));
+        showSuccess(t('agora', 'Link deleted successfully - deck board kept'));
       }
     },
     collectives: async () => {
@@ -301,7 +301,7 @@ const handleSpecificResourceDeletion = async (resource: ResourceItem, deleteExte
         await inquiryLinksStore.deleteCollectiveViaAPI(resource.target_id);
         showSuccess(t('agora', 'Collective and link deleted successfully'));
       } else {
-        showSuccess(t('agora', 'Link deleted successfully - Collective kept'));
+        showSuccess(t('agora', 'Link deleted successfully - collective kept'));
       }
     },
     polls: async () => {
@@ -309,7 +309,7 @@ const handleSpecificResourceDeletion = async (resource: ResourceItem, deleteExte
         await inquiryLinksStore.deletePollViaAPI(resource.target_id);
         showSuccess(t('agora', 'Poll and link deleted successfully'));
       } else {
-        showSuccess(t('agora', 'Link deleted successfully - Poll kept'));
+        showSuccess(t('agora', 'Link deleted successfully - poll kept'));
       }
     },
     forms: async () => {
@@ -317,7 +317,7 @@ const handleSpecificResourceDeletion = async (resource: ResourceItem, deleteExte
         await inquiryLinksStore.deleteFormViaAPI(resource.target_id);
         showSuccess(t('agora', 'Form and link deleted successfully'));
       } else {
-        showSuccess(t('agora', 'Link deleted successfully - Form kept'));
+        showSuccess(t('agora', 'Link deleted successfully - form kept'));
       }
     },
     default: async () => {
@@ -350,11 +350,11 @@ const handleAttachmentDeletion = async (resource: ResourceItem) => {
 
 const getErrorMessage = (resourceType: string): string => {
   const messages = {
-    cospend: t('agora', 'Failed to delete Cospend resource'),
-    deck: t('agora', 'Failed to delete Deck resource'),
-    collectives: t('agora', 'Failed to delete Collective resource'),
-    polls: t('agora', 'Failed to delete Poll resource'),
-    forms: t('agora', 'Failed to delete Form resource'),
+    cospend: t('agora', 'Failed to delete cospend resource'),
+    deck: t('agora', 'Failed to delete deck resource'),
+    collectives: t('agora', 'Failed to delete collective resource'),
+    polls: t('agora', 'Failed to delete poll resource'),
+    forms: t('agora', 'Failed to delete form resource'),
     attachment: t('agora', 'Failed to delete file'),
     default: t('agora', 'Failed to delete resource')
   };
@@ -498,8 +498,8 @@ onMounted(async () => {
         <div class="sidebar-header">
             <div class="header-content">
                 <div class="header-text">
-                    <h2>{{ t('agora', 'Linked Resources') }}</h2>
-                    <p class="description">{{ t('agora', 'Manage links to other Nextcloud resources and files') }}</p>
+                    <h2>{{ t('agora', 'Linked resources') }}</h2>
+                    <p class="description">{{ t('agora', 'Manage links to other nextcloud resources and files') }}</p>
                 </div>
                 <NcButton
                         v-if="currentInquiry.currentUserStatus?.isOwner"
@@ -510,7 +510,7 @@ onMounted(async () => {
                         <template #icon>
                             <component :is="InquiryGeneralIcons.Plus" :size="20" />
                         </template>
-                {{ t('agora', 'Add Resource') }}
+                {{ t('agora', 'Add resource') }}
                 </NcButton>
             </div>
         </div>

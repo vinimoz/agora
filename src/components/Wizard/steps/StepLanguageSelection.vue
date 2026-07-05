@@ -17,7 +17,7 @@ const languageNames: Record<string, string> = {
 	en: t('agora', 'English'),
 	fr: t('agora', 'French'),
 	de: t('agora', 'German'),
-	gsw: t('agora', 'Swiss German'),
+	gsw: t('agora', 'Swiss german'),
 	it: t('agora', 'Italian'),
 	es: t('agora', 'Spanish'),
 	pt: t('agora', 'Portuguese'),
@@ -34,7 +34,7 @@ const selectLanguage = (language: string) => {
 <template>
 	<div class="language-selection">
 		<div class="language-header">
-			<h2>{{ t('agora', 'Choose Your Language') }}</h2>
+			<h2>{{ t('agora', 'Choose your language') }}</h2>
 			<p class="subtitle">
 				{{ t('agora', 'Select the language for your template content') }}
 			</p>
