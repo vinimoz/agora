@@ -113,6 +113,7 @@ OC.L10N.register(
     "File" : "Fayl",
     "Deck" : "Pastki qavat",
     "Delete file" : "Faylni o'chirish",
+    "Choose language" : "Tilni tanlang",
     "Language" : "Language",
     "Confirm" : "Tasdiqlash",
     "Results" : "Natijalar",

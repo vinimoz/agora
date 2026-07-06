@@ -78,7 +78,6 @@ OC.L10N.register(
     "English" : "Saozneg",
     "French" : "Galleg",
     "German" : "Alamaneg",
-    "Swiss German" : "Alamaneg Suis",
     "Italian" : "Italianeg",
     "Spanish" : "Spagnoleg",
     "Portuguese" : "Portugaleg",
