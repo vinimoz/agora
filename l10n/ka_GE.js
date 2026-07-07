@@ -71,6 +71,7 @@ OC.L10N.register(
     "Rank" : "რანგი",
     "Login" : "ავტორიზაცია",
     "Select an icon" : "აირჩიეთ პიქტოგრამა",
+    "Save changes" : "ცვილებების შენახვა",
     "Label" : "ლეიბლი",
     "Share label" : "Share label",
     "No activity yet" : "აქტოვობა ჯერ არაა",

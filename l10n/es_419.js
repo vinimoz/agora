@@ -69,6 +69,7 @@ OC.L10N.register(
     "Rank" : "Rango",
     "Login" : "Iniciar sesión",
     "Select an icon" : "Selecciona un ícono",
+    "Save changes" : "Guardar Cambios",
     "Privacy policy link" : "Enlace de política de seguridad",
     "Label" : "Etiqueta",
     "Share label" : "Share label",

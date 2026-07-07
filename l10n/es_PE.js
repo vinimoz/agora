@@ -71,6 +71,7 @@ OC.L10N.register(
     "Email" : "Correo electrónico",
     "Login" : "Iniciar sesión",
     "Select an icon" : "Selecciona un ícono",
+    "Save changes" : "Guardar cambios",
     "Configure" : "Configurar",
     "Share label" : "Share label",
     "Shares" : "Elementos compartido",

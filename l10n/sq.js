@@ -91,6 +91,7 @@ OC.L10N.register(
     "Expiration" : "Skadim",
     "File" : "Skedar ",
     "Deck" : "Shto paisjen U2F",
+    "Select template" : "Zgjidh shabllonin",
     "Language" : "Gjuha",
     "Confirm" : "Konfirmo",
     "Importing" : "Duke u importuar",
