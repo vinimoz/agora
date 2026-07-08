@@ -544,7 +544,7 @@
     "Select parent location" : "Виберіть батьківське розташування",
     "Select parent" : "Виберіть батька",
     "Enable the automatic deletion of archived inquiries" : "Увімкнути автоматичне видалення архівних запитів",
-    "Days after which archived inquiries should be finally deleted" : "Дні, після яких архівні запити мають бути остаточно видалені",
+    "Days after which archived inquiries should be finally deleted" : "Дні, після яких архівні запити мають бути остаточно вилучені",
     "Add terms links also to the email footer" : "Додати посилання на умови також у нижній колонтитул листа",
     "Additional email disclaimer" : "Додаткове зауваження в електронному листі",
     "Select an icon" : "Оберіть значок",
