@@ -285,6 +285,7 @@ OC.L10N.register(
     "Just now" : "À l'instant",
     "Expiring soon" : "Expire bientôt",
     "Yesterday" : "Hier",
+    "No description available" : "Aucune description disponible",
     "Support" : "Support",
     "Participants" : "Participants",
     "Description" : "Description",
