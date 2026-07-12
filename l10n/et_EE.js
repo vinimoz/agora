@@ -940,6 +940,7 @@ OC.L10N.register(
     "Saving …" : "Salvestan…",
     "optional" : "valikuline",
     "Choose the voting method for this inquiry" : "Vali hääletusmeetod selle küsitluse jaoks",
+    "Form" : "Vorm",
     "File" : "Fail",
     "Deck" : "Kanban",
     "Are you sure you want to delete this file? This action cannot be undone." : "Kas sa oled kindel, et soovid selle faili kustutada? Seda tegevust ei saa tagasi pöörata.",

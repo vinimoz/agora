@@ -331,6 +331,7 @@ OC.L10N.register(
     "Close" : "Fermer",
     "Add {type}" : "Ajouter {type}",
     "Option" : "Option",
+    "Parent" : "Parent",
     "Create" : "Créer",
     "Retry" : "Réessayer",
     "Edit" : "Modifier",
