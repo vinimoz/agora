@@ -217,6 +217,7 @@ OC.L10N.register(
     "Align center" : "Centrer",
     "Align right" : "Aligner à droite",
     "Blockquote" : "Citation",
+    "Horizontal rule" : "Ligne horizontale",
     "Link" : "Lien",
     "Insert image" : "Insérer une image",
     "Code" : "Code",
