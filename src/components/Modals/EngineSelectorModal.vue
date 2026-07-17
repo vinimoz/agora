@@ -612,8 +612,8 @@ const getEngineDescription = (engineId: string): string =>
 
 const getScopeLabel = (scope: string): string => {
   const labels: Record<string, string> = {
-    per_option: t('agora', 'Per option'),
-    cross_option: t('agora', 'Cross option'),
+    per_option: t('agora', 'Absolute numbers per option decide the winner'),
+    cross_option: t('agora', 'Relative weightings across options decide the winner'),
     flex: t('agora', 'Flexible'),
     none: t('agora', 'No voting')
   }
