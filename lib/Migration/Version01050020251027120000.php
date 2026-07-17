@@ -94,7 +94,7 @@ class Version01050020251027120000 extends SimpleMigrationStep
         $table->addColumn('created', Types::BIGINT, ['notnull' => true, 'default' => 0, 'length' => 20]);
         $table->addColumn('expire', Types::BIGINT, ['notnull' => true, 'default' => 0, 'length' => 20]);
         $table->addColumn('deleted', Types::BIGINT, ['notnull' => true, 'default' => 0, 'length' => 20]);
-        $table->addColumn('access', Types::STRING, ['notnull' => true, 'default' => 'private', 'length' => 50]);
+        $table->addColumn('publication_status', Types::STRING, ['notnull' => true, 'default' => 'private', 'length' => 50]);
         $table->addColumn('inquiry_status', Types::STRING, ['notnull' => true, 'default' => 'draft', 'length' => 32]);
         $table->setPrimaryKey(['id']);
         

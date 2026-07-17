@@ -58,7 +58,7 @@ const statusOptions = [
 ]
 
 const inquiryAccess = computed({
-  get: () => props.inquiryStore.configuration.access === 'moderate',
+  get: () => props.inquiryStore.status.publicationStatus === 'pending',
 
   set: async (value) => {
     if (!value) return;
@@ -265,7 +265,7 @@ const handleAllowedTransformation = (transformType: string) => {
         <!-- Right: Access switch and item actions -->
         <div class="right-actions">
             <div class="moderation-controls">
-                <div v-if="inquiryStore.configuration.access === 'private' && inquiryStore.status.moderationStatus !== 'rejected'" class="access-control">
+                <div v-if="inquiryStore.configuration.visibility === 'private' && inquiryStore.status.moderationStatus !== 'rejected'" class="access-control">
                     <label class="control-label">{{ t('agora', 'Submit to moderation') }}</label>
                     <NcCheckboxRadioSwitch
                             v-model="inquiryAccess"
@@ -275,7 +275,7 @@ const handleAllowedTransformation = (transformType: string) => {
                 </div>
 
                 <div v-if="sessionStore.currentUser.isModerator">
-                    <div v-if="inquiryStore.configuration.access === 'moderate' && inquiryStore.status.moderationStatus === 'pending'" class="access-control">
+                    <div v-if="inquiryStore.status.publicationStatus === 'pending' && inquiryStore.status.moderationStatus === 'pending'" class="access-control">
                         <label class="control-label">{{ t('agora', 'Moderate') }}</label>
                         <NcSelect
                                 v-model="selectedStatus"

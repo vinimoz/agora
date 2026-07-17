@@ -115,7 +115,6 @@
       </div>
     </div>
 
-    <!-- Fourth Box: Responses - normal mode -->
     <!-- Conditionally hide responses when progressBar is true -->
     <div v-if="!inline && hasAllowedResponses && !compact && !progressBar" class="card-responses">
       <div class="responses-header">
@@ -159,7 +158,7 @@
                   <span class="child-title">{{ child.title || child.text?.substring(0, 30) }}</span>
                 </div>
                 <div v-if="childCounts[responseType] > 3" class="tooltip-more">
-                  {{ t('agora', 'and {count} more …', { count: childCounts[responseType] - 3 }) }}
+                  {{ t('agora', 'and {count} more …', { count: childCounts[responseType] - 3 }) }}
                 </div>
               </div>
             </div>
@@ -207,7 +206,7 @@
                     <span class="child-title">{{ child.title || child.text?.substring(0, 30) }}</span>
                   </div>
                   <div v-if="childCounts[responseType] > 3" class="tooltip-more">
-                    {{ t('agora', 'and {count} more …', { count: childCounts[responseType] - 3 }) }}
+                    {{ t('agora', 'and {count} more …', { count: childCounts[responseType] - 3 }) }}
                   </div>
                 </div>
               </div>
@@ -291,7 +290,7 @@ import { t } from '@nextcloud/l10n'
 import NcAvatar from '@nextcloud/vue/components/NcAvatar'
 import NcActions from '@nextcloud/vue/components/NcActions'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
-import SupportFeature from '../../helpers/modules/SupportFeature.vue'
+import { SupportFeature } from '../Base/index.ts'
 
 import { useOptionsStore } from '../../stores/options'
 import { useSessionStore } from '../../stores/session'

@@ -1,0 +1,468 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * SPDX-FileCopyrightText: 2024 Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+namespace OCA\Agora\Service;
+
+use OCA\Agora\Db\Participation;
+use OCA\Agora\Db\ParticipationMapper;
+use OCP\IGroupManager;
+use OCA\Agora\Db\InquiryMapper;
+use OCA\Agora\Db\LotteryRun;
+use OCA\Agora\Db\LotteryRunMapper;
+use OCA\Agora\Db\LotterySelection;
+use OCA\Agora\Db\LotterySelectionMapper;
+use OCA\Agora\Exceptions\Exception;
+use OCA\Agora\UserSession;
+use Psr\Log\LoggerInterface;
+use OCP\AppFramework\Db\DoesNotExistException;
+
+class ParticipationService
+{
+	public function __construct(
+		private ParticipationMapper $participationMapper,
+		private LotteryRunMapper $lotteryRunMapper,
+		private LotterySelectionMapper $lotterySelectionMapper,
+		private InquiryMapper $inquiryMapper,
+		private UserSession $userSession,
+		private IGroupManager $groupManager,  
+		private LoggerInterface $logger,
+	) {
+	}
+
+	// ====================================================================
+	// PARTICIPATION POLICIES
+	// ====================================================================
+
+	/**
+	 * Get participation policy for a target
+	 */
+	public function getPolicy(string $targetType, int $targetId): ?Participation
+	{
+		return $this->participationMapper->findByTarget($targetType, $targetId);
+	}
+
+
+public function runLotteryForTarget(
+    string $targetType,
+    int $targetId,
+    array $pool,
+    ?string $seed = null
+): LotteryRun {
+    $participation = $this->participationMapper->findByTarget($targetType, $targetId);
+    if ($participation === null) {
+        throw new Exception('Participation policy not found for target');
+    }
+    return $this->runLottery($participation->getId(), $pool, $seed);
+}
+
+/**
+ * Get participation policy for a target with relations loaded
+ */
+public function getPolicyWithRelations(string $targetType, int $targetId): ?Participation
+{
+    return $this->participationMapper->findByTargetWithRelations($targetType, $targetId);
+}
+
+	/**
+	 * Create or update participation policy
+	 */
+	public function setPolicy(
+		string $targetType,
+		int $targetId,
+		string $policyType,
+		array $policyConfig = []
+	): Participation {
+		$participation = $this->participationMapper->findByTarget($targetType, $targetId);
+
+		 $this->logger->warning('Setting participation POLICY', [
+        'targetType' => $targetType,
+        'targetId' => $targetId,
+        'policyType' => $policyType,
+        'hasExisting' => $participation !== null,
+        'policyConfig' => $policyConfig
+    ]);
+
+		if ($participation === null) {
+			$participation = new Participation();
+			$participation->setTargetType($targetType);
+			$participation->setTargetId($targetId);
+			$participation->setCreatedAt(time());
+			$participation->setCreatedBy($this->userSession->getCurrentUserId());
+			 $this->logger->debug('Creating new participation POLICY', [
+            'targetType' => $targetType,
+            'targetId' => $targetId
+        ]);
+		}
+
+		// Extract user_ids and group_ids from policyConfig before storing
+		$userIds = $policyConfig['user_ids'] ?? [];
+		$groupIds = $policyConfig['group_ids'] ?? [];
+
+		// Remove them from config if they exist (they're stored in relations)
+		unset($policyConfig['user_ids']);
+		unset($policyConfig['group_ids']);
+
+		$participation->setPolicyType($policyType);
+		$participation->setPolicyConfig($policyConfig);
+		$participation->setUpdatedAt(time());
+
+		if ($participation->getId() === null) {
+			$participation = $this->participationMapper->insert($participation);
+		} else {
+			$participation = $this->participationMapper->update($participation);
+		}
+
+		// Store relations using the new tables
+		if ($policyType === Participation::POLICY_USERS && !empty($userIds)) {
+			$this->participationMapper->setUsersForParticipation($targetId, $targetType, $userIds);
+		} elseif ($policyType === Participation::POLICY_GROUPS && !empty($groupIds)) {
+			$this->participationMapper->setGroupsForParticipation($targetId, $targetType, $groupIds);
+		} elseif ($policyType === Participation::POLICY_LOTTERY) {
+			if (!isset($policyConfig['mode'])) {
+				throw new Exception('Lottery mode is required');
+			}
+			if (!in_array($policyConfig['mode'], [Participation::LOTTERY_MODE_USERS, Participation::LOTTERY_MODE_GROUPS])) {
+				throw new Exception('Invalid lottery mode');
+			}
+			// Ensure count is set
+			$policyConfig['count'] = $policyConfig['count'] ?? 1;
+			if ($policyConfig['count'] < 1) {
+				throw new Exception('Lottery count must be at least 1');
+			}
+		}
+
+		return $participation;
+	}
+
+/**
+ * Delete participation policy
+ */
+public function deletePolicy(string $targetType, int $targetId): bool
+{
+	$participation = $this->participationMapper->findByTarget($targetType, $targetId);
+	if ($participation === null) {
+		return false;
+	}
+
+	$this->participationMapper->delete($participation);
+	return true;
+}
+
+/**
+ * Check if a user can participate
+ */
+public function canParticipate(string $userId, string $targetType, int $targetId): bool
+{
+	$policy = $this->participationMapper->findByTarget($targetType, $targetId);
+
+	if ($policy === null) {
+		return true; // Default: everyone
+	}
+
+	switch ($policy->getPolicyType()) {
+	case Participation::POLICY_EVERYONE:
+		return true;
+
+	case Participation::POLICY_USERS:
+		$userIds = $policy->getPolicyConfig()['user_ids'] ?? [];
+		return in_array($userId, $userIds);
+
+	case Participation::POLICY_GROUPS:
+		$groupIds = $policy->getPolicyConfig()['group_ids'] ?? [];
+		return $this->userInGroups($userId, $groupIds);
+
+	case Participation::POLICY_LOTTERY:
+		$selection = $this->lotterySelectionMapper->findByUserAndParticipation($userId, $policy->getId());
+		if ($selection === null) {
+			return false;
+		}
+		// Check if expired
+		if ($selection->isExpired() || ($selection->isPending() && $selection->getExpiresAt() < time())) {
+			return false;
+		}
+		return $selection->isAccepted();
+
+	default:
+		return false;
+	}
+}
+
+
+// ====================================================================
+// LOTTERY OPERATIONS
+// ====================================================================
+
+/**
+ * Get all users who can participate in a target
+ */
+public function getEligibleUsers(string $targetType, int $targetId): array
+{
+    $policy = $this->participationMapper->findByTargetWithRelations($targetType, $targetId);
+    if ($policy === null) {
+        // Everyone
+        return $this->userManager->search(''); // All users
+    }
+
+    switch ($policy->getPolicyType()) {
+        case Participation::POLICY_EVERYONE:
+            return $this->userManager->search('');
+        case Participation::POLICY_USERS:
+            return $policy->getPolicyConfig()['user_ids'] ?? [];
+        case Participation::POLICY_GROUPS:
+            // Expand groups to users
+            $groupIds = $policy->getPolicyConfig()['group_ids'] ?? [];
+            return $this->getUsersFromGroups($groupIds);
+        case Participation::POLICY_LOTTERY:
+            // Only accepted selections can participate
+            $selections = $this->lotterySelectionMapper->findByParticipationId($policy->getId());
+            return array_filter(
+                array_map(fn($s) => $s->isAccepted() ? $s->getSelectedUserId() : null, $selections)
+            );
+        default:
+            return [];
+    }
+}
+
+public function runLotteryForTarget(
+    string $targetType,
+    int $targetId,
+    ?string $seed = null
+): LotteryRun {
+    $participation = $this->participationMapper->findByTarget($targetType, $targetId);
+    if ($participation === null) {
+        throw new Exception('Participation policy not found for target');
+    }
+    return $this->lotteryService->runLottery($participation->getId(), $seed);
+}
+
+public function validateLotteryForTarget(string $targetType, int $targetId): LotteryRun
+{
+    $participation = $this->participationMapper->findByTarget($targetType, $targetId);
+    if ($participation === null) {
+        throw new Exception('Participation policy not found');
+    }
+
+    $latestRun = $this->lotteryRunMapper->findLatestByParticipationId($participation->getId());
+    if ($latestRun === null) {
+        throw new Exception('No lottery run found to validate');
+    }
+
+    return $this->lotteryService->validateLottery($latestRun->getId());
+}
+
+public function getLotteryStatus(string $targetType, int $targetId): array
+{
+    return $this->lotteryService->getLotteryStatus($targetType, $targetId);
+}
+
+private function buildPoolFromPolicy(Participation $participation): array
+{
+	$config = $participation->getPolicyConfig();
+	$mode = $config['mode'] ?? Participation::LOTTERY_MODE_USERS;
+
+	if ($mode === Participation::LOTTERY_MODE_GROUPS) {
+		$groupIds = $config['source_groups'] ?? [];
+		return $this->getUsersFromGroups($groupIds);
+	}
+
+	// For 'users' mode, you might want to return all users, or a specific list from relations.
+	// Since there is no user list stored for lottery, we'll return all users (or throw).
+	return array_map(fn($user) => $user->getUID(), $this->userManager->search(''));
+}
+
+
+
+/**
+ * Run a lottery
+ */
+public function runLottery(int $participationId, array $pool, ?string $seed = null): LotteryRun
+{
+	$participation = $this->participationMapper->find($participationId);
+
+
+	if ($participation === null) {
+		throw new Exception('Participation policy not found');
+	}
+
+	if ($participation->getPolicyType() !== Participation::POLICY_LOTTERY) {
+		throw new Exception('Participation policy is not a lottery');
+	}
+
+	if ($pool === null) {
+		$pool = $this->buildPoolFromPolicy($participation);
+	}
+
+	$existingRun = $this->lotteryRunMapper->findLatestByParticipationId($participationId);
+	if ($existingRun && $existingRun->isRunning()) {
+		throw new Exception('Lottery is already running');
+	}
+
+	$config = $participation->getPolicyConfig();
+	$selectionSize = $config['selection_size'] ?? $config['count'] ?? 1;
+	// Create run
+	$run = new LotteryRun();
+	$run->setParticipationId($participationId);
+	$run->setSeed($seed ?? $this->generateSeed());
+	$run->setStatus(LotteryRun::STATUS_RUNNING);
+	$run->setPoolSize(count($pool));
+	$run->setCreatedAt(time());
+	$this->lotteryRunMapper->insert($run);
+
+	try {
+		// Perform selection
+		$selected = $this->selectRandom($pool, $selectionSize, $run->getSeed());
+
+		// Save selections
+		$rank = 1;
+		foreach ($selected as $userId) {
+			$selection = new LotterySelection();
+			$selection->setParticipationId($participationId);
+			$selection->setRunId($run->getId());
+			$selection->setSelectedUserId($userId);
+			$selection->setRank($rank++);
+			$selection->setStatus(LotterySelection::STATUS_PENDING);
+			$selection->setSelectedAt(time());
+			$this->lotterySelectionMapper->insert($selection);
+		}
+
+		// Mark run as completed
+		$run->setStatus(LotteryRun::STATUS_COMPLETED);
+		$run->setSelectionCount(count($selected));
+		$run->setCompletedAt(time());
+		$run->setResultSummary([
+			'pool_size' => count($pool),
+			'selection_size' => count($selected),
+			'seed' => $run->getSeed(),
+		]);
+		$this->lotteryRunMapper->update($run);
+
+		return $run;
+
+	} catch (\Exception $e) {
+		$run->setStatus(LotteryRun::STATUS_FAILED);
+		$this->lotteryRunMapper->update($run);
+		throw new Exception('Lottery execution failed: ' . $e->getMessage());
+	}
+}
+
+/**
+ * Get lottery results for a target
+ */
+public function getLotteryResults(string $targetType, int $targetId): array
+{
+	$policy = $this->participationMapper->findByTarget($targetType, $targetId);
+	if ($policy === null || !$policy->isLottery()) {
+		return [];
+	}
+
+	$runs = $this->lotteryRunMapper->findByParticipationId($policy->getId());
+
+	$results = [];
+	foreach ($runs as $run) {
+		$selections = $this->lotterySelectionMapper->findByRunId($run->getId());
+		$results[] = [
+			'run' => $run->jsonSerialize(),
+			'selections' => array_map(fn($s) => $s->jsonSerialize(), $selections),
+		];
+	}
+
+	return $results;
+}
+
+/**
+ * Accept a selection
+ */
+public function acceptSelection(int $selectionId): LotterySelection
+{
+	$selection = $this->lotterySelectionMapper->find($selectionId);
+	if ($selection === null) {
+		throw new DoesNotExistException('Selection not found');
+	}
+
+	if (!$selection->isPending()) {
+		throw new Exception('Selection already ' . $selection->getStatus());
+	}
+
+	$selection->setStatus(LotterySelection::STATUS_ACCEPTED);
+	$selection->setAcceptedAt(time());
+	return $this->lotterySelectionMapper->update($selection);
+}
+
+/**
+ * Decline a selection
+ */
+public function declineSelection(int $selectionId): LotterySelection
+{
+	$selection = $this->lotterySelectionMapper->find($selectionId);
+	if ($selection === null) {
+		throw new DoesNotExistException('Selection not found');
+	}
+
+	if (!$selection->isPending()) {
+		throw new Exception('Selection already ' . $selection->getStatus());
+	}
+
+	$selection->setStatus(LotterySelection::STATUS_DECLINED);
+	return $this->lotterySelectionMapper->update($selection);
+}
+
+// ====================================================================
+// HELPERS
+// ====================================================================
+
+private function selectRandom(array $pool, int $count, string $seed): array
+{
+	shuffle($pool);
+	mt_srand(crc32($seed));
+	shuffle($pool);
+	mt_srand(); // Reset seed
+	return array_slice($pool, 0, min($count, count($pool)));
+
+}
+
+private function generateSeed(): string
+{
+	return bin2hex(random_bytes(16)) . '_' . time();
+}
+/**
+ * Check if a user belongs to any of the specified groups
+ */
+private function userInGroups(string $userId, array $groupIds): bool
+{
+	if (empty($groupIds)) {
+		return false;
+	}
+
+	try {
+		$user = $this->groupManager->getUser($userId);
+		if ($user === null) {
+			$this->logger->warning('User not found for group check', [
+				'userId' => $userId,
+				'app' => 'agora'
+			]);
+			return false;
+		}
+
+		$userGroups = $this->groupManager->getUserGroups($user);
+		$userGroupIds = array_map(function($group) {
+			return $group->getGID();
+		}, $userGroups);
+
+		return !empty(array_intersect($userGroupIds, $groupIds));
+	} catch (\Exception $e) {
+		$this->logger->error('Failed to check user groups', [
+			'userId' => $userId,
+			'error' => $e->getMessage(),
+			'app' => 'agora'
+		]);
+		return false;
+	}
+}
+
+}

@@ -1,3 +1,8 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
 
 <script setup lang="ts">
 import { computed, ref, onMounted } from 'vue'
@@ -275,7 +280,7 @@ onMounted(async () => {
         <!-- Loading State -->
         <div v-if="isLoading" class="loading-state">
           <div class="spinner"></div>
-          <p>{{ t('agora', 'Loading archived groups …') }}</p>
+          <p>{{ t('agora', 'Loading archived groups …') }}</p>
         </div>
 
         <!-- No Archived Groups -->

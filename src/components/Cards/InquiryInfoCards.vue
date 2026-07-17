@@ -26,7 +26,7 @@ const sessionStore = useSessionStore()
 
 const showUnpublishedInquiryCard = computed(
   () =>
-    inquiryStore.configuration.access === 'private' &&
+    inquiryStore.configuration.visibility === 'private' &&
     !sharesStore.hasShares &&
     inquiryStore.permissions.edit &&
     optionsStore.options.length

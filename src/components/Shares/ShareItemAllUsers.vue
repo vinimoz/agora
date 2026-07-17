@@ -21,21 +21,21 @@ const userItemProps = computed<{
   disabled?: boolean
   description?: string
 }>(() => ({
-  label: t('agora', 'Internal access'),
+  label: t('agora', 'Internal visibility'),
   type: 'internalAccess',
-  disabled: inquiryStore.configuration.access === 'private',
+  disabled: inquiryStore.configuration.visibility === 'private',
   description:
-    inquiryStore.configuration.access === 'private'
+    inquiryStore.configuration.visibility === 'private'
       ? t('agora', 'This inquiry is private')
       : t('agora', 'This is an openly accessible inquiry'),
 }))
 
 const inquiryAccess = computed({
   get() {
-    return inquiryStore.configuration.access === 'open'
+    return inquiryStore.configuration.visibility === 'everyone'
   },
   set(value) {
-    inquiryStore.configuration.access = value ? 'open' : 'private'
+    inquiryStore.configuration.visibility = value ? 'everyone' : 'private'
     inquiryStore.write()
   },
 })

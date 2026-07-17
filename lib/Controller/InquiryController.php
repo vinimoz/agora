@@ -18,6 +18,10 @@ use OCA\Agora\Service\OptionService;
 use OCA\Agora\Service\InquiryGroupService;
 use OCA\Agora\Service\AttachmentService;
 use OCA\Agora\Service\InquiryService;
+use OCA\Agora\Service\SupportEngineService;
+use OCA\Agora\Service\SupportResultService;
+use OCA\Agora\Service\SupportService;
+use OCA\Agora\Service\ParticipationService;
 use OCA\Agora\Service\InquiryMiscService;
 use OCA\Agora\Service\InquiryLinkService;
 use OCA\Agora\Service\ShareService;
@@ -48,6 +52,10 @@ class InquiryController extends BaseController
         private ShareService $shareService,
         private AttachmentService $attachmentService,
         private AppSettings $appSettings,
+        private SupportEngineService $supportEngineService,
+        private SupportResultService $supportResultService,
+        private SupportService $supportService,
+        private ParticipationService $participationService,
         private LoggerInterface $logger,
     ) {
         parent::__construct($appName, $request);
@@ -64,26 +72,31 @@ class InquiryController extends BaseController
      *     inquiryGroups: array<int, InquiryGroup>
      * }>
      */
+    /**
+     * Get list of inquiries
+     */
     #[NoAdminRequired]
     #[FrontpageRoute(verb: 'GET', url: '/inquiries')]
     public function listInquiries(): JSONResponse
     {
         return $this->response(
             function () {
-                $appSettings = $this->appSettings;
                 return [
-                'inquiries' => $this->inquiryService->listInquiries(),
-                'permissions' => [
-                'inquiryCreationAllowed' => $appSettings->getInquiryCreationAllowed(),
-                ],
-                'inquiryGroups' => $this->inquiryGroupService->listInquiryGroups(),
+                    'inquiries' => $this->inquiryService->listInquiries(),
+                    'permissions' => [
+                        'inquiryCreationAllowed' => $this->appSettings->getInquiryCreationAllowed(),
+                    ],
+                    'inquiryGroups' => $this->inquiryGroupService->listInquiryGroups(),
                 ];
             }
         );
     }
+
+
+
     /**
      * get childs from an inquiry
-  *
+     *
      * @param int $inquiryId Inquiry id
      *
      *                       psalm-return JSONResponse<array{inquiry: Inquiry}>
@@ -103,7 +116,7 @@ class InquiryController extends BaseController
 
     /**
      * get inquiry
-  *
+     *
      * @param int $inquiryId Inquiry id
      *
      *                       psalm-return JSONResponse<array{inquiry: Inquiry}>
@@ -134,8 +147,8 @@ class InquiryController extends BaseController
      *                       }>
      */
 
-     #[NoAdminRequired]
-     #[FrontpageRoute(verb: 'GET', url: '/inquiry/{inquiryId}')]
+    #[NoAdminRequired]
+    #[FrontpageRoute(verb: 'GET', url: '/inquiry/{inquiryId}')]
     public function getFull(int $inquiryId): JSONResponse
     {
         return $this->response(fn () => $this->getFullInquiry($inquiryId, true), Http::STATUS_OK);
@@ -168,6 +181,18 @@ class InquiryController extends BaseController
 
         $inquiryLink = $this->inquiryLinkService->findByInquiryId($inquiryId);
         $timerMicro['inquiryLink'] = microtime(true);
+        
+        $supportEngine = $this->supportEngineService->getEnginesByInquiry($inquiryId);
+        $timerMicro['supportEngine'] = microtime(true);
+
+        $supportResult = $this->supportResultService->getResultsByInquiry($inquiryId);
+        $timerMicro['supportResult'] = microtime(true);
+        
+        $supports = $this->supportService->getSupportsByInquiry($inquiryId);
+        $timerMicro['supports'] = microtime(true);
+
+	$participation = $this->participationService->getPolicy('inquiry', $inquiryId);
+        $timerMicro['participation'] = microtime(true);
 
         $diffMicro['inquiry'] = $timerMicro['inquiry'] - $timerMicro['start'];
         $diffMicro['options'] = $timerMicro['options'] - $timerMicro['inquiry'];
@@ -176,7 +201,10 @@ class InquiryController extends BaseController
         $diffMicro['subscribed'] = $timerMicro['subscribed'] - $timerMicro['shares'];
         $diffMicro['attachments'] = $timerMicro['attachments'] - $timerMicro['subscribed'];
         $diffMicro['inquiryLink'] = $timerMicro['inquiryLink'] - $timerMicro['attachments'];
-
+        $diffMicro['supportEngine'] = $timerMicro['supportEngine'] - $timerMicro['inquiryLink'];
+        $diffMicro['supportResult'] = $timerMicro['supportResult'] - $timerMicro['supportEngine'];
+        $diffMicro['supports'] = $timerMicro['supports'] - $timerMicro['supportResult'];
+        $diffMicro['participation'] = $timerMicro['participation'] - $timerMicro['supports'];
 
         if ($withTimings) {
             return [
@@ -187,6 +215,10 @@ class InquiryController extends BaseController
                 'subscribed' => $subscribed,
                 'attachments' => $attachments,
                 'inquiryLink' => $inquiryLink,
+                'supportEngine' => $supportEngine,
+                'supportResult' => $supportResult,
+                'supports' => $supports,
+                'participation' => $participation,
                 'diffMicro' => $diffMicro,
             ];
         }
@@ -197,6 +229,12 @@ class InquiryController extends BaseController
             'shares' => $shares,
             'subscribed' => $subscribed,
             'attachments' => $attachments,
+            'inquiryLink' => $inquiryLink,
+            'supportEngine' => $supportEngine,
+            'supportResult' => $supportResult,
+            'supports' => $supports,
+            'participation' => $participation,
+
         ];
     }
 
@@ -345,6 +383,7 @@ class InquiryController extends BaseController
     public function updateConfiguration(int $inquiryId): JSONResponse
     {
         $rawData = $this->request->getParams('data');
+
 
         return $this->response(
             fn () => [

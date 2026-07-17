@@ -59,12 +59,12 @@ async function addShare(user: User) {
       <ShareIcon />
     </template>
 
-    <UserSearch
+    <!-- <UserSearch
       class="add-share"
       :aria-label="t('agora', 'Add shares')"
       :placeholder="t('agora', 'Type to add an individual share')"
       @user-selected="(user: User) => addShare(user)"
-    />
+      /> -->
 
     <SharePublicAdd
       v-if="

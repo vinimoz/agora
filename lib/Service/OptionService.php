@@ -12,6 +12,7 @@ namespace OCA\Agora\Service;
 use OCA\Agora\Db\Option;
 use OCA\Agora\Db\OptionMapper;
 use OCA\Agora\Db\InquiryOptionTypeMapper;
+use OCA\Agora\Service\TrendingService;
 use OCA\Agora\Db\InquiryMapper;
 use OCA\Agora\Db\UserMapper;
 use OCA\Agora\Db\SupportMapper;
@@ -24,7 +25,6 @@ use OCA\Agora\Event\OptionUpdatedEvent;
 use OCA\Agora\Exceptions\AlreadyDeletedException;
 use OCA\Agora\Exceptions\EmptyTextException;
 use OCA\Agora\Exceptions\ForbiddenException;
-use OCA\Agora\Exceptions\InvalidAccessException;
 use OCA\Agora\Exceptions\InvalidOptionTypeException;
 use OCA\Agora\Exceptions\InvalidShowResultsException;
 use OCA\Agora\Exceptions\InvalidUsernameException;
@@ -41,13 +41,11 @@ use Psr\Log\LoggerInterface;
 
 class OptionService
 {
-    /**
-     * @psalm-suppress PossiblyUnusedMethod
-     */
+    private Option $option;
+    
     public function __construct(
         private AppSettings $appSettings,
         private IEventDispatcher $eventDispatcher,
-        private Option $option,
         private OptionMapper $optionMapper,
         private InquiryOptionTypeMapper $optionTypeMapper,
         private InquiryMapper $inquiryMapper,
@@ -55,8 +53,10 @@ class OptionService
         private UserSession $userSession,
         private SupportMapper $supportMapper,
         private SettingsService $settings,
+        private TrendingService $trendingService,
         private LoggerInterface $logger,
     ) {
+        $this->option = new Option();
     }
 
     /**
@@ -101,12 +101,12 @@ class OptionService
 
         return array_values(
             array_filter(
-                $options, function (Option $option): bool {
+                $options, 
+                function (Option $option): bool {
                     return $option->getIsAllowed(Option::PERMISSION_OPTION_VIEW);
                 }
             )
         );
-        return $options;
     }
 
     /**
@@ -230,6 +230,27 @@ class OptionService
     }
 
     /**
+     * Get options with trending scores
+     * Only works when inquiry supportFeature is 'trending'
+     */
+    public function listByTargetIdWithTrending(int $targetId, bool $includeTrending = false): array
+    {
+        $options = $this->listByTargetId($targetId);
+        
+        if ($includeTrending) {
+            $trendingScores = $this->trendingService->getTrendingScores($targetId);
+            foreach ($options as $option) {
+                $optionId = $option->getId();
+                if (isset($trendingScores[$optionId])) {
+                    $option->setTrendingScore($trendingScores[$optionId]);
+                }
+            }
+        }
+        
+        return $options;
+    }
+
+    /**
      * Transfer ownership of an option
      */
     public function transferOption(int|Option $option, string|UserBase $targetUser): Option
@@ -340,7 +361,6 @@ class OptionService
      */
     public function create(array $data): Option
     {
-
         if (empty($data['text'])) {
             throw new EmptyTextException('Text must not be empty');
         }
@@ -361,25 +381,23 @@ class OptionService
             }
         }
 
-        $title = $data['title'] ?? '';
-
         $timestamp = time();
         $this->option = new Option();
         $this->option->setText($data['text']);
         $this->option->setType($data['type']);
-        $this->option->setTitle($data['title']);
+        $this->option->setTitle($data['title'] ?? '');
         $this->option->setTargetId($data['targetId'] ?? 0);
         $this->option->setParentId($data['parentId'] ?? 0);
         $this->option->setOwnedGroup($data['ownedGroup'] ?? '');
         $this->option->setCreated($timestamp);
         $this->option->setUpdated($timestamp);
-        $this->option->setAllowComment($data['allowComment']);
-        $this->option->setSupportFeature($data['supportFeature']);
-
+        $this->option->setAllowComment($data['allowComment'] ?? 1);
+        $this->option->setSupportFeature($data['supportFeature'] ?? 'none');
         $this->option->setOwner($this->userSession->getCurrentUserId());
 
-        // Set defaults
-        $this->option->setAccess($data['access'] ?? Option::ACCESS_PRIVATE);
+        // Set defaults - using visibility and publicationStatus instead of access
+        $this->option->setVisibility($data['visibility'] ?? Option::VISIBILITY_EVERYONE);
+        $this->option->setPublicationStatus($data['publicationStatus'] ?? 'draft');
         $this->option->setShowResults($data['showResults'] ?? Option::SHOW_RESULTS_ALWAYS);
         $this->option->setFamily($data['family'] ?? 'deliberative');
         $this->option->setOptionStatus($data['status'] ?? Option::DEFAULT_STATUS_DRAFT);
@@ -406,7 +424,7 @@ class OptionService
 
         $this->optionMapper->saveDynamicFields($this->option, $fieldsDefinition);
 
-        //$this->eventDispatcher->dispatchTyped(new OptionCreatedEvent($this->option));
+        $this->eventDispatcher->dispatchTyped(new OptionCreatedEvent($this->option));
 
         return $this->option;
     }
@@ -421,7 +439,7 @@ class OptionService
     public function updatePartial(int $optionId, array $data): Option
     {
         $this->option = $this->optionMapper->find($optionId);
-        //$this->option->request(Option::PERMISSION_OPTION_EDIT);
+        $this->option->request(Option::PERMISSION_OPTION_EDIT);
 
         // Validate values
         if (isset($data['showResults']) && !in_array($data['showResults'], $this->getValidShowResults())) {
@@ -432,12 +450,6 @@ class OptionService
             throw new EmptyTextException('Text must not be empty');
         }
 
-        if (isset($data['access'])) {
-            if (!in_array($data['access'], $this->getValidAccess())) {
-                throw new InvalidAccessException('Invalid value for prop access ' . $data['access']);
-            }
-        }
-
         $timestamp = time();
 
         // Update only provided fields
@@ -445,7 +457,6 @@ class OptionService
             $this->option->setTitle($data['title']);
         }
 
-        // Update only provided fields
         if (isset($data['text'])) {
             $this->option->setText($data['text']);
         }
@@ -466,8 +477,12 @@ class OptionService
             $this->option->setOwnedGroup($data['ownedGroup']);
         }
 
-        if (isset($data['access'])) {
-            $this->option->setAccess($data['access']);
+        if (isset($data['visibility'])) {
+            $this->option->setVisibility($data['visibility']);
+        }
+
+        if (isset($data['publicationStatus'])) {
+            $this->option->setPublicationStatus($data['publicationStatus']);
         }
 
         if (isset($data['showResults'])) {
@@ -499,7 +514,7 @@ class OptionService
             $this->optionMapper->updateDynamicFields($this->option, $data['miscFields'], $fields);
         }
 
-        //$this->eventDispatcher->dispatchTyped(new OptionUpdatedEvent($this->option));
+        $this->eventDispatcher->dispatchTyped(new OptionUpdatedEvent($this->option));
 
         return $this->option;
     }
@@ -517,12 +532,6 @@ class OptionService
         // Validate values
         if (isset($optionConfiguration['showResults']) && !in_array($optionConfiguration['showResults'], $this->getValidShowResults())) {
             throw new InvalidShowResultsException('Invalid value for prop showResults');
-        }
-
-        if (isset($optionConfiguration['access'])) {
-            if (!in_array($optionConfiguration['access'], $this->getValidAccess())) {
-                throw new InvalidAccessException('Invalid value for prop access ' . $optionConfiguration['access']);
-            }
         }
 
         $this->option->deserializeArray($optionConfiguration);
@@ -728,7 +737,6 @@ class OptionService
         $this->option->setText('Clone of ' . $origin->getText());
         $this->option->setDeleted(0);
         $this->option->setArchived(0);
-        $this->option->setAccess(Option::ACCESS_PRIVATE);
 
         if ($optionType) {
             $this->option->setType($optionType);
@@ -739,6 +747,8 @@ class OptionService
         $this->option->setTargetId($origin->getTargetId());
         $this->option->setParentId($origin->getParentId());
         $this->option->setOwnedGroup($origin->getOwnedGroup());
+        $this->option->setVisibility($origin->getVisibility());
+        $this->option->setPublicationStatus($origin->getPublicationStatus());
         $this->option->setShowResults($origin->getShowResults());
         $this->option->setAllowComment($origin->getAllowComment());
         $this->option->setSupportFeature($origin->getSupportFeature());
@@ -788,7 +798,8 @@ class OptionService
     public function getValidEnum(): array
     {
         return [
-            'access' => $this->getValidAccess(),
+            'visibility' => $this->getValidVisibility(),
+            'publicationStatus' => $this->getValidPublicationStatus(),
             'showResults' => $this->getValidShowResults(),
             'types' => $this->getValidOptionTypes()
         ];
@@ -809,14 +820,12 @@ class OptionService
 
         switch ($action) {
             case 'save_draft':
-                $option->setAccess(Option::ACCESS_PRIVATE);
                 $option->setOptionStatus('draft');
                 $option->setUpdated($timestamp);
                 $option = $this->optionMapper->update($option);
                 break;
 
             case 'submit':
-                $option->setAccess(Option::ACCESS_PUBLIC);
                 $option->setOptionStatus('published');
                 $option->setUpdated($timestamp);
                 $option = $this->optionMapper->update($option);
@@ -844,11 +853,30 @@ class OptionService
     }
 
     /**
-     * Get valid values for access
+     * Get valid values for visibility
      */
-    private function getValidAccess(): array
+    private function getValidVisibility(): array
     {
-        return [Option::ACCESS_PRIVATE, Option::ACCESS_PUBLIC, Option::ACCESS_OPEN, Option::ACCESS_HIDDEN];
+        return [
+            Option::VISIBILITY_PRIVATE,
+            Option::VISIBILITY_EVERYONE,
+            Option::VISIBILITY_GROUPS,
+            Option::VISIBILITY_PARTICIPANTS
+        ];
+    }
+
+    /**
+     * Get valid values for publicationStatus
+     */
+    private function getValidPublicationStatus(): array
+    {
+        return [
+            Option::PUBLICATION_STATUS_DRAFT,
+            Option::PUBLICATION_STATUS_PENDING,
+            Option::PUBLICATION_STATUS_PUBLISHED,
+            Option::PUBLICATION_STATUS_ARCHIVED,
+            Option::PUBLICATION_STATUS_DELETED
+        ];
     }
 
     /**
@@ -856,7 +884,11 @@ class OptionService
      */
     private function getValidShowResults(): array
     {
-        return [Option::SHOW_RESULTS_ALWAYS, Option::SHOW_RESULTS_CLOSED, Option::SHOW_RESULTS_NEVER];
+        return [
+            Option::SHOW_RESULTS_ALWAYS,
+            Option::SHOW_RESULTS_CLOSED,
+            Option::SHOW_RESULTS_NEVER
+        ];
     }
 
     /**
@@ -871,25 +903,6 @@ class OptionService
             Option::TYPE_QUESTION,
             Option::TYPE_IDEA
         ];
-    }
-
-    /**
-     * Set access
-     */
-    public function setOptionAccess(int $optionId, string $access): string
-    {
-        $option = $this->optionMapper->find($optionId);
-        $option->request(Option::PERMISSION_OPTION_EDIT);
-
-        if (!in_array($access, $this->getValidAccess())) {
-            throw new InvalidAccessException('Invalid access value');
-        }
-
-        $option->setAccess($access);
-        $option->setUpdated(time());
-        $this->optionMapper->update($option);
-
-        return $access;
     }
 
     /**

@@ -1,10 +1,10 @@
 <!--
-	- SPDX-FileCopyrightText: 2018 Nextcloud contributors
-	- SPDX-License-Identifier: AGPL-3.0-or-later
+    - SPDX-FileCopyrightText: 2018 Nextcloud contributors
+    - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+    import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { showError } from '@nextcloud/dialogs'
 import { t, n } from '@nextcloud/l10n'
@@ -26,6 +26,8 @@ import ActionToggleSidebar from '../components/Actions/modules/ActionToggleSideb
 import { useInquiryGroupsStore } from '../stores/inquiryGroups.ts'
 import LoadingOverlay from '../components/Base/modules/LoadingOverlay.vue'
 import { InquiryGeneralIcons } from '../utils/icons.ts'
+import InquiryTimeline from '../components/Inquiry/InquiryTimeline.vue'
+import InquiryKanban from '../components/Inquiry/InquiryKanban.vue'
 
 const inquiriesStore = useInquiriesStore()
 const inquiryGroupsStore = useInquiryGroupsStore()
@@ -160,6 +162,15 @@ async function loadMore() {
   }
 }
 
+const openInquiryDetail = (inquiryId: number) => {
+    router.push({ name: 'inquiry', params: { id: inquiryId } })
+}
+
+const refreshInquiries = () => {
+    inquiriesStore.load(true)
+}
+
+
 onMounted(() => {
   inquiriesStore.load(false)
 // Initialize modes from route query
@@ -258,6 +269,37 @@ else if (route.query.viewMode === 'group') {
                                 <component :is="InquiryGeneralIcons.ViewListOutline" size="16" />
                             </template>
                     </NcCheckboxRadioSwitch>
+                    <!-- 
+                    <NcCheckboxRadioSwitch
+                            :button-variant="true"
+                            :model-value="subMode"
+                            value="timeline-view"
+                            name="sub_mode_radio"
+                            type="radio"
+                            button-variant-grouped="horizontal"
+                            class="mode-switch sub-mode"
+                            @update:model-value="handleSubModeChange"
+                            >
+                            <template #icon>
+                                <component :is="InquiryGeneralIcons.Timeline" size="16" />
+                            </template>
+                    </NcCheckboxRadioSwitch>
+
+                    <NcCheckboxRadioSwitch
+                            :button-variant="true"
+                            :model-value="subMode"
+                            value="kanban-view"
+                            name="sub_mode_radio"
+                            type="radio"
+                            button-variant-grouped="horizontal"
+                            class="mode-switch sub-mode"
+                            @update:model-value="handleSubModeChange"
+                            >
+                            <template #icon>
+                                <component :is="InquiryGeneralIcons.ViewKanban" size="16" />
+                            </template>
+                    </NcCheckboxRadioSwitch> 
+                    -->
                 </div>
             </div>
 
@@ -271,35 +313,50 @@ else if (route.query.viewMode === 'group') {
         </div>
     </template>
     </HeaderBar>
-    
+
     <InquiryFilter :family-type="selectedFamily" />
 
     <div class="area__main">
-        <TransitionGroup
-                v-if="!emptyInquiryListnoInquiries"
-                tag="div"
-                name="list"
-                :class="[
-                         'inquiry-list__container',
-                         isGridView ? 'inquiry-list__grid' : 'inquiry-list__list',
-                         ]"
-                >
-                <InquiryItem
-                        v-for="inquiry in inquiriesStore.chunkedList"
-                        :key="inquiry.id"
-                        :inquiry="inquiry"
-                        :grid-view="isGridView"
-                        >
-                        <template #actions>
-                            <InquiryItemActions
-                                    v-if="inquiry.permissions.edit || sessionStore.appPermissions.inquiryCreation"
-                                    :key="`actions-${inquiry.id}`"
-                                    :inquiry="inquiry"
-                                    />
-                        </template>
-                </InquiryItem>
-        </TransitionGroup>
+   <TransitionGroup
+        v-if="!emptyInquiryListnoInquiries && (subMode === 'table-view' || subMode === 'list-view')"
+        tag="div"
+        name="list"
+        :class="[
+            'inquiry-list__container',
+            isGridView ? 'inquiry-list__grid' : 'inquiry-list__list',
+        ]"
+    >
+        <InquiryItem
+            v-for="inquiry in inquiriesStore.chunkedList"
+            :key="inquiry.id"
+            :inquiry="inquiry"
+            :grid-view="isGridView"
+        >
+            <template #actions>
+                <InquiryItemActions
+                    v-if="inquiry.permissions.edit || sessionStore.appPermissions.inquiryCreation"
+                    :key="`actions-${inquiry.id}`"
+                    :inquiry="inquiry"
+                />
+            </template>
+        </InquiryItem>
+    </TransitionGroup>
 
+    <!-- Timeline view -->
+    <InquiryTimeline
+        v-else-if="!emptyInquiryListnoInquiries && subMode === 'timeline-view'"
+        :inquiries="inquiriesStore.inquiriesFilteredSorted"
+        @open-detail="openInquiryDetail"
+    />
+
+    <!-- Kanban view -->
+    <InquiryKanban
+        v-else-if="!emptyInquiryListnoInquiries && subMode === 'kanban-view'"
+        :inquiries="inquiriesStore.inquiriesFilteredSorted"
+        @open-detail="openInquiryDetail"
+        @status-changed="refreshInquiries"
+    />
+        
         <IntersectionObserver
                 v-if="showMore"
                 key="observer"
@@ -330,16 +387,16 @@ else if (route.query.viewMode === 'group') {
 }
 
 .family-type-badge {
-  display: inline-block;
-  background: var(--color-primary-element-light);
-  color: var(--color-primary-text);
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 28px;
-  font-weight: 500;
-  margin: 0 0 16px 0;
-  letter-spacing: 2px;
-  animation: slideIn 0.3s ease-out;
+    display: inline-block;
+    background: var(--color-primary-element-light);
+    color: var(--color-primary-text);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 28px;
+    font-weight: 500;
+    margin: 0 0 16px 0;
+    letter-spacing: 2px;
+    animation: slideIn 0.3s ease-out;
 }
 
 // Header controls container - all elements aligned to the right
@@ -367,262 +424,262 @@ else if (route.query.viewMode === 'group') {
     flex-shrink: 0;
 }
 
-                  // Main mode switcher - contains Create, Grid, List buttons
-                      .main-mode-switcher {
-                      display: flex;
-                      align-items: center;
-                      gap: 0;
-                      background: var(--color-background-dark);
-                      border-radius: 10px;
-                      padding: 4px;
-                      border: 1px solid var(--color-border);
+                                          // Main mode switcher - contains Create, Grid, List buttons
+                                              .main-mode-switcher {
+                                              display: flex;
+                                              align-items: center;
+                                              gap: 0;
+                                              background: var(--color-background-dark);
+                                              border-radius: 10px;
+                                              padding: 4px;
+                                              border: 1px solid var(--color-border);
 
-                      .mode-switch {
-                          margin: 0;
+                                              .mode-switch {
+                                                  margin: 0;
 
-                          :deep(.checkbox-radio-switch__label) {
-                              display: flex;
-                              align-items: center;
-                              gap: 6px;
-                              padding: 8px 12px;
-                              border-radius: 8px;
-                              font-weight: 500;
-                              font-size: 13px;
-                              transition: all 0.2s ease;
+                                                  :deep(.checkbox-radio-switch__label) {
+                                                      display: flex;
+                                                      align-items: center;
+                                                      gap: 6px;
+                                                      padding: 8px 12px;
+                                                      border-radius: 8px;
+                                                      font-weight: 500;
+                                                      font-size: 13px;
+                                                      transition: all 0.2s ease;
 
-                              &:hover {
-                                  background: var(--color-background-hover);
-                              }
-                          }
+                                                      &:hover {
+                                                          background: var(--color-background-hover);
+                                                      }
+                                                  }
 
-                          :deep(input:checked + .checkbox-radio-switch__label) {
-                              background: var(--color-primary-element);
-                              color: var(--color-primary-text);
-                              box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-                          }
+                                                  :deep(input:checked + .checkbox-radio-switch__label) {
+                                                      background: var(--color-primary-element);
+                                                      color: var(--color-primary-text);
+                                                      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                                                  }
 
-                          :deep(.material-design-icon) {
-                              width: 16px;
-                              height: 16px;
-                          }
-                      }
-                  }
+                                                  :deep(.material-design-icon) {
+                                                      width: 16px;
+                                                      height: 16px;
+                                                  }
+                                              }
+                                          }
 
-                  // Header right area alignment
-                      :deep(.header-bar__right) {
-                      display: flex;
-                      align-items: center;
-                      gap: 12px;
-                      width: 100%;
-                  }
+                                          // Header right area alignment
+                                              :deep(.header-bar__right) {
+                                              display: flex;
+                                              align-items: center;
+                                              gap: 12px;
+                                              width: 100%;
+                                          }
 
-                  .inquiry-list__container {
-                      width: 100%;
-                      padding-bottom: 14px;
-                      box-sizing: border-box;
-                  }
+                                          .inquiry-list__container {
+                                              width: 100%;
+                                              padding-bottom: 14px;
+                                              box-sizing: border-box;
+                                          }
 
-                  .inquiry-list__list {
-                      display: flex;
-                      flex-direction: column;
-                      gap: 12px;
-                  }
+                                          .inquiry-list__list {
+                                              display: flex;
+                                              flex-direction: column;
+                                              gap: 12px;
+                                          }
 
-                  .inquiry-list__grid {
-                      display: grid;
-                      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-                      gap: 20px;
-                      padding: 16px;
-                      width: 100%;
-                      box-sizing: border-box;
-                      align-items: stretch;
+                                          .inquiry-list__grid {
+                                              display: grid;
+                                              grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+                                              gap: 20px;
+                                              padding: 16px;
+                                              width: 100%;
+                                              box-sizing: border-box;
+                                              align-items: stretch;
 
-                      .inquiry-item {
-                          border: 1px solid var(--color-border);
-                          border-radius: 12px;
-                          padding: 10px;
-                          background-color: var(--color-main-background);
-                          box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-                          transition: all 0.2s ease;
-                          height: 100%;
-                          min-height: 80px;
-                          display: flex;
-                          flex-direction: column;
+                                              .inquiry-item {
+                                                  border: 1px solid var(--color-border);
+                                                  border-radius: 12px;
+                                                  padding: 10px;
+                                                  background-color: var(--color-main-background);
+                                                  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+                                                  transition: all 0.2s ease;
+                                                  height: 100%;
+                                                  min-height: 80px;
+                                                  display: flex;
+                                                  flex-direction: column;
 
-                          &:hover {
-                              transform: translateY(-2px);
-                              box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
-                          }
+                                                  &:hover {
+                                                      transform: translateY(-2px);
+                                                      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+                                                  }
 
-                          .inquiry-item__header {
-                              margin-bottom: 16px;
-                              flex-grow: 1;
+                                                  .inquiry-item__header {
+                                                      margin-bottom: 16px;
+                                                      flex-grow: 1;
 
-                              .inquiry-item__title {
-                                  font-size: 16px;
-                                  font-weight: 600;
-                                  line-height: 1.4;
-                                  margin-bottom: 12px;
-                                  color: var(--color-main-text);
-                                  word-break: break-word;
-                              }
-                          }
+                                                      .inquiry-item__title {
+                                                          font-size: 16px;
+                                                          font-weight: 600;
+                                                          line-height: 1.4;
+                                                          margin-bottom: 12px;
+                                                          color: var(--color-main-text);
+                                                          word-break: break-word;
+                                                      }
+                                                  }
 
-                          .inquiry-item__meta {
-                              display: flex;
-                              flex-wrap: wrap;
-                              gap: 10px;
-                              margin-bottom: 16px;
-                              font-size: 13px;
-                              color: var(--color-text-lighter);
+                                                  .inquiry-item__meta {
+                                                      display: flex;
+                                                      flex-wrap: wrap;
+                                                      gap: 10px;
+                                                      margin-bottom: 16px;
+                                                      font-size: 13px;
+                                                      color: var(--color-text-lighter);
 
-                              .meta-item {
-                                  display: flex;
-                                  align-items: center;
-                                  gap: 6px;
+                                                      .meta-item {
+                                                          display: flex;
+                                                          align-items: center;
+                                                          gap: 6px;
 
-                                  .material-design-icon {
-                                      width: 16px;
-                                      height: 16px;
-                                      flex-shrink: 0;
-                                  }
-                              }
-                          }
+                                                          .material-design-icon {
+                                                              width: 16px;
+                                                              height: 16px;
+                                                              flex-shrink: 0;
+                                                          }
+                                                      }
+                                                  }
 
-                          .inquiry-item__actions {
-                              margin-top: auto;
-                              padding-top: 16px;
-                              border-top: 1px solid var(--color-border-light);
-                              display: flex;
-                              justify-content: flex-end;
-                              gap: 10px;
-                          }
-                      }
+                                                  .inquiry-item__actions {
+                                                      margin-top: auto;
+                                                      padding-top: 16px;
+                                                      border-top: 1px solid var(--color-border-light);
+                                                      display: flex;
+                                                      justify-content: flex-end;
+                                                      gap: 10px;
+                                                  }
+                                              }
 
-                      @media (max-width: 1400px) {
-                          grid-template-columns: repeat(3, 1fr);
-                      }
+                                              @media (max-width: 1400px) {
+                                                  grid-template-columns: repeat(3, 1fr);
+                                              }
 
-                      @media (max-width: 1024px) {
-                          grid-template-columns: repeat(2, 1fr);
-                          gap: 16px;
-                          padding: 12px;
-                      }
+                                              @media (max-width: 1024px) {
+                                                  grid-template-columns: repeat(2, 1fr);
+                                                  gap: 16px;
+                                                  padding: 12px;
+                                              }
 
-                      @media (max-width: 768px) {
-                          grid-template-columns: 1fr;
-                          gap: 12px;
-                          padding: 8px;
+                                              @media (max-width: 768px) {
+                                                  grid-template-columns: 1fr;
+                                                  gap: 12px;
+                                                  padding: 8px;
 
-                          .inquiry-item {
-                              padding: 16px;
-                              min-height: 160px;
-                          }
-                      }
-                  }
+                                                  .inquiry-item {
+                                                      padding: 16px;
+                                                      min-height: 160px;
+                                                  }
+                                              }
+                                          }
 
-                  .observer_section {
-                      display: flex;
-                      justify-content: center;
-                      align-items: center;
-                      padding: 20px 0;
-                      grid-column: 1 / -1;
-                      width: 100%;
-                  }
+                                          .observer_section {
+                                              display: flex;
+                                              justify-content: center;
+                                              align-items: center;
+                                              padding: 20px 0;
+                                              grid-column: 1 / -1;
+                                              width: 100%;
+                                          }
 
-                  .clickable_load_more {
-                      cursor: pointer;
-                      font-weight: 600;
-                      text-align: center;
-                      padding: 20px;
-                      background-color: var(--color-background-dark);
-                      border-radius: 12px;
-                      margin: 0 16px;
-                      color: var(--color-text-lighter);
-                      transition: background-color 0.2s ease;
+                                          .clickable_load_more {
+                                              cursor: pointer;
+                                              font-weight: 600;
+                                              text-align: center;
+                                              padding: 20px;
+                                              background-color: var(--color-background-dark);
+                                              border-radius: 12px;
+                                              margin: 0 16px;
+                                              color: var(--color-text-lighter);
+                                              transition: background-color 0.2s ease;
 
-                      &:hover {
-                          background-color: var(--color-background-darker);
-                          color: var(--color-main-text);
-                      }
-                  }
+                                              &:hover {
+                                                  background-color: var(--color-background-darker);
+                                                  color: var(--color-main-text);
+                                              }
+                                          }
 
-                  .app-content {
-                      width: 100%;
+                                          .app-content {
+                                              width: 100%;
 
-                      .app-content-wrapper {
-                          width: 100%;
-                          max-width: none;
-                      }
-                  }
+                                              .app-content-wrapper {
+                                                  width: 100%;
+                                                  max-width: none;
+                                              }
+                                          }
 
-                  @media (min-width: 1600px) {
-                      .inquiry-list__grid {
-                          grid-template-columns: repeat(4, 1fr);
-                      }
-                  }
+                                          @media (min-width: 1600px) {
+                                              .inquiry-list__grid {
+                                                  grid-template-columns: repeat(4, 1fr);
+                                              }
+                                          }
 
-                  // Responsive adjustments
-              @media (max-width: 1024px) {
-                      .header-controls {
-                          flex-direction: row; // Keep horizontal on tablet
-                              gap: 12px;
-                          align-items: center;
-                          justify-content: flex-end;
-                      }
-                  }
+                                          // Responsive adjustments
+                                      @media (max-width: 1024px) {
+                                              .header-controls {
+                                                  flex-direction: row; // Keep horizontal on tablet
+                                                      gap: 12px;
+                                                  align-items: center;
+                                                  justify-content: flex-end;
+                                              }
+                                          }
 
-                  @media (max-width: 768px) {
-                      :deep(.header-bar__right) {
-                          flex-wrap: wrap;
-                          justify-content: flex-end;
-                          gap: 8px;
-                      }
+                                          @media (max-width: 768px) {
+                                              :deep(.header-bar__right) {
+                                                  flex-wrap: wrap;
+                                                  justify-content: flex-end;
+                                                  gap: 8px;
+                                              }
 
-                      .header-controls {
-                          flex-direction: column;
-                          gap: 8px;
-                          align-items: stretch;
-                      }
+                                              .header-controls {
+                                                  flex-direction: column;
+                                                  gap: 8px;
+                                                  align-items: stretch;
+                                              }
 
-                      .mode-switchers {
-                          flex-direction: column;
-                          gap: 8px;
-                          width: 100%;
-                      }
+                                              .mode-switchers {
+                                                  flex-direction: column;
+                                                  gap: 8px;
+                                                  width: 100%;
+                                              }
 
-                      .main-mode-switcher {
-                          width: 100%;
-                          justify-content: center;
-                      }
+                                              .main-mode-switcher {
+                                                  width: 100%;
+                                                  justify-content: center;
+                                              }
 
-                      .mode-switch {
-                          :deep(.checkbox-radio-switch__label) {
-                              flex: 1;
-                              justify-content: center;
-                          }
-                      }
+                                              .mode-switch {
+                                                  :deep(.checkbox-radio-switch__label) {
+                                                      flex: 1;
+                                                      justify-content: center;
+                                                  }
+                                              }
 
-                      .right-controls {
-                          justify-content: center;
-                      }
-                  }
+                                              .right-controls {
+                                                  justify-content: center;
+                                              }
+                                          }
 
-                  @media (max-width: 480px) {
-                      .main-mode-switcher .mode-switch :deep(.checkbox-radio-switch__label) {
-                          padding: 8px 10px;
-                          font-size: 12px;
+                                          @media (max-width: 480px) {
+                                              .main-mode-switcher .mode-switch :deep(.checkbox-radio-switch__label) {
+                                                  padding: 8px 10px;
+                                                  font-size: 12px;
 
-                          .material-design-icon {
-                              width: 14px;
-                              height: 14px;
-                          }
-                      }
+                                                  .material-design-icon {
+                                                      width: 14px;
+                                                      height: 14px;
+                                                  }
+                                              }
 
-                      .right-controls {
-                          flex-wrap: wrap;
-                          justify-content: center;
-                          gap: 6px;
-                      }
-                  }
+                                              .right-controls {
+                                                  flex-wrap: wrap;
+                                                  justify-content: center;
+                                                  gap: 6px;
+                                              }
+                                          }
 </style>

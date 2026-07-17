@@ -13,9 +13,15 @@ use OCA\Agora\AppConstants;
 use OCA\Agora\Dashboard\AgoraWidget;
 use OCA\Agora\Db\CommentMapper;
 use OCA\Agora\Db\SupportMapper;
+use OCA\Agora\Db\SupporResultMapper;
+use OCA\Agora\Db\SupportSqlRepository;
+use OCA\Agora\Db\SupportResultSqlRepository;
 use OCA\Agora\Db\AttachmentMapper;
+use OCA\Agora\Db\GroupRelationMapper;
+use OCA\Agora\Db\UserRelationMapper;
 use OCA\Agora\Db\LogMapper;
 use OCA\Agora\Db\OptionMapper;
+use OCA\Agora\Db\ParticipationMapper;
 use OCA\Agora\Db\InquiryMapper;
 use OCA\Agora\Db\InquiryLinkMapper;
 use OCA\Agora\Db\SubscriptionMapper;
@@ -73,6 +79,7 @@ use OCA\Agora\Provider\SearchProvider;
 use OCA\Agora\UserSession;
 use OCA\Agora\Service\CategoryService;
 use OCA\Agora\Service\LocationService;
+use OCA\Agora\Service\ParticipationService;
 use OCA\Agora\Service\InquiryStatusService;
 use OCA\Agora\Service\InquiryTypeService;
 use OCA\Agora\Service\InquiryGroupTypeService;
@@ -89,6 +96,7 @@ use OCP\Group\Events\GroupDeletedEvent;
 use OCP\IAppConfig;
 use OCP\IDBConnection;
 use OCP\IUserManager;
+use OCP\IGroupManager; 
 use OCP\User\Events\UserDeletedEvent;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
@@ -213,78 +221,109 @@ class Application extends App implements IBootstrap
                 return new InquiryMapper(
                     $c->get(IDBConnection::class),
                     $c->get(UserSession::class),
-                );
-            }
-        );
-
-        $context->registerService(
-            CommentMapper::class,
-            function (ContainerInterface $c): CommentMapper {
-                return new CommentMapper(
-                    $c->get(IDBConnection::class),
-                    $c->get(UserSession::class),
-                );
-            }
-        );
-
-        $context->registerService(
-            AttachmentMapper::class,
-            function (ContainerInterface $c): AttachmentMapper {
-                return new AttachmentMapper(
-                    $c->get(IDBConnection::class),
-                    $c->get(UserSession::class),
-                );
-            }
-        );
-
-        $context->registerService(
-            InquiryLinkMapper::class,
-            function (ContainerInterface $c): InquiryLinkMapper {
-                return new InquiryLinkMapper(
-                    $c->get(IDBConnection::class),
-                    $c->get(UserSession::class),
-                );
-            }
-        );
-
-
-        $context->registerService(
-            SupportMapper::class,
-            function (ContainerInterface $c): SupportMapper {
-                return new SupportMapper(
-                    $c->get(IDBConnection::class),
-                    $c->get(UserSession::class),
-                );
-            }
-        );
-
-        $context->registerService(
-            OptionMapper::class,
-            function (ContainerInterface $c): OptionMapper {
-                return new OptionMapper(
-                    $c->get(IDBConnection::class),
-                    $c->get(UserSession::class),
+                    $c->get(IGroupManager::class),
+                    $c->get(GroupRelationMapper::class),
+                    $c->get(UserRelationMapper::class),
                     $c->get(LoggerInterface::class),
                 );
-            }
-        );
+	    }
+	);
 
-        $context->registerService(
-            SubscriptionMapper::class,
-            function (ContainerInterface $c): SubscriptionMapper {
-                return new SubscriptionMapper(
-                    $c->get(IDBConnection::class),
-                );
-            }
-        );
+	$context->registerService( 
+		ParticipationMapper::class, 
+		function (ContainerInterface $c): ParticipationMapper { 
+			return new ParticipationMapper( 
+				$c->get(IDBConnection::class), 
+				$c->get(GroupRelationMapper::class), 
+				$c->get(UserRelationMapper::class), 
+				$c->get(IGroupManager::class), 
+			); 
+		} 
+	);
 
-        $context->registerService(
-            LogMapper::class,
-            function (ContainerInterface $c): LogMapper {
-                return new LogMapper(
-                    $c->get(IDBConnection::class),
-                );
-            }
-        );
+
+	$context->registerService(
+		CommentMapper::class,
+		function (ContainerInterface $c): CommentMapper {
+			return new CommentMapper(
+				$c->get(IDBConnection::class),
+				$c->get(UserSession::class),
+			);
+		}
+	);
+
+	$context->registerService(
+		AttachmentMapper::class,
+		function (ContainerInterface $c): AttachmentMapper {
+			return new AttachmentMapper(
+				$c->get(IDBConnection::class),
+				$c->get(UserSession::class),
+			);
+		}
+	);
+
+	$context->registerService(
+		InquiryLinkMapper::class,
+		function (ContainerInterface $c): InquiryLinkMapper {
+			return new InquiryLinkMapper(
+				$c->get(IDBConnection::class),
+				$c->get(UserSession::class),
+			);
+		}
+	);
+
+	$context->registerService(
+		SupportResultMapper::class,
+		function (ContainerInterface $c): SupportMapper {
+			return new SupportResultMapper(
+				$c->get(IDBConnection::class),
+				$c->get(SupportSqlRepository::class),
+			);
+		}
+	);
+
+	$context->registerService(
+		SupportMapper::class,
+		function (ContainerInterface $c): SupportMapper {
+			return new SupportMapper(
+				$c->get(IDBConnection::class),
+				$c->get(UserSession::class),
+				$c->get(SupportSqlRepository::class),
+			);
+		}
+	);
+
+	$context->registerService(
+		OptionMapper::class,
+		function (ContainerInterface $c): OptionMapper {
+			return new OptionMapper(
+				$c->get(IDBConnection::class),
+				$c->get(UserSession::class),
+				$c->get(IGroupManager::class),
+				$c->get(InquiryMapper::class),
+				$c->get(GroupRelationMapper::class),
+				$c->get(UserRelationMapper::class),
+				$c->get(LoggerInterface::class),
+			);
+		}
+	);
+
+	$context->registerService(
+		SubscriptionMapper::class,
+		function (ContainerInterface $c): SubscriptionMapper {
+			return new SubscriptionMapper(
+				$c->get(IDBConnection::class),
+			);
+		}
+	);
+
+	$context->registerService(
+		LogMapper::class,
+		function (ContainerInterface $c): LogMapper {
+			return new LogMapper(
+				$c->get(IDBConnection::class),
+			);
+		}
+	);
     }
 }

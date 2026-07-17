@@ -368,7 +368,7 @@ class Version01070120260104120000 extends SimpleMigrationStep
 	    if ($this->schema->hasTable(Option::TABLE)) {
 		    $table = $this->schema->getTable(Option::TABLE);
 		    $this->addColumnIfMissing($table, 'target_id', Types::BIGINT, ['notnull' => true, 'default' => 0, 'unsigned' => true, 'length' => 20]);
-		    $this->addColumnIfMissing($table, 'access', Types::STRING, ['notnull' => true, 'default' => 'private', 'length' => 32]);
+		    $this->addColumnIfMissing($table, 'publication_status', Types::STRING, ['notnull' => true, 'default' => 'private', 'length' => 32]);
 		    $this->addColumnIfMissing($table, 'updated', Types::BIGINT, ['notnull' => true, 'default' => 0, 'unsigned' => true, 'length' => 20]);
 		    $this->addColumnIfMissing($table, 'archived', Types::BIGINT, ['notnull' => false, 'default' => 0, 'unsigned' => true, 'length' => 20]);
 		    $this->addColumnIfMissing($table, 'family', Types::STRING, ['notnull' => false, 'default' => 'deliberative', 'length' => 64]);
@@ -593,14 +593,14 @@ class Version01070120260104120000 extends SimpleMigrationStep
 			    'inq_owner_deleted' => ['owner', 'deleted'],
 			    'inq_type_family' => ['type', 'family'],
 			    'inq_status_created' => ['inquiry_status', 'created'],
-			    'inq_access_owner' => ['access', 'owner'],
+			    'inq_pub_stat_owner' => ['publication_status', 'owner'],
 			    'inq_expire_status' => ['expire', 'inquiry_status'],
 		    ],
 		    'oc_agora_inquiries' => [
 			    'inq_owner_deleted' => ['owner', 'deleted'],
 			    'inq_type_family' => ['type', 'family'],
 			    'inq_status_created' => ['inquiry_status', 'created'],
-			    'inq_access_owner' => ['access', 'owner'],
+			    'inq_pub_stat_owner' => ['publication_status', 'owner'],
 			    'inq_expire_status' => ['expire', 'inquiry_status'],
 		    ],
 		    Option::TABLE => [
@@ -610,7 +610,6 @@ class Version01070120260104120000 extends SimpleMigrationStep
 			    'support_inquiry_user' => ['inquiry_id', 'user_id'],
 			    'support_option_user' => ['option_id', 'user_id'],
 			    'support_created' => ['created'],
-			    'support_option_value' => ['option_id', 'value'],
 		    ],
 		    Comment::TABLE => [
 			    'comment_inquiry_timestamp' => ['inquiry_id', 'timestamp'],

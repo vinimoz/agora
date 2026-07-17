@@ -1,0 +1,1144 @@
+<!--
+  - SPDX-FileCopyrightText: 2026 Nextcloud contributors
+  - SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+
+<script setup lang="ts">
+import { computed, onMounted, ref, watch } from 'vue'
+import { t } from '@nextcloud/l10n'
+import { showError, showSuccess } from '@nextcloud/dialogs'
+import NcSelect from '@nextcloud/vue/components/NcSelect'
+import NcTextField from '@nextcloud/vue/components/NcTextField'
+import NcDialog from '@nextcloud/vue/components/NcDialog'
+import NcButton from '@nextcloud/vue/components/NcButton'
+
+import { useParticipationStore } from '../../stores/participation.ts'
+import { useSharesStore } from '../../stores/shares.ts'
+import { useInquiryStore } from '../../stores/inquiry.ts'
+import { useSessionStore } from '../../stores/session.ts'
+
+import UserSearch from '../User/UserSearch.vue'
+import { SEARCH_TYPE_GROUPS, SEARCH_TYPE_USERS } from '../../Types/index.ts'
+
+import ShareList from '../Shares/SharesList.vue'
+
+// ============================================================
+// TYPES
+// ============================================================
+
+interface LotteryStatus {
+  status: 'not_run' | 'running' | 'completed' | 'validated' | 'failed' | 'cancelled'
+  run?: {
+    id: string
+    selections: Array<{
+      id: string
+      rank: number
+      selected_user_id: string
+      status: 'pending' | 'accepted' | 'declined' | 'expired'
+    }>
+  }
+  is_validated: boolean
+}
+
+interface ParticipationConfig {
+  selection_size: number
+  source_groups: string[]
+  method: 'random' | 'weighted' | 'stratified'
+  user_ids: string[]
+  group_ids: string[]
+}
+
+// ============================================================
+// STORE SETUP
+// ============================================================
+
+const participationStore = useParticipationStore()
+const sharesStore = useSharesStore()
+const inquiryStore = useInquiryStore()
+const sessionStore = useSessionStore()
+
+const targetType = computed(() => 'inquiry')
+const targetId = computed(() => inquiryStore.id)
+
+// ============================================================
+// LOCAL STATE
+// ============================================================
+
+const lotteryStatus = ref<LotteryStatus | null>(null)
+const lotteryRunId = ref<string | null>(null)
+const isLotteryRunning = ref(false)
+const showLotteryResults = ref(false)
+const showPoolInfo = ref(false)
+const poolInfo = ref<Array<{ id: string; displayName: string }>>([])
+const showLotteryConfig = ref(false)
+
+// Lottery confirmation dialog
+const showLotteryConfirm = ref(false)
+const pendingLotteryRun = ref<(() => Promise<void>) | null>(null)
+const confirmMessage = ref('')
+const confirmRequested = ref(0)
+const confirmAvailable = ref(0)
+
+// ============================================================
+// VISIBILITY - Using Inquiry Store with Relation Support
+// ============================================================
+
+const visibilityType = computed({
+  get: () => inquiryStore.configuration?.visibility || 'private',
+  set: (value: string) => {
+    if (inquiryStore.configuration) {
+      inquiryStore.configuration.visibility = value
+      if (value !== 'groups') {
+        inquiryStore.configuration.visibilityGroups = []
+      }
+      inquiryStore.write()
+    }
+  }
+})
+
+const extractIds = (items: any[]): string[] => {
+  if (!items || !Array.isArray(items)) return []
+  return items
+    .map(item => {
+      if (typeof item === 'string') return item
+      if (typeof item === 'object' && item !== null) {
+        return item.id || item.userId || item.groupId || item.uid || item.value || null
+      }
+      return null
+    })
+    .filter(Boolean) as string[]
+}
+
+const visibilityGroups = computed({
+  get: (): string[] => {
+    return inquiryStore.configuration?.visibilityGroups || []
+  },
+  set: (groups: string[] | any[]): void => {
+    const normalized = extractIds(groups)
+    if (inquiryStore.configuration) {
+      inquiryStore.configuration.visibilityGroups = normalized
+      inquiryStore.write()
+    }
+  }
+})
+
+const visibilityGroupsForDisplay = computed({
+  get: () => {
+    const groups = inquiryStore.configuration?.visibilityGroups || []
+    if (Array.isArray(groups) && groups.length > 0 && typeof groups[0] === 'string') {
+      return groups.map(id => ({
+        id: id,
+        groupId: id,
+        displayName: id,
+        type: 'group'
+      }))
+    }
+    return groups
+  },
+  set: (selected: any[]) => {
+    const ids = extractIds(selected)
+    visibilityGroups.value = ids
+  }
+})
+
+// ============================================================
+// PARTICIPATION - Using Store as Single Source of Truth
+// ============================================================
+
+const participationType = computed({
+  get: () => participationStore.participation?.policyType || 'everyone',
+  set: async (value: string) => {
+    const config = getConfigForType(value)
+    await participationStore.setParticipation(
+      targetType.value,
+      targetId.value,
+      value,
+      config
+    )
+    showLotteryConfig.value = value === 'lottery'
+    if (value === 'lottery') {
+      await loadLotteryStatus()
+    }
+  }
+})
+
+const participationConfig = computed({
+  get: (): ParticipationConfig => {
+    const config = participationStore.participation?.policyConfig || {}
+    return {
+      selection_size: config.selection_size || 10,
+      source_groups: config.source_groups || [],
+      method: config.method || 'random',
+      user_ids: config.user_ids || [],
+      group_ids: config.group_ids || []
+    }
+  },
+  set: async (config: Partial<ParticipationConfig>) => {
+    const currentConfig = participationConfig.value
+    const newConfig = { ...currentConfig, ...config }
+    await participationStore.setParticipation(
+      targetType.value,
+      targetId.value,
+      participationType.value,
+      newConfig
+    )
+  }
+})
+
+const loading = computed(() => participationStore.loading)
+
+// ============================================================
+// OPTIONS
+// ============================================================
+
+const participationOptions = [
+  'everyone',
+  'users',
+  'groups',
+  'lottery',
+]
+
+const participationOptionLabels: Record<string, string> = {
+  everyone: t('agora', 'Everyone'),
+  users: t('agora', 'Specific Users'),
+  groups: t('agora', 'Specific Groups'),
+  lottery: t('agora', 'Random Selection (Lottery)'),
+}
+
+const visibilityOptions = [
+  'everyone',
+  'participants',
+  'groups',
+  'private',
+]
+
+const visibilityOptionLabels: Record<string, string> = {
+  everyone: t('agora', 'Everyone'),
+  participants: t('agora', 'Participants Only'),
+  groups: t('agora', 'Specific Groups'),
+  private: t('agora', 'Private'),
+}
+
+// ============================================================
+// LOAD DATA
+// ============================================================
+
+const loadAccessData = async () => {
+  if (!targetId.value) return
+
+  try {
+    await participationStore.loadParticipation(targetType.value, targetId.value)
+    await sharesStore.load('inquiry')
+
+    if (participationStore.participation?.policyType === 'lottery') {
+      showLotteryConfig.value = true
+      await loadLotteryStatus()
+    } else {
+      showLotteryConfig.value = false
+    }
+  } catch (error) {
+    console.error('Failed to load access data:', error)
+    showError(t('agora', 'Failed to load access data'))
+  }
+}
+
+onMounted(() => {
+  loadAccessData()
+})
+
+watch(() => inquiryStore.id, (newId) => {
+  if (newId) {
+    loadAccessData()
+  }
+})
+
+watch(() => participationStore.participation, async (newParticipation) => {
+  if (newParticipation) {
+    const isLottery = newParticipation.policyType === 'lottery'
+    showLotteryConfig.value = isLottery
+    if (isLottery) {
+      await loadLotteryStatus()
+    }
+  }
+}, { deep: true })
+
+// ============================================================
+// LOTTERY
+// ============================================================
+
+const getStatusLabel = (status: string): string => {
+  const labels: Record<string, string> = {
+    not_run: t('agora', 'Not Run'),
+    running: t('agora', 'Running'),
+    completed: t('agora', 'Completed'),
+    validated: t('agora', 'Validated'),
+    failed: t('agora', 'Failed'),
+    cancelled: t('agora', 'Cancelled'),
+  }
+  return labels[status] || status
+}
+
+const getSelectionStatusLabel = (status: string): string => {
+  const labels: Record<string, string> = {
+    pending: t('agora', 'Pending'),
+    accepted: t('agora', 'Accepted'),
+    declined: t('agora', 'Declined'),
+    expired: t('agora', 'Expired'),
+  }
+  return labels[status] || status
+}
+
+const loadLotteryStatus = async () => {
+  if (!targetId.value) return
+  
+  try {
+    const status = await participationStore.getLotteryStatus(targetType.value, targetId.value)
+    lotteryStatus.value = status
+    if (status?.run) {
+      lotteryRunId.value = status.run.id
+    }
+    
+    if (status?.status === 'not_run' || status?.status === 'running') {
+      poolInfo.value = await participationStore.getEligiblePool(targetType.value, targetId.value)
+    }
+  } catch (error) {
+    console.error('Failed to load lottery status:', error)
+    lotteryStatus.value = null
+    showError(t('agora', 'Failed to load lottery status'))
+  }
+}
+
+const confirmLottery = async () => {
+  showLotteryConfirm.value = false
+  if (pendingLotteryRun.value) {
+    await pendingLotteryRun.value()
+    pendingLotteryRun.value = null
+  }
+}
+
+const handleRunLottery = async () => {
+  if (isLotteryRunning.value || !targetId.value) return
+
+  try {
+    isLotteryRunning.value = true
+    poolInfo.value = await participationStore.getEligiblePool(targetType.value, targetId.value)
+
+    if (poolInfo.value.length === 0) {
+      showError(t('agora', 'No eligible users found for lottery'))
+      return
+    }
+
+    const config = participationConfig.value
+    const requested = config.selection_size || 1
+
+    if (poolInfo.value.length < requested) {
+      // Show confirmation dialog
+      confirmMessage.value = t('agora', 'Only {available} users are available, but you requested {requested}. Continue?', {
+        available: poolInfo.value.length,
+        requested: requested
+      })
+      confirmRequested.value = requested
+      confirmAvailable.value = poolInfo.value.length
+      pendingLotteryRun.value = executeLottery
+      showLotteryConfirm.value = true
+      return
+    }
+
+    await executeLottery()
+  } catch (error: any) {
+    showError(t('agora', 'Failed to run lottery: {error}', { error: error.message }))
+  } finally {
+    isLotteryRunning.value = false
+  }
+}
+
+const executeLottery = async () => {
+  try {
+    const result = await participationStore.runLottery(targetType.value, targetId.value)
+    await loadLotteryStatus()
+    showSuccess(t('agora', 'Lottery completed successfully! {count} users selected.', {
+      count: result.selection_count
+    }))
+  } catch (error: any) {
+    showError(t('agora', 'Failed to run lottery: {error}', { error: error.message }))
+    throw error
+  }
+}
+
+const handleValidateLottery = async () => {
+  if (!targetId.value) return
+  
+  try {
+    await participationStore.validateLottery(targetType.value, targetId.value)
+    await loadLotteryStatus()
+    showSuccess(t('agora', 'Lottery validated successfully!'))
+  } catch (error: any) {
+    showError(t('agora', 'Failed to validate lottery: {error}', { error: error.message }))
+  }
+}
+
+const handleCancelLottery = async () => {
+  if (!targetId.value) return
+  
+  const reason = window.prompt(t('agora', 'Please provide a reason for cancellation:'))
+  if (reason === null) return
+
+  try {
+    await participationStore.cancelLottery(targetType.value, targetId.value, reason)
+    await loadLotteryStatus()
+    showSuccess(t('agora', 'Lottery cancelled successfully'))
+  } catch (error: any) {
+    showError(t('agora', 'Failed to cancel lottery: {error}', { error: error.message }))
+  }
+}
+
+// ============================================================
+// PARTICIPATION HANDLERS
+// ============================================================
+
+const getConfigForType = (type: string): Partial<ParticipationConfig> => {
+  const config = participationConfig.value
+  switch (type) {
+    case 'lottery':
+      return {
+        selection_size: config.selection_size || 10,
+        source_groups: config.source_groups || [],
+        method: config.method || 'random',
+      }
+    case 'users':
+      return {
+        user_ids: config.user_ids || []
+      }
+    case 'groups':
+      return {
+        group_ids: config.group_ids || []
+      }
+    default:
+      return {}
+  }
+}
+
+const handleParticipationConfigChange = async (field: keyof ParticipationConfig, value: any) => {
+  if (Array.isArray(value)) {
+    value = extractIds(value)
+  }
+  participationConfig.value = { ...participationConfig.value, [field]: value }
+}
+
+const handleLotteryConfigChange = async (field: keyof ParticipationConfig, value: any) => {
+  if (field === 'source_groups' && Array.isArray(value)) {
+    value = extractIds(value)
+  }
+  participationConfig.value = { ...participationConfig.value, [field]: value }
+}
+
+const resetParticipation = async () => {
+  if (!targetId.value) return
+  
+  try {
+    await participationStore.deleteParticipation(targetType.value, targetId.value)
+    showLotteryConfig.value = false
+    lotteryStatus.value = null
+    showSuccess(t('agora', 'Participation reset to everyone'))
+  } catch (error: any) {
+    showError(t('agora', 'Failed to reset participation: {error}', { error: error.message }))
+  }
+}
+
+// ============================================================
+// DISPLAY HELPERS
+// ============================================================
+
+const formatSelectedItems = (items: any[], type: 'user' | 'group'): string => {
+  if (!items || items.length === 0) return t('agora', 'None selected')
+  const count = items.length
+  return t('agora', '{count} {type}{s} selected', { 
+    count, 
+    type: type === 'user' ? t('agora', 'user') : t('agora', 'group'),
+    s: count > 1 ? 's' : ''
+  })
+}
+</script>
+
+<template>
+  <div class="sidebar-participation">
+    <!-- Header -->
+    <div class="participation-header">
+      <h2>{{ t('agora', 'Access & Participation') }}</h2>
+      <p class="subtitle">{{ t('agora', 'Manage who can view, participate, and share this inquiry') }}</p>
+    </div>
+
+    <!-- ============================================================
+         VISIBILITY SECTION
+         ============================================================ -->
+    <div class="participation-section">
+      <div class="section-header">
+        <h3>{{ t('agora', 'Visibility') }}</h3>
+        <div class="section-badge">
+          <span class="badge">{{ visibilityOptionLabels[visibilityType] || visibilityType }}</span>
+        </div>
+      </div>
+      <p class="section-desc">{{ t('agora', 'Who can view this inquiry') }}</p>
+
+      <NcSelect
+        :model-value="visibilityType"
+        :options="visibilityOptions"
+        :option-label="(opt: string) => visibilityOptionLabels[opt] || opt"
+        :label="t('agora', 'Visibility')"
+        @update:model-value="(val: string) => visibilityType = val"
+      />
+
+      <div v-if="visibilityType === 'groups'" class="config-panel">
+        <div class="config-group">
+          <label>{{ t('agora', 'Select Groups') }}</label>
+          <UserSearch
+            :model-value="visibilityGroupsForDisplay"
+            :search-types="[SEARCH_TYPE_GROUPS]"
+            multiple
+            :placeholder="t('agora', 'Type to search for groups')"
+            :aria-label="t('agora', 'Select groups that can view this inquiry')"
+            @update:model-value="(val) => visibilityGroupsForDisplay = val"
+          />
+          <span v-if="visibilityGroups.length === 0" class="hint">
+            {{ t('agora', 'No groups selected. Only you can view this inquiry.') }}
+          </span>
+          <span v-else class="hint">
+            {{ t('agora', '{count} groups selected', { count: visibilityGroups.length }) }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         PARTICIPATION SECTION
+         ============================================================ -->
+    <div class="participation-section">
+      <div class="section-header">
+        <h3>{{ t('agora', 'Participation') }}</h3>
+        <div class="section-badge">
+          <span class="badge">{{ participationOptionLabels[participationType] || participationType }}</span>
+        </div>
+      </div>
+      <p class="section-desc">{{ t('agora', 'Who can participate (vote, comment, contribute)') }}</p>
+
+      <NcSelect
+        :model-value="participationType"
+        :options="participationOptions"
+        :option-label="(opt: string) => participationOptionLabels[opt] || opt"
+        :label="t('agora', 'Participation Policy')"
+        :loading="loading.participation"
+        @update:model-value="(val) => participationType = val"
+      />
+
+      <!-- Users participation type -->
+      <div v-if="participationType === 'users'" class="config-panel">
+        <div class="config-group">
+          <label>{{ t('agora', 'Select Users') }}</label>
+          <UserSearch
+            :model-value="participationConfig.user_ids || []"
+            :search-types="[SEARCH_TYPE_USERS]"
+            multiple
+            :placeholder="t('agora', 'Type to search for users')"
+            :aria-label="t('agora', 'Select users who can participate')"
+            @update:model-value="(val) => handleParticipationConfigChange('user_ids', val)"
+          />
+          <span v-if="!participationConfig.user_ids?.length" class="hint">
+            {{ t('agora', 'No users selected. Only you can participate.') }}
+          </span>
+          <span v-else class="hint">
+            {{ t('agora', '{count} users selected', { count: participationConfig.user_ids.length }) }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Groups participation type -->
+      <div v-if="participationType === 'groups'" class="config-panel">
+        <div class="config-group">
+          <label>{{ t('agora', 'Select Groups') }}</label>
+          <UserSearch
+            :model-value="participationConfig.group_ids || []"
+            :search-types="[SEARCH_TYPE_GROUPS]"
+            multiple
+            :placeholder="t('agora', 'Type to search for groups')"
+            :aria-label="t('agora', 'Select groups that can participate')"
+            @update:model-value="(val) => handleParticipationConfigChange('group_ids', val)"
+          />
+          <span v-if="!participationConfig.group_ids?.length" class="hint">
+            {{ t('agora', 'No groups selected. Only you can participate.') }}
+          </span>
+          <span v-else class="hint">
+            {{ t('agora', '{count} groups selected', { count: participationConfig.group_ids.length }) }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Lottery Config -->
+      <div v-if="showLotteryConfig" class="config-panel">
+        <div class="config-group">
+          <label>{{ t('agora', 'Selection Size') }}</label>
+          <NcTextField
+            :value="participationConfig.selection_size"
+            type="number"
+            min="1"
+            max="100"
+            :label="t('agora', 'Number of participants to select')"
+            @update:model-value="(val: number) => handleLotteryConfigChange('selection_size', val)"
+          />
+        </div>
+
+        <div class="config-group">
+          <label>{{ t('agora', 'Source Groups') }}</label>
+          <UserSearch
+            :model-value="participationConfig.source_groups || []"
+            :search-types="[SEARCH_TYPE_GROUPS]"
+            multiple
+            :placeholder="t('agora', 'Type to search for groups')"
+            :aria-label="t('agora', 'Select groups to include in lottery')"
+            @update:model-value="(val) => handleLotteryConfigChange('source_groups', val)"
+          />
+          <span v-if="!participationConfig.source_groups?.length" class="hint">
+            {{ t('agora', 'No groups selected. All users eligible.') }}
+          </span>
+          <span v-else class="hint">
+            {{ t('agora', '{count} groups selected as source', { count: participationConfig.source_groups.length }) }}
+          </span>
+        </div>
+
+        <div class="config-group">
+          <label>{{ t('agora', 'Selection Method') }}</label>
+          <NcSelect
+            :model-value="participationConfig.method || 'random'"
+            :options="['random', 'weighted', 'stratified']"
+            :option-label="(opt: string) => t('agora', opt.charAt(0).toUpperCase() + opt.slice(1))"
+            :placeholder="t('agora', 'Select selection method')"
+            @update:model-value="(val: string) => handleLotteryConfigChange('method', val)"
+          />
+        </div>
+
+        <!-- Lottery Status & Actions -->
+        <div class="lottery-status">
+          <div v-if="lotteryStatus" class="status-display">
+            <div class="status-info">
+              <span class="status-label">{{ t('agora', 'Status:') }}</span>
+              <span class="status-value" :class="lotteryStatus.status">
+                {{ getStatusLabel(lotteryStatus.status) }}
+              </span>
+              <span v-if="lotteryStatus.is_validated" class="validation-badge">
+                ✅ {{ t('agora', 'Validated') }}
+              </span>
+            </div>
+
+            <!-- Actions based on status -->
+            <div class="lottery-actions">
+              <!-- No run yet -->
+              <button 
+                v-if="lotteryStatus.status === 'not_run'"
+                class="action-button run"
+                :disabled="isLotteryRunning || loading.lottery"
+                @click="handleRunLottery"
+              >
+                <span v-if="isLotteryRunning" class="spinner"></span>
+                {{ isLotteryRunning ? t('agora', 'Running...') : t('agora', 'Run Lottery') }}
+              </button>
+
+              <!-- Run failed - can retry -->
+              <div v-if="lotteryStatus.status === 'failed'" class="failed-actions">
+                <button 
+                  class="action-button run"
+                  @click="handleRunLottery"
+                >
+                  {{ t('agora', 'Retry Lottery') }}
+                </button>
+                <button 
+                  class="action-button cancel"
+                  @click="handleCancelLottery"
+                >
+                  {{ t('agora', 'Cancel') }}
+                </button>
+              </div>
+
+              <!-- Completed but not validated -->
+              <div v-if="lotteryStatus.status === 'completed' && !lotteryStatus.is_validated" class="completed-actions">
+                <button 
+                  class="action-button validate"
+                  @click="handleValidateLottery"
+                >
+                  {{ t('agora', 'Validate Lottery') }}
+                </button>
+                <button 
+                  class="action-button cancel"
+                  @click="handleCancelLottery"
+                >
+                  {{ t('agora', 'Cancel') }}
+                </button>
+                <button 
+                  class="action-button view"
+                  @click="showLotteryResults = !showLotteryResults"
+                >
+                  {{ showLotteryResults ? t('agora', 'Hide Results') : t('agora', 'View Results') }}
+                </button>
+              </div>
+
+              <!-- Validated -->
+              <div v-if="lotteryStatus.is_validated" class="validated-info">
+                <span class="success-message">✅ {{ t('agora', 'Lottery validated and active') }}</span>
+                <button 
+                  class="action-button view"
+                  @click="showLotteryResults = !showLotteryResults"
+                >
+                  {{ showLotteryResults ? t('agora', 'Hide Results') : t('agora', 'View Results') }}
+                </button>
+              </div>
+
+              <!-- Running -->
+              <div v-if="lotteryStatus.status === 'running'" class="running-info">
+                <span class="spinner"></span>
+                {{ t('agora', 'Lottery in progress...') }}
+              </div>
+            </div>
+
+            <!-- Pool information -->
+            <div v-if="lotteryStatus.status === 'not_run'" class="pool-info">
+              <button 
+                class="action-button info"
+                @click="showPoolInfo = !showPoolInfo"
+              >
+                {{ showPoolInfo ? t('agora', 'Hide Pool Info') : t('agora', 'Show Pool Info') }}
+              </button>
+              <div v-if="showPoolInfo" class="pool-details">
+                <p>{{ t('agora', 'Available users: {count}', { count: poolInfo?.length || 0 }) }}</p>
+                <p>{{ t('agora', 'Requested: {count}', { count: participationConfig.selection_size || 1 }) }}</p>
+                <p v-if="poolInfo && poolInfo.length < (participationConfig.selection_size || 1)" class="warning">
+                  ⚠️ {{ t('agora', 'Warning: Requested more users than available') }}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Results display -->
+          <div v-if="showLotteryResults && lotteryStatus?.run" class="results-display">
+            <h4>{{ t('agora', 'Lottery Results') }}</h4>
+            <div class="results-grid">
+              <div v-for="selection in lotteryStatus.run.selections" :key="selection.id" class="result-item">
+                <span class="rank">#{{ selection.rank }}</span>
+                <span class="user">{{ selection.selected_user_id }}</span>
+                <span class="status" :class="selection.status">
+                  {{ getSelectionStatusLabel(selection.status) }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reset to everyone option -->
+        <div class="config-group reset-group">
+          <button 
+            class="reset-button"
+            @click="resetParticipation"
+          >
+            {{ t('agora', 'Reset to everyone') }}
+          </button>
+          <span class="hint">
+            {{ t('agora', 'Remove participation restrictions') }}
+          </span>
+        </div>
+      </div> <!-- ✅ Closes lottery config-panel -->
+    </div> <!-- ✅ Closes participation-section -->
+
+    <!-- ============================================================
+         PUBLIC ACCESS SECTION
+         ============================================================ -->
+    <div class="participation-section shares-section">
+      <div class="section-header">
+        <h3>{{ t('agora', 'Public Access') }}</h3>
+        <div class="section-badge">
+          <span class="badge">{{ sharesStore.public.length }} {{ t('agora', 'public links') }}</span>
+        </div>
+      </div>
+      <p class="section-desc">{{ t('agora', 'Create public links for external participation') }}</p>
+      <ShareList />
+    </div>
+
+    <!-- ============================================================
+         LOTTERY CONFIRMATION DIALOG
+         ============================================================ -->
+    <NcDialog
+      v-if="showLotteryConfirm"
+      :name="t('agora', 'Run lottery?')"
+      @closing="showLotteryConfirm = false"
+    >
+      <p>{{ confirmMessage }}</p>
+
+      <template #actions>
+        <NcButton @click="showLotteryConfirm = false">
+          {{ t('agora', 'Cancel') }}
+        </NcButton>
+
+        <NcButton
+          type="primary"
+          @click="confirmLottery"
+        >
+          {{ t('agora', 'Continue') }}
+        </NcButton>
+      </template>
+    </NcDialog>
+  </div> <!-- ✅ Closes sidebar-participation -->
+</template>
+
+<style lang="scss" scoped>
+.lottery-status {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--color-border);
+
+  .status-display {
+    .status-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+
+      .status-label {
+        font-weight: 500;
+        color: var(--color-text-maxcontrast);
+      }
+
+      .status-value {
+        font-weight: 600;
+        padding: 2px 8px;
+        border-radius: 4px;
+
+        &.not_run {
+          color: var(--color-text-maxcontrast);
+          background: var(--color-background-dark);
+        }
+
+        &.running {
+          color: var(--color-primary);
+          background: var(--color-primary-light);
+        }
+
+        &.completed {
+          color: var(--color-success);
+          background: var(--color-success-light);
+        }
+
+        &.validated {
+          color: var(--color-success);
+          background: var(--color-success-light);
+        }
+
+        &.failed {
+          color: var(--color-error);
+          background: var(--color-error-light);
+        }
+
+        &.cancelled {
+          color: var(--color-warning);
+          background: var(--color-warning-light);
+        }
+      }
+
+      .validation-badge {
+        font-weight: 600;
+        color: var(--color-success);
+      }
+    }
+
+    .lottery-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 12px 0;
+
+      .action-button {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 8px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+
+        &:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+
+        &.run {
+          background: var(--color-primary);
+          color: white;
+
+          &:hover:not(:disabled) {
+            background: var(--color-primary-dark);
+          }
+        }
+
+        &.validate {
+          background: var(--color-success);
+          color: white;
+
+          &:hover {
+            background: var(--color-success-dark);
+          }
+        }
+
+        &.cancel {
+          background: var(--color-error);
+          color: white;
+
+          &:hover {
+            background: var(--color-error-dark);
+          }
+        }
+
+        &.view {
+          background: var(--color-background-dark);
+          color: var(--color-primary-text);
+
+          &:hover {
+            background: var(--color-background-hover);
+          }
+        }
+
+        &.info {
+          background: var(--color-background-dark);
+          color: var(--color-text-maxcontrast);
+
+          &:hover {
+            background: var(--color-background-hover);
+          }
+        }
+      }
+
+      .failed-actions,
+      .completed-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        width: 100%;
+      }
+    }
+
+    .pool-info {
+      margin: 8px 0;
+
+      .pool-details {
+        margin-top: 8px;
+        padding: 12px;
+        background: var(--color-background-dark);
+        border-radius: 6px;
+
+        .warning {
+          color: var(--color-warning);
+          font-weight: 500;
+        }
+      }
+    }
+  }
+
+  .results-display {
+    margin-top: 12px;
+    padding: 12px;
+    background: var(--color-background-dark);
+    border-radius: 6px;
+
+    h4 {
+      margin: 0 0 8px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .results-grid {
+      display: grid;
+      gap: 4px;
+      max-height: 300px;
+      overflow-y: auto;
+
+      .result-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 4px 8px;
+        border-radius: 4px;
+
+        .rank {
+          font-weight: 600;
+          color: var(--color-text-maxcontrast);
+          min-width: 30px;
+        }
+
+        .user {
+          flex: 1;
+        }
+
+        .status {
+          font-size: 12px;
+          padding: 2px 8px;
+          border-radius: 4px;
+
+          &.pending {
+            background: var(--color-warning-light);
+            color: var(--color-warning);
+          }
+
+          &.accepted {
+            background: var(--color-success-light);
+            color: var(--color-success);
+          }
+
+          &.declined {
+            background: var(--color-error-light);
+            color: var(--color-error);
+          }
+
+          &.expired {
+            background: var(--color-background-hover);
+            color: var(--color-text-maxcontrast);
+          }
+        }
+      }
+    }
+  }
+}
+
+.spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 0.8s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.sidebar-participation {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 16px;
+
+  .participation-header {
+    margin-bottom: 8px;
+
+    h2 {
+      font-size: 20px;
+      font-weight: 600;
+      margin: 0;
+      color: var(--color-primary-text);
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: var(--color-text-maxcontrast);
+      margin: 4px 0 0;
+    }
+  }
+
+  .participation-section {
+    background: var(--color-background-hover);
+    border-radius: 12px;
+    padding: 16px;
+    border: 1px solid var(--color-border);
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+
+      h3 {
+        font-size: 16px;
+        font-weight: 600;
+        margin: 0;
+        color: var(--color-primary-text);
+      }
+
+      .badge {
+        font-size: 11px;
+        font-weight: 500;
+        text-transform: uppercase;
+        background: var(--color-primary-element);
+        color: var(--color-primary-text);
+        padding: 2px 10px;
+        border-radius: 12px;
+      }
+    }
+
+    .section-desc {
+      font-size: 13px;
+      color: var(--color-text-maxcontrast);
+      margin: 0 0 12px;
+    }
+  }
+
+  .config-panel {
+    margin-top: 12px;
+    padding: 14px;
+    background: var(--color-background-dark);
+    border-radius: 8px;
+    border: 1px solid var(--color-border);
+
+    .config-group {
+      margin-bottom: 14px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      label {
+        display: block;
+        font-size: 13px;
+        font-weight: 500;
+        margin-bottom: 6px;
+        color: var(--color-text-maxcontrast);
+      }
+
+      .hint {
+        display: block;
+        font-size: 12px;
+        color: var(--color-text-maxcontrast);
+        margin-top: 4px;
+        opacity: 0.7;
+      }
+    }
+
+    .reset-group {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--color-border);
+
+      .reset-button {
+        background: var(--color-warning);
+        color: var(--color-primary-text);
+        border: none;
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: opacity 0.2s;
+
+        &:hover {
+          opacity: 0.8;
+        }
+      }
+    }
+  }
+
+  .shares-section {
+    .add-share {
+      margin-bottom: 16px;
+    }
+
+    .share-lists {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+  }
+}
+</style>

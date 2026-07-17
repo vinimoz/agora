@@ -24,7 +24,7 @@ import {
 } from '../utils/permissions.ts'
 import {
   SideBarTabComments,
-  SideBarTabShare,
+  SideBarTabAccess,
   SideBarTabResources,
   SideBarTabMisc,
 } from '../components/SideBar/index.js'
@@ -123,14 +123,14 @@ function closeSideBar() {
         
         <NcAppSidebarTab
                 v-if="canShare(context)"
-                id="sharing"
+                id="access"
                 :order="5"
-                :name="t('agora', 'Sharing')"
+                :name="t('agora', 'Access')"
                 >
                 <template #icon>
                     <component :is="InquiryGeneralIcons.Share" />
                 </template>
-                <SideBarTabShare :inquiry="inquiryStore"/>
+                <SideBarTabAccess :inquiry="inquiryStore"/>
         </NcAppSidebarTab>
 
         </NcAppSidebar>

@@ -22,11 +22,11 @@ abstract class OptionEvent extends BaseEvent
         protected Option $option,
     ) {
         parent::__construct($option);
-        $this->activityObjectType = 'inquiry';
+        $this->activityObjectType = 'option';
         $this->activitySubjectParams['optionTitle'] = [
         'type' => 'highlight',
         'id' => (string)$this->option->getId(),
-        'name' => $this->option->getInquiryOptionText(),
+        'name' => $this->option->getTitle(),
         ];
     }
 }

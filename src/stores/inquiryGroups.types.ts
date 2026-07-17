@@ -3,6 +3,13 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 import { User } from '../Types/index.ts'
+import { 
+  	SupportResult,
+        SupportEngine,
+} from '../Types/index.ts'
+
+export type AccessType = 'hidden' | 'public' | 'moderate' | 'private' | 'open'
+export type InquiryGroupWorkflowStatus = 'draft' |  'active' | 'closed' 
 
 export type InquiryGroupType = {
   id: number | string
@@ -23,6 +30,18 @@ export type InquiryGroupType = {
 }
 
 
+export type InquiryGroupConfiguration = {
+  access: AccessType
+  expire: number
+  supportEngine: SupportEngine[]
+}
+
+export type InquiryGroupStatus = {
+  groupStatus: InquiryGroupWorkflowStatus
+  updated: number
+  created: number
+  supportResult: SupportResult[] | null
+}
 
 export type InquiryGroup = {
   id: number
@@ -33,11 +52,12 @@ export type InquiryGroup = {
   owner: User                
   type: string              
   groupStatus: string     
+  status: InquiryGroupStatus
+  configuration: InquiryGroupConfiguration
   title: string          
   titleExt: string | null  
   ownedGroup: string | null    
   order: number             
-  expire: number | null   
   metadata: string | null    
   coverId: number | null     
   protected: boolean    

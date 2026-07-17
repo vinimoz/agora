@@ -62,12 +62,24 @@ export interface InquiryGroupRights {
 }
 
 /**
- * Access levels
+ * Publication status levels
  */
-export enum AccessLevel {
+export enum PublicationStatusLevel {
+  Draft = 'draft',
+  Pending = 'pending',
+  Published = 'published',
+  Archived = 'archived',
+  Deleted = 'deleted',
+}
+
+/**
+ * Visibility levels
+ */
+export enum VisibilityLevel {
   Private = 'private',
-  Moderate = 'moderate',
-  Open = 'open',
+  Groups = 'groups',
+  Participants = 'participants',
+  Everyone = 'everyone',
 }
 
 /**
@@ -83,7 +95,7 @@ export enum InquiryFamily {
 
 export interface InquiryStoreLike {
   owner: { id: string }
-  configuration: { access: AccessLevel | string }
+  configuration: { visibility: VisibilityLevel | string }
   status: {
     isLocked: boolean
     isExpired: boolean
@@ -91,6 +103,7 @@ export interface InquiryStoreLike {
     isArchived: boolean
     moderationStatus?: string
     inquiryStatus?: string
+    publicationStatus?: PublicationStatusLevel
   }
   inquiryGroups: InquiryGroup[]
   type: string
@@ -199,7 +212,8 @@ export interface PermissionContext {
   inquiryType?: string
   optionType?: string
   inquiryFamily?: InquiryFamily
-  accessLevel?: AccessLevel
+  visibilityLevel?: VisibilityLevel
+  publicationStatusLevel?: PublicationStatusLevel
   isFinalStatus?: boolean
   moderationStatus?: string
   supportFeature?: string  
@@ -285,7 +299,7 @@ export function createInquiryContext(inquiry: InquiryStoreLike, appSettings: unk
     userType: getCurrentUserType(),
     contentType: ContentType.Inquiry,
     isOwner: isContentOwner(inquiry.owner.id),
-    isPublic: inquiry.configuration.access === 'public',
+    isPublic: inquiry.configuration.visibility === 'everyone',
     isLocked: inquiry.currentUserStatus.isLocked || false,
     isExpired: inquiry.status.isExpired || false,
     isDeleted: inquiry.status.deletionDate > 0,
@@ -295,7 +309,7 @@ export function createInquiryContext(inquiry: InquiryStoreLike, appSettings: unk
     allowedGroups: inquiry.inquiryGroups,
     inquiryType: inquiry.type,
     inquiryFamily: inquiry.family,
-    accessLevel: inquiry.configuration.access as AccessLevel,
+    visibilityLevel: inquiry.configuration.visibility as VisibilityLevel,
     isFinalStatus,
     moderationStatus: inquiry.status.moderationStatus,
     supportFeature,
@@ -320,7 +334,7 @@ export function createOptionContext(option: OptionStoreLike): PermissionContext 
     userGroups: getCurrentUserGroups(),
     allowedGroups: [],
     optionType: option.type,
-    accessLevel: AccessLevel.Open,
+    VisibilityLevel: VisibilityLevel.Everyone,
     supportFeature,
     allowComment,
   }
@@ -614,15 +628,21 @@ function isAccessRestrictedForComments(context: PermissionContext): boolean {
         return true
     }
 
-    switch (context.accessLevel) {
-        case AccessLevel.Private:
+    switch (context.visibilityLevel) {
+        case VisibilityLevel.Private:
             return true
-        case AccessLevel.Moderate:
-            return context.userType !== UserType.Moderator && context.userType !== UserType.Admin
-        case AccessLevel.Open:
+        case VisibilityLevel.Everyone:
             default:
             return false
     }
+
+    switch (context.publicationStatusLevel) {
+        case PublicationStatusLevel.Pending:
+            return context.userType !== UserType.Moderator && context.userType !== UserType.Admin
+            default:
+            return false
+    }
+
 }
 
 function isAccessRestrictedForSupports(context: PermissionContext): boolean {
@@ -635,14 +655,21 @@ function isAccessRestrictedForSupports(context: PermissionContext): boolean {
         return true
     }
 
-    switch (context.accessLevel) {
-        case AccessLevel.Private:
-            case AccessLevel.Moderate:
+    switch (context.visibilityLevel) {
+        case VisibilityLevel.Private:
             return true
-        case AccessLevel.Open:
+        case VisibilityLevel.Everyone:
             default:
             return false
     }
+    switch (context.publicationStatusLevel) {
+        case PublicationStatusLevel.Pending:
+		return true
+            default:
+            return false
+    }
+
+
 }
 
 function isAccessRestrictedForSharing(context: PermissionContext): boolean {
@@ -651,13 +678,20 @@ function isAccessRestrictedForSharing(context: PermissionContext): boolean {
     }
 
     switch (context.accessLevel) {
-        case AccessLevel.Private:
-            case AccessLevel.Moderate:
+        case VisibilityLevel.Private:
             return true
-        case AccessLevel.Open:
+        case VisibilityLevel.Everyone:
             default:
             return false
     }
+
+     switch (context.publicationStatusLevel) {
+        case PublicationStatusLevel.Pending:
+                return true
+            default:
+            return false
+    }
+
 }
 
 /**
@@ -1071,7 +1105,7 @@ export function canShare(context: PermissionContext): boolean {
         return false
     }
    
-    if (context.accessLevel === AccessLevel.Open &&
+    if (context.accessLevel === VisibilityLevel.Open &&
         context.userType !== UserType.Moderator &&
         context.userType !== UserType.Admin &&
         !context.isOwner) {
@@ -1725,7 +1759,7 @@ export default {
     // Enums
     UserType,
     ContentType,
-    AccessLevel,
+    VisibilityLevel,
     InquiryFamily,
 
     // Default values

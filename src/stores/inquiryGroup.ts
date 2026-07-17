@@ -10,7 +10,11 @@ import { AxiosError } from 'axios'
 
 import { Logger } from '../helpers/index.ts'
 import { InquiryGroupsAPI } from '../Api/index.ts'
-import { UserType } from '../Types/index.ts'
+import { 
+	UserType,
+  	SupportResult,
+        SupportEngine,
+} from '../Types/index.ts'
 import { useSessionStore } from './session.ts'
 import { useInquiriesStore } from './inquiries.ts'
 import { useInquiryGroupsStore } from './inquiryGroups.ts'
@@ -24,6 +28,7 @@ export type InquiryGroupConfiguration = {
   groupStatus: string  
   expire: number | null
   titleExt: string | null  
+  supportEngine: SupportEngine[]
 }
 
 export type InquiryGroupStatus = {
@@ -32,6 +37,7 @@ export type InquiryGroupStatus = {
   isDeleted: boolean
   countInquiries: number
   isExpired: boolean
+  supportResult: SupportResult[] | null
 }
 
 export type InquiryGroupPermissions = {

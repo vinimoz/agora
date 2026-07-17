@@ -96,7 +96,7 @@ async function loadInquiry() {
     } else {
       const result = inquiriesStore.inquiries.filter(i =>
         i.parentId === Number(identifier.value) &&
-        i.configuration.access !== 'private'
+        i.configuration.visibility !== 'private'
       )
       inquiryStore.childs = result
     }

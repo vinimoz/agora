@@ -137,7 +137,7 @@ import { getInquiryTypeData } from '../../helpers/modules/InquiryHelper.ts'
 import type { Inquiry } from '../../Types/index.ts'
 import { useSessionStore } from '../../stores/session.ts'
 import { InquiryGeneralIcons, StatusIcons } from '../../utils/icons.ts'
-import SupportFeature from '../../helpers/modules/SupportFeature.vue'
+import { SupportFeature } from '../Base/index.ts'
 import { createInquiryContext } from '../../utils/permissions.ts'
 
 interface Props {

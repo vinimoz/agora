@@ -9,8 +9,8 @@
 
 		### ✨ Key Features
 		- 💬 Comments and discussions
-		- 👍 Supports (likes/upvotes)
-        - 👍 Supports (likes/neutral/against)
+		- 👍 Deliberative mode : Binary, Ternary, Star, Score, Reactions, Majority
+        - 👍 Voting tool : 🗳️ Condorcet, 📊 Borda, ⭐ Majority Judgment, ✅ Approval, Quadratic, Weighted…
         - 🧩 Custom inquiry families and types
         - 🧾 Multiple inquiry formats (proposals, debates, petitions, projects…)
         - 📂 Categorization and filtering by family or location
@@ -23,11 +23,11 @@
         - 🧰 Template for different goal, democraty, university, company, custom 
 
         ### 🧭 Coming Next
-        - 🏛 Collectives → Submit group of inquiries to Polls application for consultation or referendum  
+        - 🏛 Lottery.
         - 🧮 Quorums and workflow automation  
         - 🧰 Better permission control and moderation tools  
         ]]></description>
-    <version>1.7.3</version>
+    <version>1.8.0</version>
     <licence>AGPL-3.0-or-later</licence>
     <author>Vincent TRAPPE</author>
     <documentation>
@@ -49,7 +49,7 @@
     <screenshot>https://raw.githubusercontent.com/vinimoz/agora/main/screenshots/ListView.png</screenshot>
     <dependencies>
         <php min-version="8.1"/>
-        <nextcloud min-version="31" max-version="33"/>
+        <nextcloud min-version="31" max-version="34"/>
     </dependencies>
     <background-jobs>
         <job>OCA\Agora\Cron\NotificationCron</job>
@@ -57,7 +57,6 @@
     </background-jobs>
     <repair-steps>
         <post-migration>
-            <step>OCA\Agora\Migration\RepairSteps\DeleteInvalidRecords</step>
             <step>OCA\Agora\Migration\RepairSteps\UpdateHashes</step>
             <step>OCA\Agora\Migration\RepairSteps\CreateIndices</step>
         </post-migration>

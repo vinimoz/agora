@@ -161,7 +161,7 @@ import { useSessionStore } from '../../stores/session.ts'
 import { InquiryGeneralIcons } from '../../utils/icons.ts'
 import { createInquiryContext } from '../../utils/permissions.ts'
 
-import SupportFeature from '../../helpers/modules/SupportFeature.vue'
+import { SupportFeature } from '../Base/index.ts'
 interface Props {
   inquiry: Inquiry
   compact?: boolean

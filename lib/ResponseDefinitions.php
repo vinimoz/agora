@@ -33,8 +33,6 @@ namespace OCA\Agora;
  *  isOwner: boolean,
  *  userId: string,
  *  orphanedSupports: int,
- *  yesSupports: int,
- *  countSupports: int,
  *  shareToken: string,
  *  groupInvitations: string[],
  * }
@@ -47,7 +45,6 @@ namespace OCA\Agora;
  *  relevantThreshold: int,
  *  countParticipants: int,
  *  countComments: int,
- *  countSupports: int,
  * }
  *
  * @psalm-type InquiriesUser = array {

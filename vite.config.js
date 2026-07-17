@@ -21,7 +21,13 @@ const customConfig = {
   build: {
     sourcemap: true,
     minify: false,
+    cssCodeSplit: true,
     rollupOptions: {
+      onwarn(warning, warn) {
+        if (warning.message?.includes('#__PURE__')) return
+        if (warning.message?.includes('css-injected-by-js')) return
+        warn(warning)
+      },
          treeshake: true
       },
   },

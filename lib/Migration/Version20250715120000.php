@@ -134,6 +134,78 @@ class Version20250715120000 extends SimpleMigrationStep
     }
 
 
+    private function createSupportTable(ISchemaWrapper $schema): void
+    {
+        $tableName = Support::TABLE;
+        if ($schema->hasTable($tableName)) {
+            return;
+        }
+
+        $table = $schema->createTable($tableName);
+        $table->addColumn('id', Types::BIGINT, [
+            'autoincrement' => true,
+            'notnull' => true,
+            'unsigned' => true,
+            'length' => 20,
+        ]);
+        $table->addColumn('inquiry_id', Types::BIGINT, [
+            'notnull' => true,
+            'default' => 0,
+            'unsigned' => true,
+            'length' => 20,
+        ]);
+        $table->addColumn('option_id', Types::BIGINT, [
+            'notnull' => true,
+            'default' => 0,
+            'unsigned' => true,
+            'length' => 20,
+        ]);
+        $table->addColumn('user_id', Types::STRING, [
+            'notnull' => true,
+            'default' => '',
+            'length' => 256,
+        ]);
+        // value column as JSON – stores {"value": N} where N is integer (positive, negative, or zero)
+        $table->addColumn('value', Types::JSON, [
+            'notnull' => false,
+            'default' => null,
+        ]);
+        $table->addColumn('weight', Types::INTEGER, [
+            'notnull' => true,
+            'default' => 1,
+        ]);
+        $table->addColumn('created', Types::BIGINT, [
+            'notnull' => true,
+            'default' => 0,
+            'unsigned' => true,
+            'length' => 20,
+        ]);
+        $table->addColumn('updated', Types::BIGINT, [
+            'notnull' => true,
+            'default' => 0,
+            'unsigned' => true,
+            'length' => 20,
+        ]);
+        $table->addColumn('support_hash', Types::STRING, [
+            'notnull' => true,
+            'length' => 64,
+        ]);
+        $table->addColumn('support_engine_id', Types::BIGINT, [
+            'notnull' => false,
+            'default' => null,
+            'unsigned' => true,
+            'length' => 20,
+        ]);
+
+        $table->setPrimaryKey(['id']);
+        // Unique index includes support_engine_id (nullable allowed for uniqueness)
+        $table->addUniqueIndex(
+            ['inquiry_id', 'option_id', 'user_id', 'support_engine_id'],
+            'agora_uniq_supports'
+        );
+    }
+
+
     private function createInquiryGroupTable(ISchemaWrapper $schema): void {
         $tableName = InquiryGroup::TABLE;
         if ($schema->hasTable($tableName)) return;
@@ -248,7 +320,7 @@ class Version20250715120000 extends SimpleMigrationStep
         $table->addColumn('expire', Types::BIGINT, ['notnull' => true, 'default' => 0, 'unsigned' => true, 'length' => 20]);
         $table->addColumn('deleted', Types::BIGINT, ['notnull' => true, 'default' => 0, 'unsigned' => true, 'length' => 20]);
         $table->addColumn('owned_group', Types::STRING, ['notnull' => false, 'default' => '', 'length' => 255]);
-        $table->addColumn('access', Types::STRING, ['notnull' => true, 'default' => 'private', 'length' => 50]);
+        $table->addColumn('publication_status', Types::STRING, ['notnull' => true, 'default' => 'private', 'length' => 50]);
         $table->addColumn('show_results', Types::STRING, ['notnull' => true, 'default' => 'always', 'length' => 64]);
         $table->addColumn('last_interaction', Types::BIGINT, ['notnull' => true, 'default' => 0, 'unsigned' => true, 'length' => 20]);
         $table->addColumn('parent_id', Types::BIGINT, ['notnull' => false, 'default' => null, 'unsigned' => true, 'length' => 20]);
@@ -419,7 +491,7 @@ class Version20250715120000 extends SimpleMigrationStep
         $table->addColumn('target_id', Types::BIGINT, ['notnull' => true, 'default' => 0, 'unsigned' => true, 'length' => 20]);
         $table->addColumn('parent_id', Types::BIGINT, ['notnull' => true, 'default' => 0, 'unsigned' => true, 'length' => 20]);
         $table->addColumn('type', Types::STRING, ['notnull' => true, 'default' => 'debate', 'length' => 64]);
-        $table->addColumn('access', Types::STRING, ['notnull' => true, 'default' => 'private', 'length' => 32]);
+        $table->addColumn('publication_status', Types::STRING, ['notnull' => true, 'default' => 'private', 'length' => 32]);
         $table->addColumn('text', Types::STRING, ['notnull' => true, 'default' => 'enter ur text', 'length' => 1024]);
         $table->addColumn('owner', Types::STRING, ['notnull' => true, 'default' => '', 'length' => 256]);
         $table->addColumn('owned_group', Types::STRING, ['notnull' => false, 'default' => '', 'length' => 255]);
@@ -468,21 +540,6 @@ class Version20250715120000 extends SimpleMigrationStep
         $table->setPrimaryKey(['id']);
     }
 
-    private function createSupportTable(ISchemaWrapper $schema): void {
-        $tableName = Support::TABLE;
-        if ($schema->hasTable($tableName)) return;
-
-        $table = $schema->createTable($tableName);
-        $table->addColumn('id', Types::BIGINT, ['autoincrement' => true, 'notnull' => true, 'unsigned' => true, 'length' => 20]);
-        $table->addColumn('inquiry_id', Types::BIGINT, ['notnull' => true, 'default' => 0, 'unsigned' => true, 'length' => 20]);
-        $table->addColumn('option_id', Types::BIGINT, ['notnull' => true, 'default' => 0, 'unsigned' => true, 'length' => 20]);
-        $table->addColumn('user_id', Types::STRING, ['notnull' => true, 'default' => '', 'length' => 256]);
-        $table->addColumn('value', Types::SMALLINT, ['notnull' => true, 'default' => 0]);
-        $table->addColumn('created', Types::BIGINT, ['notnull' => true, 'default' => 0, 'unsigned' => true, 'length' => 20]);
-        $table->addColumn('support_hash', Types::STRING, ['notnull' => true, 'length' => 64]);
-        $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(['inquiry_id', 'option_id', 'user_id'], 'agora_uniq_supports');
-    }
 
     private function createCommentTable(ISchemaWrapper $schema): void {
         $tableName = Comment::TABLE;
@@ -579,7 +636,7 @@ class Version20250715120000 extends SimpleMigrationStep
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['user_id'], 'agora_uniq_preferences');
     }
-    
+
 
     /**
      * Find the actual table name in the schema (with or without 'oc_' prefix)

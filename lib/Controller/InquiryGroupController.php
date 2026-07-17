@@ -14,6 +14,8 @@ use OCA\Agora\Service\InquiryService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\FrontpageRoute;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
+use OCA\Agora\Service\SupportEngineService;
+use OCA\Agora\Service\SupportResultService;
 use OCA\Agora\Service\InquiryGroupMiscService;
 use OCP\AppFramework\Http\JSONResponse;
 use Psr\Log\LoggerInterface;
@@ -30,6 +32,8 @@ class InquiryGroupController extends BaseController
         private InquiryService $inquiryService,
         private InquiryGroupService $inquiryGroupService,
         private InquiryGroupMiscService $inquiryGroupMiscService,
+        private SupportResultService $supportResultService,
+        private SupportEngineService $supportEngineService,
         private LoggerInterface $logger,
     ) {
         parent::__construct($appName, $request);
@@ -98,10 +102,16 @@ class InquiryGroupController extends BaseController
     #[FrontpageRoute(verb: 'GET', url: '/inquirygroup/{inquiryGroupId}')]
     public function get(int $inquiryGroupId): JSONResponse
     {
-        $inquiryGroup = $this->inquiryGroupService->get($inquiryGroupId, true, true);
+	    $inquiryGroup = $this->inquiryGroupService->get($inquiryGroupId, true, true);
+	    $supportEngine = $this->supportEngineService->getEnginesByInquiryGroup($inquiryGroupId);
+	    $supportResult = $this->supportResultService->getResultsByInquiryGroup($inquiryGroupId);
+
+
         return $this->response(
             fn () => [
                 'inquiryGroup' => $inquiryGroup,
+                'supportEngine' => $supportResult,
+                'supportResult' => $supportEngine,
             ]
         );
     }

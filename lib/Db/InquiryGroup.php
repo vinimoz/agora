@@ -27,8 +27,8 @@ use OCA\Agora\UserSession;
  * @method    ?string getDescription()
  * @method    void setDescription(?string $value)
  * @method    string getGroupStatus()
- * @method    void setAccess(string $value)
- * @method    string getAccess()
+ * @method    void setPublicationStatus(string $value)
+ * @method    string getPublicationStatus()
  * @method    void setGroupStatus(string $value)
  * @method    string getType()
  * @method    void setType(string $value)
@@ -52,6 +52,10 @@ use OCA\Agora\UserSession;
  * @method    void setProtected(bool $value)
  * @method    bool getAllowEdit()
  * @method    void setAllowEdit(bool $value)
+ * @method string getVisibility()
+ * @method void setVisibility(string $value)
+ * @method string getVisibilityGroups()
+ * @method void setVisibilityGroups(string $value)
  */
 
 class InquiryGroup extends EntityWithUser implements JsonSerializable
@@ -81,6 +85,8 @@ class InquiryGroup extends EntityWithUser implements JsonSerializable
     protected ?int $coverId = null;
     protected ?bool $protected = false;
     protected ?bool $allowEdit = false;
+    protected ?string $supportResult = null;
+    protected ?string $supportEngine = null; 
     // joined inquiries
     protected ?string $inquiryIds = '';
     protected array $miscFields = [];
@@ -123,6 +129,61 @@ class InquiryGroup extends EntityWithUser implements JsonSerializable
         }
         return array_map('intval', explode(self::CONCAT_SEPARATOR, $this->inquiryIds));
     }
+
+     /**
+     * Get configuration array - matching TypeScript InquiryConfiguration interface
+     */
+    public function getConfigurationArray(): array
+    {
+        return [
+            'publication_status' => $this->getPublicationStatus(),
+            'expire' => $this->getExpire(),
+            'supportEngine' => $this->getSupportEngine(),
+        ];
+    }
+
+     /**
+     * Get inquiry status array - matching TypeScript InquiryStatus interface
+     */
+    public function getStatusArray(): array
+    {
+        return [
+            'groupStatus' => $this->getInquiryStatus(),
+            'updated' => $this->getUpdated(),
+            'created' => $this->getCreated(),
+            'isArchived' => (bool)$this->getArchived(),
+            'isExpired' => $this->getExpired(),
+            'supportResult' => $this->getSupportResult(),
+            'visibility' => $this->getVisibility(),
+            'visibilityGroup' => $this->getVisibilityGroup(),
+        ];
+    }
+
+        /**
+     * Get support result as array (decoded from JSON string)
+     */
+    public function getSupportResult(): ?array
+    {
+        if ($this->supportResult === null || $this->supportResult === '') {
+            return null;
+        }
+        $decoded = json_decode($this->supportResult, true);
+        return is_array($decoded) ? $decoded : [];
+    }
+
+    /**
+     * Get support engine as array (decoded from JSON string)
+     */
+    public function getSupportEngine(): array
+    {
+        if ($this->supportEngine === null || $this->supportEngine === '') {
+            return [];
+        }
+        $decoded = json_decode($this->supportEngine, true);
+        return is_array($decoded) ? $decoded : [];
+    }
+
+
 
     public function getName(): string
     {
@@ -264,7 +325,7 @@ class InquiryGroup extends EntityWithUser implements JsonSerializable
     /**
      * Request a permission level and get exception if denied
      *
-     * @throws ForbiddenException Thrown if access is denied
+     * @throws ForbiddenException Thrown if publication_status is denied
      */
     public function request(string $permission): bool
     {

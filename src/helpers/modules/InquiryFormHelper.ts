@@ -200,7 +200,7 @@ export function useInquiryPermissions(inquiryStore: ReturnType<typeof useInquiry
 	const context = computed(() => createPermissionContextForContent(
 		ContentType.Inquiry,
 		inquiryStore.owner.id,
-		inquiryStore.configuration.access === 'public',
+		inquiryStore.configuration.visibility === 'everyone',
 		inquiryStore.status.isLocked,
 		inquiryStore.status.isExpired,
 		inquiryStore.status.deletionDate > 0,

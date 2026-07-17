@@ -80,7 +80,7 @@ const onStatusChange = async (newStatus: string) => {
 
 const isNoAccessSet = computed(
   () =>
-    inquiryStore.configuration.access === 'private' &&
+    inquiryStore.configuration.visibility === 'private' &&
     !sharesStore.hasShares &&
     inquiryStore.permissions.edit
 )
@@ -108,9 +108,9 @@ const subTexts = computed(() => {
     })
     return subTexts
   }
-  if (inquiryStore.configuration.access === 'private') {
+  if (inquiryStore.configuration.visibility === 'private') {
     subTexts.push({
-      id: inquiryStore.configuration.access,
+      id: inquiryStore.configuration.visibility,
       text: t('agora', 'A private inquiry from {name}', {
         name: inquiryStore.owner.displayName,
       }),
@@ -119,7 +119,7 @@ const subTexts = computed(() => {
     })
   } else {
     subTexts.push({
-      id: inquiryStore.configuration.access,
+      id: inquiryStore.configuration.visibility,
       text: t('agora', 'An openly accessible inquiry from {name}', {
         name: inquiryStore.owner.displayName,
       }),
