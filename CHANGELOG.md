@@ -1,5 +1,8 @@
 # Changelog
 All notable changes to this project will be documented in this file.
+# [1.7.6] - 2026-07-17
+Nc34 support and fix i18n
+
 # [1.7.5] - 2026-06-28
 New vote/support feature: Majority judgement, Condorcet, score, etc.
 

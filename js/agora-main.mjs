@@ -1,4 +1,4 @@
-const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=[window.OC.filePath('agora', '', 'js/NcDashboardWidget-CvpYMKur-fpWhJSCr.chunk.mjs'),window.OC.filePath('agora', '', 'js/TernarySupportIcon.vue_vue_type_style_index_0_scoped_bbec35a7_lang-C_6eR4wF.chunk.mjs'),window.OC.filePath('agora', '', 'js/ActionVote-Bwid5-AW.chunk.mjs'),window.OC.filePath('agora', '', 'js/ExportResultsModal-l-iuppkk.chunk.mjs'),window.OC.filePath('agora', '', 'js/NcRichText-D_ssz6sB-CkVIBQj_.chunk.mjs'),window.OC.filePath('agora', '', 'js/ActionStructure-1s6niiUJ.chunk.mjs'),window.OC.filePath('agora', '', 'js/ImportDocumentModal-D6yzq1-1.chunk.mjs'),window.OC.filePath('agora', '', 'js/index-BMQQwcG1.chunk.mjs')])))=>i.map(i=>d[i]);
+const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=[window.OC.filePath('agora', '', 'js/NcDashboardWidget-CvpYMKur-CYFt7hO8.chunk.mjs'),window.OC.filePath('agora', '', 'js/TernarySupportIcon.vue_vue_type_style_index_0_scoped_bbec35a7_lang-CnKOaodk.chunk.mjs'),window.OC.filePath('agora', '', 'js/ActionVote-C8fOWjzm.chunk.mjs'),window.OC.filePath('agora', '', 'js/ExportResultsModal-Dpeo9g8U.chunk.mjs'),window.OC.filePath('agora', '', 'js/NcRichText-D_ssz6sB-0mjOBmz-.chunk.mjs'),window.OC.filePath('agora', '', 'js/ActionStructure-BsmiWZTX.chunk.mjs'),window.OC.filePath('agora', '', 'js/ImportDocumentModal-Oc-mbfBe.chunk.mjs'),window.OC.filePath('agora', '', 'js/index-RYxVU-kX.chunk.mjs')])))=>i.map(i=>d[i]);
 (function() {
   "use strict";
   try {
@@ -7861,20 +7861,20 @@ to {
 .results-layout .ranking-table table[data-v-a7396096] {
     min-width: 600px;
 }
-}.engine-selector-modal[data-v-485915ba] {
+}.engine-selector-modal[data-v-77260175] {
   padding: 0;
   max-width: 900px;
   background: var(--color-main-background);
   border-radius: 24px;
   overflow: visible;
 }
-.engine-selector-modal .modal-header[data-v-485915ba] {
+.engine-selector-modal .modal-header[data-v-77260175] {
   text-align: center;
   padding: 32px 32px 24px;
   background: linear-gradient(135deg, rgba(var(--color-primary-element-rgb), 0.05) 0%, rgba(var(--color-primary-element-rgb), 0.02) 100%);
   border-bottom: 1px solid var(--color-border);
 }
-.engine-selector-modal .modal-header .header-icon[data-v-485915ba] {
+.engine-selector-modal .modal-header .header-icon[data-v-77260175] {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -7885,32 +7885,32 @@ to {
   margin-bottom: 16px;
   color: white;
 }
-.engine-selector-modal .modal-header h3[data-v-485915ba] {
+.engine-selector-modal .modal-header h3[data-v-77260175] {
   margin: 0 0 8px 0;
   font-size: 24px;
   font-weight: 700;
 }
-.engine-selector-modal .modal-header .modal-description[data-v-485915ba] {
+.engine-selector-modal .modal-header .modal-description[data-v-77260175] {
   margin: 0;
   font-size: 14px;
   color: var(--color-text-lighter);
 }
-.engine-selector-modal .engine-basic-info[data-v-485915ba] {
+.engine-selector-modal .engine-basic-info[data-v-77260175] {
   padding: 24px 24px 0 24px;
 }
-.engine-selector-modal .engine-basic-info .field[data-v-485915ba] {
+.engine-selector-modal .engine-basic-info .field[data-v-77260175] {
   margin-bottom: 16px;
 }
-.engine-selector-modal .engine-basic-info .field label[data-v-485915ba] {
+.engine-selector-modal .engine-basic-info .field label[data-v-77260175] {
   display: block;
   margin-bottom: 8px;
   font-size: 13px;
   font-weight: 500;
 }
-.engine-selector-modal .engine-basic-info .field label .required[data-v-485915ba] {
+.engine-selector-modal .engine-basic-info .field label .required[data-v-77260175] {
   color: var(--color-error);
 }
-.engine-selector-modal .engine-basic-info .field .textarea-input[data-v-485915ba] {
+.engine-selector-modal .engine-basic-info .field .textarea-input[data-v-77260175] {
   width: 100%;
   padding: 10px 12px;
   border: 1px solid var(--color-border);
@@ -7921,42 +7921,42 @@ to {
   resize: vertical;
   transition: all 0.2s;
 }
-.engine-selector-modal .engine-basic-info .field .textarea-input[data-v-485915ba]:focus {
+.engine-selector-modal .engine-basic-info .field .textarea-input[data-v-77260175]:focus {
   outline: none;
   border-color: var(--color-primary-element);
   box-shadow: 0 0 0 2px rgba(var(--color-primary-element-rgb), 0.1);
 }
-.engine-selector-modal .engine-basic-info .field .field-error[data-v-485915ba] {
+.engine-selector-modal .engine-basic-info .field .field-error[data-v-77260175] {
   margin: 4px 0 0 0;
   font-size: 11px;
   color: var(--color-error);
 }
-.engine-selector-modal .engine-grid-wrapper[data-v-485915ba] {
+.engine-selector-modal .engine-grid-wrapper[data-v-77260175] {
   padding: 24px;
   max-height: 500px;
   overflow-y: auto;
 }
-.engine-selector-modal .engine-grid-wrapper[data-v-485915ba]::-webkit-scrollbar {
+.engine-selector-modal .engine-grid-wrapper[data-v-77260175]::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
-.engine-selector-modal .engine-grid-wrapper[data-v-485915ba]::-webkit-scrollbar-track {
+.engine-selector-modal .engine-grid-wrapper[data-v-77260175]::-webkit-scrollbar-track {
   background: var(--color-background-dark);
   border-radius: 4px;
 }
-.engine-selector-modal .engine-grid-wrapper[data-v-485915ba]::-webkit-scrollbar-thumb {
+.engine-selector-modal .engine-grid-wrapper[data-v-77260175]::-webkit-scrollbar-thumb {
   background: var(--color-border);
   border-radius: 4px;
 }
-.engine-selector-modal .engine-grid-wrapper[data-v-485915ba]::-webkit-scrollbar-thumb:hover {
+.engine-selector-modal .engine-grid-wrapper[data-v-77260175]::-webkit-scrollbar-thumb:hover {
   background: var(--color-text-lighter);
 }
-.engine-selector-modal .engine-grid[data-v-485915ba] {
+.engine-selector-modal .engine-grid[data-v-77260175] {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 20px;
 }
-.engine-selector-modal .engine-grid .engine-card[data-v-485915ba] {
+.engine-selector-modal .engine-grid .engine-card[data-v-77260175] {
   position: relative;
   padding: 20px;
   background: var(--color-background-dark);
@@ -7965,22 +7965,22 @@ to {
   cursor: pointer;
   transition: all 0.3s ease;
 }
-.engine-selector-modal .engine-grid .engine-card[data-v-485915ba]:hover {
+.engine-selector-modal .engine-grid .engine-card[data-v-77260175]:hover {
   transform: translateY(-2px);
   border-color: var(--color-primary-element);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
-.engine-selector-modal .engine-grid .engine-card.selected[data-v-485915ba] {
+.engine-selector-modal .engine-grid .engine-card.selected[data-v-77260175] {
   border-color: var(--color-primary-element);
   background: rgba(var(--color-primary-element-rgb), 0.05);
 }
-.engine-selector-modal .engine-grid .engine-card .engine-card-header[data-v-485915ba] {
+.engine-selector-modal .engine-grid .engine-card .engine-card-header[data-v-77260175] {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 12px;
 }
-.engine-selector-modal .engine-grid .engine-card .engine-card-header .engine-icon[data-v-485915ba] {
+.engine-selector-modal .engine-grid .engine-card .engine-card-header .engine-icon[data-v-77260175] {
   width: 52px;
   height: 52px;
   display: flex;
@@ -7990,137 +7990,137 @@ to {
   border-radius: 12px;
   color: var(--color-primary-element);
 }
-.engine-selector-modal .engine-grid .engine-card .engine-card-header .engine-badge[data-v-485915ba] {
+.engine-selector-modal .engine-grid .engine-card .engine-card-header .engine-badge[data-v-77260175] {
   font-size: 11px;
   padding: 4px 8px;
   border-radius: 20px;
   font-weight: 500;
 }
-.engine-selector-modal .engine-grid .engine-card .engine-card-header .engine-badge.per_option[data-v-485915ba] {
+.engine-selector-modal .engine-grid .engine-card .engine-card-header .engine-badge.per_option[data-v-77260175] {
   background: rgba(52, 152, 219, 0.1254901961);
   color: #3498db;
 }
-.engine-selector-modal .engine-grid .engine-card .engine-card-header .engine-badge.cross_option[data-v-485915ba] {
+.engine-selector-modal .engine-grid .engine-card .engine-card-header .engine-badge.cross_option[data-v-77260175] {
   background: rgba(155, 89, 182, 0.1254901961);
   color: #9b59b6;
 }
-.engine-selector-modal .engine-grid .engine-card .engine-card-header .engine-badge.flex[data-v-485915ba] {
+.engine-selector-modal .engine-grid .engine-card .engine-card-header .engine-badge.flex[data-v-77260175] {
   background: rgba(230, 126, 34, 0.1254901961);
   color: #e67e22;
 }
-.engine-selector-modal .engine-grid .engine-card .engine-card-header .engine-badge.none[data-v-485915ba] {
+.engine-selector-modal .engine-grid .engine-card .engine-card-header .engine-badge.none[data-v-77260175] {
   background: rgba(149, 165, 166, 0.1254901961);
   color: #95a5a6;
 }
-.engine-selector-modal .engine-grid .engine-card .engine-card-content h4[data-v-485915ba] {
+.engine-selector-modal .engine-grid .engine-card .engine-card-content h4[data-v-77260175] {
   margin: 0 0 8px 0;
   font-size: 16px;
   font-weight: 600;
 }
-.engine-selector-modal .engine-grid .engine-card .engine-card-content p[data-v-485915ba] {
+.engine-selector-modal .engine-grid .engine-card .engine-card-content p[data-v-77260175] {
   margin: 0 0 8px 0;
   font-size: 12px;
   color: var(--color-text-lighter);
   line-height: 1.4;
 }
-.engine-selector-modal .engine-grid .engine-card .engine-card-content .engine-constraints[data-v-485915ba] {
+.engine-selector-modal .engine-grid .engine-card .engine-card-content .engine-constraints[data-v-77260175] {
   display: flex;
   gap: 8px;
   margin-top: 8px;
 }
-.engine-selector-modal .engine-grid .engine-card .engine-card-content .engine-constraints .constraint-badge[data-v-485915ba] {
+.engine-selector-modal .engine-grid .engine-card .engine-card-content .engine-constraints .constraint-badge[data-v-77260175] {
   font-size: 10px;
   padding: 2px 6px;
   background: var(--color-background-hover);
   border-radius: 12px;
   color: var(--color-text-lighter);
 }
-.engine-selector-modal .engine-grid .engine-card .engine-check[data-v-485915ba] {
+.engine-selector-modal .engine-grid .engine-card .engine-check[data-v-77260175] {
   position: absolute;
   top: 12px;
   right: 12px;
   color: var(--color-primary-element);
 }
-.engine-selector-modal .subtype-selection-section[data-v-485915ba] {
+.engine-selector-modal .subtype-selection-section[data-v-77260175] {
   margin: 0 24px 24px 24px;
   padding: 20px;
   background: var(--color-background-dark);
   border-radius: 16px;
   border: 1px solid var(--color-border);
 }
-.engine-selector-modal .subtype-selection-section .subtype-header[data-v-485915ba] {
+.engine-selector-modal .subtype-selection-section .subtype-header[data-v-77260175] {
   display: flex;
   align-items: center;
   gap: 8px;
   margin-bottom: 16px;
 }
-.engine-selector-modal .subtype-selection-section .subtype-header svg[data-v-485915ba] {
+.engine-selector-modal .subtype-selection-section .subtype-header svg[data-v-77260175] {
   color: var(--color-primary-element);
 }
-.engine-selector-modal .subtype-selection-section .subtype-header h5[data-v-485915ba] {
+.engine-selector-modal .subtype-selection-section .subtype-header h5[data-v-77260175] {
   margin: 0;
   font-size: 15px;
   font-weight: 600;
 }
-.engine-selector-modal .subtype-selection-section .subtype-select[data-v-485915ba] .vs__dropdown-menu {
+.engine-selector-modal .subtype-selection-section .subtype-select[data-v-77260175] .vs__dropdown-menu {
   max-height: 300px;
 }
-.engine-selector-modal .subtype-selection-section .subtype-select .variant-option[data-v-485915ba] {
+.engine-selector-modal .subtype-selection-section .subtype-select .variant-option[data-v-77260175] {
   display: flex;
   align-items: flex-start;
   gap: 12px;
   padding: 8px;
 }
-.engine-selector-modal .subtype-selection-section .subtype-select .variant-option .variant-icon[data-v-485915ba] {
+.engine-selector-modal .subtype-selection-section .subtype-select .variant-option .variant-icon[data-v-77260175] {
   flex-shrink: 0;
   margin-top: 2px;
   color: var(--color-primary-element);
 }
-.engine-selector-modal .subtype-selection-section .subtype-select .variant-option .variant-content[data-v-485915ba] {
+.engine-selector-modal .subtype-selection-section .subtype-select .variant-option .variant-content[data-v-77260175] {
   flex: 1;
 }
-.engine-selector-modal .subtype-selection-section .subtype-select .variant-option .variant-content .variant-label[data-v-485915ba] {
+.engine-selector-modal .subtype-selection-section .subtype-select .variant-option .variant-content .variant-label[data-v-77260175] {
   font-weight: 500;
   margin-bottom: 2px;
 }
-.engine-selector-modal .subtype-selection-section .subtype-select .variant-option .variant-content .variant-description[data-v-485915ba] {
+.engine-selector-modal .subtype-selection-section .subtype-select .variant-option .variant-content .variant-description[data-v-77260175] {
   font-size: 12px;
   color: var(--color-text-lighter);
 }
-.engine-selector-modal .grade-config-section[data-v-485915ba] {
+.engine-selector-modal .grade-config-section[data-v-77260175] {
   margin: 0 24px 24px 24px;
   padding: 20px;
   background: var(--color-background-dark);
   border-radius: 16px;
   border: 1px solid var(--color-border);
 }
-.engine-selector-modal .grade-config-section .config-header[data-v-485915ba] {
+.engine-selector-modal .grade-config-section .config-header[data-v-77260175] {
   display: flex;
   align-items: center;
   gap: 8px;
   margin-bottom: 16px;
 }
-.engine-selector-modal .grade-config-section .config-header svg[data-v-485915ba] {
+.engine-selector-modal .grade-config-section .config-header svg[data-v-77260175] {
   color: var(--color-primary-element);
 }
-.engine-selector-modal .grade-config-section .config-header h5[data-v-485915ba] {
+.engine-selector-modal .grade-config-section .config-header h5[data-v-77260175] {
   margin: 0;
   font-size: 15px;
   font-weight: 600;
 }
-.engine-selector-modal .grade-config-section .grades-list[data-v-485915ba] {
+.engine-selector-modal .grade-config-section .grades-list[data-v-77260175] {
   margin-bottom: 12px;
 }
-.engine-selector-modal .grade-config-section .grades-list .grade-item[data-v-485915ba] {
+.engine-selector-modal .grade-config-section .grades-list .grade-item[data-v-77260175] {
   display: flex;
   align-items: center;
   gap: 8px;
   margin-bottom: 8px;
 }
-.engine-selector-modal .grade-config-section .grades-list .grade-item .grade-input[data-v-485915ba] {
+.engine-selector-modal .grade-config-section .grades-list .grade-item .grade-input[data-v-77260175] {
   flex: 1;
 }
-.engine-selector-modal .grade-config-section .grades-list .grade-item .grade-remove[data-v-485915ba] {
+.engine-selector-modal .grade-config-section .grades-list .grade-item .grade-remove[data-v-77260175] {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -8133,11 +8133,11 @@ to {
   cursor: pointer;
   transition: all 0.2s;
 }
-.engine-selector-modal .grade-config-section .grades-list .grade-item .grade-remove[data-v-485915ba]:hover {
+.engine-selector-modal .grade-config-section .grades-list .grade-item .grade-remove[data-v-77260175]:hover {
   background: var(--color-error);
   color: white;
 }
-.engine-selector-modal .grade-config-section .grade-add[data-v-485915ba] {
+.engine-selector-modal .grade-config-section .grade-add[data-v-77260175] {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -8150,38 +8150,38 @@ to {
   cursor: pointer;
   transition: all 0.2s;
 }
-.engine-selector-modal .grade-config-section .grade-add[data-v-485915ba]:hover {
+.engine-selector-modal .grade-config-section .grade-add[data-v-77260175]:hover {
   background: rgba(var(--color-primary-element-rgb), 0.05);
   border-color: var(--color-primary-element);
 }
-.engine-selector-modal .reactions-config-section[data-v-485915ba] {
+.engine-selector-modal .reactions-config-section[data-v-77260175] {
   margin: 0 24px 24px 24px;
   padding: 20px;
   background: var(--color-background-dark);
   border-radius: 16px;
   border: 1px solid var(--color-border);
 }
-.engine-selector-modal .reactions-config-section .config-header[data-v-485915ba] {
+.engine-selector-modal .reactions-config-section .config-header[data-v-77260175] {
   display: flex;
   align-items: center;
   gap: 8px;
   margin-bottom: 16px;
 }
-.engine-selector-modal .reactions-config-section .config-header svg[data-v-485915ba] {
+.engine-selector-modal .reactions-config-section .config-header svg[data-v-77260175] {
   color: var(--color-primary-element);
 }
-.engine-selector-modal .reactions-config-section .config-header h5[data-v-485915ba] {
+.engine-selector-modal .reactions-config-section .config-header h5[data-v-77260175] {
   margin: 0;
   font-size: 15px;
   font-weight: 600;
 }
-.engine-selector-modal .reactions-config-section .reactions-grid[data-v-485915ba] {
+.engine-selector-modal .reactions-config-section .reactions-grid[data-v-77260175] {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
   gap: 12px;
   margin-bottom: 16px;
 }
-.engine-selector-modal .reactions-config-section .reactions-grid .reaction-item[data-v-485915ba] {
+.engine-selector-modal .reactions-config-section .reactions-grid .reaction-item[data-v-77260175] {
   position: relative;
   display: flex;
   flex-direction: column;
@@ -8194,46 +8194,46 @@ to {
   cursor: pointer;
   transition: all 0.2s ease;
 }
-.engine-selector-modal .reactions-config-section .reactions-grid .reaction-item[data-v-485915ba]:hover {
+.engine-selector-modal .reactions-config-section .reactions-grid .reaction-item[data-v-77260175]:hover {
   transform: translateY(-2px);
   border-color: var(--color-primary-element);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
-.engine-selector-modal .reactions-config-section .reactions-grid .reaction-item.selected[data-v-485915ba] {
+.engine-selector-modal .reactions-config-section .reactions-grid .reaction-item.selected[data-v-77260175] {
   border-color: var(--color-primary-element);
   background: rgba(var(--color-primary-element-rgb), 0.05);
 }
-.engine-selector-modal .reactions-config-section .reactions-grid .reaction-item.selected .reaction-emoji[data-v-485915ba] {
+.engine-selector-modal .reactions-config-section .reactions-grid .reaction-item.selected .reaction-emoji[data-v-77260175] {
   transform: scale(1.1);
 }
-.engine-selector-modal .reactions-config-section .reactions-grid .reaction-item .reaction-emoji[data-v-485915ba] {
+.engine-selector-modal .reactions-config-section .reactions-grid .reaction-item .reaction-emoji[data-v-77260175] {
   font-size: 32px;
   transition: transform 0.2s ease;
 }
-.engine-selector-modal .reactions-config-section .reactions-grid .reaction-item .reaction-label[data-v-485915ba] {
+.engine-selector-modal .reactions-config-section .reactions-grid .reaction-item .reaction-label[data-v-77260175] {
   font-size: 12px;
   color: var(--color-text-lighter);
   text-align: center;
 }
-.engine-selector-modal .reactions-config-section .reactions-grid .reaction-item .reaction-check[data-v-485915ba] {
+.engine-selector-modal .reactions-config-section .reactions-grid .reaction-item .reaction-check[data-v-77260175] {
   position: absolute;
   top: 8px;
   right: 8px;
   color: var(--color-primary-element);
 }
-.engine-selector-modal .reactions-config-section .reaction-limit label[data-v-485915ba] {
+.engine-selector-modal .reactions-config-section .reaction-limit label[data-v-77260175] {
   display: block;
   margin-bottom: 8px;
   font-size: 13px;
   font-weight: 500;
 }
-.engine-selector-modal .reactions-config-section .reaction-limit .limit-input[data-v-485915ba] {
+.engine-selector-modal .reactions-config-section .reaction-limit .limit-input[data-v-77260175] {
   width: 100px;
 }
-.engine-selector-modal .engine-config-section[data-v-485915ba] {
+.engine-selector-modal .engine-config-section[data-v-77260175] {
   margin: 0 24px 24px 24px;
 }
-.engine-selector-modal .engine-config-section .config-settings-trigger[data-v-485915ba] {
+.engine-selector-modal .engine-config-section .config-settings-trigger[data-v-77260175] {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -8249,12 +8249,12 @@ to {
   cursor: pointer;
   transition: all 0.2s;
 }
-.engine-selector-modal .engine-config-section .config-settings-trigger[data-v-485915ba]:hover {
+.engine-selector-modal .engine-config-section .config-settings-trigger[data-v-77260175]:hover {
   background: rgba(var(--color-primary-element-rgb), 0.12);
   border-color: var(--color-primary-element);
   transform: translateY(-1px);
 }
-.engine-selector-modal .engine-config-section .config-settings-trigger .config-count-badge[data-v-485915ba] {
+.engine-selector-modal .engine-config-section .config-settings-trigger .config-count-badge[data-v-77260175] {
   background: var(--color-primary-element);
   color: white;
   padding: 2px 8px;
@@ -8262,51 +8262,51 @@ to {
   font-size: 12px;
   font-weight: 600;
 }
-.engine-selector-modal .engine-info-section[data-v-485915ba] {
+.engine-selector-modal .engine-info-section[data-v-77260175] {
   margin: 0 24px 24px 24px;
   padding: 16px;
   background: var(--color-background-dark);
   border-radius: 12px;
   border: 1px solid var(--color-border);
 }
-.engine-selector-modal .engine-info-section .info-message[data-v-485915ba] {
+.engine-selector-modal .engine-info-section .info-message[data-v-77260175] {
   display: flex;
   align-items: center;
   gap: 12px;
   color: var(--color-text-lighter);
   font-size: 13px;
 }
-.engine-selector-modal .engine-info-section .info-message svg[data-v-485915ba] {
+.engine-selector-modal .engine-info-section .info-message svg[data-v-77260175] {
   flex-shrink: 0;
   color: var(--color-primary-element);
 }
-.engine-selector-modal .engine-status-section[data-v-485915ba] {
+.engine-selector-modal .engine-status-section[data-v-77260175] {
   margin: 0 24px 24px 24px;
   padding: 20px;
   background: var(--color-background-dark);
   border-radius: 16px;
   border: 1px solid var(--color-border);
 }
-.engine-selector-modal .engine-status-section .status-header[data-v-485915ba] {
+.engine-selector-modal .engine-status-section .status-header[data-v-77260175] {
   display: flex;
   align-items: center;
   gap: 8px;
   margin-bottom: 16px;
 }
-.engine-selector-modal .engine-status-section .status-header svg[data-v-485915ba] {
+.engine-selector-modal .engine-status-section .status-header svg[data-v-77260175] {
   color: var(--color-primary-element);
 }
-.engine-selector-modal .engine-status-section .status-header h5[data-v-485915ba] {
+.engine-selector-modal .engine-status-section .status-header h5[data-v-77260175] {
   margin: 0;
   font-size: 15px;
   font-weight: 600;
 }
-.engine-selector-modal .engine-status-section .status-hint[data-v-485915ba] {
+.engine-selector-modal .engine-status-section .status-hint[data-v-77260175] {
   margin-left: 8px;
   font-size: 11px;
   color: var(--color-text-lighter);
 }
-.engine-selector-modal .modal-footer[data-v-485915ba] {
+.engine-selector-modal .modal-footer[data-v-77260175] {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
@@ -8314,7 +8314,7 @@ to {
   background: var(--color-background-dark);
   border-top: 1px solid var(--color-border);
 }
-.engine-selector-modal .modal-footer .btn-secondary[data-v-485915ba], .engine-selector-modal .modal-footer .btn-primary[data-v-485915ba] {
+.engine-selector-modal .modal-footer .btn-secondary[data-v-77260175], .engine-selector-modal .modal-footer .btn-primary[data-v-77260175] {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -8326,37 +8326,37 @@ to {
   cursor: pointer;
   transition: all 0.2s;
 }
-.engine-selector-modal .modal-footer .btn-secondary[data-v-485915ba]:disabled, .engine-selector-modal .modal-footer .btn-primary[data-v-485915ba]:disabled {
+.engine-selector-modal .modal-footer .btn-secondary[data-v-77260175]:disabled, .engine-selector-modal .modal-footer .btn-primary[data-v-77260175]:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
-.engine-selector-modal .modal-footer .btn-secondary[data-v-485915ba] {
+.engine-selector-modal .modal-footer .btn-secondary[data-v-77260175] {
   background: var(--color-background-hover);
   color: var(--color-main-text);
 }
-.engine-selector-modal .modal-footer .btn-secondary[data-v-485915ba]:hover:not(:disabled) {
+.engine-selector-modal .modal-footer .btn-secondary[data-v-77260175]:hover:not(:disabled) {
   background: var(--color-background-dark);
   transform: translateY(-1px);
 }
-.engine-selector-modal .modal-footer .btn-primary[data-v-485915ba] {
+.engine-selector-modal .modal-footer .btn-primary[data-v-77260175] {
   background: linear-gradient(135deg, var(--color-primary-element) 0%, var(--color-primary-element-light) 100%);
   color: white;
 }
-.engine-selector-modal .modal-footer .btn-primary[data-v-485915ba]:hover:not(:disabled) {
+.engine-selector-modal .modal-footer .btn-primary[data-v-77260175]:hover:not(:disabled) {
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(var(--color-primary-element-rgb), 0.3);
 }
-.settings-dialog-content[data-v-485915ba] {
+.settings-dialog-content[data-v-77260175] {
   padding: 0;
 }
-.settings-dialog-content .settings-header[data-v-485915ba] {
+.settings-dialog-content .settings-header[data-v-77260175] {
   text-align: center;
   padding: 24px 24px 20px;
   background: linear-gradient(135deg, rgba(var(--color-primary-element-rgb), 0.05) 0%, rgba(var(--color-primary-element-rgb), 0.02) 100%);
   border-bottom: 1px solid var(--color-border);
   margin: -8px -8px 0 -8px;
 }
-.settings-dialog-content .settings-header .settings-icon[data-v-485915ba] {
+.settings-dialog-content .settings-header .settings-icon[data-v-77260175] {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -8367,43 +8367,43 @@ to {
   margin-bottom: 16px;
   color: white;
 }
-.settings-dialog-content .settings-header h4[data-v-485915ba] {
+.settings-dialog-content .settings-header h4[data-v-77260175] {
   margin: 0 0 8px 0;
   font-size: 20px;
   font-weight: 600;
 }
-.settings-dialog-content .settings-header p[data-v-485915ba] {
+.settings-dialog-content .settings-header p[data-v-77260175] {
   margin: 0;
   font-size: 13px;
   color: var(--color-text-lighter);
 }
-.settings-dialog-content .settings-fields[data-v-485915ba] {
+.settings-dialog-content .settings-fields[data-v-77260175] {
   padding: 24px;
   max-height: 500px;
   overflow-y: auto;
 }
-.settings-dialog-content .settings-fields .settings-field[data-v-485915ba] {
+.settings-dialog-content .settings-fields .settings-field[data-v-77260175] {
   margin-bottom: 24px;
 }
-.settings-dialog-content .settings-fields .settings-field[data-v-485915ba]:last-child {
+.settings-dialog-content .settings-fields .settings-field[data-v-77260175]:last-child {
   margin-bottom: 0;
 }
-.settings-dialog-content .settings-fields .settings-field .settings-field-label[data-v-485915ba] {
+.settings-dialog-content .settings-fields .settings-field .settings-field-label[data-v-77260175] {
   display: block;
   margin-bottom: 8px;
   font-size: 13px;
   font-weight: 500;
   color: var(--color-main-text);
 }
-.settings-dialog-content .settings-fields .settings-field .settings-field-label .field-hint[data-v-485915ba] {
+.settings-dialog-content .settings-fields .settings-field .settings-field-label .field-hint[data-v-77260175] {
   font-size: 11px;
   color: var(--color-text-lighter);
   font-weight: normal;
 }
-.settings-dialog-content .settings-fields .settings-field .settings-field-input .number-config .null-number-control[data-v-485915ba] {
+.settings-dialog-content .settings-fields .settings-field .settings-field-input .number-config .null-number-control[data-v-77260175] {
   margin-bottom: 12px;
 }
-.settings-dialog-content .settings-fields .settings-field .settings-field-input .number-config .slider-control .settings-range-input[data-v-485915ba] {
+.settings-dialog-content .settings-fields .settings-field .settings-field-input .number-config .slider-control .settings-range-input[data-v-77260175] {
   width: 100%;
   height: 6px;
   -webkit-appearance: none;
@@ -8412,7 +8412,7 @@ to {
   outline: none;
   margin-bottom: 12px;
 }
-.settings-dialog-content .settings-fields .settings-field .settings-field-input .number-config .slider-control .settings-range-input[data-v-485915ba]::-webkit-slider-thumb {
+.settings-dialog-content .settings-fields .settings-field .settings-field-input .number-config .slider-control .settings-range-input[data-v-77260175]::-webkit-slider-thumb {
   -webkit-appearance: none;
   width: 20px;
   height: 20px;
@@ -8423,10 +8423,10 @@ to {
   border: 2px solid white;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
-.settings-dialog-content .settings-fields .settings-field .settings-field-input .number-config .slider-control .settings-range-input[data-v-485915ba]::-webkit-slider-thumb:hover {
+.settings-dialog-content .settings-fields .settings-field .settings-field-input .number-config .slider-control .settings-range-input[data-v-77260175]::-webkit-slider-thumb:hover {
   transform: scale(1.1);
 }
-.settings-dialog-content .settings-fields .settings-field .settings-field-input .number-config .slider-control .settings-range-input[data-v-485915ba]::-moz-range-thumb {
+.settings-dialog-content .settings-fields .settings-field .settings-field-input .number-config .slider-control .settings-range-input[data-v-77260175]::-moz-range-thumb {
   width: 20px;
   height: 20px;
   border-radius: 50%;
@@ -8436,13 +8436,13 @@ to {
   border: 2px solid white;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
-.settings-dialog-content .settings-fields .settings-field .settings-field-input .number-config .slider-control .slider-value[data-v-485915ba] {
+.settings-dialog-content .settings-fields .settings-field .settings-field-input .number-config .slider-control .slider-value[data-v-77260175] {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
 }
-.settings-dialog-content .settings-fields .settings-field .settings-field-input .number-config .slider-control .slider-value .value-number[data-v-485915ba] {
+.settings-dialog-content .settings-fields .settings-field .settings-field-input .number-config .slider-control .slider-value .value-number[data-v-77260175] {
   font-size: 14px;
   font-weight: 600;
   color: var(--color-primary-element);
@@ -8452,26 +8452,26 @@ to {
   min-width: 50px;
   text-align: center;
 }
-.settings-dialog-content .settings-fields .settings-field .settings-field-input .number-config .slider-control .slider-value[data-v-485915ba] .progress-bar {
+.settings-dialog-content .settings-fields .settings-field .settings-field-input .number-config .slider-control .slider-value[data-v-77260175] .progress-bar {
   flex: 1;
 }
-.settings-dialog-content .settings-fields .settings-field .settings-field-input .number-config .null-indicator[data-v-485915ba] {
+.settings-dialog-content .settings-fields .settings-field .settings-field-input .number-config .null-indicator[data-v-77260175] {
   font-size: 13px;
   color: var(--color-text-lighter);
   font-style: italic;
   padding: 8px 0;
   display: inline-block;
 }
-.settings-dialog-content .settings-fields .settings-field .settings-field-input .settings-text-input[data-v-485915ba] {
+.settings-dialog-content .settings-fields .settings-field .settings-field-input .settings-text-input[data-v-77260175] {
   width: 100%;
 }
-.settings-dialog-content .settings-fields .settings-field .settings-field-input .boolean-config .settings-switch[data-v-485915ba] .checkbox-radio-switch {
+.settings-dialog-content .settings-fields .settings-field .settings-field-input .boolean-config .settings-switch[data-v-77260175] .checkbox-radio-switch {
   justify-content: flex-start;
 }
-.settings-dialog-content .settings-fields .settings-field .settings-field-input .settings-select[data-v-485915ba] {
+.settings-dialog-content .settings-fields .settings-field .settings-field-input .settings-select[data-v-77260175] {
   width: 100%;
 }
-.settings-dialog-content .settings-fields .settings-field .settings-field-description[data-v-485915ba] {
+.settings-dialog-content .settings-fields .settings-field .settings-field-description[data-v-77260175] {
   margin: 8px 0 0 0;
   font-size: 11px;
   color: var(--color-text-lighter);
@@ -16998,15 +16998,15 @@ tr.file-picker__row td.row-name[data-v-1f96131b] {
     console.error("vite-plugin-css-injected-by-js", e);
   }
 })();
-const y8e = "agora", v8e = "1.7.5";
-import { a2 as yr, b0 as Ln, bf as jU, bg as GU, v as p, bh as XU, b1 as g0, d as Ne, a1 as YU, a4 as Qi, l as P, w as nt, C as ge, aU as Ni, bi as Bl, bj as KU, a as ii, o as b, c as A, t as S, K as Me, bk as ZU, b as F, e as H, bc as bt, q as w, f as ce, i as W, h as x, _ as We, bl as JU, bm as QU, O as Bp, aj as vs, a7 as qn, bn as eO, g as Y, bo as tO, bp as nO, u as So, Y as Pp, bq as m0, s as ut, aT as Pr, r as Dt, Z as iO, ah as y0, br as rO, bs as v0, ad as Co, E as be, F as Ee, bt as sO, bu as oO, bd as hi, m as yt, aM as Lp, a8 as vr, x as br, y as Pl, bv as aO, N as sn, n as vt, k as er, L as Oe, M as $e, B as $u, bw as b0, J as Ze, j as _0, aL as Eo, aN as Ma, $ as Et, bx as bs, by as To, H as tr, D as ki, bz as x0, bA as lO, bB as Fi, bC as cO, bD as Bu, bE as uO, bF as fi, b9 as _s, bG as pi, aY as dO, bH as qp, ba as zp, ax as w0, I as Wp, aW as D0, bI as _r, bJ as $i, bb as k0, G as hO, aP as gn, aQ as Pt, bK as fO, z as pO, A as gO } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_bbec35a7_lang-C_6eR4wF.chunk.mjs";
-import { d as at, L as Je, n as Bi, o as Vp, I as Re, p as Pu, q as S0, g as on, e as nn, r as Ao, t as Gt, s as je, v as Ll, h as ri, a as Ke, w as C0, x as ql, y as kt, z as mO, A as yO, B as xs, C as vO, D as bO, E as nr, F as Ua, G as Lu, H as Oa, J as Xt, K as E0, M as Hp, S as gt, O as zl, P as T0, Q as Lr, R as qu, T as _O, U as A0, V as xO, W as wO, X as DO, Y as kO, Z as SO, _ as R0, $ as CO, a0 as EO, a1 as zu, a2 as Wl, a3 as qe, a4 as si, a5 as ws, a6 as Vl, a7 as I0, a8 as Hl, a9 as jl, aa as Gl, ab as Xl, ac as Wu, ad as jp, ae as Gp, af as Yl, ag as M0, ah as U0, ai as TO, aj as AO, ak as Ds, al as RO, am as IO, an as O0, ao as N0, ap as MO, aq as F0, ar as UO, u as Vu, as as qr, at as OO, au as NO, av as FO, aw as $0, ax as $O, ay as BO, az as xr, aA as Hu, aB as B0, j as PO, aC as zr, aD as ir, aE as P0, aF as LO, aG as qO, aH as zO, aI as WO } from "./NcDashboardWidget-CvpYMKur-fpWhJSCr.chunk.mjs";
-import { u as Wr, _ as VO, a as HO } from "./StyleSettings-C1SxYUXC.chunk.mjs";
-import { c as Yt, u as jO, A as GO, _ as XO, d as Pi, e as Xp, S as YO, Q as KO, I as ju, f as ks, g as ZO, h as rr, C as JO, i as QO, j as L0, r as q0, t as z0, k as e8, l as Si, m as Kl, O as t8, n as W0, o as Ro, p as n8, q as i8, P as r8, s as V0, b as s8, v as o8 } from "./index-BMQQwcG1.chunk.mjs";
-import { c as a8, I as l8, N as Qt, a as Kt, _ as Li, b as Na } from "./NcRichText-D_ssz6sB-CkVIBQj_.chunk.mjs";
-import { _ as c8, a as Fa, N as Yp, b as Io } from "./markdown-Dmk3hXOL.chunk.mjs";
-import { _ as Kp } from "./agora-icon-BidPmNR0.chunk.mjs";
-import { N as u8 } from "./NcUserBubble-BE6yD-R0-ZpPwzH-4.chunk.mjs";
+const y8e = "agora", v8e = "1.7.6";
+import { a2 as yr, b0 as Ln, bf as jU, bg as GU, v as p, bh as XU, b1 as g0, d as Ne, a1 as YU, a4 as Qi, l as P, w as nt, C as ge, aU as Ni, bi as Bl, bj as KU, a as ii, o as b, c as A, t as S, K as Me, bk as ZU, b as F, e as H, bc as bt, q as w, f as ce, i as W, h as x, _ as We, bl as JU, bm as QU, O as Bp, aj as vs, a7 as qn, bn as eO, g as Y, bo as tO, bp as nO, u as So, Y as Pp, bq as m0, s as ut, aT as Pr, r as Dt, Z as iO, ah as y0, br as rO, bs as v0, ad as Co, E as be, F as Ee, bt as sO, bu as oO, bd as hi, m as yt, aM as Lp, a8 as vr, x as br, y as Pl, bv as aO, N as sn, n as vt, k as er, L as Oe, M as $e, B as $u, bw as b0, J as Ze, j as _0, aL as Eo, aN as Ma, $ as Et, bx as bs, by as To, H as tr, D as ki, bz as x0, bA as lO, bB as Fi, bC as cO, bD as Bu, bE as uO, bF as fi, b9 as _s, bG as pi, aY as dO, bH as qp, ba as zp, ax as w0, I as Wp, aW as D0, bI as _r, bJ as $i, bb as k0, G as hO, aP as gn, aQ as Pt, bK as fO, z as pO, A as gO } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_bbec35a7_lang-CnKOaodk.chunk.mjs";
+import { d as at, L as Je, n as Bi, o as Vp, I as Re, p as Pu, q as S0, g as on, e as nn, r as Ao, t as Gt, s as je, v as Ll, h as ri, a as Ke, w as C0, x as ql, y as kt, z as mO, A as yO, B as xs, C as vO, D as bO, E as nr, F as Ua, G as Lu, H as Oa, J as Xt, K as E0, M as Hp, S as gt, O as zl, P as T0, Q as Lr, R as qu, T as _O, U as A0, V as xO, W as wO, X as DO, Y as kO, Z as SO, _ as R0, $ as CO, a0 as EO, a1 as zu, a2 as Wl, a3 as qe, a4 as si, a5 as ws, a6 as Vl, a7 as I0, a8 as Hl, a9 as jl, aa as Gl, ab as Xl, ac as Wu, ad as jp, ae as Gp, af as Yl, ag as M0, ah as U0, ai as TO, aj as AO, ak as Ds, al as RO, am as IO, an as O0, ao as N0, ap as MO, aq as F0, ar as UO, u as Vu, as as qr, at as OO, au as NO, av as FO, aw as $0, ax as $O, ay as BO, az as xr, aA as Hu, aB as B0, j as PO, aC as zr, aD as ir, aE as P0, aF as LO, aG as qO, aH as zO, aI as WO } from "./NcDashboardWidget-CvpYMKur-CYFt7hO8.chunk.mjs";
+import { u as Wr, _ as VO, a as HO } from "./StyleSettings-C6mDphCj.chunk.mjs";
+import { c as Yt, u as jO, A as GO, _ as XO, d as Pi, e as Xp, S as YO, Q as KO, I as ju, f as ks, g as ZO, h as rr, C as JO, i as QO, j as L0, r as q0, t as z0, k as e8, l as Si, m as Kl, O as t8, n as W0, o as Ro, p as n8, q as i8, P as r8, s as V0, b as s8, v as o8 } from "./index-RYxVU-kX.chunk.mjs";
+import { c as a8, I as l8, N as Qt, a as Kt, _ as Li, b as Na } from "./NcRichText-D_ssz6sB-0mjOBmz-.chunk.mjs";
+import { _ as c8, a as Fa, N as Yp, b as Io } from "./markdown-bhVcnWNS.chunk.mjs";
+import { _ as Kp } from "./agora-icon-C82j6SGj.chunk.mjs";
+import { N as u8 } from "./NcUserBubble-BE6yD-R0-AwM98ktu.chunk.mjs";
 const $a = typeof document < "u";
 function H0(t10) {
   return typeof t10 == "object" || "displayName" in t10 || "props" in t10 || "__vccOpts" in t10;
@@ -57876,7 +57876,7 @@ const A2e = { class: "results-layout" }, R2e = { class: "results-summary" }, I2e
       const O = D.value?.[V];
       l.value[V] = O?.default ?? 1;
     }
-  }, T = (V) => ({ binary: oc, ternary: O_, reaction: ug, star: Hr, score: Hr, approval: Oo, ranking: Es, borda: cg, condorcet: ic, majority_judgment: rc, token_weighted: No, quadratic: Es, trending: Es })[V] || ai, L = (V) => qr[V]?.description || w("agora", "Vote using this method"), $ = (V) => ({ per_option: w("agora", "Per option"), cross_option: w("agora", "Cross option"), flex: w("agora", "Flexible"), none: w("agora", "No voting") })[V] || V, j = (V) => {
+  }, T = (V) => ({ binary: oc, ternary: O_, reaction: ug, star: Hr, score: Hr, approval: Oo, ranking: Es, borda: cg, condorcet: ic, majority_judgment: rc, token_weighted: No, quadratic: Es, trending: Es })[V] || ai, L = (V) => qr[V]?.description || w("agora", "Vote using this method"), $ = (V) => ({ per_option: w("agora", "Absolute numbers per option decide the winner"), cross_option: w("agora", "Relative weightings across options decide the winner"), flex: w("agora", "Flexible"), none: w("agora", "No voting") })[V] || V, j = (V) => {
     if (o.value = V, qr[V]?.config_schema) {
       const O = OO(V);
       l.value = { ...O };
@@ -57903,7 +57903,7 @@ const A2e = { class: "results-layout" }, R2e = { class: "results-summary" }, I2e
       V && v.some((z) => z.id === V) && (a.value = V, l.value.variant || (l.value.variant = V));
     }
   }), (V, z) => (b(), F(p(ki), { size: "large", name: f.value, onClose: z[10] || (z[10] = (O) => V.$emit("close")) }, { default: H(() => [x("div", fxe, [x("div", pxe, [x("div", gxe, [Y(p(ai), { size: 40 })]), x("h3", null, S(f.value), 1), x("p", mxe, S(p(w)("agora", "Different voting methods offer different ways to express preferences. Choose the one that best fits your decision-making process.")), 1)]), t10.mode !== "deliberative" ? (b(), A("div", yxe, [x("div", vxe, [x("label", null, [be(S(p(w)("agora", "Title")) + " ", 1), z[11] || (z[11] = x("span", { class: "required" }, "*", -1))]), Y(p(Li), { modelValue: r.value, "onUpdate:modelValue": z[0] || (z[0] = (O) => r.value = O), label: p(w)("agora", "Title"), placeholder: p(w)("agora", "E.g., final vote 2025, community decision"), error: !!d.value }, null, 8, ["modelValue", "label", "placeholder", "error"]), d.value ? (b(), A("p", bxe, S(d.value), 1)) : W("", true)]), x("div", _xe, [x("label", null, S(p(w)("agora", "Description (optional)")), 1), qn(x("textarea", { "onUpdate:modelValue": z[1] || (z[1] = (O) => s.value = O), label: p(w)("agora", "Description"), placeholder: p(w)("agora", "Describe the voting method or purpose"), rows: "2", class: "textarea-input" }, null, 8, xxe), [[D0, s.value]])]), x("div", wxe, [x("label", null, [be(S(p(w)("agora", "Purpose")) + " ", 1), z[12] || (z[12] = x("span", { class: "required" }, "*", -1))]), Y(p(Qt), { modelValue: g.value, "onUpdate:modelValue": z[2] || (z[2] = (O) => g.value = O), options: y, placeholder: p(w)("agora", "Select the purpose of this voting method"), reduce: (O) => O.value, label: "label", "label-outside": true, class: "purpose-select" }, null, 8, ["modelValue", "placeholder", "reduce"])])])) : W("", true), x("div", Dxe, [x("div", kxe, [(b(true), A(Oe, null, $e(t10.availableEngines, (O) => (b(), A("div", { key: O.id, class: Me(["engine-card", { selected: o.value === O.id, [O.scope]: true }]), onClick: (G) => j(O.id) }, [x("div", Cxe, [x("div", Exe, [(b(), F(ce(T(O.id)), { size: 28 }))]), x("div", { class: Me(["engine-badge", O.voteScope]) }, S($(O.voteScope)), 3)]), x("div", Txe, [x("h4", null, S(O.label), 1), x("p", null, S(O.description || L(O.id)), 1), O.constraints && (O.constraints.min_options || O.constraints.max_options) ? (b(), A("div", Axe, [O.constraints.min_options ? (b(), A("span", Rxe, S(p(w)("agora", "Min {n}", { n: O.constraints.min_options })), 1)) : W("", true), O.constraints.max_options ? (b(), A("span", Ixe, S(p(w)("agora", "Max {n}", { n: O.constraints.max_options })), 1)) : W("", true)])) : W("", true)]), o.value === O.id ? (b(), A("div", Mxe, [Y(p(Oo), { size: 20, fill: "currentColor" })])) : W("", true)], 10, Sxe))), 128))])]), o.value === "condorcet" ? (b(), A("div", Uxe, [x("div", Oxe, [Y(p(ic), { size: 18 }), x("h5", null, S(p(w)("agora", "Select condorcet method")), 1)]), Y(p(Qt), { modelValue: a.value, "onUpdate:modelValue": z[3] || (z[3] = (O) => a.value = O), options: v, placeholder: p(w)("agora", "Choose a condorcet variant …"), reduce: (O) => O.id, label: "label", "label-outside": true, "aria-label": p(w)("agora", "Select specific condorcet method variant"), class: "subtype-select" }, { option: H((O) => [x("div", Nxe, [(b(), F(ce(E(O.id)), { size: 16, class: "variant-icon" })), x("div", Fxe, [x("div", $xe, S(O.label), 1), x("div", Bxe, S(O.description), 1)])])]), _: 1 }, 8, ["modelValue", "placeholder", "reduce", "aria-label"])])) : W("", true), o.value === "majority_judgment" ? (b(), A("div", Pxe, [x("div", Lxe, [Y(p(rc), { size: 18 }), x("h5", null, S(p(w)("agora", "Configure grades")), 1)]), x("div", qxe, [(b(true), A(Oe, null, $e(l.value.grades || m, (O, G) => (b(), A("div", { key: G, class: "grade-item" }, [Y(p(Li), { modelValue: l.value.grades[G], "onUpdate:modelValue": (K) => l.value.grades[G] = K, "label-outside": "", placeholder: p(w)("agora", "Grade {n}", { n: G + 1 }), class: "grade-input" }, null, 8, ["modelValue", "onUpdate:modelValue", "placeholder"]), (l.value.grades || m).length > 2 ? (b(), F(p(Ee), { key: 0, class: "grade-remove", "aria-label": p(w)("agora", "Remove grade"), onClick: (K) => X(G) }, { default: H(() => [Y(p(td), { size: 14 })]), _: 1 }, 8, ["aria-label", "onClick"])) : W("", true)]))), 128))]), Y(p(Ee), { class: "grade-add", onClick: q }, { default: H(() => [Y(p(Ci), { size: 16 }), be(" " + S(p(w)("agora", "Add grade")), 1)]), _: 1 })])) : W("", true), o.value === "reaction" ? (b(), A("div", zxe, [x("div", Wxe, [Y(p(ug), { size: 18 }), x("h5", null, S(p(w)("agora", "Select reactions")), 1)]), x("div", Vxe, [(b(), A(Oe, null, $e(_, (O) => x("div", { key: O.value, class: Me(["reaction-item", { selected: M(O.value) }]), onClick: (G) => U(O.value) }, [x("div", jxe, S(O.emoji), 1), x("div", Gxe, S(O.label), 1), M(O.value) ? (b(), A("div", Xxe, [Y(p(Oo), { size: 16, fill: "currentColor" })])) : W("", true)], 10, Hxe)), 64))]), x("div", Yxe, [x("label", null, S(p(w)("agora", "Max reactions per user")), 1), Y(p(Li), { id: "max-reactions-input", modelValue: l.value.max_per_user, "onUpdate:modelValue": z[4] || (z[4] = (O) => l.value.max_per_user = O), modelModifiers: { number: true }, type: "number", class: "limit-input", "label-outside": "", label: p(w)("agora", "Max reactions per user") }, null, 8, ["modelValue", "label"])])])) : W("", true), o.value && D.value && Object.keys(D.value).length > 0 && !k.value ? (b(), A("div", Kxe, [Y(p(Ee), { class: "config-settings-trigger", onClick: z[5] || (z[5] = (O) => u.value = true) }, { default: H(() => [Y(p(dg), { size: 20 }), x("span", null, S(p(w)("agora", "Configure settings")), 1), x("span", Zxe, S(Object.keys(D.value).length), 1)]), _: 1 })])) : o.value && !k.value && (!D.value || Object.keys(D.value).length === 0) ? (b(), A("div", Jxe, [x("div", Qxe, [Y(p(ed), { size: 18 }), x("span", null, S(p(w)("agora", "This voting method requires no additional configuration.")), 1)])])) : W("", true), t10.mode === "edit" && t10.existingEngine ? (b(), A("div", ewe, [x("div", twe, [Y(p(ed), { size: 18 }), x("h5", null, S(p(w)("agora", "Status")), 1)]), Y(p(La), { modelValue: c.value, "onUpdate:modelValue": z[6] || (z[6] = (O) => c.value = O), label: p(w)("agora", "Voting method status"), "hide-label": true }, { default: H(() => [Y(p(Kt), { type: "radio", value: "active", disabled: t10.hasVotes }, { default: H(() => [be(S(p(w)("agora", "Active")) + " ", 1), t10.hasVotes ? (b(), A("span", nwe, S(p(w)("agora", "(cannot change - votes exist)")), 1)) : W("", true)]), _: 1 }, 8, ["disabled"]), Y(p(Kt), { type: "radio", value: "closed" }, { default: H(() => [be(S(p(w)("agora", "Closed")), 1)]), _: 1 }), Y(p(Kt), { type: "radio", value: "draft" }, { default: H(() => [be(S(p(w)("agora", "Draft")), 1)]), _: 1 })]), _: 1 }, 8, ["modelValue", "label"])])) : W("", true), x("div", iwe, [Y(p(Ee), { class: "btn-secondary", onClick: z[7] || (z[7] = (O) => V.$emit("close")) }, { default: H(() => [be(S(p(w)("agora", "Cancel")), 1)]), _: 1 }), Y(p(Ee), { class: "btn-primary", disabled: h.value, onClick: ue }, { default: H(() => [Y(p(ai), { size: 16 }), be(" " + S(t10.mode === "create" ? p(w)("agora", "Create voting method") : p(w)("agora", "Update voting method")), 1)]), _: 1 }, 8, ["disabled"])])]), u.value ? (b(), F(p(rr), { key: 0, name: p(w)("agora", "Configure {engine} Settings", { engine: I(o.value) }), "close-on-click-outside": true, size: "normal", onClose: z[9] || (z[9] = (O) => u.value = false) }, { actions: H(() => [Y(p(Ee), { onClick: z[8] || (z[8] = (O) => u.value = false) }, { default: H(() => [be(S(p(w)("agora", "Close")), 1)]), _: 1 })]), default: H(() => [x("div", rwe, [x("div", swe, [x("div", owe, [Y(p(dg), { size: 32 })]), x("h4", null, S(p(w)("agora", "Configuration settings")), 1), x("p", null, S(p(w)("agora", "Adjust the settings for this voting method")), 1)]), x("div", awe, [(b(true), A(Oe, null, $e(D.value, (O, G) => (b(), A("div", { key: G, class: "settings-field" }, [x("label", { for: `config-${G}`, class: "settings-field-label" }, [be(S(O.label || G) + " ", 1), O.type === "number" && O.min !== void 0 && O.max !== void 0 ? (b(), A("span", cwe, " (" + S(O.min) + "-" + S(O.max) + ") ", 1)) : W("", true)], 8, lwe), x("div", uwe, [O.type === "number" ? (b(), A("div", dwe, [O.nullable || G === "max_choices" ? (b(), A("div", hwe, [Y(p(Kt), { type: "checkbox", checked: l.value[G] === null, "onUpdate:modelValue": (K) => B(G, K) }, { default: H(() => [be(S(p(w)("agora", "Unlimited")), 1)]), _: 1 }, 8, ["checked", "onUpdate:modelValue"])])) : W("", true), l.value[G] !== null || !(O.nullable || G === "max_choices") ? (b(), A("div", fwe, [qn(x("input", { id: `config-${G}`, "onUpdate:modelValue": (K) => l.value[G] = K, type: "range", min: O.min ?? 0, max: O.max ?? 100, step: O.step ?? 1, class: "settings-range-input", style: vt({ "--range-progress": C(l.value[G], O.min ?? 0, O.max ?? 100) + "%" }) }, null, 12, pwe), [[D0, l.value[G], void 0, { number: true }]]), x("div", gwe, [x("span", mwe, S(l.value[G] ?? O.default ?? 0), 1), Y(p(W0), { value: C(l.value[G], O.min ?? 0, O.max ?? 100), "show-value": true, size: "small" }, null, 8, ["value"])])])) : l.value[G] === null ? (b(), A("span", ywe, S(p(w)("agora", "Unlimited (no restriction)")), 1)) : W("", true)])) : O.type === "string" && !O.options ? (b(), F(p(Li), { key: 1, id: `config-${G}`, modelValue: l.value[G], "onUpdate:modelValue": (K) => l.value[G] = K, placeholder: O.placeholder || "", class: "settings-text-input" }, null, 8, ["id", "modelValue", "onUpdate:modelValue", "placeholder"])) : O.type === "boolean" ? (b(), A("div", vwe, [Y(p(Kt), { modelValue: l.value[G], "onUpdate:modelValue": (K) => l.value[G] = K, type: "switch", class: "settings-switch" }, { default: H(() => [be(S(l.value[G] ? p(w)("agora", "Enabled") : p(w)("agora", "Disabled")), 1)]), _: 2 }, 1032, ["modelValue", "onUpdate:modelValue"])])) : O.options ? (b(), F(p(Qt), { key: 3, id: `config-${G}`, modelValue: l.value[G], "onUpdate:modelValue": (K) => l.value[G] = K, options: N(O), placeholder: p(w)("agora", "Select an option"), clearable: false, "label-outside": true, class: "settings-select" }, null, 8, ["id", "modelValue", "onUpdate:modelValue", "options", "placeholder"])) : W("", true)]), O.description ? (b(), A("p", bwe, S(O.description), 1)) : W("", true)]))), 128))])])]), _: 1 }, 8, ["name"])) : W("", true)]), _: 1 }, 8, ["name"]));
-} }), OU = We(_we, [["__scopeId", "data-v-485915ba"]]), xwe = { class: "supports-modal" }, wwe = { class: "modal-header" }, Dwe = { class: "header-left" }, kwe = { class: "header-content" }, Swe = { class: "option-meta" }, Cwe = { class: "option-type-label" }, Ewe = { key: 0, class: "option-text" }, Twe = { key: 0, class: "summary-badges" }, Awe = { class: "badge total" }, Rwe = { key: 0, class: "loading-state" }, Iwe = { key: 1, class: "empty-state" }, Mwe = { key: 2, class: "supports-list" }, Uwe = { class: "support-user" }, Owe = { class: "user-name" }, Nwe = { key: 0, class: "you-badge" }, Fwe = { class: "support-meta" }, $we = { class: "engine-badge" }, Bwe = { class: "timestamp" }, Pwe = Ne({ __name: "SupportsDetailModal", props: { optionId: {}, inquiryId: {}, displayVote: { type: Boolean } }, emits: ["close"], setup(t10, { emit: e }) {
+} }), OU = We(_we, [["__scopeId", "data-v-77260175"]]), xwe = { class: "supports-modal" }, wwe = { class: "modal-header" }, Dwe = { class: "header-left" }, kwe = { class: "header-content" }, Swe = { class: "option-meta" }, Cwe = { class: "option-type-label" }, Ewe = { key: 0, class: "option-text" }, Twe = { key: 0, class: "summary-badges" }, Awe = { class: "badge total" }, Rwe = { key: 0, class: "loading-state" }, Iwe = { key: 1, class: "empty-state" }, Mwe = { key: 2, class: "supports-list" }, Uwe = { class: "support-user" }, Owe = { class: "user-name" }, Nwe = { key: 0, class: "you-badge" }, Fwe = { class: "support-meta" }, $we = { class: "engine-badge" }, Bwe = { class: "timestamp" }, Pwe = Ne({ __name: "SupportsDetailModal", props: { optionId: {}, inquiryId: {}, displayVote: { type: Boolean } }, emits: ["close"], setup(t10, { emit: e }) {
   const n = t10, i = Ll(), r = Vu(), s = at(), o = ge([]), a = ge(true), l = ge(null), c = P(() => s.user?.uid || ""), u = P(() => s.appSettings?.inquiryOptionTypeTab || []), d = P(() => si(l.value?.type, u.value)), h = P(() => ws(l.value?.type, u.value, w("agora", "Option"))), f = P(() => Hl(l.value?.type, u.value)), g = P(() => w("agora", "Votes for {option}", { option: l.value?.title || w("agora", "Option") })), y = P(() => {
     const q = {};
     return o.value.forEach((X) => {
@@ -57936,7 +57936,7 @@ const A2e = { class: "results-layout" }, R2e = { class: "results-summary" }, I2e
   }
   async function M() {
     const { useOptionsStore: q } = await Ro(async () => {
-      const { useOptionsStore: N } = await import("./NcDashboardWidget-CvpYMKur-fpWhJSCr.chunk.mjs").then((B) => B.aK);
+      const { useOptionsStore: N } = await import("./NcDashboardWidget-CvpYMKur-CYFt7hO8.chunk.mjs").then((B) => B.aK);
       return { useOptionsStore: N };
     }, true ? __vite__mapDeps([0,1]) : void 0, import.meta.url), X = q();
     l.value = X.options.find((N) => N.id === n.optionId);
@@ -58027,13 +58027,13 @@ const A2e = { class: "results-layout" }, R2e = { class: "results-summary" }, I2e
     try {
       let J = null;
       if (R === "vote") {
-        const re = await Ro(() => import("./ActionVote-Bwid5-AW.chunk.mjs"), true ? __vite__mapDeps([2,0,1,3,4]) : void 0, import.meta.url);
+        const re = await Ro(() => import("./ActionVote-C8fOWjzm.chunk.mjs"), true ? __vite__mapDeps([2,0,1,3,4]) : void 0, import.meta.url);
         J = Fi(re.default || re);
       } else if (R === "structure") {
-        const re = await Ro(() => import("./ActionStructure-1s6niiUJ.chunk.mjs"), true ? __vite__mapDeps([5,6,1,0,4,7]) : void 0, import.meta.url);
+        const re = await Ro(() => import("./ActionStructure-BsmiWZTX.chunk.mjs"), true ? __vite__mapDeps([5,6,1,0,4,7]) : void 0, import.meta.url);
         J = Fi(re.default || re);
       } else {
-        const re = `${de.split("_").map((Ie) => Ie.charAt(0).toUpperCase() + Ie.slice(1)).join("")}Modal`, ve = await Kie(Object.assign({ "./Actions/ActionStructure.vue": () => Ro(() => import("./ActionStructure-1s6niiUJ.chunk.mjs"), true ? __vite__mapDeps([5,6,1,0,4,7]) : void 0, import.meta.url), "./Actions/ActionVote.vue": () => Ro(() => import("./ActionVote-Bwid5-AW.chunk.mjs"), true ? __vite__mapDeps([2,0,1,3,4]) : void 0, import.meta.url), "./Actions/ExportResultsModal.vue": () => Ro(() => import("./ExportResultsModal-l-iuppkk.chunk.mjs"), true ? __vite__mapDeps([3,1,0,4]) : void 0, import.meta.url), "./Actions/ImportDocumentModal.vue": () => Ro(() => import("./ImportDocumentModal-D6yzq1-1.chunk.mjs"), true ? __vite__mapDeps([6,1,0,4,7]) : void 0, import.meta.url) }), `./Actions/${re}.vue`, 3);
+        const re = `${de.split("_").map((Ie) => Ie.charAt(0).toUpperCase() + Ie.slice(1)).join("")}Modal`, ve = await Kie(Object.assign({ "./Actions/ActionStructure.vue": () => Ro(() => import("./ActionStructure-BsmiWZTX.chunk.mjs"), true ? __vite__mapDeps([5,6,1,0,4,7]) : void 0, import.meta.url), "./Actions/ActionVote.vue": () => Ro(() => import("./ActionVote-C8fOWjzm.chunk.mjs"), true ? __vite__mapDeps([2,0,1,3,4]) : void 0, import.meta.url), "./Actions/ExportResultsModal.vue": () => Ro(() => import("./ExportResultsModal-Dpeo9g8U.chunk.mjs"), true ? __vite__mapDeps([3,1,0,4]) : void 0, import.meta.url), "./Actions/ImportDocumentModal.vue": () => Ro(() => import("./ImportDocumentModal-Oc-mbfBe.chunk.mjs"), true ? __vite__mapDeps([6,1,0,4,7]) : void 0, import.meta.url) }), `./Actions/${re}.vue`, 3);
         J = Fi(ve.default || ve);
       }
       return J ? (v.set(te, J), J) : null;
