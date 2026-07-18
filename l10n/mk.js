@@ -16,6 +16,7 @@ OC.L10N.register(
     "No results found" : "Нема пронајдено резултати",
     "Approved" : "Одобрен",
     "Supported" : "Поддржано",
+    "Reactions" : "Реакции",
     "Reject" : "Одбиј",
     "Good" : "Добро",
     "Yes" : "Да",
