@@ -208,6 +208,7 @@ OC.L10N.register(
     "No description" : "Ingen beskrivning",
     "Title is required" : "Titel måste anges",
     "Files uploaded successfully" : "Filerna uppladdade",
+    "Failed to create {resource}" : "Det gick inte att skapa {resource}",
     "OR" : "ELLER",
     "Upload files" : "Ladda upp filer",
     "Select files" : "Välj filer",

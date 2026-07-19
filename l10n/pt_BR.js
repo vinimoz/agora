@@ -754,6 +754,8 @@ OC.L10N.register(
     "Referendum" : "Referendo",
     "Referendum on specific issues" : "Referendo sobre questões específicas",
     "Vote using this method" : "Votar usando este método",
+    "Absolute numbers per option decide the winner" : "Os números absolutos por opção determinam o vencedor",
+    "Relative weightings across options decide the winner" : "As ponderações relativas entre as opções determinam o vencedor",
     "Flexible" : "Flexível",
     "No voting" : "Sem votação",
     "Different voting methods offer different ways to express preferences. Choose the one that best fits your decision-making process." : "Os diferentes métodos de votação oferecem maneiras distintas de expressar preferências. Escolha aquele que melhor se adapta ao seu processo de tomada de decisão.",

@@ -754,6 +754,8 @@ OC.L10N.register(
     "Referendum" : "Reifreann",
     "Referendum on specific issues" : "Reifreann ar shaincheisteanna sonracha",
     "Vote using this method" : "Vótaigh ag baint úsáide as an modh seo",
+    "Absolute numbers per option decide the winner" : "Is iad na huimhreacha absalóideacha in aghaidh an rogha a chinneann an buaiteoir",
+    "Relative weightings across options decide the winner" : "Is iad na meáchain choibhneasta trasna na roghanna a chinneann an buaiteoir.",
     "Flexible" : "Solúbtha",
     "No voting" : "Gan vótáil",
     "Different voting methods offer different ways to express preferences. Choose the one that best fits your decision-making process." : "Tugann modhanna vótála éagsúla bealaí éagsúla chun roghanna a chur in iúl. Roghnaigh an ceann is fearr a oireann do do phróiseas cinnteoireachta.",
