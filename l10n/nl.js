@@ -267,6 +267,7 @@ OC.L10N.register(
     "Vote" : "Stemmen",
     "Election" : "Verkiezing",
     "Moderation" : "Beheer",
+    "Description (optional)" : "Beschrijving (optioneel)",
     "Configure settings" : "Instellingen configureren",
     "Closed" : "Gesloten",
     "Unlimited" : "Ongelimiteerd",
