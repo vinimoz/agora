@@ -402,6 +402,7 @@ OC.L10N.register(
     "Email options" : "E-mail-opties",
     "Delete group" : "Verwijder groep",
     "Home" : "Startpagina",
+    "groups" : "groepen",
     "Loading …" : "Laden …",
     "Archive" : "Archief",
     "Restore" : "Herstellen",
