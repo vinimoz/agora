@@ -195,6 +195,7 @@ OC.L10N.register(
     "Vote" : "Wyniki głosowania",
     "Election" : "Wybory",
     "Moderation" : "Moderacja",
+    "Description (optional)" : "Opis (opcjonalny)",
     "Closed" : "Zamknij ",
     "Unlimited" : "Bez limitu",
     "Enabled" : "Włączone",
