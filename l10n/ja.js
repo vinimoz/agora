@@ -107,6 +107,7 @@ OC.L10N.register(
     "Preview" : "プレビュー",
     "Summary" : "要約",
     "Generate" : "生成",
+    "Pending" : "保留中",
     "Accepted" : "承諾済み",
     "Rejected" : "拒否された",
     "Save" : "保存する",
