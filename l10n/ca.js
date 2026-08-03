@@ -185,6 +185,7 @@ OC.L10N.register(
     "Week" : "Aquesta setmana",
     "Month" : "Mes",
     "Today" : "Avui",
+    "Grid" : "Graella",
     "Not defined" : "Indefinit",
     "Just now" : "Ara mateix",
     "Yesterday" : "Ahir",
