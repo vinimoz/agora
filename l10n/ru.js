@@ -195,6 +195,7 @@ OC.L10N.register(
     "Vote" : "Голосовать",
     "Election" : "Выборы",
     "Moderation" : "Модерация",
+    "Description (optional)" : "Описание (необязательно)",
     "Closed" : "Закрыто",
     "Unlimited" : "Неограничено",
     "Enabled" : "Включено",
