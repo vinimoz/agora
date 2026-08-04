@@ -143,5 +143,8 @@
       "email": "trappe.vincent@laposte.net",
       "role": "Developer"
     }
-  ]
+  ],
+  "overrides": {
+    "@xmldom/xmldom": "0.8.13"
+  }
 }
