@@ -52,6 +52,7 @@
     "%s took over your inquiry" : "%s alichukua juu ya uchunguzi wako",
     "{actor} took over your inquiry \"%s\" and is the new owner." : "{actor} alichukua uchunguzi wako \"%s\" na ndiye mmiliki mpya.",
     "%s is the new owner of your inquiry." : "%s ndiye mmiliki mpya wa uchunguzi wako.",
+    "{actor} transferred your inquiry \"%s\" to {newOwner}. You are no more the owner." : "{actor} alihamisha maulizo yako \"%s\" kwa {newOwner}. Wewe si mmiliki tena.",
     "%s deleted your inquiry" : "%s ilifuta uchunguzi wako",
     "{actor} deleted your inquiry \"%s\"." : "{actor} ilifuta uchunguzi wako \"%s\".",
     "%s archived your inquiry" : "%s aliweka kumbukumbu ya uchunguzi wako",
