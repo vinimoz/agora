@@ -927,7 +927,7 @@ OC.L10N.register(
     "Email" : "E-post",
     "Remember me for 30 days" : "Pea mind meeles 30 päeva",
     "Legal notice" : "Juriidiline teave",
-    "Privacy policy" : "Privaatsustingimused",
+    "Privacy policy" : "Andmekaitsepõhimõtted",
     "Registered accounts" : "Registreeritud kontod",
     "Login" : "Kasutajanimi",
     "You can also log in and participate with your regular account." : "Võid samuti oma tavalise kasutajakontoga logida sisse ja osaleda.",
