@@ -331,6 +331,7 @@ OC.L10N.register(
     "Dutch" : "Нидерландский",
     "Unnamed" : "Без имени",
     "Administration settings" : "Параметры сервера",
+    "Template:" : "Шаблон:",
     "Language:" : "Язык:",
     "No templates available" : "Нет доступных шаблонов",
     "Types" : "Типы",
