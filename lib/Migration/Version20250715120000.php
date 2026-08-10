@@ -286,7 +286,7 @@ class Version20250715120000 extends SimpleMigrationStep
 
         $table = $schema->createTable($tableName);
         $table->addColumn('id', Types::BIGINT, ['autoincrement' => true, 'notnull' => true, 'unsigned' => true]);
-        $table->addColumn('family', Types::STRING, ['notnull' => true, 'default' => 'collective', 'length' => 64]);
+        $table->addColumn('family', Types::STRING, ['notnull' => true, 'default' => 'debate', 'length' => 64]);
         $table->addColumn('option_type', Types::STRING, ['notnull' => true, 'length' => 50]);
         $table->addColumn('icon', Types::STRING, ['notnull' => false, 'default' => '']);
         $table->addColumn('label', Types::STRING, ['notnull' => true, 'length' => 100]);
@@ -503,7 +503,7 @@ class Version20250715120000 extends SimpleMigrationStep
         $table->addColumn('option_status', Types::STRING, ['notnull' => true, 'default' => 'draft', 'length' => 32]);
         $table->addColumn('allow_comment', Types::SMALLINT, ['notnull' => false, 'default' => null]);
         $table->addColumn('support_feature', Types::STRING, ['notnull' => true, 'default' => 'none', 'length' => 20]);
-        $table->addColumn('family', Types::STRING, ['notnull' => false, 'default' => 'deliberative', 'length' => 64]);
+        $table->addColumn('family', Types::STRING, ['notnull' => false, 'default' => 'debate', 'length' => 64]);
         $table->addColumn('sort_order', Types::BIGINT, ['notnull' => true, 'default' => 0, 'unsigned' => true, 'length' => 20]);
         $table->setPrimaryKey(['id']);
     }

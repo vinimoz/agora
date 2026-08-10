@@ -5,7 +5,7 @@
 
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
-import { computed } from 'vue'
+import { computed  } from 'vue'
 import { DateTime } from 'luxon'
 import { t } from '@nextcloud/l10n'
 import NcAvatar from '@nextcloud/vue/components/NcAvatar'
@@ -33,10 +33,8 @@ interface Props {
 
 const { inquiry, noLink = false, gridView = false } = defineProps<Props>()
 
-
 // Context for permissions
 const context = computed(() => createInquiryContext(inquiry, sessionStore.appSettings))
-
 
 function htmlToFirstLine(html: string): string {
   const tempDiv = document.createElement('div')
@@ -77,7 +75,6 @@ const safeDescription = computed(() => {
 
 const formatDate = (timestamp: number) =>
   DateTime.fromMillis(timestamp * 1000).toLocaleString(DateTime.DATE_SHORT)
-
 
 const formatVoteDate = (dateString: string, locale: string = navigator.language) => {
   if (!dateString) return ''
@@ -126,6 +123,42 @@ const inquiryStatusInfo = computed(() => {
     (status) => status.status_key === inquiryStatus.value
   )
 })
+
+// Moderation status computed properties
+const moderationStatus = computed(() => inquiry.status.moderationStatus || null)
+
+const isModerationRejected = computed(() => moderationStatus.value === 'rejected')
+const isModerationPending = computed(() => moderationStatus.value === 'pending')
+
+// Get moderation status icon
+const moderationStatusIcon = computed(() => {
+  if (isModerationRejected.value) return StatusIcons.Error
+  if (isModerationPending.value) return StatusIcons.Warning
+  return null
+})
+
+// Get moderation status label
+const moderationStatusLabel = computed(() => {
+  if (isModerationRejected.value) return t('agora', 'Rejected')
+  if (isModerationPending.value) return t('agora', 'Pending Review')
+  return null
+})
+
+// Get moderation status description
+const moderationStatusDescription = computed(() => {
+  if (isModerationRejected.value) {
+    return inquiry.status.moderationReason 
+      ? t('agora', 'Rejected: {reason}', { reason: inquiry.status.moderationReason })
+      : t('agora', 'This inquiry has been rejected')
+  }
+  if (isModerationPending.value) {
+    return t('agora', 'This inquiry is pending moderation review')
+  }
+  return null
+})
+
+// Check if we should show moderation banner
+const showModerationBanner = computed(() => isModerationRejected.value || isModerationPending.value)
 
 // Get inquiry type data using helper
 const inquiryTypeData = computed(() => getInquiryTypeData(inquiry.type, sessionStore.appSettings.inquiryTypeTab || [], inquiry.type))
@@ -253,6 +286,24 @@ const hasVotePeriod = computed(() => inquiry.miscFields?.support_start && inquir
           </div>
         </div>
 
+        <!-- Moderation Status Badge -->
+        <div
+          v-if="showModerationBanner"
+          class="badge-bubble moderation-badge"
+          :class="{
+            'moderation-pending': isModerationPending,
+            'moderation-rejected': isModerationRejected
+          }"
+          :title="moderationStatusDescription"
+        >
+          <component
+            :is="moderationStatusIcon"
+            :size="12"
+            class="icon"
+          />
+          <span>{{ moderationStatusLabel }}</span>
+        </div>
+
         <div
           v-if="canComment(context)"
           class="badge-bubble"
@@ -334,6 +385,27 @@ const hasVotePeriod = computed(() => inquiry.miscFields?.support_start && inquir
     <!-- Grid Mode -->
     <template v-else>
         <div class="grid-card">
+            <!-- Moderation Banner for Grid View -->
+            <div
+              v-if="showModerationBanner"
+              class="grid-moderation-banner"
+              :class="{
+                'moderation-pending': isModerationPending,
+                'moderation-rejected': isModerationRejected
+              }"
+              :title="moderationStatusDescription"
+            >
+              <component
+                :is="moderationStatusIcon"
+                :size="16"
+                class="icon"
+              />
+              <span>{{ moderationStatusLabel }}</span>
+              <span v-if="isModerationRejected && inquiry.status.moderationReason" class="reason">
+                {{ inquiry.status.moderationReason }}
+              </span>
+            </div>
+
             <!-- Cover Image with User Avatar -->
             <div class="grid-cover-container">
                 <div v-if="currentCoverUrl" class="grid-cover">
@@ -527,6 +599,9 @@ const hasVotePeriod = computed(() => inquiry.miscFields?.support_start && inquir
 </template>
 
 <style lang="scss" scoped>
+// Import color module for modern color functions
+@use 'sass:color';
+
 // Common variables for consistent metadata chips
 $metadata-chip-bg: var(--color-background-dark);
 $metadata-chip-radius: 16px;
@@ -636,6 +711,21 @@ $metadata-gap: 4px;
                     border-color: var(--color-success);
                 }
 
+                // Moderation styles
+                &.moderation-badge {
+                    &.moderation-pending {
+                        background-color: var(--color-warning);
+                        color: white;
+                        border-color: var(--color-warning);
+                    }
+
+                    &.moderation-rejected {
+                        background-color: var(--color-error);
+                        color: white;
+                        border-color: var(--color-error);
+                    }
+                }
+
                 // Remove special background for participated - make it consistent
                 &.participated {
                     background-color: $metadata-chip-bg;
@@ -717,6 +807,58 @@ $metadata-gap: 4px;
                 transform: translateY(-4px);
                 box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
                 border-color: var(--color-primary-element);
+            }
+        }
+
+        .grid-moderation-banner {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 16px;
+            margin: 0;
+            font-size: 13px;
+            font-weight: 500;
+            z-index: 3;
+            position: relative;
+            border-radius: 12px 12px 0 0;
+
+            &.moderation-pending {
+                background: linear-gradient(135deg, #FFA726, #FB8C00);
+                color: white;
+                box-shadow: 0 2px 8px rgba(255, 167, 38, 0.3);
+                
+                .icon {
+                    animation: pulse-warning 2s infinite;
+                }
+            }
+
+            &.moderation-rejected {
+                background: linear-gradient(135deg, #EF5350, #C62828);
+                color: white;
+                box-shadow: 0 2px 8px rgba(239, 83, 80, 0.3);
+            }
+
+            .icon {
+                flex-shrink: 0;
+            }
+
+            .reason {
+                font-weight: normal;
+                opacity: 0.9;
+                margin-left: 4px;
+                font-size: 12px;
+                background: rgba(255, 255, 255, 0.2);
+                padding: 2px 8px;
+                border-radius: 12px;
+            }
+        }
+
+        @keyframes pulse-warning {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
             }
         }
 
@@ -1005,6 +1147,18 @@ $metadata-gap: 4px;
     .inquiry-item.grid-view {
         .grid-card {
             border-radius: 10px;
+        }
+
+        .grid-moderation-banner {
+            padding: 8px 12px;
+            font-size: 12px;
+            flex-wrap: wrap;
+
+            .reason {
+                width: 100%;
+                margin-left: 0;
+                margin-top: 4px;
+            }
         }
 
         .grid-cover-container {

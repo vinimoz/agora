@@ -7,14 +7,14 @@
 
 namespace OCA\Agora\Event;
 
-use OCA\Agora\Db\Inquiry;
+use OCA\Agora\Db\Option;
 
-class InquiryRestoredEvent extends InquiryEvent
+class OptionRestoredEvent extends OptionEvent
 {
     public function __construct(
-        Inquiry $inquiry,
+        Option $option,
     ) {
-        parent::__construct($inquiry);
+        parent::__construct($option);
         $this->eventId = self::RESTORE;
     }
 }

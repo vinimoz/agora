@@ -28,6 +28,7 @@ use OCA\Agora\Service\SubscriptionService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\FrontpageRoute;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
+use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
 use OCP\AppFramework\Http\JSONResponse;
 use OCP\IRequest;
 use Psr\Log\LoggerInterface;
@@ -146,9 +147,11 @@ class InquiryController extends BaseController
      */
 
     #[NoAdminRequired]
+     #[NoCSRFRequired]
     #[FrontpageRoute(verb: 'GET', url: '/inquiry/{inquiryId}')]
     public function getFull(int $inquiryId): JSONResponse
     {
+//	 die(" ENTERED ");
         return $this->response(fn () => $this->getFullInquiry($inquiryId, true), Http::STATUS_OK);
     }
 

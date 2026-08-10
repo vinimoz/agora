@@ -34,7 +34,7 @@ function dialogOK() {
 }
 
 const dialogText = adminAccess.value
-  ? t('inquiries', 'This will finally delete the inquiry and {username} will get notified.', {
+  ? t('agora', 'This will finally delete the inquiry and {username} will get notified.', {
       username: inquiry.owner.displayName,
     })
   : t('agora', 'This will finally delete the inquiry')

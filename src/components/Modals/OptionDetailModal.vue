@@ -669,8 +669,8 @@ const deleteOption = async () => {
             optionsStore.options.splice(index, 1)
         }
 
-        emit('deleted', optionStore.id)
         closeModal()
+        emit('deleted', optionStore.id)
     } catch (err) {
         console.error('Error deleting option:', err)
         error.value = t('agora', 'Failed to delete option')

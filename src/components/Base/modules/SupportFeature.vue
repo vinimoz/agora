@@ -568,7 +568,7 @@ const normalizedSupportResult = computed((): SupportResultData => {
 })
 
 // Helper function to process result data
-const processResultData = (data: any): SupportResultData => {
+const processResultData = (data: unknown): SupportResultData => {
   if (!data) return null
   if (Array.isArray(data) && data.length === 0) return null
   if (typeof data === 'object' && data !== null && Object.keys(data).length === 0) return null

@@ -36,7 +36,6 @@ interface Props {
   show: boolean
   inquiryId: number
   actionKey?: string
-   actionData?: unknown
 }
 
 const props = defineProps<Props>()

@@ -89,6 +89,8 @@ export interface SupportResult {
 // INQUIRY & OPTION TYPES
 // ============================================================================
 
+
+
 export interface InquiryType {
   id: number
   inquiry_type: string
@@ -102,6 +104,7 @@ export interface InquiryType {
   allowed_option_type: string[]
   allow_comment: number
   support_feature: string
+  is_root: boolean
   created: number
 }
 

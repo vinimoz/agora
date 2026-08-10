@@ -171,7 +171,7 @@ class Version01050020251027120000 extends SimpleMigrationStep
             if (!$table->hasColumn('family')) {
                 $table->addColumn('family', Types::STRING, [
                     'notnull' => true,
-                    'default' => 'collective',
+                    'default' => 'debate',
                     'length' => 64
                 ]);
                 $this->logInfo("Added family to {$tableName}");
@@ -193,7 +193,7 @@ class Version01050020251027120000 extends SimpleMigrationStep
         
         $table = $this->schema->createTable($tableName);
         $table->addColumn('id', Types::BIGINT, ['autoincrement' => true, 'notnull' => true]);
-        $table->addColumn('family', Types::STRING, ['notnull' => true, 'default' => 'collective', 'length' => 64]);
+        $table->addColumn('family', Types::STRING, ['notnull' => true, 'default' => 'debate', 'length' => 64]);
         $table->addColumn('option_type', Types::STRING, ['notnull' => true, 'length' => 50]);
         $table->addColumn('icon', Types::STRING, ['notnull' => false, 'default' => '']);
         $table->addColumn('label', Types::STRING, ['notnull' => true, 'length' => 100]);

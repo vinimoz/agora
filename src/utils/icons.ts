@@ -55,7 +55,9 @@ import FileText from '@iconify-icons/mdi/file-document-outline'
 import FileCode from '@iconify-icons/mdi/file-code-outline'
 import Markdown from '@iconify-icons/mdi/language-markdown'
 import DatabaseImport from '@iconify-icons/mdi/database-import'
-
+import ShieldRemove from '@iconify-icons/mdi/shield-remove'
+// import ShieldCheck from '@iconify-icons/mdi/shield-check'
+import ShieldAlert from '@iconify-icons/mdi/shield-alert'
 import Close from '@iconify-icons/mdi/close'
 // import Eye from '@iconify-icons/mdi/eye-outline'
 import EyeOff from '@iconify-icons/mdi/eye-off-outline'
@@ -513,6 +515,8 @@ export const OptionIcons: Record<string, Component> = {
 }
 
 export const NavigationIcons: Record<string, Component> = {
+  ShieldAlert: makeIconComponent(ShieldAlert, '#D32F2F'),
+ShieldRemove: makeIconComponent(ShieldRemove, '#D32F2F'),
   Administration: makeIconComponent(ShieldCrown, '#FF8F00'),
   Settings: makeIconComponent(Cog, '#455A64'),
   Relevant: makeIconComponent(Star, '#FFA000'),

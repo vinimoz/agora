@@ -26,6 +26,7 @@ import './assets/scss/transitions.scss'
 import './assets/scss/markdown.scss'
 import './assets/scss/globals.scss'
 import './assets/scss/agora-icon.scss'
+import './assets/scss/ncselect.scss'
 
 useInquiryWatcher()
 

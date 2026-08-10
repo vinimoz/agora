@@ -17,16 +17,17 @@ abstract class OptionEvent extends BaseEvent
     public const UNCONFIRM = 'option_unconfirm';
     public const DELETE = 'option_delete';
     public const RESTORE = 'option_restore';
+    public const ARCHIVE = 'option_archive';
 
     public function __construct(
         protected Option $option,
     ) {
         parent::__construct($option);
-        $this->activityObjectType = 'inquiry';
+        $this->activityObjectType = 'option';
         $this->activitySubjectParams['optionTitle'] = [
-        'type' => 'highlight',
-        'id' => (string)$this->option->getId(),
-        'name' => $this->option->getInquiryOptionText(),
+            'type' => 'highlight',
+            'id' => (string)$this->option->getId(),
+            'name' => $this->option->getTitle() ?: $this->option->getText(), 
         ];
     }
 }

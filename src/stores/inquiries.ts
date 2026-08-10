@@ -37,6 +37,7 @@ export type SortDirection = 'asc' | 'desc'
 export type FilterType =
   | 'relevant'
   | 'my'
+  | 'reject'
   | 'private'
   | 'participated'
   | 'open'
@@ -131,7 +132,20 @@ const inquiryCategories: InquiryCategoryList = {
       !inquiry.status.isArchived &&
       DateTime.fromSeconds(inquiry.status.relevantThreshold).diffNow('days').days > -30 &&
       inquiry.permissions.view &&
-      (inquiry.configuration.access === 'open' || inquiry.configuration.access === 'public'),
+      (inquiry.configuration.access === 'open' || inquiry.configuration.access === 'public' || inquiry.configuration.access === 'private'),
+  },
+  reject: {
+    id: 'reject',
+    title: t('agora', 'Rejected inquiries'),
+    titleExt: t('agora', 'Rejected inquiries'),
+    description: t('agora', 'These are all inquiries who has been rejected.'),
+    pinned: false,
+    showInNavigation: () => {
+      const sessionStore = useSessionStore()
+      return sessionStore.appPermissions.inquiryCreation
+    },
+    filterCondition: (inquiry: Inquiry) =>
+      !inquiry.status.isArchived && inquiry.currentUserStatus.isOwner && inquiry.status.moderationStatus === 'rejected',
   },
   my: {
     id: 'my',

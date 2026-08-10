@@ -61,6 +61,25 @@ class PageController extends Controller
     }
 
 /**
+#[NoAdminRequired]
+#[NoCSRFRequired]
+#[OpenAPI(OpenAPI::SCOPE_IGNORE)]
+#[FrontpageRoute(verb: 'GET', url: '/inquiry/{id}')]
+public function inquiry(int $id): TemplateResponse
+{
+    $this->notificationService->removeNotificationsForInquiry($id);
+
+    Util::addScript(AppConstants::APP_ID, 'agora-main');
+    $response = new TemplateResponse(AppConstants::APP_ID, 'main');
+    $csp = new ContentSecurityPolicy();
+    $csp->addAllowedWorkerSrcDomain('blob:');
+    $csp->addAllowedWorkerSrcDomain("'self'");
+    $response->setContentSecurityPolicy($csp);
+    return $response;
+}
+ */
+
+/**
  * render inquiry page
  *
  * @param $id inquiry id

@@ -6,10 +6,11 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 
-import { showError } from '@nextcloud/dialogs'
+import { showError, showSuccess } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { InquiryGeneralIcons } from '../../utils/icons.ts'
 import { useSessionStore } from '../../stores/session.ts'
+import { useRouter } from 'vue-router'
 
 import NcActions from '@nextcloud/vue/components/NcActions'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
@@ -19,6 +20,7 @@ import { Inquiry } from '../../stores/inquiry.ts'
 
 import DeleteInquiryDialog from '../Modals/DeleteInquiryDialog.vue'
 import TransferInquiryDialog from '../Modals/TransferInquiryDialog.vue'
+import ArchiveRestoreInquiryDialog from '../Modals/ArchiveRestoreInquiryDialog.vue'
 
 
 import {
@@ -29,25 +31,44 @@ import {
   createInquiryContext,
 } from '../../utils/permissions.ts'
 
-const sessionStore= useSessionStore
+const sessionStore= useSessionStore()
 
 const { inquiry } = defineProps<{ inquiry: Inquiry }>()
 
 const inquiriesStore = useInquiriesStore()
-
+const isNavigating = ref(false)
 const showDeleteDialog = ref(false)
 const showTransferDialog = ref(false)
+const showArchiveRestoreDialog = ref(false)
 const subMenu = ref<'addToGroup' | 'removeFromGroup' | null>(null)
+// const subMenu = ref(true)
 
 // Context for permissions
 const context = computed(() => createInquiryContext(inquiry, sessionStore.appSettings))
+const router = useRouter()
+
+const emit = defineEmits<{
+  deleted: []
+}>()
+
+const onInquiryDeleted = () => {
+  showSuccess(t('agora', 'Inquiry successfully deleted'))
+  emit('deleted') // Emit to parent
+  router.push({
+    name: 'list',
+    params: { type: 'relevant' },
+    query: { viewMode: 'view' }
+  }).finally(() => {
+    isNavigating.value = false
+  })
+}
 
 
 async function toggleArchive() {
   try {
     await inquiriesStore.toggleArchive({ inquiryId: inquiry.id })
   } catch {
-    showError(t('agora', 'Error archivingrestoring inquiry'))
+    showError(t('agora', 'Error archiving or restoring the  inquiry'))
   }
 }
 </script>
@@ -84,7 +105,7 @@ async function toggleArchive() {
         :name="t('agora', 'Restore inquiry')"
         :aria-label="t('agora', 'Restore inquiry')"
         close-after-click
-        @click="toggleArchive()"
+        @click="showArchiveRestoreDialog = true"
       >
         <template #icon>
           <component :is="InquiryGeneralIcons.Restore" :size="24" />
@@ -125,9 +146,16 @@ async function toggleArchive() {
     @close="showTransferDialog = false"
   />
 
+  <ArchiveRestoreInquiryDialog
+    v-model="showArchiveRestoreDialog"
+    :inquiry="inquiry"
+    @close="showArchiveRestoreDialog = false"
+  />
+
   <DeleteInquiryDialog
     v-model="showDeleteDialog"
     :inquiry="inquiry"
     @close="showDeleteDialog = false"
+    @deleted="onInquiryDeleted"
   />
 </template>

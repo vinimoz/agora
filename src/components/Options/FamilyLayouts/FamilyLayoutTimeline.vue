@@ -160,6 +160,7 @@
                 :option-title="selectedOption?.title || selectedOption?.label || ''"
                 :is-imported="selectedOption ? isImportedFromView(selectedOption,family.key) : false"
                 :view-type="'timeline'"
+		:option="selectedOption"
                 @confirm="handleConfirmDelete"
                 @remove-from-view="handleRemoveFromView"
                 />

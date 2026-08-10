@@ -658,16 +658,38 @@ protected function joinFamily(
     /**
      * Convert a value to the type defined in fields
      */
-    private function castValueByType($value, array $fieldDef)
-    {
-        $type = $fieldDef['type'] ?? 'string';
+private function castValueByType($value, array $fieldDef)
+{
+    $type = $fieldDef['type'] ?? 'string';
 
-        // Si la valeur est null, retourner null
-        if ($value === null) {
-            return null;
+    // If value is null, return null
+    if ($value === null) {
+        return null;
+    }
+
+    // If value is an array or object, we need to handle it specially
+    if (is_array($value) || is_object($value)) {
+        // For JSON type, encode it
+        if ($type === 'json' || $type === 'object' || $type === 'array') {
+            return json_encode($value);
         }
+        // For other types, try to extract the first value or convert
+        if (is_array($value)) {
+            // If it's a simple array with one value, extract it
+            if (count($value) === 1) {
+                $value = reset($value);
+            } else {
+                // Otherwise, convert to JSON string
+                return json_encode($value);
+            }
+        } else {
+            // It's an object, convert to JSON string
+            return json_encode($value);
+        }
+    }
 
-        switch ($type) {
+    // Now handle scalar values
+    switch ($type) {
         case 'integer':
         case 'int':
             return (int)$value;
@@ -684,10 +706,9 @@ protected function joinFamily(
             return is_numeric($value) ? (int)$value : $value;
 
         case 'json':
-            if (is_array($value) || is_object($value)) {
-                return json_encode($value);
-            }
-            return $value;
+        case 'object':
+        case 'array':
+            return json_encode($value);
 
         case 'enum':
             $allowed = $fieldDef['allowed_values'] ?? [];
@@ -698,9 +719,13 @@ protected function joinFamily(
 
         case 'string':
         default:
-        return (string)$value;
-        }
+            // Ensure we don't have an array here
+            if (is_array($value)) {
+                return json_encode($value);
+            }
+            return (string)$value;
     }
+}
 
     /**
      * Save dynamic fields to InquiryMisc and update miscFields in Inquiry

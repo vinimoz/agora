@@ -1,4 +1,4 @@
-# Agora 1.7.6
+# Agora 1.7.7
 
 [![Dependabot status](https://img.shields.io/badge/Dependabot-enabled-brightgreen.svg?longCache=true&style=flat-square&logo=dependabot)](https://dependabot.com/) [![Software License](https://img.shields.io/badge/license-AGPL-brightgreen.svg?style=flat-square)](file:///home/vini/Bureau/PERSO/Nextcloud/agora/COPYING) [![REUSE status](https://api.reuse.software/badge/github.com/vinimoz/agora)](https://api.reuse.software/info/github.com/vinimoz/agora)
 

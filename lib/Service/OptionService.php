@@ -70,8 +70,6 @@ class OptionService
 
         foreach ($optionList as $option) {
             $type = $option->getType();
-            $family = $this->optionTypeMapper->getFamilyFromType($type);
-            $option->setFamily($family);
         }
 
         if ($this->userSession->getCurrentUser()->getIsAdmin()) {
@@ -88,6 +86,47 @@ class OptionService
         );
     }
 
+
+    public function getChildsOptionsIds(int $optionId)
+    {
+        try {
+            $childOptionIds = $this->optionMapper->getChildOptionIds($optionId);
+
+            $children = [];
+            foreach ($childOptionIds as $childId) {
+                $childOption = $this->optionMapper->find($childId, true);
+                // No more setting family here either!
+                $children[] = $childOption;
+            }
+
+            return $children;
+        } catch (DoesNotExistException $e) {
+            throw new NotFoundException('Inquiry children not found for inquiry parent');
+        }
+    }
+
+     /**
+     * Get options by target inquiry ID
+     */
+    public function getByTargetId(int $targetId): array
+    {
+        $options = $this->optionMapper->findByTargetId($targetId);
+
+        return array_values(
+            array_filter(
+                $options, function (Option $option): bool {
+                    return $option->getIsAllowed(Option::PERMISSION_OPTION_VIEW);
+                }
+            )
+	);
+
+//	$this->logger->debug('GET OPTION BY', ['options' => $options]);
+
+        return $options;
+    }
+
+
+
     /**
      * Get options by target inquiry ID
      */
@@ -97,8 +136,6 @@ class OptionService
 
         foreach ($options as $option) {
             $type = $option->getType();
-            $family = $this->optionTypeMapper->getFamilyFromType($type);
-            $option->setFamily($family);
         }
 
         return array_values(
@@ -120,30 +157,6 @@ class OptionService
 
         foreach ($options as $option) {
             $type = $option->getType();
-            $family = $this->optionTypeMapper->getFamilyFromType($type);
-            $option->setFamily($family);
-        }
-
-        return array_values(
-            array_filter(
-                $options,
-                function (Option $option): bool {
-                    return $option->getIsAllowed(Option::PERMISSION_OPTION_VIEW);
-                }
-            )
-        );
-    }
-
-    /**
-     * Get options by type
-     */
-    public function listByType(string $type, int $targetId = 0): array
-    {
-        $options = $this->optionMapper->findByType($type, $targetId);
-
-        foreach ($options as $option) {
-            $family = $this->optionTypeMapper->getFamilyFromType($type);
-            $option->setFamily($family);
         }
 
         return array_values(
@@ -298,7 +311,6 @@ public function listByTargetIdWithTrending(int $targetId, bool $includeTrending 
             $this->option->request(Option::PERMISSION_OPTION_VIEW);
 
             $family = $this->optionTypeMapper->getFamilyFromType($this->option->getType());
-            $this->option->setFamily($family);
 
             return $this->option;
         } catch (DoesNotExistException $e) {
@@ -316,7 +328,6 @@ public function listByTargetIdWithTrending(int $targetId, bool $includeTrending 
 
             foreach ($options as $option) {
                 $family = $this->optionTypeMapper->getFamilyFromType($option->getType());
-                $option->setFamily($family);
             }
 
             return $options;
@@ -366,6 +377,7 @@ public function listByTargetIdWithTrending(int $targetId, bool $includeTrending 
         if (empty($data['text'])) {
             throw new EmptyTextException('Text must not be empty');
         }
+        
 
         if (empty($data['type'])) {
             throw new InvalidOptionTypeException('Option type must be specified');
@@ -384,6 +396,7 @@ public function listByTargetIdWithTrending(int $targetId, bool $includeTrending 
         }
 
         $title = $data['title'] ?? '';
+//	$this->logger->warning("FAMILY OF OPTION {$data['family']}: " );
 
         $timestamp = time();
         $this->option = new Option();
@@ -403,7 +416,7 @@ public function listByTargetIdWithTrending(int $targetId, bool $includeTrending 
         // Set defaults
         $this->option->setAccess($data['access'] ?? Option::ACCESS_PRIVATE);
         $this->option->setShowResults($data['showResults'] ?? Option::SHOW_RESULTS_ALWAYS);
-        $this->option->setFamily($data['family'] ?? 'deliberative');
+        $this->option->setFamily($data['family'] ?? 'debate');
         $this->option->setOptionStatus($data['status'] ?? Option::DEFAULT_STATUS_DRAFT);
 
         // Set sort order
@@ -427,8 +440,9 @@ public function listByTargetIdWithTrending(int $targetId, bool $includeTrending 
         }
 
         $this->optionMapper->saveDynamicFields($this->option, $fieldsDefinition);
+//	$this->logger->warning("FAMILY GET AFTER OPTION INSERT {$this->option->getFamily()}: " );
 
-        //$this->eventDispatcher->dispatchTyped(new OptionCreatedEvent($this->option));
+        $this->eventDispatcher->dispatchTyped(new OptionCreatedEvent($this->option));
 
         return $this->option;
     }
@@ -521,7 +535,7 @@ public function listByTargetIdWithTrending(int $targetId, bool $includeTrending 
             $this->optionMapper->updateDynamicFields($this->option, $data['miscFields'], $fields);
         }
 
-        //$this->eventDispatcher->dispatchTyped(new OptionUpdatedEvent($this->option));
+        $this->eventDispatcher->dispatchTyped(new OptionUpdatedEvent($this->option));
 
         return $this->option;
     }
@@ -566,46 +580,67 @@ public function listByTargetIdWithTrending(int $targetId, bool $includeTrending 
         }
     }
 
-    /**
-     * Move to archive or restore with optional recursive functionality
-     *
-     * @return array [option: Option, archivedCount: int]
-     */
-    public function toggleArchiveRecursive(int $optionId, bool $recursive = true): array
-    {
-        $this->option = $this->optionMapper->find($optionId);
-        $this->option->request(Option::PERMISSION_OPTION_DELETE);
+/**
+ * Move to archive or restore with recursive functionality
+ * Uses simple recursion: calls itself on each child
+ *
+ * @return array [option: Option, archivedCount: int]
+ */
+/**
+ * Move to archive or restore with recursive functionality
+ * Uses simple recursion: calls itself on each child
+ *
+ * @return array [option: Option, archivedCount: int]
+ */
+public function toggleArchiveRecursive(int $optionId, bool $archiveState = null): array
+{
+    // Get the option
+    $this->option = $this->optionMapper->find($optionId);
+    $this->option->request(Option::PERMISSION_OPTION_DELETE);
 
-        $archiveState = !$this->option->getDeleted();
-        $deletedTime = $archiveState ? time() : 0;
-
-        try {
-            $this->option->setArchived($deletedTime);
-            $this->option->setDeleted($deletedTime);
-            $this->option->setUpdated(time());
-            $this->option = $this->optionMapper->update($this->option);
-
-            $archivedCount = 1;
-
-            if ($recursive) {
-                $childCount = $this->archiveChildrenRecursive($this->option, $archiveState);
-                $archivedCount += $childCount;
-            }
-
-            if ($archiveState) {
-                $this->eventDispatcher->dispatchTyped(new OptionArchivedEvent($this->option));
-            } else {
-                $this->eventDispatcher->dispatchTyped(new OptionRestoredEvent($this->option));
-            }
-
-            return [
-                'option' => $this->option,
-                'archivedCount' => $archivedCount
-            ];
-        } catch (\Exception $e) {
-            throw $e;
-        }
+    // Determine archive state if not provided
+    if ($archiveState === null) {
+        $archiveState = !$this->option->getArchived();
     }
+
+    $archivedTime = $archiveState ? time() : 0;
+    $archivedCount = 1;
+
+    try {
+        // Archive/restore this option - ONLY set archived, NOT deleted!
+        $this->option->setArchived($archivedTime);
+        $this->option->setUpdated(time());
+        $this->option = $this->optionMapper->update($this->option);
+
+        if ($archiveState) {
+            $this->eventDispatcher->dispatchTyped(new OptionArchivedEvent($this->option));
+        } else {
+            $this->eventDispatcher->dispatchTyped(new OptionRestoredEvent($this->option));
+        }
+
+        // RECURSION: Call the same method on each child option
+        $children = $this->optionMapper->findByParentId($optionId);
+        foreach ($children as $child) {
+            try {
+                $result = $this->toggleArchiveRecursive($child->getId(), $archiveState);
+                $archivedCount += $result['archivedCount'];
+            } catch (ForbiddenException $e) {
+                $this->logger->error("Permission denied for child option {$child->getId()}: " . $e->getMessage());
+                continue;
+            } catch (\Exception $e) {
+                $this->logger->error("Error processing child option {$child->getId()}: " . $e->getMessage());
+                continue;
+            }
+        }
+
+        return [
+            'option' => $this->option,
+            'archivedCount' => $archivedCount
+        ];
+    } catch (\Exception $e) {
+        throw $e;
+    }
+}
 
     /**
      * Archive recursively all children
@@ -663,25 +698,46 @@ public function listByTargetIdWithTrending(int $targetId, bool $includeTrending 
         return $this->option;
     }
 
-    /**
-     * Delete option
-     *
-     * @return Option
-     */
-    public function delete(int $optionId): Option
-    {
-        try {
-            $this->option = $this->optionMapper->get($optionId, withRoles: true);
-        } catch (DoesNotExistException $e) {
-            throw new AlreadyDeletedException('Option not found, assume already deleted');
-        }
 
-        $this->option->request(Option::PERMISSION_OPTION_DELETE);
-        $this->eventDispatcher->dispatchTyped(new OptionDeletedEvent($this->option));
-
-        $this->optionMapper->delete($this->option);
-        return $this->option;
+/**
+ * Delete option with recursive deletion
+ * Simple recursion: calls itself on each child
+ *
+ * @return Option
+ */
+public function delete(int $optionId): Option
+{
+    try {
+        $this->option = $this->optionMapper->get($optionId, withRoles: true);
+    } catch (DoesNotExistException $e) {
+        throw new AlreadyDeletedException('Option not found, assume already deleted');
     }
+
+    $this->option->request(Option::PERMISSION_OPTION_DELETE);
+
+    // RECURSION: Delete all child options first (bottom-up)
+    $children = $this->optionMapper->findByParentId($optionId);
+    foreach ($children as $child) {
+        try {
+            $this->delete($child->getId()); // Recursive call
+        } catch (ForbiddenException $e) {
+            $this->logger->error("Permission denied for child option {$child->getId()}: " . $e->getMessage());
+            continue;
+        } catch (\Exception $e) {
+            $this->logger->error("Error deleting child option {$child->getId()}: " . $e->getMessage());
+            continue;
+        }
+    }
+
+    // Finally delete this option
+    $this->eventDispatcher->dispatchTyped(new OptionDeletedEvent($this->option));
+    $this->option->setDeleted(time());
+    $this->option->setUpdated(time());
+
+    $this->optionMapper->delete($this->option);
+    return $this->option;
+}
+
 
     /**
      * Update option status

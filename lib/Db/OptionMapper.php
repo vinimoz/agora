@@ -483,6 +483,32 @@ class OptionMapper extends QBMapper
         );
     }
 
+     public function getChildOptionIds(int $parentId): array
+    {       
+        $currentUserId = $this->userSession->getCurrentUserId();
+        $qb = $this->db->getQueryBuilder();
+        $qb->select(self::TABLE . '.id')
+           ->from($this->getTableName(), self::TABLE)
+           ->where($qb->expr()->eq(self::TABLE . '.parent_id', $qb->createNamedParameter($parentId, IQueryBuilder::PARAM_INT)));
+	/*
+        $qb->andWhere($qb->expr()->neq(self::TABLE . '.access', $qb->createNamedParameter('private')));
+            
+        if ($currentUserId !== null) {
+            $qb->andWhere($qb->expr()->neq(self::TABLE . '.owner', $qb->createNamedParameter($currentUserId)));
+	} */  
+                
+        $stmt = $qb->executeQuery();
+        $rows = $stmt->fetchAll();
+        $stmt->closeCursor();
+
+        if (empty($rows)) {
+            return []; 
+        }
+
+        return array_map(static fn(array $row): int => (int)$row['id'], $rows);
+    }
+
+
     /**
      * Add subquery for misc settings using platform-specific concatenation
      */
@@ -556,10 +582,9 @@ class OptionMapper extends QBMapper
             case 'datetime':
                 return is_numeric($value) ? (int)$value : $value;
             case 'json':
-                if (is_array($value) || is_object($value)) {
-                    return json_encode($value);
-                }
-                return $value;
+            case 'object':
+            case 'array':
+            	return json_encode($value);
             case 'enum':
                 $allowed = $fieldDef['allowed_values'] ?? [];
                 if (in_array($value, $allowed, true)) {

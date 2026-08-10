@@ -17,6 +17,7 @@ use OCA\Agora\Dto\InquiryDto;
 use OCA\Agora\Db\UserMapper;
 use OCA\Agora\Db\SupportMapper;
 use OCA\Agora\Service\TrendingService;
+use OCA\Agora\Service\OptionService;
 use OCA\Agora\Event\InquiryArchivedEvent;
 use OCA\Agora\Event\InquiryCloseEvent;
 use OCA\Agora\Event\InquiryCreatedEvent;
@@ -55,6 +56,7 @@ class InquiryService
         private SupportMapper $supportMapper,
         private SettingsService $settings,
         private TrendingService $trendingService,
+        private OptionService $optionService,
         private LoggerInterface $logger,
     ) {
     }
@@ -84,17 +86,18 @@ class InquiryService
 
     public function get(int $inquiryId, $lightweight = false)
     {
+
         try {
             if ($lightweight) {
-                $this->inquiry = $this->inquiryMapper->get($inquiryId, withRoles: true);
+                $this->inquiry = $this->inquiryMapper->get($inquiryId, false, withRoles: true);
             } else {
                 $this->inquiry = $this->inquiryMapper->find($inquiryId);
             }
-
-            $this->inquiry->request(Inquiry::PERMISSION_INQUIRY_VIEW);
+	    
+             $this->inquiry->request(Inquiry::PERMISSION_INQUIRY_VIEW);
 
             // No more setting family here - it's already joined in the query!
-
+	
             return $this->inquiry;
         } catch (DoesNotExistException $e) {
             throw new NotFoundException('Inquiry not found');
@@ -437,11 +440,12 @@ class InquiryService
                 $this->appSettings->getAllAccessAllowed();
             }
             $this->inquiry->setAccess($inquiryConfiguration['access']);
-        }
+	}
+	/*
         $this->logger->debug(
             'DEBUG allowComment = ' . var_export($inquiryConfiguration['allowComment'] ?? 'KEY_MISSING', true),
             ['app' => 'agora']
-        );
+	) ;*/
 
         if (array_key_exists('allowComment', $inquiryConfiguration)) {
             $value = $inquiryConfiguration['allowComment'];
@@ -517,45 +521,131 @@ class InquiryService
         }
     }
 
-    /**
-     * Move to archive or restore with optional recursive functionality
-     *
-     * @return array [inquiry: Inquiry, archivedCount: int]
-     */
-    public function toggleArchiveRecursive(int $inquiryId, bool $recursive = true): array
-    {
-        $this->inquiry = $this->inquiryMapper->find($inquiryId);
-        $this->inquiry->request(Inquiry::PERMISSION_INQUIRY_DELETE);
+   /**
+ * Move to archive or restore with recursive functionality
+ * Uses simple recursion: calls itself on each child
+ *
+ * @return array [inquiry: Inquiry, archivedCount: int]
+ */
+	/**
+ * Move to archive or restore with recursive functionality
+ * Uses simple recursion: calls itself on each child
+ *
+ * @return array [inquiry: Inquiry, archivedCount: int]
+ */
+public function toggleArchiveRecursive(int $inquiryId, bool $archiveState = null): array
+{
+    // Get the inquiry
+    $this->inquiry = $this->inquiryMapper->find($inquiryId);
+    $this->inquiry->request(Inquiry::PERMISSION_INQUIRY_DELETE);
 
-        $archiveState = !$this->inquiry->getDeleted();
-        $deletedTime = $archiveState ? time() : 0;
+    // Determine archive state if not provided
+    if ($archiveState === null) {
+        $archiveState = !$this->inquiry->getArchived();
+    }
 
+    $archivedTime = $archiveState ? time() : 0;
+    $archivedCount = 1;
+
+    try {
+        // Archive/restore this inquiry - ONLY set archived, NOT deleted!
+        $this->inquiry->setArchived($archivedTime);
+        // DO NOT setDeleted() - that's for permanent deletion
+        $this->inquiry->setLastInteraction(time());
+
+        if ($archiveState) {
+            $this->eventDispatcher->dispatchTyped(new InquiryArchivedEvent($this->inquiry));
+        } else {
+            $this->eventDispatcher->dispatchTyped(new InquiryRestoredEvent($this->inquiry));
+        }
+
+        $this->inquiry = $this->inquiryMapper->update($this->inquiry);
+
+        // Archive/restore all options for this inquiry
+        $options = $this->optionService->getByTargetId($inquiryId);
+        foreach ($options as $option) {
+            try {
+                $result = $this->optionService->toggleArchiveRecursive($option->getId(), $archiveState);
+                $archivedCount += $result['archivedCount'];
+            } catch (\Exception $e) {
+                $this->logger->error("Failed to archive/restore option {$option->getId()}: " . $e->getMessage());
+            }
+        }
+
+        // RECURSION: Call the same method on each child inquiry
+        $childIds = $this->inquiryMapper->getChildInquiryIds($inquiryId);
+        foreach ($childIds as $childId) {
+            try {
+                $result = $this->toggleArchiveRecursive($childId, $archiveState);
+                $archivedCount += $result['archivedCount'];
+            } catch (ForbiddenException $e) {
+                $this->logger->error("Permission denied for child inquiry {$childId}: " . $e->getMessage());
+                continue;
+            } catch (\Exception $e) {
+                $this->logger->error("Error processing child inquiry {$childId}: " . $e->getMessage());
+                continue;
+            }
+        }
+
+        return [
+            'inquiry' => $this->inquiry,
+            'archivedCount' => $archivedCount
+        ];
+    } catch (\Exception $e) {
+        throw $e;
+    }
+}
+
+/**
+ * Delete inquiry with recursive deletion
+ * Simple recursion: calls itself on each child
+ *
+ * @return Inquiry
+ */
+public function delete(int $inquiryId): Inquiry
+{
+    try {
+        $this->inquiry = $this->inquiryMapper->get($inquiryId, withRoles: true);
+    } catch (DoesNotExistException $e) {
+        throw new AlreadyDeletedException('Inquiry not found, assume already deleted');
+    }
+
+    $this->inquiry->request(Inquiry::PERMISSION_INQUIRY_DELETE);
+
+    // RECURSION: Delete all child inquiries first (bottom-up)
+    $childIds = $this->inquiryMapper->getChildInquiryIds($inquiryId);
+    foreach ($childIds as $childId) {
         try {
-            $this->inquiry->setArchived($deletedTime);
-            $this->inquiry->setDeleted($deletedTime);
-            $this->inquiry = $this->inquiryMapper->update($this->inquiry);
-
-            $archivedCount = 1;
-
-            if ($recursive) {
-                $childCount = $this->archiveChildrenRecursive($this->inquiry, $archiveState);
-                $archivedCount += $childCount;
-            }
-
-            if ($archiveState) {
-                $this->eventDispatcher->dispatchTyped(new InquiryArchivedEvent($this->inquiry));
-            } else {
-                $this->eventDispatcher->dispatchTyped(new InquiryRestoredEvent($this->inquiry));
-            }
-
-            return [
-                'inquiry' => $this->inquiry,
-                'archivedCount' => $archivedCount
-            ];
+            $this->delete($childId); // Recursive call
+        } catch (ForbiddenException $e) {
+            $this->logger->error("Permission denied for child inquiry {$childId}: " . $e->getMessage());
+            continue;
         } catch (\Exception $e) {
-            throw $e;
+            $this->logger->error("Error deleting child inquiry {$childId}: " . $e->getMessage());
+            continue;
         }
     }
+
+    // Delete all options for this inquiry
+    $options = $this->optionService->getByTargetId($inquiryId);
+    foreach ($options as $option) {
+        try {
+            $this->optionService->delete($option->getId()); // Recursive delete for options
+        } catch (\Exception $e) {
+            $this->logger->error("Failed to delete option {$option->getId()}: " . $e->getMessage());
+            continue;
+        }
+    }
+
+    // Finally delete this inquiry
+    $this->eventDispatcher->dispatchTyped(new InquiryDeletedEvent($this->inquiry));
+    $this->inquiry->setDeleted(time());
+    $this->inquiry->setArchived(time());
+    $this->inquiry->setLastInteraction(time());
+
+    $this->inquiryMapper->delete($this->inquiry);
+    return $this->inquiry;
+}
 
     /**
      * Archived recursivly all children
@@ -611,25 +701,6 @@ class InquiryService
         return $this->inquiry;
     }
 
-    /**
-     * Delete inquiry
-     *
-     * @return Inquiry
-     */
-    public function delete(int $inquiryId): Inquiry
-    {
-        try {
-            $this->inquiry = $this->inquiryMapper->get($inquiryId, withRoles: true);
-        } catch (DoesNotExistException $e) {
-            throw new AlreadyDeletedException('Inquiry not found, assume already deleted');
-        }
-
-        $this->inquiry->request(Inquiry::PERMISSION_INQUIRY_DELETE);
-        $this->eventDispatcher->dispatchTyped(new InquiryDeletedEvent($this->inquiry));
-
-        $this->inquiryMapper->delete($this->inquiry);
-        return $this->inquiry;
-    }
 
     /**
      * Close inquiry
@@ -821,13 +892,17 @@ public function getWithTrending(int $inquiryId): array
 
         if (!$inquiry) {
             throw new \Exception('Inquiry not found');
-        }
+	}
+
+	$timestamp = time();
+
 
         switch ($action) {
         case 'save_draft':
             $inquiry->setAccess('private');
             $inquiry->setInquiryStatus('draft');
             $inquiry->setModerationStatus('draft');
+	    $inquiry->setLastInteraction($timestamp);
             $inquiry = $this->inquiryMapper->update($inquiry);
             break;
 
@@ -835,6 +910,7 @@ public function getWithTrending(int $inquiryId): array
             $inquiry->setAccess('moderate');
             $inquiry->setInquiryStatus('waiting_approval');
             $inquiry->setModerationStatus('pending');
+	    $inquiry->setLastInteraction($timestamp);
             $inquiry = $this->inquiryMapper->update($inquiry);
             break;
 
@@ -850,13 +926,15 @@ public function getWithTrending(int $inquiryId): array
             if ($firstStatus) {
                 $inquiry->setInquiryStatus($firstStatus->getStatusKey());
             }
+	    $inquiry->setLastInteraction($timestamp);
             $inquiry = $this->inquiryMapper->update($inquiry);
             break;
 
         case 'submit_for_rejected':
             $inquiry->setAccess('private');
             $inquiry->setModerationStatus('rejected');
-            $inquiry->setInquiryStatus('rejected');
+	    $inquiry->setInquiryStatus('rejected');
+	    $inquiry->setLastInteraction($timestamp);
             $inquiry = $this->inquiryMapper->update($inquiry);
             break;
 

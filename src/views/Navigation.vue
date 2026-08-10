@@ -6,7 +6,6 @@
 
 <script setup lang="ts">
 import { onMounted , computed } from 'vue'
-import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import NcAppNavigation from '@nextcloud/vue/components/NcAppNavigation'
 import NcAppNavigationItem from '@nextcloud/vue/components/NcAppNavigationItem'
@@ -38,6 +37,10 @@ const icons = {
   private: {
     id: 'private',
     iconComponent: NavigationIcons.Private,
+  },
+  reject: {
+    id: 'reject',
+    iconComponent: NavigationIcons.ShieldAlert,
   },
   participated: {
     id: 'participated',
@@ -77,31 +80,6 @@ function getIconComponent(iconId: FilterType) {
   return icons[iconId].iconComponent
 }
 
-/**
- * Toggle archive status of an inquiry
- * @param inquiryId
- */
-function toggleArchive(inquiryId: number) {
-  try {
-    inquiriesStore.toggleArchive({ inquiryId })
-  } catch {
-    showError(t('agora', 'Failed to archive or restore the inquiry'))
-  }
-}
-
-/**
- * Delete a inquiry
- * @param inquiryId inquiry id to delete
- */
-function deleteInquiry(inquiryId: number) {
-  try {
-    inquiriesStore.delete({ inquiryId })
-  } catch {
-    showError(t('agora', 'Error deleting inquiry'))
-  }
-}
-
- 
 const selectedFamily = computed({
   get: () => inquiriesStore.advancedFilters.familyType || null,
   set: (value) => inquiriesStore.setFamilyType(value || '')
@@ -170,13 +148,6 @@ onMounted(() => {
             v-if="sessionStore.appSettings.navigationInquiriesInList"
             class="navigation-sublist"
           >
-            <!-- <InquiryNavigationItems
-              v-for="inquiry in inquiriesStore.groupList(inquiryGroup.inquiryIds)"
-              :key="inquiry.id"
-              :inquiry="inquiry"
-              @toggle-archive="toggleArchive(inquiry.id)"
-              @delete-inquiry="deleteInquiry(inquiry.id)"
-	      /> -->
             <NcAppNavigationItem
               v-if="inquiriesStore.groupList(inquiryGroup.inquiryIds).length === 0"
               :name="t('agora', 'No inquiries found')"
@@ -237,8 +208,6 @@ onMounted(() => {
               v-for="inquiry in inquiriesStore.navigationList(inquiryCategory.id)"
               :key="inquiry.id"
               :inquiry="inquiry"
-              @toggle-archive="toggleArchive(inquiry.id)"
-              @delete-inquiry="deleteInquiry(inquiry.id)"
             />
             <NcAppNavigationItem
               v-if="inquiriesStore.navigationList(inquiryCategory.id).length === 0"

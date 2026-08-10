@@ -146,7 +146,7 @@ class SupportService
     $engineId = ($engineId === 0) ? null : $engineId;
 
     $inquiry = $this->inquiryMapper->get($inquiryId, withRoles: true);
-    $inquiry->request(Inquiry::PERMISSION_SUPPORT_ADD);
+    // $inquiry->request(Inquiry::PERMISSION_SUPPORT_ADD);
 
      if ($inquiry->getSupportFeature() === 'trending') {
         throw new \InvalidArgumentException(

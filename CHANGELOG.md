@@ -1,5 +1,16 @@
 # Changelog
 All notable changes to this project will be documented in this file.
+# [1.7.7] - 2026-08-07
+Fix: 
+    - Deletion redirect of an inquiry
+    - Deletion an option
+    - Debate creation
+
+Improvement:
+    - Debate UI
+    - Consensus UI
+    - Template.  
+    
 # [1.7.6] - 2026-07-17
 Nc34 support and fix i18n
 

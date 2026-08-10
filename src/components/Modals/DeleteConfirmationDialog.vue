@@ -56,8 +56,8 @@ const emit = defineEmits<{
 
 const dialogTitle = computed(() => 
   props.isImported 
-    ? t('agora', 'Imported option action')
-    : t('agora', 'Delete option')
+    ? t('agora', 'Imported Option Action')
+    : t('agora', 'Delete Option')
 )
 
 const message = computed(() => {

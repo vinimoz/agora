@@ -128,7 +128,7 @@ class Option extends EntityWithUser implements JsonSerializable
     public $id = null;
     protected int $targetId = 0;  // Reference to parent inquiry
     protected int $parentId = 0;  // For hierarchical options
-    protected string $type = 'debate';
+    protected string $type = '';
     protected string $access = 'private';
     protected string $text = '';
     protected string $title = '';

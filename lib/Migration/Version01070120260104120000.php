@@ -233,7 +233,7 @@ class Version01070120260104120000 extends SimpleMigrationStep
 		    $this->logInfo('Creating missing table: ' . InquiryOptionType::TABLE);
 		    $table = $this->schema->createTable(InquiryOptionType::TABLE);
 		    $table->addColumn('id', Types::BIGINT, ['autoincrement' => true, 'notnull' => true, 'unsigned' => true]);
-		    $table->addColumn('family', Types::STRING, ['notnull' => true, 'default' => 'collective', 'length' => 64]);
+		    $table->addColumn('family', Types::STRING, ['notnull' => true, 'default' => 'debate', 'length' => 64]);
 		    $table->addColumn('option_type', Types::STRING, ['notnull' => true, 'length' => 50]);
 		    $table->addColumn('icon', Types::STRING, ['notnull' => false, 'default' => '']);
 		    $table->addColumn('label', Types::STRING, ['notnull' => true, 'length' => 100]);
@@ -371,7 +371,7 @@ class Version01070120260104120000 extends SimpleMigrationStep
 		    $this->addColumnIfMissing($table, 'access', Types::STRING, ['notnull' => true, 'default' => 'private', 'length' => 32]);
 		    $this->addColumnIfMissing($table, 'updated', Types::BIGINT, ['notnull' => true, 'default' => 0, 'unsigned' => true, 'length' => 20]);
 		    $this->addColumnIfMissing($table, 'archived', Types::BIGINT, ['notnull' => false, 'default' => 0, 'unsigned' => true, 'length' => 20]);
-		    $this->addColumnIfMissing($table, 'family', Types::STRING, ['notnull' => false, 'default' => 'deliberative', 'length' => 64]);
+		    $this->addColumnIfMissing($table, 'family', Types::STRING, ['notnull' => false, 'default' => 'debate', 'length' => 64]);
 		    $this->addColumnIfMissing($table, 'sort_order', Types::BIGINT, ['notnull' => true, 'default' => 0, 'unsigned' => true, 'length' => 20]);
 		    $this->addColumnIfMissing($table, 'owned_group', Types::STRING, ['notnull' => false, 'default' => '', 'length' => 255]);
 		    $this->addColumnIfMissing($table, 'allow_comment', Types::SMALLINT, ['notnull' => false, 'default' => null]);
