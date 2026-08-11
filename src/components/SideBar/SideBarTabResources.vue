@@ -285,7 +285,7 @@ const handleSpecificResourceDeletion = async (resource: ResourceItem, deleteExte
         await inquiryLinksStore.deleteCospendProjectViaAPI(resource.target_id); 
         showSuccess(t('agora', 'Cospend project and link deleted successfully'));
       } else {
-        showSuccess(t('agora', 'Link deleted successfully - cospend project kept'));
+        showSuccess(t('agora', 'Link deleted successfully - Cospend project kept'));
       }
     },
     deck: async () => {
@@ -293,7 +293,7 @@ const handleSpecificResourceDeletion = async (resource: ResourceItem, deleteExte
         await inquiryLinksStore.deleteDeckViaAPI(resource.target_id);
         showSuccess(t('agora', 'Deck board and link deleted successfully'));
       } else {
-        showSuccess(t('agora', 'Link deleted successfully - deck board kept'));
+        showSuccess(t('agora', 'Link deleted successfully - Deck board kept'));
       }
     },
     collectives: async () => {
@@ -301,7 +301,7 @@ const handleSpecificResourceDeletion = async (resource: ResourceItem, deleteExte
         await inquiryLinksStore.deleteCollectiveViaAPI(resource.target_id);
         showSuccess(t('agora', 'Collective and link deleted successfully'));
       } else {
-        showSuccess(t('agora', 'Link deleted successfully - collective kept'));
+        showSuccess(t('agora', 'Link deleted successfully - Collective kept'));
       }
     },
     polls: async () => {
@@ -309,7 +309,7 @@ const handleSpecificResourceDeletion = async (resource: ResourceItem, deleteExte
         await inquiryLinksStore.deletePollViaAPI(resource.target_id);
         showSuccess(t('agora', 'Poll and link deleted successfully'));
       } else {
-        showSuccess(t('agora', 'Link deleted successfully - poll kept'));
+        showSuccess(t('agora', 'Link deleted successfully - Poll kept'));
       }
     },
     forms: async () => {
@@ -317,7 +317,7 @@ const handleSpecificResourceDeletion = async (resource: ResourceItem, deleteExte
         await inquiryLinksStore.deleteFormViaAPI(resource.target_id);
         showSuccess(t('agora', 'Form and link deleted successfully'));
       } else {
-        showSuccess(t('agora', 'Link deleted successfully - form kept'));
+        showSuccess(t('agora', 'Link deleted successfully - Form kept'));
       }
     },
     default: async () => {

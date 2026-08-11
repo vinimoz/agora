@@ -140,7 +140,7 @@ const cancelEdit = () => {
 
     <div v-if="selectedType" class="status-management">
       <p class="description">
-        {{ t('agora', 'Manage statuses for this inquiry type statuses define the workflow stages') }}
+        {{ t('agora', 'Manage statuses for this inquiry type. Statuses define the workflow stages') }}
       </p>
 
       <!-- Status list for current inquiry type -->

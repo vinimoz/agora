@@ -114,7 +114,7 @@ export const sortTitlesMapping: { [key in SortType]: string } = {
   type: t('agora', 'Type'),
   access: t('agora', 'Access'),
   owner: t('agora', 'Owner'),
-  expire: t('agora', 'Expire'),
+  expire: t('agora', 'Expired'),
   interaction: t('agora', 'Last interaction'),
   countComments: t('agora', 'Comments count'),
   countSupports: t('agora', 'Supports count'),

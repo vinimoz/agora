@@ -311,14 +311,14 @@ function resetInquiry() {
             </NcCheckboxRadioSwitch>
 
             <NcCheckboxRadioSwitch value="groups">
-              {{ t('agora', 'Open with nextcloud group') }}
+              {{ t('agora', 'Open with Nextcloud group') }}
             </NcCheckboxRadioSwitch>
           </NcRadioGroup>
 
           <!-- Nextcloud Group Selection -->
           <div v-if="accessType === 'groups'" class="nextcloud-groups-selection">
               <h4 class="groups-title">
-                  {{ t('agora', 'Select nextcloud group') }}
+                  {{ t('agora', 'Select Nextcloud group') }}
               </h4>
               <div class="groups-list">
                   <NcRadioGroup :label="t('agora', 'Groups selections')">
