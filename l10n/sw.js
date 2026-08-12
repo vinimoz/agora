@@ -1081,7 +1081,6 @@ OC.L10N.register(
     "Unknown date" : "Tarehe isiyojulikana",
     "Access" : "Ufikiaji",
     "Owner" : "Mmiliki",
-    "Expire" : "Muda wake unaisha",
     "Comments count" : "Idadi ya maoni",
     "Supports count" : "Inasaidia kuhesabu",
     "Relevant" : "Husika",

@@ -505,7 +505,6 @@ OC.L10N.register(
     "now" : "adesso",
     "Access" : "Accesso",
     "Owner" : "Proprietario",
-    "Expire" : "Scadenza",
     "Relevant" : "Importante",
     "Participated" : "Partecipato",
     "Administration" : "Amministrazione",

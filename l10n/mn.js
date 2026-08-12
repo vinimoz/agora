@@ -432,7 +432,6 @@ OC.L10N.register(
     "Unknown date" : "Тодорхойгүй огноо",
     "Access" : "Хандалт",
     "Owner" : "–≠–∑—ç–º—à–∏–≥—á",
-    "Expire" : "Дуусах",
     "Relevant" : "Холбогдох",
     "Participated" : "Оролцсон",
     "Administration" : "Удирдлага",

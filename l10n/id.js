@@ -1057,7 +1057,6 @@ OC.L10N.register(
     "Unknown date" : "Tanggal tidak diketahui",
     "Access" : "Akses",
     "Owner" : "Pemilik",
-    "Expire" : "Kedaluwarsa",
     "Comments count" : "Jumlah komentar",
     "Supports count" : "Jumlah dukungan",
     "Relevant" : "Relevan",

@@ -802,7 +802,6 @@ OC.L10N.register(
     "now" : "зараз",
     "Access" : "Доступ",
     "Owner" : "Власник",
-    "Expire" : "Закінчується",
     "Comments count" : "Коментарі рахуються",
     "Supports count" : "Підтримка має значення",
     "Relevant" : "Відповідне",

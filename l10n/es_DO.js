@@ -69,6 +69,7 @@ OC.L10N.register(
     "Blocked" : "Bloqueado",
     "Discussion" : "Comentarios",
     "Explore" : "Explorar",
+    "Normal" : "Normal",
     "Details" : "Detalles",
     "None" : "Ninguno",
     "Feedback" : "Retroalimentación",
@@ -101,6 +102,7 @@ OC.L10N.register(
     "By" : "Por",
     "Sharing" : "Compartiendo",
     "Hour" : "Hora",
+    "now" : "ahora",
     "Access" : "Acceso",
     "Owner" : "Dueño",
     "Administration" : "Administración"

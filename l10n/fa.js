@@ -1295,7 +1295,6 @@ OC.L10N.register(
     "now" : "اکنون",
     "Access" : "دسترسی",
     "Owner" : "مالک",
-    "Expire" : "انقضا",
     "Comments count" : "تعداد نظرات",
     "Supports count" : "تعداد پشتیبانی‌ها",
     "Relevant" : "مرتبط",

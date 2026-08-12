@@ -1300,7 +1300,6 @@ OC.L10N.register(
     "now" : "şimdi",
     "Access" : "Erişim",
     "Owner" : "Sahibi",
-    "Expire" : "Bitiş",
     "Comments count" : "Yorum sayısı",
     "Supports count" : "Destek sayısı",
     "Relevant" : "İlişkili",

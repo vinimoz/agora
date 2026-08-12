@@ -647,7 +647,6 @@ OC.L10N.register(
     "now" : "сада",
     "Access" : "Приступ",
     "Owner" : "Власник",
-    "Expire" : "Истиче",
     "Relevant" : "Релевантно",
     "Participated" : "Учествовао/ла",
     "Administration" : "Администрација",

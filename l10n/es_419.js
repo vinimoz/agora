@@ -65,6 +65,8 @@ OC.L10N.register(
     "or" : "o",
     "Blocked" : "Bloqueado",
     "Discussion" : "Comentarios",
+    "Explore" : "Explorar",
+    "Normal" : "Normal",
     "Details" : "Detalles",
     "None" : "Ninguno",
     "Feedback" : "Retroalimentación",

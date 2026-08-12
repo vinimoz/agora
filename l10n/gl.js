@@ -1090,7 +1090,6 @@ OC.L10N.register(
     "now" : "agora",
     "Access" : "Acceso",
     "Owner" : "Propietario",
-    "Expire" : "Caduca",
     "Comments count" : "Número de comentarios",
     "Supports count" : "Número de apoios",
     "Relevant" : "Relevante",

@@ -71,6 +71,8 @@
     "or" : "o",
     "Blocked" : "Bloqueado",
     "Discussion" : "Comentarios",
+    "Explore" : "Explorar",
+    "Normal" : "Normal",
     "None" : "Ninguno",
     "Feedback" : "Retroalimentación",
     "Reset" : "Restablecer",
@@ -103,6 +105,7 @@
     "By" : "Por",
     "Sharing" : "Compartiendo",
     "Hour" : "Hora",
+    "now" : "ahora",
     "Access" : "Acceso",
     "Owner" : "Dueño",
     "Administration" : "Administración"

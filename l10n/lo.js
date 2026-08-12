@@ -1198,7 +1198,6 @@ OC.L10N.register(
     "Unknown date" : "Unknown date",
     "Access" : "ການເຂົ້າເຖິງ",
     "Owner" : "ເຈົ້າຂອງ",
-    "Expire" : "ໝົດອາຍຸ",
     "Comments count" : "ຈຳນວນຄຳເຫັນ",
     "Supports count" : "ຈຳນວນການສະໜັບສະໜູນ",
     "Relevant" : "ທີ່ກ່ຽວຂ້ອງ",

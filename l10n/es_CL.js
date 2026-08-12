@@ -73,6 +73,8 @@ OC.L10N.register(
     "or" : "o",
     "Blocked" : "Bloqueado",
     "Discussion" : "Comentarios",
+    "Explore" : "Explorar",
+    "Normal" : "Normal",
     "None" : "Ninguno",
     "Feedback" : "Retroalimentación",
     "Reset" : "Restablecer",
@@ -105,6 +107,7 @@ OC.L10N.register(
     "By" : "Por",
     "Sharing" : "Compartiendo",
     "Hour" : "Hora",
+    "now" : "ahora",
     "Access" : "Acceso",
     "Owner" : "Dueño",
     "Administration" : "Administración"

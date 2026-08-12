@@ -503,7 +503,6 @@ OC.L10N.register(
     "now" : "現在",
     "Access" : "存取",
     "Owner" : "擁有者",
-    "Expire" : "到期",
     "Relevant" : "相關",
     "Participated" : "已參與",
     "Administration" : "管理",

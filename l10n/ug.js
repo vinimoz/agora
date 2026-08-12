@@ -960,7 +960,6 @@ OC.L10N.register(
     "now" : "ھازىر",
     "Access" : "زىيارەت",
     "Owner" : "ئىگىسى",
-    "Expire" : "ۋاقتى ئۆتىدۇ",
     "Comments count" : "پىكىر سانى",
     "Supports count" : "سانىنى قوللايدۇ",
     "Relevant" : "مۇناسىۋەتلىك",

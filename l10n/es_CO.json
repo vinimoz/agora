@@ -70,6 +70,7 @@
     "Blocked" : "Bloqueado",
     "Discussion" : "Comentarios",
     "Explore" : "Explorar",
+    "Normal" : "Normal",
     "Details" : "Detalles",
     "Progress" : "Progreso",
     "None" : "Ninguno",
@@ -106,6 +107,7 @@
     "Sharing" : "Compartiendo",
     "Hour" : "Hora",
     "Not found" : "No encontrado",
+    "now" : "ahora",
     "Access" : "Acceso",
     "Participated" : "Participó",
     "Administration" : "Administración"

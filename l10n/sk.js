@@ -478,7 +478,6 @@ OC.L10N.register(
     "now" : "teraz",
     "Access" : "Prístup",
     "Owner" : "Vlastník",
-    "Expire" : "Vyprší platnosť",
     "Relevant" : "Dôležité",
     "Participated" : "Účasť",
     "Administration" : "Administrácia",
