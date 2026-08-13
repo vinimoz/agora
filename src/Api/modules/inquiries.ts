@@ -152,6 +152,7 @@ const inquiries = {
   addInquiry(dataInquiry: {
     type: string
     title: string
+    family: string
     owner: string
     ownedGroup: string
     configuration?: InquiryConfiguration

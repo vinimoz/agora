@@ -5,6 +5,7 @@ Fix:
     - Deletion redirect of an inquiry
     - Deletion an option
     - Debate creation
+    - Navigation Ux at inquiry creation
 
 Improvement:
     - Debate UI

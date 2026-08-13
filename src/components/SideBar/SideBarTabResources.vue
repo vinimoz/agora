@@ -499,7 +499,7 @@ onMounted(async () => {
             <div class="header-content">
                 <div class="header-text">
                     <h2>{{ t('agora', 'Linked resources') }}</h2>
-                    <p class="description">{{ t('agora', 'Manage links to other nextcloud resources and files') }}</p>
+                    <p class="description">{{ t('agora', 'Manage links to other Nextcloud resources and files') }}</p>
                 </div>
                 <NcButton
                         v-if="currentInquiry.currentUserStatus?.isOwner"

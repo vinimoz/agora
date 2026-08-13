@@ -282,6 +282,7 @@ const handleAllowedTransformation = (transformType: string) => {
                                 :options="statusOptions"
                                 :clearable="false"
                                 :multiple="false"
+				:label-outside="true"
                                 class="status-select"
                                 @update:model-value="(selected) => setModerationStatus(selected.value)"
                                 />

@@ -296,6 +296,7 @@ class InquiryService
         $this->inquiry = new Inquiry();
         $this->inquiry->setTitle($dto->title);
         $this->inquiry->setType($dto->type);
+        $this->inquiry->setFamily($dto->family);
         $this->inquiry->setOwnedGroup($dto->ownedGroup);
         $this->inquiry->setCreated($timestamp);
         $this->inquiry->setLastInteraction($timestamp);

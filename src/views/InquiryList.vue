@@ -172,7 +172,7 @@ const refreshInquiries = () => {
 
 
 onMounted(() => {
-  inquiriesStore.load(false)
+//  inquiriesStore.load(false)
 // Initialize modes from route query
 if (route.query.viewMode === 'create') {
   mainMode.value = 'create' 

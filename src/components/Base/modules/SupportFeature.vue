@@ -1086,7 +1086,7 @@ const handleSupportClick = async () => {
               }
               }
               else {  
-              nextReaction = reactions[0]
+	     	nextReaction = reactions.length > 0 ? reactions[0] : null
               }
 
               await supportsStore.toggleReactionSupport(itemId, userId, item, itemType, nextReaction)

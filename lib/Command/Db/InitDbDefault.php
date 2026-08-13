@@ -248,13 +248,13 @@ class InitDbDefault extends Command
 
 			'ui' => [
 				'ui' => [
-    'layout' => 'vote',
-    'show_results' => true,
-    'show_progress' => true,
-    'show_ranking' => true,
-    'allow_comparison' => true,
-    'phase_indicator' => false,
-],
+					'layout' => 'vote',
+					'show_results' => true,
+					'show_progress' => true,
+					'show_ranking' => true,
+					'allow_comparison' => true,
+					'phase_indicator' => false,
+				],
 			],
 
 			'rules' => [
@@ -646,7 +646,13 @@ class InitDbDefault extends Command
 			'label' => 'Workflow Comment',
 			'description' => 'Comment related to workflow item.',
 			'fields' => [
-				['key' => 'allowed_reactions', 'label' => 'Allowed Reactions', 'type' => 'array', 'required' => false, 'default' => ['👍', '❤️', '🎉', '🤔', '👎']],
+				['key' => 'support_template', 'label' => 'Support Template', 'type' => 'json', 'required' => false,
+				'default' => [
+					'engine' => 'reaction',
+					'allowed_reactions' => ['👍', '❤️', '🎉', '🤔', '👎'],
+					'max_per_user' => 3
+				]
+				],
 				['key' => 'max_per_user', 'label' => 'Max Reactions per User', 'type' => 'integer', 'required' => false, 'default' => 3]
 			],
 			'allowed_response' => [
@@ -931,7 +937,13 @@ class InitDbDefault extends Command
 			'label' => 'Message',
 			'description' => 'Free discussion message.',
 			'fields' => [
-				['key' => 'allowed_reactions', 'label' => 'Allowed Reactions', 'type' => 'array', 'required' => false, 'default' => ['👍', '❤️', '🎉', '🤔', '👎']],
+				['key' => 'support_template', 'label' => 'Support Template', 'type' => 'json', 'required' => false,
+				'default' => [
+					'engine' => 'reaction',
+					'allowed_reactions' => ['👍', '❤️', '🎉', '🤔', '👎'],
+					'max_per_user' => 3
+				]
+				],
 				['key' => 'max_per_user', 'label' => 'Max Reactions per User', 'type' => 'integer', 'required' => false, 'default' => 3],
 			],
 			'allowed_response' => [
@@ -949,8 +961,14 @@ class InitDbDefault extends Command
 			'label' => 'Official Summary',
 			'description' => 'Final synthesis or accepted outcome.',
 			'fields' => [
+				['key' => 'support_template', 'label' => 'Support Template', 'type' => 'json', 'required' => false,
+				'default' => [
+					'engine' => 'reaction',
+					'allowed_reactions' => ['👍', '❤️', '🎉', '🤔', '👎'],
+					'max_per_user' => 3
+				]
+				],
 				['key' => 'resolved_option_ids', 'type' => 'json', 'required' => false],
-				['key' => 'allowed_reactions', 'label' => 'Allowed Reactions', 'type' => 'array', 'required' => false, 'default' => ['👍', '❤️', '🎉', '🤔', '👎']],
 				['key' => 'max_per_user', 'label' => 'Max Reactions per User', 'type' => 'integer', 'required' => false, 'default' => 3],
 			],
 			'allowed_response' => [],
@@ -1236,7 +1254,13 @@ class InitDbDefault extends Command
 			'fields' => [
 				['key' => 'support_engine_provider', 'type' => 'string', 'required' => false],
 				['key' => 'support_engine_id', 'type' => 'string', 'required' => false],
-				['key' => 'allowed_reactions', 'label' => 'Allowed Reactions', 'type' => 'array', 'required' => false, 'default' => ['👍', '❤️', '🎉', '🤔', '👎']],
+				['key' => 'support_template', 'label' => 'Support Template', 'type' => 'json', 'required' => false,
+				'default' => [
+					'engine' => 'reaction',
+					'allowed_reactions' => ['👍', '❤️', '🎉', '🤔', '👎'],
+					'max_per_user' => 3
+				]
+				],
 				['key' => 'max_per_user', 'label' => 'Max Reactions per User', 'type' => 'integer', 'required' => false, 'default' => 3],
 			],
 			'allowed_response' => [],
@@ -1990,7 +2014,13 @@ class InitDbDefault extends Command
 				["key" => "layout_zone","label" => "Position display into the layout","type" => "enum","required" => false,"default" => "footer","allowed_values" => ["sidebar","main","footer","header"],"rules" => []],
 				["key" => "render_mode","label" => "Render mode of inquiries","type" => "enum","required" => false,"default" => "cards","allowed_values" => ["cards","list","full","summary","rich_html"],"rules" => []],
 				["key" => "open_mode","label" => "Open Mode","type" => "enum","required" => false,"default" => "page","allowed_values" => ["page","modal","none"],"rules" => []],
-				["key" => "allowed_reactions","label" => "Allowed Reactions","type" => "array","required" => false,"default" => ["👍","❤️","🎉","🤔","👎"]],
+				['key' => 'support_template', 'label' => 'Support Template', 'type' => 'json', 'required' => false, 
+				'default' => [
+					'engine' => 'reaction',
+					'allowed_reactions' => ['👍', '❤️', '🎉', '🤔', '👎'],
+					'max_per_user' => 3
+				]
+				],
 				["key" => "max_per_user","label" => "Max Reactions per User","type" => "integer","required" => false,"default" => 3],
 			],
 			'allowed_response' => ['proposal', 'law_proposal', 'official'],
@@ -3261,77 +3291,77 @@ class InitDbDefault extends Command
 		],
 
 
-    // Official family statuses
-    'official_announcement' => [
-        ['status_key' => 'draft', 'label' => 'Draft', 'description' => 'The announcement is being drafted.', 'is_final' => false, 'icon' => 'FileOutline', 'sort_order' => 1],
-        ['status_key' => 'published', 'label' => 'Published', 'description' => 'The announcement has been published.', 'is_final' => true, 'icon' => 'Check', 'sort_order' => 2],
-        ['status_key' => 'archived', 'label' => 'Archived', 'description' => 'The announcement has been archived.', 'is_final' => true, 'icon' => 'Archive', 'sort_order' => 3],
-    ],
-    'municipal_report' => [
-        ['status_key' => 'draft', 'label' => 'Draft', 'description' => 'The report is being drafted.', 'is_final' => false, 'icon' => 'FileOutline', 'sort_order' => 1],
-        ['status_key' => 'review', 'label' => 'Under Review', 'description' => 'The report is under review.', 'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 2],
-        ['status_key' => 'published', 'label' => 'Published', 'description' => 'The report has been published.', 'is_final' => true, 'icon' => 'Check', 'sort_order' => 3],
-    ],
-    'information_request' => [
-        ['status_key' => 'submitted', 'label' => 'Submitted', 'description' => 'The request has been submitted.', 'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 1],
-        ['status_key' => 'processing', 'label' => 'Processing', 'description' => 'The request is being processed.', 'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 2],
-        ['status_key' => 'fulfilled', 'label' => 'Fulfilled', 'description' => 'The information has been provided.', 'is_final' => true, 'icon' => 'Check', 'sort_order' => 3],
-        ['status_key' => 'denied', 'label' => 'Denied', 'description' => 'The request was denied.', 'is_final' => true, 'icon' => 'Cancel', 'sort_order' => 4],
-    ],
-    'permit_request' => [
-        ['status_key' => 'submitted', 'label' => 'Submitted', 'description' => 'The request has been submitted.', 'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 1],
-        ['status_key' => 'under_review', 'label' => 'Under Review', 'description' => 'The request is under review.', 'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 2],
-        ['status_key' => 'approved', 'label' => 'Approved', 'description' => 'The permit has been approved.', 'is_final' => true, 'icon' => 'Check', 'sort_order' => 3],
-        ['status_key' => 'rejected', 'label' => 'Rejected', 'description' => 'The permit request was rejected.', 'is_final' => true, 'icon' => 'Cancel', 'sort_order' => 4],
-    ],
-    'incident_report' => [
-        ['status_key' => 'reported', 'label' => 'Reported', 'description' => 'The incident has been reported.', 'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 1],
-        ['status_key' => 'under_investigation', 'label' => 'Under Investigation', 'description' => 'The incident is being investigated.', 'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 2],
-        ['status_key' => 'resolved', 'label' => 'Resolved', 'description' => 'The incident has been resolved.', 'is_final' => true, 'icon' => 'Check', 'sort_order' => 3],
-        ['status_key' => 'unresolved', 'label' => 'Unresolved', 'description' => 'The incident could not be resolved.', 'is_final' => true, 'icon' => 'Cancel', 'sort_order' => 4],
-    ],
-    'service_offer' => [
-        ['status_key' => 'active', 'label' => 'Active', 'description' => 'The service offer is active.', 'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 1],
-        ['status_key' => 'expired', 'label' => 'Expired', 'description' => 'The service offer has expired.', 'is_final' => true, 'icon' => 'Cancel', 'sort_order' => 2],
-        ['status_key' => 'withdrawn', 'label' => 'Withdrawn', 'description' => 'The service offer has been withdrawn.', 'is_final' => true, 'icon' => 'Cancel', 'sort_order' => 3],
-    ],
-    'job_offer' => [
-        ['status_key' => 'open', 'label' => 'Open', 'description' => 'The position is open for applications.', 'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 1],
-        ['status_key' => 'closing', 'label' => 'Closing Soon', 'description' => 'Applications are closing soon.', 'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 2],
-        ['status_key' => 'filled', 'label' => 'Filled', 'description' => 'The position has been filled.', 'is_final' => true, 'icon' => 'Check', 'sort_order' => 3],
-        ['status_key' => 'cancelled', 'label' => 'Cancelled', 'description' => 'The position has been cancelled.', 'is_final' => true, 'icon' => 'Cancel', 'sort_order' => 4],
-    ],
-    'recall_initiative' => [
-        ['status_key' => 'collecting_signatures', 'label' => 'Collecting Signatures', 'description' => 'Collecting signatures for recall.', 'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 1],
-        ['status_key' => 'under_review', 'label' => 'Under Review', 'description' => 'The recall is under review.', 'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 2],
-        ['status_key' => 'qualified', 'label' => 'Qualified for Ballot', 'description' => 'The recall qualifies for ballot.', 'is_final' => false, 'icon' => 'Check', 'sort_order' => 3],
-        ['status_key' => 'rejected', 'label' => 'Rejected', 'description' => 'The recall initiative was rejected.', 'is_final' => true, 'icon' => 'Cancel', 'sort_order' => 4],
-        ['status_key' => 'successful', 'label' => 'Successful', 'description' => 'The recall was successful.', 'is_final' => true, 'icon' => 'Check', 'sort_order' => 5],
-        ['status_key' => 'unsuccessful', 'label' => 'Unsuccessful', 'description' => 'The recall was unsuccessful.', 'is_final' => true, 'icon' => 'Cancel', 'sort_order' => 6],
-    ],
-    'public_spending_review' => [
-        ['status_key' => 'draft', 'label' => 'Draft', 'description' => 'The review is being drafted.', 'is_final' => false, 'icon' => 'FileOutline', 'sort_order' => 1],
-        ['status_key' => 'under_review', 'label' => 'Under Review', 'description' => 'The review is under review.', 'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 2],
-        ['status_key' => 'published', 'label' => 'Published', 'description' => 'The review has been published.', 'is_final' => true, 'icon' => 'Check', 'sort_order' => 3],
-    ],
-    'contract_review' => [
-        ['status_key' => 'draft', 'label' => 'Draft', 'description' => 'The review is being drafted.', 'is_final' => false, 'icon' => 'FileOutline', 'sort_order' => 1],
-        ['status_key' => 'under_review', 'label' => 'Under Review', 'description' => 'The contract is under review.', 'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 2],
-        ['status_key' => 'approved', 'label' => 'Approved', 'description' => 'The contract has been approved.', 'is_final' => true, 'icon' => 'Check', 'sort_order' => 3],
-        ['status_key' => 'rejected', 'label' => 'Rejected', 'description' => 'The contract has been rejected.', 'is_final' => true, 'icon' => 'Cancel', 'sort_order' => 4],
-    ],
-    'conflict_of_interest' => [
-        ['status_key' => 'reported', 'label' => 'Reported', 'description' => 'The conflict has been reported.', 'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 1],
-        ['status_key' => 'under_investigation', 'label' => 'Under Investigation', 'description' => 'The conflict is being investigated.', 'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 2],
-        ['status_key' => 'resolved', 'label' => 'Resolved', 'description' => 'The conflict has been resolved.', 'is_final' => true, 'icon' => 'Check', 'sort_order' => 3],
-        ['status_key' => 'unsubstantiated', 'label' => 'Unsubstantiated', 'description' => 'No conflict of interest found.', 'is_final' => true, 'icon' => 'Check', 'sort_order' => 4],
-    ],
-    'whistleblower_case' => [
-        ['status_key' => 'submitted', 'label' => 'Submitted', 'description' => 'The case has been submitted.', 'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 1],
-        ['status_key' => 'under_investigation', 'label' => 'Under Investigation', 'description' => 'The case is being investigated.', 'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 2],
-        ['status_key' => 'resolved', 'label' => 'Resolved', 'description' => 'The case has been resolved.', 'is_final' => true, 'icon' => 'Check', 'sort_order' => 3],
-        ['status_key' => 'dismissed', 'label' => 'Dismissed', 'description' => 'The case has been dismissed.', 'is_final' => true, 'icon' => 'Cancel', 'sort_order' => 4],
-    ],
+		// Official family statuses
+		'official_announcement' => [
+			['status_key' => 'draft', 'label' => 'Draft', 'description' => 'The announcement is being drafted.', 'is_final' => false, 'icon' => 'FileOutline', 'sort_order' => 1],
+			['status_key' => 'published', 'label' => 'Published', 'description' => 'The announcement has been published.', 'is_final' => true, 'icon' => 'Check', 'sort_order' => 2],
+			['status_key' => 'archived', 'label' => 'Archived', 'description' => 'The announcement has been archived.', 'is_final' => true, 'icon' => 'Archive', 'sort_order' => 3],
+		],
+		'municipal_report' => [
+			['status_key' => 'draft', 'label' => 'Draft', 'description' => 'The report is being drafted.', 'is_final' => false, 'icon' => 'FileOutline', 'sort_order' => 1],
+			['status_key' => 'review', 'label' => 'Under Review', 'description' => 'The report is under review.', 'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 2],
+			['status_key' => 'published', 'label' => 'Published', 'description' => 'The report has been published.', 'is_final' => true, 'icon' => 'Check', 'sort_order' => 3],
+		],
+		'information_request' => [
+			['status_key' => 'submitted', 'label' => 'Submitted', 'description' => 'The request has been submitted.', 'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 1],
+			['status_key' => 'processing', 'label' => 'Processing', 'description' => 'The request is being processed.', 'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 2],
+			['status_key' => 'fulfilled', 'label' => 'Fulfilled', 'description' => 'The information has been provided.', 'is_final' => true, 'icon' => 'Check', 'sort_order' => 3],
+			['status_key' => 'denied', 'label' => 'Denied', 'description' => 'The request was denied.', 'is_final' => true, 'icon' => 'Cancel', 'sort_order' => 4],
+		],
+		'permit_request' => [
+			['status_key' => 'submitted', 'label' => 'Submitted', 'description' => 'The request has been submitted.', 'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 1],
+			['status_key' => 'under_review', 'label' => 'Under Review', 'description' => 'The request is under review.', 'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 2],
+			['status_key' => 'approved', 'label' => 'Approved', 'description' => 'The permit has been approved.', 'is_final' => true, 'icon' => 'Check', 'sort_order' => 3],
+			['status_key' => 'rejected', 'label' => 'Rejected', 'description' => 'The permit request was rejected.', 'is_final' => true, 'icon' => 'Cancel', 'sort_order' => 4],
+		],
+		'incident_report' => [
+			['status_key' => 'reported', 'label' => 'Reported', 'description' => 'The incident has been reported.', 'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 1],
+			['status_key' => 'under_investigation', 'label' => 'Under Investigation', 'description' => 'The incident is being investigated.', 'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 2],
+			['status_key' => 'resolved', 'label' => 'Resolved', 'description' => 'The incident has been resolved.', 'is_final' => true, 'icon' => 'Check', 'sort_order' => 3],
+			['status_key' => 'unresolved', 'label' => 'Unresolved', 'description' => 'The incident could not be resolved.', 'is_final' => true, 'icon' => 'Cancel', 'sort_order' => 4],
+		],
+		'service_offer' => [
+			['status_key' => 'active', 'label' => 'Active', 'description' => 'The service offer is active.', 'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 1],
+			['status_key' => 'expired', 'label' => 'Expired', 'description' => 'The service offer has expired.', 'is_final' => true, 'icon' => 'Cancel', 'sort_order' => 2],
+			['status_key' => 'withdrawn', 'label' => 'Withdrawn', 'description' => 'The service offer has been withdrawn.', 'is_final' => true, 'icon' => 'Cancel', 'sort_order' => 3],
+		],
+		'job_offer' => [
+			['status_key' => 'open', 'label' => 'Open', 'description' => 'The position is open for applications.', 'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 1],
+			['status_key' => 'closing', 'label' => 'Closing Soon', 'description' => 'Applications are closing soon.', 'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 2],
+			['status_key' => 'filled', 'label' => 'Filled', 'description' => 'The position has been filled.', 'is_final' => true, 'icon' => 'Check', 'sort_order' => 3],
+			['status_key' => 'cancelled', 'label' => 'Cancelled', 'description' => 'The position has been cancelled.', 'is_final' => true, 'icon' => 'Cancel', 'sort_order' => 4],
+		],
+		'recall_initiative' => [
+			['status_key' => 'collecting_signatures', 'label' => 'Collecting Signatures', 'description' => 'Collecting signatures for recall.', 'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 1],
+			['status_key' => 'under_review', 'label' => 'Under Review', 'description' => 'The recall is under review.', 'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 2],
+			['status_key' => 'qualified', 'label' => 'Qualified for Ballot', 'description' => 'The recall qualifies for ballot.', 'is_final' => false, 'icon' => 'Check', 'sort_order' => 3],
+			['status_key' => 'rejected', 'label' => 'Rejected', 'description' => 'The recall initiative was rejected.', 'is_final' => true, 'icon' => 'Cancel', 'sort_order' => 4],
+			['status_key' => 'successful', 'label' => 'Successful', 'description' => 'The recall was successful.', 'is_final' => true, 'icon' => 'Check', 'sort_order' => 5],
+			['status_key' => 'unsuccessful', 'label' => 'Unsuccessful', 'description' => 'The recall was unsuccessful.', 'is_final' => true, 'icon' => 'Cancel', 'sort_order' => 6],
+		],
+		'public_spending_review' => [
+			['status_key' => 'draft', 'label' => 'Draft', 'description' => 'The review is being drafted.', 'is_final' => false, 'icon' => 'FileOutline', 'sort_order' => 1],
+			['status_key' => 'under_review', 'label' => 'Under Review', 'description' => 'The review is under review.', 'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 2],
+			['status_key' => 'published', 'label' => 'Published', 'description' => 'The review has been published.', 'is_final' => true, 'icon' => 'Check', 'sort_order' => 3],
+		],
+		'contract_review' => [
+			['status_key' => 'draft', 'label' => 'Draft', 'description' => 'The review is being drafted.', 'is_final' => false, 'icon' => 'FileOutline', 'sort_order' => 1],
+			['status_key' => 'under_review', 'label' => 'Under Review', 'description' => 'The contract is under review.', 'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 2],
+			['status_key' => 'approved', 'label' => 'Approved', 'description' => 'The contract has been approved.', 'is_final' => true, 'icon' => 'Check', 'sort_order' => 3],
+			['status_key' => 'rejected', 'label' => 'Rejected', 'description' => 'The contract has been rejected.', 'is_final' => true, 'icon' => 'Cancel', 'sort_order' => 4],
+		],
+		'conflict_of_interest' => [
+			['status_key' => 'reported', 'label' => 'Reported', 'description' => 'The conflict has been reported.', 'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 1],
+			['status_key' => 'under_investigation', 'label' => 'Under Investigation', 'description' => 'The conflict is being investigated.', 'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 2],
+			['status_key' => 'resolved', 'label' => 'Resolved', 'description' => 'The conflict has been resolved.', 'is_final' => true, 'icon' => 'Check', 'sort_order' => 3],
+			['status_key' => 'unsubstantiated', 'label' => 'Unsubstantiated', 'description' => 'No conflict of interest found.', 'is_final' => true, 'icon' => 'Check', 'sort_order' => 4],
+		],
+		'whistleblower_case' => [
+			['status_key' => 'submitted', 'label' => 'Submitted', 'description' => 'The case has been submitted.', 'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 1],
+			['status_key' => 'under_investigation', 'label' => 'Under Investigation', 'description' => 'The case is being investigated.', 'is_final' => false, 'icon' => 'ClockOutline', 'sort_order' => 2],
+			['status_key' => 'resolved', 'label' => 'Resolved', 'description' => 'The case has been resolved.', 'is_final' => true, 'icon' => 'Check', 'sort_order' => 3],
+			['status_key' => 'dismissed', 'label' => 'Dismissed', 'description' => 'The case has been dismissed.', 'is_final' => true, 'icon' => 'Cancel', 'sort_order' => 4],
+		],
 	];
 
 
@@ -3548,161 +3578,162 @@ class InitDbDefault extends Command
     }
 
     //Inquiry Types
-    private function insertDefaultInquiryTypes(?IOutput $output = null): void
+private function insertDefaultInquiryTypes(?IOutput $output = null): void
 {
     $this->log($output, 'Inserting default inquiry types...');
 
     $inserted = [];
 
     foreach ($this->inquiryTypes as $inquiryType) {
-	$uniqueKey = $inquiryType['inquiry_type'];
+        $uniqueKey = $inquiryType['inquiry_type'];
 
-	if (isset($inserted[$uniqueKey])) {
-	    $this->log($output, 'Inquiry type already processed: ' . $inquiryType['inquiry_type']);
-	    continue;
-	}
+        if (isset($inserted[$uniqueKey])) {
+            $this->log($output, 'Inquiry type already processed: ' . $inquiryType['inquiry_type']);
+            continue;
+        }
 
-	$tableName = '*PREFIX*' . InquiryType::TABLE;
+        $tableName = '*PREFIX*' . InquiryType::TABLE;
 
-	$query = $this->connection->prepare(
-	    'SELECT `id`, `family` FROM `' . $tableName . '`
-	    WHERE `inquiry_type` = ?'
-	);
+        $query = $this->connection->prepare(
+            'SELECT `id`, `family` FROM `' . $tableName . '`
+            WHERE `inquiry_type` = ?'
+        );
 
-	$cursor = $query->execute([$inquiryType['inquiry_type']]);
-	$row = $cursor->fetch();
+        $cursor = $query->execute([$inquiryType['inquiry_type']]);
+        $row = $cursor->fetch();
 
-	if ($row !== false) {
-	    $this->log($output, 'Inquiry type already exists in DB: ' . $inquiryType['inquiry_type'] . ' (family: ' . $row['family'] . ')');
-	    $inserted[$uniqueKey] = (int) $row['id'];
-	    continue;
-	}
+        if ($row !== false) {
+            $this->log($output, 'Inquiry type already exists in DB: ' . $inquiryType['inquiry_type'] . ' (family: ' . $row['family'] . ')');
+            $inserted[$uniqueKey] = (int) $row['id'];
+            continue;
+        }
 
-	$insert = $this->connection->prepare(
-	    'INSERT INTO `' . $tableName . '`
-	    (`inquiry_type`, `family`, `icon`, `label`, `description`, `fields`, `allowed_response`, `allowed_transformation`, `allowed_option_type`, `allow_comment`, `support_feature`, `is_root`, `created`)
-	    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
-	);
+        // Don't encode default values here - let the final json_encode handle it
+        $fields = !empty($inquiryType['fields']) ? $inquiryType['fields'] : [];
 
-	$created = !empty($inquiryType['created']) ? (int)$inquiryType['created'] : time();
-	$icon = !empty($inquiryType['icon']) ? $inquiryType['icon'] : '';
-	$isRoot = isset($inquiryType['is_root']) && $inquiryType['is_root'] ? 1 : 0;
-	$description = !empty($inquiryType['description']) ? $inquiryType['description'] : '';
-	$fields = !empty($inquiryType['fields']) ? json_encode($inquiryType['fields'], JSON_UNESCAPED_UNICODE) : '';
-	$allowedResponse = !empty($inquiryType['allowed_response']) ? json_encode($inquiryType['allowed_response']) : '';
-	$allowedTransformation = !empty($inquiryType['allowed_transformation']) ? json_encode($inquiryType['allowed_transformation']) : '';
-	$supportFeature = !empty($inquiryType['support_feature']) ? $inquiryType['support_feature'] : 'none';
-	$allowComment = array_key_exists('allow_comment', $inquiryType) ? (int)(bool)$inquiryType['allow_comment'] : 1;
-	$allowedOptionType = !empty($inquiryType['allowed_option_type']) ? json_encode($inquiryType['allowed_option_type']) : '';
+        $insert = $this->connection->prepare(
+            'INSERT INTO `' . $tableName . '`
+            (`inquiry_type`, `family`, `icon`, `label`, `description`, `fields`, `allowed_response`, `allowed_transformation`, `allowed_option_type`, `allow_comment`, `support_feature`, `is_root`, `created`)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+        );
 
-	try {
-	    $insert->execute([
-		$inquiryType['inquiry_type'],
-		$inquiryType['family'],
-		$icon,
-		$inquiryType['label'],
-		$description,
-		$fields,
-		$allowedResponse,
-		$allowedTransformation,
-		$allowedOptionType,
-		$allowComment,
-		$supportFeature,
-		$isRoot,
-		$created,
-	    ]);
+        $created = !empty($inquiryType['created']) ? (int)$inquiryType['created'] : time();
+        $icon = !empty($inquiryType['icon']) ? $inquiryType['icon'] : '';
+        $isRoot = isset($inquiryType['is_root']) && $inquiryType['is_root'] ? 1 : 0;
+        $description = !empty($inquiryType['description']) ? $inquiryType['description'] : '';
+        // Use json_encode directly on the fields array with JSON_UNESCAPED_UNICODE
+        $fieldsJson = !empty($fields) ? json_encode($fields, JSON_UNESCAPED_UNICODE) : '';
+        $allowedResponse = !empty($inquiryType['allowed_response']) ? json_encode($inquiryType['allowed_response'], JSON_UNESCAPED_UNICODE) : '';
+        $allowedTransformation = !empty($inquiryType['allowed_transformation']) ? json_encode($inquiryType['allowed_transformation'], JSON_UNESCAPED_UNICODE) : '';
+        $supportFeature = !empty($inquiryType['support_feature']) ? $inquiryType['support_feature'] : 'none';
+        $allowComment = array_key_exists('allow_comment', $inquiryType) ? (int)(bool)$inquiryType['allow_comment'] : 1;
+        $allowedOptionType = !empty($inquiryType['allowed_option_type']) ? json_encode($inquiryType['allowed_option_type'], JSON_UNESCAPED_UNICODE) : '';
 
-	    $id = (int)$this->connection->lastInsertId($tableName);
-	    $inserted[$uniqueKey] = $id;
+        try {
+            $insert->execute([
+                $inquiryType['inquiry_type'],
+                $inquiryType['family'],
+                $icon,
+                $inquiryType['label'],
+                $description,
+                $fieldsJson,
+                $allowedResponse,
+                $allowedTransformation,
+                $allowedOptionType,
+                $allowComment,
+                $supportFeature,
+                $isRoot,
+                $created,
+            ]);
 
-	    $this->log($output, 'Inserted inquiry type: ' . $inquiryType['inquiry_type'] . ' (family: ' . $inquiryType['family'] . ')');
-	} catch (\Exception $e) {
-	    $this->log($output, 'ERROR inserting inquiry type ' . $inquiryType['inquiry_type'] . ': ' . $e->getMessage());
-	}
+            $id = (int)$this->connection->lastInsertId($tableName);
+            $inserted[$uniqueKey] = $id;
+
+            $this->log($output, 'Inserted inquiry type: ' . $inquiryType['inquiry_type'] . ' (family: ' . $inquiryType['family'] . ')');
+        } catch (\Exception $e) {
+            $this->log($output, 'ERROR inserting inquiry type ' . $inquiryType['inquiry_type'] . ': ' . $e->getMessage());
+        }
     }
-    }
-
+}
 
     //Option Types
-    private function insertDefaultInquiryOptionTypes(?IOutput $output = null): void
-    {
-	$this->log($output, 'Inserting default inquiry types...');
+private function insertDefaultInquiryOptionTypes(?IOutput $output = null): void
+{
+    $this->log($output, 'Inserting default option types...');
 
-	$inserted = [];
+    $inserted = [];
 
-	foreach ($this->optionTypes as $optionType) {
-	    $uniqueKey = $optionType['option_type'];
+    foreach ($this->optionTypes as $optionType) {
+        $uniqueKey = $optionType['option_type'];
 
-	    if (isset($inserted[$uniqueKey])) {
-		$this->log($output, 'Inquiry option type already processed: ' . $optionType['option_type']);
-		continue;
-	    }
+        if (isset($inserted[$uniqueKey])) {
+            $this->log($output, 'Option type already processed: ' . $optionType['option_type']);
+            continue;
+        }
 
-	    $tableName = '*PREFIX*' . InquiryOptionType::TABLE;
+        $tableName = '*PREFIX*' . InquiryOptionType::TABLE;
 
-	    $query = $this->connection->prepare(
-		'SELECT `id` FROM `' . $tableName . '`
-		WHERE `option_type` = ?'
-	    );
+        $query = $this->connection->prepare(
+            'SELECT `id` FROM `' . $tableName . '`
+            WHERE `option_type` = ?'
+        );
 
-	    $cursor = $query->execute(
-		[
-		$optionType['option_type'],
-		]
-	    );
-	    $row = $cursor->fetch();
+        $cursor = $query->execute([$optionType['option_type']]);
+        $row = $cursor->fetch();
 
-	    if ($row !== false) {
-		   $this->log($output, 'Inquiry option already exists in DB: ' . $optionType['option_type']);
-		   $inserted[$uniqueKey] = (int) $row['id'];
-		   continue;
-	    }
+        if ($row !== false) {
+            $this->log($output, 'Option type already exists in DB: ' . $optionType['option_type']);
+            $inserted[$uniqueKey] = (int) $row['id'];
+            continue;
+        }
 
-	    	
+        // Don't encode default values here - let the final json_encode handle it
+        $fields = !empty($optionType['fields']) ? $optionType['fields'] : [];
 
-	    	$insert = $this->connection->prepare(
-    'INSERT INTO `' . $tableName . '`
-    (`option_type`, `family`, `icon`, `label`, `description`, `fields`, `allowed_response`, `allow_comment`, `support_feature`, `statuses`, `use_title`, `created`)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
-);
+        $insert = $this->connection->prepare(
+            'INSERT INTO `' . $tableName . '`
+            (`option_type`, `family`, `icon`, `label`, `description`, `fields`, `allowed_response`, `allow_comment`, `support_feature`, `statuses`, `use_title`, `created`)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+        );
 
-	    $created = !empty($optionType['created']) ? (int)$optionType['created'] : time();
-	    $icon = !empty($optionType['icon']) ? $optionType['icon'] : '';
-	    $description = !empty($optionType['description']) ? $optionType['description'] : '';
-	    $fields = !empty($optionType['fields']) ? json_encode($optionType['fields'], JSON_UNESCAPED_UNICODE) : '';
-	    $allowedResponse = !empty($optionType['allowed_response']) ? json_encode($optionType['allowed_response']) : '';
-	    $statuses = !empty($optionType['statuses']) ? json_encode($optionType['statuses']) : '';
-	    $supportFeature = !empty($optionType['support_feature']) ? $optionType['support_feature'] : 'none';
-	    $allowComment = array_key_exists('allow_comment', $optionType) ? (int) (bool) $optionType['allow_comment'] : null;
+        $created = !empty($optionType['created']) ? (int)$optionType['created'] : time();
+        $icon = !empty($optionType['icon']) ? $optionType['icon'] : '';
+        $description = !empty($optionType['description']) ? $optionType['description'] : '';
+        // Use json_encode directly on the fields array - it will handle nested arrays properly
+        // JSON_UNESCAPED_UNICODE ensures emojis are preserved as actual characters, not escaped
+        $fieldsJson = !empty($fields) ? json_encode($fields, JSON_UNESCAPED_UNICODE) : '';
+        $allowedResponse = !empty($optionType['allowed_response']) ? json_encode($optionType['allowed_response'], JSON_UNESCAPED_UNICODE) : '';
+        $statuses = !empty($optionType['statuses']) ? json_encode($optionType['statuses'], JSON_UNESCAPED_UNICODE) : '';
+        $supportFeature = !empty($optionType['support_feature']) ? $optionType['support_feature'] : 'none';
+        $allowComment = array_key_exists('allow_comment', $optionType) ? (int)(bool)$optionType['allow_comment'] : null;
+        $useTitle = !empty($optionType['use_title']) ? 1 : 0;
 
-	$useTitle = !empty($optionType['use_title']) ? 1 : 0;
+        try {
+            $insert->execute([
+                $optionType['option_type'],
+                $optionType['family'],
+                $icon,
+                $optionType['label'],
+                $description,
+                $fieldsJson,
+                $allowedResponse,
+                $allowComment,
+                $supportFeature,
+                $statuses,
+                $useTitle,
+                $created,
+            ]);
 
-	try {
-	    $insert->execute([
-		$optionType['option_type'],
-		$optionType['family'],
-		$icon,
-		$optionType['label'],
-		$description,
-		$fields,
-		$allowedResponse,
-		$allowComment,
-		$supportFeature,
-		$statuses,
-		$useTitle,
-		$created,
-	    ]);
+            $id = (int) $this->connection->lastInsertId($tableName);
+            $inserted[$uniqueKey] = $id;
 
-	    $id = (int) $this->connection->lastInsertId($tableName);
-	    $inserted[$uniqueKey] = $id;
+            $this->log($output, 'Inserted option type: ' . $optionType['option_type'] . ' (family: ' . $optionType['family'] . ')');
 
-	    $this->log($output, 'Inserted option type: ' . $optionType['option_type'] . ' (family: ' . $optionType['family'] . ')');
-
-	} catch (\Exception $e) {
-	    $this->log($output, 'ERROR inserting option type ' . $optionType['option_type'] . ': ' . $e->getMessage());
-	}
+        } catch (\Exception $e) {
+            $this->log($output, 'ERROR inserting option type ' . $optionType['option_type'] . ': ' . $e->getMessage());
+        }
     }
-    }
+}
 
 private function insertDefaultInquiryFamilies(?IOutput $output = null): void
 {
@@ -3808,7 +3839,7 @@ private function insertDefaultInquiryGroupTypes(?IOutput $output = null): void
 	$icon = !empty($inquiryGroupType['icon']) ? $inquiryGroupType['icon'] : '';
 	$family = !empty($inquiryGroupType['family']) ? $inquiryGroupType['family'] : '';
 	$description = !empty($inquiryGroupType['description']) ? $inquiryGroupType['description'] : '';
-	$fields = !empty($inquiryGroupType['fields']) ? json_encode($inquiryiGroupType['fields'], JSON_UNESCAPED_UNICODE) : '';
+	$fields = !empty($inquiryGroupType['fields']) ? json_encode($inquiryGroupType['fields'], JSON_UNESCAPED_UNICODE) : '';
 	$allowedInquiryTypes = !empty($inquiryGroupType['allowed_inquiry_types']) ? json_encode($inquiryGroupType['allowed_inquiry_types']) : '';
 	$allowedResponse = !empty($inquiryGroupType['allowed_response']) ? json_encode($inquiryGroupType['allowed_response']) : '';
 
@@ -3817,7 +3848,7 @@ private function insertDefaultInquiryGroupTypes(?IOutput $output = null): void
 	$rules = !empty($inquiryGroupType['rules']) ? json_encode($inquiryGroupType['rules']) : '{}';
 	$features = !empty($inquiryGroupType['features']) ? json_encode($inquiryGroupType['features']) : '[]';
 	$actions = !empty($inquiryGroupType['actions']) ? json_encode($inquiryGroupType['actions']) : '[]';
-	
+
 	$isRoot = !empty($inquiryGroupType['is_root']) ? 1 : 0;
 	$sortOrder = isset($inquiryGroupType['sort_order']) ? $inquiryGroupType['sort_order'] : 0;
 

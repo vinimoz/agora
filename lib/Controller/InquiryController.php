@@ -253,9 +253,10 @@ class InquiryController extends BaseController
             $dto = new InquiryDto(
                 (string) $data['title'],
                 (string) $data['type'],
+                (string) $data['family'],
                 isset($data['ownedGroup']) ? (string) $data['ownedGroup'] : '',
                 isset($data['description']) ? (string) $data['description'] : '',
-                isset($data['parentId']) ? (int) $data['parentId'] : 0,
+                isset($data['parentId']) ? (int) $data['parentId'] : null,
                 isset($data['locationId']) ? (int) $data['locationId'] : 0,
                 isset($data['categoryId']) ? (int) $data['categoryId'] : 0,
                 [],

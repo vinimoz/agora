@@ -3,7 +3,7 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
-import { watch,ref, computed, onMounted } from 'vue'
+import { watch,ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { t } from '@nextcloud/l10n'
 import { emit } from '@nextcloud/event-bus'
@@ -81,7 +81,7 @@ const availableGroups = computed(() => {
 
 // State for selected family
 
-// const selectedFamily = ref<string | null>(inquiriesStore.familyType || null)
+const selectedFamilyCreation = ref<string | null>(inquiriesStore.familyType || null)
 const selectedFamily = computed({
   get: () => inquiriesStore.advancedFilters.familyType || null,
   set: (value) => inquiriesStore.setFamilyType(value || '')
@@ -103,7 +103,6 @@ const sortedInquiries = computed(() =>
     )
     .sort((a, b) => new Date(b.status.lastInteraction) - new Date(a.status.lastInteraction))
 )
- const recentInquiries = computed(() => sortedInquiries.value.slice(0, 5));
 
 
 // Check if a family has inquiry groups OR inquiry group types defined
@@ -138,11 +137,6 @@ const inquiryGroupTypesByFamily = computed(() => {
 
 // Computed for default view mode from app settings
 const defaultViewMode = computed(() => preferencesStore.user.defaultDisplayMode === 'view' ? 'view' : 'create')
-
-// DEBUG: Check data
-onMounted(() => {
-  inquiriesStore.load(false)
-})
 
 // Toggle family expansion
 function toggleFamily(familyType: string) {
@@ -218,8 +212,10 @@ function navigateToFamilyInquiries(familyType: string) {
 }
 
 // Function to create new inquiry from type
-function createInquiry(inquiryType: InquiryType) {
+function createInquiry(inquiryType: InquiryType,familyType: string) {
   selectedInquiryTypeForCreation.value = inquiryType
+  selectedFamilyCreation.value = familyType
+  inquiriesStore.setFamily(familyType)
   createDlgToggle.value = true
 }
 
@@ -280,7 +276,7 @@ watch(
           {{ t('agora', 'Recent inquiries') }}
         </h3>
         <NcAppNavigationItem
-          v-for="inquiry in recentInquiries"
+          v-for="inquiry in sortedInquiries"
           :key="inquiry.id"
           :name="inquiry.title"
           :exact="true"
@@ -293,7 +289,7 @@ watch(
         </NcAppNavigationItem>
 
         <NcAppNavigationItem
-          v-if="recentInquiries.length === 0"
+          v-if="sortedInquiries.length === 0"
           :name="t('agora', 'No recent inquiries')"
           :disabled="true"
           class="navigation-empty"
@@ -339,7 +335,7 @@ watch(
               :key="inquiryType.id"
               :name="t('agora', getInquiryTypeDisplayData(inquiryType).label)"
               class="navigation-subitem"
-              @click="createInquiry(inquiryType)"
+              @click="createInquiry(inquiryType,family.family_type)"
             >
               <template #icon>
                 <component :is="getInquiryTypeDisplayData(inquiryType).icon" />
@@ -436,6 +432,7 @@ watch(
     v-if="createDlgToggle"
     :inquiry-type="selectedInquiryTypeForCreation"
     :available-groups="availableGroups"
+    :family="selectedFamilyCreation"
     @close="handleCloseDialog"
     @added="inquiryAdded"
   />

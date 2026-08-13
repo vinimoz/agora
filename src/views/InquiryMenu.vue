@@ -475,6 +475,7 @@ onMounted(() => {
                     :inquiry-type="selectedInquiryTypeForCreation"
                     :selected-groups="selectedGroups"
                     :available-groups="availableGroups"
+	            :family="selectedFamily"
                     @added="inquiryAdded"
                     @close="handleCloseDialog"
                     @update:selected-groups="selectedGroups = $event"

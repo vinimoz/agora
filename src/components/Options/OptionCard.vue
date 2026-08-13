@@ -373,6 +373,7 @@ const emit = defineEmits<{
   click: [option: Option]
   edit: [option: Option]
   delete: [optionId: number]
+  updated: [option: Option]
   supportChanged: [optionId: number, support: string]
   comment: [option: Option]
   viewResponses: [option: Option, responseType: string]

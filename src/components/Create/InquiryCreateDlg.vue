@@ -27,6 +27,7 @@ import {
 // Define props
 interface Props {
   inquiryType?: InquiryType | null
+  family: string | null,
   responseType?: string | null
   selectedMode?: string
   availableGroups?: string[]
@@ -36,6 +37,7 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
   inquiryType: null,
+  family: null,
   responseType: null,
   selectedMode: null,
   availableGroups: () => [],
@@ -117,6 +119,7 @@ const disableAddButton = computed(() => titleIsEmpty.value || adding.value)
 interface InquiryData {
   type: string
   title: string
+  family: string
   parentId?: string | number | null
   locationId?: number | string | null
   categoryId?: number | string | null
@@ -143,6 +146,10 @@ async function addInquiry() {
     
     if (inquiryStore.categoryId) {
       inquiryData.categoryId = inquiryStore.categoryId
+    }
+
+    if (props.family) {
+      inquiryData.family = props.family
     }
 
     // Add groups if groups access is selected
