@@ -351,6 +351,7 @@ OC.L10N.register(
     "now" : "今",
     "Access" : "アクセス",
     "Owner" : "作成者",
+    "Expired" : "有効期限切れ",
     "Relevant" : "関連",
     "Administration" : "管理",
     "Title must not be empty!" : "タイトルは空白にできません！"

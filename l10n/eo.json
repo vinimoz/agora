@@ -139,6 +139,7 @@
     "now" : "nun",
     "Access" : "Aliro",
     "Owner" : "Posedanto",
+    "Expired" : "Senvalidiĝis",
     "Administration" : "Administrado",
     "Title must not be empty!" : "La titolo ne povas malpleni!"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"

@@ -376,6 +376,7 @@ OC.L10N.register(
     "now" : "только что",
     "Access" : "Доступ",
     "Owner" : "Владелец",
+    "Expired" : "Истёкший",
     "Relevant" : "Актуальные",
     "Participated" : "Вы приняли участие",
     "Administration" : "Администрирование",

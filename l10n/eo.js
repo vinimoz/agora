@@ -141,6 +141,7 @@ OC.L10N.register(
     "now" : "nun",
     "Access" : "Aliro",
     "Owner" : "Posedanto",
+    "Expired" : "Senvalidiĝis",
     "Administration" : "Administrado",
     "Title must not be empty!" : "La titolo ne povas malpleni!"
 },

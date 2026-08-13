@@ -203,6 +203,7 @@ OC.L10N.register(
     "now" : "сега",
     "Access" : "Пристап",
     "Owner" : "Сопственик",
+    "Expired" : "Истечен",
     "Administration" : "Администрација"
 },
 "nplurals=2; plural=(n % 10 == 1 && n % 100 != 11) ? 0 : 1;");

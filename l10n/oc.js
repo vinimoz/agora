@@ -148,6 +148,7 @@ OC.L10N.register(
     "Hour" : "Ora",
     "Not found" : "Non trobat",
     "now" : "ara",
+    "Expired" : "Expirat",
     "Administration" : "Administracion"
 },
 "nplurals=2; plural=(n > 1);");

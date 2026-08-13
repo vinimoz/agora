@@ -519,6 +519,7 @@ OC.L10N.register(
     "now" : "现在",
     "Access" : "投票范围",
     "Owner" : "所有者",
+    "Expired" : "已过期",
     "Relevant" : "相关",
     "Participated" : "已参与",
     "Administration" : "管理员",

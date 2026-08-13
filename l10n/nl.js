@@ -433,6 +433,7 @@ OC.L10N.register(
     "now" : "nu",
     "Access" : "Toegang",
     "Owner" : "Eigenaar",
+    "Expired" : "Vervallen",
     "Relevant" : "Relevant",
     "Participated" : "Heeft deelgenomen",
     "Administration" : "Beheer",

@@ -175,6 +175,7 @@ OC.L10N.register(
     "Not found" : "Không tìm thấy",
     "now" : "bây giờ",
     "Owner" : "Người sở hữu",
+    "Expired" : "Đã hết hạn",
     "Administration" : "Quản trị viên"
 },
 "nplurals=1; plural=0;");

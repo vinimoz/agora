@@ -218,6 +218,7 @@ OC.L10N.register(
     "No name" : "No name",
     "now" : "now",
     "Owner" : "Owner",
+    "Expired" : "Expired",
     "Administration" : "Administration"
 },
 "nplurals=2; plural=(n!=1);");

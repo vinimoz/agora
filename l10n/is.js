@@ -234,6 +234,7 @@ OC.L10N.register(
     "now" : "núna",
     "Access" : "Aðgangur",
     "Owner" : "Eigandi",
+    "Expired" : "Útrunnið",
     "Relevant" : "Tengt",
     "Administration" : "Stjórnun",
     "Title must not be empty!" : "Titill getur ekki verið auður!"

@@ -244,6 +244,7 @@ OC.L10N.register(
     "No name" : "Ulac isem",
     "Access" : "Adduf",
     "Owner" : "Bab-is",
+    "Expired" : "Ad yekfu",
     "Relevant" : "Axatar",
     "Administration" : "Tadbelt"
 },

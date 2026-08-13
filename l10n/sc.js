@@ -224,6 +224,7 @@ OC.L10N.register(
     "No name" : "Perunu nùmene",
     "now" : "immoe",
     "Access" : "Atzessu",
+    "Expired" : "Iscadidu",
     "Relevant" : "Importante",
     "Participated" : "Partetzipadu",
     "Administration" : "Amministratzione",

@@ -184,6 +184,8 @@ OC.L10N.register(
     "Category name" : "Nome de la categoría",
     "Select an icon" : "Seleicionar un iconu",
     "Save changes" : "Guardar los cambeos",
+    "Enter the URL of your privacy policy" : "Introduz la URL de la política de privacidá",
+    "Enter the URL of your legal notice" : "Introduz la URL del avisu llegal",
     "Privacy policy link" : "Enllaz de la política de privacidá",
     "The style settings are still experimental!" : "¡La configuración del estilu ye esperimental!",
     "Use alternative styling for the comments sidebar" : "Usa l'estilu alternativu pa la barra llateral de los comentarios",
@@ -250,6 +252,7 @@ OC.L10N.register(
     "now" : "agora",
     "Access" : "Accesu",
     "Owner" : "Propietariu",
+    "Expired" : "Caducó",
     "Administration" : "Alministración",
     "Title must not be empty!" : "¡El títulu nun ha tar baleru!"
 },

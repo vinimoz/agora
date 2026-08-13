@@ -111,6 +111,7 @@ OC.L10N.register(
     "Not found" : "No encontrado",
     "now" : "ahora",
     "Access" : "Acceso",
+    "Expired" : "Expirado",
     "Participated" : "Participó",
     "Administration" : "Administración"
 },

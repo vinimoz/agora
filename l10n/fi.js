@@ -318,6 +318,7 @@ OC.L10N.register(
     "now" : "nyt",
     "Access" : "Käyttöoikeudet",
     "Owner" : "Omistaja",
+    "Expired" : "Vanhentunut",
     "Relevant" : "Olennaiset",
     "Participated" : "Osallistunut",
     "Administration" : "Ylläpito",

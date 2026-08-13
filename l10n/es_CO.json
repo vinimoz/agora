@@ -109,6 +109,7 @@
     "Not found" : "No encontrado",
     "now" : "ahora",
     "Access" : "Acceso",
+    "Expired" : "Expirado",
     "Participated" : "Participó",
     "Administration" : "Administración"
 },"pluralForm" :"nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"

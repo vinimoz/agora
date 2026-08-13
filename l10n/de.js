@@ -1627,6 +1627,7 @@ OC.L10N.register(
     "Support enabled" : "Unterstützung aktiviert",
     "Access" : "Zugriff",
     "Owner" : "Besitzer",
+    "Expired" : "Abgelaufen",
     "Comments count" : "Anzahl Kommentare",
     "Supports count" : "Anzahl Unterstützungen",
     "Relevant" : "Relevant",

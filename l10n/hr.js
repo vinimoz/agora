@@ -282,6 +282,7 @@ OC.L10N.register(
     "now" : "sada",
     "Access" : "Pristup",
     "Owner" : "Vlasnik",
+    "Expired" : "Istekao",
     "Relevant" : "Važno",
     "Participated" : "Sudjelovao",
     "Administration" : "Administracija",

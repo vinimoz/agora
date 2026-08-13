@@ -202,6 +202,7 @@ OC.L10N.register(
     "now" : "עכשיו",
     "Access" : "גישה",
     "Owner" : "בעלות",
+    "Expired" : "פג",
     "Administration" : "ניהול",
     "Title must not be empty!" : "הכותרת לא יכולה להישאר ריקה!"
 },

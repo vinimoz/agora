@@ -200,6 +200,7 @@
     "now" : "עכשיו",
     "Access" : "גישה",
     "Owner" : "בעלות",
+    "Expired" : "פג",
     "Administration" : "ניהול",
     "Title must not be empty!" : "הכותרת לא יכולה להישאר ריקה!"
 },"pluralForm" :"nplurals=3; plural=(n == 1 && n % 1 == 0) ? 0 : (n == 2 && n % 1 == 0) ? 1: 2;"

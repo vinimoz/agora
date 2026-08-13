@@ -98,6 +98,7 @@ OC.L10N.register(
     "Sharing" : "გაზიარება",
     "Hour" : "საათი",
     "Access" : "წვდომა",
+    "Expired" : "გაუქმდა",
     "Administration" : "ადმინისტრაცია"
 },
 "nplurals=2; plural=(n!=1);");
