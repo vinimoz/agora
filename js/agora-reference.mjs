@@ -10,13 +10,12 @@
     console.error("vite-plugin-css-injected-by-js", e);
   }
 })();
-<<<<<<< HEAD
 const appName = "agora";
 const appVersion = "1.8.0";
-import { p as _export_sfc, o as openBlock, i as createElementBlock, h as createBaseVNode, t as toDisplayString, j as createCommentVNode, m as mergeProps, d as defineComponent, b as createBlock, e as withCtx, r as renderSlot, f as resolveDynamicComponent, Z as DateTime, v as translate, g as createVNode, D as createTextVNode, J as normalizeClass, z as createApp, A as pinia } from "./NcEmptyContent-CGAPqk4S-CgF6gab2.chunk.mjs";
-import { r as registerWidget } from "./NcRichText-Dkk6iX8F-KgSfqhZR.chunk.mjs";
-import { N as NcUserBubble } from "./NcUserBubble-BXBgGflZ-BlWMRPd4.chunk.mjs";
-import { A as AgoraAppIcon } from "./agora-icon-BCUDdmtE.chunk.mjs";
+import { _ as _export_sfc, o as openBlock, c as createElementBlock, j as createBaseVNode, t as toDisplayString, k as createCommentVNode, m as mergeProps, d as defineComponent, f as createBlock, g as withCtx, r as renderSlot, h as resolveDynamicComponent, $ as DateTime, x as translate, i as createVNode, E as createTextVNode, K as normalizeClass, A as createApp, B as pinia } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_ef057a6f_lang-rq7Aiqk1.chunk.mjs";
+import { r as registerWidget } from "./NcRichText-D_ssz6sB-DrdY9Ut7.chunk.mjs";
+import { N as NcUserBubble } from "./NcUserBubble-BE6yD-R0-Brp-KGHy.chunk.mjs";
+import { A as AgoraAppIcon } from "./agora-icon-CwbRnhN8.chunk.mjs";
 const _sfc_main$2 = {
   name: "CalendarEndIcon",
   emits: ["click"],
@@ -65,7 +64,7 @@ function _sfc_render$2(_ctx, _cache, $props, $setup, $data, $options) {
     ], 8, _hoisted_2$1))
   ], 16, _hoisted_1$2);
 }
-const ExpirationIcon = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["render", _sfc_render$2], ["__file", "/var/www/nextcloud/apps/agora/node_modules/vue-material-design-icons/CalendarEnd.vue"]]);
+const ExpirationIcon = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["render", _sfc_render$2], ["__file", "/home/vini/Nextcloud/agora1.8.0/node_modules/vue-material-design-icons/CalendarEnd.vue"]]);
 const _sfc_main$1 = /* @__PURE__ */ defineComponent({
   __name: "BadgeSmallDiv",
   props: {
@@ -91,7 +90,7 @@ function _sfc_render$1(_ctx, _cache, $props, $setup, $data, $options) {
     /* FORWARDED */
   });
 }
-const BadgeSmallDiv = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["render", _sfc_render$1], ["__scopeId", "data-v-a4bfe739"], ["__file", "/var/www/nextcloud/apps/agora/src/components/Base/modules/BadgeSmallDiv.vue"]]);
+const BadgeSmallDiv = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["render", _sfc_render$1], ["__scopeId", "data-v-a4bfe739"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/components/Base/modules/BadgeSmallDiv.vue"]]);
 const _sfc_main = /* @__PURE__ */ defineComponent({
   __name: "Reference",
   props: {
@@ -205,7 +204,7 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
     ])) : createCommentVNode("v-if", true)
   ])) : createCommentVNode("v-if", true);
 }
-const Reference = /* @__PURE__ */ _export_sfc(_sfc_main, [["render", _sfc_render], ["__scopeId", "data-v-dd2984c0"], ["__file", "/var/www/nextcloud/apps/agora/src/views/Reference.vue"]]);
+const Reference = /* @__PURE__ */ _export_sfc(_sfc_main, [["render", _sfc_render], ["__scopeId", "data-v-dd2984c0"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/views/Reference.vue"]]);
 registerWidget(
   "agora_reference_widget",
   async (el, { richObject }) => {
@@ -217,22 +216,4 @@ registerWidget(
   (el) => el.classList.add("nc-agora-reference-widget"),
   {}
 );
-=======
-const F = "agora", G = "1.7.7";
-import { _ as u, o as a, c, h as n, t as s, i as o, m as v, d as y, b as d, f as j, e as l, r as _, $ as b, g as h, v as r, E as m, q as f, K as k, z as w, A as C } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_bbec35a7_lang-BtfU7b8T.chunk.mjs";
-import { r as O } from "./NcRichText-D_ssz6sB-x_P0HHms.chunk.mjs";
-import { N as q } from "./NcUserBubble-BE6yD-R0-4BHZCzsM.chunk.mjs";
-import { _ as H } from "./agora-icon-CILGPJJP.chunk.mjs";
-const $ = { name: "CalendarEndIcon", emits: ["click"], props: { title: { type: String }, fillColor: { type: String, default: "currentColor" }, size: { type: Number, default: 24 } } }, N = ["aria-hidden", "aria-label"], x = ["fill", "width", "height"], B = { d: "M22 14V22H20V18L16 22V19H11V17H16V14L20 18V14H22M5 19L9 19V21L5 21C3.9 21 3 20.1 3 19V5C3 3.89 3.9 3 5 3H6V.998H8V3H16V.998H18V3H19C20.11 3 21 3.89 21 5L21 12H19V8H5V19Z" }, z = { key: 0 };
-function D(e, t, i, p, W, Z) {
-  return a(), c("span", v(e.$attrs, { "aria-hidden": i.title ? null : "true", "aria-label": i.title, class: "material-design-icon calendar-end-icon", role: "img", onClick: t[0] || (t[0] = (V) => e.$emit("click", V)) }), [(a(), c("svg", { fill: i.fillColor, class: "material-design-icon__svg", width: i.size, height: i.size, viewBox: "0 0 24 24" }, [n("path", B, [i.title ? (a(), c("title", z, s(i.title), 1)) : o("", true)])], 8, x))], 16, N);
-}
-const I = u($, [["render", D]]), L = { key: 0 }, S = y({ __name: "BadgeSmallDiv", props: { tag: { default: "span" } }, setup(e) {
-  return (t, i) => (a(), d(j(e.tag), { class: "badge-small" }, { default: l(() => [_(t.$slots, "icon", {}, void 0, true), t.$slots.default ? (a(), c("span", L, [_(t.$slots, "default", {}, void 0, true)])) : o("", true)]), _: 3 }));
-} }), g = u(S, [["__scopeId", "data-v-a75cba4f"]]), R = { key: 0, class: "agora_widget" }, A = { class: "widget_header" }, E = ["href"], M = { class: "description" }, T = { class: "clamped" }, K = { key: 0, class: "widget_footer" }, P = y({ __name: "Reference", props: { richObject: {} }, setup(e) {
-  const t = e.richObject?.inquiry?.expiry ? b.fromMillis(e.richObject.inquiry.expiry * 1e3).diffNow("hours").hours < 36 ? "warning" : "success" : "";
-  return (i, p) => e.richObject ? (a(), c("div", R, [n("div", A, [h(r(H), { size: 20, class: "title-icon" }), n("a", { class: "title", href: e.richObject.inquiry.url, target: "_blank" }, s(e.richObject.inquiry.title), 9, E), e.richObject.inquiry.participated ? (a(), d(g, { key: 0, class: "success" }, { default: l(() => [m(s(r(f)("agora", "participated")), 1)]), _: 1 })) : e.richObject.inquiry.expired ? (a(), d(g, { key: 1, class: "error" }, { default: l(() => [m(s(r(f)("agora", "closed")), 1)]), _: 1 })) : e.richObject.inquiry.expiry > 0 ? (a(), d(g, { key: 2, class: k(r(t)) }, { icon: l(() => [h(I, { size: 16 })]), default: l(() => [m(" " + s(r(b).fromMillis(e.richObject.inquiry.expiry * 1e3).toRelative()), 1)]), _: 1 }, 8, ["class"])) : o("", true)]), n("div", M, [n("span", T, s(e.richObject.inquiry.description), 1)]), e.richObject.inquiry.ownerId ? (a(), c("div", K, [n("span", null, s(r(f)("agora", "By")), 1), h(r(q), { user: e.richObject.inquiry.ownerId, "display-name": e.richObject.inquiry.ownerDisplayName }, null, 8, ["user", "display-name"])])) : o("", true)])) : o("", true);
-} }), U = u(P, [["__scopeId", "data-v-148b2b73"]]);
-O("agora_reference_widget", async (e, { richObject: t }) => w(U, { richObject: t }).use(C).mount(e), (e) => e.classList.add("nc-agora-reference-widget"), {});
->>>>>>> main
 //# sourceMappingURL=agora-reference.mjs.map

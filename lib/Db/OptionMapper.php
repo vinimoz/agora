@@ -563,12 +563,18 @@ class OptionMapper extends QBMapper
 	    case 'double':
 		return (float)$value;
 	    case 'datetime':
-		return is_numeric($value) ? (int)$value : $value;
-	    case 'json':
-		if (is_array($value) || is_object($value)) {
-		    return json_encode($value);
-		}
-		return $value;
+		    return is_numeric($value) ? (int)$value : $value;
+	      case 'json':
+            case 'object':
+            case 'array':
+                    if (is_string($value)) {
+                            return $value;
+                    }
+                    if (is_array($value) || is_object($value)) {
+                            return json_encode($value, JSON_UNESCAPED_UNICODE);
+                    }
+                    return (string)$value;
+
 	    case 'enum':
 		$allowed = $fieldDef['allowed_values'] ?? [];
 		if (in_array($value, $allowed, true)) {

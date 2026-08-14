@@ -58,6 +58,7 @@ export type InquiryGroup = {
   titleExt: string | null  
   ownedGroup: string | null    
   order: number             
+  expire: number | null   
   metadata: string | null    
   coverId: number | null     
   protected: boolean    

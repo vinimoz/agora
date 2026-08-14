@@ -642,7 +642,6 @@ function isAccessRestrictedForComments(context: PermissionContext): boolean {
             default:
             return false
     }
-
 }
 
 function isAccessRestrictedForSupports(context: PermissionContext): boolean {

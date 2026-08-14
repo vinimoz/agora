@@ -578,7 +578,7 @@ export const useOptionsStore = defineStore('options', {
       if (otherOptions.length > 0) {
         groups.push({
           id: 999,
-          name: t('agora', 'Other Options'),
+          name: t('agora', 'Other options'),
           description: t('agora', 'Options without type classification'),
           family: 'other',
           color: '#999999',
@@ -758,28 +758,59 @@ export const useOptionsStore = defineStore('options', {
       }
     },
 
-    // Delete an option
-    async delete(payload: { option: Option }): Promise<void> {
-      const sessionStore = useSessionStore()
+async deleteOption(optionId: number): Promise<void> {
+  const optionStore = useOptionStore()
+  
+  try {
+    // Load the option if not already loaded
+    if (optionStore.id !== optionId) {
+      await optionStore.load(optionId)
+    }
+    
+    // Use the option store's delete method (which handles recursion via backend)
+    await optionStore.delete()
+    
+    // Remove ALL options that were children (they'll be gone from the list)
+    // Instead of finding just the parent, we filter out by checking if any option
+    // has the deleted parent ID or is the parent itself
+    const deletedIds = this.findAllDescendantIds(optionId)
+    
+    this.options = this.options.filter(opt => !deletedIds.includes(opt.id))
+    
+    // Reorganize groups
+    this.organizeByFamily()
+    
+    emit(Event.OptionDeleted, {
+      store: 'options',
+      message: t('agora', 'Option and children deleted'),
+      optionId,
+      deletedIds,
+    })
+    
+  } catch (error) {
+    if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+      return
+    }
+    Logger.error('Error deleting option from options store:', { error, optionId })
+    throw error
+  }
+},
 
-      try {
-        const response = await (() => {
-          if (sessionStore.route?.name === 'publicInquiry') {
-            const token = sessionStore.route.params.token as string
-            return PublicAPI.deleteOption(token, payload.option.id)
-          }
-          return OptionsAPI.deleteOption(payload.option.id)
-        })()
-
-        this.updateOption({ option: response.data.option })
-      } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return
-        }
-        Logger.error('Error deleting option', { error, payload })
-        throw error
-      }
-    },
+// Helper to find all descendant IDs recursively (uses local store data)
+findAllDescendantIds(optionId: number): number[] {
+  const result: number[] = [optionId]
+  
+  // Find direct children
+  const children = this.options.filter(opt => opt.parentId === optionId)
+  
+  // Recursively find children of children
+  for (const child of children) {
+    const descendantIds = this.findAllDescendantIds(child.id)
+    result.push(...descendantIds)
+  }
+  
+  return result
+},
 
     // Restore a deleted option
     async restore(payload: { option: Option }): Promise<void> {

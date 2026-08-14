@@ -25,7 +25,7 @@
             v-model="localTitle"
             :label="t('agora', 'Title')"
 
-            :placeholder="t('agora', 'e.g., Final Vote 2025, Community Decision')"
+            :placeholder="t('agora', 'E.g., final vote 2025, community decision')"
             :error="!!titleError"
           />
           <p v-if="titleError" class="field-error">{{ titleError }}</p>
@@ -197,7 +197,7 @@
       <div v-if="selectedEngine && currentConfigSchema && Object.keys(currentConfigSchema).length > 0 && !isSpecialEngine" class="engine-config-section">
           <NcButton class="config-settings-trigger" @click="showConfigDialog = true">
           <Settings :size="20" />
-          <span>{{ t('agora', 'Configure Settings') }}</span>
+          <span>{{ t('agora', 'Configure settings') }}</span>
           <span class="config-count-badge">{{ Object.keys(currentConfigSchema).length }}</span>
           </NcButton>
       </div>
@@ -253,7 +253,7 @@
                   @click="save"
                   >
                   <Vote :size="16" />
-                  {{ mode === 'create' ? t('agora', 'Create Voting Method') : t('agora', 'Update Voting Method') }}
+                  {{ mode === 'create' ? t('agora', 'Create voting method') : t('agora', 'Update voting method') }}
           </NcButton>
       </div>
     </div>
@@ -271,7 +271,7 @@
                     <div class="settings-icon">
                         <Settings :size="32" />
                     </div>
-    <h4>{{ t('agora', 'Configuration Settings') }}</h4>
+    <h4>{{ t('agora', 'Configuration settings') }}</h4>
     <p>{{ t('agora', 'Adjust the settings for this voting method') }}</p>
                 </div>
 
@@ -454,9 +454,9 @@ const isSaveDisabled = computed(() => {
 })
 
 const modalTitle = computed(() => {
-  if (props.mode === 'deliberative') return t('agora', 'Select Support Method')
-  if (props.mode === 'create') return t('agora', 'Configure Voting Method')
-  return t('agora', 'Edit Voting Method')
+  if (props.mode === 'deliberative') return t('agora', 'Select support method')
+  if (props.mode === 'create') return t('agora', 'Configure voting method')
+  return t('agora', 'Edit voting method')
 })
 
 const selectedPurpose = ref(props.existingEngine?.purpose || 'vote')
@@ -612,8 +612,8 @@ const getEngineDescription = (engineId: string): string =>
 
 const getScopeLabel = (scope: string): string => {
   const labels: Record<string, string> = {
-    per_option: t('agora', 'Per option'),
-    cross_option: t('agora', 'Cross option'),
+    per_option: t('agora', 'Absolute numbers per option decide the winner'),
+    cross_option: t('agora', 'Relative weightings across options decide the winner'),
     flex: t('agora', 'Flexible'),
     none: t('agora', 'No voting')
   }

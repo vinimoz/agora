@@ -138,7 +138,7 @@ const inquiries = {
 
   // Convert Proxy to plain object before sending
   const plainConfig = JSON.parse(JSON.stringify(inquiryConfiguration));
-console.log(" CONFIGURATION ", inquiryConfiguration)
+
   return httpInstance.request({
     method: 'PUT',
     url: `inquiry/updateconfig/${inquiryId}`,

@@ -164,7 +164,7 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 	protected string $showResults = '';
 	protected int $lastInteraction = 0;
 	protected int $forceConfidentialComments = 0;
-	protected ?int $parentId = 0;
+	protected ?int $parentId = null;
 	protected string $moderationStatus = self::DEFAULT_STATUS_DRAFT;
 	protected string $inquiryStatus = self::DEFAULT_STATUS_DRAFT;
 	protected ?int $allowComment = null;

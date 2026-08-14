@@ -171,7 +171,7 @@ class="counter-icon" :style="iconContainerStyles"
         <div class="breakdown-item positive">
           <div class="breakdown-header">
             <TernarySupportIcon :support-value="1" :size="iconSize * 0.8" />
-            <span class="breakdown-label">{{ t('agora', 'In Favor') }}</span>
+            <span class="breakdown-label">{{ t('agora', 'In favor') }}</span>
           </div>
           <div class="breakdown-stats">
             <span class="count">{{ ternaryResult.totals.yes }}</span>
@@ -230,7 +230,7 @@ class="counter-icon" :style="iconContainerStyles"
             }}</span>
           </div>
           <div class="score-stat">
-            <span class="stat-label">{{ t('agora', 'Total Votes') }}</span>
+            <span class="stat-label">{{ t('agora', 'Total votes') }}</span>
             <span class="stat-value">{{ scoreResult.total || 0 }}</span>
           </div>
         </div>
@@ -246,7 +246,7 @@ class="counter-icon" :style="iconContainerStyles"
             }}</span>
           </div>
           <div class="score-stat">
-            <span class="stat-label">{{ t('agora', 'Total Ratings') }}</span>
+            <span class="stat-label">{{ t('agora', 'Total ratings') }}</span>
             <span class="stat-value">{{ starResult.totals.total || 0 }}</span>
           </div>
         </div>
@@ -317,7 +317,7 @@ class="counter-icon" :style="iconContainerStyles"
           </div>
         </div>
         <div class="median-info">
-          <span class="median-label">{{ t('agora', 'Median Grade') }}:</span>
+          <span class="median-label">{{ t('agora', 'Median grade') }}:</span>
           <span class="median-value">
             {{ majorityResult.median_label || getGradeLabel(majorityResult.median) }}
           </span>
@@ -327,7 +327,7 @@ class="counter-icon" :style="iconContainerStyles"
       <!-- Footer Summary -->
       <div class="tooltip-footer">
         <div class="summary-item">
-          <span class="summary-label">{{ t('agora', 'Total Participants') }}</span>
+          <span class="summary-label">{{ t('agora', 'Total participants') }}</span>
           <span class="summary-value">{{ totalParticipants }}</span>
         </div>
         <div v-if="quorumValue" class="summary-item">
@@ -485,7 +485,7 @@ type Item = Inquiry | Option
 const containerRef = ref<HTMLElement>()
 
 // Computed tooltip title - use computed instead of mutating props
-const resolvedTooltipTitle = computed(() => props.tooltipTitle || t('agora', 'Support Details'))
+const resolvedTooltipTitle = computed(() => props.tooltipTitle || t('agora', 'Support details'))
 
 // Support feature from item configuration
 const supportFeature = computed(
@@ -568,7 +568,7 @@ const normalizedSupportResult = computed((): SupportResultData => {
 })
 
 // Helper function to process result data
-const processResultData = (data: any): SupportResultData => {
+const processResultData = (data: unknown): SupportResultData => {
   if (!data) return null
   if (Array.isArray(data) && data.length === 0) return null
   if (typeof data === 'object' && data !== null && Object.keys(data).length === 0) return null
@@ -872,12 +872,12 @@ const currentUserSupportInfo = computed(() => {
   const value = currentUserSupportValue.value
 
   if (feature === 'binary') {
-    return value === 1 ? `✅ ${t('agora', 'You voted Yes')}` : null
+    return value === 1 ? `✅ ${t('agora', 'You voted yes')}` : null
   }
   if (feature === 'ternary') {
-    if (value === 1) return `✅ ${t('agora', 'You voted In Favor')}`
-    if (value === 0) return `⚪ ${t('agora', 'You voted Neutral')}`
-    if (value === -1) return `❌ ${t('agora', 'You voted Against')}`
+    if (value === 1) return `✅ ${t('agora', 'You voted in favor')}`
+    if (value === 0) return `⚪ ${t('agora', 'You voted neutral')}`
+    if (value === -1) return `❌ ${t('agora', 'You voted against')}`
   }
   if (feature === 'star') {
     return `⭐ ${value}/5 ${t('agora', 'stars')}`
@@ -969,9 +969,9 @@ const getGradeLabel = (grade: number | string | null): string => {
       t('agora', 'Reject'),
       t('agora', 'Insufficient'),
       t('agora', 'Passable'),
-      t('agora', 'Fairly Good'),
+      t('agora', 'Fairly good'),
       t('agora', 'Good'),
-      t('agora', 'Very Good'),
+      t('agora', 'Very good'),
       t('agora', 'Excellent'),
     ]
     return defaultGrades[idx] || String(idx)
@@ -1086,7 +1086,7 @@ const handleSupportClick = async () => {
               }
               }
               else {  
-              nextReaction = reactions[0]
+	     	nextReaction = reactions.length > 0 ? reactions[0] : null
               }
 
               await supportsStore.toggleReactionSupport(itemId, userId, item, itemType, nextReaction)
@@ -1120,9 +1120,9 @@ const handleSupportClick = async () => {
   switch (feature) {
     case 'binary':
       if (supportValueAfter === 1) {
-        showSuccess(t('agora', 'Voted: Yes'), { timeout: 2000 })
+        showSuccess(t('agora', 'Voted: yes'), { timeout: 2000 })
       } else if (supportValueAfter === -1) {
-        showSuccess(t('agora', 'Voted: No'), { timeout: 2000 })
+        showSuccess(t('agora', 'Voted: no'), { timeout: 2000 })
       } else {
         showSuccess(t('agora', 'Vote removed'), { timeout: 2000 })
       }
@@ -1130,11 +1130,11 @@ const handleSupportClick = async () => {
 
     case 'ternary':
       if (supportValueAfter === 1) {
-        showSuccess(t('agora', 'Voted: In Favor'), { timeout: 2000 })
+        showSuccess(t('agora', 'Voted: in favor'), { timeout: 2000 })
       } else if (supportValueAfter === 0) {
-        showSuccess(t('agora', 'Voted: Neutral'), { timeout: 2000 })
+        showSuccess(t('agora', 'Voted: neutral'), { timeout: 2000 })
       } else if (supportValueAfter === -1) {
-        showSuccess(t('agora', 'Voted: Against'), { timeout: 2000 })
+        showSuccess(t('agora', 'Voted: against'), { timeout: 2000 })
       } else {
         showSuccess(t('agora', 'Vote removed'), { timeout: 2000 })
       }

@@ -3,23 +3,18 @@
   try {
     if (typeof document != "undefined") {
       var elementStyle = document.createElement("style");
-<<<<<<< HEAD
       elementStyle.appendChild(document.createTextNode(".inquiry-item__item[data-v-7f773d42] {\n  display: flex;\n  padding: 4px 0;\n}\n.inquiry-item__item.active[data-v-7f773d42] {\n  background-color: var(--color-primary-element-light);\n}\n.inquiry-item__item[data-v-7f773d42]:hover {\n  background-color: var(--color-background-hover);\n}\n.type-icon[data-v-7f773d42] {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  width: 44px;\n  min-width: 44px;\n}\n.type-icon .nav-icon[data-v-7f773d42] {\n  width: 20px;\n  height: 20px;\n}\n.item__title[data-v-7f773d42] {\n  display: flex;\n  flex-direction: column;\n  overflow: hidden;\n}\n.item__title[data-v-7f773d42] * {\n  display: block;\n  overflow: hidden;\n  white-space: nowrap;\n  text-overflow: ellipsis;\n}\n.item__title .item__title__description[data-v-7f773d42] {\n  opacity: 0.5;\n}"));
-=======
-      elementStyle.appendChild(document.createTextNode(".inquiry-item__item[data-v-e073396f] {\n  display: flex;\n  padding: 4px 0;\n}\n.inquiry-item__item.active[data-v-e073396f] {\n  background-color: var(--color-primary-element-light);\n}\n.inquiry-item__item[data-v-e073396f]:hover {\n  background-color: var(--color-background-hover);\n}\n.type-icon[data-v-e073396f] {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  width: 44px;\n  min-width: 44px;\n}\n.type-icon .nav-icon[data-v-e073396f] {\n  width: 20px;\n  height: 20px;\n}\n.item__title[data-v-e073396f] {\n  display: flex;\n  flex-direction: column;\n  overflow: hidden;\n}\n.item__title[data-v-e073396f] * {\n  display: block;\n  overflow: hidden;\n  white-space: nowrap;\n  text-overflow: ellipsis;\n}\n.item__title .item__title__description[data-v-e073396f] {\n  opacity: 0.5;\n}"));
->>>>>>> main
       document.head.appendChild(elementStyle);
     }
   } catch (e) {
     console.error("vite-plugin-css-injected-by-js", e);
   }
 })();
-<<<<<<< HEAD
 const appName = "agora";
 const appVersion = "1.8.0";
-import { d as defineComponent, v as translate, c as computed, q as onMounted, E as purify, G as generateUrl, p as _export_sfc, o as openBlock, i as createElementBlock, g as createVNode, e as withCtx, h as createBaseVNode, j as createCommentVNode, b as createBlock, f as resolveDynamicComponent, t as toDisplayString, z as createApp, A as pinia } from "./NcEmptyContent-CGAPqk4S-CgF6gab2.chunk.mjs";
-import { A as AgoraAppIcon } from "./agora-icon-BCUDdmtE.chunk.mjs";
-import { b as useSessionStore, c as useInquiriesStore, s as showError, L as Logger, g as getInquiryTypeData, I as InquiryGeneralIcons, N as NcDashboardWidget } from "./NcDashboardWidget-DKZ8Mgt0-CW8gWKb9.chunk.mjs";
+import { d as defineComponent, x as translate, b as computed, q as onMounted, H as purify, I as generateUrl, _ as _export_sfc, o as openBlock, c as createElementBlock, i as createVNode, g as withCtx, j as createBaseVNode, k as createCommentVNode, f as createBlock, h as resolveDynamicComponent, t as toDisplayString, A as createApp, B as pinia } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_ef057a6f_lang-rq7Aiqk1.chunk.mjs";
+import { A as AgoraAppIcon } from "./agora-icon-CwbRnhN8.chunk.mjs";
+import { d as useSessionStore, e as useInquiriesStore, s as showError, L as Logger, g as getInquiryTypeData, I as InquiryGeneralIcons, N as NcDashboardWidget } from "./NcDashboardWidget-CvpYMKur-Bi8PK-or.chunk.mjs";
 const _sfc_main = /* @__PURE__ */ defineComponent({
   __name: "Dashboard",
   setup(__props, { expose: __expose }) {
@@ -45,27 +40,6 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
       } catch {
         showError(translate("agora", "Error setting dashboard list"));
       }
-=======
-const R = "agora", U = "1.7.7";
-import { d as b, q as o, s as q, o as p, c as v, g as l, e as _, h as s, v as e, H as I, b as D, f as C, t as u, I as S, l as w, _ as x, z as L, A as N } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_bbec35a7_lang-BtfU7b8T.chunk.mjs";
-import { _ as M } from "./agora-icon-CILGPJJP.chunk.mjs";
-import { d as T, e as A, N as E, s as g, L as B, g as k, I as V } from "./NcDashboardWidget-CvpYMKur-D-8FOrUK.chunk.mjs";
-const z = ["href"], O = { class: "inquiry-item__item" }, W = { class: "type-icon" }, $ = { class: "item__title" }, F = { class: "item__title__title" }, G = { class: "item__title__description" }, H = b({ __name: "Dashboard", setup(c) {
-  const a = T(), d = { emptyContentMessage: o("agora", "No inquiries found for this category"), showMoreText: o("agora", "Relevant inquiries") }, h = w(() => a.appSettings.inquiryTypeTab || []), n = A();
-  function m() {
-    try {
-      a.load(null, false, false);
-    } catch {
-      g(o("agora", "Error setting dashboard list"));
-    }
-  }
-  function y() {
-    B.debug("Loading inquiries in dashboard widget");
-    try {
-      n.load();
-    } catch {
-      g(o("agora", "Error setting dashboard list"));
->>>>>>> main
     }
     function getInquiryIconComponent(inquiry) {
       if (inquiry.type) {
@@ -94,7 +68,6 @@ const z = ["href"], O = { class: "inquiry-item__item" }, W = { class: "type-icon
     Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
     return __returned__;
   }
-<<<<<<< HEAD
 });
 const _hoisted_1 = ["href"];
 const _hoisted_2 = { class: "inquiry-item__item" };
@@ -148,19 +121,11 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
     }, 8, ["items", "empty-content-message", "show-more-text", "loading"])
   ]);
 }
-const Dashboard = /* @__PURE__ */ _export_sfc(_sfc_main, [["render", _sfc_render], ["__scopeId", "data-v-7f773d42"], ["__file", "/var/www/nextcloud/apps/agora/src/views/Dashboard.vue"]]);
+const Dashboard = /* @__PURE__ */ _export_sfc(_sfc_main, [["render", _sfc_render], ["__scopeId", "data-v-7f773d42"], ["__file", "/home/vini/Nextcloud/agora1.8.0/src/views/Dashboard.vue"]]);
 document.addEventListener("DOMContentLoaded", () => {
   OCA.Dashboard.register("agora", (el) => {
     const AgoraDashboard = createApp(Dashboard).use(pinia).mount(el);
     return AgoraDashboard;
   });
-=======
-  return q(() => {
-    m(), y();
-  }), (i, r) => (p(), v("div", null, [l(e(E), { items: e(n).dashboardList, "empty-content-message": d.emptyContentMessage, "show-more-text": d.showMoreText, loading: e(n).inquiriesLoading }, { emptyContentIcon: _(() => [l(e(M))]), default: _(({ item: t }) => [s("a", { href: e(I)(`/apps/agora/page/inquiry/${t.id}`) }, [s("div", O, [s("div", W, [(p(), D(C(f(t)), { class: "nav-icon" }))]), s("div", $, [s("div", F, u(t.title), 1), s("div", G, u(e(S).sanitize(t.description ? t.description : e(o)("agora", "No description provided"))), 1)])])], 8, z)]), _: 1 }, 8, ["items", "empty-content-message", "show-more-text", "loading"])]));
-} }), P = x(H, [["__scopeId", "data-v-e073396f"]]);
-document.addEventListener("DOMContentLoaded", () => {
-  OCA.Dashboard.register("agora", (c) => L(P).use(N).mount(c));
->>>>>>> main
 });
 //# sourceMappingURL=agora-dashboard.mjs.map

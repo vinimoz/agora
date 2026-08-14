@@ -97,39 +97,36 @@
                     class="read-only-indicator"
                 >
                     <component :is="InquiryOptionIcons.Lock" :size="16" />
-                    <span>{{ t('agora', 'Official content - View only') }}</span>
+                    <span>{{ t('agora', 'Official content - view only') }}</span>
                 </div>
             </div>
 
             <!-- Dynamic Modals Container -->
-            <component
-                :is="currentModalComponent"
-                v-if="currentModalComponent && showModal"
-                :show="showModal"
-                :family-key="activeFamilyData.key"
-                :inquiry-id="inquiryStore.id"
-                :action-key="currentActionKey"
-                :action-data="currentActionData"
-                @close="closeModal"
-                @action-completed="handleActionCompleted"
-            />
+		  <component
+            :is="currentActionComponent"
+            v-if="currentActionComponent && showActionComponent"
+            :show="showActionComponent"
+            :inquiry-id="inquiryStore.id"
+            :action-key="currentActionKey"
+            :action-data="currentActionData"
+            @close="closeActionComponent"
+            @action-completed="handleActionCompleted"
+        />
 
             <!-- Dynamic Family Layout Component -->
             <component
                 :is="currentFamilyLayout"
                 ref="currentFamilyLayoutRef"
-                :options="activeFamilyOptions"
+                :options="familyOptions"
                 :family="activeFamilyData"
                 :inquiry-id="inquiryStore.id"
-                :parent-id="selectedParentId"
-                :target-type="'option'"
                 :option-types="activeFamilyData.optionTypes"
+		:family-option-types="familyOptionTypes"
                 :options-by-inquiry="optionsByInquiry"
                 :is-readonly="isReadOnly"
                 :is-official-user="inquiryStore.user?.isOfficial || false"
                 :can-manage-vote="canManageVote"
                 :can-add-options="showCreateOptionButtons"
-                :can-add-items="showCreateOptionButtons"
                 @add-option="openAddOptionModal"
                 @open-detail="openOptionDetail"
                 @option-updated="handleOptionUpdated"
@@ -205,6 +202,8 @@ import {
     getOptionTypeIconComponent,
     isOptionTypeInFamily,
     getOptionsCountByFamily,
+    getFamilyOptionsByTarget,
+    getOptionTypesForFamily,
 } from '../../helpers/modules/InquiryOptionHelper'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -230,10 +229,12 @@ const selectedParentId = ref<number | null>(null)
 const selectedOptionId = ref<number | null>(null)
 
 // Modal state for dynamic actions
-const showModal = ref(false)
+// const showModal = ref(false)
 const currentActionKey = ref<string | null>(null)
 const currentActionData = ref<unknown>(null)
-const currentModalComponent = ref<Component | null>(null)
+// const currentModalComponent = ref<Component | null>(null)
+const currentActionComponent = ref<Component | null>(null)
+const showActionComponent = ref(false)
 
 // Refs to dynamic layout components
 const currentFamilyLayoutRef = ref<InstanceType<typeof FamilyLayoutVote> | null>(null)
@@ -283,23 +284,30 @@ const showCreateOptionButtons = computed(() => {
     return allowCreation
 })
 
-// Load modal component dynamically
-const loadModalComponent = async (actionKey: string, familyKey?: string): Promise<Component | null> => {
+const getActionIcon = (icon: string | Component): Component => {
+    if (typeof icon === 'string') {
+        return InquiryOptionIcons[icon] || InquiryOptionIcons.File
+    }
+    return icon
+}
+
+
+const loadActionComponent = async (familyKey: string, actionKey: string): Promise<Component | null> => {
     const cacheKey = `${familyKey}-${actionKey}`
-    
+
     if (modalComponentCache.has(cacheKey)) {
         return modalComponentCache.get(cacheKey)!
     }
 
     try {
         let component: Component | null = null
-        
-        // For vote family, always use ActionVote.vue (handles all vote actions)
+
+        // For vote family, always use ActionVue.vue
         if (familyKey === 'vote') {
             const module = await import(`./Actions/ActionVote.vue`)
             component = markRaw(module.default || module)
-        } 
-        // For structure family, always use ActionStructure.vue
+        }
+        // For structure family, use ActionStructure.vue
         else if (familyKey === 'structure') {
             const module = await import(`./Actions/ActionStructure.vue`)
             component = markRaw(module.default || module)
@@ -310,16 +318,16 @@ const loadModalComponent = async (actionKey: string, familyKey?: string): Promis
                 .split('_')
                 .map(part => part.charAt(0).toUpperCase() + part.slice(1))
                 .join('')}Modal`
-            
+
             const module = await import(`./Actions/${componentName}.vue`)
             component = markRaw(module.default || module)
         }
-        
+
         if (component) {
             modalComponentCache.set(cacheKey, component)
             return component
         }
-        
+
         return null
     } catch (error) {
         console.error(`Failed to load action component for family "${familyKey}" action "${actionKey}":`, error)
@@ -327,50 +335,37 @@ const loadModalComponent = async (actionKey: string, familyKey?: string): Promis
     }
 }
 
-const getActionIcon = (icon: string | Component): Component => {
-    if (typeof icon === 'string') {
-        return InquiryOptionIcons[icon] || InquiryOptionIcons.File
-    }
-    return icon
-}
-
 const handleFamilyAction = async (action: Action) => {
-  // For vote family actions, always use ActionVote component
-  if (activeFamilyData.value?.key === 'vote') {
-    const modalComponent = await loadModalComponent(action.key, 'vote')
-    if (modalComponent) {
-      currentModalComponent.value = modalComponent
-      currentActionKey.value = action.key
-      currentActionData.value = action.data || {}
-      showModal.value = true
-      return
+    // For all actions, load the appropriate component
+    const familyKey = activeFamilyData.value?.key
+
+    if (!familyKey) {
+        console.warn('No active family found')
+        return
     }
-  }
 
-  // For other families, check if it's a modal action
-  if (action.modal) {
-    const modalComponent = await loadModalComponent(action.key, activeFamilyData.value?.key)
-    if (modalComponent) {
-      currentModalComponent.value = modalComponent
-      currentActionKey.value = action.key
-      currentActionData.value = action.data || {}
-      showModal.value = true
-      return
+    const actionComponent = await loadActionComponent(familyKey, action.key)
+
+    if (actionComponent) {
+        currentActionComponent.value = actionComponent
+        currentActionKey.value = action.key
+        currentActionData.value = action.data || {}
+        showActionComponent.value = true
+        return
     }
-  }
 
-  // If action has a direct handler
-  if (action.handler) {
-    await action.handler(action.data)
-    return
-  }
+    // If no component found, try direct handler
+    if (action.handler) {
+        await action.handler(action.data)
+        return
+    }
 
-  console.warn(`No handler or modal defined for action: ${action.key}`)
+    console.warn(`No handler or component defined for action: ${action.key}`)
 }
 
-const closeModal = () => {
-    showModal.value = false
-    currentModalComponent.value = null
+const closeActionComponent = () => {
+    showActionComponent.value = false
+    currentActionComponent.value = null
     currentActionKey.value = null
     currentActionData.value = null
 }
@@ -379,7 +374,7 @@ const handleActionCompleted = (result: unknown) => {
     if (result?.refreshOptions) {
         optionsStore.load(inquiryStore.id)
     }
-    closeModal()
+    closeActionComponent()
 }
 
 
@@ -445,13 +440,37 @@ const optionsByInquiry = computed(() => {
     return optionsStore.getOptionsByTargetId(inquiryStore.id)
 })
 
-const activeFamilyOptions = computed(() => {
+/**
+ * Get all options that belong to the current inquiry (targetId)
+ * and match the active family's option types
+ */
+const familyOptions = computed(() => {
     if (!activeFamilyData.value) return []
-    const familyOptionTypeKeys = activeFamilyData.value.optionTypes.map(opt => opt.option_type)
-    return optionsStore.options.filter(option =>
-        familyOptionTypeKeys.includes(option.type)
+
+    return getFamilyOptionsByTarget(
+        optionsStore.options,
+        allOptionTypes.value,
+        activeFamilyData.value.key,
+        inquiryStore.id
     )
 })
+
+
+/**
+ * Get all option types that belong to the current family
+ * (from the full option types tab, not filtered by inquiry)
+ */
+const familyOptionTypes = computed(() => {
+    if (!activeFamilyData.value) return []
+
+    const familyKey = activeFamilyData.value.key || 'debate'
+
+    // Get ALL option types for this family from the full option types list
+    return getOptionTypesForFamily(familyKey, allOptionTypes.value)
+})
+
+
+
 
 const setActiveFamily = (familyKey: string) => {
     activeFamily.value = familyKey

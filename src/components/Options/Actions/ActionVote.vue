@@ -4,24 +4,34 @@
 -->
 
 <template>
-  <!-- For actions that need a modal -->
-  <ExportResultsModal
-    v-if="showExportResult"
-    :show="show"
-    :inquiry-id="inquiryId"
-    @close="handleClose"
-    @exported="handleExported"
-  />
-  
-  <div v-else />
+  <div v-if="show" class="action-vote-container">
+    <!-- For actions that need a modal -->
+    <ExportResultsModal
+      v-if="showExportResult"
+      :show="showExportResult"
+      :inquiry-id="inquiryId"
+      @close="handleClose"
+      @exported="handleExported"
+    />
+
+    <!-- For actions that execute immediately -->
+    <div v-else>
+      <!-- Show loading or confirmation -->
+      <NcLoading v-if="loading" />
+      <div v-else-if="error" class="error-message">
+        {{ error }}
+      </div>
+    </div>
+  </div>
 </template>
+
 
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue'  
 import { showSuccess, showError } from '@nextcloud/dialogs'
 import ExportResultsModal from './ExportResultsModal.vue'
 import { useSupportEngineStore } from '../../../stores/supportEngine'
-
+import NcLoading from '@nextcloud/vue/components/NcLoadingIcon'
 interface Props {
   show: boolean
   inquiryId: number
@@ -36,11 +46,17 @@ const emit = defineEmits<{
 
 const engineStore = useSupportEngineStore()
 const showExportResult = ref(false) 
+const loading = ref(false)
+const error = ref<string | null>(null)
 
 // Execute action immediately when component mounts
 const executeAction = async () => {
- if (!props.show) return
+ if (!props.show || !props.actionKey) return
 
+  loading.value = true
+  error.value = null
+
+try {
   switch (props.actionKey) {
     case 'start_vote':
       await startVote()
@@ -65,7 +81,15 @@ const executeAction = async () => {
   if (props.actionKey !== 'export_results') {
     emit('close')
   }
+
+    } catch (err) {
+    error.value = err instanceof Error ? err.message : 'Action failed'
+    console.error(`Failed to execute ${props.actionKey}:`, err)
+  } finally {
+    loading.value = false
+  }
 }
+
 const startVote = async () => {
   try {
     const engine = engineStore.getCurrentEngine()
