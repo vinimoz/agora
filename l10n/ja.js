@@ -336,7 +336,6 @@ OC.L10N.register(
     "Back to home" : "ホーム画面に戻る",
     "View mode" : "表示モード",
     "Title is mandatory" : "タイトルは必須です",
-    "Family" : "家族",
     "Quick actions" : "ファイルアクション",
     "View" : "表示",
     "Settings" : "設定",

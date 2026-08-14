@@ -359,7 +359,6 @@ OC.L10N.register(
     "Add one or change category!" : "Добавьте или измените категорию",
     "View mode" : "Режим просмотра",
     "Title is mandatory" : "Требуется указать заголовок",
-    "Family" : "Семья",
     "View all" : "Просмотреть все",
     "Quick actions" : "Быстрые действия",
     "View" : "Режим просмотра",

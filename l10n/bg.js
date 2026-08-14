@@ -457,7 +457,6 @@ OC.L10N.register(
     "groups" : "групи",
     "Loading …" : "Зареждане …",
     "Add one or change category!" : "Добавете или променете категория!",
-    "Family" : "Семейство",
     "View all" : "Виж всички",
     "View" : "Изглед",
     "Settings" : "Настройки",

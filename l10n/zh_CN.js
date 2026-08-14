@@ -501,7 +501,6 @@ OC.L10N.register(
     "Title is mandatory" : "标题是必需的",
     "The inquiry has been saved" : "工单已保存",
     "Error saving inquiry!" : "保存工单时出错！",
-    "Family" : "家庭",
     "View all" : "查看全部",
     "Quick actions" : "快捷操作",
     "View" : "查看",

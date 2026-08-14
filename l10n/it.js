@@ -489,7 +489,6 @@ OC.L10N.register(
     "Click here to load more" : "Fai clic qui per caricare altro",
     "View mode" : "Modalità di visualizzazione",
     "Title is mandatory" : "Il titolo è obbligatorio",
-    "Family" : "Famiglia",
     "View all" : "Vedi tutto",
     "Quick actions" : "Azioni rapide",
     "View" : "Visualizza",

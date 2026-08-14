@@ -188,7 +188,6 @@ OC.L10N.register(
     "Delete group" : "Выдаліць групу",
     "Home" : "Дадому",
     "Loading …" : "Загрузка …",
-    "Family" : "Сям'я",
     "Quick actions" : "Хуткія дзеянні",
     "View" : "Праглядзець",
     "Settings" : "Налады",

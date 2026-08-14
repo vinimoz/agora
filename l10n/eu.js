@@ -370,7 +370,6 @@ OC.L10N.register(
     "Add one or change category!" : "Gehitu bat edo aldatu kategoria!",
     "View mode" : "Ikuspegi modua",
     "Title is mandatory" : "Izenburua jartzea nahitaezkoa da",
-    "Family" : "Familia",
     "View all" : "Ikusi denak",
     "View" : "Ikusi",
     "Settings" : "Ezarpenak",

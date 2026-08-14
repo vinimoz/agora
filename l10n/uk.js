@@ -784,7 +784,6 @@ OC.L10N.register(
     "The inquiry has been saved" : "Запит збережено",
     "Error saving inquiry!" : "Помилка збереження запиту!",
     "Inquiry {title} added" : "Додано запит {title} ",
-    "Family" : "Родина",
     "No inquiries found" : "Запитів не знайдено",
     "View all" : "Переглянути всі",
     "Quick actions" : "Швидкі дії",

@@ -487,7 +487,6 @@ OC.L10N.register(
     "Click here to load more" : "點擊此處以載入更多",
     "View mode" : "瀏覽模式",
     "Title is mandatory" : "必須有標題",
-    "Family" : "家族",
     "View all" : "檢視全部",
     "Quick actions" : "快速動作",
     "View" : "檢視",

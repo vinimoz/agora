@@ -415,7 +415,6 @@ OC.L10N.register(
     "Add one or change category!" : "Voer er een toe of wijzig de categorie!",
     "View mode" : "Weergavemodus",
     "Title is mandatory" : "Titel is verplicht",
-    "Family" : "Familie",
     "View all" : "Toon alles",
     "Quick actions" : "Snelle acties",
     "View" : "Bekijken",

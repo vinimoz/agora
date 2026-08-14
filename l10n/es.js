@@ -648,7 +648,6 @@ OC.L10N.register(
     "View mode" : "Modo de visualización",
     "Failed to load inquiry" : "No se pudo cargar la consulta",
     "Title is mandatory" : "El título es obligatorio",
-    "Family" : "Familia",
     "View all" : "Ver todo",
     "Quick actions" : "Acciones rápidas",
     "View" : "Vista",

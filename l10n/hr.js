@@ -268,7 +268,6 @@ OC.L10N.register(
     "Add one or change category!" : "Dodajte anketu ili promijenite kategoriju!",
     "View mode" : "Način prikaza",
     "Title is mandatory" : "Naziv je obavezan",
-    "Family" : "Obitelj",
     "Quick actions" : "Brze radnje",
     "View" : "Pregledaj",
     "Settings" : "Postavke",

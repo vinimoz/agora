@@ -420,7 +420,6 @@ OC.L10N.register(
     "Add one or change category!" : "Нэмэх эсвэл ангилал өөрчлөх!",
     "Click here to load more" : "Цааш ачаалахын тулд энд дарна уу",
     "View mode" : "Харах горим",
-    "Family" : "Гэр бүл",
     "Quick actions" : "Түргэн үйлдлүүд",
     "View" : "Харах",
     "Settings" : "–¢–æ—Ö–∏—Ä–≥–æ–æ",

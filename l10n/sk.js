@@ -462,7 +462,6 @@ OC.L10N.register(
     "Click here to load more" : "Kliknite sem na načítanie ďalších",
     "View mode" : "Režim zobrazenia",
     "Title is mandatory" : "Názov je povinný",
-    "Family" : "Rodina",
     "View all" : "Zobraziť všetko",
     "Quick actions" : "Rýchle akcie",
     "View" : "Zobraziť",

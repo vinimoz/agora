@@ -631,7 +631,6 @@ OC.L10N.register(
     "Click here to load more" : "Кликните овде да се учита још",
     "View mode" : "Режим приказа",
     "Title is mandatory" : "Наслов је обавезан",
-    "Family" : "Породица",
     "View all" : "Прикажи све",
     "Quick actions" : "Брзе акције",
     "View" : "Погледај",

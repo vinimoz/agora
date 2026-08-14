@@ -231,7 +231,6 @@ OC.L10N.register(
     "groups" : "igrawen",
     "Loading …" : "Asali ...",
     "Modify" : "Senfel",
-    "Family" : "Tawacult",
     "View all" : "Wali-ten akk",
     "Quick actions" : "Tigawin tiruradin",
     "View" : "Askan",

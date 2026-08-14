@@ -363,7 +363,6 @@ OC.L10N.register(
     "Add one or change category!" : "Dodaj jedną lub zmień kategorię!",
     "View mode" : "Tryb widoku",
     "Title is mandatory" : "Tytuł jest obowiązkowy",
-    "Family" : "Rodzina",
     "View all" : "Zobacz wszystkie",
     "Quick actions" : "Szybkie akcje",
     "View" : "Podgląd",
