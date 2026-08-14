@@ -12,7 +12,7 @@ use OCA\Agora\Db\Inquiry;
 class InquiryRestoredEvent extends InquiryEvent
 {
     public function __construct(
-        protected Inquiry $inquiry,
+        Inquiry $inquiry,
     ) {
         parent::__construct($inquiry);
         $this->eventId = self::RESTORE;

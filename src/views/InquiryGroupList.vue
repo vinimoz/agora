@@ -75,7 +75,7 @@ const getGroupTypeIconComponent = (type: string) => {
 const deleteDialogTitle = computed(() => 
   deleteDialogGroup.value 
     ? t('agora', 'Delete "{group}"', { group: deleteDialogGroup.value.title })
-    : t('agora', 'Delete Group')
+    : t('agora', 'Delete group')
 )
 
 const deleteDialogMessage = computed(() => 
@@ -108,7 +108,7 @@ const deleteDialogButtons = computed(() => [
 const restoreDialogTitle = computed(() => 
   restoreDialogGroup.value 
     ? t('agora', 'Restore "{group}"', { group: restoreDialogGroup.value.title })
-    : t('agora', 'Restore Group')
+    : t('agora', 'Restore group')
 )
 
 const restoreDialogMessage = computed(() => 
@@ -242,7 +242,7 @@ onMounted(async () => {
                 :is="NavigationIcons.Archive"
                 class="breadcrumb-icon"
               />
-              <span class="breadcrumb-label">{{ t('agora', 'Archived Groups') }}</span>
+              <span class="breadcrumb-label">{{ t('agora', 'Archived groups') }}</span>
               <span class="inquiry-count">
                 ({{ archivedGroups.length }})
               </span>
@@ -266,11 +266,11 @@ onMounted(async () => {
               />
             </div>
             <div class="archive-title-section">
-              <h1 class="archive-title">{{ t('agora', 'Archived Groups') }}</h1>
+              <h1 class="archive-title">{{ t('agora', 'Archived groups') }}</h1>
               <div class="archive-subtitle">
                 <p>{{ t('agora', 'Groups that have been archived. You can restore or delete them.') }}</p>
                 <span class="archive-count-badge">
-                  {{ archivedGroups.length }} {{ t('agora', 'archived groups') }}
+                  {{ archivedGroups.length }} {{ t('agora', 'Archived groups') }}
                 </span>
               </div>
             </div>
@@ -291,7 +291,7 @@ onMounted(async () => {
           <h3>{{ t('agora', 'No archived groups') }}</h3>
           <p>{{ t('agora', 'There are no archived groups at the moment.') }}</p>
           <NcButton type="primary" @click="navigateToHome">
-            {{ t('agora', 'Back to Home') }}
+            {{ t('agora', 'Back to home') }}
           </NcButton>
         </div>
 

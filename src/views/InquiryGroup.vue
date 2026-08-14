@@ -103,7 +103,7 @@
             <h3>{{ sectionTitle }}</h3>
             <div v-if="currentInquiryGroup && canUserEditGroup(currentInquiryGroup)" class="section-actions">
               <NcButton class="create-button" arial-label='' @click="createInquiryGroup(currentGroupType)">
-                ➕ {{ t('agora', 'Create Group') }}
+                ➕ {{ t('agora', 'Create group') }}
               </NcButton>
             </div>
           </div>
@@ -145,7 +145,7 @@
                   </div>
                   <div class="vignette-footer">
                     <NcButton class="view-group-button" @click.stop="selectGroup(group)">
-                      {{ t('agora', 'View Group') }}
+                      {{ t('agora', 'View group') }}
                       <template #icon>
                         <svg width="16" height="16" viewBox="0 0 24 24">
                           <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
@@ -235,7 +235,7 @@
       </div>
       <NcDialog
               v-if="createGroupDlgToggle"
-              :name="t('agora', 'Create New Inquiry Group')"
+              :name="t('agora', 'Create new inquiry group')"
               :enable-slide-up="false"
               @close="handleCloseGroupDialog"
               >
@@ -488,7 +488,7 @@ const currentBreadcrumbTitle = computed(() => currentTitle.value)
 const deleteDialogTitle = computed(() => 
   deleteDialogGroup.value 
     ? t('agora', 'Delete "{group}"', { group: deleteDialogGroup.value.title })
-    : t('agora', 'Delete Group')
+    : t('agora', 'Delete group')
 )
 
 const deleteDialogMessage = computed(() => 

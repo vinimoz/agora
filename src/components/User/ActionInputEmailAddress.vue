@@ -31,7 +31,7 @@ const inputProps = ref<InputProps>({
   error: false,
   showTrailingButton: true,
   labelOutside: false,
-  label: t('agora', 'Edit Email Address'),
+  label: t('agora', 'Edit email address'),
 })
 
 /**

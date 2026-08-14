@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<info xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
+	<id>agora</id>
+	<name>Agora</name>
+	<summary>Participatory democracy platform for proposals, debates, petitions, and surveys.</summary>
+	<description><![CDATA[
+		**Agora** is a **Nextcloud app for participatory democracy**, inspired by [Decidim](https://decidim.org) and built on [Nextcloud Polls](https://github.com/nextcloud/polls).
+		It enables communities and organizations to collaborate on **proposals, debates, petitions, and projects** in a transparent and structured way.
+
+		### ✨ Key Features
+		- 💬 Comments and discussions
+		- 👍 Deliberative mode : Binary, Ternary, Star, Score, Reactions, Majority
+        - 👍 Voting tool : 🗳️ Condorcet, 📊 Borda, ⭐ Majority Judgment, ✅ Approval, Quadratic, Weighted…
+        - 🧩 Custom inquiry families and types
+        - 🧾 Multiple inquiry formats (proposals, debates, petitions, projects…)
+        - 📂 Categorization and filtering by family or location
+        - 🧱 Scalable architecture and modern UX
+        - 🔒 Secure and private — all data stays on your Nextcloud server
+        - 🔗 Integration with Forms, Polls, Deck, Collectives,...
+        - 🏛 Collectives desgin UX
+        - 🗣 Real debate features (structured replies, multi-thread discussions)  
+        - 📜 Project law reading with article-level comments and supports  
+        - 🧰 Template for different goal, democraty, university, company, custom 
+
+        ### 🧭 Coming Next
+        - 🏛 Lottery.
+        - 🧮 Quorums and workflow automation  
+        - 🧰 Better permission control and moderation tools  
+        ]]></description>
+<<<<<<< HEAD
+    <version>1.8.0</version>
+=======
+    <version>1.7.7</version>
+>>>>>>> main
+    <licence>AGPL-3.0-or-later</licence>
+    <author>Vincent TRAPPE</author>
+    <documentation>
+        <admin>https://github.com/vinimoz/agora/blob/master/README.md</admin>
+    </documentation>
+    <category>tools</category>
+    <category>social</category>
+    <category>organization</category>
+    <website>https://github.com/vinimoz/agora</website>
+    <bugs>https://github.com/vinimoz/agora/issues</bugs>
+    <repository type="git">https://github.com/vinimoz/agora.git</repository>
+    <screenshot>https://raw.githubusercontent.com/vinimoz/agora/main/screenshots/Family.png</screenshot>
+    <screenshot>https://raw.githubusercontent.com/vinimoz/agora/main/screenshots/GroupView.png</screenshot>
+    <screenshot>https://raw.githubusercontent.com/vinimoz/agora/main/screenshots/GroupView2.png</screenshot>
+    <screenshot>https://raw.githubusercontent.com/vinimoz/agora/main/screenshots/EditInquiry.png</screenshot>
+    <screenshot>https://raw.githubusercontent.com/vinimoz/agora/main/screenshots/EditGroup.png</screenshot>
+    <screenshot>https://raw.githubusercontent.com/vinimoz/agora/main/screenshots/CreateInquiryView.png</screenshot>
+    <screenshot>https://raw.githubusercontent.com/vinimoz/agora/main/screenshots/Grid2.png</screenshot>
+    <screenshot>https://raw.githubusercontent.com/vinimoz/agora/main/screenshots/ListView.png</screenshot>
+    <dependencies>
+        <php min-version="8.1"/>
+        <nextcloud min-version="31" max-version="34"/>
+    </dependencies>
+    <background-jobs>
+        <job>OCA\Agora\Cron\NotificationCron</job>
+        <job>OCA\Agora\Cron\AutoReminderCron</job>
+    </background-jobs>
+    <repair-steps>
+        <post-migration>
+            <step>OCA\Agora\Migration\RepairSteps\UpdateHashes</step>
+            <step>OCA\Agora\Migration\RepairSteps\CreateIndices</step>
+        </post-migration>
+        <install>
+            <step>OCA\Agora\Migration\RepairSteps\Install</step>
+        </install>
+    </repair-steps>
+    <commands>
+        <command>OCA\Agora\Command\Share\Add</command>
+        <command>OCA\Agora\Command\Share\Remove</command>
+        <command>OCA\Agora\Command\Db\Purge</command>
+		<command>OCA\Agora\Command\Db\CleanInstance</command>
+        <command>OCA\Agora\Command\Db\RemoveIndices</command>
+        <command>OCA\Agora\Command\Db\Rebuild</command>
+        <command>OCA\Agora\Command\Db\CreateIndices</command>
+        <command>OCA\Agora\Command\Db\ResetWatch</command>
+        <command>OCA\Agora\Command\Db\InitDbDefault</command>
+        <command>OCA\Agora\Command\Inquiry\TransferOwnership</command>
+    </commands>
+    <settings>
+        <admin>OCA\Agora\Settings\AdminSettings</admin>
+        <admin-section>OCA\Agora\Settings\AdminSection</admin-section>
+        <personal>OCA\Agora\Settings\PersonalSettings</personal>
+        <personal-section>OCA\Agora\Settings\PersonalSection</personal-section>
+    </settings>
+    <activity>
+        <filters>
+            <filter>OCA\Agora\Filter\ActivityFilter</filter>
+        </filters>
+        <providers>
+            <provider>OCA\Agora\Provider\ActivityProvider</provider>
+        </providers>
+    </activity>
+    <navigations>
+        <navigation>
+            <name>Agora</name>
+            <route>agora.page.index</route>
+            <icon>app.svg</icon>
+            <order>77</order>
+        </navigation>
+    </navigations>
+</info>

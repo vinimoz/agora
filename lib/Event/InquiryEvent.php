@@ -22,7 +22,7 @@ abstract class InquiryEvent extends BaseEvent
     public const OPTION_REORDER = 'inquiry_option_reorder';
 
     public function __construct(
-        protected Inquiry $inquiry,
+        Inquiry $inquiry,
     ) {
         parent::__construct($inquiry);
         $this->activityObjectType = 'inquiry';

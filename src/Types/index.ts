@@ -89,12 +89,16 @@ export interface SupportResult {
 // INQUIRY & OPTION TYPES
 // ============================================================================
 
+<<<<<<< HEAD
 // Search type constants
 export const SEARCH_TYPE_USERS = 0
 export const SEARCH_TYPE_GROUPS = 1
 export const SEARCH_TYPE_ALL = 99
 
 export type ISearchType = 0 | 1 | 2 | 4 | 7 | 51 | 99
+=======
+
+>>>>>>> main
 
 export interface InquiryType {
   id: number
@@ -109,6 +113,7 @@ export interface InquiryType {
   allowed_option_type: string[]
   allow_comment: number
   support_feature: string
+  is_root: boolean
   created: number
 }
 

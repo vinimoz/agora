@@ -21,8 +21,8 @@ const iconColor = computed(() =>
 
 const dynamicTitle = computed(() =>
   supported 
-    ? t('agora', 'Supported - Click to remove support')
-    : t('agora', 'Not supported - Click to support')
+    ? t('agora', 'Supported - click to remove support')
+    : t('agora', 'Not supported - click to support')
 )
 </script>
 

@@ -134,7 +134,7 @@ const openTypeSettings = (type) => {
   <div class="types-manager">
     <div class="header">
       <NcButton @click="emit('backToFamilies')">
-        ← {{ t('agora', 'Back to Families') }}
+        ← {{ t('agora', 'Back to families') }}
       </NcButton>
       <h2>
         {{ t('agora', 'Types for {family}', { family: selectedFamily?.label }) }}
@@ -143,7 +143,7 @@ const openTypeSettings = (type) => {
 
     <!-- Types List -->
     <div class="types-list">
-      <h3>{{ t('agora', 'Configured Types') }}</h3>
+      <h3>{{ t('agora', 'Configured types') }}</h3>
       <p class="list-description">
         {{ t('agora', 'Click on a type to configure its rights and status settings') }}
       </p>
@@ -208,16 +208,16 @@ const openTypeSettings = (type) => {
         <div class="form-row">
           <NcInputField
             v-model="newType.inquiry_type"
-            :label="t('agora', 'Type Key')"
-            :placeholder="t('agora', 'e.g., petition, survey, poll')"
+            :label="t('agora', 'Type key')"
+            :placeholder="t('agora', 'E.g., petition, survey, poll')"
             required
             class="form-field"
           />
           
           <NcInputField
             v-model="newType.label"
-            :label="t('agora', 'Display Label')"
-            :placeholder="t('agora', 'e.g., Public Petition, Survey')"
+            :label="t('agora', 'Display label')"
+            :placeholder="t('agora', 'E.g., public petition, survey')"
             required
             class="form-field"
           />
@@ -242,7 +242,7 @@ const openTypeSettings = (type) => {
         <div class="form-row">
           <NcInputField
             v-model="newType.fields"
-            :label="t('agora', 'Fields Configuration (JSON)')"
+            :label="t('agora', 'Fields configuration (json)')"
             type="textarea"
             :placeholder='`e.g., ["title", "description", "deadline"]`'
             class="form-field"
@@ -250,7 +250,7 @@ const openTypeSettings = (type) => {
           
           <NcInputField
             v-model="newType.allowed_response"
-            :label="t('agora', 'Allowed Responses (JSON)')"
+            :label="t('agora', 'Allowed responses (json)')"
             type="textarea"
             :placeholder='`e.g., ["vote_yes_no", "comment"]`'
             class="form-field"
@@ -258,14 +258,14 @@ const openTypeSettings = (type) => {
           
           <NcInputField
             v-model="newType.allowed_transformation"
-            :label="t('agora', 'Allowed Transformations (JSON)')"
+            :label="t('agora', 'Allowed transformations (json)')"
             type="textarea"
             :placeholder='`e.g., ["official_proposal"]`'
             class="form-field"
           />
           <NcInputField
             v-model="newType.allowed_option_type"
-            :label="t('agora', 'Allowed Option types (JSON)')"
+            :label="t('agora', 'Allowed option types (json)')"
             type="textarea"
             :placeholder='`e.g., ["official_proposal"]`'
             class="form-field"
@@ -278,7 +278,7 @@ const openTypeSettings = (type) => {
             :disabled="!newType.inquiry_type || !newType.label"
             @click="addType"
           >
-            {{ t('agora', 'Add Type') }}
+            {{ t('agora', 'Add type') }}
           </NcButton>
         </div>
       </div>
@@ -287,18 +287,18 @@ const openTypeSettings = (type) => {
     <!-- Edit Type Modal -->
     <div v-if="editingType" class="modal-overlay">
       <div class="modal-content large-modal">
-        <h3>{{ t('agora', 'Edit Inquiry Type') }}</h3>
+        <h3>{{ t('agora', 'Edit inquiry type') }}</h3>
         <div class="form-grid">
           <div class="form-row">
             <NcInputField
               v-model="editingType.inquiry_type"
-              :label="t('agora', 'Type Key')"
+              :label="t('agora', 'Type key')"
               required
               class="form-field"
             />
             <NcInputField
               v-model="editingType.label"
-              :label="t('agora', 'Display Label')"
+              :label="t('agora', 'Display label')"
               required
               class="form-field"
             />
@@ -319,25 +319,25 @@ const openTypeSettings = (type) => {
           <div class="form-row">
             <NcInputField
               v-model="editingType.fields"
-              :label="t('agora', 'Fields Configuration (JSON)')"
+              :label="t('agora', 'Fields configuration (json)')"
               type="textarea"
               class="form-field"
             />
             <NcInputField
               v-model="editingType.allowed_response"
-              :label="t('agora', 'Allowed Responses (JSON)')"
+              :label="t('agora', 'Allowed responses (json)')"
               type="textarea"
               class="form-field"
             />
             <NcInputField
               v-model="editingType.allowed_transformation"
-              :label="t('agora', 'Allowed Transformations (JSON)')"
+              :label="t('agora', 'Allowed transformations (json)')"
               type="textarea"
               class="form-field"
             />
             <NcInputField
               v-model="editingType.allowed_option_type"
-              :label="t('agora', 'Allowed Option types (JSON)')"
+              :label="t('agora', 'Allowed option types (json)')"
               type="textarea"
               class="form-field"
             />

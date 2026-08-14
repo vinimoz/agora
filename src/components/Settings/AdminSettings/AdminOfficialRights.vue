@@ -14,7 +14,7 @@ const appSettingsStore = useAppSettingsStore()
 
 <template>
   <div class="rights-management">
-    <h2>{{ t('agora', 'Official Rights') }}</h2>
+    <h2>{{ t('agora', 'Official rights') }}</h2>
     <p class="description">
       {{ t('agora', 'Define permissions for users with official role') }}
     </p>
@@ -68,7 +68,7 @@ const appSettingsStore = useAppSettingsStore()
           {{ t('agora', 'Moderation status') }}
         </NcCheckboxRadioSwitch>
         <p class="right-description">
-          {{ t('agora', 'Allow officials to manage Moderation status for all inquiry') }}
+          {{ t('agora', 'Allow officials to manage moderation status for all inquiry') }}
         </p>
       </div>
     </div>

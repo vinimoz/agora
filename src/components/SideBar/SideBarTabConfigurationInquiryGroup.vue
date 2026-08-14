@@ -113,7 +113,7 @@ const handleImageUpload = async (event: Event) => {
   // Check image size 5Mb max
   const maxSize = 5 * 1024 * 1024
   if (file.size > maxSize) {
-    showError(t('agora', 'Image size should be less than 5MB'))
+    showError(t('agora', 'Image size should be less than 5mb'))
     return
   }
 
@@ -290,7 +290,7 @@ onMounted(() => {
   <div class="inquiry-group-sidebar-settings">
     <!-- Header -->
     <div class="sidebar-header">
-      <h2>{{ t('agora', 'Group Configuration') }}</h2>
+      <h2>{{ t('agora', 'Group configuration') }}</h2>
       <p class="subtitle">{{ inquiryGroupStore.title || t('agora', 'Untitled group') }}</p>
       
       <div v-if="!canEditGroup" class="readonly-notice">
@@ -303,7 +303,7 @@ onMounted(() => {
     <div class="settings-section">
       <h3 class="section-title">
         <component :is="InquiryGeneralIcons.Image" />
-        {{ t('agora', 'Cover Image') }}
+        {{ t('agora', 'Cover image') }}
       </h3>
       
       <div class="cover-section">
@@ -370,7 +370,7 @@ onMounted(() => {
     <div class="settings-section">
       <h3 class="section-title">
         <component :is="InquiryGeneralIcons.Title" />
-        {{ t('agora', 'Basic Information') }}
+        {{ t('agora', 'Basic information') }}
       </h3>
       
       <div class="form-fields">
@@ -394,7 +394,7 @@ onMounted(() => {
         <!-- Extended Title Field - Full width -->
         <NcTextArea
           v-model="inquiryGroupStore.titleExt"
-          :label="t('agora', 'Extended Title')"
+          :label="t('agora', 'Extended title')"
           :placeholder="t('agora', 'Optional extended title')"
           :maxlength="200"
           :disabled="!canEditGroup || autoSaving"
@@ -438,7 +438,7 @@ onMounted(() => {
     <div class="settings-section">
       <h3 class="section-title">
         <component :is="InquiryGeneralIcons.Status" />
-        {{ t('agora', 'Status & Settings') }}
+        {{ t('agora', 'Status & settings') }}
       </h3>
       
       <div class="form-fields">

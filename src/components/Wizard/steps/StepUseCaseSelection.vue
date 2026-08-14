@@ -20,7 +20,7 @@ interface UseCaseOption {
 const useCases: UseCaseOption[] = [
 	{
 		id: 'citizen_participation',
-		title: t('agora', 'Citizen Participation'),
+		title: t('agora', 'Citizen participation'),
 		description: t('agora', 'For municipalities, cantons, communes and government entities'),
 		icon: '🏛️',
 		examples: [
@@ -32,19 +32,19 @@ const useCases: UseCaseOption[] = [
 	},
 	{
 		id: 'enterprise',
-		title: t('agora', 'Enterprise & Business'),
+		title: t('agora', 'Enterprise & business'),
 		description: t('agora', 'For companies, departments and business operations'),
 		icon: '🏢',
 		examples: [
-			t('agora', 'IT Services (ideas, automation, service requests)'),
-			t('agora', 'Human Resources (training, policies, workplace)'),
-			t('agora', 'Facility Management (infrastructure, sustainability)'),
-			t('agora', 'Finance & Procurement (budget, vendor feedback)'),
+			t('agora', 'It services (ideas, automation, service requests)'),
+			t('agora', 'Human resources (training, policies, workplace)'),
+			t('agora', 'Facility management (infrastructure, sustainability)'),
+			t('agora', 'Finance & procurement (budget, vendor feedback)'),
 		],
 	},
 	{
 		id: 'education',
-		title: t('agora', 'Education & Research'),
+		title: t('agora', 'Education & research'),
 		description: t('agora', 'For schools, universities and research institutions'),
 		icon: '🎓',
 		examples: [
@@ -56,12 +56,12 @@ const useCases: UseCaseOption[] = [
 	},
 	{
 		id: 'custom',
-		title: t('agora', 'Custom Setup'),
+		title: t('agora', 'Custom setup'),
 		description: t('agora', 'Start from scratch or import your own template'),
 		icon: '🛠️',
 		examples: [
-			t('agora', 'Upload AI-generated template'),
-			t('agora', 'Import custom JSON configuration'),
+			t('agora', 'Upload ai-generated template'),
+			t('agora', 'Import custom json configuration'),
 			t('agora', 'Start with empty configuration'),
 			t('agora', 'Use community templates'),
 		],

@@ -25,8 +25,8 @@ const emit = defineEmits<{
 const appSettingsStore = useAppSettingsStore()
 
 const editorOptions = [
-  { value: 'wysiwyg', label: t('agora', 'Rich Text Editor') },
-  { value: 'textarea', label: t('agora', 'Simple Text Area') },
+  { value: 'wysiwyg', label: t('agora', 'Rich text editor') },
+  { value: 'textarea', label: t('agora', 'Simple text area') },
   { value: 'texteditor', label: t('agora', 'Nextcloud text editor') },
 ]
 

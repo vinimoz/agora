@@ -121,7 +121,7 @@
 
 		<!-- Draggable options pool -->
 		<div v-if="showDraggablePool" class="draggable-pool">
-			<h4>{{ t('agora', 'Draggable Options') }}</h4>
+			<h4>{{ t('agora', 'Draggable options') }}</h4>
 			<div class="draggable-items">
 				<div 
 					v-for="option in options" 
@@ -160,6 +160,7 @@
                 :option-title="selectedOption?.title || selectedOption?.label || ''"
                 :is-imported="selectedOption ? isImportedFromView(selectedOption,family.key) : false"
                 :view-type="'timeline'"
+		:option="selectedOption"
                 @confirm="handleConfirmDelete"
                 @remove-from-view="handleRemoveFromView"
                 />

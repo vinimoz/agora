@@ -5,8 +5,8 @@
 -->
 
 <script setup lang="ts">
-import { onMounted , computed } from 'vue'
-import { showError } from '@nextcloud/dialogs'
+import { computed } from 'vue'
+import { storeToRefs } from 'pinia'
 import { t } from '@nextcloud/l10n'
 import NcAppNavigation from '@nextcloud/vue/components/NcAppNavigation'
 import NcAppNavigationItem from '@nextcloud/vue/components/NcAppNavigationItem'
@@ -19,10 +19,17 @@ import { useInquiryGroupsStore } from '../stores/inquiryGroups.ts'
 import { useSessionStore } from '../stores/session.ts'
 import { NcAppNavigationSpacer } from '@nextcloud/vue'
 
-
 const inquiriesStore = useInquiriesStore()
 const inquiryGroupsStore = useInquiryGroupsStore()
 const sessionStore = useSessionStore()
+
+// Use storeToRefs for reactive references
+const {
+  inquiriesCount,
+  navigationCategories,
+  navigationList,
+} = storeToRefs(inquiriesStore)
+
 
 const iconSize = 20
 
@@ -38,6 +45,10 @@ const icons = {
   private: {
     id: 'private',
     iconComponent: NavigationIcons.Private,
+  },
+  reject: {
+    id: 'reject',
+    iconComponent: NavigationIcons.ShieldAlert,
   },
   participated: {
     id: 'participated',
@@ -69,39 +80,10 @@ const icons = {
   },
 }
 
-/**
- * Get icon component for a specific filter type
- * @param iconId
- */
 function getIconComponent(iconId: FilterType) {
   return icons[iconId].iconComponent
 }
 
-/**
- * Toggle archive status of an inquiry
- * @param inquiryId
- */
-function toggleArchive(inquiryId: number) {
-  try {
-    inquiriesStore.toggleArchive({ inquiryId })
-  } catch {
-    showError(t('agora', 'Failed to archive or restore the inquiry'))
-  }
-}
-
-/**
- * Delete a inquiry
- * @param inquiryId inquiry id to delete
- */
-function deleteInquiry(inquiryId: number) {
-  try {
-    inquiriesStore.delete({ inquiryId })
-  } catch {
-    showError(t('agora', 'Error deleting inquiry'))
-  }
-}
-
- 
 const selectedFamily = computed({
   get: () => inquiriesStore.advancedFilters.familyType || null,
   set: (value) => inquiriesStore.setFamilyType(value || '')
@@ -110,8 +92,6 @@ const selectedFamily = computed({
 const formattedFamilyType = computed(() => { 
   const value = inquiriesStore.advancedFilters.familyType 
   if (!value) return t('agora', 'All families') 
-   
-  // If it's a specific value, format it nicely 
   return t('agora', `${value}`) 
 })
 
@@ -119,34 +99,27 @@ const handleHomeNavigation = () => {
   selectedFamily.value = null
 }
 
-onMounted(() => {
-  inquiriesStore.load(false)
-})
 </script>
 
 <template>
-  <NcAppNavigation class="agora-navigation" aria-label="Agora Navigation"  >
-   
+  <NcAppNavigation  class="agora-navigation" aria-label="Agora Navigation">
     <!-- Header Section with Family Badge -->
     <div v-if="selectedFamily" class="navigation-header">
       <div class="family-badge">
         <component :is="NavigationIcons.Family" :size="16" class="family-icon" />
-        <!--  <span class="family-label">{{ t('agora', 'Family') }}:</span> -->
         <span class="family-name">{{ formattedFamilyType }}</span>
       </div>
     </div>
 
-    <!-- Navigation List -->
-    
     <template #list>
       <!-- Groups Section -->
-      <NcAppNavigationList v-if="inquiryGroupsStore.inquiryGroupsSorted.length > 0">
+      <NcAppNavigationList v-if="inquiryGroupsStore.inquiryGroupsSorted.length > 0" >
         <h3 class="navigation-caption">
           {{ t('agora', 'Categories') }}
         </h3>
         <NcAppNavigationItem
           v-for="inquiryGroup in inquiryGroupsStore.inquiryGroupsSorted"
-          :key="inquiryGroup.id"
+	   :key="inquiryGroup.id"
           :name="inquiryGroup.title"
           :title="inquiryGroup.titleExt"
           allow-collapse
@@ -170,13 +143,6 @@ onMounted(() => {
             v-if="sessionStore.appSettings.navigationInquiriesInList"
             class="navigation-sublist"
           >
-            <!-- <InquiryNavigationItems
-              v-for="inquiry in inquiriesStore.groupList(inquiryGroup.inquiryIds)"
-              :key="inquiry.id"
-              :inquiry="inquiry"
-              @toggle-archive="toggleArchive(inquiry.id)"
-              @delete-inquiry="deleteInquiry(inquiry.id)"
-	      /> -->
             <NcAppNavigationItem
               v-if="inquiriesStore.groupList(inquiryGroup.inquiryIds).length === 0"
               :name="t('agora', 'No inquiries found')"
@@ -202,13 +168,13 @@ onMounted(() => {
       <NcAppNavigationSpacer v-if="inquiryGroupsStore.inquiryGroups.length" />
 
       <!-- Filters Section -->
-      <NcAppNavigationList>
+      <NcAppNavigationList >
         <h3 class="navigation-caption">
           {{ t('agora', 'Filters') }}
         </h3>
         <NcAppNavigationItem
-          v-for="inquiryCategory in inquiriesStore.navigationCategories"
-          :key="inquiryCategory.id"
+          v-for="inquiryCategory in navigationCategories"
+	  :key="inquiryCategory.id"
           :name="inquiryCategory.title"
           :title="inquiryCategory.titleExt"
           :allow-collapse="sessionStore.appSettings.navigationInquiriesInList"
@@ -225,7 +191,7 @@ onMounted(() => {
           </template>
           <template #counter>
             <NcCounterBubble
-              :count="inquiriesStore.inquiriesCount[inquiryCategory.id]"
+              :count="inquiriesCount[inquiryCategory.id]"
               class="navigation-counter"
             />
           </template>
@@ -234,20 +200,19 @@ onMounted(() => {
             class="navigation-sublist"
           >
             <InquiryNavigationItems
-              v-for="inquiry in inquiriesStore.navigationList(inquiryCategory.id)"
-              :key="inquiry.id"
+              v-for="inquiry in navigationList[inquiryCategory.id]"
+	      :key="inquiry.id"
               :inquiry="inquiry"
-              @toggle-archive="toggleArchive(inquiry.id)"
-              @delete-inquiry="deleteInquiry(inquiry.id)"
             />
             <NcAppNavigationItem
-              v-if="inquiriesStore.navigationList(inquiryCategory.id).length === 0"
+              v-if="!navigationList[inquiryCategory.id] || navigationList[inquiryCategory.id].length === 0"
               :name="t('agora', 'No inquiries found')"
               class="navigation-empty"
             />
             <NcAppNavigationItem
               v-if="
-                inquiriesStore.navigationList(inquiryCategory.id) >
+                navigationList[inquiryCategory.id] &&
+                navigationList[inquiryCategory.id].length >
                 inquiriesStore.meta.maxInquiriesInNavigation
               "
               class="force-not-active"
@@ -268,23 +233,22 @@ onMounted(() => {
 
       <!-- Quick Actions Section -->
       <NcAppNavigationList>
-      <h3 class="navigation-caption">
-          {{ t('agora', 'Quick Actions') }}
-      </h3>
-
-      <NcAppNavigationItem
-              :name="t('agora', 'Home')"
-              :to="{
-                   name: 'menu',
-                   }"
-              :exact="true"
-              class="navigation-item"
-              @click="handleHomeNavigation"
-              >
-              <template #icon>
-                  <component :is="NavigationIcons.Home" />
-              </template>
-      </NcAppNavigationItem>
+        <h3 class="navigation-caption">
+          {{ t('agora', 'Quick actions') }}
+        </h3>
+        <NcAppNavigationItem
+          :name="t('agora', 'Home')"
+          :to="{
+            name: 'menu',
+          }"
+          :exact="true"
+          class="navigation-item"
+          @click="handleHomeNavigation"
+        >
+          <template #icon>
+            <component :is="NavigationIcons.Home" />
+          </template>
+        </NcAppNavigationItem>
       </NcAppNavigationList>
     </template>
   </NcAppNavigation>

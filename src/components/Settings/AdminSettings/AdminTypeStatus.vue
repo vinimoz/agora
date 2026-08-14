@@ -140,7 +140,7 @@ const cancelEdit = () => {
 
     <div v-if="selectedType" class="status-management">
       <p class="description">
-        {{ t('agora', 'Manage statuses for this inquiry type Statuses define the workflow stages') }}
+        {{ t('agora', 'Manage statuses for this inquiry type. Statuses define the workflow stages') }}
       </p>
 
       <!-- Status list for current inquiry type -->
@@ -204,12 +204,12 @@ const cancelEdit = () => {
 
       <!-- Add new status form -->
       <div class="add-status-form">
-        <h3>{{ t('agora', 'Add New Status') }}</h3>
+        <h3>{{ t('agora', 'Add new status') }}</h3>
 
         <div class="form-grid">
           <NcInputField
             v-model="newStatus.statusKey"
-            :label="t('agora', 'Status Key')"
+            :label="t('agora', 'Status key')"
             :placeholder="t('agora', 'Enter unique status key')"
             required
           />
@@ -232,12 +232,12 @@ const cancelEdit = () => {
             v-model="newStatus.icon"
             :options="availableIcons"
             label="label"
-            :input-label="t('agora', 'Select Icon')"
+            :input-label="t('agora', 'Select icon')"
           />
 
           <div class="checkbox-field">
             <NcCheckboxRadioSwitch v-model="newStatus.isFinal" type="switch">
-              {{ t('agora', 'Final Status') }}
+              {{ t('agora', 'Final status') }}
             </NcCheckboxRadioSwitch>
             <p class="field-description">
               {{ t('agora', 'Final statuses cannot be changed once set') }}
@@ -249,7 +249,7 @@ const cancelEdit = () => {
             :disabled="!newStatus.statusKey || !newStatus.label"
             @click="addStatus"
           >
-            {{ t('agora', 'Add Status') }}
+            {{ t('agora', 'Add status') }}
           </NcButton>
         </div>
       </div>
@@ -257,12 +257,12 @@ const cancelEdit = () => {
       <!-- Edit status modal -->
       <div v-if="editingStatus" class="modal-overlay">
         <div class="modal-content">
-          <h3>{{ t('agora', 'Edit Status') }}</h3>
+          <h3>{{ t('agora', 'Edit status') }}</h3>
 
           <div class="form-grid">
             <NcInputField
               v-model="editingStatus.statusKey"
-              :label="t('agora', 'Status Key')"
+              :label="t('agora', 'Status key')"
               :placeholder="t('agora', 'Enter unique status key')"
               required
             />
@@ -285,12 +285,12 @@ const cancelEdit = () => {
               v-model="editingStatus.icon"
               :options="availableIcons"
               label="label"
-              :input-label="t('agora', 'Select Icon')"
+              :input-label="t('agora', 'Select icon')"
             />
 
             <div class="checkbox-field">
               <NcCheckboxRadioSwitch v-model="editingStatus.isFinal" type="switch">
-                {{ t('agora', 'Final Status') }}
+                {{ t('agora', 'Final status') }}
               </NcCheckboxRadioSwitch>
               <p class="field-description">
                 {{ t('agora', 'Final statuses cannot be changed once set') }}
@@ -307,7 +307,7 @@ const cancelEdit = () => {
               :disabled="!editingStatus.statusKey || !editingStatus.label"
               @click="saveUpdateStatus"
             >
-              {{ t('agora', 'Save Changes') }}
+              {{ t('agora', 'Save changes') }}
             </NcButton>
           </div>
         </div>

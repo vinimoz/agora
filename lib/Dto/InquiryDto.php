@@ -16,9 +16,10 @@ class InquiryDto implements JsonSerializable
     public function __construct(
         public string $title,
         public string $type,
+        public string $family,
         public string $ownedGroup,
         public ?string $description = '',
-        public ?int $parentId = 0,
+        public ?int $parentId = null,
         public ?int $locationId = 0,
         public ?int $categoryId = 0,
         public ?array $miscFields = [],
@@ -38,9 +39,10 @@ class InquiryDto implements JsonSerializable
         return new self(
             $data['title'],
             $data['type'],
+            $data['family'],
             $data['ownedGroup'] ?? '',
             $data['description'] ?? '',
-            $data['parentId'] ?? 0,
+            $data['parentId'] ?? null,
             $data['locationId'] ?? 0,
             $data['categoryId'] ?? 0,
             $data['miscFields'] ?? [],
@@ -52,6 +54,7 @@ class InquiryDto implements JsonSerializable
         return [
             'title' => $this->title,
             'type' => $this->type->value,
+            'family' => $this->type->family,
             'ownedGroup' => $this->ownedGroup,
             'description' => $this->description,
             'parentId' => $this->parentId,
@@ -75,6 +78,7 @@ class InquiryDto implements JsonSerializable
         return [
         'title' => $this->title,
         'type' => $this->type,
+        'family' => $this->family,
         'ownedGroup' => $this->ownedGroup,
         'description' => $this->description,
         'parent_id' => $this->parentId,

@@ -19,6 +19,6 @@ const inquiryStore = useInquiryStore()
 		v-model="inquiryStore.configuration.allowComment"
 		type="switch"
 		@update:model-value="emit('change')">
-		{{ t('agora', 'Allow Comments') }}
+		{{ t('agora', 'Allow comments') }}
 	</NcCheckboxRadioSwitch>
 </template>

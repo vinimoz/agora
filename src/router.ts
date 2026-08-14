@@ -86,8 +86,8 @@ async function validateToken(to: RouteLocationNormalized, from: RouteLocationNor
   }
 
   // finally load the inquiry
-  const inquiryStore = useInquiryStore()
-  inquiryStore.load()
+   const inquiryStore = useInquiryStore()
+   inquiryStore.load()
 }
 
 const routes: RouteRecordRaw[] = [

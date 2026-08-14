@@ -1673,3 +1673,377 @@ export async function clearTimelineDates(
     throw error
   }
 }
+
+// SPECIAL FOR PAIRED OPTION FAMILY
+// /////////////////////////////////
+// ////////////////////////////////
+
+
+/**
+ * Smart detection of paired option types
+ * Uses multiple strategies to find pairs
+ * @param optionTypes
+ * @param family
+ */
+export function detectPairedOptionTypes(
+  optionTypes: InquiryOptionType[],
+  family?: string
+): Array<{ left: string, right: string, label: string }> {
+  const pairs: Array<{ left: string, right: string, label: string }> = []
+
+  // Strategy 1: Based on naming conventions
+  const namingPairs = detectPairsByNaming(optionTypes, family)
+  pairs.push(...namingPairs)
+
+  // Strategy 2: Based on allowed_response relationships
+  const responsePairs = detectPairsByResponses(optionTypes, family)
+  pairs.push(...responsePairs)
+
+  // Strategy 3: Based on family-specific patterns
+  const familyPairs = detectPairsByFamily(optionTypes, family)
+  pairs.push(...familyPairs)
+
+  // Remove duplicates
+  return deduplicatePairs(pairs)
+}
+
+/**
+ * Strategy 1: Detect pairs by naming convention
+ * e.g., position_for ↔ position_against, argument_for ↔ argument_against
+ * @param optionTypes
+ * @param family
+ */
+function detectPairsByNaming(
+  optionTypes: InquiryOptionType[],
+  family?: string
+): Array<{ left: string, right: string, label: string }> {
+  const pairs: Array<{ left: string, right: string, label: string }> = []
+  const processed = new Set<string>()
+
+  // Common prefixes that indicate pairs
+  const pairPrefixes = ['position_', 'argument_', 'vote_', 'poll_']
+
+  // Common suffixes that indicate opposites
+  const opposites: Record<string, string> = {
+    'for': 'against',
+    'yes': 'no',
+    'pro': 'contra',
+    'support': 'oppose',
+    'agree': 'disagree',
+    'approve': 'reject',
+    'accept': 'decline'
+  }
+
+  for (const type of optionTypes) {
+  // eslint-disable-next-line 
+    if (family && type.family !== family) continue
+  // eslint-disable-next-line 
+    if (processed.has(type.option_type)) continue
+
+    const typeName = type.option_type
+
+    // Check each prefix
+    for (const prefix of pairPrefixes) {
+      if (typeName.startsWith(prefix)) {
+        const suffix = typeName.replace(prefix, '')
+
+        // Check if suffix has an opposite
+        for (const [key, value] of Object.entries(opposites)) {
+          if (suffix === key) {
+            const pairedName = prefix + value
+            const pairedType = optionTypes.find(t => t.option_type === pairedName)
+            if (pairedType) {
+              pairs.push({
+                left: typeName,
+                right: pairedName,
+                label: type.family || 'Options'
+              })
+              processed.add(typeName)
+              processed.add(pairedName)
+            }
+          }
+        }
+        break
+      }
+    }
+  }
+
+  return pairs
+}
+
+/**
+ * Strategy 2: Detect pairs by allowed_response relationships
+ * If A has B in allowed_response AND B has A in allowed_response, they're paired
+ * @param optionTypes
+ * @param family
+ */
+function detectPairsByResponses(
+  optionTypes: InquiryOptionType[],
+  family?: string
+): Array<{ left: string, right: string, label: string }> {
+  const pairs: Array<{ left: string, right: string, label: string }> = []
+  const processed = new Set<string>()
+
+  for (const type of optionTypes) {
+  // eslint-disable-next-line 
+    if (family && type.family !== family) continue
+  // eslint-disable-next-line 
+    if (processed.has(type.option_type)) continue
+
+    const allowed = type.allowed_response || []
+    for (const responseType of allowed) {
+      // Check if the response type also has this type in its allowed_response
+      const responseTypeDef = optionTypes.find(t => t.option_type === responseType)
+      if (responseTypeDef && responseTypeDef.allowed_response?.includes(type.option_type)) {
+        // This is a mutual relationship - they're paired
+        pairs.push({
+          left: type.option_type,
+          right: responseType,
+          label: type.family || 'Options'
+        })
+        processed.add(type.option_type)
+        processed.add(responseType)
+        break
+      }
+    }
+  }
+
+  return pairs
+}
+
+/**
+ * Strategy 3: Family-specific patterns
+ * @param optionTypes
+ * @param family
+ */
+function detectPairsByFamily(
+  optionTypes: InquiryOptionType[],
+  family?: string
+): Array<{ left: string, right: string, label: string }> {
+  const pairs: Array<{ left: string, right: string, label: string }> = []
+
+  const familyPatterns: Record<string, Array<{ left: string, right: string }>> = {
+    'debate': [
+      { left: 'position_for', right: 'position_against' },
+      { left: 'argument_for', right: 'argument_against' }
+    ],
+    'vote': [
+      { left: 'candidate', right: 'official_result' }
+    ],
+    'proposal': [
+      { left: 'proposal', right: 'amendment' }
+    ],
+    'structure': [
+      { left: 'chapter', right: 'section' },
+      { left: 'section', right: 'article' },
+      { left: 'article', right: 'amendment' }
+    ],
+    'workflow': [
+      { left: 'workflow_item', right: 'workflow_blocker' }
+    ],
+    'decision': [
+      { left: 'proposal', right: 'official_result' }
+    ],
+    'process': [
+      { left: 'process_phase', right: 'process_event' },
+      { left: 'process_event', right: 'milestone' }
+    ],
+    'official': [
+      { left: 'official', right: 'official_summary' }
+    ],
+    'administrative': [
+      { left: 'admin_request', right: 'official' }
+    ],
+    'service': [
+      { left: 'service_request', right: 'official' }
+    ],
+    'oversight': [
+      { left: 'investigation_request', right: 'official' }
+    ],
+    'legislative': [
+      { left: 'law_proposal', right: 'amendment' }
+    ],
+    'collective': [
+      { left: 'consultation_question', right: 'poll_option' }
+    ],
+    'consensus': [
+      { left: 'consultation_question', right: 'objection' },
+      { left: 'objection', right: 'exception' }
+    ]
+  }
+
+  // Use family-specific patterns if provided
+  const patterns = family ? familyPatterns[family] || [] : []
+
+  for (const pattern of patterns) {
+    const leftExists = optionTypes.some(t => t.option_type === pattern.left)
+    const rightExists = optionTypes.some(t => t.option_type === pattern.right)
+
+    if (leftExists && rightExists) {
+      pairs.push({
+        left: pattern.left,
+        right: pattern.right,
+        label: family || 'Options'
+      })
+    }
+  }
+
+  return pairs
+}
+
+/**
+ * Remove duplicate pairs
+ * @param pairs
+ */
+function deduplicatePairs(
+  pairs: Array<{ left: string, right: string, label: string }>
+): Array<{ left: string, right: string, label: string }> {
+  const seen = new Set<string>()
+  const result: Array<{ left: string, right: string, label: string }> = []
+
+  for (const pair of pairs) {
+    const key = [pair.left, pair.right].sort().join('|')
+    if (!seen.has(key)) {
+      seen.add(key)
+      result.push(pair)
+    }
+  }
+
+  return result
+}
+
+/**
+ * Get all root option types for a family
+ * @param optionTypes
+ * @param family
+ */
+export function getRootOptionTypesForFamily(
+  optionTypes: InquiryOptionType[],
+  family?: string
+): InquiryOptionType[] {
+  const types = family
+    ? optionTypes.filter(t => t.family === family)
+    : optionTypes
+
+  const pairedTypes = new Set<string>()
+  const pairs = detectPairedOptionTypes(optionTypes, family)
+
+  for (const pair of pairs) {
+    pairedTypes.add(pair.left)
+    pairedTypes.add(pair.right)
+  }
+
+  return types.filter(type => {
+    // Root if it's part of a pair OR not a child of anything
+    if (pairedTypes.has(type.option_type)) return true
+
+    const isChildOfSomething = optionTypes.some(parent =>
+      parent.allowed_response?.includes(type.option_type) ?? false
+    )
+    return !isChildOfSomething
+  })
+}
+
+/**
+ * Get all options for a specific target ID that belong to a specific family
+ * @param options - All options
+ * @param familyKey - The family key (e.g., 'debate', 'structure')
+ * @param targetId - The target ID (inquiry ID)
+ * @return Filtered options
+ */
+export function getFamilyOptionsByTarget(
+    options: Option[],
+    familyKey: string,
+    targetId: number
+): Option[] {
+    // Filter options by:
+    // 1. targetId matches the inquiry ID
+    // 2. family matches the family key
+    return options.filter(option =>
+        option.targetId === targetId &&
+        option.family === familyKey
+    )
+}
+
+
+/**
+ * Get all root options for a specific family and target ID
+ * @param options - All options
+ * @param optionTypes - All option types
+ * @param familyKey - The family key
+ * @param targetId - The target ID (inquiry ID)
+ * @return Root options (no parent)
+ */
+export function getFamilyRootOptionsByTarget(
+    options: Option[],
+    optionTypes: InquiryOptionType[],
+    familyKey: string,
+    targetId: number
+): Option[] {
+    const familyOptions = getFamilyOptionsByTarget(options, optionTypes, familyKey, targetId)
+    return familyOptions.filter(opt => !opt.parentId || opt.parentId === 0)
+}
+
+/**
+ * Get all child options for a specific family, target ID, and parent
+ * @param options - All options
+ * @param optionTypes - All option types
+ * @param familyKey - The family key
+ * @param targetId - The target ID (inquiry ID)
+ * @param parentId - The parent option ID
+ * @return Child options
+ */
+export function getFamilyChildOptionsByTarget(
+    options: Option[],
+    optionTypes: InquiryOptionType[],
+    familyKey: string,
+    targetId: number,
+    parentId: number
+): Option[] {
+    const familyOptions = getFamilyOptionsByTarget(options, optionTypes, familyKey, targetId)
+    return familyOptions.filter(opt => opt.parentId === parentId)
+}
+
+/**
+ * Get options count by family and target ID
+ * @param options - All options
+ * @param optionTypes - All option types
+ * @param targetId - The target ID (inquiry ID)
+ * @return Record with family keys as keys and option counts as values
+ */
+export function getOptionsCountByFamilyAndTarget(
+    options: Option[],
+    optionTypes: InquiryOptionType[],
+    targetId: number
+): Record<string, number> {
+    const counts: Record<string, number> = {}
+
+    // Filter options by targetId first
+    const targetOptions = options.filter(opt => opt.targetId === targetId)
+
+    targetOptions.forEach(option => {
+        const family = getOptionTypeFamily(option.type, optionTypes)
+        counts[family] = (counts[family] || 0) + 1
+    })
+
+    return counts
+}
+
+/**
+ * Check if an option belongs to a specific family and target
+ * @param option - The option to check
+ * @param optionTypes - All option types
+ * @param familyKey - The family key
+ * @param targetId - The target ID
+ * @return boolean
+ */
+export function isOptionInFamilyAndTarget(
+    option: Option,
+    optionTypes: InquiryOptionType[],
+    familyKey: string,
+    targetId: number
+): boolean {
+    const optionFamily = getOptionTypeFamily(option.type, optionTypes)
+    return optionFamily === familyKey && option.targetId === targetId
+}
+

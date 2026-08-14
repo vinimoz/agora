@@ -1,3 +1,8 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
 <!--
     SPDX-FileCopyrightText: 2024 Nextcloud contributors
 -->
@@ -7,7 +12,7 @@
             <!-- Left sidebar - Table of Contents -->
             <div class="table-of-contents">
                 <div class="toc-header">
-                    <h3>{{ t('agora', 'Table of Contents') }}</h3>
+                    <h3>{{ t('agora', 'Table of contents') }}</h3>
                 </div>
                 <div class="toc-list">
                     <!-- Show only structure family options (2 levels max) -->

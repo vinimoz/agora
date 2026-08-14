@@ -49,15 +49,15 @@ const launchWizard = () => {
 
 const sections = {
   cleanInstance: {
-    name: t('agora', 'Agora Clean Instance'),
-    description: t('agora', 'Destroy ALL your Agora data'),
+    name: t('agora', 'Agora clean instance'),
+    description: t('agora', 'Destroy all your agora data'),
   },
   templateSetup: {
-    name: t('agora', 'Template Setup Wizard'),
-    description: t('agora', 'Configure your Agora instance using pre-built templates'),
+    name: t('agora', 'Template setup wizard'),
+    description: t('agora', 'Configure your agora instance using pre-built templates'),
   },
   inquiryCategoryLocation: {
-    name: t('agora', 'Categories and Locations Management'),
+    name: t('agora', 'Categories and locations management'),
     description: t('agora', 'Change globally location and category (for all accounts)'),
   },
   inquirySettings: {
@@ -138,11 +138,11 @@ onMounted(async () => {
 		<NcSettingsSection>
 		<!-- Template Setup Wizard Section -->
 		<NcSettingsSection v-bind="sections.templateSetup">
-			<p>{{ t('agora', 'Use the setup wizard to quickly configure your Agora instance with pre-built templates for citizen participation, enterprise, or education use cases.') }}</p>
+			<p>{{ t('agora', 'Use the setup wizard to quickly configure your agora instance with pre-built templates for citizen participation, enterprise, or education use cases.') }}</p>
 			<NcButton
 				type="primary"
 				@click="launchWizard">
-				{{ t('agora', 'Launch Setup Wizard') }}
+				{{ t('agora', 'Launch setup wizard') }}
 			</NcButton>
 		</NcSettingsSection>
 

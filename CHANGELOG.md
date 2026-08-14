@@ -1,10 +1,23 @@
-<!--
-  - SPDX-FileCopyrightText: 2017 Nextcloud contributors
-  - SPDX-License-Identifier: CC0-1.0
--->
-
 # Changelog
 All notable changes to this project will be documented in this file.
+# [1.7.7] - 2026-08-07
+Fix: 
+    - Deletion redirect of an inquiry
+    - Deletion an option
+    - Debate creation
+    - Navigation Ux at inquiry creation
+
+Improvement:
+    - Debate UI
+    - Consensus UI
+    - Template.  
+    
+# [1.7.6] - 2026-07-17
+Nc34 support and fix i18n
+
+# [1.7.5] - 2026-06-28
+New vote/support feature: Majority judgement, Condorcet, score, etc.
+
 # [1.7.3] - 2026-06-8
 Fix: TableManager: createSchemaManager and fix bug binary for support in migration from allow_support to support_feature.
 

@@ -36,7 +36,7 @@ const inquiriesStore = useInquiriesStore()
  */
  function loadSessionStore(): void {
   try {
-    sessionStore.load(null, false, false) // Ou sessionStore.load() si pas besoin de paramètres
+    sessionStore.load(null, false, false) 
   } catch {
     showError(t('agora', 'Error setting dashboard list'))
   }

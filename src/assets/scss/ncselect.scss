@@ -1,0 +1,359 @@
+/*!
+ * SPDX-FileCopyrightText: 2020 René Gieling <github@dartcafe.de>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+/* src/css/global.css */
+
+.sticky-left {
+  position: sticky;
+  left: 0;
+  z-index: 5;
+}
+
+.sticky-top {
+  --shadow-height: 10px;
+  position: sticky;
+  top: 0;
+  z-index: 4;
+  padding-bottom: 0px;
+  margin-bottom: var(--shadow-height);
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: -1px;
+    right: 0;
+    height: 0px;
+    background: linear-gradient(
+      to bottom,
+      rgba(var(--color-box-shadow-rgb), 0.3),
+      rgba(var(--color-box-shadow-rgb), 0)
+    );
+    transition:
+      all var(--animation-slow) linear,
+      border 1ms;
+  }
+
+  &.sticky-bottom-shadow {
+    border-top: 0;
+    padding-bottom: var(--shadow-height);
+    margin-bottom: 0;
+    &::after {
+      height: var(--shadow-height);
+    }
+  }
+}
+
+.nc-counter-bubble {
+  border-radius: 12px !important;
+  min-width: auto !important;
+  padding: 0 6px !important;
+  background: transparent !important;
+}
+
+/* ============================================================
+   GLOBAL NCSELECT STYLES - IMPROVED
+   ============================================================ */
+
+.v-select {
+  .vs__dropdown-toggle {
+    background: var(--color-main-background) !important;
+    border: 2px solid var(--color-border) !important;
+    border-radius: 12px !important;
+    padding: 4px 10px !important;
+    min-height: 44px !important;
+    transition: all 0.2s ease !important;
+
+    &:hover {
+      border-color: var(--color-primary-element) !important;
+    }
+
+    &:focus-within {
+      border-color: var(--color-primary-element) !important;
+      box-shadow: 0 0 0 3px rgba(var(--color-primary-element-rgb), 0.15) !important;
+    }
+  }
+
+  .vs__selected {
+    color: var(--color-main-text) !important;
+    font-weight: 500 !important;
+    font-size: 14px !important;
+    line-height: 1.4 !important;
+    margin: 2px 4px !important;
+    padding: 2px 10px !important;
+    background: var(--color-background-dark) !important;
+    border-radius: 8px !important;
+  }
+
+  .vs__search,
+  .vs__search:focus {
+    color: var(--color-main-text) !important;
+    font-size: 14px !important;
+    padding: 2px 4px !important;
+    margin: 0 !important;
+    min-height: 30px !important;
+  }
+
+  .vs__dropdown-menu {
+    background: var(--color-main-background) !important;
+    border: 2px solid var(--color-border) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12) !important;
+    padding: 8px 0 !important;
+    max-height: 320px !important;
+    overflow-y: auto !important;
+    z-index: 9999 !important;
+    margin-top: 6px !important;
+    // IMPORTANT: Position absolute for proper overflow
+    position: absolute !important;
+    width: 100% !important;
+    min-width: 200px !important;
+
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: var(--color-background-dark);
+      border-radius: 0 12px 12px 0;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: var(--color-border);
+      border-radius: 3px;
+
+      &:hover {
+        background: var(--color-primary-element);
+      }
+    }
+  }
+
+  .vs__dropdown-option {
+    color: var(--color-main-text) !important;
+    padding: 10px 16px !important;
+    font-size: 14px !important;
+    line-height: 1.4 !important;
+    transition: all 0.15s ease !important;
+    cursor: pointer !important;
+
+    &--highlight {
+      background: var(--color-primary-light) !important;
+      color: var(--color-primary-element) !important;
+    }
+
+    &:hover:not(.vs__dropdown-option--highlight) {
+      background: var(--color-background-hover) !important;
+    }
+  }
+
+  .vs__actions {
+    padding: 0 4px !important;
+
+    .vs__clear {
+      fill: var(--color-text-maxcontrast) !important;
+      padding: 4px !important;
+
+      &:hover {
+        fill: var(--color-error) !important;
+      }
+    }
+
+    .vs__open-indicator {
+      fill: var(--color-text-maxcontrast) !important;
+
+      &:hover {
+        fill: var(--color-primary-element) !important;
+      }
+    }
+  }
+
+  &.vs--disabled {
+    .vs__dropdown-toggle {
+      background: var(--color-background-dark) !important;
+      border-color: var(--color-border) !important;
+      opacity: 0.7 !important;
+      cursor: not-allowed !important;
+    }
+
+    .vs__selected {
+      background: var(--color-background-hover) !important;
+    }
+  }
+
+  .vs__spinner {
+    border-color: var(--color-primary-element) !important;
+    border-top-color: transparent !important;
+  }
+}
+
+/* ============================================================
+   RESPONSIVE NCSELECT - PREVENT OVERFLOW
+   ============================================================ */
+
+@media (max-width: 768px) {
+  .v-select {
+    .vs__dropdown-toggle {
+      min-height: 38px !important;
+      padding: 2px 8px !important;
+      border-radius: 10px !important;
+    }
+
+    .vs__selected {
+      font-size: 13px !important;
+      padding: 2px 8px !important;
+    }
+
+    .vs__search,
+    .vs__search:focus {
+      font-size: 13px !important;
+      min-height: 28px !important;
+    }
+
+    .vs__dropdown-option {
+      padding: 8px 14px !important;
+      font-size: 13px !important;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .v-select {
+    .vs__dropdown-toggle {
+      min-height: 36px !important;
+      padding: 0 6px !important;
+      border-radius: 8px !important;
+    }
+
+    .vs__selected {
+      font-size: 12px !important;
+      padding: 2px 6px !important;
+      margin: 1px 2px !important;
+    }
+
+    .vs__search,
+    .vs__search:focus {
+      font-size: 12px !important;
+      min-height: 26px !important;
+    }
+
+    .vs__dropdown-option {
+      padding: 6px 12px !important;
+      font-size: 12px !important;
+    }
+  }
+}
+
+/* ============================================================
+   FIX FOR CONTAINERS WITH OVERFLOW HIDDEN
+   ============================================================ */
+
+/* Allow dropdowns to overflow their containers */
+.metadata-section,
+.participation-section,
+.config-panel,
+.sidebar-participation {
+  overflow: visible !important;
+  position: relative !important;
+  z-index: 1 !important;
+
+  .v-select {
+    position: relative !important;
+    z-index: 20 !important;
+  }
+}
+
+/* Ensure metadata items don't clip dropdowns */
+.metadata-item,
+.participation-section .config-group {
+  overflow: visible !important;
+  position: relative !important;
+  z-index: 10 !important;
+}
+
+/* Specific fix for the metadata grid */
+.metadata-grid {
+  overflow: visible !important;
+  position: relative !important;
+}
+
+/* ============================================================
+   DARK THEME SUPPORT
+   ============================================================ */
+
+.theme-dark {
+  .v-select {
+    .vs__dropdown-toggle {
+      background: var(--color-main-background) !important;
+      border-color: var(--color-border) !important;
+    }
+
+    .vs__selected {
+      background: var(--color-background-dark) !important;
+      color: var(--color-main-text) !important;
+    }
+
+    .vs__dropdown-menu {
+      background: var(--color-main-background) !important;
+      border-color: var(--color-border) !important;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+    }
+
+    .vs__dropdown-option {
+      color: var(--color-main-text) !important;
+
+      &--highlight {
+        background: var(--color-primary-light) !important;
+        color: var(--color-primary-element) !important;
+      }
+
+      &:hover:not(.vs__dropdown-option--highlight) {
+        background: var(--color-background-hover) !important;
+      }
+    }
+
+    .vs__actions {
+      .vs__clear {
+        fill: var(--color-text-maxcontrast) !important;
+
+        &:hover {
+          fill: var(--color-error) !important;
+        }
+      }
+
+      .vs__open-indicator {
+        fill: var(--color-text-maxcontrast) !important;
+
+        &:hover {
+          fill: var(--color-primary-element) !important;
+        }
+      }
+    }
+
+    &.vs--disabled {
+      .vs__dropdown-toggle {
+        background: var(--color-background-dark) !important;
+        border-color: var(--color-border) !important;
+        opacity: 0.6 !important;
+      }
+    }
+  }
+}
+
+/* ============================================================
+   ACCESSIBILITY
+   ============================================================ */
+
+.v-select {
+  .vs__dropdown-toggle:focus-visible {
+    outline: 3px solid var(--color-primary-element) !important;
+    outline-offset: 2px !important;
+    border-color: transparent !important;
+  }
+
+  .vs__dropdown-option:focus-visible {
+    outline: 2px solid var(--color-primary-element) !important;
+    outline-offset: -2px !important;
+    border-radius: 4px !important;
+  }
+}

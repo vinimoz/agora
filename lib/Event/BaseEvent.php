@@ -15,6 +15,7 @@ use OCA\Agora\Db\UserMapper;
 use OCA\Agora\Db\Support;
 use OCA\Agora\Helper\Container;
 use OCA\Agora\UserSession;
+use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\EventDispatcher\Event;
 
 abstract class BaseEvent extends Event
@@ -23,48 +24,59 @@ abstract class BaseEvent extends Event
     protected ?string $eventId = null;
     protected array $activitySubjectParams = [];
     protected bool $log = true;
-    protected Inquiry $inquiry;
-    protected Option $option;
+    protected ?Inquiry $inquiry = null;  // Nullable to support Option events without inquiry
     protected UserMapper $userMapper;
     protected UserSession $userSession;
-
 
     public function __construct(
         protected Inquiry|Comment|Share|Option|Support $eventObject,
         protected bool $loadInquiry = false
     ) {
         parent::__construct();
-        try {
-            $this->inquiry = Container::getInquiry($this->getInquiryId(), true);
-        } catch (DoesNotExistException $e) {
-            throw new \Exception("Inquiry not found: " . $this->getInquiryId());
-        }
-
+        
         $this->userMapper = Container::queryClass(UserMapper::class);
         $this->userSession = Container::queryClass(UserSession::class);
 
-        // Default
-        $this->activitySubjectParams['inquiry'] = [
-        'type' => 'highlight',
-        'id' => (string)$this->eventObject->getInquiryId(),
-        'name' => $this->inquiry->getTitle(),
-        'link' => $this->inquiry->getInquiryUrl(),
-        ];
+        $inquiryId = $this->getInquiryId();
+        
+        if ($inquiryId > 0) {
+            try {
+                $this->inquiry = Container::getInquiry($inquiryId, true);
+            } catch (DoesNotExistException $e) {
+                $this->inquiry = null;
+            }
+        }
+
+        // Set default inquiry params if inquiry exists
+        if ($this->inquiry !== null) {
+            $this->activitySubjectParams['inquiry'] = [
+                'type' => 'highlight',
+                'id' => (string)$inquiryId,
+                'name' => $this->inquiry->getTitle(),
+                'link' => $this->inquiry->getInquiryUrl(),
+            ];
+        }
     }
 
     public function getInquiryId(): int
     {
-        return $this->eventObject->getInquiryId() ?? 0;
+        if ($this->eventObject instanceof Option) {
+            return $this->eventObject->getTargetId() ?? 0;
+        }
+        if (method_exists($this->eventObject, 'getInquiryId')) {
+            return $this->eventObject->getInquiryId() ?? 0;
+        }
+        return 0;
     }
 
     public function getInquiryTitle(): string
     {
-        return $this->inquiry->getTitle();
+        return $this->inquiry?->getTitle() ?? '';
     }
 
     public function getInquiryOwner(): string
     {
-        return $this->inquiry->getOwner();
+        return $this->inquiry?->getOwner() ?? '';
     }
 
     public function getActor(): string
@@ -72,7 +84,10 @@ abstract class BaseEvent extends Event
         if ($this->userSession->getCurrentUserId() !== '') {
             return $this->userSession->getCurrentUserId();
         }
-        return $this->eventObject->getUserId();
+        if (method_exists($this->eventObject, 'getUserId')) {
+            return $this->eventObject->getUserId();
+        }
+        return '';
     }
 
     public function getLogId(): string
@@ -96,9 +111,12 @@ abstract class BaseEvent extends Event
     public function getActivityObjectId(): int
     {
         if ($this->activityObjectType === 'inquiry') {
-            return $this->eventObject->getInquiryId() ?? 0;
+            return $this->getInquiryId();
         }
-        return $this->eventObject->getId();
+        if (method_exists($this->eventObject, 'getId')) {
+            return $this->eventObject->getId();
+        }
+        return 0;
     }
 
     public function getActivityType(): ?string

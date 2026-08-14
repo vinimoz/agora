@@ -31,12 +31,12 @@ const getIconComponent = (iconName) => InquiryGeneralIcons[iconName] || InquiryG
 const settingsTabs = [
   { 
     id: 'user-rights', 
-    label: t('agora', 'Inquiry Features'), 
+    label: t('agora', 'Inquiry features'), 
     component: AdminTypeRights,
   },
   { 
     id: 'status', 
-    label: t('agora', 'Inquiry Status'), 
+    label: t('agora', 'Inquiry status'), 
     component: AdminTypeStatus,
   },
 ]

@@ -12,7 +12,7 @@ import { NcLoadingIcon } from '@nextcloud/vue'
 	<div class="importing-step">
 		<div class="importing-content">
 			<NcLoadingIcon :size="80" />
-			<h2>{{ t('agora', 'Importing Template') }}</h2>
+			<h2>{{ t('agora', 'Importing template') }}</h2>
 			<p class="importing-message">
 				{{ t('agora', 'Please wait while the template is being imported …') }}
 			</p>

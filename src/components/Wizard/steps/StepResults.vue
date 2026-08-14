@@ -36,10 +36,10 @@ const closeWizard = () => {
 			<div v-else class="warning-icon">⚠</div>
 
 			<h2 v-if="!hasErrors">
-				{{ t('agora', 'Import Complete!') }}
+				{{ t('agora', 'Import complete!') }}
 			</h2>
 			<h2 v-else>
-				{{ t('agora', 'Import Completed with Warnings') }}
+				{{ t('agora', 'Import completed with warnings') }}
 			</h2>
 		</div>
 
@@ -47,7 +47,7 @@ const closeWizard = () => {
 			<!-- Success Items -->
 			<div v-if="hasSuccess" class="result-section success-section">
 				<h3>
-					✅ {{ t('agora', 'Successfully Created') }}
+					✅ {{ t('agora', 'Successfully created') }}
 					({{ importResult.success.length }} {{ t('agora', 'items') }})
 				</h3>
 				<ul class="result-list">
@@ -60,7 +60,7 @@ const closeWizard = () => {
 			<!-- Skipped Items -->
 			<div v-if="hasSkipped" class="result-section skipped-section">
 				<h3>
-					⏭️ {{ t('agora', 'Skipped - Already Exist') }}
+					⏭️ {{ t('agora', 'Skipped - already exist') }}
 					({{ importResult.skipped.length }} {{ t('agora', 'items') }})
 				</h3>
 				<ul class="result-list">
@@ -73,7 +73,7 @@ const closeWizard = () => {
 			<!-- Failed Items -->
 			<div v-if="hasErrors" class="result-section error-section">
 				<h3>
-					❌ {{ t('agora', 'Failed to Process') }}
+					❌ {{ t('agora', 'Failed to process') }}
 					({{ importResult.failed.length }} {{ t('agora', 'items') }})
 				</h3>
 				<ul class="result-list">
@@ -87,10 +87,10 @@ const closeWizard = () => {
 		<!-- Action Buttons -->
 		<div class="results-actions">
 			<NcButton type="primary" @click="goToAgora">
-				{{ t('agora', 'Go to Agora') }}
+				{{ t('agora', 'Go to agora') }}
 			</NcButton>
 			<NcButton type="secondary" @click="goToSettings">
-				{{ t('agora', 'Administration Settings') }}
+				{{ t('agora', 'Administration settings') }}
 			</NcButton>
 			<NcButton type="tertiary" @click="closeWizard">
 				{{ t('agora', 'Close') }}

@@ -21,7 +21,7 @@ const settingsModalOpen = ref(false)
 // Navigation breadcrumb
 const breadcrumb = computed(() => {
   const items = [
-    { label: t('agora', 'Inquiry Families'), view: 'families' }
+    { label: t('agora', 'Inquiry families'), view: 'families' }
   ]
   
   if (selectedFamily.value) {

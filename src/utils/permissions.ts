@@ -850,7 +850,7 @@ export function canDelete(context: PermissionContext): boolean {
     if (context.isDeleted) return false
 
         // Check moderation status restrictions
-        if (context.moderationStatus === 'rejected' || context.moderationStatus === 'pending') {
+        if (context.moderationStatus === 'pending') {
             return false
         }
 
@@ -949,6 +949,11 @@ export function canArchive(context: PermissionContext): boolean {
                 return true
             }
 
+	    // Check moderation status restrictions
+           if (context.moderationStatus === 'rejected' || context.moderationStatus === 'pending') {
+   	         return true
+         	}
+
             // Group editors can archive
             const sessionStore = useSessionStore()
             if (sessionStore.currentUser.isGroupEditor) {
@@ -968,7 +973,7 @@ export function canArchive(context: PermissionContext): boolean {
 
         // Check moderation status restrictions
         if (context.moderationStatus === 'rejected' || context.moderationStatus === 'pending') {
-            return false
+            return true
         }
 
         if (context.userType === UserType.Admin || context.isOwner) {

@@ -13,7 +13,7 @@ use OCA\Agora\Notification\Notifier;
 class InquiryDeletedEvent extends InquiryEvent
 {
     public function __construct(
-        protected Inquiry $inquiry,
+        Inquiry $inquiry,
     ) {
         parent::__construct($inquiry);
         $this->eventId = self::DELETE;

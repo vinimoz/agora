@@ -194,11 +194,11 @@ const rootLocations = computed(() => locations.value.filter((item) => item.paren
 
       <div v-if="activeTab === 'categories'" class="tab-content">
         <div class="add-form">
-          <h3>{{ t('agora', 'Add New Category') }}</h3>
+          <h3>{{ t('agora', 'Add new category') }}</h3>
           <div class="form-fields">
             <NcInputField
               v-model="newCategory.name"
-              :label="t('agora', 'Category Name')"
+              :label="t('agora', 'Category name')"
               :placeholder="t('agora', 'Enter category name')"
             />
             <NcSelect
@@ -208,13 +208,13 @@ const rootLocations = computed(() => locations.value.filter((item) => item.paren
               :placeholder="t('agora', 'Select parent category')"
             />
             <NcButton type="primary" :disabled="!newCategory.name.trim()" @click="addCategory">
-              {{ t('agora', 'Add Category') }}
+              {{ t('agora', 'Add category') }}
             </NcButton>
           </div>
         </div>
 
         <div class="tree-view">
-          <h3>{{ t('agora', 'Categories Tree') }}</h3>
+          <h3>{{ t('agora', 'Categories tree') }}</h3>
           <div class="tree-container">
             <TreeItem
               v-for="item in rootCategories"
@@ -232,11 +232,11 @@ const rootLocations = computed(() => locations.value.filter((item) => item.paren
 
       <div v-if="activeTab === 'locations'" class="tab-content">
         <div class="add-form">
-          <h3>{{ t('agora', 'Add New Location') }}</h3>
+          <h3>{{ t('agora', 'Add new location') }}</h3>
           <div class="form-fields">
             <NcInputField
               v-model="newLocation.name"
-              :label="t('agora', 'Location Name')"
+              :label="t('agora', 'Location name')"
               :placeholder="t('agora', 'Enter location name')"
             />
             <NcSelect
@@ -246,13 +246,13 @@ const rootLocations = computed(() => locations.value.filter((item) => item.paren
               :placeholder="t('agora', 'Select parent location')"
             />
             <NcButton type="primary" :disabled="!newLocation.name.trim()" @click="addLocation">
-              {{ t('agora', 'Add Location') }}
+              {{ t('agora', 'Add location') }}
             </NcButton>
           </div>
         </div>
 
         <div class="tree-view">
-          <h3>{{ t('agora', 'Locations Tree') }}</h3>
+          <h3>{{ t('agora', 'Locations tree') }}</h3>
           <div class="tree-container">
             <TreeItem
               v-for="item in rootLocations"
@@ -279,8 +279,8 @@ const rootLocations = computed(() => locations.value.filter((item) => item.paren
             v-model="editingItem.name"
             :label="
               editingItem.type === 'category'
-                ? t('agora', 'Category Name')
-                : t('agora', 'Location Name')
+                ? t('agora', 'Category name')
+                : t('agora', 'Location name')
             "
           />
           <NcSelect

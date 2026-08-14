@@ -209,7 +209,7 @@ const loadInquiryData = async () => {
       <div v-if="isLoadedLocal" class="parent-section">
         <div class="section-header">
           <h2 class="section-title">
-            {{ t('agora', 'Main Inquiry') }}
+            {{ t('agora', 'Main inquiry') }}
           </h2>
         </div>
         <div class="parent-inquiry-wrapper">
@@ -228,7 +228,7 @@ const loadInquiryData = async () => {
     <!-- Children Header with View Mode Controls -->
     <div class="children-header">
       <h2 class="children-title">
-        {{ t('agora', 'Child Inquiries') }}
+        {{ t('agora', 'Child inquiries') }}
       </h2>
       
       <!-- View Mode Switcher for Children -->

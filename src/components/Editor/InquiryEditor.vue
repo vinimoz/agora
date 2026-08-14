@@ -249,8 +249,8 @@
         <!-- Word import -->
         <NcButton
           type="button"
-          :title="t('agora', 'Import Word document')"
-          :aria-label="t('agora', 'Import Word document')"
+          :title="t('agora', 'Import word document')"
+          :aria-label="t('agora', 'Import word document')"
           @click="importWord"
         >
           📄
@@ -265,8 +265,8 @@
 
         <!-- AI integration -->
         <NcAssistantButton 
-          :title="t('agora', 'Generate with AI')" 
-          :aria-label="t('agora', 'Generate with AI')" 
+          :title="t('agora', 'Generate with ai')" 
+          :aria-label="t('agora', 'Generate with ai')" 
           :disabled="aiLoading"
           @click="openAIModal"
         />
@@ -279,13 +279,13 @@
     </div>
 
     <!-- AI Modal using NcModal -->
-    <NcModal v-if="showAIModal" :name="t('agora', 'Generate content with AI')" @close="closeAIModal">
+    <NcModal v-if="showAIModal" :name="t('agora', 'Generate content with ai')" @close="closeAIModal">
       <NcAssistantContent>
         <div class="container">
           <NcAssistantIcon />
           <div class="content">
             <h3 class="heading">
-              {{ t('agora', 'Generate content with AI') }}
+              {{ t('agora', 'Generate content with ai') }}
             </h3>
             
             <div class="form-group">
@@ -293,7 +293,7 @@
               <NcTextField
                 id="ai-prompt"
                 v-model:value="aiPrompt"
-                :placeholder="t('agora', 'e.g. Write a professional introduction for a business inquiry about')"
+                :placeholder="t('agora', 'E.g. Write a professional introduction for a business inquiry about')"
                 type="textarea"
                 label="Prompt for AI"
                 :rows="4"
@@ -304,7 +304,7 @@
             <div v-if="aiGeneratedContent" class="ai-preview">
               <h3>{{ t('agora', 'Preview') }}</h3>
               <div class="preview-content">
-                <p>{{ t('agora', 'AI generated content is ready to be inserted') }}</p>
+                <p>{{ t('agora', 'Ai generated content is ready to be inserted') }}</p>
                 <div class="content-length">
                   {{ t('agora', 'Content length: {length} characters', { length: aiGeneratedContent.length }) }}
                 </div>
@@ -684,7 +684,7 @@ const handleWordImport = async (event) => {
     showSuccess(t('agora', 'Word document imported'))
   } catch (error) {
     console.error('Error importing Word document:', error)
-    showError(t('agora', 'Failed to import Word document'))
+    showError(t('agora', 'Failed to import word document'))
   } finally {
     event.target.value = ''
   }
@@ -729,7 +729,7 @@ const generateWithAI = async () => {
     showSuccess(t('agora', 'Content generated'))
   } catch (error) {
     console.error('AI generation failed:', error)
-    showError(t('agora', 'AI generation failed. Please try again'))
+    showError(t('agora', 'Ai generation failed. Please try again'))
   } finally {
     aiLoading.value = false
   }

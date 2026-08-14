@@ -95,28 +95,112 @@ const options = {
         })
     },
 
-    // Create a new option
-// Create a new option
-createOption(
-    data: {
-        title: string
-        type: string
+    createOption(
+        data: {
+            title: string
+            type: string
+            text: string
+            targetId?: number
+            parentId?: number
+            ownedGroup: string
+            owner: string
+            access?: string
+            status?: string
+            family?: string
+            supportFeature?: string
+            allowComment?: number
+            showResults?: string
+            miscFields?: Record<string, { key: string; value: string }>
+        }
+    ): Promise<AxiosResponse<{ option: Option }>> {
+        const requestData: Option = {
+            title: data.title,
+            type: data.type,
+            text: data.text,
+            targetId: data.targetId || 0,
+            parentId: data.parentId || 0,
+            ownedGroup: data.ownedGroup || '',
+            owner: data.owner || '',
+            access: data.access || 'private',
+            status: data.status || 'draft',
+            family: data.family || 'debate',
+            supportFeature: data.supportFeature || 'none',
+            allowComment: data.allowComment || 0,
+            showResults: data.showResults || 'always',
+        }
+
+        if (data.miscFields) {
+            requestData.miscFields = data.miscFields
+        }
+
+        return httpInstance.request({
+            method: 'POST',
+            url: 'option',
+            data: requestData,
+            cancelToken: cancelTokenHandlerObject[this.createOption.name]
+                .handleRequestCancellation().token,
+        })
+    },
+
+    toggleArchive(optionId: number): Promise<AxiosResponse<{ option: Option }>> {
+        // First get the option to check current state
+        return this.getOption(optionId).then(response => {
+            const option = response.data.option
+            if (option.status?.isArchived) {
+                return this.restoreOption(optionId)
+            } 
+                return this.archiveOption(optionId)
+            
+        })
+    },
+
+
+    addChildOption(parentId: number, data: {
         text: string
-        targetId?: number
-        parentId?: number
-        ownedGroup: string
-        owner: string
-        configuration?: OptionConfiguration
-    }
-): Promise<AxiosResponse<{ option: Option }>> {
-    return httpInstance.request({
-        method: 'POST',
-        url: 'option',
-        data,
-        cancelToken: cancelTokenHandlerObject[this.createOption.name]
-            .handleRequestCancellation().token,
-    })
-},
+        type: string
+        ownedGroup?: string
+        access?: string
+        status?: string
+        miscFields?: Record<string, { key: string; value: string }>
+    }): Promise<AxiosResponse<{ option: Option }>> {
+        return this.createOption({
+            title: '',
+            text: data.text,
+            type: data.type,
+            parentId,
+            ownedGroup: data.ownedGroup || '',
+            owner: '', // Will be set by backend
+            access: data.access || 'private',
+            status: data.status || 'draft',
+            miscFields: data.miscFields || {},
+        })
+    },
+
+    // Add closeOption (alias for archiveOption)
+    closeOption(optionId: number): Promise<AxiosResponse<{ option: Option }>> {
+        return this.archiveOption(optionId)
+    },
+
+    // Add reopenOption (alias for restoreOption)
+    reopenOption(optionId: number): Promise<AxiosResponse<{ option: Option }>> {
+        return this.restoreOption(optionId)
+    },
+
+    // Add submitOption (use applyAction)
+    submitOption(optionId: number, action: string): Promise<AxiosResponse<{ option: Option }>> {
+        return this.applyAction(optionId, action as OptionAction)
+    },
+
+    // Add getEnhancedText (AI enhancement)
+    getEnhancedText(text: string): Promise<AxiosResponse<{ enhancedText: string }>> {
+        return httpInstance.request({
+            method: 'POST',
+            url: 'option/enhance',
+            data: { text },
+            cancelToken: cancelTokenHandlerObject[this.getEnhancedText.name]
+                .handleRequestCancellation().token,
+        })
+    },
 
     // Update option
     updateOption(optionId: number, data: Option): Promise<AxiosResponse<{ option: Option }>> {

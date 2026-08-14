@@ -61,7 +61,7 @@ function validateLimit() {
       type="switch"
       @update:model-value="emit('change')"
     >
-      {{ t('agora', 'Hide unavailable Options') }}
+      {{ t('agora', 'Hide unavailable options') }}
     </NcCheckboxRadioSwitch>
   </div>
 </template>

@@ -28,7 +28,7 @@ const inquiryStore = useInquiryStore()
       type="switch"
       @update:model-value="emit('change')"
     >
-      {{ t('agora', 'Use Autoreminder') }}
+      {{ t('agora', 'Use autoreminder') }}
     </NcCheckboxRadioSwitch>
     <NcPopover :focus-trap="false">
       <template #trigger>

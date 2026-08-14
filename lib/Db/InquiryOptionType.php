@@ -50,7 +50,7 @@ class InquiryOptionType extends EntityWithUser implements JsonSerializable
     protected string $optionType = '';
     protected string $label = '';
     protected string $icon = '';
-    protected string $family = 'deliberative';
+    protected string $family = 'debate';
     protected ?string $description = null;
     protected ?array $fields = null;
     protected ?array $allowedResponse = null;
