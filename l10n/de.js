@@ -1420,6 +1420,7 @@ OC.L10N.register(
     "Failed to delete file" : "Die Datei konnte nicht gelöscht werden",
     "Failed to delete resource" : "Die Ressource konnte nicht gelöscht werden",
     "Linked resources" : "Verlinkte Ressourcen",
+    "Manage links to other Nextcloud resources and files" : "Links zu anderen Nextcloud-Ressourcen und -Dateien verwalten",
     "Add resource" : "Ressource hinzufügen",
     "Loading resources …" : "Lade Ressourcen …",
     "No linked resources" : "Keine verlinkten Ressourcen",
