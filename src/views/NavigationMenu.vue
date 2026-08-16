@@ -215,7 +215,7 @@ function navigateToFamilyInquiries(familyType: string) {
 function createInquiry(inquiryType: InquiryType,familyType: string) {
   selectedInquiryTypeForCreation.value = inquiryType
   selectedFamilyCreation.value = familyType
-  inquiriesStore.setFamily(familyType)
+  inquiriesStore.setFamilyType(familyType)
   createDlgToggle.value = true
 }
 

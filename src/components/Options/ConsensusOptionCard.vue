@@ -134,168 +134,173 @@
           <span v-if="participantCount > 0" class="stat">
             <component :is="InquiryOptionIcons.Users" :size="12" />
             {{ participantCount }} {{ t('agora', 'participants') }}
-          </span>
-        </div>
+	  </span>
+	</div>
       </div>
 
       <!-- Raised by info -->
       <div v-if="raisedByCount > 0" class="raised-by">
-        <component :is="InquiryOptionIcons.AccountMultiple" :size="12" />
-        <span>{{ t('agora', 'Raised by {count} participant{plural}', { 
-          count: raisedByCount, 
-          plural: raisedByCount > 1 ? 's' : '' 
-        }) }}</span>
+	      <component :is="InquiryOptionIcons.AccountMultiple" :size="12" />
+	      <span>
+		      {{ n(
+		      'agora',
+		      'Raised by %n participant',
+		      'Raised by %n participants',
+		      raisedByCount
+		      ) }}
+	      </span>
       </div>
-    </div>
-
-    <!-- ======================================== -->
-    <!-- ACTIONS -->
-    <!-- ======================================== -->
-    <div class="card-actions" @click.stop>
-      <!-- Discuss -->
-      <NcButton
-        v-if="canDiscuss && canDiscussAction"
-        type="secondary"
-        size="small"
-        @click="$emit('discuss', option.id)"
-      >
-        <template #icon>
-          <component :is="InquiryOptionIcons.MessageSquare" :size="14" />
-        </template>
-        {{ t('agora', 'Discuss') }}
-      </NcButton>
-
-      <!-- Propose Resolution -->
-      <NcButton
-        v-if="canProposeResolution && !hasResolution"
-        type="secondary"
-        size="small"
-        @click="openResolutionModal"
-      >
-        <template #icon>
-          <component :is="InquiryOptionIcons.FileText" :size="14" />
-        </template>
-        {{ t('agora', 'Propose Resolution') }}
-      </NcButton>
-
-      <!-- Accept Resolution -->
-      <NcButton
-        v-if="canResolve && hasResolution && resolutionChild?.status === 'proposed'"
-        type="primary"
-        size="small"
-        @click="acceptResolution"
-      >
-        <template #icon>
-          <component :is="InquiryOptionIcons.CheckCircle" :size="14" />
-        </template>
-        {{ t('agora', 'Accept Resolution') }}
-      </NcButton>
-
-      <!-- Implement Resolution -->
-      <NcButton
-        v-if="canResolve && hasResolution && resolutionChild?.status === 'accepted'"
-        type="success"
-        size="small"
-        @click="implementResolution"
-      >
-        <template #icon>
-          <component :is="InquiryOptionIcons.Check" :size="14" />
-        </template>
-        {{ t('agora', 'Implement') }}
-      </NcButton>
-
-      <!-- Reopen -->
-      <NcButton
-        v-if="canReopen && (currentStatus === 'resolved' || currentStatus === 'accepted')"
-        type="secondary"
-        size="small"
-        @click="$emit('reopen', option.id)"
-      >
-        <template #icon>
-          <component :is="InquiryOptionIcons.Refresh" :size="14" />
-        </template>
-        {{ t('agora', 'Reopen') }}
-      </NcButton>
-
-      <!-- Status change dropdown -->
-      <NcActions v-if="canChangeStatus" :force-menu="true">
-        <template #icon>
-          <component :is="InquiryOptionIcons.Cog" :size="16" />
-        </template>
-        <NcActionButton @click="changeStatus('open')">
-          {{ t('agora', 'Mark Open') }}
-        </NcActionButton>
-        <NcActionButton @click="changeStatus('under_discussion')">
-          {{ t('agora', 'Mark Under Discussion') }}
-        </NcActionButton>
-        <NcActionButton @click="changeStatus('addressed')">
-          {{ t('agora', 'Mark Addressed') }}
-        </NcActionButton>
-        <NcActionButton @click="changeStatus('withdrawn')">
-          {{ t('agora', 'Mark Withdrawn') }}
-        </NcActionButton>
-        <NcActionButton @click="changeStatus('blocked')">
-          {{ t('agora', 'Mark Blocked') }}
-        </NcActionButton>
-        <NcActionButton @click="changeStatus('deferred')">
-          {{ t('agora', 'Mark Deferred') }}
-        </NcActionButton>
-        <NcActionButton @click="changeStatus('resolved')">
-          {{ t('agora', 'Mark Resolved') }}
-        </NcActionButton>
-      </NcActions>
-    </div>
-
-    <!-- ======================================== -->
-    <!-- QUORUM DISPLAY -->
-    <!-- ======================================== -->
-    <div v-if="showQuorum && option.status?.countSupports !== undefined" class="quorum-display">
-      <div class="quorum-bar">
-        <div 
-          class="quorum-fill" 
-          :style="{ width: `${quorumPercentage}%` }"
-          :class="quorumClass"
-        />
       </div>
-      <div class="quorum-info">
-        <span class="quorum-text">
-          {{ option.status.countSupports }} {{ t('agora', 'supports') }}
-        </span>
-        <span v-if="quorumNeeded" class="quorum-required">
-          {{ t('agora', 'need {count} more', { count: Math.max(0, quorumNeeded - (option.status.countSupports || 0)) }) }}
-        </span>
+
+
+      <!-- ======================================== -->
+      <!-- ACTIONS -->
+      <!-- ======================================== -->
+      <div class="card-actions" @click.stop>
+	      <!-- Discuss -->
+	      <NcButton
+			      v-if="canDiscuss && canDiscussAction"
+			      type="secondary"
+			      size="small"
+			      @click="$emit('discuss', option.id)"
+			      >
+			      <template #icon>
+				      <component :is="InquiryOptionIcons.MessageSquare" :size="14" />
+			      </template>
+	      {{ t('agora', 'Discuss') }}
+	      </NcButton>
+
+	      <!-- Propose Resolution -->
+	      <NcButton
+			      v-if="canProposeResolution && !hasResolution"
+			      type="secondary"
+			      size="small"
+			      @click="openResolutionModal"
+			      >
+			      <template #icon>
+				      <component :is="InquiryOptionIcons.FileText" :size="14" />
+			      </template>
+	      {{ t('agora', 'Propose Resolution') }}
+	      </NcButton>
+
+	      <!-- Accept Resolution -->
+	      <NcButton
+			      v-if="canResolve && hasResolution && resolutionChild?.status === 'proposed'"
+			      type="primary"
+			      size="small"
+			      @click="acceptResolution"
+			      >
+			      <template #icon>
+				      <component :is="InquiryOptionIcons.CheckCircle" :size="14" />
+			      </template>
+	      {{ t('agora', 'Accept Resolution') }}
+	      </NcButton>
+
+	      <!-- Implement Resolution -->
+	      <NcButton
+			      v-if="canResolve && hasResolution && resolutionChild?.status === 'accepted'"
+			      type="success"
+			      size="small"
+			      @click="implementResolution"
+			      >
+			      <template #icon>
+				      <component :is="InquiryOptionIcons.Check" :size="14" />
+			      </template>
+	      {{ t('agora', 'Implement') }}
+	      </NcButton>
+
+	      <!-- Reopen -->
+	      <NcButton
+			      v-if="canReopen && (currentStatus === 'resolved' || currentStatus === 'accepted')"
+			      type="secondary"
+			      size="small"
+			      @click="$emit('reopen', option.id)"
+			      >
+			      <template #icon>
+				      <component :is="InquiryOptionIcons.Refresh" :size="14" />
+			      </template>
+	      {{ t('agora', 'Reopen') }}
+	      </NcButton>
+
+	      <!-- Status change dropdown -->
+	      <NcActions v-if="canChangeStatus" :force-menu="true">
+	      <template #icon>
+		      <component :is="InquiryOptionIcons.Cog" :size="16" />
+	      </template>
+	      <NcActionButton @click="changeStatus('open')">
+	      {{ t('agora', 'Mark Open') }}
+	      </NcActionButton>
+	      <NcActionButton @click="changeStatus('under_discussion')">
+	      {{ t('agora', 'Mark Under Discussion') }}
+	      </NcActionButton>
+	      <NcActionButton @click="changeStatus('addressed')">
+	      {{ t('agora', 'Mark Addressed') }}
+	      </NcActionButton>
+	      <NcActionButton @click="changeStatus('withdrawn')">
+	      {{ t('agora', 'Mark Withdrawn') }}
+	      </NcActionButton>
+	      <NcActionButton @click="changeStatus('blocked')">
+	      {{ t('agora', 'Mark Blocked') }}
+	      </NcActionButton>
+	      <NcActionButton @click="changeStatus('deferred')">
+	      {{ t('agora', 'Mark Deferred') }}
+	      </NcActionButton>
+	      <NcActionButton @click="changeStatus('resolved')">
+	      {{ t('agora', 'Mark Resolved') }}
+	      </NcActionButton>
+	      </NcActions>
       </div>
-    </div>
 
-    <!-- ======================================== -->
-    <!-- MODALS -->
-    <!-- ======================================== -->
-    <ResolutionModal
-      v-if="showResolutionModal"
-      :visible="showResolutionModal"
-      :option="option"
-      :inquiry-id="inquiryId"
-      @close="showResolutionModal = false"
-      @submit="handleResolutionSubmit"
-    />
+      <!-- ======================================== -->
+      <!-- QUORUM DISPLAY -->
+      <!-- ======================================== -->
+      <div v-if="showQuorum && option.status?.countSupports !== undefined" class="quorum-display">
+	      <div class="quorum-bar">
+		      <div 
+		   class="quorum-fill" 
+		   :style="{ width: `${quorumPercentage}%` }"
+		   :class="quorumClass"
+		   />
+		      </div>
+		      <div class="quorum-info">
+			      <span class="quorum-text">
+				      {{ option.status.countSupports }} {{ t('agora', 'supports') }}
+			      </span>
+			      <span v-if="quorumNeeded" class="quorum-required">
+				      {{ t('agora', 'need {count} more', { count: Math.max(0, quorumNeeded - (option.status.countSupports || 0)) }) }}
+			      </span>
+		      </div>
+	      </div>
 
-    <DeleteConfirmationDialog
-      v-model:visible="showDeleteDialog"
-      :option-title="option?.title || option?.label || ''"
-      :option="option"
-      :is-imported="isImportedFromView"
-      :view-type="familyType || 'view'"
-      :has-children="hasChildren"
-      :children-count="childrenCount"
-      @confirm="handleConfirmDelete"
-      @remove-from-view="handleRemoveFromView"
-    />
-  </div>
+	      <!-- ======================================== -->
+	      <!-- MODALS -->
+	      <!-- ======================================== -->
+	      <ResolutionModal
+			      v-if="showResolutionModal"
+			      :visible="showResolutionModal"
+			      :option="option"
+			      :inquiry-id="inquiryId"
+			      @close="showResolutionModal = false"
+			      @submit="handleResolutionSubmit"
+			      />
+
+	      <DeleteConfirmationDialog
+			      v-model:visible="showDeleteDialog"
+			      :option-title="option?.title || option?.label || ''"
+			      :option="option"
+			      :is-imported="isImportedFromView"
+			      :view-type="familyType || 'view'"
+			      :has-children="hasChildren"
+			      :children-count="childrenCount"
+			      @confirm="handleConfirmDelete"
+			      @remove-from-view="handleRemoveFromView"
+			      />
+      </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { t } from '@nextcloud/l10n'
+	import { ref, computed } from 'vue'
+import { t, n } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcActions from '@nextcloud/vue/components/NcActions'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
@@ -374,11 +379,11 @@ const currentStatus = computed(() => {
   // Get status from option's miscFields or from the option type definition
   const miscStatus = props.option.miscFields?.status
   if (typeof miscStatus === 'string') return miscStatus
-  
+
   // Fallback to option's own status
   const status = props.option.status?.status || props.option.status?.optionStatus
   if (status) return status
-  
+
   // Default based on type
   if (props.option.type === 'objection' || props.option.type === 'blocking_objection') {
     return 'open'
@@ -579,8 +584,8 @@ const canDelete = computed(() => {
 const canEditOrDelete = computed(() => canEdit.value || canDelete.value)
 
 const canDiscussAction = computed(() => currentStatus.value === 'open' || 
-         currentStatus.value === 'under_discussion' || 
-         currentStatus.value === 'blocked')
+	 currentStatus.value === 'under_discussion' || 
+	 currentStatus.value === 'blocked')
 
 // ========================================
 // COMPUTED: Other
@@ -670,8 +675,8 @@ const handleResolutionSubmit = async (resolutionData: { text: string; status: st
       type: 'resolution',
       parentId: props.option.id,
       miscFields: {
-        resolution_text: { key: 'resolution_text', value: resolutionData.text },
-        status: { key: 'status', value: resolutionData.status }
+	resolution_text: { key: 'resolution_text', value: resolutionData.text },
+	status: { key: 'status', value: resolutionData.status }
       }
     })
     showResolutionModal.value = false
@@ -688,16 +693,16 @@ const acceptResolution = async () => {
     await optionsStore.update({
       id: resolutionChild.value.id,
       miscFields: {
-        ...resolutionChild.value.miscFields,
-        status: { key: 'status', value: 'accepted' }
+	...resolutionChild.value.miscFields,
+	status: { key: 'status', value: 'accepted' }
       }
     })
     // Also update parent status
     await optionsStore.update({
       id: props.option.id,
       miscFields: {
-        ...props.option.miscFields,
-        status: { key: 'status', value: 'addressed' }
+	...props.option.miscFields,
+	status: { key: 'status', value: 'addressed' }
       }
     })
     showSuccess(t('agora', 'Resolution accepted'))
@@ -713,15 +718,15 @@ const implementResolution = async () => {
     await optionsStore.update({
       id: resolutionChild.value.id,
       miscFields: {
-        ...resolutionChild.value.miscFields,
-        status: { key: 'status', value: 'implemented' }
+	...resolutionChild.value.miscFields,
+	status: { key: 'status', value: 'implemented' }
       }
     })
     await optionsStore.update({
       id: props.option.id,
       miscFields: {
-        ...props.option.miscFields,
-        status: { key: 'status', value: 'resolved' }
+	...props.option.miscFields,
+	status: { key: 'status', value: 'resolved' }
       }
     })
     showSuccess(t('agora', 'Resolution implemented successfully'))
@@ -763,9 +768,9 @@ const handleRemoveFromView = async () => {
     let currentLayouts = props.option.miscFields?.force_layouts || []
     if (typeof currentLayouts === 'string') {
       try {
-        currentLayouts = JSON.parse(currentLayouts)
+	currentLayouts = JSON.parse(currentLayouts)
       } catch {
-        currentLayouts = []
+	currentLayouts = []
       }
     }
     if (!Array.isArray(currentLayouts)) {
@@ -775,8 +780,8 @@ const handleRemoveFromView = async () => {
     await optionsStore.update({
       ...props.option,
       miscFields: {
-        ...props.option.miscFields,
-        force_layouts: updatedLayouts
+	...props.option.miscFields,
+	force_layouts: updatedLayouts
       }
     })
     emit('removeFromView', props.option.id, updatedLayouts)
@@ -791,751 +796,751 @@ const handleRemoveFromView = async () => {
 <style scoped lang="scss">
 // ========================================
 // CARD BASE
-// ========================================
+	// ========================================
 .consensus-option-card {
-  background: var(--color-main-background);
-  border: 1px solid var(--color-border);
-  border-radius: 12px;
-  padding: 16px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  cursor: pointer;
-  position: relative;
+	background: var(--color-main-background);
+	border: 1px solid var(--color-border);
+	border-radius: 12px;
+	padding: 16px;
+	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+	cursor: pointer;
+	position: relative;
 
-  &:hover {
-    border-color: var(--color-primary);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-    transform: translateY(-2px);
-  }
+	&:hover {
+		border-color: var(--color-primary);
+		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+		transform: translateY(-2px);
+	}
 
-  &.highlighted {
-    border-color: var(--color-error);
-    background: var(--color-error-light);
-    animation: pulse-highlight 2s ease-in-out infinite;
-  }
+	&.highlighted {
+		border-color: var(--color-error);
+		background: var(--color-error-light);
+		animation: pulse-highlight 2s ease-in-out infinite;
+	}
 
-  // Status border
-  &.status-open {
-    border-left: 4px solid var(--color-text-lighter);
-  }
-  &.status-under_discussion {
-    border-left: 4px solid var(--color-primary);
-  }
-  &.status-addressed {
-    border-left: 4px solid var(--color-primary-element);
-  }
-  &.status-withdrawn {
-    border-left: 4px solid var(--color-text-lighter);
-    opacity: 0.7;
-  }
-  &.status-accepted {
-    border-left: 4px solid var(--color-success);
-  }
-  &.status-resolved {
-    border-left: 4px solid var(--color-success);
-    opacity: 0.85;
-  }
-  &.status-blocked {
-    border-left: 4px solid var(--color-error);
-    background: var(--color-error-light);
-  }
-  &.status-deferred {
-    border-left: 4px solid var(--color-warning);
-  }
+	// Status border
+		&.status-open {
+		border-left: 4px solid var(--color-text-lighter);
+	}
+	&.status-under_discussion {
+		border-left: 4px solid var(--color-primary);
+	}
+	&.status-addressed {
+		border-left: 4px solid var(--color-primary-element);
+	}
+	&.status-withdrawn {
+		border-left: 4px solid var(--color-text-lighter);
+		opacity: 0.7;
+	}
+	&.status-accepted {
+		border-left: 4px solid var(--color-success);
+	}
+	&.status-resolved {
+		border-left: 4px solid var(--color-success);
+		opacity: 0.85;
+	}
+	&.status-blocked {
+		border-left: 4px solid var(--color-error);
+		background: var(--color-error-light);
+	}
+	&.status-deferred {
+		border-left: 4px solid var(--color-warning);
+	}
 
-  &.has-resolution {
-    border-color: var(--color-success);
-  }
+	&.has-resolution {
+		border-color: var(--color-success);
+	}
 
-  &.is-blocking {
-    .option-title {
-      font-weight: 600;
-    }
-  }
+	&.is-blocking {
+		.option-title {
+			font-weight: 600;
+		}
+	}
 }
 
-// ========================================
-// HEADER
-// ========================================
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 12px;
-  gap: 12px;
+      // ========================================
+      // HEADER
+	      // ========================================
+      .card-header {
+	      display: flex;
+	      justify-content: space-between;
+	      align-items: flex-start;
+	      margin-bottom: 12px;
+	      gap: 12px;
 
-  .header-left {
-    display: flex;
-    gap: 12px;
-    flex: 1;
-    min-width: 0;
+	      .header-left {
+		      display: flex;
+		      gap: 12px;
+		      flex: 1;
+		      min-width: 0;
 
-    .type-icon {
-      flex-shrink: 0;
-      margin-top: 2px;
-      width: 32px;
-      height: 32px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: var(--color-background-darker);
-      border-radius: 8px;
-      transition: all 0.2s ease;
+		      .type-icon {
+			      flex-shrink: 0;
+			      margin-top: 2px;
+			      width: 32px;
+			      height: 32px;
+			      display: flex;
+			      align-items: center;
+			      justify-content: center;
+			      background: var(--color-background-darker);
+			      border-radius: 8px;
+			      transition: all 0.2s ease;
 
-      svg {
-        width: 20px;
-        height: 20px;
-        transition: transform 0.2s ease;
-      }
-    }
+			      svg {
+				      width: 20px;
+				      height: 20px;
+				      transition: transform 0.2s ease;
+			      }
+		      }
 
-    .title-section {
-      flex: 1;
-      min-width: 0;
+		      .title-section {
+			      flex: 1;
+			      min-width: 0;
 
-      .option-title {
-        margin: 0 0 6px 0;
-        font-size: 15px;
-        font-weight: 500;
-        color: var(--color-main-text);
-        line-height: 1.4;
-        word-break: break-word;
-      }
+			      .option-title {
+				      margin: 0 0 6px 0;
+				      font-size: 15px;
+				      font-weight: 500;
+				      color: var(--color-main-text);
+				      line-height: 1.4;
+				      word-break: break-word;
+			      }
 
-      .meta-info {
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
-        align-items: center;
+			      .meta-info {
+				      display: flex;
+				      gap: 8px;
+				      flex-wrap: wrap;
+				      align-items: center;
 
-        .type-badge {
-          font-size: 10px;
-          padding: 2px 10px;
-          border-radius: 12px;
-          font-weight: 600;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
+				      .type-badge {
+					      font-size: 10px;
+					      padding: 2px 10px;
+					      border-radius: 12px;
+					      font-weight: 600;
+					      text-transform: uppercase;
+					      letter-spacing: 0.5px;
 
-          &.type-objection,
-          &.type-blocking_objection {
-            background: var(--color-error-light);
-            color: var(--color-error);
-          }
+					      &.type-objection,
+					      &.type-blocking_objection {
+						      background: var(--color-error-light);
+						      color: var(--color-error);
+					      }
 
-          &.type-exception,
-          &.type-non_blocking_objection {
-            background: var(--color-warning-light);
-            color: var(--color-warning);
-          }
+					      &.type-exception,
+					      &.type-non_blocking_objection {
+						      background: var(--color-warning-light);
+						      color: var(--color-warning);
+					      }
 
-          &.type-consent,
-          &.type-agreement {
-            background: var(--color-success-light);
-            color: var(--color-success);
-          }
+					      &.type-consent,
+					      &.type-agreement {
+						      background: var(--color-success-light);
+						      color: var(--color-success);
+					      }
 
-          &.type-consultation_question,
-          &.type-question {
-            background: var(--color-primary-light);
-            color: var(--color-primary);
-          }
+					      &.type-consultation_question,
+					      &.type-question {
+						      background: var(--color-primary-light);
+						      color: var(--color-primary);
+					      }
 
-          &.type-recommendation {
-            background: var(--color-primary-light);
-            color: var(--color-primary);
-          }
+					      &.type-recommendation {
+						      background: var(--color-primary-light);
+						      color: var(--color-primary);
+					      }
 
-          &.type-resolution {
-            background: var(--color-success-light);
-            color: var(--color-success);
-          }
-        }
+					      &.type-resolution {
+						      background: var(--color-success-light);
+						      color: var(--color-success);
+					      }
+				      }
 
-        .status-badge {
-          display: inline-flex;
-          align-items: center;
-          gap: 4px;
-          font-size: 10px;
-          padding: 2px 10px;
-          border-radius: 12px;
-          font-weight: 500;
+				      .status-badge {
+					      display: inline-flex;
+					      align-items: center;
+					      gap: 4px;
+					      font-size: 10px;
+					      padding: 2px 10px;
+					      border-radius: 12px;
+					      font-weight: 500;
 
-          &.status-open {
-            background: var(--color-background-darker);
-            color: var(--color-text-lighter);
-          }
+					      &.status-open {
+						      background: var(--color-background-darker);
+						      color: var(--color-text-lighter);
+					      }
 
-          &.status-under_discussion {
-            background: var(--color-primary-light);
-            color: var(--color-primary);
-          }
+					      &.status-under_discussion {
+						      background: var(--color-primary-light);
+						      color: var(--color-primary);
+					      }
 
-          &.status-addressed {
-            background: var(--color-primary-element-light);
-            color: var(--color-primary-element);
-          }
+					      &.status-addressed {
+						      background: var(--color-primary-element-light);
+						      color: var(--color-primary-element);
+					      }
 
-          &.status-withdrawn {
-            background: var(--color-background-darker);
-            color: var(--color-text-lighter);
-          }
+					      &.status-withdrawn {
+						      background: var(--color-background-darker);
+						      color: var(--color-text-lighter);
+					      }
 
-          &.status-accepted {
-            background: var(--color-success-light);
-            color: var(--color-success);
-          }
+					      &.status-accepted {
+						      background: var(--color-success-light);
+						      color: var(--color-success);
+					      }
 
-          &.status-resolved {
-            background: var(--color-success-light);
-            color: var(--color-success);
-          }
+					      &.status-resolved {
+						      background: var(--color-success-light);
+						      color: var(--color-success);
+					      }
 
-          &.status-blocked {
-            background: var(--color-error-light);
-            color: var(--color-error);
-          }
+					      &.status-blocked {
+						      background: var(--color-error-light);
+						      color: var(--color-error);
+					      }
 
-          &.status-deferred {
-            background: var(--color-warning-light);
-            color: var(--color-warning);
-          }
-        }
+					      &.status-deferred {
+						      background: var(--color-warning-light);
+						      color: var(--color-warning);
+					      }
+				      }
 
-        .support-count {
-          display: inline-flex;
-          align-items: center;
-          gap: 4px;
-          font-size: 11px;
-          color: var(--color-text-lighter);
-        }
+				      .support-count {
+					      display: inline-flex;
+					      align-items: center;
+					      gap: 4px;
+					      font-size: 11px;
+					      color: var(--color-text-lighter);
+				      }
 
-        .timestamp {
-          font-size: 11px;
-          color: var(--color-text-lighter);
-        }
-      }
-    }
-  }
+				      .timestamp {
+					      font-size: 11px;
+					      color: var(--color-text-lighter);
+				      }
+			      }
+		      }
+	      }
 
-  .resolution-indicator {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 11px;
-    font-weight: 600;
-    flex-shrink: 0;
+	      .resolution-indicator {
+		      display: flex;
+		      align-items: center;
+		      gap: 4px;
+		      padding: 4px 12px;
+		      border-radius: 20px;
+		      font-size: 11px;
+		      font-weight: 600;
+		      flex-shrink: 0;
 
-    &.resolution-proposed {
-      background: var(--color-warning-light);
-      color: var(--color-warning);
-    }
+		      &.resolution-proposed {
+			      background: var(--color-warning-light);
+			      color: var(--color-warning);
+		      }
 
-    &.resolution-under_review {
-      background: var(--color-primary-light);
-      color: var(--color-primary);
-    }
+		      &.resolution-under_review {
+			      background: var(--color-primary-light);
+			      color: var(--color-primary);
+		      }
 
-    &.resolution-accepted {
-      background: var(--color-success-light);
-      color: var(--color-success);
-    }
+		      &.resolution-accepted {
+			      background: var(--color-success-light);
+			      color: var(--color-success);
+		      }
 
-    &.resolution-rejected {
-      background: var(--color-error-light);
-      color: var(--color-error);
-    }
+		      &.resolution-rejected {
+			      background: var(--color-error-light);
+			      color: var(--color-error);
+		      }
 
-    &.resolution-implemented {
-      background: var(--color-success-light);
-      color: var(--color-success);
-    }
+		      &.resolution-implemented {
+			      background: var(--color-success-light);
+			      color: var(--color-success);
+		      }
 
-    .resolution-icon {
-      width: 14px;
-      height: 14px;
-    }
+		      .resolution-icon {
+			      width: 14px;
+			      height: 14px;
+		      }
 
-    .resolution-label {
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.3px;
-    }
-  }
+		      .resolution-label {
+			      font-size: 10px;
+			      text-transform: uppercase;
+			      letter-spacing: 0.3px;
+		      }
+	      }
 
-  .header-right {
-    flex-shrink: 0;
+	      .header-right {
+		      flex-shrink: 0;
 
-    .card-actions {
-      :deep(button) {
-        background: transparent;
-        border: none;
-        padding: 4px;
-        color: var(--color-text-lighter);
-        cursor: pointer;
-        border-radius: 50%;
-        transition: all 0.2s ease;
+		      .card-actions {
+			      :deep(button) {
+				      background: transparent;
+				      border: none;
+				      padding: 4px;
+				      color: var(--color-text-lighter);
+				      cursor: pointer;
+				      border-radius: 50%;
+				      transition: all 0.2s ease;
 
-        &:hover {
-          color: var(--color-primary-element);
-          background: var(--color-background-hover);
-        }
-      }
-    }
-  }
-}
-
-// ========================================
-// CONTENT
-// ========================================
-.card-content {
-  margin-bottom: 12px;
-
-  .option-description {
-    margin: 0 0 12px 0;
-    font-size: 13px;
-    color: var(--color-text);
-    line-height: 1.6;
-    word-break: break-word;
-  }
-
-  .resolution-details {
-    .resolution-box {
-      background: var(--color-background-dark);
-      border-radius: 10px;
-      padding: 14px 16px;
-      margin: 8px 0;
-      border: 1px solid var(--color-border);
-
-      &.resolution-status-proposed {
-        border-left: 4px solid var(--color-warning);
+				      &:hover {
+					      color: var(--color-primary-element);
+					      background: var(--color-background-hover);
+				      }
+			      }
+		      }
+	      }
       }
 
-      &.resolution-status-under_review {
-        border-left: 4px solid var(--color-primary);
+      // ========================================
+      // CONTENT
+	      // ========================================
+      .card-content {
+	      margin-bottom: 12px;
+
+	      .option-description {
+		      margin: 0 0 12px 0;
+		      font-size: 13px;
+		      color: var(--color-text);
+		      line-height: 1.6;
+		      word-break: break-word;
+	      }
+
+	      .resolution-details {
+		      .resolution-box {
+			      background: var(--color-background-dark);
+			      border-radius: 10px;
+			      padding: 14px 16px;
+			      margin: 8px 0;
+			      border: 1px solid var(--color-border);
+
+			      &.resolution-status-proposed {
+				      border-left: 4px solid var(--color-warning);
+			      }
+
+			      &.resolution-status-under_review {
+				      border-left: 4px solid var(--color-primary);
+			      }
+
+			      &.resolution-status-accepted {
+				      border-left: 4px solid var(--color-success);
+			      }
+
+			      &.resolution-status-rejected {
+				      border-left: 4px solid var(--color-error);
+			      }
+
+			      &.resolution-status-implemented {
+				      border-left: 4px solid var(--color-success);
+				      background: var(--color-success-light);
+			      }
+
+			      .resolution-header {
+				      display: flex;
+				      align-items: center;
+				      gap: 8px;
+				      margin-bottom: 8px;
+				      flex-wrap: wrap;
+
+				      .resolution-title {
+					      font-weight: 600;
+					      font-size: 13px;
+					      color: var(--color-text-lighter);
+				      }
+
+				      .resolution-status-badge {
+					      display: inline-flex;
+					      align-items: center;
+					      font-size: 10px;
+					      padding: 2px 10px;
+					      border-radius: 12px;
+					      font-weight: 500;
+
+					      &.status-proposed {
+						      background: var(--color-warning-light);
+						      color: var(--color-warning);
+					      }
+
+					      &.status-under_review {
+						      background: var(--color-primary-light);
+						      color: var(--color-primary);
+					      }
+
+					      &.status-accepted {
+						      background: var(--color-success-light);
+						      color: var(--color-success);
+					      }
+
+					      &.status-rejected {
+						      background: var(--color-error-light);
+						      color: var(--color-error);
+					      }
+
+					      &.status-implemented {
+						      background: var(--color-success-light);
+						      color: var(--color-success);
+					      }
+				      }
+			      }
+
+			      .resolution-text {
+				      margin: 0 0 10px 0;
+				      font-size: 13px;
+				      color: var(--color-main-text);
+				      line-height: 1.5;
+				      font-style: italic;
+				      padding-left: 4px;
+				      border-left: 2px solid var(--color-border);
+				      padding-left: 12px;
+			      }
+
+			      .resolution-meta {
+				      display: flex;
+				      gap: 16px;
+				      font-size: 12px;
+				      color: var(--color-text-lighter);
+				      flex-wrap: wrap;
+				      align-items: center;
+
+				      .resolved-date,
+				      .resolved-by,
+				      .support-count {
+					      display: inline-flex;
+					      align-items: center;
+					      gap: 4px;
+				      }
+			      }
+		      }
+	      }
+
+	      .discussion-summary {
+		      .discussion-stats {
+			      display: flex;
+			      gap: 16px;
+			      flex-wrap: wrap;
+			      padding: 8px 12px;
+			      background: var(--color-background-dark);
+			      border-radius: 8px;
+
+			      .stat {
+				      display: inline-flex;
+				      align-items: center;
+				      gap: 6px;
+				      font-size: 12px;
+				      color: var(--color-text-lighter);
+
+				      svg {
+					      opacity: 0.7;
+				      }
+			      }
+		      }
+	      }
+
+	      .raised-by {
+		      display: flex;
+		      align-items: center;
+		      gap: 6px;
+		      margin-top: 8px;
+		      padding: 6px 12px;
+		      background: var(--color-background-dark);
+		      border-radius: 6px;
+		      font-size: 12px;
+		      color: var(--color-text-lighter);
+	      }
       }
 
-      &.resolution-status-accepted {
-        border-left: 4px solid var(--color-success);
+      // ========================================
+      // ACTIONS
+	      // ========================================
+      .card-actions {
+	      display: flex;
+	      gap: 8px;
+	      flex-wrap: wrap;
+	      margin-top: 8px;
+	      padding-top: 12px;
+	      border-top: 1px solid var(--color-border);
+
+	      :deep(.nc-button) {
+		      font-size: 12px;
+		      padding: 4px 12px;
+		      min-height: 30px;
+
+		      .nc-button__icon {
+			      margin-right: 4px;
+		      }
+	      }
       }
 
-      &.resolution-status-rejected {
-        border-left: 4px solid var(--color-error);
+      // ========================================
+      // QUORUM
+	      // ========================================
+      .quorum-display {
+	      margin-top: 12px;
+	      padding-top: 12px;
+	      border-top: 1px solid var(--color-border);
+
+	      .quorum-bar {
+		      width: 100%;
+		      height: 6px;
+		      background: var(--color-background-darker);
+		      border-radius: 3px;
+		      overflow: hidden;
+		      margin-bottom: 6px;
+
+		      .quorum-fill {
+			      height: 100%;
+			      border-radius: 3px;
+			      transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+
+			      &.complete {
+				      background: linear-gradient(90deg, var(--color-success), var(--color-success-light));
+			      }
+
+			      &.high {
+				      background: linear-gradient(90deg, var(--color-primary), var(--color-primary-light));
+			      }
+
+			      &.medium {
+				      background: linear-gradient(90deg, var(--color-warning), var(--color-warning-light));
+			      }
+
+			      &.low {
+				      background: linear-gradient(90deg, var(--color-error), var(--color-error-light));
+			      }
+		      }
+	      }
+
+	      .quorum-info {
+		      display: flex;
+		      justify-content: space-between;
+		      align-items: center;
+		      font-size: 12px;
+
+		      .quorum-text {
+			      color: var(--color-text-lighter);
+			      font-weight: 500;
+		      }
+
+		      .quorum-required {
+			      color: var(--color-text-lighter);
+			      font-size: 11px;
+		      }
+	      }
       }
 
-      &.resolution-status-implemented {
-        border-left: 4px solid var(--color-success);
-        background: var(--color-success-light);
+      // ========================================
+      // COMPACT MODE
+	      // ========================================
+      &.compact {
+	      padding: 12px;
+
+	      .card-header {
+		      .header-left {
+			      .type-icon {
+				      width: 24px;
+				      height: 24px;
+
+				      svg {
+					      width: 16px;
+					      height: 16px;
+				      }
+			      }
+
+			      .title-section {
+				      .option-title {
+					      font-size: 13px;
+				      }
+
+				      .meta-info {
+					      .type-badge,
+					      .status-badge {
+						      font-size: 9px;
+						      padding: 1px 8px;
+					      }
+				      }
+			      }
+		      }
+	      }
+
+	      .card-content {
+		      .option-description {
+			      font-size: 12px;
+			      display: -webkit-box;
+			      -webkit-line-clamp: 2;
+			      -webkit-box-orient: vertical;
+			      overflow: hidden;
+		      }
+
+		      .resolution-details {
+			      .resolution-box {
+				      padding: 10px 12px;
+
+				      .resolution-text {
+					      font-size: 12px;
+				      }
+			      }
+		      }
+	      }
+
+	      .card-actions {
+		      gap: 4px;
+
+		      :deep(.nc-button) {
+			      font-size: 11px;
+			      padding: 2px 8px;
+			      min-height: 26px;
+		      }
+	      }
       }
 
-      .resolution-header {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        margin-bottom: 8px;
-        flex-wrap: wrap;
+      // ========================================
+      // INLINE MODE
+	      // ========================================
+      &.inline {
+	      display: flex;
+	      align-items: center;
+	      padding: 8px 12px;
+	      margin-bottom: 4px;
 
-        .resolution-title {
-          font-weight: 600;
-          font-size: 13px;
-          color: var(--color-text-lighter);
-        }
+	      .card-header {
+		      margin-bottom: 0;
+		      flex: 0 0 auto;
 
-        .resolution-status-badge {
-          display: inline-flex;
-          align-items: center;
-          font-size: 10px;
-          padding: 2px 10px;
-          border-radius: 12px;
-          font-weight: 500;
+		      .header-left {
+			      .type-icon {
+				      width: 24px;
+				      height: 24px;
 
-          &.status-proposed {
-            background: var(--color-warning-light);
-            color: var(--color-warning);
-          }
+				      svg {
+					      width: 16px;
+					      height: 16px;
+				      }
+			      }
 
-          &.status-under_review {
-            background: var(--color-primary-light);
-            color: var(--color-primary);
-          }
+			      .title-section {
+				      .option-title {
+					      font-size: 13px;
+					      margin-bottom: 2px;
+				      }
 
-          &.status-accepted {
-            background: var(--color-success-light);
-            color: var(--color-success);
-          }
+				      .meta-info {
+					      gap: 4px;
 
-          &.status-rejected {
-            background: var(--color-error-light);
-            color: var(--color-error);
-          }
+					      .type-badge,
+					      .status-badge {
+						      font-size: 9px;
+						      padding: 1px 6px;
+					      }
 
-          &.status-implemented {
-            background: var(--color-success-light);
-            color: var(--color-success);
-          }
-        }
+					      .timestamp {
+						      font-size: 10px;
+					      }
+				      }
+			      }
+		      }
+
+		      .resolution-indicator {
+			      padding: 2px 8px;
+			      font-size: 10px;
+
+			      .resolution-icon {
+				      width: 12px;
+				      height: 12px;
+			      }
+		      }
+	      }
+
+	      .card-content {
+		      flex: 1;
+		      min-width: 0;
+		      margin-bottom: 0;
+		      padding: 0 10px;
+
+		      .option-description {
+			      font-size: 12px;
+			      margin-bottom: 0;
+			      display: -webkit-box;
+			      -webkit-line-clamp: 1;
+			      -webkit-box-orient: vertical;
+			      overflow: hidden;
+		      }
+
+		      .resolution-details,
+		      .discussion-summary,
+		      .raised-by {
+			      display: none;
+		      }
+	      }
+
+	      .card-actions {
+		      margin-top: 0;
+		      padding-top: 0;
+		      border-top: none;
+		      flex: 0 0 auto;
+		      gap: 4px;
+
+		      :deep(.nc-button) {
+			      font-size: 10px;
+			      padding: 2px 6px;
+			      min-height: 22px;
+		      }
+
+		      :deep(.nc-actions) {
+			      .nc-actions__button {
+				      padding: 2px;
+				      min-height: 22px;
+			      }
+		      }
+	      }
+
+	      .quorum-display {
+		      display: none;
+	      }
       }
 
-      .resolution-text {
-        margin: 0 0 10px 0;
-        font-size: 13px;
-        color: var(--color-main-text);
-        line-height: 1.5;
-        font-style: italic;
-        padding-left: 4px;
-        border-left: 2px solid var(--color-border);
-        padding-left: 12px;
+      // ========================================
+      // ANIMATIONS
+	      // ========================================
+      @keyframes pulse-highlight {
+	      0%, 100% {
+		      box-shadow: 0 0 0 0 rgba(var(--color-error-rgb), 0.2);
+	      }
+	      50% {
+		      box-shadow: 0 0 0 4px rgba(var(--color-error-rgb), 0.1);
+	      }
       }
 
-      .resolution-meta {
-        display: flex;
-        gap: 16px;
-        font-size: 12px;
-        color: var(--color-text-lighter);
-        flex-wrap: wrap;
-        align-items: center;
-
-        .resolved-date,
-        .resolved-by,
-        .support-count {
-          display: inline-flex;
-          align-items: center;
-          gap: 4px;
-        }
-      }
-    }
-  }
-
-  .discussion-summary {
-    .discussion-stats {
-      display: flex;
-      gap: 16px;
-      flex-wrap: wrap;
-      padding: 8px 12px;
-      background: var(--color-background-dark);
-      border-radius: 8px;
-
-      .stat {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        font-size: 12px;
-        color: var(--color-text-lighter);
-
-        svg {
-          opacity: 0.7;
-        }
-      }
-    }
-  }
-
-  .raised-by {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    margin-top: 8px;
-    padding: 6px 12px;
-    background: var(--color-background-dark);
-    border-radius: 6px;
-    font-size: 12px;
-    color: var(--color-text-lighter);
-  }
-}
-
-// ========================================
-// ACTIONS
-// ========================================
-.card-actions {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-top: 8px;
-  padding-top: 12px;
-  border-top: 1px solid var(--color-border);
-
-  :deep(.nc-button) {
-    font-size: 12px;
-    padding: 4px 12px;
-    min-height: 30px;
-
-    .nc-button__icon {
-      margin-right: 4px;
-    }
-  }
-}
-
-// ========================================
-// QUORUM
-// ========================================
-.quorum-display {
-  margin-top: 12px;
-  padding-top: 12px;
-  border-top: 1px solid var(--color-border);
-
-  .quorum-bar {
-    width: 100%;
-    height: 6px;
-    background: var(--color-background-darker);
-    border-radius: 3px;
-    overflow: hidden;
-    margin-bottom: 6px;
-
-    .quorum-fill {
-      height: 100%;
-      border-radius: 3px;
-      transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-
-      &.complete {
-        background: linear-gradient(90deg, var(--color-success), var(--color-success-light));
+      @keyframes fadeIn {
+	      from {
+		      opacity: 0;
+		      transform: translateY(-5px);
+	      }
+	      to {
+		      opacity: 1;
+		      transform: translateY(0);
+	      }
       }
 
-      &.high {
-        background: linear-gradient(90deg, var(--color-primary), var(--color-primary-light));
+      // ========================================
+      // RESPONSIVE
+	      // ========================================
+      @media (max-width: 768px) {
+	      .consensus-option-card {
+		      padding: 12px;
+
+		      .card-header {
+			      flex-wrap: wrap;
+
+			      .resolution-indicator {
+				      margin-left: auto;
+			      }
+		      }
+
+		      .card-actions {
+			      :deep(.nc-button) {
+				      font-size: 11px;
+				      padding: 2px 8px;
+				      min-height: 26px;
+			      }
+		      }
+	      }
       }
-
-      &.medium {
-        background: linear-gradient(90deg, var(--color-warning), var(--color-warning-light));
-      }
-
-      &.low {
-        background: linear-gradient(90deg, var(--color-error), var(--color-error-light));
-      }
-    }
-  }
-
-  .quorum-info {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 12px;
-
-    .quorum-text {
-      color: var(--color-text-lighter);
-      font-weight: 500;
-    }
-
-    .quorum-required {
-      color: var(--color-text-lighter);
-      font-size: 11px;
-    }
-  }
-}
-
-// ========================================
-// COMPACT MODE
-// ========================================
-&.compact {
-  padding: 12px;
-
-  .card-header {
-    .header-left {
-      .type-icon {
-        width: 24px;
-        height: 24px;
-
-        svg {
-          width: 16px;
-          height: 16px;
-        }
-      }
-
-      .title-section {
-        .option-title {
-          font-size: 13px;
-        }
-
-        .meta-info {
-          .type-badge,
-          .status-badge {
-            font-size: 9px;
-            padding: 1px 8px;
-          }
-        }
-      }
-    }
-  }
-
-  .card-content {
-    .option-description {
-      font-size: 12px;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-
-    .resolution-details {
-      .resolution-box {
-        padding: 10px 12px;
-
-        .resolution-text {
-          font-size: 12px;
-        }
-      }
-    }
-  }
-
-  .card-actions {
-    gap: 4px;
-
-    :deep(.nc-button) {
-      font-size: 11px;
-      padding: 2px 8px;
-      min-height: 26px;
-    }
-  }
-}
-
-// ========================================
-// INLINE MODE
-// ========================================
-&.inline {
-  display: flex;
-  align-items: center;
-  padding: 8px 12px;
-  margin-bottom: 4px;
-
-  .card-header {
-    margin-bottom: 0;
-    flex: 0 0 auto;
-
-    .header-left {
-      .type-icon {
-        width: 24px;
-        height: 24px;
-
-        svg {
-          width: 16px;
-          height: 16px;
-        }
-      }
-
-      .title-section {
-        .option-title {
-          font-size: 13px;
-          margin-bottom: 2px;
-        }
-
-        .meta-info {
-          gap: 4px;
-
-          .type-badge,
-          .status-badge {
-            font-size: 9px;
-            padding: 1px 6px;
-          }
-
-          .timestamp {
-            font-size: 10px;
-          }
-        }
-      }
-    }
-
-    .resolution-indicator {
-      padding: 2px 8px;
-      font-size: 10px;
-
-      .resolution-icon {
-        width: 12px;
-        height: 12px;
-      }
-    }
-  }
-
-  .card-content {
-    flex: 1;
-    min-width: 0;
-    margin-bottom: 0;
-    padding: 0 10px;
-
-    .option-description {
-      font-size: 12px;
-      margin-bottom: 0;
-      display: -webkit-box;
-      -webkit-line-clamp: 1;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-
-    .resolution-details,
-    .discussion-summary,
-    .raised-by {
-      display: none;
-    }
-  }
-
-  .card-actions {
-    margin-top: 0;
-    padding-top: 0;
-    border-top: none;
-    flex: 0 0 auto;
-    gap: 4px;
-
-    :deep(.nc-button) {
-      font-size: 10px;
-      padding: 2px 6px;
-      min-height: 22px;
-    }
-
-    :deep(.nc-actions) {
-      .nc-actions__button {
-        padding: 2px;
-        min-height: 22px;
-      }
-    }
-  }
-
-  .quorum-display {
-    display: none;
-  }
-}
-
-// ========================================
-// ANIMATIONS
-// ========================================
-@keyframes pulse-highlight {
-  0%, 100% {
-    box-shadow: 0 0 0 0 rgba(var(--color-error-rgb), 0.2);
-  }
-  50% {
-    box-shadow: 0 0 0 4px rgba(var(--color-error-rgb), 0.1);
-  }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-5px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-// ========================================
-// RESPONSIVE
-// ========================================
-@media (max-width: 768px) {
-  .consensus-option-card {
-    padding: 12px;
-
-    .card-header {
-      flex-wrap: wrap;
-
-      .resolution-indicator {
-        margin-left: auto;
-      }
-    }
-
-    .card-actions {
-      :deep(.nc-button) {
-        font-size: 11px;
-        padding: 2px 8px;
-        min-height: 26px;
-      }
-    }
-  }
-}
 </style>

@@ -584,7 +584,6 @@ const optionsStore = useOptionsStore()
 const navigationHistory = ref<Array<number>>([])
 const showBackButton = computed(() => navigationHistory.value.length > 0)
 
-
 // ============================================
 // Get ALL option types for this family (for icon lookups, child creation)
 // ============================================

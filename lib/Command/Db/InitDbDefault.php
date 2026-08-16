@@ -2310,7 +2310,7 @@ class InitDbDefault extends Command
 			'fields' => [
 				["key" => "target_official_id", "label" => "Target Official", "type" => "users", "required" => true],
 				["key" => "official_position", "label" => "Official Position", "type" => "string", "required" => true],
-				["key" => "recall_grounds", "label" => "Grounds for Recall", "type" => "rich_text", "required" => true],
+				["key" => "recall_grounds", "label" => "Grounds for Recall", "type" => "string", "required" => true],
 				["key" => "signatures_required", "label" => "Signatures Required", "type" => "integer", "required" => true],
 				["key" => "signatures_collected", "label" => "Signatures Collected", "type" => "integer", "required" => false, "default" => 0],
 				["key" => "collection_deadline", "label" => "Collection Deadline", "type" => "datetime", "required" => true],

@@ -84,6 +84,8 @@ function getIconComponent(iconId: FilterType) {
   return icons[iconId].iconComponent
 }
 
+const getNavigationList = (categoryId: FilterType) => navigationList.value(categoryId)
+
 const selectedFamily = computed({
   get: () => inquiriesStore.advancedFilters.familyType || null,
   set: (value) => inquiriesStore.setFamilyType(value || '')
@@ -200,19 +202,19 @@ const handleHomeNavigation = () => {
             class="navigation-sublist"
           >
             <InquiryNavigationItems
-              v-for="inquiry in navigationList[inquiryCategory.id]"
+              v-for="inquiry in getNavigationList(inquiryCategory.id)"
 	      :key="inquiry.id"
               :inquiry="inquiry"
             />
             <NcAppNavigationItem
-              v-if="!navigationList[inquiryCategory.id] || navigationList[inquiryCategory.id].length === 0"
+              v-if="!getNavigationList(inquiryCategory.id) || getNavigationList(inquiryCategory.id).length === 0"
               :name="t('agora', 'No inquiries found')"
               class="navigation-empty"
             />
             <NcAppNavigationItem
               v-if="
-                navigationList[inquiryCategory.id] &&
-                navigationList[inquiryCategory.id].length >
+                getNavigationList(inquiryCategory.id) &&
+                getNavigationList(inquiryCategory.id).length >
                 inquiriesStore.meta.maxInquiriesInNavigation
               "
               class="force-not-active"

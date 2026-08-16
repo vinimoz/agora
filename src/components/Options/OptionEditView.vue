@@ -449,7 +449,6 @@ const familyOptions = computed(() => {
 
     return getFamilyOptionsByTarget(
         optionsStore.options,
-        allOptionTypes.value,
         activeFamilyData.value.key,
         inquiryStore.id
     )

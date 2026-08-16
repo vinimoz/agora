@@ -1,5 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
+# [1.7.8] - 2026-08-16
+Fix: 
+    - Navigation display ui
+    - Navigation menu creation
+    - I18n : plural
+
 # [1.7.7] - 2026-08-07
 Fix: 
     - Deletion redirect of an inquiry
