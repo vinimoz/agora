@@ -280,6 +280,7 @@ OC.L10N.register(
     "Hide unavailable options" : "Cacher les choix indisponibles",
     "Always show results" : "Toujours afficher les résultats",
     "Never show results" : "Ne jamais afficher les résultats",
+    "\"{inquiryTitle}\" has been added" : "« {inquiryTitle}» a été ajouté",
     "Access settings" : "Paramètres d'accès",
     "Select groups" : "Sélectionner les groupes",
     "Title" : "Titre",
