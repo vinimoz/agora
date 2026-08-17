@@ -155,6 +155,11 @@ OC.L10N.register(
     "Sharing" : "Koplietošana",
     "Hour" : "Stunda",
     "Not found" : "Nav atrasts",
+    "_%n minute ago_::_%n minutes ago_" : ["pirms %n minūtēm","pirms %n minūtes","pirms %n minūtēm"],
+    "_%n hour ago_::_%n hours ago_" : ["pirms %n stundām","pirms %n stundas","pirms %n stundām"],
+    "_%n day ago_::_%n days ago_" : ["pirms %n dienām","pirms %n dienas","pirms %n dienām"],
+    "_%n month ago_::_%n months ago_" : ["pirms %n mēnešiem","pirms %n mēneša","pirms %n mēnešiem"],
+    "_%n year ago_::_%n years ago_" : ["pirms %n gadiem","pirms %n gada","pirms %n gadiem"],
     "now" : "šobrīd",
     "Owner" : "Īpašnieks",
     "Administration" : "Pārvaldīšana"

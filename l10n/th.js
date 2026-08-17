@@ -111,6 +111,11 @@ OC.L10N.register(
     "Sharing" : "แชร์ข้อมูล",
     "Not found" : "ไม่พบ",
     "No name" : "ไม่มีชื่อ",
+    "_%n minute ago_::_%n minutes ago_" : ["%n นาทีที่ผ่านมา"],
+    "_%n hour ago_::_%n hours ago_" : ["%n ชั่วโมงที่ผ่านมา"],
+    "_%n day ago_::_%n days ago_" : ["%n วันที่ผ่านมา"],
+    "_%n month ago_::_%n months ago_" : ["%n เดือนที่ผ่านมา"],
+    "_%n year ago_::_%n years ago_" : ["%n ปีที่ผ่านมา"],
     "now" : "ตอนนี้",
     "Owner" : "เจ้าของ"
 },

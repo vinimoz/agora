@@ -109,6 +109,11 @@ OC.L10N.register(
     "Settings" : "Rregullimet",
     "Sharing" : "Ndarje",
     "Hour" : "Orë",
+    "_%n minute ago_::_%n minutes ago_" : ["%n minutë më parë","%n minuta më parë"],
+    "_%n hour ago_::_%n hours ago_" : ["%n orë më parë","%n orë më parë"],
+    "_%n day ago_::_%n days ago_" : ["%n ditë më parë","%n ditë më parë"],
+    "_%n month ago_::_%n months ago_" : ["%n muaj më parë","%n muaj më parë"],
+    "_%n year ago_::_%n years ago_" : ["%n vit më parë","%n vjet më parë"],
     "now" : "tani"
 },
 "nplurals=2; plural=(n != 1);");

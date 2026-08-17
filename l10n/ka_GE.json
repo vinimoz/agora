@@ -95,6 +95,11 @@
     "By" : "ავტორი",
     "Sharing" : "გაზიარება",
     "Hour" : "საათი",
+    "_%n minute ago_::_%n minutes ago_" : ["%n წუთის წინ","%n წუთის წინ"],
+    "_%n hour ago_::_%n hours ago_" : ["%n საათის წინ","%n საათის წინ"],
+    "_%n day ago_::_%n days ago_" : ["%n დღის წინ","%n დღის წინ"],
+    "_%n month ago_::_%n months ago_" : ["%n თვის წინ","%n თვის წინ"],
+    "_%n year ago_::_%n years ago_" : ["%n წლის წინ","%n წლის წინ"],
     "Access" : "წვდომა",
     "Expired" : "გაუქმდა",
     "Administration" : "ადმინისტრაცია"

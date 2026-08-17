@@ -122,6 +122,8 @@ OC.L10N.register(
     "Sharing" : "Compartir",
     "Hour" : "Hora",
     "Not found" : "No encontrado",
+    "_%n hour ago_::_%n hours ago_" : ["Hace %n hora","Hace %n horas","Hace %n horas"],
+    "_%n month ago_::_%n months ago_" : ["Hace %n mes","Hace %n meses","Hace %n meses"],
     "Administration" : "Administración"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

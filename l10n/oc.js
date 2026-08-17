@@ -147,6 +147,11 @@ OC.L10N.register(
     "Minute" : "Minuta",
     "Hour" : "Ora",
     "Not found" : "Non trobat",
+    "_%n minute ago_::_%n minutes ago_" : ["fa %n minuta","fa %n minutas"],
+    "_%n hour ago_::_%n hours ago_" : ["fa %n ora ","fa %n oras"],
+    "_%n day ago_::_%n days ago_" : ["fa %n jorn","fa %n jorns"],
+    "_%n month ago_::_%n months ago_" : ["fa %n mes","fa %n meses"],
+    "_%n year ago_::_%n years ago_" : ["fa %n annada","fa %n annadas"],
     "now" : "ara",
     "Expired" : "Expirat",
     "Administration" : "Administracion"

@@ -99,6 +99,11 @@ OC.L10N.register(
     "By" : "Por",
     "Sharing" : "Compartiendo",
     "Hour" : "Hora",
+    "_%n minute ago_::_%n minutes ago_" : ["Hace %n minuto","Hace %n minutos","Hace %n minutos"],
+    "_%n hour ago_::_%n hours ago_" : ["Hace %n hora","Hace %n horas","Hace %n horas"],
+    "_%n day ago_::_%n days ago_" : ["hace %n día","hace %n días","hace %n días"],
+    "_%n month ago_::_%n months ago_" : ["Hace %n mes","Hace %n meses","Hace %n meses"],
+    "_%n year ago_::_%n years ago_" : ["hace %n año","hace %n años","hace %n años"],
     "Access" : "Acceso",
     "Owner" : "Dueño",
     "Administration" : "Administración"
