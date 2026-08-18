@@ -92,6 +92,11 @@
     "View" : "Gwell",
     "Settings" : "Arventennoù",
     "Sharing" : "Rannan",
+    "_%n minute ago_::_%n minutes ago_" : ["%n munudenn-zo","%n munudenn-zo","%n munudenn-zo","%n munudenn-zo","%n munudenn-zo"],
+    "_%n hour ago_::_%n hours ago_" : ["%n hervez zo","%n hervez zo","%n hervez zo","%n hervez zo","%n hervez zo"],
+    "_%n day ago_::_%n days ago_" : ["%n deiz zo","%n deiz zo","%n deiz zo","%n deiz zo","%n deiz zo"],
+    "_%n month ago_::_%n months ago_" : ["%n miz zo","%n miz zo","%n miz zo","%n miz zo","%n miz zo"],
+    "_%n year ago_::_%n years ago_" : ["%n bloaz zo","%n bloaz zo","%n bloaz zo","%n bloaz zo","%n bloaz zo"],
     "now" : "bremañ",
     "Expired" : "Termenet",
     "Administration" : "Merouriez"

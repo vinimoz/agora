@@ -588,6 +588,7 @@ OC.L10N.register(
     "Locations" : "Lieux",
     "Category name" : "Nom de la catégorie",
     "Enter category name" : "Saisissez le nom de la catégorie",
+    "Add category" : "Ajouter une catégorie",
     "Categories tree" : "Arborescence des catégories",
     "Enter location name" : "Saisissez le nom du lieu",
     "Locations tree" : "Arborescence des lieux",
