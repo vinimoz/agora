@@ -53,7 +53,7 @@
     ]
   },
   "require": {
-    "league/commonmark": "^2.1",
+    "league/commonmark": "2.9.0",
     "rlanvin/php-rrule": "^2.3"
   }
 }
