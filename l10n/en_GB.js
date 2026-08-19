@@ -1735,6 +1735,7 @@ OC.L10N.register(
     "_%n minute ago_::_%n minutes ago_" : ["%n minute ago","%n minutes ago"],
     "_%n hour ago_::_%n hours ago_" : ["%n hour ago","%n hours ago"],
     "_%n day ago_::_%n days ago_" : ["%n day ago","%n days ago"],
+    "_%n week ago_::_%n weeks ago_" : ["%n week ago","%n weeks ago"],
     "_%n month ago_::_%n months ago_" : ["%n month ago","%n months ago"],
     "_%n year ago_::_%n years ago_" : ["%n year ago","%n years ago"],
     "now" : "now",
