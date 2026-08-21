@@ -330,6 +330,9 @@ function closePopup() {
 
 .inquiry-group-view-main {
   min-height: 100vh;
+   min-height: 100vh;
+  border-radius: 12px; 
+  overflow: hidden;
 }
 
 .header-item,
@@ -341,6 +344,8 @@ function closePopup() {
   cursor: pointer;
   overflow: hidden;
   position: relative;
+   border-radius: 12px; 
+  border: 1px solid var(--color-border); 
   
   &::before {
     content: '';
@@ -354,6 +359,7 @@ function closePopup() {
     transition: opacity 0.3s ease;
     pointer-events: none;
     z-index: 1;
+    border-radius: 12px;
   }
   
   &:hover {

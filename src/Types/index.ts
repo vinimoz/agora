@@ -216,7 +216,6 @@ export type UserType =
 
 export type VirtualUserItemType = 'addPublicLink' | 'internalAccess' | 'deleted' | 'anonymous'
 
-export type ISearchType = 0 | 1 | 2 | 4 | 7 | 51 | 99
 
 export type Chunking = {
   size: number

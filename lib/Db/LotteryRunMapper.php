@@ -27,8 +27,26 @@ class LotteryRunMapper extends QBMapper
     }
 
     /**
+     * Find a run by ID
+     */
+    public function find(int $id): ?LotteryRun
+    {
+        $qb = $this->db->getQueryBuilder();
+        $qb->select('*')
+     ->from($this->getTableName())
+     ->where($qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT)));
+
+        try {
+            return $this->findEntity($qb);
+        } catch (\OCP\AppFramework\Db\DoesNotExistException $e) {
+            return null;
+        }
+    }
+
+
+    /**
      * Find runs by participation ID
-     * 
+     *
      * @return LotteryRun[]
      */
     public function findByParticipationId(int $participationId): array
@@ -63,7 +81,7 @@ class LotteryRunMapper extends QBMapper
 
     /**
      * Find runs by status
-     * 
+     *
      * @return LotteryRun[]
      */
     public function findByStatus(string $status): array
@@ -79,7 +97,7 @@ class LotteryRunMapper extends QBMapper
 
     /**
      * Find completed runs since a timestamp
-     * 
+     *
      * @return LotteryRun[]
      */
     public function findCompletedSince(int $timestamp): array

@@ -26,8 +26,6 @@ import ActionToggleSidebar from '../components/Actions/modules/ActionToggleSideb
 import { useInquiryGroupsStore } from '../stores/inquiryGroups.ts'
 import LoadingOverlay from '../components/Base/modules/LoadingOverlay.vue'
 import { InquiryGeneralIcons } from '../utils/icons.ts'
-import InquiryTimeline from '../components/Inquiry/InquiryTimeline.vue'
-import InquiryKanban from '../components/Inquiry/InquiryKanban.vue'
 
 const inquiriesStore = useInquiriesStore()
 const inquiryGroupsStore = useInquiryGroupsStore()
@@ -62,7 +60,7 @@ function handleMainModeChange(mode: string) {
   router.push({
     name: 'group-list',
     params: {
-        slug: 'none' 
+        slug: '' 
     },
     query: {
       ...route.query,
@@ -172,7 +170,7 @@ const refreshInquiries = () => {
 
 
 onMounted(() => {
-//  inquiriesStore.load(false)
+  inquiriesStore.load(false)
 // Initialize modes from route query
 if (route.query.viewMode === 'create') {
   mainMode.value = 'create' 
@@ -269,37 +267,6 @@ else if (route.query.viewMode === 'group') {
                                 <component :is="InquiryGeneralIcons.ViewListOutline" size="16" />
                             </template>
                     </NcCheckboxRadioSwitch>
-                    <!-- 
-                    <NcCheckboxRadioSwitch
-                            :button-variant="true"
-                            :model-value="subMode"
-                            value="timeline-view"
-                            name="sub_mode_radio"
-                            type="radio"
-                            button-variant-grouped="horizontal"
-                            class="mode-switch sub-mode"
-                            @update:model-value="handleSubModeChange"
-                            >
-                            <template #icon>
-                                <component :is="InquiryGeneralIcons.Timeline" size="16" />
-                            </template>
-                    </NcCheckboxRadioSwitch>
-
-                    <NcCheckboxRadioSwitch
-                            :button-variant="true"
-                            :model-value="subMode"
-                            value="kanban-view"
-                            name="sub_mode_radio"
-                            type="radio"
-                            button-variant-grouped="horizontal"
-                            class="mode-switch sub-mode"
-                            @update:model-value="handleSubModeChange"
-                            >
-                            <template #icon>
-                                <component :is="InquiryGeneralIcons.ViewKanban" size="16" />
-                            </template>
-                    </NcCheckboxRadioSwitch> 
-                    -->
                 </div>
             </div>
 
@@ -342,21 +309,6 @@ else if (route.query.viewMode === 'group') {
         </InquiryItem>
     </TransitionGroup>
 
-    <!-- Timeline view -->
-    <InquiryTimeline
-        v-else-if="!emptyInquiryListnoInquiries && subMode === 'timeline-view'"
-        :inquiries="inquiriesStore.inquiriesFilteredSorted"
-        @open-detail="openInquiryDetail"
-    />
-
-    <!-- Kanban view -->
-    <InquiryKanban
-        v-else-if="!emptyInquiryListnoInquiries && subMode === 'kanban-view'"
-        :inquiries="inquiriesStore.inquiriesFilteredSorted"
-        @open-detail="openInquiryDetail"
-        @status-changed="refreshInquiries"
-    />
-        
         <IntersectionObserver
                 v-if="showMore"
                 key="observer"

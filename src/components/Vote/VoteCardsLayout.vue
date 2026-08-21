@@ -83,8 +83,8 @@ import { computed } from 'vue'
 import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import { Vote, X } from 'lucide-vue-next'
-import VoteCard from './VoteCard.vue'
-import { InquiryOptionIcons } from '../../../utils/icons.ts'
+import VoteCard from '../Vote/VoteCard.vue'
+import { InquiryOptionIcons } from '../../utils/icons.ts'
 import type { Option, Inquiry, SupportEngine, SupportValue } from '../../Types/index'
 
 const props = defineProps<{

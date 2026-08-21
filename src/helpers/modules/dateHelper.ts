@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { t } from '@nextcloud/l10n'
+import { t , n } from '@nextcloud/l10n'
 
 /**
  * Format a date string or Date object to a localized date string
@@ -63,47 +63,62 @@ function getRelativeTimeString(
   }
 
   if (diffMinutes < 60) {
-    return t('agora', '{minutes} minute{plural} ago', {
-      minutes: diffMinutes,
-      plural: diffMinutes === 1 ? '' : 's'
-    })
+    return n(
+      'agora',
+      '%n minute ago',
+      '%n minutes ago',
+      diffMinutes
+    )
   }
 
   if (diffHours < 24) {
-    return t('agora', '{hours} hour{plural} ago', {
-      hours: diffHours,
-      plural: diffHours === 1 ? '' : 's'
-    })
+    return n(
+      'agora',
+      '%n hour ago',
+      '%n hours ago',
+      diffHours
+    )
   }
 
   if (diffDays < 7) {
-    return t('agora', '{days} day{plural} ago', {
-      days: diffDays,
-      plural: diffDays === 1 ? '' : 's'
-    })
+    return n(
+      'agora',
+      '%n day ago',
+      '%n days ago',
+      diffDays
+    )
   }
 
   if (diffDays < 30) {
     const weeks = Math.floor(diffDays / 7)
-    return t('agora', '{weeks} week{plural} ago', {
-      weeks,
-      plural: weeks === 1 ? '' : 's'
-    })
+
+    return n(
+      'agora',
+      '%n week ago',
+      '%n weeks ago',
+      weeks
+    )
   }
 
   if (diffDays < 365) {
     const months = Math.floor(diffDays / 30)
-    return t('agora', '{months} month{plural} ago', {
-      months,
-      plural: months === 1 ? '' : 's'
-    })
+
+    return n(
+      'agora',
+      '%n month ago',
+      '%n months ago',
+      months
+    )
   }
 
   const years = Math.floor(diffDays / 365)
-  return t('agora', '{years} year{plural} ago', {
-    years,
-    plural: years === 1 ? '' : 's'
-  })
+
+  return n(
+    'agora',
+    '%n year ago',
+    '%n years ago',
+    years
+  )
 }
 
 /**

@@ -404,11 +404,13 @@ function handleCommentsClick() {
 <style lang="scss" scoped>
 .inquiry-card {
   position: relative;
-  border-radius: 16px;
+  border-radius: 12px;
   background: var(--color-main-background);
-  border: 2px solid var(--color-border);
+  border: 1px solid var(--color-border);
   overflow: hidden;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    	
+
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -480,6 +482,7 @@ function handleCommentsClick() {
     display: flex;
     flex-direction: column;
     gap: 12px;
+    border-radius: 0 12px 12px 0;
   }
   
   // Adjust title for elongated look
@@ -660,7 +663,7 @@ function handleCommentsClick() {
 .card-content {
   padding: 20px;
   background: var(--color-main-background);
-  border-radius: 8px;
+   border-radius: 0 0 12px 12px;
   display: flex;
   flex-direction: column;
   gap: 12px;

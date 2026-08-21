@@ -16,6 +16,9 @@ use OCP\IGroupManager;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Http;             
 use OCA\Agora\Exceptions\Exception; 
+use OCA\Agora\Db\LotteryRunMapper;
+use OCA\Agora\Db\LotterySelectionMapper;
+
 /**
  * @template-extends QBMapper<Participation>
  */
@@ -27,11 +30,30 @@ class ParticipationMapper extends QBMapper
 		IDBConnection $db,
 		private GroupRelationMapper $groupRelationMapper,
 		private UserRelationMapper $userRelationMapper,
-	        private IGroupManager $groupManager,
+		private IGroupManager $groupManager,
+	        private LotteryRunMapper $lotteryRunMapper, 
+        	private LotterySelectionMapper $lotterySelectionMapper,
 
 	) {
 		parent::__construct($db, self::TABLE, Participation::class);
 	}
+
+/**
+ * Find participation by ID
+ */
+public function find(int $id): ?Participation
+{
+    $qb = $this->db->getQueryBuilder();
+    $qb->select('*')
+        ->from($this->getTableName())
+        ->where($qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT)));
+
+    try {
+        return $this->findEntity($qb);
+    } catch (\OCP\AppFramework\Db\DoesNotExistException $e) {
+        return null;
+    }
+}
 
 	/**
 	 * Find participation policy by target
@@ -135,37 +157,91 @@ class ParticipationMapper extends QBMapper
 
 	/**
 	 * Find participation policy by target with relations loaded
+	 public function findByTargetWithRelations(string $targetType, int $targetId): ?Participation
+	 {
+		 $participation = $this->findByTarget($targetType, $targetId);
+
+		 if ($participation !== null) {
+			 // Ensure policyConfig is an array
+			 if ($participation->getPolicyConfig() === null) {
+				 $participation->setPolicyConfig([]);
+}
+
+// Load user IDs if policy type is USERS
+if ($participation->usesUsers()) {
+	$userIds = $this->getUserIdsForParticipation($targetId, $targetType);
+	$config = $participation->getPolicyConfig() ?? [];
+	$config['user_ids'] = $userIds;
+	$participation->setPolicyConfig($config);
+}
+
+// Load group IDs if policy type is GROUPS
+if ($participation->usesGroups()) {
+	$groupIds = $this->getGroupIdsForParticipation($targetId, $targetType);
+	$config = $participation->getPolicyConfig() ?? [];
+	$config['group_ids'] = $groupIds;
+	$participation->setPolicyConfig($config);
+}
+}
+
+return $participation;
+}
 	 */
 	public function findByTargetWithRelations(string $targetType, int $targetId): ?Participation
-{
-    $participation = $this->findByTarget($targetType, $targetId);
+	{
+		$participation = $this->findByTarget($targetType, $targetId);
 
-    if ($participation !== null) {
-        // Ensure policyConfig is an array
-        if ($participation->getPolicyConfig() === null) {
-            $participation->setPolicyConfig([]);
-        }
+		if ($participation !== null) {
+			// Ensure policyConfig is an array
+			if ($participation->getPolicyConfig() === null) {
+				$participation->setPolicyConfig([]);
+			}
 
-        // Load user IDs if policy type is USERS
-        if ($participation->usesUsers()) {
-            $userIds = $this->getUserIdsForParticipation($targetId, $targetType);
-            $config = $participation->getPolicyConfig() ?? [];
-            $config['user_ids'] = $userIds;
-            $participation->setPolicyConfig($config);
-        }
+			// Load user IDs if policy type is USERS
+			if ($participation->usesUsers()) {
+				$userIds = $this->getUserIdsForParticipation($targetId, $targetType);
+				$config = $participation->getPolicyConfig() ?? [];
+				$config['user_ids'] = $userIds;
+				$participation->setPolicyConfig($config);
+			}
 
-        // Load group IDs if policy type is GROUPS
-        if ($participation->usesGroups()) {
-            $groupIds = $this->getGroupIdsForParticipation($targetId, $targetType);
-            $config = $participation->getPolicyConfig() ?? [];
-            $config['group_ids'] = $groupIds;
-            $participation->setPolicyConfig($config);
-        }
-    }
+			// Load group IDs if policy type is GROUPS
+			if ($participation->usesGroups()) {
+				$groupIds = $this->getGroupIdsForParticipation($targetId, $targetType);
+				$config = $participation->getPolicyConfig() ?? [];
+				$config['group_ids'] = $groupIds;
+				$participation->setPolicyConfig($config);
+			}
 
-    return $participation;
+			if ($participation->isLottery()) {
+				$config = $participation->getPolicyConfig() ?? [];
+
+				// Get the latest lottery run with selections
+				$latestRun = $this->lotteryRunMapper->findLatestByParticipationId($participation->getId());
+				if ($latestRun !== null) {
+					$selections = $this->lotterySelectionMapper->findByRunId($latestRun->getId());
+					$config['lottery'] = [
+						'status' => $latestRun->getStatus(),
+						'is_validated' => $latestRun->isValidated(),
+						'run' => $latestRun->jsonSerialize(),
+						'selections' => array_map(fn($s) => $s->jsonSerialize(), $selections),
+						'pool_size' => $latestRun->getPoolSize(),
+						'selection_count' => $latestRun->getSelectionCount(),
+					];
+				} else {
+					$config['lottery'] = [
+						'status' => 'not_run',
+						'is_validated' => false,
+					];
+				}
+
+				$participation->setPolicyConfig($config);
+			}
+		}
+
+		return $participation;
 	}
-	
+
 	/**
 	 * Get user IDs for a participation policy
 	 * 

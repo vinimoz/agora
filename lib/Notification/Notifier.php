@@ -29,6 +29,8 @@ class Notifier implements INotifier
     public const NOTIFY_INQUIRY_TAKEOVER = 'takeOverInquiry';
     public const NOTIFY_INQUIRY_CHANGED_OWNER = 'InquiryChangedOwner';
     public const NOTIFY_INVITATION = 'invitation';
+    public const NOTIFY_INVITATION_PARTICIPATION = 'invitationParticipation';
+    public const NOTIFY_INVITATION_VOTE = 'invitationVote';
     private const SUBJECT_PARSED = 'parsedSubject';
     private const SUBJECT_RICH = 'richSubject';
 
@@ -157,6 +159,14 @@ class Notifier implements INotifier
             self::NOTIFY_INVITATION => [
             self::SUBJECT_PARSED => $l->t('%s invited you to a inquiry', $actor->getDisplayName()),
             self::SUBJECT_RICH => $l->t('{actor} has invited you to the inquiry "%s".', $inquiryTitle),
+            ],
+            self::NOTIFY_INVITATION_PARTICIPATION => [
+            self::SUBJECT_PARSED => $l->t('%s invited you to participate to the inquiry', $actor->getDisplayName()),
+            self::SUBJECT_RICH => $l->t('{actor} has invited you to participate inquiry "%s".', $inquiryTitle),
+            ],
+            self::NOTIFY_INVITATION_VOTE => [
+            self::SUBJECT_PARSED => $l->t('%s invited you to vote to the inquiry', $actor->getDisplayName()),
+            self::SUBJECT_RICH => $l->t('{actor} has invited you to vote to the inquiry "%s".', $inquiryTitle),
             ],
             self::NOTIFY_INQUIRY_TAKEOVER => [
             self::SUBJECT_PARSED => $l->t('%s took over your inquiry', $actor->getDisplayName()),

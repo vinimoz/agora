@@ -231,7 +231,8 @@ const props = defineProps({
   },
   parentId: {
     type: Number,
-    required: true
+    required: true,
+    default: null
   },
   targetType: {
     type: String as PropType<TargetType>,

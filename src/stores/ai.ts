@@ -59,38 +59,33 @@ export const useAiStore = defineStore('ai', {
   getters: {
     /**
      * Get summary for inquiry
+     * @param state
      */
-    getSummary: (state) => (inquiryId: number): string | null => {
-      return state.summaries[inquiryId] || null
-    },
+    getSummary: (state) => (inquiryId: number): string | null => state.summaries[inquiryId] || null,
 
     /**
      * Get key points for inquiry
+     * @param state
      */
-    getKeyPoints: (state) => (inquiryId: number): string[] => {
-      return state.keyPoints[inquiryId] || []
-    },
+    getKeyPoints: (state) => (inquiryId: number): string[] => state.keyPoints[inquiryId] || [],
 
     /**
      * Get TL;DR for inquiry
+     * @param state
      */
-    getTldr: (state) => (inquiryId: number): string | null => {
-      return state.tldrs[inquiryId] || null
-    },
+    getTldr: (state) => (inquiryId: number): string | null => state.tldrs[inquiryId] || null,
 
     /**
      * Get sentiment analysis for inquiry
+     * @param state
      */
-    getSentiment: (state) => (inquiryId: number): any | null => {
-      return state.sentiments[inquiryId] || null
-    },
+    getSentiment: (state) => (inquiryId: number): any | null => state.sentiments[inquiryId] || null,
 
     /**
      * Get poll options for inquiry
+     * @param state
      */
-    getPollOptions: (state) => (inquiryId: number): string[] => {
-      return state.pollOptions[inquiryId] || []
-    },
+    getPollOptions: (state) => (inquiryId: number): string[] => state.pollOptions[inquiryId] || [],
   },
 
   actions: {
@@ -98,6 +93,8 @@ export const useAiStore = defineStore('ai', {
 
     /**
      * Summarize inquiry
+     * @param inquiryId
+     * @param format
      */
     async summarizeInquiry(inquiryId: number, format: 'concise' | 'detailed' | 'bullet_points' = 'concise'): Promise<string> {
       this.isLoading = true
@@ -118,6 +115,7 @@ export const useAiStore = defineStore('ai', {
 
     /**
      * Get key points
+     * @param inquiryId
      */
     async getKeyPoints(inquiryId: number): Promise<string[]> {
       this.isLoading = true
@@ -138,6 +136,8 @@ export const useAiStore = defineStore('ai', {
 
     /**
      * Get TL;DR
+     * @param inquiryId
+     * @param maxLength
      */
     async getTldr(inquiryId: number, maxLength: number = 100): Promise<string> {
       this.isLoading = true
@@ -160,6 +160,8 @@ export const useAiStore = defineStore('ai', {
 
     /**
      * Analyze sentiment
+     * @param inquiryId
+     * @param commentId
      */
     async analyzeSentiment(inquiryId: number, commentId?: number): Promise<any> {
       this.isLoading = true
@@ -180,6 +182,8 @@ export const useAiStore = defineStore('ai', {
 
     /**
      * Classify topic
+     * @param inquiryId
+     * @param categories
      */
     async classifyTopic(inquiryId: number, categories: string[] = []): Promise<string> {
       this.isLoading = true
@@ -200,6 +204,7 @@ export const useAiStore = defineStore('ai', {
 
     /**
      * Detect urgency
+     * @param inquiryId
      */
     async detectUrgency(inquiryId: number): Promise<string> {
       this.isLoading = true
@@ -220,6 +225,7 @@ export const useAiStore = defineStore('ai', {
 
     /**
      * Extract actions
+     * @param inquiryId
      */
     async extractActions(inquiryId: number): Promise<string[]> {
       this.isLoading = true
@@ -242,6 +248,9 @@ export const useAiStore = defineStore('ai', {
 
     /**
      * Generate poll options
+     * @param inquiryId
+     * @param count
+     * @param optionId
      */
     async generatePollOptions(inquiryId: number, count: number = 4, optionId?: number): Promise<string[]> {
       this.isLoading = true
@@ -262,6 +271,8 @@ export const useAiStore = defineStore('ai', {
 
     /**
      * Generate decision options
+     * @param inquiryId
+     * @param constraints
      */
     async generateDecisionOptions(inquiryId: number, constraints: Record<string, any> = {}): Promise<any[]> {
       this.isLoading = true
@@ -282,6 +293,8 @@ export const useAiStore = defineStore('ai', {
 
     /**
      * Generate creative ideas
+     * @param inquiryId
+     * @param count
      */
     async generateCreativeIdeas(inquiryId: number, count: number = 5): Promise<string[]> {
       this.isLoading = true
@@ -302,6 +315,10 @@ export const useAiStore = defineStore('ai', {
 
     /**
      * Generate options from document
+     * @param inquiryId
+     * @param documentPath
+     * @param optionType
+     * @param options
      */
     async generateDocumentOptions(
       inquiryId: number,
@@ -329,6 +346,9 @@ export const useAiStore = defineStore('ai', {
 
     /**
      * Generate arguments
+     * @param inquiryId
+     * @param position
+     * @param count
      */
     async generateArguments(inquiryId: number, position: string, count: number = 3): Promise<any[]> {
       this.isLoading = true
@@ -349,6 +369,8 @@ export const useAiStore = defineStore('ai', {
 
     /**
      * Generate counter-arguments
+     * @param inquiryId
+     * @param argumentsList
      */
     async generateCounterArguments(inquiryId: number, argumentsList: any[]): Promise<any[]> {
       this.isLoading = true
@@ -369,6 +391,7 @@ export const useAiStore = defineStore('ai', {
 
     /**
      * Analyze debate
+     * @param inquiryId
      */
     async analyzeDebate(inquiryId: number): Promise<any> {
       this.isLoading = true
@@ -389,6 +412,7 @@ export const useAiStore = defineStore('ai', {
 
     /**
      * Generate debate summary
+     * @param inquiryId
      */
     async generateDebateSummary(inquiryId: number): Promise<string> {
       this.isLoading = true
@@ -409,6 +433,8 @@ export const useAiStore = defineStore('ai', {
 
     /**
      * Suggest compromise
+     * @param inquiryId
+     * @param positions
      */
     async suggestCompromise(inquiryId: number, positions: any[]): Promise<any> {
       this.isLoading = true
@@ -429,6 +455,9 @@ export const useAiStore = defineStore('ai', {
 
     /**
      * Generate rebuttal
+     * @param inquiryId
+     * @param point
+     * @param context
      */
     async generateRebuttal(inquiryId: number, point: string, context: Record<string, any> = {}): Promise<string> {
       this.isLoading = true
@@ -451,6 +480,10 @@ export const useAiStore = defineStore('ai', {
 
     /**
      * Translate content
+     * @param inquiryId
+     * @param targetLanguage
+     * @param sourceLanguage
+     * @param commentId
      */
     async translateContent(
       inquiryId: number,
@@ -479,6 +512,8 @@ export const useAiStore = defineStore('ai', {
 
     /**
      * Translate to multiple languages
+     * @param inquiryId
+     * @param targetLanguages
      */
     async translateMultilingual(inquiryId: number, targetLanguages: string[]): Promise<Record<string, string>> {
       this.isLoading = true
@@ -502,6 +537,8 @@ export const useAiStore = defineStore('ai', {
 
     /**
      * Translate all comments
+     * @param inquiryId
+     * @param targetLanguage
      */
     async translateAllComments(inquiryId: number, targetLanguage: string): Promise<Record<number, string>> {
       this.isLoading = true
@@ -521,6 +558,7 @@ export const useAiStore = defineStore('ai', {
 
     /**
      * Clear AI data for inquiry
+     * @param inquiryId
      */
     clearAiData(inquiryId: number): void {
       delete this.summaries[inquiryId]

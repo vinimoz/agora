@@ -42,8 +42,7 @@
             <!-- Empty state when no votable items exist -->
             <VoteEmptyState
                     v-else-if="votableItems.length === 0"
-                    :show-add-button="canAddItems"
-                    :can-manage-vote="canManageVote && canAddItems"
+                    :can-manage-vote="canManageVote"
                     :is-readonly="isReadonly"
                     @add-option="$emit('addOption')"
                     />
@@ -193,7 +192,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { t } from '@nextcloud/l10n'
-import { NcLoadingIcon, NcDialog } from '@nextcloud/vue'
+import { NcLoadingIcon, NcDialog } from '@nextcloud/vue' 
 import NcButton from '@nextcloud/vue/components/NcButton'
 import type { Option, Inquiry, SupportEngine } from '../../Types/index'
 import { useVoteContext, type TargetType } from '../../composables/useVoteContext'
@@ -213,10 +212,10 @@ import { showSuccess } from '@nextcloud/dialogs'
 
 const props = defineProps<{
   inquiryId: number | null
+  parentId: number | null
   targetType: TargetType
   canManageVote: boolean
   isReadonly: boolean
-  canAddItems: boolean
 }>()
 
 const emit = defineEmits<{
@@ -236,9 +235,9 @@ const supportsStore = useSupportsStore()
 const allItems = computed(() => {
   if (props.targetType === 'option') {
     return optionsStore.options || []
-  } else {
+  } 
     return inquiriesStore.inquiries || []
-  }
+  
 })
 
 console.log(" TARGET TYPE ",props.targetType)

@@ -6,7 +6,7 @@
   <div class="cards-layout">
     <!-- Cards grid -->
     <div class="options-grid">
-      <ItemCard
+      <OptionCard
         v-for="option in options"
         :key="option.id"
         :option="option"
@@ -68,7 +68,7 @@
     <!-- List view alternative -->
     <div v-if="viewMode === 'list'" class="list-view">
       <div class="options-list">
-        <ItemCard
+        <OptionCard
           v-for="option in options"
           :key="option.id"
           :option="option"
@@ -84,7 +84,7 @@
     <!-- Compact view -->
     <div v-else-if="viewMode === 'compact'" class="compact-view">
       <div class="options-compact">
-        <ItemCard
+        <OptionCard
           v-for="option in options"
           :key="option.id"
           :option="option"
@@ -101,12 +101,12 @@
 import { ref, computed } from 'vue'
 import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
-import { InquiryOptionIcons } from '../../utils/icons.ts'
-import ItemCard from './ItemCard.vue'
+import { InquiryOptionIcons } from '../../../utils/icons.ts'
+import OptionCard from '../OptionCard.vue'
 import { 
   getFamilyIconComponent, 
   getOptionTypeIconComponent 
-} from '../../helpers/modules/InquiryOptionHelper'
+} from '../../../helpers/modules/InquiryOptionHelper'
 
 import type { InquiryOptionType, Option , OptionFamily } from '../../Types/index.ts'
 

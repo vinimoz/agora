@@ -30,6 +30,8 @@ use OCA\Agora\UserSession;
  * @method    void setPublicationStatus(string $value)
  * @method    string getPublicationStatus()
  * @method    void setGroupStatus(string $value)
+ * @method void setPublicationStatus(string $value)
+ * @method string getPublicationStatus()
  * @method    string getType()
  * @method    void setType(string $value)
  * @method    string getOwner()
@@ -47,6 +49,10 @@ use OCA\Agora\UserSession;
  * @method    ?string getMetadata()
  * @method    void setMetadata(?string $value)
  * @method    ?int getCoverId()
+ * @method string getVisibility()
+ * @method void setVisibility(string $value)
+ * @method array|null getVisibilityGroups()
+ * @method void setVisibilityGroups(array|null $value)
  * @method    void setCoverId(?int $value)
  * @method    bool getProtected()
  * @method    void setProtected(bool $value)
@@ -75,7 +81,10 @@ class InquiryGroup extends EntityWithUser implements JsonSerializable
     protected string $title = '';
     protected string $owner = '';
     protected string $type = 'default';
+    protected string $visibility = 'private';
+    protected ?array $visibilityGroups = [];
     protected string $groupStatus = 'draft';
+    protected string $publicationStatus = '';
     protected ?string $description = null;
     protected ?string $titleExt = null;
     protected ?string $ownedGroup = null;
@@ -112,6 +121,8 @@ class InquiryGroup extends EntityWithUser implements JsonSerializable
         $this->addType('miscFields', 'json');
         $this->addType('childs', 'json');
         $this->addType('miscGroupSettingsConcat', 'string');
+		$this->addType('visibility', 'string');
+		$this->addType('visibilityGroups', 'json');
 
 
         $this->userSession = Container::queryClass(UserSession::class);
@@ -149,6 +160,7 @@ class InquiryGroup extends EntityWithUser implements JsonSerializable
     {
         return [
             'groupStatus' => $this->getInquiryStatus(),
+	    'publicationStatus' => $this->getPublicationStatus(),
             'updated' => $this->getUpdated(),
             'created' => $this->getCreated(),
             'isArchived' => (bool)$this->getArchived(),
@@ -299,7 +311,6 @@ class InquiryGroup extends EntityWithUser implements JsonSerializable
             'protected' => $this->getProtected(),
             'allowEdit' => $this->getAllowEdit(),
             'inquiryIds' => $this->getInquiryIds(),
-            'childs' => $this->getChilds(),
             'childs' => $this->getChilds(),
             'slug' => $this->getSlug(),
             'miscFields' => $this->getMiscArray(),

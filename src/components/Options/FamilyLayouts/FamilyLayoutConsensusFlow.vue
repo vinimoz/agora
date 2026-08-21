@@ -100,7 +100,7 @@
           :can-resolve="hasFeature('consensus_tracking')"
           :can-reopen="hasFeature('consensus_tracking')"
           :can-change-status="hasFeature('objection_management')"
-	  :family-type="consensus"
+	  :family-type="familyKey"
           @click="$emit('openDetail', option)"
           @status-change="(status) => $emit('optionStatusChange', option.id, status)"
           @propose-resolution="(optionId) => $emit('proposeOptionResolution', optionId)"
@@ -126,7 +126,7 @@
           :show-discussion="true"
           :can-discuss="hasFeature('objection_management')"
           :can-propose-resolution="hasFeature('objection_management')"
-	  :family-type="consensus"
+	  :family-type="familyKey"
           @click="$emit('openDetail', option)"
           @status-change="(status) => $emit('optionStatusChange', option.id, status)"
         />
@@ -147,7 +147,7 @@
           :inquiry-id="inquiryId"
           :show-resolution="true"
           :can-resolve="hasFeature('consensus_tracking')"
-	  :family-type="consensus"
+	  :family-type="familyKey"
           @click="$emit('openDetail', option)"
           @resolve="(optionId) => $emit('resolveOption', optionId)"
         />
@@ -172,7 +172,7 @@
           :show-resolution="true"
           :show-resolved-info="true"
           :can-reopen="hasFeature('consensus_tracking')"
-	  :family-type="consensus"
+	  :family-type="familyKey"
           @click="$emit('openDetail', option)"
           @reopen="(optionId) => $emit('reopenOption', optionId)"
         />
@@ -192,7 +192,7 @@
           :option="option"
           :inquiry-id="inquiryId"
           :show-status="true"
-	  :family-type="consensus"
+	  :family-type="familyKey"
           @click="$emit('openDetail', option)"
         />
       </div>
@@ -211,7 +211,7 @@
           :option="option"
           :inquiry-id="inquiryId"
           :show-status="true"
-	  :family-type="consensus"
+	  :family-type="familyKey"
           @click="$emit('openDetail', option)"
         />
       </div>
@@ -230,7 +230,7 @@
           :option="option"
           :inquiry-id="inquiryId"
           :show-status="true"
-	  :family-type="consensus"
+	  :family-type="familyKey"
           @click="$emit('openDetail', option)"
         />
       </div>
@@ -249,7 +249,7 @@
           :option="option"
           :inquiry-id="inquiryId"
           :show-support="true"
-	  :family-type="debate"
+	  :family-type="familyKey"
           @click="$emit('openDetail', option)"
         />
       </div>
@@ -325,6 +325,7 @@ const emit = defineEmits<{
   'reopenInquiry': []
   'action': [actionKey: string]
 }>()
+
 
 // ========================================
 // HELPER: Get option status safely

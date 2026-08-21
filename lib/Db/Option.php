@@ -142,7 +142,7 @@ class Option extends EntityWithUser implements JsonSerializable
     protected int $targetId = 0;
     protected int $parentId = 0;
     protected string $type = 'debate';
-    protected string $publicationStatus = 'private';
+    protected string $publicationStatus = 'draft';
     protected string $text = '';
     protected string $title = '';
     protected string $owner = '';
@@ -157,7 +157,8 @@ class Option extends EntityWithUser implements JsonSerializable
     protected string $supportFeature = '';
     protected string $family = 'debate';
     protected int $sortOrder = 0;
-    protected string $visibility = 'private';
+    protected string $visibility = 'inherit';
+    	
 
     // Visibility relations (loaded from GroupRelation/UserRelation)
     protected ?array $visibilityGroups = [];
@@ -204,6 +205,7 @@ class Option extends EntityWithUser implements JsonSerializable
         $this->addType('visibility', 'string');
         $this->addType('visibilityGroups', 'json');
         $this->addType('visibilityUsers', 'json');
+	$this->addType('publicationStatus', 'string'); 
 
         // Joined attributes
         $this->addType('currentUserSupports', 'integer');

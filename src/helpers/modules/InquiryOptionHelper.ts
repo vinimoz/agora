@@ -13,6 +13,35 @@ import type { useOptionsStore } from '@/stores/options'
 
 type OptionsStore = ReturnType<typeof useOptionsStore>
 
+export {
+  getItemTitle,
+  getItemStatus,
+  getItemType,
+  getItemFamily,
+  getItemId,
+  getForceLayouts,
+  addLayoutToItem,
+  removeLayoutFromItem,
+  hasLayout,
+  filterItemsByLayout,
+  formatDateToISO,
+  setTimelineDates,
+  getTimelineStartDate,
+  getTimelineEndDate,
+  hasTimelineDates,
+  addToTimeline,
+  removeFromTimeline,
+  getItemTypeIcon,
+  getItemTypeIconComponent,
+  getAvailableStatuses,
+  getStatusColor,
+  groupItemsByFamily,
+  groupItemsByStatus,
+  groupItemsByType,
+  searchItemsByTitle,
+  filterItemsByStatus,
+  filterItemsByType
+} from './GenericItemHelper'
 
 export const isImportedFromView = (option: Option, familyKey: string): boolean => !( option.family === familyKey )
 
@@ -1206,43 +1235,6 @@ export function filterOptionsForTimeline(
   return options.filter(option => shouldShowInTimeline(option, optionTypes, targetFamily))
 }
 
-/// //////////////////////////////////////
-/**
- * Get force_layouts from option's miscFields
- * @param option - The option
- */
-export function getForceLayouts(option: Option): string[] {
-  const miscFields = option.miscFields || {}
-  
-  if (!miscFields.force_layouts) {
-    return []
-  }
-  
-  // Handle both string and array formats
-  if (typeof miscFields.force_layouts === 'string') {
-    try {
-      const parsed = JSON.parse(miscFields.force_layouts)
-      if (Array.isArray(parsed)) {
-        return parsed
-      } if (typeof parsed === 'string') {
-        return [parsed]
-      } 
-        return []
-      
-    } catch {
-      // If parsing fails, treat as a single layout string
-      if (miscFields.force_layouts) {
-        return [miscFields.force_layouts]
-      }
-      return []
-    }
-  } else if (Array.isArray(miscFields.force_layouts)) {
-    return miscFields.force_layouts
-  }
-  
-  return []
-}
-
 /**
  * Add a layout to an option's force_layouts
  * @param option - The option
@@ -1285,29 +1277,6 @@ export function removeLayoutFromOption(option: Option, layout: string): Option {
     miscFields
   }
 }
-
-/**
- * Remove an option from timeline (removes timeline from force_layouts)
- * @param option - The option to remove
- * @param optionsStore - The options store instance
- */
-export async function removeFromTimeline(
-  option: Option,
-  optionsStore: OptionsStore
-): Promise<void> {
-  try {
-    // Remove 'timeline' from force_layouts
-    const updatedOption = removeLayoutFromOption(option, 'timeline')
-    
-    // Update the option
-    await optionsStore.updateOption({ option: updatedOption })
-    
-  } catch (error) {
-    console.error('Failed to remove option from timeline:', error)
-    throw error
-  }
-}
-
 
 /**
  * Get default layout for a family
@@ -1422,161 +1391,6 @@ function formatDateToISO(date: Date | string | null): string | null {
   return `${year}-${month}-${day}`
 }
 
-/**
- * Set timeline dates on an option
- * @param option - The option to update
- * @param startDate - Start date (Date object or string)
- * @param endDate - End date (Date object or string, optional)
- */
-export function setTimelineDates(
-  option: Option,
-  startDate: Date | string | null,
-  endDate?: Date | string | null
-): Option {
-  const miscFields = { ...(option.miscFields || {}) }
-  
-  // Set start date
-  if (startDate) {
-    const formattedStart = formatDateToISO(startDate)
-    if (formattedStart) {
-      miscFields.start_date = formattedStart
-    }
-  } else if (startDate === null) {
-    // Remove start_date if null is passed
-    delete miscFields.start_date
-  }
-  
-  // Set end date (if provided)
-  if (endDate !== undefined) {
-    if (endDate === null) {
-      // Remove end_date if null is passed
-      delete miscFields.end_date
-    } else {
-      const formattedEnd = formatDateToISO(endDate)
-      if (formattedEnd) {
-        miscFields.end_date = formattedEnd
-      }
-    }
-  }
-  
-  return {
-    ...option,
-    miscFields
-  }
-}
-
-/**
- * Get timeline start date from an option
- * @param option - The option to check
- */
-export function getTimelineStartDate(option: Option): Date | null {
-  const miscFields = option.miscFields || {}
-  
-  // Check multiple possible date fields
-  const dateStr = miscFields.start_date || 
-                  miscFields.voting_start || 
-                  miscFields.support_start
-  
-  if (!dateStr) return null
-  
-  try {
-    // Handle string dates
-    if (typeof dateStr === 'string') {
-      const date = new Date(dateStr)
-      return isNaN(date.getTime()) ? null : date
-    }
-    
-    // Handle timestamp numbers
-    if (typeof dateStr === 'number') {
-      // Check if it's seconds or milliseconds
-      const timestamp = dateStr < 10000000000 ? dateStr * 1000 : dateStr
-      const date = new Date(timestamp)
-      return isNaN(date.getTime()) ? null : date
-    }
-    
-    // Handle Date objects
-    if (dateStr instanceof Date) {
-      return isNaN(dateStr.getTime()) ? null : dateStr
-    }
-    
-    return null
-  } catch {
-    return null
-  }
-}
-
-/**
- * Get timeline end date from an option
- * @param option - The option to check
- */
-export function getTimelineEndDate(option: Option): Date | null {
-  const miscFields = option.miscFields || {}
-  const dateStr = miscFields.end_date
-  
-  if (!dateStr) return null
-  
-  try {
-    // Handle string dates
-    if (typeof dateStr === 'string') {
-      const date = new Date(dateStr)
-      return isNaN(date.getTime()) ? null : date
-    }
-    
-    // Handle timestamp numbers
-    if (typeof dateStr === 'number') {
-      const timestamp = dateStr < 10000000000 ? dateStr * 1000 : dateStr
-      const date = new Date(timestamp)
-      return isNaN(date.getTime()) ? null : date
-    }
-    
-    // Handle Date objects
-    if (dateStr instanceof Date) {
-      return isNaN(dateStr.getTime()) ? null : dateStr
-    }
-    
-    return null
-  } catch {
-    return null
-  }
-}
-
-/**
- * Check if an option has timeline dates set
- * @param option - The option to check
- */
-export function hasTimelineDates(option: Option): boolean {
-  return getTimelineStartDate(option) !== null
-}
-
-/**
- * Add an option to timeline (sets dates and adds to force_layouts)
- * This is the equivalent of setOptionStatus for Kanban
- * @param option - The option to add
- * @param startDate - Start date
- * @param endDate - End date (optional)
- * @param optionsStore - The options store instance
- */
-export async function addToTimeline(
-  option: Option,
-  startDate: Date | string,
-  endDate: Date | string | null | undefined,
-  optionsStore: OptionsStore
-): Promise<void> {
-  try {
-    // Step 1: Set the timeline dates
-    let updatedOption = setTimelineDates(option, startDate, endDate)
-    
-    // Step 2: Add 'timeline' to force_layouts
-    updatedOption = addLayoutToOption(updatedOption, 'timeline')
-    
-    // Step 3: Update the option
-    await optionsStore.updateOption({ option: updatedOption })
-    
-  } catch (error) {
-    console.error('Failed to add option to timeline:', error)
-    throw error
-  }
-}
 
 /**
  * Update timeline dates for an option (preserves force_layouts)

@@ -269,7 +269,7 @@ import {
     Hash,
 } from 'lucide-vue-next'
 
-import { ENGINE_DEFINITIONS, type SupportEngine } from '../../../Types/votingType'
+import { ENGINE_DEFINITIONS, type SupportEngine } from '../../Types/votingType'
 
 interface VoteSession {
     start_date?: string

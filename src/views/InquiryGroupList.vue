@@ -3,8 +3,10 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-
 <script setup lang="ts">
+// ============================================================
+// EXISTING IMPORTS
+// ============================================================
 import { computed, ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { t } from '@nextcloud/l10n'
@@ -17,14 +19,17 @@ import { useInquiryGroupStore } from '../stores/inquiryGroup.ts'
 import { DateTime } from 'luxon'
 import NcDialog from '@nextcloud/vue/components/NcDialog'
 import { 
-  createInquiryGroupContext, 
-  canRestore,
-  canDelete,
+    createInquiryGroupContext, 
+    canRestore,
+    canDelete,
 } from '../utils/permissions.ts'
 import { InquiryGeneralIcons, NavigationIcons } from '../utils/icons.ts'
 import { getInquiryGroupTypeData } from '../helpers/modules/InquiryHelper.ts'
 import type { InquiryGroup } from '../stores/inquiryGroups.types.ts'
 
+// ============================================================
+// EXISTING STORE INITIALIZATION
+// ============================================================
 const sessionStore = useSessionStore()
 const inquiryGroupsStore = useInquiryGroupsStore()
 const inquiryGroupStore = useInquiryGroupStore()
@@ -39,180 +44,194 @@ const showRestoreDialog = ref(false)
 const restoreDialogGroup = ref<InquiryGroup | null>(null)
 const router = useRouter()
 
-
-// Get all archived groups
+// ============================================================
+// EXISTING COMPUTED
+// ============================================================
 const archivedGroups = computed(() => inquiryGroupsStore.inquiryGroups.filter(
     group => group.groupStatus === "archived"
-  ).sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()))
+).sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()))
 
-// Create permission context for a specific group
 function createGroupPermissionContext(group: InquiryGroup) {
-  return createInquiryGroupContext(group)
+    return createInquiryGroupContext(group)
 }
 
-// Helper functions
-// Then use it for each group
 function canUserRestoreGroup(group: InquiryGroup): boolean {
-  const context = createGroupPermissionContext(group)
-  if (!context) return false
-  return canRestore(context)
+    const context = createGroupPermissionContext(group)
+    if (!context) return false
+    return canRestore(context)
 }
 
 function canUserDeleteGroup(group: InquiryGroup): boolean {
-  const context = createGroupPermissionContext(group)
-  if (!context) return false
-  return canDelete(context)
+    const context = createGroupPermissionContext(group)
+    if (!context) return false
+    return canDelete(context)
 }
 
-
-// Get icon component for group type
-const getGroupTypeIconComponent = (type: string) => {
-  const typeData = getInquiryGroupTypeData(type, sessionStore.appSettings.inquiryGroupTypeTab)
-  return typeData?.icon || 'div'
+function getGroupTypeIconComponent(type: string) {
+    const typeData = getInquiryGroupTypeData(type, sessionStore.appSettings.inquiryGroupTypeTab)
+    return typeData?.icon || 'div'
 }
 
-// Delete dialog properties
+// ============================================================
+// EXISTING: Delete dialog
+// ============================================================
 const deleteDialogTitle = computed(() => 
-  deleteDialogGroup.value 
-    ? t('agora', 'Delete "{group}"', { group: deleteDialogGroup.value.title })
-    : t('agora', 'Delete group')
+    deleteDialogGroup.value 
+        ? t('agora', 'Delete "{group}"', { group: deleteDialogGroup.value.title })
+        : t('agora', 'Delete group')
 )
 
 const deleteDialogMessage = computed(() => 
-  t('agora', 'Are you sure you want to permanently delete this archived group? This action cannot be undone.')
+    t('agora', 'Are you sure you want to permanently delete this archived group? This action cannot be undone.')
 )
 
 const deleteDialogButtons = computed(() => [
-  {
-    label: t('agora', 'Cancel'),
-    type: 'secondary',
-    callback: () => {
-      showDeleteDialog.value = false
-      deleteDialogGroup.value = null
+    {
+        label: t('agora', 'Cancel'),
+        type: 'secondary',
+        callback: () => {
+            showDeleteDialog.value = false
+            deleteDialogGroup.value = null
+        }
+    },
+    {
+        label: t('agora', 'Delete'),
+        type: 'error',
+        callback: async () => {
+            if (deleteDialogGroup.value) {
+                await performDeleteGroup(deleteDialogGroup.value)
+            }
+            showDeleteDialog.value = false
+            deleteDialogGroup.value = null
+        }
     }
-  },
-  {
-    label: t('agora', 'Delete'),
-    type: 'error',
-    callback: async () => {
-      if (deleteDialogGroup.value) {
-        await performDeleteGroup(deleteDialogGroup.value)
-      }
-      showDeleteDialog.value = false
-      deleteDialogGroup.value = null
-    }
-  }
 ])
 
-// Restore dialog properties
+// ============================================================
+// EXISTING: Restore dialog
+// ============================================================
 const restoreDialogTitle = computed(() => 
-  restoreDialogGroup.value 
-    ? t('agora', 'Restore "{group}"', { group: restoreDialogGroup.value.title })
-    : t('agora', 'Restore group')
+    restoreDialogGroup.value 
+        ? t('agora', 'Restore "{group}"', { group: restoreDialogGroup.value.title })
+        : t('agora', 'Restore group')
 )
 
 const restoreDialogMessage = computed(() => 
-  t('agora', 'Are you sure you want to restore this group? It will be moved back to the active groups list.')
+    t('agora', 'Are you sure you want to restore this group? It will be moved back to the active groups list.')
 )
 
 const restoreDialogButtons = computed(() => [
-  {
-    label: t('agora', 'Cancel'),
-    type: 'secondary',
-    callback: () => {
-      showRestoreDialog.value = false
-      restoreDialogGroup.value = null
+    {
+        label: t('agora', 'Cancel'),
+        type: 'secondary',
+        callback: () => {
+            showRestoreDialog.value = false
+            restoreDialogGroup.value = null
+        }
+    },
+    {             
+        label: t('agora', 'Restore'),
+        type: 'primary',
+        callback: async () => {
+            if (restoreDialogGroup.value) {
+                await performRestoreGroup(restoreDialogGroup.value)
+            }
+            showRestoreDialog.value = false
+            restoreDialogGroup.value = null
+        }       
     }
-  },
-  {             
-    label: t('agora', 'Restore'),
-    type: 'primary',
-    callback: async () => {
-      if (restoreDialogGroup.value) {
-        await performRestoreGroup(restoreDialogGroup.value)
-      }
-      showRestoreDialog.value = false
-      restoreDialogGroup.value = null
-    }       
-  }
 ])
 
-// Owner menu actions
-function restoreGroup(group: InquiryGroup) {
-  // Check permission before showing dialog
-  if (!canUserRestoreGroup(group)) {
-    showError(t('agora', 'You do not have permission to restore this group'))
-    return
-  }
-  
-  restoreDialogGroup.value = group
-  showRestoreDialog.value = true
-}
-
-// Methods
+// ============================================================
+// EXISTING METHODS
+// ============================================================
 function navigateToHome() {
-  router.push({ name: 'group-list', 
-  query: {} })
+    router.push({ name: 'group-list', query: {} })
 }
 
 function deleteGroup(group: InquiryGroup) {
-  // Check permission before showing dialog
-  if (!canUserDeleteGroup(group)) {
-    showError(t('agora', 'You do not have permission to delete this group'))
-    return
-  }
-  
-  deleteDialogGroup.value = group
-  showDeleteDialog.value = true
-}
-
-// Actual restore logic
-async function performRestoreGroup(group: InquiryGroup) {
-  try {
-    // Implement restore logic here
-    await inquiryGroupStore.restoreGroup(group.id)
-    showSuccess(t('agora', 'Group restored successfully'))
-    
-    // Refresh groups
-    await inquiryGroupsStore.fetchAllGroups()
-    
-  } catch (error) {
-    console.error('Error restoring group:', error)
-    showError(t('agora', 'Failed to restore group'))
-  }
-}
-
-// Actual delete logic
-async function performDeleteGroup(group: InquiryGroup) {
-  try {
-    await inquiryGroupStore.deleteGroup(group.id)
-    showSuccess(t('agora', 'Group deleted successfully'))
-
-    // Refresh groups
-    await inquiryGroupsStore.fetchAllGroups()
-    
-  } catch (error) {
-    console.error('Error deleting group:', error)
-    showError(t('agora', 'Failed to delete group'))
-  }
-}
-
-const formatDate = (timestamp: number) =>
-  DateTime.fromMillis(timestamp * 1000).toLocaleString(DateTime.DATE_SHORT)
-
-// Lifecycle
-onMounted(async () => {
-  try {
-    // Load data if needed
-    if (inquiryGroupsStore.inquiryGroups.length === 0) {
-      await inquiryGroupsStore.fetchAllGroups()
+    if (!canUserDeleteGroup(group)) {
+        showError(t('agora', 'You do not have permission to delete this group'))
+        return
     }
-  } catch (error) {
-    console.error('Error loading archived groups:', error)
-    showError(t('agora', 'Failed to load archived groups'))
-  } finally {
-    isLoading.value = false
-  }
+    deleteDialogGroup.value = group
+    showDeleteDialog.value = true
+}
+
+async function performRestoreGroup(group: InquiryGroup) {
+    try {
+        await inquiryGroupStore.restoreGroup(group.id)
+        showSuccess(t('agora', 'Group restored successfully'))
+        await inquiryGroupsStore.fetchAllGroups()
+    } catch (error) {
+        console.error('Error restoring group:', error)
+        showError(t('agora', 'Failed to restore group'))
+    }
+}
+
+async function performDeleteGroup(group: InquiryGroup) {
+    try {
+        await inquiryGroupStore.deleteGroup(group.id)
+        showSuccess(t('agora', 'Group deleted successfully'))
+        await inquiryGroupsStore.fetchAllGroups()
+    } catch (error) {
+        console.error('Error deleting group:', error)
+        showError(t('agora', 'Failed to delete group'))
+    }
+}
+
+function formatDate(timestamp: number) {
+    return DateTime.fromMillis(timestamp * 1000).toLocaleString(DateTime.DATE_SHORT)
+}
+
+// ============================================================
+// NEW: Get cover URL
+// ============================================================
+const BASE_URL = window.location.origin;
+
+function getNextcloudPreviewUrl(fileId: string, x = 1920, y = 1080, autoScale = true) {
+    return `${BASE_URL}/index.php/core/preview?fileId=${fileId}&x=${x}&y=${y}&a=${autoScale ? 1 : 0}`;
+}
+
+function getCoverUrl(coverId: string) {
+    return getNextcloudPreviewUrl(coverId)
+}
+
+// ============================================================
+// NEW: Select group
+// ============================================================
+function selectGroup(group: InquiryGroup) {
+    if (group.slug) {
+        router.push({ name: 'group-list', params: { slug: group.slug } })
+    }
+}
+
+// ============================================================
+// NEW: Restore group handler
+// ============================================================
+function restoreGroup(group: InquiryGroup) {
+    if (!canUserRestoreGroup(group)) {
+        showError(t('agora', 'You do not have permission to restore this group'))
+        return
+    }
+    restoreDialogGroup.value = group
+    showRestoreDialog.value = true
+}
+
+// ============================================================
+// EXISTING: Lifecycle
+// ============================================================
+onMounted(async () => {
+    try {
+        if (inquiryGroupsStore.inquiryGroups.length === 0) {
+            await inquiryGroupsStore.fetchAllGroups()
+        }
+    } catch (error) {
+        console.error('Error loading archived groups:', error)
+        showError(t('agora', 'Failed to load archived groups'))
+    } finally {
+        isLoading.value = false
+    }
 })
 </script>
 
@@ -306,8 +325,6 @@ onMounted(async () => {
           >
             <div class="vignette-container">
               <div class="group-vignette archived" @click="selectGroup(group)">
-                <!-- Vignette content here (make sure it's properly closed) -->
-                <!-- If you have content inside, ensure all tags are properly closed -->
                 <div v-if="group.cover_id" class="vignette-cover">
                   <img :src="getCoverUrl(group.cover_id)" :alt="group.title" />
                   <div class="vignette-cover-overlay"></div>
@@ -347,7 +364,7 @@ onMounted(async () => {
                 @mouseleave="hoveredGroupId = null"
               >
                 <div class="owner-menu-content">
-                  <!-- Restore button - only show if user has permission -->
+                  <!-- Restore button -->
                   <NcButton 
                     v-if="canUserRestoreGroup(group)"
                     type="tertiary" 
@@ -362,7 +379,7 @@ onMounted(async () => {
                     {{ t('agora', 'Restore') }}
                   </NcButton>
                   
-                  <!-- Delete button - only show if user has permission -->
+                  <!-- Delete button -->
                   <NcButton 
                     v-if="canUserDeleteGroup(group)"
                     type="tertiary" 
@@ -383,7 +400,8 @@ onMounted(async () => {
         </div>
       </div>
     </div>
-        <!-- Delete Dialog -->
+    
+    <!-- Delete Dialog -->
     <NcDialog
       v-if="deleteDialogGroup"
       v-model:open="showDeleteDialog"
@@ -400,13 +418,13 @@ onMounted(async () => {
       :message="restoreDialogMessage"
       :buttons="restoreDialogButtons"
     />
-
   </NcAppContent>
 </template>
 
-
-
 <style lang="scss" scoped>
+// ============================================================
+// EXISTING STYLES (kept as is)
+// ============================================================
 .inquiry-group-archive-page {
     width: 100%;
     background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);

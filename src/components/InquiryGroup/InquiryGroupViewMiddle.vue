@@ -2,13 +2,12 @@
 - SPDX-FileCopyrightText: 2025 Nextcloud contributors
 - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
-
 <template>
   <div class="consultation-layout">
     <!-- Left Column: Description (70%) -->
     <div class="left-column">
       <div class="description-section">
-          <h1 class="section-title">{{ t('agora','Presentation') }}</h1>
+        <h1 class="section-title">{{ t('agora','Presentation') }}</h1>
         
         <div v-if="group.description" class="description-container">
           <div class="description-content" :class="{ expanded: isDescriptionExpanded }">
@@ -50,7 +49,7 @@
           :key="typeKey" 
           class="inquiry-type-group"
         >
-        <!-- Type Header -->
+          <!-- Type Header -->
           <div class="type-header" @click="toggleType(typeKey)">
             <div class="type-info">
               <div class="type-icon">
@@ -126,7 +125,6 @@ const props = defineProps<Props>()
 const emit = defineEmits<{
   viewInquiry: [id: number]
 }>()
-
 
 // Initialize stores
 const inquiriesStore = useInquiriesStore()
@@ -217,7 +215,6 @@ onMounted(() => {
 })
 </script>
 
-
 <style lang="scss" scoped>
 @import '../../assets/scss/inquiry-theme.css';
 
@@ -228,8 +225,9 @@ onMounted(() => {
   max-width: none;
   margin: 0;
   padding: 16px;
-  align-items: flex-start;
+  align-items: stretch; /* Changed from flex-start to stretch */
   box-sizing: border-box;
+  min-height: 100%; /* Ensure it takes full height */
 }
 
 /* Left Column: Description */
@@ -237,7 +235,6 @@ onMounted(() => {
   flex: 0 0 70%;
   width: 70%;
   min-width: 70%;
-  height: 100%;
   display: flex;
   flex-direction: column;
 
@@ -246,6 +243,7 @@ onMounted(() => {
     flex: 1;
     display: flex;
     flex-direction: column;
+    height: 100%;
 
     .section-title {
       font-size: 36px;
@@ -256,6 +254,7 @@ onMounted(() => {
       padding-bottom: 16px;
       border-bottom: 2px solid var(--color-border);
       width: 100%;
+      flex-shrink: 0;
     }
   }
 }
@@ -269,6 +268,7 @@ onMounted(() => {
   flex: 1;
   display: flex;
   flex-direction: column;
+  min-height: 0; /* Allow flex shrinking */
 }
 
 .description-content {
@@ -279,6 +279,7 @@ onMounted(() => {
   flex: 1;
   display: flex;
   flex-direction: column;
+  min-height: 0;
 
   &.expanded {
     .description-text {
@@ -327,6 +328,7 @@ onMounted(() => {
   cursor: pointer;
   transition: all 0.2s ease;
   align-self: flex-start;
+  flex-shrink: 0;
 
   &:hover {
     background: var(--color-background-hover);
@@ -350,9 +352,11 @@ onMounted(() => {
   min-width: 30%;
   position: sticky;
   top: 32px;
-  height: fit-content;
   display: flex;
   flex-direction: column;
+  height: fit-content;
+  max-height: calc(100vh - 64px); /* Add max height for scrolling */
+  overflow-y: auto;
 
   .sidebar-header {
     display: flex;
@@ -362,6 +366,7 @@ onMounted(() => {
     padding-bottom: 16px;
     border-bottom: 2px solid var(--color-border);
     width: 100%;
+    flex-shrink: 0;
   }
 
   .sidebar-title {
@@ -381,6 +386,11 @@ onMounted(() => {
     min-width: 32px;
     text-align: center;
   }
+}
+
+.inquiries-container {
+  flex: 1;
+  overflow-y: auto;
 }
 
 /* Inquiry Type Groups */
@@ -521,7 +531,7 @@ onMounted(() => {
   }
 }
 
-/* Empty State - ADDED background */
+/* Empty State */
 .empty-state {
   text-align: center;
   padding: 40px 24px;
@@ -569,6 +579,7 @@ onMounted(() => {
     max-width: 100%;
     width: 100%;
     position: static;
+    max-height: none;
   }
 }
 

@@ -15,6 +15,7 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
 import InquiryCreateDlg from '../components/Create/InquiryCreateDlg.vue'
 import InquiryGroupCreateDlg from '../components/Create/InquiryGroupCreateDlg.vue'
+import { useInquiryGroupsStore } from '../stores/inquiryGroups.ts'
 import { AgoraAppIcon } from '../components/AppIcons/index.ts'
 import { useSessionStore } from '../stores/session.ts'
 import { useInquiriesStore } from '../stores/inquiries.ts'
@@ -39,6 +40,7 @@ const route = useRoute()
 const router = useRouter()
 const sessionStore = useSessionStore()
 const inquiriesStore = useInquiriesStore()
+const inquiryGroupsStore = useInquiryGroupsStore()
 const createDlgToggle = ref(false)
 const createGroupDlgToggle = ref(false)
 const selectedInquiryTypeForCreation = ref<InquiryType | null>(null)
@@ -123,7 +125,8 @@ const filteredInquiryGroupTypes = computed(() => {
   
   const family = inquiryFamilies.value.find(f => f.family_type === selectedFamily.value)
   if (!family) return []
-  
+  console.log(" FAMILY FILTERED INQ", family) 
+  console.log(" FAMILY FILTERED INQ", inquiryTypesByFamily.value) 
   return getInquiryGroupTypesForFamily(family.family_type, inquiryGroupTypesByFamily.value)
 })
 
@@ -160,7 +163,7 @@ function selectFamily(familyType: string) {
   } else if (shouldRedirectToGroupView(familyType)) {
     router.push({
       name: 'group-list',
-      params: { slug: 'none' },
+      params: { slug: '' },
       query: { viewMode: 'group' }
     }).finally(() => {
       isNavigating.value = false
@@ -192,9 +195,20 @@ function clearFamilySelection() {
 }
 
 // Check if a family has inquiry groups OR inquiry group types defined
-function shouldRedirectToGroupView(familyType: string) {
-  const hasGroupTypes = getInquiryGroupTypesForCurrentFamily(familyType).length > 0
-  return hasGroupTypes
+
+const shouldRedirectToGroupView = (familyType: string) => {
+  console.log("  FAMILY TYPE ",familyType)
+  // Get actual inquiry groups in this family
+  const groupsInFamily = inquiryGroupsStore.byFamilyType(familyType)
+  console.log(" GROUPS IN FAMILY ",groupsInFamily)
+
+  // Check if there are root group types available for this family
+  const hasRootGroupTypes = groupsInFamily.some(type =>  type.parentId === null )
+  
+  console.log("HA ROOT GROUPS IN FAMILY ", hasRootGroupTypes)
+
+  // Also check if there are any child groups (which would mean there's at least one root group)
+  return  hasRootGroupTypes
 }
 
 // Function to handle view mode change

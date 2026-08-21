@@ -30,8 +30,7 @@ class ParticipationService
         private IUserManager $userManager,
         private LoggerInterface $logger,
         private LotteryService $lotteryService,
-    ) {
-    }
+    ) {}
 
     // ====================================================================
     // PARTICIPATION POLICIES
@@ -60,7 +59,7 @@ class ParticipationService
             'targetId' => $targetId,
             'policyType' => $policyType,
             'hasExisting' => $participation !== null,
-            'policyConfig' => $policyConfig
+            'policyConfig' => $policyConfig,
         ]);
 
         if ($participation === null) {
@@ -69,9 +68,9 @@ class ParticipationService
             $participation->setTargetId($targetId);
             $participation->setCreatedAt(time());
             $participation->setCreatedBy($this->userSession->getCurrentUserId());
-            $this->logger->debug('Creating new participation POLICY', [
+            $this->logger->warning('Creating new participation POLICY', [
                 'targetType' => $targetType,
-                'targetId' => $targetId
+                'targetId' => $targetId,
             ]);
         }
 
@@ -84,6 +83,13 @@ class ParticipationService
         $participation->setPolicyType($policyType);
         $participation->setPolicyConfig($policyConfig);
         $participation->setUpdatedAt(time());
+
+        // After setting the config
+        $this->logger->warning('Saving participation policy', [
+            'policyType' => $policyType,
+            'policyConfig' => $policyConfig,
+            'participation' => $participation->jsonSerialize(),
+        ]);
 
         if ($participation->getId() === null) {
             $participation = $this->participationMapper->insert($participation);
@@ -102,7 +108,7 @@ class ParticipationService
             if (!in_array($policyConfig['mode'], [Participation::LOTTERY_MODE_USERS, Participation::LOTTERY_MODE_GROUPS])) {
                 throw new Exception('Invalid lottery mode');
             }
-            $policyConfig['count'] = $policyConfig['count'] ?? 1;
+            $policyConfig['count'] ??= 1;
             if ($policyConfig['count'] < 1) {
                 throw new Exception('Lottery count must be at least 1');
             }
@@ -158,8 +164,26 @@ class ParticipationService
     }
 
     // ====================================================================
-    // LOTTERY OPERATIONS - Delegated to LotteryService
+    // LOTTERY OPERATIONS
     // ====================================================================
+
+    /**
+     * Expire pending selections older than expiration time
+     */
+    public function expireOldSelections(): int
+    {
+        $now = time();
+        $expired = $this->lotterySelectionMapper->findExpiring($now);
+        $count = 0;
+        foreach ($expired as $selection) {
+            if ($selection->isPending() && $selection->getExpiresAt() <= $now) {
+                $selection->setStatus(LotterySelection::STATUS_EXPIRED);
+                $this->lotterySelectionMapper->update($selection);
+                $count++;
+            }
+        }
+        return $count;
+    }
 
     public function runLotteryForTarget(
         string $targetType,
@@ -172,19 +196,53 @@ class ParticipationService
         }
         return $this->lotteryService->runLottery($participation, $seed);
     }
+    /*
+        public function validateLotteryForTarget(string $targetType, int $targetId): array
+        {
+            $policy = $this->participationMapper->findByTarget($targetType, $targetId);
+            if ($policy === null || !$policy->isLottery()) {
+                throw new Exception('No lottery policy found for this target');
+            }
 
-    public function validateLotteryForTarget(string $targetType, int $targetId): LotteryRun
+            // Get the latest run
+            $latestRun = $this->lotteryRunMapper->findLatestByParticipationId($policy->getId());
+
+            if ($latestRun === null) {
+                throw new Exception('No lottery run found');
+            }
+
+            if ($latestRun->getStatus() !== LotteryRun::STATUS_COMPLETED) {
+                throw new Exception('Cannot validate a lottery that is not completed');
+            }
+
+            // Validate the lottery
+            $validatedRun = $this->lotteryService->validateLottery($latestRun->getId());
+
+            return [
+                'run' => $validatedRun->jsonSerialize(),
+                'status' => 'validated',
+                'is_validated' => true,
+            ];
+    }*/
+    public function validateLotteryForTarget(string $targetType, int $targetId): LotteryRun  // Change return type
     {
-        $participation = $this->participationMapper->findByTarget($targetType, $targetId);
-        if ($participation === null) {
-            throw new Exception('Participation policy not found');
+        $policy = $this->participationMapper->findByTarget($targetType, $targetId);
+        if ($policy === null || !$policy->isLottery()) {
+            throw new Exception('No lottery policy found for this target');
         }
 
-        $latestRun = $this->lotteryRunMapper->findLatestByParticipationId($participation->getId());
+        // Get the latest run
+        $latestRun = $this->lotteryRunMapper->findLatestByParticipationId($policy->getId());
+
         if ($latestRun === null) {
-            throw new Exception('No lottery run found to validate');
+            throw new Exception('No lottery run found');
         }
 
+        if ($latestRun->getStatus() !== LotteryRun::STATUS_COMPLETED) {
+            throw new Exception('Cannot validate a lottery that is not completed');
+        }
+
+        // Validate the lottery and return the run object
         return $this->lotteryService->validateLottery($latestRun->getId());
     }
 
@@ -212,6 +270,23 @@ class ParticipationService
         }
 
         return $results;
+    }
+
+    public function resetLottery(string $targetType, int $targetId): void
+    {
+        $policy = $this->participationMapper->findByTarget($targetType, $targetId);
+        if ($policy === null || !$policy->isLottery()) {
+            throw new Exception('Lottery policy not found');
+        }
+        $this->logger->warning('Setting participation POLICY', [
+            'targetType' => $targetType,
+            'targetId' => $targetId,
+            'participation ID' => $policy->getId(),
+        ]);
+
+        // Delete all lottery runs and selections
+        $this->lotteryRunMapper->deleteByParticipationId($policy->getId());
+        $this->lotterySelectionMapper->deleteByParticipationId($policy->getId());
     }
 
     public function acceptSelection(int $selectionId): LotterySelection
@@ -285,13 +360,13 @@ class ParticipationService
             if ($user === null) {
                 $this->logger->warning('User not found for group check', [
                     'userId' => $userId,
-                    'app' => 'agora'
+                    'app' => 'agora',
                 ]);
                 return false;
             }
 
             $userGroups = $this->groupManager->getUserGroups($user);
-            $userGroupIds = array_map(function($group) {
+            $userGroupIds = array_map(function ($group) {
                 return $group->getGID();
             }, $userGroups);
 
@@ -300,7 +375,7 @@ class ParticipationService
             $this->logger->error('Failed to check user groups', [
                 'userId' => $userId,
                 'error' => $e->getMessage(),
-                'app' => 'agora'
+                'app' => 'agora',
             ]);
             return false;
         }

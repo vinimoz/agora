@@ -74,7 +74,7 @@ class InquiryGroupService
     public function createGroup(
         string $title,
         string $type = 'default',
-        ?int $parentId = 0,
+        ?int $parentId = null,
         ?bool $protected = false,
         ?string $ownedGroup = '',
         ?string $groupStatus = 'draft',
@@ -90,7 +90,7 @@ class InquiryGroupService
         $inquiryGroup->setTitle($title);
         $inquiryGroup->setTitleExt($titleExt ?: $title);
         $inquiryGroup->setType($type);
-        $inquiryGroup->setParentId($parentId ?? 0);
+        $inquiryGroup->setParentId($parentId ?? null);
         $inquiryGroup->setProtected($protected ? 1 : 0);
         $inquiryGroup->setGroupStatus($groupStatus ?? 'draft');
         $inquiryGroup->setOwnedGroup($ownedGroup ?? '');

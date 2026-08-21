@@ -20,6 +20,8 @@ use OCA\Agora\Db\AttachmentMapper;
 use OCA\Agora\Db\GroupRelationMapper;
 use OCA\Agora\Db\UserRelationMapper;
 use OCA\Agora\Db\LogMapper;
+use OCA\Agora\Db\LotteryRunMapper;
+use OCA\Agora\Db\LotterySelectionMapper;
 use OCA\Agora\Db\OptionMapper;
 use OCA\Agora\Db\ParticipationMapper;
 use OCA\Agora\Db\InquiryMapper;
@@ -237,6 +239,8 @@ class Application extends App implements IBootstrap
 				$c->get(GroupRelationMapper::class), 
 				$c->get(UserRelationMapper::class), 
 				$c->get(IGroupManager::class), 
+				$c->get(LotteryRunMapper::class), 
+				$c->get(LotterySelectionMapper::class), 
 			); 
 		} 
 	);

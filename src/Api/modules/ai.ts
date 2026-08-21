@@ -137,6 +137,8 @@ const aiApi = {
 
   /**
    * Summarize inquiry discussion
+   * @param inquiryId
+   * @param format
    */
   summarizeInquiry(
     inquiryId: number,
@@ -153,6 +155,7 @@ const aiApi = {
 
   /**
    * Get key points from inquiry
+   * @param inquiryId
    */
   getKeyPoints(inquiryId: number): Promise<AxiosResponse<KeyPointsResponse>> {
     return httpInstance.request({
@@ -165,6 +168,8 @@ const aiApi = {
 
   /**
    * Get TL;DR for inquiry
+   * @param inquiryId
+   * @param maxLength
    */
   getTldr(inquiryId: number, maxLength: number = 100): Promise<AxiosResponse<TldrResponse>> {
     return httpInstance.request({
@@ -180,6 +185,8 @@ const aiApi = {
 
   /**
    * Analyze sentiment of inquiry or specific comment
+   * @param inquiryId
+   * @param commentId
    */
   analyzeSentiment(
     inquiryId: number,
@@ -196,6 +203,8 @@ const aiApi = {
 
   /**
    * Classify topic of inquiry
+   * @param inquiryId
+   * @param categories
    */
   classifyTopic(
     inquiryId: number,
@@ -212,6 +221,7 @@ const aiApi = {
 
   /**
    * Detect urgency of inquiry
+   * @param inquiryId
    */
   detectUrgency(inquiryId: number): Promise<AxiosResponse<UrgencyResponse>> {
     return httpInstance.request({
@@ -224,6 +234,7 @@ const aiApi = {
 
   /**
    * Extract action items from inquiry
+   * @param inquiryId
    */
   extractActions(inquiryId: number): Promise<AxiosResponse<ActionItemsResponse>> {
     return httpInstance.request({
@@ -238,6 +249,8 @@ const aiApi = {
 
   /**
    * Check if content is duplicate
+   * @param inquiryId
+   * @param content
    */
   checkDuplicate(
     inquiryId: number,
@@ -254,6 +267,9 @@ const aiApi = {
 
   /**
    * Find similar content
+   * @param inquiryId
+   * @param content
+   * @param limit
    */
   findSimilar(
     inquiryId: number,
@@ -273,6 +289,9 @@ const aiApi = {
 
   /**
    * Generate options
+   * @param inquiryId
+   * @param count
+   * @param optionId
    */
   generateOptions(
     inquiryId: number,
@@ -290,6 +309,8 @@ const aiApi = {
 
   /**
    * Generate decision options
+   * @param inquiryId
+   * @param constraints
    */
   generateDecisionOptions(
     inquiryId: number,
@@ -306,6 +327,8 @@ const aiApi = {
 
   /**
    * Generate creative ideas
+   * @param inquiryId
+   * @param count
    */
   generateCreativeIdeas(
     inquiryId: number,
@@ -322,6 +345,10 @@ const aiApi = {
 
   /**
    * Generate options from document
+   * @param inquiryId
+   * @param documentPath
+   * @param optionType
+   * @param options
    */
   generateDocumentOptions(
     inquiryId: number,
@@ -342,6 +369,9 @@ const aiApi = {
 
   /**
    * Generate arguments for a position
+   * @param inquiryId
+   * @param position
+   * @param count
    */
   generateArguments(
     inquiryId: number,
@@ -378,6 +408,7 @@ const aiApi = {
 
   /**
    * Analyze debate
+   * @param inquiryId
    */
   analyzeDebate(inquiryId: number): Promise<AxiosResponse<DebateAnalysisResponse>> {
     return httpInstance.request({
@@ -390,6 +421,7 @@ const aiApi = {
 
   /**
    * Generate debate summary
+   * @param inquiryId
    */
   generateDebateSummary(inquiryId: number): Promise<AxiosResponse<DebateSummaryResponse>> {
     return httpInstance.request({
@@ -402,6 +434,8 @@ const aiApi = {
 
   /**
    * Suggest compromise
+   * @param inquiryId
+   * @param positions
    */
   suggestCompromise(
     inquiryId: number,
@@ -418,6 +452,9 @@ const aiApi = {
 
   /**
    * Generate rebuttal
+   * @param inquiryId
+   * @param point
+   * @param context
    */
   generateRebuttal(
     inquiryId: number,
@@ -437,6 +474,10 @@ const aiApi = {
 
   /**
    * Translate content
+   * @param inquiryId
+   * @param targetLanguage
+   * @param sourceLanguage
+   * @param commentId
    */
   translateContent(
     inquiryId: number,
@@ -455,6 +496,8 @@ const aiApi = {
 
   /**
    * Translate to multiple languages
+   * @param inquiryId
+   * @param targetLanguages
    */
   translateMultilingual(
     inquiryId: number,
@@ -471,6 +514,8 @@ const aiApi = {
 
   /**
    * Translate all comments
+   * @param inquiryId
+   * @param targetLanguage
    */
   translateAllComments(
     inquiryId: number,

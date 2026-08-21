@@ -1,3 +1,8 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
 <!--
     SPDX-FileCopyrightText: 2024 Nextcloud contributors
 -->
@@ -7,7 +12,7 @@
             <!-- Left sidebar - Table of Contents -->
             <div class="table-of-contents">
                 <div class="toc-header">
-                    <h3>{{ t('agora', 'Table of Contents') }}</h3>
+                    <h3>{{ t('agora', 'Table of contents') }}</h3>
                 </div>
                 <div class="toc-list">
                     <!-- Show only structure family options (2 levels max) -->
@@ -719,22 +724,22 @@ import { ref, computed, onMounted } from 'vue'
 import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcRichContenteditable from '@nextcloud/vue/components/NcRichContenteditable'
-import { SupportFeature } from '../Base/index.ts'
+import { SupportFeature } from '../../Base/index.ts'
 import { DateTime } from 'luxon'
 import DOMPurify from 'dompurify'
 
-import { useInquiryStore } from '../../stores/inquiry'
-import { useOptionsStore } from '../../stores/options'
-import { useSessionStore } from '../../stores/session'
-import { useOptionStore } from '../../stores/option'
-import { InquiryOptionIcons } from '../../utils/icons.ts'
+import { useInquiryStore } from '../../../stores/inquiry'
+import { useOptionsStore } from '../../../stores/options'
+import { useSessionStore } from '../../../stores/session'
+import { useOptionStore } from '../../../stores/option'
+import { InquiryOptionIcons } from '../../../utils/icons.ts'
 import { showSuccess, showError } from '@nextcloud/dialogs'
 import { 
   createOptionContext,
   canEditOption,
   canCommentOption,
   canSupportOption
-} from '../../utils/permissions.ts'
+} from '../../../utils/permissions.ts'
 
 import {
   findOptionType,
@@ -744,13 +749,13 @@ import {
   hasSupportFeature as hasSupportFeatureHelper,
   allowsComments as allowsCommentsHelper,
   usesTitle
-} from '../../helpers/modules/InquiryOptionHelper'
+} from '../../../helpers/modules/InquiryOptionHelper'
 
 // Types
-import type { Option, OptionType, OptionStoreLike } from '../../Types/index.ts'
+import type { Option, OptionType, OptionStoreLike } from '../../../Types/index.ts'
 
-import OptionAddModal from '../Modals/OptionAddModal.vue'
-import OptionDetailModal from '../Modals/OptionDetailModal.vue'
+import OptionAddModal from '../../Modals/OptionAddModal.vue'
+import OptionDetailModal from '../../Modals/OptionDetailModal.vue'
 
 // Stores
 const inquiryStore = useInquiryStore()

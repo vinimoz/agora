@@ -18,6 +18,35 @@ export interface InquiryFamily {
   description?: string
 }
 
+export {
+  getItemTitle,
+  getItemStatus,
+  getItemType,
+  getItemFamily,
+  getItemId,
+  getForceLayouts,
+  addLayoutToItem,
+  removeLayoutFromItem,
+  hasLayout,
+  filterItemsByLayout,
+  formatDateToISO,
+  setTimelineDates,
+  getTimelineStartDate,
+  getTimelineEndDate,
+  hasTimelineDates,
+  addToTimeline,
+  removeFromTimeline,
+  getItemTypeIcon,
+  getItemTypeIconComponent,
+  getAvailableStatuses,
+  getStatusColor,
+  groupItemsByFamily,
+  groupItemsByStatus,
+  groupItemsByType,
+  searchItemsByTitle,
+  filterItemsByStatus,
+  filterItemsByType
+} from './GenericItemHelper'
 
 export async function confirmAction(message: string): Promise<boolean> {
   return Promise.resolve(window.confirm(message))
@@ -129,7 +158,8 @@ export function getInquiryGroupTypesByFamily(inquiryGroupTypes: InquiryGroupType
     if (!grouped[familyKey]) {
       grouped[familyKey] = []
     }
-    grouped[familyKey].push(type)
+    if (grouped[familyKey].is_root)
+    	grouped[familyKey].push(type)
   })
 
   return grouped
@@ -336,6 +366,7 @@ export function getInquiryGroupTypesForFamily(
   inquiryGroupTypesByFamily: Record<string, InquiryType[]>,
 ) {
   const types = inquiryGroupTypesByFamily[familyInquiryType] || []
+  console.log(" TYPES ", types)
   return types
 }
 

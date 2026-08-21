@@ -134,7 +134,8 @@ export type TargetType = 'option' | 'inquiry'
 const props = defineProps({
   parentId: {
     type: Number,
-    required: true
+    required: true,
+    default: null
   },
   targetType: {
     type: String as PropType<TargetType>,
@@ -222,9 +223,7 @@ const getItemStatus = (item: Option | Inquiry): string => {
 }
 
 // Get items by status
-const getItemsByStatus = (status: string) => {
-  return kanbanItems.value.filter(item => getItemStatus(item) === status)
-}
+const getItemsByStatus = (status: string) => kanbanItems.value.filter(item => getItemStatus(item) === status)
 
 // Get status label
 const getStatusLabel = (status: string) => {

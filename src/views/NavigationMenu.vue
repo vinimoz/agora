@@ -16,6 +16,7 @@ import InquiryGroupCreateDlg from '../components/Create/InquiryGroupCreateDlg.vu
 import { InquiryGeneralIcons,NavigationIcons } from '../utils/icons.ts'
 import { useSessionStore } from '../stores/session.ts'
 import { useInquiriesStore } from '../stores/inquiries.ts'
+import { useInquiryGroupsStore } from '../stores/inquiryGroups.ts'
 import { usePreferencesStore } from '../stores/preferences.ts'
 import { Event } from '../Types/index.ts'
 import type { InquiryGroupType } from '../stores/inquiryGroups.types.ts'
@@ -38,6 +39,7 @@ const preferencesStore = usePreferencesStore()
 const router = useRouter()
 const sessionStore = useSessionStore()
 const inquiriesStore = useInquiriesStore()
+const inquiryGroupsStore = useInquiryGroupsStore()
 const createDlgToggle = ref(false)
 const createGroupDlgToggle = ref(false)
 const selectedInquiryTypeForCreation = ref<InquiryType | null>(null)
@@ -104,12 +106,21 @@ const sortedInquiries = computed(() =>
     .sort((a, b) => new Date(b.status.lastInteraction) - new Date(a.status.lastInteraction))
 )
 
-
-// Check if a family has inquiry groups OR inquiry group types defined
 const shouldRedirectToGroupView = (familyType: string) => {
-  const hasGroupTypes = getInquiryGroupTypesForCurrentFamily(familyType).length > 0
-  return hasGroupTypes
+  console.log("  FAMILY TYPE ",familyType)
+  // Get actual inquiry groups in this family
+  const groupsInFamily = inquiryGroupsStore.byFamilyType(familyType)
+  console.log(" GROUPS IN FAMILY ",groupsInFamily)
+
+  // Check if there are root group types available for this family
+  const hasRootGroupTypes = groupsInFamily.some(type =>  type.parentId === null )
+  
+  console.log("HA ROOT GROUPS IN FAMILY ", hasRootGroupTypes)
+
+  // Also check if there are any child groups (which would mean there's at least one root group)
+  return  hasRootGroupTypes
 }
+
 
 // Computed for all inquiry types
 const allInquiryTypes = computed((): InquiryType[] => {
@@ -132,6 +143,9 @@ const inquiryTypesByFamily = computed(() => {
 // Computed for inquiry group types grouped by family
 const inquiryGroupTypesByFamily = computed(() => {
   const groupTypes = allInquiryGroupTypes.value
+  console.log(" GROUP TYPES ",allInquiryGroupTypes.value)
+  console.log("FILTERED GROUP TYPES ",getInquiryTypesByFamily(allInquiryGroupTypes.value))
+
   return getInquiryTypesByFamily(groupTypes)
 })
 
@@ -195,7 +209,7 @@ function navigateToFamilyInquiries(familyType: string) {
         router.push({
           name: 'group-list',
           params: {
-            slug: 'none'
+            slug: ''
           },
           query: {
             viewMode: 'group',
@@ -215,7 +229,7 @@ function navigateToFamilyInquiries(familyType: string) {
 function createInquiry(inquiryType: InquiryType,familyType: string) {
   selectedInquiryTypeForCreation.value = inquiryType
   selectedFamilyCreation.value = familyType
-  inquiriesStore.setFamily(familyType)
+  inquiriesStore.setFamilyType(familyType)
   createDlgToggle.value = true
 }
 

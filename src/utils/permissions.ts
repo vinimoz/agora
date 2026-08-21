@@ -5,7 +5,7 @@ import { useSessionStore } from '../stores/session.ts'
 import { useAppSettingsStore } from '../stores/appSettings.ts'
 import { isInquiryFinalStatus } from '../helpers/modules/InquiryHelper' 
 import type { InquiryType, InquiryOptionType } from '../Types/index.ts'
-
+import type { ParticipationPolicy } from '../Api/modules/participation'
 
 export interface InquiryTypeSettings {
   supportInquiry: boolean
@@ -642,6 +642,7 @@ function isAccessRestrictedForComments(context: PermissionContext): boolean {
             default:
             return false
     }
+
 }
 
 function isAccessRestrictedForSupports(context: PermissionContext): boolean {
@@ -849,7 +850,7 @@ export function canDelete(context: PermissionContext): boolean {
     if (context.isDeleted) return false
 
         // Check moderation status restrictions
-        if (context.moderationStatus === 'pending') {
+        if (context.moderationStatus === 'rejected' || context.moderationStatus === 'pending') {
             return false
         }
 
@@ -972,7 +973,7 @@ export function canArchive(context: PermissionContext): boolean {
 
         // Check moderation status restrictions
         if (context.moderationStatus === 'rejected' || context.moderationStatus === 'pending') {
-            return true
+            return false
         }
 
         if (context.userType === UserType.Admin || context.isOwner) {
@@ -1758,6 +1759,231 @@ export function canPerformOptionAction(context: PermissionContext, action: strin
     }
 }
 
+// ////////////////////////////////////
+// Participation
+// ////////////////////////////////////
+
+/**
+ * Check if user can participate in an inquiry based on participation policy
+ * @param context - The permission context
+ * @param participationPolicy - The participation policy from the store
+ */
+export function canParticipate(
+    context: PermissionContext,
+    participationPolicy?: ParticipationPolicy | null
+): boolean {
+    // If no participation policy is set, everyone can participate
+    if (!participationPolicy) {
+        return true
+    }
+
+    // Get current user
+    const sessionStore = useSessionStore()
+    const currentUser = sessionStore.currentUser
+    
+    // If no user, only guests can participate if policy allows
+    if (!currentUser?.id) {
+        // Guests can only participate if policy is 'everyone'
+        return participationPolicy.policyType === 'everyone'
+    }
+
+    // Check based on policy type
+    switch (participationPolicy.policyType) {
+        case 'everyone':
+            return true
+
+        case 'users':
+            // Check if current user is in the allowed users list
+            const userIds = participationPolicy.policyConfig?.user_ids || []
+            return userIds.includes(currentUser.id)
+
+        case 'groups':
+            // Check if current user belongs to any of the allowed groups
+            const groupIds = participationPolicy.policyConfig?.group_ids || []
+            if (groupIds.length === 0) return false
+            
+            const userGroups = currentUser.groups || []
+            return userGroups.some(group => groupIds.includes(group))
+
+        case 'lottery':
+            // For lottery, users can only participate if they have been selected
+            // and have accepted the selection
+            const selections = participationPolicy.policyConfig?.lottery?.selections || []
+            const userSelection = selections.find(
+                (s: any) => s.selected_user_id === currentUser.id
+            )
+            
+            if (!userSelection) return false
+            
+            // Check if selection is accepted and not expired
+            if (userSelection.status === 'expired') return false
+            if (userSelection.status === 'declined') return false
+            
+            // Check if selection has expired
+            if (userSelection.expires_at && userSelection.expires_at < Date.now() / 1000) {
+                return false
+            }
+            
+            return userSelection.status === 'accepted' || userSelection.status === 'pending'
+
+        default:
+            return false
+    }
+}
+
+/**
+ * Check if user can participate based on inquiry context and participation policy
+ * @param inquiry - The inquiry store
+ * @param participationPolicy - The participation policy
+ */
+export function canParticipateInInquiry(
+    inquiry: InquiryStoreLike,
+    participationPolicy?: ParticipationPolicy | null
+): boolean {
+    // Create context from inquiry
+    const context = createInquiryContext(inquiry, {})
+    if (!context) return false
+
+    // Check basic permissions first
+    if (!canView(context)) return false
+    
+    // Check if inquiry is locked or archived
+    if (context.isLocked || context.isArchived || context.isDeleted) {
+        return false
+    }
+
+    // Check moderation status
+    if (context.moderationStatus === 'rejected' || context.moderationStatus === 'pending') {
+        return false
+    }
+
+    // Check participation policy
+    return canParticipate(context, participationPolicy)
+}
+
+/**
+ * Get the participation status for a user in an inquiry
+ * @param context - The permission context
+ * @param participationPolicy - The participation policy
+ */
+export function getParticipationStatus(
+    context: PermissionContext,
+    participationPolicy?: ParticipationPolicy | null
+): {
+    canParticipate: boolean
+    reason?: string
+    status?: 'allowed' | 'denied' | 'pending' | 'selected'
+} {
+    // If no policy, everyone can participate
+    if (!participationPolicy) {
+        return { canParticipate: true, status: 'allowed' }
+    }
+
+    const sessionStore = useSessionStore()
+    const currentUser = sessionStore.currentUser
+
+    // Guest users
+    if (!currentUser?.id) {
+        if (participationPolicy.policyType === 'everyone') {
+            return { canParticipate: true, status: 'allowed' }
+        }
+        return { 
+            canParticipate: false, 
+            reason: 'Guests are not allowed to participate in this inquiry',
+            status: 'denied'
+        }
+    }
+
+    switch (participationPolicy.policyType) {
+        case 'everyone':
+            return { canParticipate: true, status: 'allowed' }
+
+        case 'users': {
+            const userIds = participationPolicy.policyConfig?.user_ids || []
+            const canParticipate = userIds.includes(currentUser.id)
+            return {
+                canParticipate,
+                reason: canParticipate ? undefined : 'You are not in the allowed users list',
+                status: canParticipate ? 'allowed' : 'denied'
+            }
+        }
+
+        case 'groups': {
+            const groupIds = participationPolicy.policyConfig?.group_ids || []
+            const userGroups = currentUser.groups || []
+            const canParticipate = userGroups.some(group => groupIds.includes(group))
+            return {
+                canParticipate,
+                reason: canParticipate ? undefined : 'You are not in any of the allowed groups',
+                status: canParticipate ? 'allowed' : 'denied'
+            }
+        }
+
+        case 'lottery': {
+            const selections = participationPolicy.policyConfig?.lottery?.selections || []
+            const userSelection = selections.find(
+                (s: any) => s.selected_user_id === currentUser.id
+            )
+
+            if (!userSelection) {
+                return {
+                    canParticipate: false,
+                    reason: 'You were not selected in the lottery',
+                    status: 'denied'
+                }
+            }
+
+            // Check if expired
+            if (userSelection.expires_at && userSelection.expires_at < Date.now() / 1000) {
+                return {
+                    canParticipate: false,
+                    reason: 'Your lottery selection has expired',
+                    status: 'denied'
+                }
+            }
+
+            switch (userSelection.status) {
+                case 'pending':
+                    return {
+                        canParticipate: true,
+                        reason: 'You have been selected but need to accept',
+                        status: 'pending'
+                    }
+                case 'accepted':
+                    return {
+                        canParticipate: true,
+                        status: 'allowed'
+                    }
+                case 'declined':
+                    return {
+                        canParticipate: false,
+                        reason: 'You declined the lottery selection',
+                        status: 'denied'
+                    }
+                case 'expired':
+                    return {
+                        canParticipate: false,
+                        reason: 'Your lottery selection has expired',
+                        status: 'denied'
+                    }
+                default:
+                    return {
+                        canParticipate: false,
+                        reason: 'Unknown lottery selection status',
+                        status: 'denied'
+                    }
+            }
+        }
+
+        default:
+            return {
+                canParticipate: false,
+                reason: 'Unknown participation policy type',
+                status: 'denied'
+            }
+    }
+}
+
 
 export default {
     // Enums
@@ -1788,6 +2014,11 @@ export default {
     canCreate,
     canLock,
 
+    // Permission
+    canParticipate,
+    canParticipateInInquiry,
+    getParticipationStatus,
+    
     // New moderation status functions
     canEditResult,
     canPerformActions,
@@ -1816,7 +2047,7 @@ export default {
     canManageGroupPermissions,
 
     // Option 
-     canEditOption,
+    canEditOption,
     canDeleteOption,
     canChangeStatus,      
     canChangeOptionStatus, 

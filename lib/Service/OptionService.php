@@ -92,12 +92,6 @@ class OptionService
     {
         $options = $this->optionMapper->findByTargetId($targetId);
 
-        foreach ($options as $option) {
-            $type = $option->getType();
-            $family = $this->optionTypeMapper->getFamilyFromType($type);
-            $option->setFamily($family);
-        }
-
         return array_values(
             array_filter(
                 $options, 
