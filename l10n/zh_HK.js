@@ -1735,6 +1735,7 @@ OC.L10N.register(
     "_%n minute ago_::_%n minutes ago_" : ["%n 分鐘前"],
     "_%n hour ago_::_%n hours ago_" : ["%n 小時前"],
     "_%n day ago_::_%n days ago_" : ["%n 天前"],
+    "_%n week ago_::_%n weeks ago_" : ["%n星期前"],
     "_%n month ago_::_%n months ago_" : ["%n 個月前"],
     "_%n year ago_::_%n years ago_" : ["%n 年前"],
     "now" : "現在",

@@ -1733,6 +1733,7 @@
     "_%n minute ago_::_%n minutes ago_" : ["%n minuto atrás","%n de minutos atrás","%n minutos atrás"],
     "_%n hour ago_::_%n hours ago_" : ["%n hora atrás","%n de horas atrás","%n horas atrás"],
     "_%n day ago_::_%n days ago_" : ["%n dia atrás","%n de dias atrás","%n dias atrás"],
+    "_%n week ago_::_%n weeks ago_" : ["%n semana atrás","%n de semanas atrás","%n semanas atrás"],
     "_%n month ago_::_%n months ago_" : ["%n mês atrás","%n de meses atrás","%n meses atrás"],
     "_%n year ago_::_%n years ago_" : ["%n ano atrás","%n de anos atrás","%n anos atrás"],
     "now" : "agora",

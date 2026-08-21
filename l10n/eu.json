@@ -1,8 +1,12 @@
 { "translations": {
+    "Inquiry changes" : "Kontsulta aldaketak",
     "Agora" : "Agora",
     "Team" : "Lantaldea",
     "Contact group" : "Kontaktu taldea",
     "Group" : "Taldea",
+    "Inquiry \"%s\" - Confirmation" : "Kontsulta \"%s\" - Berrespena",
+    "This email is sent to you to inform you about the result of a inquiry you participated in. At least your name or your email address was recorded in this inquiry. If you want to be removed from this inquiry, contact the site administrator or the inquiry initiator, where the mail is sent from." : "Mezu elektroniko hau bidali dizugu parte hartu zenuen kontsultaren emaitzen berri emateko. Zure izena edo helbide elektronikoa, gutxienez, kontsulta honetan jasota geratu ziren. Kontsulta honetatik kentzea nahi baduzu, jarri harremanetan guneko administratzailearekin edo mezu elektroniko hau bidali dizun kontsulta honen sortzailearekin.",
+    "{owner} wants to inform you about the final result of the inquiry \"{title}\"" : "{owner}-ek \"{title}\" kontsultaren azken emaitzen berri eman nahi dizu ",
     "_Confirmed option:_::_Confirmed options:_" : ["Berretsitako aukera:","Berretsitako aukerak:"],
     "Legal Notice" : "Lege oharra",
     "Privacy Policy" : "Pribatutasun politika",
