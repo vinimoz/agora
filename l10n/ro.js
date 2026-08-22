@@ -158,6 +158,7 @@ OC.L10N.register(
     "Sharing" : "Partajare",
     "Minute" : "Minute",
     "Not found" : "Nu a fost găsit",
+    "Unknown date" : "Dată necunoscută",
     "_%n minute ago_::_%n minutes ago_" : ["%n minut în urmă","%n minute în urmă","%n minute în urmă"],
     "_%n hour ago_::_%n hours ago_" : ["%n oră în urmă","%n ore în urmă","%n ore în urmă"],
     "_%n day ago_::_%n days ago_" : ["%n zi în rumă","Acum %n zile","Acum %n zile"],

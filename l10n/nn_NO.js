@@ -75,6 +75,7 @@ OC.L10N.register(
     "Shares" : "Delingar",
     "No activity yet" : "Ingen aktivitetar enno",
     "Never" : "Aldri",
+    "Change" : "ENdre",
     "Expiration" : "Utløp",
     "Saving …" : "Lagrar …",
     "File" : "Fil",
