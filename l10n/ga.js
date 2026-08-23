@@ -1735,6 +1735,7 @@ OC.L10N.register(
     "_%n minute ago_::_%n minutes ago_" : ["%n nóiméad ó shin","%n nóiméad ó shin","%n nóiméad ó shin","%n nóiméad ó shin","%n nóiméad ó shin"],
     "_%n hour ago_::_%n hours ago_" : ["%n uair ó shin","%n uair ó shin","%n uair ó shin","%n uair ó shin","%n uair ó shin"],
     "_%n day ago_::_%n days ago_" : ["%n lá ó shin","%n lá ó shin","%n lá ó shin","%n lá ó shin","%n lá ó shin"],
+    "_%n week ago_::_%n weeks ago_" : ["%n seachtain ó shin","%n seachtain ó shin","%n seachtain ó shin","%n seachtain ó shin","%n seachtain ó shin"],
     "_%n month ago_::_%n months ago_" : ["%n mí ó shin","%n mí ó shin","%n mí ó shin","%n mí ó shin","%n mí ó shin"],
     "_%n year ago_::_%n years ago_" : ["%n bliain ó shin","%n bliain ó shin","%n bliain ó shin","%n bliain ó shin","%n bliain ó shin"],
     "now" : "anois",
