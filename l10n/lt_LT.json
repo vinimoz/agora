@@ -1733,6 +1733,7 @@
     "_%n minute ago_::_%n minutes ago_" : ["prieš %n minutę","prieš %n minutes","prieš %n minučių","prieš %n minučių"],
     "_%n hour ago_::_%n hours ago_" : ["prieš %n valandą","prieš %n valandas","prieš %n valandų","prieš %n valandų"],
     "_%n day ago_::_%n days ago_" : ["prieš %n dieną","prieš %n dienas","prieš %n dienų","prieš %n dienų"],
+    "_%n week ago_::_%n weeks ago_" : ["Prieš %n savaitę","Prieš %n savaites","Prieš %n savaičių","Prieš %n savaites"],
     "_%n month ago_::_%n months ago_" : ["prieš %n mėnesį","prieš %n mėnesius","prieš %n mėnesių","prieš %n mėnesį"],
     "_%n year ago_::_%n years ago_" : ["prieš %n metus","prieš %n metus","prieš %n metų","prieš %n metus"],
     "now" : "dabar",
