@@ -124,12 +124,6 @@ class ImportController extends Controller {
 
 
     private function extractDocText(string $filePath): string {
-        $cmd = escapeshellcmd('catdoc') . ' ' . escapeshellarg($filePath);
-        $output = shell_exec($cmd);
-        if ($output && !empty(trim($output))) {
-            return $output;
-        }
-
         $content = file_get_contents($filePath);
         $text = preg_replace('/[^\p{L}\p{N}\s\.\,\!\?\;\:\'\"\(\)\[\]\{\}\<\>\/\-\=\+\*\&\^\%@\#\$\€\£\\\|]/u', ' ', $content);
         $text = preg_replace('/\s+/', ' ', $text);
@@ -164,20 +158,7 @@ class ImportController extends Controller {
     }
 
     private function extractPdfText(string $filePath): string {
-        $outputFile = tempnam(sys_get_temp_dir(), 'pdf_');
-        $cmd = escapeshellcmd('pdftotext') . ' ' . escapeshellarg($filePath) . ' ' . escapeshellarg($outputFile);
-        exec($cmd, $output, $returnCode);
-
-        if ($returnCode === 0 && file_exists($outputFile)) {
-            $text = file_get_contents($outputFile);
-            unlink($outputFile);
-            if (!empty(trim($text))) {
-                return $text;
-            }
-        }
-
-        if (file_exists($outputFile)) unlink($outputFile);
-        throw new \Exception('Could not extract text from PDF file. Please ensure pdftotext is installed');
+        throw new \Exception('PDF text extraction is not supported. Please convert to a supported format.');
     }
 
     private function extractHtmlText(string $filePath): string {
