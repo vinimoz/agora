@@ -7,7 +7,7 @@
     <!-- Cards grid -->
     <div class="options-grid">
       <OptionCard
-        v-for="option in options"
+        v-for="option in items"
         :key="option.id"
         :option="option"
         :inquiry-id="inquiryId"
@@ -16,7 +16,7 @@
     </div>
 
     <!-- Empty state -->
-    <div v-if="options.length === 0" class="empty-state">
+    <div v-if="items.length === 0" class="empty-state">
       <component :is="getFamilyIcon()" :size="48" />
       <h4>{{ t('agora', 'No options yet') }}</h4>
       <p>{{ t('agora', 'Be the first to contribute') }}</p>
@@ -38,7 +38,7 @@
     </div>
 
     <!-- View mode toggle (optional) -->
-    <div v-if="options.length > 0 && hasMultipleViewModes" class="view-mode-toggle">
+    <div v-if="items.length > 0 && hasMultipleViewModes" class="view-mode-toggle">
       <NcButton
         :type="viewMode === 'grid' ? 'primary' : 'tertiary'"
         @click="viewMode = 'grid'"
@@ -67,9 +67,9 @@
 
     <!-- List view alternative -->
     <div v-if="viewMode === 'list'" class="list-view">
-      <div class="options-list">
+      <div class="items-list">
         <OptionCard
-          v-for="option in options"
+          v-for="option in items"
           :key="option.id"
           :option="option"
           :show-action="true"
@@ -85,7 +85,7 @@
     <div v-else-if="viewMode === 'compact'" class="compact-view">
       <div class="options-compact">
         <OptionCard
-          v-for="option in options"
+          v-for="option in items"
           :key="option.id"
           :option="option"
           :inquiry-id="inquiryId"
@@ -111,7 +111,7 @@ import {
 import type { InquiryOptionType, Option , OptionFamily } from '../../Types/index.ts'
 
 const props = defineProps<{
-  options: Option[]
+  items: Option[]
   family: OptionFamily
   inquiryId: number
   optionTypes: InquiryOptionType[]

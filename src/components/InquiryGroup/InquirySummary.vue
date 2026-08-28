@@ -1,13 +1,15 @@
-<!--
+	<!--
   - SPDX-FileCopyrightText: 2018-2025 Nextcloud contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
 <template>
-  <div class="inquiry-summary" :class="summaryClasses" @click="handleClick">
+  <div 
+    v-if="inquiry"
+    class="inquiry-summary" :class="summaryClasses" @click="handleClick">
     <!-- Compact Mode -->
-    <div v-if="compact" class="summary-compact">
-      <div class="compact-type-badge" :class="typeBadgeClass">
+    <div v-if="compact || displayMode === 'summary'" class="summary-compact">
+      <div v-if="showType" class="compact-type-badge" :class="typeBadgeClass">
         <component :is="typeIconComponent" class="compact-type-icon" />
       </div>
 
@@ -16,14 +18,14 @@
           <div class="compact-title" :title="inquiry.title">
             {{ truncatedTitle }}
           </div>
-          <div v-if="showExpiryBadge" class="compact-expiry-badge" :class="expiryBadgeClass">
+          <div v-if="showExpiry && showExpiryBadge" class="compact-expiry-badge" :class="expiryBadgeClass">
             <component :is="InquiryGeneralIcons.ClockOutline" class="expiry-icon" :size="12" />
             <span>{{ expiryText }}</span>
           </div>
         </div>
 
         <div class="compact-meta">
-          <div class="compact-author">
+          <div v-if="showAuthor" class="compact-author">
             <NcAvatar
               v-if="inquiry.ownedGroup"
               :display-name="inquiry.ownedGroup"
@@ -43,19 +45,25 @@
             <span class="author-name">{{ truncatedAuthorName }}</span>
           </div>
 
-          <div class="compact-stats">
-                            <SupportFeature
-                                    :item="inquiry"
-                                    item-type="inquiry"
-                                    :context="context"
-                                    :show-quorum="true"
-                                    :show-details-on-hover="true"
-                                    :icon-size="22"
-                                    @click.stop
-                                    />
-            <div v-if="inquiry.status?.countComments" class="stat-item comments">
+          <div v-if="showStats" class="compact-stats">
+            <div v-if="showSupport" class="stat-item supports">
+              <SupportFeature
+                :item="inquiry"
+                item-type="inquiry"
+                :context="context"
+                :show-quorum="true"
+                :show-details-on-hover="true"
+                :icon-size="20"
+                @click.stop
+              />
+            </div>
+            <div v-if="showComments && inquiry.status?.countComments" class="stat-item comments">
               <component :is="InquiryGeneralIconsComponents.Comment" class="comments-icon" :size="10" />
               <span>{{ inquiry.status.countComments }}</span>
+            </div>
+            <div v-if="showParticipants && inquiry.status?.countParticipants" class="stat-item participants">
+              <component :is="InquiryGeneralIconsComponents.Users" class="participants-icon" :size="10" />
+              <span>{{ inquiry.status.countParticipants }}</span>
             </div>
           </div>
         </div>
@@ -64,21 +72,25 @@
 
     <!-- Regular Mode -->
     <div v-else class="summary-regular">
-      <!-- Cover Image (if exists) -->
-      <div v-if="coverUrl" class="summary-cover">
+      <!-- Cover Image -->
+      <div v-if="showCover && coverUrl" class="summary-cover">
         <img :src="coverUrl" :alt="inquiry.title" class="cover-image" @load="handleImageLoad" />
         <div class="cover-overlay"></div>
       </div>
 
       <!-- Header with Type -->
-      <div class="summary-header">
-        <div class="header-type-badge" :class="typeBadgeClass">
+      <div v-if="showType || showStatus" class="summary-header">
+        <div v-if="showType" class="header-type-badge" :class="typeBadgeClass">
           <component :is="typeIconComponent" class="type-icon" :size="14" />
           <span class="type-label">{{ typeLabel }}</span>
         </div>
 
         <div class="header-right">
-          <div v-if="showExpiryBadge" class="expiry-badge" :class="expiryBadgeClass">
+          <div v-if="showStatus && currentInquiryStatus" class="status-badge" :class="statusBadgeClass">
+            <component :is="statusIconComponent" class="status-icon" :size="12" />
+            {{ statusText }}
+          </div>
+          <div v-if="showExpiry && showExpiryBadge" class="expiry-badge" :class="expiryBadgeClass">
             <component :is="InquiryGeneralIcons.ClockOutline" class="expiry-icon" :size="12" />
             <span>{{ expiryText }}</span>
           </div>
@@ -92,13 +104,12 @@
           {{ inquiry.title }}
         </div>
 
-        <!-- Safe Description -->
-        <!-- eslint-disable-next-line vue/no-v-html -->
-        <div v-if="safeDescription" class="summary-description" v-html="safeDescription">
+        <!-- Description -->
+        <div v-if="showDescription && safeDescription" class="summary-description" v-html="safeDescription">
         </div>
 
-        <!-- Location & Category -->
-        <div class="summary-meta">
+        <!-- Meta: Location & Category -->
+        <div v-if="showMeta" class="summary-meta">
           <div v-if="locationPath" class="meta-item location">
             <component :is="InquiryGeneralIconsComponents.Location" class="meta-icon" :size="12" />
             <span class="meta-text">{{ truncatedLocation }}</span>
@@ -112,9 +123,9 @@
       </div>
 
       <!-- Footer with Author and Stats -->
-      <div class="summary-footer">
+      <div v-if="showAuthor || showStats" class="summary-footer">
         <!-- Author Info -->
-        <div class="footer-author">
+        <div v-if="showAuthor" class="footer-author">
           <NcAvatar
             v-if="inquiry.ownedGroup"
             :display-name="inquiry.ownedGroup"
@@ -139,11 +150,26 @@
           </div>
         </div>
 
-        <!-- Stats Icons -->
-        <div class="footer-stats">
-          <div v-if="inquiry.status?.countComments" class="stat-item comments">
+        <!-- Stats -->
+        <div v-if="showStats" class="footer-stats">
+          <div v-if="showSupport" class="stat-item supports">
+            <SupportFeature
+              :item="inquiry"
+              item-type="inquiry"
+              :context="context"
+              :show-quorum="true"
+              :show-details-on-hover="true"
+              :icon-size="18"
+              @click.stop
+            />
+          </div>
+          <div v-if="showComments && inquiry.status?.countComments" class="stat-item comments">
             <component :is="InquiryGeneralIconsComponents.Comment" class="comments-icon" :size="16" />
             <span>{{ inquiry.status.countComments }}</span>
+          </div>
+          <div v-if="showParticipants && inquiry.status?.countParticipants" class="stat-item participants">
+            <component :is="InquiryGeneralIconsComponents.Users" class="participants-icon" :size="16" />
+            <span>{{ inquiry.status.countParticipants }}</span>
           </div>
         </div>
       </div>
@@ -158,19 +184,50 @@ import NcAvatar from '@nextcloud/vue/components/NcAvatar'
 import { getInquiryTypeData } from '../../helpers/modules/InquiryHelper.ts'
 import type { Inquiry } from '../../Types/index.ts'
 import { useSessionStore } from '../../stores/session.ts'
-import { InquiryGeneralIcons } from '../../utils/icons.ts'
+import { InquiryGeneralIcons, StatusIcons } from '../../utils/icons.ts'
 import { createInquiryContext } from '../../utils/permissions.ts'
-
 import { SupportFeature } from '../Base/index.ts'
+
 interface Props {
   inquiry: Inquiry
+  inquiries?: Inquiry[]
   compact?: boolean
   interactive?: boolean
+  
+  // Display feature toggles
+  showIcon?: boolean
+  showCover?: boolean
+  showMeta?: boolean
+  showStats?: boolean
+  showAuthor?: boolean
+  showDescription?: boolean
+  showExpiry?: boolean
+  showType?: boolean
+  showStatus?: boolean
+  showComments?: boolean
+  showSupport?: boolean
+  showParticipants?: boolean
+  
+  // Display mode
+  displayMode?: 'summary' | 'compact' | 'regular'
 }
 
 const props = withDefaults(defineProps<Props>(), {
   compact: false,
-  interactive: true
+  interactive: true,
+  showIcon: true,
+  showCover: true,
+  showMeta: true,
+  showStats: true,
+  showAuthor: true,
+  showDescription: true,
+  showExpiry: true,
+  showType: true,
+  showStatus: true,
+  showComments: true,
+  showSupport: true,
+  showParticipants: true,
+  displayMode: 'regular'
 })
 
 const emit = defineEmits<{
@@ -179,17 +236,16 @@ const emit = defineEmits<{
 
 const sessionStore = useSessionStore()
 
-// Import icon components from utils/icons.ts
 const InquiryGeneralIconsComponents = InquiryGeneralIcons
 
 // Computed properties
 const inquiryTypes = computed(() => sessionStore.appSettings?.inquiryTypeTab || [])
 
 const summaryClasses = computed(() => ({
-  'is-compact': props.compact,
+  'is-compact': props.compact || props.displayMode === 'summary',
   'is-interactive': props.interactive,
-  'has-expiry': showExpiryBadge.value,
-  'has-cover': !!coverUrl.value
+  'has-expiry': props.showExpiry && showExpiryBadge.value,
+  'has-cover': props.showCover && !!coverUrl.value
 }))
 
 // Context for permissions
@@ -235,6 +291,59 @@ const typeBadgeClass = computed(() => {
   return `type-${type}`
 })
 
+// Status
+const currentInquiryStatus = computed(() => {
+  if (!props.inquiry.status?.inquiryStatus) return null
+  
+  const specialStatuses = {
+    'draft': {
+      statusKey: 'draft',
+      label: 'Draft',
+      icon: 'draft',
+      inquiryType: props.inquiry.type,
+      order: 0,
+    },
+    'waiting_approval': {
+      statusKey: 'waiting_approval',
+      label: 'Waiting Approval',
+      icon: 'waitingapproval',
+      inquiryType: props.inquiry.type,
+      order: 1,
+    }
+  }
+
+  const currentStatus = props.inquiry.status.inquiryStatus
+  if (specialStatuses[currentStatus]) {
+    return specialStatuses[currentStatus]
+  }
+
+  const statusesFromSettings = sessionStore.appSettings?.inquiryStatusTab
+    ?.filter((status) => status.inquiryType === props.inquiry.type) || []
+    
+  return statusesFromSettings.find(
+    (status) => status.statusKey === currentStatus
+  ) || specialStatuses.draft
+})
+
+const statusText = computed(() => currentInquiryStatus.value?.label ? t('agora', currentInquiryStatus.value.label) : '')
+
+const statusIconComponent = computed(() => {
+  if (!currentInquiryStatus.value?.icon) return StatusIcons.Default
+  const iconName = currentInquiryStatus.value.icon
+  return StatusIcons[iconName] || StatusIcons.Default
+})
+
+const statusBadgeClass = computed(() => {
+  const status = props.inquiry.status?.inquiryStatus
+  const map: Record<string, string> = {
+    'active': 'status-open',
+    'open': 'status-open',
+    'closed': 'status-closed',
+    'draft': 'status-draft',
+    'waiting_approval': 'status-waiting'
+  }
+  return map[status || ''] || 'status-unknown'
+})
 
 // Owner display
 const ownerDisplayName = computed(() => 
@@ -244,8 +353,9 @@ const ownerDisplayName = computed(() =>
 // Truncated text
 const truncatedTitle = computed(() => {
   if (!props.inquiry.title) return ''
-  return props.inquiry.title.length > 40
-    ? `${props.inquiry.title.substring(0, 40)}…`
+  const maxLen = props.compact ? 35 : 50
+  return props.inquiry.title.length > maxLen
+    ? `${props.inquiry.title.substring(0, maxLen)}…`
     : props.inquiry.title
 })
 
@@ -261,7 +371,7 @@ const safeDescription = computed(() => {
   if (!props.inquiry.descriptionSafe) return ''
 
   const description = props.inquiry.descriptionSafe
-  const maxLength = 150
+  const maxLength = props.compact ? 80 : 150
 
   if (description.length > maxLength) {
     return `${description.substring(0, maxLength)}…`
@@ -272,6 +382,7 @@ const safeDescription = computed(() => {
 
 // Cover image
 const coverUrl = computed(() => {
+  if (!props.showCover) return ''
   if (!props.inquiry.coverId || props.inquiry.coverId === 0) return ''
   return getNextcloudPreviewUrl(props.inquiry.coverId)
 })
@@ -353,7 +464,7 @@ function getHierarchyPath(items, targetId) {
   })
 
   if (!itemMap[targetId]) {
-    return itemMap[1]?.name || t('agora', 'Not defined')
+    return itemMap[1]?.name || ''
   }
 
   function buildPath(item) {
@@ -388,9 +499,12 @@ const truncatedCategory = computed(() => {
 })
 
 function handleClick() {
-  emit('view', props.inquiry.id)
+  if (props.interactive) {
+    emit('view', props.inquiry.id)
+  }
 }
 </script>
+
 <style lang="scss" scoped>
 .inquiry-summary {
   font-family: var(--font-family);

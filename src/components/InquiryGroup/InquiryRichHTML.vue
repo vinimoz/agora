@@ -4,29 +4,43 @@
 -->
 
 <template>
-  <div class="inquiry-rich-html">
+  <div v-if="inquiry" class="inquiry-rich-html" :class="{ 'is-book': displayMode === 'book' }">
     <!-- Cover Image with Title -->
-    <div v-if="coverUrl" class="rich-cover">
-      <img :src="coverUrl" :alt="inquiry.title" class="cover-image" />
+    <div v-if="showCover && coverUrl" class="rich-cover">
+      <img :src="coverUrl" :alt="inquiry.title" class="cover-image" loading="lazy" />
       <div class="cover-overlay">
         <div class="cover-content">
-          <div class="cover-type-badge">
+          <div v-if="showType" class="cover-type-badge">
             <component :is="typeIconComponent" class="type-icon" :size="20" />
             <span class="type-label">{{ typeLabel }}</span>
           </div>
           <h1 class="cover-title">{{ inquiry.title }}</h1>
+          <div v-if="showMeta" class="cover-meta">
+            <span v-if="locationPath" class="cover-meta-item">
+              <component :is="InquiryGeneralIcons.Location" :size="14" />
+              {{ truncatedLocation }}
+            </span>
+            <span v-if="categoryPath" class="cover-meta-item">
+              <component :is="InquiryGeneralIcons.Category" :size="14" />
+              {{ truncatedCategory }}
+            </span>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- Main Content -->
-    <div class="rich-content-wrapper" :class="{ 'has-cover': !!coverUrl }">
+    <div class="rich-content-wrapper" :class="{ 'has-cover': showCover && coverUrl }">
       <!-- Header without cover -->
       <div v-if="!coverUrl" class="rich-header">
         <div class="header-top">
-          <div class="type-badge">
+          <div v-if="showType" class="type-badge">
             <component :is="typeIconComponent" class="type-icon" :size="20" />
             <span class="type-label">{{ typeLabel }}</span>
+          </div>
+          <div v-if="showStatus && currentInquiryStatus" class="status-badge" :class="statusBadgeClass">
+            <component :is="statusIconComponent" class="status-icon" :size="12" />
+            {{ statusText }}
           </div>
         </div>
         
@@ -34,54 +48,74 @@
       </div>
 
       <!-- Meta Information -->
-      <div class="rich-meta">
-        <!-- Owner/Group Info -->
+      <div v-if="showAuthor || showMeta" class="rich-meta">
         <div class="meta-author">
           <NcAvatar
-            v-if="inquiry.ownedGroup"
+            v-if="showAuthor && inquiry.ownedGroup"
             :display-name="inquiry.ownedGroup"
             :show-user-status="false"
             :size="44"
             class="author-avatar"
           />
           <NcAvatar
-            v-else
+            v-else-if="showAuthor"
             :user="inquiry.owner?.id"
             :display-name="inquiry.owner?.displayName"
             :size="44"
             class="author-avatar"
           />
           <div class="author-info">
-            <div class="author-name">
+            <div v-if="showAuthor" class="author-name">
               {{ inquiry.ownedGroup || inquiry.owner?.displayName }}
             </div>
-            <div class="meta-details">
+            <div v-if="showMeta" class="meta-details">
               <div v-if="inquiry.status?.created" class="meta-date">
-                <component :is="InquiryGeneralIconsComponents.Calendar" class="date-icon" :size="14" />
+                <component :is="InquiryGeneralIcons.Calendar" class="date-icon" :size="14" />
                 <span>{{ formattedDate }}</span>
               </div>
               
               <div v-if="locationPath" class="meta-location">
-                <component :is="InquiryGeneralIconsComponents.Location" class="location-icon" :size="14" />
+                <component :is="InquiryGeneralIcons.Location" class="location-icon" :size="14" />
                 <span>{{ truncatedLocation }}</span>
               </div>
               
               <div v-if="categoryPath" class="meta-category">
-                <component :is="InquiryGeneralIconsComponents.Category" class="category-icon" :size="14" />
+                <component :is="InquiryGeneralIcons.Category" class="category-icon" :size="14" />
                 <span>{{ truncatedCategory }}</span>
               </div>
             </div>
           </div>
         </div>
+        
+        <!-- Stats -->
+        <div v-if="showStats" class="rich-stats">
+          <div v-if="showComments && inquiry.status?.countComments" class="stat-item">
+            <component :is="InquiryGeneralIcons.Comment" :size="14" />
+            <span>{{ inquiry.status.countComments }}</span>
+            <span class="stat-label">{{ t('agora', 'comments') }}</span>
+          </div>
+          <div v-if="showSupport && inquiry.status?.countSupports" class="stat-item">
+            <component :is="InquiryGeneralIcons.ThumbUp" :size="14" />
+            <span>{{ inquiry.status.countSupports }}</span>
+            <span class="stat-label">{{ t('agora', 'supports') }}</span>
+          </div>
+          <div v-if="showParticipants && inquiry.status?.countParticipants" class="stat-item">
+            <component :is="InquiryGeneralIcons.Users" :size="14" />
+            <span>{{ inquiry.status.countParticipants }}</span>
+            <span class="stat-label">{{ t('agora', 'participants') }}</span>
+          </div>
+        </div>
       </div>
 
       <!-- Main HTML Content -->
-      <!-- eslint-disable-next-line vue/no-v-html -->
-      <div class="rich-content" v-html="sanitizedContent"></div>
+      <div v-if="showDescription" class="rich-content">
+        <!-- eslint-disable-next-line vue/no-v-html -->
+        <div v-html="sanitizedContent"></div>
+      </div>
 
-      <!-- Expiry Warning (only if expired) -->
-      <div v-if="isExpired" class="expiry-warning">
-        <component :is="InquiryGeneralIconsComponents.AlertCircle" class="warning-icon" :size="18" />
+      <!-- Expiry Warning -->
+      <div v-if="showExpiry && isExpired" class="expiry-warning">
+        <component :is="InquiryGeneralIcons.AlertCircle" class="warning-icon" :size="18" />
         <span>{{ t('agora', 'This inquiry has expired') }}</span>
       </div>
     </div>
@@ -97,25 +131,57 @@ import DOMPurify from 'dompurify'
 import { getInquiryTypeData } from '../../helpers/modules/InquiryHelper.ts'
 import type { Inquiry } from '../../Types/index.ts'
 import { useSessionStore } from '../../stores/session.ts'
-import { InquiryGeneralIcons } from '../../utils/icons.ts'
+import { InquiryGeneralIcons, StatusIcons } from '../../utils/icons.ts'
 
 interface Props {
   inquiry: Inquiry
+  inquiries?: Inquiry[]
+  
+  // Display feature toggles
+  showIcon?: boolean
+  showCover?: boolean
+  showMeta?: boolean
+  showStats?: boolean
+  showAuthor?: boolean
+  showDescription?: boolean
+  showExpiry?: boolean
+  showType?: boolean
+  showStatus?: boolean
+  showComments?: boolean
+  showSupport?: boolean
+  showParticipants?: boolean
+  
+  // Display mode
+  displayMode?: 'full' | 'book' | 'summary'
 }
 
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), {
+  showIcon: true,
+  showCover: true,
+  showMeta: true,
+  showStats: true,
+  showAuthor: true,
+  showDescription: true,
+  showExpiry: true,
+  showType: true,
+  showStatus: true,
+  showComments: true,
+  showSupport: true,
+  showParticipants: true,
+  displayMode: 'full'
+})
+
+const emit = defineEmits<{
+  click: [inquiry: Inquiry]
+}>()
 
 const sessionStore = useSessionStore()
 
-// Import icon components from utils/icons.ts
+// Import icon components
 const InquiryGeneralIconsComponents = InquiryGeneralIcons
 
 // Get type data
-
 const inquiryTypes = computed(() => sessionStore.appSettings?.inquiryTypeTab || [])
-
-// Context for permissions
-// const context = computed(() => createInquiryContext(props.inquiry, sessionStore.appSettings))
 
 const typeData = computed(() => getInquiryTypeData(props.inquiry.type, inquiryTypes.value))
 
@@ -125,7 +191,6 @@ const typeLabel = computed(() => typeData.value?.label || props.inquiry.type)
 const typeIconComponent = computed(() => {
   if (typeData.value?.icon) {
     const iconName = typeData.value.icon
-    
     if (typeof iconName === 'string' && InquiryGeneralIconsComponents[iconName]) {
       return InquiryGeneralIconsComponents[iconName]
     }
@@ -149,8 +214,63 @@ const typeIconComponent = computed(() => {
   return InquiryGeneralIconsComponents[mappedIconName]
 })
 
+// Status
+const currentInquiryStatus = computed(() => {
+  if (!props.inquiry.status?.inquiryStatus) return null
+  
+  const specialStatuses = {
+    'draft': {
+      statusKey: 'draft',
+      label: 'Draft',
+      icon: 'draft',
+      inquiryType: props.inquiry.type,
+      order: 0,
+    },
+    'waiting_approval': {
+      statusKey: 'waiting_approval',
+      label: 'Waiting Approval',
+      icon: 'waitingapproval',
+      inquiryType: props.inquiry.type,
+      order: 1,
+    }
+  }
+
+  const currentStatus = props.inquiry.status.inquiryStatus
+  if (specialStatuses[currentStatus]) {
+    return specialStatuses[currentStatus]
+  }
+
+  const statusesFromSettings = sessionStore.appSettings?.inquiryStatusTab
+    ?.filter((status) => status.inquiryType === props.inquiry.type) || []
+    
+  return statusesFromSettings.find(
+    (status) => status.statusKey === currentStatus
+  ) || specialStatuses.draft
+})
+
+const statusText = computed(() => currentInquiryStatus.value?.label ? t('agora', currentInquiryStatus.value.label) : '')
+
+const statusIconComponent = computed(() => {
+  if (!currentInquiryStatus.value?.icon) return StatusIcons.Default
+  const iconName = currentInquiryStatus.value.icon
+  return StatusIcons[iconName] || StatusIcons.Default
+})
+
+const statusBadgeClass = computed(() => {
+  const status = props.inquiry.status?.inquiryStatus
+  const map: Record<string, string> = {
+    'active': 'status-open',
+    'open': 'status-open',
+    'closed': 'status-closed',
+    'draft': 'status-draft',
+    'waiting_approval': 'status-waiting'
+  }
+  return map[status || ''] || 'status-unknown'
+})
+
 // Cover image
 const coverUrl = computed(() => {
+  if (!props.showCover) return ''
   if (!props.inquiry.coverId || props.inquiry.coverId === 0) return ''
   return getNextcloudPreviewUrl(props.inquiry.coverId)
 })
@@ -178,7 +298,7 @@ function getHierarchyPath(items, targetId) {
   })
 
   if (!itemMap[targetId]) {
-    return itemMap[1]?.name || t('agora', 'Not defined')
+    return itemMap[1]?.name || ''
   }
 
   function buildPath(item) {
@@ -198,7 +318,6 @@ function getHierarchyPath(items, targetId) {
 const locationPath = computed(() => getHierarchyPath(sessionStore.appSettings?.locationTab, props.inquiry.locationId))
 const categoryPath = computed(() => getHierarchyPath(sessionStore.appSettings?.categoryTab, props.inquiry.categoryId))
 
-// Truncated text
 const truncatedLocation = computed(() => {
   if (!locationPath.value) return ''
   return locationPath.value.length > 30 
@@ -257,21 +376,37 @@ const sanitizedContent = computed(() => {
   })
 })
 </script>
+
 <style lang="scss" scoped>
-/* === PROFESSIONAL RICH HTML THEME === */
 .inquiry-rich-html {
-  border-radius: 8px;
+  border-radius: 12px;
   background: var(--color-main-background);
   overflow: hidden;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-  transition: box-shadow 0.2s ease;
+  transition: all 0.3s ease;
+  border: 1px solid var(--color-border);
   
   &:hover {
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  }
+  
+  &.is-book {
+    max-width: 800px;
+    margin: 0 auto;
+    
+    .rich-content {
+      font-size: 16px;
+      line-height: 1.8;
+      padding: 40px 48px;
+    }
+    
+    .rich-meta {
+      padding: 20px 32px;
+    }
   }
 }
 
-// === COVER IMAGE HERO ===
+// Cover Image Hero
 .rich-cover {
   position: relative;
   height: 320px;
@@ -305,7 +440,7 @@ const sanitizedContent = computed(() => {
     bottom: 0;
     background: linear-gradient(
       to bottom,
-      rgba(0, 0, 0, 0.3) 0%,
+      rgba(0, 0, 0, 0.2) 0%,
       rgba(0, 0, 0, 0.6) 100%
     );
     display: flex;
@@ -356,7 +491,7 @@ const sanitizedContent = computed(() => {
       font-size: 36px;
       font-weight: 700;
       line-height: 1.2;
-      margin: 0;
+      margin: 0 0 12px 0;
       text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
       
       @media (max-width: 768px) {
@@ -367,12 +502,29 @@ const sanitizedContent = computed(() => {
         font-size: 24px;
       }
     }
+    
+    .cover-meta {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      font-size: 14px;
+      opacity: 0.9;
+      
+      .cover-meta-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        
+        svg {
+          opacity: 0.8;
+        }
+      }
+    }
   }
 }
 
-// === CONTENT WRAPPER ===
+// Content Wrapper
 .rich-content-wrapper {
-  border-radius: 8px;
   padding: 32px;
   background: var(--color-main-background);
   
@@ -393,7 +545,7 @@ const sanitizedContent = computed(() => {
   }
 }
 
-// === HEADER (WITHOUT COVER) ===
+// Header (without cover)
 .rich-header {
   margin-bottom: 32px;
   padding-bottom: 24px;
@@ -405,7 +557,11 @@ const sanitizedContent = computed(() => {
   }
   
   .header-top {
-    margin-bottom: 20px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
   }
   
   .type-badge {
@@ -432,6 +588,48 @@ const sanitizedContent = computed(() => {
     }
   }
   
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    
+    &.status-open {
+      background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(34, 197, 94, 0.05));
+      color: #16a34a;
+      border: 1px solid rgba(34, 197, 94, 0.2);
+    }
+    
+    &.status-closed {
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(239, 68, 68, 0.05));
+      color: #dc2626;
+      border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+    
+    &.status-draft {
+      background: linear-gradient(135deg, rgba(148, 163, 184, 0.1), rgba(148, 163, 184, 0.05));
+      color: #64748b;
+      border: 1px solid rgba(148, 163, 184, 0.2);
+    }
+    
+    &.status-waiting {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(245, 158, 11, 0.05));
+      color: #f59e0b;
+      border: 1px solid rgba(245, 158, 11, 0.2);
+    }
+    
+    &.status-unknown {
+      background: var(--color-background-hover);
+      color: var(--color-text-lighter);
+      border: 1px solid var(--color-border);
+    }
+  }
+  
   .rich-title {
     font-size: 36px;
     font-weight: 700;
@@ -449,17 +647,24 @@ const sanitizedContent = computed(() => {
   }
 }
 
-// === META INFORMATION ===
+// Meta Information
 .rich-meta {
-  margin-bottom: 40px;
-  padding: 24px;
-  background: var(--color-main-background);
-  border-radius: 8px;
+  margin-bottom: 32px;
+  padding: 20px 24px;
+  background: var(--color-background-dark);
+  border-radius: 10px;
   border: 1px solid var(--color-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
   
   @media (max-width: 768px) {
-    margin-bottom: 32px;
-    padding: 20px;
+    margin-bottom: 24px;
+    padding: 16px 20px;
+    flex-direction: column;
+    align-items: stretch;
   }
   
   .meta-author {
@@ -489,26 +694,26 @@ const sanitizedContent = computed(() => {
       flex: 1;
       
       .author-name {
-        font-size: 15px;
+        font-size: 16px;
         font-weight: 600;
         color: var(--color-main-text);
-        margin-bottom: 8px;
+        margin-bottom: 6px;
       }
       
       .meta-details {
         display: flex;
         align-items: center;
-        gap: 24px;
+        gap: 20px;
         flex-wrap: wrap;
         
         @media (max-width: 768px) {
-          gap: 16px;
+          gap: 12px;
         }
         
         @media (max-width: 480px) {
           flex-direction: column;
           align-items: flex-start;
-          gap: 8px;
+          gap: 6px;
         }
         
         .meta-date,
@@ -516,7 +721,7 @@ const sanitizedContent = computed(() => {
         .meta-category {
           display: flex;
           align-items: center;
-          gap: 8px;
+          gap: 6px;
           font-size: 13px;
           color: var(--color-text-lighter);
           transition: color 0.2s ease;
@@ -541,28 +746,43 @@ const sanitizedContent = computed(() => {
       }
     }
   }
+  
+  .rich-stats {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    
+    .stat-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 13px;
+      color: var(--color-text-lighter);
+      
+      svg {
+        color: var(--color-text-maxcontrast);
+      }
+      
+      .stat-label {
+        font-size: 12px;
+        color: var(--color-text-maxcontrast);
+        margin-left: 2px;
+      }
+    }
+  }
 }
 
-// === MAIN HTML CONTENT ===
+// Main HTML Content
 .rich-content {
   font-size: 15px;
   line-height: 1.7;
   color: var(--color-text-lighter);
-  padding: 32px;
-  background: var(--color-main-background);
-  border-radius: 8px;
-  border: 1px solid var(--color-border);
+  padding: 0;
   
   @media (max-width: 768px) {
-    padding: 24px;
     font-size: 14px;
   }
   
-  @media (max-width: 480px) {
-    padding: 20px;
-  }
-  
-  // Professional rich text styling
   :deep(*) {
     margin: 0 0 16px 0;
     
@@ -714,19 +934,6 @@ const sanitizedContent = computed(() => {
       border: none;
       color: var(--color-main-text);
     }
-    
-    &::-webkit-scrollbar {
-      height: 6px;
-    }
-    
-    &::-webkit-scrollbar-track {
-      background: transparent;
-    }
-    
-    &::-webkit-scrollbar-thumb {
-      background: var(--color-border);
-      border-radius: 3px;
-    }
   }
   
   :deep(img) {
@@ -785,16 +992,12 @@ const sanitizedContent = computed(() => {
       color: var(--color-main-text);
     }
     
-    tr {
-      transition: background-color 0.2s ease;
-      
-      &:nth-child(even) {
-        background: var(--color-background-hover);
-      }
-      
-      &:hover {
-        background: rgba(var(--color-primary-rgb), 0.05);
-      }
+    tr:nth-child(even) {
+      background: var(--color-background-hover);
+    }
+    
+    tr:hover {
+      background: rgba(var(--color-primary-rgb), 0.05);
     }
   }
   
@@ -840,7 +1043,7 @@ const sanitizedContent = computed(() => {
   }
 }
 
-// === EXPIRY WARNING ===
+// Expiry Warning
 .expiry-warning {
   display: flex;
   align-items: center;
@@ -870,26 +1073,17 @@ const sanitizedContent = computed(() => {
   }
 }
 
-// === SMOOTH TRANSITIONS ===
-.rich-cover,
-.type-badge,
-.author-avatar,
-.meta-details div,
-.rich-content :deep(img),
-.rich-content :deep(table tr),
-.expiry-warning {
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+// Responsive
+@media (max-width: 768px) {
+  .inquiry-rich-html.is-book .rich-content {
+    padding: 24px 20px;
+  }
+  
+  .inquiry-rich-html.is-book .rich-meta {
+    padding: 16px 20px;
+  }
 }
 
-// === FOCUS STATES FOR ACCESSIBILITY ===
-.rich-content :deep(a):focus-visible,
-.type-badge:focus-visible {
-  outline: 2px solid var(--color-primary-element);
-  outline-offset: 2px;
-  border-radius: 2px;
-}
-
-// === PRINT STYLES ===
 @media print {
   .inquiry-rich-html {
     box-shadow: none;
@@ -906,16 +1100,6 @@ const sanitizedContent = computed(() => {
   
   .rich-content-wrapper {
     padding: 20px;
-  }
-  
-  .rich-content {
-    padding: 20px;
-    border: 1px solid #ddd;
-  }
-  
-  .expiry-warning {
-    border: 1px solid #ef4444;
-    background: #fef2f2;
   }
 }
 </style>

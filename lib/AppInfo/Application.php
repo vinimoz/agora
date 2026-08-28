@@ -89,6 +89,21 @@ use OCA\Agora\Service\InquiryOptionTypeService;
 use OCA\Agora\Service\InquiryFamilyService;
 use OCA\Agora\Service\OptionFamilyService;
 use OCA\Agora\Service\InquiryLinkService;
+
+// ============ AI SERVICES ============
+use OCP\TaskProcessing\IManager;
+use OCA\Agora\Service\AIService;
+use OCA\Agora\Service\Ai\AgoraService;
+use OCA\Agora\Service\Ai\PromptRepository;
+use OCA\Agora\Service\Ai\Document\DocumentParser;
+use OCA\Agora\Service\Ai\Document\StructureAnalyzer;
+use OCA\Agora\Service\Ai\GeneralAssistant;
+use OCA\Agora\Service\Ai\OptionGenerator;
+use OCA\Agora\Service\Ai\Summarizer;
+use OCA\Agora\Service\Ai\Classifier;
+use OCA\Agora\Service\Ai\DuplicateDetector;
+use OCA\Agora\Service\Ai\DebateAssistant;
+use OCA\Agora\Service\Ai\Translator;
 use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
@@ -100,6 +115,7 @@ use OCP\IDBConnection;
 use OCP\IUserManager;
 use OCP\IGroupManager; 
 use OCP\User\Events\UserDeletedEvent;
+use OCP\Http\Client\IClientService;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 
@@ -115,10 +131,8 @@ class Application extends App implements IBootstrap
 
     public function __construct(array $urlParams = [])
     {
-        //    $this->getContainer()->getServer()->get(\OCP\ILogger::class)->info("Application Agora loaded", ['app' => 'agora']);
         parent::__construct(AppConstants::APP_ID, $urlParams);
     }
-
 
     public function boot(IBootContext $context): void
     {
@@ -129,7 +143,6 @@ class Application extends App implements IBootstrap
     {
         include_once __DIR__ . '/../../vendor/autoload.php';
         $this->registerServices($context);
-
 
         $context->registerEventListener(RenderReferenceEvent::class, AgoraReferenceListener::class);
         $context->registerMiddleWare(RequestAttributesMiddleware::class);
@@ -228,106 +241,204 @@ class Application extends App implements IBootstrap
                     $c->get(UserRelationMapper::class),
                     $c->get(LoggerInterface::class),
                 );
-	    }
-	);
+            }
+        );
 
-	$context->registerService( 
-		ParticipationMapper::class, 
-		function (ContainerInterface $c): ParticipationMapper { 
-			return new ParticipationMapper( 
-				$c->get(IDBConnection::class), 
-				$c->get(GroupRelationMapper::class), 
-				$c->get(UserRelationMapper::class), 
-				$c->get(IGroupManager::class), 
-				$c->get(LotteryRunMapper::class), 
-				$c->get(LotterySelectionMapper::class), 
-			); 
-		} 
-	);
+        $context->registerService(
+            ParticipationMapper::class,
+            function (ContainerInterface $c): ParticipationMapper {
+                return new ParticipationMapper(
+                    $c->get(IDBConnection::class),
+                    $c->get(GroupRelationMapper::class),
+                    $c->get(UserRelationMapper::class),
+                    $c->get(IGroupManager::class),
+                    $c->get(LotteryRunMapper::class),
+                    $c->get(LotterySelectionMapper::class),
+                );
+            }
+        );
+
+        $context->registerService(
+            CommentMapper::class,
+            function (ContainerInterface $c): CommentMapper {
+                return new CommentMapper(
+                    $c->get(IDBConnection::class),
+                    $c->get(UserSession::class),
+                );
+            }
+        );
+
+        $context->registerService(
+            AttachmentMapper::class,
+            function (ContainerInterface $c): AttachmentMapper {
+                return new AttachmentMapper(
+                    $c->get(IDBConnection::class),
+                    $c->get(UserSession::class),
+                );
+            }
+        );
+
+        $context->registerService(
+            InquiryLinkMapper::class,
+            function (ContainerInterface $c): InquiryLinkMapper {
+                return new InquiryLinkMapper(
+                    $c->get(IDBConnection::class),
+                    $c->get(UserSession::class),
+                );
+            }
+        );
+
+        $context->registerService(
+            SupportResultMapper::class,
+            function (ContainerInterface $c): SupportMapper {
+                return new SupportResultMapper(
+                    $c->get(IDBConnection::class),
+                    $c->get(SupportSqlRepository::class),
+                );
+            }
+        );
+
+        $context->registerService(
+            SupportMapper::class,
+            function (ContainerInterface $c): SupportMapper {
+                return new SupportMapper(
+                    $c->get(IDBConnection::class),
+                    $c->get(UserSession::class),
+                    $c->get(SupportSqlRepository::class),
+                );
+            }
+        );
+
+        $context->registerService(
+            OptionMapper::class,
+            function (ContainerInterface $c): OptionMapper {
+                return new OptionMapper(
+                    $c->get(IDBConnection::class),
+                    $c->get(UserSession::class),
+                    $c->get(IGroupManager::class),
+                    $c->get(InquiryMapper::class),
+                    $c->get(GroupRelationMapper::class),
+                    $c->get(UserRelationMapper::class),
+                    $c->get(LoggerInterface::class),
+                );
+            }
+        );
+
+        $context->registerService(
+            SubscriptionMapper::class,
+            function (ContainerInterface $c): SubscriptionMapper {
+                return new SubscriptionMapper(
+                    $c->get(IDBConnection::class),
+                );
+            }
+        );
+
+        $context->registerService(
+            LogMapper::class,
+            function (ContainerInterface $c): LogMapper {
+                return new LogMapper(
+                    $c->get(IDBConnection::class),
+                );
+            }
+        );
+
+        // ============ AI SERVICES ============
+        
+        // Register AIService (Nextcloud AI integration)
+        $context->registerService(
+            AIService::class,
+            function (ContainerInterface $c): AIService {
+                return new AIService(
+                    $c->get(IManager::class),
+                    $c->get(LoggerInterface::class),
+                );
+            }
+        );
+
+        // Register PromptRepository
+        $context->registerService(
+            PromptRepository::class,
+            function (ContainerInterface $c): PromptRepository {
+                return new PromptRepository();
+            }
+        );
+
+        // Register DocumentParser
+        $context->registerService(
+            DocumentParser::class,
+            function (ContainerInterface $c): DocumentParser {
+                return new DocumentParser();
+            }
+        );
 
 
-	$context->registerService(
-		CommentMapper::class,
-		function (ContainerInterface $c): CommentMapper {
-			return new CommentMapper(
-				$c->get(IDBConnection::class),
-				$c->get(UserSession::class),
-			);
-		}
-	);
+        // Register AgoraService (main AI service)
+        $context->registerService(
+            AgoraService::class,
+            function (ContainerInterface $c): AgoraService {
+                return new AgoraService(
+                    $c->get(PromptRepository::class),
+                    $c->get(AIService::class),
+                    $c->get(DocumentParser::class),
+                    $c->get(StructureAnalyzer::class)
+                );
+            }
+        );
 
-	$context->registerService(
-		AttachmentMapper::class,
-		function (ContainerInterface $c): AttachmentMapper {
-			return new AttachmentMapper(
-				$c->get(IDBConnection::class),
-				$c->get(UserSession::class),
-			);
-		}
-	);
+        // Register individual AI services
+        $context->registerService(
+            GeneralAssistant::class,
+            function (ContainerInterface $c): GeneralAssistant {
+                return $c->get(AgoraService::class)->getGeneralAssistant();
+            }
+        );
 
-	$context->registerService(
-		InquiryLinkMapper::class,
-		function (ContainerInterface $c): InquiryLinkMapper {
-			return new InquiryLinkMapper(
-				$c->get(IDBConnection::class),
-				$c->get(UserSession::class),
-			);
-		}
-	);
+        $context->registerService(
+            OptionGenerator::class,
+            function (ContainerInterface $c): OptionGenerator {
+                return $c->get(AgoraService::class)->getOptionGenerator();
+            }
+        );
 
-	$context->registerService(
-		SupportResultMapper::class,
-		function (ContainerInterface $c): SupportMapper {
-			return new SupportResultMapper(
-				$c->get(IDBConnection::class),
-				$c->get(SupportSqlRepository::class),
-			);
-		}
-	);
+        $context->registerService(
+            Summarizer::class,
+            function (ContainerInterface $c): Summarizer {
+                return $c->get(AgoraService::class)->getSummarizer();
+            }
+        );
 
-	$context->registerService(
-		SupportMapper::class,
-		function (ContainerInterface $c): SupportMapper {
-			return new SupportMapper(
-				$c->get(IDBConnection::class),
-				$c->get(UserSession::class),
-				$c->get(SupportSqlRepository::class),
-			);
-		}
-	);
+        $context->registerService(
+            Classifier::class,
+            function (ContainerInterface $c): Classifier {
+                return $c->get(AgoraService::class)->getClassifier();
+            }
+        );
 
-	$context->registerService(
-		OptionMapper::class,
-		function (ContainerInterface $c): OptionMapper {
-			return new OptionMapper(
-				$c->get(IDBConnection::class),
-				$c->get(UserSession::class),
-				$c->get(IGroupManager::class),
-				$c->get(InquiryMapper::class),
-				$c->get(GroupRelationMapper::class),
-				$c->get(UserRelationMapper::class),
-				$c->get(LoggerInterface::class),
-			);
-		}
-	);
+        $context->registerService(
+            DuplicateDetector::class,
+            function (ContainerInterface $c): DuplicateDetector {
+                return new DuplicateDetector(
+                    $c->get(PromptRepository::class),
+                );
+            }
+        );
 
-	$context->registerService(
-		SubscriptionMapper::class,
-		function (ContainerInterface $c): SubscriptionMapper {
-			return new SubscriptionMapper(
-				$c->get(IDBConnection::class),
-			);
-		}
-	);
+        $context->registerService(
+            DebateAssistant::class,
+            function (ContainerInterface $c): DebateAssistant {
+                return new DebateAssistant(
+                    $c->get(PromptRepository::class),
+                );
+            }
+        );
 
-	$context->registerService(
-		LogMapper::class,
-		function (ContainerInterface $c): LogMapper {
-			return new LogMapper(
-				$c->get(IDBConnection::class),
-			);
-		}
-	);
+        $context->registerService(
+            Translator::class,
+            function (ContainerInterface $c): Translator {
+                return new Translator(
+                    $c->get(PromptRepository::class),
+                );
+            }
+        );
     }
 }

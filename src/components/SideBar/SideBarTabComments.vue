@@ -19,6 +19,11 @@ import { useCommentsStore } from '../../stores/comments'
 import ConfigBox from '../Base/modules/ConfigBox.vue'
 import CardDiv from '../Base/modules/CardDiv.vue'
 
+defineOptions({
+  inheritAttrs: false
+})
+
+
 const inquiryStore = useInquiryStore()
 const commentsStore = useCommentsStore()
 

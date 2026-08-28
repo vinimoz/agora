@@ -75,7 +75,9 @@ const initialInquiryGroupType = computed(() => {
 })
 
 const availableInquiryGroupTypes = computed(() => {
-  
+ 
+ console.log(" PARENT GROUP ID",props.parentGroupId)
+ console.log(" PARENT GROUP ID INITIAL ", initialInquiryGroupType.value)
   // CASE 1: No parent ID, use the provided type
   if (!props.parentGroupId && initialInquiryGroupType.value) {
     return [initialInquiryGroupType.value]
@@ -84,8 +86,11 @@ const availableInquiryGroupTypes = computed(() => {
   // CASE 2: Has parent ID, we need to find parent group type
   if (props.parentGroupId && initialInquiryGroupType.value) {
     
+    console.log(" LOIT OF  ", allInquiryGroupTypes.value)
     // Get allowed response types for the parent group type
     const allowedResponses = getAllowedResponseGroupTypes(allInquiryGroupTypes.value, initialInquiryGroupType.value.group_type)
+    
+    console.log(" ALLOWED RESPONSE LOIT OF  ", allowedResponses)
     
     if (allowedResponses && allowedResponses.length > 0) {
       // Return parent type + allowed responses

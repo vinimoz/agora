@@ -140,6 +140,9 @@ const sessionStore = useSessionStore()
 // Computed stats
 const totalInquiries = computed(() => props.inquiries.length)
 
+
+const trends = computed(() => ({}))
+
 const activeCount = computed(() => 
   props.inquiries.filter(i => 
     i.status?.inquiryStatus === 'active' && !i.status?.isArchived
@@ -165,6 +168,7 @@ const engagementRate = computed(() => {
   ).length
   return Math.round((engaged / totalInquiries.value) * 100)
 })
+
 
 const typeDistribution = computed(() => {
   const types = sessionStore.appSettings?.inquiryTypeTab || []

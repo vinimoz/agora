@@ -15,50 +15,79 @@ export type InquiryGroupWorkflowStatus = 'draft' | 'active' | 'closed' | 'archiv
 
 // ===== DISPLAY ZONE =====
 export interface DisplayZone {
-  content: string
-  scope?: Record<string, unknown>
-  display?: {
-    type: string
-    tool?: string
+  /** Position/area inside the layout */
+  position?: {
+    row?: number
+    column?: number
+    rowSpan?: number
+    columnSpan?: number
+  }
+
+  /** What is displayed */
+  content?:
+    | 'inquiry_groups'
+    | 'inquiries'
+    | 'options'
+    | 'resources'
+    | 'comments'
+    | 'statistics'
+
+  /** Defines where the content comes from */
+  scope?: {
+    source:
+      | 'group'
+      | 'children'
+      | 'parent_group'
+      | 'selected_group'
+      | 'selected_inquiry'
+      | 'selected_inquiry_group'
+  }
+
+  /** Restricts the content */
+  filter?: Record<string, unknown>
+
+  /** How the content is displayed */
+  display: {
+    type:
+      | 'list'
+      | 'cards'
+      | 'book'
+      | 'tree'
+      | 'feed'
+      | 'timeline'
+      | 'kanban'
+      | 'tool'
+
+    /** Required when display.type === 'tool' */
+    tool?:
+      | 'vote'
+      | 'kanban'
+      | 'timeline'
+      | 'consensus'
+      | 'debate'
+      | 'structure'
+      | 'search'
+
     [key: string]: unknown
   }
-}
 
-// ===== INQUIRY GROUP TYPE =====
-export interface InquiryGroupType {
-  id: number | string
-  type: string
-  group_type?: string // Backward compatibility
-  label: string
-  family: string
-  icon?: string
-  description?: string
-  allowed_inquiry_types?: string | string[]
-  allowed_response?: string | string[]
-  ui: string[] | Record<string, any>
-  features?: string[]
-  rules?: Record<string, any>
-  actions?: Array<{ key: string; label: string; icon?: string }>
-  is_root: boolean
-  sort_order: number
-  fields?: Array<{
-    key: string
-    label: string
-    type: string
-    required?: boolean
-    default?: any
-    allowed_values?: any[]
-    rules?: any[]
-  }>
-  created?: number | string
+  /** What happens when the selected item is clicked again */
+  interaction?: {
+    action?: 'open' | 'navigate' | 'none'
+    target?: 'modal' | 'page' | 'panel'
+  }
+
+  [key: string]: unknown
 }
 
 // ============================================================
-// UI Configuration for Inquiry Group
+// INQUIRY GROUP UI CONFIGURATION
 // ============================================================
+
 export interface InquiryGroupUIConfig {
   /** Display architecture for the group experience */
-  display_architecture?: Record<string, DisplayZone>
+  displayArchitecture?: Record<string, DisplayZone>
+
   /** Layout configuration */
   layout?: {
     type: 'grid' | 'flex' | 'sidebar' | 'split' | 'full'
@@ -66,24 +95,37 @@ export interface InquiryGroupUIConfig {
     rows?: number
     responsive?: boolean
   }
+
   /** Enabled features */
   features?: string[]
+
   /** Experience mode */
   experience?: string
+
   /** Default experience mode */
-  default_experience?: 'dashboard' | 'social' | 'marketplace' | 'kanban' | 'timeline' | 'wiki' | 'decision_room'
+  defaultExperience?:
+    | 'dashboard'
+    | 'social'
+    | 'marketplace'
+    | 'kanban'
+    | 'timeline'
+    | 'wiki'
+    | 'decision_room'
+
   /** Context configuration */
   context?: {
     type?: string
     selection?: string
     [key: string]: unknown
   }
+
   /** Theme or styling overrides */
   styles?: {
     primaryColor?: string
     accentColor?: string
     borderRadius?: string
   }
+
   [key: string]: unknown
 }
 
@@ -138,6 +180,35 @@ export interface InquiryGroupTemplateData {
   templateDescription: string
 }
 
+// ===== INQUIRY GROUP TYPE =====
+export interface InquiryGroupType {
+  id: number | string
+  type: string
+  group_type?: string // Backward compatibility
+  label: string
+  family: string
+  icon?: string
+  description?: string
+  allowed_inquiry_types?: string | string[]
+  allowed_response?: string | string[]
+  ui: string[] | InquiryGroupUIConfig
+  features?: string[]
+  rules?: Record<string, any>
+  actions?: Array<{ key: string; label: string; icon?: string }>
+  is_root: boolean
+  sort_order: number
+  fields?: Array<{
+    key: string
+    label: string
+    type: string
+    required?: boolean
+    default?: any
+    allowed_values?: any[]
+    rules?: any[]
+  }>
+  created?: number | string
+}
+
 // ===== INQUIRY GROUP =====
 export interface InquiryGroup {
   id: number
@@ -148,10 +219,8 @@ export interface InquiryGroup {
   owner: User
   type: string
   groupStatus: InquiryGroupWorkflowStatus
-  publicationStatus: PublicationStatus
+  publicationStatus?: PublicationStatus
   configuration: InquiryGroupConfiguration
-  // Instance-specific UI overrides
-  ui?: InquiryGroupUIConfig
   status: InquiryGroupStatus
   title: string
   titleExt: string | null
@@ -166,10 +235,27 @@ export interface InquiryGroup {
   childs: number[]
   slug: string
   miscFields: Record<string, string>
+  // UI Configuration
+  ui?: InquiryGroupUIConfig
   // Template-derived fields (from session store)
   templateData?: InquiryGroupTemplateData
   // Direct access to common template fields for convenience
   family?: string
   icon?: string
   label?: string
+  allowedInquiryTypes?: string[]
+  isRoot?: boolean
+  actions?: Array<{ key: string; label: string; icon?: string }>
+  rules?: Record<string, any>
+  allowed_response?: string[]
+  fields?: Array<{
+    key: string
+    label: string
+    type: string
+    required?: boolean
+    default?: any
+    allowed_values?: any[]
+    rules?: any[]
+  }>
+  templateDescription?: string
 }

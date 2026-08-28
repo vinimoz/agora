@@ -300,7 +300,7 @@ interface FamilyAction {
 }
 
 const props = defineProps<{
-  options: Option[]
+  items: Option[]
   inquiryId: number
   optionTypes: InquiryOptionType[]
   quorumNeeded?: number
@@ -429,57 +429,57 @@ const availableActions = computed(() => {
 // Filter options
 // ========================================
 const blockingObjections = computed(() => 
-  props.options.filter(opt => 
+  props.items.filter(opt => 
     opt.type === 'objection' || opt.type === 'blocking_objection'
   )
 )
 
 const activeDiscussions = computed(() => 
-  props.options.filter(opt => 
+  props.items.filter(opt => 
     (opt.type === 'objection' || opt.type === 'blocking_objection') &&
     getOptionStatus(opt) === 'under_discussion'
   )
 )
 
 const proposedResolutions = computed(() => 
-  props.options.filter(opt => 
+  props.items.filter(opt => 
     opt.type === 'resolution' && 
     getOptionStatus(opt) === 'proposed'
   )
 )
 
 const resolvedConcerns = computed(() => 
-  props.options.filter(opt => 
+  props.items.filter(opt => 
     (opt.type === 'objection' || opt.type === 'blocking_objection') &&
     (getOptionStatus(opt) === 'resolved' || getOptionStatus(opt) === 'accepted')
   )
 )
 
 const exceptions = computed(() => 
-  props.options.filter(opt => 
+  props.items.filter(opt => 
     opt.type === 'exception' || opt.type === 'non_blocking_objection'
   )
 )
 
 const consents = computed(() => 
-  props.options.filter(opt => 
+  props.items.filter(opt => 
     opt.type === 'consent' || opt.type === 'agreement'
   )
 )
 
 const consultationQuestions = computed(() => 
-  props.options.filter(opt => 
+  props.items.filter(opt => 
     opt.type === 'consultation_question' || opt.type === 'question'
   )
 )
 
 const recommendations = computed(() => 
-  props.options.filter(opt => 
+  props.items.filter(opt => 
     opt.type === 'recommendation'
   )
 )
 
-const allOptions = computed(() => props.options)
+const allOptions = computed(() => props.items)
 
 // ========================================
 // Stats

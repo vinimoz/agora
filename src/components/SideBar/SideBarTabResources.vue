@@ -26,6 +26,11 @@ import {
 // Components
 import AddResourceModal from '../Modals/AddResourceModal.vue'
 
+defineOptions({
+  inheritAttrs: false
+})
+
+
 // Props
 const props = defineProps<{
   availableApps?: string[]

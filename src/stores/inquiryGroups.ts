@@ -9,7 +9,7 @@ import { Inquiry } from '../Types/index'
 import { useSessionStore } from './session'
 import { useInquiriesStore } from './inquiries'
 import { orderBy } from 'lodash'
-import type { InquiryGroup } from './inquiryGroups.types'
+import type { InquiryGroup, InquiryGroupType } from './inquiryGroups.types'
 import { InquiryGroupsAPI } from '../Api'
 import { AxiosError } from 'axios'
 import { Logger } from '../helpers'
@@ -183,12 +183,12 @@ export const useInquiryGroupsStore = defineStore('inquiryGroups', () => {
     if (currentFamily) {
       const typeTabs = sessionStore.appSettings?.inquiryGroupTypeTab || []
       const typesForFamily = typeTabs
-        .filter((tab: any) => tab.family === currentFamily)
-        .map((tab: any) => tab.type || tab.group_type)
+        .filter((tab: InquiryGroupType) => tab.family === currentFamily)
+        .map((tab: InquiryGroupType) => tab.type || tab.group_type)
 
       if (typesForFamily.length > 0) {
         filteredGroups = inquiryGroups.value.filter(group =>
-          typesForFamily.includes(group.type) && group.is_root === true
+          typesForFamily.includes(group.type) && group.isRoot === true
         )
       }
     }
@@ -212,64 +212,64 @@ export const useInquiryGroupsStore = defineStore('inquiryGroups', () => {
     return counts
   })
 
+  /**
+   * Get groups by family
+   * @param family
+   */
+  const byFamily = (family: string): InquiryGroup[] => 
+    inquiryGroups.value.filter(g => g.family === family)
 
-/**
- * Get groups by family
- * @param family
- */
-const byFamily = (family: string): InquiryGroup[] => inquiryGroups.value.filter(g => g.family === family)
-
-/**
- * Group inquiry groups by family
- */
-const groupsByFamily = computed((): Record<string, InquiryGroup[]> => {
-  const result: Record<string, InquiryGroup[]> = {}
-  for (const group of inquiryGroups.value) {
-    const family = group.family || 'uncategorized'
-    if (!result[family]) {
-      result[family] = []
+  /**
+   * Group inquiry groups by family
+   */
+  const groupsByFamily = computed((): Record<string, InquiryGroup[]> => {
+    const result: Record<string, InquiryGroup[]> = {}
+    for (const group of inquiryGroups.value) {
+      const family = group.family || 'uncategorized'
+      if (!result[family]) {
+        result[family] = []
+      }
+      result[family].push(group)
     }
-    result[family].push(group)
+    return result
+  })
+
+  /**
+   * Get families with their group counts as an array
+   */
+  const familySummary = computed(() => {
+    const summary: Array<{ family: string; count: number; groups: InquiryGroup[] }> = []
+    const grouped = groupsByFamily.value
+    for (const [family, groups] of Object.entries(grouped)) {
+      summary.push({
+        family,
+        count: groups.length,
+        groups
+      })
+    }
+    // Sort by count descending
+    return summary.sort((a, b) => b.count - a.count)
+  })
+
+  /**
+   * Get groups by family type (using the type template family)
+   * @param familyType
+   */
+  const byFamilyType = (familyType: string): InquiryGroup[] => {
+    const sessionStore = useSessionStore()
+    const typeTabs = sessionStore.appSettings?.inquiryGroupTypeTab || []
+
+    // Get all types that belong to this family
+    const typesForFamily = typeTabs
+      .filter((tab: InquiryGroupType) => tab.family === familyType)
+      .map((tab: InquiryGroupType) => tab.type || tab.group_type)
+
+    if (typesForFamily.length === 0) return []
+
+    return inquiryGroups.value.filter(group =>
+      typesForFamily.includes(group.type)
+    )
   }
-  return result
-})
-
-/**
- * Get families with their group counts as an array
- */
-const familySummary = computed(() => {
-  const summary: Array<{ family: string; count: number; groups: InquiryGroup[] }> = []
-  const grouped = groupsByFamily.value
-  for (const [family, groups] of Object.entries(grouped)) {
-    summary.push({
-      family,
-      count: groups.length,
-      groups
-    })
-  }
-  // Sort by count descending
-  return summary.sort((a, b) => b.count - a.count)
-})
-
-/**
- * Get groups by family type (using the type template family)
- * @param familyType
- */
-const byFamilyType = (familyType: string): InquiryGroup[] => {
-  const sessionStore = useSessionStore()
-  const typeTabs = sessionStore.appSettings?.inquiryGroupTypeTab || []
-
-  // Get all types that belong to this family
-  const typesForFamily = typeTabs
-    .filter((tab: any) => tab.family === familyType)
-    .map((tab: any) => tab.type || tab.group_type)
-
-  if (typesForFamily.length === 0) return []
-
-  return inquiryGroups.value.filter(group =>
-    typesForFamily.includes(group.type)
-  )
-}
 
   /**
    * Get groups that can be added to (for creating child groups)
@@ -297,7 +297,7 @@ const byFamilyType = (familyType: string): InquiryGroup[] => {
     if (typeTabs.length === 0) return ''
 
     if (selectedFamily) {
-      const matchingType = typeTabs.find((type: any) => type.family === selectedFamily)
+      const matchingType = typeTabs.find((type: InquiryGroupType) => type.family === selectedFamily)
       if (matchingType) return matchingType.type
     }
 
@@ -399,14 +399,6 @@ const byFamilyType = (familyType: string): InquiryGroup[] => {
   }
 
   /**
-   * Set the current inquiry group by ID
-   * @param groupId
-   */
-  function setCurrentInquiryGroup(groupId: number): void {
-    currentInquiryGroupId.value = groupId
-  }
-
-  /**
    * Write changes to the current inquiry group
    * @param payload
    */
@@ -472,7 +464,6 @@ const byFamilyType = (familyType: string): InquiryGroup[] => {
     updating,
     selectedGroupType,
     currentGroupType,
-    currentInquiryGroupId,
     
     // Getters
     bySlug,
@@ -489,11 +480,10 @@ const byFamilyType = (familyType: string): InquiryGroup[] => {
     inquiryGroupsSorted,
     countInquiriesInInquiryGroups,
     addableInquiryGroups,
-   
-   byFamily,
-  groupsByFamily,
-  familySummary,
-  byFamilyType,
+    byFamily,
+    groupsByFamily,
+    familySummary,
+    byFamilyType,
 
     // Actions
     addInquiryGroup,
@@ -506,7 +496,6 @@ const byFamilyType = (familyType: string): InquiryGroup[] => {
     ensureSlugs,
     getInquiryGroupName,
     setCurrentGroupType,
-    setCurrentInquiryGroup,
     writeCurrentInquiryGroup,
     addInquiryToInquiryGroup,
     removeInquiryFromGroup,

@@ -549,8 +549,6 @@ import { useOptionsStore } from '../../../stores/options'
 // ============================================
 
 const props = defineProps<{
-  // eslint-disable-next-line 
-  options: Option[]
   family?: OptionFamily
   inquiryId: number
   optionTypes: InquiryOptionType[]

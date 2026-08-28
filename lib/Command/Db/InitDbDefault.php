@@ -2610,6 +2610,8 @@ class InitDbDefault extends Command
 		],
 	];
 
+
+
 	private array $inquiryGroupTypes = [
     // ============================================================
     // SERVICE GROUPS
@@ -2628,7 +2630,7 @@ class InitDbDefault extends Command
             'maintenance_request',
             'incident_report',
         ],
-        'allowed_response' => ['official'],
+        'allowed_response' => ['official_announcements'],
         'is_root' => true,
         'ui' => [
             'experience' => 'kanban',
@@ -2649,6 +2651,16 @@ class InitDbDefault extends Command
                     'display' => [
                         'type' => 'tool',
                         'tool' => 'kanban',
+                    ],
+                    'position' => [
+                        'row' => 1,
+                        'column' => 1,
+                    ],
+                    'interaction' => [
+                        'on_click' => [
+                            'action' => 'open',
+                            'target' => 'panel',
+                        ],
                     ],
                 ],
             ],
@@ -2683,37 +2695,34 @@ class InitDbDefault extends Command
             'service_offer',
             'job_offer',
         ],
-        'allowed_response' => ['official'],
+        'allowed_response' => [],
         'is_root' => true,
-        'ui' => [
-            'experience' => 'marketplace',
-            'context' => [
-                'type' => 'group',
-                'selection' => 'selected',
-            ],
-            'layout' => [
-                'type' => 'grid',
-                'columns' => 3,
-                'rows' => null,
-                'responsive' => true,
-            ],
-            'display_architecture' => [
-                'main' => [
-                    'content' => 'inquiries',
-                    'scope' => ['source' => 'children'],
-                    'display' => [
-                        'type' => 'cards',
-                    ],
-                    'interaction' => [
-                        'on_click' => [
-                            'action' => 'open',
-                            'target' => 'dialog',
-                        ],
-                    ],
-                ],
-            ],
+'ui' => [
+    'experience' => 'marketplace',
+    'layout' => ['type' => 'grid', 'columns' => 3, 'rows' => 2, 'responsive' => true],
+    'display_architecture' => [
+        'search' => [
+            'content' => 'inquiries',
+            'scope' => ['source' => 'children'],
+            'display' => ['type' => 'tool', 'tool' => 'search'],
+            'position' => ['row' => 1, 'column' => 1, 'columnSpan' => 3],
         ],
-        'features' => [
+        'filters' => [
+            'content' => 'statistics',
+            'scope' => ['source' => 'group'],
+            'display' => ['type' => 'list'],
+            'position' => ['row' => 2, 'column' => 1, 'columnSpan' => 1],
+        ],
+        'cards' => [
+            'content' => 'inquiries',
+            'scope' => ['source' => 'children', 'sort' => ['field' => 'rating', 'direction' => 'desc']],
+            'display' => ['type' => 'cards'],
+            'position' => ['row' => 2, 'column' => 2, 'columnSpan' => 2],
+        ],
+    ],
+    'features' => ['search', 'filter', 'compare', 'cards'],
+],	
+	'features' => [
             'inquiry_selection',
             'search',
         ],
@@ -2746,7 +2755,8 @@ class InitDbDefault extends Command
         'allowed_inquiry_types' => [
             'investigation_request',
         ],
-        'allowed_response' => ['official', 'report'],
+        // ✅ allowed_response → group_type existants
+        'allowed_response' => ['official_announcements', 'municipal_reports'],
         'is_root' => true,
         'ui' => [
             'experience' => 'decision_room',
@@ -2761,28 +2771,68 @@ class InitDbDefault extends Command
                 'responsive' => true,
             ],
             'display_architecture' => [
-                'top_left' => [
+                'inquiry_detail' => [
                     'content' => 'inquiries',
-                    'scope' => ['source' => 'selected'],
+                    'scope' => ['source' => 'selected_inquiry'],
                     'display' => ['type' => 'full'],
+                    'position' => [
+                        'row' => 1,
+                        'column' => 1,
+                    ],
+                    'interaction' => [
+                        'on_click' => [
+                            'action' => 'open',
+                            'target' => 'page',
+                        ],
+                    ],
                 ],
-                'top_right' => [
+                'resources' => [
                     'content' => 'resources',
                     'scope' => ['source' => 'selected_inquiry'],
                     'display' => ['type' => 'list'],
+                    'position' => [
+                        'row' => 1,
+                        'column' => 2,
+                    ],
+                    'interaction' => [
+                        'on_click' => [
+                            'action' => 'open',
+                            'target' => 'panel',
+                        ],
+                    ],
                 ],
-                'bottom_left' => [
+                'timeline' => [
                     'content' => 'inquiries',
                     'scope' => ['source' => 'children'],
                     'display' => [
                         'type' => 'tool',
                         'tool' => 'timeline',
                     ],
+                    'position' => [
+                        'row' => 2,
+                        'column' => 1,
+                    ],
+                    'interaction' => [
+                        'on_click' => [
+                            'action' => 'open',
+                            'target' => 'panel',
+                        ],
+                    ],
                 ],
-                'bottom_right' => [
+                'comments' => [
                     'content' => 'comments',
                     'scope' => ['source' => 'selected_inquiry'],
                     'display' => ['type' => 'feed'],
+                    'position' => [
+                        'row' => 2,
+                        'column' => 2,
+                    ],
+                    'interaction' => [
+                        'on_click' => [
+                            'action' => 'comment',
+                            'target' => 'panel',
+                        ],
+                    ],
                 ],
             ],
         ],
@@ -2815,7 +2865,7 @@ class InitDbDefault extends Command
             'ethics_review',
             'proposal',
         ],
-        'allowed_response' => ['official', 'report'],
+        'allowed_response' => ['official_announcements', 'municipal_reports'],
         'is_root' => true,
         'ui' => [
             'experience' => 'decision_room',
@@ -2830,31 +2880,68 @@ class InitDbDefault extends Command
                 'responsive' => true,
             ],
             'display_architecture' => [
-                'top_left' => [
+                'inquiry_detail' => [
                     'content' => 'inquiries',
-                    'scope' => ['source' => 'selected'],
+                    'scope' => ['source' => 'selected_inquiry'],
                     'display' => ['type' => 'full'],
+                    'position' => [
+                        'row' => 1,
+                        'column' => 1,
+                    ],
+                    'interaction' => [
+                        'on_click' => [
+                            'action' => 'open',
+                            'target' => 'page',
+                        ],
+                    ],
                 ],
-                'top_right' => [
+                'resources' => [
                     'content' => 'resources',
                     'scope' => ['source' => 'selected_inquiry'],
                     'display' => ['type' => 'list'],
-                ],
-                'bottom_left' => [
-                    'content' => 'options',
-                    'scope' => [
-                        'source' => 'selected_inquiry',
-                        'family' => 'consensus',
+                    'position' => [
+                        'row' => 1,
+                        'column' => 2,
                     ],
+                    'interaction' => [
+                        'on_click' => [
+                            'action' => 'open',
+                            'target' => 'panel',
+                        ],
+                    ],
+                ],
+                'consensus' => [
+                    'content' => 'options',
+                    'scope' => ['source' => 'selected_inquiry'],
                     'display' => [
                         'type' => 'tool',
                         'tool' => 'consensus',
                     ],
+                    'position' => [
+                        'row' => 2,
+                        'column' => 1,
+                    ],
+                    'interaction' => [
+                        'on_click' => [
+                            'action' => 'open',
+                            'target' => 'panel',
+                        ],
+                    ],
                 ],
-                'bottom_right' => [
+                'comments' => [
                     'content' => 'comments',
                     'scope' => ['source' => 'selected_inquiry'],
                     'display' => ['type' => 'feed'],
+                    'position' => [
+                        'row' => 2,
+                        'column' => 2,
+                    ],
+                    'interaction' => [
+                        'on_click' => [
+                            'action' => 'comment',
+                            'target' => 'panel',
+                        ],
+                    ],
                 ],
             ],
         ],
@@ -2890,7 +2977,7 @@ class InitDbDefault extends Command
         'allowed_inquiry_types' => [
             'announcement',
         ],
-        'allowed_response' => ['official'],
+        'allowed_response' => [],
         'is_root' => true,
         'ui' => [
             'experience' => 'social',
@@ -2911,6 +2998,10 @@ class InitDbDefault extends Command
                     'display' => [
                         'type' => 'feed',
                         'pagination' => 'infinite',
+                    ],
+                    'position' => [
+                        'row' => 1,
+                        'column' => 1,
                     ],
                     'interaction' => [
                         'on_click' => [
@@ -2949,7 +3040,7 @@ class InitDbDefault extends Command
         'allowed_inquiry_types' => [
             'report',
         ],
-        'allowed_response' => ['official', 'report'],
+        'allowed_response' => ['official_announcements'],
         'is_root' => true,
         'ui' => [
             'experience' => 'wiki',
@@ -2964,17 +3055,37 @@ class InitDbDefault extends Command
                 'responsive' => true,
             ],
             'display_architecture' => [
-                'left' => [
+                'navigation' => [
                     'content' => 'inquiry_groups',
                     'scope' => ['source' => 'children'],
-                    'display' => ['type' => 'navigation'],
+                    'display' => ['type' => 'tree'],
+                    'position' => [
+                        'row' => 1,
+                        'column' => 1,
+                    ],
+                    'interaction' => [
+                        'on_click' => [
+                            'action' => 'navigate',
+                            'target' => 'same_view',
+                        ],
+                    ],
                 ],
-                'main' => [
+                'content' => [
                     'content' => 'inquiries',
                     'scope' => ['source' => 'selected_group'],
                     'display' => [
                         'type' => 'book',
                         'pagination' => 'infinite',
+                    ],
+                    'position' => [
+                        'row' => 1,
+                        'column' => 2,
+                    ],
+                    'interaction' => [
+                        'on_click' => [
+                            'action' => 'open',
+                            'target' => 'page',
+                        ],
                     ],
                 ],
             ],
@@ -3147,10 +3258,7 @@ class InitDbDefault extends Command
             'debate',
             'question',
         ],
-        'allowed_response' => [
-            'citizen',
-            'official',
-        ],
+        'allowed_response' => ['working_group', 'official_announcements'],
         'is_root' => true,
         'ui' => [
             'experience' => 'decision_room',
@@ -3165,27 +3273,68 @@ class InitDbDefault extends Command
                 'responsive' => true,
             ],
             'display_architecture' => [
-                'top_left' => [
+                'inquiry_detail' => [
                     'content' => 'inquiries',
-                    'scope' => ['source' => 'selected'],
+                    'scope' => ['source' => 'selected_inquiry'],
                     'display' => ['type' => 'full'],
+                    'position' => [
+                        'row' => 1,
+                        'column' => 1,
+                    ],
+                    'interaction' => [
+                        'on_click' => [
+                            'action' => 'open',
+                            'target' => 'page',
+                        ],
+                    ],
                 ],
-                'top_right' => [
+                'resources' => [
                     'content' => 'resources',
                     'scope' => ['source' => 'selected_inquiry'],
                     'display' => ['type' => 'list'],
+                    'position' => [
+                        'row' => 1,
+                        'column' => 2,
+                    ],
+                    'interaction' => [
+                        'on_click' => [
+                            'action' => 'open',
+                            'target' => 'panel',
+                        ],
+                    ],
                 ],
-                'bottom_left' => [
+                'consensus' => [
                     'content' => 'options',
                     'scope' => ['source' => 'selected_inquiry'],
                     'display' => [
-                        'type' => 'family_tools',
+                        'type' => 'tool',
+                        'tool' => 'consensus'
+                    ],
+                    'position' => [
+                        'row' => 2,
+                        'column' => 1,
+                    ],
+                    'interaction' => [
+                        'on_click' => [
+                            'action' => 'open',
+                            'target' => 'panel',
+                        ],
                     ],
                 ],
-                'bottom_right' => [
+                'comments' => [
                     'content' => 'comments',
                     'scope' => ['source' => 'selected_inquiry'],
                     'display' => ['type' => 'feed'],
+                    'position' => [
+                        'row' => 2,
+                        'column' => 2,
+                    ],
+                    'interaction' => [
+                        'on_click' => [
+                            'action' => 'comment',
+                            'target' => 'panel',
+                        ],
+                    ],
                 ],
             ],
         ],
@@ -3221,8 +3370,10 @@ class InitDbDefault extends Command
             'proposal',
             'initiative',
             'suggestion',
+            'debate',
+            'question',
         ],
-        'allowed_response' => ['citizen', 'official'],
+        'allowed_response' => ['working_group', 'citizen_jury', 'official_announcements'],
         'is_root' => true,
         'ui' => [
             'experience' => 'dashboard',
@@ -3237,28 +3388,68 @@ class InitDbDefault extends Command
                 'responsive' => true,
             ],
             'display_architecture' => [
-                'top_left' => [
+                'inquiries' => [
                     'content' => 'inquiries',
                     'scope' => ['source' => 'children'],
                     'display' => ['type' => 'cards'],
+                    'position' => [
+                        'row' => 1,
+                        'column' => 1,
+                    ],
+                    'interaction' => [
+                        'on_click' => [
+                            'action' => 'open',
+                            'target' => 'panel',
+                        ],
+                    ],
                 ],
-                'top_right' => [
+                'statistics' => [
                     'content' => 'statistics',
                     'scope' => ['source' => 'group'],
                     'display' => ['type' => 'widget'],
+                    'position' => [
+                        'row' => 1,
+                        'column' => 2,
+                    ],
+                    'interaction' => [
+                        'on_click' => [
+                            'action' => 'open',
+                            'target' => 'panel',
+                        ],
+                    ],
                 ],
-                'bottom_left' => [
+                'book_view' => [
                     'content' => 'inquiries',
                     'scope' => ['source' => 'children'],
                     'display' => [
                         'type' => 'book',
                         'pagination' => 'infinite',
                     ],
+                    'position' => [
+                        'row' => 2,
+                        'column' => 1,
+                    ],
+                    'interaction' => [
+                        'on_click' => [
+                            'action' => 'open',
+                            'target' => 'page',
+                        ],
+                    ],
                 ],
-                'bottom_right' => [
+                'resources' => [
                     'content' => 'resources',
                     'scope' => ['source' => 'selected_inquiry'],
                     'display' => ['type' => 'list'],
+                    'position' => [
+                        'row' => 2,
+                        'column' => 2,
+                    ],
+                    'interaction' => [
+                        'on_click' => [
+                            'action' => 'open',
+                            'target' => 'panel',
+                        ],
+                    ],
                 ],
             ],
         ],
@@ -3298,7 +3489,7 @@ class InitDbDefault extends Command
             'initiative',
             'suggestion',
         ],
-        'allowed_response' => ['citizen', 'official'],
+        'allowed_response' => ['citizen_jury', 'official_announcements', 'commission', 'working_group'],
         'is_root' => true,
         'ui' => [
             'experience' => 'dashboard',
@@ -3313,28 +3504,68 @@ class InitDbDefault extends Command
                 'responsive' => true,
             ],
             'display_architecture' => [
-                'top_left' => [
+                'inquiries' => [
                     'content' => 'inquiries',
                     'scope' => ['source' => 'children'],
                     'display' => ['type' => 'cards'],
+                    'position' => [
+                        'row' => 1,
+                        'column' => 1,
+                    ],
+                    'interaction' => [
+                        'on_click' => [
+                            'action' => 'open',
+                            'target' => 'panel',
+                        ],
+                    ],
                 ],
-                'top_right' => [
+                'statistics' => [
                     'content' => 'statistics',
                     'scope' => ['source' => 'group'],
                     'display' => ['type' => 'widget'],
-                ],
-                'bottom_left' => [
-                    'content' => 'inquiries',
-                    'scope' => ['source' => 'children'],
-                    'display' => [
-                        'type' => 'book',
-                        'pagination' => 'infinite',
+                    'position' => [
+                        'row' => 1,
+                        'column' => 2,
+                    ],
+                    'interaction' => [
+                        'on_click' => [
+                            'action' => 'open',
+                            'target' => 'panel',
+                        ],
                     ],
                 ],
-                'bottom_right' => [
+                'vote' => [
+                    'content' => 'options',
+                    'scope' => ['source' => 'selected_inquiry'],
+                    'display' => [
+                        'type' => 'tool',
+                        'tool' => 'vote'
+                    ],
+                    'position' => [
+                        'row' => 2,
+                        'column' => 1,
+                    ],
+                    'interaction' => [
+                        'on_click' => [
+                            'action' => 'vote',
+                            'target' => 'panel',
+                        ],
+                    ],
+                ],
+                'resources' => [
                     'content' => 'resources',
                     'scope' => ['source' => 'selected_inquiry'],
                     'display' => ['type' => 'list'],
+                    'position' => [
+                        'row' => 2,
+                        'column' => 2,
+                    ],
+                    'interaction' => [
+                        'on_click' => [
+                            'action' => 'open',
+                            'target' => 'panel',
+                        ],
+                    ],
                 ],
             ],
         ],
@@ -3364,8 +3595,8 @@ class InitDbDefault extends Command
             ["key" => "version", "label" => "Version", "type" => "string", "required" => false, "default" => null, "rules" => []],
             ["key" => "tags", "label" => "Tags", "type" => "json", "required" => false, "default" => null, "rules" => []],
         ],
-        'allowed_inquiry_types' => [],
-        'allowed_response' => ['citizen', 'official'],
+        'allowed_inquiry_types' => ['*'],
+        'allowed_response' => ['*'],
         'is_root' => true,
         'ui' => [
             'experience' => 'navigation',
@@ -3384,6 +3615,16 @@ class InitDbDefault extends Command
                     'content' => 'inquiry_groups',
                     'scope' => ['source' => 'children'],
                     'display' => ['type' => 'tree'],
+                    'position' => [
+                        'row' => 1,
+                        'column' => 1,
+                    ],
+                    'interaction' => [
+                        'on_click' => [
+                            'action' => 'navigate',
+                            'target' => 'same_view',
+                        ],
+                    ],
                 ],
             ],
         ],
@@ -3420,7 +3661,7 @@ class InitDbDefault extends Command
             'poll',
             'question',
         ],
-        'allowed_response' => ['citizen'],
+        'allowed_response' => ['citizen_jury'],
         'is_root' => true,
         'ui' => [
             'experience' => 'dashboard',
@@ -3435,28 +3676,68 @@ class InitDbDefault extends Command
                 'responsive' => true,
             ],
             'display_architecture' => [
-                'top_left' => [
+                'inquiries' => [
                     'content' => 'inquiries',
                     'scope' => ['source' => 'children'],
                     'display' => ['type' => 'cards'],
+                    'position' => [
+                        'row' => 1,
+                        'column' => 1,
+                    ],
+                    'interaction' => [
+                        'on_click' => [
+                            'action' => 'open',
+                            'target' => 'panel',
+                        ],
+                    ],
                 ],
-                'top_right' => [
+                'statistics' => [
                     'content' => 'statistics',
                     'scope' => ['source' => 'group'],
                     'display' => ['type' => 'widget'],
+                    'position' => [
+                        'row' => 1,
+                        'column' => 2,
+                    ],
+                    'interaction' => [
+                        'on_click' => [
+                            'action' => 'open',
+                            'target' => 'panel',
+                        ],
+                    ],
                 ],
-                'bottom_left' => [
-                    'content' => 'inquiries',
-                    'scope' => ['source' => 'children'],
+                'vote' => [
+                    'content' => 'options',
+                    'scope' => ['source' => 'selected_inquiry'],
                     'display' => [
                         'type' => 'tool',
                         'tool' => 'vote',
                     ],
+                    'position' => [
+                        'row' => 2,
+                        'column' => 1,
+                    ],
+                    'interaction' => [
+                        'on_click' => [
+                            'action' => 'vote',
+                            'target' => 'panel',
+                        ],
+                    ],
                 ],
-                'bottom_right' => [
+                'resources' => [
                     'content' => 'resources',
                     'scope' => ['source' => 'selected_inquiry'],
                     'display' => ['type' => 'list'],
+                    'position' => [
+                        'row' => 2,
+                        'column' => 2,
+                    ],
+                    'interaction' => [
+                        'on_click' => [
+                            'action' => 'open',
+                            'target' => 'panel',
+                        ],
+                    ],
                 ],
             ],
         ],
@@ -3492,7 +3773,7 @@ class InitDbDefault extends Command
             ["key" => "location", "label" => "Location", "type" => "location", "required" => false, "default" => null, "rules" => []],
         ],
         'allowed_inquiry_types' => [],
-        'allowed_response' => ['citizen', 'official'],
+        'allowed_response' => ['district'],
         'is_root' => true,
         'ui' => [
             'experience' => 'navigation',
@@ -3511,6 +3792,16 @@ class InitDbDefault extends Command
                     'content' => 'inquiry_groups',
                     'scope' => ['source' => 'children'],
                     'display' => ['type' => 'navigation'],
+                    'position' => [
+                        'row' => 1,
+                        'column' => 1,
+                    ],
+                    'interaction' => [
+                        'on_click' => [
+                            'action' => 'navigate',
+                            'target' => 'page',
+                        ],
+                    ],
                 ],
             ],
         ],
@@ -3541,8 +3832,8 @@ class InitDbDefault extends Command
             ["key" => "location", "label" => "Location", "type" => "location", "required" => false, "default" => null, "rules" => []],
         ],
         'allowed_inquiry_types' => ['consultation', 'deliberation', 'proposal', 'news', 'announcement'],
-        'allowed_response' => ['consultation', 'proposal'],
-        'is_root' => true,
+        'allowed_response' => ['commune'],
+        'is_root' => false,
         'ui' => [
             'experience' => 'navigation',
             'context' => [
@@ -3560,6 +3851,16 @@ class InitDbDefault extends Command
                     'content' => 'inquiry_groups',
                     'scope' => ['source' => 'children'],
                     'display' => ['type' => 'navigation'],
+                    'position' => [
+                        'row' => 1,
+                        'column' => 1,
+                    ],
+                    'interaction' => [
+                        'on_click' => [
+                            'action' => 'navigate',
+                            'target' => 'page',
+                        ],
+                    ],
                 ],
             ],
         ],
@@ -3590,8 +3891,8 @@ class InitDbDefault extends Command
             ["key" => "location", "label" => "Location", "type" => "location", "required" => false, "default" => null, "rules" => []],
         ],
         'allowed_inquiry_types' => ['consultation', 'proposal', 'news', 'meeting', 'announcement', 'gathering'],
-        'allowed_response' => ['consultation', 'proposal'],
-        'is_root' => true,
+        'allowed_response' => ['commission', 'consultation_set'],
+        'is_root' => false,
         'ui' => [
             'experience' => 'navigation',
             'context' => [
@@ -3609,6 +3910,16 @@ class InitDbDefault extends Command
                     'content' => 'inquiry_groups',
                     'scope' => ['source' => 'children'],
                     'display' => ['type' => 'navigation'],
+                    'position' => [
+                        'row' => 1,
+                        'column' => 1,
+                    ],
+                    'interaction' => [
+                        'on_click' => [
+                            'action' => 'navigate',
+                            'target' => 'page',
+                        ],
+                    ],
                 ],
             ],
         ],
@@ -3643,7 +3954,7 @@ class InitDbDefault extends Command
             ["key" => "public", "label" => "Public", "type" => "boolean", "required" => false, "default" => true, "rules" => []],
         ],
         'allowed_inquiry_types' => ['deliberation', 'proposal', 'consultation'],
-        'allowed_response' => ['proposal'],
+        'allowed_response' => ['official_announcements'],
         'is_root' => false,
         'ui' => [
             'experience' => 'kanban',
@@ -3665,11 +3976,31 @@ class InitDbDefault extends Command
                         'type' => 'tool',
                         'tool' => 'kanban',
                     ],
+                    'position' => [
+                        'row' => 1,
+                        'column' => 1,
+                    ],
+                    'interaction' => [
+                        'on_click' => [
+                            'action' => 'open',
+                            'target' => 'panel',
+                        ],
+                    ],
                 ],
-                'right' => [
+                'resources' => [
                     'content' => 'resources',
                     'scope' => ['source' => 'group'],
                     'display' => ['type' => 'list'],
+                    'position' => [
+                        'row' => 1,
+                        'column' => 2,
+                    ],
+                    'interaction' => [
+                        'on_click' => [
+                            'action' => 'open',
+                            'target' => 'panel',
+                        ],
+                    ],
                 ],
             ],
         ],
@@ -3701,7 +4032,7 @@ class InitDbDefault extends Command
             ["key" => "scope", "label" => "Scope", "type" => "string", "required" => false, "default" => null, "rules" => []],
         ],
         'allowed_inquiry_types' => ['debate', 'proposal', 'official'],
-        'allowed_response' => ['proposal', 'official'],
+        'allowed_response' => ['official_announcements'],
         'is_root' => false,
         'ui' => [
             'experience' => 'decision_room',
@@ -3716,27 +4047,65 @@ class InitDbDefault extends Command
                 'responsive' => true,
             ],
             'display_architecture' => [
-                'top_left' => [
+                'inquiry_detail' => [
                     'content' => 'inquiries',
-                    'scope' => ['source' => 'selected'],
+                    'scope' => ['source' => 'selected_inquiry'],
                     'display' => ['type' => 'full'],
+                    'position' => [
+                        'row' => 1,
+                        'column' => 1,
+                    ],
+                    'interaction' => [
+                        'on_click' => [
+                            'action' => 'open',
+                            'target' => 'page',
+                        ],
+                    ],
                 ],
-                'top_right' => [
+                'resources' => [
                     'content' => 'resources',
                     'scope' => ['source' => 'selected_inquiry'],
                     'display' => ['type' => 'list'],
-                ],
-                'bottom_left' => [
-                    'content' => 'options',
-                    'scope' => ['source' => 'selected_inquiry'],
-                    'display' => [
-                        'type' => 'family_tools',
+                    'position' => [
+                        'row' => 1,
+                        'column' => 2,
+                    ],
+                    'interaction' => [
+                        'on_click' => [
+                            'action' => 'open',
+                            'target' => 'panel',
+                        ],
                     ],
                 ],
-                'bottom_right' => [
+                'consensus' => [
+                    'content' => 'options',
+                    'scope' => ['source' => 'selected_inquiry'],
+                    'display' => ['type' => 'tool', 'tool' => 'consensus'],
+                    'position' => [
+                        'row' => 2,
+                        'column' => 1,
+                    ],
+                    'interaction' => [
+                        'on_click' => [
+                            'action' => 'open',
+                            'target' => 'panel',
+                        ],
+                    ],
+                ],
+                'comments' => [
                     'content' => 'comments',
                     'scope' => ['source' => 'selected_inquiry'],
                     'display' => ['type' => 'feed'],
+                    'position' => [
+                        'row' => 2,
+                        'column' => 2,
+                    ],
+                    'interaction' => [
+                        'on_click' => [
+                            'action' => 'comment',
+                            'target' => 'panel',
+                        ],
+                    ],
                 ],
             ],
         ],
@@ -3767,7 +4136,7 @@ class InitDbDefault extends Command
             ["key" => "subtitle", "label" => "Subtitle", "type" => "string", "required" => false, "default" => null, "rules" => []],
         ],
         'allowed_inquiry_types' => ['assembly', 'consultation', 'deliberation', 'proposal', 'law_proposal', 'amendment'],
-        'allowed_response' => ['proposal'],
+        'allowed_response' => ['consultation_set'],
         'is_root' => false,
         'ui' => [
             'experience' => 'decision_room',
@@ -3782,27 +4151,65 @@ class InitDbDefault extends Command
                 'responsive' => true,
             ],
             'display_architecture' => [
-                'top_left' => [
+                'inquiry_detail' => [
                     'content' => 'inquiries',
-                    'scope' => ['source' => 'selected'],
+                    'scope' => ['source' => 'selected_inquiry'],
                     'display' => ['type' => 'full'],
+                    'position' => [
+                        'row' => 1,
+                        'column' => 1,
+                    ],
+                    'interaction' => [
+                        'on_click' => [
+                            'action' => 'open',
+                            'target' => 'page',
+                        ],
+                    ],
                 ],
-                'top_right' => [
+                'resources' => [
                     'content' => 'resources',
                     'scope' => ['source' => 'selected_inquiry'],
                     'display' => ['type' => 'list'],
-                ],
-                'bottom_left' => [
-                    'content' => 'options',
-                    'scope' => ['source' => 'selected_inquiry'],
-                    'display' => [
-                        'type' => 'family_tools',
+                    'position' => [
+                        'row' => 1,
+                        'column' => 2,
+                    ],
+                    'interaction' => [
+                        'on_click' => [
+                            'action' => 'open',
+                            'target' => 'panel',
+                        ],
                     ],
                 ],
-                'bottom_right' => [
+                'debate' => [
+                    'content' => 'options',
+                    'scope' => ['source' => 'selected_inquiry'],
+                    'display' => ['type' => 'tool', 'tool' => 'debate'],
+                    'position' => [
+                        'row' => 2,
+                        'column' => 1,
+                    ],
+                    'interaction' => [
+                        'on_click' => [
+                            'action' => 'open',
+                            'target' => 'panel',
+                        ],
+                    ],
+                ],
+                'comments' => [
                     'content' => 'comments',
                     'scope' => ['source' => 'selected_inquiry'],
                     'display' => ['type' => 'feed'],
+                    'position' => [
+                        'row' => 2,
+                        'column' => 2,
+                    ],
+                    'interaction' => [
+                        'on_click' => [
+                            'action' => 'comment',
+                            'target' => 'panel',
+                        ],
+                    ],
                 ],
             ],
         ],
@@ -3838,7 +4245,7 @@ class InitDbDefault extends Command
             'proposal',
             'question',
         ],
-        'allowed_response' => ['citizen', 'official'],
+        'allowed_response' => ['citizen_jury', 'official_announcements'],
         'is_root' => false,
         'ui' => [
             'experience' => 'decision_room',
@@ -3853,19 +4260,35 @@ class InitDbDefault extends Command
                 'responsive' => true,
             ],
             'display_architecture' => [
-                'main' => [
+                'debate' => [
                     'content' => 'options',
-                    'scope' => [
-                        'source' => 'selected_inquiry',
+                    'scope' => ['source' => 'selected_inquiry'],
+                    'display' => ['type' => 'tool', 'tool' => 'debate'],
+                    'position' => [
+                        'row' => 1,
+                        'column' => 1,
                     ],
-                    'display' => [
-                        'type' => 'family_tools',
+                    'interaction' => [
+                        'on_click' => [
+                            'action' => 'open',
+                            'target' => 'panel',
+                        ],
                     ],
                 ],
-                'right' => [
+                'resources' => [
                     'content' => 'resources',
                     'scope' => ['source' => 'selected_inquiry'],
                     'display' => ['type' => 'list'],
+                    'position' => [
+                        'row' => 1,
+                        'column' => 2,
+                    ],
+                    'interaction' => [
+                        'on_click' => [
+                            'action' => 'open',
+                            'target' => 'panel',
+                        ],
+                    ],
                 ],
             ],
         ],
@@ -3899,7 +4322,7 @@ class InitDbDefault extends Command
             'proposal',
             'poll',
         ],
-        'allowed_response' => ['citizen'],
+        'allowed_response' => ['citizen_jury'],
         'is_root' => false,
         'ui' => [
             'experience' => 'dashboard',
@@ -3914,28 +4337,68 @@ class InitDbDefault extends Command
                 'responsive' => true,
             ],
             'display_architecture' => [
-                'top_left' => [
+                'inquiries' => [
                     'content' => 'inquiries',
                     'scope' => ['source' => 'children'],
                     'display' => ['type' => 'cards'],
+                    'position' => [
+                        'row' => 1,
+                        'column' => 1,
+                    ],
+                    'interaction' => [
+                        'on_click' => [
+                            'action' => 'open',
+                            'target' => 'panel',
+                        ],
+                    ],
                 ],
-                'top_right' => [
+                'statistics' => [
                     'content' => 'statistics',
                     'scope' => ['source' => 'group'],
                     'display' => ['type' => 'widget'],
+                    'position' => [
+                        'row' => 1,
+                        'column' => 2,
+                    ],
+                    'interaction' => [
+                        'on_click' => [
+                            'action' => 'open',
+                            'target' => 'panel',
+                        ],
+                    ],
                 ],
-                'bottom_left' => [
-                    'content' => 'inquiries',
-                    'scope' => ['source' => 'children'],
+                'vote' => [
+                    'content' => 'options',
+                    'scope' => ['source' => 'selected_inquiry'],
                     'display' => [
                         'type' => 'tool',
                         'tool' => 'vote',
                     ],
+                    'position' => [
+                        'row' => 2,
+                        'column' => 1,
+                    ],
+                    'interaction' => [
+                        'on_click' => [
+                            'action' => 'vote',
+                            'target' => 'panel',
+                        ],
+                    ],
                 ],
-                'bottom_right' => [
+                'resources' => [
                     'content' => 'resources',
                     'scope' => ['source' => 'selected_inquiry'],
                     'display' => ['type' => 'list'],
+                    'position' => [
+                        'row' => 2,
+                        'column' => 2,
+                    ],
+                    'interaction' => [
+                        'on_click' => [
+                            'action' => 'open',
+                            'target' => 'panel',
+                        ],
+                    ],
                 ],
             ],
         ],

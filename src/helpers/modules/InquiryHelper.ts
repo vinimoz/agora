@@ -222,21 +222,26 @@ export function getAllowedResponseGroupTypes(
 ): InquiryGroupType[] {
   const currentType = allTypes.find(t => t.group_type === inquiryType)
   if (!currentType || !currentType.allowed_response) return []
-
   // Parse allowed_response if it's a string (JSON)
   let allowedResponses: string[] = []
   if (typeof currentType.allowed_response === 'string') {
     try {
       allowedResponses = JSON.parse(currentType.allowed_response)
     } catch {
+  	console.log(" INTO GET ALLOWED RESPONSE CATCH ",allowedResponses )
       allowedResponses = []
     }
   } else if (Array.isArray(currentType.allowed_response)) {
+  	console.log(" INTO THE ELSE OF GET ALLOWED RESPONSE CATCH ",allowedResponses )
     allowedResponses = currentType.allowed_response
   }
+  console.log(" INTO GET ALLOWED RESPONSE ALL TYPE",allTypes)
+  console.log(" INTO GET ALLOWED",allowedResponses)
+  console.log(" INTO GET ALLOWED FILTERED", allTypes.filter(type =>
+    allowedResponses.includes(type.group_typea)))
 
   // Filter inquiry types that are in allowed_response
-  return allTypes.filter(type =>
+   return allTypes.filter(type =>
     allowedResponses.includes(type.group_type)
   )
 }

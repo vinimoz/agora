@@ -362,6 +362,7 @@ import { useAttachmentsStore } from '../../stores/attachments'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { useInquiryStore } from '../../stores/inquiry.ts'
 import { t } from '@nextcloud/l10n'
+import { useAiStore } from '../../stores/ai'
 
 // Nextcloud components
 import NcModal from '@nextcloud/vue/components/NcModal'
@@ -370,6 +371,8 @@ import NcTextField from '@nextcloud/vue/components/NcTextField'
 import NcAssistantIcon from '@nextcloud/vue/components/NcAssistantIcon'
 import NcAssistantContent from '@nextcloud/vue/components/NcAssistantContent'
 import NcAssistantButton from '@nextcloud/vue/components/NcAssistantButton'
+	
+
 
 // Stores
 const attachmentsStore = useAttachmentsStore()
@@ -392,6 +395,46 @@ const showAIModal = ref(false)
 const aiLoading = ref(false)
 const aiPrompt = ref('')
 const aiGeneratedContent = ref('')
+const aiStore = useAiStore()
+
+
+// AI Functions
+const openAIModal = () => {
+  // Get current context from the inquiry
+  const title = inquiryStore.title || ''
+  const description = inquiryStore.description || ''
+
+  if (description && description.trim().length > 0) {
+    aiPrompt.value = t('agora', 'Improve and expand this content while maintaining the same meaning')
+  } else {
+    aiPrompt.value = t('agora', 'Write content about this topic')
+  }
+  showAIModal.value = true
+  aiGeneratedContent.value = ''
+}
+
+const generateWithAI = async () => {
+  if (!aiPrompt.value.trim()) {
+    showError(t('agora', 'Please enter a prompt'))
+    return
+  }
+
+  aiLoading.value = true
+  aiGeneratedContent.value = ''
+
+  try {
+    // Use the AI store's enhance content method
+    const enhancedContent = await aiStore.enhanceContent(inquiryStore.id, aiPrompt.value)
+    aiGeneratedContent.value = enhancedContent
+    showSuccess(t('agora', 'Content generated'))
+  } catch (error) {
+    console.error('AI generation failed:', error)
+    showError(t('agora', 'AI generation failed. Please try again'))
+  } finally {
+    aiLoading.value = false
+  }
+}
+
 
 // Image URL function
 function getNextcloudPreviewUrl(fileId, x = 1920, y = 1080, autoScale = true) {
@@ -690,22 +733,6 @@ const handleWordImport = async (event) => {
   }
 }
 
-// AI Functions
-const openAIModal = () => {
-  const currentText = editor.value.getText()
-  if (currentText && currentText.trim().length > 0) {
-    aiPrompt.value = t('agora', 'Improve and expand on: {text}', { text: `${currentText.substring(0, 100)}...` })
-  }
-  showAIModal.value = true
-  aiGeneratedContent.value = ''
-}
-
-const closeAIModal = () => {
-  showAIModal.value = false
-  aiPrompt.value = ''
-  aiGeneratedContent.value = ''
-  aiLoading.value = false
-}
 
 // Watch for prompt changes to enable/disable button
 const onPromptUpdate = (value) => {
@@ -713,26 +740,11 @@ const onPromptUpdate = (value) => {
   aiPrompt.value = value
 }
 
-const generateWithAI = async () => {
-  if (!aiPrompt.value.trim()) {
-    showError(t('agora', 'Please enter a prompt'))
-    return
-  }
-
-  aiLoading.value = true
+const closeAIModal = () => {
+  showAIModal.value = false
+  aiPrompt.value = ''
   aiGeneratedContent.value = ''
-
-  try {
-    // Use the inquiryStore to contact Nextcloud AI
-    const generatedContent = await inquiryStore.getEchanceText(aiPrompt.value)
-    aiGeneratedContent.value = generatedContent
-    showSuccess(t('agora', 'Content generated'))
-  } catch (error) {
-    console.error('AI generation failed:', error)
-    showError(t('agora', 'Ai generation failed. Please try again'))
-  } finally {
-    aiLoading.value = false
-  }
+  aiLoading.value = false
 }
 
 const insertAIContent = () => {

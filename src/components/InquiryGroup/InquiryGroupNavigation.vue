@@ -167,6 +167,7 @@ const props = defineProps<{
 // ============================================================
 const emit = defineEmits<{
   click: [group: InquiryGroup]
+  select: [group: InquiryGroup]
   create: []
 }>()
 
@@ -243,11 +244,11 @@ function toggleGroup(id: number) {
 }
 
 function handleClick(group: InquiryGroup) {
-  emit('click', group)
+  emit('select', group)
 }
 
 function handleChildClick(group: InquiryGroup) {
-  emit('click', group)
+  emit('select', group)
 }
 
 function handleCreate() {

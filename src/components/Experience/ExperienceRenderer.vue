@@ -19,7 +19,7 @@
       </div>
       <div class="controls-right">
         <DisplayModeSwitcher
-          v-if="availableDisplays.length > 1"
+          v-if="availableDisplays.length > 1 && !displayArchitecture"
           :current-mode="displayMode"
           :available-modes="availableDisplays"
           @change="handleDisplayChange"
@@ -51,20 +51,25 @@
     <!-- DYNAMIC LAYOUT - Based on display_architecture              -->
     <!-- ============================================================ -->
     <div
-v-else-if="displayArchitecture && Object.keys(displayArchitecture).length > 0" 
-         class="architecture-grid" 
-         :class="layoutClasses">
+      v-else-if="filteredArchitecture && Object.keys(filteredArchitecture).length > 0" 
+      class="architecture-grid"
+      :style="gridStyle"
+    >
       <div
-        v-for="(zone, zoneKey) in displayArchitecture"
+        v-for="(zone, zoneKey) in filteredArchitecture"
         :key="zoneKey"
         class="architecture-zone"
-        :class="`zone-${zoneKey}`"
+        :class="[
+          `zone-${zoneKey}`,
+          `content-${zone.content || 'inquiries'}`,
+          `display-${zone.display?.type || 'cards'}`
+        ]"
         :style="getZoneStyle(zone)"
       >
         <!-- Zone Header -->
         <div v-if="getZoneLabel(zone)" class="zone-header">
           <span class="zone-label">{{ getZoneLabel(zone) }}</span>
-          <span v-if="getZoneCount(zone)" class="zone-count">{{ getZoneCount(zone) }}</span>
+          <span v-if="getZoneCount(zone) !== null" class="zone-count">{{ getZoneCount(zone) }}</span>
         </div>
 
         <!-- Zone Content -->
@@ -72,11 +77,12 @@ v-else-if="displayArchitecture && Object.keys(displayArchitecture).length > 0"
           <component
             :is="getZoneComponent(zone)"
             v-bind="getZoneProps(zone)"
-            @view-inquiry="handleViewInquiry"
-            @view-option="handleViewOption"
+            @view-inquiry="(inquiry) => handleInquiryClick(inquiry, zoneKey)"
+            @view-option="(option) => handleOptionClick(option, zoneKey)"
             @view-group="handleViewGroup"
-            @comment="handleComment"
-            @support="handleSupport"
+            @click="(item) => handleInquiryClick(item, zoneKey)"
+            @select="handleViewGroup"
+            @view="(item) => handleInquiryClick(item, zoneKey)"
           />
         </div>
       </div>
@@ -88,17 +94,17 @@ v-else-if="displayArchitecture && Object.keys(displayArchitecture).length > 0"
     <div v-else class="standard-layout" :class="`layout-${layoutConfig.type}`">
       <!-- Sidebar -->
       <div v-if="layoutConfig.type === 'sidebar'" class="layout-sidebar">
-<ExperienceSidebar
-  :group="group"
-  :inquiries="inquiries"
-  :options="options"
-  :tools="tools"
-  :show-resources="showResources"
-  :show-comments="showComments"
-  @navigate="handleSidebarNavigate"
-  @toggle-resources="toggleResources"
-  @toggle-comments="toggleComments"
-/>
+        <ExperienceSidebar
+          :group="group"
+          :inquiries="inquiries"
+          :options="options"
+          :tools="tools"
+          :show-resources="showResources"
+          :show-comments="showComments"
+          @navigate="handleSidebarNavigate"
+          @toggle-resources="toggleResources"
+          @toggle-comments="toggleComments"
+        />
       </div>
 
       <!-- Main Content -->
@@ -110,11 +116,11 @@ v-else-if="displayArchitecture && Object.keys(displayArchitecture).length > 0"
           
           <div v-if="showStats" class="layout-stats">
             <div class="stat-item">
-              <span class="stat-value">{{ inquiries.length }}</span>
+              <span class="stat-value">{{ inquiries ? inquiries.length : 0 }}</span>
               <span class="stat-label">{{ t('agora', 'Inquiries') }}</span>
             </div>
             <div class="stat-item">
-              <span class="stat-value">{{ options.length }}</span>
+              <span class="stat-value">{{ options ? options.length : 0 }}</span>
               <span class="stat-label">{{ t('agora', 'Options') }}</span>
             </div>
             <div class="stat-item">
@@ -127,17 +133,36 @@ v-else-if="displayArchitecture && Object.keys(displayArchitecture).length > 0"
         <!-- Content -->
         <div class="layout-content">
           <slot>
-            <div v-if="inquiries && inquiries.length > 0" class="inquiries-grid" :class="displayModeClass">
-		    <component
-  :is="getDisplayComponent(displayMode)"
-  v-for="inquiry in displayedInquiries"
-  :key="inquiry.id"
-  :inquiry="inquiry"
-  :horizontal="displayMode === 'horizontal'"
-  :dense="displayMode === 'compact'"
-/>
+            <!-- Inquiries Grid -->
+            <div v-if="displayedInquiries && displayedInquiries.length > 0" class="inquiries-grid" :class="displayModeClass">
+              <template v-for="inquiry in displayedInquiries" :key="inquiry.id">
+                <component
+                  v-if="inquiry"
+                  :is="getDisplayComponent(displayMode)"
+                  :inquiry="inquiry"
+                  :inquiries="displayedInquiries"
+                  :mode="displayMode"
+                  :horizontal="displayMode === 'horizontal'"
+                  :compact="displayMode === 'compact'"
+                  :show-cover="true"
+                  :show-meta="true"
+                  :show-stats="true"
+                  :show-author="true"
+                  :show-description="true"
+                  :show-expiry="true"
+                  :show-type="true"
+                  :show-status="true"
+                  :show-comments="true"
+                  :show-support="true"
+                  :show-participants="true"
+                  :open-mode="'page'"
+                  @click="handleInquiryClick(inquiry, 'fallback')"
+                  @view="handleInquiryClick(inquiry, 'fallback')"
+                />
+              </template>
             </div>
             
+            <!-- Empty State -->
             <div v-else class="empty-state">
               <component :is="Icons.FolderMultiple" :size="48" />
               <h3>{{ t('agora', 'No inquiries') }}</h3>
@@ -153,17 +178,21 @@ v-else-if="displayArchitecture && Object.keys(displayArchitecture).length > 0"
         </div>
 
         <!-- Comments -->
-        <div v-if="showComments && config.showComments !== false" class="layout-comments">
+        <div v-if="showComments" class="layout-comments">
           <div class="comments-header">
             <h3>{{ t('agora', 'Comments') }}</h3>
             <span class="comments-count">{{ totalComments }}</span>
           </div>
-          <SideBarTabComments :inquiry="selectedInquiry || inquiries[0]" />
+          <div>
+            <SideBarTabComments :inquiry="selectedInquiry || (inquiries && inquiries[0])" />
+          </div>
         </div>
 
         <!-- Resources -->
-        <div v-if="showResources && config.showResources !== false" class="layout-resources">
-          <SideBarTabResources :inquiry="selectedInquiry || inquiries[0]" />
+        <div v-if="showResources" class="layout-resources">
+          <div>
+            <SideBarTabResources :inquiry="selectedInquiry || (inquiries && inquiries[0])" />
+          </div>
         </div>
       </div>
     </div>
@@ -174,7 +203,7 @@ v-else-if="displayArchitecture && Object.keys(displayArchitecture).length > 0"
 // ============================================================
 // IMPORTS
 // ============================================================
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import { InquiryGeneralIcons as Icons } from '../../utils/icons'
@@ -184,52 +213,71 @@ import ExperienceSwitcher from './ExperienceSwitcher.vue'
 import DisplayModeSwitcher from './DisplayModeSwitcher.vue'
 import ExperienceSidebar from './ExperienceSidebar.vue'
 
-// Display Components
+// ============================================================
+// INQUIRY DISPLAY COMPONENTS
+// ============================================================
 import InquiryCard from '../InquiryGroup/InquiryCard.vue'
-import InquiryGroupViewMain from '../InquiryGroup/InquiryGroupViewMain.vue'
 import InquiryListItem from '../InquiryGroup/InquiryListItem.vue'
-import InquiryFull from '../InquiryGroup/InquiryFull.vue'
-import InquiryRichHTML from '../InquiryGroup/InquiryRichHTML.vue'
-import InquirySummary from '../InquiryGroup/InquirySummary.vue'
-import SideBarTabComments from '../SideBar/SideBarTabComments.vue'
-import SideBarTabResources from '../SideBar/SideBarTabResources.vue'
-
-
+import InquiryGrid from '../InquiryGroup/InquiryGrid.vue'
 import InquiryFeed from '../InquiryGroup/InquiryFeed.vue'
 import InquiryTree from '../InquiryGroup/InquiryTree.vue'
-import InquiryGrid from '../InquiryGroup/InquiryGrid.vue'
+import InquirySummary from '../InquiryGroup/InquirySummary.vue'
+import InquiryRichHTML from '../InquiryGroup/InquiryRichHTML.vue'
+import InquiryKanban from '../InquiryGroup/InquiryKanban.vue'
+import InquiryTimeline from '../InquiryGroup/InquiryTimeline.vue'
+
+// ============================================================
+// GROUP DISPLAY COMPONENTS
+// ============================================================
 import InquiryGroupCatalog from '../InquiryGroup/InquiryGroupCatalog.vue'
 import InquiryGroupNavigation from '../InquiryGroup/InquiryGroupNavigation.vue'
-import OptionCard from '../Options/OptionCard.vue'
-import StatisticsWidget from '../InquiryGroup/StatisticsWidget.vue'
-import ActivityFeed from '../InquiryGroup/ActivityFeed.vue'
-import FamilyLayoutPaired from '../Options/FamilyLayouts/FamilyLayoutPaired.vue'
-import FamilyLayoutTree from '../Options/FamilyLayouts/FamilyLayoutTree.vue'
 
 // ============================================================
-// IMPORT - Option Tool Display (renamed from FamilyToolsDisplay)
+// OPTION TOOL COMPONENTS
 // ============================================================
 import OptionToolDisplay from '../Options/OptionToolDisplay.vue'
-
-// ============================================================
-// IMPORT - Tool components (can be used for both Options AND Inquiries)
-// ============================================================
+import FamilyLayoutPaired from '../Options/FamilyLayouts/FamilyLayoutPaired.vue'
+import FamilyLayoutTree from '../Options/FamilyLayouts/FamilyLayoutTree.vue'
+import FamilyLayoutConsensusFlow from '../Options/FamilyLayouts/FamilyLayoutConsensusFlow.vue'
 import FamilyLayoutKanban from '../FamilyLayouts/FamilyLayoutKanban.vue'
 import FamilyLayoutTimeline from '../FamilyLayouts/FamilyLayoutTimeline.vue'
 import FamilyLayoutVote from '../FamilyLayouts/FamilyLayoutVote.vue'
 
 // ============================================================
-// IMPORT - Types and Helpers
+// SIDEBAR COMPONENTS
+// ============================================================
+import SideBarTabComments from '../SideBar/SideBarTabComments.vue'
+import SideBarTabResources from '../SideBar/SideBarTabResources.vue'
+
+// ============================================================
+// STATISTICS & ACTIVITY
+// ============================================================
+import StatisticsWidget from '../InquiryGroup/StatisticsWidget.vue'
+import ActivityFeed from '../InquiryGroup/ActivityFeed.vue'
+
+// ============================================================
+// TYPES & HELPERS
 // ============================================================
 import type { InquiryGroup, InquiryGroupUIConfig } from '../stores/inquiryGroups.types'
 import type { Inquiry } from '../../Types/index.ts'
+import type { DisplayZone, GridPosition } from '../Types/experience.types'
 import { useSessionStore } from '../../stores/session'
 import { useCommentsStore } from '../../stores/comments'
 import { useInquiryGroupsStore } from '../../stores/inquiryGroups'
-
-import { EXPERIENCE_DEFINITIONS, type ExperienceKey, type DisplayMode } from '../../composables/useExperience'
 import { getExperienceArchitecture } from '../../composables/experienceArchitecture'
-import { processScopeData } from '../../helpers/modules/filterHelpers'
+import { EXPERIENCE_DEFINITIONS, type ExperienceKey, type DisplayMode } from '../../composables/useExperience'
+import { processZoneData } from '../../helpers/modules/filterHelpers'
+
+// ============================================================
+// IMPORT VOCABULARY
+// ============================================================
+import {
+  DISPLAY_TYPE_VALUES,
+  VALID_DISPLAYS_BY_CONTENT,
+  VALID_TOOLS_BY_CONTENT,
+  type DisplayTypeValue,
+  type ToolValue,
+} from '../Types/experience.types'
 
 // ============================================================
 // PROPS
@@ -270,8 +318,20 @@ const emit = defineEmits<{
   sidebarNavigate: [target: string]
   experienceChange: [experience: ExperienceKey]
   displayChange: [mode: DisplayMode]
+  selectInquiry: [inquiry: Inquiry]
+  openPanel: [payload: { inquiry: Inquiry; zone: string; target: string }]
+  navigateTo: [target: any]
 }>()
 
+// ============================================================
+// STATE - Two-click interaction
+// ============================================================
+const selectedInquiryId = ref<number | null>(null)
+const selectedOptionId = ref<number | null>(null)
+
+// ============================================================
+// STATE - UI toggles
+// ============================================================
 const internalShowResources = ref(props.showResources ?? true)
 const internalShowComments = ref(props.showComments ?? true)
 
@@ -286,7 +346,20 @@ const commentsStore = useCommentsStore()
 // ============================================================
 const experience = computed(() => props.experience || 'dashboard')
 const displayArchitecture = computed(() => props.displayArchitecture || null)
-const layoutConfig = computed(() => props.layoutConfig || { type: 'full', columns: 2, rows: 2 })
+const layoutConfig = computed(() => props.layoutConfig || { type: 'grid', columns: 3, rows: 2, responsive: true })
+
+// ============================================================
+// COMPUTED - Grid Style using position row/column/span
+// ============================================================
+const gridStyle = computed(() => {
+  const cols = layoutConfig.value.columns || 3
+  const rows = layoutConfig.value.rows || 2
+  return {
+    gridTemplateColumns: `repeat(${cols}, 1fr)`,
+    gridTemplateRows: `repeat(${rows}, auto)`,
+    gap: '20px',
+  }
+})
 
 // ============================================================
 // COMPUTED - Available Experiences
@@ -308,12 +381,6 @@ const displayModeClass = computed(() => {
   return `display-${mode}`
 })
 
-const layoutClasses = computed(() => ({
-  [`layout-${layoutConfig.value.type}`]: true,
-  [`cols-${layoutConfig.value.columns || 2}`]: true,
-  'is-responsive': layoutConfig.value.responsive !== false,
-}))
-
 // ============================================================
 // COMPUTED - Group Data
 // ============================================================
@@ -329,9 +396,12 @@ const totalComments = computed(() => {
 
 const canCreateInquiry = computed(() => sessionStore.currentUser.isAdmin || sessionStore.currentUser.isGroupEditor)
 
+// ============================================================
+// Filter out null/undefined inquiries
+// ============================================================
 const displayedInquiries = computed(() => {
   if (!props.inquiries) return []
-  return props.inquiries
+  return props.inquiries.filter(item => item != null)
 })
 
 // ============================================================
@@ -339,86 +409,487 @@ const displayedInquiries = computed(() => {
 // ============================================================
 const availableDisplays = computed(() => {
   const def = EXPERIENCE_DEFINITIONS[experience as ExperienceKey]
-  return def?.allowedDisplays || ['cards', 'list', 'grid']
+  return def?.allowedDisplays || ['cards', 'list']
 })
+
+// ============================================================
+// COMPUTED - Filtered Architecture - ONLY show zones with data
+// ============================================================
+const filteredArchitecture = computed(() => {
+  const arch = effectiveArchitecture.value
+  const filtered: Record<string, any> = {}
+  for (const key in arch) {
+    const zone = arch[key]
+    if (zone && hasZoneData(zone)) {
+      filtered[key] = zone
+    }
+  }
+  return filtered
+})
+
+function hasZoneData(zone: any): boolean {
+  if (!zone) return false
+  const content = zone.content || 'inquiries'
+  const data = getZoneData(zone)
+  
+  // For inquiry_groups, check if there are groups
+  if (content === 'inquiry_groups') {
+    return data && data.length > 0
+  }
+  
+  // For inquiries, check if there are inquiries
+  if (content === 'inquiries') {
+    return data && data.length > 0
+  }
+  
+  // For inquiry (single), check if there's a selected inquiry
+  if (content === 'inquiry') {
+    const selected = getSelectedInquiry()
+    return selected !== null
+  }
+  
+  // For options, check if there are options
+  if (content === 'options') {
+    const options = getZoneOptions(zone)
+    return options && options.length > 0
+  }
+  
+  // For comments, check if there are comments
+  if (content === 'comments') {
+    const selected = getSelectedInquiry()
+    if (!selected) return false
+    const comments = commentsStore.comments.filter(c => c.inquiryId === selected.id)
+    return comments && comments.length > 0
+  }
+  
+  // For statistics and activity, always show if there's data
+  if (content === 'statistics') {
+    return props.inquiries && props.inquiries.length > 0
+  }
+  
+  if (content === 'activity') {
+    return props.inquiries && props.inquiries.length > 0
+  }
+  
+  return true
+}
+
+// ============================================================
+// EFFECTIVE ARCHITECTURE
+// ============================================================
+const effectiveArchitecture = computed(() => {
+  let arch = {}
+  try {
+    const exp = props.experience || 'dashboard'
+    const groupDefault = props.uiConfig?.default_experience || 'dashboard'
+    if (exp !== groupDefault) {
+      const globalArch = getExperienceArchitecture(exp as ExperienceKey)
+      arch = globalArch?.display_architecture || {}
+    } else if (props.displayArchitecture && Object.keys(props.displayArchitecture).length > 0) {
+      arch = props.displayArchitecture
+    } else {
+      arch = getExperienceArchitecture('dashboard')?.display_architecture || {}
+    }
+  } catch (e) {
+    console.warn('Error computing architecture:', e)
+    arch = {}
+  }
+  return Object.fromEntries(
+    Object.entries(arch).filter(([_, value]) => value != null)
+  )
+})
+
+// ============================================================
+// ZONE GRID POSITION HELPER
+// ============================================================
+function getZoneGridPosition(zone: any): GridPosition | null {
+  if (!zone || !zone.position) return null
+  
+  const pos = zone.position
+  return {
+    row: pos.row || 1,
+    column: pos.column || 1,
+    row_span: pos.row_span || 1,
+    column_span: pos.column_span || 1,
+  }
+}
 
 // ============================================================
 // ZONE DATA HELPERS
 // ============================================================
-
-/**
- * Get data for a zone based on its scope
- * Applies filters, sorting, and pagination
- * @param zone
- */
 function getZoneData(zone: any) {
+  if (!zone) return []
+
+  const content = zone.content || 'inquiries'
   const scope = zone.scope || { source: 'all' }
   const source = scope.source || 'all'
-  
-  let data: any[] = []
-  
-  switch (source) {
-    case 'selected':
-    case 'selected_inquiry':
-      const selected = getSelectedInquiry()
-      data = selected ? [selected] : []
-      break
-    case 'children':
-      data = props.inquiries || []
-      break
-    case 'group':
-      data = props.inquiries || []
-      break
-    case 'all':
-      data = props.inquiries || []
-      break
-    default:
-      data = props.inquiries || []
-  }
 
-  // Apply filters, sort, pagination
-  return processScopeData(data, {
-    filter: scope.filter,
+  const rawData = fetchRawData(content, source)
+  return processZoneData(rawData, {
+    filter: zone.filter,
     sort: scope.sort,
     pagination: scope.pagination
   })
 }
 
-// ============================================================
-// COMPLETE DISPLAY COMPONENT MAP
-// ============================================================
+function fetchRawData(content: string, source: string) {
+  switch (content) {
+    case 'inquiry_groups':
+      const groupsStore = useInquiryGroupsStore()
+      if (source === 'children' && props.group) {
+        return groupsStore.byParentId(props.group.id)
+      }
+      return props.groups || []
 
-function getDisplayComponent(mode: DisplayMode) {
-  const map: Record<DisplayMode, any> = {
-    // Standard display modes
+    case 'inquiries':
+      if (source === 'selected_inquiry') {
+        const selected = getSelectedInquiry()
+        return selected ? [selected] : []
+      }
+      return props.inquiries || []
+
+    case 'inquiry':
+      const selected = getSelectedInquiry()
+      return selected ? [selected] : []
+
+    case 'options':
+      const sel = getSelectedInquiry()
+      if (!sel) return []
+      return (props.options || []).filter(opt => opt.inquiryId === sel.id)
+
+    case 'resources':
+      return getResourcesForInquiry(getSelectedInquiry())
+
+    case 'comments':
+      return getCommentsForInquiry(getSelectedInquiry())
+
+    case 'statistics':
+      return props.inquiries || []
+
+    case 'activity':
+      return props.inquiries || []
+
+    default:
+      return []
+  }
+}
+
+function getResourcesForInquiry(inquiry: Inquiry | null): any[] {
+  if (!inquiry) return []
+  return inquiry.miscFields?.resources || []
+}
+
+function getCommentsForInquiry(inquiry: Inquiry | null): any[] {
+  if (!inquiry) return []
+  return commentsStore.comments.filter(c => c.inquiryId === inquiry.id)
+}
+
+function getSelectedInquiry(): Inquiry | null {
+  if (props.selectedInquiry) return props.selectedInquiry
+  if (props.inquiries && props.inquiries.length > 0) {
+    return props.inquiries[0]
+  }
+  return null
+}
+
+// ============================================================
+// ZONE COMPONENT RESOLVER
+// ============================================================
+function getZoneComponent(zone: any) {
+  if (!zone) return null
+
+  const content = zone.content || 'inquiries'
+  const display = zone.display || { type: 'cards' }
+  const type = display.type || 'cards'
+  const tool = display.tool
+
+  // COMPONENT MAP - Clean architecture
+  const componentMap: Record<string, any> = {
+    // ---- Inquiry Groups ----
+    inquiry_groups: {
+      'list': InquiryGroupCatalog,
+      'cards': InquiryGroupCatalog,
+      'tree': InquiryGroupNavigation,
+      'navigation': InquiryGroupNavigation,
+    },
+
+    // ---- Inquiries (plural) ----
+    inquiries: {
+      'list': InquiryListItem,
+      'cards': InquiryCard,
+      'grid': InquiryGrid,
+      'feed': InquiryFeed,
+      'tree': InquiryTree,
+       'timeline': InquiryTimeline,
+       'kanban': InquiryKanban,
+      'summary': InquirySummary,
+      'compact': InquirySummary,
+      'horizontal': InquiryCard,
+      'tool': getToolComponent(tool, content),
+    },
+
+    // ---- Inquiry (singular) ----
+    inquiry: {
+      'full': InquiryRichHTML,
+      'book': InquiryRichHTML,
+      'rich_html': InquiryRichHTML,
+      'summary': InquirySummary,
+      'compact': InquirySummary,
+      'cards': InquiryCard,
+    },
+
+    // ---- Options ----
+    options: {
+      'tool': getToolComponent(tool, content),
+    },
+
+    // ---- Resources ----
+    resources: {
+      'list': SideBarTabResources,
+      'full': SideBarTabResources,
+    },
+
+    // ---- Comments ----
+    comments: {
+      'feed': SideBarTabComments,
+      'list': SideBarTabComments,
+    },
+
+    // ---- Statistics ----
+    statistics: {
+      'widget': StatisticsWidget,
+      'list': StatisticsWidget,
+      'cards': StatisticsWidget,
+    },
+
+    // ---- Activity ----
+    activity: {
+      'feed': ActivityFeed,
+      'list': ActivityFeed,
+    },
+  }
+
+  const contentComponents = componentMap[content]
+  if (!contentComponents) return InquiryCard
+
+  const component = contentComponents[type]
+  if (!component) {
+    return contentComponents['cards'] || InquiryCard
+  }
+
+  return component
+}
+
+// ============================================================
+// TOOL COMPONENT RESOLVER
+// ============================================================
+function getToolComponent(tool: string, content: string) {
+  const toolMap: Record<string, any> = {
+    // For inquiries
+    'vote': FamilyLayoutVote,
+    'timeline': FamilyLayoutTimeline,
+    'kanban': FamilyLayoutKanban,
+    // For options
+    'consensus': FamilyLayoutConsensusFlow,
+    'debate': FamilyLayoutPaired,
+    'structure': FamilyLayoutTree,
+  }
+
+  const comp = toolMap[tool]
+  if (comp) return comp
+
+  return content === 'options' ? OptionToolDisplay : InquiryCard
+}
+
+// ============================================================
+// DISPLAY COMPONENT (fallback)
+// ============================================================
+function getDisplayComponent(mode: string) {
+  const map: Record<string, any> = {
     cards: InquiryCard,
     list: InquiryListItem,
-    grid: InquiryGrid,          // dedicated grid component
-    feed: InquiryFeed,          // feed component
-    timeline: FamilyLayoutTimeline,
-    kanban: FamilyLayoutKanban,
-    map: InquiryCard,           // Placeholder - could use a map component
-    wiki: InquiryRichHTML,
-    full: InquiryFull,
-    compact: InquiryCard,       // Uses card with compact prop
+    grid: InquiryGrid,
+    feed: InquiryFeed,
+    tree: InquiryTree,
+    timeline: InquiryTimeline,
+    kanban: InquiryKanban,
     summary: InquirySummary,
-    horizontal: InquiryCard,    // Uses card with horizontal prop
-    split: InquiryFull,         // Split view shows full with sidebar
-    tree: InquiryTree,          //  tree view
-    book: InquiryRichHTML,      // Book/reading style
-    navigation: InquiryGroupNavigation, // Navigation style
-    widget: StatisticsWidget,   // Widget style - uses statistics
+    compact: InquirySummary,
+    horizontal: InquiryCard,
+    book: InquiryRichHTML,
+    rich_html: InquiryRichHTML,
   }
+  
+  if (mode === 'compact' || mode === 'summary' || mode === 'horizontal') {
+    return InquiryCard
+  }
+  
   return map[mode] || InquiryCard
 }
 
-/**
- * Get options for a zone
- * @param zone
- */
+// ============================================================
+// ZONE PROPS RESOLVER
+// ============================================================
+function getZoneProps(zone: any) {
+  if (!zone) return {}
+
+  const content = zone.content || 'inquiries'
+  const display = zone.display || { type: 'cards' }
+  const type = display.type || 'cards'
+  const tool = display.tool
+
+  const displayOptions = display.options || {}
+  
+  const baseProps = {
+    group: props.group,
+    showResources: props.showResources,
+    showComments: props.showComments,
+    showIcon: displayOptions.showIcon !== undefined ? displayOptions.showIcon : true,
+    showCover: displayOptions.showCover !== undefined ? displayOptions.showCover : true,
+    showMeta: displayOptions.showMeta !== undefined ? displayOptions.showMeta : true,
+    showStats: displayOptions.showStats !== undefined ? displayOptions.showStats : true,
+    showAuthor: displayOptions.showAuthor !== undefined ? displayOptions.showAuthor : true,
+    showDescription: displayOptions.showDescription !== undefined ? displayOptions.showDescription : true,
+    showExpiry: displayOptions.showExpiry !== undefined ? displayOptions.showExpiry : true,
+    showType: displayOptions.showType !== undefined ? displayOptions.showType : true,
+    showStatus: displayOptions.showStatus !== undefined ? displayOptions.showStatus : true,
+    showSupport: displayOptions.showSupport !== undefined ? displayOptions.showSupport : true,
+    showParticipants: displayOptions.showParticipants !== undefined ? displayOptions.showParticipants : true,
+    horizontal: displayOptions.horizontal || false,
+    dense: displayOptions.dense || false,
+    compact: displayOptions.compact || false,
+    interactive: displayOptions.interactive !== undefined ? displayOptions.interactive : true,
+    displayMode: type,
+    openMode: displayOptions.openMode || 'page',
+    mode: type === 'list' ? 'list' : 'cards',
+  }
+
+  const data = getZoneData(zone)
+  const selectedInquiry = getSelectedInquiry()
+
+  switch (content) {
+    case 'inquiry_groups':
+      return {
+        ...baseProps,
+        groups: data,
+        activeId: props.group?.id,
+        showCreateButton: true,
+        families: zone.scope?.families || [],
+        mode: type === 'list' ? 'list' : 'cards',
+      }
+
+    case 'inquiries': {
+      const inquiriesData = data.length > 0 ? data : props.inquiries || []
+      const isSingle = inquiriesData.length === 1
+      const singleInquiry = isSingle ? inquiriesData[0] : null
+      
+      return {
+        ...baseProps,
+        inquiries: inquiriesData,
+        inquiryIds: inquiriesData.map(i => i.id),
+        group: props.group,
+        columns: display.cardsPerRow || 3,
+        selectedInquiry: selectedInquiry,
+        tool: tool,
+        families: zone.scope?.families || [],
+        family: zone.scope?.family || null,
+        optionTypes: sessionStore.appSettings?.inquiryOptionTypeTab || [],
+        inquiry: singleInquiry,
+        initialInquiry: inquiriesData.length > 0 ? inquiriesData[0] : null,
+      }
+    }
+
+    case 'inquiry': {
+      const inquiryData = data.length > 0 ? data[0] : selectedInquiry || props.inquiries?.[0]
+      const inquiriesData = data.length > 0 ? data : [inquiryData].filter(Boolean)
+      
+      return {
+        ...baseProps,
+        inquiry: inquiryData,
+        inquiries: inquiriesData,
+        group: props.group,
+        displayMode: type === 'book' ? 'book' : type,
+        openMode: displayOptions.openMode || 'none',
+      }
+    }
+
+    case 'options':
+      return {
+        ...baseProps,
+        options: data,
+        inquiry: selectedInquiry,
+        inquiryId: selectedInquiry?.id,
+        tool: tool,
+        families: zone.scope?.families || [],
+        family: zone.scope?.family || null,
+        optionTypes: sessionStore.appSettings?.inquiryOptionTypeTab || [],
+      }
+
+    case 'resources':
+      return {
+        ...baseProps,
+        inquiry: selectedInquiry,
+        inquiryId: selectedInquiry?.id,
+        showResources: true,
+      }
+
+    case 'comments':
+      return {
+        ...baseProps,
+        inquiry: selectedInquiry,
+        inquiryId: selectedInquiry?.id,
+      }
+
+    case 'statistics':
+      return {
+        ...baseProps,
+        inquiries: data,
+        groupId: props.group?.id,
+      }
+
+    case 'activity':
+      return {
+        ...baseProps,
+        inquiries: data,
+        limit: zone.scope?.pagination?.limit || 20,
+      }
+
+    default:
+      return {
+        ...baseProps,
+        data: data,
+        content: content,
+        group: props.group,
+      }
+  }
+}
+
+// ============================================================
+// ZONE HELPERS
+// ============================================================
+function getZoneLabel(zone: any): string {
+  if (!zone) return ''
+  const labels: Record<string, string> = {
+    inquiry_groups: t('agora', 'Groups'),
+    inquiries: t('agora', 'Inquiries'),
+    options: t('agora', 'Options'),
+    resources: t('agora', 'Resources'),
+    comments: t('agora', 'Comments'),
+    statistics: t('agora', 'Statistics'),
+    activity: t('agora', 'Activity'),
+  }
+  return labels[zone.content] || ''
+}
+
+function getZoneCount(zone: any): number | null {
+  if (!zone) return null
+  const content = zone.content || 'inquiries'
+  const data = getZoneData(zone)
+  return data.length
+}
+
 function getZoneOptions(zone: any) {
   const content = zone.content || 'inquiries'
-  
   if (content !== 'options') return props.options || []
   
   const scope = zone.scope || { source: 'selected_inquiry' }
@@ -435,251 +906,33 @@ function getZoneOptions(zone: any) {
     data = props.options || []
   }
   
-  return processScopeData(data, {
-    filter: scope.filter,
+  return processZoneData(data, {
+    filter: zone.filter,
     sort: scope.sort,
     pagination: scope.pagination
   })
 }
 
-/**
- * Get inquiry IDs from zone data
- * @param zone
- */
-function getZoneInquiryIds(zone: any) {
-  const data = getZoneData(zone)
-  return data.map((i: any) => i.id)
-}
-
-/**
- * Get the selected inquiry (from props or first in list)
- */
-function getSelectedInquiry(): Inquiry | null {
-  if (props.selectedInquiry) return props.selectedInquiry
-  if (props.inquiries && props.inquiries.length > 0) {
-    return props.inquiries[0]
-  }
-  return null
-}
-
-// ============================================================
-// ZONE COMPONENT RESOLVER
-// ============================================================
-
-const zoneComponentMap: Record<string, any> = {
-  // Inquiries
-  'inquiries_cards': InquiryCard,
-  'inquiries_list': InquiryListItem,
-  'inquiries_full': InquiryFull,
-  'inquiries_summary': InquirySummary,
-  'inquiries_feed': InquiryFeed,        
-  'inquiries_tree': InquiryTree,     
-  // Options
-  'options_cards': OptionCard,
-  'options_list': OptionCard,
-  // Resources
-  'resources_list': SideBarTabResources,
-  // Comments
-  'comments_feed': SideBarTabComments,
-  // Groups
-  'inquiry_groups_cards': InquiryGroupCatalog,
-  'inquiry_groups_navigation': InquiryGroupNavigation,
-  // Fallback by content type
-  'inquiries': InquiryGroupViewMain,
-  'options': OptionToolDisplay,
-  'resources': SideBarTabResources,
-  'comments': SideBarTabComments,
-  'inquiry_groups': InquiryGroupCatalog,
-  'statistics': StatisticsWidget,
-  'activity': ActivityFeed,
-}
-
-/**
- * Get the appropriate component for a display zone
- * 
- * Implements the architecture from "La séparation est maintenant claire.txt":
- * - display.type === 'tool' + content === 'options' → OptionToolDisplay
- * - display.type === 'tool' + content === 'inquiries' → direct tool mapping
- * - Otherwise → standard display modes
- */
-
-// ============================================================
-// ZONE COMPONENT RESOLVER - Complete
-// ============================================================
-
-function getZoneComponent(zone: any) {
-  const content = zone.content || 'inquiries'
-  const display = zone.display || { type: 'cards' }
-
-  // ============================================================
-  // CASE 1: TOOL DISPLAY
-  // ============================================================
-  if (display.type === 'tool' && display.tool) {
-
-    // 1a. OPTIONS CONTENT → Specific tool or OptionToolDisplay
-    if (content === 'options') {
-      const toolMap: Record<string, any> = {
-        debate: FamilyLayoutPaired,
-        consensus: FamilyLayoutTree,
-        structure: FamilyLayoutTree,
-        kanban: FamilyLayoutKanban,
-        timeline: FamilyLayoutTimeline,
-        vote: FamilyLayoutVote,
-      }
-      return toolMap[display.tool] || OptionToolDisplay
-    }
-
-    // 1b. INQUIRIES CONTENT → Direct tool mapping
-    if (content === 'inquiries') {
-      const inquiryToolMap: Record<string, any> = {
-        kanban: FamilyLayoutKanban,
-        timeline: FamilyLayoutTimeline,
-        vote: FamilyLayoutVote,
-        feed: InquiryFeed,
-        tree: InquiryTree,
-      }
-      return inquiryToolMap[display.tool] || InquiryGroupViewMain
-    }
-  }
-
-  // ============================================================
-  // CASE 2: FAMILY TOOLS (legacy compatibility)
-  // ============================================================
-  if (display.type === 'family_tools') {
-    return OptionToolDisplay
-  }
-
-  // ============================================================
-  // CASE 3: STANDARD DISPLAY MODES
-  // ============================================================
-  const displayTypeMap: Record<string, string> = {
-    'list': '_list',
-    'card': '_cards',
-    'cards': '_cards',
-    'grid': '_grid',
-    'book': '_book',
-    'full': '_full',
-    'summary': '_summary',
-    'tree': '_tree',
-    'navigation': '_navigation',
-    'feed': '_feed',
-    'widget': '_widget',
-    'horizontal': '_horizontal',
-    'compact': '_compact',
-    'rich_html': '_rich_html',
-    'debate': '_debate',
-    'consensus': '_consensus',
-    'structure': '_structure',
-    'kanban': '_kanban',
-    'timeline': '_timeline',
-    'vote': '_vote',
-  }
-
-  if (display.type in displayTypeMap) {
-    const key = `${content}${displayTypeMap[display.type]}`
-    const component = zoneComponentMap[key] || zoneComponentMap[content] || InquiryGroupViewMain
-    return component
-  }
-
-  // ============================================================
-  // CASE 4: CONTENT-BASED FALLBACK
-  // ============================================================
-  return zoneComponentMap[content] || InquiryGroupViewMain
-}
-
-// ============================================================
-// ZONE PROPS RESOLVER
-// ============================================================
-
-function getZoneProps(zone: any) {
-  const baseProps = {
-    group: props.group,
-    inquiries: getZoneData(zone),
-    options: getZoneOptions(zone),
-    showResources: props.showResources,
-    showComments: props.showComments,
-  }
-  
-  const content = zone.content || 'inquiries'
-  
-  switch (content) {
-    case 'options':
-      return {
-        ...baseProps,
-        inquiryId: getSelectedInquiry()?.id,
-        specificFamily: zone.scope?.family,
-        families: zone.scope?.families,
-      }
-    
-    case 'inquiries':
-      return {
-        ...baseProps,
-        selectedInquiry: getSelectedInquiry(),
-        inquiryIds: getZoneInquiryIds(zone),
-      }
-    
-    case 'resources':
-    case 'comments':
-      return {
-        ...baseProps,
-        inquiry: getSelectedInquiry() || props.inquiries?.[0],
-      }
-    
-    case 'inquiry_groups':
-      return {
-        ...baseProps,
-        groups: getChildGroups(),
-        onNavigate: handleViewGroup,
-      }
-    
-    default:
-      return baseProps
-  }
-}
-
-// ============================================================
-// ZONE LABEL & COUNT HELPERS
-// ============================================================
-
-function getZoneLabel(zone: any): string {
-  const labels: Record<string, string> = {
-    inquiry_groups: t('agora', 'Groups'),
-    inquiries: t('agora', 'Inquiries'),
-    options: t('agora', 'Options'),
-    resources: t('agora', 'Resources'),
-    comments: t('agora', 'Comments'),
-    statistics: t('agora', 'Statistics'),
-    activity: t('agora', 'Activity'),
-  }
-  return labels[zone.content] || ''
-}
-
-function getZoneCount(zone: any): number | null {
-  const content = zone.content || 'inquiries'
-  
-  switch (content) {
-    case 'inquiry_groups':
-      return getChildGroups().length
-    case 'inquiries':
-      return getZoneData(zone).length
-    case 'options':
-      return getZoneOptions(zone).length
-    default:
-      return null
-  }
-}
-
 function getZoneStyle(zone: any) {
-  const display = zone.display || {}
+  if (!zone) return {}
+  
+  const pos = getZoneGridPosition(zone)
   const styles: Record<string, string> = {}
   
-  if (display.width) styles['--zone-width'] = display.width
-  if (display.height) styles['--zone-height'] = display.height
-  if (display.background) styles['--zone-background'] = display.background
+  // Apply grid position styles
+  if (pos) {
+    styles.gridRow = `${pos.row} / span ${pos.row_span || 1}`
+    styles.gridColumn = `${pos.column} / span ${pos.column_span || 1}`
+  }
+  
+  // Apply custom styles
+  const display = zone.display || {}
+  if (display.width) styles.width = display.width
+  if (display.height) styles.height = display.height
+  if (display.background) styles.background = display.background
   
   return styles
 }
-
 
 function getChildGroups(): InquiryGroup[] {
   const store = useInquiryGroupsStore()
@@ -688,27 +941,160 @@ function getChildGroups(): InquiryGroup[] {
 }
 
 // ============================================================
-// EVENT HANDLERS
+// TWO-CLICK INTERACTION HANDLERS
 // ============================================================
 
+/**
+ * Handle inquiry click with two-click interaction:
+ * - First click: Select the inquiry (update selected state)
+ * - Second click on same inquiry: Perform the interaction action defined in the zone
+ */
+function handleInquiryClick(inquiry: Inquiry, zoneKey: string) {
+  if (!inquiry) return
+  
+  const zone = filteredArchitecture.value[zoneKey]
+  
+  // If this is the first click or a different inquiry, just select it
+  if (selectedInquiryId.value !== inquiry.id) {
+    selectedInquiryId.value = inquiry.id
+    selectedOptionId.value = null // Reset option selection
+    emit('selectInquiry', inquiry)
+    return
+  }
+  
+  // Second click on the same inquiry -> perform interaction
+  if (zone?.interaction?.on_click) {
+    const { action, target } = zone.interaction.on_click
+    
+    switch (action) {
+      case 'open':
+        if (target === 'page') {
+          emit('viewInquiry', inquiry)
+        } else if (target === 'panel' || target === 'modal' || target === 'dialog') {
+          emit('openPanel', { inquiry, zone: zoneKey, target })
+        } else {
+          // Default: view inquiry
+          emit('viewInquiry', inquiry)
+        }
+        break
+      
+      case 'navigate':
+        emit('navigateTo', inquiry)
+        break
+      
+      case 'select':
+        // Already selected, just keep it
+        break
+      
+      case 'vote':
+        // Could emit a vote action
+        emit('viewInquiry', inquiry)
+        break
+      
+      case 'edit':
+        emit('viewInquiry', inquiry)
+        break
+      
+      case 'comment':
+        emit('viewInquiry', inquiry)
+        break
+      
+      case 'support':
+        emit('viewInquiry', inquiry)
+        break
+      
+      default:
+        // Fallback: view inquiry
+        emit('viewInquiry', inquiry)
+    }
+  } else {
+    // No interaction defined, just view as fallback
+    emit('viewInquiry', inquiry)
+  }
+}
+
+/**
+ * Handle option click with two-click interaction
+ */
+function handleOptionClick(option: any, zoneKey: string) {
+  if (!option) return
+  
+  const zone = filteredArchitecture.value[zoneKey]
+  
+  // If this is the first click or a different option, just select it
+  if (selectedOptionId.value !== option.id) {
+    selectedOptionId.value = option.id
+    selectedInquiryId.value = null // Reset inquiry selection
+    return
+  }
+  
+  // Second click on the same option -> perform interaction
+  if (zone?.interaction?.on_click) {
+    const { action, target } = zone.interaction.on_click
+    
+    switch (action) {
+      case 'open':
+        if (target === 'page') {
+          emit('viewOption', option)
+        } else if (target === 'panel' || target === 'modal' || target === 'dialog') {
+          // Could emit a specific openPanel for options
+          emit('viewOption', option)
+        } else {
+          emit('viewOption', option)
+        }
+        break
+      
+      default:
+        emit('viewOption', option)
+    }
+  } else {
+    emit('viewOption', option)
+  }
+}
+
+// ============================================================
+// LEGACY EVENT HANDLERS (for backward compatibility)
+// ============================================================
 function handleViewInquiry(inquiry: Inquiry) {
-  emit('viewInquiry', inquiry)
+  if (!inquiry) return
+  // If this comes from a component without zone context, try to find which zone it belongs to
+  const zoneKey = findZoneForInquiry(inquiry)
+  handleInquiryClick(inquiry, zoneKey || 'fallback')
 }
 
 function handleViewOption(option: any) {
-  emit('viewOption', option)
+  if (!option) return
+  const zoneKey = findZoneForOption(option)
+  handleOptionClick(option, zoneKey || 'fallback')
 }
 
 function handleViewGroup(group: InquiryGroup) {
+  if (!group) return
   emit('viewGroup', group)
 }
 
-function handleComment(inquiryId: number, comment: any) {
-  emit('comment', inquiryId, comment)
+function findZoneForInquiry(inquiry: Inquiry): string | null {
+  for (const [key, zone] of Object.entries(filteredArchitecture.value)) {
+    if (zone.content === 'inquiries' || zone.content === 'inquiry') {
+      const data = getZoneData(zone)
+      if (data.some((item: any) => item.id === inquiry.id)) {
+        return key
+      }
+    }
+  }
+  return null
 }
 
-function handleSupport(inquiryId: number, value: any) {
-  emit('support', inquiryId, value)
+function findZoneForOption(option: any): string | null {
+  for (const [key, zone] of Object.entries(filteredArchitecture.value)) {
+    if (zone.content === 'options') {
+      const data = getZoneData(zone)
+      if (data.some((item: any) => item.id === option.id)) {
+        return key
+      }
+    }
+  }
+  return null
 }
 
 function handleSidebarNavigate(target: string) {
@@ -733,6 +1119,30 @@ function toggleComments() {
   emit('update:showComments', internalShowComments.value)
 }
 
+// ============================================================
+// WATCHERS - Reset selection when props change
+// ============================================================
+watch(
+  () => props.selectedInquiry,
+  (newVal) => {
+    if (newVal) {
+      selectedInquiryId.value = newVal.id
+    }
+  }
+)
+
+watch(
+  () => props.inquiries,
+  () => {
+    // If the inquiries list changes and the selected inquiry is no longer in the list, reset selection
+    if (selectedInquiryId.value && props.inquiries) {
+      const stillExists = props.inquiries.some(i => i.id === selectedInquiryId.value)
+      if (!stillExists) {
+        selectedInquiryId.value = null
+      }
+    }
+  }
+)
 </script>
 
 <style lang="scss" scoped>
@@ -819,39 +1229,12 @@ function toggleComments() {
 }
 
 /* ============================================================ */
-/* ARCHITECTURE GRID                                            */
+/* ARCHITECTURE GRID - Using CSS Grid with row/column positions */
 /* ============================================================ */
 .architecture-grid {
   display: grid;
   gap: 20px;
   min-height: 400px;
-
-  &.layout-grid {
-    grid-template-columns: repeat(2, 1fr);
-    
-    &.cols-1 { grid-template-columns: 1fr; }
-    &.cols-2 { grid-template-columns: repeat(2, 1fr); }
-    &.cols-3 { grid-template-columns: repeat(3, 1fr); }
-    &.cols-4 { grid-template-columns: repeat(4, 1fr); }
-  }
-
-  &.layout-flex {
-    display: flex;
-    flex-wrap: wrap;
-    
-    .architecture-zone {
-      flex: 1;
-      min-width: 300px;
-    }
-  }
-
-  &.layout-sidebar {
-    grid-template-columns: 280px 1fr;
-  }
-
-  &.layout-split {
-    grid-template-columns: 1fr 1fr;
-  }
 
   .architecture-zone {
     background: var(--color-main-background);
@@ -862,6 +1245,8 @@ function toggleComments() {
     flex-direction: column;
     min-height: 200px;
 
+    // Zone specific sizing via inline styles (grid-row/grid-column)
+
     .zone-header {
       display: flex;
       justify-content: space-between;
@@ -869,6 +1254,7 @@ function toggleComments() {
       padding: 12px 16px;
       background: var(--color-background-dark);
       border-bottom: 1px solid var(--color-border);
+      flex-shrink: 0;
 
       .zone-label {
         font-size: 14px;
@@ -890,6 +1276,7 @@ function toggleComments() {
       flex: 1;
       padding: 16px;
       overflow-y: auto;
+      min-height: 100px;
     }
   }
 }
@@ -1063,22 +1450,18 @@ function toggleComments() {
 }
 
 /* ============================================================ */
-/* RESPONSIVE                                                   */
+/* RESPONSIVE - Adapt grid to available space                   */
 /* ============================================================ */
+@media (max-width: 1400px) {
+  .architecture-grid {
+    // Reduce columns on smaller screens, but keep grid-auto-flow to respect spans
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
 @media (max-width: 1024px) {
   .architecture-grid {
-    &.layout-sidebar {
-      grid-template-columns: 1fr;
-    }
-    
-    &.layout-split {
-      grid-template-columns: 1fr;
-    }
-    
-    &.layout-grid {
-      &.cols-3 { grid-template-columns: repeat(2, 1fr); }
-      &.cols-4 { grid-template-columns: repeat(2, 1fr); }
-    }
+    grid-template-columns: repeat(2, 1fr) !important;
   }
 
   .standard-layout {
@@ -1105,9 +1488,7 @@ function toggleComments() {
 
 @media (max-width: 768px) {
   .architecture-grid {
-    &.layout-grid {
-      grid-template-columns: 1fr !important;
-    }
+    grid-template-columns: 1fr !important;
   }
 
   .layout-content .inquiries-grid {

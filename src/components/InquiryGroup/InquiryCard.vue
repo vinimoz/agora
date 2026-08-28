@@ -4,15 +4,21 @@
 -->
 
 <template>
-  <div class="inquiry-card" :class="cardClasses" @click="handleClick">
-    <!-- Cover Image - Position changes based on layout -->
-    <div v-if="coverUrl" class="card-cover" :class="{ 'horizontal-cover': horizontal }">
-      <img :src="coverUrl" :alt="inquiry.title" class="cover-image" />
+  <div
+    v-if="inquiry"
+    class="inquiry-card" 
+    :class="cardClasses" 
+    @click="handleClick"
+    :data-inquiry-id="inquiry.id"
+  >
+    <!-- Cover Image -->
+    <div v-if="showCover && coverUrl" class="card-cover" :class="{ 'horizontal-cover': horizontal }">
+      <img :src="coverUrl" :alt="inquiry.title" class="cover-image" loading="lazy" />
       <div class="cover-overlay"></div>
       
-      <!-- Support & Comments on cover for horizontal layout -->
+      <!-- Cover Actions - Support & Comments on cover for horizontal layout -->
       <div v-if="horizontal" class="cover-actions">
-        <div class="cover-support">
+        <div v-if="showSupport" class="cover-support">
           <SupportFeature
             :item="inquiry"
             item-type="inquiry"
@@ -23,7 +29,7 @@
             @click.stop
           />
         </div>
-        <div v-if="inquiry.status?.countComments" class="cover-comments" @click.stop="handleCommentsClick">
+        <div v-if="showComments && inquiry.status?.countComments" class="cover-comments" @click.stop="handleCommentsClick">
           <component :is="InquiryGeneralIcons.Comment" class="counter-icon" :size="16" />
           <span class="counter-value">{{ inquiry.status.countComments }}</span>
         </div>
@@ -31,51 +37,54 @@
     </div>
 
     <!-- Content -->
-    <div
-class="card-content" :class="{ 
-      'has-cover': coverUrl,
-      'horizontal-content': horizontal 
-    }">
-      <!-- Header -->
-      <div class="card-header">
-        <div class="type-badge">
+    <div 
+      class="card-content" 
+      :class="{ 
+        'has-cover': showCover && coverUrl,
+        'horizontal-content': horizontal,
+        'no-padding': compact
+      }"
+    >
+      <!-- Header: Type + Status -->
+      <div v-if="showType || showStatus" class="card-header">
+        <div v-if="showType" class="type-badge">
           <component :is="typeIconComponent" class="type-icon" :size="14" />
           <span class="type-label">{{ typeLabel }}</span>
         </div>
         
-        <div v-if="currentInquiryStatus" class="status-badge">
+        <div v-if="showStatus && currentInquiryStatus" class="status-badge" :class="statusBadgeClass">
           <component :is="statusIconComponent" class="status-icon" :size="12" />
           {{ statusText }}
         </div>
       </div>
 
       <!-- Title -->
-      <h3 class="card-title" :title="inquiry.title">
+      <h3 v-if="inquiry.title" class="card-title" :title="inquiry.title">
         {{ inquiry.title }}
       </h3>
 
-      <!-- Short Description -->
-      <div v-if="shortDescription" class="card-description">
+      <!-- Description -->
+      <div v-if="showDescription && shortDescription" class="card-description">
         {{ shortDescription }}
       </div>
 
-      <!-- Metadata - Location & Category -->
-      <div class="card-meta-info">
-        <div class="meta-item location">
+      <!-- Meta: Location & Category -->
+      <div v-if="showMeta" class="card-meta-info">
+        <div v-if="locationPath" class="meta-item location">
           <component :is="InquiryGeneralIcons.Location" class="meta-icon" :size="12" />
-          <span class="location-text">{{ truncatedLocation }}</span>
+          <span class="meta-text">{{ truncatedLocation }}</span>
         </div>
         
-        <div class="meta-item category">
+        <div v-if="categoryPath" class="meta-item category">
           <component :is="InquiryGeneralIcons.Category" class="meta-icon" :size="12" />
           <span class="meta-text">{{ truncatedCategory }}</span>
         </div>
       </div>
 
-      <!-- Stats -->
-      <div class="card-stats">
+      <!-- Stats: Author + Counters -->
+      <div v-if="showStats || showAuthor" class="card-stats">
         <!-- Author -->
-        <div class="stat-author">
+        <div v-if="showAuthor" class="stat-author">
           <NcAvatar
             v-if="inquiry.ownedGroup"
             :display-name="inquiry.ownedGroup"
@@ -99,26 +108,32 @@ class="card-content" :class="{
           </div>
         </div>
 
-        <!-- Counters - Only show in vertical layout -->
-        <div v-if="!horizontal" class="stat-counters">
-          <SupportFeature
-            :item="inquiry"
-            item-type="inquiry"
-            :context="context"
-            :show-quorum="true"
-            :show-details-on-hover="true"
-            :icon-size="22"
-            @click.stop
-          />
-          <div v-if="inquiry.status?.countComments" class="counter-item comments" @click.stop="handleCommentsClick">
+        <!-- Counters -->
+        <div v-if="showStats && !horizontal" class="stat-counters">
+          <div v-if="showSupport" class="counter-item supports">
+            <SupportFeature
+              :item="inquiry"
+              item-type="inquiry"
+              :context="context"
+              :show-quorum="true"
+              :show-details-on-hover="true"
+              :icon-size="22"
+              @click.stop
+            />
+          </div>
+          <div v-if="showComments && inquiry.status?.countComments" class="counter-item comments" @click.stop="handleCommentsClick">
             <component :is="InquiryGeneralIcons.Comment" class="counter-icon" :size="14" />
             <span class="counter-value">{{ inquiry.status.countComments }}</span>
+          </div>
+          <div v-if="showParticipants && inquiry.status?.countParticipants" class="counter-item participants">
+            <component :is="InquiryGeneralIcons.Users" class="counter-icon" :size="14" />
+            <span class="counter-value">{{ inquiry.status.countParticipants }}</span>
           </div>
         </div>
       </div>
 
-      <!-- Dates -->
-      <div v-if="showExpiryBadge" class="card-dates">
+      <!-- Expiry Badge -->
+      <div v-if="showExpiry && showExpiryBadge" class="card-dates">
         <div class="date-item expiry" :class="expiryBadgeClass">
           <component :is="InquiryGeneralIcons.ClockOutline" class="date-icon" :size="12" />
           <span>{{ expiryText }}</span>
@@ -142,17 +157,50 @@ import { createInquiryContext } from '../../utils/permissions.ts'
 
 interface Props {
   inquiry: Inquiry
+  inquiries?: Inquiry[]
   isActive?: boolean
   dense?: boolean
+  compact?: boolean
   interactive?: boolean
-  horizontal?: boolean 
+  horizontal?: boolean
+  
+  // Display feature toggles
+  showIcon?: boolean
+  showCover?: boolean
+  showMeta?: boolean
+  showStats?: boolean
+  showAuthor?: boolean
+  showDescription?: boolean
+  showExpiry?: boolean
+  showType?: boolean
+  showStatus?: boolean
+  showComments?: boolean
+  showSupport?: boolean
+  showParticipants?: boolean
+  
+  // Open behavior
+  openMode?: 'page' | 'modal' | 'popup' | 'none'
 }
 
 const props = withDefaults(defineProps<Props>(), {
   isActive: false,
   dense: false,
+  compact: false,
   interactive: true,
-  horizontal: true
+  horizontal: false,
+  showIcon: true,
+  showCover: true,
+  showMeta: true,
+  showStats: true,
+  showAuthor: true,
+  showDescription: true,
+  showExpiry: true,
+  showType: true,
+  showStatus: true,
+  showComments: true,
+  showSupport: true,
+  showParticipants: true,
+  openMode: 'page'
 })
 
 const emit = defineEmits<{
@@ -167,9 +215,10 @@ const sessionStore = useSessionStore()
 const cardClasses = computed(() => ({
   'is-active': props.isActive,
   'is-dense': props.dense,
+  'is-compact': props.compact,
   'is-interactive': props.interactive,
-  'has-cover': !!coverUrl.value,
-  'is-horizontal': props.horizontal // Add horizontal class
+  'has-cover': props.showCover && !!coverUrl.value,
+  'is-horizontal': props.horizontal
 }))
 
 // Get inquiry types
@@ -255,8 +304,21 @@ const statusIconComponent = computed(() => {
   return StatusIcons[iconName] || StatusIcons.Default
 })
 
+const statusBadgeClass = computed(() => {
+  const status = props.inquiry.status?.inquiryStatus
+  const map: Record<string, string> = {
+    'active': 'status-open',
+    'open': 'status-open',
+    'closed': 'status-closed',
+    'draft': 'status-draft',
+    'waiting_approval': 'status-waiting'
+  }
+  return map[status || ''] || 'status-unknown'
+})
+
 // Cover image
 const coverUrl = computed(() => {
+  if (!props.showCover) return ''
   if (!props.inquiry.coverId || props.inquiry.coverId === 0) return ''
   return getNextcloudPreviewUrl(props.inquiry.coverId)
 })
@@ -271,9 +333,10 @@ const shortDescription = computed(() => {
   if (!props.inquiry.description) return ''
   
   const plainText = props.inquiry.description.replace(/<[^>]*>/g, '')
+  const maxLen = props.compact ? 60 : 100
   
-  if (plainText.length > 100) {
-    return `${plainText.substring(0, 100)}…`
+  if (plainText.length > maxLen) {
+    return `${plainText.substring(0, maxLen)}…`
   }
   
   return plainText
@@ -290,7 +353,7 @@ function getHierarchyPath(items, targetId) {
   })
 
   if (!itemMap[targetId]) {
-    return itemMap[1]?.name || t('agora', 'Not defined')
+    return itemMap[1]?.name || ''
   }
 
   function buildPath(item) {
@@ -313,23 +376,26 @@ const categoryPath = computed(() => getHierarchyPath(sessionStore.appSettings?.c
 
 const truncatedLocation = computed(() => {
   if (!locationPath.value) return ''
-  return locationPath.value.length > 15 
-    ? `${locationPath.value.substring(0, 15)}…` 
+  const maxLen = props.compact ? 12 : 15
+  return locationPath.value.length > maxLen 
+    ? `${locationPath.value.substring(0, maxLen)}…` 
     : locationPath.value
 })
 
 const truncatedCategory = computed(() => {
   if (!categoryPath.value) return ''
-  return categoryPath.value.length > 15 
-    ? `${categoryPath.value.substring(0, 15)}…` 
+  const maxLen = props.compact ? 12 : 15
+  return categoryPath.value.length > maxLen 
+    ? `${categoryPath.value.substring(0, maxLen)}…` 
     : categoryPath.value
 })
 
 // Truncated text
 const truncatedAuthorName = computed(() => {
   const name = props.inquiry.ownedGroup || props.inquiry.owner?.displayName || ''
-  return name.length > 20 
-    ? `${name.substring(0, 20)}…` 
+  const maxLen = props.compact ? 15 : 20
+  return name.length > maxLen 
+    ? `${name.substring(0, maxLen)}…` 
     : name
 })
 
@@ -396,7 +462,8 @@ function handleClick() {
   }
 }
 
-function handleCommentsClick() {
+function handleCommentsClick(e: Event) {
+  e.stopPropagation()
   emit('comments', props.inquiry.id)
 }
 </script>
@@ -409,169 +476,172 @@ function handleCommentsClick() {
   border: 1px solid var(--color-border);
   overflow: hidden;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    	
-
   height: 100%;
   display: flex;
   flex-direction: column;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   
-  // Horizontal layout - Tall and elongated
-&.is-horizontal {
-  flex-direction: row;
-  min-height: 320px; // Taller minimum height
-  max-height: 380px; // Control maximum height
-  
-  .card-cover {
-    width: 200px; // Slightly narrower cover
-    height: 100%;
-    min-height: 100%;
-    position: relative;
-    
-    &.horizontal-cover {
-      position: relative;
-      
-      .cover-actions {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 16px 12px;
-        background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
-        backdrop-filter: blur(4px);
-        
-        .cover-support,
-        .cover-comments {
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          color: white;
-          padding: 6px 12px;
-          border-radius: 24px;
-          background: rgba(255, 255, 255, 0.15);
-          cursor: pointer;
-          transition: all 0.2s ease;
-          font-weight: 500;
-          
-          &:hover {
-            background: rgba(255, 255, 255, 0.25);
-            transform: scale(1.05);
-          }
-        }
-        
-        .cover-comments {
-          .counter-icon {
-            color: white;
-          }
-          .counter-value {
-            font-weight: 600;
-            font-size: 14px;
-          }
-        }
-      }
+  // Compact mode
+  &.is-compact {
+    .card-content {
+      padding: 12px 14px;
+      gap: 6px;
     }
-  }
-  
-  .card-content.horizontal-content {
-    flex: 1;
-    width: calc(100% - 200px);
-    padding: 20px 24px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    border-radius: 0 12px 12px 0;
-  }
-  
-  // Adjust title for elongated look
-  .card-title {
-    font-size: 20px; // Larger title
-    line-height: 1.3;
-    margin-bottom: 4px;
-    -webkit-line-clamp: 2;
-  }
-  
-  // Make description take more space
-  .card-description {
-    font-size: 14px;
-    line-height: 1.6;
-    -webkit-line-clamp: 3; // Show more lines
-    margin-bottom: 8px;
-    flex: 1; // Take available space
-  }
-  
-  // Compact meta info
-  .card-meta-info {
-    margin-top: 4px;
-    gap: 8px;
     
-    .meta-item {
-      padding: 4px 10px;
-      font-size: 12px;
+    .card-title {
+      font-size: 15px;
+      -webkit-line-clamp: 2;
+    }
+    
+    .card-description {
+      font-size: 13px;
+      -webkit-line-clamp: 1;
+    }
+    
+    .card-meta-info .meta-item {
+      padding: 2px 6px;
+      font-size: 11px;
       
       .meta-text {
-        max-width: 140px; // Longer text allowed
+        max-width: 80px;
       }
+    }
+    
+    .stat-author .author-info .author-name {
+      font-size: 12px;
+      max-width: 80px;
+    }
+    
+    .stat-counters .counter-item {
+      font-size: 12px;
     }
   }
   
-  // Adjust stats positioning
-  .card-stats {
-    padding-top: 12px;
-    margin-top: 4px;
-    border-top: 1px solid var(--color-border);
-  }
-  
-  // Compact author section
-  .stat-author {
-    .author-info {
-      .author-name {
-        font-size: 13px;
-        max-width: 140px;
+  // Horizontal layout
+  &.is-horizontal {
+    flex-direction: row;
+    min-height: 280px;
+    max-height: 360px;
+    
+    .card-cover {
+      width: 200px;
+      height: 100%;
+      min-height: 100%;
+      position: relative;
+      
+      &.horizontal-cover {
+        position: relative;
+        
+        .cover-actions {
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 16px 12px;
+          background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
+          backdrop-filter: blur(4px);
+          
+          .cover-support,
+          .cover-comments {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 24px;
+            background: rgba(255, 255, 255, 0.15);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 500;
+            
+            &:hover {
+              background: rgba(255, 255, 255, 0.25);
+              transform: scale(1.05);
+            }
+          }
+          
+          .cover-comments {
+            .counter-icon {
+              color: white;
+            }
+            .counter-value {
+              font-weight: 600;
+              font-size: 14px;
+            }
+          }
+        }
+      }
+    }
+    
+    .card-content.horizontal-content {
+      flex: 1;
+      width: calc(100% - 200px);
+      padding: 20px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      border-radius: 0 12px 12px 0;
+    }
+    
+    .card-title {
+      font-size: 20px;
+      line-height: 1.3;
+      -webkit-line-clamp: 2;
+    }
+    
+    .card-description {
+      font-size: 14px;
+      line-height: 1.6;
+      -webkit-line-clamp: 3;
+      flex: 1;
+    }
+    
+    .card-meta-info {
+      margin-top: 2px;
+      gap: 8px;
+      
+      .meta-item {
+        padding: 4px 10px;
+        font-size: 12px;
+        
+        .meta-text {
+          max-width: 140px;
+        }
+      }
+    }
+    
+    .card-stats {
+      padding-top: 10px;
+      margin-top: 2px;
+    }
+    
+    .stat-author .author-info .author-name {
+      font-size: 13px;
+      max-width: 140px;
+    }
+    
+    &.is-compact {
+      min-height: 220px;
+      max-height: 280px;
+      
+      .card-cover {
+        width: 160px;
       }
       
-      .post-time {
-        font-size: 11px;
+      .card-content.horizontal-content {
+        width: calc(100% - 160px);
+        padding: 16px 18px;
+      }
+      
+      .card-title {
+        font-size: 17px;
       }
     }
   }
-}
-
-// Dense horizontal - Even more elongated
-&.is-horizontal.is-dense {
-  min-height: 280px;
-  max-height: 320px;
   
-  .card-cover {
-    width: 160px;
-  }
-  
-  .card-content.horizontal-content {
-    width: calc(100% - 160px);
-    padding: 16px 20px;
-  }
-  
-  .card-title {
-    font-size: 18px;
-    -webkit-line-clamp: 2;
-  }
-  
-  .card-description {
-    -webkit-line-clamp: 2;
-    font-size: 13px;
-  }
-  
-  .card-meta-info .meta-item .meta-text {
-    max-width: 120px;
-  }
-  
-  .stat-author .author-info .author-name {
-    max-width: 120px;
-  }
-}
-
   &.is-interactive {
     cursor: pointer;
     
@@ -587,7 +657,6 @@ function handleCommentsClick() {
     }
   }
   
-  // Specific hover for horizontal to prevent double transform
   &.is-horizontal.is-interactive:hover {
     transform: translateX(-4px) translateY(-4px);
   }
@@ -598,36 +667,33 @@ function handleCommentsClick() {
   }
   
   &.is-dense {
-    border-radius: 12px;
+    border-radius: 10px;
     
     .card-content {
-      padding: 16px;
+      padding: 14px;
     }
     
     .card-title {
-      font-size: 15px;
+      font-size: 16px;
     }
     
     .card-description {
       -webkit-line-clamp: 1;
     }
     
-    // Dense horizontal adjustments
     &.is-horizontal {
       .card-cover {
-        width: 200px;
+        width: 160px;
       }
       
       .card-content.horizontal-content {
-        width: calc(100% - 200px);
+        width: calc(100% - 160px);
       }
     }
   }
   
-  &.has-cover {
-    .card-header {
-      margin-top: 8px;
-    }
+  &.has-cover .card-header {
+    margin-top: 4px;
   }
 }
 
@@ -653,21 +719,23 @@ function handleCommentsClick() {
     transition: opacity 0.3s ease;
   }
   
-  .inquiry-card:hover & {
-    .cover-image {
-      transform: scale(1.05);
-    }
+  .inquiry-card:hover & .cover-image {
+    transform: scale(1.05);
   }
 }
 
 .card-content {
   padding: 20px;
   background: var(--color-main-background);
-   border-radius: 0 0 12px 12px;
+  border-radius: 0 0 12px 12px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
   flex: 1;
+  
+  &.no-padding {
+    padding: 12px 14px;
+  }
 }
 
 .card-header {
@@ -763,8 +831,8 @@ function handleCommentsClick() {
 .card-meta-info {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 4px;
+  gap: 8px;
+  margin-top: 2px;
   
   .meta-item {
     display: inline-flex;
@@ -802,9 +870,9 @@ function handleCommentsClick() {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-top: 12px;
+  padding-top: 10px;
   border-top: 1px solid var(--color-border);
-  margin-top: 8px;
+  margin-top: 4px;
 }
 
 .stat-author {
@@ -849,7 +917,7 @@ function handleCommentsClick() {
 .stat-counters {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
   
   .counter-item {
     display: inline-flex;
@@ -860,36 +928,40 @@ function handleCommentsClick() {
     transition: all 0.2s ease;
     cursor: pointer;
     
-    &.supports {
-      &:hover {
-        color: var(--color-primary-element);
-        
-        .counter-icon {
-          opacity: 0.9;
-        }
-      }
+    &.supports:hover {
+      color: var(--color-primary-element);
       
       .counter-icon {
-        transition: transform 0.2s ease;
-      }
-      
-      &:hover .counter-icon {
-        transform: scale(1.1);
+        opacity: 0.9;
       }
     }
     
-    &.comments {
-      &:hover {
-        color: #3b82f6;
-        
-        .counter-icon {
-          opacity: 0.9;
-        }
-      }
+    &.supports .counter-icon {
+      transition: transform 0.2s ease;
+    }
+    
+    &.supports:hover .counter-icon {
+      transform: scale(1.1);
+    }
+    
+    &.comments:hover {
+      color: #3b82f6;
       
       .counter-icon {
-        color: var(--color-text-maxcontrast);
+        opacity: 0.9;
       }
+    }
+    
+    &.participants:hover {
+      color: #8b5cf6;
+      
+      .counter-icon {
+        opacity: 0.9;
+      }
+    }
+    
+    .counter-icon {
+      color: var(--color-text-maxcontrast);
     }
     
     .counter-value {
@@ -937,9 +1009,8 @@ function handleCommentsClick() {
 // Responsive
 @media (max-width: 768px) {
   .inquiry-card {
-    border-radius: 12px;
+    border-radius: 10px;
     
-    // Stack horizontal on mobile
     &.is-horizontal {
       flex-direction: column;
       
@@ -954,12 +1025,11 @@ function handleCommentsClick() {
       
       .card-content.horizontal-content {
         width: 100%;
+        border-radius: 0 0 10px 10px;
       }
       
-      &.is-dense {
-        .card-cover {
-          height: 140px;
-        }
+      &.is-compact .card-cover {
+        height: 140px;
       }
     }
   }
@@ -971,7 +1041,7 @@ function handleCommentsClick() {
   .card-content {
     border-radius: 8px;
     padding: 16px;
-    gap: 10px;
+    gap: 8px;
   }
   
   .card-title {
@@ -982,22 +1052,22 @@ function handleCommentsClick() {
     font-size: 13px;
   }
   
-  .card-meta-info {
-    gap: 8px;
-    
-    .meta-item {
-      .meta-text {
-        max-width: 80px;
-      }
-    }
+  .card-meta-info .meta-item .meta-text {
+    max-width: 80px;
   }
   
   .stat-counters {
-    gap: 12px;
+    gap: 10px;
   }
   
   .stat-author .author-info .author-name {
     max-width: 80px;
+  }
+}
+
+@media (max-width: 480px) {
+  .inquiry-card.is-compact .card-content {
+    padding: 10px 12px;
   }
 }
 </style>

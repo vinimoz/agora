@@ -139,7 +139,7 @@ class InquiryGroupController extends BaseController
                     'inquiryGroup' => $this->inquiryGroupService->createGroup(
                         $data['title'],
                         $data['type'] ?? 'default',
-                        $data['parentId'] ?? 0,
+                        $data['parentId'] ?? null,
                         $data['protected'] ?? false,
                         $data['ownedGroup'] ?? '',
                         $data['groupStatus'] ?? 'draft',

@@ -66,7 +66,6 @@ const getSafeStringValue = (value: unknown): string => {
 }
 
 const getSafeNumberValue = (value: unknown): string => {
-  // FIXED: Return empty string instead of null
   if (value === null || value === undefined || value === '') {
     return ''
   }
@@ -576,22 +575,21 @@ onMounted(() => {
               </label>
 
               <div class="edit-field-input">
-                <!-- Location field -->
+                <!-- ============================================================
+                     LOCATION FIELD - FIXED
+                     ============================================================ -->
                 <div v-if="field.type === 'location'" class="location-field">
                   <div v-if="showLocationAsLabel" class="metadata-value">
                     {{ getHierarchyPath(sessionStore.appSettings?.locationTab, getMiscValue(field.key)) || t('agora', 'Inherited from parent') }}
                   </div>
-                  <!-- FIXED: :label-outside="true" with colon -->
                   <NcSelect
                     v-else
                     :model-value="getMiscValue(field.key)"
                     :options="hierarchicalLocation"
                     :clearable="!field.required"
-                    label="Location"
                     :label-outside="true"
-                    input-label="Select location"
-                    option-label="label"
-                    option-value="value"
+                    :option-label="(option: any) => option?.label || option"
+                    :option-value="(option: any) => option?.value || option"
                     :disabled="isSaving"
                     class="select-field location-select"
                     :placeholder="t('Select location')"
@@ -600,22 +598,21 @@ onMounted(() => {
                   />
                 </div>
 
-                <!-- Category field -->
+                <!-- ============================================================
+                     CATEGORY FIELD - FIXED
+                     ============================================================ -->
                 <div v-else-if="field.type === 'category'" class="category-field">
                   <div v-if="showCategoryAsLabel" class="metadata-value">
                     {{ getHierarchyPath(sessionStore.appSettings?.categoryTab, getMiscValue(field.key)) || t('agora', 'Inherited from parent') }}
                   </div>
-                  <!-- FIXED: :label-outside="true" with colon -->
                   <NcSelect
                     v-else
                     :model-value="getMiscValue(field.key)"
                     :options="hierarchicalCategory"
                     :clearable="!field.required"
-                    label="Category"
                     :label-outside="true"
-                    input-label="Select category"
-                    option-label="label"
-                    option-value="value"
+                    :option-label="(option: any) => option?.label || option"
+                    :option-value="(option: any) => option?.value || option"
                     :disabled="isSaving"
                     class="select-field category-select"
                     :placeholder="t('Select category')"
@@ -624,23 +621,25 @@ onMounted(() => {
                   />
                 </div>
 
-                <!-- Enum field - FIXED -->
+                <!-- ============================================================
+                     ENUM FIELD - FIXED
+                     ============================================================ -->
                 <NcSelect
                   v-else-if="field.type === 'enum'"
                   :model-value="getEnumModelValue(field)"
                   :options="normalizeAllowedValues(field.allowed_values)"
-                  :reduce="(option: any) => option.value"
-                  :get-option-label="getEnumLabel"
+                  :option-label="(option: any) => option?.label || option"
+                  :option-value="(option: any) => option?.value || option"
                   :clearable="!field.required"
-                  label="Select option"
                   :label-outside="true"
-                  input-label="Select an option"
                   :disabled="isSaving"
                   :placeholder="t('Select an option')"
                   @update:model-value="(val: any) => updateFieldValue(field.key, val, 'enum')"
                 />
 
-                <!-- Integer field - FIXED: returns empty string instead of null -->
+                <!-- ============================================================
+                     INTEGER FIELD
+                     ============================================================ -->
                 <NcInputField
                   v-else-if="field.type === 'integer'"
                   :model-value="getSafeNumberValue(getMiscValue(field.key))"
@@ -650,7 +649,9 @@ onMounted(() => {
                   @update:model-value="(val: string) => updateFieldValue(field.key, val ? parseInt(val) : null, 'integer')"
                 />
 
-                <!-- Datetime field -->
+                <!-- ============================================================
+                     DATETIME FIELD
+                     ============================================================ -->
                 <NcDateTimePickerNative
                   v-else-if="field.type === 'datetime'"
                   :model-value="getFormattedDate(field.key)"
@@ -660,7 +661,9 @@ onMounted(() => {
                   @update:model-value="(val: string) => updateFieldValue(field.key, val, 'datetime')"
                 />
 
-                <!-- Users/Groups field -->
+                <!-- ============================================================
+                     USERS/GROUPS FIELD
+                     ============================================================ -->
                 <UserSearch
                   v-else-if="field.type === 'users' || field.type === 'groups'"
                   :model-value="selectedUsers[field.key]"
@@ -671,7 +674,9 @@ onMounted(() => {
                   @update:model-value="(user) => handleUserSelected(field.key, user)"
                 />
 
-                <!-- JSON field -->
+                <!-- ============================================================
+                     JSON FIELD
+                     ============================================================ -->
                 <div v-else-if="field.type === 'json'" class="json-field">
                   <NcInputField
                     :model-value="getSafeStringValue(getMiscValue(field.key))"
@@ -690,7 +695,9 @@ onMounted(() => {
                   />
                 </div>
 
-                <!-- Default string field -->
+                <!-- ============================================================
+                     DEFAULT STRING FIELD
+                     ============================================================ -->
                 <NcInputField
                   v-else
                   :model-value="getSafeStringValue(getMiscValue(field.key))"
@@ -913,12 +920,12 @@ onMounted(() => {
     width: 100%;
 }
 
-                                                                                                      @keyframes rotate {
-                                                                                                          from {
-                                                                                                              transform: rotate(0deg);
-                                                                                                          }
-                                                                                                          to {
-                                                                                                              transform: rotate(360deg);
-                                                                                                          }
-                                                                                                      }
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
 </style>

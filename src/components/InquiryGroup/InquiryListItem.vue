@@ -4,7 +4,9 @@
 -->
 
 <template>
+  <!-- When inquiry exists, render the list item -->
   <NcListItem
+    v-if="inquiry"
     :name="inquiry.title"
     :details="listItemDetails"
     :active="isActiveListItem"
@@ -48,6 +50,12 @@
       </div>
     </template>
   </NcListItem>
+
+  <!-- Fallback when inquiry is null/undefined -->
+  <div v-else class="inquiry-placeholder">
+    <span class="placeholder-icon">📄</span>
+    <span class="placeholder-text">{{ t('agora', 'Inquiry not available') }}</span>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -79,8 +87,14 @@ const sessionStore = useSessionStore()
 // Import icon components from utils/icons.ts
 const InquiryGeneralIconsComponents = InquiryGeneralIcons
 
-// List item properties
+// ============================================================
+// LIST ITEM PROPERTIES - with null guards
+// ============================================================
+
 const listItemDetails = computed(() => {
+  // Guard: if no inquiry, return empty string
+  if (!props.inquiry) return ''
+  
   const details = []
   if (props.inquiry.owner?.displayName || props.inquiry.ownedGroup) {
     details.push(ownerDisplayName.value)
@@ -91,26 +105,52 @@ const listItemDetails = computed(() => {
   return details.join(' • ')
 })
 
-const isActiveListItem = computed(() => props.isActive || props.inquiry.currentUserStatus?.hasSupported || false)
+const isActiveListItem = computed(() => {
+  // Guard: if no inquiry, return false
+  if (!props.inquiry) return false
+  return props.isActive || props.inquiry.currentUserStatus?.hasSupported || false
+})
 
-const isBold = computed(() => props.inquiry.status?.inquiryStatus === 'open' && !props.inquiry.currentUserStatus?.hasRead)
+const isBold = computed(() => {
+  // Guard: if no inquiry, return false
+  if (!props.inquiry) return false
+  return props.inquiry.status?.inquiryStatus === 'open' && !props.inquiry.currentUserStatus?.hasRead
+})
 
-const listItemAriaLabel = computed(() => t('agora', 'Inquiry: {title}. Created by {owner}', {
-  title: props.inquiry.title,
-  owner: ownerDisplayName.value
-}))
+const listItemAriaLabel = computed(() => {
+  if (!props.inquiry) {
+    return t('agora', 'Inquiry not available')
+  }
+  return t('agora', 'Inquiry: {title}. Created by {owner}', {
+    title: props.inquiry.title,
+    owner: ownerDisplayName.value
+  })
+})
 
-// Owner display
-const ownerDisplayName = computed(() => 
-  props.inquiry.ownedGroup || props.inquiry.owner?.displayName || ''
-)
+// ============================================================
+// OWNER DISPLAY - with null guard
+// ============================================================
 
-// Get type icon
+const ownerDisplayName = computed(() => {
+  if (!props.inquiry) return ''
+  return props.inquiry.ownedGroup || props.inquiry.owner?.displayName || ''
+})
+
+// ============================================================
+// TYPE ICON - with null guard
+// ============================================================
+
 const inquiryTypes = computed(() => sessionStore.appSettings?.inquiryTypeTab || [])
 
-const typeData = computed(() => getInquiryTypeData(props.inquiry.type, inquiryTypes.value))
+const typeData = computed(() => {
+  if (!props.inquiry) return null
+  return getInquiryTypeData(props.inquiry.type, inquiryTypes.value)
+})
 
 const typeIconComponent = computed(() => {
+  // Guard: if no inquiry, return default icon
+  if (!props.inquiry) return InquiryGeneralIconsComponents.FolderMultiple
+  
   if (typeData.value?.icon) {
     const iconName = typeData.value.icon
     if (typeof iconName === 'string' && InquiryGeneralIconsComponents[iconName]) {
@@ -139,9 +179,12 @@ const typeIconComponent = computed(() => {
   return InquiryGeneralIconsComponents[iconName] || InquiryGeneralIconsComponents.FolderMultiple
 })
 
-// Short Description (2 lines max, ~100 characters)
+// ============================================================
+// SHORT DESCRIPTION - with null guard
+// ============================================================
+
 const shortDescription = computed(() => {
-  if (!props.inquiry.description) return ''
+  if (!props.inquiry?.description) return ''
   
   const plainText = props.inquiry.description.replace(/<[^>]*>/g, '')
   
@@ -152,9 +195,12 @@ const shortDescription = computed(() => {
   return plainText
 })
 
-// Date formatting
+// ============================================================
+// DATE FORMATTING - with null guard
+// ============================================================
+
 const formattedCreationDate = computed(() => {
-  if (!props.inquiry.status?.created) return ''
+  if (!props.inquiry?.status?.created) return ''
   try {
     return DateTime.fromMillis(props.inquiry.status.created * 1000).toLocaleString(DateTime.DATE_MED)
   } catch {
@@ -162,11 +208,17 @@ const formattedCreationDate = computed(() => {
   }
 })
 
-// Expiry
-const showExpiryBadge = computed(() => !!props.inquiry.configuration?.expire && props.inquiry.configuration.expire > 0)
+// ============================================================
+// EXPIRY - with null guards
+// ============================================================
+
+const showExpiryBadge = computed(() => {
+  if (!props.inquiry?.configuration?.expire) return false
+  return props.inquiry.configuration.expire > 0
+})
 
 const expiryText = computed(() => {
-  if (!props.inquiry.configuration?.expire) return ''
+  if (!props.inquiry?.configuration?.expire) return ''
   
   const expiryDate = new Date(props.inquiry.configuration.expire * 1000)
   const now = new Date()
@@ -183,7 +235,7 @@ const expiryText = computed(() => {
 })
 
 const expiryBadgeClass = computed(() => {
-  if (!props.inquiry.configuration?.expire) return ''
+  if (!props.inquiry?.configuration?.expire) return ''
   
   const expiryDate = new Date(props.inquiry.configuration.expire * 1000)
   const now = new Date()
@@ -195,9 +247,15 @@ const expiryBadgeClass = computed(() => {
   return 'expiry-normal'
 })
 
-// Handlers
+// ============================================================
+// HANDLERS - with null guard
+// ============================================================
+
 function handleClick() {
-  emit('click', props.inquiry)
+  // Only emit if we have a valid inquiry
+  if (props.inquiry) {
+    emit('click', props.inquiry)
+  }
 }
 </script>
 
@@ -352,7 +410,38 @@ function handleClick() {
   }
 }
 
-// Responsive adjustments
+// ============================================================
+// FALLBACK PLACEHOLDER STYLES
+// ============================================================
+
+.inquiry-placeholder {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  min-height: 80px;
+  border: 2px dashed var(--color-border);
+  border-radius: 12px;
+  margin-bottom: 8px;
+  background: var(--color-background-dark);
+  color: var(--color-text-lighter);
+  opacity: 0.7;
+
+  .placeholder-icon {
+    font-size: 20px;
+    opacity: 0.5;
+  }
+
+  .placeholder-text {
+    font-size: 14px;
+    font-style: italic;
+  }
+}
+
+// ============================================================
+// RESPONSIVE
+// ============================================================
+
 @media (max-width: 768px) {
   .inquiry-subtitle {
     font-size: 12px;
@@ -389,6 +478,19 @@ function handleClick() {
     min-width: 28px;
     margin-right: 10px;
   }
+
+  .inquiry-placeholder {
+    padding: 12px 14px;
+    min-height: 76px;
+    
+    .placeholder-icon {
+      font-size: 18px;
+    }
+    
+    .placeholder-text {
+      font-size: 13px;
+    }
+  }
 }
 
 @media (max-width: 480px) {
@@ -423,6 +525,20 @@ function handleClick() {
     height: 24px;
     min-width: 24px;
     margin-right: 8px;
+  }
+
+  .inquiry-placeholder {
+    padding: 10px 12px;
+    min-height: 72px;
+    gap: 8px;
+    
+    .placeholder-icon {
+      font-size: 16px;
+    }
+    
+    .placeholder-text {
+      font-size: 12px;
+    }
   }
 }
 </style>

@@ -133,6 +133,8 @@ import { getInquiryTypeData } from '../../helpers/modules/InquiryHelper'
 import { createInquiryContext } from '../../utils/permissions'
 import { SupportFeature } from '../Base'
 import type { Inquiry } from '../../Types'
+import { useSessionStore } from '../../stores/session.ts'
+
 
 const props = defineProps<{
   inquiries: Inquiry[]

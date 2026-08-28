@@ -11,7 +11,7 @@ import { AxiosError } from 'axios'
 
 import { Logger } from '../helpers/index.ts'
 import { InquiryGroupsAPI } from '../Api/index.ts'
-import { UserType, SupportEngine } from '../Types/index.ts'
+import { UserType } from '../Types/index.ts'
 import { useSessionStore } from './session.ts'
 import { useInquiriesStore } from './inquiries.ts'
 import { useInquiryGroupsStore } from './inquiryGroups.ts'
@@ -26,9 +26,6 @@ import type {
   InquiryGroupUIConfig,
   DisplayZone,
 } from './inquiryGroups.types.ts'
-
-export type VisibilityType = 'private' | 'groups' | 'participants' | 'everyone' 
-export type PublicationStatus = 'draft' | 'pending' | 'published' | 'archived' | 'deleted' 
 
 // ===== TYPES =====
 export type InquiryGroupPermissions = {
@@ -76,7 +73,7 @@ export const useInquiryGroupStore = defineStore('inquiryGroup', () => {
   const expire = ref<number | null>(null)
   const groupStatus = ref<InquiryGroupWorkflowStatus>('draft')
   const publicationStatus = ref<PublicationStatus>('draft')
-  const type = ref<InquiryGroupType | string>('default')
+  const type = ref<string>('default')
   const title = ref('')
   const titleExt = ref('')
   const slug = ref('')
@@ -120,14 +117,12 @@ export const useInquiryGroupStore = defineStore('inquiryGroup', () => {
   /**
    * Get the type template from session store
    */
-  const typeTemplate = computed(() => {
+  const typeTemplate = computed((): InquiryGroupType | undefined => {
     if (!type.value) return undefined
-    
-    const typeKey = typeof type.value === 'string' ? type.value : type.value.type
     
     // Find the type template in session store
     return sessionStore.appSettings?.inquiryGroupTypeTab?.find(
-      (t: InquiryGroupType) => t.type === typeKey || t.group_type === typeKey
+      (t: InquiryGroupType) => t.type === type.value || t.group_type === type.value
     )
   })
 
@@ -153,7 +148,7 @@ export const useInquiryGroupStore = defineStore('inquiryGroup', () => {
   /**
    * Get family from template
    */
-  const family = computed(() => typeTemplate.value?.family)
+  const family = computed(() => typeTemplate.value?.family || '')
 
   /**
    * Get display architecture from UI config
@@ -178,9 +173,16 @@ export const useInquiryGroupStore = defineStore('inquiryGroup', () => {
   /**
    * Get allowed inquiry types from template
    */
-  const allowedInquiryTypes = computed(() => typeTemplate.value?.allowedInquiryTypes || 
-           typeTemplate.value?.allowed_inquiry_types || 
-           [])
+  const allowedInquiryTypes = computed((): string[] => {
+    const template = typeTemplate.value
+    if (!template) return []
+    
+    const types = template.allowedInquiryTypes || template.allowed_inquiry_types
+    if (typeof types === 'string') {
+      return types.split(',').map(s => s.trim())
+    }
+    return types || []
+  })
 
   /**
    * Get is_root from template
@@ -215,7 +217,16 @@ export const useInquiryGroupStore = defineStore('inquiryGroup', () => {
   /**
    * Get allowed response from template
    */
-  const allowedResponse = computed(() => typeTemplate.value?.allowed_response || [])
+  const allowedResponse = computed((): string[] => {
+    const template = typeTemplate.value
+    if (!template) return []
+    
+    const response = template.allowed_response
+    if (typeof response === 'string') {
+      return response.split(',').map(s => s.trim())
+    }
+    return response || []
+  })
 
   /**
    * Get fields from template
@@ -389,7 +400,7 @@ export const useInquiryGroupStore = defineStore('inquiryGroup', () => {
     deleted: deleted.value,
     description: description.value,
     owner: owner.value,
-    type: typeof type.value === 'string' ? type.value : type.value.type || 'default',
+    type: type.value,
     groupStatus: groupStatus.value,
     publicationStatus: publicationStatus.value,
     configuration: configuration.value,
@@ -418,6 +429,7 @@ export const useInquiryGroupStore = defineStore('inquiryGroup', () => {
     rules: rules.value,
     allowed_response: allowedResponse.value,
     fields: fields.value,
+    templateDescription: templateDescription.value,
   }))
 
   // ============================================================
@@ -531,6 +543,7 @@ export const useInquiryGroupStore = defineStore('inquiryGroup', () => {
    */
   async function load(inquiryGroupId?: number | null): Promise<InquiryGroup | void> {
     let groupId = inquiryGroupId
+    console.log(" WE LOAD THE GROUP INTO THE STORE ", inquiryGroupId)
     if (!groupId && sessionStore.route?.params?.id) {
       groupId = Number(sessionStore.route.params.id)
     }
@@ -566,15 +579,6 @@ export const useInquiryGroupStore = defineStore('inquiryGroup', () => {
   /**
    * Create a new inquiry group
    * @param payload
-   * @param payload.title
-   * @param payload.titleExt
-   * @param payload.description
-   * @param payload.type
-   * @param payload.parentId
-   * @param payload.protected
-   * @param payload.ownedGroup
-   * @param payload.groupStatus
-   * @param payload.inquiryIds
    */
   async function add(payload: {
     title?: string
@@ -592,7 +596,7 @@ export const useInquiryGroupStore = defineStore('inquiryGroup', () => {
         title: payload.title,
         titleExt: payload.titleExt,
         type: payload.type || 'default',
-        parentId: payload.parentId,
+        parentId: payload.parentId || null,
         protected: payload.protected || true,
         ownedGroup: payload.ownedGroup,
         groupStatus: payload.groupStatus || 'draft',
@@ -615,17 +619,6 @@ export const useInquiryGroupStore = defineStore('inquiryGroup', () => {
   /**
    * Update the current inquiry group
    * @param payload
-   * @param payload.title
-   * @param payload.titleExt
-   * @param payload.description
-   * @param payload.type
-   * @param payload.parentId
-   * @param payload.protected
-   * @param payload.ownedGroup
-   * @param payload.groupStatus
-   * @param payload.expire
-   * @param payload.publicationStatus
-   * @param payload.configuration
    */
   async function update(payload: {
     title?: string
@@ -635,7 +628,7 @@ export const useInquiryGroupStore = defineStore('inquiryGroup', () => {
     parentId?: number
     protected?: boolean
     ownedGroup?: string
-    groupStatus?: string
+    groupStatus?: InquiryGroupWorkflowStatus
     expire?: number
     publicationStatus?: PublicationStatus
     configuration?: InquiryGroupConfiguration
@@ -732,9 +725,6 @@ export const useInquiryGroupStore = defineStore('inquiryGroup', () => {
   /**
    * Update visibility
    * @param params
-   * @param params.visibility
-   * @param params.visibilityGroups
-   * @param params.visibilityUsers
    */
   async function updateVisibility(params: {
     visibility: VisibilityType
@@ -760,9 +750,6 @@ export const useInquiryGroupStore = defineStore('inquiryGroup', () => {
   /**
    * Update participation
    * @param params
-   * @param params.type
-   * @param params.groups
-   * @param params.users
    */
   async function updateParticipation(params: {
     type: 'everyone' | 'users' | 'groups'
@@ -842,7 +829,7 @@ export const useInquiryGroupStore = defineStore('inquiryGroup', () => {
    * Write all changes to API
    */
   async function write(): Promise<void> {
-    if (!title.value ) {
+    if (!title.value) {
       showError(t('inquiries', 'Group title must not be empty!'))
       return
     }
@@ -853,7 +840,7 @@ export const useInquiryGroupStore = defineStore('inquiryGroup', () => {
         title: title.value,
         titleExt: titleExt.value,
         description: description.value,
-        type: typeof type.value === 'string' ? type.value : type.value.type,
+        type: type.value,
         parentId: parentId.value,
         protected: protected_.value,
         ownedGroup: ownedGroup.value,
@@ -883,64 +870,80 @@ export const useInquiryGroupStore = defineStore('inquiryGroup', () => {
   }
 
   /**
-   * Archive the group
+   * Archive the current inquiry group
+   * @param inquiryGroupId - Optional group ID to archive (defaults to current group)
    */
-  async function archive(): Promise<void> {
+  async function archive(inquiryGroupId?: number): Promise<void> {
+    const groupId = inquiryGroupId || id.value
     try {
-      await update({
+      const response = await InquiryGroupsAPI.updateGroup(groupId, {
         groupStatus: 'archived',
-        publicationStatus: 'archived',
       })
-
-      emit('archive:inquiry-group', {
-        store: 'inquiryGroup',
-        message: t('inquiries', 'Inquiry group archived'),
-      })
+      if (response.data?.inquiryGroup) {
+        patchFromResponse(response.data.inquiryGroup)
+        emit('archive:inquiry-group', {
+          store: 'inquiryGroup',
+          message: t('inquiries', 'Inquiry group archived'),
+        })
+      }
     } catch (error) {
       if ((error as AxiosError)?.code === 'ERR_CANCELED') {
         return
       }
-      Logger.error('Error archiving inquiry group', { error, inquiryGroupId: id.value })
+      Logger.error('Error archiving inquiry group', {
+        error,
+        inquiryGroupId: groupId,
+      })
       throw error
     }
   }
 
   /**
-   * Restore the group
+   * Restore an archived inquiry group
    */
   async function restore(): Promise<void> {
     try {
-      await update({
+      const response = await InquiryGroupsAPI.updateGroup(id.value, {
         groupStatus: 'active',
-        publicationStatus: 'published',
       })
-
-      emit('restore:inquiry-group', {
-        store: 'inquiryGroup',
-        message: t('inquiries', 'Inquiry group restored'),
-      })
+      if (response.data?.inquiryGroup) {
+        patchFromResponse(response.data.inquiryGroup)
+        emit('restore:inquiry-group', {
+          store: 'inquiryGroup',
+          message: t('inquiries', 'Inquiry group restored'),
+        })
+      }
     } catch (error) {
       if ((error as AxiosError)?.code === 'ERR_CANCELED') {
         return
       }
-      Logger.error('Error restoring inquiry group', { error, inquiryGroupId: id.value })
+      Logger.error('Error restoring inquiry group', {
+        error,
+        inquiryGroupId: id.value,
+      })
       throw error
     }
   }
 
   /**
-   * Delete the group
+   * Delete the current inquiry group
+   * @param inquiryGroupId - Optional group ID to delete
    */
-  async function deleteGroup(): Promise<void> {
+  async function deleteGroup(inquiryGroupId?: number): Promise<void> {
+    const groupId = inquiryGroupId || id.value
     try {
-      await InquiryGroupsAPI.deleteGroup(id.value)
-      inquiryGroupsStore.removeInquiryGroup(id.value)
+      await InquiryGroupsAPI.deleteGroup(groupId)
+      // Clear the current group data after deletion
       reset()
+      inquiryGroupsStore.removeInquiryGroup(groupId)
     } catch (error) {
       if ((error as AxiosError)?.code === 'ERR_CANCELED') {
         return
       }
-      Logger.error('Error deleting inquiry group', { error, inquiryGroupId: id.value })
+      Logger.error('Error deleting inquiry group', {
+        error,
+        inquiryGroupId: groupId,
+      })
       throw error
     }
   }

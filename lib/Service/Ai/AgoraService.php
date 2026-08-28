@@ -1,37 +1,61 @@
 <?php
-// lib/Service/Ai/AgoraService.php
+
 namespace OCA\Agora\Service\Ai;
+
+use OCA\Agora\Service\AIService;
+use OCA\Agora\Service\Ai\Document\DocumentParser;
+use OCA\Agora\Service\Ai\GeneralAssistant;
 
 class AgoraService {
     private $promptRepository;
-    private $localAiClient;
+    private $aiService;
+    private $documentParser;
+    private $structureAnalyzer;
 
-    public function __construct(PromptRepository $promptRepository, LocalAiClient $localAiClient) {
+    public function __construct(
+        PromptRepository $promptRepository,
+        AIService $aiService,
+        DocumentParser $documentParser = null,
+        $structureAnalyzer = null
+    ) {
         $this->promptRepository = $promptRepository;
-        $this->localAiClient = $localAiClient;
+        $this->aiService = $aiService;
+        $this->documentParser = $documentParser;
+        $this->structureAnalyzer = $structureAnalyzer;
+    }
+
+    public function getGeneralAssistant(): GeneralAssistant {
+        return new GeneralAssistant(
+            $this->promptRepository,
+            $this->aiService
+        );
     }
 
     public function getSummarizer(): Summarizer {
-        return new Summarizer($this->promptRepository, $this->localAiClient);
+        return new Summarizer($this->promptRepository);
     }
 
     public function getClassifier(): Classifier {
-        return new Classifier($this->promptRepository, $this->localAiClient);
+        return new Classifier($this->promptRepository);
     }
 
     public function getDuplicateDetector(): DuplicateDetector {
-        return new DuplicateDetector($this->promptRepository, $this->localAiClient);
+        return new DuplicateDetector($this->promptRepository);
     }
 
     public function getOptionGenerator(): OptionGenerator {
-        return new OptionGenerator($this->promptRepository, $this->localAiClient);
+        return new OptionGenerator(
+            $this->promptRepository,
+            $this->documentParser,
+            $this->structureAnalyzer
+        );
     }
 
     public function getDebateAssistant(): DebateAssistant {
-        return new DebateAssistant($this->promptRepository, $this->localAiClient);
+        return new DebateAssistant($this->promptRepository);
     }
 
     public function getTranslator(): Translator {
-        return new Translator($this->promptRepository, $this->localAiClient);
+        return new Translator($this->promptRepository);
     }
 }

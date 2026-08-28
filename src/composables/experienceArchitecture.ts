@@ -1,17 +1,14 @@
 // ============================================================
+// Experience Architecture Definitions – using GridPosition
 // ============================================================
 
 import type { ExperienceKey } from './useExperience'
 import type { ExperienceArchitecture } from '../Types/experience.types'
 
-/**
- * Complete architecture definitions for each experience
- * @see La séparation est maintenant claire.txt - Section 8-11
- */
 export const EXPERIENCE_ARCHITECTURES: Record<ExperienceKey, ExperienceArchitecture> = {
-  
+
   // ============================================================
-  // DASHBOARD - Overview with statistics and activity
+  // DASHBOARD – 2×2 grid
   // ============================================================
   dashboard: {
     experience: 'dashboard',
@@ -19,58 +16,43 @@ export const EXPERIENCE_ARCHITECTURES: Record<ExperienceKey, ExperienceArchitect
     context: { type: 'group', selection: 'current' },
     features: ['statistics', 'activity', 'navigation'],
     display_architecture: {
-      top_left: {
+      stats: {
         content: 'statistics',
-        scope: { 
-          source: 'group',
-          filter: { 
-            status: ['active', 'published'],
-            selection: { category: 'overview' }
-          }
-        },
-        display: { type: 'widget' }
+        scope: { source: 'group' },
+        filter: { status: ['active', 'published'] },
+        display: { type: 'widget' },
+        position: { row: 1, column: 1 },
+        interaction: { on_click: { action: 'open', target: 'panel' } }
       },
-      top_right: {
+      activity: {
         content: 'activity',
-        scope: { 
-          source: 'children',
-          filter: { 
-            type: ['news', 'announcement'],
-            selection: { category: 'latest' }
-          }
-        },
-        display: { type: 'feed' }
+        scope: { source: 'children' },
+        filter: { type: ['news', 'announcement'] },
+        display: { type: 'feed' },
+        position: { row: 1, column: 2 },
+        interaction: { on_click: { action: 'open', target: 'panel' } }
       },
-      bottom_left: {
+      groups: {
         content: 'inquiry_groups',
-        scope: { 
-          source: 'children',
-          filter: { 
-            status: 'active',
-            selection: { category: 'active' }
-          }
-        },
-        display: { type: 'cards' }
+        scope: { source: 'children' },
+        filter: { status: 'active' },
+        display: { type: 'cards' },
+        position: { row: 2, column: 1 },
+        interaction: { on_click: { action: 'navigate', target: 'page' } }
       },
-      bottom_right: {
+      inquiries: {
         content: 'inquiries',
-        scope: { 
-          source: 'children',
-          filter: {
-            status: ['published', 'active'],
-            type: ['proposal', 'question'],
-            selection: { category: 'recent' }
-          },
-          sort: { field: 'created', direction: 'desc' },
-          pagination: { limit: 10, offset: 0 }
-        },
-        display: { type: 'cards' }
+        scope: { source: 'children', sort: { field: 'created', direction: 'desc' }, pagination: { limit: 10, offset: 0 } },
+        filter: { status: ['published', 'active'] },
+        display: { type: 'cards' },
+        position: { row: 2, column: 2 },
+        interaction: { on_click: { action: 'open', target: 'panel' } }
       }
     }
   },
 
   // ============================================================
-  // SOCIAL - Feed-based social interaction
+  // SOCIAL – single full‑width feed
   // ============================================================
   social: {
     experience: 'social',
@@ -80,105 +62,53 @@ export const EXPERIENCE_ARCHITECTURES: Record<ExperienceKey, ExperienceArchitect
     display_architecture: {
       main: {
         content: 'inquiries',
-        scope: { 
-          source: 'children',
-          filter: {
-            status: ['published', 'active'],
-            type: ['discussion', 'poll', 'question'],
-            selection: { category: 'social' }
-          },
-          sort: { field: 'lastInteraction', direction: 'desc' },
-          pagination: { limit: 20, offset: 0 }
-        },
-        display: { type: 'feed', pagination: 'infinite' }
-      },
-      sidebar: {
-        content: 'activity',
-        scope: { 
-          source: 'group',
-          filter: { 
-            type: ['comment', 'support', 'vote'],
-            selection: { category: 'engagement' }
-          }
-        },
-        display: { type: 'list' }
+        scope: { source: 'children', sort: { field: 'lastInteraction', direction: 'desc' }, pagination: { limit: 20, offset: 0 } },
+        filter: { status: ['published', 'active'], inquiry_type: ['discussion', 'poll', 'question'] },
+        display: { type: 'feed', pagination: 'infinite' },
+        position: { row: 1, column: 1 }
       }
     }
   },
 
   // ============================================================
-  // MARKETPLACE - Browse and discover like Airbnb
+  // MARKETPLACE – 3×3 grid with search, cards, filters, map
   // ============================================================
   marketplace: {
     experience: 'marketplace',
-    layout: { type: 'grid', columns: 3, responsive: true },
+    layout: { type: 'grid', columns: 3, rows: 3, responsive: true },
     context: { type: 'group', selection: 'all' },
     features: ['search', 'filter', 'compare', 'cards'],
     display_architecture: {
-      // Search & Filter Bar
-      search: {
+      search_bar: {
         content: 'inquiries',
-        scope: { 
-          source: 'children',
-          filter: {
-            status: ['published', 'active'],
-            type: ['proposal', 'offer', 'service', 'project'],
-            selection: { 
-              category: 'marketplace',
-              // User can filter by location, category, etc.
-            }
-          },
-          sort: { field: 'promoted', direction: 'desc' }
-        },
-        display: { type: 'tool', tool: 'search' }
+        scope: { source: 'children', sort: { field: 'promoted', direction: 'desc' } },
+        filter: { status: ['published', 'active'], inquiry_type: ['proposal', 'offer', 'service', 'project'] },
+        display: { type: 'tool', tool: 'search' },
+        position: { row: 1, column: 1, column_span: 3 }
       },
-      // Main Grid - Cards display like Airbnb
-      main: {
+      main_grid: {
         content: 'inquiries',
-        scope: { 
-          source: 'children',
-          filter: {
-            status: ['published', 'featured'],
-            type: ['proposal', 'offer', 'service'],
-            selection: {
-              // Selection filters for marketplace
-              location: '{user_selected_location}',
-              category: '{user_selected_category}',
-              tags: ['{user_selected_tags}']
-            }
-          },
-          sort: { field: 'rating', direction: 'desc' },
-          pagination: { limit: 20, offset: 0 }
-        },
-        display: { type: 'cards' }
+        scope: { source: 'children', sort: { field: 'rating', direction: 'desc' }, pagination: { limit: 20, offset: 0 } },
+        filter: { status: ['published', 'featured'], inquiry_type: ['proposal', 'offer', 'service'] },
+        display: { type: 'cards', options: { cardsPerRow: 2 } },
+        position: { row: 2, column: 1, column_span: 2 },
+        interaction: { on_click: { action: 'open', target: 'modal' } }
       },
-      // Sidebar with filters
-      sidebar: {
+      filters: {
         content: 'statistics',
-        scope: { 
-          source: 'group',
-          filter: {
-            status: ['published', 'active'],
-            selection: { category: 'marketplace_stats' }
-          }
-        },
-        display: { type: 'widget' }
+        scope: { source: 'group' },
+        filter: { status: ['published', 'active'] },
+        display: { type: 'widget' },
+        position: { row: 2, column: 3 },
+        interaction: { on_click: { action: 'open', target: 'panel' } }
       },
-      // Map view for location-based browsing
-      map: {
+      map_view: {
         content: 'inquiries',
-        scope: { 
-          source: 'children',
-          filter: {
-            status: ['published', 'active'],
-            type: ['proposal', 'offer', 'service'],
-            selection: {
-              location: '{user_selected_location}',
-              category: 'geolocated'
-            }
-          }
-        },
-        display: { type: 'map' }
+        scope: { source: 'children' },
+        filter: { status: ['published', 'active'], inquiry_type: ['proposal', 'offer', 'service'] },
+        display: { type: 'list' },
+        position: { row: 3, column: 1, column_span: 3 },
+        interaction: { on_click: { action: 'open', target: 'panel' } }
       }
     }
   },
@@ -192,19 +122,20 @@ export const EXPERIENCE_ARCHITECTURES: Record<ExperienceKey, ExperienceArchitect
     context: { type: 'group', selection: 'current' },
     features: ['drag-drop', 'status-tracking', 'progress'],
     display_architecture: {
-      main: {
+      board: {
         content: 'inquiries',
         scope: { 
           source: 'children',
-          filter: {
-            status: ['active', 'in_progress', 'review'],
-            selection: { category: 'board' }
-          },
           sort: { field: 'priority', direction: 'desc' }
         },
-        display: { 
-          type: 'tool',
-          tool: 'kanban'
+        filter: {
+          status: ['active', 'in_progress', 'review'],
+          selection: { category: 'board' }
+        },
+        display: { type: 'tool', tool: 'kanban' },
+        position: { row: 1, column: 1, row_span: 1 },
+        interaction: {
+          on_click: { action: 'select', target: 'same_view' }
         }
       }
     }
@@ -215,38 +146,54 @@ export const EXPERIENCE_ARCHITECTURES: Record<ExperienceKey, ExperienceArchitect
   // ============================================================
   timeline: {
     experience: 'timeline',
-    layout: { type: 'full', responsive: true },
+    layout: { type: 'grid', columns: 2, rows: 2, responsive: true },
     context: { type: 'group', selection: 'current' },
     features: ['chronological', 'events', 'milestones'],
     display_architecture: {
-      main: {
+      timeline_view: {
         content: 'inquiries',
         scope: { 
           source: 'children',
-          filter: {
-            status: ['published', 'completed', 'archived'],
-            date: {
-              from: Date.now() - (365 * 24 * 60 * 60 * 1000) // Last year
-            },
-            selection: { category: 'history' }
-          },
           sort: { field: 'created', direction: 'asc' }
         },
-        display: { 
-          type: 'tool',
-          tool: 'timeline'
+        filter: {
+          status: ['published', 'completed', 'archived'],
+          date: {
+            from: Date.now() - (365 * 24 * 60 * 60 * 1000) // Last year
+          },
+          selection: { category: 'history' }
+        },
+        display: { type: 'tool', tool: 'timeline' },
+        position: { row: 1, column: 1, column_span: 2 },
+        interaction: {
+          on_click: { action: 'open', target: 'panel' }
         }
       },
-      sidebar: {
+      stats: {
         content: 'statistics',
-        scope: { 
-          source: 'group',
-          filter: { 
-            status: ['published', 'completed'],
-            selection: { category: 'timeline_stats' }
-          }
+        scope: { source: 'group' },
+        filter: { 
+          status: ['published', 'completed'],
+          selection: { category: 'timeline_stats' }
         },
-        display: { type: 'widget' }
+        display: { type: 'widget' },
+        position: { row: 2, column: 1 },
+        interaction: {
+          on_click: { action: 'open', target: 'panel' }
+        }
+      },
+      activity_summary: {
+        content: 'activity',
+        scope: { source: 'children' },
+        filter: {
+          type: ['milestone', 'event'],
+          selection: { category: 'timeline' }
+        },
+        display: { type: 'list' },
+        position: { row: 2, column: 2 },
+        interaction: {
+          on_click: { action: 'open', target: 'panel' }
+        }
       }
     }
   },
@@ -256,46 +203,54 @@ export const EXPERIENCE_ARCHITECTURES: Record<ExperienceKey, ExperienceArchitect
   // ============================================================
   wiki: {
     experience: 'wiki',
-    layout: { type: 'sidebar', responsive: true },
+    layout: { type: 'grid', columns: 2, rows: 2, responsive: true },
     context: { type: 'group', selection: 'selected' },
     features: ['tree-navigation', 'structure', 'book-reading'],
     display_architecture: {
-      sidebar: {
+      navigation: {
         content: 'inquiry_groups',
         scope: { 
           source: 'children',
-          filter: { 
-            status: ['published', 'active'],
-            selection: { category: 'navigation' }
-          },
           sort: { field: 'order', direction: 'asc' }
         },
-        display: { type: 'tree' }
-      },
-      main: {
-        content: 'inquiry',
-        scope: { 
-          source: 'selected',
-          filter: { 
-            status: ['published', 'active'],
-            selection: { category: 'content' }
-          }
+        filter: { 
+          status: ['published', 'active'],
+          selection: { category: 'navigation' }
         },
-        display: { type: 'full' }
+        display: { type: 'tree' },
+        position: { row: 1, column: 1, row_span: 2 },
+        interaction: {
+          on_click: { action: 'navigate', target: 'same_view' }
+        }
       },
-      bottom: {
-        content: 'options',
-        scope: { 
-          source: 'selected_inquiry',
-          family: 'structure',
-          filter: { 
-            status: ['published', 'active'],
-            selection: { category: 'structure' }
-          }
+      content: {
+        content: 'inquiry',
+        scope: { source: 'selected_inquiry' },
+        filter: { 
+          status: ['published', 'active'],
+          selection: { category: 'content' }
         },
         display: { 
-          type: 'tool',
-          tool: 'structure'
+          type: 'book',
+          options: { showMeta: true }
+        },
+        position: { row: 1, column: 2 },
+        interaction: {
+          on_click: { action: 'open', target: 'page' }
+        }
+      },
+      structure: {
+        content: 'options',
+        scope: { source: 'selected_inquiry' },
+        filter: { 
+          family: 'structure',
+          status: ['published', 'active'],
+          selection: { category: 'structure' }
+        },
+        display: { type: 'tool', tool: 'structure' },
+        position: { row: 2, column: 2 },
+        interaction: {
+          on_click: { action: 'open', target: 'panel' }
         }
       }
     }
@@ -310,57 +265,102 @@ export const EXPERIENCE_ARCHITECTURES: Record<ExperienceKey, ExperienceArchitect
     context: { type: 'group', selection: 'selected' },
     features: ['debate', 'resources', 'comments', 'decision-making'],
     display_architecture: {
-      top_left: {
+      inquiry_detail: {
         content: 'inquiry',
-        scope: { 
-          source: 'selected',
-          filter: { 
-            status: ['active', 'debate', 'voting'],
-            selection: { category: 'decision' }
-          }
+        scope: { source: 'selected_inquiry' },
+        filter: { 
+          status: ['active', 'debate', 'voting'],
+          selection: { category: 'decision' }
         },
-        display: { type: 'full' }
+        display: { 
+          type: 'full',
+          options: { showMeta: true, showStats: true }
+        },
+        position: { row: 1, column: 1 },
+        interaction: {
+          on_click: { action: 'open', target: 'page' }
+        }
       },
-      top_right: {
+      resources: {
         content: 'resources',
-        scope: { 
-          source: 'selected_inquiry',
-          filter: { 
-            type: ['document', 'link', 'reference'],
-            selection: { category: 'resources' }
-          }
+        scope: { source: 'selected_inquiry' },
+        filter: { 
+          type: ['document', 'link', 'reference'],
+          selection: { category: 'resources' }
         },
-        display: { type: 'list' }
+        display: { 
+          type: 'list',
+          options: { showMeta: true }
+        },
+        position: { row: 1, column: 2 },
+        interaction: {
+          on_click: { action: 'open', target: 'panel' }
+        }
       },
-      bottom_left: {
+      debate: {
         content: 'options',
         scope: { 
           source: 'selected_inquiry',
-          family: 'debate',
-          filter: {
-            status: ['active', 'proposed', 'under_discussion'],
-            selection: { category: 'debate' }
-          },
           sort: { field: 'supportCount', direction: 'desc' }
         },
-        display: { 
-          type: 'tool',
-          tool: 'debate'
+        filter: {
+          family: 'debate',
+          status: ['active', 'proposed', 'under_discussion'],
+          selection: { category: 'debate' }
+        },
+        display: { type: 'tool', tool: 'debate' },
+        position: { row: 2, column: 1 },
+        interaction: {
+          on_click: { action: 'open', target: 'panel' }
         }
       },
-      bottom_right: {
-        content: 'messages',
+      discussion: {
+        content: 'comments',
         scope: { 
           source: 'selected_inquiry',
-          filter: {
-            type: ['comment', 'argument', 'objection'],
-            status: 'published',
-            selection: { category: 'discussion' }
-          },
           sort: { field: 'created', direction: 'desc' },
           pagination: { limit: 50, offset: 0 }
         },
-        display: { type: 'feed' }
+        filter: {
+          type: ['comment', 'argument', 'objection'],
+          status: 'published',
+          selection: { category: 'discussion' }
+        },
+        display: { 
+          type: 'feed',
+          options: { showMeta: true }
+        },
+        position: { row: 2, column: 2 },
+        interaction: {
+          on_click: { action: 'comment', target: 'panel' }
+        }
+      }
+    }
+  },
+
+  // ============================================================
+  // NAVIGATION - Simple navigation
+  // ============================================================
+  navigation: {
+    experience: 'navigation',
+    layout: { type: 'full', responsive: true },
+    context: { type: 'group', selection: 'current' },
+    features: ['navigation'],
+    display_architecture: {
+      groups: {
+        content: 'inquiry_groups',
+        scope: { 
+          source: 'children',
+          sort: { field: 'order', direction: 'asc' }
+        },
+        filter: {
+          status: ['active', 'published']
+        },
+        display: { type: 'navigation' },
+        position: { row: 1, column: 1 },
+        interaction: {
+          on_click: { action: 'navigate', target: 'page' }
+        }
       }
     }
   }
@@ -368,7 +368,7 @@ export const EXPERIENCE_ARCHITECTURES: Record<ExperienceKey, ExperienceArchitect
 
 /**
  * Get the architecture for a given experience
- * @param experience
+ * @param experience - The experience key
  */
 export function getExperienceArchitecture(experience: ExperienceKey): ExperienceArchitecture {
   return EXPERIENCE_ARCHITECTURES[experience] || EXPERIENCE_ARCHITECTURES.dashboard

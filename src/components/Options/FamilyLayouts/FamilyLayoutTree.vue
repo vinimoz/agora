@@ -702,7 +702,7 @@
         <OptionDetailModal
             v-if="showDetailModal && selectedNode"
             :option-id="selectedNode.id"
-            :inquiry-id="inquiryStore.id"
+            :inquiry-id="inquiryId"
             @close="closeDetailModal"
             @updated="handleNodeUpdated"
             @deleted="handleNodeDeleted"
@@ -710,7 +710,7 @@
 
         <OptionAddModal
             v-if="showAddOptionModal"
-            :inquiry-id="inquiryStore.id"
+            :inquiry-id="inquiryId"
             :option-type="selectedOptionTypeKey"
             :parent-id="selectedParentId"
             @close="closeAddOptionModal"
@@ -728,7 +728,6 @@ import { SupportFeature } from '../../Base/index.ts'
 import { DateTime } from 'luxon'
 import DOMPurify from 'dompurify'
 
-import { useInquiryStore } from '../../../stores/inquiry'
 import { useOptionsStore } from '../../../stores/options'
 import { useSessionStore } from '../../../stores/session'
 import { useOptionStore } from '../../../stores/option'
@@ -757,8 +756,14 @@ import type { Option, OptionType, OptionStoreLike } from '../../../Types/index.t
 import OptionAddModal from '../../Modals/OptionAddModal.vue'
 import OptionDetailModal from '../../Modals/OptionDetailModal.vue'
 
+const props = defineProps<{
+  family?: OptionFamily
+  inquiryId: number
+  optionTypes: InquiryOptionType[]
+  	familyOptionTypes?: InquiryOptionType[] 
+}>()
+
 // Stores
-const inquiryStore = useInquiryStore()
 const optionsStore = useOptionsStore()
 const sessionStore = useSessionStore()
 const optionStore = useOptionStore()
@@ -1046,8 +1051,8 @@ const handleOptionCreated = (newOption: Option): void => {
 
 // Initialize
 onMounted(() => {
-  if (inquiryStore.id) {
-    optionsStore.load(inquiryStore.id).then(() => {
+  if (inquiryId) {
+    optionsStore.load(inquiryId).then(() => {
       if (structureRootOptions.value.length > 0 && !activeNodeId.value) {
         setActiveNode(structureRootOptions.value[0])
       }
