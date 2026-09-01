@@ -89,6 +89,8 @@ use OCA\Agora\Service\InquiryOptionTypeService;
 use OCA\Agora\Service\InquiryFamilyService;
 use OCA\Agora\Service\OptionFamilyService;
 use OCA\Agora\Service\InquiryLinkService;
+use OCA\Agora\Db\TrendingScore;
+use OCA\Agora\Db\TrendingScoreMapper;
 
 // ============ AI SERVICES ============
 use OCP\TaskProcessing\IManager;
@@ -371,6 +373,11 @@ class Application extends App implements IBootstrap
             }
         );
 
+	$context->registerService(TrendingScoreMapper::class, function ($c) {
+        return new TrendingScoreMapper(
+            $c->get(IDBConnection::class)
+        );
+    	});
 
         // Register AgoraService (main AI service)
         $context->registerService(

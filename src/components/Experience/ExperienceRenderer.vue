@@ -48,7 +48,7 @@
     </div>
 
     <!-- ============================================================ -->
-    <!-- DYNAMIC LAYOUT - Based on display_architecture              -->
+    <!-- DYNAMIC LAYOUT - Based on displayArchitecture              -->
     <!-- ============================================================ -->
     <div
       v-else-if="filteredArchitecture && Object.keys(filteredArchitecture).length > 0" 
@@ -85,6 +85,9 @@
             @view="(item) => handleInquiryClick(item, zoneKey)"
           />
         </div>
+	  <div v-if="!hasZoneData(zone)" class="zone-empty-message">
+    {{ t('agora', 'No content available for this zone') }}
+  </div>
       </div>
     </div>
 
@@ -225,6 +228,7 @@ import InquirySummary from '../InquiryGroup/InquirySummary.vue'
 import InquiryRichHTML from '../InquiryGroup/InquiryRichHTML.vue'
 import InquiryKanban from '../InquiryGroup/InquiryKanban.vue'
 import InquiryTimeline from '../InquiryGroup/InquiryTimeline.vue'
+import BookDisplay from '../InquiryGroup/BookDisplay.vue'
 
 // ============================================================
 // GROUP DISPLAY COMPONENTS
@@ -349,7 +353,7 @@ const displayArchitecture = computed(() => props.displayArchitecture || null)
 const layoutConfig = computed(() => props.layoutConfig || { type: 'grid', columns: 3, rows: 2, responsive: true })
 
 // ============================================================
-// COMPUTED - Grid Style using position row/column/span
+// COMPUTED - Grid Style using position row/column/span (camelCase)
 // ============================================================
 const gridStyle = computed(() => {
   const cols = layoutConfig.value.columns || 3
@@ -415,7 +419,7 @@ const availableDisplays = computed(() => {
 // ============================================================
 // COMPUTED - Filtered Architecture - ONLY show zones with data
 // ============================================================
-const filteredArchitecture = computed(() => {
+/*const filteredArchitecture = computed(() => {
   const arch = effectiveArchitecture.value
   const filtered: Record<string, any> = {}
   for (const key in arch) {
@@ -426,69 +430,60 @@ const filteredArchitecture = computed(() => {
   }
   return filtered
 })
+*/
+const filteredArchitecture = computed(() => {
+  return effectiveArchitecture.value; // no filtering
+});
 
 function hasZoneData(zone: any): boolean {
   if (!zone) return false
   const content = zone.content || 'inquiries'
   const data = getZoneData(zone)
   
-  // For inquiry_groups, check if there are groups
   if (content === 'inquiry_groups') {
     return data && data.length > 0
   }
-  
-  // For inquiries, check if there are inquiries
   if (content === 'inquiries') {
     return data && data.length > 0
   }
-  
-  // For inquiry (single), check if there's a selected inquiry
   if (content === 'inquiry') {
     const selected = getSelectedInquiry()
     return selected !== null
   }
-  
-  // For options, check if there are options
   if (content === 'options') {
     const options = getZoneOptions(zone)
     return options && options.length > 0
   }
-  
-  // For comments, check if there are comments
   if (content === 'comments') {
     const selected = getSelectedInquiry()
     if (!selected) return false
     const comments = commentsStore.comments.filter(c => c.inquiryId === selected.id)
     return comments && comments.length > 0
   }
-  
-  // For statistics and activity, always show if there's data
   if (content === 'statistics') {
     return props.inquiries && props.inquiries.length > 0
   }
-  
   if (content === 'activity') {
     return props.inquiries && props.inquiries.length > 0
   }
-  
   return true
 }
 
 // ============================================================
-// EFFECTIVE ARCHITECTURE
+// EFFECTIVE ARCHITECTURE (camelCase)
 // ============================================================
 const effectiveArchitecture = computed(() => {
   let arch = {}
   try {
     const exp = props.experience || 'dashboard'
-    const groupDefault = props.uiConfig?.default_experience || 'dashboard'
+    const groupDefault = props.uiConfig?.defaultExperience || 'dashboard'  // camelCase
     if (exp !== groupDefault) {
       const globalArch = getExperienceArchitecture(exp as ExperienceKey)
-      arch = globalArch?.display_architecture || {}
+      arch = globalArch?.displayArchitecture || {}  // camelCase
     } else if (props.displayArchitecture && Object.keys(props.displayArchitecture).length > 0) {
       arch = props.displayArchitecture
     } else {
-      arch = getExperienceArchitecture('dashboard')?.display_architecture || {}
+      arch = getExperienceArchitecture('dashboard')?.displayArchitecture || {}
     }
   } catch (e) {
     console.warn('Error computing architecture:', e)
@@ -500,7 +495,7 @@ const effectiveArchitecture = computed(() => {
 })
 
 // ============================================================
-// ZONE GRID POSITION HELPER
+// ZONE GRID POSITION HELPER (camelCase)
 // ============================================================
 function getZoneGridPosition(zone: any): GridPosition | null {
   if (!zone || !zone.position) return null
@@ -509,8 +504,8 @@ function getZoneGridPosition(zone: any): GridPosition | null {
   return {
     row: pos.row || 1,
     column: pos.column || 1,
-    row_span: pos.row_span || 1,
-    column_span: pos.column_span || 1,
+    rowSpan: pos.rowSpan || 1,      // was row_span
+    columnSpan: pos.columnSpan || 1, // was column_span
   }
 }
 
@@ -525,6 +520,15 @@ function getZoneData(zone: any) {
   const source = scope.source || 'all'
 
   const rawData = fetchRawData(content, source)
+  console.log("GET  ZONE DATA BEFORE CONTENT", zone.content)
+  console.log("GET  ZONE DATA BEFORE SCOPE", zone.scope)
+  console.log("GET  ZONE DATA BEFORE FILTER", rawData)
+  console.log("GET  ZONE DATA WITH FILTER", processZoneData(rawData, {
+    filter: zone.filter,
+    sort: scope.sort,
+    pagination: scope.pagination
+  }))
+
   return processZoneData(rawData, {
     filter: zone.filter,
     sort: scope.sort,
@@ -603,7 +607,7 @@ function getZoneComponent(zone: any) {
   const type = display.type || 'cards'
   const tool = display.tool
 
-  // COMPONENT MAP - Clean architecture
+  // COMPONENT MAP - using only valid DisplayType values
   const componentMap: Record<string, any> = {
     // ---- Inquiry Groups ----
     inquiry_groups: {
@@ -617,24 +621,20 @@ function getZoneComponent(zone: any) {
     inquiries: {
       'list': InquiryListItem,
       'cards': InquiryCard,
-      'grid': InquiryGrid,
       'feed': InquiryFeed,
       'tree': InquiryTree,
-       'timeline': InquiryTimeline,
-       'kanban': InquiryKanban,
-      'summary': InquirySummary,
-      'compact': InquirySummary,
-      'horizontal': InquiryCard,
+      'timeline': InquiryTimeline,
+      'kanban': InquiryKanban,
+      'book': BookDisplay,    // book display uses rich html view
       'tool': getToolComponent(tool, content),
+      // fallback for any other valid type not explicitly mapped
     },
 
     // ---- Inquiry (singular) ----
     inquiry: {
-      'full': InquiryRichHTML,
+      'full': InquiryRichHTML,    // full is not a valid DisplayType, but kept for legacy
       'book': InquiryRichHTML,
       'rich_html': InquiryRichHTML,
-      'summary': InquirySummary,
-      'compact': InquirySummary,
       'cards': InquiryCard,
     },
 
@@ -674,6 +674,7 @@ function getZoneComponent(zone: any) {
 
   const component = contentComponents[type]
   if (!component) {
+    // fallback to cards if type is not valid
     return contentComponents['cards'] || InquiryCard
   }
 
@@ -685,11 +686,9 @@ function getZoneComponent(zone: any) {
 // ============================================================
 function getToolComponent(tool: string, content: string) {
   const toolMap: Record<string, any> = {
-    // For inquiries
     'vote': FamilyLayoutVote,
     'timeline': FamilyLayoutTimeline,
     'kanban': FamilyLayoutKanban,
-    // For options
     'consensus': FamilyLayoutConsensusFlow,
     'debate': FamilyLayoutPaired,
     'structure': FamilyLayoutTree,
@@ -702,26 +701,20 @@ function getToolComponent(tool: string, content: string) {
 }
 
 // ============================================================
-// DISPLAY COMPONENT (fallback)
+// DISPLAY COMPONENT (fallback) - only valid DisplayType
 // ============================================================
 function getDisplayComponent(mode: string) {
   const map: Record<string, any> = {
     cards: InquiryCard,
     list: InquiryListItem,
-    grid: InquiryGrid,
     feed: InquiryFeed,
     tree: InquiryTree,
     timeline: InquiryTimeline,
     kanban: InquiryKanban,
-    summary: InquirySummary,
-    compact: InquirySummary,
-    horizontal: InquiryCard,
     book: InquiryRichHTML,
-    rich_html: InquiryRichHTML,
-  }
-  
-  if (mode === 'compact' || mode === 'summary' || mode === 'horizontal') {
-    return InquiryCard
+    widget: InquiryCard, // fallback
+    tool: InquiryCard,   // fallback
+    navigation: InquiryGroupNavigation,
   }
   
   return map[mode] || InquiryCard
@@ -732,6 +725,8 @@ function getDisplayComponent(mode: string) {
 // ============================================================
 function getZoneProps(zone: any) {
   if (!zone) return {}
+  
+  console.log(`[DEBUG] Zone props for "${zone.content}":`, props)
 
   const content = zone.content || 'inquiries'
   const display = zone.display || { type: 'cards' }
@@ -919,13 +914,11 @@ function getZoneStyle(zone: any) {
   const pos = getZoneGridPosition(zone)
   const styles: Record<string, string> = {}
   
-  // Apply grid position styles
   if (pos) {
-    styles.gridRow = `${pos.row} / span ${pos.row_span || 1}`
-    styles.gridColumn = `${pos.column} / span ${pos.column_span || 1}`
+    styles.gridRow = `${pos.row} / span ${pos.rowSpan || 1}`
+    styles.gridColumn = `${pos.column} / span ${pos.columnSpan || 1}`
   }
   
-  // Apply custom styles
   const display = zone.display || {}
   if (display.width) styles.width = display.width
   if (display.height) styles.height = display.height
@@ -941,111 +934,73 @@ function getChildGroups(): InquiryGroup[] {
 }
 
 // ============================================================
-// TWO-CLICK INTERACTION HANDLERS
+// TWO-CLICK INTERACTION HANDLERS (using top-level action/target)
 // ============================================================
 
-/**
- * Handle inquiry click with two-click interaction:
- * - First click: Select the inquiry (update selected state)
- * - Second click on same inquiry: Perform the interaction action defined in the zone
- */
 function handleInquiryClick(inquiry: Inquiry, zoneKey: string) {
   if (!inquiry) return
   
   const zone = filteredArchitecture.value[zoneKey]
   
-  // If this is the first click or a different inquiry, just select it
   if (selectedInquiryId.value !== inquiry.id) {
     selectedInquiryId.value = inquiry.id
-    selectedOptionId.value = null // Reset option selection
+    selectedOptionId.value = null
     emit('selectInquiry', inquiry)
     return
   }
   
-  // Second click on the same inquiry -> perform interaction
-  if (zone?.interaction?.on_click) {
-    const { action, target } = zone.interaction.on_click
-    
-    switch (action) {
-      case 'open':
-        if (target === 'page') {
+  // Second click – use interaction from zone (top-level)
+  if (zone?.interaction) {
+    const { action, target } = zone.interaction
+    if (action) {
+      switch (action) {
+        case 'open':
+          if (target === 'page') {
+            emit('viewInquiry', inquiry)
+          } else if (target === 'panel' || target === 'modal' || target === 'dialog') {
+            emit('openPanel', { inquiry, zone: zoneKey, target })
+          } else {
+            emit('viewInquiry', inquiry)
+          }
+          break
+        case 'navigate':
+          emit('navigateTo', inquiry)
+          break
+        case 'select':
+          // already selected
+          break
+        default:
           emit('viewInquiry', inquiry)
-        } else if (target === 'panel' || target === 'modal' || target === 'dialog') {
-          emit('openPanel', { inquiry, zone: zoneKey, target })
-        } else {
-          // Default: view inquiry
-          emit('viewInquiry', inquiry)
-        }
-        break
-      
-      case 'navigate':
-        emit('navigateTo', inquiry)
-        break
-      
-      case 'select':
-        // Already selected, just keep it
-        break
-      
-      case 'vote':
-        // Could emit a vote action
-        emit('viewInquiry', inquiry)
-        break
-      
-      case 'edit':
-        emit('viewInquiry', inquiry)
-        break
-      
-      case 'comment':
-        emit('viewInquiry', inquiry)
-        break
-      
-      case 'support':
-        emit('viewInquiry', inquiry)
-        break
-      
-      default:
-        // Fallback: view inquiry
-        emit('viewInquiry', inquiry)
+      }
+    } else {
+      emit('viewInquiry', inquiry)
     }
   } else {
-    // No interaction defined, just view as fallback
     emit('viewInquiry', inquiry)
   }
 }
 
-/**
- * Handle option click with two-click interaction
- */
 function handleOptionClick(option: any, zoneKey: string) {
   if (!option) return
   
   const zone = filteredArchitecture.value[zoneKey]
   
-  // If this is the first click or a different option, just select it
   if (selectedOptionId.value !== option.id) {
     selectedOptionId.value = option.id
-    selectedInquiryId.value = null // Reset inquiry selection
+    selectedInquiryId.value = null
     return
   }
   
-  // Second click on the same option -> perform interaction
-  if (zone?.interaction?.on_click) {
-    const { action, target } = zone.interaction.on_click
-    
-    switch (action) {
-      case 'open':
-        if (target === 'page') {
-          emit('viewOption', option)
-        } else if (target === 'panel' || target === 'modal' || target === 'dialog') {
-          // Could emit a specific openPanel for options
-          emit('viewOption', option)
-        } else {
-          emit('viewOption', option)
-        }
-        break
-      
-      default:
+  if (zone?.interaction) {
+    const { action, target } = zone.interaction
+    if (action === 'open') {
+      if (target === 'page' || target === 'panel' || target === 'modal' || target === 'dialog') {
         emit('viewOption', option)
+      } else {
+        emit('viewOption', option)
+      }
+    } else {
+      emit('viewOption', option)
     }
   } else {
     emit('viewOption', option)
@@ -1053,11 +1008,10 @@ function handleOptionClick(option: any, zoneKey: string) {
 }
 
 // ============================================================
-// LEGACY EVENT HANDLERS (for backward compatibility)
+// LEGACY EVENT HANDLERS
 // ============================================================
 function handleViewInquiry(inquiry: Inquiry) {
   if (!inquiry) return
-  // If this comes from a component without zone context, try to find which zone it belongs to
   const zoneKey = findZoneForInquiry(inquiry)
   handleInquiryClick(inquiry, zoneKey || 'fallback')
 }
@@ -1120,7 +1074,7 @@ function toggleComments() {
 }
 
 // ============================================================
-// WATCHERS - Reset selection when props change
+// WATCHERS
 // ============================================================
 watch(
   () => props.selectedInquiry,
@@ -1134,7 +1088,6 @@ watch(
 watch(
   () => props.inquiries,
   () => {
-    // If the inquiries list changes and the selected inquiry is no longer in the list, reset selection
     if (selectedInquiryId.value && props.inquiries) {
       const stillExists = props.inquiries.some(i => i.id === selectedInquiryId.value)
       if (!stillExists) {

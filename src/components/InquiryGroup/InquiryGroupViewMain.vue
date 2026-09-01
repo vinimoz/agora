@@ -587,7 +587,7 @@ onMounted(() => {
   position: sticky;
   top: 24px;
   height: fit-content;
-  max-height: calc(100vh - 120px);
+  max-height: calc(100vh - 60px);
   overflow-y: auto;
   border-radius: 12px;
   border: 1px solid var(--color-border);

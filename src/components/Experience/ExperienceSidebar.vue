@@ -101,26 +101,20 @@ import { useSessionStore } from '../../stores/session'
 import type { InquiryGroup } from '../../stores/inquiryGroups.types'
 import type { Inquiry } from '../../Types'
 
-// ============================================================
-// IMPORT - Tool definitions from vocabulary
-// ============================================================
+// Import tool vocabulary
 import { ALL_TOOLS, type ToolValue } from '../Types/experience.types'
 
-// ============================================================
-// TOOL ICON MAP - Single source of truth for tool icons
-// ============================================================
-const TOOL_ICON_MAP: Record<ToolValue, { icon: any; label: string }> = {
+// Only include tools that are in ALL_TOOLS
+const TOOL_ICON_MAP: Partial<Record<ToolValue, { icon: any; label: string }>> = {
   debate: { icon: Icons.MessageSquare, label: 'Debate' },
   vote: { icon: Icons.CheckCircle, label: 'Vote' },
   support: { icon: Icons.ThumbUp, label: 'Support' },
   kanban: { icon: Icons.Board, label: 'Kanban' },
   timeline: { icon: Icons.Clock, label: 'Timeline' },
   wiki: { icon: Icons.Book, label: 'Wiki' },
-  map: { icon: Icons.MapPin, label: 'Map' },
   analytics: { icon: Icons.BarChart, label: 'Analytics' },
   compare: { icon: Icons.Compare, label: 'Compare' },
   quorum: { icon: Icons.Users, label: 'Quorum' },
-  results: { icon: Icons.Chart, label: 'Results' },
   consensus: { icon: Icons.Handshake, label: 'Consensus' },
   structure: { icon: Icons.FolderTree, label: 'Structure' },
   search: { icon: Icons.Magnify, label: 'Search' },
@@ -159,7 +153,6 @@ const navItems = computed(() => {
   const inquiryCount = props.inquiries?.length || 0
   const optionCount = props.options?.length || 0
   
-  // Use status values from the inquiry status vocabulary
   const debateCount = props.inquiries?.filter(i => i.status?.inquiryStatus === 'debate').length || 0
   const votingCount = props.inquiries?.filter(i => i.status?.inquiryStatus === 'voting').length || 0
   
@@ -209,13 +202,12 @@ const navItems = computed(() => {
 
 const toolItems = computed(() => {
   const availableTools = props.tools || []
-  
   return availableTools
     .filter(key => TOOL_ICON_MAP[key as ToolValue])
     .map(key => ({
       key,
-      icon: TOOL_ICON_MAP[key as ToolValue].icon,
-      label: TOOL_ICON_MAP[key as ToolValue].label,
+      icon: TOOL_ICON_MAP[key as ToolValue]!.icon,
+      label: TOOL_ICON_MAP[key as ToolValue]!.label,
       active: false,
       action: () => emit('navigate', key)
     }))

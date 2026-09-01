@@ -9,9 +9,7 @@ import { t } from '@nextcloud/l10n'
 import { useInquiryGroupsStore } from '../stores/inquiryGroups'
 import type { InquiryGroup } from '../stores/inquiryGroups.types'
 
-// ============================================================
-// IMPORT VOCABULARY FROM TYPES
-// ============================================================
+// Import types from the single source of truth
 import {
   EXPERIENCE_VALUES,
   CONTENT_VALUES,
@@ -21,12 +19,13 @@ import {
   OPTION_TOOLS,
   MARKETPLACE_TOOLS,
   ALL_TOOLS,
-  type ExperienceValue,
-  type ContentValue,
-  type SourceValue,
-  type DisplayTypeValue,
-  type ToolValue,
+  type DisplayType,
+  type ToolKey,
+  type ExperienceKey,
 } from '../Types/experience.types'
+
+// Re‑export types for convenience
+export type { DisplayType, ToolKey, ExperienceKey }
 
 // ============================================================
 // EXPERIENCE DEFINITIONS - Single source of truth
@@ -43,10 +42,10 @@ export const EXPERIENCE_DEFINITIONS = {
     description: 'Understand and see what is happening',
     verb: 'Understand',
     question: 'What is happening here and where can I go?',
-    defaultTools: ['quorum', 'analytics'] as ToolValue[],
-    defaultDisplay: 'cards' as DisplayTypeValue,
-    allowedDisplays: ['cards', 'list', 'feed'] as DisplayTypeValue[],
-    allowedTools: ['quorum', 'analytics', 'resources'] as ToolValue[],
+    defaultTools: ['quorum', 'analytics'] as ToolKey[],
+    defaultDisplay: 'cards' as DisplayType,
+    allowedDisplays: ['cards', 'list', 'feed'] as DisplayType[],
+    allowedTools: ['quorum', 'analytics', 'resources'] as ToolKey[],
     layout: 'grid',
     showHeader: true,
     showBreadcrumb: true,
@@ -64,10 +63,10 @@ export const EXPERIENCE_DEFINITIONS = {
     description: 'Follow and participate',
     verb: 'Follow',
     question: 'What are others thinking?',
-    defaultTools: ['support', 'debate', 'vote'] as ToolValue[],
-    defaultDisplay: 'feed' as DisplayTypeValue,
-    allowedDisplays: ['feed', 'cards', 'list'] as DisplayTypeValue[],
-    allowedTools: ['support', 'debate', 'vote'] as ToolValue[],
+    defaultTools: ['support', 'debate', 'vote'] as ToolKey[],
+    defaultDisplay: 'feed' as DisplayType,
+    allowedDisplays: ['feed', 'cards', 'list'] as DisplayType[],
+    allowedTools: ['support', 'debate', 'vote'] as ToolKey[],
     layout: 'full',
     showHeader: true,
     showBreadcrumb: true,
@@ -85,10 +84,10 @@ export const EXPERIENCE_DEFINITIONS = {
     description: 'Browse and discover',
     verb: 'Discover',
     question: 'What is available?',
-    defaultTools: ['search', 'filter', 'compare'] as ToolValue[],
-    defaultDisplay: 'cards' as DisplayTypeValue,
-    allowedDisplays: ['cards', 'list'] as DisplayTypeValue[],
-    allowedTools: ['search', 'filter', 'compare', 'resources'] as ToolValue[],
+    defaultTools: ['search', 'filter', 'compare'] as ToolKey[],
+    defaultDisplay: 'cards' as DisplayType,
+    allowedDisplays: ['cards', 'list'] as DisplayType[],
+    allowedTools: ['search', 'filter', 'compare', 'resources'] as ToolKey[],
     layout: 'grid',
     showHeader: true,
     showBreadcrumb: true,
@@ -106,11 +105,11 @@ export const EXPERIENCE_DEFINITIONS = {
     description: 'Build and track',
     verb: 'Build',
     question: 'Where is the process?',
-    defaultTools: ['kanban', 'support'] as ToolValue[],
-    defaultDisplay: 'tool' as DisplayTypeValue,
-    defaultTool: 'kanban' as ToolValue,
-    allowedDisplays: ['tool', 'list', 'cards'] as DisplayTypeValue[],
-    allowedTools: ['kanban', 'support', 'timeline', 'resources'] as ToolValue[],
+    defaultTools: ['kanban', 'support'] as ToolKey[],
+    defaultDisplay: 'tool' as DisplayType,
+    defaultTool: 'kanban' as ToolKey,
+    allowedDisplays: ['tool', 'list', 'cards'] as DisplayType[],
+    allowedTools: ['kanban', 'support', 'timeline', 'resources'] as ToolKey[],
     layout: 'full',
     showHeader: true,
     showBreadcrumb: true,
@@ -128,11 +127,11 @@ export const EXPERIENCE_DEFINITIONS = {
     description: 'Understand the evolution',
     verb: 'Understand',
     question: 'How has this evolved?',
-    defaultTools: ['timeline', 'wiki'] as ToolValue[],
-    defaultDisplay: 'tool' as DisplayTypeValue,
-    defaultTool: 'timeline' as ToolValue,
-    allowedDisplays: ['tool', 'list', 'full'] as DisplayTypeValue[],
-    allowedTools: ['timeline', 'wiki', 'analytics', 'resources'] as ToolValue[],
+    defaultTools: ['timeline', 'wiki'] as ToolKey[],
+    defaultDisplay: 'tool' as DisplayType,
+    defaultTool: 'timeline' as ToolKey,
+    allowedDisplays: ['tool', 'list'] as DisplayType[],  // removed 'full'
+    allowedTools: ['timeline', 'wiki', 'analytics', 'resources'] as ToolKey[],
     layout: 'full',
     showHeader: true,
     showBreadcrumb: true,
@@ -150,10 +149,10 @@ export const EXPERIENCE_DEFINITIONS = {
     description: 'Understand the content',
     verb: 'Understand',
     question: 'What does this information mean / contain?',
-    defaultTools: ['wiki', 'structure'] as ToolValue[],
-    defaultDisplay: 'book' as DisplayTypeValue,
-    allowedDisplays: ['book', 'full', 'list'] as DisplayTypeValue[],
-    allowedTools: ['wiki', 'structure', 'resources'] as ToolValue[],
+    defaultTools: ['wiki', 'structure'] as ToolKey[],
+    defaultDisplay: 'book' as DisplayType,
+    allowedDisplays: ['book', 'list'] as DisplayType[],  // removed 'full'
+    allowedTools: ['wiki', 'structure', 'resources'] as ToolKey[],
     layout: 'sidebar',
     showHeader: true,
     showBreadcrumb: true,
@@ -171,10 +170,10 @@ export const EXPERIENCE_DEFINITIONS = {
     description: 'Decide',
     verb: 'Decide',
     question: 'How do we decide?',
-    defaultTools: ['debate', 'vote', 'consensus'] as ToolValue[],
-    defaultDisplay: 'full' as DisplayTypeValue,
-    allowedDisplays: ['full', 'split', 'grid'],
-    allowedTools: ['debate', 'vote', 'consensus', 'resources'] as ToolValue[],
+    defaultTools: ['debate', 'vote', 'consensus'] as ToolKey[],
+    defaultDisplay: 'book' as DisplayType,  // was 'full'
+    allowedDisplays: ['book', 'list'] as DisplayType[],  // was ['full', 'split', 'grid'] – now using display types
+    allowedTools: ['debate', 'vote', 'consensus', 'resources'] as ToolKey[],
     layout: 'split',
     showHeader: true,
     showBreadcrumb: true,
@@ -184,42 +183,18 @@ export const EXPERIENCE_DEFINITIONS = {
 } as const
 
 // ============================================================
-// TYPES
+// TYPES (re‑exported from experience.types)
 // ============================================================
 
 export type ExperienceKey = keyof typeof EXPERIENCE_DEFINITIONS
 
-// DisplayMode - Aligned with DISPLAY_TYPE_VALUES from experience.types.ts
-export type DisplayMode = 
-  | 'list' 
-  | 'cards' 
-  | 'full' 
-  | 'feed' 
-  | 'tree' 
-  | 'navigation' 
-  | 'book' 
-  | 'widget' 
-  | 'tool'
+// DisplayMode is now an alias for DisplayType
+export type DisplayMode = DisplayType
 
 // Display mode with variants (for internal use)
 export type DisplayModeWithVariant = DisplayMode | 'compact' | 'summary' | 'horizontal'
 
-// ToolKey - Aligned with ALL_TOOLS from experience.types.ts
-export type ToolKey = 
-  | 'vote' 
-  | 'timeline' 
-  | 'kanban' 
-  | 'consensus' 
-  | 'debate' 
-  | 'structure'
-  | 'search' 
-  | 'filter' 
-  | 'compare'
-  | 'wiki'
-  | 'analytics'
-  | 'resources'
-  | 'quorum'
-  | 'support'
+// ToolKey is imported
 
 export interface ExperienceConfig {
   experience: ExperienceKey

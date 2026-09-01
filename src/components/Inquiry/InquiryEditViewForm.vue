@@ -7,6 +7,7 @@ import { ref, watch, computed, onMounted, onUnmounted, toRaw } from 'vue'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { showSuccess, showError } from '@nextcloud/dialogs'
 import { useInquiryStore } from '../../stores/inquiry'
+import { useInquiriesStore } from '../../stores/inquiries'
 import { useCommentsStore } from '../../stores/comments'
 import { useSessionStore } from '../../stores/session'
 import { useAttachmentsStore } from '../../stores/attachments'
@@ -51,6 +52,7 @@ const props = defineProps<{
 const sessionStore = useSessionStore()
 const commentsStore = useCommentsStore()
 const inquiryStore = useInquiryStore()
+const inquiriesStore = useInquiriesStore()
 const route = useRoute()
 const attachmentsStore = useAttachmentsStore()
 
@@ -329,6 +331,12 @@ onMounted(() => {
   if (inquiryStore.coverId) { 
         currentCoverUrl.value = getNextcloudPreviewUrl(inquiryStore.coverId)
    }
+
+   if (inquiriesStore.inquiries.length === 0 ) { 
+  	inquiriesStore.setFamilyType(inquiryStore.family)
+   	inquiriesStore.load()
+   }
+
   subscribe(Event.UpdateComments, () => commentsStore.load())
   isLoaded.value = true
 })

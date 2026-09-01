@@ -62,7 +62,7 @@
             </div>
 
             <!-- Experience badge -->
-            <div v-if="group.ui?.display_architecture" class="card-badge experience-badge">
+            <div v-if="group.ui?.displayArchitecture" class="card-badge experience-badge">
               ✨ {{ t('agora', 'Custom experience') }}
             </div>
           </div>

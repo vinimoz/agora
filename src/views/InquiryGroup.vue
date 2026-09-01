@@ -120,7 +120,7 @@
           <!-- ============================================================ -->
           <!-- CASE 1: Experience Renderer - For groups with display_architecture -->
           <!-- ============================================================ -->
-          <template v-if="currentInquiryGroup && hasCustomArchitecture">
+          <template v-if="currentInquiryGroup && hasCustomArchitecture && experience !== 'classic'">
             <div class="experience-container">
               <ExperienceRenderer
                 :group="currentInquiryGroup"
@@ -129,7 +129,7 @@
                 :display-mode="displayMode"
                 :display-architecture="displayArchitecture"
                 :layout-config="layoutConfig"
-                :ui-config="currentInquiryGroup.ui"
+                :ui-config="currentInquiryGroup?.configuration?.ui"
                 :show-header="false"
                 :show-stats="true"
                 :show-resources="true"
@@ -629,38 +629,6 @@ const parentGroups = computed(() => {
   return parents
 })
 
-/*
-const displayedGroups = computed(() => {
-    if (!hasSlug.value || route.params.slug === 'undefined' || route.params.slug === 'null') {
-	console.log("Current group type:", inquiryGroupsStore.currentGroupType)
-	console.log("All groups:", inquiryGroupsStore.inquiryGroups)
-
-	// Get groups in the current family
-	const groupsInFamily = inquiryGroupsStore.byFamilyType(inquiriesStore.advancedFilters.familyType)
-
-	// Filter by: parentId null, not archived, AND matches the current group type
-	const rootGroups = groupsInFamily.filter(
-	    group => group.parentId === null &&
-		    group.groupStatus !== "archived" &&
-		    group.type === inquiryGroupsStore.currentGroupType // ADD THIS FILTER
-	)
-
-	console.log("Filtered root groups:", rootGroups)
-	return rootGroups.sort((a, b) => a.title.localeCompare(b.title))
-    }
-
-    // When there's a valid slug, show child groups
-    if (hasSlug.value && currentInquiryGroup.value) {
-	const childGroups = inquiryGroupsStore.inquiryGroups.filter(
-	    group => group.parentId === currentInquiryGroup.value?.id &&
-		    group.groupStatus !== "archived"
-	)
-	return childGroups.sort((a, b) => a.title.localeCompare(b.title))
-    }
-
-    return []
-})
-*/
 
 const displayedGroups = computed(() => {
   // If no slug, show root groups based on current type
@@ -682,6 +650,8 @@ const displayedGroups = computed(() => {
 
   // When there's a valid slug, show child groups of the current group
   if (hasSlug.value && currentInquiryGroup.value) {
+    console.log(" HAS SLUG ", hasSlug.value )
+    console.log(" HAS SLUG CURRENT INQUIRY GROUP ", currentInquiryGroup.value )
     const childGroups = inquiryGroupsStore.inquiryGroups.filter(
       (group) =>
         group.parentId === currentInquiryGroup.value?.id && group.groupStatus !== 'archived'
@@ -1072,7 +1042,10 @@ watch(
     if (newSlug === oldSlug) return
     isLoading.value = true
     groupNotFound.value = false
-
+    
+console.log('currentInquiryGroup:', currentInquiryGroup.value)
+console.log('hasCustomArchitecture:', hasCustomArchitecture.value)
+console.log('displayArchitecture:', displayArchitecture.value)
     if (hasSlug.value) {
       const slug = route.params.slug as string
       const group = inquiryGroupsStore.bySlug(slug)
@@ -1086,9 +1059,6 @@ watch(
   }
 )
 
-console.log('currentInquiryGroup:', currentInquiryGroup.value)
-console.log('hasCustomArchitecture:', hasCustomArchitecture.value)
-console.log('displayArchitecture:', displayArchitecture.value)
 </script>
 
 <style lang="scss" scoped>

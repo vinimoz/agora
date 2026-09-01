@@ -99,7 +99,7 @@ const executeAction = async () => {
 
 try {
   switch (props.actionKey) {
-    case 'ai_create_options':
+    case 'create_options_ai':
       showConfigModal.value = true
       return  
     default:

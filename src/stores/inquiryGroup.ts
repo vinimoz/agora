@@ -11,7 +11,7 @@ import { AxiosError } from 'axios'
 
 import { Logger } from '../helpers/index.ts'
 import { InquiryGroupsAPI } from '../Api/index.ts'
-import { UserType } from '../Types/index.ts'
+import { UserType, SupportResult } from '../Types/index.ts'
 import { useSessionStore } from './session.ts'
 import { useInquiriesStore } from './inquiries.ts'
 import { useInquiryGroupsStore } from './inquiryGroups.ts'
@@ -63,6 +63,7 @@ export const useInquiryGroupStore = defineStore('inquiryGroup', () => {
   const id = ref(0)
   const parentId = ref<number | null>(null)
   const created = ref(0)
+  const updated = ref<number | undefined>(undefined)
   const deleted = ref(0)
   const description = ref('')
   const ownedGroup = ref('')
@@ -81,6 +82,8 @@ export const useInquiryGroupStore = defineStore('inquiryGroup', () => {
   const childs = ref<number[]>([])
   const coverId = ref<number | null>(null)
   const miscFields = ref<Record<string, string>>({})
+  const trendingScore = ref<number | undefined>(undefined)
+  const supportResult = ref<SupportResult[] | null>(null)
   const meta = ref<'loaded' | 'loading' | 'error'>('loaded')
   const updating = ref(false)
 
@@ -94,11 +97,12 @@ export const useInquiryGroupStore = defineStore('inquiryGroup', () => {
     description: '',
     protected: false,
     titleExt: null,
-    participation: {
-      type: 'everyone',
-      groups: [],
-      users: [],
-    },
+    ui: {
+      experience: 'dashboard',
+      features: [],
+      layout: { type: 'grid', columns: 1, rows: 1, responsive: true },
+      displayArchitecture: undefined,
+    } as InquiryGroupUIConfig,
   })
 
   // Owner
@@ -113,13 +117,13 @@ export const useInquiryGroupStore = defineStore('inquiryGroup', () => {
   // ============================================================
   // COMPUTED - Template-based getters from sessionStore
   // ============================================================
-  
+
   /**
    * Get the type template from session store
    */
   const typeTemplate = computed((): InquiryGroupType | undefined => {
     if (!type.value) return undefined
-    
+
     // Find the type template in session store
     return sessionStore.appSettings?.inquiryGroupTypeTab?.find(
       (t: InquiryGroupType) => t.type === type.value || t.group_type === type.value
@@ -131,18 +135,29 @@ export const useInquiryGroupStore = defineStore('inquiryGroup', () => {
    */
   const ui = computed((): InquiryGroupUIConfig | undefined => {
     const template = typeTemplate.value
+    console.log(' WE GET THE TEMPLATE UI ', template)
     if (!template) return undefined
-    
+
     // If ui is a string array, convert to proper config
     if (Array.isArray(template.ui)) {
       return {
         experience: 'dashboard',
         features: template.ui,
-        layout: { type: 'grid', columns: 1, rows: 1, responsive: true }
+        layout: { type: 'grid', columns: 1, rows: 1, responsive: true },
       } as InquiryGroupUIConfig
     }
-    
-    return template.ui as InquiryGroupUIConfig
+
+    const uiConfig = template.ui as InquiryGroupUIConfig
+
+    // If the config has display_architecture (snake_case from API), convert to displayArchitecture (camelCase)
+    if (uiConfig && 'display_architecture' in uiConfig && !uiConfig.displayArchitecture) {
+      return {
+        ...uiConfig,
+        displayArchitecture: uiConfig.display_architecture as Record<string, DisplayZone>,
+      }
+    }
+
+    return uiConfig
   })
 
   /**
@@ -163,7 +178,9 @@ export const useInquiryGroupStore = defineStore('inquiryGroup', () => {
   /**
    * Get layout from UI config
    */
-  const layout = computed(() => ui.value?.layout || { type: 'grid', columns: 1, rows: 1, responsive: true })
+  const layout = computed(
+    () => ui.value?.layout || { type: 'grid', columns: 1, rows: 1, responsive: true }
+  )
 
   /**
    * Get features from UI config
@@ -176,10 +193,10 @@ export const useInquiryGroupStore = defineStore('inquiryGroup', () => {
   const allowedInquiryTypes = computed((): string[] => {
     const template = typeTemplate.value
     if (!template) return []
-    
+
     const types = template.allowedInquiryTypes || template.allowed_inquiry_types
     if (typeof types === 'string') {
-      return types.split(',').map(s => s.trim())
+      return types.split(',').map((s) => s.trim())
     }
     return types || []
   })
@@ -220,10 +237,10 @@ export const useInquiryGroupStore = defineStore('inquiryGroup', () => {
   const allowedResponse = computed((): string[] => {
     const template = typeTemplate.value
     if (!template) return []
-    
+
     const response = template.allowed_response
     if (typeof response === 'string') {
-      return response.split(',').map(s => s.trim())
+      return response.split(',').map((s) => s.trim())
     }
     return response || []
   })
@@ -266,7 +283,7 @@ export const useInquiryGroupStore = defineStore('inquiryGroup', () => {
   }
 
   /**
-   * Get zone scope for a specific zone
+   * Get zone scope for a specific zon
    * @param zoneName
    */
   function getZoneScope(zoneName: string): Record<string, unknown> | undefined {
@@ -296,7 +313,8 @@ export const useInquiryGroupStore = defineStore('inquiryGroup', () => {
     publicationStatus: publicationStatus.value,
     created: created.value,
     deleted: deleted.value,
-    supportResult: null,
+    updated: updated.value,
+    supportResult: supportResult.value,
   }))
 
   const isDraft = computed(() => groupStatus.value === 'draft')
@@ -358,56 +376,37 @@ export const useInquiryGroupStore = defineStore('inquiryGroup', () => {
     },
   })
 
-  // Participation shortcuts
-  const participationType = computed({
-    get: () => configuration.value.participation?.type || 'everyone',
-    set: (value: 'everyone' | 'users' | 'groups') => {
-      configuration.value.participation = {
-        ...configuration.value.participation,
-        type: value,
-      }
-      void updateConfiguration({ participation: configuration.value.participation })
-    },
-  })
-
-  const participationGroups = computed({
-    get: () => configuration.value.participation?.groups || [],
-    set: (groups: string[]) => {
-      configuration.value.participation = {
-        ...configuration.value.participation,
-        groups,
-      }
-      void updateConfiguration({ participation: configuration.value.participation })
-    },
-  })
-
-  const participationUsers = computed({
-    get: () => configuration.value.participation?.users || [],
-    set: (users: string[]) => {
-      configuration.value.participation = {
-        ...configuration.value.participation,
-        users,
-      }
-      void updateConfiguration({ participation: configuration.value.participation })
-    },
-  })
-
-  // Full inquiry group object
+  // Full inquiry group object - EXACTLY matching InquiryGroup interface
   const inquiryGroup = computed<InquiryGroup>(() => ({
     id: id.value,
     parentId: parentId.value,
     created: created.value,
     deleted: deleted.value,
-    description: description.value,
+    description: description.value || null,
     owner: owner.value,
     type: type.value,
-    groupStatus: groupStatus.value,
-    publicationStatus: publicationStatus.value,
-    configuration: configuration.value,
-    status: status.value,
+    configuration: {
+      visibility: configuration.value.visibility,
+      visibilityGroups: configuration.value.visibilityGroups,
+      visibilityUsers: configuration.value.visibilityUsers,
+      expire: configuration.value.expire,
+      supportEngine: configuration.value.supportEngine,
+      description: configuration.value.description,
+      protected: configuration.value.protected,
+      titleExt: configuration.value.titleExt,
+      ui: configuration.value.ui,
+    },
+    status: {
+      groupStatus: groupStatus.value,
+      publicationStatus: publicationStatus.value,
+      created: created.value,
+      deleted: deleted.value,
+      updated: updated.value,
+      supportResult: supportResult.value,
+    },
     title: title.value,
-    titleExt: titleExt.value,
-    ownedGroup: ownedGroup.value,
+    titleExt: titleExt.value || null,
+    ownedGroup: ownedGroup.value || null,
     order: order.value,
     expire: expire.value,
     metadata: metadata.value,
@@ -418,18 +417,8 @@ export const useInquiryGroupStore = defineStore('inquiryGroup', () => {
     childs: childs.value,
     slug: slug.value,
     miscFields: miscFields.value,
-    // Template-derived fields
-    ui: ui.value,
-    family: family.value,
-    icon: icon.value,
-    label: label.value,
-    allowedInquiryTypes: allowedInquiryTypes.value,
-    isRoot: isRoot.value,
-    actions: actions.value,
-    rules: rules.value,
-    allowed_response: allowedResponse.value,
-    fields: fields.value,
-    templateDescription: templateDescription.value,
+    trendingScore: trendingScore.value,
+    inquiryGroupType: typeTemplate.value,
   }))
 
   // ============================================================
@@ -447,6 +436,39 @@ export const useInquiryGroupStore = defineStore('inquiryGroup', () => {
     })
   }
 
+
+  /**
+ * Sync UI configuration from template to configuration.ui
+ * This should be called whenever the type changes or the group loads
+ */
+function syncUIToTemplate() {
+  const template = typeTemplate.value
+  if (!template?.ui) return
+
+  // If UI is an array (legacy), convert to object
+  let uiConfig: InquiryGroupUIConfig
+  if (Array.isArray(template.ui)) {
+    uiConfig = {
+      experience: 'dashboard',
+      features: template.ui,
+      layout: { type: 'grid', columns: 1, rows: 1, responsive: true },
+    }
+  } else {
+    uiConfig = template.ui as InquiryGroupUIConfig
+  }
+
+  // Convert snake_case to camelCase if needed
+  if (uiConfig && 'display_architecture' in uiConfig && !uiConfig.displayArchitecture) {
+    uiConfig = {
+      ...uiConfig,
+      displayArchitecture: uiConfig.display_architecture as Record<string, DisplayZone>,
+    }
+  }
+
+  configuration.value.ui = uiConfig
+  syncToCollectionStore()
+}
+
   /**
    * Patch state from API response
    * @param data
@@ -455,6 +477,7 @@ export const useInquiryGroupStore = defineStore('inquiryGroup', () => {
     if (data.id !== undefined) id.value = data.id
     if (data.parentId !== undefined) parentId.value = data.parentId
     if (data.created !== undefined) created.value = data.created
+    if (data.updated !== undefined) updated.value = data.updated
     if (data.deleted !== undefined) deleted.value = data.deleted
     if (data.description !== undefined) description.value = data.description || ''
     if (data.ownedGroup !== undefined) ownedGroup.value = data.ownedGroup || ''
@@ -464,7 +487,8 @@ export const useInquiryGroupStore = defineStore('inquiryGroup', () => {
     if (data.order !== undefined) order.value = data.order || 0
     if (data.expire !== undefined) expire.value = data.expire || null
     if (data.groupStatus !== undefined) groupStatus.value = data.groupStatus || 'draft'
-    if (data.publicationStatus !== undefined) publicationStatus.value = data.publicationStatus || 'draft'
+    if (data.publicationStatus !== undefined)
+      publicationStatus.value = data.publicationStatus || 'draft'
     if (data.type !== undefined) type.value = data.type || 'default'
     if (data.title !== undefined) title.value = data.title || ''
     if (data.titleExt !== undefined) titleExt.value = data.titleExt || ''
@@ -473,7 +497,21 @@ export const useInquiryGroupStore = defineStore('inquiryGroup', () => {
     if (data.childs !== undefined) childs.value = data.childs || []
     if (data.coverId !== undefined) coverId.value = data.coverId || null
     if (data.miscFields !== undefined) miscFields.value = data.miscFields || {}
+    if (data.trendingScore !== undefined) trendingScore.value = data.trendingScore
     if (data.owner !== undefined) owner.value = data.owner || owner.value
+
+    // Handle status-related fields from nested status object
+    if (data.status) {
+      if (data.status.updated !== undefined) updated.value = data.status.updated
+      if (data.status.supportResult !== undefined) supportResult.value = data.status.supportResult
+      if (data.status.groupStatus !== undefined) groupStatus.value = data.status.groupStatus
+      if (data.status.publicationStatus !== undefined)
+        publicationStatus.value = data.status.publicationStatus
+      if (data.status.created !== undefined) created.value = data.status.created
+      if (data.status.deleted !== undefined) deleted.value = data.status.deleted
+    }
+
+    // Handle configuration
     if (data.configuration !== undefined) {
       configuration.value = {
         ...configuration.value,
@@ -481,6 +519,8 @@ export const useInquiryGroupStore = defineStore('inquiryGroup', () => {
       }
     }
 
+    syncUIToTemplate()
+    
     // Sync to collection store
     syncToCollectionStore()
   }
@@ -493,6 +533,7 @@ export const useInquiryGroupStore = defineStore('inquiryGroup', () => {
     id.value = 0
     parentId.value = null
     created.value = 0
+    updated.value = undefined
     deleted.value = 0
     description.value = ''
     ownedGroup.value = ''
@@ -511,6 +552,8 @@ export const useInquiryGroupStore = defineStore('inquiryGroup', () => {
     childs.value = []
     coverId.value = null
     miscFields.value = {}
+    trendingScore.value = undefined
+    supportResult.value = null
     configuration.value = {
       visibility: 'private',
       visibilityGroups: [],
@@ -520,11 +563,12 @@ export const useInquiryGroupStore = defineStore('inquiryGroup', () => {
       description: '',
       protected: false,
       titleExt: null,
-      participation: {
-        type: 'everyone',
-        groups: [],
-        users: [],
-      },
+      ui: {
+        experience: 'dashboard',
+        features: [],
+        layout: { type: 'grid', columns: 1, rows: 1, responsive: true },
+        displayArchitecture: undefined,
+      } as InquiryGroupUIConfig,
     }
     owner.value = {
       id: '',
@@ -543,7 +587,7 @@ export const useInquiryGroupStore = defineStore('inquiryGroup', () => {
    */
   async function load(inquiryGroupId?: number | null): Promise<InquiryGroup | void> {
     let groupId = inquiryGroupId
-    console.log(" WE LOAD THE GROUP INTO THE STORE ", inquiryGroupId)
+    console.log(' WE LOAD THE GROUP INTO THE STORE ', inquiryGroupId)
     if (!groupId && sessionStore.route?.params?.id) {
       groupId = Number(sessionStore.route.params.id)
     }
@@ -688,6 +732,7 @@ export const useInquiryGroupStore = defineStore('inquiryGroup', () => {
       await update({
         configuration: configuration.value,
       })
+    syncUIToTemplate()
     } catch (error) {
       Logger.error('Error updating configuration', { error, configUpdate })
       throw error
@@ -743,29 +788,6 @@ export const useInquiryGroupStore = defineStore('inquiryGroup', () => {
       await update({ configuration: configuration.value })
     } catch (error) {
       Logger.error('Error updating visibility', { error, params })
-      throw error
-    }
-  }
-
-  /**
-   * Update participation
-   * @param params
-   */
-  async function updateParticipation(params: {
-    type: 'everyone' | 'users' | 'groups'
-    groups?: string[]
-    users?: string[]
-  }): Promise<void> {
-    configuration.value.participation = {
-      type: params.type,
-      groups: params.groups || [],
-      users: params.users || [],
-    }
-
-    try {
-      await update({ configuration: configuration.value })
-    } catch (error) {
-      Logger.error('Error updating participation', { error, params })
       throw error
     }
   }
@@ -1015,6 +1037,7 @@ export const useInquiryGroupStore = defineStore('inquiryGroup', () => {
       id,
       parentId,
       created,
+      updated,
       deleted,
       description,
       owner,
@@ -1035,6 +1058,8 @@ export const useInquiryGroupStore = defineStore('inquiryGroup', () => {
       childs,
       slug,
       miscFields,
+      trendingScore,
+      supportResult,
     ],
     () => {
       if (id.value > 0) {
@@ -1052,6 +1077,7 @@ export const useInquiryGroupStore = defineStore('inquiryGroup', () => {
     id,
     parentId,
     created,
+    updated,
     deleted,
     description,
     ownedGroup,
@@ -1070,6 +1096,8 @@ export const useInquiryGroupStore = defineStore('inquiryGroup', () => {
     childs,
     coverId,
     miscFields,
+    trendingScore,
+    supportResult,
     configuration,
     owner,
     meta,
@@ -1088,9 +1116,6 @@ export const useInquiryGroupStore = defineStore('inquiryGroup', () => {
     visibility,
     visibilityGroups,
     visibilityUsers,
-    participationType,
-    participationGroups,
-    participationUsers,
     inquiryGroup,
 
     // Computed - Template-based
@@ -1110,6 +1135,7 @@ export const useInquiryGroupStore = defineStore('inquiryGroup', () => {
     rules,
     allowedResponse,
     fields,
+    syncUIToTemplate,
 
     // Template helper methods
     hasFeature,
@@ -1128,7 +1154,6 @@ export const useInquiryGroupStore = defineStore('inquiryGroup', () => {
     updateConfiguration,
     updatePublicationStatus,
     updateVisibility,
-    updateParticipation,
     addInquiry,
     removeInquiry,
     write,

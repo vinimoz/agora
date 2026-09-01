@@ -874,26 +874,21 @@ public function getWithTrending(int $inquiryId): array
 {
 	$inquiry = $this->get($inquiryId);
 
-	// Only include trending if supportFeature is 'trending'
-	if ($inquiry->getSupportFeature() === 'trending') {
-		$trendingScores = $this->trendingService->getTrendingScores($inquiryId);
 
-		$inquiryData = $inquiry->jsonSerialize();
-		$inquiryData['trending'] = $trendingScores;
+	$inquiryData = $inquiry->jsonSerialize();
+	$inquiryData['trending'] = $trendingScores;
 
-		// Add trending scores to each option
-		if (isset($inquiryData['childs']) && is_array($inquiryData['childs'])) {
-			foreach ($inquiryData['childs'] as &$option) {
-				if (isset($option['id']) && isset($trendingScores[$option['id']])) {
-					$option['trendingScore'] = $trendingScores[$option['id']];
-				}
+	// Add trending scores to each option
+	if (isset($inquiryData['childs']) && is_array($inquiryData['childs'])) {
+		foreach ($inquiryData['childs'] as &$option) {
+			if (isset($option['id']) && isset($trendingScores[$option['id']])) {
+				$option['trendingScore'] = $trendingScores[$option['id']];
 			}
 		}
-
-		return $inquiryData;
 	}
 
-	return $inquiry->jsonSerialize();
+	return $inquiryData;
+
 }
 
 
@@ -941,7 +936,7 @@ public function applyAction(int $inquiryId, string $action): Inquiry
 		throw new \Exception('Inquiry not found');
 	}
 
-        $timestamp = time();
+	$timestamp = time();
 
 	switch ($action) {
 	case 'save_draft':
@@ -949,7 +944,7 @@ public function applyAction(int $inquiryId, string $action): Inquiry
 		$inquiry->setPublicationStatus('draft');
 		$inquiry->setInquiryStatus('draft');
 		$inquiry->setModerationStatus('draft');
-    		$inquiry->setLastInteraction($timestamp);
+		$inquiry->setLastInteraction($timestamp);
 		$inquiry = $this->inquiryMapper->update($inquiry);
 		break;
 

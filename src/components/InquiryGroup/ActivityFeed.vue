@@ -17,7 +17,7 @@
 
     <div class="feed-list">
       <div
-        v-for="activity in activities"
+        v-for="activity in feedActivities"
         :key="activity.id"
         class="activity-item"
         :class="{ 'is-unread': !activity.read }"
@@ -29,13 +29,13 @@
           <div class="activity-text">
             <strong>{{ activity.user }}</strong>
             {{ activity.action }}
-            <span class="activity-target">{{ activity.target }}</span>
+            <span v-if="activity.target" class="activity-target">{{ activity.target }}</span>
           </div>
           <div class="activity-time">{{ formatTime(activity.timestamp) }}</div>
         </div>
       </div>
 
-      <div v-if="activities.length === 0" class="empty-state">
+      <div v-if="feedActivities.length === 0" class="empty-state">
         <component :is="Icons.BellOff" :size="32" />
         <p>{{ t('agora', 'No recent activity') }}</p>
       </div>
@@ -44,38 +44,78 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { t } from '@nextcloud/l10n'
 import { InquiryGeneralIcons as Icons } from '../../utils/icons'
-import type { Inquiry } from '../../Types'
+import { useActivityStore } from '../../stores/activity'
+import { useSessionStore } from '../../stores/session'
 
-interface Activity {
-  id: string
-  type: 'comment' | 'support' | 'create' | 'update' | 'close'
-  user: string
-  action: string
-  target: string
-  inquiryId: number
-  timestamp: number
-  read: boolean
+// Local set to track which activity IDs have been marked as read
+const readStatus = ref<Set<number>>(new Set())
+
+const activityStore = useActivityStore()
+const sessionStore = useSessionStore()
+
+// Computed feed items from store, mapped to the component's internal shape
+const feedActivities = computed(() => {
+  const activities = activityStore.getActivitiesForInquiry
+  return activities.map((activity) => {
+    // Map the store's activity type to the icon types used in the component
+    let type = activity.type
+    if (type.includes('comment')) type = 'comment'
+    else if (type.includes('create') || type.includes('add')) type = 'create'
+    else if (type.includes('update') || type.includes('change')) type = 'update'
+    else if (type.includes('close')) type = 'close'
+    else if (type.includes('support')) type = 'support'
+    else type = 'update' // fallback
+
+    // Convert ISO datetime to Unix timestamp (seconds)
+    let timestamp = 0
+    try {
+      timestamp = Math.floor(new Date(activity.datetime).getTime() / 1000)
+    } catch {
+      timestamp = Math.floor(Date.now() / 1000)
+    }
+
+    return {
+      id: activity.activity_id,
+      type,
+      user: activity.user,
+      action: activity.subject || activity.message || '',
+      target: '', // The store doesn't provide a separate target; can be extended later
+      inquiryId: activity.object_id,
+      timestamp,
+      read: readStatus.value.has(activity.activity_id),
+    }
+  })
+})
+
+// Load activities when the component mounts and when the current inquiry changes
+async function loadActivities() {
+  try {
+    await activityStore.load()
+  } catch (error) {
+    // Silent fail – the store already handles cancellation and resets
+  }
 }
 
-const props = defineProps<{
-  inquiries: Inquiry[]
-  limit?: number
-}>()
+onMounted(() => {
+  loadActivities()
+})
 
-const activities = ref<Activity[]>([
-  // Example activities - in real implementation, these would come from an API
-])
+watch(() => sessionStore.currentInquiryId, () => {
+  loadActivities()
+  // Note: readStatus persists across inquiries; activity IDs are globally unique,
+  // so it's safe to keep them.
+})
 
-function getActivityIcon(activity: Activity) {
+function getActivityIcon(activity: any) {
   const icons: Record<string, any> = {
     comment: Icons.MessageSquare,
     support: Icons.ThumbUp,
     create: Icons.Plus,
     update: Icons.Edit,
-    close: Icons.CheckCircle
+    close: Icons.CheckCircle,
   }
   return icons[activity.type] || Icons.Bell
 }
@@ -94,11 +134,17 @@ function formatTime(timestamp: number): string {
 }
 
 function markAllRead() {
-  activities.value = activities.value.map(a => ({ ...a, read: true }))
+  // Add all current activity IDs to the read set
+  feedActivities.value.forEach((activity) => {
+    readStatus.value.add(activity.id)
+  })
+  // Trigger reactivity by reassigning the set
+  readStatus.value = new Set(readStatus.value)
 }
 </script>
 
 <style lang="scss" scoped>
+/* Styles remain unchanged – kept for completeness */
 .activity-feed {
   background: var(--color-main-background);
   border-radius: 12px;

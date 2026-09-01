@@ -105,7 +105,7 @@ class InquiryGroupType extends Entity implements JsonSerializable
             'icon' => $this->getIcon(),
             'description' => $this->getDescription(),
             'fields' => $this->getFields(),
-            'allowedInquiryTypes' => $this->getAllowedInquiryTypes(),
+            'allowed_inquiry_types' => $this->getAllowedInquiryTypes(),
             'allowed_response' => $this->getAllowedResponse(),
             'sort_order' => $this->getSortOrder(),
             'is_root' => $this->getIsRoot() ?? false,

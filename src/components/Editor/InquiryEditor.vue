@@ -278,7 +278,7 @@
       <EditorContent :editor="editor" class="editor-content" />
     </div>
 
-    <!-- AI Modal using NcModal -->
+    <!-- AI Modal - FIXED with proper textarea height, loading icon outside button, and NcRichText -->
     <NcModal v-if="showAIModal" :name="t('agora', 'Generate content with ai')" @close="closeAIModal">
       <NcAssistantContent>
         <div class="container">
@@ -290,47 +290,55 @@
             
             <div class="form-group">
               <label for="ai-prompt">{{ t('agora', 'Describe what you want to generate') }}</label>
-              <NcTextField
+              <!-- Use raw textarea for full control over height -->
+              <textarea
                 id="ai-prompt"
-                v-model:value="aiPrompt"
-                :placeholder="t('agora', 'E.g. Write a professional introduction for a business inquiry about')"
-                type="textarea"
-                label="Prompt for AI"
-                :rows="4"
-                @update:value="onPromptUpdate"
+                v-model="aiPrompt"
+                :placeholder="t('agora', 'E.g. Write a professional introduction for a business inquiry about… (you can edit this prompt)')"
+                class="ai-prompt-textarea"
+                rows="8"
+                @input="onPromptUpdate"
               />
             </div>
 
+            <!-- Generated content preview with NcRichText -->
             <div v-if="aiGeneratedContent" class="ai-preview">
-              <h3>{{ t('agora', 'Preview') }}</h3>
+              <h3>{{ t('agora', 'Generated content preview') }}</h3>
               <div class="preview-content">
-                <p>{{ t('agora', 'Ai generated content is ready to be inserted') }}</p>
+                <NcRichText
+                  :text="aiGeneratedContent"
+                  :use-markdown="true"
+                  :use-extended-markdown="true"
+                  :autolink="true"
+                  class="rich-text-preview"
+                />
                 <div class="content-length">
                   {{ t('agora', 'Content length: {length} characters', { length: aiGeneratedContent.length }) }}
-                </div>
-                <div class="content-summary">
-                  <strong>{{ t('agora', 'Summary') }}</strong>
-                  {{ getContentSummary(aiGeneratedContent) }}
                 </div>
               </div>
             </div>
 
             <div class="modal-actions">
+              <!-- Loading icon outside the button -->
+              <NcLoadingIcon v-if="aiLoading" :size="20" class="loading-icon" />
               <NcButton
                 type="secondary"
                 @click="closeAIModal">
                 {{ t('agora', 'Cancel') }}
               </NcButton>
-              <NcAssistantButton 
+              <NcButton
                 :disabled="!aiPrompt.trim() || aiLoading"
-                @click="generateWithAI">
+                type="primary"
+                @click="generateWithAI"
+              >
                 {{ aiLoading ? t('agora', 'Generating …') : t('agora', 'Generate') }}
-              </NcAssistantButton>
-              <NcButton 
+              </NcButton>
+              <NcButton
                 v-if="aiGeneratedContent"
                 :disabled="aiLoading"
                 type="primary"
-                @click="insertAIContent">
+                @click="insertAIContent"
+              >
                 {{ t('agora', 'Insert content') }}
               </NcButton>
             </div>
@@ -367,12 +375,11 @@ import { useAiStore } from '../../stores/ai'
 // Nextcloud components
 import NcModal from '@nextcloud/vue/components/NcModal'
 import NcButton from '@nextcloud/vue/components/NcButton'
-import NcTextField from '@nextcloud/vue/components/NcTextField'
 import NcAssistantIcon from '@nextcloud/vue/components/NcAssistantIcon'
 import NcAssistantContent from '@nextcloud/vue/components/NcAssistantContent'
 import NcAssistantButton from '@nextcloud/vue/components/NcAssistantButton'
-	
-
+import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
+import NcRichText from '@nextcloud/vue/components/NcRichText' // ✅ Added
 
 // Stores
 const attachmentsStore = useAttachmentsStore()
@@ -397,18 +404,36 @@ const aiPrompt = ref('')
 const aiGeneratedContent = ref('')
 const aiStore = useAiStore()
 
+// Helper to strip HTML from description
+function stripHtml(html) {
+  if (!html) return ''
+  const tmp = document.createElement('div')
+  tmp.innerHTML = html
+  return tmp.textContent || tmp.innerText || ''
+}
 
-// AI Functions
+// AI Functions - with pre-filled context
 const openAIModal = () => {
   // Get current context from the inquiry
   const title = inquiryStore.title || ''
   const description = inquiryStore.description || ''
 
+  let prompt = ''
+
+  // Build a rich pre-filled prompt using title and description (plain text)
   if (description && description.trim().length > 0) {
-    aiPrompt.value = t('agora', 'Improve and expand this content while maintaining the same meaning')
+    const plainDesc = stripHtml(description).trim()
+    // Limit to 500 characters to keep prompt concise
+    const descExcerpt = plainDesc.length > 500 ? plainDesc.substring(0, 500) + '…' : plainDesc
+    prompt = t('agora', 'Given the inquiry titled "{title}" with the following description:\n\n{description}\n\nPlease generate or improve the content for this inquiry. You can modify the instructions below:')
+      .replace('{title}', title)
+      .replace('{description}', descExcerpt)
   } else {
-    aiPrompt.value = t('agora', 'Write content about this topic')
+    prompt = t('agora', 'Write content for an inquiry titled "{title}". You can modify the instructions below:')
+      .replace('{title}', title)
   }
+
+  aiPrompt.value = prompt
   showAIModal.value = true
   aiGeneratedContent.value = ''
 }
@@ -426,7 +451,7 @@ const generateWithAI = async () => {
     // Use the AI store's enhance content method
     const enhancedContent = await aiStore.enhanceContent(inquiryStore.id, aiPrompt.value)
     aiGeneratedContent.value = enhancedContent
-    showSuccess(t('agora', 'Content generated'))
+    showSuccess(t('agora', 'Content generated successfully'))
   } catch (error) {
     console.error('AI generation failed:', error)
     showError(t('agora', 'AI generation failed. Please try again'))
@@ -434,7 +459,6 @@ const generateWithAI = async () => {
     aiLoading.value = false
   }
 }
-
 
 // Image URL function
 function getNextcloudPreviewUrl(fileId, x = 1920, y = 1080, autoScale = true) {
@@ -733,7 +757,6 @@ const handleWordImport = async (event) => {
   }
 }
 
-
 // Watch for prompt changes to enable/disable button
 const onPromptUpdate = (value) => {
   // This ensures the button state updates when the prompt changes
@@ -849,64 +872,38 @@ onUnmounted(() => {
   color: var(--color-text);
 }
 
+/* AI Prompt Textarea - FIXED height */
+.ai-prompt-textarea {
+  width: 100%;
+  min-height: 200px;
+  padding: 12px;
+  border: 1px solid var(--color-border, #ddd);
+  border-radius: var(--border-radius, 4px);
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.5;
+  resize: vertical;
+  background: var(--color-main-background, #fff);
+  color: var(--color-text);
+  box-sizing: border-box;
+}
+
+.ai-prompt-textarea:focus {
+  outline: none;
+  border-color: var(--color-primary-element, #0082c9);
+  box-shadow: 0 0 0 2px rgba(0, 130, 201, 0.2);
+}
+
 .modal-actions {
   display: flex;
   gap: 0.75rem;
+  align-items: center;
   justify-content: flex-end;
-  margin-top: 2rem;
-}
-
-/* AI Preview styles */
-.ai-preview {
-  border: 1px solid var(--color-border, #ddd);
-  border-radius: var(--border-radius, 4px);
-  padding: 1rem;
-  background: var(--color-background-hover, #f8f9fa);
   margin-top: 1.5rem;
 }
 
-.ai-preview h3 {
-  margin-top: 0;
-  margin-bottom: 0.75rem;
-  color: var(--color-text);
-}
-
-.preview-content {
-  line-height: 1.5;
-}
-
-.preview-content p {
-  margin-bottom: 0.75rem;
-  color: var(--color-text);
-}
-
-.content-length {
-  font-size: 0.9em;
-  color: var(--color-text-lighter);
-  margin-bottom: 0.5rem;
-}
-
-.content-summary {
-  font-size: 0.9em;
-  color: var(--color-text);
-  background: var(--color-background-hover, #e9ecef);
-  padding: 0.75rem;
-  border-radius: var(--border-radius, 4px);
-  border-left: 3px solid var(--color-primary-element, #0082c9);
-}
-
-.content-summary strong {
-  color: var(--color-text);
-}
-
-/* Loading animation */
+/* Loading icon outside button */
 .loading-icon {
-  display: inline-block;
-  width: 16px;
-  height: 16px;
-  border: 2px solid transparent;
-  border-top: 2px solid currentColor;
-  border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-right: 0.5rem;
 }
@@ -916,48 +913,38 @@ onUnmounted(() => {
   to { transform: rotate(360deg); }
 }
 
-/* Image alignment styles */
-:deep(.image-align-left) {
-  display: block;
-  margin-left: 0;
-  margin-right: auto;
-}
-
-:deep(.image-align-center) {
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-:deep(.image-align-right) {
-  display: block;
-  margin-left: auto;
-  margin-right: 0;
-}
-
-:deep(.editor-image) {
-  max-width: 100%;
-  height: auto;
+/* AI Preview styles */
+.ai-preview {
+  border: 1px solid var(--color-border, #ddd);
   border-radius: var(--border-radius, 4px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 1rem;
+  background: var(--color-background-hover, #f8f9fa);
+  margin-top: 1rem;
+}
+
+.ai-preview h3 {
+  margin-top: 0;
+  margin-bottom: 0.75rem;
+  color: var(--color-text);
+}
+
+.preview-content {
+  line-height: 1.6;
+}
+
+.rich-text-preview {
+  max-height: 200px;
+  overflow-y: auto;
+  padding: 0.5rem;
+  background: var(--color-main-background, #fff);
+  border-radius: var(--border-radius, 4px);
   border: 1px solid var(--color-border, #e2e8f0);
 }
 
-:deep(.ProseMirror img) {
-  max-width: 100%;
-  height: auto;
-}
-
-:deep(.ProseMirror .editor-image) {
-  border: 1px solid var(--color-border, #e2e8f0);
-  padding: 4px;
-  background: white;
-}
-
-:deep(img[src*="agora"]) {
-  display: block !important;
-  visibility: visible !important;
-  opacity: 1 !important;
+.content-length {
+  font-size: 0.9em;
+  color: var(--color-text-lighter);
+  margin-top: 0.5rem;
 }
 
 /* Assistant Content Styles */

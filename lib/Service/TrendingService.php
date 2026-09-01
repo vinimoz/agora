@@ -11,6 +11,8 @@ namespace OCA\Agora\Service;
 
 use OCA\Agora\Db\Option;
 use OCA\Agora\Db\Support;
+use OCA\Agora\Db\TrendingScore;
+use OCA\Agora\Db\TrendingScoreMapper;
 use OCA\Agora\Db\SupportMapper;
 use OCA\Agora\Db\CommentMapper;
 use OCA\Agora\Db\OptionMapper;
@@ -36,7 +38,8 @@ class TrendingService
     public function __construct(
         private SupportMapper $supportMapper,
         private CommentMapper $commentMapper,
-        private OptionMapper $optionMapper,
+	private OptionMapper $optionMapper,
+	 private TrendingScoreMapper $trendingScoreMapper,
         private LoggerInterface $logger,
         ICacheFactory $cacheFactory,
     ) {
@@ -58,6 +61,142 @@ class TrendingService
             $this->logger->warning('Could not initialize cache for TrendingService: ' . $e->getMessage());
             $this->cache = null;
         }
+    }
+
+
+    /**
+     * Get trending scores with fallback to real-time calculation if not stored
+     */
+    public function getTrendingScoresWithFallback(int $inquiryId, bool $useCache = true): array
+    {
+        $cacheKey = $this->getCacheKey($inquiryId);
+
+        if ($useCache && $this->cache !== null) {
+            $cached = $this->cache->get($cacheKey);
+            if ($cached !== null && is_array($cached)) {
+                $this->logger->debug('Trending scores served from cache', ['inquiryId' => $inquiryId]);
+                return $cached;
+            }
+        }
+
+        // Try stored scores first
+        $storedScores = $this->getStoredTrendingScores($inquiryId);
+
+        if (!empty($storedScores)) {
+            // Check if they're stale (older than 1 hour)
+            $maxUpdated = max(array_column($storedScores, 'updated_at'));
+            if (time() - $maxUpdated < 3600) {
+                if ($this->cache !== null) {
+                    $this->cache->set($cacheKey, $storedScores, self::CACHE_TTL);
+                }
+                return $storedScores;
+            }
+        }
+
+        // Calculate fresh scores
+        $freshScores = $this->calculateAndStoreTrendingScores($inquiryId);
+
+        if ($this->cache !== null) {
+            $this->cache->set($cacheKey, $freshScores, self::CACHE_TTL);
+        }
+
+        return $freshScores;
+    }
+
+    /**
+     * Get stored trending scores from database
+     */
+    private function getStoredTrendingScores(int $inquiryId): array
+    {
+        $scores = $this->trendingScoreMapper->findByInquiryId($inquiryId);
+
+        $result = [];
+        foreach ($scores as $score) {
+            $result[$score->getOptionId()] = [
+                'score' => $score->getScore(),
+                'updated_at' => $score->getUpdatedAt()
+            ];
+        }
+
+        return $result;
+    }
+
+    /**
+     * Calculate and store trending scores for all options in an inquiry
+     * Returns array of option_id => score
+     */
+    public function calculateAndStoreTrendingScores(int $inquiryId): array
+    {
+        $options = $this->optionMapper->findByTargetId($inquiryId);
+        $scores = $this->calculateTrendingScores($inquiryId, $options);
+
+        $now = time();
+
+        // Store inquiry-level score (average of all options or 0 if no options)
+        $inquiryScore = !empty($scores) ? array_sum($scores) / count($scores) : 0;
+        $this->storeTrendingScore($inquiryId, 0, $inquiryScore, $now);
+
+        // Store option-level scores
+        foreach ($scores as $optionId => $score) {
+            $this->storeTrendingScore($inquiryId, $optionId, $score, $now);
+        }
+
+        // Invalidate cache
+        $this->invalidateCache($inquiryId);
+
+        $this->logger->debug('Trending scores calculated and stored', [
+            'inquiryId' => $inquiryId,
+            'optionsCount' => count($scores),
+            'inquiryScore' => $inquiryScore
+        ]);
+
+        return $scores;
+    }
+
+    /**
+     * Store a single trending score using the mapper
+     */
+    private function storeTrendingScore(int $inquiryId, int $optionId, float $score, int $timestamp): void
+    {
+        $trendingScore = new TrendingScore();
+        $trendingScore->setInquiryId($inquiryId);
+        $trendingScore->setOptionId($optionId);
+        $trendingScore->setScore($score);
+        $trendingScore->setUpdatedAt($timestamp);
+
+        $this->trendingScoreMapper->upsert($trendingScore);
+    }
+
+    /**
+     * Get trending scores with option details
+     */
+    public function getTrendingScoresWithDetails(int $inquiryId): array
+    {
+        return $this->trendingScoreMapper->findByInquiryIdWithOptions($inquiryId);
+    }
+
+    /**
+     * Update trending scores for all active inquiries
+     */
+    public function updateAllTrendingScores(): int
+    {
+        $inquiries = $this->inquiryMapper->findAllActive();
+        $updated = 0;
+
+        foreach ($inquiries as $inquiry) {
+            if ($inquiry->getSupportFeature() === 'trending') {
+                try {
+                    $this->calculateAndStoreTrendingScores($inquiry->getId());
+                    $updated++;
+                } catch (\Exception $e) {
+                    $this->logger->error('Failed to update trending scores for inquiry ' . $inquiry->getId(), [
+                        'error' => $e->getMessage()
+                    ]);
+                }
+            }
+        }
+
+        return $updated;
     }
 
     /**

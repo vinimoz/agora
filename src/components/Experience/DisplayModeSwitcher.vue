@@ -32,36 +32,31 @@ const emit = defineEmits<{
   change: [mode: DisplayMode]
 }>()
 
-const modeLabels: Record<DisplayMode, string> = {
+// Only include valid DisplayMode values from experience.types.ts
+const modeLabels: Partial<Record<DisplayMode, string>> = {
   cards: t('agora', 'Cards'),
   list: t('agora', 'List'),
-  grid: t('agora', 'Grid'),
   feed: t('agora', 'Feed'),
+  tree: t('agora', 'Tree'),
+  navigation: t('agora', 'Navigation'),
   timeline: t('agora', 'Timeline'),
   kanban: t('agora', 'Kanban'),
-  map: t('agora', 'Map'),
-  wiki: t('agora', 'Wiki'),
-  full: t('agora', 'Full'),
-  compact: t('agora', 'Compact'),
-  summary: t('agora', 'Summary'),
-  horizontal: t('agora', 'Horizontal'),
-  split: t('agora', 'Split')
+  book: t('agora', 'Book'),
+  widget: t('agora', 'Widget'),
+  tool: t('agora', 'Tool'),
 }
 
-const modeIcons: Record<DisplayMode, any> = {
+const modeIcons: Partial<Record<DisplayMode, any>> = {
   cards: Icons.Grid,
   list: Icons.List,
-  grid: Icons.Grid,
   feed: Icons.Activity,
+  tree: Icons.FolderTree,
+  navigation: Icons.Navigation,
   timeline: Icons.Clock,
   kanban: Icons.Board,
-  map: Icons.MapPin,
-  wiki: Icons.Book,
-  full: Icons.Maximize,
-  compact: Icons.Collapse,
-  summary: Icons.FileText,
-  horizontal: Icons.AlignHorizontal,
-  split: Icons.Columns
+  book: Icons.Book,
+  widget: Icons.Widget,
+  tool: Icons.Tool,
 }
 
 function getModeLabel(mode: DisplayMode): string {

@@ -97,6 +97,15 @@ import TextBoxMultiple from '@iconify-icons/mdi/text-box-multiple'  // For 'Summ
 import ChartArc from '@iconify-icons/mdi/chart-arc'  // For 'Graph' ✓
 import FileReport from '@iconify-icons/mdi/file-report'  // For 'Report' ✓
 import NoteMultiple from '@iconify-icons/mdi/note-multiple'  // For 'Minutes' ✓
+import CrownOutline from '@iconify-icons/mdi/crown-outline'
+import AccountGroupOutline from '@iconify-icons/mdi/account-group-outline'
+import FormatListCheckbox from '@iconify-icons/mdi/format-list-checkbox'
+import HandExtendedOutline from '@iconify-icons/mdi/hand-extended-outline'
+import MapClockOutline from '@iconify-icons/mdi/map-clock-outline'
+import Monitor from '@iconify-icons/mdi/monitor'
+import MonitorLock from '@iconify-icons/mdi/monitor-lock'
+import MonitorOff from '@iconify-icons/mdi/monitor-off'
+
 
 // For 'ViewKanban' - use one of these alternatives:
 import ViewDashboard from '@iconify-icons/mdi/view-dashboard'  // Alternative for Kanban ✓
@@ -127,7 +136,7 @@ import ClipboardText from '@iconify-icons/mdi/clipboard-text-outline' // Minutes
 import MapOutline from '@iconify-icons/mdi/map-outline'
 
 // import Circle from '@iconify-icons/mdi/circle'    
-// import Information from '@iconify-icons/mdi/information'
+import Information from '@iconify-icons/mdi/information'
 // import CloseCircle from '@iconify-icons/mdi/close-circle'
 import Update from '@iconify-icons/mdi/update'
 import Calendar from '@iconify-icons/mdi/calendar'
@@ -410,6 +419,7 @@ export const InquiryGeneralIcons: Record<string, Component> = {
   AccountMultipleCheck: makeIconComponent(AccountMultipleCheck, '#1B5E20'),
   LightbulbOn: makeIconComponent(LightbulbOn, '#F57C00'),
   Bullhorn: makeIconComponent(Bullhorn, '#EF6C00'),
+Information: makeIconComponent(Information, '#1976D2'), 
   Check: makeIconComponent(Check, '#689F38'),
   CommentQuote: makeIconComponent(CommentQuote, '#7B1FA2'),
   ViewListOutline: makeIconComponent(ViewListOutline, '#0D47A1'),
@@ -567,6 +577,18 @@ export const BadgeIcons: Record<string, Component> = {
 export const getBadgeIcon = (name: string) => BadgeIcons[name] || BadgeIcons.Comments
 
 export const StatusIcons: Record<string, Component> = {
+	Owner: makeIconComponent(CrownOutline, '#F9A825'),                    // Gold crown
+  OpenInquiry: makeIconComponent(Earth, '#43A047'),                    // Green globe
+  PrivateInquiry: makeIconComponent(Key, '#D32F2F'),                  // Red key
+  Participants: makeIconComponent(AccountGroupOutline, '#1E88E5'),    // Blue group
+  Options: makeIconComponent(FormatListCheckbox, '#6D4C41'),          // Brown checkbox list
+  ProposalsAllowed: makeIconComponent(HandExtendedOutline, '#2E7D32'), // Green hand
+  Timezone: makeIconComponent(MapClockOutline, '#5D4037'),            // Dark brown clock map
+  ShowResults: makeIconComponent(Monitor, '#1976D2'),                // Blue monitor
+  ShowResultsOnClosed: makeIconComponent(MonitorLock, '#FF8F00'),     // Orange monitor with lock
+  HideResults: makeIconComponent(MonitorOff, '#9E9E9E'),             // Gray monitor off
+  Subscribed: makeIconComponent(BellOutline, '#FFA000'),             // Orange bell
+  AnonymousIcon: makeIconComponent(AnonymousIcon, '#757575'),            // Gray incognito (if not already defined)
   Unpublished: makeIconComponent(PublishOff, '#757575'),
   Archived: makeIconComponent(Archive, '#455A64'),
   Closed: makeIconComponent(Lock, '#5D4037'),
@@ -601,7 +623,6 @@ export const StatusIcons: Record<string, Component> = {
   ContactGroupIcon: makeIconComponent(ContactGroupIcon, '#7B1FA2'),
   CircleIcon: makeIconComponent(CircleIcon, '#00ACC1'),
   DeletedUserIcon: makeIconComponent(DeletedUserIcon, '#D32F2F'),
-  AnonymousIcon: makeIconComponent(AnonymousIcon, '#757575'),
   InquiryGroupIcon: makeIconComponent(InquiryGroupIcon, '#5E35B1'),
   Draft: makeIconComponent(FileDocumentEdit, '#6A1B9A'),
   Default: makeIconComponent(FileDocumentEdit, '#757575'),

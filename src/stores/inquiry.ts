@@ -79,6 +79,7 @@ export type InquiryStatus = {
   countParticipants: number
   countComments: number
   countSupports: number
+  trendingScore: number
   publicationStatus: string
 }
 
@@ -224,7 +225,7 @@ export const useInquiryStore = defineStore('inquiry', {
       reorderOptions: false,
       seeResults: false,
       seeUsernames: false,
-      subscribe: false,
+      subscribe: true,
       takeOver: false,
       deanonymize: false,
       addOptions: false,

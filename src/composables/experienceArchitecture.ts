@@ -15,14 +15,14 @@ export const EXPERIENCE_ARCHITECTURES: Record<ExperienceKey, ExperienceArchitect
     layout: { type: 'grid', columns: 2, rows: 2, responsive: true },
     context: { type: 'group', selection: 'current' },
     features: ['statistics', 'activity', 'navigation'],
-    display_architecture: {
+    displayArchitecture: {
       stats: {
         content: 'statistics',
         scope: { source: 'group' },
         filter: { status: ['active', 'published'] },
         display: { type: 'widget' },
         position: { row: 1, column: 1 },
-        interaction: { on_click: { action: 'open', target: 'panel' } }
+        interaction: { action: 'open', target: 'panel' }
       },
       activity: {
         content: 'activity',
@@ -30,7 +30,7 @@ export const EXPERIENCE_ARCHITECTURES: Record<ExperienceKey, ExperienceArchitect
         filter: { type: ['news', 'announcement'] },
         display: { type: 'feed' },
         position: { row: 1, column: 2 },
-        interaction: { on_click: { action: 'open', target: 'panel' } }
+        interaction: { action: 'open', target: 'panel' }
       },
       groups: {
         content: 'inquiry_groups',
@@ -38,7 +38,7 @@ export const EXPERIENCE_ARCHITECTURES: Record<ExperienceKey, ExperienceArchitect
         filter: { status: 'active' },
         display: { type: 'cards' },
         position: { row: 2, column: 1 },
-        interaction: { on_click: { action: 'navigate', target: 'page' } }
+        interaction: { action: 'navigate', target: 'page' }
       },
       inquiries: {
         content: 'inquiries',
@@ -46,7 +46,7 @@ export const EXPERIENCE_ARCHITECTURES: Record<ExperienceKey, ExperienceArchitect
         filter: { status: ['published', 'active'] },
         display: { type: 'cards' },
         position: { row: 2, column: 2 },
-        interaction: { on_click: { action: 'open', target: 'panel' } }
+        interaction: { action: 'open', target: 'panel' }
       }
     }
   },
@@ -59,7 +59,7 @@ export const EXPERIENCE_ARCHITECTURES: Record<ExperienceKey, ExperienceArchitect
     layout: { type: 'full', responsive: true },
     context: { type: 'group', selection: 'current' },
     features: ['feed', 'activity', 'comments', 'support'],
-    display_architecture: {
+    displayArchitecture: {
       main: {
         content: 'inquiries',
         scope: { source: 'children', sort: { field: 'lastInteraction', direction: 'desc' }, pagination: { limit: 20, offset: 0 } },
@@ -78,21 +78,21 @@ export const EXPERIENCE_ARCHITECTURES: Record<ExperienceKey, ExperienceArchitect
     layout: { type: 'grid', columns: 3, rows: 3, responsive: true },
     context: { type: 'group', selection: 'all' },
     features: ['search', 'filter', 'compare', 'cards'],
-    display_architecture: {
+    displayArchitecture: {
       search_bar: {
         content: 'inquiries',
         scope: { source: 'children', sort: { field: 'promoted', direction: 'desc' } },
         filter: { status: ['published', 'active'], inquiry_type: ['proposal', 'offer', 'service', 'project'] },
         display: { type: 'tool', tool: 'search' },
-        position: { row: 1, column: 1, column_span: 3 }
+        position: { row: 1, column: 1, columnSpan: 3 }
       },
       main_grid: {
         content: 'inquiries',
         scope: { source: 'children', sort: { field: 'rating', direction: 'desc' }, pagination: { limit: 20, offset: 0 } },
         filter: { status: ['published', 'featured'], inquiry_type: ['proposal', 'offer', 'service'] },
         display: { type: 'cards', options: { cardsPerRow: 2 } },
-        position: { row: 2, column: 1, column_span: 2 },
-        interaction: { on_click: { action: 'open', target: 'modal' } }
+        position: { row: 2, column: 1, columnSpan: 2 },
+        interaction: { action: 'open', target: 'modal' }
       },
       filters: {
         content: 'statistics',
@@ -100,15 +100,15 @@ export const EXPERIENCE_ARCHITECTURES: Record<ExperienceKey, ExperienceArchitect
         filter: { status: ['published', 'active'] },
         display: { type: 'widget' },
         position: { row: 2, column: 3 },
-        interaction: { on_click: { action: 'open', target: 'panel' } }
+        interaction: { action: 'open', target: 'panel' }
       },
       map_view: {
         content: 'inquiries',
         scope: { source: 'children' },
         filter: { status: ['published', 'active'], inquiry_type: ['proposal', 'offer', 'service'] },
         display: { type: 'list' },
-        position: { row: 3, column: 1, column_span: 3 },
-        interaction: { on_click: { action: 'open', target: 'panel' } }
+        position: { row: 3, column: 1, columnSpan: 3 },
+        interaction: { action: 'open', target: 'panel' }
       }
     }
   },
@@ -121,7 +121,7 @@ export const EXPERIENCE_ARCHITECTURES: Record<ExperienceKey, ExperienceArchitect
     layout: { type: 'full', responsive: true },
     context: { type: 'group', selection: 'current' },
     features: ['drag-drop', 'status-tracking', 'progress'],
-    display_architecture: {
+    displayArchitecture: {
       board: {
         content: 'inquiries',
         scope: { 
@@ -133,10 +133,8 @@ export const EXPERIENCE_ARCHITECTURES: Record<ExperienceKey, ExperienceArchitect
           selection: { category: 'board' }
         },
         display: { type: 'tool', tool: 'kanban' },
-        position: { row: 1, column: 1, row_span: 1 },
-        interaction: {
-          on_click: { action: 'select', target: 'same_view' }
-        }
+        position: { row: 1, column: 1, rowSpan: 1 },
+        interaction: { action: 'select', target: 'same_view' }
       }
     }
   },
@@ -149,7 +147,7 @@ export const EXPERIENCE_ARCHITECTURES: Record<ExperienceKey, ExperienceArchitect
     layout: { type: 'grid', columns: 2, rows: 2, responsive: true },
     context: { type: 'group', selection: 'current' },
     features: ['chronological', 'events', 'milestones'],
-    display_architecture: {
+    displayArchitecture: {
       timeline_view: {
         content: 'inquiries',
         scope: { 
@@ -164,10 +162,8 @@ export const EXPERIENCE_ARCHITECTURES: Record<ExperienceKey, ExperienceArchitect
           selection: { category: 'history' }
         },
         display: { type: 'tool', tool: 'timeline' },
-        position: { row: 1, column: 1, column_span: 2 },
-        interaction: {
-          on_click: { action: 'open', target: 'panel' }
-        }
+        position: { row: 1, column: 1, columnSpan: 2 },
+        interaction: { action: 'open', target: 'panel' }
       },
       stats: {
         content: 'statistics',
@@ -178,9 +174,7 @@ export const EXPERIENCE_ARCHITECTURES: Record<ExperienceKey, ExperienceArchitect
         },
         display: { type: 'widget' },
         position: { row: 2, column: 1 },
-        interaction: {
-          on_click: { action: 'open', target: 'panel' }
-        }
+        interaction: { action: 'open', target: 'panel' }
       },
       activity_summary: {
         content: 'activity',
@@ -191,9 +185,7 @@ export const EXPERIENCE_ARCHITECTURES: Record<ExperienceKey, ExperienceArchitect
         },
         display: { type: 'list' },
         position: { row: 2, column: 2 },
-        interaction: {
-          on_click: { action: 'open', target: 'panel' }
-        }
+        interaction: { action: 'open', target: 'panel' }
       }
     }
   },
@@ -206,7 +198,7 @@ export const EXPERIENCE_ARCHITECTURES: Record<ExperienceKey, ExperienceArchitect
     layout: { type: 'grid', columns: 2, rows: 2, responsive: true },
     context: { type: 'group', selection: 'selected' },
     features: ['tree-navigation', 'structure', 'book-reading'],
-    display_architecture: {
+    displayArchitecture: {
       navigation: {
         content: 'inquiry_groups',
         scope: { 
@@ -218,13 +210,11 @@ export const EXPERIENCE_ARCHITECTURES: Record<ExperienceKey, ExperienceArchitect
           selection: { category: 'navigation' }
         },
         display: { type: 'tree' },
-        position: { row: 1, column: 1, row_span: 2 },
-        interaction: {
-          on_click: { action: 'navigate', target: 'same_view' }
-        }
+        position: { row: 1, column: 1, rowSpan: 2 },
+        interaction: { action: 'navigate', target: 'same_view' }
       },
       content: {
-        content: 'inquiry',
+        content: 'inquiries',  // was 'inquiry' – now uses plural
         scope: { source: 'selected_inquiry' },
         filter: { 
           status: ['published', 'active'],
@@ -235,9 +225,7 @@ export const EXPERIENCE_ARCHITECTURES: Record<ExperienceKey, ExperienceArchitect
           options: { showMeta: true }
         },
         position: { row: 1, column: 2 },
-        interaction: {
-          on_click: { action: 'open', target: 'page' }
-        }
+        interaction: { action: 'open', target: 'page' }
       },
       structure: {
         content: 'options',
@@ -249,9 +237,7 @@ export const EXPERIENCE_ARCHITECTURES: Record<ExperienceKey, ExperienceArchitect
         },
         display: { type: 'tool', tool: 'structure' },
         position: { row: 2, column: 2 },
-        interaction: {
-          on_click: { action: 'open', target: 'panel' }
-        }
+        interaction: { action: 'open', target: 'panel' }
       }
     }
   },
@@ -264,22 +250,20 @@ export const EXPERIENCE_ARCHITECTURES: Record<ExperienceKey, ExperienceArchitect
     layout: { type: 'grid', columns: 2, rows: 2, responsive: true },
     context: { type: 'group', selection: 'selected' },
     features: ['debate', 'resources', 'comments', 'decision-making'],
-    display_architecture: {
+    displayArchitecture: {
       inquiry_detail: {
-        content: 'inquiry',
+        content: 'inquiries',  // was 'inquiry'
         scope: { source: 'selected_inquiry' },
         filter: { 
           status: ['active', 'debate', 'voting'],
           selection: { category: 'decision' }
         },
         display: { 
-          type: 'full',
+          type: 'book',  // was 'full' – replaced with 'book'
           options: { showMeta: true, showStats: true }
         },
         position: { row: 1, column: 1 },
-        interaction: {
-          on_click: { action: 'open', target: 'page' }
-        }
+        interaction: { action: 'open', target: 'page' }
       },
       resources: {
         content: 'resources',
@@ -293,9 +277,7 @@ export const EXPERIENCE_ARCHITECTURES: Record<ExperienceKey, ExperienceArchitect
           options: { showMeta: true }
         },
         position: { row: 1, column: 2 },
-        interaction: {
-          on_click: { action: 'open', target: 'panel' }
-        }
+        interaction: { action: 'open', target: 'panel' }
       },
       debate: {
         content: 'options',
@@ -310,9 +292,7 @@ export const EXPERIENCE_ARCHITECTURES: Record<ExperienceKey, ExperienceArchitect
         },
         display: { type: 'tool', tool: 'debate' },
         position: { row: 2, column: 1 },
-        interaction: {
-          on_click: { action: 'open', target: 'panel' }
-        }
+        interaction: { action: 'open', target: 'panel' }
       },
       discussion: {
         content: 'comments',
@@ -331,9 +311,7 @@ export const EXPERIENCE_ARCHITECTURES: Record<ExperienceKey, ExperienceArchitect
           options: { showMeta: true }
         },
         position: { row: 2, column: 2 },
-        interaction: {
-          on_click: { action: 'comment', target: 'panel' }
-        }
+        interaction: { action: 'comment', target: 'panel' }
       }
     }
   },
@@ -346,7 +324,7 @@ export const EXPERIENCE_ARCHITECTURES: Record<ExperienceKey, ExperienceArchitect
     layout: { type: 'full', responsive: true },
     context: { type: 'group', selection: 'current' },
     features: ['navigation'],
-    display_architecture: {
+    displayArchitecture: {
       groups: {
         content: 'inquiry_groups',
         scope: { 
@@ -358,18 +336,33 @@ export const EXPERIENCE_ARCHITECTURES: Record<ExperienceKey, ExperienceArchitect
         },
         display: { type: 'navigation' },
         position: { row: 1, column: 1 },
-        interaction: {
-          on_click: { action: 'navigate', target: 'page' }
-        }
+	interaction: { action: 'navigate', target: 'page' }
       }
     }
+  },
+
+  classic: {
+	  key: 'classic',
+	  label: 'Classic View',
+	  icon: 'Home',
+	  description: 'Standard group layout',
+	  verb: 'View',
+	  question: 'Default view',
+	  defaultTools: [],
+	  defaultDisplay: 'list' as DisplayType,
+	  allowedDisplays: ['list', 'cards'] as DisplayType[],
+	  allowedTools: [],
+	  layout: 'full',
+	  showHeader: true,
+	  showBreadcrumb: true,
+	  showStats: true,
+	  supportedGroupTypes: [],
   }
 }
-
 /**
  * Get the architecture for a given experience
  * @param experience - The experience key
  */
 export function getExperienceArchitecture(experience: ExperienceKey): ExperienceArchitecture {
-  return EXPERIENCE_ARCHITECTURES[experience] || EXPERIENCE_ARCHITECTURES.dashboard
+	return EXPERIENCE_ARCHITECTURES[experience] || EXPERIENCE_ARCHITECTURES.dashboard
 }

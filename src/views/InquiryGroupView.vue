@@ -31,6 +31,7 @@ import { useGroupExperience } from '../composables/useGroupExperience'
 import type { ExperienceKey, DisplayMode } from '../composables/useExperience'
 import type { Inquiry } from '../Types/index.ts'
 import type { Option } from '../types'
+import { useInquiriesStore } from '../stores/inquiries.ts'
 
 // ============================================================
 // EXISTING STORE INITIALIZATION
@@ -40,6 +41,7 @@ const route = useRoute()
 const router = useRouter()
 const inquiryGroupStore = useInquiryGroupStore()
 const inquiryGroupsStore = useInquiryGroupsStore()
+const inquiriesStore = useInquiriesStore()
 const sessionStore = useSessionStore()
 const isAppLoaded = ref(false)
 
@@ -75,12 +77,14 @@ const availableGroups = computed(() => {
 // ============================================================
 // GROUP INQUIRIES
 // ============================================================
+
 const groupInquiries = computed(() => {
-    if (!inquiryGroupStore.inquiryIds) return []
-    // Fetch from inquiries store
-    // This would need to be implemented based on your store structure
-    return []
+  if (!inquiryGroupStore.inquiryIds) return []
+  return inquiryGroupStore.inquiryIds
+    .map(id => inquiriesStore.inquiries.find(i => i.id === id))
+    .filter(Boolean)
 })
+
 
 const groupOptions = computed(() => {
     const options: Option[] = []
@@ -236,7 +240,7 @@ function handleCreateInquiry() {
             :display-mode="displayMode"
             :display-architecture="displayArchitecture"
             :layout-config="layoutConfig"
-            :ui-config="inquiryGroupStore.ui"
+            :ui-config="inquiryGroupStore.configuration?.ui"
             :show-header="false"
             :show-stats="true"
             :show-resources="true"
