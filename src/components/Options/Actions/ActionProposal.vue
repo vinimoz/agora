@@ -99,9 +99,28 @@ const executeAction = async () => {
 
 try {
   switch (props.actionKey) {
-    case 'create_options_ai':
-      showConfigModal.value = true
-      return  
+    case 'duplicate_proposal':
+        await duplicateProposal()
+        emit('close')
+        break
+      case 'merge_proposals':
+        await mergeProposals()
+        emit('close')
+        break
+      case 'export_proposal':
+        await exportProposal()
+        emit('close')
+        break
+      case 'request_review':
+        await requestReview()
+        emit('close')
+        break
+      case 'create_options_ai':
+        // Show modal instead of executing directly
+        showConfigModal.value = true
+        loading.value = false
+        return
+
     default:
       console.warn(`Unknown action: ${props.actionKey}`)
   }

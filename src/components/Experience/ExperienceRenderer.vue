@@ -66,28 +66,27 @@
         ]"
         :style="getZoneStyle(zone)"
       >
-        <!-- Zone Header -->
-        <div v-if="getZoneLabel(zone)" class="zone-header">
-          <span class="zone-label">{{ getZoneLabel(zone) }}</span>
-          <span v-if="getZoneCount(zone) !== null" class="zone-count">{{ getZoneCount(zone) }}</span>
-        </div>
-
         <!-- Zone Content -->
         <div class="zone-content">
-          <component
-            :is="getZoneComponent(zone)"
-            v-bind="getZoneProps(zone)"
-            @view-inquiry="(inquiry) => handleInquiryClick(inquiry, zoneKey)"
-            @view-option="(option) => handleOptionClick(option, zoneKey)"
-            @view-group="handleViewGroup"
-            @click="(item) => handleInquiryClick(item, zoneKey)"
-            @select="handleViewGroup"
-            @view="(item) => handleInquiryClick(item, zoneKey)"
-          />
+          <!-- Show component if data exists -->
+          <template v-if="hasZoneData(zone)">
+            <component
+              :is="getZoneComponent(zone)"
+              v-bind="getZoneProps(zone)"
+              :columns="getColumns(zone)"
+              @view-inquiry="(inquiry) => handleInquiryClick(inquiry, zoneKey)"
+              @view-option="(option) => handleOptionClick(option, zoneKey)"
+              @view-group="handleViewGroup"
+              @click="(item) => handleInquiryClick(item, zoneKey)"
+              @select="handleViewGroup"
+              @view="(item) => handleInquiryClick(item, zoneKey)"
+            />
+          </template>
+          <!-- Show empty message if no data -->
+          <div v-else class="zone-empty-message">
+            {{ t('agora', 'No content available for this zone') }}
+          </div>
         </div>
-	  <div v-if="!hasZoneData(zone)" class="zone-empty-message">
-    {{ t('agora', 'No content available for this zone') }}
-  </div>
       </div>
     </div>
 
@@ -229,6 +228,9 @@ import InquiryRichHTML from '../InquiryGroup/InquiryRichHTML.vue'
 import InquiryKanban from '../InquiryGroup/InquiryKanban.vue'
 import InquiryTimeline from '../InquiryGroup/InquiryTimeline.vue'
 import BookDisplay from '../InquiryGroup/BookDisplay.vue'
+import InquiryGroupTree from '../InquiryGroup/InquiryGroupTree.vue'
+// ⚠️ IMPORTANT: Add missing import for InquiryListNavigation
+import InquiryListNavigation from '../InquiryGroup/InquiryListNavigation.vue'
 
 // ============================================================
 // GROUP DISPLAY COMPONENTS
@@ -417,28 +419,35 @@ const availableDisplays = computed(() => {
 })
 
 // ============================================================
-// COMPUTED - Filtered Architecture - ONLY show zones with data
+// COMPUTED - Filtered Architecture - Show all zones
 // ============================================================
-/*const filteredArchitecture = computed(() => {
-  const arch = effectiveArchitecture.value
-  const filtered: Record<string, any> = {}
-  for (const key in arch) {
-    const zone = arch[key]
-    if (zone && hasZoneData(zone)) {
-      filtered[key] = zone
-    }
-  }
-  return filtered
-})
-*/
 const filteredArchitecture = computed(() => {
-  return effectiveArchitecture.value; // no filtering
-});
+  return effectiveArchitecture.value
+})
+
+// ============================================================
+// COMPUTED - Zone Data Cache (to avoid recomputation)
+// ============================================================
+const zoneDataCache = computed(() => {
+  const arch = filteredArchitecture.value
+  const cache: Record<string, any[]> = {}
+  for (const key in arch) {
+    cache[key] = getZoneData(arch[key])
+  }
+  return cache
+})
 
 function hasZoneData(zone: any): boolean {
   if (!zone) return false
   const content = zone.content || 'inquiries'
-  const data = getZoneData(zone)
+  
+  // Use cached data if available
+  const zoneKey = Object.keys(filteredArchitecture.value).find(
+    key => filteredArchitecture.value[key] === zone
+  )
+  const data = zoneKey && zoneDataCache.value[zoneKey] 
+    ? zoneDataCache.value[zoneKey] 
+    : getZoneData(zone)
   
   if (content === 'inquiry_groups') {
     return data && data.length > 0
@@ -476,10 +485,10 @@ const effectiveArchitecture = computed(() => {
   let arch = {}
   try {
     const exp = props.experience || 'dashboard'
-    const groupDefault = props.uiConfig?.defaultExperience || 'dashboard'  // camelCase
+    const groupDefault = props.uiConfig?.defaultExperience || 'dashboard'
     if (exp !== groupDefault) {
       const globalArch = getExperienceArchitecture(exp as ExperienceKey)
-      arch = globalArch?.displayArchitecture || {}  // camelCase
+      arch = globalArch?.displayArchitecture || {}
     } else if (props.displayArchitecture && Object.keys(props.displayArchitecture).length > 0) {
       arch = props.displayArchitecture
     } else {
@@ -504,9 +513,14 @@ function getZoneGridPosition(zone: any): GridPosition | null {
   return {
     row: pos.row || 1,
     column: pos.column || 1,
-    rowSpan: pos.rowSpan || 1,      // was row_span
-    columnSpan: pos.columnSpan || 1, // was column_span
+    rowSpan: pos.rowSpan || 1,
+    columnSpan: pos.columnSpan || 1,
   }
+}
+
+function getColumns(zone: any): number {
+  const display = zone.display || { type: 'cards' }
+  return display.options?.cardsPerRow || 3
 }
 
 // ============================================================
@@ -520,20 +534,14 @@ function getZoneData(zone: any) {
   const source = scope.source || 'all'
 
   const rawData = fetchRawData(content, source)
-  console.log("GET  ZONE DATA BEFORE CONTENT", zone.content)
-  console.log("GET  ZONE DATA BEFORE SCOPE", zone.scope)
-  console.log("GET  ZONE DATA BEFORE FILTER", rawData)
-  console.log("GET  ZONE DATA WITH FILTER", processZoneData(rawData, {
-    filter: zone.filter,
-    sort: scope.sort,
-    pagination: scope.pagination
-  }))
 
+  return rawData
+  /*
   return processZoneData(rawData, {
     filter: zone.filter,
     sort: scope.sort,
     pagination: scope.pagination
-  })
+  })*/
 }
 
 function fetchRawData(content: string, source: string) {
@@ -541,9 +549,12 @@ function fetchRawData(content: string, source: string) {
     case 'inquiry_groups':
       const groupsStore = useInquiryGroupsStore()
       if (source === 'children' && props.group) {
-        return groupsStore.byParentId(props.group.id)
+	const children = groupsStore.byParentId(props.group.id)
+        return children || []
+
       }
-      return props.groups || []
+      // return props.groups || []
+       return groupsStore.inquiryGroups || []
 
     case 'inquiries':
       if (source === 'selected_inquiry') {
@@ -613,29 +624,21 @@ function getZoneComponent(zone: any) {
     inquiry_groups: {
       'list': InquiryGroupCatalog,
       'cards': InquiryGroupCatalog,
-      'tree': InquiryGroupNavigation,
+      'tree': InquiryGroupTree,
       'navigation': InquiryGroupNavigation,
     },
 
     // ---- Inquiries (plural) ----
     inquiries: {
       'list': InquiryListItem,
-      'cards': InquiryCard,
+      'cards': InquiryGrid,
       'feed': InquiryFeed,
       'tree': InquiryTree,
       'timeline': InquiryTimeline,
       'kanban': InquiryKanban,
-      'book': BookDisplay,    // book display uses rich html view
+      'book': BookDisplay,
+      'navigation': InquiryListNavigation, // ✅ Now properly imported
       'tool': getToolComponent(tool, content),
-      // fallback for any other valid type not explicitly mapped
-    },
-
-    // ---- Inquiry (singular) ----
-    inquiry: {
-      'full': InquiryRichHTML,    // full is not a valid DisplayType, but kept for legacy
-      'book': InquiryRichHTML,
-      'rich_html': InquiryRichHTML,
-      'cards': InquiryCard,
     },
 
     // ---- Options ----
@@ -674,7 +677,6 @@ function getZoneComponent(zone: any) {
 
   const component = contentComponents[type]
   if (!component) {
-    // fallback to cards if type is not valid
     return contentComponents['cards'] || InquiryCard
   }
 
@@ -712,8 +714,8 @@ function getDisplayComponent(mode: string) {
     timeline: InquiryTimeline,
     kanban: InquiryKanban,
     book: InquiryRichHTML,
-    widget: InquiryCard, // fallback
-    tool: InquiryCard,   // fallback
+    widget: InquiryCard,
+    tool: InquiryCard,
     navigation: InquiryGroupNavigation,
   }
   
@@ -723,10 +725,11 @@ function getDisplayComponent(mode: string) {
 // ============================================================
 // ZONE PROPS RESOLVER
 // ============================================================
+// ============================================================
+// ZONE PROPS RESOLVER - Fixed inquiry_groups case
+// ============================================================
 function getZoneProps(zone: any) {
   if (!zone) return {}
-  
-  console.log(`[DEBUG] Zone props for "${zone.content}":`, props)
 
   const content = zone.content || 'inquiries'
   const display = zone.display || { type: 'cards' }
@@ -763,32 +766,46 @@ function getZoneProps(zone: any) {
   const selectedInquiry = getSelectedInquiry()
 
   switch (content) {
-    case 'inquiry_groups':
+    case 'inquiry_groups': {
+      // Get groups from the store if data is empty
+      let groupsData = data
+      if (!groupsData || groupsData.length === 0) {
+        const groupsStore = useInquiryGroupsStore()
+        if (props.group?.id) {
+          groupsData = groupsStore.byParentId(props.group.id)
+        } else {
+          groupsData = groupsStore.inquiryGroups || []
+        }
+      }
+      
       return {
         ...baseProps,
-        groups: data,
+        groups: groupsData,
         activeId: props.group?.id,
         showCreateButton: true,
         families: zone.scope?.families || [],
         mode: type === 'list' ? 'list' : 'cards',
       }
+    }
 
     case 'inquiries': {
       const inquiriesData = data.length > 0 ? data : props.inquiries || []
       const isSingle = inquiriesData.length === 1
       const singleInquiry = isSingle ? inquiriesData[0] : null
-      
+      const cardsPerRow = display.cardsPerRow || 3
+
       return {
         ...baseProps,
         inquiries: inquiriesData,
         inquiryIds: inquiriesData.map(i => i.id),
         group: props.group,
-        columns: display.cardsPerRow || 3,
+        columns: cardsPerRow,
         selectedInquiry: selectedInquiry,
         tool: tool,
         families: zone.scope?.families || [],
         family: zone.scope?.family || null,
         optionTypes: sessionStore.appSettings?.inquiryOptionTypeTab || [],
+        mode: type === 'list' ? 'list' : 'cards',
         inquiry: singleInquiry,
         initialInquiry: inquiriesData.length > 0 ? inquiriesData[0] : null,
       }
@@ -812,6 +829,8 @@ function getZoneProps(zone: any) {
       return {
         ...baseProps,
         options: data,
+        targetType: selectedInquiry?.type,
+        parentId: selectedInquiry?.id,
         inquiry: selectedInquiry,
         inquiryId: selectedInquiry?.id,
         tool: tool,
@@ -927,14 +946,8 @@ function getZoneStyle(zone: any) {
   return styles
 }
 
-function getChildGroups(): InquiryGroup[] {
-  const store = useInquiryGroupsStore()
-  if (!props.group?.id) return []
-  return store.byParentId(props.group.id)
-}
-
 // ============================================================
-// TWO-CLICK INTERACTION HANDLERS (using top-level action/target)
+// TWO-CLICK INTERACTION HANDLERS
 // ============================================================
 
 function handleInquiryClick(inquiry: Inquiry, zoneKey: string) {
@@ -942,6 +955,7 @@ function handleInquiryClick(inquiry: Inquiry, zoneKey: string) {
   
   const zone = filteredArchitecture.value[zoneKey]
   
+  // First click - select the inquiry
   if (selectedInquiryId.value !== inquiry.id) {
     selectedInquiryId.value = inquiry.id
     selectedOptionId.value = null
@@ -949,31 +963,26 @@ function handleInquiryClick(inquiry: Inquiry, zoneKey: string) {
     return
   }
   
-  // Second click – use interaction from zone (top-level)
+  // Second click - perform interaction
   if (zone?.interaction) {
     const { action, target } = zone.interaction
-    if (action) {
-      switch (action) {
-        case 'open':
-          if (target === 'page') {
-            emit('viewInquiry', inquiry)
-          } else if (target === 'panel' || target === 'modal' || target === 'dialog') {
-            emit('openPanel', { inquiry, zone: zoneKey, target })
-          } else {
-            emit('viewInquiry', inquiry)
-          }
-          break
-        case 'navigate':
-          emit('navigateTo', inquiry)
-          break
-        case 'select':
-          // already selected
-          break
-        default:
-          emit('viewInquiry', inquiry)
-      }
-    } else {
+    
+    if (target === 'page' || target === 'panel') {
       emit('viewInquiry', inquiry)
+      return
+    }
+    
+    switch (action) {
+      case 'open':
+        emit('viewInquiry', inquiry)
+        break
+      case 'navigate':
+        emit('navigateTo', inquiry)
+        break
+      case 'select':
+        break
+      default:
+        emit('viewInquiry', inquiry)
     }
   } else {
     emit('viewInquiry', inquiry)
@@ -1023,7 +1032,10 @@ function handleViewOption(option: any) {
 }
 
 function handleViewGroup(group: InquiryGroup) {
-  if (!group) return
+  if (!group) {
+    console.warn('Attempted to view null/undefined group')
+    return
+  }
   emit('viewGroup', group)
 }
 
@@ -1198,37 +1210,24 @@ watch(
     flex-direction: column;
     min-height: 200px;
 
-    // Zone specific sizing via inline styles (grid-row/grid-column)
-
-    .zone-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 12px 16px;
-      background: var(--color-background-dark);
-      border-bottom: 1px solid var(--color-border);
-      flex-shrink: 0;
-
-      .zone-label {
-        font-size: 14px;
-        font-weight: 600;
-        color: var(--color-main-text);
-      }
-
-      .zone-count {
-        font-size: 12px;
-        font-weight: 500;
-        background: var(--color-background-darker);
-        padding: 2px 10px;
-        border-radius: 12px;
-        color: var(--color-text-lighter);
-      }
-    }
-
     .zone-content {
       flex: 1;
       padding: 16px;
       overflow-y: auto;
+      min-height: 100px;
+    }
+
+    .zone-empty-message {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      color: var(--color-text-lighter);
+      font-size: 14px;
+      font-style: italic;
+      text-align: center;
+      background: var(--color-background-dark);
+      border-radius: 8px;
       min-height: 100px;
     }
   }
@@ -1407,7 +1406,6 @@ watch(
 /* ============================================================ */
 @media (max-width: 1400px) {
   .architecture-grid {
-    // Reduce columns on smaller screens, but keep grid-auto-flow to respect spans
     grid-template-columns: repeat(2, 1fr) !important;
   }
 }

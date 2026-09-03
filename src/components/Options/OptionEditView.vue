@@ -328,6 +328,10 @@ const loadActionComponent = async (familyKey: string, actionKey: string): Promis
             const module = await import(`./Actions/ActionStructure.vue`)
             component = markRaw(module.default || module)
         }
+        else if (familyKey === 'proposal') {
+            const module = await import(`./Actions/ActionProposal.vue`)
+            component = markRaw(module.default || module)
+        }
         // For other families, try to load individual action modals
         else {
             const componentName = `${actionKey

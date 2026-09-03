@@ -196,6 +196,7 @@ export const useInquiryStore = defineStore('inquiry', {
       countComments: 0,
       countSupports: 0,
       publicationStatus: 'draft',
+      trendingScore: 0,
     },
     currentUserStatus: {
       groupInvitations: [],

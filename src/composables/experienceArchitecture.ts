@@ -210,7 +210,7 @@ export const EXPERIENCE_ARCHITECTURES: Record<ExperienceKey, ExperienceArchitect
           selection: { category: 'navigation' }
         },
         display: { type: 'tree' },
-        position: { row: 1, column: 1, rowSpan: 2 },
+        position: { row: 1, column: 1, rowSpan: 2, columnSpan: 2 },
         interaction: { action: 'navigate', target: 'same_view' }
       },
       content: {

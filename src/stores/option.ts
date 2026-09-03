@@ -47,6 +47,7 @@ export type OptionCurrentStatus = {
   countParticipants: number
   countComments: number
   countSupports: number
+  trendingScore: number
   optionStatus: string
   supportResult: SupportResult | null
   publicationStatus: 'draft' | 'pending' | 'published' | 'archived' | 'deleted'
@@ -163,6 +164,7 @@ export const useOptionStore = defineStore('option', {
       isDeleted: false,
       countParticipants: 0,
       countComments: 0,
+      trendingScore: 0,
       countSupports: 0,
       optionStatus: 'draft',
       supportResult: null,

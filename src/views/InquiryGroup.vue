@@ -553,12 +553,39 @@ const {
   switchDisplay,
 } = useGroupExperience(currentGroup)
 
+/*
 function selectGroup(group: InquiryGroup) {
   if (group.slug) {
     router.push({ name: 'group-list', params: { slug: group.slug }, query: route.query })
   } else if (group.id) {
     // fallback to ID if slug not present (should not happen normally)
     router.push({ name: 'group', params: { id: String(group.id) }, query: route.query })
+  }
+}*/
+
+function selectGroup(group: InquiryGroup) {
+  if (!group) return
+
+  // If the group is the same as current, reload it
+  if (currentInquiryGroup.value?.id === group.id) {
+    // Reload the current group
+    inquiryGroupStore.load(group.id)
+    return
+  }
+
+  // Navigate to the group
+  if (group.slug) {
+    router.push({
+      name: 'group-list',
+      params: { slug: group.slug },
+      query: { ...route.query }
+    })
+  } else if (group.id) {
+    router.push({
+      name: 'group',
+      params: { id: String(group.id) },
+      query: { ...route.query }
+    })
   }
 }
 
@@ -868,6 +895,10 @@ function inquiryGroupAdded(newGroup: InquiryGroup) {
 // ============================================================
 // EXPERIENCE EVENT HANDLERS
 // ============================================================
+// ============================================================
+// EXPERIENCE EVENT HANDLERS - FIXED VERSION
+// ============================================================
+
 function handleExperienceChange(key: ExperienceKey) {
   switchExperience(key)
 }
@@ -876,18 +907,95 @@ function handleDisplayChange(mode: DisplayMode) {
   switchDisplay(mode)
 }
 
+/**
+ * Handle view inquiry event from ExperienceRenderer
+ * Navigates to the selected inquiry page
+ */
 function handleViewInquiry(inquiry: Inquiry) {
+  if (!inquiry) {
+    console.warn('handleViewInquiry: No inquiry provided')
+    showError(t('agora', 'Cannot open inquiry'))
+    return
+  }
+  
+  if (!inquiry.id) {
+    console.warn('handleViewInquiry: Inquiry has no ID', inquiry)
+    showError(t('agora', 'Cannot open inquiry: missing ID'))
+    return
+  }
+  
+  // Navigate to the inquiry page
   router.push({
     name: 'inquiry',
-    params: { id: inquiry.id },
+    params: { id: String(inquiry.id) }
+  }).catch(err => {
+    console.error('Navigation error:', err)
+    showError(t('agora', 'Failed to navigate to inquiry'))
   })
 }
 
+/**
+ * Handle view option event from ExperienceRenderer
+ * Navigates to the selected option page
+ */
 function handleViewOption(option: Option) {
+  if (!option) {
+    console.warn('handleViewOption: No option provided')
+    showError(t('agora', 'Cannot open option'))
+    return
+  }
+  
+  if (!option.id) {
+    console.warn('handleViewOption: Option has no ID', option)
+    showError(t('agora', 'Cannot open option: missing ID'))
+    return
+  }
+  
   router.push({
     name: 'option',
-    params: { id: option.id },
+    params: { id: String(option.id) },
+  }).catch(err => {
+    console.error('Navigation error:', err)
+    showError(t('agora', 'Failed to navigate to option'))
   })
+}
+
+/**
+ * Handle view group event from ExperienceRenderer
+ * Navigates to the selected group's page
+ */
+function handleViewGroup(group: InquiryGroup) {
+  if (!group) {
+    console.warn('Attempted to view null/undefined group')
+    showError(t('agora', 'Cannot navigate to this group'))
+    return
+  }
+
+  // If the group has a slug, navigate using the slug
+  if (group.slug) {
+    router.push({
+      name: 'group-list',
+      params: { slug: group.slug },
+      query: { ...route.query }
+    }).catch(err => {
+      console.error('Navigation error:', err)
+      showError(t('agora', 'Failed to navigate to group'))
+    })
+  }
+  // Fallback to ID if no slug (should not happen normally)
+  else if (group.id) {
+    router.push({
+      name: 'group',
+      params: { id: String(group.id) },
+      query: { ...route.query }
+    }).catch(err => {
+      console.error('Navigation error:', err)
+      showError(t('agora', 'Failed to navigate to group'))
+    })
+  } else {
+    console.warn('Group has no slug or id:', group)
+    showError(t('agora', 'Cannot navigate to this group'))
+  }
 }
 
 function handleCreateInquiry() {
@@ -898,6 +1006,7 @@ function handleCreateInquiry() {
     })
   }
 }
+
 
 // ============================================================
 // Available groups for dialog
