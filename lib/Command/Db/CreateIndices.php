@@ -9,9 +9,9 @@ declare(strict_types=1);
 
 namespace OCA\Agora\Command\Db;
 
-use Doctrine\DBAL\Schema\Schema;
 use OCA\Agora\Command\Command;
 use OCA\Agora\Db\IndexManager;
+use OCP\DB\ISchemaWrapper;
 use OCP\IDBConnection;
 
 /**
@@ -22,33 +22,37 @@ class CreateIndices extends Command
     protected string $name = parent::NAME_PREFIX . 'index:create';
     protected string $description = 'Add all indices and foreign key constraints';
     protected array $operationHints = [
-    'Adds indices and foreing key constraints.',
-    'NO data migration will be executed, so make sure you have a backup of your database.',
+        'Adds indices and foreign key constraints.',
+        'NO data migration will be executed, so make sure you have a backup of your database.',
     ];
 
     public function __construct(
         private IndexManager $indexManager,
         private IDBConnection $connection,
-        private Schema $schema,
     ) {
         parent::__construct();
     }
 
     protected function runCommands(): int
     {
-        // create indices and constraints
-        // secure, that the schema is updated to the current status
-        $this->schema = $this->connection->createSchema();
-        $this->indexManager->setSchema($this->schema);
+        // Create schema using the connection
+        $schema = $this->connection->createSchema();
+        
+        // Set the schema on the index manager
+        $this->indexManager->setSchema($schema);
+        
+        // Create indices and constraints
         $this->addForeignKeyConstraints();
         $this->addIndices();
-        $this->connection->migrateToSchema($this->schema);
+        
+        // Migrate the schema to the database
+        $this->connection->migrateToSchema($schema);
 
         return 0;
     }
 
     /**
-     * add an on delete fk contraint to all tables referencing the main inquiries table
+     * add an on delete fk constraint to all tables referencing the main inquiries table
      */
     private function addForeignKeyConstraints(): void
     {
@@ -63,7 +67,7 @@ class CreateIndices extends Command
     private function addIndices(): void
     {
         $this->printComment('Add indices');
-        $messages = $this->indexManager->createIndices();
+        $messages = $this->indexManager->createAllIndices();
         $this->printInfo($messages, ' - ');
     }
 }

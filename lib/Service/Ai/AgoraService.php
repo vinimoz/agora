@@ -46,8 +46,7 @@ class AgoraService {
     public function getOptionGenerator(): OptionGenerator {
         return new OptionGenerator(
             $this->promptRepository,
-            $this->documentParser,
-            $this->structureAnalyzer
+            $this->aiService  // FIXED: Pass the actual AIService
         );
     }
 

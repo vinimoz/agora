@@ -12,7 +12,6 @@ export type ApiEmailAdressList = {
 export { default as ActivityAPI } from './modules/activity.ts'
 export { default as AdminAPI } from './modules/admin.ts'
 export { default as AppSettingsAPI } from './modules/appSettings.ts'
-export { default as CalendarAPI } from './modules/calendar.ts'
 export { default as CommentsAPI } from './modules/comments.ts'
 export { default as OptionsAPI } from './modules/options.ts'
 export { default as InquiriesAPI } from './modules/inquiries.ts'

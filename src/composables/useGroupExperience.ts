@@ -20,6 +20,15 @@ export function useGroupExperience(group: Ref<InquiryGroup | null>) {
   // Get the full UI configuration from the group (stored in configuration.ui)
   const uiConfig = computed(() => group.value?.configuration?.ui || null)
   console.log(" USE GROUP EXPEREIECEN ",uiConfig.value)
+  let config = group.value?.configuration?.ui || null
+ 
+  if (!config && group.value?.inquiryGroupType?.ui) {
+    const templateUi = group.value.inquiryGroupType.ui
+    if (typeof templateUi === 'object') {
+      config = templateUi
+    }
+  }
+
   /**
    * Experience is determined by:
    * 1. URL query parameter (?experience=xxx)
@@ -32,7 +41,7 @@ export function useGroupExperience(group: Ref<InquiryGroup | null>) {
       if (urlExp && EXPERIENCE_DEFINITIONS[urlExp]) {
         return urlExp
       }
-      // Use 'experience' field from ExperienceArchitecture (not 'defaultExperience')
+      // Use 'experience' field from ExperienceArchitecture
       return uiConfig.value?.experience || 'dashboard'
     },
     set: (val) => {

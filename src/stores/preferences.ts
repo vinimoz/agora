@@ -4,17 +4,13 @@
  */
 
 import { defineStore } from 'pinia'
-import { CalendarAPI, UserSettingsAPI } from '../Api/index.ts'
+import {  UserSettingsAPI } from '../Api/index.ts'
 import { Logger } from '../helpers/index.ts'
 import { AxiosError } from '@nextcloud/axios'
 
 export type ViewMode = 'table-view' | 'list-view'
 
 export type UserPreferences = {
-  calendarPeek: boolean
-  checkCalendars: string[]
-  checkCalendarsHoursBefore: number
-  checkCalendarsHoursAfter: number
   defaultViewInquiry: ViewMode
   inquiryCombo: number[]
   relevantOffset: number
@@ -40,7 +36,6 @@ export type Calendar = {
 export type Preferences = {
   user: UserPreferences
   session: SessionSettings
-  availableCalendars: Calendar[]
 }
 
 export const usePreferencesStore = defineStore('preferences', {
@@ -59,7 +54,6 @@ export const usePreferencesStore = defineStore('preferences', {
     session: {
       manualViewInquiry: '',
     },
-    availableCalendars: [],
   }),
 
   getters: {
@@ -83,22 +77,6 @@ export const usePreferencesStore = defineStore('preferences', {
   },
 
   actions: {
-    setCalendars(payload: { calendars: Calendar[] }) {
-      this.availableCalendars = payload.calendars
-    },
-
-    addCheckCalendar(calendar: Calendar) {
-      this.user.checkCalendars.push(calendar.key)
-      this.write()
-    },
-
-    removeCheckCalendar(calendar: Calendar) {
-      const index = this.user.checkCalendars.indexOf(calendar.key)
-      if (index !== -1) {
-        this.user.checkCalendars.splice(index, 1)
-      }
-      this.write()
-    },
 
     setViewInquiry(viewMode: ViewMode) {
       this.session.manualViewInquiry = viewMode
@@ -133,18 +111,5 @@ export const usePreferencesStore = defineStore('preferences', {
       }
     },
 
-    async getCalendars() {
-      try {
-        const response = await CalendarAPI.getCalendars()
-        // this.availableCalendars = response.data.calendars
-        this.setCalendars({ calendars: response.data.calendars })
-        return response
-      } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return
-        }
-        throw error
-      }
-    },
   },
 })

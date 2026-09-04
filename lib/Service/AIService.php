@@ -2,11 +2,6 @@
 
 declare(strict_types=1);
 
-/**
- * SPDX-FileCopyrightText: 2017 Nextcloud contributors
- * SPDX-License-Identifier: AGPL-3.0-or-later
- */
-
 namespace OCA\Agora\Service;
 
 use OCP\TaskProcessing\IManager;
@@ -14,9 +9,6 @@ use OCP\TaskProcessing\Task;
 use OCP\TaskProcessing\TaskTypes\TextToTextReformulation;
 use Psr\Log\LoggerInterface;
 
-/**
- * Service for interacting with Nextcloud's AI capabilities
- */
 class AIService
 {
     private ?IManager $taskProcessingManager;
@@ -32,18 +24,22 @@ class AIService
 
     /**
      * Enhance or generate text using AI via Task Processing API (synchronous)
-     * 
-     * @param string $text The text to enhance or prompt for generation
-     * @return string The enhanced/generated text
      */
     public function enhanceText(string $text): string
     {
+        // If no AI service is available, return the original text
         if ($this->taskProcessingManager === null) {
             $this->logger->warning('AIService: no service available, install AI nextcloud.');
             return $text;
         }
 
         try {
+            // Log the request
+            $this->logger->info('AI request received', [
+                'text_length' => strlen($text),
+                'text_preview' => substr($text, 0, 100)
+            ]);
+
             // Create a task using TextToTextReformulation
             $task = new Task(
                 TextToTextReformulation::ID,
@@ -52,16 +48,20 @@ class AIService
                 null // userId - null for current user
             );
 
-            // Run the task synchronously - this returns a Task object
+            // Run the task synchronously
             $resultTask = $this->taskProcessingManager->runTask($task);
             
             // Check if the task completed successfully
             if ($resultTask->getStatus() === Task::STATUS_SUCCESSFUL) {
                 $output = $resultTask->getOutput();
-                if (isset($output['output']) && !empty($output['output'])) {
-                    return $output['output'];
-                }
-                return $text;
+                $result = $output['output'] ?? '';
+                
+                // Log success
+                $this->logger->info('AI request successful', [
+                    'result_length' => strlen($result)
+                ]);
+                
+                return $result;
             }
             
             // Task failed or returned no output
@@ -69,35 +69,23 @@ class AIService
                 'status' => $resultTask->getStatus(),
                 'error' => $resultTask->getErrorMessage()
             ]);
+            
+            // Return the original text as fallback
             return $text;
+            
         } catch (\Throwable $e) {
-            $this->logger->error('IA Nextcloud Error : ' . $e->getMessage(), ['exception' => $e]);
-            return $this->getFallbackResponse($text);
+            $this->logger->error('AI Error: ' . $e->getMessage(), ['exception' => $e]);
+            return $text;
         }
     }
 
     /**
      * Generate content with context
-     * 
-     * @param string $prompt The user prompt
-     * @param array $context Additional context (title, description, etc.)
-     * @return string The generated content
      */
     public function generateWithContext(string $prompt, array $context): string
     {
-        if ($this->taskProcessingManager === null) {
-            $this->logger->warning('AIService: no service available, install AI nextcloud.');
-            return $this->getFallbackResponse($prompt);
-        }
-
-        try {
-            // Build a comprehensive prompt with context
-            $fullPrompt = $this->buildPrompt($prompt, $context);
-            return $this->enhanceText($fullPrompt);
-        } catch (\Throwable $e) {
-            $this->logger->error('IA Nextcloud Error : ' . $e->getMessage(), ['exception' => $e]);
-            return $this->getFallbackResponse($prompt);
-        }
+        $fullPrompt = $this->buildPrompt($prompt, $context);
+        return $this->enhanceText($fullPrompt);
     }
 
     /**
@@ -117,37 +105,10 @@ class AIService
     }
 
     /**
-     * Get a fallback response when AI is not available
-     */
-    private function getFallbackResponse(string $prompt): string
-    {
-        return "I'll help with: " . $prompt . "\n\n" .
-               "To develop this, consider:\n" .
-               "1. What is the core problem or opportunity?\n" .
-               "2. Who are the key stakeholders?\n" .
-               "3. What are the desired outcomes?\n" .
-               "4. What resources are available?\n" .
-               "5. What are the potential risks and mitigations?\n\n" .
-               "Would you like me to elaborate on any of these areas?";
-    }
-
-    /**
      * Check if AI service is available
-     * 
-     * @return bool True if AI service is available
      */
     public function isAvailable(): bool
     {
         return $this->taskProcessingManager !== null;
-    }
-
-    /**
-     * Get the task manager
-     * 
-     * @return IManager|null The task manager
-     */
-    public function getTaskManager(): ?IManager
-    {
-        return $this->taskProcessingManager;
     }
 }

@@ -13,6 +13,7 @@ use OCA\Agora\Command\Command;
 use OCA\Agora\Db\IndexManager;
 use OCA\Agora\Db\TableManager;
 use OCA\Agora\Migration\Version20250715120000;
+use OCP\DB\ISchemaWrapper;
 use OCP\IDBConnection;
 use OCP\Migration\IOutput;
 
@@ -90,9 +91,12 @@ class Rebuild extends Command
     {
         $schema = $this->connection->createSchema();
         $this->indexManager->setSchema($schema);
-        $this->indexManager->createIndices();
+        
+        // Create all indices using the proper methods
+        $this->indexManager->createAllIndices();
         $this->indexManager->createForeignKeyConstraints();
         $this->indexManager->createUniqueIndices();
+        
         $this->connection->migrateToSchema($schema);
     }
 }

@@ -96,25 +96,41 @@ class AiController extends BaseController
      */
     #[NoAdminRequired]
     #[FrontpageRoute(verb: 'POST', url: '/ai/inquiry/{inquiryId}/generate-options')]
-    public function generateOptionsFromInquiry(int $inquiryId, int $count = 4): JSONResponse
-    {
-        return $this->response(
-            function () use ($inquiryId, $count) {
-                try {
-                    $inquiry = $this->getInquiry($inquiryId);
-                    $context = $this->buildOptionContext($inquiry);
-                    $options = $this->agoraService->getOptionGenerator()->generateOptionsFromContext($context, $count);
-                    return ['options' => $options];
-                } catch (\Throwable $e) {
-                    $this->logger->error('Option generation failed', [
-                        'error' => $e->getMessage(),
-                        'inquiryId' => $inquiryId
-                    ]);
-                    return ['options' => [], 'error' => $e->getMessage()];
-                }
+public function generateOptionsFromInquiry(int $inquiryId, int $count = 4): JSONResponse
+{
+    // Set a timeout for the AI request
+    set_time_limit(60); // 60 seconds
+    
+    return $this->response(
+        function () use ($inquiryId, $count) {
+            try {
+                $inquiry = $this->getInquiry($inquiryId);
+                $context = $this->buildOptionContext($inquiry);
+                
+                // Log start time
+                $start = microtime(true);
+                
+                $options = $this->agoraService->getOptionGenerator()
+                    ->generateOptionsFromContext($context, $count);
+                
+                // Log duration
+                $duration = microtime(true) - $start;
+                $this->logger->info('Option generation completed', [
+                    'duration' => $duration,
+                    'count' => count($options)
+                ]);
+                
+                return ['options' => $options];
+            } catch (\Throwable $e) {
+                $this->logger->error('Option generation failed', [
+                    'error' => $e->getMessage(),
+                    'inquiryId' => $inquiryId
+                ]);
+                return ['options' => [], 'error' => $e->getMessage()];
             }
-        );
-    }
+        }
+    );
+}
 
     /**
      * Generate options from uploaded document

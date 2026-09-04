@@ -9,9 +9,9 @@ declare(strict_types=1);
 
 namespace OCA\Agora\Migration\RepairSteps;
 
-use Doctrine\DBAL\Schema\Schema;
-use OCA\Agora\Db\Share;
 use OCA\Agora\Db\IndexManager;
+use OCA\Agora\Db\Share;
+use OCP\DB\ISchemaWrapper;
 use OCP\IDBConnection;
 use OCP\Migration\IOutput;
 use OCP\Migration\IRepairStep;
@@ -21,11 +21,10 @@ class CreateIndices implements IRepairStep
     public function __construct(
         private IndexManager $indexManager,
         private IDBConnection $connection,
-        private Schema $schema,
     ) {
     }
 
-    public function getName()
+    public function getName(): string
     {
         return 'Agora - Create all unique and optional indices';
     }
@@ -33,17 +32,27 @@ class CreateIndices implements IRepairStep
     public function run(IOutput $output): void
     {
         $messages = [];
-        $this->schema = $this->connection->createSchema();
-        $this->indexManager->setSchema($this->schema);
+        
+        // Create schema using the connection (returns ISchemaWrapper in NC35)
+        $schema = $this->connection->createSchema();
+        
+        // Set the schema on the index manager
+        $this->indexManager->setSchema($schema);
 
+        // Remove foreign keys from the share table
         $messages = array_merge($messages, $this->indexManager->removeForeignKeysFromTable(Share::TABLE));
+        
+        // Create indices
         $messages = array_merge($messages, $this->indexManager->createUniqueIndices());
         $messages = array_merge($messages, $this->indexManager->createOptionalIndices());
         
-        $this->connection->migrateToSchema($this->schema);
+        // Migrate the schema to the database
+        $this->connection->migrateToSchema($schema);
 
         foreach ($messages as $message) {
-            $output->info($message);
+            if ($message !== '') {
+                $output->info($message);
+            }
         }
 
         $output->info('Agora - Indices created.');

@@ -9,7 +9,6 @@ declare(strict_types=1);
 
 namespace OCA\Agora\Db;
 
-use Doctrine\DBAL\Schema\Exception\IndexDoesNotExist;
 use Exception;
 use OCA\Agora\Db\IndexDefinitions;
 use OCP\IConfig;
@@ -409,8 +408,8 @@ class IndexManager extends DbManager
                 $table->dropIndex($indexName);
                 $message = 'Removed ' . $indexName . ' from ' . $tableName;
             }
-        } catch (IndexDoesNotExist $e) {
-            // common index does not exist, skip it
+        } catch (Exception $e) {
+            // Index does not exist, skip it
         }
         return $message;
     }

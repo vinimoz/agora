@@ -7,7 +7,7 @@ import { defineStore } from 'pinia'
 import { ParticipationAPI } from '../Api'
 import { Logger } from '../helpers/modules/logger'
 import { useInquiryStore } from './inquiry'
-import { canParticipate, canParticipateInInquiry, getParticipationStatus } from '../utils/permissions'
+import { canParticipate, canParticipateInInquiry, getParticipationStatus, createInquiryContext } from '../utils/permissions'
 import type { AxiosError } from '@nextcloud/axios'
 import type { ParticipationPolicy } from '../Api/modules/participation'
 

@@ -81,22 +81,28 @@ export const useAiStore = defineStore('ai', {
      * Generate options from inquiry title and description
      * This is the primary method for creating options from discussion content
      */
-    async generateOptionsFromInquiry(inquiryId: number, count: number = 4): Promise<string[]> {
-      this.isLoading = true
-      try {
-        const response = await AiAPI.generateOptionsFromInquiry(inquiryId, count)
-        this.generatedOptions[inquiryId] = response.data.options
-        return response.data.options
-      } catch (error) {
-        if ((error as AxiosError)?.code === 'ERR_CANCELED') {
-          return []
-        }
-        Logger.error('Error generating options from inquiry', { error, inquiryId })
-        throw error
-      } finally {
-        this.isLoading = false
-      }
-    },
+async generateOptionsFromInquiry(inquiryId: number, count: number = 4): Promise<string[]> {
+  this.isLoading = true
+  try {
+    const response = await AiAPI.generateOptionsFromInquiry(inquiryId, count)
+    // Make sure we handle the response properly
+    if (response.data && response.data.options) {
+      const options = response.data.options
+      this.generatedOptions[inquiryId] = options
+      return options
+    } else {
+      throw new Error('Invalid response from AI service')
+    }
+  } catch (error) {
+    if ((error as AxiosError)?.code === 'ERR_CANCELED') {
+      return []
+    }
+    Logger.error('Error generating options from inquiry', { error, inquiryId })
+    throw error // Re-throw to be caught by the component
+  } finally {
+    this.isLoading = false
+  }
+},
 
     /**
      * Generate options from uploaded document

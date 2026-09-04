@@ -5,12 +5,12 @@
 
 <template>
   <div v-if="show" class="action-proposal-container">
-    <!-- Step 1: Configuration Modal -->
-    <GenerateOptionsModal
+  <GenerateOptionsModal
+      ref="configModalRef"
       v-if="showConfigModal"
       :show="showConfigModal"
       :inquiry-id="inquiryId"
-      :initial-prompt="initialPrompt"
+      :initial-prompt="'Generate options for our current discussion about sustainability'"
       :initial-count="initialCount"
       @close="handleConfigClose"
       @generate="handleGenerate"
@@ -137,6 +137,7 @@ const handleConfigClose = () => {
   emit('close')
 }
 
+/*
 const handleGenerate = async (prompt: string, count: number) => {
   loading.value = true
   showConfigModal.value = false
@@ -162,6 +163,41 @@ const handleGenerate = async (prompt: string, count: number) => {
     Logger.error('Error generating options', { error })
     showError('Failed to generate options. Please try again.')
     showConfigModal.value = true
+  } finally {
+    loading.value = false
+  }
+}*/
+
+const handleGenerate = async (prompt: string, count: number) => {
+  // Show loading state in the config modal
+  loading.value = true
+  
+  try {
+    // WAIT for the AI to generate options
+    const response = await aiStore.generateOptionsFromInquiry(
+      props.inquiryId,
+      count
+    )
+
+    // Parse the response
+    let options = parseOptions(response, count, prompt)
+    if (options.length === 0) {
+      options = createFallbackOptions(count, prompt)
+    }
+
+    // Set generated options
+    generatedOptions.value = options
+    
+    // Close config modal ONLY after options are generated
+    showConfigModal.value = false
+    
+    // Show preview modal with the generated options
+    showPreviewModal.value = true
+    
+  } catch (error) {
+    Logger.error('Error generating options', { error })
+    showError('Failed to generate options. Please try again.')
+    // Keep config modal open on error
   } finally {
     loading.value = false
   }
@@ -297,6 +333,5 @@ onMounted(() => {
 
 <style scoped lang="scss">
 .action-proposal-container {
-  // Container styles if needed
 }
 </style>
