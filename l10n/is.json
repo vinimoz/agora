@@ -59,6 +59,7 @@
     "Pending" : "Í bið",
     "Accepted" : "Samþykkt",
     "Save" : "Vista",
+    "{file} uploaded" : "{file} var sent inn",
     "Failed to upload {file}" : "Mistókst að senda inn {file}",
     "never" : "aldrei",
     "Comments" : "Athugasemdir",
