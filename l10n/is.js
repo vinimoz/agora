@@ -117,6 +117,7 @@ OC.L10N.register(
     "Uploading …" : "Sendi inn …",
     "Restore" : "Endurheimta",
     "Archive" : "Safn",
+    "Are you sure you want to delete \"{option}\"?" : "Ertu viss um að þú viljir eyða \"{option}\"?",
     "Delete permanently" : "Eyða varanlega",
     "OK" : "OK",
     "Vote" : "Greiðsla atkvæða",
