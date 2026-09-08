@@ -183,6 +183,17 @@ class InquiryGroupController extends BaseController
             $rawData = $this->request->getParams('updateData');
             $data = $rawData;
 
+	    $visibilityGroups = null;
+	    $visibilityUsers = null;
+
+            if (isset($data['configuration']['visibilityGroups']) && is_array($data['configuration']['visibilityGroups'])) {
+                   $visibilityGroups = $data['configuration']['visibilityGroups'];
+	    }
+
+            if (isset($data['configuration']['visibilityUsers']) && is_array($data['configuration']['visibilityUsers'])) {
+                   $visibilityUsers = $data['configuration']['visibilityUsers'];
+	    }
+
 
             return $this->response(
                 fn () => [
@@ -196,7 +207,12 @@ class InquiryGroupController extends BaseController
                         $data['protected'] ?? null,
                         $data['ownedGroup'] ?? null,
                         $data['groupStatus'] ?? null,
-                        $data['expire'] ?? null
+                        $data['publicationStatus'] ?? null,
+			$data['expire'] ?? null,
+			$data['miscFields'] ?? null,
+			$data['visibility'] ?? null,
+                    	$visibilityGroups,
+                    	$visibilityUsers 
                     ),
                 ]
             );

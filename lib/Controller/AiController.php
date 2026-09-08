@@ -91,46 +91,58 @@ class AiController extends BaseController
     
     // ============ OPTION GENERATION ============
 
+    private function buildOptionContext(array $inquiry): array
+    {
+	    return [
+		    'title' => $inquiry['title'] ?? '',
+		    'description' => $inquiry['description'] ?? '',
+		    'type' => $inquiry['type'] ?? 'proposal',
+		    'family' => $inquiry['family'] ?? '',
+		    'id' => $inquiry['id'] ?? null,
+	    ];
+    }
     /**
      * Generate options from inquiry title and description
      */
     #[NoAdminRequired]
     #[FrontpageRoute(verb: 'POST', url: '/ai/inquiry/{inquiryId}/generate-options')]
-public function generateOptionsFromInquiry(int $inquiryId, int $count = 4): JSONResponse
-{
-    // Set a timeout for the AI request
-    set_time_limit(60); // 60 seconds
-    
-    return $this->response(
-        function () use ($inquiryId, $count) {
-            try {
-                $inquiry = $this->getInquiry($inquiryId);
-                $context = $this->buildOptionContext($inquiry);
-                
-                // Log start time
-                $start = microtime(true);
-                
-                $options = $this->agoraService->getOptionGenerator()
-                    ->generateOptionsFromContext($context, $count);
-                
-                // Log duration
-                $duration = microtime(true) - $start;
-                $this->logger->info('Option generation completed', [
-                    'duration' => $duration,
-                    'count' => count($options)
-                ]);
-                
-                return ['options' => $options];
-            } catch (\Throwable $e) {
-                $this->logger->error('Option generation failed', [
-                    'error' => $e->getMessage(),
-                    'inquiryId' => $inquiryId
-                ]);
-                return ['options' => [], 'error' => $e->getMessage()];
-            }
-        }
-    );
-}
+    public function generateOptionsFromInquiry(int $inquiryId, int $count = 4): JSONResponse
+    {
+	    // Set a timeout for the AI request
+	    set_time_limit(60); // 60 seconds
+
+	    return $this->response(
+		    function () use ($inquiryId, $count) {
+			    try {
+				    $inquiry = $this->getInquiry($inquiryId);
+				    $context = $this->buildOptionContext($inquiry);
+
+				    // Log start time
+				    $start = microtime(true);
+
+				    $options = $this->agoraService->getOptionGenerator()
+				      ->generateOptionsFromContext($context, $count);
+
+				    // Log duration and results
+				    $duration = microtime(true) - $start;
+				    $this->logger->info('Option generation completed', [
+					    'duration' => $duration,
+					    'count' => count($options),
+					    'options_preview' => array_slice($options, 0, 2)
+				    ]);
+
+				    return ['options' => $options];
+			    } catch (\Throwable $e) {
+				    $this->logger->error('Option generation failed', [
+					    'error' => $e->getMessage(),
+					    'trace' => $e->getTraceAsString(),
+					    'inquiryId' => $inquiryId
+				    ]);
+				    return ['options' => [], 'error' => $e->getMessage()];
+			    }
+		    }
+	    );
+    }
 
     /**
      * Generate options from uploaded document
@@ -138,29 +150,29 @@ public function generateOptionsFromInquiry(int $inquiryId, int $count = 4): JSON
     #[NoAdminRequired]
     #[FrontpageRoute(verb: 'POST', url: '/ai/inquiry/{inquiryId}/document-options')]
     public function generateDocumentOptions(
-        int $inquiryId,
-        string $documentPath,
-        string $optionType = 'section',
-        array $options = []
+	    int $inquiryId,
+	    string $documentPath,
+	    string $optionType = 'section',
+	    array $options = []
     ): JSONResponse {
-        return $this->response(
-            function () use ($inquiryId, $documentPath, $optionType, $options) {
-                try {
-                    $result = $this->agoraService->getOptionGenerator()->generateOptionsFromDocument(
-                        $documentPath,
-                        $optionType,
-                        $options
-                    );
-                    return ['options' => $result];
-                } catch (\Throwable $e) {
-                    $this->logger->error('Document option generation failed', [
-                        'error' => $e->getMessage(),
-                        'inquiryId' => $inquiryId
-                    ]);
-                    return ['options' => [], 'error' => $e->getMessage()];
-                }
-            }
-        );
+	    return $this->response(
+		    function () use ($inquiryId, $documentPath, $optionType, $options) {
+			    try {
+				    $result = $this->agoraService->getOptionGenerator()->generateOptionsFromDocument(
+					    $documentPath,
+					    $optionType,
+					    $options
+				    );
+				    return ['options' => $result];
+			    } catch (\Throwable $e) {
+				    $this->logger->error('Document option generation failed', [
+					    'error' => $e->getMessage(),
+					    'inquiryId' => $inquiryId
+				    ]);
+				    return ['options' => [], 'error' => $e->getMessage()];
+			    }
+		    }
+	    );
     }
 
     /**
@@ -170,24 +182,24 @@ public function generateOptionsFromInquiry(int $inquiryId, int $count = 4): JSON
     #[FrontpageRoute(verb: 'POST', url: '/ai/inquiry/{inquiryId}/decision-options')]
     public function generateDecisionOptions(int $inquiryId, array $constraints = []): JSONResponse
     {
-        return $this->response(
-            function () use ($inquiryId, $constraints) {
-                try {
-                    $inquiry = $this->getInquiry($inquiryId);
-                    $options = $this->agoraService->getOptionGenerator()->generateDecisionOptions(
-                        $inquiry['title'] ?? '',
-                        $constraints
-                    );
-                    return ['options' => $options];
-                } catch (\Throwable $e) {
-                    $this->logger->error('Decision options generation failed', [
-                        'error' => $e->getMessage(),
-                        'inquiryId' => $inquiryId
-                    ]);
-                    return ['options' => [], 'error' => $e->getMessage()];
-                }
-            }
-        );
+	    return $this->response(
+		    function () use ($inquiryId, $constraints) {
+			    try {
+				    $inquiry = $this->getInquiry($inquiryId);
+				    $options = $this->agoraService->getOptionGenerator()->generateDecisionOptions(
+					    $inquiry['title'] ?? '',
+					    $constraints
+				    );
+				    return ['options' => $options];
+			    } catch (\Throwable $e) {
+				    $this->logger->error('Decision options generation failed', [
+					    'error' => $e->getMessage(),
+					    'inquiryId' => $inquiryId
+				    ]);
+				    return ['options' => [], 'error' => $e->getMessage()];
+			    }
+		    }
+	    );
     }
 
     /**
@@ -197,24 +209,24 @@ public function generateOptionsFromInquiry(int $inquiryId, int $count = 4): JSON
     #[FrontpageRoute(verb: 'POST', url: '/ai/inquiry/{inquiryId}/creative-ideas')]
     public function generateCreativeIdeas(int $inquiryId, int $count = 5): JSONResponse
     {
-        return $this->response(
-            function () use ($inquiryId, $count) {
-                try {
-                    $inquiry = $this->getInquiry($inquiryId);
-                    $ideas = $this->agoraService->getOptionGenerator()->generateCreativeIdeas(
-                        $inquiry['title'] ?? '',
-                        $count
-                    );
-                    return ['ideas' => $ideas];
-                } catch (\Throwable $e) {
-                    $this->logger->error('Creative ideas generation failed', [
-                        'error' => $e->getMessage(),
-                        'inquiryId' => $inquiryId
-                    ]);
-                    return ['ideas' => [], 'error' => $e->getMessage()];
-                }
-            }
-        );
+	    return $this->response(
+		    function () use ($inquiryId, $count) {
+			    try {
+				    $inquiry = $this->getInquiry($inquiryId);
+				    $ideas = $this->agoraService->getOptionGenerator()->generateCreativeIdeas(
+					    $inquiry['title'] ?? '',
+					    $count
+				    );
+				    return ['ideas' => $ideas];
+			    } catch (\Throwable $e) {
+				    $this->logger->error('Creative ideas generation failed', [
+					    'error' => $e->getMessage(),
+					    'inquiryId' => $inquiryId
+				    ]);
+				    return ['ideas' => [], 'error' => $e->getMessage()];
+			    }
+		    }
+	    );
     }
 
     // ============ SUMMARIZATION ============
@@ -226,21 +238,21 @@ public function generateOptionsFromInquiry(int $inquiryId, int $count = 4): JSON
     #[FrontpageRoute(verb: 'POST', url: '/ai/inquiry/{inquiryId}/summarize')]
     public function summarizeInquiry(int $inquiryId, string $format = 'concise'): JSONResponse
     {
-        return $this->response(
-            function () use ($inquiryId, $format) {
-                try {
-                    $messages = $this->getMessagesForInquiry($inquiryId);
-                    $summary = $this->agoraService->getSummarizer()->summarizeThread($messages, $format);
-                    return ['summary' => $summary];
-                } catch (\Throwable $e) {
-                    $this->logger->error('Summarization failed', [
-                        'error' => $e->getMessage(),
-                        'inquiryId' => $inquiryId
-                    ]);
-                    return ['summary' => '', 'error' => $e->getMessage()];
-                }
-            }
-        );
+	    return $this->response(
+		    function () use ($inquiryId, $format) {
+			    try {
+				    $messages = $this->getMessagesForInquiry($inquiryId);
+				    $summary = $this->agoraService->getSummarizer()->summarizeThread($messages, $format);
+				    return ['summary' => $summary];
+			    } catch (\Throwable $e) {
+				    $this->logger->error('Summarization failed', [
+					    'error' => $e->getMessage(),
+					    'inquiryId' => $inquiryId
+				    ]);
+				    return ['summary' => '', 'error' => $e->getMessage()];
+			    }
+		    }
+	    );
     }
 
     /**
@@ -250,88 +262,88 @@ public function generateOptionsFromInquiry(int $inquiryId, int $count = 4): JSON
     #[FrontpageRoute(verb: 'POST', url: '/ai/inquiry/{inquiryId}/sentiment')]
     public function analyzeSentiment(int $inquiryId): JSONResponse
     {
-        return $this->response(
-            function () use ($inquiryId) {
-                try {
-                    $text = $this->getDiscussionText($inquiryId);
-                    $sentiment = $this->agoraService->getClassifier()->classifySentiment($text);
-                    return ['sentiment' => $sentiment];
-                } catch (\Throwable $e) {
-                    $this->logger->error('Sentiment analysis failed', [
-                        'error' => $e->getMessage(),
-                        'inquiryId' => $inquiryId
-                    ]);
-                    return ['sentiment' => null, 'error' => $e->getMessage()];
-                }
-            }
-        );
+	    return $this->response(
+		    function () use ($inquiryId) {
+			    try {
+				    $text = $this->getDiscussionText($inquiryId);
+				    $sentiment = $this->agoraService->getClassifier()->classifySentiment($text);
+				    return ['sentiment' => $sentiment];
+			    } catch (\Throwable $e) {
+				    $this->logger->error('Sentiment analysis failed', [
+					    'error' => $e->getMessage(),
+					    'inquiryId' => $inquiryId
+				    ]);
+				    return ['sentiment' => null, 'error' => $e->getMessage()];
+			    }
+		    }
+	    );
     }
 
 
- // ============ HELPER METHODS ============
+    // ============ HELPER METHODS ============
 
     private function getFallbackContent(string $prompt, array $context): string {
-        $title = $context['title'] ?? 'the topic';
-        $description = $context['description'] ?? '';
+	    $title = $context['title'] ?? 'the topic';
+	    $description = $context['description'] ?? '';
 
-        if (!empty($description)) {
-            return "Based on the discussion about '{$title}':\n\n" .
-                   "Current description: " . substr($description, 0, 150) . "...\n\n" .
-                   "Regarding: " . $prompt . "\n\n" .
-                   "I suggest building on the existing content and adding more specific details about implementation.";
-        }
+	    if (!empty($description)) {
+		    return "Based on the discussion about '{$title}':\n\n" .
+			    "Current description: " . substr($description, 0, 150) . "...\n\n" .
+			    "Regarding: " . $prompt . "\n\n" .
+			    "I suggest building on the existing content and adding more specific details about implementation.";
+	    }
 
-        return "I'll help with: " . $prompt . "\n\n" .
-               "Topic: " . $title . "\n\n" .
-               "To develop this, consider:\n" .
-               "1. What is the core problem or opportunity?\n" .
-               "2. Who are the key stakeholders?\n" .
-               "3. What are the desired outcomes?\n" .
-               "4. What resources are available?";
+	    return "I'll help with: " . $prompt . "\n\n" .
+		    "Topic: " . $title . "\n\n" .
+		    "To develop this, consider:\n" .
+		    "1. What is the core problem or opportunity?\n" .
+		    "2. Who are the key stakeholders?\n" .
+		    "3. What are the desired outcomes?\n" .
+		    "4. What resources are available?";
     }
 
     private function getInquiry(int $inquiryId): array
     {
-        $inquiry = $this->inquiryService->get($inquiryId);
-        
-        if (method_exists($inquiry, 'jsonSerialize')) {
-            return $inquiry->jsonSerialize();
-        }
-        
-        return [
-            'id' => $inquiry->getId(),
-            'title' => $inquiry->getTitle(),
-            'description' => $inquiry->getDescription(),
-            'type' => $inquiry->getType(),
-            'family' => $inquiry->getFamily(),
-        ];
+	    $inquiry = $this->inquiryService->get($inquiryId);
+
+	    if (method_exists($inquiry, 'jsonSerialize')) {
+		    return $inquiry->jsonSerialize();
+	    }
+
+	    return [
+		    'id' => $inquiry->getId(),
+		    'title' => $inquiry->getTitle(),
+		    'description' => $inquiry->getDescription(),
+		    'type' => $inquiry->getType(),
+		    'family' => $inquiry->getFamily(),
+	    ];
     }
 
     private function getInquiryContext(int $inquiryId): array
     {
-        $inquiry = $this->getInquiry($inquiryId);
-        return [
-            'title' => $inquiry['title'] ?? '',
-            'description' => $inquiry['description'] ?? '',
-            'type' => $inquiry['type'] ?? 'proposal',
-        ];
+	    $inquiry = $this->getInquiry($inquiryId);
+	    return [
+		    'title' => $inquiry['title'] ?? '',
+		    'description' => $inquiry['description'] ?? '',
+		    'type' => $inquiry['type'] ?? 'proposal',
+	    ];
     }
 
     private function getMessagesForInquiry(int $inquiryId): array
     {
-        try {
-            $comments = $this->commentService->getCommentsForInquiry($inquiryId);
-            return array_map(function($comment) {
-                return $comment['message'] ?? '';
-            }, $comments);
-        } catch (\Throwable $e) {
-            return [];
-        }
+	    try {
+		    $comments = $this->commentService->getCommentsForInquiry($inquiryId);
+		    return array_map(function($comment) {
+			    return $comment['message'] ?? '';
+		    }, $comments);
+	    } catch (\Throwable $e) {
+		    return [];
+	    }
     }
 
     private function getDiscussionText(int $inquiryId): string
     {
-        return implode("\n", $this->getMessagesForInquiry($inquiryId));
+	    return implode("\n", $this->getMessagesForInquiry($inquiryId));
     }
 
 }

@@ -553,6 +553,16 @@ const {
   switchDisplay,
 } = useGroupExperience(currentGroup)
 
+/*
+function selectGroup(group: InquiryGroup) {
+  if (group.slug) {
+    router.push({ name: 'group-list', params: { slug: group.slug }, query: route.query })
+  } else if (group.id) {
+    // fallback to ID if slug not present (should not happen normally)
+    router.push({ name: 'group', params: { id: String(group.id) }, query: route.query })
+  }
+}*/
+
 function selectGroup(group: InquiryGroup) {
   if (!group) return
 
@@ -658,7 +668,7 @@ const displayedGroups = computed(() => {
     const rootGroups = groupsInFamily.filter(
       (group) =>
         group.parentId === null &&
-        group.status?.groupStatus !== 'archived' &&
+        group.status.groupStatus !== 'archived' &&
         group.type === inquiryGroupsStore.currentGroupType
     )
 
@@ -667,10 +677,11 @@ const displayedGroups = computed(() => {
 
   // When there's a valid slug, show child groups of the current group
   if (hasSlug.value && currentInquiryGroup.value) {
+    console.log(" HAS SLUG ", hasSlug.value )
+    console.log(" HAS SLUG CURRENT INQUIRY GROUP ", currentInquiryGroup.value )
     const childGroups = inquiryGroupsStore.inquiryGroups.filter(
       (group) =>
-        group.parentId === currentInquiryGroup.value?.id && 
-        group.status?.groupStatus !== 'archived'
+        group.parentId === currentInquiryGroup.value?.id && group.groupStatus !== 'archived'
     )
     return childGroups.sort((a, b) => a.title.localeCompare(b.title))
   }
@@ -681,9 +692,8 @@ const displayedGroups = computed(() => {
 // Get total inquiries for current group
 const totalInquiries = computed(() => {
   if (!hasSlug.value || !currentInquiryGroup.value) return 0
-  return currentInquiryGroup.value.inquiryIds?.length || 0
+  return inquiryGroupStore.inquiryIds.length
 })
-
 
 // Section title
 const sectionTitle = computed(() => {
@@ -696,7 +706,7 @@ const sectionTitle = computed(() => {
 // Get icon component for group type
 const getGroupTypeIconComponent = (type: string) => {
   const typeData = getInquiryGroupTypeData(type, sessionStore.appSettings.inquiryGroupTypeTab)
-  return typeData?.icon || 'Folder'
+  return typeData?.icon || 'div'
 }
 
 // Helper function to get children
@@ -748,13 +758,10 @@ const currentTitle = computed(() => {
 // Current description
 const currentDescription = computed(() => {
   if (hasSlug.value && currentInquiryGroup.value) {
-    return currentInquiryGroup.value.titleExt || 
-           currentInquiryGroup.value.configuration?.description || 
-           selectedTypeDescription.value
+    return currentInquiryGroup.value.titleExt || selectedTypeDescription.value
   }
   return selectedTypeDescription.value
 })
-
 
 // Breadcrumb current title
 const currentBreadcrumbTitle = computed(() => currentTitle.value)
@@ -881,12 +888,7 @@ function handleCloseGroupDialog() {
 function inquiryGroupAdded(newGroup: InquiryGroup) {
   createGroupDlgToggle.value = false
   if (newGroup.slug) {
-    // Wait for store to update
-    setTimeout(() => {
-      router.push({ name: 'group-list', params: { slug: newGroup.slug } })
-    }, 100)
-  } else if (newGroup.id) {
-    router.push({ name: 'group', params: { id: String(newGroup.id) } })
+    router.push({ name: 'group', params: { slug: newGroup.slug } })
   }
 }
 
@@ -1032,7 +1034,7 @@ const availableGroupTypesWithGroups = computed(() => {
   return types.filter((type: InquiryGroupType) => {
     const typeKey = type.type || type.group_type
     const count = inquiryGroupsStore.inquiryGroups.filter(
-      (g) => g.type === typeKey && g.parentId === null && g.status?.groupStatus !== 'archived'
+      (g) => g.type === typeKey && g.parentId === null && g.status.groupStatus !== 'archived'
     ).length
     return count > 0
   })
@@ -1127,16 +1129,14 @@ onMounted(async () => {
       await inquiriesStore.load()
     }
 
-if (hasSlug.value) {
-  const slug = route.params.slug as string
-  const group = inquiryGroupsStore.bySlug(slug)
-  if (group) {
-    await inquiryGroupStore.load(group.id)
-  } else {
-    groupNotFound.value = true
-  }
-}
-
+    if (hasSlug.value) {
+      const slug = route.params.slug as string
+      const group = inquiryGroupsStore.bySlug(slug)
+      inquiryGroupStore.load(group.id)
+      if (!group) {
+        groupNotFound.value = true
+      }
+    }
   } catch (error) {
     console.error('Error loading data:', error)
     showError(t('agora', 'Failed to load data'))

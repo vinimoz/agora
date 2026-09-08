@@ -96,7 +96,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, nextTick } from 'vue'
+import { ref, computed, watch, nextTick } from 'vue'
 import { t } from '@nextcloud/l10n'
 import NcModal from '@nextcloud/vue/components/NcModal'
 import NcButton from '@nextcloud/vue/components/NcButton'
@@ -109,7 +109,7 @@ const props = defineProps<{
   inquiryId: number
   initialPrompt?: string
   initialCount?: number
-   loading?: boolean
+  loading?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -120,7 +120,11 @@ const emit = defineEmits<{
 // State
 const prompt = ref('')
 const count = ref(4)
-const isLoading = computed(() => props.loading || localLoading.value)
+const localLoading = ref(false)
+
+// Computed - combine local and prop loading
+const isLoading = computed(() => localLoading.value || (props.loading ?? false))
+
 // Initialize with props
 const initialize = () => {
   // Set prompt from props, but only if empty and initialPrompt is provided
@@ -131,8 +135,8 @@ const initialize = () => {
   if (props.initialCount) {
     count.value = props.initialCount
   }
-  // Reset loading state
-  isLoading.value = false
+  // Reset local loading
+  localLoading.value = false
 }
 
 // Initialize on mount
@@ -149,6 +153,14 @@ watch(() => props.show, (newVal) => {
         textarea.focus()
       }
     })
+  }
+}, { immediate: true })
+
+// Watch for loading prop changes from parent
+watch(() => props.loading, (newVal) => {
+  // If parent loading becomes false and local loading was true, reset local
+  if (!newVal && localLoading.value) {
+    localLoading.value = false
   }
 }, { immediate: true })
 
@@ -169,23 +181,23 @@ const decrementCount = () => {
 
 const handleClose = () => {
   if (isLoading.value) return // Prevent closing while loading
-  isLoading.value = false
+  localLoading.value = false
   emit('close')
 }
 
 const handleGenerate = () => {
   if (prompt.value.trim() && !isLoading.value) {
-    isLoading.value = true
-    // Small delay to show loading state before emitting
-    setTimeout(() => {
-      emit('generate', prompt.value, count.value)
-    }, 100)
+    // Set local loading state immediately
+    localLoading.value = true
+    
+    // Emit the generate event
+    emit('generate', prompt.value, count.value)
   }
 }
 
 // Expose method to reset loading state from parent
 const resetLoading = () => {
-  isLoading.value = false
+  localLoading.value = false
 }
 
 // Expose for parent component to control loading state

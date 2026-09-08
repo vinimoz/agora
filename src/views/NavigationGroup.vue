@@ -47,8 +47,30 @@ const availableGroups = computed(() => {
 
 // State for selected family
 const selectedFamily = computed({
-  get: () => inquiriesStore.advancedFilters?.familyType || null,
-  set: (value) => inquiriesStore.setFamilyType(value || '')
+  get: () => {
+    // First check if we have a family in the store
+    const storeFamily = inquiriesStore.advancedFilters?.familyType
+    if (storeFamily) return storeFamily
+    
+    // Fallback to route query
+    const queryFamily = (route.query.family as string) || null
+    if (queryFamily) {
+      inquiriesStore.setFamilyType(queryFamily)
+      return queryFamily
+    }
+    
+    return null
+  },
+  set: (value) => {
+    inquiriesStore.setFamilyType(value || '')
+    // Also update route query
+    if (value) {
+      router.push({ query: { ...route.query, family: value } })
+    } else {
+      const { family, ...restQuery } = route.query
+      router.push({ query: restQuery })
+    }
+  }
 })
 
 // Computed for all inquiry group types (root types only)
@@ -58,14 +80,15 @@ const allInquiryGroupTypes = computed((): InquiryGroupType[] => {
 })
 
 // Get inquiry groups from store
-const inquiryGroups = computed(() => inquiryGroupsStore.inquiryGroups || [])
+const inquiryGroups = computed(() => {
+  return inquiryGroupsStore.inquiryGroups || []
+})
 
-// Helper function to get groups by type
 function getGroupsByType(typeKey: string): InquiryGroup[] {
-  return inquiryGroups.value.filter(group =>
-    group.type === typeKey && 
-    group.parentId === null && 
-    group.groupStatus !== "archived"
+  return inquiryGroupsStore.inquiryGroups.filter(group =>
+    group.type === typeKey &&
+    group.parentId === null &&
+    group.status?.groupStatus !== "archived"
   )
 }
 
@@ -74,16 +97,44 @@ function getGroupTypeCount(groupType: string): number {
   return getGroupsByType(groupType).length
 }
 
+
+/*
 // Filter group types by selected family AND only those that have groups
 const filteredInquiryGroupTypes = computed((): InquiryGroupType[] => {
   let types = allInquiryGroupTypes.value || []
   
+ if (selectedFamily.value) {
+  types = types.filter((groupType: InquiryGroupType) => 
+    groupType.family === selectedFamily.value || 
+    groupType.family_type === selectedFamily.value
+  )
+} 
+console.log(" FILTERED INQUIRY GROUP ", types)
+  // Only show types that have at least one group
+  return types.filter((groupType: InquiryGroupType) => {
+    const typeKey = groupType.type || groupType.group_type
+    return getGroupTypeCount(typeKey) > 0
+  })
+})*/
+
+const filteredInquiryGroupTypes = computed((): InquiryGroupType[] => {
+  // Get all types from the tab
+  let types = allInquiryGroupTypes.value || []
+
+   console.log(" FIRST FILTERED INQUIRY GROUP ", types)
+  // If we have a selected family, filter by it
   if (selectedFamily.value) {
-    types = types.filter((groupType: InquiryGroupType) => 
-      groupType.family === selectedFamily.value 
+    types = types.filter((groupType: InquiryGroupType) =>
+      groupType.family === selectedFamily.value ||
+      groupType.family_type === selectedFamily.value
     )
   }
-  
+
+   console.log(" FILTERED INQUIRY GROUP ", types)
+   console.log(" FILTERED INQUIRY GROUP ", types.filter((groupType: InquiryGroupType) => {
+    const typeKey = groupType.type || groupType.group_type
+    return getGroupTypeCount(typeKey) > 0 }))
+
   // Only show types that have at least one group
   return types.filter((groupType: InquiryGroupType) => {
     const typeKey = groupType.type || groupType.group_type
@@ -149,7 +200,7 @@ function handleGroupUpdate(groups: string[]) {
 
 // Check if there are any archived groups
 const hasArchivedGroups = computed(() => {
-  const archived = inquiryGroups.value.filter(group => group.groupStatus === "archived")
+  const archived = inquiryGroups.value.filter(group => group.status?.groupStatus === "archived")
   return archived.length > 0
 })
 
@@ -170,7 +221,9 @@ function showSettings() {
 const inquiryGroupsByType = computed((): Record<string, InquiryGroup[]> => {
   const groupsByType: Record<string, InquiryGroup[]> = {}
   const types = filteredInquiryGroupTypes.value || []
-
+  
+  console.log(" INQUIRY GROUP BY TYPESSSSSSSSSSSSSSSSSSSS ", types)
+  
   types.forEach((groupType: InquiryGroupType) => {
     const typeKey = groupType.type || groupType.group_type
     const groupsOfType = getGroupsByType(typeKey)
@@ -191,7 +244,7 @@ const archivedInquiryGroupsByType = computed((): Record<string, InquiryGroup[]> 
     const typeKey = groupType.type || groupType.group_type
     const groupsOfType = inquiryGroups.value.filter(group =>
       (group.type === typeKey) &&
-      group.groupStatus === "archived" 
+      group.status?.groupStatus === "archived" 
     )
     if (groupsOfType.length > 0) {
       groupsByType[typeKey] = groupsOfType
@@ -219,7 +272,13 @@ const isHomePage = computed(() => !selectedFamily.value && !slug)
 const hasGroupTypes = computed(() => (filteredInquiryGroupTypes.value || []).length > 0)
 
 // Check if there are any groups to display
-const hasGroups = computed(() => inquiryGroups.value.length > 0)
+const hasGroups = computed(() => {
+  const activeGroups = inquiryGroups.value.filter(
+    g => g.status?.groupStatus !== 'archived'
+  )
+  return activeGroups.length > 0
+})
+
 
 </script>
 
@@ -232,7 +291,15 @@ const hasGroups = computed(() => inquiryGroups.value.length > 0)
         <h3 class="navigation-caption">
           {{ t('agora', 'Group types') }}
         </h3>
-        
+      
+	<!-- Add this temporarily to see what's happening -->
+<div v-if="!hasGroupTypes" class="debug-info">
+  <p>No group types found. Debug info:</p>
+  <p>Total groups: {{ inquiryGroups.length }}</p>
+  <p>Filtered types: {{ filteredInquiryGroupTypes.length }}</p>
+  <p>Selected family: {{ selectedFamily }}</p>
+</div>
+
         <NcAppNavigationItem
           v-for="inquiryGroupType in filteredInquiryGroupTypes"
           :key="inquiryGroupType.id || inquiryGroupType.type"
@@ -317,7 +384,7 @@ const hasGroups = computed(() => inquiryGroups.value.length > 0)
 
           <template #counter>
             <NcCounterBubble
-              :count="inquiryGroups.value.filter(g => g.groupStatus === 'archived').length || 0"
+              :count="inquiryGroups.value.filter(g => g.status?.groupStatus === 'archived').length || 0"
               class="navigation-counter archived-counter"
             />
           </template>

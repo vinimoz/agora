@@ -93,7 +93,7 @@
         >
           <span class="archived-icon">📁</span>
           <span class="archived-title">{{ group.title }}</span>
-          <span class="archived-date">{{ formatDate(group.updated_at) }}</span>
+          <span class="archived-date">{{ formatDate(group.updated) }}</span>
         </div>
       </div>
     </div>
@@ -146,7 +146,7 @@ const availableFamilies = computed(() => {
 
 // Filter groups by selected family
 const filteredGroups = computed(() => {
-  let result = props.groups.filter(g => g.groupStatus !== 'archived')
+  let result = props.groups.filter(g => g.status.groupStatus !== 'archived')
   
   if (selectedFamily.value) {
     result = result.filter(group => {
@@ -160,8 +160,8 @@ const filteredGroups = computed(() => {
 
 // Archived groups
 const archivedGroups = computed(() => props.groups
-    .filter(g => g.groupStatus === 'archived')
-    .sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()))
+    .filter(g => g.status.groupStatus === 'archived')
+    .sort((a, b) => new Date(b.updated).getTime() - new Date(a.updated).getTime()))
 
 function getGroupTypeIcon(type: string) {
   const typeData = getInquiryGroupTypeData(type, sessionStore.appSettings.inquiryGroupTypeTab)
@@ -175,7 +175,7 @@ function getGroupChildren(group: InquiryGroup) {
 function getFamilyCount(familyKey: string): number {
   return props.groups.filter(group => {
     const typeData = getInquiryGroupTypeData(group.type, sessionStore.appSettings.inquiryGroupTypeTab)
-    return typeData?.family === familyKey && group.groupStatus !== 'archived'
+    return typeData?.family === familyKey && group.status.groupStatus !== 'archived'
   }).length
 }
 

@@ -3354,6 +3354,251 @@ class InitDbDefault extends Command
         'sort_order' => 1,
         'created' => '',
     ],
+     // ============================================================
+    // PROGRAM - A structured program or initiative
+    // ============================================================
+    [
+        'family' => 'collective',
+        'group_type' => 'program',
+        'icon' => 'Folder',
+        'label' => 'Program',
+        'description' => 'A structured program or initiative with multiple components and inquiries.',
+        'fields' => [
+            ["key" => "budget", "label" => "Budget", "type" => "string", "required" => false, "default" => null, "rules" => []],
+            ["key" => "timeline", "label" => "Timeline", "type" => "string", "required" => false, "default" => null, "rules" => []],
+            ["key" => "minister", "label" => "Responsible Minister", "type" => "string", "required" => false, "default" => null, "rules" => []],
+            ["key" => "focus", "label" => "Focus Areas", "type" => "string", "required" => false, "default" => null, "rules" => []],
+        ],
+        'allowed_inquiry_types' => [
+            'proposal',
+            'consultation',
+            'deliberation',
+            'project',
+            'official',
+        ],
+        'allowed_response' => ['working_group', 'commission', 'official_announcements'],
+        'is_root' => true,
+        'ui' => [
+            'experience' => 'navigation',
+            'context' => [
+                'type' => 'group',
+                'selection' => 'selected',
+            ],
+            'layout' => [
+                'type' => 'grid',
+                'columns' => 1,
+                'rows' => 1,
+                'responsive' => true,
+            ],
+            'display_architecture' => [
+                'main' => [
+                    'content' => 'inquiry_groups',
+                    'scope' => ['source' => 'children'],
+                    'display' => ['type' => 'navigation'],
+                    'position' => [
+                        'row' => 1,
+                        'column' => 1,
+                    ],
+                    'interaction' => [
+                        'on_click' => [
+                            'action' => 'navigate',
+                            'target' => 'page',
+                        ],
+                    ],
+                ],
+            ],
+        ],
+        'features' => [
+            'group_navigation',
+        ],
+        'rules' => [
+            'allow_child_groups' => true,
+            'allow_child_inquiries' => true,
+            'allow_multiple_inquiry_types' => true,
+            'require_inquiry_selection' => false,
+        ],
+        'actions' => [
+            ['key' => 'create_group', 'label' => 'Create Subgroup', 'icon' => 'FolderPlus'],
+            ['key' => 'create_inquiry', 'label' => 'Create Inquiry', 'icon' => 'Plus'],
+        ],
+        'sort_order' => 0,
+        'created' => '',
+    ],
+
+    // ============================================================
+    // ARCHIVE - Archived inquiries and historical documents
+    // ============================================================
+    [
+        'family' => 'collective',
+        'group_type' => 'archive',
+        'icon' => 'Archive',
+        'label' => 'Archive',
+        'description' => 'Archived inquiries and historical documents.',
+        'fields' => [
+            ["key" => "archivist", "label" => "Archivist", "type" => "string", "required" => false, "default" => null, "rules" => []],
+            ["key" => "retention_period", "label" => "Retention Period", "type" => "string", "required" => false, "default" => null, "rules" => []],
+        ],
+        'allowed_inquiry_types' => ['*'],
+        'allowed_response' => [],
+        'is_root' => true,
+        'ui' => [
+            'experience' => 'navigation',
+            'context' => [
+                'type' => 'group',
+                'selection' => 'selected',
+            ],
+            'layout' => [
+                'type' => 'grid',
+                'columns' => 1,
+                'rows' => 1,
+                'responsive' => true,
+            ],
+            'display_architecture' => [
+                'main' => [
+                    'content' => 'inquiries',
+                    'scope' => ['source' => 'children'],
+                    'display' => ['type' => 'list'],
+                    'position' => [
+                        'row' => 1,
+                        'column' => 1,
+                    ],
+                    'interaction' => [
+                        'on_click' => [
+                            'action' => 'open',
+                            'target' => 'page',
+                        ],
+                    ],
+                ],
+            ],
+        ],
+        'features' => [],
+        'rules' => [
+            'allow_child_groups' => false,
+            'allow_child_inquiries' => true,
+            'allow_multiple_inquiry_types' => true,
+            'require_inquiry_selection' => false,
+        ],
+        'actions' => [
+            ['key' => 'open_archive', 'label' => 'Open Archive', 'icon' => 'FolderOpen'],
+        ],
+        'sort_order' => 8,
+        'created' => '',
+    ],
+
+    // ============================================================
+    // REFERENDUM GROUP - A group organizing a public referendum
+    // ============================================================
+    [
+        'family' => 'collective',
+        'group_type' => 'referendum_group',
+        'icon' => 'Vote',
+        'label' => 'Referendum Group',
+        'description' => 'A group organizing a public referendum or vote.',
+        'fields' => [
+            ["key" => "referendum_date", "label" => "Referendum Date", "type" => "datetime", "required" => true, "default" => null, "rules" => []],
+            ["key" => "campaign_budget", "label" => "Campaign Budget", "type" => "string", "required" => false, "default" => null, "rules" => []],
+            ["key" => "signatures_required", "label" => "Signatures Required", "type" => "integer", "required" => false, "default" => null, "rules" => []],
+        ],
+        'allowed_inquiry_types' => [
+            'proposal',
+            'question',
+            'poll',
+        ],
+        'allowed_response' => ['citizen_jury', 'official_announcements'],
+        'is_root' => true,
+        'ui' => [
+            'experience' => 'dashboard',
+            'context' => [
+                'type' => 'group',
+                'selection' => 'selected',
+            ],
+            'layout' => [
+                'type' => 'grid',
+                'columns' => 2,
+                'rows' => 2,
+                'responsive' => true,
+            ],
+            'display_architecture' => [
+                'inquiries' => [
+                    'content' => 'inquiries',
+                    'scope' => ['source' => 'children'],
+                    'display' => ['type' => 'cards'],
+                    'position' => [
+                        'row' => 1,
+                        'column' => 1,
+                    ],
+                    'interaction' => [
+                        'on_click' => [
+                            'action' => 'open',
+                            'target' => 'panel',
+                        ],
+                    ],
+                ],
+                'statistics' => [
+                    'content' => 'statistics',
+                    'scope' => ['source' => 'group'],
+                    'display' => ['type' => 'widget'],
+                    'position' => [
+                        'row' => 1,
+                        'column' => 2,
+                    ],
+                    'interaction' => [
+                        'on_click' => [
+                            'action' => 'open',
+                            'target' => 'panel',
+                        ],
+                    ],
+                ],
+                'vote' => [
+                    'content' => 'options',
+                    'scope' => ['source' => 'selected_inquiry'],
+                    'display' => [
+                        'type' => 'tool',
+                        'tool' => 'vote',
+                    ],
+                    'position' => [
+                        'row' => 2,
+                        'column' => 1,
+                    ],
+                    'interaction' => [
+                        'on_click' => [
+                            'action' => 'vote',
+                            'target' => 'panel',
+                        ],
+                    ],
+                ],
+                'resources' => [
+                    'content' => 'resources',
+                    'scope' => ['source' => 'selected_inquiry'],
+                    'display' => ['type' => 'list'],
+                    'position' => [
+                        'row' => 2,
+                        'column' => 2,
+                    ],
+                    'interaction' => [
+                        'on_click' => [
+                            'action' => 'open',
+                            'target' => 'panel',
+                        ],
+                    ],
+                ],
+            ],
+        ],
+        'features' => [
+            'inquiry_selection',
+        ],
+        'rules' => [
+            'allow_child_groups' => false,
+            'allow_child_inquiries' => true,
+            'allow_multiple_inquiry_types' => true,
+            'require_inquiry_selection' => false,
+        ],
+        'actions' => [
+            ['key' => 'create_inquiry', 'label' => 'Create Referendum Item', 'icon' => 'Plus'],
+        ],
+        'sort_order' => 4,
+        'created' => '',
+    ],
     [
         'family' => 'collective',
         'group_type' => 'initiative_group',

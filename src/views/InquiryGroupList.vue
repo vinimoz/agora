@@ -48,8 +48,8 @@ const router = useRouter()
 // EXISTING COMPUTED
 // ============================================================
 const archivedGroups = computed(() => inquiryGroupsStore.inquiryGroups.filter(
-    group => group.groupStatus === "archived"
-).sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()))
+    group => group.status.groupStatus === "archived"
+).sort((a, b) => new Date(b.updated).getTime() - new Date(a.updated).getTime()))
 
 function createGroupPermissionContext(group: InquiryGroup) {
     return createInquiryGroupContext(group)
@@ -69,7 +69,7 @@ function canUserDeleteGroup(group: InquiryGroup): boolean {
 
 function getGroupTypeIconComponent(type: string) {
     const typeData = getInquiryGroupTypeData(type, sessionStore.appSettings.inquiryGroupTypeTab)
-    return typeData?.icon || 'div'
+    return typeData?.icon || 'Folder'
 }
 
 // ============================================================
@@ -185,7 +185,7 @@ function formatDate(timestamp: number) {
 }
 
 // ============================================================
-// NEW: Get cover URL
+//Get cover URL
 // ============================================================
 const BASE_URL = window.location.origin;
 
@@ -198,16 +198,18 @@ function getCoverUrl(coverId: string) {
 }
 
 // ============================================================
-// NEW: Select group
+// Select group
 // ============================================================
 function selectGroup(group: InquiryGroup) {
-    if (group.slug) {
-        router.push({ name: 'group-list', params: { slug: group.slug } })
-    }
+  if (group.slug) {
+    router.push({ name: 'group-list', params: { slug: group.slug } })
+  } else if (group.id) {
+    router.push({ name: 'group', params: { id: String(group.id) } })
+  }
 }
 
 // ============================================================
-// NEW: Restore group handler
+// Restore group handler
 // ============================================================
 function restoreGroup(group: InquiryGroup) {
     if (!canUserRestoreGroup(group)) {
@@ -325,8 +327,8 @@ onMounted(async () => {
           >
             <div class="vignette-container">
               <div class="group-vignette archived" @click="selectGroup(group)">
-                <div v-if="group.cover_id" class="vignette-cover">
-                  <img :src="getCoverUrl(group.cover_id)" :alt="group.title" />
+                <div v-if="group.coverId" class="vignette-cover">
+                  <img :src="getCoverUrl(group.coverId)" :alt="group.title" />
                   <div class="vignette-cover-overlay"></div>
                   <div class="archived-overlay">
                     <component :is="NavigationIcons.Archive" />

@@ -5,13 +5,14 @@
 
 <template>
   <div v-if="show" class="action-proposal-container">
-  <GenerateOptionsModal
+    <GenerateOptionsModal
       ref="configModalRef"
       v-if="showConfigModal"
       :show="showConfigModal"
       :inquiry-id="inquiryId"
       :initial-prompt="'Generate options for our current discussion about sustainability'"
       :initial-count="initialCount"
+      :loading="loading"
       @close="handleConfigClose"
       @generate="handleGenerate"
     />
@@ -38,7 +39,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted } from 'vue'
+import { ref, watch, onMounted, nextTick } from 'vue'
 import { showError } from '@nextcloud/dialogs'
 import GenerateOptionsModal from '../../Ai/GenerateOptionsModal.vue'
 import PreviewOptionsModal from '../../Ai/PreviewOptionsModal.vue'
@@ -84,6 +85,7 @@ const showSuccessModal = ref(false)
 const loading = ref(false)
 const generatedOptions = ref<GeneratedOption[]>([])
 const createdCount = ref(0)
+const configModalRef = ref<InstanceType<typeof GenerateOptionsModal>>()
 
 // Default values
 const defaultPrompt = props.initialPrompt || ''
@@ -97,9 +99,9 @@ const executeAction = async () => {
   generatedOptions.value = []
   createdCount.value = 0
 
-try {
-  switch (props.actionKey) {
-    case 'duplicate_proposal':
+  try {
+    switch (props.actionKey) {
+      case 'duplicate_proposal':
         await duplicateProposal()
         emit('close')
         break
@@ -121,15 +123,14 @@ try {
         loading.value = false
         return
 
-    default:
-      console.warn(`Unknown action: ${props.actionKey}`)
-  }
+      default:
+        console.warn(`Unknown action: ${props.actionKey}`)
+    }
   } catch (error) {
     Logger.error('Error generating options actions', { error })
     showError('Failed to generate options action. Please try again.')
     showConfigModal.value = true
   }
-
 }
 
 const handleConfigClose = () => {
@@ -137,43 +138,12 @@ const handleConfigClose = () => {
   emit('close')
 }
 
-/*
 const handleGenerate = async (prompt: string, count: number) => {
-  loading.value = true
-  showConfigModal.value = false
-
-  try {
-    // Generate options using AI
-    const response = await aiStore.generateOptionsFromInquiry(
-      props.inquiryId,
-      count
-    )
-
-    // Parse the response
-    let options = parseOptions(response, count, prompt)
-
-    // If no options were extracted, create fallback
-    if (options.length === 0) {
-      options = createFallbackOptions(count, prompt)
-    }
-
-    generatedOptions.value = options
-    showPreviewModal.value = true
-  } catch (error) {
-    Logger.error('Error generating options', { error })
-    showError('Failed to generate options. Please try again.')
-    showConfigModal.value = true
-  } finally {
-    loading.value = false
-  }
-}*/
-
-const handleGenerate = async (prompt: string, count: number) => {
-  // Show loading state in the config modal
+  // Show loading state - this will be passed to the modal via props
   loading.value = true
   
   try {
-    // WAIT for the AI to generate options
+    // Call the AI store to generate options
     const response = await aiStore.generateOptionsFromInquiry(
       props.inquiryId,
       count
@@ -198,36 +168,45 @@ const handleGenerate = async (prompt: string, count: number) => {
     Logger.error('Error generating options', { error })
     showError('Failed to generate options. Please try again.')
     // Keep config modal open on error
+    showConfigModal.value = true
   } finally {
+    // Always reset loading state
     loading.value = false
+    
+    // If the config modal is still open, reset its loading state
+    if (showConfigModal.value && configModalRef.value) {
+      await nextTick()
+      configModalRef.value.resetLoading()
+    }
   }
 }
 
 const parseOptions = (response: any, count: number, prompt: string): GeneratedOption[] => {
   let options: GeneratedOption[] = []
 
-  if (Array.isArray(response)) {
+  // Check if response has options array
+  if (response && typeof response === 'object' && Array.isArray(response.options)) {
+    options = response.options.map((opt: any) => ({
+      text: typeof opt === 'string' ? opt : (opt.text || opt.title || ''),
+      title: typeof opt === 'string' ? '' : (opt.title || ''),
+      description: typeof opt === 'string' ? '' : (opt.description || ''),
+      pros: typeof opt === 'string' ? [] : (opt.pros || []),
+      cons: typeof opt === 'string' ? [] : (opt.cons || []),
+      tags: typeof opt === 'string' ? [] : (opt.tags || []),
+      selected: true
+    }))
+  } else if (Array.isArray(response)) {
     options = response.map((opt: any) => ({
-      text: typeof opt === 'string' ? opt : opt.text || opt.title || '',
-      title: typeof opt === 'string' ? '' : opt.title || '',
-      description: typeof opt === 'string' ? '' : opt.description || '',
-      pros: typeof opt === 'string' ? [] : opt.pros || [],
-      cons: typeof opt === 'string' ? [] : opt.cons || [],
-      tags: typeof opt === 'string' ? [] : opt.tags || [],
+      text: typeof opt === 'string' ? opt : (opt.text || opt.title || ''),
+      title: typeof opt === 'string' ? '' : (opt.title || ''),
+      description: typeof opt === 'string' ? '' : (opt.description || ''),
+      pros: typeof opt === 'string' ? [] : (opt.pros || []),
+      cons: typeof opt === 'string' ? [] : (opt.cons || []),
+      tags: typeof opt === 'string' ? [] : (opt.tags || []),
       selected: true
     }))
   } else if (response && typeof response === 'object') {
-    if (response.options && Array.isArray(response.options)) {
-      options = response.options.map((opt: any) => ({
-        text: typeof opt === 'string' ? opt : opt.text || opt.title || '',
-        title: typeof opt === 'string' ? '' : opt.title || '',
-        description: typeof opt === 'string' ? '' : opt.description || '',
-        pros: typeof opt === 'string' ? [] : opt.pros || [],
-        cons: typeof opt === 'string' ? [] : opt.cons || [],
-        tags: typeof opt === 'string' ? [] : opt.tags || [],
-        selected: true
-      }))
-    } else if (response.text || response.title) {
+    if (response.text || response.title) {
       // Single option response
       options = [{
         text: response.text || response.title || '',
@@ -274,20 +253,29 @@ const handleImport = async (selectedOptions: GeneratedOption[]) => {
   try {
     let created = 0
     for (const option of selectedOptions) {
-      await optionsStore.createOption({
-        title: option.title || option.text,
-        text: option.text,
+      // Log the option being created for debugging
+      Logger.debug('Creating option', { option })
+      
+      // Create the option with proper structure
+      const optionData = {
+        title: option.title || option.text || 'Untitled Option',
+        text: option.text || option.title || '',
         type: 'proposal',
         family: 'debate',
         targetId: props.inquiryId,
         status: 'published',
         miscFields: {
           description: option.description || '',
-          tags: option.tags?.join(',') || '',
-          pros: option.pros?.join(',') || '',
-          cons: option.cons?.join(',') || ''
+          tags: (option.tags || []).join(','),
+          pros: (option.pros || []).join(','),
+          cons: (option.cons || []).join(',')
         }
-      })
+      }
+      
+      Logger.debug('Creating option with data', { optionData })
+      
+      // Call the store method - use the correct method name
+      await optionsStore.createOption(optionData)
       created++
     }
 
@@ -303,8 +291,8 @@ const handleImport = async (selectedOptions: GeneratedOption[]) => {
       message: `${created} options created successfully`
     })
   } catch (error) {
-    Logger.error('Error creating options', { error })
-    showError('Failed to create options. Please try again.')
+    Logger.error('Error creating options', { error, selectedOptions })
+    showError(`Failed to create options: ${error.message || 'Unknown error'}`)
     showPreviewModal.value = true
   } finally {
     loading.value = false
@@ -329,6 +317,12 @@ onMounted(() => {
     executeAction()
   }
 })
+
+// Placeholder functions for other actions
+const duplicateProposal = async () => { /* ... */ }
+const mergeProposals = async () => { /* ... */ }
+const exportProposal = async () => { /* ... */ }
+const requestReview = async () => { /* ... */ }
 </script>
 
 <style scoped lang="scss">

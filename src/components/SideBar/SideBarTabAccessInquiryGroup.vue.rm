@@ -67,7 +67,7 @@ const publicationStatusLabels: Record<PublicationStatus, string> = {
 // ============================================================
 
 const selectedPublicationStatus = computed({
-    get: () => inquiryGroupStore.status.publicationStatus || 'draft',
+    get: () => inquiryGroupStore.status.publicationStatus,
     set: async (val: PublicationStatus) => {
         try {
             await inquiryGroupStore.updatePublicationStatus(val)
@@ -192,7 +192,7 @@ const infoText = computed((): string => {
             parts.push(t('agora', 'Private (owner only)'))
             break
     }
- return parts.join(' • ')
+
 })
 
 // ============================================================
@@ -259,12 +259,13 @@ onMounted(async () => {
                 <h3>{{ t('agora', 'Publication Status') }}</h3>
                 <div class="section-badge">
                     <span class="badge" :class="inquiryGroupStore.status.publicationStatus">
-                        {{ publicationStatusLabels[inquiryGroupStore.status?.publicationStatus] }}
+                        {{ publicationStatusLabels[inquiryGroupStore.status.publicationStatus] }}
                     </span>
                 </div>
             </div>
             <p class="section-desc">{{ t('agora', 'Control the publication state of this group') }}</p>
 
+            <!-- Using string array pattern like SideBarTabAccess.vue -->
             <NcSelect
                 :model-value="selectedPublicationStatus"
                 :options="publicationStatusOptions"
@@ -272,7 +273,6 @@ onMounted(async () => {
                 :option-label="(opt: string) => publicationStatusLabels[opt as PublicationStatus] || opt"
                 :label="t('agora', 'Status')"
                 :disabled="!canEdit || isSaving"
-		input-label="Select publication status"
                 @update:model-value="selectedPublicationStatus = $event"
             />
 
@@ -304,7 +304,7 @@ onMounted(async () => {
     <div class="section-header">
         <h3>{{ t('agora', 'Visibility') }}</h3>
         <div class="section-badge">
-            <span class="badge">{{ visibilityOptionLabels[inquiryGroupStore.configuration.visibility] }}</span>
+            <span class="badge">{{ visibilityOptionLabels[inquiryGroupStore.visibility] }}</span>
         </div>
     </div>
     <p class="section-desc">{{ t('agora', 'Who can view this inquiry group and its inquiries') }}</p>
@@ -316,7 +316,6 @@ onMounted(async () => {
         :option-label="(opt: string) => visibilityOptionLabels[opt] || opt"
         :label="t('agora', 'Visibility')"
         :disabled="!canEdit || isSaving"
-	input-label="Select visibility"
         @update:model-value="selectedVisibility = $event"
     />
 

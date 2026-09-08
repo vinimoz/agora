@@ -467,7 +467,7 @@ export const useInquiriesStore = defineStore('inquiries', {
       // unless the user has specific moderation permissions
       filteredInquiries = filteredInquiries.filter((inquiry) => {
         // Always exclude moderate access inquiries from regular lists
-        if (inquiry.publicationStatus === 'pending') {
+        if (inquiry.status.publicationStatus === 'pending') {
           // Only show moderate inquiries to users with moderation permissions
           const sessionStore = useSessionStore()
           return !!sessionStore.currentUser?.isModerator

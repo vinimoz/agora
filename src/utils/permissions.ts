@@ -347,7 +347,7 @@ export function createInquiryGroupContext(group: InquiryGroup): PermissionContex
   
   // Handle different field name variations
   const deleted = group.deleted ?? 0
-const groupStatus = group.group_status || group.groupStatus || ''
+const groupStatus = group.status.group_status || group.status.groupStatus || ''
 const ownedGroup = group.owned_group || group.ownedGroup || null
 const isPublic = group.isPublic ?? (group.protected === false || group.protected === 0)
 

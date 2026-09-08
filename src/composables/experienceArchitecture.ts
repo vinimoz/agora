@@ -132,8 +132,8 @@ export const EXPERIENCE_ARCHITECTURES: Record<ExperienceKey, ExperienceArchitect
           status: ['active', 'in_progress', 'review'],
           selection: { category: 'board' }
         },
-        display: { type: 'tool', tool: 'kanban' },
-        position: { row: 1, column: 1, rowSpan: 1 },
+        display: { type: 'kaban' },
+        position: { row: 2, column: 2, rowSpan: 2, columnSpan: 2 },
         interaction: { action: 'select', target: 'same_view' }
       }
     }
@@ -161,8 +161,8 @@ export const EXPERIENCE_ARCHITECTURES: Record<ExperienceKey, ExperienceArchitect
           },
           selection: { category: 'history' }
         },
-        display: { type: 'tool', tool: 'timeline' },
-        position: { row: 1, column: 1, columnSpan: 2 },
+        display: { type: 'timeline' },
+        position: { row: 2, column: 2, rowSpan: 2, columnSpan: 2 },
         interaction: { action: 'open', target: 'panel' }
       },
       stats: {

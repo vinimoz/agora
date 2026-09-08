@@ -34,15 +34,21 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
-  unsubscribe(Event.SidebarToggle, () => {
-    activeTab.value = 'comments'
-  })
-  unsubscribe(Event.SidebarChangeTab, () => {
-    showSidebar.value = false
-  })
+  // Store the toggle handler to properly unsubscribe
+  const toggleHandler = (payload: any) => {
+    showSidebar.value = payload?.open ?? !showSidebar.value
+    activeTab.value = payload?.activeTab ?? activeTab.value
+  }
+  const changeTabHandler = (payload: any) => {
+    activeTab.value = payload?.activeTab ?? activeTab.value
+  }
+  
+  unsubscribe(Event.SidebarToggle, toggleHandler)
+  unsubscribe(Event.SidebarChangeTab, changeTabHandler)
 })
 
 function closeSideBar() {
+  showSidebar.value = false
   emit(Event.SidebarToggle, { open: false })
 }
 </script>
@@ -73,7 +79,7 @@ function closeSideBar() {
                  <SideBarTabGroupMisc /> 
                 </NcAppSidebarTab>
 
-                <NcAppSidebarTab
+               <NcAppSidebarTab
                         id="sharing"
                         :order="3"
                         :name="t('agora', 'Access')"
@@ -81,8 +87,8 @@ function closeSideBar() {
                         <template #icon>
                             <component :is="InquiryGeneralIcons.Share" />
                         </template>
-                <SideBarTabAccessInquiryGroup />
-                </NcAppSidebarTab>
+	   <SideBarTabAccessInquiryGroup />
+	   </NcAppSidebarTab>
 
         </NcAppSidebar>
     </aside>

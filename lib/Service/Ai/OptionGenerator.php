@@ -6,11 +6,11 @@ use OCA\Agora\Service\AIService;
 
 class OptionGenerator {
     private $promptRepository;
-    private $aiService;  // Changed from $aiClient to $aiService
+    private $aiService;  
 
     public function __construct(
         PromptRepository $promptRepository, 
-        AIService $aiService  // Type hint with AIService
+        AIService $aiService  
     ) {
         $this->promptRepository = $promptRepository;
         $this->aiService = $aiService;
@@ -19,38 +19,149 @@ class OptionGenerator {
     /**
      * Generate options from inquiry context (title + description)
      */
+    /**
+     * Generate options from inquiry context (title + description)
+     */
     public function generateOptionsFromContext(array $context, int $count = 4): array
     {
         try {
-            $prompt = $this->promptRepository->getPrompt('options_from_context', [
-                'title' => $context['title'] ?? '',
-                'description' => $context['description'] ?? '',
-                'type' => $context['type'] ?? 'proposal',
-                'count' => $count
-            ]);
+            // Build a more specific prompt
+            $prompt = $this->buildPrompt($context, $count);
+
+            // Log the prompt
+            error_log('AI Prompt: ' . $prompt);
 
             // Use AIService's enhanceText method
             $response = $this->aiService->enhanceText($prompt);
-            
+
+            // Log the response
+            error_log('AI Response: ' . substr($response, 0, 500));
+
             // If empty response, use fallback
             if (empty($response)) {
+                error_log('AI returned empty response, using fallback');
                 return $this->getFallbackOptions($context, $count);
             }
-            
-            $options = $this->parseOptions($response);
-            
+
+            // Try to parse JSON response first
+            $options = $this->parseJsonResponse($response);
+
+            // If JSON parsing failed, try text parsing
+            if (empty($options)) {
+                $options = $this->parseTextOptions($response);
+            }
+
             // Ensure we return at least something
             if (empty($options)) {
+                error_log('No options parsed from AI response, using fallback');
                 return $this->getFallbackOptions($context, $count);
             }
-            
+
+            // Limit to requested count
             return array_slice($options, 0, $count);
-            
+
         } catch (\Throwable $e) {
-            // Log the error
             error_log('Error generating options: ' . $e->getMessage());
+            error_log('Stack trace: ' . $e->getTraceAsString());
             return $this->getFallbackOptions($context, $count);
         }
+    }
+  private function buildPrompt(array $context, int $count): string
+    {
+        $title = $context['title'] ?? 'the topic';
+        $description = $context['description'] ?? '';
+        
+        return "Generate $count specific, actionable options for: $title\n\n" .
+               "Context: $description\n\n" .
+               "Please provide the response as a JSON array of objects, each with these fields:\n" .
+               "- title: A short, descriptive title for the option\n" .
+               "- text: A detailed description of the option\n" .
+               "- description: A brief summary (optional)\n" .
+               "- pros: Array of advantages (optional)\n" .
+               "- cons: Array of disadvantages (optional)\n" .
+               "- tags: Array of relevant keywords (optional)\n\n" .
+               "Return ONLY the JSON array, no other text.";
+    }
+
+    private function parseJsonResponse(string $response): array
+    {
+        // Try to extract JSON from the response
+        $json = $response;
+        
+        // If response contains markdown code blocks, extract the JSON
+        if (preg_match('/```(?:json)?\s*([\s\S]*?)\s*```/', $response, $matches)) {
+            $json = trim($matches[1]);
+        }
+        
+        // Try to parse as JSON
+        $decoded = json_decode($json, true);
+        
+        if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+            return array_map(function($item) {
+                return [
+                    'title' => $item['title'] ?? $item['text'] ?? '',
+                    'text' => $item['text'] ?? $item['description'] ?? '',
+                    'description' => $item['description'] ?? '',
+                    'pros' => $item['pros'] ?? [],
+                    'cons' => $item['cons'] ?? [],
+                    'tags' => $item['tags'] ?? []
+                ];
+            }, $decoded);
+        }
+        
+        return [];
+    }
+
+    private function parseTextOptions(string $response): array
+    {
+        $options = [];
+        $lines = explode("\n", $response);
+        $currentOption = null;
+        $currentText = '';
+        
+        foreach ($lines as $line) {
+            $line = trim($line);
+            
+            // Check for numbered options (1., 2., etc.)
+            if (preg_match('/^(\d+)[\.\)]\s*(.+)/', $line, $matches)) {
+                if ($currentOption !== null) {
+                    $options[] = [
+                        'title' => $currentOption,
+                        'text' => $currentText,
+                        'description' => $currentText,
+                        'pros' => [],
+                        'cons' => [],
+                        'tags' => []
+                    ];
+                }
+                $currentOption = trim($matches[2]);
+                $currentText = $currentOption;
+            } 
+            // Check for bullet points
+            elseif (preg_match('/^[-*•]\s*(.+)/', $line, $matches)) {
+                if ($currentOption !== null) {
+                    $currentText .= ' ' . trim($matches[1]);
+                }
+            } 
+            // Continue line
+            elseif ($line && $currentOption !== null) {
+                $currentText .= ' ' . $line;
+            }
+        }
+        
+        // Add the last option
+        if ($currentOption !== null) {
+            $options[] = [
+                'title' => $currentOption,
+                'text' => $currentText,
+                'description' => $currentText,
+                'pros' => [],
+                'cons' => [],
+                'tags' => []
+            ];
+        }
+        
+        return $options;
     }
 
     /**

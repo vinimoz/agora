@@ -43,10 +43,10 @@
             <component :is="Icons.Folder" :size="12" />
             {{ node.childs.length }}
           </span>
-          <span v-if="node.groupStatus === 'archived'" class="status-badge archived">
+          <span v-if="node.status.groupStatus === 'archived'" class="status-badge archived">
             {{ t('agora', 'Archived') }}
           </span>
-          <span v-if="node.groupStatus === 'draft'" class="status-badge draft">
+          <span v-if="node.status.groupStatus === 'draft'" class="status-badge draft">
             {{ t('agora', 'Draft') }}
           </span>
         </div>

@@ -33,15 +33,45 @@ export type InquiryGroupWorkflowStatus = 'draft' | 'active' | 'closed' | 'archiv
  * UI configuration for a group instance.
  * Extends the base ExperienceArchitecture and adds group‑specific overrides.
  */
-export interface InquiryGroupUIConfig extends Partial<ExperienceArchitecture> {
+export interface InquiryGroupUIConfig {
+  /** Active experience key */
+  experience?: ExperienceKey
+  /** Default experience (if different from active) */
+  defaultExperience?: ExperienceKey
+  /** Default display mode for this experience */
+  defaultDisplay?: DisplayType
+  /** Layout configuration */
+  layout?: {
+    type: 'grid' | 'flex' | 'sidebar' | 'split' | 'full'
+    columns?: number
+    rows?: number
+    responsive?: boolean
+  }
+  /** Map of zone names to DisplayZone (camelCase) */
+  displayArchitecture?: Record<string, DisplayZone>
+  /** Enabled features */
+  features?: string[]
+  /** Context definition */
+  context?: { type: 'group' | 'inquiry'; selection: 'selected' | 'current' | 'all' }
   /** Theme or styling overrides */
   styles?: {
     primaryColor?: string
     accentColor?: string
     borderRadius?: string
   }
-  // Additional custom fields can be added here
   [key: string]: unknown
+}
+
+//  ============= PERMISSION ==========
+export type InquiryGroupPermissions = {
+  view: boolean
+  edit: boolean
+  delete: boolean
+  addInquiries: boolean
+  reorderInquiries: boolean
+  changeOwner: boolean
+  archive: boolean
+  clone: boolean
 }
 
 // ===== CONFIGURATION =====
@@ -54,7 +84,7 @@ export interface InquiryGroupConfiguration {
   description: string
   protected: boolean
   titleExt: string | null
-  ui?: InquiryGroupUIConfig
+  ui: InquiryGroupUIConfig
 }
 
 // ===== STATUS =====
@@ -63,8 +93,8 @@ export interface InquiryGroupStatus {
   publicationStatus: PublicationStatus
   created: number
   deleted: number
-  updated?: number
-  supportResult: SupportResult[] | null
+  updated: number
+  supportResult: SupportResult[] 
 }
 
 // ===== INQUIRY GROUP TYPE =====
@@ -102,10 +132,11 @@ export interface InquiryGroup {
   parentId: number | null
   created: number
   deleted: number
+  updated?: number
   description: string | null
   owner: User
   type: string
-  groupStatus: InquiryGroupWorkflowStatus
+  trendingScore?: number
   publicationStatus?: PublicationStatus
   configuration: InquiryGroupConfiguration
   status: InquiryGroupStatus
@@ -123,4 +154,6 @@ export interface InquiryGroup {
   slug: string
   miscFields: Record<string, string>
   inquiryGroupType?: InquiryGroupType
+  permissions?: InquiryGroupPermissions
 }
+export type { InquiryGroupPermissions }

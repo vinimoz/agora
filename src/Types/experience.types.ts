@@ -363,5 +363,7 @@ export function validateUIDefinition(ui: Partial<ValidatedUIDefinition>): { vali
     }
   }
 
+  export type { ExperienceKey }
+
   return { valid: errors.length === 0, errors }
 }

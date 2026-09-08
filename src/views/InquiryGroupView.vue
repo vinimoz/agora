@@ -138,8 +138,8 @@ onUnmounted(() => {
 })
 
 const collapsibleProps = computed<CollapsibleProps>(() => ({
-    noCollapse: !inquiryGroupStore.configuration.collapseDescription || isShortDescription.value,
-    initialState: inquiryGroupStore.currentUserStatus.countInquiries === 0 ? 'max' : 'min',
+  noCollapse: !inquiryGroupStore.configuration?.collapseDescription || isShortDescription.value,
+  initialState: inquiryGroupStore.currentUserStatus?.countInquiries === 0 ? 'max' : 'min',
 }))
 
 // ============================================================
