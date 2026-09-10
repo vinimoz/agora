@@ -728,7 +728,7 @@ OC.L10N.register(
     "Conclusion" : "Závěr",
     "Open" : "Otevřít",
     "Resolved" : "Vyřešeno",
-    "Blocked" : "Blokovaný",
+    "Blocked" : "Blokované",
     "Published" : "Zveřejněno",
     "Answered" : "Odpovězeno",
     "responses" : "odpovědi",
