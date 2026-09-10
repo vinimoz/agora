@@ -22,6 +22,7 @@ use OCA\Agora\Db\Support;
 use OCA\Agora\Db\SupportResult;        
 use OCA\Agora\Db\SupportEngine;        
 use OCA\Agora\Db\Participation;
+use OCA\Agora\Db\Trending;
 use OCP\IGroupManager; 
 use Psr\Log\LoggerInterface;
 
@@ -191,6 +192,7 @@ class InquiryMapper extends QBMapper
 		$this->joinMiscs($qb, self::TABLE);
 		$this->joinSupportResult($qb, self::TABLE);
 		$this->joinSupportEngine($qb, self::TABLE);
+		$this->joinTrendingScores($qb, self::TABLE);
 
 		$qb->groupBy(self::TABLE . '.id');
 		$qb->addGroupBy(self::TABLE . '.cover_id');
@@ -218,6 +220,46 @@ class InquiryMapper extends QBMapper
 		return $qb;
 	}
 
+	/**
+ * Find all active inquiries for the current user
+ * Active = not archived, not deleted, and user has view permission
+ *
+ * @return Inquiry[]
+ */
+public function findAllActive(): array
+{
+    $activeInquiries = [];
+
+    try {
+        // Get all inquiries for the current user
+        $inquiries = $this->inquiryMapper->findForMe($this->userSession->getCurrentUserId());
+
+        // Filter for active (non-archived, non-deleted) and permission-checked
+        foreach ($inquiries as $inquiry) {
+            // Check if inquiry is active (not archived and not deleted)
+            $isActive = $inquiry->getArchived() === 0 && $inquiry->getDeleted() === 0;
+
+            if (!$isActive) {
+                continue;
+            }
+
+            // Check if user has view permission
+            try {
+                $inquiry->request(Inquiry::PERMISSION_INQUIRY_VIEW);
+                $activeInquiries[] = $inquiry;
+            } catch (ForbiddenException $e) {
+                // User doesn't have permission, skip this inquiry
+                continue;
+            }
+        }
+
+        return $activeInquiries;
+
+    } catch (DoesNotExistException $e) {
+        // No inquiries found
+        return [];
+    }
+}
 
 	/**
 	 * Get user IDs for an inquiry visibility
@@ -1298,16 +1340,95 @@ class InquiryMapper extends QBMapper
 		   ->executeStatement();
 	    } else {
 		$qb->insert(InquiryMisc::TABLE)
-		   ->values([
-		       'inquiry_id' => $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT),
-		       'key' => $qb->createNamedParameter($key, IQueryBuilder::PARAM_STR),
-		       'value' => $qb->createNamedParameter($stringValue, IQueryBuilder::PARAM_STR),
-		   ])
-		   ->executeStatement();
+     ->values([
+	     'inquiry_id' => $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT),
+	     'key' => $qb->createNamedParameter($key, IQueryBuilder::PARAM_STR),
+	     'value' => $qb->createNamedParameter($stringValue, IQueryBuilder::PARAM_STR),
+     ])
+     ->executeStatement();
 	    }
 
 	    $inquiry->setMiscField($key, $value);
 	}
+    }
+
+
+
+    /**
+     * Join trending scores to the query
+     */
+protected function joinTrendingScores(
+    IQueryBuilder &$qb,
+    string $fromAlias,
+    string $joinAlias = 'trending_scores'
+): void {
+    // Join only the inquiry-level score (option_id = 0)
+    $qb->leftJoin(
+        $fromAlias,
+        TrendingScore::TABLE,
+        $joinAlias,
+        $qb->expr()->andX(
+            $qb->expr()->eq($joinAlias . '.inquiry_id', $fromAlias . '.id'),
+            $qb->expr()->eq($joinAlias . '.option_id', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT))
+        )
+    );
+
+    // Since there's only one score per inquiry (option_id=0), MAX() returns that single value
+    $qb->addSelect(
+        $qb->createFunction('MAX(' . $joinAlias . '.score) AS trending_score')
+    );
+}
+    /**
+     * Get trending scores for multiple inquiries in a single query
+     * This is more efficient than loading them individually
+     */
+    public function loadTrendingScoresForInquiries(array $inquiries): array
+    {
+	    if (empty($inquiries)) {
+		    return $inquiries;
+	    }
+
+	    // Extract inquiry IDs
+	    $inquiryIds = array_map(function($inquiry) {
+		    return $inquiry instanceof Inquiry ? $inquiry->getId() : (int)$inquiry;
+	    }, $inquiries);
+
+	    // Get all trending scores for these inquiries
+	    $qb = $this->db->getQueryBuilder();
+	    $qb->select('*')
+	->from(TrendingScore::TABLE)
+	->where($qb->expr()->in('inquiry_id', $qb->createNamedParameter($inquiryIds, IQueryBuilder::PARAM_INT_ARRAY)))
+	->orderBy('updated_at', 'DESC');
+
+	    $stmt = $qb->executeQuery();
+	    $scores = [];
+	    while ($row = $stmt->fetch()) {
+		    $inquiryId = (int)$row['inquiry_id'];
+		    if (!isset($scores[$inquiryId])) {
+			    $scores[$inquiryId] = [];
+		    }
+		    $scores[$inquiryId][$row['option_id']] = [
+			    'score' => (float)$row['score'],
+			    'updated_at' => (int)$row['updated_at']
+		    ];
+	    }
+	    $stmt->closeCursor();
+
+	    // Attach scores to inquiries
+	    foreach ($inquiries as $inquiry) {
+		    if ($inquiry instanceof Inquiry) {
+			    $id = $inquiry->getId();
+			    if (isset($scores[$id])) {
+				    $inquiry->setTrendingScores($scores[$id]);
+				    // Set the inquiry-level score
+				    if (isset($scores[$id][0])) {
+					    $inquiry->setTrendingScore($scores[$id][0]['score']);
+				    }
+			    }
+		    }
+	    }
+
+	    return $inquiries;
     }
 
     // ====================================================================
@@ -1316,72 +1437,72 @@ class InquiryMapper extends QBMapper
 
     public function archiveExpiredInquiries(int $offset): int
     {
-	$archiveDate = time();
-	$qb = $this->db->getQueryBuilder();
-	$qb->update($this->getTableName())
-	   ->set('archived', $qb->createNamedParameter($archiveDate))
-	   ->where($qb->expr()->lt('expire', $qb->createNamedParameter($offset)))
-	   ->andWhere($qb->expr()->gt('expire', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)))
-	   ->andWhere($qb->expr()->eq('archived', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)));
-	return $qb->executeStatement();
+	    $archiveDate = time();
+	    $qb = $this->db->getQueryBuilder();
+	    $qb->update($this->getTableName())
+	->set('archived', $qb->createNamedParameter($archiveDate))
+	->where($qb->expr()->lt('expire', $qb->createNamedParameter($offset)))
+	->andWhere($qb->expr()->gt('expire', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)))
+	->andWhere($qb->expr()->eq('archived', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)));
+	    return $qb->executeStatement();
     }
 
     public function setInquiryStatus(int $inquiryId, string $mstatus): void
     {
-	$qb = $this->db->getQueryBuilder();
-	$qb->update($this->getTableName())
-	   ->set('inquiry_status', $qb->createNamedParameter($mstatus))
-	   ->where($qb->expr()->eq('id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT)));
-	$qb->executeStatement();
+	    $qb = $this->db->getQueryBuilder();
+	    $qb->update($this->getTableName())
+	->set('inquiry_status', $qb->createNamedParameter($mstatus))
+	->where($qb->expr()->eq('id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT)));
+	    $qb->executeStatement();
     }
 
     public function setModerationStatus(int $inquiryId, string $mstatus): void
     {
-	$qb = $this->db->getQueryBuilder();
-	$qb->update($this->getTableName())
-	   ->set('moderation_status', $qb->createNamedParameter($mstatus))
-	   ->where($qb->expr()->eq('id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT)));
-	$qb->executeStatement();
+	    $qb = $this->db->getQueryBuilder();
+	    $qb->update($this->getTableName())
+	->set('moderation_status', $qb->createNamedParameter($mstatus))
+	->where($qb->expr()->eq('id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT)));
+	    $qb->executeStatement();
     }
 
     public function deleteArchivedInquiries(int $offset): int
     {
-	$qb = $this->db->getQueryBuilder();
-	$qb->delete($this->getTableName())
-	   ->where($qb->expr()->lt('archived', $qb->createNamedParameter($offset)))
-	   ->andWhere($qb->expr()->gt('archived', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)));
-	return $qb->executeStatement();
+	    $qb = $this->db->getQueryBuilder();
+	    $qb->delete($this->getTableName())
+	->where($qb->expr()->lt('archived', $qb->createNamedParameter($offset)))
+	->andWhere($qb->expr()->gt('archived', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)));
+	    return $qb->executeStatement();
     }
 
     public function setLastInteraction(int $inquiryId): void
     {
-	$timestamp = time();
-	$qb = $this->db->getQueryBuilder();
-	$qb->update($this->getTableName())
-	   ->set('last_interaction', $qb->createNamedParameter($timestamp, IQueryBuilder::PARAM_INT))
-	   ->where($qb->expr()->eq('id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT)));
-	$qb->executeStatement();
+	    $timestamp = time();
+	    $qb = $this->db->getQueryBuilder();
+	    $qb->update($this->getTableName())
+	->set('last_interaction', $qb->createNamedParameter($timestamp, IQueryBuilder::PARAM_INT))
+	->where($qb->expr()->eq('id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT)));
+	    $qb->executeStatement();
     }
 
     public function deleteByUserId(string $userId): void
     {
-	$qb = $this->db->getQueryBuilder();
-	$qb->delete($this->getTableName())
-	   ->where('owner = :userId')
-	   ->setParameter('userId', $userId);
-	$qb->executeStatement();
+	    $qb = $this->db->getQueryBuilder();
+	    $qb->delete($this->getTableName())
+	->where('owner = :userId')
+	->setParameter('userId', $userId);
+	    $qb->executeStatement();
     }
 
     public function findParticipantsByInquiry(int $inquiryId): array {
-	$qb = $this->db->getQueryBuilder();
+	    $qb = $this->db->getQueryBuilder();
 
-	$qb->selectDistinct([self::TABLE . '.owner', self::TABLE . '.id'])
-	   ->from($this->getTableName(), self::TABLE)
-	   ->groupBy(self::TABLE . '.owner', self::TABLE . '.id')
-	   ->where(
-	       $qb->expr()->eq(self::TABLE . '.id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT))
-	   );
+	    $qb->selectDistinct([self::TABLE . '.owner', self::TABLE . '.id'])
+	->from($this->getTableName(), self::TABLE)
+	->groupBy(self::TABLE . '.owner', self::TABLE . '.id')
+	->where(
+		$qb->expr()->eq(self::TABLE . '.id', $qb->createNamedParameter($inquiryId, IQueryBuilder::PARAM_INT))
+	);
 
-	return $this->findEntities($qb);
+	    return $this->findEntities($qb);
     }
 }

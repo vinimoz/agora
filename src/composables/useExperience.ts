@@ -160,6 +160,7 @@ export const EXPERIENCE_DEFINITIONS = {
     supportedGroupTypes: ['wiki', 'structure', 'documentation', 'municipal_reports', 'chapter']
   },
 
+
   // ============================================================
   // DECISION_ROOM - Full decision-making interface
   // ============================================================
@@ -179,7 +180,26 @@ export const EXPERIENCE_DEFINITIONS = {
     showBreadcrumb: true,
     showStats: true,
     supportedGroupTypes: ['decision', 'consultation', 'debate', 'citizen_jury', 'commission', 'chapter', 'ethics_review', 'investigation_case']
-  }
+  },
+  
+  classic: {
+    key: 'classic',
+    label: 'Classic View',
+    icon: 'Home',
+    description: 'Standard group layout',
+    verb: 'View',
+    question: 'Default view',
+    defaultTools: [] as ToolKey[],
+    defaultDisplay: 'list' as DisplayType,
+    allowedDisplays: ['list', 'cards'] as DisplayType[],
+    allowedTools: [] as ToolKey[],
+    layout: 'full',
+    showHeader: true,
+    showBreadcrumb: true,
+    showStats: true,
+    supportedGroupTypes: [] as string[],
+  },
+
 } as const
 
 // ============================================================

@@ -98,7 +98,6 @@
                         <label :for="`field-${field.key}`">{{ field.label || field.key }}</label>
                     </div>
 
-                    <!-- Number / Integer - FIXED: handle null values -->
                     <NcTextField
                         v-else-if="field.type === 'number' || field.type === 'integer'"
                         :id="`field-${field.key}`"
@@ -232,7 +231,6 @@
                         />
                     </div>
 
-                    <!-- Default fallback - FIXED: handle null values and add label -->
                     <NcTextField
                         v-else
                         :id="`field-${field.key}`"
@@ -336,7 +334,6 @@ const categoryOptions = computed(() => getHierarchicalOptions(
 // Helper methods
 const getFieldLabel = (field: MiscField): string => getFieldLabelHelper(field)
 
-// FIXED: Safe method to get string value (never returns null)
 const getSafeStringValue = (key: string): string => {
     const value = miscFields.getValue(key)
     if (value === null || value === undefined) {
@@ -348,7 +345,6 @@ const getSafeStringValue = (key: string): string => {
     return String(value)
 }
 
-// FIXED: Safe method for select values (returns null for empty)
 const getSafeSelectValue = (key: string): unknown => {
     const value = miscFields.getValue(key)
     if (value === null || value === undefined || value === '') {
@@ -357,7 +353,6 @@ const getSafeSelectValue = (key: string): unknown => {
     return value
 }
 
-// FIXED: Safe method for number fields
 const getSafeNumberString = (key: string): string => {
     const value = miscFields.getValue(key)
     if (value === null || value === undefined || value === '') {
@@ -375,7 +370,6 @@ const getSafeNumberString = (key: string): string => {
     return ''
 }
 
-// FIXED: Update method for number fields
 const updateNumberValue = (key: string, value: unknown, type: string) => {
     let parsedValue: number | null = null
     

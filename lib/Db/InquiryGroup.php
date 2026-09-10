@@ -90,7 +90,7 @@ class InquiryGroup extends EntityWithUser implements JsonSerializable
     protected string $visibility = 'private';
     protected ?array $visibilityGroups = [];
     protected ?array $visibilityUsers = [];
-    protected string $groupStatus = 'draft';
+    protected string $groupStatus = 'active';
     protected string $publicationStatus = 'draft';
     protected ?string $description = null;
     protected ?string $titleExt = null;

@@ -670,6 +670,32 @@ public function toggleArchiveRecursive(int $inquiryId, bool $archiveState = null
 }
 
 /**
+ * Get inquiry with trending scores included
+ */
+public function getWithTrending(int $inquiryId): array
+{
+    $inquiry = $this->get($inquiryId);
+    
+    // Get trending scores with fallback
+    $trendingScores = $this->trendingService->getTrendingScoresWithFallback($inquiryId);
+    
+    $inquiryData = $inquiry->jsonSerialize();
+    $inquiryData['trending'] = $trendingScores;
+
+    // Add trending scores to each option
+    if (isset($inquiryData['childs']) && is_array($inquiryData['childs'])) {
+        foreach ($inquiryData['childs'] as &$option) {
+            if (isset($option['id']) && isset($trendingScores[$option['id']])) {
+                $option['trendingScore'] = $trendingScores[$option['id']]['score'] ?? $trendingScores[$option['id']];
+            }
+        }
+    }
+
+    return $inquiryData;
+}
+
+
+/**
  * Move to archive or restore
  *
  * @return Inquiry
@@ -706,47 +732,54 @@ public function toggleArchive(int $inquiryId): Inquiry
  */
 public function delete(int $inquiryId): Inquiry
 {
+    $this->inquiryMapper->beginTransaction();
+    
     try {
         $this->inquiry = $this->inquiryMapper->get($inquiryId, withRoles: true);
-    } catch (DoesNotExistException $e) {
-        throw new AlreadyDeletedException('Inquiry not found, assume already deleted');
-    }
+        $this->inquiry->request(Inquiry::PERMISSION_INQUIRY_DELETE);
 
-    $this->inquiry->request(Inquiry::PERMISSION_INQUIRY_DELETE);
-
-    // RECURSION: Delete all child inquiries first (bottom-up)
-    $childIds = $this->inquiryMapper->getChildInquiryIds($inquiryId);
-    foreach ($childIds as $childId) {
-        try {
-            $this->delete($childId); // Recursive call
-        } catch (ForbiddenException $e) {
-            $this->logger->error("Permission denied for child inquiry {$childId}: " . $e->getMessage());
-            continue;
-        } catch (\Exception $e) {
-            $this->logger->error("Error deleting child inquiry {$childId}: " . $e->getMessage());
-            continue;
+        // RECURSION with permission checks
+        $childIds = $this->inquiryMapper->getChildInquiryIds($inquiryId);
+        foreach ($childIds as $childId) {
+            try {
+                // Check permission for child first
+                $childInquiry = $this->inquiryMapper->get($childId, withRoles: true);
+                $childInquiry->request(Inquiry::PERMISSION_INQUIRY_DELETE);
+                $this->delete($childId);
+            } catch (ForbiddenException $e) {
+                $this->logger->error("Permission denied for child inquiry {$childId}: " . $e->getMessage());
+                continue;
+            } catch (\Exception $e) {
+                $this->logger->error("Error deleting child inquiry {$childId}: " . $e->getMessage());
+                continue;
+            }
         }
-    }
 
-    // Delete all options for this inquiry
-    $options = $this->optionService->getByTargetId($inquiryId);
-    foreach ($options as $option) {
-        try {
-            $this->optionService->delete($option->getId()); // Recursive delete for options
-        } catch (\Exception $e) {
-            $this->logger->error("Failed to delete option {$option->getId()}: " . $e->getMessage());
-            continue;
+        // Delete all options
+        $options = $this->optionService->getByTargetId($inquiryId);
+        foreach ($options as $option) {
+            try {
+                $this->optionService->delete($option->getId());
+            } catch (\Exception $e) {
+                $this->logger->error("Failed to delete option {$option->getId()}: " . $e->getMessage());
+            }
         }
+
+        // Delete this inquiry
+        $this->eventDispatcher->dispatchTyped(new InquiryDeletedEvent($this->inquiry));
+        $this->inquiry->setDeleted(time());
+        $this->inquiry->setArchived(time());
+        $this->inquiry->setLastInteraction(time());
+
+        $this->inquiryMapper->delete($this->inquiry);
+        
+        $this->inquiryMapper->commit();
+        return $this->inquiry;
+        
+    } catch (\Exception $e) {
+        $this->inquiryMapper->rollBack();
+        throw $e;
     }
-
-    // Finally delete this inquiry
-    $this->eventDispatcher->dispatchTyped(new InquiryDeletedEvent($this->inquiry));
-    $this->inquiry->setDeleted(time());
-    $this->inquiry->setArchived(time());
-    $this->inquiry->setLastInteraction(time());
-
-    $this->inquiryMapper->delete($this->inquiry);
-    return $this->inquiry;
 }
 
 /**
@@ -867,30 +900,6 @@ public function clone(int $inquiryId, string $inquiryType): Inquiry
 	return $this->inquiry;
 }
 
-/**
- * Get inquiry with trending scores included
- */
-public function getWithTrending(int $inquiryId): array
-{
-	$inquiry = $this->get($inquiryId);
-
-
-	$inquiryData = $inquiry->jsonSerialize();
-	$inquiryData['trending'] = $trendingScores;
-
-	// Add trending scores to each option
-	if (isset($inquiryData['childs']) && is_array($inquiryData['childs'])) {
-		foreach ($inquiryData['childs'] as &$option) {
-			if (isset($option['id']) && isset($trendingScores[$option['id']])) {
-				$option['trendingScore'] = $trendingScores[$option['id']];
-			}
-		}
-	}
-
-	return $inquiryData;
-
-}
-
 
 /**
  * Collect email addresses from particitipants
@@ -988,6 +997,5 @@ public function applyAction(int $inquiryId, string $action): Inquiry
 
 	return $inquiry;
 }
-
-
 }
+

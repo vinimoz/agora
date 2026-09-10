@@ -1473,10 +1473,8 @@ const formatSelectedItems = (items: any[], type: 'user' | 'group'): string => {
 }
 
 // ============================================================
-// DARK MODE FIXES FOR NC COMPONENTS
 // ============================================================
 
-// Fix for NcSelect
 :deep(.vs__search) {
 	color: var(--color-text) !important;
 }

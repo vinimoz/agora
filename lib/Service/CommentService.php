@@ -18,6 +18,7 @@ use OCA\Agora\Event\CommentDeleteEvent;
 use OCA\Agora\Exceptions\Exception;
 use OCA\Agora\UserSession;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCA\Agora\Service\TrendingService;
 
 class CommentService
 {
@@ -29,7 +30,8 @@ class CommentService
         private Comment $comment,
         private IEventDispatcher $eventDispatcher,
         private UserSession $userSession,
-        private InquiryMapper $inquiryMapper,
+	private InquiryMapper $inquiryMapper,
+	private TrendingService $trendingService,
     ) {
     }
 
@@ -92,8 +94,17 @@ class CommentService
         $this->comment = $this->commentMapper->insert($this->comment);
 
         $this->eventDispatcher->dispatchTyped(new CommentAddEvent($this->comment));
-
+	$this->updateTrendingScores($data['inquiryId']);
         return $this->comment;
+    }
+
+    private function updateTrendingScores(int $inquiryId): void
+    {
+        try {
+            $this->trendingService->updateTrendingScoresForInquiry($inquiryId);
+        } catch (\Exception $e) {
+            $this->logger->error('Failed to update trending scores: ' . $e->getMessage());
+        }
     }
 
     public function countByInquiryId(int $inquiryId): int

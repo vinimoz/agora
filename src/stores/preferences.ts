@@ -4,11 +4,11 @@
  */
 
 import { defineStore } from 'pinia'
-import {  UserSettingsAPI } from '../Api/index.ts'
+import { UserSettingsAPI } from '../Api/index.ts'
 import { Logger } from '../helpers/index.ts'
 import { AxiosError } from '@nextcloud/axios'
 
-export type ViewMode = 'table-view' | 'list-view'
+export type ViewMode = 'table-view' | 'list-view' | 'reel-view'
 
 export type UserPreferences = {
   defaultViewInquiry: ViewMode
@@ -25,13 +25,6 @@ export type SessionSettings = {
   manualViewInquiry: '' | ViewMode
 }
 
-export type Calendar = {
-  key: string
-  name: string
-  calendarUri: string
-  displayColor: string
-  permissions: number
-}
 
 export type Preferences = {
   user: UserPreferences
@@ -80,6 +73,17 @@ export const usePreferencesStore = defineStore('preferences', {
 
     setViewInquiry(viewMode: ViewMode) {
       this.session.manualViewInquiry = viewMode
+    },
+
+    // Add this method to set user preferences
+    setUserPreference(key: keyof UserPreferences, value: any) {
+      if (key in this.user) {
+        this.user[key] = value
+        // Optionally save to server
+        this.write().catch(() => {
+          Logger.debug('Failed to save preference:', key, value)
+        })
+      }
     },
 
     async load(): Promise<void> {

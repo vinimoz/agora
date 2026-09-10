@@ -1319,7 +1319,6 @@ onMounted(() => {
                 opacity: 0.8;
             }
 
-            /* Support and comments inline - FIXED ALIGNMENT */
             .node-interactions {
                 display: flex;
                 align-items: center;
@@ -1393,7 +1392,6 @@ onMounted(() => {
         }
     }
 
-    /* Allowed responses hover panel - FIXED ALIGNMENT */
     .allowed-responses-hover {
         position: absolute;
         top: 100%;

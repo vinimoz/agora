@@ -893,9 +893,6 @@ function inquiryGroupAdded(newGroup: InquiryGroup) {
 // ============================================================
 // EXPERIENCE EVENT HANDLERS
 // ============================================================
-// ============================================================
-// EXPERIENCE EVENT HANDLERS - FIXED VERSION
-// ============================================================
 
 function handleExperienceChange(key: ExperienceKey) {
   switchExperience(key)

@@ -498,7 +498,7 @@ onMounted(async () => {
 })
 </script>
 
-<template>
+<template v-if="currentInquiry">
     <div class="sidebar-links">
         <div class="sidebar-header">
             <div class="header-content">

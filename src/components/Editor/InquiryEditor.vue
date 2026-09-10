@@ -278,7 +278,6 @@
       <EditorContent :editor="editor" class="editor-content" />
     </div>
 
-    <!-- AI Modal - FIXED with proper textarea height, loading icon outside button, and NcRichText -->
     <NcModal v-if="showAIModal" :name="t('agora', 'Generate content with ai')" @close="closeAIModal">
       <NcAssistantContent>
         <div class="container">
@@ -872,7 +871,6 @@ onUnmounted(() => {
   color: var(--color-text);
 }
 
-/* AI Prompt Textarea - FIXED height */
 .ai-prompt-textarea {
   width: 100%;
   min-height: 200px;

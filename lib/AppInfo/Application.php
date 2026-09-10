@@ -71,6 +71,7 @@ use OCA\Agora\Listener\OptionListener;
 use OCA\Agora\Listener\InquiryListener;
 use OCA\Agora\Listener\AgoraReferenceListener;
 use OCA\Agora\Listener\ShareListener;
+use OCA\Agora\Listener\TrendingScoreListener;
 use OCA\Agora\Listener\UserDeletedListener;
 use OCA\Agora\Middleware\RequestAttributesMiddleware;
 use OCA\Agora\Model\Settings\AppSettings;
@@ -145,6 +146,9 @@ class Application extends App implements IBootstrap
     {
         include_once __DIR__ . '/../../vendor/autoload.php';
         $this->registerServices($context);
+
+        $context->registerEventListener( InquiryUpdatedEvent::class , TrendingScoreListener::class );
+        $context->registerEventListener( InquiryCreatedEvent::class , TrendingScoreListener::class );
 
         $context->registerEventListener(RenderReferenceEvent::class, AgoraReferenceListener::class);
         $context->registerMiddleWare(RequestAttributesMiddleware::class);

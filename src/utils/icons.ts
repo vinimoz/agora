@@ -273,6 +273,13 @@ import CalendarMultiple from '@iconify-icons/mdi/calendar-multiple'
 import CalendarBlank from '@iconify-icons/mdi/calendar-blank'
 import CalendarPlusOutline from '@iconify-icons/mdi/calendar-plus-outline'
 
+import ViewCarousel from '@iconify-icons/mdi/view-carousel'
+import ArrowLeftRight from '@iconify-icons/mdi/arrow-left-right'
+import Play from '@iconify-icons/mdi/play'
+import ViewGrid from '@iconify-icons/mdi/view-grid'
+import ViewDashboard from '@iconify-icons/mdi/view-dashboard'
+
+
 // -------------------------------
 // Share related icons
 // -------------------------------
@@ -314,6 +321,13 @@ export const makeIconComponent = (icon: Component, color = '#000', size = 24) =>
 })
 
 export const InquiryGeneralIcons: Record<string, Component> = {
+  ViewCarousel: makeIconComponent(ViewCarousel, '#607D8B'),
+  ViewVertical: makeIconComponent(ViewGrid, '#1976D2'),
+  ViewHorizontal: makeIconComponent(ViewDashboard, '#1976D2'),
+  ArrowLeftRight: makeIconComponent(ArrowLeftRight, '#546E7A'),
+  Play: makeIconComponent(Play, '#388E3C'),
+  ArrowLeft: makeIconComponent(ArrowLeft, '#546E7A'),
+  ArrowRight: makeIconComponent(ArrowRight, '#546E7A'),
   Discussion: makeIconComponent(ChatOutline, '#455A64'),
   Lightbulb: makeIconComponent(Lightbulb, '#FB8C00'),
   Checkmark: makeIconComponent(CheckCircleOutline, '#388E3C'),

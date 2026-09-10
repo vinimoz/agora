@@ -952,7 +952,6 @@ watch(() => commentsStore.comments, (newComments) => {
                     }
                 }
 
-                /* Feature buttons container - FIXED ALIGNMENT */
                 .feature-buttons-container {
                     display: flex;
                     align-items: center;

@@ -49,7 +49,6 @@ interface Field {
 }
 
 // ============================================================
-// SAFE VALUE HELPERS - FIXED
 // ============================================================
 const getSafeStringValue = (value: unknown): string => {
   if (value === null || value === undefined || value === '') {
@@ -576,7 +575,6 @@ onMounted(() => {
 
               <div class="edit-field-input">
                 <!-- ============================================================
-                     LOCATION FIELD - FIXED
                      ============================================================ -->
                 <div v-if="field.type === 'location'" class="location-field">
                   <div v-if="showLocationAsLabel" class="metadata-value">
@@ -599,7 +597,6 @@ onMounted(() => {
                 </div>
 
                 <!-- ============================================================
-                     CATEGORY FIELD - FIXED
                      ============================================================ -->
                 <div v-else-if="field.type === 'category'" class="category-field">
                   <div v-if="showCategoryAsLabel" class="metadata-value">
@@ -622,7 +619,6 @@ onMounted(() => {
                 </div>
 
                 <!-- ============================================================
-                     ENUM FIELD - FIXED
                      ============================================================ -->
                 <NcSelect
                   v-else-if="field.type === 'enum'"

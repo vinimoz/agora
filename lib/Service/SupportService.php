@@ -210,13 +210,15 @@ class SupportService
         $currentSupports,
         $engineId
     );
-   
+
+    $this->trendingService->updateTrendingScoresForInquiry($inquiryId);
+
     if ($engineId === null) {
         $this->trendingService->invalidateCache($inquiryId);
-        $this->logger->debug('Trending cache invalidated after support change', [
+      /*  $this->logger->debug('Trending cache invalidated after support change', [
             'inquiryId' => $inquiryId,
             'optionId' => $optionId
-        ]);
+      ]);*/
     }
     
     return $support;

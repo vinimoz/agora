@@ -23,7 +23,7 @@ export type { DisplayZone, ExperienceKey, DisplayType, ToolKey }
 // ===== SHARED TYPES =====
 export type VisibilityType = 'private' | 'groups' | 'users' | 'everyone'
 export type PublicationStatus = 'draft' | 'pending' | 'published' | 'archived' | 'deleted'
-export type InquiryGroupWorkflowStatus = 'draft' | 'active' | 'closed' | 'archived'
+export type InquiryGroupWorkflowStatus = 'active' | 'completed' | 'suspended' | 'canceled' 
 
 // ============================================================
 // INQUIRY GROUP UI CONFIGURATION

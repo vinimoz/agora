@@ -210,7 +210,7 @@ class InquiryGroupController extends BaseController
                         $data['publicationStatus'] ?? null,
 			$data['expire'] ?? null,
 			$data['miscFields'] ?? null,
-			$data['visibility'] ?? null,
+			$data['configuration']['visibility'] ?? null,
                     	$visibilityGroups,
                     	$visibilityUsers 
                     ),
