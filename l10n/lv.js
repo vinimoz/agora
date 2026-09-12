@@ -11,6 +11,7 @@ OC.L10N.register(
     "External participant" : "Ārējs dalībnieks",
     "User" : "Lietotājs",
     "Access denied" : "Piekļuve liegta",
+    "You have added an option" : "Tu pievienoji atbildes iespēju",
     "Delete" : "Izdzēst",
     "Unknown error" : "Nezināma kļūda",
     "Loading" : "Ielādē",
