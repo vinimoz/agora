@@ -27,7 +27,7 @@
         - 🧮 Quorums and workflow automation  
         - 🧰 Better permission control and moderation tools  
         ]]></description>
-    <version>1.7.8</version>
+    <version>1.7.9</version>
     <licence>AGPL-3.0-or-later</licence>
     <author>Vincent TRAPPE</author>
     <documentation>
@@ -48,8 +48,8 @@
     <screenshot>https://raw.githubusercontent.com/vinimoz/agora/main/screenshots/Grid2.png</screenshot>
     <screenshot>https://raw.githubusercontent.com/vinimoz/agora/main/screenshots/ListView.png</screenshot>
     <dependencies>
-        <php min-version="8.1"/>
-        <nextcloud min-version="31" max-version="34"/>
+        <php min-version="8.3"/>
+        <nextcloud min-version="31" max-version="35"/>
     </dependencies>
     <background-jobs>
         <job>OCA\Agora\Cron\NotificationCron</job>

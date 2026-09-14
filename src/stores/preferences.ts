@@ -4,7 +4,7 @@
  */
 
 import { defineStore } from 'pinia'
-import { CalendarAPI, UserSettingsAPI } from '../Api/index.ts'
+import { UserSettingsAPI } from '../Api/index.ts'
 import { Logger } from '../helpers/index.ts'
 import { AxiosError } from '@nextcloud/axios'
 
@@ -27,14 +27,6 @@ export type UserPreferences = {
 
 export type SessionSettings = {
   manualViewInquiry: '' | ViewMode
-}
-
-export type Calendar = {
-  key: string
-  name: string
-  calendarUri: string
-  displayColor: string
-  permissions: number
 }
 
 export type Preferences = {

@@ -32,7 +32,7 @@ async function runCleanInstanceJob() {
     }
 
     // Second confirmation for safety
-    const secondConfirmMessage = t('agora', 'Final warning: all polls, votes, comments, and settings will be permanently deleted. Type "delete" to confirm:')
+    const secondConfirmMessage = t('agora', 'Final warning: all polls, votes, comments, and settings will be permanently deleted. Type "DELETE" to confirm:')
     
     const userInput = prompt(secondConfirmMessage)
     if (userInput !== 'DELETE') {
