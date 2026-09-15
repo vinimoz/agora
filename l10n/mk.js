@@ -45,7 +45,6 @@ OC.L10N.register(
     "Insert image" : "Вметни фотографија",
     "Undo" : "Назад",
     "Redo" : "Напред",
-    "Summary" : "Резиме",
     "Pending" : "Чекање",
     "Save" : "Сними",
     "Failed to upload {file}" : "Неуспешно прикачување {file}",
