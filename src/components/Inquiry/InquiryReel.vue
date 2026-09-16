@@ -7,13 +7,13 @@
         <button 
             v-if="showArrows && hasPrevious" 
             class="reel-nav-btn prev-btn"
-            @click="goToPrevious"
             :aria-label="t('agora', 'Previous inquiry')"
+            @click="goToPrevious"
         >
             <component :is="isVertical ? ArrowUp : ArrowLeft" size="32" />
         </button>
 
-        <div class="reel-container" ref="reelContainer">
+        <div ref="reelContainer" class="reel-container">
             <div 
                 class="reel-track"
                 :style="trackStyle"
@@ -42,7 +42,7 @@
                         </template>
                     </InquiryItem>
                     
-                    <div class="reel-progress" v-if="showProgress">
+                    <div v-if="showProgress" class="reel-progress">
                         <div 
                             class="reel-progress-bar"
                             :style="{ width: `${((currentIndex + 1) / inquiries.length) * 100}%` }"
@@ -55,8 +55,8 @@
         <button 
             v-if="showArrows && hasNext" 
             class="reel-nav-btn next-btn"
-            @click="goToNext"
             :aria-label="t('agora', 'Next inquiry')"
+            @click="goToNext"
         >
             <component :is="isVertical ? ArrowDown : ArrowRight" size="32" />
         </button>
@@ -68,8 +68,8 @@
                 :key="index"
                 class="reel-dot"
                 :class="{ active: currentIndex === index }"
-                @click="goToIndex(index)"
                 :aria-label="t('agora', 'Go to inquiry {index}', { index: index + 1 })"
+                @click="goToIndex(index)"
             />
         </div>
     </div>
@@ -83,14 +83,14 @@ import InquiryItem from './InquiryItem.vue'
 import InquiryItemActions from './InquiryItemActions.vue'
 import { useSessionStore } from '../../stores/session.ts'
 import { InquiryGeneralIcons } from '../../utils/icons.ts'
-
+import { Inquiry } from '../../stores/inquiry.ts'
 const ArrowLeft = InquiryGeneralIcons.ArrowLeft || 'span'
 const ArrowRight = InquiryGeneralIcons.ArrowRight || 'span'
 const ArrowUp = InquiryGeneralIcons.ArrowUp || 'span'
 const ArrowDown = InquiryGeneralIcons.ArrowDown || 'span'
 
 const props = defineProps<{
-    inquiries: any[]
+    inquiries: Inquiry[]
     orientation?: 'vertical' | 'horizontal'
     showArrows?: boolean
     showProgress?: boolean
@@ -98,7 +98,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
     (e: 'change', index: number): void
-    (e: 'itemClick', inquiry: any): void
+    (e: 'itemClick', inquiry: Inquiry): void
 }>()
 
 const sessionStore = useSessionStore()
@@ -123,18 +123,18 @@ const trackStyle = computed(() => {
             transform: `translateY(-${currentIndex.value * 100}%)`,
             transition: isTransitioning.value ? 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)' : 'none',
         }
-    } else {
+    } 
         return {
             transform: `translateX(-${currentIndex.value * 100}%)`,
             transition: isTransitioning.value ? 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)' : 'none',
         }
-    }
+    
 })
 
 const goToNext = () => {
     if (hasNext.value && !isTransitioning.value) {
         isTransitioning.value = true
-        currentIndex.value++
+        currentIndex.value = currentIndex.value + 1
         emit('change', currentIndex.value)
         setTimeout(() => {
             isTransitioning.value = false
@@ -145,7 +145,7 @@ const goToNext = () => {
 const goToPrevious = () => {
     if (hasPrevious.value && !isTransitioning.value) {
         isTransitioning.value = true
-        currentIndex.value--
+        currentIndex.value = currentIndex.value - 1
         emit('change', currentIndex.value)
         setTimeout(() => {
             isTransitioning.value = false
@@ -202,13 +202,11 @@ const handleTouchEnd = () => {
             } else if (touchDelta.value > 0 && hasPrevious.value) {
                 goToPrevious()
             }
-        } else {
-            if (touchDelta.value < 0 && hasNext.value) {
+        } else if (touchDelta.value < 0 && hasNext.value) {
                 goToNext()
             } else if (touchDelta.value > 0 && hasPrevious.value) {
                 goToPrevious()
             }
-        }
     }
     
     touchDelta.value = 0
@@ -224,15 +222,13 @@ const handleKeydown = (e: KeyboardEvent) => {
             e.preventDefault()
             goToPrevious()
         }
-    } else {
-        if (e.key === 'ArrowRight') {
+    } else if (e.key === 'ArrowRight') {
             e.preventDefault()
             goToNext()
         } else if (e.key === 'ArrowLeft') {
             e.preventDefault()
             goToPrevious()
         }
-    }
 }
 
 // Watch for changes in inquiries

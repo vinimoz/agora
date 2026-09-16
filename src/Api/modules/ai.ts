@@ -23,7 +23,7 @@ export interface DocumentOptionsResponse {
     title: string
     content: string
     summary: string
-    metadata: Record<string, any>
+    metadata: Record<string, unknown>
   }>
 }
 
@@ -54,6 +54,8 @@ const aiApi = {
   /**
    * Enhance or generate content with AI
    * Used for general AI assistance in editor
+   * @param inquiryId
+   * @param prompt
    */
   enhanceContent(
     inquiryId: number,
@@ -71,6 +73,8 @@ const aiApi = {
   /**
    * Generate options from inquiry title and description
    * Primary method for creating options from discussion
+   * @param inquiryId
+   * @param count
    */
   generateOptionsFromInquiry(
     inquiryId: number,
@@ -88,12 +92,16 @@ const aiApi = {
   /**
    * Generate options from uploaded document
    * For future use
+   * @param inquiryId
+   * @param documentPath
+   * @param optionType
+   * @param options
    */
   generateDocumentOptions(
     inquiryId: number,
     documentPath: string,
     optionType: 'chapter' | 'section' | 'subsection' | 'paragraph' | 'custom' = 'section',
-    options: Record<string, any> = {}
+    options: Record<string, unknown> = {}
   ): Promise<AxiosResponse<DocumentOptionsResponse>> {
     return httpInstance.request({
       method: 'POST',
@@ -106,10 +114,12 @@ const aiApi = {
 
   /**
    * Generate decision options with pros/cons
+   * @param inquiryId
+   * @param constraints
    */
   generateDecisionOptions(
     inquiryId: number,
-    constraints: Record<string, any> = {}
+    constraints: Record<string, unknown> = {}
   ): Promise<AxiosResponse<DecisionOptionsResponse>> {
     return httpInstance.request({
       method: 'POST',
@@ -122,6 +132,8 @@ const aiApi = {
 
   /**
    * Generate creative ideas
+   * @param inquiryId
+   * @param count
    */
   generateCreativeIdeas(
     inquiryId: number,
@@ -138,6 +150,8 @@ const aiApi = {
 
   /**
    * Summarize inquiry discussion
+   * @param inquiryId
+   * @param format
    */
   summarizeInquiry(
     inquiryId: number,
@@ -154,6 +168,7 @@ const aiApi = {
 
   /**
    * Analyze sentiment
+   * @param inquiryId
    */
   analyzeSentiment(inquiryId: number): Promise<AxiosResponse<SentimentResponse>> {
     return httpInstance.request({

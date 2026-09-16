@@ -98,7 +98,6 @@ import ChartArc from '@iconify-icons/mdi/chart-arc'  // For 'Graph' ✓
 import FileReport from '@iconify-icons/mdi/file-report'  // For 'Report' ✓
 import NoteMultiple from '@iconify-icons/mdi/note-multiple'  // For 'Minutes' ✓
 import CrownOutline from '@iconify-icons/mdi/crown-outline'
-import AccountGroupOutline from '@iconify-icons/mdi/account-group-outline'
 import FormatListCheckbox from '@iconify-icons/mdi/format-list-checkbox'
 import HandExtendedOutline from '@iconify-icons/mdi/hand-extended-outline'
 import MapClockOutline from '@iconify-icons/mdi/map-clock-outline'
@@ -109,9 +108,6 @@ import MonitorOff from '@iconify-icons/mdi/monitor-off'
 
 // For 'ViewKanban' - use one of these alternatives:
 import ViewDashboard from '@iconify-icons/mdi/view-dashboard'  // Alternative for Kanban ✓
-// import ViewDashboardOutline from '@iconify-icons/mdi/view-dashboard-outline'  // Alternative ✓
-// import ViewGrid from '@iconify-icons/mdi/view-grid'  // Alternative ✓
-// import ViewGridPlus from '@iconify-icons/mdi/view-grid-plus'  // Alternative ✓
 
 import Reply from '@iconify-icons/mdi/reply'          
 // import Grid from '@iconify-icons/mdi/grid'               
@@ -275,9 +271,7 @@ import CalendarPlusOutline from '@iconify-icons/mdi/calendar-plus-outline'
 
 import ViewCarousel from '@iconify-icons/mdi/view-carousel'
 import ArrowLeftRight from '@iconify-icons/mdi/arrow-left-right'
-import Play from '@iconify-icons/mdi/play'
 import ViewGrid from '@iconify-icons/mdi/view-grid'
-import ViewDashboard from '@iconify-icons/mdi/view-dashboard'
 
 
 // -------------------------------
@@ -595,7 +589,7 @@ export const StatusIcons: Record<string, Component> = {
 	Owner: makeIconComponent(CrownOutline, '#F9A825'),                    // Gold crown
   OpenInquiry: makeIconComponent(Earth, '#43A047'),                    // Green globe
   PrivateInquiry: makeIconComponent(Key, '#D32F2F'),                  // Red key
-  Participants: makeIconComponent(AccountGroupOutline, '#1E88E5'),    // Blue group
+  Participants: makeIconComponent(ContactGroupIcon, '#1E88E5'),    // Blue group
   Options: makeIconComponent(FormatListCheckbox, '#6D4C41'),          // Brown checkbox list
   ProposalsAllowed: makeIconComponent(HandExtendedOutline, '#2E7D32'), // Green hand
   Timezone: makeIconComponent(MapClockOutline, '#5D4037'),            // Dark brown clock map

@@ -5,7 +5,7 @@
 
 import { defineStore } from 'pinia'
 import { Logger } from '../helpers/modules/logger'
-import { AiAPI } from '../Api/index.ts'
+import { AiAPI } from '../Api/index.ts'
 import type { AxiosError } from '@nextcloud/axios'
 
 interface AiState {
@@ -15,10 +15,10 @@ interface AiState {
   // Option generation from discussion
   generatedOptions: Record<number, string[]>
   // Document-based options
-  documentOptions: Record<number, any[]>
+  documentOptions: Record<number, unknown[]>
   // Debate/analysis
   summaries: Record<number, string>
-  sentiments: Record<number, any>
+  sentiments: Record<number, unknown>
   topics: Record<number, string>
   // Translation
   translations: Record<number, Record<string, string>>
@@ -43,7 +43,7 @@ export const useAiStore = defineStore('ai', {
     getGeneratedOptions: (state) => (inquiryId: number): string[] => 
       state.generatedOptions[inquiryId] || [],
     
-    getDocumentOptions: (state) => (inquiryId: number): any[] => 
+    getDocumentOptions: (state) => (inquiryId: number): unknown[] => 
       state.documentOptions[inquiryId] || [],
     
     getSummary: (state) => (inquiryId: number): string | null => 
@@ -56,6 +56,8 @@ export const useAiStore = defineStore('ai', {
     /**
      * Enhance or generate content using AI
      * Used by InquiryEditor for general AI assistance
+     * @param inquiryId
+     * @param prompt
      */
     async enhanceContent(inquiryId: number, prompt: string): Promise<string> {
       this.isLoading = true
@@ -80,6 +82,8 @@ export const useAiStore = defineStore('ai', {
     /**
      * Generate options from inquiry title and description
      * This is the primary method for creating options from discussion content
+     * @param inquiryId
+     * @param count
      */
 async generateOptionsFromInquiry(inquiryId: number, count: number = 4): Promise<string[]> {
   this.isLoading = true
@@ -90,9 +94,9 @@ async generateOptionsFromInquiry(inquiryId: number, count: number = 4): Promise<
       const options = response.data.options
       this.generatedOptions[inquiryId] = options
       return options
-    } else {
+    } 
       throw new Error('Invalid response from AI service')
-    }
+    
   } catch (error) {
     if ((error as AxiosError)?.code === 'ERR_CANCELED') {
       return []
@@ -107,13 +111,17 @@ async generateOptionsFromInquiry(inquiryId: number, count: number = 4): Promise<
     /**
      * Generate options from uploaded document
      * For future use with document import
+     * @param inquiryId
+     * @param documentPath
+     * @param optionType
+     * @param options
      */
     async generateOptionsFromDocument(
       inquiryId: number,
       documentPath: string,
       optionType: 'chapter' | 'section' | 'subsection' | 'paragraph' | 'custom' = 'section',
-      options: Record<string, any> = {}
-    ): Promise<any[]> {
+      options: Record<string, unknown> = {}
+    ): Promise<unknown[]> {
       this.isLoading = true
       try {
         const response = await AiAPI.generateDocumentOptions(inquiryId, documentPath, optionType, options)
@@ -132,11 +140,13 @@ async generateOptionsFromInquiry(inquiryId: number, count: number = 4): Promise<
 
     /**
      * Generate decision options with pros/cons
+     * @param inquiryId
+     * @param constraints
      */
     async generateDecisionOptions(
       inquiryId: number, 
-      constraints: Record<string, any> = {}
-    ): Promise<any[]> {
+      constraints: Record<string, unknown> = {}
+    ): Promise<unknown[]> {
       this.isLoading = true
       try {
         const response = await AiAPI.generateDecisionOptions(inquiryId, constraints)
@@ -154,6 +164,8 @@ async generateOptionsFromInquiry(inquiryId: number, count: number = 4): Promise<
 
     /**
      * Generate creative ideas
+     * @param inquiryId
+     * @param count
      */
     async generateCreativeIdeas(inquiryId: number, count: number = 5): Promise<string[]> {
       this.isLoading = true
@@ -175,6 +187,8 @@ async generateOptionsFromInquiry(inquiryId: number, count: number = 4): Promise<
     
     /**
      * Summarize discussion
+     * @param inquiryId
+     * @param format
      */
     async summarizeInquiry(inquiryId: number, format: 'concise' | 'detailed' | 'bullet_points' = 'concise'): Promise<string> {
       this.isLoading = true
@@ -197,8 +211,9 @@ async generateOptionsFromInquiry(inquiryId: number, count: number = 4): Promise<
     
     /**
      * Analyze sentiment of discussion
+     * @param inquiryId
      */
-    async analyzeSentiment(inquiryId: number): Promise<any> {
+    async analyzeSentiment(inquiryId: number): Promise<unknown> {
       this.isLoading = true
       try {
         const response = await AiAPI.analyzeSentiment(inquiryId)
@@ -217,6 +232,7 @@ async generateOptionsFromInquiry(inquiryId: number, count: number = 4): Promise<
 
     /**
      * Clear AI data for inquiry
+     * @param inquiryId
      */
     clearAiData(inquiryId: number): void {
       delete this.enhancedContent[inquiryId]

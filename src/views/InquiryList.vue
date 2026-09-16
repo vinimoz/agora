@@ -52,7 +52,6 @@ const showReelArrows = ref(true)
 
 // Computed properties for view modes
 const isGridView = computed(() => subMode.value === 'table-view')
-const isListView = computed(() => subMode.value === 'list-view')
 const isReelView = computed(() => subMode.value === 'reel-view')
 
 // Handle main mode change

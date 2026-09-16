@@ -211,10 +211,6 @@
              </div>
             </div>
             <div v-if="hasSlug && currentInquiryGroup" class="inquiry-group-content">
-                <InquiryGroupViewMiddle
-                        :group="currentInquiryGroup"
-                        :inquiry-ids="currentInquiryGroup.inquiryIds"
-                        />
                 <InquiryGroupViewMain
                         :group="currentInquiryGroup"
                         :inquiry-ids="currentInquiryGroup.inquiryIds"
@@ -275,7 +271,6 @@ import { InquiryGeneralIcons } from '../utils/icons.ts'
 import { getInquiryGroupTypeData } from '../helpers/modules/InquiryHelper.ts'
 import InquiryGroupCreateDlg from '../components/Create/InquiryGroupCreateDlg.vue'
 import type { InquiryGroupType, InquiryGroup } from '../stores/inquiryGroups.types.ts'
-import InquiryGroupViewMiddle from '../components/InquiryGroup/InquiryGroupViewMiddle.vue'
 import InquiryGroupViewMain from '../components/InquiryGroup/InquiryGroupViewMain.vue'
 import { 
   createInquiryGroupContext, 

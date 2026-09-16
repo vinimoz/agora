@@ -6,12 +6,10 @@ import { defineStore } from 'pinia'
 import domPurify from 'dompurify'
 import { marked } from 'marked'
 import { gfmHeadingId } from 'marked-gfm-heading-id'
-import { t } from '@nextcloud/l10n'
-import moment from '@nextcloud/moment'
+import { t  } from '@nextcloud/l10n'
 import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import { AxiosError } from '@nextcloud/axios'
-
 import { Logger } from '../helpers/index.ts'
 import { PublicAPI, InquiriesAPI } from '../Api/index.ts'
 import {
@@ -244,12 +242,16 @@ export const useInquiryStore = defineStore('inquiry', {
 			return !this.isClosed && state.permissions.edit
 		},
 
-		isClosed(state): boolean {
-			return (
-				state.status.isExpired ||
-					(state.configuration.expire > 0 && moment.unix(state.configuration.expire).diff() < 1000)
-			)
-		},
+		// In the getters section, replace the isClosed getter with:
+
+isClosed(state): boolean {
+    const now = Date.now() / 1000 // Current time in seconds
+    return (
+        state.status.isExpired ||
+        (state.configuration.expire > 0 && state.configuration.expire < now)
+    )
+},
+
 
 		descriptionMarkDown(state): string {
 			marked.use(gfmHeadingId(markedPrefix))

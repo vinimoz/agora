@@ -293,7 +293,7 @@
               <textarea
                 id="ai-prompt"
                 v-model="aiPrompt"
-                :placeholder="t('agora', 'E.g. Write a professional introduction for a business inquiry about… (you can edit this prompt)')"
+                :placeholder="t('agora', 'E.g. Write a professional introduction for a business inquiry about … (you can edit this prompt)')"
                 class="ai-prompt-textarea"
                 rows="8"
                 @input="onPromptUpdate"
@@ -423,7 +423,7 @@ const openAIModal = () => {
   if (description && description.trim().length > 0) {
     const plainDesc = stripHtml(description).trim()
     // Limit to 500 characters to keep prompt concise
-    const descExcerpt = plainDesc.length > 500 ? plainDesc.substring(0, 500) + '…' : plainDesc
+    const descExcerpt = plainDesc.length > 500 ? `${plainDesc.substring(0, 500)  }…` : plainDesc
     prompt = t('agora', 'Given the inquiry titled "{title}" with the following description:\n\n{description}\n\nPlease generate or improve the content for this inquiry. You can modify the instructions below:')
       .replace('{title}', title)
       .replace('{description}', descExcerpt)
@@ -470,6 +470,7 @@ const triggerImageUpload = () => {
   imageFileInput.value?.click()
 }
 
+/*
 const getContentSummary = (content) => {
   if (!content) return ''
   const text = content.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim()
@@ -477,7 +478,7 @@ const getContentSummary = (content) => {
   if (text.length <= 150) return text
 
   return `${text.substring(0, 150)}...`
-}
+} */
 
 const handleImageUpload = async (event) => {
   const file = event.target.files[0]
