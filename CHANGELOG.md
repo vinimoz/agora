@@ -1,5 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
+# [1.7.10] - 2026-09-17
+Fix:
+    - Nextcloud 35 integration
+
 # [1.7.9] - 2026-09-15
 Fix:
     - Bug #38: delete instead of DELETE

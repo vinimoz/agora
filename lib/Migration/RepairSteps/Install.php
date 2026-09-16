@@ -2,15 +2,8 @@
 
 declare(strict_types=1);
 
-/**
- * SPDX-FileCopyrightText: 2021 Nextcloud contributors
- * SPDX-License-Identifier: AGPL-3.0-or-later
- */
-
 namespace OCA\Agora\Migration\RepairSteps;
 
-use Doctrine\DBAL\Schema\Schema;
-use OCA\Agora\Db\IndexManager;
 use OCA\Agora\Command\Db\InitDbDefault;
 use OCP\IDBConnection;
 use OCP\Migration\IOutput;
@@ -19,35 +12,22 @@ use OCP\Migration\IRepairStep;
 class Install implements IRepairStep
 {
     public function __construct(
-        private IndexManager $indexManager,
         private IDBConnection $connection,
-        private Schema $schema,
-        private InitDbDefault $initDbDefault
+        private InitDbDefault $initDbDefault,
     ) {
     }
 
-    public function getName()
+    public function getName(): string
     {
-        return 'Agora - Install';
+        return 'Agora - Ensure default configuration exists';
     }
 
     public function run(IOutput $output): void
     {
-        $messages = [];
-        $this->schema = $this->connection->createSchema();
-        $this->indexManager->setSchema($this->schema);
-
-        $messages = array_merge($messages, $this->indexManager->createUniqueIndices());
-
-        $this->connection->migrateToSchema($this->schema);
-
-        foreach ($messages as $message) {
-            $output->info($message);
-        }
-
-        $output->info('Agora - Indices created.');
-        $output->info('Agora - Initialization begin.');
+        // No schema manipulation here — the migration chain owns the schema.
+        // This step only ensures default rows exist in lookup tables.
+        $output->info('Agora - Initializing default configuration...');
         $this->initDbDefault->runCommands($output);
-        $output->info('Agora - Installation complete. You can use the Template Wizard to import data.');
+        $output->info('Agora - Default configuration ready.');
     }
 }
