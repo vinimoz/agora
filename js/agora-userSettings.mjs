@@ -1,10 +1,10 @@
 const A = "agora", k = "1.7.9";
-import { d as c, q as a, s as m, o as l, b as g, e as t, g as s, v as e, x as r, y as n, z as f, A as _ } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_bbec35a7_lang-DHo2GuAN.chunk.mjs";
-import { N as i } from "./index-Cz0G7fLw.chunk.mjs";
-import "./NcDashboardWidget-CvpYMKur-DWSXH_1b.chunk.mjs";
-import { F as u } from "./FlexSettings-DuoGNaZU.chunk.mjs";
-import "./NcRichText-D_ssz6sB-BMdEthOo.chunk.mjs";
-import { u as S, _ as d, a as y } from "./StyleSettings-D2bLFjUv.chunk.mjs";
+import { d as c, q as a, s as m, o as l, b as g, e as t, g as s, v as e, x as r, y as n, z as f, A as _ } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_bbec35a7_lang-Ci-HSesf.chunk.mjs";
+import { N as i } from "./index-D6r-Ff8s.chunk.mjs";
+import "./NcDashboardWidget-CvpYMKur-CZckKf4S.chunk.mjs";
+import { F as u } from "./FlexSettings-D2--3H3y.chunk.mjs";
+import "./NcRichText-D_ssz6sB-KS_N5mXr.chunk.mjs";
+import { u as S, _ as d, a as y } from "./StyleSettings-DDP8xWN2.chunk.mjs";
 const x = c({ __name: "UserSettingsPage", setup(N) {
   const p = S(), o = { personalSettings: { name: a("agora", "Personal preferences"), description: a("agora", "Set your personal preferences for the agora app") }, styleSettings: { name: a("agora", "Experimental styles"), description: a("agora", "Some visual styling options") } };
   return m(() => {
