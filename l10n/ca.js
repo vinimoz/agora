@@ -205,7 +205,6 @@ OC.L10N.register(
     "Unknown" : "Desconegut",
     "Remove" : "Suprimir",
     "Add" : "Afegeix",
-    "Presentation" : "Presentació",
     "Show less" : "Mostra'n menys",
     "Read more" : "Més informació",
     "Draft" : "Esborrany",

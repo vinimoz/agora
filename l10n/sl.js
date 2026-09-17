@@ -199,7 +199,6 @@ OC.L10N.register(
     "Unknown" : "Neznano",
     "Remove" : "Odstrani",
     "Add" : "Dodaj",
-    "Presentation" : "Predstavitev",
     "Show less" : "Pokaži manj",
     "Read more" : "Več o tem",
     "Draft" : "Osnutek",

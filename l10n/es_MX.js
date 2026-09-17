@@ -104,7 +104,6 @@ OC.L10N.register(
     "Unknown" : "Desconocido",
     "Remove" : "Borrar",
     "Add" : "Añadir",
-    "Presentation" : "Presentación",
     "Show less" : "Mostrar menos",
     "Read more" : "Leer más",
     "Active" : "Activo",

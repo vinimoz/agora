@@ -481,7 +481,6 @@ OC.L10N.register(
     "Unknown" : "نامەلۇم",
     "Remove" : "ئۆچۈرۈڭ",
     "Add" : "قوش",
-    "Presentation" : "لېكسىيە",
     "Show less" : "ئازراق كۆرسەت",
     "Read more" : "تېخىمۇ كۆپ ئوقۇڭ",
     "{hours}h" : "{hours} س",

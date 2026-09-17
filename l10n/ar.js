@@ -226,7 +226,6 @@ OC.L10N.register(
     "Unknown" : "غير معروف",
     "Remove" : "حذف",
     "Add" : "إضافة ",
-    "Presentation" : "عرض تقديمي",
     "Show less" : "عرض أقل",
     "Read more" : "إقرأ أكثر",
     "{hours}h" : "{hours} س",

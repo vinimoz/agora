@@ -238,7 +238,6 @@ OC.L10N.register(
     "Unknown" : "Sconosciuto",
     "Remove" : "Rimuovi",
     "Add" : "Aggiungi",
-    "Presentation" : "Presentazione",
     "Show less" : "Mostra meno",
     "Read more" : "Leggi altro",
     "{days}d" : "{days}g",

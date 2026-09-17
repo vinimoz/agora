@@ -77,7 +77,6 @@ OC.L10N.register(
     "Unknown" : "Непознат",
     "Remove" : "Отстрани ",
     "Add" : "Додади",
-    "Presentation" : "Презентација",
     "Show less" : "Помалку",
     "Read more" : "Прочитај повеќе",
     "Draft" : "Шаблон",

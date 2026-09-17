@@ -436,7 +436,6 @@ OC.L10N.register(
     "Unknown" : "Невідомо",
     "Remove" : "Вилучити",
     "Add" : "Додати",
-    "Presentation" : "Презентація",
     "Show less" : "Показувати менше",
     "Read more" : "Більше",
     "{hours}h" : "{hours} год",

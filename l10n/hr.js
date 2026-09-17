@@ -106,7 +106,6 @@ OC.L10N.register(
     "Unknown" : "Nepoznata pogreška",
     "Remove" : "Ukloni",
     "Add" : "Dodaj",
-    "Presentation" : "Prezentacija",
     "Show less" : "Prikaži manje",
     "Read more" : "Saznaj više",
     "{hours} hours ago" : "prije {hours} sati",

@@ -276,7 +276,6 @@ OC.L10N.register(
     "Unknown" : "Неизвестен",
     "Remove" : "Премахване",
     "Add" : "Добавяне",
-    "Presentation" : "Презентация",
     "Show less" : "Покажи по-малко",
     "Read more" : "Прочети повече",
     "Draft" : "Чернова",

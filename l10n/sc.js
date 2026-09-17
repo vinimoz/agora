@@ -82,7 +82,6 @@ OC.L10N.register(
     "Unknown" : "Disconnotu",
     "Remove" : "Boga",
     "Add" : "Agiunghe",
-    "Presentation" : "Presentatzione",
     "Show less" : "Mustra prus pagu",
     "Read more" : "Leghe de prus",
     "Active" : "Ativu",

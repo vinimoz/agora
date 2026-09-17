@@ -168,7 +168,6 @@ OC.L10N.register(
     "Unknown" : "Ezezaguna",
     "Remove" : "Kendu",
     "Add" : "Gehitu",
-    "Presentation" : "Aurkezpena",
     "Show less" : "Erakutsi gutxiago",
     "Read more" : "Irakurri gehiago",
     "{hours}h" : "{hours}h",

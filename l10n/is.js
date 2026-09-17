@@ -95,7 +95,6 @@ OC.L10N.register(
     "Unknown" : "Óþekkt",
     "Remove" : "Fjarlægja",
     "Add" : "Bæta við",
-    "Presentation" : "Kynning",
     "Show less" : "Birta minna",
     "Read more" : "Lesa meira",
     "Draft" : "Drög",

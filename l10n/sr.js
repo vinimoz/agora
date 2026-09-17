@@ -381,7 +381,6 @@ OC.L10N.register(
     "Unknown" : "Непознато",
     "Remove" : "Уклони",
     "Add" : "Додај",
-    "Presentation" : "Презентација",
     "Show less" : "Прикажи мање",
     "Read more" : "Прочитајте више",
     "{hours}h" : "{hours}ч",

@@ -145,7 +145,6 @@ OC.L10N.register(
     "Resources" : "Recursos",
     "Unknown" : "Desconocido",
     "Add" : "Guardar",
-    "Presentation" : "Presentación",
     "Show less" : "Mostrar menos",
     "Read more" : "Leer más",
     "Draft" : "Borrador",

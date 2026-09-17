@@ -570,7 +570,6 @@ OC.L10N.register(
     "Unknown" : "未知",
     "Remove" : "移除",
     "Add" : "新增",
-    "Presentation" : "簡報",
     "Show less" : "顯示較少",
     "Read more" : "更多",
     "Draft" : "草稿",

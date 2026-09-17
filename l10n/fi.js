@@ -129,7 +129,6 @@ OC.L10N.register(
     "Unknown" : "Tuntematon",
     "Remove" : "Poista",
     "Add" : "Lisää",
-    "Presentation" : "Esitys",
     "Show less" : "Näytä vähemmän",
     "Read more" : "Lue lisää",
     "{hours}h" : "{hours}h",

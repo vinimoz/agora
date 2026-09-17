@@ -206,7 +206,6 @@ OC.L10N.register(
     "Unknown" : "Ukjent",
     "Remove" : "Fjern",
     "Add" : "Legg til",
-    "Presentation" : "Presentasjon",
     "Show less" : "Vis mindre",
     "Read more" : "Les mer",
     "{hours}h" : "{hours}t",

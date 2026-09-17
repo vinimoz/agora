@@ -63,7 +63,6 @@ OC.L10N.register(
     "Unknown" : "Necunoscut",
     "Remove" : "Elimină",
     "Add" : "Adaugă",
-    "Presentation" : "Prezentare",
     "Read more" : "Citește mai mult",
     "Draft" : "Schiță",
     "Active" : "Activ",

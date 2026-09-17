@@ -72,7 +72,6 @@ OC.L10N.register(
     "Unknown" : "Nezināms",
     "Remove" : "Noņemt",
     "Add" : "Pievienot",
-    "Presentation" : "Prezentācija",
     "Read more" : "Lasīt vairāk",
     "Draft" : "Melnraksts",
     "Completed" : "Pabeigts",

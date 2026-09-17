@@ -45,7 +45,6 @@ OC.L10N.register(
     "Resources" : "ทรัพยากร",
     "Unknown" : "ไม่ทราบ",
     "Remove" : "ลบออก",
-    "Presentation" : "งานนำเสนอ",
     "Read more" : "อ่านเพิ่มเติม",
     "Completed" : "เสร็จแล้ว",
     "Cancelled" : "ยกเลิกแล้ว",

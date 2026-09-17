@@ -111,7 +111,6 @@ OC.L10N.register(
     "Unknown" : "Unknown",
     "Remove" : "Remove",
     "Add" : "დამატება",
-    "Presentation" : "Presentation",
     "Show less" : "Show less",
     "Read more" : "Read more",
     "Draft" : "Draft",

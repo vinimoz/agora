@@ -234,7 +234,6 @@ OC.L10N.register(
     "Unknown" : "Onbekend",
     "Remove" : "Verwijderen",
     "Add" : "Toevoegen",
-    "Presentation" : "Presentatie",
     "Show less" : "Toon minder",
     "Read more" : "Lees meer",
     "Draft" : "Concept",

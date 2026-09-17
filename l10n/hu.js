@@ -308,7 +308,6 @@ OC.L10N.register(
     "Remove" : "Eltávolítás",
     "Add" : "Hozzáadás",
     "No inquiries available" : "Nincs elérhető vizsgálat",
-    "Presentation" : "Bemutató",
     "Show less" : "Kevesebb megjelenítése",
     "Read more" : "Továbbolvasás",
     "{days}d" : "{days} n",

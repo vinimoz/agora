@@ -129,7 +129,6 @@ OC.L10N.register(
     "Unknown" : "알 수 없음",
     "Remove" : "삭제",
     "Add" : "추가",
-    "Presentation" : "프레젠테이션",
     "Show less" : "적게 보기",
     "Read more" : "더 보기",
     "{hours}h" : "{hours}시간",

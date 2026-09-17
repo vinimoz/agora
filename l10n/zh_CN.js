@@ -300,7 +300,6 @@ OC.L10N.register(
     "Unknown" : "未知",
     "Remove" : "移除",
     "Add" : "添加",
-    "Presentation" : "报告",
     "Show less" : "显示更少",
     "Read more" : "阅读更多",
     "Draft" : "草稿",

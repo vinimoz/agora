@@ -163,7 +163,6 @@ OC.L10N.register(
     "Unknown" : "Nieznana",
     "Remove" : "Usuń",
     "Add" : "Dodaj",
-    "Presentation" : "Prezentacja",
     "Show less" : "Pokaż mniej",
     "Read more" : "Czytaj więcej",
     "Draft" : "Wersja robocza",

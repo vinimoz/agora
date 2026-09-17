@@ -208,7 +208,6 @@ OC.L10N.register(
     "Unknown" : "“Æ–ª —Ç–∞–Ω–∏–≥–¥–∞—Ö –∑“Ø–π–ª",
     "Remove" : "Хасах",
     "Add" : "–ù—ç–º—ç—Ö",
-    "Presentation" : "Танилцуулга",
     "Show less" : "Бага харуулах",
     "Read more" : "Дэлгэрэнгүй унших",
     "{days} days ago" : "{days} хоногийн өмнө",

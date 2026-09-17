@@ -80,7 +80,6 @@ OC.L10N.register(
     "Unknown" : "Không xác định",
     "Remove" : "Xoá",
     "Add" : "Thêm",
-    "Presentation" : "Buổi thuyết trình",
     "Read more" : "Đọc thêm",
     "Active" : "Hoạt động",
     "Completed" : "Hoàn thành",

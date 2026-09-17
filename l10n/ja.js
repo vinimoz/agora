@@ -179,7 +179,6 @@ OC.L10N.register(
     "Unknown" : "不明",
     "Remove" : "削除",
     "Add" : "追加",
-    "Presentation" : "プレゼンテーション",
     "Show less" : "表示を減らす",
     "Read more" : "続きを読む",
     "Draft" : "下書き",

@@ -84,7 +84,6 @@ OC.L10N.register(
     "Unknown" : "לא ידוע",
     "Remove" : "הסרה",
     "Add" : "הוספה",
-    "Presentation" : "מצגת",
     "Show less" : "להציג פחות",
     "Read more" : "מידע נוסף",
     "Active" : "פעיל",

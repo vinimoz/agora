@@ -162,7 +162,6 @@ OC.L10N.register(
     "Unknown" : "Неизвестно",
     "Remove" : "Исключить",
     "Add" : "Добавить",
-    "Presentation" : "Презентация",
     "Show less" : "Показывать меньше",
     "Read more" : "Читать далее",
     "Draft" : "Черновик",
