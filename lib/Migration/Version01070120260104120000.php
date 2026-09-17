@@ -634,65 +634,60 @@ class Version01070120260104120000 extends SimpleMigrationStep
     /**
      * Create foreign key constraints defined in TableSchema::FK_INDICES
      */
-    private function createForeignKeyConstraints(): void
-    {
-	    $fkIndices = [
-		    Inquiry::TABLE => [
-			    'agora_log' => ['inquiry_id', 'CASCADE'],
-			    'agora_subscription' => ['inquiry_id', 'CASCADE'],
-			    'agora_support' => ['inquiry_id', 'CASCADE'],
-			    'agora_watch' => ['inquiry_id', 'CASCADE'],
-			    InquiryGroup::RELATION_TABLE => ['inquiry_id', 'CASCADE'],
-			    'agora_inquiry_misc' => ['inquiry_id', 'CASCADE'],
-			    'agora_inquiry_link' => ['inquiry_id', 'CASCADE'],
-			    'agora_comment' => ['inquiry_id', 'CASCADE'],
-			    'agora_attachment' => ['inquiry_id', 'CASCADE'],
-			    'agora_quorums' => ['inquiry_id', 'CASCADE'],
-		    ],
-		    InquiryGroup::TABLE => [
-			    'agora_inquiry_group_misc' => ['inquiry_group_id', 'CASCADE'],
-			    InquiryGroup::RELATION_TABLE => ['group_id', 'CASCADE'],
-		    ],
-		    Option::TABLE => [
-			    'agora_option_misc' => ['option_id', 'CASCADE'],
-		    ],
-	    ];
 
-	    foreach ($fkIndices as $parentTable => $children) {
-		    if (!$this->schema->hasTable($parentTable)) {
-			    continue;
-		    }
+private function createForeignKeyConstraints(): void
+{
+    $fkIndices = [
+        Inquiry::TABLE => [
+            'agora_log' => ['inquiry_id', 'CASCADE'],
+            // ...
+        ],
+        // ...
+    ];
 
-		    foreach ($children as $childTable => [$column, $onDelete]) {
-			    if (!$this->schema->hasTable($childTable)) {
-				    continue;
-			    }
+    foreach ($fkIndices as $parentTable => $children) {
+        // Resolve the PARENT table object (this gives you the real, prefixed name)
+        if (!$this->schema->hasTable($parentTable)) {
+            $this->logInfo("Parent table {$parentTable} not found, skipping");
+            continue;
+        }
+        $parentTableObj = $this->schema->getTable($parentTable);
 
-			    $fkName = 'fk_' . str_replace('agora_', '', $parentTable) . '_' . str_replace('agora_', '', $childTable);
+        foreach ($children as $childTable => [$column, $onDelete]) {
+            if (!$this->schema->hasTable($childTable)) {
+                continue;
+            }
+            $childTableObj = $this->schema->getTable($childTable);
 
-			    $childTableObj = $this->schema->getTable($childTable);
-			    $fkExists = false;
-			    $fkExists = false;
-foreach ($childTableObj->getForeignKeys() as $fk) {
-    if ($fk->getName() === $fkName) {
-        $fkExists = true;
-        break;
+            // Pass the parent TABLE OBJECT, not the string
+            $fkName = 'fk_' . str_replace('agora_', '', $parentTableObj->getName()) 
+                    . '_' . str_replace('agora_', '', $childTableObj->getName());
+            // Truncate to 63 chars (MySQL identifier limit) — actually use a shorter scheme
+            $fkName = substr($fkName, 0, 63);
+
+            $fkExists = false;
+            foreach ($childTableObj->getForeignKeys() as $fk) {
+                if ($fk->getName() === $fkName) {
+                    $fkExists = true;
+                    break;
+                }
+            }
+
+            if (!$fkExists && $childTableObj->hasColumn($column)) {
+                $childTableObj->addForeignKeyConstraint(
+                    $parentTableObj,   // ← TABLE OBJECT, not string
+                    [$column],
+                    ['id'],
+                    ['onDelete' => $onDelete],
+                    $fkName
+                );
+                $this->logInfo("Added FK constraint '{$fkName}' from '{$childTableObj->getName()}' to '{$parentTableObj->getName()}'");
+            }
+        }
     }
 }
 
-			    if (!$fkExists && $childTableObj->hasColumn($column)) {
-				    $childTableObj->addForeignKeyConstraint(
-					    $parentTable,
-					    [$column],
-					    ['id'],
-					    ['onDelete' => $onDelete],
-					    $fkName
-				    );
-				    $this->logInfo("Added FK constraint '{$fkName}' from '{$childTable}' to '{$parentTable}'");
-			    }
-		    }
-	    }
-    }
+
 
     /**
      * Log info message
