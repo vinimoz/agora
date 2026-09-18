@@ -196,6 +196,16 @@ class Option extends EntityWithUser implements JsonSerializable
         $this->userSession = Container::queryClass(UserSession::class);
     }
 
+    /**
+     * Always mark text as updated, so that an empty text is stored as is
+     * instead of falling back to the column default on insert.
+     */
+    public function setText(string $text): void
+    {
+        $this->text = $text;
+        $this->markFieldUpdated('text');
+    }
+
     public function jsonSerialize(): array
     {
         $baseData = [

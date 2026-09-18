@@ -374,8 +374,8 @@ public function listByTargetIdWithTrending(int $targetId, bool $includeTrending 
     public function create(array $data): Option
     {
 
-        if (empty($data['text'])) {
-            throw new EmptyTextException('Text must not be empty');
+        if (empty($data['text']) && empty($data['title'])) {
+            throw new EmptyTextException('Title or text must not be empty');
         }
         
 
