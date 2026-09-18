@@ -216,6 +216,7 @@ class InquiryApiController extends BaseApiV2Controller
             $dto = new InquiryDto(
                 $title,
                 $type,
+                '',
                 $ownedGroup ?? '',
                 $description ?? '',
                 $parentId ?? 0,
