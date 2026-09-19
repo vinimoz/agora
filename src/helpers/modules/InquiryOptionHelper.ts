@@ -515,8 +515,8 @@ export function getFamilyFallbackData(): Record<string, OptionFamily> {
   return {
     'debate': {
       name: 'Debate',
-      label: 'Debate',
-      description: 'Debate positions, arguments, and alternatives',
+      label: t('agora', 'Debate'),
+      description: t('agora', 'Debate positions, arguments, and alternatives'),
       icon: 'Discussion',
       ui: {
         layout: 'paired',
@@ -529,15 +529,15 @@ export function getFamilyFallbackData(): Record<string, OptionFamily> {
       },
       features: ['argument_rating', 'thread_collapsing', 'consensus_indicators'],
       actions: [
-        { key: 'export_thread', label: 'Export Debate Thread', icon: 'Download' },
-        { key: 'generate_summary', label: 'Generate Summary', icon: 'Summarize' },
-        { key: 'visualize_network', label: 'View Argument Network', icon: 'Graph' }
+        { key: 'export_thread', label: t('agora', 'Export Debate Thread'), icon: 'Download' },
+        { key: 'generate_summary', label: t('agora', 'Generate Summary'), icon: 'Summarize' },
+        { key: 'visualize_network', label: t('agora', 'View Argument Network'), icon: 'Graph' }
       ]
     },
     'structure': {
       name: 'Structure',
-      label: 'Structure',
-      description: 'Structured documents with chapters and articles',
+      label: t('agora', 'Structure'),
+      description: t('agora', 'Structured documents with chapters and articles'),
       icon: 'Settings',
       ui: {
         layout: 'tree',
@@ -552,17 +552,17 @@ export function getFamilyFallbackData(): Record<string, OptionFamily> {
       },
       features: ['version_control', 'change_tracking', 'commentary'],
       actions: [
-        { key: 'import_document', label: 'Import Document', icon: 'Upload' },
-        { key: 'export_pdf', label: 'Export as PDF', icon: 'FilePdf' },
-        { key: 'export_markdown', label: 'Export as Markdown', icon: 'Markdown' },
-        { key: 'print_view', label: 'Print View', icon: 'Printer' },
-        { key: 'compare_versions', label: 'Compare Versions', icon: 'Diff' }
+        { key: 'import_document', label: t('agora', 'Import Document'), icon: 'Upload' },
+        { key: 'export_pdf', label: t('agora', 'Export as PDF'), icon: 'FilePdf' },
+        { key: 'export_markdown', label: t('agora', 'Export as Markdown'), icon: 'Markdown' },
+        { key: 'print_view', label: t('agora', 'Print View'), icon: 'Printer' },
+        { key: 'compare_versions', label: t('agora', 'Compare Versions'), icon: 'Diff' }
       ]
     },
     'consensus': {
       name: 'Consensus',
-      label: 'Consensus',
-      description: 'Consultation questions and consensus building',
+      label: t('agora', 'Consensus'),
+      description: t('agora', 'Consultation questions and consensus building'),
       icon: 'ThumbUp',
       ui: {
         layout: 'consensus_flow',
@@ -576,16 +576,16 @@ export function getFamilyFallbackData(): Record<string, OptionFamily> {
       },
       features: ['consensus_tracking', 'objection_management', 'poll_integration'],
       actions: [
-        { key: 'export_consensus_report', label: 'Export Consensus Report', icon: 'Report' },
-        { key: 'generate_minutes', label: 'Generate Minutes', icon: 'Minutes' },
-        { key: 'visualize_consensus', label: 'View Consensus Map', icon: 'Map' },
-        { key: 'schedule_facilitation', label: 'Schedule Facilitation', icon: 'Calendar' }
+        { key: 'export_consensus_report', label: t('agora', 'Export Consensus Report'), icon: 'Report' },
+        { key: 'generate_minutes', label: t('agora', 'Generate Minutes'), icon: 'Minutes' },
+        { key: 'visualize_consensus', label: t('agora', 'View Consensus Map'), icon: 'Map' },
+        { key: 'schedule_facilitation', label: t('agora', 'Schedule Facilitation'), icon: 'Calendar' }
       ]
     },
     'decision': {
       name: 'Decision',
-      label: 'Decision',
-      description: 'Official decisions and results',
+      label: t('agora', 'Decision'),
+      description: t('agora', 'Official decisions and results'),
       icon: 'Checkmark',
       ui: {
         layout: 'cards',
@@ -599,16 +599,16 @@ export function getFamilyFallbackData(): Record<string, OptionFamily> {
       },
       features: ['legal_binding', 'appeal_mechanism', 'implementation_tracking'],
       actions: [
-        { key: 'generate_legal_document', label: 'Generate Legal Document', icon: 'Gavel' },
-        { key: 'export_decision', label: 'Export Decision', icon: 'FileExport' },
-        { key: 'notify_stakeholders', label: 'Notify Stakeholders', icon: 'Bell' },
-        { key: 'track_implementation', label: 'Track Implementation', icon: 'ProgressCheck' }
+        { key: 'generate_legal_document', label: t('agora', 'Generate Legal Document'), icon: 'Gavel' },
+        { key: 'export_decision', label: t('agora', 'Export Decision'), icon: 'FileExport' },
+        { key: 'notify_stakeholders', label: t('agora', 'Notify Stakeholders'), icon: 'Bell' },
+        { key: 'track_implementation', label: t('agora', 'Track Implementation'), icon: 'ProgressCheck' }
       ]
     },
     'proposal': {
       name: 'Proposal',
-      label: 'Proposal',
-      description: 'Initial proposals and suggestions',
+      label: t('agora', 'Proposal'),
+      description: t('agora', 'Initial proposals and suggestions'),
       icon: 'Lightbulb',
       ui: {
         layout: 'cards',
@@ -622,16 +622,16 @@ export function getFamilyFallbackData(): Record<string, OptionFamily> {
       },
       features: ['budget_estimation', 'impact_analysis', 'community_feedback'],
       actions: [
-        { key: 'duplicate_proposal', label: 'Duplicate Proposal', icon: 'ContentCopy' },
-        { key: 'merge_proposals', label: 'Merge with Similar', icon: 'CallMerge' },
-        { key: 'export_proposal', label: 'Export Proposal', icon: 'FileExport' },
-        { key: 'request_review', label: 'Request Expert Review', icon: 'AccountReview' }
+        { key: 'duplicate_proposal', label: t('agora', 'Duplicate Proposal'), icon: 'ContentCopy' },
+        { key: 'merge_proposals', label: t('agora', 'Merge with Similar'), icon: 'CallMerge' },
+        { key: 'export_proposal', label: t('agora', 'Export Proposal'), icon: 'FileExport' },
+        { key: 'request_review', label: t('agora', 'Request Expert Review'), icon: 'AccountReview' }
       ]
     },
     'workflow': {
       name: 'Workflow',
-      label: 'Workflow',
-      description: 'Project and decision workflow management',
+      label: t('agora', 'Workflow'),
+      description: t('agora', 'Project and decision workflow management'),
       icon: 'BarChart2',
       ui: {
         layout: 'kanban',
@@ -645,16 +645,16 @@ export function getFamilyFallbackData(): Record<string, OptionFamily> {
       },
       features: ['automated_transitions', 'blocker_detection', 'sla_tracking'],
       actions: [
-        { key: 'export_board', label: 'Export Board', icon: 'FileExport' },
-        { key: 'generate_flow_report', label: 'Flow Report', icon: 'ChartLine' },
-        { key: 'configure_workflow', label: 'Configure Workflow', icon: 'Cog' },
-        { key: 'bulk_transition', label: 'Bulk Transition', icon: 'ArrowRightBold' }
+        { key: 'export_board', label: t('agora', 'Export Board'), icon: 'FileExport' },
+        { key: 'generate_flow_report', label: t('agora', 'Flow Report'), icon: 'ChartLine' },
+        { key: 'configure_workflow', label: t('agora', 'Configure Workflow'), icon: 'Cog' },
+        { key: 'bulk_transition', label: t('agora', 'Bulk Transition'), icon: 'ArrowRightBold' }
       ]
     },
     'process': {
       name: 'Process',
-      label: 'Process',
-      description: 'Timeline and procedural events',
+      label: t('agora', 'Process'),
+      description: t('agora', 'Timeline and procedural events'),
       icon: 'Timeline',
       ui: {
         layout: 'timeline',
@@ -668,16 +668,16 @@ export function getFamilyFallbackData(): Record<string, OptionFamily> {
       },
       features: ['gantt_chart', 'critical_path', 'resource_allocation'],
       actions: [
-        { key: 'export_gantt', label: 'Export Gantt', icon: 'FileExport' },
-        { key: 'print_timeline', label: 'Print Timeline', icon: 'Printer' },
-        { key: 'adjust_schedule', label: 'Adjust Schedule', icon: 'CalendarClock' },
-        { key: 'identify_bottlenecks', label: 'Identify Bottlenecks', icon: 'AlertCircle' }
+        { key: 'export_gantt', label: t('agora', 'Export Gantt'), icon: 'FileExport' },
+        { key: 'print_timeline', label: t('agora', 'Print Timeline'), icon: 'Printer' },
+        { key: 'adjust_schedule', label: t('agora', 'Adjust Schedule'), icon: 'CalendarClock' },
+        { key: 'identify_bottlenecks', label: t('agora', 'Identify Bottlenecks'), icon: 'AlertCircle' }
       ]
     },
     'default': {
       name: 'Options',
-      label: 'Options',
-      description: 'Various option types',
+      label: t('agora', 'Options'),
+      description: t('agora', 'Various option types'),
       icon: 'File',
       ui: {
         layout: 'cards'

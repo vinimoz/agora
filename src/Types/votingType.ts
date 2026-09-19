@@ -1,6 +1,8 @@
 // SPDX-FileCopyrightText: 2018-2025 Nextcloud contributors
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+import { t } from '@nextcloud/l10n'
+
 /**
  * ============================================================================
  * VOTING & SUPPORT TYPE DEFINITIONS
@@ -495,11 +497,11 @@ export const ENGINE_DEFINITIONS: Record<string, EngineDefinition> = {
   // === Simple Voting ===
   binary: {
     id: 'binary',
-    label: 'Yes / No',
+    label: t('agora', 'Yes / No'),
     supportFeature: true,
     voteScope: 'per_option',
     inputModel: 'scalar',
-    description: 'Simple yes/no voting on options',
+    description: t('agora', 'Simple yes/no voting on options'),
     constraints: { min_options: 1 },
     recommendedViews: ['cards', 'list', 'radio'],
     compatibleOptionTypes: ['text', 'boolean'],
@@ -508,11 +510,11 @@ export const ENGINE_DEFINITIONS: Record<string, EngineDefinition> = {
 
   ternary: {
     id: 'ternary',
-    label: 'For / Abstain / Against',
+    label: t('agora', 'For / Abstain / Against'),
     supportFeature: true,
     voteScope: 'per_option',
     inputModel: 'scalar',
-    description: 'Three-way voting with abstention option',
+    description: t('agora', 'Three-way voting with abstention option'),
     constraints: { min_options: 1 },
     recommendedViews: ['cards', 'list', 'radio'],
     compatibleOptionTypes: ['text'],
@@ -522,45 +524,45 @@ export const ENGINE_DEFINITIONS: Record<string, EngineDefinition> = {
   // === Rated Voting ===
   star: {
     id: 'star',
-    label: 'Star Rating',
+    label: t('agora', 'Star Rating'),
     supportFeature: true,
     voteScope: 'per_option',
     inputModel: 'scalar',
-    description: 'Rate options from 1 to 5 stars',
+    description: t('agora', 'Rate options from 1 to 5 stars'),
     constraints: { min_options: 1 },
     recommendedViews: ['cards', 'grid', 'slider'],
     compatibleOptionTypes: ['text', 'number'],
     config_schema: {
-      min: { type: 'number', default: 1, label: 'Minimum stars', min: 1, max: 5 },
-      max: { type: 'number', default: 5, label: 'Maximum stars', min: 1, max: 10 },
-      step: { type: 'number', default: 1, label: 'Step', min: 1, max: 5 },
+      min: { type: 'number', default: 1, label: t('agora', 'Minimum stars'), min: 1, max: 5 },
+      max: { type: 'number', default: 5, label: t('agora', 'Maximum stars'), min: 1, max: 10 },
+      step: { type: 'number', default: 1, label: t('agora', 'Step'), min: 1, max: 5 },
     },
   },
 
   score: {
     id: 'score',
-    label: 'Score Voting',
+    label: t('agora', 'Score Voting'),
     supportFeature: true,
     voteScope: 'per_option',
     inputModel: 'scalar',
-    description: 'Rate options on a numeric scale (0-10)',
+    description: t('agora', 'Rate options on a numeric scale (0-10)'),
     constraints: { min_options: 1 },
     recommendedViews: ['cards', 'list', 'slider'],
     compatibleOptionTypes: ['text', 'number'],
     config_schema: {
-      min: { type: 'number', default: 0, label: 'Minimum score', min: 0, max: 100 },
-      max: { type: 'number', default: 10, label: 'Maximum score', min: 1, max: 100 },
-      step: { type: 'number', default: 1, label: 'Step', min: 1, max: 10 },
+      min: { type: 'number', default: 0, label: t('agora', 'Minimum score'), min: 0, max: 100 },
+      max: { type: 'number', default: 10, label: t('agora', 'Maximum score'), min: 1, max: 100 },
+      step: { type: 'number', default: 1, label: t('agora', 'Step'), min: 1, max: 10 },
     },
   },
 
   majority_judgment: {
     id: 'majority_judgment',
-    label: 'Majority Judgment',
+    label: t('agora', 'Majority Judgment'),
     supportFeature: true,
     voteScope: 'per_option',
     inputModel: 'scalar',
-    description: 'Grade each option, median grade determines winner',
+    description: t('agora', 'Grade each option, median grade determines winner'),
     constraints: { min_options: 2 },
     recommendedViews: ['cards', 'matrix'],
     compatibleOptionTypes: ['text'],
@@ -576,7 +578,7 @@ export const ENGINE_DEFINITIONS: Record<string, EngineDefinition> = {
           'Very Good',
           'Excellent',
         ],
-        label: 'Grade options',
+        label: t('agora', 'Grade options'),
       },
     },
   },
@@ -584,20 +586,20 @@ export const ENGINE_DEFINITIONS: Record<string, EngineDefinition> = {
   // === Approval-Based ===
   approval: {
     id: 'approval',
-    label: 'Approval Voting',
+    label: t('agora', 'Approval Voting'),
     supportFeature: false,
     voteScope: 'per_option',
     inputModel: 'selection',
-    description: 'Select all options you approve of',
+    description: t('agora', 'Select all options you approve of'),
     constraints: { min_options: 2 },
     recommendedViews: ['cards', 'list', 'checkbox'],
     compatibleOptionTypes: ['text'],
     config_schema: {
-      min_choices: { type: 'number', default: 1, label: 'Minimum choices', min: 1 },
+      min_choices: { type: 'number', default: 1, label: t('agora', 'Minimum choices'), min: 1 },
       max_choices: {
         type: 'number',
         default: null,
-        label: 'Maximum choices (null = unlimited)',
+        label: t('agora', 'Maximum choices (null = unlimited)'),
         min: 1,
         nullable: true,
       },
@@ -607,11 +609,11 @@ export const ENGINE_DEFINITIONS: Record<string, EngineDefinition> = {
   // === Ranked Methods ===
   ranking: {
     id: 'ranking',
-    label: 'Ranked Choice',
+    label: t('agora', 'Ranked Choice'),
     supportFeature: false,
     voteScope: 'cross_option',
     inputModel: 'ranking',
-    description: 'Rank options in order of preference',
+    description: t('agora', 'Rank options in order of preference'),
     constraints: { min_options: 2 },
     recommendedViews: ['cards', 'list', 'ranking'],
     compatibleOptionTypes: ['text'],
@@ -619,21 +621,21 @@ export const ENGINE_DEFINITIONS: Record<string, EngineDefinition> = {
       max_rank: {
         type: 'number',
         default: null,
-        label: 'Maximum rank (null = rank all)',
+        label: t('agora', 'Maximum rank (null = rank all)'),
         min: 1,
         nullable: true,
       },
-      allow_ties: { type: 'boolean', default: false, label: 'Allow tied ranks' },
+      allow_ties: { type: 'boolean', default: false, label: t('agora', 'Allow tied ranks') },
     },
   },
 
   borda: {
     id: 'borda',
-    label: 'Borda Count',
+    label: t('agora', 'Borda Count'),
     supportFeature: false,
     voteScope: 'cross_option',
     inputModel: 'ranking',
-    description: 'Rank options, points assigned by rank position',
+    description: t('agora', 'Rank options, points assigned by rank position'),
     constraints: { min_options: 2 },
     recommendedViews: ['cards', 'ranking'],
     compatibleOptionTypes: ['text'],
@@ -641,25 +643,25 @@ export const ENGINE_DEFINITIONS: Record<string, EngineDefinition> = {
       max_rank: {
         type: 'number',
         default: null,
-        label: 'Maximum rank (null = rank all)',
+        label: t('agora', 'Maximum rank (null = rank all)'),
         min: 1,
         nullable: true,
       },
       allow_ties: {
         type: 'boolean',
         default: false,
-        label: 'Allow tied ranks',
+        label: t('agora', 'Allow tied ranks'),
       },
     },
   },
 
   condorcet: {
     id: 'condorcet',
-    label: 'Condorcet',
+    label: t('agora', 'Condorcet'),
     supportFeature: false,
     voteScope: 'cross_option',
     inputModel: 'ranking',
-    description: 'Pairwise comparison voting method',
+    description: t('agora', 'Pairwise comparison voting method'),
     constraints: { min_options: 2 },
     recommendedViews: ['cards', 'ranking', 'matrix'],
     compatibleOptionTypes: ['text'],
@@ -667,32 +669,32 @@ export const ENGINE_DEFINITIONS: Record<string, EngineDefinition> = {
       variant: {
         type: 'select',
         default: 'schulze',
-        label: 'Condorcet method',
+        label: t('agora', 'Condorcet method'),
         options: ['schulze', 'copeland', 'minimax', 'ranked_pairs', 'kemeny_young'],
       },
       max_rank: {
         type: 'number',
         default: null,
-        label: 'Maximum rank (null = rank all)',
+        label: t('agora', 'Maximum rank (null = rank all)'),
         min: 1,
         nullable: true,
       },
       allow_ties: {
         type: 'boolean',
         default: false,
-        label: 'Allow tied ranks',
+        label: t('agora', 'Allow tied ranks'),
       },
     },
   },
 
   approval_delib: {
     id: 'approval_delib',
-    label: 'Simple Approval (Deliberative)',
+    label: t('agora', 'Simple Approval (Deliberative)'),
     supportFeature: true,
     voteScope: 'per_option',
     inputModel: 'selection',
     description:
-      'Simple yes/no approval voting for deliberation phase - users can either approve or not',
+      t('agora', 'Simple yes/no approval voting for deliberation phase - users can either approve or not'),
     constraints: { min_options: 1 },
     recommendedViews: ['cards', 'list', 'checkbox'],
     compatibleOptionTypes: ['text', 'boolean'],
@@ -703,56 +705,56 @@ export const ENGINE_DEFINITIONS: Record<string, EngineDefinition> = {
   quadratic: {
     id: 'quadratic',
     supportFeature: false,
-    label: 'Quadratic Voting',
+    label: t('agora', 'Quadratic Voting'),
     voteScope: 'per_option',
     inputModel: 'allocation',
-    description: 'Vote with quadratic cost mechanism',
+    description: t('agora', 'Vote with quadratic cost mechanism'),
     constraints: { min_options: 1 },
     recommendedViews: ['cards', 'slider'],
     compatibleOptionTypes: ['text', 'number'],
     config_schema: {
-      credits_per_user: { type: 'number', default: 100, label: 'Credits per user', min: 1 },
+      credits_per_user: { type: 'number', default: 100, label: t('agora', 'Credits per user'), min: 1 },
     },
   },
 
   token_weighted: {
     id: 'token_weighted',
-    label: 'Token / Weighted',
+    label: t('agora', 'Token / Weighted'),
     supportFeature: false,
     voteScope: 'per_option',
     inputModel: 'allocation',
-    description: 'Vote with weighted tokens',
+    description: t('agora', 'Vote with weighted tokens'),
     constraints: { min_options: 1, requires_weight_source: true },
     recommendedViews: ['cards', 'slider'],
     compatibleOptionTypes: ['text', 'number'],
     config_schema: {
-      weight_source: { type: 'object', default: null, label: 'Weight source' },
+      weight_source: { type: 'object', default: null, label: t('agora', 'Weight source') },
       normalization: {
         type: 'select',
         default: 'none',
-        label: 'Normalization',
+        label: t('agora', 'Normalization'),
         options: ['none', 'min-max', 'z-score'],
       },
-      max_weight: { type: 'number', default: 100, label: 'Maximum weight', min: 1 },
+      max_weight: { type: 'number', default: 100, label: t('agora', 'Maximum weight'), min: 1 },
     },
   },
 
   phased_voting: {
     id: 'phased_voting',
-    label: 'Phased Voting',
+    label: t('agora', 'Phased Voting'),
     supportFeature: false,
     voteScope: 'flex',
     inputModel: 'flex',
-    description: 'Multi-round elimination voting',
+    description: t('agora', 'Multi-round elimination voting'),
     constraints: { min_options: 3 },
     recommendedViews: ['cards', 'list'],
     compatibleOptionTypes: ['text'],
     config_schema: {
-      rounds: { type: 'number', default: 2, label: 'Number of rounds', min: 2 },
+      rounds: { type: 'number', default: 2, label: t('agora', 'Number of rounds'), min: 2 },
       elimination_rule: {
         type: 'select',
         default: 'bottom',
-        label: 'Elimination rule',
+        label: t('agora', 'Elimination rule'),
         options: ['bottom', 'threshold', 'top'],
       },
     },
@@ -761,11 +763,11 @@ export const ENGINE_DEFINITIONS: Record<string, EngineDefinition> = {
   // === Reaction Support (Informal) ===
   reaction: {
     id: 'reaction',
-    label: 'Reactions',
+    label: t('agora', 'Reactions'),
     supportFeature: true,
     voteScope: 'per_option',
     inputModel: 'reaction',
-    description: 'React with emojis to show your opinion',
+    description: t('agora', 'React with emojis to show your opinion'),
     constraints: { min_options: 1 },
     recommendedViews: ['cards', 'emoji', 'grid'],
     compatibleOptionTypes: ['text'],
@@ -773,12 +775,12 @@ export const ENGINE_DEFINITIONS: Record<string, EngineDefinition> = {
       allowed_reactions: {
         type: 'array',
         default: ['👍', '❤️', '🎉', '🤔', '👎'],
-        label: 'Allowed reactions',
+        label: t('agora', 'Allowed reactions'),
       },
       max_per_user: {
         type: 'number',
         default: 3,
-        label: 'Max reactions per user',
+        label: t('agora', 'Max reactions per user'),
         min: 1,
         max: 10,
       },
@@ -788,11 +790,11 @@ export const ENGINE_DEFINITIONS: Record<string, EngineDefinition> = {
   // === Additional support features (no formal voting) ===
   trending: {
     id: 'trending',
-    label: 'Trending',
+    label: t('agora', 'Trending'),
     supportFeature: false,
     voteScope: 'none',
     inputModel: 'scalar',
-    description: 'Popularity-based trending (votes + activity)',
+    description: t('agora', 'Popularity-based trending (votes + activity)'),
     constraints: { min_options: 1 },
     recommendedViews: ['cards', 'list'],
     compatibleOptionTypes: ['text'],
@@ -801,11 +803,11 @@ export const ENGINE_DEFINITIONS: Record<string, EngineDefinition> = {
 
   none: {
     id: 'none',
-    label: 'No Support',
+    label: t('agora', 'No Support'),
     supportFeature: true,
     voteScope: 'none',
     inputModel: 'scalar',
-    description: 'Pure discussion without support features',
+    description: t('agora', 'Pure discussion without support features'),
     constraints: {},
     recommendedViews: ['list'],
     compatibleOptionTypes: ['text'],
@@ -878,4 +880,24 @@ export function isValidPhase(phase: string): phase is Phase {
  */
 export function getRecommendedViews(engineId: string): OptionViewMode[] {
   return ENGINE_DEFINITIONS[engineId]?.recommendedViews || ['cards', 'list']
+}
+
+/**
+ * Translate a default majority judgment grade for display.
+ * Grades are stored in English in the engine config, custom grades are returned as is.
+ * @param grade
+ */
+export function translateGrade(grade: string | null | undefined): string {
+  const labels: Record<string, string> = {
+    Reject: t('agora', 'Reject'),
+    Insufficient: t('agora', 'Insufficient'),
+    Passable: t('agora', 'Passable'),
+    'Fairly Good': t('agora', 'Fairly good'),
+    Good: t('agora', 'Good'),
+    'Very Good': t('agora', 'Very good'),
+    Excellent: t('agora', 'Excellent'),
+    Poor: t('agora', 'Poor'),
+    Fair: t('agora', 'Fair'),
+  }
+  return (grade && labels[grade]) || grade || ''
 }

@@ -71,17 +71,17 @@
                             <span 
     v-if="index === 0" 
     class="medal" 
-    aria-label="First place"
+    :aria-label="t('agora', 'First place')"
 >🥇</span>
 <span 
     v-else-if="index === 1" 
     class="medal" 
-    aria-label="Second place"
+    :aria-label="t('agora', 'Second place')"
 >🥈</span>
 <span 
     v-else-if="index === 2" 
     class="medal" 
-    aria-label="Third place"
+    :aria-label="t('agora', 'Third place')"
 >🥉</span>
                             <span v-else class="rank-badge">{{ index + 1 }}</span>
 

@@ -209,7 +209,7 @@ function navigateToFamilyInquiries(familyType: string) {
         query: { viewMode: defaultViewMode.value }
     })
     }
-  } else showError("You are not allowed to access this family")
+  } else showError(t('agora', 'You are not allowed to access this family'))
 }
 
 // Function to create new inquiry from type
@@ -269,7 +269,7 @@ watch(
 </script>
 
 <template>
-  <NcAppNavigation class="agora-navigation" aria-label="Inquiry Navigation">
+  <NcAppNavigation class="agora-navigation" :aria-label="t('agora', 'Inquiry navigation')">
     <template #list>
       <!-- Recent Inquiries Section -->
       <NcAppNavigationList>

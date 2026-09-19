@@ -85,7 +85,7 @@
                                 <template #icon>
                                     <component :is="getActionIcon(action.icon)" :size="18" />
                                 </template>
-                                {{ action.label }}
+                                {{ t('agora', action.label) }}
                             </NcActionButton>
                         </NcActions>
                     </div>
