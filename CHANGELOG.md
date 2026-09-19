@@ -1,5 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
+# [1.7.11] - 2026-09-18
+Fix:
+    - Bug #39 : pass family to InquiryDto on update
+
 # [1.7.10] - 2026-09-17
 Fix:
     - Nextcloud 35 integration
