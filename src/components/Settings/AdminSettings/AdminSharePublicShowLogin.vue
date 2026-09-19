@@ -20,7 +20,7 @@ const appSettingsStore = useAppSettingsStore()
       type="switch"
       @update:model-value="appSettingsStore.write()"
     >
-      {{ t('inquiries', 'Enable the login option in the registration dialog of public inquiries') }}
+      {{ t('agora', 'Enable the login option in the registration dialog of public inquiries') }}
     </NcCheckboxRadioSwitch>
   </div>
 </template>

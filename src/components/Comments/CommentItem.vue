@@ -108,7 +108,7 @@ async function deleteComment(comment: Comment) {
   try {
     await commentsStore.delete({ comment })
   } catch {
-    showError(t('inquiries', 'Error while deleting the comment'))
+    showError(t('agora', 'Error while deleting the comment'))
   }
 }
 
@@ -117,7 +117,7 @@ async function restoreComment(comment: Comment) {
   try {
     await commentsStore.restore({ comment })
   } catch {
-    showError(t('inquiries', 'Error while restoring the comment'))
+    showError(t('agora', 'Error while restoring the comment'))
   }
 }
 
@@ -179,7 +179,7 @@ const position = computed(() => {
       <!-- Header - always left aligned -->
       <div class="comment-item__header">
         <span class="comment-item__user">
-          {{ user.displayName || t('inquiries', 'Unknown user') }}
+          {{ user.displayName || t('agora', 'Unknown user') }}
         </span>
         <span
           class="comment-item__date"
@@ -190,7 +190,7 @@ const position = computed(() => {
           {{ timeRange }}
         </span>
         <span v-if="isConfidential" class="comment-item__confidential">
-          {{ t('inquiries', 'Confidential') }}
+          {{ t('agora', 'Confidential') }}
         </span>
         <span v-if="comments.length > 1" class="comment-item__count">
           {{ comments.length }}
@@ -215,7 +215,7 @@ const position = computed(() => {
           <div class="comment-item__actions">
             <ActionDelete
               v-if="deletable && singleComment"
-              :name="singleComment.deleted ? t('inquiries', 'Restore comment') : t('inquiries', 'Delete comment')"
+              :name="singleComment.deleted ? t('agora', 'Restore comment') : t('agora', 'Delete comment')"
               :restore="!!singleComment.deleted"
               :timeout="0"
               @restore="restoreComment(singleComment)"

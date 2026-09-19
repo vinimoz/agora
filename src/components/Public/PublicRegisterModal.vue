@@ -99,9 +99,9 @@ const emailAddressHint = computed(() => {
   }
   if (sessionStore.share.type === 'public') {
     if (emailGeneratedStatus.value === 'valid') {
-      return t('inquiries', 'You will receive your personal link after clicking "OK".')
+      return t('agora', 'You will receive your personal link after clicking "OK".')
     }
-    return t('inquiries', 'Enter your email address to get your personal access link.')
+    return t('agora', 'Enter your email address to get your personal access link.')
   }
   return ''
 })
