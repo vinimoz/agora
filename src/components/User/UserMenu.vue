@@ -323,7 +323,7 @@ async function submitEmail() {
     <template #icon>
       <SettingsIcon :size="20" />
     </template>
-    <NcActionButtonGroup name="View mode">
+    <NcActionButtonGroup :name="t('agora', 'View mode')">
       <NcActionButton
         v-model="viewMode"
         :value="'table-view'"
@@ -347,7 +347,7 @@ async function submitEmail() {
       </NcActionButton>
     </NcActionButtonGroup>
 
-    <NcActionButtonGroup name="Options order">
+    <NcActionButtonGroup :name="t('agora', 'Options order')">
       <NcActionButton
         v-model="optionsStore.ranked"
         value="no"

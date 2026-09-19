@@ -95,14 +95,14 @@ const currentInquiryStatus = computed(() => {
   const specialStatuses = {
     'draft': {
       statusKey: 'draft',
-      label: 'Draft',
+      label: t('agora', 'Draft'),
       icon: 'draft',
       inquiryType: props.inquiry.type,
       order: 0,
     },
     'waiting_approval': {
       statusKey: 'waiting_approval',
-      label: 'Waiting Approval',
+      label: t('agora', 'Waiting approval'),
       icon: 'waitingapproval',
       inquiryType: props.inquiry.type,
       order: 1,

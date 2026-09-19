@@ -93,8 +93,11 @@ const selectedFamily = computed({
  
 const formattedFamilyType = computed(() => { 
   const value = inquiriesStore.advancedFilters.familyType 
-  if (!value) return t('agora', 'All families') 
-  return t('agora', `${value}`) 
+  if (!value) return t('agora', 'All families')
+  const family = sessionStore.appSettings.inquiryFamilyTab?.find(
+    (f) => f.family_type === value
+  )
+  return t('agora', family?.label || `${value}`)
 })
 
 const handleHomeNavigation = () => {
@@ -104,7 +107,7 @@ const handleHomeNavigation = () => {
 </script>
 
 <template>
-  <NcAppNavigation  class="agora-navigation" aria-label="Agora Navigation">
+  <NcAppNavigation  class="agora-navigation" :aria-label="t('agora', 'Agora navigation')">
     <!-- Header Section with Family Badge -->
     <div v-if="selectedFamily" class="navigation-header">
       <div class="family-badge">

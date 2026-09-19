@@ -476,23 +476,23 @@ const defaultGrades = ['Reject', 'Insufficient', 'Passable', 'Fairly Good', 'Goo
 
 // Condorcet variants
 const condorcetVariants = [
-  { id: 'schulze', label: 'Schulze Method', description: 'Also known as Beatpath method, considered one of the most robust Condorcet methods' },
-  { id: 'copeland', label: 'Copeland Method', description: 'Simple method based on win-loss record against other candidates' },
-  { id: 'minimax', label: 'Minimax', description: 'Also known as Simpson-Kramer method, minimizes the largest opposition' },
-  { id: 'ranked_pairs', label: 'Ranked Pairs', description: 'Tideman method that builds a ranking from strongest to weakest majorities' },
-  { id: 'kemeny_young', label: 'Kemeny-Young', description: 'Finds the most likely ranking based on voters preferences' },
+  { id: 'schulze', label: t('agora', 'Schulze Method'), description: t('agora', 'Also known as Beatpath method, considered one of the most robust Condorcet methods') },
+  { id: 'copeland', label: t('agora', 'Copeland Method'), description: t('agora', 'Simple method based on win-loss record against other candidates') },
+  { id: 'minimax', label: t('agora', 'Minimax'), description: t('agora', 'Also known as Simpson-Kramer method, minimizes the largest opposition') },
+  { id: 'ranked_pairs', label: t('agora', 'Ranked Pairs'), description: t('agora', 'Tideman method that builds a ranking from strongest to weakest majorities') },
+  { id: 'kemeny_young', label: t('agora', 'Kemeny-Young'), description: t('agora', 'Finds the most likely ranking based on voters preferences') },
 ]
 
 // Reaction options
 const reactionOptions = [
-  { value: '👍', label: 'Thumbs Up', emoji: '👍' },
-  { value: '❤️', label: 'Heart', emoji: '❤️' },
-  { value: '😊', label: 'Smile', emoji: '😊' },
-  { value: '🎉', label: 'Celebrate', emoji: '🎉' },
-  { value: '🤔', label: 'Thinking', emoji: '🤔' },
-  { value: '👎', label: 'Thumbs Down', emoji: '👎' },
-  { value: '😢', label: 'Sad', emoji: '😢' },
-  { value: '😡', label: 'Angry', emoji: '😡' },
+  { value: '👍', label: t('agora', 'Thumbs Up'), emoji: '👍' },
+  { value: '❤️', label: t('agora', 'Heart'), emoji: '❤️' },
+  { value: '😊', label: t('agora', 'Smile'), emoji: '😊' },
+  { value: '🎉', label: t('agora', 'Celebrate'), emoji: '🎉' },
+  { value: '🤔', label: t('agora', 'Thinking'), emoji: '🤔' },
+  { value: '👎', label: t('agora', 'Thumbs Down'), emoji: '👎' },
+  { value: '😢', label: t('agora', 'Sad'), emoji: '😢' },
+  { value: '😡', label: t('agora', 'Angry'), emoji: '😡' },
 ]
 
 
@@ -573,9 +573,19 @@ const getSelectOptions = (schema: ConfigSchemaField) => {
     ? schema.options 
     : Object.values(schema.options)
 
+  const labels: Record<string, string> = {
+    ...Object.fromEntries(condorcetVariants.map((variant) => [variant.id, variant.label])),
+    none: t('agora', 'None'),
+    'min-max': t('agora', 'Min-max'),
+    'z-score': t('agora', 'Z-score'),
+    bottom: t('agora', 'Bottom'),
+    threshold: t('agora', 'Threshold'),
+    top: t('agora', 'Top'),
+  }
+
   return options.map((opt: string) => ({
     value: opt,
-    label: opt.charAt(0).toUpperCase() + opt.slice(1).replace(/_/g, ' ')
+    label: labels[opt] || opt.charAt(0).toUpperCase() + opt.slice(1).replace(/_/g, ' ')
   }))
 }
 

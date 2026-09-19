@@ -557,7 +557,7 @@ async function fetchAllGroups(): Promise<InquiryGroup[]> {
     if (group) {
       return group.name
     }
-    return t('inquiries', 'Invalid Group ID')
+    return t('agora', 'Invalid Group ID')
   }
 
   return {

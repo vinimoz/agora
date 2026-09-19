@@ -40,7 +40,7 @@ async function sendAllInvitations() {
     response.data.sentResult.abortedMails.forEach((item) => {
       Logger.error('Mail could not be sent!', { recipient: item })
       showError(
-        t('inquiries', 'Error sending invitation to {displayName} ({emailAddress})', {
+        t('agora', 'Error sending invitation to {displayName} ({emailAddress})', {
           emailAddress: item.emailAddress,
           displayName: item.displayName,
         })

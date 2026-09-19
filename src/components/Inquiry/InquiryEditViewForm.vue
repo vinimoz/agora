@@ -116,7 +116,7 @@ const availableInquiryStatuses = computed(() => {
   if (inquiryStore.status.inquiryStatus === 'draft') {
     statusesFromSettings.unshift({
       statusKey: 'draft',
-      label: 'Draft',
+      label: t('agora', 'Draft'),
       icon: 'draft',
       inquiryType: inquiryStore.type,
       order: 0,
@@ -126,7 +126,7 @@ const availableInquiryStatuses = computed(() => {
   if (inquiryStore.status.inquiryStatus === 'waiting_approval') {
     statusesFromSettings.unshift({
       statusKey: 'waiting_approval',
-      label: 'Waiting Approval',
+      label: t('agora', 'Waiting approval'),
       icon: 'waitingapproval',
       inquiryType: inquiryStore.type,
       order: 1,
@@ -141,14 +141,14 @@ const currentInquiryStatus = computed(
     const specialStatuses = {
       'draft': {
 	statusKey: 'draft',
-	label: 'Draft',
+	label: t('agora', 'Draft'),
 	icon: 'draft',
 	inquiryType: inquiryStore.type,
 	order: 0,
       },
       'waiting_approval': {
 	statusKey: 'waiting_approval',
-	label: 'Waiting Approval',
+	label: t('agora', 'Waiting approval'),
 	icon: 'waitingapproval',
 	inquiryType: inquiryStore.type,
 	order: 1,

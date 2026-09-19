@@ -46,7 +46,7 @@
             <template v-if="action.icon" #icon>
               <component :is="getActionIcon(action.icon)" :size="16" />
             </template>
-            {{ action.label }}
+            {{ t('agora', action.label) }}
           </NcButton>
         </div>
       </div>
