@@ -1,4 +1,4 @@
-const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=[window.OC.filePath('agora', '', 'js/NcDashboardWidget-CvpYMKur-CZckKf4S.chunk.mjs'),window.OC.filePath('agora', '', 'js/TernarySupportIcon.vue_vue_type_style_index_0_scoped_bbec35a7_lang-Ci-HSesf.chunk.mjs'),window.OC.filePath('agora', '', 'js/ActionVote-JxaLRPVz.chunk.mjs'),window.OC.filePath('agora', '', 'js/ExportResultsModal-DFOraO89.chunk.mjs'),window.OC.filePath('agora', '', 'js/NcRichText-D_ssz6sB-KS_N5mXr.chunk.mjs'),window.OC.filePath('agora', '', 'js/ActionStructure-B7Kd5UPH.chunk.mjs'),window.OC.filePath('agora', '', 'js/ImportDocumentModal-CFooPqdG.chunk.mjs'),window.OC.filePath('agora', '', 'js/index-D6r-Ff8s.chunk.mjs')])))=>i.map(i=>d[i]);
+const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=[window.OC.filePath('agora', '', 'js/NcDashboardWidget-CvpYMKur-BX6dlvMs.chunk.mjs'),window.OC.filePath('agora', '', 'js/TernarySupportIcon.vue_vue_type_style_index_0_scoped_bbec35a7_lang-C47BSer6.chunk.mjs'),window.OC.filePath('agora', '', 'js/ActionVote-C5qDgsLP.chunk.mjs'),window.OC.filePath('agora', '', 'js/ExportResultsModal-DkGK6iEo.chunk.mjs'),window.OC.filePath('agora', '', 'js/NcRichText-D_ssz6sB-CDKM4yie.chunk.mjs'),window.OC.filePath('agora', '', 'js/ActionStructure-Dw4YxAcZ.chunk.mjs'),window.OC.filePath('agora', '', 'js/ImportDocumentModal-Dl0a4vqp.chunk.mjs'),window.OC.filePath('agora', '', 'js/index-B9Wfbam3.chunk.mjs')])))=>i.map(i=>d[i]);
 (function() {
   "use strict";
   try {
@@ -18738,15 +18738,15 @@ tr.file-picker__row td.row-name[data-v-1f96131b] {
     console.error("vite-plugin-css-injected-by-js", e);
   }
 })();
-const D5e = "agora", k5e = "1.7.9";
-import { ac as Ur, bb as ti, bp as FU, bq as $U, v as p, br as BU, bc as J0, d as ze, ab as LU, ae as pr, l as L, w as at, C as _e, a_ as Nr, bs as uc, bt as PU, a as yi, o as v, c as T, t as k, K as Be, bu as qU, bv as zU, bw as WU, O as bg, a9 as ns, h as b, a6 as Cn, bx as VU, g as ne, by as HU, bz as jU, u as Ns, Y as _g, bA as Z0, s as wt, aX as is, r as It, Z as GU, ap as e_, bB as XU, bC as t_, al as Fs, e as X, E as Ee, b as U, F as Le, bD as YU, bE as KU, i as j, bn as vi, m as Tt, aY as xg, a7 as gr, x as Fr, y as dc, f as ue, bF as QU, N as pn, n as bt, k as $i, q as x, bm as yt, L as qe, _ as Ye, bG as JU, M as He, B as hc, bH as n_, J as it, j as i_, aU as Wo, a5 as Ja, $ as zt, bI as $s, bJ as Bs, H as mr, D as Si, bK as r_, bL as ZU, bM as Gi, bN as eN, bO as hd, bP as tN, bQ as Ci, bk as Ls, a1 as nN, G as s_, bR as fd, a8 as pd, b5 as wg, aE as o_, I as Dg, bS as $r, bT as Xi, bl as a_, a3 as En, a4 as Xt, bU as iN, z as rN, A as sN } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_bbec35a7_lang-Ci-HSesf.chunk.mjs";
-import { c as ft, L as tt, d as an, s as Qe, m as gd, n as oN, o as Ot, a as Je, p as kg, q as Sg, I as Pe, r as md, t as l_, g as Dn, v as Yi, w as Vo, x as Yt, y as fc, f as Xn, z as c_, A as pc, B as aN, C as lN, D as Ps, E as cN, F as uN, G as yr, H as Za, J as yd, K as el, M as rn, O as u_, P as Cg, S as St, Q as gc, R as d_, T as rs, U as dN, V as hN, W as fN, X as pN, Y as gN, Z as h_, _ as mN, $ as yN, a0 as Ho, a1 as mc, a2 as Ne, a3 as Tn, a4 as gn, a5 as tl, a6 as vd, a7 as Eg, a8 as nl, a9 as yc, aa as vc, ab as bc, ac as bd, ad as Tg, ae as _c, af as f_, ag as p_, ah as vN, ai as bN, aj as qs, ak as _N, al as xN, am as g_, an as m_, ao as y_, ap as wN, aq as DN, ar as kN, as as SN, at as CN, au as v_, av as EN, aw as b_, ax as TN, u as _d, ay as ss, az as AN, aA as RN, aB as IN, aC as __, aD as MN, aE as ON, aF as Br, aG as xd, aH as x_, aI as as, i as UN, aJ as vr, aK as w_, aL as NN, aM as FN, aN as $N, aO as BN } from "./NcDashboardWidget-CvpYMKur-CZckKf4S.chunk.mjs";
-import { u as ls, _ as LN, a as PN } from "./StyleSettings-DDP8xWN2.chunk.mjs";
-import { u as qN, A as zN, _ as WN, c as Ki, d as ln, e as br, f as Ag, S as VN, Q as HN, I as wd, g as zs, h as jN, i as D_, r as k_, t as S_, j as GN, k as Bi, l as xc, O as XN, m as C_, n as YN, o as KN, P as QN, p as E_, b as JN, q as ZN } from "./index-D6r-Ff8s.chunk.mjs";
-import { d as e8, I as t8, N as cn, a as Wt, _ as _r, e as n8, f as jo, b as il } from "./NcRichText-D_ssz6sB-KS_N5mXr.chunk.mjs";
-import { _ as i8, a as rl, N as Rg, b as Go } from "./markdown-BKFmRkXA.chunk.mjs";
-import { _ as Ig } from "./agora-icon-TQkJGJld.chunk.mjs";
-import { N as r8 } from "./NcUserBubble-BE6yD-R0-DeLDmvK3.chunk.mjs";
+const D5e = "agora", k5e = "1.7.10";
+import { ac as Ur, bb as ti, bp as FU, bq as $U, v as p, br as BU, bc as J0, d as ze, ab as LU, ae as pr, l as L, w as at, C as _e, a_ as Nr, bs as uc, bt as PU, a as yi, o as v, c as T, t as k, K as Be, bu as qU, bv as zU, bw as WU, O as bg, a9 as ns, h as b, a6 as Cn, bx as VU, g as ne, by as HU, bz as jU, u as Ns, Y as _g, bA as Z0, s as wt, aX as is, r as It, Z as GU, ap as e_, bB as XU, bC as t_, al as Fs, e as X, E as Ee, b as U, F as Le, bD as YU, bE as KU, i as j, bn as vi, m as Tt, aY as xg, a7 as gr, x as Fr, y as dc, f as ue, bF as QU, N as pn, n as bt, k as $i, q as x, bm as yt, L as qe, _ as Ye, bG as JU, M as He, B as hc, bH as n_, J as it, j as i_, aU as Wo, a5 as Ja, $ as zt, bI as $s, bJ as Bs, H as mr, D as Si, bK as r_, bL as ZU, bM as Gi, bN as eN, bO as hd, bP as tN, bQ as Ci, bk as Ls, a1 as nN, G as s_, bR as fd, a8 as pd, b5 as wg, aE as o_, I as Dg, bS as $r, bT as Xi, bl as a_, a3 as En, a4 as Xt, bU as iN, z as rN, A as sN } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_bbec35a7_lang-C47BSer6.chunk.mjs";
+import { c as ft, L as tt, d as an, s as Qe, m as gd, n as oN, o as Ot, a as Je, p as kg, q as Sg, I as Pe, r as md, t as l_, g as Dn, v as Yi, w as Vo, x as Yt, y as fc, f as Xn, z as c_, A as pc, B as aN, C as lN, D as Ps, E as cN, F as uN, G as yr, H as Za, J as yd, K as el, M as rn, O as u_, P as Cg, S as St, Q as gc, R as d_, T as rs, U as dN, V as hN, W as fN, X as pN, Y as gN, Z as h_, _ as mN, $ as yN, a0 as Ho, a1 as mc, a2 as Ne, a3 as Tn, a4 as gn, a5 as tl, a6 as vd, a7 as Eg, a8 as nl, a9 as yc, aa as vc, ab as bc, ac as bd, ad as Tg, ae as _c, af as f_, ag as p_, ah as vN, ai as bN, aj as qs, ak as _N, al as xN, am as g_, an as m_, ao as y_, ap as wN, aq as DN, ar as kN, as as SN, at as CN, au as v_, av as EN, aw as b_, ax as TN, u as _d, ay as ss, az as AN, aA as RN, aB as IN, aC as __, aD as MN, aE as ON, aF as Br, aG as xd, aH as x_, aI as as, i as UN, aJ as vr, aK as w_, aL as NN, aM as FN, aN as $N, aO as BN } from "./NcDashboardWidget-CvpYMKur-BX6dlvMs.chunk.mjs";
+import { u as ls, _ as LN, a as PN } from "./StyleSettings-Ds1L0FS2.chunk.mjs";
+import { u as qN, A as zN, _ as WN, c as Ki, d as ln, e as br, f as Ag, S as VN, Q as HN, I as wd, g as zs, h as jN, i as D_, r as k_, t as S_, j as GN, k as Bi, l as xc, O as XN, m as C_, n as YN, o as KN, P as QN, p as E_, b as JN, q as ZN } from "./index-B9Wfbam3.chunk.mjs";
+import { d as e8, I as t8, N as cn, a as Wt, _ as _r, e as n8, f as jo, b as il } from "./NcRichText-D_ssz6sB-CDKM4yie.chunk.mjs";
+import { _ as i8, a as rl, N as Rg, b as Go } from "./markdown-BWlA5soF.chunk.mjs";
+import { _ as Ig } from "./agora-icon-CdsgDA9C.chunk.mjs";
+import { N as r8 } from "./NcUserBubble-BE6yD-R0-DrzjYDIX.chunk.mjs";
 var T_ = {}, Dd = {};
 Dd.byteLength = a8, Dd.toByteArray = c8, Dd.fromByteArray = h8;
 for (var Lr = [], Qi = [], s8 = typeof Uint8Array < "u" ? Uint8Array : Array, Mg = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/", sl = 0, o8 = Mg.length; sl < o8; ++sl) Lr[sl] = Mg[sl], Qi[Mg.charCodeAt(sl)] = sl;
@@ -61172,7 +61172,7 @@ const BDe = { class: "results-layout" }, LDe = { class: "results-summary" }, PDe
   }
   async function O() {
     const { useOptionsStore: G } = await jo(async () => {
-      const { useOptionsStore: F } = await import("./NcDashboardWidget-CvpYMKur-CZckKf4S.chunk.mjs").then((V) => V.aQ);
+      const { useOptionsStore: F } = await import("./NcDashboardWidget-CvpYMKur-BX6dlvMs.chunk.mjs").then((V) => V.aQ);
       return { useOptionsStore: F };
     }, true ? __vite__mapDeps([0,1]) : void 0, import.meta.url), ee = G();
     l.value = ee.options.find((F) => F.id === n.optionId);
@@ -61263,13 +61263,13 @@ const BDe = { class: "results-layout" }, LDe = { class: "results-summary" }, PDe
     try {
       let he = null;
       if (ge === "vote") {
-        const Se = await jo(() => import("./ActionVote-JxaLRPVz.chunk.mjs"), true ? __vite__mapDeps([2,0,1,3,4]) : void 0, import.meta.url);
+        const Se = await jo(() => import("./ActionVote-C5qDgsLP.chunk.mjs"), true ? __vite__mapDeps([2,0,1,3,4]) : void 0, import.meta.url);
         he = Gi(Se.default || Se);
       } else if (ge === "structure") {
-        const Se = await jo(() => import("./ActionStructure-B7Kd5UPH.chunk.mjs"), true ? __vite__mapDeps([5,6,1,0,4,7]) : void 0, import.meta.url);
+        const Se = await jo(() => import("./ActionStructure-Dw4YxAcZ.chunk.mjs"), true ? __vite__mapDeps([5,6,1,0,4,7]) : void 0, import.meta.url);
         he = Gi(Se.default || Se);
       } else {
-        const Se = `${ae.split("_").map((De) => De.charAt(0).toUpperCase() + De.slice(1)).join("")}Modal`, $e = await GQ(Object.assign({ "./Actions/ActionStructure.vue": () => jo(() => import("./ActionStructure-B7Kd5UPH.chunk.mjs"), true ? __vite__mapDeps([5,6,1,0,4,7]) : void 0, import.meta.url), "./Actions/ActionVote.vue": () => jo(() => import("./ActionVote-JxaLRPVz.chunk.mjs"), true ? __vite__mapDeps([2,0,1,3,4]) : void 0, import.meta.url), "./Actions/ExportResultsModal.vue": () => jo(() => import("./ExportResultsModal-DFOraO89.chunk.mjs"), true ? __vite__mapDeps([3,1,0,4]) : void 0, import.meta.url), "./Actions/ImportDocumentModal.vue": () => jo(() => import("./ImportDocumentModal-CFooPqdG.chunk.mjs"), true ? __vite__mapDeps([6,1,0,4,7]) : void 0, import.meta.url) }), `./Actions/${Se}.vue`, 3);
+        const Se = `${ae.split("_").map((De) => De.charAt(0).toUpperCase() + De.slice(1)).join("")}Modal`, $e = await GQ(Object.assign({ "./Actions/ActionStructure.vue": () => jo(() => import("./ActionStructure-Dw4YxAcZ.chunk.mjs"), true ? __vite__mapDeps([5,6,1,0,4,7]) : void 0, import.meta.url), "./Actions/ActionVote.vue": () => jo(() => import("./ActionVote-C5qDgsLP.chunk.mjs"), true ? __vite__mapDeps([2,0,1,3,4]) : void 0, import.meta.url), "./Actions/ExportResultsModal.vue": () => jo(() => import("./ExportResultsModal-DkGK6iEo.chunk.mjs"), true ? __vite__mapDeps([3,1,0,4]) : void 0, import.meta.url), "./Actions/ImportDocumentModal.vue": () => jo(() => import("./ImportDocumentModal-Dl0a4vqp.chunk.mjs"), true ? __vite__mapDeps([6,1,0,4,7]) : void 0, import.meta.url) }), `./Actions/${Se}.vue`, 3);
         he = Gi($e.default || $e);
       }
       return he ? (_.set(re, he), he) : null;
