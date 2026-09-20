@@ -63,7 +63,11 @@ abstract class BaseEvent extends Event
         if ($this->eventObject instanceof Option) {
             return $this->eventObject->getTargetId() ?? 0;
         }
-        if (method_exists($this->eventObject, 'getInquiryId')) {
+        // Entities expose getInquiryId() through Entity::__call, so method_exists()
+        // does not see it and the id silently falls back to 0.
+        if (method_exists($this->eventObject, 'getInquiryId')
+            || property_exists($this->eventObject, 'inquiryId')
+        ) {
             return $this->eventObject->getInquiryId() ?? 0;
         }
         return 0;
