@@ -255,6 +255,25 @@
       </div>
     </div>
 
+    <!-- Other options -->
+    <div v-if="otherOptions.length > 0" class="consensus-section">
+      <h4 class="section-title">
+        <component :is="InquiryOptionIcons.Options" :size="16" />
+        {{ t('agora', 'Other options') }} ({{ otherOptions.length }})
+      </h4>
+      <div class="options-list">
+        <ConsensusOptionCard
+          v-for="option in otherOptions"
+          :key="option.id"
+          :option="option"
+          :inquiry-id="inquiryId"
+          :show-status="true"
+	  :family-type="familyKey"
+          @click="$emit('openDetail', option)"
+        />
+      </div>
+    </div>
+
     <!-- Empty state -->
     <div v-if="allOptions.length === 0" class="empty-state">
       <component :is="InquiryOptionIcons.AlertCircle" :size="48" />
@@ -478,6 +497,19 @@ const recommendations = computed(() =>
     opt.type === 'recommendation'
   )
 )
+
+// Options no section above displays (e.g. poll options, resolutions no longer proposed)
+const otherOptions = computed(() => {
+  const shown = new Set([
+    ...blockingObjections.value,
+    ...proposedResolutions.value,
+    ...exceptions.value,
+    ...consents.value,
+    ...consultationQuestions.value,
+    ...recommendations.value,
+  ])
+  return props.options.filter(opt => !shown.has(opt))
+})
 
 const allOptions = computed(() => props.options)
 
