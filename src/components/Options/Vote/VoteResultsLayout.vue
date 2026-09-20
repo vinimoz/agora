@@ -69,21 +69,21 @@
                     <tr v-for="(option, index) in rankedOptions" :key="option.id">
                         <td class="rank-cell">
                             <span 
-    v-if="index === 0" 
+    v-if="rankOf(option, index) === 1" 
     class="medal" 
     :aria-label="t('agora', 'First place')"
 >🥇</span>
 <span 
-    v-else-if="index === 1" 
+    v-else-if="rankOf(option, index) === 2" 
     class="medal" 
     :aria-label="t('agora', 'Second place')"
 >🥈</span>
 <span 
-    v-else-if="index === 2" 
+    v-else-if="rankOf(option, index) === 3" 
     class="medal" 
     :aria-label="t('agora', 'Third place')"
 >🥉</span>
-                            <span v-else class="rank-badge">{{ index + 1 }}</span>
+                            <span v-else class="rank-badge">{{ rankOf(option, index) }}</span>
 
                         </td>
                         <td>
@@ -125,7 +125,13 @@ const props = defineProps<{
     timeRemaining: string
     getOptionVoteCount: (optionId: number) => number
     getPercentage: (option: Option) => number
+    getOptionRank?: (optionId: number) => number | null
 }>()
+
+// Rank published by the server, which shares a rank between tied options.
+// Falls back to the row position for engines that do not publish one.
+const rankOf = (option: Option, index: number): number =>
+    props.getOptionRank?.(option.id) ?? index + 1
 
 const pieChartCanvas = ref<HTMLCanvasElement | null>(null)
 const barChartCanvas = ref<HTMLCanvasElement | null>(null)

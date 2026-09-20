@@ -40,6 +40,7 @@ export interface VoteContext {
   getOptionVoteCount: (optionId: number) => number
   getPercentage: (option: Option, total?: number) => number
   getRankedOptions: (options: Option[]) => Option[]
+  getOptionRank: (optionId: number) => number | null
   getWinner: (options: Option[]) => Option | null
   getWinnerPercentage: (options: Option[]) => number
   getUserVoteValueForOption: (optionId: number) => SupportValue | null
@@ -748,6 +749,17 @@ export function useVoteContext(inquiryId: number): VoteContext {
           }
   }
 
+  /**
+   * Rank computed by the server, which shares a rank between tied options.
+   * Null when the engine does not publish one, the caller then falls back
+   * to the row position.
+   * @param optionId
+   */
+  const getOptionRank = (optionId: number): number | null => {
+      const res = engineResult.value
+      return res?.ranking?.[optionId] ?? null
+  }
+
   const totalVotes = computed(() => {
       if (effectiveEngineId.value === 'trending') {
           let total = 0
@@ -1066,6 +1078,7 @@ export function useVoteContext(inquiryId: number): VoteContext {
 
       totalVotes,
       getOptionVoteCount,
+      getOptionRank,
       getPercentage,
       getRankedOptions,
       getWinner,
