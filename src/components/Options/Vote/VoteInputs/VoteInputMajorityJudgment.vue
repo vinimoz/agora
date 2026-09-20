@@ -7,7 +7,7 @@
     <select v-model="localGrade" class="grade-select" @change="handleChange">
       <option :value="null">{{ t('agora', 'No grade') }}</option>
       <option v-for="(grade, index) in grades" :key="index" :value="grade">
-        {{ grade }}
+        {{ translateGrade(grade) }}
       </option>
     </select>
   </div>
@@ -16,6 +16,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { t } from '@nextcloud/l10n'
+import { translateGrade } from '../../../../Types/votingType'
 
 const props = defineProps<{
   engineConfig: Record<string, unknown>

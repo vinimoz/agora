@@ -150,6 +150,7 @@ const enrichedTransformTypes = computed(() => {
 
 
 const getStatusLabel = (status: string) => {
+  if (status === 'draft') return t('agora', 'Draft')
   const option = statusOptions.find(opt => opt.value === status)
   return option ? option.label : status
 }

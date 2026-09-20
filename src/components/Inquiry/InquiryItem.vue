@@ -108,10 +108,10 @@ const inquiryStatusLabel = computed(() => {
   )
 
   if (!statusItem) {
-    return 'Draft'
+    return t('agora', 'Draft')
   }
 
-  return statusItem.label || 'Draft'
+  return statusItem.label || t('agora', 'Draft')
 })
 
 const inquiryStatusInfo = computed(() => {

@@ -38,7 +38,7 @@
                         <template #icon>
                             <component :is="getLayoutIcon(layout)" :size="16" />
                         </template>
-                {{ t('agora', capitalize(layout)) }}
+                {{ getLayoutLabel(layout) }}
                 </NcButton>
             </div>
         </div>
@@ -404,6 +404,14 @@ const formatDate = (date?: string): string =>
 
 const capitalize = (str: string): string =>
     str.charAt(0).toUpperCase() + str.slice(1)
+
+const getLayoutLabel = (layout: string): string => {
+    const labels: Record<string, string> = {
+	cards: t('agora', 'Cards'),
+	results: t('agora', 'Results'),
+    }
+    return labels[layout] || capitalize(layout)
+}
 
 const getLayoutIcon = (layout: string): unknown => {
     const icons: Record<string, unknown> = { 

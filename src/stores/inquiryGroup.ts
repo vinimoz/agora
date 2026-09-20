@@ -536,7 +536,7 @@ return response.data
             this.inquiryGroup = response.data.inquiryGroup
             emit('archive:inquiry-group', {
                 store: 'inquiryGroup',
-                message: t('inquiries', 'Inquiry group archived'),
+                message: t('agora', 'Inquiry group archived'),
             })
         } catch (error) {
             if ((error as AxiosError)?.code === 'ERR_CANCELED') {
@@ -561,7 +561,7 @@ return response.data
             this.inquiryGroup = response.data.inquiryGroup
             emit('restore:inquiry-group', {
                 store: 'inquiryGroup',
-                message: t('inquiries', 'Inquiry group restored'),
+                message: t('agora', 'Inquiry group restored'),
             })
         } catch (error) {
             if ((error as AxiosError)?.code === 'ERR_CANCELED') {
@@ -582,7 +582,7 @@ return response.data
         const inquiriesStore = useInquiriesStore()
 
         if (!this.inquiryGroup.title && !this.inquiryGroup.title) {
-            showError(t('inquiries', 'Group title must not be empty!'))
+            showError(t('agora', 'Group title must not be empty!'))
             return
         }
 
@@ -602,7 +602,7 @@ return response.data
             this.inquiryGroup = response.data.inquiryGroup
             emit('update:inquiry-group', {
                 store: 'inquiryGroup',
-                message: t('inquiries', 'Inquiry group updated'),
+                message: t('agora', 'Inquiry group updated'),
             })
         } catch (error) {
             if ((error as AxiosError)?.code === 'ERR_CANCELED') {
@@ -612,7 +612,7 @@ return response.data
                 error,
                 inquiryGroup: this.inquiryGroup,
             })
-            showError(t('inquiries', 'Error writing inquiry group'))
+            showError(t('agora', 'Error writing inquiry group'))
             throw error
         } finally {
             this.updating = false

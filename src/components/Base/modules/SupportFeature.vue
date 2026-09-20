@@ -319,7 +319,7 @@ class="counter-icon" :style="iconContainerStyles"
         <div class="median-info">
           <span class="median-label">{{ t('agora', 'Median grade') }}:</span>
           <span class="median-value">
-            {{ majorityResult.median_label || getGradeLabel(majorityResult.median) }}
+            {{ translateGrade(majorityResult.median_label) || getGradeLabel(majorityResult.median) }}
           </span>
         </div>
       </div>
@@ -453,6 +453,7 @@ import type {
   ReactionResult,
   MajorityJudgmentResult,
 } from '../../../Types/votingType'
+import { translateGrade } from '../../../Types/votingType'
 
 // Define emits
 const emit = defineEmits<{
@@ -950,7 +951,7 @@ const getGradeLabel = (grade: number | string | null): string => {
   // Convert numeric strings to numbers
   if (typeof grade === 'string') {
     const num = Number(grade)
-    if (isNaN(num)) return grade // it's a real string label
+    if (isNaN(num)) return translateGrade(grade) // it's a real string label
     grade = num
   }
 
@@ -958,11 +959,11 @@ const getGradeLabel = (grade: number | string | null): string => {
     const idx = grade
     // Use supportTemplate.grades first
     if (supportTemplate.value?.grades && supportTemplate.value.grades[idx]) {
-      return supportTemplate.value.grades[idx]
+      return translateGrade(supportTemplate.value.grades[idx])
     }
     // Fallback to result's grades if available
     if (majorityResult.value && (majorityResult.value as unknown).grades?.[idx]) {
-      return (majorityResult.value as unknown).grades[idx]
+      return translateGrade((majorityResult.value as unknown).grades[idx])
     }
     // Default grades
     const defaultGrades = [

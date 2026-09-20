@@ -16,7 +16,7 @@ const emit = defineEmits(['change'])
 
 const showAnonDialog = ref(false)
 const anonDialog = {
-  message: t('inquiries', 'Once enabled, the anonymous setting cannot be reverted anymore.'),
+  message: t('agora', 'Once enabled, the anonymous setting cannot be reverted anymore.'),
   name: t('agora', 'Anonymize inquiry irrevocably'),
 
   buttons: [

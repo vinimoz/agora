@@ -15,10 +15,10 @@ const cardType = 'info'
 
 const registrationInvitationText = computed(() => {
   if (sessionStore.share?.publicInquiryEmail === 'mandatory') {
-    return t('inquiries', 'To participate, register with your email address and a name.')
+    return t('agora', 'To participate, register with your email address and a name.')
   }
   if (sessionStore.share?.publicInquiryEmail === 'optional') {
-    return t('inquiries', 'To participate, register a name and optionally with your email address.')
+    return t('agora', 'To participate, register a name and optionally with your email address.')
   }
   return t('agora', 'To participate register with a name')
 })

@@ -130,8 +130,8 @@ onMounted(async () => {
     try {
       isLoadedLocal.value = false
       await loadInquiryData()
-    } catch (error) {
-      showError('Failed to load inquiry:', error)
+    } catch {
+      showError(t('agora', 'Failed to load inquiry'))
     } finally {
       inquiryParent.value.id = inquiryStore.id
       inquiryParent.value.parentId = inquiryStore.parentId

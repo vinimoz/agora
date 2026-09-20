@@ -54,7 +54,7 @@ import { t } from '@nextcloud/l10n'
     <ul>
       <li>{{ t('agora', 'For text inquiries without expiration') }}</li>
       <li>
-        {{ t('inquiries', 'For inquiries created less than 2 days before the expiration.') }}
+        {{ t('agora', 'For inquiries created less than 2 days before the expiration.') }}
       </li>
       <li>
         {{

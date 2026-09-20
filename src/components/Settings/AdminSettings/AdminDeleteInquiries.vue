@@ -30,7 +30,7 @@ const appSettingsStore = useAppSettingsStore()
       type="number"
       inputmode="numeric"
       use-num-modifiers
-      :label="t('inquiries', 'Days after which archived inquiries should be finally deleted')"
+      :label="t('agora', 'Days after which archived inquiries should be finally deleted')"
       @change="appSettingsStore.write()"
     />
   </div>

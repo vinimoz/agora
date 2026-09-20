@@ -28,32 +28,32 @@ export type DateFormats = 'dateTime' | 'dateShort'
 export const dateTimeUnitsKeyed: Record<DateTimeUnit, DateTimeUnitType> = {
   minute: {
     id: 'minute',
-    name: t('inquiries', 'Minute'),
+    name: t('agora', 'Minute'),
     timeOption: true,
   },
   hour: {
     id: 'hour',
-    name: t('inquiries', 'Hour'),
+    name: t('agora', 'Hour'),
     timeOption: true,
   },
   day: {
     id: 'day',
-    name: t('inquiries', 'Day'),
+    name: t('agora', 'Day'),
     timeOption: false,
   },
   week: {
     id: 'week',
-    name: t('inquiries', 'Week'),
+    name: t('agora', 'Week'),
     timeOption: false,
   },
   month: {
     id: 'month',
-    name: t('inquiries', 'Month'),
+    name: t('agora', 'Month'),
     timeOption: false,
   },
   year: {
     id: 'year',
-    name: t('inquiries', 'Year'),
+    name: t('agora', 'Year'),
     timeOption: false,
   },
 }

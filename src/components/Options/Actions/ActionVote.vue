@@ -29,6 +29,7 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue'  
 import { showSuccess, showError } from '@nextcloud/dialogs'
+import { t } from '@nextcloud/l10n'
 import ExportResultsModal from './ExportResultsModal.vue'
 import { useSupportEngineStore } from '../../../stores/supportEngine'
 import NcLoading from '@nextcloud/vue/components/NcLoadingIcon'
@@ -95,17 +96,17 @@ const startVote = async () => {
     const engine = engineStore.getCurrentEngine()
     
     if (!engine) {
-      showError('Please create a vote system before starting a vote')
+      showError(t('agora', 'Please create a vote system before starting a vote'))
       return 
     }
 
     if (engine.target_ids.length === 0) {
-      showError('Please add options before starting a vote')
+      showError(t('agora', 'Please add options before starting a vote'))
       return
     }
 
     await engineStore.updateEngine(engine.id, { status: 'active' })
-    showSuccess('Vote started successfully')
+    showSuccess(t('agora', 'Vote started successfully'))
     emit('actionCompleted', { 
       refreshOptions: true, 
       message: 'Vote started successfully'
@@ -113,7 +114,7 @@ const startVote = async () => {
   } catch (error) {
     // Only unexpected errors (e.g. network failure) will reach this point
     console.error('Failed to start vote:', error)
-    showError('Failed to start vote')
+    showError(t('agora', 'Failed to start vote'))
   }
 }
 
@@ -124,24 +125,24 @@ const closeVote = async () => {
    
    
     if (!engine) {
-      showError('Please create a vote system before starting a vote')
+      showError(t('agora', 'Please create a vote system before starting a vote'))
       return   
     }
 
     if (engine.target_ids.length === 0) {
-      showError('Please add options before starting a vote')
+      showError(t('agora', 'Please add options before starting a vote'))
       return
     }
    
        if (engine.status === 'draft') {
-      showError('Could not close a vote not started')
+      showError(t('agora', 'Could not close a vote not started'))
       return
     }
 
 
     await engineStore.updateEngine(engine.id, { status: 'closed' })
     
-    showSuccess('Vote closed successfully')
+    showSuccess(t('agora', 'Vote closed successfully'))
     
     emit('actionCompleted', { 
       refreshOptions: true, 
@@ -149,7 +150,7 @@ const closeVote = async () => {
     })
   } catch (error) {
     console.error('Failed to close vote:', error)
-    showError('Failed to close vote')
+    showError(t('agora', 'Failed to close vote'))
   }
 }
 
@@ -158,12 +159,12 @@ const nextPhase = async () => {
     const engine = engineStore.getCurrentEngine()
 
     if (!engine) {
-      showError('Please create a vote system before starting a vote')
+      showError(t('agora', 'Please create a vote system before starting a vote'))
       return   
     }
 
     if (engine.target_ids.length === 0) {
-      showError('Please add options before starting a vote')
+      showError(t('agora', 'Please add options before starting a vote'))
       return
     }
    
@@ -173,13 +174,13 @@ const nextPhase = async () => {
     const nextPhaseName = phases[currentIdx + 1]
     
     if (!nextPhaseName) {
-      showError('Already in final phase')
+      showError(t('agora', 'Already in final phase'))
       return
     }
     
     await engineStore.updateEngine(engine.id, { status: nextPhaseName })
     
-    showSuccess(`Phase changed to ${nextPhaseName}`)
+    showSuccess(t('agora', 'Phase changed to {phase}', { phase: nextPhaseName }))
     
     emit('actionCompleted', { 
       refreshOptions: true, 
@@ -187,7 +188,7 @@ const nextPhase = async () => {
     })
   } catch (error) {
     console.error('Failed to change phase:', error)
-    showError('Failed to change phase')
+    showError(t('agora', 'Failed to change phase'))
   }
 }
 
