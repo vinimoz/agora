@@ -99,7 +99,7 @@
                   :link-autocomplete="true"
                   :placeholder="t('agora', 'Enter a title for this option')"
                   full-width
-                  @keyup.enter="formData.text && createOption()"
+                  @keyup.enter="formValid && createOption()"
                 />
               </div>
 
@@ -385,7 +385,9 @@ const optionTypeHelp = computed(() => {
 })
 
 // Form validation
-const formValid = computed(() => !!formData.value.text.trim())
+const formValid = computed(() =>
+  useTitle.value ? !!formData.value.title.trim() : !!formData.value.text.trim()
+)
 
 // Helper methods
 const getParentIcon = (parent: Option) => getOptionTypeIconComponent(parent.type, allOptionTypes.value)
