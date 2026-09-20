@@ -426,6 +426,7 @@ OC.L10N.register(
     "Email options" : "Alternativer for e-post",
     "Add links to legal terms, if they exist and add an optional disclaimer to emails." : "Legg til koblinger til juridiske termer, hvis de finnes, og legg til en valgfri ansvarsfraskrivelse i e-poster.",
     "Job control" : "Jobbkontroll",
+    "Delete group" : "Slett gruppe",
     "Home" : "Hjem",
     "groups" : "grupper",
     "Loading …" : "Laster ...",

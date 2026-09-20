@@ -209,6 +209,7 @@
     "{actor} has restored the share for {sharee} from inquiry {inquiryTitle}" : "{actor}ha restaurado el recurso compartido {sharee}de la consulta {inquiryTitle}",
     "You have restored share of {sharee}" : "Has restaurado el recurso compartido de {sharee}",
     "{actor} has restored a share" : "{actor} ha restaurado un recurso compartido",
+    "You have restored a public share from inquiry {inquiryTitle}" : "Has restaurado un recurso compartido a la consulta 1{inquiryTitle}",
     "You have restored a public share" : "Has restaurado un recurso compartido público",
     "{actor} has restored a public share" : "{actor} ha restaurado un recurso compartido público",
     "You have restored the share for group {sharee}" : "Has restaurado el recurso compartido para el grupo {sharee}",
