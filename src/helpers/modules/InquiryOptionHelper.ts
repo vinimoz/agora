@@ -740,11 +740,24 @@ export function findOptionType(
  */
 export function getOptionTypeLabel(
   optionType: string | null | undefined,
-  optionTypes: InquiryOptionType[],
+  optionTypes?: InquiryOptionType[],
   fallback: string = 'Option'
 ): string {
   if (!optionType) return fallback
-  const found = findOptionType(optionType, optionTypes)
+
+  let types = optionTypes ?? []
+
+  // Callers that have no option type list at hand fall back to the stored
+  // catalogue, otherwise the raw key would be rendered instead of its label.
+  if (!types.length) {
+    try {
+      types = useAppSettingsStore()?.inquiryOptionTypeTab ?? []
+    } catch {
+      // Store not available
+    }
+  }
+
+  const found = findOptionType(optionType, types)
   return found?.label || optionType || fallback
 }
 
