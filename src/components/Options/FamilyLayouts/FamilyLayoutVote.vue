@@ -51,7 +51,7 @@
             <!-- Cards Layout -->
             <div v-else-if="currentLayout === 'cards'" class="cards-layout">
                 <VoteCardsLayout
-                        :ranked-options="rankedOptions"
+                        :options="votableOptions"
                         :effective-engine-id="effectiveEngineId"
                         :active-engine="currentEngine"
                         :can-vote="canVote"

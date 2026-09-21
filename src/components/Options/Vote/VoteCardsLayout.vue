@@ -4,7 +4,7 @@
   <div class="cards-layout">
     <div class="cards-grid">
       <VoteCard
-        v-for="option in rankedOptions"
+        v-for="option in options"
         :key="option.id"
         :option="option"
         :effective-engine-id="effectiveEngineId"
@@ -22,7 +22,7 @@
         :current-reaction="reactions[option.id]"
         :current-quadratic-votes="quadraticVotes[option.id]"
         :current-token-weight="tokenWeights[option.id]"
-        :total-options="rankedOptions.length"
+        :total-options="options.length"
         :get-user-vote-value-for-option="getUserVoteValueForOption"
         @vote="(option, value) => $emit('vote', option, value)"
         @approval-toggle="(optionId) => $emit('toggleSelection', optionId)"
@@ -39,7 +39,7 @@
 
 
     <!-- Empty state -->
-    <div v-if="rankedOptions.length === 0" class="empty-state">
+    <div v-if="options.length === 0" class="empty-state">
       <component :is="InquiryOptionIcons.Inbox" :size="48" />
       <p>{{ t('agora', 'No options available') }}</p>
     </div>
@@ -90,7 +90,7 @@ import type { Option, SupportEngine } from '../../../Types/index'
 import type { SupportValue } from '../../../Types/votingType'
 
 const props = defineProps<{
-  rankedOptions: Option[]
+  options: Option[]
   effectiveEngineId: string
   activeEngine?: SupportEngine
   canVote?: boolean
@@ -130,7 +130,7 @@ const showSubmitButton = computed(() =>
   props.canVote &&
   props.activeEngine?.status === 'active' &&
   props.effectiveEngineId !== 'trending' &&
-  props.rankedOptions.length > 0
+  props.options.length > 0
 )
 
 const getSubmitButtonText = (): string => {
