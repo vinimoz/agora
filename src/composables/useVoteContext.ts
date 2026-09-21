@@ -851,7 +851,22 @@ export function useVoteContext(inquiryId: number): VoteContext {
           }
   })
 
-  const getPercentage = (option: Option, total: number = totalVotes.value): number => {
+  // Borda spreads points across the options and Condorcet counts won duels, so
+  // an option scores on a scale that has nothing to do with the number of
+  // voters: two voters ranking three options give the winner six points, which
+  // totalVotes turned into 300%. Their share is of the points handed out.
+  const pointBasedEngines = ['borda', 'condorcet']
+
+  const percentageBase = computed(() => {
+      if (!pointBasedEngines.includes(effectiveEngineId.value)) {
+          return totalVotes.value
+      }
+      let total = 0
+      for (const opt of votableOptions.value) total += getOptionVoteCount(opt.id)
+          return total
+  })
+
+  const getPercentage = (option: Option, total: number = percentageBase.value): number => {
       const count = getOptionVoteCount(option.id)
       if (total === 0) return 0
           return Math.round((count / total) * 100)
