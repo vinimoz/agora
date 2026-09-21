@@ -5,18 +5,18 @@
 <template>
   <div class="vote-input-binary">
     <NcButton
-      v-for="option in binaryOptions"
-      :key="option.value"
-      :type="isSelected(option.value) ? 'primary' : 'tertiary'"
+      v-for="choice in binaryOptions"
+      :key="choice.value"
+      :type="isSelected(choice.value) ? 'primary' : 'tertiary'"
       size="small"
-      :class="{ 'binary-selected': isSelected(option.value) }"
+      :class="{ 'binary-selected': isSelected(choice.value) }"
       :disabled="disabled"
-      @click="vote(option.value)"
+      @click="vote(choice.value)"
     >
       <template #icon>
-        <component :is="option.icon" :size="16" />
+        <component :is="choice.icon" :size="16" />
       </template>
-      {{ option.label }}
+      {{ choice.label }}
     </NcButton>
   </div>
 </template>
@@ -29,7 +29,7 @@ import { ThumbsUp, ThumbsDown } from 'lucide-vue-next'
 import type { SupportData, Option } from '../../Types/index'
 
 const props = defineProps<{
-  optionb: Option
+  option: Option
   disabled?: boolean
   userVote?: SupportData
   currentScore?: number | null
@@ -63,7 +63,7 @@ function isSelected(value: number) {
 
 function vote(value: number) {
   const newValue = currentValue.value === value ? null : value
-  emit('update:score', props.optionb.id, newValue)
+  emit('update:score', props.option.id, newValue)
 }
 </script>
 
