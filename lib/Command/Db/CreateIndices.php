@@ -30,25 +30,21 @@ class CreateIndices extends Command
         private IndexManager $indexManager,
         private IDBConnection $connection,
     ) {
-        parent::__construct();
+	    parent::__construct();
     }
 
     protected function runCommands(): int
     {
-        // Create schema using the connection
-        $schema = $this->connection->createSchema();
-        
-        // Set the schema on the index manager
-        $this->indexManager->setSchema($schema);
-        
-        // Create indices and constraints
-        $this->addForeignKeyConstraints();
-        $this->addIndices();
-        
-        // Migrate the schema to the database
-        $this->connection->migrateToSchema($schema);
+	    $schema = $this->connection->createSchema();
+	    $this->indexManager->setSchema($schema);
 
-        return 0;
+	    // Indices first so FKs referencing indexed columns can be created
+	    // safely on all DB platforms (notably MySQL).
+	    $this->addIndices();
+	    $this->addForeignKeyConstraints();
+
+	    $this->connection->migrateToSchema($schema);
+	    return 0;
     }
 
     /**
@@ -56,9 +52,9 @@ class CreateIndices extends Command
      */
     private function addForeignKeyConstraints(): void
     {
-        $this->printComment('Add foreign key constraints');
-        $messages = $this->indexManager->createForeignKeyConstraints();
-        $this->printInfo($messages, ' - ');
+	    $this->printComment('Add foreign key constraints');
+	    $messages = $this->indexManager->createForeignKeyConstraints();
+	    $this->printInfo($messages, ' - ');
     }
 
     /**
@@ -66,8 +62,8 @@ class CreateIndices extends Command
      */
     private function addIndices(): void
     {
-        $this->printComment('Add indices');
-        $messages = $this->indexManager->createAllIndices();
-        $this->printInfo($messages, ' - ');
+	    $this->printComment('Add indices');
+	    $messages = $this->indexManager->createAllIndices();
+	    $this->printInfo($messages, ' - ');
     }
 }

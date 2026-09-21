@@ -102,7 +102,7 @@ class Version01060020251115120000 extends SimpleMigrationStep
         }
 
         $table = $this->schema->createTable($tableName);
-        $table->addColumn('id', Types::BIGINT, ['autoincrement' => true, 'notnull' => true]);
+        $table->addColumn('id', Types::BIGINT, ['autoincrement' => true, 'unsigned' => true, 'notnull' => true]);
         $table->addColumn('family', Types::STRING, ['notnull' => true, 'default' => 'collective', 'length' => 64]);
         $table->addColumn('group_type', Types::STRING, ['notnull' => true, 'length' => 50]);
         $table->addColumn('icon', Types::STRING, ['notnull' => false, 'default' => '']);
@@ -116,8 +116,8 @@ class Version01060020251115120000 extends SimpleMigrationStep
         $table->addColumn('rules', Types::JSON, ['notnull' => true, 'default' => '{}']);
         $table->addColumn('features', Types::JSON, ['notnull' => true, 'default' => '[]']);
         $table->addColumn('actions', Types::JSON, ['notnull' => true, 'default' => '[]']);
-        $table->addColumn('sort_order', Types::BIGINT, ['notnull' => true, 'default' => 0, 'length' => 20]);
-        $table->addColumn('created', Types::BIGINT, ['notnull' => true, 'default' => 0]);
+        $table->addColumn('sort_order', Types::BIGINT, ['notnull' => true, 'default' => 0, 'unsigned' => true, 'length' => 20]);
+        $table->addColumn('created', Types::BIGINT, ['notnull' => true, 'unsigned' => true, 'default' => 0]);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['group_type'], 'agora_uniq_group_type');
         
@@ -132,17 +132,17 @@ class Version01060020251115120000 extends SimpleMigrationStep
         }
 
         $table = $this->schema->createTable($tableName);
-        $table->addColumn('id', Types::BIGINT, ['autoincrement' => true, 'notnull' => true, 'length' => 20]);
-        $table->addColumn('inquiry_id', Types::BIGINT, ['notnull' => true, 'length' => 20]);
-        $table->addColumn('option_id', Types::BIGINT, ['notnull' => true, 'length' => 20]);
+        $table->addColumn('id', Types::BIGINT, ['autoincrement' => true, 'notnull' => true, 'unsigned' => true, 'length' => 20]);
+        $table->addColumn('inquiry_id', Types::BIGINT, ['notnull' => true, 'unsigned' => true, 'length' => 20]);
+        $table->addColumn('option_id', Types::BIGINT, ['notnull' => true, 'unsigned' => true, 'length' => 20]);
         $table->addColumn('phase', Types::STRING, ['notnull' => true, 'length' => 50]);
         $table->addColumn('type', Types::STRING, ['notnull' => true, 'length' => 20]);
         $table->addColumn('value', Types::FLOAT, ['notnull' => true, 'default' => 0]);
         $table->addColumn('base', Types::STRING, ['notnull' => true, 'length' => 50]);
         $table->addColumn('description', Types::TEXT, ['notnull' => false]);
-        $table->addColumn('sort_order', Types::BIGINT, ['notnull' => true, 'default' => 0, 'length' => 20]);
-        $table->addColumn('created', Types::BIGINT, ['notnull' => true, 'default' => 0, 'length' => 20]);
-        $table->addColumn('updated', Types::BIGINT, ['notnull' => true, 'default' => 0, 'length' => 20]);
+        $table->addColumn('sort_order', Types::BIGINT, ['notnull' => true, 'default' => 0, 'unsigned' => true, 'length' => 20]);
+        $table->addColumn('created', Types::BIGINT, ['notnull' => true, 'default' => 0, 'unsigned' => true, 'length' => 20]);
+        $table->addColumn('updated', Types::BIGINT, ['notnull' => true, 'default' => 0, 'unsigned' => true, 'length' => 20]);
         $table->setPrimaryKey(['id']);
         
         $this->logInfo("Created {$tableName}");
@@ -176,7 +176,8 @@ class Version01060020251115120000 extends SimpleMigrationStep
         $table = $this->schema->getTable($tableName);
         if (!$table->hasColumn('allow_edit')) {
             $table->addColumn('allow_edit', Types::BIGINT, [
-                'notnull' => true,
+		    'notnull' => true,
+		    'unsigned' => true,
                 'default' => 1,
                 'length' => 20
             ]);

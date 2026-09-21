@@ -169,12 +169,11 @@ class TrendingService
      */
     public function updateAllTrendingScores(int $batchSize = 50): int
     {
-        $inquiries = $this->inquiryMapper->findAllActive();
+	 $inquiries = $this->inquiryMapper->findAllWithTrendingFeature();
         $updated = 0;
 
         foreach (array_chunk($inquiries, $batchSize) as $chunk) {
             foreach ($chunk as $inquiry) {
-                if ($inquiry->getSupportFeature() === 'trending') {
                     try {
                         $this->calculateAndStoreTrendingScores($inquiry->getId());
                         $updated++;
@@ -183,7 +182,6 @@ class TrendingService
                             'error' => $e->getMessage()
                         ]);
                     }
-                }
             }
 
             // Small sleep to prevent DB overload

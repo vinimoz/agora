@@ -11,6 +11,7 @@ namespace OCA\Agora\Db;
 use OCA\Agora\UserSession;
 use OCA\Agora\Helper\SqlHelper;
 use OCP\AppFramework\Db\QBMapper;
+use OCA\Agora\Exceptions\ForbiddenException;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 use OCP\Search\ISearchQuery;
@@ -220,46 +221,26 @@ class InquiryMapper extends QBMapper
 		return $qb;
 	}
 
+
 	/**
- * Find all active inquiries for the current user
- * Active = not archived, not deleted, and user has view permission
+ * Find all inquiries that have the 'trending' support feature enabled.
+ * Used by the cron job - no user context available.
  *
  * @return Inquiry[]
  */
-public function findAllActive(): array
+public function findAllWithTrendingFeature(): array
 {
-    $activeInquiries = [];
+    $qb = $this->db->getQueryBuilder();
 
-    try {
-        // Get all inquiries for the current user
-        $inquiries = $this->inquiryMapper->findForMe($this->userSession->getCurrentUserId());
+    $qb->select('*')
+        ->from($this->getTableName())
+        ->where($qb->expr()->eq('deleted', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)))
+        ->andWhere($qb->expr()->eq('archived', $qb->expr()->literal(0, IQueryBuilder::PARAM_INT)))
+        ->andWhere($qb->expr()->eq('support_feature', $qb->createNamedParameter('trending')));
 
-        // Filter for active (non-archived, non-deleted) and permission-checked
-        foreach ($inquiries as $inquiry) {
-            // Check if inquiry is active (not archived and not deleted)
-            $isActive = $inquiry->getArchived() === 0 && $inquiry->getDeleted() === 0;
-
-            if (!$isActive) {
-                continue;
-            }
-
-            // Check if user has view permission
-            try {
-                $inquiry->request(Inquiry::PERMISSION_INQUIRY_VIEW);
-                $activeInquiries[] = $inquiry;
-            } catch (ForbiddenException $e) {
-                // User doesn't have permission, skip this inquiry
-                continue;
-            }
-        }
-
-        return $activeInquiries;
-
-    } catch (DoesNotExistException $e) {
-        // No inquiries found
-        return [];
-    }
+    return $this->findEntities($qb);
 }
+
 
 	/**
 	 * Get user IDs for an inquiry visibility

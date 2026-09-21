@@ -94,18 +94,10 @@ class CommentService
         $this->comment = $this->commentMapper->insert($this->comment);
 
         $this->eventDispatcher->dispatchTyped(new CommentAddEvent($this->comment));
-	$this->updateTrendingScores($data['inquiryId']);
+        $this->trendingService->updateTrendingScoresForInquiry($inquiryId);
         return $this->comment;
     }
 
-    private function updateTrendingScores(int $inquiryId): void
-    {
-        try {
-            $this->trendingService->updateTrendingScoresForInquiry($inquiryId);
-        } catch (\Exception $e) {
-            $this->logger->error('Failed to update trending scores: ' . $e->getMessage());
-        }
-    }
 
     public function countByInquiryId(int $inquiryId): int
     {

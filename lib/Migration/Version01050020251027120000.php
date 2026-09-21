@@ -86,15 +86,15 @@ class Version01050020251027120000 extends SimpleMigrationStep
         $this->logInfo("Creating base table {$tableName}");
         
         $table = $this->schema->createTable($tableName);
-        $table->addColumn('id', Types::BIGINT, ['autoincrement' => true, 'notnull' => true, 'length' => 20]);
+        $table->addColumn('id', Types::BIGINT, ['autoincrement' => true, 'notnull' => true, 'unsigned' => true, 'length' => 20]);
         $table->addColumn('type', Types::STRING, ['notnull' => true, 'default' => 'petition', 'length' => 64]);
         $table->addColumn('title', Types::STRING, ['notnull' => true, 'default' => '', 'length' => 128]);
         $table->addColumn('description', Types::TEXT, ['notnull' => false, 'default' => null]);
         $table->addColumn('owner', Types::STRING, ['notnull' => false, 'default' => '', 'length' => 256]);
-        $table->addColumn('created', Types::BIGINT, ['notnull' => true, 'default' => 0, 'length' => 20]);
-        $table->addColumn('expire', Types::BIGINT, ['notnull' => true, 'default' => 0, 'length' => 20]);
-        $table->addColumn('deleted', Types::BIGINT, ['notnull' => true, 'default' => 0, 'length' => 20]);
-        $table->addColumn('publication_status', Types::STRING, ['notnull' => true, 'default' => 'private', 'length' => 50]);
+        $table->addColumn('created', Types::BIGINT, ['notnull' => true, 'default' => 0, 'unsigned' => true, 'length' => 20]);
+        $table->addColumn('expire', Types::BIGINT, ['notnull' => true, 'default' => 0, 'unsigned' => true,  'length' => 20]);
+        $table->addColumn('deleted', Types::BIGINT, ['notnull' => true, 'default' => 0, 'unsigned' => true, 'length' => 20]);
+        $table->addColumn('access', Types::STRING, ['notnull' => true, 'default' => 'private', 'length' => 50]);
         $table->addColumn('inquiry_status', Types::STRING, ['notnull' => true, 'default' => 'draft', 'length' => 32]);
         $table->setPrimaryKey(['id']);
         
@@ -140,7 +140,7 @@ class Version01050020251027120000 extends SimpleMigrationStep
         $this->logInfo("Creating table {$tableName}");
         
         $table = $this->schema->createTable($tableName);
-        $table->addColumn('id', Types::BIGINT, ['autoincrement' => true, 'notnull' => true, 'length' => 20]);
+        $table->addColumn('id', Types::BIGINT, ['autoincrement' => true, 'notnull' => true, 'unsigned' => true, 'length' => 20]);
         $table->addColumn('inquiry_type', Types::STRING, ['notnull' => true, 'length' => 50]);
         $table->addColumn('family', Types::STRING, ['notnull' => true, 'default' => 'deliberative', 'length' => 64]);
         $table->addColumn('icon', Types::STRING, ['notnull' => true, 'default' => '']);
@@ -153,7 +153,7 @@ class Version01050020251027120000 extends SimpleMigrationStep
         $table->addColumn('allow_comment', Types::SMALLINT, ['notnull' => false, 'default' => null]);
         $table->addColumn('support_feature', Types::STRING, ['notnull' => true, 'default' => 'none', 'length' => 20]);
         $table->addColumn('is_root', Types::BOOLEAN, ['notnull' => false, 'default' => true]);
-        $table->addColumn('created', Types::BIGINT, ['notnull' => true, 'default' => 0, 'length' => 20]);
+        $table->addColumn('created', Types::BIGINT, ['notnull' => true, 'default' => 0, 'unsigned' => true, 'length' => 20]);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['inquiry_type'], 'agora_uniq_inquiry_type');
         
@@ -192,7 +192,7 @@ class Version01050020251027120000 extends SimpleMigrationStep
         $this->logInfo("Creating table {$tableName}");
         
         $table = $this->schema->createTable($tableName);
-        $table->addColumn('id', Types::BIGINT, ['autoincrement' => true, 'notnull' => true]);
+        $table->addColumn('id', Types::BIGINT, ['autoincrement' => true, 'unsigned' => true, 'notnull' => true]);
         $table->addColumn('family', Types::STRING, ['notnull' => true, 'default' => 'debate', 'length' => 64]);
         $table->addColumn('option_type', Types::STRING, ['notnull' => true, 'length' => 50]);
         $table->addColumn('icon', Types::STRING, ['notnull' => false, 'default' => '']);
@@ -203,8 +203,8 @@ class Version01050020251027120000 extends SimpleMigrationStep
         $table->addColumn('allow_comment', Types::SMALLINT, ['notnull' => false, 'default' => null]);
         $table->addColumn('support_feature', Types::STRING, ['notnull' => true, 'default' => 'none', 'length' => 20]);
         $table->addColumn('statuses', Types::TEXT, ['notnull' => false]);
-        $table->addColumn('use_title', Types::BIGINT, ['notnull' => true, 'default' => 1, 'length' => 20]);
-        $table->addColumn('created', Types::BIGINT, ['notnull' => true, 'default' => 0]);
+        $table->addColumn('use_title', Types::BIGINT, ['notnull' => true, 'default' => 1, 'unsigned' => true, 'length' => 20]);
+        $table->addColumn('created', Types::BIGINT, ['notnull' => true, 'unsigned' => true, 'default' => 0]);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['option_type'], 'agora_uniq_option_type');
         
@@ -255,16 +255,16 @@ class Version01050020251027120000 extends SimpleMigrationStep
         }
 
         $table = $this->schema->createTable($tableName);
-        $table->addColumn('id', Types::BIGINT, ['autoincrement' => true, 'notnull' => true, 'length' => 20]);
+        $table->addColumn('id', Types::BIGINT, ['autoincrement' => true, 'notnull' => true, 'unsigned' => true,  'length' => 20]);
         $table->addColumn('inquiry_type', Types::STRING, ['notnull' => true, 'length' => 50]);
         $table->addColumn('status_key', Types::STRING, ['notnull' => true, 'length' => 50]);
         $table->addColumn('label', Types::STRING, ['notnull' => true, 'length' => 100]);
         $table->addColumn('description', Types::TEXT, ['notnull' => true, 'default' => '']);
         $table->addColumn('is_final', Types::BOOLEAN, ['notnull' => false, 'default' => false]);
         $table->addColumn('icon', Types::STRING, ['notnull' => true, 'default' => '']);
-        $table->addColumn('sort_order', Types::BIGINT, ['notnull' => true, 'default' => 0, 'length' => 20]);
-        $table->addColumn('created', Types::BIGINT, ['notnull' => true, 'default' => 0, 'length' => 20]);
-        $table->addColumn('updated', Types::BIGINT, ['notnull' => true, 'default' => 0, 'length' => 20]);
+        $table->addColumn('sort_order', Types::BIGINT, ['notnull' => true, 'default' => 0, 'unsigned' => true, 'length' => 20]);
+        $table->addColumn('created', Types::BIGINT, ['notnull' => true, 'default' => 0, 'unsigned' => true, 'length' => 20]);
+        $table->addColumn('updated', Types::BIGINT, ['notnull' => true, 'default' => 0, 'unsigned' => true, 'length' => 20]);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['inquiry_type', 'status_key'], 'agora_uniq_inquiry_status');
         
@@ -279,7 +279,7 @@ class Version01050020251027120000 extends SimpleMigrationStep
         }
 
         $table = $this->schema->createTable($tableName);
-        $table->addColumn('id', Types::BIGINT, ['autoincrement' => true, 'notnull' => true, 'length' => 20]);
+        $table->addColumn('id', Types::BIGINT, ['autoincrement' => true, 'notnull' => true, 'unsigned' => true, 'length' => 20]);
         $table->addColumn('family_type', Types::STRING, ['notnull' => true, 'length' => 50]);
         $table->addColumn('label', Types::STRING, ['notnull' => true, 'length' => 100]);
         $table->addColumn('description', Types::TEXT, ['notnull' => true, 'default' => '']);
@@ -288,8 +288,8 @@ class Version01050020251027120000 extends SimpleMigrationStep
         $table->addColumn('rules', Types::JSON, ['notnull' => true, 'default' => '{}']);
         $table->addColumn('features', Types::JSON, ['notnull' => true, 'default' => '[]']);
         $table->addColumn('actions', Types::JSON, ['notnull' => true, 'default' => '[]']);
-        $table->addColumn('sort_order', Types::BIGINT, ['notnull' => true, 'default' => 0, 'length' => 20]);
-        $table->addColumn('created', Types::BIGINT, ['notnull' => true, 'default' => 0, 'length' => 20]);
+        $table->addColumn('sort_order', Types::BIGINT, ['notnull' => true, 'default' => 0, 'unsigned' => true, 'length' => 20]);
+        $table->addColumn('created', Types::BIGINT, ['notnull' => true, 'default' => 0, 'unsigned' => true, 'length' => 20]);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['family_type'], 'agora_uniq_family_inquiry_type');
         
@@ -304,7 +304,7 @@ class Version01050020251027120000 extends SimpleMigrationStep
         }
 
         $table = $this->schema->createTable($tableName);
-        $table->addColumn('id', Types::BIGINT, ['autoincrement' => true, 'notnull' => true, 'length' => 20]);
+        $table->addColumn('id', Types::BIGINT, ['autoincrement' => true, 'notnull' => true, 'unsigned' => true, 'length' => 20]);
         $table->addColumn('family_type', Types::STRING, ['notnull' => true, 'length' => 50]);
         $table->addColumn('label', Types::STRING, ['notnull' => true, 'length' => 100]);
         $table->addColumn('description', Types::TEXT, ['notnull' => true, 'default' => '']);
@@ -313,8 +313,8 @@ class Version01050020251027120000 extends SimpleMigrationStep
         $table->addColumn('rules', Types::JSON, ['notnull' => true, 'default' => '{}']);
         $table->addColumn('features', Types::JSON, ['notnull' => true, 'default' => '[]']);
         $table->addColumn('actions', Types::JSON, ['notnull' => true, 'default' => '[]']);
-        $table->addColumn('sort_order', Types::BIGINT, ['notnull' => true, 'default' => 0, 'length' => 20]);
-        $table->addColumn('created', Types::BIGINT, ['notnull' => true, 'default' => 0, 'length' => 20]);
+        $table->addColumn('sort_order', Types::BIGINT, ['notnull' => true, 'default' => 0, 'unsigned' => true, 'length' => 20]);
+        $table->addColumn('created', Types::BIGINT, ['notnull' => true, 'default' => 0, 'unsigned' => true, 'length' => 20]);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['family_type'], 'agora_uniq_family_option_type');
         

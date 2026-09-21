@@ -1,5 +1,4 @@
 <?php
-
 namespace OCA\Agora\Service\Ai\Document;
 
 class DocumentParser {
@@ -35,5 +34,22 @@ class DocumentParser {
     
     public function addSupportedFormat(string $format, ParserInterface $parser): void {
         $this->supportedFormats[] = $format;
+        // Store parser for custom formats
     }
+}
+
+interface ParserInterface {
+    public function parse(string $path): DocumentContent;
+}
+
+class DocumentContent {
+    public string $fullText;
+    public array $chapters;
+    public array $sections;
+    public array $headings;
+    public array $paragraphs;
+    public array $metadata;
+    public array $tables;
+    public array $images;
+    public array $footnotes;
 }

@@ -95,7 +95,6 @@ class Rebuild extends Command
         // Create all indices using the proper methods
         $this->indexManager->createAllIndices();
         $this->indexManager->createForeignKeyConstraints();
-        $this->indexManager->createUniqueIndices();
         
         $this->connection->migrateToSchema($schema);
     }

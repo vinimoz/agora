@@ -320,7 +320,7 @@ class Version20250715120000 extends SimpleMigrationStep
         $table->addColumn('expire', Types::BIGINT, ['notnull' => true, 'default' => 0, 'unsigned' => true, 'length' => 20]);
         $table->addColumn('deleted', Types::BIGINT, ['notnull' => true, 'default' => 0, 'unsigned' => true, 'length' => 20]);
         $table->addColumn('owned_group', Types::STRING, ['notnull' => false, 'default' => '', 'length' => 255]);
-        $table->addColumn('publication_status', Types::STRING, ['notnull' => true, 'default' => 'private', 'length' => 50]);
+        $table->addColumn('access', Types::STRING, ['notnull' => true, 'default' => 'private', 'length' => 50]);
         $table->addColumn('show_results', Types::STRING, ['notnull' => true, 'default' => 'always', 'length' => 64]);
         $table->addColumn('last_interaction', Types::BIGINT, ['notnull' => true, 'default' => 0, 'unsigned' => true, 'length' => 20]);
         $table->addColumn('parent_id', Types::BIGINT, ['notnull' => false, 'default' => null, 'unsigned' => true, 'length' => 20]);
@@ -491,7 +491,7 @@ class Version20250715120000 extends SimpleMigrationStep
         $table->addColumn('target_id', Types::BIGINT, ['notnull' => true, 'default' => 0, 'unsigned' => true, 'length' => 20]);
         $table->addColumn('parent_id', Types::BIGINT, ['notnull' => true, 'default' => 0, 'unsigned' => true, 'length' => 20]);
         $table->addColumn('type', Types::STRING, ['notnull' => true, 'default' => 'debate', 'length' => 64]);
-        $table->addColumn('publication_status', Types::STRING, ['notnull' => true, 'default' => 'private', 'length' => 32]);
+        $table->addColumn('access', Types::STRING, ['notnull' => true, 'default' => 'private', 'length' => 32]);
         $table->addColumn('text', Types::STRING, ['notnull' => true, 'default' => 'enter ur text', 'length' => 1024]);
         $table->addColumn('owner', Types::STRING, ['notnull' => true, 'default' => '', 'length' => 256]);
         $table->addColumn('owned_group', Types::STRING, ['notnull' => false, 'default' => '', 'length' => 255]);
