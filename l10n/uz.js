@@ -77,6 +77,8 @@ OC.L10N.register(
     "Archive" : "Arxiv",
     "Delete permanently" : "Butunlay o'chirish",
     "OK" : "OK",
+    "None" : "Yo'q",
+    "Threshold" : "Kirish maydoni",
     "Unlimited" : "Unlimited",
     "Close" : "Yopish",
     "Add {type}" : " {type} ni qo'shish",
@@ -97,7 +99,7 @@ OC.L10N.register(
     "Year" : "Yil",
     "No content yet" : "Hozircha kontent yo‘q",
     "Details" : "Tafsilotlar",
-    "None" : "Yo'q",
+    "Results" : "Natijalar",
     "Reset" : "Qayta tiklash",
     "Approve" : "Tasdiqlamoq",
     "Percentage" : "Foiz",
@@ -126,7 +128,6 @@ OC.L10N.register(
     "Choose language" : "Tilni tanlang",
     "Language" : "Language",
     "Confirm" : "Tasdiqlash",
-    "Results" : "Natijalar",
     "Next" : "Keyingisi",
     "English" : "Inglishcha",
     "French" : "Frantsuzcha",
@@ -141,6 +142,7 @@ OC.L10N.register(
     "Settings" : "Sozlamalar",
     "Sharing" : "Ulashish",
     "Not found" : "Topilmadi",
+    "Export as PDF" : "PDF sifatida eksport qilish",
     "Owner" : "Egalik"
 },
 "nplurals=1; plural=0;");
