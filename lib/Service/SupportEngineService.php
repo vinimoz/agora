@@ -11,6 +11,7 @@ namespace OCA\Agora\Service;
 
 use OCA\Agora\Db\SupportEngine;
 use OCA\Agora\Db\SupportEngineMapper;
+use OCA\Agora\Db\SupportMapper;
 use OCA\Agora\Db\SupportResultMapper;
 use OCP\AppFramework\Db\DoesNotExistException;
 use Psr\Log\LoggerInterface;
@@ -20,6 +21,8 @@ class SupportEngineService
     public function __construct(
         private SupportEngineMapper $engineMapper,
         private SupportResultMapper $resultMapper,
+        private SupportMapper $supportMapper,
+        private SupportResultService $resultService,
         private LoggerInterface $logger,
     ) {
     }
@@ -108,6 +111,7 @@ class SupportEngineService
         }
         
         // Handle status transitions
+        $closing = false;
         if (isset($data['status'])) {
             $oldStatus = $engine->getStatus();
             $config = $engine->getConfig();
@@ -121,6 +125,7 @@ class SupportEngineService
             // Closing engine
             if ($data['status'] === SupportEngine::STATUS_CLOSED) {
                 $config['ended_at'] = time();
+                $closing = $oldStatus !== SupportEngine::STATUS_CLOSED;
             }
             
             $engine->setConfig($config);
@@ -158,7 +163,26 @@ class SupportEngineService
             $engine->setInquiryGroupId($data['inquiry_group_id']);
         }
 
-        return $this->engineMapper->update($engine);
+        $engine = $this->engineMapper->update($engine);
+
+        // A closed scrutiny keeps whatever result the last vote left behind,
+        // so recount once on the transition rather than serving a stale one.
+        // Count every support of the engine, as the vote path does: ballots
+        // cast option by option carry an option id.
+        if ($closing && $engine->getInquiryId()) {
+            try {
+                $this->resultService->calculateFromSupports(
+                    $engine->getInquiryId(),
+                    0,
+                    $this->supportMapper->findBySupportEngineId($engine->getId()),
+                    $engine->getId()
+                );
+            } catch (\Exception $e) {
+                $this->logger->error('Failed to recalculate results on close: ' . $e->getMessage());
+            }
+        }
+
+        return $engine;
     }
 
     public function deleteEngine(int $id): bool
