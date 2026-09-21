@@ -1,5 +1,15 @@
 # Changelog
 All notable changes to this project will be documented in this file.
+
+# [1.7.12] - 2026-09-20
+Fix:
+    - Bug #43: make commenting work on the /page/inquiry route
+    - Bug #42: show options not handled by any section
+    - Bug #41: translate leftover English strings
+    - Bug #40: allow creating an option with a title only
+    - In reel, cannot click on support
+    - Display Item, when there is an expieration date, support hidded.
+
 # [1.7.11] - 2026-09-18
 Fix:
     - Bug #39 : pass family to InquiryDto on update
