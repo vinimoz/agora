@@ -256,7 +256,7 @@ const hasVotePeriod = computed(() => inquiry.miscFields?.support_start && inquir
       </div>
 
       <div class="badges">
-        <div v-if="inquiry.parentId !== null" class="item__type">
+        <div v-if="inquiry.parentId" class="item__type">
           <RouterLink
             class="underline"
             :to="`/inquiry/${inquiry.parentId}`"
@@ -498,7 +498,7 @@ const hasVotePeriod = computed(() => inquiry.miscFields?.support_start && inquir
             <!-- Second Line: Parent Link + Participated + Comments + Supports -->
             <div class="second-line">
               <div class="left-items">
-                <div v-if="inquiry.parentId !== null" class="meta-chip meta-chip--transparent parent-link">
+                <div v-if="inquiry.parentId" class="meta-chip meta-chip--transparent parent-link">
                   <RouterLink :to="`/inquiry/${inquiry.parentId}`">
                     <component :is="StatusIcons.LinkIcon" :size="16" :title="`id:${inquiry.parentId}`"/>
                   </RouterLink>
