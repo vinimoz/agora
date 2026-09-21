@@ -7,7 +7,7 @@
     "optimize-autoloader": true,
     "autoloader-suffix": "Agora",
     "platform": {
-      "php": "8.2"
+      "php": "8.3"
     },
     "allow-plugins": {
       "bamarni/composer-bin-plugin": true,
@@ -29,7 +29,7 @@
     "doctrine/dbal": "3.8.6",
     "league/factory-muffin": "^3.0",
     "league/factory-muffin-faker": "^2.0",
-    "nextcloud/ocp": "dev-stable34"
+    "nextcloud/ocp": "dev-stable35"
   },
   "scripts": {
     "lint": "find . -name \\*.php -not -path './vendor*/*' -print0 | xargs -0 -n1 php -l",
@@ -53,7 +53,7 @@
     ]
   },
   "require": {
-    "league/commonmark": "^2.1",
+    "league/commonmark": "2.10.0",
     "rlanvin/php-rrule": "^2.3"
   }
 }
