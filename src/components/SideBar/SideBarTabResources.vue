@@ -53,6 +53,7 @@ const currentInquiry = computed(() => {
   if (inquiryStore.id) {
     return inquiryStore
   }
+  console.log(" CURRENT INQUIRY ", props.inquiry)
   
   // Otherwise, try to find the inquiry by ID in the store or use minimal data
   if (props.inquiry) {
@@ -393,13 +394,15 @@ const getResourceTarget = (): string => '_blank'
 
 // Add this function to check if resource can be edited
 const canEditResource = (): boolean => {
+   const inquiry = currentInquiry.value
+  console.log(" CAN EDIT RESSOURCE ",currentInquiry.value)
 
- if (!currentInquiry.value) {
+
+  if (!inquiry) {
     return false
   }
 
-  // Only owners can delete resources
-  if (!currentInquiry.value.currentUserStatus?.isOwner) {
+  if (!inquiry.currentUserStatus?.isOwner) {
     return false
   }
 
@@ -407,12 +410,12 @@ const canEditResource = (): boolean => {
   // Use your permission system if available, otherwise simple owner check
   try {
       if (context.value === undefined || context.value === null) {
-         return currentInquiry.value.currentUserStatus?.isOwner
+         return inquiry.currentUserStatus?.isOwner
     }
-    return canEdit?.(context.value) ?? currentInquiry.value.currentUserStatus?.isOwner
+    return canEdit?.(context.value) ?? inquiry.currentUserStatus?.isOwner
   } catch (error) {
     console.error('Error checking edit permissions:', error)
-    return currentInquiry.value.currentUserStatus?.isOwner
+    return false
   }
 }
 
@@ -507,7 +510,7 @@ onMounted(async () => {
                     <p class="description">{{ t('agora', 'Manage links to other Nextcloud resources and files') }}</p>
                 </div>
                 <NcButton
-                        v-if="currentInquiry.currentUserStatus?.isOwner"
+                        v-if="currentInquiry && currentInquiry.currentUserStatus?.isOwner"
                         type="primary"
                         class="add-resource-btn"
                         @click="openAddModal"

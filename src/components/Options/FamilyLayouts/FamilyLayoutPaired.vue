@@ -40,10 +40,12 @@
 
       <!-- Debate Axis with columns -->
       <div
-class="debate-axis" :class="{ 
-        'has-pairs': hasDetectedPairs,
-        'single-column': !hasForPositions || !hasAgainstPositions
-      }">
+        class="debate-axis"
+        :class="{
+          'has-pairs': hasDetectedPairs,
+          'single-column': !hasForPositions || !hasAgainstPositions,
+        }"
+      >
         <!-- FOR Column -->
         <div v-if="hasForPositions" class="debate-column for-column">
           <div class="column-header">
@@ -51,30 +53,32 @@ class="debate-axis" :class="{
             <h3>{{ getOptionTypeLabel('position_for') }}</h3>
             <span class="column-count">{{ getOptionsByType('position_for').length }}</span>
           </div>
-          
+
           <div class="column-content">
             <div
               v-for="position in getOptionsByType('position_for')"
               :key="position.id"
               class="position-wrapper"
               :class="{
-                'selected': selectedOptionId === position.id,
-                'expanded': expandedOptionId === position.id
+                selected: selectedOptionId === position.id,
+                expanded: expandedOptionId === position.id,
               }"
             >
-              <OptionCard
-                :option="position"
-                :inquiry-id="inquiryId"
-                :compact="cardDisplayMode === 'compact'"
-                :inline="cardDisplayMode === 'list'"
-                :show-action="true"
-		:family-type="family?.key"
+              <ItemCard
+                :item="position"
+                :parent-id="parentId"
+                :target-type="targetType"
+                :family-type="familyKey"
                 @click="selectOption(position)"
                 @edit="openDetail(position)"
               />
             </div>
-            
-            <button v-if="canAddForPosition" class="add-position-btn" @click="openAddOptionDialog('position_for')">
+
+            <button
+              v-if="canAddForPosition"
+              class="add-position-btn"
+              @click="openAddOptionDialog('position_for')"
+            >
               <component :is="InquiryOptionIcons.Plus" :size="16" />
               {{ t('agora', 'Add position') }}
             </button>
@@ -86,13 +90,10 @@ class="debate-axis" :class="{
           <!-- Balance Indicator -->
           <div class="balance-indicator">
             <div class="balance-bar">
-              <div 
-                class="balance-fill for-fill" 
-                :style="{ width: `${debateBalance.for}%` }"
-              ></div>
-              <div 
+              <div class="balance-fill for-fill" :style="{ width: `${debateBalance.for}%` }"></div>
+              <div
                 v-if="hasAgainstPositions"
-                class="balance-fill against-fill" 
+                class="balance-fill against-fill"
                 :style="{ width: `${debateBalance.against}%` }"
               ></div>
             </div>
@@ -102,7 +103,7 @@ class="debate-axis" :class="{
               <span class="against-stats">{{ debateBalance.against }}%</span>
             </div>
           </div>
-          
+
           <!-- Metrics -->
           <div class="center-metrics">
             <div class="metric-item">
@@ -145,30 +146,32 @@ class="debate-axis" :class="{
             <h3>{{ getOptionTypeLabel('position_against') }}</h3>
             <span class="column-count">{{ getOptionsByType('position_against').length }}</span>
           </div>
-          
+
           <div class="column-content">
             <div
               v-for="position in getOptionsByType('position_against')"
               :key="position.id"
               class="position-wrapper"
               :class="{
-                'selected': selectedOptionId === position.id,
-                'expanded': expandedOptionId === position.id
+                selected: selectedOptionId === position.id,
+                expanded: expandedOptionId === position.id,
               }"
             >
-              <OptionCard
-                :option="position"
-                :inquiry-id="inquiryId"
-                :compact="cardDisplayMode === 'compact'"
-                :inline="cardDisplayMode === 'list'"
-                :show-action="true"
-		:family-type="family?.key"
+              <ItemCard
+                :item="position"
+                :parent-id="parentId"
+                :target-type="targetType"
+                :family-type="familyKey"
                 @click="selectOption(position)"
                 @edit="openDetail(position)"
               />
             </div>
-            
-            <button v-if="canAddAgainstPosition" class="add-position-btn" @click="openAddOptionDialog('position_against')">
+
+            <button
+              v-if="canAddAgainstPosition"
+              class="add-position-btn"
+              @click="openAddOptionDialog('position_against')"
+            >
               <component :is="InquiryOptionIcons.Plus" :size="16" />
               {{ t('agora', 'Add position') }}
             </button>
@@ -189,17 +192,15 @@ class="debate-axis" :class="{
             :key="option.id"
             class="unpaired-item"
             :class="{
-              'selected': selectedOptionId === option.id,
-              'expanded': expandedOptionId === option.id
+              selected: selectedOptionId === option.id,
+              expanded: expandedOptionId === option.id,
             }"
           >
-            <OptionCard
-              :option="option"
-              :inquiry-id="inquiryId"
-              :compact="cardDisplayMode === 'compact'"
-              :inline="cardDisplayMode === 'list'"
-              :show-action="true"
-		:family-type="family?.key"
+            <ItemCard
+              :item="option"
+              :parent-id="parentId"
+              :target-type="targetType"
+              :family-type="familyKey"
               @click="selectOption(option)"
               @edit="openDetail(option)"
             />
@@ -215,22 +216,24 @@ class="debate-axis" :class="{
               <component :is="InquiryOptionIcons.Close" :size="20" />
             </button>
             <div class="expanded-title">
-              <component :is="getOptionTypeIconComponent(selectedOption.type, allFamilyOptionTypes)" :size="16" />
+              <component
+                :is="getOptionTypeIconComponent(selectedOption.type, allFamilyOptionTypes)"
+                :size="16"
+              />
               <h4>{{ getOptionLabel(selectedOption) }}</h4>
             </div>
             <span class="expanded-type">{{ getOptionTypeLabel(selectedOption.type) }}</span>
           </div>
-          
+
           <div class="expanded-body">
             <!-- Show the selected option in full detail -->
             <div class="selected-option-detail">
-              <OptionCard
-                :option="selectedOption"
-                :inquiry-id="inquiryId"
-                :compact="false"
-                :inline="false"
-                :show-action="true"
-		:family-type="family?.key"
+              <ItemCard
+                :item="selectedOption"
+                :parent-id="parentId"
+                :target-type="targetType"
+                :family-type="familyKey"
+                @click="selectOption(selectedOption)"
                 @edit="openDetail(selectedOption)"
               />
             </div>
@@ -249,13 +252,11 @@ class="debate-axis" :class="{
                   class="child-item"
                   @click="selectOption(child)"
                 >
-                  <OptionCard
-                    :option="child"
-                    :inquiry-id="inquiryId"
-                    :compact="true"
-                    :inline="false"
-                    :show-action="true"
-		    :family-type="family?.key"
+                  <ItemCard
+                    :item="child"
+                    :parent-id="parentId"
+                    :target-type="targetType"
+                    :family-type="familyKey"
                     @edit="openDetail(child)"
                   />
                 </div>
@@ -268,7 +269,7 @@ class="debate-axis" :class="{
                 v-if="canAddChild(selectedOption)"
                 type="tertiary"
                 size="small"
-		@click="addResponse(selectedOption)"
+                @click="addResponse(selectedOption)"
               >
                 <template #icon>
                   <component :is="InquiryOptionIcons.Plus" :size="14" />
@@ -292,7 +293,7 @@ class="debate-axis" :class="{
             <component :is="InquiryOptionIcons.List" :size="18" />
             <h4>{{ t('agora', 'Debate Tree') }}</h4>
           </div>
-          
+
           <div class="nav-tree">
             <!-- Recursive tree rendering with all levels -->
             <template v-for="node in optionTree" :key="node.id">
@@ -312,31 +313,35 @@ class="debate-axis" :class="{
             <div class="detail-title">
               <component :is="InquiryOptionIcons.MessageReplyText" :size="18" />
               <h4>
-                {{ selectedOption 
-                  ? getOptionLabel(selectedOption)
-                  : t('agora', 'Select an option to inspect') 
+                {{
+                  selectedOption
+                    ? getOptionLabel(selectedOption)
+                    : t('agora', 'Select an option to inspect')
                 }}
               </h4>
             </div>
-            <span class="detail-count">{{ selectedOption ? getChildrenCount(selectedOption.id) : 0 }}</span>
+            <span class="detail-count">{{
+              selectedOption ? getChildrenCount(selectedOption.id) : 0
+            }}</span>
           </div>
 
           <div class="detail-body">
             <template v-if="selectedOption">
               <!-- Type badge -->
               <div class="option-type-badge">
-                <component :is="getOptionTypeIconComponent(selectedOption.type, allFamilyOptionTypes)" :size="14" />
+                <component
+                  :is="getOptionTypeIconComponent(selectedOption.type, allFamilyOptionTypes)"
+                  :size="14"
+                />
                 <span>{{ getOptionTypeLabel(selectedOption.type) }}</span>
               </div>
 
-              <!-- Show selected option as OptionCard -->
-              <OptionCard
-                :option="selectedOption"
-                :inquiry-id="inquiryId"
-                :compact="cardDisplayMode === 'compact'"
-                :inline="cardDisplayMode === 'list'"
-                :show-action="true"
-		:family-type="family?.key"
+              <!-- Show selected option as ItemCard -->
+              <ItemCard
+                :item="selectedOption"
+                :parent-id="parentId"
+                :target-type="targetType"
+                :family-type="familyKey"
                 @edit="openDetail(selectedOption)"
               />
 
@@ -347,23 +352,20 @@ class="debate-axis" :class="{
                 class="detail-response-group"
               >
                 <div class="response-group-label">
-                  <component :is="getOptionTypeIconComponent(type,allFamilyOptionTypes)" :size="14" />
+                  <component
+                    :is="getOptionTypeIconComponent(type, allFamilyOptionTypes)"
+                    :size="14"
+                  />
                   <span>{{ getOptionTypeLabel(type) }}</span>
                   <span class="response-count">{{ children.length }}</span>
                 </div>
-                
-                <div
-                  v-for="child in children"
-                  :key="child.id"
-                  class="argument-wrapper"
-                >
-                  <OptionCard
-                    :option="child"
-                    :inquiry-id="inquiryId"
-                    :compact="cardDisplayMode === 'compact'"
-                    :inline="cardDisplayMode === 'list'"
-                    :show-action="true"
-		    :family-type="family?.key"
+
+                <div v-for="child in children" :key="child.id" class="argument-wrapper">
+                  <ItemCard
+                    :item="child"
+                    :parent-id="parentId"
+                    :target-type="targetType"
+                    :family-type="familyKey"
                     @click="selectOption(child)"
                     @edit="openDetail(child)"
                   />
@@ -372,11 +374,7 @@ class="debate-axis" :class="{
 
               <!-- Add response -->
               <div v-if="canAddChild(selectedOption)" class="add-response-area">
-                <NcButton
-                  type="tertiary"
-                  size="small"
-		  @click="addResponse(selectedOption)"
-                >
+                <NcButton type="tertiary" size="small" @click="addResponse(selectedOption)">
                   <template #icon>
                     <component :is="InquiryOptionIcons.Plus" :size="14" />
                   </template>
@@ -403,28 +401,29 @@ class="debate-axis" :class="{
           <h3>{{ t('agora', 'Argument Map') }}</h3>
           <p>{{ t('agora', 'Hover for details, click to navigate') }}</p>
         </div>
-        
+
         <div class="map-canvas">
           <div class="map-network">
             <!-- All root options as branches -->
             <div v-if="rootOptions.length > 0" class="map-level branches-level">
-              <div
-                v-for="option in rootOptions"
-                :key="option.id"
-                class="map-branch"
-              >
-                <div 
+              <div v-for="option in rootOptions" :key="option.id" class="map-branch">
+                <div
                   class="map-node branch-node"
                   :class="{
                     'for-node': option.type === 'position_for',
                     'against-node': option.type === 'position_against',
-                    'neutral-node': option.type !== 'position_for' && option.type !== 'position_against',
-                    'selected': selectedOptionId === option.id
+                    'neutral-node':
+                      option.type !== 'position_for' && option.type !== 'position_against',
+                    selected: selectedOptionId === option.id,
                   }"
                   @click="selectOption(option)"
                 >
                   <div class="node-content">
-                    <component :is="getOptionTypeIconComponent(option.type, allFamilyOptionTypes)" :size="16" class="node-icon" />
+                    <component
+                      :is="getOptionTypeIconComponent(option.type, allFamilyOptionTypes)"
+                      :size="16"
+                      class="node-icon"
+                    />
                     <span class="node-label">{{ getOptionLabel(option) }}</span>
                     <span class="node-type">{{ getOptionTypeLabel(option.type) }}</span>
                     <span v-if="getChildrenCount(option.id) > 0" class="node-badge">
@@ -433,44 +432,41 @@ class="debate-axis" :class="{
                   </div>
                 </div>
 
-                <!-- Children nodes with OptionCard in compact mode -->
+                <!-- Children nodes with ItemCard in compact mode -->
                 <div v-if="getChildrenCount(option.id) > 0" class="map-children">
                   <div
                     v-for="child in getChildrenForOption(option.id)"
                     :key="child.id"
                     class="map-child-wrapper"
-                    :class="{ 'selected': selectedOptionId === child.id }"
+                    :class="{ selected: selectedOptionId === child.id }"
                     @click="selectOption(child)"
                   >
                     <div class="map-child-tooltip">
-                      <OptionCard
-                        :option="child"
-                        :inquiry-id="inquiryId"
-                        :compact="true"
-                        :show-action="false"
-		        :family-type="family?.key"
+                      <ItemCard
+                        :item="child"
+                        :parent-id="parentId"
+                        :target-type="targetType"
+                        :family-type="familyKey"
                         @edit="openDetail(child)"
                       />
                       <div class="map-tooltip">
-                        <OptionCard
-                          :option="child"
-                          :inquiry-id="inquiryId"
-                          :compact="false"
-                          :inline="false"
-                          :show-action="true"
-		        :family-type="family?.key"
+                        <ItemCard
+                          :item="child"
+                          :parent-id="parentId"
+                          :target-type="targetType"
+                          :family-type="familyKey"
                           @edit="openDetail(child)"
                         />
                       </div>
                     </div>
-                    
+
                     <!-- Grandchildren -->
                     <div v-if="getChildrenCount(child.id) > 0" class="map-grandchildren">
                       <div
                         v-for="grandchild in getChildrenForOption(child.id).slice(0, 3)"
                         :key="grandchild.id"
                         class="map-node grandchild-node"
-                        :class="{ 'selected': selectedOptionId === grandchild.id }"
+                        :class="{ selected: selectedOptionId === grandchild.id }"
                         @click.stop="selectOption(grandchild)"
                       >
                         <div class="node-content tiny">
@@ -490,11 +486,13 @@ class="debate-axis" :class="{
             <div v-if="rootOptions.length === 0" class="map-empty">
               <component :is="InquiryOptionIcons.Graph" :size="48" />
               <p>{{ t('agora', 'No options to display') }}</p>
-              <span class="map-hint">{{ t('agora', 'Add an option to start building the argument map') }}</span>
+              <span class="map-hint">{{
+                t('agora', 'Add an option to start building the argument map')
+              }}</span>
             </div>
           </div>
         </div>
-        
+
         <div class="map-legend">
           <div class="legend-item">
             <span class="legend-color position-for"></span>
@@ -519,7 +517,6 @@ class="debate-axis" :class="{
         </div>
       </div>
     </div>
-
   </div>
 </template>
 
@@ -528,7 +525,7 @@ import { ref, computed } from 'vue'
 import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import { InquiryOptionIcons } from '../../../utils/icons.ts'
-import OptionCard from '../OptionCard.vue'
+import ItemCard from '../../FamilyLayouts/ItemCard.vue'
 import DebateHeader from './DebateHeader.vue'
 import DebateToolbar from './DebateToolbar.vue'
 import DebateTreeNode from './DebateTreeNode.vue'
@@ -538,33 +535,35 @@ import {
   detectPairedOptionTypes,
   getRootOptionTypesForFamily,
   getOptionTypesForFamily,
-  getFamilyOptionsByTarget,
 } from '../../../helpers/modules/InquiryOptionHelper'
 import type { InquiryOptionType, Option, OptionFamily } from '../../Types/index.ts'
-import { useOptionsStore } from '../../../stores/options'
-
+import type { Item } from '../../../Types/index.ts'
+import { getItemsForFamily } from '../../../helpers/modules/itemHelpers'
 
 // ============================================
 // Props
 // ============================================
 
 const props = defineProps<{
-  family?: OptionFamily
-  inquiryId: number
+  items: Item[]
+  parentId: number
+  targetType: 'option' | 'inquiry'
   optionTypes: InquiryOptionType[]
-  	familyOptionTypes?: InquiryOptionType[] 
+  familyOptionTypes?: InquiryOptionType[]
+  family?: OptionFamily | null
+  familyKey?: string
+  isReadonly?: boolean
+  appSettings?: Record<string, unknown>
+  // keep these debate-specific props
   debateQuestion?: string
   debateStatus?: string
   debatePhase?: string
 }>()
 
 // ============================================
-// Emits
-// ============================================
-
 const emit = defineEmits<{
-  'addOption': [optionType: string, parentId?: number]
-  'openDetail': [option: Option]
+  addOption: [optionType: string, parentId?: number]
+  openDetail: [item: Item]
 }>()
 
 // ============================================
@@ -575,43 +574,44 @@ const currentView = ref<'canvas' | 'explore' | 'map'>('canvas')
 const cardDisplayMode = ref<'normal' | 'compact' | 'list'>('normal')
 const selectedOptionId = ref<number | null>(null)
 const expandedOptionId = ref<number | null>(null)
-const optionsStore = useOptionsStore()
-
 
 // Navigation history
 const navigationHistory = ref<Array<number>>([])
 const showBackButton = computed(() => navigationHistory.value.length > 0)
 
-
 // ============================================
 // Get ALL option types for this family (for icon lookups, child creation)
 // ============================================
-const familyOptions = computed(() => 
-  // Use the helper to filter by family and inquiry ID
-   getFamilyOptionsByTarget(
-    optionsStore.options,  // All options
-    props.family?.key || 'debate',  // Current family
-    props.inquiryId  // Current inquiry ID
-  )
+
+
+const familyKey = computed(() => props.familyKey ?? props.family?.family_type ?? '')
+
+const familyOptions = computed(() =>
+  getItemsForFamily(props.items, familyKey.value)
 )
 
+
 const allFamilyOptionTypes = computed(() =>
-  getOptionTypesForFamily(props.family?.key || 'debate', props.familyOptionTypes)
-  		
+  getOptionTypesForFamily(
+    props.familyKey || props.family?.family_type || 'debate',
+    props.familyOptionTypes
+  )
 )
 
 // ============================================
 // Root Option Types - computed from familyOptionTypes
 // ============================================
 
-const rootOptionTypes = computed(() => 
-  getRootOptionTypesForFamily(allFamilyOptionTypes.value, props.family?.key)
+const rootOptionTypes = computed(() =>
+  getRootOptionTypesForFamily(
+    allFamilyOptionTypes.value,
+    props.familyKey ?? props.family?.family_type
+  )
 )
 
 // ============================================
 // Views Configuration
 // ============================================
-
 
 const availableViews = [
   { key: 'canvas', label: t('agora', 'Debate'), icon: InquiryOptionIcons.Scale },
@@ -630,7 +630,9 @@ const displayModes = [
 // ============================================
 
 // Detect paired option types
-const detectedPairs = computed(() => detectPairedOptionTypes(props.optionTypes, props.family?.key))
+const detectedPairs = computed(() =>
+  detectPairedOptionTypes(props.optionTypes, props.familyKey ?? props.family?.family_type)
+)
 
 const hasDetectedPairs = computed(() => detectedPairs.value.length > 0)
 
@@ -639,17 +641,23 @@ const hasForPositions = computed(() => getOptionsByType('position_for').length >
 const hasAgainstPositions = computed(() => getOptionsByType('position_against').length > 0)
 
 // Check if user can add positions
-const canAddForPosition = computed(() => rootOptionTypes.value.some(t => t.option_type === 'position_for'))
+const canAddForPosition = computed(() =>
+  rootOptionTypes.value.some((t) => t.option_type === 'position_for')
+)
 
-const canAddAgainstPosition = computed(() => rootOptionTypes.value.some(t => t.option_type === 'position_against'))
+const canAddAgainstPosition = computed(() =>
+  rootOptionTypes.value.some((t) => t.option_type === 'position_against')
+)
 
 // Root options (parentId === 0 or undefined)
-const rootOptions = computed(() => familyOptions.value.filter(opt => !opt.parentId || opt.parentId === 0))
+const rootOptions = computed(() =>
+  familyOptions.value.filter((opt) => !opt.parentId || opt.parentId === 0)
+)
 
 // Unpaired options (everything else)
-const unpairedOptions = computed(() => rootOptions.value.filter(opt => 
-    opt.type !== 'position_for' && opt.type !== 'position_against'
-  ))
+const unpairedOptions = computed(() =>
+  rootOptions.value.filter((opt) => opt.type !== 'position_for' && opt.type !== 'position_against')
+)
 
 const hasUnpairedOptions = computed(() => unpairedOptions.value.length > 0)
 
@@ -661,21 +669,21 @@ const debateBalance = computed(() => {
   const forPositions = getOptionsByType('position_for')
   const againstPositions = getOptionsByType('position_against')
   const total = forPositions.length + againstPositions.length || 1
-  
+
   return {
     for: Math.round((forPositions.length / total) * 100),
-    against: Math.round((againstPositions.length / total) * 100)
+    against: Math.round((againstPositions.length / total) * 100),
   }
 })
 
 const debateMetrics = computed(() => {
-  const allChildren = familyOptions.value.filter(opt => opt.parentId && opt.parentId > 0)
-  const objections = familyOptions.value.filter(opt => opt.type === 'objection')
-  
+  const allChildren = familyOptions.value.filter((opt) => opt.parentId && opt.parentId > 0)
+  const objections = familyOptions.value.filter((opt) => opt.type === 'objection')
+
   return {
-    participants: new Set(familyOptions.value.map(opt => opt.owner?.id)).size,
+    participants: new Set(familyOptions.value.map((opt) => opt.owner?.id)).size,
     arguments: allChildren.length,
-    objections: objections.length
+    objections: objections.length,
   }
 })
 
@@ -690,24 +698,22 @@ interface OptionNode extends Option {
 
 const buildOptionTree = (parentId: number | null = null, depth: number = 0): OptionNode[] => {
   // Find children of the current parent
-  const children = familyOptions.value.filter(opt => {
+  const children = familyOptions.value.filter((opt) => {
     // Normalize parentId to number for comparison
     const optParentId = typeof opt.parentId === 'string' ? parseInt(opt.parentId, 10) : opt.parentId
-    
+
     if (parentId === null) {
       // Root level: include options with no parent (null, undefined, 0, or '0')
-      return optParentId === null || 
-             optParentId === undefined || 
-             optParentId === 0
+      return optParentId === null || optParentId === undefined || optParentId === 0
     }
     // Child level: exact match
     return optParentId === parentId
   })
-  
-  return children.map(opt => ({
+
+  return children.map((opt) => ({
     ...opt,
     depth,
-    children: buildOptionTree(opt.id, depth + 1)
+    children: buildOptionTree(opt.id, depth + 1),
   }))
 }
 
@@ -717,29 +723,28 @@ const optionTree = computed(() => buildOptionTree(null))
 // Helper Functions
 // ============================================
 
-const getOptionsByType = (type: string): Option[] => familyOptions.value.filter(opt => opt.type === type)
+const getOptionsByType = (type: string): Item[] =>
+  familyOptions.value.filter((i) => i.type === type)
 
-const getOptionLabel = (option: Option | null): string => {
-  if (!option) return ''
-  return option.title || option.label || getOptionTypeLabel(option.type)
+const getOptionLabel = (item: Item | null): string => {
+  if (!item) return ''
+  return item.title || getOptionTypeLabel(item.type, allFamilyOptionTypes.value)
 }
 
-const getChildrenForOption = (optionId: number): Option[] => {
-  const option = familyOptions.value.find(opt => opt.id === optionId)
-  if (!option) return []
+const getChildrenForOption = (optionId: number): Item[] => {
+  const item = familyOptions.value.find((i) => i.id === optionId)
+  if (!item) return []
 
-  const typeDef = props.optionTypes.find(t => t.option_type === option.type)
+  const typeDef = props.optionTypes.find((t) => t.option_type === item.type)
   if (!typeDef) return []
 
   let allowedChildTypes: string[] = []
   if (typeof typeDef.allowed_response === 'string') {
     try {
       const parsed = JSON.parse(typeDef.allowed_response)
-      if (Array.isArray(parsed)) {
-        allowedChildTypes = parsed
-      }
+      if (Array.isArray(parsed)) allowedChildTypes = parsed
     } catch {
-      // ignore
+      /* ignore */
     }
   } else if (Array.isArray(typeDef.allowed_response)) {
     allowedChildTypes = typeDef.allowed_response
@@ -747,19 +752,15 @@ const getChildrenForOption = (optionId: number): Option[] => {
 
   if (allowedChildTypes.length === 0) return []
 
-  return familyOptions.value.filter(opt =>
-    opt.parentId === optionId && allowedChildTypes.includes(opt.type)
+  return familyOptions.value.filter(
+    (i) => i.parentId === optionId && allowedChildTypes.includes(i.type)
   )
 }
 
-
-// And selectedOption:
-const selectedOption = computed(() => {
+const selectedOption = computed<Item | null>(() => {
   if (!selectedOptionId.value) return null
-  return familyOptions.value.find(opt => opt.id === selectedOptionId.value) || null
+  return familyOptions.value.find((i) => i.id === selectedOptionId.value) || null
 })
-
-
 
 const getChildrenCount = (optionId: number): number => getChildrenForOption(optionId).length
 
@@ -775,7 +776,6 @@ const groupedChildren = computed(() => {
   }
   return groups
 })
-
 
 // ============================================
 // Navigation Methods
@@ -798,7 +798,6 @@ const selectOption = (option: Option) => {
   expandedOptionId.value = option.id
 }
 
-
 const closeExpandedView = () => {
   expandedOptionId.value = null
 }
@@ -820,9 +819,9 @@ const openDetail = (option: Option) => {
 // ============================================
 
 const canAddChild = (option: Option) => {
-  const typeDef = props.optionTypes.find(t => t.option_type === option.type)
+  const typeDef = props.optionTypes.find((t) => t.option_type === option.type)
   if (!typeDef) return false
-  
+
   let allowedResponses: string[] = []
   if (typeof typeDef.allowed_response === 'string') {
     try {
@@ -840,12 +839,11 @@ const canAddChild = (option: Option) => {
 }
 
 const openAddOptionDialog = (type: string, parentId?: number) => {
-  emit('addOption',type,parentId)
+  emit('addOption', type, parentId)
 }
 
-
 const addResponse = (option: Option) => {
-  const typeDef = props.optionTypes.find(t => t.option_type === option.type)
+  const typeDef = props.optionTypes.find((t) => t.option_type === option.type)
   if (!typeDef) return
 
   let allowedResponses: string[] = []
@@ -869,8 +867,7 @@ const addResponse = (option: Option) => {
   }
 }
 
-
-
+console.log(" ITEMS IN PAIRED ",props.items)
 </script>
 
 <style scoped lang="scss">
@@ -942,7 +939,7 @@ $neutral-color: #6c757d;
     // When only one column exists: fill the space
     &.single-column {
       grid-template-columns: 1fr;
-      
+
       .debate-column {
         max-height: none;
         max-width: 800px;
@@ -959,7 +956,7 @@ $neutral-color: #6c757d;
     @media (max-width: 768px) {
       grid-template-columns: 1fr !important;
       gap: $gap * 2;
-      
+
       .debate-column {
         max-height: none;
         max-width: 100%;
@@ -984,7 +981,8 @@ $neutral-color: #6c757d;
         background: var(--color-background-darker);
         border-bottom: 1px solid var(--color-border);
 
-        .for-icon, .against-icon {
+        .for-icon,
+        .against-icon {
           flex-shrink: 0;
         }
 
@@ -1364,7 +1362,7 @@ $neutral-color: #6c757d;
 
             .child-item {
               cursor: pointer;
-              
+
               &:hover {
                 :deep(.option-card) {
                   border-color: var(--color-primary-element);
@@ -1613,17 +1611,17 @@ $neutral-color: #6c757d;
           width: 100%;
           max-width: 280px;
           position: relative;
-          
+
           &.selected {
             :deep(.option-card) {
               border-color: var(--color-primary-element);
               box-shadow: 0 0 0 2px var(--color-primary-element);
             }
           }
-          
+
           &:hover {
             transform: translateY(-2px);
-            
+
             .map-tooltip {
               visibility: visible;
               opacity: 1;
@@ -1632,7 +1630,7 @@ $neutral-color: #6c757d;
 
           .map-child-tooltip {
             position: relative;
-            
+
             .map-tooltip {
               visibility: hidden;
               opacity: 0;
@@ -1650,7 +1648,7 @@ $neutral-color: #6c757d;
               box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
               transition: all 0.3s ease;
               pointer-events: none;
-              
+
               &::after {
                 content: '';
                 position: absolute;

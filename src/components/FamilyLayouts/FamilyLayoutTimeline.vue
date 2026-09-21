@@ -124,7 +124,7 @@
       <h4>{{ t('agora', 'Draggable Items') }}</h4>
       <div class="draggable-items">
         <div 
-          v-for="item in items" 
+          v-for="item in timelineItems" 
           :key="item.id"
           class="draggable-item"
           :data-event="JSON.stringify({
@@ -158,7 +158,7 @@
     <DeleteConfirmationDialog
       v-model:visible="showDeleteDialog"
       :item-title="getItemTitle(selectedItem)"
-      :is-imported="selectedItem ? isImportedFromView(selectedItem, family?.key || 'timeline') : false"
+		    :is-imported="selectedItem ? isImportedFromView(selectedItem.raw as any, family?.key || 'timeline') : false"
       :view-type="'timeline'"
       @confirm="handleConfirmDelete"
       @remove-from-view="handleRemoveFromView"
@@ -185,7 +185,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick, type PropType } from 'vue'
+import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
@@ -193,7 +193,6 @@ import { DateTime } from 'luxon'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { InquiryOptionIcons } from '../../utils/icons.ts'
 import { 
-  filterItemsByLayout,
   getTimelineStartDate,
   isImportedFromView,
   getTimelineEndDate,
@@ -220,45 +219,98 @@ import DeleteConfirmationDialog from '../Modals/DeleteConfirmationDialog.vue'
 import resourcePlugin from '@fullcalendar/resource'
 import resourceTimeGridPlugin from '@fullcalendar/resource-timegrid'
 import resourceTimelinePlugin from '@fullcalendar/resource-timeline'
+import type { Item } from '../../Types/index.ts'
+import { getItemsForFamily } from '../../helpers/modules/itemHelpers'
 
 export type TargetType = 'option' | 'inquiry'
 
 // Props
-const props = defineProps({
-  items: {
-    type: Array as PropType<(Option | Inquiry)[]>,
-    default: () => []
-  },
-  parentId: {
-    type: Number,
-    required: true,
-    default: null
-  },
-  targetType: {
-    type: String as PropType<TargetType>,
-    required: true
-  },
-  itemTypes: {
-    type: Array as PropType<InquiryOptionType[]>,
-    default: () => []
-  },
-  family: {
-    type: Object as PropType<OptionFamily>,
-    default: null
-  },
-  showDraggablePool: {
-    type: Boolean,
-    default: false
-  },
-  appSettings: {
-    type: Object,
-    default: () => ({})
+const props = defineProps<{
+  items: Item[]
+  parentId: number
+  targetType: 'option' | 'inquiry'
+  optionTypes: InquiryOptionType[]
+  familyOptionTypes?: InquiryOptionType[]
+  family?: OptionFamily | null
+  familyKey?: string
+  isReadonly?: boolean
+  appSettings?: Record<string, unknown>
+  showDraggablePool?: boolean
+}>()
+
+const getItemTitle = (item: Item | null) => item?.title ?? ''
+const getItemStatus = (item: Item) => item.statusKey
+
+const getStatusColor = (status: string) => {
+  const colors: Record<string, string> = {
+    draft: '#949494', active: '#3498db', completed: '#27ae60',
+    cancelled: '#e74c3c', pending: '#f39c12', approved: '#2ecc71',
   }
+  return colors[status] || '#949494'
+}
+
+// ---- timelineItems: no store reads, just props ----
+const familyKey = computed(() => props.familyKey ?? props.family?.family_type ?? '')
+const timelineItems = computed(() => {
+	return  getItemsForFamily(props.items, familyKey.value)
 })
+
+
+// ---- events computed — swap `item.raw` handling ----
+const events = computed(() =>
+  timelineItems.value
+    .map(item => {
+      const start = getTimelineStartDate(item.raw)
+      if (!start) return null
+
+      if (dateFilter.value) {
+        const filterDate = DateTime.fromISO(dateFilter.value).toLocal()
+        const startDateObj = DateTime.fromJSDate(start)
+        if (!startDateObj.hasSame(filterDate, 'day')) return null
+      }
+
+      const end = getTimelineEndDate(item.raw)
+      const endDateObj = end ? DateTime.fromJSDate(end).plus({ days: 1 }).toJSDate() : undefined
+
+      return {
+        id: item.id.toString(),
+        resourceId: item.id.toString(),
+        title: item.title,
+        start,
+        end: endDateObj,
+        allDay: true,
+        extendedProps: { item },
+        backgroundColor: getStatusColor(item.statusKey),
+        borderColor:     getStatusColor(item.statusKey),
+        textColor: '#ffffff',
+      }
+    })
+    .filter(Boolean)
+)
+
+
+// ---- emit openDetail with Item ----
+const handleEventClick = (info: EventClickArg) => {
+  info.jsEvent.preventDefault()
+  info.jsEvent.stopPropagation()
+  if (info.jsEvent.button === 2) {
+    const item = info.event.extendedProps?.item as Item
+    if (item) {
+      contextMenu.value = {
+        visible: true,
+        x: info.jsEvent.clientX,
+        y: info.jsEvent.clientY,
+        event: info.event,
+      }
+    }
+  } else if (info.jsEvent.button === 0) {
+    emit('openDetail', info.event.extendedProps.item as Item)
+  }
+}
 
 // Emit
 const emit = defineEmits<{
-  openDetail: [item: Option | Inquiry]
+  openDetail: [item: Item]
   'update:items': []
   eventDrop: [eventData: unknown]
   dateSelect: [dateInfo: unknown]
@@ -268,37 +320,6 @@ const emit = defineEmits<{
   itemFamilyChanged: [payload: { itemId: number, familyKey: string, action: string }]
 }>()
 
-// Helper functions
-const getItemTitle = (item: Option | Inquiry): string => {
-  if (!item) return ''
-  if ('title' in item) return item.title || ''
-  if ('label' in item && item.label) return item.label
-  return `Item #${item.id}`
-}
-
-const getItemStatus = (item: Option | Inquiry): string => {
-  if ('status' in item) {
-    if (typeof item.status === 'object' && item.status && 'optionStatus' in item.status) {
-      return (item.status as { optionStatus: string }).optionStatus || 'draft'
-    }
-    if (typeof item.status === 'string') {
-      return item.status
-    }
-  }
-  return 'draft'
-}
-
-const getStatusColor = (status: string) => {
-  const colors: Record<string, string> = {
-    draft: '#949494',
-    active: '#3498db',
-    completed: '#27ae60',
-    cancelled: '#e74c3c',
-    pending: '#f39c12',
-    approved: '#2ecc71'
-  }
-  return colors[status] || '#949494'
-}
 
 // State refs
 const calendarRef = ref<unknown>(null)
@@ -311,35 +332,14 @@ const viewMode = ref<'list' | 'timeline' | 'calendar' | 'resourceDay' | 'resourc
 const scale = ref<'day' | 'week' | 'month' | 'year'>('week')
 const dateFilter = ref('')
 const showDeleteDialog = ref(false)
-const selectedItem = ref<Option | Inquiry | null>(null)
+const selectedItem = ref<Item | null>(null)
+
 
 let pendingCallbacks: {
   onDelete: () => void
   onRemoveFromView: () => void
 } | null = null
 
-const handleEventClick = (info: EventClickArg) => {
-  // Prevent default to stop browser context menu
-  info.jsEvent.preventDefault()
-  info.jsEvent.stopPropagation()
-  
-  // Check for right click (button === 2)
-  if (info.jsEvent.button === 2) {
-    const item = info.event.extendedProps?.item
-    if (item) {
-      contextMenu.value = {
-        visible: true,
-        x: info.jsEvent.clientX,
-        y: info.jsEvent.clientY,
-        event: info.event
-      }
-    }
-  } 
-  // Left click (button === 0)
-  else if (info.jsEvent.button === 0) {
-    emit('openDetail', info.event.extendedProps.item)
-  }
-}
 
 const preventGlobalContextMenu = (e: MouseEvent) => {
   const target = e.target as HTMLElement
@@ -363,7 +363,7 @@ const popoverStyle = computed(() => ({
   zIndex: 9999
 }))
 
-const getItemTypeIcon = (type: string) => getItemTypeIconComponent(type, props.itemTypes)
+const getItemTypeIcon = (type: string) => getItemTypeIconComponent(type, props.optionTypes)
 
 const updateCurrentPeriodText = () => {
   if (!calendarRef.value) return
@@ -372,58 +372,19 @@ const updateCurrentPeriodText = () => {
   currentPeriodText.value = currentDate.toLocaleString('default', { month: 'long', year: 'numeric' })
 }
 
-// Computed properties
-const timelineItems = computed(() => {
-  const sourceItems = props.items || []
-  return filterItemsByLayout(
-    sourceItems,
-    'timeline',
-    props.itemTypes,
-    props.family?.key || 'timeline'
-  )
-})
 
-const processItems = computed(() => 
-  timelineItems.value.filter((item: Option | Inquiry) => getTimelineStartDate(item) !== null)
+const processItems = computed(() =>
+  timelineItems.value.filter((item: Item) => getTimelineStartDate(item.raw) !== null)
 )
 
-const resources = computed(() => processItems.value.map((item: Option | Inquiry) => ({
-  id: item.id.toString(),
-  title: getItemTitle(item),
-  eventColor: getStatusColor(getItemStatus(item))
-})))
+const resources = computed(() =>
+  processItems.value.map((item: Item) => ({
+    id: item.id.toString(),
+    title: item.title,
+    eventColor: getStatusColor(item.statusKey),
+  }))
+)
 
-const events = computed(() => processItems.value
-  .map((item: Option | Inquiry) => {
-    const start = getTimelineStartDate(item)
-    if (!start) return null
-
-    if (dateFilter.value) {
-      const filterDate = DateTime.fromISO(dateFilter.value).toLocal()
-      const startDateObj = DateTime.fromJSDate(start)
-      if (!startDateObj.hasSame(filterDate, 'day')) return null
-    }
-
-    const end = getTimelineEndDate(item)
-    let endDateObj: Date | undefined
-    if (end) {
-      endDateObj = DateTime.fromJSDate(end).plus({ days: 1 }).toJSDate()
-    }
-
-    return {
-      id: item.id.toString(),
-      resourceId: item.id.toString(),
-      title: getItemTitle(item),
-      start,
-      end: endDateObj,
-      allDay: true,
-      extendedProps: { item },
-      backgroundColor: getStatusColor(getItemStatus(item)),
-      borderColor: getStatusColor(getItemStatus(item)),
-      textColor: '#ffffff'
-    }
-  })
-  .filter(Boolean))
 
 // Event Handlers
 const handleExternalDrop = async (dropInfo: DropArg) => {
@@ -463,7 +424,7 @@ const handleExternalDrop = async (dropInfo: DropArg) => {
 const handleEventDrop = async (dropInfo: unknown) => {
   const event = (dropInfo as { event: { id: string; start: Date; end: Date; resource?: { id: string } } }).event
   const itemId = parseInt(event.id)
-  const item = timelineItems.value.find((i: Option | Inquiry) => i.id === itemId)
+  const item = timelineItems.value.find((i: Item) => i.id === itemId)
 
   if (item) {
     emit('eventDrop', {
@@ -480,7 +441,7 @@ const handleEventDrop = async (dropInfo: unknown) => {
 const handleEventResize = async (resizeInfo: unknown) => {
   const event = (resizeInfo as { event: { id: string; start: Date; end: Date } }).event
   const itemId = parseInt(event.id)
-  const item = timelineItems.value.find((i: Option | Inquiry) => i.id === itemId)
+  const item = timelineItems.value.find((i: Item) => i.id === itemId)
 
   if (item) {
     emit('eventDrop', {
@@ -574,7 +535,8 @@ const resourceDayViewOptions = computed(() => ({
 
 const handleContextMenuDelete = () => {
   if (contextMenu.value.event) {
-    const item = (contextMenu.value.event as { extendedProps?: { item?: Option | Inquiry } }).extendedProps?.item
+    const item = (contextMenu.value.event as { extendedProps?: { item?: Item } }).extendedProps?.item
+
     if (item) {
       selectedItem.value = item
       pendingCallbacks = {
@@ -586,23 +548,26 @@ const handleContextMenuDelete = () => {
             }, 100)
           }
         },
-        onRemoveFromView: () => {
-          let currentLayouts = (item as Option).miscFields?.force_layouts || []
-          if (typeof currentLayouts === 'string') {
-            try {
-              currentLayouts = JSON.parse(currentLayouts)
-            } catch {
-              currentLayouts = []
-            }
-          }
-          const updatedLayouts = currentLayouts.filter((l: string) => l !== 'timeline')
-          emit('removeFromTimeline', item.id, updatedLayouts)
-          if (calendarRef.value) {
-            setTimeout(() => {
-              ;(calendarRef.value as { getApi: () => { refetchEvents: () => void } }).getApi().refetchEvents()
-            }, 100)
-          }
-        }
+	onRemoveFromView: () => {
+  const rawItem = item.raw as any
+  let currentLayouts = rawItem.miscFields?.force_layouts || []
+
+  if (typeof currentLayouts === 'string') {
+    try { currentLayouts = JSON.parse(currentLayouts) }
+    catch { currentLayouts = [] }
+  }
+
+  const updatedLayouts = currentLayouts.filter((l: string) => l !== 'timeline')
+  emit('removeFromTimeline', item.id, updatedLayouts)
+
+  if (calendarRef.value) {
+    setTimeout(() => {
+      ;(calendarRef.value as { getApi: () => { refetchEvents: () => void } })
+        .getApi()
+        .refetchEvents()
+    }, 100)
+  }
+}
       }
       showDeleteDialog.value = true
     }
@@ -825,6 +790,7 @@ onBeforeUnmount(() => {
   destroyDraggable()
   document.removeEventListener('contextmenu', preventGlobalContextMenu)
 })
+console.log(" ITEMS IN TIMELINE  ",props.items)
 
 defineExpose({ moveTimeline, centerOnToday, switchView, setScale })
 </script>

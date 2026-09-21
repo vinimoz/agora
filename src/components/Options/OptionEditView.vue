@@ -114,7 +114,33 @@
             />
 
             <!-- Dynamic Family Layout Component -->
-            <component
+	    <component
+  :is="currentFamilyLayout"
+  ref="currentFamilyLayoutRef"
+  :items="unifiedItems"
+  :family="activeFamilyData"
+  :parent-id="inquiryStore.id"
+  :target-type="targetType"
+  :option-types="activeFamilyData.optionTypes"
+  :family-option-types="familyOptionTypes"
+  :family-key="activeFamilyData.key"
+  :is-readonly="isReadOnly"
+  :can-manage-vote="canManageVote"
+  :app-settings="appSettings"
+  @add-option="openAddOptionModal"
+  @open-detail="openOptionDetail"
+  @option-updated="handleOptionUpdated"
+  @option-deleted="handleOptionDeleted"
+  @configure-engine="handleConfigureEngine"
+  @add-to-vote="handleAddToVote"
+  @update-items="handleItemsUpdated"
+  @delete-item="handleItemDeleted"
+  @remove-from-timeline="handleRemoveFromTimeline"
+  @event-drop="handleEventDrop"
+  @date-select="handleDateSelect"
+  @event-receive="handleEventReceive"
+/>
+ <!--           <component
                 :is="currentFamilyLayout"
                 ref="currentFamilyLayoutRef"
                 :options="familyOptions"
@@ -145,7 +171,7 @@
                 @date-select="handleDateSelect"
                 @event-receive="handleEventReceive"
                 @item-family-changed="handleItemFamilyChanged"
-            />
+		/> -->
         </div>
 
         <!-- Empty State when no families -->
@@ -219,6 +245,10 @@ import {
     filterItemsByLayout,
 } from '../../helpers/modules/InquiryOptionHelper'
 
+import { toItems } from '../../helpers/modules/itemHelpers'
+import type { Item } from '../../Types/index.ts'
+
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const props = defineProps<{
     hasVisibleFamilies: boolean
@@ -286,6 +316,9 @@ const hasActiveEngineForActiveFamily = computed(() => {
     const engines = engineStore.engines
     return engines.length > 0
 })
+
+const unifiedItems = computed<Item[]>(() => toItems(familyItems.value as (Option | Inquiry)[])) 
+
 
 // Check if we should show create option buttons based on family features
 const showCreateOptionButtons = computed(() => {
@@ -464,7 +497,7 @@ const familyItems = computed(() => {
     if (!activeFamilyData.value) return []
 
     // For option-only layouts (cards, consensus, paired, tree) - use filtered options
-    const optionOnlyFamilies = ['cards', 'consensus', 'paired', 'tree', 'structure']
+    const optionOnlyFamilies = ['cards', 'consensus_flow:', 'paired', 'tree', 'tree']
     if (optionOnlyFamilies.includes(activeFamilyData.value.key)) {
         return getFamilyOptionsByTarget(
             optionsStore.options,

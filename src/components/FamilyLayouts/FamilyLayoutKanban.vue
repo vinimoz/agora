@@ -3,15 +3,113 @@
   SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
+<script setup lang="ts">
+import { computed, ref } from 'vue'
+import { t } from '@nextcloud/l10n'
+import NcButton from '@nextcloud/vue/components/NcButton'
+import NcActions from '@nextcloud/vue/components/NcActions'
+import NcActionButton from '@nextcloud/vue/components/NcActionButton'
+import { InquiryOptionIcons } from '../../utils/icons.ts'
+import ItemCard from './ItemCard.vue'
+import AddItemToFamily from '../Modals/AddItemToFamily.vue'
+import type { Item, InquiryOptionType, OptionFamily } from '../../Types/index.ts'
+import { useOptionsStore } from '../../stores/options'
+import { useInquiriesStore } from '../../stores/inquiries'
+import { showSuccess, showError } from '@nextcloud/dialogs'
+import { getItemsForFamily } from '../../helpers/modules/itemHelpers'
+
+const props = defineProps<{
+  items: Item[]
+  parentId: number
+  targetType: 'option' | 'inquiry'
+  optionTypes: InquiryOptionType[]
+  familyOptionTypes?: InquiryOptionType[]
+  family?: OptionFamily | null
+  familyKey?: string
+  isReadonly?: boolean
+  appSettings?: Record<string, unknown>
+}>()
+
+const emit = defineEmits<{
+  addOption: [optionType: string, parentId?: number]
+  openDetail: [item: Item]
+  updateItems: []
+}>()
+
+const optionsStore = useOptionsStore()
+const inquiriesStore = useInquiriesStore()
+
+const showAddModal = ref(false)
+const draggingItemId = ref<number | null>(null)
+
+const statusColumns = computed(() => {
+  const cfg = (props.appSettings as any)?.optionFamilyTab?.[props.family?.key || 'kanban']
+    ?.ui?.kanban_column
+  if (Array.isArray(cfg) && cfg.length) {
+    return cfg.map((c: any) => ({
+      value: c.value,
+      label: t('agora', c.label),
+      color: c.color,
+    }))
+  }
+  return [
+    { value: 'draft',     label: t('agora', 'Draft'),     color: '#949494' },
+    { value: 'active',    label: t('agora', 'Active'),    color: '#3498db' },
+    { value: 'completed', label: t('agora', 'Completed'), color: '#27ae60' },
+    { value: 'cancelled', label: t('agora', 'Cancelled'), color: '#e74c3c' },
+  ]
+})
+
+const columnCount = computed(() => statusColumns.value.length)
+
+/** Filter items for this layout (family + force_layouts) */
+const familyKey = computed(() => props.familyKey ?? props.family?.family_type ?? '')
+const kanbanItems = computed(() => {
+	return  getItemsForFamily(props.items, familyKey.value)
+})
+
+const getItemsByStatus = (status: string) =>
+  kanbanItems.value.filter(i => i.statusKey === status)
+
+const getStatusLabel = (status: string) =>
+  statusColumns.value.find(s => s.value === status)?.label || status
+
+const handleDragStart = (e: DragEvent, item: Item) => {
+  draggingItemId.value = item.id
+  e.dataTransfer?.setData('text/plain', item.id.toString())
+  e.dataTransfer!.effectAllowed = 'move'
+}
+
+const handleDragEnd = () => { draggingItemId.value = null }
+
+const handleDrop = async (e: DragEvent, newStatus: string) => {
+  e.preventDefault()
+  const id = e.dataTransfer?.getData('text/plain')
+  if (!id) return
+  await changeStatus(parseInt(id, 10), newStatus)
+}
+
+const changeStatus = async (itemId: number, newStatus: string) => {
+  try {
+    if (props.targetType === 'option') {
+      await optionsStore.setOptionStatus(itemId, newStatus)
+    } else {
+      await inquiriesStore.updateInquiryStatus(itemId, newStatus)
+    }
+    showSuccess(t('agora', 'Item moved to {column}', { column: getStatusLabel(newStatus) }))
+    emit('updateItems')
+  } catch (err) {
+    console.error('Unable to change item status', err)
+    showError(t('agora', 'Item status could not be updated'))
+  }
+}
+console.log(" ITEMS IN KANBAN  ",props.items)
+</script>
+
 <template>
   <div class="kanban-layout">
-    <!-- Add item button -->
     <div class="kanban-actions">
-      <NcButton
-        type="primary"
-        class="add-kanban-btn"
-        @click="showAddModal = true"
-      >
+      <NcButton type="primary" class="add-kanban-btn" @click="showAddModal = true">
         <template #icon>
           <component :is="InquiryOptionIcons.Plus" :size="18" />
         </template>
@@ -19,23 +117,21 @@
       </NcButton>
     </div>
 
-    <!-- Add item modal -->
     <AddItemToFamily
       v-if="showAddModal"
       family-type="kanban"
       :parent-id="parentId"
       :target-type="targetType"
       @close="showAddModal = false"
-      @success="handleAddSuccess"
+      @success="emit('updateItems')"
     />
 
-    <!-- Column headers -->
-    <div class="kanban-header">
-      <div 
-        v-for="status in statusColumns" 
+    <!-- headers -->
+    <div class="kanban-header" :style="{ gridTemplateColumns: `repeat(${columnCount}, 1fr)` }">
+      <div
+        v-for="status in statusColumns"
         :key="status.value"
         class="kanban-column-header"
-        :class="`status-${status.value}`"
         @dragover.prevent
         @drop="handleDrop($event, status.value)"
       >
@@ -47,22 +143,21 @@
       </div>
     </div>
 
-    <!-- Kanban columns -->
-    <div class="kanban-board">
-      <div 
-        v-for="status in statusColumns" 
+    <!-- columns -->
+    <div class="kanban-board" :style="{ gridTemplateColumns: `repeat(${columnCount}, 1fr)` }">
+      <div
+        v-for="status in statusColumns"
         :key="status.value"
         class="kanban-column"
-        :class="`column-${status.value}`"
         @dragover.prevent
         @drop="handleDrop($event, status.value)"
       >
         <div class="column-items">
-          <div 
-            v-for="item in getItemsByStatus(status.value)" 
+          <div
+            v-for="item in getItemsByStatus(status.value)"
             :key="item.id"
             class="kanban-item"
-            :class="{ 'dragging': draggingItemId === item.id }"
+            :class="{ dragging: draggingItemId === item.id }"
             draggable="true"
             @dragstart="handleDragStart($event, item)"
             @dragend="handleDragEnd"
@@ -73,8 +168,8 @@
               :parent-id="parentId"
               :target-type="targetType"
               :show-action="true"
-              :family-type="family?.key || 'kanban'"
-              @click="$emit('openDetail', item)"
+              :family-type="familyKey || 'kanban'"
+              @click="emit('openDetail', item)"
             />
 
             <div class="item-footer">
@@ -82,7 +177,7 @@
               <div class="item-actions">
                 <NcActions>
                   <NcActionButton
-                    v-for="target in statusColumns.filter(s => s.value !== getItemStatus(item))"
+                    v-for="target in statusColumns.filter(s => s.value !== item.statusKey)"
                     :key="target.value"
                     @click="changeStatus(item.id, target.value)"
                   >
@@ -96,8 +191,8 @@
             </div>
           </div>
 
-          <div 
-            v-if="getItemsByStatus(status.value).length === 0" 
+          <div
+            v-if="getItemsByStatus(status.value).length === 0"
             class="empty-column"
             @dragover.prevent
             @drop="handleDrop($event, status.value)"
@@ -112,169 +207,6 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import { computed, ref, type PropType } from 'vue'
-import { t } from '@nextcloud/l10n'
-import NcButton from '@nextcloud/vue/components/NcButton'
-import NcActions from '@nextcloud/vue/components/NcActions'
-import NcActionButton from '@nextcloud/vue/components/NcActionButton'
-import { InquiryOptionIcons } from '../../utils/icons.ts'
-import ItemCard from './ItemCard.vue'
-import type { Option, Inquiry, InquiryOptionType, OptionFamily } from '../../Types/index.ts'
-import { useOptionsStore } from '../../stores/options'
-import { useInquiriesStore } from '../../stores/inquiries'
-import { showSuccess, showError } from '@nextcloud/dialogs'
-import { filterItemsByLayout } from '../../helpers/modules/InquiryOptionHelper'
-import AddItemToFamily from '../Modals/AddItemToFamily.vue'
-
-export type TargetType = 'option' | 'inquiry'
-
-// Props
-const props = defineProps({
-  parentId: {
-    type: Number,
-    required: true,
-    default: null
-  },
-  targetType: {
-    type: String as PropType<TargetType>,
-    required: true
-  },
-  items: {
-    type: Array as PropType<(Option | Inquiry)[]>,
-    default: () => []
-  },
-  itemTypes: {
-    type: Array as PropType<InquiryOptionType[]>,
-    default: () => []
-  },
-  family: {
-    type: Object as PropType<OptionFamily>,
-    default: null
-  },
-  appSettings: {
-    type: Object,
-    default: () => ({})
-  }
-})
-
-// Stores
-const optionsStore = useOptionsStore()
-const inquiriesStore = useInquiriesStore()
-
-// State
-const showAddModal = ref(false)
-const draggingItemId = ref<number | null>(null)
-
-// Emits
-const emit = defineEmits<{
-  'addItem': [itemType: string, status: string]
-  'openDetail': [item: Option | Inquiry]
-  'update:items': []
-  'itemFamilyChanged': [payload: { itemId: number, familyKey: string, action: string }]
-}>()
-
-const statusColumns = computed(() => {
-  // Check if we have kanban column settings from the UI configuration
-  const kanbanColumns = props.appSettings?.optionFamilyTab?.[props.family?.key]?.ui?.kanban_column
-
-  if (kanbanColumns && Array.isArray(kanbanColumns) && kanbanColumns.length > 0) {
-    return kanbanColumns.map((column: unknown) => ({
-      value: column.value,
-      label: t('agora', column.label),
-      color: column.color
-    }))
-  }
-
-  // Fallback to default columns if no settings available
-  return [
-    { value: 'draft', label: t('agora', 'Draft'), color: '#949494' },
-    { value: 'active', label: t('agora', 'Active'), color: '#3498db' },
-    { value: 'completed', label: t('agora', 'Completed'), color: '#27ae60' },
-    { value: 'cancelled', label: t('agora', 'Cancelled'), color: '#e74c3c' }
-  ]
-})
-
-const columnCount = computed(() => statusColumns.value.length)
-
-// Get items for this layout
-const kanbanItems = computed(() => {
-  const sourceItems = props.items || []
-  return filterItemsByLayout(
-    sourceItems,
-    'kanban',
-    props.itemTypes,
-    props.family?.key || 'kanban'
-  )
-})
-
-// Get item status (works for both options and inquiries)
-const getItemStatus = (item: Option | Inquiry): string => {
-  // For options, use status.optionStatus
-  if ('status' in item && item.status && typeof item.status === 'object' && 'optionStatus' in item.status) {
-    return (item.status as { optionStatus: string }).optionStatus || 'draft'
-  }
-  // For inquiries, use status directly if it's a string
-  if ('status' in item && typeof item.status === 'string') {
-    return item.status
-  }
-  return 'draft'
-}
-
-// Get items by status
-const getItemsByStatus = (status: string) => kanbanItems.value.filter(item => getItemStatus(item) === status)
-
-// Get status label
-const getStatusLabel = (status: string) => {
-  const found = statusColumns.value.find(s => s.value === status)
-  return found?.label || status
-}
-
-// Drag and drop handlers
-const handleDragStart = (event: DragEvent, item: Option | Inquiry) => {
-  draggingItemId.value = item.id
-  event.dataTransfer?.setData('text/plain', item.id.toString())
-  event.dataTransfer!.effectAllowed = 'move'
-}
-
-const handleDragEnd = () => {
-  draggingItemId.value = null
-}
-
-const handleDrop = async (event: DragEvent, newStatus: string) => {
-  event.preventDefault()
-
-  const itemId = event.dataTransfer?.getData('text/plain')
-  if (!itemId) return
-
-  await changeStatus(parseInt(itemId), newStatus)
-}
-
-const changeStatus = async (itemId: number, newStatus: string) => {
-  try {
-    if (props.targetType === 'option') {
-      await optionsStore.setOptionStatus(itemId, newStatus)
-    } else {
-      // For inquiries, update status via inquiries store
-      await inquiriesStore.updateInquiryStatus(itemId, newStatus)
-    }
-    showSuccess(t('agora', 'Item moved to {column}', { 
-      column: getStatusLabel(newStatus) 
-    }))
-    emit('update:items')
-  } catch (error) {
-    console.error("Unable to change item status", error) 
-    showError(t('agora', 'Item status could not be updated'))
-  }
-}
-
-const handleAddSuccess = () => {
-  emit('update:items')
-  // Refresh the kanban view
-  // The items will be updated via the watcher
-}
-</script>
 
 <style scoped lang="scss">
 .kanban-layout {
@@ -305,8 +237,6 @@ const handleAddSuccess = () => {
 
   .kanban-header {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    grid-template-columns: repeat(v-bind(columnCount), 1fr);
     gap: 16px;
 
     .kanban-column-header {
@@ -355,7 +285,6 @@ const handleAddSuccess = () => {
 
   .kanban-board {
     display: grid;
-    grid-template-columns: repeat(v-bind(columnCount), 1fr);
     gap: 16px;
     min-height: 600px;
 

@@ -298,6 +298,7 @@ watch(subMode, (newMode) => {
                 <!-- Reel controls -->
                 <template v-if="isReelView">
                     <!-- Vertical orientation button -->
+		    <div class="reel-controls">
                     <NcCheckboxRadioSwitch
                         :button-variant="true"
                         :model-value="reelOrientation"
@@ -340,7 +341,7 @@ watch(subMode, (newMode) => {
                             <component :is="InquiryGeneralIcons.ArrowLeftRight" size="16" />
                         </template>
                     </NcCheckboxRadioSwitch>
-
+		  </div>
                 </template>
 
                 <ActionToggleSidebar
@@ -458,6 +459,19 @@ watch(subMode, (newMode) => {
     flex-shrink: 0;
 }
 
+.reel-controls {
+    display: flex;
+    align-items: center;
+    background: var(--color-background-dark);
+    border-radius: 10px;
+    padding: 4px;
+    border: 1px solid var(--color-border);
+
+    :deep(.checkbox-radio-switch__label) {
+        border-inline-start: none !important;
+    }
+}
+ 
 .reel-wrapper {
     width: 100%;
     height: 600px;

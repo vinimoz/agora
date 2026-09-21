@@ -79,7 +79,7 @@
                         @vote="(item, value) => submitSingleVote(parentId, item, value)"
                         @submit-multi-vote="onSubmitMultiVote"
                         @remove-my-vote="removeMyVote"
-                        @select-option="$emit('selectOption', $event)"
+				@select-option="(opt) => emit('selectOption', toItem(opt))"
                         @open-supports-modal="openSupportsModal"
                         />
             </div>
@@ -119,7 +119,7 @@
                         @update:token-weights="tokenWeights = $event"
                         @vote="(item, value) => submitSingleVote(parentId, item, value)"
                         @submit-multi-vote="submitMultiVote"
-                        @select-option="$emit('selectOption', $event)"
+			@select-option="(opt) => emit('selectOption', toItem(opt))"
                         />
             </div>
         </div>
@@ -194,7 +194,7 @@ import { ref, computed } from 'vue'
 import { t } from '@nextcloud/l10n'
 import { NcLoadingIcon, NcDialog } from '@nextcloud/vue' 
 import NcButton from '@nextcloud/vue/components/NcButton'
-import type { Option, Inquiry, SupportEngine } from '../../Types/index'
+import type { Item, Option, Inquiry, SupportEngine } from '../../Types/index'
 import { useVoteContext, type TargetType } from '../../composables/useVoteContext'
 import { useOptionsStore } from '../../stores/options'
 import { useInquiriesStore } from '../../stores/inquiries'
@@ -209,9 +209,10 @@ import AddItemToFamily from '../Modals/AddItemToFamily.vue'
 import SupportsDetailModal from '../Modals/SupportsDetailModal.vue'
 import { ENGINE_DEFINITIONS } from '../../Types/votingType'
 import { showSuccess } from '@nextcloud/dialogs'
+import { toItem } from '../../helpers/modules/itemHelpers'
 
 const props = defineProps<{
-  inquiryId: number | null
+  items: Item[]
   parentId: number | null
   targetType: TargetType
   canManageVote: boolean
@@ -222,7 +223,7 @@ const emit = defineEmits<{
   'configureEngine': []
   'addOption': []
   'addToVote': []
-  'selectOption': [item: Option | Inquiry]
+  'selectOption': [item:  Item]
   'itemFamilyChanged': [payload: { itemId: number, familyKey: string, action: string }]
 }>()
 
@@ -232,16 +233,21 @@ const engineStore = useSupportEngineStore()
 const supportsStore = useSupportsStore()
 
 // Get all items based on target type
-const allItems = computed(() => {
-  if (props.targetType === 'option') {
-    return optionsStore.options || []
-  } 
-    return inquiriesStore.inquiries || []
-  
+/** Raw objects for AddItemToFamily / VoteCardsLayout — pre-existing consumers */
+const allItems = computed<(Option | Inquiry)[]>(() => {
+  if (props.items?.length) {
+    return props.items.map(i => i.raw as Option | Inquiry)
+  }
+  return props.targetType === 'option'
+    ? optionsStore.options || []
+    : inquiriesStore.inquiries || []
 })
 
+
+
 console.log(" TARGET TYPE ",props.targetType)
-console.log(" INQUIRY ID ",props.inquiryId)
+console.log(" ITEMS IN VOTE  ",props.items)
+console.log(" INQUIRY ID ",props.parentId)
 
 const {
   loadingEngines,
@@ -277,8 +283,7 @@ const {
   reactions,
   quadraticVotes,
   tokenWeights,
-} = useVoteContext(props.inquiryId, props.targetType)
-
+} = useVoteContext(props.parentId, props.targetType)
 // Local UI state
 const currentLayout = ref<'cards' | 'results'>('cards')
 const allowedLayouts = ['cards', 'results']
@@ -307,15 +312,16 @@ const availableEnginesSelector = computed(() => {
       inputModel: engine.inputModel,
       description: engine.description,
       constraints: engine.constraints,
-      recommendedViews: engine.recommendedViews
+      recommendedViews: engine.recommendedViews,
     }))
- console.log(" OPTIONS COUNT ", props.optionCount)
-  if (!props.optionCount) return engines
+
+  const count = props.items.length
+  if (!count) return engines
 
   return engines.filter(engine => {
-    const constraints = engine.constraints
-    if (constraints?.min_options && props.optionCount! < constraints.min_options) return false
-    if (constraints?.max_options && props.optionCount! > constraints.max_options) return false
+    const c = engine.constraints
+    if (c?.min_options && count < c.min_options) return false
+    if (c?.max_options && count > c.max_options) return false
     return true
   })
 })
@@ -405,7 +411,7 @@ const onEngineSaved = async (data: {
 }) => {
   if (engineModalMode.value === 'create') {
     await engineStore.createEngine({
-      inquiry_id: props.inquiryId,
+      inquiry_id: props.parentId,
       title: data.title,
       description: data.description,
       engine: data.engine,
@@ -443,7 +449,7 @@ const handleEngineUpdate = (engineId: number | null) => {
 }
 
 const engineHasVotes = (engineId: number): boolean => {
-  const supports = supportsStore.getSupportsByParent(props.inquiryId, props.targetType)
+  const supports = supportsStore.getSupportsByParent(props.parentId, props.targetType)
   return supports?.some(s => s.support_engine_id === engineId) ?? false
 }
 
@@ -467,6 +473,7 @@ console.log(" CURRENT ENGINE ",currentEngine.value)
 const onItemsAdded = () => {
   showAddToVoteModal.value = false
 }
+console.log(" ITEMS IN VOTE  ",props.items)
 </script>
 
 <style scoped lang="scss">

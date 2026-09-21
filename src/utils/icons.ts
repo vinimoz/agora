@@ -328,6 +328,7 @@ export const InquiryGeneralIcons: Record<string, Component> = {
   Play: makeIconComponent(Play, '#388E3C'),
   ArrowLeft: makeIconComponent(ArrowLeft, '#546E7A'),
   ArrowRight: makeIconComponent(ArrowRight, '#546E7A'),
+  ArrowUp: makeIconComponent(ArrowUp, '#607D8B'),
   Discussion: makeIconComponent(ChatOutline, '#455A64'),
   Lightbulb: makeIconComponent(Lightbulb, '#FB8C00'),
   Checkmark: makeIconComponent(CheckCircleOutline, '#388E3C'),

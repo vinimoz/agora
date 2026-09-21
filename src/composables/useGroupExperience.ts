@@ -5,205 +5,183 @@
 
 import { computed, type Ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { 
-  EXPERIENCE_DEFINITIONS, 
-  type ExperienceKey, 
-  type DisplayType,
-  type ToolKey
-} from './useExperience'
+import { EXPERIENCE_DEFINITIONS } from './useExperience'
+import type {
+  ExperienceKey,
+  DisplayType,
+  ToolKey,
+  LayoutTypeValue,
+  DisplayZone,
+} from '../Types/experience.types'
 import type { InquiryGroup } from '../stores/inquiryGroups.types'
 
 export function useGroupExperience(group: Ref<InquiryGroup | null>) {
   const route = useRoute()
   const router = useRouter()
 
-  // Get the full UI configuration from the group (stored in configuration.ui)
-  const uiConfig = computed(() => group.value?.configuration?.ui || null)
-  console.log(" USE GROUP EXPEREIECEN ",uiConfig.value)
-  let config = group.value?.configuration?.ui || null
- 
-  if (!config && group.value?.inquiryGroupType?.ui) {
-    const templateUi = group.value.inquiryGroupType.ui
-    if (typeof templateUi === 'object') {
-      config = templateUi
-    }
-  }
+  // ----------------------------------------------------------
+  // UI CONFIG – reactive, with fallback to group-type template
+  // ----------------------------------------------------------
+  const uiConfig = computed(() => {
+    const own = group.value?.configuration?.ui
+    if (own) return own
 
-  /**
-   * Experience is determined by:
-   * 1. URL query parameter (?experience=xxx)
-   * 2. Group's UI config (.experience field from ExperienceArchitecture)
-   * 3. Default 'dashboard'
-   */
+    const templateUi = group.value?.inquiryGroupType?.ui
+    if (templateUi && typeof templateUi === 'object') return templateUi
+
+    return null
+  })
+
+  // ----------------------------------------------------------
+  // EXPERIENCE
+  // ----------------------------------------------------------
   const experience = computed<ExperienceKey>({
     get: () => {
-      const urlExp = route.query.experience as ExperienceKey
-      if (urlExp && EXPERIENCE_DEFINITIONS[urlExp]) {
-        return urlExp
-      }
-      // Use 'experience' field from ExperienceArchitecture
-      return uiConfig.value?.experience || 'dashboard'
+      const urlExp = route.query.experience as ExperienceKey | undefined
+      if (urlExp && EXPERIENCE_DEFINITIONS[urlExp]) return urlExp
+
+      const exp = uiConfig.value?.experience as ExperienceKey | undefined
+      if (exp && EXPERIENCE_DEFINITIONS[exp]) return exp
+
+      return 'dashboard'
     },
     set: (val) => {
-      router.push({
-        query: { ...route.query, experience: val }
-      })
-    }
+      const query: Record<string, string> = {
+        ...Object.fromEntries(
+          Object.entries(route.query).filter(
+            ([, v]) => typeof v === 'string',
+          ) as [string, string][],
+        ),
+        experience: val,
+      }
+      router.push({ query })
+    },
   })
 
-  /**
-   * Display mode is determined by:
-   * 1. URL query parameter (?display=xxx)
-   * 2. Default display from the experience definition
-   * 3. Fallback to 'cards'
-   */
+  // ----------------------------------------------------------
+  // DISPLAY MODE
+  // ----------------------------------------------------------
   const displayMode = computed<DisplayType>({
     get: () => {
-      const urlDisplay = route.query.display as DisplayType
+      const urlDisplay = route.query.display as DisplayType | undefined
       if (urlDisplay) return urlDisplay
-      
-      // Get defaultDisplay from experience definition
+
       const def = EXPERIENCE_DEFINITIONS[experience.value]
-      return def?.defaultDisplay || 'cards'
+      return def?.defaultDisplay ?? 'cards'
     },
     set: (val) => {
-      router.push({
-        query: { ...route.query, display: val }
-      })
-    }
-  })
-
-  /**
-   * Check if group has custom display architecture
-   * Uses displayArchitecture from ExperienceArchitecture
-   */
-  const hasCustomArchitecture = computed(() => 
-    uiConfig.value?.displayArchitecture && 
-    Object.keys(uiConfig.value.displayArchitecture).length > 0
-  )
-
-  /**
-   * Get the display architecture from the group's UI config
-   * Uses displayArchitecture from ExperienceArchitecture
-   */
-  const displayArchitecture = computed(() => 
-    uiConfig.value?.displayArchitecture || null
-  )
-
-  /**
-   * Get layout config from the group's UI config
-   * Falls back to experience default if not specified
-   */
-  const layoutConfig = computed(() => {
-    const ui = uiConfig.value
-    if (!ui?.layout) {
-      // Fallback based on experience definition
-      const def = EXPERIENCE_DEFINITIONS[experience.value]
-      if (def?.layout === 'grid') {
-        return { type: 'grid', columns: 2, rows: 2, responsive: true }
+      const query: Record<string, string> = {
+        ...Object.fromEntries(
+          Object.entries(route.query).filter(
+            ([, v]) => typeof v === 'string',
+          ) as [string, string][],
+        ),
+        display: val,
       }
-      return { type: 'full', responsive: true }
-    }
-    return {
-      type: ui.layout.type || 'full',
-      columns: ui.layout.columns || 2,
-      rows: ui.layout.rows || 2,
-      responsive: ui.layout.responsive !== false
-    }
+      router.push({ query })
+    },
   })
 
-  /**
-   * Get context from the group's UI config
-   * Uses context from ExperienceArchitecture
-   */
-  const contextConfig = computed(() => 
-    uiConfig.value?.context || { type: 'group', selection: 'selected' }
+  // ----------------------------------------------------------
+  // ARCHITECTURE
+  // ----------------------------------------------------------
+  const hasCustomArchitecture = computed(
+    () =>
+      !!uiConfig.value?.displayArchitecture &&
+      Object.keys(uiConfig.value.displayArchitecture).length > 0,
   )
 
-  /**
-   * Get features from the group's UI config
-   * Uses features from ExperienceArchitecture
-   */
-  const features = computed(() => 
-    uiConfig.value?.features || []
+  const displayArchitecture = computed<Record<string, DisplayZone> | null>(
+    () => uiConfig.value?.displayArchitecture ?? null,
   )
 
-  /**
-   * Get allowed tools from the display architecture
-   * Extracts tools from zones where display.type === 'tool'
-   */
-  const allowedTools = computed((): ToolKey[] => {
+  const layoutConfig = computed<{
+    type: LayoutTypeValue
+    columns?: number
+    rows?: number
+    responsive: boolean
+  }>(() => {
     const ui = uiConfig.value
-    if (!ui?.displayArchitecture) return []
-
-    const tools: ToolKey[] = []
-    for (const zone of Object.values(ui.displayArchitecture)) {
-      if (zone.display?.type === 'tool' && zone.display?.tool) {
-        const tool = zone.display.tool as ToolKey
-        if (!tools.includes(tool)) {
-          tools.push(tool)
-        }
+    if (ui?.layout) {
+      return {
+        type: (ui.layout.type ?? 'full') as LayoutTypeValue,
+        columns: ui.layout.columns,
+        rows: ui.layout.rows,
+        responsive: ui.layout.responsive !== false,
       }
     }
-    return tools
+
+    const def = EXPERIENCE_DEFINITIONS[experience.value]
+    const type = (def?.layout ?? 'full') as LayoutTypeValue
+    if (type === 'grid') {
+      return { type, columns: 2, rows: 2, responsive: true }
+    }
+    return { type, responsive: true }
   })
 
-  /**
-   * Get available experiences for this group type
-   * Filters experiences by supportedGroupTypes
-   * IMPORTANT: Also includes experiences that don't have supportedGroupTypes defined (available to all)
-   */
-  const availableExperiences = computed(() => {
+  const contextConfig = computed(
+    () => uiConfig.value?.context ?? { type: 'group', selection: 'selected' },
+  )
+
+  const features = computed<string[]>(() => uiConfig.value?.features ?? [])
+
+  // ----------------------------------------------------------
+  // TOOLS
+  // ----------------------------------------------------------
+  const allowedTools = computed<ToolKey[]>(() => {
+    const architecture = uiConfig.value?.displayArchitecture
+    if (!architecture) return []
+
+    const seen = new Set<ToolKey>()
+    for (const zone of Object.values(architecture)) {
+      if (zone.display?.type === 'tool' && zone.display.tool) {
+        seen.add(zone.display.tool)
+      }
+    }
+    return [...seen]
+  })
+
+  // ----------------------------------------------------------
+  // EXPERIENCE AVAILABILITY
+  // ----------------------------------------------------------
+  const availableExperiences = computed<ExperienceKey[]>(() => {
     const groupType = group.value?.type
-    
-    // If no group type, return all experiences
-    if (!groupType) {
-      return Object.keys(EXPERIENCE_DEFINITIONS) as ExperienceKey[]
-    }
-
     const allKeys = Object.keys(EXPERIENCE_DEFINITIONS) as ExperienceKey[]
-    return allKeys.filter(key => {
+
+    if (!groupType) return allKeys
+
+    return allKeys.filter((key) => {
       const def = EXPERIENCE_DEFINITIONS[key]
-      // If no supportedGroupTypes defined, experience is available to all
       if (!def.supportedGroupTypes || def.supportedGroupTypes.length === 0) {
         return true
       }
-      // Check if group type is in supportedGroupTypes (case insensitive)
       return def.supportedGroupTypes.some(
-        supportedType => supportedType.toLowerCase() === groupType.toLowerCase()
+        (supportedType) =>
+          supportedType.toLowerCase() === groupType.toLowerCase(),
       )
     })
   })
 
-  /**
-   * Get the default experience for this group type
-   * First checks if the group's type has a default, otherwise returns 'dashboard'
-   */
-  const defaultExperience = computed((): ExperienceKey => {
-    // Check if group type has a default experience from UI config
-    if (uiConfig.value?.defaultExperience) {
-      return uiConfig.value.defaultExperience as ExperienceKey
-    }
-    // Check if the experience is defined in the UI config
-    if (uiConfig.value?.experience) {
-      return uiConfig.value.experience as ExperienceKey
-    }
+  const defaultExperience = computed<ExperienceKey>(() => {
+    const candidate =
+      (uiConfig.value?.defaultExperience as ExperienceKey | undefined) ??
+      (uiConfig.value?.experience as ExperienceKey | undefined)
+
+    if (candidate && EXPERIENCE_DEFINITIONS[candidate]) return candidate
     return 'dashboard'
   })
 
-  /**
-   * Get the default display mode for the current experience
-   */
-  const defaultDisplay = computed((): DisplayType => {
+  const defaultDisplay = computed<DisplayType>(() => {
     const def = EXPERIENCE_DEFINITIONS[experience.value]
-    return def?.defaultDisplay || 'cards'
+    return def?.defaultDisplay ?? 'cards'
   })
 
-  /**
-   * Get zones for a specific content type
-   * @param contentType - The content type to filter zones by
-   */
-  function getZonesByContent(contentType: string): Array<{ key: string; zone: any }> {
+  // ----------------------------------------------------------
+  // ZONE HELPERS
+  // ----------------------------------------------------------
+  function getZonesByContent(
+    contentType: string,
+  ): Array<{ key: string; zone: DisplayZone }> {
     const architecture = displayArchitecture.value
     if (!architecture) return []
 
@@ -212,102 +190,92 @@ export function useGroupExperience(group: Ref<InquiryGroup | null>) {
       .map(([key, zone]) => ({ key, zone }))
   }
 
-  /**
-   * Get a specific zone by key
-   * @param zoneKey - The zone key to retrieve
-   */
-  function getZone(zoneKey: string): any {
-    return displayArchitecture.value?.[zoneKey] || null
+  function getZone(zoneKey: string): DisplayZone | null {
+    return displayArchitecture.value?.[zoneKey] ?? null
   }
 
-  /**
-   * Check if a specific feature is enabled
-   * @param featureName - The feature to check
-   */
   function hasFeature(featureName: string): boolean {
     return features.value.includes(featureName)
   }
 
-  /**
-   * Get the experience definition for the current experience
-   */
-  const definition = computed(() => 
-    EXPERIENCE_DEFINITIONS[experience.value] || EXPERIENCE_DEFINITIONS.dashboard
+  const definition = computed(
+    () =>
+      EXPERIENCE_DEFINITIONS[experience.value] ||
+      EXPERIENCE_DEFINITIONS.dashboard,
   )
 
-  /**
-   * Switch experience and update URL
-   * @param key - The experience key to switch to
-   */
+  // ----------------------------------------------------------
+  // ACTIONS
+  // ----------------------------------------------------------
+  function buildQuery(extra: Record<string, string>): Record<string, string> {
+    return {
+      ...Object.fromEntries(
+        Object.entries(route.query).filter(
+          ([, v]) => typeof v === 'string',
+        ) as [string, string][],
+      ),
+      ...extra,
+    }
+  }
+
   function switchExperience(key: ExperienceKey) {
     experience.value = key
-    const query = { ...route.query, experience: key }
-    // Reset display to default when switching experience
     const def = EXPERIENCE_DEFINITIONS[key]
-    if (def) {
-      query.display = def.defaultDisplay
-    }
-    router.push({ query })
+    const extra: Record<string, string> = { experience: key }
+    if (def) extra.display = def.defaultDisplay
+    router.push({ query: buildQuery(extra) })
   }
 
-  /**
-   * Switch display mode and update URL
-   * @param mode - The display mode to switch to
-   */
   function switchDisplay(mode: DisplayType) {
     displayMode.value = mode
-    const query = { ...route.query, display: mode }
-    router.push({ query })
+    router.push({ query: buildQuery({ display: mode }) })
   }
 
-  /**
-   * Get all zones in the display architecture
-   */
+  // ----------------------------------------------------------
+  // COMPUTED COLLECTIONS
+  // ----------------------------------------------------------
   const allZones = computed(() => {
     const architecture = displayArchitecture.value
     if (!architecture) return []
     return Object.entries(architecture).map(([key, zone]) => ({
       key,
-      ...zone
+      ...zone,
     }))
   })
 
-  /**
-   * Get zones for a specific position
-   * @param row - The row to filter by
-   * @param column - The column to filter by
-   */
-  function getZonesByPosition(row: number, column: number): any[] {
+  function getZonesByPosition(
+    row: number,
+    column: number,
+  ): Array<{ key: string; zone: DisplayZone }> {
     const architecture = displayArchitecture.value
     if (!architecture) return []
 
     return Object.entries(architecture)
-      .filter(([, zone]) => 
-        zone.position?.row === row && zone.position?.column === column
+      .filter(
+        ([, zone]) =>
+          zone.position?.row === row && zone.position?.column === column,
       )
-      .map(([key, zone]) => ({ key, ...zone }))
+      .map(([key, zone]) => ({ key, zone }))
   }
 
-  // Watch for group changes to update experience if needed
+  // ----------------------------------------------------------
+  // WATCHERS
+  // ----------------------------------------------------------
   watch(
     () => group.value?.type,
     (newType) => {
       if (!newType) return
-      
-      // If current experience is not available for this group type, switch to default
+
       const available = availableExperiences.value
-      const currentExp = experience.value
-      
-      if (!available.includes(currentExp)) {
-        const defaultExp = defaultExperience.value
-        if (defaultExp && available.includes(defaultExp)) {
-          switchExperience(defaultExp)
-        } else if (available.length > 0) {
-          switchExperience(available[0])
-        }
-      }
+      if (available.includes(experience.value)) return
+
+      const fallback = defaultExperience.value
+      const next =
+        fallback && available.includes(fallback) ? fallback : available[0]
+
+      if (next && next !== experience.value) switchExperience(next)
     },
-    { immediate: true }
+    { immediate: true },
   )
 
   return {
@@ -332,8 +300,8 @@ export function useGroupExperience(group: Ref<InquiryGroup | null>) {
     // Actions
     switchExperience,
     switchDisplay,
-    
-    // Helper methods
+
+    // Helpers
     getZonesByContent,
     getZone,
     getZonesByPosition,

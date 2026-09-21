@@ -86,11 +86,11 @@
       </h4>
       <div class="options-list">
         <ConsensusOptionCard
-          v-for="option in blockingObjections"
-          :key="option.id"
-          :option="option"
-          :inquiry-id="inquiryId"
-          :highlight="uiConfig.highlight_objections && getOptionStatus(option) === 'blocked'"
+          v-for="item in blockingObjections"
+          :key="item.id"
+          :option="item.raw"
+          :inquiry-id="parentId"
+	  :highlight="uiConfig.highlight_objections && getOptionStatus(item) === 'blocked'"
           :show-quorum="uiConfig.show_consensus_meter"
           :show-status="true"
           :show-resolution="true"
@@ -101,11 +101,11 @@
           :can-reopen="hasFeature('consensus_tracking')"
           :can-change-status="hasFeature('objection_management')"
 	  :family-type="familyKey"
-          @click="$emit('openDetail', option)"
-          @status-change="(status) => $emit('optionStatusChange', option.id, status)"
-          @propose-resolution="(optionId) => $emit('proposeOptionResolution', optionId)"
-          @resolve="(optionId) => $emit('resolveOption', optionId)"
-          @reopen="(optionId) => $emit('reopenOption', optionId)"
+          @click="emit('openDetail', item)"
+          @status-change="emit('optionStatusChange', item.id, status)"
+          @propose-resolution="emit('proposeOptionResolution', item.id)"
+          @resolve="emit('resolveOption', item.id)"
+          @reopen="emit('reopenOption', item.id)"
         />
       </div>
     </div>
@@ -118,17 +118,17 @@
       </h4>
       <div class="options-list">
         <ConsensusOptionCard
-          v-for="option in activeDiscussions"
-          :key="option.id"
-          :option="option"
-          :inquiry-id="inquiryId"
+          v-for="item in activeDiscussions"
+          :key="item.id"
+          :option="item.raw"
+          :inquiry-id="parentId"
           :show-status="true"
           :show-discussion="true"
           :can-discuss="hasFeature('objection_management')"
           :can-propose-resolution="hasFeature('objection_management')"
 	  :family-type="familyKey"
-          @click="$emit('openDetail', option)"
-          @status-change="(status) => $emit('optionStatusChange', option.id, status)"
+          @click="emit('openDetail', item)"
+          @status-change="emit('optionStatusChange', item.id, status)"
         />
       </div>
     </div>
@@ -141,15 +141,15 @@
       </h4>
       <div class="options-list">
         <ConsensusOptionCard
-          v-for="option in proposedResolutions"
-          :key="option.id"
-          :option="option"
-          :inquiry-id="inquiryId"
+          v-for="item in proposedResolutions"
+          :key="item.id"
+          :option="item.raw"
+          :inquiry-id="parentId"
           :show-resolution="true"
           :can-resolve="hasFeature('consensus_tracking')"
 	  :family-type="familyKey"
-          @click="$emit('openDetail', option)"
-          @resolve="(optionId) => $emit('resolveOption', optionId)"
+          @click="$emit('openDetail', item)"
+          @resolve="emit('resolveOption', item.id)"
         />
       </div>
     </div>
@@ -165,16 +165,16 @@
       </h4>
       <div class="options-list">
         <ConsensusOptionCard
-          v-for="option in resolvedConcerns"
-          :key="option.id"
-          :option="option"
-          :inquiry-id="inquiryId"
+          v-for="item in resolvedConcerns"
+          :key="item.id"
+          :option="item.raw"
+          :inquiry-id="parentId"
           :show-resolution="true"
           :show-resolved-info="true"
           :can-reopen="hasFeature('consensus_tracking')"
 	  :family-type="familyKey"
-          @click="$emit('openDetail', option)"
-          @reopen="(optionId) => $emit('reopenOption', optionId)"
+          @click="$emit('openDetail', item)"
+          @reopen="emit('reopenOption', item.id)"
         />
       </div>
     </div>
@@ -187,13 +187,13 @@
       </h4>
       <div class="options-list">
         <ConsensusOptionCard
-          v-for="option in exceptions"
-          :key="option.id"
-          :option="option"
-          :inquiry-id="inquiryId"
+          v-for="item in exceptions"
+          :key="item.id"
+          :option="item.raw"
+          :inquiry-id="parentId"
           :show-status="true"
 	  :family-type="familyKey"
-          @click="$emit('openDetail', option)"
+          @click="emit('openDetail', item)"
         />
       </div>
     </div>
@@ -206,13 +206,13 @@
       </h4>
       <div class="options-list">
         <ConsensusOptionCard
-          v-for="option in consultationQuestions"
-          :key="option.id"
-          :option="option"
-          :inquiry-id="inquiryId"
+          v-for="item in consultationQuestions"
+          :key="item.id"
+          :option="item.raw"
+          :inquiry-id="parentId"
           :show-status="true"
 	  :family-type="familyKey"
-          @click="$emit('openDetail', option)"
+          @click="$emit('openDetail', item)"
         />
       </div>
     </div>
@@ -225,32 +225,33 @@
       </h4>
       <div class="options-list">
         <ConsensusOptionCard
-          v-for="option in recommendations"
-          :key="option.id"
-          :option="option"
-          :inquiry-id="inquiryId"
+          v-for="item in recommendations"
+          :key="item.id"
+          :option="item.raw"
+          :inquiry-id="parentId"
           :show-status="true"
 	  :family-type="familyKey"
-          @click="$emit('openDetail', option)"
+          @click="$emit('openDetail', item)"
         />
       </div>
     </div>
 
     <!-- Consent Given -->
     <div v-if="consents.length > 0" class="consensus-section">
-      <h4 class="section-title consent">
+	    <h4 class="section-title consent">
         <component :is="InquiryOptionIcons.CheckCircle" :size="16" />
         {{ t('agora', 'Consent given') }} ({{ consents.length }})
       </h4>
       <div class="options-list">
-        <OptionCard
-          v-for="option in consents"
-          :key="option.id"
-          :option="option"
-          :inquiry-id="inquiryId"
-          :show-support="true"
-	  :family-type="familyKey"
-          @click="$emit('openDetail', option)"
+        <ItemCard
+	     v-for="item in consents"
+   :key="item.id"
+   :item="item"
+   :parent-id="parentId"
+   :target-type="targetType"
+   :family-type="familyKey"
+   @click="emit('openDetail', item)"
+
         />
       </div>
     </div>
@@ -283,7 +284,7 @@ import { computed } from 'vue'
 import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import { InquiryOptionIcons } from '../../../utils/icons.ts'
-import OptionCard from '../OptionCard.vue'
+import ItemCard from '../../FamilyLayouts/ItemCard.vue'
 import ConsensusOptionCard from '../ConsensusOptionCard.vue'
 import { 
   getOptionTypeIconComponent,
@@ -291,7 +292,8 @@ import {
   getFamilyFeatures,
   getFamilyActions,
 } from '../../../helpers/modules/InquiryOptionHelper'
-import type { InquiryOptionType, Option, OptionFamily } from '../../Types/index.ts'
+import type { Item, InquiryOptionType,  OptionFamily } from '../../Types/index.ts'
+import { getItemsForFamily } from '../../../helpers/modules/itemHelpers'
 
 interface FamilyAction {
   key: string
@@ -300,67 +302,112 @@ interface FamilyAction {
 }
 
 const props = defineProps<{
-  items: Option[]
-  inquiryId: number
+  items: Item[]
+  parentId: number
+  targetType: 'option' | 'inquiry'
   optionTypes: InquiryOptionType[]
+  familyOptionTypes?: InquiryOptionType[]
+  family?: OptionFamily | null
+  familyKey?: string
+  isReadonly?: boolean
+  appSettings?: Record<string, unknown>
   quorumNeeded?: number
   consensusStatus?: string
   canReopen?: boolean
   canContinueDiscussion?: boolean
   canProposeResolution?: boolean
   recentActivityThreshold?: number
-  familyKey?: string
-  familyData?: OptionFamily
 }>()
 
+/** Emit shape uses Item */
 const emit = defineEmits<{
-  'addOption': [optionType: string]
-  'openDetail': [option: Option]
-  'optionStatusChange': [optionId: number, status: string]
-  'proposeOptionResolution': [optionId: number]
-  'resolveOption': [optionId: number]
-  'reopenOption': [optionId: number]
-  'continueDiscussion': []
-  'proposeResolution': []
-  'reopenInquiry': []
-  'action': [actionKey: string]
+  addOption: [optionType: string]
+  openDetail: [item: Item]
+  optionStatusChange: [optionId: number, status: string]
+  proposeOptionResolution: [optionId: number]
+  resolveOption: [optionId: number]
+  reopenOption: [optionId: number]
+  continueDiscussion: []
+  proposeResolution: []
+  reopenInquiry: []
+  action: [actionKey: string]
 }>()
 
+const familyKey = computed(() => props.familyKey ?? props.family?.family_type ?? '')
 
+const filtered = computed(() =>
+  getItemsForFamily(props.items, familyKey.value)
+)
+
+
+console.log(" FILT ITEMS N CONSENSUS ",filtered.value)
+console.log(" FAMILY ITEMS IN CONSENSUS ",familyKey.value)
+console.log(" ITEMS IN CONSENSUS", props.items)
 // ========================================
 // HELPER: Get option status safely
 // ========================================
-const getOptionStatus = (option: Option): string => {
-  if (!option) return 'open'
-  
-  // Check miscFields first (where status is often stored)
-  if (option.miscFields?.status && typeof option.miscFields.status === 'string') {
-    return option.miscFields.status
-  }
-  
-  // Check status object
-  if (option.status) {
-    if (typeof option.status === 'string') return option.status
-    if (option.status.status) return option.status.status
-    if (option.status.optionStatus) return option.status.optionStatus
-  }
-  
-  // Default based on type
-  if (option.type === 'objection' || option.type === 'blocking_objection') return 'open'
-  if (option.type === 'consultation_question') return 'open'
-  if (option.type === 'exception') return 'open'
-  if (option.type === 'resolution') return 'proposed'
-  if (option.type === 'recommendation') return 'draft'
-  
-  return 'draft'
-}
+const getOptionStatus = (item: Item) => item.statusKey
+
+const blockingObjections = computed(() =>
+  filtered.value.filter(i => i.type === 'objection' || i.type === 'blocking_objection')
+)
+
+const activeDiscussions = computed(() =>
+  filtered.value.filter(i =>
+    (i.type === 'objection' || i.type === 'blocking_objection') &&
+    i.statusKey === 'under_discussion'
+  )
+)
+
+const proposedResolutions = computed(() =>
+  filtered.value.filter(i => i.type === 'resolution' && i.statusKey === 'proposed')
+)
+
+const resolvedConcerns = computed(() =>
+  filtered.value.filter(i =>
+    (i.type === 'objection' || i.type === 'blocking_objection') &&
+    (i.statusKey === 'resolved' || i.statusKey === 'accepted')
+  )
+)
+
+const exceptions = computed(() =>
+  filtered.value.filter(i => i.type === 'exception' || i.type === 'non_blocking_objection')
+)
+const consents = computed(() =>
+  filtered.value.filter(i => i.type === 'consent' || i.type === 'agreement')
+)
+const consultationQuestions = computed(() =>
+  filtered.value.filter(i => i.type === 'consultation_question' || i.type === 'question')
+)
+const recommendations = computed(() =>
+  filtered.value.filter(i => i.type === 'recommendation')
+)
+
+/** Recently resolved — reads raw for resolved_at timestamp */
+const recentlyResolved = computed(() => {
+  const threshold = props.recentActivityThreshold || 60
+  const now = Date.now()
+  return resolvedConcerns.value.filter(i => {
+    const raw = i.raw as any
+    const ts = raw.resolved_at ?? raw.miscFields?.resolved_at
+    if (!ts) return false
+    return (now - new Date(ts).getTime()) / 1000 / 60 < threshold
+  }).length
+})
+
+/** Quorum — reads raw for countSupports */
+const objectionsQuorum = computed(() =>
+  blockingObjections.value.reduce((sum, i) => {
+    const raw = i.raw as any
+    return sum + (raw.status?.countSupports || 0)
+  }, 0)
+)
 
 // ========================================
 // Get family configuration
 // ========================================
-const familyKey = computed(() => props.familyKey || 'consensus')
 const uiConfig = computed(() => {
-  const config = getFamilyUIConfig(familyKey.value, props.familyData)
+  const config = getFamilyUIConfig(familyKey.value, props.family)
   return {
     show_consensus_meter: config.show_consensus_meter !== false,
     highlight_objections: config.highlight_objections !== false,
@@ -369,8 +416,8 @@ const uiConfig = computed(() => {
   }
 })
 
-const features = computed(() => getFamilyFeatures(familyKey.value, props.familyData))
-const actions = computed(() => getFamilyActions(familyKey.value, props.familyData))
+const features = computed(() => getFamilyFeatures(familyKey.value, props.family))
+const actions = computed(() => getFamilyActions(familyKey.value, props.family))
 
 // ========================================
 // Helper functions
@@ -428,58 +475,8 @@ const availableActions = computed(() => {
 // ========================================
 // Filter options
 // ========================================
-const blockingObjections = computed(() => 
-  props.items.filter(opt => 
-    opt.type === 'objection' || opt.type === 'blocking_objection'
-  )
-)
 
-const activeDiscussions = computed(() => 
-  props.items.filter(opt => 
-    (opt.type === 'objection' || opt.type === 'blocking_objection') &&
-    getOptionStatus(opt) === 'under_discussion'
-  )
-)
-
-const proposedResolutions = computed(() => 
-  props.items.filter(opt => 
-    opt.type === 'resolution' && 
-    getOptionStatus(opt) === 'proposed'
-  )
-)
-
-const resolvedConcerns = computed(() => 
-  props.items.filter(opt => 
-    (opt.type === 'objection' || opt.type === 'blocking_objection') &&
-    (getOptionStatus(opt) === 'resolved' || getOptionStatus(opt) === 'accepted')
-  )
-)
-
-const exceptions = computed(() => 
-  props.items.filter(opt => 
-    opt.type === 'exception' || opt.type === 'non_blocking_objection'
-  )
-)
-
-const consents = computed(() => 
-  props.items.filter(opt => 
-    opt.type === 'consent' || opt.type === 'agreement'
-  )
-)
-
-const consultationQuestions = computed(() => 
-  props.items.filter(opt => 
-    opt.type === 'consultation_question' || opt.type === 'question'
-  )
-)
-
-const recommendations = computed(() => 
-  props.items.filter(opt => 
-    opt.type === 'recommendation'
-  )
-)
-
-const allOptions = computed(() => props.items)
+const allOptions = computed(() => filtered.value)
 
 // ========================================
 // Stats
@@ -490,24 +487,9 @@ const blockedCount = computed(() =>
   blockingObjections.value.filter(opt => getOptionStatus(opt) === 'blocked').length
 )
 
-const recentlyResolved = computed(() => {
-  const threshold = props.recentActivityThreshold || 60
-  const now = new Date()
-  return resolvedConcerns.value.filter(opt => {
-    const resolvedAt = opt.resolved_at || opt.miscFields?.resolved_at
-    if (!resolvedAt) return false
-    const resolvedTime = new Date(resolvedAt as string | number)
-    const diffMinutes = (now.getTime() - resolvedTime.getTime()) / 1000 / 60
-    return diffMinutes < threshold
-  }).length
-})
-
 // ========================================
 // Quorum
 // ========================================
-const objectionsQuorum = computed(() => 
-  blockingObjections.value.reduce((sum, opt) => sum + (opt.status?.countSupports || 0), 0)
-)
 
 const quorumPercentage = computed(() => {
   if (!props.quorumNeeded || props.quorumNeeded === 0) return 0
@@ -638,14 +620,14 @@ const progressSteps = computed(() => [
 // Available types for quick add
 // ========================================
 const availableTypes = computed(() => {
-  // All consensus option types that can be added as root
   const rootTypes = ['objection', 'exception', 'consultation_question', 'recommendation']
-  return props.optionTypes.filter(type => 
+  return (props.familyOptionTypes ?? []).filter(type =>
     rootTypes.includes(type.option_type)
   )
 })
 
-const getOptionTypeIcon = (type: string) => getOptionTypeIconComponent(type, props.optionTypes)
+const getOptionTypeIcon = (type: string) =>
+  getOptionTypeIconComponent(type, props.familyOptionTypes ?? [])
 </script>
 
 <style scoped lang="scss">

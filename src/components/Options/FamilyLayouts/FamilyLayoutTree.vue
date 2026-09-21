@@ -1,8 +1,3 @@
-/**
- * SPDX-FileCopyrightText: 2026 Nextcloud contributors
- * SPDX-License-Identifier: AGPL-3.0-or-later
- */
-
 <!--
     SPDX-FileCopyrightText: 2024 Nextcloud contributors
 -->
@@ -150,8 +145,6 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Always show structure layout with all structure family options -->
 
                 <!-- STRUCTURE LAYOUT -->
                 <div class="structure-layout">
@@ -702,7 +695,7 @@
         <OptionDetailModal
             v-if="showDetailModal && selectedNode"
             :option-id="selectedNode.id"
-            :inquiry-id="inquiryId"
+            :inquiry-id="parentId"
             @close="closeDetailModal"
             @updated="handleNodeUpdated"
             @deleted="handleNodeDeleted"
@@ -710,7 +703,7 @@
 
         <OptionAddModal
             v-if="showAddOptionModal"
-            :inquiry-id="inquiryId"
+            :inquiry-id="parentId"
             :option-type="selectedOptionTypeKey"
             :parent-id="selectedParentId"
             @close="closeAddOptionModal"
@@ -720,7 +713,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, nextTick, computed, onMounted } from 'vue'
 import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcRichContenteditable from '@nextcloud/vue/components/NcRichContenteditable'
@@ -751,17 +744,38 @@ import {
 } from '../../../helpers/modules/InquiryOptionHelper'
 
 // Types
-import type { Option, OptionType, OptionStoreLike } from '../../../Types/index.ts'
+import type {
+  Item,
+  InquiryOptionType,
+  OptionFamily,
+  Option,
+  OptionType,
+  OptionStoreLike,
+} from '../../../Types/index.ts'
 
 import OptionAddModal from '../../Modals/OptionAddModal.vue'
 import OptionDetailModal from '../../Modals/OptionDetailModal.vue'
 
+
+
 const props = defineProps<{
-  family?: OptionFamily
-  inquiryId: number
+  items: Item[]
+  parentId: number
+  targetType: 'option' | 'inquiry'
   optionTypes: InquiryOptionType[]
-  	familyOptionTypes?: InquiryOptionType[] 
+  familyOptionTypes?: InquiryOptionType[]
+  family?: OptionFamily | null
+  familyKey?: string
+  isReadonly?: boolean
+  appSettings?: Record<string, unknown>
 }>()
+
+const emit = defineEmits<{
+  addOption: [optionType: string, parentId?: number]
+  openDetail: [item: Item]
+}>()
+console.log(" ITEMS IN STRUCTURE  ",props.items)
+
 
 // Stores
 const optionsStore = useOptionsStore()
@@ -802,8 +816,15 @@ const rootStructureTypes = computed<OptionType[]>(() => structureTypes.value.fil
     })
 }))
 
+/** Raw Option[] — prefer unified props.items, fall back to store */
+const sourceOptions = computed<Option[]>(() =>
+  props.items.length > 0
+    ? props.items.map(i => i.raw as Option)
+    : optionsStore.options
+)
+
 // Get only structure family root options
-const structureRootOptions = computed<Option[]>(() => optionsStore.options.filter(opt => {
+const structureRootOptions = computed<Option[]>(() => sourceOptions.value.filter(opt => {
   // Check if it's a structure family type and has no parent
   const typeData = findOptionType(opt.type, allOptionTypes.value)
   return typeData?.family === 'structure' && (!opt.parentId || opt.parentId === 0)
@@ -811,7 +832,7 @@ const structureRootOptions = computed<Option[]>(() => optionsStore.options.filte
 
 const activeNode = computed<Option | null>(() => {
   if (!activeNodeId.value) return null
-  return optionsStore.options.find(opt => opt.id === activeNodeId.value) || null
+  return sourceOptions.value.find(opt => opt.id === activeNodeId.value) || null
 })
 
 const getOptionTypeLabel = (type: string): string => getOptionTypeLabelHelper(type, allOptionTypes.value, type)
@@ -830,8 +851,8 @@ const hasSupportFeature = (node: Option): boolean => {
 }
 
 const getChildren = (parentId: number): Option[] => {
-  if (!optionsStore.options) return []
-  return optionsStore.options.filter(opt => opt.parentId === parentId)
+  if (!sourceOptions.value) return []
+  return sourceOptions.value.filter(opt => opt.parentId === parentId)
 }
 
 const getAllowedResponseTypes = (nodeType: string): string[] => getAllowedResponses(nodeType, allOptionTypes.value)
@@ -851,7 +872,7 @@ const getRootTypeLabel = (): string => getOptionTypeLabel(getRootType())
 
 const getDepth = (node: Option, depth = 0): number => {
   if (!node.parentId || node.parentId === 0) return depth
-  const parent = optionsStore.options.find(opt => opt.id === node.parentId)
+  const parent = sourceOptions.value.find(opt => opt.id === node.parentId)
   if (!parent) return depth
   return getDepth(parent, depth + 1)
 }
@@ -950,16 +971,16 @@ const saveInlineEdit = async (node: Option): Promise<void> => {
       parentId: node.parentId
     })
 
-    const index = optionsStore.options.findIndex(opt => opt.id === node.id)
+    const index = sourceOptions.value.findIndex(opt => opt.id === node.id)
     if (index >= 0) {
       const newOption = {
-        ...optionsStore.options[index],
+        ...sourceOptions.value[index],
         ...updatedOption,
         title: inlineEditTitle.value || '',
         text: inlineEditText.value || '',
-        label: inlineEditTitle.value || optionsStore.options[index].label || ''
+        label: inlineEditTitle.value || sourceOptions.value[index].label || ''
       }
-      optionsStore.options.splice(index, 1, newOption)
+      sourceOptions.value.splice(index, 1, newOption)
     }
     
     if (activeNode.value && activeNode.value.id === node.id) {
@@ -1037,7 +1058,7 @@ const handleNodeDeleted = (deletedNodeId: number): void => {
 }
 
 const handleOptionCreated = (newOption: Option): void => {
-  optionsStore.options.push(newOption)
+  sourceOptions.value.push(newOption)
   closeAddOptionModal()
 
   if ((!newOption.parentId || newOption.parentId === 0) && !activeNodeId.value) {
@@ -1049,16 +1070,13 @@ const handleOptionCreated = (newOption: Option): void => {
   }
 }
 
-// Initialize
 onMounted(() => {
-  if (inquiryId) {
-    optionsStore.load(inquiryId).then(() => {
-      if (structureRootOptions.value.length > 0 && !activeNodeId.value) {
-        setActiveNode(structureRootOptions.value[0])
-      }
-    })
+  if (structureRootOptions.value.length > 0 && !activeNodeId.value) {
+    setActiveNode(structureRootOptions.value[0])
   }
+console.log(" ITEMS IN STRUCTURE ",props.items)
 })
+
 </script>
 
 <style scoped lang="scss">

@@ -51,7 +51,7 @@
     <!-- DYNAMIC LAYOUT - Based on displayArchitecture              -->
     <!-- ============================================================ -->
     <div
-      v-else-if="filteredArchitecture && Object.keys(filteredArchitecture).length > 0" 
+      v-else-if="filteredArchitecture && Object.keys(filteredArchitecture).length > 0"
       class="architecture-grid"
       :style="gridStyle"
     >
@@ -62,14 +62,27 @@
         :class="[
           `zone-${zoneKey}`,
           `content-${zone.content || 'inquiries'}`,
-          `display-${zone.display?.type || 'cards'}`
+          `display-${zone.display?.type || 'cards'}`,
+          { 'is-empty': !hasZoneData(zone) || !isZoneRenderable(zone) }
         ]"
         :style="getZoneStyle(zone)"
       >
-        <!-- Zone Content -->
+        <!-- Zone header -->
+        <div class="zone-header">
+          <component :is="getContentIcon(zone.content)" :size="16" />
+          <span class="zone-title">{{ getZoneLabel(zone) }}</span>
+          <span
+            v-if="hasZoneData(zone) && isZoneRenderable(zone)"
+            class="zone-count"
+          >
+            {{ getZoneCount(zone) }}
+          </span>
+        </div>
+
+        <!-- Zone body -->
         <div class="zone-content">
-          <!-- Show component if data exists -->
-          <template v-if="hasZoneData(zone)">
+          <!-- Render component when data exists AND zone is renderable -->
+          <template v-if="hasZoneData(zone) && isZoneRenderable(zone)">
             <component
               :is="getZoneComponent(zone)"
               v-bind="getZoneProps(zone)"
@@ -82,9 +95,12 @@
               @view="(item) => handleInquiryClick(item, zoneKey)"
             />
           </template>
-          <!-- Show empty message if no data -->
-          <div v-else class="zone-empty-message">
-            {{ t('agora', 'No content available for this zone') }}
+
+          <!-- Structured empty state -->
+          <div v-else class="zone-empty-state">
+            <component :is="getEmptyIcon(zone)" :size="40" class="empty-icon" />
+            <p class="empty-title">{{ getEmptyTitle(zone) }}</p>
+            <p class="empty-hint">{{ getEmptyHint(zone) }}</p>
           </div>
         </div>
       </div>
@@ -115,7 +131,7 @@
         <div v-if="showHeader" class="layout-header">
           <h1 class="layout-title">{{ groupTitle }}</h1>
           <p v-if="groupDescription" class="layout-description">{{ groupDescription }}</p>
-          
+
           <div v-if="showStats" class="layout-stats">
             <div class="stat-item">
               <span class="stat-value">{{ inquiries ? inquiries.length : 0 }}</span>
@@ -163,7 +179,7 @@
                 />
               </template>
             </div>
-            
+
             <!-- Empty State -->
             <div v-else class="empty-state">
               <component :is="Icons.FolderMultiple" :size="48" />
@@ -186,14 +202,20 @@
             <span class="comments-count">{{ totalComments }}</span>
           </div>
           <div>
-            <SideBarTabComments :inquiry="selectedInquiry || (inquiries && inquiries[0])" />
+            <SideBarTabComments
+              v-if="selectedInquiry || (inquiries && inquiries[0])"
+              :inquiry="selectedInquiry || (inquiries && inquiries[0])"
+            />
           </div>
         </div>
 
         <!-- Resources -->
         <div v-if="showResources" class="layout-resources">
           <div>
-            <SideBarTabResources :inquiry="selectedInquiry || (inquiries && inquiries[0])" />
+            <SideBarTabResources
+              v-if="selectedInquiry || (inquiries && inquiries[0])"
+              :inquiry="selectedInquiry || (inquiries && inquiries[0])"
+            />
           </div>
         </div>
       </div>
@@ -229,7 +251,6 @@ import InquiryKanban from '../InquiryGroup/InquiryKanban.vue'
 import InquiryTimeline from '../InquiryGroup/InquiryTimeline.vue'
 import BookDisplay from '../InquiryGroup/BookDisplay.vue'
 import InquiryGroupTree from '../InquiryGroup/InquiryGroupTree.vue'
-// ⚠️ IMPORTANT: Add missing import for InquiryListNavigation
 import InquiryListNavigation from '../InquiryGroup/InquiryListNavigation.vue'
 
 // ============================================================
@@ -266,7 +287,7 @@ import ActivityFeed from '../InquiryGroup/ActivityFeed.vue'
 // ============================================================
 import type { InquiryGroup, InquiryGroupUIConfig } from '../stores/inquiryGroups.types'
 import type { Inquiry } from '../../Types/index.ts'
-import type { DisplayZone, GridPosition } from '../Types/experience.types'
+import type { DisplayZone, GridPosition, InteractionAction, InteractionTarget } from '../Types/experience.types'
 import { useSessionStore } from '../../stores/session'
 import { useCommentsStore } from '../../stores/comments'
 import { useInquiryGroupsStore } from '../../stores/inquiryGroups'
@@ -284,6 +305,10 @@ import {
   type DisplayTypeValue,
   type ToolValue,
 } from '../Types/experience.types'
+
+import { toItems } from '../../helpers/modules/itemAdapter'
+import type { Item } from '../../Types/index.ts'
+
 
 // ============================================================
 // PROPS
@@ -306,6 +331,7 @@ const props = defineProps<{
   showComments?: boolean
   tools?: string[]
   selectedInquiry?: Inquiry | null
+  selectedGroup?: InquiryGroup | null
   availableExperiences?: ExperienceKey[]
   defaultExperience?: ExperienceKey
 }>()
@@ -317,6 +343,8 @@ const emit = defineEmits<{
   viewInquiry: [inquiry: Inquiry]
   viewOption: [option: any]
   viewGroup: [group: InquiryGroup]
+  selectInquiry: [inquiry: Inquiry]
+  selectGroup: [group: InquiryGroup]
   comment: [inquiryId: number, comment: any]
   support: [inquiryId: number, value: any]
   retry: []
@@ -324,7 +352,6 @@ const emit = defineEmits<{
   sidebarNavigate: [target: string]
   experienceChange: [experience: ExperienceKey]
   displayChange: [mode: DisplayMode]
-  selectInquiry: [inquiry: Inquiry]
   openPanel: [payload: { inquiry: Inquiry; zone: string; target: string }]
   navigateTo: [target: any]
 }>()
@@ -333,6 +360,7 @@ const emit = defineEmits<{
 // STATE - Two-click interaction
 // ============================================================
 const selectedInquiryId = ref<number | null>(null)
+const selectedGroupId = ref<number | null>(null)
 const selectedOptionId = ref<number | null>(null)
 
 // ============================================================
@@ -414,7 +442,7 @@ const displayedInquiries = computed(() => {
 // COMPUTED - Available Displays
 // ============================================================
 const availableDisplays = computed(() => {
-  const def = EXPERIENCE_DEFINITIONS[experience as ExperienceKey]
+  const def = EXPERIENCE_DEFINITIONS[experience.value as ExperienceKey]
   return def?.allowedDisplays || ['cards', 'list']
 })
 
@@ -437,52 +465,11 @@ const zoneDataCache = computed(() => {
   return cache
 })
 
-function hasZoneData(zone: any): boolean {
-  if (!zone) return false
-  const content = zone.content || 'inquiries'
-  
-  // Use cached data if available
-  const zoneKey = Object.keys(filteredArchitecture.value).find(
-    key => filteredArchitecture.value[key] === zone
-  )
-  const data = zoneKey && zoneDataCache.value[zoneKey] 
-    ? zoneDataCache.value[zoneKey] 
-    : getZoneData(zone)
-  
-  if (content === 'inquiry_groups') {
-    return data && data.length > 0
-  }
-  if (content === 'inquiries') {
-    return data && data.length > 0
-  }
-  if (content === 'inquiry') {
-    const selected = getSelectedInquiry()
-    return selected !== null
-  }
-  if (content === 'options') {
-    const options = getZoneOptions(zone)
-    return options && options.length > 0
-  }
-  if (content === 'comments') {
-    const selected = getSelectedInquiry()
-    if (!selected) return false
-    const comments = commentsStore.comments.filter(c => c.inquiryId === selected.id)
-    return comments && comments.length > 0
-  }
-  if (content === 'statistics') {
-    return props.inquiries && props.inquiries.length > 0
-  }
-  if (content === 'activity') {
-    return props.inquiries && props.inquiries.length > 0
-  }
-  return true
-}
-
 // ============================================================
 // EFFECTIVE ARCHITECTURE (camelCase)
 // ============================================================
 const effectiveArchitecture = computed(() => {
-  let arch = {}
+  let arch: Record<string, any> = {}
   try {
     const exp = props.experience || 'dashboard'
     const groupDefault = props.uiConfig?.defaultExperience || 'dashboard'
@@ -508,7 +495,7 @@ const effectiveArchitecture = computed(() => {
 // ============================================================
 function getZoneGridPosition(zone: any): GridPosition | null {
   if (!zone || !zone.position) return null
-  
+
   const pos = zone.position
   return {
     row: pos.row || 1,
@@ -536,25 +523,18 @@ function getZoneData(zone: any) {
   const rawData = fetchRawData(content, source)
 
   return rawData
-  /*
-  return processZoneData(rawData, {
-    filter: zone.filter,
-    sort: scope.sort,
-    pagination: scope.pagination
-  })*/
 }
 
 function fetchRawData(content: string, source: string) {
   switch (content) {
-    case 'inquiry_groups':
+    case 'inquiry_groups': {
       const groupsStore = useInquiryGroupsStore()
       if (source === 'children' && props.group) {
-	const children = groupsStore.byParentId(props.group.id)
+        const children = groupsStore.byParentId(props.group.id)
         return children || []
-
       }
-      // return props.groups || []
-       return groupsStore.inquiryGroups || []
+      return groupsStore.inquiryGroups || []
+    }
 
     case 'inquiries':
       if (source === 'selected_inquiry') {
@@ -563,14 +543,16 @@ function fetchRawData(content: string, source: string) {
       }
       return props.inquiries || []
 
-    case 'inquiry':
+    case 'inquiry': {
       const selected = getSelectedInquiry()
       return selected ? [selected] : []
+    }
 
-    case 'options':
+    case 'options': {
       const sel = getSelectedInquiry()
       if (!sel) return []
       return (props.options || []).filter(opt => opt.inquiryId === sel.id)
+    }
 
     case 'resources':
       return getResourcesForInquiry(getSelectedInquiry())
@@ -607,6 +589,203 @@ function getSelectedInquiry(): Inquiry | null {
   return null
 }
 
+function getSelectedGroup(): InquiryGroup | null {
+  if (props.selectedGroup) return props.selectedGroup
+  return null
+}
+
+// ============================================================
+// DATA & RENDERABILITY GUARDS
+// ============================================================
+
+/**
+ * Whether the zone has data to display.
+ */
+function hasZoneData(zone: any): boolean {
+  if (!zone) return false
+  const content = zone.content || 'inquiries'
+  const data = getZoneData(zone)
+
+  switch (content) {
+    case 'inquiry_groups':
+    case 'inquiries':
+    case 'options':
+    case 'resources':
+    case 'comments':
+    case 'statistics':
+    case 'activity':
+      return data.length > 0
+    case 'inquiry':
+      return getSelectedInquiry() !== null
+    default:
+      return data.length > 0
+  }
+}
+
+/**
+ * Whether the zone has all required inputs to render its component.
+ * Prevents rendering components that require a selected inquiry/group
+ * when nothing is selected.
+ */
+function isZoneRenderable(zone: any): boolean {
+  if (!zone) return false
+  const content = zone.content || 'inquiries'
+  const source = zone.scope?.source
+
+  // Zones that require a selected inquiry
+  if (content === 'resources' || content === 'comments' || content === 'options') {
+    return getSelectedInquiry() !== null
+  }
+
+  // Zones that require a selected inquiry via scope
+  if (content === 'inquiry' || content === 'inquiries') {
+    if (source === 'selected_inquiry') {
+      return getSelectedInquiry() !== null
+    }
+  }
+
+  // inquiry_groups with selected_group / selected source requires a selection
+  if (content === 'inquiry_groups') {
+    if (source === 'selected_group' || source === 'selected') {
+      return getSelectedGroup() !== null || props.group != null
+    }
+  }
+
+  return true
+}
+
+// ============================================================
+// EMPTY STATE HELPERS
+// ============================================================
+
+/**
+ * Human-readable label for the zone's content type.
+ */
+function getZoneLabel(zone: any): string {
+  const content = zone?.content || 'inquiries'
+  const labels: Record<string, string> = {
+    inquiry_groups: t('agora', 'Groups'),
+    inquiries: t('agora', 'Inquiries'),
+    inquiry: t('agora', 'Inquiry'),
+    options: t('agora', 'Options'),
+    resources: t('agora', 'Resources'),
+    comments: t('agora', 'Comments'),
+    statistics: t('agora', 'Statistics'),
+    activity: t('agora', 'Activity'),
+  }
+  return labels[content] || content
+}
+
+/**
+ * Icon for the zone header, per content type.
+ */
+function getContentIcon(content: string) {
+  const map: Record<string, any> = {
+    inquiry_groups: Icons.FolderMultiple,
+    inquiries: Icons.ClipboardList,
+    inquiry: Icons.ClipboardList,
+    options: Icons.Lightbulb,
+    resources: Icons.Document,
+    comments: Icons.Comment,
+    statistics: Icons.BarChart,
+    activity: Icons.Activity,
+  }
+  return map[content] || Icons.FolderMultiple
+}
+
+/**
+ * Icon shown in the empty state, per content type.
+ */
+function getEmptyIcon(zone: any) {
+  return getContentIcon(zone?.content || 'inquiries')
+}
+
+/**
+ * Main line of the empty state.
+ * Distinguishes "no selection yet" from "selection has no data".
+ */
+function getEmptyTitle(zone: any): string {
+  const content = zone?.content || 'inquiries'
+  const source = zone?.scope?.source
+
+  // Case: zone requires a selected inquiry, but none selected yet
+  if (
+    (content === 'resources' || content === 'comments' || content === 'options') &&
+    !getSelectedInquiry()
+  ) {
+    return t('agora', 'No inquiry selected')
+  }
+
+  if (
+    (content === 'inquiry' || (content === 'inquiries' && source === 'selected_inquiry')) &&
+    !getSelectedInquiry()
+  ) {
+    return t('agora', 'No inquiry selected')
+  }
+
+  if (
+    content === 'inquiry_groups' &&
+    (source === 'selected_group' || source === 'selected') &&
+    !getSelectedGroup()
+  ) {
+    return t('agora', 'No group selected')
+  }
+
+  // Generic per-content empties
+  const titles: Record<string, string> = {
+    inquiry_groups: t('agora', 'No groups'),
+    inquiries: t('agora', 'No inquiries'),
+    inquiry: t('agora', 'No inquiry'),
+    options: t('agora', 'No options'),
+    resources: t('agora', 'No resources'),
+    comments: t('agora', 'No comments'),
+    statistics: t('agora', 'No statistics'),
+    activity: t('agora', 'No activity'),
+  }
+  return titles[content] || t('agora', 'Nothing to show')
+}
+
+/**
+ * Secondary line — tells the user what to do, or why it's empty.
+ */
+function getEmptyHint(zone: any): string {
+  const content = zone?.content || 'inquiries'
+  const source = zone?.scope?.source
+
+  if (
+    (content === 'resources' || content === 'comments' || content === 'options') &&
+    !getSelectedInquiry()
+  ) {
+    return t('agora', 'Select an inquiry to see its {content}.', { content: getZoneLabel(zone).toLowerCase() })
+  }
+
+  if (
+    (content === 'inquiry' || (content === 'inquiries' && source === 'selected_inquiry')) &&
+    !getSelectedInquiry()
+  ) {
+    return t('agora', 'Select an inquiry from the list to view it here.')
+  }
+
+  if (
+    content === 'inquiry_groups' &&
+    (source === 'selected_group' || source === 'selected') &&
+    !getSelectedGroup()
+  ) {
+    return t('agora', 'Select a group from the list to view it here.')
+  }
+
+  const hints: Record<string, string> = {
+    inquiry_groups: t('agora', 'This group has no subgroups yet.'),
+    inquiries: t('agora', 'This group has no inquiries yet.'),
+    options: t('agora', 'This inquiry has no options yet.'),
+    resources: t('agora', 'This inquiry has no resources yet.'),
+    comments: t('agora', 'No comments yet.'),
+    statistics: t('agora', 'No statistics available yet.'),
+    activity: t('agora', 'No activity yet.'),
+  }
+  return hints[content] || ''
+}
+
 // ============================================================
 // ZONE COMPONENT RESOLVER
 // ============================================================
@@ -619,7 +798,7 @@ function getZoneComponent(zone: any) {
   const tool = display.tool
 
   // COMPONENT MAP - using only valid DisplayType values
-  const componentMap: Record<string, any> = {
+  const componentMap: Record<string, Record<string, any>> = {
     // ---- Inquiry Groups ----
     inquiry_groups: {
       'list': InquiryGroupCatalog,
@@ -637,7 +816,7 @@ function getZoneComponent(zone: any) {
       'timeline': InquiryTimeline,
       'kanban': InquiryKanban,
       'book': BookDisplay,
-      'navigation': InquiryListNavigation, // ✅ Now properly imported
+      'navigation': InquiryListNavigation,
       'tool': getToolComponent(tool, content),
     },
 
@@ -673,11 +852,25 @@ function getZoneComponent(zone: any) {
   }
 
   const contentComponents = componentMap[content]
-  if (!contentComponents) return InquiryCard
+  if (!contentComponents) {
+    // Unknown content type - do not fall through to InquiryCard
+    console.warn(`[ExperienceRenderer] Unknown content type: ${content}`)
+    return null
+  }
 
   const component = contentComponents[type]
   if (!component) {
-    return contentComponents['cards'] || InquiryCard
+    // Content-specific fallback rather than a global InquiryCard fallback
+    const fallbacks: Record<string, any> = {
+      inquiry_groups: InquiryGroupCatalog,
+      inquiries: InquiryCard,
+      options: OptionToolDisplay,
+      resources: SideBarTabResources,
+      comments: SideBarTabComments,
+      statistics: StatisticsWidget,
+      activity: ActivityFeed,
+    }
+    return fallbacks[content] || null
   }
 
   return component
@@ -718,13 +911,10 @@ function getDisplayComponent(mode: string) {
     tool: InquiryCard,
     navigation: InquiryGroupNavigation,
   }
-  
+
   return map[mode] || InquiryCard
 }
 
-// ============================================================
-// ZONE PROPS RESOLVER
-// ============================================================
 // ============================================================
 // ZONE PROPS RESOLVER - Fixed inquiry_groups case
 // ============================================================
@@ -737,7 +927,7 @@ function getZoneProps(zone: any) {
   const tool = display.tool
 
   const displayOptions = display.options || {}
-  
+
   const baseProps = {
     group: props.group,
     showResources: props.showResources,
@@ -777,7 +967,7 @@ function getZoneProps(zone: any) {
           groupsData = groupsStore.inquiryGroups || []
         }
       }
-      
+
       return {
         ...baseProps,
         groups: groupsData,
@@ -814,7 +1004,7 @@ function getZoneProps(zone: any) {
     case 'inquiry': {
       const inquiryData = data.length > 0 ? data[0] : selectedInquiry || props.inquiries?.[0]
       const inquiriesData = data.length > 0 ? data : [inquiryData].filter(Boolean)
-      
+
       return {
         ...baseProps,
         inquiry: inquiryData,
@@ -881,23 +1071,8 @@ function getZoneProps(zone: any) {
 // ============================================================
 // ZONE HELPERS
 // ============================================================
-function getZoneLabel(zone: any): string {
-  if (!zone) return ''
-  const labels: Record<string, string> = {
-    inquiry_groups: t('agora', 'Groups'),
-    inquiries: t('agora', 'Inquiries'),
-    options: t('agora', 'Options'),
-    resources: t('agora', 'Resources'),
-    comments: t('agora', 'Comments'),
-    statistics: t('agora', 'Statistics'),
-    activity: t('agora', 'Activity'),
-  }
-  return labels[zone.content] || ''
-}
-
 function getZoneCount(zone: any): number | null {
   if (!zone) return null
-  const content = zone.content || 'inquiries'
   const data = getZoneData(zone)
   return data.length
 }
@@ -905,12 +1080,12 @@ function getZoneCount(zone: any): number | null {
 function getZoneOptions(zone: any) {
   const content = zone.content || 'inquiries'
   if (content !== 'options') return props.options || []
-  
+
   const scope = zone.scope || { source: 'selected_inquiry' }
   const source = scope.source || 'selected_inquiry'
-  
+
   let data: any[] = []
-  
+
   if (source === 'selected_inquiry') {
     const selected = getSelectedInquiry()
     if (selected) {
@@ -919,30 +1094,30 @@ function getZoneOptions(zone: any) {
   } else {
     data = props.options || []
   }
-  
+
   return processZoneData(data, {
     filter: zone.filter,
     sort: scope.sort,
-    pagination: scope.pagination
+    pagination: scope.pagination,
   })
 }
 
 function getZoneStyle(zone: any) {
   if (!zone) return {}
-  
+
   const pos = getZoneGridPosition(zone)
   const styles: Record<string, string> = {}
-  
+
   if (pos) {
     styles.gridRow = `${pos.row} / span ${pos.rowSpan || 1}`
     styles.gridColumn = `${pos.column} / span ${pos.columnSpan || 1}`
   }
-  
+
   const display = zone.display || {}
   if (display.width) styles.width = display.width
   if (display.height) styles.height = display.height
   if (display.background) styles.background = display.background
-  
+
   return styles
 }
 
@@ -950,69 +1125,128 @@ function getZoneStyle(zone: any) {
 // TWO-CLICK INTERACTION HANDLERS
 // ============================================================
 
+/**
+ * Inquiry click - phase 1 selects & emits selectInquiry (refresh dependents),
+ * phase 2 executes the zone's configured interaction.
+ */
 function handleInquiryClick(inquiry: Inquiry, zoneKey: string) {
   if (!inquiry) return
-  
+
   const zone = filteredArchitecture.value[zoneKey]
-  
-  // First click - select the inquiry
+  const interaction = zone?.interaction as
+    | { action?: InteractionAction; target?: InteractionTarget }
+    | undefined
+
+  // ---- PHASE 1: not yet selected -> select & emit ----
   if (selectedInquiryId.value !== inquiry.id) {
     selectedInquiryId.value = inquiry.id
+    selectedGroupId.value = null
     selectedOptionId.value = null
-    emit('selectInquiry', inquiry)
+    emit('selectInquiry', inquiry) // refresh selected_* zones
     return
   }
-  
-  // Second click - perform interaction
-  if (zone?.interaction) {
-    const { action, target } = zone.interaction
-    
-    if (target === 'page' || target === 'panel') {
+
+  // ---- PHASE 2: already selected -> execute action ----
+  executeInquiryAction(inquiry, interaction)
+}
+
+function executeInquiryAction(
+  inquiry: Inquiry,
+  interaction?: { action?: InteractionAction; target?: InteractionTarget },
+) {
+  const action = interaction?.action ?? 'open'
+  const target = interaction?.target ?? 'page'
+
+  switch (action) {
+    case 'open':
+      if (target === 'same_view') {
+        return
+      }
       emit('viewInquiry', inquiry)
       return
-    }
-    
-    switch (action) {
-      case 'open':
-        emit('viewInquiry', inquiry)
-        break
-      case 'navigate':
-        emit('navigateTo', inquiry)
-        break
-      case 'select':
-        break
-      default:
-        emit('viewInquiry', inquiry)
-    }
-  } else {
-    emit('viewInquiry', inquiry)
+
+    case 'navigate':
+      emit('navigateTo', inquiry)
+      return
+
+    case 'select':
+      // Explicit select action - confirm selection, refresh dependents
+      emit('selectInquiry', inquiry)
+      return
+
+    default:
+      emit('viewInquiry', inquiry)
   }
 }
 
+/**
+ * Group click - phase 1 selects & emits selectGroup (refresh dependents),
+ * phase 2 executes the zone's configured interaction.
+ */
+function handleViewGroup(group: InquiryGroup) {
+  if (!group) {
+    console.warn('Attempted to view null/undefined group')
+    return
+  }
+
+  const zoneKey = findZoneForGroup(group)
+  const zone = zoneKey ? filteredArchitecture.value[zoneKey] : null
+  const interaction = zone?.interaction as
+    | { action?: InteractionAction; target?: InteractionTarget }
+    | undefined
+
+  // ---- PHASE 1: not yet selected -> select & emit ----
+  if (selectedGroupId.value !== group.id) {
+    selectedGroupId.value = group.id
+    selectedInquiryId.value = null
+    selectedOptionId.value = null
+    emit('selectGroup', group) // refresh selected_group zones
+    return
+  }
+
+  // ---- PHASE 2: already selected -> execute action ----
+  const action = interaction?.action ?? 'navigate'
+
+  switch (action) {
+    case 'navigate':
+    case 'open':
+      emit('viewGroup', group)
+      return
+    case 'select':
+      emit('selectGroup', group)
+      return
+    default:
+      emit('viewGroup', group)
+  }
+}
+
+/**
+ * Option click - phase 1 selects locally, phase 2 executes the interaction.
+ */
 function handleOptionClick(option: any, zoneKey: string) {
   if (!option) return
-  
+
   const zone = filteredArchitecture.value[zoneKey]
-  
+  const interaction = zone?.interaction as
+    | { action?: InteractionAction; target?: InteractionTarget }
+    | undefined
+
   if (selectedOptionId.value !== option.id) {
     selectedOptionId.value = option.id
     selectedInquiryId.value = null
+    selectedGroupId.value = null
     return
   }
-  
-  if (zone?.interaction) {
-    const { action, target } = zone.interaction
-    if (action === 'open') {
-      if (target === 'page' || target === 'panel' || target === 'modal' || target === 'dialog') {
-        emit('viewOption', option)
-      } else {
-        emit('viewOption', option)
-      }
-    } else {
+
+  const action = interaction?.action ?? 'open'
+  switch (action) {
+    case 'open':
       emit('viewOption', option)
-    }
-  } else {
-    emit('viewOption', option)
+      return
+    case 'select':
+      return
+    default:
+      emit('viewOption', option)
   }
 }
 
@@ -1029,14 +1263,6 @@ function handleViewOption(option: any) {
   if (!option) return
   const zoneKey = findZoneForOption(option)
   handleOptionClick(option, zoneKey || 'fallback')
-}
-
-function handleViewGroup(group: InquiryGroup) {
-  if (!group) {
-    console.warn('Attempted to view null/undefined group')
-    return
-  }
-  emit('viewGroup', group)
 }
 
 function findZoneForInquiry(inquiry: Inquiry): string | null {
@@ -1056,6 +1282,18 @@ function findZoneForOption(option: any): string | null {
     if (zone.content === 'options') {
       const data = getZoneData(zone)
       if (data.some((item: any) => item.id === option.id)) {
+        return key
+      }
+    }
+  }
+  return null
+}
+
+function findZoneForGroup(group: InquiryGroup): string | null {
+  for (const [key, zone] of Object.entries(filteredArchitecture.value)) {
+    if (zone.content === 'inquiry_groups') {
+      const data = getZoneData(zone)
+      if (data.some((item: any) => item.id === group.id)) {
         return key
       }
     }
@@ -1091,22 +1329,33 @@ function toggleComments() {
 watch(
   () => props.selectedInquiry,
   (newVal) => {
-    if (newVal) {
-      selectedInquiryId.value = newVal.id
+    const nextId = newVal?.id ?? null
+    if (nextId !== selectedInquiryId.value) {
+      selectedInquiryId.value = nextId
     }
-  }
+  },
+)
+
+watch(
+  () => props.selectedGroup,
+  (newVal) => {
+    const nextId = newVal?.id ?? null
+    if (nextId !== selectedGroupId.value) {
+      selectedGroupId.value = nextId
+    }
+  },
 )
 
 watch(
   () => props.inquiries,
-  () => {
-    if (selectedInquiryId.value && props.inquiries) {
-      const stillExists = props.inquiries.some(i => i.id === selectedInquiryId.value)
-      if (!stillExists) {
-        selectedInquiryId.value = null
-      }
+  (list) => {
+    if (
+      selectedInquiryId.value != null &&
+      !list?.some(i => i.id === selectedInquiryId.value)
+    ) {
+      selectedInquiryId.value = null
     }
-  }
+  },
 )
 </script>
 
@@ -1210,6 +1459,31 @@ watch(
     flex-direction: column;
     min-height: 200px;
 
+    .zone-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--color-border);
+      background: var(--color-background-dark);
+      color: var(--color-text-lighter);
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+
+      .zone-title {
+        flex: 1;
+      }
+
+      .zone-count {
+        background: var(--color-background-hover);
+        padding: 1px 8px;
+        border-radius: 10px;
+        font-size: 11px;
+      }
+    }
+
     .zone-content {
       flex: 1;
       padding: 16px;
@@ -1217,18 +1491,39 @@ watch(
       min-height: 100px;
     }
 
-    .zone-empty-message {
+    .zone-empty-state {
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 40px 20px;
-      color: var(--color-text-lighter);
-      font-size: 14px;
-      font-style: italic;
       text-align: center;
+      padding: 32px 20px;
+      min-height: 140px;
+      color: var(--color-text-lighter);
+
+      .empty-icon {
+        opacity: 0.25;
+        margin-bottom: 12px;
+      }
+
+      .empty-title {
+        margin: 0 0 4px 0;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--color-main-text);
+      }
+
+      .empty-hint {
+        margin: 0;
+        font-size: 13px;
+        color: var(--color-text-lighter);
+        max-width: 260px;
+      }
+    }
+
+    &.is-empty {
       background: var(--color-background-dark);
-      border-radius: 8px;
-      min-height: 100px;
+      border-style: dashed;
     }
   }
 }

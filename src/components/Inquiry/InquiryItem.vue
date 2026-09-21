@@ -111,10 +111,10 @@ const inquiryStatusLabel = computed(() => {
   )
 
   if (!statusItem) {
-    return 'Draft'
+    return t('agora', 'Draft')
   }
 
-  return statusItem.label || 'Draft'
+  return statusItem.label || t('agora', 'Draft')
 })
 
 const inquiryStatusInfo = computed(() => {
@@ -660,13 +660,8 @@ $transition-base: 0.25s ease;
         :deep(.counter-bubble__counter),
         :deep(.counter-bubble) {
             background: transparent !important;
-            color: var(--color-main-text) !important;
             font-weight: 600;
             font-size: $chip-font-size;
-            min-width: auto;
-            height: auto;
-            padding: 0;
-            margin: 0;
         }
 
         :deep(.support-feature-wrapper),

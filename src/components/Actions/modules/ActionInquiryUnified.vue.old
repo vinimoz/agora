@@ -17,6 +17,7 @@ import NcActionCheckbox from '@nextcloud/vue/components/NcActionCheckbox'
 import NcActionInput from '@nextcloud/vue/components/NcActionInput'
 import NcActionSeparator from '@nextcloud/vue/components/NcActionSeparator'
 
+// Icons from icons.ts
 import { UserIcons, StatusIcons, InquiryGeneralIcons } from '../../../utils/icons.ts'
 
 import { ValidatorAPI, InquiriesAPI } from '../../../Api/index.ts'
@@ -27,6 +28,7 @@ import { useInquiryStore } from '../../../stores/inquiry.ts'
 import { StatusResults, Event } from '../../../Types/index.ts'
 import { deleteCookieByValue, findCookieByValue } from '../../../helpers/index.ts'
 import { canArchive, canRestore, canDelete, canTransfer, createInquiryContext } from '../../../utils/permissions.ts'
+import UserBubble from '../../User/UserBubble.vue'
 import DeleteInquiryDialog from '../../Modals/DeleteInquiryDialog.vue'
 import TransferInquiryDialog from '../../Modals/TransferInquiryDialog.vue'
 import ArchiveRestoreInquiryDialog from '../../Modals/ArchiveRestoreInquiryDialog.vue'
@@ -56,6 +58,7 @@ const isNavigating = ref(false)
 const hasCookie = !!findCookieByValue(sessionStore.publicToken)
 const isExternalShare = computed(() => sessionStore.share?.type === 'external')
 const hasEmail = computed(() => !!sessionStore.share?.user?.emailAddress)
+const displayName = computed(() => sessionStore.share?.user?.displayName || sessionStore.currentUser?.displayName || 'User')
 const isSubscribed = computed(() => subscriptionStore.subscribed)
 const context = computed(() => createInquiryContext(inquiryStore, sessionStore.appSettings))
 
@@ -253,7 +256,7 @@ const onInquiryDeleted = () => {
   router.push({
     name: 'list',
     params: { type: 'relevant' },
-    query: { viewMode: 'view' },
+    query: { viewMode: 'view' }
   }).finally(() => {
     isNavigating.value = false
   })
@@ -262,148 +265,114 @@ const onInquiryDeleted = () => {
 
 <template>
   <div class="unified-actions">
-    <!-- ============================= -->
-    <!-- PROFILE / USER SECTION        -->
-    <!-- ============================= -->
-    <section v-if="isExternalShare" class="action-section">
-      <header class="section-header">
-        <component :is="StatusIcons.AccountMultiple" :size="16" />
-        <span class="section-title">{{ t('agora', 'Profile') }}</span>
-      </header>
+    <!-- User Section -->
+    <div class="action-section user-section">
+      <NcActions class="actions-list" :force-menu="true">
+        <template v-if="isExternalShare">
+          <NcActionButton :name="t('agora', 'Copy link')" @click="copyLink()">
+            <template #icon>
+              <component :is="UserIcons.ListView" />
+            </template>
+            {{ t('agora', 'Copy link') }}
+          </NcActionButton>
 
-      <NcActions
-        class="actions-list"
-        :force-menu="true"
-        :inline="0"
-        menu-name="Profile"
-      >
-        <NcActionButton :name="t('agora', 'Copy link')" @click="copyLink()">
-          <template #icon>
-            <component :is="UserIcons.ListView" :size="20" />
-          </template>
-          {{ t('agora', 'Copy link') }}
-        </NcActionButton>
+          <NcActionInput
+            v-bind="displayNameInputProps"
+            v-model="sessionStore.share.user.displayName"
+            @update:value="validateDisplayName"
+            @submit="submitDisplayName"
+          >
+            <template #icon>
+              <component :is="UserIcons.EditAccount" />
+            </template>
+          </NcActionInput>
 
-        <NcActionInput
-          v-bind="displayNameInputProps"
-          v-model="sessionStore.share.user.displayName"
-          @update:value="validateDisplayName"
-          @submit="submitDisplayName"
-        >
-          <template #icon>
-            <component :is="UserIcons.EditAccount" :size="20" />
-          </template>
-        </NcActionInput>
+          <NcActionInput
+            v-bind="eMailInputProps"
+            v-model="sessionStore.share.user.emailAddress"
+            @update:model-value="validateEMail"
+            @submit="submitEmail"
+          >
+            <template #icon>
+              <component :is="UserIcons.EditEmail" />
+            </template>
+          </NcActionInput>
 
-        <NcActionInput
-          v-bind="eMailInputProps"
-          v-model="sessionStore.share.user.emailAddress"
-          @update:model-value="validateEMail"
-          @submit="submitEmail"
-        >
-          <template #icon>
-            <component :is="UserIcons.EditEmail" :size="20" />
-          </template>
-        </NcActionInput>
+          <NcActionButton
+            :name="t('agora', 'Resend invitation')"
+            :disabled="!hasEmail"
+            @click="resendInvitation()"
+          >
+            <template #icon>
+              <component :is="InquiryGeneralIcons.Share" />
+            </template>
+            {{ t('agora', 'Resend invitation') }}
+          </NcActionButton>
 
-        <NcActionButton
-          :name="t('agora', 'Resend invitation')"
-          :disabled="!hasEmail"
-          @click="resendInvitation()"
-        >
-          <template #icon>
-            <component :is="InquiryGeneralIcons.Share" :size="20" />
-          </template>
-          {{ t('agora', 'Resend invitation') }}
-        </NcActionButton>
+          <NcActionButton
+            v-if="hasEmail"
+            :name="t('agora', 'Remove email')"
+            @click="deleteEmailAddress"
+          >
+            <template #icon>
+              <component :is="InquiryGeneralIcons.Delete" />
+            </template>
+            {{ t('agora', 'Remove email') }}
+          </NcActionButton>
 
-        <NcActionButton
-          v-if="hasEmail"
-          :name="t('agora', 'Remove email')"
-          @click="deleteEmailAddress"
-        >
-          <template #icon>
-            <component :is="InquiryGeneralIcons.Delete" :size="20" />
-          </template>
-          {{ t('agora', 'Remove email') }}
-        </NcActionButton>
+          <NcActionSeparator />
 
-        <NcActionSeparator v-if="hasCookie" />
-
-        <NcActionButton
-          v-if="hasCookie"
-          :name="t('agora', 'Logout')"
-          @click="logout()"
-        >
-          <template #icon>
-            <component :is="UserIcons.Logout" :size="20" />
-          </template>
-          {{ t('agora', 'Logout') }}
-        </NcActionButton>
+          <NcActionButton
+            v-if="hasCookie"
+            :name="t('agora', 'Logout')"
+            @click="logout()"
+          >
+            <template #icon>
+              <component :is="UserIcons.Logout" />
+            </template>
+            {{ t('agora', 'Logout') }}
+          </NcActionButton>
+        </template>
       </NcActions>
-    </section>
+    </div>
 
-    <!-- ============================= -->
-    <!-- NOTIFICATIONS SECTION         -->
-    <!-- ============================= -->
-    <section
-      v-if="inquiryStore.permissions.subscribe"
-      class="action-section"
-    >
-      <header class="section-header">
+    <!-- Subscription Section -->
+    <div class="action-section subscription-section">
+      <div class="section-header">
         <component :is="InquiryGeneralIcons.Bell" :size="16" />
         <span class="section-title">{{ t('agora', 'Notifications') }}</span>
-      </header>
+      </div>
 
-      <NcActions
-        class="actions-list"
-        :force-menu="true"
-        :inline="0"
-        menu-name="Notifications"
-      >
+      <NcActions class="actions-list" :force-menu="true">
         <NcActionCheckbox
+          v-if="inquiryStore.permissions.subscribe"
           :model-value="isSubscribed"
-          @update:model-value="toggleSubscription"
+          @change="toggleSubscription"
         >
           <template #icon>
-            <component
-              :is="isSubscribed ? InquiryGeneralIcons.Bell : InquiryGeneralIcons.BellOutline"
-              :size="20"
-            />
+            <component :is="isSubscribed ? InquiryGeneralIcons.Bell : InquiryGeneralIcons.BellOutline" :size="20" />
           </template>
           {{ isSubscribed ? t('agora', 'Unsubscribe') : t('agora', 'Subscribe') }}
         </NcActionCheckbox>
       </NcActions>
-    </section>
+    </div>
 
-    <!-- ============================= -->
-    <!-- INQUIRY ACTIONS SECTION       -->
-    <!-- ============================= -->
-    <section
-      v-if="canArchiveAction || canRestoreAction || canDeleteAction || canTransferAction || inquiryStore.permissions.edit || inquiryStore.viewMode === 'list-view'"
-      class="action-section"
-    >
-      <header class="section-header">
+    <!-- Inquiry Actions Section -->
+    <div class="action-section inquiry-actions-section">
+      <div class="section-header">
         <component :is="InquiryGeneralIcons.Tools" :size="16" />
         <span class="section-title">{{ t('agora', 'Inquiry') }}</span>
-      </header>
+      </div>
 
-      <NcActions
-        class="actions-list"
-        :force-menu="true"
-        :inline="0"
-        menu-name="Inquiry"
-      >
+      <NcActions class="actions-list" :force-menu="true">
         <!-- Archive -->
-        <NcActionButton
-          v-if="canArchiveAction"
+        <NcActionButton          v-if="canArchiveAction"
           :name="t('agora', 'Archive inquiry')"
           @click="toggleArchive()"
         >
           <template #icon>
-            <component :is="InquiryGeneralIcons.Archive" :size="20" />
+            <component :is="InquiryGeneralIcons.Archive" :size="24" />
           </template>
-          {{ t('agora', 'Archive inquiry') }}
         </NcActionButton>
 
         <!-- Restore -->
@@ -413,47 +382,45 @@ const onInquiryDeleted = () => {
           @click="showArchiveRestoreDialog = true"
         >
           <template #icon>
-            <component :is="InquiryGeneralIcons.Restore" :size="20" />
+            <component :is="InquiryGeneralIcons.Restore" :size="24" />
           </template>
-          {{ t('agora', 'Restore inquiry') }}
         </NcActionButton>
 
         <!-- Delete -->
         <NcActionButton
           v-if="canDeleteAction"
+          class="danger"
           :name="t('agora', 'Delete inquiry')"
           @click="showDeleteDialog = true"
         >
           <template #icon>
-            <component :is="InquiryGeneralIcons.Delete" :size="20" />
+            <component :is="InquiryGeneralIcons.Delete" :size="24" />
           </template>
-          {{ t('agora', 'Delete inquiry') }}
         </NcActionButton>
 
         <!-- Transfer -->
         <NcActionButton
           v-if="canTransferAction"
+          class="danger"
           :name="t('agora', 'Transfer ownership')"
           @click="showTransferDialog = true"
         >
           <template #icon>
-            <component :is="InquiryGeneralIcons.Transfer" :size="20" />
+            <component :is="InquiryGeneralIcons.Transfer" :size="24" />
           </template>
-          {{ t('agora', 'Transfer ownership') }}
         </NcActionButton>
 
         <NcActionSeparator v-if="inquiryStore.permissions.edit" />
 
-        <!-- Copy participant emails -->
+        <!-- Copy emails -->
         <NcActionButton
           v-if="inquiryStore.permissions.edit"
           :name="t('agora', 'Copy participant emails')"
           @click="getAddresses()"
         >
           <template #icon>
-            <component :is="StatusIcons.EmailIcon" :size="20" />
+            <component :is="StatusIcons.EmailIcon" />
           </template>
-          {{ t('agora', 'Copy participant emails') }}
         </NcActionButton>
 
         <!-- Reset inquiries -->
@@ -463,16 +430,13 @@ const onInquiryDeleted = () => {
           @click="resetInquiries()"
         >
           <template #icon>
-            <component :is="UserIcons.Reset" :size="20" />
+            <component :is="UserIcons.Reset" />
           </template>
-          {{ t('agora', 'Reset your inquiries') }}
         </NcActionButton>
       </NcActions>
-    </section>
+    </div>
 
-    <!-- ============================= -->
-    <!-- DIALOGS                       -->
-    <!-- ============================= -->
+    <!-- Dialogs -->
     <TransferInquiryDialog
       v-model="showTransferDialog"
       :inquiry="inquiryStore"
@@ -497,14 +461,8 @@ const onInquiryDeleted = () => {
 <style scoped lang="scss">
 .unified-actions {
   width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
 }
 
-/* -------------------------------------------------- */
-/* Section wrapper                                    */
-/* -------------------------------------------------- */
 .action-section {
   padding: 8px 0;
 
@@ -517,13 +475,7 @@ const onInquiryDeleted = () => {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 4px 4px 8px 4px;
-
-  :deep(svg),
-  :deep(.material-design-icon) {
-    color: var(--color-text-lighter);
-    opacity: 0.8;
-  }
+  padding: 4px 0 8px 0;
 
   .section-title {
     font-size: 11px;
@@ -534,53 +486,67 @@ const onInquiryDeleted = () => {
   }
 }
 
-/* -------------------------------------------------- */
-/* NcActions — DO NOT force width on the wrapper or   */
-/* on .action-item, otherwise the popover anchor will */
-/* be miscalculated and the menu will shift.          */
-/* -------------------------------------------------- */
-.actions-list {
-  /* Let NcActions be its natural size — it will render */
-  /* a compact 3-dot trigger button.                    */
-  display: inline-flex;
-  vertical-align: middle;
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  background: var(--color-background-dark);
+  border-radius: 8px;
+  margin-bottom: 8px;
 
-  /* Make the trigger look like a full-width, left-     */
-  /* aligned row so it fits the panel design.           */
-  :deep(.action-item__menutoggle),
-  :deep(button.action-item__menutoggle) {
-    width: 100%;
-    justify-content: flex-start;
-    border-radius: 8px;
-    padding: 6px 10px;
-    min-height: 32px;
-    color: var(--color-main-text);
-    background: var(--color-background-dark);
-    border: 1px solid transparent;
-    transition: background 0.15s ease, border-color 0.15s ease;
+  .user-info-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
 
-    &:hover,
-    &:focus-visible {
-      background: var(--color-primary-light);
-      border-color: var(--color-primary-element);
+    .user-name {
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--color-main-text);
+    }
+
+    .user-email {
+      font-size: 12px;
+      color: var(--color-text-lighter);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
   }
+}
 
-  /* Style the items inside the popover menu. */
+.actions-list {
+  width: 100%;
+
   :deep(.action-item) {
-    margin: 1px 0;
+    margin: 2px 0;
 
     .action-item__button {
-      border-radius: 6px;
+      border-radius: 8px;
+      padding: 6px 10px;
       font-size: 13px;
+      width: 100%;
+      justify-content: flex-start;
 
       &:hover {
         background: var(--color-primary-light);
       }
+
+      &.danger {
+        color: var(--color-error);
+
+        &:hover {
+          background: var(--color-error-light);
+        }
+      }
+    }
+
+    .action-item__icon {
+      margin-right: 8px;
     }
   }
 
-  /* Input rows inside the popover. */
   :deep(.action-item--input) {
     .action-item__input-wrapper {
       border-radius: 8px;
@@ -623,12 +589,5 @@ const onInquiryDeleted = () => {
       }
     }
   }
-}
-
-/* -------------------------------------------------- */
-/* Empty-state hint (optional, keeps layout balanced) */
-/* -------------------------------------------------- */
-.action-section:empty {
-  display: none;
 }
 </style>

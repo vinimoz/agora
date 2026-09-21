@@ -249,12 +249,12 @@
                             </div>
 
                             <div v-else class="children-grid">
-                                <OptionCard
+                                <ItemCard
                                     v-for="child in filteredChildOptions"
                                     :key="child.id"
-                                    :option="child"
-                                    :inquiry-id="inquiryId"
-                                    :compact="false"
+                                    :item="child"
+	        		    :target-type="'option'"
+                                    :parent-id="inquiryId"
                                     :inline="true"
                                     @click="openChildModal(child.id)"
                                     @comment="handleChildComment"
@@ -342,7 +342,7 @@ import { useOptionStore } from '../../stores/option'
 import { useSessionStore } from '../../stores/session'
 import { InquiryOptionIcons } from '../../utils/icons.ts'
 import { SupportFeature } from '../Base/index.ts'
-import OptionCard from '../Options/OptionCard.vue'
+import ItemCard from '../FamilyLayouts/ItemCard.vue'
 import {
     getOptionTypeLabel as getOptionTypeLabelHelper,
     getOptionTypeIconComponent,
