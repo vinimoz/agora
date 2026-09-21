@@ -898,7 +898,7 @@ class SupportResultService
         foreach (array_keys($optionRankings) as $oid) {
             try {
                 $option = $this->optionMapper->find($oid);
-                $optionNames[$oid] = $option->getOption();
+                $optionNames[$oid] = $option->getTitle();
             } catch (\Exception $e) {
                 $optionNames[$oid] = "Option $oid";
             }

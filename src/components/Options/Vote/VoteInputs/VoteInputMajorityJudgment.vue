@@ -20,7 +20,7 @@ import { translateGrade } from '../../../../Types/votingType'
 
 const props = defineProps<{
   engineConfig: Record<string, unknown>
-  gradeb?: string | null
+  grade?: string | null
 }>()
 
 const emit = defineEmits<{
@@ -33,7 +33,7 @@ const grades = computed(() => {
 })
 
 const localGrade = computed({
-  get: () => props.gradeb ?? null,
+  get: () => props.grade ?? null,
   set: (value) => {
     emit('changeGrade', value)
   }
