@@ -602,6 +602,7 @@ OC.L10N.register(
     "Vote" : "Kura",
     "Moderation" : "Usimamizi",
     "None" : "Hakuna",
+    "Threshold" : "Kizingiti",
     "Unlimited" : "Isiyo na kikomo",
     "Enabled" : "Washwa",
     "Disabled" : "Ilizimwa",

@@ -98,6 +98,7 @@ OC.L10N.register(
     "Vote" : "Гласај",
     "Election" : "Избори",
     "Moderation" : "Модерација",
+    "Celebrate" : "Прослава",
     "None" : "Ништо",
     "Closed" : "Затворено",
     "Unlimited" : "Неограничено",

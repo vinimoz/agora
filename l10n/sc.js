@@ -100,6 +100,7 @@ OC.L10N.register(
     "Archive" : "Archìviu",
     "Delete permanently" : "Cantzella in manera definitiva",
     "OK" : "OK",
+    "Celebrate" : "Afestare",
     "None" : "Perunu",
     "Closed" : "Serradu",
     "Enabled" : "Ativadu",

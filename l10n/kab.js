@@ -121,6 +121,8 @@ OC.L10N.register(
     "OK" : "Ih",
     "Vote" : "Tafrant",
     "None" : "Ula d yiwen",
+    "Bottom" : "Ddaw",
+    "Threshold" : "Amnaṛ",
     "Top" : "D asawen",
     "Closed" : "Yemdel",
     "Unlimited" : "War talast",

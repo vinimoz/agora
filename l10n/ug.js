@@ -537,6 +537,7 @@ OC.L10N.register(
     "Vote" : "بېلەت تاشلاش",
     "Moderation" : "ئوتتۇراھال",
     "None" : "يوق",
+    "Bottom" : "تۆۋەن",
     "Threshold" : "چەك",
     "Top" : "يۇقۇرى",
     "Closed" : "تاقالدى",
