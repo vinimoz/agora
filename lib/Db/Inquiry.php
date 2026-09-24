@@ -760,14 +760,6 @@ class Inquiry extends EntityWithUser implements JsonSerializable
             return true;
         }
 
-        if ($this->getAccess() !== self::ACCESS_PRIVATE) {
-            return true;
-        }
-
-        if ($this->getIsOpenInquiry()) {
-            return true;
-        }
-
         return false;
     }
 

@@ -889,11 +889,28 @@ public function getWithTrending(int $inquiryId): array
 
     public function applyAction(int $inquiryId, string $action): Inquiry
     {
-        $inquiry = $this->inquiryMapper->find($inquiryId);
+        $inquiry = $this->inquiryMapper->get($inquiryId, withRoles: true);
 
         if (!$inquiry) {
             throw new \Exception('Inquiry not found');
 	}
+
+        // The author saves and submits; moderators accept or reject. The
+        // author may also accept when moderation is off or an official
+        // may bypass it.
+        $user = $this->userSession->getCurrentUser();
+        $selfAccept = !$this->appSettings->getUseModeration()
+            || ($user->getIsOfficial() && $this->appSettings->getOfficialBypassModeration());
+        $allowed = match ($action) {
+            'save_draft', 'submit_for_moderate' => $inquiry->getIsAllowed(Inquiry::PERMISSION_INQUIRY_EDIT),
+            'submit_for_accepted' => $user->getIsModerator()
+                || ($selfAccept && $inquiry->getIsAllowed(Inquiry::PERMISSION_INQUIRY_EDIT)),
+            'submit_for_rejected' => $user->getIsModerator(),
+            default => true,
+        };
+        if (!$allowed) {
+            throw new ForbiddenException('denied action ' . $action);
+        }
 
 	$timestamp = time();
 
