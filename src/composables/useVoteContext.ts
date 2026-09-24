@@ -61,8 +61,9 @@ export interface VoteContext {
   updateQuadratic: (optionId: number, votes: number | null) => void
   updateTokenWeight: (optionId: number, weight: number | null) => void
   submitSingleVote: (inquiryId: number, option: Option, value: SupportValue) => Promise<boolean>
-  submitMultiVote: () => Promise<boolean>
-  removeMyVote: () => Promise<boolean>
+  submitMultiVote: (reload?: boolean) => Promise<boolean>
+  removeMyVote: (reload?: boolean) => Promise<boolean>
+  loadUserVotesForEngine: (engineId: number) => void
   resetSelections: () => void
   hasUserVotedFor: (optionId: number) => boolean
   isSelectedForVote: (optionId: number) => boolean
@@ -554,7 +555,7 @@ export function useVoteContext(inquiryId: number, engineId?: number): VoteContex
       return t('agora', '{count} options voted', { count })
   })
 
-  async function submitMultiVote() {
+  async function submitMultiVote(reload = true) {
       if (!canVote.value || !canSubmitMultiVote.value) return false
 
           const engine = currentEngine.value
@@ -662,7 +663,7 @@ export function useVoteContext(inquiryId: number, engineId?: number): VoteContex
                       await supportsStore.addSupport(inquiryId, userId, payload, 0, engineId)
                   }
 
-                  await loadUserVotesForEngine(engineId)
+                  if (reload) await loadUserVotesForEngine(engineId)
                   await loadResults()
                   return true
               } catch (error) {
@@ -977,8 +978,9 @@ export function useVoteContext(inquiryId: number, engineId?: number): VoteContex
   /**
    * Remove all votes of the current user for the active engine.
    * This handles both engine‑level (optionId = 0) and per‑option votes.
+   * @param reload reset and reload the selections after the removal
    */
-  const removeMyVote = async (): Promise<boolean> => {
+  const removeMyVote = async (reload = true): Promise<boolean> => {
       const engine = currentEngine.value
       if (!engine) return false
           const userId = sessionStore.currentUser?.id
@@ -997,8 +999,10 @@ export function useVoteContext(inquiryId: number, engineId?: number): VoteContex
               }
 
               // Clear local selections and reload fresh state
-              resetSelections()
-              await loadUserVotesForEngine(engine.id)
+              if (reload) {
+                  resetSelections()
+                  await loadUserVotesForEngine(engine.id)
+              }
               await loadResults()
 
               return true
@@ -1113,5 +1117,6 @@ export function useVoteContext(inquiryId: number, engineId?: number): VoteContex
       selectEngine,
       refreshEngines,
       removeMyVote,
+      loadUserVotesForEngine,
   }
 }
