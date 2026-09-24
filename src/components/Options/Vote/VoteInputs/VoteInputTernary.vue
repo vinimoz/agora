@@ -5,18 +5,18 @@
 <template>
   <div class="vote-input-ternary">
     <NcButton
-      v-for="option in ternaryOptions"
-      :key="option.value"
-      :type="isSelected(option.value) ? 'primary' : 'tertiary'"
+      v-for="choice in ternaryOptions"
+      :key="choice.value"
+      :type="isSelected(choice.value) ? 'primary' : 'tertiary'"
       size="small"
-      :class="{ 'ternary-selected': isSelected(option.value) }"
+      :class="{ 'ternary-selected': isSelected(choice.value) }"
       :disabled="disabled"
-      @click="vote(option.value)"
+      @click="vote(choice.value)"
     >
       <template #icon>
-        <component :is="option.icon" :size="16" />
+        <component :is="choice.icon" :size="16" />
       </template>
-      {{ option.label }}
+      {{ choice.label }}
     </NcButton>
   </div>
 </template>
@@ -26,9 +26,10 @@ import { computed } from 'vue'
 import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import { ThumbsUp, Minus, ThumbsDown } from 'lucide-vue-next'
-import type { SupportData } from '../../Types/index'
+import type { SupportData, Option } from '../../Types/index'
 
 const props = defineProps<{
+  option: Option
   disabled?: boolean
   userVote?: SupportData
   currentScore?: number | null

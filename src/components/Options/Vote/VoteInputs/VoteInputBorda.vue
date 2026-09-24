@@ -5,10 +5,9 @@
 <template>
   <div class="vote-input-borda">
     <select
-      :value="currentRank"
+      v-model="currentRank"
       class="rank-select"
       :disabled="disabled"
-      @change="handleChange"
     >
       <option :value="null">{{ t('agora', 'Not ranked') }}</option>
       <option
@@ -56,13 +55,10 @@ const maxRank = computed(() => {
   return max as number
 })
 
-const currentRank = computed(() => props.rank ?? null)
-
-function handleChange(event: Event) {
-  const target = event.target as HTMLSelectElement
-  const value = target.value === 'null' ? null : parseInt(target.value, 10)
-  emit('changeRank', value)
-}
+const currentRank = computed({
+  get: () => props.rank ?? null,
+  set: (value: number | null) => emit('changeRank', value),
+})
 
 function clearRank() {
   emit('changeRank', null)
