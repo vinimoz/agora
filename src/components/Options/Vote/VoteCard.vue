@@ -84,6 +84,25 @@
       @change-grade="handleGradeChange"
     />
 
+    <div v-if="canComment" class="option-comment">
+      <NcButton
+        variant="tertiary"
+        :aria-expanded="showComment ? 'true' : 'false'"
+        :aria-controls="commentZoneId"
+        @click="toggleComment"
+      >
+        {{ showComment ? t('agora', 'Hide comment') : t('agora', 'Add comment') }}
+      </NcButton>
+      <div v-show="showComment" :id="commentZoneId">
+        <CommentAdd
+          v-if="commentMounted"
+          ref="commentAdd"
+          :option-id="option.id"
+          :input-label="t('agora', 'Comment on {option}', { option: option.title })"
+        />
+      </div>
+    </div>
+
     <!-- Footer with owner info -->
     <div v-if="!compact" class="card-footer">
       <div class="owner-info">
@@ -106,12 +125,15 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, nextTick, ref } from 'vue'
 import { t } from '@nextcloud/l10n'
 import { CheckCircle } from 'lucide-vue-next'
 import NcAvatar from '@nextcloud/vue/components/NcAvatar'
+import NcButton from '@nextcloud/vue/components/NcButton'
 import VoteInput from './VoteInput.vue'
+import CommentAdd from '../../Comments/CommentAdd.vue'
 import { useSessionStore } from '../../../stores/session'
+import { useInquiryStore } from '../../../stores/inquiry'
 import { InquiryOptionIcons } from '../../../utils/icons.ts'
 import {
   getOptionTypeLabel,
@@ -210,6 +232,25 @@ const allowComment = computed(() =>
   allowsComments(props.option.type, allOptionTypes.value)
 )
 
+const inquiryStore = useInquiryStore()
+// PublicController::addComment drops optionId, so no per-option comment on a public link.
+const canComment = computed(() => !!props.option.permissions?.comment
+  && inquiryStore.permissions.comment
+  && sessionStore.route.name !== 'publicInquiry')
+const showComment = ref(false)
+const commentMounted = ref(false)
+const commentAdd = ref<InstanceType<typeof CommentAdd> | null>(null)
+const commentZoneId = computed(() => `option-comment-${props.option.id}`)
+
+async function toggleComment() {
+  showComment.value = !showComment.value
+  if (showComment.value) {
+    commentMounted.value = true
+    await nextTick()
+    commentAdd.value?.focus()
+  }
+}
+
 const hasSupportFeature = computed(() => 
   hasSupportFeatureHelper(props.option.type, allOptionTypes.value)
 )
@@ -252,7 +293,7 @@ function handleUpdateTokenWeight(optionId: number, weight: number | null) { emit
 
 function handleCardClick(event: MouseEvent) {
   const target = event.target as HTMLElement
-  if (target.closest('.vote-input-container') || target.closest('.voted-badge') || target.closest('.support-stats')) {
+  if (target.closest('.vote-input-container') || target.closest('.voted-badge') || target.closest('.support-stats') || target.closest('.option-comment')) {
     return
   }
   emit('openSupportsModal', props.option.id)
@@ -459,6 +500,10 @@ function handleCardClick(event: MouseEvent) {
         font-size: 11px;
       }
     }
+  }
+
+  .option-comment {
+    margin-top: 8px;
   }
 
   // Voted Badge
