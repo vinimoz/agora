@@ -104,6 +104,7 @@
                         :selected-options="selectedOptions"
                         :can-submit-multi-vote="canSubmitMultiVote"
                         :vote-selection-info="voteSelectionInfo"
+                        :get-option-rank="getOptionRank"
                         :get-option-vote-count="getOptionVoteCount"
                         :get-percentage="(option) => getPercentage(option)"
                         :has-user-voted-for="hasUserVotedFor"
@@ -255,6 +256,7 @@ const {
   submitMultiVote,
   totalVotes,
   getOptionVoteCount,
+  getOptionRank,
   getPercentage,
   getRankedOptions,
   getWinner,

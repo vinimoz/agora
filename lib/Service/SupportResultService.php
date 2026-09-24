@@ -150,18 +150,17 @@ class SupportResultService
             // Unranked options receive 0 points (no action needed)
         }
 
-        // Sort options by score descending
+        // Sort options by score descending, then rank them, tied options
+        // sharing the rank of the first of them.
         arsort($scores);
         $rank = 1;
         $ranking = [];
         $prevScore = null;
-        $skip = 0;
+        $position = 0;
         foreach ($scores as $oid => $score) {
-            if ($score !== $prevScore) {
-                $rank += $skip;
-                $skip = 0;
-            } else {
-                $skip++;
+            $position++;
+            if ($prevScore === null || $score != $prevScore) {
+                $rank = $position;
             }
             $ranking[$oid] = $rank;
             $prevScore = $score;
