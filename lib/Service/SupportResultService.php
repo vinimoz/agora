@@ -850,7 +850,9 @@ class SupportResultService
                 continue;
             }
 
-            // Sort grades from best to worst (according to gradeOrder)
+            // Grades are configured from worst to best, so sorting by their
+            // index walks them from worst to best. floor((n - 1) / 2) then
+            // lands on the lower median, which is the majority judgment rule.
             $sortedGrades = $data['grades'];
             usort($sortedGrades, function($a, $b) use ($gradeOrder) {
                 return $gradeOrder[$a] <=> $gradeOrder[$b];
@@ -863,8 +865,8 @@ class SupportResultService
             $aboveCount = 0;
             $belowCount = 0;
             foreach ($sortedGrades as $g) {
-                if ($gradeOrder[$g] < $gradeOrder[$medianGrade]) $aboveCount++;
-                elseif ($gradeOrder[$g] > $gradeOrder[$medianGrade]) $belowCount++;
+                if ($gradeOrder[$g] > $gradeOrder[$medianGrade]) $aboveCount++;
+                elseif ($gradeOrder[$g] < $gradeOrder[$medianGrade]) $belowCount++;
             }
 
             $optionRankings[$oid] = [
@@ -883,7 +885,7 @@ class SupportResultService
         if (!empty($optionRankings)) {
             uasort($optionRankings, function($a, $b) {
                 if ($a['median_index'] !== $b['median_index']) {
-                    return $a['median_index'] <=> $b['median_index'];
+                    return $b['median_index'] <=> $a['median_index'];
                 }
                 return $b['above_share'] <=> $a['above_share'];
             });
@@ -895,7 +897,7 @@ class SupportResultService
         foreach (array_keys($optionRankings) as $oid) {
             try {
                 $option = $this->optionMapper->find($oid);
-                $optionNames[$oid] = $option->getOption();
+                $optionNames[$oid] = $option->getTitle();
             } catch (\Exception $e) {
                 $optionNames[$oid] = "Option $oid";
             }
@@ -983,7 +985,7 @@ class SupportResultService
         }
 
         // Default fallback
-        $defaultGrades = ['Excellent', 'Good', 'Fair', 'Poor'];
+        $defaultGrades = ['Poor', 'Fair', 'Good', 'Excellent'];
         $this->logger->warning('No grades found for majority judgment, using defaults', [
             'inquiryId' => $inquiryId,
             'optionId' => $optionId,
