@@ -151,7 +151,7 @@ const getSubmitButtonText = (): string => {
 .cards-layout {
   .cards-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
     gap: 20px;
     margin-bottom: 24px;
   }
@@ -216,11 +216,6 @@ const getSubmitButtonText = (): string => {
 
 @media (max-width: 768px) {
   .cards-layout {
-    .cards-grid {
-      grid-template-columns: 1fr;
-      gap: 16px;
-    }
-
     .submit-vote-section .submit-container {
       flex-direction: column;
       border-radius: 20px;
