@@ -422,11 +422,19 @@ class InquiryController extends BaseController
     public function submitInquiry(int $inquiryId): JSONResponse
     {
         $rawData = $this->request->getParams('data');
-        return $this->response(
-            fn () => [
-                'inquiry' => $this->inquiryService->applyAction($inquiryId, $rawData['action']),
-            ]
-        );
+
+        try {
+            return $this->response(
+                fn () => [
+                    'inquiry' => $this->inquiryService->applyAction($inquiryId, $rawData['action'] ?? ''),
+                ]
+            );
+        } catch (\InvalidArgumentException $e) {
+            return new JSONResponse(
+                ['error' => $e->getMessage()],
+                Http::STATUS_BAD_REQUEST
+            );
+        }
     }
 
 

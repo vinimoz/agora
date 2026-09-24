@@ -919,6 +919,7 @@ public function getWithTrending(int $inquiryId): array
             $inquiry->setAccess('open');
             $inquiry->setModerationStatus('accepted');
             //We find the first status available in inquiry type status definition
+            $firstStatus = null;
             $statuses = $this->inquiryStatusMapper->findByInquiryType($inquiry->getType());
             if (!empty($statuses)) {
                 usort($statuses, fn($a, $b) => $a->getSortOrder() <=> $b->getSortOrder());
