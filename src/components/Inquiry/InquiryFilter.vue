@@ -350,7 +350,9 @@ onUnmounted(() => {
 		align-items: center;
 		gap: 16px;
 		margin-bottom: 16px;
-		flex-wrap: nowrap;
+		/* wrapping keeps the last control reachable on a narrow content area,
+		   where nowrap pushed it outside the visible width */
+		flex-wrap: wrap;
 		min-width: 0;
 
 		.search-box.compact {
@@ -448,7 +450,7 @@ onUnmounted(() => {
 			flex: 1;
 			justify-content: flex-start;
 			min-width: 0;
-			flex-wrap: nowrap;
+			flex-wrap: wrap;
 
 			.filter-group.compact {
 				display: flex;

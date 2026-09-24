@@ -415,10 +415,12 @@ export const useInquiriesStore = defineStore('inquiries', {
         )
       }
 
-      // Filter by parentId
-      if (state.advancedFilters.parentId !== undefined ) {
-        filteredInquiries = filteredInquiries.filter(
-          (inquiry) => inquiry.parentId === state.advancedFilters.parentId
+      // Filter by parentId. A root inquiry carries either null or 0 depending
+      // on how it was created, so asking for "no parent" has to accept both.
+      if (state.advancedFilters.parentId !== undefined) {
+        const wantedParent = state.advancedFilters.parentId
+        filteredInquiries = filteredInquiries.filter((inquiry) =>
+          wantedParent === null ? !inquiry.parentId : inquiry.parentId === wantedParent
         )
       }
 

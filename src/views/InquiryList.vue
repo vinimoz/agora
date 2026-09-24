@@ -688,7 +688,10 @@ watch(subMode, (newMode) => {
 
 @media (min-width: 1600px) {
     .inquiry-list__grid {
-        grid-template-columns: repeat(4, 1fr);
+        /* 1fr is minmax(auto, 1fr), so a wide card refuses to shrink and the
+           grid overflows its column. minmax(0, 1fr) lets the columns share
+           the width they actually have. */
+        grid-template-columns: repeat(4, minmax(0, 1fr));
     }
 }
 
