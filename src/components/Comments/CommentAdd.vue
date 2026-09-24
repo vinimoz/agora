@@ -19,6 +19,7 @@ interface Props {
   inquiryId?: number
   optionId?: number
   inputLabel?: string
+  placeholder?: string
 }
 
 const props = defineProps<Props>()
@@ -148,7 +149,7 @@ defineExpose({ focus })
           ref="editor"
           v-model="comment"
           :aria-label="inputLabel"
-          :placeholder="t('agora', 'Write a comment …')"
+          :placeholder="placeholder ?? t('agora', 'Write a comment …')"
                   :autolink="true"
                   :use-markdown="true"
                   :emoji-autocomplete="true"

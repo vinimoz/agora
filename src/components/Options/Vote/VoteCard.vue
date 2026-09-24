@@ -99,6 +99,7 @@
           ref="commentAdd"
           :option-id="option.id"
           :input-label="t('agora', 'Comment on {option}', { option: option.title })"
+          :placeholder="openedByGrade ? t('agora', 'Under which conditions? Why?') : undefined"
         />
       </div>
     </div>
@@ -239,12 +240,15 @@ const canComment = computed(() => !!props.option.permissions?.comment
   && sessionStore.route.name !== 'publicInquiry')
 const showComment = ref(false)
 const commentMounted = ref(false)
+const openedByGrade = ref(false)
 const commentAdd = ref<InstanceType<typeof CommentAdd> | null>(null)
 const commentZoneId = computed(() => `option-comment-${props.option.id}`)
+const commentGrades = computed(() => (props.engineConfig.comment_grades as string[] | undefined) ?? [])
 
 async function toggleComment() {
   showComment.value = !showComment.value
   if (showComment.value) {
+    openedByGrade.value = false
     commentMounted.value = true
     await nextTick()
     commentAdd.value?.focus()
@@ -282,7 +286,14 @@ const showVoteInput = computed(() => props.canVote)
 function handleVote(value: SupportValue) { emit('vote', props.option, value) }
 function handleApprovalToggle() { emit('approvalToggle', props.option.id) }
 function handleRankChange(rank: number | null) { emit('changeRank', props.option.id, rank) }
-function handleGradeChange(grade: string | null) { emit('changeGrade', props.option.id, grade) }
+function handleGradeChange(grade: string | null) {
+  emit('changeGrade', props.option.id, grade)
+  if (grade && canComment.value && commentGrades.value.includes(grade)) {
+    if (!showComment.value) openedByGrade.value = true
+    commentMounted.value = true
+    showComment.value = true
+  }
+}
 function handleUpdateScore(optionId: number, score: number | null) { emit('update:score', optionId, score) }
 function handleUpdateStar(optionId: number, star: number | null) { emit('update:star', optionId, star) }
 function handleUpdateReaction(optionId: number, reaction: string[] | null) { emit('update:reaction', optionId, reaction) }
