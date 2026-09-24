@@ -10,6 +10,49 @@
             <p>{{ t('agora', 'Loading vote interface …') }}</p>
         </div>
 
+        <div v-else-if="stackedEngines.length" class="vote-interface stacked">
+            <VoteHeader
+                    part="bar"
+                    :total-votes="totalVotes"
+                    :current-engine="currentEngine"
+                    :available-engines="availableEngines"
+                    :can-manage-vote="canManageVote"
+                    :is-readonly="isReadonly"
+                    :current-layout="currentLayout"
+                    :allowed-layouts="allowedLayouts"
+                    @update:layout="currentLayout = $event"
+                    @create-engine="showCreateEngineModal = true"
+                    />
+            <section
+                    v-for="engine in stackedEngines"
+                    :key="engine.id"
+                    class="vote-engine-section"
+                    :aria-labelledby="`engine-title-${engine.id}`"
+                    >
+                <VoteHeader
+                        part="card"
+                        :current-engine="engine"
+                        :available-engines="availableEngines"
+                        :can-manage-vote="inquiryStore.permissions.edit"
+                        :is-readonly="isReadonly"
+                        :total-votes="0"
+                        :current-layout="currentLayout"
+                        :allowed-layouts="allowedLayouts"
+                        @edit-engine="handleEditEngine"
+                        @delete-engine="handleDeleteEngine"
+                        @add-to-vote="onAddToVote"
+                        />
+                <VoteEngineBlock
+                        :inquiry-id="inquiryId"
+                        :engine-id="engine.id"
+                        :layout="currentLayout"
+                        :time-remaining="timeRemaining"
+                        @open-supports-modal="openSupportsModal"
+                        @select-option="$emit('selectOption', $event)"
+                        />
+            </section>
+        </div>
+
         <!-- Show header when there's an active engine, even without options -->
         <div v-else-if="hasActiveEngine && currentEngine" class="vote-interface">
             <VoteHeader
@@ -26,7 +69,7 @@
                     @create-engine="showCreateEngineModal = true"
                     @edit-engine="handleEditEngine"
                     @delete-engine="handleDeleteEngine"
-                    @add-to-vote="showAddToVoteModal = true"
+                    @add-to-vote="onAddToVote"
                     />
 
             <!-- Empty state when no options are linked -->
@@ -131,6 +174,7 @@ import { NcLoadingIcon, NcDialog } from '@nextcloud/vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import type { Option, SupportEngine } from '../../Types/index'
 import { useVoteContext } from '../../../composables/useVoteContext'
+import { useInquiryStore } from '../../../stores/inquiry'
 import { useOptionsStore } from '../../../stores/options'
 import { useSupportEngineStore } from '../../../stores/supportEngine'
 import { useSupportsStore } from '../../../stores/supports'
@@ -157,6 +201,7 @@ const emit = defineEmits<{
   'optionFamilyChanged': [payload: { optionId: number, familyKey: string, action: string }]
 }>()
 
+const inquiryStore = useInquiryStore()
 const optionsStore = useOptionsStore()
 const engineStore = useSupportEngineStore()
 const allOptions = computed(() => optionsStore.options || [])
@@ -177,6 +222,24 @@ const {
   refreshEngines,
   selectEngine,
 } = useVoteContext(props.inquiryId)
+
+// One block per active engine, only when each option belongs to exactly one of them.
+const stackedEngines = computed<SupportEngine[]>(() => {
+  const active = availableEngines.value.filter((e) => e.status === 'active')
+  if (active.length < 2 || active.some((e) => e.engine === 'phased_voting' || !e.target_ids?.length)) {
+    return []
+  }
+  const covered = new Set<number>()
+  for (const e of active) {
+    for (const id of e.target_ids) {
+      if (covered.has(id)) return []
+      covered.add(id)
+    }
+  }
+  const shown = availableEngines.value.flatMap((e) => e.target_ids ?? [])
+  if (shown.some((id) => !covered.has(id))) return []
+  return [...active].sort((a, b) => a.id - b.id)
+})
 
 // Local UI state
 const currentLayout = ref<'cards' | 'results'>('cards')
@@ -298,6 +361,11 @@ const closeEngineModal = () => {
   engineModalMode.value = 'create'
 }
 
+const onAddToVote = (engine: SupportEngine) => {
+  selectEngine(engine.id)
+  showAddToVoteModal.value = true
+}
+
 const handleEngineUpdate = (engineId: number | null) => {
   if (engineId) {
     selectEngine(engineId)
@@ -334,6 +402,16 @@ const onOptionsAdded = () => {
 .family-layout-vote {
     .vote-interface {
         animation: fadeIn 0.3s ease;
+    }
+
+    .vote-interface.stacked {
+        .vote-engine-section + .vote-engine-section {
+            margin-top: 32px;
+        }
+
+        :deep(.submit-vote-section) {
+            position: static;
+        }
     }
 
     .debug-panel {
