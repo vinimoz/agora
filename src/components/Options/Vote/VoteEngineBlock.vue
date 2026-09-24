@@ -83,7 +83,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, watch } from 'vue'
 import { t } from '@nextcloud/l10n'
 import { showSuccess } from '@nextcloud/dialogs'
 import type { Option } from '../../../Types/index'
@@ -98,9 +98,10 @@ const props = defineProps<{
   timeRemaining: string
 }>()
 
-defineEmits<{
+const emit = defineEmits<{
   'openSupportsModal': [optionId: number]
   'selectOption': [option: Option]
+  'progress': [engineId: number, answered: number, total: number]
 }>()
 
 const {
@@ -139,6 +140,13 @@ const winner = computed(() => getWinner(votableOptions.value))
 const winnerPercentage = computed(() => getWinnerPercentage(votableOptions.value))
 
 const rankedOptions = computed(() => getRankedOptions(votableOptions.value))
+
+const answered = computed(() => votableOptions.value.filter((o) => isSelectedForVote(o.id)).length)
+watch(
+  [answered, () => votableOptions.value.length],
+  ([count, total]) => emit('progress', props.engineId, count, total),
+  { immediate: true },
+)
 
 const onSubmitMultiVote = async () => {
   const success = await submitMultiVote()
