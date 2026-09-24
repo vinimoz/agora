@@ -43,10 +43,12 @@
                         @add-to-vote="onAddToVote"
                         />
                 <VoteEngineBlock
+                        ref="blocks"
                         :inquiry-id="inquiryId"
                         :engine-id="engine.id"
                         :layout="currentLayout"
                         :time-remaining="timeRemaining"
+                        :enqueue-save="enqueueSave"
                         @open-supports-modal="openSupportsModal"
                         @select-option="$emit('selectOption', $event)"
                         @progress="onProgress"
@@ -57,6 +59,14 @@
                     {{ n('agora', '{answered} answer out of {total}', '{answered} answers out of {total}', progressTotals[0], { answered: progressTotals[0], total: progressTotals[1] }) }}
                 </span>
                 <progress :value="progressTotals[0]" :max="progressTotals[1] || 1" aria-labelledby="vote-progress-label" />
+                <span v-if="savesRunning">{{ t('agora', 'Saving …') }}</span>
+                <span v-else-if="savedOnce && !failedSaves.size">{{ t('agora', 'Saved') }}</span>
+                <span aria-live="polite">
+                    <template v-if="!savesRunning && failedSaves.size">{{ t('agora', 'Not saved') }}</template>
+                </span>
+                <NcButton v-if="!savesRunning && failedSaves.size" variant="tertiary" @click="retrySaves">
+                    {{ t('agora', 'Retry') }}
+                </NcButton>
             </div>
         </div>
 
@@ -175,7 +185,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, useTemplateRef } from 'vue'
+import { onBeforeRouteLeave } from 'vue-router'
 import { n, t } from '@nextcloud/l10n'
 import { NcLoadingIcon, NcDialog } from '@nextcloud/vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
@@ -256,6 +267,34 @@ const progressTotals = computed(() => stackedEngines.value.reduce(
   ([count, total], e) => [count + (progress.value[e.id]?.[0] ?? 0), total + (progress.value[e.id]?.[1] ?? 0)],
   [0, 0],
 ))
+
+// Supports API calls cancel the previous call of the same name, so writes run one at a time.
+let queue: Promise<unknown> = Promise.resolve()
+const savesRunning = ref(0)
+const savedOnce = ref(false)
+const failedSaves = ref(new Map<number, () => Promise<boolean>>())
+
+const enqueueSave = (engineId: number, task: () => Promise<boolean>): Promise<boolean> => {
+  savesRunning.value += 1
+  const run = queue.then(task).catch(() => false).then((ok) => {
+    savesRunning.value -= 1
+    savedOnce.value = true
+    if (ok) failedSaves.value.delete(engineId)
+    else failedSaves.value.set(engineId, task)
+    return ok
+  })
+  queue = run
+  return run
+}
+
+const retrySaves = () => {
+  for (const [engineId, task] of failedSaves.value) enqueueSave(engineId, task)
+}
+
+const blocks = useTemplateRef<InstanceType<typeof VoteEngineBlock>[]>('blocks')
+onBeforeRouteLeave(async () => {
+  await Promise.all((blocks.value ?? []).map((b) => b.flush()))
+})
 
 // Local UI state
 const currentLayout = ref<'cards' | 'results'>('cards')
