@@ -13,7 +13,7 @@
     @click="handleCardClick"
   >
     <!-- Header with icon, type label, and creation date -->
-    <div class="card-header">
+    <div v-if="inquiryStore.permissions.edit" class="card-header">
       <div class="header-left">
         <div class="type-icon" :style="{ color: optionTypeColor }">
           <component :is="optionIcon" :size="20" />
@@ -33,7 +33,7 @@
       
       <!-- Support and comments stats (when not voting mode) -->
       <div v-if="!canVote || hasUserVoted" class="stats-container">
-        <div class="support-stats" @click.stop="openSupportsModal">
+        <div v-if="!hideResults" class="support-stats" @click.stop="openSupportsModal">
           <component :is="InquiryOptionIcons.Support" :size="14" class="stat-icon" />
           <span class="vote-count">{{ voteCount }}</span>
           <span class="percentage">{{ percentage }}%</span>
@@ -46,7 +46,7 @@
       </div>
 
       <!-- Progress bar for voting mode -->
-      <div v-if="!canVote || hasUserVoted" class="progress-bar-container">
+      <div v-if="(!canVote || hasUserVoted) && !hideResults" class="progress-bar-container">
         <div class="progress-bar">
           <div class="progress-fill" :style="{ width: percentage + '%' }" />
         </div>
@@ -85,7 +85,7 @@
     />
 
     <!-- Footer with owner info -->
-    <div v-if="!compact" class="card-footer">
+    <div v-if="!compact && inquiryStore.permissions.edit" class="card-footer">
       <div class="owner-info">
         <NcAvatar
           v-if="option.owner?.id"
@@ -112,6 +112,7 @@ import { CheckCircle } from 'lucide-vue-next'
 import NcAvatar from '@nextcloud/vue/components/NcAvatar'
 import VoteInput from './VoteInput.vue'
 import { useSessionStore } from '../../../stores/session'
+import { useInquiryStore } from '../../../stores/inquiry'
 import { InquiryOptionIcons } from '../../../utils/icons.ts'
 import {
   getOptionTypeLabel,
@@ -143,6 +144,7 @@ const props = defineProps<{
   currentTokenWeight?: number | null
   getUserVoteValueForOption: (optionId: number) => SupportValue | null
   totalOptions?: number
+  hideResults?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -159,6 +161,7 @@ const emit = defineEmits<{
 }>()
 
 const sessionStore = useSessionStore()
+const inquiryStore = useInquiryStore()
 const allOptionTypes = computed(() => sessionStore.appSettings?.inquiryOptionTypeTab || [])
 
 const optionTypeLabel = computed(() => {
@@ -271,7 +274,11 @@ function handleCardClick(event: MouseEvent) {
   &:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    border-color: var(--color-primary-element);
+  }
+
+  &:has(:focus-visible) {
+    outline: 2px solid var(--color-main-text);
+    outline-offset: 2px;
   }
 
   &.user-voted {

@@ -70,6 +70,10 @@ const confidentialText = computed(() => {
   if (!owner || owner.id === sessionStore.currentUser.id) {
     return t('agora', 'Only visible to me')
   }
+
+  if (!inquiryStore.permissions.edit) {
+    return t('agora', 'Visible only to the organizer')
+  }
   
   return t('agora', 'Only visible to {displayName}', {
     displayName: owner.displayName || t('agora', 'The owner'),

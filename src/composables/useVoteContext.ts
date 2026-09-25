@@ -31,6 +31,7 @@ export interface VoteContext {
   tokenWeights: Ref<Record<number, number>>
   selectedOptions: Ref<Set<number>>
   hasUserVoted: ComputedRef<boolean>
+  hasSelectionsChanged: ComputedRef<boolean>
   canVote: ComputedRef<boolean>
   canSubmitMultiVote: ComputedRef<boolean>
   voteSelectionInfo: ComputedRef<string | null>
@@ -60,13 +61,15 @@ export interface VoteContext {
   updateQuadratic: (optionId: number, votes: number | null) => void
   updateTokenWeight: (optionId: number, weight: number | null) => void
   submitSingleVote: (inquiryId: number, option: Option, value: SupportValue) => Promise<boolean>
-  submitMultiVote: () => Promise<boolean>
+  submitMultiVote: (reload?: boolean) => Promise<boolean>
+  removeMyVote: (reload?: boolean) => Promise<boolean>
+  loadUserVotesForEngine: (engineId: number) => void
   resetSelections: () => void
   hasUserVotedFor: (optionId: number) => boolean
   isSelectedForVote: (optionId: number) => boolean
 }
 
-export function useVoteContext(inquiryId: number): VoteContext {
+export function useVoteContext(inquiryId: number, engineId?: number): VoteContext {
   const engineStore = useSupportEngineStore()
   const supportsStore = useSupportsStore()
   const optionsStore = useOptionsStore()
@@ -75,13 +78,16 @@ export function useVoteContext(inquiryId: number): VoteContext {
 
   // ---------- Engine management ----------
   const loadingEngines = ref(false)
-  const selectedEngineId = ref<number | null>(null)
+  const selectedEngineId = ref<number | null>(engineId ?? null)
 
   const availableEngines = computed(() => engineStore.getEnginesByInquiry(inquiryId))
  // const { calculateTrendingScore } = useTrending(inquiryId)
 
   const currentEngine = computed<SupportEngine | null>(() => {
     const engines = availableEngines.value
+    if (engineId !== undefined) {
+      return engines.find((e) => e.id === engineId) ?? null
+    }
     if (!engines.length) return null
     if (selectedEngineId.value) {
       const found = engines.find((e) => e.id === selectedEngineId.value)
@@ -549,7 +555,7 @@ export function useVoteContext(inquiryId: number): VoteContext {
       return t('agora', '{count} options voted', { count })
   })
 
-  async function submitMultiVote() {
+  async function submitMultiVote(reload = true) {
       if (!canVote.value || !canSubmitMultiVote.value) return false
 
           const engine = currentEngine.value
@@ -657,7 +663,7 @@ export function useVoteContext(inquiryId: number): VoteContext {
                       await supportsStore.addSupport(inquiryId, userId, payload, 0, engineId)
                   }
 
-                  await loadUserVotesForEngine(engineId)
+                  if (reload) await loadUserVotesForEngine(engineId)
                   await loadResults()
                   return true
               } catch (error) {
@@ -972,8 +978,9 @@ export function useVoteContext(inquiryId: number): VoteContext {
   /**
    * Remove all votes of the current user for the active engine.
    * This handles both engine‑level (optionId = 0) and per‑option votes.
+   * @param reload reset and reload the selections after the removal
    */
-  const removeMyVote = async (): Promise<boolean> => {
+  const removeMyVote = async (reload = true): Promise<boolean> => {
       const engine = currentEngine.value
       if (!engine) return false
           const userId = sessionStore.currentUser?.id
@@ -992,8 +999,10 @@ export function useVoteContext(inquiryId: number): VoteContext {
               }
 
               // Clear local selections and reload fresh state
-              resetSelections()
-              await loadUserVotesForEngine(engine.id)
+              if (reload) {
+                  resetSelections()
+                  await loadUserVotesForEngine(engine.id)
+              }
               await loadResults()
 
               return true
@@ -1006,9 +1015,7 @@ export function useVoteContext(inquiryId: number): VoteContext {
           const engineResultEntry = results.find(
               (r) => r.support_engine_id === selectedEngineId.value && r.target_type === 'inquiry'
           )
-          if (engineResultEntry) {
-              engineResult.value = engineResultEntry.result
-          }
+          engineResult.value = engineResultEntry?.result ?? null
       }
   }
 
@@ -1108,5 +1115,6 @@ export function useVoteContext(inquiryId: number): VoteContext {
       selectEngine,
       refreshEngines,
       removeMyVote,
+      loadUserVotesForEngine,
   }
 }
