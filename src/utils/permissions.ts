@@ -68,6 +68,7 @@ export enum AccessLevel {
   Private = 'private',
   Moderate = 'moderate',
   Open = 'open',
+  Group = 'group',
 }
 
 /**
@@ -617,6 +618,9 @@ function isAccessRestrictedForComments(context: PermissionContext): boolean {
     switch (context.accessLevel) {
         case AccessLevel.Private:
             return true
+   case AccessLevel.Group:
+            return !hasGroupAccess(context)
+
         case AccessLevel.Moderate:
             return context.userType !== UserType.Moderator && context.userType !== UserType.Admin
         case AccessLevel.Open:
@@ -639,6 +643,10 @@ function isAccessRestrictedForSupports(context: PermissionContext): boolean {
         case AccessLevel.Private:
             case AccessLevel.Moderate:
             return true
+	        case AccessLevel.Group:
+            // group members can support; outsiders can't
+            return !hasGroupAccess(context)
+
         case AccessLevel.Open:
             default:
             return false
@@ -654,9 +662,14 @@ function isAccessRestrictedForSharing(context: PermissionContext): boolean {
         case AccessLevel.Private:
             case AccessLevel.Moderate:
             return true
+		   case AccessLevel.Group:
+            // group members can support; outsiders can't
+            return !hasGroupAccess(context)
+
         case AccessLevel.Open:
             default:
             return false
+
     }
 }
 

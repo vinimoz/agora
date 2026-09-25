@@ -40,6 +40,7 @@ export type FilterType =
   | 'reject'
   | 'private'
   | 'participated'
+  | 'group'
   | 'open'
   | 'all'
   | 'closed'
@@ -128,13 +129,14 @@ const inquiryCategories: InquiryCategoryList = {
     description: t('agora', 'All inquiries who are relevant for you, not older than 30 days.'),
     pinned: false,
     showInNavigation: () => true,
-    filterCondition: (inquiry: Inquiry) =>
-      !inquiry.status.isArchived &&
-      DateTime.fromSeconds(inquiry.status.relevantThreshold).diffNow('days').days > -30 &&
-      inquiry.permissions.view &&
-      (inquiry.configuration.access === 'open' ||
-        inquiry.configuration.access === 'public' ||
-        inquiry.configuration.access === 'private'),
+	    filterCondition: (inquiry: Inquiry) =>
+    !inquiry.status.isArchived &&
+    DateTime.fromSeconds(inquiry.status.relevantThreshold).diffNow('days').days > -30 &&
+    inquiry.permissions.view &&
+    (inquiry.configuration.access === 'open' ||
+     inquiry.configuration.access === 'public' ||
+     inquiry.configuration.access === 'private' ||
+     inquiry.configuration.access === 'group'),
   },
   reject: {
     id: 'reject',
@@ -180,6 +182,7 @@ const inquiryCategories: InquiryCategoryList = {
       inquiry.currentUserStatus.isOwner &&
       inquiry.configuration.access === 'private',
   },
+
   participated: {
     id: 'participated',
     title: t('agora', 'Participated'),
@@ -189,6 +192,23 @@ const inquiryCategories: InquiryCategoryList = {
     showInNavigation: () => true,
     filterCondition: (inquiry: Inquiry) =>
       !inquiry.status.isArchived && inquiry.status.countParticipants > 0,
+  },
+  group: {
+    id: 'group' as FilterType,
+    title: t('agora', 'Group inquiries'),
+    titleExt: t('agora', 'Inquiries shared with my groups'),
+    description: t('agora', 'Inquiries visible to the groups you belong to.'),
+    pinned: false,
+    showInNavigation: () => {
+        const sessionStore = useSessionStore()
+        return (sessionStore.currentUser?.groups?.length ?? 0) > 0
+    },
+    filterCondition: (inquiry: Inquiry) =>
+        !inquiry.status.isArchived &&
+        inquiry.permissions.view &&
+        inquiry.configuration.access === 'group' &&
+        !!inquiry.ownedGroup &&
+        (useSessionStore().currentUser?.groups ?? []).includes(inquiry.ownedGroup),
   },
   open: {
     id: 'open',
@@ -216,7 +236,8 @@ const inquiryCategories: InquiryCategoryList = {
       (inquiry.configuration.access === 'open' ||
         inquiry.configuration.access === 'moderate' ||
         inquiry.configuration.access === 'public' ||
-        inquiry.configuration.access === 'private'),
+        inquiry.configuration.access === 'private' ||
+       inquiry.configuration.access === 'group'),
   },
   closed: {
     id: 'closed',
@@ -481,7 +502,7 @@ export const useInquiriesStore = defineStore('inquiries', {
         // For "all" category, only show open access inquiries
         if (this.currentCategory?.id === 'all') {
           return (
-            inquiry.configuration.access === 'open' || inquiry.configuration.access === 'public'
+            inquiry.configuration.access === 'open' || inquiry.configuration.access === 'public' || inquiry.configuration.access === 'group' 
           )
         }
 

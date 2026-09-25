@@ -1,6 +1,20 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+# [1.7.13] - 2026-09-24
+Fix:
+    - Bug #52: label the balance bar with position counts
+    - Bug #51: restrict editing and moderation to the users entitled to them
+    - Bug #50: fall back to the stored catalogue for option type labels
+    - Bug #49: answer 400 on a bad submit action and stop a PHP warning
+    - Bug #48: show every inquiry, and keep the list inside its area 
+    - Bug #47: publish results that match the ballots
+    - Bug #46: elect the best median, and show what was cast
+    - Bug #45: make the ballot usable again
+    - Bug #44: Bug in template creation
+    - Fix group inquiry owner display
+
+
 # [1.7.12] - 2026-09-20
 Fix:
     - Bug #43: make commenting work on the /page/inquiry route

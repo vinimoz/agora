@@ -36,7 +36,7 @@ import { useAppSettingsStore } from '../stores/appSettings.ts'
 import { useSupportResultStore } from './supportResult.ts'
 
 // Type definitions matching PHP constants
-export type AccessType = 'hidden' | 'public' | 'moderate' | 'private' | 'open'
+export type AccessType = 'hidden' | 'public' | 'moderate' | 'private' | 'open' | 'group'
 export type ShowResultsType = 'always' | 'closed' | 'never'
 export type ModerationWorkflowStatus = 'draft' | 'pending' | 'accepted' | 'rejected'
 export type InquiryWorkflowStatus = 'draft' | 'waiting_approval' | 'active' | 'closed' | 'rejected'
@@ -244,13 +244,17 @@ export const useInquiryStore = defineStore('inquiry', {
 
 		// In the getters section, replace the isClosed getter with:
 
-isClosed(state): boolean {
-    const now = Date.now() / 1000 // Current time in seconds
-    return (
-        state.status.isExpired ||
-        (state.configuration.expire > 0 && state.configuration.expire < now)
-    )
-},
+		isGroupRestricted(state): boolean {
+			return state.configuration.access === 'group' && state.ownedGroup !== ''
+		},
+
+		isClosed(state): boolean {
+			const now = Date.now() / 1000 // Current time in seconds
+			return (
+				state.status.isExpired ||
+					(state.configuration.expire > 0 && state.configuration.expire < now)
+			)
+		},
 
 
 		descriptionMarkDown(state): string {
@@ -306,7 +310,12 @@ isClosed(state): boolean {
 					this.status.moderationStatus = 'pending'
 					this.status.inquiryStatus = 'waiting_approval'
 					this.configuration.access = 'moderate'
-				}
+				} else if (action === 'submit_for_moderate') {
+    this.status.moderationStatus = 'pending'
+    this.status.inquiryStatus = 'waiting_approval'
+    // Preserve group access if an owner group was assigned
+    this.configuration.access = this.ownedGroup ? 'group' : 'moderate'
+}
 
 				const response = await InquiriesAPI.submitInquiry(this.id, action)
 				if (!response || !response.data) {
@@ -412,6 +421,7 @@ isClosed(state): boolean {
 			type?: string
 			family: string
 			ownedGroup?: string
+			access?: AccessType
 			description?: string
 			parentId?: number
 			locationId?: number
@@ -427,6 +437,7 @@ isClosed(state): boolean {
 					family: payload.family,
 					parentId: payload.parentId,
 					locationId: payload.locationId,
+					access: payload.access,
 					categoryId: payload.categoryId,
 					description: payload.description,
 					owner: payload.owner,

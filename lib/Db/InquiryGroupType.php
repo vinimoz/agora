@@ -116,4 +116,23 @@ class InquiryGroupType extends Entity implements JsonSerializable
             'actions' => $this->getActions() ?? [],
         ];
     }
+    public function setUi(string $ui): void
+{
+    $this->ui = $ui;
+}
+
+public function setRules(string $rules): void
+{
+    $this->rules = $rules;
+}
+
+public function setFeatures(string $features): void
+{
+    $this->features = $features;
+}
+
+public function setActions(string $actions): void
+{
+    $this->actions = $actions;
+}
 }

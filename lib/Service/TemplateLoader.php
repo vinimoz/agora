@@ -123,39 +123,61 @@ class TemplateLoader
     /**
      * Load inquiry families from template
      */
-    private function loadInquiryFamilies(array $families, string $language): array
-    {
-        $messages = [];
-        $messages[] = 'Loading inquiry families...';
+private function loadInquiryFamilies(array $families, string $language): array
+{
+    $messages = [];
+    $messages[] = 'Loading inquiry families...';
 
-        foreach ($families as $familyData) {
-            try {
-                $familyType = $familyData['family_type'];
+    foreach ($families as $familyData) {
+        try {
+            $familyType = $familyData['family_type'];
 
-                // Check if family already exists
-                if ($this->inquiryFamilyMapper->familyTypeExists($familyType)) {
-                    $messages[] = "  - Family already exists: {$familyType} (skipped)";
-                    continue;
-                }
-
-                $family = new InquiryFamily();
-                $family->setFamilyType($familyType);
-                $family->setLabel($this->extractText($familyData['label'] ?? '', $language));
-                $family->setDescription($this->extractText($familyData['description'] ?? '', $language));
-                $family->setIcon($familyData['icon'] ?? '');
-                $family->setSortOrder($familyData['sort_order'] ?? 0);
-                $family->setCreated(time());
-
-                $this->inquiryFamilyMapper->insert($family);
-                $messages[] = "  - Created family: {$familyType}";
-            } catch (\Exception $e) {
-                $messages[] = "  - Error creating family {$familyData['family_type']}: " . $e->getMessage();
+            if ($this->inquiryFamilyMapper->familyTypeExists($familyType)) {
+                $messages[] = "  - Family already exists: {$familyType} (skipped)";
+                continue;
             }
-        }
 
-        return $messages;
+            $family = new InquiryFamily();
+            $family->setFamilyType($familyType);
+            $family->setLabel($this->extractText($familyData['label'] ?? '', $language));
+            $family->setDescription($this->extractText($familyData['description'] ?? '', $language));
+            $family->setIcon($familyData['icon'] ?? '');
+            $family->setSortOrder($familyData['sort_order'] ?? 0);
+
+            // =================================================================
+            // FIX: supply defaults for internal Agora fields not in the public
+            // template schema. These mirror the fallbacks already used in
+            // InitDbDefault.php so both code paths produce identical rows.
+            // =================================================================
+            $family->setUi(json_encode(
+                !empty($familyData['ui']) ? $familyData['ui'] : new \stdClass(),
+                JSON_UNESCAPED_UNICODE
+            ));
+            $family->setRules(json_encode(
+                !empty($familyData['rules']) ? $familyData['rules'] : new \stdClass(),
+                JSON_UNESCAPED_UNICODE
+            ));
+            $family->setFeatures(json_encode(
+                !empty($familyData['features']) ? $familyData['features'] : [],
+                JSON_UNESCAPED_UNICODE
+            ));
+            $family->setActions(json_encode(
+                !empty($familyData['actions']) ? $familyData['actions'] : [],
+                JSON_UNESCAPED_UNICODE
+            ));
+            // =================================================================
+
+            $family->setCreated(time());
+
+            $this->inquiryFamilyMapper->insert($family);
+            $messages[] = "  - Created family: {$familyType}";
+        } catch (\Exception $e) {
+            $messages[] = "  - Error creating family {$familyData['family_type']}: " . $e->getMessage();
+        }
     }
 
+    return $messages;
+}
     /**
      * Load inquiry types from template
      */
@@ -234,76 +256,130 @@ class TemplateLoader
     /**
      * Load option types from template
      */
-    private function loadOptionTypes(array $optionTypes, string $language): array
-    {
-        $messages = [];
-        $messages[] = 'Loading option types...';
+private function loadOptionTypes(array $optionTypes, string $language): array
+{
+    $messages = [];
+    $messages[] = 'Loading option types...';
 
-        foreach ($optionTypes as $optionTypeData) {
-            try {
-                $optionType = new InquiryOptionType();
-                $optionType->setFamily($optionTypeData['family'] ?? '');
-                $optionType->setOptionType($optionTypeData['option_type']);
-                $optionType->setIcon($optionTypeData['icon'] ?? '');
-                $optionType->setLabel($this->extractText($optionTypeData['label'] ?? '', $language));
-                $optionType->setDescription($this->extractText($optionTypeData['description'] ?? '', $language));
+    foreach ($optionTypes as $optionTypeData) {
+        try {
+            $optionType = new InquiryOptionType();
+            $optionType->setFamily($optionTypeData['family'] ?? '');
+            $optionType->setOptionType($optionTypeData['option_type']);
+            $optionType->setIcon($optionTypeData['icon'] ?? '');
+            $optionType->setLabel($this->extractText($optionTypeData['label'] ?? '', $language));
+            $optionType->setDescription($this->extractText($optionTypeData['description'] ?? '', $language));
 
-                // Handle allowed_response
-                if (isset($optionTypeData['allowed_response']) && is_array($optionTypeData['allowed_response'])) {
-                    $optionType->setAllowedResponse($optionTypeData['allowed_response']);
-                } else {
-                    $optionType->setAllowedResponse(null);
-                }
-
-                // Handle fields if present
-                if (isset($optionTypeData['fields']) && is_array($optionTypeData['fields'])) {
-                    $optionType->setFields($optionTypeData['fields']);
-                }
-
-                $optionType->setCreated(time());
-
-                $this->inquiryOptionTypeMapper->insert($optionType);
-                $messages[] = "  - Created option type: {$optionTypeData['option_type']}";
-            } catch (\Exception $e) {
-                $messages[] = "  - Error creating option type {$optionTypeData['option_type']}: " . $e->getMessage();
+            if (isset($optionTypeData['allowed_response']) && is_array($optionTypeData['allowed_response'])) {
+                $optionType->setAllowedResponse($optionTypeData['allowed_response']);
+            } else {
+                $optionType->setAllowedResponse(null);
             }
-        }
 
-        return $messages;
+            if (isset($optionTypeData['fields']) && is_array($optionTypeData['fields'])) {
+                $optionType->setFields($optionTypeData['fields']);
+            }
+
+            // =============================================================
+            // FIX: defaults for internal columns not in the public schema
+            // =============================================================
+            $optionType->setUi(json_encode(
+                !empty($optionTypeData['ui']) ? $optionTypeData['ui'] : new \stdClass(),
+                JSON_UNESCAPED_UNICODE
+            ));
+            $optionType->setRules(json_encode(
+                !empty($optionTypeData['rules']) ? $optionTypeData['rules'] : new \stdClass(),
+                JSON_UNESCAPED_UNICODE
+            ));
+            $optionType->setFeatures(json_encode(
+                !empty($optionTypeData['features']) ? $optionTypeData['features'] : [],
+                JSON_UNESCAPED_UNICODE
+            ));
+            $optionType->setActions(json_encode(
+                !empty($optionTypeData['actions']) ? $optionTypeData['actions'] : [],
+                JSON_UNESCAPED_UNICODE
+            ));
+
+            // Also mirror InitDbDefault fallbacks:
+            $optionType->setStatuses(json_encode(
+                !empty($optionTypeData['statuses']) ? $optionTypeData['statuses'] : [],
+                JSON_UNESCAPED_UNICODE
+            ));
+            $optionType->setSupportFeature($optionTypeData['support_feature'] ?? 'none');
+            $optionType->setAllowComment(
+                array_key_exists('allow_comment', $optionTypeData)
+                    ? (int)(bool)$optionTypeData['allow_comment']
+                    : null
+            );
+            $optionType->setUseTitle(!empty($optionTypeData['use_title']) ? 1 : 0);
+            // =============================================================
+
+            $optionType->setCreated(time());
+
+            $this->inquiryOptionTypeMapper->insert($optionType);
+            $messages[] = "  - Created option type: {$optionTypeData['option_type']}";
+        } catch (\Exception $e) {
+            $messages[] = "  - Error creating option type {$optionTypeData['option_type']}: " . $e->getMessage();
+        }
     }
+
+    return $messages;
+}
 
     /**
      * Load inquiry group types from template
      */
-    private function loadInquiryGroupTypes(array $groupTypes, string $language): array
-    {
-        $messages = [];
-        $messages[] = 'Loading inquiry group types...';
+private function loadInquiryGroupTypes(array $groupTypes, string $language): array
+{
+    $messages = [];
+    $messages[] = 'Loading inquiry group types...';
 
-        foreach ($groupTypes as $groupTypeData) {
-            try {
-                $groupType = new InquiryGroupType();
-                $groupType->setGroupType($groupTypeData['group_type']);
-                $groupType->setFamily($groupTypeData['family'] ?? 'deliberative');
-                $groupType->setLabel($this->extractText($groupTypeData['label'] ?? '', $language));
-                $groupType->setDescription($this->extractText($groupTypeData['description'] ?? '', $language));
-                $groupType->setIcon($groupTypeData['icon'] ?? '');
-                $groupType->setFields($groupTypeData['fields'] ?? []);
-                $groupType->setAllowedInquiryTypes($groupTypeData['allowed_inquiry_types'] ?? []);
-                $groupType->setAllowedResponse($groupTypeData['allowed_response'] ?? []);
-                $groupType->setIsRoot($groupTypeData['is_root'] ?? false);
-                $groupType->setSortOrder($groupTypeData['sort_order'] ?? 0);
-                $groupType->setCreated(time());
+    foreach ($groupTypes as $groupTypeData) {
+        try {
+            $groupType = new InquiryGroupType();
+            $groupType->setGroupType($groupTypeData['group_type']);
+            $groupType->setFamily($groupTypeData['family'] ?? 'deliberative');
+            $groupType->setLabel($this->extractText($groupTypeData['label'] ?? '', $language));
+            $groupType->setDescription($this->extractText($groupTypeData['description'] ?? '', $language));
+            $groupType->setIcon($groupTypeData['icon'] ?? '');
+            $groupType->setFields($groupTypeData['fields'] ?? []);
+            $groupType->setAllowedInquiryTypes($groupTypeData['allowed_inquiry_types'] ?? []);
+            $groupType->setAllowedResponse($groupTypeData['allowed_response'] ?? []);
+            $groupType->setIsRoot($groupTypeData['is_root'] ?? false);
+            $groupType->setSortOrder($groupTypeData['sort_order'] ?? 0);
 
-                $this->inquiryGroupTypeMapper->insert($groupType);
-                $messages[] = "  - Created group type: {$groupTypeData['group_type']}";
-            } catch (\Exception $e) {
-                $messages[] = "  - Error creating group type {$groupTypeData['group_type']}: " . $e->getMessage();
-            }
+            // =============================================================
+            // FIX: defaults for internal columns not in the public schema
+            // =============================================================
+            $groupType->setUi(json_encode(
+                !empty($groupTypeData['ui']) ? $groupTypeData['ui'] : new \stdClass(),
+                JSON_UNESCAPED_UNICODE
+            ));
+            $groupType->setRules(json_encode(
+                !empty($groupTypeData['rules']) ? $groupTypeData['rules'] : new \stdClass(),
+                JSON_UNESCAPED_UNICODE
+            ));
+            $groupType->setFeatures(json_encode(
+                !empty($groupTypeData['features']) ? $groupTypeData['features'] : [],
+                JSON_UNESCAPED_UNICODE
+            ));
+            $groupType->setActions(json_encode(
+                !empty($groupTypeData['actions']) ? $groupTypeData['actions'] : [],
+                JSON_UNESCAPED_UNICODE
+            ));
+            // =============================================================
+
+            $groupType->setCreated(time());
+
+            $this->inquiryGroupTypeMapper->insert($groupType);
+            $messages[] = "  - Created group type: {$groupTypeData['group_type']}";
+        } catch (\Exception $e) {
+            $messages[] = "  - Error creating group type {$groupTypeData['group_type']}: " . $e->getMessage();
         }
-
-        return $messages;
     }
+
+    return $messages;
+}
 
     /**
      * Load categories from template

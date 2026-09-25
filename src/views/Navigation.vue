@@ -54,6 +54,10 @@ const icons = {
     id: 'participated',
     iconComponent: NavigationIcons.Participated,
   },
+  group: {
+    id: 'group',
+    iconComponent: NavigationIcons.Group,
+  },
   open: {
     id: 'open',
     iconComponent: NavigationIcons.Open,

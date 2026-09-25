@@ -120,6 +120,7 @@ interface InquiryData {
   type: string
   title: string
   family: string
+  access?: 'private'|'group'
   parentId?: string | number | null
   locationId?: number | string | null
   categoryId?: number | string | null
@@ -139,6 +140,8 @@ async function addInquiry() {
     if (props.parentInquiryId) {
       inquiryData.parentId = props.parentInquiryId
     }
+
+
     
     if (inquiryStore.locationId) {
       inquiryData.locationId = inquiryStore.locationId
@@ -152,11 +155,16 @@ async function addInquiry() {
       inquiryData.family = props.family
     }
 
+      
     // Add groups if groups access is selected
     if (accessType.value === 'groups' && selectedGroup.value) {
-      inquiryData.ownedGroup = selectedGroup.value
+      inquiryData.ownedGroup = selectedGroup.valuea
+      inquiryData.access = 'group'
     }
-    
+    else
+    {
+    inquiryData.access = 'private'
+    }
     if (props.selectedMode === 'transform') {
       inquiryData.description = inquiryStore.description
       // Clone the inquiry with the new mode.
