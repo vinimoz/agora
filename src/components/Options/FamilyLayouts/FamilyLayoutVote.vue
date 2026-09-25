@@ -16,7 +16,7 @@
                     :total-votes="totalVotes"
                     :current-engine="currentEngine"
                     :available-engines="availableEngines"
-                    :can-manage-vote="canManageVote"
+                    :can-manage-vote="inquiryStore.permissions.edit"
                     :is-readonly="isReadonly"
                     :current-layout="currentLayout"
                     :allowed-layouts="allowedLayouts"
@@ -79,7 +79,7 @@
                     :total-votes="totalVotes"
                     :current-engine="currentEngine"
                     :available-engines="availableEngines"
-                    :can-manage-vote="canManageVote"
+                    :can-manage-vote="inquiryStore.permissions.edit"
                     :is-readonly="isReadonly"
                     :current-layout="currentLayout"
                     :allowed-layouts="allowedLayouts"
@@ -96,7 +96,7 @@
             <VoteEmptyState
                     v-if="(!currentEngine.target_ids || currentEngine.target_ids.length === 0)"
                     :no-options-linked="true"
-                    :can-manage-vote="canManageVote"
+                    :can-manage-vote="inquiryStore.permissions.edit"
                     :is-readonly="isReadonly"
                     @add-to-vote="showAddToVoteModal = true"
                     @configure="showCreateEngineModal = true"
@@ -106,7 +106,7 @@
             <VoteEmptyState
                     v-else-if="votableOptions.length === 0"
                     :show-add-button="canAddOptions"
-                    :can-manage-vote="canManageVote && canAddOptions"
+                    :can-manage-vote="inquiryStore.permissions.edit"
                     :is-readonly="isReadonly"
                     @add-option="$emit('addOption')"
                     />
@@ -137,7 +137,7 @@
         <VoteEmptyState
                 v-else-if="!hasActiveEngine"
                 :no-engine="true"
-                :can-manage-vote="canManageVote"
+                :can-manage-vote="inquiryStore.permissions.edit"
                 :is-readonly="isReadonly"
                 @configure="showCreateEngineModal = true"
                 @add-option="$emit('addOption')"
@@ -210,7 +210,6 @@ import { ENGINE_DEFINITIONS } from '../../../Types/votingType'
 
 const props = defineProps<{
   inquiryId: number
-  canManageVote: boolean
   isReadonly: boolean
   canAddOptions: boolean
 }>()

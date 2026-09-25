@@ -125,7 +125,6 @@
                 :options-by-inquiry="optionsByInquiry"
                 :is-readonly="isReadOnly"
                 :is-official-user="inquiryStore.user?.isOfficial || false"
-                :can-manage-vote="canManageVote"
                 :can-add-options="showCreateOptionButtons"
                 @add-option="openAddOptionModal"
                 @open-detail="openOptionDetail"
@@ -244,7 +243,6 @@ const modalComponentCache = new Map<string, Component>()
 
 // Computed
 const isReadOnly = computed(() => route.name === 'publicInquiry')
-const canManageVote = computed(() => inquiryStore.currentUserStatus?.isOwner || sessionStore.currentUser?.isAdmin || sessionStore.currentUser?.isOfficial)
 
 // Layout component registry
 const layoutComponents: Record<string, Component> = {
@@ -278,7 +276,7 @@ const showCreateOptionButtons = computed(() => {
    
     // For vote family, additionally check if there's an active engine
     if (family.key === 'vote') {
-        return allowCreation && hasActiveEngineForActiveFamily.value
+        return allowCreation && hasActiveEngineForActiveFamily.value && inquiryStore.permissions.edit
     }
     
     return allowCreation
