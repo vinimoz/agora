@@ -16,6 +16,7 @@ use OCA\Agora\Db\InquiryMapper;
 use OCA\Agora\Service\SupportEngineService;
 use OCA\Agora\Service\SupportResultService;
 use OCA\Agora\Service\TrendingService;
+use OCA\Agora\UserSession;
 
 use Psr\Log\LoggerInterface;
 
@@ -30,7 +31,27 @@ class SupportService
         private SupportEngineService $engineService,
         private TrendingService $trendingService, 
         private LoggerInterface $logger,
+        private UserSession $userSession,
     ) {
+    }
+
+    /**
+     * Keep only the current user's own supports for engines hidden until close
+     *
+     * @param Support[] $supports
+     * @return Support[]
+     */
+    private function hideOthersSupports(array $supports, int $inquiryId): array
+    {
+        $hidden = $this->supportResultService->getHiddenEngineIds($inquiryId);
+        if (!$hidden) {
+            return $supports;
+        }
+        $userId = $this->userSession->getCurrentUserId();
+        return array_values(array_filter(
+            $supports,
+            fn (Support $s) => !in_array($s->getSupportEngineId(), $hidden, true) || $s->getUserId() === $userId,
+        ));
     }
 
         /**
@@ -763,7 +784,7 @@ public function removeAllSupportForInquiry(int $inquiryId, ?int $engineId = null
 public function getSupportsByInquiry(int $inquiryId): array
 {
     $this->logger->debug('Getting supports by inquiry', ['inquiryId' => $inquiryId]);
-    return $this->supportMapper->findByInquiryId($inquiryId);
+    return $this->hideOthersSupports($this->supportMapper->findByInquiryId($inquiryId), $inquiryId);
 }
 
 /**
@@ -771,7 +792,19 @@ public function getSupportsByInquiry(int $inquiryId): array
  */
 public function getSupportsForUser(string $userId): array
 {
-    return $this->supportMapper->findByUserId($userId);
+    $supports = $this->supportMapper->findByUserId($userId);
+    if ($userId === $this->userSession->getCurrentUserId()) {
+        return $supports;
+    }
+    $hidden = [];
+    return array_values(array_filter(
+        $supports,
+        function (Support $s) use (&$hidden): bool {
+            $inquiryId = $s->getInquiryId();
+            $hidden[$inquiryId] ??= $this->supportResultService->getHiddenEngineIds($inquiryId);
+            return !in_array($s->getSupportEngineId(), $hidden[$inquiryId], true);
+        },
+    ));
 }
 
 /**
@@ -792,7 +825,7 @@ public function list(int $inquiryId, bool $wRoles = true): array
         return [];
     }
 
-    return $this->supportMapper->findByInquiryId($inquiryId);
+    return $this->hideOthersSupports($this->supportMapper->findByInquiryId($inquiryId), $inquiryId);
 }
 
 /**
@@ -800,7 +833,7 @@ public function list(int $inquiryId, bool $wRoles = true): array
  */
 public function getSupportByInquiryId(int $inquiryId): array
 {
-    return $this->supportMapper->findByInquiryId($inquiryId);
+    return $this->hideOthersSupports($this->supportMapper->findByInquiryId($inquiryId), $inquiryId);
 }
 
 /**
