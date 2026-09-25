@@ -173,7 +173,7 @@
 
 	<!-- Current Engine Info Card (when engine is selected) -->
 	<div v-if="currentEngine && part !== 'bar'" class="current-engine-card">
-		<div class="engine-card-icon">
+		<div v-if="canManageVote" class="engine-card-icon">
 			<component :is="getEngineIcon(currentEngine.engine)" :size="24" />
 		</div>
 		<div class="engine-card-content">
