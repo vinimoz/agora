@@ -49,6 +49,7 @@
                         :layout="currentLayout"
                         :time-remaining="timeRemaining"
                         :enqueue-save="enqueueSave"
+                        :hide-results="hidesResults(engine)"
                         @open-supports-modal="openSupportsModal"
                         @select-option="$emit('selectOption', $event)"
                         @progress="onProgress"
@@ -82,6 +83,7 @@
                     :is-readonly="isReadonly"
                     :current-layout="currentLayout"
                     :allowed-layouts="allowedLayouts"
+                    :hide-results="resultsHidden"
                     @update:layout="currentLayout = $event"
                     @update:engine="handleEngineUpdate"
                     @create-engine="showCreateEngineModal = true"
@@ -116,6 +118,7 @@
                     :engine-id="currentEngine.id"
                     :layout="currentLayout"
                     :time-remaining="timeRemaining"
+                    :hide-results="resultsHidden"
                     @open-supports-modal="openSupportsModal"
                     @select-option="$emit('selectOption', $event)"
                     />
@@ -186,7 +189,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, useTemplateRef } from 'vue'
+import { ref, computed, useTemplateRef, watch } from 'vue'
 import { onBeforeRouteLeave } from 'vue-router'
 import { n, t } from '@nextcloud/l10n'
 import { NcLoadingIcon, NcDialog } from '@nextcloud/vue'
@@ -303,7 +306,20 @@ onBeforeRouteLeave(async () => {
 
 // Local UI state
 const currentLayout = ref<'cards' | 'results'>('cards')
-const allowedLayouts = ['cards', 'results']
+const hidesResults = (engine?: SupportEngine | null) => engine?.config?.results_visibility === 'closed'
+  && engine?.status !== 'closed'
+  && !inquiryStore.permissions.edit
+const resultsHidden = computed(() => hidesResults(currentEngine.value))
+// Stacked mode keeps the Results tab while one block still shows its results.
+const allowedLayouts = computed(() => {
+  const engines = stackedEngines.value.length ? stackedEngines.value : [currentEngine.value]
+  return engines.every(hidesResults) ? ['cards'] : ['cards', 'results']
+})
+watch(allowedLayouts, (layouts) => {
+  if (!layouts.includes(currentLayout.value)) {
+    currentLayout.value = 'cards'
+  }
+})
 const showCreateEngineModal = ref(false)
 const showAddToVoteModal = ref(false)
 const showDeleteConfirm = ref(false)

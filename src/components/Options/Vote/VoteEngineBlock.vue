@@ -5,7 +5,7 @@
 
 <template>
     <!-- Cards Layout -->
-    <div v-if="layout === 'cards'" class="cards-layout">
+    <div v-if="layout === 'cards' || hideResults" class="cards-layout">
         <VoteCardsLayout
                 :options="votableOptions"
                 :effective-engine-id="effectiveEngineId"
@@ -27,6 +27,7 @@
                 :get-user-vote-value-for-option="getUserVoteValueForOption"
                 :has-selections-changed="hasSelectionsChanged"
                 :auto-save="autoSave"
+                :hide-results="hideResults"
                 @toggle-selection="toggleSelection"
                 @update:rankings="updateRankings"
                 @update:scores="updateScores"
@@ -38,7 +39,7 @@
                 @submit-multi-vote="onSubmitMultiVote"
                 @remove-my-vote="onRemoveMyVote"
                 @select-option="$emit('selectOption', $event)"
-                @open-supports-modal="$emit('openSupportsModal', $event)"
+                @open-supports-modal="!hideResults && $emit('openSupportsModal', $event)"
                 />
     </div>
     <!-- Results Layout -->
@@ -99,6 +100,7 @@ const props = defineProps<{
   layout: 'cards' | 'results'
   timeRemaining: string
   enqueueSave?: (engineId: number, task: () => Promise<boolean>) => Promise<boolean>
+  hideResults?: boolean
 }>()
 
 const emit = defineEmits<{

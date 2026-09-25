@@ -1015,9 +1015,7 @@ export function useVoteContext(inquiryId: number, engineId?: number): VoteContex
           const engineResultEntry = results.find(
               (r) => r.support_engine_id === selectedEngineId.value && r.target_type === 'inquiry'
           )
-          if (engineResultEntry) {
-              engineResult.value = engineResultEntry.result
-          }
+          engineResult.value = engineResultEntry?.result ?? null
       }
   }
 
