@@ -19,7 +19,9 @@
                 </span>
                 <span class="metadata-badge">
                     <Vote :size="14" />
-                    {{ t('agora', 'Total votes: {total}', { total: totalVotes }) }}
+                    {{ hideResults
+                        ? t('agora', 'Results will be shown when voting closes')
+                        : t('agora', 'Total votes: {total}', { total: totalVotes }) }}
                 </span>
                 <span v-if="currentEngine && (currentEngine.voteScope === 'per_option' || currentEngine.voteScope === 'cross_option')" class="metadata-badge">
                     <CheckCircle :size="14" />
@@ -295,6 +297,7 @@ const props = defineProps<{
     isReadonly: boolean
     currentLayout: string
     allowedLayouts: string[]
+    hideResults?: boolean
 }>()
 
 const emit = defineEmits<{
