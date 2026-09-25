@@ -274,7 +274,11 @@ function handleCardClick(event: MouseEvent) {
   &:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    border-color: var(--color-primary-element);
+  }
+
+  &:has(:focus-visible) {
+    outline: 2px solid var(--color-main-text);
+    outline-offset: 2px;
   }
 
   &.user-voted {
