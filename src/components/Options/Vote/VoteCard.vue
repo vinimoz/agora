@@ -13,7 +13,7 @@
     @click="handleCardClick"
   >
     <!-- Header with icon, type label, and creation date -->
-    <div class="card-header">
+    <div v-if="inquiryStore.permissions.edit" class="card-header">
       <div class="header-left">
         <div class="type-icon" :style="{ color: optionTypeColor }">
           <component :is="optionIcon" :size="20" />
@@ -85,7 +85,7 @@
     />
 
     <!-- Footer with owner info -->
-    <div v-if="!compact" class="card-footer">
+    <div v-if="!compact && inquiryStore.permissions.edit" class="card-footer">
       <div class="owner-info">
         <NcAvatar
           v-if="option.owner?.id"
@@ -112,6 +112,7 @@ import { CheckCircle } from 'lucide-vue-next'
 import NcAvatar from '@nextcloud/vue/components/NcAvatar'
 import VoteInput from './VoteInput.vue'
 import { useSessionStore } from '../../../stores/session'
+import { useInquiryStore } from '../../../stores/inquiry'
 import { InquiryOptionIcons } from '../../../utils/icons.ts'
 import {
   getOptionTypeLabel,
@@ -160,6 +161,7 @@ const emit = defineEmits<{
 }>()
 
 const sessionStore = useSessionStore()
+const inquiryStore = useInquiryStore()
 const allOptionTypes = computed(() => sessionStore.appSettings?.inquiryOptionTypeTab || [])
 
 const optionTypeLabel = computed(() => {
