@@ -349,7 +349,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, watch, nextTick, computed } from 'vue'
+import { ref, onMounted, watch, nextTick, computed } from 'vue'
 import { useEditor, EditorContent } from '@tiptap/vue-3'
 import StarterKit from '@tiptap/starter-kit'
 import Underline from '@tiptap/extension-underline'
@@ -688,11 +688,12 @@ watch(
   (newVal) => {
     if (editor.value && newVal !== editor.value.getHTML()) {
       nextTick(() => {
-        editor.value.commands.setContent(newVal || '<p></p>')
+        if (editor.value && !editor.value.isDestroyed) {
+          editor.value.commands.setContent(newVal || '<p></p>')
+        }
       })
     }
   },
-  { immediate: true }
 )
 
 // Handle heading selection - Fixed implementation
@@ -782,16 +783,10 @@ const insertAIContent = () => {
 // Lifecycle hooks
 onMounted(() => {
   nextTick(() => {
-    if (editor.value && inquiryStore.description) {
+    if (editor.value && !editor.value.isDestroyed && inquiryStore.description) {
       editor.value.commands.setContent(inquiryStore.description)
     }
   })
-})
-
-onUnmounted(() => {
-  if (editor.value) {
-    editor.value.destroy()
-  }
 })
 </script>
 
