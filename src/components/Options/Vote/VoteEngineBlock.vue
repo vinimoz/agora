@@ -171,6 +171,7 @@ watch(
 const autoSave = computed(() => !!props.enqueueSave && hydrated.value
   && AUTO_SAVE_ENGINES.includes(effectiveEngineId.value))
 let timer: ReturnType<typeof setTimeout> | undefined
+const waiting = ref(false)
 let pending: Promise<boolean> = Promise.resolve(true)
 
 // Stacked mode: every support write goes through the page queue.
@@ -192,6 +193,7 @@ function flush(): Promise<boolean> {
   if (timer === undefined) return pending
   clearTimeout(timer)
   timer = undefined
+  waiting.value = false
   pending = write(save)
   return pending
 }
@@ -200,15 +202,20 @@ function scheduleSave() {
   if (!autoSave.value) return
   clearTimeout(timer)
   timer = setTimeout(flush, 1000)
+  waiting.value = true
 }
 
 function onRemoveMyVote() {
   clearTimeout(timer)
   timer = undefined
+  waiting.value = false
   pending = write(() => removeAll(true))
 }
 
-defineExpose({ flush })
+// Every answer of this block is stored or on its way to the page queue.
+const settled = computed(() => autoSave.value && !waiting.value)
+
+defineExpose({ flush, settled })
 
 const onSubmitMultiVote = async () => {
   const success = await write(() => submitMultiVote())

@@ -60,9 +60,10 @@
                 </span>
                 <progress :value="progressTotals[0]" :max="progressTotals[1] || 1" aria-labelledby="vote-progress-label" />
                 <span v-if="savesRunning">{{ t('agora', 'Saving …') }}</span>
-                <span v-else-if="savedOnce && !failedSaves.size">{{ t('agora', 'Saved') }}</span>
+                <span v-else-if="savedOnce && !failedSaves.size && !allSaved">{{ t('agora', 'Saved') }}</span>
                 <span aria-live="polite">
                     <template v-if="!savesRunning && failedSaves.size">{{ t('agora', 'Not saved') }}</template>
+                    <template v-else-if="allSaved">{{ t('agora', 'All your answers are saved') }}</template>
                 </span>
                 <NcButton v-if="!savesRunning && failedSaves.size" variant="tertiary" @click="retrySaves">
                     {{ t('agora', 'Retry') }}
@@ -292,6 +293,10 @@ const retrySaves = () => {
 }
 
 const blocks = useTemplateRef<InstanceType<typeof VoteEngineBlock>[]>('blocks')
+const allSaved = computed(() => progressTotals.value[1] > 0
+  && progressTotals.value[0] === progressTotals.value[1]
+  && !savesRunning.value && !failedSaves.value.size
+  && (blocks.value ?? []).every((b) => b.settled))
 onBeforeRouteLeave(async () => {
   await Promise.all((blocks.value ?? []).map((b) => b.flush()))
 })
