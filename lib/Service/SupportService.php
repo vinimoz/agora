@@ -10,12 +10,17 @@ declare(strict_types=1);
 namespace OCA\Agora\Service;
 
 use OCA\Agora\Db\Support;
+use OCA\Agora\Db\SupportEngine;
 use OCA\Agora\Db\SupportMapper;
 use OCA\Agora\Db\Inquiry;
 use OCA\Agora\Db\InquiryMapper;
+use OCA\Agora\Db\OptionMapper;
+use OCA\Agora\Exceptions\ForbiddenException;
 use OCA\Agora\Service\SupportEngineService;
 use OCA\Agora\Service\SupportResultService;
 use OCA\Agora\Service\TrendingService;
+use OCA\Agora\UserSession;
+use OCP\AppFramework\Db\DoesNotExistException;
 
 use Psr\Log\LoggerInterface;
 
@@ -30,7 +35,68 @@ class SupportService
         private SupportEngineService $engineService,
         private TrendingService $trendingService, 
         private LoggerInterface $logger,
+        private UserSession $userSession,
+        private OptionMapper $optionMapper,
     ) {
+    }
+
+    /**
+     * Allow a vote, its change or its removal only for the current user,
+     * on an option of the inquiry and on an active engine of the inquiry,
+     * or with the right to support when no engine is used
+     *
+     * @throws ForbiddenException
+     */
+    private function requestVote(Inquiry $inquiry, string $userId, int $optionId, ?int $engineId): void
+    {
+        if (!$inquiry->matchUser($userId)) {
+            throw new ForbiddenException('Supports of other users cannot be changed');
+        }
+
+        if ($engineId !== null) {
+            $inquiry->request(Inquiry::PERMISSION_INQUIRY_VIEW);
+            $engine = $this->engineService->getEngine($engineId);
+            if ($engine === null
+                || $engine->getStatus() !== SupportEngine::STATUS_ACTIVE
+                || ($engine->getInquiryId() !== $inquiry->getId()
+                    && !$this->groupEngineCovers($engine, $inquiry, $optionId))
+            ) {
+                throw new ForbiddenException('Support engine is not open for this inquiry');
+            }
+        } else {
+            $inquiry->request(Inquiry::PERMISSION_SUPPORT_ADD);
+            if ($inquiry->getExpired() || $inquiry->getArchived() > 0) {
+                throw new ForbiddenException('Inquiry is closed');
+            }
+        }
+
+        if ($optionId > 0) {
+            try {
+                $option = $this->optionMapper->get($optionId);
+            } catch (DoesNotExistException $e) {
+                throw new ForbiddenException('Option does not belong to this inquiry');
+            }
+            if ($option->getTargetId() !== $inquiry->getId()) {
+                throw new ForbiddenException('Option does not belong to this inquiry');
+            }
+        }
+    }
+
+    /**
+     * A group engine covers an inquiry of its group only through its
+     * targets, which were checked against the inquiries its editor may
+     * edit
+     */
+    private function groupEngineCovers(SupportEngine $engine, Inquiry $inquiry, int $optionId): bool
+    {
+        if (!in_array($engine->getInquiryGroupId(), $inquiry->getInquiryGroups(), true)) {
+            return false;
+        }
+        $targetIds = array_map('intval', $engine->getTargetIds());
+        if ($engine->getTargetType() === SupportEngine::TARGET_INQUIRY) {
+            return in_array($inquiry->getId(), $targetIds, true);
+        }
+        return $optionId > 0 && in_array($optionId, $targetIds, true);
     }
 
         /**
@@ -146,7 +212,7 @@ class SupportService
     $engineId = ($engineId === 0) ? null : $engineId;
 
     $inquiry = $this->inquiryMapper->get($inquiryId, withRoles: true);
-    // $inquiry->request(Inquiry::PERMISSION_SUPPORT_ADD);
+    $this->requestVote($inquiry, $userId, $optionId, $engineId);
 
      if ($inquiry->getSupportFeature() === 'trending') {
         throw new \InvalidArgumentException(
@@ -698,6 +764,9 @@ public function removeSupport(int $inquiryId, string $userId, int $optionId = 0,
         'engine_id' => $engineId
     ]);
 
+    $inquiry = $this->inquiryMapper->get($inquiryId, withRoles: true);
+    $this->requestVote($inquiry, $userId, $optionId, $engineId);
+
     // First, perform the deletion from database
     $deleted = $this->supportMapper->removeSupport($inquiryId, $userId, $optionId, $engineId);
 
@@ -737,6 +806,8 @@ public function removeSupport(int $inquiryId, string $userId, int $optionId = 0,
  */
 public function removeAllSupportForInquiry(int $inquiryId, ?int $engineId = null): int
 {
+    $this->inquiryMapper->get($inquiryId, withRoles: true)->request(Inquiry::PERMISSION_SUPPORT_DELETE);
+
     $count = $this->supportMapper->removeAllSupportForInquiry($inquiryId);
 
     if ($count > 0) {
@@ -771,6 +842,9 @@ public function getSupportsByInquiry(int $inquiryId): array
  */
 public function getSupportsForUser(string $userId): array
 {
+    if ($userId !== $this->userSession->getCurrentUserId()) {
+        throw new ForbiddenException('Supports of other users cannot be listed');
+    }
     return $this->supportMapper->findByUserId($userId);
 }
 
