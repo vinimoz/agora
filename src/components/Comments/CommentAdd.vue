@@ -18,6 +18,8 @@ import { useInquiryStore } from '../../stores/inquiry.ts'
 interface Props {
   inquiryId?: number
   optionId?: number
+  inputLabel?: string
+  placeholder?: string
 }
 
 const props = defineProps<Props>()
@@ -29,6 +31,7 @@ const inquiryStore = useInquiryStore()
 const comment = ref('')
 const confidential = ref(false)
 const isSubmitting = ref(false)
+const editor = ref<InstanceType<typeof NcRichContenteditable> | null>(null)
 
 // Determine which inquiry to use
 const currentInquiry = computed(() => {
@@ -126,6 +129,12 @@ function handleKeydown(event: KeyboardEvent) {
     writeComment()
   }
 }
+
+function focus() {
+  editor.value?.focus()
+}
+
+defineExpose({ focus })
 </script>
 
 <template>
@@ -137,8 +146,10 @@ function handleKeydown(event: KeyboardEvent) {
     <div class="comment-add__input">
       <div class="comment-add__editor">
         <NcRichContenteditable
+          ref="editor"
           v-model="comment"
-          :placeholder="t('agora', 'Write a comment …')"
+          :aria-label="inputLabel"
+          :placeholder="placeholder ?? t('agora', 'Write a comment …')"
                   :autolink="true"
                   :use-markdown="true"
                   :emoji-autocomplete="true"
