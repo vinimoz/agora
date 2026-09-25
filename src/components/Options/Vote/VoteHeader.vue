@@ -4,8 +4,8 @@
 <template>
     <div class="vote-header">
         <!-- Top row: Metadata left, Layout switcher right -->
-        <div class="header-top-row">
-            <div class="vote-metadata">
+        <div v-if="part !== 'card'" class="header-top-row">
+            <div v-if="!part" class="vote-metadata">
                 <span v-if="voteSession" class="metadata-badge">
                     <Calendar :size="14" />
                     {{ formatDate(voteSession.start_date) }}
@@ -19,7 +19,9 @@
                 </span>
                 <span class="metadata-badge">
                     <Vote :size="14" />
-                    {{ t('agora', 'Total votes: {total}', { total: totalVotes }) }}
+                    {{ hideResults
+                        ? t('agora', 'Results will be shown when voting closes')
+                        : t('agora', 'Total votes: {total}', { total: totalVotes }) }}
                 </span>
                 <span v-if="currentEngine && (currentEngine.voteScope === 'per_option' || currentEngine.voteScope === 'cross_option')" class="metadata-badge">
                     <CheckCircle :size="14" />
@@ -46,7 +48,7 @@
         <!-- Middle row: Engine selector and action buttons -->
         <div class="action-bar">
             <!-- Engine selector - Beautiful display of support engines -->
-            <div v-if="availableEngines.length > 0" class="engine-selector">
+            <div v-if="!part && availableEngines.length > 0" class="engine-selector">
                 <NcSelect
                         :model-value="currentEngine"
                         :options="availableEngines"
@@ -143,7 +145,7 @@
 
 	    <!-- Show "Create Method" button when no engines exist OR when user wants to create a new one -->
 	    <NcButton
-			    v-if="!isReadonly && canManageVote"
+			    v-if="part !== 'card' && !isReadonly && canManageVote"
 			    type="primary"
 			    size="small"
 			    @click="$emit('createEngine')"
@@ -156,7 +158,7 @@
 
 	    <!-- Add to vote button - only show when there's a current engine -->
 	    <NcButton
-			    v-if="!isReadonly && canManageVote && currentEngine"
+			    v-if="part !== 'bar' && !isReadonly && canManageVote && currentEngine"
 			    type="primary"
 			    size="small"
 			    class="add-to-vote-btn"
@@ -170,13 +172,13 @@
 	</div>
 
 	<!-- Current Engine Info Card (when engine is selected) -->
-	<div v-if="currentEngine" class="current-engine-card">
+	<div v-if="currentEngine && part !== 'bar'" class="current-engine-card">
 		<div class="engine-card-icon">
 			<component :is="getEngineIcon(currentEngine.engine)" :size="24" />
 		</div>
 		<div class="engine-card-content">
 			<div class="engine-card-header">
-				<h3 class="engine-card-title">{{ currentEngine.title || getEngineLabel(currentEngine.engine) }}</h3>
+				<component :is="part === 'card' ? 'h2' : 'h3'" :id="`engine-title-${currentEngine.id}`" class="engine-card-title">{{ currentEngine.title || getEngineLabel(currentEngine.engine) }}</component>
 				<div class="engine-card-actions">
 					<!-- Edit button for the current engine -->
 					<NcButton
@@ -207,7 +209,7 @@
 			<p v-if="currentEngine.description" class="engine-card-description">
 			{{ currentEngine.description }}
 			</p>
-			<div class="engine-card-stats">
+			<div v-if="part !== 'card' || canManageVote" class="engine-card-stats">
 				<div v-if="currentEngine.target_type" class="stat-item">
 					<Users :size="12" />
 					<span>{{ formatTargetType(currentEngine.target_type) }}</span>
@@ -235,7 +237,7 @@
 			</div>
 		</div>
 		<!-- Engine purpose, phase, status badges moved to bottom right -->
-		<div class="engine-card-bottom-badges">
+		<div v-if="part !== 'card' || canManageVote" class="engine-card-bottom-badges">
 			<span v-if="currentEngine.purpose" class="card-purpose-badge">
 				{{ getPurposeLabel(currentEngine.purpose) }}
 			</span>
@@ -295,6 +297,8 @@ const props = defineProps<{
     isReadonly: boolean
     currentLayout: string
     allowedLayouts: string[]
+    part?: 'bar' | 'card'
+    hideResults?: boolean
 }>()
 
 const emit = defineEmits<{

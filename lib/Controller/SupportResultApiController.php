@@ -98,9 +98,10 @@ class SupportResultApiController extends BaseApiV2Controller
     public function calculateResults(int $engineId): DataResponse
     {
         return $this->response(
-            fn () => [
-                'results' => $this->resultService->calculateResults($engineId)
-            ]
+            function () use ($engineId) {
+                $results = $this->resultService->calculateResults($engineId);
+                return ['results' => $this->resultService->isEngineHidden($engineId) ? [] : $results];
+            }
         );
     }
 
@@ -117,9 +118,10 @@ class SupportResultApiController extends BaseApiV2Controller
     public function calculateTargetResults(int $engineId, string $targetType, int $targetId): DataResponse
     {
         return $this->response(
-            fn () => [
-                'result' => $this->resultService->calculateTargetResults($engineId, $targetType, $targetId)
-            ]
+            function () use ($engineId, $targetType, $targetId) {
+                $result = $this->resultService->calculateTargetResults($engineId, $targetType, $targetId);
+                return ['result' => $this->resultService->isEngineHidden($engineId) ? null : $result];
+            }
         );
     }
 
