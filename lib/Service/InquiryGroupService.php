@@ -370,10 +370,8 @@ class InquiryGroupService
     {
         $originalGroup = $this->inquiryGroupMapper->find($inquiryGroupId);
 
-        // Check permissions - anyone can clone if they can view
-        if (!$originalGroup->getAllowEdit() && !$this->userSession->getCurrentUser()) {
-            throw new ForbiddenException('You do not have permission to clone this inquiry group');
-        }
+        // Only the editor of the group may clone it
+        $originalGroup->request(InquiryGroup::PERMISSION_INQUIRY_GROUP_EDIT);
 
         // Create new group with similar properties
         $clonedGroup = new InquiryGroup();
@@ -401,15 +399,14 @@ class InquiryGroupService
             $this->inquiryGroupMapper->saveDynamicFields($clonedGroup, $fieldsDefinition, $miscFields);
         }
 
-        // Clone inquiries if any
-        if (!empty($originalGroup->getInquiryIds())) {
-            foreach ($originalGroup->getInquiryIds() as $inquiryId) {
-                try {
-                    $this->inquiryGroupMapper->addInquiryToGroup($inquiryId, $clonedGroup->getId());
-                } catch (Exception $e) {
-                    // Skip if there's an error adding an inquiry
-                    continue;
-                }
+        // Clone only the inquiries the current user may edit
+        foreach ($this->inquiryGroupMapper->getInquiryIdsForGroup($inquiryGroupId) as $inquiryId) {
+            try {
+                $this->inquiryMapper->get($inquiryId, withRoles: true)->request(Inquiry::PERMISSION_INQUIRY_EDIT);
+                $this->inquiryGroupMapper->addInquiryToGroup($inquiryId, $clonedGroup->getId());
+            } catch (ForbiddenException|DoesNotExistException|Exception $e) {
+                // Skip inquiries that cannot be edited or added
+                continue;
             }
         }
 
@@ -426,7 +423,8 @@ class InquiryGroupService
         ?int $inquiryGroupId = null,
         ?string $inquiryGroupName = null,
     ): InquiryGroup {
-        $inquiry = $this->inquiryMapper->get($inquiryId);
+        $inquiry = $this->inquiryMapper->get($inquiryId, withRoles: true);
+        $inquiry->request(Inquiry::PERMISSION_INQUIRY_EDIT);
 
         // Without inquiry group id, create a new inquiry group
         if ($inquiryGroupId === null && $inquiryGroupName !== null && $inquiryGroupName !== '') {
@@ -456,6 +454,7 @@ class InquiryGroupService
             $this->setBasicPermissions($inquiryGroup);
         } elseif ($inquiryGroupId !== null) {
             $inquiryGroup = $this->inquiryGroupMapper->find($inquiryGroupId);
+            $inquiryGroup->request(InquiryGroup::PERMISSION_INQUIRY_GROUP_EDIT);
             $this->enrichInquiryGroup($inquiryGroup, false, false);
         } else {
             throw new InsufficientAttributesException('An existing inquiry group id must be provided or a new inquiry group name must be given.');
