@@ -45,7 +45,7 @@
     </div>
 
     <!-- Submit section -->
-    <div v-if="showSubmitButton" class="submit-vote-section">
+    <div v-if="showSubmitButton && !autoSave" class="submit-vote-section">
       <div class="submit-container">
         <NcButton
           type="primary"
@@ -109,6 +109,7 @@ const props = defineProps<{
   hasUserVotedFor: (optionId: number) => boolean
   isSelectedForVote: (optionId: number) => boolean
   getUserVoteValueForOption: (optionId: number) => SupportValue | null
+  autoSave?: boolean
 }>()
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
