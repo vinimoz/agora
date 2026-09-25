@@ -351,6 +351,28 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 
 
     /**
+     * Support results without those of engines hidden until close
+     */
+    private function getVisibleSupportResult(): ?array
+    {
+        $results = $this->getSupportResult();
+        if (!$results || $this->getIsAllowed(self::PERMISSION_INQUIRY_EDIT)) {
+            return $results;
+        }
+        $hidden = [];
+        foreach ($this->getSupportEngine() as $engine) {
+            $config = is_string($engine['config'] ?? null) ? json_decode($engine['config'], true) : ($engine['config'] ?? []);
+            if (SupportEngine::hidesResults($config ?? [], $engine['status'] ?? '')) {
+                $hidden[] = (int)$engine['id'];
+            }
+        }
+        return array_values(array_filter(
+            $results,
+            fn ($r) => !in_array((int)($r['support_engine_id'] ?? 0), $hidden, true),
+        ));
+    }
+
+    /**
      * Get inquiry status array - matching TypeScript InquiryStatus interface
      */
     public function getStatusArray(): array
@@ -366,7 +388,7 @@ class Inquiry extends EntityWithUser implements JsonSerializable
             'relevantThreshold' => $this->getRelevantThreshold(),
             'deletionDate' => $this->getDeleted(),
             'archivedDate' => $this->getArchived(),
-            'supportResult' => $this->getSupportResult(),
+            'supportResult' => $this->getVisibleSupportResult(),
             'countSupports' => $this->getIsAllowed(self::PERMISSION_INQUIRY_RESULTS_VIEW) ? $this->getCountSupports() : 0,
             'countParticipants' => $this->getIsAllowed(self::PERMISSION_INQUIRY_RESULTS_VIEW) 
             ? $this->getCountParticipants() 

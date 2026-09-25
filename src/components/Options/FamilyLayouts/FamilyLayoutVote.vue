@@ -21,6 +21,7 @@
                     :is-readonly="isReadonly"
                     :current-layout="currentLayout"
                     :allowed-layouts="allowedLayouts"
+                    :hide-results="resultsHidden"
                     @update:layout="currentLayout = $event"
                     @update:engine="handleEngineUpdate"
                     @create-engine="showCreateEngineModal = true"
@@ -70,6 +71,7 @@
                         :is-selected-for-vote="isSelectedForVote"
                         :get-user-vote-value-for-option="getUserVoteValueForOption"
                         :has-selections-changed="hasSelectionsChanged"
+                        :hide-results="resultsHidden"
                         @toggle-selection="toggleSelection"
                         @update:rankings="updateRankings"
                         @update:scores="updateScores"
@@ -191,7 +193,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { t } from '@nextcloud/l10n'
 import { NcLoadingIcon, NcDialog } from '@nextcloud/vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
@@ -200,6 +202,7 @@ import { useVoteContext } from '../../../composables/useVoteContext'
 import { useOptionsStore } from '../../../stores/options'
 import { useSupportEngineStore } from '../../../stores/supportEngine'
 import { useSupportsStore } from '../../../stores/supports'
+import { useInquiryStore } from '../../../stores/inquiry'
 import VoteHeader from '../Vote/VoteHeader.vue'
 import VoteEmptyState from '../Vote/VoteEmptyState.vue'
 import VoteCardsLayout from '../Vote/VoteCardsLayout.vue'
@@ -230,6 +233,7 @@ const engineStore = useSupportEngineStore()
 const allOptions = computed(() => optionsStore.options || [])
 const votableOptionIds = computed(() => votableOptions.value.map(opt => opt.id))
 const supportsStore = useSupportsStore()
+const inquiryStore = useInquiryStore()
 const showSupportsModal = ref(false)
 const selectedOptionId = ref<number | null>(null)
 
@@ -274,7 +278,15 @@ const {
 
 // Local UI state
 const currentLayout = ref<'cards' | 'results'>('cards')
-const allowedLayouts = ['cards', 'results']
+const resultsHidden = computed(() => currentEngine.value?.config?.results_visibility === 'closed'
+  && currentEngine.value?.status !== 'closed'
+  && !inquiryStore.permissions.edit)
+const allowedLayouts = computed(() => (resultsHidden.value ? ['cards'] : ['cards', 'results']))
+watch(resultsHidden, (hidden) => {
+  if (hidden) {
+    currentLayout.value = 'cards'
+  }
+})
 const showCreateEngineModal = ref(false)
 const showAddToVoteModal = ref(false)
 const showDeleteConfirm = ref(false)
@@ -429,6 +441,9 @@ const handleEngineUpdate = (engineId: number | null) => {
 }
 
 function openSupportsModal(optionId: number) {
+  if (resultsHidden.value) {
+    return
+  }
   selectedOptionId.value = optionId
   showSupportsModal.value = true
 }
