@@ -989,7 +989,6 @@ OC.L10N.register(
     "Normal" : "Normal",
     "Compact" : "Kompakt",
     "Add position" : "Tilføj position",
-    "VS" : "VS",
     "Paired options" : "Parrede tilvalg",
     "Neutral options" : "Neutrale tilvalg",
     "Arguments & responses" : "Argumenter og svar",

@@ -988,7 +988,6 @@ OC.L10N.register(
     "Normal" : "Gnáth",
     "Compact" : "Dlúth",
     "Add position" : "Cuir suíomh leis",
-    "VS" : "VS",
     "Paired options" : "Roghanna péireáilte",
     "Neutral options" : "Roghanna neodracha",
     "Arguments & responses" : "Argóintí agus freagraí",

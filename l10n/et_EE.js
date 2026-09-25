@@ -1560,6 +1560,7 @@ OC.L10N.register(
     "Rate options from 1 to 5 stars" : "Valikuid saad märkida ühe kuni viie tärniga",
     "Minimum stars" : "Minimaalselt tärne",
     "Maximum stars" : "Maksimaalselt tärne",
+    "Step" : "Samm",
     "Condorcet method" : "Condorcet'i meetod",
     "Poor" : "Kehv",
     "{count}/{max} selected (min: {min})" : "Valitud on {count}/{max} (vähim vajalik: {min})",

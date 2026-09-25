@@ -1020,7 +1020,6 @@ OC.L10N.register(
     "Normal" : "Normal",
     "Compact" : "Compact",
     "Add position" : "Add position",
-    "VS" : "VS",
     "Paired options" : "Paired options",
     "Neutral options" : "Neutral options",
     "Arguments & responses" : "Arguments & responses",

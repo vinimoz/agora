@@ -977,7 +977,6 @@ OC.L10N.register(
     "Normal" : "Normal",
     "Compact" : "Kompakt",
     "Add position" : "Lägg till ståndpunkt",
-    "VS" : "mot",
     "Paired options" : "Parade alternativ",
     "Neutral options" : "Neutrala alternativ",
     "Arguments & responses" : "Argument och svar",

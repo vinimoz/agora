@@ -1020,7 +1020,6 @@ OC.L10N.register(
     "Normal" : "Normal",
     "Compact" : "Dar",
     "Add position" : "Görüş ekle",
-    "VS" : "Karşıt",
     "Paired options" : "Eşleşen seçenekler",
     "Neutral options" : "Tarafsız seçenekler",
     "Arguments & responses" : "Argümanlar ve yanıtlar",

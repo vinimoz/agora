@@ -769,7 +769,6 @@ OC.L10N.register(
     "Normal" : "Normální",
     "Compact" : "Zhuštěné",
     "Add position" : "Přidat pozici",
-    "VS" : "VS",
     "Add argument" : "Přidat argument",
     "Selected" : "Vybráno",
     "Event updated" : "Událost zaktualizována",

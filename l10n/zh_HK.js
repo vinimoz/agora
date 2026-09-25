@@ -1020,7 +1020,6 @@ OC.L10N.register(
     "Normal" : "正常",
     "Compact" : "簡潔",
     "Add position" : "新增立場",
-    "VS" : "對比",
     "Paired options" : "配對選項",
     "Neutral options" : "中立選項",
     "Arguments & responses" : "論點及回應",

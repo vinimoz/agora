@@ -978,7 +978,6 @@ OC.L10N.register(
     "Normal" : "Normalus",
     "Compact" : "Kompaktinis",
     "Add position" : "Pridėti poziciją",
-    "VS" : "„VS“",
     "Paired options" : "Suporuotuos parinktys",
     "Neutral options" : "Neutralios parinktys",
     "Arguments & responses" : "Argumentai ir atsakymai",

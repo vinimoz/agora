@@ -977,7 +977,6 @@ OC.L10N.register(
     "Normal" : "Normal",
     "Compact" : "Ringkas",
     "Add position" : "Tambahkan posisi",
-    "VS" : "VS",
     "Paired options" : "Opsi berpasangan",
     "Neutral options" : "Opsi netral",
     "Arguments & responses" : "Argumen & respons",

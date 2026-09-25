@@ -427,6 +427,7 @@ OC.L10N.register(
     "By" : "Door",
     "Sharing" : "Delen",
     "Experimental styles" : "Experimentele stijlen",
+    "Step" : "Stap",
     "Poor" : "Slecht",
     "Minute" : "Minuut",
     "Hour" : "Uur",

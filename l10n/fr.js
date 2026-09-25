@@ -1015,7 +1015,6 @@ OC.L10N.register(
     "Normal" : "Normale",
     "Compact" : "Compact",
     "Add position" : "Ajouter une position",
-    "VS" : "VS",
     "Paired options" : "Options appariées",
     "Neutral options" : "Options neutres",
     "Arguments & responses" : "Arguments et réponses",
