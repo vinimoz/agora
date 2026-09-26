@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace OCA\Agora\Controller;
 
+use OCA\Agora\Service\SupportEngineService;
 use OCA\Agora\Service\SupportResultService;
 use OCP\AppFramework\Http\Attribute\FrontpageRoute;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
@@ -21,6 +22,7 @@ class SupportResultController extends BaseController
         string $appName,
         IRequest $request,
         private SupportResultService $supportResultService,
+        private SupportEngineService $supportEngineService,
     ) {
         parent::__construct($appName, $request);
     }
@@ -44,9 +46,9 @@ class SupportResultController extends BaseController
     #[FrontpageRoute(verb: 'POST', url: '/support/engine/{engineId}/calculate')]
     public function calculate(int $engineId): JSONResponse
     {
-        return $this->response(function () use ($engineId) {
-            $results = $this->supportResultService->calculateResults($engineId);
-            return ['results' => $this->supportResultService->isEngineHidden($engineId) ? [] : $results];
+        return $this->response(function () use ($engineId): array {
+            $this->supportEngineService->requestEditEngine($engineId);
+            return ['results' => $this->supportResultService->calculateResults($engineId)];
         });
     }
 

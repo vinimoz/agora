@@ -14,7 +14,9 @@ use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\CORS;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
+use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
+use OCP\AppFramework\OCS\OCSException;
 use OCP\IRequest;
 
 /**
@@ -132,10 +134,12 @@ class SupportEngineApiController extends BaseApiV2Controller
     #[ApiRoute(verb: 'DELETE', url: '/api/v1.0/support/engine/{id}', requirements: ['apiVersion' => '(v2)'])]
     public function delete(int $id): DataResponse
     {
-        return $this->response(
-            fn () => [
-                'success' => $this->engineService->deleteEngine($id)
-            ]
-        );
+        return $this->response(function () use ($id): array {
+            $this->engineService->requestEditEngine($id);
+            if ($this->engineService->hasVotes($id)) {
+                throw new OCSException('Cannot delete engine with existing votes', Http::STATUS_CONFLICT);
+            }
+            return ['success' => $this->engineService->deleteEngine($id)];
+        });
     }
 }

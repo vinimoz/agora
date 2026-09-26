@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace OCA\Agora\Controller;
 
+use OCA\Agora\Exceptions\ForbiddenException;
+use OCA\Agora\Service\SupportEngineService;
 use OCA\Agora\Service\SupportResultService;
 use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\CORS;
@@ -26,6 +28,7 @@ class SupportResultApiController extends BaseApiV2Controller
         string $appName,
         IRequest $request,
         private SupportResultService $resultService,
+        private SupportEngineService $engineService,
     ) {
         parent::__construct($appName, $request);
     }
@@ -97,12 +100,10 @@ class SupportResultApiController extends BaseApiV2Controller
     #[ApiRoute(verb: 'POST', url: '/api/v1.0/support/engine/{engineId}/calculate', requirements: ['apiVersion' => '(v2)'])]
     public function calculateResults(int $engineId): DataResponse
     {
-        return $this->response(
-            function () use ($engineId) {
-                $results = $this->resultService->calculateResults($engineId);
-                return ['results' => $this->resultService->isEngineHidden($engineId) ? [] : $results];
-            }
-        );
+        return $this->response(function () use ($engineId): array {
+            $this->engineService->requestEditEngine($engineId);
+            return ['results' => $this->resultService->calculateResults($engineId)];
+        });
     }
 
     /**
@@ -117,12 +118,15 @@ class SupportResultApiController extends BaseApiV2Controller
     #[ApiRoute(verb: 'POST', url: '/api/v1.0/support/engine/{engineId}/calculate/{targetType}/{targetId}', requirements: ['apiVersion' => '(v2)'])]
     public function calculateTargetResults(int $engineId, string $targetType, int $targetId): DataResponse
     {
-        return $this->response(
-            function () use ($engineId, $targetType, $targetId) {
-                $result = $this->resultService->calculateTargetResults($engineId, $targetType, $targetId);
-                return ['result' => $this->resultService->isEngineHidden($engineId) ? null : $result];
+        return $this->response(function () use ($engineId, $targetType, $targetId): array {
+            $engine = $this->engineService->requestEditEngine($engineId);
+            if ($targetType !== $engine->getTargetType()
+                || !in_array($targetId, array_map('intval', $engine->getTargetIds()), true)
+            ) {
+                throw new ForbiddenException('Engine does not target this ID');
             }
-        );
+            return ['result' => $this->resultService->calculateTargetResults($engineId, $targetType, $targetId)];
+        });
     }
 
     /**
