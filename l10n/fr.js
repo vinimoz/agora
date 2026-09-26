@@ -1854,6 +1854,8 @@ OC.L10N.register(
     "All private inquiries, not submitted yet or inquiry rejected." : "Toutes les consultations privées, non encore soumises, ou celles rejetées.",
     "Participated" : "Auxquels j'ai participé",
     "All inquiries who get participation." : "Toutes les consultations avec de la participation.",
+    "Inquiries shared with my groups" : "Consultations partagées avec mes groupes",
+    "Inquiries visible to the groups you belong to." : "Consultations visibles par tous les groupes auxquels vous appartenez.",
     "Openly accessible inquiries" : "Consultations librement accessibles",
     "A complete list with all openly accessible inquiries on this site." : "Une liste complète de toutes les consultations ouvertes et accessibles sur ce site.",
     "All inquiries" : "Toutes les consultations",
