@@ -235,7 +235,6 @@ const allowComment = computed(() =>
   allowsComments(props.option.type, allOptionTypes.value)
 )
 
-const inquiryStore = useInquiryStore()
 // PublicController::addComment drops optionId, so no per-option comment on a public link.
 const canComment = computed(() => !!props.option.permissions?.comment
   && inquiryStore.permissions.comment

@@ -47,7 +47,7 @@
         <VoteResultsLayout
                 :options="votableOptions"
                 :total-votes="totalVotes"
-                :ranked-options="rankedOptios"
+                :ranked-options="rankedOptions"
                 :current-engine="currentEngine"
                 :effective-engine-id="effectiveEngineId"
                 :active-engine="currentEngine"
