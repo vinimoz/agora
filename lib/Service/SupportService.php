@@ -831,11 +831,23 @@ public function removeAllSupportForInquiry(int $inquiryId, ?int $engineId = null
  * @param int $inquiryId The inquiry ID
  * @return Support[] Array of Support entities
  */
-public function getSupportsByInquiry(int $inquiryId): array
-{
-    $this->logger->debug('Getting supports by inquiry', ['inquiryId' => $inquiryId]);
-    return $this->hideOthersSupports($this->supportMapper->findByInquiryId($inquiryId), $inquiryId);
-}
+    public function getSupportsByInquiry(int $inquiryId): array
+    {
+        try {
+            $this->inquiryMapper
+                 ->get($inquiryId, withRoles: true)
+                 ->request(Inquiry::PERMISSION_INQUIRY_VIEW);
+        } catch (ForbiddenException $e) {
+            return [];
+        }
+
+        $this->logger->debug('Getting supports by inquiry', ['inquiryId' => $inquiryId]);
+
+        return $this->hideOthersSupports(
+            $this->supportMapper->findByInquiryId($inquiryId),
+            $inquiryId
+        );
+    }
 
 /**
  * Get supports for a user
@@ -965,4 +977,125 @@ public function batchAddSupports(
     }
     return $results;
 }
+    /**
+     * Filter support rows so a user cannot see the individual values
+     * of other users' supports unless they are allowed to.
+     *
+     * @param  Support[] $supports
+     * @return Support[]
+     */
+    private function hideOthersSupports(array $supports, int $inquiryId): array
+    {
+        if (empty($supports)) {
+            return [];
+        }
+
+        $inquiry = null;
+        try {
+            $inquiry = $this->inquiryMapper->get($inquiryId, withRoles: true);
+        } catch (\Exception $e) {
+            $inquiry = null;
+        }
+
+        $currentUserId = $this->userSession->getCurrentUserId();
+        $isLoggedIn    = $this->userSession->getIsLoggedIn();
+
+        $maySeeAll = false;
+        if ($inquiry !== null) {
+            $maySeeAll = $inquiry->getIsAllowed(Inquiry::PERMISSION_INQUIRY_RESULTS_VIEW);
+        }
+
+        $engineHidesResults = $this->collectEngineVisibilityRules($inquiryId);
+
+        $filtered = [];
+        foreach ($supports as $support) {
+            $isOwn = $currentUserId !== null
+                && $support->getUserId() === $currentUserId;
+
+            if ($isOwn) {
+                $filtered[] = $support;
+                continue;
+            }
+
+            if ($maySeeAll) {
+                $filtered[] = $support;
+                continue;
+            }
+
+            if (!$isLoggedIn) {
+                $filtered[] = $this->stripSupportValue($support);
+                continue;
+            }
+
+            if ($inquiry !== null) {
+                $showResults = $inquiry->getShowResults();
+                $isExpired   = $inquiry->getExpired();
+
+                if ($showResults === Inquiry::SHOW_RESULTS_NEVER) {
+                    $filtered[] = $this->stripSupportValue($support);
+                    continue;
+                }
+
+                if ($showResults === Inquiry::SHOW_RESULTS_CLOSED && !$isExpired) {
+                    $filtered[] = $this->stripSupportValue($support);
+                    continue;
+                }
+            }
+
+            $engineId = $support->getSupportEngineId();
+            if ($engineId !== null && ($engineHidesResults[$engineId] ?? false)) {
+                $filtered[] = $this->stripSupportValue($support);
+                continue;
+            }
+
+            $filtered[] = $support;
+        }
+
+        return $filtered;
+    }
+
+    /**
+     * @return array<int, bool> engineId => hidesResults
+     */
+    private function collectEngineVisibilityRules(int $inquiryId): array
+    {
+        $map = [];
+
+        try {
+            $engines = $this->engineService->getEnginesByInquiry($inquiryId);
+        } catch (\Exception $e) {
+            $this->logger->debug('Could not load engines for visibility check', [
+                'inquiryId' => $inquiryId,
+                'error'     => $e->getMessage(),
+            ]);
+            return $map;
+        }
+
+        foreach ($engines as $engine) {
+            if (!method_exists($engine, 'getId')) {
+                continue;
+            }
+            $id     = (int)$engine->getId();
+            $config = method_exists($engine, 'getConfig') ? ($engine->getConfig() ?? []) : [];
+            $status = method_exists($engine, 'getStatus') ? (string)$engine->getStatus() : '';
+
+            $map[$id] = SupportEngine::hidesResults(
+                is_array($config) ? $config : [],
+                $status
+            );
+        }
+
+        return $map;
+    }
+
+    /**
+     * Return a clone of the support with its value hidden.
+     */
+    private function stripSupportValue(Support $support): Support
+    {
+        $copy = clone $support;
+        $copy->setHidden(true);
+        $copy->setValue(null);
+        return $copy;
+    }
 }

@@ -1,5 +1,4 @@
 <?php
-// Db/Support.php
 
 declare(strict_types=1);
 
@@ -50,7 +49,11 @@ class Support extends Entity implements JsonSerializable
     protected string $userId = '';
     protected int $created = 0;
     protected ?int $supportEngineId = null;
-    protected int $updated = 0; 
+    protected int $updated = 0;
+
+    // Runtime-only flag: set when the value is hidden from the current user.
+    // Not persisted to the database.
+    protected bool $hidden = false;
 
     // Computed attributes
     protected ?UserBase $user = null;
@@ -66,6 +69,7 @@ class Support extends Entity implements JsonSerializable
         $this->addType('created', 'integer');
         $this->addType('updated', 'integer');
         $this->addType('supportEngineId', 'integer');
+        $this->addType('hidden', 'boolean');
     }
 
     public function getUser(): ?UserBase
@@ -88,12 +92,37 @@ class Support extends Entity implements JsonSerializable
         $this->setUserId($user->getId());
     }
 
+    /**
+     * Whether this support's value is hidden from the current user.
+     * Runtime-only; never persisted.
+     */
+    public function isHidden(): bool
+    {
+        return $this->hidden;
+    }
+
+    /**
+     * Mark this support as hidden from the current user.
+     * Runtime-only; never persisted.
+     */
+    public function setHidden(bool $hidden): void
+    {
+        $this->hidden = $hidden;
+    }
+
     public function setValue(mixed $value): void
     {
-         \OCP\Server::get(\Psr\Log\LoggerInterface::class)->debug('Support::setValue received', [
-        'type' => gettype($value),
-        'value' => is_array($value) ? json_encode($value) : $value
-         ]);
+        // Explicit null means "no value" (e.g. hidden from current user).
+        // Do not coerce to {"value": 0}.
+        if ($value === null) {
+            $this->value = null;
+            return;
+        }
+
+        \OCP\Server::get(\Psr\Log\LoggerInterface::class)->debug('Support::setValue received', [
+            'type' => gettype($value),
+            'value' => is_array($value) ? json_encode($value) : $value
+        ]);
 
         // If it's already a string (possibly JSON), store as-is
         if (is_string($value)) {
@@ -118,15 +147,19 @@ class Support extends Entity implements JsonSerializable
             return;
         }
 
-
         // Fallback
         $this->value = json_encode(['value' => 0]);
     }
+
     /**
      * Get value with JSON decoding if needed
      */
     public function getValue(): mixed
     {
+        if ($this->value === null) {
+            return null;
+        }
+
         if (is_string($this->value)) {
             $decoded = json_decode($this->value, true);
             if (json_last_error() === JSON_ERROR_NONE) {
@@ -181,7 +214,8 @@ class Support extends Entity implements JsonSerializable
             'supportHash' => $this->getSupportHash(),
             'userId' => $this->getUserId(),
             'user' => $this->getUser(),
-            'value' => $this->getValue(),
+            'value' => $this->hidden ? null : $this->getValue(),
+            'hidden' => $this->hidden,
             'weight' => $this->getWeight(),
             'created' => $this->getCreated(),
             'updated' => $this->getUpdated(),

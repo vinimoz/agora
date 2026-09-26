@@ -30,7 +30,8 @@ class InquiryMapper extends QBMapper
 
     public function __construct(
         IDBConnection $db,
-        private UserSession $userSession,
+	private UserSession $userSession,
+	 private \Psr\Log\LoggerInterface $logger,
     ) {
         parent::__construct($db, Inquiry::TABLE, Inquiry::class);
     }
@@ -87,7 +88,9 @@ class InquiryMapper extends QBMapper
             $this->joinSupportsCount($qb, self::TABLE);
             $this->joinMiscs($qb, self::TABLE);
             $this->joinSupportResult($qb, self::TABLE); 
-            $this->joinSupportEngine($qb, self::TABLE); 
+	    $this->joinSupportEngine($qb, self::TABLE); 
+	    $this->applyGroupAccessFilter($qb, self::TABLE);
+
             // Add GROUP BY with all columns
             $qb->groupBy([
                 self::TABLE . '.id',
@@ -113,7 +116,13 @@ class InquiryMapper extends QBMapper
                 self::TABLE . '.support_feature',
                 self::TABLE . '.family'
             ]);
-        }
+	}
+	/*
+	$this->logger->error('AGORA-DEBUG get() SQL', [
+    'id'     => $id,
+    'sql'    => $qb->getSQL(),
+    'params' => $qb->getParameters(),
+	]);*/
 
         return $this->findEntity($qb);
     }
@@ -164,6 +173,7 @@ class InquiryMapper extends QBMapper
         $this->joinMiscs($qb, self::TABLE);
         $this->joinSupportResult($qb, self::TABLE);  
         $this->joinSupportEngine($qb, self::TABLE);
+	$this->applyGroupAccessFilter($qb, self::TABLE);
 
         // Add GROUP BY with all inquiry table columns for PostgreSQL compatibility
         $qb->groupBy([
@@ -345,16 +355,29 @@ protected function joinFamily(
     public function getChildInquiryIds(int $parentId): array
     {
         $currentUserId = $this->userSession->getCurrentUserId();
+
         $qb = $this->db->getQueryBuilder();
         $qb->select(self::TABLE . '.id')
            ->from($this->getTableName(), self::TABLE)
-           ->where($qb->expr()->eq(self::TABLE . '.parent_id', $qb->createNamedParameter($parentId, IQueryBuilder::PARAM_INT)));
+           ->where($qb->expr()->eq(
+               self::TABLE . '.parent_id',
+               $qb->createNamedParameter($parentId, IQueryBuilder::PARAM_INT)
+           ));
 
-        $qb->andWhere($qb->expr()->neq(self::TABLE . '.access', $qb->createNamedParameter('private')));
+        $qb->andWhere($qb->expr()->neq(
+            self::TABLE . '.access',
+            $qb->createNamedParameter('private', IQueryBuilder::PARAM_STR)
+        ));
 
         if ($currentUserId !== null) {
-            $qb->andWhere($qb->expr()->neq(self::TABLE . '.owner', $qb->createNamedParameter($currentUserId)));
+            $qb->andWhere($qb->expr()->neq(
+                self::TABLE . '.owner',
+                $qb->createNamedParameter($currentUserId, IQueryBuilder::PARAM_STR)
+            ));
         }
+
+        // Row-level visibility for access='group' inquiries
+        $this->applyGroupAccessFilter($qb, self::TABLE);
 
         $stmt = $qb->executeQuery();
         $rows = $stmt->fetchAll();
@@ -875,6 +898,62 @@ private function castValueByType($value, array $fieldDef)
                 $qb->createFunction('CASE WHEN ' . $joinAlias . '.user_id IS NOT NULL THEN 1 ELSE 0 END AS has_supported')
             );
         }
+    }
+
+    /**
+     */
+    protected function applyGroupAccessFilter(IQueryBuilder $qb, string $alias = self::TABLE): void
+    {
+        $user = $this->userSession->getCurrentUser();
+
+
+	/*        $this->logger->error('AGORA-DEBUG applyGroupAccessFilter', [
+            'userId'     => $this->userSession->getCurrentUserId(),
+            'isAdmin'    => $user->getIsAdmin(),
+            'userGroups' => $user->getGroups(),
+	]);*/
+
+        // Admin bypasses entirely
+        if ($user->getIsAdmin()) {
+            return;
+        }
+
+        $currentUserId = $this->userSession->getCurrentUserId();
+        $userGroups    = $user->getGroups();   // string[] of GIDs
+	
+        // De Morgan complement of: access='group' AND owned_group IS NOT NULL AND owned_group <> ''
+        $notGroupScoped = $qb->expr()->orX(
+            $qb->expr()->neq(
+                $alias . '.access',
+                $qb->createNamedParameter(Inquiry::ACCESS_GROUP, IQueryBuilder::PARAM_STR)
+            ),
+            $qb->expr()->isNull($alias . '.owned_group'),
+            $qb->expr()->eq(
+                $alias . '.owned_group',
+                $qb->createNamedParameter('', IQueryBuilder::PARAM_STR)
+            )
+	);
+	        // (group-scoped AND allowed) — owner OR group membership.
+        $allowedPredicates = [
+            $notGroupScoped,
+
+            // Owner
+            $qb->expr()->eq(
+                $alias . '.owner',
+                $qb->createNamedParameter($currentUserId, IQueryBuilder::PARAM_STR)
+            ),
+        ];
+
+        // Member of the owning group
+        if (!empty($userGroups)) {
+            $allowedPredicates[] = $qb->expr()->in(
+                $alias . '.owned_group',
+                $qb->createNamedParameter($userGroups, IQueryBuilder::PARAM_STR_ARRAY)
+            );
+        }
+
+        $qb->andWhere($qb->expr()->orX(...$allowedPredicates));
+
     }
 
     protected function joinGroupShares(

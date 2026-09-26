@@ -1700,7 +1700,6 @@ return isPublicRoute
 }
 
 // ============================================================
-// FIX: ENSURE DROPDOWNS APPEAR ABOVE EVERYTHING
 // ============================================================
 
 // High z-index for select containers in metadata
