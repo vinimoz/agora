@@ -49,8 +49,15 @@
                         :time-remaining="timeRemaining"
                         @open-supports-modal="openSupportsModal"
                         @select-option="$emit('selectOption', $event)"
+                        @progress="onProgress"
                         />
             </section>
+            <div v-if="currentLayout === 'cards'" class="vote-progress-bar">
+                <span id="vote-progress-label">
+                    {{ n('agora', '{answered} answer out of {total}', '{answered} answers out of {total}', progressTotals[0], { answered: progressTotals[0], total: progressTotals[1] }) }}
+                </span>
+                <progress :value="progressTotals[0]" :max="progressTotals[1] || 1" aria-labelledby="vote-progress-label" />
+            </div>
         </div>
 
         <!-- Show header when there's an active engine, even without options -->
@@ -169,7 +176,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { t } from '@nextcloud/l10n'
+import { n, t } from '@nextcloud/l10n'
 import { NcLoadingIcon, NcDialog } from '@nextcloud/vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import type { Option, SupportEngine } from '../../Types/index'
@@ -240,6 +247,15 @@ const stackedEngines = computed<SupportEngine[]>(() => {
   if (shown.some((id) => !covered.has(id))) return []
   return [...active].sort((a, b) => a.id - b.id)
 })
+
+const progress = ref<Record<number, [number, number]>>({})
+const onProgress = (engineId: number, count: number, total: number) => {
+  progress.value[engineId] = [count, total]
+}
+const progressTotals = computed(() => stackedEngines.value.reduce(
+  ([count, total], e) => [count + (progress.value[e.id]?.[0] ?? 0), total + (progress.value[e.id]?.[1] ?? 0)],
+  [0, 0],
+))
 
 // Local UI state
 const currentLayout = ref<'cards' | 'results'>('cards')
@@ -410,6 +426,27 @@ const onOptionsAdded = () => {
         }
 
         :deep(.submit-vote-section) {
+            position: static;
+        }
+
+        .vote-progress-bar {
+            position: sticky;
+            bottom: 0;
+            z-index: 10;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px 16px;
+            padding: 12px 16px;
+            background: var(--color-main-background);
+            border-top: 1px solid var(--color-border);
+
+            progress {
+                flex: 1 1 160px;
+            }
+        }
+
+        &:has([contenteditable]:focus) .vote-progress-bar {
             position: static;
         }
     }
