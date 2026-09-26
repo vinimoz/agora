@@ -110,6 +110,7 @@ const props = defineProps<{
   hasUserVotedFor: (optionId: number) => boolean
   isSelectedForVote: (optionId: number) => boolean
   getUserVoteValueForOption: (optionId: number) => SupportValue | null
+  autoSave?: boolean
   hideResults?: boolean
 }>()
 

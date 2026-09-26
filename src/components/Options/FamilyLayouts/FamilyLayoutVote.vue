@@ -4,10 +4,187 @@
 -->
 
 <template>
-  <div class="family-layout-vote">
-    <div v-if="loadingEngines" class="loading-state">
-      <NcLoadingIcon :size="40" />
-      <p>{{ t('agora', 'Loading vote interface …') }}</p>
+    <div class="family-layout-vote">
+        <div v-if="loadingEngines" class="loading-state">
+            <NcLoadingIcon :size="40" />
+            <p>{{ t('agora', 'Loading vote interface …') }}</p>
+        </div>
+
+        <div v-else-if="stackedEngines.length" class="vote-interface stacked">
+            <VoteHeader
+                    part="bar"
+                    :total-votes="totalVotes"
+                    :current-engine="currentEngine"
+                    :available-engines="availableEngines"
+                    :can-manage-vote="canManageVote"
+                    :is-readonly="isReadonly"
+                    :current-layout="currentLayout"
+                    :allowed-layouts="allowedLayouts"
+                    @update:layout="currentLayout = $event"
+                    @create-engine="showCreateEngineModal = true"
+                    />
+            <section
+                    v-for="engine in stackedEngines"
+                    :key="engine.id"
+                    class="vote-engine-section"
+                    :aria-labelledby="`engine-title-${engine.id}`"
+                    >
+                <VoteHeader
+                        part="card"
+                        :current-engine="engine"
+                        :available-engines="availableEngines"
+                        :can-manage-vote="inquiryStore.permissions.edit"
+                        :is-readonly="isReadonly"
+                        :total-votes="0"
+                        :current-layout="currentLayout"
+                        :allowed-layouts="allowedLayouts"
+                        @edit-engine="handleEditEngine"
+                        @delete-engine="handleDeleteEngine"
+                        @add-to-vote="onAddToVote"
+                        />
+                <VoteEngineBlock
+                        ref="blocks"
+                        :inquiry-id="inquiryId"
+                        :engine-id="engine.id"
+                        :layout="currentLayout"
+                        :time-remaining="timeRemaining"
+                        :enqueue-save="enqueueSave"
+                        :hide-results="hidesResults(engine)"
+                        @open-supports-modal="openSupportsModal"
+                        @select-option="$emit('selectOption', $event)"
+                        @progress="onProgress"
+                        />
+            </section>
+            <div v-if="currentLayout === 'cards'" class="vote-progress-bar">
+                <span id="vote-progress-label">
+                    {{ n('agora', '{answered} answer out of {total}', '{answered} answers out of {total}', progressTotals[0], { answered: progressTotals[0], total: progressTotals[1] }) }}
+                </span>
+                <progress :value="progressTotals[0]" :max="progressTotals[1] || 1" aria-labelledby="vote-progress-label" />
+                <span v-if="savesRunning">{{ t('agora', 'Saving …') }}</span>
+                <span v-else-if="savedOnce && !failedSaves.size && !allSaved">{{ t('agora', 'Saved') }}</span>
+                <span aria-live="polite">
+                    <template v-if="!savesRunning && failedSaves.size">{{ t('agora', 'Not saved') }}</template>
+                    <template v-else-if="allSaved">{{ t('agora', 'All your answers are saved') }}</template>
+                </span>
+                <NcButton v-if="!savesRunning && failedSaves.size" variant="tertiary" @click="retrySaves">
+                    {{ t('agora', 'Retry') }}
+                </NcButton>
+            </div>
+        </div>
+
+        <!-- Show header when there's an active engine, even without options -->
+        <div v-else-if="hasActiveEngine && currentEngine" class="vote-interface">
+            <VoteHeader
+                    :vote-session="voteSession"
+                    :total-votes="totalVotes"
+                    :current-engine="currentEngine"
+                    :available-engines="availableEngines"
+                    :can-manage-vote="canManageVote"
+                    :is-readonly="isReadonly"
+                    :current-layout="currentLayout"
+                    :allowed-layouts="allowedLayouts"
+                    :hide-results="resultsHidden"
+                    @update:layout="currentLayout = $event"
+                    @update:engine="handleEngineUpdate"
+                    @create-engine="showCreateEngineModal = true"
+                    @edit-engine="handleEditEngine"
+                    @delete-engine="handleDeleteEngine"
+                    @add-to-vote="onAddToVote"
+                    />
+
+            <!-- Empty state when no options are linked -->
+            <VoteEmptyState
+                    v-if="(!currentEngine.target_ids || currentEngine.target_ids.length === 0)"
+                    :no-options-linked="true"
+                    :can-manage-vote="canManageVote"
+                    :is-readonly="isReadonly"
+                    @add-to-vote="showAddToVoteModal = true"
+                    @configure="showCreateEngineModal = true"
+                    />
+
+            <!-- Empty state when no votable options exist -->
+            <VoteEmptyState
+                    v-else-if="votableOptions.length === 0"
+                    :show-add-button="canAddOptions"
+                    :can-manage-vote="canManageVote && canAddOptions"
+                    :is-readonly="isReadonly"
+                    @add-option="$emit('addOption')"
+                    />
+
+            <VoteEngineBlock
+                    v-else
+                    :key="currentEngine.id"
+                    :inquiry-id="inquiryId"
+                    :engine-id="currentEngine.id"
+                    :layout="currentLayout"
+                    :time-remaining="timeRemaining"
+                    :hide-results="resultsHidden"
+                    @open-supports-modal="openSupportsModal"
+                    @select-option="$emit('selectOption', $event)"
+                    />
+        </div>
+
+
+        <SupportsDetailModal
+                v-if="showSupportsModal"
+                :option-id="selectedOptionId"
+                :inquiry-id="inquiryId"
+                 :display-vote="true"
+                @close="showSupportsModal = false"
+                />
+
+        <!-- Show empty state when no engine exists -->
+        <VoteEmptyState
+                v-else-if="!hasActiveEngine"
+                :no-engine="true"
+                :can-manage-vote="canManageVote"
+                :is-readonly="isReadonly"
+                @configure="showCreateEngineModal = true"
+                @add-option="$emit('addOption')"
+                />
+
+        <!-- Create/Edit Engine Modal -->
+        <EngineSelectorModal
+                v-if="showCreateEngineModal"
+                :mode="engineModalMode"
+                :existing-engine="engineToEdit"
+                :option-count="allOptions.length"
+                :available-engines="availableEnginesSelector"
+                :has-votes="currentEngineHasVotes"
+                @close="closeEngineModal"
+                @save="onEngineSaved"
+                />
+
+        <!-- Add Options to Vote Modal -->
+        <AddOptionToFamily
+                v-if="showAddToVoteModal"
+                :inquiry-id="inquiryId"
+                family-type="vote"
+                :current-engine="currentEngine"
+                :available-options="allOptions"
+                :already-linked-option-ids="votableOptionIds"
+                @close="showAddToVoteModal = false"
+                @options-added="onOptionsAdded"
+                @option-family-changed="handleOptionFamilyChanged"
+                />
+
+        <!-- Delete Confirmation Dialog -->
+        <NcDialog
+                v-if="showDeleteConfirm"
+                :name="t('agora', 'Delete voting method')"
+                :message="deleteConfirmMessage"
+                @confirm="confirmDelete"
+                @cancel="cancelDelete"
+                >
+                <template #actions>
+                    <NcButton type="primary" @click="confirmDelete">
+                    {{ t('agora', 'Delete') }}
+                    </NcButton>
+        <NcButton type="tertiary" @click="cancelDelete">
+        {{ t('agora', 'Cancel') }}
+        </NcButton>
+                </template>
+        </NcDialog>
     </div>
 
     <div v-else-if="stackedEngines.length" class="vote-interface stacked">
@@ -339,15 +516,17 @@ onBeforeRouteLeave(async () => {
 
 // Local UI state
 const currentLayout = ref<'cards' | 'results'>('cards')
-const resultsHidden = computed(
-  () =>
-    currentEngine.value?.config?.results_visibility === 'closed' &&
-    currentEngine.value?.status !== 'closed' &&
-    !inquiryStore.permissions.edit
-)
-const allowedLayouts = computed(() => (resultsHidden.value ? ['cards'] : ['cards', 'results']))
-watch(resultsHidden, (hidden) => {
-  if (hidden) {
+const hidesResults = (engine?: SupportEngine | null) => engine?.config?.results_visibility === 'closed'
+  && engine?.status !== 'closed'
+  && !inquiryStore.permissions.edit
+const resultsHidden = computed(() => hidesResults(currentEngine.value))
+// Stacked mode keeps the Results tab while one block still shows its results.
+const allowedLayouts = computed(() => {
+  const engines = stackedEngines.value.length ? stackedEngines.value : [currentEngine.value]
+  return engines.every(hidesResults) ? ['cards'] : ['cards', 'results']
+})
+watch(allowedLayouts, (layouts) => {
+  if (!layouts.includes(currentLayout.value)) {
     currentLayout.value = 'cards'
   }
 })
