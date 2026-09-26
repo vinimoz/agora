@@ -128,7 +128,7 @@ const availableInquiryStatuses = computed(() => {
   if (inquiryStore.status.inquiryStatus === 'waiting_approval') {
     statusesFromSettings.unshift({
       statusKey: 'waiting_approval',
-      label: t('agora', 'Waiting approval'),
+      label: t('agora', 'Pending approval'),
       icon: 'waitingapproval',
       inquiryType: inquiryStore.type,
       order: 1,
@@ -150,7 +150,7 @@ const currentInquiryStatus = computed(
       },
       'waiting_approval': {
 	statusKey: 'waiting_approval',
-	label: t('agora', 'Waiting approval'),
+	label: t('agora', 'Pending approval'),
 	icon: 'waitingapproval',
 	inquiryType: inquiryStore.type,
 	order: 1,

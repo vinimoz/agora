@@ -227,7 +227,7 @@ const currentInquiryStatus = computed(() => {
     },
     'waiting_approval': {
       statusKey: 'waiting_approval',
-      label: t('agora', 'Waiting approval'),
+      label: t('agora', 'Pending approval'),
       icon: 'waitingapproval',
       inquiryType: props.inquiry.type,
       order: 1,
