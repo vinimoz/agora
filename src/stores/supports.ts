@@ -154,9 +154,19 @@ export const useSupportsStore = defineStore('supports', () => {
     itemType: 'inquiry' | 'option',
     customValue?: SupportValue
   ) {
-    // Get active engine
+    // Vote on the current engine only when it is open for this inquiry
     const engineStore = useSupportEngineStore()
-    const activeEngine = engineStore.getCurrentEngine()
+    const inquiryStore = useInquiryStore()
+    const currentEngine = engineStore.getCurrentEngine()
+    const voteInquiryId = resolveIds(itemId, item, itemType).inquiryId
+    const activeEngine =
+      currentEngine?.status === 'active' &&
+      (currentEngine.inquiry_id === voteInquiryId ||
+        (currentEngine.inquiry_group_id > 0 &&
+          inquiryStore.id === voteInquiryId &&
+          inquiryStore.inquiryGroups.includes(currentEngine.inquiry_group_id)))
+        ? currentEngine
+        : null
     const supportEngineId = activeEngine?.id ?? null
     const effectiveFeature = activeEngine?.engine ?? getSupportFeature(item)
 

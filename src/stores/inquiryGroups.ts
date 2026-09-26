@@ -198,11 +198,11 @@ export const useInquiryGroupsStore = defineStore('inquiryGroups', () => {
    * Sort inquiry groups by title in ascending order
    * @return {InquiryGroup[]} Sorted inquiry groups, sorted by title in ascending order
    */
-const inquiryGroupsSorted = computed((): InquiryGroup[] =>
+  const inquiryGroupsSorted = computed((): InquiryGroup[] =>
   orderBy(
-    inquiryGroups.value.filter((group) =>
+    (inquiryGroups.value ?? []).filter((group) =>
       group.type === 'private' &&
-      countInquiriesInInquiryGroups.value[group.id] > 0
+      (countInquiriesInInquiryGroups.value[group.id] ?? 0) > 0
     ),
     ['title'],
     ['asc']
@@ -215,7 +215,7 @@ const inquiryGroupsSorted = computed((): InquiryGroup[] =>
     if (!currentInquiryGroup.value) {
       return []
     }
-    return inquiriesStore.inquiries.filter((inquiry) =>
+    return (inquiriesStore.inquiries ?? []).filter((inquiry) =>
       currentInquiryGroup.value?.inquiryIds.includes(inquiry.id)
     )
   })
@@ -229,7 +229,7 @@ const inquiryGroupsSorted = computed((): InquiryGroup[] =>
     const counts: Record<number, number> = {}
     const inquiriesStore = useInquiriesStore()
     inquiryGroups.value.forEach((group) => {
-      counts[group.id] = inquiriesStore.inquiries.filter((inquiry) =>
+      counts[group.id] = (inquiriesStore.inquiries ?? []).filter((inquiry) =>
         group.inquiryIds.includes(inquiry.id)
       ).length
     })

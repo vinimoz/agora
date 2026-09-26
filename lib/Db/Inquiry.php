@@ -352,6 +352,28 @@ class Inquiry extends EntityWithUser implements JsonSerializable
 
 
     /**
+     * Support results without those of engines hidden until close
+     */
+    private function getVisibleSupportResult(): ?array
+    {
+        $results = $this->getSupportResult();
+        if (!$results || $this->getIsAllowed(self::PERMISSION_INQUIRY_EDIT)) {
+            return $results;
+        }
+        $hidden = [];
+        foreach ($this->getSupportEngine() as $engine) {
+            $config = is_string($engine['config'] ?? null) ? json_decode($engine['config'], true) : ($engine['config'] ?? []);
+            if (SupportEngine::hidesResults($config ?? [], $engine['status'] ?? '')) {
+                $hidden[] = (int)$engine['id'];
+            }
+        }
+        return array_values(array_filter(
+            $results,
+            fn ($r) => !in_array((int)($r['support_engine_id'] ?? 0), $hidden, true),
+        ));
+    }
+
+    /**
      * Get inquiry status array - matching TypeScript InquiryStatus interface
      */
     public function getStatusArray(): array
@@ -367,7 +389,7 @@ class Inquiry extends EntityWithUser implements JsonSerializable
             'relevantThreshold' => $this->getRelevantThreshold(),
             'deletionDate' => $this->getDeleted(),
             'archivedDate' => $this->getArchived(),
-            'supportResult' => $this->getSupportResult(),
+            'supportResult' => $this->getVisibleSupportResult(),
             'countSupports' => $this->getIsAllowed(self::PERMISSION_INQUIRY_RESULTS_VIEW) ? $this->getCountSupports() : 0,
             'countParticipants' => $this->getIsAllowed(self::PERMISSION_INQUIRY_RESULTS_VIEW) 
             ? $this->getCountParticipants() 
@@ -775,6 +797,75 @@ class Inquiry extends EntityWithUser implements JsonSerializable
             || $this->userSession->getCurrentUser()->getIsAdmin();
     }
 
+    /*
+    private function getAllowAccessInquiry(): bool
+    {
+        $log = \OCP\Server::get(\Psr\Log\LoggerInterface::class);
+
+        $log->error('AGORA-DEBUG getAllowAccessInquiry ENTER', [
+            'id'          => $this->getId(),
+            'access'      => $this->getAccess(),
+            'ownedGroup'  => $this->getOwnedGroup(),
+            'owner'       => $this->getOwner(),
+            'deleted'     => $this->getDeleted(),
+            'archived'    => $this->getArchived(),
+            'userId'      => $this->userSession->getCurrentUserId(),
+            'userGroups'  => $this->userSession->getCurrentUser()->getGroups(),
+            'isAdmin'     => $this->userSession->getCurrentUser()->getIsAdmin(),
+            'userRole'    => $this->getUserRole(),
+        ]);
+
+        if ($this->getAllowEditInquiry()) {
+            $log->error('AGORA-DEBUG branch: EDIT');
+            return true;
+        }
+
+        if ($this->getDeleted()) {
+            $log->error('AGORA-DEBUG branch: DELETED');
+            return false;
+        }
+
+        if ($this->getArchived()) {
+            $log->error('AGORA-DEBUG branch: ARCHIVED');
+            return false;
+        }
+
+        if ($this->getAccess() === self::ACCESS_GROUP) {
+            $ownedGroup = $this->getOwnedGroup();
+
+            if ($ownedGroup !== '' && $ownedGroup !== null) {
+                $user = $this->userSession->getCurrentUser();
+
+                $isOwner   = $this->getOwner() === $user->getId();
+                $isInGroup = in_array($ownedGroup, $user->getGroups(), true);
+                $isAdmin   = $user->getIsAdmin();
+
+                $log->error('AGORA-DEBUG branch: GROUP', [
+                    'ownedGroup' => $ownedGroup,
+                    'isAdmin'    => $isAdmin,
+                    'isOwner'    => $isOwner,
+                    'isInGroup'  => $isInGroup,
+                    'result'     => ($isAdmin || $isOwner || $isInGroup),
+                ]);
+
+                return $isAdmin || $isOwner || $isInGroup;
+            }
+        }
+
+        if ($this->getIsOpenInquiry()) {
+            $log->error('AGORA-DEBUG branch: OPEN');
+            return true;
+        }
+
+        $share = $this->userSession->getShare();
+        $log->error('AGORA-DEBUG branch: SHARE', [
+            'shareId'   => $share->getId(),
+            'inquiryId' => $share->getInquiryId(),
+        ]);
+
+        return (bool)($share->getId() && $share->getInquiryId() === $this->getId());
+    }
+     */
     private function getAllowAccessInquiry(): bool
     {
         if ($this->getAllowEditInquiry()) {
@@ -789,6 +880,21 @@ class Inquiry extends EntityWithUser implements JsonSerializable
             return false;
         }
 
+        if ($this->getAccess() === self::ACCESS_GROUP) {
+            $ownedGroup = $this->getOwnedGroup();
+
+            // Group-scoped: decide here and return, do not fall through.
+            if ($ownedGroup !== '' && $ownedGroup !== null) {
+                $user = $this->userSession->getCurrentUser();
+
+                $isOwner = $this->getOwner() === $user->getId();
+                $isInGroup = in_array($ownedGroup, $user->getGroups(), true);
+
+                return $user->getIsAdmin() || $isOwner || $isInGroup;
+            }
+
+	}
+
         if ($this->getIsOpenInquiry()) {
             return true;
         }
@@ -796,146 +902,145 @@ class Inquiry extends EntityWithUser implements JsonSerializable
         $share = $this->userSession->getShare();
         return (bool)($share->getId() && $share->getInquiryId() === $this->getId());
     }
-
     private function getAllowDeleteInquiry(): bool
     {
-        if ($this->getAllowEditInquiry()) {
-            return true;
-        }
+	    if ($this->getAllowEditInquiry()) {
+		    return true;
+	    }
 
-        return $this->userSession->getCurrentUser()->getIsAdmin();
+	    return $this->userSession->getCurrentUser()->getIsAdmin();
     }
 
     private function getAllowAddInquiry(): bool
     {
-        if ($this->getAllowEditInquiry()) {
-            return true;
-        }
+	    if ($this->getAllowEditInquiry()) {
+		    return true;
+	    }
 
-        if (!$this->getAllowAccessInquiry()) {
-            return false;
-        }
+	    if (!$this->getAllowAccessInquiry()) {
+		    return false;
+	    }
 
-        if ($this->userSession->getShare()->getType() === 'public') {
-            return false;
-        }
+	    if ($this->userSession->getShare()->getType() === 'public') {
+		    return false;
+	    }
 
-        return true;
+	    return true;
     }
 
     private function getAllowConfirmInquiry(): bool
     {
-        return $this->getAllowEditInquiry() && $this->getExpired();
+	    return $this->getAllowEditInquiry() && $this->getExpired();
     }
 
     private function getAllowReorderInquiries(): bool
     {
-        return $this->getAllowEditInquiry() && !$this->getExpired();
+	    return $this->getAllowEditInquiry() && !$this->getExpired();
     }
 
     public function matchUser(string $userId): bool
     {
-        return $this->userSession->getCurrentUser()->getId() === $userId;
+	    return $this->userSession->getCurrentUser()->getId() === $userId;
     }
 
     public function getIsInquiryOwner(): bool
     {
-        return ($this->getUserRole() === self::ROLE_OWNER);
+	    return ($this->getUserRole() === self::ROLE_OWNER);
     }
 
     public function getIsHaveParticipated(): bool
     {
-        $userId = $this->userSession->getCurrentUser()->getId();
-        foreach ($this->childs as $child) {
-            if (method_exists($child, 'getUserId') && $child->getUserId() === $userId) {
-                return true;
-            }
-            if (is_array($child) && isset($child['userId']) && $child['userId'] === $userId) {
-                return true;
-            }
-        }
-        return false;
+	    $userId = $this->userSession->getCurrentUser()->getId();
+	    foreach ($this->childs as $child) {
+		    if (method_exists($child, 'getUserId') && $child->getUserId() === $userId) {
+			    return true;
+		    }
+		    if (is_array($child) && isset($child['userId']) && $child['userId'] === $userId) {
+			    return true;
+		    }
+	    }
+	    return false;
     }
 
     private function getAllowCommenting(): bool
     {
-        if (!$this->getAllowAccessInquiry()) {
-            return false;
-        }
+	    if (!$this->getAllowAccessInquiry()) {
+		    return false;
+	    }
 
-        if ($this->userSession->getShare()->getType() === 'public') {
-            return false;
-        }
+	    if ($this->userSession->getShare()->getType() === 'public') {
+		    return false;
+	    }
 
-        return (bool)$this->getAllowComment();
+	    return (bool)$this->getAllowComment();
     }
 
     private function getSupportFeaturing(): bool
     {
-        if (!$this->getAllowAccessInquiry()) {
-            return false;
-        }
+	    if (!$this->getAllowAccessInquiry()) {
+		    return false;
+	    }
 
-        if ($this->getSupportFeature() === 'none') {
-            return false;
-        }
-        return true;
+	    if ($this->getSupportFeature() === 'none') {
+		    return false;
+	    }
+	    return true;
     }
 
     private function getAllowDeleteSupport(): bool
     {
-        return $this->getAllowEditInquiry();
+	    return $this->getAllowEditInquiry();
     }
 
     private function getAllowDeleteComment(): bool
     {
-        return $this->getAllowEditInquiry();
+	    return $this->getAllowEditInquiry();
     }
 
     private function getAllowChangeForeignSupports(): bool
     {
-        return $this->getAllowEditInquiry() && $this->getUser()->getIsUnrestrictedInquiryOwner();
+	    return $this->getAllowEditInquiry() && $this->getUser()->getIsUnrestrictedInquiryOwner();
     }
 
     private function getAllowDeanonymize(): bool
     {
-        return $this->getAllowEditInquiry() && $this->getUser()->getIsUnrestrictedInquiryOwner();
+	    return $this->getAllowEditInquiry() && $this->getUser()->getIsUnrestrictedInquiryOwner();
     }
 
     private function getAllowSubscribeToInquiry(): bool
     {
-        if (!$this->getAllowAccessInquiry()) {
-            return false;
-        }
+	    if (!$this->getAllowAccessInquiry()) {
+		    return false;
+	    }
 
-        return $this->userSession->getCurrentUser()->getHasEmail();
+	    return $this->userSession->getCurrentUser()->getHasEmail();
     }
 
     private function getAllowShowResults(): bool
     {
-        if ($this->getAllowEditInquiry()) {
-            return true;
-        }
+	    if ($this->getAllowEditInquiry()) {
+		    return true;
+	    }
 
-        if (!$this->getAllowAccessInquiry()) {
-            return false;
-        }
+	    if (!$this->getAllowAccessInquiry()) {
+		    return false;
+	    }
 
-        if ($this->getShowResults() === self::SHOW_RESULTS_CLOSED && $this->getExpired()) {
-            return true;
-        }
+	    if ($this->getShowResults() === self::SHOW_RESULTS_CLOSED && $this->getExpired()) {
+		    return true;
+	    }
 
-        return $this->getShowResults() === self::SHOW_RESULTS_ALWAYS;
+	    return $this->getShowResults() === self::SHOW_RESULTS_ALWAYS;
     }
 
     // Family management
     public function setFamily(?string $family): void
     {
-        $this->family = $family ?? '';
+	    $this->family = $family ?? '';
     }
 
     public function getFamily(): ?string
     {
-        return $this->family;
+	    return $this->family;
     }
 }

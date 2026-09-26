@@ -9,10 +9,16 @@ declare(strict_types=1);
 
 namespace OCA\Agora\Service;
 
+use OCA\Agora\Db\Inquiry;
+use OCA\Agora\Db\InquiryGroup;
+use OCA\Agora\Db\InquiryGroupMapper;
+use OCA\Agora\Db\InquiryMapper;
+use OCA\Agora\Db\OptionMapper;
 use OCA\Agora\Db\SupportEngine;
 use OCA\Agora\Db\SupportEngineMapper;
 use OCA\Agora\Db\SupportMapper;
 use OCA\Agora\Db\SupportResultMapper;
+use OCA\Agora\Exceptions\ForbiddenException;
 use OCP\AppFramework\Db\DoesNotExistException;
 use Psr\Log\LoggerInterface;
 
@@ -24,7 +30,95 @@ class SupportEngineService
         private SupportMapper $supportMapper,
         private SupportResultService $resultService,
         private LoggerInterface $logger,
+        private InquiryMapper $inquiryMapper,
+        private InquiryGroupMapper $inquiryGroupMapper,
+        private OptionMapper $optionMapper,
     ) {
+    }
+
+    /**
+     * Require the right to edit the inquiry and the inquiry group the
+     * engine is attached to
+     *
+     * @throws ForbiddenException
+     */
+    public function requestEdit(int $inquiryId, ?int $inquiryGroupId): void
+    {
+        $hasGroup = $inquiryGroupId !== null && $inquiryGroupId > 0;
+        if (!$hasGroup && $inquiryId <= 0) {
+            throw new ForbiddenException('Support engine has no inquiry');
+        }
+        if ($hasGroup) {
+            $this->inquiryGroupMapper->get($inquiryGroupId)->request(InquiryGroup::PERMISSION_INQUIRY_GROUP_EDIT);
+        }
+        if ($inquiryId > 0) {
+            $this->inquiryMapper->get($inquiryId, withRoles: true)->request(Inquiry::PERMISSION_INQUIRY_EDIT);
+        }
+    }
+
+    /**
+     * Require every target to belong to the engine's inquiry or to an
+     * inquiry of its group the user may edit, and a group engine on
+     * inquiries to name its targets
+     *
+     * @throws ForbiddenException
+     */
+    private function validateTargets(string $targetType, array|string $targetIds, int $inquiryId, ?int $inquiryGroupId): void
+    {
+        if (is_string($targetIds)) {
+            $targetIds = json_decode($targetIds, true);
+            if (!is_array($targetIds)) {
+                throw new ForbiddenException('Invalid support engine targets');
+            }
+        }
+        $inquiryIds = $inquiryId > 0 ? [$inquiryId] : [];
+        if ($inquiryGroupId !== null && $inquiryGroupId > 0) {
+            if ($targetIds === [] && $targetType === SupportEngine::TARGET_INQUIRY) {
+                throw new ForbiddenException('Group support engine needs explicit targets');
+            }
+            $inquiryIds = array_merge($inquiryIds, $this->inquiryGroupMapper->getInquiryIdsForGroup($inquiryGroupId));
+        }
+        $editable = $inquiryId > 0 ? [$inquiryId => true] : [];
+
+        foreach ($targetIds as $targetId) {
+            if (!is_int($targetId) && !(is_string($targetId) && ctype_digit($targetId))) {
+                throw new ForbiddenException('Invalid support engine target');
+            }
+            if ($targetType === SupportEngine::TARGET_OPTION) {
+                try {
+                    $targetId = $this->optionMapper->get((int)$targetId)->getTargetId();
+                } catch (DoesNotExistException $e) {
+                    throw new ForbiddenException('Support engine target does not exist');
+                }
+            } elseif ($targetType !== SupportEngine::TARGET_INQUIRY) {
+                throw new ForbiddenException('Invalid support engine target type');
+            }
+            $targetId = (int)$targetId;
+            if (!in_array($targetId, $inquiryIds, true)) {
+                throw new ForbiddenException('Support engine target is outside its inquiry');
+            }
+            if (!isset($editable[$targetId])) {
+                try {
+                    $this->inquiryMapper->get($targetId, withRoles: true)->request(Inquiry::PERMISSION_INQUIRY_EDIT);
+                } catch (DoesNotExistException $e) {
+                    throw new ForbiddenException('Support engine target does not exist');
+                }
+                $editable[$targetId] = true;
+            }
+        }
+    }
+
+    /**
+     * Require the right to edit an existing engine
+     *
+     * @throws DoesNotExistException
+     * @throws ForbiddenException
+     */
+    public function requestEditEngine(int $id): SupportEngine
+    {
+        $engine = $this->engineMapper->find($id);
+        $this->requestEdit($engine->getInquiryId(), $engine->getInquiryGroupId());
+        return $engine;
     }
 
     /**
@@ -70,6 +164,17 @@ class SupportEngineService
 }
     public function createEngine(array $data): SupportEngine
     {
+        $this->requestEdit(
+            (int)($data['inquiry_id'] ?? 0),
+            isset($data['inquiry_group_id']) ? (int)$data['inquiry_group_id'] : null
+        );
+        $this->validateTargets(
+            $data['target_type'] ?? SupportEngine::TARGET_OPTION,
+            $data['target_ids'] ?? [],
+            (int)($data['inquiry_id'] ?? 0),
+            isset($data['inquiry_group_id']) ? (int)$data['inquiry_group_id'] : null
+        );
+
         $engine = new SupportEngine();
         $engine->setEngine($data['engine'] ?? '');
         $engine->setTitle($data['title'] ?? '');
@@ -102,6 +207,24 @@ class SupportEngineService
         $engine = $this->getEngine($id);
         if ($engine === null) {
             return null;
+        }
+        $this->requestEdit($engine->getInquiryId(), $engine->getInquiryGroupId());
+
+        $inquiryId = (int)($data['inquiry_id'] ?? $engine->getInquiryId());
+        $inquiryGroupId = isset($data['inquiry_group_id']) ? (int)$data['inquiry_group_id'] : $engine->getInquiryGroupId();
+        if ($inquiryId !== $engine->getInquiryId() || $inquiryGroupId !== $engine->getInquiryGroupId()) {
+            $this->requestEdit($inquiryId, $inquiryGroupId);
+        }
+        if (isset($data['target_type']) || isset($data['target_ids'])
+            || isset($data['inquiry_id']) || isset($data['inquiry_group_id'])
+            || ($data['status'] ?? null) === SupportEngine::STATUS_ACTIVE
+        ) {
+            $this->validateTargets(
+                $data['target_type'] ?? $engine->getTargetType(),
+                $data['target_ids'] ?? $engine->getTargetIds(),
+                $inquiryId,
+                $inquiryGroupId
+            );
         }
 
         // Update config with phase handling
@@ -191,6 +314,7 @@ class SupportEngineService
         if ($engine === null) {
             return false;
         }
+        $this->requestEdit($engine->getInquiryId(), $engine->getInquiryGroupId());
 
         try {
             $this->engineMapper->delete($engine);
@@ -222,33 +346,39 @@ class SupportEngineService
      */
 public function setActiveEngine(string $targetType, int $targetId, int $engineId): void
 {
-    // First, deactivate all active engines for this target
+    // The engine and its target must both be editable by the current user
+    $engine = $this->requestEditEngine($engineId);
+    if ($targetType !== $engine->getTargetType()
+        || !in_array($targetId, array_map('intval', $engine->getTargetIds()), true)
+    ) {
+        throw new ForbiddenException('Engine does not target this ID');
+    }
+    if ($targetType === SupportEngine::TARGET_OPTION) {
+        $this->requestEdit($this->optionMapper->get($targetId)->getTargetId(), null);
+    } else {
+        $this->requestEdit($targetId, null);
+    }
+
+    // First, deactivate the active engines of this target in the same inquiry
     $activeEngines = $this->getActiveEnginesByTarget($targetType, $targetId);
-    foreach ($activeEngines as $engine) {
-        $engine->setStatus(SupportEngine::STATUS_DRAFT);
-        $this->engineMapper->update($engine);
+    foreach ($activeEngines as $active) {
+        if ($active->getId() === $engine->getId()
+            || $active->getInquiryId() !== $engine->getInquiryId()
+            || $active->getInquiryGroupId() !== $engine->getInquiryGroupId()
+        ) {
+            continue;
+        }
+        $active->setStatus(SupportEngine::STATUS_DRAFT);
+        $this->engineMapper->update($active);
     }
 
     // Then activate the specified engine
-    $engine = $this->getEngine($engineId);
-    if ($engine) {
-        // Check if target_ids contains this target
-        $targetIds = $engine->getTargetIds();
-        if (!in_array($targetId, $targetIds)) {
-            $this->logger->warning('Engine does not target this ID', [
-                'engineId' => $engineId,
-                'targetId' => $targetId,
-                'targetIds' => $targetIds
-            ]);
-        }
-
-        $engine->setStatus(SupportEngine::STATUS_ACTIVE);
-        $config = $engine->getConfig();
-        $config['started_at'] = $config['started_at'] ?? time();
-        $config['ended_at'] = null;
-        $engine->setConfig($config);
-        $this->engineMapper->update($engine);
-    }
+    $engine->setStatus(SupportEngine::STATUS_ACTIVE);
+    $config = $engine->getConfig();
+    $config['started_at'] = $config['started_at'] ?? time();
+    $config['ended_at'] = null;
+    $engine->setConfig($config);
+    $this->engineMapper->update($engine);
 }
     
     /**

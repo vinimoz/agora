@@ -13,7 +13,7 @@
     @click="handleCardClick"
   >
     <!-- Header with icon, type label, and creation date -->
-    <div class="card-header">
+    <div v-if="inquiryStore.permissions.edit" class="card-header">
       <div class="header-left">
         <div class="type-icon" :style="{ color: optionTypeColor }">
           <component :is="optionIcon" :size="20" />
@@ -33,7 +33,7 @@
       
       <!-- Support and comments stats (when not voting mode) -->
       <div v-if="!canVote || hasUserVoted" class="stats-container">
-        <div class="support-stats" @click.stop="openSupportsModal">
+        <div v-if="!hideResults" class="support-stats" @click.stop="openSupportsModal">
           <component :is="InquiryOptionIcons.Support" :size="14" class="stat-icon" />
           <span class="vote-count">{{ voteCount }}</span>
           <span class="percentage">{{ percentage }}%</span>
@@ -46,7 +46,7 @@
       </div>
 
       <!-- Progress bar for voting mode -->
-      <div v-if="!canVote || hasUserVoted" class="progress-bar-container">
+      <div v-if="(!canVote || hasUserVoted) && !hideResults" class="progress-bar-container">
         <div class="progress-bar">
           <div class="progress-fill" :style="{ width: percentage + '%' }" />
         </div>
@@ -84,8 +84,28 @@
       @change-grade="handleGradeChange"
     />
 
+    <div v-if="canComment" class="option-comment">
+      <NcButton
+        variant="tertiary"
+        :aria-expanded="showComment ? 'true' : 'false'"
+        :aria-controls="commentZoneId"
+        @click="toggleComment"
+      >
+        {{ showComment ? t('agora', 'Hide comment') : t('agora', 'Add comment') }}
+      </NcButton>
+      <div v-show="showComment" :id="commentZoneId">
+        <CommentAdd
+          v-if="commentMounted"
+          ref="commentAdd"
+          :option-id="option.id"
+          :input-label="t('agora', 'Comment on {option}', { option: option.title })"
+          :placeholder="openedByGrade ? t('agora', 'Under which conditions? Why?') : undefined"
+        />
+      </div>
+    </div>
+
     <!-- Footer with owner info -->
-    <div v-if="!compact" class="card-footer">
+    <div v-if="!compact && inquiryStore.permissions.edit" class="card-footer">
       <div class="owner-info">
         <NcAvatar
           v-if="option.owner?.id"
@@ -106,12 +126,15 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, nextTick, ref } from 'vue'
 import { t } from '@nextcloud/l10n'
 import { CheckCircle } from 'lucide-vue-next'
 import NcAvatar from '@nextcloud/vue/components/NcAvatar'
+import NcButton from '@nextcloud/vue/components/NcButton'
 import VoteInput from './VoteInput.vue'
+import CommentAdd from '../../Comments/CommentAdd.vue'
 import { useSessionStore } from '../../../stores/session'
+import { useInquiryStore } from '../../../stores/inquiry'
 import { InquiryOptionIcons } from '../../../utils/icons.ts'
 import {
   getOptionTypeLabel,
@@ -143,6 +166,7 @@ const props = defineProps<{
   currentTokenWeight?: number | null
   getUserVoteValueForOption: (optionId: number) => SupportValue | null
   totalOptions?: number
+  hideResults?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -159,6 +183,7 @@ const emit = defineEmits<{
 }>()
 
 const sessionStore = useSessionStore()
+const inquiryStore = useInquiryStore()
 const allOptionTypes = computed(() => sessionStore.appSettings?.inquiryOptionTypeTab || [])
 
 const optionTypeLabel = computed(() => {
@@ -210,6 +235,27 @@ const allowComment = computed(() =>
   allowsComments(props.option.type, allOptionTypes.value)
 )
 
+// PublicController::addComment drops optionId, so no per-option comment on a public link.
+const canComment = computed(() => !!props.option.permissions?.comment
+  && inquiryStore.permissions.comment
+  && sessionStore.route.name !== 'publicInquiry')
+const showComment = ref(false)
+const commentMounted = ref(false)
+const openedByGrade = ref(false)
+const commentAdd = ref<InstanceType<typeof CommentAdd> | null>(null)
+const commentZoneId = computed(() => `option-comment-${props.option.id}`)
+const commentGrades = computed(() => (props.engineConfig.comment_grades as string[] | undefined) ?? [])
+
+async function toggleComment() {
+  showComment.value = !showComment.value
+  if (showComment.value) {
+    openedByGrade.value = false
+    commentMounted.value = true
+    await nextTick()
+    commentAdd.value?.focus()
+  }
+}
+
 const hasSupportFeature = computed(() => 
   hasSupportFeatureHelper(props.option.type, allOptionTypes.value)
 )
@@ -241,7 +287,14 @@ const showVoteInput = computed(() => props.canVote)
 function handleVote(value: SupportValue) { emit('vote', props.option, value) }
 function handleApprovalToggle() { emit('approvalToggle', props.option.id) }
 function handleRankChange(rank: number | null) { emit('changeRank', props.option.id, rank) }
-function handleGradeChange(grade: string | null) { emit('changeGrade', props.option.id, grade) }
+function handleGradeChange(grade: string | null) {
+  emit('changeGrade', props.option.id, grade)
+  if (grade && canComment.value && commentGrades.value.includes(grade)) {
+    if (!showComment.value) openedByGrade.value = true
+    commentMounted.value = true
+    showComment.value = true
+  }
+}
 function handleUpdateScore(optionId: number, score: number | null) { emit('update:score', optionId, score) }
 function handleUpdateStar(optionId: number, star: number | null) { emit('update:star', optionId, star) }
 function handleUpdateReaction(optionId: number, reaction: string[] | null) { emit('update:reaction', optionId, reaction) }
@@ -252,7 +305,7 @@ function handleUpdateTokenWeight(optionId: number, weight: number | null) { emit
 
 function handleCardClick(event: MouseEvent) {
   const target = event.target as HTMLElement
-  if (target.closest('.vote-input-container') || target.closest('.voted-badge') || target.closest('.support-stats')) {
+  if (target.closest('.vote-input-container') || target.closest('.voted-badge') || target.closest('.support-stats') || target.closest('.option-comment')) {
     return
   }
   emit('openSupportsModal', props.option.id)
@@ -271,7 +324,11 @@ function handleCardClick(event: MouseEvent) {
   &:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    border-color: var(--color-primary-element);
+  }
+
+  &:has(:focus-visible) {
+    outline: 2px solid var(--color-main-text);
+    outline-offset: 2px;
   }
 
   &.user-voted {
@@ -459,6 +516,10 @@ function handleCardClick(event: MouseEvent) {
         font-size: 11px;
       }
     }
+  }
+
+  .option-comment {
+    margin-top: 8px;
   }
 
   // Voted Badge

@@ -216,6 +216,7 @@ class Application extends App implements IBootstrap
                 return new InquiryMapper(
                     $c->get(IDBConnection::class),
                     $c->get(UserSession::class),
+                    $c->get(LoggerInterface::class),
                 );
             }
         );

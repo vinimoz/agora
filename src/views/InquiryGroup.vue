@@ -418,7 +418,6 @@ const sectionTitle = computed(() => {
   return selectedTypeLabel.value
 })
 
-// Check if user is owner or admin - FIXED: Ensure this returns boolean
 
 // Get icon component for group type
 const getGroupTypeIconComponent = (type: string) => {
@@ -1101,7 +1100,6 @@ watch(() => route.params.slug, async () => {
                             }
                         }
 
-                        /* FIXED: Owner menu - appears under the vignette */
                         .owner-menu-under {
                             position: absolute;
                             top: calc(100% + 5px); /* Position it right below the vignette with a small gap */

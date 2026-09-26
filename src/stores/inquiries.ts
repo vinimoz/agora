@@ -148,10 +148,16 @@ const inquiryCategories: InquiryCategoryList = {
       const sessionStore = useSessionStore()
       return sessionStore.appPermissions.inquiryCreation
     },
-    filterCondition: (inquiry: Inquiry) =>
-      !inquiry.status.isArchived &&
-      inquiry.currentUserStatus.isOwner &&
-      inquiry.status.moderationStatus === 'rejected',
+    filterCondition: (inquiry: Inquiry) => {
+    if (inquiry.status.isArchived || inquiry.status.moderationStatus !== 'rejected') {
+      return false
+    }
+    const sessionStore = useSessionStore()
+    if (sessionStore.currentUser?.isModerator || sessionStore.currentUser?.isAdmin) {
+      return inquiry.permissions.view
+    }
+    return inquiry.currentUserStatus.isOwner
+  },
   },
   my: {
     id: 'my',
@@ -224,26 +230,47 @@ group: {
     filterCondition: (inquiry: Inquiry) =>
       !inquiry.status.isArchived && inquiry.configuration.access === 'open',
   },
-  all: {
-  id: 'all',
-  title: t('agora', 'All inquiries'),
-  titleExt: t('agora', 'All inquiries'),
-  description: t('agora', 'All inquiries open and public, where you have access to'),
-  pinned: false,
-  showInNavigation: () => true,
-  filterCondition: (inquiry: Inquiry) =>
-    !inquiry.status.isArchived &&
-    inquiry.permissions.view &&
-    (inquiry.configuration.access === 'open' ||
-      inquiry.configuration.access === 'moderate' ||
-      inquiry.configuration.access === 'public' ||
-      inquiry.configuration.access === 'private' ||
-      inquiry.configuration.access === 'group') &&
-    // Only apply group membership check for group access inquiries
-    (inquiry.configuration.access !== 'group' ||
-      (inquiry.ownedGroup &&
-        (useSessionStore().currentUser?.groups ?? []).includes(inquiry.ownedGroup))),
-  },
+    all: {
+    id: 'all',
+    title: t('agora', 'All inquiries'),
+    titleExt: t('agora', 'All inquiries'),
+    description: t('agora', 'All inquiries you have access to'),
+    pinned: false,
+    showInNavigation: () => true,
+    filterCondition: (inquiry: Inquiry) => {
+      if (inquiry.status.isArchived || !inquiry.permissions.view) {
+        return false
+      }
+
+      const sessionStore = useSessionStore()
+      const access = inquiry.configuration.access
+
+      // Open and public are always visible
+      if (access === 'open' || access === 'public') {
+        return true
+      }
+
+      // Private inquiries are only visible to the owner
+      if (access === 'private') {
+        return inquiry.currentUserStatus.isOwner
+      }
+
+      // Moderate inquiries are visible to moderators and admins
+      if (access === 'moderate') {
+        return !!(sessionStore.currentUser?.isModerator || sessionStore.currentUser?.isAdmin)
+      }
+
+      // Group inquiries are visible if the user is in the owning group
+      if (access === 'group') {
+        return !!(
+          inquiry.ownedGroup &&
+          (sessionStore.currentUser?.groups ?? []).includes(inquiry.ownedGroup)
+        )
+      }
+
+      return false
+    },  
+  },     
   closed: {
     id: 'closed',
     title: t('agora', 'Closed inquiries'),
@@ -280,20 +307,23 @@ group: {
       const sessionStore = useSessionStore()
       return !!sessionStore.currentUser?.isAdmin
     },
-    filterCondition: (inquiry: Inquiry) => inquiry.permissions.view,
+    filterCondition: (inquiry: Inquiry) => !inquiry.status.isArchived && inquiry.permissions.view,
   },
-  moderate: {
-    id: 'moderate',
-    title: t('agora', 'To moderate'),
-    titleExt: t('agora', 'Moderator access'),
-    description: t('agora', 'All new inquiries who required validation.'),
-    pinned: true,
-    showInNavigation: () => {
-      const sessionStore = useSessionStore()
-      return !!sessionStore.currentUser?.isModerator
-    },
-    filterCondition: (inquiry: Inquiry) => inquiry.configuration.access === 'moderate',
+    moderate: {
+  id: 'moderate',
+  title: t('agora', 'To moderate'),
+  titleExt: t('agora', 'Moderator access'),
+  description: t('agora', 'All new inquiries who required validation.'),
+  pinned: true,
+  showInNavigation: () => {
+    const sessionStore = useSessionStore()
+    return !!sessionStore.currentUser?.isModerator
   },
+  filterCondition: (inquiry: Inquiry) =>
+    !inquiry.status.isArchived &&
+    inquiry.permissions.view &&
+    inquiry.configuration.access === 'moderate',
+},
 }
 
 export const useInquiriesStore = defineStore('inquiries', {
@@ -494,26 +524,7 @@ export const useInquiriesStore = defineStore('inquiries', {
         filteredInquiries = results
       }
 
-      // Additional access control: exclude moderate access inquiries from regular lists
-      // unless the user has specific moderation permissions
-      filteredInquiries = filteredInquiries.filter((inquiry) => {
-        // Always exclude moderate access inquiries from regular lists
-        if (inquiry.configuration.access === 'moderate') {
-          // Only show moderate inquiries to users with moderation permissions
-          const sessionStore = useSessionStore()
-          return !!sessionStore.currentUser?.isModerator
-        }
-
-        // For "all" category, only show open access inquiries
-        if (this.currentCategory?.id === 'all') {
-          return (
-            inquiry.configuration.access === 'open' || inquiry.configuration.access === 'public' || inquiry.configuration.access === 'group' 
-          )
-        }
-
-        return true
-      })
-
+      
       return orderBy(
         filteredInquiries,
         [sortColumnsMapping[state.sort.by]],
@@ -746,7 +757,7 @@ export const useInquiriesStore = defineStore('inquiries', {
 	    try {
 		    const response = await InquiriesAPI.getInquiries()
 		    this.inquiries = response.data.inquiries
-		    inquiryGroupsStore.inquiryGroups = response.data.inquiryGroups
+		    inquiryGroupsStore.inquiryGroups = response.data.inquiryGroups ?? []
 		    this.meta.status = 'loaded'
 	    } catch (error) {
 		    if ((error as AxiosError)?.code === 'ERR_CANCELED') {

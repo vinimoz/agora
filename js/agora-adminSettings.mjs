@@ -10,13 +10,13 @@
     console.error("vite-plugin-css-injected-by-js", e);
   }
 })();
-const br = "agora", $r = "1.7.12";
-import { G as Se, a3 as ee, a4 as te, d as G, q as t, o as r, c, h as a, t as l, v as e, L as K, M as W, K as X, E as b, i as C, _ as j, s as me, g as n, e as _, F as I, b as z, B as _e, a5 as Ve, l as L, C as D, w as ge, f as le, D as Ce, m as qe, a6 as fe, a7 as he, a8 as Te, I as Ie, J as re, a9 as xe, n as Ue, x as Z, y as Q, z as Le, A as Ae } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_bbec35a7_lang-fzgqcKSs.chunk.mjs";
-import { I as de, b as Ee, N as B } from "./index-DuJqCx5N.chunk.mjs";
-import { L as M, i as R, k as be, j as De, l as ye, I as ae, s as ue, S as ve, a as Fe } from "./NcDashboardWidget-CvpYMKur-CYM3U3wk.chunk.mjs";
-import { F as Ne } from "./FlexSettings-C6dy0_0O.chunk.mjs";
-import { _ as $e, a as F, b as N, N as J } from "./NcRichText-D_ssz6sB-BgURSsFz.chunk.mjs";
-import { N as oe, a as Re, _ as ze, b as Oe } from "./markdown-DA8gTtQk.chunk.mjs";
+const br = "agora", $r = "1.7.13";
+import { G as Se, a3 as ee, a4 as te, d as G, q as t, o as r, c, h as a, t as l, v as e, L as K, M as W, K as X, E as b, i as C, _ as j, s as me, g as n, e as _, F as I, b as z, B as _e, a5 as Ve, l as L, C as D, w as ge, f as le, D as Ce, m as qe, a6 as fe, a7 as he, a8 as Te, I as Ie, J as re, a9 as xe, n as Ue, x as Z, y as Q, z as Le, A as Ae } from "./TernarySupportIcon.vue_vue_type_style_index_0_scoped_bbec35a7_lang-DY5YNnt_.chunk.mjs";
+import { I as de, b as Ee, N as B } from "./index-CRWO1fn1.chunk.mjs";
+import { L as M, i as R, k as be, j as De, l as ye, I as ae, s as ue, S as ve, a as Fe } from "./NcDashboardWidget-CvpYMKur-CoBvE3IC.chunk.mjs";
+import { F as Ne } from "./FlexSettings-CB9paAo3.chunk.mjs";
+import { _ as $e, a as F, b as N, N as J } from "./NcRichText-D_ssz6sB-BtMLGGyZ.chunk.mjs";
+import { N as oe, a as Re, _ as ze, b as Oe } from "./markdown-DLZA2HDd.chunk.mjs";
 const se = Se("templateWizard", { state: () => ({ isOpen: false, currentStep: "use-case", steps: ["use-case", "template-selection", "language", "preview", "summary", "importing", "results"], templates: [], loadingTemplates: false, selectedUseCase: null, selectedTemplate: null, selectedLanguage: null, customTemplate: null, editableData: null, importing: false, importResult: null, importError: null, isDatabaseEmpty: null }), getters: { currentStepIndex: (u) => u.steps.indexOf(u.currentStep), canGoNext: (u) => {
   switch (u.currentStep) {
     case "use-case":

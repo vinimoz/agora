@@ -23,6 +23,7 @@
         :current-quadratic-votes="quadraticVotes[option.id]"
         :current-token-weight="tokenWeights[option.id]"
         :total-options="options.length"
+        :hide-results="hideResults"
         :get-user-vote-value-for-option="getUserVoteValueForOption"
         @vote="(option, value) => $emit('vote', option, value)"
         @approval-toggle="(optionId) => $emit('toggleSelection', optionId)"
@@ -45,7 +46,7 @@
     </div>
 
     <!-- Submit section -->
-    <div v-if="showSubmitButton" class="submit-vote-section">
+    <div v-if="showSubmitButton && !autoSave" class="submit-vote-section">
       <div class="submit-container">
         <NcButton
           type="primary"
@@ -109,6 +110,8 @@ const props = defineProps<{
   hasUserVotedFor: (optionId: number) => boolean
   isSelectedForVote: (optionId: number) => boolean
   getUserVoteValueForOption: (optionId: number) => SupportValue | null
+  autoSave?: boolean
+  hideResults?: boolean
 }>()
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -151,7 +154,7 @@ const getSubmitButtonText = (): string => {
 .cards-layout {
   .cards-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
     gap: 20px;
     margin-bottom: 24px;
   }
@@ -216,11 +219,6 @@ const getSubmitButtonText = (): string => {
 
 @media (max-width: 768px) {
   .cards-layout {
-    .cards-grid {
-      grid-template-columns: 1fr;
-      gap: 16px;
-    }
-
     .submit-vote-section .submit-container {
       flex-direction: column;
       border-radius: 20px;
