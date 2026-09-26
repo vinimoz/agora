@@ -3,6 +3,18 @@ All notable changes to this project will be documented in this file.
 
 # [1.7.13] - 2026-09-24
 Fix:
+    - Bug #64: do not touch the description editor once destroyed
+    - Bug #63: check permissions on votes and support engines
+    - Bug #62: show voters only what they need to vote
+    - Bug #61: hide engine results until close, on stacked engine blocks
+    - Bug #60: hide an engine's results until it is close
+    - Bug #59: save stacked yes/no and grade answers automatically
+    - Bug #58: show overall progress below stacked engine blocks
+    - Bug #57: show one block per engine when an inquiry is split into themes
+    - Bug #56: fit the card grid to narrow screens
+    - Bug #55: open the comment field on chosen majority judgment grades
+    - Bug #54: comment on an option from its vote card
+    - Bug #53: grade a majority judgment option with one tap
     - Bug #52: label the balance bar with position counts
     - Bug #51: restrict editing and moderation to the users entitled to them
     - Bug #50: fall back to the stored catalogue for option type labels
