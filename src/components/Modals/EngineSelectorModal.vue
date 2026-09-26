@@ -140,6 +140,12 @@
                           :placeholder="t('agora', 'Grade {n}', { n: index + 1 })"
                           class="grade-input"
                           />
+                  <NcCheckboxRadioSwitch
+                          :model-value="commentGrades.includes(grade)"
+                          @update:model-value="toggleCommentGrade(grade, $event)"
+                          >
+                          {{ t('agora', 'Open comment on this grade') }}
+                  </NcCheckboxRadioSwitch>
                   <NcButton
                           v-if="(tempConfig.grades || defaultGrades).length > 2"
                           class="grade-remove"
@@ -566,6 +572,13 @@ const removeGrade = (index: number) => {
   }
 }
 
+const commentGrades = computed(() => (tempConfig.value.comment_grades as string[] | undefined) ?? [])
+
+const toggleCommentGrade = (grade: string, checked: boolean) => {
+  const others = commentGrades.value.filter((g) => g !== grade)
+  tempConfig.value.comment_grades = checked ? [...others, grade] : others
+}
+
 const getSelectOptions = (schema: ConfigSchemaField) => {
   if (!schema.options) return []
 
@@ -667,6 +680,9 @@ const save = (): void => {
     // Clean up empty grades
     if (selectedEngine.value === 'majority_judgment' && config.grades) {
         config.grades = (config.grades as string[]).filter(g => g.trim() !== '')
+        if (config.comment_grades) {
+            config.comment_grades = (config.comment_grades as string[]).filter((g) => (config.grades as string[]).includes(g))
+        }
     }
 
     // VALIDATION: Ensure min < max for score/star
@@ -1019,6 +1035,7 @@ onMounted(() => {
             .grade-item {
                 display: flex;
                 align-items: center;
+                flex-wrap: wrap;
                 gap: 8px;
                 margin-bottom: 8px;
 
