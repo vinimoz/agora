@@ -257,6 +257,19 @@ export const useInquiryStore = defineStore('inquiry', {
 		},
 
 
+	/**
+	 * Check if the current user belongs to the inquiry's owned group.
+	 * Returns true if no ownedGroup is set (no restriction),
+	 * otherwise checks if the current user's groups include the ownedGroup.
+	 */
+	isCurrentUserInOwnedGroup(): boolean {
+	if (!this.ownedGroup) {
+		return true
+	}
+	const sessionStore = useSessionStore()
+	return (sessionStore.currentUser?.groups ?? []).includes(this.ownedGroup)
+	},
+
 		descriptionMarkDown(state): string {
 			marked.use(gfmHeadingId(markedPrefix))
 			return domPurify.sanitize(marked.parse(state.description).toString())
@@ -309,13 +322,8 @@ export const useInquiryStore = defineStore('inquiry', {
 				} else if (action === 'submit_for_moderate') {
 					this.status.moderationStatus = 'pending'
 					this.status.inquiryStatus = 'waiting_approval'
-					this.configuration.access = 'moderate'
-				} else if (action === 'submit_for_moderate') {
-    this.status.moderationStatus = 'pending'
-    this.status.inquiryStatus = 'waiting_approval'
-    // Preserve group access if an owner group was assigned
-    this.configuration.access = this.ownedGroup ? 'group' : 'moderate'
-}
+    					this.configuration.access = this.ownedGroup ? 'group' : 'moderate'
+				}
 
 				const response = await InquiriesAPI.submitInquiry(this.id, action)
 				if (!response || !response.data) {

@@ -254,6 +254,7 @@ class InquiryController extends BaseController
                 (string) $data['title'],
                 (string) $data['type'],
                 (string) $data['family'],
+                isset($data['access']) ? (string) $data['access'] : '',
                 isset($data['ownedGroup']) ? (string) $data['ownedGroup'] : '',
                 isset($data['description']) ? (string) $data['description'] : '',
                 isset($data['parentId']) ? (int) $data['parentId'] : null,

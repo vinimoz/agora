@@ -193,23 +193,24 @@ const inquiryCategories: InquiryCategoryList = {
     filterCondition: (inquiry: Inquiry) =>
       !inquiry.status.isArchived && inquiry.status.countParticipants > 0,
   },
-  group: {
-    id: 'group' as FilterType,
-    title: t('agora', 'Group inquiries'),
-    titleExt: t('agora', 'Inquiries shared with my groups'),
-    description: t('agora', 'Inquiries visible to the groups you belong to.'),
-    pinned: false,
-    showInNavigation: () => {
-        const sessionStore = useSessionStore()
-        return (sessionStore.currentUser?.groups?.length ?? 0) > 0
-    },
-    filterCondition: (inquiry: Inquiry) =>
-        !inquiry.status.isArchived &&
-        inquiry.permissions.view &&
-        inquiry.configuration.access === 'group' &&
-        !!inquiry.ownedGroup &&
-        (useSessionStore().currentUser?.groups ?? []).includes(inquiry.ownedGroup),
+
+group: {
+  id: 'group' as FilterType,
+  title: t('agora', 'Group inquiries'),
+  titleExt: t('agora', 'Inquiries shared with my groups'),
+  description: t('agora', 'Inquiries visible to the groups you belong to.'),
+  pinned: false,
+  showInNavigation: () => {
+    const sessionStore = useSessionStore()
+    return (sessionStore.currentUser?.groups?.length ?? 0) > 0
   },
+  filterCondition: (inquiry: Inquiry) =>
+    !inquiry.status.isArchived &&
+    inquiry.permissions.view &&
+    inquiry.configuration.access === 'group' &&
+    inquiry.ownedGroup &&
+    (useSessionStore().currentUser?.groups ?? []).includes(inquiry.ownedGroup),
+},
   open: {
     id: 'open',
     title: t('agora', 'Openly accessible inquiries'),
@@ -224,20 +225,24 @@ const inquiryCategories: InquiryCategoryList = {
       !inquiry.status.isArchived && inquiry.configuration.access === 'open',
   },
   all: {
-    id: 'all',
-    title: t('agora', 'All inquiries'),
-    titleExt: t('agora', 'All inquiries'),
-    description: t('agora', 'All inquiries open and public, where you have access to'),
-    pinned: false,
-    showInNavigation: () => true,
-    filterCondition: (inquiry: Inquiry) =>
-      !inquiry.status.isArchived &&
-      inquiry.permissions.view &&
-      (inquiry.configuration.access === 'open' ||
-        inquiry.configuration.access === 'moderate' ||
-        inquiry.configuration.access === 'public' ||
-        inquiry.configuration.access === 'private' ||
-       inquiry.configuration.access === 'group'),
+  id: 'all',
+  title: t('agora', 'All inquiries'),
+  titleExt: t('agora', 'All inquiries'),
+  description: t('agora', 'All inquiries open and public, where you have access to'),
+  pinned: false,
+  showInNavigation: () => true,
+  filterCondition: (inquiry: Inquiry) =>
+    !inquiry.status.isArchived &&
+    inquiry.permissions.view &&
+    (inquiry.configuration.access === 'open' ||
+      inquiry.configuration.access === 'moderate' ||
+      inquiry.configuration.access === 'public' ||
+      inquiry.configuration.access === 'private' ||
+      inquiry.configuration.access === 'group') &&
+    // Only apply group membership check for group access inquiries
+    (inquiry.configuration.access !== 'group' ||
+      (inquiry.ownedGroup &&
+        (useSessionStore().currentUser?.groups ?? []).includes(inquiry.ownedGroup))),
   },
   closed: {
     id: 'closed',

@@ -141,8 +141,6 @@ async function addInquiry() {
       inquiryData.parentId = props.parentInquiryId
     }
 
-
-    
     if (inquiryStore.locationId) {
       inquiryData.locationId = inquiryStore.locationId
     }
@@ -158,7 +156,7 @@ async function addInquiry() {
       
     // Add groups if groups access is selected
     if (accessType.value === 'groups' && selectedGroup.value) {
-      inquiryData.ownedGroup = selectedGroup.valuea
+      inquiryData.ownedGroup = selectedGroup.value
       inquiryData.access = 'group'
     }
     else

@@ -303,11 +303,13 @@ class InquiryService
         $this->inquiry->setOwner($this->userSession->getCurrentUserId());
         $this->inquiry->setParentId($dto->parentId);
         $this->inquiry->setLocationId($dto->locationId);
-        $this->inquiry->setCategoryId($dto->categoryId);
+	$this->inquiry->setCategoryId($dto->categoryId);
+	// By default, access group are accepted there is no moderation
+        if ($dto->access == 'group' ) $this->inquiry->setModerationStatus('accepted');
 
         // Optional fields with defaults
         $this->inquiry->setDescription($dto->description ?? '');
-        $this->inquiry->setAccess(Inquiry::ACCESS_PRIVATE);
+        $this->inquiry->setAccess($dto->access);
         if ($this->appSettings->getAutoExpireEnabled()) {
             $expireDays = $this->appSettings->getAutoExpireOffsetDays();
             $expireTimestamp = $timestamp + ($expireDays * 24 * 60 * 60);
@@ -917,7 +919,7 @@ public function getWithTrending(int $inquiryId): array
 
         switch ($action) {
         case 'save_draft':
-            $inquiry->setAccess('private');
+            // $inquiry->setAccess('private');
             $inquiry->setInquiryStatus('draft');
             $inquiry->setModerationStatus('draft');
 	    $inquiry->setLastInteraction($timestamp);
@@ -933,7 +935,8 @@ public function getWithTrending(int $inquiryId): array
             break;
 
         case 'submit_for_accepted':
-            $inquiry->setAccess('open');
+		if ($inquiry->getOwnedGroup() ) $inquiry->setAccess('group');
+		else $inquiry->setAccess('open');
             $inquiry->setModerationStatus('accepted');
             //We find the first status available in inquiry type status definition
             $firstStatus = null;
@@ -973,7 +976,7 @@ public function getWithTrending(int $inquiryId): array
      */
     private function getValidAccess(): array
     {
-        return [Inquiry::ACCESS_PRIVATE, Inquiry::ACCESS_OPEN,Inquiry::ACCESS_MODERATE];
+        return [Inquiry::ACCESS_PRIVATE, Inquiry::ACCESS_OPEN,Inquiry::ACCESS_MODERATE,Inquiry::ACCESS_GROUP];
     }
 
     /**

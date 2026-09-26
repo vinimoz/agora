@@ -81,6 +81,7 @@ class Inquiry extends EntityWithUser implements JsonSerializable
     public const ACCESS_MODERATE = 'moderate';
     public const ACCESS_PRIVATE = 'private';
     public const ACCESS_OPEN = 'open';
+    public const ACCESS_GROUP = 'group';
     
     // Show results types
     public const SHOW_RESULTS_ALWAYS = 'always';
