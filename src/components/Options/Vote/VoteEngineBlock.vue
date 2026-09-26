@@ -27,6 +27,7 @@
                 :get-user-vote-value-for-option="getUserVoteValueForOption"
                 :has-selections-changed="hasSelectionsChanged"
                 :auto-save="autoSave"
+		  :hide-results="hideResults"
                 @toggle-selection="toggleSelection"
                 @update:rankings="updateRankings"
                 @update:scores="updateScores"
@@ -46,7 +47,7 @@
         <VoteResultsLayout
                 :options="votableOptions"
                 :total-votes="totalVotes"
-                :ranked-options="rankedOptions"
+                :ranked-options="rankedOptios"
                 :current-engine="currentEngine"
                 :effective-engine-id="effectiveEngineId"
                 :active-engine="currentEngine"
@@ -99,6 +100,7 @@ const props = defineProps<{
   layout: 'cards' | 'results'
   timeRemaining: string
   enqueueSave?: (engineId: number, task: () => Promise<boolean>) => Promise<boolean>
+  hideResults?: boolean
 }>()
 
 const emit = defineEmits<{

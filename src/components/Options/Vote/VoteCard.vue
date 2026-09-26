@@ -33,7 +33,7 @@
       
       <!-- Support and comments stats (when not voting mode) -->
       <div v-if="!canVote || hasUserVoted" class="stats-container">
-        <div class="support-stats" @click.stop="openSupportsModal">
+        <div v-if="!hideResults" class="support-stats" @click.stop="openSupportsModal">
           <component :is="InquiryOptionIcons.Support" :size="14" class="stat-icon" />
           <span class="vote-count">{{ voteCount }}</span>
           <span class="percentage">{{ percentage }}%</span>
@@ -46,7 +46,7 @@
       </div>
 
       <!-- Progress bar for voting mode -->
-      <div v-if="!canVote || hasUserVoted" class="progress-bar-container">
+      <div v-if="(!canVote || hasUserVoted) && !hideResults" class="progress-bar-container">
         <div class="progress-bar">
           <div class="progress-fill" :style="{ width: percentage + '%' }" />
         </div>
@@ -166,6 +166,7 @@ const props = defineProps<{
   currentTokenWeight?: number | null
   getUserVoteValueForOption: (optionId: number) => SupportValue | null
   totalOptions?: number
+  hideResults?: boolean
 }>()
 
 const emit = defineEmits<{

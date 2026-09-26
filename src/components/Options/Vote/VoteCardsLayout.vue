@@ -23,6 +23,7 @@
         :current-quadratic-votes="quadraticVotes[option.id]"
         :current-token-weight="tokenWeights[option.id]"
         :total-options="options.length"
+        :hide-results="hideResults"
         :get-user-vote-value-for-option="getUserVoteValueForOption"
         @vote="(option, value) => $emit('vote', option, value)"
         @approval-toggle="(optionId) => $emit('toggleSelection', optionId)"
@@ -109,7 +110,7 @@ const props = defineProps<{
   hasUserVotedFor: (optionId: number) => boolean
   isSelectedForVote: (optionId: number) => boolean
   getUserVoteValueForOption: (optionId: number) => SupportValue | null
-  autoSave?: boolean
+  hideResults?: boolean
 }>()
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

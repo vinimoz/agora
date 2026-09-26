@@ -44,9 +44,10 @@ class SupportResultController extends BaseController
     #[FrontpageRoute(verb: 'POST', url: '/support/engine/{engineId}/calculate')]
     public function calculate(int $engineId): JSONResponse
     {
-        return $this->response(fn () => [
-            'results' => $this->supportResultService->calculateResults($engineId),
-        ]);
+        return $this->response(function () use ($engineId) {
+            $results = $this->supportResultService->calculateResults($engineId);
+            return ['results' => $this->supportResultService->isEngineHidden($engineId) ? [] : $results];
+        });
     }
 
     /**

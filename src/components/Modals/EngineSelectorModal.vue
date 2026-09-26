@@ -249,6 +249,14 @@
           </NcRadioGroup>
       </div>
 
+      <NcCheckboxRadioSwitch
+              v-if="mode !== 'deliberative'"
+              :model-value="tempConfig.results_visibility === 'closed'"
+              @update:model-value="tempConfig.results_visibility = $event ? 'closed' : 'always'"
+              >
+              {{ t('agora', 'Hide results until voting is closed') }}
+      </NcCheckboxRadioSwitch>
+
       <div class="modal-footer">
           <NcButton class="btn-secondary" @click="$emit('close')">
           {{ t('agora', 'Cancel') }}
