@@ -31,6 +31,7 @@ export interface VoteContext {
   tokenWeights: Ref<Record<number, number>>
   selectedOptions: Ref<Set<number>>
   hasUserVoted: ComputedRef<boolean>
+  hasSelectionsChanged: ComputedRef<boolean>
   canVote: ComputedRef<boolean>
   canSubmitMultiVote: ComputedRef<boolean>
   voteSelectionInfo: ComputedRef<string | null>
@@ -61,12 +62,13 @@ export interface VoteContext {
   updateTokenWeight: (optionId: number, weight: number | null) => void
   submitSingleVote: (inquiryId: number, option: Option, value: SupportValue) => Promise<boolean>
   submitMultiVote: () => Promise<boolean>
+  removeMyVote: () => Promise<boolean>
   resetSelections: () => void
   hasUserVotedFor: (optionId: number) => boolean
   isSelectedForVote: (optionId: number) => boolean
 }
 
-export function useVoteContext(inquiryId: number): VoteContext {
+export function useVoteContext(inquiryId: number, engineId?: number): VoteContext {
   const engineStore = useSupportEngineStore()
   const supportsStore = useSupportsStore()
   const optionsStore = useOptionsStore()
@@ -75,13 +77,16 @@ export function useVoteContext(inquiryId: number): VoteContext {
 
   // ---------- Engine management ----------
   const loadingEngines = ref(false)
-  const selectedEngineId = ref<number | null>(null)
+  const selectedEngineId = ref<number | null>(engineId ?? null)
 
   const availableEngines = computed(() => engineStore.getEnginesByInquiry(inquiryId))
  // const { calculateTrendingScore } = useTrending(inquiryId)
 
   const currentEngine = computed<SupportEngine | null>(() => {
     const engines = availableEngines.value
+    if (engineId !== undefined) {
+      return engines.find((e) => e.id === engineId) ?? null
+    }
     if (!engines.length) return null
     if (selectedEngineId.value) {
       const found = engines.find((e) => e.id === selectedEngineId.value)

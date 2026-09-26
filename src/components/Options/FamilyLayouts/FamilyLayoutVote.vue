@@ -10,6 +10,49 @@
             <p>{{ t('agora', 'Loading vote interface …') }}</p>
         </div>
 
+        <div v-else-if="stackedEngines.length" class="vote-interface stacked">
+            <VoteHeader
+                    part="bar"
+                    :total-votes="totalVotes"
+                    :current-engine="currentEngine"
+                    :available-engines="availableEngines"
+                    :can-manage-vote="canManageVote"
+                    :is-readonly="isReadonly"
+                    :current-layout="currentLayout"
+                    :allowed-layouts="allowedLayouts"
+                    @update:layout="currentLayout = $event"
+                    @create-engine="showCreateEngineModal = true"
+                    />
+            <section
+                    v-for="engine in stackedEngines"
+                    :key="engine.id"
+                    class="vote-engine-section"
+                    :aria-labelledby="`engine-title-${engine.id}`"
+                    >
+                <VoteHeader
+                        part="card"
+                        :current-engine="engine"
+                        :available-engines="availableEngines"
+                        :can-manage-vote="inquiryStore.permissions.edit"
+                        :is-readonly="isReadonly"
+                        :total-votes="0"
+                        :current-layout="currentLayout"
+                        :allowed-layouts="allowedLayouts"
+                        @edit-engine="handleEditEngine"
+                        @delete-engine="handleDeleteEngine"
+                        @add-to-vote="onAddToVote"
+                        />
+                <VoteEngineBlock
+                        :inquiry-id="inquiryId"
+                        :engine-id="engine.id"
+                        :layout="currentLayout"
+                        :time-remaining="timeRemaining"
+                        @open-supports-modal="openSupportsModal"
+                        @select-option="$emit('selectOption', $event)"
+                        />
+            </section>
+        </div>
+
         <!-- Show header when there's an active engine, even without options -->
         <div v-else-if="hasActiveEngine && currentEngine" class="vote-interface">
             <VoteHeader
@@ -26,7 +69,7 @@
                     @create-engine="showCreateEngineModal = true"
                     @edit-engine="handleEditEngine"
                     @delete-engine="handleDeleteEngine"
-                    @add-to-vote="showAddToVoteModal = true"
+                    @add-to-vote="onAddToVote"
                     />
 
             <!-- Empty state when no options are linked -->
@@ -48,82 +91,16 @@
                     @add-option="$emit('addOption')"
                     />
 
-            <!-- Cards Layout -->
-            <div v-else-if="currentLayout === 'cards'" class="cards-layout">
-                <VoteCardsLayout
-                        :options="votableOptions"
-                        :effective-engine-id="effectiveEngineId"
-                        :active-engine="currentEngine"
-                        :can-vote="canVote"
-                        :has-user-voted="hasUserVoted"
-                        :rankings="rankings"
-                        :scores="scores"
-                        :grades="grades"
-                        :reactions="reactions"
-                        :quadratic-votes="quadraticVotes"
-                        :token-weights="tokenWeights"
-                        :can-submit-multi-vote="canSubmitMultiVote"
-                        :vote-selection-info="voteSelectionInfo"
-                        :get-option-vote-count="getOptionVoteCount"
-                        :get-percentage="(option) => getPercentage(option)"
-                        :has-user-voted-for="hasUserVotedFor"
-                        :is-selected-for-vote="isSelectedForVote"
-                        :get-user-vote-value-for-option="getUserVoteValueForOption"
-                        :has-selections-changed="hasSelectionsChanged"
-                        @toggle-selection="toggleSelection"
-                        @update:rankings="updateRankings"
-                        @update:scores="updateScores"
-                        @update:grades="updateGrades"
-                        @update:reactions="updateReactions"
-                        @update:quadratic-votes="updateQuadraticVotes"
-                        @update:token-weights="updateTokenWeights"
-                        @vote="(option, value) => submitSingleVote(inquiryId,option, value)"
-                        @submit-multi-vote="onSubmitMultiVote"
-                        @remove-my-vote="removeMyVote"
-                        @select-option="$emit('selectOption', $event)"
-                        @open-supports-modal="openSupportsModal"
-                        />
-            </div>
-            <!-- Results Layout -->
-            <div v-else-if="currentLayout === 'results'" class="results-layout">
-                <VoteResultsLayout
-                        :options="votableOptions"
-                        :total-votes="totalVotes"
-                        :ranked-options="rankedOptions"
-                        :current-engine="currentEngine"
-                        :effective-engine-id="effectiveEngineId"
-                        :active-engine="currentEngine"
-                        :can-vote="canVote"
-                        :has-user-voted="hasUserVoted"
-                        :rankings="rankings"
-                        :scores="scores"
-                        :grades="grades"
-                        :reactions="reactions"
-                        :quadratic-votes="quadraticVotes"
-                        :token-weights="tokenWeights"
-                        :selected-options="selectedOptions"
-                        :can-submit-multi-vote="canSubmitMultiVote"
-                        :vote-selection-info="voteSelectionInfo"
-                        :get-option-rank="getOptionRank"
-                        :get-option-vote-count="getOptionVoteCount"
-                        :get-percentage="(option) => getPercentage(option)"
-                        :has-user-voted-for="hasUserVotedFor"
-                        :is-selected-for-vote="isSelectedForVote"
-                        :winner="winner"
-                        :winner-percentage="winnerPercentage"
-                        :time-remaining="timeRemaining"
-                        @toggle-selection="toggleSelection"
-                        @update:rankings="rankings = $event"
-                        @update:scores="scores = $event"
-                        @update:grades="grades = $event"
-                        @update:reactions="reactions = $event"
-                        @update:quadratic-votes="quadraticVotes = $event"
-                        @update:token-weights="tokenWeights = $event"
-                        @vote="(option, value) => submitSingleVote(inquiryId,option, value)"
-                        @submit-multi-vote="submitMultiVote"
-                        @select-option="$emit('selectOption', $event)"
-                        />
-            </div>
+            <VoteEngineBlock
+                    v-else
+                    :key="currentEngine.id"
+                    :inquiry-id="inquiryId"
+                    :engine-id="currentEngine.id"
+                    :layout="currentLayout"
+                    :time-remaining="timeRemaining"
+                    @open-supports-modal="openSupportsModal"
+                    @select-option="$emit('selectOption', $event)"
+                    />
         </div>
 
 
@@ -197,18 +174,17 @@ import { NcLoadingIcon, NcDialog } from '@nextcloud/vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import type { Option, SupportEngine } from '../../Types/index'
 import { useVoteContext } from '../../../composables/useVoteContext'
+import { useInquiryStore } from '../../../stores/inquiry'
 import { useOptionsStore } from '../../../stores/options'
 import { useSupportEngineStore } from '../../../stores/supportEngine'
 import { useSupportsStore } from '../../../stores/supports'
 import VoteHeader from '../Vote/VoteHeader.vue'
 import VoteEmptyState from '../Vote/VoteEmptyState.vue'
-import VoteCardsLayout from '../Vote/VoteCardsLayout.vue'
-import VoteResultsLayout from '../Vote/VoteResultsLayout.vue'
+import VoteEngineBlock from '../Vote/VoteEngineBlock.vue'
 import EngineSelectorModal from '../../Modals/EngineSelectorModal.vue'
 import AddOptionToFamily from '../../Modals/AddOptionToFamily.vue'
 import SupportsDetailModal from '../../Modals/SupportsDetailModal.vue'
 import { ENGINE_DEFINITIONS } from '../../../Types/votingType'
-import { showSuccess } from '@nextcloud/dialogs'
 
 const props = defineProps<{
   inquiryId: number
@@ -225,6 +201,7 @@ const emit = defineEmits<{
   'optionFamilyChanged': [payload: { optionId: number, familyKey: string, action: string }]
 }>()
 
+const inquiryStore = useInquiryStore()
 const optionsStore = useOptionsStore()
 const engineStore = useSupportEngineStore()
 const allOptions = computed(() => optionsStore.options || [])
@@ -241,36 +218,28 @@ const {
   currentEngine,
   votableOptions,
   hasActiveEngine,
-  hasSelectionsChanged,
-  rankings,
-  scores,
-  selectedOptions,
-  hasUserVoted,
-  canVote,
-  canSubmitMultiVote,
-  voteSelectionInfo,
-  hasUserVotedFor,
-  isSelectedForVote,
-  toggleSelection,
-  submitSingleVote,
-  submitMultiVote,
   totalVotes,
-  getOptionVoteCount,
-  getOptionRank,
-  getPercentage,
-  getRankedOptions,
-  getWinner,
-  getWinnerPercentage,
-  getUserVoteValueForOption,
   refreshEngines,
-  effectiveEngineId,
   selectEngine,
-  removeMyVote,
-  grades,
-  reactions,
-  quadraticVotes,
-  tokenWeights,
 } = useVoteContext(props.inquiryId)
+
+// One block per active engine, only when each option belongs to exactly one of them.
+const stackedEngines = computed<SupportEngine[]>(() => {
+  const active = availableEngines.value.filter((e) => e.status === 'active')
+  if (active.length < 2 || active.some((e) => e.engine === 'phased_voting' || !e.target_ids?.length)) {
+    return []
+  }
+  const covered = new Set<number>()
+  for (const e of active) {
+    for (const id of e.target_ids) {
+      if (covered.has(id)) return []
+      covered.add(id)
+    }
+  }
+  const shown = availableEngines.value.flatMap((e) => e.target_ids ?? [])
+  if (shown.some((id) => !covered.has(id))) return []
+  return [...active].sort((a, b) => a.id - b.id)
+})
 
 // Local UI state
 const currentLayout = ref<'cards' | 'results'>('cards')
@@ -282,11 +251,7 @@ const engineModalMode = ref<'create' | 'edit'>('create')
 const engineToEdit = ref<SupportEngine | null>(null)
 const engineToDelete = ref<SupportEngine | null>(null)
 const voteSession = ref({ start_date: null, end_date: null, quorum: null })
-const winner = computed(() => getWinner(votableOptions.value))
-const winnerPercentage = computed(() => getWinnerPercentage(votableOptions.value))
 const currentEngineHasVotes = ref(false)
-
-const rankedOptions = computed(() => getRankedOptions(votableOptions.value))
 
 const availableEnginesSelector = computed(() => {
   const engines = Object.entries(ENGINE_DEFINITIONS)
@@ -310,32 +275,6 @@ const availableEnginesSelector = computed(() => {
     return true
   })
 })
-
-const onSubmitMultiVote = async () => {
-  const success = await submitMultiVote()
-  if (success) {
-    showSuccess(t('agora', 'Your vote has been recorded.'))
-  }
-}
-
-function updateRankings(newRankings) {
-  rankings.value = newRankings
-}
-function updateScores(newScores) {
-  scores.value = newScores
-}
-function updateGrades(newGrades) {
-  grades.value = newGrades
-}
-function updateReactions(newReactions) {
-  reactions.value = newReactions
-}
-function updateQuadraticVotes(newVotes) {
-  quadraticVotes.value = newVotes
-}
-function updateTokenWeights(newWeights) {
-  tokenWeights.value = newWeights
-}
 
 const deleteConfirmMessage = computed(() => {
   if (!engineToDelete.value) return ''
@@ -422,6 +361,11 @@ const closeEngineModal = () => {
   engineModalMode.value = 'create'
 }
 
+const onAddToVote = (engine: SupportEngine) => {
+  selectEngine(engine.id)
+  showAddToVoteModal.value = true
+}
+
 const handleEngineUpdate = (engineId: number | null) => {
   if (engineId) {
     selectEngine(engineId)
@@ -458,6 +402,16 @@ const onOptionsAdded = () => {
 .family-layout-vote {
     .vote-interface {
         animation: fadeIn 0.3s ease;
+    }
+
+    .vote-interface.stacked {
+        .vote-engine-section + .vote-engine-section {
+            margin-top: 32px;
+        }
+
+        :deep(.submit-vote-section) {
+            position: static;
+        }
     }
 
     .debug-panel {
