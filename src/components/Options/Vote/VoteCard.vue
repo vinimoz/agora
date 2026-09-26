@@ -13,7 +13,7 @@
     @click="handleCardClick"
   >
     <!-- Header with icon, type label, and creation date -->
-    <div class="card-header">
+    <div v-if="inquiryStore.permissions.edit" class="card-header">
       <div class="header-left">
         <div class="type-icon" :style="{ color: optionTypeColor }">
           <component :is="optionIcon" :size="20" />
@@ -105,7 +105,7 @@
     </div>
 
     <!-- Footer with owner info -->
-    <div v-if="!compact" class="card-footer">
+    <div v-if="!compact && inquiryStore.permissions.edit" class="card-footer">
       <div class="owner-info">
         <NcAvatar
           v-if="option.owner?.id"
@@ -183,6 +183,7 @@ const emit = defineEmits<{
 }>()
 
 const sessionStore = useSessionStore()
+const inquiryStore = useInquiryStore()
 const allOptionTypes = computed(() => sessionStore.appSettings?.inquiryOptionTypeTab || [])
 
 const optionTypeLabel = computed(() => {
@@ -324,7 +325,11 @@ function handleCardClick(event: MouseEvent) {
   &:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    border-color: var(--color-primary-element);
+  }
+
+  &:has(:focus-visible) {
+    outline: 2px solid var(--color-main-text);
+    outline-offset: 2px;
   }
 
   &.user-voted {

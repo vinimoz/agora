@@ -4,7 +4,7 @@
 <template>
     <div class="vote-header">
         <!-- Top row: Metadata left, Layout switcher right -->
-        <div v-if="part !== 'card'" class="header-top-row">
+        <div v-if="part !== 'card' && (!part || allowedLayouts.length > 1)" class="header-top-row">
             <div v-if="!part" class="vote-metadata">
                 <span v-if="voteSession" class="metadata-badge">
                     <Calendar :size="14" />
@@ -29,7 +29,7 @@
                 </span>
             </div>
 
-            <div class="layout-switcher">
+            <div v-if="allowedLayouts.length > 1" class="layout-switcher">
                 <NcButton
                         v-for="layout in allowedLayouts"
                         :key="layout"
@@ -173,7 +173,7 @@
 
 	<!-- Current Engine Info Card (when engine is selected) -->
 	<div v-if="currentEngine && part !== 'bar'" class="current-engine-card">
-		<div class="engine-card-icon">
+		<div v-if="canManageVote" class="engine-card-icon">
 			<component :is="getEngineIcon(currentEngine.engine)" :size="24" />
 		</div>
 		<div class="engine-card-content">
